@@ -14,20 +14,26 @@ cross-benchmark (`scripts/run_sensitivity_tornado.py`, `docs/handoffs/diagnostic
 
 ## 0. Status snapshot (every claim re-verified on disk, 2026-07-05)
 
+**Superseded note (re-verified again on disk, 2026-07-06):** every row below was accurate
+*at the 2026-07-05 planning cut*, before the W2-P5/W3-P1 implementation sessions this doc
+itself commissioned (§4) actually ran. §6 records what those sessions landed; this table is
+kept as the "before" picture but the rows that §6 overtook are annotated in place rather than
+silently left to contradict §6.
+
 | Item | State |
 |---|---|
-| Capacity hindcast | **Never built.** No `run_capacity_hindcast.py`, no `docs/hindcast-reports/`. Called the centerpiece by both prior programs (plan Phase 2, PP-0.3). |
-| Forecast invariant checker | **Absent.** No `check_forecast_invariants.py`. |
-| Forecast e2e coverage | **Zero.** `tests/test_runner.py:23-64` patches `solve_dispatch`/`DispatchModel` with synthetic results; the 2026–2050 evolution loop has never run against a real LP in tests (TC-3). |
-| Statistical-mode (D-7) backcast | **REFRESHED 2026-07-05 (this session, W3-P1).** ERCOT/PJM/MISO (carbon=$0) re-scored in place — `calibration_verdict.py` reads the already-committed `runs/<id>.js` payload, not raw dispatch, so no re-solve was needed or possible in a fresh checkout (bundle-local dispatch/bench parquets are gitignored intermediates); confirmed provably unchanged (`2026-07-04-statmode-d7-probe-ercot32`, `2026-07-03-pjm-statmode-d-7`, `2026-07-03-miso-statmode-d-7` — same ids, same files, no diff). CAISO/NYISO/NEISO (carbon-priced) re-solved at HEAD against each ISO's *current* keeper bundle (`caiso51_firm_base`, `nyiso41_hubprices`, `neiso_ctscrub`), all years 2023-2025, registered as `2026-07-05-<iso>-statmode-d7-r2` (probes; the stale 2026-07-03 sidecars are kept but flagged STALE, not deleted). See §5 for the per-ISO table. **Caveat:** the CAISO/NYISO r2 solves inherit HEAD's current offer state wholesale (not a same-SHA keeper-replay-paired isolation of R2 alone per §3.2's fuller recipe), so their CO2/volume movement vs the *committed* (partly pre-07-04-merge) keeper numbers conflates R2 with the 07-04+ offer work; NYISO specifically inherits the B-NYI-1 offer de-leak (merge a4c219e, 2026-07-05) — noted, not compensated for. **Environment note:** this session ran in a fresh container with no persisted `results/calibration/_shared/` or per-bundle `dispatch/` cache from prior sessions (both gitignored by design), so re-solving was the only way to regenerate the three carbon-priced bundles; a same-session/same-container re-score (as CLAUDE.md's "never re-solve just to make the report" guidance intends) would not have required it. |
-| Keepers | All six dated 2026-07-03; all predate the 07-04 ISO-offer merges. NYISO flagged: a HEAD re-solve of nyiso-41 regresses C1/C7 (CT-offer grounding) — owner re-gate pending (`co2-keeper-regate-2026-07-05.md`). |
-| Holdouts | 2022 + H1-2026 fully quarantined (rule 22); `calibration-complete.json` `complete: {}`. ERCOT+PJM holdout *source data* intake landed 2026-07-04 under explicit owner authorization; CAISO/MISO/NYISO/NEISO zero holdout intake. |
-| CI | **W1-P1 landed** (`.github/workflows/ci.yml`): a pytest job (`not slow and not integration`) plus a `quarantine-gates` job running `audit_keepers.py --check` and `legitimacy_diagnostics.py --keepers` on every PR, alongside `lint.yml` (ruff) and the weekly D-13 `bench-repro.yml` cron. |
-| W2-P1 emissions fixes | **Landed** (PR #1371: d3077a4 forward estimator, fff2c34 R2 basis, 968cead quarantine-row strip, R7 NOx unit fix). Validation artifacts built from HEAD now score the right quantity. |
-| EIA-860 vintages on disk | `data/raw/eia-860/vintage_2023/`, `vintage_2024/` **only**. **No 2018/2019/2020 vintage snapshots exist** — the CAMPD 2018/2019/2020 unit-level intake landed (`campd-unit-level/{ST}_{2018,2019,2020}.parquet`), but that is CEMS operations data (feeds the W0-P1 emission-rate history), not a fleet-registry snapshot. |
-| Demand model profiles | `eia_demand_profiles` covers **2021–2025** (full-8760 contract; no builder script in repo — F3). Earliest solvable dispatch year is therefore **2021**. |
-| Henry Hub | 1997–2026 on disk. AEO as-known-then paths: not yet intaken for a 2021 vintage. |
-| Evolution ledger | **Does not exist.** `runner.py`/`capacity.py` persist only `retrofit_log` inside `prior_results` (in-memory); retirements/builds are log-lines, not data. Both the invariant checker and the hindcast scorer need a persisted per-year ledger — it is the shared substrate (§2.1). |
+| Capacity hindcast | ~~**Never built.**~~ **Built and run** (§6): `scripts/run_capacity_hindcast.py`, `scripts/score_capacity_hindcast.py`, `scripts/build_capacity_actuals.py`, `scripts/register_hindcast.py` all exist; `docs/hindcast-reports/` holds ERCOT + PJM realized/asknown runs (plus later `-s2`/`-s3` re-runs from the Stage-2/3 revenue-side fix, `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05-stage2.md`), registered under `results/hindcast/` and `frontend/data/hindcast/`. |
+| Forecast invariant checker | ~~**Absent.**~~ **Landed** (§6): `scripts/check_forecast_invariants.py` (29KB, I1-I14 + P1-P3) exists on disk and is wired into `.github/workflows/forecast-invariants.yml`. |
+| Forecast e2e coverage | ~~**Zero.**~~ **Closed** (§6): `tests/test_forecast_invariants.py` (not a separate `test_forecast_e2e.py` as originally named in §2.4 — folded into the same file) has 34 fast invariant-logic cases plus `test_real_forecast_invariants_pass` (`@pytest.mark.slow`, `RUN_SLOW_FORECAST=1`, a real 3-year ERCOT HiGHS solve) — the first real-LP exercise of the evolution loop, closing TC-3. `test_runner.py`'s mocked tests are unchanged. |
+| Statistical-mode (D-7) backcast | REFRESHED 2026-07-05 (W3-P1), table in §5. **Stale as of 2026-07-06:** `frontend/data/backcast/keepers.json` now shows every ISO except CAISO re-gated again since this refresh (ERCOT/NEISO/MISO/NYISO 2026-07-06, PJM 2026-07-05) — the run ids this row and §5 cite (`nyiso41_hubprices`, `neiso_ctscrub`, etc.) are no longer the current keeper bundles. Per the doc's own standing rule (§3.2, "D-7 is keeper-relative"), a fresh D-7 refresh is now owed and has not been done in this doc. |
+| Keepers | ~~All six dated 2026-07-03~~ **Only CAISO still is** (`2026-07-03-caiso-51-firm-base`). ERCOT, PJM, NYISO, NEISO, MISO have all been re-gated since (`frontend/data/backcast/keepers.json`: ERCOT `2026-07-06-ercot34-stage4-overlay-off`, PJM `2026-07-05-pjm-77-ct-relfloor`, NYISO `2026-07-06-nyiso-53-li-tsl`, NEISO `2026-07-06-neiso-49-stgas-netload`, MISO `2026-07-06-miso-42-coal-econ-ablation`). The NYISO re-gate this row flagged as "pending" has happened (nyiso-41 → nyiso-53-li-tsl); see `docs/handoffs/co2-keeper-regate-2026-07-05.md` for the resolution. |
+| Holdouts | 2022 + H1-2026 fully quarantined (rule 22); `calibration-complete.json` `complete: {}` **— still true as of 2026-07-06**. ERCOT+PJM holdout *source data* intake landed 2026-07-04 under explicit owner authorization; CAISO/MISO/NYISO/NEISO zero holdout intake. |
+| CI | **W1-P1 landed** (`.github/workflows/ci.yml`): a pytest job (`not slow and not integration`) plus a `quarantine-gates` job running `audit_keepers.py --check` and `legitimacy_diagnostics.py --keepers` on every PR, alongside `lint.yml` (ruff) and the weekly D-13 `bench-repro.yml` cron. Still current; a further `.github/workflows/forecast-invariants.yml` has since been added (scheduled tier for the slow invariant/golden/paired-run tests this doc's §2.4 designed). |
+| W2-P1 emissions fixes | **Landed** (PR #1371: d3077a4 forward estimator, fff2c34 R2 basis, 968cead quarantine-row strip, R7 NOx unit fix). Validation artifacts built from HEAD now score the right quantity. `src/market_sim/data/emission_rates.py` exists and is in active use; the referenced commit hashes are no longer resolvable in `git log` (history has since moved/squashed) but the module and its behavior are confirmed on disk. |
+| EIA-860 vintages on disk | ~~`data/raw/eia-860/vintage_2023/`, `vintage_2024/` **only**. No 2018/2019/2020 vintage snapshots exist~~ — **`vintage_2020/` now exists on disk** (§6: the W2-P5 stage-2 EIA-860 2020-vintage intake landed). 2018/2019 vintages still do not exist. |
+| Demand model profiles | `eia_demand_profiles` covers **2021–2025** (full-8760 contract; no builder script in repo — F3, still true: no `scripts/build_demand_profiles.py` exists). Earliest solvable dispatch year is therefore **2021**. Separately, `scripts/curate_demand_profile.py` (a *repair*, not a from-scratch *builder*) now exists and fixes physically-impossible hours in the raw extract — see the §6 update below. |
+| Henry Hub | 1997–2026 on disk. ~~AEO as-known-then paths: not yet intaken for a 2021 vintage.~~ **Landed** (§6): `HENRY_HUB_TRAJECTORIES` in `constants.py` now carries both `hindcast_realized` and `hindcast_asknown_aeo2021` entries. |
+| Evolution ledger | ~~**Does not exist.**~~ **Landed** (§6): `src/market_sim/results/evolution_ledger.py` exists and is imported/used by `runner.py`, which writes `evolution_<year>.json` beside each cached year parquet. |
 
 ---
 
@@ -246,13 +252,18 @@ residuals). Runtime is ~7 ERCOT LP years ⇒ nightly/weekly CI tier, not per-PR.
 
 ```
 1. W1-P1  CI wiring (pytest-on-PR + audit_keepers/legitimacy gates)   [landed, `ci.yml`]
-2. W2-P5 stage 1  evolution ledger + invariant checker + synthetic e2e + golden scaffold
+2. W2-P5 stage 1  evolution ledger + invariant checker + synthetic e2e + golden scaffold   [landed, §6]
 3. W2-P5 stage 2  EIA-860 vintage-2020 intake + hindcast harness/actuals/scorer
-                  → run+score ERCOT (both fuel variants), then PJM → forecast-validation page
+                  → run+score ERCOT (both fuel variants), then PJM → forecast-validation page   [landed, §6]
 4. W3-P1  statmode: re-solve CAISO/NYISO/NEISO D-7 at HEAD (+ paired HEAD keeper replays);
-          re-SCORE (no solve) ERCOT/PJM/MISO statmode bundles under the R2 basis
-5. Ongoing: D-6 machinery prep (§3.3), owner re-gates (NYISO first), calibration-complete
-          declarations per §3.4 → one-shot holdout validation per ISO
+          re-SCORE (no solve) ERCOT/PJM/MISO statmode bundles under the R2 basis   [landed, §5;
+          stale again as of 2026-07-06 — see the §0 Statistical-mode row, every ISO but CAISO
+          has since been re-gated]
+5. Ongoing: D-6 machinery prep (§3.3, partially landed — the run_calibration_full.py
+          holdout-year solve guard exists; the demand-profile *builder* (F3) and the
+          build_calibration_reference.py year-registration (F4) do not), owner re-gates
+          (NYISO landed 2026-07-06, others pending), calibration-complete declarations per
+          §3.4 (none declared yet — `complete: {}`) → one-shot holdout validation per ISO
 ```
 
 Rationale: W1-P1 protects every artifact the rest produce (the quarantine gates currently run
@@ -311,8 +322,11 @@ The owner declares an ISO complete by adding its marker to
 — every line verifiable from committed artifacts, no judgment calls hidden in prose:
 
 1. **Keeper current at HEAD:** re-gated after the last solve-affecting merge; passes the rubric
-   on all years 2023–2025. (Today: none qualify — all six keepers predate the 07-04 merges;
-   NYISO has a known HEAD regression.)
+   on all years 2023–2025. (As of 2026-07-05: none qualified — all six keepers predated the
+   07-04 merges; NYISO had a known HEAD regression. **Update 2026-07-06:** `keepers.json` now
+   shows ERCOT/PJM/NYISO/NEISO/MISO all re-gated (dates 2026-07-05/06); only CAISO is still the
+   2026-07-03 bundle. Whether the re-gated keepers satisfy this checklist item's other clauses
+   — rubric pass on 2023-2025, current D-7/D-8 artifacts — has not been re-verified here.)
 2. **Rules 19–21 artifacts current:** DOF ledger, registered zero-forcing ablation twin,
    forced-energy budget met (merchant ≤ 30%, peakers ≤ 10%).
 3. **D-7 statmode gap published at the current code/basis** (per §3.2, re-run after any re-gate).
@@ -589,9 +603,17 @@ run**, the forecast invariant checker **exists**, and the EIA-860 2020 vintage i
   eia_demand_profiles.parquet` PJM series — `raw_mw` values of 4.3×10⁸-2.1×10⁹
   MW against a ~90,000 MW backdrop — driving I3/I7/I12/I14 forecast-invariant
   failures in 2021 and plausibly confounding the 2022 evolution step's
-  price/margin signal (2021's `prior_results` feeds it directly). Not fixed
-  (raw/ is immutable source data); flagged for a future intake correction +
-  hindcast re-run. I9 storage-integrity also FAILs on 2023/2024 independent of
-  this defect. Full attribution in the realized report's Diagnostic notes.
+  price/margin signal (2021's `prior_results` feeds it directly). I9
+  storage-integrity also FAILs on 2023/2024 independent of this defect. Full
+  attribution in the realized report's Diagnostic notes.
+  **Update — fixed:** `scripts/curate_demand_profile.py` now repairs this at
+  the curation seam (raw/ stays untouched; a physical-bounds screen +
+  interpolation writes a repaired clean partition), and
+  `docs/forecast-invariant-findings.md` F4 records the re-run confirming the
+  fix: with the repaired 2021 series, I9 PASSes outright and simultaneous
+  charge+discharge drops to float noise (~1e-18 of throughput) in every
+  scored year — the corrupted price signal, not the LP/storage tiebreaker,
+  was the cause.
 - **Still NOT done:** the CO2 decomposition's dispatch-error column; screen-
-  pinned attribution runs; the 2021 raw-demand-data fix + re-run it motivates.
+  pinned attribution runs. (The 2021 raw-demand-data fix + re-run this bullet
+  used to list as outstanding has landed — see the update above.)
