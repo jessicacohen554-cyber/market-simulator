@@ -3,7 +3,7 @@
   "label": "pjm statmode d 7",
   "date": "2026-07-03",
   "shorthand": "pjm-statmode-d-7",
-  "definition": "D-7 statistical-mode A/B probe: byte-faithful replay of keeper pjm76_outage_fix (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
+  "definition": "STALE vs current PJM keeper 2026-07-06-pjm-83-srmc-reground (bundle pjm80_srmc_reground_keeper) \u2014 this probe replays the superseded pjm76_outage_fix (pjm-76-outage-fix) keeper, itself superseded twice since (pjm-77-ct-relfloor 2026-07-05, then pjm-83-srmc-reground 2026-07-06). No successor statmode probe has been registered against any later PJM keeper (G-10 gap register: 'PJM/MISO statmode twins stale after 07-05 keeper swaps, unflagged') \u2014 a fresh same-SHA replay against pjm80_srmc_reground_keeper is queued, not done here. Retained for history. Original definition: D-7 statistical-mode A/B probe: byte-faithful replay of keeper pjm76_outage_fix (meta.json) with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False). Structural model + realized annual Henry Hub gas price unchanged. Probe only \u2014 not a keeper, per CLAUDE.md #1/#13.",
   "years": [
     2023,
     2024,
