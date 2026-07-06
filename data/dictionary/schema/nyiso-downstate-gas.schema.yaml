@@ -1,0 +1,71 @@
+# Canonical schema: NYISO downstate delivered-gas basis (daily)
+#
+# The daily delivered-gas index a non-firm downstate NYISO gas peaker (NYC zone
+# J + Long Island zone K, the LM6000 CT_PEAKER fleet on the Con Edison /
+# National Grid / KeySpan LDC systems) faces. These peakers run only a few
+# hundred hours a year, hold no firm interstate pipeline capacity, and take gas
+# off the local LDC **city gate** on interruptible service, so their delivered
+# fuel index is the LDC city gate — not the interstate pipeline hub the model
+# prices bulk downstate gas at.
+#
+# Construction (free-data memo §1.4, docs/handoffs/free-data-sourcing-2026-07.md;
+# all three inputs measured, forward-native, rule-13 admissible):
+#
+#   delivered_gas[day] = henry_hub[day]                       (EIA daily spot)
+#                      + (transco_z6_ny[day] - henry_hub[day])  (pipeline-hub daily basis)
+#                      + ldc_premium[month]                    (EIA citygate - Transco, monthly)
+#                      = transco_z6_ny[day] + ldc_premium[month]
+#
+# i.e. the measured Transco Zone 6 NY pipeline-hub DAILY spot (captures cold-snap
+# blowouts on the exact days peakers run) plus the measured monthly LDC city-gate
+# premium over that hub (the distribution/demand-charge/interruptible adder,
+# published only monthly). Nothing is fitted to a price or volume residual: each
+# component is a measured market/tariff input that regenerates for a forward year
+# and responds to changed conditions (rules #1/#11/#13).
+#
+# Curated by scripts/curate_nyiso_downstate_gas.py from
+#   data/raw/gas-prices/transco_z6_ny_daily.csv                 (daily pipeline hub)
+#   data/raw/gas-prices/henry_hub_daily.csv                     (daily HH, provenance)
+#   data/raw/gas-prices/nyiso_downstate_ct_gas_basis_monthly.csv (monthly LDC premium)
+datatype: nyiso-downstate-gas
+schema_version: 1
+title: NYISO downstate delivered-gas basis (daily)
+description: >-
+  Daily delivered-gas index for non-firm downstate NYISO gas peakers ($/MMBtu):
+  the measured Transco Zone 6 NY pipeline-hub daily spot plus the measured
+  monthly LDC city-gate premium over that hub. Forward-native, rule-13 clean.
+
+key_columns: [iso, date]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (NYISO).
+  - name: date
+    dtype: datetime64[ns]
+    unit: calendar_date
+    nullable: false
+    description: Calendar day (every day in the covered year; non-trading days interpolated).
+  - name: henry_hub_usd_per_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: false
+    description: EIA Henry Hub daily spot ($/MMBtu), interpolated to every calendar day (provenance component).
+  - name: transco_z6_ny_usd_per_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: false
+    description: Measured Transco Zone 6 NY pipeline-hub daily spot ($/MMBtu), interpolated to every calendar day.
+  - name: ldc_premium_usd_per_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: false
+    description: Monthly LDC city-gate premium over the Transco hub (EIA N3050NY3 citygate minus Transco Z6 NY monthly, floored 0), broadcast to each day of the month.
+  - name: delivered_gas_usd_per_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: false
+    description: Downstate interruptible delivered-gas index = transco_z6_ny_usd_per_mmbtu + ldc_premium_usd_per_mmbtu.
