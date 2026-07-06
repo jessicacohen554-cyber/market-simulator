@@ -28,6 +28,8 @@ Both scripts accept the same flags, forwarded to
 | `--results DIR` | Results-store root each run's `--results` output writes under (default `results/`). |
 | `--state-dir DIR` | Where saved configs / last-used values persist (default `launcher/`). |
 | `--inputs-dir DIR` | Directory searched for the default LMP export (default `data/inputs/`). |
+| `--bundled-lmp-dir DIR` | HP-02 real-LMP bundle for the input-file dropdown (default `data/bundled/lmp/`; optional, degrades gracefully if absent). |
+| `--templates-dir DIR` | Input templates for the dropdown and the Templates help block (default `data/templates/`). |
 
 Stop the server with `Ctrl+C` in the terminal it's running in (or just close
 the terminal window).
@@ -61,6 +63,47 @@ configuration** and reload it later, and shows the **queue** of runs staged
 for the next submit. Saved configurations and the last-submitted values
 persist as JSON under `launcher/` (`saved_configs.json` / `last_used.json`,
 both gitignored — machine-local state, not shared through version control).
+
+## Input-file dropdowns and Templates help (HP-03)
+
+The **load file path** and **LMP file path** fields each get a dropdown of
+server-detected candidate files, populated from exactly four whitelisted
+sources (never arbitrary filesystem browsing) — free-text path entry still
+works alongside it:
+
+- `data/inputs/` (`--inputs-dir`)
+- `data/bundled/lmp/` (`--bundled-lmp-dir`) — HP-02's real per-ISO 2024 BAU
+  LMP exports; the dropdown simply contributes nothing from this source on
+  a checkout that predates HP-02 (no error)
+- `data/templates/` (`--templates-dir`) — the three committed example
+  templates
+- the bundled reference load (`data/reference/reference_load_100mw.csv`)
+
+Each dropdown entry is labeled with a best-effort schema hint read from its
+header row (or the Parquet footer schema) — never the full file. An
+annual-average LMP file (HP-01's flat-price comparison mode, detected by
+its `iso,annual_avg_lmp` columns) shows a **FLAT-PRICE** badge next to the
+LMP field — the same idiom as the SYNTHETIC flag above — and the queued-run
+confirmation restates it. A small **Templates** panel below the form lists
+each template's path and column schema, read live off disk (never a copy of
+the example rows) — see `../data/templates/README.md` for the full contract.
+
+## Past runs and run log (HP-03)
+
+Two panels below the form, each with a **Refresh** button:
+
+- **Past runs** — every `results/<run_id>/` directory that has a
+  `<iso>_run_metadata.json`: run id, ISO(s), mode, setpoints, `lmp_kind`,
+  timestamp, solve status, and a link to its cached `report.html` (served
+  through the same `/reports/` route the report-open flow already uses). A
+  missing or corrupt metadata file (or a leftover `.tmp` staging directory
+  from a crashed run) shows up as a flagged row instead of breaking the
+  list. Sorted newest first.
+- **Run log** — the last 20 entries of `launcher/run_log.jsonl`, an
+  append-only, one-line-per-finished-run history (run id, params, status,
+  wall time, error summary on failure). Gitignored machine-local state, same
+  as `saved_configs.json` / `last_used.json`. Queue execution stays
+  sequential and unaffected by this — it's a record, not a control.
 
 ## Python resolution (ADR 0016 §4)
 
