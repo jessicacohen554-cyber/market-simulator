@@ -84,14 +84,28 @@ if [ -f "$EMISSIONS_FILE" ]; then
 else
   echo "note: no fossil-avg CO2 rate file for $VERIFY_ISO -- running without it (optional input)"
 fi
+# profile_shape_year pins the CF-profile vintage to the committed 2024
+# bundle and (per PortfolioConfig docstring) turns a missing file into a
+# hard error instead of a silent synthetic-shape fallback -- the CLI has no
+# flag for this field, only --config, so a tiny config file sets it.
+PROFILE_CONFIG="$WORK_DIR/verify_profile_config.json"
+printf '{"profile_shape_year": 2024}\n' > "$PROFILE_CONFIG"
 RUN_ID="verify_standalone_${VERIFY_ISO,,}"
 python run_portfolio.py \
+  --config "$PROFILE_CONFIG" \
   --load data/reference/reference_load_100mw.csv \
   --lmp "$LMP_FILE" \
   "${EMISSIONS_ARGS[@]}" \
   --iso "$VERIFY_ISO" \
   --deltas 10 20 \
   --results --run-id "$RUN_ID"
+
+METADATA_FILE="results/${RUN_ID}/${VERIFY_ISO}_run_metadata.json"
+if grep -q '"source": *"synthetic"' "$METADATA_FILE" 2>/dev/null; then
+  echo "FAIL: $METADATA_FILE shows a synthetic CF-profile fallback -- the real bundled profile was not used" >&2
+  exit 1
+fi
+echo "OK: $METADATA_FILE confirms a real (non-synthetic) CF profile was used"
 
 REPORT_HTML="results/${RUN_ID}/report.html"
 if [ ! -s "$REPORT_HTML" ]; then
@@ -117,7 +131,7 @@ for _ in $(seq 1 150); do
     cat "$LAUNCHER_LOG" >&2
     exit 1
   fi
-  PORT="$(grep -oE 'http://127\.0\.0\.1:[0-9]+/' "$LAUNCHER_LOG" 2>/dev/null | head -1 | grep -oE '[0-9]+' || true)"
+  PORT="$(sed -nE 's#.*http://127\.0\.0\.1:([0-9]+)/.*#\1#p' "$LAUNCHER_LOG" 2>/dev/null | head -1 || true)"
   if [ -n "$PORT" ]; then
     break
   fi
