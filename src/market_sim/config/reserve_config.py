@@ -167,6 +167,52 @@ MISO_ZONAL_ORDC_STEPS: tuple[tuple[float, float], ...] = (
 # (Michigan pocket) is the optional second family.
 MISO_ZONAL_RESERVE_DEFAULT_ZONES: tuple[str, ...] = ("MISO-South",)
 
+# --- CAISO (config.caiso_reserve_coopt, _caiso_design, issue #1492) ---------
+# BAL-002-WECC-3 R1 Contingency Reserve requirement: max(most-severe single
+# contingency, 3% of hourly-integrated load + 3% of hourly-integrated
+# generation). With generation ≈ load the load+gen basis is ≈6% of load; the
+# CAISO DMM Annual Report AS chapters report CAISO operational practice
+# procuring ≈6.3% of the load forecast (net imports pull the true value toward
+# ~5.4%). We anchor the hourly requirement at 6% of load with the fleet-derived
+# MSSC (largest_single_contingency_mw) as the floor — both forward-responsive
+# (retire the largest plant and the floor falls; the 6% tracks the load
+# forecast). Never fitted to a price residual (rule 5/23).
+CAISO_CONTINGENCY_FRAC: float = 0.06
+
+# BAL-002-WECC-3 retired the WECC-2a R2 half-spinning requirement (FERC
+# approval 2021); CAISO operational practice per the DMM AS chapters keeps
+# spinning ≈ non-spinning ≈ half of the contingency reserve. Half/half split of
+# the BAL-002 requirement across the two co-optimized products.
+CAISO_SPIN_FRACTION: float = 0.5
+
+# CAISO Soft Energy Bid Cap (tariff §30.4.1.2 / §39.6.1.1): $1,000/MWh, the
+# anchor the §27.1.2.3.5 scarcity reserve demand curves are quoted as a
+# percentage of. The $2,000 Hard cap applies only to resources with a verified
+# cost basis above $1,000; the published scarcity-curve $ values (non-spin
+# $500/$600/$700, spin $100) are the SOFT-cap percentages, so the soft cap is
+# the operative anchor for the demand curve.
+CAISO_ENERGY_BID_CAP_SOFT: float = 1000.0
+
+# CAISO scarcity reserve demand curves, tariff §27.1.2.3.5 (Fifth Replacement
+# FERC Electric Tariff, as of 2025-11-19), each as an ascending-shortage
+# sequence of (fraction-of-soft-bid-cap, cumulative shortage-MW upper edge of
+# the tier); the final tier's edge is ``inf`` (to the requirement). Cheapest
+# (shallowest shortage) tier first — the convention model.dispatch consumes.
+#   * Spinning: 10% of the bid cap ($100/MWh), FLAT at any shortage depth
+#     (§27.1.2.3.5) — one tier spanning the whole requirement.
+CAISO_SPIN_DEMAND_CURVE: tuple[tuple[float, float], ...] = (
+    (0.10, float("inf")),  # $100/MWh, all shortage depths
+)
+#   * Non-Spinning: 50% ($500) for shortage ≤ 70 MW, 60% ($600) for 70–210 MW,
+#     70% ($700) for > 210 MW (§27.1.2.3.5). ABSOLUTE-MW tiers (not fractions of
+#     the hourly requirement), so a low-requirement hour simply never reaches
+#     the deeper tiers.
+CAISO_NONSPIN_DEMAND_CURVE: tuple[tuple[float, float], ...] = (
+    (0.50, 70.0),  # $500/MWh, first 70 MW of shortage
+    (0.60, 210.0),  # $600/MWh, 70–210 MW
+    (0.70, float("inf")),  # $700/MWh, beyond 210 MW
+)
+
 # --- NYISO RCPF products ---------------------------------------------------
 NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
     ("nyca_30min_total", 2620.0, 1965.0, 750.0),
@@ -316,6 +362,14 @@ def get_reserve_design(
         return _nyiso_design(config, fleet_arrays, hours, zone_names)
     if iso == "NEISO":
         return _neiso_design(config, fleet_arrays, hours, zone_names)
+    if iso == "CAISO":
+        return _caiso_design(
+            config,
+            fleet_arrays,
+            hours,
+            zone_names,
+            system_load=system_load,
+        )
     raise ValueError(f"No reserve design for ISO {iso!r}")
 
 
@@ -1649,4 +1703,167 @@ def _neiso_design(
         families=families,
         eligible=eligible,
         storage_eligible=True,
+    )
+
+
+# ---- CAISO ----------------------------------------------------------------
+
+
+def _caiso_reserve_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
+    """CAISO-local reserve-eligibility mask ``(n_gen,)``.
+
+    Currently the shared thermal mask (:data:`RESERVE_FUEL_TYPES`). This is the
+    ISO-local seam the issue-#1492 design calls for: CAISO hydro (166 plants,
+    ~6.4 GW) is a certified spin/non-spin provider and belongs here, but hydro
+    carries no entry in ``fleet.RAMP10_FRAC_BY_*`` so its ``FleetArrays.ramp10``
+    is 0 — the pergen ``ramp10 > 0`` filter would drop it anyway. Adding hydro
+    (a published 10-minute hydro ramp fraction + the energy-limited hydro
+    fleet's reserve headroom) is the documented next increment; kept as a
+    distinct function so that extension is a one-line change here, never a
+    branch in the shared ``_reserve_eligible``.
+    """
+    return _reserve_eligible(fleet_arrays)
+
+
+def _caiso_design(
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    zone_names: list[str] | None = None,
+    *,
+    system_load: np.ndarray | None = None,
+) -> ReserveDesign:
+    """CAISO per-generator energy+reserve co-optimization (issue #1492, L-10).
+
+    Two co-optimized upward contingency-reserve products — **Spinning** and
+    **Non-Spinning** — drawn from ONE shared per-generator R pool (the MISO
+    ``miso_reserve_pergen`` structure): one ``R[r,t]`` column per (zone,
+    fuel-class) pool of reserve-eligible thermal units with nonzero 10-minute
+    ramp, joint ``Σ P + R ≤ Σ pmax·availability`` per pool-hour, and
+    ``R[r] ≤ Σ FleetArrays.ramp10`` as a variable bound. Both product families
+    span every CAISO zone and share the pool, so a shortfall in either prices
+    the same marginal MW and the two shortfall duals SUM into the energy LMP —
+    the §27.1.2.4 co-optimization behaviour ("upward products sum toward the bid
+    cap when all short"). The pergen ramp bound is what makes the requirement
+    bite: a zone-aggregate ungated family clears inertly from ~10 GW of idle
+    evening CC headroom at zero opportunity cost (the MISO lesson, issue #1492).
+
+    Requirement (BAL-002-WECC-3 R1 Contingency Reserve): the hourly
+    ``max(MSSC, CAISO_CONTINGENCY_FRAC × load)`` — the fleet-derived
+    most-severe single contingency (``largest_single_contingency_mw``,
+    availability-aware, plant-aggregated) floored under 6% of load — split
+    :data:`CAISO_SPIN_FRACTION` half spinning / half non-spinning (WECC-3 +
+    DMM practice). When ``system_load`` is unavailable the requirement falls
+    back to the flat MSSC floor. Shortfalls price at the PUBLISHED tariff
+    §27.1.2.3.5 scarcity reserve demand curves
+    (:data:`CAISO_SPIN_DEMAND_CURVE` / :data:`CAISO_NONSPIN_DEMAND_CURVE`)
+    against the :data:`CAISO_ENERGY_BID_CAP_SOFT` anchor — every step a tariff
+    value, zero fitted breakpoints (rules 5/23).
+
+    Documented gaps (issue #1492 "Honest expectation", all next increments —
+    each would ADD reserve supply, so this build over-states scarcity ex-ante,
+    rule 1): **storage** (dominant CAISO AS provider, but the pergen builder
+    backs no per-unit storage reserve columns — ``storage_eligible`` is inert on
+    this path); **hydro** (``ramp10 = 0``, energy-limited — see
+    :func:`_caiso_reserve_eligible`); **Regulation Up/Down** (no
+    forward-derivable requirement series; RegDown is a downward product the
+    upward-headroom pergen row does not model).
+    """
+    from market_sim.results.scarcity import (
+        caiso_reserve_demand_steps,
+        largest_single_contingency_mw,
+    )
+
+    eligible = _caiso_reserve_eligible(fleet_arrays)
+    ramp10 = getattr(fleet_arrays, "ramp10", None)
+    if ramp10 is None:
+        raise ValueError(
+            "caiso_reserve_coopt requires FleetArrays.ramp10 (the 10-min "
+            "deliverable ramp, fleet._ramp10_capability)"
+        )
+    ramp10 = np.asarray(ramp10, dtype=float)
+
+    T = int(hours)
+    n_zones = int(np.max(fleet_arrays.zone_idx)) + 1
+
+    # BAL-002-WECC-3 Contingency Reserve: max(MSSC, 6% load), hourly. MSSC is
+    # the largest single *plant* over reserve-eligible units (common-mode,
+    # availability-aware) — forward-responsive.
+    mssc = float(
+        largest_single_contingency_mw(
+            fleet_arrays.pmax,
+            availability=fleet_arrays.availability,
+            reserve_mask=eligible,
+            plant_code=fleet_arrays.plant_code,
+        )
+    )
+    if system_load is not None:
+        load = np.asarray(system_load, dtype=float).reshape(-1)
+        if load.shape[0] != T:
+            raise ValueError(f"caiso system_load length {load.shape[0]} != hours {T}")
+        contingency = np.maximum(mssc, CAISO_CONTINGENCY_FRAC * load)  # (T,)
+    else:
+        # No load series available (should not happen on the solve path): fall
+        # back to the flat MSSC floor so the design is still well-formed.
+        contingency = np.full(T, mssc, dtype=float)
+    spin_req = CAISO_SPIN_FRACTION * contingency
+    nonspin_req = (1.0 - CAISO_SPIN_FRACTION) * contingency
+
+    # Static ORDC steps sized to each product's MAX hourly requirement (tier
+    # edges are fixed tariff MW; total width ≥ the tightest-hour requirement
+    # keeps the balance feasible at zero reserve). Spin flat; non-spin tiered.
+    spin_pen, spin_wid = caiso_reserve_demand_steps(
+        float(spin_req.max(initial=0.0)),
+        CAISO_SPIN_DEMAND_CURVE,
+        CAISO_ENERGY_BID_CAP_SOFT,
+    )
+    nonspin_pen, nonspin_wid = caiso_reserve_demand_steps(
+        float(nonspin_req.max(initial=0.0)),
+        CAISO_NONSPIN_DEMAND_CURVE,
+        CAISO_ENERGY_BID_CAP_SOFT,
+    )
+
+    all_zones = np.ones(n_zones, dtype=bool)
+    families = [
+        ReserveFamily(
+            name="caiso_spin",
+            requirement=spin_req.astype(float),
+            zone_mask=all_zones,
+            ordc_penalties=spin_pen,
+            ordc_step_widths=spin_wid,
+            reserve_class=0,
+        ),
+        ReserveFamily(
+            name="caiso_nonspin",
+            requirement=nonspin_req.astype(float),
+            zone_mask=all_zones,
+            ordc_penalties=nonspin_pen,
+            ordc_step_widths=nonspin_wid,
+            reserve_class=0,
+        ),
+    ]
+
+    # PER-ASSET R columns (dispatch._build_reserve_rows_pergen), one per
+    # (zone, fuel-class) pool of reserve-eligible units deliverable within
+    # 10 min. Availability-scaled hourly deliverable ramp per column, (n_r, T):
+    # a unit on outage contributes proportionally less 10-minute ramp, thinning
+    # the pool's cap in exactly the hours capacity is out — physical, not fitted.
+    pergen_gen_idx = np.flatnonzero(eligible & (ramp10 > 0.0))
+    fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)[pergen_gen_idx]
+    zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[pergen_gen_idx]
+    keys = np.stack([zone, fuel], axis=1)
+    _, pergen_col = np.unique(keys, axis=0, return_inverse=True)
+    n_r = int(pergen_col.max()) + 1 if pergen_col.size else 0
+    avail = np.asarray(fleet_arrays.availability, dtype=float)[pergen_gen_idx]
+    member_ramp_t = ramp10[pergen_gen_idx][:, np.newaxis] * avail  # (m, T)
+    col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
+    np.add.at(col_ramp10, pergen_col, member_ramp_t)
+
+    return ReserveDesign(
+        families=families,
+        eligible=eligible.reshape(1, -1),
+        storage_eligible=False,
+        pergen_gen_idx=pergen_gen_idx,
+        pergen_col=pergen_col.astype(int),
+        pergen_ramp10=col_ramp10,
     )

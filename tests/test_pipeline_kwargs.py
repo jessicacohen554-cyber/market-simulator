@@ -132,14 +132,52 @@ def test_apply_reserve_coopt_gated_off_is_noop():
     assert dk == {"T": 4}
 
 
-def test_apply_reserve_coopt_caiso_excluded():
-    """CAISO has no reserve design — excluded exactly as both inline blocks."""
+def test_apply_reserve_coopt_caiso_excluded_by_default():
+    """CAISO's reserve design stays short-circuited unless caiso_reserve_coopt
+    is set (issue #1492): default path is byte-identical to the old exclusion."""
     dk = {"T": 4}
     design = apply_reserve_coopt(
         dk, _Cfg(iso="CAISO", energy_reserve_coopt=True), None, 4, ["Z1"]
     )
     assert design is None
     assert dk == {"T": 4}
+
+
+def test_apply_reserve_coopt_caiso_flag_lifts_short_circuit():
+    """With caiso_reserve_coopt on, the CAISO design is built and merged."""
+    from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+    T = 4
+    cc = FUEL_TYPE_NAMES.index("gas_cc")
+    fleet = FleetArrays(
+        pmax=np.array([1000.0, 800.0]),
+        pmin=np.zeros(2),
+        heat_rate=np.array([7.0, 7.5]),
+        vom=np.zeros(2),
+        emission_rate=np.zeros(2),
+        nox_rate=np.zeros(2),
+        so2_rate=np.zeros(2),
+        zone_idx=np.array([0, 2]),
+        fuel_type_idx=np.array([cc, cc]),
+        availability=np.ones((2, T)),
+        unit_ids=["cc_np", "cc_sp"],
+        efficiency_bin=np.zeros(2),
+        plant_code=np.array([100, 300]),
+        ramp10=np.array([400.0, 320.0]),
+    )
+    dk = {"T": T}
+    design = apply_reserve_coopt(
+        dk,
+        _Cfg(iso="CAISO", energy_reserve_coopt=True, caiso_reserve_coopt=True),
+        fleet,
+        T,
+        ["NP15", "ZP26", "SP15", "WECC_import"],
+        system_load=np.full(T, 20000.0),
+    )
+    assert design is not None
+    assert [f.name for f in design.families] == ["caiso_spin", "caiso_nonspin"]
+    assert "reserve_requirement" in dk
+    assert "reserve_pergen_gen_idx" in dk
 
 
 def test_apply_reserve_coopt_merges_design_kwargs_and_threads_drivers(monkeypatch):
