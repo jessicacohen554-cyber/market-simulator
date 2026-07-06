@@ -1,0 +1,112 @@
+# Canonical schema: ramp-capability (measured per-plant 10-minute ramp /
+# fast-start capability inputs for the reserve co-optimization).
+#
+# Two measured public sources, reconciled per plant (EIA plant code = CAMPD
+# ORISPL facilityId):
+#
+#   * EIA-860 Schedule 3.1 "Time from Cold Shutdown to Full Load" — the
+#     respondent-reported start-capability category per generator. Category
+#     "10M" (full load within 10 minutes) is the measured per-unit fast-start
+#     flag: that generator's capacity is deliverable inside a 10-minute
+#     reserve window from ANY state (PJM Manual 11's non-synchronized primary
+#     reserve; MISO BPM-002 §2.2's offline Supplemental). fast_start_mw sums
+#     the "10M" thermal nameplate at the plant; thermal_nameplate_mw is the
+#     plant's full thermal nameplate (the denominator).
+#   * EPA CAMPD (CEMS) hourly unit gross load — the measured operating
+#     envelope. ramp_up_1h_mw is the maximum observed 1-hour INCREASE in
+#     plant-level gross load (units summed per hour, gap-hours excluded from
+#     diffs), pooled over the vintage span. CEMS is hourly, so it cannot
+#     resolve a 10-minute move; the model-side reconciliation
+#     (market_sim.data.ramp_capability) therefore uses the envelope only as a
+#     measured CEILING on the class-rate estimate, never as the 10-minute
+#     quantity itself. Max (not a quantile): the envelope must never deny the
+#     fleet a move it demonstrably made (docs/ramp-locational-design-2026-07.md
+#     §1.3 convention).
+#
+# Vintage span is 2023-2025 only: 2022 and 2026 are the designated holdout
+# periods (CLAUDE.md rule 22) and are not read by this curation.
+#
+# The frame stores the MEASURED quantities; every derived combination (the
+# 10-minute fraction fed to FleetArrays.ramp10) lives in cited model code so
+# the reconciliation is reviewable and re-derivable, not baked into data.
+datatype: ramp-capability
+schema_version: 1
+title: Measured plant ramp / fast-start capability (EIA-860 + CAMPD CEMS)
+description: >-
+  Per-plant measured ramp-capability inputs: EIA-860 fast-start ("10M" time
+  from cold shutdown to full load) thermal capacity and the CAMPD CEMS
+  maximum observed 1-hour plant gross-load up-ramp, pooled 2023-2025. Inputs
+  to the 10-minute reserve-deliverability bound (FleetArrays.ramp10) used by
+  the per-generator energy+reserve co-optimization.
+
+key_columns: [iso, plant_code]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      ISO/RTO whose fleet the plant belongs to (EIA-860 balancing-authority
+      scoping via the per-ISO spec, e.g. PJM, MISO).
+  - name: plant_code
+    dtype: int64
+    unit: none
+    nullable: false
+    description: EIA plant code (ORISPL; CAMPD facilityId).
+  - name: fast_start_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Sum of nameplate capacity over the plant's operable thermal generators
+      whose EIA-860 "Time from Cold Shutdown to Full Load" is "10M" (full
+      load within 10 minutes). Null when the plant has no EIA-860 thermal
+      rows (CEMS-only row).
+  - name: thermal_nameplate_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Sum of nameplate capacity over the plant's operable thermal generators
+      (combustion/steam prime movers, nuclear excluded). The fast-start
+      share denominator. Null when the plant has no EIA-860 thermal rows.
+  - name: ramp_up_1h_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Maximum observed 1-hour increase in plant-level CEMS gross load
+      (units summed per hour; offline unit-hours count as 0 MW; diffs
+      spanning non-consecutive timestamps excluded), pooled over
+      vintage_span. Null when the plant has no CAMPD coverage.
+  - name: observed_pmax_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Maximum observed plant-level CEMS gross load over vintage_span (the
+      measured capacity basis guarding stale nameplate against derates).
+      Null when the plant has no CAMPD coverage.
+  - name: hours_observed
+    dtype: int64
+    unit: hours
+    nullable: false
+    description: >-
+      Count of plant-hours with CEMS coverage pooled over vintage_span
+      (0 for an EIA-860-only row). The model-side loader requires a minimum
+      (market_sim.data.ramp_capability.MIN_OBSERVED_HOURS) before the
+      envelope is trusted.
+  - name: vintage_span
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      CAMPD vintages pooled for the envelope, e.g. "2023-2025". Holdout
+      periods (2022, 2026) are excluded by construction (CLAUDE.md rule 22).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: true
+    description: Authoritative source citation for the row's inputs.

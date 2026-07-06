@@ -1861,6 +1861,7 @@ def solve_and_persist(
     pjm_reserve_online_gated: bool = False,
     pjm_reserve_online_rho: float = 1.0,
     pjm_reserve_pergen: bool = False,
+    measured_ramp_capability: bool = False,
     ercot_as_forward_requirement: bool = False,
     ercot_load_resource_reserve: bool = False,
     ercot_load_resource_reserve_from_year: int = 2023,
@@ -2113,6 +2114,7 @@ def solve_and_persist(
             pjm_reserve_online_gated=pjm_reserve_online_gated,
             pjm_reserve_online_rho=pjm_reserve_online_rho,
             pjm_reserve_pergen=pjm_reserve_pergen,
+            measured_ramp_capability=measured_ramp_capability,
             ercot_as_forward_requirement=ercot_as_forward_requirement,
             ercot_load_resource_reserve=ercot_load_resource_reserve,
             ercot_load_resource_reserve_from_year=ercot_load_resource_reserve_from_year,
@@ -2423,6 +2425,7 @@ def solve_and_persist(
         "pjm_reserve_online_gated": pjm_reserve_online_gated,
         "pjm_reserve_online_rho": pjm_reserve_online_rho,
         "pjm_reserve_pergen": pjm_reserve_pergen,
+        "measured_ramp_capability": measured_ramp_capability,
         "ercot_as_forward_requirement": ercot_as_forward_requirement,
         "ercot_load_resource_reserve": ercot_load_resource_reserve,
         "ercot_load_resource_reserve_from_year": ercot_load_resource_reserve_from_year,
@@ -2593,6 +2596,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
     if pjm_reserve_pergen:
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen=True)
+    if measured_ramp_capability:
+        recorded_cfg = recorded_cfg.with_overrides(measured_ramp_capability=True)
     if pjm_reserve_online_gated:
         recorded_cfg = recorded_cfg.with_overrides(
             pjm_reserve_online_gated=True,
@@ -5534,6 +5539,29 @@ def main() -> None:
         "pergen. MISO-only; default off.",
     )
     parser.add_argument(
+        "--pjm-reserve-pergen",
+        action="store_true",
+        help="PJM PER-GENERATOR reserve co-optimization "
+        "(docs/multi-iso/pjm-reserve-ordc.md Phase 2): pooled R columns for "
+        "the reserve-eligible fleet, joint P+R <= cap per pool-hour, R "
+        "bounded by the 10-min deliverable ramp (FleetArrays.ramp10), and "
+        "the two measured Manual-11 balance families (RTO + MAD subzone) "
+        "priced by the published two-step ORDC. Reserve competes with energy "
+        "on the marginal pool, so the sub-shortage opportunity cost enters "
+        "the LMP endogenously. Requires --energy-reserve-coopt. PJM-only; "
+        "default off.",
+    )
+    parser.add_argument(
+        "--measured-ramp-capability",
+        action="store_true",
+        help="Reconcile FleetArrays.ramp10's class 10-minute fractions "
+        "against the measured ramp-capability datatype (EIA-860 '10M' "
+        "fast-start floor + CAMPD CEMS hourly-envelope ceiling; "
+        "data/clean/ramp-capability). Uncovered plants keep the class "
+        "estimate. Feeds --pjm-reserve-pergen / --miso-reserve-pergen. "
+        "Default off.",
+    )
+    parser.add_argument(
         "--ercot-as-aware-commitment",
         action="store_true",
         help="ERCOT AS-aware commitment: run a P2 commitment screen that values "
@@ -6936,6 +6964,8 @@ def main() -> None:
         miso_zonal_reserves=args.miso_zonal_reserves,
         miso_reserve_pergen=args.miso_reserve_pergen,
         miso_commitment_posture=args.miso_commitment_posture,
+        pjm_reserve_pergen=args.pjm_reserve_pergen,
+        measured_ramp_capability=args.measured_ramp_capability,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
         ercot_ordc_total_reserve=args.ercot_ordc_total_reserve,
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
