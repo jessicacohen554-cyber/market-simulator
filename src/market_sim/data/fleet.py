@@ -4624,13 +4624,10 @@ BIN_FORCED_DERATE_BY_YEAR: dict[str, dict[int, float]] = {
     # commission for 2025 (1 of 3 units, ~33% nameplate loss).
     "N_COAL4": {2025: 0.67},
     # V H Braunig -- CPS Energy retired ST units 1 (225 MW) and 2 (252 MW)
-    # in early 2025 (March), leaving ST unit 3 (417 MW) and four 61 MW
-    # CTs (units 5-8) in the bin. The retiring 477 MW is 42% of the bin's
-    # 1138 MW nameplate; the annual-average derate for 2025 is
-    # (3/12 * 1.0) + (9/12 * 661/1138) = 0.686. 2026+ would be 0.581
-    # (units 1+2 retired full year); add when those calibration years
-    # come into scope.
-    "SC_STGAS3": {2025: 0.686},
+    # in early 2025 (March). Handled via confirmed-exit registry injection
+    # (data/raw/confirmed-retirements/ercot.csv, plant 3612) with
+    # month-level precision: (3/12 * 1.0) + (9/12 * 661/1138) = 0.686.
+    # Removed from hardcode 2026-07-06 per rule 24 (no off-registry tuning).
     # Sandy Creek -- removed from availability in 2025 (mostly offline; EIA-923
     # shows 0.72 TWh vs ~3.0-3.3 TWh in 2023-2024).
     "SC_COAL3": {2025: 0.0},
