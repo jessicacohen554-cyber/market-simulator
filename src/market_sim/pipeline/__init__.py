@@ -36,13 +36,17 @@ warm-start cache seam) — both orchestrators call it.
 (:func:`~market_sim.pipeline.commitment.run_commitment_pass`: CAISO RA
 must-offer bridge, NYISO path B, ERCOT AS-aware screen + AS-adequacy floor +
 WS1 headroom overrides, economic commitment screen + coal pin) — both
-orchestrators call it. The remaining backcast-specific modules
-(``backcast_config.py``, ``overlays.py``) land in later stages — see the
-plan §5.
+orchestrators call it.
+
+**Stage 7 adds ``backcast_config.py``** — :func:`~market_sim.pipeline.
+backcast_config.backcast_config`, the per-year backcast ``ScenarioConfig``
+builder (ex-``scripts/run_calibration.py::_calibration_config``), imported
+by both ``run_calibration.py`` and ``run_calibration_full.py``.
 """
 
 from __future__ import annotations
 
+from market_sim.pipeline.backcast_config import backcast_config
 from market_sim.pipeline.commitment import run_commitment_pass
 from market_sim.pipeline.kwargs import apply_reserve_coopt, build_base_dispatch_kwargs
 from market_sim.pipeline.prior import PriorYearResults
@@ -61,4 +65,5 @@ __all__ = [
     "apply_reserve_coopt",
     "run_energy_solve",
     "run_commitment_pass",
+    "backcast_config",
 ]
