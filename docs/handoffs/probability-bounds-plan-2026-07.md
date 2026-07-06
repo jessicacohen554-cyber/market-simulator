@@ -136,6 +136,10 @@ memory (measure first — PB-5 step 0).
 
 ## 2. The multivariate sampler (PP-1.2) — the parametric band
 
+**LANDED** — `src/market_sim/uncertainty.py` implements §2.1-§2.4 in full (all levers
+below exist on `ScenarioConfig` except `datacenter_load_gw`, still gated on unbuilt
+PP-3.3); §2.5 records where it hooks into `ensemble.py`, also landed.
+
 ### 2.1 What is sampled vs scenario-switched
 
 **Sampled (continuous, LHS + Gaussian copula):**
@@ -257,6 +261,11 @@ per-member config-hash caching + `_summarize_year` reuse); generalized the membe
 
 ## 3. The structural-error prior (PP-1.3) — from parametric band to published band
 
+**LANDED** — `src/market_sim/structural_prior.py` implements this section in full
+(`fit_prior`, `convolve`, `StructuralPrior`, `default_prior`), fitted from the committed
+D-7 statmode bundles; artifact committed at
+`results/ensemble/structural-prior/pb3-statmode-d7-2026-07.json`.
+
 ### 3.1 Why the decomposition is clean
 
 The **D-7 statistical-mode probes already exist for all six ISOs**
@@ -283,9 +292,11 @@ honest dispatch-skill prior).
 - **Small-sample honesty:** n=3 years per ISO. Pool the noise scale across ISOs
   (s² = pooled within-ISO variance) and carry parameter uncertainty explicitly:
   ε_i ~ Student-t(ν = 2) location b_i, scale √(s² · (1 + 1/3)) — the fat tails and the
-  +1/3 term encode that both moments are estimated from three points. (Exact form
-  finalized in implementation; the requirement is that the prior must be *wider* than
-  the plug-in normal, never narrower.)
+  +1/3 term encode that both moments are estimated from three points. **Landed exactly as
+  specified** (`structural_prior.fit_prior`/`StructuralPrior.scale`,
+  `STRUCTURAL_PRIOR_STUDENT_T_NU=2.0`, `STRUCTURAL_PRIOR_CONVOLUTION_K=25` in
+  `constants.py`); the requirement that the prior be *wider* than the plug-in normal,
+  never narrower, is checked by `plugin_normal_scale`.
 - **No recentering.** The point forecast (P50 of the parametric layer) is **not**
   bias-corrected — subtracting b_i would be feeding a measured outcome back in (rule 13's
   forbidden side). Instead ε enters with its non-zero mean, so the published band is
@@ -332,9 +343,10 @@ band.
 
 ### 4.1 Computation and storage (parquet per scenario-year preserved)
 
-Per-member results stay exactly where they are — the existing per-scenario-year parquet
-cache (rule 7); the ensemble layer only *reads* members. New per-ensemble directory
-`results/ensemble/<ensemble_id>/`:
+**LANDED as specified.** Per-member results stay exactly where they are — the existing
+per-scenario-year parquet cache (rule 7); the ensemble layer only *reads* members.
+Per-ensemble directory `results/ensemble/<ensemble_id>/` (`ensemble.py`'s
+`run_ensemble`/output writers):
 
 | File | Contents |
 |---|---|
@@ -343,15 +355,22 @@ cache (rule 7); the ensemble layer only *reads* members. New per-ensemble direct
 | `bands.parquet` | (year, metric, layer, quantile, value, n, bootstrap_lo, bootstrap_hi) with layer ∈ {scenario_envelope, parametric, parametric_plus_structural} |
 | `ensemble_meta.json` | UncertaintySpec (marginals, Spearman matrix, weights), seed, n, K, structural-prior version + fit inputs (statmode bundle ids), estimator note, label (dispatch-conditional flag) |
 
-Bands are recomputed from `metrics.parquet` + the prior by a pure function — cheap,
-re-runnable, and auditable separately from the solves.
+Bands are recomputed from `metrics.parquet` + the prior by a pure function
+(`ensemble.py`'s band-recompute path) — cheap, re-runnable, and auditable separately from
+the solves. Only a synthetic-fixture ensemble (`synthetic-fixture-ercot-v1`,
+`synthetic-fixture-ercot-matrix-v1`) and the PB-3 structural-prior artifact are populated
+under `results/ensemble/` today — no real production ensemble has been solved (PB-5,
+still open, see §0 status line and gap-register G-35).
 
 ### 4.2 Display
 
-- **Fan chart page** on the codebase site: `docs/codebase-site/forecast-bands.html`,
-  reading committed payloads `frontend/data/forecast/<ensemble_id>.js` — the same
-  committed-payload pattern as the backcast dashboard (deploy-workflow-owned manifests
-  untouched; follow the CLAUDE.md 413 push workflow for payload commits).
+- **LANDED — fan chart page** on the codebase site: `docs/codebase-site/forecast-bands.html`
+  (+ `css/forecast-bands.css`, `js/viz-forecast-bands.js`), reading committed payloads
+  `frontend/data/forecast/<ensemble_id>.js` — the same committed-payload pattern as the
+  backcast dashboard (deploy-workflow-owned manifests untouched; follow the CLAUDE.md 413
+  push workflow for payload commits). **Currently wired to the synthetic fixture only**
+  (`frontend/data/forecast/manifest.json` registers just `synthetic-fixture-ercot-v1`) —
+  no real ensemble has been committed yet.
 - Rendered layers, visually distinct and individually toggleable: scenario-matrix
   envelope (dashed bounds), parametric P10–P90 fan, published (⊕ structural) P10–P90
   fan, P50 path, and the 13 named-case trajectories as thin reference lines.
