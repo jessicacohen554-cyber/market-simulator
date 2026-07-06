@@ -127,6 +127,16 @@ def _commitment_params(
     """
     if gen.is_campd_bin:
         if gen.min_run_hours <= 0:
+            # A class override with a positive min_run_hours overrides the
+            # bin's zero — so a steam-gas class can be commitment-screened
+            # even when its bin carries no native min-run window.
+            ov = (class_overrides or {}).get(gen.plant_group)
+            if ov and ov.get("min_run_hours", 0) > 0:
+                return {
+                    "startup_per_mw": gen.startup_cost_per_mw,
+                    "min_run_hours": ov["min_run_hours"],
+                    "min_down_hours": ov.get("min_down_hours", gen.min_down_hours),
+                }
             return None
         base = {
             "startup_per_mw": gen.startup_cost_per_mw,

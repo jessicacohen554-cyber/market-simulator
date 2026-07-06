@@ -955,6 +955,9 @@ class ReliabilityFloorSpec:
     start_hour: int | None = None  # sub-daily window start (inclusive, 0-23)
     end_hour: int | None = None  # sub-daily window end (inclusive, 0-23)
     ramp_group: str | None = None  # continuous-ramp family label (see below)
+    threshold_percentile: float | None = (
+        None  # engine-computed percentile (netload only)
+    )
 
 
 # Steam classes carry multi-day event bridging by default (a committed boiler
@@ -1002,6 +1005,7 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
                     sh_raw = (row.get("start_hour") or "").strip()
                     eh_raw = (row.get("end_hour") or "").strip()
                     rg_raw = (row.get("ramp_group") or "").strip()
+                    tp_raw = (row.get("threshold_percentile") or "").strip()
                     limbs.append(
                         ReliabilityFloorSpec(
                             zone=row["zone"].strip(),
@@ -1022,6 +1026,7 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
                             start_hour=int(sh_raw) if sh_raw else None,
                             end_hour=int(eh_raw) if eh_raw else None,
                             ramp_group=rg_raw or None,
+                            threshold_percentile=float(tp_raw) if tp_raw else None,
                         )
                     )
         registry[iso] = limbs
