@@ -1,0 +1,45 @@
+{
+  "iso": "ERCOT",
+  "keeper": "2026-07-03-ercot32-ordc-total-rtolcap",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "gen_source": "plant_hourly_fit.model_gwh",
+  "results": {
+    "2023": {
+      "model_fossil_gwh": 257507.4,
+      "coverage_pct": 100.0,
+      "n_plants": 99,
+      "n_plants_covered": 99,
+      "v2_model_co2_mt": 159.71,
+      "matched_subset_gen_pct": 100.0,
+      "matched_v2_co2_mt": 159.71,
+      "matched_egrid_co2_mt": 159.78,
+      "matched_rate_delta_pct": -0.04
+    },
+    "2024": {
+      "model_fossil_gwh": 257248.0,
+      "coverage_pct": 100.0,
+      "n_plants": 100,
+      "n_plants_covered": 100,
+      "v2_model_co2_mt": 156.26,
+      "matched_subset_gen_pct": 100.0,
+      "matched_v2_co2_mt": 156.26,
+      "matched_egrid_co2_mt": 157.05,
+      "matched_rate_delta_pct": -0.5
+    },
+    "2025": {
+      "model_fossil_gwh": 256029.1,
+      "coverage_pct": 100.0,
+      "n_plants": 100,
+      "n_plants_covered": 100,
+      "v2_model_co2_mt": 159.62,
+      "matched_subset_gen_pct": 100.0,
+      "matched_v2_co2_mt": 159.62,
+      "matched_egrid_co2_mt": 158.74,
+      "matched_rate_delta_pct": 0.55
+    }
+  }
+}
