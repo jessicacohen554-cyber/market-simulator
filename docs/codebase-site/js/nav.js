@@ -42,6 +42,7 @@
         { label: 'Run Explorer',        href: 'backcast-runs.html',     num: '&#9881;' },
         { label: 'Calibration Status',   href: 'calibration-status.html', num: '&#9678;' },
         { label: 'Forecast Validation',  href: 'forecast-validation.html', num: '&#9873;' },
+        { label: 'Data Completeness',    href: 'data-completeness.html',  num: '&#9745;' },
       ],
     },
     {

@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Completeness — Codebase Explorer</title>
+  <meta name="description" content="Gathering checklist — the measured datasets still missing from data/raw/ for the 2018–H1 2026 backcast window, distilled from the 2026-07 data register.">
+  <link rel="stylesheet" href="css/shared.css">
+  <link rel="stylesheet" href="css/site.css">
+  <link rel="stylesheet" href="css/bc-pages.css">
+  <style>
+    .dc-summary{display:flex;flex-wrap:wrap;gap:var(--space-md);align-items:center;
+      background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-sm);padding:var(--space-md);margin-bottom:var(--space-md)}
+    .dc-progress{flex:1 1 320px;min-width:240px}
+    .dc-progress .bar{height:12px;border-radius:999px;background:var(--bg-page);
+      border:1px solid var(--border-light);overflow:hidden}
+    .dc-progress .bar > i{display:block;height:100%;background:var(--positive);width:0;
+      transition:width .25s ease}
+    .dc-progress .lbl{font-size:.78rem;color:var(--text-muted);margin-top:6px}
+    .dc-progress .lbl b{color:var(--text-primary);font-variant-numeric:tabular-nums}
+    .dc-actions{display:flex;gap:8px;flex-wrap:wrap}
+    .dc-btn{border:1px solid var(--border-light);background:var(--bg-card);color:var(--text-secondary);
+      border-radius:var(--radius-md);padding:7px 13px;font-size:.78rem;font-weight:600;cursor:pointer}
+    .dc-btn:hover{background:var(--bg-page)}
+    .dc-filters{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:var(--space-md)}
+    .dc-chip{border:1px solid var(--border-light);background:var(--bg-card);border-radius:18px;
+      padding:5px 13px;font-size:.76rem;font-weight:600;cursor:pointer;color:var(--text-muted)}
+    .dc-chip.active{background:var(--hydro,#0EA5E9);color:#fff;border-color:var(--hydro,#0EA5E9)}
+    .dc-group{margin-bottom:var(--space-lg)}
+    .dc-group-head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:0 0 4px}
+    .dc-group-head h2{font-size:1.05rem;margin:0;color:var(--text-primary)}
+    .dc-group-head .n{font-size:.72rem;color:var(--text-muted);font-weight:600}
+    .dc-group-sub{font-size:.82rem;color:var(--text-muted);margin:0 0 10px;line-height:1.5;max-width:70ch}
+    .dc-table-wrap{width:100%;overflow-x:auto;border:1px solid var(--border-light);
+      border-radius:var(--radius-md);background:var(--bg-card)}
+    table.dc{width:100%;border-collapse:collapse;font-size:.84rem;color:var(--text-secondary)}
+    table.dc th,table.dc td{padding:9px 11px;border-bottom:1px solid var(--border-light);
+      text-align:left;vertical-align:top}
+    table.dc th{background:var(--bg-page);font-size:.66rem;text-transform:uppercase;
+      letter-spacing:.05em;color:var(--text-muted);position:sticky;top:0;white-space:nowrap}
+    table.dc tr:last-child td{border-bottom:0}
+    table.dc tr.done td{opacity:.5}
+    table.dc tr.done .dc-name{text-decoration:line-through}
+    .dc-chk{width:17px;height:17px;cursor:pointer;accent-color:var(--positive)}
+    .dc-name{font-weight:700;color:var(--text-primary)}
+    .dc-reg{font-family:var(--font-mono,monospace);font-size:.7rem;color:var(--text-muted)}
+    .dc-need{color:var(--text-secondary);line-height:1.45}
+    .dc-src{color:var(--text-muted);line-height:1.45;font-size:.8rem}
+    .pri{display:inline-block;font-size:.64rem;font-weight:800;letter-spacing:.03em;
+      border-radius:4px;padding:2px 7px;white-space:nowrap}
+    .pri-high{background:rgba(220,38,38,.10);color:var(--negative)}
+    .pri-med{background:rgba(217,119,6,.12);color:var(--warning)}
+    .pri-low{background:rgba(22,163,74,.12);color:var(--positive)}
+    .gate{display:inline-block;font-size:.64rem;font-weight:700;border-radius:4px;
+      padding:2px 7px;background:var(--bg-page);border:1px solid var(--border-light);
+      color:var(--text-muted);white-space:nowrap}
+    .dc-note{font-size:.78rem;color:var(--text-muted);line-height:1.6;margin-top:var(--space-md);
+      border-top:1px solid var(--border-light);padding-top:var(--space-md);max-width:80ch}
+    @media (max-width:640px){ table.dc th:nth-child(5),table.dc td:nth-child(5){display:none} }
+  </style>
+</head>
+<body>
+  <nav id="topNav"></nav>
+  <div class="content-section" style="padding: var(--space-lg);">
+    <div class="bc-page-header"><h1>Data Completeness</h1></div>
+    <p class="bc-page-sub">A gathering checklist of the measured datasets still <b>missing</b> from
+    <code>data/raw/</code> across the <b>Jan&nbsp;2018 – Jun&nbsp;2026</b> backcast window &mdash;
+    distilled from <code>docs/data-register-2026-07.md</code> (full-coverage sources are omitted).
+    Tick items as you gather them; progress is saved in this browser. Holdout-year intake
+    (2022, 2019, &le;2021, H1&nbsp;2026) is gated on per-ISO owner authorization &amp; the
+    <code>calibration-complete</code> marker (rule&nbsp;22).</p>
+
+    <div class="dc-summary">
+      <div class="dc-progress">
+        <div class="bar"><i id="barFill"></i></div>
+        <div class="lbl"><b id="doneCount">0</b> of <b id="totalCount">0</b> gathered
+          &middot; <span id="pctDone">0%</span></div>
+      </div>
+      <div class="dc-actions">
+        <button class="dc-btn" id="hideDone">Hide gathered</button>
+        <button class="dc-btn" id="resetAll">Reset checkmarks</button>
+      </div>
+    </div>
+
+    <div class="dc-filters" id="filters"></div>
+    <div id="groups"></div>
+
+    <p class="dc-note" id="footNote"></p>
+  </div>
+
+  <script id="dcData" type="application/json">{
+    "groups": [
+      {
+        "id": "structural",
+        "title": "Structural gaps — needed regardless of holdout status",
+        "sub": "Missing pieces inside the in-sample 2023–2025 window (or their raw sources), independent of holdout authorization. These block or degrade current keepers and should be gathered first.",
+        "items": [
+          {
+            "name": "Daily zone temperature — H1 2026 + backward extension",
+            "reg": "#41",
+            "need": "All 6 ISOs. On disk spans exactly 2023-01-01→2025-12-31; no 2026, no 2022, no pre-2023. The single gap common to every ISO — a hard floor under any holdout-year backcast.",
+            "source": "NOAA / NASA-derived daily TMAX/TMIN → data/raw/<iso>-weather/",
+            "gate": "structural",
+            "pri": "high"
+          },
+          {
+            "name": "NYISO renewable HSL / curtailment",
+            "reg": "#27-analogue",
+            "need": "NYISO 2023–2025. Directory absent; NYISO only publishes a coarse annual curtailment aggregate, so an HSL-analogue must be constructed. Marked DATA NEEDED.",
+            "source": "NYISO (annual curtailment product) → data/raw/nyiso-hsl/",
+            "gate": "structural",
+            "pri": "med"
+          },
+          {
+            "name": "MISO renewable HSL / curtailment",
+            "reg": "#27-analogue",
+            "need": "MISO 2023–2025. miso-hsl/ is README-only. MISO curtailment reports are blocked by this environment's network allowlist — needs an alternate fetch path.",
+            "source": "MISO curtailment reports → data/raw/miso-hsl/",
+            "gate": "structural",
+            "pri": "med"
+          },
+          {
+            "name": "NYISO measured hourly locational reserve requirements",
+            "reg": "#34",
+            "need": "NYISO 2023–2025. NYISO-AS/requirements/ directory is absent (only DA/RT clearing present). Replaces the published static reserve requirement in the co-opt.",
+            "source": "NYISO OASIS RTD/RTC as-enforced series → data/raw/NYISO-AS/requirements/",
+            "gate": "structural",
+            "pri": "med"
+          },
+          {
+            "name": "ERCOT NP6-86 raw monthly binding-constraint (GTC) ZIPs",
+            "reg": "#35",
+            "need": "ERCOT 2020–2025. Derived GTC parquets are on disk, but the raw monthly source ZIPs were not re-committed after a prior fetch (README flagged DATA NEEDED). Re-fetch to make the derivation reproducible.",
+            "source": "ERCOT MIS (SCEDBTCNP686) → data/raw/iso-specific-transmission/",
+            "gate": "structural",
+            "pri": "low"
+          },
+          {
+            "name": "EIA-923 raw Form-923 workbooks (2018–2021)",
+            "reg": "#13 / #14",
+            "need": "2018–2021 delivered fuel cost + monthly net generation. Raw F923 workbooks for these years are not on disk; the EIA archive URL is not reachable through this environment's proxy.",
+            "source": "EIA Form 923 annual archive → data/raw/_processed-legacy/",
+            "gate": "pre-2020",
+            "pri": "low"
+          }
+        ]
+      },
+      {
+        "id": "v2022",
+        "title": "2022 validation holdout — per-ISO intake",
+        "sub": "2022 is the validation-tier holdout. ERCOT, PJM and (CAMPD-only) NEISO are already intaked; CAISO, MISO and NYISO are not. Each row needs its own owner authorization and no-LP (byte-identity) validation before it may be solved.",
+        "items": [
+          {
+            "name": "CAISO 2022 — full stack",
+            "reg": "#1,4,2,21,37,40,41",
+            "need": "CAMPD unit-level (CA), EIA-930 supplemental fuel/region rows, TAC zonal load, CAISO zonal gas hub, WECC intertie LMP, LMP validation, weather. Nothing 2022 present today.",
+            "source": "EPA CAMPD / EIA / CAISO OASIS",
+            "gate": "holdout",
+            "pri": "med"
+          },
+          {
+            "name": "MISO 2022 — full stack",
+            "reg": "#1,4,2,20,38,40,41",
+            "need": "Own-state CAMPD (present 2022 rows are only PJM/ERCOT state overlap), EIA-930 supplemental (2022 rows degenerate — 7 hrs), sub-BA demand, MISO zonal gas hub, MISO↔PJM border LMP, LMP validation, weather.",
+            "source": "EPA CAMPD / EIA / MISO / PJM DataMiner",
+            "gate": "holdout",
+            "pri": "med"
+          },
+          {
+            "name": "NYISO 2022 — full stack",
+            "reg": "#1,4,2,21,40,41",
+            "need": "CAMPD NY units (only NJ present for 2022), per-year zonal load, NYISO zonal gas hub, DART LMP validation, weather. (NYISO raw monthly 'pal' load archive already reaches 2022.)",
+            "source": "EPA CAMPD / EIA / NYISO OASIS & MIS",
+            "gate": "holdout",
+            "pri": "med"
+          }
+        ]
+      },
+      {
+        "id": "h2026",
+        "title": "H1 2026 forward-edge locked test — per-ISO intake",
+        "sub": "H1 2026 is the touch-once forward-edge locked test. ERCOT and PJM lead; CAISO and MISO have essentially nothing past 2025-12-31. Intake is authorization-gated and validated no-LP only; a backcast solve of H1 2026 stays quarantined until the ISO marker exists.",
+        "items": [
+          {
+            "name": "CAISO H1 2026 — full stack",
+            "reg": "#1,4,26,41,2",
+            "need": "EIA-930 hourly (CISO file ends 2025-12-31), CAMPD unit-level, CAISO citygate gas, weather, TAC load. No 2026 rows exist for CAISO in the tree.",
+            "source": "EIA / EPA CAMPD / CAISO OASIS",
+            "gate": "holdout",
+            "pri": "low"
+          },
+          {
+            "name": "MISO H1 2026 — full stack",
+            "reg": "#1,4,20,41,2",
+            "need": "EIA-930 hourly (MISO file ends 2025-12-31), own-state CAMPD, MISO zonal gas, weather, sub-BA demand. Nothing past 2025-12-31.",
+            "source": "EIA / EPA CAMPD / MISO",
+            "gate": "holdout",
+            "pri": "low"
+          },
+          {
+            "name": "NEISO H1 2026 — CAMPD unit-level",
+            "reg": "#4",
+            "need": "NEISO (ME/NH/MA/CT/RI/VT) CAMPD Q1–Q2 2026. 2022–2025 landed 2026-07-07 but H1 2026 is still absent.",
+            "source": "EPA CAMPD → data/raw/campd-unit-level/",
+            "gate": "holdout",
+            "pri": "low"
+          },
+          {
+            "name": "ERCOT + PJM H1 2026 — completion",
+            "reg": "#4,13,41",
+            "need": "CAMPD is Q1-only (need Q2); EIA-923 early-release is Jan–Apr (need May–Jun); weather 2026 absent. EIA-930 hourly & gas partials already present.",
+            "source": "EPA CAMPD / EIA-923 / NOAA-NASA",
+            "gate": "holdout",
+            "pri": "low"
+          }
+        ]
+      },
+      {
+        "id": "pre2020",
+        "title": "2019 locked test & pre-2020 validation ladder",
+        "sub": "2019 is the clean-regime locked test; 2018/2020–2021 extend the validation ladder as data lands and is authorized. On-disk coverage before ~2021 is thin outside a few sources, so most of the register is missing here.",
+        "items": [
+          {
+            "name": "PJM / CAISO / MISO EIA-930 hourly — pre-2019",
+            "reg": "#1",
+            "need": "PJM, CAISO, MISO. Their EIA-930 wide files start 2019-01-01 (ERCOT/NEISO/NYISO reach back to mid-2015). No 2018 for these three.",
+            "source": "U.S. EIA-930 Grid Monitor → data/raw/eia-930-hourly/",
+            "gate": "pre-2020",
+            "pri": "low"
+          },
+          {
+            "name": "2018–2020 general — all non-CEMS/non-gas sources",
+            "reg": "many",
+            "need": "All ISOs. LMP, AS, HSL/curtailment, zonal demand, weather, zonal gas-hub series, PJM/MISO gen-by-fuel do not reach earlier than ~2020–2021. Exceptions already on disk: CAMPD unit-level (all states 2018–2021), Henry Hub, EIA-930 wide (ERCOT/NEISO/NYISO).",
+            "source": "per register — ISO / EIA / EPA archives",
+            "gate": "pre-2020",
+            "pri": "low"
+          }
+        ]
+      },
+      {
+        "id": "reference",
+        "title": "Reference / vintage releases (not a calendar series)",
+        "sub": "Static or forward-only tables tracked by release vintage, not a rolling year grid. Listed for completeness of the gathering task.",
+        "items": [
+          {
+            "name": "EIA-860 fleet vintage — 2026",
+            "reg": "ref",
+            "need": "2026 EIA-860 vintage not yet released/on disk (2020, 2023, 2024, 2025 present). Intake when EIA publishes.",
+            "source": "U.S. EIA-860 → data/raw/eia-860/",
+            "gate": "structural",
+            "pri": "low"
+          },
+          {
+            "name": "NERC GADS EFORd benchmarks — 2024+",
+            "reg": "#49",
+            "need": "On disk 2019–2023 only. Extend the class-level forced-outage-rate prior with 2024+ vintages (and 2018 if backfilling the ladder).",
+            "source": "NERC GADS → data/raw/reference/nerc-gads-eford-*",
+            "gate": "structural",
+            "pri": "low"
+          }
+        ]
+      }
+    ]
+  }</script>
+
+  <script src="js/nav.js"></script>
+  <script>
+  (function(){
+    'use strict';
+    const LS_KEY = 'dc-gathered-v1';
+    const data = JSON.parse(document.getElementById('dcData').textContent);
+    const groupsEl = document.getElementById('groups');
+    const filtersEl = document.getElementById('filters');
+
+    // Persisted checkmark state {itemKey: true}
+    let state = {};
+    try { state = JSON.parse(localStorage.getItem(LS_KEY) || '{}'); } catch(e){ state = {}; }
+    const save = () => { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch(e){} };
+
+    // Stable per-item key
+    const keyOf = (gid, i) => gid + '::' + i;
+
+    const FILTERS = [
+      {id:'all',   label:'All'},
+      {id:'high',  label:'High priority'},
+      {id:'structural', label:'Structural'},
+      {id:'holdout', label:'Holdout-gated'},
+      {id:'pre-2020', label:'Pre-2020'}
+    ];
+    let activeFilter = 'all';
+    let hideDone = false;
+
+    const priClass = p => ({high:'pri-high',med:'pri-med',low:'pri-low'}[p]||'pri-low');
+    const priLabel = p => ({high:'HIGH',med:'MED',low:'LOW'}[p]||'LOW');
+    const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+    function itemMatches(it){
+      if(hideDone && it._done) return false;
+      switch(activeFilter){
+        case 'all': return true;
+        case 'high': return it.pri === 'high';
+        case 'structural': return it.gate === 'structural';
+        case 'holdout': return it.gate === 'holdout';
+        case 'pre-2020': return it.gate === 'pre-2020';
+        default: return true;
+      }
+    }
+
+    function render(){
+      // annotate done state
+      data.groups.forEach(g => g.items.forEach((it,i)=>{ it._done = !!state[keyOf(g.id,i)]; }));
+
+      // filters
+      filtersEl.innerHTML = FILTERS.map(f =>
+        '<button class="dc-chip'+(f.id===activeFilter?' active':'')+'" data-f="'+f.id+'">'+f.label+'</button>'
+      ).join('');
+      filtersEl.querySelectorAll('.dc-chip').forEach(b =>
+        b.addEventListener('click',()=>{ activeFilter=b.dataset.f; render(); }));
+
+      // groups
+      let html = '';
+      data.groups.forEach(g => {
+        const rows = g.items.map((it,i)=>({it,i})).filter(x=>itemMatches(x.it));
+        if(!rows.length) return;
+        html += '<div class="dc-group">'+
+          '<div class="dc-group-head"><h2>'+esc(g.title)+'</h2>'+
+          '<span class="n">'+rows.length+' item'+(rows.length>1?'s':'')+'</span></div>'+
+          '<p class="dc-group-sub">'+esc(g.sub)+'</p>'+
+          '<div class="dc-table-wrap"><table class="dc">'+
+          '<thead><tr><th></th><th>Dataset</th><th>What&#39;s needed</th>'+
+          '<th>Source &rarr; path</th><th>Reg</th><th>Priority</th><th>Gate</th></tr></thead><tbody>';
+        rows.forEach(({it,i})=>{
+          const k = keyOf(g.id,i);
+          html += '<tr class="'+(it._done?'done':'')+'">'+
+            '<td><input type="checkbox" class="dc-chk" data-k="'+k+'"'+(it._done?' checked':'')+' aria-label="mark gathered"></td>'+
+            '<td class="dc-name">'+esc(it.name)+'</td>'+
+            '<td class="dc-need">'+esc(it.need)+'</td>'+
+            '<td class="dc-src">'+esc(it.source)+'</td>'+
+            '<td class="dc-reg">'+esc(it.reg)+'</td>'+
+            '<td><span class="pri '+priClass(it.pri)+'">'+priLabel(it.pri)+'</span></td>'+
+            '<td><span class="gate">'+esc(it.gate)+'</span></td>'+
+          '</tr>';
+        });
+        html += '</tbody></table></div></div>';
+      });
+      groupsEl.innerHTML = html || '<p class="dc-note">Nothing matches this filter.</p>';
+
+      groupsEl.querySelectorAll('.dc-chk').forEach(cb =>
+        cb.addEventListener('change',()=>{
+          if(cb.checked) state[cb.dataset.k]=true; else delete state[cb.dataset.k];
+          save(); render();
+        }));
+
+      updateSummary();
+    }
+
+    function updateSummary(){
+      let total=0, done=0;
+      data.groups.forEach(g => g.items.forEach((it,i)=>{
+        total++; if(state[keyOf(g.id,i)]) done++;
+      }));
+      const pct = total? Math.round(done/total*100) : 0;
+      document.getElementById('doneCount').textContent = done;
+      document.getElementById('totalCount').textContent = total;
+      document.getElementById('pctDone').textContent = pct+'%';
+      document.getElementById('barFill').style.width = pct+'%';
+    }
+
+    document.getElementById('resetAll').addEventListener('click',()=>{
+      state = {}; save(); render();
+    });
+    document.getElementById('hideDone').addEventListener('click',(e)=>{
+      hideDone = !hideDone;
+      e.target.textContent = hideDone ? 'Show gathered' : 'Hide gathered';
+      render();
+    });
+
+    document.getElementById('footNote').innerHTML =
+      'Source of truth: <code>docs/data-register-2026-07.md</code> (data-availability snapshot, 2026-07-07). '+
+      'Full-coverage sources (Henry Hub, CAMPD unit-level 2018–2021, in-sample AS/LMP/gas/transmission for '+
+      '2023–2025, etc.) are intentionally omitted — this page lists only what is still <b>missing</b>. '+
+      'Reg&nbsp;# references the register\'s Part&nbsp;1 dataset numbers. Checkmarks are stored locally in '+
+      'your browser only and are not committed.';
+
+    render();
+  })();
+  </script>
+</body>
+</html>
