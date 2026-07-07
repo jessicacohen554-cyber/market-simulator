@@ -1207,10 +1207,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # lives in calibration.actuals_source, not here or in JS). Built
             # from the matched fossil plants so it decomposes by zone and month
             # -- the dashboard heatmap re-aggregates these to whatever axis it
-            # shows. Per-plant model (m_mon) and EIA-923 (e923_mon) are the full
-            # plant (CHP add-back included on both sides), matching the existing
-            # per-plant Δ-vs-923 table. Solar carries only a system annual
+            # shows. GRID-DELIVERED on BOTH sides (user directive), matching the
+            # class/system mix scorecard (gm_model vs classFull): the model uses
+            # the grid LP series (``mw_p``, NO behind-the-meter CHP add-back) and
+            # the EIA-923 actual has each plant's behind-the-meter CHP host
+            # self-supply removed (``_btm_share`` is 0 for non-CHP classes, so
+            # only CHP plants change). This diverges deliberately from the
+            # per-plant Δ-vs-923 table, which stays whole-plant to compare
+            # against whole-plant CEMS. Solar carries only a system annual
             # because EIA-930 is neither zonal nor monthly here.
+            _iso = meta.get("iso", "ERCOT")
             vol_err: dict[str, dict] = {}
             for code in mw_p:
                 grp = grp_p.get(code)
@@ -1224,11 +1230,14 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 zc = cell["zoneMon"].setdefault(
                     zone, {"m": [0.0] * 12, "a": [0.0] * 12}
                 )
-                m_mon = mplants[str(code)]["m_mon"]  # model GWh
+                # Grid-delivered: model from the grid LP (mw_p, no add-back),
+                # actual from EIA-923 net gen minus the plant's BTM host supply.
+                m_mon = _monthly_gwh(mw_p[code])  # grid-LP model GWh
+                _grid_frac = 1.0 - _btm_share(code, grp, _iso)
                 a_mon = e923_mon.get(code, np.zeros(12))  # EIA-923 GWh
                 for mo in range(12):
                     zc["m"][mo] += float(m_mon[mo]) / 1e3  # GWh -> TWh
-                    zc["a"][mo] += float(a_mon[mo]) / 1e3
+                    zc["a"][mo] += float(a_mon[mo]) * _grid_frac / 1e3
             for cell in vol_err.values():
                 for zc in cell["zoneMon"].values():
                     zc["m"] = [round(x, 4) for x in zc["m"]]
