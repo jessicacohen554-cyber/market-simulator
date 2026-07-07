@@ -220,20 +220,42 @@ NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
     ("nyca_10min_spin", 655.0, 0.0, 775.0),
 )
 
+# Locational operating-reserve requirements & demand-curve values, grounded in
+# the NYISO State of the Market (SOM) report — the primary source (2023/2024/
+# 2025 SOM, "Operating Reserves and Regulation" subsection, e.g. 2024 SOM p.297;
+# reproduced identically across all three report years). The SOM enumerates the
+# as-enforced products verbatim:
+#   * 10-minute East — 1,200 MW in Eastern New York (zones F–K), $775/MW.
+#   * 30-minute SENY — "at least 1,300 MW" for ALL hours in Southeast NY, $500/MW
+#     (an additional condition-varying increment binds a subset of hours at
+#     $40/MW — the #1344 dynamic-requirement channel, not the static base here).
+#   * 30-minute NYC — 1,000 MW in New York City, $25/MW.
+#   * 10-minute NYC —   500 MW in New York City, $25/MW.
+# These supersede the earlier placeholders (East 30-min/$500, SENY 1,100 MW
+# nesting-midpoint stand-in, NYC $500) — grounded in the published curve, not
+# fitted to LMP residuals (rules 12/13). The product NAME encodes the reserve
+# class (``_nyiso_design``: a "10min" product draws only quick-start-eligible
+# {gas_ct, oil} headroom; a "30min" product draws the full thermal reserve
+# fleet), so East 10-min is met by the downstate F–K peaker fleet — the units
+# the real market commits for reserve. ``critical=0`` keeps each product's
+# demand curve a single linear ramp from requirement→$0 down to 0 MW→max penalty
+# (the SOM's finer step table is approximated by the ``n_ramp`` shortfall steps
+# in ``_nyiso_design``). Region membership carries the NYCA ⊃ East ⊃ SENY ⊃ NYC
+# nesting: a zone's locational adder stacks every region that contains it.
 NYISO_RCPF_LOCATIONAL: dict[str, dict] = {
     "East": {
         "zones": ("Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"),
-        "products": (("east_30min_total", 1200.0, 0.0, 500.0),),
+        "products": (("east_10min_total", 1200.0, 0.0, 775.0),),
     },
     "SENY": {
         "zones": ("Lower_Hudson", "NYC", "Long_Island"),
-        "products": (("seny_30min_total", 1100.0, 0.0, 500.0),),
+        "products": (("seny_30min_total", 1300.0, 0.0, 500.0),),
     },
     "NYC": {
         "zones": ("NYC",),
         "products": (
-            ("nyc_30min_total", 1000.0, 0.0, 500.0),
-            ("nyc_10min_total", 500.0, 0.0, 500.0),
+            ("nyc_30min_total", 1000.0, 0.0, 25.0),
+            ("nyc_10min_total", 500.0, 0.0, 25.0),
         ),
     },
 }
