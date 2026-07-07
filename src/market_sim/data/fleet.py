@@ -5384,9 +5384,12 @@ def load_campd_bins(
     them as the dispatched values:
 
     * ``Pct_Committed`` / ``Pct_Peaking`` — replaced per-plant by the
-      CAMPD-derived ``CC_REGULAR_COMMITTED_PCT_BY_PLANT`` /
-      :func:`thermal_tranche_peaking` when ``config.cc_committed_per_plant`` /
-      ``cc_peaking_per_plant`` is set (the ERCOT calibration default).
+      CAMPD-derived ``CC_REGULAR_COMMITTED_PCT_BY_PLANT`` (``config.
+      cc_committed_per_plant``, the ERCOT calibration default) /
+      :func:`thermal_tranche_peaking` or the EIA-860 ``cc_duct_peaking_pct``
+      (``config.cc_peaking_per_plant`` / ``cc_duct_peaking`` — ERCOT's default
+      is ``cc_duct_peaking``, since it carries no CAMPD thermal-tranche
+      artifact of its own).
     * ``HR_Mult_Committed`` / ``HR_Mult_Economic`` / ``HR_Mult_Peaking`` —
       used only when no ``offer_curve_by_group`` covers the group. With an
       offer curve configured (the ERCOT default) the committed band uses
@@ -5590,13 +5593,17 @@ def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
     by ``scripts/derive_thermal_tranches.py`` for CC_REGULAR / CC_CHP): the
     share of the plant's demonstrated sustained maximum it clears in fewer
     than 5% of its online hours. Empty when the ISO has no artifact or it
-    predates the column. Applied per plant in :func:`bins_to_fleet` under
-    ``config.cc_peaking_per_plant`` — supersedes the offer curve's
-    class-wide ``pct_peaking``. (The prior ERCOT hand-set
-    ``CC_REGULAR_PEAKING_PCT_BY_PLANT`` four-plant override this same flag
-    also drove was deleted 2026-07, rule 26/G-26/C-12: dead in every current
-    keeper — ERCOT's keeper carries ``cc_peaking_per_plant=False`` and uses
-    the measured EIA-860 ``cc_duct_peaking`` mechanism instead.)
+    predates the column (ERCOT has none — its own per-plant binning path
+    never produced one). Applied per plant in :func:`bins_to_fleet` under
+    ``config.cc_peaking_per_plant`` (CAISO/PJM/NYISO/NEISO/MISO default) —
+    supersedes the offer curve's class-wide ``pct_peaking``. (The prior
+    ERCOT hand-set ``CC_REGULAR_PEAKING_PCT_BY_PLANT`` four-plant override
+    was deleted 2026-07, rule 26/G-26/C-12: dead in every current keeper.
+    ERCOT's default — and every current ERCOT keeper — instead runs
+    ``cc_peaking_per_plant=False`` + ``cc_duct_peaking=True``: the measured
+    EIA-860 mechanism below, generalized to every ERCOT CC plant rather than
+    the four the deleted dict named, since ERCOT has no thermal-tranche
+    artifact of its own to fall back to.)
     """
     path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
     if not path.exists():
