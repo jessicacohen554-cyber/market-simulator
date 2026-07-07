@@ -7099,3 +7099,55 @@ oldest ERCOT dashboard entries (`ercot31-ordc-total-full`, `ercot32-ordc-total-r
 
 **Holdouts.** No solve, score, or intake touched 2022/H1-2026 (rule 22); all three years in one
 bundle (rule 16).
+
+## 2026-07-07 — ERCOT VRE under-curtailment step 2: dumping + storage timing cleared; lever localised to West→North corridor (diagnosis, no keeper/probe swap)
+
+Step 2 of `docs/handoffs/ercot-vre-undercurtailment-2026-07.md` §5.2 (step 1 =
+ercot39, GTC ruled out). Checked the two next real mechanisms — negative-price
+dumping and storage absorption timing — on a byte-faithful ercot38 re-solve
+(`results/calibration/_diag_ercot38_baseline`, static TTC; reproduces ercot38
+dispatch exactly: model wind 110.84/116.28/120.38 TWh 2023/24/25). Full evidence:
+`docs/handoffs/ercot-vre-undercurtailment-step2-2026-07.md`. Analysis driver
+`scripts/_diag_vre_curtailment.py`; added a `dump` column to `system.parquet` so
+the LP's per-zone overgeneration `Dump[z,t]` is persisted.
+
+**Q1 dumping — NOT the mechanism.** The `dump_cost` negative-MC guard never binds:
+system dump = 0.0000 TWh, 0 hours, all three years. Correct LP behaviour —
+curtailing W/S below the CF ceiling costs ~$0 and always undercuts paying
+`dump_cost`, so the LP curtails before it ever dumps. The real signal is model
+curtailment (W/S below potential), which reproduces the handoff [3e] gap exactly
+(model 2.16–3.05% vs reported 4.67–7.35%; 21–50% of reported volume captured).
+*Why the model doesn't reach oversupply:* the reduced 8-zone **West→North (7300 MW)
+corridor is a wide-open relief valve** — saturated only 1.3–3.8% of hours, mean
+flow ≈ 0 / negative, and in **94–98% of the hours ERCOT actually curtailed wind it
+carries 6,575–7,501 MW of spare headroom.** The chronically-bound links are the
+smaller West→SC (2700, ~68–79% bound) and Panhandle→North (2680, ~38–55%), but
+West→North's headroom lets the surplus escape so the West LMP stays positive and
+the LP never curtails. Must-run ruled out: D-2 forcing is `chp_steam` (coastal,
+~11 TWh) + small peaker floor, none in the West, and must-run *raises* curtailment
+by the West energy balance. This is a topology-resolution gap — exactly why
+ercot39's aggregate GTC (which maps onto West→North, the rarely-binding link)
+didn't move it.
+
+**Q2 storage — legitimate, no bug.** Storage charges *more* in reported-curtailment
+hours than outside them (2024 116 vs 77 MW; 2025 379 vs 164 MW), with the
+midday-charge share rising 12%→51% and evening-discharge 67%→87% as solar grows —
+correct solar-arbitrage shape absorbing the midday surplus. Idle in 74–90% of
+reported-curt hours only because most are overnight wind-curtailment hours when the
+small ~4h fleet is empty. Not eating the wrong hours.
+
+**[3e] / C-scores:** reproduce ercot38 (registered `2026-07-06-ercot38-measured-hsl-2425`):
+C2 FAIL (2025 gas −6.4%), C3a PASS, C5c PASS. **No new dashboard run** — this is a
+read-only diagnosis on a byte-identical config, so there is no new-config bundle to
+register; ercot38's result is already on the dashboard. **No keeper swap.**
+
+**Recommendation (owner decision):** neither dumping nor storage is the lever. The
+two forward-admissible fixes remaining are (1) topology refinement of the
+West/Panhandle zone / West→North corridor, or (2) a derived, forward-admissible
+curtailment-share driver (WS-A precedent) fit to measured GTC-binding frequency /
+supply shares — never the residual — with a DOF ledger before any keeper (rule
+21/23). Both need sign-off; guardrails hold (no HSL pin, no residual adder, no GTC
+re-probe).
+
+**Holdouts.** No solve, score, or intake touched 2022/H1-2026 (rule 22); the
+diagnostic re-solve covers all three in-sample years in one bundle (rule 16).
