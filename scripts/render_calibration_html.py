@@ -423,6 +423,46 @@ def _actual_lmp_hourly(iso: str, year: int) -> np.ndarray | None:
     return np.where(np.isnan(rt), da, rt)
 
 
+@lru_cache(maxsize=None)
+def _actual_rt_padded(iso: str, year: int, hours: int) -> np.ndarray | None:
+    """Return the actual hourly RT LMP as an ``(hours,)`` NaN-padded array, or ``None``.
+
+    Same source as :func:`_actual_lmp_hourly` (``actual_lmp_hourly_<ISO>.parquet``
+    under the canonical validation-source dir), but scattered by the ``hour``
+    column into a fixed ``hours``-length array so it aligns positionally with the
+    model's per-hour series for the C3c scarcity-tail count and the demand-weighted
+    monthly-MAE. This is the ISO-agnostic replacement for ``derive_ordc_overlay``'s
+    ERCOT-only ``_actual_rt`` (whose CAL_DIR still points at the pre-W1
+    ``inputs/calibration`` tree) — it lets the settlement-price overlay block
+    (below) score every ISO from its own actuals, not just ERCOT.
+    """
+    from market_sim.config.paths import CALIBRATION_DIR
+
+    p = CALIBRATION_DIR / f"actual_lmp_hourly_{iso}.parquet"
+    if not p.exists():
+        return None
+    df = pd.read_parquet(p)
+    df = df[df["year"] == int(year)]
+    if df.empty:
+        return None
+    out = np.full(int(hours), np.nan)
+    hr = df["hour"].to_numpy()
+    rt = df["rt"].to_numpy(float)
+    if "da" in df.columns:
+        rt = np.where(np.isnan(rt), df["da"].to_numpy(float), rt)
+    # Guard against a stray out-of-range hour index (leap-year / DST artifacts).
+    valid = (hr >= 0) & (hr < int(hours))
+    out[hr[valid]] = rt[valid]
+    return out
+
+
+def _gt_count(series: np.ndarray | None, cut: float) -> int | None:
+    """Count finite entries of ``series`` strictly above ``cut`` (``None`` -> ``None``)."""
+    if series is None:
+        return None
+    return int(np.nansum(np.asarray(series, dtype=float) > cut))
+
+
 @lru_cache(maxsize=1)
 def _actual_lmp_table() -> dict:
     """Load the derived actual-LMP reference (``scripts/derive_actual_lmp.py``).
@@ -592,14 +632,17 @@ def _tranche_bands_for_bundle(bdir: Path) -> dict[int, list]:
 
 
 def _load_scarcity_overlay(bdir: Path, year: int, hours: int) -> dict | None:
-    """Load the ERCOT ORDC scarcity overlay for a bundle-year, or ``None``.
+    """Load a bundle-year's post-solve scarcity overlay sidecar, or ``None``.
 
-    The overlay is the post-solve ``lmp_scarcity = lmp + scarcity_adder``
-    series committed next to the energy-only duals. Prefers the calibrated
-    reliability-deployment series (``scarcity_reldeploy2500.parquet``) and
-    falls back to the published-ORDC-only ``scarcity.parquet``; returns
-    ``None`` when neither exists (non-ERCOT bundles / older runs), so the
-    energy-only payload is left exactly as it was.
+    ISO-agnostic (G-20a): the overlay is the ``lmp_scarcity = lmp +
+    scarcity_adder`` series written next to the energy-only duals by whichever
+    ``derive_*_overlay.py`` ran for this ISO — ERCOT ORDC, PJM two-step, NYISO/
+    NEISO RCPF, or CAISO LOLP. They all write the same ``scarcity.parquet``
+    schema (``year, hour, scarcity_adder, lmp, lmp_scarcity``). Prefers the
+    ERCOT calibrated reliability-deployment series
+    (``scarcity_reldeploy2500.parquet``) and falls back to the default
+    ``scarcity.parquet``; returns ``None`` when neither exists (a run with no
+    derived overlay), so the energy-only payload is left exactly as it was.
 
     Returns ``{adder, lmp, lmp_scarcity, series, reldeploy}`` with the three
     hourly arrays NaN-padded to ``hours`` (the system-wide adder is added
@@ -1067,17 +1110,18 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # so the summary page can build a model-vs-actual monthly LMP table;
             # the shell re-weights pMon across the selected zones by dMon.
             sy = _primary_pass(sys_all[sys_all["year"] == year])
-            # Post-solve ORDC scarcity overlay (ERCOT only, display-only): the
-            # SECOND LMP series shown next to the energy-only duals. The
-            # energy-only ``lmp`` block below stays the GATED calibration metric
-            # and is byte-identical; ``lmpScar`` is purely additive (the
-            # system-wide adder added uniformly to each zone) and never re-gated.
+            # Post-solve scarcity overlay (any ISO with a derived sidecar;
+            # display + C3c settlement-price scoring): the SECOND LMP series
+            # shown next to the energy-only duals. The energy-only ``lmp`` block
+            # below stays byte-identical and is the series every VOLUME gate
+            # uses; ``lmpScar`` is purely additive (the published system-wide
+            # reserve/scarcity adder added uniformly to each zone — ERCOT ORDC,
+            # PJM two-step, NYISO/NEISO RCPF, CAISO LOLP). G-20a (2026-07-07,
+            # owner-approved) removed the old ``iso == "ERCOT"`` gate here so the
+            # settlement tail scores for every ISO whose derive_*_overlay.py
+            # wrote a scarcity.parquet into the bundle.
             hours = int(meta.get("hours", _T))
-            scar = (
-                _load_scarcity_overlay(bdir, int(year), hours)
-                if meta.get("iso") == "ERCOT"
-                else None
-            )
+            scar = _load_scarcity_overlay(bdir, int(year), hours)
             lmp = {}
             lmp_scar: dict[str, dict] = {}
             # Per-zone hourly model price (hour-indexed, NaN-padded to ``hours``)
@@ -1228,46 +1272,59 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 "throughput_twh": model_storage if model_storage is not None else 0.0,
                 "monthly_net_gwh": model_storage_monthly,
             }
-            # Year-level scarcity-overlay summary (display-only): demand-weighted
-            # monthly LMP MAE vs actual RT for the energy-only and overlaid
-            # series, and tail-hour counts. Reuses the deriver's _monthly_mae /
-            # _actual_rt / _demand_weights so these match
-            # ``scripts/derive_ordc_overlay.py`` exactly. Provenance (series file
-            # + reliability-deployment MW) is kept so the label can state it.
+            # Year-level scarcity-overlay summary: demand-weighted monthly LMP
+            # MAE vs actual RT for the energy-only and settlement (overlaid)
+            # series, and tail-hour counts, for ANY ISO whose derive_*_overlay.py
+            # wrote a scarcity.parquet into the bundle (ERCOT ORDC, PJM two-step,
+            # NYISO/NEISO RCPF, CAISO LOLP). ``lam`` is the energy-only system
+            # lambda and ``lam_s = lam + adder`` the settlement price; the
+            # ``hoursGt200.overlay`` count is what C3c scores (G-20a) — the
+            # ``.model`` count (energy-only) stays emitted for diagnostics. The
+            # per-ISO threshold (rubric §5: $200, NYISO/NEISO $300) is applied to
+            # the primary tail; the >$500 companion stays fixed. ``_actual_rt_padded``
+            # is the ISO-agnostic RT reader (replaces the ERCOT-only ordc._actual_rt,
+            # whose CAL_DIR points at the pre-W1 inputs/ tree); _demand_weights /
+            # _monthly_mae are reused from the deriver unchanged (bundle-relative).
+            iso = meta.get("iso")
+            thr = TAIL_THRESHOLD.get(iso, 200.0)
             if scar is not None and lmp_scar:
-                rt = ordc._actual_rt(int(year), hours)
+                rt = _actual_rt_padded(iso, int(year), hours)
                 w = ordc._demand_weights(bdir, int(year), hours)
                 lam, lam_s = scar["lmp"], scar["lmp_scarcity"]
                 run_years[int(year)]["lmpScar"] = lmp_scar
                 run_years[int(year)]["ordc"] = {
-                    "maeEnergyOnly": round(ordc._monthly_mae(lam, rt, w), 1),
-                    "maeOverlay": round(ordc._monthly_mae(lam_s, rt, w), 1),
+                    "maeEnergyOnly": (
+                        round(ordc._monthly_mae(lam, rt, w), 1)
+                        if rt is not None
+                        else None
+                    ),
+                    "maeOverlay": (
+                        round(ordc._monthly_mae(lam_s, rt, w), 1)
+                        if rt is not None
+                        else None
+                    ),
                     "hoursGt200": {
-                        "actual": int(np.nansum(rt > 200)),
-                        "model": int(np.nansum(lam > 200)),
-                        "overlay": int(np.nansum(lam_s > 200)),
+                        "actual": _gt_count(rt, thr),
+                        "model": _gt_count(lam, thr),
+                        "overlay": _gt_count(lam_s, thr),
                     },
                     "hoursGt500": {
-                        "actual": int(np.nansum(rt > 500)),
-                        "model": int(np.nansum(lam > 500)),
-                        "overlay": int(np.nansum(lam_s > 500)),
+                        "actual": _gt_count(rt, 500),
+                        "model": _gt_count(lam, 500),
+                        "overlay": _gt_count(lam_s, 500),
                     },
                     "series": scar["series"],
                     "reldeployMw": scar["reldeploy"],
                 }
-            # Scarcity tail (C3c): count hours where the max zonal LMP
-            # exceeds the ISO's threshold (rubric §5 — $200, NYISO/NEISO $300),
-            # for the model duals and the actual hub series, stored under the
-            # legacy key "hoursGt200" the scorer reads regardless of threshold.
-            # For ERCOT with an overlay file the block was set above (with
-            # MAE, overlay tail, provenance); for all other cases — non-ERCOT
-            # ISOs and ERCOT bundles WITHOUT a scarcity overlay file (co-opt
-            # runs where derive_ordc_overlay was never run) — emit the
-            # model-dual + actual tail so C3c scores instead of SKIPPING.
-            # The energy-only LP (or co-opt LP) may under-shoot the actual
-            # scarcity tail — that is the truthful, expected signal, not a
-            # thing to tune.
-            iso = meta.get("iso")
+            # Scarcity tail (C3c) fallback — no overlay sidecar: count hours where
+            # the max zonal LMP exceeds the ISO's threshold, for the model duals
+            # and the actual hub series, stored under the legacy key "hoursGt200"
+            # the scorer reads regardless of threshold. Emitted only when the
+            # overlay block above did not fire (a bundle with no derived
+            # scarcity.parquet — e.g. a co-opt run). No ``overlay`` key here, so
+            # C3c scores the energy-only ``model`` for these runs. The energy-only
+            # LP may under-shoot the actual scarcity tail — that is the truthful,
+            # expected signal, not a thing to tune.
             if "ordc" not in run_years[int(year)]:
                 thr = TAIL_THRESHOLD.get(iso, 200.0)
                 actual_hourly = _actual_lmp_hourly(iso, int(year))
