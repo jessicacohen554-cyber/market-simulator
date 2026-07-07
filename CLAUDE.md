@@ -105,35 +105,54 @@ data/        → all on-disk inputs; every path resolves through config/paths.py
 1. **Every keeper carries a DOF ledger and an ablation twin.** The attestation lists each free
     parameter with its identification source; a zero-forcing ablation run is registered alongside.
     A residual that can only be closed by a tuned value is an open root-cause issue, not a parameter.
-1. **Hold out data, and score it exactly once.** The designated holdouts are **2022 and
-    H1-2026**. **No backcast solve, no scoring, and no registration** may touch a holdout
-    period until an ISO's calibration is declared complete (its marker in
-    `frontend/data/backcast/calibration-complete.json`). The clauses, amended 2026-07-06 by
-    owner decision (G-17, Option 2 — `docs/handoffs/holdout-policy-memo-2026-07.md` §(e)):
-    - **Data intake is permitted** for holdout periods, but ONLY under explicit,
-      session-logged owner authorization, and validation of intaken holdout data is no-LP
-      only (byte-identity / loader-resolvability checks — never a dispatch solve). This
-      codifies the authorized 2026-07-04 ERCOT/PJM intake (PRs #1298/#1300/#1304); each
-      future intake (CAISO/MISO/NYISO/NEISO, itemized in
-      `docs/out-of-sample-results-2026-07.md` §1) requires its own authorization.
-    - **2022 is fully solve-quarantined:** no modeling run of any kind on 2022 — no
-      backcast, no diagnostic probe, no "throwaway" solve — until the ISO's
-      calibration-complete marker exists, at which point it is scored EXACTLY ONCE with the
-      frozen keeper config.
-    - **2026 forecast runs are permitted:** forecast-mode runs (`ScenarioConfig.mode=
-      "forecast"`) naturally span 2026+ and use no measured H1-2026 actuals (historic
-      overlays are backcast-only by construction) — they are NOT restricted. What is
-      quarantined is any *backcast* of H1-2026 on real data and any scoring of model output
-      against measured H1-2026 actuals, until the one-shot validation.
-    - The one-shot results are recorded whatever they are, and **no calibration change may
-      respond to them** without designating a new never-touched holdout. Structural
-      mechanism changes are still scored leave-one-year-out within 2023–2025 before
-      promotion. In-sample improvement with held-out degradation is overfitting, not skill.
+1. **Hold out data across three tiers — train, validation, locked test — and never let a
+    locked-test result re-enter tuning.** *Amended 2026-07-07 (owner) — supersedes the earlier
+    two-window "holdouts are 2022 + H1-2026, score once" wording with an explicit
+    train/validation/test split (`docs/handoffs/holdout-policy-memo-2026-07.md`); the quarantine
+    machinery in the standing clauses below is unchanged.* The tiers:
+    - **Train / calibration = 2023–2025.** The ONLY years tuned against. Every keeper is built and
+      scored here, all three in one bundle (rule 16).
+    - **Validation holdout = 2022**, extensible backward as a staged ladder (2022 → 2020–2022 →
+      earlier as data lands and is authorized). **Iterable.** After an ISO's calibration-complete
+      marker exists, 2022 may be solved and scored, and a miss MAY send you back to re-tune
+      2023–2025 and re-solve — that is its purpose (model selection). Because it is iterated
+      against, a validation number is selection evidence, **NOT** a certified out-of-sample skill
+      number, and must never be quoted as one.
+    - **Locked test = 2019 and H1-2026.** **Touch-once, ever.** Scored EXACTLY ONCE per ISO with
+      the frozen keeper config; the result is recorded whatever it is. **No calibration change may
+      respond to a locked-test result** without designating a new never-touched year as its
+      replacement. This is the honest out-of-sample number. (2019 is the clean-regime test;
+      H1-2026 is the forward-edge test. Pre-2020 years exercise a structurally different fleet —
+      grade against regime drift, not raw MAE.)
+    - **Crossover window = 2024–H1 2026** is scored in BOTH modes — backcast (measured overlays)
+      and forecast (forward drivers) — against the same actuals, to measure the backcast→forecast
+      input gap. Diagnostic, not a locked test; its forecast side uses no measured actuals so it is
+      unrestricted (see the 2026 clause below).
+
+    Standing quarantine clauses (from the 2026-07-06 amendment — G-17 Option 2,
+    `docs/handoffs/holdout-policy-memo-2026-07.md` §(e) — unchanged except tier wording):
+    - **Data intake is permitted** for any out-of-training period (validation or locked), but ONLY
+      under explicit, session-logged owner authorization, and validation of intaken data is no-LP
+      only (byte-identity / loader-resolvability checks — never a dispatch solve). Codifies the
+      authorized 2026-07-04 ERCOT/PJM intake (PRs #1298/#1300/#1304); each further intake (per-ISO,
+      per-window — now including 2018–2021, itemized in `docs/out-of-sample-results-2026-07.md` §1)
+      requires its own authorization.
+    - **No solve, no scoring, no registration** may touch ANY out-of-training year (2022, 2019,
+      ≤2021, H1-2026) — no backcast, no diagnostic probe, no "throwaway" solve — until the ISO's
+      calibration-complete marker exists in `frontend/data/backcast/calibration-complete.json`.
+    - **2026 forecast runs are permitted:** forecast-mode runs (`ScenarioConfig.mode="forecast"`)
+      span 2026+ and use no measured H1-2026 actuals (overlays are backcast-only by construction) —
+      NOT restricted. Only a *backcast* of H1-2026 on real data, or scoring output against measured
+      H1-2026 actuals, is quarantined.
+    - Structural mechanism changes are still scored leave-one-year-out within 2023–2025 before
+      promotion. In-sample gain with held-out degradation is overfitting, not skill.
     Enforcement: CI (`.github/workflows/ci.yml`, `quarantine-gates` job) fails any PR whose
-    registered bundle contains a solve year outside 2023–2025 before that ISO's marker
-    exists, and `scripts/run_calibration_full.py` hard-fails any `--year` outside
-    {2023, 2024, 2025} unless `--holdout-authorized` is passed AND the target ISO carries a
-    calibration-complete marker.
+    registered bundle contains a solve year outside 2023–2025 before that ISO's marker exists, and
+    `scripts/run_calibration_full.py` hard-fails any `--year` outside {2023, 2024, 2025} unless
+    `--holdout-authorized` is passed AND the target ISO carries a calibration-complete marker. The
+    CI gate is tier-agnostic — it enforces the marker, not the validation/locked distinction, which
+    is a discipline clause above (a locked-test year re-solved after its one-shot is a governance
+    breach, not a CI failure).
 1. **Derive scripts are frozen against residuals.** Measured-behaviour parameters (min-stable
     loads, drag hinges, sigmoid anchors, committed shares) re-derive only when their *source data*
     updates — never because a residual moved. Re-derivation commits must cite the data change.
@@ -150,7 +169,9 @@ data/        → all on-disk inputs; every path resolves through config/paths.py
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8 (numbered
 **16–25 there** — this file gained rule 16, all-years-one-bundle, after the audit was written; a
 doc reference to "audit rule N" maps to rule N+1 here). Rule 22 (holdouts) carries the owner's
-strict-quarantine amendment, superseding the audit's original D-6/rule-21 wording.
+strict-quarantine amendment, further amended 2026-07-07 into the three-tier
+train(2023–2025)/validation(2022)/locked-test(2019 + H1-2026) split, superseding the audit's
+original D-6/rule-21 wording.
 
 ## LP Variable Layout (per ISO-year)
 
