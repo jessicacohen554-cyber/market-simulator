@@ -55,22 +55,46 @@ TAIL_THRESHOLD = {
 }
 
 # Rule-22 holdout quarantine: 2022 and H1-2026 are untouchable until an ISO's
-# calibration-complete marker exists; this deriver never emits any year outside
-# the calibration window regardless of what the source files carry.
+# calibration-complete marker exists; this deriver never emits a holdout year
+# for an ISO without its marker in calibration-complete.json. In-sample years
+# are always allowed; a marker'd ISO additionally emits the holdout years its
+# one-shot validation scores (the marker is the authorization — CLAUDE.md
+# rule 22; first use: NEISO 2022, declared 2026-07-07).
 ALLOWED_YEARS = (2023, 2024, 2025)
+HOLDOUT_YEARS = (2022, 2026)
+_MARKER_PATH = (
+    Path(__file__).resolve().parent.parent
+    / "frontend"
+    / "data"
+    / "backcast"
+    / "calibration-complete.json"
+)
+
+
+def _marker_isos() -> set[str]:
+    """ISOs with a calibration-complete marker (holdout years unlocked)."""
+    try:
+        data = json.loads(_MARKER_PATH.read_text())
+    except (OSError, ValueError):
+        return set()
+    return {str(k).upper() for k in (data.get("complete") or {})}
 
 
 def derive() -> dict:
     """Compute the per-(ISO, year) DA/RT tail counts from the hub series."""
     isos: dict[str, dict] = {}
+    marker_isos = _marker_isos()
     for iso, thr in sorted(TAIL_THRESHOLD.items()):
         p = SRC_DIR / f"actual_lmp_hourly_{iso}.parquet"
         if not p.exists():
             continue
         df = pd.read_parquet(p)
         for year, d in df.groupby(df["year"].astype(int)):
-            if int(year) not in ALLOWED_YEARS:
-                continue  # holdout guard — never derive outside 2023-2025
+            year_ok = int(year) in ALLOWED_YEARS or (
+                int(year) in HOLDOUT_YEARS and iso.upper() in marker_isos
+            )
+            if not year_ok:
+                continue  # holdout guard — marker-gated (rule 22)
             rt = d["rt"].to_numpy(float)
             da = (
                 d["da"].to_numpy(float)
