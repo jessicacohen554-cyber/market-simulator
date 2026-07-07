@@ -1,7 +1,8 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 2** (2026-07-06
-fitness-for-purpose re-anchor; v1 history in §9). This document is the single
+Status: **canonical, machine-enforced. RUBRIC VERSION 2.2** (2026-07-06
+fitness-for-purpose re-anchor + 2026-07-07 C8 grounded-above-budget escalation;
+v1 history in §9). This document is the single
 auditable definition of when an ISO backcast may be declared *calibrated*. It
 replaces the ad-hoc, per-run sidecar judgement (“this looks good enough”) with a
 fixed rubric that a scorer reproduces byte-for-byte:
@@ -542,7 +543,7 @@ FAILS regardless of every score above.** Four assertions, all required:
   `SKIPPED` (never a silent pass — and it caps the determination, §2) when
   the bundle carries no `legitimacy_diagnostics.json`.
 
-### C8 — Forced-energy share  *(PROTECTIVE, added 2026-07-04, audit D-2 / CLAUDE.md rule 20; UNCHANGED in v2)*
+### C8 — Forced-energy share  *(PROTECTIVE, added 2026-07-04, audit D-2 / CLAUDE.md rule 20; grounded-above-budget escalation v2.2 2026-07-07)*
 
 - **Metric:** the share of a class's annual energy dispatched **AT a binding
   `min_gen` floor**, by class, attributed per mechanism via the int8
@@ -568,8 +569,39 @@ FAILS regardless of every score above.** Four assertions, all required:
   the volume gates rewarded it (audit §1.1). Same statistical-mode evidence
   as C7: the class-volume band is structurally unable to distinguish
   merit-order dispatch from forced energy.
+- **Grounded-above-budget escalation (v2.2, owner amendment 2026-07-07):** the
+  caps and the materiality floor above are **unchanged** — a class within its
+  cap still passes cheaply on the share alone. What changes is a material class
+  **above** its cap: it is no longer an automatic `FAIL`, because forcing can be
+  legitimate past the budget when it is a real grid/RA/AS driver that reproduces
+  the observed dispatch (*as much as needed* may be forced if it is structurally
+  grounded **and** shape-faithful). It escalates to a conditional pass requiring
+  **both**:
+    1. **Provenance (D-4):** every binding non-exempt mechanism forcing the class
+       clears D-4 off-window binding — it binds only inside its driver-justified
+       `D4_WINDOWS` window. A mechanism with **no declared window** fails here
+       (rule 12: no floor without a window), as does one that binds off-window.
+    2. **Shape (D-1):** the class's D-1 hour-of-day profile clears the artifact
+       gates (`profile_r ≥ d1_min_profile_r` and off-peak `cv_ratio ≥
+       d1_min_cv_ratio`), applied to **any** escalating class (not only the
+       default `d1_gated_classes`). This is the "shape mismatch ⇒ the forcing
+       variables are wrong" test.
+  Both clear → **clean `PASS`** classified `GROUNDED ABOVE BUDGET`, surfaced as a
+  report **note** (never a caveat — owner decision), so the high forcing stays
+  visible and auditable. Either fails → `FAIL` describing the miss as a forcing
+  **shape/provenance mismatch**. All signals come from the committed
+  `legitimacy_diagnostics.json` (D1/D2/D4 rows + gates), so this is **scorer-only
+  — no re-solve, no bundle regen** — and existing keepers re-score in place (C8
+  only *relaxes*: below-cap unchanged, above-cap gains a pass-path). To actually
+  ground a specific keeper's over-budget class, its mechanism needs a **cited
+  `D4_WINDOWS` entry** and that bundle re-generated so the D-4 row exists; a
+  mechanism-driven flip is scored **leave-one-year-out** within 2023–2025 before
+  promotion. (Wired 2026-07-07: the CAISO-58 CT_PEAKER `ra_mustoffer_bridge` and
+  NYISO-53 `reliability_floor × ST_GAS` shares — both ~60 % — now FAIL with an
+  *explicit* "no declared D-4 window" diagnosis rather than a flat over-cap fail.)
 - **Failure classification:** `MODEL MISS` (stacked-floor creep / a floor
-  fitting the class). Essentially never ledgerable. `SKIPPED` when the
+  fitting the class, or an above-cap class failing the provenance/shape
+  escalation). Essentially never ledgerable. `SKIPPED` when the
   artifact or the year's floor data is absent — recorded, capping the
   determination.
 
@@ -805,6 +837,26 @@ never a curve to grade down to.
 
 ## 9. Version history
 
+- **v2.2 (2026-07-07, owner amendment)** — C8 **grounded-above-budget
+  escalation**. The 15 %/30 % caps and the 2 % materiality floor are
+  **unchanged**; what changes is that a material class **above** its cap is no
+  longer an automatic `FAIL`. It escalates to a conditional pass on **provenance
+  (D-4 off-window binding) + shape (D-1 profile)**: forcing may exceed the budget
+  when it is a real grid/RA/AS driver that binds in its justified window *and*
+  reproduces the observed diurnal shape (*as much as needed* may be forced if
+  structurally grounded and shape-faithful; the gate now targets forcing whose
+  **window or shape doesn't match reality**). A grounded pass is a **clean PASS
+  surfaced as a report note, never a caveat** (owner decision); a miss FAILs as a
+  forcing shape/provenance mismatch. Scorer-only (reads D1/D2/D4 rows + gates from
+  the committed `legitimacy_diagnostics.json`) — no re-solve, no bundle regen;
+  existing keepers re-score in place and C8 only *relaxes* (below-cap unchanged,
+  above-cap gains a pass-path). Grounding a specific keeper's over-budget class
+  requires a **cited `D4_WINDOWS` entry** for its mechanism + that bundle's regen,
+  and a mechanism-driven flip is scored **leave-one-year-out** within 2023–2025
+  before promotion. Effect at amendment: no keeper flips — CAISO-58 CT_PEAKER
+  (`ra_mustoffer_bridge`, ~60 % forced) and NYISO-53 `reliability_floor × ST_GAS`
+  (~60 %) now FAIL with an explicit **"no declared D-4 window"** diagnosis instead
+  of a flat over-cap fail, naming exactly what would ground them.
 - **v2.1 (2026-07-06, owner amendments)** — C7/C8 **materiality floor**: the
   protective shape and forced-share gates score only classes with annual
   energy (max of model/actual) **≥ 2 % of total ISO load**; smaller classes
