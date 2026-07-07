@@ -70,6 +70,7 @@ def caiso_ra_p1_floor_fleet(
     p0_dispatch: np.ndarray,
     p0_prices: np.ndarray | None,
     mc_base: np.ndarray,
+    release_hours: np.ndarray | None = None,
 ):
     """Return a floored ``FleetArrays`` for the P1 solve — the P1-native RA bridge.
 
@@ -107,47 +108,44 @@ def caiso_ra_p1_floor_fleet(
     bridge_decommit = startup_bridge and bool(
         getattr(config, "caiso_ra_bridge_decommit", False)
     )
+    # Startup-aware run screen (G-61 path (b)): both it and the economic
+    # bridge price start economics off the P0 duals + base MC.
+    startup_aware = bool(getattr(config, "caiso_ra_bridge_startup_aware", False))
+    need_econ = startup_bridge or startup_aware
     surplus_floor_value = (
         -float(config.renewable_keep_running_value)
         if getattr(config, "negative_renewable_offers", False)
         else 0.0
     )
-    # G-61 candidate (b): startup-aware P0 run detection (docs/handoffs/
-    # caiso-ct-drag-d8-closure-2026-07.md §7) — drops sub-min_run_hours P0
-    # dither before runs/gaps are measured. Zero new inputs beyond the config
-    # gate.
-    startup_aware_p0 = bool(getattr(config, "caiso_ra_startup_aware_p0", False))
-    # G-61 candidate (c): release the floor on genuine renewable curtailment —
-    # the model's own P0 dispatch below its own available (CF x capacity)
-    # bound, by more than a small numerical-noise tolerance (not a fitted
-    # threshold; CLAUDE.md #5/#11).
-    curtailed_hours_mask = None
-    if getattr(config, "caiso_ra_curtailment_release", False):
-        pmax_arr = np.asarray(fleet_arrays.pmax, dtype=float)
-        avail_arr = np.asarray(fleet_arrays.availability, dtype=float)
-        is_vre = np.array(
-            [gen.fuel_type in ("wind", "solar") for gen in fleet], dtype=bool
-        )
-        if is_vre.any():
-            available_mw = pmax_arr[is_vre, None] * avail_arr[is_vre, :]
-            curtailed_mw = np.clip(
-                available_mw - p0_dispatch[is_vre, :], 0.0, None
-            ).sum(axis=0)
-            _NOISE_FLOOR_MW = 1.0  # LP numerical tolerance, not a tuned threshold
-            curtailed_hours_mask = curtailed_mw > _NOISE_FLOOR_MW
     ra_floor = caiso_ra_mustoffer_min_gen(
         p0_dispatch,
         fleet_arrays,
         fleet,
         float(config.caiso_ra_min_load_frac),
-        p1_prices=p0_prices if startup_bridge else None,
-        base_mc=mc_base if startup_bridge else None,
+        p1_prices=p0_prices if need_econ else None,
+        base_mc=mc_base if need_econ else None,
         startup_bridge=startup_bridge,
         bridge_decommit=bridge_decommit,
         surplus_floor_value=surplus_floor_value,
-        startup_aware_p0=startup_aware_p0,
-        curtailed_hours_mask=curtailed_hours_mask,
+        startup_aware=startup_aware,
+        release_hours=release_hours,
     )
+    # RA-quantity gate (gap G-61 path (a)): cap the bridged fleet at the
+    # published gas-fired must-offer RA capacity for the compliance year —
+    # the obligation attaches to RA-contracted capacity, not the whole
+    # merchant fleet. Cheapest-startup plants drop first (RUC order).
+    if getattr(config, "caiso_ra_mustoffer_quantity_gate", False):
+        from market_sim.config.constants import CAISO_RA_MUSTOFFER_GAS_MW
+        from market_sim.model.commitment import apply_ra_mustoffer_quantity_gate
+
+        year = int(getattr(config, "weather_year", 0) or 0)
+        cap_mw = CAISO_RA_MUSTOFFER_GAS_MW.get(year)
+        if cap_mw is None and CAISO_RA_MUSTOFFER_GAS_MW:
+            # Forward/uncovered year: latest published vintage (rule 23 —
+            # refreshes when the next DMM annual report lands).
+            cap_mw = CAISO_RA_MUSTOFFER_GAS_MW[max(CAISO_RA_MUSTOFFER_GAS_MW)]
+        if cap_mw is not None:
+            apply_ra_mustoffer_quantity_gate(ra_floor, fleet, fleet_arrays, cap_mw)
     if not np.any(ra_floor > 0.0):
         return None
     base_min_gen = (
@@ -186,20 +184,57 @@ def caiso_ra_p1_floor_fleet(
     )
 
 
-def build_caiso_ra_p1_prep(config, iso: str, fleet: list, fleet_arrays, mc_base):
+def build_caiso_ra_p1_prep(
+    config,
+    iso: str,
+    fleet: list,
+    fleet_arrays,
+    mc_base,
+    renewable_potential_mw: np.ndarray | None = None,
+):
     """Return a ``p1_fleet_prep`` hook for :func:`pipeline.solve.run_energy_solve`.
 
     The hook is called with the P0 result once P0 has solved; it returns the
     RA-floored ``FleetArrays`` the P1 solve should use (or ``None`` to keep the
     ordinary warm-started P1). ``None`` when the RA must-offer mechanism is off or
     the ISO is not CAISO, so no non-CAISO / non-RA path changes.
+
+    Args:
+        renewable_potential_mw: Optional ``(T,)`` system wind+solar available
+            potential (``Σ_z cf × cap``) — required only by the curtailed-VRE
+            release (``caiso_ra_bridge_curtailment_release``, gap G-61 path
+            (c)), which compares it against the P0 solution's dispatched
+            wind+solar to find genuine-curtailment hours. ``None`` (the
+            forecast orchestrator, which does not thread it yet) leaves the
+            release inert by construction.
     """
     if not (getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO"):
         return None
 
     def _prep(r0):
+        release_hours = None
+        if (
+            getattr(config, "caiso_ra_bridge_curtailment_release", False)
+            and renewable_potential_mw is not None
+        ):
+            from market_sim.config.constants import CAISO_CURTAIL_RELEASE_EPS_MW
+
+            dispatched = np.asarray(r0.wind_dispatched, dtype=float).sum(
+                axis=0
+            ) + np.asarray(r0.solar_dispatched, dtype=float).sum(axis=0)
+            curtail = (
+                np.asarray(renewable_potential_mw, dtype=float).reshape(-1) - dispatched
+            )
+            release_hours = curtail > CAISO_CURTAIL_RELEASE_EPS_MW
         return caiso_ra_p1_floor_fleet(
-            config, iso, fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
+            config,
+            iso,
+            fleet,
+            fleet_arrays,
+            r0.dispatch,
+            r0.prices,
+            mc_base,
+            release_hours=release_hours,
         )
 
     return _prep
