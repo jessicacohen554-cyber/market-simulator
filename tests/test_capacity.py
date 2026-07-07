@@ -831,8 +831,13 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         # (0.55 t/MWh) is retained ahead of the coal unit (0.95 t/MWh)
         # even though coal's heat rate is lower (the old key got this
         # backwards).
+        # Equalize the going-forward cost keys (coal fom 8 = ct fom 8) so the
+        # CO2 rate decides the tie; the gas_ct default flipped to 21 (G-32),
+        # so pin it back to 8 to preserve the crafted tie.
         config = ScenarioConfig().with_overrides(
-            fixed_om_coal=8.0, retirement_fom_multiplier_coal=1.0
+            fixed_om_coal=8.0,
+            retirement_fom_multiplier_coal=1.0,
+            fixed_om_gas_ct=8.0,
         )
         fleet = [
             _gen("CO", "coal", pmax=1000.0, heat_rate=9.5, emission_rate_co2=0.95),
@@ -911,8 +916,9 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         self.assertEqual(row["fuel_type"], "coal")
         # ERCOT seasonal-rating basis: firm MW = nameplate, no EFORd derate.
         self.assertAlmostEqual(row["ucap_mw"], 1000.0)
-        # going_forward_cost = 40 x 1.3 x 1000 MW x 1000 = 52,000,000 $/yr.
-        self.assertAlmostEqual(row["going_forward_cost"], 52.0e6)
+        # going_forward_cost = 45 x 1.3 x 1000 MW x 1000 = 58,500,000 $/yr
+        # (coal FOM default flipped 40 -> NREL-ATB-2024 45, G-32).
+        self.assertAlmostEqual(row["going_forward_cost"], 58.5e6)
         self.assertEqual(row["loss_years"], 1)
         # The floor-retained unit keeps its loss counter (re-screened next
         # year); it is un-retired, not absolved.
@@ -1400,7 +1406,11 @@ class TestRetirementMargin(unittest.TestCase):
     T = 10
 
     def _setup(self, price, mc_value, level=100.0):
-        config = ScenarioConfig()
+        # Pin the legacy gas_cc FOM bar (12 $/kW-yr) the crafted margins below
+        # are computed against; the default flipped to the NREL-ATB-2024 30
+        # $/kW-yr (G-32), which this mechanism test is deliberately independent
+        # of.
+        config = ScenarioConfig().with_overrides(fixed_om_gas_cc=12.0)
         fleet = [_gen("G0", "gas_cc", pmax=100.0)]
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
         prices = np.full((1, self.T), price)
@@ -1501,7 +1511,13 @@ class TestScreenReserveValue(unittest.TestCase):
     T = 10
 
     def _screen(self, fleet, prices, mc, config=None, dispatch_level=0.0, **kw):
-        config = config or ScenarioConfig()
+        # Pin the legacy gas_cc/gas_ct FOM bars (12 / 8 $/kW-yr) the crafted
+        # margins in this class are computed against; the defaults flipped to
+        # NREL-ATB-2024 30 / 21 (G-32), which these mechanism tests are
+        # deliberately independent of.
+        config = config or ScenarioConfig().with_overrides(
+            fixed_om_gas_cc=12.0, fixed_om_gas_ct=8.0
+        )
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
         dispatch = SimpleNamespace(
             dispatch=np.full((len(fleet), self.T), dispatch_level)
@@ -1592,7 +1608,11 @@ class TestScreenReserveValue(unittest.TestCase):
         base = as_revenue_per_mw_yr("gas_ct", 0.0, config)
         self.assertGreater(base, 0.0)
         needed = (900_000.0 / 100.0) / base  # flat credit ~ 9 $/kW-yr > bar 8
-        config = config.with_overrides(as_revenue_multiplier=needed)
+        # Pin the legacy gas_ct FOM bar (8 $/kW-yr) the flat-credit "> bar 8"
+        # sizing above assumes; the default flipped to NREL-ATB-2024 21 (G-32).
+        config = config.with_overrides(
+            as_revenue_multiplier=needed, fixed_om_gas_ct=8.0
+        )
         fleet = [_gen("T0", "gas_ct", pmax=100.0)]
         prices = np.zeros((1, self.T))
         mc = np.full((1, self.T), 50.0)
