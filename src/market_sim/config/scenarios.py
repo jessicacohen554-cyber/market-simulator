@@ -2201,6 +2201,41 @@ class ScenarioConfig:
     # scoping the per-pool ramp10 bound replaces. Requires
     # energy_reserve_coopt + PJM; default off; GATED. Profile memory before
     # multi-year runs (CLAUDE.md #45).
+    pjm_reserve_pergen_sync: bool = False  # PJM: per-gen OPPORTUNITY-COST reserve
+    # co-optimization — the G-20b successor build (pjm-84/pjm-85 verdict:
+    # reserve-supply scoping cannot price the $75-200 afternoon band; the band
+    # is the SUB-SHORTAGE opportunity cost, needing reserve to compete with
+    # energy on the same marginal unit AND an honest product split). On top of
+    # pjm_reserve_pergen's (zone, fuel-class) pools this adds, per Manual 11
+    # sec 4.2/4.3.3:
+    # (i) the SYNCHRONIZED reserve sub-product as its own measured balance
+    #     families (RTO sr_req_mw + nested MAD mad_sr_req_mw, PJM Data Miner
+    #     reserve_market_results service=SR — the same rule-13 reliability-
+    #     quantity basis as the Primary series) priced by the published
+    #     Synchronized two-step ORDC rows (pjm_ordc_curve.csv, as filed —
+    #     never forcing the Primary row to bind against a synchronized-only
+    #     supply, the pjm-85 structural warning;
+    # (ii) a per-pool product split of the R columns: a SYNC column servable
+    #     only by ONLINE capacity's 10-min ramp, and a NON-SYNC column
+    #     servable by OFFLINE fast-start ramp (Manual 11 sec 4.2: offline
+    #     10-min CT/oil provides non-synchronized Primary, rule-18 physics
+    #     gate) — both share the pool's joint P+R headroom row, so a reserve
+    #     award of either product consumes the same iron; and
+    # (iii) online scoping of the SYNC caps at the P0->P1 seam from the
+    #     model's own P0 run pattern (the pjm-85 pjm_commitment_scoped plant-
+    #     online derivation, min-down gap-bridged, applied to the RESERVE
+    #     bounds only — energy availability is NOT masked, so P1's energy
+    #     redispatch around the held reserve is exactly what prices the
+    #     opportunity cost). P0 solves all-online (sync=full deliverable
+    #     ramp, nonsync=0); P1 cold-solves on the masked caps
+    #     (pipeline.commitment.build_pjm_reserve_p1_prep).
+    # Measured requirement + published curve + physics ramp/commitment gates;
+    # zero parameters fitted to the price residual (rules 1/11/13). Requires
+    # energy_reserve_coopt + pjm_reserve_pergen + PJM; mutually exclusive with
+    # pjm_reserve_commitment_scoped / pjm_reserve_online_gated /
+    # pjm_commitment_posture (one mechanism per phenomenon, rule 19). Default
+    # off; GATED CHANGE (alters dispatch volumes). Profile memory first
+    # (CLAUDE.md #12/#45 — the R-column count doubles vs pjm_reserve_pergen).
     pjm_commitment_posture: bool = False  # PJM: the SAME pooled linear
     # commitment-posture lever as miso_commitment_posture (design note
     # docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A; PJM port
@@ -4659,6 +4694,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_reserve_online_rho": 1,
     "pjm_reserve_commitment_scoped": 1,
     "pjm_reserve_pergen": 1,
+    "pjm_reserve_pergen_sync": 1,
     "pjm_commitment_posture": 1,
     "measured_ramp_capability": 1,
     "ercot_as_forward_requirement": 1,

@@ -1873,6 +1873,7 @@ def solve_and_persist(
     pjm_reserve_online_rho: float = 1.0,
     pjm_reserve_commitment_scoped: bool = False,
     pjm_reserve_pergen: bool = False,
+    pjm_reserve_pergen_sync: bool = False,
     pjm_commitment_posture: bool = False,
     measured_ramp_capability: bool = False,
     ercot_as_forward_requirement: bool = False,
@@ -2138,6 +2139,7 @@ def solve_and_persist(
             pjm_reserve_online_rho=pjm_reserve_online_rho,
             pjm_reserve_commitment_scoped=pjm_reserve_commitment_scoped,
             pjm_reserve_pergen=pjm_reserve_pergen,
+            pjm_reserve_pergen_sync=pjm_reserve_pergen_sync,
             pjm_commitment_posture=pjm_commitment_posture,
             measured_ramp_capability=measured_ramp_capability,
             ercot_as_forward_requirement=ercot_as_forward_requirement,
@@ -2478,6 +2480,7 @@ def solve_and_persist(
         "pjm_reserve_online_rho": pjm_reserve_online_rho,
         "pjm_reserve_commitment_scoped": pjm_reserve_commitment_scoped,
         "pjm_reserve_pergen": pjm_reserve_pergen,
+        "pjm_reserve_pergen_sync": pjm_reserve_pergen_sync,
         "pjm_commitment_posture": pjm_commitment_posture,
         "measured_ramp_capability": measured_ramp_capability,
         "ercot_as_forward_requirement": ercot_as_forward_requirement,
@@ -2661,6 +2664,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
     if pjm_reserve_pergen:
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen=True)
+    if pjm_reserve_pergen_sync:
+        recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen_sync=True)
     if pjm_commitment_posture:
         recorded_cfg = recorded_cfg.with_overrides(pjm_commitment_posture=True)
     if measured_ramp_capability:
@@ -5830,6 +5835,22 @@ def main() -> None:
         "default off.",
     )
     parser.add_argument(
+        "--pjm-reserve-pergen-sync",
+        action="store_true",
+        help="PJM per-gen OPPORTUNITY-COST reserve co-opt (the G-20b "
+        "successor; pjm-84/85 verdict): adds the SYNCHRONIZED sub-product as "
+        "its own measured balance families (RTO sr_req_mw + MAD mad_sr_req_mw"
+        ", published Synchronized ORDC rows as filed) and splits each pergen "
+        "pool's R column into a SYNC product (online 10-min ramp only — "
+        "scoped at the P0->P1 seam from the model's own P0 run pattern, the "
+        "pjm-85 plant-online derivation) and a NON-SYNC product (offline "
+        "fast-start ramp, Manual 11 sec 4.2), sharing the pool's joint P+R "
+        "headroom row. Energy availability is NOT masked — P1's redispatch "
+        "around the held reserve prices the sub-shortage opportunity cost. "
+        "Requires --energy-reserve-coopt --pjm-reserve-pergen "
+        "(--measured-ramp-capability recommended). PJM-only; default off.",
+    )
+    parser.add_argument(
         "--pjm-commitment-posture",
         action="store_true",
         help="PJM pooled linear commitment-posture lever — the SAME mechanism "
@@ -7382,6 +7403,7 @@ def main() -> None:
         miso_reserve_pergen=args.miso_reserve_pergen,
         miso_commitment_posture=args.miso_commitment_posture,
         pjm_reserve_pergen=args.pjm_reserve_pergen,
+        pjm_reserve_pergen_sync=args.pjm_reserve_pergen_sync,
         pjm_commitment_posture=args.pjm_commitment_posture,
         measured_ramp_capability=args.measured_ramp_capability,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
