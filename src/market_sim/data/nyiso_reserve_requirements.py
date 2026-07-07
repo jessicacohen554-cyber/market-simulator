@@ -52,7 +52,7 @@ FAMILY_BY_REGION_PRODUCT: dict[tuple[str, str], str] = {
     ("NYCA", "30min_total"): "nyca_30min_total",
     ("NYCA", "10min_total"): "nyca_10min_total",
     ("NYCA", "10min_spin"): "nyca_10min_spin",
-    ("East", "30min_total"): "east_30min_total",
+    ("East", "10min_total"): "east_10min_total",
     ("SENY", "30min_total"): "seny_30min_total",
     ("NYC", "30min_total"): "nyc_30min_total",
     ("NYC", "10min_total"): "nyc_10min_total",
