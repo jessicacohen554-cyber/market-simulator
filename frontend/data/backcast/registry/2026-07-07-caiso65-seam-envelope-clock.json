@@ -3,7 +3,7 @@
   "label": "caiso65 seam envelope clock",
   "date": "2026-07-07",
   "shorthand": "caiso65-seam-envelope-clock",
-  "definition": "D-3 zero-forcing ablation TWIN of caiso65_seam_envelope_clock (rule 21): the same envelope-clock-corrected caiso-60 recipe with every merchant floor/bridge neutralized (ScenarioConfig.as_zero_forcing_ablation). ablation_of: caiso65_seam_envelope_clock (recorded here; the replay path does not thread the run_config field - see the W3a PR).",
+  "definition": "PROBE/KEEPER-CANDIDATE (W3a seam-clock fix; keeper decision = owner). The caiso-60 keeper recipe re-solved with the measured (month x hod) p95 corridor envelope bucketed on the MODEL clock: the CISO per-DIBA parquet's local_time stamps lag the model frame by a measured 1h (standard) / 2h (daylight) - lag-scan corr 0.972/0.961 at -1/-2h vs <=0.930 elsewhere, absolute frame anchored by January solar astronomy + the 2024-04-08 eclipse dip - so the keeper's envelope reached the LP 1-2h late. Fixed at the read seam (eia_loader._caiso_interchange_model_clock, pinned measured constants + drift guard scripts/validate_caiso_seam_hod_frame.py; zero fitted parameters, rule 23). A/B vs the caiso-61 base arm at the same code state: hod-mean corridor-flow error improves every year (mean |delta| 1402->1362 / 1803->1692 / 1979->1816 MW, gains at the phase edges h9/h18), lambda a near-wash (+-$0.0-0.8) as pre-registered; kept on correctness (rule 14). Part of the W3a forensics that WITHDREW the seam-diurnal FINDING attribution (its actual-flow table was UTC-bucketed) and reattributed the C3a body to belly gas commitment - see FINDING-caiso-seam-tz-correction-2026-07-07.md.",
   "years": [
     2023,
     2024,
@@ -11,5 +11,5 @@
   ],
   "iso": "CAISO",
   "file": "frontend/data/backcast/runs/2026-07-07-caiso65-seam-envelope-clock.js",
-  "bundle": "results/calibration/caiso65_seam_envelope_clock-ablation"
+  "bundle": "results/calibration/caiso65_seam_envelope_clock"
 }
