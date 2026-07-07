@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-ercot42-wtx-curtailment-driver",
+  "label": "ercot42 wtx curtailment driver",
+  "date": "2026-07-07",
+  "shorthand": "ercot42-wtx-curtailment-driver",
+  "definition": "ercot42: WP-B West Texas Export corridor net-load-indexed VRE curtailment-share driver (nodal congestion ceiling) on the ercot34 keeper",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-07-ercot42-wtx-curtailment-driver.js",
+  "bundle": "results/calibration/ercot42_wtx_curtail_probe"
+}
