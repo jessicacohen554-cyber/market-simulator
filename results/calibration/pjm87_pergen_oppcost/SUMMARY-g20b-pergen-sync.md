@@ -98,3 +98,19 @@ keeper cycle (rule 1: right structure first); keeper decision (whether to
 adopt alongside pjm-83, or hold pending a magnitude follow-up) is the
 owner's call — see the session's `AskUserQuestion` for the DOF ledger /
 ablation-twin tradeoff (rule 20/21 apply only if this is promoted).
+
+## Follow-up — WHY the magnitude is small (fleet-reconstruction probe, no re-solve)
+
+Owner-directed investigation: none of the 4 measured balance rows
+(Primary/Synchronized × RTO/MAD) ever come close to binding — supply margin
+stays 8–14× at the tightest hour of all 3 years. The observed duals come
+from the per-**pool** joint headroom row instead, and with only 39 uniform
+(zone, fuel-class) pools the LP can almost always source PJM's small
+measured requirement from an idle pool even when one dominant plant is
+fully energy-loaded — diluting the signal (pooling dilution, an inherent
+tradeoff of the memory-safe 39-pool tier, not a design flaw). See
+`results/calibration/pjm88_pergen_sizesplit/SUMMARY-g20b-sizesplit.md` for
+the size-split pooling-tier follow-up this diagnosis motivated: it fires
+~50% more hours but does **not** sharpen the magnitude into the targeted
+band, and introduces a real (gate-non-crossing) 2025 dispatch shift pjm-87
+does not have.
