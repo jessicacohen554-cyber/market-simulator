@@ -29,10 +29,23 @@ We curate the reserve-supply / price-adder subset the ERCOT scarcity model needs
     prc       Physical Responsive Capability (MW).
     system_lambda  SCED system lambda ($/MWh).
 
-The ~5-minute intervals are averaged to hourly and placed on the fixed non-leap
-8760-hour clock keyed to ERCOT-local time (Feb 29 dropped, the DST fall-back
-repeat averaged via the clock-hour group-by, the spring-forward gap interpolated)
-— matching the ``ERCO hourly`` demand clock and the AS-by-restype series.
+The report's SCED timestamps are Central *Prevailing* Time (CPT: CDT in
+summer), with the fall-back repeated hour disambiguated by the report's own
+"Repeated Hour Flag" column. They are converted CPT -> CST (fixed UTC-6, the
+model clock — reusing ``build_ercot_hsl._prevailing_to_standard``) BEFORE
+placement, then the ~5-minute intervals are averaged to hourly on the fixed
+non-leap 8760-hour clock (Feb 29 dropped) — matching the ``ERCO hourly``
+demand clock. (The pre-2026-07-07 build placed the CPT labels unconverted, so
+the whole mid-Mar–early-Nov series ran one hour late — Jan best lag 0 / Jul
+best lag +1 vs EIA-930 across all three years, the same placement defect class
+as the NP4-732/737 HSL intake; see
+``docs/handoffs/ercot-g22-demand-side-design-2026-07.md`` §7.)
+
+Physically impossible interval values (an MW capability outside
+``[0, _MW_PLAUSIBLE_MAX]``, e.g. the corrupt 2024 PRC interval that dragged an
+hourly mean to -56M MW) are nulled as telemetry corruption and interpolated,
+with the nulled count flagged in the parquet metadata — never ingested as
+measured.
 
 Run (network required; the managed env reaches www.ercot.com):
 
@@ -58,6 +71,9 @@ import requests
 REPO_ROOT = Path(__file__).resolve().parents[1]
 OUT_DIR = REPO_ROOT / "data" / "raw" / "ercot"
 
+sys.path.insert(0, str(REPO_ROOT / "scripts"))
+from build_ercot_hsl import _prevailing_to_standard  # noqa: E402
+
 # ERCOT MIS "Historical Real-Time Price Adders by SCED Interval" (NP6-905-CD).
 DOC_LIST_URL = "https://www.ercot.com/misapp/servlets/IceDocListJsonWS"
 DOWNLOAD_URL = "https://www.ercot.com/misdownload/servlets/mirDownload"
@@ -80,10 +96,23 @@ COLUMN_MAP: dict[str, str] = {
     "RTORDPA": "rtordpa",
 }
 TS_COL = "SCED Timestamp"
+# The report's own fall-back disambiguator: 'Y' marks the second occurrence of
+# the repeated 01:00-02:00 prevailing hour (already back on CST).
+FLAG_COL = "Repeated Hour Flag"
 # Largest hole (hours) interpolated when placing the series on the 8760 clock —
-# the DST spring-forward gap is 1 hour; more than a day missing means the
-# archive is incomplete and the year is rejected rather than fabricated.
+# more than a day missing means the archive is incomplete and the year is
+# rejected rather than fabricated. (After the CPT->CST conversion the clock is
+# gapless by construction, so interior holes are genuine telemetry gaps.)
 _MAX_GAP_HOURS = 24
+
+# Physical plausibility ceiling for the MW capability/reserve columns: the
+# entire ERCOT fleet is < 200 GW installed, so any interval value outside
+# [0, 200 GW] is telemetry corruption (e.g. the corrupt 2024 PRC interval,
+# hourly-mean min -56,246,692 MW in the pre-fix parquet), nulled + flagged and
+# interpolated — never ingested as measured. Price columns are NOT bounded
+# (negative lambda is legitimate).
+_MW_PLAUSIBLE_MAX = 200_000.0
+_MW_COLS = ("prc", "rtolcap", "rtoffcap", "rtolhsl")
 
 
 def _discover_docid(year: int) -> str:
@@ -122,7 +151,14 @@ def _download_xlsx(docid: str) -> bytes:
 
 
 def _read_intervals(xlsx: bytes) -> pd.DataFrame:
-    """Concatenate the twelve monthly sheets into one SCED-interval frame."""
+    """Concatenate the twelve monthly sheets into one SCED-interval frame.
+
+    The SCED timestamps are Central Prevailing Time and are converted to the
+    fixed CST model clock here (``_prevailing_to_standard``), with the report's
+    "Repeated Hour Flag" disambiguating the fall-back repeated hour. A stamp
+    that cannot be placed (an unflagged ambiguous repeat / malformed
+    spring-forward row) becomes NaT and is dropped.
+    """
     sheets = pd.read_excel(
         io.BytesIO(xlsx),
         sheet_name=None,
@@ -136,13 +172,34 @@ def _read_intervals(xlsx: bytes) -> pd.DataFrame:
             continue  # a non-data sheet (none expected, but be defensive)
         keep = [TS_COL] + [c for c in COLUMN_MAP if c in df.columns]
         sub = df[keep].copy()
-        sub["ts"] = pd.to_datetime(sub[TS_COL], errors="coerce")
+        raw_ts = pd.to_datetime(sub[TS_COL], errors="coerce")
+        flag = df[FLAG_COL] if FLAG_COL in df.columns else None
+        sub["ts"] = _prevailing_to_standard(raw_ts, flag)
         sub = sub.dropna(subset=["ts"])
         frames.append(sub)
     if not frames:
         sys.exit("no monthly sheet carried a 'SCED Timestamp' column")
     out = pd.concat(frames, ignore_index=True)
     return out.rename(columns=COLUMN_MAP)
+
+
+def _null_implausible_mw(intervals: pd.DataFrame) -> tuple[pd.DataFrame, int]:
+    """Null MW-capability interval values outside the physical bound.
+
+    Returns the cleaned frame and the count of nulled cells (telemetry
+    corruption, e.g. the cited corrupt 2024 PRC interval). Nulled cells become
+    interior NaN holes that ``_interp_short_gaps`` fills like any other
+    telemetry gap.
+    """
+    nulled = 0
+    for col in _MW_COLS:
+        if col not in intervals.columns:
+            continue
+        vals = pd.to_numeric(intervals[col], errors="coerce")
+        bad = (vals < 0.0) | (vals > _MW_PLAUSIBLE_MAX)
+        nulled += int(bad.sum())
+        intervals[col] = vals.mask(bad)
+    return intervals, nulled
 
 
 def _interp_short_gaps(s: pd.Series) -> tuple[pd.Series, int, int]:
@@ -179,10 +236,11 @@ def _to_model_clock(
     """Average the ~5-min intervals to hourly on the non-leap 8760-hour clock.
 
     Filters to ``year`` with Feb 29 dropped, averages each curated column by
-    local ``(month, day, hour)`` — collapsing sub-hourly intervals and the
-    repeated DST fall-back hour alike — then reindexes onto the fixed non-leap
-    hourly calendar. Short interior gaps are interpolated; a long contiguous
-    tail (a regime boundary such as RTC+B) is preserved as NaN.
+    CST ``(month, day, hour)`` — collapsing sub-hourly intervals (timestamps
+    are already on the fixed CST clock, so DST needs no handling here) — then
+    reindexes onto the fixed non-leap hourly calendar. Short interior gaps are
+    interpolated; a long contiguous tail (a regime boundary such as RTC+B) is
+    preserved as NaN.
     """
     ts = intervals["ts"]
     keep = (ts.dt.year == year) & ~((ts.dt.month == 2) & (ts.dt.day == 29))
@@ -254,6 +312,12 @@ def build_year(year: int) -> bool:
     print(f"   DocID {docid}; downloading ~16 MB xlsx ...")
     xlsx = _download_xlsx(docid)
     intervals = _read_intervals(xlsx)
+    intervals, nulled = _null_implausible_mw(intervals)
+    if nulled:
+        print(
+            f"   {nulled} physically-impossible MW interval value(s) nulled "
+            f"(outside [0, {_MW_PLAUSIBLE_MAX:.0f}] MW) and interpolated"
+        )
     print(f"   {len(intervals):,} SCED intervals read; aggregating to hourly ...")
     df, missing, left_nan = _to_model_clock(intervals, year)
     _validate(df, year, missing, left_nan)
@@ -281,6 +345,17 @@ def build_year(year: int) -> bool:
                 f"{left_nan} trailing hours left NaN (the ORDC/RTORPA regime "
                 "ended at the 2025-12-05 RTC+B go-live, so the 2025 archive "
                 "stops in early December — not fabricated)."
+            ),
+            "clock": (
+                "Fixed non-leap 8760h ERCOT-local STANDARD time (CST, UTC-6): "
+                "the report's Central-Prevailing SCED stamps are converted "
+                "CPT->CST before placement (Repeated Hour Flag disambiguates "
+                "the fall-back repeat), matching the EIA-930 demand clock."
+            ),
+            "quality": (
+                f"{nulled} physically-impossible MW interval value(s) "
+                f"(outside [0, {_MW_PLAUSIBLE_MAX:.0f}] MW) nulled as telemetry "
+                "corruption and interpolated."
             ),
             "year": str(year),
         }
