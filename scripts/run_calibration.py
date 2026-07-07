@@ -2779,7 +2779,16 @@ def run_year(
     # CC/CT fleet from the P0 run pattern before the P1 clearing solve, so the
     # RA structure rides the scored P1 pass (P2 is archived — CLAUDE.md: P0/P1
     # only). None for every non-CAISO / non-RA run (byte-identical).
-    ra_p1_prep = build_caiso_ra_p1_prep(config, iso, fleet, fleet_arrays, mc_base)
+    ra_p1_prep = build_caiso_ra_p1_prep(
+        config,
+        iso,
+        fleet,
+        fleet_arrays,
+        mc_base,
+        renewable_potential_mw=(
+            (wind_cap[:, None] * wind_cf) + (solar_cap[:, None] * solar_cf)
+        ).sum(axis=0),
+    )
     energy_solve = run_energy_solve(
         fleet,
         fleet_arrays,
