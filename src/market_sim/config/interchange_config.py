@@ -563,6 +563,100 @@ MISO_PJM_BORDER_HR_BY_YEAR: dict[int, float] = {
     2025: 11.40,
 }
 
+# MISO per-seam measured band-price ladders (audit C-6 closure for MISO;
+# gap register G-23 residual "2025 import starvation"): the revealed seam
+# supply curve, derived by scripts/derive_miso_seam_ladders.py from two
+# measured sources — the EIA-930 MISO BA-to-BA seam flows (pooled onto the
+# three priced seams by MISO_SEAM_DIBA) Q-Q duration-coupled with the
+# measured MISO Day-Ahead hub LMP (external transactions schedule in the DA
+# market). Band k of a seam's import side is priced at the DA quantile whose
+# exceedance duration equals the measured duration of the seam flowing
+# deeper than the band's midpoint (export side mirrored), on the existing
+# SEAM_FLOW_TRANCHES (8) equal-band grid of each seam's interface limit —
+# capacities and the measured (month x hour-of-day) deliverability envelopes
+# are untouched; ONLY the price ladder is measured.
+#
+# Why (rule #1 — right market structure): the measured PJM+IESO seam flow is
+# a firm/scheduled base (imports in 97.5-99.5% of ALL hours, p10 0.9-1.7 GW,
+# hourly flow uncorrelated with the RT spread r=+0.06, 2025 annual RT spread
+# $0.00 while 28 TWh flowed) — firm PTP service, grandfathered agreements
+# and JOA firm flow entitlements, not spot-spread arbitrage. A hurdle-gated
+# gas x HR x load-shape seam structurally deletes that flow in a zero-spread
+# year (the miso-45 2025 gross imports 3.4 TWh vs actual net 19.0). The
+# ladder encodes the revealed willingness-to-flow as a rising supply curve
+# the LP still clears ECONOMICALLY hour by hour against its own internal
+# price — nothing is forced (contrast the rejected miso_firm_import_floor
+# min_gen pin): at price extremes even the base band backs off, and flows
+# respond to changed model conditions.
+#
+# Identification (rule 23): measured-behaviour, frozen formula, zero fitted
+# parameters — re-derives ONLY when the source data extends (a new EIA-930 /
+# settlement year). Forward story (rules 12/13): the pooled 2023-2025 ladder
+# printed by the derive script is the multi-year revealed seam structure
+# (persistent firm-transfer base + arbitrage increment) that regenerates as
+# the measured record extends; forecast years keep the gas-elastic
+# reference-price formula (the same two-track design as hr_by_year).
+#
+# Boundary reconciliations (rule 14, documented in the derive script):
+# IESO's Ontario tie pools into the PJM seam per MISO_SEAM_DIBA (one eastern
+# seam; its surplus-baseload economics land in the cheap base bands); the
+# coupling anchor is the MISO hub-mean DA (in-repo canonical), with the PJM
+# western-border DA (pjm_border_lmp_hourly_MISO.parquet: $28.86/$28.56/
+# $41.45) reported as the interpretability anchor; same-seam no-wash
+# ordering (every export band below the seam's cheapest import band) holds
+# naturally in all years — cross-seam counterflow (import PJM while
+# exporting South) is real wheel-through the multi-link external node
+# carries, bounded by the measured per-seam envelopes.
+#
+# Applied by transmission.inject_miso_seam_ladder_prices under
+# ScenarioConfig.miso_seam_measured_ladder (default off, backcast years
+# below only); displaces miso_pjm_border_anchor / miso_pjm_lmp_import_pricing
+# on the rows it prices (alternatives, never stacked).
+MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
+    2023: {
+        "PJM": {
+            "import": (13.40, 16.25, 19.79, 24.09, 27.86, 32.78, 37.99, 46.55),
+            "export": (12.34, 11.72, 11.72, 11.72, 11.72, 11.72, 11.72, 11.72),
+        },
+        "SPP": {
+            "import": (33.03, 44.43, 64.03, 111.92, 177.08, 204.68, 204.68, 204.68),
+            "export": (25.00, 20.03, 16.25, 13.59, 12.38, 11.72, 11.72, 11.72),
+        },
+        "South": {
+            "import": (50.99, 63.58, 85.76, 112.47, 204.68, 204.68, 204.68, 204.68),
+            "export": (43.04, 36.49, 31.69, 27.69, 24.74, 22.09, 19.70, 17.34),
+        },
+    },
+    2024: {
+        "PJM": {
+            "import": (14.01, 17.18, 20.92, 24.58, 29.38, 37.03, 50.15, 73.78),
+            "export": (11.32, 9.48, 8.43, 8.43, 8.43, 8.43, 8.43, 8.43),
+        },
+        "SPP": {
+            "import": (31.20, 49.28, 116.01, 239.27, 284.59, 284.59, 284.59, 284.59),
+            "export": (23.13, 18.85, 16.19, 14.75, 13.39, 12.63, 12.20, 11.73),
+        },
+        "South": {
+            "import": (57.86, 82.81, 163.02, 241.36, 260.66, 284.59, 284.59, 284.59),
+            "export": (46.72, 38.67, 32.32, 27.61, 23.77, 20.81, 18.47, 16.00),
+        },
+    },
+    2025: {
+        "PJM": {
+            "import": (21.82, 25.85, 31.31, 37.36, 46.47, 59.25, 82.59, 121.91),
+            "export": (18.36, 16.40, 16.40, 16.40, 16.40, 16.40, 16.40, 16.40),
+        },
+        "SPP": {
+            "import": (40.09, 64.24, 112.65, 198.83, 247.99, 296.90, 310.00, 406.47),
+            "export": (28.65, 23.85, 21.43, 19.60, 17.91, 17.34, 16.40, 16.40),
+        },
+        "South": {
+            "import": (68.46, 87.90, 121.12, 155.42, 258.05, 327.25, 433.12, 433.12),
+            "export": (53.00, 44.14, 37.04, 32.38, 29.43, 26.61, 24.29, 22.35),
+        },
+    },
+}
+
 
 @dataclass(frozen=True)
 class CaisoHubNeighbor:
