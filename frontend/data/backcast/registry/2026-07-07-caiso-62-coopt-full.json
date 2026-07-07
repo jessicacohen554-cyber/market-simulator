@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-07-caiso-62-coopt-full",
+ "label": "caiso 62 coopt full",
+ "date": "2026-07-07",
+ "shorthand": "caiso-62-coopt-full",
+ "definition": "PROBE (#1492 reserve co-opt COMPLETED \u2014 participation model per the issue's own design constraints 2/3; fully inert, kept default-off per rule 1; keeper stays caiso-60). The caiso-60 keeper recipe + energy_reserve_coopt + caiso_reserve_coopt with the extension this branch adds: STORAGE backs the co-drawn spin/non-spin requirement through duration-gated RS[c,z] columns on the pergen path (power competition vs its own charge/discharge + the published 30-min ASSOC state-of-charge sustain, CAISO_AS_SUSTAIN_DURATION_H=0.5 h, Tariff AS certification), and HYDRO joins the CAISO-local pergen pool (166 plants; CAISO_HYDRO_RAMP10_FRAC=1.0 backfill, WWSIS-2 class physics) \u2014 1,249 eligible units, 14 (zone,fuel) pools, \u03a3 19.2 GW deliverable ramp vs a ~2.24 GW BAL-002-WECC-3 requirement (max(MSSC, 6% load), half/half; \u00a727.1.2.3.5 demand curves; zero fitted breakpoints). RESULT vs the caiso-61 base arm at the same HEAD: reserve price fired 0 h in ALL years (caiso-59's thermal-only build fired ~100 h 2023 up to $800 \u2014 completing the real provider set removed even those), mean \u03bb unchanged \u00b1$0.00, C3c tail unchanged. This is the pre-registered honest direction (issue #1492: participation ADDS supply; the thermal-only pool over-stated scarcity; real CAISO AS prices are ~$0 in most hours). Confirms the G-20 Layer-2 unifying root cause: the perfect-foresight LP is never reserve-tight, so no correctly-parameterized reserve mechanism can source the 2024/25 tail. Residual #1492 scope: Regulation Up/Down (no forward-derivable requirement series).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-07-caiso-62-coopt-full.js",
+ "bundle": "results/calibration/caiso62_coopt_full"
+}
