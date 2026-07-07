@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-07-caiso-61-lolp-tail",
+ "label": "caiso 61 lolp tail",
+ "date": "2026-07-07",
+ "shorthand": "caiso-61-lolp-tail",
+ "definition": "PROBE (G-15 scarcity-tail candidate \u2014 REJECTED as the drag's second half; also the G-20a settlement-basis vehicle and the caiso-62 A/B base arm). Byte-faithful caiso-60 keeper replay at HEAD (drag ON, RA must-offer P1-native, P1-scored; LP identical to the keeper recipe \u2014 caiso_scarcity_pricing is post-solve-only in a backcast, and the recorded dirty diff is the default-off #1492 reserve code, inert here with the co-opt off and modules imported pre-edit). Carries the derived scarcity.parquet (derive_caiso_scarcity_overlay.py: VOLL $2,000 Tariff \u00a739.6.1, MCL 1,400 MW Diablo MSSC, \u03c3 2,500 MW FRP \u2014 published params, zero fitted) so C3c scores the SETTLEMENT price (G-20a owner-approved basis). RESULT \u2014 the published LOLP overlay is INERT exactly where the tail deficit is: 2024 adder mean $0.04 (0 h >$100, tail 0 h vs 52 h DA), 2025 mean $0.01 (0 h, 0 vs 8 DA small-count PASS), and ADDITIVE only to 2023's evening-merit-owned over-tail (mean $0.54, 10 h >$100; settlement 511 h vs energy-only 502 h vs 41 h DA / 21 h RT). Confirms G-20d: the CAISO tail miss is evening-merit / seam-shape, not reserve scarcity \u2014 see FINDING-caiso-seam-diurnal-2026-07-07.md (midday/evening/overnight seam misshape vs measured EIA-930: model near-flat 2.4-5.1 GW vs actual 5:1 swing; evening +2-3.2 GW over-import suppresses the premium the drag must then carry). Overlay mechanism stays built + default-off (rule 1); keeper stays caiso-60.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-07-caiso-61-lolp-tail.js",
+ "bundle": "results/calibration/caiso61_lolp_tail"
+}
