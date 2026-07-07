@@ -24,10 +24,17 @@ LZ_SOUTH and is correctly excluded). This is a **structural** definition (all
 LZ_WEST-attributed binders), NOT a top-N cutoff, so it regenerates identically
 every year.
 
-The ~5-minute intervals aggregate onto the fixed non-leap 8760-hour ERCOT-local
-clock (Feb 29 dropped, DST fall-back merged by the clock-hour group-by — the
-convention shared with the ``gtc-limits`` / ``ercot-hsl`` / ORDC series). Output
-is DENSE: one row per local clock hour, carrying how many SCED executions ran,
+The ~5-minute SCED intervals are stamped in Central *Prevailing* Time (the
+NP6-86 ``SCEDTimeStamp``), with the report's own ``RepeatedHourFlag``
+disambiguating the fall-back repeat; they are converted CPT -> CST (fixed
+UTC-6, the model clock — reusing ``build_ercot_hsl._prevailing_to_standard``)
+BEFORE placement, then aggregated onto the fixed non-leap 8760-hour ERCOT-local
+**standard**-time clock (Feb 29 dropped — the convention shared with the
+``ercot-hsl`` / ORDC / ercot-AS series after the 2026-07-07 clock-unification
+round; ``docs/handoffs/ercot-g22-demand-side-design-2026-07.md`` §7). The
+pre-fix build placed the prevailing stamps unconverted, shifting the summer
+binding-frequency hour cells one hour late. Output is DENSE: one row per local
+clock hour, carrying how many SCED executions ran,
 how many had at least one West-corridor constraint binding (and the resulting
 congestion fraction), the interface-only binding fraction, and the mean positive
 West shadow price.
@@ -55,12 +62,14 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
+import pyarrow.parquet as pq
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO))
 
 from market_sim.config import paths  # noqa: E402
+from scripts.build_ercot_hsl import _prevailing_to_standard  # noqa: E402
 from scripts.lib.clean_io import validate_clean, write_clean  # noqa: E402
 
 DATATYPE = "ercot-wtx-congestion"
@@ -82,9 +91,12 @@ CORRIDOR_KV = (138.0, 345.0)
 
 HOURS_PER_YEAR = 8760
 
-# NP6-86 columns consumed.
+# NP6-86 columns consumed. ``RepeatedHourFlag`` disambiguates the DST fall-back
+# repeated hour for the CPT->CST conversion (read defensively — absent in some
+# legacy archive vintages, in which case the ambiguous repeat drops to NaT).
 _NP686_COLS = [
     "SCEDTimeStamp",
+    "RepeatedHourFlag",
     "ConstraintName",
     "ShadowPrice",
     "FromStation",
@@ -92,6 +104,22 @@ _NP686_COLS = [
     "FromStationkV",
     "ToStationkV",
 ]
+
+
+def _sced_ts_to_cst(df: pd.DataFrame) -> pd.Series:
+    """Convert the NP6-86 Central-Prevailing SCED stamps to the fixed CST clock.
+
+    ``SCEDTimeStamp`` is Central Prevailing Time; ``RepeatedHourFlag`` (``Y``
+    on the second occurrence of the fall-back repeated hour) disambiguates the
+    ambiguous repeat. Rows whose stamp cannot be placed (an unflagged
+    ambiguous repeat / malformed spring-forward row) become NaT and are
+    dropped by the caller.
+    """
+    raw = pd.to_datetime(
+        df["SCEDTimeStamp"], format="%m/%d/%Y %H:%M:%S", errors="coerce"
+    )
+    flag = df["RepeatedHourFlag"] if "RepeatedHourFlag" in df.columns else None
+    return _prevailing_to_standard(raw, flag)
 
 
 def load_substation_zone(raw_root: Path) -> dict[str, str]:
@@ -159,10 +187,7 @@ def _calendar_position() -> pd.Series:
 
 def _to_hourly(df: pd.DataFrame, sub2zone: dict[str, str], year: int) -> pd.DataFrame:
     """Aggregate one year's NP6-86 rows to the hourly West-corridor signal."""
-    ts = pd.to_datetime(
-        df["SCEDTimeStamp"], format="%m/%d/%Y %H:%M:%S", errors="coerce"
-    )
-    df = df.assign(ts=ts)
+    df = df.assign(ts=_sced_ts_to_cst(df))
     df = df[
         (df["ts"].dt.year == year)
         & ~((df["ts"].dt.month == 2) & (df["ts"].dt.day == 29))
@@ -271,7 +296,15 @@ def curate(raw_root: Path | None = None, isos: list[str] | None = None) -> list[
 
     sub2zone = load_substation_zone(raw_root)
 
-    frames = [pd.read_parquet(p, columns=_NP686_COLS) for p in archives]
+    # RepeatedHourFlag is absent in some legacy archive vintages and in the
+    # test fixture; read whatever subset of the consumed columns each archive
+    # actually carries (a missing flag column just means its fall-back repeat
+    # rows drop to NaT in the CPT->CST conversion).
+    def _read(p: Path) -> pd.DataFrame:
+        have = set(pq.ParquetFile(p).schema.names)
+        return pd.read_parquet(p, columns=[c for c in _NP686_COLS if c in have])
+
+    frames = [_read(p) for p in archives]
     rows = pd.concat(frames, ignore_index=True).drop_duplicates(ignore_index=True)
     years = (
         pd.to_datetime(
