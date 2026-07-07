@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-07-07 (C8 grounded-above-budget escalation, rubric v2.2)
+
+- **Rubric/scoring:** `scripts/calibration_verdict.py` C8 (forced-energy share)
+  gains a **grounded-above-budget escalation** (rubric v2.2, owner amendment). The
+  15 %/30 % caps and the 2 % materiality floor are unchanged; a material class
+  **above** its cap is no longer an automatic `FAIL` but escalates to a conditional
+  pass on **provenance (D-4 off-window binding) + shape (D-1 profile)** — forcing
+  may exceed the budget when it is a real windowed grid/RA/AS driver that
+  reproduces the observed dispatch. A grounded pass is a clean `PASS` surfaced as a
+  report **note** (new top-level `notes` in the verdict + `metrics.json`), never a
+  caveat; a miss FAILs as a forcing shape/provenance mismatch. Scorer-only — reads
+  D1/D2/D4 rows + gates from the committed `legitimacy_diagnostics.json`, no
+  re-solve or bundle regen; C8 only *relaxes*, so existing keepers re-score in
+  place with **no determination flips** (CAISO-58 / NYISO-53 now fail C8 with an
+  explicit "no declared D-4 window" diagnosis instead of a flat over-cap fail).
+  `RUBRIC_VERSION` 2.1 → 2.2.
+- **Docs:** CLAUDE.md rule 20, `docs/calibration-determination-rubric.md` (§1 C8
+  + §9 v2.2), and `docs/model-legitimacy-audit-2026-07.md` (rule 19) amended;
+  D-4 is now a promotion-gating input for any over-budget class, not merely a
+  reported diagnostic.
+- **Tests:** `tests/test_calibration_verdict.py` — grounded pass, off-window fail,
+  bad-shape fail, unwindowed-mechanism fail, no-mechanism-rows fail, note
+  surfaced in the verdict, and a drift guard that `FORCED_EXEMPT_MECH_NAMES`
+  mirrors `floor_mechanisms` (D2_EXEMPT_MECHS ∪ NON_THERMAL_MECHS).
+
 ## 2026-07-06 (NEISO C-6: measured seam ladders, priced-interchange P9 re-test, neiso-50 ablation twin)
 
 - **Model/config:** `IMPORT_TRANCHES[_BY_YEAR]["NEISO"]` / `EXPORT_TRANCHES["NEISO"]`

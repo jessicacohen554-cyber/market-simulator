@@ -84,7 +84,24 @@ data/        → all on-disk inputs; every path resolves through config/paths.py
     this budget — plus the C7 diurnal-shape gate — applies only to classes whose annual energy
     (max of model and actual, so forcing can't hide a class below the line) is ≥ 2 % of total ISO
     load; smaller classes are reported by the D-1/D-2 diagnostics but never gated — trivial-class
-    shape/forcing is not worth structural work.
+    shape/forcing is not worth structural work. *Owner amendment 2026-07-07 (rubric v2.2 —
+    grounded-above-budget escalation):* the 15 %/30 % caps and the 2 % floor are unchanged, but a
+    material class **above** its cap is no longer an automatic fail. It escalates to a conditional
+    pass on **provenance + shape**: it passes iff (a) every binding non-exempt mechanism forcing it
+    clears **D-4 off-window binding** (binds only in its driver-justified window — a mechanism with
+    no declared window fails, per rule 12), **and** (b) its **D-1** diurnal profile clears the gates
+    (`profile_r`/`cv_ratio`). Rationale: forcing can be legitimate past the budget when it is a real
+    grid/RA/AS driver that reproduces the observed dispatch — *as much as needed* may be forced on a
+    class if it is structurally grounded and shape-faithful; what the gate now targets is forcing
+    whose **shape or window doesn't match reality** (the "forcing variables are wrong" signal). A
+    grounded pass is a **clean PASS surfaced as a report note, never a caveat**; a miss FAILs as a
+    forcing shape/provenance mismatch. This is scored entirely from the committed
+    `legitimacy_diagnostics.json` (D1/D2/D4 rows + gates), so it is scorer-only — no re-solve, no
+    bundle regen, and existing keepers re-score in place (the change only *relaxes* C8: below-cap is
+    unchanged, above-cap gains a pass-path). **To actually ground a specific keeper's over-budget
+    class**, its mechanism needs a cited `D4_WINDOWS` entry in `scripts/legitimacy_diagnostics.py`
+    and that bundle re-generated so the D-4 row exists; and any mechanism-change-driven verdict flip
+    is scored leave-one-year-out within 2023–2025 before the keeper is promoted.
 1. **Every keeper carries a DOF ledger and an ablation twin.** The attestation lists each free
     parameter with its identification source; a zero-forcing ablation run is registered alongside.
     A residual that can only be closed by a tuned value is an open root-cause issue, not a parameter.
