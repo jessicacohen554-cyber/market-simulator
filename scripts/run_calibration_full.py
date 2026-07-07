@@ -6060,6 +6060,20 @@ def main() -> None:
         "capability (the Hinds / Zeeland 131%% CF issue).",
     )
     parser.add_argument(
+        "--cc-capacity-reconcile",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Reconcile listed CC plants' LP capacity to their demonstrated "
+        "CAMPD value from the per-ISO table "
+        "data/raw/_processed-legacy/cc_capacity_reconcile_<ISO>.csv "
+        "(scripts/derive_cc_capacity_reconcile.py; mode=cap rows bound a "
+        "plant AT its measured sustained peak, raise rows lift it). Fixes "
+        "the EIA-860 CA-row block-level summer-capacity double-count "
+        "(e.g. MISO Union Power 3,457 MW modeled vs 2,428 nameplate / "
+        "2,318 CAMPD p99.9). Same ScenarioConfig.cc_capacity_reconcile "
+        "seam the PJM keeper uses (fleet._reconcile_cc_capacity).",
+    )
+    parser.add_argument(
         "--cc-duct-peaking",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -7195,6 +7209,22 @@ def main() -> None:
             "coal_waste_passthrough_ceil": args.waste_ceil,
             "coal_waste_passthrough_gas_mid": args.waste_gas_mid,
             "coal_waste_passthrough_gas_slope": args.waste_gas_slope,
+            # Per-plant CC demonstrated-capacity reconciliation (mode=cap
+            # bounds a plant AT its CAMPD sustained peak — the EIA-860
+            # CA-row block-summer double-count fix). Per-ISO table; never
+            # crosses ISO boundaries (rule 25).
+            "cc_capacity_reconcile": True if args.cc_capacity_reconcile else None,
+            "cc_capacity_reconcile_path": (
+                str(
+                    REPO
+                    / "data"
+                    / "raw"
+                    / "_processed-legacy"
+                    / f"cc_capacity_reconcile_{iso}.csv"
+                )
+                if args.cc_capacity_reconcile
+                else None
+            ),
         },
         coal_mustrun_online_pmin=args.coal_mustrun_online_pmin,
         coal_sync_srmc_tranche=args.coal_sync_srmc_tranche,
