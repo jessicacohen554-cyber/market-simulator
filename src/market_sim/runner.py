@@ -98,7 +98,7 @@ from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
-from market_sim.policy.rps import get_rps_target
+from market_sim.policy.rps import get_rps_acp, get_rps_target
 from market_sim.results.cache import (
     get_cache_path,
     is_cached,
@@ -1079,8 +1079,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # The RPS is enforced as an LP constraint when enabled; its dual
             # is the RPS shadow price returned in the dispatch result.
             rps_target = None
+            # The RPS ACP ceiling ($/MWh) accompanies an active target: it
+            # prices the ACP escape column so the RPS row stays feasible when
+            # in-region wind+solar cannot reach the target and its dual (REC
+            # price) is capped at the ACP (policy/rps.get_rps_acp; rule 13).
+            rps_acp_price = None
             if config.rps_enabled:
                 rps_target = get_rps_target(iso, year)
+                rps_acp_price = get_rps_acp(iso)
             # CAISO solar deliverability derate (Lever D): reduce the solar CF
             # ceiling by the forward solar-penetration signal so the LP sees
             # the local-network congestion the reduced 3-zone topology misses.
@@ -1153,6 +1159,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 storage_discharge_eac=storage_eac,
                 storage_discharge_cost=storage.vom,
                 rps_target=rps_target,
+                rps_acp_price=rps_acp_price,
                 # Bound storage foresight to within-day arbitrage when the
                 # config asks for it (methodology spec §1.3); previously
                 # only the backcast script honored this flag.
