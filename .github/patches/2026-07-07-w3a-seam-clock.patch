@@ -1,0 +1,180 @@
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index aa7e017..18a5dd0 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -4934,6 +4934,53 @@ def _enforce_legacy_p2_gate(parser: argparse.ArgumentParser, args) -> None:
+         )
+ 
+ 
++def run_replay_bundle(
++    bundle: Path,
++    out_dir: Path | None,
++    years: list[int] | None,
++    note: str,
++    holdout_authorized: bool,
++    zero_forcing_ablation: bool = False,
++) -> None:
++    """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
++
++    The CI-dispatchable form of ``scripts/replay_keeper.py``: the bundle's
++    ``meta.json`` is the authoritative snapshot of every ``solve_and_persist``
++    kwarg, so a keeper/probe recipe reproduces exactly at the dispatched ref —
++    including single-delta A/B arms whose delta is a code change — without
++    expressing the recipe through the workflow input surface. The dashboard
++    job needs only the written bundle (``dashboard_add_run.py`` computes
++    metrics itself), so this solves and prints the standard report.
++
++    Args:
++        bundle: Committed bundle dir whose ``meta.json`` carries the recipe.
++        out_dir: Destination bundle root (``None`` re-solves in place).
++        years: Optional solve-span override (defaults to the bundle's years);
++            holdout-gated either way (rule 22).
++        note: Provenance note recorded in ``run_config.json`` (empty keeps
++            the replay default).
++        holdout_authorized: Forwarded to :func:`enforce_holdout_year_gate`.
++        zero_forcing_ablation: Solve the recipe's D-3 zero-forcing ablation
++            twin instead (composes exactly like the flag on a direct solve).
++    """
++    import replay_keeper as rk
++
++    meta = json.loads((bundle / "meta.json").read_text())
++    kwargs = rk.build_kwargs(meta)
++    kwargs["iso"] = meta["iso"]
++    kwargs["years"] = [int(y) for y in (years or meta["years"])]
++    kwargs["hours"] = int(meta.get("hours", 8760))
++    enforce_holdout_year_gate(kwargs["years"], kwargs["iso"], holdout_authorized)
++    kwargs["reference"] = _load_reference()
++    if out_dir is not None:
++        kwargs["run_dir"] = out_dir
++    if note:
++        kwargs["note"] = note
++    kwargs["zero_forcing_ablation"] = zero_forcing_ablation
++    run_dir = solve_and_persist(**kwargs)
++    report_run(run_dir)
++
++
+ def main() -> None:
+     """Solve + persist a timestamped bundle and report it, or report an old one."""
+     parser = argparse.ArgumentParser(
+@@ -5313,6 +5360,20 @@ def main() -> None:
+         default=None,
+         help="Skip solving; print the report from an existing bundle directory.",
+     )
++    parser.add_argument(
++        "--replay-bundle",
++        metavar="DIR",
++        default=None,
++        help="Re-solve a committed bundle's exact recipe: DIR/meta.json "
++        "supplies every solve kwarg (scripts/replay_keeper.py's mapping), so "
++        "a keeper/probe recipe reproduces without expressing it flag-by-flag "
++        "— the CI-dispatchable replay for calibration-run.yml (extra_flags). "
++        "--out-dir/--note override the destination and provenance note; "
++        "--year (if given) overrides the solved span, still holdout-gated; "
++        "--zero-forcing-ablation composes to solve the recipe's D-3 ablation "
++        "twin. All other solve flags are ignored on this path (the bundle IS "
++        "the config).",
++    )
+     parser.add_argument(
+         "--rebuild-benchmark",
+         metavar="DIR",
+@@ -7116,6 +7177,17 @@ def main() -> None:
+         run_p2_layer(Path(args.run_p2), screen_coal=not args.no_coal_p2)
+         return
+ 
++    if args.replay_bundle:
++        run_replay_bundle(
++            Path(args.replay_bundle),
++            out_dir=Path(args.out_dir) if args.out_dir else None,
++            years=args.year if "--year" in sys.argv else None,
++            note=args.note,
++            holdout_authorized=args.holdout_authorized,
++            zero_forcing_ablation=args.zero_forcing_ablation,
++        )
++        return
++
+     iso = args.iso.upper()
+     enforce_holdout_year_gate(args.year, iso, args.holdout_authorized)
+     # Resolve the reference-price interface: explicit CLI flag OR the per-ISO
+diff --git a/src/market_sim/data/eia_loader.py b/src/market_sim/data/eia_loader.py
+index 3b98634..1da937f 100644
+--- a/src/market_sim/data/eia_loader.py
++++ b/src/market_sim/data/eia_loader.py
+@@ -1135,6 +1135,50 @@ def measured_miso_pjm_border_prices(
+     return price[:hours]
+ 
+ 
++# Measured clock offset of the CISO per-DIBA interchange stamps relative to
++# the model's hourly frame (the ``<BA> hourly`` extract row clock every CAISO
++# demand/renewable series runs on): the stamps lag the model clock by 1 hour
++# in standard-time months and 2 hours in daylight-time months. Measured by
++# per-DST-regime lag scan of the summed per-DIBA series against the extract's
++# own Total-interchange column (2023-2025: PST best lag −1 corr 0.972 vs 0.930
++# at neighbours; PDT best lag −2 corr 0.961 vs 0.919), anchored absolutely by
++# solar astronomy and the 2024-04-08 eclipse dip (both land the extract row
++# clock on the true wall hour). Consistent with prevailing-local hour-ENDING
++# stamps whose DST offset was applied twice at fetch time (the file predates
++# scripts/fetch_eia930_interchange.py; see the eia-930-interchange README).
++# Frozen against residuals (rule 23): these constants re-derive only from the
++# lag scan in scripts/validate_caiso_seam_hod_frame.py, which fails loudly if
++# the parquet is ever re-fetched with honest stamps (best lag moves to 0) so
++# this correction cannot silently double-shift. Full forensics:
++# results/calibration/FINDING-caiso-seam-tz-correction-2026-07-07.md.
++_CAISO_INTERCHANGE_LAG_STD_H: int = 1
++_CAISO_INTERCHANGE_LAG_DST_H: int = 2
++
++
++def _caiso_interchange_model_clock(stamps: pd.DatetimeIndex) -> pd.DatetimeIndex:
++    """Map CISO per-DIBA ``local_time`` stamps onto the model's hourly clock.
++
++    Subtracts the measured per-regime lag (:data:`_CAISO_INTERCHANGE_LAG_STD_H`
++    hours in standard time, :data:`_CAISO_INTERCHANGE_LAG_DST_H` in daylight
++    time) so each row lands on the start-of-hour slot of the same physical
++    hour in the model's 8760 frame. The DST regime of each stamp is resolved
++    with ``US/Pacific`` rules (the repeated fall-back hour is treated as
++    standard time, the skipped spring-forward hour shifted forward — both
++    choices touch one stamp a year and only move it between adjacent
++    (month, hod) envelope buckets).
++    """
++    localized = stamps.tz_localize(
++        "US/Pacific", ambiguous=False, nonexistent="shift_forward"
++    )
++    # Vectorized DST test: a Pacific stamp maps to UTC at +8h in standard
++    # time and +7h in daylight time.
++    is_dst = (localized.tz_convert("UTC").tz_localize(None) - stamps) == pd.Timedelta(
++        hours=7
++    )
++    shift = np.where(is_dst, _CAISO_INTERCHANGE_LAG_DST_H, _CAISO_INTERCHANGE_LAG_STD_H)
++    return stamps - pd.to_timedelta(shift, unit="h")
++
++
+ def measured_corridor_flow_envelope(
+     iso: str,
+     year: int,
+@@ -1166,7 +1210,12 @@ def measured_corridor_flow_envelope(
+     Hours are mapped onto the model's fixed non-leap calendar
+     (:func:`~market_sim.data.fleet._hour_to_month_index` for the month, ``hour %
+     24`` for the hour-of-day), the same calendar the LP and the hydro budgets
+-    use, so the cap aligns hour-for-hour with the dispatch.
++    use, so the cap aligns hour-for-hour with the dispatch. The parquet's
++    ``local_time`` stamps are first mapped onto the model clock via
++    :func:`_caiso_interchange_model_clock` (the stamps lag the model frame by
++    a measured 1 h standard-time / 2 h daylight-time — see the constant block
++    above it), so each (month × hod) bucket keys the same physical hour the
++    LP dispatches.
+ 
+     Returns ``{corridor_zone: (hours,) MW}`` for both corridors, or ``None`` when
+     the ISO is not CAISO, the parquet is absent, or the year is uncovered (a
+@@ -1202,11 +1251,11 @@ def measured_corridor_flow_envelope(
+     if not path.exists():
+         return None
+     frame = pd.read_parquet(path)
+-    local = pd.DatetimeIndex(frame["local_time"])
++    local = _caiso_interchange_model_clock(pd.DatetimeIndex(frame["local_time"]))
+     frame = frame[local.year == year]
++    local = local[local.year == year]
+     if frame.empty:
+         return None
+-    local = pd.DatetimeIndex(frame["local_time"])
+     corridor = frame["diba"].astype(str).map(CAISO_CORRIDOR_DIBA)
+     work = pd.DataFrame(
+         {
