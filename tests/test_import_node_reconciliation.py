@@ -175,10 +175,10 @@ class TestBuildConstraintsIdentical(unittest.TestCase):
         fa = _import_node_fleet()
         demand = np.zeros((2, T))
         layout = VariableLayout(n_gen=3, n_zones=2, n_storage=0, n_links=1, T=T)
-        base_A, base_lo, base_hi = build_constraints(
+        base_A, base_lo, base_hi, *_ = build_constraints(
             layout, fa, demand, incidence=_INCIDENCE
         )
-        node_A, node_lo, node_hi = build_constraints(
+        node_A, node_lo, node_hi, *_ = build_constraints(
             layout,
             fa,
             demand,
