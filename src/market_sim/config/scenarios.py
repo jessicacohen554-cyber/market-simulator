@@ -693,16 +693,27 @@ class ScenarioConfig:
     # the sourced ISO-NE defaults. A forward scenario can widen/tighten the
     # curves (e.g. a tighter reserve margin) without a code edit.
 
-    reserve_margin_build_enabled: bool = False  # Adequacy backstop: after the
-    # economic new-entry screen, force-build firm (gas_ct) capacity if the
+    reserve_margin_build_enabled: bool | None = None  # Adequacy backstop: after
+    # the economic new-entry screen, force-build firm (gas_ct) capacity if the
     # system's accredited firm capacity is below peak * (1 + planning reserve
     # margin). This is the ReEDS/NEMS/CDR structural adequacy mechanism — it
     # keeps the lights on when under-priced energy/scarcity revenue would
     # otherwise under-build, independent of getting prices exactly right. The
     # economic screen still decides the profitable build; this only fills the
-    # residual adequacy gap. Default off (byte-identical); recommended on for
-    # forecasts. Tests the entering year's known peak (plan §2.3 component 1;
-    # prior-year peak only when a caller does not supply the known one).
+    # residual adequacy gap. Tests the entering year's known peak (plan §2.3
+    # component 1; prior-year peak only when a caller does not supply the known
+    # one).
+    #   TRI-STATE market-design resolution (G-41, PJM hindcast I7 decision
+    # 2026-07-06, owner-approved market-design-dependent variant): None (default)
+    # resolves per market design in capacity.resolve_reserve_margin_build_enabled
+    # — ON for ISOs whose design procures capacity to an adequacy requirement
+    # (MARKET_DESIGN[iso].capacity_market: PJM/MISO/NYISO/NEISO/CAISO — the LP
+    # analogue of RPM's absolute-IRM procurement), OFF for energy-only ERCOT
+    # (no absolute floor — an under-remunerated unit exits and ORDC prices the
+    # scarcity) and ISOs absent from MARKET_DESIGN (conservative). Set True/False
+    # explicitly to force it either way (rule 21 — the knob lands in
+    # run_config.json). Energy-only ERCOT stays byte-identical (resolves off);
+    # a scenario that pins False reproduces the pre-G-41 off behaviour exactly.
     market_design_retirement_floor: bool = False  # GATED, default-OFF
     # market-design fidelity gate on the RETIREMENT reliability floor
     # (fom-scarcity stage 5 / the capacity-economics successor mechanism,
