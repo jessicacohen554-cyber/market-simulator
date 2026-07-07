@@ -21,6 +21,26 @@ is a market *outcome* to be pinned (rule 13's forbidden half); the measured rese
 
 ---
 
+> **FULFILLED 2026-07-07 (via free web sourcing, not the paywalled asks below).**
+> The blocking half of Ask A — a grounded downstate interruptible delivered-gas
+> curve — was obtained free from the National Grid tariff archive. The peakers are
+> **non-firm transportation** customers (KEDLI PSC No. 1 SC-7→SC-19; KEDNY SC-22),
+> so their delivered fuel = the Transco Z6 NY daily commodity (already in the
+> model) **+ the LDC non-firm transportation delivery rate**, which both LDCs
+> publish monthly in their *Statement of Non-Firm Demand Response Sales and
+> Transportation Rates* (`statnfdr` PDFs). Intaken as
+> `data/raw/gas-prices/nyiso_downstate_ldc_transport_monthly.csv`
+> (`scripts/fetch_nyiso_downstate_ldc_transport.py`) and wired per-zone through
+> the `nyiso-downstate-gas` datatype v2 (KEDNY SC-22 → NYC, KEDLI SC-19 → Long
+> Island). This is the *correct rate class* the ask below was reaching for, and
+> supersedes the statewide-N3050NY3 stand-in. It resolves the G-13 offer-grounding
+> block. The remaining sub-asks (A1–A5, esp. daily kero/ULSD frames A4 and the
+> restricted per-plant A5) stay open only as optional sharpening — the transport
+> delivery rate is inherently monthly/rate-case, so monthly is its native cadence.
+> What could NOT be free-sourced: Con Edison 2023–24 GCF (purged from coned.com)
+> and any paywalled Platts/NGI daily citygate — neither is needed for the
+> transport construction.
+
 ## Ask A — LI/NYC LDC citygate / interruptible delivered-gas prices (G-13; priority 1)
 
 **Why.** Commit `0c6c833` de-leaked the ERCOT-fitted CT/CC offer bands to neutral 1.0,

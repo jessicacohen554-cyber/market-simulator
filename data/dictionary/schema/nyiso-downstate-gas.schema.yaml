@@ -1,41 +1,53 @@
-# Canonical schema: NYISO downstate delivered-gas basis (daily)
+# Canonical schema: NYISO downstate delivered-gas index (daily, per downstate zone)
 #
-# The daily delivered-gas index a non-firm downstate NYISO gas peaker (NYC zone
-# J + Long Island zone K, the LM6000 CT_PEAKER fleet on the Con Edison /
-# National Grid / KeySpan LDC systems) faces. These peakers run only a few
-# hundred hours a year, hold no firm interstate pipeline capacity, and take gas
-# off the local LDC **city gate** on interruptible service, so their delivered
-# fuel index is the LDC city gate — not the interstate pipeline hub the model
-# prices bulk downstate gas at.
+# The daily delivered-gas index a non-firm downstate NYISO gas peaker (NYC zone J
+# + Long Island zone K, the LM6000 CT_PEAKER fleet) faces. These peakers run only
+# a few hundred hours a year, hold no firm interstate pipeline capacity, and are
+# TRANSPORTATION customers on the local LDC: they buy their commodity at the
+# market hub and pay the LDC a non-firm transportation delivery charge to move it
+# from the city gate to the plant. Their delivered fuel index is therefore the
+# pipeline-hub DAILY spot plus the LDC non-firm transportation delivery rate — not
+# the interstate pipeline hub alone, and not the statewide firm citygate sales
+# price the model prices bulk downstate gas at.
 #
-# Construction (free-data memo §1.4, docs/handoffs/free-data-sourcing-2026-07.md;
-# all three inputs measured, forward-native, rule-13 admissible):
+# Construction (schema v2 — per downstate zone; both inputs measured,
+# forward-native, rule-13 admissible; nothing fitted to a residual):
 #
-#   delivered_gas[day] = henry_hub[day]                       (EIA daily spot)
-#                      + (transco_z6_ny[day] - henry_hub[day])  (pipeline-hub daily basis)
-#                      + ldc_premium[month]                    (EIA citygate - Transco, monthly)
-#                      = transco_z6_ny[day] + ldc_premium[month]
+#   delivered_gas[zone][day] = transco_z6_ny[day]              (measured pipeline-hub daily spot)
+#                            + ldc_transport_adder[zone][month] (measured LDC non-firm transport rate)
 #
-# i.e. the measured Transco Zone 6 NY pipeline-hub DAILY spot (captures cold-snap
-# blowouts on the exact days peakers run) plus the measured monthly LDC city-gate
-# premium over that hub (the distribution/demand-charge/interruptible adder,
-# published only monthly). Nothing is fitted to a price or volume residual: each
-# component is a measured market/tariff input that regenerates for a forward year
-# and responds to changed conditions (rules #1/#11/#13).
+# The LDC non-firm transportation delivery rate is the "Total Monthly Tier 1
+# Transportation Service" rate published every month by each downstate LDC in its
+# National Grid "Statement of Non-Firm Demand Response Sales and Transportation
+# Rates" (statnfdr PDFs). It already folds in that month's delivery-rate
+# adjustment clauses (EAM / Demand Capacity Surcharge / Net Utility Plant Tracker /
+# Rate Adjustment Clause), and steps at rate cases — a measured, forward-native
+# tariff input that regenerates for a forecast year and responds to changed
+# conditions (rules #1/#11/#13). Per-zone because the LI gas island (KEDLI) and
+# the NYC system (KEDNY) carry materially different delivery costs:
+#
+#   NYC          -> KEDNY (Brooklyn Union Gas)  SC-22 C&G Non-Firm Transportation, Tier 1
+#   Long_Island  -> KEDLI (KeySpan Gas East)    SC-19 Non-Firm Demand Response Transportation, Tier 1
+#
+# This v2 construction supersedes the v1 statewide EIA-N3050NY3 citygate premium
+# (a firm-sales, whole-state stand-in): the interruptible peakers are transport
+# customers, and the LDC transport rate is their correct delivered-fuel boundary
+# (CLAUDE.md rule #12 — prefer accurate/measured data over an estimate; G-13).
 #
 # Curated by scripts/curate_nyiso_downstate_gas.py from
-#   data/raw/gas-prices/transco_z6_ny_daily.csv                 (daily pipeline hub)
-#   data/raw/gas-prices/henry_hub_daily.csv                     (daily HH, provenance)
-#   data/raw/gas-prices/nyiso_downstate_ct_gas_basis_monthly.csv (monthly LDC premium)
+#   data/raw/gas-prices/transco_z6_ny_daily.csv                     (daily pipeline hub)
+#   data/raw/gas-prices/henry_hub_daily.csv                         (daily HH, provenance)
+#   data/raw/gas-prices/nyiso_downstate_ldc_transport_monthly.csv   (monthly per-LDC transport rate)
 datatype: nyiso-downstate-gas
-schema_version: 1
-title: NYISO downstate delivered-gas basis (daily)
+schema_version: 2
+title: NYISO downstate delivered-gas index (daily, per zone)
 description: >-
-  Daily delivered-gas index for non-firm downstate NYISO gas peakers ($/MMBtu):
-  the measured Transco Zone 6 NY pipeline-hub daily spot plus the measured
-  monthly LDC city-gate premium over that hub. Forward-native, rule-13 clean.
+  Daily delivered-gas index for non-firm downstate NYISO gas peakers ($/MMBtu),
+  per downstate zone: the measured Transco Zone 6 NY pipeline-hub daily spot plus
+  the measured monthly LDC non-firm transportation delivery rate (KEDNY SC-22 for
+  NYC, KEDLI SC-19 for Long Island). Forward-native, rule-13 clean.
 
-key_columns: [iso, date]
+key_columns: [iso, zone, date]
 allow_additional_columns: false
 
 columns:
@@ -44,6 +56,11 @@ columns:
     unit: none
     nullable: false
     description: ISO identifier (NYISO).
+  - name: zone
+    dtype: string
+    unit: none
+    nullable: false
+    description: Downstate model zone the delivered index applies to (NYC or Long_Island).
   - name: date
     dtype: datetime64[ns]
     unit: calendar_date
@@ -58,14 +75,14 @@ columns:
     dtype: float64
     unit: usd_per_mmbtu
     nullable: false
-    description: Measured Transco Zone 6 NY pipeline-hub daily spot ($/MMBtu), interpolated to every calendar day.
-  - name: ldc_premium_usd_per_mmbtu
+    description: Measured Transco Zone 6 NY pipeline-hub daily spot ($/MMBtu), interpolated to every calendar day (the peaker's commodity index).
+  - name: ldc_transport_adder_usd_per_mmbtu
     dtype: float64
     unit: usd_per_mmbtu
     nullable: false
-    description: Monthly LDC city-gate premium over the Transco hub (EIA N3050NY3 citygate minus Transco Z6 NY monthly, floored 0), broadcast to each day of the month.
+    description: Monthly LDC non-firm transportation delivery rate for the zone's LDC (KEDNY SC-22 / KEDLI SC-19, Tier 1, incl. delivery-rate adjustments), broadcast to each day of the month.
   - name: delivered_gas_usd_per_mmbtu
     dtype: float64
     unit: usd_per_mmbtu
     nullable: false
-    description: Downstate interruptible delivered-gas index = transco_z6_ny_usd_per_mmbtu + ldc_premium_usd_per_mmbtu.
+    description: Downstate non-firm transport delivered-gas index = transco_z6_ny_usd_per_mmbtu + ldc_transport_adder_usd_per_mmbtu.
