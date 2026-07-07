@@ -1,0 +1,17 @@
+{
+  "id": "2026-07-07-nyiso-55-ldc-transport",
+  "label": "nyiso 55 ldc transport",
+  "date": "2026-07-07",
+  "shorthand": "nyiso-55-ldc-transport",
+  "definition": "(CANDIDATE — G-13 RESOLVED; keeper stays 2026-07-06-nyiso-53-li-tsl pending owner promotion) The nyiso-53 keeper recipe with the downstate CT-peaker gas re-grounded on the CORRECT rate-class, per-zone measured delivered index (nyiso_downstate_ct_gas_daily; nyiso-downstate-gas datatype v2). The LM6000 downstate peakers are non-firm TRANSPORTATION customers, so their delivered fuel = Transco Z6 NY daily commodity + the LDC monthly non-firm transportation delivery rate (KEDNY SC-22 for NYC, KEDLI SC-19 for Long Island; National Grid statnfdr statements, fetched free from the tariff archive). This is the Ask-A LI/NYC delivered-gas intake the G-13 register row called for; it supersedes nyiso-54's statewide EIA-N3050NY3 firm-citygate stand-in with the correct rate class at the correct per-zone boundary (rules #1/#11/#12/#13), zero new free parameters. RESULT vs nyiso-53: C1 fuel-mix PASS all 14/14 classes (the CT_PEAKER over-run is NOT reintroduced), C2 PASS, C3c price-tail PASS, C5 dispatch-corr PASS, C7 shape PASS; C3a/C3b/C8 unchanged from the keeper (nyiso-53 ledgers these same values as accepted #1344/Ask-B-blocked caveats). A metrics WASH but strictly more structurally faithful: the correct delivered-fuel boundary no longer being the open root cause is the deliverable, and the residual downstate scarcity level/tail is reattributed to #1344/Ask-B (endogenous reserve-scarcity commitment), a distinct data block. NOT-YET here is solely the missing governance attestation (a keeper-promotion step), not a metrics regression.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-07-nyiso-55-ldc-transport.js",
+  "bundle": "results/calibration/nyiso55_ldc_transport",
+  "ablation_twin": "2026-07-07-nyiso-55-ldc-transport-ablation",
+  "market_story": "Re-grounding the downstate CT gas on the correct per-zone non-firm TRANSPORTATION delivered index (Transco Z6 NY daily commodity, up to ~$100/MMBtu on Jan-2025 arctic days, + KEDNY SC-22 ~$2.5-3.4/MMBtu for NYC / KEDLI SC-19 ~$1.7-2.9/MMBtu for Long Island) lifts the peaker offer on the exact scarce days it runs and prices NYC peakers above LI ones, which is the delivered-fuel physics a pure-ED LP should honor. Vs the zero-forcing twin, the PR-#1442 windowed temperature floors still commit downstate CT_PEAKER (2023 ~88% of class energy) and ST_GAS out of merit for local reliability — behaviour a pure-ED LP cannot produce. But the correct gas boundary cannot move the >$300 tail or the mean-price level: the peakers the real market commits for reserve sit idle in the pure-ED LP (issue #1344, data-blocked on the Ask-B condition-varying reserve-requirement series), so pricing their gas correctly is a structurally-faithful refinement that leaves the masked residual where it is (rule #1). Kept honest: no offer markup, adder, or floor is tuned to close the gap (rules 13/26)."
+}
