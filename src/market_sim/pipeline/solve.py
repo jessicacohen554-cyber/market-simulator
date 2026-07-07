@@ -65,12 +65,18 @@ class EnergySolveResult:
         mc_bid: ``mc_base + markup`` — the bid-cost objective P1 solved; the
             optional P2 commitment re-solve prices at this same MC.
         markup: The ``(n_gen, T)`` monthly startup-amortization markup.
+        p1_fleet_arrays: The ``FleetArrays`` P1 actually solved on. Identical to
+            the input ``fleet_arrays`` on every ordinary path; when a
+            ``p1_fleet_prep`` hook injects a floor (the P1-native CAISO RA
+            must-offer bridge), this is the floored fleet the scored P1 saw, so
+            the caller persists its ``min_gen`` as the P1 pass's floors.
     """
 
     r0: "DispatchResult"
     p1: "DispatchResult"
     mc_bid: np.ndarray
     markup: np.ndarray
+    p1_fleet_arrays: "FleetArrays"
 
 
 def run_energy_solve(
@@ -82,6 +88,7 @@ def run_energy_solve(
     config,
     *,
     xyear_cache: Optional[list] = None,
+    p1_fleet_prep=None,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
 
@@ -104,9 +111,17 @@ def run_energy_solve(
         xyear_cache: Optional single-element list carrying the prior year's
             exported basis (backcast year loop). ``None`` (forecast) disables
             both the cross-year apply and the export — see module docstring.
+        p1_fleet_prep: Optional callable ``(r0) -> Optional[FleetArrays]`` invoked
+            after P0 solves. When it returns a ``FleetArrays`` the P1 solve uses
+            that (floored) fleet instead of the input one — the P1-native CAISO RA
+            must-offer bridge injects its ``min_gen`` floor here, detected from the
+            P0 dispatch. Changing the P1 bounds precludes the warm-start basis
+            reuse, so that year's P1 is a cold solve; every other path (hook
+            ``None`` or returning ``None``) is byte-identical, warm start included.
 
     Returns:
-        :class:`EnergySolveResult` with the P0/P1 results and the bid MC.
+        :class:`EnergySolveResult` with the P0/P1 results, the bid MC, and the
+        ``FleetArrays`` P1 solved on.
     """
     _warm = os.environ.get("MARKET_SIM_WARMSTART", "1") != "0"
     model = DispatchModel(fleet_arrays, demand, **dispatch_kwargs) if _warm else None
@@ -131,10 +146,21 @@ def run_energy_solve(
         coal_warm_committed=getattr(config, "coal_warm_committed", False),
     )
     mc_bid = mc_base + markup
-    if _warm:
+    # P1-native floor injection (CAISO RA must-offer bridge): the hook reads the
+    # P0 solution and returns a floored fleet for the P1 clearing solve. Changing
+    # the column bounds means the warm-start basis no longer applies, so P1 is a
+    # cold solve on the floored fleet; the ordinary path (hook None / no floor)
+    # keeps the warm start and is byte-identical.
+    p1_fleet_arrays = fleet_arrays
+    if p1_fleet_prep is not None:
+        replaced = p1_fleet_prep(r0)
+        if replaced is not None:
+            p1_fleet_arrays = replaced
+    _warm_p1 = _warm and p1_fleet_arrays is fleet_arrays
+    if _warm_p1:
         p1 = model.solve(mc=mc_bid)
     else:
-        p1 = solve_dispatch(fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
+        p1 = solve_dispatch(p1_fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
 
     # Hand this year's optimal basis to the next year's P0 (cross-year warm
     # start). Stored even when the flag is off so a downstream A/B does not
@@ -144,7 +170,9 @@ def run_energy_solve(
         if basis is not None:
             xyear_cache[:] = [basis]
 
-    return EnergySolveResult(r0=r0, p1=p1, mc_bid=mc_bid, markup=markup)
+    return EnergySolveResult(
+        r0=r0, p1=p1, mc_bid=mc_bid, markup=markup, p1_fleet_arrays=p1_fleet_arrays
+    )
 
 
 __all__ = ["EnergySolveResult", "run_energy_solve"]
