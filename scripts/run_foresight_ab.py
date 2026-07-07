@@ -28,6 +28,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import shutil
 import sys
 import time
 from concurrent.futures import ProcessPoolExecutor, as_completed
@@ -104,9 +105,52 @@ class ArmResult:
     error: str | None = None
 
 
+PARTIAL_DIRNAME = "_partial"  # per-arm checkpoint JSONs under --out
+
+
+def _partial_path(out_dir: Path, arm: str, growth: str) -> Path:
+    """Where one arm's checkpointed result lives, so a killed run resumes."""
+    return out_dir / PARTIAL_DIRNAME / f"{arm}_{growth}.json"
+
+
+def _load_partial(out_dir: Path, arm: str, growth: str) -> ArmResult | None:
+    """Load a prior arm's checkpoint if present and complete, else None."""
+    path = _partial_path(out_dir, arm, growth)
+    if not path.exists():
+        return None
+    try:
+        return ArmResult(**json.loads(path.read_text()))
+    except (json.JSONDecodeError, TypeError, KeyError):
+        return None  # corrupt/partial write from a killed process -- re-run
+
+
+def _save_partial(out_dir: Path, result: ArmResult) -> None:
+    """Checkpoint one finished arm immediately, independent of the others."""
+    path = _partial_path(out_dir, result.arm, result.growth)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(asdict(result), indent=1))
+
+
 def evaluate_arm(spec_dict: dict) -> dict:
     """Run one instrumented forward solve (worker process entry point)."""
+    if not logging.getLogger().hasHandlers():
+        # A forked worker inherits the parent's logging config for free; a
+        # spawned one starts with none. Configuring unconditionally here
+        # (idempotent via the hasHandlers guard) makes runner.py's own
+        # per-year "year %d: solved and cached" progress lines reach the
+        # harness's log file regardless of the multiprocessing start method.
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+        )
     spec = ArmSpec(**spec_dict)
+    logger.info(
+        "arm %s/%s: starting %d-%d",
+        spec.arm,
+        spec.growth,
+        spec.start_year,
+        spec.end_year,
+    )
     import market_sim.model.capacity as capacity
     from market_sim import runner
     from market_sim.config.scenarios import ScenarioConfig
@@ -373,11 +417,26 @@ def main(argv: list[str] | None = None) -> None:
     p.add_argument("--only", nargs="+", default=None, help="Restrict arms.")
     p.add_argument("--out", default="docs/handoffs")
     p.add_argument("--cache-root", default=None)
+    p.add_argument(
+        "--fresh",
+        action="store_true",
+        help=(
+            "Ignore/clear any checkpointed per-arm results under "
+            f"<out>/{PARTIAL_DIRNAME} and re-run every arm from scratch. "
+            "Without this flag, a prior killed/interrupted run resumes: "
+            "already-'ok' arms are loaded from their checkpoint, and any "
+            "unfinished arm resumes mid-year via the runner's own "
+            "per-year result cache at --cache-root."
+        ),
+    )
     args = p.parse_args(argv)
 
     out_dir = REPO / args.out if not Path(args.out).is_absolute() else Path(args.out)
     out_dir.mkdir(parents=True, exist_ok=True)
     cache_root = args.cache_root or str(out_dir / "_foresight_ab_cache")
+    partial_dir = out_dir / PARTIAL_DIRNAME
+    if args.fresh and partial_dir.exists():
+        shutil.rmtree(partial_dir)
 
     arms = {k: v for k, v in ARMS.items() if not args.only or k in args.only}
     specs = [
@@ -392,20 +451,40 @@ def main(argv: list[str] | None = None) -> None:
         for growth in args.growth
         for arm, ov in arms.items()
     ]
-    logger.info("foresight A/B: %d runs, %d workers", len(specs), args.workers)
+
+    results: dict[str, ArmResult] = {}
+    pending_specs: list[ArmSpec] = []
+    for s in specs:
+        rid = f"{s.arm}:{s.growth}"
+        cached = _load_partial(out_dir, s.arm, s.growth)
+        if cached is not None and cached.status == "ok":
+            logger.info("%s -> resumed from checkpoint (skipping re-run)", rid)
+            results[rid] = cached
+        else:
+            pending_specs.append(s)
+    logger.info(
+        "foresight A/B: %d runs total, %d resumed, %d to run, %d workers",
+        len(specs),
+        len(specs) - len(pending_specs),
+        len(pending_specs),
+        args.workers,
+    )
 
     t0 = time.perf_counter()
-    results: dict[str, ArmResult] = {}
-    with ProcessPoolExecutor(
-        max_workers=max(1, args.workers), max_tasks_per_child=1
-    ) as pool:
-        futures = {
-            pool.submit(evaluate_arm, asdict(s)): f"{s.arm}:{s.growth}" for s in specs
-        }
-        for fut in as_completed(futures):
-            rid = futures[fut]
-            results[rid] = ArmResult(**fut.result())
-            logger.info("%s -> %s", rid, results[rid].status)
+    if pending_specs:
+        with ProcessPoolExecutor(
+            max_workers=max(1, args.workers), max_tasks_per_child=1
+        ) as pool:
+            futures = {
+                pool.submit(evaluate_arm, asdict(s)): f"{s.arm}:{s.growth}"
+                for s in pending_specs
+            }
+            for fut in as_completed(futures):
+                rid = futures[fut]
+                result = ArmResult(**fut.result())
+                results[rid] = result
+                _save_partial(out_dir, result)
+                logger.info("%s -> %s (checkpointed)", rid, result.status)
     elapsed = time.perf_counter() - t0
 
     decisions = {g: decide(results, g) for g in args.growth}
