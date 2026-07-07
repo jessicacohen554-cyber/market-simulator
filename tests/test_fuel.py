@@ -1638,6 +1638,50 @@ def test_nyiso_downstate_ct_gas_basis_lifts_only_downstate_peakers():
     assert on[nyc, 5] == 3.0
 
 
+def test_nyiso_downstate_ct_gas_daily_per_zone():
+    """The daily re-grounding sets each downstate CT peaker to its zone's index.
+
+    NYC peakers take the KEDNY (SC-22) delivered index, Long Island peakers the
+    KEDLI (SC-19) one — different per-zone levels — while upstate CT and the
+    downstate CC are untouched. Uses the committed 2024 raw series via the
+    reader's raw fallback.
+    """
+    from market_sim.data.fuel import (
+        _downstate_delivered_gas_hourly_by_zone,
+        apply_nyiso_downstate_ct_gas_daily,
+    )
+
+    hours = 8760
+    fleet = _nyiso_ct_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.0)
+    config = ScenarioConfig(iso="NYISO", hours=hours)
+
+    off = base.copy()
+    apply_nyiso_downstate_ct_gas_daily(off, fleet, config, 2024)
+    np.testing.assert_array_equal(off, base)  # flag off -> no-op
+
+    by_zone = _downstate_delivered_gas_hourly_by_zone("NYISO", 2024, hours)
+    assert by_zone is not None and {"NYC", "Long_Island"} <= set(by_zone)
+
+    on = base.copy()
+    apply_nyiso_downstate_ct_gas_daily(
+        on, fleet, config.with_overrides(nyiso_downstate_ct_gas_daily=True), 2024
+    )
+    nyc = fleet.unit_ids.index("CT_NYC")
+    li = fleet.unit_ids.index("CT_LI")
+    up = fleet.unit_ids.index("CT_UP")
+    cc = fleet.unit_ids.index("CC_NYC")
+    # Each downstate peaker is SET to its own zone's measured delivered index
+    # (all >> the gas-price floor, so the floor is a no-op here).
+    np.testing.assert_allclose(on[nyc], by_zone["NYC"])
+    np.testing.assert_allclose(on[li], by_zone["Long_Island"])
+    # Per-zone: NYC (KEDNY transport) is dearer than Long Island (KEDLI).
+    assert on[nyc].mean() > on[li].mean()
+    # Upstate CT peaker and downstate CC untouched.
+    np.testing.assert_array_equal(on[up], base[up])
+    np.testing.assert_array_equal(on[cc], base[cc])
+
+
 def test_nyiso_downstate_ct_gas_basis_skips_other_isos():
     """A non-NYISO ISO is untouched even with the flag set."""
     hours = 8760
