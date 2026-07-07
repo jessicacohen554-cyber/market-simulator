@@ -169,3 +169,23 @@ C-1 ledger (#1347) and the G-20e scarcity boundary). If coal's remaining
 over-run after the import fix is the sigmoids' cheap-gas-keyed discounts,
 that stays an OPEN root-cause on #1347 — the sigmoids re-derive only on a
 source-data change (rule 23), never against this residual.
+
+**Observed outcome (solved 2026-07-07).** The interchange structure
+restores as designed — net interchange +35.2 / +19.6 / +13.2 TWh vs actual
++37.9 / +23.1 / +19.0 (miso-45: +35.1 / +15.5 / +3.4); 2025 PJM-seam
+imports 1.4 → 16.7 TWh, South exports −5.7/−8.4 restored — but the
+displaced energy came off **gas, not coal** (2025: CC −4.3, CT −1.9,
+ST_GAS −0.6 vs PRB −1.3, BIT −0.8 TWh): the model's PRB offers sit below
+even the $21.82 base import rung, so no import can undercut them. C2-2025
+gas worsens (−10.8 → −14.1%), coal barely improves (+16.8 → +15.7%), C3a
+−10.5 → −11.8% (the added mid-priced supply lowers the marginal price),
+C3b PASS → commercial-band caveat, and 2023 COAL_PRB (+7.4 baseline
+overrun) drifts +0.9 TWh across the C1 band edge (+8.34, a new marginal C1
+FAIL). Per rule 14 this is the expected signature of removing a
+compensating error: the starved seam was hiding a domestic supply-side
+miscalibration, and with measured flows restored the residual re-attributes
+cleanly to the **coal offer level in dear-gas years** — the coal-sigmoid
+C-1 ledgered DOF (#1347) — plus the still-0h scarcity tail (G-20e,
+data-blocked). The sigmoids are NOT re-fit against this residual (rule 23);
+#1347 records the re-scored miss. The ladder stays regardless of the fit
+movement (rule 14: never revert accurate data because the fit moved).
