@@ -1615,6 +1615,8 @@ def _build_reserve_rows_pergen(
     storage_zone_idx: np.ndarray | None = None,
     storage_power_cap: np.ndarray | None = None,
     storage_duration_h: np.ndarray | None = None,
+    pergen_col_pool: np.ndarray | None = None,
+    balance_col_mask: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the PER-GENERATOR energy+reserve co-optimization rows.
 
@@ -1697,6 +1699,19 @@ def _build_reserve_rows_pergen(
             pool (CEMS-measured, reserve_config._posture_pool_params).
         pergen_ramp10: the ``(n_r,)`` or ``(n_r, T)`` deliverable-ramp caps
             (required with ``posture_pools`` for the ramp-gate ρ).
+        pergen_col_pool: ``(n_r,)`` int — the joint-headroom POOL of each R
+            column (PJM ``pjm_reserve_pergen_sync`` product split: a pool's
+            synchronized and non-synchronized product columns share ONE joint
+            P+R row and its member-capacity RHS, so a reserve award of either
+            product consumes the same iron). When given, ``pergen_col`` maps
+            members to POOLS (``0..n_pools-1``) rather than to R columns.
+            ``None`` is the identity (columns ≡ pools) — byte-identical to
+            the pre-split layout. Mutually exclusive with ``posture_pools``
+            (the posture U re-anchor indexes pools 1:1 with R columns).
+        balance_col_mask: ``(n_families, n_r)`` bool — each family's complete
+            R-column selection (zone ∧ product), replacing the zone-only
+            selection derived from ``balance_zone_mask``. ``None`` keeps the
+            zone-derived selection (byte-identical).
 
     Returns:
         ``(block, row_lower, row_upper)``: joint-headroom rows (``<=``,
@@ -1720,11 +1735,40 @@ def _build_reserve_rows_pergen(
             f"pergen_col shape {col.shape} != pergen_gen_idx shape {gidx.shape}"
         )
     n_r = layout.n_reserve
-    if col.size == 0 or int(col.max()) + 1 != n_r or np.unique(col).size != n_r:
-        raise ValueError(
-            "pergen_col must cover every R column 0..n_reserve-1 "
-            f"(n_reserve={n_r}, columns covered={np.unique(col).size})"
-        )
+    # Product split (pergen_col_pool): pergen_col maps members to POOLS and
+    # col_pool maps each of the n_r R columns to its pool; identity when the
+    # split is absent (pools ≡ columns, the pre-split layout, byte-identical).
+    if pergen_col_pool is not None:
+        if posture_pools is not None:
+            raise ValueError(
+                "pergen_col_pool (the product-split pergen layout) is not "
+                "composable with posture_pools — the posture U re-anchor "
+                "indexes pools 1:1 with R columns"
+            )
+        col_pool = np.asarray(pergen_col_pool, dtype=int)
+        if col_pool.shape != (n_r,):
+            raise ValueError(f"pergen_col_pool shape {col_pool.shape} != ({n_r},)")
+        n_pools = int(col_pool.max()) + 1 if col_pool.size else 0
+        if np.unique(col_pool).size != n_pools:
+            raise ValueError("pergen_col_pool must cover every pool 0..n_pools-1")
+        if (
+            col.size == 0
+            or int(col.max()) + 1 != n_pools
+            or (np.unique(col).size != n_pools)
+        ):
+            raise ValueError(
+                "with pergen_col_pool, pergen_col must cover every pool "
+                f"0..n_pools-1 (n_pools={n_pools}, "
+                f"pools covered={np.unique(col).size})"
+            )
+    else:
+        col_pool = np.arange(n_r, dtype=int)
+        n_pools = n_r
+        if col.size == 0 or int(col.max()) + 1 != n_r or np.unique(col).size != n_r:
+            raise ValueError(
+                "pergen_col must cover every R column 0..n_reserve-1 "
+                f"(n_reserve={n_r}, columns covered={np.unique(col).size})"
+            )
     zone_idx = np.asarray(fleet.zone_idx, dtype=int)
     # Duration-gated storage reserve (issue #1492): active iff the layout
     # allocated RS columns (it already encoded reserve_storage + durations +
@@ -1749,25 +1793,28 @@ def _build_reserve_rows_pergen(
     # per-column zone below.
     member_map = sp.csr_matrix(
         (np.ones(gidx.size), (col, np.arange(gidx.size))),
-        shape=(n_r, gidx.size),
+        shape=(n_pools, gidx.size),
     )
-    # All of a column's members must share a zone (a plant is in one zone) —
-    # the balance families select R columns by zone.
-    r_zone = np.zeros(n_r, dtype=int)
-    r_zone[col] = zone_idx[gidx]
-    if np.any(member_map @ (zone_idx[gidx] != r_zone[col]).astype(float) > 0):
+    # All of a pool's members must share a zone (a plant is in one zone) —
+    # the balance families select R columns by zone. Column zone = its pool's
+    # zone (identity map without the product split).
+    pool_zone = np.zeros(n_pools, dtype=int)
+    pool_zone[col] = zone_idx[gidx]
+    if np.any(member_map @ (zone_idx[gidx] != pool_zone[col]).astype(float) > 0):
         raise ValueError("pergen_col groups generators from different zones")
+    r_zone = pool_zone[col_pool]
 
-    # --- Joint-headroom per-hour block, (n_r, vph): row r reads
-    # sum_{members j} P[g_j] + R[r] <= sum_j cap[g_j]. A POSTURED pool's row
+    # --- Joint-headroom per-hour block, (n_pools, vph): pool row p reads
+    # sum_{members j} P[g_j] + sum_{columns r of p} R[r] <= sum_j cap[g_j]
+    # (one R term per pool without the product split). A POSTURED pool's row
     # is re-anchored to its online capacity instead — sum P + R − U <= 0 —
     # so reserve can only come from capacity the LP keeps online; the member
     # capacity sum moves to U's upper bound (build_variable_bounds).
     q = 0 if posture_pools is None else int(np.asarray(posture_pools).size)
-    jrows = [col, np.arange(n_r)]
+    jrows = [col, col_pool]
     jcols = [layout._p_off + gidx, layout._reserve_off + np.arange(n_r)]
     jvals = [np.ones(gidx.size), np.ones(n_r)]
-    # Summed member capacity per R-column, (n_r, T). Compute pmax*availability
+    # Summed member capacity per pool, (n_pools, T). Compute pmax*availability
     # ONLY on the reserve members instead of materializing the full (n_gen, T)
     # fleet ``cap`` and fancy-indexing it: byte-identical operands (member i is
     # ``pmax[gidx[i]] * availability[gidx[i]]`` either way), but the dense
@@ -1775,7 +1822,7 @@ def _build_reserve_rows_pergen(
     # (n_members, T) index copy, and it is released before the large ``joint``
     # kron allocates — driver (a) of the reserve-column-construction peak (G-40).
     cap_members = fleet.pmax[gidx][:, np.newaxis] * fleet.availability[gidx]
-    pool_cap = member_map @ cap_members  # (n_r, T) member caps summed per pool
+    pool_cap = member_map @ cap_members  # (n_pools, T) member caps summed per pool
     del cap_members
     joint_rhs = pool_cap  # only copied below when a postured pool mutates it
     if q:
@@ -1792,13 +1839,13 @@ def _build_reserve_rows_pergen(
             np.concatenate(jvals),
             (np.concatenate(jrows), np.concatenate(jcols)),
         ),
-        shape=(n_r, layout.vars_per_hour),
+        shape=(n_pools, layout.vars_per_hour),
     ).tocsr()
     joint = sp.kron(sp.eye(T, format="csr"), joint_per_hour, format="csr")
-    # RHS hour-major (row t*n_r + r): member caps summed per column, (n_r, T);
-    # 0 for postured pools (the capacity bound lives on U).
+    # RHS hour-major (row t*n_pools + p): member caps summed per pool,
+    # (n_pools, T); 0 for postured pools (the capacity bound lives on U).
     joint_upper = joint_rhs.T.ravel()
-    joint_lower = np.full(n_r * T, -np.inf)
+    joint_lower = np.full(n_pools * T, -np.inf)
 
     # --- Commitment-posture families (between joint and balance so the
     # balance rows stay the final n_families*T — the dual-extraction anchor).
@@ -1922,11 +1969,20 @@ def _build_reserve_rows_pergen(
         req2d = np.asarray(reserve_requirement, dtype=float).reshape(zmask.shape[0], T)
         ordc_counts = np.asarray(balance_ordc_counts, dtype=int)
     n_fam = zmask.shape[0]
+    # Per-family R-column selection: the product split supplies each family's
+    # complete (zone ∧ product) mask; otherwise columns are selected by zone.
+    cmask = None
+    if balance_col_mask is not None:
+        cmask = np.asarray(balance_col_mask, dtype=bool)
+        if cmask.shape != (n_fam, n_r):
+            raise ValueError(
+                f"balance_col_mask shape {cmask.shape} != ({n_fam}, {n_r})"
+            )
     brows: list[np.ndarray] = []
     bcols: list[np.ndarray] = []
     bvals: list[np.ndarray] = []
     for f in range(n_fam):
-        sel = np.flatnonzero(zmask[f][r_zone])
+        sel = np.flatnonzero(cmask[f] if cmask is not None else zmask[f][r_zone])
         brows.append(np.full(sel.size, f))
         bcols.append(layout._reserve_off + sel)
         bvals.append(np.ones(sel.size))
@@ -2224,6 +2280,8 @@ def build_constraints(
     reserve_posture_pools: np.ndarray | None = None,
     reserve_posture_mlf: np.ndarray | None = None,
     reserve_pergen_ramp10: np.ndarray | None = None,
+    reserve_pergen_col_pool: np.ndarray | None = None,
+    reserve_balance_col_mask: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -2639,6 +2697,8 @@ def build_constraints(
                 storage_zone_idx=storage_zone_idx,
                 storage_power_cap=reserve_storage_power_cap,
                 storage_duration_h=reserve_storage_duration_h,
+                pergen_col_pool=reserve_pergen_col_pool,
+                balance_col_mask=reserve_balance_col_mask,
             )
             blocks.append(res_block)
             del res_block
@@ -3143,6 +3203,8 @@ class DispatchModel:
         reserve_posture_pools: np.ndarray | None = None,
         reserve_posture_mlf: np.ndarray | None = None,
         reserve_posture_startup: np.ndarray | None = None,
+        reserve_pergen_col_pool: np.ndarray | None = None,
+        reserve_balance_col_mask: np.ndarray | None = None,
         link_bidirectional: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
@@ -3197,17 +3259,29 @@ class DispatchModel:
         n_reserve = (
             0
             if not coopt
-            # R-column count: grouped members share a column
-            # (reserve_pergen_col maps member -> column), 1:1 otherwise.
+            # R-column count: the product split (reserve_pergen_col_pool)
+            # carries one entry per R column; else grouped members share a
+            # column (reserve_pergen_col maps member -> column), 1:1 otherwise.
             else (
                 (
-                    int(np.asarray(reserve_pergen_col).max()) + 1
-                    if reserve_pergen_col is not None
-                    else int(np.asarray(reserve_pergen_gen_idx).size)
+                    int(np.asarray(reserve_pergen_col_pool).size)
+                    if reserve_pergen_col_pool is not None
+                    else (
+                        int(np.asarray(reserve_pergen_col).max()) + 1
+                        if reserve_pergen_col is not None
+                        else int(np.asarray(reserve_pergen_gen_idx).size)
+                    )
                 )
                 if pergen
                 else n_reserve_classes * n_zones
             )
+        )
+        # Joint-headroom pool count (pergen): the product split maps several
+        # R columns onto one pool's joint P+R row; identity otherwise.
+        n_pergen_pools = (
+            (int(np.asarray(reserve_pergen_col_pool).max()) + 1)
+            if (pergen and reserve_pergen_col_pool is not None)
+            else n_reserve
         )
         n_ordc_steps = 0 if not coopt or ordc_penalties is None else len(ordc_penalties)
         # Reserve families: one system-wide balance row (ERCOT/PJM) by default,
@@ -3289,6 +3363,12 @@ class DispatchModel:
         # up when it re-anchors to U.
         posture_ucap = None
         if n_posture:
+            if reserve_pergen_col_pool is not None:
+                raise ValueError(
+                    "reserve_posture_pools is not composable with "
+                    "reserve_pergen_col_pool (the product-split pergen layout) "
+                    "— the posture U re-anchor indexes pools 1:1 with R columns"
+                )
             ppools = np.asarray(reserve_posture_pools, dtype=int)
             gidx_p = np.asarray(reserve_pergen_gen_idx, dtype=int)
             col_p = (
@@ -3353,6 +3433,8 @@ class DispatchModel:
             reserve_posture_pools=reserve_posture_pools,
             reserve_posture_mlf=reserve_posture_mlf,
             reserve_pergen_ramp10=(reserve_pergen_ramp10 if n_posture else None),
+            reserve_pergen_col_pool=reserve_pergen_col_pool,
+            reserve_balance_col_mask=reserve_balance_col_mask,
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -3532,8 +3614,13 @@ class DispatchModel:
                     np.count_nonzero(np.asarray(reserve_posture_mlf, dtype=float) > 0.0)
                 )
                 n_posture_rows = (q_mlf + 2 * n_posture) * T
+            # Joint-headroom rows are per POOL (the product split maps several
+            # R columns onto one pool row; identity otherwise).
             self._n_reserve_rows = (
-                n_reserve * T + n_posture_rows + n_storage_gate_rows + n_families * T
+                n_pergen_pools * T
+                + n_posture_rows
+                + n_storage_gate_rows
+                + n_families * T
             )
         else:
             self._n_reserve_rows = (
@@ -3558,8 +3645,15 @@ class DispatchModel:
                 if reserve_pergen_col is None
                 else np.asarray(reserve_pergen_col, dtype=int)
             )
-            r_zone = np.zeros(n_reserve, dtype=int)
-            r_zone[col] = np.asarray(fleet.zone_idx, dtype=int)[gidx]
+            # Column zone: with the product split, pergen_col maps members to
+            # POOLS and each R column inherits its pool's zone; identity map
+            # (columns ≡ pools) otherwise.
+            pool_zone = np.zeros(n_pergen_pools, dtype=int)
+            pool_zone[col] = np.asarray(fleet.zone_idx, dtype=int)[gidx]
+            if reserve_pergen_col_pool is not None:
+                r_zone = pool_zone[np.asarray(reserve_pergen_col_pool, dtype=int)]
+            else:
+                r_zone = pool_zone
             self._pergen_zone_map = sp.csr_matrix(
                 (np.ones(n_reserve), (r_zone, np.arange(n_reserve))),
                 shape=(n_zones, n_reserve),
@@ -4063,6 +4157,8 @@ def solve_dispatch(
     reserve_posture_pools: np.ndarray | None = None,
     reserve_posture_mlf: np.ndarray | None = None,
     reserve_posture_startup: np.ndarray | None = None,
+    reserve_pergen_col_pool: np.ndarray | None = None,
+    reserve_balance_col_mask: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
@@ -4216,6 +4312,8 @@ def solve_dispatch(
         reserve_posture_pools=reserve_posture_pools,
         reserve_posture_mlf=reserve_posture_mlf,
         reserve_posture_startup=reserve_posture_startup,
+        reserve_pergen_col_pool=reserve_pergen_col_pool,
+        reserve_balance_col_mask=reserve_balance_col_mask,
         link_bidirectional=link_bidirectional,
         T=T,
     )
