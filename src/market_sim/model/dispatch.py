@@ -2590,6 +2590,8 @@ def build_variable_bounds(
     reserve_pergen_ramp10: np.ndarray | None = None,
     ttc_import: np.ndarray | None = None,
     posture_ucap: np.ndarray | None = None,
+    wind_curtail_share: np.ndarray | None = None,
+    solar_curtail_share: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
@@ -2648,17 +2650,24 @@ def build_variable_bounds(
         fleet.pmax[:, np.newaxis] * fleet.availability
     ).T
 
-    # Wind: 0 <= W <= wind_cf * wind_cap.
-    col_upper[:, layout._w_off : layout._s_off] = (
-        np.asarray(wind_cap, dtype=float)[:, np.newaxis]
-        * np.asarray(wind_cf, dtype=float)
-    ).T
+    # Wind: 0 <= W <= wind_cf * wind_cap * curtail_share. The optional
+    # (n_zones, T) curtail_share in (0,1] is the ERCOT West Texas Export corridor
+    # congestion ceiling (market_sim.data.curtailment_share); 1.0 / None elsewhere
+    # leaves the uncurtailed potential bound unchanged.
+    wind_upper = np.asarray(wind_cap, dtype=float)[:, np.newaxis] * np.asarray(
+        wind_cf, dtype=float
+    )
+    if wind_curtail_share is not None:
+        wind_upper = wind_upper * np.asarray(wind_curtail_share, dtype=float)
+    col_upper[:, layout._w_off : layout._s_off] = wind_upper.T
 
-    # Solar: 0 <= S <= solar_cf * solar_cap.
-    col_upper[:, layout._s_off : layout._chg_off] = (
-        np.asarray(solar_cap, dtype=float)[:, np.newaxis]
-        * np.asarray(solar_cf, dtype=float)
-    ).T
+    # Solar: 0 <= S <= solar_cf * solar_cap * curtail_share.
+    solar_upper = np.asarray(solar_cap, dtype=float)[:, np.newaxis] * np.asarray(
+        solar_cf, dtype=float
+    )
+    if solar_curtail_share is not None:
+        solar_upper = solar_upper * np.asarray(solar_curtail_share, dtype=float)
+    col_upper[:, layout._s_off : layout._chg_off] = solar_upper.T
 
     # Storage: 0 <= Chg, Dis <= power_cap; 0 <= SOC <= energy_cap. Caps are
     # static ``(n_storage,)`` arrays, or hour-varying ``(n_storage, T)`` —
@@ -2960,6 +2969,8 @@ class DispatchModel:
         incidence: "np.ndarray | sp.spmatrix | None" = None,
         ttc: np.ndarray | None = None,
         ttc_import: np.ndarray | None = None,
+        wind_curtail_share: np.ndarray | None = None,
+        solar_curtail_share: np.ndarray | None = None,
         storage_power_cap: np.ndarray | None = None,
         storage_energy_cap: np.ndarray | None = None,
         storage_zone_idx: np.ndarray | None = None,
@@ -3240,6 +3251,8 @@ class DispatchModel:
             reserve_pergen_ramp10=reserve_pergen_ramp10,
             ttc_import=ttc_import,
             posture_ucap=posture_ucap,
+            wind_curtail_share=wind_curtail_share,
+            solar_curtail_share=solar_curtail_share,
         )
 
         _mem_debug = os.environ.get("MARKET_SIM_MEM_DEBUG") == "1"
@@ -3868,6 +3881,8 @@ def solve_dispatch(
     incidence: np.ndarray | sp.spmatrix | None = None,
     ttc: np.ndarray | None = None,
     ttc_import: np.ndarray | None = None,
+    wind_curtail_share: np.ndarray | None = None,
+    solar_curtail_share: np.ndarray | None = None,
     storage_power_cap: np.ndarray | None = None,
     storage_energy_cap: np.ndarray | None = None,
     storage_zone_idx: np.ndarray | None = None,
@@ -4021,6 +4036,8 @@ def solve_dispatch(
         incidence=incidence,
         ttc=ttc,
         ttc_import=ttc_import,
+        wind_curtail_share=wind_curtail_share,
+        solar_curtail_share=solar_curtail_share,
         storage_power_cap=storage_power_cap,
         storage_energy_cap=storage_energy_cap,
         storage_zone_idx=storage_zone_idx,
