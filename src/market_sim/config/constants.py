@@ -209,7 +209,24 @@ CT_STARTUP_PARAMS: list[tuple[float, float]] = [
 # every non-ERCOT keeper's `cc_peaking_per_plant=True` drives only the
 # CAMPD-measured `fleet.thermal_tranche_peaking` path — this dict's four
 # ERCOT-specific plant codes never matched any other ISO's fleet. No keeper
-# changes behavior from this deletion.
+# changes behavior from this deletion. Follow-up correction (same sweep): the
+# ERCOT DEFAULT builder (pipeline/backcast_config.py) previously left
+# `cc_duct_peaking` PJM-only and `cc_peaking_per_plant` unconditionally True
+# for every ISO — deleting this dict without also fixing that default would
+# have left ERCOT with NO per-plant peaking mechanism at all (silently
+# regressing to the flat class-wide `pct_peaking`) unless a run happened to
+# pass the existing `--cc-duct-peaking` CLI flag by hand, while simultaneously
+# breaking every non-ERCOT ISO's default (`cc_peaking_per_plant` drives their
+# real, already-keeper-validated CAMPD mechanism). Fixed: ERCOT's default is
+# now `cc_duct_peaking=True` + `cc_peaking_per_plant=False`, matching every
+# current ERCOT keeper exactly and generalizing the EIA-860 duct-burner
+# mechanism to every ERCOT CC plant (not four named ones); CAISO/PJM/NYISO/
+# NEISO/MISO defaults are restored to `cc_peaking_per_plant=True` unchanged.
+# Extending `cc_duct_peaking` to those five ISOs by default is a distinct,
+# real follow-up (EIA-860 would supersede their measured CAMPD mechanism for
+# every EIA-860-covered plant) that needs its own per-ISO calibration probe +
+# leave-one-year-out validation (rule 22) before promotion — not a silent
+# default flip.
 
 # DELETED 2026-07 (rule 26, G-26/C-8/issue #1336): COAL_TRANCHES was a
 # documentation-only mirror of the coal take-or-pay supply-curve tranches —
