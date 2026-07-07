@@ -99,6 +99,52 @@ immaterial at <0.3 % of ISO load → reported-not-gated, rule 20 v2.1). Holdouts
 fully quarantined (rule 22). `keepers.json` NEISO → the new id; `status.js` rebuilt
 (NEISO CALIBRATED-WITH-CAVEATS); dashboard retention pruned to top-15 (dropped
 `neiso-47-fast-start`, `neiso-statmode-d-7`; bundles kept). G-24 struck.
+### 2026-07-07 — NYISO — G-13 RESOLVED: downstate CT offer re-grounded on correct-rate-class per-zone LDC transport gas (`nyiso-55-ldc-transport` + ablation twin; CANDIDATE, metrics wash, keeper stays nyiso-53 pending owner)
+
+**Data ask fulfilled from free web sources (Ask-A / G-13).** The downstate LM6000
+peakers (Equus→KEDNY, Edgewood/Glenwood Landing→KEDLI) are non-firm
+**transportation** customers (KEDLI PSC No. 1 SC-7→SC-19; KEDNY SC-22), not
+firm-sales customers — so their delivered fuel is the Transco Z6 NY daily
+commodity (already in the model) **plus the LDC monthly non-firm transportation
+delivery rate**, which both LDCs publish monthly in their *Statement of Non-Firm
+Demand Response Sales and Transportation Rates* (`statnfdr` PDFs). Crawled the
+National Grid tariff archive, transcribed the "Total Monthly Tier 1
+Transportation Service" rate for all 36 months × 2 LDCs
+(`scripts/fetch_nyiso_downstate_ldc_transport.py`, committed CSV + SOURCES). What
+could NOT be free-sourced and was not needed: Con Edison 2023–24 GCF (purged from
+coned.com) and paywalled Platts/NGI daily citygate. Levels: KEDNY (NYC)
+~$2.48–3.45/MMBtu, KEDLI (Long Island) ~$1.66–2.89/MMBtu, rate-case-stepped.
+
+**Contract + regrounding.** Rebuilt the `nyiso-downstate-gas` clean datatype as
+schema **v2, per zone**: `delivered_gas[zone] = transco_z6_ny_daily +
+ldc_transport_adder[zone]_month` (KEDNY→NYC, KEDLI→Long_Island). The fuel seam
+`apply_nyiso_downstate_ct_gas_daily` now SETs each downstate CT_PEAKER unit to its
+own zone's index (105 units, range $2.45–100.9/MMBtu incl. Jan-2025 arctic hub
+spikes, bounded by the dual-fuel oil-parity cap). Supersedes both the monthly
+statewide-citygate adder and nyiso-54's statewide-daily construction with the
+correct rate class at the correct per-zone boundary (rules #11/#12/#13), zero new
+free parameters. Schema-first, `write_clean`/`read_clean` seam, per-ISO registry,
+tests green (incl. a new per-zone fuel-seam test); also fixed a pre-existing stale
+`ALL_DATATYPES` list.
+
+**Result (vs nyiso-53 keeper).** C1 fuel-mix PASS **14/14** classes (the
+CT_PEAKER over-run is NOT reintroduced), C2 PASS, C3c price-tail PASS, C5
+dispatch-corr PASS, C7 shape PASS. C3a/C3b/C8 unchanged from the keeper (which
+ledgers these same values as accepted #1344/Ask-B caveats). CT_PEAKER D-2 forced
+share ~88% (2023), comparable to nyiso-53's 92.7%. A **metrics wash** — the
+correct gas boundary cannot move the >$300 tail or the mean-price level because
+the peakers the real market commits for reserve sit idle in the pure-ED LP
+(#1344, data-blocked on the Ask-B condition-varying reserve requirement). This is
+the rule-#1 case: a structurally-faithful mechanism kept because it is faithful,
+not because it moved the residual. The offer level is no longer the open root
+cause; the residual is reattributed to #1344/Ask-B.
+
+**Disposition.** Registered `2026-07-07-nyiso-55-ldc-transport` + zero-forcing
+ablation twin `-ablation`. NOT-YET is solely the missing governance attestation (a
+promotion step), not a metrics regression. nyiso-55 dominates nyiso-53 on
+structural faithfulness at equal metrics (rule #1), so it is the natural keeper —
+but the keeper swap carries nyiso-53's owner-HELD C8 breach, so promotion is left
+as an owner decision; the keeper stays `2026-07-06-nyiso-53-li-tsl` for now.
 
 ### 2026-07-06 — ERCOT — measured GTC transmission-limit probe of ercot38 (`ercot39-gtc-measured`; NEGATIVE result, no keeper swap)
 
