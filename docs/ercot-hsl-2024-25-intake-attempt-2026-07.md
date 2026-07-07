@@ -1,5 +1,18 @@
 # ERCOT NP6 HSL 2024/2025 intake — COMPLETE (2026-07-06)
 
+**Follow-up 2026-07-07 (clock-placement bug fix, second defect).** The G-22
+demand-side round found the parquets built below were placed on the model
+clock one hour late for the entire DST window: NP4-732/737 stamps are Central
+*Prevailing* Time and `_parse_report` treated them as the model's fixed CST
+clock (vs EIA-930: Jan best lag 0, Jul best lag +1, r = 1.0000 at both — the
+same series, shifted), handing the dispatch 3–5 GW of phantom post-sunset
+solar potential in the scarcity window. Fixed with a CPT→CST conversion
+(`_prevailing_to_standard`, DSTFLAG-disambiguated fall-back repeat), both
+years rebuilt (annual totals unchanged — this was a shape defect), regression
+tests added. Full evidence + the sibling intakes carrying the same defect
+class: `docs/handoffs/ercot-g22-demand-side-design-2026-07.md` §6–7. The 2023
+UMass series (positional aggregation) was never affected.
+
 **Follow-up 2026-07-06 (bug fix on the committed 2024/2025 parquets).** A
 follow-up session found the "final" 2024/2025 parquets below (and their
 +3.4%/+21.9% 2024 EIA-923 deltas) were built from ERCOT's own corrupted
