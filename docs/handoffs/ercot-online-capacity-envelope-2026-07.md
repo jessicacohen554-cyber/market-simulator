@@ -8,6 +8,13 @@ Keeper stays `ercot34-stage4-overlay-off`; `ercot_online_capacity_envelope`
 stays default-off. G-22 **not struck** — structural conclusion #2 (online-
 capability structure) is now tested and over-fires; the diagnosis and forward
 path are below.
+**2026-07-07 (later, second session):** the §5 forward path was EXECUTED —
+the extreme-peak-resolved variant (`ercot_online_capacity_envelope_extreme`,
+ercot43 A/B on the ercot42 keeper recipe) — and is **also REJECTED**; §7
+records it. The §5 caveat is CONFIRMED: with the extreme tail reproduced on
+the measured data, the over-fire persists through the ORDC-span-vs-energy
+competition. The envelope family (base + extreme) is now exhausted as a G-22
+remedy; keeper stays `ercot42-wtx-curtailment-driver`.
 **Reads first:** `docs/FINDING-ercot-priceshape-2026-07.md` §3 / structural
 conclusion #2 (the ~3.2 GW online-capability wedge this builds), the ercot34
 calibration-log entry (the G-22 fold), `docs/handoffs/ercot-g22-offer-surface-
@@ -182,3 +189,143 @@ Two coupled contributors:
 * `tests/test_ercot_online_capacity_envelope.py` — trivial-case (flag-off no-op,
   condition-responsive prices-on-the-energy-dual, tighter-prices-higher) +
   builder (gated, all-tier-only, rises-with-net-load).
+
+---
+
+## 7. The §5 forward path EXECUTED — extreme-peak-resolved variant (ercot43) — REJECTED PROBE
+
+**Date:** 2026-07-07 (second session). **Branch:**
+`claude/ercot-g22-extreme-peak-w2d-t6lshe`. Registered:
+`2026-07-07-ercot43-extremeenv-off` (control = ercot42 keeper recipe replayed
+at HEAD; doubles as the zero-forcing ablation twin) /
+`2026-07-07-ercot43-extremeenv-on-probe` (treatment = + single delta
+`ercot_online_capacity_envelope_extreme=True`). Keeper `ercot42` untouched.
+
+### 7.1 Mechanism (built, default-off, mutually exclusive with the base flag)
+
+Identical LP row; the driver resolution changes exactly as §5 filed, plus the
+level completion §5's identification demanded:
+
+1. **Shape** — `ERCOT_ONLINE_CAP_SHARE_EXTREME` resolves the committed on-line
+   HSL fraction on **14 net-load bins** (deciles 0–8 + five 2-pp sub-bins of
+   the top decile, `scarcity.ercot_online_cap_extreme_bin`). The measured CAMPD
+   commitment saturation rises through the sub-bins (summer CT_PEAKER
+   0.40→0.61, ST_GAS 0.83→0.97) where the decile-9 median collapsed it.
+   Sub-bin cells with < 24 pooled hours inherit the parent decile-9 median.
+2. **Level** — `ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME`: the scalar
+   deliverability becomes a **per-bin profile** (same ratio-of-means
+   identification, resolved on the share's own axis), fit to the measured
+   thermal on-line HSL identity `CAMPD gross + (RTOLCAP − storage AS − LR
+   credit)` — the LR netting is a target correction vs the base fit (the
+   keeper LP credits the measured LR series against the requirement, so a
+   thermal cap keeping LR capability would double-count). Monotone-rising
+   1.05→1.10 through the binding bins — the measured capability margin
+   (non-CEMS units + telemetered HSL above the summer-derated nameplate)
+   that grows toward the extreme peak, which one scalar provably cannot span.
+
+**Identification gate — PASSED where ercot41's design could not**
+(`validate_ercot_online_capacity.py --extreme`): binding regime −0/+3/−2%
+(2023/24/25), pooled top-2% EXACT (10.19 vs 10.19 GW), coverage 2.15×.
+Recorded per-year extreme-tail ledger: **2023 −23% / 2024 −2% / 2025 +18%** —
+the cross-year capability spread at a fixed within-year rank (2023's scarcity
+summer mustered more absolute capability than 2025's milder tail), which a
+year-symmetric pooled coefficient cannot span without year-pinning (rule 13).
+
+### 7.2 A/B result — REJECTED, no retune (rules 1/11; §6.1 pre-committed rule)
+
+Both arms the ercot42 keeper recipe at HEAD, single delta = the extreme flag.
+The control reproduces the keeper's registered verdict exactly (C3a +8.9/+6.6
+caveat, C3b 0.256/0.252, C3c 103/25/1 vs DA 311/68/23) — the keeper-at-HEAD
+reproduction check. Demand-weighted settled price (LP dual + ORDC adder +
+RTORDPA overlay):
+
+| year | actual RT dw | off (control) | on (treatment) | h>$200 (off/on) | on-arm top-2% room+stor+LR vs meas RTOLCAP |
+|---|---|---|---|---|---|
+| 2023 | $48.36 | $56.67 | **$455.18** | 106 / 991 | 5.41 vs 7.89 GW (still collapsed) |
+| 2024 | $26.83 | $29.19 | **$47.71** | 27 / 55 | 9.65 vs 11.04 GW (−13%) |
+| 2025 | $32.49 | $33.99 | $34.04 (≈inert) | 2 / 2 | 15.26 vs 11.64 GW (slack → inert) |
+
+Official rubric v2.2 (`calibration_verdict.py`, energy-only LMP / DA-expressible
+C3c basis):
+
+| criterion | arm A (off = keeper@HEAD) | arm B (extreme envelope) |
+|---|---|---|
+| C3a mean LMP | CAVEAT commercial-band (+8.9% / +6.6% / +3.2%) | **FAIL** (2023 **+708%**, 2024 **+61.4%**) |
+| C3b shape NRMSE | FAIL 0.256 / 0.252 / 0.085 | FAIL **10.579** / **1.663** / 0.085 |
+| C3c tail (model vs DA actual) | FAIL 103/311 (0.33×), 25/68 (0.37×), 1/23 | FAIL 989/311 (**3.18×**), **53/68 (0.78×) PASSES** — RT companion 53/53 exact, 1/23 unchanged |
+| C1 / C2 / C4 / C5a / C5c | PASS / CAVEAT / PASS / PASS / PASS | identical — no volume/dispatch regression |
+
+The treatment over-fires 2023 even harder than ercot41's base envelope ($455
+vs $347 preview; C3a +708% vs +797%) and lifts 2024 (+61.4% official) — a
+current-design year — which under the §6.1 pre-committed rule is a rejection
+on its own. 2025 stays inert (slack envelope), exactly as the identification
+ledger predicted. **The C3c-2024 leg individually flips FAIL→PASS (0.37×→0.78×
+DA; the RT companion lands 53/53 exact)** — the mechanism produces the RIGHT
+tail-hour count in the year whose extreme-tail identification is right (−2%),
+at the wrong intensity. D-8 class volumes are neutral: CC_REGULAR 141.7→141.8,
+ST_GAS 14.9→14.8 TWh (2023); 2024/25 unchanged at 0.1 TWh grain — a pure price
+mechanism, like the base envelope.
+
+### 7.3 The failure signature (what the extreme resolution PROVES)
+
+* **The room collapse is no longer an identification artifact.** The envelope
+  is +3.0 GW looser than the base in 2023's top-2% (60.0 vs 57.0 GW) and
+  reproduces the pooled measured capability exactly. Loosening it released
+  ~+4.9 GW of previously-suppressed thermal dispatch in those hours (52.6 →
+  57.5 GW — the phantom-scarcity release working as designed), yet the room
+  still landed at 2.56 GW thermal (5.41 incl. stor+LR) vs measured 7.89 —
+  because with fixed demand the extra capability is consumed by energy until
+  the ORDC-span competition prices it.
+* **2023 fails on BREADTH, not depth**: >$200 hours spread nearly uniformly
+  across bins 8–13 (186/135/153/159/173/175 of ~175 h each — ~94% of the top
+  ~22% of the year) where reality priced 181 h concentrated in the extreme
+  tail. The raw energy dual itself carries it (mean $267, p99.5 $6,383): the
+  co-opt makes energy compete with the full ~10.7 GW ORDC total-reserve span
+  inside the envelope, while the real 2023 market repeatedly operated ~5 GW
+  below that span and the tariff curve priced it small ($1.84 mean RTORPA).
+* **2024 is structurally CORRECT and only hot on level**: 47 of its 52 >$200
+  hours sit in bin 13 (the top-2%) — the concentration reality shows — with
+  the level +78%. The mechanism's shape is right where the capability
+  identification is right (2024's extreme ledger: −2%).
+* **Recipe compounding (new vs ercot41):** on the ercot42 recipe the WTX
+  curtailment driver backfills curtailed West VRE with thermal in exactly the
+  congested extreme-peak hours, consuming ~all of the room the extreme
+  resolution restored (like-for-like 2023 room 4.63 GW incl. storage vs
+  ercot41's 4.4). Any envelope in this family binds harder the more thermal
+  the recipe dispatches — the two mechanisms compound in the tail.
+
+### 7.4 Structural conclusion for G-22 (the honest answer, sharpened)
+
+The §5 caveat is **confirmed as the root cause**: contributor (2), the
+ORDC-vs-energy competition, survives a fully-identified envelope. Both
+G-22 remedies are now exhausted across three probes — (a) the offer surface
+(ercot33/37, collapses offer heterogeneity), (b) the on-line-capacity envelope
+at base grain (ercot41, room collapse) AND at extreme-peak-resolved grain
+(ercot43, this section). No supply-side cap that reproduces the measured
+on-line capability can price the 2023 tail correctly while the co-opt demands
+energy + the full ORDC total-reserve span inside it: the remaining structural
+object is the **reserve-demand side** — how much of the ORDC span the
+scarcity-year market actually held as priced reserve (PRC ran ~5.7 GW where
+the span is ~10.7 GW) — i.e. the deployment/held-reserve representation, not
+offer heights and not on-line capability. Filed, not built (rule 1: the
+mechanism must be real market structure, and any such change re-opens the
+ORDC-family design that rule 26 froze; it needs its own owner-sanctioned
+design round).
+
+### 7.5 Files (delta vs §6)
+
+* `scripts/derive_ercot_rtolcap_forward.py` — `derive_online_capacity_extreme()`,
+  `--emit online-cap-extreme-{constant,report}`, `N_BIN_EXTREME`,
+  `MIN_CELL_HOURS_EXTREME`.
+* `src/market_sim/config/constants.py` — `ERCOT_ONLINE_CAP_SHARE_EXTREME`,
+  `ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME` (+ identification block comment).
+* `src/market_sim/config/scenarios.py` — `ercot_online_capacity_envelope_extreme`
+  (default-off, TIER_TAGS, `__post_init__` mutual exclusion with the base flag).
+* `src/market_sim/results/scarcity.py` — `ercot_online_cap_extreme_bin()` +
+  the extreme branch of `ercot_online_capacity_envelope_mw`.
+* `src/market_sim/config/reserve_config.py` — gate extended to either flag.
+* `scripts/validate_ercot_online_capacity.py` — `--extreme` mode (+ pooled
+  top-2% gate, LR add-back).
+* `tests/test_ercot_online_capacity_envelope.py` — bin-helper equal-counts /
+  top-2%, both-flags-off None, mutual-exclusion raise, extreme-alone
+  activates, extreme-lifts-top-2%-room-vs-base.
