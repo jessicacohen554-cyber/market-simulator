@@ -863,6 +863,87 @@ class TestRPSConstraint(unittest.TestCase):
                 **self._no_renewables(1),
             )
 
+    def test_rps_acp_escape_makes_short_rps_feasible(self):
+        # An ACP price turns the otherwise-infeasible short RPS feasible: a
+        # gas-only fleet cannot produce any renewable energy, but paying the
+        # Alternative Compliance Payment satisfies the row (real-market ACP).
+        # The REC dual then equals the ACP ceiling, since every deficient MWh
+        # clears at the buy-out price.
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
+        )
+        mc = np.full((1, self.T), 50.0)
+        demand = np.full((1, self.T), 80.0)
+
+        result = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            rps_target=1.0,
+            rps_acp_price=65.0,
+            **self._no_renewables(1),
+        )
+        self.assertEqual(result.status, "Optimal")
+        self.assertIsNotNone(result.rps_shadow_price)
+        # Dual pinned at the ACP ceiling — the marginal MWh of compliance is
+        # the buy-out payment, not physical renewable energy.
+        self.assertAlmostEqual(result.rps_shadow_price, 65.0, delta=1e-3)
+
+    def test_rps_acp_caps_dual_at_ceiling(self):
+        # When physical RECs are pricier than the ACP, the REC market clears at
+        # the ACP: the dual is capped at the ceiling, not the (higher) renewable
+        # premium. Wind premium 100 > ACP 65, and only 50 MW of wind is
+        # available vs an 80 MW (100% × 80) target, so the shortfall is bought
+        # out at 65 rather than forcing the 100 premium onto the dual.
+        fleet = self._nuclear_gas_fleet()
+        mc = np.vstack([np.full(self.T, 0.0), np.full(self.T, 20.0)])
+        demand = np.full((1, self.T), 80.0)
+
+        result = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            rps_target=1.0,
+            rps_acp_price=65.0,
+            wind_cf=np.full((1, self.T), 0.5),
+            wind_cap=np.array([100.0]),  # 50 MW available vs 80 MW target
+            wind_mc=100.0,  # renewable premium above the ACP ceiling
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+        )
+        self.assertEqual(result.status, "Optimal")
+        self.assertIsNotNone(result.rps_shadow_price)
+        self.assertAlmostEqual(result.rps_shadow_price, 65.0, delta=0.5)
+
+    def test_rps_acp_unused_when_renewables_suffice(self):
+        # With cheap wind covering more than the target, the ACP escape goes
+        # unused and the dual sits below the ceiling (here at zero, the slack
+        # RPS) — the escape only binds when RECs are physically short, so an
+        # available ACP price never distorts a well-supplied RPS.
+        fleet = _make_fleet(
+            ["Z0"], ["Z0"], hours=self.T, pmax=200.0, pmin=0.0, eford=0.0
+        )
+        mc = np.full((1, self.T), 50.0)
+        demand = np.full((1, self.T), 80.0)
+
+        result = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            T=self.T,
+            rps_target=0.5,
+            rps_acp_price=65.0,
+            wind_cf=np.full((1, self.T), 0.5),
+            wind_cap=np.array([100.0]),  # 50 MW ≈ 62.5% of demand, above floor
+            solar_cf=np.zeros((1, self.T)),
+            solar_cap=np.zeros(1),
+        )
+        self.assertEqual(result.status, "Optimal")
+        self.assertIsNotNone(result.rps_shadow_price)
+        self.assertAlmostEqual(result.rps_shadow_price, 0.0, places=3)
+
 
 class TestMassCapConstraint(unittest.TestCase):
     """The emissions mass-cap row, its endogenous dual, and membership."""

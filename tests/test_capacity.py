@@ -36,7 +36,7 @@ from market_sim.model.storage import compute_storage_annual_cost
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import apply_ira_credits_to_lcoe, ira_phaseout_fraction
-from market_sim.policy.rps import get_rps_target
+from market_sim.policy.rps import get_rps_acp, get_rps_target
 
 
 def _gen(
@@ -1985,6 +1985,24 @@ class TestGetRPSTarget(unittest.TestCase):
 
     def test_ercot_floor_is_zero(self):
         self.assertAlmostEqual(get_rps_target("ERCOT", 2030), 0.0)
+
+
+class TestGetRPSACP(unittest.TestCase):
+    """RPS Alternative Compliance Payment ceiling lookup."""
+
+    def test_rps_iso_returns_acp_ceiling(self):
+        self.assertAlmostEqual(get_rps_acp("NEISO"), 65.0)
+        self.assertAlmostEqual(get_rps_acp("CAISO"), 50.0)
+        self.assertAlmostEqual(get_rps_acp("NYISO"), 40.0)
+
+    def test_case_insensitive(self):
+        self.assertAlmostEqual(get_rps_acp("neiso"), 65.0)
+
+    def test_iso_without_rps_is_none(self):
+        # ERCOT/PJM have no RPS floor, so no ACP ceiling — the escape column is
+        # never built and the LP is unchanged there.
+        self.assertIsNone(get_rps_acp("ERCOT"))
+        self.assertIsNone(get_rps_acp("PJM"))
 
 
 def _entry_by_tech(
