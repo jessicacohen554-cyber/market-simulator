@@ -1,11 +1,20 @@
 {
-  "timestamp": "2026-07-07T03:31:49",
+  "timestamp": "2026-07-07T05:13:41",
   "git": {
-    "sha": "b351b21",
-    "branch": "claude/ercot-nodal-curtailment-driver-vyf80n",
-    "dirty": false,
-    "changed_files": [],
-    "diffstat": ""
+    "sha": "58aa5cc",
+    "branch": "claude/ercot-wpb-curtailment-keeper-forecast-8dnrvf",
+    "dirty": true,
+    "changed_files": [
+      "frontend/data/backcast/registry/2026-07-05-ercot33-storage-duration-gate.json",
+      "frontend/data/backcast/registry/2026-07-06-ercot32-v2rescore-probe.json",
+      "frontend/data/backcast/runs/2026-07-05-ercot33-storage-duration-gate.js",
+      "frontend/data/backcast/runs/2026-07-06-ercot32-v2rescore-probe.js",
+      "src/market_sim/data/curtailment_share.py",
+      "src/market_sim/data/renewables.py",
+      "src/market_sim/runner.py",
+      "tests/test_curtailment_share_forecast.py"
+    ],
+    "diffstat": ".../2026-07-05-ercot33-storage-duration-gate.json  | 15 -----\n .../2026-07-06-ercot32-v2rescore-probe.json        | 15 -----\n .../2026-07-05-ercot33-storage-duration-gate.js    |  1 -\n .../runs/2026-07-06-ercot32-v2rescore-probe.js     |  1 -\n src/market_sim/data/curtailment_share.py           | 70 ++++++++++++++++++++++\n src/market_sim/data/renewables.py                  | 22 +++++++\n src/market_sim/runner.py                           | 30 ++++++++++\n 7 files changed, 122 insertions(+), 32 deletions(-)"
   },
   "model_changes_note": "ercot42: WP-B West Texas Export corridor net-load-indexed VRE curtailment-share driver (nodal congestion ceiling) on the ercot34 keeper",
   "ablation_of": null,
@@ -121,7 +130,7 @@
     "ercot_dam_as_overlay": false,
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
-    "git_sha": "b351b21"
+    "git_sha": "58aa5cc"
   },
   "scenario_config": {
     "weather_year": 2023,
