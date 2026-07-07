@@ -530,11 +530,11 @@ class TestNyisoReserveCooptInputs(unittest.TestCase):
         self.assertEqual(elig.shape, (2, 2))
         np.testing.assert_array_equal(elig[0], [True, False])  # full: gas only
         np.testing.assert_array_equal(elig[1], [True, False])  # quick-start: gas only
-        # Family reserve class: NYCA 30-min + East/SENY/NYC 30-min on class 0;
-        # the three 10-minute products (NYCA 10-min total/spin, NYC 10-min) on
-        # the quick-start class 1.
+        # Family reserve class: NYCA 30-min + SENY/NYC 30-min on the full class
+        # 0; the four 10-minute products (NYCA 10-min total/spin, the published
+        # 10-minute East requirement, and NYC 10-min) on the quick-start class 1.
         self.assertEqual(fam_class.shape, (n_fam,))
-        np.testing.assert_array_equal(fam_class, [0, 1, 1, 0, 0, 0, 1])
+        np.testing.assert_array_equal(fam_class, [0, 1, 1, 1, 0, 0, 1])
         # Synchronised flag OFF (default): no online-gated class, legacy layout.
         self.assertIsNone(online_gated)
         self.assertEqual(online_rho, 1.0)
