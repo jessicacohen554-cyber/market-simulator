@@ -236,16 +236,19 @@ def _finalize_dtypes(df: pd.DataFrame) -> pd.DataFrame:
     return df[list(_SCHEMA_COLUMNS)].reset_index(drop=True)
 
 
-def curate_year(year: int, *, unit_dir: Path = RAW_UNIT_DIR) -> Path:
+def curate_year(
+    year: int, *, unit_dir: Path = RAW_UNIT_DIR, allow_quarantined: bool = False
+) -> Path:
     """Curate one year of unit-level CAMPD into ``emissions-unit-annual``.
 
     Raises ``ValueError`` for a quarantined year (never rolled up) and
     ``FileNotFoundError`` when no extract is present. Returns the written path.
     """
-    if year in QUARANTINED_YEARS:
+    if year in QUARANTINED_YEARS and not allow_quarantined:
         raise ValueError(
             f"year {year} is under CLAUDE.md rule 22 quarantine; "
-            f"{DATATYPE} never rolls up 2022/H1-2026"
+            f"{DATATYPE} never rolls up 2022/H1-2026 (pass --holdout-intake "
+            "<ISO> with its calibration-complete marker for the one-shot)"
         )
     paths_in = sorted(unit_dir.glob(f"*_{year}.parquet")) if unit_dir.is_dir() else []
     if not paths_in:
@@ -299,18 +302,54 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Years to curate (default: every non-quarantined year on disk).",
     )
+    parser.add_argument(
+        "--holdout-intake",
+        default=None,
+        metavar="ISO",
+        help="authorize rolling up quarantined-year (2022/2026) extracts for the "
+        "named ISO's one-shot holdout validation (requires its "
+        "calibration-complete marker; CLAUDE.md rule 22).",
+    )
     args = parser.parse_args(argv)
 
+    allow_quarantined = False
+    if args.holdout_intake:
+        import json
+
+        marker_path = (
+            paths.REPO_ROOT
+            / "frontend"
+            / "data"
+            / "backcast"
+            / "calibration-complete.json"
+        )
+        try:
+            complete = {
+                str(k).upper()
+                for k in (json.loads(marker_path.read_text()).get("complete") or {})
+            }
+        except (OSError, ValueError):
+            complete = set()
+        iso = args.holdout_intake.upper()
+        if iso not in complete:
+            parser.error(
+                f"no calibration-complete marker for {iso} in {marker_path} "
+                f"(complete: {sorted(complete) or 'none'}); rule 22 one-shot "
+                "holdout intake requires the marker"
+            )
+        allow_quarantined = True
+
     years = args.years or _detect_years(RAW_UNIT_DIR)
-    skipped = [y for y in (args.years or []) if y in QUARANTINED_YEARS]
-    for y in skipped:
-        logger.warning("skipping quarantined year %d (CLAUDE.md rule 22)", y)
-    years = [y for y in years if y not in QUARANTINED_YEARS]
+    if not allow_quarantined:
+        skipped = [y for y in (args.years or []) if y in QUARANTINED_YEARS]
+        for y in skipped:
+            logger.warning("skipping quarantined year %d (CLAUDE.md rule 22)", y)
+        years = [y for y in years if y not in QUARANTINED_YEARS]
     if not years:
         logger.error("no curatable years found under %s", RAW_UNIT_DIR)
         return 1
     for year in years:
-        curate_year(year)
+        curate_year(year, allow_quarantined=allow_quarantined)
     return 0
 
 

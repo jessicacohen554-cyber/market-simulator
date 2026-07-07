@@ -1,0 +1,160 @@
+name: holdout-intake-neiso-2022
+
+# One-shot NEISO 2022 holdout-intake BINARY lander (CLAUDE.md rule 22).
+#
+# The NEISO calibration-complete marker (declared 2026-07-07,
+# frontend/data/backcast/calibration-complete.json) authorizes the one-shot
+# 2022 holdout validation. The intake session lands every TEXT artifact via
+# the GitHub API, but the API file tools cannot carry binary content
+# (verified: content is stored literally, so a parquet/xlsx round-trips
+# corrupted). This workflow reproduces the BINARY artifacts on an Actions
+# runner from the same committed, marker-gated scripts and pushes them to the
+# intake branch — the exact fetch-workflow pattern used by
+# fetch-caiso-oasis.yml and friends.
+#
+# It is NOT a solve: no LP is constructed (rule 22's solve/score quarantine is
+# untouched); everything here is loader-level data intake under the marker.
+#
+# Artifacts landed (all NEISO-2022-scoped):
+#   * data/raw/campd-unit-level/{CT,MA,ME,NH,RI,VT}_2022.parquet   (EPA CAMPD)
+#   * data/raw/_processed-legacy/plant_emission_rates_v2.parquet   (merge: +NEISO 2022 rows,
+#     every pre-existing row asserted frozen by the derive script itself)
+#   * data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet  (2022-2025 rebuild from the
+#     committed SMD workbooks; 2023-2025 rows byte-identical by construction)
+#   * data/raw/lmp-data/2022_smd_hourly.xlsx -> data/raw/lmp-data/NEISO/ (git mv, blob reuse)
+#
+# Guard: refuses to run unless the NEISO marker exists on the target branch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Preview only — run everything but do not commit or push"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: holdout-intake-neiso-2022
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rule-22 marker guard
+        run: |
+          python - <<'EOF'
+          import json, sys
+          data = json.load(open("frontend/data/backcast/calibration-complete.json"))
+          if "NEISO" not in (data.get("complete") or {}):
+              sys.exit("no NEISO calibration-complete marker — rule 22 forbids this intake")
+          print("NEISO marker present:", data["complete"]["NEISO"])
+          EOF
+
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Install pinned dependencies (uv.lock — parquet bytes must match
+              the intake session's pinned pyarrow/pandas)
+        run: uv sync --frozen
+
+      - name: Fetch CAMPD 2022 unit-level (six NE states)
+        # x-api-key falls back to EPA's public DEMO_KEY (fetcher default) —
+        # sufficient for six small state files; do NOT export an empty
+        # EPA_API_KEY (an empty string would override the fallback).
+        run: |
+          uv run python scripts/fetch_campd_unit_level.py --year 2022 \
+            --states CT MA ME NH RI VT --holdout-intake NEISO
+
+      - name: Curate emissions-unit-annual 2022 (clean, gitignored intermediate)
+        run: |
+          uv run python scripts/curate_emissions_unit_annual.py --years 2022 --holdout-intake NEISO
+
+      - name: Extend plant_emission_rates_v2 with NEISO 2022 (frozen-row merge; skip if landed)
+        run: |
+          if uv run python - <<'EOF'
+          import pandas as pd, sys
+          df = pd.read_parquet("data/raw/_processed-legacy/plant_emission_rates_v2.parquet")
+          sys.exit(0 if ((df["iso"] == "NEISO") & (df["year"] == 2022)).any() else 1)
+          EOF
+          then echo "NEISO 2022 rows already in the v2 artifact — skipping (one-shot merge already ran)"
+          else uv run python scripts/derive_plant_emissions_v2.py --iso NEISO --years 2022 --holdout-intake NEISO
+          fi
+
+      - name: Relocate the 2022 SMD workbook into NEISO/ (blob reuse via git mv)
+        run: |
+          if [ -f data/raw/lmp-data/2022_smd_hourly.xlsx ]; then
+            git mv data/raw/lmp-data/2022_smd_hourly.xlsx data/raw/lmp-data/NEISO/2022_smd_hourly.xlsx
+          else
+            echo "workbook already relocated"
+          fi
+
+      - name: Rebuild NEISO actual-LMP hourly parquet (2022-2025, in-sample byte-frozen; skip if landed)
+        run: |
+          if uv run python - <<'EOF'
+          import pandas as pd, sys
+          try:
+              df = pd.read_parquet("data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet")
+              sys.exit(0 if (df["year"] == 2022).any() else 1)
+          except Exception:
+              sys.exit(1)
+          EOF
+          then echo "hourly parquet already spans 2022 — skipping"
+          else
+            uv run python scripts/derive_actual_lmp.py --years 2022 2023 2024 2025 --isos NEISO
+            git checkout -- data/raw/_validation-source/actual_lmp.json || true
+          fi
+
+      - name: Materialize base64 relay files (*.b64 -> binary sibling)
+        # Small binaries the API cannot carry (e.g. the one-shot's
+        # bench/NEISO/2022.json.gz) are pushed as base64 TEXT siblings
+        # (<path>.b64) and decoded here; the .b64 relay is then removed.
+        run: |
+          python - <<'EOF'
+          import base64, pathlib
+          for b64 in pathlib.Path(".").rglob("*.b64"):
+              if ".git" in b64.parts:
+                  continue
+              target = b64.with_suffix("")
+              target.write_bytes(base64.b64decode(b64.read_text()))
+              b64.unlink()
+              print(f"materialized {target} ({target.stat().st_size} bytes)")
+          EOF
+
+      - name: Integrity report (sha256 of every landed binary)
+        run: |
+          sha256sum \
+            data/raw/campd-unit-level/CT_2022.parquet \
+            data/raw/campd-unit-level/MA_2022.parquet \
+            data/raw/campd-unit-level/ME_2022.parquet \
+            data/raw/campd-unit-level/NH_2022.parquet \
+            data/raw/campd-unit-level/RI_2022.parquet \
+            data/raw/campd-unit-level/VT_2022.parquet \
+            data/raw/_processed-legacy/plant_emission_rates_v2.parquet \
+            data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet \
+            data/raw/lmp-data/NEISO/2022_smd_hourly.xlsx
+
+      - name: Commit binaries to the branch
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A data/raw/campd-unit-level/ \
+                  data/raw/_processed-legacy/plant_emission_rates_v2.parquet \
+                  data/raw/_processed-legacy/plant_emission_rates_v2.csv \
+                  data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet \
+                  data/raw/lmp-data/NEISO/2022_smd_hourly.xlsx \
+                  frontend/data/backcast/bench/
+          git rm --cached data/raw/lmp-data/2022_smd_hourly.xlsx 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing to commit (binaries already landed)"
+            exit 0
+          fi
+          git commit -m "data(neiso): 2022 holdout-intake binaries (marker-gated one-shot, workflow run ${{ github.run_id }})"
+          git push origin "HEAD:${{ github.ref_name }}"
