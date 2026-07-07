@@ -552,6 +552,7 @@ def run_year(
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
     miso_pjm_lmp_import_pricing: bool = False,
+    miso_seam_measured_ladder: bool = False,
     pjm_seam_flow_limit: bool = False,
     pjm_seam_flow_percentile: float | None = None,
     pjm_seam_export_limit: bool = False,
@@ -991,6 +992,8 @@ def run_year(
         config = config.with_overrides(miso_firm_import_floor=True)
     if miso_pjm_lmp_import_pricing:
         config = config.with_overrides(miso_pjm_lmp_import_pricing=True)
+    if miso_seam_measured_ladder:
+        config = config.with_overrides(miso_seam_measured_ladder=True)
     if gas_hub_basis_overlay is not None:
         config = config.with_overrides(gas_hub_basis_overlay=gas_hub_basis_overlay)
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
@@ -2350,6 +2353,35 @@ def run_year(
                         ),
                         2.0,
                     ),
+                )
+        # [measured: per-seam Q-Q band ladders — EIA-930 seam flow duration
+        #  curves coupled with the measured MISO DA hub LMP
+        #  (interchange_config.MISO_SEAM_LADDER_BY_YEAR, scripts/
+        #  derive_miso_seam_ladders.py) | forecast substitute: the gas-elastic
+        #  reference-price formula (hr_by_year two-track; pooled ladder = the
+        #  forward story)]. Overwrites EVERY seam band (PJM/SPP/South, both
+        # directions) with its measured revealed-supply-curve price, so the
+        # firm/scheduled PJM+IESO base the spot-spread pricing deletes (G-23
+        # 2025 import starvation) clears economically. Runs LAST among the
+        # seam price overwrites — displaces the border-anchor / PJM-LMP
+        # prices on the rows it covers (alternatives, never stacked).
+        if (
+            getattr(config, "reference_price_interface", False)
+            and iso in INTERFACE_NEIGHBORS
+            and iso != "CAISO"
+            and getattr(config, "miso_seam_measured_ladder", False)
+        ):
+            from market_sim.model.transmission import (
+                inject_miso_seam_ladder_prices,
+            )
+
+            if inject_miso_seam_ladder_prices(fleet_arrays, mc_base, iso, year):
+                logger.info(
+                    "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
+                    "ladders (EIA-930 flow durations x MISO DA hub quantiles; "
+                    "PJM/SPP/South, import + export; no added hurdle)",
+                    iso,
+                    year,
                 )
         # [measured: WECC intertie hub LMP (Malin / Palo Verde, OASIS) per
         #  corridor | forecast substitute: caiso_intertie_reference_price —
