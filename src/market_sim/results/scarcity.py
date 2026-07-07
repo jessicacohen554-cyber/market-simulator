@@ -64,6 +64,8 @@ from scipy.special import ndtr
 
 from market_sim.config.constants import (
     ERCOT_LR_RRS_AVAILABILITY_HOD,
+    ERCOT_ONLINE_CAP_DELIV_COEF,
+    ERCOT_ONLINE_CAP_SHARE,
     ERCOT_RTOLCAP_FWD_DELIV_COEF,
     ERCOT_RTOLCAP_FWD_N_DECILE,
     ERCOT_RTOLCAP_FWD_OFFLINE_CLASSES,
@@ -1227,6 +1229,107 @@ def ercot_rtolcap_forward_supply_cap_mw(
         cap = np.vstack([rtolcap, rtolcap + rtoffcap])  # (2, T)
     else:
         cap = rtolcap.reshape(1, T)  # (1, T)
+    return cap.astype(float)
+
+
+def ercot_online_capacity_envelope_mw(
+    config,
+    fleet_arrays: FleetArrays,
+    hours: int,
+    *,
+    net_load: np.ndarray,
+    headroom_eligible: np.ndarray,
+    headroom_products: np.ndarray,
+) -> np.ndarray | None:
+    """ERCOT's committed on-line-CAPACITY envelope, ``(n_hr, hours)`` MW.
+
+    The G-22 commitment-thinness structure (``config.ercot_online_capacity_envelope``;
+    ``docs/FINDING-ercot-priceshape-2026-07.md`` §3, structural conclusion #2). The
+    multi-product co-opt's shared-headroom rows bound
+    ``Σ_{elig thermal} P + Σ_prod R ≤ cap(full fleet)`` — the RHS is every
+    reserve-eligible thermal unit's *full availability-derated* capacity, so a
+    perfect-foresight P1 LP can serve energy (or hold reserve) from cold
+    slow-start MW the real system never had on-line. ``ercot_reserve_supply_cap``
+    caps only the cleared RESERVE (``Σ R ≤ RTOLCAP``); the ENERGY term still draws
+    on the fat RHS, leaving ~3.2 GW of phantom sub-$200 spare beyond the measured
+    on-line capability in the missed 2023 tail hours — so the energy dual sits at
+    ~$45 where SCED cleared $600+.
+
+    This returns, per shared-headroom tier, a **system-wide** MW cap
+        ``online_cap_env(t) = deliv × Σ_c online_cap_share_c(nl,season) × cap_c(t)``
+    the committed on-line HSL of the tier's responsive classes
+    (:data:`~market_sim.config.constants.ERCOT_ONLINE_CAP_SHARE` /
+    :data:`~market_sim.config.constants.ERCOT_ONLINE_CAP_DELIV_COEF`, derived from
+    the committed CAMPD extracts, ``scripts/derive_ercot_rtolcap_forward.py
+    --emit online-cap-constant``). ``model.dispatch._build_reserve_rows`` imposes
+    ``Σ_z Σ_{g∈E_h∩z} P[g] + Σ_z Σ_{p∈Prod_h} R[p,z] ≤ online_cap_env[h,t]`` on the
+    envelope tiers, so the LP cannot dispatch OR reserve more thermal than the
+    committed on-line capacity. Because the ENERGY term is on the LHS the cap is
+    **condition-responsive**: in slack hours the cap sits well above the low
+    dispatch and never binds; in the high-energy tight hours it binds, forcing
+    reserve into shortage → the ORDC/co-opt reserve-shortage channel prices the
+    hour up (the same channel that already prices the caught hours) with **no
+    offer-height change** (rule #1). The cap is anchored to the measured RTOLCAP
+    series (``online_cap_env − dispatch`` reproduces its level/band/coverage; the
+    anti-F1 identification gate ``scripts/validate_ercot_online_capacity.py``),
+    never to the price residual (rules #13/#14/#23).
+
+    Applied to the **all-responsive tier(s) only** — a tier whose
+    ``headroom_products`` bounds every AS product (the total online-thermal
+    constraint that carries the wedge). Non-all tiers (the fast/spinning tier,
+    already bounded by the RTOLCAP reserve-supply cap) return the uncapped
+    sentinel :data:`_RESERVE_SUPPLY_CAP_UNCAPPED_MW`, so they add a (harmless)
+    always-slack row and never over-constrain the spinning fleet. The formula
+    NEVER reads the LP's own commitment/output state (anti-F3/F4) and never a
+    price. Returns ``None`` (uncapped) when the gate is off or the fleet has no
+    ``plant_group``.
+    """
+    from market_sim.data.fleet import _SUMMER_CLASS_DERATE
+
+    if not getattr(config, "ercot_online_capacity_envelope", False):
+        return None
+    T = int(hours)
+    plant_group = getattr(fleet_arrays, "plant_group", None)
+    if plant_group is None:
+        return None
+    plant_group = np.asarray(plant_group)
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    elig = np.atleast_2d(np.asarray(headroom_eligible, dtype=bool))  # (n_hr, n_gen)
+    prod = np.atleast_2d(np.asarray(headroom_products, dtype=bool))  # (n_hr, n_prod)
+    n_hr = elig.shape[0]
+    n_prod = prod.shape[1]
+
+    nl = np.asarray(net_load, dtype=float)
+    if nl.size < T:
+        nl = np.concatenate([nl, np.full(T - nl.size, nl.mean() if nl.size else 0.0)])
+    nl = nl[:T]
+    month = _ercot_rtolcap_fwd_month()[:T]
+    season = np.asarray(ERCOT_RTOLCAP_FWD_SEASON_BY_MONTH, dtype=int)[month - 1]
+    decile = _ercot_rtolcap_fwd_decile(nl)
+    summer = np.isin(month, [6, 7, 8, 9])  # Jun-Sep ambient-derate window
+    deliv = float(ERCOT_ONLINE_CAP_DELIV_COEF)
+
+    cap = np.full((n_hr, T), _RESERVE_SUPPLY_CAP_UNCAPPED_MW, dtype=float)
+    for h in range(n_hr):
+        # Only the ALL-responsive tier (bounds every product) carries the energy
+        # envelope; the fast/spinning tier stays uncapped (RTOLCAP reserve cap
+        # already bounds it) to avoid over-constraining the baseload fleet.
+        if not prod[h].all() or n_prod == 0:
+            continue
+        tier_classes = set(np.unique(plant_group[elig[h]]).tolist())
+        out = np.zeros(T, dtype=float)
+        for cls in tier_classes:
+            tbl = ERCOT_ONLINE_CAP_SHARE.get(cls)
+            if tbl is None:
+                continue
+            cap_c = float(pmax[(plant_group == cls) & elig[h]].sum())
+            if cap_c <= 0.0:
+                continue
+            share_t = np.asarray(tbl, dtype=float)[season, decile]  # (T,), vectorized
+            derate = _SUMMER_CLASS_DERATE.get(cls, 0.0)
+            cap_ct = cap_c * (1.0 - np.where(summer, derate, 0.0))
+            out += share_t * cap_ct
+        cap[h] = deliv * out
     return cap.astype(float)
 
 
