@@ -7303,3 +7303,82 @@ re-probe).
 
 **Holdouts.** No solve, score, or intake touched 2022/H1-2026 (rule 22); the
 diagnostic re-solve covers all three in-sample years in one bundle (rule 16).
+
+## 2026-07-07 — ERCOT G-22 on-line-capacity envelope (commitment thinness): REJECTED PROBE (`ercot41 envelope-off`/`-on`; keeper stays ercot34)
+
+Wave-3 ERCOT lane (L-12), G-22 structural conclusion #2 (online-capability
+structure / commitment thinness — the OTHER remedy to the price-shape miss, the
+offer surface being #1 and already rejected). Full record:
+`docs/handoffs/ercot-online-capacity-envelope-2026-07.md`. Two solves registered
+(`2026-07-06-ercot41-envelope-off` control, `2026-07-07-ercot41-envelope-on-probe`
+treatment); keeper `ercot34` untouched.
+
+**Mechanism (built, default-off, ERCOT-gated, pure LP).** New flag
+`ercot_online_capacity_envelope` adds, per shared-headroom tier, a system-wide row
+`Σ_z Σ_{g∈E_h∩z} P[g] + Σ_z Σ_p R[p,z] ≤ online_cap_env(t)` — the committed
+on-line HSL of the tier's responsive classes
+(`scarcity.ercot_online_capacity_envelope_mw`). `ercot_reserve_supply_cap` already
+caps cleared RESERVE at RTOLCAP; this caps the shared headroom's ENERGY+reserve at
+the on-line capacity, so the LP cannot dispatch/reserve more thermal than the real
+system had on-line — removing the ~3.2 GW phantom sub-$200 spare (FINDING §3). The
+ENERGY term makes it condition-responsive (inert in slack, binds only in tight
+hours); price rises via the co-opt reserve-shortage channel with NO offer-height
+change (rule 1). D-8 volume-neutral by construction (a pure price mechanism —
+class TWh unchanged, unlike the ercot33 offer wall). Threaded end-to-end
+(`_build_reserve_rows` block + `reserve_online_capacity_cap` through
+`build_constraints`/`DispatchModel`/`solve_dispatch` + balance-dual offset);
+8/8 trivial-case tests (flag-off no-op, condition-responsive prices-on-the-energy-
+dual, tighter-prices-higher, all-tier-only, rises-with-net-load).
+
+**Identification gate — PASSED in the binding regime.**
+`scripts/validate_ercot_online_capacity.py`: envelope headroom remainder vs
+measured RTOLCAP, top-30% net-load (where the envelope operates): **−1/+2/−1%**
+(2023/24/25); coverage ~2× (not the ercot27 1.0× artifact). `deliv_env=1.0830`,
+fit to the measured on-line HSL MW quantity on the PRODUCTION cap basis (model
+FleetArrays), never a price (rules 13/14/23). Gate lesson: an annual-mean gate
+passed while the binding tail was under-reproduced — the first probe (all-hours
+fit, CAMPD-nameplate basis) collapsed tail room to ~2 GW and over-fired
+catastrophically ($690 dw, 1574 h>$200); two identification bugs (binding-regime
+fit; production cap basis) were fixed against the measured RTOLCAP quantity, not
+the price. The strengthened gate now checks the binding regime.
+
+**A/B verdict — REJECTED, no retune (rules 1/11).** Load-weighted hub LMP + official
+rubric (DA-expressible C3c), both arms the ercot34 recipe (single delta = the flag):
+
+| year | actual dw | off | on | C3a | C3b NRMSE | C3c (model/DA-act) | EXTREME(top2%) room vs meas RTOLCAP |
+|---|---|---|---|---|---|---|---|
+| 2023 | $48.36 | $46.5 (PASS) | $347/$434 | PASS→**FAIL** +797% | 0.324→**13.195** | 92h→711h (0.30×→2.29×) | **4.4 vs 8.0 GW (collapsed)** |
+| 2024 | $26.83 | $27.3 (PASS) | $73.1 | PASS→FAIL | worse | 23h→132h | 6.7 vs 11.1 GW (collapsed) |
+| 2025 | $32.49 | $32.5 (PASS) | $32.6 | ~unchanged (inert) | ~unchanged | 1h→1h | 11.7 vs 11.2 GW (matched) |
+
+The envelope OVER-fires the tight years (2023 7×, 2024 2.7×; concentrated in
+Aug-2023 $1,465 / Aug-2024 $379), **flipping C3a PASS→FAIL and worsening C3b ~40×**.
+It hurts the current-design years 2024/2025 → REJECTED per the pre-committed rule
+(`ercot-g22-offer-surface-2026-07.md` §6.1); `deliv` is NOT re-swept (locked by the
+RTOLCAP identification — a price sweep is the rule-1 fit-first move).
+
+**Root cause — extreme-peak room collapse.** Not an identification failure at the
+binding grain (±2%) but at the top-2%: there the model's thermal dispatch approaches
+`online_cap_env`, so the room collapses to 4.4/6.7 GW where measured RTOLCAP retained
+8.0/11.1. Once room < the ORDC total-reserve span (~10.7 GW), the tariff LOLP×VOLL
+curve prices scarcity in far more hours than reality (which held PRC ~5.7 GW there
+and priced $1.84). Two coupled contributors: (1) the pooled-median on-line-capacity
+share saturates below the *committable* capacity at the absolute peak (a SHAPE error
+a single deliverability coefficient cannot fix); (2) energy competing with the full
+ORDC-demanded reserve span over-prices the shortfall. 2025 (mild) never reaches the
+collapse → inert.
+
+**Consequence for G-22 — NOT struck; both sanctioned remedies now tested.** (a) the
+offer surface over-corrects by collapsing offer heterogeneity (ercot-g22-offer-
+surface); (b) the online-capacity envelope over-fires from the extreme-peak room
+collapse + ORDC competition (this entry). The C3b/C3c miss stays an open structural
+gap. Filed forward path: an extreme-peak-resolved on-line-capacity share (finer
+top-percentile bins → share ≈ full commitment in the top 2%), a rule-13 data-driven
+refinement — with the caveat that the ORDC-vs-energy coupling may still over-fire.
+Mechanism stays in the code default-off as a validated, documented negative result;
+`keepers.json` untouched.
+
+**Holdouts / gates.** No solve, score, or intake touched 2022/H1-2026 (rule 22);
+both runs span 2023–2025 in one bundle each (rule 16). The A/B (off vs on) is the
+attribution twin; the per-year pattern (over-fire 2023/24, inert 2025) is a
+consistent structural signature, not a one-year artifact.
