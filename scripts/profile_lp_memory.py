@@ -248,9 +248,8 @@ def profile_full_build(case: ReserveCase, seed: int = 0) -> dict:
 
     layout_e = _layout_for(case, 0, n_storage=n_storage)  # energy+soc, no reserve
     gc.collect()
-    base_kb = _vmrss_kb()
     with RSSSampler() as s_e:
-        A_e, _, _ = build_constraints(
+        A_e = build_constraints(
             layout_e,
             fa,
             demand,
@@ -258,7 +257,7 @@ def profile_full_build(case: ReserveCase, seed: int = 0) -> dict:
             storage_zone_idx=storage_zone_idx,
             eta_chg=eta,
             eta_dis=eta,
-        )
+        )[0]
         e_nnz = int(A_e.nnz)
         del A_e
         gc.collect()
@@ -266,9 +265,8 @@ def profile_full_build(case: ReserveCase, seed: int = 0) -> dict:
 
     layout_r = _layout_for(case, n_r, n_storage=n_storage)  # energy+soc+reserve
     gc.collect()
-    base2_kb = _vmrss_kb()
     with RSSSampler() as s_r:
-        A_r, _, _ = build_constraints(
+        A_r = build_constraints(
             layout_r,
             fa,
             demand,
@@ -279,7 +277,7 @@ def profile_full_build(case: ReserveCase, seed: int = 0) -> dict:
             reserve_requirement=req,
             reserve_pergen_gen_idx=gidx,
             reserve_pergen_col=pergen_col,
-        )
+        )[0]
         full_nnz = int(A_r.nnz)
         full_hash = _csr_hash(A_r)
         del A_r
