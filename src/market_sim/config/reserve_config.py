@@ -999,14 +999,18 @@ def _ercot_multiproduct_design(
     )
 
     # On-line-capacity envelope (config.ercot_online_capacity_envelope, G-22
-    # commitment thinness): caps the shared-headroom ENERGY+RESERVE at the
-    # committed on-line HSL so the LP cannot serve/reserve more thermal than the
-    # real system had on-line (the ~3.2 GW phantom sub-$200 spare). Net-load
-    # driver threaded in here exactly like the forward RTOLCAP supply cap; the
-    # cap is anchored to measured RTOLCAP, never a price (rule #13). None (gate
-    # off) leaves the LP unchanged.
+    # commitment thinness; or its extreme-peak-resolved variant
+    # config.ercot_online_capacity_envelope_extreme, the §5 forward path): caps
+    # the shared-headroom ENERGY+RESERVE at the committed on-line HSL so the LP
+    # cannot serve/reserve more thermal than the real system had on-line (the
+    # ~3.2 GW phantom sub-$200 spare). Net-load driver threaded in here exactly
+    # like the forward RTOLCAP supply cap; the cap is anchored to measured
+    # RTOLCAP, never a price (rule #13). None (gate off) leaves the LP
+    # unchanged.
     online_capacity_cap = None
-    if getattr(config, "ercot_online_capacity_envelope", False):
+    if getattr(config, "ercot_online_capacity_envelope", False) or getattr(
+        config, "ercot_online_capacity_envelope_extreme", False
+    ):
         from market_sim.results.scarcity import ercot_online_capacity_envelope_mw
 
         if system_load is not None:
