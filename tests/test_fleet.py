@@ -1632,7 +1632,7 @@ class TestCaisoChpSteamCreditHr(unittest.TestCase):
         )
 
     def test_eor_plants_lifted_to_power_only_hr(self):
-        from market_sim.data.chp import _correct_caiso_chp_steam_credit_hr
+        from market_sim.data.chp import _correct_chp_steam_credit_hr
         from market_sim.data.fleet import CAISO_EOR_TOPPING_FACTOR
 
         gens = [
@@ -1640,68 +1640,85 @@ class TestCaisoChpSteamCreditHr(unittest.TestCase):
             self._gen(50134, "CT_CHP", 5.987),  # Sycamore
             self._gen(52169, "CT_CHP", 5.090),  # Midway Sunset
         ]
-        _correct_caiso_chp_steam_credit_hr(gens, "CAISO")
+        _correct_chp_steam_credit_hr(gens, "CAISO")
         self.assertAlmostEqual(gens[0].heat_rate, 5.795 * CAISO_EOR_TOPPING_FACTOR, 3)
         self.assertAlmostEqual(gens[1].heat_rate, 5.987 * CAISO_EOR_TOPPING_FACTOR, 3)
         self.assertAlmostEqual(gens[2].heat_rate, 5.090 * CAISO_EOR_TOPPING_FACTOR, 3)
         self.assertTrue(all(9.0 <= g.heat_rate <= 11.0 for g in gens))
 
     def test_all_ct_chp_below_threshold_corrected(self):
-        from market_sim.data.chp import _correct_caiso_chp_steam_credit_hr
+        from market_sim.data.chp import _correct_chp_steam_credit_hr
         from market_sim.data.fleet import CAISO_EOR_TOPPING_FACTOR
 
         g = self._gen(50170, "CT_CHP", 5.53)  # Berry Cogen (non-EOR)
-        _correct_caiso_chp_steam_credit_hr([g], "CAISO")
+        _correct_chp_steam_credit_hr([g], "CAISO")
         self.assertAlmostEqual(g.heat_rate, 5.53 * CAISO_EOR_TOPPING_FACTOR, 3)
 
     def test_ct_chp_above_threshold_untouched(self):
-        from market_sim.data.chp import _correct_caiso_chp_steam_credit_hr
+        from market_sim.data.chp import _correct_chp_steam_credit_hr
 
         g = self._gen(50495, "CT_CHP", 9.09)  # High Sierra — already realistic
-        _correct_caiso_chp_steam_credit_hr([g], "CAISO")
+        _correct_chp_steam_credit_hr([g], "CAISO")
         self.assertEqual(g.heat_rate, 9.09)
 
     def test_cc_chp_below_threshold_corrected(self):
-        from market_sim.data.chp import _correct_caiso_chp_steam_credit_hr
+        from market_sim.data.chp import _correct_chp_steam_credit_hr
         from market_sim.data.fleet import (
             CAISO_CHP_CC_STEAM_CREDIT_FACTOR,
             CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR,
         )
 
         g = self._gen(50216, "CC_CHP", 5.61)  # Watson
-        _correct_caiso_chp_steam_credit_hr([g], "CAISO")
+        _correct_chp_steam_credit_hr([g], "CAISO")
         expected = max(
             5.61 * CAISO_CHP_CC_STEAM_CREDIT_FACTOR, CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR
         )
         self.assertAlmostEqual(g.heat_rate, expected, 3)
 
     def test_cc_chp_above_threshold_untouched(self):
-        from market_sim.data.chp import _correct_caiso_chp_steam_credit_hr
+        from market_sim.data.chp import _correct_chp_steam_credit_hr
 
         g = self._gen(55217, "CC_CHP", 6.65)  # Los Medanos
-        _correct_caiso_chp_steam_credit_hr([g], "CAISO")
+        _correct_chp_steam_credit_hr([g], "CAISO")
         self.assertEqual(g.heat_rate, 6.65)
 
-    def test_non_caiso_is_noop(self):
-        from market_sim.data.chp import _correct_caiso_chp_steam_credit_hr
+    def test_uncorrected_iso_is_noop(self):
+        # ISOs outside CHP_STEAM_CREDIT_HR_CORRECTION_ISOS are untouched.
+        from market_sim.data.chp import _correct_chp_steam_credit_hr
 
         g = self._gen(10496, "CT_CHP", 5.795)
-        _correct_caiso_chp_steam_credit_hr([g], "ERCOT")
+        _correct_chp_steam_credit_hr([g], "ERCOT")
         self.assertEqual(g.heat_rate, 5.795)
 
+    def test_pjm_chp_corrected(self):
+        # PJM joined the correction set (2026-07-07); its steam-credited CHP
+        # gets the same universal turbine-physics correction as CAISO.
+        from market_sim.data.chp import _correct_chp_steam_credit_hr
+        from market_sim.data.fleet import (
+            CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR,
+            CAISO_EOR_TOPPING_FACTOR,
+        )
+
+        ct = self._gen(999001, "CT_CHP", 6.04)  # PJM median CT_CHP HR
+        cc = self._gen(999002, "CC_CHP", 4.50)  # PJM median CC_CHP HR
+        _correct_chp_steam_credit_hr([ct, cc], "PJM")
+        self.assertAlmostEqual(ct.heat_rate, 6.04 * CAISO_EOR_TOPPING_FACTOR, 3)
+        self.assertTrue(9.0 <= ct.heat_rate <= 11.0)
+        self.assertGreaterEqual(cc.heat_rate, CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR)
+
     def test_non_chp_group_untouched(self):
-        from market_sim.data.chp import _correct_caiso_chp_steam_credit_hr
+        from market_sim.data.chp import _correct_chp_steam_credit_hr
 
         g = self._gen(10496, "CC_REGULAR", 5.5)
-        _correct_caiso_chp_steam_credit_hr([g], "CAISO")
+        _correct_chp_steam_credit_hr([g], "CAISO")
         self.assertEqual(g.heat_rate, 5.5)
 
     def test_cc_chp_floor_prevents_undercorrection(self):
-        from market_sim.data.chp import _correct_caiso_chp_steam_credit_hr
+        from market_sim.data.chp import _correct_chp_steam_credit_hr
         from market_sim.data.fleet import CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR
 
         g = self._gen(52109, "CC_CHP", 5.14)  # Richmond — very low HR
-        _correct_caiso_chp_steam_credit_hr([g], "CAISO")
+        _correct_chp_steam_credit_hr([g], "CAISO")
         self.assertGreaterEqual(g.heat_rate, CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR)
 
 
