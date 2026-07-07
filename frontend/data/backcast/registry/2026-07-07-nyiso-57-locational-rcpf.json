@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-nyiso-57-locational-rcpf",
+  "label": "nyiso 57 locational rcpf",
+  "date": "2026-07-07",
+  "shorthand": "nyiso-57-locational-rcpf",
+  "definition": "G-20c: main measured-zonal recipe + primary-source-corrected NYISO_RCPF_LOCATIONAL (SOM 2023-25 p297: East 10-min $775, SENY 1300 MW, NYC $25) in the live energy_reserve_coopt path. Single-delta A/B vs nyiso-56-measured-zonal.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-07-nyiso-57-locational-rcpf.js",
+  "bundle": "results/calibration/nyiso57_locational_rcpf"
+}
