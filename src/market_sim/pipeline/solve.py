@@ -89,6 +89,7 @@ def run_energy_solve(
     *,
     xyear_cache: Optional[list] = None,
     p1_fleet_prep=None,
+    p1_kwargs_prep=None,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
 
@@ -118,6 +119,14 @@ def run_energy_solve(
             P0 dispatch. Changing the P1 bounds precludes the warm-start basis
             reuse, so that year's P1 is a cold solve; every other path (hook
             ``None`` or returning ``None``) is byte-identical, warm start included.
+        p1_kwargs_prep: Optional callable ``(r0, p1_fleet_arrays) ->
+            Optional[dict]`` invoked after ``p1_fleet_prep`` resolves. A returned
+            dict is merged over ``dispatch_kwargs`` for the P1 solve only — the
+            PJM commitment-scoped reserve supply (path B) recomputes its
+            deliverable ``reserve_supply_cap`` on the masked fleet here. Like a
+            fleet replacement, a kwargs override precludes the warm-start basis
+            reuse (the LP rows change), so that P1 is a cold solve; ``None`` (or
+            a hook returning ``None``/empty) is byte-identical.
 
     Returns:
         :class:`EnergySolveResult` with the P0/P1 results, the bid MC, and the
@@ -156,16 +165,39 @@ def run_energy_solve(
         replaced = p1_fleet_prep(r0)
         if replaced is not None:
             p1_fleet_arrays = replaced
-    _warm_p1 = _warm and p1_fleet_arrays is fleet_arrays
+    # P1-only kwargs overrides (e.g. the PJM path-B deliverable reserve-supply
+    # cap recomputed on the masked fleet). ``None``/empty keeps the shared
+    # kwargs object, preserving the warm-start identity check below.
+    p1_dispatch_kwargs = dispatch_kwargs
+    if p1_kwargs_prep is not None:
+        overrides = p1_kwargs_prep(r0, p1_fleet_arrays)
+        if overrides:
+            p1_dispatch_kwargs = {**dispatch_kwargs, **overrides}
+    _warm_p1 = (
+        _warm
+        and p1_fleet_arrays is fleet_arrays
+        and p1_dispatch_kwargs is dispatch_kwargs
+    )
     if _warm_p1:
         p1 = model.solve(mc=mc_bid)
     else:
-        p1 = solve_dispatch(p1_fleet_arrays, demand, mc=mc_bid, **dispatch_kwargs)
+        # Cold P1 on a replaced fleet / overridden kwargs: export the cross-year
+        # basis from the P0 model FIRST (same value as the post-P1 export below —
+        # the model last solved P0 either way), then release the P0 LP + HiGHS
+        # workspace before building the second DispatchModel, so peak RSS stays
+        # ~one model (the PJM zone-aggregate co-opt alone peaks ~14.5 GB on the
+        # 15 GB calibration box).
+        if _warm and xyear_cache is not None:
+            basis = model.export_cross_year_basis()
+            if basis is not None:
+                xyear_cache[:] = [basis]
+        model = None
+        p1 = solve_dispatch(p1_fleet_arrays, demand, mc=mc_bid, **p1_dispatch_kwargs)
 
     # Hand this year's optimal basis to the next year's P0 (cross-year warm
     # start). Stored even when the flag is off so a downstream A/B does not
     # depend on call ordering; only consumed when MARKET_SIM_WARMSTART_XYEAR=1.
-    if _warm and xyear_cache is not None:
+    if _warm and model is not None and xyear_cache is not None:
         basis = model.export_cross_year_basis()
         if basis is not None:
             xyear_cache[:] = [basis]
