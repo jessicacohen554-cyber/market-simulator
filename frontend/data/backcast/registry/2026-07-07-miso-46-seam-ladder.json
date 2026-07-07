@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-miso-46-seam-ladder",
+  "label": "miso 46 seam ladder",
+  "date": "2026-07-07",
+  "shorthand": "miso-46-seam-ladder",
+  "definition": "miso-46: miso-45 keeper recipe + miso_seam_measured_ladder \u2014 G-23-residual import-starvation fix (measured per-seam Q-Q band ladders, scripts/derive_miso_seam_ladders.py; EIA-930 seam flow durations x MISO DA hub quantiles). MEM_DEBUG on for the G-40 peak-RSS confirmation on a 15GB box.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-07-miso-46-seam-ladder.js",
+  "bundle": "results/calibration/MISO/miso_46_seam_ladder"
+}

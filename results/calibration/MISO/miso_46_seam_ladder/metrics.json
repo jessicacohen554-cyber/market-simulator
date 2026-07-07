@@ -1,0 +1,134 @@
+{
+  "run_id": "2026-07-07-miso-46-seam-ladder",
+  "iso": "MISO",
+  "label": "miso 46 seam ladder",
+  "target_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "rubric_version": 2.2,
+  "determination": "NOT-YET",
+  "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, sysvol, price_mean, price_tail"
+  ],
+  "notes": [],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (DA-expressible)",
+      "tier": "supporting",
+      "status": "FAIL"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "status": "PASS"
+    },
+    "co2": {
+      "label": "C5a CO2 vs eGRID",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "storage": {
+      "label": "C5b storage throughput",
+      "tier": "supporting",
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
+    },
+    "storage_shape": {
+      "label": "C5c storage dispatch shape",
+      "tier": "supporting",
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "status": "PASS"
+    },
+    "shape": {
+      "label": "C7 diurnal shape (D-1)",
+      "tier": "protective",
+      "status": "PASS"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "status": "PASS"
+    }
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [
+      "C5b storage throughput",
+      "C5c storage dispatch shape"
+    ],
+    "commercial_band": [
+      "C3b price duration/shape"
+    ],
+    "budget": {
+      "protective_max": 1,
+      "ledgered_max": 3
+    }
+  },
+  "grade_summary": {
+    "scored": 12,
+    "target_grade": 5,
+    "commercial_grade": 1,
+    "ledgered": 2,
+    "fails": 4
+  },
+  "free_class_score": {
+    "iso": "MISO",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "imports",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 14,
+      "total": 16
+    },
+    "free": {
+      "pass": 10,
+      "total": 12
+    },
+    "headline": "C1 all 14/16 \u00b7 free 10/12"
+  }
+}
