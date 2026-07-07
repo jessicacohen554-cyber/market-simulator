@@ -77,6 +77,16 @@ class VariableLayout:
     # ``n_posture`` = the postured (non-fast-start) pool count, 0 (default)
     # leaves the layout byte-identical.
     n_posture: int = 0
+    # RPS Alternative-Compliance-Payment (ACP) escape column. A single
+    # non-negative variable per hour (``n_rec_acp`` == 0 or 1) carrying a ``+1``
+    # coefficient in the annual RPS row and a cost of the ACP price ($/MWh) in
+    # the objective. It represents the real-market ACP: an LSE short of RECs
+    # pays the ACP rate rather than physically failing the standard, so the RPS
+    # row is never infeasible and its dual (the REC price) is capped at the ACP.
+    # Appended AFTER the posture block so every existing offset is unchanged; 0
+    # (the default — set only when an ACP price accompanies an active RPS
+    # target) leaves the layout byte-identical to the hard-constraint LP.
+    n_rec_acp: int = 0
 
     @property
     def vars_per_hour(self) -> int:
@@ -90,6 +100,7 @@ class VariableLayout:
             + self.n_ordc_steps
             + self.n_storage_reserve
             + 2 * self.n_posture
+            + self.n_rec_acp
         )
 
     @property
@@ -173,6 +184,11 @@ class VariableLayout:
         """Per-hour offset of the posture startup block (SU[p,t])."""
         return self._posture_u_off + self.n_posture
 
+    @property
+    def _rec_acp_off(self) -> int:
+        """Per-hour offset of the RPS ACP escape column (RPS only)."""
+        return self._posture_su_off + self.n_posture
+
     def p_col(self, g: int, t: int) -> int:
         """Return the column index of thermal generator ``g`` in hour ``t``."""
         return t * self.vars_per_hour + self._p_off + g
@@ -229,6 +245,10 @@ class VariableLayout:
         """Return the startup column of postured pool ``p``, hour ``t``."""
         return t * self.vars_per_hour + self._posture_su_off + p
 
+    def acp_col(self, t: int) -> int:
+        """Return the RPS ACP escape column in hour ``t`` (RPS only)."""
+        return t * self.vars_per_hour + self._rec_acp_off
+
     def p_cols_gen(self, g: int) -> slice:
         """Return a slice selecting all ``T`` columns of thermal generator ``g``."""
         start = self._p_off + g
@@ -246,6 +266,7 @@ def build_cost_vector(
     storage_discharge_cost: np.ndarray | float = 0.0,
     ordc_penalties: np.ndarray | None = None,
     posture_startup_cost: np.ndarray | None = None,
+    rps_acp_price: float = 0.0,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
@@ -281,6 +302,11 @@ def build_cost_vector(
             U[p,t] columns carry NO direct cost — being online costs
             min-load energy through the coupled P variables, and cycling
             costs the SU charge; U itself is free by design.
+        rps_acp_price: Alternative Compliance Payment rate in $/MWh applied to
+            the RPS ACP escape column (``layout.n_rec_acp``). Sets the marginal
+            cost of buying out of the RPS with an ACP, which caps the RPS row's
+            dual (the REC price) at this ceiling. Ignored when the layout
+            carries no ACP column.
 
     Returns:
         Cost vector of length ``layout.total_columns``.
@@ -382,6 +408,15 @@ def build_cost_vector(
             su_cost[np.newaxis, :]
         )
 
+    # RPS ACP escape column: priced at the Alternative Compliance Payment rate.
+    # Paying ACP is the marginal cost of the last unit of RPS compliance when
+    # physical RECs (wind+solar) run short, so the RPS row's dual cannot exceed
+    # this ceiling. Only present when an ACP price accompanies an active RPS.
+    if layout.n_rec_acp:
+        block[:, layout._rec_acp_off : layout._rec_acp_off + layout.n_rec_acp] = (
+            rps_acp_price
+        )
+
     return cost
 
 
@@ -430,8 +465,17 @@ def _build_rps_row(
     The row carries a ``+1`` coefficient on every wind and solar dispatch
     column across all ``T`` hours; the lower bound is ``rps_target`` times
     total annual demand. The resulting constraint
-    ``renewable >= rps_target * demand`` is an inequality with no upper bound,
-    and its dual is the implicit REC price ($/MWh renewable-energy premium).
+    ``renewable (+ ACP) >= rps_target * demand`` is an inequality with no upper
+    bound, and its dual is the implicit REC price ($/MWh renewable-energy
+    premium).
+
+    When the layout carries an ACP escape column (``layout.n_rec_acp``), each
+    hour's ACP variable also takes a ``+1`` coefficient: it is the real-market
+    Alternative Compliance Payment, so a region short of physical RECs satisfies
+    the row by paying the ACP rate (priced in the objective) rather than the LP
+    turning infeasible. Its non-negativity plus the objective ACP cost pin the
+    row's dual (the REC price) at or below the ACP ceiling — exactly how a REC
+    market clears when supply is short.
 
     Only wind and solar count toward the target: an RPS is a *renewable*
     portfolio standard, so existing nuclear and large hydro -- clean but not
@@ -451,7 +495,13 @@ def _build_rps_row(
     wind_cols = (hours * vph + layout._w_off + zones).ravel()
     solar_cols = (hours * vph + layout._s_off + zones).ravel()
 
-    cols = np.concatenate([wind_cols, solar_cols])
+    col_groups = [wind_cols, solar_cols]
+    if layout.n_rec_acp:
+        # One ACP escape column per hour (a single non-negative variable),
+        # +1 in the row so paying ACP substitutes for physical RECs.
+        acp_cols = np.arange(T) * vph + layout._rec_acp_off
+        col_groups.append(acp_cols)
+    cols = np.concatenate(col_groups)
     row = sp.coo_matrix(
         (np.ones(cols.size), (np.zeros(cols.size, dtype=int), cols)),
         shape=(1, layout.total_columns),
@@ -2138,6 +2188,9 @@ def build_constraints(
             # Posture U/SU columns carry no energy (zero blocks; empty when
             # the commitment-posture lever is off).
             sp.csr_matrix((n_zones, 2 * layout.n_posture)),
+            # RPS ACP escape column carries no energy (zero block; empty unless
+            # the RPS ACP escape is active). Keeps per_hour width == vph.
+            sp.csr_matrix((n_zones, layout.n_rec_acp)),
         ],
         format="csr",
     )
@@ -2678,6 +2731,14 @@ def build_variable_bounds(
         su0 = layout._posture_su_off
         col_upper[:, su0 : su0 + layout.n_posture] = np.inf
 
+    # RPS ACP escape column: 0 ≤ ACP ≤ inf (its objective cost, the ACP rate,
+    # bounds it from above; the RPS row draws on it only when physical RECs are
+    # short). Without this the zero-init upper bound would pin it at 0 and the
+    # escape would not exist.
+    if layout.n_rec_acp:
+        a0 = layout._rec_acp_off
+        col_upper[:, a0 : a0 + layout.n_rec_acp] = np.inf
+
     # Clip the lower bound to never exceed the upper bound. A committed
     # thermal generator carries a positive Pmin, but the commitment screen
     # (and hour-varying availability) can drive its upper bound to zero in
@@ -2863,6 +2924,7 @@ class DispatchModel:
         storage_discharge_eac: float = 0.0,
         storage_discharge_cost: "np.ndarray | float" = 0.0,
         rps_target: float | None = None,
+        rps_acp_price: float | None = None,
         hydro_monthly_energy: np.ndarray | None = None,
         hydro_month_index: np.ndarray | None = None,
         hydro_gen_idx: np.ndarray | None = None,
@@ -3019,6 +3081,17 @@ class DispatchModel:
             if reserve_posture_pools is None
             else int(np.asarray(reserve_posture_pools).size)
         )
+        # RPS ACP escape column: present only when an ACP price accompanies an
+        # active RPS target. Absent (default) leaves the layout byte-identical.
+        n_rec_acp = (
+            1
+            if (
+                rps_target is not None
+                and rps_target > 0.0
+                and rps_acp_price is not None
+            )
+            else 0
+        )
 
         layout = VariableLayout(
             n_gen=n_gen,
@@ -3031,6 +3104,7 @@ class DispatchModel:
             n_ordc_steps=n_ordc_steps,
             n_storage_reserve=n_storage_reserve,
             n_posture=n_posture,
+            n_rec_acp=n_rec_acp,
         )
 
         # Posture U upper bound: the pool's hour-varying available capacity
@@ -3219,6 +3293,7 @@ class DispatchModel:
         self.storage_discharge_eac = storage_discharge_eac
         self.storage_discharge_cost = storage_discharge_cost
         self.rps_target = rps_target
+        self.rps_acp_price = rps_acp_price
         self._lcr_row_offset = lcr_row_offset
         self._n_lcr_areas = n_lcr_areas
         self._lcr_gen_idx = (
@@ -3376,6 +3451,7 @@ class DispatchModel:
             storage_discharge_cost=self.storage_discharge_cost,
             ordc_penalties=self.ordc_penalties,
             posture_startup_cost=self._posture_startup,
+            rps_acp_price=(self.rps_acp_price or 0.0),
         )
 
         h = self._h
@@ -3744,6 +3820,7 @@ def solve_dispatch(
     storage_discharge_eac: float = 0.0,
     storage_discharge_cost: np.ndarray | float = 0.0,
     rps_target: float | None = None,
+    rps_acp_price: float | None = None,
     hydro_monthly_energy: np.ndarray | None = None,
     hydro_month_index: np.ndarray | None = None,
     hydro_gen_idx: np.ndarray | None = None,
@@ -3839,6 +3916,12 @@ def solve_dispatch(
         rps_target: Required renewable-energy (wind+solar) share. When not
             ``None`` and positive, an annual RPS constraint is enforced and its
             dual is returned as ``DispatchResult.rps_shadow_price``.
+        rps_acp_price: Optional RPS Alternative Compliance Payment ceiling in
+            $/MWh. When set alongside a positive ``rps_target``, an ACP escape
+            column is added so the RPS row stays feasible when physical RECs
+            fall short (paying the ACP substitutes for renewable energy) and its
+            dual (the REC price) is capped at this ceiling. ``None`` (default)
+            keeps the RPS a hard constraint, byte-identical to before.
         mass_cap_coeffs: Optional ``(k, n_gen)`` emissions mass-cap row
             coefficients (``m[g] * emission_rate[g]``); one inequality row per
             cap bounds in-region fossil emissions. ``None`` (default) adds no
@@ -3889,6 +3972,7 @@ def solve_dispatch(
         storage_discharge_eac=storage_discharge_eac,
         storage_discharge_cost=storage_discharge_cost,
         rps_target=rps_target,
+        rps_acp_price=rps_acp_price,
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_month_index=hydro_month_index,
         hydro_gen_idx=hydro_gen_idx,
