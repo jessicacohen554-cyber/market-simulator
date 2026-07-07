@@ -151,3 +151,38 @@ bins each year.
 - Implementation deferred to a later capacity-fleet-representation session (owner picks A/B/C).
 
 *Produced 2026-07-06, L-7 (capacity economics & hindcast closure), G-31.*
+
+---
+
+## Update 2026-07-07 — G-31 closed via the **scoring** grain, not the model grain
+
+The G-31 register row is closed, but by a different (and cheaper) mechanism than the
+candidates above. Two things were conflated in the original 94%-false diagnosis:
+
+1. **Model-side grain** (this note's subject). Closed independently as **G-28** on
+   2026-07-07: `aggregate_fleet` now passes CAMPD per-plant tranches through
+   un-aggregated (`fleet.py:2761`), so post-base-year retirements stay at per-plant
+   grain — no more lumpy 4 GW zone-coal aggregates. The re-run
+   (`ercot-2021-2025-realized-g31`) confirms every year now retires per-plant tranche
+   rows carrying `p<plant>` identity. Candidates A/C (intra-bin partial derate / finer
+   retirement sub-bins) are therefore **no longer needed for the grain**; Candidate B
+   is effectively what G-28 shipped.
+
+2. **Scoring-side grain** (the actual G-31 fix, `scripts/score_capacity_hindcast.py`).
+   Even at per-plant grain, the scorer's old 1:1 `fuel+size` match ([0.5×,1.5×] MW,
+   one model row ↔ one actual unit) mis-scored tranche splits and any lumpy row. It is
+   re-grained to **per-fuel MW coverage**: a real retired unit is *recalled* when the
+   model derated ≥ its MW of the same fuel (its plant-binned tranche derated by its MW,
+   exact identity not required); *false-retire* is the model's per-fuel MW in excess of
+   what that fuel actually retired. A/B on the identical lumpy s3 bundle: recall
+   **33%→67%**, false-retire **94%→90%**.
+
+**What remains is NOT grain — it is a genuine over-retirement (G-30).** The G-31 re-run
+retires ~14 GW coal + 8.8 GW gas_st vs 1.5 GW actual; with the grain artifact removed
+from *both* the model (G-28) and the scorer (G-31), the residual 96% false-retire is the
+economic screen exiting the whole fleet under the **perfect-foresight, over-supplied
+2020-vintage LP that forms zero scarcity hours** (s3 corrected root cause). That is the
+FOM/foresight/screen problem tracked as **G-30 / G-32**, and the acceptance test named in
+§4 (the per-plant 2022 step landing near the ~1.5 GW actual) is now a *screen* target,
+not a grain target — it will be met when the scarcity-free-signal root cause is fixed,
+not by any further binning change.
