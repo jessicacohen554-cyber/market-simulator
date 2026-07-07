@@ -126,6 +126,76 @@ def _share_lookup(table: pd.DataFrame, net_load: np.ndarray) -> np.ndarray:
     return np.nan_to_num(share, nan=0.0)
 
 
+def forecast_wtx_curtail_multipliers(
+    config,
+    iso: str,
+    year: int,
+    demand: np.ndarray,
+    wind_cf: np.ndarray,
+    wind_cap: np.ndarray,
+    solar_cf: np.ndarray,
+    solar_cap: np.ndarray,
+    zone_names: list[str],
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Forecast-mode gate for the WP-B corridor ceiling, or ``None`` when off.
+
+    The forecast leg of the driver (runner.py's per-year dispatch assembly;
+    the backcast leg lives in ``scripts/run_calibration.py``, guarded there on
+    a measured-HSL year instead). Fires only for ERCOT with
+    ``ScenarioConfig.ercot_wtx_curtailment_driver`` enabled in forecast mode;
+    the renewable bound is then the *uncurtailed* potential basis
+    (``load_renewable_profiles`` grosses the delivered EIA-930 profile up by
+    the reference curtailment rate under the same gate), so the ceiling never
+    double-counts a curtailment already embedded in the bound.
+
+    ``net_load`` is computed from the FORECAST state — the year's scaled
+    demand minus the year's evolved wind/solar *potential* (same LP-served
+    convention as the backcast gate) — so the decile mapping regenerates each
+    forecast year: a bigger West VRE build deepens the net-load troughs and
+    re-composes which (hour, season) cells carry the high-congestion deciles
+    (rule #10, forward admissibility). Two documented ASSUMPTIONS bound what
+    that regeneration captures (handoff §8, owner-accepted framing): the
+    within-year percentile axis normalizes away the absolute year-over-year
+    congestion rise (depth at deep penetration is conservative), and the
+    share/depth encode the 2023–25 West-corridor network topology (future
+    Permian/CREZ transmission builds would ease it; the driver does not
+    auto-relax).
+
+    Parameters mirror the runner's per-year state; ``demand`` is the
+    ``(n_zones, T)`` year demand and the CF/cap pairs the evolved fleet's
+    potential basis. Returns ``(wind_mult, solar_mult)`` each ``(n_zones, T)``
+    or ``None`` (gate closed / share table absent) — the caller then leaves
+    the static bound untouched.
+    """
+    if iso != "ERCOT" or not getattr(config, "ercot_wtx_curtailment_driver", False):
+        return None
+    if getattr(config, "mode", "forecast") != "forecast":
+        return None
+    from market_sim.config import paths as _paths
+
+    net_load = (
+        np.asarray(demand, dtype=float).sum(axis=0)
+        - (np.asarray(wind_cap, dtype=float)[:, None] * wind_cf).sum(axis=0)
+        - (np.asarray(solar_cap, dtype=float)[:, None] * solar_cf).sum(axis=0)
+    )
+    mult = wtx_curtail_multipliers(
+        net_load,
+        list(zone_names),
+        depth_wind=float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0)),
+        depth_solar=float(getattr(config, "ercot_wtx_curtail_depth_solar", 0.0)),
+        reference_dir=_paths.RAW_DIR / "reference",
+    )
+    if mult is not None:
+        logger.info(
+            "ercot_wtx_curtailment_driver: %d forecast West/Panhandle VRE "
+            "ceiling active (depth wind=%.4f solar=%.4f)",
+            year,
+            float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0)),
+            float(getattr(config, "ercot_wtx_curtail_depth_solar", 0.0)),
+        )
+    return mult
+
+
 def wtx_curtail_multipliers(
     net_load: np.ndarray,
     zone_names: list[str],
