@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-pjm-87-pergen-oppcost",
+  "label": "pjm 87 pergen oppcost",
+  "date": "2026-07-07",
+  "shorthand": "pjm-87-pergen-oppcost",
+  "definition": "(PROBE \u2014 keeper decision pending the pjm-86 same-tree A/B) PJM 87 per-gen OPPORTUNITY-COST reserve co-opt (G-20b successor): pjm-83 keeper recipe VERBATIM (= the pjm-86 same-tree baseline) + pjm_reserve_pergen ((zone, fuel-class) pooled R<=ramp10 co-opt, measured RTO+MAD Primary families) + pjm_reserve_pergen_sync (NEW: measured Synchronized sub-product families sr_req_mw/mad_sr_req_mw on the published Synchronized ORDC rows; per-pool SYNC/NON-SYNC column split sharing the joint P+R row \u2014 sync servable only by ONLINE 10-min ramp, scoped at the P0->P1 seam from the P0 run pattern; offline fast-start ramp serves non-sync Primary per Manual 11 sec 4.2; energy availability NOT masked so P1 redispatch prices the opportunity cost) + measured_ramp_capability (rule 14). Fixes pjm-81's non-fire (joint headroom let idle capacity back reserve; 1 fired hour / 3 yr) by composing per-gen ramp limits WITH online scoping. RESULT: reserve dual > 0 in 133/44/50 hours (2023/24/25, mostly afternoon 11-18h) \u2014 the first PJM reserve scoping to fire nontrivially (vs pjm-81's 1h/3yr). All duals stay under $32, well below the $300 penalty step (never fires the shortage regime) \u2014 correctly sub-shortage opportunity-cost, as designed. But magnitude is modest: most positive-dual hours sit in $0-10, not the targeted $10-80 band, so this only partially engages the $75-200 afternoon residual, not a residual-closing fix.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-07-pjm-87-pergen-oppcost.js",
+  "bundle": "results/calibration/pjm87_pergen_oppcost"
+}
