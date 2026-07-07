@@ -30,7 +30,7 @@ df = df.sort_values("_o").groupby(["year", "hour"], as_index=False).last()
 
 print(f"\nERCOT endogenous storage AS-vs-energy split — {bundle.name}\n")
 print(
-    f"{'year':>4} | {'measured AS':>11} | {'modeled AS (UB)':>15} | "
+    f"{'year':>4} | {'measured AS':>11} | {'modeled AS':>15} | "
     f"{'mod/meas':>8} | {'modeled energy':>14} | {'AS share (mod)':>14}"
 )
 print("-" * 84)
@@ -45,12 +45,14 @@ for year, g in df.groupby("year"):
         f"{ratio:>7.2f}x | {mod_en:>11.0f} MW | {mod_share:>13.1%}"
     )
 print(
-    "\n(mean MW across 8760h. modeled AS = storage-FIRST attribution of cleared "
-    "co-opt reserve = min(storage room, zone reserve) — an UPPER BOUND on the "
-    "battery's AS (exact only when storage is the marginal fast-AS provider); the "
-    "true modeled AS lies between the measured level and this bound. modeled energy "
-    "= battery discharge. measured AS = 60-Day DAM battery award — the validation "
-    "target, never a pin. The LP CHOOSES the split; it is AS-dominated and rises "
-    "with the fleet, as in reality, but over-holds AS vs the measured level — a "
-    "documented residual, not retuned to it.)"
+    "\n(mean MW across 8760h. modeled AS: with ercot_storage_as_duration_gate ON "
+    "(e.g. bundle 166) this is the EXACT storage AS decision variable "
+    "(DispatchResult.storage_reserve_dispatch = sum_c RS[c,z]); with the gate OFF "
+    "(storage pooled in the thermal headroom, e.g. bundle 164) it is the storage-FIRST "
+    "min(storage room, zone reserve) UPPER bound. modeled energy = battery discharge. "
+    "measured AS = 60-Day DAM battery award — the validation target, never a pin "
+    "(CLAUDE.md #12). The LP CHOOSES the split; it is AS-dominated and rises with the "
+    "fleet, as in reality. The gate-on 0.54-0.61x under-provision is a documented "
+    "dispatch-choice residual (evening SOC depletion, G-37 / "
+    "FINDING-ercot-storage-as-g37-2026-07.md), not retuned to the measured level.)"
 )
