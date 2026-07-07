@@ -25,7 +25,9 @@ from market_sim.model.dispatch import solve_dispatch
 from market_sim.pipeline import commitment as pipeline_commitment
 from market_sim.pipeline.commitment import (
     build_caiso_ra_p1_prep,
+    build_pjm_reserve_p1_prep,
     caiso_ra_p1_floor_fleet,
+    pjm_commitment_scoped_reserve_fleet,
     run_commitment_pass,
 )
 from market_sim.pipeline.solve import run_energy_solve
@@ -327,3 +329,174 @@ def test_run_energy_solve_p1_prep_floors_the_scored_p1():
     # No hook → the input fleet is used unchanged (ordinary warm-started P1).
     res2 = run_energy_solve(gens, fa, demand, mc_base, dk, config)
     assert res2.p1_fleet_arrays is fa
+
+
+# ---------------------------------------------------------------------------
+# PJM path B — commitment-scoped reserve supply (G-20b)
+# ---------------------------------------------------------------------------
+
+
+def _pjm_mask_inputs():
+    """One-zone PJM fleet: slow CC (min-down 6 h), fast CT, coal — 24 hours."""
+    gens, fa, demand, mc_base, dk = _trivial_inputs("PJM")
+    iso_config = get_iso_config("PJM")
+    zone_names = iso_config.zone_names
+    gens = gens + [
+        Generator(
+            unit_id="G2",
+            name="coal_base",
+            zone=zone_names[0],
+            fuel_type="coal",
+            pmax_mw=300.0,
+            pmin_mw=0.0,
+            heat_rate=10.5,
+            vom=2.0,
+            eford=0.0,
+        ),
+    ]
+    fa = generators_to_fleet_arrays(gens, zone_names, hours=T)
+    return gens, fa, demand, mc_base, dk
+
+
+def test_build_pjm_reserve_p1_prep_guards():
+    """(None, None) off-gate / off-ISO / no co-opt; hard error on a stacked path."""
+    import pytest
+
+    _gens, fa, _demand, _mc, _dk = _pjm_mask_inputs()
+    on = ScenarioConfig(
+        hours=T, pjm_reserve_commitment_scoped=True, energy_reserve_coopt=True
+    )
+    off = ScenarioConfig(hours=T, energy_reserve_coopt=True)
+    no_coopt = ScenarioConfig(hours=T, pjm_reserve_commitment_scoped=True)
+    assert build_pjm_reserve_p1_prep(off, "PJM", fa) == (None, None)
+    assert build_pjm_reserve_p1_prep(on, "ERCOT", fa) == (None, None)
+    assert build_pjm_reserve_p1_prep(no_coopt, "PJM", fa) == (None, None)
+    fleet_prep, kwargs_prep = build_pjm_reserve_p1_prep(on, "PJM", fa)
+    assert fleet_prep is not None and kwargs_prep is not None
+    # Path A / pergen stacking is a config error (rule 19, one mechanism).
+    for stacked in (
+        ScenarioConfig(
+            hours=T,
+            pjm_reserve_commitment_scoped=True,
+            energy_reserve_coopt=True,
+            pjm_reserve_online_gated=True,
+        ),
+        ScenarioConfig(
+            hours=T,
+            pjm_reserve_commitment_scoped=True,
+            energy_reserve_coopt=True,
+            pjm_reserve_pergen=True,
+        ),
+    ):
+        with pytest.raises(ValueError):
+            build_pjm_reserve_p1_prep(stacked, "PJM", fa)
+
+
+def test_pjm_commitment_scoped_mask_physics():
+    """Slow units mask in offline hours, min-down gaps bridge, fast-start exempt.
+
+    Unit physics (NREL class tables): the heat-rate-7 CC is f-class (min-down
+    6 h, startup $48.6/MW) -> gated; the heat-rate-10 CT is frame (min-down
+    1 h, startup $24.5/MW) -> fast-start, NEVER masked; coal (min-down 16 h,
+    $100/MW) -> gated.
+    """
+    _gens, fa, _demand, _mc, _dk = _pjm_mask_inputs()
+    config = ScenarioConfig(
+        hours=T, pjm_reserve_commitment_scoped=True, energy_reserve_coopt=True
+    )
+    p0 = np.zeros((3, T))
+    # CC: online 0-9, off 10-11 (2 h gap < 6 h min-down -> bridged online),
+    # online 12-15, offline 16-23 (a real 8 h > 6 h shutdown -> masked).
+    p0[0, 0:10] = 400.0
+    p0[0, 12:16] = 400.0
+    # CT idle all day (fast-start: stays available). Coal offline all day.
+    masked = pjm_commitment_scoped_reserve_fleet(config, fa, p0)
+    assert masked is not None and masked is not fa
+    # CC: full availability through the bridged gap, zeroed in the real gap.
+    assert np.all(masked.availability[0, 0:16] == fa.availability[0, 0:16])
+    assert np.all(masked.availability[0, 16:] == 0.0)
+    # CT (fast-start) untouched everywhere despite idling in P0.
+    assert np.array_equal(masked.availability[1], fa.availability[1])
+    # Coal offline in P0 all day -> masked all day.
+    assert np.all(masked.availability[2] == 0.0)
+    # The input fleet is never mutated.
+    assert fa.availability.max() > 0.0
+    # An all-online pattern masks nothing -> None (ordinary warm-started P1).
+    p0_all_on = np.full((3, T), 50.0)
+    assert pjm_commitment_scoped_reserve_fleet(config, fa, p0_all_on) is None
+
+
+def test_pjm_kwargs_prep_recomputes_supply_cap_on_masked_fleet():
+    """The P1 supply cap is Σ ramp10 × availability over the MASKED fleet."""
+    _gens, fa, _demand, _mc, _dk = _pjm_mask_inputs()
+    fa = dataclasses.replace(fa, ramp10=np.array([100.0, 200.0, 30.0]))
+    config = ScenarioConfig(
+        hours=T,
+        pjm_reserve_commitment_scoped=True,
+        energy_reserve_coopt=True,
+        pjm_reserve_supply_cap=True,
+    )
+    fleet_prep, kwargs_prep = build_pjm_reserve_p1_prep(config, "PJM", fa)
+
+    class _R0:
+        dispatch = np.zeros((3, T))
+
+    _R0.dispatch[0, 0:12] = 400.0  # CC online first half only; CT+coal idle
+    p1_fa = fleet_prep(_R0)
+    assert p1_fa is not None
+    overrides = kwargs_prep(_R0, p1_fa)
+    assert set(overrides) == {"reserve_supply_cap"}
+    cap = overrides["reserve_supply_cap"]
+    assert cap.shape == (1, T)
+    # First half: CC (100, online) + CT (200, fast-start, always deliverable);
+    # second half (CC masked): CT only. Coal idles all day -> masked, and its
+    # 30 MW never enters. All availabilities are 1.0 in the trivial fleet.
+    assert np.allclose(cap[0, :12], 300.0)
+    assert np.allclose(cap[0, 12:], 200.0)
+    # No mask fired -> no override (the design-time cap stands).
+    assert kwargs_prep(_R0, fa) is None
+
+
+def test_run_energy_solve_p1_kwargs_prep_cold_solve_and_merge():
+    """A kwargs override rides the P1 solve only; None keeps the warm path."""
+    gens, fa, demand, mc_base, dk = _trivial_inputs("PJM")
+
+    calls: list = []
+
+    def kwargs_prep(_r0, _p1_fa):
+        calls.append(1)
+        return None
+
+    res = run_energy_solve(
+        gens,
+        fa,
+        demand,
+        mc_base,
+        dk,
+        ScenarioConfig(hours=T),
+        p1_kwargs_prep=kwargs_prep,
+    )
+    assert calls and res.p1.status == "Optimal"
+    assert res.p1_fleet_arrays is fa
+
+    # An actual override: cap the CT's pmax via a trivially different kwargs
+    # dict (T unchanged) — the P1 must re-solve cold and stay optimal, and the
+    # P0 result must be identical to the no-hook run (the override is P1-only).
+    base = run_energy_solve(gens, fa, demand, mc_base, dk, ScenarioConfig(hours=T))
+
+    def kwargs_prep2(_r0, _p1_fa):
+        return {"voll": dk["voll"]}  # same value, but a NEW dict -> cold P1
+
+    res2 = run_energy_solve(
+        gens,
+        fa,
+        demand,
+        mc_base,
+        dk,
+        ScenarioConfig(hours=T),
+        p1_kwargs_prep=kwargs_prep2,
+    )
+    assert res2.p1.status == "Optimal"
+    assert np.array_equal(res2.r0.dispatch, base.r0.dispatch)
+    np.testing.assert_allclose(res2.p1.dispatch, base.p1.dispatch, atol=1e-9)
+    np.testing.assert_allclose(res2.p1.prices, base.p1.prices, atol=1e-9)
