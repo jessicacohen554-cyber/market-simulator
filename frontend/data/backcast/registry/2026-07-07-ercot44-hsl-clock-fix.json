@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-ercot44-hsl-clock-fix",
+  "label": "ercot44 hsl clock fix",
+  "date": "2026-07-07",
+  "shorthand": "ercot44-hsl-clock-fix",
+  "definition": "ercot44 HSL-clock-fix A/B: TREATMENT arm = ercot42 keeper recipe replayed at HEAD, single delta = the rebuilt 2024/2025 HSL parquets (CPT->CST clock fix in scripts/build_ercot_hsl.py; NP4-732/737 stamps are Central Prevailing Time and were placed on the standard-time model clock unconverted, putting the whole Mar-Nov wind/solar potential one hour late -- Jan lag 0 / Jul lag +1 vs EIA-930, r=1.0000). Control = registered 2026-07-07-ercot43-extremeenv-off. Rule-23 source citation: placement defect in this repo's intake, ERCOT source data unchanged.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-07-ercot44-hsl-clock-fix.js",
+  "bundle": "results/calibration/ercot44_hsl_clock_fix"
+}
