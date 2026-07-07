@@ -10,13 +10,16 @@ hoists the union of the two bodies here; both orchestrators now call
 The pass has four config-gated branches (all opt-in — P1 is THE main run per
 CLAUDE.md; P2 never runs unless a gate below is set):
 
-- **CAISO RA must-offer bridge** (``caiso_ra_mustoffer``, CAISO only, engaged
-  only when the economic commitment screen is off): a pure min-load bridge
-  floor on the merchant gas CC/CT fleet — NO economic decommit screen.
-  Previously reachable only from the backcast orchestrator; the forecast
-  orchestrator's ``caiso_ra_mustoffer`` P2 *trigger* (audit gap A10) ran the
-  economic screen instead — Stage 4 closes that drift: the trigger now reaches
-  the real RA branch from both entry points.
+- **CAISO RA must-offer bridge** (``caiso_ra_mustoffer``, CAISO only) — now
+  applied **P1-native**, not in P2. Since P2 was archived (CLAUDE.md: P0/P1 are
+  the only production passes and every run is scored on P1), the bridge is
+  injected as a ``min_gen`` floor *before* the single P1 solve, detected from the
+  P0 run pattern (:func:`build_caiso_ra_p1_prep` /
+  :func:`caiso_ra_p1_floor_fleet` above), so ``caiso_ra_mustoffer`` no longer
+  triggers a P2 pass. The in-pass RA branch below is retained for the legacy
+  ``--enable-legacy-p2`` path but is unreachable on the CAISO default path (it
+  gates on ``not commitment_enabled``, and P2 on CAISO now triggers only via
+  ``commitment_enabled``).
 - **Economic commitment screen** (``commitment_enabled``): CC/CT run-length
   screening on P1 margins + the coal pin
   (``model.commitment.compute_commitment`` →
@@ -57,6 +60,124 @@ from market_sim.model.commitment import (
     reserve_adequacy_commit,
 )
 from market_sim.model.dispatch import solve_dispatch
+
+
+def caiso_ra_p1_floor_fleet(
+    config,
+    iso: str,
+    fleet: list,
+    fleet_arrays,
+    p0_dispatch: np.ndarray,
+    p0_prices: np.ndarray | None,
+    mc_base: np.ndarray,
+):
+    """Return a floored ``FleetArrays`` for the P1 solve — the P1-native RA bridge.
+
+    The CAISO Resource-Adequacy must-offer bridge (``caiso_ra_mustoffer``) used
+    to run as a P2 re-solve on top of P1. P2 is archived (CLAUDE.md: P0/P1 are
+    the only two passes, every run is scored on P1), so the bridge is now applied
+    as a ``min_gen`` floor *before* the single P1 clearing solve: the same
+    forward-derivable detector (:func:`model.commitment.caiso_ra_mustoffer_min_gen`)
+    reads the model's own base-cost **P0** run pattern (and P0 duals / base MC for
+    the startup-economics extension) instead of P1, writes the min-load floor on
+    the merchant gas CC/CT fleet, and raises availability where the floor exceeds
+    the economic ceiling so the LP stays feasible. The floor rides into P1, so the
+    scored P1 pass carries the RA structure with no second solve.
+
+    Detection from P0 rather than P1 keeps the input forward-derivable and
+    condition-responsive (P0 and P1 are the same LP, differing only in the
+    startup-markup objective — the midday run/idle pattern the bridge keys on is
+    the same), and no measured generation enters (CLAUDE.md #1/#11).
+
+    Returns ``None`` when the mechanism is off, the ISO is not CAISO, or the
+    detector produces no floor (so the caller keeps the ordinary warm-started P1).
+    """
+    if not (getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO"):
+        return None
+    import dataclasses
+
+    from market_sim.data.floor_mechanisms import MECH_RA_MUSTOFFER
+    from market_sim.model.commitment import caiso_ra_mustoffer_min_gen
+
+    # Startup-cost-aware extension (caiso-44) + solar-proportional / seasonal
+    # decommitment (caiso-48): identical gating to the former P2 branch, but fed
+    # the P0 solution (dispatch + duals) — the LMP/MC the restart inequality
+    # prices the gap at is the model's own base-cost dual, still forward-derivable.
+    startup_bridge = bool(getattr(config, "caiso_ra_startup_bridge", False))
+    bridge_decommit = startup_bridge and bool(
+        getattr(config, "caiso_ra_bridge_decommit", False)
+    )
+    surplus_floor_value = (
+        -float(config.renewable_keep_running_value)
+        if getattr(config, "negative_renewable_offers", False)
+        else 0.0
+    )
+    ra_floor = caiso_ra_mustoffer_min_gen(
+        p0_dispatch,
+        fleet_arrays,
+        fleet,
+        float(config.caiso_ra_min_load_frac),
+        p1_prices=p0_prices if startup_bridge else None,
+        base_mc=mc_base if startup_bridge else None,
+        startup_bridge=startup_bridge,
+        bridge_decommit=bridge_decommit,
+        surplus_floor_value=surplus_floor_value,
+    )
+    if not np.any(ra_floor > 0.0):
+        return None
+    base_min_gen = (
+        fleet_arrays.min_gen
+        if fleet_arrays.min_gen is not None
+        else np.broadcast_to(fleet_arrays.pmin[:, None], ra_floor.shape)
+    )
+    new_min_gen = np.maximum(base_min_gen, ra_floor)
+    # D-2 attribution: the RA bridge owns every gen-hour where it strictly raised
+    # the composed floor (maximum-composition, data.floor_mechanisms).
+    base_mech = getattr(fleet_arrays, "min_gen_mechanism", None)
+    new_mech = (
+        base_mech.copy()
+        if base_mech is not None
+        else np.zeros(ra_floor.shape, dtype=np.int8)
+    )
+    new_mech[ra_floor > base_min_gen] = MECH_RA_MUSTOFFER
+    # Feasibility: the LP binds ``min_gen <= P <= pmax * availability``. Raise
+    # availability to at least ``min_gen / pmax`` on every floored gen-hour so the
+    # floor never makes the P1 bound infeasible — the same guard the P2
+    # preserve_min_gen path applied, minus the coal pin / commitment mask (P1
+    # solves coal and every unit freely above the floor; there is no second pass
+    # to lock a prior dispatch into).
+    avail = fleet_arrays.availability.copy()
+    pmax_safe = np.maximum(fleet_arrays.pmax, 1.0)[:, None]
+    floored = new_min_gen > 0.0
+    if floored.any():
+        need = np.clip(new_min_gen / pmax_safe, 0.0, 1.0)
+        avail = np.where(floored, np.maximum(avail, need), avail)
+    return dataclasses.replace(
+        fleet_arrays,
+        min_gen=new_min_gen,
+        min_gen_mechanism=new_mech,
+        availability=avail,
+        pmin=fleet_arrays.pmin.copy(),
+    )
+
+
+def build_caiso_ra_p1_prep(config, iso: str, fleet: list, fleet_arrays, mc_base):
+    """Return a ``p1_fleet_prep`` hook for :func:`pipeline.solve.run_energy_solve`.
+
+    The hook is called with the P0 result once P0 has solved; it returns the
+    RA-floored ``FleetArrays`` the P1 solve should use (or ``None`` to keep the
+    ordinary warm-started P1). ``None`` when the RA must-offer mechanism is off or
+    the ISO is not CAISO, so no non-CAISO / non-RA path changes.
+    """
+    if not (getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO"):
+        return None
+
+    def _prep(r0):
+        return caiso_ra_p1_floor_fleet(
+            config, iso, fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
+        )
+
+    return _prep
 
 
 def run_commitment_pass(state: dict, config=None):
