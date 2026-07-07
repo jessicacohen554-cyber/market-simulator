@@ -154,7 +154,7 @@ def test_full_constraints_multiblock_byte_stable():
         n_reserve_classes=1,
         n_ordc_steps=3,
     )
-    A, lo, hi = build_constraints(
+    A = build_constraints(
         layout,
         fa,
         demand,
@@ -165,9 +165,9 @@ def test_full_constraints_multiblock_byte_stable():
         reserve_requirement=np.full(T, 50.0),
         reserve_pergen_gen_idx=gidx,
         reserve_pergen_col=col,
-    )
+    )[0]
     # Independent re-build must be byte-identical (determinism + pure re-pack).
-    A2, _, _ = build_constraints(
+    A2 = build_constraints(
         layout,
         fa,
         demand,
@@ -178,7 +178,7 @@ def test_full_constraints_multiblock_byte_stable():
         reserve_requirement=np.full(T, 50.0),
         reserve_pergen_gen_idx=gidx,
         reserve_pergen_col=col,
-    )
+    )[0]
     assert _csr_bytes(A) == _csr_bytes(A2)
     # Row count = energy (n_zones*T) + soc (n_storage*T) + joint (n_r*T) + balance (T).
     assert A.shape[0] == (n_zones + n_storage + n_r + 1) * T
