@@ -208,7 +208,7 @@ def test_locational_region_headroom_is_summed_over_member_zones():
     # Capital_Hudson zone is in East only, so its total adder is 0.
     assert a["Capital_Hudson"][0] == pytest.approx(0.0)
     # NYC zone still carries its SENY (reserve 500) and NYC (reserve 0)
-    # shortages: SENY region reserve = 500+0+0 = 500 < 1100, NYC = 0.
+    # shortages: SENY region reserve = 500+0+0 = 500 < 1300, NYC = 0.
     seny = NYISO_RCPF_LOCATIONAL["SENY"]["products"][0]
     seny_at_500 = seny[3] * (seny[1] - 500.0) / (seny[1] - seny[2])
     nyc_max = sum(p[3] for p in NYISO_RCPF_LOCATIONAL["NYC"]["products"])
