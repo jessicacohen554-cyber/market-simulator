@@ -261,15 +261,26 @@ class ScenarioConfig:
     # constants.PLANNING_RESERVE_MARGIN_BY_ISO, overridable only through
     # planning_reserve_margin_override below. One requirement, two verbs —
     # capacity-economics plan 2026-07 §3.2.)
-    fixed_om_gas_cc: float = 12.0  # $/kW-yr
-    fixed_om_gas_ct: float = 8.0
+    fixed_om_gas_cc: float = 30.0  # $/kW-yr. NREL ATB 2024 Gas-CC FOM.
+    fixed_om_gas_ct: float = 21.0  # NREL ATB 2024 Gas-CT (F-frame) FOM.
+    # (Flipped from the legacy 12/8 estimates to the externally-identified
+    # NREL-ATB-2024 targets — G-32, docs/handoffs/fom-scarcity-defaults-flip-
+    # 2026-07-07.md. Rule 11: prefer the accurate measured FOM class over a
+    # hand estimate. The flip is inert on the realized ERCOT fleet — the
+    # accredited reliability floor / adequacy backstop mask the going-forward
+    # bar in the economic-retirement screen (fom-scarcity Stage 2 §2, Stage 5;
+    # foresight A/B re-run confirms retirement/entry byte-identical to the
+    # legacy-FOM run) — so it is NOT credited with any retirement or emissions
+    # effect; it is adopted for input fidelity only.)
     fixed_om_gas_st: float = 35.0  # legacy gas steam (boiler/ST) going-forward fixed
     # cost: high relative to a CC because old steam units are staffing- and
     # maintenance-intensive. Until this field existed, gas_st was absent from the
     # economic-retirement screen entirely (it is not gas_cc/gas_ct/coal), so old
     # steam gas could never retire on economics regardless of revenue. Source:
     # Lazard LCOE / NREL ATB legacy-steam FOM class ($30-40/kW-yr).
-    fixed_om_coal: float = 40.0
+    fixed_om_coal: float = 45.0  # NREL ATB 2024 / EIA-S&L existing-coal FOM
+    # (flipped from the legacy 40.0 estimate — G-32; see the fixed_om_gas_ct
+    # note above for the flip rationale and its inert-on-realized-fleet caveat).
     fixed_om_oil: float = 25.0  # legacy oil/distillate steam & CT — high O&M,
     # rarely run. Source: Lazard LCOE / EIA O&M.
     fixed_om_gas_cc_ccs: float = 25.0  # CC + capture island going-forward fixed
