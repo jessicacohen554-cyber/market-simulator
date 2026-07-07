@@ -1,4 +1,10 @@
 {
  "note": "Per-ISO calibration-complete markers gating the holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04). The designated holdouts (2022, H1-2026) are under FULL quarantine — no solves, no scoring, no data intake — until an ISO appears in `complete`. Declaring an ISO complete authorizes the ONE-SHOT holdout validation: intake the 2022/H1-2026 bench+fleet data (docs/out-of-sample-results-2026-07.md §1), solve the frozen keeper config once per holdout window, record the result whatever it is, and never re-tune against it. CI (scripts/legitimacy_diagnostics.py --keepers, scripts/audit_keepers.py) FAILS any registered bundle carrying a solve year outside 2023-2025 for an ISO not marked here. Marker format: \"<ISO>\": {\"declared\": \"YYYY-MM-DD\", \"keeper\": \"<run id frozen for the one-shot score>\", \"by\": \"<session/owner>\"}.",
- "complete": {}
+ "complete": {
+  "NEISO": {
+   "declared": "2026-07-07",
+   "keeper": "2026-07-07-neiso53-winter-fuelsec-coldsnap",
+   "by": "owner (session neiso-calibration-complete-w1c, AskUserQuestion 2026-07-07: 'Declare + run one-shot'; memo docs/handoffs/neiso-calibration-complete-memo-2026-07.md)"
+  }
+ }
 }
