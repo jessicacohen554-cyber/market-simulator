@@ -1967,7 +1967,7 @@ def solve_and_persist(
     ct_drag_overrides: dict | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
-    ercot_wtx_curtailment_driver: bool = False,
+    ercot_wtx_curtailment_driver: bool | None = None,
     ercot_wtx_curtail_depth_wind: float | None = None,
     ercot_wtx_curtail_depth_solar: float | None = None,
     mass_cap_enabled: bool = False,
@@ -2828,16 +2828,19 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(chp_export_floor_measured=True)
     if ercot_gtc_limits_measured:
         recorded_cfg = recorded_cfg.with_overrides(ercot_gtc_limits_measured=True)
-    if ercot_wtx_curtailment_driver:
-        _wtx_over = {"ercot_wtx_curtailment_driver": True}
-        if ercot_wtx_curtail_depth_wind is not None:
-            _wtx_over["ercot_wtx_curtail_depth_wind"] = float(
-                ercot_wtx_curtail_depth_wind
-            )
-        if ercot_wtx_curtail_depth_solar is not None:
-            _wtx_over["ercot_wtx_curtail_depth_solar"] = float(
-                ercot_wtx_curtail_depth_solar
-            )
+    # WP-B curtailment driver — tri-state (ct_netload_drag pattern): None keeps
+    # the backcast_config per-ISO default (ERCOT keeper default-ON, owner GO
+    # 2026-07-07); explicit True/False force it, so ablation arms can scrub it.
+    _wtx_over: dict = {}
+    if ercot_wtx_curtailment_driver is not None:
+        _wtx_over["ercot_wtx_curtailment_driver"] = bool(ercot_wtx_curtailment_driver)
+    if ercot_wtx_curtail_depth_wind is not None:
+        _wtx_over["ercot_wtx_curtail_depth_wind"] = float(ercot_wtx_curtail_depth_wind)
+    if ercot_wtx_curtail_depth_solar is not None:
+        _wtx_over["ercot_wtx_curtail_depth_solar"] = float(
+            ercot_wtx_curtail_depth_solar
+        )
+    if _wtx_over:
         recorded_cfg = recorded_cfg.with_overrides(**_wtx_over)
     if mass_cap_enabled:
         # G-29 wiring: mirrors run_calibration.py::run_year's own
