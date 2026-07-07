@@ -93,50 +93,41 @@
   ]
  },
  "disclosures": {
-  "note": "MODEL MISS grounds for the NOT-YET determination. These are open structural root causes, not accepted measured-input limitations, and must keep scoring as FAILs until the mechanisms that own them land. The wefor_multiplier neutralization halved the CC over-run (the biggest miss) and improved prices, demonstrating the previous 0.7 haircut was masking the commitment-posture wedge. The promotion is on fewer DOFs + better structural fidelity, not on caveats closing.",
+  "note": "MODEL MISS grounds for the NOT-YET determination. These are open structural root causes, not accepted measured-input limitations, and must keep scoring as FAILs until the mechanisms that own them land. The CC demonstrated-capacity cap CLOSED the G-23 canonical miss (CC_REGULAR passes C1 in all three years; 2023/2024 C3a mean LMP now PASS) - the promotion is on the measured-capacity root-cause fix, not on the remaining FAILs closing.",
   "items": [
    {
     "criterion": "fuelmix",
-    "klass": "CC_REGULAR",
-    "year": "2023-2024",
-    "metric": "C1 CC_REGULAR grid-delivered TWh",
-    "magnitude": "+20.03 / +19.05 TWh (2023/24; was +44.35/+43.22 under miso-41 \u2014 the wefor neutralization HALVED the CC over-run by raising thermal EFOR to its physical level, removing a silent CC availability subsidy)",
-    "classification": "MODEL MISS (P1 commitment-posture wedge; G-23/G-25)",
-    "reason": "Halved but still present. The remaining ~20 TWh over-run is the commitment-posture wedge: a perfect-foresight P1 clears at the efficient frontier with no start/min-load rents. Closable only by the pooled commitment-posture build."
-   },
-   {
-    "criterion": "fuelmix",
     "klass": "ST_GAS",
-    "year": "2023-2024",
+    "year": 2024,
     "metric": "C1 ST_GAS grid-delivered TWh",
-    "magnitude": "-8.53 / -11.01 TWh (improved from -10.86/-14.27 under miso-41)",
-    "classification": "MODEL MISS (commitment posture \u2014 ST_GAS self-committed dispatch)",
-    "reason": "Steam gas units run on commitment inertia the P1 LP cannot carry. Same family as CC over-run."
-   },
-   {
-    "criterion": "price_mean",
-    "year": "2025",
-    "metric": "C3a system load-weighted mean LMP vs RT",
-    "magnitude": "-12.5% (improved from -19.5% under miso-41)",
-    "classification": "MODEL MISS (residual price-formation gap: commitment posture + RT premium)",
-    "reason": "The gas-year 2025 residual sits in the commitment-posture and RT-premium families."
+    "magnitude": "-9.87 TWh, share -1.5pp (2023 -2.0 raw / in band; 2025 in band on share)",
+    "classification": "MODEL MISS (commitment posture - ST_GAS self-committed dispatch; G-25)",
+    "reason": "Steam gas units run on commitment inertia the perfect-foresight P1 cannot carry; the pooled commitment-posture lever (miso-43) was honesty-gate rejected. Improved from -11.0 under miso-44 by the capacity cap raising the internal price; the residual is the G-25 wedge."
    },
    {
     "criterion": "sysvol",
-    "family": "coal",
+    "family": "gas/coal",
     "year": 2025,
-    "metric": "C2 coal family grid-delivered TWh (preliminary 2025 vintage)",
-    "magnitude": "+14.7% (worsened from +8.8% under miso-41; +7.2% under miso-42)",
-    "classification": "MODEL MISS (dear-gas-year coal/CC margin; wefor neutralization reduces CC availability \u2192 coal fills)",
-    "reason": "With wefor=1.0, CC forced-outage rates rise to their physical level \u2192 CC availability drops \u2192 coal fills some of the gap (coal's own higher EFOR is offset by its baseload must-run inertia). The magnitude is within the 2025 preliminary-vintage uncertainty band. Root cause is the same commitment-posture family: the P1 LP over-dispatches the cheapest available marginal unit."
+    "metric": "C2 gas family -10.8% / coal family +16.8% (2023/2024 PASS)",
+    "magnitude": "-10.8% gas, +16.8% coal (2025 only)",
+    "classification": "MODEL MISS (2025 import starvation + coal-sigmoid discount; audit boxes 3-4)",
+    "reason": "Dear-gas 2025: the model serves domestically (gross imports 3.4 vs actual net-import 19.0 TWh) and the cheap-gas-keyed coal sigmoid discounts let coal fill what imports should - the re-attributed G-23 residual (docs/multi-iso/miso-cc-overrun-rootcause-2026-07.md boxes 3-4; sigmoid C-1 ledgered DOF, seam ladders C-6)."
+   },
+   {
+    "criterion": "price_mean",
+    "year": 2025,
+    "metric": "C3a system load-weighted mean LMP vs RT",
+    "magnitude": "-10.5% (2025 only; 2023 -0.7% PASS, 2024 PASS - both healed by the capacity cap)",
+    "classification": "MODEL MISS (same 2025 supply-surplus family as C2)",
+    "reason": "With phantom CC removed the 2023/24 price level lands; 2025's -10.5% rides the import/coal rows above."
    },
    {
     "criterion": "price_tail",
     "year": "2024-2025",
-    "metric": "C3c hours LMP > $200/MWh",
-    "magnitude": "model 0h vs actual 24/38 (DA)",
-    "classification": "MODEL MISS (commitment posture + Midwest locational reserve)",
-    "reason": "Same family as miso-41/42. Not closable by any admissible supply-side reserve structure under perfect-foresight hourly dispatch."
+    "metric": "C3c hours DA-expressible LMP > $200/MWh",
+    "magnitude": "model 0h vs DA actual 24h (2024) / 38h (2025); 2023 PASS (small-count)",
+    "classification": "MODEL MISS (scarcity price formation; G-20)",
+    "reason": "No admissible supply-side structure prices the >$200 tail (BPM curve landed, gate closed-negative; commitment posture + Midwest locational reserve zone unbuilt)."
    }
   ]
  }
