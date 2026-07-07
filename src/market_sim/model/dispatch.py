@@ -1090,6 +1090,7 @@ def _build_reserve_rows(
     headroom_products: np.ndarray | None = None,
     headroom_extra_cap: np.ndarray | None = None,
     reserve_supply_cap: np.ndarray | None = None,
+    online_capacity_cap: np.ndarray | None = None,
     storage_duration_h: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the energy+reserve co-optimization constraint rows (zone-aggregate).
@@ -1475,6 +1476,49 @@ def _build_reserve_rows(
         blocks.append(cap_block)
         lowers.append(np.full(n_hr * T, -np.inf))
         uppers.append(cap.T.ravel())
+
+    # --- Optional ON-LINE-CAPACITY ENVELOPE block, (n_hr, vph). The G-22
+    # commitment-thinness cap: one system-wide row per headroom row h bounding
+    # that row's ENERGY + RESERVE by the committed on-line capacity —
+    #   sum_z sum_{g in E_h ∩ z} P[g] + sum_z sum_{p in Prod_h} R[p,z]
+    #       (+ sum_z sum_p RS[p,z] if the storage duration gate is on)
+    #       <= online_capacity_cap[h,t].
+    # Identical placement/shape to the reserve-supply cap above (inserted BEFORE
+    # the balance rows so the balance dual indexing is unchanged) — but the added
+    # P terms make it condition-responsive: the LP can serve/reserve no more
+    # thermal than the real system had on-line, so on a tight (high-energy) hour
+    # reserve is forced into shortage and the ORDC/co-opt channel prices the hour
+    # up with NO offer-height change. Non-envelope tiers carry the uncapped
+    # sentinel RHS (scarcity.ercot_online_capacity_envelope_mw), so their row is
+    # always slack. Absent (``online_capacity_cap is None``) the LP is unchanged.
+    if online_capacity_cap is not None:
+        oc = np.asarray(online_capacity_cap, dtype=float).reshape(n_hr, T)
+        erows: list[np.ndarray] = []
+        ecols: list[np.ndarray] = []
+        evals: list[np.ndarray] = []
+        for h in range(n_hr):
+            # eligible thermal energy P[g] for this tier's generators (zone-summed
+            # into the single system-wide row h — one row per tier per hour).
+            e_idx = np.flatnonzero(hr_elig[h])
+            erows.append(np.full(e_idx.size, h))
+            ecols.append(e_idx)
+            evals.append(np.ones(e_idx.size))
+            for p in np.flatnonzero(hr_prod[h]):
+                erows.append(np.full(n_zones, h))
+                ecols.append(layout._reserve_off + int(p) * n_zones + z_all)
+                evals.append(np.ones(n_zones))
+                if gate:
+                    erows.append(np.full(n_zones, h))
+                    ecols.append(layout._storage_reserve_off + int(p) * n_zones + z_all)
+                    evals.append(np.ones(n_zones))
+        env_per_hour = sp.coo_matrix(
+            (np.concatenate(evals), (np.concatenate(erows), np.concatenate(ecols))),
+            shape=(n_hr, layout.vars_per_hour),
+        ).tocsr()
+        env_block = sp.kron(sp.eye(T, format="csr"), env_per_hour, format="csr")
+        blocks.append(env_block)
+        lowers.append(np.full(n_hr * T, -np.inf))
+        uppers.append(oc.T.ravel())
 
     # --- Storage duration-gate blocks (ERCOT endogenous storage AS). Two
     # per-zone-hour row families, inserted BEFORE the balance rows so the balance
@@ -2065,6 +2109,7 @@ def build_constraints(
     reserve_headroom_products: np.ndarray | None = None,
     reserve_headroom_extra_cap: np.ndarray | None = None,
     reserve_supply_cap: np.ndarray | None = None,
+    reserve_online_capacity_cap: np.ndarray | None = None,
     reserve_storage_duration_h: np.ndarray | None = None,
     reserve_pergen_gen_idx: np.ndarray | None = None,
     reserve_pergen_col: np.ndarray | None = None,
@@ -2513,6 +2558,7 @@ def build_constraints(
             headroom_products=reserve_headroom_products,
             headroom_extra_cap=reserve_headroom_extra_cap,
             reserve_supply_cap=reserve_supply_cap,
+            online_capacity_cap=reserve_online_capacity_cap,
             storage_duration_h=reserve_storage_duration_h,
         )
         blocks.append(res_block)
@@ -2964,6 +3010,7 @@ class DispatchModel:
         reserve_headroom_products: np.ndarray | None = None,
         reserve_headroom_extra_cap: np.ndarray | None = None,
         reserve_supply_cap: np.ndarray | None = None,
+        reserve_online_capacity_cap: np.ndarray | None = None,
         reserve_storage_duration_h: np.ndarray | None = None,
         reserve_pergen_gen_idx: np.ndarray | None = None,
         reserve_pergen_col: np.ndarray | None = None,
@@ -3002,14 +3049,15 @@ class DispatchModel:
         if pergen:
             if (
                 reserve_supply_cap is not None
+                or reserve_online_capacity_cap is not None
                 or reserve_online_gated is not None
                 or reserve_headroom_products is not None
             ):
                 raise ValueError(
                     "reserve_pergen_gen_idx is mutually exclusive with "
-                    "reserve_supply_cap / reserve_online_gated / "
-                    "reserve_headroom_products (per-gen ramp10 bounds "
-                    "supersede the zone-aggregate scoping mechanisms)"
+                    "reserve_supply_cap / reserve_online_capacity_cap / "
+                    "reserve_online_gated / reserve_headroom_products (per-gen "
+                    "ramp10 bounds supersede the zone-aggregate scoping mechanisms)"
                 )
             if reserve_pergen_ramp10 is None:
                 raise ValueError(
@@ -3167,6 +3215,7 @@ class DispatchModel:
             reserve_headroom_products=reserve_headroom_products,
             reserve_headroom_extra_cap=reserve_headroom_extra_cap,
             reserve_supply_cap=reserve_supply_cap,
+            reserve_online_capacity_cap=reserve_online_capacity_cap,
             reserve_storage_duration_h=(
                 reserve_storage_duration_h if storage_gate else None
             ),
@@ -3325,6 +3374,14 @@ class DispatchModel:
         n_supply_cap_rows = (
             n_headroom_rows * T if (coopt and reserve_supply_cap is not None) else 0
         )
+        # On-line-capacity envelope (ERCOT G-22): one system-wide row per headroom
+        # tier per hour, inserted after the supply-cap block and before balance
+        # (so the balance dual stays the final n_families*T rows).
+        n_online_cap_rows = (
+            n_headroom_rows * T
+            if (coopt and reserve_online_capacity_cap is not None)
+            else 0
+        )
         # Storage duration-gate rows: a per-zone power-competition row + a
         # per-zone SOC duration-gate row per hour (2 * n_zones * T), inserted
         # between the supply-cap and balance blocks (balance stays final).
@@ -3348,6 +3405,7 @@ class DispatchModel:
                 (
                     n_headroom_rows * n_zones * T
                     + n_supply_cap_rows
+                    + n_online_cap_rows
                     + n_storage_gate_rows
                     + n_families * T
                 )
@@ -3860,6 +3918,7 @@ def solve_dispatch(
     reserve_headroom_products: np.ndarray | None = None,
     reserve_headroom_extra_cap: np.ndarray | None = None,
     reserve_supply_cap: np.ndarray | None = None,
+    reserve_online_capacity_cap: np.ndarray | None = None,
     reserve_storage_duration_h: np.ndarray | None = None,
     reserve_pergen_gen_idx: np.ndarray | None = None,
     reserve_pergen_col: np.ndarray | None = None,
@@ -4010,6 +4069,7 @@ def solve_dispatch(
         reserve_headroom_products=reserve_headroom_products,
         reserve_headroom_extra_cap=reserve_headroom_extra_cap,
         reserve_supply_cap=reserve_supply_cap,
+        reserve_online_capacity_cap=reserve_online_capacity_cap,
         reserve_storage_duration_h=reserve_storage_duration_h,
         reserve_pergen_gen_idx=reserve_pergen_gen_idx,
         reserve_pergen_col=reserve_pergen_col,

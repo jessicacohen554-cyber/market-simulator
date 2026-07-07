@@ -3748,3 +3748,396 @@ ERCOT_RTOLCAP_FWD_OFFLINE_DELIV_COEF: float = 0.7748
 # only; in backcast the storage term reads the measured storage-AS series
 # (mode-aware, like the G4 load-resource credit).
 ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC: float = 0.35
+
+# --- ERCOT on-line-CAPACITY envelope (G-22 commitment thinness) ---------------
+# The committed on-line HSL fraction per responsive class, conditioned on the
+# same net-load-decile x season axes as ERCOT_RTOLCAP_FWD_ONLINE_SHARE above.
+# Where the RTOLCAP share is the on-line *headroom* (HSL - gross), this is the
+# on-line *capacity* (HSL) fraction itself. The on-line-capacity envelope
+# (scarcity.ercot_online_capacity_envelope_mw, gated ercot_online_capacity_envelope)
+# caps the multi-product co-opt's shared-headroom ENERGY+RESERVE at
+#     online_cap_env(t) = ERCOT_ONLINE_CAP_DELIV_COEF
+#                         x Sum_c ERCOT_ONLINE_CAP_SHARE_c[season,decile] x cap_c(t)
+# so the LP cannot dispatch or reserve more thermal than the real system had
+# on-line -- removing the ~3.2 GW phantom sub-$200 spare P1 perfect commitment
+# manufactures beyond measured RTOLCAP (FINDING-ercot-priceshape-2026-07 §3,
+# structural conclusion #2). Derived by
+# scripts/derive_ercot_rtolcap_forward.py --emit online-cap-constant from the
+# committed CAMPD unit extracts (Sum_online eff_cap / installed_cap, pooled-year
+# median). Rule #23: re-derives only on a CAMPD / measured-RTOLCAP source-data
+# update, never a residual. Identification (envelope - gross reproduces measured
+# RTOLCAP level/band/coverage) gated by scripts/validate_ercot_online_capacity.py.
+
+# Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON);
+# each inner tuple is the 10 net-load-percentile deciles (low→high).
+ERCOT_ONLINE_CAP_SHARE: dict[str, tuple[tuple[float, ...], ...]] = {
+    "COAL": (
+        (
+            0.9525,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+        (
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9025,
+            0.9025,
+            0.9525,
+            0.9025,
+            0.8776,
+        ),
+        (
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+        (
+            0.9242,
+            0.9242,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+    ),
+    "CC_REGULAR": (
+        (
+            0.4194,
+            0.4974,
+            0.5762,
+            0.6525,
+            0.6991,
+            0.7315,
+            0.7453,
+            0.7777,
+            0.8339,
+            0.8900,
+        ),
+        (
+            0.3933,
+            0.5444,
+            0.6376,
+            0.6859,
+            0.7083,
+            0.7428,
+            0.7731,
+            0.8237,
+            0.8523,
+            0.8657,
+        ),
+        (
+            0.5756,
+            0.5925,
+            0.6462,
+            0.6657,
+            0.7004,
+            0.7300,
+            0.7449,
+            0.7628,
+            0.7809,
+            0.8097,
+        ),
+        (
+            0.4370,
+            0.5380,
+            0.6202,
+            0.6651,
+            0.6797,
+            0.7212,
+            0.7458,
+            0.7743,
+            0.7848,
+            0.8107,
+        ),
+    ),
+    "CC_CHP": (
+        (
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+        ),
+        (
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+        ),
+        (
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+        ),
+        (
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6480,
+            0.6383,
+            0.6249,
+            0.6249,
+            0.6249,
+        ),
+    ),
+    "CT_PEAKER": (
+        (
+            0.0507,
+            0.0507,
+            0.0639,
+            0.0769,
+            0.0945,
+            0.1230,
+            0.1641,
+            0.2533,
+            0.3536,
+            0.4567,
+        ),
+        (
+            0.0753,
+            0.0969,
+            0.1176,
+            0.1490,
+            0.2066,
+            0.2440,
+            0.3768,
+            0.4296,
+            0.5450,
+            0.7131,
+        ),
+        (
+            0.0650,
+            0.0763,
+            0.0443,
+            0.0443,
+            0.0827,
+            0.0827,
+            0.0847,
+            0.1148,
+            0.2158,
+            0.4981,
+        ),
+        (
+            0.0945,
+            0.0969,
+            0.0969,
+            0.1037,
+            0.1185,
+            0.1234,
+            0.1411,
+            0.1257,
+            0.2657,
+            0.5198,
+        ),
+    ),
+    "CT_CHP": (
+        (
+            0.3241,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3698,
+            0.3698,
+        ),
+        (
+            0.3331,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3503,
+        ),
+        (
+            0.3065,
+            0.3065,
+            0.3065,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.3236,
+        ),
+        (
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3236,
+            0.3236,
+            0.3503,
+        ),
+    ),
+    "ST_GAS": (
+        (
+            0.0228,
+            0.0228,
+            0.0228,
+            0.1153,
+            0.1153,
+            0.1429,
+            0.1734,
+            0.2880,
+            0.5149,
+            0.8842,
+        ),
+        (
+            0.1602,
+            0.2592,
+            0.3493,
+            0.4078,
+            0.4598,
+            0.5093,
+            0.5788,
+            0.6631,
+            0.7193,
+            0.8014,
+        ),
+        (
+            0.1734,
+            0.1734,
+            0.3117,
+            0.4077,
+            0.4818,
+            0.6042,
+            0.6791,
+            0.7454,
+            0.8204,
+            0.9105,
+        ),
+        (
+            0.2819,
+            0.3269,
+            0.3631,
+            0.3975,
+            0.5241,
+            0.5730,
+            0.6396,
+            0.6782,
+            0.7822,
+            0.8796,
+        ),
+    ),
+    "ST_CHP": (
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+    ),
+}
+# Envelope deliverability coefficient: fit to reproduce the measured on-line HSL
+# MW quantity (CAMPD on-line gross + measured thermal RTOLCAP) in the BINDING
+# REGIME (top-30% net-load hours), on the PRODUCTION cap basis (model
+# FleetArrays pmax by responsive plant_group + summer derate, matching
+# scarcity.ercot_online_capacity_envelope_mw exactly — the derive's own
+# CAMPD-nameplate class cap runs ~20-30% too tight in the LP). The binding regime
+# is where the envelope is not slack and its reproduction of the measured RTOLCAP
+# capability decides whether the co-opt tightens. A whole-year fit reproduces the
+# annual mean but lets the pooled-median share undershoot the *committable*
+# capacity in the tight tail (room collapses far below measured RTOLCAP ->
+# over-fire); the envelope is a CAP (upper bound on what can be on-line), so it
+# is fit where it binds. On this basis the binding regime reproduces measured
+# RTOLCAP within -1/+2/-1% (2023/24/25); the slack hours (over-reproduced) never
+# reach the LP because the ENERGY term keeps the envelope slack there. With the
+# model's unconstrained thermal dispatch ~= measured CAMPD gross in these hours
+# (verified on the control arm, within 0.2-1.4 GW), the resulting in-LP on-line
+# room reproduces measured RTOLCAP + ~1 GW. A measured-MW-quantity fit to the
+# RTOLCAP band, never a price (rule #13).
+ERCOT_ONLINE_CAP_DELIV_COEF: float = 1.0830
