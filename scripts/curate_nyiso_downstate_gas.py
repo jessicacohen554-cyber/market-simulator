@@ -37,10 +37,10 @@ def _rel(path: Path) -> str:
 
 
 def _years_for(spec: dg.DownstateGasSpec, raw_root: Path) -> list[int]:
-    """Return the calendar years the ISO's monthly premium file covers."""
+    """Return the calendar years the ISO's monthly transport-rate file covers."""
     import pandas as pd
 
-    frame = pd.read_csv(raw_root / spec.premium_monthly_file)
+    frame = pd.read_csv(raw_root / spec.transport_monthly_file)
     return sorted({int(y) for y in frame["year"].dropna().unique()})
 
 
@@ -73,7 +73,8 @@ def curate(
         iso_years = list(years) if years else _years_for(spec, raw_root)
         source = (
             f"{_rel(raw_root / spec.hub_daily_file)} (daily hub) + "
-            f"{_rel(raw_root / spec.premium_monthly_file)} (monthly LDC premium)"
+            f"{_rel(raw_root / spec.transport_monthly_file)} "
+            "(monthly per-LDC non-firm transport rate)"
         )
         for year in iso_years:
             df = dg.build_daily_frame(iso, year, raw_root)

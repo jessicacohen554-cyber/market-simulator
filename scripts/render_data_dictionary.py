@@ -218,19 +218,22 @@ NARRATIVE: dict[str, dict[str, str]] = {
     },
     "nyiso-downstate-gas": {
         "summary": (
-            "Daily downstate NYISO delivered-gas index for the non-firm LM6000 "
-            "CT-peaker fleet (NYC zone J + Long Island zone K)."
+            "Daily downstate NYISO delivered-gas index, per zone, for the "
+            "non-firm LM6000 CT-peaker fleet (NYC zone J + Long Island zone K)."
         ),
         "reconciles": (
             "The measured Transco Zone 6 NY pipeline-hub daily spot "
-            "(`transco_z6_ny_daily.csv`), Henry Hub daily "
-            "(`henry_hub_daily.csv`, provenance), and the measured monthly LDC "
-            "city-gate premium over that hub "
-            "(`nyiso_downstate_ct_gas_basis_monthly.csv`) — into one daily series "
-            "`delivered_gas = transco_z6_ny_daily + ldc_premium_month`, "
-            "interpolated to every calendar day (free-data memo §1.4). Each "
-            "component is a measured, forward-native market/tariff input "
-            "(rule-13); nothing fitted to a residual. Consumed by "
+            "(`transco_z6_ny_daily.csv`, the peaker's own commodity), Henry Hub "
+            "daily (`henry_hub_daily.csv`, provenance), and the measured monthly "
+            "per-LDC non-firm transportation delivery rate "
+            "(`nyiso_downstate_ldc_transport_monthly.csv`: KEDNY SC-22 for NYC, "
+            "KEDLI SC-19 for Long Island) — into one daily series per zone "
+            "`delivered_gas = transco_z6_ny_daily + ldc_transport_adder_month`, "
+            "interpolated to every calendar day. Each component is a measured, "
+            "forward-native market/tariff input (rule-13); nothing fitted to a "
+            "residual. This v2 per-zone transport construction supersedes the v1 "
+            "statewide EIA-citygate premium (the interruptible peakers are "
+            "transport customers). Consumed by "
             "`market_sim.data.fuel.apply_nyiso_downstate_ct_gas_daily` to "
             "re-ground the downstate CT-peaker offer level."
         ),
