@@ -1018,14 +1018,37 @@ class TestCaisoDesign(unittest.TestCase):
             by_name["caiso_nonspin"].ordc_step_widths, [70.0, 140.0, 390.0]
         )
 
-    def test_pergen_pools_exclude_hydro(self):
-        # Hydro (ramp10 = 0) drops out of the pergen pool; three thermal
-        # (zone, fuel) columns remain: (NP15,cc), (SP15,cc), (SP15,ct).
+    def test_pergen_pools_include_hydro_with_backfilled_ramp(self):
+        # Hydro joins the CAISO-local pool (issue #1492 constraint 3): the
+        # fleet tables leave its ramp10 at 0, and _caiso_design backfills it
+        # to CAISO_HYDRO_RAMP10_FRAC x pmax. Four (zone, fuel) columns:
+        # (NP15,cc), (SP15,cc), (SP15,ct), (SP15,hydro); deliverable ramp
+        # 400 + 320 + 500 + 600 (hydro full nameplate) = 1,820 MW.
         cfg = _cfg(iso="CAISO", weather_year=1999)
         design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
-        np.testing.assert_array_equal(design.pergen_gen_idx, [0, 1, 2])
-        self.assertEqual(design.pergen_ramp10.shape, (3, 24))
-        self.assertAlmostEqual(float(design.pergen_ramp10[:, 0].sum()), 1220.0)
+        np.testing.assert_array_equal(design.pergen_gen_idx, [0, 1, 2, 3])
+        self.assertEqual(design.pergen_ramp10.shape, (4, 24))
+        self.assertAlmostEqual(float(design.pergen_ramp10[:, 0].sum()), 1820.0)
+
+    def test_hydro_backfill_leaves_mssc_unchanged(self):
+        # The 600 MW hydro plant is smaller than the 1,000 MW CC, so admitting
+        # hydro to the eligibility mask must not move the MSSC floor.
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        for fam in design.families:
+            self.assertAlmostEqual(float(fam.requirement[0]), 500.0)
+
+    def test_storage_participation_fields(self):
+        # Issue #1492 constraint 2: batteries/pumped storage back reserve via
+        # the duration-gated RS columns at the published 30-minute ASSOC
+        # sustain — the design must carry storage_eligible + the duration.
+        cfg = _cfg(iso="CAISO", weather_year=1999)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        self.assertTrue(design.storage_eligible)
+        np.testing.assert_allclose(design.storage_duration_h, [0.5])
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertTrue(kw.get("reserve_storage"))
+        np.testing.assert_allclose(kw["reserve_storage_duration_h"], [0.5])
 
     def test_pergen_ramp_scales_with_availability(self):
         cfg = _cfg(iso="CAISO", weather_year=1999)
