@@ -96,11 +96,19 @@ exact) vs measured 60-Day DAM award, per year; target 0.8–1.3×.
 | **run166 (endogenous + duration gate)** | **0.55×** |
 
 The gate cuts the over-hold decisively (1.97× → 0.55×). The 2024 residual lands just
-**below** the target band: with idle thermal reserve free in loose hours, the endogenous
-LP gives storage its tight-hour share, netting 0.55× rather than the measured 1.0×. Per
-CLAUDE.md #1 the structurally-faithful mechanism (published durations, LP-linear SOC gate)
-is kept as-is; the under-provision is a **documented residual**, not closed by tuning.
-Full 2023–2025 split table is on the dashboard (bundle `166`).
+**below** the target band. Per CLAUDE.md #1 the structurally-faithful mechanism (published
+durations, LP-linear SOC gate) is kept as-is; the under-provision is a **documented
+residual**, not closed by tuning. Full 2023–2025 split table is on the dashboard (bundle `166`).
+
+> **Correction (2026-07-07, G-37 diagnosis — `docs/handoffs/FINDING-ercot-storage-as-g37-2026-07.md`):**
+> the mechanism above ("idle thermal reserve free in loose hours … storage gets its
+> tight-hour share") is **backwards**. The hourly split (bundle 166) shows storage keeps
+> its award in the **loose midday hours** (h11–16, ratio ~0.8) and **loses** it in the
+> **tight evening peak** (h17–22, ratio 0.13–0.41), tracking battery *discharge*, not
+> thermal slack. The real driver: in the evening the deterministic P1 co-opt discharges the
+> battery for energy arbitrage, drawing down SOC so the (correct) duration gate forecloses
+> AS in exactly the hours the measured fleet holds its largest awards. The coupling is not
+> the defect; see follow-up 1 below.
 
 ## Tests (`tests/test_ercot_storage_as_duration_gate.py`)
 
@@ -127,9 +135,18 @@ all off — the endogenous split forces them off; never mixed, per the ercot30 b
 
 ## Open follow-ups
 
-1. The 2024 under-provision (0.55×): the endogenous LP has no reason to prefer storage over
-   free idle-thermal reserve in loose hours. A physically-grounded fast-AS preference (the
-   real reason batteries win ERCOT AS) would need a **grounded** cost separation, not a
-   tuned adder — an open root-cause item, not a knob.
+1. The under-provision (0.54–0.61× ×3yr): **DIAGNOSED 2026-07-07** (G-37,
+   `docs/handoffs/FINDING-ercot-storage-as-g37-2026-07.md`) — it is a **dispatch-choice
+   limitation, not a coupling bug**. The coupling (`dispatch.py:1441-1494`) is structurally
+   correct: the shortfall is concentrated in the evening peak (h17–22) where the
+   deterministic P1 co-opt discharges the battery for energy arbitrage, drawing down SOC so
+   the duration gate forecloses AS — the opposite of the "free loose-hour thermal" story.
+   Two missing mechanisms would close it, neither a knob: (a) a **forward AS commitment
+   under uncertainty** (perfect-foresight P1 greedily arbitrages the evening instead of
+   holding the DAM AS award), and (b) **evening fast-AS scarcity price formation** — a
+   grounded ramp/response-qualified thermal-reserve limit (`data/ramp_capability.py`) that
+   raises the evening AS dual. Both live on the **thermal** AS-supply side / solve
+   architecture, out of scope for the storage coupling; each needs its own validated build +
+   LOYO scoring. Stays open root-cause debt.
 2. Stage-4 integration (`ercot40`): fold the gate into the overlay-replacement run and
    score C1–C5 / G-1…G-7 against the stage-0 ex-overlay baseline.
