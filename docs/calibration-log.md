@@ -7741,3 +7741,64 @@ row updated. Rule-21 artifacts verified pre-swap: `calibration_attestation.json`
 DOF ledger (seam family residual→measured-physical) + registered zero-forcing
 ablation twin `2026-07-07-miso-46-ablation`. Follow-up lane: #1347 coal-offer
 source-data re-grounding (W4-C prompt).
+
+## 2026-07-07 — ERCOT G-22 demand-side design round (owner-sanctioned): thread A EXHAUSTED with no build; thread B root-caused as the HSL CPT→CST clock defect, FIXED + A/B'd (`ercot44-hsl-clock-fix` PROBE; keeper stays ercot42)
+
+The sanctioned reserve-demand-side round the ercot43 FILE-ONLY decision
+required. Full record: `docs/handoffs/ercot-g22-demand-side-design-2026-07.md`.
+ORDC tariff parameters untouched (rule 26); no sweep, no offset.
+
+**Thread A (demand-side scarcity formation) — admissible mechanism space is
+EMPTY; correctly NOT built.** Hour-level 2023 decomposition on the ercot43
+control (scratch replay at HEAD; tail 103 h reproduces the registered control
+exactly; measured series joined clock-corrected): in the 100 missed RT-tail
+hours the real market had RTOLCAP p50 **8.0 GW** (above the ORDC knee),
+measured RTORPA p50 **$0.7**, and SCED λ p50 **$443** vs the model dual $53 —
+the real tail is offer-carried at non-scarce reserve levels, and the keeper's
+adder channel already reproduces the measured adder (2023 mean $1.84 vs $0.9).
+The "adder at the PRC point" construction is refuted by the tariff's own
+series: curve(PRC) p50 ≈ $253 in the tail hours where measured RTORPA is
+$4.5 (RTORPA prices RTOLCAP, not PRC). All six enumerated candidates (design
+doc §4) fail identification or reduce to the rejected envelope family; the
+model's residual wedge in the missed hours is +1.7 GW at the median (half the
+ercot32-era 3.2 GW). Residual ownership: scarcity-anticipating offer
+formation (heterogeneity-preserving surface, filed ercot37 §8) and the
+C3c DA-basis premium (~130 h of DA>RT expectation hours in 2023; model 103 h
+is 0.57× the RT tail — in-band — vs 0.33× the DA basis).
+
+**Thread B (2024/25 measured-HSL data vintage) — root-caused at the data
+layer, FIXED.** `build_ercot_hsl.py` placed NP4-732/737 Central-*Prevailing*
+labels on the fixed CST model clock unconverted: the whole Mar–Nov 2024/25
+wind/solar potential ran one hour late (Jan lag 0 / Jul lag +1 vs EIA-930,
+r = 1.0000 both — pure placement), handing the LP 3–5 GW of phantom
+post-sunset solar in exactly the scarcity window (2025 top-1 % net-load:
+6.3 GW claimed vs 1.2 GW delivered). Fixed (`_prevailing_to_standard`,
+DSTFLAG-disambiguated; regression tests), parquets rebuilt (annual totals
+unchanged — a shape defect). Rule-23 citation: intake placement defect;
+source reports unchanged. **The same defect class is confirmed in the ORDC
+reserves parquets (RTOLCAP/PRC/RTORPA/RTORDPA — all 3 years) and at the
+builder level in the ercot-AS series; expected in the NP6-86 WTX congestion
+table** — each is a named follow-up re-derive round (design doc §7), NOT
+churned here because they condition keeper-frozen derived constants.
+
+**A/B (pre-committed frame, design doc §6.2).** Control = registered
+`ercot43-extremeenv-off`; treatment = `2026-07-07-ercot44-hsl-clock-fix`
+(keeper recipe at HEAD + rebuilt parquets; 2023 byte-identical across arms —
+verified). Verdict movement: **C3b-2024 0.252 FAIL → 0.180 commercial-band
+CAVEAT** (the ercot42-attributed intake-vintage C3b flip is CURED; C3b now
+fails only on 2023 = the G-22 offer-formation miss); C3c toward actual in
+both affected years (2024 24→28 h = 0.41×, 2025 1→5 h = 0.22× DA; RT
+companions 0.53×/0.16×); C2-2025 gas −4.0 → −3.8 %; C3a-2024 +6.6 → +5.9 %.
+Two rule-14 discovered compensations (register as open root-cause items, no
+coefficient moved): C3a-2025 +3.2 → +7.1 % (stays in band — the phantom
+evening solar was flattering the 2025 mean) and C5c-2024 storage monthly
+shape r 0.518 → 0.481 (PASS → FAIL — storage arbitrage timing re-couples to
+the corrected solar shape). Corrected parquets are the standing input either
+way (rule 14). Registered as PROBE (unattested); retention pruned
+`ercot40-rtolcap-forward` to hold 15. **Keeper stays `ercot42`; promotion of
+the fixed-data arm is an owner decision** (it would need the rule-21
+attestation + twin regenerated on the corrected data).
+
+**Holdouts.** No solve, score, or intake touched 2022/H1-2026 (rule 22); all
+three years in one bundle per arm (rule 16); years solved sequentially, arms
+serial (rule 12 / OOM guardrail).
