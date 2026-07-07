@@ -7665,85 +7665,21 @@ for ablation arms) and a `replay_keeper.build_kwargs` backstop pinning
 pre-driver ERCOT bundles (no key in `meta.json`) to `False` so their replays
 stay byte-faithful.
 
-## 2026-07-07 — ERCOT G-22 §5 forward path EXECUTED: extreme-peak-resolved on-line-capacity envelope (`ercot43 extremeenv-off`/`-on`; REJECTED PROBE; keeper stays ercot42)
+## 2026-07-07 — MISO keeper PROMOTED: `2026-07-07-miso-46-seam-ladder` (owner decision, gap-review session)
 
-The filed forward path from the ercot41 rejection (envelope handoff §5), built
-and A/B'd on the **ercot42 keeper recipe** at HEAD. Full record: `docs/handoffs/
-ercot-online-capacity-envelope-2026-07.md` **§7**. Two solves registered
-(`2026-07-07-ercot43-extremeenv-off` control = keeper replay at HEAD, doubling
-as the zero-forcing ablation twin; `2026-07-07-ercot43-extremeenv-on-probe`
-treatment = single delta `ercot_online_capacity_envelope_extreme=True`).
-Keeper `ercot42` untouched; both envelope flags stay default-off.
-
-**Mechanism (built, default-off, mutually exclusive with the base flag).**
-Identical LP row; driver resolution per §5: (1) share table at 2-pp grain in
-the top decile (14 net-load bins, `scarcity.ercot_online_cap_extreme_bin` —
-the measured CAMPD commitment saturation the decile-9 median collapsed; <24
-pooled-hour cells inherit the parent decile median); (2) the scalar
-deliverability becomes a per-bin profile fit to the measured thermal on-line
-HSL identity (CAMPD gross + RTOLCAP − storage AS − **LR credit**, the target
-correction vs the base fit — the keeper LP nets the measured LR series from
-the requirement, so a thermal cap keeping LR capability double-counts).
-Monotone 1.05→1.10 through the binding bins — the measured capability margin
-(non-CEMS + HSL-above-derated-nameplate) one scalar provably cannot span.
-
-**Identification gate — PASSED where ercot41's design could not**
-(`validate_ercot_online_capacity.py --extreme`): binding −0/+3/−2%, pooled
-top-2% EXACT (10.19 vs 10.19 GW), coverage 2.15×; recorded per-year
-extreme-tail ledger −23/−2/+18% (2023/24/25 — cross-year capability spread at
-fixed within-year rank; year-pinning forbidden, rule 13).
-
-**A/B verdict — REJECTED, no retune (rules 1/11; §6.1 pre-committed rule).**
-Control reproduces the keeper's registered verdict exactly at HEAD (C3a
-+8.9/+6.6 caveat, C3b 0.256/0.252, C3c 103/25/1 vs DA 311/68/23). Official
-rubric v2.2: treatment flips C3a CAVEAT→**FAIL** (2023 **+708%**, 2024
-**+61.4%** — a current-design year, the §6.1 trigger), C3b 0.256→**10.579** /
-0.252→**1.663**, C3c-2023 0.33×→**3.18×** over; C1/C2/C4/C5 identical (no
-volume regression; D-8 neutral: CC_REGULAR 141.7→141.8, ST_GAS 14.9→14.8 TWh
-2023). **The C3c-2024 leg individually flips FAIL→PASS (25→53 h vs DA 68 =
-0.78×; RT companion 53/53 exact)** — the right tail-hour count in the year
-whose extreme-tail identification is right (−2%), at the wrong intensity.
-Demand-weighted settled-price preview (dual + ORDC adder + RTORDPA overlay):
-
-| year | actual RT dw | off (control) | on (treatment) | h>$200 off/on | on-arm top-2% room+stor+LR vs meas RTOLCAP |
-|---|---|---|---|---|---|
-| 2023 | $48.36 | $56.67 | **$455.18** | 106/991 | 5.41 vs 7.89 GW (still collapsed) |
-| 2024 | $26.83 | $29.19 | **$47.71** | 27/55 | 9.65 vs 11.04 GW (−13%) |
-| 2025 | $32.49 | $33.99 | $34.04 (≈inert) | 2/2 | 15.26 vs 11.64 GW (slack → inert) |
-
-**Failure signature (what the extreme resolution proves).** The room collapse
-is no longer an identification artifact: the envelope is +3.0 GW looser than
-base in 2023's top-2% (60.0 vs 57.0 GW) and released ~+4.9 GW of suppressed
-thermal dispatch (52.6→57.5 GW) — yet the room still landed at 2.56 GW thermal
-(5.41 incl. stor+LR) vs measured 7.89, and 2023 fails on BREADTH: >$200 hours
-spread ~uniformly across bins 8–13 (186/135/153/159/173/175 of ~175 h each,
-~94% of the top ~22% of the year; raw energy dual mean $267, p99.5 $6,383)
-where reality priced 181 h concentrated in the extreme tail. 2024 is
-structurally CORRECT in shape (47/52 hot hours in bin 13, the top-2%) and only
-hot on level (+78%) — where the capability identification is right (−2%), the
-mechanism concentrates correctly. 2025 inert as predicted. Recipe compounding
-(new vs ercot41): the WTX driver's thermal backfill in congested extreme-peak
-hours consumes ~all the restored room (like-for-like 2023 room 4.63 vs
-ercot41's 4.4 GW).
-
-**Consequence for G-22 — root cause CONFIRMED as the §5 caveat, contributor
-(2).** A fully-identified supply cap cannot fix a reserve-DEMAND-side
-representation: the co-opt requires energy + the full ~10.7 GW ORDC
-total-reserve span inside the on-line capability, while the real 2023 market
-operated ~5 GW below the span and the tariff curve priced it small ($1.84 mean
-RTORPA). The envelope family (base + extreme) is exhausted; remaining
-structural object = the scarcity-year held-reserve/deployment representation,
-which re-opens the rule-26-frozen ORDC family and needs its own
-owner-sanctioned design round (handoff §7.4; G-22 register row updated).
-
-**Owner decision (2026-07-07, in-session):** keeper stays `ercot42` (probe
-rejected per the §6.1 pre-committed rule); G-22 demand-side follow-up is
-FILE-ONLY — no ORDC-family design round authorized (handoff §7.4 note stands;
-any future held-reserve/deployment work needs its own owner sanction).
-
-**Holdouts / gates.** No solve, score, or intake touched 2022/H1-2026 (rule
-22); both runs span 2023–2025 in one bundle each (rule 16); constants locked
-by the identification (no post-hoc resweep). OOM note: two concurrent ERCOT
-year-solves exceeded this container (15 GB; ~8 GB each at the 2024 build) —
-the control arm re-ran solo after the treatment finished; rule 12's ~2-run
-cap needs ≥20 GB for ERCOT per-plant co-opt arms.
+Owner decision (session-logged in the gap-review wave-manager session,
+2026-07-07): promote `miso-46-seam-ladder` over `miso-45-cc-capacity` —
+structure-over-fit per rules 1/14, the `pjm-83-srmc-reground` precedent. The
+measured per-seam Q-Q band ladders (zero fitted parameters, rule 23) restore
+the G-23-residual import channel (net interchange +35.2/+19.6/+13.2 TWh vs
+actual +37.9/+23.1/+19.0; miso-45 was +3.4 in 2025); the disclosed fit
+regression (C3a −10.5→−11.8%, C2-2025 gas −10.8→−14.1%, 2023 COAL_PRB +8.34
+marginal C1 FAIL) is the rule-14 compensating-error signature, re-attributed
+to the coal-sigmoid offer level (#1347, NOT refit per rule 23) and the G-20e
+scarcity boundary. Swap executed: `keepers.json`, `status.js` rebuilt
+(MISO NOT-YET, unchanged class), `audit_keepers.py --check` PASS
+(0 failures / 3 warnings), sidecar promotion note appended, register §4 MISO
+row updated. Rule-21 artifacts verified pre-swap: `calibration_attestation.json`
+DOF ledger (seam family residual→measured-physical) + registered zero-forcing
+ablation twin `2026-07-07-miso-46-ablation`. Follow-up lane: #1347 coal-offer
+source-data re-grounding (W4-C prompt).
