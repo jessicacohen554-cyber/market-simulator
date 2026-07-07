@@ -66,8 +66,16 @@ def _chp_by_plant(eia860_dir, year: int | None = None) -> "pd.Series":
 # ---------------------------------------------------------------------------
 
 
-def _correct_caiso_chp_steam_credit_hr(generators: list, iso: str) -> None:
-    """Correct steam-credited heat rates for all CAISO CHP plants (in place).
+def _correct_chp_steam_credit_hr(generators: list, iso: str) -> None:
+    """Correct steam-credited heat rates for an ISO's CHP gas turbines (in place).
+
+    Applied to the ISOs in
+    :data:`market_sim.data.fleet.CHP_STEAM_CREDIT_HR_CORRECTION_ISOS` (CAISO,
+    PJM). The correction is TURBINE PHYSICS, not a per-ISO residual fit
+    (CLAUDE.md rule 24 governs fitted curves, not physical limits): the
+    thresholds/factors/floor below are universal power-only heat-rate limits
+    that hold in every market, so the same values apply wherever a CHP unit's
+    reported HR is sub-physical.
 
     CT_CHP: all simple-cycle CHP gas turbines report a steam-credited HR that
     is physically impossible on a power-only basis (< 8.0 MMBtu/MWh).  The
@@ -77,6 +85,10 @@ def _correct_caiso_chp_steam_credit_hr(generators: list, iso: str) -> None:
     CC_CHP: combined-cycle CHP plants carry a smaller steam credit from
     process-steam extraction.  Plants with HR below 6.0 (under the most
     efficient CC class) get a 1.15× correction with a 6.3 floor.
+
+    (PJM 2026-07-07: reported CHP HRs of CC_CHP ~4.95 / CT_CHP ~6.14 MMBtu/MWh
+    are equally sub-physical — this correction stops steam-credited PJM CHP from
+    clearing as the cheapest thermal and over-delivering grid energy vs 923.)
     """
     from market_sim.data.fleet import (
         CAISO_CHP_CC_STEAM_CREDIT_FACTOR,
@@ -84,9 +96,10 @@ def _correct_caiso_chp_steam_credit_hr(generators: list, iso: str) -> None:
         CAISO_CHP_CC_STEAM_CREDIT_HR_THRESHOLD,
         CAISO_CHP_CT_STEAM_CREDIT_HR_THRESHOLD,
         CAISO_EOR_TOPPING_FACTOR,
+        CHP_STEAM_CREDIT_HR_CORRECTION_ISOS,
     )
 
-    if iso.upper() != "CAISO":
+    if iso.upper() not in CHP_STEAM_CREDIT_HR_CORRECTION_ISOS:
         return
     for gen in generators:
         if gen.plant_group == "CT_CHP":
