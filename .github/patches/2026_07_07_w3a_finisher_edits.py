@@ -140,7 +140,7 @@ def repair_ablation_registration() -> None:
     ABL_SIDECAR.write_text(json.dumps(sc, indent=2) + "\n")
 
     js = show(f"frontend/data/backcast/runs/{OLD_SHARED_ID}.js")
-    m = re.match(r'^(.*runGz\\[")([^"]+)("\\]=")([^"]+)(";?\\s*)$', js, re.S)
+    m = re.match(r'^(.*runGz\[")([^"]+)("\]=")([^"]+)(";?\s*)$', js, re.S)
     assert m is not None, "unexpected payload format"
     data = json.loads(gzip.decompress(base64.b64decode(m.group(4))).decode())
     data["label"] = "caiso65 seam envclock ablation"
