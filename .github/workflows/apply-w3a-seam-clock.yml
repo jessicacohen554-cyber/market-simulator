@@ -1,10 +1,18 @@
 name: apply-w3a-seam-clock
 
-# Applies .github/patches/2026-07-07-w3a-seam-clock.patch onto the W3a session
-# branch, server-side, so the seam-clock source lands without the agent
-# sandbox's blocked git push — the apply-export-cap.yml precedent. Idempotent:
-# the apply commit's own push re-triggers this workflow, which then finds the
-# patch already applied and no-ops.
+# Applies the W3a session's source changes onto this branch, server-side, so
+# they land without the agent sandbox's blocked git push — the
+# apply-export-cap.yml precedent. Two carriers, both idempotent (the apply
+# commit's own push re-triggers this workflow, which then no-ops):
+#   1. .github/patches/2026-07-07-w3a-seam-clock.patch — the two in-place
+#      code edits (eia_loader envelope-clock fix; run_calibration_full
+#      --replay-bundle).
+#   2. .github/patches/2026_07_07_w3a_register_log_edits.py — the
+#      gap-register / calibration-log edits, expressed as short-anchor
+#      splices because those rows are multi-kilobyte single lines a hand-
+#      transcribed diff could silently corrupt.
+# The session's new/small files (FINDINGs, guard script, tests) are pushed
+# directly via the MCP path and do not travel through this workflow.
 on:
   push:
     branches:
@@ -23,38 +31,46 @@ jobs:
         with:
           ref: claude/caiso-seam-diurnal-shape-w3a-y2cc1s
           fetch-depth: 0
-      - name: Apply patch and push
+      - name: Apply code patch + register/log edits, push
         run: |
           set -euo pipefail
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
           PATCH=.github/patches/2026-07-07-w3a-seam-clock.patch
-          test -f "$PATCH"
-          if ! git apply --check "$PATCH" 2>/dev/null; then
-            if git apply --check --reverse "$PATCH" 2>/dev/null; then
-              echo "patch already applied — no-op"
-              exit 0
-            fi
+          EDITS=.github/patches/2026_07_07_w3a_register_log_edits.py
+          test -f "$PATCH"; test -f "$EDITS"
+          if git apply --check "$PATCH" 2>/dev/null; then
+            git apply --index "$PATCH"
+            echo "code patch applied"
+          elif git apply --check --reverse "$PATCH" 2>/dev/null; then
+            echo "code patch already applied — skip"
+          else
             echo "::error::patch neither applies nor reverses cleanly on $(git rev-parse HEAD)"
             exit 1
           fi
-          git apply --index "$PATCH"
-          git commit -m "W3a seam-clock: apply session source patch (server-side git apply)
+          python3 "$EDITS"
+          git add docs/gap-register-2026-07.md docs/calibration-log.md
+          if git diff --cached --quiet; then
+            echo "nothing to commit — all carriers already applied"
+            exit 0
+          fi
+          git commit -F - <<'MSG'
+W3a seam-clock: apply session source changes (server-side carriers)
 
-Carries the three session commits flattened (the patch file in
-.github/patches/ preserves the reviewable diff):
 1. fix(caiso): map per-DIBA interchange stamps onto the model clock for the
    corridor deliverability envelope (measured -1h standard / -2h daylight;
-   eia_loader._caiso_interchange_model_clock + pinned constants + unit tests
-   + scripts/validate_caiso_seam_hod_frame.py drift guard).
+   eia_loader._caiso_interchange_model_clock + pinned constants — unit tests
+   and the scripts/validate_caiso_seam_hod_frame.py drift guard arrive via
+   the direct MCP pushes).
 2. docs(caiso): withdraw the seam-diurnal attribution (its 'measured actual'
-   hod table was UTC-bucketed, reproduced to the MW) — tz-correction FINDING,
-   superseded banner, G-15/G-20d/G-61 register rows, calibration-log entry;
-   C3a body reattributed to belly gas commitment.
+   hod table was UTC-bucketed, reproduced to the MW) — G-15/G-20d/G-61
+   register rows + calibration-log entry; C3a body reattributed to belly gas
+   commitment.
 3. feat(calibration): --replay-bundle on run_calibration_full.py so
    calibration-run.yml can reproduce a committed recipe at this ref (the
    caiso-65 registration + its --zero-forcing-ablation twin ride this).
 
 Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_016eHWwkn7NsJZZPeVNd6oLA"
+Claude-Session: https://claude.ai/code/session_016eHWwkn7NsJZZPeVNd6oLA
+MSG
           git push origin HEAD:claude/caiso-seam-diurnal-shape-w3a-y2cc1s
