@@ -1229,8 +1229,26 @@ def ercot_commitment_headroom_overrides(
 # ---- PJM ------------------------------------------------------------------
 
 
+PJM_PERGEN_SIZE_SPLIT_MEAN_MULTIPLE: float = 2.0  # size-split pooling
+# threshold (pjm_reserve_pergen_size_split): a plant is "large enough to
+# individually matter" for reserve pricing when its capacity exceeds this
+# multiple of its OWN (zone, fuel-class) pool's mean plant capacity —
+# self-normalizing (derived from the pool's own capacity distribution, no
+# absolute MW cutoff) rather than a fitted price parameter (rule 5): this
+# gates LP GRANULARITY (which plants get an individual reserve column vs
+# share a pooled one), never a breakpoint, penalty, or offer curve. Value
+# chosen from the measured PJM 2024 fleet's row-count/memory tradeoff: 2.0x
+# -> 95 pools / 27.0% MW split individually / ~2.1x the base 39-pool tier's
+# joint+balance rows, staying inside a defensible headroom over the
+# already-near-ceiling (~15.3 GB) base sync-split tier; 1.5x -> 141 pools
+# measured at ~2.45x the row count, too aggressive given the base tier's
+# already-thin margin (see the pjm-88 size-split A/B and the memory-infeasible
+# full per-plant tier at 407 pools this sits well under).
+
+
 def pjm_pergen_structure(
     fleet_arrays: FleetArrays,
+    size_split_mean_multiple: float | None = None,
 ) -> tuple[np.ndarray, np.ndarray, int]:
     """Return the PJM pergen ``(gen_idx, col, n_r)`` (zone, fuel-class) pooling.
 
@@ -1240,6 +1258,21 @@ def pjm_pergen_structure(
     Shared between :func:`_pjm_design`'s pergen branch and the P0→P1
     sync-cap recompute (``pipeline.commitment.pjm_pergen_sync_reserve_caps``)
     so the pooling is identical by construction.
+
+    ``size_split_mean_multiple`` (``pjm_reserve_pergen_size_split``, GATED
+    default ``None``): when set, each base (zone, fuel-class) pool is further
+    split — a PLANT (tranches summed) whose capacity exceeds
+    ``size_split_mean_multiple`` × its pool's mean plant capacity gets its
+    OWN individual pool; the remaining (smaller) plants stay pooled together
+    in the base (zone, fuel-class) pool, exactly as the ``None`` path. This
+    concentrates LP granularity on the plants large enough to individually
+    set the marginal reserve opportunity cost (the pjm-87 diagnosis: with
+    39 uniform pools the LP can virtually always source PJM's small measured
+    requirement from SOME idle pool, diluting the price even when a specific
+    dominant plant is fully energy-loaded) without the memory-infeasible cost
+    of a full per-plant tier (407 pools / 814 sync-split R columns — ~10x the
+    base tier, beyond the documented 2026-07-02 P1 OOM precedent at a smaller
+    scale). ``None`` is byte-identical to the pre-split layout.
     """
     ramp10 = getattr(fleet_arrays, "ramp10", None)
     if ramp10 is None:
@@ -1253,9 +1286,55 @@ def pjm_pergen_structure(
     fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)[gen_idx]
     zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[gen_idx]
     keys = np.stack([zone, fuel], axis=1)
-    _, col = np.unique(keys, axis=0, return_inverse=True)
+    _, base_col = np.unique(keys, axis=0, return_inverse=True)
+    base_col = base_col.astype(int)
+    if size_split_mean_multiple is None:
+        n_r = int(base_col.max()) + 1 if base_col.size else 0
+        return gen_idx, base_col, n_r
+
+    plant = np.asarray(fleet_arrays.plant_code, dtype=int)[gen_idx]
+    # Per-(pool, plant) capacity: aggregate tranches of one plant within one
+    # base pool (a plant cannot span zones or fuel classes, so this is an
+    # exact per-plant total). pool_plant_id keys the unique (pool, plant)
+    # pairs; member_pp maps each member row to its pair's index.
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)[gen_idx]
+    pool_plant_keys = np.stack([base_col, plant], axis=1)
+    pool_plant_id, member_pp = np.unique(pool_plant_keys, axis=0, return_inverse=True)
+    n_pp = pool_plant_id.shape[0]
+    pp_cap = np.zeros(n_pp, dtype=float)
+    np.add.at(pp_cap, member_pp, pmax)
+    pp_pool = pool_plant_id[:, 0]
+
+    # Pool mean plant capacity (mean over DISTINCT plants, not tranches).
+    n_base = int(base_col.max()) + 1 if base_col.size else 0
+    pool_plant_count = np.zeros(n_base, dtype=float)
+    pool_cap_sum = np.zeros(n_base, dtype=float)
+    np.add.at(pool_plant_count, pp_pool, 1.0)
+    np.add.at(pool_cap_sum, pp_pool, pp_cap)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        pool_mean_cap = np.where(
+            pool_plant_count > 0, pool_cap_sum / pool_plant_count, 0.0
+        )
+    pp_large = pp_cap > (size_split_mean_multiple * pool_mean_cap[pp_pool])
+
+    # Column assignment: large (pool, plant) pairs each get a unique new
+    # column (0..n_large-1); every other member keeps its base pool id,
+    # offset past the large columns and re-densified via np.unique so ids
+    # stay contiguous even when a base pool has zero small members left.
+    large_pp_idx = np.flatnonzero(pp_large)
+    n_large = large_pp_idx.size
+    pp_to_large_col = np.full(n_pp, -1, dtype=int)
+    pp_to_large_col[large_pp_idx] = np.arange(n_large)
+    member_large_col = pp_to_large_col[member_pp]
+    is_large_member = member_large_col >= 0
+
+    small_base = np.where(is_large_member, -1, base_col)
+    _, small_dense = np.unique(small_base[~is_large_member], return_inverse=True)
+    col = np.empty(gen_idx.size, dtype=int)
+    col[is_large_member] = member_large_col[is_large_member]
+    col[~is_large_member] = n_large + small_dense
     n_r = int(col.max()) + 1 if col.size else 0
-    return gen_idx, col.astype(int), n_r
+    return gen_idx, col, n_r
 
 
 def pjm_pergen_pool_ramp10(
@@ -1407,8 +1486,18 @@ def _pjm_design(
         # documented memory scope-down, never a breakpoint/penalty change
         # (CLAUDE.md #1/#11). Pooling shared with the P0->P1 sync-cap
         # recompute via pjm_pergen_structure (grouping identical by
-        # construction).
-        pergen_gen_idx, pergen_col, n_r = pjm_pergen_structure(fleet_arrays)
+        # construction). pjm_reserve_pergen_size_split (GATED) further
+        # splits each pool's large plants into individual columns — the
+        # pjm-87 diagnosis's remedy for pooling-diluted opportunity-cost
+        # pricing; None (default) is byte-identical to the pre-split layout.
+        size_split = (
+            PJM_PERGEN_SIZE_SPLIT_MEAN_MULTIPLE
+            if getattr(config, "pjm_reserve_pergen_size_split", False)
+            else None
+        )
+        pergen_gen_idx, pergen_col, n_r = pjm_pergen_structure(
+            fleet_arrays, size_split_mean_multiple=size_split
+        )
         # Hourly availability-scaled deliverable ramp per column, (n_r, T):
         # a unit on outage (or derated) contributes proportionally less
         # 10-minute ramp — the CAMPD outage overlay (backcast) / forecast
