@@ -422,9 +422,7 @@ NARRATIVE: dict[str, dict[str, str]] = {
         ),
     },
     "unit-outage-events": {
-        "summary": (
-            "Per-unit CAMPD outage events (one row per detected window)."
-        ),
+        "summary": ("Per-unit CAMPD outage events (one row per detected window)."),
         "reconciles": (
             "`campd-unit-outages.csv` (ERCOT) / `campd-unit-outages-<ISO>.csv` "
             "(CAISO/MISO/NEISO/NYISO/PJM) — event grain (not hourly-expanded), "

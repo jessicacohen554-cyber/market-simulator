@@ -47,7 +47,11 @@ by both ``run_calibration.py`` and ``run_calibration_full.py``.
 from __future__ import annotations
 
 from market_sim.pipeline.backcast_config import backcast_config
-from market_sim.pipeline.commitment import run_commitment_pass
+from market_sim.pipeline.commitment import (
+    build_caiso_ra_p1_prep,
+    caiso_ra_p1_floor_fleet,
+    run_commitment_pass,
+)
 from market_sim.pipeline.kwargs import apply_reserve_coopt, build_base_dispatch_kwargs
 from market_sim.pipeline.prior import PriorYearResults
 from market_sim.pipeline.result import YearSolveResult
@@ -65,5 +69,7 @@ __all__ = [
     "apply_reserve_coopt",
     "run_energy_solve",
     "run_commitment_pass",
+    "build_caiso_ra_p1_prep",
+    "caiso_ra_p1_floor_fleet",
     "backcast_config",
 ]
