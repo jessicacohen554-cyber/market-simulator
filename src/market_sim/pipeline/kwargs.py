@@ -278,16 +278,23 @@ def _log_reserve_coopt(
             int(elig2d[0].sum()),
         )
         if design.pergen_gen_idx is not None:
+            _r10 = np.atleast_2d(design.pergen_ramp10)
             logger.info(
                 "PJM PER-GEN reserve co-opt ON: %d R columns / %d member units "
-                "(eligible, ramp10>0; Σ ramp10 %.1f GW), %d balance families "
-                "(%s), req means %s MW",
-                int(design.pergen_ramp10.size),
+                "(eligible, ramp10>0; deliverable ramp mean %.1f GW), "
+                "%d balance families (%s), req means %s MW%s",
+                _r10.shape[0],
                 int(design.pergen_gen_idx.size),
-                float(design.pergen_ramp10.sum()) / 1e3,
+                float(_r10.sum(axis=0).mean()) / 1e3,
                 len(design.families),
                 ", ".join(f.name for f in design.families),
                 [int(f.requirement.mean()) for f in design.families],
+                (
+                    " — SYNC product split ON (pjm_reserve_pergen_sync: "
+                    "online-scoped sync caps recomputed at the P0->P1 seam)"
+                    if design.pergen_col_pool is not None
+                    else ""
+                ),
             )
         if design.posture_pools is not None and design.posture_pools.size:
             logger.info(
