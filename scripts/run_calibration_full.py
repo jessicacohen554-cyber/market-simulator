@@ -4939,6 +4939,53 @@ def _enforce_legacy_p2_gate(parser: argparse.ArgumentParser, args) -> None:
         )
 
 
+def run_replay_bundle(
+    bundle: Path,
+    out_dir: Path | None,
+    years: list[int] | None,
+    note: str,
+    holdout_authorized: bool,
+    zero_forcing_ablation: bool = False,
+) -> None:
+    """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
+
+    The CI-dispatchable form of ``scripts/replay_keeper.py``: the bundle's
+    ``meta.json`` is the authoritative snapshot of every ``solve_and_persist``
+    kwarg, so a keeper/probe recipe reproduces exactly at the dispatched ref —
+    including single-delta A/B arms whose delta is a code change — without
+    expressing the recipe through the workflow input surface. The dashboard
+    job needs only the written bundle (``dashboard_add_run.py`` computes
+    metrics itself), so this solves and prints the standard report.
+
+    Args:
+        bundle: Committed bundle dir whose ``meta.json`` carries the recipe.
+        out_dir: Destination bundle root (``None`` re-solves in place).
+        years: Optional solve-span override (defaults to the bundle's years);
+            holdout-gated either way (rule 22).
+        note: Provenance note recorded in ``run_config.json`` (empty keeps
+            the replay default).
+        holdout_authorized: Forwarded to :func:`enforce_holdout_year_gate`.
+        zero_forcing_ablation: Solve the recipe's D-3 zero-forcing ablation
+            twin instead (composes exactly like the flag on a direct solve).
+    """
+    import replay_keeper as rk
+
+    meta = json.loads((bundle / "meta.json").read_text())
+    kwargs = rk.build_kwargs(meta)
+    kwargs["iso"] = meta["iso"]
+    kwargs["years"] = [int(y) for y in (years or meta["years"])]
+    kwargs["hours"] = int(meta.get("hours", 8760))
+    enforce_holdout_year_gate(kwargs["years"], kwargs["iso"], holdout_authorized)
+    kwargs["reference"] = _load_reference()
+    if out_dir is not None:
+        kwargs["run_dir"] = out_dir
+    if note:
+        kwargs["note"] = note
+    kwargs["zero_forcing_ablation"] = zero_forcing_ablation
+    run_dir = solve_and_persist(**kwargs)
+    report_run(run_dir)
+
+
 def main() -> None:
     """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
@@ -5317,6 +5364,20 @@ def main() -> None:
         metavar="DIR",
         default=None,
         help="Skip solving; print the report from an existing bundle directory.",
+    )
+    parser.add_argument(
+        "--replay-bundle",
+        metavar="DIR",
+        default=None,
+        help="Re-solve a committed bundle's exact recipe: DIR/meta.json "
+        "supplies every solve kwarg (scripts/replay_keeper.py's mapping), so "
+        "a keeper/probe recipe reproduces without expressing it flag-by-flag "
+        "— the CI-dispatchable replay for calibration-run.yml (extra_flags). "
+        "--out-dir/--note override the destination and provenance note; "
+        "--year (if given) overrides the solved span, still holdout-gated; "
+        "--zero-forcing-ablation composes to solve the recipe's D-3 ablation "
+        "twin. All other solve flags are ignored on this path (the bundle IS "
+        "the config).",
     )
     parser.add_argument(
         "--rebuild-benchmark",
@@ -7119,6 +7180,17 @@ def main() -> None:
 
     if args.run_p2:
         run_p2_layer(Path(args.run_p2), screen_coal=not args.no_coal_p2)
+        return
+
+    if args.replay_bundle:
+        run_replay_bundle(
+            Path(args.replay_bundle),
+            out_dir=Path(args.out_dir) if args.out_dir else None,
+            years=args.year if "--year" in sys.argv else None,
+            note=args.note,
+            holdout_authorized=args.holdout_authorized,
+            zero_forcing_ablation=args.zero_forcing_ablation,
+        )
         return
 
     iso = args.iso.upper()
