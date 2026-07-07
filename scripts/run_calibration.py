@@ -565,7 +565,7 @@ def run_year(
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
-    ercot_wtx_curtailment_driver: bool = False,
+    ercot_wtx_curtailment_driver: bool | None = None,
     ercot_wtx_curtail_depth_wind: float | None = None,
     ercot_wtx_curtail_depth_solar: float | None = None,
     mass_cap_enabled: bool = False,
@@ -673,22 +673,30 @@ def run_year(
         # carrying links' export capability follows the hourly NP6-86 series
         # (gtc-limits clean datatype) instead of the static ttc_mw.
         config = config.with_overrides(ercot_gtc_limits_measured=True)
-    if ercot_wtx_curtailment_driver:
-        # ERCOT West Texas Export corridor VRE curtailment-share driver (WP-B):
-        # the West/Panhandle wind & solar CF ceiling follows the derived
-        # net-load-indexed congestion share (data.curtailment_share) so the
-        # sub-zonal Permian/CREZ nodal congestion the 8-zone reduction cannot
-        # resolve is represented. depth=0 -> inert (zero-forcing ablation twin).
-        _overrides = {"ercot_wtx_curtailment_driver": True}
-        if ercot_wtx_curtail_depth_wind is not None:
-            _overrides["ercot_wtx_curtail_depth_wind"] = float(
-                ercot_wtx_curtail_depth_wind
-            )
-        if ercot_wtx_curtail_depth_solar is not None:
-            _overrides["ercot_wtx_curtail_depth_solar"] = float(
-                ercot_wtx_curtail_depth_solar
-            )
-        config = config.with_overrides(**_overrides)
+    # ERCOT West Texas Export corridor VRE curtailment-share driver (WP-B):
+    # the West/Panhandle wind & solar CF ceiling follows the derived
+    # net-load-indexed congestion share (data.curtailment_share) so the
+    # sub-zonal Permian/CREZ nodal congestion the 8-zone reduction cannot
+    # resolve is represented. depth=0 -> inert (zero-forcing ablation twin).
+    # Tri-state (ct_netload_drag pattern): None keeps the backcast_config
+    # per-ISO default (ERCOT keeper default-ON, owner GO 2026-07-07);
+    # True/False force it on/off so an A/B arm can scrub the driver without
+    # touching the keeper default.
+    _wtx_overrides: dict = {}
+    if ercot_wtx_curtailment_driver is not None:
+        _wtx_overrides["ercot_wtx_curtailment_driver"] = bool(
+            ercot_wtx_curtailment_driver
+        )
+    if ercot_wtx_curtail_depth_wind is not None:
+        _wtx_overrides["ercot_wtx_curtail_depth_wind"] = float(
+            ercot_wtx_curtail_depth_wind
+        )
+    if ercot_wtx_curtail_depth_solar is not None:
+        _wtx_overrides["ercot_wtx_curtail_depth_solar"] = float(
+            ercot_wtx_curtail_depth_solar
+        )
+    if _wtx_overrides:
+        config = config.with_overrides(**_wtx_overrides)
     if mass_cap_enabled:
         # G-29 wiring: the calibration harness previously had no path to
         # mass_cap_enabled at all, so the mass-cap row (policy.cap_and_trade
