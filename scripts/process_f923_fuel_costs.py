@@ -152,13 +152,26 @@ def _extract_schedules_xlsx(zip_path: Path) -> bytes:
         return zf.read(members[0])
 
 
-def _find_header_row(xlsx_bytes: bytes, sheet_name: str, key: str) -> int:
-    """Return the zero-based header row for ``sheet_name`` in the workbook.
+# The 2025 annual Early Release workbook (30JUN2026) prepends a caution
+# column ("Early release data (July 2026). Not fully edited…") to every
+# sheet, shifting the real header key out of column 0. Scan this many
+# leading columns for the key; columns to its left are release-vintage
+# padding and are dropped before renaming.
+_HEADER_SCAN_COLS: int = 3
+
+
+def _find_header_row(xlsx_bytes: bytes, sheet_name: str, key: str) -> tuple[int, int]:
+    """Return ``(header_row, key_column)`` for ``sheet_name`` in the workbook.
+
+    The header key sits in column 0 of the final/monthly-cycle releases and
+    in column 1 of the 2025 annual Early Release (which prepends a caution
+    padding column), so the scan covers the first ``_HEADER_SCAN_COLS``
+    columns of the first few rows.
 
     Args:
         xlsx_bytes: Workbook contents.
         sheet_name: Sheet to scan.
-        key: First-column header text identifying the data header row
+        key: Header text identifying the data header row
             (e.g. ``"YEAR"`` for Page 5, ``"Plant Id"`` for Page 1).
     """
     probe = pd.read_excel(
@@ -168,9 +181,10 @@ def _find_header_row(xlsx_bytes: bytes, sheet_name: str, key: str) -> int:
         nrows=12,
     )
     target = key.strip().upper()
-    for idx, value in enumerate(probe.iloc[:, 0]):
-        if isinstance(value, str) and value.strip().upper() == target:
-            return idx
+    for col in range(min(_HEADER_SCAN_COLS, probe.shape[1])):
+        for idx, value in enumerate(probe.iloc[:, col]):
+            if isinstance(value, str) and value.strip().upper() == target:
+                return idx, col
     raise ValueError(f"Could not locate {key!r} header row on {sheet_name!r}")
 
 
@@ -178,12 +192,13 @@ def _load_receipts(zip_path: Path) -> pd.DataFrame:
     """Read Page 5 from ``zip_path``'s schedules workbook, renaming columns."""
     logger.info("reading Page 5 of %s", zip_path.name)
     xlsx_bytes = _extract_schedules_xlsx(zip_path)
-    header = _find_header_row(xlsx_bytes, _PAGE_5_SHEET, "YEAR")
+    header, key_col = _find_header_row(xlsx_bytes, _PAGE_5_SHEET, "YEAR")
     raw = pd.read_excel(
         io.BytesIO(xlsx_bytes),
         sheet_name=_PAGE_5_SHEET,
         header=header,
     )
+    raw = raw.iloc[:, key_col:]
     keep = [c for c in _RENAME if c in raw.columns]
     return raw[keep].rename(columns=_RENAME)
 
@@ -198,12 +213,13 @@ def _load_generation(zip_path: Path, year: int) -> pd.DataFrame:
     """
     logger.info("reading Page 1 of %s", zip_path.name)
     xlsx_bytes = _extract_schedules_xlsx(zip_path)
-    header = _find_header_row(xlsx_bytes, _PAGE_1_SHEET, "Plant Id")
+    header, key_col = _find_header_row(xlsx_bytes, _PAGE_1_SHEET, "Plant Id")
     raw = pd.read_excel(
         io.BytesIO(xlsx_bytes),
         sheet_name=_PAGE_1_SHEET,
         header=header,
     )
+    raw = raw.iloc[:, key_col:]
     rename = {
         "Plant Id": "plant_id",
         "Plant Name": "plant_name",
@@ -385,6 +401,21 @@ def main() -> None:
         "plants. Pass --ba ERCO to reproduce the legacy ERCOT-only "
         "table.",
     )
+    parser.add_argument(
+        "--merge-years",
+        nargs="+",
+        type=int,
+        default=None,
+        metavar="YEAR",
+        help="Surgical vintage refresh: process only the zips for these "
+        "years, then replace those years' rows in the EXISTING costs "
+        "parquet, leaving every other year byte-stable (used to intake "
+        "the 2025 annual Early Release without re-downloading the "
+        "2022/2026 vintages). In this mode the Page-1 generation "
+        "parquet is NOT rewritten: it is a calibration benchmark, and "
+        "refreshing it re-benches every registered run — a separate, "
+        "owner-visible operation.",
+    )
     args = parser.parse_args()
 
     raw_dir = Path(args.raw_dir)
@@ -393,8 +424,36 @@ def main() -> None:
 
     zips = _find_zips(raw_dir)
     ba = args.ba or None
-    costs = aggregate_monthly_fuel_costs(zips, ba_code=ba)
     cost_path = out_dir / "eia923_monthly_fuel_costs.parquet"
+
+    if args.merge_years is not None:
+        wanted = set(args.merge_years)
+        zips = [
+            z
+            for z in zips
+            if (m := re.search(r"f923[_-]?(\d{4})", z.stem))
+            and int(m.group(1)) in wanted
+        ]
+        if not zips:
+            raise FileNotFoundError(
+                f"No f923_*.zip for years {sorted(wanted)} in {raw_dir}"
+            )
+        existing = pd.read_parquet(cost_path)
+        fresh = aggregate_monthly_fuel_costs(zips, ba_code=ba)
+        merged = pd.concat(
+            [existing[~existing["year"].isin(wanted)], fresh], ignore_index=True
+        ).sort_values(["year", "month", "plant_id", "fuel_group"], ignore_index=True)
+        merged.to_parquet(cost_path, index=False)
+        logger.info(
+            "merged %s: years %s refreshed (%d rows) onto %d carried rows",
+            cost_path,
+            sorted(wanted),
+            len(fresh),
+            (~existing["year"].isin(wanted)).sum(),
+        )
+        return
+
+    costs = aggregate_monthly_fuel_costs(zips, ba_code=ba)
     costs.to_parquet(cost_path, index=False)
     logger.info(
         "wrote %s (%d plant-months across %d years, BA filter=%s)",
