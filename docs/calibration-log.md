@@ -191,6 +191,40 @@ faithfulness — NOT ledgered to a CAVEAT, matching caiso-58). Committed forced
 shares are the payload-path (CI-reproducible) convention every keeper uses (the
 dashboard payload covers a ~100-of-276-plant CAMPD subset; the full-fleet parquet
 share is higher but not committed/CI-checked). G-05 struck to CLOSED.
+### 2026-07-07 — MISO — G-23 CC_REGULAR overrun root-caused: phantom EIA-860 capacity; KEEPER PROMOTED `2026-07-07-miso-45-cc-capacity` replaces `miso-44-wefor-neutral`
+
+The G-23 deep diagnostic (8-box audit, ranked report
+`docs/multi-iso/miso-cc-overrun-rootcause-2026-07.md`) found the keeper's
+CC_REGULAR +20.0/+19.1 TWh (2023/24) overrun is **not merit order**: within
+the CAMPD-covered CC plant set the model matched the actuals almost exactly
+(127.6 vs 128.1 TWh, 2023); the overrun sat in plants whose modeled pmax
+exceeds anything they ever generated. Root cause: EIA-860 reports 7 MISO CC
+plants' steam (CA) rows with **block-level Summer Capacity** while nameplate
+stays component-level, so the loader's summer-preferred pmax
+(`fleet.py:3433`) double-counts the CTs — **−2,714 MW phantom CC_REGULAR**,
+6/7 plants MISO-South (Union Power modeled 3,457 MW vs 2,428 nameplate /
+2,318 CAMPD p99.9 / 2,354 EIA-860 winter; model ran it at 109.7% CF of true
+nameplate, +9.7 TWh at one plant). Fix: the existing demonstrated-capacity
+reconcile seam (`cc_capacity_reconcile`, the PJM pjm-75 cap mechanism) with
+a MISO-derived table (`cc_capacity_reconcile_MISO.csv`, CAMPD p99.9 anchor,
+EIA-923 feasibility + pure-play guards) + new `--cc-capacity-reconcile`
+flag. Zero new DOF (ledger unchanged at 6 entries, 5 residual-identified).
+
+Result vs miso-44 (full span 2023–2025, one invocation): CC_REGULAR
++20.0/+19.1/+3.1 → **+6.7/+7.2/−7.3 TWh**; ST_GAS −8.5/−11.0/−10.5 →
+−2.0/−4.6/−6.1; CT_PEAKER 2023 −6.2 → −4.2; COAL_BIT 2023 −5.3 → −4.0;
+**C1 12/16 → 15/16 (free 8/12 → 11/12); C3b PASS**; all D-gates PASS;
+determination NOT-YET (fuelmix/sysvol/price_mean/price_tail FAIL — the open
+scarcity/import/commitment rows). 2025 flips CC to −7.3 with coal absorbing
+(+22 PRB): the residual is the audit's boxes 3–4 — import starvation (gross
+imports 3.4 vs actual net-import 19.0 TWh in 2025) and the coal-sigmoid C-1
+ledgered DOF; the cap is measured capability and stays regardless (rule 14).
+Zero-forcing ablation twin `2026-07-07-miso-45-ablation` registered
+(keeper-minus-twin ≤0.05 TWh/class — floors inert). Other boxes audited
+clean: delivered gas within ±$0.25/MMBtu of F923; internal TTC =
+documented CIL/CEL + RDT design; take-or-pay measured; ST_GAS/CT everyday
+underrun stays G-25 (commitment posture), not a floor gap. G-23 struck
+(CC core) in the gap register.
 
 ### 2026-07-06 — ERCOT — measured GTC transmission-limit probe of ercot38 (`ercot39-gtc-measured`; NEGATIVE result, no keeper swap)
 
