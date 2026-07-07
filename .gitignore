@@ -360,3 +360,6 @@ docs/handoffs/_foresight_ab_cache/
 # frontend/data/backcast/runs/. Matches the keeper-bundle tracking pattern.
 /results/calibration/ercot37_g22surface_off/
 /results/calibration/ercot37_g22surface_on/
+
+# Agent tool worktrees (per-session isolated worktrees, not repo content)
+.claude/worktrees/
