@@ -392,7 +392,12 @@ first-class C-criteria so a flat floor can never again *improve* a keeper's scor
     unexplained residual of an old one.
 19. **Forced energy is budgeted.** A keeper fails if any merchant class dispatches > 30 %
     (peakers: > 10 %) of its energy at binding floors. Floors are commitment scaffolding, not the
-    dispatch model.
+    dispatch model. *(Peaker cap later raised 10 → 15 %, rubric v2.1 2026-07-06. Amended 2026-07-07
+    by the rubric v2.2 grounded-above-budget escalation: a class above its cap is no longer an
+    automatic fail — it passes clean if every binding merchant mechanism clears D-4 off-window
+    binding AND its D-1 diurnal shape clears the gates, i.e. the forcing is a real windowed driver
+    that reproduces the observed dispatch. This promotes D-4 from a reported diagnostic to a
+    promotion-gating input for any over-budget class. See CLAUDE.md rule 20 / rubric §1 C8 §9 v2.2.)*
 20. **Every keeper carries a DOF ledger and an ablation twin.** The attestation lists each free
     parameter with its identification source; a zero-forcing ablation run is registered alongside.
     A residual that can only be closed by a tuned value is an open root-cause issue, not a parameter.
