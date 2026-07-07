@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-pjm-88-pergen-sizesplit",
+  "label": "pjm 88 pergen sizesplit",
+  "date": "2026-07-07",
+  "shorthand": "pjm-88-pergen-sizesplit",
+  "definition": "(PROBE) PJM 88 size-split pergen pooling tier (pjm-87 diagnosis remedy): pjm-87 recipe VERBATIM + pjm_reserve_pergen_size_split (splits each base (zone, fuel-class) pool's plants above 2.0x the pool's own mean plant capacity into individual reserve columns -- self-normalizing threshold, no absolute MW cutoff -- 91-95 pools / 182-190 sync-split R columns vs the base 39/78; a middle ground short of the memory-infeasible full per-plant tier, 407 pools / 814 columns). Diagnosis: none of the 4 balance rows ever bind (8-14x margin at the tightest hour of 3 years); duals come from the per-pool joint headroom row, diluted by 39 uniform pools letting the LP source PJM's small requirement from any idle pool. RESULT: memory-safe (no OOM), fires ~50% more hours (205/54/70 vs pjm-87's 133/44/50) but does NOT sharpen the magnitude into the $10-80 band -- distribution shape unchanged, still >=90% in $0-10. Unlike pjm-87, introduces a real 2025-specific dispatch shift (CT_PEAKER -2.53 TWh vs pjm-87, CC_REGULAR +1.44 TWh) and a genuine #1484 CT_PEAKER D-2 drag-share movement (10.54%->11.93%, still under the 15% cap, no gate crossed). Not a promotion case -- frequency gain without magnitude gain, at a real (small) dispatch-distortion cost pjm-87 didn't have.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-07-pjm-88-pergen-sizesplit.js",
+  "bundle": "results/calibration/pjm88_pergen_sizesplit"
+}
