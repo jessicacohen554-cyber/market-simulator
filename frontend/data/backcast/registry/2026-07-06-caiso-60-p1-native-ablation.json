@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-06-caiso-60-p1-native-ablation",
+  "label": "caiso 60 p1 native (ABLATION TWIN)",
+  "date": "2026-07-06",
+  "shorthand": "caiso-60-p1-native-ablation",
+  "definition": "ABLATION TWIN of 2026-07-06-caiso-60-p1-native \u2014 zero-forcing reference solve (every merchant floor/bridge OFF, keeping only nuclear must-run, CHP steam-following, coal take-or-pay). The keeper-vs-twin per-class delta shows what the RA must-offer bridge (and the CT net-load drag) buys. Same config as the keeper, P1-only.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-caiso-60-p1-native-ablation.js",
+  "bundle": "results/calibration/caiso60_p1native_ra-ablation",
+  "ablation_of": "2026-07-06-caiso-60-p1-native"
+}
