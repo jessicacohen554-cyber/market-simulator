@@ -252,8 +252,24 @@ class TestBinsToFleet(unittest.TestCase):
         # bid-tranche heat rate, so every tranche of one plant/group shares a
         # single physical CO2 rate — even where the peak tranche's pricing HR is
         # inflated. (Before R2 each tranche emitted at its own bid HR.)
+        #
+        # This is the CAMPD-bin tranche-construction invariant, so it is
+        # checked against a fleet with the v2 measured-CO2-rate override
+        # (``use_plant_emission_rates_v2``, on by default — G-39) disabled:
+        # that override books each CEMS-covered plant its own multi-year
+        # gen-weighted measured net CO2 rate (data/emission_rates.py), which
+        # is real and legitimately need NOT respect the bid-HR ceiling below —
+        # e.g. a CHP plant's electric-only measured rate is worse than a
+        # power-only design HR implies (fuel also serves the steam host), and
+        # a low-utilization peaker's measured rate reflects part-load/startup
+        # losses a nameplate HR doesn't capture. That override has its own
+        # coverage in tests/test_emission_rates.py and
+        # tests/test_campd.py::TestApplyPlantEmissionRatesV2NoxSo2; this
+        # test's job is only the base tranche-derivation formula.
+        config = ScenarioConfig(use_plant_emission_rates_v2=False)
+        fleet, _ = bins_to_fleet(self.bins, ZONE_NAMES, config)
         by_plant: dict[tuple, list] = {}
-        for g in self.fleet:
+        for g in fleet:
             by_plant.setdefault((g.plant_code, g.plant_group, g.fuel_type), []).append(
                 g
             )
