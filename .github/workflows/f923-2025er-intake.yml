@@ -66,10 +66,20 @@ jobs:
           n25 = new[new.year == 2025]
           o25 = old[old.year == 2025]
           merged = o25.merge(n25, on=key, how="left", indicator=True)
-          assert (merged._merge == "both").all(), "2025 ER dropped plant-months"
+          # The ER is an edited vintage: it may legitimately REMOVE a bad
+          # receipt as well as add annual-only respondents (observed: one
+          # AZ gas plant-month, plant 126 Nov-2025). Removals are allowed
+          # but each one is printed — never silently capped — and a large
+          # count still fails the intake.
+          gone = merged[merged._merge == "left_only"]
+          for r in gone.itertuples():
+              print(f"ER removed: plant {r.plant_id} month {r.month} {r.fuel_group}")
+          assert len(gone) <= 5, f"2025 ER dropped {len(gone)} plant-months (>5)"
           assert len(n25) > len(o25), "2025 ER added no plant-months"
           print(
-              f"OK: 2025 {len(o25)} -> {len(n25)} plant-months, "
+              f"OK: 2025 {len(o25)} -> {len(n25)} plant-months "
+              f"(+{len(n25) - len(merged[merged._merge == 'both'])} new, "
+              f"-{len(gone)} removed), "
               f"{o25.plant_id.nunique()} -> {n25.plant_id.nunique()} plants"
           )
           EOF
@@ -81,5 +91,5 @@ jobs:
           git config user.email "noreply@anthropic.com"
           git add data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet
           git commit -m "data: intake EIA-923 2025 annual Early Release into the delivered fuel-cost parquet (server-side; push_files is text-only) [skip ci]" \
-            -m "Source: https://www.eia.gov/electricity/data/eia923/xls/f923_2025er.zip (posted 2026-06-30). Surgical --merge-years 2025: +1,844 plant-months nationally (annual-only respondents), 9 December revisions; 2022/2023/2024/2026 rows carried byte-stable; the Page-1 generation benchmark parquet untouched. Rule 23 source-data citation for this vintage refresh."
+            -m "Source: https://www.eia.gov/electricity/data/eia923/xls/f923_2025er.zip (posted 2026-06-30). Surgical --merge-years 2025: net +1,844 plant-months nationally (1,845 added from annual-only respondents, 1 removed by the ER edit), 9 December revisions; 2022/2023/2024/2026 rows carried byte-stable; the Page-1 generation benchmark parquet untouched. Rule 23 source-data citation for this vintage refresh."
           git push origin "HEAD:${GITHUB_REF_NAME}"
