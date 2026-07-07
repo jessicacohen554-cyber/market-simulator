@@ -1,5 +1,18 @@
 # FINDING — CAISO body overprice + evening-merit gap are one seam-shape defect (2026-07-07)
 
+> **SUPERSEDED IN PART (2026-07-07, same day, W3a lane) — §2 and §5 are wrong; do not
+> build on them.** §2's "measured actual" hod table was bucketed on the **UTC hour** of
+> the EIA-930 `period` timestamp (reproduced to the MW in the correction), so the
+> model-vs-actual comparison was 7–8 hours out of phase: the "evening collapse /
+> +2–3.2 GW evening over-import / midday under-import" attribution inverts on the true
+> clock (real residual: midday **over**-import at the envelope, overnight/evening
+> **under**-import, no evening suppressor), and §5's pre-registered prediction points
+> the wrong way in both segments. §1 (hod-λ table), §3's reserve-scarcity/offer-band
+> adjudications, and §4's firm-block observations survive. Full forensics, the corrected
+> tables, a second (in-LP) clock defect in the corridor envelope and its fix + A/B, and
+> the reattribution of the C3a body to belly gas commitment:
+> **`FINDING-caiso-seam-tz-correction-2026-07-07.md`**.
+
 **Thread:** G-20d (`docs/g20-scarcity-price-formation-diagnosis-2026-07.md`) folded into G-15;
 work-order item 3 of the caiso-calibration-burndown lane ("diagnose why the evening merit
 order clears low — offer bands vs RA commitment vs import pricing").
