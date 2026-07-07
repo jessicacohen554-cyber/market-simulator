@@ -155,8 +155,10 @@ TX_UNIT_OUTAGES_CSV: Path = REFERENCE_DIR / "tx-jan-aug23-unit-outages.csv"
 # ---------------------------------------------------------------------------
 # Raw/clean layout. ``RAW_DIR`` is now live and identical to ``RAW_DATA_DIR``
 # (the W1 relocation made data/raw the single raw root). ``CLEAN_DIR`` /
-# ``DICTIONARY_DIR`` / :func:`clean_path` remain forward-looking — nothing in
-# the model reads them yet; later waves curate into data/clean.
+# ``DICTIONARY_DIR`` are also live: the write_clean/read_clean seam
+# (``scripts/lib/clean_io.py``) reads/writes under ``CLEAN_DIR`` and is
+# already exercised by 15+ data modules (``data/campd.py``, ``data/chp.py``,
+# ``data/capacity_deliverability.py``, ``data/fleet.py``, etc.).
 # ---------------------------------------------------------------------------
 RAW_DIR: Path = RAW_DATA_DIR
 CLEAN_DIR: Path = DATA_ROOT / "data" / "clean"
@@ -181,14 +183,15 @@ def clean_path(
     year: int | None = None,
     market: str | None = None,
 ) -> Path:
-    """Return the future ``data/clean`` location for a derived dataset.
+    """Return the ``data/clean`` location for a derived dataset.
 
-    Forward-looking helper for the upcoming raw/clean split: it composes a
-    canonical path under :data:`CLEAN_DIR` from a dataset ``datatype`` and the
-    optional ``iso`` / ``market`` partition keys, with ``year`` (when given)
-    folded into the file stem. Nothing in the model calls this yet — it exists
-    so later waves can route cleaned artifacts through one helper rather than
-    hand-building paths.
+    Composes a canonical path under :data:`CLEAN_DIR` from a dataset
+    ``datatype`` and the optional ``iso`` / ``market`` partition keys, with
+    ``year`` (when given) folded into the file stem. Live: e.g.
+    ``data/eia_loader.py`` calls this to resolve its weather clean-Parquet
+    path. Most other clean-seam modules instead go through
+    ``scripts/lib/clean_io.read_clean``/``write_clean``, which resolve their
+    own per-datatype paths under :data:`CLEAN_DIR` directly.
 
     Examples
     --------

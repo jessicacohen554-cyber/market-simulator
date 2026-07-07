@@ -8,14 +8,29 @@ inventory cap inert (oil still under-ran). Component B (winter fuel-security
 must-run, `winter_fuel_inventory.py:apply_winter_fuelsec_mustrun`, GATED
 `neiso_winter_fuel_mustrun`, default off, wired into `scripts/run_calibration.py`)
 has since also landed and been probed together with Component A (2026-07-06,
-dashboard runs `neiso-wfuelsec-ab-v2` / `neiso-wfuelsec-ab-v2off`): A+B do NOT
-close the C1/C3c/C5b caveats — the small NEISO coal/steam fleet already runs
-above min-stable on cold days economically, so the commitment floor is
-non-binding; keeper stays neiso-48. This was the scope for the (now-completed)
-NEISO model experiment described below. It was the *only* sanctioned lever for the remaining
-NEISO model-miss family, per the neiso-41/43 attestation ("Closable only via the
-documented future build (fuel-inventory / seasonal-reliability constraint),
-NEVER by cranking the floor slope/cap or by an offer adder") and
+dashboard runs `neiso-wfuelsec-ab-v2` / `neiso-wfuelsec-ab-v2off`): A+B alone
+do NOT close the C1/C3c/C5b caveats — the small NEISO coal/steam fleet already
+runs above min-stable on cold days economically, so the commitment floor is
+non-binding. **Update (2026-07-07, G-24):** a third, complementary mechanism —
+the gas cold-snap availability derate (`neiso_gas_coldsnap_derate` →
+`transmission.inject_neiso_gas_coldsnap_derate`) — was identified and solved
+full-span alongside A+B (`2026-07-07-neiso53-winter-fuelsec-coldsnap`, bundle
+`neiso53_winter_coldsnap_ab`, against ablation twin
+`2026-07-07-neiso53-winter-fuelsec-ablation`). Result: still **DORMANT** on
+every *scored* metric (C3c/C5b unmoved vs the twin — see
+`docs/calibration-log.md` 2026-07-07 entry for the twin-vs-probe table), so
+this REFUTES the "one missing fuel-security mechanism" hypothesis outright;
+the residual is now attributed to a NEISO winter capacity-adequacy /
+scarcity-price-formation gap, not a fuel-security-mechanism gap. Per rule 1
+the owner nonetheless **adopted the full stack into the keeper** (all three
+mechanisms are real, forward-derivable ISO-NE winter structure) —
+`2026-07-07-neiso53-winter-fuelsec-coldsnap` is the current NEISO keeper
+(`frontend/data/backcast/keepers.json`), not neiso-48. This was the scope for
+the (now-completed) NEISO model experiment described below. It was the *only*
+sanctioned lever for the remaining NEISO model-miss family, per the
+neiso-41/43 attestation ("Closable only via the documented future build
+(fuel-inventory / seasonal-reliability constraint), NEVER by cranking the
+floor slope/cap or by an offer adder") and
 `neiso-ps-undercycling-diagnosis-2026-06.md` ("do not touch the storage
 formulation to move that number").
 
@@ -114,9 +129,12 @@ limbs' slope/cap are untouched.
   `docs/parameter-citations.md` — outstanding).
 - Probe **done**: full-span solve `--year 2023 2024 2025`, registered on the
   dashboard in-session (calibration-report skill) — component A alone
-  (`2026-07-04-neiso-inventorycap-inert-probe`, inert) and A+B together
-  (`2026-07-06-neiso-wfuelsec-ab-v2` / `-v2off`, negative). Keeper stays
-  neiso-48.
+  (`2026-07-04-neiso-inventorycap-inert-probe`, inert), A+B together
+  (`2026-07-06-neiso-wfuelsec-ab-v2` / `-v2off`, negative), and the full A+B+
+  cold-snap-derate stack (`2026-07-07-neiso53-winter-fuelsec-coldsnap` /
+  `-ablation`, still DORMANT on scored metrics). **Keeper is now
+  `2026-07-07-neiso53-winter-fuelsec-coldsnap`** — adopted per rule 1 despite
+  the negative result (see Status update above).
 - Score: C3c/C5b/C5c were required to move *endogenously* for a keeper
   decision on structural faithfulness (not MAE); scored 2026-07-06 and none of
   the three moved — see Status above.
