@@ -773,6 +773,17 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         forecast_symbols=("inject_nyiso_local_selfsupply",),
         note="LMIC market-design rule — mode-independent by intent",
     ),
+    MechanismSpec(
+        "ercot_wtx_curtailment_driver",
+        "ercot_wtx_curtailment_driver",
+        "both",
+        False,
+        backcast_symbols=("wtx_curtail_multipliers",),
+        forecast_symbols=("forecast_wtx_curtail_multipliers",),
+        note="WP-B West-corridor curtailment ceiling — net-load-indexed "
+        "structural mechanism, mode-independent by intent (backcast rides "
+        "the measured-HSL potential, forecast the reference-rate gross-up)",
+    ),
 )
 
 
