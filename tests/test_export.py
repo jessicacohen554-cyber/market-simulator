@@ -57,7 +57,11 @@ def _fake_energy_solve(
     """Return a synthetic ``EnergySolveResult`` in place of the real P0/P1 solve."""
     result = _fake_dispatch_result(fleet_arrays, demand)
     return EnergySolveResult(
-        r0=result, p1=result, mc_bid=mc_base, markup=np.zeros_like(mc_base)
+        r0=result,
+        p1=result,
+        mc_bid=mc_base,
+        markup=np.zeros_like(mc_base),
+        p1_fleet_arrays=fleet_arrays,
     )
 
 
