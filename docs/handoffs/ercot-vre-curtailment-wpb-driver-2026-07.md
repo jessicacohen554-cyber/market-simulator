@@ -153,6 +153,58 @@ offer/price structure those criteria score).
   against residuals; re-derive only on a new NP6-86 year or rebuilt HSL (rule #23).
 - All three in-sample years in one bundle (rule #16).
 
+## 8. Forecast-mode leg (2026-07-07 session) — wiring + documented assumptions
+
+The driver now has a forecast leg, so forward runs (2026–2050) stop freezing
+West curtailment at the static rate embedded in the delivered EIA-930 profile:
+
+- **Renewable basis (no double-count).** In forecast mode with the driver on,
+  `load_renewable_profiles` grosses the ERCOT delivered-basis profile up to an
+  *uncurtailed potential* with the per-tech reference curtailment rate from the
+  most recent HSL year — the same `_forecast_uncurtailed_cf` construction the
+  no-HSL backcast years (ERCOT 2024/25) already use — and the LP re-curtails
+  endogenously under the corridor ceiling. Gross-up and ceiling share one gate
+  (`ercot_wtx_curtailment_driver`), so the ceiling never multiplies an
+  already-curtailed bound and driver-off forecasts are byte-identical.
+- **Seam.** `data.curtailment_share.forecast_wtx_curtail_multipliers` (the
+  forecast twin of the `run_calibration.py` gate) is called in `runner.py`'s
+  per-year dispatch assembly: net-load = the year's scaled demand − the evolved
+  fleet's uncurtailed wind/solar potential, so the decile mapping regenerates
+  every forecast year (rule #10). Multipliers thread through
+  `DispatchSpec.wind_curtail_share`/`solar_curtail_share` (UNSET off the flag).
+- **Self-scaling, verified** (`tests/test_curtailment_share_forecast.py`): the
+  within-year decile axis re-composes which (hour, season) cells carry the deep
+  deciles as West VRE builds out; doubling the West/Panhandle build grows the
+  driver-forced curtailed energy ~proportionally-plus (energy-weighted share
+  non-decreasing) and the LP's own economic surplus curtailment stacks on top
+  at deep penetration. A 2026 336-h smoke run: gross-up +7.6%/+7.9%
+  (wind/solar, 2025 reference rates), delivered lands +3.8%/+3.5% over the old
+  static basis — the frozen ~7% embedded curtailment is now endogenous.
+
+**Documented ASSUMPTIONS (owner-accepted framing, 2026-07-07 rulings — logged,
+not caveated):**
+
+1. **Percentile normalization.** The within-year net-load percentile axis
+   captures "which hours are congested" but normalizes away the absolute
+   year-over-year congestion rise: decile-conditional congestion depth is
+   pinned at the pooled 2023–25 level (decile-0 ≈ 0.8), so congestion DEPTH
+   under-escalates at deep penetration and the forecast curtailment rate is
+   conservative there. Owner decision: keep the percentile axis (simpler,
+   forward-admissible) and log this; do not index on absolute net-load.
+2. **Frozen 2023–25 West topology.** SHAPE and depth encode the measured
+   2023–25 West-corridor network. Future Permian/CREZ transmission builds
+   ERCOT is planning would ease the congestion; the driver does not
+   auto-relax. No transmission-additions scaler is fitted (it would be a
+   speculative second DOF); when a West-corridor build materially changes the
+   NP6-86 binding pattern, the share table re-derives from the new data
+   (rule #23 — a source-data update, not a residual response).
+
+The depth coefficient itself is the one outcome-anchored DOF, owner-accepted
+as a documented assumption (mainstream precedent: NREL ReEDS, Cambium, EIA
+NEMS, Aurora, EPA IPM all carry reduced-form, historically/simulation-
+calibrated curtailment representations for sub-zonal congestion; this one is
+more disciplined — measured shape + one LOYO-stable scalar).
+
 ## References
 - `docs/handoffs/ercot-vre-undercurtailment-2026-07.md`, `…-step2-2026-07.md`,
   `…-curtailment-topology-scope-2026-07.md` — the diagnosis chain.

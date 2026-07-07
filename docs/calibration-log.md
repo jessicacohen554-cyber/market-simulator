@@ -7568,3 +7568,60 @@ ledger + ablation twin registered on the dashboard
 (`2026-07-07-ercot42-wtx-curtailment-driver`/`-ablation`). **Keeper stays ercot34
 pending owner sign-off** (default off; the one [3e]-adjacent DOF is the depth
 coefficient, owner-approved 2026-07-07 as the RTOLCAP-`deliv`-style level scalar).
+
+## 2026-07-07 — ercot42 WP-B curtailment driver: full promotion gate + forecast-mode leg
+
+**Promotion gate (WS1).** The lean replay bundle's skipped scoring was produced in
+full: byte-faithful re-solve of `ercot42_wtx_curtail_probe` (metrics reproduced
+exactly), then `legitimacy_diagnostics.json/md` (D-1/D-2/D-5/D-9/D-10 PASS; D-4
+FAIL inherited **unchanged** from the keeper's `reliability_floor × CT_PEAKER`
+rows — not driver-caused), `stage4_gate_eval.json` (same demand-weighted monthly
+price convention as the keeper's, keeper + RT-actual comparators), plant
+CF-band/hourly-fit parquets, and the C6 attestation whose DOF ledger carries the
+**one outcome-anchored DOF** — the depth pair (wind 0.0998 / solar 0.1633),
+owner-accepted 2026-07-07 as a documented ASSUMPTION (mainstream precedent:
+ReEDS / Cambium / NEMS / Aurora / IPM reduced-form curtailment; identification on
+the measured curtailment MW quantity, RTOLCAP-`deliv` style; LOYO-stable
+0.0984–0.0998).
+
+**Verdict (rubric v2.2):** NOT-YET on exactly the keeper's two pre-existing
+criteria (C3b, C3c) — no new criterion-level fail; grade summary strictly better
+(target-grade 7 vs 6, ledgered 0 vs 1 — C5c-2024 improves to a genuine PASS).
+C2 gas closes ~2 pp/yr; [3e] wind curtailment doubles toward reported.
+
+**Attribution vs the depth=0 ablation twin (same HEAD code+data):** the
+C3b-2024 flip (ablation already 0.225 > 0.20), the C3c-2025 tail collapse (1 h
+with the driver off too) and +13.2 of the +16.4 Aug-2024 price rise are the
+**2024/25 measured-HSL intake's data-vintage effect**, not the driver. The
+driver itself adds +3.4 Aug-2024, moves 2023 prices toward actual (C3b-2023
+0.324→0.256) and **rescues C2-2025 from the intake-induced FAIL** (−6.4%
+ablation → −4.0% commercial band) — the rule-14 pattern: the accurate-HSL swap
+worsened the fit because the real curtailment structure was missing, and the
+driver is that structure. The driver's own price footprint is C3a 2023/2024
+PASS→CAVEAT (+8.9%/+6.6%, commercial band).
+
+**LOYO verdict scoring (rules 19/22):** three train-only single-year diagnostic
+solves (share table + depths re-derived on the other two years; never
+registered). Every year-level verdict reproduces: C3a +10.0/+6.5/+3.2 vs pooled
++8.9/+6.6/+3.2 (2023 sits at the commercial-band edge under LOYO); C3b
+0.264/0.251/0.085 vs 0.256/0.252/0.085; C3c 105/24/1 vs 103/24/1 h; C2 gas
+−5.6/−5.6/−6.0 vs −5.9/−5.7/−6.3 (ablation −7.7/−7.6/−8.7). No
+verdict flip is an in-sample artifact.
+
+**Forecast leg (WS2).** `runner.py` now applies the same net-load → share →
+ceiling in forecast mode (`data.curtailment_share.forecast_wtx_curtail_multipliers`
+→ `DispatchSpec.wind/solar_curtail_share`), with the delivered-basis profile
+grossed up to an uncurtailed potential by the reference curtailment rate under
+the same gate (`load_renewable_profiles`) — no double-count, byte-identical off
+the flag. Verified: 2026 smoke run (gross-up +7.6/+7.9%, delivered +3.8/+3.5%
+over the static basis → curtailment now endogenous) + self-scaling tests
+(`tests/test_curtailment_share_forecast.py`). Two documented assumptions
+(handoff §8, owner-accepted framing): within-year percentile normalization
+(depth under-escalates at deep penetration — conservative) and the frozen
+2023–25 West topology (future Permian/CREZ builds won't auto-relax it;
+re-derive on new NP6-86 data, rule #23).
+
+**Dashboard:** ERCOT retention pruned 17→15 (`ercot33-storage-duration-gate`,
+`ercot32-v2rescore-probe` dropped). **Keeper stays ercot34 pending owner GO**
+on (a) the keeper swap to `2026-07-07-ercot42-wtx-curtailment-driver` and
+(b) `ercot_wtx_curtailment_driver` default-ON for ERCOT backcasts.
