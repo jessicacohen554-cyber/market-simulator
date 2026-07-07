@@ -166,7 +166,15 @@ MIN_STABLE_PCT_PHYSICAL: dict[str, float] = {
 # "merchant": no independent EIA sector-level split exists for merchant/IPP
 # (NAICS-22) CHP hosts at this granularity — retained at its prior fitted
 # value. Residual-identified, forecast-risk (open item for the DOF ledger,
-# S5): replace when an independent merchant-CHP host-load source is found.
+# S5; G-26/issue #1335): replace when an independent merchant-CHP host-load
+# source is found. R6 DOCUMENT-AND-KEEP disposition per
+# docs/handoffs/scalar-remediation-plan-2026-07.md C-4 — deletion is not an
+# improvement (0% would be an equally unsourced assumption) and the
+# candidate fix (extending the EIA-923 intake to Schedule 8, filtered to the
+# ~15-40 merchant-tagged plant codes, mirroring the industrial/commercial
+# derivation above) is a data-intake project, not a hygiene edit; full
+# survey of candidate sources and the recommended path in
+# docs/handoffs/merchant-chp-host-load-memo-2026-07.md.
 CHP_BTM_PCT_BY_SECTOR: dict[str, float] = {
     "merchant": 35.0,  # residual-identified, forecast-risk — no independent source yet
     "industrial": 70.0,  # EIA-923 Schedule-8: ~70% of CHP fuel to useful thermal output
@@ -189,33 +197,29 @@ CT_STARTUP_PARAMS: list[tuple[float, float]] = [
     (99.0, 19.0),  # older
 ]
 
-# Per-plant ERCOT CC_REGULAR peaking-tranche % (top slice of nameplate priced
-# at the duct-burner peak multiplier), used in place of the generic offer
-# curve's pct_peaking when ScenarioConfig.cc_peaking_per_plant is set — moves
-# the peaking band earlier on the CF axis (15% => peaking starts at 85% of
-# nameplate). Residual-identified, forecast-risk: applied to exactly the four
-# F-class(late) 2x1 CCs the model over-ran in the 80-90% CF range (not a
-# published or physically-measured turbine limit) — open root-cause item for
-# the DOF ledger (S5).
-CC_REGULAR_PEAKING_PCT_BY_PLANT: dict[int, float] = {
-    58001: 15.0,  # Temple Power Station
-    58005: 15.0,  # Rayburn Energy Station LLC
-    59812: 15.0,  # Wolf Hollow II
-    60122: 15.0,  # Colorado Bend II
-}
+# DELETED 2026-07 (rule 26, G-26/C-12/issue #1335-adjacent audit sweep): a
+# per-plant ERCOT CC_REGULAR peaking-tranche % (top slice of nameplate priced
+# at the duct-burner peak multiplier) applied to exactly the four F-class(late)
+# 2x1 CCs the model over-ran in the 80-90% CF range — not a published or
+# physically-measured turbine limit, i.e. an answer-key scalar with no
+# independent source. Confirmed dead at HEAD before deletion: the current
+# ERCOT keeper (2026-07-06-ercot34-stage4-overlay-off) explicitly carries
+# `cc_peaking_per_plant=False` (superseded by the measured EIA-860
+# duct-burner mechanism, `cc_duct_peaking`/`fleet.cc_duct_peaking_pct`), and
+# every non-ERCOT keeper's `cc_peaking_per_plant=True` drives only the
+# CAMPD-measured `fleet.thermal_tranche_peaking` path — this dict's four
+# ERCOT-specific plant codes never matched any other ISO's fleet. No keeper
+# changes behavior from this deletion.
 
-# Coal take-or-pay supply-curve tranches: (capacity_fraction, fuel_passthrough).
-# Coal plants hold take-or-pay fuel contracts, so the contracted volume bids at
-# VOM only (fuel sunk) while volume above the contract bids at progressively
-# more of full fuel cost. This stepped supply curve replaces a flat coal MC.
-# These are the defaults for the coal_tranche_* ScenarioConfig fields.
-# Source: calibrated to EIA-930 2023-2024 hourly ERCOT coal dispatch and
-# eGRID 2023/2024 annual coal generation.
-COAL_TRANCHES: list[tuple[float, float]] = [
-    (0.30, 0.00),  # T1: take-or-pay floor — VOM only (~$4.5/MWh)
-    (0.25, 0.35),  # T2: partially contracted — 35% fuel passthrough (~$11.5/MWh)
-    (0.45, 1.00),  # T3: economic dispatch — full fuel cost (~$24-27/MWh)
-]
+# DELETED 2026-07 (rule 26, G-26/C-8/issue #1336): COAL_TRANCHES was a
+# documentation-only mirror of the coal take-or-pay supply-curve tranches —
+# never imported or read anywhere (confirmed by grep: zero references outside
+# an offer_curves.py docstring). The live, dispatch-affecting values are the
+# ScenarioConfig.coal_tranche_{1,2,3}_{frac,fuel_passthrough} fields
+# (scenarios.py), read directly by data.offer_curves._coal_tranches. A dead
+# duplicate of a tunable is exactly the "re-armable answer key" rule 26 warns
+# about (editing this list would silently do nothing), so it is removed
+# rather than kept in sync by hand.
 
 # Legacy per-class heat-rate-override band defaults (econ/peak multipliers on the
 # plant's base heat rate) for the CC / gas-steam / CT_CHP supply-curve override
@@ -2725,7 +2729,23 @@ RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
 # entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's
 # southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split
 # has unverified provenance (Tier 3 — calibration; forecast-risk): refine when
-# a direct Path-15 sub-TAC load measurement becomes available.
+# a direct Path-15 sub-TAC load measurement becomes available. This IS the
+# rule-14/rule-12 misalignment exception (a single measured TAC-area load
+# spanning a boundary — Path 15 — that our zone model splits, with no direct
+# way to measure the sub-split): the estimate is legitimately kept, not an
+# answer key, per docs/handoffs/scalar-remediation-plan-2026-07.md C-16.
+# G-26/issue #1372 status (2026-07-05 B-CAI-1 attempt, per the DOF ledger):
+# FERC-714 unreachable (403/502 via proxy), CEC planning-area geography
+# boundary-mismatched to Path 15. RE-CHECKED 2026-07-07: CAISO OASIS
+# (oasis.caiso.com SingleZip, SLD_FCST/ACTUAL) IS now reachable from this
+# environment (a zipped-XML load-forecast file fetched successfully) —
+# contradicts the 2026-07-05 "OASIS unreachable" finding and re-opens this
+# item as actionable. Not completed here: finding the specific OASIS report
+# that publishes NP15/ZP26 sub-TAC zonal load (vs. TAC-area load, which is
+# already used), downloading/parsing it, and validating a re-derivation
+# against the CAISO keeper is a data-intake project (new frozen derive
+# script + re-solve + registration, rule 23), not a documentation edit — left
+# for that dedicated session with this reachability finding as the unblock.
 CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
     "PGE-TAC": {"NP15": 0.86, "ZP26": 0.14},
     "SCE-TAC": {"SP15": 1.0},
