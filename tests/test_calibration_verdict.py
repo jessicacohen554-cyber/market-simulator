@@ -842,11 +842,26 @@ def _mat(klass="CT_PEAKER", model_twh=30.0, actual_twh=30.0, total_twh=None):
     return {"gmModel": gm}, {"classFull": cf}
 
 
-def _legit_artifact(year=2024, r=0.92, cv_ratio=1.1, share=0.05, klass="CT_PEAKER"):
-    """Synthetic legitimacy_diagnostics.json content (schema v1) for C7/C8."""
+def _legit_artifact(
+    year=2024,
+    r=0.92,
+    cv_ratio=1.1,
+    share=0.05,
+    klass="CT_PEAKER",
+    d2_rows=None,
+    d4_rows=None,
+):
+    """Synthetic legitimacy_diagnostics.json content (schema v1) for C7/C8.
+
+    ``d2_rows`` / ``d4_rows`` (optional) inject the per-(class, mechanism) D-2
+    attribution rows and the D-4 off-window rows the v2.2 grounded-above-budget
+    escalation reads. Omitted by default so the below-cap / immaterial /
+    stale-verdict tests keep their exact prior fixtures (an above-cap class with
+    no D-2 rows then correctly fails provenance — unattributable forcing).
+    """
     fail_d1 = r < 0.8 or cv_ratio < 0.5
     fail_d2 = share > (0.15 if klass == "CT_PEAKER" else 0.30)
-    return {
+    out = {
         "schema": "legitimacy-diagnostics/v1",
         "iso": "PJM",
         "years": [year],
@@ -885,10 +900,15 @@ def _legit_artifact(year=2024, r=0.92, cv_ratio=1.1, share=0.05, klass="CT_PEAKE
                         "lower_bound": False,
                         "verdict": "FAIL" if fail_d2 else "pass",
                     }
-                ]
+                ],
             },
         },
     }
+    if d2_rows is not None:
+        out["diagnostics"]["D2"]["rows"] = d2_rows
+    if d4_rows is not None:
+        out["diagnostics"]["D4"] = {"rows": d4_rows}
+    return out
 
 
 class ShapeForcedShareTests(unittest.TestCase):
@@ -975,6 +995,116 @@ class ShapeForcedShareTests(unittest.TestCase):
         legit["diagnostics"]["D2"]["summary"][0]["lower_bound"] = True
         recs = cv.score_forced_share(2024, legit, *_mat())
         self.assertIn("lower bound", recs[0]["magnitude"])
+
+    # --- v2.2 grounded-above-budget escalation (rubric §1 C8) --------------
+    def _grounded_legit(
+        self,
+        share=0.50,
+        mech="ct_netload_drag",
+        r=0.92,
+        cv_ratio=1.1,
+        d4_verdict="pass",
+        klass="CT_PEAKER",
+    ):
+        """Above-cap artifact with a D-2 mechanism row and a D-4 window row."""
+        return _legit_artifact(
+            share=share,
+            r=r,
+            cv_ratio=cv_ratio,
+            klass=klass,
+            d2_rows=[
+                {
+                    "year": 2024,
+                    "class": klass,
+                    "mechanism": mech,
+                    "forced_twh": 1.0,
+                    "class_total_twh": 1.0 / share,
+                    "share_of_class": share,
+                }
+            ],
+            d4_rows=[
+                {
+                    "year": 2024,
+                    "floor": mech,
+                    "window": "h15-21",
+                    "offwindow_share": 0.0 if d4_verdict == "pass" else 0.4,
+                    "verdict": d4_verdict,
+                }
+            ],
+        )
+
+    def test_forced_share_grounded_above_budget_passes(self):
+        # 50% forced (above the 15% peaker cap) but the driving mechanism binds
+        # in-window (D-4 pass) AND the diurnal shape is good (D-1 pass): clean
+        # PASS classified GROUNDED_ABOVE_BUDGET, not a FAIL.
+        recs = cv.score_forced_share(2024, self._grounded_legit(), *_mat())
+        self.assertEqual(recs[0]["status"], cv.PASS)
+        self.assertEqual(recs[0]["classification"], cv.GROUNDED_ABOVE_BUDGET)
+        self.assertIn("GROUNDED", recs[0]["magnitude"])
+
+    def test_forced_share_above_budget_offwindow_fails(self):
+        # Same 50% forcing, but the mechanism binds OFF its justified window
+        # (D-4 FAIL) -> provenance fails -> C8 FAIL (forcing miscalibrated).
+        recs = cv.score_forced_share(
+            2024, self._grounded_legit(d4_verdict="FAIL"), *_mat()
+        )
+        self.assertEqual(recs[0]["status"], cv.FAIL)
+        self.assertIn("provenance", recs[0]["magnitude"])
+        self.assertIn("off-window", recs[0]["magnitude"])
+
+    def test_forced_share_above_budget_bad_shape_fails(self):
+        # In-window mechanism but a flat diurnal shape (the caiso-42 signature,
+        # cv_ratio 0.02) -> shape fails -> C8 FAIL. This is the "shape mismatch
+        # means the forcing variables are wrong" case.
+        recs = cv.score_forced_share(2024, self._grounded_legit(cv_ratio=0.02), *_mat())
+        self.assertEqual(recs[0]["status"], cv.FAIL)
+        self.assertIn("shape", recs[0]["magnitude"])
+
+    def test_forced_share_above_budget_unwindowed_mech_fails(self):
+        # A mechanism with NO declared D-4 window cannot be grounded (rule 12).
+        legit = self._grounded_legit()
+        legit["diagnostics"]["D4"]["rows"] = []  # window registry has no entry
+        recs = cv.score_forced_share(2024, legit, *_mat())
+        self.assertEqual(recs[0]["status"], cv.FAIL)
+        self.assertIn("no declared D-4 window", recs[0]["magnitude"])
+
+    def test_forced_share_above_budget_no_mech_rows_fails(self):
+        # Above cap with no attributable D-2 mechanism rows (legacy artifact):
+        # provenance unverifiable -> FAIL, never a vacuous grounded pass.
+        recs = cv.score_forced_share(2024, _legit_artifact(share=0.50), *_mat())
+        self.assertEqual(recs[0]["status"], cv.FAIL)
+        self.assertIn("unverifiable", recs[0]["magnitude"])
+
+    def test_forced_share_grounded_note_surfaced_in_verdict(self):
+        # The grounded pass is surfaced as a report NOTE (not a caveat) and does
+        # not knock a clean run below CALIBRATED.
+        d = DeterminationTests()
+        art = _artifacts(
+            d._clean_year_payload(),
+            attestation=_clean_attestation(),
+            **d._clean_bench_args(),
+        )
+        # Give the clean run a shape artifact whose CT_PEAKER is grounded above
+        # budget (2024 is the clean payload's scored year).
+        art["legitimacy"] = self._grounded_legit()
+        art["legitimacy"]["years"] = [2024]
+        art["legitimacy"]["diagnostics"]["D1"]["rows"][0]["year"] = 2024
+        v = cv.determine_from_artifacts("t", art)
+        self.assertEqual(v["criteria"]["forced_share"]["status"], cv.PASS)
+        self.assertTrue(
+            any("grounded above budget" in n for n in v.get("notes", [])),
+            v.get("notes"),
+        )
+
+    def test_forced_exempt_mech_names_match_floor_mechanisms(self):
+        # The local literal must mirror floor_mechanisms (source of truth) so it
+        # cannot silently drift from the D-2 exempt / non-thermal id sets.
+        from market_sim.data import floor_mechanisms as fm
+
+        expected = {
+            fm.MECH_NAMES[m] for m in (fm.D2_EXEMPT_MECHS | fm.NON_THERMAL_MECHS)
+        }
+        self.assertEqual(cv.FORCED_EXEMPT_MECH_NAMES, expected)
 
     def test_missing_artifact_caps_determination(self):
         """SKIPPED HARD C7/C8 (no artifact) can never yield clean CALIBRATED."""
