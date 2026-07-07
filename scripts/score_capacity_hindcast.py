@@ -24,6 +24,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -126,8 +127,62 @@ def _band(err_frac: float, tol: float) -> str:
     return "PASS" if abs(err_frac) <= tol else "FAIL"
 
 
+def model_plant_code(unit_id: str) -> str | None:
+    """Best-effort EIA plant code from a *model* retirement ``unit_id``.
+
+    The economic screen retires generators at whatever grain the fleet carries
+    when the screen runs, so ``unit_id`` takes several forms:
+
+    * CAMPD per-plant tranche — ``COAL_South_p6183_committed`` → ``"6183"`` (the
+      ``p<plant>`` token the binning layer stamps on every tranche);
+    * raw EIA unit — ``3490_GEN1`` → ``"3490"`` (leading plant code);
+    * legacy zone aggregate — ``coal_COAL_South_Central`` → ``None`` (plant
+      identity was collapsed away pre-G-28; only fuel survives).
+
+    Returns the plant code as a string, or ``None`` when identity is lost.
+    """
+    s = str(unit_id)
+    m = re.search(r"_p(\d+)(?:_|$)", s)  # CAMPD tranche form
+    if m:
+        return m.group(1)
+    m = re.match(r"(\d+)(?:_|$)", s)  # raw plant_generator form
+    if m:
+        return m.group(1)
+    return None
+
+
 def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
-    """Retirement GW (total + per-fuel), unit recall, false-retire, timing."""
+    """Retirement GW (total + per-fuel), grain-corrected recall + false-retire.
+
+    **Grain fix (G-31).** The economic screen retires *plant-binned tranches*
+    (MW derates), never raw EIA units: one plant's coal exits as several tranche
+    rows (must-run / committed / peak / econ), and pre-G-28 runs even collapse
+    survivors into multi-GW zone aggregates. The old 1:1 ``fuel+size`` match
+    (a model row within [0.5×, 1.5×] of one actual unit) therefore mis-scored
+    every lumpy or split derate — a 4 GW zone-coal row can never sit inside
+    [0.5×, 1.5×] of a 486 MW actual unit, so the whole derate scored as
+    *false-retire* (the 94% artifact) while the real unit scored as *un-recalled*
+    — even when the model retired exactly the right fuel in the right amount.
+
+    The corrected grain scores capacity the way the screen can actually produce
+    it — by fuel MW, plant identity not required (per the G-31 spec):
+
+    * **recall** — a real retired unit (≥ ``LARGE_UNIT_MW``) is *recalled* when
+      the model derated at least its MW of the **same fuel** (its plant-binned
+      tranche is derated by its MW). Greedy, largest actual unit first, each
+      claim consuming the model's per-fuel derate pool so two real units aren't
+      both credited to the same MW.
+    * **false-retire** — genuine over-retirement only: model-derated MW of a
+      fuel in **excess** of what that fuel actually retired, summed over fuels.
+      Grain-independent (a tranche split or a zone lump nets out); it flags the
+      model retiring *more* coal than reality, never the model retiring the
+      *right* coal in an unfamiliar shape. (When this stays high after the fix
+      it is a real over-retirement — e.g. the G-30 scarcity-free screen exiting
+      the whole coal fleet — a screen root-cause, not a scoring artifact.)
+
+    ``plant_recall_frac`` is reported (not banded) as a stricter diagnostic: the
+    share of large actual units whose exact plant the model also retired.
+    """
     act = actuals[actuals["kind"] == "retirement"]
     act_thermal = act[act["fuel"].isin(THERMAL_FUELS)]
     mod_thermal = model[model["fuel"].isin(THERMAL_FUELS)]
@@ -136,12 +191,14 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
     mod_gw = mod_thermal["mw"].sum() / 1000.0
     total_err = (mod_gw - act_gw) / act_gw if act_gw else float("nan")
 
-    # Per fuel.
+    # Per-fuel retired MW (grain-independent — a tranche split sums back).
     perfuel = {}
     fuels = set(act_thermal["fuel"]) | set(mod_thermal["fuel"])
+    model_fuel_mw = mod_thermal.groupby("fuel")["mw"].sum().to_dict()
+    actual_fuel_mw = act_thermal.groupby("fuel")["mw"].sum().to_dict()
     for f in sorted(fuels):
-        a = act_thermal[act_thermal["fuel"] == f]["mw"].sum() / 1000.0
-        m = mod_thermal[mod_thermal["fuel"] == f]["mw"].sum() / 1000.0
+        a = actual_fuel_mw.get(f, 0.0) / 1000.0
+        m = model_fuel_mw.get(f, 0.0) / 1000.0
         e = (m - a) / a if a else float("nan")
         perfuel[f] = {
             "actual_gw": round(a, 3),
@@ -149,34 +206,43 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
             "err_frac": None if np.isnan(e) else round(e, 3),
         }
 
-    # Unit-level recall on >300 MW actual retirements, greedy fuel+size match.
-    big = act_thermal[act_thermal["mw"] >= LARGE_UNIT_MW]
-    model_pool = mod_thermal.copy()
+    # --- Grain-corrected recall (G-31): per-fuel MW coverage --------------- #
+    # A real retired unit is recalled when the model derated >= its MW of the
+    # same fuel. Greedy largest-first so each unit claims distinct model MW.
+    big = act_thermal[act_thermal["mw"] >= LARGE_UNIT_MW].sort_values(
+        "mw", ascending=False
+    )
+    fuel_pool = {f: float(mw) for f, mw in model_fuel_mw.items()}
     matched = 0
     for _, a in big.iterrows():
-        cand = model_pool[
-            (model_pool["fuel"] == a["fuel"])
-            & (model_pool["mw"] >= 0.5 * a["mw"])
-            & (model_pool["mw"] <= 1.5 * a["mw"])
-        ]
-        if not cand.empty:
+        f, m = a["fuel"], float(a["mw"])
+        if fuel_pool.get(f, 0.0) + 1e-6 >= m:
             matched += 1
-            model_pool = model_pool.drop(cand.index[0])
+            fuel_pool[f] = fuel_pool.get(f, 0.0) - m
     recall = matched / len(big) if len(big) else float("nan")
 
-    # False-retire: model thermal GW with no actual counterpart, greedy.
-    act_pool = act_thermal.copy()
+    # Stricter plant-exact diagnostic (reported, not banded): how many large
+    # actual units the model also retired at the *same plant* of the same fuel.
+    mod_plant_fuel = set()
+    for _, r in mod_thermal.iterrows():
+        pc = (
+            model_plant_code(r["unit_id"]) if "unit_id" in mod_thermal.columns else None
+        )
+        if pc is not None:
+            mod_plant_fuel.add((pc, r["fuel"]))
+    plant_matched = 0
+    if "plant_id" in big.columns:
+        for _, a in big.iterrows():
+            if (str(int(a["plant_id"])), a["fuel"]) in mod_plant_fuel:
+                plant_matched += 1
+    plant_recall = plant_matched / len(big) if len(big) else float("nan")
+
+    # --- Grain-corrected false-retire (G-31): per-fuel excess -------------- #
     false_gw = 0.0
-    for _, m in mod_thermal.iterrows():
-        cand = act_pool[
-            (act_pool["fuel"] == m["fuel"])
-            & (act_pool["mw"] >= 0.5 * m["mw"])
-            & (act_pool["mw"] <= 1.5 * m["mw"])
-        ]
-        if cand.empty:
-            false_gw += m["mw"] / 1000.0
-        else:
-            act_pool = act_pool.drop(cand.index[0])
+    for f in set(model_fuel_mw) | set(actual_fuel_mw):
+        false_gw += (
+            max(0.0, model_fuel_mw.get(f, 0.0) - actual_fuel_mw.get(f, 0.0)) / 1000.0
+        )
     false_frac = false_gw / mod_gw if mod_gw else 0.0
 
     return {
@@ -193,6 +259,11 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
             "n_big_actual": int(len(big)),
             "matched": matched,
             "recall": None if np.isnan(recall) else round(recall, 3),
+            "grain": "fuel-mw-coverage",  # G-31: not exact unit identity
+            "plant_recall_frac": None
+            if np.isnan(plant_recall)
+            else round(plant_recall, 3),
+            "plant_matched": plant_matched,
             "band": ("PASS" if recall >= BANDS["retire_recall_min"] else "FAIL")
             if not np.isnan(recall)
             else "SKIP",
@@ -200,6 +271,7 @@ def score_retirements(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
         "false_retire": {
             "false_gw": round(false_gw, 3),
             "frac_of_model": round(false_frac, 3),
+            "grain": "per-fuel-excess",  # G-31: genuine over-retire, not artifact
             "band": "PASS" if false_frac <= BANDS["false_retire_frac_max"] else "FAIL",
         },
     }
@@ -374,6 +446,24 @@ def write_report(
     fr = ret["false_retire"]
     L.append(
         f"| false-retire (GW) | — | {fr['false_gw']} | {format(fr['frac_of_model'], '.0%')} of model | {_fmt_band(fr['band'])} |"
+    )
+    L.append("")
+    pr = (
+        ""
+        if rr.get("plant_recall_frac") is None
+        else format(rr["plant_recall_frac"], ".0%")
+    )
+    L.append(
+        "> **Grain (G-31):** recall and false-retire are scored at **per-fuel MW "
+        "coverage**, not exact unit identity — a real retired unit is *recalled* "
+        "when the model derated ≥ its MW of the same fuel (its plant-binned tranche "
+        "is derated by its MW), and *false-retire* is the model's per-fuel MW in "
+        "**excess** of what that fuel actually retired. This retires the 94% "
+        "false-retire artifact the old 1:1 `fuel+size` match produced against lumpy "
+        f"tranche/zone derates. Stricter plant-exact recall (same plant, reported "
+        f"only): **{pr or '—'}** ({rr.get('plant_matched', 0)}/{rr['n_big_actual']}). "
+        "A false-retire that stays high after the grain fix is a genuine "
+        "over-retirement (screen root-cause, e.g. G-30), not a scoring artifact."
     )
     L.append("")
     L.append("Per-fuel retired GW:")
