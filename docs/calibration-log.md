@@ -7736,6 +7736,11 @@ structural object = the scarcity-year held-reserve/deployment representation,
 which re-opens the rule-26-frozen ORDC family and needs its own
 owner-sanctioned design round (handoff §7.4; G-22 register row updated).
 
+**Owner decision (2026-07-07, in-session):** keeper stays `ercot42` (probe
+rejected per the §6.1 pre-committed rule); G-22 demand-side follow-up is
+FILE-ONLY — no ORDC-family design round authorized (handoff §7.4 note stands;
+any future held-reserve/deployment work needs its own owner sanction).
+
 **Holdouts / gates.** No solve, score, or intake touched 2022/H1-2026 (rule
 22); both runs span 2023–2025 in one bundle each (rule 16); constants locked
 by the identification (no post-hoc resweep). OOM note: two concurrent ERCOT
