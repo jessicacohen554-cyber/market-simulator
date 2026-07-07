@@ -1612,6 +1612,9 @@ def _build_reserve_rows_pergen(
     posture_pools: np.ndarray | None = None,
     posture_mlf: np.ndarray | None = None,
     pergen_ramp10: np.ndarray | None = None,
+    storage_zone_idx: np.ndarray | None = None,
+    storage_power_cap: np.ndarray | None = None,
+    storage_duration_h: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Build the PER-GENERATOR energy+reserve co-optimization rows.
 
@@ -1648,9 +1651,18 @@ def _build_reserve_rows_pergen(
       dual is that family's reserve clearing price; the joint-headroom rows
       transfer it into the member zones' energy LMPs.
 
-    Storage does not back reserve here (the per-gen build is currently used by
-    PJM, whose design sets ``storage_eligible=False``); extend with per-unit
-    storage reserve columns before reusing it for a storage-backed ISO.
+    Storage backs reserve via the SAME duration-gated per-zone ``RS[c,z]``
+    columns as the zone-aggregate path (issue #1492, CAISO
+    ``caiso_reserve_coopt``): when the layout allocated storage-reserve columns
+    (``reserve_storage`` + ``storage_duration_h`` + storage present) and the
+    three ``storage_*`` args are supplied, each family's balance row gains the
+    ``RS[0,z]`` columns of its member zones, and the two zone-hour row families
+    of the zone path are appended between the posture and balance blocks: power
+    competition ``Σ_c RS[c,z] + Σ_{s∈z}(Dis−Chg) ≤ Σ_{s∈z} cap[s]`` and the SOC
+    duration gate ``Σ_c dur_c·RS[c,z] − Σ_{s∈z} SOC[s] ≤ 0``. The pergen layout
+    carries exactly one reserve class, so ``RS[0,z]`` backs every family over
+    its member zones — the same co-drawn convention as the thermal R pool
+    (CAISO spin/non-spin share the marginal MW, §27.1.2.4).
 
     Args:
         layout: Variable layout with ``n_reserve == n_r`` (R-column count) and
@@ -1689,10 +1701,11 @@ def _build_reserve_rows_pergen(
     Returns:
         ``(block, row_lower, row_upper)``: joint-headroom rows (``<=``,
         hour-major then R-column order), then the posture families when
-        postured (min-load ``>=``, startup ``<=``, ramp gate ``<=``), then
-        balance rows (``>=``, hour-major then family order — the final
-        ``n_families * T`` rows, the position the ``DispatchModel`` dual
-        extraction relies on).
+        postured (min-load ``>=``, startup ``<=``, ramp gate ``<=``), then the
+        storage duration-gate families when storage-gated (power competition
+        ``<=``, SOC duration ``<=``), then balance rows (``>=``, hour-major
+        then family order — the final ``n_families * T`` rows, the position
+        the ``DispatchModel`` dual extraction relies on).
     """
     T = layout.T
     n_zones = layout.n_zones
@@ -1713,6 +1726,25 @@ def _build_reserve_rows_pergen(
             f"(n_reserve={n_r}, columns covered={np.unique(col).size})"
         )
     zone_idx = np.asarray(fleet.zone_idx, dtype=int)
+    # Duration-gated storage reserve (issue #1492): active iff the layout
+    # allocated RS columns (it already encoded reserve_storage + durations +
+    # storage-present) AND the storage args reached this builder. The layout's
+    # class count sizes the RS block; the pergen layout guarantees one class.
+    gate = (
+        layout.n_storage_reserve > 0
+        and storage_zone_idx is not None
+        and storage_power_cap is not None
+        and storage_duration_h is not None
+    )
+    if gate:
+        n_classes = layout.n_reserve_classes
+        dur = np.asarray(storage_duration_h, dtype=float).reshape(n_classes)
+        s_zone = np.asarray(storage_zone_idx, dtype=int)
+        n_storage = s_zone.shape[0]
+        s_idx = np.arange(n_storage)
+        spc = np.asarray(storage_power_cap, dtype=float)
+        zone_storage = _build_zone_storage_map(s_zone, n_zones, n_storage)
+        z_all = np.arange(n_zones)
     # Member -> R-column incidence, for the summed-capacity RHS and the
     # per-column zone below.
     member_map = sp.csr_matrix(
@@ -1898,6 +1930,15 @@ def _build_reserve_rows_pergen(
         brows.append(np.full(sel.size, f))
         bcols.append(layout._reserve_off + sel)
         bvals.append(np.ones(sel.size))
+        if gate:
+            # Storage's duration-gated RS[c,z] backs every family over its
+            # member zones (single pergen reserve class — the co-drawn
+            # spin/non-spin convention of the thermal pool above).
+            zsel = np.flatnonzero(zmask[f])
+            for c in range(n_classes):
+                brows.append(np.full(zsel.size, f))
+                bcols.append(layout._storage_reserve_off + c * n_zones + zsel)
+                bvals.append(np.ones(zsel.size))
     off = 0
     for f in range(n_fam):
         k = int(ordc_counts[f])
@@ -1915,16 +1956,83 @@ def _build_reserve_rows_pergen(
     bal_lower = req2d.T.ravel()
     bal_upper = np.full(n_fam * T, np.inf)
 
+    # --- Storage duration-gate blocks (issue #1492 pergen storage AS): the two
+    # zone-hour row families of the zone-aggregate path, verbatim, inserted
+    # BEFORE the balance rows so the balance dual stays the final n_fam*T.
+    #  1. Power competition: sum_c RS[c,z] + sum_{s in z}(Dis - Chg)
+    #     <= sum_{s in z} cap[s] — a MW held as reserve cannot also discharge.
+    #  2. Duration gate: sum_c dur_c * RS[c,z] - sum_{s in z} SOC[s] <= 0 —
+    #     the stored energy must cover the award for its sustain duration
+    #     (CAISO ASSOC: 30-min spin/non-spin sustain).
+    gate_blocks: list[sp.csr_matrix] = []
+    gate_lower: list[np.ndarray] = []
+    gate_upper: list[np.ndarray] = []
+    if gate:
+        pw_rows: list[np.ndarray] = []
+        pw_cols: list[np.ndarray] = []
+        pw_vals: list[np.ndarray] = []
+        for c in range(n_classes):
+            pw_rows.append(z_all)
+            pw_cols.append(layout._storage_reserve_off + c * n_zones + z_all)
+            pw_vals.append(np.ones(n_zones))  # +RS[c,z]
+        pw_rows.append(s_zone)
+        pw_cols.append(layout._dis_off + s_idx)
+        pw_vals.append(np.ones(n_storage))  # +Dis
+        pw_rows.append(s_zone)
+        pw_cols.append(layout._chg_off + s_idx)
+        pw_vals.append(-np.ones(n_storage))  # -Chg
+        pw_per_hour = sp.coo_matrix(
+            (
+                np.concatenate(pw_vals),
+                (np.concatenate(pw_rows), np.concatenate(pw_cols)),
+            ),
+            shape=(n_zones, layout.vars_per_hour),
+        ).tocsr()
+        gate_blocks.append(sp.kron(sp.eye(T, format="csr"), pw_per_hour, format="csr"))
+        # RHS: zone-summed storage power cap, (n_zones, T) hour-major.
+        if spc.ndim == 2:
+            zcap = zone_storage @ spc  # (n_zones, T)
+        else:
+            zcap = np.broadcast_to((zone_storage @ spc)[:, None], (n_zones, T))
+        gate_lower.append(np.full(n_zones * T, -np.inf))
+        gate_upper.append(np.ascontiguousarray(zcap).T.ravel())
+
+        du_rows: list[np.ndarray] = []
+        du_cols: list[np.ndarray] = []
+        du_vals: list[np.ndarray] = []
+        for c in range(n_classes):
+            du_rows.append(z_all)
+            du_cols.append(layout._storage_reserve_off + c * n_zones + z_all)
+            du_vals.append(np.full(n_zones, float(dur[c])))  # +dur_c * RS[c,z]
+        du_rows.append(s_zone)
+        du_cols.append(layout._soc_off + s_idx)
+        du_vals.append(-np.ones(n_storage))  # -SOC[s]
+        du_per_hour = sp.coo_matrix(
+            (
+                np.concatenate(du_vals),
+                (np.concatenate(du_rows), np.concatenate(du_cols)),
+            ),
+            shape=(n_zones, layout.vars_per_hour),
+        ).tocsr()
+        gate_blocks.append(sp.kron(sp.eye(T, format="csr"), du_per_hour, format="csr"))
+        gate_lower.append(np.full(n_zones * T, -np.inf))
+        gate_upper.append(np.zeros(n_zones * T))
+
     # Free-concat the reserve sub-blocks (joint headroom is by far the largest —
     # T * n_members nnz). Drop the block names first so the list owns them and
     # _vstack_csr_free can release joint before allocating the stacked result,
     # instead of scipy.vstack holding joint + result simultaneously. Byte-
     # identical; this is the reserve-column-construction peak the OOM log names.
-    _res_sub: list[sp.csr_matrix | None] = [joint, *posture_blocks, balance]
-    del joint, balance, posture_blocks
+    _res_sub: list[sp.csr_matrix | None] = [
+        joint,
+        *posture_blocks,
+        *gate_blocks,
+        balance,
+    ]
+    del joint, balance, posture_blocks, gate_blocks
     block = _vstack_csr_free(_res_sub, layout.total_columns)
-    row_lower = np.concatenate([joint_lower, *posture_lower, bal_lower])
-    row_upper = np.concatenate([joint_upper, *posture_upper, bal_upper])
+    row_lower = np.concatenate([joint_lower, *posture_lower, *gate_lower, bal_lower])
+    row_upper = np.concatenate([joint_upper, *posture_upper, *gate_upper, bal_upper])
     return block, row_lower, row_upper
 
 
@@ -2513,7 +2621,10 @@ def build_constraints(
             # unit): joint P+R headroom per unit-hour + per-family balance.
             # Mutually exclusive with the zone-aggregate spec's scoping
             # mechanisms (supply cap / online gating / additive headroom) —
-            # the per-unit ramp10 variable bound supersedes them all.
+            # the per-unit ramp10 variable bound supersedes them all. Storage
+            # participates via the same duration-gated RS[c,z] columns as the
+            # zone-aggregate path when the layout allocated them (CAISO
+            # caiso_reserve_coopt, issue #1492).
             res_block, res_lower, res_upper = _build_reserve_rows_pergen(
                 layout,
                 fleet,
@@ -2525,6 +2636,9 @@ def build_constraints(
                 posture_pools=reserve_posture_pools,
                 posture_mlf=reserve_posture_mlf,
                 pergen_ramp10=reserve_pergen_ramp10,
+                storage_zone_idx=storage_zone_idx,
+                storage_power_cap=reserve_storage_power_cap,
+                storage_duration_h=reserve_storage_duration_h,
             )
             blocks.append(res_block)
             del res_block
@@ -3113,14 +3227,18 @@ class DispatchModel:
             if not coopt or reserve_headroom_products is None
             else int(np.atleast_2d(np.asarray(reserve_headroom_products)).shape[0])
         )
-        # Duration-gated endogenous storage AS (ERCOT): storage gets its own
-        # per-zone RS[c,z] reserve columns (n_reserve_classes * n_zones) plus a
+        # Duration-gated endogenous storage AS: storage gets its own per-zone
+        # RS[c,z] reserve columns (n_reserve_classes * n_zones) plus a
         # power-competition row and a SOC duration-gate row per zone-hour. Active
-        # only when durations are supplied, storage is present, reserve_storage is
-        # on, and we are on the zone-aggregate (non-pergen) co-opt.
+        # only when durations are supplied, storage is present, and
+        # reserve_storage is on. Both co-opt structures support it: the
+        # zone-aggregate path (ERCOT ercot_storage_as_duration_gate) and the
+        # per-generator path (CAISO caiso_reserve_coopt, issue #1492 — batteries
+        # are CAISO's dominant AS providers, so the pergen thermal pool without
+        # them over-states thermal scarcity); the RS rows are identical in both,
+        # only the thermal side of the co-opt differs.
         storage_gate = (
             coopt
-            and not pergen
             and reserve_storage
             and reserve_storage_duration_h is not None
             and n_storage > 0
@@ -3404,15 +3522,19 @@ class DispatchModel:
         # way, so the dual extraction below is layout-independent.
         if pergen:
             # Posture families (min-load q_mlf·T + startup q·T + ramp gate
-            # q·T) sit between the joint and balance blocks; the balance rows
-            # stay the final n_families*T either way.
+            # q·T) sit between the joint and balance blocks; the storage
+            # duration-gate rows (issue #1492 pergen storage AS) between the
+            # posture and balance blocks; the balance rows stay the final
+            # n_families*T either way.
             n_posture_rows = 0
             if n_posture:
                 q_mlf = int(
                     np.count_nonzero(np.asarray(reserve_posture_mlf, dtype=float) > 0.0)
                 )
                 n_posture_rows = (q_mlf + 2 * n_posture) * T
-            self._n_reserve_rows = n_reserve * T + n_posture_rows + n_families * T
+            self._n_reserve_rows = (
+                n_reserve * T + n_posture_rows + n_storage_gate_rows + n_families * T
+            )
         else:
             self._n_reserve_rows = (
                 (

@@ -1169,6 +1169,132 @@ class TestMisoPergenReserveLP(unittest.TestCase):
         self.assertGreater(float(np.asarray(per.reserve_price).mean()), 0.0)
 
 
+class TestCaisoPergenStorageHydroLP(unittest.TestCase):
+    """CAISO completed participation model end-to-end (issue #1492 c.2/c.3).
+
+    Storage backs the co-drawn spin/non-spin requirement through the
+    duration-gated RS[c,z] columns on the PERGEN path (power competition vs
+    its own charge/discharge + the 30-min ASSOC SOC gate), and hydro joins
+    the pergen pool with its ISO-locally backfilled 10-minute ramp. Trivial
+    case (1 zone, 1-2 gens, 24 h): a thermal fleet whose deliverable ramp is
+    SHORT of the requirement prices the published curve; adding the real
+    providers (storage / hydro) closes the gap and the price honestly
+    collapses — participation can only LOOSEN scarcity, the issue's ex-ante
+    direction.
+    """
+
+    _T = 24
+
+    def _fleet(self, with_hydro=False):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        cc = FUEL_TYPE_NAMES.index("gas_cc")
+        hyd = FUEL_TYPE_NAMES.index("hydro")
+        n = 2 if with_hydro else 1
+        # One 1,000 MW CC (MSSC anchor; ramp10 300 MW deliverable) and
+        # optionally a 600 MW hydro plant whose FleetArrays ramp10 is 0 —
+        # _caiso_design must backfill it (CAISO_HYDRO_RAMP10_FRAC).
+        return FleetArrays(
+            pmax=np.array([1000.0, 600.0][:n]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 0.0][:n]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.zeros(n, dtype=int),
+            fuel_type_idx=np.array([cc, hyd][:n]),
+            availability=np.ones((n, self._T)),
+            unit_ids=["cc0", "hyd0"][:n],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([1, 2][:n]),
+            ramp10=np.array([300.0, 0.0][:n]),
+        )
+
+    def _solve(self, with_hydro=False, with_storage=False, storage_mwh=400.0):
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet = self._fleet(with_hydro=with_hydro)
+        cfg = type("C", (), {"iso": "CAISO", "weather_year": 2024})()
+        design = get_reserve_design(cfg, fleet, self._T, ["SP15"])
+        kw = build_reserve_dispatch_kwargs(design)
+        n = fleet.pmax.shape[0]
+        storage_kw = {}
+        if with_storage:
+            storage_kw = dict(
+                storage_power_cap=np.array([400.0]),
+                storage_energy_cap=np.array([float(storage_mwh)]),
+                storage_zone_idx=np.array([0]),
+                eta_chg=1.0,
+                eta_dis=1.0,
+                reserve_storage=kw.get("reserve_storage", False),
+                reserve_storage_duration_h=kw.get("reserve_storage_duration_h"),
+            )
+        return solve_dispatch(
+            fleet,
+            np.full((1, self._T), 200.0),
+            wind_cf=np.zeros((1, self._T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, self._T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((n, self._T)),
+            voll=5000.0,
+            reserve_requirement=kw["reserve_requirement"],
+            reserve_eligible=kw["reserve_eligible"],
+            ordc_penalties=kw["ordc_penalties"],
+            ordc_step_widths=kw["ordc_step_widths"],
+            reserve_balance_zone_mask=kw["reserve_balance_zone_mask"],
+            reserve_balance_ordc_counts=kw["reserve_balance_ordc_counts"],
+            reserve_pergen_gen_idx=kw["reserve_pergen_gen_idx"],
+            reserve_pergen_col=kw["reserve_pergen_col"],
+            reserve_pergen_ramp10=kw["reserve_pergen_ramp10"],
+            T=self._T,
+            **storage_kw,
+        )
+
+    def test_thermal_only_ramp_shortage_prices_published_curve(self):
+        # MSSC 1,000 -> spin 500 + non-spin 500; thermal deliverable ramp is
+        # 300, so both co-drawn families run 200 MW short: spin prices $100
+        # flat, non-spin $600 (the 70-210 MW tier), reserve_price (sum of
+        # family duals) = $700 every hour.
+        r = self._solve()
+        self.assertEqual(r.status, "Optimal")
+        self.assertAlmostEqual(
+            float(np.asarray(r.reserve_price).mean()), 700.0, places=3
+        )
+
+    def test_storage_rs_closes_the_gap_and_collapses_price(self):
+        # A 400 MW / 400 MWh battery: RS bounded by power (400) and by the
+        # 30-min ASSOC gate (SOC/0.5 = 800). Deliverable 300 + 400 >= 500 ->
+        # requirement clears, price collapses to ~0, and the exact storage
+        # split (storage_reserve_dispatch) carries >= 200 MW every hour.
+        r = self._solve(with_storage=True)
+        self.assertEqual(r.status, "Optimal")
+        self.assertLess(float(np.asarray(r.reserve_price).mean()), 1.0)
+        self.assertIsNotNone(r.storage_reserve_dispatch)
+        self.assertGreaterEqual(float(r.storage_reserve_dispatch.min()), 200.0 - 1e-3)
+
+    def test_assoc_soc_gate_bounds_storage_reserve(self):
+        # Shrink the battery to 50 MWh: the ASSOC gate caps RS at
+        # 50/0.5 = 100 MW, so 300 + 100 = 400 < 500 and 100 MW stays short —
+        # the published curve fires and cleared storage AS respects the gate.
+        r = self._solve(with_storage=True, storage_mwh=50.0)
+        self.assertEqual(r.status, "Optimal")
+        self.assertGreater(float(np.asarray(r.reserve_price).mean()), 50.0)
+        self.assertLessEqual(float(r.storage_reserve_dispatch.max()), 100.0 + 1e-3)
+
+    def test_hydro_backfilled_ramp_closes_the_gap(self):
+        # The 600 MW hydro plant (ramp10 backfilled to full nameplate) joins
+        # the pool: 300 + 600 >= 500 -> the shortage vanishes without storage.
+        r = self._solve(with_hydro=True)
+        self.assertEqual(r.status, "Optimal")
+        self.assertLess(float(np.asarray(r.reserve_price).mean()), 1.0)
+
+
 class TestPerGenReserveCoopt(unittest.TestCase):
     """Per-generator reserve columns (R[j] ≤ ramp10, joint P+R ≤ cap).
 
