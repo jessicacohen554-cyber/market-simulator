@@ -1,0 +1,104 @@
+# Canonical schema: ercot-wtx-congestion (measured West Texas Export corridor
+# transmission-congestion pressure on the hourly model clock).
+#
+# Source: ERCOT NP6-86-CD "SCED Shadow Prices and Binding Transmission
+# Constraints" (data/raw/iso-specific-transmission/SCEDBTCNP686_*.parquet) —
+# every ~5-minute SCED execution's active constraint set with its enforced
+# Limit (MW), flow Value (MW) and ShadowPrice ($/MWh) — geographically
+# attributed to the West Texas Export wind corridor via ERCOT's own authoritative
+# Settlement Points List and Electrical Buses Mapping (NP4-160-SG,
+# data/raw/ercot-settlement-points): a binding constraint is "West-corridor" when
+# either monitored station (FromStation/ToStation) sits in the LZ_WEST settlement
+# load zone, OR it is a West/Panhandle export GTC (WESTEX, PNHNDL). LZ_WEST maps
+# to the Permian / CREZ / West Texas Export geography with precision 1.00 vs
+# independent HIFLD substation coordinates (validated 2026-07-07); every top West
+# binder (ODEHV, VEALMOOR, KNAPP, SCRCV, RILEY, ...) resolves to LZ_WEST and every
+# top South-Texas binder (RIOHONDO, LAREDO, CATARINA, DILLEY, ...) to LZ_SOUTH and
+# is correctly excluded.
+#
+# Curation (scripts/curate_ercot_wtx_congestion.py) aggregates the ~5-minute
+# intervals to the fixed non-leap 8760-hour ERCOT-local clock (Feb 29 dropped,
+# DST fall-back merged by the clock-hour group-by — the convention shared with the
+# ercot-hsl / gtc-limits / ORDC raw series). One dense row per local clock hour.
+#
+# Rule #13/#14 admissibility: this is measured ERCOT SCED transmission-congestion
+# incidence — a reproducible market/physical INPUT that regenerates every year and
+# responds to changed grid conditions (more West VRE build -> deeper net-load
+# troughs -> more corridor congestion; more takeaway -> less). Nothing on the
+# curation path reads the model's dispatch, prices, or the reported HSL curtailment
+# totals (the [3e] VALIDATION target). It is the identification source for the
+# forward-admissible VRE curtailment-share driver, NEVER fit to the curtailment
+# volume or a price residual.
+datatype: ercot-wtx-congestion
+schema_version: 1
+title: Measured ERCOT West Texas Export corridor congestion pressure (hourly)
+description: >-
+  Hourly aggregation of ERCOT's ~5-minute SCED binding-constraint incidence in
+  the West Texas Export wind corridor (NP6-86 constraints geo-attributed to the
+  LZ_WEST settlement zone via the NP4-160 SP/bus mapping, plus the WESTEX/PNHNDL
+  export GTCs). Per local clock hour: how many SCED executions ran, how many had
+  at least one West-corridor constraint binding (and the resulting congestion
+  fraction), the interface-only binding fraction, and the mean positive West
+  shadow price. Dense — one row per hour.
+
+key_columns: [iso, hour]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code (ERCOT).
+  - name: hour
+    dtype: int64
+    unit: hour_index
+    nullable: false
+    description: >-
+      Index 0-8759 on the fixed non-leap 8760-hour ERCOT-local clock (Feb 29
+      dropped) — the model's dispatch clock.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Wall-clock local start of the hour (naive, ERCOT local).
+  - name: n_intervals
+    dtype: int64
+    unit: count
+    nullable: false
+    description: >-
+      Number of distinct SCED executions observed in the hour (nominal cadence
+      ~12/hour; the DST fall-back clock hour can carry up to ~24). Zero-filled
+      for hours with no SCED coverage in the archive.
+  - name: n_binding_west
+    dtype: int64
+    unit: count
+    nullable: false
+    description: >-
+      Number of those executions with at least one binding (ShadowPrice > 0)
+      West-corridor constraint (LZ_WEST-endpoint 138/345 kV element or the
+      WESTEX/PNHNDL export GTC).
+  - name: congestion_frac
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: >-
+      n_binding_west / n_intervals in [0,1] — the fraction of the hour's SCED
+      executions with the West Texas Export corridor congested. The measured
+      congestion-pressure intensity the curtailment-share driver's SHAPE is fit
+      to. 0.0 when n_intervals is 0.
+  - name: interface_binding_frac
+    dtype: float64
+    unit: fraction
+    nullable: false
+    description: >-
+      Fraction of the hour's executions with the aggregate WESTEX or PNHNDL
+      export GTC binding — the interface-only component (already representable in
+      the model's 8-zone TTC), reported for decomposition against the nodal tail.
+  - name: shadow_price_mean_west
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: >-
+      Mean positive ShadowPrice over the hour's binding West-corridor
+      constraints; null when none bound that hour.
