@@ -174,3 +174,15 @@ overfitting, not skill, and will be recorded as such.
   `neiso-calibration-complete-w1c` session; this memo's §4–§5 terms are in
   force. The H1-2026 half remains publication-blocked and executes later under
   this same marker, exactly once.
+- **Owner decision (2026-07-07, later same day): one-shot EXECUTION HELD —
+  data-equivalency gate.** After the intake landed, the owner held one-shot
+  execution for every ISO: no holdout solve or score may run, and no holdout
+  result may be recorded, until a **cross-ISO holdout data-equivalency gap
+  register** exists — a series-by-series audit that each holdout year's input
+  coverage (drivers, fleet/overlays, bench actuals, and their
+  granularity/vintage) matches the keeper years'. The known NEISO
+  asymmetries motivating the gate are recorded in the out-of-sample doc §1.2
+  (weekly-anchored daily-AGT density; outage-detector vintage). The NEISO
+  2022 intake stands; the declaration and the marker stand; §4's execution
+  plan and §5's irreversibility terms apply whenever the gate is cleared and
+  execution is re-authorized. Tracked in G-19.
