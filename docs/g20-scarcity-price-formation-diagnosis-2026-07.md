@@ -79,7 +79,7 @@ different in each ISO.
 | **PJM** | vertical two-step ($850 < REQ, $300 < REQ+190 ≈ 3.3 GW) | **~0 h** | `pjm-81` per-gen co-opt fired **1 h / 3 yr** (2025-06-23 h19, $46.47 dual). Online reserve ~14 GW vs ~3 GW req even in real-short hours. | **Perfect-foresight over-commitment** keeps ~14 GW synchronized-and-idle. Vertical curve → strictly $0 above REQ. |
 | **NYISO** | piecewise-linear RCPF + **locational** stack (NYCA ⊃ East ⊃ SENY ⊃ NYC) | system-wide **0 h**; locational **gated** | NYCA headroom ~4–6 GW (3–4 GW too loose to bind). But in actual >$300 h, **NYC-zone headroom collapses to ~1,000 MW ≈ the NYC 1,000 MW req** while NYCA-wide is still ~5 GW. | Tail is **genuinely locational** (import-constrained NYC/SENY pocket). Directionally correct — blocked on **downstate transmission binding** (interface TTC + Gold-Book load shares) + the #1344 condition-varying-requirement intake. |
 | **CAISO** | smooth LOLP (σ=2,500 MW, $2,000 cap) | reserve co-opt **inert** (+$0.47 mean, tail unchanged) | `caiso-59` probe: 2023 **over**-tails 483 h vs 21 h RT; 2024 0 h; 2025 0 h. Adding co-opt leaves the tail at 483 h. | The C3c miss is **not a reserve-scarcity gap** — it's the **evening-merit / RA-commitment-uplift** gap (`FINDING-caiso-evening-merit-2026-07-04`). The smooth overlay is inert on that residual. (G-15 territory.) |
-| **MISO** | — (raw dual / co-opt only) | **~0 h** | DA actual tail is itself tiny (2023 = 1 h); the RT 30-h tail is single-hour 5-minute transients (`miso-scarcity-tail-diagnosis.md` §1). Commitment posture + Midwest locational reserve zone unbuilt. | Same over-commitment family as PJM; the DA-expressible tail is small, so the gap is narrower than the RT view suggests. |
+| **MISO** | — (raw dual / co-opt only) | **~0 h** | DA tail is **year-dependent, not uniformly tiny**: 2023 = 1 h (RT's 30-h tail is single-hour 5-minute transients, `miso-scarcity-tail-diagnosis.md` §1), but **2024 = 24 h (Winter Storm Heather) and 2025 = 38 h** — both real C3c FAILs under the rubric's ratio-band gate (actual ≥ 10 h ⇒ model must land in [0.5×,2.0×]; model is 0 h both years). The current keeper (`miso-45-cc-capacity`) registry entry itself records this as an open FAIL. | Same over-commitment family as PJM for the material years; **both admissible remedies already exhausted** — commitment posture built + honesty-gate REJECTED under G-25 (`miso-43`); Midwest locational reserve zone still DATA-BLOCKED (no published requirement series). See G-20e correction below. |
 
 **Evidence sources:** `docs/multi-iso/pjm-reserve-ordc.md` (honesty gate +
 Phase-2 re-gates, `pjm-81`); `docs/nyiso-rcpf-overlay.md` §"Finding: the
@@ -117,9 +117,61 @@ tight, **not** because the curve is missing or mis-wired.
 | **G-20b** | PJM | perfect-foresight over-commitment (online reserve ~14 GW vs ~3 GW) | commitment posture (tighten P1/P2 so online reserve thins) + per-gen co-opt (memory-gated, `pjm_reserve_pergen`). Ties to G-25. |
 | **G-20c** | NYISO | downstate transmission not binding; tail is locational (NYC pocket) | interface-TTC/Gold-Book-load-share audit so downstate peaks, + locational RCPF (`nyiso_rcpf_locational`) + #1344 condition-varying requirement intake. |
 | **G-20d** | CAISO | C3c miss is evening-merit / RA-commitment, not reserve scarcity | folded into **G-15** (evening-CT merit / LCR commitment credit). The scarcity overlay is inert here by design. |
-| **G-20e** | MISO | small DA-expressible tail + over-commitment + Midwest reserve zone unbuilt | commitment posture (G-25 family) + MISO locational reserve zone; narrow gap given DA tail ≈ 1 h. |
+| **G-20e** | MISO | over-commitment (2024/25 material FAILs) + Midwest reserve zone unbuilt | **Corrected 2026-07-07** (was: "narrow gap given DA tail ≈ 1 h" — true for 2023 only; 2024=24 h/2025=38 h are real, non-trivial C3c FAILs, confirmed against the current `miso-45` keeper). Both admissible remedies are already exhausted, not open: commitment posture is G-25's lever, built and honesty-gate REJECTED (`miso-43`, postured headroom 3.7–4.2× measured); Midwest locational zone is DATA-BLOCKED (no published zonal requirement series — a hand-sized one is forbidden, rule 11). No new mechanism is admissible under G-20e without duplicating G-25 (rule 18) or fitting an ungrounded requirement (rule 11). Downgraded to **tracked/blocked**, inherits G-25 (posture refinement: deferred min-run/min-down rows on the existing lever) and the open Midwest-requirement-series data ask — not a G-20e-specific build. |
 
 **Disposition:** G-20 stays **open** as a diagnosed cluster. No keeper changed; no
 overlay tuned. The honest conclusion is that scarcity price formation is gated on
 LP tightness (commitment/topology), not on the scarcity curves — which are built,
 cited, and correct.
+
+---
+
+## Addendum 2026-07-07 — G-20e re-verification (no re-solve, no keeper change)
+
+Re-checked G-20e's "narrow gap" framing against the current MISO keeper
+(`miso-45-cc-capacity`) and the live dashboard tail data
+(`frontend/data/backcast/tail/actual_tail.json`), per the calibration
+determination rubric's C3c small-count rule (`docs/calibration-determination-
+rubric.md`: actual < 10 h ⇒ `|model − actual| ≤ 10 h`; actual ≥ 10 h ⇒ model
+must land in `[0.5×, 2.0×]` of actual):
+
+| year | DA actual (h > $200) | model (h) | rubric gate | result |
+|---|---|---|---|---|
+| 2023 | 1 | 0 | small-count, \|0−1\|≤10 | **PASS** |
+| 2024 | 24 | 0 | ratio band [12, 48] | **FAIL** |
+| 2025 | 38 | 0 | ratio band [19, 76] | **FAIL** |
+
+So the original claim ("narrow gap given DA tail ≈ 1 h") only holds for 2023;
+2024 and 2025 are genuine, material C3c FAILs — matching what the `miso-45`
+registry entry (`frontend/data/backcast/registry/2026-07-07-miso-45-cc-
+capacity.json`) already discloses as an open FAIL, and what `docs/gap-
+register-2026-07.md`'s MISO row (line 351) already tracks under "scarcity
+posture (G-20/G-25)".
+
+**No new structural work follows from this correction.** Both routes the
+task brief asked to evaluate are already closed out, not open:
+
+1. **Midwest locational reserve zone** (would let the zonal co-opt bind
+   where 2024's Winter Storm Heather event was Midwest-wide, not
+   MISO-South): still **DATA-BLOCKED** — `docs/multi-iso/miso-scarcity-
+   posture-design-2026-07.md` §B and `docs/calibration-log.md:7059` record
+   the open ask (a published/measured Midwest zonal *requirement* series;
+   the intaken `data/raw/MISO-AS` series has cleared MW/MCPs but not the
+   requirement basis). No such series has landed since. A hand-sized
+   requirement would be a rule-11 fitted input, not admissible.
+2. **Commitment posture** (the LP holding too much reserve online): this is
+   **G-25's** lever (`miso_commitment_posture`, `config/reserve_config.py`),
+   already built with zero fitted parameters and already probed full-span
+   (`miso-43-commitment-posture`, 2026-07-06) — its own pre-committed
+   honesty gate **rejected** it (postured online headroom 9.9–11.1 GW vs
+   measured cleared reserve 2.5–2.7 GW, 3.7–4.2× too loose; C3c tail stayed
+   0 h ×3). Building a second posture mechanism under G-20e would violate
+   rule 18 (one mechanism per phenomenon); G-25 already owns the honest
+   rejection and its own named follow-up (deferred min-run/min-down
+   rolling-window rows on the same lever, blocked on G-40 memory headroom).
+
+**Conclusion:** G-20e is downgraded from an open build item to
+**tracked/blocked** — a real (if narrow-scope) 2-of-3-year gap whose only
+admissible next moves are outside this gap's ownership (G-25's posture
+refinement) or outside this session's control (the Midwest requirement-series
+data ask). No code change, no re-solve, no keeper touched this session.
