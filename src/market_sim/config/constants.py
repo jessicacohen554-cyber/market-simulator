@@ -2267,6 +2267,35 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
     # ISO-wide clean-energy floor, so no PJM entry is defined here.
 }
 
+# RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.
+#
+# Every real RPS/CES carries an ACP (or an equivalent non-compliance penalty):
+# a load-serving entity short of physical RECs pays the ACP rate per deficient
+# MWh instead of the standard physically failing. The ACP is therefore the
+# price ceiling of the REC market — the marginal cost of the last unit of
+# compliance — so the model enters it as the cost of an RPS ACP escape column
+# (dispatch.build_cost_vector), which both keeps the annual RPS row feasible
+# when in-region wind+solar cannot reach the target and caps the row's dual
+# (the REC shadow price) at this ceiling. Rule 13 admissible: a published policy
+# parameter that regenerates for any forecast year and responds to conditions
+# (as the fleet builds VRE the escape goes unused and the dual falls below it).
+# Tier 3 (calibration) — verify against each state's current ACP schedule.
+# Sources:
+#   CAISO — CA RPS non-compliance penalty $50/MWh (Pub. Util. Code §399.15;
+#     CPUC RPS enforcement), the effective ACP ceiling for SB 100 compliance.
+#   NYISO — NY Clean Energy Standard Tier 1 ACP (NYSERDA/PSC Case 15-E-0302);
+#     ~$40/MWh order of magnitude for recent compliance years.
+#   NEISO — MA Class I RPS ACP ($67.62/MWh, 2024, 225 CMR 14.08) blended with
+#     CT Class I ($55/MWh, Conn. Gen. Stat. §16-245a) across the six-state
+#     region; ~$65/MWh regional Class I ACP.
+# ISOs without a STATE_RPS_FLOORS entry (ERCOT, PJM) need no ACP — their RPS row
+# is never built, so the escape column is absent and the LP is byte-identical.
+STATE_RPS_ACP: dict[str, float] = {
+    "CAISO": 50.0,
+    "NYISO": 40.0,
+    "NEISO": 65.0,
+}
+
 # Annual interconnection queue caps (GW/yr) by ISO.
 # Source: ERCOT CDR, CAISO TPP.
 QUEUE_CAP_GW: dict[str, float] = {

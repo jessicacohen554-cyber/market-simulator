@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from market_sim.config.constants import STATE_RPS_FLOORS
+from market_sim.config.constants import STATE_RPS_ACP, STATE_RPS_FLOORS
 
 
 def get_rps_target(iso: str, year: int) -> float | None:
@@ -37,3 +37,23 @@ def get_rps_target(iso: str, year: int) -> float | None:
             frac = (year - lo) / span
             return floors[lo] + frac * (floors[hi] - floors[lo])
     return floors[knots[-1]]
+
+
+def get_rps_acp(iso: str) -> float | None:
+    """Return the RPS Alternative Compliance Payment ceiling for an ISO.
+
+    The ACP (:data:`STATE_RPS_ACP`) is the $/MWh price at which a
+    load-serving entity buys out of the renewable portfolio standard when
+    physical RECs are short. It is the price ceiling of the REC market, so the
+    dispatch LP enters it as the cost of an RPS ACP escape column: this keeps
+    the annual RPS row feasible when in-region wind+solar cannot reach the
+    target and caps the row's dual (the REC shadow price) at this ceiling.
+
+    Args:
+        iso: ISO identifier (case-insensitive), e.g. ``"NEISO"``.
+
+    Returns:
+        The ACP ceiling in $/MWh, or ``None`` when the ISO has no RPS defined
+        (in which case no ACP escape column is added and the LP is unchanged).
+    """
+    return STATE_RPS_ACP.get(iso.upper())
