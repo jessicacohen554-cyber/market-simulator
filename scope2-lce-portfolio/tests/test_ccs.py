@@ -19,7 +19,6 @@ from lce_portfolio.lp import build_and_solve
 from lce_portfolio.resources import (
     NG_CO2_TON_PER_MMBTU,
     ResourceArrays,
-    capital_recovery_factor,
     load_gas_price,
     load_resource_arrays,
 )
@@ -246,22 +245,31 @@ def test_ccs_not_swept_into_additionality() -> None:
 # --- catalog rows: retrofit vs new -------------------------------------------
 
 
-def test_retrofit_cheaper_than_new_at_mid() -> None:
-    """At mid costs + mid gas, retrofit beats new-build on all-in $/MWh at CF 0.9."""
+def test_ccs_catalog_rows_are_lmp_ppa_attribute_basis() -> None:
+    """Real-catalog CCS is lmp_ppa (ADR 0020): LMP + EAC, no capex, no 45Q-in-VOM.
+
+    Supersedes the pre-ADR-0020 capex-basis retrofit-vs-new all-in comparison —
+    the capex and 45Q now accrue to the project owner (priced into the EAC by
+    scripts/derive_eac_breakeven.py), and the LP sees only LMP + the EAC premium.
+    """
     cfg = PortfolioConfig(
         iso="ERCOT",
+        year=2030,
         active_resources=("gas_cc_ccs_new", "gas_cc_ccs_retrofit"),
-        gas_price_mmbtu=3.80,  # mid-case delivered (MISO row; near HH+basis mid)
     )
     ra = load_resource_arrays(cfg)
     idx = {n: i for i, n in enumerate(ra.names)}
     new, retro = idx["gas_cc_ccs_new"], idx["gas_cc_ccs_retrofit"]
-    mwh_per_mwyr = 0.9 * 8760.0  # both rows carry cf_assumed 0.90
-    allin = ra.fixed_mwyr / mwh_per_mwyr + ra.vom
-    assert allin[retro] < allin[new]
-    # Sanity anchors on the fixed side: capex×CRF+FOM annualization.
-    crf20 = capital_recovery_factor(cfg.discount_rate, 20)
-    assert ra.fixed_mwyr[retro] == pytest.approx(1000 * 1000 * crf20 + 30_000)
+    # No fixed capex enters the LP; energy is priced at the hourly LMP.
+    assert ra.fixed_mwyr[new] == 0.0 and ra.fixed_mwyr[retro] == 0.0
+    assert ra.lmp_indexed[new] and ra.lmp_indexed[retro]
+    # VOM carries ONLY the EAC premium resolved from data/eac/eac_prices.csv 2030.
+    assert ra.vom[new] == pytest.approx(20.0)
+    assert ra.vom[retro] == pytest.approx(12.0)
+    # Retrofit prices only the decarbonization increment -> lower clean premium.
+    assert ra.vom[retro] < ra.vom[new]
+    # Residual emissions are still carried for reporting (ADR 0012 unchanged).
+    assert ra.emission_rate_ton_mwh[new] > 0.0
 
 
 def test_ccs_rows_inactive_by_default() -> None:
