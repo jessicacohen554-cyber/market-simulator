@@ -2715,6 +2715,24 @@ def aggregate_fleet(
     carrying a scheduled ``retirement_year`` also passes through, so the
     known-retirement mechanism keeps its per-unit retirement dates.
 
+    **CAMPD per-plant bins (``is_campd_bin``) also pass through unchanged**
+    (G-28 fix). :func:`build_base_fleet` builds the first-year CAMPD fleet as
+    one LP unit per plant (:func:`bins_to_fleet`) *without* aggregation, so
+    each tranche carries its originating ``plant_code`` and its
+    must-run/committed/economic/peaking offer-curve structure. Collapsing those
+    tranches into ``(fuel_type, efficiency_bin, zone)`` vintage representatives
+    in the post-base-year re-aggregation dropped the ``plant_code`` (it is not
+    a grouping key and was not propagated onto the representative) and the
+    tranche structure, so a confirmed exit effective 2+ years into a CAMPD
+    forecast went unmatched (:func:`~market_sim.model.capacity.apply_confirmed_exits`
+    matches by ``plant_code``) and the retirement grain became lumpy zone
+    vintage bins rather than per-plant. Passing CAMPD bins through keeps every
+    projected year's thermal fleet at the same per-plant grain the base year
+    already solves, preserving plant identity for the confirmed-exit,
+    emission-rate-uniformity and hindcast-recall paths. Legacy (non-CAMPD)
+    fleets are untouched -- they carry no ``plant_code`` and still collapse to
+    vintage/heat-rate bins.
+
     Args:
         generators: The individual-unit fleet.
         n_bins: Number of equal-width efficiency bins per ``(fuel_type, zone)``
@@ -2732,7 +2750,16 @@ def aggregate_fleet(
     passthrough: list[Generator] = []
     groups: dict[tuple, list[Generator]] = {}
     for g in generators:
-        if g.fuel_type not in _AGGREGATABLE_FUELS or g.retirement_year is not None:
+        if (
+            g.fuel_type not in _AGGREGATABLE_FUELS
+            or g.retirement_year is not None
+            # CAMPD per-plant tranche: keep it un-aggregated so its plant_code
+            # (and tranche offer curve) survives re-aggregation (G-28). The
+            # base fleet is already built at this grain (build_base_fleet /
+            # bins_to_fleet); merging it into vintage bins here was the sole
+            # place plant identity was lost between projected years.
+            or g.is_campd_bin
+        ):
             passthrough.append(g)
             continue
         key = (

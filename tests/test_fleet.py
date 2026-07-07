@@ -931,6 +931,91 @@ class TestAggregateFleet(unittest.TestCase):
         self.assertIn("C_RET", ids)
         self.assertIn("coal_older_north", ids)
 
+    def test_campd_bins_pass_through_preserving_plant_code(self):
+        # G-28: CAMPD per-plant tranches (is_campd_bin) must survive
+        # re-aggregation with their plant_code intact so a confirmed exit
+        # effective 2+ years into a forecast still matches by plant_code.
+        # Two same-(fuel, bin, zone) tranches from DIFFERENT plants would be
+        # merged into one vintage representative (losing plant_code) without
+        # the passthrough; a plain thermal unit alongside still aggregates.
+        gens = [
+            Generator(
+                unit_id="3470_coal_mustrun",
+                name="3470_coal_mustrun",
+                zone="north",
+                fuel_type="coal",
+                efficiency_bin="COAL",
+                pmax_mw=300.0,
+                heat_rate=9.5,
+                is_campd_bin=True,
+                plant_group="COAL",
+                plant_code=3470,
+            ),
+            Generator(
+                unit_id="6146_coal_econ",
+                name="6146_coal_econ",
+                zone="north",
+                fuel_type="coal",
+                efficiency_bin="COAL",
+                pmax_mw=500.0,
+                heat_rate=10.2,
+                is_campd_bin=True,
+                plant_group="COAL",
+                plant_code=6146,
+            ),
+            Generator(
+                unit_id="legacy_coal",
+                name="legacy_coal",
+                zone="north",
+                fuel_type="coal",
+                efficiency_bin="older",
+                pmax_mw=400.0,
+                heat_rate=11.0,
+            ),
+        ]
+        result = aggregate_fleet(gens)
+        ids = {g.unit_id for g in result}
+        # Both CAMPD tranches pass through with their identity intact.
+        self.assertIn("3470_coal_mustrun", ids)
+        self.assertIn("6146_coal_econ", ids)
+        by_id = {g.unit_id: g for g in result}
+        self.assertEqual(by_id["3470_coal_mustrun"].plant_code, 3470)
+        self.assertEqual(by_id["6146_coal_econ"].plant_code, 6146)
+        self.assertEqual(by_id["6146_coal_econ"].pmax_mw, 500.0)  # not merged
+        # The legacy (non-CAMPD) unit still collapses to a vintage rep.
+        self.assertIn("coal_older_north", ids)
+
+    def test_campd_bins_pass_through_under_n_bins(self):
+        # The integer-n_bins path must also preserve plant_code identity.
+        gens = [
+            Generator(
+                unit_id="3470_coal_mustrun",
+                name="3470_coal_mustrun",
+                zone="north",
+                fuel_type="coal",
+                efficiency_bin="COAL",
+                pmax_mw=300.0,
+                heat_rate=9.5,
+                is_campd_bin=True,
+                plant_code=3470,
+            ),
+            Generator(
+                unit_id="6146_coal_econ",
+                name="6146_coal_econ",
+                zone="north",
+                fuel_type="coal",
+                efficiency_bin="COAL",
+                pmax_mw=500.0,
+                heat_rate=10.2,
+                is_campd_bin=True,
+                plant_code=6146,
+            ),
+        ]
+        result = aggregate_fleet(gens, n_bins=3)
+        by_id = {g.unit_id: g for g in result}
+        self.assertEqual(by_id["3470_coal_mustrun"].plant_code, 3470)
+        self.assertEqual(by_id["6146_coal_econ"].plant_code, 6146)
+
     def test_more_bins_produce_more_cc_groups(self):
         # With actual per-plant heat rates, n_bins=10 yields a finer merit
         # order -- more distinct gas_cc bins than n_bins=3.
