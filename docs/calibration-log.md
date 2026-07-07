@@ -40,6 +40,72 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-07 — MISO — G-23 residual root-caused: 2025 import starvation = the seam's spot-spread clearing rule; measured Q-Q seam ladders land; KEEPER PROMOTED `2026-07-07-miso-46-seam-ladder` (owner decision) replaces `miso-45-cc-capacity`; coal C2 re-attributed to #1347
+
+The miso-45 keeper's re-attributed residual (C2 coal 2025 +22 TWh PRB in a
+dear-gas year; model gross imports 3.4 vs actual net imports 19.0 TWh) is
+root-caused by measurement, not conjecture
+(`docs/multi-iso/miso-import-starvation-rootcause-2026-07.md`): the measured
+PJM+IESO seam is a **firm/scheduled base** — it imports in 97.5–99.5% of ALL
+hours (p10 0.9–1.7 GW), its hourly flow is uncorrelated with the RT LMP
+spread (r ≈ +0.06), the 2025 annual mean RT spread is **$0.00** while
+28.0 TWh flowed, and 46–56% of the measured import MWh moves at spreads
+inside/below the $2 hurdle. A hurdle-gated spot-spread seam therefore
+structurally deletes the flow in a zero-spread year; the seam's *levels*
+(hr_by_year, border anchor) and the measured envelopes were never the
+problem. The SPP seam proves the counterfactual: MISO's RT premium over SPP
+averaged +$8 to +$16 yet the measured SPP seam nets ≈0 — the measured
+envelope correctly polices what the spread alone would over-import.
+
+**Fix (audit C-6 closed for MISO, the NEISO pattern):** measured per-seam
+Q-Q band ladders — `miso_seam_measured_ladder` /
+`interchange_config.MISO_SEAM_LADDER_BY_YEAR`, derived by the frozen
+`scripts/derive_miso_seam_ladders.py` (EIA-930 per-seam flow durations
+quantile-coupled with the measured MISO DA hub LMP on the existing 8-band
+grid; import `pi_k = Q_DA(1 − P[flow > L_k])`, export mirrored; no added
+hurdle; zero fitted parameters, rule 23). Band capacities, the measured
+(month × hod) envelopes, and the Manitoba firm block are untouched; every
+band clears economically on the model's own hourly price (contrast the
+rejected `miso_firm_import_floor` pin). Offline P9 (measured-DA-driven):
+every seam's volume within 0.2 TWh and duration RMSE 130–290 MW in all
+years. DOF: the seam family flips residual → measured-physical.
+
+**Result (`2026-07-07-miso-46-seam-ladder`, miso-45 recipe + the ladder at
+HEAD, full span, one invocation):** net interchange **+35.2/+19.6/+13.2 TWh**
+vs actual +37.9/+23.1/+19.0 (miso-45: +35.1/+15.5/+3.4); 2025 PJM-seam
+imports 1.4 → 16.7 TWh; South exports restored −5.7/−8.4. **The coal C2
+re-score is the honest negative:** the restored imports displace GAS, not
+PRB (2025: CC −4.3, CT −1.9, ST_GAS −0.6 vs PRB −1.3, BIT −0.8 TWh) because
+the model's PRB offers undercut even the $21.82 base import rung — C2-2025
+gas −10.8→−14.1%, coal +16.8→+15.7% (both FAIL), C3a −10.5→−11.8%, C3b
+PASS→commercial caveat (NRMSE 0.168), C1 15/16→14/16 (2023 COAL_PRB +7.4→
++8.34 crosses the band edge). Per rule 14 this is the signature of removing
+a compensating error: the ~+30 TWh dear-gas coal-vs-gas mis-order
+re-attributes to the **coal-sigmoid offer level (#1347)** — NOT re-fit
+(rule 23: no source-data change) — plus the 0h scarcity tail (G-20e,
+data-blocked). **Owner decision (2026-07-07): promote miso-46** — rule 1
+(most structurally faithful; the pjm-83 add-a-FAIL-on-structure precedent);
+determination stays NOT-YET.
+
+Zero-forcing ablation twin `2026-07-07-miso-46-ablation` registered
+(reliability_floor off; keeper-minus-twin ≤0.06 TWh/class — floors inert;
+its run_config carries a post_hoc recording-fidelity correction for the
+--set-vs-meta-kwarg ordering, solve proven floor-off). An accidental
+same-config duplicate replay reproduced miso-46 **byte-identically**
+(dispatch/system/flows md5-equal) — a same-box D-8 determinism datum. G-40
+measured on this 15 GiB box (`MARKET_SIM_MEM_DEBUG=1`): VmHWM 14.85 GB
+(year 1 alone) → 15.76 GB (year-2 peak); the swapless run is OOM-killed at
+15.95 GB anon-RSS in 2024; with a 10 GiB swapfile it completes (≤190 MB
+swapped) — the all-years keeper run needs ~16 GB + swap, register row
+updated. HEAD-vs-keeper-SHA drift note: miso-46 also inherits the
+owner-directed `cc_duct_peaking` all-ISO default extension (7358028, merged
+same day); the head-faithful miso-45 replay (`2026-07-07-miso-45-head-replay`,
+attribution arm, ercot36 pattern, registered same-session) isolates the
+deltas: the 2023 COAL_PRB band-edge flip is the DUCT drift (+0.7 TWh; the
+ladder is a 2023 near-no-op, PRB +0.1), while the 2024/2025 import
+restoration is the LADDER (net +3.6/+9.2 TWh vs the HEAD baseline,
+displacing 2025 gas ~2:1 over coal — confirming the #1347 re-attribution).
+
 ### 2026-07-07 — CAISO — W3a seam-clock forensics: the seam-diurnal attribution was a timezone artifact (WITHDRAWN); corridor-envelope clock fixed in the LP (`caiso-65` A/B); C3a body reattributed to belly gas commitment — keeper stays caiso-60
 
 **Lane:** caiso-seam-diurnal-shape-w3a, commissioned to build the
