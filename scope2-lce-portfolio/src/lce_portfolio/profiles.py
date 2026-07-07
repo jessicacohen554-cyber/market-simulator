@@ -46,6 +46,17 @@ SAMPLE_ISO = "SAMPLE"
 # file is a hard error, never a silent flat row (audit finding DL-7).
 VARIABLE_SHAPE_RESOURCES = ("solar_pv", "onshore_wind", "offshore_wind")
 
+# Attribute-basis (lmp_ppa) variable resources (ADR 0020) reuse the hourly CF
+# shape of their build-basis twin — buying wind's attribute vs. building wind is
+# the same production shape, only a different cost basis. Resolved to the twin's
+# name before every shape lookup (synthetic and real), so a real profile file
+# built for the base resources serves the attribute variants with no new rows.
+SHAPE_ALIAS = {
+    "onshore_wind_ppa": "onshore_wind",
+    "solar_pv_ppa": "solar_pv",
+    "offshore_wind_ppa": "offshore_wind",
+}
+
 # Deterministic synthetic shapes: no Date.now / RNG seeding surprises, so runs
 # and tests are reproducible. Keyed by resource name; anything not listed and
 # non-storage falls back to a flat profile at its assumed capacity factor.
@@ -97,9 +108,10 @@ def _synthetic_cf_matrix(resources: ResourceArrays) -> np.ndarray:
         if resources.is_storage[r]:
             continue
         target = resources.cf_assumed[r]
-        if name == "solar_pv":
+        key = SHAPE_ALIAS.get(name, name)
+        if key == "solar_pv":
             cf[r] = _normalize_to_cf(_solar_shape(), target)
-        elif name in ("onshore_wind", "offshore_wind"):
+        elif key in ("onshore_wind", "offshore_wind"):
             cf[r] = _normalize_to_cf(_wind_shape(), target)
         else:
             # Firm clean (nuclear, geothermal, hydro placeholder): flat at CF.
@@ -243,9 +255,10 @@ def build_cf_matrix(
     for r, name in enumerate(resources.names):
         if resources.is_storage[r]:
             continue  # storage: zero CF row
-        if name in real:
-            cf[r] = real[name]
-        elif name in VARIABLE_SHAPE_RESOURCES:
+        key = SHAPE_ALIAS.get(name, name)  # attribute twin -> base shape (ADR 0020)
+        if key in real:
+            cf[r] = real[key]
+        elif key in VARIABLE_SHAPE_RESOURCES:
             raise ValueError(
                 f"profile {path.name}: variable renewable {name!r} is absent "
                 "from the real profile file — a flat fallback would grossly "
