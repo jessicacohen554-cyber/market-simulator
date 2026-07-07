@@ -3,8 +3,9 @@ name: w3a-finisher
 # One-shot promotion + repair for the W3a lane (owner decision 2026-07-07):
 #   1. repair the ablation twin's registration (its 5-word label slugged to
 #      the BASE id — render_backcast._slug keeps <=4 words — so the base job
-#      overwrote its sidecar/payload on main): re-register it from the CI
-#      artifact under the distinct id 2026-07-07-caiso65-seam-envclock-ablation.
+#      overwrote its sidecar/payload on main): the helper recovers the
+#      rendered payload from the register job's publish commit and re-keys
+#      it as 2026-07-07-caiso65-seam-envclock-ablation.
 #   2. add the base bundle's legitimacy_diagnostics.json (C7/C8/D-gates were
 #      SKIPPED at registration) — generated from the CI artifact, whose
 #      dispatch is byte-identical to the session's local A/B arm.
@@ -54,6 +55,7 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin main
+          git fetch origin auto/caiso65_seam_envelope_clock-ablation-95bef5f6
           git checkout -fB w3a-promotion origin/main
           git checkout "${{ github.sha }}" -- .github/patches/2026_07_07_w3a_finisher_edits.py
 
@@ -65,32 +67,24 @@ jobs:
           run-id: 28870278179
           github-token: ${{ github.token }}
 
-      - name: Download ablation bundle artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: bundle-caiso65_seam_envelope_clock-ablation
-          path: results/calibration/caiso65_seam_envelope_clock-ablation
-          run-id: 28870278179
-          github-token: ${{ github.token }}
-
       - name: Promote and publish
         run: |
           set -euo pipefail
           BASE=results/calibration/caiso65_seam_envelope_clock
-          ABL=results/calibration/caiso65_seam_envelope_clock-ablation
 
+          # exits 1 when a D-gate FAILs (C8 CT_PEAKER is a known owner-held
+          # FAIL); the JSON artifact is written regardless.
           python scripts/legitimacy_diagnostics.py \
             --bundle "$BASE" --iso CAISO \
-            --json-out "$BASE/legitimacy_diagnostics.json"
+            --json-out "$BASE/legitimacy_diagnostics.json" || true
+          test -s "$BASE/legitimacy_diagnostics.json"
 
-          RUN_ID=$(python scripts/dashboard_add_run.py \
-                     --label "caiso65 seam envclock ablation" \
-                     --bundle "$ABL" \
-                   | sed -n 's/^RUN_ID=//p')
-          echo "ablation run id = $RUN_ID"
-          test "$RUN_ID" = "2026-07-07-caiso65-seam-envclock-ablation"
-
+          # the ablation's rendered payload is recovered from its register
+          # job's publish commit by the helper (git show; no re-render, no
+          # shared-input dependency)
+          RUN_ID="2026-07-07-caiso65-seam-envclock-ablation"
           python .github/patches/2026_07_07_w3a_finisher_edits.py
+          test -s "frontend/data/backcast/runs/${RUN_ID}.js"
 
           # NOT-YET determinations exit 1 by design; the metrics write happens first.
           python scripts/calibration_verdict.py "$BASE" --write-metrics || true
@@ -111,7 +105,6 @@ jobs:
                   frontend/data/backcast/registry/2026-07-07-caiso65-seam-envelope-clock.json \
                   frontend/data/backcast/keepers.json \
                   frontend/data/backcast/status.js \
-                  frontend/data/backcast/bench \
                   .github/patches/2026_07_07_w3a_finisher_edits.py
 
           MSG_FILE=$(mktemp)
@@ -126,7 +119,8 @@ jobs:
             echo "  clock-lag constants (rule 23, drift-guarded); C6 attests."
             echo "- legitimacy_diagnostics.json for the registered bundle (C7 PASS scored)."
             echo "- ablation twin re-registered as 2026-07-07-caiso65-seam-envclock-ablation"
-            echo "  (its 5-word label had slugged onto the base id and been overwritten)."
+            echo "  (recovered from its register job's publish commit; its 5-word label"
+            echo "  had slugged onto the base id and been overwritten)."
             echo "- status.js rebuilt; the three one-shot W3a workflows removed."
             echo ""
             echo "Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
