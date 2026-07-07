@@ -45,8 +45,11 @@ from market_sim.results.scarcity import (  # noqa: E402
     pjm_reserve_demand_price,
 )
 
-CAL_DIR = REPO / "inputs" / "calibration"
-RAW_DIR = REPO / "inputs" / "raw-data" / "PJM-AS"
+# W1 relocated the old inputs/ tree: inputs/calibration -> data/raw/_validation-source
+# (paths.CALIBRATION_DIR, holds pjm_ordc_curve.csv + actual_lmp_hourly_PJM.parquet)
+# and inputs/raw-data/PJM-AS -> data/raw/PJM-AS (measured reserve requirements).
+CAL_DIR = REPO / "data" / "raw" / "_validation-source"
+RAW_DIR = REPO / "data" / "raw" / "PJM-AS"
 DEFAULT_CURVE = CAL_DIR / "pjm_ordc_curve.csv"
 
 # PJM data `service` code -> curve product name. The RT/DA reserve parquets use

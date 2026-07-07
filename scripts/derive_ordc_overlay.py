@@ -53,7 +53,10 @@ from market_sim.results.scarcity import (  # noqa: E402
     scarcity_prices,
 )
 
-CAL_DIR = REPO / "inputs" / "calibration"
+# Validation-source dir (actual_lmp_hourly_ERCOT.parquet). W1 relocated the old
+# inputs/calibration tree to data/raw/_validation-source (paths.CALIBRATION_DIR);
+# the stale inputs/ path silently produced an empty actual RT series.
+CAL_DIR = REPO / "data" / "raw" / "_validation-source"
 
 _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _MONTH_START_HOUR = np.cumsum([0] + [d * 24 for d in _DAYS_IN_MONTH])
