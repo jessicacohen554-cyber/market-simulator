@@ -7694,13 +7694,22 @@ extreme-tail ledger −23/−2/+18% (2023/24/25 — cross-year capability spread
 fixed within-year rank; year-pinning forbidden, rule 13).
 
 **A/B verdict — REJECTED, no retune (rules 1/11; §6.1 pre-committed rule).**
-Demand-weighted settled price (dual + ORDC adder + RTORDPA overlay):
+Control reproduces the keeper's registered verdict exactly at HEAD (C3a
++8.9/+6.6 caveat, C3b 0.256/0.252, C3c 103/25/1 vs DA 311/68/23). Official
+rubric v2.2: treatment flips C3a CAVEAT→**FAIL** (2023 **+708%**, 2024
+**+61.4%** — a current-design year, the §6.1 trigger), C3b 0.256→**10.579** /
+0.252→**1.663**, C3c-2023 0.33×→**3.18×** over; C1/C2/C4/C5 identical (no
+volume regression; D-8 neutral: CC_REGULAR 141.7→141.8, ST_GAS 14.9→14.8 TWh
+2023). **The C3c-2024 leg individually flips FAIL→PASS (25→53 h vs DA 68 =
+0.78×; RT companion 53/53 exact)** — the right tail-hour count in the year
+whose extreme-tail identification is right (−2%), at the wrong intensity.
+Demand-weighted settled-price preview (dual + ORDC adder + RTORDPA overlay):
 
 | year | actual RT dw | off (control) | on (treatment) | h>$200 off/on | on-arm top-2% room+stor+LR vs meas RTOLCAP |
 |---|---|---|---|---|---|
-| 2023 | $48.36 | {OFF23} | **$455.18** | {H23}/991 | 5.41 vs 7.89 GW (still collapsed) |
-| 2024 | $26.83 | {OFF24} | **$47.71** | {H24}/55 | 9.65 vs 11.04 GW (−13%) |
-| 2025 | $32.49 | {OFF25} | $34.04 (≈inert) | {H25}/2 | 15.26 vs 11.64 GW (slack → inert) |
+| 2023 | $48.36 | $56.67 | **$455.18** | 106/991 | 5.41 vs 7.89 GW (still collapsed) |
+| 2024 | $26.83 | $29.19 | **$47.71** | 27/55 | 9.65 vs 11.04 GW (−13%) |
+| 2025 | $32.49 | $33.99 | $34.04 (≈inert) | 2/2 | 15.26 vs 11.64 GW (slack → inert) |
 
 **Failure signature (what the extreme resolution proves).** The room collapse
 is no longer an identification artifact: the envelope is +3.0 GW looser than
