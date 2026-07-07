@@ -104,6 +104,7 @@ from market_sim.pipeline import (  # noqa: E402
     backcast_config,
     build_base_dispatch_kwargs,
     build_caiso_ra_p1_prep,
+    build_pjm_reserve_p1_prep,
     run_commitment_pass,
     run_energy_solve,
 )
@@ -481,6 +482,7 @@ def run_year(
     pjm_reserve_supply_cap: bool = False,
     pjm_reserve_online_gated: bool = False,
     pjm_reserve_online_rho: float = 1.0,
+    pjm_reserve_commitment_scoped: bool = False,
     pjm_reserve_pergen: bool = False,
     pjm_commitment_posture: bool = False,
     measured_ramp_capability: bool = False,
@@ -1110,6 +1112,12 @@ def run_year(
             pjm_reserve_online_gated=True,
             pjm_reserve_online_rho=pjm_reserve_online_rho,
         )
+    if pjm_reserve_commitment_scoped:
+        # PJM path B (G-20b): commitment-scoped reserve supply — fa_p2-style
+        # availability mask from the P0 run pattern at the P0->P1 seam +
+        # deliverable supply cap recomputed on the masked fleet
+        # (pipeline.commitment.build_pjm_reserve_p1_prep). GATED default off.
+        config = config.with_overrides(pjm_reserve_commitment_scoped=True)
     if pjm_reserve_pergen:
         config = config.with_overrides(pjm_reserve_pergen=True)
     if pjm_commitment_posture:
@@ -2797,6 +2805,15 @@ def run_year(
             (wind_cap[:, None] * wind_cf) + (solar_cap[:, None] * solar_cf)
         ).sum(axis=0),
     )
+    # P1-native PJM commitment-scoped reserve supply (path B, G-20b): the fleet
+    # hook zeroes non-fast-start reserve-eligible units' availability in their
+    # plant's P0-offline hours (the fa_p2-style mask), the kwargs hook
+    # recomputes the deliverable reserve-supply cap on the masked fleet. (None,
+    # None) for every non-PJM / gate-off run (byte-identical). ISO-exclusive
+    # with the CAISO hook, so at most one fleet prep is ever non-None.
+    pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
+        config, iso, fleet_arrays
+    )
     energy_solve = run_energy_solve(
         fleet,
         fleet_arrays,
@@ -2805,7 +2822,8 @@ def run_year(
         dispatch_kwargs,
         config,
         xyear_cache=xyear_cache,
-        p1_fleet_prep=ra_p1_prep,
+        p1_fleet_prep=ra_p1_prep or pjm_fleet_prep,
+        p1_kwargs_prep=pjm_kwargs_prep,
     )
     result = energy_solve.p1
     mc_bid = energy_solve.mc_bid
