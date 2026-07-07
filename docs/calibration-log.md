@@ -40,6 +40,65 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-07 — CAISO — W1a burndown: G-15 scarcity-tail candidate REJECTED-inert (`caiso-61`), #1492 co-opt participation COMPLETED and inert (`caiso-62`), C3a/C4 root cause relocated to the WECC seam diurnal shape — keeper stays caiso-60
+
+**Lane:** caiso-calibration-burndown-w1a (G-15 / G-20d / #1492). Two registered
+full-span probes, both A/B'd at the same HEAD; no keeper change; no drag
+coefficient touched; zero fitted parameters added (rules 1/13/21/23/24).
+
+**`2026-07-07-caiso-61-lolp-tail` (PROBE, G-15 second-half candidate + G-20a
+vehicle + A/B base arm).** Byte-faithful caiso-60 keeper replay at HEAD; the
+published LOLP overlay (#1556 params — VOLL $2,000 §39.6.1, MCL 1,400 MW
+Diablo MSSC, σ 2,500 MW FRP) derived post-solve into `scarcity.parquet`, so
+C3c scores the SETTLEMENT price — the first CAISO run through the G-20a
+plumbing end-to-end (verdict prints "model 511h [settlement (LMP+overlay)]").
+RESULT: the overlay is inert exactly where the 2024/25 tail deficit is (adder
+mean $0.04/$0.01, 0 h >$100; tails stay 0 h vs 52 h DA / 8 h DA) and additive
+only to 2023's evening-merit-owned over-tail (mean $0.54; 502→511 h vs 41 h
+DA). The G-15 "scarcity-pricing half" of the drag is NOT closable by a
+reserve-scarcity curve. Mechanism stays built + default-off (rule 1).
+
+**`2026-07-07-caiso-62-coopt-full` (PROBE, #1492 completed).** The
+participation model the issue's own design constraints 2/3 called for:
+storage backs the co-drawn spin/non-spin pool through duration-gated RS[c,z]
+columns on the pergen path (power competition vs its own charge/discharge +
+the published 30-minute ASSOC state-of-charge sustain,
+`CAISO_AS_SUSTAIN_DURATION_H=0.5`), and hydro joins the CAISO-local pool (166
+plants, `CAISO_HYDRO_RAMP10_FRAC=1.0` backfill, WWSIS-2 class physics) —
+1,249 eligible units, Σ 19.2 GW deliverable ramp vs the ~2.24 GW
+BAL-002-WECC-3 requirement. RESULT vs caiso-61 at the same HEAD: reserve
+price fires **0 h in all three years** (caiso-59's thermal-only pool fired
+~100 h in 2023 up to $800 — completing the real provider set removed even
+those), mean λ unchanged ±$0.00. This is the pre-registered honest direction
+(the issue: participation ADDS supply; real CAISO AS prices are ~$0 in most
+hours). #1492's remaining scope is Regulation Up/Down only. Confirms the G-20
+Layer-2 root cause for CAISO: the perfect-foresight LP is never
+reserve-tight; no correctly-parameterized reserve mechanism can source the
+2024/25 tail.
+
+**Root cause relocated (G-20d → seam; `FINDING-caiso-seam-diurnal-2026-07-07.md`).**
+Hour-of-day decomposition of the C3a +20–42% overshoot on caiso-61: the
+evening PEAK is essentially right (h19 Δ +3.0/−0.6/+8.1 $/MWh) — the BODY is
+inflated (midday +$17–34, the worst bucket; overnight +$8–25), so the model's
+diurnal swing is ~3× too flat (the C3b/C4 killer). One structural object owns
+all three segments: the WECC seam's diurnal delivery is near-flat
+(2.4–5.1 GW) vs the measured EIA-930 5:1 swing — evening h19–21 over-imports
++2.0–3.2 GW (suppressing the evening premium → the CT-merit gap the
+`ct_netload_drag` carries, G-15), midday under-imports −1.0–1.8 GW (model
+never reaches the curtailment margin: 0/28/8 dump-hours per year → midday
+gas-CC-marginal at $36–59 vs actual $13–33), overnight over-imports ~+3 GW
+with import tranches price-setting in 15–40% of hours (the DSW_solar_PV firm
+tranche runs 84% of max AT NIGHT — `caiso_import_solar_shape` exists,
+default-off). The measured p95 (month×hod) corridor envelope is a correct
+CEILING and cannot carry typical-evening thinness (fat heat-event tails);
+percentile-tightening would be an outcome pin (rules 12/23 — not the fix).
+Couples to G-61 (D-8 closure §7, register row added): the seam's midday
+under-import is why §7's curtailment-release signals never fire. Fix
+directions + pre-registered prediction in the FINDING §4–5; G-15/G-20d/G-61
+register rows updated. Dashboard: both probes registered; pruned the two
+displaced oldest CAISO registrations (caiso-50-perhub-bridge,
+caiso-51-firm-base) per the 15-run retention rule.
+
 ### 2026-07-07 — NYISO — G-20c: measured per-zone load shares make the downstate pocket BIND; locational reserve scarcity fires (`2026-07-07-nyiso-56-measured-zonal`, CANDIDATE, keeper stays nyiso-53 pending owner)
 
 **Gap G-20c** (`docs/g20-scarcity-price-formation-diagnosis-2026-07.md`): NYISO's
