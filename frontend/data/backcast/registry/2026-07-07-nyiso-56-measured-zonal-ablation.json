@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-nyiso-56-measured-zonal-ablation",
+  "label": "nyiso 56 measured zonal (ABLATION TWIN)",
+  "date": "2026-07-07",
+  "shorthand": "nyiso-56-measured-zonal-ablation",
+  "definition": "(ABLATION TWIN of 2026-07-07-nyiso-56-measured-zonal) D-3 zero-forcing ablation twin of 2026-07-07-nyiso-56-measured-zonal (rule 21): the nyiso-56 recipe verbatim (measured per-zone load shares, G-20c) with all merchant floors/bridges zero-forced.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-07-nyiso-56-measured-zonal-ablation.js",
+  "bundle": "results/calibration/nyiso56_measuredshares-ablation"
+}
