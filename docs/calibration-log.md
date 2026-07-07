@@ -145,6 +145,52 @@ promotion step), not a metrics regression. nyiso-55 dominates nyiso-53 on
 structural faithfulness at equal metrics (rule #1), so it is the natural keeper —
 but the keeper swap carries nyiso-53's owner-HELD C8 breach, so promotion is left
 as an owner decision; the keeper stays `2026-07-06-nyiso-53-li-tsl` for now.
+### 2026-07-07 — NYISO — G-05 forced-energy determination: ST_GAS + CT forcing adjudicated LEGITIMATE (keep+disclose); keeper `nyiso-53-li-tsl` UNCHANGED (no model change)
+
+**Gap G-05 (rule-20 forced-energy budget).** Adjudicated the two classes the
+rubric flags **materially**: CAISO CT_PEAKER and NYISO ST_GAS. Rule-15 test =
+does the floor bind in hours the driver's own measured evidence says the class
+is OFFLINE? Both **LEGITIMATE** (keep + disclose, the caiso-58 precedent; rule 1
+dominates the rule-20 letter) — no bug, no faithful model change reduces the
+share without deleting real structure. Evidence:
+`docs/handoffs/g05-forced-energy-caiso-ct-nyiso-stgas-2026-07.md`.
+
+- **CAISO CT** (unchanged; confirms caiso-58): `ct_netload_drag` binds [15,21)
+  with D-4 off-window **0.0%** all years; measured overnight CT CF ≈ 0.016 —
+  the drag excludes the offline hours. High share, clean rule-15 test.
+- **NYISO ST_GAS** (60.8/69.8/59.7%, merchant cap 30%): the forcing is the
+  downstate NYC/LI `reliability_floor` persistent-24h base. Measured CAMPD:
+  NYC overnight (h0-6) CF 0.118/0.122/0.159, LI 0.120/0.153/0.170, **both
+  online 100% of the year** — a genuine around-the-clock reliability base
+  (DARU/SRE + steam min-run), the OPPOSITE of a CT overnight-offline
+  signature. D-1 shape PASSES (r 0.94-0.95). Switching to the windowed
+  `gas_st_netload_drag` would be WRONG (it under-commits the measured 24h
+  steam base) — one mechanism per phenomenon (rule 19): steam base ≠ CT
+  evening ramp.
+- **NYISO CT_PEAKER** (immaterial, 1.5-1.9% of load → C8-skipped): binds
+  ENTIRELY within its driver-derived HB14-21 ramp — D-4 off-window
+  **27%→0.0%** after correcting the diagnostic window from the inherited
+  drag [15,22) to the reliability-floor ramp's [14,22) (measured downstate CT
+  CF at h14 = 0.11-0.23). Diagnostic-window artifact, not over-firing.
+
+**Mechanics — NO keeper swap.** The nyiso-53 li-tsl recipe was re-solved at HEAD
+purely as a validation: it reproduced **byte-identically** (0/12 metrics differ,
+per-plant dispatch matches exactly), so nyiso-53 is HEAD-faithful and there is NO
+structural change — a byte-identical duplicate is not a keeper (rule 1). The
+throwaway re-solve was discarded; the two real deliverables were applied to
+nyiso-53 **in place**: (1) the D-4 diagnostic-window correction
+(`legitimacy_diagnostics.py` `D4_WINDOWS[(reliability_floor, CT_PEAKER/CT_CHP)]` →
+[14,22), NYISO-only blast radius, can only lower an off-window share), regenerating
+nyiso-53's committed `legitimacy_diagnostics.json` (D-4 now PASSES: CT off-window
+0.0% all years); (2) the G-05 determination recorded in nyiso-53's
+`calibration_attestation.json` governance note. Its existing zero-forcing ablation
+twin (`2026-07-06-nyiso-53-li-tsl-ablation`) stands: floors buy ST_GAS +2.7/+3.8/
++3.9, CT +1.1/+0.9/+0.6 TWh and both classes still UNDER-run measured actuals.
+Determination stays **NOT-YET** (C8 disclosed hard breach, promoted on rule-1
+faithfulness — NOT ledgered to a CAVEAT, matching caiso-58). Committed forced
+shares are the payload-path (CI-reproducible) convention every keeper uses (the
+dashboard payload covers a ~100-of-276-plant CAMPD subset; the full-fleet parquet
+share is higher but not committed/CI-checked). G-05 struck to CLOSED.
 
 ### 2026-07-06 — ERCOT — measured GTC transmission-limit probe of ercot38 (`ercot39-gtc-measured`; NEGATIVE result, no keeper swap)
 
