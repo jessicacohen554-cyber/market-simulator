@@ -62,7 +62,8 @@ for the market split.
 | ramp-capability | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
-| nyiso-downstate-gas | — | — | — | — | 2023–2025 | — |
+| nyiso-downstate-gas | — | — | — | — | — | — |
+| ercot-wtx-congestion | 2019–2025 | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -897,3 +898,31 @@ CT-peaker fleet (NYC zone J + Long Island zone K). Schema:
 | `transco_z6_ny_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | Measured Transco Zone 6 NY pipeline-hub daily spot ($/MMBtu), interpolated to every calendar day (the peaker's commodity index). |
 | `ldc_transport_adder_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | Monthly LDC non-firm transportation delivery rate for the zone's LDC (KEDNY SC-22 / KEDLI SC-19, Tier 1, incl. delivery-rate adjustments), broadcast to each day of the month. |
 | `delivered_gas_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | Downstate non-firm transport delivered-gas index = transco_z6_ny_usd_per_mmbtu + ldc_transport_adder_usd_per_mmbtu. |
+
+## ercot-wtx-congestion
+
+Measured ERCOT West Texas Export corridor transmission-congestion pressure
+(hourly) — the VRE curtailment-share driver's shape source. Schema:
+[`schema/ercot-wtx-congestion.schema.yaml`](schema/ercot-wtx-congestion.schema.yaml).
+
+- **Keys:** `iso`, `hour`
+- **Reconciles:** ERCOT NP6-86-CD SCED binding constraints geo-attributed to
+  the West Texas Export wind corridor via ERCOT's authoritative Settlement
+  Points List / electrical-bus load-zone mapping (NP4-160): a binding row
+  counts when either station is in the LZ_WEST settlement zone or the
+  constraint is the WESTEX/PNHNDL export GTC. Aggregated to the fixed non-leap
+  8760-hour ERCOT-local clock as per-hour SCED-execution and West-binding
+  counts, congestion fraction, interface-only fraction, and mean positive West
+  shadow price (dense). ERCOT-only (measured congestion incidence, rule #13/#14
+  admissible — never the reported curtailment volume).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO code (ERCOT). |
+| `hour` | `int64` | `hour_index` | no | Index 0-8759 on the fixed non-leap 8760-hour ERCOT-local clock (Feb 29 dropped) — the model's dispatch clock. |
+| `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Wall-clock local start of the hour (naive, ERCOT local). |
+| `n_intervals` | `int64` | `count` | no | Number of distinct SCED executions observed in the hour (nominal cadence ~12/hour; the DST fall-back clock hour can carry up to ~24). Zero-filled for hours with no SCED coverage in the archive. |
+| `n_binding_west` | `int64` | `count` | no | Number of those executions with at least one binding (ShadowPrice > 0) West-corridor constraint (LZ_WEST-endpoint 138/345 kV element or the WESTEX/PNHNDL export GTC). |
+| `congestion_frac` | `float64` | `fraction` | no | n_binding_west / n_intervals in [0,1] — the fraction of the hour's SCED executions with the West Texas Export corridor congested. The measured congestion-pressure intensity the curtailment-share driver's SHAPE is fit to. 0.0 when n_intervals is 0. |
+| `interface_binding_frac` | `float64` | `fraction` | no | Fraction of the hour's executions with the aggregate WESTEX or PNHNDL export GTC binding — the interface-only component (already representable in the model's 8-zone TTC), reported for decomposition against the nodal tail. |
+| `shadow_price_mean_west` | `float64` | `usd_per_mwh` | yes | Mean positive ShadowPrice over the hour's binding West-corridor constraints; null when none bound that hour. |
