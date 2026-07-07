@@ -65,7 +65,9 @@ from scipy.special import ndtr
 from market_sim.config.constants import (
     ERCOT_LR_RRS_AVAILABILITY_HOD,
     ERCOT_ONLINE_CAP_DELIV_COEF,
+    ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME,
     ERCOT_ONLINE_CAP_SHARE,
+    ERCOT_ONLINE_CAP_SHARE_EXTREME,
     ERCOT_RTOLCAP_FWD_DELIV_COEF,
     ERCOT_RTOLCAP_FWD_N_DECILE,
     ERCOT_RTOLCAP_FWD_OFFLINE_CLASSES,
@@ -1111,6 +1113,30 @@ def _ercot_rtolcap_fwd_decile(net_load: np.ndarray) -> np.ndarray:
     )
 
 
+def ercot_online_cap_extreme_bin(net_load: np.ndarray) -> np.ndarray:
+    """Extreme-peak-resolved net-load percentile bin (0..13) per hour, vectorized.
+
+    The G-22 extreme-peak refinement of :func:`_ercot_rtolcap_fwd_decile`
+    (``docs/handoffs/ercot-online-capacity-envelope-2026-07.md`` §5): bins 0–8
+    are the bottom nine deciles unchanged; the TOP decile is resolved into five
+    equal-count 2-percentile sub-bins (bins 9–13 = ranks [90,92) … [98,100)), so
+    the on-line-capacity share/deliverability can carry the measured commitment
+    saturation in the extreme tail instead of collapsing it to the decile-9
+    median (the ercot41 top-2% room collapse). The 2-pp grain is the finest
+    equal-count refinement with ≥~500 pooled hours per cell across the three
+    source years (~175 h/yr), and bin 13 is exactly the top-2% regime where the
+    measured room-collapse was diagnosed — a uniform refinement of the existing
+    axis, not a bespoke threshold (rules #11/#13). Within-year ranking: a
+    forecast year ranks its OWN net-load, so the mapping regenerates (rule #10).
+    """
+    n = max(len(net_load), 1)
+    order = np.argsort(np.argsort(net_load))  # ascending rank per hour
+    dec = np.minimum((order * 10) // n, 9)
+    # 2-pp sub-bins: rank fifties 45..49 → sub 0..4 within the top decile.
+    sub = np.minimum((order * 50) // n - 45, 4)
+    return np.where(dec < 9, dec, 9 + np.maximum(sub, 0))
+
+
 def ercot_online_storage_reserve_mw(config, hours: int) -> np.ndarray:
     """Mode-aware ERCOT on-line storage responsive-reserve MW, ``(hours,)``.
 
@@ -1283,10 +1309,25 @@ def ercot_online_capacity_envelope_mw(
     NEVER reads the LP's own commitment/output state (anti-F3/F4) and never a
     price. Returns ``None`` (uncapped) when the gate is off or the fleet has no
     ``plant_group``.
+
+    **Extreme-peak-resolved variant** (``config.ercot_online_capacity_envelope_
+    extreme``, the filed G-22 §5 path after the ercot41 rejection): identical LP
+    row, but the driver resolution changes — the share table is resolved on 14
+    net-load bins (:func:`ercot_online_cap_extreme_bin`; the top decile at
+    2-percentile grain, carrying the measured CAMPD commitment saturation the
+    decile-9 median collapsed) and the scalar deliverability becomes a per-bin
+    profile fit to the measured thermal on-line HSL identity (CAMPD gross +
+    RTOLCAP − storage AS − LR credit), so the envelope reproduces the measured
+    on-line capability in the extreme tail (top-2%) instead of collapsing the
+    room there (:data:`~market_sim.config.constants.ERCOT_ONLINE_CAP_SHARE_EXTREME`
+    / :data:`~market_sim.config.constants.ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME`,
+    ``--emit online-cap-extreme-constant``). Mutually exclusive with the base
+    flag (``ScenarioConfig.__post_init__`` hard error).
     """
     from market_sim.data.fleet import _SUMMER_CLASS_DERATE
 
-    if not getattr(config, "ercot_online_capacity_envelope", False):
+    extreme = bool(getattr(config, "ercot_online_capacity_envelope_extreme", False))
+    if not (getattr(config, "ercot_online_capacity_envelope", False) or extreme):
         return None
     T = int(hours)
     plant_group = getattr(fleet_arrays, "plant_group", None)
@@ -1305,9 +1346,21 @@ def ercot_online_capacity_envelope_mw(
     nl = nl[:T]
     month = _ercot_rtolcap_fwd_month()[:T]
     season = np.asarray(ERCOT_RTOLCAP_FWD_SEASON_BY_MONTH, dtype=int)[month - 1]
-    decile = _ercot_rtolcap_fwd_decile(nl)
     summer = np.isin(month, [6, 7, 8, 9])  # Jun-Sep ambient-derate window
-    deliv = float(ERCOT_ONLINE_CAP_DELIV_COEF)
+    if extreme:
+        # G-22 §5 extreme-peak-resolved variant: 14-bin driver axis + per-bin
+        # deliverability, so the envelope carries the measured commitment
+        # saturation / capability margin in the extreme tail instead of the
+        # decile-9 median that collapsed the top-2% room (ercot41).
+        nl_bin = ercot_online_cap_extreme_bin(nl)
+        share_tables = ERCOT_ONLINE_CAP_SHARE_EXTREME
+        deliv_t = np.asarray(ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME, dtype=float)[
+            nl_bin
+        ]  # (T,)
+    else:
+        nl_bin = _ercot_rtolcap_fwd_decile(nl)
+        share_tables = ERCOT_ONLINE_CAP_SHARE
+        deliv_t = float(ERCOT_ONLINE_CAP_DELIV_COEF)  # scalar broadcast
 
     cap = np.full((n_hr, T), _RESERVE_SUPPLY_CAP_UNCAPPED_MW, dtype=float)
     for h in range(n_hr):
@@ -1319,17 +1372,17 @@ def ercot_online_capacity_envelope_mw(
         tier_classes = set(np.unique(plant_group[elig[h]]).tolist())
         out = np.zeros(T, dtype=float)
         for cls in tier_classes:
-            tbl = ERCOT_ONLINE_CAP_SHARE.get(cls)
+            tbl = share_tables.get(cls)
             if tbl is None:
                 continue
             cap_c = float(pmax[(plant_group == cls) & elig[h]].sum())
             if cap_c <= 0.0:
                 continue
-            share_t = np.asarray(tbl, dtype=float)[season, decile]  # (T,), vectorized
+            share_t = np.asarray(tbl, dtype=float)[season, nl_bin]  # (T,), vectorized
             derate = _SUMMER_CLASS_DERATE.get(cls, 0.0)
             cap_ct = cap_c * (1.0 - np.where(summer, derate, 0.0))
             out += share_t * cap_ct
-        cap[h] = deliv * out
+        cap[h] = deliv_t * out
     return cap.astype(float)
 
 
