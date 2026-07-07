@@ -307,6 +307,21 @@ def build_and_solve(
         else np.array([])
     )
 
+    # Effective per-(resource, hour) VOM in gen-column order (resource-major).
+    # Market-indexed attribute resources (ADR 0020: CCS, uprate, RoR, attribute
+    # wind/solar) pay the hourly LMP for energy on top of the EAC premium carried
+    # in resources.vom, so their dispatch cost is lmp[t] + eac; every other
+    # resource is flat at its vom. Serving a MWh at lmp+eac while avoiding a grid
+    # buy at lmp leaves a net portfolio premium of exactly the EAC. Flat when no
+    # resource is lmp-indexed (byte-identical to the pre-ADR-0020 np.repeat).
+    lmp_indexed = np.asarray(resources.lmp_indexed, dtype=bool)
+    vom_rt = np.repeat(resources.vom.astype(float), T)  # (n_res*T,), resource-major
+    if lmp_indexed.any():
+        lmp_add = np.zeros((n_res, T))
+        lmp_add[lmp_indexed] = lmp  # broadcast the (T,) price to flagged rows
+        vom_rt = vom_rt + lmp_add.reshape(-1)
+    vom_eff = vom_rt.reshape(n_res, T)  # (n_res, T) view for post-solve reporting
+
     # ------------------------------------------------------------------ rows
     rows, cols, data = _energy_balance(lay, storage_idx)
     rlow = [load.copy()]  # energy balance: equality = load
@@ -495,7 +510,7 @@ def build_and_solve(
         data.append(resources.fixed_mwyr.copy())
         rows.append(np.full(n_res * T, roff))
         cols.append(lay.gen_off + np.arange(n_res * T))
-        data.append(np.repeat(resources.vom, T))
+        data.append(vom_rt.copy())
         rows.append(np.full(T, roff))
         cols.append(lay.buy_off + np.arange(T))
         data.append(lmp.copy())
@@ -609,7 +624,7 @@ def build_and_solve(
             cost[lay.bev_off : lay.bev_off + n_split] += config.build_tiebreak_epsilon
     else:
         cost[lay.build_off : lay.build_off + n_res] = resources.fixed_mwyr
-        cost[lay.gen_off : lay.chg_off] = np.repeat(resources.vom, T)
+        cost[lay.gen_off : lay.chg_off] = vom_rt
         cost[lay.buy_off : lay.buy_off + T] = lmp
         # ε tiebreak on excess (audit finding LP-2): at the ratified
         # excess_sale_fraction = 1.0 (ADR 0005) the +lmp on grid_buy exactly
@@ -718,7 +733,7 @@ def build_and_solve(
     net_cost = (
         float(resources.fixed_mwyr @ build_mw)
         + energy_capex
-        + float((resources.vom[:, None] * gen).sum())
+        + float((vom_eff * gen).sum())
         + float(lmp @ grid_buy)
         - sale * float(lmp @ excess)
     )
@@ -741,7 +756,7 @@ def build_and_solve(
     capital_cost = (
         float(resources.fixed_mwyr @ build_mw)
         + energy_capex
-        + float((resources.vom[:, None] * gen).sum())
+        + float((vom_eff * gen).sum())
     )
     surplus_revenue = sale * float(lmp @ excess)
     avoided_purchase_cost = bau_cost - float(lmp @ grid_buy)
