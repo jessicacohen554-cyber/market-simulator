@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-neiso53-winter-fuelsec-ablation",
+  "label": "neiso53 winter fuelsec ablation",
+  "date": "2026-07-07",
+  "shorthand": "neiso53-winter-fuelsec-ablation",
+  "definition": "Zero-mechanism ablation twin of neiso53_winter_coldsnap_ab: all three winter-fuel mechanisms off (= neiso-50 keeper baseline), same harness/BTM basis, for D-3 attribution of the winter stack.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-07-neiso53-winter-fuelsec-ablation.js",
+  "bundle": "results/calibration/neiso53_winter_coldsnap_ab_off"
+}
