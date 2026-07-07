@@ -475,8 +475,7 @@
         !FUELMIX_EXCLUDED.has(e.grp) && !NONFOSSIL.includes(e.grp)
         && (GAS_CLASSES.includes(e.grp) || COAL_CLASSES.includes(e.grp))
         && !classIsGated(yr, e.grp)).length;
-      let sm = 0, sa = 0, worst = null;
-      es.forEach(e => { if (!e.nonfos) { sm += e.mFull; sa += e.bench923; } });
+      let worst = null;
       // Worst = out-of-tolerance first, then largest absolute TWh miss (the
       // C1 gate's own magnitude) — a tiny in-tolerance class with a big % error
       // (e.g. 0.4 TWh ST_CHP) must not outrank a 19 TWh CC miss.
@@ -488,7 +487,6 @@
       });
       return {
         n: gated.length, inTol: gated.filter(classInTol).length, skipped,
-        sysErr: sa > 0 ? 100 * (sm - sa) / sa : null,
         worst, price: avgLMP(yr), priceScar: avgLMPScar(yr)
       };
     }
@@ -798,7 +796,6 @@
         html += `<div class="year-card">
           <div class="year-head"><span>${yr}</span><span style="font-size:0.72rem;font-weight:600;color:var(--text-muted)">${H.n && H.inTol === H.n ? 'all pass' : ''}</span></div>
           <div class="kpi-row"><span class="k" title="C1 fuel-mix gate — gas+coal classes only, same set the Calibration Status page scores">Classes in tol (C1)</span><span class="v ${H.n && H.inTol === H.n ? 'clr-good' : H.inTol * 2 >= H.n ? 'clr-ok' : 'clr-bad'}">${H.inTol} / ${H.n}${H.skipped ? ` <span style="font-weight:600;color:var(--text-muted)">· ${H.skipped} skipped</span>` : ''}</span></div>
-          <div class="kpi-row"><span class="k">Sys vol error</span><span class="v ${H.sysErr == null ? '' : tolcls(H.sysErr)}">${H.sysErr == null ? '—' : fmtPctSigned(H.sysErr)}</span></div>
           <div class="kpi-row"><span class="k">Fleet r</span><span class="v ${rcls(fr)}">${fr == null ? '—' : fr.toFixed(3)}</span></div>
           <div class="kpi-row"><span class="k">Avg LMP${ov ? ' +ORDC' : ''}</span><span class="v" ${ov ? `style="color:${OVERLAY_COLOR}"` : ''}>${mp == null ? '—' : fmtDollars(mp)}</span></div>
           <div class="kpi-row"><span class="k">LMP vs ${aL ? aLab : 'actual'}</span><span class="v ${pdiff == null ? '' : dcls(pdiff)}">${pdiff == null ? '—' : fmtPctSigned(pdiff)}</span></div>
