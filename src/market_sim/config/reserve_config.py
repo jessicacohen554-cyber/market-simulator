@@ -213,6 +213,28 @@ CAISO_NONSPIN_DEMAND_CURVE: tuple[tuple[float, float], ...] = (
     (0.70, float("inf")),  # $700/MWh, beyond 210 MW
 )
 
+# CAISO Spin/Non-Spin sustain duration (hours) — the storage SOC gate's dur_c.
+# A resource with a Spinning or Non-Spinning Reserve award must convert the
+# full reserved capacity to energy within 10 minutes of dispatch and MAINTAIN
+# that output for at least 30 minutes from reaching the award capacity (CAISO
+# Tariff AS certification, §8.4 / Appendix K). For storage, CAISO enforces
+# exactly this through the ancillary-services state-of-charge constraint
+# (ASSOC): an ESR's SOC must cover award × duration (CAISO "Ancillary service
+# state of charge constraint" stakeholder initiative; DMM 2023/2024 Special
+# Reports on Battery Storage). Published market design, never fitted (rule 5).
+CAISO_AS_SUSTAIN_DURATION_H: float = 0.5
+
+# CAISO hydro 10-minute deliverable-ramp fraction of nameplate. Conventional
+# hydro governors ramp ~15-25+%/min (NREL WWSIS-2, NREL/TP-5500-55588 App. H —
+# the same published source family as fleet.RAMP10_FRAC_BY_GROUP's thermal
+# classes), so full nameplate is reachable inside the 10-minute reserve
+# window; the tariff's spin/non-spin certification bar is exactly that
+# 10-minute full-conversion capability, and CAISO hydro is a major certified
+# spin/non-spin provider (DMM Annual Report AS chapters). Class physics, not a
+# fitted value; ISO-local because only the CAISO design admits hydro reserve
+# (fleet.RAMP10_FRAC_* stay thermal-only for every other ISO).
+CAISO_HYDRO_RAMP10_FRAC: float = 1.0
+
 # --- NYISO RCPF products ---------------------------------------------------
 NYISO_RCPF_PRODUCTS: tuple[tuple[str, float, float, float], ...] = (
     ("nyca_30min_total", 2620.0, 1965.0, 750.0),
@@ -1778,17 +1800,20 @@ def _neiso_design(
 def _caiso_reserve_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
     """CAISO-local reserve-eligibility mask ``(n_gen,)``.
 
-    Currently the shared thermal mask (:data:`RESERVE_FUEL_TYPES`). This is the
+    The shared thermal mask (:data:`RESERVE_FUEL_TYPES`) PLUS hydro — the
     ISO-local seam the issue-#1492 design calls for: CAISO hydro (166 plants,
-    ~6.4 GW) is a certified spin/non-spin provider and belongs here, but hydro
-    carries no entry in ``fleet.RAMP10_FRAC_BY_*`` so its ``FleetArrays.ramp10``
-    is 0 — the pergen ``ramp10 > 0`` filter would drop it anyway. Adding hydro
-    (a published 10-minute hydro ramp fraction + the energy-limited hydro
-    fleet's reserve headroom) is the documented next increment; kept as a
-    distinct function so that extension is a one-line change here, never a
-    branch in the shared ``_reserve_eligible``.
+    ~6.4 GW) is a major certified spin/non-spin provider (DMM Annual Report AS
+    chapters). Hydro carries no entry in ``fleet.RAMP10_FRAC_BY_*`` (thermal
+    tables, other ISOs' designs stay hydro-free), so ``_caiso_design``
+    backfills its 10-minute deliverable ramp from
+    :data:`CAISO_HYDRO_RAMP10_FRAC` locally. Hydro's monthly energy budget
+    (``dispatch._build_hydro_rows``) bounds only its dispatched energy — held
+    (undeployed) reserve spends no water, so the budget and the reserve
+    headroom compose correctly. Kept a distinct function so the extension
+    lives here, never as a branch in the shared ``_reserve_eligible``.
     """
-    return _reserve_eligible(fleet_arrays)
+    fuel_names = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    return _reserve_eligible(fleet_arrays) | (fuel_names == "hydro")
 
 
 def _caiso_design(
@@ -1826,14 +1851,24 @@ def _caiso_design(
     against the :data:`CAISO_ENERGY_BID_CAP_SOFT` anchor — every step a tariff
     value, zero fitted breakpoints (rules 5/23).
 
-    Documented gaps (issue #1492 "Honest expectation", all next increments —
-    each would ADD reserve supply, so this build over-states scarcity ex-ante,
-    rule 1): **storage** (dominant CAISO AS provider, but the pergen builder
-    backs no per-unit storage reserve columns — ``storage_eligible`` is inert on
-    this path); **hydro** (``ramp10 = 0``, energy-limited — see
-    :func:`_caiso_reserve_eligible`); **Regulation Up/Down** (no
-    forward-derivable requirement series; RegDown is a downward product the
-    upward-headroom pergen row does not model).
+    Participation (issue #1492 design constraints 2/3, completed): **storage**
+    — CAISO's dominant AS provider (DMM 2023-25 battery special reports) —
+    backs reserve through the duration-gated per-zone ``RS[c,z]`` columns
+    (``dispatch._build_reserve_rows_pergen`` storage gate): power competition
+    against its own charge/discharge and an ASSOC state-of-charge gate at the
+    published 30-minute sustain (:data:`CAISO_AS_SUSTAIN_DURATION_H`).
+    **Hydro** — a major certified spin/non-spin provider — joins the pergen
+    pool via :func:`_caiso_reserve_eligible`, with its 10-minute deliverable
+    ramp backfilled from :data:`CAISO_HYDRO_RAMP10_FRAC` (hydro has no CEMS,
+    so no measured ramp-capability row exists; the thermal ``RAMP10_FRAC``
+    tables stay hydro-free for every other ISO). Both ADD reserve supply, so
+    this completed build prices LESS scarcity than the thermal-only caiso-59
+    probe — the honest direction (the issue's ex-ante note: the thermal-only
+    pool over-states scarcity).
+
+    Remaining gap: **Regulation Up/Down** (no forward-derivable requirement
+    series; RegDown is a downward product the upward-headroom pergen row does
+    not model).
     """
     from market_sim.results.scarcity import (
         caiso_reserve_demand_steps,
@@ -1848,6 +1883,19 @@ def _caiso_design(
             "deliverable ramp, fleet._ramp10_capability)"
         )
     ramp10 = np.asarray(ramp10, dtype=float)
+    # Hydro 10-minute deliverable ramp, backfilled ISO-locally: the shared
+    # fleet tables are thermal-only (hydro rows carry 0), and hydro has no
+    # CEMS so the measured ramp-capability datatype cannot cover it. Full
+    # nameplate inside the 10-minute window is hydro governor class physics
+    # (CAISO_HYDRO_RAMP10_FRAC citation above). Only rows the CAISO-local
+    # eligibility mask admits are touched; other ISOs never reach this.
+    fuel_names_all = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    is_hydro = fuel_names_all == "hydro"
+    ramp10 = np.where(
+        is_hydro & (ramp10 <= 0.0),
+        CAISO_HYDRO_RAMP10_FRAC * np.asarray(fleet_arrays.pmax, dtype=float),
+        ramp10,
+    )
 
     T = int(hours)
     n_zones = int(np.max(fleet_arrays.zone_idx)) + 1
@@ -1928,7 +1976,12 @@ def _caiso_design(
     return ReserveDesign(
         families=families,
         eligible=eligible.reshape(1, -1),
-        storage_eligible=False,
+        # Storage participation (issue #1492 constraint 2): batteries + pumped
+        # storage back reserve via the duration-gated RS[c,z] columns with the
+        # published 30-minute ASSOC sustain. One reserve class on this layout,
+        # so the single duration applies to both co-drawn products.
+        storage_eligible=True,
+        storage_duration_h=np.array([CAISO_AS_SUSTAIN_DURATION_H], dtype=float),
         pergen_gen_idx=pergen_gen_idx,
         pergen_col=pergen_col.astype(int),
         pergen_ramp10=col_ramp10,
