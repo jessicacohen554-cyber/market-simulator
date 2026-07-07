@@ -109,15 +109,22 @@ def _state_to_isos() -> dict[str, list[str]]:
     return out
 
 
-def derive(years: list[int], isos: list[str]) -> pd.DataFrame:
-    """Build the v2 artifact frame for ``years`` × ``isos`` from the annual data."""
+def derive(
+    years: list[int], isos: list[str], allow_quarantined: bool = False
+) -> pd.DataFrame:
+    """Build the v2 artifact frame for ``years`` × ``isos`` from the annual data.
+
+    ``allow_quarantined`` is set ONLY by the ``--holdout-intake`` path (the
+    marker-gated one-shot holdout validation, CLAUDE.md rule 22); the default
+    keeps 2022/H1-2026 out of the artifact.
+    """
     per_paras, pooled_paras = _parasitic_maps()
     state_isos = _state_to_isos()
     want_states = {st for iso in isos for st in campd.states_for_iso(iso)}
 
     frames = []
     for year in years:
-        if year in QUARANTINED_YEARS:
+        if year in QUARANTINED_YEARS and not allow_quarantined:
             logger.warning("skipping quarantined year %d (rule 22)", year)
             continue
         if not clean_io.clean_exists("emissions-unit-annual", year=year):
@@ -193,20 +200,98 @@ def derive(years: list[int], isos: list[str]) -> pd.DataFrame:
     )
 
 
+def _calibration_complete_isos() -> set[str]:
+    """Return ISOs marked calibration-complete (uppercased) — the rule-22 gate."""
+    marker = (
+        paths.REPO_ROOT / "frontend" / "data" / "backcast" / "calibration-complete.json"
+    )
+    try:
+        import json
+
+        data = json.loads(marker.read_text())
+    except (OSError, ValueError):
+        return set()
+    return {str(k).upper() for k in (data.get("complete") or {})}
+
+
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--iso", nargs="+", default=list(ALL_ISOS))
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
+    ap.add_argument(
+        "--holdout-intake",
+        default=None,
+        metavar="ISO",
+        help="authorize extending the artifact with quarantined-year (2022/2026) "
+        "rows for this ISO only (requires its calibration-complete marker; "
+        "CLAUDE.md rule 22 one-shot holdout validation). In this mode --years "
+        "must be quarantined years only and --iso must equal the named ISO; the "
+        "new rows are MERGED into the existing artifact with every pre-existing "
+        "row asserted byte-frozen.",
+    )
     args = ap.parse_args(argv)
 
     bad = [y for y in args.years if y in QUARANTINED_YEARS]
-    if bad:
+    if bad and not args.holdout_intake:
         ap.error(f"quarantined years cannot enter the artifact: {bad} (rule 22)")
 
-    out = derive(args.years, [i.upper() for i in args.iso])
-    if out.empty:
-        logger.error("no rows derived — curate emissions-unit-annual first")
-        return 1
+    if args.holdout_intake:
+        iso = args.holdout_intake.upper()
+        complete = _calibration_complete_isos()
+        if iso not in complete:
+            ap.error(
+                f"no calibration-complete marker for {iso} "
+                f"(complete: {sorted(complete) or 'none'}); declare the ISO "
+                "complete before its one-shot holdout intake (rule 22)"
+            )
+        if [i.upper() for i in args.iso] != [iso]:
+            ap.error(f"--holdout-intake {iso} requires --iso {iso} (and only it)")
+        if not bad or set(args.years) - QUARANTINED_YEARS:
+            ap.error(
+                "--holdout-intake extends the artifact with quarantined years "
+                "only; run the default path for in-sample years"
+            )
+        new = derive(args.years, [iso], allow_quarantined=True)
+        if new.empty:
+            logger.error("no rows derived — curate emissions-unit-annual first")
+            return 1
+        existing = pd.read_parquet(OUT_PATH)
+        clash = existing[(existing["iso"] == iso) & existing["year"].isin(args.years)]
+        if not clash.empty:
+            logger.error(
+                "artifact already carries %d (%s, %s) rows — the one-shot "
+                "holdout intake may only run once (rule 22)",
+                len(clash),
+                iso,
+                sorted(set(args.years)),
+            )
+            return 1
+        merged = (
+            pd.concat([existing, new], ignore_index=True)
+            .sort_values(["iso", "plant_id", "unit_id", "year"])
+            .reset_index(drop=True)
+        )
+        # Every pre-existing row must survive byte-identically (frozen).
+        refrozen = (
+            merged.merge(new, how="left", indicator=True)
+            .query("_merge == 'left_only'")
+            .drop(columns="_merge")
+            .reset_index(drop=True)
+        )
+        frozen_ok = refrozen.equals(
+            existing.sort_values(["iso", "plant_id", "unit_id", "year"]).reset_index(
+                drop=True
+            )
+        )
+        if not frozen_ok:
+            logger.error("pre-existing artifact rows changed — refusing to write")
+            return 1
+        out = merged
+    else:
+        out = derive(args.years, [i.upper() for i in args.iso])
+        if out.empty:
+            logger.error("no rows derived — curate emissions-unit-annual first")
+            return 1
     PROCESSED_DIR.mkdir(parents=True, exist_ok=True)
     out.to_parquet(OUT_PATH, index=False)
     out.to_csv(CSV_PATH, index=False)

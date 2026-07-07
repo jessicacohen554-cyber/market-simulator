@@ -92,7 +92,11 @@ CALIBRATION_ISOS: tuple[str, ...] = (
 CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     "CAISO": (2023, 2024, 2025),
     "NYISO": (2023, 2025),
-    "NEISO": (2023, 2024, 2025),
+    # NEISO gained 2022 on 2026-07-07: the calibration-complete marker
+    # (frontend/data/backcast/calibration-complete.json) authorizes the ONE-SHOT
+    # 2022 holdout validation (CLAUDE.md rule 22) — 2022 is a validation year
+    # for the frozen keeper, never a calibration year.
+    "NEISO": (2022, 2023, 2024, 2025),
     # MISO is the Stage-F addition: the EIA-923/930 by-fuel and demand
     # extracts all cover 2023-2025 (the 2025 EIA-923 release is the partial
     # monthly survey, handled by the incomplete-vintage guard).
