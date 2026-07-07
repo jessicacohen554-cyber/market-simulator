@@ -9,18 +9,20 @@
   <link rel="stylesheet" href="css/site.css">
   <link rel="stylesheet" href="css/bc-pages.css">
   <style>
-    .fv-card{border:1px solid var(--border,#334);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.5rem;background:var(--surface,#1b1f2a)}
+    .fv-card{border:1px solid var(--border-light);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1.5rem;background:var(--bg-card);color:var(--text-secondary);box-shadow:var(--shadow-sm)}
+    .fv-card h2{color:var(--text-primary)}
     .fv-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:.5rem;margin:.75rem 0}
-    .fv-metric{padding:.5rem .75rem;border-radius:6px;background:var(--surface-2,#232838)}
-    .fv-metric .v{font-size:1.25rem;font-weight:600}
-    .fv-metric .l{font-size:.75rem;opacity:.75}
-    table.fv{width:100%;border-collapse:collapse;margin:.5rem 0;font-size:.9rem}
-    table.fv th,table.fv td{padding:.35rem .5rem;border-bottom:1px solid var(--border,#334);text-align:right}
+    .fv-metric{padding:.5rem .75rem;border-radius:6px;background:var(--bg-page);border:1px solid var(--border-light)}
+    .fv-metric .v{font-size:1.25rem;font-weight:600;color:var(--text-primary)}
+    .fv-metric .l{font-size:.75rem;color:var(--text-muted)}
+    table.fv{width:100%;border-collapse:collapse;margin:.5rem 0;font-size:.9rem;color:var(--text-secondary)}
+    table.fv th,table.fv td{padding:.35rem .5rem;border-bottom:1px solid var(--border-light);text-align:right}
+    table.fv th{color:var(--text-muted);font-weight:600}
     table.fv th:first-child,table.fv td:first-child{text-align:left}
-    .pass{color:#3fb950} .fail{color:#f85149} .warn{color:#d29922} .skip{opacity:.6}
+    .pass{color:var(--positive)} .fail{color:var(--negative)} .warn{color:var(--warning)} .skip{color:var(--text-muted)}
     .fv-inv{display:flex;flex-wrap:wrap;gap:.35rem;margin:.5rem 0}
-    .fv-inv span{font-size:.72rem;padding:.15rem .45rem;border-radius:4px;border:1px solid var(--border,#334)}
-    .fv-empty{opacity:.7;padding:2rem;text-align:center}
+    .fv-inv span{font-size:.72rem;padding:.15rem .45rem;border-radius:4px;border:1px solid var(--border-light);background:var(--bg-page)}
+    .fv-empty{color:var(--text-muted);padding:2rem;text-align:center}
   </style>
 </head>
 <body>
