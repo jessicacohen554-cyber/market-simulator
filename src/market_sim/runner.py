@@ -118,6 +118,7 @@ from market_sim.pipeline import (
     PriorYearResults,
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
+    build_caiso_ra_p1_prep,
     run_commitment_pass,
     run_energy_solve,
 )
@@ -1285,6 +1286,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # docs/cross-year-warmstart.md). Wiring it forecast-side is
             # blocked on a basis-independent capacity screen (warm-start
             # backlog #4) — do not thread a cache here before that lands.
+            # P1-native CAISO RA must-offer bridge (P2 archived — CLAUDE.md:
+            # P0/P1 only): floor the merchant gas CC/CT fleet from the P0 run
+            # pattern before P1, so the scored P1 carries the RA structure. None
+            # for every non-CAISO / non-RA run (byte-identical).
+            ra_p1_prep = build_caiso_ra_p1_prep(
+                config, iso, dispatch_fleet, fleet_arrays, mc_base
+            )
             energy_solve = run_energy_solve(
                 dispatch_fleet,
                 fleet_arrays,
@@ -1293,9 +1301,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 dispatch_kwargs,
                 config,
                 xyear_cache=None,
+                p1_fleet_prep=ra_p1_prep,
             )
             p1_result = energy_solve.p1
             mc_bid = energy_solve.mc_bid
+            # The fleet P1 solved on — RA-floored when the bridge fired, else the
+            # input fleet. Downstream save/floor-persistence sees the floors.
+            fleet_arrays = energy_solve.p1_fleet_arrays
             context = FleetContext.from_arrays(
                 fleet_arrays,
                 iso_config,
@@ -1307,25 +1319,25 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
             result = p1_result
 
-            # === LEGACY: P2 Commitment Screen ===
-            # P2 (optional): screen CC/CT commitment on P1 clearing prices
-            # against base MC, pin coal to its P1 dispatch, and re-solve.
-            # Both datasets are kept: the P1 dispatch as year_{year}_p1, the
-            # final result (P2 here) as the primary year_{year}. With
-            # commitment disabled only P1 is solved and it is the primary.
-            # AS-aware commitment (ERCOT, gated): value a unit's AS revenue when
-            # screening commitment so the units a tight month keeps online FOR AS
-            # stay committed and the P2 co-opt headroom reflects realistic online
-            # capacity (the phantom-headroom fix, Finding 1 / G1). Triggers a P2
-            # pass even with commitment_enabled off; ERCOT + multi-product co-opt
+            # === LEGACY: P2 Commitment Screen (ARCHIVED — last resort) ===
+            # P2 (opt-in, CLAUDE.md "Dispatch & Commitment"): screen CC/CT
+            # commitment on P1 clearing prices against base MC, pin coal to its P1
+            # dispatch, and re-solve. P0/P1 are the only production passes and
+            # every run is scored on P1; this branch runs only when a legacy
+            # diagnostic gate is explicitly set (CLI --enable-legacy-p2). The
+            # CAISO RA must-offer bridge NO LONGER triggers P2 — it is applied
+            # P1-native above (build_caiso_ra_p1_prep). AS-aware commitment
+            # (ERCOT, gated): value a unit's AS revenue when screening commitment
+            # so the units a tight month keeps online FOR AS stay committed and
+            # the P2 co-opt headroom reflects realistic online capacity (the
+            # phantom-headroom fix, Finding 1 / G1); ERCOT + multi-product co-opt
             # only.
             as_aware = (
                 getattr(config, "ercot_as_aware_commitment", False)
                 and iso == "ERCOT"
                 and getattr(config, "energy_reserve_coopt", False)
             )
-            caiso_ra = getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO"
-            if config.commitment_enabled or as_aware or caiso_ra:
+            if config.commitment_enabled or as_aware:
                 save_result(
                     p1_result,
                     config,
@@ -1674,15 +1686,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
         # Evolution ledger (plan §2.1): persist this solved year's capacity
         # events + summary beside its dispatch parquet. P0+P1 always solve once;
-        # P2 runs only when the commitment/AS-aware/CAISO-RA screen is enabled.
-        p2_enabled = (
-            config.commitment_enabled
-            or (
-                getattr(config, "ercot_as_aware_commitment", False)
-                and iso == "ERCOT"
-                and getattr(config, "energy_reserve_coopt", False)
-            )
-            or (getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO")
+        # P2 (archived) runs only when a legacy diagnostic screen is enabled. The
+        # CAISO RA must-offer bridge is P1-native and adds no P2 solve.
+        p2_enabled = config.commitment_enabled or (
+            getattr(config, "ercot_as_aware_commitment", False)
+            and iso == "ERCOT"
+            and getattr(config, "energy_reserve_coopt", False)
         )
         firm_mw = accredited_firm_capacity_mw(
             fleet,

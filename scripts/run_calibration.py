@@ -103,6 +103,7 @@ from market_sim.pipeline import (  # noqa: E402
     apply_reserve_coopt,
     backcast_config,
     build_base_dispatch_kwargs,
+    build_caiso_ra_p1_prep,
     run_commitment_pass,
     run_energy_solve,
 )
@@ -2665,6 +2666,11 @@ def run_year(
     # loop, basis exported even when the XYEAR flag is off so a downstream A/B
     # does not depend on call ordering), and the startup-markup config gates
     # all moved to pipeline.solve.run_energy_solve statement-for-statement.
+    # P1-native CAISO RA must-offer bridge: the hook floors the merchant gas
+    # CC/CT fleet from the P0 run pattern before the P1 clearing solve, so the
+    # RA structure rides the scored P1 pass (P2 is archived — CLAUDE.md: P0/P1
+    # only). None for every non-CAISO / non-RA run (byte-identical).
+    ra_p1_prep = build_caiso_ra_p1_prep(config, iso, fleet, fleet_arrays, mc_base)
     energy_solve = run_energy_solve(
         fleet,
         fleet_arrays,
@@ -2673,9 +2679,14 @@ def run_year(
         dispatch_kwargs,
         config,
         xyear_cache=xyear_cache,
+        p1_fleet_prep=ra_p1_prep,
     )
     result = energy_solve.p1
     mc_bid = energy_solve.mc_bid
+    # The fleet P1 actually solved on — the RA-floored fleet when the bridge
+    # fired, else the input fleet unchanged. Persist ITS min_gen as the P1 pass's
+    # floors and expose it downstream (D-2 forced-energy attribution).
+    fleet_arrays = energy_solve.p1_fleet_arrays
 
     context = FleetContext.from_arrays(
         fleet_arrays,
@@ -2713,23 +2724,21 @@ def run_year(
         "links": iso_config.links,
     }
 
-    # P2 (optional): screen CC/CT commitment on P1 prices vs base MC, pin
-    # coal to its P1 dispatch, and re-solve (a single LP solve). ERCOT AS-aware
-    # commitment triggers the same P2 pass (valuing AS revenue in the screen)
-    # even when the energy-only commitment screen is off — it requires the
+    # P2 (ARCHIVED — last resort, CLAUDE.md "Dispatch & Commitment"): the
+    # optional third LP solve. P0/P1 are the only production passes and every run
+    # is scored on P1; P2 runs only when a legacy diagnostic gate is explicitly
+    # set. The CAISO RA must-offer bridge NO LONGER triggers P2 — it is applied
+    # P1-native above (build_caiso_ra_p1_prep). ERCOT AS-aware commitment stays a
+    # P2 trigger, reachable only behind the CLI's --enable-legacy-p2 unlock; it
+    # values a unit's own P1 reserve dual in the screen and needs the
     # multi-product co-opt to supply the per-product reserve duals.
     as_aware = (
         getattr(config, "ercot_as_aware_commitment", False)
         and iso == "ERCOT"
         and getattr(config, "energy_reserve_coopt", False)
     )
-    # CAISO RA must-offer commitment (Step-1 overhaul): a min-load bridge floor
-    # on the merchant gas CC/CT fleet, derived from the economic P1 run pattern,
-    # re-solved in the same P2 pass. Triggers P2 even with the economic
-    # commitment screen off (CAISO runs P1-only otherwise).
-    caiso_ra = getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO"
     result_p1 = None
-    if config.commitment_enabled or as_aware or caiso_ra:
+    if config.commitment_enabled or as_aware:
         result_p1 = result
         result = _commitment_pass(p2_state)
 
@@ -3065,16 +3074,23 @@ def _build_parser() -> argparse.ArgumentParser:
         "fuel-cost fraction); 1.0 disables the discount.",
     )
     parser.add_argument(
+        "--enable-legacy-p2",
+        action="store_true",
+        help="Unlock the ARCHIVED P2 commitment pass (last resort). P0/P1 are the "
+        "only production passes and every run is scored on P1. --commitment / "
+        "--no-coal-p2 are hidden and inert unless this is passed.",
+    )
+    parser.add_argument(
         "--commitment",
         action="store_true",
-        help="Run the P2 unit-commitment pass after P1; both are reported.",
+        # ARCHIVED P2 trigger — hidden from --help, gated behind --enable-legacy-p2.
+        help=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--no-coal-p2",
         action="store_true",
-        help="Pin coal to its P1 dispatch in P2 instead of screening it: "
-        "coal gains no new generation in P2 (P1 locks it). Only "
-        "meaningful with --commitment.",
+        # ARCHIVED P2 knob — hidden; only meaningful under --enable-legacy-p2.
+        help=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--priced-interchange",
@@ -3142,7 +3158,16 @@ def main(argv: list[str] | None = None) -> None:
     Args:
         argv: Argument vector to parse. Defaults to ``sys.argv[1:]``.
     """
-    args = _build_parser().parse_args(argv)
+    parser = _build_parser()
+    args = parser.parse_args(argv)
+    # P2 is ARCHIVED (P0/P1 only; scored on P1). Reaching for it without the
+    # explicit unlock is a hard error so it is never a silent calibration option.
+    if (args.commitment or args.no_coal_p2) and not args.enable_legacy_p2:
+        parser.error(
+            "the P2 commitment pass is ARCHIVED (P0/P1 only; runs are scored on "
+            "P1). --commitment / --no-coal-p2 require --enable-legacy-p2 to run "
+            'P2 as a last resort. See CLAUDE.md "Dispatch & Commitment".'
+        )
     iso = args.iso.upper()
     # The reference-price interface is on when the CLI flag is set OR the ISO is
     # in the per-ISO default-on set (MISO); see resolve_reference_price_interface.
