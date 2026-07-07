@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-pjm-86-pjm83-head",
+  "label": "pjm 86 pjm83 head",
+  "date": "2026-07-07",
+  "shorthand": "pjm-86-pjm83-head",
+  "definition": "PJM 86 pjm-83 keeper recipe VERBATIM re-solved at HEAD: the flag-off baseline of the pjm-87 per-gen opportunity-cost A/B, on the same data tree as the treatment (regenerated clean partitions + the per-BA EIA-930 PJM demand rewire: 1-2h clock lag fixed, 2023/2024 zero-hour gaps replaced with real meter data, the 2024 interpolation-shaved ~104 GW ridge restored). No mechanism deltas vs pjm-83 \u2014 any move vs the committed pjm-83 bundle is the data tree.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-07-pjm-86-pjm83-head.js",
+  "bundle": "results/calibration/pjm86_pjm83_head_baseline"
+}
