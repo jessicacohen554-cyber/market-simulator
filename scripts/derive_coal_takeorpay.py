@@ -63,7 +63,9 @@ _CONTRACT_CODES: frozenset[str] = frozenset({"C", "NC", "T"})
 _SPOT_CODES: frozenset[str] = frozenset({"S"})
 
 
-def _takeorpay_table(iso: str, years: list[int] | None) -> pd.DataFrame:
+def _takeorpay_table(
+    iso: str, years: list[int] | None, raw_dir: Path | None = None
+) -> pd.DataFrame:
     """Return ``[plant_code, contract_share, spot_share, total_tons, n_receipts,
     source, breakdown]`` — one row per coal plant in ``iso`` with coal receipts.
 
@@ -81,7 +83,13 @@ def _takeorpay_table(iso: str, years: list[int] | None) -> pd.DataFrame:
     logger.info("%s EIA-860 fleet has %d coal plants", iso, len(coal_codes))
 
     rframes = []
-    for zip_path in _find_zips(REPO / "inputs" / "raw-data"):
+    # Raw f923_*.zip releases: data/raw since the W1 layout collapse (the
+    # pre-W1 inputs/raw-data root no longer exists). The zips are immutable
+    # EIA downloads (https://www.eia.gov/electricity/data/eia923/), not
+    # committed to the repo — re-download the cited vintages to re-derive.
+    for zip_path in _find_zips(
+        raw_dir if raw_dir is not None else REPO / "data" / "raw"
+    ):
         m = re.search(r"f923[_-]?(\d{4})", zip_path.stem)
         yr = int(m.group(1)) if m else 0
         if years is not None and yr not in years:
@@ -176,9 +184,15 @@ def main() -> None:
         help="Restrict to these EIA-923 release years (default: all).",
     )
     parser.add_argument("--out-dir", default="data/raw/_processed-legacy")
+    parser.add_argument(
+        "--raw-dir",
+        default=None,
+        help="Directory holding the f923_*.zip releases (default: data/raw).",
+    )
     args = parser.parse_args()
 
-    table = _takeorpay_table(args.iso.upper(), args.year)
+    raw_dir = Path(args.raw_dir) if args.raw_dir else None
+    table = _takeorpay_table(args.iso.upper(), args.year, raw_dir=raw_dir)
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"coal_takeorpay_{args.iso.upper()}.csv"
