@@ -236,3 +236,42 @@ detect the bridge on a startup-aware commitment pattern instead of raw energy-on
 release on genuine curtailed-VRE volume (solar/wind dispatched below available CF)
 rather than price, since price never reaches the floor here. None of these were
 attempted this session; G-61 is open for whichever the next session picks up.
+
+## 8. G-61 execution record (2026-07-07, W1a lane) — all three §7 paths built; (a) measured no-op, (b) removes ~40% of the forced energy, (c) measured inert
+
+All three §7 open paths landed as default-off flags (zero fitted parameters each), with the
+§7-reverted absorption/price release mechanisms NOT rebuilt:
+
+- **(a) RA-quantity gate** (`caiso_ra_mustoffer_quantity_gate`): the published quantity was
+  found — DMM Annual Report Table 8.4 "Must-Offer: Gas-fired generators" (the bid-insertion
+  category, i.e. the literal 24x7 must-offer fleet): **19,130 MW (2023) / 15,566 MW (2024)**,
+  2025 at latest published vintage (`constants.CAISO_RA_MUSTOFFER_GAS_MW`; refresh on the DMM
+  2025 annual, a rule-23 source-data trigger). Bridged plants would drop cheapest-startup-first
+  (the RUC order). **Measured NO-OP at HEAD, no probe needed (provably byte-identical): the
+  bridged CC fleet totals 13,847/13,847/13,717 MW true pmax — INSIDE the published quantity in
+  every year.** The model bridges LESS capacity than reality obligates, so G-61's
+  over-commitment is not a quantity-scope error; the defect is the CONFLATION of must-OFFER
+  (bid it) with must-stay-online (the bridge's assertion). Kept as the forward scope guard.
+- **(b) startup-aware detection** (`caiso_ra_bridge_startup_aware`, probe
+  `2026-07-07-caiso-63-g61b-startup` vs base `caiso-61`): a P0 run anchors a bridge only when
+  its whole run margin repays one startup (run margin/MW ≥ published class startup cost).
+  **RA-bridge forced energy falls ~40%** (4.04/4.01/3.48 → 2.56/2.33/2.38 TWh; peak
+  simultaneous floor 2.48/2.82/2.63 → 2.38/2.36/1.92 GW) — 1.5–1.7 TWh/yr of belly min-load
+  was anchored by phantom micro-runs. The freed CC largely returns on merit (class −0.5 TWh);
+  CT evening is unchanged (the drag owns it); body λ rises ~$0.3–0.9 (the phantom floors were
+  price-suppressing; 2023 tail 502→530 h). Strictly more faithful UC physics with a ~40%
+  smaller RA forcing budget, at a small honest C3a cost in a body whose overprice is
+  seam-owned (`FINDING-caiso-seam-diurnal-2026-07-07.md`).
+- **(c) curtailed-VRE release** (`caiso_ra_bridge_curtailment_release`, probe
+  `2026-07-07-caiso-64-g61c-curtail` vs the same base): a gap containing genuine P0
+  curtailment (wind+solar below available potential, 1 MW float guard) never floors.
+  **Byte-identical to the base in all three years — P0 never curtails a single MWh of VRE in
+  2023–2025**, the exact seam-coupling prediction (the midday 1–1.8 GW import under-delivery
+  keeps the belly gas-marginal, so every curtailment-triggered signal is starved). Real market
+  design, stays built for the day the seam fix lands; its inertness is the measured
+  half of the G-61 ← seam coupling.
+
+**Disposition:** keeper stays `caiso-60` this session; adopting (b) into the keeper (a
+structural-faithfulness promotion at a small fit cost, rule 1) is put to the owner. G-61 stays
+open, narrowed to: adopt-(b) decision + the seam-shape fix (G-15 residual) that unblocks (c)
+and the §7 release signals.

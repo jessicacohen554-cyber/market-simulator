@@ -40,6 +40,37 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-07 — CAISO — W1a continuation (G-61): all three §7 RA-bridge paths built — quantity gate a measured no-op, startup-aware detection removes ~40% of forced energy (`caiso-63`), curtailed-VRE release measured inert (`caiso-64`) — keeper stays caiso-60
+
+**Gap G-61** (CC over-commitment via the P1-native RA bridge, D-8 closure §7; register row
+added this lane). All three §7 open paths landed default-off with zero fitted parameters;
+the §7-reverted absorption/price releases were NOT rebuilt. Full record: D-8 closure §8.
+
+- **(a) `caiso_ra_mustoffer_quantity_gate`** — published quantity intaken
+  (`constants.CAISO_RA_MUSTOFFER_GAS_MW`: DMM Annual Report Table 8.4 "Must-Offer:
+  Gas-fired generators" 19,130/15,566 MW 2023/2024, 2025 latest-vintage). **Measured
+  no-op at HEAD** (no probe needed — provably byte-identical): the bridged CC fleet is
+  13,847/13,847/13,717 MW true pmax, inside the published quantity every year. The model
+  bridges LESS than reality obligates — G-61 is a must-OFFER-vs-must-stay-online
+  conflation, not a quantity-scope error. Kept as the forward scope guard.
+- **(b) `caiso_ra_bridge_startup_aware`** (`2026-07-07-caiso-63-g61b-startup`, PROBE, vs
+  base `caiso-61`): a P0 run anchors a bridge only when commitment-real (run margin/MW ≥
+  published startup cost). **RA forced energy −~40%** (4.04/4.01/3.48 → 2.56/2.33/2.38
+  TWh) — 1.5–1.7 TWh/yr of belly min-load was phantom-anchored. CC returns mostly on
+  merit (−0.5 TWh class); CT evening unchanged (drag-owned); λ +$0.30–0.46 mean
+  (midday +$0.5–0.9 — the phantom floors were price-suppressing; 2023 tail 502→530 h).
+  More faithful UC physics + ~40% smaller C8/D-2 RA forcing budget at a small honest
+  C3a cost in the seam-owned body. **Keeper adoption = owner decision.**
+- **(c) `caiso_ra_bridge_curtailment_release`** (`2026-07-07-caiso-64-g61c-curtail`,
+  PROBE): gaps with genuine P0 curtailed-VRE volume never floor. **Byte-identical to the
+  base ×3 years — P0 never curtails a MWh of VRE in 2023–25**, the exact
+  FINDING-caiso-seam-diurnal prediction (midday import under-delivery starves every
+  curtailment signal). Stays built for the day the seam fix lands.
+
+Dashboard: caiso-63/64 registered; pruned the two displaced oldest CAISO registrations
+(caiso-52-ct-scrub, caiso51-co2re-probe) per the 15-run retention rule. Holdouts
+untouched (rule 22). G-61/G-15 register rows updated.
+
 ### 2026-07-07 — CAISO — W1a burndown: G-15 scarcity-tail candidate REJECTED-inert (`caiso-61`), #1492 co-opt participation COMPLETED and inert (`caiso-62`), C3a/C4 root cause relocated to the WECC seam diurnal shape — keeper stays caiso-60
 
 **Lane:** caiso-calibration-burndown-w1a (G-15 / G-20d / #1492). Two registered
