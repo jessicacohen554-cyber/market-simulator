@@ -1,7 +1,7 @@
 # PJM 84 — online-gated deliverable reserve co-opt (G-20b)
 
 **Probe (not a keeper). Keeper stays pjm-83-srmc-reground.** Full span 2023–2025,
-one bundle, years sequential. Branch `claude/pjm-scarcity-price-formation-jran5q`.
+one bundle, years sequential. Fresh branch off latest main.
 
 ## What was run
 
