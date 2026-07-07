@@ -38,12 +38,13 @@ jobs:
           git config user.email "noreply@anthropic.com"
           PATCH=.github/patches/2026-07-07-w3a-seam-clock.patch
           EDITS=.github/patches/2026_07_07_w3a_register_log_edits.py
-          test -f "$PATCH"; test -f "$EDITS"
+          test -f "$PATCH"
+          test -f "$EDITS"
           if git apply --check "$PATCH" 2>/dev/null; then
             git apply --index "$PATCH"
             echo "code patch applied"
           elif git apply --check --reverse "$PATCH" 2>/dev/null; then
-            echo "code patch already applied — skip"
+            echo "code patch already applied - skip"
           else
             echo "::error::patch neither applies nor reverses cleanly on $(git rev-parse HEAD)"
             exit 1
@@ -51,26 +52,28 @@ jobs:
           python3 "$EDITS"
           git add docs/gap-register-2026-07.md docs/calibration-log.md
           if git diff --cached --quiet; then
-            echo "nothing to commit — all carriers already applied"
+            echo "nothing to commit - all carriers already applied"
             exit 0
           fi
-          git commit -F - <<'MSG'
-W3a seam-clock: apply session source changes (server-side carriers)
-
-1. fix(caiso): map per-DIBA interchange stamps onto the model clock for the
-   corridor deliverability envelope (measured -1h standard / -2h daylight;
-   eia_loader._caiso_interchange_model_clock + pinned constants — unit tests
-   and the scripts/validate_caiso_seam_hod_frame.py drift guard arrive via
-   the direct MCP pushes).
-2. docs(caiso): withdraw the seam-diurnal attribution (its 'measured actual'
-   hod table was UTC-bucketed, reproduced to the MW) — G-15/G-20d/G-61
-   register rows + calibration-log entry; C3a body reattributed to belly gas
-   commitment.
-3. feat(calibration): --replay-bundle on run_calibration_full.py so
-   calibration-run.yml can reproduce a committed recipe at this ref (the
-   caiso-65 registration + its --zero-forcing-ablation twin ride this).
-
-Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_016eHWwkn7NsJZZPeVNd6oLA
-MSG
+          MSG_FILE=$(mktemp)
+          {
+            echo "W3a seam-clock: apply session source changes (server-side carriers)"
+            echo ""
+            echo "1. fix(caiso): map per-DIBA interchange stamps onto the model clock for"
+            echo "   the corridor deliverability envelope (measured -1h standard / -2h"
+            echo "   daylight; eia_loader._caiso_interchange_model_clock + pinned"
+            echo "   constants - unit tests and the validate_caiso_seam_hod_frame.py"
+            echo "   drift guard arrive via the direct MCP pushes)."
+            echo "2. docs(caiso): withdraw the seam-diurnal attribution (its measured"
+            echo "   actual hod table was UTC-bucketed, reproduced to the MW) -"
+            echo "   G-15/G-20d/G-61 register rows + calibration-log entry; C3a body"
+            echo "   reattributed to belly gas commitment."
+            echo "3. feat(calibration): --replay-bundle on run_calibration_full.py so"
+            echo "   calibration-run.yml can reproduce a committed recipe at this ref"
+            echo "   (the caiso-65 registration + its --zero-forcing-ablation twin)."
+            echo ""
+            echo "Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
+            echo "Claude-Session: https://claude.ai/code/session_016eHWwkn7NsJZZPeVNd6oLA"
+          } > "$MSG_FILE"
+          git commit -F "$MSG_FILE"
           git push origin HEAD:claude/caiso-seam-diurnal-shape-w3a-y2cc1s
