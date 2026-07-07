@@ -571,6 +571,197 @@ def derive_online_capacity():
     return online_cap_share, deliv_env, preview
 
 
+# --- G-22 extreme-peak-resolved variant (envelope handoff §5 forward path) ----
+
+# Number of net-load bins on the extreme axis: deciles 0-8 + five 2-percentile
+# sub-bins of the top decile (scarcity.ercot_online_cap_extreme_bin).
+N_BIN_EXTREME = 14
+# Minimum pooled hours (across the source years) for a top-decile sub-bin
+# share cell to stand on its own median; thinner cells inherit the parent
+# decile-9 (same-season, whole-top-decile) median. One diurnal cycle of pooled
+# support — the spring sub-bins carry only 2-13 pooled hours (the top decile is
+# summer/winter-dominated) and a median over so few observations is noise, not
+# measurement. A hierarchical coarsening to the parent cell, never a new number.
+MIN_CELL_HOURS_EXTREME = 24
+
+
+def derive_online_capacity_extreme():
+    """Derive the EXTREME-PEAK-RESOLVED on-line-capacity share + deliv profile.
+
+    The filed G-22 forward path (``ercot-online-capacity-envelope-2026-07.md``
+    §5) after the ercot41 rejection: the base envelope reproduced measured
+    RTOLCAP in the binding regime (±2%) but its pooled decile-9 median
+    under-stated the *committable* capacity in the top-2% net-load hours, so the
+    in-LP room collapsed (4.4/6.7 GW vs measured 8.0/11.1) and the ORDC
+    over-fired. Two coupled refinements, both identified on measured MW
+    quantities (rules #13/#23, never a price):
+
+    1. **Shape — the share table resolved at 2-pp grain in the top decile**
+       (:func:`market_sim.results.scarcity.ercot_online_cap_extreme_bin`,
+       ``N_BIN_EXTREME`` = 14 bins): the pooled-median committed on-line HSL
+       fraction rises through the top-decile sub-bins (measured CAMPD
+       saturation, e.g. CT_PEAKER 0.40→0.61, ST_GAS 0.83→0.95 summer), which the
+       single decile-9 median collapsed. Thin cells (< ``MIN_CELL_HOURS_EXTREME``
+       pooled hours) inherit the parent decile-9 same-season median.
+    2. **Level — a per-bin deliverability profile** replacing the scalar
+       ``deliv_env``: ``deliv_b = pooled_mean_b(target) / pooled_mean_b(F)``
+       where ``F`` is the share-composite on the production cap basis and the
+       target is the measured thermal on-line HSL identity
+
+           target(t) = CAMPD on-line gross(t)
+                       + (measured RTOLCAP(t) − storage AS(t) − LR credit(t)).
+
+       The same ratio-of-means identification as the base ``deliv_env`` fit,
+       resolved on the same axis as the share — "the peak states resolved at
+       finer grain" — because a single scalar provably cannot carry the
+       capability margin that GROWS toward the extreme peak (the measured
+       thermal RTOLCAP exceeds the CAMPD share-reconstruction by ~2.3–3.4 GW in
+       the top-2%: non-CEMS capability + telemetered HSL above the summer-
+       derated nameplate, exactly where scarcity operations muster everything).
+
+    **Target-construction note (differs from the base derive, documented):** the
+    base fit's target netted only storage AS out of measured RTOLCAP. The
+    keeper LP *also* credits the measured load-resource RRS-UFR series against
+    the reserve requirement (``ercot_load_resource_reserve``, G4), so a thermal
+    envelope whose target keeps LR capability would count those MW twice. The
+    extreme target nets both measured non-thermal series. Both are measured
+    procurement quantities (rule #13).
+
+    **Residual ledger (recorded, not tuned — the §3.1 pattern):** the pooled
+    per-bin fit reproduces the pooled top-2% mean by construction, but the
+    per-year spread remains ±~20% (2023 −23%, 2024 −2%, 2025 +18%): at a fixed
+    WITHIN-YEAR rank the 2023 scarcity summer mustered more absolute capability
+    (and dispatched ~4 GW more) than 2025's milder tail, and a year-symmetric
+    pooled coefficient cannot span that without year-pinning (forbidden, rule
+    #13). Recorded in the preview; the A/B scores what this does to dispatch.
+
+    Rule #23: re-derives only on a CAMPD / measured-RTOLCAP / storage-AS /
+    LR-credit source-data update, never a residual.
+
+    Returns ``(share_extreme, deliv_profile, preview)``.
+    """
+    from market_sim.results.scarcity import (
+        ercot_load_resource_reserve_mw,
+        ercot_online_cap_extreme_bin,
+        ercot_storage_as_reserve_mw,
+    )
+
+    season = _season_index()
+    summer = np.isin(_hour_month(), [6, 7, 8, 9])
+    per_year = {}
+    for year in YEARS:
+        _onl, _off, class_cap, online_cap, online_gross = _class_hourly(year)
+        nl = _net_load(year)
+        per_year[year] = (class_cap, online_cap, online_gross, nl)
+
+    # 1. Pooled (season, bin) median on-line-capacity share per class, with the
+    # thin-cell fallback to the parent decile-9 (whole-top-decile) median.
+    share_extreme: dict[str, np.ndarray] = {}
+    fallback_cells: list[tuple[str, int, int, int]] = []
+    for grp in ONLINE_CAP_CLASSES:
+        tbl = np.full((N_SEASON, N_BIN_EXTREME), np.nan)
+        for s in range(N_SEASON):
+            for b in range(N_BIN_EXTREME):
+                vals, nh = [], 0
+                for year in YEARS:
+                    ccap, oncap, _g, nl = per_year[year]
+                    cap = ccap.get(grp, 0.0)
+                    if cap <= 0 or grp not in oncap:
+                        continue
+                    m = (season == s) & (ercot_online_cap_extreme_bin(nl) == b)
+                    nh += int(m.sum())
+                    if m.any():
+                        vals.append(oncap[grp][m] / cap)
+                if vals and (b < 9 or nh >= MIN_CELL_HOURS_EXTREME):
+                    tbl[s, b] = float(np.median(np.concatenate(vals)))
+                elif b >= 9:
+                    fallback_cells.append((grp, s, b, nh))
+        # Parent decile-9 cell per season = pooled median over the WHOLE top
+        # decile (bins 9-13 together) — the base table's own grain.
+        dec9 = np.zeros(N_SEASON)
+        for s in range(N_SEASON):
+            vals = []
+            for year in YEARS:
+                ccap, oncap, _g, nl = per_year[year]
+                cap = ccap.get(grp, 0.0)
+                if cap <= 0 or grp not in oncap:
+                    continue
+                m = (season == s) & (ercot_online_cap_extreme_bin(nl) >= 9)
+                if m.any():
+                    vals.append(oncap[grp][m] / cap)
+            dec9[s] = float(np.median(np.concatenate(vals))) if vals else 0.0
+        nanm = np.isnan(tbl)
+        tbl[nanm] = np.repeat(dec9[:, None], N_BIN_EXTREME, axis=1)[nanm]
+        share_extreme[grp] = tbl
+
+    # 2. Per-bin deliverability profile on the production cap basis.
+    F_y, Y_y, gross_y, meas_y, nonth_y, nl_y = {}, {}, {}, {}, {}, {}
+    for year in YEARS:
+        ccap, oncap, ongross, nl = per_year[year]
+        mcap = _model_class_cap(year)
+        b = ercot_online_cap_extreme_bin(nl)
+        F = np.zeros(HOURS)
+        gross = np.zeros(HOURS)
+        for grp in ONLINE_CAP_CLASSES:
+            cap = mcap.get(grp, 0.0)
+            if cap <= 0:
+                continue
+            derate = _SUMMER_CLASS_DERATE.get(grp, 0.0)
+            cap_t = cap * (1.0 - np.where(summer, derate, 0.0))
+            F += share_extreme[grp][season, b] * cap_t
+            gross += ongross.get(grp, np.zeros(HOURS))
+        stor = ercot_storage_as_reserve_mw(year, HOURS)
+        lr = ercot_load_resource_reserve_mw(year, HOURS)
+        meas = pd.read_parquet(
+            REPO / f"data/raw/ercot/ercot_{year}_ordc_reserves_hourly.parquet"
+        )["rtolcap"].to_numpy(dtype=float)[:HOURS]
+        F_y[year] = F
+        Y_y[year] = gross + (meas - stor - lr)  # measured thermal on-line HSL
+        gross_y[year], meas_y[year], nonth_y[year], nl_y[year] = (
+            gross,
+            meas,
+            stor + lr,
+            nl,
+        )
+    FF = np.concatenate([F_y[y] for y in YEARS])
+    YY = np.concatenate([Y_y[y] for y in YEARS])
+    BB = np.concatenate([ercot_online_cap_extreme_bin(nl_y[y]) for y in YEARS])
+    ok = ~np.isnan(YY) & (FF > 0)
+    deliv_profile = np.zeros(N_BIN_EXTREME)
+    for b in range(N_BIN_EXTREME):
+        m = ok & (BB == b)
+        deliv_profile[b] = float(YY[m].sum() / FF[m].sum()) if m.any() else 1.0
+
+    # 3. Per-year identification preview: headroom remainder vs measured RTOLCAP
+    # in the binding regime (top-30%) and the extreme tail (top-2%).
+    preview = {"fallback_cells": fallback_cells}
+    for year in YEARS:
+        b = ercot_online_cap_extreme_bin(nl_y[year])
+        env = deliv_profile[b] * F_y[year]
+        headroom = env - gross_y[year] + nonth_y[year]  # + measured stor+LR back
+        meas = meas_y[year]
+        okm = ~np.isnan(meas)
+        nl = nl_y[year]
+        row = {}
+        for regime, mask in [
+            ("all", okm),
+            ("bind", (nl >= np.percentile(nl, 70)) & okm),
+            ("extreme", (nl >= np.percentile(nl, 98)) & okm),
+        ]:
+            h = headroom[mask].mean() / 1000.0
+            mm = meas[mask].mean() / 1000.0
+            row[regime] = {
+                "headroom_gw": h,
+                "meas_gw": mm,
+                "err_pct": 100.0 * (h / mm - 1.0),
+            }
+        row["corr"] = float(np.corrcoef(headroom[okm], meas[okm])[0, 1])
+        row["headroom_p"] = np.percentile(headroom[okm], [10, 50, 90]) / 1000.0
+        row["meas_p"] = np.percentile(meas[okm], [10, 50, 90]) / 1000.0
+        preview[year] = row
+    return share_extreme, deliv_profile, preview
+
+
 def _fmt_table(tbl: np.ndarray) -> str:
     rows = []
     for s in range(N_SEASON):
@@ -583,10 +774,83 @@ def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
         "--emit",
-        choices=["report", "constant", "online-cap-constant", "online-cap-report"],
+        choices=[
+            "report",
+            "constant",
+            "online-cap-constant",
+            "online-cap-report",
+            "online-cap-extreme-constant",
+            "online-cap-extreme-report",
+        ],
         default="report",
     )
     args = ap.parse_args()
+
+    # G-22 EXTREME-PEAK-RESOLVED on-line-capacity envelope derivation (the §5
+    # forward path after the ercot41 rejection; separate emit modes so the base
+    # envelope constants above stay frozen — rule #23).
+    if args.emit in ("online-cap-extreme-constant", "online-cap-extreme-report"):
+        share_extreme, deliv_profile, preview = derive_online_capacity_extreme()
+        if args.emit == "online-cap-extreme-constant":
+            print("# Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON);")
+            print(
+                "# each inner tuple is the 14 extreme-resolved net-load bins "
+                "(deciles 0-8 + five 2-pp sub-bins of the top decile, low->high)."
+            )
+            print(
+                "ERCOT_ONLINE_CAP_SHARE_EXTREME: "
+                "dict[str, tuple[tuple[float, ...], ...]] = {"
+            )
+            for grp in ONLINE_CAP_CLASSES:
+                print(f'    "{grp}": (')
+                print(_fmt_table(share_extreme[grp]))
+                print("    ),")
+            print("}")
+            vals = ", ".join(f"{v:.4f}" for v in deliv_profile)
+            print("ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME: tuple[float, ...] = (")
+            print(f"    {vals}")
+            print(")")
+            return
+        print(
+            "=== ERCOT EXTREME-PEAK-RESOLVED on-line-capacity envelope "
+            "(G-22, handoff §5) ==="
+        )
+        print("deliv profile (bins 0-8 deciles, 9-13 = 2-pp sub-bins of top decile):")
+        print("  " + " ".join(f"{v:.3f}" for v in deliv_profile))
+        fb = preview["fallback_cells"]
+        print(
+            f"share fallback cells (< {MIN_CELL_HOURS_EXTREME} pooled h, inherit "
+            f"parent decile-9 median): {len(fb)}"
+            + (f" — seasons {sorted({s for _g, s, _b, _n in fb})}" if fb else "")
+        )
+        print(
+            "\nIdentification: (envelope − CAMPD on-line gross + measured "
+            "storage-AS + LR credit) vs measured RTOLCAP\n"
+        )
+        print(
+            f"{'year':>5} {'corr':>5}  {'hdrm p10/50/90':>20}  {'meas p10/50/90':>20}"
+            f"  {'BIND h/m/err':>18}  {'EXTREME(top2%) h/m/err':>24}"
+        )
+        for year in YEARS:
+            p = preview[year]
+            pp = "/".join(f"{v:.1f}" for v in p["headroom_p"])
+            mp = "/".join(f"{v:.1f}" for v in p["meas_p"])
+            bind = (
+                f"{p['bind']['headroom_gw']:.1f}/{p['bind']['meas_gw']:.1f}/"
+                f"{p['bind']['err_pct']:+.0f}%"
+            )
+            ext = (
+                f"{p['extreme']['headroom_gw']:.1f}/{p['extreme']['meas_gw']:.1f}/"
+                f"{p['extreme']['err_pct']:+.0f}%"
+            )
+            print(
+                f"{year:>5} {p['corr']:5.2f}  {pp:>20}  {mp:>20}  {bind:>18}  {ext:>24}"
+            )
+        print(
+            "\nGate: scripts/validate_ercot_online_capacity.py --extreme "
+            "(binding ±10% AND extreme-tail reproduction, band, coverage)."
+        )
+        return
 
     # G-22 on-line-capacity envelope derivation (separate emit modes so the
     # commitment-thinness constants can be regenerated without re-touching the
