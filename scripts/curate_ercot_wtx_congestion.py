@@ -223,7 +223,6 @@ def _to_hourly(df: pd.DataFrame, sub2zone: dict[str, str], year: int) -> pd.Data
         denom > 0, out["n_iface"].to_numpy() / safe, 0.0
     )
 
-    cal = pd.date_range(f"{year}-01-01", periods=HOURS_PER_YEAR, freq="h")
     # Non-leap wall clock: build from the 2023 template's month/day/hour applied to
     # this year (Feb 29 already excluded by construction of the 8760 grid).
     tmpl = pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h")
