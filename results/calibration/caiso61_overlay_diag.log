@@ -1,0 +1,77 @@
+bundle caiso61_lolp_tail: years [2023, 2024, 2025]
+INFO: CAISO 2023: endogenous solar spill — full solar potential passed to LP (no pre-LP CF derate); solar sets the midday dual when curtailed
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: unit-outage derate (CAISO 2023): 227 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2023): 87 unit-months masked offline (mid-year COD / retirement), 7 unit(s) fully not-yet-built/retired
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: Loaded CAISO 2023 hydro budget: 166 plants, 23901.9 GWh annual, 6433 MW nameplate
+INFO: CAISO 2023: 166 hydro plants in LP (6433 MW, 23.90 TWh monthly budget)
+INFO: CAISO 2023: priced import/export node — 6 import tranches (11123 MW), 2 export sinks (6500 MW)
+INFO: unit-outage derate (CAISO 2023): 227 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2023): 144 unit-months masked offline (mid-year COD / retirement), 10 unit(s) fully not-yet-built/retired
+INFO: CAISO 2023: CT_PEAKER net-load reliability-drag floor applied (frac = clip(0.00901*netGW -0.1124, 0, 0.36) in ramp 15h-22h)
+INFO: CAISO 2023: reliability floor — dropped 3 drag-owned limb(s) (CLAUDE.md rule 19: net-load drag owns the class commitment)
+INFO: F923 fuel costs for 2023: 61 generators priced from their own plant, 866 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (CAISO 2023, monthly): 1049 gas generators repriced at the measured hub spot in 12/12 months (winter max 28.08 $/MMBtu)
+  2023: thermal avail mean 24,489 MW, dispatch mean 10,335 MW, renewable headroom mean 0 MW, storage cap mean 7,602 MW
+INFO: CAISO 2024: endogenous solar spill — full solar potential passed to LP (no pre-LP CF derate); solar sets the midday dual when curtailed
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: unit-outage derate (CAISO 2024): 219 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2024): 326 unit-months masked offline (mid-year COD / retirement), 11 unit(s) fully not-yet-built/retired
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: Loaded CAISO 2024 hydro budget: 160 plants, 21484.8 GWh annual, 6568 MW nameplate
+INFO: CAISO 2024: 160 hydro plants in LP (6568 MW, 21.48 TWh monthly budget)
+INFO: CAISO 2024: priced import/export node — 6 import tranches (12171 MW), 2 export sinks (6500 MW)
+INFO: unit-outage derate (CAISO 2024): 219 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2024): 390 unit-months masked offline (mid-year COD / retirement), 15 unit(s) fully not-yet-built/retired
+INFO: CAISO 2024: CT_PEAKER net-load reliability-drag floor applied (frac = clip(0.00901*netGW -0.1124, 0, 0.36) in ramp 15h-22h)
+INFO: CAISO 2024: reliability floor — dropped 3 drag-owned limb(s) (CLAUDE.md rule 19: net-load drag owns the class commitment)
+INFO: F923 fuel costs for 2024: 61 generators priced from their own plant, 871 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (CAISO 2024, monthly): 1052 gas generators repriced at the measured hub spot in 12/12 months (winter max 5.86 $/MMBtu)
+  2024: thermal avail mean 23,742 MW, dispatch mean 10,543 MW, renewable headroom mean 4 MW, storage cap mean 11,355 MW
+INFO: CAISO 2025: endogenous solar spill — full solar potential passed to LP (no pre-LP CF derate); solar sets the midday dual when curtailed
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: unit-outage derate (CAISO 2025): 247 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2025): 408 unit-months masked offline (mid-year COD / retirement), 34 unit(s) fully not-yet-built/retired
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: Loaded CAISO 2025 hydro budget: 26 plants, 12319.2 GWh annual, 3916 MW nameplate
+INFO: CAISO 2025: 26 hydro plants in LP (3916 MW, 12.32 TWh monthly budget)
+INFO: CAISO 2025: priced import/export node — 6 import tranches (12171 MW), 2 export sinks (6500 MW)
+INFO: unit-outage derate (CAISO 2025): 247 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2025): 495 unit-months masked offline (mid-year COD / retirement), 39 unit(s) fully not-yet-built/retired
+INFO: CAISO 2025: CT_PEAKER net-load reliability-drag floor applied (frac = clip(0.00901*netGW -0.1124, 0, 0.36) in ramp 15h-22h)
+INFO: CAISO 2025: reliability floor — dropped 3 drag-owned limb(s) (CLAUDE.md rule 19: net-load drag owns the class commitment)
+INFO: F923 fuel costs for 2025: 46 generators priced from their own plant, 873 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (CAISO 2025, monthly): 1055 gas generators repriced at the measured hub spot in 9/12 months (winter max 6.38 $/MMBtu)
+  2025: thermal avail mean 22,679 MW, dispatch mean 10,132 MW, renewable headroom mean -0 MW, storage cap mean 15,249 MW
+wrote /home/user/market-simulator/results/calibration/caiso61_lolp_tail/availability.parquet
+
+2023: adder>$1 in 304 h, >$10 in 78 h, >$100 in 10 h, max $298; mean $0.54
+  monthly LMP MAE (gate metric) 11.1 -> 11.9 $/MWh; hourly dw-MAE 19.6 -> 19.9
+  hours >$200: actual 21, model 502 -> 511; >$500: actual 6, model 0 -> 0
+
+2024: adder>$1 in 51 h, >$10 in 5 h, >$100 in 0 h, max $63; mean $0.04
+  monthly LMP MAE (gate metric) 14.2 -> 14.2 $/MWh; hourly dw-MAE 17.2 -> 17.2
+  hours >$200: actual 35, model 0 -> 0; >$500: actual 3, model 0 -> 0
+
+2025: adder>$1 in 11 h, >$10 in 0 h, >$100 in 0 h, max $9; mean $0.01
+  monthly LMP MAE (gate metric) 14.4 -> 14.4 $/MWh; hourly dw-MAE 16.4 -> 16.4
+  hours >$200: actual 8, model 0 -> 0; >$500: actual 0, model 0 -> 0
