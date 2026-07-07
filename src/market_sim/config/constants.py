@@ -119,6 +119,40 @@ DA_COMMITMENT_HORIZON_HOURS: int = 24
 # 1 h min-down unit it can never fire anyway.
 RA_BRIDGE_ECON_MIN_DOWN_HOURS: float = 4.0
 
+# CAISO gas-fired MUST-OFFER Resource-Adequacy capacity (MW), by compliance
+# year — the PUBLISHED quantity the RA must-offer bridge is gated to when
+# ScenarioConfig.caiso_ra_mustoffer_quantity_gate is on (gap G-61 path (a)).
+# Real CAISO attaches the must-offer obligation only to RA-CONTRACTED (shown)
+# capacity; the ungated bridge floors the WHOLE merchant gas CC fleet, which
+# over-commits CC through the solar belly (D-8 closure §7). Source: CAISO
+# Department of Market Monitoring, Annual Report on Market Issues and
+# Performance — "Average system resource adequacy capacity, availability, and
+# performance by fuel type (RMO+ hours)": the "Must-Offer: Gas-fired
+# generators" row (the category the California ISO inserts bids for — the
+# literal 24x7 must-offer fleet; the separate "use-limited gas" category is
+# NOT bid-inserted and is excluded here). 2023: 19,130 MW (2023 Annual
+# Report, Jul 2024, Table 8.4); 2024: 15,566 MW (2024 Annual Report,
+# Aug 2025, RA chapter table). 2025 carries the LATEST PUBLISHED vintage
+# (the 2024 value) — the DMM 2025 Annual Report is unpublished as of
+# 2026-07; refresh on its publication (a source-data change, rule 23 —
+# never a residual). Values are NQC-basis annual RMO+-hour averages; the
+# gate consumes them against model plant pmax (pmax ≥ NQC, so the gate is
+# conservative in the strict direction — disclosed, not fitted).
+CAISO_RA_MUSTOFFER_GAS_MW: dict[int, float] = {
+    2023: 19130.0,
+    2024: 15566.0,
+    2025: 15566.0,  # latest published vintage (DMM 2024 Annual Report)
+}
+
+# Float-noise guard on the RA bridge's curtailed-VRE release (gap G-61 path
+# (c), ScenarioConfig.caiso_ra_bridge_curtailment_release): a P0 hour counts
+# as genuinely curtailing renewables only when wind+solar dispatch sits more
+# than this many MW below the available potential. Purely numerical (LP
+# round-off on Σ cf × cap sums spans ~1e-6..1e-2 MW); NOT a behavioural
+# threshold — any physically-real curtailment event is orders of magnitude
+# above it.
+CAISO_CURTAIL_RELEASE_EPS_MW: float = 1.0
+
 # Coal is not commitment-screened: EIA-930 confirms ERCOT coal runs all 8,760
 # hours, cycling output level rather than starting and stopping.
 
