@@ -564,6 +564,9 @@ def run_year(
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
+    ercot_wtx_curtailment_driver: bool = False,
+    ercot_wtx_curtail_depth_wind: float | None = None,
+    ercot_wtx_curtail_depth_solar: float | None = None,
     mass_cap_enabled: bool = False,
     mass_cap_tons: float | None = None,
     mass_cap_program: str | None = None,
@@ -669,6 +672,22 @@ def run_year(
         # carrying links' export capability follows the hourly NP6-86 series
         # (gtc-limits clean datatype) instead of the static ttc_mw.
         config = config.with_overrides(ercot_gtc_limits_measured=True)
+    if ercot_wtx_curtailment_driver:
+        # ERCOT West Texas Export corridor VRE curtailment-share driver (WP-B):
+        # the West/Panhandle wind & solar CF ceiling follows the derived
+        # net-load-indexed congestion share (data.curtailment_share) so the
+        # sub-zonal Permian/CREZ nodal congestion the 8-zone reduction cannot
+        # resolve is represented. depth=0 -> inert (zero-forcing ablation twin).
+        _overrides = {"ercot_wtx_curtailment_driver": True}
+        if ercot_wtx_curtail_depth_wind is not None:
+            _overrides["ercot_wtx_curtail_depth_wind"] = float(
+                ercot_wtx_curtail_depth_wind
+            )
+        if ercot_wtx_curtail_depth_solar is not None:
+            _overrides["ercot_wtx_curtail_depth_solar"] = float(
+                ercot_wtx_curtail_depth_solar
+            )
+        config = config.with_overrides(**_overrides)
     if mass_cap_enabled:
         # G-29 wiring: the calibration harness previously had no path to
         # mass_cap_enabled at all, so the mass-cap row (policy.cap_and_trade
@@ -1370,6 +1389,60 @@ def run_year(
                 )
             else:
                 ttc, ttc_import = gtc_out
+
+    # ERCOT West Texas Export corridor VRE curtailment-share driver (WP-B): a
+    # per-(zone, hour) ceiling on West/Panhandle wind & solar reproducing the
+    # sub-zonal Permian/CREZ nodal congestion the 8-zone reduction cannot resolve.
+    # Reads the derived congestion-share table and the model's OWN net-load, so it
+    # regenerates forward. Applied only when the year carries measured HSL
+    # potential (the uncurtailed CF ceiling) — otherwise the delivered-as-CF
+    # renewables already embed curtailment and the ceiling would double-count.
+    wind_curtail_share = None
+    solar_curtail_share = None
+    if getattr(config, "ercot_wtx_curtailment_driver", False) and iso == "ERCOT":
+        if load_hsl_hourly(iso, year) is None:
+            logger.warning(
+                "ercot_wtx_curtailment_driver: %d has no measured HSL potential "
+                "(renewables ride delivered-as-CF) — curtailment ceiling skipped "
+                "to avoid double-curtailment",
+                year,
+            )
+        else:
+            from market_sim.config import paths as _paths
+            from market_sim.data.curtailment_share import wtx_curtail_multipliers
+
+            # System net-load on the potential convention (fleet net-load drag):
+            # demand minus uncurtailed wind & solar potential, summed over zones.
+            net_load = (
+                demand.sum(axis=0)
+                - (np.asarray(wind_cap)[:, None] * wind_cf).sum(axis=0)
+                - (np.asarray(solar_cap)[:, None] * solar_cf).sum(axis=0)
+            )
+            mult = wtx_curtail_multipliers(
+                net_load,
+                list(zone_names),
+                depth_wind=float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0)),
+                depth_solar=float(
+                    getattr(config, "ercot_wtx_curtail_depth_solar", 0.0)
+                ),
+                reference_dir=_paths.RAW_DIR / "reference",
+            )
+            if mult is None:
+                logger.warning(
+                    "ercot_wtx_curtailment_driver: no derived share table for %d "
+                    "— ceiling skipped (run "
+                    "scripts/derive_ercot_wtx_curtailment_share.py)",
+                    year,
+                )
+            else:
+                wind_curtail_share, solar_curtail_share = mult
+                logger.info(
+                    "ercot_wtx_curtailment_driver: %d West/Panhandle VRE ceiling "
+                    "active (depth wind=%.4f solar=%.4f)",
+                    year,
+                    float(getattr(config, "ercot_wtx_curtail_depth_wind", 0.0)),
+                    float(getattr(config, "ercot_wtx_curtail_depth_solar", 0.0)),
+                )
     # Aggregate interface limits (CAISO's simultaneous WECC import cap): resolve
     # the configured link groups to flow-column indices for the LP. Empty (no
     # extra rows) for ISOs without an interface_limits entry.
@@ -2543,6 +2616,10 @@ def run_year(
         # Import-direction bound when the measured ERCOT GTC overlay made the
         # export caps hourly/asymmetric; None keeps the symmetric -ttc.
         ttc_import=ttc_import,
+        # ERCOT West Texas Export corridor VRE curtailment ceilings (WP-B);
+        # None off-corridor / driver-off leaves the uncurtailed CF bound.
+        wind_curtail_share=wind_curtail_share,
+        solar_curtail_share=solar_curtail_share,
         storage_power_cap=storage_power_cap,
         storage_energy_cap=storage_energy_cap,
         storage_zone_idx=storage.zone_idx,
