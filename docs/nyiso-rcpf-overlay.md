@@ -167,12 +167,12 @@ NYCA-aggregate energy LP.
 `results.rcpf.locational_zone_adders` prices that shortage. NYISO's reserve
 market is **nested and locational** (`constants.NYISO_RCPF_LOCATIONAL`):
 
-| Region | Model zones (NYISO A–K) | 30-min req | Max penalty | Source |
-|---|---|---|---|---|
-| NYCA   | all five (system-wide)        | 2,620 MW | $750 | FERC ER21-502 |
-| East   | Capital_Hudson, Lower_Hudson, NYC, Long_Island (F–K) | 1,200 MW | $500 | FERC ER21-502 / RS4 |
-| SENY   | Lower_Hudson, NYC, Long_Island (G–K) | 1,100 MW *(placeholder)* | $500 | $500 sourced; MW = TODO |
-| NYC    | NYC (J): 1,000 MW 30-min + 500 MW 10-min | 1,000 / 500 MW | $500 | RS4 / "Zone J Reserves" ✓ confirmed |
+| Region | Model zones (NYISO A–K) | Product | Requirement | Max penalty | Source |
+|---|---|---|---|---|---|
+| NYCA   | all five (system-wide) | 30-min total | 2,620 MW | $750 | FERC ER21-502 / SOM |
+| East   | Capital_Hudson, Lower_Hudson, NYC, Long_Island (F–K) | **10-min** total | 1,200 MW | **$775** | SOM 2023–25 |
+| SENY   | Lower_Hudson, NYC, Long_Island (H–K) | 30-min total | **1,300 MW** | $500 | SOM 2023–25 |
+| NYC    | NYC (J) | 30-min + 10-min | 1,000 / 500 MW | **$25** | SOM 2023–25 |
 
 Each region's reserve headroom is the **sum of its member zones'** dispatchable
 headroom, and a zone's locational adder is the sum of the demand-curve prices
@@ -180,26 +180,28 @@ of every region that contains it (the NYCA system tier is added on top of all
 of them). This reproduces the measured cascade tiers (`process_nyiso_as.py`):
 A–E carry NYCA only, F adds East, G–K add SENY, J adds NYC.
 
-**SENY MW status (2026-07-07 partial confirmation, G-20c).** Two of the four
-anchors are now confirmed against primary sources: the **NYC (Zone J)**
-requirements — **1,000 MW 30-min + 500 MW 10-min** — are the published Zone J
-reserve region values (NYISO "Establishing Zone J Operating Reserves", ICAP/MIWG
-2019; corroborated by S&P Global Commodity Insights, 2019-06-24), and NYISO's
-**SENY is Load Zones G–K** (so the model's SENY = H–K is one zone narrower than
-the tariff SENY — zone G is folded into `Capital_Hudson` in the five-zone
-aggregation; a documented approximation). The SENY **30-min MW requirement**
-itself stays a **placeholder** (1,100 MW — the midpoint of the sourced nested
-anchors East 1,200 MW ⊇ SENY ⊇ NYC 1,000 MW): the primary value lives in the
-NYISO *Locational Reserve Requirements* / RS4 PDFs, which are **not fetchable in
-this environment** (NYISO doc host returns empty/403), so `TODO(SENY-MW)` remains
-open pending a manual transcription of that PDF. `$500` 30-min penalty sourced.
-Every other
-locational requirement/penalty is a tariff value; **nothing is fitted to LMP
-residuals**, and each zone's modeled adder is validated against the measured
-per-zone RT reserve price (the committed `actual_as_reserve_NYISO.parquet` now
-carries a `reserve_<model_zone>` column for all five model zones, built from
-the NYISO OASIS RT ancillary-service archive, 2023–25, all 11 settlement
-zones).
+**SENY MW resolved + all locational values grounded (2026-07-07, G-20c).** The
+earlier `TODO(SENY-MW)` placeholder and the interim `$500` NYC penalty are
+**superseded by the primary source** — the NYISO **State-of-the-Market** report,
+which is in-repo (`data/raw/NYISO/NYISO-{2023,2024,2025}-SOM-*.pdf`) and states
+the as-enforced locational products verbatim, identically across all three years
+(2023 p.305 / 2024 p.297 / 2025 p.323, "Operating Reserves and Regulation"):
+*10-minute East* 1,200 MW at **$775/MW**; *30-minute SENY* "at least **1,300
+MW** for all hours" at $500/MW (an additional condition-varying increment binds a
+subset of hours at $40/MW — the #1344 dynamic channel, not this static base);
+*30-minute NYC* 1,000 MW and *10-minute NYC* 500 MW, each at **$25/MW**. So the
+prior table was wrong on three counts — East was a *10-minute* $775 product (not
+30-min/$500), SENY is **1,300 MW** (not the 1,100 MW nesting midpoint), and the
+NYC-specific penalties are **$25** (not $500; the real downstate scarcity is
+carried by the East $775 and SENY $500 tiers, not the small NYC-specific one).
+In the live in-LP co-optimization (`reserve_config._nyiso_design`) the product
+name sets the reserve class, so the corrected 10-minute East now draws only
+quick-start {gas_ct, oil} headroom — the downstate F–K peaker fleet the real
+market commits for reserve. **Nothing is fitted to LMP residuals** (rules 12/13);
+each zone's modeled adder is validated against the measured per-zone RT reserve
+price (the committed `actual_as_reserve_NYISO.parquet` carries a
+`reserve_<model_zone>` column for all five model zones, built from the NYISO
+OASIS RT ancillary-service archive, 2023–25, all 11 settlement zones).
 
 Across all three keepers the NYC locational adder fires in the right hours and
 its mean tracks the measured N.Y.C. reserve adder without tuning (2023:
