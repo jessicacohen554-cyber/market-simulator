@@ -24,6 +24,7 @@ from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import Generator, generators_to_fleet_arrays
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.results.scarcity import (
+    ercot_online_cap_extreme_bin,
     ercot_online_capacity_envelope_mw,
     nyiso_rcpf_product_shortfall_steps,
 )
@@ -244,6 +245,141 @@ class TestOnlineCapacityEnvelopeBuilder(unittest.TestCase):
         hi = out[1][np.argmax(nl)]
         lo = out[1][np.argmin(nl)]
         self.assertGreaterEqual(hi, lo)
+
+
+class TestExtremePeakResolvedVariant(unittest.TestCase):
+    """ercot_online_capacity_envelope_extreme: the G-22 §5 forward-path variant."""
+
+    def _fleet_arrays(self, hours=48):
+        gens = [
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="Z0",
+                fuel_type="gas_cc",
+                pmax_mw=500.0,
+                pmin_mw=0.0,
+                plant_group="CC_REGULAR",
+                plant_code=1,
+            ),
+            Generator(
+                unit_id="ct",
+                name="ct",
+                zone="Z0",
+                fuel_type="gas_ct",
+                pmax_mw=200.0,
+                pmin_mw=0.0,
+                plant_group="CT_PEAKER",
+                plant_code=2,
+            ),
+            Generator(
+                unit_id="coal",
+                name="coal",
+                zone="Z0",
+                fuel_type="coal",
+                pmax_mw=800.0,
+                pmin_mw=0.0,
+                plant_group="COAL",
+                plant_code=3,
+            ),
+        ]
+        return generators_to_fleet_arrays(gens, ["Z0"], hours=hours)
+
+    def _kwargs(self, hours=48):
+        return dict(
+            net_load=np.linspace(500.0, 5000.0, hours),
+            headroom_eligible=np.ones((2, 3), dtype=bool),
+            headroom_products=np.array([[True, False], [True, True]], dtype=bool),
+        )
+
+    def test_bin_helper_equal_counts_and_top2(self):
+        # 8760 within-year ranks: bins 0-8 hold 876 hours each; the top decile
+        # splits into five ~175-hour sub-bins; bin 13 is exactly the top-2%.
+        rng = np.random.default_rng(7)
+        nl = rng.normal(50_000.0, 8_000.0, 8760)
+        b = ercot_online_cap_extreme_bin(nl)
+        counts = np.bincount(b, minlength=14)
+        self.assertEqual(b.min(), 0)
+        self.assertEqual(b.max(), 13)
+        np.testing.assert_array_equal(counts[:9], np.full(9, 876))
+        self.assertTrue(np.all(np.abs(counts[9:] - 175.2) <= 1.0))
+        # The top-2% hours by rank land in bin 13 (rank convention, matching
+        # the helper's integer arithmetic: the top 175 of 8760 ranks).
+        rank = np.argsort(np.argsort(nl))
+        top2 = rank >= 8760 - 175
+        self.assertTrue(np.all(b[top2] == 13))
+
+    def test_both_flags_off_returns_none(self):
+        cfg = ScenarioConfig(iso="ERCOT", mode="backcast", weather_year=2024, hours=48)
+        out = ercot_online_capacity_envelope_mw(
+            cfg, self._fleet_arrays(), 48, **self._kwargs()
+        )
+        self.assertIsNone(out)
+
+    def test_mutually_exclusive_flags_raise(self):
+        with self.assertRaises(ValueError):
+            ScenarioConfig(
+                iso="ERCOT",
+                mode="backcast",
+                weather_year=2024,
+                hours=48,
+                ercot_online_capacity_envelope=True,
+                ercot_online_capacity_envelope_extreme=True,
+            )
+
+    def test_extreme_alone_activates_envelope(self):
+        cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=48,
+            ercot_online_capacity_envelope_extreme=True,
+        )
+        out = ercot_online_capacity_envelope_mw(
+            cfg, self._fleet_arrays(), 48, **self._kwargs()
+        )
+        self.assertIsNotNone(out)
+        self.assertEqual(out.shape, (2, 48))
+        # Fast tier uncapped sentinel; all tier finite, positive, below fleet cap.
+        self.assertTrue(np.all(out[0] > 1e8))
+        self.assertTrue(np.all(out[1] < 1500.0))
+        self.assertTrue(np.all(out[1] > 0.0))
+
+    def test_extreme_lifts_top2_room_vs_base(self):
+        # The variant's whole point (ercot41 root cause): in the top-2% net-load
+        # hours the extreme-resolved envelope sits ABOVE the base envelope
+        # (measured commitment saturation + capability margin restore the room
+        # the decile-9 median collapsed). 8760 hours so within-year percentile
+        # bins are meaningful; identical fleet/net-load in both arms.
+        hours = 8760
+        fleet = self._fleet_arrays(hours=hours)
+        rng = np.random.default_rng(11)
+        nl = np.clip(rng.normal(50_000.0, 8_000.0, hours), 20_000.0, None)
+        kwargs = dict(
+            net_load=nl,
+            headroom_eligible=np.ones((2, 3), dtype=bool),
+            headroom_products=np.array([[True, False], [True, True]], dtype=bool),
+        )
+        base_cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=hours,
+            ercot_online_capacity_envelope=True,
+        )
+        ext_cfg = ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=hours,
+            ercot_online_capacity_envelope_extreme=True,
+        )
+        env_b = ercot_online_capacity_envelope_mw(base_cfg, fleet, hours, **kwargs)[1]
+        env_e = ercot_online_capacity_envelope_mw(ext_cfg, fleet, hours, **kwargs)[1]
+        top2 = nl >= np.quantile(nl, 0.98)
+        self.assertGreater(env_e[top2].mean(), env_b[top2].mean())
+        # And the envelope still rises with net load within the extreme arm.
+        self.assertGreaterEqual(env_e[np.argmax(nl)], env_e[np.argmin(nl)])
 
 
 if __name__ == "__main__":
