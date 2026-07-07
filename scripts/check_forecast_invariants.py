@@ -44,7 +44,12 @@ _SRC = Path(__file__).resolve().parent.parent / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+from market_sim.config.constants import (  # noqa: E402
+    DEFAULT_MARKET_DESIGN,
+    MARKET_DESIGN,
+)
 from market_sim.config.scenarios import ScenarioConfig  # noqa: E402
+from market_sim.model.capacity import resolve_adequacy_requirement_mw  # noqa: E402
 from market_sim.model.dispatch import DispatchResult  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
 from market_sim.results.outputs import read_demand, read_fleet_context  # noqa: E402
@@ -397,19 +402,73 @@ def check_i6_econ_retire_sanity(run: Run) -> Result:
 
 
 def check_i7_reliability_floor(run: Run) -> Result:
-    """I7: post-evolution thermal ≥ (peak − firm_clean) × (1 + margin)."""
+    """I7: reliability floor, market-design-dependent (G-41 owner decision).
+
+    The invariant's *definition* mirrors the mechanism that actually clears
+    capacity in each ISO (G-41 decision memo 2026-07-06, owner-approved
+    market-design-dependent variant; rule 1 — the definition follows the real
+    market, never what turns the line green):
+
+    * **Capacity-market ISOs** (``MARKET_DESIGN[iso].capacity_market``:
+      PJM/MISO/NYISO/NEISO/CAISO) — an **absolute** adequacy floor, because
+      their design (PJM RPM's absolute IRM, etc.) procures capacity to a fixed
+      requirement. The floor is measured on the **model's own** accreditation
+      convention, not the crude nameplate/hydro-only/0.15 proxy the invariant
+      used before (precondition 1 of the decision): the model's accredited firm
+      capacity — persisted per year as ``reserve_margin`` (=
+      ``accredited_firm_mw / peak − 1``, from
+      :func:`market_sim.model.capacity.accredited_firm_capacity_mw`) — must
+      clear the model's own requirement
+      (:func:`market_sim.model.capacity.resolve_adequacy_requirement_mw` — firm
+      peak × (1 + per-ISO PRM) × ICAP/UCAP ratio). Checker and model now measure
+      the same quantity, so the adequacy backstop (default-on for these ISOs)
+      satisfies I7 honestly rather than by coincidence.
+
+    * **Energy-only ISOs** (ERCOT) — a **retirement-bounded** floor: evolution
+      must not over-retire the thermal fleet below the reliability floor, but a
+      fleet that *started* below it is tolerated (the real energy-only market
+      has no absolute floor; adequacy expresses as scarcity price, not procured
+      capacity). Measured as ``thermal_after ≥ min(floor, thermal_before)`` on
+      the pre-existing nameplate convention — self-consistent (nameplate vs
+      nameplate) and needing no UCAP reconciliation because nothing force-builds
+      on this branch.
+
+    ISOs absent from :data:`MARKET_DESIGN` take the conservative absolute branch.
+    """
     problems: list[str] = []
+    design = MARKET_DESIGN.get(run.iso, DEFAULT_MARKET_DESIGN)
     for year in sorted(run.ledgers):
         led = run.ledgers[year]
         peak = led.get("peak_demand_mw")
         if peak is None:  # bridge year — no solve, no floor to check
             continue
-        after = led.get("fleet_by_fuel_after", {})
-        firm_clean = sum(mw for f, mw in after.items() if f in FIRM_CLEAN_FUELS)
-        thermal = _thermal_mw(after)
-        floor = (peak - firm_clean) * (1.0 + T.reliability_reserve_margin)
-        if thermal < floor - T.reliability_slack_mw:
-            problems.append(f"{year}: thermal {thermal:.0f} < floor {floor:.0f} MW")
+        if design.capacity_market:
+            # Absolute floor on the model's accreditation convention.
+            rm = led.get("reserve_margin")
+            if rm is None or peak <= 0.0:
+                continue  # no firm-capacity accounting persisted this year
+            accredited_firm = peak * (1.0 + rm)
+            requirement = resolve_adequacy_requirement_mw(run.config, run.iso, peak)
+            if accredited_firm < requirement - T.reliability_slack_mw:
+                problems.append(
+                    f"{year}: accredited firm {accredited_firm:.0f} < "
+                    f"requirement {requirement:.0f} MW"
+                )
+        else:
+            # Retirement-bounded nameplate floor (energy-only): did evolution
+            # over-retire below the floor relative to where the year started?
+            after = led.get("fleet_by_fuel_after", {})
+            before = led.get("fleet_by_fuel_before", {})
+            firm_clean = sum(mw for f, mw in after.items() if f in FIRM_CLEAN_FUELS)
+            thermal_after = _thermal_mw(after)
+            thermal_before = _thermal_mw(before)
+            floor = (peak - firm_clean) * (1.0 + T.reliability_reserve_margin)
+            bound = min(floor, thermal_before) if thermal_before > 0 else floor
+            if thermal_after < bound - T.reliability_slack_mw:
+                problems.append(
+                    f"{year}: thermal {thermal_after:.0f} < "
+                    f"retirement-bounded floor {bound:.0f} MW"
+                )
     status = PASS if not problems else FAIL
     return Result(
         "I7",

@@ -1394,6 +1394,85 @@ class TestReserveMarginBuild(unittest.TestCase):
         self.assertAlmostEqual(built_fallback, expected)
 
 
+class TestReserveMarginBuildMarketDesignResolution(unittest.TestCase):
+    """G-41: the backstop's tri-state field resolves per market design.
+
+    Owner-approved market-design-dependent variant (PJM hindcast I7 decision
+    2026-07-06): ``reserve_margin_build_enabled=None`` (default) resolves ON for
+    capacity-market ISOs, OFF for energy-only ERCOT; an explicit bool overrides.
+    """
+
+    def test_default_is_none(self):
+        self.assertIsNone(ScenarioConfig().reserve_margin_build_enabled)
+
+    def test_none_resolves_off_for_energy_only_ercot(self):
+        from market_sim.model.capacity import resolve_reserve_margin_build_enabled
+
+        cfg = ScenarioConfig(iso="ERCOT")  # default None
+        self.assertFalse(resolve_reserve_margin_build_enabled(cfg, "ERCOT"))
+
+    def test_none_resolves_on_for_capacity_market_isos(self):
+        from market_sim.model.capacity import resolve_reserve_margin_build_enabled
+
+        cfg = ScenarioConfig()  # default None
+        for iso in ("PJM", "MISO", "NYISO", "NEISO", "CAISO"):
+            self.assertTrue(
+                resolve_reserve_margin_build_enabled(cfg, iso),
+                f"{iso} is a capacity-market ISO -> backstop default-on",
+            )
+
+    def test_none_resolves_off_for_iso_absent_from_market_design(self):
+        from market_sim.model.capacity import resolve_reserve_margin_build_enabled
+
+        cfg = ScenarioConfig()  # default None
+        # An ISO not in MARKET_DESIGN takes DEFAULT_MARKET_DESIGN (capacity_market
+        # False) -> conservative OFF.
+        self.assertFalse(resolve_reserve_margin_build_enabled(cfg, "SPP"))
+
+    def test_explicit_override_wins_either_way(self):
+        from market_sim.model.capacity import resolve_reserve_margin_build_enabled
+
+        # Force ON for energy-only ERCOT.
+        on = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=True)
+        self.assertTrue(resolve_reserve_margin_build_enabled(on, "ERCOT"))
+        # Force OFF for a capacity-market ISO.
+        off = ScenarioConfig(iso="PJM", reserve_margin_build_enabled=False)
+        self.assertFalse(resolve_reserve_margin_build_enabled(off, "PJM"))
+
+    def test_ercot_default_none_byte_identical_to_explicit_false(self):
+        """Energy-only ERCOT under the new None default builds nothing — exactly
+        the pre-G-41 default-off (explicit False) behaviour (byte-identity)."""
+        from market_sim.model.capacity import apply_reserve_margin_build
+
+        none_cfg = ScenarioConfig(iso="ERCOT")  # default None -> resolves off
+        false_cfg = ScenarioConfig(iso="ERCOT", reserve_margin_build_enabled=False)
+        fleet = [_gen("cc", "gas_cc", pmax=1000.0)]
+        _, built_none = apply_reserve_margin_build(
+            list(fleet), 0.0, 8000.0, 2030, none_cfg, "ERCOT"
+        )
+        _, built_false = apply_reserve_margin_build(
+            list(fleet), 0.0, 8000.0, 2030, false_cfg, "ERCOT"
+        )
+        self.assertEqual(built_none, 0.0)
+        self.assertEqual(built_false, 0.0)
+
+    def test_pjm_default_none_builds_like_explicit_true(self):
+        """Capacity-market PJM under the None default fires the backstop
+        identically to an explicit True (the default now engages it)."""
+        from market_sim.model.capacity import apply_reserve_margin_build
+
+        none_cfg = ScenarioConfig(iso="PJM")  # default None -> resolves on
+        true_cfg = ScenarioConfig(iso="PJM", reserve_margin_build_enabled=True)
+        _, built_none = apply_reserve_margin_build(
+            [], 5000.0, 8000.0, 2030, none_cfg, "PJM"
+        )
+        _, built_true = apply_reserve_margin_build(
+            [], 5000.0, 8000.0, 2030, true_cfg, "PJM"
+        )
+        self.assertGreater(built_none, 0.0)
+        self.assertEqual(built_none, built_true)
+
+
 class TestRetirementMargin(unittest.TestCase):
     """The retirement screen nets variable cost against price.
 

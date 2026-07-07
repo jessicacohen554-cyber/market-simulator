@@ -710,5 +710,96 @@ class TestChpMeasuredCo2Inputs(unittest.TestCase):
         self.assertIsInstance(btm_share, dict)
 
 
+class _RecordingDispatchModel(_FakeDispatchModel):
+    """``_FakeDispatchModel`` that records each year's demand array reaching the LP.
+
+    One instance is built per simulation year (build-once / re-cost), so
+    ``demands`` holds exactly the demand vector the LP saw for each year — the
+    object we assert the data-center block did (or did not) modify.
+    """
+
+    demands: list = []
+
+    def __init__(self, fleet, demand, **kwargs):
+        super().__init__(fleet, demand, **kwargs)
+        type(self).demands.append(demand)
+
+
+class TestDatacenterBlockWiring(RunnerTestBase):
+    """G-34: add_datacenter_block is wired into runner demand assembly.
+
+    Default-off is byte-identical (the DC block returns the same array object,
+    so the demand reaching the LP is the exact _scale_demand output); a forecast
+    run with a non-off path lands the per-ISO DC MW trajectory in the demand
+    vector.
+    """
+
+    def _run_capture(self, config):
+        """Run a single forecast year (2026) capturing per-year _scale_demand
+        outputs and the demand arrays reaching the LP."""
+        _RecordingDispatchModel.demands = []
+        scale_out: dict = {}
+        orig_scale = runner._scale_demand
+
+        def _rec_scale(base, cfg, yr):
+            out = orig_scale(base, cfg, yr)
+            scale_out[yr] = out  # seam-2 (LP) call is the last write per year
+            return out
+
+        with (
+            patch.object(runner, "END_YEAR", 2026),
+            patch.object(runner, "_scale_demand", side_effect=_rec_scale),
+            patch.object(pipeline_solve, "DispatchModel", _RecordingDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
+        ):
+            runner.run_scenario_iso(config, "ERCOT")
+        return scale_out, list(_RecordingDispatchModel.demands)
+
+    def test_default_off_demand_is_scale_demand_object_byte_identical(self):
+        # Default config => datacenter_load_path == "off" => add_datacenter_block
+        # returns the SAME array object, so the demand reaching the LP is the
+        # identical _scale_demand output (no copy, no addition): byte-identical.
+        config = ScenarioConfig(iso="ERCOT")
+        scale_out, demands = self._run_capture(config)
+        self.assertEqual(len(demands), 1)  # one DispatchModel per year (2026)
+        self.assertIs(demands[0], scale_out[2026])
+
+    def test_forecast_path_lands_datacenter_mw_in_demand(self):
+        # A forecast run with a non-off DC path adds the published per-ISO DC MW
+        # trajectory (flat block) to every hour, so the peak rises by exactly
+        # resolve_datacenter_mw * datacenter_load_factor and the demand reaching
+        # the LP is a NEW array (not the _scale_demand object).
+        from market_sim.data.datacenter import resolve_datacenter_mw
+
+        config = ScenarioConfig(iso="ERCOT", datacenter_load_path="mid")
+        scale_out, demands = self._run_capture(config)
+        self.assertEqual(len(demands), 1)
+        lp_demand = demands[0]
+        base = scale_out[2026]
+
+        # New array, not the byte-identical off-path object.
+        self.assertIsNot(lp_demand, base)
+
+        expected_block_mw = (
+            resolve_datacenter_mw(config, "ERCOT", 2026) * config.datacenter_load_factor
+        )
+        self.assertGreater(expected_block_mw, 0.0)  # ERCOT mid is nonzero in 2026
+        # Flat block => peak rises by exactly the total block MW.
+        self.assertAlmostEqual(
+            float(lp_demand.sum(axis=0).max()),
+            float(base.sum(axis=0).max()) + expected_block_mw,
+            places=3,
+        )
+        # Total energy rises by block_mw * 8760 (flat, no shape).
+        self.assertAlmostEqual(
+            float(lp_demand.sum()),
+            float(base.sum()) + expected_block_mw * config.hours,
+            places=1,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
