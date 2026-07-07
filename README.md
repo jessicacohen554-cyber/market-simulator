@@ -40,7 +40,7 @@ uv run market-sim run --config <scenario.yaml> [--iso ERCOT]
 uv run market-sim sweep --sweep <sweep.yaml> [--workers N]
 ```
 
-> **Test status:** the suite collects ~1900 tests (1937 as of this writing). A
+> **Test status:** the suite collects ~3200 tests (3198 as of this writing). A
 > handful of *known, pre-existing* failures are tied to optional local data and
 > are unrelated to setup — the four `test_eia_loader` CAISO/NYISO zonal-share
 > fallback cases, plus a NEISO committed-artifact determinism check. A clean
