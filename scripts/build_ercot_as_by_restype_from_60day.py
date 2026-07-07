@@ -61,11 +61,14 @@ import pandas as pd
 import pyarrow as pa
 import pyarrow.parquet as pq
 
-# Reuse the canonical clock mapping (non-leap 8760, DST fall-back averaged,
-# spring-forward interpolated) so this series sits on the same clock as the
-# rest of the fleet inputs.
+# Reuse the canonical clock mapping (non-leap 8760 on fixed CST, the sources'
+# Central-Prevailing sequential-HE labels converted CPT->CST before placement)
+# so this series sits on the same clock as the rest of the fleet inputs.
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from build_ercot_as_withholding import HOURS_PER_YEAR, _to_model_clock  # noqa: E402
+from build_ercot_as_withholding import (  # noqa: E402
+    HOURS_PER_YEAR,
+    _to_model_clock,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 GEN_DIR = REPO_ROOT / "data" / "raw" / "ercot"
@@ -138,7 +141,8 @@ def build_year(
         print(f"  {year}: no delivery rows — skipping.")
         return None
     days = sub["dd"].dt.normalize().nunique()
-    ts = sub["dd"] + pd.to_timedelta(sub["he"] - 1, unit="h")
+    # Prevailing sequential-HE labels (1-24; 25 on the fall-back day) -> CST.
+    ts = prevailing_he_to_cst(sub["dd"], sub["he"])
     frame = pd.DataFrame({"hour": np.arange(HOURS_PER_YEAR, dtype="int64")})
     for cls in _CLASSES:
         measured = cls != "load" and (cls == "storage" or with_thermal)
@@ -171,13 +175,58 @@ def _write(frame: pd.DataFrame, year: int) -> None:
             "awards file not in repo).",
             "units": "MW (hour-beginning)",
             "year": str(year),
-            "clock": "Model 8760 non-leap ERCOT-local; Feb29 dropped, DST "
-            "fall-back averaged, spring-forward interpolated",
+            "clock": "Model 8760 non-leap ERCOT-local STANDARD time (CST, "
+            "UTC-6); Feb29 dropped, the source's Central-Prevailing "
+            "sequential-HE labels (HE 1-25 on the fall-back day) converted "
+            "CPT->CST before placement",
         }
     )
     out = OUT_DIR / f"ercot_{year}_as_by_restype_hourly.parquet"
     pq.write_table(table, out)
     print(f"  wrote {out.relative_to(REPO_ROOT)}")
+
+
+def surgical_storage_fix(big: pd.DataFrame, year: int) -> None:
+    """Replace ONLY the ``storage`` column of a committed by-restype parquet.
+
+    The committed 2024/2025 files were built from the 60-Day Gen **and Load**
+    Resource Data; the Load awards file is not in the repo, so a full rebuild
+    here would change the data vintage of columns this script cannot
+    reproduce. The ``storage`` (PWRSTR) column — the one column the keeper
+    consumes (the storage-AS reserve credit) — is measured entirely from the
+    in-repo Gen Resource Data: rebuild it on the corrected CST clock
+    (CPT->CST, the 2026-07-07 placement-defect fix) and leave every other
+    column untouched. ``thermal_total`` is NOT recomputed (it is the
+    committed Load+Gen build's convention, not this script's).
+    """
+    path = OUT_DIR / f"ercot_{year}_as_by_restype_hourly.parquet"
+    if not path.exists():
+        print(f"  {year}: no committed by-restype parquet — nothing to fix.")
+        return
+    frame = build_year(big, year, with_thermal=False)
+    if frame is None:
+        return
+    existing = pq.read_table(path)
+    meta = {
+        (k.decode() if isinstance(k, bytes) else k): (
+            v.decode() if isinstance(v, bytes) else v
+        )
+        for k, v in (existing.schema.metadata or {}).items()
+    }
+    out = existing.to_pandas()
+    out["storage"] = frame["storage"].to_numpy(dtype=float)
+    meta["storage_clock_fix"] = (
+        "storage column rebuilt 2026-07-07 from the in-repo 60d Gen Resource "
+        "Data PWRSTR awards with the Central-Prevailing sequential-HE labels "
+        "converted CPT->CST before placement (the HSL-round placement-defect "
+        "class, docs/handoffs/ercot-g22-demand-side-design-2026-07.md §7); "
+        "all other columns are the original Gen+Load build (Load awards "
+        "source not in repo) and keep its clock."
+    )
+    table = pa.Table.from_pandas(out, preserve_index=False)
+    table = table.replace_schema_metadata(meta)
+    pq.write_table(table, path)
+    print(f"  wrote {path.relative_to(REPO_ROOT)} (storage column replaced)")
 
 
 def validate(big: pd.DataFrame) -> None:
@@ -217,6 +266,14 @@ def main() -> None:
     ap.add_argument("--year", type=int, default=None)
     ap.add_argument("--validate", action="store_true")
     ap.add_argument(
+        "--surgical-storage",
+        action="store_true",
+        help="replace ONLY the storage column of the committed parquet for "
+        "--year with the clock-corrected Gen-Resource-Data rebuild, keeping "
+        "the other (Load+Gen-sourced, not in-repo-reproducible) columns "
+        "byte-identical — see surgical_storage_fix",
+    )
+    ap.add_argument(
         "--with-thermal",
         action="store_true",
         help="also write measured thermal classes (unreconciled vs committed "
@@ -230,6 +287,9 @@ def main() -> None:
     )
     if args.validate:
         validate(big)
+        return
+    if args.surgical_storage:
+        surgical_storage_fix(big, args.year or 2024)
         return
     years = [args.year] if args.year else [2023]
     for year in years:
