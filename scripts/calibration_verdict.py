@@ -56,8 +56,10 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # Rubric version implemented by this scorer (rubric §0/§1/§9; v2 = the
 # 2026-07-06 fitness-for-purpose re-anchor: criterion tiers, two-band
 # target/commercial tolerances, DA-expressible C3c; v2.1 = the same-day owner
-# amendments: C7/C8 materiality floor + C8 peaker cap 15%).
-RUBRIC_VERSION = 2.1
+# amendments: C7/C8 materiality floor + C8 peaker cap 15%; v2.2 = the 2026-07-07
+# owner amendment: C8 grounded-above-budget escalation — an over-cap class passes
+# clean iff it clears D-4 provenance + D-1 shape, surfaced as a note).
+RUBRIC_VERSION = 2.2
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -271,6 +273,47 @@ PROTECTIVE_MIN_LOAD_FRAC = 0.02
 FORCED_SHARE_PEAKER_MAX = 0.15
 FORCED_SHARE_MERCHANT_MAX = 0.30
 FORCED_SHARE_PEAKER_CLASSES = ("CT_PEAKER",)
+
+# C8 grounded-above-budget escalation (rubric v2.2, owner amendment 2026-07-07).
+# The 15%/30% caps and the 2% materiality floor are UNCHANGED — a class within
+# the cap still passes cheaply on volume alone. What changes is the treatment of
+# a class ABOVE the cap: instead of an automatic FAIL, it escalates to a
+# conditional pass on PROVENANCE + SHAPE (the true legitimacy question), because
+# a class can legitimately be forced past the budget when the forcing is a real
+# grid/RA/AS driver that reproduces the observed dispatch. A class above the cap
+# passes iff BOTH:
+#   (a) PROVENANCE — every binding *non-exempt* mechanism it is forced by clears
+#       D-4 off-window binding (it binds only in its driver-justified window;
+#       a mechanism with NO declared D-4 window fails here — rule 12, "no floor
+#       without a window"), AND
+#   (b) SHAPE — the class's D-1 hour-of-day profile clears the artifact's own
+#       gates (profile r >= d1_min_profile_r AND off-peak CV ratio >=
+#       d1_min_cv_ratio), applied to ANY escalating class (not only the default
+#       D1_GATED_CLASSES) — this is the "shape mismatch means the forcing
+#       variables are wrong" test.
+# Both signals are already in every committed legitimacy_diagnostics.json
+# (D1.rows / D2.rows / D4.rows / gates), so this stays scorer-only — no
+# re-solve, no bundle regen — and existing keepers re-score in place. A pass
+# here is a CLEAN PASS (owner decision 2026-07-07: surfaced as a report NOTE,
+# never a caveat); a fail is classified as a forcing shape/provenance mismatch.
+GROUNDED_ABOVE_BUDGET = "GROUNDED ABOVE BUDGET (D-4 window + D-1 shape clear)"
+# Mechanism NAMES excluded from the C8 forced-share arithmetic — the union of
+# data.floor_mechanisms.D2_EXEMPT_MECHS (structural must-run: nuclear / CHP-steam
+# / coal take-or-pay) and NON_THERMAL_MECHS (interchange pseudo-unit boundaries).
+# Kept as a local literal so this scorer stays stdlib-only (no market_sim import);
+# floor_mechanisms is the source of truth and tests/test_calibration_verdict.py
+# asserts this set matches MECH_NAMES for those id sets so it cannot silently
+# drift. run_d2 already excludes these from a class's gated forced_share; the
+# escalation re-derives the binding *merchant* mechanism set from the same names.
+FORCED_EXEMPT_MECH_NAMES = frozenset(
+    {
+        "nuclear_mustrun",  # MECH_NUCLEAR
+        "chp_steam",  # MECH_CHP_STEAM
+        "coal_mustrun",  # MECH_COAL_MUSTRUN
+        "firm_import",  # MECH_FIRM_IMPORT (non-thermal boundary)
+        "nyiso_local_selfsupply",  # MECH_NYISO_SELFSUPPLY (non-thermal boundary)
+    }
+)
 
 # Criterion id -> (label, tier). The v1 HARD/SOFT split conflated two things —
 # strict data gates (C1/C2) and anti-gaming gates (C6/C7/C8); v2 tiers them by
@@ -1400,6 +1443,103 @@ def score_shape(year: int, legit: dict | None, ypay: dict, ybench: dict) -> list
     return out
 
 
+def _binding_merchant_mechs(legit: dict, year: int, klass: str) -> list[str]:
+    """Mechanism NAMES the class is forced by that count toward the C8 gate.
+
+    From the committed D-2 per-(class, mechanism) rows: every mechanism with a
+    positive ``share_of_class`` for ``(year, klass)`` that is NOT in
+    :data:`FORCED_EXEMPT_MECH_NAMES` (structural must-run / non-thermal
+    boundaries, which run_d2 already excludes from the class forced share). This
+    is exactly the set whose forcing must be justified for a grounded-above-budget
+    pass.
+    """
+    out: list[str] = []
+    for r in legit.get("diagnostics", {}).get("D2", {}).get("rows", []):
+        if int(r.get("year", -1)) != int(year) or str(r.get("class")) != str(klass):
+            continue
+        mech = str(r.get("mechanism", ""))
+        if float(r.get("share_of_class", 0) or 0.0) > 0.0 and (
+            mech not in FORCED_EXEMPT_MECH_NAMES
+        ):
+            out.append(mech)
+    return sorted(set(out))
+
+
+def _d4_provenance(legit: dict, year: int, klass: str, mechs: list[str]):
+    """(ok, detail) — do ALL of the class's binding merchant mechanisms clear D-4.
+
+    A mechanism clears when the committed D-4 off-window rows carry at least one
+    entry for it (a declared, driver-justified window — the ``floor`` label is
+    the mechanism name, optionally ``<mech> × <class>``) that applies to this
+    class, and EVERY applicable entry passes (off-window share within the D-4
+    tolerance). A mechanism with NO applicable D-4 row has no declared window —
+    provenance fails for it (rule 12: no floor without a window). ``detail``
+    names the offending mechanism(s) for the report.
+    """
+    if not mechs:
+        # No attributable binding merchant mechanism (D-2 rows absent, or a
+        # legacy artifact without them): forcing above the cap that cannot be
+        # traced to a mechanism cannot be grounded — fail conservatively.
+        return False, (
+            "no attributable binding merchant mechanism in D-2 rows "
+            "(provenance unverifiable)"
+        )
+    d4_rows = legit.get("diagnostics", {}).get("D4", {}).get("rows", [])
+    unwindowed: list[str] = []
+    offwindow: list[str] = []
+    for mech in mechs:
+        applicable = [
+            row
+            for row in d4_rows
+            if int(row.get("year", -1)) == int(year)
+            and str(row.get("floor", "")) in (mech, f"{mech} × {klass}")
+        ]
+        if not applicable:
+            unwindowed.append(mech)
+        elif any(str(row.get("verdict")) == "FAIL" for row in applicable):
+            offwindow.append(mech)
+    ok = not unwindowed and not offwindow
+    bits = []
+    if unwindowed:
+        bits.append("no declared D-4 window: " + ", ".join(unwindowed))
+    if offwindow:
+        bits.append("binds off-window (D-4 FAIL): " + ", ".join(offwindow))
+    return ok, ("; ".join(bits) if bits else "all binding mechanisms clear D-4")
+
+
+def _d1_shape(legit: dict, year: int, klass: str):
+    """(ok, detail) — does the class's D-1 hour-of-day profile clear the gates.
+
+    Applies the artifact's own D-1 gates (``d1_min_profile_r`` /
+    ``d1_min_cv_ratio``) to ``klass`` regardless of whether it is in the default
+    ``d1_gated_classes`` — the escalation treats any above-budget class as
+    shape-gated. A missing D-1 row (no profile to check) fails conservatively:
+    an unverifiable shape cannot ground the forcing.
+    """
+    gates = legit.get("gates", {})
+    min_r = float(gates.get("d1_min_profile_r", 0.8))
+    min_cv = float(gates.get("d1_min_cv_ratio", 0.5))
+    row = next(
+        (
+            r
+            for r in legit.get("diagnostics", {}).get("D1", {}).get("rows", [])
+            if int(r.get("year", -1)) == int(year) and str(r.get("class")) == str(klass)
+        ),
+        None,
+    )
+    if row is None:
+        return False, f"no D-1 profile for {klass} (shape unverifiable)"
+    r_val = row.get("profile_r")
+    cv = row.get("cv_ratio")  # None when actual off-peak CV is degenerate
+    r_ok = r_val is not None and float(r_val) >= min_r
+    cv_ok = cv is None or float(cv) >= min_cv
+    detail = (
+        f"profile r {r_val} (≥{min_r}) & off-peak CV ratio "
+        f"{cv if cv is not None else 'n/a'} (≥{min_cv})"
+    )
+    return (r_ok and cv_ok), detail
+
+
 def score_forced_share(
     year: int, legit: dict | None, ypay: dict, ybench: dict
 ) -> list[dict]:
@@ -1417,6 +1557,16 @@ def score_forced_share(
     (``lower_bound``) are flagged in the record: a PASS there is a lower
     bound, never an upper one. SKIPPED when the artifact or the year is
     absent.
+
+    Grounded-above-budget escalation (rubric v2.2, 2026-07-07): a class ABOVE
+    its cap is no longer an automatic FAIL. It escalates to a conditional pass
+    on PROVENANCE (every binding merchant mechanism clears D-4 off-window
+    binding — :func:`_d4_provenance`) AND SHAPE (the class's D-1 profile clears
+    the artifact gates — :func:`_d1_shape`). Both clear -> CLEAN PASS classified
+    :data:`GROUNDED_ABOVE_BUDGET` (surfaced as a report note, not a caveat);
+    either fails -> FAIL, the miss described as a forcing shape/provenance
+    mismatch (the "forcing variables are wrong" signal). See the constant block
+    for the full rationale.
     """
     if legit is None:
         return [
@@ -1460,30 +1610,56 @@ def score_forced_share(
             if klass in FORCED_SHARE_PEAKER_CLASSES
             else FORCED_SHARE_MERCHANT_MAX
         )
-        ok = fs <= cap
         lb = (
             " (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)"
             if r.get("lower_bound")
             else ""
         )
+        base = f"{fs * 100:.1f}% forced ({r.get('forced_twh')} of {r.get('class_total_twh')} TWh)"
+        if fs <= cap:
+            # Within budget: passes cheaply on the share alone (unchanged).
+            status, classification, magnitude = PASS, None, base + lb
+        else:
+            # Above budget: escalate on provenance (D-4) + shape (D-1).
+            mechs = _binding_merchant_mechs(legit, year, klass)
+            prov_ok, prov_detail = _d4_provenance(legit, year, klass, mechs)
+            shape_ok, shape_detail = _d1_shape(legit, year, klass)
+            if prov_ok and shape_ok:
+                status, classification = PASS, GROUNDED_ABOVE_BUDGET
+                magnitude = (
+                    f"{base} — above the {cap * 100:.0f}% cap but GROUNDED: "
+                    f"{prov_detail}; {shape_detail}{lb}"
+                )
+            else:
+                status, classification = FAIL, MODEL_MISS
+                miss = "; ".join(
+                    part
+                    for part in (
+                        None if prov_ok else f"provenance — {prov_detail}",
+                        None if shape_ok else f"shape — {shape_detail}",
+                    )
+                    if part
+                )
+                magnitude = (
+                    f"{base} — above the {cap * 100:.0f}% cap and NOT grounded "
+                    f"(forcing variables miscalibrated): {miss}{lb}"
+                )
         out.append(
             {
                 "criterion": "forced_share",
                 "key": klass,
                 "year": year,
-                "status": PASS if ok else FAIL,
-                "classification": None if ok else MODEL_MISS,
+                "status": status,
+                "classification": classification,
                 "metric": f"{klass} energy at binding non-exempt floors (D-2)",
                 "model": fs,
                 "actual": None,
                 "tol": (
-                    f"< {cap * 100:.0f}% of class energy "
-                    f"(class ≥ {PROTECTIVE_MIN_LOAD_FRAC:.0%} of load)"
+                    f"< {cap * 100:.0f}% of class energy, OR above-cap with D-4 "
+                    f"window + D-1 shape clear (class ≥ {PROTECTIVE_MIN_LOAD_FRAC:.0%} "
+                    "of load)"
                 ),
-                "magnitude": (
-                    f"{fs * 100:.1f}% forced "
-                    f"({r.get('forced_twh')} of {r.get('class_total_twh')} TWh)" + lb
-                ),
+                "magnitude": magnitude,
             }
         )
     return out
@@ -1794,6 +1970,21 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
                     "data-blocked target year(s): " + ", ".join(map(str, data_blocked))
                 )
 
+    # Report notes (not caveats): grounded-above-budget C8 passes — a class
+    # forced past its cap that cleared the D-4 provenance + D-1 shape escalation
+    # (owner decision 2026-07-07: a CLEAN PASS surfaced as a note so the high
+    # forcing stays visible and auditable without counting against any budget).
+    notes: list[str] = []
+    for r in records:
+        if (
+            r.get("criterion") == "forced_share"
+            and r.get("status") == PASS
+            and r.get("classification") == GROUNDED_ABOVE_BUDGET
+        ):
+            notes.append(
+                f"C8 {r['year']} {r.get('key')}: grounded above budget — {r['magnitude']}"
+            )
+
     # Grade summary (reported): how many scored criteria sit at target grade
     # (clean PASS) vs commercial grade (auto band caveat) vs ledgered.
     scored = [
@@ -1817,6 +2008,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         "data_blocked_years": data_blocked,
         "determination": determination,
         "reasons": reasons,
+        "notes": notes,
         "criteria": per_criterion,
         "free_class_score": free_class_score(iso, records),
         "grade_summary": grade_summary,
@@ -1883,6 +2075,10 @@ def render_text(v: dict) -> str:
             lines.append(f"  - {rsn}")
     else:
         lines.append("determination basis: all criteria pass, governance attested.")
+    if v.get("notes"):
+        lines.append("notes:")
+        for note in v["notes"]:
+            lines.append(f"  - {note}")
     lines.append("=" * 72)
     return "\n".join(lines)
 
@@ -1915,6 +2111,7 @@ def condensed_metrics(v: dict) -> dict:
         "rubric_version": v.get("rubric_version", 1),
         "determination": v["determination"],
         "reasons": v["reasons"],
+        "notes": v.get("notes", []),
         "criteria": {
             cid: {
                 "label": c["label"],
