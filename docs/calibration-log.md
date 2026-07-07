@@ -40,6 +40,66 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-07 — NEISO — G-24 KEEPER SWAP: `2026-07-07-neiso53-winter-fuelsec-coldsnap` promoted — winter fuel-security stack (cold-snap derate + Component A + Component B) proven DORMANT on 2023–25, adopted for forward faithfulness (rule 1)
+
+**Goal (G-24).** Resolve the NEISO winter-fuel gap: verify Component B
+(`winter_fuel_inventory.apply_winter_fuelsec_mustrun`) is the structurally correct
+winter-fuel-inventory mechanism; adopt it into the keeper if real (rule 1 — keep even if it
+worsens fit), or build the complementary mechanism it is missing. The 2026-07-06 A+B probe had
+already found Component B **inert** (the ~105 MW coal / ~74 MW ST_GAS fuel-secure fleet already
+runs above min-stable on cold days, so the must-run floor is non-binding and Component A's oil
+budget never binds).
+
+**The complementary mechanism identified + probed: the gas cold-snap availability derate**
+(`neiso_gas_coldsnap_derate` → `transmission.inject_neiso_gas_coldsnap_derate`, a
+temperature-dependent forced-outage of non-dual-fuel gas-CC/CT, TDFOR). Already built (default
+off) but **never before solved for NEISO**. Theory: it removes gas capacity on cold snaps →
+forces the dual-fuel oil switch (draws down Component A → binding scarcity rent) AND shrinks
+available reserves so the already-on ORDC scarcity overlay prices the C3c >$300 tail (and widens
+the C5b storage spread). Solved the full stack (`neiso_gas_coldsnap_derate` +
+`neiso_winter_fuel_inventory` (A) + `neiso_winter_fuel_mustrun` (B)) full-span on the neiso-50
+base, `2026-07-07-neiso53-winter-fuelsec-coldsnap` (bundle `neiso53_winter_coldsnap_ab`), against
+a zero-mechanism ablation twin `2026-07-07-neiso53-winter-fuelsec-ablation` (bundle
+`neiso53_winter_coldsnap_ab_off`).
+
+**Result — DORMANT (decisive negative), all mechanisms structurally faithful.** Ground truth from
+the dispatch parquets, probe vs twin:
+
+| metric (2023/24/25) | twin (off) | probe (coldsnap+A+B) | actual | moved? |
+|---|---|---|---|---|
+| C3c h > $300 (DA) | 0 / 0 / 0 | 0 / 0 / 0 | 5 / 5 / 12 | **no** |
+| max zonal LMP | 221 / 200 / 258 | 229 / 200 / 258 | — | pinned at oil parity |
+| C5b storage 2025 (TWh) | 0.697 | 0.715 (+2.6%) | 2.08 | **no** |
+| winter oil-fuel 2025 (TWh) | 1.546 | 1.558 (+0.8%) | 1.24 | ~unchanged |
+| mean LMP 2025 | 64.42 | 64.52 | — | ~unchanged |
+
+The derate cuts CC/CT availability ≤13% on 8 cold-peak hours, but the ample NEISO winter fleet
+(dual-fuel oil + peakers + imports) never goes reserve-short, the dual-fuel oil-parity cap
+(~$258) holds the ceiling, and Component A's budget (9.79 M MMBtu/month) is never approached
+(~3.3 M/month draw). **This REFUTES the "one missing mechanism" hypothesis** for every *scored*
+metric: the C3c/C5b residual is a NEISO **winter capacity-adequacy / scarcity-price-formation**
+gap, not a fuel-security-mechanism gap. (D-2 nuance: Component B *does* bind — it commits the tiny
+fuel-secure COAL fleet on cold days, D-2 forced share 0.35/0.23/0.02 vs 0.0 in the twin — but
+COAL is 0.04–0.2 % of ISO load, so it is reported-not-gated per rule 20 v2.1 and moves nothing
+scored; ST_GAS forced share is unchanged, owned by the reliability netload limb, from which
+Component B correctly drops ST_GAS to avoid stacking, rule 24; Component A + the derate carry no
+forced energy.)
+
+**Decision (owner, 2026-07-07): ADOPT the stack into the keeper anyway (rule 1).** The three
+mechanisms are real, forward-derivable ISO-NE winter structure (WRP FERC ER14-2407 → IEP
+ER19-1428 → OFSA; NERC Winter Storm Elliott forced-outage record; physical boiler turndown) that
+binds in colder forecast years — kept on even though it moves no backcast metric (a real market
+behaviour stays in even when the residual does not move). Determination **unchanged**
+(CALIBRATED-WITH-CAVEATS; identical C2/C3a/C3b commercial-band caveats as neiso-50); governance C6
+PASS via the bundle's new attestation (four assertions true, machine check clean). **Ablation twin
+registered alongside — resolves the neiso-50 audit_keepers E9 missing-twin flag.** DOF ledger
+carries all three winter params as **measured-physical** (n_residual unchanged at 6), each cited,
+none residual-fit (rule 23 frozen); C8/rule-20 PASS (the only class Component B forces, COAL, is
+immaterial at <0.3 % of ISO load → reported-not-gated, rule 20 v2.1). Holdouts (2022, H1-2026)
+fully quarantined (rule 22). `keepers.json` NEISO → the new id; `status.js` rebuilt
+(NEISO CALIBRATED-WITH-CAVEATS); dashboard retention pruned to top-15 (dropped
+`neiso-47-fast-start`, `neiso-statmode-d-7`; bundles kept). G-24 struck.
+
 ### 2026-07-06 — ERCOT — measured GTC transmission-limit probe of ercot38 (`ercot39-gtc-measured`; NEGATIVE result, no keeper swap)
 
 Next step of the ERCOT wind/solar under-curtailment investigation
