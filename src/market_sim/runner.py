@@ -56,6 +56,7 @@ from market_sim.data.fuel import (
     resolve_annual_gas_price,
     resolve_fuel_prices,
 )
+from market_sim.data.curtailment_share import forecast_wtx_curtail_multipliers
 from market_sim.data.renewables import (
     inject_offshore_wind_availability,
     load_renewable_profiles,
@@ -1130,6 +1131,34 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     "dual when curtailed",
                     year,
                 )
+            # ERCOT West Texas Export corridor VRE curtailment-share driver
+            # (WP-B), forecast leg: the same per-(zone, hour) ceiling the
+            # backcast orchestrator applies, computed from the FORECAST state
+            # (this year's scaled demand minus the evolved fleet's uncurtailed
+            # wind/solar potential) so curtailment emerges endogenously and
+            # the decile mapping regenerates as West VRE builds out. The
+            # matching gross-up of the delivered-basis profile happens in
+            # load_renewable_profiles under the same gate — no
+            # double-curtailment. UNSET off the flag (byte-identical LP).
+            _wtx_mult = forecast_wtx_curtail_multipliers(
+                config,
+                iso,
+                year,
+                year_demand,
+                wind_cf,
+                wind_cap,
+                year_solar_cf,
+                solar_cap,
+                zone_names,
+            )
+            _wtx_spec_kwargs = (
+                {
+                    "wind_curtail_share": _wtx_mult[0],
+                    "solar_curtail_share": _wtx_mult[1],
+                }
+                if _wtx_mult is not None
+                else {}
+            )
             # Base dispatch kwargs + priced import-node band: the shared
             # pipeline assembly (orchestrator-unification Stage 2) — the same
             # key set the inline dict carried, byte-identical values.
@@ -1138,6 +1167,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 wind_cap=wind_cap,
                 solar_cf=year_solar_cf,
                 solar_cap=solar_cap,
+                **_wtx_spec_kwargs,
                 # Load-shed penalty = the ISO's own energy bid cap, not the
                 # ERCOT-flavored ScenarioConfig default ($5,000). Each ISOConfig
                 # carries its real cap (NYISO/CAISO/MISO/PJM $2,000 per FERC
