@@ -1,0 +1,336 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "neiso-53 winter fuel-security adoption session 2026-07-07 (branch claude/neiso-winter-component-b-012p1j, G-24)",
+    "note": "neiso-53 = the neiso-50 keeper recipe (identical run_config, reliability-floor CSV, offer bands and flags: --commitment --reliability-floor --hydro-backfill-year 2024 --hydro-eia930-monthly --gas-hub-basis-daily --scarcity-price-overlay --tranche-startup-amortization) with the three NEISO winter fuel-security mechanisms TURNED ON: neiso_gas_coldsnap_derate (temperature-dependent non-dual-fuel gas-CC/CT availability derate, TDFOR) + neiso_winter_fuel_inventory (Component A: Nov-Mar oil-burn seasonal inventory budget) + neiso_winter_fuel_mustrun (Component B: fuel-secure COAL_BIT/ST_GAS winter must-run). All three are structurally-faithful, forward-derivable real ISO-NE winter mechanisms grounded in the Winter Reliability Program (FERC ER14-2407) -> Inventoried Energy Program (ER19-1428) -> OFSA operational posture and the NERC/FERC Winter Storm Elliott cold-weather forced-outage record. ADOPTION RATIONALE (owner decision 2026-07-07, rule 1): on the 2023-2025 backcast the three mechanisms are DORMANT on every scored/material metric -- C3c and C5b do not move and prices are byte-near-identical to the zero-mechanism ablation twin (2026-07-07-neiso53-winter-fuelsec-ablation) (Component B does commit the immaterial fuel-secure COAL fleet on cold days, see free_parameters, but that class is <0.3% of ISO load and moves nothing scored): the NEISO model's winter capacity is ample enough that a <=13%-on-8-cold-peak-hours gas derate creates no genuine reserve shortage, the dual-fuel oil-parity cap (~$258/MWh) holds the price ceiling, and Component A's oil budget (9.79 M MMBtu/month) is never approached (winter oil draw ~3.3 M MMBtu/month). They are adopted for FORWARD faithfulness -- they are real, forward-responsive market structure that binds in a colder forecast year (the derate and oil budget then price winter scarcity endogenously and lift the >$300 tail) -- kept per rule 1 (a real market behaviour stays in even when the backcast residual does not move). This is NOT a residual fit: every winter parameter is a measured/physical constant (see free_parameters below), provably tuned to no scored metric here since it moves none. The prior hypothesis that a missing winter commitment (Component B) or the coupled cold-snap derate closes the C3c/C5b caveat family is REFUTED for the 2023-2025 backcast; the residual is a NEISO winter capacity-adequacy / scarcity-price-formation gap, not a fuel-security-mechanism gap (G-24 struck with this evidence).",
+    "validation_note": "Reproducible from the committed bundle: scripts/replay_keeper.py results/calibration/neiso49_resolve_confirm --out-dir results/calibration/neiso53_winter_coldsnap_ab --set neiso_gas_coldsnap_derate=true --set neiso_winter_fuel_inventory=true --set neiso_winter_fuel_mustrun=true. ABLATION TWIN registered alongside (2026-07-07-neiso53-winter-fuelsec-ablation, all three mechanisms off = the neiso-50 baseline) -- this RESOLVES the neiso-50 audit_keepers.py E9 missing-twin flag noted in the prior keeper's attestation. D-3 attribution: the twin's prices/storage/oil-burn match this run within <1% every year (mechanisms inert), confirming Component B binds only on the IMMATERIAL fuel-secure COAL fleet (D-2 forced share 0.35/0.23/0.02 vs 0.0 in the twin; COAL is 0.04-0.2% of ISO load, reported-not-gated per rule 20 v2.1) and ST_GAS forced share is unchanged (0.124/0.827/0.398 both arms -- owned by the reliability netload limb; Component B drops ST_GAS to avoid stacking, rule 24); Component A and the cold-snap derate carry NO forced energy and move no scored metric on 2023-2025. Leave-one-year-out (rule 22): unchanged from neiso-50 -- no value was fitted to a single year's residual (the winter params are NERC/WRP physical constants, frozen against the residual, rule 23). Holdouts (2022, H1-2026) remain fully quarantined (rule 22). REMAINING OPEN C7 GATE (unchanged from neiso-50, SKIPPED/immaterial, ST_GAS <0.1% of ISO load, rubric v2.1): the ST_GAS diurnal-shape residual is a separate root cause not touched by this adoption."
+  },
+  "exceptions": [
+    {
+      "criterion": "sysvol",
+      "family": "gas",
+      "year": 2025,
+      "metric": "C2 gas family grid-delivered TWh (preliminary 2025 vintage)",
+      "magnitude": "+3.0% vs corrected EIA-930 grid gas",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (EIA-930 gas-vs-OTHER fold-in + preliminary-vintage incompleteness)",
+      "reason": "2025 is a preliminary EIA-923 vintage \u2014 per-class actuals are incomplete (audit 2026-07-04: 13/30 prior CC_REGULAR plants missing, 57% reporting; gas family incomplete). The scorer falls back to the EIA-930 grid gas cell, which INCLUDES geothermal+biomass (~5.2 TWh); the correction formula under-corrects because the preliminary vintage's per-class cells are incomplete. Same categorization issue documented for the complete-vintage years, where the per-class C1 gate PASSES under the load-scaled band. When the full 2025 vintage reconciles, the per-class gate replaces this family fallback. NOT closable by adjusting model dispatch."
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2023,
+      "metric": "hours LMP > $300/MWh (C3c scarcity tail)",
+      "magnitude": "model 0h vs actual 15h (system max ~$258)",
+      "classification": "MODEL MISS (NEISO winter scarcity-price formation; winter fuel-security build implemented + probed neiso-53, DORMANT on this mild backcast year)",
+      "reason": "The energy-only LP caps the cold-hour price at the dual-fuel oil-parity (~$258/MWh). The documented winter fuel-inventory / seasonal-reliability build (docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md) is now IMPLEMENTED and ADOPTED in this keeper (neiso_gas_coldsnap_derate + neiso_winter_fuel_inventory + neiso_winter_fuel_mustrun), but on the 2023-2025 backcast it is DORMANT: the derate removes too little capacity on too few hours to make the ample NEISO winter fleet reserve-short, so Component A's oil budget never binds and the >$300 tail does not form (model 0h, max ~$258, unchanged vs the ablation twin). The mechanisms bind in colder forecast years; on this backcast the tail is a winter capacity-adequacy / scarcity-price-formation gap (G-24 struck with this evidence), NOT closable by these mechanisms here and NEVER by an offer adder tuned to the tail."
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2024,
+      "metric": "hours LMP > $300/MWh (C3c scarcity tail)",
+      "magnitude": "model 0h vs actual 8h",
+      "classification": "MODEL MISS (NEISO winter scarcity-price formation; winter fuel-security build implemented + probed neiso-53, DORMANT on this mild backcast year)",
+      "reason": "Same structural item as 2023 (winter build adopted, dormant on this backcast year)."
+    },
+    {
+      "criterion": "price_tail",
+      "year": 2025,
+      "metric": "hours LMP > $300/MWh (C3c scarcity tail)",
+      "magnitude": "model 0h vs actual 20h",
+      "classification": "MODEL MISS (NEISO winter scarcity-price formation; winter fuel-security build implemented + probed neiso-53, DORMANT on this mild backcast year)",
+      "reason": "Same structural item as 2023 (winter build adopted, dormant on this backcast year)."
+    },
+    {
+      "criterion": "storage",
+      "year": 2025,
+      "metric": "C5b storage throughput (pumped-storage + battery discharge)",
+      "magnitude": "model 0.91 vs actual 2.08 TWh (-56.3%; was -49.3% on the neiso-48 keeper)",
+      "classification": "MODEL MISS (downstream of the price_tail / winter-scarcity item)",
+      "reason": "PS arbitrage throughput tracks the intraday price spread. The fast-start tranche pricing + econ-band re-anchor recovered a third of the gap ENDOGENOUSLY (0.74 -> 1.05 TWh, no storage-formulation change \u2014 per the neiso-ps-undercycling diagnosis, the PS number may only move downstream of price structure). The residual under-cycle is winter-concentrated: the LP's cold-month spread stays compressed at the dual-fuel oil-parity cap, and the real Northfield fleet additionally cycles near-daily for reserves/regulation the energy-only LP does not remunerate. Closes with the winter fuel-inventory build and/or in-LP reserve co-optimization value reaching storage; never via a storage knob. DEEPENED by neiso-49 (honest cost, rule #1): the measured-cost ST_GAS committed tranche shaves the artificial evening peak the PS fleet was arbitraging; the residual spread is the same ledgered winter/scarcity price-formation gap, and per the neiso-ps-undercycling diagnosis it may only be recovered via price structure, never a storage knob."
+    },
+    {
+      "criterion": "fuelmix",
+      "klass": "COAL_BIT/ST_GAS",
+      "year": 2023,
+      "metric": "C1 coal + steam-gas winter-energy under-run (within the C1 band, non-gating; documentation)",
+      "magnitude": "COAL_BIT model ~0.06/0.11/0.23 vs actual 0.18/0.24/0.27 TWh (2023/24/25); ST_GAS similar",
+      "classification": "MODEL MISS (structural; same winter fuel-security family as price_tail and storage)",
+      "reason": "The energy-only LP runs coal/steam only at the temperature-floor commitment plus the hours delivered gas is dear enough; the real units ran more on winter fuel-security / local-reliability commitments. Closable only via the documented winter fuel-inventory / seasonal-reliability build, never by cranking the floor slope/cap or an offer adder."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2023,
+      "metric": "C3a demand-weighted price level",
+      "magnitude": "model $31.98 vs actual $35.70 (-10.4%; was -8.3% under the retired, unreproducible keeper)",
+      "classification": "OPEN ROOT CAUSE (honest cost of killing ERCOT offer-band leakage, commit 0c6c833 / rule #25 \u2014 NOT this run's CT scrub)",
+      "reason": "neiso-47's price pass (-4.6/-2.3%) was partly produced by ERCOT-fitted CT_PEAKER/CC_CHP/ST_GAS econ bands that leaked cross-ISO into _NEISO_OFFER_CURVE; commit 0c6c833 killed that leakage (rule #25), de-leaking those bands to neutral 1.0. Model clearing prices fell ~$2/MWh as a result. This CT-floor scrub is price-neutral (A/B dw-LMP +$0.04). Closable ONLY by grounding real NEISO-measured CT/CC_CHP/ST_GAS part-load HR spreads (rule #1 second-step calibration), never by re-introducing the ERCOT-leaked bands (rule #25). ADDENDUM (neiso-50, this bundle): on top of the pre-existing 0c6c833 de-leak gap above, this bundle also loses the retired keeper's HQ_import zonal price separation (never present in any committed commit -- see governance.note) -- roughly -$0.75/MWh (2023), -$0.31/MWh (2024) of the total gap is that lost, unreproducible, non-mechanistic separation, not a new structural regression."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2024,
+      "metric": "C3a demand-weighted price level",
+      "magnitude": "model $36.11 vs actual $39.50 (-8.6%; was -7.8% under the retired, unreproducible keeper)",
+      "classification": "OPEN ROOT CAUSE (honest cost of killing ERCOT offer-band leakage, commit 0c6c833 / rule #25 \u2014 NOT this run's CT scrub)",
+      "reason": "neiso-47's price pass (-4.6/-2.3%) was partly produced by ERCOT-fitted CT_PEAKER/CC_CHP/ST_GAS econ bands that leaked cross-ISO into _NEISO_OFFER_CURVE; commit 0c6c833 killed that leakage (rule #25), de-leaking those bands to neutral 1.0. Model clearing prices fell ~$2/MWh as a result. This CT-floor scrub is price-neutral (A/B dw-LMP +$0.04). Closable ONLY by grounding real NEISO-measured CT/CC_CHP/ST_GAS part-load HR spreads (rule #1 second-step calibration), never by re-introducing the ERCOT-leaked bands (rule #25). ADDENDUM (neiso-50, this bundle): on top of the pre-existing 0c6c833 de-leak gap above, this bundle also loses the retired keeper's HQ_import zonal price separation (never present in any committed commit -- see governance.note) -- roughly -$0.75/MWh (2023), -$0.31/MWh (2024) of the total gap is that lost, unreproducible, non-mechanistic separation, not a new structural regression."
+    },
+    {
+      "criterion": "price_shape",
+      "year": 2024,
+      "metric": "C3b price-shape NRMSE",
+      "magnitude": "NRMSE 0.169 (gate ~0.15); 2023 0.149 / 2025 0.064 pass",
+      "classification": "OPEN ROOT CAUSE (same 0c6c833 de-leak family as price_mean)",
+      "reason": "Same cause as the price_mean caveat: the de-leaked flat econ bands compress the offer-curve shape. Closes with real NEISO offer-band grounding, not ERCOT re-leakage."
+    },
+    {
+      "criterion": "shape",
+      "klass": "ST_GAS",
+      "year": 2023,
+      "metric": "C7 / D1 ST_GAS off-peak diurnal shape (gated class)",
+      "magnitude": "profile_r 0.491 (<0.8); off-peak CV ratio 1.795 (was 4.606 under the fixed-threshold basis; #1515 p70 recompute, immaterial either way)",
+      "classification": "OPEN ROOT CAUSE (residual steam-commitment shape after the neiso-49 re-grounding)",
+      "reason": "neiso-49 closes the ST_GAS level+CV half of C7 (2025 PASSES: r 0.844, cv_ratio 2.87; 2023 CV fixed) via the netload commitment limb + measured offer bands. Remaining gap: profile mis-phase: the measured-band merit dispatch is evening-peaked while the actual Feb/Jul/Sep event days are midday-peaked; the off-peak CV collapse (35.4) IS fixed (4.6). Fix structurally, never re-tune to win C7 back (rules 1/17-20)."
+    },
+    {
+      "criterion": "shape",
+      "klass": "ST_GAS",
+      "year": 2024,
+      "metric": "C7 / D1 ST_GAS off-peak diurnal shape (gated class)",
+      "magnitude": "profile_r 0.725 (<0.8); off-peak CV ratio 0.0 (unchanged)",
+      "classification": "OPEN ROOT CAUSE (residual steam-commitment shape after the neiso-49 re-grounding)",
+      "reason": "neiso-49 closes the ST_GAS level+CV half of C7 (2025 PASSES: r 0.844, cv_ratio 2.87; 2023 CV fixed) via the netload commitment limb + measured offer bands. Remaining gap: flat-floor-only year: at $2.19 HH gas the unit clears no merit hours, so the committed floor profile is intra-day flat (cv 0.0 vs actual 0.183). Coupled to the C3a price-depression family; also the engine flags 36 days on the model net-load basis vs the derivation basis ~110/yr (basis-consistency follow-up). Fix structurally, never re-tune to win C7 back (rules 1/17-20)."
+    },
+    {
+      "criterion": "governance",
+      "metric": "D-3 zero-forcing ablation twin (CLAUDE.md rule 20)",
+      "magnitude": "absent at registration",
+      "classification": "RESOLVED 2026-07-06 (was OWNER-DEFERRED (temporary))",
+      "reason": "This bundle replaces 2026-07-06-neiso-49-stgas-netload, whose own ablation twin (2026-07-06-neiso-49-stgas-netload-ablation) is being retired alongside it (it validated the retired, unreproducible base price level and is not a valid twin for this bundle). The owner explicitly deferred solving a fresh ablation twin pending the C3a determination check (session claude/neiso-49-resolve-confirm-7eb00b). A fresh zero-forcing ablation solve (--zero-forcing-ablation, same recipe, full 2023-2025 span) should be registered as a follow-up; audit_keepers.py E9 will flag this bundle until then. RESOLUTION (2026-07-06): the deferred twin is now registered as 2026-07-06-neiso-50-ablation (bundle results/calibration/neiso49_resolve_confirm-ablation, same recipe, full 2023-2025 span, every merchant floor/bridge neutralized) and linked from this keeper's sidecar \"ablation_twin\" field; keeper-vs-twin per-class deltas are small (max +-0.17 TWh: COAL_BIT -0.17/2025, CC_CHP -0.13/2025, CT_PEAKER +0.17/2025), confirming the keeper is not floor-dependent. audit_keepers.py E9 now passes for this keeper."
+    }
+  ],
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+    "n_entries": 12,
+    "n_residual": 6,
+    "entries": [
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "value": {
+          "CC_REGULAR": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "CT_PEAKER": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "COAL_LIGNITE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_PRB": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_BIT": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_WC": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ]
+        },
+        "n_scalars": 72,
+        "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13). 2026-07-06: the NEISO ST_GAS and CC_CHP bands moved from neutral placeholders to MEASURED grounding (CAMPD marginal HR x the NEISO-native CC reach ratio; derive_campd_marginal_hr.py), and the CT_PEAKER neutral econ bands are measurement-AFFIRMED \u2014 those bands are no longer residual-identified.",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "value": {
+          "offer_curve_smoothing_n": 6,
+          "offer_curve_smoothing_exp": 1.0
+        },
+        "n_scalars": 2,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "COAL_SIGMOID_DEFAULTS[NEISO]",
+        "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid)",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "n_scalars": 4,
+        "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+        "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_multiplier",
+        "where": "run_config.scenario_config.wefor_multiplier",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "value": 0.7,
+        "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "GAS_AVAILABILITY_FACTOR[NEISO]",
+        "where": "constants.py GAS_AVAILABILITY_FACTOR",
+        "identification": "published",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "value": 0.866,
+        "source": "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide \u2014 no per-ISO breakdown exists), 'FOSSIL Gas Primary, All Sizes', EFORd=13.44%",
+        "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
+      },
+      {
+        "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",
+        "where": "constants.py CC_REGULAR_PEAKING_PCT_BY_PLANT (engaged via cc_peaking_per_plant)",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "n_scalars": 4,
+        "source": "per-plant CC peaking-tranche % applied to exactly the four F-class CCs the model over-ran (audit C-12; W1d marker) \u2014 not a published turbine limit",
+        "root_cause": "audit C-12 open item: derive duct-burner share from EIA-860 duct-firing capability or CAMPD max-vs-base output, or fold into the generic curve"
+      },
+      {
+        "name": "reliability_floor coefficients",
+        "where": "data/raw/reference/reliability_floor_coeffs_NEISO.csv",
+        "identification": "measured-physical",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled. 2026-07-06: Connecticut ST_GAS netload limb added (rho 0.51, n 329, commit_frac 0.2796 x min_stable 0.12) \u2014 the rule-19 re-grounding of the two disabled ST_GAS temperature limbs; measured-physical identification.",
+        "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+      },
+      {
+        "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO]",
+        "where": "interchange_config.py per-ISO seam supply-curve ladders",
+        "identification": "residual",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)",
+        "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback",
+        "root_cause": "audit C-6 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "ST_GAS/CC_CHP measured-offer-band reach-ratio dependency (2026-07-06 addendum)",
+        "where": "results/calibration/neiso_stgas_netload (offer_curve_by_group ST_GAS + CC_CHP entries, same 72-scalar surface as the first ledger entry above)",
+        "identification": "derived-dependency (declares a coupling within already-counted scalars; not a new free parameter)",
+        "source": "The ST_GAS 0.79/0.85/0.89 and CC_CHP 1.15/1.17/1.19 bands are the NEISO-native CAMPD-measured marginal heat rate (ST_GAS 0.642/0.692/0.731; CC_CHP flat 0.94-0.97) multiplied by the NEISO-native CC reach ratio 1.223 (= CC_REGULAR econ_high 1.15 / native CC marginal HR 0.940). CC_REGULAR econ_high 1.15 is itself residual-identified (see the first ledger entry's offer_curve_by_group.value.CC_REGULAR.econ_high). So while the ST_GAS/CC_CHP bands are measured-grounded in level, the reach ratio that anchors them to the CC_REGULAR scale is not independent of that residual value.",
+        "root_cause": "wave-manager tranche review 2026-07-06 (#1498 deficiency 6, docs/handoffs/wave-manager-tranche-review-2026-07-06.md): dependency was undeclared at neiso-49's promotion. If CC_REGULAR econ_high (1.15) is ever re-identified (re-derived under a different residual fit), the reach ratio 1.223 changes, and the ST_GAS 0.79/0.85/0.89 and CC_CHP 1.15/1.17/1.19 bands re-derive with it \u2014 they are not independently anchored."
+      },
+      {
+        "name": "neiso_winter_fuel_mustrun (Component B) + neiso_winter_fuelsec_{min_stable_pct,commit_frac,tmin_c}",
+        "where": "run_config.scenario_config.neiso_winter_fuel_mustrun / _min_stable_pct / _commit_frac / _tmin_c",
+        "identification": "measured-physical",
+        "lineage_solves": "adopted 2026-07-07 (G-24); inert on 2023-2025 (moves no scored metric)",
+        "value": {
+          "min_stable_pct": 0.4,
+          "commit_frac": 1.0,
+          "tmin_c": -7.0
+        },
+        "citation": "min_stable_pct 0.40 = subcritical steam-boiler turndown (Merrimack-class coal min-load ~40% nameplate); commit_frac 1.0 = the WRP/IEP fuel-secure steam fleet IS the program fleet; tmin_c -7C = NERC cold-weather forced-outage onset (~20 degF). Program driver: Winter Reliability Program FERC ER14-2407 -> IEP ER19-1428 -> OFSA. None tuned to the C1/C3c/C5b residual (rule 23 frozen). Component B BINDS on the immaterial fuel-secure COAL fleet (D-2 forced share 0.35/0.23/0.02 vs 0 in the twin; COAL <0.3% of ISO load, reported-not-gated per rule 20 v2.1, moves no scored metric); ST_GAS is dropped from Component B when the reliability netload limb is active (rule 24), so ST_GAS forced share is unchanged (owned by that limb)."
+      },
+      {
+        "name": "neiso_winter_fuel_inventory (Component A) + neiso_winter_fuel_start_fill_bbl",
+        "where": "run_config.scenario_config.neiso_winter_fuel_inventory / _start_fill_bbl",
+        "identification": "measured-physical",
+        "lineage_solves": "adopted 2026-07-07 (G-24); budget never binds on 2023-2025",
+        "value": {
+          "start_fill_bbl": "2.8M (WRP low target default)"
+        },
+        "citation": "Nov-Mar oil-burn seasonal budget = start_fill x (1 + delivery_fills) / 5 months, MMBtu-correct over the oil-capable fleet (oil-primary + dual-fuel oil limb on switch hours). start_fill 2.8M bbl = Winter Reliability Program (FERC ER14-2407) 2014/15 low fleet oil-inventory target; delivery rate + tank autonomy from ISO-NE OFSA / WRP studies + EIA-860 (winter-fuel-inventory clean datatype). Forward-regenerable capacity/logistics quantities (rule 13), not measured receipts. Never tuned to the residual; monthly cap 9.79 M MMBtu is never approached (winter draw ~3.3 M/month)."
+      },
+      {
+        "name": "neiso_gas_coldsnap_derate + neiso_gas_derate_{t0_c,slope_per_c,cap}",
+        "where": "run_config.scenario_config.neiso_gas_coldsnap_derate / _t0_c / _slope_per_c / _cap",
+        "identification": "measured-physical",
+        "lineage_solves": "adopted 2026-07-07 (G-24); <=13% cut on 8 cold-peak hours, moves no price",
+        "value": {
+          "t0_c": -7.0,
+          "slope_per_c": 0.018,
+          "cap": 0.2
+        },
+        "citation": "Temperature-dependent forced-outage of non-dual-fuel gas-CC/CT: frac = clip(slope*(t0-TMIN),0,cap) on the winter cold-snap peak hours, keyed to NEISO load-weighted daily TMIN. cap 0.20 = NERC/FERC Winter Storm Elliott (gas fuel-supply ~20% of unplanned outages, largest forced-out category); t0 -7C = NERC cold-onset; slope 0.018 = cap/(t0 - T_extreme). Forward-reproducible from pinned/forecast TMIN, condition-responsive, NOT fitted to the number of >$300 hours (produces zero here)."
+      }
+    ]
+  }
+}
