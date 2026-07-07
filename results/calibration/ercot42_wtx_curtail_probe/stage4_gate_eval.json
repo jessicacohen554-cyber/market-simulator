@@ -1,0 +1,243 @@
+{
+ "_scope_note": "ercot42 WP-B curtailment-driver promotion gate vs the ercot34 keeper (single delta ercot_wtx_curtailment_driver=True). Convention identical to the keeper's stage4_gate_eval: mon_model = demand-weighted zonal monthly mean of the P1 energy price (no overlay/adder), mon_actual = ERCOT RT settlement (bench rt_mon), tails = hours with demand-weighted hourly energy price above threshold vs RT actual. mon_keeper = the committed ercot34 keeper values (its own mon_model). The AS-channel blocks of the keeper's eval (g6, g22, acute) are not reproduced: the driver is a VRE/gas volume mechanism and does not touch the AS/overlay channels those gates score; the keeper's values carry over unchanged. Gates read: G-3-style broad-elevation = max |mon_delta_vs_keeper|; G-2-style level = mae_monthly_vs_actual vs mae_monthly_keeper; G-4-style tails vs keeper tails.",
+ "2023": {
+  "mon_model": [
+   34.95,
+   24.46,
+   27.81,
+   27.18,
+   26.71,
+   57.07,
+   38.53,
+   154.21,
+   97.04,
+   29.14,
+   28.21,
+   24.4
+  ],
+  "mon_actual": [
+   22.27,
+   18.16,
+   25.84,
+   19.81,
+   29.53,
+   61.73,
+   42.65,
+   191.71,
+   86.85,
+   27.81,
+   29.65,
+   21.5
+  ],
+  "mon_keeper": [
+   34.4,
+   24.02,
+   27.15,
+   26.03,
+   26.49,
+   53.48,
+   36.67,
+   141.55,
+   94.22,
+   28.86,
+   27.87,
+   24.1
+  ],
+  "mon_delta_vs_keeper": [
+   0.55,
+   0.44,
+   0.66,
+   1.15,
+   0.22,
+   3.59,
+   1.86,
+   12.66,
+   2.82,
+   0.28,
+   0.34,
+   0.3
+  ],
+  "max_abs_mon_delta_vs_keeper": 12.66,
+  "ann_dw": 52.68,
+  "ann_dw_keeper": 50.16,
+  "mae_monthly_vs_actual": 7.77,
+  "mae_monthly_keeper": 8.81,
+  "tails": {
+   "gt200": {
+    "model": 103,
+    "actual": 181,
+    "keeper": 92
+   },
+   "gt500": {
+    "model": 94,
+    "actual": 104,
+    "keeper": 83
+   },
+   "gt1000": {
+    "model": 43,
+    "actual": 61,
+    "keeper": 39
+   }
+  }
+ },
+ "2024": {
+  "mon_model": [
+   41.67,
+   17.52,
+   19.61,
+   20.37,
+   24.65,
+   28.76,
+   24.13,
+   51.94,
+   25.29,
+   24.53,
+   26.92,
+   27.13
+  ],
+  "mon_actual": [
+   32.87,
+   14.41,
+   21.04,
+   24.38,
+   37.71,
+   28.0,
+   22.56,
+   36.03,
+   24.29,
+   23.94,
+   30.24,
+   25.61
+  ],
+  "mon_keeper": [
+   36.79,
+   17.69,
+   20.42,
+   26.12,
+   26.57,
+   28.36,
+   24.01,
+   35.55,
+   25.31,
+   24.89,
+   28.59,
+   26.87
+  ],
+  "mon_delta_vs_keeper": [
+   4.88,
+   -0.17,
+   -0.81,
+   -5.75,
+   -1.92,
+   0.4,
+   0.12,
+   16.39,
+   -0.02,
+   -0.36,
+   -1.67,
+   0.26
+  ],
+  "max_abs_mon_delta_vs_keeper": 16.39,
+  "ann_dw": 28.6,
+  "ann_dw_keeper": 27.16,
+  "mae_monthly_vs_actual": 4.59,
+  "mae_monthly_keeper": 2.32,
+  "tails": {
+   "gt200": {
+    "model": 24,
+    "actual": 53,
+    "keeper": 22
+   },
+   "gt500": {
+    "model": 20,
+    "actual": 16,
+    "keeper": 17
+   },
+   "gt1000": {
+    "model": 10,
+    "actual": 8,
+    "keeper": 6
+   }
+  }
+ },
+ "2025": {
+  "mon_model": [
+   36.74,
+   36.6,
+   31.8,
+   31.76,
+   33.24,
+   30.07,
+   33.63,
+   35.53,
+   31.1,
+   32.41,
+   34.3,
+   36.57
+  ],
+  "mon_actual": [
+   31.69,
+   31.39,
+   26.62,
+   31.13,
+   36.42,
+   29.09,
+   33.43,
+   36.35,
+   31.26,
+   33.33,
+   33.73,
+   35.19
+  ],
+  "mon_keeper": [
+   37.0,
+   36.64,
+   34.01,
+   32.38,
+   41.93,
+   29.99,
+   37.12,
+   36.95,
+   31.57,
+   32.99,
+   34.23,
+   36.67
+  ],
+  "mon_delta_vs_keeper": [
+   -0.26,
+   -0.04,
+   -2.21,
+   -0.62,
+   -8.69,
+   0.08,
+   -3.49,
+   -1.42,
+   -0.47,
+   -0.58,
+   0.07,
+   -0.1
+  ],
+  "max_abs_mon_delta_vs_keeper": 8.69,
+  "ann_dw": 33.6,
+  "ann_dw_keeper": 35.14,
+  "mae_monthly_vs_actual": 2.02,
+  "mae_monthly_keeper": 2.71,
+  "tails": {
+   "gt200": {
+    "model": 1,
+    "actual": 31,
+    "keeper": 7
+   },
+   "gt500": {
+    "model": 1,
+    "actual": 3,
+    "keeper": 5
+   },
+   "gt1000": {
+    "model": 1,
+    "actual": 3,
+    "keeper": 4
+   }
+  }
+ }
+}

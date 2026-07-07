@@ -1,0 +1,32 @@
+{
+ "_note": "LOYO verdict scoring for the WP-B curtailment driver (rules 19/22): per hold year, the congestion-share table and per-tech depths are re-derived on the OTHER two years and the hold year re-solved alone with the probe's exact keeper recipe (throwaway diagnostics, never registered; committed reference CSV restored afterwards). Metrics on the same conventions as stage4_gate_eval (demand-weighted energy price vs RT; gas classes excl CT_CHP vs EIA-930 gas). Pooled-probe comparators: C3a +8.9/+6.6/+3.2; C3b 0.256/0.252/0.085; C3c gt200 103/24/1; C2 gas -5.9/-5.7/-6.3 (ablation depth=0: -7.7/-7.6/-8.7). Every year-level verdict band reproduces under LOYO; 2023 C3a sits at the commercial-band edge (+10.0%).",
+ "holds": {
+  "2023": {
+   "depth_wind_train": 0.0998,
+   "depth_solar_train": 0.1558,
+   "c3a_ann_dw": 53.19,
+   "c3a_pct_vs_rt": 10.0,
+   "c3b_nrmse_rt": 0.264,
+   "c3c_gt200_model": 105,
+   "c2_gas_pct_vs_e930": -5.6
+  },
+  "2024": {
+   "depth_wind_train": 0.0996,
+   "depth_solar_train": 0.1554,
+   "c3a_ann_dw": 28.59,
+   "c3a_pct_vs_rt": 6.5,
+   "c3b_nrmse_rt": 0.251,
+   "c3c_gt200_model": 24,
+   "c2_gas_pct_vs_e930": -5.6
+  },
+  "2025": {
+   "depth_wind_train": 0.0984,
+   "depth_solar_train": 0.1864,
+   "c3a_ann_dw": 33.54,
+   "c3a_pct_vs_rt": 3.2,
+   "c3b_nrmse_rt": 0.085,
+   "c3c_gt200_model": 1,
+   "c2_gas_pct_vs_e930": -6.0
+  }
+ }
+}

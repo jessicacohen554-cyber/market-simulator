@@ -1,0 +1,261 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "ercot42 wtx-curtailment-driver keeper-promotion gate session 2026-07-07 (full scored bundle; owner promotion sign-off PENDING)",
+    "note": "WP-B West Texas Export corridor VRE curtailment-share driver on the ercot34 keeper recipe, single delta ercot_wtx_curtailment_driver=True (docs/handoffs/ercot-vre-curtailment-wpb-driver-2026-07.md). SHAPE = measured NP6-86 SCED West-corridor binding frequency binned by within-year net-load decile x hour x season, geo-attributed via the authoritative ERCOT Settlement-Point/electrical-bus mapping (NP4-160, LZ_WEST precision 1.00); never fit to the [3e] curtailment volume or any price residual; LOYO-reproduces the binding-frequency distribution. LEVEL = one per-tech depth coefficient (wind 0.0998 / solar 0.1633) converting congestion incidence into curtailed fraction, centred on the measured curtailment MW quantity (HSL - delivered) exactly like the RTOLCAP-forward deliv coefficient; LOYO-stable 0.0984-0.0998 (wind). OWNER RULING 2026-07-07: the depth coefficient is ACCEPTED as defensible and logged as a documented ASSUMPTION, not a disqualifying caveat - external precedent is mainstream (NREL ReEDS, Cambium, EIA NEMS, Aurora, EPA IPM all use reduced-form historically/simulation-calibrated curtailment representations for sub-zonal congestion); this construction is more disciplined (measured shape + one LOYO-stable scalar, not a free derate). Zero-forcing ablation twin (depth=0) registered alongside and reproduces the keeper byte-faithfully - all movement is the measured driver. DOCUMENTED ASSUMPTIONS (forecast leg, handoff \u00a78): (1) the within-year net-load percentile axis normalizes away the absolute year-over-year congestion rise - it re-composes which hours are congested but pins decile-conditional depth at the 2023-25 level, so congestion DEPTH under-escalates at deep penetration (conservative); (2) share/depth encode the 2023-25 West-corridor network topology - future Permian/CREZ transmission builds would ease the congestion and the driver does not auto-relax (no speculative transmission-additions scaler is fitted). Applied only where the year carries an uncurtailed potential basis (measured HSL in backcast; reference-rate gross-up in forecast) - no double-curtailment. Everything else is the ercot34 stack unchanged, including its inherited fitted surface (no scalar re-tuned; this run adds the two entries below)."
+  },
+  "exceptions": [
+    {
+      "criterion": "sysvol",
+      "family": "gas",
+      "year": 2025,
+      "magnitude": "-4.0% vs EIA-930 grid",
+      "reason": "Inherited ercot34 limitation, IMPROVED by the WP-B curtailment driver (-5.0% -> -4.0%): 2025 preliminary EIA-923 vintage (9/41 CC_REGULAR, 24/38 CT_PEAKER plants missing) - no trustworthy per-class actual, family falls back to the EIA-930 aggregate. Re-score when the final 923 vintage lands."
+    }
+  ],
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20) \u2014 inherited verbatim by ercot34 (no scalar re-tuned); WS-A + West-floor entries appended 2026-07-06; WP-B curtailment-driver entries appended 2026-07-07 (ercot42 promotion gate)",
+    "n_entries": 14,
+    "n_residual": 8,
+    "entries": [
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "value": {
+          "CC_REGULAR": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CC_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_CHP": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "CT_PEAKER": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "CT_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "ST_GAS_INTERMEDIATE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "pct_peaking",
+            "peak"
+          ],
+          "COAL_LIGNITE": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_PRB": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_BIT": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL_WC": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ],
+          "COAL": [
+            "committed",
+            "econ_high",
+            "econ_low",
+            "econ_low_share",
+            "peak"
+          ]
+        },
+        "n_scalars": 72,
+        "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "value": {
+          "offer_curve_smoothing_n": 6,
+          "offer_curve_smoothing_mid": 0.35,
+          "offer_curve_smoothing_exp": 1.0
+        },
+        "n_scalars": 3,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "COAL_SIGMOID_DEFAULTS[ERCOT]",
+        "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_lignite_passthrough_sigmoid)",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "n_scalars": 8,
+        "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+        "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_multiplier",
+        "where": "run_config.scenario_config.wefor_multiplier",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "value": 0.7,
+        "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_residual",
+        "where": "run_config.scenario_config.wefor_residual (groups ['ST_CHP', 'ST_GAS'])",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "value": 0.06,
+        "source": "wind-EFOR residual relief term (audit C-15) \u2014 residual-identified by name",
+        "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "battery_dispatch_adder",
+        "where": "run_config.scenario_config.battery_dispatch_adder",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "value": 10.0,
+        "source": "grid-battery throughput/cycling adder $/MWh \u2014 inside the literature range (NREL ATB 2024 cycle-life ~$15-25/MWh; Xu et al. 2018 $25-50/MWh) but the specific value is calibrated",
+        "root_cause": "reduced-form stand-in for cycling degradation + AS opportunity cost; forward-valid replacement is the measured AS power reservation (storage_as_commitment) + an ATB-derived degradation cost \u2014 open item to re-derive from those"
+      },
+      {
+        "name": "GAS_AVAILABILITY_FACTOR[ERCOT]",
+        "where": "constants.py GAS_AVAILABILITY_FACTOR",
+        "identification": "published",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "value": 0.866,
+        "source": "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide \u2014 no per-ISO breakdown exists), 'FOSSIL Gas Primary, All Sizes', EFORd=13.44%",
+        "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
+      },
+      {
+        "name": "coal_take_or_pay_tranches",
+        "where": "scenarios.py coal tranche shares 0.30/0.25/0.45 + passthrough 0.35 (constants.py:154)",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "n_scalars": 4,
+        "source": "core coal offer-curve step sizes (audit C-8) \u2014 'Tier 3 (calibration)'; sanctioned mechanism, undisciplined values",
+        "root_cause": "audit C-8: ground on contract-structure data (EIA-923 fuel-cost dispersion) or freeze via rule 23; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1336"
+      },
+      {
+        "name": "CHP_BTM_PCT_BY_SECTOR['merchant']",
+        "where": "constants.py CHP_BTM_PCT_BY_SECTOR",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "value": 35.0,
+        "source": "merchant CHP behind-the-meter share \u2014 industrial/commercial re-derived from EIA-923 Schedule-8 (S3), merchant retained at its prior fitted value (audit C-4; W1d marker)",
+        "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+      },
+      {
+        "name": "reliability_floor coefficients",
+        "where": "data/raw/reference/reliability_floor_coeffs_ERCOT.csv",
+        "identification": "measured-physical",
+        "lineage_solves": ">=165 solves (audit \u00a75.1)",
+        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+        "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+      },
+      {
+        "name": "ercot_rtolcap_forward coefficients",
+        "where": "data/raw/reference/ercot_rtolcap_forward_coeffs (scripts/derive_ercot_rtolcap_forward.py); engaged via ercot_reserve_supply_forward",
+        "identification": "measured",
+        "lineage_solves": "identification on the measured RTOLCAP/RTOFFCAP MW series BEFORE any dispatch run (validate_ercot_rtolcap_forward.py); 2 registered probes (ercot40 drifted-config, ercot34 faithful-config)",
+        "source": "per-class on-line headroom-realization shares (committed CAMPD extracts, net-load percentile x season) x reserve-eligible capacity x a deliverability coefficient fit to the measured RTOLCAP/RTOFFCAP QUANTITY (rule 23: re-derives only on source-data updates)",
+        "root_cause": "level residuals +10.6/-5.6/-12.0% (2023 real-time scarcity depletion; 2025 storage/commitment growth beyond the fixed backcast base) \u2014 documented, never price-fit; coverage-ratio gate (median ~2x) guards the ercot27 exact-coverage artifact"
+      },
+      {
+        "name": "ercot_west_gas_delivered_floor",
+        "where": "run_config.scenario_config.ercot_west_gas_delivered_floor",
+        "identification": "measured-physical",
+        "value": 0.4,
+        "source": "West/Panhandle delivered burner-tip floor at the transport-bound minimum during Waha hub collapse \u2014 'a physical transport-bound input, not a CT residual fit' (scenarios.py field doc). Part of the keeper's own resolved config; surfaced into this ledger by the G-12 finding (it was previously invisible to replays).",
+        "root_cause": "open: cite the specific transport-rate source in docs/parameter-citations.md (the field pre-dates this run; carried unchanged from ercot32's resolved config)"
+      },
+      {
+        "name": "ercot_wtx_congestion_share(decile,hour,season)",
+        "where": "data/raw/reference/ercot_wtx_curtailment_share.csv (scripts/derive_ercot_wtx_curtailment_share.py)",
+        "identification": "measured",
+        "lineage_solves": "0 (derived from NP6-86 SCED binding incidence + NP4-160 SP crosswalk; frozen against residuals, rule 23)",
+        "value": "measured West-corridor binding-frequency table; LOYO-reproduces the binding-frequency distribution (shape corr +0.34/+0.37/+0.34)"
+      },
+      {
+        "name": "ercot_wtx_curtail_depth_wind / _solar",
+        "where": "ScenarioConfig.ercot_wtx_curtail_depth_wind / _solar",
+        "identification": "outcome-anchored (measured curtailment MW quantity, HSL - delivered; owner-accepted documented assumption 2026-07-07)",
+        "lineage_solves": "derive-time closed form per year + LOYO (no solve sweep); RTOLCAP-forward deliv precedent",
+        "value": {
+          "wind": 0.0998,
+          "solar": 0.1633,
+          "loyo_wind": [
+            0.0998,
+            0.0996,
+            0.0984
+          ]
+        }
+      }
+    ],
+    "n_outcome_anchored": 1
+  }
+}

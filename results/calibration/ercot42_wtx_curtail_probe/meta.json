@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T03:31:49",
+  "timestamp": "2026-07-07T05:13:41",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -244,10 +244,10 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/ERCOT/eia930-6a9d718be8dd.parquet",
+    "eia930": "../_shared/ERCOT/eia930-003496dd6dd1.parquet",
     "eia923": "../_shared/ERCOT/eia923-1baf3fae644b.parquet",
     "campd": "../_shared/ERCOT/campd-e42e97159860.parquet"
   },
-  "git_sha": "b351b21",
+  "git_sha": "58aa5cc",
   "highspy_version": "1.14.0"
 }
