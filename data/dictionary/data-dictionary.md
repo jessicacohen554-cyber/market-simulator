@@ -62,6 +62,7 @@ for the market split.
 | ramp-capability | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
+| nyiso-downstate-gas | — | — | — | — | 2023–2025 | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -515,8 +516,8 @@ Measured neighbor-border hourly Day-Ahead LMP. Schema:
 |---|---|---|---|---|
 | `year` | `int64` | `none` | no | Calendar year of the price observation. |
 | `hour` | `int64` | `none` | no | Hour-of-year index [0..8759] on the model's fixed non-leap local-time calendar (Pacific for CAISO, Central for MISO). Feb 29 is excluded; DST spring-forward gap interpolated (limit=2). |
-| `hub` | `string` | `none` | no | Border hub identifier. CAISO: MALIN (COI/PDCI PNW scheduling point), PALOVRDE (Path-46 desert-SW scheduling point). MISO: PJM_WEST (equal-weight mean of CHICAGO GEN / AEP GEN / ATSI GEN hubs). |
-| `price` | `float64` | `usd_per_mwh` | yes | Day-Ahead total LMP ($/MWh). CAISO: energy + congestion + loss (MCE+MCC+MCL), GHG excluded (re-added per-tranche by the injector). MISO/PJM: total_lmp_da (energy + congestion + loss). NaN for hours with no data (OASIS retention gap, missing source). |
+| `hub` | `string` | `none` | no | Border hub identifier. CAISO: MALIN (COI/PDCI PNW scheduling point), PALOVRDE (Path-46 desert-SW scheduling point). MISO: PJM_WEST (equal-weight mean of CHICAGO GEN / AEP GEN / ATSI GEN hubs). NEISO: NYISO_HQ (NYISO "H Q" proxy bus — HQ's measured alternative- market price), NYISO_NPX (NYISO "NPX" proxy bus — the NY-side price at the NY-NE interface). |
+| `price` | `float64` | `usd_per_mwh` | yes | Day-Ahead total LMP ($/MWh). CAISO: energy + congestion + loss (MCE+MCC+MCL), GHG excluded (re-added per-tranche by the injector). MISO/PJM: total_lmp_da (energy + congestion + loss). NEISO: NYISO zonal "LBMP ($/MWHr)" at the proxy buses. NaN for hours with no data (OASIS retention gap, missing source). |
 
 ## zonal-shares
 
@@ -865,3 +866,34 @@ sector-keyed chp_btm_pct default for forecast years). Schema:
 | `n_years` | `int64` | `none` | no | Count of distinct years pooled into this row's totals. |
 | `first_year` | `int64` | `none` | no | Earliest calendar year contributing to this row. |
 | `last_year` | `int64` | `none` | no | Latest calendar year contributing to this row. |
+
+## nyiso-downstate-gas
+
+Daily downstate NYISO delivered-gas index, per zone, for the non-firm LM6000
+CT-peaker fleet (NYC zone J + Long Island zone K). Schema:
+[`schema/nyiso-downstate-gas.schema.yaml`](schema/nyiso-downstate-gas.schema.yaml).
+
+- **Keys:** `iso`, `zone`, `date`
+- **Reconciles:** The measured Transco Zone 6 NY pipeline-hub daily spot
+  (`transco_z6_ny_daily.csv`, the peaker's own commodity), Henry Hub daily
+  (`henry_hub_daily.csv`, provenance), and the measured monthly per-LDC
+  non-firm transportation delivery rate
+  (`nyiso_downstate_ldc_transport_monthly.csv`: KEDNY SC-22 for NYC, KEDLI
+  SC-19 for Long Island) — into one daily series per zone `delivered_gas =
+  transco_z6_ny_daily + ldc_transport_adder_month`, interpolated to every
+  calendar day. Each component is a measured, forward-native market/tariff
+  input (rule-13); nothing fitted to a residual. This v2 per-zone transport
+  construction supersedes the v1 statewide EIA-citygate premium (the
+  interruptible peakers are transport customers). Consumed by
+  `market_sim.data.fuel.apply_nyiso_downstate_ct_gas_daily` to re-ground the
+  downstate CT-peaker offer level.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (NYISO). |
+| `zone` | `string` | `none` | no | Downstate model zone the delivered index applies to (NYC or Long_Island). |
+| `date` | `datetime64[ns]` | `calendar_date` | no | Calendar day (every day in the covered year; non-trading days interpolated). |
+| `henry_hub_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | EIA Henry Hub daily spot ($/MMBtu), interpolated to every calendar day (provenance component). |
+| `transco_z6_ny_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | Measured Transco Zone 6 NY pipeline-hub daily spot ($/MMBtu), interpolated to every calendar day (the peaker's commodity index). |
+| `ldc_transport_adder_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | Monthly LDC non-firm transportation delivery rate for the zone's LDC (KEDNY SC-22 / KEDLI SC-19, Tier 1, incl. delivery-rate adjustments), broadcast to each day of the month. |
+| `delivered_gas_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | Downstate non-firm transport delivered-gas index = transco_z6_ny_usd_per_mmbtu + ldc_transport_adder_usd_per_mmbtu. |
