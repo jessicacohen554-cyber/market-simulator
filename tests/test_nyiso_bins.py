@@ -238,8 +238,11 @@ class TestNyisoBinsPlantEmissionRatesV2(unittest.TestCase):
 
     G-39 §9.6 backcast-reachability fix: `use_plant_emission_rates_v2` was
     silently unreachable from `bins_to_fleet` (the nyiso-53 v2-on/off twin
-    pair solved byte-identical). Flag off must stay byte-identical; flag on
-    must override binned NYISO plants' CO2 rates from the committed artifact.
+    pair solved byte-identical). `use_plant_emission_rates_v2` defaults to
+    True (scenarios.py) — measured rates are the default fleet, so flag-on
+    must reproduce the default byte-identically and flag-off must revert a
+    material share of binned NYISO plants' CO2 rates off the committed
+    artifact.
     """
 
     @classmethod
@@ -259,24 +262,25 @@ class TestNyisoBinsPlantEmissionRatesV2(unittest.TestCase):
         fleet, _ = bins_to_fleet(synth, ZONES, config)
         return fleet
 
-    def test_flag_off_is_byte_identical(self):
+    def test_flag_on_is_byte_identical_to_default(self):
         base = self._fleet()
-        off = self._fleet(use_plant_emission_rates_v2=False)
+        on = self._fleet(use_plant_emission_rates_v2=True)
         self.assertEqual(
             [(g.unit_id, g.emission_rate_co2) for g in base],
-            [(g.unit_id, g.emission_rate_co2) for g in off],
+            [(g.unit_id, g.emission_rate_co2) for g in on],
         )
 
-    def test_flag_on_overrides_binned_plant_rates(self):
+    def test_flag_off_reverts_binned_plant_rates(self):
         base = {g.unit_id: g.emission_rate_co2 for g in self._fleet()}
-        on = self._fleet(use_plant_emission_rates_v2=True)
+        off = self._fleet(use_plant_emission_rates_v2=False)
         changed = [
             g
-            for g in on
+            for g in off
             if g.plant_code > 0 and base.get(g.unit_id) != g.emission_rate_co2
         ]
         # The committed artifact carries measured rates for most of the CAMPD
-        # NYISO fleet — a material share of binned tranches must move.
+        # NYISO fleet by default — turning it off must revert a material
+        # share of binned tranches back to the legacy pooled rate.
         self.assertGreater(len(changed), 50)
         # And a moved rate is a physical CO2 intensity, not a garbage value.
         for g in changed[:20]:
