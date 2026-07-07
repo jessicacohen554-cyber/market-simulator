@@ -40,6 +40,60 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-07 — CAISO — W3a seam-clock forensics: the seam-diurnal attribution was a timezone artifact (WITHDRAWN); corridor-envelope clock fixed in the LP (`caiso-65` A/B); C3a body reattributed to belly gas commitment — keeper stays caiso-60
+
+**Lane:** caiso-seam-diurnal-shape-w3a, commissioned to build the
+FINDING-caiso-seam-diurnal fix (neighbor evening-scarcity withdrawal). The
+pre-build evidence pass instead **falsified the FINDING's central table**: its
+"measured actual" hod column reproduces to the MW as the UTC-hod bucketing of
+EIA-930 −TI (2023 h0/h12/h19/h21 = 948/5,131/669/200 vs the quoted
+955/5,131/669/200), 7–8 hours out of phase with the model column. The
+commissioned mechanism was therefore **not built** (it would have tuned the
+seam toward the artifact — real evening flows RISE into the neighbors' peak;
+rule 13). Full forensics: `results/calibration/FINDING-caiso-seam-tz-correction-2026-07-07.md`
+(supersedes §2/§5 of the seam FINDING; banner added there; G-15/G-20d/G-61
+register rows corrected).
+
+**Layer-2 discovery (in-LP, fixed + A/B'd).** The CISO per-DIBA interchange
+parquet's `local_time` stamps lag the model's hourly frame by a measured 1 h
+(standard) / 2 h (daylight) — lag-scan corr 0.972/0.961 at −1/−2 vs ≤0.930
+elsewhere; the model frame itself is wall-true (January solar exactly within
+astronomical daylight {7..16}; 2024-04-08 eclipse dip exactly at hod 11). The
+keeper's measured (month × hod) p95 corridor envelope therefore reached the LP
+1–2 h late. Fixed at the read seam (`eia_loader._caiso_interchange_model_clock`,
+pinned constants + unit tests) and guarded by
+`scripts/validate_caiso_seam_hod_frame.py`, which re-measures the lag from
+source and fails on drift (a re-fetched parquet with honest stamps cannot be
+silently double-shifted). A/B at HEAD, all years, one bundle:
+the registered caiso-61 recipe re-solved as the base arm (its corridor hods
+reproduce the seam FINDING's model column exactly) vs
+`caiso65_seam_envelope_clock` (single-delta envelope-clock fix): hod-mean
+corridor-flow error improves every year (mean |Δ| 1,402→1,362 / 1,803→1,692 /
+1,979→1,816 MW), concentrated at the phase edges (h9 over-import −508/−620/
+−670 MW; h18 under-import +504/+293/+146 toward the real base), λ a near-wash
+(±$0.0–0.8 by hod) — the pre-registered expectation, since the envelope is
+rarely price-setting and the body is internal. caiso-65 registered per rule
+15 with its `--zero-forcing-ablation` twin.
+
+**True residual (both sides on the model clock).** Midday +2.5–3.3 GW
+OVER-import at the (previously mis-phased) envelope cap; overnight/evening
+−0.6–2.3 GW UNDER-import, price-gated (border-LMP + wheel + CARB wedge —
+2023 DSW_CCGT ≈ hub+$16.2 — structurally deletes the revealed 4.3–5.9 GW
+contracted/self-scheduled base; the MISO-G-23 signature at a self-referential
+border price); NO evening over-import. Model solar ≈ measured (the "phantom
+evening solar cliff" seen mid-forensics was a frame misread of the fueltype
+file — the HSL profiles are eclipse-verified). **The C3a body's worst bucket
+reattributes to belly gas commitment:** measured CAISO runs 3.1–5.2 GW MORE
+gas through the belly than the model while printing $13–33 (committed-gas
+surplus → curtailment/import margin) where the model's exact-fit belly is
+gas-marginal at $37–59. Consequences threaded into G-15 (residual = belly
+commitment grounding + seam contracted base), G-61 (coupling inverted;
+caiso-63 adoption now carries a belly caveat; (c) blocked on the belly, not
+the seam), G-20d (relocation withdrawn; reserve-channel inertness stands).
+Open data-provider question filed: the EIA-930 extract's `Demand` column sits
++1 h from the OASIS SLD frame while its generation columns are
+astronomy-exact (model internally consistent either way).
+
 ### 2026-07-07 — CAISO — W1a continuation (G-61): all three §7 RA-bridge paths built — quantity gate a measured no-op, startup-aware detection removes ~40% of forced energy (`caiso-63`), curtailed-VRE release measured inert (`caiso-64`) — keeper stays caiso-60
 
 **Gap G-61** (CC over-commitment via the P1-native RA bridge, D-8 closure §7; register row
@@ -108,6 +162,10 @@ reserve-tight; no correctly-parameterized reserve mechanism can source the
 2024/25 tail.
 
 **Root cause relocated (G-20d → seam; `FINDING-caiso-seam-diurnal-2026-07-07.md`).**
+*[SUPERSEDED same day — the "measured actual" flow table under this paragraph was
+UTC-bucketed; the attribution inverts on the true clock. See the W3a entry above and
+`FINDING-caiso-seam-tz-correction-2026-07-07.md`; the caiso-61/62 probe results in this
+entry stand.]*
 Hour-of-day decomposition of the C3a +20–42% overshoot on caiso-61: the
 evening PEAK is essentially right (h19 Δ +3.0/−0.6/+8.1 $/MWh) — the BODY is
 inflated (midday +$17–34, the worst bucket; overnight +$8–25), so the model's
