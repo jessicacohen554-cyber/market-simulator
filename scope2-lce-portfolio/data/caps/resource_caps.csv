@@ -72,3 +72,37 @@ NYISO,gas_cc_ccs_retrofit,1500,geology-limited,"Fleet-share basis would be ~6,00
 NYISO,gas_cc_ccs_new,2000,geology-limited,"Thin: no in-state storage geology, CLCPA hostile to new gas; nonzero only via interstate CO2 transport (ADR 0012)."
 NEISO,gas_cc_ccs_retrofit,1000,geology-limited,"Fleet-share basis would be ~7,200 MW (50% of New England ~14.4 GW NG-CC, EIA-860 2024) but New England has no viable onshore CO2 storage basin and no CO2 pipelines; only long-haul transport or offshore storage could serve it, so the cap is geology-derated furthest (ADR 0012)."
 NEISO,gas_cc_ccs_new,1500,geology-limited,"Thinnest US CO2 storage geology + winter-constrained gas (Algonquin) - small cap reflects both (ADR 0012)."
+ERCOT,battery_12h,80000,resource-potential,ERCOT 12h Li-ion headroom (mirrors battery_8h).
+ERCOT,nuclear_uprate,360,fleet-share,~15% of procurable ERCOT existing-nuclear as uprate headroom (EIA power uprate potential).
+ERCOT,hydro_ror,120,fleet-share,~40% of ERCOT conventional-hydro band as run-of-river attribute headroom.
+ERCOT,onshore_wind_ppa,60000,resource-potential,Attribute-basis onshore wind (mirrors onshore_wind cap).
+ERCOT,solar_pv_ppa,60000,resource-potential,Attribute-basis solar (mirrors solar_pv cap).
+CAISO,battery_12h,60000,resource-potential,CAISO 12h Li-ion headroom (mirrors battery_8h).
+CAISO,nuclear_uprate,165,fleet-share,~15% of procurable CAISO existing-nuclear as uprate headroom (EIA power uprate potential).
+CAISO,hydro_ror,1600,fleet-share,~40% of CAISO conventional-hydro band as run-of-river attribute headroom.
+CAISO,onshore_wind_ppa,20000,resource-potential,Attribute-basis onshore wind (mirrors onshore_wind cap).
+CAISO,solar_pv_ppa,50000,resource-potential,Attribute-basis solar (mirrors solar_pv cap).
+CAISO,offshore_wind_ppa,15000,resource-potential,Attribute-basis offshore wind (mirrors offshore_wind cap).
+PJM,battery_12h,60000,resource-potential,PJM 12h Li-ion headroom (mirrors battery_8h).
+PJM,nuclear_uprate,2400,fleet-share,~15% of procurable PJM existing-nuclear as uprate headroom (EIA power uprate potential).
+PJM,hydro_ror,600,fleet-share,~40% of PJM conventional-hydro band as run-of-river attribute headroom.
+PJM,onshore_wind_ppa,30000,resource-potential,Attribute-basis onshore wind (mirrors onshore_wind cap).
+PJM,solar_pv_ppa,50000,resource-potential,Attribute-basis solar (mirrors solar_pv cap).
+PJM,offshore_wind_ppa,20000,resource-potential,Attribute-basis offshore wind (mirrors offshore_wind cap).
+MISO,battery_12h,60000,resource-potential,MISO 12h Li-ion headroom (mirrors battery_8h).
+MISO,nuclear_uprate,900,fleet-share,~15% of procurable MISO existing-nuclear as uprate headroom (EIA power uprate potential).
+MISO,hydro_ror,400,fleet-share,~40% of MISO conventional-hydro band as run-of-river attribute headroom.
+MISO,onshore_wind_ppa,60000,resource-potential,Attribute-basis onshore wind (mirrors onshore_wind cap).
+MISO,solar_pv_ppa,60000,resource-potential,Attribute-basis solar (mirrors solar_pv cap).
+NYISO,battery_12h,30000,resource-potential,NYISO 12h Li-ion headroom (mirrors battery_8h).
+NYISO,nuclear_uprate,255,fleet-share,~15% of procurable NYISO existing-nuclear as uprate headroom (EIA power uprate potential).
+NYISO,hydro_ror,1000,fleet-share,~40% of NYISO conventional-hydro band as run-of-river attribute headroom.
+NYISO,onshore_wind_ppa,15000,resource-potential,Attribute-basis onshore wind (mirrors onshore_wind cap).
+NYISO,solar_pv_ppa,25000,resource-potential,Attribute-basis solar (mirrors solar_pv cap).
+NYISO,offshore_wind_ppa,20000,resource-potential,Attribute-basis offshore wind (mirrors offshore_wind cap).
+NEISO,battery_12h,20000,resource-potential,NEISO 12h Li-ion headroom (mirrors battery_8h).
+NEISO,nuclear_uprate,255,fleet-share,~15% of procurable NEISO existing-nuclear as uprate headroom (EIA power uprate potential).
+NEISO,hydro_ror,600,fleet-share,~40% of NEISO conventional-hydro band as run-of-river attribute headroom.
+NEISO,onshore_wind_ppa,10000,resource-potential,Attribute-basis onshore wind (mirrors onshore_wind cap).
+NEISO,solar_pv_ppa,25000,resource-potential,Attribute-basis solar (mirrors solar_pv cap).
+NEISO,offshore_wind_ppa,25000,resource-potential,Attribute-basis offshore wind (mirrors offshore_wind cap).
