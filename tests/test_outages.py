@@ -308,12 +308,14 @@ class NEISOUnitOutageSmokeTest(unittest.TestCase):
             {2364},
             "COAL group must be exclusively Merrimack (2364)",
         )
-        # Coal rows now span all three years (NH_2025 unit-level has landed).
+        # Coal rows span the three backcast years plus 2022 — the NEISO
+        # calibration-complete marker (2026-07-07) authorized the one-shot
+        # holdout intake, which appended the 2022 windows (rule 22).
         coal_years = set(coal["outage_start"].str[:4].unique())
         self.assertEqual(
             coal_years,
-            {"2023", "2024", "2025"},
-            "COAL rows expected in every backcast year",
+            {"2022", "2023", "2024", "2025"},
+            "COAL rows expected in every backcast + holdout-validation year",
         )
 
     def test_kleen_energy_cc_windows_detected(self):
