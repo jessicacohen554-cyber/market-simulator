@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-07-caiso-66-g61b-startup",
+  "label": "caiso 66 g61b startup",
+  "date": "2026-07-07",
+  "shorthand": "caiso-66-g61b-startup",
+  "definition": "PROBE (2026-07-07; G-61 path (b) transplanted onto the caiso-65 seam-envelope-clock base — NOT promoted, keeper stays caiso-65, decision referred to the owner). The caiso-65 keeper recipe re-solved with caiso_ra_bridge_startup_aware=true: a base-cost P0 run anchors the RA must-offer physical bridge on a merchant CC only when the run is COMMITMENT-REAL under its own start economics (run margin/MW >= the published class startup cost), replacing the prior unconditional min-down floor. Zero new free parameters (rules 13/17/18 — a physics-gated detection refinement, not a new tunable). Reproduces the caiso-63 probe's qualitative result on the seam-corrected base: RA-bridge (ra_mustoffer_bridge) forced energy on CC_REGULAR falls ~38-43% (3.68/3.80/3.19 -> 2.29/2.20/2.15 TWh 2023/24/25; D-2 legitimacy_diagnostics.json). Freed CC mostly returns on merit (class total -0.5 TWh/yr). CT_PEAKER is UNAFFECTED (ct_netload_drag forced-energy rows byte-close; D-4 off-window binding stays PASS). Body price rises slightly (C3a FAIL magnitude +0.7 to +1.3pp: +21.7/+37.2/+44.4% -> +22.6/+38.5/+45.1%). C1-C8 grade summary IDENTICAL to caiso-65 (zero criterion flips); C1 free-class score improves 6/8 -> 7/8. HELD BACK FROM PROMOTION (2026-07-07): `FINDING-caiso-seam-tz-correction-2026-07-07.md` §4.3, which landed on main mid-session, inverts the sign of this decision. Its measured comparison shows actual CAISO runs 3.1-5.2 GW MORE belly gas than the model at $13-33 (h9-15: actual 8.4-10.9 GW vs model 5.3-6.4 GW) -- the REAL market over-commits the belly relative to the model, not under-commits it -- and explicitly flags that this probe's own λ move (+0.30 to +0.46, AWAY from actual) is the predicted signature of removing real belly commitment the model needs MORE of, not less. So the mechanism this probe implements (releasing merchant CC off the RA floor when a run doesn't recoup its startup cost) may be correcting a real UC-physics defect (phantom sub-min-down P0 runs) while simultaneously moving the belly's committed-capacity level further from what real RA/AS/local-reliability obligations actually deliver -- the two readings are in tension and this run alone cannot adjudicate between them. Per owner instruction, NOT auto-promoted; caiso-65 remains the CAISO keeper pending explicit owner review of §4.3 against this run's numbers. Ablation twin: 2026-07-07-caiso66-g61b-ablation-twin. G-61 register status: path (b) built and reproduced, adoption decision OPEN (referred back to owner, not closed either way); path (c) re-checked post-seam-fix, still measured inert (P0 curtails 0 MWh of VRE 2023-2025 on the corrected clock too).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-07-caiso-66-g61b-startup.js",
+  "bundle": "results/calibration/caiso66_g61b_on_seamclock",
+  "ablation_twin": "2026-07-07-caiso66-g61b-ablation-twin"
+}
