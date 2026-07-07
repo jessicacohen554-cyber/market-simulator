@@ -2236,6 +2236,30 @@ class ScenarioConfig:
     # pjm_commitment_posture (one mechanism per phenomenon, rule 19). Default
     # off; GATED CHANGE (alters dispatch volumes). Profile memory first
     # (CLAUDE.md #12/#45 — the R-column count doubles vs pjm_reserve_pergen).
+    pjm_reserve_pergen_size_split: bool = False  # PJM: SIZE-SPLIT the pergen
+    # pooling tier (reserve_config.pjm_pergen_structure's
+    # size_split_mean_multiple, PJM_PERGEN_SIZE_SPLIT_MEAN_MULTIPLE=2.0x) —
+    # the pjm-87 diagnosis (fleet-reconstruction probe, no re-solve): none of
+    # the 4 balance rows (Primary/Synchronized x RTO/MAD) ever came close to
+    # binding (8-14x supply margin at the tightest hour of 3 years); the
+    # observed opportunity-cost duals came from the per-POOL joint headroom
+    # row instead, and with 39 uniform (zone, fuel-class) pools the LP can
+    # almost always source PJM's small measured requirement from SOME idle
+    # pool even when one specific dominant plant is fully energy-loaded —
+    # diluting the signal. This splits each base pool's plants whose capacity
+    # exceeds the multiple x the pool's own mean plant capacity into
+    # INDIVIDUAL pools (self-normalizing threshold, no absolute MW cutoff —
+    # a granularity/LP-structure choice, not a fitted price parameter, rule
+    # 5); smaller plants stay pooled together exactly as the base tier. A
+    # deliberate middle ground between the base 39-pool tier and the memory-
+    # infeasible full per-plant tier (407 pools / 814 sync-split R columns,
+    # ~10x the base tier — beyond the documented 2026-07-02 P1 OOM precedent
+    # at a smaller column count). Requires energy_reserve_coopt +
+    # pjm_reserve_pergen; composes with pjm_reserve_pergen_sync (both use the
+    # same pjm_pergen_structure call, so the sync/non-sync product split
+    # rides the size-split pools unchanged). Default off; GATED CHANGE
+    # (alters dispatch volumes AND the LP column/row count — profile memory
+    # first, CLAUDE.md #12/#45).
     pjm_commitment_posture: bool = False  # PJM: the SAME pooled linear
     # commitment-posture lever as miso_commitment_posture (design note
     # docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A; PJM port
@@ -4695,6 +4719,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_reserve_commitment_scoped": 1,
     "pjm_reserve_pergen": 1,
     "pjm_reserve_pergen_sync": 1,
+    "pjm_reserve_pergen_size_split": 1,
     "pjm_commitment_posture": 1,
     "measured_ramp_capability": 1,
     "ercot_as_forward_requirement": 1,

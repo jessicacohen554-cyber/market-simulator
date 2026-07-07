@@ -485,6 +485,7 @@ def run_year(
     pjm_reserve_commitment_scoped: bool = False,
     pjm_reserve_pergen: bool = False,
     pjm_reserve_pergen_sync: bool = False,
+    pjm_reserve_pergen_size_split: bool = False,
     pjm_commitment_posture: bool = False,
     measured_ramp_capability: bool = False,
     ercot_as_forward_requirement: bool = False,
@@ -1128,6 +1129,13 @@ def run_year(
         # (pipeline.commitment.build_pjm_reserve_p1_prep). Requires
         # pjm_reserve_pergen. GATED default off.
         config = config.with_overrides(pjm_reserve_pergen_sync=True)
+    if pjm_reserve_pergen_size_split:
+        # PJM pergen SIZE-SPLIT pooling tier (pjm-87 diagnosis remedy):
+        # splits each (zone, fuel-class) pool's large plants into individual
+        # columns, self-normalizing threshold (reserve_config.
+        # PJM_PERGEN_SIZE_SPLIT_MEAN_MULTIPLE). Requires pjm_reserve_pergen.
+        # GATED default off.
+        config = config.with_overrides(pjm_reserve_pergen_size_split=True)
     if pjm_commitment_posture:
         # PJM commitment-posture lever (design note §A ported; requires the
         # pergen reserve co-opt). U/SU columns on non-fast-start pools; zero
