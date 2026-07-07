@@ -1292,27 +1292,30 @@ def backcast_config(
         #   for its own binning path), so this is a no-op there regardless;
         #   set False explicitly for clarity now that cc_duct_peaking below
         #   is ERCOT's real default mechanism.
-        cc_duct_peaking=(iso.upper() in ("PJM", "ERCOT")),  # per-plant EIA-860
-        #   duct-burner peaking shares for CC_REGULAR/CC_CHP: duct-fired
+        cc_duct_peaking=True,  # per-plant EIA-860 duct-burner peaking shares
+        #   for CC_REGULAR/CC_CHP, every ISO (2026-07, G-26/C-12): duct-fired
         #   plants get their nameplate-vs-summer capability gap as the peak
         #   band, non-duct plants get 0 — replacing the class-uniform
         #   pct_peaking that hands every CC the same phantom duct band
         #   (fleet.cc_duct_peaking_pct; PJM: 65 of 84 CCs duct-fired, ~50 GW).
         #   The underlying EIA-860 query is national/ISO-agnostic (no ISO
-        #   filter in cc_duct_peaking_pct itself), so this ternary is only
-        #   about which ISOs have it VALIDATED as their default: PJM (its
-        #   original default) and ERCOT (2026-07, G-26/C-12 — replaces the
-        #   deleted four-plant CC_REGULAR_PEAKING_PCT_BY_PLANT answer-key
-        #   dict with the same national EIA-860 mechanism the ERCOT keeper
-        #   already runs, generalized to every ERCOT CC plant instead of
-        #   four named ones; the ERCOT keeper's own run-specific override
-        #   is now redundant with this default but harmless). Extending this
-        #   to CAISO/NYISO/NEISO/MISO by default is a real follow-up (EIA-860
-        #   would supersede their existing measured CAMPD thermal-tranche
-        #   mechanism for every EIA-860-covered plant, zeroing non-duct CCs
-        #   to 0 in the process) but needs its own per-ISO calibration probe
-        #   + leave-one-year-out validation before promotion (rule 22/rule
-        #   1) — not done here as a silent default flip.
+        #   filter in cc_duct_peaking_pct itself) — was PJM/ERCOT-only,
+        #   generalized to CAISO/NYISO/NEISO/MISO going forward: measured
+        #   physical data (EIA-860 nameplate/summer-capacity/duct-burner-flag)
+        #   beats the CAMPD statistical proxy (thermal_tranche_peaking) or
+        #   the deleted ERCOT four-plant hardcode wherever it has coverage
+        #   (rule 12 — prefer accurate/measured data). For CAISO/NYISO/NEISO/
+        #   MISO this coexists with cc_peaking_per_plant=True (the PJM
+        #   pattern, already keeper-validated there): EIA-860 wins per plant
+        #   wherever it has data (incl. an explicit 0 for a non-duct CC,
+        #   correctly zeroing a phantom CAMPD-derived peak band), and the
+        #   CAMPD thermal-tranche artifact (fleet.thermal_tranche_peaking)
+        #   stays the fallback for any plant EIA-860 doesn't cover. Applies
+        #   to NEW runs going forward only — no existing keeper's frozen
+        #   run_config.json changes; each new run records which mechanism(s)
+        #   fired via its own cc_duct_peaking/cc_peaking_per_plant fields
+        #   (rule 20 — no off-registry channel, always visible in
+        #   run_config.json and the DOF ledger).
         cc_duct_peaking_cap_pct=(8.0 if iso.upper() == "PJM" else None),  # cap
         #   the per-plant duct band at the F-class supplementary-firing physical
         #   max. The raw nameplate-vs-net-summer gap folds the ambient summer
