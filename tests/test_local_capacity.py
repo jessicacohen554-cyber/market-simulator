@@ -85,9 +85,11 @@ class TestLocalCapacityFlagOffByteIdentity(unittest.TestCase):
         )
         demand = np.full((1, T24), 120.0)
         layout = VariableLayout(n_gen=2, n_zones=1, n_storage=0, n_links=0, T=T24)
-        a0, lo0, up0 = build_constraints(layout, fleet, demand)
-        a1, lo1, up1 = build_constraints(layout, fleet, demand, local_capacity_specs=[])
-        a2, lo2, up2 = build_constraints(
+        a0, lo0, up0, *_ = build_constraints(layout, fleet, demand)
+        a1, lo1, up1, *_ = build_constraints(
+            layout, fleet, demand, local_capacity_specs=[]
+        )
+        a2, lo2, up2, *_ = build_constraints(
             layout, fleet, demand, local_capacity_specs=None
         )
         for a, lo, up in ((a1, lo1, up1), (a2, lo2, up2)):
