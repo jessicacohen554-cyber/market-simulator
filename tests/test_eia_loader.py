@@ -640,16 +640,17 @@ class TestWeatherPoolWidening(unittest.TestCase):
             self.assertEqual(series.shape, (HOURS_PER_YEAR,))
             self.assertFalse(np.isnan(series).any())
 
-    def test_pjm_2019_2020_demand_stays_uncovered_despite_hourly_backfill(self):
-        # The hourly extract itself now covers 2019/2020 (renewables would
-        # resolve), but load_demand for PJM always falls back to
-        # eia_demand_profiles.parquet, whose floor is 2021 -- so PJM's demand
-        # (and therefore the weather-year pool) still can't use 2019/2020.
+    def test_pjm_2019_2020_demand_resolves_from_hourly_extract(self):
+        # PJM demand now reads the per-BA hourly extract directly
+        # (_load_pjm_hourly_demand), whose BALANCE-bulk backfill covers
+        # 2019/2020 -- so demand resolves end-to-end for those years (they
+        # remain weather-pool CANDIDATES pending the coverage-doc
+        # verification protocol; WEATHER_YEAR_POOL_BY_ISO is unchanged).
         self.assertIsNotNone(_eia_hourly_frame_filled("PJM", 2019))
-        with self.assertRaises(Exception):
-            load_demand("PJM", 2019)
-        with self.assertRaises(Exception):
-            load_demand("PJM", 2020)
+        for year in (2019, 2020):
+            demand = load_demand("PJM", year, include_interchange=False)
+            self.assertEqual(demand.shape[1], HOURS_PER_YEAR)
+            self.assertFalse(np.isnan(demand).any())
 
     def test_pjm_2021_demand_and_renewables_full_year(self):
         demand = load_demand("PJM", 2021)
@@ -720,11 +721,18 @@ class TestDemandProfileCleanSeam(unittest.TestCase):
 
     def test_load_demand_uses_repaired_partition_over_raw_spike(self):
         # A repaired series with no billion-MW spike must flow all the way
-        # through load_demand's PJM path (which has no dedicated loader and
-        # would otherwise fall back straight to the raw, uncorrected parquet).
+        # through load_demand's demand-profile fallback path. PJM normally
+        # serves the per-BA hourly extract now (_load_pjm_hourly_demand), so
+        # that loader is patched out to exercise the fallback seam.
+        from unittest import mock
+
         mw = np.full(HOURS_PER_YEAR, 90_000.0)
         self._write_clean_partition("PJM", 2021, mw)
-        demand = load_demand("PJM", 2021, include_interchange=False)
+        with mock.patch(
+            "market_sim.data.eia_loader._load_pjm_hourly_demand",
+            return_value=None,
+        ):
+            demand = load_demand("PJM", 2021, include_interchange=False)
         self.assertLess(demand.sum(axis=0).max(), 200_000.0)
 
     def test_missing_partition_warns_when_repair_manifest_covers_it(self):
@@ -773,10 +781,18 @@ class TestDemandProfileCleanSeam(unittest.TestCase):
         np.testing.assert_allclose(out, mw)
 
     def test_load_demand_strict_raises_when_partition_missing(self):
+        # PJM's per-BA loader is patched out so load_demand actually reaches
+        # the demand-profile fallback whose strict mode is under test.
+        from unittest import mock
+
         from market_sim.data.eia_loader import DemandProfileNotRepairedError
 
-        with self.assertRaises(DemandProfileNotRepairedError):
-            load_demand("PJM", 2021, strict_demand_profile=True)
+        with mock.patch(
+            "market_sim.data.eia_loader._load_pjm_hourly_demand",
+            return_value=None,
+        ):
+            with self.assertRaises(DemandProfileNotRepairedError):
+                load_demand("PJM", 2021, strict_demand_profile=True)
 
     def test_load_demand_meta_strict_raises_when_partition_missing(self):
         from market_sim.data.eia_loader import DemandProfileNotRepairedError
