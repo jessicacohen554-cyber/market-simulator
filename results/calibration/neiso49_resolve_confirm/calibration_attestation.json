@@ -113,8 +113,8 @@
   "free_parameters": {
     "schema": "dof-ledger/v1",
     "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-    "n_entries": 9,
-    "n_residual": 6,
+    "n_entries": 8,
+    "n_residual": 4,
     "entries": [
       {
         "name": "offer_curve_by_group",
@@ -266,15 +266,6 @@
         "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
       },
       {
-        "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",
-        "where": "constants.py CC_REGULAR_PEAKING_PCT_BY_PLANT (engaged via cc_peaking_per_plant)",
-        "identification": "residual",
-        "lineage_solves": ">=43 solves (audit \u00a75.1)",
-        "n_scalars": 4,
-        "source": "per-plant CC peaking-tranche % applied to exactly the four F-class CCs the model over-ran (audit C-12; W1d marker) \u2014 not a published turbine limit",
-        "root_cause": "audit C-12 open item: derive duct-burner share from EIA-860 duct-firing capability or CAMPD max-vs-base output, or fold into the generic curve"
-      },
-      {
         "name": "reliability_floor coefficients",
         "where": "data/raw/reference/reliability_floor_coeffs_NEISO.csv",
         "identification": "measured-physical",
@@ -284,11 +275,11 @@
       },
       {
         "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO]",
-        "where": "interchange_config.py per-ISO seam supply-curve ladders",
-        "identification": "residual",
-        "lineage_solves": ">=43 solves (audit \u00a75.1)",
-        "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback",
-        "root_cause": "audit C-6 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+        "where": "interchange_config.py NEISO seam supply-curve ladders",
+        "identification": "measured-physical",
+        "source": "per-seam Q-Q duration coupling of measured ISO-NE DA hub LMP with measured EIA-930 per-seam flows, frozen scripts/derive_neiso_import_tranches.py (audit C-6 CLOSED 2026-07-06)",
+        "root_cause": "re-derive trigger is a source-data change only (rule 23), never a residual; shape gap: flat annual rungs cannot carry within-year seam variation (calibration-log 2026-07-06 neiso-51 P9 re-test)",
+        "lineage_solves": ">=43 solves (audit \u00a75.1)"
       },
       {
         "name": "ST_GAS/CC_CHP measured-offer-band reach-ratio dependency (2026-07-06 addendum)",

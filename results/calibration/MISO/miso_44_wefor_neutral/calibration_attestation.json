@@ -30,8 +30,8 @@
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-06 MISO merchant-floors root-cause session; derived from the miso-42 ledger with wefor_multiplier REMOVED (neutralized to 1.0)",
-  "n_entries": 6,
-  "n_residual": 5,
+  "n_entries": 5,
+  "n_residual": 4,
   "note": "One fewer DOF than miso-42: wefor_multiplier removed (neutralized to 1.0 = identity). The remaining 6 entries are unchanged from the miso-42 ledger.",
   "entries": [
    {
@@ -66,15 +66,6 @@
     "root_cause": "weakly identified: each asymptote is pinned by a single gas regime; open: ground the COMMITTED-band discount in the measured EIA-923 Schedule-5 contract share"
    },
    {
-    "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",
-    "where": "constants.py CC_REGULAR_PEAKING_PCT_BY_PLANT (engaged via cc_peaking_per_plant)",
-    "identification": "residual",
-    "lineage_solves": ">=40 solves (audit §5.1 + miso-39/-41/-42/-44)",
-    "n_scalars": 4,
-    "source": "per-plant CC peaking-tranche % applied to exactly the four F-class CCs the model over-ran (audit C-12; W1d marker) — not a published turbine limit",
-    "root_cause": "audit C-12 open item: derive duct-burner share from EIA-860 duct-firing capability or CAMPD max-vs-base output"
-   },
-   {
     "name": "reliability_floor coefficients",
     "where": "data/raw/reference/reliability_floor_coeffs_MISO.csv",
     "identification": "measured-physical",
@@ -87,8 +78,8 @@
     "where": "interchange_config.py per-ISO seam supply-curve ladders",
     "identification": "residual",
     "lineage_solves": ">=40 solves (audit §5.1 + miso-39/-41/-42/-44)",
-    "source": "fitted seam price/volume ladders (audit C-6/L7/L8)",
-    "root_cause": "audit C-6 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam"
+    "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback; NEISO closed this item (see the NEISO-only entry, measured-physical) — remaining scope for this item is NYISO/PJM/MISO/CAISO's static ladder",
+    "root_cause": "audit C-6/#1350 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam, following the NEISO precedent (scripts/derive_neiso_import_tranches.py)"
    }
   ]
  },

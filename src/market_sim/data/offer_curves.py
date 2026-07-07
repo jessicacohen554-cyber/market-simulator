@@ -45,9 +45,9 @@ def _hr_override(value: float | None, default: float) -> float:
 def _coal_tranches(config: ScenarioConfig) -> list[tuple[float, float]]:
     """Return the coal take-or-pay tranches as ``(cap_frac, fuel_frac)`` pairs.
 
-    Mirrors :data:`~market_sim.config.constants.COAL_TRANCHES`, reading the
-    per-tranche capacity fraction and fuel-cost passthrough from the scenario
-    config so calibration can override the defaults.
+    Reads the per-tranche capacity fraction and fuel-cost passthrough from
+    the scenario config (``coal_tranche_{1,2,3}_{frac,fuel_passthrough}``,
+    ``ScenarioConfig``) so calibration can override the defaults.
     """
     return [
         (config.coal_tranche_1_frac, config.coal_tranche_1_fuel_passthrough),
@@ -415,7 +415,6 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
     from market_sim.data.fleet import (
         BIN_GROUP_TO_FUEL,
         CC_REGULAR_COMMITTED_PCT_BY_PLANT,
-        CC_REGULAR_PEAKING_PCT_BY_PLANT,
         COAL_MUSTRUN_BY_PLANT,
         PETRA_NOVA_PARASITIC_PCT,
         PETRA_NOVA_PLANT_CODE,
@@ -509,12 +508,6 @@ def plant_tranche_bands(b: "pd.Series | dict", config: ScenarioConfig) -> list[d
         _dpk = cc_duct_peaking_pct().get(plant_code)
         if _dpk is not None:
             pct_peak = _dpk
-    if (
-        group == "CC_REGULAR"
-        and getattr(config, "cc_peaking_per_plant", False)
-        and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT
-    ):
-        pct_peak = CC_REGULAR_PEAKING_PCT_BY_PLANT[plant_code]
 
     if fuel == "coal":
         mustrun_cap = nameplate * pct_mr / 100.0

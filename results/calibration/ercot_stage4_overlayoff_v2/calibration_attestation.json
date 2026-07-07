@@ -213,7 +213,7 @@
     "lineage_solves": ">=165 solves (audit \u00a75.1)",
     "value": 35.0,
     "source": "merchant CHP behind-the-meter share \u2014 industrial/commercial re-derived from EIA-923 Schedule-8 (S3), merchant retained at its prior fitted value (audit C-4; W1d marker)",
-    "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+    "root_cause": "no independent merchant-CHP host-load source found yet \u2014 replace when one exists (constants.py comment); survey of candidate sources + recommended EIA-923 Schedule-8 intake path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
    },
    {
     "name": "reliability_floor coefficients",
