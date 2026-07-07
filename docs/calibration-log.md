@@ -7467,3 +7467,45 @@ Mechanism stays in the code default-off as a validated, documented negative resu
 both runs span 2023–2025 in one bundle each (rule 16). The A/B (off vs on) is the
 attribution twin; the per-year pattern (over-fire 2023/24, inert 2025) is a
 consistent structural signature, not a one-year artifact.
+
+## 2026-07-07 — ERCOT VRE under-curtailment WP-B: derived West Texas Export corridor curtailment-share driver (`ercot42 wtx-curtailment-driver` + zero-forcing ablation twin; keeper stays ercot34 pending owner sign-off)
+
+Built the sanctioned WP-B fix for the West/Panhandle VRE under-curtailment
+(`docs/handoffs/ercot-vre-curtailment-wpb-driver-2026-07.md`). A net-load-indexed
+curtailment ceiling on West+Panhandle wind & solar,
+`ceiling = 1 − depth·congestion_share(net_load_decile, hour, season)`, the
+reduced-form stand-in for the sub-zonal Permian/CREZ nodal congestion the 8-zone
+reduction cannot resolve.
+
+**The unlock (two authorized intakes, already merged to main):** ERCOT's
+Settlement Points List / electrical-bus load-zone mapping (NP4-160) — its
+`SUBSTATION` code matches the NP6-86 station codes exactly (93.3% of West-corridor
+binding weight), giving an authoritative geo-attribution — cross-validated against
+HIFLD substation coordinates (LZ_WEST precision 1.00 vs `_ercot_zone`). New curated
+datatype `ercot-wtx-congestion` carries the measured West-corridor SCED binding
+frequency (0.42/0.54/0.64 for 2023/24/25; congested 62/70/76% of hours).
+
+**SHAPE / LEVEL split.** The share table (SHAPE) is measured congestion frequency
+by net-load decile × hour × season, reproducing the binding-frequency distribution
+leave-one-year-out (rule #23). The per-tech `depth` (LEVEL) is a single coefficient
+centred on the measured curtailment MW quantity (RTOLCAP-`deliv` precedent) — a
+LOYO-stable structural constant (wind 0.0998; LOYO 0.098/0.100/0.098). depth=0 is
+the zero-forcing ablation.
+
+**Result (probe vs keeper, EIA-930 + reconciled potential):**
+
+| year | C2 gas % | [3e] wind % (rep) | [3e] solar % (rep) |
+|---|---|---|---|
+| 2023 | −5.2 → **−3.4** | 2.2 → **5.0** (4.7) | 1.3 → 4.7 (6.3) |
+| 2024 | −5.1 → **−3.1** | 2.4 → **5.3** (6.4) | 1.8 → 4.8 (5.9) |
+| 2025 | −5.4 → **−2.9** | 2.7 → **5.6** (7.5) | 3.0 → 5.8 (7.5) |
+
+The C2 gas-volume gap that drove FAIL closes ~2 pts/yr (~−5% → ~−3%); modeled wind
+curtailment roughly doubles toward the reported rate (2023 on target, 2024/25 a
+slight undershoot from the LOYO congestion-trend compression). The ablation
+reproduces the keeper's gas/curtailment exactly — all movement is the measured
+driver, not the wiring. Both runs span 2023–2025 in one bundle (rule 16); DOF
+ledger + ablation twin registered on the dashboard
+(`2026-07-07-ercot42-wtx-curtailment-driver`/`-ablation`). **Keeper stays ercot34
+pending owner sign-off** (default off; the one [3e]-adjacent DOF is the depth
+coefficient, owner-approved 2026-07-07 as the RTOLCAP-`deliv`-style level scalar).

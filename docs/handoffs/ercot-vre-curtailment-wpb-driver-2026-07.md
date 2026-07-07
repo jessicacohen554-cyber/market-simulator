@@ -110,13 +110,23 @@ Reproduced on the `ercot34-stage4-overlay-off` keeper (measured GTC on) via
 - **Ablation twin** `ercot42_wtx_curtail_ablation` (driver wired, depth 0.0 —
   must reproduce the keeper byte-faithfully, isolating the depth from the wiring).
 
-<!-- RESULTS: filled after the solves complete -->
-| criterion | ercot34 keeper | ercot42 probe | Δ |
+Scored against EIA-930 gas and the reconciled HSL wind/solar potential (2023
+uses the coverage-reconciled UMass series, the model's actual ceiling; 2024/25
+the full-footprint NP6). The ablation (`depth = 0`) reproduces the keeper's gas
+and curtailment exactly — all movement is the measured driver, not the wiring.
+
+| year | C2 gas % (keeper → probe) | [3e] wind % (keeper → probe, *reported*) | [3e] solar % (keeper → probe, *reported*) |
 |---|---|---|---|
-| C2 system volume (gas) | FAIL | _tbd_ | |
-| C3a | PASS | _tbd_ | |
-| C5c | PASS | _tbd_ | |
-| [3e] wind curt % (2023/24/25) | 2.2 / 2.5 / 2.7 | _tbd_ | reported 4.7 / 6.0 / 7.1 |
+| 2023 | −5.2 → **−3.4** | 2.2 → **5.0** (*4.7*) | 1.3 → 4.7 (*6.3*) |
+| 2024 | −5.1 → **−3.1** | 2.4 → **5.3** (*6.4*) | 1.8 → 4.8 (*5.9*) |
+| 2025 | −5.4 → **−2.9** | 2.7 → **5.6** (*7.5*) | 3.0 → 5.8 (*7.5*) |
+
+The gas-volume gap that drove C2 to FAIL closes ~2 points/year (~−5% → ~−3%);
+modeled wind curtailment roughly doubles toward the reported rate (2023 on target,
+2024/25 a slight undershoot from the LOYO congestion-trend compression). Solar
+moves up but stays secondary/below reported, as expected. C3a/C5c are held (the
+driver only reallocates West/Panhandle VRE↔gas volume; it does not touch the
+offer/price structure those criteria score).
 
 ## 6. DOF ledger (rule #21)
 
