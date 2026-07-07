@@ -1966,6 +1966,9 @@ def solve_and_persist(
     ct_drag_overrides: dict | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
+    ercot_wtx_curtailment_driver: bool = False,
+    ercot_wtx_curtail_depth_wind: float | None = None,
+    ercot_wtx_curtail_depth_solar: float | None = None,
     mass_cap_enabled: bool = False,
     mass_cap_tons: float | None = None,
     mass_cap_program: str | None = None,
@@ -2224,6 +2227,9 @@ def solve_and_persist(
             ct_drag_overrides=ct_drag_overrides,
             chp_export_floor_measured=chp_export_floor_measured,
             ercot_gtc_limits_measured=ercot_gtc_limits_measured,
+            ercot_wtx_curtailment_driver=ercot_wtx_curtailment_driver,
+            ercot_wtx_curtail_depth_wind=ercot_wtx_curtail_depth_wind,
+            ercot_wtx_curtail_depth_solar=ercot_wtx_curtail_depth_solar,
             mass_cap_enabled=mass_cap_enabled,
             mass_cap_tons=mass_cap_tons,
             mass_cap_program=mass_cap_program,
@@ -2564,6 +2570,9 @@ def solve_and_persist(
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "chp_export_floor_measured": chp_export_floor_measured,
         "ercot_gtc_limits_measured": ercot_gtc_limits_measured,
+        "ercot_wtx_curtailment_driver": ercot_wtx_curtailment_driver,
+        "ercot_wtx_curtail_depth_wind": ercot_wtx_curtail_depth_wind,
+        "ercot_wtx_curtail_depth_solar": ercot_wtx_curtail_depth_solar,
         "mass_cap_enabled": mass_cap_enabled,
         "mass_cap_tons": mass_cap_tons,
         "mass_cap_program": mass_cap_program,
@@ -2816,6 +2825,17 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(chp_export_floor_measured=True)
     if ercot_gtc_limits_measured:
         recorded_cfg = recorded_cfg.with_overrides(ercot_gtc_limits_measured=True)
+    if ercot_wtx_curtailment_driver:
+        _wtx_over = {"ercot_wtx_curtailment_driver": True}
+        if ercot_wtx_curtail_depth_wind is not None:
+            _wtx_over["ercot_wtx_curtail_depth_wind"] = float(
+                ercot_wtx_curtail_depth_wind
+            )
+        if ercot_wtx_curtail_depth_solar is not None:
+            _wtx_over["ercot_wtx_curtail_depth_solar"] = float(
+                ercot_wtx_curtail_depth_solar
+            )
+        recorded_cfg = recorded_cfg.with_overrides(**_wtx_over)
     if mass_cap_enabled:
         # G-29 wiring: mirrors run_calibration.py::run_year's own
         # mass_cap_enabled block so a mass-cap-enabled backcast config is

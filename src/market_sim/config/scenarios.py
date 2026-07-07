@@ -3112,6 +3112,33 @@ class ScenarioConfig:
     # uses the static (or scenario-built) link ratings.
     ercot_gtc_limits_measured: bool = False
 
+    # ERCOT West Texas Export corridor VRE curtailment-share driver
+    # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
+    # scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and
+    # Panhandle zones' wind (and solar) CF upper bound is multiplied by
+    #   1 - depth * congestion_share(net_load_decile, hour_of_day, season),
+    # the reduced-form stand-in for the sub-zonal Permian/CREZ nodal congestion
+    # the 8-zone reduction cannot resolve -- dozens of internal 138/345 kV lines
+    # that chronically curtail West wind even when the aggregate West->North
+    # interface has headroom (the C2 / [3e] under-curtailment gap; step-2 handoff).
+    # congestion_share is the SHAPE: the measured NP6-86 SCED West-corridor binding
+    # frequency (data.curtailment_share reads the derived reference table
+    # data/raw/reference/ercot_wtx_curtailment_share.csv), geo-attributed via
+    # ERCOT's authoritative Settlement-Point/electrical-bus load-zone mapping
+    # (NP4-160) and reproducing the measured binding-frequency distribution
+    # leave-one-year-out (rule #23). It is a function of the model's OWN net-load,
+    # so it regenerates for a forecast year (more West VRE -> deeper net-load
+    # troughs -> higher congestion share). depth is the LEVEL: a single per-tech
+    # coefficient centred on the measured curtailment MW quantity like the
+    # RTOLCAP-forward ``deliv`` coefficient (never a price residual), a LOYO-stable
+    # structural constant (~0.10 wind across 2023-2025); depth=0.0 is the
+    # zero-forcing ablation (driver inert). Applied per year only when the derived
+    # reference table and the year's measured HSL potential both exist. Off by
+    # default. See scripts/derive_ercot_wtx_curtailment_share.py.
+    ercot_wtx_curtailment_driver: bool = False
+    ercot_wtx_curtail_depth_wind: float = 0.0998
+    ercot_wtx_curtail_depth_solar: float = 0.1633
+
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
     # overwriting any EIA-923 monthly per-plant cost. Set False to keep the
@@ -4587,6 +4614,9 @@ TIER_TAGS: dict[str, int] = {
     "chp_btm_floor_pct": 3,
     "chp_export_floor_measured": 3,
     "ercot_gtc_limits_measured": 3,
+    "ercot_wtx_curtailment_driver": 3,
+    "ercot_wtx_curtail_depth_wind": 3,
+    "ercot_wtx_curtail_depth_solar": 3,
     "coal_supply_repricing": 3,
     "coal_plant_monthly_pricing": 3,
     "nearby_fuel_price_fallback": 3,
