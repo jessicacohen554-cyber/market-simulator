@@ -86,10 +86,34 @@ class PortfolioConfig:
     resource_floors_mw: dict[str, float] = field(default_factory=dict)
     """Per-resource existing/committed MW floor (``cap_min``)."""
     eac_premium_mwh: dict[str, float] = field(default_factory=dict)
-    """Per-resource override ($/MWh) of the ``eac_premium_mwh`` clean-attribute
-    premium column for ``ppa_mwh`` existing resources (ADR 0008). When a resource
-    name is present here its value replaces the table column; absent resources use
-    the table value. Values must be non-negative. Empty ``{}`` = use the table."""
+    """Per-resource override ($/MWh) of the clean-attribute (EAC) premium for
+    attribute-basis resources — ``ppa_mwh`` existing resources (ADR 0008) and
+    ``lmp_ppa`` market-indexed resources (ADR 0020: CCS, nuclear uprate,
+    run-of-river hydro, attribute-basis wind/solar). This override wins over both
+    the ``eac_prices_file`` annual series and the table's ``eac_premium_mwh``
+    column. When a resource name is present here its value replaces the resolved
+    premium; absent resources fall through to the series/table. Values must be
+    non-negative. Empty ``{}`` = use the series/table."""
+    eac_prices_file: str | None = None
+    """Path to the annual EAC price series (ADR 0020), columns
+    ``(resource, year, eac_mwh)``. Resolved to the run's ``year`` (exact match,
+    else the latest year at or before ``year``, else the earliest). A resource
+    absent from the file falls back to its table ``eac_premium_mwh`` column, so a
+    flat single value and a full trajectory are both expressible. ``None``
+    (default) uses the packaged ``data/eac/eac_prices.csv``; pass a path to
+    override, or ``""`` to disable the series and use only table columns."""
+    storage_pricing: str = "capex"
+    """How fixed-duration storage capacity cost is sourced (ADR 0022):
+
+    * ``"capex"`` (default): annualized ATB overnight capex × CRF + FOM
+      (``fixed_mwyr``), the historical treatment.
+    * ``"tolling"``: the row's ``tolling_kw_yr_{low/mid/high}`` × 1000, a
+      capacity-grounded fixed $/MW-yr tolling payment (5-year-style contract),
+      used in place of the annualized capex. A storage row selected under this
+      mode MUST carry a tolling price for the chosen sensitivity or loading
+      raises. Storage is capacity-grounded either way (VOM≈0); tolling only
+      changes where the fixed number comes from. Split storage (LDES/hydrogen)
+      is unaffected — it keeps its power/energy capex basis."""
     gas_price_mmbtu: float = 0.0
     """Delivered natural-gas price override ($/MMBtu) for fuel-burning resources
     (ADR 0012). Resolution precedence: a value > 0 here wins; else the per-ISO
@@ -212,6 +236,10 @@ class PortfolioConfig:
         if self.lcoe_sensitivity not in ("low", "mid", "high"):
             raise ValueError(
                 f"lcoe_sensitivity must be low/mid/high, got {self.lcoe_sensitivity!r}"
+            )
+        if self.storage_pricing not in ("capex", "tolling"):
+            raise ValueError(
+                f"storage_pricing must be capex/tolling, got {self.storage_pricing!r}"
             )
         if not 0.0 <= self.excess_sale_fraction <= 1.0:
             raise ValueError("excess_sale_fraction must be in [0, 1]")
