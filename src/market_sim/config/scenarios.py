@@ -2304,8 +2304,14 @@ class ScenarioConfig:
     # fuel contract: a fraction of capacity at a fraction of fuel passthrough.
     # Tranche 1 (contracted volume) bids at VOM only — its fuel is sunk;
     # higher tranches bid progressively more of full fuel cost. The fractions
-    # need not sum to 1.0 but normally do. Source: calibrated to EIA-930
-    # 2023-2024 hourly ERCOT coal dispatch and eGRID 2023/2024 actuals.
+    # need not sum to 1.0 but normally do. The take-or-pay STRUCTURE is a real
+    # coal-contract mechanism (rule #1); the specific step sizes below were
+    # calibrated to EIA-930 2023-2024 hourly ERCOT coal dispatch and eGRID
+    # 2023/2024 actuals — R6 DOCUMENT-AND-KEEP (owner-sanctioned offer-curve
+    # scope; docs/handoffs/scalar-remediation-plan-2026-07.md C-8), tracked
+    # residual-identified in the DOF ledger (open: re-ground the step sizes on
+    # EIA-923 fuel-cost-dispersion/contract-share data instead of the
+    # backcast fit; issue #1336).
     coal_tranche_1_frac: float = 0.30  # Take-or-pay capacity fraction
     coal_tranche_1_fuel_passthrough: float = 0.00  # VOM only — fuel sunk
     coal_tranche_2_frac: float = 0.25  # Partially contracted
@@ -2858,12 +2864,17 @@ class ScenarioConfig:
         PROCESSED_DIR / "cc_capacity_reconcile_ERCOT.csv"
     )
 
-    # When True, the CC_REGULAR plants in fleet.CC_REGULAR_PEAKING_PCT_BY_PLANT
-    # use that per-plant peaking-tranche % instead of the offer curve's
-    # ``pct_peaking`` — moving where the expensive duct-burner peak band starts
-    # on the CF axis (e.g. 15% => peaking starts at 85% of nameplate). The
-    # economic tranche absorbs the difference. Other CC_REGULAR plants keep the
-    # offer-curve value. Off by default.
+    # When True, CC_REGULAR / CC_CHP plants use the per-plant CAMPD-derived
+    # duct-firing/scarcity share from fleet.thermal_tranche_peaking (the share
+    # of the plant's demonstrated sustained maximum cleared in <5% of its
+    # online hours) instead of the offer curve's class-wide ``pct_peaking`` —
+    # moving where the expensive duct-burner peak band starts on the CF axis.
+    # The economic tranche absorbs the difference. Plants absent from the
+    # ISO's thermal-tranche artifact keep the offer-curve value. Off by
+    # default. (The prior ERCOT hand-set CC_REGULAR_PEAKING_PCT_BY_PLANT
+    # four-plant override this flag also drove was deleted 2026-07 — rule 26,
+    # G-26/C-12: dead in every current keeper, structurally superseded here
+    # and by ``cc_duct_peaking`` below.)
     cc_peaking_per_plant: bool = False
 
     # When True, every CC_REGULAR / CC_CHP plant's peaking-tranche % comes
@@ -2872,9 +2883,8 @@ class ScenarioConfig:
     # the peak band, non-duct CC plants get 0 — no phantom scarcity band on
     # plants with no duct firing. Supersedes the offer curve's class-wide
     # ``pct_peaking`` (the band heat-rate multipliers still apply on top);
-    # plants absent from the EIA-860 sheet keep the class value, and the
-    # ERCOT hand-set CC_REGULAR_PEAKING_PCT_BY_PLANT map stays the final
-    # word for its plants. Off by default.
+    # plants absent from the EIA-860 sheet keep the class value. Off by
+    # default.
     cc_duct_peaking: bool = False
 
     # Physical cap (percentage points of capacity) on the per-plant
@@ -4052,6 +4062,33 @@ def resolve_policy_bundle(config: "ScenarioConfig") -> "ScenarioConfig":
 # Supply keys match coal_supply_class tags ("prb" / "subbituminous" /
 # "bituminous" / "lignite" / "waste"), plus "prb_follower" for the ERCOT
 # tiered low-must-run load-follower tier of the prb curve.
+#
+# G-26/C-1 disposition (docs/handoffs/scalar-remediation-plan-2026-07.md):
+# R6 DOCUMENT-AND-KEEP — the gas-keyed passthrough MECHANISM is owner-
+# sanctioned rule-#1 offer-curve scope (a real take-or-pay/mine-mouth coal
+# contract makes fuel cost mostly fixed, so a plant's bid should track its
+# OWN sunk cost, not chase the marginal gas-CC price up or down), but the
+# specific per-(ISO,supply) floor/ceil/gas_mid/gas_slope numbers below were
+# tuned run-by-run against each ISO's backcast (documented inline per entry)
+# and are only weakly identified (D-8: each asymptote is pinned by a single
+# gas regime — floor by the cheapest observed year, ceil by the dearest —
+# docs/out-of-sample-results-2026-07.md §2C). Two distinct physical stories
+# are in play, and neither is a numbers change here (documentation of
+# plausibility only): (1) COST-TRACKING basins whose delivered fuel cost does
+# NOT follow the gas index (mine-mouth/rail PRB and mine-mouth lignite in
+# MISO) must carry ceil <= 1.0 — the sigmoid may only ever DISCOUNT the bid
+# toward sunk cost, never mark it up past full cost, since there is no gas-
+# indexed contract escalator to justify a markup (the MISO PRB/bituminous
+# entries below were fixed to ceil <= 1.0 for exactly this reason after run
+# 30); (2) OPPORTUNITY-COST bidding basins (ERCOT's PRB-by-rail entries,
+# ceil > 1.0) price toward the gas-CC breakeven to capture margin while
+# staying in merit, a genuine strategic-bidding story distinct from (1) — but
+# the two stories being applied inconsistently by ISO, with no single
+# documented rule for which basin gets which, is itself part of the D-8 weak-
+# identification finding. Full re-derivation from cited coal-contract-
+# structure data (EIA-923 Schedule-5 fuel-cost dispersion / take-or-pay
+# share) is tracked, not done here; open:
+# https://github.com/jessicacohen554-cyber/market-simulator/issues/1347.
 COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # ERCOT PRB-by-rail (curated COAL_PLANT_SUPPLY tags): per-month
     # PRB-vs-gas-CC breakeven across 2023-2025 (run-70s tuning series).

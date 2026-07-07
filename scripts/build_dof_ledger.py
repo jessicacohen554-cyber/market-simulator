@@ -320,29 +320,23 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
 def curated_entries(sc: dict, iso: str) -> list[dict]:
     """Audit §3 C-table / W1d-marker entries, keyed on engaging flags."""
     out = []
-    if sc.get("cc_peaking_per_plant"):
-        out.append(
-            _entry(
-                "CC_REGULAR_PEAKING_PCT_BY_PLANT",
-                "constants.py CC_REGULAR_PEAKING_PCT_BY_PLANT (engaged via "
-                "cc_peaking_per_plant)",
-                "residual",
-                iso,
-                n_scalars=4,
-                source="per-plant CC peaking-tranche % applied to exactly the "
-                "four F-class CCs the model over-ran (audit C-12; W1d marker) — "
-                "not a published turbine limit",
-                root_cause="audit C-12 open item: derive duct-burner share from "
-                "EIA-860 duct-firing capability or CAMPD max-vs-base output, "
-                "or fold into the generic curve",
-            )
-        )
+    # C-12 CLOSED 2026-07 (rule 26, G-26 scalar sweep): CC_REGULAR_PEAKING_PCT_
+    # BY_PLANT deleted from constants.py — confirmed dead in every current
+    # keeper (ERCOT's keeper already carried cc_peaking_per_plant=False,
+    # favoring the measured cc_duct_peaking mechanism; every non-ERCOT keeper
+    # with cc_peaking_per_plant=True was driving only the separate,
+    # legitimate CAMPD-measured thermal_tranche_peaking path — this entry was
+    # a false positive for those ISOs, since their plant codes never matched
+    # the deleted dict's four ERCOT-specific keys). No replacement entry
+    # needed: no residual scalar remains.
     if iso == "ERCOT":
         out.append(
             _entry(
                 "coal_take_or_pay_tranches",
-                "scenarios.py coal tranche shares 0.30/0.25/0.45 + passthrough "
-                "0.35 (constants.py:154)",
+                "scenarios.py ScenarioConfig.coal_tranche_{1,2,3}_{frac,"
+                "fuel_passthrough} (0.30/0.25/0.45 capacity fracs, 0.00/0.35/1.00 "
+                "fuel passthrough); the constants.py COAL_TRANCHES mirror of "
+                "these values was dead code (never read) and was deleted 2026-07",
                 "residual",
                 iso,
                 n_scalars=4,
@@ -365,8 +359,10 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "commercial re-derived from EIA-923 Schedule-8 (S3), merchant "
                 "retained at its prior fitted value (audit C-4; W1d marker)",
                 root_cause="no independent merchant-CHP host-load source found "
-                "yet — replace when one exists (constants.py comment); open: "
-                + _ISSUE_C4_MERCHANT_CHP,
+                "yet — replace when one exists (constants.py comment); survey "
+                "of candidate sources + recommended EIA-923 Schedule-8 intake "
+                "path: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; "
+                "open: " + _ISSUE_C4_MERCHANT_CHP,
             )
         )
     if iso == "CAISO":
@@ -383,9 +379,16 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "(403/502 via proxy); CEC reachable but planning-area geography "
                 "(PG&E Bay Area / PG&E Valley) is boundary-mismatched to Path 15 "
                 "(rule-14); the direct NP15/ZP26 zonal load lives in CAISO OASIS "
-                "(unreachable — needs fetch-caiso-oasis.yml). No refit (no source).",
+                "(unreachable at the time — needs fetch-caiso-oasis.yml). "
+                "RE-CHECKED 2026-07-07 (G-26 scalar sweep): OASIS "
+                "(oasis.caiso.com SingleZip) IS now reachable — a SLD_FCST/"
+                "ACTUAL zipped-XML load file fetched successfully, contradicting "
+                "the 2026-07-05 finding. Re-opened as actionable; still not "
+                "done (finding the NP15/ZP26 sub-TAC report + parse + validate "
+                "is a data-intake project, not this session's scope). No refit.",
                 root_cause="audit C-16: refine when NP15/ZP26 zonal load lands "
-                "via the OASIS fetch workflow (rule-23 trigger); open: "
+                "via the OASIS fetch workflow (rule-23 trigger; OASIS confirmed "
+                "reachable 2026-07-07, unblocking that workflow); open: "
                 + _ISSUE_C16_PGE_TAC_SPLIT,
             )
         )
@@ -500,7 +503,31 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "re-ground; 0.45 left in place — open: " + _ISSUE_NYISO_LI_LCR_MISMATCH,
             )
         )
-    if iso in ("NYISO", "NEISO", "PJM", "MISO", "CAISO"):
+    if iso == "NEISO":
+        # C-6 CLOSED for NEISO 2026-07-06 (docs/calibration-log.md same date):
+        # IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO] re-derived by the frozen
+        # scripts/derive_neiso_import_tranches.py from measured EIA-930
+        # per-seam flows + NYISO proxy-bus DA LBMPs (rule 23) — no longer a
+        # residual fit. Listing it under the generic residual bucket below
+        # would be a false positive (the CC-peaking-pct pattern this same
+        # sweep found elsewhere), so NEISO gets its own measured-physical row.
+        out.append(
+            _entry(
+                "IMPORT_TRANCHES/EXPORT_TRANCHES[NEISO]",
+                "interchange_config.py NEISO seam supply-curve ladders",
+                "measured-physical",
+                iso,
+                source="per-seam Q-Q duration coupling of measured ISO-NE DA "
+                "hub LMP with measured EIA-930 per-seam flows, frozen "
+                "scripts/derive_neiso_import_tranches.py (audit C-6 CLOSED "
+                "2026-07-06)",
+                root_cause="re-derive trigger is a source-data change only "
+                "(rule 23), never a residual; shape gap: flat annual rungs "
+                "cannot carry within-year seam variation (calibration-log "
+                "2026-07-06 neiso-51 P9 re-test)",
+            )
+        )
+    if iso in ("NYISO", "PJM", "MISO", "CAISO"):
         out.append(
             _entry(
                 f"IMPORT_TRANCHES/EXPORT_TRANCHES[{iso}]",
@@ -510,10 +537,13 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 source="fitted seam price/volume ladders (audit C-6/L7/L8); "
                 "CAISO's keeper supersedes the fitted ladder with measured hub "
                 "prices on the binding path but the static ladder remains the "
-                "fallback",
-                root_cause="audit C-6 open item: replace year-keyed rungs with "
-                "measured hub prices / published wheeling costs per seam; "
-                + _HOLDOUT_ROOT_CAUSE,
+                "fallback; NEISO closed this item (see the NEISO-only entry, "
+                "measured-physical) — remaining scope for this item is NYISO/"
+                "PJM/MISO/CAISO's static ladder",
+                root_cause="audit C-6/#1350 open item: replace year-keyed "
+                "rungs with measured hub prices / published wheeling costs "
+                "per seam, following the NEISO precedent "
+                "(scripts/derive_neiso_import_tranches.py); " + _HOLDOUT_ROOT_CAUSE,
             )
         )
     return out

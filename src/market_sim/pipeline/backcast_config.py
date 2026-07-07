@@ -1280,18 +1280,23 @@ def backcast_config(
         cc_committed_per_plant=True,  # ground each CC_REGULAR committed % in
         #   CAMPD-observed minimum stable load (fleet.CC_REGULAR_COMMITTED_PCT_
         #   BY_PLANT) instead of the coarse assumed CSV Pct_Committed.
-        cc_peaking_per_plant=True,  # the four F-class(late) 2x1 CCs (CBII,
-        #   WH2, Rayburn, Temple) move the duct-burner peak band start to 85%
-        #   (pct_peaking 15) so the expensive band bites earlier and they back
-        #   down out of the 80-90% CF range (fleet.CC_REGULAR_PEAKING_PCT_BY_PLANT).
+        cc_peaking_per_plant=False,  # neutral default (rule 26/G-26/C-12,
+        #   2026-07): the ERCOT hand-set four-plant CC_REGULAR_PEAKING_PCT_
+        #   BY_PLANT override this flag drove was deleted as an answer-key
+        #   scalar with no independent source, dead in the actual ERCOT
+        #   keeper (which already carries this flag False, favoring
+        #   cc_duct_peaking below). Left off rather than silently falling
+        #   through to the CAMPD thermal-tranche-peaking path, which was
+        #   never validated as ERCOT's default.
         cc_duct_peaking=(iso.upper() == "PJM"),  # per-plant EIA-860
         #   duct-burner peaking shares for CC_REGULAR/CC_CHP: duct-fired
         #   plants (65 of 84 PJM CCs, ~50 GW) get their nameplate-vs-summer
         #   capability gap as the peak band, the 19 non-duct plants (~10 GW)
         #   get 0 — replacing the class-uniform pct_peaking 8.0 that handed
         #   every CC the same phantom duct band and stacked the fleet at one
-        #   72% CF mass point (fleet.cc_duct_peaking_pct). ERCOT keeps its
-        #   CAMPD-fitted class curve + hand-set per-plant map.
+        #   72% CF mass point (fleet.cc_duct_peaking_pct). The ERCOT keeper
+        #   sets cc_duct_peaking=True via its own run-specific override
+        #   (not this default) with its CAMPD-fitted class curve underneath.
         cc_duct_peaking_cap_pct=(8.0 if iso.upper() == "PJM" else None),  # cap
         #   the per-plant duct band at the F-class supplementary-firing physical
         #   max. The raw nameplate-vs-net-summer gap folds the ambient summer
