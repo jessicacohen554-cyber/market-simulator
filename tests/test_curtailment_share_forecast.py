@@ -242,5 +242,33 @@ class TestForecastGrossUp(unittest.TestCase):
         np.testing.assert_array_equal(wind_on, wind_off)
 
 
+class TestErcotBackcastDefault(unittest.TestCase):
+    """Keeper default-ON (owner GO 2026-07-07) + pre-driver replay backstop."""
+
+    def test_backcast_config_per_iso_default(self):
+        from market_sim.pipeline.backcast_config import backcast_config
+
+        self.assertTrue(
+            backcast_config(2023, "ERCOT", 8760, 2.54).ercot_wtx_curtailment_driver
+        )
+        for iso in ("CAISO", "PJM", "MISO", "NYISO", "NEISO"):
+            self.assertFalse(
+                backcast_config(2023, iso, 8760, 2.54).ercot_wtx_curtailment_driver,
+                iso,
+            )
+
+    def test_replay_backstop_pins_pre_driver_bundles_off(self):
+        from scripts.replay_keeper import build_kwargs
+
+        pre_driver = {"iso": "ERCOT", "years": [2023], "commitment": False}
+        self.assertIs(build_kwargs(pre_driver)["ercot_wtx_curtailment_driver"], False)
+        recorded = dict(pre_driver, ercot_wtx_curtailment_driver=True)
+        self.assertIs(build_kwargs(recorded)["ercot_wtx_curtailment_driver"], True)
+        # An explicit null (solved on the builder default) stays None so the
+        # replay re-resolves the same builder default.
+        null_rec = dict(pre_driver, ercot_wtx_curtailment_driver=None)
+        self.assertIsNone(build_kwargs(null_rec)["ercot_wtx_curtailment_driver"])
+
+
 if __name__ == "__main__":
     unittest.main()

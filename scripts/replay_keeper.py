@@ -71,6 +71,18 @@ def build_kwargs(meta: dict) -> dict:
             continue
         if key in params:
             kwargs[key] = v
+    # Pre-driver bundle backstop: the WP-B curtailment driver became the ERCOT
+    # backcast default-ON (owner GO 2026-07-07), and its solve kwarg is
+    # tri-state (None = per-ISO backcast_config default). A bundle solved
+    # before the driver existed carries no key in meta.json — replaying it
+    # byte-faithfully means the driver OFF, not today's default, so pin the
+    # kwarg to False when meta is silent. Post-driver bundles record their
+    # resolved True/False (or an explicit null) and are unaffected.
+    if (
+        meta.get("iso", "").upper() == "ERCOT"
+        and "ercot_wtx_curtailment_driver" not in meta
+    ):
+        kwargs["ercot_wtx_curtailment_driver"] = False
     return kwargs
 
 
