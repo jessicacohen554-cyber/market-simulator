@@ -1179,6 +1179,18 @@ def backcast_config(
         #   Schedule 5 monthly Petroleum receipts (MMBtu -> MWh); a reproducible
         #   physical deliverability input (CLAUDE.md #10). NEISO-only, no-op for
         #   other ISOs (byte-identical).
+        ercot_wtx_curtailment_driver=(iso.upper() == "ERCOT"),  # ERCOT keeper
+        #   default-ON (owner GO 2026-07-07, ercot42 promotion): the WP-B West
+        #   Texas Export corridor VRE curtailment-share driver — a per-(zone,
+        #   hour) ceiling on West/Panhandle wind & solar, SHAPE = measured
+        #   NP6-86 SCED West-corridor binding frequency by net-load decile x
+        #   hour x season (data.curtailment_share), LEVEL = the per-tech depth
+        #   pair. Structural stand-in for the sub-zonal Permian/CREZ nodal
+        #   congestion the 8-zone reduction cannot resolve (docs/handoffs/
+        #   ercot-vre-curtailment-wpb-driver-2026-07.md). Tri-state at the
+        #   orchestrator seam: explicit False scrubs it (ablation arms);
+        #   pre-driver bundle replays are backstopped to False in
+        #   replay_keeper.build_kwargs. Non-ERCOT ISOs default off (rule 25).
         ct_netload_drag=(iso.upper() == "CAISO"),  # CAISO keeper default-ON: the
         #   forward-native CT_PEAKER reliability-drag floor that REPLACES the flat
         #   TMAX floor above (audit Lever B). Same mechanism validated on ERCOT —
