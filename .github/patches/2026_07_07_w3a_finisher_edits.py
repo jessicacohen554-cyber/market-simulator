@@ -1,16 +1,18 @@
 """W3a finisher: compose the caiso-65 attestation and promotion edits.
 
 Run in CI by .github/workflows/w3a-finisher.yml against a fresh origin/main
-checkout, AFTER dashboard_add_run has registered the ablation twin under its
-own id. Performs the pure-file promotion edits (owner decision 2026-07-07):
+checkout. Performs the pure-file promotion edits (owner decision 2026-07-07):
 
-1. results/calibration/caiso65_seam_envelope_clock/calibration_attestation.json
+1. The ablation twin's registry sidecar + runs payload, recovered from its
+   register job's publish commit and re-keyed under its own id (its 5-word
+   label had slugged onto the base id and been overwritten on main).
+2. results/calibration/caiso65_seam_envelope_clock/calibration_attestation.json
    — caiso-60's DOF ledger carried forward verbatim, lineage line amended,
    plus the two MEASURED clock-lag constants of the envelope fix (rule 23:
    lag-scan identified, drift-guarded, zero new free parameters).
-2. The caiso-65 registry sidecar — definition flipped PROBE→KEEPER with the
+3. The caiso-65 registry sidecar — definition flipped PROBE→KEEPER with the
    promotion disclosures, ablation_twin linked.
-3. frontend/data/backcast/keepers.json — CAISO keeper swapped to caiso-65.
+4. frontend/data/backcast/keepers.json — CAISO keeper swapped to caiso-65.
 
 Idempotent: each edit is skipped when already applied.
 """
@@ -97,6 +99,59 @@ PROMOTION_DISCLOSURES = (
 )
 
 
+ABL_SRC_COMMIT = "693fcc5da436e0d3b752c03a41f04d10bdd4c0dd"
+OLD_SHARED_ID = BASE_ID  # the ablation's payload/sidecar were written under the base id
+
+
+def repair_ablation_registration() -> None:
+    """Recreate the ablation's registry sidecar + runs payload under ABL_ID.
+
+    The original CI register job rendered the ablation payload correctly but
+    its 5-word label slugged onto the BASE id (render_backcast._slug keeps
+    <=4 words), so the base job later overwrote both files on main. The
+    rendered content survives in the register job's publish commit
+    (ABL_SRC_COMMIT, on its auto/ branch): extract both files from git and
+    rewrite the id/label -- no re-render, no shared-input dependency.
+    """
+    import base64
+    import gzip
+    import re
+    import subprocess
+
+    if ABL_SIDECAR.exists():
+        print("  skip: ablation registration already repaired")
+        return
+
+    def show(path: str) -> str:
+        return subprocess.run(
+            ["git", "show", f"{ABL_SRC_COMMIT}:{path}"],
+            check=True,
+            capture_output=True,
+            text=True,
+            cwd=REPO,
+        ).stdout
+
+    sc = json.loads(show(f"frontend/data/backcast/registry/{OLD_SHARED_ID}.json"))
+    assert sc["bundle"].endswith("-ablation"), "source sidecar is not the ablation's"
+    sc["id"] = ABL_ID
+    sc["label"] = "caiso65 seam envclock ablation"
+    sc["shorthand"] = "caiso65-seam-envclock-ablation"
+    sc["file"] = f"frontend/data/backcast/runs/{ABL_ID}.js"
+    ABL_SIDECAR.write_text(json.dumps(sc, indent=2) + "\n")
+
+    js = show(f"frontend/data/backcast/runs/{OLD_SHARED_ID}.js")
+    m = re.match(r'^(.*runGz\\[")([^"]+)("\\]=")([^"]+)(";?\\s*)$', js, re.S)
+    assert m is not None, "unexpected payload format"
+    data = json.loads(gzip.decompress(base64.b64decode(m.group(4))).decode())
+    data["label"] = "caiso65 seam envclock ablation"
+    blob = base64.b64encode(
+        gzip.compress(json.dumps(data, separators=(",", ":")).encode(), 9)
+    ).decode()
+    payload = m.group(1) + ABL_ID + m.group(3) + blob + m.group(5)
+    (REPO / f"frontend/data/backcast/runs/{ABL_ID}.js").write_text(payload)
+    print(f"  ablation registration recreated under {ABL_ID}")
+
+
 def compose_attestation() -> None:
     if ATTEST_DST.exists():
         data = json.loads(ATTEST_DST.read_text())
@@ -125,7 +180,7 @@ def promote_sidecar() -> None:
         return
     if not ABL_SIDECAR.exists():
         raise SystemExit(
-            f"ablation sidecar missing: {ABL_SIDECAR} — run dashboard_add_run first"
+            f"ablation sidecar missing: {ABL_SIDECAR} — repair step must run first"
         )
     definition = sc["definition"]
     probe_prefix = (
@@ -156,6 +211,7 @@ def swap_keeper() -> None:
 
 def main() -> None:
     print("w3a finisher edits:")
+    repair_ablation_registration()
     compose_attestation()
     promote_sidecar()
     swap_keeper()
