@@ -484,6 +484,7 @@ def run_year(
     pjm_reserve_online_rho: float = 1.0,
     pjm_reserve_commitment_scoped: bool = False,
     pjm_reserve_pergen: bool = False,
+    pjm_reserve_pergen_sync: bool = False,
     pjm_commitment_posture: bool = False,
     measured_ramp_capability: bool = False,
     ercot_as_forward_requirement: bool = False,
@@ -1120,6 +1121,13 @@ def run_year(
         config = config.with_overrides(pjm_reserve_commitment_scoped=True)
     if pjm_reserve_pergen:
         config = config.with_overrides(pjm_reserve_pergen=True)
+    if pjm_reserve_pergen_sync:
+        # PJM per-gen OPPORTUNITY-COST co-opt (G-20b successor): Synchronized
+        # sub-product families + per-pool sync/non-sync column split, sync
+        # caps online-scoped at the P0->P1 seam
+        # (pipeline.commitment.build_pjm_reserve_p1_prep). Requires
+        # pjm_reserve_pergen. GATED default off.
+        config = config.with_overrides(pjm_reserve_pergen_sync=True)
     if pjm_commitment_posture:
         # PJM commitment-posture lever (design note §A ported; requires the
         # pergen reserve co-opt). U/SU columns on non-fast-start pools; zero

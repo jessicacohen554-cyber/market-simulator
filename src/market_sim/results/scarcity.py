@@ -2040,6 +2040,84 @@ def load_pjm_measured_mad_reserve_requirement(
     return np.resize(req, hours)
 
 
+def _load_pjm_req_column(
+    year: int,
+    hours: int,
+    column: str,
+    data_dir: Path = _PJM_AS_DIR,
+) -> np.ndarray | None:
+    """Load one hourly requirement column from ``pjm_<year>_as_up_mw.parquet``.
+
+    Shared reader for the measured PJM reserve-requirement series (the
+    Synchronized sub-product columns ``sr_req_mw`` / ``mad_sr_req_mw``, built
+    by ``scripts/build_pjm_as_withholding.py`` from the same PJM Data Miner
+    reserve-market results as the Primary columns). Applies the same
+    defensive forward/back-fill as :func:`load_pjm_measured_reserve_requirement`
+    (documented ~24 h data holes read as 0 and must never yield a spuriously
+    zero requirement). Returns ``None`` when the parquet or column is absent.
+    """
+    path = Path(data_dir) / f"pjm_{year}_as_up_mw.parquet"
+    if not path.exists():
+        return None
+    import pandas as pd
+
+    df = pd.read_parquet(path)
+    if column not in df.columns:
+        return None
+    req = df[column].to_numpy(dtype=float)
+    if (req <= 0.0).any():
+        good = req > 0.0
+        if good.any():
+            idx = np.where(good, np.arange(len(req)), -1)
+            np.maximum.accumulate(idx, out=idx)
+            idx[idx < 0] = np.flatnonzero(good)[0]
+            req = req[idx]
+    if len(req) >= hours:
+        return req[:hours]
+    return np.resize(req, hours)
+
+
+def load_pjm_measured_sync_reserve_requirement(
+    year: int,
+    hours: int = 8760,
+    data_dir: Path = _PJM_AS_DIR,
+) -> np.ndarray | None:
+    """Return the measured PJM_RTO SYNCHRONIZED Reserve requirement (MW), hourly.
+
+    The Synchronized sub-product's published requirement (SR ⊆ Primary,
+    Manual 11 sec 4.2/4.4.1: the 10-minute reserve that must come from
+    *synchronized* resources; requirement ≈ the largest single contingency,
+    Manual 13) — column ``sr_req_mw`` in
+    ``data/raw/PJM-AS/pjm_<year>_as_up_mw.parquet`` (PJM Data Miner RT
+    reserve market results, ``service == "SR"``, ``locale == "PJM_RTO"``).
+    Like the Primary series it is a measured *reliability* quantity set by a
+    published market-design formula, never a price actual — the rule-13
+    admissibility basis is identical to
+    :func:`load_pjm_measured_reserve_requirement`. The forecast analogue is
+    the Manual-11 rule SR requirement = LSC
+    (:func:`largest_single_contingency_mw`).
+
+    Returns ``None`` when the parquet or column is absent.
+    """
+    return _load_pjm_req_column(year, hours, "sr_req_mw", data_dir)
+
+
+def load_pjm_measured_mad_sync_reserve_requirement(
+    year: int,
+    hours: int = 8760,
+    data_dir: Path = _PJM_AS_DIR,
+) -> np.ndarray | None:
+    """Return the measured MAD-subzone SYNCHRONIZED Reserve requirement (MW).
+
+    The Mid-Atlantic/Dominion Reserve Subzone's Synchronized requirement —
+    column ``mad_sr_req_mw`` in ``pjm_<year>_as_up_mw.parquet`` (PJM Data
+    Miner RT reserve market results, ``service == "SR"``, ``locale ==
+    "MAD"``). Same measured-reliability-quantity basis as the RTO series.
+    Returns ``None`` when absent (caller builds the RTO sync family only).
+    """
+    return _load_pjm_req_column(year, hours, "mad_sr_req_mw", data_dir)
+
+
 def pjm_primary_reserve_requirement(
     lsc_mw: float,
     hours: int,
