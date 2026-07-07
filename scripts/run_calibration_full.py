@@ -1871,6 +1871,7 @@ def solve_and_persist(
     pjm_reserve_supply_cap: bool = False,
     pjm_reserve_online_gated: bool = False,
     pjm_reserve_online_rho: float = 1.0,
+    pjm_reserve_commitment_scoped: bool = False,
     pjm_reserve_pergen: bool = False,
     pjm_commitment_posture: bool = False,
     measured_ramp_capability: bool = False,
@@ -2135,6 +2136,7 @@ def solve_and_persist(
             pjm_reserve_supply_cap=pjm_reserve_supply_cap,
             pjm_reserve_online_gated=pjm_reserve_online_gated,
             pjm_reserve_online_rho=pjm_reserve_online_rho,
+            pjm_reserve_commitment_scoped=pjm_reserve_commitment_scoped,
             pjm_reserve_pergen=pjm_reserve_pergen,
             pjm_commitment_posture=pjm_commitment_posture,
             measured_ramp_capability=measured_ramp_capability,
@@ -2474,6 +2476,7 @@ def solve_and_persist(
         "pjm_reserve_supply_cap": pjm_reserve_supply_cap,
         "pjm_reserve_online_gated": pjm_reserve_online_gated,
         "pjm_reserve_online_rho": pjm_reserve_online_rho,
+        "pjm_reserve_commitment_scoped": pjm_reserve_commitment_scoped,
         "pjm_reserve_pergen": pjm_reserve_pergen,
         "pjm_commitment_posture": pjm_commitment_posture,
         "measured_ramp_capability": measured_ramp_capability,
@@ -2667,6 +2670,8 @@ def solve_and_persist(
             pjm_reserve_online_gated=True,
             pjm_reserve_online_rho=pjm_reserve_online_rho,
         )
+    if pjm_reserve_commitment_scoped:
+        recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_commitment_scoped=True)
     if ercot_multiproduct_as_coopt:
         recorded_cfg = recorded_cfg.with_overrides(ercot_multiproduct_as_coopt=True)
     if ercot_ecrs_conservative_deployment:

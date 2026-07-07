@@ -2130,6 +2130,29 @@ class ScenarioConfig:
     pjm_reserve_online_rho: float = 1.0  # online-headroom multiplier for the gated
     # PJM reserve class (~ fleet (pmax−pmin)/pmin near min load). Default 1.0 (the
     # dispatch._build_reserve_rows documented default); not fitted to a residual.
+    pjm_reserve_commitment_scoped: bool = False  # PJM path B (G-20b): scope the
+    # P1 reserve co-opt's supply to the COMMITMENT-DERIVED online fleet. An
+    # fa_p2-style availability mask (the ERCOT AS-aware P2 mechanism that zeroes
+    # idle slow-start capacity out of the reserve-headroom RHS, made P1-native
+    # like the CAISO RA bridge): the P0 base-cost run pattern defines each
+    # PLANT's online hours; non-fast-start reserve-eligible units (unit physics
+    # gate, rule 18 — capacity-weighted plant min-down > 2 h or startup ≥
+    # $30/MW, the same NREL/class-table thresholds as _posture_pool_params)
+    # have availability zeroed in their plant's offline hours before the single
+    # scored P1 solve, and the pjm_reserve_supply_cap deliverable ramp cap is
+    # recomputed on the masked fleet (Σ ramp10 over ONLINE eligible units — the
+    # pjm-reserve-ordc.md bind-gate "online + 10-min-deliverable" measure).
+    # Offline gaps shorter than the plant's min-down are bridged online (a unit
+    # physically cannot cycle off-and-back inside its min-down window).
+    # Fast-start units are NEVER masked: an offline 10-min CT/oil peaker still
+    # provides non-synchronized Primary reserve per Manual 11 sec 4.2.
+    # Commitment state derived from the model's own P0 solve — forward-
+    # regenerating, condition-responsive, no measured series and no fitted
+    # parameter (rules 11/13). Published two-step ORDC stays as filed.
+    # Mutually exclusive with pjm_reserve_online_gated (path A, the LP-linear
+    # proxy this supersedes) and pjm_reserve_pergen (different supply layout).
+    # Requires energy_reserve_coopt + PJM; default off; GATED
+    # (pipeline.commitment.build_pjm_reserve_p1_prep).
     pjm_reserve_pergen: bool = False  # PJM: PER-GENERATOR reserve co-optimization
     # (dispatch._build_reserve_rows_pergen) — one R[r,t] column per (zone,
     # fuel-class) pool of reserve-eligible tranches with nonzero 10-min ramp,
@@ -4594,6 +4617,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_reserve_supply_cap": 1,
     "pjm_reserve_online_gated": 1,
     "pjm_reserve_online_rho": 1,
+    "pjm_reserve_commitment_scoped": 1,
     "pjm_reserve_pergen": 1,
     "pjm_commitment_posture": 1,
     "measured_ramp_capability": 1,
