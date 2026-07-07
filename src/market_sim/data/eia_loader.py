@@ -1135,6 +1135,50 @@ def measured_miso_pjm_border_prices(
     return price[:hours]
 
 
+# Measured clock offset of the CISO per-DIBA interchange stamps relative to
+# the model's hourly frame (the ``<BA> hourly`` extract row clock every CAISO
+# demand/renewable series runs on): the stamps lag the model clock by 1 hour
+# in standard-time months and 2 hours in daylight-time months. Measured by
+# per-DST-regime lag scan of the summed per-DIBA series against the extract's
+# own Total-interchange column (2023-2025: PST best lag −1 corr 0.972 vs 0.930
+# at neighbours; PDT best lag −2 corr 0.961 vs 0.919), anchored absolutely by
+# solar astronomy and the 2024-04-08 eclipse dip (both land the extract row
+# clock on the true wall hour). Consistent with prevailing-local hour-ENDING
+# stamps whose DST offset was applied twice at fetch time (the file predates
+# scripts/fetch_eia930_interchange.py; see the eia-930-interchange README).
+# Frozen against residuals (rule 23): these constants re-derive only from the
+# lag scan in scripts/validate_caiso_seam_hod_frame.py, which fails loudly if
+# the parquet is ever re-fetched with honest stamps (best lag moves to 0) so
+# this correction cannot silently double-shift. Full forensics:
+# results/calibration/FINDING-caiso-seam-tz-correction-2026-07-07.md.
+_CAISO_INTERCHANGE_LAG_STD_H: int = 1
+_CAISO_INTERCHANGE_LAG_DST_H: int = 2
+
+
+def _caiso_interchange_model_clock(stamps: pd.DatetimeIndex) -> pd.DatetimeIndex:
+    """Map CISO per-DIBA ``local_time`` stamps onto the model's hourly clock.
+
+    Subtracts the measured per-regime lag (:data:`_CAISO_INTERCHANGE_LAG_STD_H`
+    hours in standard time, :data:`_CAISO_INTERCHANGE_LAG_DST_H` in daylight
+    time) so each row lands on the start-of-hour slot of the same physical
+    hour in the model's 8760 frame. The DST regime of each stamp is resolved
+    with ``US/Pacific`` rules (the repeated fall-back hour is treated as
+    standard time, the skipped spring-forward hour shifted forward — both
+    choices touch one stamp a year and only move it between adjacent
+    (month, hod) envelope buckets).
+    """
+    localized = stamps.tz_localize(
+        "US/Pacific", ambiguous=False, nonexistent="shift_forward"
+    )
+    # Vectorized DST test: a Pacific stamp maps to UTC at +8h in standard
+    # time and +7h in daylight time.
+    is_dst = (localized.tz_convert("UTC").tz_localize(None) - stamps) == pd.Timedelta(
+        hours=7
+    )
+    shift = np.where(is_dst, _CAISO_INTERCHANGE_LAG_DST_H, _CAISO_INTERCHANGE_LAG_STD_H)
+    return stamps - pd.to_timedelta(shift, unit="h")
+
+
 def measured_corridor_flow_envelope(
     iso: str,
     year: int,
@@ -1166,7 +1210,12 @@ def measured_corridor_flow_envelope(
     Hours are mapped onto the model's fixed non-leap calendar
     (:func:`~market_sim.data.fleet._hour_to_month_index` for the month, ``hour %
     24`` for the hour-of-day), the same calendar the LP and the hydro budgets
-    use, so the cap aligns hour-for-hour with the dispatch.
+    use, so the cap aligns hour-for-hour with the dispatch. The parquet's
+    ``local_time`` stamps are first mapped onto the model clock via
+    :func:`_caiso_interchange_model_clock` (the stamps lag the model frame by
+    a measured 1 h standard-time / 2 h daylight-time — see the constant block
+    above it), so each (month × hod) bucket keys the same physical hour the
+    LP dispatches.
 
     Returns ``{corridor_zone: (hours,) MW}`` for both corridors, or ``None`` when
     the ISO is not CAISO, the parquet is absent, or the year is uncovered (a
@@ -1202,11 +1251,11 @@ def measured_corridor_flow_envelope(
     if not path.exists():
         return None
     frame = pd.read_parquet(path)
-    local = pd.DatetimeIndex(frame["local_time"])
+    local = _caiso_interchange_model_clock(pd.DatetimeIndex(frame["local_time"]))
     frame = frame[local.year == year]
+    local = local[local.year == year]
     if frame.empty:
         return None
-    local = pd.DatetimeIndex(frame["local_time"])
     corridor = frame["diba"].astype(str).map(CAISO_CORRIDOR_DIBA)
     work = pd.DataFrame(
         {
