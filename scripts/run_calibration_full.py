@@ -560,6 +560,13 @@ def _system_frame(
     """
     prices = np.asarray(result.prices, dtype=float)
     slack = np.asarray(result.slack, dtype=float)
+    # Per-zone overgeneration dump (LP ``Dump[z,t]``): the MW the LP could
+    # neither serve, export, nor absorb and had to spill at ``dump_cost``. A
+    # real oversupply signal (distinct from renewable curtailment, which shows
+    # as W/S below their CF ceiling); persisted so the curtailment/oversupply
+    # diagnostics can see when the negative-MC dump guard actually binds.
+    dump = getattr(result, "dump", None)
+    dump = np.zeros_like(prices) if dump is None else np.asarray(dump, dtype=float)
     n_zones, T = prices.shape
     reserve_price = getattr(result, "reserve_price", None)
     rp = (
@@ -636,6 +643,7 @@ def _system_frame(
             "hour": np.arange(T, dtype=np.int32),
             "price": prices[z] + total_overlay,
             "slack": slack[z],
+            "dump": dump[z, :T],
             "demand": demand[z, :T],
             "reserve_price": rp,
         }
