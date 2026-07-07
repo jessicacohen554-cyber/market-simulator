@@ -3,7 +3,7 @@
   "label": "caiso 60 p1 native",
   "date": "2026-07-06",
   "shorthand": "caiso-60-p1-native",
-  "definition": "P1-native RA bridge (P2 archived): keeper caiso-58 config re-solved P1-only",
+  "definition": "P1-native RA must-offer bridge (P2 archived). The caiso-58 keeper config re-solved P1-only: P2 is archived (P0/P1 are the only production passes, every run scored on P1), and the CAISO RA must-offer bridge — which used to ride the P2 pass — is now a P1-native min_gen floor detected from the base-cost P0 run pattern and applied before the single P1 clearing solve. Same verdict profile as caiso-58 (no calibration regression); the ra_mustoffer bridge forces ~6% of CC_REGULAR energy (well within the 30% budget).",
   "years": [
     2023,
     2024,
@@ -11,5 +11,7 @@
   ],
   "iso": "CAISO",
   "file": "frontend/data/backcast/runs/2026-07-06-caiso-60-p1-native.js",
-  "bundle": "results/calibration/caiso60_p1native_ra"
+  "bundle": "results/calibration/caiso60_p1native_ra",
+  "ablation_twin": "2026-07-06-caiso-60-p1-native-ablation",
+  "market_story": "ra_mustoffer_bridge on CC_REGULAR (~3.4-3.9 TWh/yr, ~6% of class): CAISO's Resource-Adequacy must-offer obligation keeps the merchant gas CC fleet committed through the midday solar belly — a unit that runs before and after a midday idle gap shorter than its min-down cannot economically cycle off and restart for the evening ramp, so it is held at min-load rather than cold. This reproduces real CAISO, where several GW of RA gas stays committed at min-load through the deep spring belly; the LP, paying no startup on a continuous ramp, would otherwise over-cycle it. The floor only binds when oversupply would drive a committed unit cold; the midday ~$0 price comes from real solar/import oversupply, not the floor."
 }
