@@ -2110,6 +2110,31 @@ class ScenarioConfig:
     # ercot_multiproduct_as_coopt. Mode-aware net-load driver like
     # ercot_reserve_supply_forward (backcast reads its own forecast net-load, not
     # the LP's output). Default off; ERCOT-only; GATED.
+    ercot_online_capacity_envelope_extreme: bool = False  # ERCOT: the
+    # EXTREME-PEAK-RESOLVED variant of the on-line-capacity envelope — the filed
+    # G-22 forward path after the ercot41 rejection (docs/handoffs/ercot-online-
+    # capacity-envelope-2026-07.md §5). The base envelope reproduced measured
+    # RTOLCAP in the binding regime (±2%) but its pooled decile-9 share median
+    # under-stated the committable capacity in the top-2% net-load hours, so the
+    # in-LP room collapsed (4.4/6.7 GW vs measured 8.0/11.1 in 2023/24) and the
+    # ORDC over-fired (C3a PASS→FAIL, C3b 0.32→13.2). This variant keeps the
+    # identical LP row (Σ elig thermal P + Σ prod R ≤ online_cap_env) and
+    # replaces the envelope's driver resolution: (1) the share table is resolved
+    # at 2-percentile grain inside the top decile (14 net-load bins,
+    # scarcity.ercot_online_cap_extreme_bin — the measured CAMPD commitment
+    # saturation the decile median collapsed), and (2) the scalar deliverability
+    # becomes a per-bin profile fit to the measured thermal on-line HSL identity
+    # (CAMPD gross + RTOLCAP − storage AS − LR credit), so the envelope
+    # reproduces the measured on-line capability IN THE EXTREME TAIL, not just
+    # the binding-regime mean (ERCOT_ONLINE_CAP_SHARE_EXTREME /
+    # ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME, derived by
+    # scripts/derive_ercot_rtolcap_forward.py --emit online-cap-extreme-constant).
+    # Every input is a measured MW quantity (rules #13/#14/#23, never a price);
+    # identification gated by scripts/validate_ercot_online_capacity.py
+    # --extreme (binding AND extreme-tail reproduction). Implies the envelope
+    # machinery — do not set together with ercot_online_capacity_envelope (the
+    # base flag keeps its frozen decile tables for ercot41 replay fidelity).
+    # Default off; ERCOT-only; GATED.
     pjm_reserve_supply_cap: bool = False  # PJM analogue of ercot_reserve_supply_cap:
     # cap the energy+reserve co-opt's cleared reserve at the fleet's 10-min
     # DELIVERABLE ramp (FleetArrays.ramp10 = RAMP10_FRAC_BY_GROUP × pmax,
@@ -3831,6 +3856,20 @@ class ScenarioConfig:
                 f"{self.datacenter_load_path!r}."
             )
 
+        # The two on-line-capacity envelope variants resolve the SAME LP row
+        # from different derived tables (base decile vs extreme-peak-resolved);
+        # setting both would be ambiguous about which table governs, so it is a
+        # hard error rather than a silent precedence rule (rule 19: one
+        # mechanism per phenomenon).
+        if self.ercot_online_capacity_envelope and (
+            self.ercot_online_capacity_envelope_extreme
+        ):
+            raise ValueError(
+                "ercot_online_capacity_envelope and "
+                "ercot_online_capacity_envelope_extreme are mutually exclusive "
+                "variants of the same envelope row — set exactly one."
+            )
+
         # Endogenous storage energy-vs-AS competition is priced *inside* the
         # reserve co-optimization: without it the flag would silently no-op
         # (and, worse, still suppress the exogenous storage AS credit in the
@@ -4591,6 +4630,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_reserve_supply_cap_from_year": 1,
     "ercot_reserve_supply_forward": 1,
     "ercot_online_capacity_envelope": 1,
+    "ercot_online_capacity_envelope_extreme": 1,
     "pjm_reserve_supply_cap": 1,
     "pjm_reserve_online_gated": 1,
     "pjm_reserve_online_rho": 1,
