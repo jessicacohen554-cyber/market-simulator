@@ -1956,6 +1956,7 @@ def solve_and_persist(
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
     miso_pjm_lmp_import_pricing: bool = False,
+    miso_seam_measured_ladder: bool = False,
     pjm_seam_flow_limit: bool = False,
     pjm_seam_flow_percentile: float | None = None,
     pjm_seam_export_limit: bool = False,
@@ -2217,6 +2218,7 @@ def solve_and_persist(
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
             miso_pjm_lmp_import_pricing=miso_pjm_lmp_import_pricing,
+            miso_seam_measured_ladder=miso_seam_measured_ladder,
             pjm_seam_flow_limit=pjm_seam_flow_limit,
             pjm_seam_flow_percentile=pjm_seam_flow_percentile,
             pjm_seam_export_limit=pjm_seam_export_limit,
@@ -2564,6 +2566,7 @@ def solve_and_persist(
         "miso_pjm_border_anchor": miso_pjm_border_anchor,
         "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
         "miso_firm_import_floor": miso_firm_import_floor,
+        "miso_seam_measured_ladder": miso_seam_measured_ladder,
         "pjm_seam_flow_limit": pjm_seam_flow_limit,
         "pjm_seam_flow_percentile": pjm_seam_flow_percentile,
         "pjm_seam_export_limit": pjm_seam_export_limit,
@@ -2986,6 +2989,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(miso_firm_import_floor=True)
     if miso_pjm_lmp_import_pricing:
         recorded_cfg = recorded_cfg.with_overrides(miso_pjm_lmp_import_pricing=True)
+    if miso_seam_measured_ladder:
+        recorded_cfg = recorded_cfg.with_overrides(miso_seam_measured_ladder=True)
     if pjm_seam_flow_limit:
         recorded_cfg = recorded_cfg.with_overrides(pjm_seam_flow_limit=True)
     if pjm_seam_flow_percentile is not None:
@@ -6966,6 +6971,26 @@ def main() -> None:
         "--reference-price-interface; MISO-only.",
     )
     parser.add_argument(
+        "--miso-seam-measured-ladder",
+        action="store_true",
+        help="Price every MISO seam band (PJM/SPP/South, import + export) at "
+        "the MEASURED per-year Q-Q band ladder "
+        "(interchange_config.MISO_SEAM_LADDER_BY_YEAR, derived by "
+        "scripts/derive_miso_seam_ladders.py: EIA-930 per-seam flow duration "
+        "curves quantile-coupled with the measured MISO DA hub LMP — the "
+        "NEISO audit-C-6 measured-ladder pattern), replacing the gas x HR x "
+        "load-shape band prices + hurdle for backcast years. Fixes the G-23 "
+        "2025 import starvation: the measured PJM+IESO seam is a "
+        "firm/scheduled base flowing in ~98-100 percent of hours "
+        "uncorrelated with the hourly spread, which spot-spread pricing "
+        "structurally deletes in a zero-spread year. Bands still clear "
+        "economically on the model's own hourly price; envelopes and band "
+        "capacities unchanged. DISPLACES --miso-pjm-border-anchor / "
+        "--miso-pjm-lmp-import-pricing on the rows it prices (alternatives, "
+        "never stacked; this overwrite runs last). Requires "
+        "--reference-price-interface; MISO-only.",
+    )
+    parser.add_argument(
         "--miso-zonal-gas-basis",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -7377,6 +7402,7 @@ def main() -> None:
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,
         miso_pjm_lmp_import_pricing=args.miso_pjm_lmp_import_pricing,
+        miso_seam_measured_ladder=args.miso_seam_measured_ladder,
         miso_zonal_gas_basis=args.miso_zonal_gas_basis,
         pjm_seam_flow_limit=args.pjm_seam_flow_limit,
         pjm_seam_flow_percentile=args.pjm_seam_flow_percentile,

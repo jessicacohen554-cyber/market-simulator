@@ -1681,6 +1681,72 @@ def inject_miso_pjm_lmp_import_prices(
     return applied
 
 
+def inject_miso_seam_ladder_prices(
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
+) -> bool:
+    """Overwrite MISO's seam band rows of ``mc`` with the measured Q-Q ladders.
+
+    The MISO application of the NEISO audit-C-6 measured-ladder pattern: every
+    reference-price band of every seam (PJM / SPP / South, import AND export
+    directions) takes its per-year measured band price from
+    :data:`~market_sim.config.interchange_config.MISO_SEAM_LADDER_BY_YEAR` —
+    the seam's revealed supply curve, derived by
+    ``scripts/derive_miso_seam_ladders.py`` from the EIA-930 per-seam flow
+    duration curves Q-Q coupled with the measured MISO DA hub LMP. Band ``k``'s
+    price is the DA quantile whose exceedance duration equals the measured
+    duration of the seam flowing deeper than the band's midpoint, so the LP —
+    still clearing each band economically on its OWN hourly internal price —
+    reproduces the measured flow duration curve when its price distribution is
+    faithful, including the firm/scheduled base that flows regardless of the
+    hourly spread (the flow the hurdle-gated spot-spread pricing structurally
+    deletes; G-23 2025 import starvation).
+
+    No hurdle is added on top: the ladder prices are revealed clearing
+    thresholds that already embed delivery/wheeling costs. Band capacities,
+    the measured (month × hour-of-day) seam deliverability envelopes
+    (:func:`inject_miso_seam_flow_limit`) and the firm Manitoba block are
+    untouched. Runs LAST among the seam price overwrites, displacing the
+    ``miso_pjm_border_anchor`` / ``miso_pjm_lmp_import_pricing`` prices on any
+    row it covers (the flags are alternatives, never stacked).
+
+    Returns ``True`` when at least one band row was repriced, ``False`` when
+    ``iso``/``year`` has no ladder entry or the fleet carries no
+    reference-price bands (byte-identical no-op — forecast years fall through
+    to the gas-elastic reference-price formula, the hr_by_year two-track
+    design).
+    """
+    from market_sim.config.interchange_config import MISO_SEAM_LADDER_BY_YEAR
+
+    if iso != "MISO":
+        return False
+    ladder = MISO_SEAM_LADDER_BY_YEAR.get(year)
+    if not ladder:
+        return False
+
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        if _REF_IMPORT_MARK in uid:
+            tag, side = uid.rsplit(_REF_IMPORT_MARK, 1)[1], "import"
+        elif _REF_EXPORT_MARK in uid:
+            tag, side = uid.rsplit(_REF_EXPORT_MARK, 1)[1], "export"
+        else:
+            continue
+        name, _, k_str = tag.partition("#")
+        seam = ladder.get(name)
+        if seam is None or not k_str:
+            continue
+        prices = seam[side]
+        k = int(k_str) - 1
+        if not 0 <= k < len(prices):
+            continue
+        mc[row, :] = prices[k]
+        applied = True
+    return applied
+
+
 # NYISO priced-node tranche → the modeled neighbor whose measured hourly system
 # LMP prices it (nyiso_import_hub_prices). HQ_hydro and IESO_Ontario are absent
 # on purpose: neither carries an organized-market LMP series in-repo (HQ is a

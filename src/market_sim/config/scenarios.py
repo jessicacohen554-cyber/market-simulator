@@ -1413,6 +1413,29 @@ class ScenarioConfig:
     # MISO-only; no-op without the measured parquet (byte-identical).
     # Measured neighbor price-formation input (rule #12), blind to MISO's own
     # flow (rule #11 — reads only PJM hub LMP). Default off; opt-in.
+    miso_seam_measured_ladder: bool = False  # MISO reference-price seams: price
+    # every seam band (PJM/SPP/South, import + export) at the MEASURED per-year
+    # Q-Q band ladder (interchange_config.MISO_SEAM_LADDER_BY_YEAR, derived by
+    # scripts/derive_miso_seam_ladders.py: EIA-930 per-seam flow duration curves
+    # coupled quantile-by-quantile with the measured MISO DA hub LMP — the NEISO
+    # audit-C-6 measured-ladder pattern), replacing the gas x HR x load-shape
+    # band prices + hurdle for backcast years. Fixes the 2025 import starvation
+    # (G-23 residual): the measured PJM+IESO seam is a firm/scheduled base that
+    # flows in ~98-100% of hours UNCORRELATED with the hourly spread (r=+0.06;
+    # 2025 RT spread $0.00 while 28 TWh flowed; 46-56% of import MWh inside the
+    # $2 hurdle band), which a spot-spread-arbitrage seam structurally deletes
+    # in a zero-spread year (miso-45: 3.4 TWh gross imports vs 19.0 actual net).
+    # The ladder is the seam's revealed supply curve: the LP still clears each
+    # band economically on ITS OWN hourly price (nothing forced — contrast the
+    # rejected miso_firm_import_floor pin); the measured (month x hod) seam
+    # envelopes and band capacities are unchanged. Measured-behaviour
+    # identification, frozen formula, zero fitted parameters (rule 23); forward
+    # years keep the gas-elastic reference-price formula (two-track, like
+    # hr_by_year; pooled ladder = the forward story, see the registry comment).
+    # DISPLACES miso_pjm_border_anchor / miso_pjm_lmp_import_pricing on the
+    # rows it prices (alternatives, never stacked; this overwrite runs last).
+    # Requires --reference-price-interface; MISO-only; no-op for years outside
+    # the registry (byte-identical). Default off; opt-in per run.
     caiso_import_hub_prices: bool = False  # Price the CAISO priced-import node's
     # tranches at the MEASURED hourly WECC neighbor-hub LMP each proxies, instead
     # of the static fitted ladder in IMPORT_TRANCHES["CAISO"]. The PNW blocks
@@ -4451,6 +4474,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,
     "miso_pjm_lmp_import_pricing": 1,
+    "miso_seam_measured_ladder": 1,
     "ct_intermediate_split": 1,
     "ct_intermediate_cf_threshold": 3,
     "st_gas_intermediate_split": 1,
