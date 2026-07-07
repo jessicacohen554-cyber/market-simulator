@@ -1,9 +1,12 @@
 # CAISO CT-Drag D-8 Closure — Design (2026-07-06, Lane L-10, G-15)
 
-**Status: EXECUTED 2026-07-06 (L-10 continuation) — the §4 A/B ran full-span at HEAD and
-FAILED criterion (i); the drag stays, G-15 stays open. See §6 execution record. No drag
-coefficient was changed, no keeper swapped, nothing tuned against a residual (rules
-13/21/24).**
+**Status: RE-VERIFIED 2026-07-07 post-P2-archival — STILL FAILS.** §6's A/B ran under the
+old P2-legacy structure; §7 re-runs it under current main (P2 archived, the RA must-offer
+bridge now P1-native) and finds the SAME fail branch via a NEW root cause (CC
+over-commitment, spun out as gap G-61). The drag stays, G-15 stays open. No drag
+coefficient changed, no keeper swapped, no code left behind — two candidate release
+mechanisms were built, unit-tested, found inert in this configuration, and fully
+reverted (rules 1/13/21/24).
 
 **Thread:** gap-register `docs/gap-register-2026-07.md` G-15. The CAISO CT net-load drag
 (`ct_netload_drag`, the keeper's sole surviving CT commitment mechanism after the caiso-52
@@ -175,3 +178,61 @@ re-tune (rules 1/19). Mean SP15 LMP is unchanged vs the drag arm (69.2/46.5/48.7
 — neither the drag nor ramp+LCR moves C3a; the body overprice is owned by the
 midday/RUC-long and seam threads, and the 2024/25 tail deficit (0 h >$200 vs 35/8 actual)
 by the missing scarcity/AS mechanism (issue #1492).
+
+## 7. Re-verification post-P2-archival (2026-07-07) — same fail, new root cause
+
+Main since archived P2 (P0/P1 only, every run scored on P1) and moved the CAISO RA
+must-offer bridge (`caiso_ra_mustoffer`) P1-native: it is now applied as a `min_gen`
+floor *before* the single scored P1 solve (`pipeline/commitment.py::caiso_ra_p1_floor_fleet`),
+not a P2 re-solve. This session re-ran the §4 A/B under that new structure
+(`ramp_limits` + `local_capacity_constraints`, drag OFF) and it **still fails criterion
+(i)**: P1 CT 1.77/0.73 TWh (2023/24) vs the drag's 2.10/1.71, actual 3.05/3.30.
+
+**New root cause.** The suppressor is no longer P2 (archived) — it is the P1-native RA
+physical bridge itself. `caiso_ra_mustoffer_min_gen`'s physical-bridge branch (a gap
+shorter than a unit's min-down) floors **every eligible merchant CC unconditionally**
+across the whole gap: no RA-quantity gate (real CAISO must-offer binds only
+RA-contracted capacity; the model floors the entire merchant CC fleet) and no
+oversupply/absorption screen (only the off-by-default economic-bridge extension,
+`caiso_ra_startup_bridge`, has one). CC min-down (6-8h) exceeds the CAISO midday
+solar-belly length, so essentially every CC the base-cost P0 run commits both morning
+and evening gets floored at 0.26×pmax across the entire belly — pre-positioning it to
+ride the `ramp_limits` envelope into the evening and out-compete the fast-start CT
+reality commits for the ramp.
+
+**This is drag-independent, not something ramp+LCR broke.** The CAISO keeper's own
+committed D-2 (`caiso58_v2_regate`, drag ON) shows CC_REGULAR 61.4/64.9/62.7 TWh — the
+SAME over-run as this session's drag-OFF candidate (62.2/65.8/62.8). The drag was never
+restraining CC; it was independently forcing CT on top of an already-over-committed CC.
+Spun out as gap **G-61**.
+
+**Two structural release mechanisms tried, both inert — reverted in full.**
+
+1. **Absorption-based**: release the physical floor to cold when the total floored MW
+   in an hour exceeds the model's own import-back-down + export-headroom (the same
+   basis the existing economic-bridge surplus screen uses). Inert: CAISO's ~15 GW
+   export-sink headroom always exceeds the ~3 GW physical floor, so the screen never
+   triggers — the wrong absorption proxy for this scale.
+2. **Price-based**: release the physical floor when the base-cost P0 LMP falls to the
+   curtailable-renewable keep-running floor (0, or negative when
+   `negative_renewable_offers` is on) — the real economic signal of genuine curtailment.
+   Unit-level testing (a synthetic 1-plant, 48-hour case) confirmed the release LOGIC is
+   correct: given a negative LMP in the gap hours, the floor released to zero exactly as
+   designed. But in the real CAISO configuration it was **still inert** — the model's
+   actual midday LMP never reaches the curtailment floor (hour-of-day mean stays
+   $56-58 through the belly across all of 2023), so the "genuine oversupply" premise
+   this design assumed (LP-cleared price collapses when VRE is being curtailed) does not
+   hold in this model's price formation. The mechanism is correct in isolation; the
+   signal it depends on doesn't fire here.
+
+Both attempts (config field, seam wiring, `model/commitment.py` helper) were reverted to
+byte-identical origin/main (rules 1/13/21/24: an inert or premise-mismatched mechanism is
+not shipped as if it works, and is not left half-built in the tree).
+
+**Open path (G-61, next session):** either (a) gate RA must-offer eligibility to a
+published RA-contracted-capacity quantity instead of the whole merchant CC fleet, (b)
+detect the bridge on a startup-aware commitment pattern instead of raw energy-only P0
+(which over-cycles CC and manufactures short gaps a real UC would not produce), or (c)
+release on genuine curtailed-VRE volume (solar/wind dispatched below available CF)
+rather than price, since price never reaches the floor here. None of these were
+attempted this session; G-61 is open for whichever the next session picks up.
