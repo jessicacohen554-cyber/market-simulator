@@ -31,6 +31,7 @@ from market_sim.config.scenarios import (
     resolve_demand_growth_rate,
     resolve_policy_bundle,
 )
+from market_sim.data.datacenter import add_datacenter_block
 from market_sim.data.eia_loader import load_demand
 from market_sim.data.fleet import (
     Generator,
@@ -652,7 +653,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # (capacity-economics plan 2026-07 §2.3 component 1: an off-by-one
         # deletion, not foresight). The price-driven screens still see only
         # prior-year outcomes (one-pass, rule 10).
+        #
+        # The data-center flat load block (G-34) is added immediately after
+        # _scale_demand and before peak is taken, so every peak-anchored
+        # capacity screen (retirement floor, reserve-margin backstop) sees the
+        # DC load for free. Forecast-mode-only and default-off
+        # (datacenter_load_path == "off") => same array object, byte-identical.
         year_demand = _scale_demand(base_demand, config, year)
+        year_demand = add_datacenter_block(year_demand, config, iso, year, zone_names)
         peak_demand = float(year_demand.sum(axis=0).max())
 
         if fleet is None:
@@ -919,11 +927,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # year_demand / peak_demand here on the hindcast-aware basis for the LP
         # and results path: in hindcast mode the measured/pinned load
         # (year_base_demand) governs the solve, not the forecast scalar.
-        year_demand = (
-            year_base_demand
-            if config.hindcast
-            else _scale_demand(base_demand, config, year)
-        )
+        if config.hindcast:
+            # Measured/pinned historical load governs the hindcast LP; the
+            # forecast-only DC block is never added on top of measured actuals
+            # (and datacenter_load_path is "off" in any hindcast anyway).
+            year_demand = year_base_demand
+        else:
+            # Same DC block as the capacity-screen seam above (G-34), applied on
+            # the forecast branch so the LP and results path see the identical
+            # demand the screens saw. Default-off => same array, byte-identical.
+            year_demand = _scale_demand(base_demand, config, year)
+            year_demand = add_datacenter_block(
+                year_demand, config, iso, year, zone_names
+            )
         peak_demand = float(year_demand.sum(axis=0).max())
 
         # Net-load-indexed ST_GAS + CT_PEAKER reliability-drag min-gen floors —

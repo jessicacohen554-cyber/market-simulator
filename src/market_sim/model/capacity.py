@@ -2140,6 +2140,43 @@ def accredited_firm_capacity_mw(
     return firm
 
 
+def resolve_reserve_margin_build_enabled(config: ScenarioConfig, iso: str) -> bool:
+    """Resolve whether the reserve-margin adequacy backstop fires for ``iso``.
+
+    Market-design-dependent resolution (G-41, PJM hindcast I7 decision
+    2026-07-06 — owner-approved market-design-dependent variant). The
+    ``ScenarioConfig.reserve_margin_build_enabled`` field is tri-state:
+
+    * ``True`` / ``False`` — explicit override, honoured verbatim (rule 21: the
+      knob lands in ``run_config.json`` and a scenario can force it either way).
+    * ``None`` (default) — resolve per market design: ON when the ISO's design
+      procures capacity to an adequacy requirement
+      (``MARKET_DESIGN[iso].capacity_market`` — PJM/MISO/NYISO/NEISO/CAISO; the
+      LP analogue of RPM's absolute-IRM procurement), OFF for energy-only ERCOT
+      and for ISOs absent from :data:`MARKET_DESIGN` (conservative — the real
+      energy-only market has no absolute reliability floor: an under-remunerated
+      unit exits and ORDC/scarcity prices the resulting adequacy, so a
+      force-build backstop would manufacture firm MW the market never procures,
+      rule 1).
+
+    Energy-only ERCOT and any ``None``-default forecast on an unknown ISO
+    resolve OFF, so the pre-G-41 default-off behaviour is byte-identical there;
+    the capacity-market ISOs are where the backstop newly engages by default.
+
+    Args:
+        config: Scenario config carrying the tri-state override field.
+        iso: ISO identifier.
+
+    Returns:
+        ``True`` if the backstop should fire, else ``False``.
+    """
+    override = config.reserve_margin_build_enabled
+    if override is not None:
+        return bool(override)
+    design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
+    return bool(design.capacity_market)
+
+
 def apply_reserve_margin_build(
     fleet: list[Generator],
     firm_capacity_mw: float,
@@ -2166,7 +2203,7 @@ def apply_reserve_margin_build(
     capacity. Returns ``(fleet, built_mw)``; a no-op (built 0) when disabled,
     when the margin is already met, or when the queue cap is exhausted.
     """
-    if not config.reserve_margin_build_enabled or peak_demand_mw <= 0.0:
+    if not resolve_reserve_margin_build_enabled(config, iso) or peak_demand_mw <= 0.0:
         return fleet, 0.0
     # Shared requirement resolution (one requirement, two verbs — plan §3.2):
     # the same firm-peak x (1 + PRM) construction the retirement reliability
@@ -2791,8 +2828,13 @@ def evolve_fleet(
     # against the entering year's known peak (prior-year peak when the runner
     # did not supply it). Firm capacity nets the thermal fleet (UCAP) and the
     # prior-year renewable pools / storage (threaded via prior_results).
-    # No-op unless reserve_margin_build_enabled.
-    if config.reserve_margin_build_enabled and peak_demand_used > 0.0:
+    # No-op unless the backstop resolves on (G-41 market-design resolution:
+    # capacity-market ISOs default-on, energy-only ERCOT off, explicit override
+    # wins — resolve_reserve_margin_build_enabled).
+    if (
+        resolve_reserve_margin_build_enabled(config, config.iso)
+        and peak_demand_used > 0.0
+    ):
         firm_mw = accredited_firm_capacity_mw(
             fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw, iso=config.iso
         )
