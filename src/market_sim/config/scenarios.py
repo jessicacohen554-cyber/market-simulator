@@ -991,6 +991,72 @@ class ScenarioConfig:
     # a gas/price residual (CLAUDE.md #1/#11), keeper-eligible. Default off
     # (byte-identical caiso-45 bridge); requires caiso_ra_startup_bridge;
     # CAISO-only. Toggle with --caiso-ra-bridge-decommit.
+    caiso_ra_mustoffer_quantity_gate: bool = False  # CAISO RA must-offer
+    # QUANTITY gate (gap G-61 path (a), D-8 closure §7). Real CAISO attaches
+    # the must-offer obligation only to RA-CONTRACTED (shown) capacity; the
+    # ungated P1-native bridge floors the WHOLE merchant gas CC fleet through
+    # the solar belly (no RA-quantity gate), over-committing CC and
+    # pre-positioning it to out-compete fast-start CT at the evening ramp.
+    # With this gate on, the bridged fleet is capped at the PUBLISHED
+    # gas-fired must-offer RA capacity for the compliance year
+    # (constants.CAISO_RA_MUSTOFFER_GAS_MW — DMM Annual Report "Must-Offer:
+    # Gas-fired generators", the bid-insertion category): bridged plants are
+    # dropped cheapest-startup-first (the RUC de-commitment order already
+    # used by _apply_economic_bridges — cheapest to bring back tomorrow
+    # cycles off first) until the kept plants' summed pmax fits the published
+    # quantity. A measured market-design quantity, forward-regenerating
+    # (refreshes on each DMM annual publication), never fitted to a residual
+    # (rules 13/23). MEASURED NO-OP AT HEAD (2026-07-07, G-61a): the bridged
+    # CC fleet totals 13.7-13.8 GW true pmax in 2023-25, inside the published
+    # 19,130/15,566/15,566 MW in every year — the model bridges LESS capacity
+    # than reality obligates, so G-61's over-commitment is not a quantity-
+    # scope error (the conflation of must-OFFER with must-stay-online is —
+    # path (b)). Kept as the forward scope guard: it binds when the published
+    # series drops below fleet scale. Default off (byte-identical); requires
+    # caiso_ra_mustoffer; CAISO-only. GATED CHANGE (alters dispatch volumes).
+    caiso_ra_bridge_startup_aware: bool = False  # CAISO RA bridge STARTUP-AWARE
+    # run detection (gap G-61 path (b), D-8 closure §7). The P1-native bridge
+    # detects committed runs from the raw base-cost P0 dispatch; P0 pays no
+    # startup cost on a continuous ramp, so it over-cycles CC — phantom
+    # micro-runs a real unit commitment would never start chop the solar
+    # belly into sub-min-down gaps, every one of which the physical bridge
+    # floors unconditionally. With this on, a detected run anchors a bridge
+    # only when it is COMMITMENT-REAL under the unit's own start economics:
+    # the run's P0 energy margin per MW of capacity,
+    #   Σ_t∈run (LMP_P0[zone,t] − MC[g,t]) × dispatch[g,t] / pmax[g],
+    # must cover the unit's published per-MW startup cost (the same
+    # NREL/CAMPD-bin startup the economic bridge prices, _ra_bridge_unit_
+    # params) — the standard UC start test: one startup amortized over the
+    # run's whole margin. Runs failing it are removed BEFORE gap detection,
+    # so phantom fragments stop manufacturing short gaps and a bridge only
+    # ever spans two genuinely-committed runs. Inputs are the model's own P0
+    # solution + published class startup costs — zero fitted parameters,
+    # forward-derivable (rules 13/17); the run threshold and min-down physics
+    # are unchanged. Default off (byte-identical); requires
+    # caiso_ra_mustoffer; CAISO-only. GATED CHANGE (alters dispatch volumes).
+    caiso_ra_bridge_curtailment_release: bool = False  # CAISO RA bridge
+    # CURTAILED-VRE RELEASE (gap G-61 path (c), D-8 closure §7). A bridge gap
+    # is NOT floored when the model's own P0 solution shows genuine
+    # curtailed-VRE volume inside it — wind+solar dispatched below their
+    # available potential (Σ cf × cap − Σ dispatched >
+    # constants.CAISO_CURTAIL_RELEASE_EPS_MW, a float-noise guard) — because
+    # holding thermal min-load through real renewable curtailment displaces
+    # curtailable energy, and real CAISO decommits RA units in oversupply
+    # (RUC de-commitment / exceptional dispatch) rather than curtail more
+    # VRE. This is the VOLUME form of the §7 price-based release (built,
+    # correct in isolation, reverted as inert — the midday LMP never reaches
+    # the curtailment floor here): volume fires whenever curtailment
+    # physically occurs, price only when the LP is long enough to hit the
+    # renewable offer floor. Ex-ante honesty note (FINDING-caiso-seam-diurnal
+    # -2026-07-07): at HEAD the model reaches the curtailment margin only
+    # 0-28 h/yr (the seam under-imports midday), so this release is expected
+    # near-inert until the seam-shape fix lands — build it because it is real
+    # market design (rule 1), record what it does. Zero fitted parameters;
+    # inputs are the model's own P0 solution + the LP's own renewable bounds.
+    # Threaded on the backcast path (run_calibration.py); the forecast
+    # orchestrator does not yet pass the potential series, where the flag is
+    # inert by construction. Default off (byte-identical); requires
+    # caiso_ra_mustoffer; CAISO-only. GATED CHANGE (alters dispatch volumes).
     neiso_gas_coldsnap_derate: bool = False  # NEISO winter gas-fired availability
     # derate (temperature-dependent forced outage, TDFOR). On deep-winter cold
     # snaps the gas-electric constraint physically curtails NON-dual-fuel gas
@@ -4442,6 +4508,9 @@ TIER_TAGS: dict[str, int] = {
     "caiso_ra_min_load_frac": 2,
     "caiso_ra_startup_bridge": 1,
     "caiso_ra_bridge_decommit": 1,
+    "caiso_ra_mustoffer_quantity_gate": 1,
+    "caiso_ra_bridge_startup_aware": 1,
+    "caiso_ra_bridge_curtailment_release": 1,
     "reliability_floor": 1,
     "caiso_solar_deliverability": 1,
     "caiso_solar_deliverability_k": 3,
