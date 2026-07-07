@@ -44,9 +44,13 @@ For any year with neither source the year is skipped with a data-needed
 message — curtailment is never fabricated.
 
 The output series sit on the model's fixed non-leap 8760-hour clock keyed to
-ERCOT-local time: Feb 29 of a leap year is dropped, repeated fall-back hours
-are averaged, and the spring-forward gap is interpolated — matching the
-``ERCO hourly`` demand clock (see eia_loader).
+ERCOT-local **standard** time (CST, UTC-6, no DST) — matching the ``ERCO
+hourly`` demand clock (see eia_loader). ERCOT report timestamps are Central
+*Prevailing* Time (CPT: CDT in summer), so they are converted CPT -> CST
+before placement (:func:`_prevailing_to_standard`); the repeated fall-back
+hour is disambiguated by the reports' DSTFLAG and the spring-forward hour is
+absent by construction, so the CST clock is covered with no DST gap. Feb 29
+of a leap year is dropped.
 
 Run:
     python scripts/build_ercot_hsl.py                 # all buildable years
@@ -353,28 +357,62 @@ def _pick_column(
     return None
 
 
+def _prevailing_to_standard(ts: pd.Series, dst_flag: pd.Series | None) -> pd.Series:
+    """Convert Central-*Prevailing*-Time report stamps to the fixed CST clock.
+
+    ERCOT market reports are stamped in Central Prevailing Time (CPT): the
+    labels jump forward one hour at the DST spring transition (HE 3 absent on
+    the transition day) and repeat one hour at fall-back (HE 2 twice, the
+    second occurrence flagged ``DSTFLAG == 'Y'``). The model's fixed non-leap
+    8760-hour clock — and the EIA-930 demand/renewable series the dispatch
+    joins these bounds against — is local **standard** time (CST, UTC-6, no
+    DST), so CPT labels placed on it unconverted land one hour late for the
+    entire mid-Mar–early-Nov DST window. That defect put the 2024/25 wind and
+    solar potential one hour late through every scarcity season (verified
+    against EIA-930: Jan best lag 0 / Jul best lag +1, r = 1.0000 at both —
+    the same series, shifted), handing the dispatch multi-GW phantom solar
+    potential in the post-sunset scarcity hours.
+
+    ``dst_flag`` disambiguates the repeated fall-back hour (``'Y'`` = second
+    occurrence, already back on CST). Without a flag column the ambiguous
+    repeat and any nonexistent spring-forward stamp become ``NaT`` (dropped
+    upstream) rather than guessed.
+    """
+    if dst_flag is not None:
+        # True = first occurrence (DST still in effect) for the repeated hour.
+        ambiguous = dst_flag.astype(str).str.strip().str.upper().ne("Y").to_numpy()
+    else:
+        ambiguous = "NaT"
+    local = ts.dt.tz_localize("US/Central", ambiguous=ambiguous, nonexistent="NaT")
+    # Etc/GMT+6 is fixed UTC-6 (POSIX sign convention) == CST year-round.
+    return local.dt.tz_convert("Etc/GMT+6").dt.tz_localize(None)
+
+
 def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
-    """Reduce one report frame to ``(ts, gen_mw, hsl_mw)`` rows.
+    """Reduce one report frame to ``(ts, gen_mw, hsl_mw)`` rows on the CST clock.
 
     Handles both report families: the hourly NP4-732/737 layout
     (``DELIVERY_DATE`` + ``HOUR_ENDING``, with a DST flag for the repeated
     fall-back hour) and the 5-minute NP4-733/738 layout (a single interval
-    timestamp column). The GEN column is the system-wide actual; the HSL
-    column is the system-wide actual HSL, preferred over the COP HSL when
-    both are present (COP HSLs aggregate only On-Line resources' operating
-    plans; the actual HSL is the telemetered potential).
+    timestamp column). Timestamps are Central Prevailing Time in both
+    families and are converted to the model's fixed CST clock
+    (:func:`_prevailing_to_standard`). The GEN column is the system-wide
+    actual; the HSL column is the system-wide actual HSL, preferred over the
+    COP HSL when both are present (COP HSLs aggregate only On-Line resources'
+    operating plans; the actual HSL is the telemetered potential).
 
     Raises:
         ValueError: when the timestamp, GEN or HSL column cannot be found.
     """
     df = df.rename(columns=lambda c: str(c).strip().upper())
     columns = list(df.columns)
+    dst_flag = df["DSTFLAG"] if "DSTFLAG" in columns else None
 
     if "DELIVERY_DATE" in columns and "HOUR_ENDING" in columns:
         date = pd.to_datetime(df["DELIVERY_DATE"])
         # HOUR_ENDING is 1-24 (sometimes "HH:00"); hour-beginning = HE - 1.
         he = df["HOUR_ENDING"].astype(str).str.split(":").str[0].astype(int)
-        ts = date + pd.to_timedelta(he - 1, unit="h")
+        ts = _prevailing_to_standard(date + pd.to_timedelta(he - 1, unit="h"), dst_flag)
     else:
         ts_col = next((c for c in _TIMESTAMP_COLUMNS if c in columns), None)
         if ts_col is None:
@@ -388,7 +426,7 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
         # flooring so the interval lands in the hour it covers.
         if (ts.dt.minute != 0).any():
             ts = ts - pd.Timedelta(seconds=1)
-        ts = ts.dt.floor("h")
+        ts = _prevailing_to_standard(ts.dt.floor("h"), dst_flag)
 
     gen_col = _pick_column(
         columns, ("ACTUAL", "SYSTEM"), exclude=("HSL",)
@@ -412,20 +450,23 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
         }
     )
     # Forecast-only rows (the rolling future window of the hourly reports)
-    # carry no actuals; drop them rather than treating them as telemetry.
-    return out.dropna(subset=["gen_mw", "hsl_mw"])
+    # carry no actuals; drop them rather than treating them as telemetry. A
+    # NaT ts is a CPT stamp that could not be placed on the CST clock (an
+    # unflagged fall-back repeat / malformed spring-forward row) — dropped,
+    # then covered by the overlapping rolling-window postings or interpolated.
+    return out.dropna(subset=["ts", "gen_mw", "hsl_mw"])
 
 
 def _to_model_clock(rows: pd.DataFrame, year: int) -> pd.DataFrame:
     """Place ``(ts, gen_mw, hsl_mw)`` rows on the non-leap 8760-hour clock.
 
     Rows are filtered to ``year`` with Feb 29 dropped, then averaged by
-    local ``(month, day, hour)`` — which collapses sub-hourly intervals,
-    overlapping rolling-window postings, and the repeated DST fall-back
-    hour alike — and reindexed onto the fixed non-leap hourly calendar. Any
-    cited known-bad ERCOT source window (``_KNOWN_BAD_NP6_WINDOWS``) is then
-    nulled out. Remaining holes (the DST spring-forward hour, scattered
-    telemetry gaps, and the cited known-bad windows) are linearly
+    local ``(month, day, hour)`` — which collapses sub-hourly intervals and
+    overlapping rolling-window postings (timestamps are already on the CST
+    clock, so DST needs no handling here) — and reindexed onto the fixed
+    non-leap hourly calendar. Any cited known-bad ERCOT source window
+    (``_KNOWN_BAD_NP6_WINDOWS``) is then nulled out. Remaining holes
+    (scattered telemetry gaps and the cited known-bad windows) are linearly
     interpolated.
 
     Raises:

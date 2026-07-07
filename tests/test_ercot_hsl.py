@@ -124,11 +124,12 @@ def test_hsl_cf_profile_covers_new_year(tmp_path, monkeypatch):
 
 
 def _hourly_report_frame(dates: pd.DatetimeIndex) -> pd.DataFrame:
-    """Return an NP4-732-style hourly report frame for the given local hours."""
+    """Return an NP4-732-style hourly report frame for the given CPT hours."""
     return pd.DataFrame(
         {
             "DELIVERY_DATE": dates.strftime("%m/%d/%Y"),
             "HOUR_ENDING": [f"{h + 1}:00" for h in dates.hour],
+            "DSTFLAG": "N",
             "ACTUAL_SYSTEM_WIDE": 5000.0 + np.arange(len(dates)) % 100,
             "ACTUAL_SYSTEM_WIDE_HSL": 6000.0 + np.arange(len(dates)) % 100,
             "COP_HSL_SYSTEM_WIDE": 9999.0,  # must NOT be picked over the actual
@@ -138,13 +139,61 @@ def _hourly_report_frame(dates: pd.DatetimeIndex) -> pd.DataFrame:
 
 
 def test_parse_report_hourly_layout_prefers_actual_hsl():
-    """DELIVERY_DATE/HOUR_ENDING parse; actual HSL wins over COP HSL."""
+    """DELIVERY_DATE/HOUR_ENDING parse; actual HSL wins over COP HSL.
+
+    June labels are Central *Prevailing* (CDT), so the CST model-clock stamp
+    is one hour earlier than the naive label.
+    """
     dates = pd.date_range("2024-06-01", periods=48, freq="h")
     parsed = hsl_script._parse_report("wind.csv", _hourly_report_frame(dates))
     assert len(parsed) == 48
     assert (parsed["hsl_mw"] < 9999.0).all()  # actual column, not COP
-    assert parsed["ts"].iloc[0] == pd.Timestamp("2024-06-01 00:00")
-    assert parsed["ts"].iloc[-1] == pd.Timestamp("2024-06-02 23:00")
+    assert parsed["ts"].iloc[0] == pd.Timestamp("2024-05-31 23:00")
+    assert parsed["ts"].iloc[-1] == pd.Timestamp("2024-06-02 22:00")
+
+
+def test_parse_report_cpt_to_cst_winter_identity():
+    """Winter (CST) labels are already standard time: no shift."""
+    dates = pd.date_range("2024-01-05", periods=24, freq="h")
+    parsed = hsl_script._parse_report("wind.csv", _hourly_report_frame(dates))
+    assert parsed["ts"].iloc[0] == pd.Timestamp("2024-01-05 00:00")
+    assert parsed["ts"].iloc[-1] == pd.Timestamp("2024-01-05 23:00")
+
+
+def test_parse_report_cpt_dst_transitions_cover_cst_clock():
+    """Spring-forward (HE 3 absent) and fall-back (HE 2 repeated, DSTFLAG=Y)
+    prevailing labels convert to a gapless, duplicate-free CST hour sequence."""
+    # 2024-03-10: spring forward. Real reports carry HE 1,2,4..24 (23 rows).
+    he = [1, 2] + list(range(4, 25))
+    spring = pd.DataFrame(
+        {
+            "DELIVERY_DATE": "03/10/2024",
+            "HOUR_ENDING": [f"{h}:00" for h in he],
+            "DSTFLAG": "N",
+            "ACTUAL_SYSTEM_WIDE": 100.0,
+            "ACTUAL_SYSTEM_WIDE_HSL": 120.0,
+        }
+    )
+    parsed = hsl_script._parse_report("wind.csv", spring)
+    got = parsed["ts"].dt.strftime("%m-%d %H").tolist()
+    # HE1,2 are CST hours 0,1; HE4..24 are CDT -> CST hours 2..22. Gapless.
+    assert got == [f"03-10 {h:02d}" for h in range(23)]
+
+    # 2024-11-03: fall back. HE 2 occurs twice; DSTFLAG=Y marks the repeat.
+    rows = [(1, "N"), (2, "N"), (2, "Y")] + [(h, "N") for h in range(3, 25)]
+    fall = pd.DataFrame(
+        {
+            "DELIVERY_DATE": "11/03/2024",
+            "HOUR_ENDING": [f"{h}:00" for h, _ in rows],
+            "DSTFLAG": [f for _, f in rows],
+            "ACTUAL_SYSTEM_WIDE": 100.0,
+            "ACTUAL_SYSTEM_WIDE_HSL": 120.0,
+        }
+    )
+    parsed = hsl_script._parse_report("wind.csv", fall)
+    got = parsed["ts"].dt.strftime("%m-%d %H").tolist()
+    # HE1 (00:00 CDT) -> 11-02 23:00 CST; HE2 N/Y -> 00:00/01:00; HE3..24 -> 02..23.
+    assert got == ["11-02 23"] + [f"11-03 {h:02d}" for h in range(24)]
 
 
 def test_parse_report_drops_forecast_only_rows():
@@ -167,9 +216,10 @@ def test_parse_report_five_minute_interval_ending():
         }
     )
     parsed = hsl_script._parse_report("solar.csv", df)
-    # Intervals ending 00:05..01:00 cover hour 0; 01:05..02:00 cover hour 1.
-    assert (parsed["ts"].iloc[:12] == pd.Timestamp("2024-06-01 00:00")).all()
-    assert (parsed["ts"].iloc[12:] == pd.Timestamp("2024-06-01 01:00")).all()
+    # Intervals ending 00:05..01:00 cover CPT hour 0; 01:05..02:00 CPT hour 1
+    # — June CPT is CDT, one hour ahead of the CST model clock.
+    assert (parsed["ts"].iloc[:12] == pd.Timestamp("2024-05-31 23:00")).all()
+    assert (parsed["ts"].iloc[12:] == pd.Timestamp("2024-06-01 00:00")).all()
 
 
 def test_parse_report_2025_schema_prefers_system_wide_hsl_over_cop():
