@@ -362,7 +362,7 @@
      "class_total_twh": 61.5669,
      "forced_share": 0.0618,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.5462,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -374,8 +374,8 @@
      "class_total_twh": 0.1112,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.001,
+     "immaterial": true,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -386,7 +386,7 @@
      "class_total_twh": 2.0184,
      "forced_share": 0.6076,
      "limit": 0.15,
-     "load_share": null,
+     "load_share": 0.0271,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -398,8 +398,8 @@
      "class_total_twh": 0.557,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.0123,
+     "immaterial": true,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -410,7 +410,7 @@
      "class_total_twh": 24.2106,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.2148,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -422,7 +422,7 @@
      "class_total_twh": 64.9873,
      "forced_share": 0.0604,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.4908,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -434,8 +434,8 @@
      "class_total_twh": 0.0837,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.0006,
+     "immaterial": true,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -446,7 +446,7 @@
      "class_total_twh": 1.6763,
      "forced_share": 0.6599,
      "limit": 0.15,
-     "load_share": null,
+     "load_share": 0.0247,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -458,8 +458,8 @@
      "class_total_twh": 0.4404,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.0033,
+     "immaterial": true,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -470,7 +470,7 @@
      "class_total_twh": 22.2975,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.1684,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -482,7 +482,7 @@
      "class_total_twh": 62.636,
      "forced_share": 0.0548,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.4863,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -494,8 +494,8 @@
      "class_total_twh": 0.1074,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.0008,
+     "immaterial": true,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -506,10 +506,10 @@
      "class_total_twh": 1.3374,
      "forced_share": 0.6494,
      "limit": 0.15,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.012,
+     "immaterial": true,
      "lower_bound": true,
-     "verdict": "FAIL"
+     "verdict": "pass"
     },
     {
      "year": 2025,
@@ -518,8 +518,8 @@
      "class_total_twh": 0.1924,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
-     "immaterial": false,
+     "load_share": 0.0015,
+     "immaterial": true,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -530,7 +530,7 @@
      "class_total_twh": 19.6605,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.1526,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -538,8 +538,7 @@
    ],
    "failures": [
     "2023 CT_PEAKER: forced share 60.8% > 15% (1.23 of 2.02 TWh at binding non-exempt floors)",
-    "2024 CT_PEAKER: forced share 66.0% > 15% (1.11 of 1.68 TWh at binding non-exempt floors)",
-    "2025 CT_PEAKER: forced share 64.9% > 15% (0.87 of 1.34 TWh at binding non-exempt floors)"
+    "2024 CT_PEAKER: forced share 66.0% > 15% (1.11 of 1.68 TWh at binding non-exempt floors)"
    ],
    "notes": [
     "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
