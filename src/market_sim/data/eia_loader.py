@@ -241,11 +241,11 @@ _ISO_LOCAL_TZ: dict[str, str] = {
 # model uses today (the EIA-930 ``<BA> hourly`` Demand, summed over the clean
 # zones). Restricted to the ISOs whose model demand already comes from that same
 # ``<BA> hourly`` extract: CAISO/NYISO read native zonal feeds into clean (a
-# different series from the CISO/NYIS BA demand the model serves), MISO serves
-# the ``MISO hourly`` extract directly (its clean feed is not rebuilt onto the
-# local clock; see :data:`_ISO_LOCAL_TZ`), and PJM/SPP serve the demand-profiles
-# parquet, so their clean override is left off to avoid silently swapping the
-# source under the flag.
+# different series from the CISO/NYIS BA demand the model serves), MISO and PJM
+# serve their ``<BA> hourly`` extracts directly (neither clean feed is rebuilt
+# onto the local clock; see :data:`_ISO_LOCAL_TZ`), and SPP serves the
+# demand-profiles parquet, so their clean override is left off to avoid
+# silently swapping the source under the flag.
 _CLEAN_DEMAND_ISOS: frozenset[str] = frozenset({"ERCOT", "NEISO"})
 
 # Clean ``generation`` fuel bucket -> model benchmark series name, restricted to
@@ -428,9 +428,9 @@ def _demand_profile_clean(
     ``scripts/regenerate_clean.py demand-profile``. Silently returning
     ``None`` in that case (the old behavior) means the caller falls back to
     the corrupted legacy ``eia_demand_profiles.parquet`` series without any
-    signal — PJM has no dedicated per-BA extract, so for PJM this fallback is
-    not a rare edge case but the *only* demand source, and the corruption is
-    silent (PR #1426). So when the partition is missing for an ``(iso, year)``
+    signal (PR #1426; before PJM gained its per-BA extract wiring —
+    :func:`_load_pjm_hourly_demand` — this fallback was PJM's *only* demand
+    source). So when the partition is missing for an ``(iso, year)``
     the raw file's repair manifest actually covers (see
     :func:`_demand_profile_raw_pairs`), this now either:
 
@@ -1611,6 +1611,48 @@ def _load_miso_hourly_demand(year: int) -> np.ndarray | None:
     return demand
 
 
+def _load_pjm_hourly_demand(year: int) -> np.ndarray | None:
+    """Return PJM hourly metered demand (MW) for a year, or ``None``.
+
+    Reads the EIA-930 ``PJM hourly`` extract's ``Demand`` column off the same
+    :func:`_eia_hourly_frame_filled` frame family every other ISO's demand now
+    comes from, so demand shares the chronological clock of the renewables,
+    benchmark series, and the PJM metered-load zonal shares
+    (:func:`load_zonal_shares` reads the local-clock ``hrl_load_metered``
+    files). The legacy per-ISO demand-profiles series PJM used to serve is
+    defective three ways, and only the first is caught by the
+    ``curate_demand_profile.py`` repair screen:
+
+    * **Zero-hour gaps** — 23 h in 2023 and 22 h in 2024 read 0 MW (the
+      repair screen interpolates these);
+    * **Peak shaving** — 2024's 22-hour gap sits on a real ~104 GW ridge
+      (p80 of the year), so the repair's linear interpolation silently cuts
+      it to ~63 GW; the per-BA extract carries the real meter data in
+      exactly those hours;
+    * **Clock lag** — the legacy series lags this frame by 1-2 h, which
+      desynchronizes demand from the wind/solar series and the metered
+      zonal-share weights (the ERCOT/MISO precedent: serving the evening
+      peak hours after sunset manufactures or destroys scarcity).
+
+    The level is unchanged (same EIA-930 PJM BA Demand: identical peaks);
+    only the gap hours and the alignment move. Isolated missing meter hours
+    (the extract's first local hour; the 2023-11-05 fall-back day) are
+    interpolated. Net interchange is NOT read here — PJM's measured tie-line
+    export is applied separately in :func:`load_demand` (per-border-zone
+    attribution via :func:`pjm_zonal_interchange`).
+
+    Returns ``None`` when no usable full-year frame is available, signaling
+    the caller to fall back to the repaired demand-profiles partition.
+    """
+    frame = _eia_hourly_frame_filled("PJM", year)
+    if frame is None:
+        return None
+    demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
+    if np.isnan(demand).any():
+        return None
+    return demand
+
+
 def load_ercot_renewable_gen(year: int) -> dict[str, np.ndarray] | None:
     """Return ERCOT hourly wind and solar net generation (MW) for a year.
 
@@ -2437,8 +2479,11 @@ def load_demand(
     forward mechanism, used under ``--priced-interchange`` (where
     ``include_interchange`` is ``False`` so the wedge is not double counted).
     The demand series is net load, already net of behind-the-meter
-    PV/storage/DER (playbook §8.1). Other ISOs, and any (iso, year) whose
-    dedicated per-BA extract is unavailable (every PJM year; CAISO/MISO
+    PV/storage/DER (playbook §8.1). PJM's internal load likewise comes from
+    the EIA-930 ``PJM hourly`` extract (see :func:`_load_pjm_hourly_demand`
+    — the legacy demand-profiles series lags this clock by 1-2 h and its 2024
+    zero gap interpolates away a real ~104 GW ridge). Other ISOs, and any
+    (iso, year) whose dedicated per-BA extract is unavailable (CAISO/MISO
     2021-2022), fall back to the demand-profiles parquet alone, with no
     interchange — preferring the repaired ``demand-profile`` clean partition
     (see :func:`_demand_profile_clean`) when it has been regenerated, since
@@ -2504,6 +2549,13 @@ def load_demand(
         # the demand-profiles fallback below is on UTC and lags the local
         # renewable clock by ~5-6h (see :func:`_load_miso_hourly_demand`).
         raw_mw = _load_miso_hourly_demand(year)
+    elif iso == "PJM":
+        # Source PJM system demand off the per-BA EIA-930 extract: the legacy
+        # demand-profiles series lags this clock by 1-2h AND its 2024 22-hour
+        # zero gap sits on a real ~104 GW ridge that the demand-profile repair
+        # can only interpolate away (peak shaving); the per-BA extract carries
+        # the real meter data there (see :func:`_load_pjm_hourly_demand`).
+        raw_mw = _load_pjm_hourly_demand(year)
     # Clean-data seam (gated, default OFF): source the system demand from the
     # curated clean ``load`` dataset for the ISOs whose clean feed reconstructs
     # the raw EIA-930 series exactly (parity-checked in tests). Only the demand

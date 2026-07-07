@@ -350,6 +350,16 @@ class ReserveDesign:
     pergen_col: Optional[np.ndarray] = None  # (n_members,) R column per member
     pergen_ramp10: Optional[np.ndarray] = None  # (n_r,) static or (n_r, T)
     # hourly (availability-scaled) MW ramp10 caps
+    # Per-pool PRODUCT split (PJM pjm_reserve_pergen_sync): when set,
+    # ``pergen_col`` maps members to JOINT-HEADROOM POOLS and
+    # ``pergen_col_pool[r]`` maps each R column to its pool, so several
+    # product columns (synchronized / non-synchronized) share one pool's
+    # joint P+R row and its capacity RHS. ``balance_col_mask[f, r]`` is each
+    # family's complete R-column selection (zone ∧ product), replacing the
+    # zone-only selection. Both ``None`` on every other path (byte-identical:
+    # columns ≡ pools, zone selection).
+    pergen_col_pool: Optional[np.ndarray] = None  # (n_r,) pool per R column
+    balance_col_mask: Optional[np.ndarray] = None  # (n_fam, n_r) bool
     # Commitment-posture lever (miso_commitment_posture, design note §A): the
     # postured subset of the pergen pools. ``posture_pools`` indexes the R
     # columns that get an online-capacity variable U[p,t] (fast-start pools —
@@ -514,6 +524,12 @@ def build_reserve_dispatch_kwargs(
         kw["reserve_pergen_ramp10"] = design.pergen_ramp10
         if design.pergen_col is not None:
             kw["reserve_pergen_col"] = design.pergen_col
+        # Product-split pergen layout (PJM pjm_reserve_pergen_sync): several
+        # R columns share one joint-headroom pool, families select columns.
+        if design.pergen_col_pool is not None:
+            kw["reserve_pergen_col_pool"] = design.pergen_col_pool
+        if design.balance_col_mask is not None:
+            kw["reserve_balance_col_mask"] = design.balance_col_mask
 
     # Commitment-posture pools (MISO miso_commitment_posture, design note §A)
     if design.posture_pools is not None and design.posture_pools.size:
@@ -1213,6 +1229,60 @@ def ercot_commitment_headroom_overrides(
 # ---- PJM ------------------------------------------------------------------
 
 
+def pjm_pergen_structure(
+    fleet_arrays: FleetArrays,
+) -> tuple[np.ndarray, np.ndarray, int]:
+    """Return the PJM pergen ``(gen_idx, col, n_r)`` (zone, fuel-class) pooling.
+
+    Members are the reserve-eligible units that can deliver within 10 minutes
+    (``FleetArrays.ramp10 > 0`` — an exact reduction: a zero-ramp column would
+    be fixed at 0); ``col`` maps each member to its (zone, fuel-class) pool.
+    Shared between :func:`_pjm_design`'s pergen branch and the P0→P1
+    sync-cap recompute (``pipeline.commitment.pjm_pergen_sync_reserve_caps``)
+    so the pooling is identical by construction.
+    """
+    ramp10 = getattr(fleet_arrays, "ramp10", None)
+    if ramp10 is None:
+        raise ValueError(
+            "pjm_reserve_pergen requires FleetArrays.ramp10 (the 10-min "
+            "deliverable ramp, fleet._ramp10_capability)"
+        )
+    ramp10 = np.asarray(ramp10, dtype=float)
+    eligible = _reserve_eligible(fleet_arrays)
+    gen_idx = np.flatnonzero(eligible & (ramp10 > 0.0))
+    fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)[gen_idx]
+    zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[gen_idx]
+    keys = np.stack([zone, fuel], axis=1)
+    _, col = np.unique(keys, axis=0, return_inverse=True)
+    n_r = int(col.max()) + 1 if col.size else 0
+    return gen_idx, col.astype(int), n_r
+
+
+def pjm_pergen_pool_ramp10(
+    fleet_arrays: FleetArrays,
+    gen_idx: np.ndarray,
+    col: np.ndarray,
+    n_r: int,
+    member_mask: np.ndarray | None = None,
+) -> np.ndarray:
+    """Per-pool hourly availability-scaled 10-min deliverable ramp, ``(n_r, T)``.
+
+    ``member_mask`` (``(n_members, T)`` bool/float) optionally scopes members
+    per hour — the sync/non-sync product split multiplies the online (or
+    offline-fast-start) pattern in before pooling. The dense member-level
+    intermediate is released before return (the G-40 subset-build discipline).
+    """
+    ramp = np.asarray(fleet_arrays.ramp10, dtype=float)[gen_idx]
+    avail = np.asarray(fleet_arrays.availability, dtype=float)[gen_idx]
+    member_ramp_t = ramp[:, np.newaxis] * avail  # (n_members, T)
+    if member_mask is not None:
+        member_ramp_t = member_ramp_t * member_mask
+    out = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
+    np.add.at(out, col, member_ramp_t)
+    del member_ramp_t
+    return out
+
+
 def _pjm_design(
     config,
     fleet_arrays: FleetArrays,
@@ -1248,7 +1318,9 @@ def _pjm_design(
     from market_sim.results.scarcity import (
         largest_single_contingency_mw,
         load_pjm_measured_mad_reserve_requirement,
+        load_pjm_measured_mad_sync_reserve_requirement,
         load_pjm_measured_reserve_requirement,
+        load_pjm_measured_sync_reserve_requirement,
         load_pjm_ordc_curve,
         pjm_ordc_shortfall_steps,
         pjm_primary_reserve_requirement,
@@ -1318,16 +1390,6 @@ def _pjm_design(
                         reserve_class=0,
                     )
                 )
-        ramp10 = getattr(fleet_arrays, "ramp10", None)
-        if ramp10 is None:
-            raise ValueError(
-                "pjm_reserve_pergen requires FleetArrays.ramp10 (the 10-min "
-                "deliverable ramp, fleet._ramp10_capability)"
-            )
-        ramp10 = np.asarray(ramp10, dtype=float)
-        # Members: eligible units that can deliver within 10 min (ramp10 > 0)
-        # — an exact reduction: a zero-ramp column would be fixed at 0.
-        pergen_gen_idx = np.flatnonzero(eligible & (ramp10 > 0.0))
         # R-column granularity: one column per (zone, fuel-class) EVERYWHERE
         # — the class-level aggregate tier the miso-39 KEEPER runs
         # (_miso_design pergen branch), adopted after the finer tiers were
@@ -1343,22 +1405,135 @@ def _pjm_design(
         # measured_ramp_capability); the MAD balance family still selects
         # its member zones' columns (columns are zone-pure). The tier is a
         # documented memory scope-down, never a breakpoint/penalty change
-        # (CLAUDE.md #1/#11).
-        fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)[pergen_gen_idx]
-        zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[pergen_gen_idx]
-        keys = np.stack([zone, fuel], axis=1)
-        _, pergen_col = np.unique(keys, axis=0, return_inverse=True)
-        n_r = int(pergen_col.max()) + 1 if pergen_col.size else 0
+        # (CLAUDE.md #1/#11). Pooling shared with the P0->P1 sync-cap
+        # recompute via pjm_pergen_structure (grouping identical by
+        # construction).
+        pergen_gen_idx, pergen_col, n_r = pjm_pergen_structure(fleet_arrays)
         # Hourly availability-scaled deliverable ramp per column, (n_r, T):
         # a unit on outage (or derated) contributes proportionally less
         # 10-minute ramp — the CAMPD outage overlay (backcast) / forecast
         # availability thins the pool's deliverable cap in exactly the hours
         # capacity is out (the _miso_design convention). Physical input, not
         # a fitted parameter.
-        avail = np.asarray(fleet_arrays.availability, dtype=float)[pergen_gen_idx]
-        member_ramp_t = ramp10[pergen_gen_idx][:, np.newaxis] * avail  # (m, T)
-        col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
-        np.add.at(col_ramp10, pergen_col, member_ramp_t)
+        col_ramp10 = pjm_pergen_pool_ramp10(
+            fleet_arrays, pergen_gen_idx, pergen_col, n_r
+        )
+        if getattr(config, "pjm_reserve_pergen_sync", False):
+            # Per-gen OPPORTUNITY-COST co-opt (pjm_reserve_pergen_sync, the
+            # G-20b successor build): the Synchronized sub-product gets its
+            # own measured balance families and the pool R columns split into
+            # a SYNC product (online 10-min ramp only — scoped at the P0->P1
+            # seam, pipeline.commitment.build_pjm_reserve_p1_prep) and a
+            # NON-SYNC product (offline fast-start ramp, Manual 11 sec 4.2),
+            # sharing each pool's joint P+R headroom row. See the
+            # ScenarioConfig field docstring for the full design.
+            if getattr(config, "pjm_commitment_posture", False):
+                raise ValueError(
+                    "pjm_reserve_pergen_sync is mutually exclusive with "
+                    "pjm_commitment_posture — the posture U/SU re-anchor and "
+                    "the sync online scoping gate the same phenomenon "
+                    "(CLAUDE.md rule 19: one mechanism per phenomenon)"
+                )
+            # Synchronized requirement: measured (backcast) or the Manual 11
+            # sec 4.3 rule SR = Largest Single Contingency (forecast).
+            sr_req = load_pjm_measured_sync_reserve_requirement(year, hours)
+            if sr_req is None:
+                lsc = largest_single_contingency_mw(
+                    fleet_arrays.pmax,
+                    availability=fleet_arrays.availability,
+                    reserve_mask=eligible,
+                    plant_code=fleet_arrays.plant_code,
+                )
+                sr_req = np.full(T, max(0.0, float(lsc)), dtype=float)
+            sr_req = np.asarray(sr_req, dtype=float)
+            sr_steps = curve[("Synchronized", "RTO")]
+            sr_offset = float(max(o for o, _ in sr_steps))
+            _sr_total, sr_pen, sr_wid = pjm_ordc_shortfall_steps(
+                sr_steps, float(np.mean(sr_req))
+            )
+            sr_wid = np.asarray(sr_wid, dtype=float).copy()
+            sr_wid[-1] = float(np.max(sr_req))
+            families.append(
+                ReserveFamily(
+                    name="pjm_sync",
+                    requirement=sr_req + sr_offset,
+                    zone_mask=zone_mask,
+                    ordc_penalties=sr_pen.astype(float),
+                    ordc_step_widths=sr_wid.astype(float),
+                    reserve_class=0,
+                )
+            )
+            mad_mask_arr = (
+                np.array([z in PJM_MAD_ZONES for z in zone_names], dtype=bool)
+                if zone_names
+                else None
+            )
+            mad_sr_req = load_pjm_measured_mad_sync_reserve_requirement(year, hours)
+            has_mad_sr = (
+                mad_sr_req is not None
+                and mad_mask_arr is not None
+                and mad_mask_arr.any()
+            )
+            if has_mad_sr:
+                mad_sr_steps = curve[("Synchronized", "MAD")]
+                mad_sr_offset = float(max(o for o, _ in mad_sr_steps))
+                mad_sr_req = np.asarray(mad_sr_req, dtype=float)
+                _msr_total, msr_pen, msr_wid = pjm_ordc_shortfall_steps(
+                    mad_sr_steps, float(np.mean(mad_sr_req))
+                )
+                msr_wid = np.asarray(msr_wid, dtype=float).copy()
+                msr_wid[-1] = float(np.max(mad_sr_req))
+                families.append(
+                    ReserveFamily(
+                        name="pjm_sync_mad",
+                        requirement=mad_sr_req + mad_sr_offset,
+                        zone_mask=mad_mask_arr,
+                        ordc_penalties=msr_pen.astype(float),
+                        ordc_step_widths=msr_wid.astype(float),
+                        reserve_class=0,
+                    )
+                )
+            # Column layout: [0, n_r) = SYNC product, [n_r, 2*n_r) = NON-SYNC
+            # product; both columns of pool p share joint row p.
+            col_pool = np.tile(np.arange(n_r, dtype=int), 2)
+            # Pool zone (columns are zone-pure): pool p's zone from any member.
+            pool_zone = np.zeros(n_r, dtype=int)
+            pool_zone[pergen_col] = np.asarray(fleet_arrays.zone_idx, dtype=int)[
+                pergen_gen_idx
+            ]
+            sync_sel = np.concatenate(
+                [np.ones(n_r, dtype=bool), np.zeros(n_r, dtype=bool)]
+            )
+            all_sel = np.ones(2 * n_r, dtype=bool)
+            # Family order mirrors the `families` list construction above:
+            # PR_RTO [, PR_MAD], SR_RTO [, SR_MAD]. Primary is served by both
+            # products (SR ⊆ PR nesting — a synchronized MW counts toward
+            # Primary); Synchronized only by the SYNC columns.
+            masks: list[np.ndarray] = [all_sel]
+            if len(families) >= 2 and families[1].name == "pjm_primary_mad":
+                mad_pool = mad_mask_arr[pool_zone]
+                masks.append(np.tile(mad_pool, 2))
+            masks.append(sync_sel)
+            if has_mad_sr:
+                mad_pool = mad_mask_arr[pool_zone]
+                masks.append(np.concatenate([mad_pool, np.zeros(n_r, dtype=bool)]))
+            balance_col_mask = np.stack(masks, axis=0)
+            # P0 caps (no commitment pattern yet — the base-cost discovery run
+            # treats the fleet as all-online): SYNC = the full availability-
+            # scaled pool deliverable ramp, NON-SYNC = 0. The P0->P1 seam
+            # recomputes both from the P0 run pattern
+            # (pipeline.commitment.pjm_pergen_sync_reserve_caps).
+            pergen_ramp10_2p = np.vstack([col_ramp10, np.zeros_like(col_ramp10)])
+            return ReserveDesign(
+                families=families,
+                eligible=eligible.reshape(1, -1),
+                storage_eligible=False,
+                pergen_gen_idx=pergen_gen_idx,
+                pergen_col=pergen_col.astype(int),
+                pergen_ramp10=pergen_ramp10_2p,
+                pergen_col_pool=col_pool,
+                balance_col_mask=balance_col_mask,
+            )
         # Commitment-posture lever (design note §A; PJM port
         # docs/handoffs/pjm-commitment-posture-port-2026-07.md): U/SU columns
         # on the non-fast-start pools, gated on pjm_commitment_posture. Shares

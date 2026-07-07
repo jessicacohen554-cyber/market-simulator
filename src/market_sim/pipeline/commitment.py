@@ -282,42 +282,34 @@ def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
     return min_down, startup
 
 
-def pjm_commitment_scoped_reserve_fleet(config, fleet_arrays, p0_dispatch):
-    """Return the P1 ``FleetArrays`` with the commitment-scoped reserve mask applied.
+def _pjm_plant_online_pattern(fleet_arrays, p0_dispatch):
+    """Derive the plant-online commitment pattern from the P0 run pattern.
 
-    PJM path B (G-20b): the fa_p2-style availability screen, made P1-native.
-    ERCOT's AS-aware P2 zeroes decommitted units' availability so idle
-    slow-start capacity leaves the reserve-headroom RHS
-    (``apply_commitment_with_coal_pin`` + ``ercot_commitment_headroom_overrides``);
-    P2 is archived, so PJM applies the same commitment-state re-scope *before*
-    the single scored P1 solve, with the commitment state read from the model's
-    own base-cost **P0** run pattern (the CAISO RA bridge convention —
+    The shared P0 commitment-state derivation of the PJM path-B mask
+    (:func:`pjm_commitment_scoped_reserve_fleet`) and the pergen-sync product
+    split (:func:`pjm_pergen_sync_reserve_caps`) — commitment state read from
+    the model's own base-cost **P0** solve (the CAISO RA bridge convention:
     forward-derivable, condition-responsive, no measured series; rules 11/13):
 
     * A PLANT is online in hour ``t`` when any of its tranches dispatches in P0
       (``pjm-reserve-ordc.md`` honesty-gate measure: "a plant is synchronized
       when any of its tranches dispatch") — tranches are the same physical iron,
       so an online plant's unused tranche headroom stays available.
-    * Offline gaps shorter than the plant's capacity-weighted min-down are
-      bridged online (``model.commitment._merge_runs``): a unit physically
-      cannot cycle off-and-back inside its min-down window, so it stayed
-      synchronized through the gap. Physics-loosening only — the bridge can
-      only ADD online hours, never manufacture tightness (rule 11).
-    * Non-fast-start reserve-eligible units (plant capacity-weighted min-down
-      > ``POSTURE_FAST_START_MIN_DOWN_H`` or startup ≥
+    * Offline gaps shorter than a non-fast-start plant's capacity-weighted
+      min-down are bridged online (``model.commitment._merge_runs``): a unit
+      physically cannot cycle off-and-back inside its min-down window, so it
+      stayed synchronized through the gap. Physics-loosening only — the bridge
+      can only ADD online hours, never manufacture tightness (rule 11).
+    * Fast-start plants (capacity-weighted min-down ≤
+      ``POSTURE_FAST_START_MIN_DOWN_H`` and startup <
       ``POSTURE_FAST_START_STARTUP_PER_MW`` — the rule-18 physics thresholds
-      ``_posture_pool_params`` uses) have availability zeroed in their plant's
-      offline hours. Fast-start units are NEVER masked: an offline 10-min
-      CT/oil peaker still provides non-synchronized Primary reserve
-      (Manual 11 sec 4.2) and can start within the operating hour.
+      ``_posture_pool_params`` uses) are flagged in ``grp_fast``; they cycle
+      freely, so their pattern is never min-down-bridged.
 
-    A ``min_gen``-floored unit-hour is online by construction (P0 solves the
-    same floors, so ``P0 >= min_gen > 0`` there) — no floor is ever masked.
-    Returns ``None`` when the P0 pattern masks nothing (caller keeps the
-    ordinary warm-started P1).
+    Returns ``(online, group_of, grp_fast, eligible)``: the ``(n_grp, T)``
+    plant-online pattern, each unit's plant-group index, the per-group
+    fast-start flags, and the reserve-eligibility mask.
     """
-    import dataclasses
-
     from market_sim.config.reserve_config import (
         POSTURE_FAST_START_MIN_DOWN_H,
         POSTURE_FAST_START_STARTUP_PER_MW,
@@ -369,15 +361,14 @@ def pjm_commitment_scoped_reserve_fleet(config, fleet_arrays, p0_dispatch):
         grp_su < float(POSTURE_FAST_START_STARTUP_PER_MW)
     )
     gated = eligible & ~grp_fast[group_of]
-    if not gated.any():
-        return None
 
     # Plant online pattern from P0: any tranche dispatching -> the plant is
     # synchronized that hour (all its tranches' headroom stays available).
     online = np.zeros((n_grp, T), dtype=bool)
     np.logical_or.at(online, group_of, p0 > TOL_MW)
 
-    # Bridge offline gaps shorter than the plant's min-down (loosening only).
+    # Bridge offline gaps shorter than the plant's min-down (loosening only;
+    # non-fast-start plants only — fast-start iron cycles freely).
     for r in np.unique(group_of[gated]):
         md = float(grp_md[r])
         if md <= 1.0:
@@ -388,6 +379,40 @@ def pjm_commitment_scoped_reserve_fleet(config, fleet_arrays, p0_dispatch):
         for start, end in _merge_runs(runs, md):
             online[r, start:end] = True
 
+    return online, group_of, grp_fast, eligible
+
+
+def pjm_commitment_scoped_reserve_fleet(config, fleet_arrays, p0_dispatch):
+    """Return the P1 ``FleetArrays`` with the commitment-scoped reserve mask applied.
+
+    PJM path B (G-20b): the fa_p2-style availability screen, made P1-native.
+    ERCOT's AS-aware P2 zeroes decommitted units' availability so idle
+    slow-start capacity leaves the reserve-headroom RHS
+    (``apply_commitment_with_coal_pin`` + ``ercot_commitment_headroom_overrides``);
+    P2 is archived, so PJM applies the same commitment-state re-scope *before*
+    the single scored P1 solve, with the commitment state read from the model's
+    own base-cost **P0** run pattern (:func:`_pjm_plant_online_pattern` — the
+    plant-online derivation, min-down gap bridging, and rule-18 fast-start
+    exemption all live there). Non-fast-start reserve-eligible units have
+    availability zeroed in their plant's offline hours; fast-start units are
+    NEVER masked (an offline 10-min CT/oil peaker still provides
+    non-synchronized Primary reserve, Manual 11 sec 4.2, and can start within
+    the operating hour).
+
+    A ``min_gen``-floored unit-hour is online by construction (P0 solves the
+    same floors, so ``P0 >= min_gen > 0`` there) — no floor is ever masked.
+    Returns ``None`` when the P0 pattern masks nothing (caller keeps the
+    ordinary warm-started P1).
+    """
+    import dataclasses
+
+    online, group_of, grp_fast, eligible = _pjm_plant_online_pattern(
+        fleet_arrays, p0_dispatch
+    )
+    gated = eligible & ~grp_fast[group_of]
+    if not gated.any():
+        return None
+
     masked = gated[:, None] & ~online[group_of]
     if not masked.any():
         return None
@@ -397,6 +422,59 @@ def pjm_commitment_scoped_reserve_fleet(config, fleet_arrays, p0_dispatch):
         availability=avail,
         pmin=fleet_arrays.pmin.copy(),
     )
+
+
+def pjm_pergen_sync_reserve_caps(config, fleet_arrays, p0_dispatch):
+    """P1 ramp caps ``(2*n_r, T)`` for the ``pjm_reserve_pergen_sync`` product split.
+
+    The per-gen opportunity-cost co-opt's online scoping, applied to the
+    RESERVE bounds only (energy availability is NOT masked — P1's free energy
+    redispatch around the held reserve is what prices the sub-shortage
+    opportunity cost). Column products, per Manual 11 sec 4.2:
+
+    * **SYNC columns** ``[0, n_r)``: Σ ONLINE members' availability-scaled
+      ``ramp10`` per (zone, fuel-class) pool — synchronized reserve can come
+      only from synchronized (online) iron, fast-start included: an offline
+      10-min CT is not synchronized, so its ramp moves to the non-sync column.
+    * **NON-SYNC columns** ``[n_r, 2*n_r)``: Σ OFFLINE FAST-START members'
+      ``ramp10`` — offline 10-min-startable capacity provides non-synchronized
+      Primary reserve; its award still consumes the pool's ramp (this bound)
+      and capacity headroom (the shared joint P+R row). Offline non-fast-start
+      capacity backs nothing.
+
+    The online pattern is the pjm-85 P0 plant-online derivation
+    (:func:`_pjm_plant_online_pattern`: any-tranche-dispatching, min-down gaps
+    bridged, rule-18 physics fast-start flags) — commitment state from the
+    model's own P0 solve, forward-regenerating and condition-responsive
+    (rules 11/13). Pooling comes from ``reserve_config.pjm_pergen_structure``,
+    the same helper ``_pjm_design`` builds the layout from, so the column
+    order is identical by construction.
+    """
+    from market_sim.config.reserve_config import (
+        pjm_pergen_pool_ramp10,
+        pjm_pergen_structure,
+    )
+
+    gen_idx, col, n_r = pjm_pergen_structure(fleet_arrays)
+    online, group_of, grp_fast, _eligible = _pjm_plant_online_pattern(
+        fleet_arrays, p0_dispatch
+    )
+    online_member = online[group_of[gen_idx]]  # (n_members, T) bool
+    fast_member = grp_fast[group_of[gen_idx]]  # (n_members,) bool
+    sync = pjm_pergen_pool_ramp10(
+        fleet_arrays, gen_idx, col, n_r, member_mask=online_member
+    )
+    nonsync = pjm_pergen_pool_ramp10(
+        fleet_arrays,
+        gen_idx,
+        col,
+        n_r,
+        member_mask=(~online_member) & fast_member[:, np.newaxis],
+    )
+    del online_member
+    caps = np.vstack([sync, nonsync])
+    del sync, nonsync
+    return caps
 
 
 def build_pjm_reserve_p1_prep(config, iso: str, fleet_arrays):
@@ -412,15 +490,48 @@ def build_pjm_reserve_p1_prep(config, iso: str, fleet_arrays):
     mechanism is off, the ISO is not PJM, or the co-opt is off, so every other
     path is byte-identical.
 
-    Raises on a stacked path-A/pergen config: the online-gate proxy and the
-    per-pool layout scope the same phenomenon (one mechanism per phenomenon,
-    rule 19) — path B supersedes, never composes.
+    Per-gen sync split (``pjm_reserve_pergen_sync``, the G-20b successor):
+    the kwargs hook recomputes the ``(2*n_r, T)`` product-split ramp caps
+    (:func:`pjm_pergen_sync_reserve_caps`) from the P0 run pattern — SYNC
+    columns scoped to online iron, NON-SYNC to offline fast-start — with NO
+    fleet hook (energy availability is never masked; the free P1 energy
+    redispatch is what prices the opportunity cost).
+
+    Raises on a stacked path-A/path-B/pergen config: the online-gate proxy,
+    the availability mask, and the per-pool product split scope the same
+    phenomenon (one mechanism per phenomenon, rule 19) — enable exactly one.
     """
-    if not (
-        getattr(config, "pjm_reserve_commitment_scoped", False)
-        and iso == "PJM"
-        and getattr(config, "energy_reserve_coopt", False)
-    ):
+    if not (iso == "PJM" and getattr(config, "energy_reserve_coopt", False)):
+        return None, None
+    if getattr(config, "pjm_reserve_pergen_sync", False):
+        if not getattr(config, "pjm_reserve_pergen", False):
+            raise ValueError(
+                "pjm_reserve_pergen_sync requires pjm_reserve_pergen (the "
+                "product split rides the per-gen (zone, fuel-class) layout)"
+            )
+        if getattr(config, "pjm_reserve_commitment_scoped", False) or getattr(
+            config, "pjm_reserve_online_gated", False
+        ):
+            raise ValueError(
+                "pjm_reserve_pergen_sync is mutually exclusive with "
+                "pjm_reserve_commitment_scoped (path B) and "
+                "pjm_reserve_online_gated (path A) — enable exactly one "
+                "reserve-supply scoping (CLAUDE.md rule 19: one mechanism "
+                "per phenomenon)"
+            )
+
+        def _sync_kwargs_prep(r0, p1_fleet_arrays):
+            # Recompute the product-split ramp caps on the P0 run pattern.
+            # Bounds-only override: same LP dimensions, cold P1 (the seam
+            # releases the P0 model first — the memory-friendly path).
+            return {
+                "reserve_pergen_ramp10": pjm_pergen_sync_reserve_caps(
+                    config, fleet_arrays, r0.dispatch
+                )
+            }
+
+        return None, _sync_kwargs_prep
+    if not getattr(config, "pjm_reserve_commitment_scoped", False):
         return None, None
     if getattr(config, "pjm_reserve_online_gated", False) or getattr(
         config, "pjm_reserve_pergen", False
