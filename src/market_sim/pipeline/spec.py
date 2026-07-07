@@ -103,6 +103,11 @@ class DispatchSpec:
     # Import-direction TTC bound (measured ERCOT GTC overlay); None keeps the
     # symmetric -ttc.
     ttc_import: Any = UNSET
+    # ERCOT West Texas Export corridor VRE curtailment ceilings — (n_zones, T)
+    # multipliers in (0,1] on the wind/solar CF upper bound (1.0 off-corridor).
+    # UNSET (driver off / non-ERCOT) omits the keys, leaving the uncurtailed bound.
+    wind_curtail_share: Any = UNSET
+    solar_curtail_share: Any = UNSET
     # NEISO oil-burn / winter-fuel-inventory budget rows.
     oil_monthly_budget: Any = UNSET
     oil_gen_idx: Any = UNSET

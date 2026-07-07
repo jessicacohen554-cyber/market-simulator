@@ -88,6 +88,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "carb-cap-schedule",
     "chp-btm-share",
     "nyiso-downstate-gas",
+    "ercot-wtx-congestion",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -149,6 +150,24 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "counts, and mean positive shadow price. Sparse: a row exists only "
             "for hours the constraint was in SCED's active set. ERCOT-only "
             "(published physical transfer limits, rule #13/#14 admissible)."
+        ),
+    },
+    "ercot-wtx-congestion": {
+        "summary": (
+            "Measured ERCOT West Texas Export corridor transmission-congestion "
+            "pressure (hourly) — the VRE curtailment-share driver's shape source."
+        ),
+        "reconciles": (
+            "ERCOT NP6-86-CD SCED binding constraints geo-attributed to the West "
+            "Texas Export wind corridor via ERCOT's authoritative Settlement "
+            "Points List / electrical-bus load-zone mapping (NP4-160): a binding "
+            "row counts when either station is in the LZ_WEST settlement zone or "
+            "the constraint is the WESTEX/PNHNDL export GTC. Aggregated to the "
+            "fixed non-leap 8760-hour ERCOT-local clock as per-hour SCED-execution "
+            "and West-binding counts, congestion fraction, interface-only "
+            "fraction, and mean positive West shadow price (dense). ERCOT-only "
+            "(measured congestion incidence, rule #13/#14 admissible — never the "
+            "reported curtailment volume)."
         ),
     },
     "winter-fuel-inventory": {
