@@ -186,11 +186,18 @@ def _net_load(year: int) -> np.ndarray:
 def _class_hourly(year: int):
     """Per-class hourly on-line headroom + off-line quick-start capacity (MW).
 
-    Returns ``(online_reserve, offline_cap, class_cap)`` dicts keyed by model
-    class, each an ``(8760,)`` MW array (class_cap a scalar), computed from the
-    committed CAMPD extracts and the model nameplate/derate. Everything here is a
-    measured physical quantity (CAMPD gross output + model capacity), never a
-    price and never the LP's own dispatch.
+    Returns ``(online_reserve, offline_cap, class_cap, online_cap, online_gross)``
+    dicts keyed by model class, each an ``(8760,)`` MW array (class_cap a scalar),
+    computed from the committed CAMPD extracts and the model nameplate/derate.
+    ``online_cap`` is the summer-derated nameplate (HSL) of the class's ON-LINE
+    (committed, gross > 1 MW) units per hour — the on-line *capacity* envelope
+    (the base for the G-22 commitment-thinness energy+reserve cap), distinct from
+    ``online_reserve`` which is that envelope MINUS the on-line gross (the RTOLCAP
+    headroom). ``online_gross`` is the class's on-line gross output per hour, so
+    the identity ``online_cap - online_gross == online_reserve`` holds cell-by-cell
+    (the measured-data anchor: ``online_cap - gross`` reproduces measured RTOLCAP).
+    Everything here is a measured physical quantity (CAMPD gross output + model
+    capacity), never a price and never the LP's own dispatch.
     """
     plant_group, plant_cap, summer_derate = _fleet_class_maps(year)
     df = campd.load_campd_hourly(["TX"], [year])
@@ -208,8 +215,12 @@ def _class_hourly(year: int):
     ph["online_reserve"] = np.where(
         online, np.clip(eff_cap - ph["gross"].to_numpy(), 0.0, None), 0.0
     )
-    # Online capacity (of committed units) — the base for the OFF-line remainder.
+    # Online capacity (summer-derated HSL of committed units) — the base for both
+    # the OFF-line remainder (RTOFFCAP) AND the G-22 on-line-capacity envelope.
     ph["online_cap"] = np.where(online, eff_cap, 0.0)
+    # Online gross output of committed units (the envelope's energy term anchor;
+    # online_cap - online_gross == online_reserve, the measured RTOLCAP identity).
+    ph["online_gross"] = np.where(online, ph["gross"].to_numpy(), 0.0)
 
     # Class capacity = the CAMPD-covered nameplate of the class (the denominator
     # the reserve-realization fraction is normalized by; ERCOT thermal is almost
@@ -226,19 +237,26 @@ def _class_hourly(year: int):
 
     online_reserve: dict[str, np.ndarray] = {}
     offline_cap: dict[str, np.ndarray] = {}
+    online_cap: dict[str, np.ndarray] = {}
+    online_gross: dict[str, np.ndarray] = {}
     for grp in class_cap:
         sub = ph[ph["grp"] == grp]
         onl = np.zeros(HOURS)
         oncap = np.zeros(HOURS)
+        ongross = np.zeros(HOURS)
         v = sub.groupby("hour_of_year")["online_reserve"].sum()
         onl[v.index.to_numpy()] = v.to_numpy()
         v = sub.groupby("hour_of_year")["online_cap"].sum()
         oncap[v.index.to_numpy()] = v.to_numpy()
+        v = sub.groupby("hour_of_year")["online_gross"].sum()
+        ongross[v.index.to_numpy()] = v.to_numpy()
         # Off-line startable capacity = class total (summer-derated) − on-line.
         class_eff = class_cap[grp] * (1.0 - np.where(summer_hr, class_derate[grp], 0.0))
         online_reserve[grp] = onl
         offline_cap[grp] = np.clip(class_eff - oncap, 0.0, None)
-    return online_reserve, offline_cap, class_cap
+        online_cap[grp] = oncap
+        online_gross[grp] = ongross
+    return online_reserve, offline_cap, class_cap, online_cap, online_gross
 
 
 def derive():
@@ -254,7 +272,7 @@ def derive():
     season = _season_index()
     per_year = {}
     for year in YEARS:
-        online_reserve, offline_cap, class_cap = _class_hourly(year)
+        online_reserve, offline_cap, class_cap, _oncap, _ongross = _class_hourly(year)
         nl = _net_load(year)
         decile = _net_load_decile(nl)
         per_year[year] = (online_reserve, offline_cap, class_cap, decile)
@@ -356,6 +374,203 @@ def derive():
     return online_share, offline_share, deliv, deliv_off, preview
 
 
+# Classes forming the on-line-capacity envelope (G-22 commitment thinness). Same
+# responsive-thermal set as RTOLCAP_CLASSES — the envelope caps energy+reserve
+# drawn on the shared headroom at the committed on-line capacity, of which
+# RTOLCAP is the un-dispatched remainder.
+ONLINE_CAP_CLASSES = RTOLCAP_CLASSES
+
+# Net-load decile at/above which the envelope is in its BINDING REGIME — the
+# high-net-load hours where the co-opt's shared headroom is tight and the
+# envelope decides whether reserve tightens (below it the ENERGY term keeps the
+# envelope slack). deliv_env is fit to reproduce the measured on-line HSL over
+# these deciles (top 30%), so the envelope reproduces the measured RTOLCAP
+# capability where it operates rather than only in the annual mean.
+ONLINE_CAP_BINDING_DECILE = 7  # deciles 7,8,9 of N_DECILE=10 → top 30%
+
+
+def _model_class_cap(year: int) -> dict[str, float]:
+    """Per-class model-fleet reserve-eligible pmax (MW) — the production cap basis.
+
+    ``scarcity.ercot_online_capacity_envelope_mw`` builds the envelope from the
+    model ``FleetArrays.pmax`` summed over the responsive-fuel generators of each
+    plant_group class — NOT the derive's CAMPD-covered class nameplate (they
+    differ: tranche binning, non-CAMPD units, the responsive-fuel eligibility).
+    ``deliv_env`` must be fit on THIS basis so it transfers exactly to the LP;
+    fitting on the CAMPD nameplate leaves the in-LP envelope ~20-30% too tight in
+    the binding regime (the validator-basis mismatch). Mirrors the production
+    function's class summation exactly.
+    """
+    from market_sim.config.reserve_config import RESERVE_FUEL_TYPES
+    from market_sim.config.scenarios import ScenarioConfig
+    from market_sim.data.fleet import FUEL_TYPE_NAMES, generators_to_fleet_arrays
+
+    cfg = ScenarioConfig(
+        iso="ERCOT",
+        weather_year=year,
+        mode="backcast",
+        ercot_multiproduct_as_coopt=True,
+        ercot_online_capacity_envelope=True,
+    )
+    iso = get_iso_config("ERCOT")
+    gens = load_fleet_from_csv("ERCOT", iso, year=year)
+    fleet = generators_to_fleet_arrays(
+        gens, [z.name for z in iso.zones], HOURS, iso="ERCOT", config=cfg, year=year
+    )
+    pmax = np.asarray(fleet.pmax, dtype=float)
+    pg = np.asarray(getattr(fleet, "plant_group"))
+    fn = np.array([FUEL_TYPE_NAMES[i] for i in fleet.fuel_type_idx])
+    responsive = np.isin(fn, sorted(RESERVE_FUEL_TYPES))
+    return {
+        grp: float(pmax[(pg == grp) & responsive].sum()) for grp in ONLINE_CAP_CLASSES
+    }
+
+
+def derive_online_capacity():
+    """Derive the on-line-CAPACITY share tables + envelope deliverability coef.
+
+    The G-22 commitment-thinness anchor. Where :func:`derive` fits the on-line
+    *headroom* share (RTOLCAP = HSL − gross of committed units), this fits the
+    on-line *capacity* share — the committed HSL fraction itself:
+
+        online_cap_share_c(season, decile) = median_over_years(
+            Σ_online eff_cap_c / installed_cap_c )
+
+    conditioned on the same net-load-decile × season axes. The on-line-capacity
+    envelope the LP imposes is
+
+        online_cap_env(t) = deliv_env × Σ_c online_cap_share_c(nl,season) × cap_c(t)
+
+    capping ``Σ energy_c + Σ reserve_c ≤ online_cap_env`` on the shared-headroom
+    rows, so the LP cannot dispatch (or reserve) more thermal than the real
+    system had on-line — the ~3.2 GW phantom sub-$200 spare the P1
+    perfect-commitment assumption manufactures beyond RTOLCAP
+    (``docs/FINDING-ercot-priceshape-2026-07.md`` §3, structural conclusion #2).
+
+    ``deliv_env`` is fit to the measured on-line HSL quantity — CAMPD on-line
+    gross + measured RTOLCAP (the thermal portion, storage-AS removed) — a MW
+    quantity, never a price (rule #13). The **identification anchor** (returned in
+    the preview and hard-gated by ``scripts/validate_ercot_online_capacity.py``):
+    ``online_cap_env(t) − CAMPD_online_gross(t)`` must reproduce the measured
+    RTOLCAP series (level within ±10%, sane p10/p50/p90 band, coverage ~2× the
+    AS requirement — NOT the 1.0× ercot27 artifact), so the envelope reproduces
+    the measured on-line capability rather than merely tightening in the right
+    direction (the MISO-43 posture-lever lesson, G-25). Rule #23: re-derives only
+    on a CAMPD / measured-RTOLCAP source-data update, never a residual.
+    """
+    from market_sim.results.scarcity import ercot_storage_as_reserve_mw
+
+    season = _season_index()
+    per_year = {}
+    for year in YEARS:
+        _onl, _off, class_cap, online_cap, online_gross = _class_hourly(year)
+        nl = _net_load(year)
+        decile = _net_load_decile(nl)
+        per_year[year] = (class_cap, online_cap, online_gross, decile)
+
+    # Pooled (season, decile) median on-line-capacity share per class.
+    online_cap_share: dict[str, np.ndarray] = {}
+    for grp in ONLINE_CAP_CLASSES:
+        frac_cells = [[[] for _ in range(N_DECILE)] for _ in range(N_SEASON)]
+        for year in YEARS:
+            ccap, oncap, ongross, decile = per_year[year]
+            cap = ccap.get(grp, 0.0)
+            if cap <= 0 or grp not in oncap:
+                continue
+            frac = oncap[grp] / cap
+            for s in range(N_SEASON):
+                for d in range(N_DECILE):
+                    m = (season == s) & (decile == d)
+                    if m.any():
+                        frac_cells[s][d].append(frac[m])
+        tbl = np.zeros((N_SEASON, N_DECILE))
+        for s in range(N_SEASON):
+            for d in range(N_DECILE):
+                if frac_cells[s][d]:
+                    tbl[s, d] = float(np.median(np.concatenate(frac_cells[s][d])))
+        online_cap_share[grp] = tbl
+
+    # Fit deliv_env to the measured on-line HSL quantity = CAMPD on-line gross +
+    # measured RTOLCAP (thermal, storage-AS removed) — a pooled LS through the
+    # gross-anchored target, so the envelope's headroom remainder reproduces the
+    # measured RTOLCAP (rule #13; never a price).
+    # Summer (Jun-Sep) ambient-derate mask, applied to the class cap exactly as
+    # the production envelope does (scarcity.ercot_online_capacity_envelope_mw).
+    summer = np.isin(_hour_month(), [6, 7, 8, 9])
+    F_all, Y_all, gross_all, meas_all, stor_all, bind_all = [], [], [], [], [], []
+    for year in YEARS:
+        ccap, oncap, ongross, decile = per_year[year]
+        mcap = _model_class_cap(year)  # PRODUCTION cap basis (model FleetArrays)
+        F = np.zeros(HOURS)  # Σ_c cap_share_c[season,decile] × model cap_c (derated)
+        gross = np.zeros(HOURS)  # Σ_c CAMPD on-line gross_c
+        for grp in ONLINE_CAP_CLASSES:
+            cap = mcap.get(grp, 0.0)
+            if cap <= 0:
+                continue
+            derate = _SUMMER_CLASS_DERATE.get(grp, 0.0)
+            cap_t = cap * (1.0 - np.where(summer, derate, 0.0))
+            F += online_cap_share[grp][season, decile] * cap_t
+            gross += ongross.get(grp, np.zeros(HOURS))
+        stor = ercot_storage_as_reserve_mw(year, HOURS)
+        meas = pd.read_parquet(
+            REPO / f"data/raw/ercot/ercot_{year}_ordc_reserves_hourly.parquet"
+        )["rtolcap"].to_numpy()[:HOURS]
+        rtolcap_thermal = meas - stor  # storage-AS removed → thermal RTOLCAP
+        F_all.append(F)
+        Y_all.append(gross + rtolcap_thermal)  # measured on-line HSL (thermal)
+        gross_all.append(gross)
+        meas_all.append(meas)
+        stor_all.append(stor)
+        bind_all.append(decile >= ONLINE_CAP_BINDING_DECILE)
+    F = np.concatenate(F_all)
+    Y = np.concatenate(Y_all)
+    bind = np.concatenate(bind_all)
+    # Fit deliv_env to reproduce the measured on-line HSL in the BINDING REGIME
+    # (top net-load deciles) — the hours where the envelope is not slack and its
+    # reproduction of the measured RTOLCAP capability decides whether the co-opt
+    # tightens correctly. A whole-year LS fit reproduces the annual MEAN but lets
+    # the pooled-median share undershoot the *committable* capacity in the tight
+    # tail (room collapses far below measured RTOLCAP → over-fire); the envelope
+    # is a CAP (upper bound on what can be on-line), so it must reflect the
+    # capability the tight hours actually mustered. A ratio-of-means fit over the
+    # binding deciles reproduces that capability where it binds; the (harmless)
+    # overshoot in the slack hours never reaches the LP because the ENERGY term
+    # keeps the envelope slack there (rule #13: a measured-MW-quantity fit to the
+    # RTOLCAP band, never the price).
+    ok = ~np.isnan(Y) & (F > 0) & bind
+    deliv_env = float(Y[ok].sum() / F[ok].sum())
+
+    # Per-year identification preview: the envelope's headroom remainder
+    # (online_cap_env − CAMPD on-line gross) vs the measured RTOLCAP series.
+    preview = {}
+    for i, year in enumerate(YEARS):
+        env = deliv_env * F_all[i]
+        headroom = env - gross_all[i]  # what the model's post-envelope spare tracks
+        meas = meas_all[i]
+        stor = stor_all[i]
+        # Add the measured on-line storage-AS back for an apples-to-apples RTOLCAP
+        # comparison (the LP's envelope + storage reserve = the full RTOLCAP row).
+        headroom_full = headroom + stor
+        ok = ~np.isnan(meas)
+        bind = bind_all[i] & ok  # binding-regime hours (top net-load deciles)
+        preview[year] = {
+            "env_mean_gw": env[ok].mean() / 1000.0,
+            "headroom_mean_gw": headroom_full[ok].mean() / 1000.0,
+            "meas_mean_gw": meas[ok].mean() / 1000.0,
+            "err_pct": 100.0 * (headroom_full[ok].mean() / meas[ok].mean() - 1.0),
+            "corr": float(np.corrcoef(headroom_full[ok], meas[ok])[0, 1]),
+            "headroom_p": np.percentile(headroom_full[ok], [10, 50, 90]) / 1000.0,
+            "meas_p": np.percentile(meas[ok], [10, 50, 90]) / 1000.0,
+            # Binding-regime reproduction (the operative tail): the headroom the
+            # envelope leaves in the top-net-load hours vs measured RTOLCAP there.
+            "bind_headroom_gw": headroom_full[bind].mean() / 1000.0,
+            "bind_meas_gw": meas[bind].mean() / 1000.0,
+            "bind_err_pct": 100.0
+            * (headroom_full[bind].mean() / meas[bind].mean() - 1.0),
+        }
+    return online_cap_share, deliv_env, preview
+
+
 def _fmt_table(tbl: np.ndarray) -> str:
     rows = []
     for s in range(N_SEASON):
@@ -366,8 +581,62 @@ def _fmt_table(tbl: np.ndarray) -> str:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--emit", choices=["report", "constant"], default="report")
+    ap.add_argument(
+        "--emit",
+        choices=["report", "constant", "online-cap-constant", "online-cap-report"],
+        default="report",
+    )
     args = ap.parse_args()
+
+    # G-22 on-line-capacity envelope derivation (separate emit modes so the
+    # commitment-thinness constants can be regenerated without re-touching the
+    # frozen RTOLCAP-headroom shares above).
+    if args.emit in ("online-cap-constant", "online-cap-report"):
+        online_cap_share, deliv_env, preview = derive_online_capacity()
+        if args.emit == "online-cap-constant":
+            print("# Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON);")
+            print(
+                "# each inner tuple is the 10 net-load-percentile deciles (low→high)."
+            )
+            print(
+                "ERCOT_ONLINE_CAP_SHARE: dict[str, tuple[tuple[float, ...], ...]] = {"
+            )
+            for grp in ONLINE_CAP_CLASSES:
+                print(f'    "{grp}": (')
+                print(_fmt_table(online_cap_share[grp]))
+                print("    ),")
+            print("}")
+            print(f"ERCOT_ONLINE_CAP_DELIV_COEF: float = {deliv_env:.4f}")
+            return
+        print("=== ERCOT on-line-CAPACITY envelope (G-22 commitment thinness) ===")
+        print(
+            f"envelope deliverability coefficient (fit to measured on-line HSL "
+            f"MW): {deliv_env:.4f}\n"
+        )
+        print(
+            "Identification: (envelope − CAMPD on-line gross + storage-AS) vs "
+            "measured RTOLCAP\n"
+        )
+        print(
+            f"{'year':>5} {'env GW':>7} {'hdrm GW':>8} {'meas GW':>8} {'err%':>6} "
+            f"{'corr':>5}  {'hdrm p10/50/90':>22}  {'meas p10/50/90':>22}  "
+            f"{'BIND hdrm/meas/err':>20}"
+        )
+        for year in YEARS:
+            p = preview[year]
+            pp = "/".join(f"{v:.1f}" for v in p["headroom_p"])
+            mp = "/".join(f"{v:.1f}" for v in p["meas_p"])
+            bind = f"{p['bind_headroom_gw']:.1f}/{p['bind_meas_gw']:.1f}/{p['bind_err_pct']:+.0f}%"
+            print(
+                f"{year:>5} {p['env_mean_gw']:7.2f} {p['headroom_mean_gw']:8.2f} "
+                f"{p['meas_mean_gw']:8.2f} {p['err_pct']:+6.1f} {p['corr']:5.2f}  "
+                f"{pp:>22}  {mp:>22}  {bind:>20}"
+            )
+        print(
+            "\nGate: headroom remainder within ±10% of measured RTOLCAP, sane "
+            "band, coverage ~2× (scripts/validate_ercot_online_capacity.py)."
+        )
+        return
 
     online_share, offline_share, deliv, deliv_off, preview = derive()
 

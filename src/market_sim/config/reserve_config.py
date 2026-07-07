@@ -283,6 +283,13 @@ class ReserveDesign:
     # headroom (the pre-gate endogenous split).
     storage_duration_h: Optional[np.ndarray] = None
     supply_cap: Optional[np.ndarray] = None  # (n_headroom_rows, T) MW
+    # (n_headroom_rows, T) MW — the committed on-line CAPACITY envelope (ERCOT
+    # ercot_online_capacity_envelope, G-22 commitment thinness). Where supply_cap
+    # bounds only the cleared RESERVE, this caps the shared headroom's ENERGY +
+    # RESERVE at the on-line HSL, so the LP cannot dispatch/reserve more thermal
+    # than the real system had on-line (scarcity.ercot_online_capacity_envelope_mw).
+    # Non-envelope tiers carry the uncapped sentinel. None keeps the LP unchanged.
+    online_capacity_cap: Optional[np.ndarray] = None
     headroom_eligible: Optional[np.ndarray] = None  # (n_hr, n_gen) bool
     headroom_products: Optional[np.ndarray] = None  # (n_hr, n_families) bool
     headroom_extra_cap: Optional[np.ndarray] = None
@@ -452,6 +459,10 @@ def build_reserve_dispatch_kwargs(
     # Supply cap (ERCOT RTOLCAP, PJM deliverable ramp)
     if design.supply_cap is not None:
         kw["reserve_supply_cap"] = design.supply_cap
+
+    # On-line-capacity envelope (ERCOT G-22 commitment thinness)
+    if design.online_capacity_cap is not None:
+        kw["reserve_online_capacity_cap"] = design.online_capacity_cap
 
     # Per-generator reserve columns (PJM pjm_reserve_pergen)
     if design.pergen_gen_idx is not None:
@@ -943,6 +954,38 @@ def _ercot_multiproduct_design(
         solar_gen=solar_gen,
     )
 
+    # On-line-capacity envelope (config.ercot_online_capacity_envelope, G-22
+    # commitment thinness): caps the shared-headroom ENERGY+RESERVE at the
+    # committed on-line HSL so the LP cannot serve/reserve more thermal than the
+    # real system had on-line (the ~3.2 GW phantom sub-$200 spare). Net-load
+    # driver threaded in here exactly like the forward RTOLCAP supply cap; the
+    # cap is anchored to measured RTOLCAP, never a price (rule #13). None (gate
+    # off) leaves the LP unchanged.
+    online_capacity_cap = None
+    if getattr(config, "ercot_online_capacity_envelope", False):
+        from market_sim.results.scarcity import ercot_online_capacity_envelope_mw
+
+        if system_load is not None:
+            wind = (
+                np.zeros_like(np.asarray(system_load, dtype=float))
+                if wind_gen is None
+                else np.asarray(wind_gen, dtype=float)
+            )
+            solar = (
+                np.zeros_like(np.asarray(system_load, dtype=float))
+                if solar_gen is None
+                else np.asarray(solar_gen, dtype=float)
+            )
+            net_load = np.asarray(system_load, dtype=float) - wind - solar
+            online_capacity_cap = ercot_online_capacity_envelope_mw(
+                config,
+                fleet_arrays,
+                T,
+                net_load=net_load,
+                headroom_eligible=headroom_eligible,
+                headroom_products=headroom_products,
+            )
+
     # Storage AS duration gate (config.ercot_storage_as_duration_gate): the
     # published per-product SOC durations (ERCOT_AS_PRODUCT_DURATION_H, index-
     # aligned with ERCOT_AS_PRODUCTS) that bound the endogenous storage split by
@@ -1042,6 +1085,7 @@ def _ercot_multiproduct_design(
         headroom_eligible=headroom_eligible,
         headroom_products=headroom_products,
         supply_cap=supply_cap,
+        online_capacity_cap=online_capacity_cap,
     )
 
 
