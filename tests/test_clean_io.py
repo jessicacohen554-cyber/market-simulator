@@ -38,6 +38,7 @@ ALL_DATATYPES = [
     "validation",
     "fleet",
     "fuel-prices",
+    "nyiso-downstate-gas",
     "reference",
     "egrid",
     "unit-outage-events",
