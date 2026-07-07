@@ -1796,6 +1796,28 @@ def load_renewable_profiles(
             else:
                 cf_profile = _eia930_cf(fuel)
                 vintage_ramp = config.vintage_capacity_ramp
+                if (
+                    not is_backcast
+                    and iso == "ERCOT"
+                    and getattr(config, "ercot_wtx_curtailment_driver", False)
+                ):
+                    # Forecast leg of the WP-B West Texas curtailment driver
+                    # (data.curtailment_share): the forecast profile rides the
+                    # EIA-930 *delivered* distribution, which freezes the
+                    # weather year's historical curtailment into the bound. So
+                    # the LP can re-curtail endogenously (and the corridor
+                    # ceiling is not double-counted on an already-curtailed
+                    # series), gross the profile up to an uncurtailed potential
+                    # with the per-tech reference curtailment rate from the
+                    # most recent HSL year — exactly the
+                    # :func:`_forecast_uncurtailed_cf` construction the ERCOT
+                    # no-HSL backcast years use. Gated with the driver so
+                    # driver-off forecasts stay byte-identical.
+                    rate_info = _reference_curtailment_rate(iso, fuel)
+                    if rate_info is not None and 0.0 <= rate_info[0] < 1.0:
+                        cf_profile = np.clip(
+                            cf_profile / (1.0 - rate_info[0]), _CF_MIN, _CF_MAX
+                        )
             # Gated multi-zone ISOs get a per-zone SHAPE so geographically
             # distinct zones no longer share one ISO-wide hourly profile: solar
             # in CAISO (clear-sky geometry by tracking mix/latitude) and wind in
