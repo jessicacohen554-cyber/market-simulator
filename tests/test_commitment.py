@@ -439,6 +439,209 @@ class TestCaisoRaStartupBridge(unittest.TestCase):
         np.testing.assert_allclose(floor[1], np.zeros(24))
 
 
+class TestRaBridgeStartupAwareDetection(unittest.TestCase):
+    """G-61b: only commitment-real runs anchor bridges (start economics).
+
+    The base-cost P0 pattern over-cycles CC; a phantom micro-run whose whole
+    run margin cannot repay one startup must not chop the belly into
+    sub-min-down gaps that floor unconditionally.
+    """
+
+    def _cc_fleet(self, hours=24):
+        gen = Generator(
+            unit_id="CC",
+            name="CC",
+            zone="z",
+            fuel_type="gas_cc",
+            pmax_mw=200.0,
+            pmin_mw=0.0,
+            heat_rate=7.0,  # f-class: min_down 6 h, startup ~$50/MW
+            eford=0.0,
+        )
+        return [gen], generators_to_fleet_arrays([gen], ["z"], hours=hours)
+
+    def _floor(self, disp, lmp, mc, startup_aware):
+        gens, fa = self._cc_fleet()
+        return caiso_ra_mustoffer_min_gen(
+            disp,
+            fa,
+            gens,
+            min_load_frac=0.40,
+            p1_prices=lmp,
+            base_mc=mc,
+            startup_aware=startup_aware,
+        )
+
+    def _phantom_belly_case(self):
+        # Morning 6-10 and evening 18-24 runs at full output with +$20/MWh
+        # margin (margin/MW 80 and 120 >= startup ~50: commitment-real);
+        # a 1-hour belly micro-run 13-14 at the same +$20 (margin/MW 20 <
+        # startup: phantom). Without the screen the belly splits into 3h+4h
+        # sub-gaps (< 6 h min-down) that BOTH floor; with it the micro-run
+        # drops and the single 8 h gap (>= min-down) never floors.
+        hours = 24
+        disp = np.zeros((1, hours))
+        disp[0, 6:10] = 200.0
+        disp[0, 13:14] = 200.0
+        disp[0, 18:24] = 200.0
+        mc = np.full((1, hours), 35.0)
+        lmp = np.full((1, hours), 33.0)  # belly: below MC
+        for s, e in ((6, 10), (13, 14), (18, 24)):
+            lmp[0, s:e] = 55.0  # +$20 margin in run hours
+        return disp, lmp, mc
+
+    def test_phantom_micro_run_floors_belly_without_screen(self):
+        disp, lmp, mc = self._phantom_belly_case()
+        floor = self._floor(disp, lmp, mc, startup_aware=False)
+        # Both sub-gaps (10-13, 14-18) floored at 0.40 x 200 = 80 MW.
+        np.testing.assert_allclose(floor[0, 10:13], 80.0)
+        np.testing.assert_allclose(floor[0, 14:18], 80.0)
+
+    def test_screen_drops_phantom_and_gap_stops_flooring(self):
+        disp, lmp, mc = self._phantom_belly_case()
+        floor = self._floor(disp, lmp, mc, startup_aware=True)
+        # Micro-run dropped -> one 8 h gap >= 6 h min-down -> no floor at all.
+        np.testing.assert_allclose(floor, np.zeros_like(floor))
+
+    def test_commitment_real_runs_still_bridge(self):
+        # Two real runs around a 5 h gap (< 6 h min-down) keep their floor
+        # under the screen — the screen only removes phantom anchors.
+        hours = 24
+        disp = np.zeros((1, hours))
+        disp[0, 6:12] = 200.0
+        disp[0, 17:24] = 200.0
+        mc = np.full((1, hours), 35.0)
+        lmp = np.full((1, hours), 33.0)
+        lmp[0, 6:12] = 55.0
+        lmp[0, 17:24] = 55.0
+        floor = self._floor(disp, lmp, mc, startup_aware=True)
+        np.testing.assert_allclose(floor[0, 12:17], 80.0)
+
+    def test_startup_aware_requires_prices_and_mc(self):
+        gens, fa = self._cc_fleet()
+        disp = np.zeros((1, 24))
+        with self.assertRaises(ValueError):
+            caiso_ra_mustoffer_min_gen(
+                disp, fa, gens, min_load_frac=0.40, startup_aware=True
+            )
+
+
+class TestRaBridgeCurtailmentRelease(unittest.TestCase):
+    """G-61c: a gap containing genuine curtailed-VRE hours never bridges."""
+
+    def _floored(self, release_hours):
+        gen = Generator(
+            unit_id="CC",
+            name="CC",
+            zone="z",
+            fuel_type="gas_cc",
+            pmax_mw=200.0,
+            pmin_mw=0.0,
+            heat_rate=7.0,
+            eford=0.0,
+        )
+        gens = [gen]
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=24)
+        disp = np.zeros((1, 24))
+        disp[0, 6:12] = 200.0  # 5 h gap 12-17 < 6 h min-down -> physical bridge
+        disp[0, 17:24] = 200.0
+        return caiso_ra_mustoffer_min_gen(
+            disp, fa, gens, min_load_frac=0.40, release_hours=release_hours
+        )
+
+    def test_release_hour_inside_gap_unfloors_it(self):
+        release = np.zeros(24, dtype=bool)
+        release[13] = True  # one genuine-curtailment hour inside the gap
+        floor = self._floored(release)
+        np.testing.assert_allclose(floor, np.zeros_like(floor))
+
+    def test_release_hours_outside_gap_keep_floor(self):
+        release = np.zeros(24, dtype=bool)
+        release[2] = True  # curtailment outside the gap: bridge unaffected
+        floor = self._floored(release)
+        np.testing.assert_allclose(floor[0, 12:17], 80.0)
+
+    def test_none_is_byte_identical(self):
+        floor = self._floored(None)
+        np.testing.assert_allclose(floor[0, 12:17], 80.0)
+
+
+class TestRaMustofferQuantityGate(unittest.TestCase):
+    """G-61a: the published RA-quantity gate on the bridge floor.
+
+    Real CAISO attaches the must-offer obligation only to RA-contracted
+    capacity (DMM Annual Report Table 8.4 "Must-Offer: Gas-fired
+    generators"); the gate drops bridged plants cheapest-startup-first
+    (RUC order) until the kept plants' summed pmax fits the published MW.
+    """
+
+    def _plant(self, pid, pmax_committed, pmax_econ, startup, hours=24):
+        def bin_gen(suffix, pmax, su):
+            return Generator(
+                unit_id=f"CC_REGULAR_z_p{pid}_{suffix}",
+                name=f"CC{pid}",
+                zone="z",
+                fuel_type="gas_cc",
+                pmax_mw=pmax,
+                pmin_mw=0.0,
+                heat_rate=7.0,
+                eford=0.0,
+                plant_group="CC_REGULAR",
+                is_campd_bin=True,
+                startup_cost_per_mw=su,
+            )
+
+        return [
+            bin_gen("committed", pmax_committed, startup),
+            bin_gen("econc00", pmax_econ, 0.0),
+        ]
+
+    def _gated_fleet(self, cap_mw):
+        from market_sim.model.commitment import apply_ra_mustoffer_quantity_gate
+
+        hours = 24
+        # Three plants, 500 MW each (committed 200 + econ 300), startup costs
+        # 20 / 40 / 60 $/MW — plant p1 is the cheapest restart.
+        gens = (
+            self._plant(1, 200.0, 300.0, 20.0)
+            + self._plant(2, 200.0, 300.0, 40.0)
+            + self._plant(3, 200.0, 300.0, 60.0)
+        )
+        fa = generators_to_fleet_arrays(gens, ["z"], hours=hours)
+        floor = np.zeros((6, hours))
+        for row in (0, 2, 4):  # each plant's committed tranche floored 10-17
+            floor[row, 10:18] = 200.0
+        apply_ra_mustoffer_quantity_gate(floor, gens, fa, cap_mw)
+        return floor
+
+    def test_cap_above_fleet_is_noop(self):
+        floor = self._gated_fleet(cap_mw=2000.0)  # fleet obligation = 1,500
+        for row in (0, 2, 4):
+            np.testing.assert_allclose(floor[row, 10:18], 200.0)
+
+    def test_cap_drops_cheapest_startup_first(self):
+        # Cap 1,100 < 1,500: dropping plant p1 (startup 20) brings the kept
+        # obligation to 1,000 <= cap; plants p2/p3 keep their floors.
+        floor = self._gated_fleet(cap_mw=1100.0)
+        np.testing.assert_allclose(floor[0], np.zeros(24))  # p1 dropped
+        np.testing.assert_allclose(floor[2, 10:18], 200.0)  # p2 kept
+        np.testing.assert_allclose(floor[4, 10:18], 200.0)  # p3 kept
+
+    def test_obligation_counts_full_plant_pmax(self):
+        # The obligation is the PLANT's full RA capacity (500 MW incl. the
+        # unfloored econ tranche), not just the floored tranche's 200 MW: a
+        # 700 MW cap keeps only the dearest-restart plant (500 <= 700 but
+        # 1,000 > 700), so p1 AND p2 drop.
+        floor = self._gated_fleet(cap_mw=700.0)
+        np.testing.assert_allclose(floor[0], np.zeros(24))
+        np.testing.assert_allclose(floor[2], np.zeros(24))
+        np.testing.assert_allclose(floor[4, 10:18], 200.0)
+
+    def test_nonpositive_cap_zeroes_all(self):
+        floor = self._gated_fleet(cap_mw=0.0)
+        np.testing.assert_allclose(floor, np.zeros_like(floor))
+
+
 class TestRaBridgeFastStartExclusion(unittest.TestCase):
     """Economic-bridge eligibility is unit physics, not a class tuple (rule 17).
 
