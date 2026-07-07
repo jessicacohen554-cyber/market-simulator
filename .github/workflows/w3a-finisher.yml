@@ -1,6 +1,6 @@
 name: w3a-finisher
 
-# One-shot promotion + repair for the W3a lane (owner decision 2026-07-07; v4):
+# One-shot promotion + repair for the W3a lane (owner decision 2026-07-07; v5):
 #   1. repair the ablation twin's registration (its 5-word label slugged to
 #      the BASE id — render_backcast._slug keeps <=4 words — so the base job
 #      overwrote its sidecar/payload on main): re-register it from the CI
@@ -54,7 +54,6 @@ jobs:
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin main
-          git fetch origin auto/caiso65_seam_envelope_clock-ablation-95bef5f6
           git checkout -fB w3a-promotion origin/main
           git checkout "${{ github.sha }}" -- .github/patches/2026_07_07_w3a_finisher_edits.py
 
