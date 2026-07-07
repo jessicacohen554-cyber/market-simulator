@@ -2581,11 +2581,12 @@ def evolve_fleet(
     #    re-aggregation with its plant identity intact — a unit-grain unit (raw
     #    EIA-860 unit that passes through, e.g. an oil unit carrying an announced
     #    date) or a first-year exit in build_base_fleet — is matched in its exit
-    #    year. A plant-binned coal/gas plant whose bins are merged into vintage
-    #    efficiency bins after the base year loses its plant_code, so a confirmed
-    #    exit effective 2+ years into a CAMPD forecast is not matched (preserving
-    #    per-plant identity through aggregation needs the dispatch/economic-screen
-    #    pipeline to accept un-aggregated coal tranches — a documented follow-up).
+    #    year. Plant-binned coal/gas tranches (is_campd_bin) also keep their
+    #    plant_code: aggregate_fleet passes them through un-aggregated (G-28 fix),
+    #    so a confirmed exit effective any number of years into a CAMPD forecast
+    #    is matched at the same per-plant grain the base year solves. (Before the
+    #    fix these tranches were merged into vintage efficiency bins after the
+    #    base year, dropping plant_code, and an exit 2+ years out went unmatched.)
     #    ``apply_backlog`` defaults to False here (unlike build_base_fleet's
     #    True): only the row newly effective in THIS year is selected, so a
     #    row already applied in the pre-start backlog or a prior year's
