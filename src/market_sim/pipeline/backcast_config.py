@@ -1280,23 +1280,39 @@ def backcast_config(
         cc_committed_per_plant=True,  # ground each CC_REGULAR committed % in
         #   CAMPD-observed minimum stable load (fleet.CC_REGULAR_COMMITTED_PCT_
         #   BY_PLANT) instead of the coarse assumed CSV Pct_Committed.
-        cc_peaking_per_plant=False,  # neutral default (rule 26/G-26/C-12,
-        #   2026-07): the ERCOT hand-set four-plant CC_REGULAR_PEAKING_PCT_
-        #   BY_PLANT override this flag drove was deleted as an answer-key
-        #   scalar with no independent source, dead in the actual ERCOT
-        #   keeper (which already carries this flag False, favoring
-        #   cc_duct_peaking below). Left off rather than silently falling
-        #   through to the CAMPD thermal-tranche-peaking path, which was
-        #   never validated as ERCOT's default.
-        cc_duct_peaking=(iso.upper() == "PJM"),  # per-plant EIA-860
+        cc_peaking_per_plant=(iso.upper() != "ERCOT"),  # per-plant CAMPD-
+        #   derived duct-firing/scarcity share (fleet.thermal_tranche_peaking)
+        #   for CAISO/PJM/NYISO/NEISO/MISO — restores the pre-2026-07 default
+        #   these keepers actually solved with (a bug introduced and then
+        #   caught in the same G-26/C-12 sweep: an earlier pass at this file
+        #   flipped this to an unconditional False, which would have silently
+        #   dropped every non-ERCOT ISO's measured CAMPD peaking mechanism on
+        #   the next default-config run). ERCOT has no thermal-tranche
+        #   artifact (no CAMPD-native per-plant peaking-tranche derive exists
+        #   for its own binning path), so this is a no-op there regardless;
+        #   set False explicitly for clarity now that cc_duct_peaking below
+        #   is ERCOT's real default mechanism.
+        cc_duct_peaking=(iso.upper() in ("PJM", "ERCOT")),  # per-plant EIA-860
         #   duct-burner peaking shares for CC_REGULAR/CC_CHP: duct-fired
-        #   plants (65 of 84 PJM CCs, ~50 GW) get their nameplate-vs-summer
-        #   capability gap as the peak band, the 19 non-duct plants (~10 GW)
-        #   get 0 — replacing the class-uniform pct_peaking 8.0 that handed
-        #   every CC the same phantom duct band and stacked the fleet at one
-        #   72% CF mass point (fleet.cc_duct_peaking_pct). The ERCOT keeper
-        #   sets cc_duct_peaking=True via its own run-specific override
-        #   (not this default) with its CAMPD-fitted class curve underneath.
+        #   plants get their nameplate-vs-summer capability gap as the peak
+        #   band, non-duct plants get 0 — replacing the class-uniform
+        #   pct_peaking that hands every CC the same phantom duct band
+        #   (fleet.cc_duct_peaking_pct; PJM: 65 of 84 CCs duct-fired, ~50 GW).
+        #   The underlying EIA-860 query is national/ISO-agnostic (no ISO
+        #   filter in cc_duct_peaking_pct itself), so this ternary is only
+        #   about which ISOs have it VALIDATED as their default: PJM (its
+        #   original default) and ERCOT (2026-07, G-26/C-12 — replaces the
+        #   deleted four-plant CC_REGULAR_PEAKING_PCT_BY_PLANT answer-key
+        #   dict with the same national EIA-860 mechanism the ERCOT keeper
+        #   already runs, generalized to every ERCOT CC plant instead of
+        #   four named ones; the ERCOT keeper's own run-specific override
+        #   is now redundant with this default but harmless). Extending this
+        #   to CAISO/NYISO/NEISO/MISO by default is a real follow-up (EIA-860
+        #   would supersede their existing measured CAMPD thermal-tranche
+        #   mechanism for every EIA-860-covered plant, zeroing non-duct CCs
+        #   to 0 in the process) but needs its own per-ISO calibration probe
+        #   + leave-one-year-out validation before promotion (rule 22/rule
+        #   1) — not done here as a silent default flip.
         cc_duct_peaking_cap_pct=(8.0 if iso.upper() == "PJM" else None),  # cap
         #   the per-plant duct band at the F-class supplementary-firing physical
         #   max. The raw nameplate-vs-net-summer gap folds the ambient summer
