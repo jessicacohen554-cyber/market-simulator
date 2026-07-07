@@ -1886,47 +1886,17 @@ def _hourly_shares_from_groups(
     return grid / col_tot[None, :]
 
 
-def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray | None:
-    """Load zonal load share fractions from clean Parquet.
+def _validate_zonal_shares(
+    iso: str, year: int, zone_names: list[str], shares: np.ndarray, origin: str
+) -> np.ndarray:
+    """Reject an all-zero row for any zone that carries static load.
 
-    Reads the curated ``zonal-shares`` dataset produced by
-    ``scripts/curate_zonal_shares.py`` and returns a
-    ``(n_zones, HOURS_PER_YEAR)`` array of hourly fractional load shares, where
-    each column sums to 1.0 across zones. Returns ``None`` when the clean
-    Parquet has not been curated yet (the caller falls back to the static
-    per-zone ``load_share``).
-
-    Args:
-        iso: ISO code (e.g. ``"ERCOT"``).
-        year: Calendar year.
-        zone_names: Model zone names in the order the caller expects (must
-            match the zones written by the curation script).
-
-    Returns:
-        ``(n_zones, HOURS_PER_YEAR)`` float64 array, or ``None`` if the clean
-        Parquet for this ISO-year is absent.
+    A zone that legitimately carries no load (ERCOT Panhandle, CAISO/NEISO
+    import nodes) has static ``load_share == 0``; any zone with a positive
+    static share must have a live measured column. An all-zero row there is a
+    stale-parquet / bad-mapping bug (the exact hazard of the MISO 3→6-zone
+    rename), never a silent degradation, so it is a hard error.
     """
-    seam = _read_clean_seam()
-    if seam is None:
-        return None
-    read_clean, clean_exists = seam
-    if not clean_exists("zonal-shares", iso=iso, year=year):
-        return None
-    try:
-        df = read_clean("zonal-shares", iso=iso, year=year, validate=False)
-    except Exception as exc:
-        logger.warning("zonal-shares read failed for %s %d: %s", iso, year, exc)
-        return None
-    pivot = df.pivot(index="hour", columns="zone", values="share")
-    pivot = pivot.reindex(columns=zone_names, fill_value=0.0)
-    shares = pivot.to_numpy(dtype=float).T
-    # Stale-parquet guard: the reindex fills a missing zone column with 0.0,
-    # so a renamed zone silently gets ZERO load from a parquet curated under
-    # the old names (the exact hazard of the MISO 3→6-zone rename). A zone
-    # that legitimately carries no load (ERCOT Panhandle, import nodes) has
-    # static load_share == 0; any zone with a positive static share must have
-    # a live column, so an all-zero row there is a hard error, never a silent
-    # degradation.
     from market_sim.config.iso_configs import get_iso_config
 
     static_share = {z.name: z.load_share for z in get_iso_config(iso).zones}
@@ -1937,11 +1907,86 @@ def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray 
     ]
     if dead:
         raise ValueError(
-            f"zonal-shares parquet for {iso} {year} has all-zero shares for "
-            f"load-carrying zone(s) {dead} — stale parquet curated under old "
-            "zone names? Re-run scripts/curate_zonal_shares.py."
+            f"zonal-shares ({origin}) for {iso} {year} has all-zero shares for "
+            f"load-carrying zone(s) {dead} — stale parquet under old zone names "
+            "or a broken raw mapping? Re-run scripts/curate_zonal_shares.py."
         )
     return shares
+
+
+def _zonal_shares_from_raw(
+    iso: str, year: int, zone_names: list[str]
+) -> np.ndarray | None:
+    """Build measured hourly zonal shares straight from the raw demand file.
+
+    Falls back to the per-ISO parsers in ``scripts.curate_zonal_shares`` (the
+    single source of the raw-file parsing the clean curation also uses, so the
+    raw and clean paths are byte-identical) when the clean Parquet has not been
+    materialised. ``data/clean`` is derived and gitignored, so in a fresh clone
+    the curated parquet is absent; without this fallback the LP would silently
+    drop to the static Gold-Book ``load_share`` and lose every zone's measured
+    diurnal/seasonal shape — the downstate-pocket peaking that G-20c depends on.
+    Returns ``None`` when the raw file is absent (caller then uses the static
+    share) or the scripts package is off ``sys.path``.
+    """
+    try:
+        from scripts.curate_zonal_shares import _PARSE_FUNCS
+    except Exception:  # pragma: no cover - only when scripts/ is off sys.path
+        logger.debug("scripts.curate_zonal_shares unavailable; static shares")
+        return None
+    parse_fn = _PARSE_FUNCS.get(iso)
+    if parse_fn is None:
+        return None
+    try:
+        shares = parse_fn(year, zone_names)
+    except Exception as exc:
+        logger.warning("raw zonal-shares parse failed for %s %d: %s", iso, year, exc)
+        return None
+    if shares is None:
+        return None
+    return _validate_zonal_shares(iso, year, zone_names, shares, "raw")
+
+
+def load_zonal_shares(iso: str, year: int, zone_names: list[str]) -> np.ndarray | None:
+    """Load measured hourly zonal load-share fractions.
+
+    Returns a ``(n_zones, HOURS_PER_YEAR)`` array of hourly fractional load
+    shares (each column sums to 1.0 across zones), so each model zone gets its
+    own measured diurnal/seasonal shape instead of a single static fraction
+    broadcast flat across the year. Prefers the curated ``zonal-shares`` clean
+    Parquet (``scripts/curate_zonal_shares.py``); when that has not been
+    materialised — ``data/clean`` is derived and gitignored, so it is absent in
+    a fresh clone — it falls back to parsing the raw
+    ``data/raw/zone-specific-demand`` file directly (:func:`_zonal_shares_from_raw`).
+    Both paths share the same parsing, so the fallback is byte-identical to the
+    clean parquet. Returns ``None`` only when neither the parquet nor a raw file
+    exists, in which case the caller uses the static per-zone ``load_share``.
+
+    Args:
+        iso: ISO code (e.g. ``"ERCOT"``).
+        year: Calendar year.
+        zone_names: Model zone names in the order the caller expects (must
+            match the zones written by the curation script).
+
+    Returns:
+        ``(n_zones, HOURS_PER_YEAR)`` float64 array, or ``None`` if no measured
+        source (clean parquet or raw file) is available for this ISO-year.
+    """
+    seam = _read_clean_seam()
+    if seam is not None:
+        read_clean, clean_exists = seam
+        if clean_exists("zonal-shares", iso=iso, year=year):
+            try:
+                df = read_clean("zonal-shares", iso=iso, year=year, validate=False)
+            except Exception as exc:
+                logger.warning("zonal-shares read failed for %s %d: %s", iso, year, exc)
+            else:
+                pivot = df.pivot(index="hour", columns="zone", values="share")
+                pivot = pivot.reindex(columns=zone_names, fill_value=0.0)
+                shares = pivot.to_numpy(dtype=float).T
+                return _validate_zonal_shares(iso, year, zone_names, shares, "clean")
+    # Clean parquet absent (or read failed / seam off): use the measured raw file.
+    return _zonal_shares_from_raw(iso, year, zone_names)
 
 
 # EIA-930 MISO sub-BA -> model zone. EIA-930 reports MISO sub-BA hourly demand
