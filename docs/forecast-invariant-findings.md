@@ -20,15 +20,31 @@ each finding.
 
 ## Findings
 
-### F0 — NEISO default forecast is infeasible (blocks the NEISO nightly smoke)
-`run_scenario_iso(ScenarioConfig(iso="NEISO"), "NEISO")` raises
+### F0 — (RESOLVED 2026-07-07) NEISO default forecast was infeasible — missing RPS ACP escape
+`run_scenario_iso(ScenarioConfig(iso="NEISO"), "NEISO")` raised
 `dispatch LP has no feasible primal solution (status: Infeasible)` on the first
-(P0) solve of 2026, at full 8760 and default levers. The plan §2.4 nightly tier
-names "NEISO 2026-2030 smoke (smallest real ISO)" — that tier cannot be wired
-until NEISO's default forecast is feasible. **Open:** identify the binding
-infeasibility (candidate: an import-node / HQ interchange balance or a must-run
-floor that over-constrains the first forecast year) before standing up the NEISO
-smoke. Not a checker defect — the checker never gets a cache to read.
+(P0) solve of 2026, at full 8760 and default levers. **Root cause (IIS, not the
+doc's original import-node guess):** the annual **RPS constraint row**
+(`dispatch._build_rps_row`) — `wind+solar ≥ rps_target × demand` — was a hard
+inequality with no escape. NEISO's 2026 floor is 0.30 (`STATE_RPS_FLOORS`), but
+its front-of-meter fleet (~1.4 GW wind + 2.7 GW solar) can physically supply
+only ~10 % of that target, so the row had no feasible point and the LP failed
+before transmission ever bound. (All three RPS ISOs — CAISO/NYISO/NEISO — were
+latently exposed; only NEISO surfaced it because the heavy tier solves ERCOT,
+whose RPS floor is 0.) **Fix:** the real-market **Alternative Compliance Payment
+(ACP)** — an LSE short of RECs pays the ACP rate instead of the standard
+physically failing, which is the REC-market price ceiling. Added an ACP escape
+column priced at a per-ISO ACP (`STATE_RPS_ACP`; NEISO 65, CAISO 50, NYISO 40
+$/MWh, cited): it keeps the RPS row feasible and caps its dual (the REC price)
+at the ACP. Rule-13 admissible (a published policy parameter that regenerates
+for any year and, as the fleet builds VRE, goes unused so the dual falls below
+the ceiling). ERCOT/PJM (no RPS) are byte-identical — no escape column is built.
+Files: `dispatch.py` `_build_rps_row`/`build_cost_vector`/`build_variable_bounds`/
+`VariableLayout.n_rec_acp`; `constants.py` `STATE_RPS_ACP`; `policy/rps.py`
+`get_rps_acp`; `runner.py`; `pipeline/spec.py`. Full 8760 NEISO 2026 forecast now
+solves; tests in `test_dispatch.py::TestRPSConstraint` (3 ACP cases) +
+`test_capacity.py::TestGetRPSACP`. The plan §2.4 NEISO nightly smoke can now be
+wired.
 
 ### F1 — I7 reliability floor: post-evolution thermal below the floor every year
 `[FAIL] I7  2026: thermal 78102 < floor 107769 MW; 2027: 78982 < 113158;

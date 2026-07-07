@@ -96,6 +96,10 @@ class DispatchSpec:
     #      they are OMITTED from to_dispatch_kwargs(), so the forecast dict's
     #      key set is unchanged; the backcast passes them explicitly (possibly
     #      None), reproducing its always-present keys. ----
+    # RPS ACP ceiling ($/MWh) — prices the ACP escape column that keeps the RPS
+    # row feasible and caps its dual. UNSET (backcast, which disables the RPS)
+    # is omitted from the kwargs, so the LP key set there is unchanged.
+    rps_acp_price: Any = UNSET
     # Import-direction TTC bound (measured ERCOT GTC overlay); None keeps the
     # symmetric -ttc.
     ttc_import: Any = UNSET
