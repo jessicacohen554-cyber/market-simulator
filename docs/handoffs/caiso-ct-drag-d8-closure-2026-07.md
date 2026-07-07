@@ -275,3 +275,55 @@ All three §7 open paths landed as default-off flags (zero fitted parameters eac
 structural-faithfulness promotion at a small fit cost, rule 1) is put to the owner. G-61 stays
 open, narrowed to: adopt-(b) decision + the seam-shape fix (G-15 residual) that unblocks (c)
 and the §7 release signals.
+
+## 9. G-61(b) transplant onto caiso-65 — probed, NOT promoted (2026-07-07)
+
+The seam-envelope-clock fix (§8 recap: `2026-07-07-caiso65-seam-envelope-clock`, promoted
+as the CAISO keeper the same day, commit `73bdcd9`) reopened the adopt-(b) question with a
+corrected base. Owner instruction this session: fold `caiso_ra_bridge_startup_aware=true`
+into the caiso-65 recipe, re-solve full span, and promote if the caiso-63 finding holds up.
+
+**Reproduction.** `scripts/replay_keeper.py results/calibration/caiso65_seam_envelope_clock
+--out-dir results/calibration/caiso66_g61b_on_seamclock --set
+caiso_ra_bridge_startup_aware=true` — single-delta byte-faithful transplant, full 2023-2025
+span, one bundle. D-3 zero-forcing ablation twin solved via `run_calibration_full.py
+--replay-bundle results/calibration/caiso66_g61b_on_seamclock --zero-forcing-ablation`.
+
+**Result: the caiso-63 finding reproduces cleanly on the seam-corrected base.** CC_REGULAR
+`ra_mustoffer_bridge` forced energy falls 3.68/3.80/3.19 → 2.29/2.20/2.15 TWh (2023/24/25,
+−38% to −43%) — the same ~40% phantom-run reduction the caiso-63 probe found against the
+old caiso-60/61 base. CC class total energy falls ~0.5 TWh/yr (merit return). CT_PEAKER is
+unaffected: `ct_netload_drag` forced-energy rows are byte-close (1.2536/1.1102 →
+1.2527/1.0978 TWh 2023/24) and D-4 off-window binding stays PASS (0 off-window MWh, all 3
+years) — confirms CT evening remains drag-owned, not RA-bridge-owned (rule 18 class
+separation holds). Body λ rises slightly (C3a FAIL magnitude +0.7 to +1.3pp: the phantom
+floors were price-suppressing). **Zero criterion flips** vs caiso-65 (grade summary
+identical: 9 scored / 2 target-grade / 1 commercial-grade / 6 fails); C1 free-class score
+improves 6/8 → 7/8 (one more class crosses into its tolerance band as the freed CC
+redispatches). No new DOF (calibration_attestation.json carries the caiso-65 ledger
+unchanged, plus a note — rule 18 physics-gated refinement, not a new tunable).
+
+**HELD BACK FROM PROMOTION.** `FINDING-caiso-seam-tz-correction-2026-07-07.md` §4.3 landed
+on `main` mid-session and inverts the sign of this decision: its measured comparison shows
+actual CAISO runs 3.1–5.2 GW MORE belly gas than the model at $13–33 (h9–15: actual
+8.4–10.9 GW vs model 5.3–6.4 GW) — the real market *over*-commits the belly relative to the
+model, not under-commits it — and explicitly names this run's own λ move (+0.30–0.46, AWAY
+from actual) as the predicted signature of removing real belly commitment the model needs
+MORE of, not less. So (b)'s mechanism (releasing a merchant CC off the RA floor whenever a
+P0 run doesn't recoup its own startup cost) is in genuine tension with itself: it may be
+correcting a real UC-physics defect (phantom sub-min-down P0 runs manufactured by the
+unconditional gap-length floor) while simultaneously moving the belly's committed-capacity
+level further from what real RA/AS/local-reliability obligations actually deliver. This run
+alone cannot adjudicate between "more faithful commitment detection" and "removes real
+forced-online capacity the model needs more of" — both readings are consistent with the
+same numbers. Per owner instruction, **NOT auto-promoted**: registered as PROBE
+`2026-07-07-caiso-66-g61b-startup` (ablation twin `2026-07-07-caiso66-g61b-ablation-twin`),
+`frontend/data/backcast/keepers.json` CAISO left at `caiso65-seam-envelope-clock`, and the
+full numbers (this section + the sidecar definition) referred back to the owner for the
+final call, weighing §4.3 against the C1–C8/D-2 case above. G-61 stays open on BOTH path
+(b) (adoption decision pending owner review of the tension) and path (c) — re-checked
+post-seam-fix per the W3a lane's own forensics: P0 curtails 0 MWh of VRE in 2023-2025 even
+after the seam correction (the seam fix changed import *levels*, not whether P0 ever
+curtails), so (c) remains blocked on the internal belly-commitment grounding (G-15 residual
+(a)), not on any seam mechanism — no new probe needed, the existing post-seam-fix forensics
+already answer it.
