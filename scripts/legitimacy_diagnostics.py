@@ -184,9 +184,22 @@ D4_MAX_OFFWINDOW_SHARE: float = 0.05
 # derivation found overnight CT CF ~ 0 even at high net load
 # (docs/caiso-ct-netload-drag-2026-06.md), so the justified window matches
 # the ct_netload_drag ramp window [15, 22).
+#
+# The reliability_floor x CT_PEAKER window is [14, 22): the ct_netload_drag is
+# the [15, 22) mechanism, but the temperature reliability-floor CT ramps carry
+# their own driver-derived HB14-21 window (start_hour=14) — NYISO NYC_CT_ev /
+# LI_CT_ev, reliability_floor_coeffs_NYISO.csv. Measured downstate CT CF at h14
+# is 0.11-0.23 (CAMPD 2023-25 pooled NYC/LI), squarely inside the class's active
+# ramp — h14 forcing there is driver-supported, not overnight over-firing. The
+# prior [15, 22) inherited from the drag mislabeled that legitimate h14 binding
+# as off-window (~27% of floored CT MWh) — a diagnostic-window artifact, not a
+# rule-15 bug (G-05, docs/handoffs/g05-forced-energy-caiso-ct-nyiso-stgas-2026-07
+# .md). Widening to [14, 22) affects ONLY NYISO (the only ISO whose CT ramp
+# starts at h14; MISO's is [15, 21], ERCOT/PJM are 24h hot-day) and can only
+# LOWER an off-window share (h14 moves in-window) — it never newly-fails an ISO.
 D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
-    (MECH_RELIABILITY_FLOOR, "CT_PEAKER"): (15, 22),
-    (MECH_RELIABILITY_FLOOR, "CT_CHP"): (15, 22),
+    (MECH_RELIABILITY_FLOOR, "CT_PEAKER"): (14, 22),
+    (MECH_RELIABILITY_FLOOR, "CT_CHP"): (14, 22),
     (MECH_CT_NETLOAD_DRAG, None): (15, 22),
     # Midday NG:NG slab window (h9-16) — the probe's own gate
     # (transmission.inject_caiso_gas_commitment_floor).
