@@ -321,13 +321,18 @@ class TestD2:
 
 class TestD4:
     def test_all_day_floor_fails_evening_window(self):
-        """A 24 h CT floor with an evening-justified driver → ~71 % off-window."""
+        """A 24 h CT floor with an evening-justified driver → ~67 % off-window.
+
+        The reliability_floor × CT_PEAKER justified window is [14, 22) (the
+        driver-derived HB14-21 ramp; G-05), so 8 of 24 h are in-window and
+        16/24 fall outside — a 24h floor still fails heavily.
+        """
         dispatch = np.full((1, HOURS), 40.0)
         min_gen = np.full((1, HOURS), 40.0)
         mech = np.full((1, HOURS), MECH_RELIABILITY_FLOOR, dtype=np.int8)
         res = run_d4(dispatch, min_gen, mech, np.array(["CT_PEAKER"]), year=2023)
         assert not res.passed
-        assert res.rows[0]["offwindow_share"] == pytest.approx(17 / 24, abs=1e-3)
+        assert res.rows[0]["offwindow_share"] == pytest.approx(16 / 24, abs=1e-3)
 
     def test_windowed_floor_passes(self):
         dispatch = np.zeros((1, HOURS))
