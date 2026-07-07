@@ -151,8 +151,8 @@ class TestRampFlagOffByteIdentity(unittest.TestCase):
         )
         demand = _step_demand()
         layout = VariableLayout(n_gen=2, n_zones=1, n_storage=0, n_links=0, T=T24)
-        a0, lo0, up0 = build_constraints(layout, fleet, demand)
-        a1, lo1, up1 = build_constraints(
+        a0, lo0, up0, *_ = build_constraints(layout, fleet, demand)
+        a1, lo1, up1, *_ = build_constraints(
             layout,
             fleet,
             demand,
@@ -171,8 +171,8 @@ class TestRampFlagOffByteIdentity(unittest.TestCase):
         fleet = _make_fleet(["Z0"], ["Z0"], hours=T24, pmax=100.0, pmin=0.0, eford=0.0)
         demand = np.full((1, T24), 50.0)
         layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=T24)
-        a0, _, _ = build_constraints(layout, fleet, demand)
-        a1, _, _ = build_constraints(
+        a0, _, _, *_ = build_constraints(layout, fleet, demand)
+        a1, _, _, *_ = build_constraints(
             layout,
             fleet,
             demand,

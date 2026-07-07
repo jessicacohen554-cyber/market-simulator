@@ -12,7 +12,12 @@ recovers the input spread when eps=0, and asymmetry when the bias is non-zero.
 
 import json
 import math
+import os
+import shutil
+import tempfile
 import unittest
+from pathlib import Path
+from unittest import mock
 
 import numpy as np
 import pandas as pd
@@ -39,6 +44,50 @@ from market_sim.structural_prior import (
 )
 
 YEARS = STRUCTURAL_PRIOR_FIT_YEARS
+
+# Several ``STATMODE_PROBE_RUNS`` entries (ERCOT, NYISO, NEISO) cite committed
+# ``runs/<id>.js`` payloads that later top-15-per-ISO retention prunes deleted
+# as collateral damage (177c353 ercot32; 394e83c nyiso-statmode-d-7; fbc597e
+# neiso-statmode-d-7) -- the dashboard registry correctly dropped them, but the
+# frozen provenance constant still depends on them by name. Repointing that
+# frozen constant at a different run would silently change the fitted bias (a
+# data-drift call for the owner, not a test fixture); instead these
+# committed-source tests mirror the real runs/bench trees into a temp dir and
+# add back whichever payloads are missing from a minimal re-encoding
+# (``tests/fixtures/backcast_runs/``, generated from the real pre-prune
+# payload recovered via ``git show <deleting-commit>^:<path>``) that carries
+# only the numeric fields these tests actually read -- each fit year's
+# ``co2.model`` (and, for ERCOT, ``gmModel`` for the carbon-zero rescore
+# check) -- so the fixtures stay tiny while remaining numerically faithful,
+# without touching src/ or the pruned dashboard tree.
+_STATMODE_FIXTURES_DIR = Path(__file__).parent / "fixtures" / "backcast_runs"
+
+
+def _mirror_backcast_dir_with_pruned_runs_restored():
+    """Return a temp FRONTEND_BACKCAST_DIR mirror with any pruned probe runs restored."""
+    tmp = Path(tempfile.mkdtemp(prefix="statmode_probe_fixture_"))
+    runs_dir = tmp / "runs"
+    runs_dir.mkdir()
+    for f in (paths.FRONTEND_BACKCAST_DIR / "runs").iterdir():
+        os.symlink(f, runs_dir / f.name)
+    for run_id in STATMODE_PROBE_RUNS.values():
+        name = f"{run_id}.js"
+        if not (runs_dir / name).exists():
+            os.symlink(_STATMODE_FIXTURES_DIR / name, runs_dir / name)
+    os.symlink(paths.FRONTEND_BACKCAST_DIR / "bench", tmp / "bench")
+    return tmp
+
+
+class _RestoresPrunedStatmodeRun:
+    """Mixin patching FRONTEND_BACKCAST_DIR so committed-source fits survive the prune."""
+
+    def setUp(self):
+        super().setUp()
+        tmp = _mirror_backcast_dir_with_pruned_runs_restored()
+        self.addCleanup(shutil.rmtree, tmp, ignore_errors=True)
+        patcher = mock.patch.object(paths, "FRONTEND_BACKCAST_DIR", tmp)
+        patcher.start()
+        self.addCleanup(patcher.stop)
 
 
 def _flat_prior(bias_by_iso, sd, isos=("ERCOT", "PJM")):
@@ -228,7 +277,7 @@ class RecomputeAndPointForecastTests(unittest.TestCase):
             bands_from_metrics(self._metrics(), seed=5, prior=prior)
 
 
-class CommittedSourceTests(unittest.TestCase):
+class CommittedSourceTests(_RestoresPrunedStatmodeRun, unittest.TestCase):
     def test_default_prior_matches_d7_report_signs(self):
         """The fit off committed statmode probes reproduces the D-7 CO2 signs."""
         prior = default_prior()
@@ -248,7 +297,7 @@ class CommittedSourceTests(unittest.TestCase):
         self.assertEqual(run_ids["ERCOT"], STATMODE_PROBE_RUNS["ERCOT"])
 
 
-class BasisStalenessTests(unittest.TestCase):
+class BasisStalenessTests(_RestoresPrunedStatmodeRun, unittest.TestCase):
     """Emissions-basis handling: carbon-zero re-score, W3-P1 stale flags.
 
     The D-7 probes predate the R2 measured-rate CO2 basis (PR #1371). Per the
@@ -304,8 +353,6 @@ class BasisStalenessTests(unittest.TestCase):
         """A committed model CO2 inconsistent with gmModel x intensity raises."""
         import base64
         import gzip
-        import tempfile
-        from pathlib import Path
 
         with tempfile.TemporaryDirectory() as tmp:
             tmp = Path(tmp)
@@ -346,8 +393,6 @@ class BasisStalenessTests(unittest.TestCase):
                 )
 
     def test_write_prior_artifact_round_trip(self):
-        import tempfile
-        from pathlib import Path
 
         prior = default_prior()
         with tempfile.TemporaryDirectory() as tmp:

@@ -686,8 +686,13 @@ class TestChpMeasuredCo2Inputs(unittest.TestCase):
     def test_both_sources_off_returns_empty(self):
         # No plant-rate override -> empty maps -> caller keeps the fuel-class
         # default rate and the flat must_run_cf (no behaviour change).
+        # use_plant_emission_rates_v2 defaults to True (scenarios.py), so both
+        # sources must be disabled explicitly to exercise the empty path.
         config = ScenarioConfig(
-            iso="ERCOT", mode="backcast", use_plant_emission_rates=False
+            iso="ERCOT",
+            mode="backcast",
+            use_plant_emission_rates=False,
+            use_plant_emission_rates_v2=False,
         )
         rates, cf, btm_share = runner._chp_measured_co2_inputs(config, "ERCOT", 2024)
         self.assertEqual(rates, {})
