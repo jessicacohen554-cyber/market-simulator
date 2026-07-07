@@ -240,6 +240,220 @@ def build_caiso_ra_p1_prep(
     return _prep
 
 
+def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
+    """Per-unit ``(min_down_hours, startup $/MW)`` from the published class tables.
+
+    The same member derivation as ``reserve_config._posture_pool_params``
+    (rule 18 — commitment eligibility gates on unit physics, never class
+    names): coal from ``BIN_STARTUP_COST_PER_MW['COAL']`` +
+    ``COAL_BIN_MIN_DOWN_HOURS``, gas CC/CT/ST from the NREL/SR-5500-55433
+    class tables (``COMMITMENT_PARAMS_BY_FUEL``) keyed by heat rate. Fuels
+    with no table (the oil quick-start IC/CT class ``_commitment_params``
+    never screens) carry ``(0, 0)`` — fast-start by physics.
+    """
+    from market_sim.data.fleet import (
+        BIN_STARTUP_COST_PER_MW,
+        COAL_BIN_MIN_DOWN_HOURS,
+        FUEL_TYPE_NAMES,
+    )
+    from market_sim.model.commitment import COMMITMENT_PARAMS_BY_FUEL
+
+    n_gen = int(fleet_arrays.pmax.shape[0])
+    hr = np.asarray(fleet_arrays.heat_rate, dtype=float)
+    fuels = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    startup = np.zeros(n_gen)
+    min_down = np.zeros(n_gen)
+    for g in range(n_gen):
+        f = fuels[g]
+        if f == "coal":
+            startup[g] = BIN_STARTUP_COST_PER_MW["COAL"]
+            min_down[g] = float(COAL_BIN_MIN_DOWN_HOURS)
+            continue
+        table = COMMITMENT_PARAMS_BY_FUEL.get(f)
+        if table is None:
+            continue  # no commitment table -> fast-start by physics
+        params = table[-1][1]
+        for cutoff, p in table:
+            if hr[g] < cutoff:
+                params = p
+                break
+        startup[g] = float(params["startup_per_mw"])
+        min_down[g] = float(params["min_down_hours"])
+    return min_down, startup
+
+
+def pjm_commitment_scoped_reserve_fleet(config, fleet_arrays, p0_dispatch):
+    """Return the P1 ``FleetArrays`` with the commitment-scoped reserve mask applied.
+
+    PJM path B (G-20b): the fa_p2-style availability screen, made P1-native.
+    ERCOT's AS-aware P2 zeroes decommitted units' availability so idle
+    slow-start capacity leaves the reserve-headroom RHS
+    (``apply_commitment_with_coal_pin`` + ``ercot_commitment_headroom_overrides``);
+    P2 is archived, so PJM applies the same commitment-state re-scope *before*
+    the single scored P1 solve, with the commitment state read from the model's
+    own base-cost **P0** run pattern (the CAISO RA bridge convention —
+    forward-derivable, condition-responsive, no measured series; rules 11/13):
+
+    * A PLANT is online in hour ``t`` when any of its tranches dispatches in P0
+      (``pjm-reserve-ordc.md`` honesty-gate measure: "a plant is synchronized
+      when any of its tranches dispatch") — tranches are the same physical iron,
+      so an online plant's unused tranche headroom stays available.
+    * Offline gaps shorter than the plant's capacity-weighted min-down are
+      bridged online (``model.commitment._merge_runs``): a unit physically
+      cannot cycle off-and-back inside its min-down window, so it stayed
+      synchronized through the gap. Physics-loosening only — the bridge can
+      only ADD online hours, never manufacture tightness (rule 11).
+    * Non-fast-start reserve-eligible units (plant capacity-weighted min-down
+      > ``POSTURE_FAST_START_MIN_DOWN_H`` or startup ≥
+      ``POSTURE_FAST_START_STARTUP_PER_MW`` — the rule-18 physics thresholds
+      ``_posture_pool_params`` uses) have availability zeroed in their plant's
+      offline hours. Fast-start units are NEVER masked: an offline 10-min
+      CT/oil peaker still provides non-synchronized Primary reserve
+      (Manual 11 sec 4.2) and can start within the operating hour.
+
+    A ``min_gen``-floored unit-hour is online by construction (P0 solves the
+    same floors, so ``P0 >= min_gen > 0`` there) — no floor is ever masked.
+    Returns ``None`` when the P0 pattern masks nothing (caller keeps the
+    ordinary warm-started P1).
+    """
+    import dataclasses
+
+    from market_sim.config.reserve_config import (
+        POSTURE_FAST_START_MIN_DOWN_H,
+        POSTURE_FAST_START_STARTUP_PER_MW,
+        _reserve_eligible,
+    )
+    from market_sim.model.commitment import _merge_runs, find_runs
+
+    # LP dispatch dust guard (simplex emits exact zeros for out-of-basis
+    # columns; 1e-3 MW = 1 kW catches accumulated round-off only).
+    TOL_MW = 1e-3
+
+    p0 = np.asarray(p0_dispatch, dtype=float)
+    n_gen, T = p0.shape
+    eligible = _reserve_eligible(fleet_arrays)
+    min_down_u, startup_u = _pjm_unit_commitment_physics(fleet_arrays)
+
+    # Plant grouping: tranches of one plant share (plant_code, plant_group);
+    # a unit without a plant code (imports, aggregates) is its own group.
+    plant = np.asarray(fleet_arrays.plant_code, dtype=int)
+    groups_raw = (
+        np.asarray(fleet_arrays.plant_group, dtype=object)
+        if getattr(fleet_arrays, "plant_group", None) is not None
+        else np.array([""] * n_gen, dtype=object)
+    )
+    keys = np.array(
+        [
+            f"{plant[g]}|{groups_raw[g]}" if plant[g] > 0 else f"unit|{g}"
+            for g in range(n_gen)
+        ],
+        dtype=object,
+    )
+    _, group_of = np.unique(keys, return_inverse=True)
+    n_grp = int(group_of.max()) + 1 if n_gen else 0
+
+    # Capacity-weighted plant min-down / startup over the reserve-eligible
+    # members (the reserve-relevant iron); rule-18 fast-start exemption.
+    cap = np.asarray(fleet_arrays.pmax, dtype=float)
+    w = np.where(eligible, cap, 0.0)
+    grp_cap = np.zeros(n_grp)
+    grp_md = np.zeros(n_grp)
+    grp_su = np.zeros(n_grp)
+    np.add.at(grp_cap, group_of, w)
+    np.add.at(grp_md, group_of, w * min_down_u)
+    np.add.at(grp_su, group_of, w * startup_u)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        grp_md = np.where(grp_cap > 0, grp_md / grp_cap, 0.0)
+        grp_su = np.where(grp_cap > 0, grp_su / grp_cap, 0.0)
+    grp_fast = (grp_md <= float(POSTURE_FAST_START_MIN_DOWN_H)) & (
+        grp_su < float(POSTURE_FAST_START_STARTUP_PER_MW)
+    )
+    gated = eligible & ~grp_fast[group_of]
+    if not gated.any():
+        return None
+
+    # Plant online pattern from P0: any tranche dispatching -> the plant is
+    # synchronized that hour (all its tranches' headroom stays available).
+    online = np.zeros((n_grp, T), dtype=bool)
+    np.logical_or.at(online, group_of, p0 > TOL_MW)
+
+    # Bridge offline gaps shorter than the plant's min-down (loosening only).
+    for r in np.unique(group_of[gated]):
+        md = float(grp_md[r])
+        if md <= 1.0:
+            continue
+        runs = find_runs(online[r])
+        if not runs:
+            continue
+        for start, end in _merge_runs(runs, md):
+            online[r, start:end] = True
+
+    masked = gated[:, None] & ~online[group_of]
+    if not masked.any():
+        return None
+    avail = np.where(masked, 0.0, fleet_arrays.availability)
+    return dataclasses.replace(
+        fleet_arrays,
+        availability=avail,
+        pmin=fleet_arrays.pmin.copy(),
+    )
+
+
+def build_pjm_reserve_p1_prep(config, iso: str, fleet_arrays):
+    """Return ``(p1_fleet_prep, p1_kwargs_prep)`` hooks for ``run_energy_solve``.
+
+    PJM path B wiring (``pjm_reserve_commitment_scoped``, GATED default off):
+    the fleet hook applies :func:`pjm_commitment_scoped_reserve_fleet` from the
+    P0 run pattern; the kwargs hook recomputes the deliverable reserve-supply
+    cap (``pjm_reserve_supply_cap`` → ``pjm_reserve_deliverable_supply_cap_mw``)
+    on the MASKED fleet, so the P1 cap is Σ ramp10 over the ONLINE eligible
+    units — the ``pjm-reserve-ordc.md`` bind-gate "online + 10-min-deliverable"
+    measure — instead of the full-fleet ~39 GW. ``(None, None)`` when the
+    mechanism is off, the ISO is not PJM, or the co-opt is off, so every other
+    path is byte-identical.
+
+    Raises on a stacked path-A/pergen config: the online-gate proxy and the
+    per-pool layout scope the same phenomenon (one mechanism per phenomenon,
+    rule 19) — path B supersedes, never composes.
+    """
+    if not (
+        getattr(config, "pjm_reserve_commitment_scoped", False)
+        and iso == "PJM"
+        and getattr(config, "energy_reserve_coopt", False)
+    ):
+        return None, None
+    if getattr(config, "pjm_reserve_online_gated", False) or getattr(
+        config, "pjm_reserve_pergen", False
+    ):
+        raise ValueError(
+            "pjm_reserve_commitment_scoped (path B) supersedes "
+            "pjm_reserve_online_gated (path A) and is incompatible with "
+            "pjm_reserve_pergen — enable exactly one reserve-supply scoping "
+            "(CLAUDE.md rule 19: one mechanism per phenomenon)"
+        )
+
+    def _fleet_prep(r0):
+        return pjm_commitment_scoped_reserve_fleet(config, fleet_arrays, r0.dispatch)
+
+    def _kwargs_prep(r0, p1_fleet_arrays):
+        # Only when the mask fired AND the deliverable cap is part of the recipe:
+        # recompute the (1, T) supply cap on the masked availability.
+        if p1_fleet_arrays is fleet_arrays:
+            return None
+        if not getattr(config, "pjm_reserve_supply_cap", False):
+            return None
+        from market_sim.results.scarcity import pjm_reserve_deliverable_supply_cap_mw
+
+        cap = pjm_reserve_deliverable_supply_cap_mw(
+            config, p1_fleet_arrays, int(config.hours)
+        )
+        if cap is None:
+            return None
+        return {"reserve_supply_cap": cap}
+
+    return _fleet_prep, _kwargs_prep
+
+
 def run_commitment_pass(state: dict, config=None):
     """Run the P2 commitment pass from a P1 ``state`` dict; return the result.
 
