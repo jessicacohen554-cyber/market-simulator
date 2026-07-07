@@ -540,27 +540,32 @@ def compute_commitment(
 
 def _ra_bridge_unit_params(
     gen: Generator, heat_rate: float
-) -> tuple[float, float] | None:
-    """Return ``(min_down_hours, startup_per_mw)`` for the RA must-offer bridge.
+) -> tuple[float, float, float] | None:
+    """Return ``(min_down_hours, startup_per_mw, min_run_hours)`` for the RA bridge.
 
-    The bridge needs a unit's PHYSICAL minimum-down time and per-MW startup cost.
-    A legacy per-plant generator gets both from :func:`_commitment_params` (the
+    The bridge needs a unit's PHYSICAL minimum-down time and per-MW startup cost
+    (and, for the ``startup_aware_p0`` detector, its minimum-run time). A legacy
+    per-plant generator gets all three from :func:`_commitment_params` (the
     per-fuel heat-rate table). A CAISO per-plant CAMPD **tranche**, however,
     carries ``min_run_hours = min_down_hours = 0`` on its bins (the tranche
     artifact never computed them), so ``_commitment_params`` returns ``None`` and
-    the bridge would be silently inert. For such a bin the min-down is instead
-    read from the same per-fuel class table by heat rate — a class-physical,
-    forward-derivable property, no measured pin — and the startup cost is taken
-    from the bin. Only the base (``committed``) tranche carries a startup cost;
-    the incremental ``econ``/``peak`` tranches have ``startup_per_mw = 0`` and are
-    rejected here (returning ``None``) so the bridge never floors above the
-    plant's minimum stable load (which would pad midday gas). Returns ``None``
-    when the unit has no class commitment params (a non-thermal fuel) or is a
-    binned incremental tranche.
+    the bridge would be silently inert. For such a bin the min-down/min-run are
+    instead read from the same per-fuel class table by heat rate — a
+    class-physical, forward-derivable property, no measured pin — and the
+    startup cost is taken from the bin. Only the base (``committed``) tranche
+    carries a startup cost; the incremental ``econ``/``peak`` tranches have
+    ``startup_per_mw = 0`` and are rejected here (returning ``None``) so the
+    bridge never floors above the plant's minimum stable load (which would pad
+    midday gas). Returns ``None`` when the unit has no class commitment params
+    (a non-thermal fuel) or is a binned incremental tranche.
     """
     params = _commitment_params(gen, heat_rate)
     if params is not None and float(params["min_down_hours"]) > 0.0:
-        return float(params["min_down_hours"]), float(params["startup_per_mw"])
+        return (
+            float(params["min_down_hours"]),
+            float(params["startup_per_mw"]),
+            float(params.get("min_run_hours", 0.0)),
+        )
     # Binned tranche (min-down zeroed on the bin): fall back to the per-fuel
     # class table for the physical min-down.
     table = COMMITMENT_PARAMS_BY_FUEL.get(gen.fuel_type)
@@ -574,6 +579,7 @@ def _ra_bridge_unit_params(
     if base is None:
         base = table[-1][1]
     min_down = float(base["min_down_hours"])
+    min_run = float(base.get("min_run_hours", 0.0))
     if min_down <= 0.0:
         return None
     startup = float(getattr(gen, "startup_cost_per_mw", 0.0))
@@ -583,7 +589,7 @@ def _ra_bridge_unit_params(
         return None
     if startup <= 0.0:
         startup = float(base["startup_per_mw"])
-    return min_down, startup
+    return min_down, startup, min_run
 
 
 def _apply_economic_bridges(
@@ -683,8 +689,8 @@ def caiso_ra_mustoffer_min_gen(
     startup_bridge: bool = False,
     bridge_decommit: bool = False,
     surplus_floor_value: float = 0.0,
-    startup_aware: bool = False,
-    release_hours: np.ndarray | None = None,
+    startup_aware_p0: bool = False,
+    curtailed_hours_mask: np.ndarray | None = None,  # (T,) bool
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
 
@@ -803,42 +809,42 @@ def caiso_ra_mustoffer_min_gen(
             keep-running offer, ``-config.renewable_keep_running_value`` when
             negative renewable offers are on, else 0. Only used when
             ``bridge_decommit`` is on.
-        startup_aware: When True (gap G-61 path (b)), a detected run anchors a
-            bridge only when it is COMMITMENT-REAL under the unit's own start
-            economics — its run margin per MW of capacity
-            (``Σ_t∈run (LMP − MC) × dispatch / pmax``) covers the published
-            per-MW startup cost. The base-cost P0 pattern the P1-native bridge
-            reads pays no startup on a continuous ramp and over-cycles CC;
-            phantom micro-runs a real unit commitment would never start
-            otherwise chop the solar belly into sub-min-down gaps that all
-            floor unconditionally. Requires ``p1_prices`` and ``base_mc``.
-            Default False is byte-identical.
-        release_hours: Optional ``(T,)`` boolean — hours of genuine
-            curtailed-VRE volume in the solve the run pattern came from (gap
-            G-61 path (c)). A gap containing ANY release hour is never
-            floored (physical or economic): holding thermal min-load through
-            real renewable curtailment displaces curtailable energy, and the
-            real market decommits RA units in oversupply rather than curtail
-            more VRE. ``None`` (default) is byte-identical.
+        startup_aware_p0: G-61 candidate (b) — pre-filter each generator's raw
+            ``p1_dispatch`` (here the base-cost P0 pattern) run mask by
+            dropping any "on" spell shorter than the unit's OWN minimum-run
+            time (``min_run_hours``, the same physical table the bridge reads
+            its min-down from) before runs/gaps are detected, so a P0 dither
+            (on for a couple of hours chasing a brief price spike, off, on
+            again — free in P0's zero-startup-cost objective, never free in a
+            real unit-commitment) collapses into one long idle span with no
+            bridge-worthy gap at its edges, instead of manufacturing a
+            short-restart floor at every blip. Default False reproduces the
+            raw-P0 detector byte-identically.
+        curtailed_hours_mask: G-61 candidate (c) — ``(T,)`` bool, True in
+            hours where the model's own P0 solution shows genuine renewable
+            curtailment (dispatched wind+solar below their available CF x
+            capacity bound by more than numerical noise). The bridge's own
+            premise is that oversupply, not the floor, drives the ~$0 midday
+            price; this releases the floor to zero in exactly those hours —
+            the direct volume signal of that oversupply — rather than a price
+            threshold. ``None`` (default) applies no release.
 
     Returns:
         The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
         ``min_load_frac`` is non-positive.
 
     Raises:
-        ValueError: If ``startup_bridge`` (or ``startup_aware``) is True but
-            ``p1_prices`` or ``base_mc`` is None (the start/restart economics
-            cannot be evaluated).
+        ValueError: If ``startup_bridge`` is True but ``p1_prices`` or ``base_mc``
+            is None (the restart economics cannot be evaluated).
     """
     n_gen, T = p1_dispatch.shape
     floor = np.zeros((n_gen, T), dtype=float)
     if min_load_frac <= 0.0:
         return floor
-    if (startup_bridge or startup_aware) and (p1_prices is None or base_mc is None):
+    if startup_bridge and (p1_prices is None or base_mc is None):
         raise ValueError(
-            "caiso_ra_mustoffer_min_gen: startup_bridge/startup_aware require "
-            "both p1_prices (LMP) and base_mc (MC) to evaluate the start "
-            "economics."
+            "caiso_ra_mustoffer_min_gen: startup_bridge requires both p1_prices "
+            "(LMP) and base_mc (MC) to evaluate the restart economics."
         )
     pmax = np.asarray(fleet_arrays.pmax, dtype=float)
     avail = np.asarray(fleet_arrays.availability, dtype=float)
@@ -870,7 +876,7 @@ def caiso_ra_mustoffer_min_gen(
         resolved = _ra_bridge_unit_params(gen, float(fleet_arrays.heat_rate[g]))
         if resolved is None:
             continue
-        min_down, startup_per_mw = resolved
+        min_down, startup_per_mw, min_run = resolved
         # ECONOMIC bridging (holding across a gap ≥ min-down on restart
         # economics) requires slow-restart physics: min-down at/above the CC
         # table floor. A fast-start CT (min-down 1 h, cheap start) is never
@@ -882,29 +888,20 @@ def caiso_ra_mustoffer_min_gen(
             and min_down >= RA_BRIDGE_ECON_MIN_DOWN_HOURS
         )
         threshold = pmax[g] * run_threshold_frac
-        runs = find_runs(p1_dispatch[g, :] > threshold)
-        # Startup-aware run screen (G-61 path (b)): only COMMITMENT-REAL runs
-        # anchor bridges. A run whose whole P0 energy margin cannot repay one
-        # startup is a phantom the base-cost LP manufactured (it pays no
-        # startup on a continuous ramp) — a real UC would not have started
-        # the unit, so the run must not shorten its neighbours' gaps.
-        if startup_aware and runs:
-            g_zone = int(zone_idx[g])
-            pmax_g = max(float(pmax[g]), 1.0)
-            kept_runs = []
-            for s, e in runs:
-                margin_per_mw = (
-                    float(
-                        np.sum(
-                            (p1_prices[g_zone, s:e] - base_mc[g, s:e])
-                            * p1_dispatch[g, s:e]
-                        )
-                    )
-                    / pmax_g
-                )
-                if margin_per_mw >= startup_per_mw:
-                    kept_runs.append((s, e))
-            runs = kept_runs
+        on_mask = p1_dispatch[g, :] > threshold
+        if startup_aware_p0 and min_run > 0.0:
+            # G-61 candidate (b): P0 pays no startup cost, so it will dither a
+            # unit on for a handful of hours chasing a brief price spike, off,
+            # on again — a pattern no real unit-commitment (which amortizes a
+            # real startup cost over at least its own minimum-run time) would
+            # produce. Drop any "on" spell shorter than the unit's OWN
+            # min_run_hours before runs/gaps are measured, so the dither
+            # collapses into one long idle span instead of manufacturing a
+            # bridge-worthy gap at every blip.
+            for s, e in find_runs(on_mask):
+                if e - s < min_run:
+                    on_mask[s:e] = False
+        runs = find_runs(on_mask)
         if len(runs) < 2:
             continue
         # The min-load target is the PLANT's minimum stable load; for a binned
@@ -929,13 +926,6 @@ def caiso_ra_mustoffer_min_gen(
         for (_, end_prev), (start_next, _) in zip(runs[:-1], runs[1:]):
             gap = start_next - end_prev
             if gap <= 0:
-                continue
-            # Curtailed-VRE release (G-61 path (c)): a gap that contains a
-            # genuine-curtailment hour never bridges — the real market
-            # decommits in oversupply rather than curtail more renewables.
-            if release_hours is not None and bool(
-                np.any(release_hours[end_prev:start_next])
-            ):
                 continue
             if gap < min_down:
                 floor[g, end_prev:start_next] = (
@@ -971,91 +961,12 @@ def caiso_ra_mustoffer_min_gen(
         bridge_decommit,
         surplus_floor_value,
     )
-    return floor
-
-
-def apply_ra_mustoffer_quantity_gate(
-    floor: np.ndarray,  # (n_gen, T) — the RA bridge floor, mutated in place
-    generators: list[Generator],
-    fleet_arrays: FleetArrays,
-    cap_mw: float,
-) -> np.ndarray:
-    """Cap the RA-bridged fleet at the published must-offer RA quantity (G-61a).
-
-    Real CAISO attaches the must-offer obligation only to RA-CONTRACTED
-    capacity; :func:`caiso_ra_mustoffer_min_gen` floors every merchant gas
-    CC/CT whose run pattern bridges — the whole fleet, not the RA fleet (D-8
-    closure §7, gap G-61). This gate drops bridged PLANTS
-    cheapest-startup-first — the RUC de-commitment order
-    (:func:`_apply_economic_bridges`): the unit cheapest to bring back
-    tomorrow cycles off first — until the kept plants' summed pmax fits
-    ``cap_mw``, the published gas-fired must-offer RA capacity for the
-    compliance year (``constants.CAISO_RA_MUSTOFFER_GAS_MW``, DMM Annual
-    Report "Must-Offer: Gas-fired generators"). Dropped plants' floors zero
-    out; kept plants are untouched. The obligation is per PLANT (a binned
-    plant's tranches share the bin-id prefix, exactly the detector's
-    ``plant_pmax`` grouping) and is consumed at plant pmax — pmax ≥ NQC, so
-    the gate errs strict, never generous (disclosed at the constant).
-
-    Args:
-        floor: The ``(n_gen, T)`` RA min-load floor to gate, mutated in place.
-        generators: The dispatch fleet, aligned with ``floor`` rows.
-        fleet_arrays: The vectorized fleet (``pmax``, ``heat_rate``).
-        cap_mw: The published must-offer gas RA capacity (MW) for the year.
-
-    Returns:
-        The gated floor (the same array, for chaining). A non-positive
-        ``cap_mw`` zeroes every floor; a cap at/above the bridged fleet's
-        summed plant pmax is a no-op.
-    """
-    if not np.any(floor > 0.0):
-        return floor
-    if cap_mw <= 0.0:
-        floor[:] = 0.0
-        return floor
-    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
-    heat_rate = np.asarray(fleet_arrays.heat_rate, dtype=float)
-    floored_rows = np.flatnonzero((floor > 0.0).any(axis=1))
-    # Plant grouping: a binned plant's tranches share the unit_id prefix (the
-    # detector's plant_pmax convention); legacy per-plant units stand alone.
-    plant_rows: dict[str, list[int]] = {}
-    for g in floored_rows:
-        gen = generators[g]
-        key = (
-            gen.unit_id.rpartition("_")[0]
-            if getattr(gen, "is_campd_bin", False)
-            else gen.unit_id
-        )
-        plant_rows.setdefault(key, []).append(int(g))
-    # Per-plant RA MW (summed pmax over ALL of the plant's tranches, floored or
-    # not — the obligation attaches to the plant's full RA capacity) and the
-    # plant's startup cost (its floored base tranche's, the max over members).
-    plant_all_pmax: dict[str, float] = {}
-    for g, gen in enumerate(generators):
-        key = (
-            gen.unit_id.rpartition("_")[0]
-            if getattr(gen, "is_campd_bin", False)
-            else gen.unit_id
-        )
-        if key in plant_rows:
-            plant_all_pmax[key] = plant_all_pmax.get(key, 0.0) + float(pmax[g])
-    plant_startup: dict[str, float] = {}
-    for key, rows in plant_rows.items():
-        su = 0.0
-        for g in rows:
-            resolved = _ra_bridge_unit_params(generators[g], float(heat_rate[g]))
-            if resolved is not None:
-                su = max(su, float(resolved[1]))
-        plant_startup[key] = su
-    total = sum(plant_all_pmax.values())
-    # RUC order: drop the cheapest-startup plant first (deterministic
-    # tie-break on the plant key) until the kept obligation fits the cap.
-    for key in sorted(plant_rows, key=lambda k: (plant_startup[k], k)):
-        if total <= cap_mw:
-            break
-        for g in plant_rows[key]:
-            floor[g, :] = 0.0
-        total -= plant_all_pmax[key]
+    if curtailed_hours_mask is not None:
+        # G-61 candidate (c): release the floor to zero in hours the model's
+        # own P0 solution shows genuine renewable curtailment — the direct
+        # physical signal that oversupply, not the floor, is driving the
+        # midday price down (the bridge's own stated premise).
+        floor[:, np.asarray(curtailed_hours_mask, dtype=bool)] = 0.0
     return floor
 
 
