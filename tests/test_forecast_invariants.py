@@ -132,13 +132,13 @@ def _ledger(
     }
 
 
-def _mk_run(ledgers, years=None, config=None):
+def _mk_run(ledgers, years=None, config=None, iso="ERCOT"):
     from market_sim.config.scenarios import ScenarioConfig
 
     run = C.Run(
         run_dir=Path("."),
-        config=config or ScenarioConfig(iso="ERCOT"),
-        iso="ERCOT",
+        config=config or ScenarioConfig(iso=iso),
+        iso=iso,
     )
     run.ledgers = {led["year"]: led for led in ledgers}
     run.years = years or {}
@@ -309,18 +309,56 @@ def test_i6_passes_modest_retire():
 
 
 # --------------------------------------------------------------------------- #
-# I7 reliability floor
+# I7 reliability floor (G-41: market-design-dependent)
 # --------------------------------------------------------------------------- #
-def test_i7_passes_above_floor():
+# Energy-only ISOs (ERCOT): retirement-bounded nameplate floor.
+def test_i7_energy_only_passes_above_floor():
     led = _ledger(2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000)
     assert C.check_i7_reliability_floor(_mk_run([led])).status == C.PASS
 
 
-def test_i7_fails_below_floor():
-    led = _ledger(
-        2026, {"gas_cc": 3000}, {"gas_cc": 3000}, peak=5000
-    )  # floor 5750 > 3000
+def test_i7_energy_only_tolerates_starting_below_floor():
+    # Fleet started below the floor (3000 < 5750) but did not over-retire —
+    # retirement-bounded floor tolerates it (no absolute floor in energy-only).
+    led = _ledger(2026, {"gas_cc": 3000}, {"gas_cc": 3000}, peak=5000)
+    assert C.check_i7_reliability_floor(_mk_run([led])).status == C.PASS
+
+
+def test_i7_energy_only_fails_on_over_retirement():
+    # Started above the floor (10000 > 5750), evolution retired down to 3000
+    # (below the floor): over-retirement, FAIL.
+    led = _ledger(2026, {"gas_cc": 10000}, {"gas_cc": 3000}, peak=5000)
     assert C.check_i7_reliability_floor(_mk_run([led])).status == C.FAIL
+
+
+# Capacity-market ISOs (PJM): absolute floor on the model's accreditation
+# convention (accredited firm = peak*(1+reserve_margin) vs the model's own
+# resolve_adequacy_requirement_mw).
+def test_i7_capacity_market_passes_when_accredited_meets_requirement():
+    led = _ledger(
+        2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=0.15
+    )
+    run = _mk_run([led], iso="PJM")
+    assert C.check_i7_reliability_floor(run).status == C.PASS
+
+
+def test_i7_capacity_market_fails_when_accredited_below_requirement():
+    # reserve_margin=-0.30 -> accredited firm 3500 MW, below PJM's UCAP-basis
+    # requirement (~4534 MW at peak 5000): absolute floor FAIL.
+    led = _ledger(
+        2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=-0.30
+    )
+    run = _mk_run([led], iso="PJM")
+    assert C.check_i7_reliability_floor(run).status == C.FAIL
+
+
+def test_i7_capacity_market_skips_year_without_reserve_margin():
+    # No persisted firm-capacity accounting (reserve_margin None) -> skip, PASS.
+    led = _ledger(
+        2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=None
+    )
+    run = _mk_run([led], iso="PJM")
+    assert C.check_i7_reliability_floor(run).status == C.PASS
 
 
 # --------------------------------------------------------------------------- #
