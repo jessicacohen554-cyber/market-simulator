@@ -185,5 +185,43 @@ class TestEnvelopeLoader(unittest.TestCase):
         self.assertLess(dsw[hod == 12].mean(), dsw[hod == 0].mean())
 
 
+class TestInterchangeModelClock(unittest.TestCase):
+    """Per-DIBA stamps map onto the model clock: −1 h standard, −2 h daylight.
+
+    The measured lag of the CISO per-DIBA ``local_time`` stamps against the
+    model's hourly frame (see the ``_CAISO_INTERCHANGE_LAG_*`` constant block
+    in ``eia_loader`` and FINDING-caiso-seam-tz-correction-2026-07-07).
+    """
+
+    def test_standard_time_shifts_one_hour(self):
+        import pandas as pd
+
+        from market_sim.data.eia_loader import _caiso_interchange_model_clock
+
+        stamps = pd.DatetimeIndex(["2024-01-15 08:00", "2024-12-01 23:00"])
+        out = _caiso_interchange_model_clock(stamps)
+        self.assertEqual(list(out), list(stamps - pd.Timedelta(hours=1)))
+
+    def test_daylight_time_shifts_two_hours(self):
+        import pandas as pd
+
+        from market_sim.data.eia_loader import _caiso_interchange_model_clock
+
+        stamps = pd.DatetimeIndex(["2024-07-15 14:00", "2024-04-08 11:00"])
+        out = _caiso_interchange_model_clock(stamps)
+        self.assertEqual(list(out), list(stamps - pd.Timedelta(hours=2)))
+
+    def test_fall_back_repeated_hour_is_deterministic(self):
+        import pandas as pd
+
+        from market_sim.data.eia_loader import _caiso_interchange_model_clock
+
+        # 2024-11-03 01:00 occurs twice on the wall clock; ambiguous=False
+        # resolves it as standard time (−1 h), deterministically.
+        stamps = pd.DatetimeIndex(["2024-11-03 01:00"])
+        out = _caiso_interchange_model_clock(stamps)
+        self.assertEqual(out[0], pd.Timestamp("2024-11-03 00:00"))
+
+
 if __name__ == "__main__":
     unittest.main()
