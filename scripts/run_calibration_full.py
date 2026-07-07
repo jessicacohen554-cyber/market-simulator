@@ -1874,6 +1874,7 @@ def solve_and_persist(
     pjm_reserve_commitment_scoped: bool = False,
     pjm_reserve_pergen: bool = False,
     pjm_reserve_pergen_sync: bool = False,
+    pjm_reserve_pergen_size_split: bool = False,
     pjm_commitment_posture: bool = False,
     measured_ramp_capability: bool = False,
     ercot_as_forward_requirement: bool = False,
@@ -2140,6 +2141,7 @@ def solve_and_persist(
             pjm_reserve_commitment_scoped=pjm_reserve_commitment_scoped,
             pjm_reserve_pergen=pjm_reserve_pergen,
             pjm_reserve_pergen_sync=pjm_reserve_pergen_sync,
+            pjm_reserve_pergen_size_split=pjm_reserve_pergen_size_split,
             pjm_commitment_posture=pjm_commitment_posture,
             measured_ramp_capability=measured_ramp_capability,
             ercot_as_forward_requirement=ercot_as_forward_requirement,
@@ -2481,6 +2483,7 @@ def solve_and_persist(
         "pjm_reserve_commitment_scoped": pjm_reserve_commitment_scoped,
         "pjm_reserve_pergen": pjm_reserve_pergen,
         "pjm_reserve_pergen_sync": pjm_reserve_pergen_sync,
+        "pjm_reserve_pergen_size_split": pjm_reserve_pergen_size_split,
         "pjm_commitment_posture": pjm_commitment_posture,
         "measured_ramp_capability": measured_ramp_capability,
         "ercot_as_forward_requirement": ercot_as_forward_requirement,
@@ -2666,6 +2669,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen=True)
     if pjm_reserve_pergen_sync:
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen_sync=True)
+    if pjm_reserve_pergen_size_split:
+        recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen_size_split=True)
     if pjm_commitment_posture:
         recorded_cfg = recorded_cfg.with_overrides(pjm_commitment_posture=True)
     if measured_ramp_capability:
@@ -5851,6 +5856,23 @@ def main() -> None:
         "(--measured-ramp-capability recommended). PJM-only; default off.",
     )
     parser.add_argument(
+        "--pjm-reserve-pergen-size-split",
+        action="store_true",
+        help="PJM pergen SIZE-SPLIT pooling tier (the pjm-87 diagnosis "
+        "remedy): splits each base (zone, fuel-class) pool's large plants "
+        "(capacity > 1.5x the pool's own mean plant capacity, self-"
+        "normalizing threshold, reserve_config."
+        "PJM_PERGEN_SIZE_SPLIT_MEAN_MULTIPLE) into individual reserve "
+        "columns; smaller plants stay pooled as the base tier. Sharpens the "
+        "opportunity-cost signal (pjm-87 found none of the 4 balance rows "
+        "ever binds; the pooled-dilution lets the LP source the small "
+        "measured requirement from any idle pool) without the memory-"
+        "infeasible cost of a full per-plant tier. Requires "
+        "--energy-reserve-coopt --pjm-reserve-pergen; composes with "
+        "--pjm-reserve-pergen-sync. PJM-only; default off. Profile memory "
+        "first (CLAUDE.md #12/#45).",
+    )
+    parser.add_argument(
         "--pjm-commitment-posture",
         action="store_true",
         help="PJM pooled linear commitment-posture lever — the SAME mechanism "
@@ -7404,6 +7426,7 @@ def main() -> None:
         miso_commitment_posture=args.miso_commitment_posture,
         pjm_reserve_pergen=args.pjm_reserve_pergen,
         pjm_reserve_pergen_sync=args.pjm_reserve_pergen_sync,
+        pjm_reserve_pergen_size_split=args.pjm_reserve_pergen_size_split,
         pjm_commitment_posture=args.pjm_commitment_posture,
         measured_ramp_capability=args.measured_ramp_capability,
         ercot_multiproduct_as_coopt=args.ercot_multiproduct_as_coopt,
