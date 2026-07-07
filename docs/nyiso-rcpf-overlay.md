@@ -85,10 +85,40 @@ a `ScenarioConfig` override (`nyiso_rcpf_products`).
   with the zonal-congestion fix — see the finding below. The system-wide
   overlay matches the NYCA-hub RT price the backcast reports.
 
+## Update 2026-07-07 (G-20c): the downstate gate is (largely) lifted
+
+The gating cause below — "static Gold-Book load shares never let downstate peak
+hard enough to bind the interfaces" — is now **fixed**. The energy LP was
+silently dispatching on the static per-zone `load_share` (all zones peaking the
+same hour; NYC 0.28 / LI 0.12) because `eia_loader.load_zonal_shares` read the
+measured hourly shares only from the **clean** parquet, which is derived and
+gitignored (absent in a fresh clone) — so the measured "pal" actual-load (upload
+U3) never reached the solve. `load_zonal_shares` now falls back to parsing the
+raw file directly (rule 12: measured > estimate), so every zone gets its own
+measured diurnal/seasonal shape. The measured shares put materially more load
+downstate at peak (NYC 0.34, LI 0.17) and let downstate peak at its own hours.
+
+**Result (keeper recipe + measured shares, run `2026-07-07-nyiso-56-measured-zonal`):**
+the import-constrained NYC/SENY pocket now tightens in the real tight hours and
+the **in-LP locational reserve co-optimization** (`energy_reserve_coopt`, 7
+locational families) fires — 2023 NYC/Hudson LBMP reaches **$1,684/MWh** while
+Upstate maxes at $152 (genuinely locational, as this section predicted). C3c tail
+vs RT actual: 2023 **21 h vs 10 h** (was 0), 2025 14 h vs 42 h; C3a 2023 mean bias
+−9.0% → +1.6% (vs DA); C1/C2/C4/C7 hold. The system-wide overlay curves in this
+doc remain the co-opt-off comparator; nothing here was tuned. **Still open:** 2024
+(a mild year) and the 2025 *deep* (>$300) tail stay under — the remaining
+perfect-foresight import over-service. The next lever is downstate import
+discipline: the **measured** NYC locality import limit is **2,875 MW** (curated
+`capacity-deliverability` datatype) vs the model's 3,900 MW Dunwoodie-South
+energy-TTC estimate, applied in the summer-peak window exactly as the Zone-K TSL
+(`nyiso_li_lcr_tsl`, #1345) already applies the LI limit.
+
 ## Finding: the 2023–2025 tail is *locational*, and the overlay is gated by
 ## the LP's perfect-foresight headroom
 
-Run across all three keeper bundles, the system-wide overlay fires **zero**
+*(Original finding, retained; the gate it describes is lifted by the 2026-07-07
+update above.)* Run across all three keeper bundles, the system-wide overlay
+fires **zero**
 adder in every hour. The diagnostic (`--diagnostic`) localises why: even in
 the actual >$300/MWh hours, the model's NYCA-wide reserve headroom is ~4–6 GW
 (2023: median 5,954 MW, p5 3,981 MW), never approaching the 2,620 MW 30-min
@@ -142,16 +172,28 @@ market is **nested and locational** (`constants.NYISO_RCPF_LOCATIONAL`):
 | NYCA   | all five (system-wide)        | 2,620 MW | $750 | FERC ER21-502 |
 | East   | Capital_Hudson, Lower_Hudson, NYC, Long_Island (F–K) | 1,200 MW | $500 | FERC ER21-502 / RS4 |
 | SENY   | Lower_Hudson, NYC, Long_Island (G–K) | 1,100 MW *(placeholder)* | $500 | $500 sourced; MW = TODO |
-| NYC    | NYC (J): 1,000 MW 30-min + 500 MW 10-min | 1,000 / 500 MW | $500 | RS4 / "Zone J Reserves" |
+| NYC    | NYC (J): 1,000 MW 30-min + 500 MW 10-min | 1,000 / 500 MW | $500 | RS4 / "Zone J Reserves" ✓ confirmed |
 
 Each region's reserve headroom is the **sum of its member zones'** dispatchable
 headroom, and a zone's locational adder is the sum of the demand-curve prices
 of every region that contains it (the NYCA system tier is added on top of all
 of them). This reproduces the measured cascade tiers (`process_nyiso_as.py`):
-A–E carry NYCA only, F adds East, G–K add SENY, J adds NYC. SENY's $500 30-min
-penalty is sourced but its MW requirement is a **placeholder** (1,100 MW —
-the midpoint of the two sourced nested anchors East 1,200 MW ⊇ SENY ⊇ NYC
-1,000 MW; `TODO(SENY-MW)`: replace with the published RS4 value). Every other
+A–E carry NYCA only, F adds East, G–K add SENY, J adds NYC.
+
+**SENY MW status (2026-07-07 partial confirmation, G-20c).** Two of the four
+anchors are now confirmed against primary sources: the **NYC (Zone J)**
+requirements — **1,000 MW 30-min + 500 MW 10-min** — are the published Zone J
+reserve region values (NYISO "Establishing Zone J Operating Reserves", ICAP/MIWG
+2019; corroborated by S&P Global Commodity Insights, 2019-06-24), and NYISO's
+**SENY is Load Zones G–K** (so the model's SENY = H–K is one zone narrower than
+the tariff SENY — zone G is folded into `Capital_Hudson` in the five-zone
+aggregation; a documented approximation). The SENY **30-min MW requirement**
+itself stays a **placeholder** (1,100 MW — the midpoint of the sourced nested
+anchors East 1,200 MW ⊇ SENY ⊇ NYC 1,000 MW): the primary value lives in the
+NYISO *Locational Reserve Requirements* / RS4 PDFs, which are **not fetchable in
+this environment** (NYISO doc host returns empty/403), so `TODO(SENY-MW)` remains
+open pending a manual transcription of that PDF. `$500` 30-min penalty sourced.
+Every other
 locational requirement/penalty is a tariff value; **nothing is fitted to LMP
 residuals**, and each zone's modeled adder is validated against the measured
 per-zone RT reserve price (the committed `actual_as_reserve_NYISO.parquet` now
