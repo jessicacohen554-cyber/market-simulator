@@ -14,6 +14,17 @@ Numbering note: CLAUDE.md rule N = audit §8 rule N−1 (CLAUDE.md gained rule 1
 
 ## 0. Status snapshot — what is already done (do not re-plan)
 
+**Update (2026-07-07, verified at HEAD):** past W0, **W1 and W2 are also landed.** W1's
+diagnostics: D-10 is built (`scripts/legitimacy_diagnostics.py::run_d10`, condensed into every
+bundle's `metrics.json` `free_class_score`); D-3 (zero-forcing ablation twin) is built per-ISO
+(`scripts/run_pjm77_ablation_twin.py`, `run_pjm80_ablation_twin.py`, `run_miso41_ablation_twin.py`);
+D-11/D-13/D-14 remain unbuilt. W2's neutralizations are landed: C-13 (the NYISO `13.15×`
+CT_PEAKER / `1.21` CC_REGULAR cross-ISO leak) is gone from `data/fleet.py`/`offer_curves.py`
+(retired via PR #1635, "Retire G-26 residual-identified scalars"); C-7's env-var channel
+(`INTERCHANGE_SHAPE_IMPORT_PCT`/`EXPORT_PCT`) is deleted from `transmission.py` (only a historical
+comment referencing the old read remains in `scenarios.py`). W3–W5 are still open (see the
+per-item table below and CLAUDE.md rules 19–26 for the standing rules that remain live).
+
 Verified against the tree at 2026-07-04 (`main` @ 7b0d150). **W0 closed 2026-07-05** — see
 `docs/handoffs/scalar-remediation-w0-closure-2026-07-05.md` for the current C-2/C-11 record
 (this table predates that closure and is not re-litigated here):
