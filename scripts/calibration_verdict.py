@@ -1007,7 +1007,18 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
             )
         ]
     h = ordc["hoursGt200"]
-    model = float(h.get("model", 0))
+    # G-20a (2026-07-07, owner-approved): score the SETTLEMENT price
+    # (energy LMP + the published reserve/scarcity overlay) when the render
+    # derived one for this ISO-year (``overlay`` present), else the energy-only
+    # LP dual (``model``). Real RT settlement IS energy LMP + reserve price
+    # (ERCOT RTSPP, PJM SRMCP-into-LMP, NYISO RCPF-into-LBMP); the adder is a
+    # published, forward-reproducible input (CLAUDE.md rule 13), not fitted to
+    # this residual. ``model`` stays emitted (and read below for the diagnostic
+    # note) so the energy-only tail remains visible; the settlement count is the
+    # gated one. Every VOLUME gate keeps reading the energy-only dual elsewhere.
+    settled = h.get("overlay") is not None
+    model = float(h["overlay"]) if settled else float(h.get("model", 0))
+    energy_only = float(h.get("model", 0))
     tail_rec = _tail_part().get(iso, {}).get(str(year))
     out: list[dict] = []
     if tail_rec is None:
@@ -1026,18 +1037,26 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
         cov_note = (
             f"; DA coverage {cov:.0%} — count is a lower bound" if cov < 0.999 else ""
         )
+        # ``model`` above is the settlement count when an overlay was derived;
+        # note the basis and, when overlaid, the energy-only count it was lifted
+        # from — so the tail's provenance (energy dual vs energy+reserve price)
+        # is visible in the verdict, not just the number.
+        basis = "settlement (LMP+overlay)" if settled else "energy-only LMP"
+        settle_note = (
+            f"; energy-only {energy_only:.0f}h + published overlay" if settled else ""
+        )
         if actual < TAIL_SMALL_COUNT:
             ok = abs(model - actual) <= TAIL_SMALL_COUNT
             mag = (
-                f"model {model:.0f}h vs DA actual {actual:.0f}h "
-                f"(small-count |Δ|≤{TAIL_SMALL_COUNT}h, >${thr:.0f}){cov_note}"
+                f"model {model:.0f}h [{basis}] vs DA actual {actual:.0f}h "
+                f"(small-count |Δ|≤{TAIL_SMALL_COUNT}h, >${thr:.0f}){settle_note}{cov_note}"
             )
         else:
             ratio = model / actual
             ok = TAIL_LO <= ratio <= TAIL_HI
             mag = (
-                f"model {model:.0f}h vs DA actual {actual:.0f}h "
-                f"({ratio:.2f}×, >${thr:.0f}){cov_note}"
+                f"model {model:.0f}h [{basis}] vs DA actual {actual:.0f}h "
+                f"({ratio:.2f}×, >${thr:.0f}){settle_note}{cov_note}"
             )
         out.append(
             {
@@ -1046,7 +1065,10 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
                 "year": year,
                 "status": PASS if ok else FAIL,
                 "classification": None if ok else MODEL_MISS,
-                "metric": f"hours DA-expressible LMP > ${thr:.0f}/MWh",
+                "metric": (
+                    f"hours DA-expressible {'settlement price' if settled else 'LMP'} "
+                    f"> ${thr:.0f}/MWh"
+                ),
                 "model": model,
                 "actual": actual,
                 "tol": (
