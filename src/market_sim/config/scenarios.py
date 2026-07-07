@@ -1984,6 +1984,32 @@ class ScenarioConfig:
     # the formula carries the measured cap's role. Default off; ERCOT-only; GATED.
     # The formula never reads the LP's commitment/output state (anti-F3/F4) and
     # never a price (honesty gate: RTOLCAP MW quantity only).
+    ercot_online_capacity_envelope: bool = False  # ERCOT: cap the multi-product
+    # co-opt's shared-headroom ENERGY+RESERVE at the committed on-line CAPACITY
+    # envelope — the G-22 commitment-thinness structure (docs/FINDING-ercot-
+    # priceshape-2026-07.md §3 / structural conclusion #2). ercot_reserve_supply_cap
+    # caps only the cleared RESERVE (Σ R ≤ RTOLCAP); the ENERGY side of the shared
+    # headroom still draws on full-fleet capacity, so in the missed 2023 tail hours
+    # the model retains ~3.2 GW of spare sub-$200 energy capacity BEYOND the
+    # measured on-line capability (RTOLCAP) — the P1 perfect-commitment assumption
+    # (every available MW serves energy instantly) plus the sub-2-day forced-outage
+    # tail. That phantom spare keeps the energy dual at ~$45 where SCED cleared
+    # $600+. This lever adds, per shared-headroom tier, a system-wide row
+    # `Σ_{elig thermal} P + Σ_prod R ≤ online_cap_env(t)` where online_cap_env is
+    # the CAMPD-measured committed on-line HSL (scarcity.
+    # ercot_online_capacity_envelope_mw), so the model cannot dispatch OR reserve
+    # more thermal than the real system had on-line. Unlike the flat reserve cap
+    # the ENERGY term makes it CONDITION-RESPONSIVE: inert in slack hours (spare
+    # capacity abundant), binding only in the high-energy tight hours where the
+    # tail miss lives, tightening reserve into the ORDC band with NO offer-height
+    # change (the price rises via the co-opt reserve-shortage channel, not via a
+    # tuned offer — rule #1). The envelope is anchored to the measured RTOLCAP
+    # series (online_cap_env − dispatch reproduces RTOLCAP level/band/coverage; the
+    # anti-F1 identification gate, scripts/validate_ercot_online_capacity.py), never
+    # to the price residual (rules #13/#14/#23). Requires energy_reserve_coopt +
+    # ercot_multiproduct_as_coopt. Mode-aware net-load driver like
+    # ercot_reserve_supply_forward (backcast reads its own forecast net-load, not
+    # the LP's output). Default off; ERCOT-only; GATED.
     pjm_reserve_supply_cap: bool = False  # PJM analogue of ercot_reserve_supply_cap:
     # cap the energy+reserve co-opt's cleared reserve at the fleet's 10-min
     # DELIVERABLE ramp (FleetArrays.ramp10 = RAMP10_FRAC_BY_GROUP × pmax,
@@ -4433,6 +4459,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_reserve_supply_cap": 1,
     "ercot_reserve_supply_cap_from_year": 1,
     "ercot_reserve_supply_forward": 1,
+    "ercot_online_capacity_envelope": 1,
     "pjm_reserve_supply_cap": 1,
     "pjm_reserve_online_gated": 1,
     "pjm_reserve_online_rho": 1,
