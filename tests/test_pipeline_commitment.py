@@ -23,7 +23,12 @@ from market_sim.model.commitment import (
 )
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.pipeline import commitment as pipeline_commitment
-from market_sim.pipeline.commitment import run_commitment_pass
+from market_sim.pipeline.commitment import (
+    build_caiso_ra_p1_prep,
+    caiso_ra_p1_floor_fleet,
+    run_commitment_pass,
+)
+from market_sim.pipeline.solve import run_energy_solve
 
 T = 24
 
@@ -237,3 +242,88 @@ def test_nyiso_path_b_wired(monkeypatch):
     got = run_commitment_pass(state)
     assert got.status == "Optimal"
     assert "requirement_mw" in calls  # path B fired for NYISO
+
+
+# ---------------------------------------------------------------------------
+# P1-native CAISO RA must-offer bridge (P2 archived): the bridge is applied as a
+# min_gen floor before the single P1 solve, detected from the P0 run pattern —
+# no P2 re-solve. These cover the floor builder and the run_energy_solve hook.
+# ---------------------------------------------------------------------------
+
+
+def _gap_p0_dispatch():
+    """P0 dispatch with a 2-hour midday idle gap on the CC (< its 6 h min-down).
+
+    The CC (row 0) runs 0–9 and 12–23, idle 10–11 — a physical restart bar, so
+    the plain bridge floors it at min-load across the gap. Row 1 (the peaker CT,
+    min-down 1 h) is never bridged.
+    """
+    p0 = np.zeros((2, T))
+    p0[0, :10] = 300.0
+    p0[0, 12:] = 300.0
+    return p0
+
+
+def test_caiso_ra_p1_floor_fleet_guards():
+    """The P1 floor builder / prep are no-ops off CAISO or with the mechanism off."""
+    gens, fa, demand, mc_base, _dk = _trivial_inputs("CAISO")
+    p0 = _gap_p0_dispatch()
+    prices = np.full((demand.shape[0], T), 40.0)
+    on = ScenarioConfig(hours=T, caiso_ra_mustoffer=True)
+    off = ScenarioConfig(hours=T, caiso_ra_mustoffer=False)
+    # Wrong ISO / mechanism off → None (no floor, ordinary warm-started P1).
+    assert caiso_ra_p1_floor_fleet(on, "ERCOT", gens, fa, p0, prices, mc_base) is None
+    assert caiso_ra_p1_floor_fleet(off, "CAISO", gens, fa, p0, prices, mc_base) is None
+    assert build_caiso_ra_p1_prep(on, "ERCOT", gens, fa, mc_base) is None
+    assert build_caiso_ra_p1_prep(off, "CAISO", gens, fa, mc_base) is None
+    assert build_caiso_ra_p1_prep(on, "CAISO", gens, fa, mc_base) is not None
+
+
+def test_caiso_ra_p1_floor_fleet_sets_floor_and_raises_availability():
+    """A detected bridge sets the min_gen floor + mechanism id and keeps it feasible."""
+    from market_sim.data.floor_mechanisms import MECH_RA_MUSTOFFER
+
+    gens, fa, demand, mc_base, _dk = _trivial_inputs("CAISO")
+    p0 = _gap_p0_dispatch()
+    prices = np.full((demand.shape[0], T), 40.0)
+    config = ScenarioConfig(hours=T, caiso_ra_mustoffer=True)
+    floored = caiso_ra_p1_floor_fleet(config, "CAISO", gens, fa, p0, prices, mc_base)
+    assert floored is not None
+    # The floor is exactly min_load_frac × pmax on the CC across the gap hours.
+    expected = config.caiso_ra_min_load_frac * fa.pmax[0]
+    assert np.allclose(floored.min_gen[0, 10:12], expected)
+    assert floored.min_gen[0, :10].max() == 0.0 and floored.min_gen[0, 12:].max() == 0.0
+    assert floored.min_gen[1].max() == 0.0  # the fast-start CT is never bridged
+    # Mechanism attribution + feasibility: min_gen ≤ pmax × availability.
+    assert np.all(floored.min_gen_mechanism[0, 10:12] == MECH_RA_MUSTOFFER)
+    assert np.all(
+        floored.min_gen <= floored.availability * floored.pmax[:, None] + 1e-9
+    )
+    # The input fleet is not mutated.
+    assert fa.min_gen is None
+
+
+def test_run_energy_solve_p1_prep_floors_the_scored_p1():
+    """The prep hook makes P1 solve on the floored fleet; the floor binds in P1."""
+    gens, fa, demand, mc_base, dk = _trivial_inputs("CAISO")
+    config = ScenarioConfig(hours=T, caiso_ra_mustoffer=True)
+    prices = np.full((demand.shape[0], T), 40.0)
+    p0 = _gap_p0_dispatch()
+
+    # Deterministic prep: floor from the crafted gap pattern, ignoring the LP's
+    # own P0 (the trivial constant demand has no midday gap of its own).
+    def prep(_r0):
+        return caiso_ra_p1_floor_fleet(config, "CAISO", gens, fa, p0, prices, mc_base)
+
+    res = run_energy_solve(gens, fa, demand, mc_base, dk, config, p1_fleet_prep=prep)
+    assert res.p1.status == "Optimal"
+    # P1 solved on the floored fleet (not the input one), and the floor binds:
+    # the CC dispatches at least its min-load across the gap it would otherwise
+    # idle through in this cheap-demand hour.
+    assert res.p1_fleet_arrays is not fa
+    floor = config.caiso_ra_min_load_frac * fa.pmax[0]
+    assert np.all(res.p1.dispatch[0, 10:12] >= floor - 1e-6)
+
+    # No hook → the input fleet is used unchanged (ordinary warm-started P1).
+    res2 = run_energy_solve(gens, fa, demand, mc_base, dk, config)
+    assert res2.p1_fleet_arrays is fa

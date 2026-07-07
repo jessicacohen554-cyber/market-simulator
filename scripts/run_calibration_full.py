@@ -4871,6 +4871,41 @@ def enforce_holdout_year_gate(
     )
 
 
+def _enforce_legacy_p2_gate(parser: argparse.ArgumentParser, args) -> None:
+    """Fail unless the ARCHIVED P2 flags are unlocked with --enable-legacy-p2.
+
+    P2 is a legacy artifact: P0/P1 are the only production passes and every run
+    is scored on P1 (CLAUDE.md "Dispatch & Commitment"). The P2 triggers/knobs
+    are hidden from ``--help`` and inert; reaching for one without the explicit
+    ``--enable-legacy-p2`` unlock is a hard error so P2 is never a silent
+    calibration option. The CAISO RA must-offer bridge is NOT gated here — it is
+    a P1-native mechanism (``--caiso-ra-mustoffer``), not a P2 pass.
+    """
+    if getattr(args, "enable_legacy_p2", False):
+        return
+    used = []
+    if getattr(args, "commitment", False):
+        used.append("--commitment")
+    if getattr(args, "ercot_as_aware_commitment", False):
+        used.append("--ercot-as-aware-commitment")
+    if getattr(args, "run_p2", None):
+        used.append("--run-p2")
+    if getattr(args, "no_coal_p2", False):
+        used.append("--no-coal-p2")
+    if getattr(args, "persist_p2_state", False):
+        used.append("--persist-p2-state")
+    if getattr(args, "class_commitment_overrides", None):
+        used.append("--class-commitment-overrides")
+    if used:
+        parser.error(
+            "the P2 commitment pass is ARCHIVED (P0/P1 only; runs are scored on "
+            "P1). "
+            + ", ".join(used)
+            + " require --enable-legacy-p2 to run P2 as a last resort. See "
+            'CLAUDE.md "Dispatch & Commitment".'
+        )
+
+
 def main() -> None:
     """Solve + persist a timestamped bundle and report it, or report an old one."""
     parser = argparse.ArgumentParser(
@@ -4907,14 +4942,26 @@ def main() -> None:
         "points each to see where an efficient CC loses its high-CF hours.",
     )
     parser.add_argument(
+        "--enable-legacy-p2",
+        action="store_true",
+        help="Unlock the ARCHIVED P2 commitment pass (last resort). P0/P1 are the "
+        "only production passes and every run is scored on P1 (CLAUDE.md "
+        '"Dispatch & Commitment"). The P2 flags (--commitment, '
+        "--ercot-as-aware-commitment, --run-p2, --no-coal-p2, --persist-p2-state, "
+        "--class-commitment-overrides) are hidden and inert unless this is passed; "
+        "using any of them without it is an error. Not part of any keeper config.",
+    )
+    parser.add_argument(
         "--commitment",
         action="store_true",
-        help="Run the P2 unit-commitment pass after P1; both are persisted.",
+        # ARCHIVED P2 trigger — hidden from --help, gated behind --enable-legacy-p2.
+        help=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--no-coal-p2",
         action="store_true",
-        help="Pin coal to its P1 dispatch in P2 (coal gains no new P2 gen).",
+        # ARCHIVED P2 knob — hidden; only meaningful under --enable-legacy-p2.
+        help=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--coal-lignite-mustrun",
@@ -5249,15 +5296,15 @@ def main() -> None:
     parser.add_argument(
         "--persist-p2-state",
         action="store_true",
-        help="Pickle each year's P1 inputs (large) so P2 can be re-run via "
-        "--run-p2 without re-solving P0/P1.",
+        # ARCHIVED P2 knob — hidden; only meaningful under --enable-legacy-p2.
+        help=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--run-p2",
         metavar="DIR",
         default=None,
-        help="Run the P2 commitment pass from a bundle's cached P1 state "
-        "(one LP solve, no re-solve). Honours --no-coal-p2.",
+        # ARCHIVED P2 post-process — hidden; gated behind --enable-legacy-p2.
+        help=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--out-dir",
@@ -5719,14 +5766,12 @@ def main() -> None:
     parser.add_argument(
         "--ercot-as-aware-commitment",
         action="store_true",
-        help="ERCOT AS-aware commitment: run a P2 commitment screen that values "
-        "AS revenue (P1 reserve dual x reserve-eligible headroom), not energy "
-        "margin alone, so units a tight month keeps online FOR AS stay committed "
-        "and the P2 co-opt headroom reflects realistic online capacity — letting "
-        "the multi-product co-opt form the broad-month elevation endogenously "
-        "(phantom-headroom fix, Finding 1/G1). Triggers a P2 pass even without "
-        "--commitment. Requires --energy-reserve-coopt + "
-        "--ercot-multiproduct-as-coopt. ERCOT-only. Off (default).",
+        # ARCHIVED P2 trigger — hidden from --help, gated behind --enable-legacy-p2.
+        # ERCOT AS-aware commitment: run a P2 commitment screen that values AS
+        # revenue (P1 reserve dual x reserve-eligible headroom), not energy margin
+        # alone. Requires --energy-reserve-coopt + --ercot-multiproduct-as-coopt.
+        # ERCOT-only.
+        help=argparse.SUPPRESS,
     )
     parser.add_argument(
         "--ercot-reserve-supply-cap",
@@ -6181,18 +6226,18 @@ def main() -> None:
         "--caiso-ra-mustoffer",
         action=argparse.BooleanOptionalAction,
         default=None,
-        help="CAISO Resource-Adequacy must-offer COMMITMENT (Step-1 replacement "
-        "for --caiso-gas-commitment-floor): through the P2 pass, hold each "
-        "merchant gas CC/CT unit that the economic P1 dispatch runs before AND "
-        "after a midday idle gap shorter than its physical min-down time at "
-        "--caiso-ra-min-load-frac x available capacity across the gap (it "
+        help="CAISO Resource-Adequacy must-offer COMMITMENT — applied P1-NATIVE "
+        "(NOT a P2 pass; P2 is archived). Before the single P1 clearing solve, "
+        "hold each merchant gas CC/CT unit that the base-cost P0 dispatch runs "
+        "before AND after a midday idle gap shorter than its physical min-down "
+        "time at --caiso-ra-min-load-frac x available capacity across the gap (it "
         "cannot economically cycle off and restart for the evening ramp). The "
         "unit is online at min-load and free to dispatch DOWN to it — not "
-        "pinned to measured output. Detected from the model's own run pattern "
-        "+ min-down (forward-derivable, no measured-outcome pin). CAISO-only. "
-        "Default (unset) keeps the per-ISO base config value — ON for CAISO, "
-        "off elsewhere; --no-caiso-ra-mustoffer forces it off (the floor-off-"
-        "only baseline probe).",
+        "pinned to measured output. Detected from the model's own P0 run pattern "
+        "+ min-down (forward-derivable, no measured-outcome pin), so the RA "
+        "structure rides the scored P1 pass. CAISO-only. Default (unset) keeps "
+        "the per-ISO base config value — ON for CAISO, off elsewhere; "
+        "--no-caiso-ra-mustoffer forces it off (the floor-off baseline probe).",
     )
     parser.add_argument(
         "--caiso-ra-min-load-frac",
@@ -6978,14 +7023,14 @@ def main() -> None:
         "--class-commitment-overrides",
         default=None,
         metavar="JSON",
-        help="Per-class P2 commitment-screen overrides, keyed by plant_group "
-        '(e.g. \'{"ST_GAS":{"min_run_hours":48,"min_down_hours":12}}\'). '
-        "Sets ScenarioConfig.class_commitment_overrides so a class can be "
-        "commitment-screened even when its CAMPD bin carries min_run=0. "
-        "Empty = constant-table defaults (byte-identical).",
+        # ARCHIVED P2 knob — hidden; only meaningful under --enable-legacy-p2.
+        # Per-class P2 commitment-screen overrides, keyed by plant_group (e.g.
+        # '{"ST_GAS":{"min_run_hours":48,"min_down_hours":12}}').
+        help=argparse.SUPPRESS,
     )
     args = parser.parse_args()
     apply_statistical_mode(args)
+    _enforce_legacy_p2_gate(parser, args)
 
     offer_curve_overrides = _parse_offer_curve_json(args.offer_curve_json)
     offer_curve_deltas = _parse_offer_curve_json(

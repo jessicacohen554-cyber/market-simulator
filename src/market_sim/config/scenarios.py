@@ -925,19 +925,25 @@ class ScenarioConfig:
     # COMMITMENT (Step-1 replacement for the measured-outcome gas floor above).
     # A real RA must-offer obligation is a *commitment* — the unit is online at
     # minimum stable load and FREE to dispatch down to it — NOT an energy floor
-    # pinned to measured generation. Through the P2 pass (runner P0->P1->P2,
-    # model.commitment.caiso_ra_mustoffer_min_gen) this holds each gas CC/CT unit
-    # that the economic P1 dispatch runs BEFORE and AFTER a midday idle gap
+    # pinned to measured generation. Applied P1-NATIVE (P2 is archived — CLAUDE.md
+    # "Dispatch & Commitment": P0/P1 are the only production passes and every run
+    # is scored on P1): the bridge is written as a min_gen floor BEFORE the single
+    # P1 clearing solve (pipeline.commitment.caiso_ra_p1_floor_fleet /
+    # build_caiso_ra_p1_prep, injected at the P0->P1 seam), detected from the
+    # base-cost P0 run pattern via model.commitment.caiso_ra_mustoffer_min_gen. It
+    # holds each gas CC/CT unit that P0 runs BEFORE and AFTER a midday idle gap
     # SHORTER than its physical minimum-down time at caiso_ra_min_load_frac x
     # available capacity across that gap: it cannot economically cycle off and
     # restart for the evening ramp, so its RA commitment keeps it online at
-    # min-load instead of cold midday. The bridge is detected from the model's
-    # OWN dispatch run pattern + the physical min-down time (CC_COMMITMENT_PARAMS),
-    # both forward-derivable and condition-responsive — no measured-outcome pin
-    # (CLAUDE.md #1/#11). The LP dispatches economically above the floor, so it
+    # min-load instead of cold midday. Detected from the model's OWN P0 run
+    # pattern + the physical min-down time (CC_COMMITMENT_PARAMS), both
+    # forward-derivable and condition-responsive — no measured-outcome pin
+    # (CLAUDE.md #1/#11). The P1 LP dispatches economically above the floor, so it
     # only binds when oversupply would otherwise drive the committed unit cold;
     # the midday ~$0 price comes from real oversupply (solar/imports), not the
     # floor. Default off (byte-identical); CAISO-only via _calibration_config.
+    # (This no longer triggers a P2 pass; the former P2 RA branch in
+    # pipeline.commitment is retained for the legacy --enable-legacy-p2 path.)
     caiso_ra_min_load_frac: float = 0.40  # Minimum stable load of a committed
     # gas unit as a fraction of available capacity, for the RA must-offer bridge
     # commitment above. ~0.40 is the typical combined-cycle / frame simple-cycle
@@ -956,10 +962,11 @@ class ScenarioConfig:
     # zero and even a small startup cost holds the unit online — why real CAISO
     # keeps ~6.8 GW gas committed through the deep spring belly a pure LP over-cycles
     # (it pays no startup on a continuous ramp). MC is the unit's own marginal cost
-    # and LMP_gap the model's OWN P1 dual — both forward-derivable, NO measured-
-    # generation pin (CLAUDE.md #1/#11), so unlike the removed NG:NG floor this is
-    # keeper-eligible. Default off (byte-identical); requires caiso_ra_mustoffer;
-    # CAISO-only. Toggle with --caiso-ra-startup-bridge.
+    # and LMP_gap the model's OWN base-cost (P0) dual the P1-native bridge prices
+    # the gap at — both forward-derivable, NO measured-generation pin (CLAUDE.md
+    # #1/#11), so unlike the removed NG:NG floor this is keeper-eligible. Default
+    # off (byte-identical); requires caiso_ra_mustoffer; CAISO-only. Toggle with
+    # --caiso-ra-startup-bridge.
     caiso_ra_bridge_decommit: bool = False  # Solar-proportional / seasonal
     # DECOMMITMENT control on the startup bridge above (caiso-48). The plain
     # startup bridge over-commits in high-solar years: the P1 LMP it prices the
