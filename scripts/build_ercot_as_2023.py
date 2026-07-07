@@ -57,7 +57,9 @@ from build_ercot_as_withholding import (  # noqa: E402
     HOURS_PER_YEAR,
     _read_service,
     _to_model_clock,
+    prevailing_he_to_cst,
 )
+from build_ercot_hsl import _prevailing_to_standard  # noqa: E402
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 ERCOT_DIR = REPO_ROOT / "data" / "raw" / "ercot"
@@ -88,10 +90,14 @@ _RRSUFR_TARGET_MEAN_MW: float = 862.0
 
 
 def _rows_to_hb(df: pd.DataFrame, value: pd.Series) -> pd.DataFrame:
-    """Convert (Delivery Date, Hour Ending) rows to hour-beginning ``(ts, mw)``."""
+    """Convert (Delivery Date, Hour Ending) rows to hour-beginning ``(ts, mw)``.
+
+    The 60-Day labels are Central Prevailing Time with sequential HE numbering
+    on the DST days (HE 1-25 at fall-back), converted to the fixed CST model
+    clock via ``prevailing_he_to_cst``.
+    """
     date = pd.to_datetime(df["Delivery Date"], format="%m/%d/%Y")
-    he = df["Hour Ending"].astype(int)
-    ts = date + pd.to_timedelta(he - 1, unit="h")
+    ts = prevailing_he_to_cst(date, df["Hour Ending"].astype(int))
     return pd.DataFrame({"ts": ts, "mw": np.asarray(value, dtype=float)})
 
 
@@ -114,13 +120,22 @@ def _load_gen_awards() -> pd.DataFrame:
 
 
 def _asplan_by_type() -> pd.DataFrame:
-    """Return ASPLAN 2023 cleared requirement by (date, HE) for each AS type."""
+    """Return ASPLAN 2023 cleared requirement by CST hour-beginning ts per AS type.
+
+    ASPLAN labels are Central Prevailing Time in the repeated-HE convention
+    (the fall-back hour's second occurrence is flagged ``DSTFlag == 'Y'``);
+    they are converted to the fixed CST model clock before indexing, so no
+    DST duplicate survives and no mean-collapse is needed.
+    """
     asp = pd.read_parquet(ERCOT_DIR / "ASPLANNP433_2023.parquet")
     asp["date"] = pd.to_datetime(asp["DeliveryDate"], format="%m/%d/%Y")
     asp = asp[asp["date"].dt.year == 2023].copy()
-    asp["he"] = asp["HourEnding"].str.slice(0, 2).astype(int)
-    # Collapse the DST fall-back duplicate (DSTFlag Y/N) by mean.
-    return asp.groupby(["date", "he", "AncillaryType"])["Quantity"].mean().unstack()
+    he = asp["HourEnding"].str.slice(0, 2).astype(int)
+    asp["ts"] = _prevailing_to_standard(
+        asp["date"] + pd.to_timedelta(he - 1, unit="h"), asp["DSTFlag"]
+    )
+    asp = asp.dropna(subset=["ts"])
+    return asp.groupby(["ts", "AncillaryType"])["Quantity"].mean().unstack()
 
 
 def _to_model_clock_keep_gaps(rows: pd.DataFrame, year: int) -> np.ndarray:
@@ -159,20 +174,20 @@ def _build_rrsufr(g: pd.DataFrame, plan: pd.DataFrame) -> tuple[np.ndarray, dict
         g.assign(pf=g[["RRSPFR Awarded", "RRSFFR Awarded"]].sum(axis=1))
         .groupby(["Delivery Date", "Hour Ending"])["pf"]
         .sum()
+        .reset_index()
     )
-    idx = gp.index
-    dates = pd.to_datetime([d for d, _ in idx], format="%m/%d/%Y").normalize()
-    hes = np.array([h for _, h in idx], dtype=int)
-    key = pd.MultiIndex.from_arrays([dates, hes], names=["date", "he"])
+    # Prevailing sequential-HE labels -> CST, then join the (ts-indexed) plan.
+    ts = prevailing_he_to_cst(
+        pd.to_datetime(gp["Delivery Date"], format="%m/%d/%Y"),
+        gp["Hour Ending"].astype(int),
+    )
     rrs_req = (
-        plan["RRS"].reindex(key).to_numpy(dtype=float)
+        plan["RRS"].reindex(ts).to_numpy(dtype=float)
         if "RRS" in plan.columns
-        else np.zeros(len(key))
+        else np.zeros(len(ts))
     )
-    residual = np.clip(rrs_req - gp.to_numpy(), 0.0, None)
-    resid_rows = pd.DataFrame(
-        {"ts": dates + pd.to_timedelta(hes - 1, unit="h"), "mw": residual}
-    )
+    residual = np.clip(rrs_req - gp["pf"].to_numpy(), 0.0, None)
+    resid_rows = pd.DataFrame({"ts": ts, "mw": residual})
     resid_grid = _to_model_clock_keep_gaps(resid_rows, 2023)
 
     np3 = _to_model_clock_keep_gaps(_read_service("rrsufr"), 2023)
@@ -200,12 +215,8 @@ def _write_up_mw(rrsufr: np.ndarray, plan: pd.DataFrame, g: pd.DataFrame) -> Pat
     def plan_clock(name: str) -> np.ndarray:
         if name not in plan.columns:
             return np.zeros(HOURS_PER_YEAR)
-        ser = plan[name]
-        dates = ser.index.get_level_values("date")
-        hes = ser.index.get_level_values("he").astype(int)
-        rows = pd.DataFrame(
-            {"ts": dates + pd.to_timedelta(hes - 1, unit="h"), "mw": ser.to_numpy()}
-        )
+        ser = plan[name].dropna()  # ts-indexed (CST) by _asplan_by_type
+        rows = pd.DataFrame({"ts": ser.index, "mw": ser.to_numpy()})
         return _to_model_clock(rows, 2023)
 
     def gen_clock(col: str) -> np.ndarray:
@@ -241,6 +252,10 @@ def _write_up_mw(rrsufr: np.ndarray, plan: pd.DataFrame, g: pd.DataFrame) -> Pat
             "columns are cleared-to-plan (ASPLAN) / measured gen awards for schema "
             "parity and are not consumed downstream.",
             "units": "MW (hour-beginning)",
+            "clock": "Fixed non-leap 8760h ERCOT-local STANDARD time (CST, "
+            "UTC-6): the sources' Central-Prevailing labels (60-Day/NP3-911 "
+            "sequential HE; ASPLAN repeated-HE + DSTFlag) are converted "
+            "CPT->CST before placement, matching the EIA-930 demand clock.",
             "year": "2023",
         }
     )
