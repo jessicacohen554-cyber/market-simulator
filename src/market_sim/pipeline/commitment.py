@@ -451,11 +451,19 @@ def pjm_pergen_sync_reserve_caps(config, fleet_arrays, p0_dispatch):
     order is identical by construction.
     """
     from market_sim.config.reserve_config import (
+        PJM_PERGEN_SIZE_SPLIT_MEAN_MULTIPLE,
         pjm_pergen_pool_ramp10,
         pjm_pergen_structure,
     )
 
-    gen_idx, col, n_r = pjm_pergen_structure(fleet_arrays)
+    size_split = (
+        PJM_PERGEN_SIZE_SPLIT_MEAN_MULTIPLE
+        if getattr(config, "pjm_reserve_pergen_size_split", False)
+        else None
+    )
+    gen_idx, col, n_r = pjm_pergen_structure(
+        fleet_arrays, size_split_mean_multiple=size_split
+    )
     online, group_of, grp_fast, _eligible = _pjm_plant_online_pattern(
         fleet_arrays, p0_dispatch
     )

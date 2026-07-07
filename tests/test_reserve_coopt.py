@@ -1822,6 +1822,97 @@ class TestPjmPergenSyncCapsPrep(unittest.TestCase):
             build_pjm_reserve_p1_prep(cfg, "PJM", fa)
 
 
+class TestPjmPergenSizeSplit(unittest.TestCase):
+    """pjm_pergen_structure's size-split pooling tier (pjm_reserve_pergen_size_split)."""
+
+    def _fleet(self, pmax_by_unit, plant_code, T=4):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        gas_idx = FUEL_TYPE_NAMES.index("gas_ct")
+        n = len(pmax_by_unit)
+        fa = FleetArrays(
+            pmax=np.asarray(pmax_by_unit, dtype=float),
+            pmin=np.zeros(n),
+            heat_rate=np.full(n, 8.0),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.zeros(n, dtype=int),
+            fuel_type_idx=np.full(n, gas_idx),
+            availability=np.ones((n, T)),
+            unit_ids=[f"g{i}" for i in range(n)],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.asarray(plant_code, dtype=int),
+        )
+        fa.ramp10 = np.full(n, 10.0)
+        return fa
+
+    def test_none_is_byte_identical_to_base(self):
+        from market_sim.config.reserve_config import pjm_pergen_structure
+
+        fa = self._fleet([100.0, 100.0, 500.0, 50.0], [1, 1, 2, 3])
+        g0, c0, n0 = pjm_pergen_structure(fa)
+        g1, c1, n1 = pjm_pergen_structure(fa, size_split_mean_multiple=None)
+        np.testing.assert_array_equal(g0, g1)
+        np.testing.assert_array_equal(c0, c1)
+        self.assertEqual(n0, n1)
+
+    def test_large_plant_gets_individual_column(self):
+        from market_sim.config.reserve_config import pjm_pergen_structure
+
+        # Plant 1 (tranches 100+100=300), plant 2 (500), plant 3 (100).
+        # mean plant cap = (300+500+100)/3 = 300; 1.5x mean = 450 -> only
+        # plant 2 (500 > 450) splits out; plants 1 and 3 (300, 100) share
+        # the residual pool.
+        fa = self._fleet([100.0, 100.0, 500.0, 100.0], [1, 1, 2, 3])
+        gidx, col, n_r = pjm_pergen_structure(fa, size_split_mean_multiple=1.5)
+        self.assertEqual(n_r, 2)
+        plant2_col = col[gidx == 2][0]
+        plant1_cols = col[np.isin(gidx, [0, 1])]
+        plant3_col = col[gidx == 3][0]
+        self.assertTrue(np.all(plant1_cols != plant2_col))
+        self.assertEqual(plant3_col, plant1_cols[0])  # residual pool shared
+
+    def test_no_plant_exceeds_threshold_collapses_to_one_pool(self):
+        from market_sim.config.reserve_config import pjm_pergen_structure
+
+        fa = self._fleet([100.0, 100.0, 100.0], [1, 2, 3])
+        gidx, col, n_r = pjm_pergen_structure(fa, size_split_mean_multiple=1.5)
+        self.assertEqual(n_r, 1)
+        np.testing.assert_array_equal(col, np.zeros(3, dtype=int))
+
+    def test_pools_stay_zone_pure(self):
+        from market_sim.config.reserve_config import pjm_pergen_structure
+
+        fa = self._fleet([100.0, 100.0, 500.0, 50.0], [1, 1, 2, 3])
+        fa.zone_idx = np.array([0, 0, 1, 1])
+        gidx, col, n_r = pjm_pergen_structure(fa, size_split_mean_multiple=1.5)
+        zone = fa.zone_idx[gidx]
+        for c in np.unique(col):
+            self.assertEqual(np.unique(zone[col == c]).size, 1)
+
+    def test_design_size_split_reduces_pool_count_vs_full_split(self):
+        # A larger synthetic fleet: size-split should land strictly between
+        # the base (zone, fuel-class) tier and full per-plant granularity.
+        from market_sim.config.reserve_config import pjm_pergen_structure
+
+        rng = np.random.default_rng(0)
+        n = 200
+        pmax = rng.uniform(20.0, 800.0, size=n)
+        plant_code = rng.integers(1, 60, size=n)  # ~60 distinct plants
+        fa = self._fleet(pmax.tolist(), plant_code.tolist())
+        fa.zone_idx = rng.integers(0, 3, size=n)
+        fa.fuel_type_idx = np.full(n, fa.fuel_type_idx[0])
+        _g0, _c0, n_base = pjm_pergen_structure(fa)
+        _g1, _c1, n_split = pjm_pergen_structure(fa, size_split_mean_multiple=1.5)
+        n_plants = np.unique(np.stack([fa.zone_idx, plant_code], axis=1), axis=0).shape[
+            0
+        ]
+        self.assertGreater(n_split, n_base)
+        self.assertLess(n_split, n_plants)
+
+
 class TestPjmSyncRequirementLoaders(unittest.TestCase):
     """Measured Synchronized requirement columns (sr_req_mw / mad_sr_req_mw)."""
 
