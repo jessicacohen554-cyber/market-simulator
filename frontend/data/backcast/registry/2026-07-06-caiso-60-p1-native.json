@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-06-caiso-60-p1-native",
+  "label": "caiso 60 p1 native",
+  "date": "2026-07-06",
+  "shorthand": "caiso-60-p1-native",
+  "definition": "P1-native RA bridge (P2 archived): keeper caiso-58 config re-solved P1-only",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-06-caiso-60-p1-native.js",
+  "bundle": "results/calibration/caiso60_p1native_ra"
+}
