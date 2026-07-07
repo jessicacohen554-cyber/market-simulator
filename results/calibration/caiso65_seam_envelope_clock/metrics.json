@@ -16,7 +16,7 @@
   "rubric_version": 2.2,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "governance gate UNATTESTED: no governance attestation in bundle (attestation has no governance block)"
   ],
   "notes": [],
   "criteria": {
@@ -74,12 +74,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "FAIL"
     }
   },
   "caveats": {
@@ -94,11 +94,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 1,
+    "scored": 9,
+    "target_grade": 2,
     "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 5
+    "fails": 6
   },
   "free_class_score": {
     "iso": "CAISO",
