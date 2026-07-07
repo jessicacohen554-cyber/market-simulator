@@ -775,8 +775,15 @@ class TestD6Quarantine:
 # ---------------------------------------------------------------------------
 
 
-def _fake_keeper_repo(tmp_path, run_id, iso, years, committed_summary):
-    """Build a minimal repo root: keepers.json + sidecar + committed bundle."""
+def _fake_keeper_repo(
+    tmp_path, run_id, iso, years, committed_summary, committed_rows=None
+):
+    """Build a minimal repo root: keepers.json + sidecar + committed bundle.
+
+    ``committed_rows`` (the per-mechanism D-2 rows) is optional; it carries the
+    ``ra_mustoffer_bridge`` attribution the recompute cannot rebuild, which the
+    staleness check subtracts from the committed side before comparing.
+    """
     reg = tmp_path / "frontend" / "data" / "backcast" / "registry"
     reg.mkdir(parents=True)
     (tmp_path / "frontend" / "data" / "backcast" / "keepers.json").write_text(
@@ -788,8 +795,11 @@ def _fake_keeper_repo(tmp_path, run_id, iso, years, committed_summary):
     )
     bundle = tmp_path / bundle_rel
     bundle.mkdir(parents=True)
+    d2 = {"summary": committed_summary}
+    if committed_rows is not None:
+        d2["rows"] = committed_rows
     (bundle / "legitimacy_diagnostics.json").write_text(
-        json.dumps({"diagnostics": {"D2": {"summary": committed_summary}}})
+        json.dumps({"diagnostics": {"D2": d2}})
     )
     return tmp_path
 
@@ -1008,3 +1018,180 @@ class TestD2KeepersVerify:
         res = ld.run_d2_keepers_verify(root)
         assert not res.passed
         assert any("ST_GAS" in f for f in res.failures)
+
+    def test_p2_ra_mustoffer_bridge_excluded_from_committed(
+        self, tmp_path, monkeypatch
+    ):
+        """The recompute's floor rebuild (run_year(fleet_only=True)) runs no P2
+        solve, so it cannot reproduce the P2 ``ra_mustoffer_bridge``. A keeper
+        whose committed forced energy for a class is ENTIRELY that bridge (e.g.
+        caiso-58 CC_REGULAR 0.0527 = 3.24 TWh RA must-offer) must PASS against a
+        recompute that shows ~0 there — the bridge share is subtracted from the
+        committed side, not demanded of the rebuild. Regenerating the artifact to
+        the recompute would erase the real, disclosed forced energy instead."""
+        import scripts.legitimacy_diagnostics as ld
+
+        committed = [
+            {
+                "year": 2023,
+                "class": "CC_REGULAR",
+                "forced_share": 0.0527,
+                "class_total_twh": 61.4225,
+                "immaterial": False,
+            },
+        ]
+        rows = [
+            {
+                "year": 2023,
+                "class": "CC_REGULAR",
+                "mechanism": "ra_mustoffer_bridge",
+                "forced_twh": 3.2381,
+                "class_total_twh": 61.4225,
+                "share_of_class": 0.0527,
+            },
+        ]
+        root = _fake_keeper_repo(
+            tmp_path, "caiso58", "CAISO", [2023], committed, committed_rows=rows
+        )
+        monkeypatch.setattr(
+            ld,
+            "diagnose_bundle",
+            lambda *a, **k: [
+                ld.GateResult(
+                    "D-2 forced-energy attribution",
+                    summary=[
+                        {
+                            "year": 2023,
+                            "class": "CC_REGULAR",
+                            "forced_share": 0.0003,  # rebuild has no P2 bridge
+                            "class_total_twh": 61.5033,
+                            "immaterial": False,
+                        }
+                    ],
+                )
+            ],
+        )
+        res = ld.run_d2_keepers_verify(root)
+        assert res.passed
+        assert res.rows[0]["verdict"] == "pass"
+        assert res.rows[0]["committed_rebuildable"] == 0.0
+
+    def test_denominator_jitter_within_tolerance_passes(self, tmp_path, monkeypatch):
+        """A material class whose committed vs recomputed share differs only by
+        class-denominator attribution jitter (a boundary plant binning into a
+        different class shifts the class total ~0.08 TWh) passes — this is the
+        CAISO CT_PEAKER 0.5933 (rebuildable) vs 0.6099 case, ~1.7 pp < the 2.5 pp
+        tolerance. The small ra_mustoffer_bridge component is excluded first."""
+        import scripts.legitimacy_diagnostics as ld
+
+        committed = [
+            {
+                "year": 2023,
+                "class": "CT_PEAKER",
+                "forced_share": 0.5972,
+                "class_total_twh": 2.0980,
+                "immaterial": False,
+            },
+        ]
+        rows = [
+            {
+                "year": 2023,
+                "class": "CT_PEAKER",
+                "mechanism": "ct_netload_drag",
+                "forced_twh": 1.2449,
+                "class_total_twh": 2.0980,
+                "share_of_class": 0.5934,
+            },
+            {
+                "year": 2023,
+                "class": "CT_PEAKER",
+                "mechanism": "ra_mustoffer_bridge",
+                "forced_twh": 0.0081,
+                "class_total_twh": 2.0980,
+                "share_of_class": 0.0039,
+            },
+        ]
+        root = _fake_keeper_repo(
+            tmp_path, "caiso58", "CAISO", [2023], committed, committed_rows=rows
+        )
+        monkeypatch.setattr(
+            ld,
+            "diagnose_bundle",
+            lambda *a, **k: [
+                ld.GateResult(
+                    "D-2 forced-energy attribution",
+                    summary=[
+                        {
+                            "year": 2023,
+                            "class": "CT_PEAKER",
+                            "forced_share": 0.6099,
+                            "class_total_twh": 2.0181,
+                            "immaterial": False,
+                        }
+                    ],
+                )
+            ],
+        )
+        res = ld.run_d2_keepers_verify(root)
+        assert res.passed
+
+    def test_staleness_beyond_tolerance_still_fails_after_bridge_exclusion(
+        self, tmp_path, monkeypatch
+    ):
+        """Excluding the P2 bridge must NOT blind the gate: a rebuildable-floor
+        share that drifts past the tolerance still fails. Here the committed
+        rebuildable share (0.20, after removing a 0.05 bridge share) vs a
+        recompute of 0.10 is a 10 pp drift — a genuinely stale artifact."""
+        import scripts.legitimacy_diagnostics as ld
+
+        committed = [
+            {
+                "year": 2023,
+                "class": "CT_PEAKER",
+                "forced_share": 0.25,
+                "class_total_twh": 100.0,
+                "immaterial": False,
+            },
+        ]
+        rows = [
+            {
+                "year": 2023,
+                "class": "CT_PEAKER",
+                "mechanism": "ct_netload_drag",
+                "forced_twh": 20.0,
+                "class_total_twh": 100.0,
+                "share_of_class": 0.20,
+            },
+            {
+                "year": 2023,
+                "class": "CT_PEAKER",
+                "mechanism": "ra_mustoffer_bridge",
+                "forced_twh": 5.0,
+                "class_total_twh": 100.0,
+                "share_of_class": 0.05,
+            },
+        ]
+        root = _fake_keeper_repo(
+            tmp_path, "keeperx", "CAISO", [2023], committed, committed_rows=rows
+        )
+        monkeypatch.setattr(
+            ld,
+            "diagnose_bundle",
+            lambda *a, **k: [
+                ld.GateResult(
+                    "D-2 forced-energy attribution",
+                    summary=[
+                        {
+                            "year": 2023,
+                            "class": "CT_PEAKER",
+                            "forced_share": 0.10,
+                            "class_total_twh": 100.0,
+                            "immaterial": False,
+                        }
+                    ],
+                )
+            ],
+        )
+        res = ld.run_d2_keepers_verify(root)
+        assert not res.passed
+        assert any("CT_PEAKER" in f for f in res.failures)
