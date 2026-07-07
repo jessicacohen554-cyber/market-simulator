@@ -122,8 +122,8 @@
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-06 nyiso-53 promotion - carried forward from the nyiso-41 ledger; NYISO_LOCAL_SELFSUPPLY_FRAC['Long_Island'] (residual, S5) RETIRED from the live config by the published Zone-K TSL mechanism (#1345); v2 plant rates + downstate citygate premium added as measured inputs.",
-  "n_entries": 11,
-  "n_residual": 6,
+  "n_entries": 10,
+  "n_residual": 5,
   "entries": [
    {
     "name": "offer_curve_by_group",
@@ -275,15 +275,6 @@
     "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned, confirmed by grep 2026-07-05), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation against the ISO's own CT/CC/ST capacity shares (replacing, never stacking with, the existing per-unit EFORD-derived availability) or delete it as dead code (rule 26) \u2014 tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
    },
    {
-    "name": "CC_REGULAR_PEAKING_PCT_BY_PLANT",
-    "where": "constants.py CC_REGULAR_PEAKING_PCT_BY_PLANT (engaged via cc_peaking_per_plant)",
-    "identification": "residual",
-    "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
-    "n_scalars": 4,
-    "source": "per-plant CC peaking-tranche % applied to exactly the four F-class CCs the model over-ran (audit C-12; W1d marker) \u2014 not a published turbine limit",
-    "root_cause": "audit C-12 open item: derive duct-burner share from EIA-860 duct-firing capability or CAMPD max-vs-base output, or fold into the generic curve"
-   },
-   {
     "name": "reliability_floor coefficients",
     "where": "data/raw/reference/reliability_floor_coeffs_NYISO.csv",
     "identification": "measured-physical",
@@ -296,8 +287,8 @@
     "where": "interchange_config.py per-ISO seam supply-curve ladders",
     "identification": "residual",
     "lineage_solves": ">=41 solves (audit \u00a75.1 + nyiso-41)",
-    "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback",
-    "root_cause": "audit C-6 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+    "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback; NEISO closed this item (see the NEISO-only entry, measured-physical) \u2014 remaining scope for this item is NYISO/PJM/MISO/CAISO's static ladder",
+    "root_cause": "audit C-6/#1350 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam, following the NEISO precedent (scripts/derive_neiso_import_tranches.py); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
    },
    {
     "name": "nyiso_li_lcr_tsl (Zone-K locality import limit)",

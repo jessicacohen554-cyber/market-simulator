@@ -24,7 +24,6 @@ from market_sim.config.constants import (
     CAMPD_BINNING_ISOS,
     CC_ECON_HR_OVERRIDE_DEFAULT,
     CC_PEAK_HR_OVERRIDE_DEFAULT,
-    CC_REGULAR_PEAKING_PCT_BY_PLANT,
     CHP_BTM_PCT_BY_SECTOR,
     CHP_ST_BTM_PCT,  # noqa: F401 — re-exported; market_sim.data.chp imports from fleet
     CO2_RATES,
@@ -4627,10 +4626,6 @@ CC_REGULAR_COMMITTED_PCT_BY_PLANT: dict[int, float] = {
 }
 
 
-# CC_REGULAR_PEAKING_PCT_BY_PLANT now lives in constants.py (residual-
-# identified, forecast-risk — see the citation there).
-
-
 @lru_cache(maxsize=1)
 def _eia860_plant_sector() -> dict[int, int]:
     """Return ``{plant_code: EIA-860 Sector number}`` from the plant table."""
@@ -5390,9 +5385,8 @@ def load_campd_bins(
 
     * ``Pct_Committed`` / ``Pct_Peaking`` — replaced per-plant by the
       CAMPD-derived ``CC_REGULAR_COMMITTED_PCT_BY_PLANT`` /
-      ``CC_REGULAR_PEAKING_PCT_BY_PLANT`` when
-      ``config.cc_committed_per_plant`` / ``cc_peaking_per_plant`` is set
-      (the ERCOT calibration default).
+      :func:`thermal_tranche_peaking` when ``config.cc_committed_per_plant`` /
+      ``cc_peaking_per_plant`` is set (the ERCOT calibration default).
     * ``HR_Mult_Committed`` / ``HR_Mult_Economic`` / ``HR_Mult_Peaking`` —
       used only when no ``offer_curve_by_group`` covers the group. With an
       offer curve configured (the ERCOT default) the committed band uses
@@ -5597,9 +5591,12 @@ def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
     share of the plant's demonstrated sustained maximum it clears in fewer
     than 5% of its online hours. Empty when the ISO has no artifact or it
     predates the column. Applied per plant in :func:`bins_to_fleet` under
-    ``config.cc_peaking_per_plant`` — the per-ISO measured analogue of the
-    hand-set ERCOT :data:`CC_REGULAR_PEAKING_PCT_BY_PLANT` — superseding the
-    offer curve's class-wide ``pct_peaking``.
+    ``config.cc_peaking_per_plant`` — supersedes the offer curve's
+    class-wide ``pct_peaking``. (The prior ERCOT hand-set
+    ``CC_REGULAR_PEAKING_PCT_BY_PLANT`` four-plant override this same flag
+    also drove was deleted 2026-07, rule 26/G-26/C-12: dead in every current
+    keeper — ERCOT's keeper carries ``cc_peaking_per_plant=False`` and uses
+    the measured EIA-860 ``cc_duct_peaking`` mechanism instead.)
     """
     path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
     if not path.exists():
@@ -6442,8 +6439,7 @@ def bins_to_fleet(
             # Per-plant EIA-860 duct-burner peaking share: duct-fired plants
             # get their capability gap, non-duct CCs get 0 (no phantom
             # scarcity band). Supersedes the class-wide pct_peaking and the
-            # tranche artifact above; the ERCOT hand-set map below stays the
-            # final word for its plants.
+            # tranche artifact above.
             _dpk = cc_duct_peaking_pct().get(plant_code)
             if _dpk is not None:
                 # Cap the band at the F-class supplementary-firing physical
@@ -6452,12 +6448,6 @@ def bins_to_fleet(
                 # plants and dropping the price wall below the real duct point.
                 _cap = getattr(config, "cc_duct_peaking_cap_pct", None)
                 pct_peak = min(_dpk, float(_cap)) if _cap is not None else _dpk
-        if (
-            group == "CC_REGULAR"
-            and getattr(config, "cc_peaking_per_plant", False)
-            and plant_code in CC_REGULAR_PEAKING_PCT_BY_PLANT
-        ):
-            pct_peak = CC_REGULAR_PEAKING_PCT_BY_PLANT[plant_code]
         if ov is not None:
             pct_mc, pct_peak = ov["pct_mc"], ov["pct_pk"]
         denom = 100.0 - pct_mr
