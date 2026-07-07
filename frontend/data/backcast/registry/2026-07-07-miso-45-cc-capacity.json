@@ -11,5 +11,7 @@
  ],
  "iso": "MISO",
  "file": "frontend/data/backcast/runs/2026-07-07-miso-45-cc-capacity.js",
- "bundle": "results/calibration/MISO/miso_45_cc_capacity_cap"
+ "bundle": "results/calibration/MISO/miso_45_cc_capacity_cap",
+ "ablation_twin": "2026-07-07-miso-45-ablation",
+ "market_story": "Floors force <0.6 TWh total (all four enabled MISO limbs are design-day commitment floors: hot-day coal/CT/ST_GAS units are online before the peak because operators commit against the design cooling/heating day, not the price of the hour). The miso-45 keeper-vs-twin per-class deltas are near-zero by construction - the run's structural content is the measured demonstrated-capacity cap, which is in BOTH twins; nothing in the CC row is floor-bought."
 }
