@@ -1,0 +1,8 @@
+plant_code,plant_name,current_mw,campd_p999_mw,eia860_winter_mw,reconciled_mw,delta_pct,source,mode
+55418,Hot Spring Generating Facility,957.0,582.1,633.9,582.1,-39.2,campd_demonstrated_peak,cap
+55220,Attala,811.9,516.8,513.8,516.8,-36.4,campd_demonstrated_peak,cap
+55218,Hinds Energy Facility,810.9,532.1,556.8,532.1,-34.4,campd_demonstrated_peak,cap
+55467,Ouachita,1257.2,841.4,835.9,841.4,-33.1,campd_demonstrated_peak,cap
+55380,Union Power Station,3456.6,2317.7,2354.3,2317.7,-32.9,campd_demonstrated_peak,cap
+55221,Harry L. Oswald,548.0,437.8,548.0,437.8,-20.1,campd_demonstrated_peak,cap
+7985,Greater Des Moines,503.7,403.6,590.5,403.6,-19.9,campd_demonstrated_peak,cap
