@@ -674,3 +674,744 @@ def _load_scarcity_overlay(bdir: Path, year: int, hours: int) -> dict | None:
             "reldeploy": float(m.group(1)) if m else 0.0,
         }
     return None
+
+
+def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -> dict:
+    """Assemble the embedded data for every run, with a shared CAMPD benchmark.
+
+    Returns a dict with: groups / labels / zones / years; ``bench`` (per year:
+    per-plant CAMPD CF + annual + monthly, EIA-923 per-plant annual + monthly,
+    EIA-930 per-fuel annual + hourly); and ``model`` (per run, per year:
+    per-plant model CF + annual + monthly + per-plant r / NRMSE / capture%, the
+    non-fossil model annual, the system fuel-vs-930 table rows, and
+    ``volErr`` -- the signed volume error (model vs the authoritative actuals
+    source per class) decomposed by zone and month for the heatmap).
+    """
+    npl = _nameplates()
+    pnames = _plant_names()
+    labels = [lab for lab, _ in runs]
+    years_set: set[int] = set()
+    zones_set: set[str] = set()
+    groups_set: set[str] = set()
+
+    bench: dict[int, dict] = {}  # year -> benchmark payload
+    model_runs: list[dict] = []  # per run -> {year -> payload}
+
+    for label, bdir in runs:
+        meta = json.loads((bdir / "meta.json").read_text())
+        tr_bands = _tranche_bands_for_bundle(bdir)
+        run_years: dict[int, dict] = {}
+        e923_all = pd.read_parquet(bundle_input_path(bdir, "eia923"))
+        e930_all = pd.read_parquet(bundle_input_path(bdir, "eia930"))
+        campd_all = pd.read_parquet(bundle_input_path(bdir, "campd"))
+        sys_all = pd.read_parquet(bdir / "system.parquet")
+        # Per-storage-unit hourly charge/discharge (run_calibration_full
+        # _storage_frame), present only when the bundle has a storage fleet.
+        # Drives the C5b throughput criterion; gitignored like dispatch/ +
+        # system.parquet, so it is read at render time and its annual scalar
+        # baked into the committed payload.
+        storage_all = (
+            pd.read_parquet(bdir / "storage.parquet")
+            if (bdir / "storage.parquet").exists()
+            else None
+        )
+        # Behind-the-meter must-run per (year, pass, class) — the same off-grid
+        # CHP host self-supply the LP held out, as the calibration report uses
+        # it (run_calibration_full). Drives the system-wide generation mix.
+        btm_all = (
+            pd.read_parquet(bdir / "btm.parquet")
+            if (bdir / "btm.parquet").exists()
+            else None
+        )
+        for year in meta["years"]:
+            if years is not None and int(year) not in years:
+                continue
+            years_set.add(int(year))
+            # Re-bucket genuinely-mixed gas-thermal plants into OTHER_FOSSIL on
+            # both the model and the EIA-923 side, so a coin-flip plant scores in
+            # the same bucket on both and stops distorting the clean classes
+            # (a scoring transform — dispatch itself is unchanged).
+            # Primary-pass dispatch: the commitment re-solve (P2) when the
+            # bundle ran one, else P1 (see _primary_pass).
+            _disp_path = bdir / "dispatch" / f"{year}_P2.parquet"
+            if not _disp_path.exists():
+                _disp_path = bdir / "dispatch" / f"{year}_P1.parquet"
+            disp = apply_other_fossil_scoring(
+                pd.read_parquet(_disp_path),
+                year,
+                plant_col="plant_code",
+            )
+            e923 = apply_other_fossil_scoring(
+                e923_all[e923_all["year"] == year],
+                year,
+                plant_col="plant_id",
+            )
+            e930 = e930_all[e930_all["year"] == year]
+            campd = campd_all[campd_all["year"] == year]
+
+            # Model hourly MW per (fossil) plant, with its zone and class.
+            dm = disp[(disp["plant_code"] > 0) & (disp["klass"].isin(FOSSIL_GROUPS))]
+            mw_p, zone_p, grp_p = {}, {}, {}
+            for (code, klass), g in dm.groupby(["plant_code", "klass"], observed=True):
+                arr = (
+                    g.groupby("hour")["mw"]
+                    .sum()
+                    .reindex(range(_T), fill_value=0.0)
+                    .to_numpy(float)
+                )
+                mw_p[int(code)] = arr
+                zone_p[int(code)] = str(g["zone"].iloc[0])
+                grp_p[int(code)] = str(klass)
+                zones_set.add(zone_p[int(code)])
+                groups_set.add(str(klass))
+
+            # CAMPD net hourly per plant (benchmark — built once on run 0).
+            cn_p: dict[int, np.ndarray] = {}
+            for code, g in campd.groupby("plant_id", observed=True):
+                a = np.nan_to_num(g.sort_values("hour")["net_mw"].to_numpy(float))
+                cn_p[int(code)] = np.concatenate(
+                    [a, np.zeros(max(0, _T - a.shape[0]))]
+                )[:_T]
+
+            e923_ann = e923.groupby("plant_id")["annual_mwh"].sum().to_dict()
+            mcols = [f"m{i:02d}" for i in range(1, 13)]
+            e923_mon = {
+                int(i): (row.to_numpy(float) / 1e3)
+                for i, row in e923.groupby("plant_id")[mcols].sum().iterrows()
+            }
+
+            # ---- benchmark payload (newest bundle wins) ----
+            # Rebuilt for every run, so the LAST run in the id-sorted registry
+            # (the newest bundle covering each year) supplies the shared
+            # benchmark. Building it once from run 0 froze the benchmark to
+            # the OLDEST bundle: its plant -> group classification and EIA-923
+            # class totals could predate the current taxonomy (e.g. PJM coal
+            # as one generic COAL, COAL_SUB before the SUB -> COAL_PRB
+            # rename), making every newer run compare against incompatible
+            # groups (-100% "Coal" rows, vanished class heatmaps).
+            bplants: dict[str, dict] = {}
+            for code, cn in cn_p.items():
+                grp = grp_p.get(code)
+                if grp is None:
+                    continue
+                cap = float(npl.get(code, 0.0)) or 1.0
+                e_ann = float(e923_ann.get(code, 0.0)) / 1e6
+                bplants[str(code)] = {
+                    "name": pnames.get(code, str(code)),
+                    "zone": zone_p.get(code, "?"),
+                    "group": grp,
+                    "npl": round(cap),
+                    # No usable CAMPD hourly series (plant absent from CEMS
+                    # or all-NaN, e.g. some waste-coal units): flagged so the
+                    # charts show the model without a misleading flat-zero
+                    # 'actual' comparison.
+                    "nodata": bool(cn.sum() <= 0.0),
+                    "campd": _b64(100.0 * cn / cap),
+                    "c_ann": round(float(cn.sum()) / 1e6, 4),
+                    "c_mon": _monthly_gwh(cn),
+                    "e_ann": round(e_ann, 4),
+                    "btm": round(
+                        e_ann * _btm_share(code, grp, meta.get("iso", "ERCOT")), 4
+                    ),
+                    "e_mon": [round(x, 2) for x in e923_mon.get(code, np.zeros(12))],
+                }
+            e = {
+                s: e930[e930["series"] == s].sort_values("hour")["mw"].to_numpy(float)
+                for s in e930["series"].unique()
+            }
+            # Full EIA-923 net generation per fossil class (TWh) — every
+            # 923 plant of the class, NOT just the ones the model matches.
+            # This is the true class total the generation-mix benchmark and
+            # the zonal Δ-vs-923 are scaled to (matched plants understate
+            # it, e.g. CC_REGULAR 145 TWh vs ~138 matched in 2024).
+            e923_cls = e923.groupby("klass")["annual_mwh"].sum()
+            # Grid-delivered benchmark (2026-06-14, user directive): subtract
+            # each class's behind-the-meter CHP host supply (btm.parquet, the
+            # authoritative BTM held out of the LP) from the full EIA-923 class
+            # total, so the benchmark is what actually reached the grid — the
+            # same basis the model (grid LP, no add-back) and the gate score on.
+            # ISOs without a btm.parquet (no CHP split) keep full 923.
+            btm_cls = {}
+            if btm_all is not None:
+                _by = _primary_pass(btm_all[btm_all["year"] == year])
+                btm_cls = dict(zip(_by["klass"], _by["btm_twh"]))
+            # Every actual class is kept (not just the hardcoded MIX_GROUPS)
+            # so the model's real plant classification — e.g. EIA-923-derived
+            # coal ranks COAL_BIT / COAL_PRB / COAL_WC — carries its actual
+            # into the table for every ISO. groups_set picks them up below.
+            groups_set.update(str(g) for g in e923_cls.index)
+            _e930d = {
+                f: round(float(e.get(f, np.zeros(1)).sum()) / 1e6, 3)
+                for f in ("gas", "coal", "nuclear", "wind", "solar")
+            }
+            # Carry the EIA-930 "Other Fuel Sources" total when the bundle was
+            # re-extracted with it (eia_loader._EIA930_BENCHMARK_COLUMNS adds the
+            # NG: OTH series), so reconcile_vintage_classes can subtract only the
+            # GENUINELY-folded geothermal+biomass. A bundle predating the series
+            # has no "other" key, and reconcile falls back to the per-ISO
+            # EIA930_GAS_FOLDS_GEO_BIOMASS allowlist — no silent regression.
+            if "other" in e:
+                _e930d["other"] = round(float(e["other"].sum()) / 1e6, 3)
+            bench[int(year)] = {
+                "plants": bplants,
+                "e930": _e930d,
+                "classFull": {
+                    str(g): round(float(v) / 1e6 - float(btm_cls.get(str(g), 0.0)), 4)
+                    for g, v in e923_cls.items()
+                },
+            }
+            # Grid-delivered actual for the variable renewables (2026-06-25 user
+            # directive). EIA-923 'classFull' counts every plant >= 1 MW including
+            # the distribution-connected / net-metered behind-the-meter PV that
+            # ISO-NE / CAISO / PJM / NYISO / MISO net into LOAD and that never
+            # reaches the wholesale grid (e.g. NEISO solar 3.70 EIA-923 vs 0.89
+            # EIA-930-grid; CAISO +4.7, PJM +5.3, MISO +2.8, NYISO +2.1 TWh of
+            # BTM PV). The model dispatches only grid solar/wind, so for an
+            # apples-to-apples per-class actual AND total the variable renewables
+            # use the authoritative EIA-930 grid series instead of full EIA-923 --
+            # the SAME source-authority `results.calibration.actuals_source`
+            # already applies to the solar/wind fuel-mix gate. Nuclear is left on
+            # EIA-923 (no BTM nuclear; EIA-930 under-reports it for some BAs, e.g.
+            # NYIS), matching actuals_source (nuclear -> eia923). This is the single
+            # BTM-removal point; downstream system totals then count each class
+            # exactly once (no separate EIA-930 add-on -- see calibration_verdict
+            # ._gen_totals and the run explorer's totalGen).
+            #
+            # ISO override (NYISO solar). NYISO grid solar is structurally 0 in
+            # EIA-930 — NYISO solar is overwhelmingly behind-the-meter / net-metered
+            # and invisible to the NYIS balancing-area telemetry — so the default
+            # EIA-930 routing would score the model's ~2 TWh of dispatched grid
+            # solar against a spurious zero. For NYISO, `actuals_source("solar",
+            # iso)` returns EIA-923 (the ~2 TWh of utility-scale grid solar the
+            # model actually dispatches), so classFull KEEPS its EIA-923 value and
+            # that value is MIRRORED into the e930 slot, because the dashboard's
+            # nonFosErr reads the variable-renewable actual from bench.e930 (the
+            # bench part itself must carry the right number).
+            _iso_key = str(meta.get("iso", "ERCOT"))
+            _cf = bench[int(year)]["classFull"]
+            for _vre in ("wind", "solar"):  # variable renewables
+                if actuals_source(_vre, _iso_key) == EIA930_SOURCE:
+                    if _vre in _cf and _vre in _e930d:
+                        _cf[_vre] = round(float(_e930d[_vre]), 4)
+                elif _vre in _cf:
+                    # EIA-923 is authoritative here (NYISO solar): keep classFull on
+                    # the utility-scale 923 total and mirror it into e930 so the
+                    # dashboard scores the variable-renewable row against it, not 0.
+                    _e930d[_vre] = round(float(_cf[_vre]), 4)
+            # Repair a preliminary EIA-923 vintage: when a fossil fuel's class
+            # total is materially below the complete EIA-930 grid series (the
+            # same authority the model's gas/coal are calibrated to), scale that
+            # fuel's classes up to the EIA-930 total so the fossil volume error
+            # compares the model against a COMPLETE benchmark, not a partial
+            # survey. Without this the 2025 NEISO benchmark under-counted CC by
+            # ~4 TWh, inflating the system volume error to +7% though the model
+            # matches EIA-930 within 1%. Complete vintages (>= frac) are
+            # untouched; the inter-class split and monthly shape are preserved.
+            # For fold-in BAs (CAISO) the gas target is deflated by the EIA-930
+            # geothermal+biomass fold-in first, so gas doesn't scale to the
+            # inflated NG cell (see reconcile_vintage_classes / [1] note).
+            reconcile_vintage_classes(
+                bench[int(year)]["classFull"],
+                bench[int(year)]["e930"],
+                str(meta.get("iso", "ERCOT")),
+            )
+            # Actual historical avg LMP ($/MWh), system hub-average, for the
+            # summary page's model-vs-actual price comparison. Absent for an
+            # ISO-year with no price file -> the card shows model only.
+            actual_lmp = _actual_avg_lmp(meta.get("iso", "ERCOT"), year)
+            if actual_lmp:
+                bench[int(year)]["avgLMP"] = actual_lmp
+
+            # Observed storage discharge throughput (TWh), the C5b cycling-realism
+            # actual: the positive half of the EIA-930 battery + pumped-storage
+            # net-gen series. None when the BA doesn't report a storage breakout
+            # or coverage is below the threshold — the verdict's score_storage
+            # distinguishes "no EIA-930 data" from "data says zero".
+            actual_storage = _actual_storage_twh(e930)
+            actual_storage_monthly = _actual_storage_monthly(e930)
+            bench[int(year)]["storage"] = {
+                "throughput_twh": actual_storage,
+                "monthly_net_gwh": actual_storage_monthly,
+            }
+
+            # Actual fossil CO2 (Mt), the calibration-page emissions metric.
+            # Each fossil plant's CO2 rate (kg / net MWh) comes from eGRID — the
+            # only source spanning the small non-CEMS units — overridden by the
+            # CAMPD-measured intensity where it exists; the rates are net-gen-
+            # weighted within each class to a tonnes/MWh intensity, then applied
+            # to the same grid-delivered class totals (``classFull``) the
+            # generation-mix benchmark uses. So the actual is what the fossil
+            # fleet emitted delivering the grid energy the model is scored on.
+            e_fossil = e923[e923["klass"].isin(FOSSIL_GROUPS)]
+            co2_rate = egrid.fossil_co2_rate_map(int(year))
+            co2_intensity = egrid.class_co2_intensity(
+                e_fossil,
+                co2_rate,
+                plant_col="plant_id",
+                klass_col="klass",
+                gen_col="annual_mwh",
+            )
+            actual_co2_mt, actual_co2_by = _fossil_co2(
+                bench[int(year)]["classFull"], co2_intensity
+            )
+            # Share of fossil-class EIA-923 generation carrying a plant rate —
+            # the class intensity is extrapolated to the small remainder.
+            _frate = e_fossil.assign(
+                rate=e_fossil["plant_id"].astype(int).map(co2_rate)
+            )
+            _gcov = float(_frate.loc[_frate["rate"].notna(), "annual_mwh"].sum())
+            _gall = float(_frate["annual_mwh"].sum())
+            # Key the scalar actual "egrid" — the name calibration_verdict's
+            # C5a gate (score_co2) reads — so committing this benchmark part
+            # activates the CO2 verdict that has been SKIPPED for want of an
+            # actual. ("eGRID" names the fleet-wide base; CAMPD overrides the
+            # large plants.) byClass / intensity / covPct drive the panel.
+            bench[int(year)]["co2"] = {
+                "egrid": actual_co2_mt,
+                "byClass": actual_co2_by,
+                "intensity": {k: round(v, 5) for k, v in co2_intensity.items()},
+                "covPct": round(100.0 * _gcov / _gall, 1) if _gall > 0 else 0.0,
+            }
+
+            # ---- model payload (per run) ----
+            mplants: dict[str, dict] = {}
+            for code, mw in mw_p.items():
+                cap = float(npl.get(code, 0.0)) or 1.0
+                grp = grp_p.get(code, "")
+                # CHP add-back (report only, NOT in the LP): the host
+                # behind-the-meter self-supply was held out of the grid solve,
+                # but CAMPD measures the full plant. Add it back flat so the
+                # plant heatmap and the plant/class r / NRMSE / capture compare
+                # the full plant to the full CAMPD plant. A flat add is
+                # correlation-invariant (it corrects the level, not the shape).
+                if grp in ("CC_CHP", "CT_CHP", "ST_CHP"):
+                    btm_mwh = float(e923_ann.get(code, 0.0)) * _btm_share(
+                        code, grp, meta.get("iso", "ERCOT")
+                    )
+                    if btm_mwh > 0.0:
+                        mw = mw + btm_mwh / float(_T)
+                cn = cn_p.get(code)
+                r = nr = None
+                cap_pct = None
+                if cn is not None and cn.sum() > 0 and mw.std() > 0:
+                    r = round(_pearson(mw, cn), 3)
+                    nr = round(_nrmse(mw, cn), 3)
+                    dev = (mw.sum() - cn.sum()) / cn.sum()
+                    cap_pct = _capture(r, nr, dev)
+                mplants[str(code)] = {
+                    "m": _b64(100.0 * mw / cap),
+                    "m_ann": round(float(mw.sum()) / 1e6, 4),
+                    "m_mon": _monthly_gwh(mw),
+                    "r": r,
+                    "nrmse": nr,
+                    "cap": cap_pct,
+                }
+                if code in tr_bands:
+                    mplants[str(code)]["tr"] = tr_bands[code]
+            # Non-fossil model annual (nuclear / wind / solar) for fuel table.
+            nf = {}
+            for f in ("nuclear", "wind", "solar"):
+                s = disp[disp["klass"] == f]
+                nf[f] = round(float(s["mw"].sum()) / 1e6, 3)
+            # System fuel-vs-EIA-930 table (all zones; 930 is not zonal).
+            mh = rcf._class_hourly(disp)
+            e = {
+                s: e930[e930["series"] == s].sort_values("hour")["mw"].to_numpy(float)
+                for s in e930["series"].unique()
+            }
+            fuel_rows = []
+            # Each EIA-930 fuel row sums the model classes that roll up to it
+            # (market_sim.config.plant_taxonomy) — so any class is counted once,
+            # in the right bucket, with no hardcoded membership list.
+            specs = [
+                (fuel, classes_for_fuel930(fuel), e.get(fuel), fuel == "gas")
+                for fuel in ("gas", "coal", "nuclear", "wind", "solar")
+            ]
+            cfull = bench[int(year)]["classFull"]
+            for fuel, classes, ob, is_gas in specs:
+                # Grid-delivered model vs the RAW EIA-930 grid series, for every
+                # fuel (user directive 2026-07-02): the model sum includes EVERY
+                # class of the fuel — the CHP classes' grid dispatch too, since
+                # EIA-930 meters CHP grid exports while the behind-the-meter host
+                # supply is held out of the LP on the model side and invisible to
+                # the BA meter on the actual side. (The old gas row dropped the
+                # CHP classes from the model and releveled the "930" benchmark to
+                # the EIA-923 classFull basis — a 923 subtotal mislabeled 930 that
+                # double-showed the CC_REGULAR/CC_CHP classification split already
+                # scored per class by C1.)
+                ms = sum((mh.get(c, np.zeros(_T)) for c in classes), np.zeros(_T))
+                if is_gas and ob is not None and "other" in e:
+                    # Gas fold-in correction, identical to the C2 verdict
+                    # (calibration_verdict.score_sysvol): some BAs (MISO) fold
+                    # biomass/process gas into the EIA-930 NG series while the
+                    # model books them in its own biomass/OTHER rows; subtract
+                    # that excess as a flat baseload (biomass/process gas run
+                    # ~flat, so pearson r is preserved).
+                    fold = max(
+                        0.0,
+                        float(cfull.get("OTHER", 0.0))
+                        + float(cfull.get("biomass", 0.0))
+                        - float(e["other"].sum()) / 1e6,
+                    )
+                    ob = ob - fold * 1e6 / _T
+                m_twh = float(ms.sum()) / 1e6
+                b_twh = float(ob.sum()) / 1e6 if ob is not None else None
+                r2 = (
+                    round(_pearson(ms, ob), 3)
+                    if ob is not None and ob.std() > 0
+                    else None
+                )
+                n2 = round(_nrmse(ms, ob), 3) if ob is not None else None
+                fuel_rows.append(
+                    {
+                        "fuel": fuel,
+                        "m": round(m_twh, 2),
+                        "b": round(b_twh, 2) if b_twh is not None else None,
+                        "r": r2,
+                        "nrmse": n2,
+                    }
+                )
+            # Net interchange (net-export positive, the EIA-930 sign
+            # convention): model = -(priced import/export node dispatch:
+            # import tranches positive, export sinks negative), actual = the
+            # EIA-930 region "interchange" series. Only present when the
+            # bundle solved with --priced-interchange (klass "import" rows
+            # exist); a measured-schedule bundle nets interchange into demand,
+            # so a row would compare actual to itself. Informational — it
+            # makes the import/export node's error visible instead of letting
+            # fuels silently shift to cover it.
+            imp = disp[disp["klass"] == "import"]
+            ob_ix = e.get("interchange")
+            if not imp.empty and ob_ix is not None:
+                ms_ix = -(
+                    imp.groupby("hour")["mw"]
+                    .sum()
+                    .reindex(range(_T), fill_value=0.0)
+                    .to_numpy(float)
+                )
+                fuel_rows.append(
+                    {
+                        "fuel": "interchange",
+                        "m": round(float(ms_ix.sum()) / 1e6, 2),
+                        "b": round(float(ob_ix.sum()) / 1e6, 2),
+                        "r": (
+                            round(_pearson(ms_ix, ob_ix), 3)
+                            if ob_ix.std() > 0
+                            else None
+                        ),
+                        "nrmse": round(_nrmse(ms_ix, ob_ix), 3),
+                    }
+                )
+            # Per-zone average LMP (load-weighted) from the system duals, for
+            # the dashboard's average-LMP KPI. Primary pass (P2 when the bundle
+            # ran commitment, else P1); the shell averages over
+            # the selected zones, weighting by demand. ``pMon``/``dMon`` carry
+            # the same load-weighted price + demand-weight per month (Jan-Dec)
+            # so the summary page can build a model-vs-actual monthly LMP table;
+            # the shell re-weights pMon across the selected zones by dMon.
+            sy = _primary_pass(sys_all[sys_all["year"] == year])
+            # Post-solve scarcity overlay (any ISO with a derived sidecar;
+            # display + C3c settlement-price scoring): the SECOND LMP series
+            # shown next to the energy-only duals. The energy-only ``lmp`` block
+            # below stays byte-identical and is the series every VOLUME gate
+            # uses; ``lmpScar`` is purely additive (the published system-wide
+            # reserve/scarcity adder added uniformly to each zone — ERCOT ORDC,
+            # PJM two-step, NYISO/NEISO RCPF, CAISO LOLP). G-20a (2026-07-07,
+            # owner-approved) removed the old ``iso == "ERCOT"`` gate here so the
+            # settlement tail scores for every ISO whose derive_*_overlay.py
+            # wrote a scarcity.parquet into the bundle.
+            hours = int(meta.get("hours", _T))
+            scar = _load_scarcity_overlay(bdir, int(year), hours)
+            lmp = {}
+            lmp_scar: dict[str, dict] = {}
+            # Per-zone hourly model price (hour-indexed, NaN-padded to ``hours``)
+            # for the C3c scarcity-tail count. The model dual under-shoots
+            # scarcity by construction (energy-only LP), so this tail can collapse
+            # — that is the intended, truthful signal, not a thing to tune.
+            model_price_by_zone: dict[str, np.ndarray] = {}
+            for zone, zg in sy.groupby("zone", observed=True):
+                price = zg["price"].to_numpy(float)
+                dem = zg["demand"].to_numpy(float)
+                hr = zg["hour"].to_numpy()
+                full = np.full(hours, np.nan)
+                full[hr] = price
+                model_price_by_zone[str(zone)] = full
+                d_tot = float(dem.sum())
+                p = (
+                    float((price * dem).sum()) / d_tot
+                    if d_tot > 0
+                    else float(price.mean())
+                )
+                # hour 0-8759 -> month 0-11 via the cumulative month-hour edges.
+                midx = np.clip(np.searchsorted(_CUM, hr, side="right") - 1, 0, 11)
+                p_mon: list = [None] * 12
+                d_mon = [0.0] * 12
+                # Overlaid price for this zone = energy-only price + the
+                # system-wide adder (uniform across zones); demand-weighted per
+                # month exactly like p_mon so the shell re-weights it across the
+                # selected zones with the SAME dMon weights.
+                op = price + scar["adder"][hr] if scar is not None else None
+                p_mon_scar: list = [None] * 12
+                for m in range(12):
+                    sel = midx == m
+                    if not sel.any():
+                        continue
+                    dd = float(dem[sel].sum())
+                    p_mon[m] = (
+                        round(float((price[sel] * dem[sel]).sum()) / dd, 2)
+                        if dd > 0
+                        else round(float(price[sel].mean()), 2)
+                    )
+                    d_mon[m] = round(dd / 1e6, 4)
+                    if op is not None:
+                        p_mon_scar[m] = (
+                            round(float((op[sel] * dem[sel]).sum()) / dd, 2)
+                            if dd > 0
+                            else round(float(op[sel].mean()), 2)
+                        )
+                lmp[str(zone)] = {
+                    "p": round(p, 2),
+                    "d": round(d_tot / 1e6, 4),
+                    "pMon": p_mon,
+                    "dMon": d_mon,
+                }
+                if scar is not None:
+                    lmp_scar[str(zone)] = {"pMonScar": p_mon_scar}
+            # System-wide generation mix per fossil class (TWh), GRID-DELIVERED:
+            # model = grid LP only (``_class_hourly`` sum, NO behind-the-meter
+            # add-back), compared against ``bench.classFull`` which is now
+            # EIA-923 minus the per-class BTM host supply — so the mix table and
+            # the scorecard judge what the model dispatched to the grid against
+            # what actually reached the grid (user directive 2026-06-14). The
+            # per-plant heatmaps keep the whole-plant add-back (they compare to
+            # CEMS, which is whole-plant); only these class/system totals are
+            # grid-delivered.
+            gm_model = {
+                g: round(float(mh.get(g, np.zeros(_T)).sum()) / 1e6, 4)
+                # sorted: set iteration order is hash-randomized per process,
+                # and the payload must be byte-stable across re-renders (an
+                # unchanged run must not show up as a git diff).
+                for g in sorted(set(MIX_GROUPS) | set(mh))
+            }
+            # Model fossil CO2 (Mt): the model's grid-delivered class totals
+            # (gm_model) times the SAME per-class CO2 intensity the benchmark
+            # used. The comparison is therefore the model's generation mix
+            # re-weighted by measured carbon intensity — an independent check on
+            # the coal/gas split that a pure MWh volume gate is blind to.
+            model_co2_mt, model_co2_by = _fossil_co2(
+                gm_model, bench[int(year)]["co2"]["intensity"]
+            )
+            # ---- signed volume error per (class, zone, month) ----
+            # Model monthly TWh vs the authoritative actuals source for each
+            # class (EIA-923 for every class except solar -> EIA-930; the rule
+            # lives in calibration.actuals_source, not here or in JS). Built
+            # from the matched fossil plants so it decomposes by zone and month
+            # -- the dashboard heatmap re-aggregates these to whatever axis it
+            # shows. GRID-DELIVERED on BOTH sides (user directive), matching the
+            # class/system mix scorecard (gm_model vs classFull): the model uses
+            # the grid LP series (``mw_p``, NO behind-the-meter CHP add-back) and
+            # the EIA-923 actual has each plant's behind-the-meter CHP host
+            # self-supply removed (``_btm_share`` is 0 for non-CHP classes, so
+            # only CHP plants change). This diverges deliberately from the
+            # per-plant Δ-vs-923 table, which stays whole-plant to compare
+            # against whole-plant CEMS. Solar carries only a system annual
+            # because EIA-930 is neither zonal nor monthly here.
+            _iso = meta.get("iso", "ERCOT")
+            vol_err: dict[str, dict] = {}
+            for code in mw_p:
+                grp = grp_p.get(code)
+                zone = zone_p.get(code)
+                if grp is None or zone is None:
+                    continue
+                cell = vol_err.setdefault(
+                    grp,
+                    {"src": actuals_source(grp, meta.get("iso")), "zoneMon": {}},
+                )
+                zc = cell["zoneMon"].setdefault(
+                    zone, {"m": [0.0] * 12, "a": [0.0] * 12}
+                )
+                # Grid-delivered: model from the grid LP (mw_p, no add-back),
+                # actual from EIA-923 net gen minus the plant's BTM host supply.
+                m_mon = _monthly_gwh(mw_p[code])  # grid-LP model GWh
+                _grid_frac = 1.0 - _btm_share(code, grp, _iso)
+                a_mon = e923_mon.get(code, np.zeros(12))  # EIA-923 GWh
+                for mo in range(12):
+                    zc["m"][mo] += float(m_mon[mo]) / 1e3  # GWh -> TWh
+                    zc["a"][mo] += float(a_mon[mo]) * _grid_frac / 1e3
+            for cell in vol_err.values():
+                for zc in cell["zoneMon"].values():
+                    zc["m"] = [round(x, 4) for x in zc["m"]]
+                    zc["a"] = [round(x, 4) for x in zc["a"]]
+                    zc["e"] = [_vol_err(m, a) for m, a in zip(zc["m"], zc["a"])]
+            # Variable renewables: EIA-930 system annual baseline (no zone/month
+            # breakdown — 930 is neither zonal nor split into model classes
+            # here). Both solar and wind route to EIA-930 via actuals_source
+            # (the BA-level 923 net-gen survey under-counts CISO wind and
+            # collapses in the incomplete 2025 release for every ISO).
+            for _vr in ("solar", "wind"):
+                vr_m = float(nf.get(_vr, 0.0))
+                vr_a = float(bench[int(year)]["e930"].get(_vr, 0.0))
+                if vr_a > 0.0 or vr_m > 0.0:
+                    vol_err[_vr] = {
+                        "src": actuals_source(_vr, meta.get("iso")),
+                        "sys": {
+                            "m": round(vr_m, 4),
+                            "a": round(vr_a, 4),
+                            "e": _vol_err(vr_m, vr_a),
+                        },
+                    }
+            run_years[int(year)] = {
+                "plants": mplants,
+                "nonfossil": nf,
+                "fuelRows": fuel_rows,
+                "gmModel": gm_model,
+                "lmp": lmp,
+                "volErr": vol_err,
+                # Scalar keyed "model" for calibration_verdict's C5a gate.
+                "co2": {"model": model_co2_mt, "byClass": model_co2_by},
+            }
+            # Model storage discharge throughput (TWh) for the C5b criterion —
+            # li-ion + pumped storage from this run's storage.parquet P1 frame.
+            # Always set: 0.0 when no storage fleet, so the verdict can
+            # distinguish "model has no storage" from "model has storage but
+            # data is missing".
+            model_storage = _model_storage_twh(storage_all, year)
+            model_storage_monthly = _model_storage_monthly(storage_all, year)
+            run_years[int(year)]["storage"] = {
+                "throughput_twh": model_storage if model_storage is not None else 0.0,
+                "monthly_net_gwh": model_storage_monthly,
+            }
+            # Year-level scarcity-overlay summary: demand-weighted monthly LMP
+            # MAE vs actual RT for the energy-only and settlement (overlaid)
+            # series, and tail-hour counts, for ANY ISO whose derive_*_overlay.py
+            # wrote a scarcity.parquet into the bundle (ERCOT ORDC, PJM two-step,
+            # NYISO/NEISO RCPF, CAISO LOLP). ``lam`` is the energy-only system
+            # lambda and ``lam_s = lam + adder`` the settlement price; the
+            # ``hoursGt200.overlay`` count is what C3c scores (G-20a) — the
+            # ``.model`` count (energy-only) stays emitted for diagnostics. The
+            # per-ISO threshold (rubric §5: $200, NYISO/NEISO $300) is applied to
+            # the primary tail; the >$500 companion stays fixed. ``_actual_rt_padded``
+            # is the ISO-agnostic RT reader (replaces the ERCOT-only ordc._actual_rt,
+            # whose CAL_DIR points at the pre-W1 inputs/ tree); _demand_weights /
+            # _monthly_mae are reused from the deriver unchanged (bundle-relative).
+            iso = meta.get("iso")
+            thr = TAIL_THRESHOLD.get(iso, 200.0)
+            if scar is not None and lmp_scar:
+                rt = _actual_rt_padded(iso, int(year), hours)
+                w = ordc._demand_weights(bdir, int(year), hours)
+                lam, lam_s = scar["lmp"], scar["lmp_scarcity"]
+                run_years[int(year)]["lmpScar"] = lmp_scar
+                run_years[int(year)]["ordc"] = {
+                    "maeEnergyOnly": (
+                        round(ordc._monthly_mae(lam, rt, w), 1)
+                        if rt is not None
+                        else None
+                    ),
+                    "maeOverlay": (
+                        round(ordc._monthly_mae(lam_s, rt, w), 1)
+                        if rt is not None
+                        else None
+                    ),
+                    "hoursGt200": {
+                        "actual": _gt_count(rt, thr),
+                        "model": _gt_count(lam, thr),
+                        "overlay": _gt_count(lam_s, thr),
+                    },
+                    "hoursGt500": {
+                        "actual": _gt_count(rt, 500),
+                        "model": _gt_count(lam, 500),
+                        "overlay": _gt_count(lam_s, 500),
+                    },
+                    "series": scar["series"],
+                    "reldeployMw": scar["reldeploy"],
+                }
+            # Scarcity tail (C3c) fallback — no overlay sidecar: count hours where
+            # the max zonal LMP exceeds the ISO's threshold, for the model duals
+            # and the actual hub series, stored under the legacy key "hoursGt200"
+            # the scorer reads regardless of threshold. Emitted only when the
+            # overlay block above did not fire (a bundle with no derived
+            # scarcity.parquet — e.g. a co-opt run). No ``overlay`` key here, so
+            # C3c scores the energy-only ``model`` for these runs. The energy-only
+            # LP may under-shoot the actual scarcity tail — that is the truthful,
+            # expected signal, not a thing to tune.
+            if "ordc" not in run_years[int(year)]:
+                thr = TAIL_THRESHOLD.get(iso, 200.0)
+                actual_hourly = _actual_lmp_hourly(iso, int(year))
+                if actual_hourly is not None and model_price_by_zone:
+                    run_years[int(year)]["ordc"] = {
+                        "hoursGt200": {
+                            "model": _tail_hours(model_price_by_zone, thr),
+                            "actual": _tail_hours({"hub": actual_hourly}, thr),
+                        }
+                    }
+        model_runs.append({"label": label, "years": run_years})
+
+    # Only the fossil classes actually present in this ISO's dispatch, in the
+    # canonical order — so the class selector and its default land on a
+    # populated class (PJM has no COAL_LIGNITE, so it must not default there and
+    # render an empty view). ERCOT keeps all classes (all present).
+    # Fossil classes actually present in this ISO's model or benchmark, in
+    # canonical order first then any extra (auto-wired) classes sorted — so a
+    # new classification like the EIA-923 coal ranks shows up for every ISO
+    # without being hardcoded here. Non-fossil classes are excluded.
+    fossil_present = {g for g in groups_set if g not in _NONFOSSIL_KLASS}
+    groups = [g for g in FOSSIL_GROUPS if g in fossil_present] + sorted(
+        fossil_present - set(FOSSIL_GROUPS)
+    )
+    groups = groups or FOSSIL_GROUPS
+    return {
+        "groups": groups,
+        "groupLabel": {g: _group_label(g) for g in groups},
+        "zones": sorted(zones_set),
+        "years": sorted(years_set),
+        "runLabels": labels,
+        "bench": bench,
+        "model": model_runs,
+    }
+
+
+def main() -> None:
+    """Render the multi-run report from one or more bundles."""
+    ap = argparse.ArgumentParser(description=__doc__)
+    ap.add_argument("bundles", nargs="+", help="[LABEL=]BUNDLE_DIR for each run/config")
+    ap.add_argument(
+        "--out",
+        default=str(REPO / "results" / "calibration" / "calibration-report.html"),
+    )
+    args = ap.parse_args()
+    runs: list[tuple[str, Path]] = []
+    for spec in args.bundles:
+        if "=" in spec:
+            lab, _, d = spec.partition("=")
+        else:
+            d = spec
+            lab = Path(spec).name
+        runs.append((lab, Path(d)))
+    payload = build_payload(runs)
+    # Gzip + base64 the payload (CF series compress ~5x); the browser inflates
+    # it with DecompressionStream. Keeps the self-contained file small enough
+    # for mobile and version control.
+    import gzip
+
+    gz = gzip.compress(json.dumps(payload).encode(), compresslevel=9)
+    b64 = base64.b64encode(gz).decode()
+    out = Path(args.out)
+    out.write_text(
+        TEMPLATE.replace("__B64__", b64).replace(
+            "__GEN__", datetime.now().strftime("%Y-%m-%d %H:%M")
+        )
+    )
+    n_series = sum(
+        len(y["plants"]) for r in payload["model"] for y in r["years"].values()
+    )
+    print(
+        f"wrote {out}  ({out.stat().st_size / 1e6:.1f} MB, "
+        f"{len(runs)} runs, {n_series} model series)"
+    )
+
+
+TEMPLATE = r"""PLACEHOLDER_TEMPLATE_BODY"""
+
+
+if __name__ == "__main__":
+    main()
