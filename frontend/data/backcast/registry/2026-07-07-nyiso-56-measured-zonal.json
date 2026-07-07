@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-nyiso-56-measured-zonal",
+  "label": "nyiso 56 measured zonal",
+  "date": "2026-07-07",
+  "shorthand": "nyiso-56-measured-zonal",
+  "definition": "G-20c CANDIDATE (keeper stays nyiso-53 pending owner). nyiso-53 recipe VERBATIM (nyiso_li_lcr_tsl #1345 + use_plant_emission_rates_v2 + downstate CT gas basis + energy_reserve_coopt) with ONE change: the LP now dispatches on MEASURED per-zone hourly load shapes instead of the static Gold-Book shares. load_zonal_shares gained a raw-file fallback (eia_loader) so the measured NYISO 'pal' actual-load (data/raw/zone-specific-demand/NYISO, upload U3) drives every zone's own diurnal/seasonal shape even when the gitignored data/clean parquet is absent \u2014 rule-12 measured>estimate, forward-reproducible, no new free parameter. Static shares understated the downstate peak (NYC 0.28 static vs 0.34 measured at peak; LI 0.12 vs 0.17) and forced every zone to peak the same hour, so the import-constrained NYC/SENY pocket never tightened. RESULT (G-20c): with measured load the downstate pocket BINDS and the in-LP locational reserve co-opt fires \u2014 2023 NYC/Hudson LBMP spikes to $1,684 while Upstate maxes at $152 (genuinely locational). C3c tail vs RT actual: 2023 21h vs 10h (was 0h), 2025 14h vs 42h; C3a mean 2023 +1.6% vs DA (was -9.0%), C3b NRMSE 0.188/0.200/0.165 (keeper 0.182/0.221/0.190); C1/C2/C4 PASS, C7 PASS, no load-bearing regression. OPEN: 2024 (mild year) + 2025 deep >$300 tail still under \u2014 next lever is downstate import discipline (measured NYC locality import limit 2,875 MW < model Dunwoodie 3,900 MW estimate, apply in-window like #1345). C3c FAILs the DA-expressible gate (DA actual 1h) = the G-20a scoring-basis artifact, not an RT over-fire. C8 ST_GAS breach is the keeper's owner-held-legitimate item at LOWER forced share (30/45/38% vs keeper 61/70/60%). Governance UNATTESTED (promotion step).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-07-nyiso-56-measured-zonal.js",
+  "bundle": "results/calibration/nyiso56_measuredshares"
+}
