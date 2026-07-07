@@ -3181,12 +3181,14 @@ WEATHER_YEAR_POOL_BY_ISO: dict[str, tuple[int, ...]] = {
     # PJM (BA "PJM"): same BALANCE-bulk backfill as CAISO for the hourly
     # extract, 2026-07-06 (existing 2022+ rows untouched -- dedup keeps the
     # already-committed rows for the handful of overlapping UTC hours at the
-    # 2021/2022 boundary). But PJM demand (unlike CAISO/MISO) never reads the
-    # hourly extract -- market_sim.data.eia_loader.load_demand always falls
-    # back to eia_demand_profiles.parquet for PJM, and that source only
-    # reaches back to 2021 (same NYISO-style single-source floor). 2019/2020
-    # fail end-to-end on demand even though the hourly renewables path now
-    # resolves; only 2021 is added.
+    # 2021/2022 boundary). PJM demand now reads the hourly extract directly
+    # (eia_loader._load_pjm_hourly_demand, 2026-07-07 -- the legacy
+    # demand-profiles series carried a 1-2 h clock lag, zero-hour gaps, and a
+    # 2024 interpolation-shaved ~104 GW ridge), so 2019/2020 demand resolves
+    # end-to-end and those years are now pool CANDIDATES -- but a year enters
+    # this tuple only after the full end-to-end verification protocol
+    # (docs/weather-pool-coverage-2026-07.md), which 2019/2020 have not been
+    # run through post-rewire; only 2021 is verified.
     "PJM": (2021, 2023, 2024, 2025),
     # MISO (BA "MISO"): same BALANCE-bulk backfill as CAISO, 2026-07-06. MISO's
     # existing extract separately reports NG: BAT (battery); the bulk archive

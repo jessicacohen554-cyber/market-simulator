@@ -1494,6 +1494,451 @@ if __name__ == "__main__":
     unittest.main()
 
 
+class TestPjmPergenSyncProductSplit(unittest.TestCase):
+    """Per-pool sync/non-sync product split (pjm_reserve_pergen_sync).
+
+    The G-20b successor structure: the Synchronized sub-product gets its own
+    balance family served ONLY by online 10-min ramp (sync columns), while
+    offline fast-start ramp serves the Primary family through non-sync
+    columns; both products share each pool's joint P+R headroom row
+    (``reserve_pergen_col_pool`` / ``reserve_balance_col_mask``).
+    """
+
+    def _fleet(self, pmax, mc_hr, zone_idx=None, T=4):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        gas_idx = FUEL_TYPE_NAMES.index("gas_ct")
+        n = len(pmax)
+        return (
+            FleetArrays(
+                pmax=np.asarray(pmax, dtype=float),
+                pmin=np.zeros(n),
+                heat_rate=np.asarray(mc_hr, dtype=float),
+                vom=np.zeros(n),
+                emission_rate=np.zeros(n),
+                nox_rate=np.zeros(n),
+                so2_rate=np.zeros(n),
+                zone_idx=(
+                    np.zeros(n, dtype=int)
+                    if zone_idx is None
+                    else np.asarray(zone_idx, dtype=int)
+                ),
+                fuel_type_idx=np.full(n, gas_idx),
+                availability=np.ones((n, T)),
+                unit_ids=[f"g{i}" for i in range(n)],
+                efficiency_bin=np.zeros(n),
+                plant_code=np.arange(1, n + 1),
+            ),
+            T,
+        )
+
+    def _base_kwargs(self, fleet, T, demand_mw):
+        return dict(
+            demand=np.full((1, T), float(demand_mw)),
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.ones((fleet.pmax.size, T)),
+            voll=2000.0,
+        )
+
+    def test_identity_col_pool_matches_unsplit_layout(self):
+        # The mandatory refactor guard: an identity product split (one column
+        # per pool, zone-derived family mask) must reproduce the unsplit
+        # pergen LP's solution exactly — objective, prices, reserve price.
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet, T = self._fleet([1100.0, 500.0], [10.0, 50.0])
+        common = dict(
+            reserve_requirement=np.full(T, 200.0),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([300.0, 850.0]),
+            ordc_step_widths=np.array([190.0, 200.0]),
+            reserve_pergen_gen_idx=np.array([0, 1]),
+            reserve_pergen_col=np.array([0, 1]),
+        )
+        base = solve_dispatch(
+            fleet,
+            **self._base_kwargs(fleet, T, 1000.0),
+            **common,
+            reserve_pergen_ramp10=np.array([300.0, 200.0]),
+        )
+        split = solve_dispatch(
+            fleet,
+            **self._base_kwargs(fleet, T, 1000.0),
+            **common,
+            reserve_pergen_ramp10=np.broadcast_to(
+                np.array([[300.0], [200.0]]), (2, T)
+            ).copy(),
+            reserve_pergen_col_pool=np.array([0, 1]),
+            reserve_balance_col_mask=np.ones((1, 2), dtype=bool),
+        )
+        self.assertEqual(base.status, "Optimal")
+        self.assertEqual(split.status, "Optimal")
+        self.assertAlmostEqual(base.objective_value, split.objective_value, places=4)
+        np.testing.assert_allclose(split.prices, base.prices, atol=1e-6)
+        np.testing.assert_allclose(split.reserve_price, base.reserve_price, atol=1e-6)
+
+    def _solve_split(
+        self,
+        sync_req,
+        pr_req,
+        sync_caps,
+        ns_caps,
+        demand_mw=1000.0,
+    ):
+        # 1 zone, 2 pools (gen 0 cheap $10 / 1,100 MW; gen 1 dear $50 /
+        # 500 MW). Columns: [sync0, sync1, ns0, ns1], col_pool [0,1,0,1].
+        # Families: PR (all columns) then SR (sync columns only), each with
+        # the PJM two-step shortfall curve.
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet, T = self._fleet([1100.0, 500.0], [10.0, 50.0])
+        caps = np.vstack(
+            [
+                np.broadcast_to(np.asarray(sync_caps, float)[:, None], (2, T)),
+                np.broadcast_to(np.asarray(ns_caps, float)[:, None], (2, T)),
+            ]
+        ).copy()
+        col_mask = np.array(
+            [
+                [True, True, True, True],  # Primary: both products
+                [True, True, False, False],  # Synchronized: sync only
+            ]
+        )
+        return solve_dispatch(
+            fleet,
+            **self._base_kwargs(fleet, T, demand_mw),
+            reserve_requirement=np.vstack(
+                [np.full(T, float(pr_req)), np.full(T, float(sync_req))]
+            ),
+            reserve_eligible=np.array([True, True]),
+            ordc_penalties=np.array([300.0, 850.0, 300.0, 850.0]),
+            ordc_step_widths=np.array([190.0, float(pr_req), 190.0, float(sync_req)]),
+            reserve_balance_zone_mask=np.array([[True], [True]]),
+            reserve_balance_ordc_counts=np.array([2, 2]),
+            reserve_pergen_gen_idx=np.array([0, 1]),
+            reserve_pergen_col=np.array([0, 1]),
+            reserve_pergen_ramp10=caps,
+            reserve_pergen_col_pool=np.array([0, 1, 0, 1]),
+            reserve_balance_col_mask=col_mask,
+        )
+
+    def test_sync_row_prices_opportunity_cost_from_online_iron(self):
+        # SR req 200 servable only by gen 0's online ramp (gen 1 "offline":
+        # sync cap 0, its 200 MW fast-start ramp lives on the ns column).
+        # Holding 200 on gen 0 backs it down to 900; gen 1 serves 100 at $50.
+        # SR dual = forgone margin $40 (opportunity cost, below the $300
+        # step); PR (300) rides sync 200 + ns 100+ free -> dual $0; summed
+        # reserve_price = $40.
+        r = self._solve_split(
+            200.0, 300.0, sync_caps=[300.0, 0.0], ns_caps=[0.0, 200.0]
+        )
+        self.assertEqual(r.status, "Optimal")
+        np.testing.assert_allclose(r.prices, 50.0, atol=1e-6)
+        np.testing.assert_allclose(r.reserve_price, 40.0, atol=1e-6)
+        np.testing.assert_allclose(r.dispatch[0], 900.0, atol=1e-6)
+        np.testing.assert_allclose(r.dispatch[1], 100.0, atol=1e-6)
+
+    def test_offline_fast_start_cannot_serve_sync_row(self):
+        # SR req 400 > gen 0's 300 MW online ramp; gen 1's 200 MW OFFLINE
+        # fast-start ramp may not fill the sync row -> 100 MW SR shortfall at
+        # the $300 step, even though the Primary row (which the ns column DOES
+        # serve) stays whole. reserve_price = SR $300 + PR $0.
+        r = self._solve_split(
+            400.0, 500.0, sync_caps=[300.0, 0.0], ns_caps=[0.0, 200.0]
+        )
+        self.assertEqual(r.status, "Optimal")
+        np.testing.assert_allclose(r.reserve_price, 300.0, atol=1e-4)
+
+    def test_products_share_pool_headroom(self):
+        # Pool 0 fully loaded (demand 1,100 on the cheap unit alone): its
+        # sync award must displace energy one-for-one even when the ns column
+        # carries a nonzero cap on the same pool — the shared joint row binds
+        # on the SUM of both products plus energy. With sync cap 300 and ns
+        # cap 300 on pool 0 and SR req 200 + PR req 500, awards on pool 0
+        # cannot exceed cap - P; the LP backs down and reprices.
+        r = self._solve_split(
+            200.0,
+            500.0,
+            sync_caps=[300.0, 0.0],
+            ns_caps=[300.0, 200.0],
+            demand_mw=1100.0,
+        )
+        self.assertEqual(r.status, "Optimal")
+        # Energy + all reserve awards on pool 0 never exceed its 1,100 cap:
+        # P0 + R for pool 0 <= 1100 => P0 <= 1100 - its awards. Total served
+        # demand must still be 1,100 with gen 1 helping at $50.
+        self.assertGreater(float(r.dispatch[1].mean()), 0.0)
+        np.testing.assert_allclose(r.dispatch.sum(axis=0), 1100.0, atol=1e-5)
+
+    def test_posture_pools_reject_product_split(self):
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet, T = self._fleet([1100.0, 500.0], [10.0, 50.0])
+        with self.assertRaises(ValueError):
+            solve_dispatch(
+                fleet,
+                **self._base_kwargs(fleet, T, 1000.0),
+                reserve_requirement=np.full(T, 200.0),
+                reserve_eligible=np.array([True, True]),
+                ordc_penalties=np.array([300.0, 850.0]),
+                ordc_step_widths=np.array([190.0, 200.0]),
+                reserve_pergen_gen_idx=np.array([0, 1]),
+                reserve_pergen_col=np.array([0, 1]),
+                reserve_pergen_ramp10=np.ones((4, T)),
+                reserve_pergen_col_pool=np.array([0, 1, 0, 1]),
+                reserve_balance_col_mask=np.ones((1, 4), dtype=bool),
+                reserve_posture_pools=np.array([0]),
+                reserve_posture_mlf=np.array([0.4]),
+                reserve_posture_startup=np.array([50.0]),
+            )
+
+
+class TestPjmPergenSyncCapsPrep(unittest.TestCase):
+    """P0→P1 online scoping of the product-split ramp caps
+    (pipeline.commitment.pjm_pergen_sync_reserve_caps +
+    build_pjm_reserve_p1_prep gating)."""
+
+    def _fleet(self, T=6):
+        # Unit 0: gas_cc hr 7.0 (f-class: min_down 6 h, startup $48.6/MW —
+        # NOT fast-start). Unit 1: gas_ct hr 9.5 (aero: min_down 1 h,
+        # startup $12.3/MW — fast-start). Different plants, one zone.
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        fa = FleetArrays(
+            pmax=np.array([1000.0, 400.0]),
+            pmin=np.zeros(2),
+            heat_rate=np.array([7.0, 9.5]),
+            vom=np.zeros(2),
+            emission_rate=np.zeros(2),
+            nox_rate=np.zeros(2),
+            so2_rate=np.zeros(2),
+            zone_idx=np.zeros(2, dtype=int),
+            fuel_type_idx=np.array(
+                [
+                    FUEL_TYPE_NAMES.index("gas_cc"),
+                    FUEL_TYPE_NAMES.index("gas_ct"),
+                ]
+            ),
+            availability=np.ones((2, T)),
+            unit_ids=["cc0", "ct0"],
+            efficiency_bin=np.zeros(2),
+            plant_code=np.array([101, 202]),
+        )
+        fa.ramp10 = np.array([300.0, 400.0])
+        return fa, T
+
+    def test_caps_split_online_sync_and_offline_fast_nonsync(self):
+        from market_sim.pipeline.commitment import pjm_pergen_sync_reserve_caps
+
+        fa, T = self._fleet()
+        # P0 pattern: CC (slow) online hours 0-2, offline 3-5 (gap at the
+        # END so the 6h min-down bridge cannot close it); CT (fast) offline
+        # everywhere.
+        p0 = np.zeros((2, T))
+        p0[0, :3] = 500.0
+        caps = pjm_pergen_sync_reserve_caps(None, fa, p0)
+        # Pools: (zone 0, gas_cc) and (zone 0, gas_ct) — 2 pools, 4 columns.
+        self.assertEqual(caps.shape, (4, T))
+        gen_pool = {}
+        from market_sim.config.reserve_config import pjm_pergen_structure
+
+        gen_idx, col, n_r = pjm_pergen_structure(fa)
+        self.assertEqual(n_r, 2)
+        gen_pool = {int(g): int(c) for g, c in zip(gen_idx, col)}
+        cc_pool, ct_pool = gen_pool[0], gen_pool[1]
+        # SYNC: CC's 300 MW ramp only in its online hours; CT offline -> 0.
+        np.testing.assert_allclose(caps[cc_pool, :3], 300.0)
+        np.testing.assert_allclose(caps[cc_pool, 3:], 0.0)
+        np.testing.assert_allclose(caps[ct_pool, :], 0.0)
+        # NON-SYNC: offline FAST ramp -> CT 400 all hours; CC (slow) never.
+        np.testing.assert_allclose(caps[2 + ct_pool, :], 400.0)
+        np.testing.assert_allclose(caps[2 + cc_pool, :], 0.0)
+
+    def test_online_fast_start_moves_to_sync(self):
+        from market_sim.pipeline.commitment import pjm_pergen_sync_reserve_caps
+        from market_sim.config.reserve_config import pjm_pergen_structure
+
+        fa, T = self._fleet()
+        p0 = np.zeros((2, T))
+        p0[1, :] = 100.0  # CT online everywhere
+        caps = pjm_pergen_sync_reserve_caps(None, fa, p0)
+        gen_idx, col, n_r = pjm_pergen_structure(fa)
+        ct_pool = {int(g): int(c) for g, c in zip(gen_idx, col)}[1]
+        np.testing.assert_allclose(caps[ct_pool, :], 400.0)  # sync
+        np.testing.assert_allclose(caps[2 + ct_pool, :], 0.0)  # ns emptied
+
+    def test_prep_gating_and_hook(self):
+        from types import SimpleNamespace
+
+        from market_sim.pipeline.commitment import build_pjm_reserve_p1_prep
+
+        fa, T = self._fleet()
+        cfg = SimpleNamespace(
+            energy_reserve_coopt=True,
+            pjm_reserve_pergen=True,
+            pjm_reserve_pergen_sync=True,
+            pjm_reserve_commitment_scoped=False,
+            pjm_reserve_online_gated=False,
+        )
+        fleet_prep, kwargs_prep = build_pjm_reserve_p1_prep(cfg, "PJM", fa)
+        self.assertIsNone(fleet_prep)
+        self.assertIsNotNone(kwargs_prep)
+        r0 = SimpleNamespace(dispatch=np.zeros((2, T)))
+        out = kwargs_prep(r0, fa)
+        self.assertIn("reserve_pergen_ramp10", out)
+        self.assertEqual(out["reserve_pergen_ramp10"].shape, (4, T))
+
+    def test_prep_raises_without_pergen(self):
+        from types import SimpleNamespace
+
+        from market_sim.pipeline.commitment import build_pjm_reserve_p1_prep
+
+        fa, _T = self._fleet()
+        cfg = SimpleNamespace(
+            energy_reserve_coopt=True,
+            pjm_reserve_pergen=False,
+            pjm_reserve_pergen_sync=True,
+        )
+        with self.assertRaises(ValueError):
+            build_pjm_reserve_p1_prep(cfg, "PJM", fa)
+
+    def test_prep_raises_on_stacked_scoping(self):
+        from types import SimpleNamespace
+
+        from market_sim.pipeline.commitment import build_pjm_reserve_p1_prep
+
+        fa, _T = self._fleet()
+        cfg = SimpleNamespace(
+            energy_reserve_coopt=True,
+            pjm_reserve_pergen=True,
+            pjm_reserve_pergen_sync=True,
+            pjm_reserve_commitment_scoped=True,
+            pjm_reserve_online_gated=False,
+        )
+        with self.assertRaises(ValueError):
+            build_pjm_reserve_p1_prep(cfg, "PJM", fa)
+
+
+class TestPjmSyncRequirementLoaders(unittest.TestCase):
+    """Measured Synchronized requirement columns (sr_req_mw / mad_sr_req_mw)."""
+
+    def test_loads_8760_positive_sync_requirement(self):
+        from market_sim.results.scarcity import (
+            load_pjm_measured_mad_sync_reserve_requirement,
+            load_pjm_measured_sync_reserve_requirement,
+        )
+
+        for year in (2023, 2024, 2025):
+            sr = load_pjm_measured_sync_reserve_requirement(year)
+            self.assertIsNotNone(sr, f"sr_req_mw missing for {year}")
+            self.assertEqual(sr.shape, (8760,))
+            self.assertTrue((sr > 0).all())
+            mad = load_pjm_measured_mad_sync_reserve_requirement(year)
+            self.assertIsNotNone(mad)
+            self.assertTrue((mad > 0).all())
+            # SR ⊆ PR: the sync requirement sits below Primary on average.
+            from market_sim.results.scarcity import (
+                load_pjm_measured_reserve_requirement,
+            )
+
+            pr = load_pjm_measured_reserve_requirement(year)
+            self.assertLess(float(sr.mean()), float(pr.mean()))
+
+    def test_missing_year_returns_none(self):
+        from market_sim.results.scarcity import (
+            load_pjm_measured_sync_reserve_requirement,
+        )
+
+        self.assertIsNone(load_pjm_measured_sync_reserve_requirement(1999))
+
+
+class TestPjmDesignPergenSync(unittest.TestCase):
+    """_pjm_design under pjm_reserve_pergen_sync: families, split, P0 caps."""
+
+    def _fleet(self, T=8760):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        fa = FleetArrays(
+            pmax=np.array([1000.0, 400.0, 600.0]),
+            pmin=np.zeros(3),
+            heat_rate=np.array([7.0, 9.5, 7.2]),
+            vom=np.zeros(3),
+            emission_rate=np.zeros(3),
+            nox_rate=np.zeros(3),
+            so2_rate=np.zeros(3),
+            zone_idx=np.array([0, 0, 1]),
+            fuel_type_idx=np.array(
+                [
+                    FUEL_TYPE_NAMES.index("gas_cc"),
+                    FUEL_TYPE_NAMES.index("gas_ct"),
+                    FUEL_TYPE_NAMES.index("gas_cc"),
+                ]
+            ),
+            availability=np.ones((3, T)),
+            unit_ids=["cc0", "ct0", "cc1"],
+            efficiency_bin=np.zeros(3),
+            plant_code=np.array([101, 202, 303]),
+        )
+        fa.ramp10 = np.array([300.0, 400.0, 180.0])
+        return fa
+
+    def test_sync_design_families_and_split(self):
+        from types import SimpleNamespace
+
+        from market_sim.config.reserve_config import _pjm_design
+
+        fa = self._fleet()
+        cfg = SimpleNamespace(
+            iso="PJM",
+            weather_year=2024,
+            pjm_reserve_pergen=True,
+            pjm_reserve_pergen_sync=True,
+            pjm_commitment_posture=False,
+        )
+        zone_names = ["PJM_West", "PJM_EMAAC"]  # zone 1 in MAD
+        design = _pjm_design(cfg, fa, 8760, zone_names)
+        names = [f.name for f in design.families]
+        self.assertEqual(
+            names, ["pjm_primary", "pjm_primary_mad", "pjm_sync", "pjm_sync_mad"]
+        )
+        n_r = int(np.max(design.pergen_col)) + 1
+        self.assertEqual(design.pergen_col_pool.shape, (2 * n_r,))
+        self.assertEqual(design.balance_col_mask.shape, (4, 2 * n_r))
+        # Primary selects every column; sync selects only the first n_r.
+        self.assertTrue(design.balance_col_mask[0].all())
+        self.assertTrue(design.balance_col_mask[2][:n_r].all())
+        self.assertFalse(design.balance_col_mask[2][n_r:].any())
+        # MAD families select only zone-1 pools (columns are zone-pure).
+        pool_zone = np.zeros(n_r, dtype=int)
+        pool_zone[design.pergen_col] = fa.zone_idx[design.pergen_gen_idx]
+        mad_cols = np.tile(pool_zone == 1, 2)
+        np.testing.assert_array_equal(design.balance_col_mask[1], mad_cols)
+        # P0 caps: sync = full pool deliverable ramp, non-sync = 0.
+        caps = design.pergen_ramp10
+        self.assertEqual(caps.shape, (2 * n_r, 8760))
+        np.testing.assert_allclose(caps[n_r:], 0.0)
+        self.assertGreater(float(caps[:n_r].sum()), 0.0)
+
+    def test_posture_composition_rejected(self):
+        from types import SimpleNamespace
+
+        from market_sim.config.reserve_config import _pjm_design
+
+        fa = self._fleet()
+        cfg = SimpleNamespace(
+            iso="PJM",
+            weather_year=2024,
+            pjm_reserve_pergen=True,
+            pjm_reserve_pergen_sync=True,
+            pjm_commitment_posture=True,
+        )
+        with self.assertRaises(ValueError):
+            _pjm_design(cfg, fa, 8760, ["PJM_West", "PJM_EMAAC"])
+
+
 class TestAllClassBalanceFamily(unittest.TestCase):
     """A reserve_class -1 family draws on EVERY class's reserve (the ERCOT
     lumped ORDC total-reserve curve layered on the product families).
