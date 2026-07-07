@@ -18,6 +18,19 @@ low/mid/high sensitivity. There are three cost bases (ADRs 0004/0006/0008):
     clean-attribute premium; ``fixed_mwyr=0`` and the effective VOM is
     ``cost + eac_premium``, so existing resources pay only when dispatched and are
     capped by the contractable MW (ADR 0008).
+  * ``lmp_ppa`` — market-indexed attribute PPA (ADR 0020): CCS, nuclear uprate,
+    run-of-river hydro, and attribute-basis wind/solar. ``fixed_mwyr=0`` and the
+    VOM carries ONLY the EAC premium; the buyer pays the hourly LMP for energy on
+    top (added per-hour in the LP via the ``lmp_indexed`` flag), so the resource's
+    net portfolio premium is exactly its EAC. For CCS the plant capex and the IRA
+    §45Q credit both accrue to the project owner and are out of scope here.
+
+The clean-attribute (EAC) premium for both attribute bases resolves in the order
+``config.eac_premium_mwh`` override > annual series (``data/eac/eac_prices.csv``,
+resolved to ``config.year``) > table ``eac_premium_mwh`` column (ADR 0020), so a
+flat single value and a full year trajectory are both expressible. Storage may be
+priced by annualized capex (default) or a ``tolling_kw_yr`` capacity payment
+(``config.storage_pricing="tolling"``, ADR 0022).
 
 The CRF is ``r(1+r)^n / ((1+r)^n - 1)`` with ``r = config.discount_rate`` and
 ``n = life_yr``; this finally wires ``config.discount_rate`` into the tool.
@@ -51,6 +64,7 @@ DEFAULT_COST_TABLE = _PKG_ROOT / "data" / "lcoe" / "resource_costs.csv"
 DEFAULT_CAPS_TABLE = _PKG_ROOT / "data" / "caps" / "resource_caps.csv"
 DEFAULT_HYDRO_BUDGETS = _PKG_ROOT / "data" / "hydro" / "monthly_budgets.csv"
 DEFAULT_GAS_PRICES = _PKG_ROOT / "data" / "fuel" / "gas_prices.csv"
+DEFAULT_EAC_PRICES = _PKG_ROOT / "data" / "eac" / "eac_prices.csv"
 
 # Pre-capture CO2 intensity of pipeline natural gas (tCO2/MMBtu burned).
 # Source: EPA GHG Emission Factors Hub / 40 CFR Part 98 Table C-1: 53.06 kg
@@ -113,6 +127,8 @@ class ResourceArrays:
     is_budget_hydro: np.ndarray = None  # (n_res,) bool; monthly-energy-budget hydro
     # --- residual emissions (ADR 0012) -------------------------------------
     emission_rate_ton_mwh: np.ndarray = None  # (n_res,) residual tCO2/MWh generated
+    # --- market-indexed attribute pricing (ADR 0020) -----------------------
+    lmp_indexed: np.ndarray = None  # (n_res,) bool; energy priced at hourly LMP
 
     def __post_init__(self) -> None:
         """Default the optional flag arrays to zeros/False when omitted.
@@ -136,6 +152,8 @@ class ResourceArrays:
             object.__setattr__(self, "is_budget_hydro", np.zeros(n, dtype=bool))
         if self.emission_rate_ton_mwh is None:
             object.__setattr__(self, "emission_rate_ton_mwh", np.zeros(n, dtype=float))
+        if self.lmp_indexed is None:
+            object.__setattr__(self, "lmp_indexed", np.zeros(n, dtype=bool))
 
     @property
     def n_res(self) -> int:
@@ -306,6 +324,69 @@ def load_gas_price(iso: str, path: Path | None = None) -> float | None:
     return price
 
 
+def load_eac_prices(
+    path: Path | None = None,
+) -> dict[str, list[tuple[int, float]]]:
+    """Load the annual EAC price series into ``{resource: [(year, eac_mwh), ...]}``.
+
+    Reads ``data/eac/eac_prices.csv`` (ADR 0020): one row per
+    ``(resource, year)`` with the clean-attribute premium in ``$/MWh``. The
+    per-resource lists are returned sorted by year so :func:`resolve_eac_series`
+    can pick the exact / most-recent-prior year. A missing file returns an empty
+    mapping (the caller falls back to the table's ``eac_premium_mwh`` column). A
+    negative price, a duplicate ``(resource, year)``, or a non-integer year is a
+    data error and raises.
+    """
+    src = path or DEFAULT_EAC_PRICES
+    if not Path(src).exists():
+        return {}
+    out: dict[str, list[tuple[int, float]]] = {}
+    seen: set[tuple[str, int]] = set()
+    for row in _read_csv(Path(src)):
+        res = row["resource"].strip()
+        raw_year = row.get("year")
+        if raw_year is None or str(raw_year).strip() == "":
+            raise ValueError(f"eac price table {src}: blank year for {res!r}")
+        year = int(str(raw_year).strip())
+        if (res, year) in seen:
+            raise ValueError(
+                f"eac price table {src}: duplicate row for ({res!r}, {year})"
+            )
+        seen.add((res, year))
+        val = _f(row, "eac_mwh")
+        if np.isnan(val) or val < 0:
+            raise ValueError(
+                f"eac price table {src}: eac_mwh for ({res!r}, {year}) must be a "
+                f"non-negative number, got {row.get('eac_mwh')!r}"
+            )
+        out.setdefault(res, []).append((year, val))
+    for res in out:
+        out[res].sort()
+    return out
+
+
+def resolve_eac_series(
+    name: str, year: int, series: dict[str, list[tuple[int, float]]]
+) -> float | None:
+    """Return the EAC ($/MWh) for ``name`` at ``year`` from a loaded series.
+
+    Resolution (ADR 0020): exact-year match; else the latest year at or before
+    ``year`` (forward-fill a sparse trajectory); else the earliest available
+    year. Returns ``None`` when ``name`` is absent from the series, so the
+    caller can fall back to the table column.
+    """
+    pts = series.get(name)
+    if not pts:
+        return None
+    for y, v in pts:
+        if y == year:
+            return v
+    prior = [(y, v) for y, v in pts if y <= year]
+    if prior:
+        return prior[-1][1]
+    return pts[0][1]
+
+
 def _resolve_gas_price(config: PortfolioConfig, gas_table: Path | None) -> float | None:
     """Resolve the delivered gas price with precedence config > table > None.
 
@@ -337,6 +418,7 @@ def load_resource_arrays(
     cost_table: Path | None = None,
     caps_table: Path | None = None,
     gas_table: Path | None = None,
+    eac_table: Path | None = None,
 ) -> ResourceArrays:
     """Build :class:`ResourceArrays` for the resources active under ``config``.
 
@@ -397,16 +479,43 @@ def load_resource_arrays(
     if sens not in ("low", "mid", "high"):
         raise ValueError(f"lcoe_sensitivity must be low/mid/high, got {sens!r}")
 
-    # Config eac_premium_mwh overrides apply only to ppa_mwh existing
-    # resources (documented in config.py); a key that matches nothing would
-    # silently no-op (audit finding DL-9), so validate against the catalog.
-    ppa_names = {r["resource"] for r in rows if r["cost_basis"] == "ppa_mwh"}
-    bad_overrides = set(config.eac_premium_mwh) - ppa_names
+    # Config eac_premium_mwh overrides apply to attribute-basis resources —
+    # ppa_mwh existing resources (ADR 0008) and lmp_ppa market-indexed resources
+    # (ADR 0020); a key that matches nothing would silently no-op (audit finding
+    # DL-9), so validate against the catalog.
+    attribute_names = {
+        r["resource"] for r in rows if r["cost_basis"] in ("ppa_mwh", "lmp_ppa")
+    }
+    bad_overrides = set(config.eac_premium_mwh) - attribute_names
     if bad_overrides:
         raise ValueError(
-            f"eac_premium_mwh overrides {sorted(bad_overrides)} do not match "
-            f"any ppa_mwh resource in {path}; have {sorted(ppa_names)}"
+            f"eac_premium_mwh overrides {sorted(bad_overrides)} do not match any "
+            f"attribute-basis (ppa_mwh/lmp_ppa) resource in {path}; have "
+            f"{sorted(attribute_names)}"
         )
+
+    # Annual EAC price series (ADR 0020): config path "" disables it (table
+    # columns only), None uses the packaged default, else the given path.
+    if config.eac_prices_file == "":
+        eac_series: dict[str, list[tuple[int, float]]] = {}
+    elif config.eac_prices_file is not None:
+        eac_series = load_eac_prices(Path(config.eac_prices_file))
+    else:
+        eac_series = load_eac_prices(eac_table)
+
+    def _resolve_eac_premium(name: str, row: dict[str, str]) -> float:
+        """Resolve a resource's EAC premium: config override > series > column.
+
+        Precedence (ADR 0020): ``config.eac_premium_mwh[name]`` wins; else the
+        annual series at ``config.year``; else the table ``eac_premium_mwh``
+        column (a flat single value). Used by both attribute cost bases.
+        """
+        if name in config.eac_premium_mwh:
+            return float(config.eac_premium_mwh[name])
+        from_series = resolve_eac_series(name, config.year, eac_series)
+        if from_series is not None:
+            return from_series
+        return _f(row, "eac_premium_mwh")
 
     # --- select the candidate rows (explicit list or active_minimal flag) ---
     if config.active_resources is not None:
@@ -461,6 +570,7 @@ def load_resource_arrays(
     cap_max, cap_min, cf_assumed = [], [], []
     duration_h, duration_min_h, duration_max_h, rte = [], [], [], []
     emission_rate = []
+    lmp_indexed = []
 
     for row in rows:
         name = row["resource"]
@@ -468,6 +578,7 @@ def load_resource_arrays(
         stor = row["category"] in ("storage", "storage_split")
         split = row["cost_basis"] == "split_storage"
         existing = basis == "ppa_mwh"  # going-forward PPA existing resource
+        is_lmp_indexed = basis == "lmp_ppa"  # energy priced at hourly LMP (ADR 0020)
         budget_hydro = name in HYDRO_BUDGET_RESOURCES
 
         row_fixed = 0.0
@@ -534,6 +645,40 @@ def load_resource_arrays(
             fom_kw_yr = _req(row, "fom_kw_yr", name)
             life = _f(row, "life_yr", 30.0)
             row_fixed = capex_kw * 1000.0 * _crf(life) + fom_kw_yr * 1000.0
+            # Storage tolling (ADR 0022): under storage_pricing="tolling" the
+            # capacity-grounded fixed cost comes from a $/kW-yr tolling price
+            # instead of annualized capex. Fixed-duration storage only; the row
+            # MUST carry a tolling price for the chosen sensitivity.
+            if stor and config.storage_pricing == "tolling":
+                toll = row.get(f"tolling_kw_yr_{sens}")
+                if toll is None or str(toll).strip() == "":
+                    raise ValueError(
+                        f"resource {name!r}: storage_pricing='tolling' but no "
+                        f"tolling_kw_yr_{sens} in the cost table (ADR 0022)"
+                    )
+                toll_val = float(toll)
+                if toll_val <= 0:
+                    raise ValueError(
+                        f"resource {name!r}: tolling_kw_yr_{sens}={toll_val} must "
+                        "be positive"
+                    )
+                row_fixed = toll_val * 1000.0  # $/kW-yr -> $/MW-yr
+        elif basis == "lmp_ppa":
+            # Market-indexed attribute PPA (ADR 0020): the buyer pays the hourly
+            # LMP for energy plus the clean EAC premium. Energy is added per-hour
+            # in the LP via lmp_indexed, so here vom carries ONLY the EAC and
+            # there is no fixed capex — for CCS the capex and the 45Q credit both
+            # accrue to the project owner and are out of this model's scope. The
+            # net portfolio premium of such a resource is therefore exactly its
+            # EAC (energy nets against the avoided grid purchase).
+            premium = _resolve_eac_premium(name, row)
+            if premium < 0:
+                raise ValueError(
+                    f"resource {name!r}: eac_premium_mwh must be non-negative, "
+                    f"got {premium}"
+                )
+            row_fixed = 0.0
+            row_vom = premium
         elif basis == "split_storage":
             # Power ($/kW) and energy ($/kWh) capex annualized separately.
             life = _f(row, "life_yr", 30.0)
@@ -552,7 +697,7 @@ def load_resource_arrays(
         elif basis == "ppa_mwh":
             # Going-forward per-MWh cost + clean-attribute premium; no fixed cost.
             cost = _req(row, f"cost_{sens}", name)
-            premium = config.eac_premium_mwh.get(name, _f(row, "eac_premium_mwh"))
+            premium = _resolve_eac_premium(name, row)
             if premium < 0:
                 # config overrides are validated in PortfolioConfig; this
                 # catches a negative TABLE value, which would drive vom
@@ -567,7 +712,13 @@ def load_resource_arrays(
             raise ValueError(f"unknown cost_basis {basis!r} for {name}")
 
         # --- fuel cost + 45Q for fuel-burning rows (ADR 0012) ----------------
-        if row_heat_rate > 0.0:
+        # Only capex_fixed (build-basis) CCS folds delivered fuel and the 45Q
+        # credit into its VOM. lmp_ppa CCS (ADR 0020) instead prices energy at
+        # the hourly LMP and pays a clean EAC premium; its fuel is already in
+        # the market price and 45Q accrues to the project owner, so neither is
+        # netted here (the heat_rate/capture/emission columns are still read
+        # above for the ADR 0012 admissibility checks and residual reporting).
+        if row_heat_rate > 0.0 and basis == "capex_fixed":
             if not gas_price_resolved:
                 gas_price = _resolve_gas_price(config, gas_table)
                 gas_price_resolved = True
@@ -645,6 +796,7 @@ def load_resource_arrays(
         duration_max_h.append(row_dmax)
         rte.append(row_rte)
         emission_rate.append(row_emission)
+        lmp_indexed.append(is_lmp_indexed)
 
     return ResourceArrays(
         names=names,
@@ -663,4 +815,5 @@ def load_resource_arrays(
         is_existing=np.array(is_existing, dtype=bool),
         is_budget_hydro=np.array(is_budget_hydro, dtype=bool),
         emission_rate_ton_mwh=np.array(emission_rate, dtype=float),
+        lmp_indexed=np.array(lmp_indexed, dtype=bool),
     )

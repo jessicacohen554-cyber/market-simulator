@@ -375,7 +375,7 @@ def test_unknown_eac_override_key_rejected(tmp_path) -> None:
     """A typo'd eac_premium_mwh override key must not silently no-op (DL-9)."""
     table = _cost_table(tmp_path, [_SOLAR])
     cfg = PortfolioConfig(eac_premium_mwh={"nuclear_existng": 9.0})
-    with pytest.raises(ValueError, match="do not match any ppa_mwh resource"):
+    with pytest.raises(ValueError, match="do not match any attribute-basis"):
         load_resource_arrays(cfg, cost_table=table)
 
 
