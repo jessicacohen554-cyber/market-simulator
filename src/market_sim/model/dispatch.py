@@ -1618,7 +1618,6 @@ def _build_reserve_rows_pergen(
             "pergen_col must cover every R column 0..n_reserve-1 "
             f"(n_reserve={n_r}, columns covered={np.unique(col).size})"
         )
-    cap = fleet.pmax[:, np.newaxis] * fleet.availability  # (n_gen, T)
     zone_idx = np.asarray(fleet.zone_idx, dtype=int)
     # Member -> R-column incidence, for the summed-capacity RHS and the
     # per-column zone below.
@@ -1642,13 +1641,25 @@ def _build_reserve_rows_pergen(
     jrows = [col, np.arange(n_r)]
     jcols = [layout._p_off + gidx, layout._reserve_off + np.arange(n_r)]
     jvals = [np.ones(gidx.size), np.ones(n_r)]
-    pool_cap = member_map @ cap[gidx]  # (n_r, T) member caps summed per pool
-    joint_rhs = pool_cap.copy()
+    # Summed member capacity per R-column, (n_r, T). Compute pmax*availability
+    # ONLY on the reserve members instead of materializing the full (n_gen, T)
+    # fleet ``cap`` and fancy-indexing it: byte-identical operands (member i is
+    # ``pmax[gidx[i]] * availability[gidx[i]]`` either way), but the dense
+    # intermediate is (n_members, T) rather than (n_gen, T) held alongside its
+    # (n_members, T) index copy, and it is released before the large ``joint``
+    # kron allocates — driver (a) of the reserve-column-construction peak (G-40).
+    cap_members = fleet.pmax[gidx][:, np.newaxis] * fleet.availability[gidx]
+    pool_cap = member_map @ cap_members  # (n_r, T) member caps summed per pool
+    del cap_members
+    joint_rhs = pool_cap  # only copied below when a postured pool mutates it
     if q:
         ppools = np.asarray(posture_pools, dtype=int)
         jrows.append(ppools)
         jcols.append(layout._posture_u_off + np.arange(q))
         jvals.append(-np.ones(q))
+        # Zero the postured pools' capacity RHS on a copy — pool_cap must stay
+        # intact for the ramp-gate ρ (uses pool_cap[ppools]) below.
+        joint_rhs = pool_cap.copy()
         joint_rhs[ppools, :] = 0.0
     joint_per_hour = sp.coo_matrix(
         (

@@ -223,7 +223,7 @@ class TestBuildConstraints(unittest.TestCase):
         layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=24)
         fleet = _make_fleet(["Z0"], ["Z0"], hours=24)
         demand = np.arange(24, dtype=float).reshape(1, 24)
-        A, row_lower, row_upper = build_constraints(layout, fleet, demand)
+        A, row_lower, row_upper = build_constraints(layout, fleet, demand)[:3]
         # vars_per_hour = 1 + 4*1 + 3*0 + 0 = 5.
         self.assertEqual(layout.vars_per_hour, 5)
         self.assertEqual(A.shape, (24, 24 * layout.vars_per_hour))
@@ -233,7 +233,7 @@ class TestBuildConstraints(unittest.TestCase):
         layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=24)
         fleet = _make_fleet(["Z0"], ["Z0"], hours=24)
         demand = np.zeros((1, 24))
-        A, _, _ = build_constraints(layout, fleet, demand)
+        A, _, _ = build_constraints(layout, fleet, demand)[:3]
         dense = A.toarray()
         for t in range(layout.T):  # t: hour index
             self.assertEqual(dense[t, layout.p_col(0, t)], 1.0)
@@ -248,7 +248,7 @@ class TestBuildConstraints(unittest.TestCase):
         layout = VariableLayout(n_gen=2, n_zones=2, n_storage=0, n_links=0, T=3)
         fleet = _make_fleet(["Z0", "Z1"], ["Z0", "Z1"], hours=3)
         demand = np.zeros((2, 3))
-        A, _, _ = build_constraints(layout, fleet, demand)
+        A, _, _ = build_constraints(layout, fleet, demand)[:3]
         dense = A.toarray()
         for t in range(layout.T):  # t: hour index
             # Row for zone 0 holds gen 0; row for zone 1 holds gen 1.
@@ -261,7 +261,7 @@ class TestBuildConstraints(unittest.TestCase):
         layout = VariableLayout(n_gen=1, n_zones=1, n_storage=0, n_links=0, T=24)
         fleet = _make_fleet(["Z0"], ["Z0"], hours=24)
         demand = np.arange(100.0, 124.0).reshape(1, 24)
-        _, row_lower, row_upper = build_constraints(layout, fleet, demand)
+        _, row_lower, row_upper = build_constraints(layout, fleet, demand)[:3]
         # Equality rows: lower == upper == demand, in hour order.
         np.testing.assert_array_equal(row_lower, demand.ravel())
         np.testing.assert_array_equal(row_upper, demand.ravel())
@@ -272,7 +272,7 @@ class TestBuildConstraints(unittest.TestCase):
         demand = np.array([[10.0, 20.0, 30.0, 40.0]])
         A, row_lower, row_upper = build_constraints(
             layout, fleet, demand, storage_zone_idx=[0], eta_chg=0.9, eta_dis=0.8
-        )
+        )[:3]
         # 4 energy-balance rows + 4 SOC rows (one per hour).
         self.assertEqual(A.shape, (8, layout.total_columns))
         dense = A.toarray()
@@ -300,7 +300,7 @@ class TestBuildConstraints(unittest.TestCase):
         fleet = _make_fleet(["Z0"], ["Z0", "Z1"], hours=2)
         demand = np.zeros((2, 2))
         incidence = np.array([[1.0], [-1.0]])  # link injects to Z0, withdraws Z1
-        A, _, _ = build_constraints(layout, fleet, demand, incidence=incidence)
+        A, _, _ = build_constraints(layout, fleet, demand, incidence=incidence)[:3]
         dense = A.toarray()
         for t in range(layout.T):  # t: hour index
             self.assertEqual(dense[t * 2 + 0, layout.flow_col(0, t)], 1.0)
@@ -1204,7 +1204,7 @@ def _solve_with_highs_options(
         storage_zone_idx=storage_zone_idx,
         eta_chg=eta_chg,
         eta_dis=eta_dis,
-    )
+    )[:3]
     col_lower, col_upper = build_variable_bounds(
         layout,
         fleet,
