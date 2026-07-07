@@ -40,6 +40,57 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-07 — NYISO — G-20c: measured per-zone load shares make the downstate pocket BIND; locational reserve scarcity fires (`2026-07-07-nyiso-56-measured-zonal`, CANDIDATE, keeper stays nyiso-53 pending owner)
+
+**Gap G-20c** (`docs/g20-scarcity-price-formation-diagnosis-2026-07.md`): NYISO's
+scarcity tail is *locational* (import-constrained NYC/SENY pocket), and it was
+inert because "static Gold-Book load shares never let downstate peak hard enough
+to bind the interfaces." Root cause found: the energy LP was silently dispatching
+on the **static** per-zone `load_share` (NYC 0.28 / LI 0.12, every zone peaking
+the same hour). `eia_loader.load_zonal_shares` read the measured hourly shares
+**only from the clean parquet**, which is derived + gitignored → absent in a fresh
+clone → the measured NYISO "pal" actual-load (upload U3) never reached the solve.
+
+**Fix (rule 12, one code change, no new free parameter).** `load_zonal_shares`
+now falls back to parsing the raw `data/raw/zone-specific-demand` file directly
+(via the canonical `scripts.curate_zonal_shares` parsers) when the clean parquet
+is absent, so every zone gets its own **measured** diurnal/seasonal shape. Also
+curated the `capacity-deliverability` NYISO partition (needed by the keeper's
+`nyiso_li_lcr_tsl` #1345 — clean tree is gitignored). Measured shares put more
+load downstate at peak (NYC 0.28→0.34, LI 0.12→0.17) and decorrelate zone peaks.
+
+**Result** (nyiso-53 recipe VERBATIM + measured shares; the LP already carries
+`energy_reserve_coopt` with 7 locational reserve families): the NYC/SENY pocket
+now tightens in the real tight hours and the locational reserve co-opt **fires** —
+2023 NYC/Hudson LBMP → **$1,684/MWh** while Upstate maxes $152 (genuinely
+locational). Scorecard vs the keeper: **C1/C2/C4 PASS, C7 PASS** (no load-bearing
+regression); **C3a mean** 2023 −9.0%→**+1.6%** (vs DA), 2024/25 −7.7/−7.5%
+(keeper −10.9/−10.6); **C3b NRMSE** 0.188/0.200/0.165 (keeper 0.182/0.221/0.190);
+**C3c** RT tail 2023 **21 h vs 10 h actual** (was 0), 2025 14 h vs 42 h. C8 ST_GAS
+breach is the keeper's owner-held-legitimate item at **lower** forced share
+(30/45/38% vs keeper 61/70/60%). C3c FAILs only the **DA-expressible** gate (DA
+actual 1 h) — the G-20a scoring-basis artifact, not an RT over-fire.
+
+**Open (honest partial).** 2024 (a mild year) and the 2025 **deep** (>$300) tail
+stay under: the remaining perfect-foresight downstate import over-service. TTC
+audit → the next lever is **import discipline**, with a measured value in hand:
+the NYISO **NYC locality import limit is 2,875 MW** (curated `capacity-deliverability`)
+vs the model's 3,900 MW Dunwoodie-South energy-TTC estimate — apply it in the
+summer-peak window exactly as the Zone-K TSL (`nyiso_li_lcr_tsl`, #1345) already
+does for LI (325 MW). Central-East is already measured (postings); UPNY-SENY
+(5,150) and Dunwoodie (3,900) are Gold-Book estimates looser than the measured RA
+import limits (G-J 3,425; NYC 2,875). SENY 30-min MW requirement stays a
+placeholder (NYC 1,000/500 and SENY=zones G–K confirmed against primary; the
+RS4/Locational-Reserve-Requirements PDF is unfetchable here). #1344 in-LP
+condition-varying requirement remains data-blocked (Ask-B not intaken).
+
+**Disposition.** Registered `2026-07-07-nyiso-56-measured-zonal` (CANDIDATE). Keeper
+stays `2026-07-06-nyiso-53-li-tsl` — the measured-share fix dominates on structural
+faithfulness + C3a/C3b (rule 1), but promotion carries the keeper's owner-held C8
+and needs a governance attestation + ablation twin, so it is left as an owner
+decision. The code fix ships regardless (measured > static is correct for every
+ISO). Holdouts (2022, H1-2026) untouched (rule 22).
+
 ### 2026-07-07 — NEISO — G-24 KEEPER SWAP: `2026-07-07-neiso53-winter-fuelsec-coldsnap` promoted — winter fuel-security stack (cold-snap derate + Component A + Component B) proven DORMANT on 2023–25, adopted for forward faithfulness (rule 1)
 
 **Goal (G-24).** Resolve the NEISO winter-fuel gap: verify Component B

@@ -187,3 +187,35 @@ def test_load_zonal_shares_matches_direct_parse_ercot():
 
     assert shares_loaded is not None
     np.testing.assert_array_equal(shares_loaded, shares_direct)
+
+
+@pytest.mark.skipif(
+    not _parse_is_available("NYISO", 2023),
+    reason="NYISO pal actual-load CSV for 2023 not present",
+)
+def test_load_zonal_shares_raw_fallback_when_clean_absent_nyiso():
+    """With no clean parquet, load_zonal_shares falls back to the measured raw file.
+
+    Guards the G-20c fix: ``data/clean`` is derived and gitignored, so in a
+    fresh clone the curated parquet is absent. Without the raw fallback the LP
+    would silently drop to the static Gold-Book share and lose the downstate
+    diurnal shape. The fallback must return the measured shares (not ``None``)
+    and match the canonical curate parser byte-for-byte.
+    """
+    from scripts.curate_zonal_shares import parse_nyiso_shares
+
+    zone_names = get_iso_config("NYISO").zone_names
+    shares_direct = parse_nyiso_shares(2023, zone_names)
+    assert shares_direct is not None
+
+    # Point the clean seam at an EMPTY dir so no parquet exists — exercises the
+    # raw fallback path, not the clean-parquet path.
+    with tempfile.TemporaryDirectory() as tmp:
+        with mock.patch("market_sim.config.paths.CLEAN_DIR", Path(tmp)):
+            shares_loaded = load_zonal_shares("NYISO", 2023, zone_names)
+
+    assert shares_loaded is not None, "raw fallback must not return None"
+    np.testing.assert_array_equal(shares_loaded, shares_direct)
+    # Measured NYC (zone J) share peaks materially above its 0.28 static value.
+    nyc_i = zone_names.index("NYC")
+    assert shares_loaded[nyc_i].max() > 0.30
