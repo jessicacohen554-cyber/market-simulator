@@ -124,7 +124,6 @@ def main() -> None:
 
     # ---- (c) overnight net-load response vs ramp at same net-load -------
     slope, intercept, cap = 0.01108, -0.9979, 0.46
-    hinge = np.clip(slope * nl + intercept, 0.0, cap)
     on = (hod >= 0) & (hod < 6)
     rw = (hod >= start) & (hod < end)
     nl_edges = np.arange(60, 130, 10)
