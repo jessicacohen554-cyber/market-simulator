@@ -34,6 +34,9 @@ short; link to any analysis.
 | 0017 | Storage charge policy: optional `excess_clean_only` provenance rows (`Σchg + excess ≤ Σgen`) | accepted | storage audit 2026-07 | `config.py`/`lp.py`/`cli.py` |
 | 0018 | Divert-and-backfill diagnostic (`divert_backfill_mwh`, always on) + `excess_headroom_only` policy (ADR 0017 rows + iterative charge-pinning cut loop) | accepted | storage audit 2026-07 §2.4 | `lp.py`/`config.py`/`cli.py`/`outputs.py`/`report.py` |
 | 0019 | Mode A build-size tiebreak (`build_tiebreak_epsilon`, flat per-MW, fixes the CAISO onshore-wind saturate-to-cap degeneracy) | accepted | CAISO Mode-A tiebreak follow-up 2026-07-05 | `config.py`/`lp.py` |
+| 0020 | Annual EAC time series (`data/eac/eac_prices.csv`, resolved to run year) + market-indexed `lmp_ppa` attribute basis (LMP + EAC, premium == EAC); CCS reframed onto it (45Q → owner); new uprate/RoR/attribute-wind-solar resources | accepted | scope-2 EAC wiring 2026-07-07 | `resources.py`/`config.py`/`lp.py`/`profiles.py`/data |
+| 0021 | Breakeven EAC derivation (PPA-strike logic: capex at IRR hurdle − expected LMP − 45Q − capacity), default-off helper feeding the EAC series | accepted | scope-2 EAC wiring 2026-07-07 | `scripts/derive_eac_breakeven.py` |
+| 0022 | Storage priced as a capacity-grounded tolling fixed cost (`storage_pricing="tolling"`, `tolling_kw_yr` × 1000); `battery_12h` added | accepted | scope-2 EAC wiring 2026-07-07 | `config.py`/`resources.py`/data |
 
 ---
 
