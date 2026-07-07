@@ -7622,6 +7622,14 @@ over the static basis → curtailment now endogenous) + self-scaling tests
 re-derive on new NP6-86 data, rule #23).
 
 **Dashboard:** ERCOT retention pruned 17→15 (`ercot33-storage-duration-gate`,
-`ercot32-v2rescore-probe` dropped). **Keeper stays ercot34 pending owner GO**
-on (a) the keeper swap to `2026-07-07-ercot42-wtx-curtailment-driver` and
-(b) `ercot_wtx_curtailment_driver` default-ON for ERCOT backcasts.
+`ercot32-v2rescore-probe` dropped).
+
+**PROMOTED TO KEEPER (owner GO in-session, 2026-07-07):**
+`2026-07-07-ercot42-wtx-curtailment-driver` replaces `ercot34-stage4-overlay-off`
+in `keepers.json` (status.js rebuilt), and `ercot_wtx_curtailment_driver` is now
+the **ERCOT backcast default-ON** — implemented as a per-ISO default in
+`pipeline/backcast_config.py` with tri-state orchestrator kwargs (the
+`ct_netload_drag` pattern: `None` = builder default, explicit `False` scrubs it
+for ablation arms) and a `replay_keeper.build_kwargs` backstop pinning
+pre-driver ERCOT bundles (no key in `meta.json`) to `False` so their replays
+stay byte-faithful.
