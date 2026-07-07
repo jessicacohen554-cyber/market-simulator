@@ -1,6 +1,30 @@
 # Changelog
 
-## 2026-07-07 (C8 grounded-above-budget escalation, rubric v2.2)
+## 2026-07-07 (MISO C-6: measured seam ladders — G-23-residual import-starvation fix)
+
+- **Model/config:** new `ScenarioConfig.miso_seam_measured_ladder` (default off,
+  CLI `--miso-seam-measured-ladder`): prices every MISO reference-price seam band
+  (PJM/SPP/South, import + export) at the measured per-year Q-Q band ladder in the
+  new `interchange_config.MISO_SEAM_LADDER_BY_YEAR`, replacing the
+  gas × HR × load-shape band prices + hurdle for backcast years (forecast years
+  keep the gas-elastic formula — the hr_by_year two-track design). New injector
+  `transmission.inject_miso_seam_ladder_prices` runs last among the backcast seam
+  price overwrites (displaces `miso_pjm_border_anchor` /
+  `miso_pjm_lmp_import_pricing` on rows it covers; alternatives, never stacked).
+- **Derivation:** new `scripts/derive_miso_seam_ladders.py` (the NEISO audit-C-6
+  measured-ladder pattern): per-seam Q-Q duration coupling of the measured EIA-930
+  MISO BA-to-BA seam flows with the measured MISO DA hub LMP, on the existing
+  8-band grid — band capacities and the measured (month × hod) seam envelopes
+  unchanged; zero fitted parameters (rule 23: re-derives only when the source
+  data extends). Root cause it fixes (G-23 residual, `docs/multi-iso/
+  miso-import-starvation-rootcause-2026-07.md`): the measured PJM+IESO seam is a
+  firm/scheduled base — importing in 97.5-99.5% of all hours, uncorrelated with
+  the hourly spread (r ≈ +0.06), 2025 mean RT spread $0.00 while 28 TWh flowed —
+  which a hurdle-gated spot-spread seam structurally deletes in a zero-spread
+  year (miso-45: 3.4 TWh gross imports vs 19.0 actual net in 2025).
+- **Tests:** `tests/test_miso_seam_ladder.py` — registry completeness/monotonicity/
+  same-seam no-wash, band repricing, spot-check of the derived 2025 PJM base band,
+  availability untouched, non-MISO / forecast-year / non-seam-row no-ops.
 
 - **Rubric/scoring:** `scripts/calibration_verdict.py` C8 (forced-energy share)
   gains a **grounded-above-budget escalation** (rubric v2.2, owner amendment). The
