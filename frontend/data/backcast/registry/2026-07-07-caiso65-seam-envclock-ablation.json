@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-caiso65-seam-envclock-ablation",
+  "label": "caiso65 seam envclock ablation",
+  "date": "2026-07-07",
+  "shorthand": "caiso65-seam-envclock-ablation",
+  "definition": "D-3 zero-forcing ablation TWIN of caiso65_seam_envelope_clock (rule 21): the same envelope-clock-corrected caiso-60 recipe with every merchant floor/bridge neutralized (ScenarioConfig.as_zero_forcing_ablation). ablation_of: caiso65_seam_envelope_clock (recorded here; the replay path does not thread the run_config field - see the W3a PR).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-07-caiso65-seam-envclock-ablation.js",
+  "bundle": "results/calibration/caiso65_seam_envelope_clock-ablation"
+}
