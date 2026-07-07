@@ -69,9 +69,32 @@ inflated to manufacture a bigger number (rule 11); this is the honest
 in-LP result of the measured requirement, published curve, and physics-
 gated online/offline ramp split.
 
-## Next steps (not run here)
+## A/B vs pjm-86 (same-tree, flags off) — criterion-identical
 
-- A/B vs `pjm86_pjm83_head_baseline` (same-tree, flags off) for C3a/b/c,
-  C1/C2 fuel-mix deltas, and D-2 CT_PEAKER drag reconciliation (#1484).
-- If the keeper decision favors adoption, the DOF ledger + zero-forcing
-  ablation twin (rule 20/21) are required before promotion.
+`calibration_verdict.py` full C1–C8 scoring is **byte-for-status identical**
+between this run and the `pjm86_pjm83_head_baseline` flag-off partner: not
+one criterion's PASS/FAIL/CAVEAT/SKIPPED status differs. C3c (price tail /
+scarcity, DA-expressible) **FAILs in both** — the mechanism does not clear
+this gate at its current magnitude. C3b (price shape) is CAVEAT in both.
+C1 fuel-mix per-class TWh deltas are ≤0.03 TWh/yr (CT_PEAKER ≤0.01 TWh/yr
+either direction, out of 20–32 TWh/yr class volume) — confirming near-zero
+dispatch redistribution, consistent with the small dual magnitude above.
+
+## #1484 (CT_PEAKER C8 drag share) — no material movement to reconcile
+
+CT_PEAKER class volume moves by ≤0.01 TWh/yr vs the pjm-86 baseline (2023
++0.0098, 2024 −0.0043, 2025 −0.0082 TWh — noise-level, <0.05% of the class's
+20–32 TWh/yr total). No real reserve product absorbed CT_PEAKER value at a
+magnitude worth D-2 reconciliation (rule 19); #1484's drag share is
+unchanged from pjm-83's already-registered 9.0/14.6/10.3% (2023/24/25).
+
+## Verdict — structurally real, criterion-neutral (the pjm-81 pattern, fixed)
+
+Unlike pjm-81 (1 fired hour / 3 yr, effectively inert), pjm-87 fires
+nontrivially and stays correctly in the opportunity-cost regime (never
+crosses the $300 penalty step). But like pjm-81, it moves **zero** C1–C8
+criteria — not a promotion case on its own. Mechanism retained for the next
+keeper cycle (rule 1: right structure first); keeper decision (whether to
+adopt alongside pjm-83, or hold pending a magnitude follow-up) is the
+owner's call — see the session's `AskUserQuestion` for the DOF ledger /
+ablation-twin tradeoff (rule 20/21 apply only if this is promoted).
