@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-08-miso-47-steamgas-ct",
+  "run_id": "2026-07-08-miso-47-steamgas-ablation",
   "iso": "MISO",
-  "label": "miso 47 steamgas ct",
+  "label": "miso 47 steamgas ablation",
   "target_years": [
     2023,
     2024,
@@ -16,7 +16,7 @@
   "rubric_version": 2.2,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, sysvol, price_mean, price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
   "notes": [],
   "criteria": {
@@ -59,37 +59,32 @@
     "storage": {
       "label": "C5b storage throughput",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "storage_shape": {
       "label": "C5c storage dispatch shape",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "FAIL"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
     "protective": [],
-    "ledgered": [
-      "C5b storage throughput",
-      "C5c storage dispatch shape"
-    ],
+    "ledgered": [],
     "commercial_band": [
       "C3b price duration/shape"
     ],
@@ -99,11 +94,11 @@
     }
   },
   "grade_summary": {
-    "scored": 12,
-    "target_grade": 5,
+    "scored": 9,
+    "target_grade": 2,
     "commercial_grade": 1,
-    "ledgered": 2,
-    "fails": 4
+    "ledgered": 0,
+    "fails": 6
   },
   "free_class_score": {
     "iso": "MISO",
