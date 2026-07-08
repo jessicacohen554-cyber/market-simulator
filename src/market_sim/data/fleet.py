@@ -1189,6 +1189,51 @@ def generators_to_fleet_arrays(
             out[shoulder] = pof_eff_legacy
             return out
 
+        # Temperature-dependent capacity derate (config.temp_dependent_derate).
+        # Precompute, per zone, the measured hourly dry-bulb TMAX (deg C) for the
+        # classes this switch derates, so the loop below can (a) SKIP the flat
+        # net-summer derate for temp-covered generators and (b) apply the physical
+        # temperature curve in the dedicated block after the loop. Zones with no
+        # weather coverage keep the flat derate (graceful fallback). See the
+        # ScenarioConfig.temp_dependent_derate docstring for the full rationale.
+        _td_on = (
+            bool(getattr(config, "temp_dependent_derate", False)) if config else False
+        )
+        # (slope per deg C, reference/onset temp deg C) by plant group
+        _TD_PARAMS: dict[str, tuple[float, float]] = {}
+        _td_tmax: dict[str, np.ndarray] = {}
+        _td_year = (
+            year
+            if year is not None
+            else (getattr(config, "weather_year", None) if config else None)
+        )
+        if _td_on and _iso and _td_year:
+            _ref = float(config.temp_derate_ref_c)
+            _TD_PARAMS = {
+                "CC_REGULAR": (float(config.temp_derate_slope_cc), _ref),
+                "CC_CHP": (float(config.temp_derate_slope_cc), _ref),
+                "CT_PEAKER": (float(config.temp_derate_slope_ct), _ref),
+                "CT_CHP": (float(config.temp_derate_slope_ct), _ref),
+                "ST_GAS": (float(config.temp_derate_slope_st_gas), _ref),
+                "ST_CHP": (float(config.temp_derate_slope_st_gas), _ref),
+                "COAL": (
+                    float(config.temp_derate_slope_coal),
+                    float(config.temp_derate_ref_c_coal),
+                ),
+            }
+            from market_sim.data.eia_loader import iso_zone_tmax
+
+            _td_zones = {g.zone for g in generators if g.plant_group in _TD_PARAMS}
+            for _z in _td_zones:
+                _t = iso_zone_tmax(_iso, int(_td_year), hours, zone=_z)
+                if _t is not None and _t[0] is not None:
+                    _td_tmax[_z] = np.asarray(_t[0], dtype=float)
+
+        def _td_covers(gen: "Generator") -> bool:
+            """True when the temperature derate handles this generator's summer
+            capability (so the flat net-summer derate must be skipped for it)."""
+            return _td_on and gen.plant_group in _TD_PARAMS and gen.zone in _td_tmax
+
         for g_idx, gen in enumerate(generators):
             if gen.plant_group not in THERMAL_AVAILABILITY:
                 continue
@@ -1323,14 +1368,20 @@ def generators_to_fleet_arrays(
             # nameplate in fleet_to_bins, so this brings the summer months back
             # to the real net-summer rating. Every other class keeps the flat
             # ``_SUMMER_CLASS_DERATE``.
-            if is_cc_np:
-                ratio = cc_summer_derate_ratio(int(gen.plant_code))
-                if ratio is not None and ratio < 1.0:
-                    availability[g_idx, summer] *= ratio
-            else:
-                summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
-                if summer_derate:
-                    availability[g_idx, summer] *= 1.0 - summer_derate
+            # When config.temp_dependent_derate covers this generator's
+            # zone+class, the flat/measured summer derate is SKIPPED here and
+            # replaced by the temperature curve in the dedicated block after the
+            # loop (it reproduces the same net-summer summer-mean for CC/CT, so
+            # that is a reshape, not a level change).
+            if not _td_covers(gen):
+                if is_cc_np:
+                    ratio = cc_summer_derate_ratio(int(gen.plant_code))
+                    if ratio is not None and ratio < 1.0:
+                        availability[g_idx, summer] *= ratio
+                else:
+                    summer_derate = _SUMMER_CLASS_DERATE.get(gen.plant_group)
+                    if summer_derate:
+                        availability[g_idx, summer] *= 1.0 - summer_derate
             # Per-plant coal max-CF ceilings: cap availability so the unit
             # cannot dispatch above its sustained operating limit.
             if gen.plant_group == "COAL":
@@ -1358,7 +1409,12 @@ def generators_to_fleet_arrays(
         # reduces capacity, only on hot hours. Vectorized per affected zone (no
         # per-hour Python loop, rule 2).
         _amb_year = year if year is not None else getattr(config, "weather_year", None)
-        if getattr(config, "gt_ambient_derate", False) and _iso and _amb_year:
+        if (
+            getattr(config, "gt_ambient_derate", False)
+            and not _td_on
+            and _iso
+            and _amb_year
+        ):
             _amb_slope = {
                 "CC_REGULAR": float(config.gt_ambient_derate_slope_cc),
                 "CC_CHP": float(config.gt_ambient_derate_slope_cc),
@@ -1383,6 +1439,43 @@ def generators_to_fleet_arrays(
                         continue
                     availability[g_idx, :] *= 1.0 - _slope * _over
                 np.clip(availability, 0.0, 1.0, out=availability)
+
+        # Temperature-dependent capacity derate (config.temp_dependent_derate).
+        # Applies the per-class physical curve precomputed above. For CC/CT the
+        # curve is rescaled so its SUMMER-hours mean reproduces the net-summer
+        # capability it replaces (capacity-neutral reshape); COAL/ST_GAS take the
+        # raw curve (a pure additive hot-hour condenser derate). Vectorized per
+        # zone; the only Python loop is over generators, not hours (rule 2).
+        # Availability is clipped to [0, 1], so it never exceeds the net-summer
+        # pmax basis (no capacity is invented on cool hours).
+        if _td_tmax:
+            for g_idx, gen in enumerate(generators):
+                _p = _TD_PARAMS.get(gen.plant_group)
+                if _p is None:
+                    continue
+                _tmax = _td_tmax.get(gen.zone)
+                if _tmax is None:
+                    continue
+                _slope, _ref_td = _p
+                # capacity fraction vs the ISO/onset rating point (<= 1.0)
+                raw = 1.0 - _slope * np.maximum(0.0, _tmax - _ref_td)
+                # Net-summer anchor for classes that already carry a summer
+                # derate: rescale so the Jun-Sep mean of the curve equals that
+                # net-summer factor (reshape only). COAL/ST_GAS have no existing
+                # summer derate -> no anchor, raw curve applied directly.
+                if cc_np_derate and gen.plant_group in ("CC_REGULAR", "CC_CHP"):
+                    _r = cc_summer_derate_ratio(int(gen.plant_code))
+                    _anchor = _r if (_r is not None and _r < 1.0) else None
+                elif gen.plant_group in _SUMMER_CLASS_DERATE:
+                    _anchor = 1.0 - _SUMMER_CLASS_DERATE[gen.plant_group]
+                else:
+                    _anchor = None
+                if _anchor is not None:
+                    _sm = float(np.mean(raw[summer]))
+                    if _sm > 0.0:
+                        raw = raw * (_anchor / _sm)
+                availability[g_idx, :] *= np.clip(raw, 0.0, 1.0)
+            np.clip(availability, 0.0, 1.0, out=availability)
 
     # Historic-outage overlay (backcast only). When config.outage_source is
     # "historic", zero availability for coal/CC plants during their actual

@@ -467,6 +467,7 @@ def run_year(
     gt_ambient_derate_ref_c: float | None = None,
     gt_ambient_derate_slope_cc: float | None = None,
     gt_ambient_derate_slope_ct: float | None = None,
+    temp_dependent_derate: bool = False,
     must_run_mw: "np.ndarray | None" = None,
     inject_biomass_mustrun: bool = False,
     priced_interchange: bool = False,
@@ -1259,6 +1260,12 @@ def run_year(
         if gt_ambient_derate_slope_ct is not None:
             _amb["gt_ambient_derate_slope_ct"] = float(gt_ambient_derate_slope_ct)
         config = config.with_overrides(**_amb)
+    if temp_dependent_derate:
+        # Temperature-dependent capacity derate: replaces the flat EIA-860
+        # net-summer derate with a per-class physical curve in measured hourly
+        # zone dry-bulb temperature (fleet.generators_to_fleet_arrays). Slopes/
+        # reference temps default to the ScenarioConfig physical values.
+        config = config.with_overrides(temp_dependent_derate=True)
     if zero_forcing_ablation:
         # D-3 zero-forcing ablation twin (audit §7 / CLAUDE.md rule 20): drop
         # every MERCHANT floor/bridge, keeping only the structural must-run set
