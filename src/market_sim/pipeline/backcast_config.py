@@ -195,7 +195,14 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
     "COAL_BIT": {
         "committed": 0.648,
         "econ_low": 0.7056,
-        "econ_high": 0.8064,
+        # econ_high raised 0.8064 -> 0.90 (2026-07-07): PJM bituminous coal was
+        # clearing too deep into the mid-merit economic band (over-running vs
+        # EIA-923), so the top economic tranche now offers nearer the plant's own
+        # base heat rate, steepening the coal supply curve above the committed
+        # block while staying below the 1.044 peak/scarcity tranche. Offer-level
+        # calibration on the registered offer_curve_by_group surface (rule #1
+        # step 2), validated in the PJM re-solve — not a residual-fitted adder.
+        "econ_high": 0.90,
         "peak": 1.044,
         "econ_low_share": 0.55,
     },
@@ -1454,7 +1461,7 @@ def backcast_config(
             # offer curve's 1.10 committed multiplier priced them as cheap
             # baseload and the LP ran the three flat at ~88% CF (3.7 TWh in 2024)
             # vs ~0.8 measured. The fix is the POWER-ONLY heat-rate correction in
-            # fleet._correct_caiso_chp_steam_credit_hr, which
+            # chp._correct_chp_steam_credit_hr, which
             # lifts those three units to the simple-cycle band (~9-11) so they
             # clear on price like peakers — CT_CHP 6.95 -> 3.54 TWh (2024),
             # FAIL -> PASS. It is grounded in topping-cycle physics (steam-credit

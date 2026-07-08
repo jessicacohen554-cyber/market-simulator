@@ -406,6 +406,9 @@ def main() -> None:
     # routes each CAMPD unit's outage to the bin matching the UNIT's own
     # class, not whichever group the last fleet row happened to carry.
     groups_by_code: dict[int, set[str]] = {}
+    # Per-plant MODELED steam (ST_GAS / ST_CHP) nameplate — the capacity basis
+    # for the orphaned gross-blank steam-host boiler fallback below (non-ERCOT).
+    steam_np_by_code: dict[int, float] = {}
 
     def _resolve_unit_group(
         is_coal: bool,
@@ -473,6 +476,10 @@ def main() -> None:
                 group_by_code[int(g.plant_code)] = g.plant_group
                 name_by_code[int(g.plant_code)] = g.name
                 groups_by_code.setdefault(int(g.plant_code), set()).add(g.plant_group)
+                if g.plant_group in ("ST_GAS", "ST_CHP"):
+                    steam_np_by_code[int(g.plant_code)] = steam_np_by_code.get(
+                        int(g.plant_code), 0.0
+                    ) + float(g.pmax_mw)
     # Facility names for units re-keyed by the CEMS->EIA split-plant remap
     # (their CAMPD facilityName is the legacy plant's).
     remap_names = {
@@ -602,6 +609,77 @@ def main() -> None:
                         }
                         peaks = {uid: float(g.max()) for uid, g in units.items()}
                         caps = {uid: (share, share, "optime_proxy") for uid in units}
+                # Orphaned gross-blank STEAM-HOST boiler fallback (non-ERCOT,
+                # MIXED facilities). The facility-wide opTime proxy above only
+                # fires when EVERY unit is gross-blank. A steam-CHP host boiler
+                # (ST_CHP / ST_GAS) that logs opTime but never grossLoad — its
+                # output serves the host behind the meter — is otherwise skipped
+                # (peaks<=0 -> continue below) whenever it shares a facility with
+                # a gross-reporting unit, so its outages go uncaptured and the
+                # flat chp_grid_pmin_mw steam floor force-generates it. Rebuild
+                # ONLY such units from their own binary opTime proxy (operated =
+                # available) x an equal share of the plant's MODELED steam (ST_*)
+                # nameplate, so a genuine multi-day boiler stop is caught while a
+                # host that keeps running yields no outage. Tightly gated to be
+                # over-detection-proof:
+                #   * a MODELED steam bin must exist at the plant (steam_grp in
+                #     fac_groups) — this alone excludes every auxiliary/startup
+                #     boiler at a COAL or CC_CHP plant (those carry no ST_* bin,
+                #     so their aux boilers — idle most of the year — are never
+                #     turned into a phantom full-year outage that would derate
+                #     the running plant; verified: Gavin 8102, Cardinal 2828,
+                #     Rockport 6166, the WV coal plants all carry {COAL} only),
+                #   * the unit's CAMPD unitType must be a fired steam boiler
+                #     (not a combustion turbine / combined-cycle block), and
+                #   * only whole-year gross-blank units (peaks<=0) are rebuilt,
+                #     so a gross-reporting unit with a data gap is untouched.
+                # Capacity = the plant's ST_* nameplate split equally across its
+                # blank steam boilers (per-unit EIA id matching is unreliable for
+                # behind-the-meter boilers and can mis-grab a large main-unit
+                # generator — the equal steam split mirrors the facility-wide
+                # fallback). Event-break fragmentation (a looser CF break for
+                # ST_CHP) was measured and REJECTED: a +48 h spike tolerance
+                # recovers only ~1.5 % more outage-days and 0 net windows on the
+                # PJM ST_CHP opTime-proxy set, so the strict ST_GAS_CF_PEAK break
+                # stays (a looser break would relabel steam-following economic
+                # cycling as outage for no real gain). Evidence: PJM Grays Ferry
+                # (54785) unit 25 (56.6 MW ST_CHP wall-fired boiler; opTime
+                # ~8.5k h/yr, no grossLoad any year) shares the plant with the
+                # gross-reporting 114 MW CT (unit 2); it takes one genuine 6-9 d
+                # maintenance stop each year (2023/24/25) this fallback now
+                # captures, relieving the ST_CHP floor over the plant-wide outage.
+                forced_group: dict[object, str] = {}
+                if iso != "ERCOT" and not all(p <= 0.0 for p in peaks.values()):
+                    steam_grp = (
+                        "ST_CHP"
+                        if "ST_CHP" in fac_groups
+                        else ("ST_GAS" if "ST_GAS" in fac_groups else None)
+                    )
+                    steam_np = steam_np_by_code.get(int(fac_id), 0.0)
+                    if steam_grp is not None and steam_np > 0.0:
+                        blank_boilers: dict[object, np.ndarray] = {}
+                        for uid, u in fac.groupby("unitId", observed=True):
+                            if peaks.get(uid, 0.0) > 0.0:
+                                continue
+                            ut = str(u["unitType"].iloc[0]).strip().lower()
+                            if "turbine" in ut or "combined cycle" in ut:
+                                continue
+                            if not any(
+                                k in ut
+                                for k in ("fired", "boiler", "stoker", "cyclone")
+                            ):
+                                continue
+                            ot = _unit_year_grid(u, year, col="opTime", end=horizon_end)
+                            if (ot > 0.0).any():
+                                blank_boilers[uid] = ot
+                        if blank_boilers:
+                            share = steam_np / len(blank_boilers)
+                            for uid, ot in blank_boilers.items():
+                                proxy = np.where(ot > 0.0, share, 0.0)
+                                units[uid] = proxy
+                                peaks[uid] = float(proxy.max())
+                                caps[uid] = (share, share, "optime_proxy_steam")
+                                forced_group[uid] = steam_grp
                 fac_cap = sum(derate for _, derate, _ in caps.values()) or 0.0
                 ran = {uid for uid, pk in peaks.items() if pk > 0.0}
                 for uid, gross in units.items():
@@ -615,10 +693,15 @@ def main() -> None:
                     # Route this unit's window to ITS model bin (non-ERCOT;
                     # ERCOT keeps the bin-sheet group verbatim and reroutes
                     # its split plants downstream in _unit_outage_target).
+                    # A steam-host boiler rebuilt by the orphaned-blank fallback
+                    # above carries an explicit forced steam group (the resolver's
+                    # fac_group short-circuit would otherwise mis-route it to a
+                    # sibling CT_CHP bin at a mixed CT/ST plant like Grays Ferry).
                     ugroup = (
                         group
                         if iso == "ERCOT"
-                        else _resolve_unit_group(
+                        else forced_group.get(uid)
+                        or _resolve_unit_group(
                             unit_is_coal[uid],
                             unit_type.get(uid, ""),
                             fac_groups,
