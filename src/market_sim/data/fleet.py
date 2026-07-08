@@ -1345,6 +1345,45 @@ def generators_to_fleet_arrays(
                     )
         np.clip(availability, 0.0, 1.0, out=availability)
 
+        # Gas-turbine ambient-temperature derate (config.gt_ambient_derate). The
+        # net-summer/flat class derate above is a season-average rating; a GT
+        # keeps losing output as ambient rises past that rating point, so the
+        # hottest hours (where scarcity should occur) sit BELOW net-summer. Layer
+        # a purely-additive incremental derate on CC/CT for hours whose measured
+        # zone tmax exceeds the net-summer reference temp:
+        #   extra(t) = slope_class x max(0, tmax_zone(t) - ref_c);  avail *= 1-extra
+        # Physics (per-C slope) x measured hourly temperature x measured
+        # net-summer anchor — a rule-11 physical input, forward-reproducible in
+        # both backcast and forecast (never fitted to the price residual). Only
+        # reduces capacity, only on hot hours. Vectorized per affected zone (no
+        # per-hour Python loop, rule 2).
+        _amb_year = year if year is not None else getattr(config, "weather_year", None)
+        if getattr(config, "gt_ambient_derate", False) and _iso and _amb_year:
+            _amb_slope = {
+                "CC_REGULAR": float(config.gt_ambient_derate_slope_cc),
+                "CC_CHP": float(config.gt_ambient_derate_slope_cc),
+                "CT_PEAKER": float(config.gt_ambient_derate_slope_ct),
+                "CT_CHP": float(config.gt_ambient_derate_slope_ct),
+            }
+            _ref_c = float(config.gt_ambient_derate_ref_c)
+            from market_sim.data.eia_loader import iso_zone_tmax
+
+            _amb_zones = {g.zone for g in generators if g.plant_group in _amb_slope}
+            _zone_over: dict[str, np.ndarray] = {}
+            for _z in _amb_zones:
+                _t = iso_zone_tmax(_iso, int(_amb_year), hours, zone=_z)
+                if _t is not None and _t[0] is not None:
+                    # degrees ABOVE the net-summer reference (0 below it)
+                    _zone_over[_z] = np.maximum(0.0, np.asarray(_t[0], float) - _ref_c)
+            if _zone_over:
+                for g_idx, gen in enumerate(generators):
+                    _slope = _amb_slope.get(gen.plant_group)
+                    _over = _zone_over.get(gen.zone) if _slope else None
+                    if _over is None:
+                        continue
+                    availability[g_idx, :] *= 1.0 - _slope * _over
+                np.clip(availability, 0.0, 1.0, out=availability)
+
     # Historic-outage overlay (backcast only). When config.outage_source is
     # "historic", zero availability for coal/CC plants during their actual
     # sustained (> 10-day) outage windows, a hard override of the statistical
