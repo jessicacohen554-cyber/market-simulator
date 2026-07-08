@@ -66,7 +66,7 @@ from the year grid.
 | 46 | Confirmed-retirement binding instruments | RTO deactivation acceptances, consent decrees, statutes, regulatory orders (per ISO) | Force-retirement/derate at instrument date | `data/raw/confirmed-retirements/<iso>.csv` | Forecast-only |
 | 47 | RGGI allowance distribution / CARB cap schedule | RGGI Inc. / CARB-Quebec auction results | State carbon price series (NEISO/NYISO/CAISO) | `data/raw/policy/rggi-co2-budgets/`, `carb-cap-schedule/` | Both |
 | 48 | NYSDEC 6 NYCRR Subpart 227-3 "peaker rule" compliance schedule | NY DEC regulatory filing (via NYISO Gold Book) | Ozone-season simple-cycle unavailability | `data/raw/reference/nysdec-227-3-peaker-compliance.csv` | Both |
-| 49 | NERC GADS EFORd benchmarks | NERC | Class-level forced-outage-rate prior | `data/raw/reference/nerc-gads-eford-2019-2023/` | Both |
+| 49 | NERC GADS EFORd benchmarks | NERC | Class-level forced-outage-rate prior | `data/raw/reference/nerc-gads-eford-2019-2023/`, `nerc-gads-eford-annual-2018-2024/` (per-year 2018-2024), `nerc-gads-eford-2018-2022/`, `nerc-gads-eford-2020-2024/` (5-yr rolling windows) | Both |
 | 50 | Master plant registry / CAMPD bin assignments / LCR-area membership | Curated crosswalks (EIA-860 + CAMPD + county rules) | Plant→zone assignment, ERCOT tranche crosswalk, CAISO LCR area membership | `data/raw/reference/master-plant-registry.csv`, `custom-bin-assignments.csv`, `lcr_area_membership_CAISO.csv` | Both |
 
 ---
@@ -236,11 +236,24 @@ under any holdout-year backcast until it's addressed).
 - **Confirmed-retirements registry** — forward-looking events (`exit_year >= 2023`); not a
   historical coverage question.
 - **RGGI allowance schedule / CARB cap schedule** — forward regulatory compliance-year tables.
-- **NYSDEC 227-3 peaker compliance, NERC GADS EFORd (2019-2023 only, no 2018/2024+), master
-  plant registry, CAMPD bin assignments, LCR-area membership** — static crosswalks/benchmarks, not
-  time series.
+- **NYSDEC 227-3 peaker compliance, NERC GADS EFORd (annual brochures now on disk for every
+  published year 2018-2024 plus 5-yr rolling windows 2018-2022/2019-2023/2020-2024; NERC has not
+  yet published a 2025 or H1-2026 brochure as of 2026-07-08), master plant registry, CAMPD bin
+  assignments, LCR-area membership** — static crosswalks/benchmarks, not time series.
 - **NEISO winter fuel-security inventory** — hand-curated from ISO-NE's 2018 OFSA study and
   2018-2020 ESI filings; a fixed planning-study snapshot, not a rolling measured series.
+
+**Rule-22 note on the 2026-07-08 GADS collection.** The new annual (2018-2024) and
+2018-2022 rolling GADS files span the validation holdout year (2022) and years before the
+locked-test boundary (2018). This is a **NERC-wide, class-level** statistical benchmark
+(generator technology × nameplate-size band) — it carries no ISO-specific or per-year
+realized-dispatch/price information that could leak into backcast tuning, and it is not
+wired into any model code path (intake only, no constant/offer-curve/availability input
+changed). Authorization for this intake is the user's own task instruction ("collect and
+download remaining NERC GADS EFORd benchmarks to cover full 2018-2026 data where
+available"). Validation performed was no-LP structural/byte checks only (row counts,
+header column-name matching, cross-window continuity checks against the existing
+`2019-2023` intake) — no dispatch solve, no scoring against any year.
 
 ---
 
