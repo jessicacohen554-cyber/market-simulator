@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-08-ercot46-statmode",
+ "label": "ercot46 statmode",
+ "date": "2026-07-08",
+ "shorthand": "ercot46-statmode",
+ "definition": "D-7 statistical-mode A/B twin — SAME-SHA replay of the CURRENT ERCOT keeper 2026-07-08-ercot46-clock-steamgas (bundle ercot46_clock_steamgas), replayed at HEAD fab2254 with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False); structural model + realized annual Henry Hub gas price unchanged. G-10 honesty-gate twin: the D-7 gap is now same-SHA-comparable to the keeper. Fail count 2→7 of 11 scored (C6 governance excluded) — price level C3a CAVEAT→FAIL (+1.7%→−14.5%/−22.5%/−48.5% vs DA), fuel-mix C1 PASS→FAIL (COAL_PRB over-run), dispatch-corr C4 PASS→FAIL, CO2 C5a PASS but worsens (+2%→+6%); CT/ST forced-energy share (C8) jumps to 47–58%. Probe only — not a keeper, per CLAUDE.md #1/#13.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-08-ercot46-statmode.js",
+ "bundle": "results/calibration/ercot46_statmode",
+ "statmode_of": "2026-07-08-ercot46-clock-steamgas",
+ "head_sha": "fab2254"
+}
