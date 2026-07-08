@@ -509,6 +509,22 @@ CAISO_CHP_CC_STEAM_CREDIT_HR_THRESHOLD: float = 6.0
 CAISO_CHP_CC_STEAM_CREDIT_FACTOR: float = 1.15
 CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR: float = 6.3
 
+# ISOs whose CHP gas turbines get the steam-credit power-only heat-rate
+# correction (:func:`market_sim.data.chp._correct_chp_steam_credit_hr`). The
+# correction is TURBINE PHYSICS, not an ISO-specific residual fit: a power-only
+# simple-cycle GT cannot run below ~8 MMBtu/MWh and a power-only CC cannot run
+# below ~6.3, so a CHP unit reporting less is carrying a steam credit in its
+# CEMS/EIA-923 heat rate regardless of which market it sits in. Because the
+# thresholds/factors/floor are universal physical limits (the same for every
+# ISO — CLAUDE.md rule 24 governs *fitted* per-ISO curves, not physics), the set
+# only controls WHICH ISOs have had their CHP HR distribution audited and wired
+# in. PJM added 2026-07-07: its CHP reports cap-weighted HRs of CC_CHP ~4.95 /
+# CT_CHP ~6.14 MMBtu/MWh (both physically impossible power-only), which let
+# steam-credited CHP clear as the cheapest thermal and over-deliver grid energy
+# +52-67% vs EIA-923 net-to-grid (docs/FINDING-pjm-burndown-2026-07.md). Other
+# ISOs join as their CHP HR distributions are audited in the all-ISO sweep.
+CHP_STEAM_CREDIT_HR_CORRECTION_ISOS: frozenset[str] = frozenset({"CAISO", "PJM"})
+
 # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
 # summer peak; the remaining (1 - share) is redistributed into the shoulder
 # months. Winter keeps the flat WEFOR.
@@ -3533,7 +3549,7 @@ def _rows_to_generators(
 
 from market_sim.data.chp import (  # noqa: E402
     _chp_by_plant,
-    _correct_caiso_chp_steam_credit_hr,
+    _correct_chp_steam_credit_hr,
     chp_btm_pct,
     chp_class_netgen_mwh,
     chp_pmin_cf,
@@ -3947,7 +3963,7 @@ def load_fleet_from_csv(
         source = parquet_path
 
     _correct_mixed_facility_steam_hr(generators)
-    _correct_caiso_chp_steam_credit_hr(generators, iso)
+    _correct_chp_steam_credit_hr(generators, iso)
     _cache_binned_fleet(iso, generators, source)
     return generators
 
