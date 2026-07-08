@@ -1,0 +1,201 @@
+year,region_id,region_name,market_type_id,market_type_name,price_usd_per_ton,sales_short_tons
+2019,WNC,West North Central,TOT,Total,19.17,27342241.0
+2019,WSB,Western Region Total,CAP,Captive,16.16,131754954.0
+2019,WSB,Western Region Total,OM,Open Market,18.27,242569009.0
+2019,WSB,Western Region Total,TOT,Total,17.81,383763321.0
+2019,WSC,West South Central,CAP,Captive,17.58,19497572.0
+2019,WSC,West South Central,OM,Open Market,41.38,3157553.0
+2019,WSC,West South Central,TOT,Total,21.22,24211971.0
+2019,WST,West Total,CAP,Captive,16.16,131754954.0
+2019,WST,West Total,OM,Open Market,18.18,215416041.0
+2019,WST,West Total,TOT,Total,17.72,356610353.0
+2019,WV,West Virginia,CAP,Captive,43.95,16741574.0
+2019,WV,West Virginia,OM,Open Market,67.3,45624828.0
+2019,WV,West Virginia,TOT,Total,72.7,90831546.0
+2019,WVN,West Virginia (Northern),TOT,Total,55.03,46370027.0
+2019,WVS,West Virginia (Southern),TOT,Total,91.13,44461519.0
+2019,WY,Wyoming,CAP,Captive,12.85,113407876.0
+2019,WY,Wyoming,OM,Open Market,12.48,163338165.0
+2019,WY,Wyoming,TOT,Total,12.63,276746041.0
+2020,AK,Alaska,TOT,Total,58.32,1042289.0
+2020,AL,Alabama,TOT,Total,98.01,12596301.0
+2020,APC,Appalachia Central,CAP,Captive,89.81,571329.0
+2020,APC,Appalachia Central,OM,Open Market,75.21,25372055.0
+2020,APC,Appalachia Central,TOT,Total,73.56,48256115.0
+2020,APN,Appalachia Northern,CAP,Captive,39.24,7802506.0
+2020,APN,Appalachia Northern,OM,Open Market,49.96,52820558.0
+2020,APN,Appalachia Northern,TOT,Total,49.72,78483351.0
+2020,APP,Appalachia Total,CAP,Captive,42.91,8497689.0
+2020,APP,Appalachia Total,OM,Open Market,58.91,80627374.0
+2020,APP,Appalachia Total,TOT,Total,62.34,139335767.0
+2020,APS,Appalachia Southern,CAP,Captive,57.98,123854.0
+2020,APS,Appalachia Southern,OM,Open Market,83.37,2434761.0
+2020,APS,Appalachia Southern,TOT,Total,98.01,12596301.0
+2020,CO,Colorado,CAP,Captive,42.84,5157130.0
+2020,CO,Colorado,OM,Open Market,39.0,4580532.0
+2020,CO,Colorado,TOT,Total,41.45,10390282.0
+2020,EMR,East of Mississippi River,CAP,Captive,36.22,26734309.0
+2020,EMR,East of Mississippi River,OM,Open Market,49.7,128618417.0
+2020,EMR,East of Mississippi River,TOT,Total,52.47,210287969.0
+2020,ENC,East North Central,CAP,Captive,33.22,18511339.0
+2020,ENC,East North Central,OM,Open Market,31.33,32291770.0
+2020,ENC,East North Central,TOT,Total,31.11,55619592.0
+2020,ESC,East South Central,CAP,Captive,119.05,195237.0
+2020,ESC,East South Central,OM,Open Market,49.16,28873098.0
+2020,ESC,East South Central,TOT,Total,63.12,40035318.0
+2020,EST,East Total,CAP,Captive,43.67,1499230.0
+2020,EST,East Total,OM,Open Market,59.32,28689470.0
+2020,EST,East Total,TOT,Total,56.55,46000324.0
+2020,IL,Illinois,TOT,Total,23.86,30888749.0
+2020,ILL,Illinois Basin,CAP,Captive,33.1,18236620.0
+2020,ILL,Illinois Basin,OM,Open Market,34.58,45452608.0
+2020,ILL,Illinois Basin,TOT,Total,33.27,68413767.0
+2020,IN,Indiana,CAP,Captive,40.71,9989273.0
+2020,IN,Indiana,OM,Open Market,40.57,10585557.0
+2020,IN,Indiana,TOT,Total,40.49,20871586.0
+2020,INO,Other Interior,CAP,Captive,11.52,17721036.0
+2020,INO,Other Interior,OM,Open Market,70.34,5773347.0
+2020,INO,Other Interior,TOT,Total,26.19,23718314.0
+2020,INT,Interior Region Total,CAP,Captive,22.47,35957656.0
+2020,INT,Interior Region Total,OM,Open Market,38.61,51225955.0
+2020,INT,Interior Region Total,TOT,Total,31.45,92132081.0
+2020,KY,Kentucky,CAP,Captive,225.0,71383.0
+2020,KY,Kentucky,OM,Open Market,47.95,23881990.0
+2020,KY,Kentucky,TOT,Total,49.04,24797678.0
+2020,KYE,Kentucky (East),TOT,Total,64.06,8144246.0
+2020,KYW,Kentucky (West),OM,Open Market,41.71,16626834.0
+2020,KYW,Kentucky (West),TOT,Total,41.7,16653432.0
+2020,LA,Louisiana,TOT,Total,254.45,696753.0
+2020,MAT,Middle Atlantic,CAP,Captive,43.67,1499230.0
+2020,MAT,Middle Atlantic,OM,Open Market,55.75,25259631.0
+2020,MAT,Middle Atlantic,TOT,Total,52.11,36122046.0
+2020,MD,Maryland,OM,Open Market,59.36,816333.0
+2020,MD,Maryland,TOT,Total,62.4,1114660.0
+2020,MID,Midwest Total,CAP,Captive,33.22,18511339.0
+2020,MID,Midwest Total,OM,Open Market,26.07,58857251.0
+2020,MID,Midwest Total,TOT,Total,27.42,82185073.0
+2020,MO,Missouri,TOT,Total,53.0,158739.0
+2020,MS,Mississippi,TOT,Total,27.61,2538435.0
+2020,MT,Montana,TOT,Total,20.27,26380520.0
+2020,MTN,Mountain,CAP,Captive,16.11,107942621.0
+2020,MTN,Mountain,OM,Open Market,17.6,165713252.0
+2020,MTN,Mountain,TOT,Total,17.03,279930535.0
+2020,ND,North Dakota,OM,Open Market,19.48,26406742.0
+2020,ND,North Dakota,TOT,Total,19.48,26406742.0
+2020,NM,New Mexico,TOT,Total,40.62,11325095.0
+2020,OH,Ohio,TOT,Total,38.49,3859257.0
+2020,PA,Pennsylvania,TOT,Total,52.11,36122046.0
+2020,PAA,Pennsylvania (Anthracite),TOT,Total,90.68,2417451.0
+2020,PAB,Pennsylvania (Bituminous),TOT,Total,49.35,33704595.0
+2020,PCN,Pacific Noncontiguous,TOT,Total,58.32,1042289.0
+2020,PRB,Powder River Basin,CAP,Captive,11.31,88365426.0
+2020,PRB,Powder River Basin,OM,Open Market,12.56,137503749.0
+2020,PRB,Powder River Basin,TOT,Total,12.11,230255255.0
+2020,SAT,South Atlantic,CAP,Captive,40.54,6528503.0
+2020,SAT,South Atlantic,OM,Open Market,60.5,42193918.0
+2020,SAT,South Atlantic,TOT,Total,62.32,78511013.0
+2020,STH,South Total,CAP,Captive,20.13,24444776.0
+2020,STH,South Total,OM,Open Market,56.65,70713350.0
+2020,STH,South Total,TOT,Total,55.86,129689193.0
+2020,TN,Tennessee,TOT,Total,61.43,102904.0
+2020,TX,Texas,TOT,Total,17.98,20324387.0
+2020,UNT,Uinta Basin,CAP,Captive,42.71,4996620.0
+2020,UNT,Uinta Basin,OM,Open Market,39.59,15655808.0
+2020,UNT,Uinta Basin,TOT,Total,39.22,22435852.0
+2020,US,U.S. Total,CAP,Captive,19.1,152397966.0
+2020,US,U.S. Total,OM,Open Market,31.44,325015612.0
+2020,US,U.S. Total,TOT,Total,31.41,538847414.0
+2020,UT,Utah,OM,Open Market,39.35,11966361.0
+2020,UT,Utah,TOT,Total,37.22,13202323.0
+2020,VA,Virginia,OM,Open Market,85.59,3429839.0
+2020,VA,Virginia,TOT,Total,72.76,9878278.0
+2020,WBO,Other Western,CAP,Captive,36.09,14580575.0
+2020,WBO,Other Western,OM,Open Market,28.61,40002726.0
+2020,WBO,Other Western,TOT,Total,30.64,54688459.0
+2020,WMR,West of Mississippi River,CAP,Captive,15.46,125663657.0
+2020,WMR,West of Mississippi River,OM,Open Market,19.49,196397195.0
+2020,WMR,West of Mississippi River,TOT,Total,17.94,328559445.0
+2020,WNC,West North Central,OM,Open Market,19.68,26565481.0
+2020,WNC,West North Central,TOT,Total,19.68,26565481.0
+2020,WSB,Western Region Total,CAP,Captive,16.11,107942621.0
+2020,WSB,Western Region Total,OM,Open Market,18.08,193162283.0
+2020,WSB,Western Region Total,TOT,Total,17.38,307379566.0
+2020,WSC,West South Central,CAP,Captive,11.52,17721036.0
+2020,WSC,West South Central,OM,Open Market,106.5,3076173.0
+2020,WSC,West South Central,TOT,Total,25.82,21021140.0
+2020,WST,West Total,CAP,Captive,16.11,107942621.0
+2020,WST,West Total,OM,Open Market,17.85,166755541.0
+2020,WST,West Total,TOT,Total,17.19,280972824.0
+2020,WV,West Virginia,CAP,Captive,40.54,6528503.0
+2020,WV,West Virginia,OM,Open Market,58.26,37947746.0
+2020,WV,West Virginia,TOT,Total,60.8,67518075.0
+2020,WVN,West Virginia (Northern),TOT,Total,48.19,37387388.0
+2020,WVS,West Virginia (Southern),TOT,Total,76.43,30130687.0
+2020,WY,Wyoming,CAP,Captive,13.19,92054841.0
+2020,WY,Wyoming,OM,Open Market,12.94,126518951.0
+2020,WY,Wyoming,TOT,Total,13.04,218632315.0
+2021,AK,Alaska,TOT,Total,60.32,1023740.0
+2021,AL,Alabama,TOT,Total,150.54,10178986.0
+2021,APC,Appalachia Central,CAP,Captive,129.24,1827997.0
+2021,APC,Appalachia Central,OM,Open Market,75.97,27847041.0
+2021,APC,Appalachia Central,TOT,Total,99.51,54941733.0
+2021,APN,Appalachia Northern,CAP,Captive,117.72,1055745.0
+2021,APN,Appalachia Northern,OM,Open Market,50.57,67572042.0
+2021,APN,Appalachia Northern,TOT,Total,57.98,90976735.0
+2021,APP,Appalachia Total,CAP,Captive,125.02,2883742.0
+2021,APP,Appalachia Total,OM,Open Market,58.67,96954333.0
+2021,APP,Appalachia Total,TOT,Total,78.63,156097454.0
+2021,APS,Appalachia Southern,OM,Open Market,101.56,1535250.0
+2021,APS,Appalachia Southern,TOT,Total,150.54,10178986.0
+2021,CO,Colorado,CAP,Captive,44.63,5271436.0
+2021,CO,Colorado,OM,Open Market,36.61,4628627.0
+2021,CO,Colorado,TOT,Total,46.02,11492102.0
+2021,EMR,East of Mississippi River,CAP,Captive,46.84,21259167.0
+2021,EMR,East of Mississippi River,OM,Open Market,52.34,144302836.0
+2021,EMR,East of Mississippi River,TOT,Total,64.77,233127524.0
+2021,ENC,East North Central,CAP,Captive,34.58,18375425.0
+2021,ENC,East North Central,OM,Open Market,38.47,31502725.0
+2021,ENC,East North Central,TOT,Total,35.52,60423157.0
+2021,ESC,East South Central,CAP,Captive,125.06,798462.0
+2021,ESC,East South Central,OM,Open Market,51.18,28016465.0
+2021,ESC,East South Central,TOT,Total,77.52,39786309.0
+2021,EST,East Total,CAP,Captive,98.31,957382.0
+2021,EST,East Total,OM,Open Market,60.74,31030167.0
+2021,EST,East Total,TOT,Total,70.26,52448945.0
+2021,IL,Illinois,TOT,Total,31.15,37894589.0
+2021,ILL,Illinois Basin,CAP,Captive,34.58,18375425.0
+2021,ILL,Illinois Basin,OM,Open Market,40.19,44323895.0
+2021,ILL,Illinois Basin,TOT,Total,37.06,74005462.0
+2021,IN,Indiana,TOT,Total,43.52,19770249.0
+2021,INO,Other Interior,CAP,Captive,14.11,15432882.0
+2021,INO,Other Interior,OM,Open Market,42.27,5540392.0
+2021,INO,Other Interior,TOT,Total,21.55,20973274.0
+2021,INT,Interior Region Total,CAP,Captive,25.23,33808307.0
+2021,INT,Interior Region Total,OM,Open Market,40.42,49864287.0
+2021,INT,Interior Region Total,TOT,Total,33.63,94978736.0
+2021,KY,Kentucky,CAP,Captive,125.06,798462.0
+2021,KY,Kentucky,OM,Open Market,50.96,23456607.0
+2021,KY,Kentucky,TOT,Total,55.28,26582715.0
+2021,KYE,Kentucky (East),TOT,Total,74.97,10242091.0
+2021,KYW,Kentucky (West),OM,Open Market,43.34,15543304.0
+2021,KYW,Kentucky (West),TOT,Total,42.93,16340624.0
+2021,LA,Louisiana,TOT,Total,26.26,292527.0
+2021,MAT,Middle Atlantic,CAP,Captive,45.01,461326.0
+2021,MAT,Middle Atlantic,OM,Open Market,57.26,27900388.0
+2021,MAT,Middle Atlantic,TOT,Total,57.63,41907950.0
+2021,MD,Maryland,OM,Open Market,56.94,1184879.0
+2021,MD,Maryland,TOT,Total,59.12,1238127.0
+2021,MID,Midwest Total,CAP,Captive,34.58,18375425.0
+2021,MID,Midwest Total,OM,Open Market,29.54,58348680.0
+2021,MID,Midwest Total,TOT,Total,30.45,87269112.0
+2021,MO,Missouri,TOT,Total,53.0,44163.0
+2021,MS,Mississippi,TOT,Total,27.32,3024608.0
+2021,MT,Montana,TOT,Total,22.66,28752866.0
+2021,MTN,Mountain,CAP,Captive,16.47,109246671.0
+2021,MTN,Mountain,OM,Open Market,16.91,183718057.0
+2021,MTN,Mountain,TOT,Total,17.05,302908348.0
+2021,ND,North Dakota,OM,Open Market,19.0,26801792.0
+2021,ND,North Dakota,TOT,Total,19.0,26801792.0
+2021,NM,New Mexico,TOT,Total,41.98,10251487.0
+2021,OH,Ohio,OM,Open Market,38.19,2722134.0
+2021,OH,Ohio,TOT,Total,38.08,2758319.0
