@@ -3575,6 +3575,39 @@ class ScenarioConfig:
     # enables it for MISO. See market_sim.data.fuel.apply_miso_zonal_gas_basis.
     miso_zonal_gas_basis: bool = False
 
+    # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
+    # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
+    # SoCal Citygate — but the model prices every zone off the single blended
+    # CA-composite series, so the gas fleets are equally cheap and the LP
+    # develops no systematic north-south dispatch gradient (its NP15/ZP26 clear
+    # byte-identical prices and its N-S LMP basis carries the wrong sign vs the
+    # measured hub LMPs). This adds each zone's measured hub basis vs Henry Hub
+    # (data/raw/caiso_zonal_gas_hub.csv — month-balanced annual means of the
+    # EIA NG Weekly archive's weekly Wednesday prints, NGI Daily GPI; the same
+    # published print the ERCOT Waha rows cite) as a mean-zero capacity-weighted
+    # spread, identical to the PJM/MISO mechanism, preserving the calibrated
+    # composite+transport aggregate level. Measured N-S spread (PG&E − SoCal):
+    # −0.49 / +0.54 / −0.18 $/MMBtu (2023/24/25) — year-varying measured data,
+    # not a fitted north-premium knob. Off by default so every existing CAISO
+    # keeper replay is byte-identical. Backcast-only (no hub rows in forward
+    # years). See market_sim.data.fuel.apply_caiso_zonal_gas_basis.
+    caiso_zonal_gas_basis: bool = False
+
+    # CAISO asymmetric measured Path 15 / Path 26 directional ratings. The
+    # internal N-S links carry symmetric TTCs (5,400 / 4,000 MW) although each
+    # is only ONE direction's WECC-accepted rating: Path 15 (Midway–Los Banos)
+    # is 3,265 MW N→S / 5,400 MW S→N and Path 26 (Midway–Vincent) is 4,000 MW
+    # N→S / 3,000 MW S→N (WECC Path Rating Catalog, 2024 public version). The
+    # loose directions let the LP equalize the zones (Path 15 never binds;
+    # NP15==ZP26 byte-identical all years) and ship the south's midday solar
+    # surplus north past the real 3,000 MW Path-26 S→N limit, suppressing the
+    # measured NP15-over-SP15 LMP premium. When on, two InterfaceLimit rows cap
+    # each path's directional flow at the published rating (the per-link TTC
+    # keeps the looser direction). Measured data over estimate (rule 14); off
+    # by default so every existing CAISO keeper replay is byte-identical. See
+    # market_sim.model.transmission.apply_caiso_asymmetric_path_limits.
+    caiso_asymmetric_path_ratings: bool = False
+
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
     # perfect single price (0.000 zonal LMP spread in all 8760 hours of all
     # backcast years) because the priced external star node (PJM_external) wires
