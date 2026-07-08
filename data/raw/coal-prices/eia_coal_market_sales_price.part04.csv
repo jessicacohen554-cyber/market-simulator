@@ -1,0 +1,201 @@
+year,region_id,region_name,market_type_id,market_type_name,price_usd_per_ton,sales_short_tons
+2007,WY,Wyoming,CAP,Captive,13.62,75461858.0
+2007,WY,Wyoming,OM,Open Market,9.67,375774650.0
+2007,WY,Wyoming,TOT,Total,10.33,451236508.0
+2008,AL,Alabama,OM,Open Market,71.31,20106836.0
+2008,AL,Alabama,TOT,Total,71.31,20106836.0
+2008,APC,Appalachia Central,CAP,Captive,74.01,28655910.0
+2008,APC,Appalachia Central,OM,Open Market,62.56,204663092.0
+2008,APC,Appalachia Central,TOT,Total,63.97,233319002.0
+2008,APN,Appalachia Northern,CAP,Captive,55.29,10371144.0
+2008,APN,Appalachia Northern,OM,Open Market,46.07,126458991.0
+2008,APN,Appalachia Northern,TOT,Total,46.77,136830135.0
+2008,APP,Appalachia Total,CAP,Captive,69.04,39027054.0
+2008,APP,Appalachia Total,OM,Open Market,57.12,351228919.0
+2008,APP,Appalachia Total,TOT,Total,58.31,390255973.0
+2008,APS,Appalachia Southern,OM,Open Market,71.31,20106836.0
+2008,APS,Appalachia Southern,TOT,Total,71.31,20106836.0
+2008,CO,Colorado,CAP,Captive,36.59,2917288.0
+2008,CO,Colorado,OM,Open Market,32.3,30545830.0
+2008,CO,Colorado,TOT,Total,32.67,33463118.0
+2008,EMR,East of Mississippi River,CAP,Captive,60.12,55540189.0
+2008,EMR,East of Mississippi River,OM,Open Market,52.92,437459973.0
+2008,EMR,East of Mississippi River,TOT,Total,53.73,493000162.0
+2008,ENC,East North Central,CAP,Captive,38.71,17878646.0
+2008,ENC,East North Central,OM,Open Market,38.5,77769282.0
+2008,ENC,East North Central,TOT,Total,38.54,95647928.0
+2008,ESC,East South Central,CAP,Captive,51.2,5252931.0
+2008,ESC,East South Central,OM,Open Market,53.43,140101542.0
+2008,ESC,East South Central,TOT,Total,53.35,145354473.0
+2008,EST,East Total,CAP,Captive,83.5,11662854.0
+2008,EST,East Total,OM,Open Market,55.98,78683081.0
+2008,EST,East Total,TOT,Total,59.53,90345935.0
+2008,IL,Illinois,CAP,Captive,39.78,5768132.0
+2008,IL,Illinois,OM,Open Market,40.41,27079930.0
+2008,IL,Illinois,TOT,Total,40.3,32848062.0
+2008,ILL,Illinois Basin,CAP,Captive,39.03,16513135.0
+2008,ILL,Illinois Basin,OM,Open Market,36.46,83208954.0
+2008,ILL,Illinois Basin,TOT,Total,36.88,99722089.0
+2008,IN,Indiana,CAP,Captive,38.81,10680475.0
+2008,IN,Indiana,OM,Open Market,33.37,26150914.0
+2008,IN,Indiana,TOT,Total,34.95,36831389.0
+2008,INO,Other Interior,CAP,Captive,17.97,28028139.0
+2008,INO,Other Interior,OM,Open Market,23.05,19896887.0
+2008,INO,Other Interior,TOT,Total,20.08,47925026.0
+2008,INT,Interior Region Total,CAP,Captive,25.78,44541274.0
+2008,INT,Interior Region Total,OM,Open Market,33.87,103105841.0
+2008,INT,Interior Region Total,TOT,Total,31.43,147647115.0
+2008,KY,Kentucky,CAP,Captive,51.2,5252931.0
+2008,KY,Kentucky,OM,Open Market,51.33,114067641.0
+2008,KY,Kentucky,TOT,Total,51.32,119320572.0
+2008,KYE,Kentucky (East),OM,Open Market,56.94,
+2008,KYW,Kentucky (West),OM,Open Market,35.59,
+2008,MAT,Middle Atlantic,CAP,Captive,68.13,4078987.0
+2008,MAT,Middle Atlantic,OM,Open Market,49.65,62862017.0
+2008,MAT,Middle Atlantic,TOT,Total,50.77,66941004.0
+2008,MD,Maryland,OM,Open Market,42.19,2928964.0
+2008,MD,Maryland,TOT,Total,42.19,2928964.0
+2008,MID,Midwest Total,CAP,Captive,33.08,22334952.0
+2008,MID,Midwest Total,OM,Open Market,32.35,103570286.0
+2008,MID,Midwest Total,TOT,Total,32.48,125905238.0
+2008,MT,Montana,OM,Open Market,12.4,
+2008,MTN,Mountain,CAP,Captive,15.31,119709041.0
+2008,MTN,Mountain,OM,Open Market,14.25,480650094.0
+2008,MTN,Mountain,TOT,Total,14.46,600359135.0
+2008,ND,North Dakota,OM,Open Market,13.34,
+2008,NM,New Mexico,OM,Open Market,36.28,
+2008,OH,Ohio,OM,Open Market,41.86,24538438.0
+2008,OK,Oklahoma,OM,Open Market,47.72,1461954.0
+2008,OK,Oklahoma,TOT,Total,47.72,1461954.0
+2008,PA,Pennsylvania,OM,Open Market,49.65,62862017.0
+2008,PAA,Pennsylvania (Anthracite),OM,Open Market,52.03,
+2008,PAB,Pennsylvania (Bituminous),OM,Open Market,49.59,
+2008,PRB,Powder River Basin,CAP,Captive,12.95,100661255.0
+2008,PRB,Powder River Basin,OM,Open Market,10.55,393874798.0
+2008,PRB,Powder River Basin,TOT,Total,11.03,494536053.0
+2008,SAT,South Atlantic,CAP,Captive,74.13,28329625.0
+2008,SAT,South Atlantic,OM,Open Market,60.94,156727132.0
+2008,SAT,South Atlantic,TOT,Total,62.96,185056757.0
+2008,STH,South Total,CAP,Captive,40.29,54026828.0
+2008,STH,South Total,OM,Open Market,54.26,297406103.0
+2008,STH,South Total,TOT,Total,52.12,351432931.0
+2008,TN,Tennessee,OM,Open Market,48.94,2904965.0
+2008,TN,Tennessee,TOT,Total,48.94,2904965.0
+2008,TX,Texas,CAP,Captive,17.41,
+2008,UNT,Uinta Basin,CAP,Captive,28.49,8044533.0
+2008,UNT,Uinta Basin,OM,Open Market,30.1,50444624.0
+2008,UNT,Uinta Basin,TOT,Total,29.88,58489157.0
+2008,US,U.S. Total,CAP,Captive,27.55,207733675.0
+2008,US,U.S. Total,OM,Open Market,32.05,961842509.0
+2008,US,U.S. Total,TOT,Total,31.25,1169576184.0
+2008,UT,Utah,OM,Open Market,26.91,
+2008,VA,Virginia,CAP,Captive,91.76,7583867.0
+2008,VA,Virginia,OM,Open Market,81.12,15821064.0
+2008,VA,Virginia,TOT,Total,84.57,23404931.0
+2008,WBO,Other Western,CAP,Captive,22.47,15459559.0
+2008,WBO,Other Western,OM,Open Market,25.31,63188327.0
+2008,WBO,Other Western,TOT,Total,24.75,78647886.0
+2008,WMR,West of Mississippi River,CAP,Captive,15.66,152193486.0
+2008,WMR,West of Mississippi River,OM,Open Market,14.64,524382536.0
+2008,WMR,West of Mississippi River,TOT,Total,14.87,676576022.0
+2008,WNC,West North Central,CAP,Captive,10.53,4456306.0
+2008,WNC,West North Central,OM,Open Market,13.81,25801004.0
+2008,WNC,West North Central,TOT,Total,13.33,30257310.0
+2008,WSB,Western Region Total,CAP,Captive,15.14,124165347.0
+2008,WSB,Western Region Total,OM,Open Market,14.33,507507749.0
+2008,WSB,Western Region Total,TOT,Total,14.49,631673096.0
+2008,WSC,West South Central,CAP,Captive,17.97,28028139.0
+2008,WSC,West South Central,OM,Open Market,23.46,16398493.0
+2008,WSC,West South Central,TOT,Total,19.99,44426632.0
+2008,WST,West Total,CAP,Captive,15.31,119709041.0
+2008,WST,West Total,OM,Open Market,14.38,482183039.0
+2008,WST,West Total,TOT,Total,14.56,601892080.0
+2008,WV,West Virginia,CAP,Captive,67.68,20745758.0
+2008,WV,West Virginia,OM,Open Market,59.02,137977104.0
+2008,WV,West Virginia,TOT,Total,60.16,158722862.0
+2008,WVN,West Virginia (Northern),OM,Open Market,43.01,36129572.0
+2008,WVS,West Virginia (Southern),OM,Open Market,64.7,101847532.0
+2008,WY,Wyoming,CAP,Captive,14.05,104109182.0
+2008,WY,Wyoming,OM,Open Market,10.62,361256078.0
+2008,WY,Wyoming,TOT,Total,11.39,465365260.0
+2009,AL,Alabama,OM,Open Market,76.22,18684711.0
+2009,APC,Appalachia Central,CAP,Captive,73.87,23505562.0
+2009,APC,Appalachia Central,OM,Open Market,68.05,169680922.0
+2009,APC,Appalachia Central,TOT,Total,68.76,193186484.0
+2009,APN,Appalachia Northern,CAP,Captive,56.14,9287258.0
+2009,APN,Appalachia Northern,OM,Open Market,51.34,115003501.0
+2009,APN,Appalachia Northern,TOT,Total,51.7,124290759.0
+2009,APP,Appalachia Total,CAP,Captive,68.8,32876064.0
+2009,APP,Appalachia Total,OM,Open Market,62.22,303369134.0
+2009,APP,Appalachia Total,TOT,Total,62.86,336245198.0
+2009,APS,Appalachia Southern,CAP,Captive,48.3,83244.0
+2009,APS,Appalachia Southern,OM,Open Market,76.22,18684711.0
+2009,APS,Appalachia Southern,TOT,Total,76.1,18767955.0
+2009,CO,Colorado,CAP,Captive,36.73,3292696.0
+2009,CO,Colorado,OM,Open Market,36.71,24277694.0
+2009,CO,Colorado,TOT,Total,36.71,27570390.0
+2009,EMR,East of Mississippi River,CAP,Captive,60.76,50395124.0
+2009,EMR,East of Mississippi River,OM,Open Market,57.33,389457577.0
+2009,EMR,East of Mississippi River,TOT,Total,57.72,439852701.0
+2009,ENC,East North Central,CAP,Captive,45.25,18843151.0
+2009,ENC,East North Central,OM,Open Market,43.05,76102707.0
+2009,ENC,East North Central,TOT,Total,43.49,94945858.0
+2009,ESC,East South Central,CAP,Captive,58.21,5585382.0
+2009,ESC,East South Central,OM,Open Market,60.16,123683768.0
+2009,ESC,East South Central,TOT,Total,60.08,129269150.0
+2009,EST,East Total,CAP,Captive,75.8,11381474.0
+2009,EST,East Total,OM,Open Market,58.75,67763355.0
+2009,EST,East Total,TOT,Total,61.2,79144829.0
+2009,IL,Illinois,OM,Open Market,47.2,26059384.0
+2009,ILL,Illinois Basin,CAP,Captive,45.69,17519060.0
+2009,ILL,Illinois Basin,OM,Open Market,41.02,82341064.0
+2009,ILL,Illinois Basin,TOT,Total,41.84,99860124.0
+2009,IN,Indiana,CAP,Captive,42.52,11013377.0
+2009,IN,Indiana,OM,Open Market,37.03,25183071.0
+2009,IN,Indiana,TOT,Total,38.7,36196448.0
+2009,INO,Other Interior,CAP,Captive,18.17,25728278.0
+2009,INO,Other Interior,OM,Open Market,24.19,17663074.0
+2009,INO,Other Interior,TOT,Total,20.62,43391352.0
+2009,INT,Interior Region Total,CAP,Captive,29.31,43247338.0
+2009,INT,Interior Region Total,OM,Open Market,38.05,100004138.0
+2009,INT,Interior Region Total,TOT,Total,35.41,143251476.0
+2009,KY,Kentucky,CAP,Captive,58.72,5356467.0
+2009,KY,Kentucky,OM,Open Market,58.53,99330342.0
+2009,KY,Kentucky,TOT,Total,58.54,104686809.0
+2009,KYE,Kentucky (East),OM,Open Market,67.4,
+2009,KYW,Kentucky (West),OM,Open Market,39.06,
+2009,MAT,Middle Atlantic,CAP,Captive,60.98,4874035.0
+2009,MAT,Middle Atlantic,OM,Open Market,54.98,53310667.0
+2009,MAT,Middle Atlantic,TOT,Total,55.48,58184702.0
+2009,MD,Maryland,OM,Open Market,37.65,2413324.0
+2009,MD,Maryland,TOT,Total,37.65,2413324.0
+2009,MID,Midwest Total,CAP,Captive,39.15,22992249.0
+2009,MID,Midwest Total,OM,Open Market,35.54,102524203.0
+2009,MID,Midwest Total,TOT,Total,36.2,125516452.0
+2009,MT,Montana,OM,Open Market,13.5,
+2009,MTN,Mountain,CAP,Captive,15.99,126897626.0
+2009,MTN,Mountain,OM,Open Market,15.52,424673264.0
+2009,MTN,Mountain,TOT,Total,15.63,551570890.0
+2009,ND,North Dakota,OM,Open Market,13.93,
+2009,NM,New Mexico,OM,Open Market,33.83,
+2009,OH,Ohio,OM,Open Market,44.81,24860252.0
+2009,OK,Oklahoma,OM,Open Market,56.45,971214.0
+2009,OK,Oklahoma,TOT,Total,56.45,971214.0
+2009,PA,Pennsylvania,OM,Open Market,54.98,53310667.0
+2009,PAA,Pennsylvania (Anthracite),OM,Open Market,45.38,
+2009,PAB,Pennsylvania (Bituminous),OM,Open Market,55.23,
+2009,PRB,Powder River Basin,CAP,Captive,13.31,106424709.0
+2009,PRB,Powder River Basin,OM,Open Market,11.63,347796805.0
+2009,PRB,Powder River Basin,TOT,Total,12.03,454221514.0
+2009,SAT,South Atlantic,CAP,Captive,75.25,21092556.0
+2009,SAT,South Atlantic,OM,Open Market,63.63,136360435.0
+2009,SAT,South Atlantic,TOT,Total,65.19,157452991.0
+2009,STH,South Total,CAP,Captive,39.53,45898777.0
+2009,STH,South Total,OM,Open Market,59.54,258869943.0
+2009,STH,South Total,TOT,Total,56.53,304768720.0
+2009,TN,Tennessee,OM,Open Market,67.65,
+2009,TX,Texas,CAP,Captive,17.5,
+2009,UNT,Uinta Basin,CAP,Captive,33.86,8047358.0
+2009,UNT,Uinta Basin,OM,Open Market,34.91,40080273.0
+2009,UNT,Uinta Basin,TOT,Total,34.74,48127631.0
+2009,US,U.S. Total,CAP,Captive,27.06,207170126.0
