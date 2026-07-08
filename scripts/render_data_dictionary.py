@@ -91,6 +91,8 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "ercot-wtx-congestion",
     "nyiso-renewable-curtailment",
     "nyiso-renewable-curtailment-monthly",
+    "coal-basin-price",
+    "coal-mining-ppi",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -539,6 +541,34 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "`confirmed_exits_enabled`, default off)."
         ),
     },
+    "coal-basin-price": {
+        "summary": (
+            "EIA Annual Coal Report region/rank f.o.b.-mine coal price "
+            "(annual, national)."
+        ),
+        "reconciles": (
+            "EIA `coal/market-sales-price` (region x market-type, all ranks) "
+            "and `coal/price-by-rank` (region x coal rank) tidied onto one "
+            "`metric`-keyed frame, with an `ALL` sentinel on whichever "
+            "dimension the other route doesn't carry. The free public-domain "
+            "substitute for the S&P/Argus/McCloskey-paywalled daily basin "
+            "spot indices — collected to give the coal-vs-gas passthrough "
+            "sigmoids (issue #1347) a real coal commodity price to check "
+            "their `floor`/`ceil`/`gas_mid` asymptotes against. Region -> "
+            "ISO-plant crosswalk: `reference` datatype, "
+            "`market=coal-region-crosswalk`."
+        ),
+    },
+    "coal-mining-ppi": {
+        "summary": "BLS Producer Price Index for coal (national, monthly).",
+        "reconciles": (
+            "BLS `WPU051` (PPI commodity Coal) and `PCU2121--2121--` (PPI "
+            "industry Coal Mining, NAICS 2121) — a monthly elasticity/slope "
+            "cross-check on the annual `coal-basin-price` region prices. No "
+            "regional breakout exists in BLS PPI for coal (confirmed by "
+            "probing candidate series ids)."
+        ),
+    },
 }
 
 # Short scope note for the national (non-ISO-partitioned) datatypes' table.
@@ -556,6 +586,8 @@ NATIONAL_SCOPE: dict[str, str] = {
     "zonal-shares": "per-ISO via directory partitioning",
     "weather": "per-ISO via directory partitioning",
     "egrid": "national (EPA eGRID, by vintage year)",
+    "coal-basin-price": "national/regional (EIA Annual Coal Report, by producing region)",
+    "coal-mining-ppi": "national (BLS PPI, coal)",
 }
 
 NA = "n/a"

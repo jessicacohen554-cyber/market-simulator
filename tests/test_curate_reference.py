@@ -33,6 +33,14 @@ _BINS_CSV = (
     "CC,South,2,S_CC2,50043,Battleground,380.7,5.67,0.0,1.0\n"
 )
 
+# A 2-row stand-in for coal_region_crosswalk.csv (scripts/derive_coal_region_crosswalk.py).
+_COAL_CROSSWALK_CSV = (
+    "iso,plant_code,plant_name,state,coal_supply_class,region_id,region_name,"
+    "confidence,note\n"
+    "ERCOT,298,Limestone,TX,prb,PRB,PRB,high,PRB-by-rail\n"
+    "PJM,3130,Seward (PA),PA,waste,,,none,culm/gob reclamation fuel\n"
+)
+
 
 class TestCurateReference(unittest.TestCase):
     def setUp(self):
@@ -44,6 +52,7 @@ class TestCurateReference(unittest.TestCase):
         self.raw_dir.mkdir(parents=True)
         (self.raw_dir / "master-plant-registry.csv").write_text(_REGISTRY_CSV)
         (self.raw_dir / "custom-bin-assignments.csv").write_text(_BINS_CSV)
+        (self.raw_dir / "coal_region_crosswalk.csv").write_text(_COAL_CROSSWALK_CSV)
 
         # Redirect the clean tree so writes never touch the repo.
         self._orig_clean = clean_io.paths.CLEAN_DIR
@@ -57,7 +66,9 @@ class TestCurateReference(unittest.TestCase):
         written = curate_reference.curate(raw_dir=self.raw_dir)
 
         # One file per lookup table, each under its own `market` partition.
-        self.assertEqual(set(written), {"plant-registry", "bin-assignments"})
+        self.assertEqual(
+            set(written), {"plant-registry", "bin-assignments", "coal-region-crosswalk"}
+        )
         for name, path in written.items():
             self.assertTrue(path.exists())
             self.assertEqual(path.name, "reference.parquet")
@@ -109,6 +120,24 @@ class TestCurateReference(unittest.TestCase):
         self.assertIn("heat_rate_mult_must_run", df.columns)
         # No leftover TitleCase columns.
         self.assertFalse([c for c in df.columns if any(ch.isupper() for ch in c)])
+
+    def test_coal_region_crosswalk_normalization(self):
+        written = curate_reference.curate(raw_dir=self.raw_dir)
+        df = pd.read_parquet(written["coal-region-crosswalk"])
+
+        # plant_code -> plant_id; iso carried straight through (multi-ISO table).
+        self.assertIn("plant_id", df.columns)
+        self.assertNotIn("plant_code", df.columns)
+        self.assertEqual(set(df["iso"]), {"ERCOT", "PJM"})
+        self.assertEqual(
+            df.loc[df["plant_id"] == 298, "key"].iloc[0],
+            "coal-region-crosswalk:ERCOT:298",
+        )
+
+        # PRB-tagged plant resolves to the PRB region; waste-tagged plant has
+        # no region match (culm/gob is not commodity-traded).
+        self.assertEqual(df.loc[df["plant_id"] == 298, "region_id"].iloc[0], "PRB")
+        self.assertEqual(df.loc[df["plant_id"] == 3130, "confidence"].iloc[0], "none")
 
 
 if __name__ == "__main__":
