@@ -1,0 +1,36 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "coal": 13963.9,
+    "gas_cc": 37241.04,
+    "gas_ct": 10689.167,
+    "gas_st": 11296.45,
+    "nuclear": 4980.0
+  },
+  "fleet_by_fuel_before": {
+    "coal": 13963.9,
+    "gas_cc": 37241.04,
+    "gas_ct": 10689.167,
+    "gas_st": 11296.45,
+    "nuclear": 4980.0
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "ERCOT",
+  "mode": "forecast",
+  "peak_demand_mw": 72776.0,
+  "renewable_additions": [],
+  "reserve_margin": 0.471021,
+  "retirements": [],
+  "rps_dual": 0.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "thermal_additions": [],
+  "year": 2021
+}
