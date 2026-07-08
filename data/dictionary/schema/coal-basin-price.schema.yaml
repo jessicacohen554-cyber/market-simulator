@@ -1,0 +1,94 @@
+# Canonical schema: EIA Annual Coal Report region/rank f.o.b.-mine coal price
+#
+# The free public-domain substitute for the paywalled daily basin spot
+# indices (PRB 8800 / Illinois Basin / NAPP / CAPP / Uinta are S&P
+# Global/Argus/McCloskey-licensed and not redistributable — even EIA's own
+# current "Coal Markets" weekly report is licensed FROM S&P Global). This is
+# the EIA Annual Coal Report's own annual average sales price at the mine,
+# by PRODUCING region/state (not the burning ISO — see
+# data/raw/reference/coal_region_crosswalk.csv for the region -> ISO-plant
+# map) and, separately, by coal rank. Two EIA Open Data API v2 routes tidied
+# into one long frame via the `metric` column so one schema covers both:
+#   - coal/market-sales-price: region x market-type (captive/open-market/
+#     total), all coal ranks combined
+#   - coal/price-by-rank: region x coal rank (bituminous/subbituminous/
+#     lignite/anthracite/all), all market types combined
+# Exactly one of (market_type_id, coal_rank_id) is meaningful per metric; the
+# other carries the literal "ALL" sentinel (never null, so both are always
+# queryable without a null-check).
+#
+# Curated by scripts/curate_coal_basin_price.py from
+#   data/raw/coal-prices/eia_coal_market_sales_price.csv
+#   data/raw/coal-prices/eia_coal_price_by_rank.csv
+datatype: coal-basin-price
+schema_version: 1
+title: EIA Annual Coal Report region/rank f.o.b.-mine coal price
+description: >-
+  Annual average coal sales price at the mine ($/short ton), by EIA producing
+  region/state, from the EIA Annual Coal Report (Open Data API v2). Two
+  tidied metrics: by market type (captive/open-market/total, all ranks) and
+  by coal rank (bituminous/subbituminous/lignite/anthracite/all, all market
+  types). Free public-domain substitute for the paywalled daily basin spot
+  indices; used to check the coal-vs-gas passthrough sigmoid asymptotes
+  (issue #1347) against a real coal commodity price.
+
+key_columns: [metric, region_id, market_type_id, coal_rank_id, year]
+allow_additional_columns: false
+
+columns:
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Which EIA route this row came from: "market_sales_price" (region x
+      market-type, all ranks) or "price_by_rank" (region x coal rank, all
+      market types).
+  - name: region_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      EIA stateRegionId — a two/three-letter state code (e.g. TX, WV) or a
+      named producing region/aggregate (e.g. PRB = Powder River Basin,
+      APC/APN/APS = Appalachia Central/Northern/Southern, ILL = Illinois
+      Basin, UNT = Uinta Basin, ENC/WNC/WSC/ESC = Census-division
+      aggregates).
+  - name: region_name
+    dtype: string
+    unit: none
+    nullable: false
+    description: Human-readable EIA region/state description.
+  - name: market_type_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      EIA marketTypeId (CAP=captive, OM=open market, TOT=total) for
+      metric="market_sales_price" rows; literal "ALL" for
+      metric="price_by_rank" rows.
+  - name: coal_rank_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      EIA coalRankId (BIT/SUB/LIG/ANT/TOT) for metric="price_by_rank" rows;
+      literal "ALL" for metric="market_sales_price" rows.
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar (ACR publication) year.
+  - name: price_usd_per_ton
+    dtype: float64
+    unit: usd_per_short_ton
+    nullable: false
+    description: Average sales price at the mine, dollars per short ton.
+  - name: sales_short_tons
+    dtype: float64
+    unit: short_tons
+    nullable: true
+    description: >-
+      Annual sales tonnage for this region/market-type/year (only populated
+      for metric="market_sales_price"; null for metric="price_by_rank" rows,
+      which EIA does not report tonnage for).
