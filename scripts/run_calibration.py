@@ -463,6 +463,10 @@ def run_year(
     curve_smoothing: dict[str, float | int | None] | None = None,
     cc_derate_from_top: bool = False,
     cc_nameplate_summer_derate: bool = False,
+    gt_ambient_derate: bool = False,
+    gt_ambient_derate_ref_c: float | None = None,
+    gt_ambient_derate_slope_cc: float | None = None,
+    gt_ambient_derate_slope_ct: float | None = None,
     must_run_mw: "np.ndarray | None" = None,
     inject_biomass_mustrun: bool = False,
     priced_interchange: bool = False,
@@ -1243,6 +1247,18 @@ def run_year(
         config = config.with_overrides(cc_outage_derate_from_top=True)
     if cc_nameplate_summer_derate:
         config = config.with_overrides(cc_nameplate_summer_derate=True)
+    if gt_ambient_derate:
+        # Physics-grounded GT ambient-temperature derate on the hottest hours
+        # (fleet.generators_to_fleet_arrays). Slopes/reference default to the
+        # ScenarioConfig physical values unless the caller overrides them.
+        _amb = {"gt_ambient_derate": True}
+        if gt_ambient_derate_ref_c is not None:
+            _amb["gt_ambient_derate_ref_c"] = float(gt_ambient_derate_ref_c)
+        if gt_ambient_derate_slope_cc is not None:
+            _amb["gt_ambient_derate_slope_cc"] = float(gt_ambient_derate_slope_cc)
+        if gt_ambient_derate_slope_ct is not None:
+            _amb["gt_ambient_derate_slope_ct"] = float(gt_ambient_derate_slope_ct)
+        config = config.with_overrides(**_amb)
     if zero_forcing_ablation:
         # D-3 zero-forcing ablation twin (audit §7 / CLAUDE.md rule 20): drop
         # every MERCHANT floor/bridge, keeping only the structural must-run set
