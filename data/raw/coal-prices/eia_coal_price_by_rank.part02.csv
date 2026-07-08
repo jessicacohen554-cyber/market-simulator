@@ -1,0 +1,201 @@
+year,region_id,region_name,coal_rank_id,coal_rank_name,price_usd_per_ton
+2004,KYW,Kentucky (West),TOT,All,23.66
+2004,MAT,Middle Atlantic,ANT,Anthracite,43.52
+2004,MAT,Middle Atlantic,BIT,Bituminous,30.41
+2004,MAT,Middle Atlantic,TOT,All,30.75
+2004,MD,Maryland,BIT,Bituminous,24.99
+2004,MD,Maryland,TOT,All,24.99
+2004,MID,Midwest Total,BIT,Bituminous,24.24
+2004,MID,Midwest Total,LIG,Lignite,9.37
+2004,MID,Midwest Total,TOT,All,20.53
+2004,MT,Montana,TOT,All,10.02
+2004,MTN,Mountain,BIT,Bituminous,20.77
+2004,MTN,Mountain,SUB,Subbituminous,8.22
+2004,MTN,Mountain,TOT,All,10.09
+2004,ND,North Dakota,LIG,Lignite,9.37
+2004,ND,North Dakota,TOT,All,9.37
+2004,NM,New Mexico,TOT,All,24.09
+2004,OH,Ohio,BIT,Bituminous,23.54
+2004,OH,Ohio,TOT,All,23.54
+2004,OK,Oklahoma,BIT,Bituminous,28.36
+2004,OK,Oklahoma,TOT,All,28.36
+2004,PA,Pennsylvania,ANT,Anthracite,43.52
+2004,PA,Pennsylvania,BIT,Bituminous,30.41
+2004,PA,Pennsylvania,TOT,All,30.75
+2004,PAA,Pennsylvania (Anthracite),ANT,Anthracite,43.52
+2004,PAA,Pennsylvania (Anthracite),TOT,All,43.52
+2004,PAB,Pennsylvania (Bituminous),BIT,Bituminous,30.41
+2004,PAB,Pennsylvania (Bituminous),TOT,All,30.41
+2004,PRB,Powder River Basin,SUB,Subbituminous,7.16
+2004,PRB,Powder River Basin,TOT,All,7.16
+2004,SAT,South Atlantic,BIT,Bituminous,35.96
+2004,SAT,South Atlantic,TOT,All,35.96
+2004,STH,South Total,BIT,Bituminous,34.64
+2004,STH,South Total,LIG,Lignite,14.4
+2004,STH,South Total,TOT,All,31.51
+2004,TN,Tennessee,BIT,Bituminous,34.7
+2004,TN,Tennessee,TOT,All,34.7
+2004,TX,Texas,TOT,All,13.87
+2004,UNT,Uinta Basin,BIT,Bituminous,18.45
+2004,UNT,Uinta Basin,SUB,Subbituminous,19.16
+2004,UNT,Uinta Basin,TOT,All,18.55
+2004,US,U.S. Total,ANT,Anthracite,43.52
+2004,US,U.S. Total,BIT,Bituminous,30.75
+2004,US,U.S. Total,LIG,Lignite,12.59
+2004,US,U.S. Total,SUB,Subbituminous,8.51
+2004,US,U.S. Total,TOT,All,20.07
+2004,UT,Utah,BIT,Bituminous,18.44
+2004,UT,Utah,TOT,All,18.44
+2004,VA,Virginia,BIT,Bituminous,39.45
+2004,VA,Virginia,TOT,All,39.45
+2004,WBO,Other Western,BIT,Bituminous,25.29
+2004,WBO,Other Western,LIG,Lignite,9.39
+2004,WBO,Other Western,SUB,Subbituminous,22.11
+2004,WBO,Other Western,TOT,All,18.88
+2004,WMR,West of Mississippi River,BIT,Bituminous,21.01
+2004,WMR,West of Mississippi River,LIG,Lignite,12.45
+2004,WMR,West of Mississippi River,SUB,Subbituminous,8.51
+2004,WMR,West of Mississippi River,TOT,All,10.66
+2004,WNC,West North Central,BIT,Bituminous,29.46
+2004,WNC,West North Central,LIG,Lignite,9.37
+2004,WNC,West North Central,TOT,All,9.79
+2004,WSB,Western Region Total,BIT,Bituminous,20.77
+2004,WSB,Western Region Total,LIG,Lignite,9.39
+2004,WSB,Western Region Total,SUB,Subbituminous,8.51
+2004,WSB,Western Region Total,TOT,All,10.26
+2004,WSC,West South Central,BIT,Bituminous,28.63
+2004,WSC,West South Central,LIG,Lignite,14.3
+2004,WSC,West South Central,TOT,All,14.8
+2004,WST,West Total,BIT,Bituminous,20.77
+2004,WST,West Total,LIG,Lignite,11.45
+2004,WST,West Total,SUB,Subbituminous,8.51
+2004,WST,West Total,TOT,All,10.31
+2004,WV,West Virginia,BIT,Bituminous,35.63
+2004,WV,West Virginia,TOT,All,35.63
+2004,WVN,West Virginia (Northern),BIT,Bituminous,29.66
+2004,WVN,West Virginia (Northern),TOT,All,29.66
+2004,WVS,West Virginia (Southern),BIT,Bituminous,37.86
+2004,WVS,West Virginia (Southern),TOT,All,37.86
+2004,WY,Wyoming,TOT,All,7.35
+2005,AL,Alabama,BIT,Bituminous,53.63
+2005,AL,Alabama,TOT,All,53.63
+2005,APC,Appalachia Central,BIT,Bituminous,45.13
+2005,APC,Appalachia Central,TOT,All,45.13
+2005,APN,Appalachia Northern,ANT,Anthracite,47.7
+2005,APN,Appalachia Northern,BIT,Bituminous,33.84
+2005,APN,Appalachia Northern,TOT,All,34.0
+2005,APP,Appalachia Total,ANT,Anthracite,47.7
+2005,APP,Appalachia Total,BIT,Bituminous,41.66
+2005,APP,Appalachia Total,TOT,All,41.68
+2005,APS,Appalachia Southern,BIT,Bituminous,53.63
+2005,APS,Appalachia Southern,TOT,All,53.63
+2005,CO,Colorado,TOT,All,22.1
+2005,EMR,East of Mississippi River,ANT,Anthracite,47.7
+2005,EMR,East of Mississippi River,BIT,Bituminous,38.91
+2005,EMR,East of Mississippi River,LIG,Lignite,15.65
+2005,EMR,East of Mississippi River,TOT,All,38.77
+2005,ENC,East North Central,BIT,Bituminous,27.05
+2005,ENC,East North Central,TOT,All,27.05
+2005,ESC,East South Central,BIT,Bituminous,41.81
+2005,ESC,East South Central,TOT,All,41.18
+2005,EST,East Total,ANT,Anthracite,47.7
+2005,EST,East Total,BIT,Bituminous,40.15
+2005,EST,East Total,TOT,All,40.28
+2005,IL,Illinois,BIT,Bituminous,28.97
+2005,IL,Illinois,TOT,All,28.97
+2005,ILL,Illinois Basin,BIT,Bituminous,27.2
+2005,ILL,Illinois Basin,TOT,All,27.2
+2005,IN,Indiana,BIT,Bituminous,25.56
+2005,IN,Indiana,TOT,All,25.56
+2005,INO,Other Interior,BIT,Bituminous,29.43
+2005,INO,Other Interior,LIG,Lignite,15.0
+2005,INO,Other Interior,TOT,All,15.65
+2005,INT,Interior Region Total,BIT,Bituminous,27.26
+2005,INT,Interior Region Total,LIG,Lignite,15.0
+2005,INT,Interior Region Total,TOT,All,22.78
+2005,KY,Kentucky,BIT,Bituminous,39.6
+2005,KY,Kentucky,TOT,All,39.6
+2005,KYE,Kentucky (East),BIT,Bituminous,43.14
+2005,KYE,Kentucky (East),TOT,All,43.14
+2005,KYW,Kentucky (West),BIT,Bituminous,27.2
+2005,KYW,Kentucky (West),TOT,All,27.2
+2005,MAT,Middle Atlantic,ANT,Anthracite,47.7
+2005,MAT,Middle Atlantic,BIT,Bituminous,36.25
+2005,MAT,Middle Atlantic,TOT,All,36.53
+2005,MD,Maryland,BIT,Bituminous,29.78
+2005,MD,Maryland,TOT,All,29.78
+2005,MID,Midwest Total,BIT,Bituminous,27.09
+2005,MID,Midwest Total,LIG,Lignite,10.09
+2005,MID,Midwest Total,TOT,All,22.87
+2005,MT,Montana,TOT,All,9.68
+2005,MTN,Mountain,BIT,Bituminous,23.51
+2005,MTN,Mountain,SUB,Subbituminous,8.75
+2005,MTN,Mountain,TOT,All,10.92
+2005,ND,North Dakota,LIG,Lignite,10.09
+2005,ND,North Dakota,TOT,All,10.09
+2005,NM,New Mexico,TOT,All,25.82
+2005,OH,Ohio,BIT,Bituminous,26.62
+2005,OH,Ohio,TOT,All,26.62
+2005,OK,Oklahoma,BIT,Bituminous,28.24
+2005,OK,Oklahoma,TOT,All,28.24
+2005,PA,Pennsylvania,ANT,Anthracite,47.7
+2005,PA,Pennsylvania,BIT,Bituminous,36.25
+2005,PA,Pennsylvania,TOT,All,36.53
+2005,PAA,Pennsylvania (Anthracite),ANT,Anthracite,47.7
+2005,PAA,Pennsylvania (Anthracite),TOT,All,47.7
+2005,PAB,Pennsylvania (Bituminous),BIT,Bituminous,36.25
+2005,PAB,Pennsylvania (Bituminous),TOT,All,36.25
+2005,PRB,Powder River Basin,SUB,Subbituminous,7.69
+2005,PRB,Powder River Basin,TOT,All,7.69
+2005,SAT,South Atlantic,BIT,Bituminous,43.33
+2005,SAT,South Atlantic,TOT,All,43.33
+2005,STH,South Total,BIT,Bituminous,41.97
+2005,STH,South Total,LIG,Lignite,15.0
+2005,STH,South Total,TOT,All,37.85
+2005,TN,Tennessee,BIT,Bituminous,42.5
+2005,TN,Tennessee,TOT,All,42.5
+2005,TX,Texas,LIG,Lignite,14.43
+2005,TX,Texas,TOT,All,14.43
+2005,UNT,Uinta Basin,BIT,Bituminous,21.18
+2005,UNT,Uinta Basin,SUB,Subbituminous,21.1
+2005,UNT,Uinta Basin,TOT,All,21.17
+2005,US,U.S. Total,ANT,Anthracite,47.7
+2005,US,U.S. Total,BIT,Bituminous,36.7
+2005,US,U.S. Total,LIG,Lignite,13.26
+2005,US,U.S. Total,SUB,Subbituminous,8.93
+2005,US,U.S. Total,TOT,All,23.34
+2005,UT,Utah,BIT,Bituminous,19.95
+2005,UT,Utah,TOT,All,19.95
+2005,VA,Virginia,BIT,Bituminous,49.43
+2005,VA,Virginia,TOT,All,49.43
+2005,WBO,Other Western,BIT,Bituminous,28.36
+2005,WBO,Other Western,LIG,Lignite,10.11
+2005,WBO,Other Western,SUB,Subbituminous,21.26
+2005,WBO,Other Western,TOT,All,19.58
+2005,WMR,West of Mississippi River,BIT,Bituminous,23.7
+2005,WMR,West of Mississippi River,LIG,Lignite,13.16
+2005,WMR,West of Mississippi River,SUB,Subbituminous,8.93
+2005,WMR,West of Mississippi River,TOT,All,11.4
+2005,WNC,West North Central,BIT,Bituminous,32.3
+2005,WNC,West North Central,LIG,Lignite,10.09
+2005,WNC,West North Central,TOT,All,10.64
+2005,WSB,Western Region Total,BIT,Bituminous,23.51
+2005,WSB,Western Region Total,LIG,Lignite,10.11
+2005,WSB,Western Region Total,SUB,Subbituminous,8.93
+2005,WSB,Western Region Total,TOT,All,11.0
+2005,WSC,West South Central,BIT,Bituminous,28.24
+2005,WSC,West South Central,LIG,Lignite,14.96
+2005,WSC,West South Central,TOT,All,15.42
+2005,WST,West Total,BIT,Bituminous,23.51
+2005,WST,West Total,LIG,Lignite,11.73
+2005,WST,West Total,SUB,Subbituminous,8.93
+2005,WST,West Total,TOT,All,11.05
+2005,WV,West Virginia,BIT,Bituminous,42.71
+2005,WV,West Virginia,TOT,All,42.71
+2005,WVN,West Virginia (Northern),BIT,Bituminous,34.64
+2005,WVN,West Virginia (Northern),TOT,All,34.64
+2005,WVS,West Virginia (Southern),BIT,Bituminous,45.8
+2005,WVS,West Virginia (Southern),TOT,All,45.8
+2005,WY,Wyoming,SUB,Subbituminous,7.93
+2005,WY,Wyoming,TOT,All,7.93
+2006,AL,Alabama,BIT,Bituminous,48.39
