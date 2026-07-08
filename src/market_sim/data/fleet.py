@@ -521,9 +521,16 @@ CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR: float = 6.3
 # in. PJM added 2026-07-07: its CHP reports cap-weighted HRs of CC_CHP ~4.95 /
 # CT_CHP ~6.14 MMBtu/MWh (both physically impossible power-only), which let
 # steam-credited CHP clear as the cheapest thermal and over-deliver grid energy
-# +52-67% vs EIA-923 net-to-grid (docs/FINDING-pjm-burndown-2026-07.md). Other
-# ISOs join as their CHP HR distributions are audited in the all-ISO sweep.
-CHP_STEAM_CREDIT_HR_CORRECTION_ISOS: frozenset[str] = frozenset({"CAISO", "PJM"})
+# +52-67% vs EIA-923 net-to-grid (docs/FINDING-pjm-burndown-2026-07.md). MISO
+# added 2026-07-08: its CHP reports cap-weighted HRs of CT_CHP ~6.62 (median
+# 5.50; 77/96 units, 2126 MW below the 8.0 power-only floor) / CC_CHP ~6.76
+# (min 4.49; 23 units, 774 MW below the 6.0 floor) MMBtu/MWh — the same
+# sub-physical steam-credited distribution, so the universal turbine-physics
+# correction applies. Other ISOs join as their CHP HR distributions are audited
+# in the all-ISO sweep.
+CHP_STEAM_CREDIT_HR_CORRECTION_ISOS: frozenset[str] = frozenset(
+    {"CAISO", "PJM", "MISO"}
+)
 
 # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
 # summer peak; the remaining (1 - share) is redistributed into the shoulder
