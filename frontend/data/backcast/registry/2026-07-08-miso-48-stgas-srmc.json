@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-08-miso-48-stgas-srmc",
+ "label": "miso 48 stgas srmc",
+ "date": "2026-07-08",
+ "shorthand": "miso-48-stgas-srmc",
+ "definition": "MISO 48 ST_GAS_INTERMEDIATE SRMC-floor re-ground keeper candidate: the miso-47 keeper recipe re-solved byte-identical at HEAD with ONE offer-curve change - the generic ST_GAS_INTERMEDIATE committed band raised 0.85 -> 1.00x base_HR (backcast_config.py), closing the pjm-83 defect pattern from the L-7 SRMC-floor audit (docs/miso-caiso-srmc-floor-audit-2026-07.md SS2, G-21/#1302): an uncited generic sub-1.0 multiplier priced the five near-baseload MISO steam boilers (Harding Street, Ames, Nine Mile Point, Lewis Creek, Sabine) ~$3.3-5.2/MWh below the MISO cost-based-offer floor (Tariff Module C / Attachment L; IMM/Potomac SOM sanity). CC_REGULAR econ_low 0.95 untouched (the recognized CC flat-plateau CAMPD exception). Zero free parameters: a tariff-cited bound replaces a residual-lineage value; LOO degenerates to per-year direction checks, consistent all three years. Structure fix promoted on correctness (rules 1/11/14): 2023 ST_GAS crosses the C1 band edge (-7.56 -> -8.16 TWh, C1 14/16 -> 13/16) because the sub-SRMC band was buying ~0.6 TWh/yr of masked G-25 commitment-posture energy (now correctly attributed); C3a mean LMP improves in ALL years (2023 -0.1%, 2024 -4.7%, 2025 -10.7%). Everything else in the miso-47 recipe unchanged.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-08-miso-48-stgas-srmc.js",
+ "bundle": "results/calibration/MISO/miso_48_stgas_srmc"
+}
