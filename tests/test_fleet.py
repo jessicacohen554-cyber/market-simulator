@@ -2,6 +2,7 @@
 
 import tempfile
 import unittest
+import unittest.mock
 from pathlib import Path
 
 import numpy as np
@@ -1720,6 +1721,118 @@ class TestCaisoChpSteamCreditHr(unittest.TestCase):
         g = self._gen(52109, "CC_CHP", 5.14)  # Richmond — very low HR
         _correct_chp_steam_credit_hr([g], "CAISO")
         self.assertGreaterEqual(g.heat_rate, CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR)
+
+
+class TestTemperatureDependentDerate(unittest.TestCase):
+    """Tests for config.temp_dependent_derate (fleet.generators_to_fleet_arrays).
+
+    The switch replaces the flat net-summer/_SUMMER_CLASS_DERATE treatment with a
+    per-class temperature curve driven by measured hourly zone dry-bulb TMAX. We
+    monkeypatch the weather loader so the test is deterministic and offline.
+    """
+
+    ZONE = "North"
+    # July window used to isolate the temperature effect from the seasonal
+    # WEFOR/POF split: same calendar month -> identical statistical availability,
+    # so any difference between these two hours is purely the temperature curve.
+    _JUL_SPIKE = 4400  # forced to 42 C
+    _JUL_NORMAL = 4500  # left at the 30 C July baseline
+
+    def _tmax_series(self, hours: int = 8760) -> np.ndarray:
+        """Monthly dry-bulb baseline (deg C) with a mid-July heat spike."""
+        monthly = np.array([2, 5, 11, 16, 24, 29, 30, 30, 25, 16, 8, 3], dtype=float)
+        tmax = monthly[_hour_to_month_index(hours)]
+        tmax[self._JUL_SPIKE : self._JUL_SPIKE + 24] = 42.0
+        return tmax
+
+    def _gen(self, unit_id: str, group: str, fuel: str) -> Generator:
+        return Generator(
+            unit_id=unit_id,
+            name=unit_id,
+            zone=self.ZONE,
+            fuel_type=fuel,
+            pmax_mw=400.0,
+            heat_rate=8.0,
+            eford=0.05,
+            online_year=2015,
+            plant_group=group,
+            plant_code=90000 + hash(unit_id) % 1000,
+        )
+
+    def _run(self, temp_on: bool):
+        gens = [
+            self._gen("cc1", "CC_REGULAR", "gas_cc"),
+            self._gen("ct1", "CT_PEAKER", "gas_ct"),
+            self._gen("coal1", "COAL", "coal"),
+        ]
+        cfg = ScenarioConfig(
+            mode="backcast",
+            weather_year=2023,
+            iso="ERCOT",
+            temp_dependent_derate=temp_on,
+        )
+        tmax = self._tmax_series()
+        fake = lambda iso, year, hours, zone=None: (tmax, tmax)  # noqa: E731
+        with unittest.mock.patch(
+            "market_sim.data.eia_loader.iso_zone_tmax", side_effect=fake
+        ):
+            fa = generators_to_fleet_arrays(
+                gens, [self.ZONE], iso="ERCOT", config=cfg, year=2023
+            )
+        return {g.unit_id: fa.availability[i] for i, g in enumerate(gens)}
+
+    def test_off_has_no_temperature_signal(self):
+        """Switch off: same-month hours are identical (no temperature curve)."""
+        off = self._run(temp_on=False)
+        for uid in ("cc1", "ct1", "coal1"):
+            self.assertAlmostEqual(
+                off[uid][self._JUL_SPIKE],
+                off[uid][self._JUL_NORMAL],
+                places=6,
+                msg=f"{uid} should have no within-July temperature spread when off",
+            )
+
+    def test_gas_turbines_derated_on_heat_spike(self):
+        """CC/CT lose capacity on the 42 C spike vs a 30 C July hour, CT steeper."""
+        on = self._run(temp_on=True)
+        for uid, lo, hi in (("cc1", 0.88, 0.95), ("ct1", 0.78, 0.90)):
+            ratio = on[uid][self._JUL_SPIKE] / on[uid][self._JUL_NORMAL]
+            self.assertTrue(
+                lo < ratio < hi,
+                f"{uid} spike/normal ratio {ratio:.3f} outside ({lo}, {hi})",
+            )
+        # Simple-cycle CT must derate more steeply than the CC (steam bottoming
+        # cycle partly compensates the CC).
+        self.assertLess(
+            on["ct1"][self._JUL_SPIKE] / on["ct1"][self._JUL_NORMAL],
+            on["cc1"][self._JUL_SPIKE] / on["cc1"][self._JUL_NORMAL],
+        )
+
+    def test_coal_gets_additive_hot_hour_derate(self):
+        """Coal (no existing summer derate) picks up a hot-hour condenser derate."""
+        off = self._run(temp_on=False)
+        on = self._run(temp_on=True)
+        # Off: flat within July. On: the spike hour is derated below the 30 C hour.
+        self.assertLess(on["coal1"][self._JUL_SPIKE], on["coal1"][self._JUL_NORMAL])
+        self.assertGreater(
+            on["coal1"][self._JUL_SPIKE] / on["coal1"][self._JUL_NORMAL], 0.90
+        )
+        # The additive derate is a net reduction relative to off at the spike.
+        self.assertLess(on["coal1"][self._JUL_SPIKE], off["coal1"][self._JUL_SPIKE])
+
+    def test_cc_ct_capacity_neutral_on_summer_mean(self):
+        """CC/CT summer mean is reshaped, not lowered wholesale (rules 1, 9)."""
+        off = self._run(temp_on=False)
+        on = self._run(temp_on=True)
+        summer = np.isin(_hour_to_month_index(8760), [5, 6, 7, 8])
+        for uid in ("cc1", "ct1"):
+            ratio = on[uid][summer].mean() / off[uid][summer].mean()
+            # Clipping at 1.0 makes the on-mean slightly below the off-mean, but
+            # it must stay close (neutral reshape) and never rise above it.
+            self.assertTrue(
+                0.85 <= ratio <= 1.02,
+                f"{uid} summer-mean on/off ratio {ratio:.3f} not capacity-neutral",
+            )
 
 
 if __name__ == "__main__":

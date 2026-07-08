@@ -1907,6 +1907,7 @@ def solve_and_persist(
     gt_ambient_derate_ref_c: float | None = None,
     gt_ambient_derate_slope_cc: float | None = None,
     gt_ambient_derate_slope_ct: float | None = None,
+    temp_dependent_derate: bool = False,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
@@ -2174,6 +2175,7 @@ def solve_and_persist(
             gt_ambient_derate_ref_c=gt_ambient_derate_ref_c,
             gt_ambient_derate_slope_cc=gt_ambient_derate_slope_cc,
             gt_ambient_derate_slope_ct=gt_ambient_derate_slope_ct,
+            temp_dependent_derate=temp_dependent_derate,
             must_run_mw=must_run_total,
             inject_biomass_mustrun=inject_biomass,
             priced_interchange=priced_interchange,
@@ -2520,6 +2522,7 @@ def solve_and_persist(
         "curve_smoothing": curve_smoothing or {},
         "cc_derate_from_top": cc_derate_from_top,
         "cc_nameplate_summer_derate": cc_nameplate_summer_derate,
+        "temp_dependent_derate": temp_dependent_derate,
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
@@ -2778,6 +2781,11 @@ def solve_and_persist(
         if gt_ambient_derate_slope_ct is not None:
             _amb_rec["gt_ambient_derate_slope_ct"] = float(gt_ambient_derate_slope_ct)
         recorded_cfg = recorded_cfg.with_overrides(**_amb_rec)
+    if temp_dependent_derate:
+        # Mirror run_year so run_config.json records the switch (rule 25). The
+        # per-class slopes/reference temps live in ScenarioConfig defaults, so
+        # recording the boolean captures the full solve-changing configuration.
+        recorded_cfg = recorded_cfg.with_overrides(temp_dependent_derate=True)
     if coal_mustrun_online_pmin:
         # Meta-writer audit fix (Stage 7): mirrors run_year; previously
         # entirely absent from recorded_cfg.
@@ -6216,6 +6224,18 @@ def main() -> None:
         "capability (the Hinds / Zeeland 131%% CF issue).",
     )
     parser.add_argument(
+        "--temp-dependent-derate",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Replace the flat EIA-860 net-summer derate with a per-class "
+        "TEMPERATURE-dependent capacity derate driven by measured hourly zone "
+        "dry-bulb temperature (CC/CT air-density mass-flow loss; coal/gas-steam "
+        "condenser loss). CC/CT reproduce their net-summer summer-mean "
+        "(capacity-neutral reshape so heatwave hours sit below net-summer); "
+        "coal/gas-steam gain an additive hot-hour derate. Physical slopes live "
+        "in ScenarioConfig.temp_derate_slope_*; forward-reproducible (rule 11).",
+    )
+    parser.add_argument(
         "--cc-capacity-reconcile",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -7485,6 +7505,7 @@ def main() -> None:
         },
         cc_derate_from_top=args.cc_derate_from_top,
         cc_nameplate_summer_derate=args.cc_nameplate_summer_derate,
+        temp_dependent_derate=args.temp_dependent_derate,
         priced_interchange=(
             True
             if reference_price_interface and args.priced_interchange is not False

@@ -3217,6 +3217,49 @@ class ScenarioConfig:
     gt_ambient_derate_slope_cc: float = 0.004  # CC fractional loss per C above ref
     gt_ambient_derate_slope_ct: float = 0.006  # CT fractional loss per C above ref
 
+    # TEMPERATURE-DEPENDENT capacity derate (temp_dependent_derate, off by
+    # default) -- a physically-derived ALTERNATIVE to the flat EIA-860 net-summer
+    # / _SUMMER_CLASS_DERATE treatment, not an increment on top of it (contrast
+    # gt_ambient_derate above). When on it REPLACES the flat summer derate (and
+    # the per-plant measured CC ratio) with a per-class curve in measured hourly
+    # zone dry-bulb temperature and supersedes gt_ambient_derate for the affected
+    # classes. Two physical mechanisms:
+    #   * gas turbines (CC/CT) -- air-density / mass-flow limited: usable output
+    #     falls ~linearly as ambient dry-bulb rises above the 15 C (59 F) ISO
+    #     rating point. CT (simple cycle) is steepest; CC is shallower because the
+    #     steam bottoming cycle recovers part of the lost GT exhaust heat.
+    #   * steam plants (ST_GAS / COAL) -- condenser back-pressure limited: a
+    #     smaller loss with a warmer onset; dry-bulb TMAX is a proxy for the true
+    #     wet-bulb / cooling-water driver (documented approximation).
+    # Curve:  raw(t) = 1 - slope_class * max(0, tmax_zone(t) - ref_class).
+    # For classes that already carry a net-summer derate (CC/CT, or the per-plant
+    # measured CC ratio under cc_nameplate_summer_derate) the curve is rescaled so
+    # its SUMMER-hours (Jun-Sep) mean reproduces that same net-summer capability:
+    # capacity-NEUTRAL on the seasonal average, only RESHAPING it by temperature
+    # so heatwave hours sit below net-summer (where scarcity should occur) and
+    # cooler hours toward full rating -- it does NOT tune the level (rules 1, 9).
+    # COAL / ST_GAS carry no existing summer derate, so they take the raw curve
+    # directly: a pure, additive hot-hour condenser derate. Availability is never
+    # driven above 1.0, so capacity never exceeds the net-summer pmax basis.
+    # Physics slope x measured hourly temperature -> forward-reproducible in BOTH
+    # backcast and forecast (rule 11); never fitted to a price/volume residual.
+    # Slopes are fractional loss per degree C. Sources (docs/parameter-citations):
+    #   CT 0.0126/C  = 0.70 %/F, mid of the 0.5-0.9 %/F industry frame-GT range
+    #                  (arXiv:2311.07001 uses 0.0083/C; CPUC R.21-10-002 ~1 %/C).
+    #   CC 0.0076/C  = 0.42 %/F net, from ~22.6 % net loss over 41->95 F
+    #                  (arXiv:2311.07001 net-CC ~0.75 %/C).
+    #   ST_GAS 0.0054/C = 0.30 %/F (CPUC R.21-10-002: steam slope > GT slope, but
+    #                  plant-level condenser derate is modest).
+    #   COAL 0.0040/C = 0.22 %/F, onset 25 C / 77 F (arXiv:2311.07001 reports a
+    #                  modest steam-coal summer deration, condenser-onset limited).
+    temp_dependent_derate: bool = False
+    temp_derate_ref_c: float = 15.0  # ISO 59 F rating point (GT + gas-steam)
+    temp_derate_ref_c_coal: float = 25.0  # coal condenser-derate onset (~77 F)
+    temp_derate_slope_cc: float = 0.0076  # CC fractional loss per C above ref
+    temp_derate_slope_ct: float = 0.0126  # CT fractional loss per C above ref
+    temp_derate_slope_st_gas: float = 0.0054  # gas-steam fractional loss per C
+    temp_derate_slope_coal: float = 0.0040  # coal fractional loss per C above ref
+
     # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
     # the plant's base HR). When set, each reliability ST_GAS bin's committed /
     # economic / peaking heat rate is base_HR x {gas_st_committed_hr_override,
