@@ -26,15 +26,15 @@ every delta vs miso-46 is one of these mechanisms:
    peaker budget, so it rides the rule-20 v2.2 grounded-above-budget path
    (D-4 window [15,21] ⊂ the (MECH_RELIABILITY_FLOOR, CT_PEAKER) [14,22)
    justified window; D-1 diurnal shape scored in the bundle).
-3. **CHP steam-credit power-only HR correction extended to MISO**: CC_CHP/CT_CHP
-   no longer clear on physically-impossible steam-credited HRs (cap-weighted
-   CT_CHP ~6.62 / CC_CHP ~6.76, median CT_CHP 5.50, min CC_CHP 4.49 MMBtu/MWh) —
-   universal turbine physics (rule 24 clean), the same correction landed for
-   CAISO/PJM.
+(The MISO CHP steam-credit HR correction was audited on this branch and
+deliberately LEFT OFF — MISO CHP does not over-deliver, so correcting the
+sub-physical HR only worsens the already-under CT_CHP; see the
+``CHP_STEAM_CREDIT_HR_CORRECTION_ISOS`` note in ``data/fleet.py``. This candidate
+is drag-only.)
 
-All three limbs live in the ``reliability_floor`` engine + base fleet config; the
-separate ``gas_st_netload_drag`` / ``ct_netload_drag`` mechanisms stay OFF (rule
-14/19: one mechanism per phenomenon).
+Both drag limbs live in the ``reliability_floor`` engine; the separate
+``gas_st_netload_drag`` / ``ct_netload_drag`` mechanisms stay OFF (rule 14/19:
+one mechanism per phenomenon).
 
 Memory note (CLAUDE.md rule 1/12): the MISO per-plant multi-zone energy+reserve
 co-opt LP peaks ~14-16 GB per year; run this SOLO (never concurrent with another
@@ -71,16 +71,16 @@ _OUT_DIR = _REPO / "results/calibration/MISO/miso_47_steamgas_ct_drag"
 
 NOTE = (
     "MISO 47 steam-gas overnight + CT evening drag keeper candidate: miso-46 "
-    "seam-ladder recipe re-solved at HEAD, absorbing three base-config/base-data "
-    "structural corrections vs miso-46 — (1) ST_GAS extreme-day overnight [0,6] "
-    "drag in the reliability_floor engine (tmax/tmin/netload, min-stable 0.12, 4 "
-    "limbs enabled where the CAMPD overnight pre-positioning is real, forced "
-    "0.3-0.4%), (2) CT_PEAKER evening [15,21] netload drag replacing the "
-    "temperature-only CT limbs (6 zones, rho 0.49-0.71, forced ~18-20% — rule-20 "
-    "v2.2 grounded-above-budget, D-4 [15,21]⊂[14,22)), (3) CHP steam-credit "
-    "power-only HR correction extended to MISO (CT_CHP ~6.62 / CC_CHP ~6.76 "
-    "sub-physical). Recipe byte-unchanged vs miso-46; every delta is one of these "
-    "three structural mechanisms in base config/data."
+    "seam-ladder recipe re-solved at HEAD, absorbing two base-data structural "
+    "mechanisms vs miso-46 — (1) ST_GAS extreme-day overnight [0,6] drag in the "
+    "reliability_floor engine (tmax/tmin/netload, min-stable 0.12, 4 limbs "
+    "enabled where the CAMPD overnight pre-positioning is real, forced 0.7-1.2% "
+    "in-solve), (2) CT_PEAKER evening [15,21] netload drag replacing the "
+    "temperature-only CT limbs (6 zones, rho 0.49-0.71, forced 5.0-7.5% in-solve "
+    "— under the 15% peaker cap; D-1/D-2/D-4 all pass). The MISO CHP steam-credit "
+    "HR correction was audited and LEFT OFF (MISO CHP does not over-deliver). "
+    "Recipe byte-unchanged vs miso-46; every delta is one of these two drag "
+    "mechanisms in reliability_floor_coeffs_MISO.csv."
 )
 
 
