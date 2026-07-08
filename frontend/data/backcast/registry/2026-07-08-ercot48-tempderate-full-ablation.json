@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-ercot48-tempderate-full-ablation",
+  "label": "ercot48 tempderate full ablation",
+  "date": "2026-07-08",
+  "shorthand": "ercot48-tempderate-full-ablation",
+  "definition": "temp-derate full-keeper ablation -- ercot46_clock_steamgas config (reconstructed from meta.json, not the curated calibration_flags subset) + temp_dependent_derate, 2023-2025 (rule 16)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-08-ercot48-tempderate-full-ablation.js",
+  "bundle": "results/calibration/ercot48_tempderate_full-ablation"
+}
