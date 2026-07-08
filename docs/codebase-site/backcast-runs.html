@@ -78,7 +78,7 @@
 
   <script type="module">
     import {
-      initBC, loadRun, loadBench,
+      initBC, loadRun, loadBench, loadKeepers,
       getMeta, getCompleteness,
       isoList, isoZones, isoYears, isoGroups, isoGroupLabels,
       isoColorVar, inflateGz, pearson,
@@ -95,6 +95,13 @@
       klass: null, zones: new Set(), plant: 'agg',
       runData: null, benchData: null, runMeta: null,
     };
+
+    // Per-ISO keeper map ({ ERCOT: '<id>', ... }) from keepers.json, loaded in
+    // boot(). Drives the keeper badge, the default-run-on-ISO-switch, and the
+    // keeper-only LMP delta heatmap. Empty until loaded / if the fetch fails.
+    let KEEPERS = {};
+    function keeperFor(iso) { return KEEPERS?.[iso] || null; }
+    function isKeeperRun() { return !!st.runId && keeperFor(st.iso) === st.runId; }
 
     const $ = s => document.querySelector(s);
     const $$ = s => document.querySelectorAll(s);
@@ -194,6 +201,19 @@
     function dec(b) {
       const s = atob(b), a = new Float32Array(s.length);
       for (let i = 0; i < s.length; i++) a[i] = s.charCodeAt(i);
+      return a;
+    }
+
+    /* Decode base64 little-endian int16 signed hourly series (LMP delta $/MWh).
+       -32768 is the NaN sentinel (no model dual / no actual price for that hour)
+       and decodes to NaN so the heatmap renders it neutral, not colored. */
+    function decI16(b) {
+      const s = atob(b), n = s.length >> 1, a = new Float32Array(n);
+      for (let i = 0; i < n; i++) {
+        let v = s.charCodeAt(2 * i) | (s.charCodeAt(2 * i + 1) << 8);
+        if (v >= 32768) v -= 65536;          // sign-extend
+        a[i] = v === -32768 ? NaN : v;        // sentinel -> NaN
+      }
       return a;
     }
 
@@ -522,6 +542,55 @@
     }
 
     /* ================================================================
+       LMP DELTA HEATMAP — diverging color (model $/MWh minus actual)
+       ================================================================ */
+    // Diverging ramp: model OVER actual (positive delta) -> orange, model UNDER
+    // (negative) -> blue, ~zero -> white. |delta| is normalized to ``cap`` and
+    // gamma-shaped (<1) so small biases still read as tint — "show the
+    // variation", not just the scarcity spikes. NaN (no data) -> neutral gray.
+    const DELTA_ORANGE = [230, 126, 34];   // #E67E22 — model runs HOT
+    const DELTA_BLUE = [33, 102, 172];     // #2166AC — model runs COLD
+    const DELTA_NAN = [235, 238, 242];     // no model/actual price this hour
+    function lmpDeltaColorRGB(d, cap) {
+      if (d == null || isNaN(d)) return DELTA_NAN;
+      const t = Math.max(-1, Math.min(1, d / (cap || 1)));
+      const f = Math.pow(Math.abs(t), 0.7);
+      const c = t >= 0 ? DELTA_ORANGE : DELTA_BLUE;
+      return [255 + f * (c[0] - 255), 255 + f * (c[1] - 255), 255 + f * (c[2] - 255)];
+    }
+
+    function drawDeltaHeat(cv, arr, cap) {
+      const ctx = cv.getContext('2d');
+      const im = ctx.createImageData(365, 24);
+      for (let h = 0; h < T; h++) {
+        const day = h / 24 | 0, hod = h % 24;
+        if (day > 364) break;
+        const c = lmpDeltaColorRGB(arr[h], cap);
+        const i = (hod * 365 + day) * 4;
+        im.data[i] = c[0]; im.data[i + 1] = c[1]; im.data[i + 2] = c[2]; im.data[i + 3] = 255;
+      }
+      ctx.putImageData(im, 0, 0);
+    }
+
+    // Robust symmetric color cap = 98th percentile of |delta| (min $10), so a
+    // handful of scarcity hours don't wash the whole map to one saturated tone.
+    function deltaCap(arr) {
+      const a = [];
+      for (let i = 0; i < arr.length; i++) if (!isNaN(arr[i])) a.push(Math.abs(arr[i]));
+      if (!a.length) return 10;
+      a.sort((x, y) => x - y);
+      const p = a[Math.min(a.length - 1, Math.floor(a.length * 0.98))];
+      return Math.max(10, Math.ceil(p / 5) * 5);
+    }
+
+    // Mean signed delta over finite hours (annual price bias, $/MWh).
+    function deltaMean(arr) {
+      let s = 0, n = 0;
+      for (let i = 0; i < arr.length; i++) if (!isNaN(arr[i])) { s += arr[i]; n++; }
+      return n ? s / n : null;
+    }
+
+    /* ================================================================
        UPDATE ISO CHROME
        ================================================================ */
     function updateIsoChrome(iso) {
@@ -552,11 +621,13 @@
         return runs;
       }
 
+      const kid = keeperFor(iso);
       list.innerHTML = runs.map((r, i) => {
         const active = (st.runId === r.id || (!st.runId && i === 0)) ? 'active' : '';
-        return `<label class="run-opt ${active}" data-id="${esc(r.id)}">
+        const keep = r.id === kid ? '<span class="keeper-badge">Keeper</span>' : '';
+        return `<label class="run-opt ${active} ${r.id === kid ? 'is-keeper' : ''}" data-id="${esc(r.id)}">
           <input type="radio" name="run" value="${esc(r.id)}" ${active ? 'checked' : ''}>
-          <span class="run-label">${esc(r.label || r.shorthand || r.id)}</span>
+          <span class="run-label">${esc(r.label || r.shorthand || r.id)}${keep}</span>
         </label>`;
       }).join('');
 
@@ -749,8 +820,10 @@
 
       // Run definition
       if (reg.definition) {
+        const keeperPill = isKeeperRun()
+          ? ` <span class="keeper-badge" title="Designated keeper for ${esc(st.iso)}">Keeper &middot; ${esc(st.iso)}</span>` : '';
         html += `<div class="bc-panel">
-          <h2>Run Definition</h2>
+          <h2>Run Definition${keeperPill}</h2>
           <p class="bc-narration"><span class="ndef">${esc(reg.definition)}</span></p>
           <p style="margin-top:8px;font-size:0.72rem;color:var(--text-muted)">
             ID: <span class="run-id-link">${esc(st.runId)}</span>
@@ -822,6 +895,20 @@
       }
       html += `</div></div>`;
 
+      // LMP delta heatmap (KEEPER ONLY) — 365×24 hot/cold map of model minus
+      // actual LMP per hour. Only shown for the ISO's keeper and only when the
+      // payload carries the hourly delta field (populate-on-next-render).
+      const deltaYears = isKeeperRun() ? years.filter(yr => RUN(yr).lmpDeltaHr) : [];
+      if (deltaYears.length) {
+        html += `<div class="bc-panel"><h2>LMP Delta Heatmap <span class="keeper-badge">Keeper</span></h2>
+          <p class="panel-sub">Model minus actual LMP for every hour of the year — <span style="color:${`rgb(${DELTA_ORANGE.join(',')})`};font-weight:700">orange = model over</span> (runs hot), <span style="color:${`rgb(${DELTA_BLUE.join(',')})`};font-weight:700">blue = model under</span> (runs cold), white ≈ on top. Day-of-year across, hour-of-day down; color capped at the 98th percentile of |Δ| per year.</p>
+          <div class="lmp-grid" id="deltaHeatGrid">`;
+        for (const yr of deltaYears) {
+          html += `<div class="year-card"><div class="svg-box" data-deltayr="${yr}"></div></div>`;
+        }
+        html += `</div></div>`;
+      }
+
       // Diagnostic findings
       const findings = diagFindings(years);
       if (findings.length) {
@@ -851,6 +938,60 @@
 
       // Mount LMP line charts
       mountLmpCharts(years);
+
+      // Mount keeper LMP delta heatmaps (no-op when the grid is absent)
+      drawDeltaHeatmaps();
+    }
+
+    /* Mount the per-year LMP delta heatmaps into their [data-deltayr] boxes.
+       Each box gets a 365×24 canvas (day × hour), a Jan/Jul/Dec axis, an annual
+       mean-bias caption, and a per-canvas hover tooltip. Reads the signed int16
+       hourly delta from RUN(yr).lmpDeltaHr. */
+    function drawDeltaHeatmaps() {
+      document.querySelectorAll('[data-deltayr]').forEach(box => {
+        const yr = Number(box.dataset.deltayr);
+        const enc = RUN(yr).lmpDeltaHr;
+        if (!enc) { box.innerHTML = '<p style="font-size:0.82rem;color:var(--text-muted)">No hourly LMP delta.</p>'; return; }
+        const arr = decI16(enc);
+        const cap = deltaCap(arr);
+        const mean = deltaMean(arr);
+
+        box.innerHTML = '';
+        const head = document.createElement('div');
+        head.className = 'year-head';
+        head.innerHTML = `<span>${yr}</span><span style="font-size:0.72rem;font-weight:600" class="${mean == null ? '' : (mean >= 0 ? 'clr-bad' : 'clr-ok')}">${mean == null ? '' : 'bias ' + (mean >= 0 ? '+' : '') + mean.toFixed(1) + ' $/MWh'}</span>`;
+        box.appendChild(head);
+
+        const cv = document.createElement('canvas');
+        cv.className = 'heat'; cv.width = 365; cv.height = 24;
+        box.appendChild(cv);
+        drawDeltaHeat(cv, arr, cap);
+
+        const axis = document.createElement('div');
+        axis.className = 'heat-axis';
+        axis.innerHTML = '<span>Jan</span><span>Jul</span><span>Dec</span>';
+        box.appendChild(axis);
+
+        // Diverging legend: −cap (blue) … 0 (white) … +cap (orange)
+        const legend = document.createElement('div');
+        legend.innerHTML = `<div style="display:flex;align-items:center;gap:8px;margin-top:8px">
+          <span style="font-size:0.68rem;color:var(--text-muted)">−$${cap} (cold)</span>
+          <div class="delta-ramp"></div>
+          <span style="font-size:0.68rem;color:var(--text-muted)">+$${cap} (hot)</span></div>`;
+        box.appendChild(legend);
+
+        cv.addEventListener('mousemove', e => {
+          const r = cv.getBoundingClientRect();
+          const day = Math.floor((e.clientX - r.left) / r.width * 365);
+          const hod = Math.floor((e.clientY - r.top) / r.height * 24);
+          if (day < 0 || day > 364 || hod < 0 || hod > 23) { hideTip(); return; }
+          const v = arr[day * 24 + hod];
+          const dt = new Date(yr, 0, 1); dt.setDate(day + 1);
+          const vtxt = isNaN(v) ? 'no price' : (v >= 0 ? '+' : '') + Math.round(v) + ' $/MWh ' + (v >= 0 ? '(hot)' : '(cold)');
+          showTip(`<b>${MONTHS[dt.getMonth()]} ${dt.getDate()}, ${String(hod).padStart(2, '0')}:00</b><br>Model − actual: ${vtxt}`, e.clientX, e.clientY);
+        });
+        cv.addEventListener('mouseleave', hideTip);
+      });
     }
 
     /* Mount SVG monthly LMP charts. */
@@ -1602,8 +1743,13 @@
       buildRunList(iso);
 
       if (runs.length) {
+        // Deep-linked run (for this ISO) wins; otherwise default to the ISO's
+        // keeper, falling back to the newest run when no keeper is registered.
         const h = hashState.get();
-        const targetRun = (h.run && runs.some(r => r.id === h.run)) ? h.run : runs[0].id;
+        const kid = keeperFor(iso);
+        const targetRun = (h.run && runs.some(r => r.id === h.run)) ? h.run
+          : (kid && runs.some(r => r.id === kid)) ? kid
+            : runs[0].id;
         await selectRun(targetRun);
       } else {
         $('#diag').textContent = 'No runs available for this ISO.';
@@ -1616,6 +1762,8 @@
     async function boot() {
       try {
         await initBC();
+        // Keeper map: best-effort, never blocks the page if keepers.json is absent.
+        KEEPERS = await loadKeepers().catch(() => ({})) || {};
 
         const meta = getMeta();
         if (!meta || !Object.keys(meta).length) throw new Error('No ISO data in manifest.');
