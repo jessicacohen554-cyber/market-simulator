@@ -1,0 +1,201 @@
+year,region_id,region_name,market_type_id,market_type_name,price_usd_per_ton,sales_short_tons
+2011,MTN,Mountain,OM,Open Market,17.31,397960944.0
+2011,MTN,Mountain,TOT,Total,16.86,554978226.0
+2011,ND,North Dakota,OM,Open Market,16.21,
+2011,NM,New Mexico,OM,Open Market,34.22,24413574.0
+2011,NM,New Mexico,TOT,Total,34.22,24413574.0
+2011,OH,Ohio,OM,Open Market,46.58,
+2011,OK,Oklahoma,OM,Open Market,70.39,1082073.0
+2011,OK,Oklahoma,TOT,Total,70.39,1082073.0
+2011,PA,Pennsylvania,OM,Open Market,65.89,41353638.0
+2011,PAA,Pennsylvania (Anthracite),OM,Open Market,61.43,1669127.0
+2011,PAB,Pennsylvania (Bituminous),OM,Open Market,66.08,39684511.0
+2011,PRB,Powder River Basin,CAP,Captive,13.48,140424973.0
+2011,PRB,Powder River Basin,OM,Open Market,12.92,321292229.0
+2011,PRB,Powder River Basin,TOT,Total,13.09,461717202.0
+2011,SAT,South Atlantic,CAP,Captive,86.14,9042923.0
+2011,SAT,South Atlantic,OM,Open Market,74.97,109935528.0
+2011,SAT,South Atlantic,TOT,Total,75.81,118978451.0
+2011,STH,South Total,CAP,Captive,29.93,41409816.0
+2011,STH,South Total,OM,Open Market,65.39,241276106.0
+2011,STH,South Total,TOT,Total,60.19,282685922.0
+2011,TN,Tennessee,OM,Open Market,76.5,
+2011,TX,Texas,CAP,Captive,15.88,29138367.0
+2011,TX,Texas,OM,Open Market,25.88,15278911.0
+2011,TX,Texas,TOT,Total,19.32,44417278.0
+2011,UNT,Uinta Basin,CAP,Captive,38.61,6647415.0
+2011,UNT,Uinta Basin,OM,Open Market,36.84,35666348.0
+2011,UNT,Uinta Basin,TOT,Total,37.12,42313763.0
+2011,US,U.S. Total,CAP,Captive,24.43,232830183.0
+2011,US,U.S. Total,OM,Open Market,38.23,789101776.0
+2011,US,U.S. Total,TOT,Total,35.09,1021931959.0
+2011,UT,Utah,OM,Open Market,33.07,
+2011,VA,Virginia,OM,Open Market,98.63,8594589.0
+2011,WBO,Other Western,CAP,Captive,26.46,14123812.0
+2011,WBO,Other Western,OM,Open Market,28.7,66010644.0
+2011,WBO,Other Western,TOT,Total,28.31,80134456.0
+2011,WMR,West of Mississippi River,CAP,Captive,15.89,192358473.0
+2011,WMR,West of Mississippi River,OM,Open Market,17.93,441796383.0
+2011,WMR,West of Mississippi River,TOT,Total,17.31,634154856.0
+2011,WNC,West North Central,CAP,Captive,12.94,4178918.0
+2011,WNC,West North Central,OM,Open Market,16.9,24500198.0
+2011,WNC,West North Central,TOT,Total,16.32,28679116.0
+2011,WSB,Western Region Total,CAP,Captive,15.66,161196200.0
+2011,WSB,Western Region Total,OM,Open Market,17.4,422969221.0
+2011,WSB,Western Region Total,TOT,Total,16.92,584165421.0
+2011,WSC,West South Central,CAP,Captive,17.12,31162273.0
+2011,WSC,West South Central,OM,Open Market,29.31,18322236.0
+2011,WSC,West South Central,TOT,Total,21.63,49484509.0
+2011,WST,West Total,CAP,Captive,15.73,157017282.0
+2011,WST,West Total,OM,Open Market,17.47,398973949.0
+2011,WST,West Total,TOT,Total,16.98,555991231.0
+2011,WV,West Virginia,OM,Open Market,73.73,98799114.0
+2011,WVN,West Virginia (Northern),OM,Open Market,55.11,
+2011,WVS,West Virginia (Southern),OM,Open Market,83.64,
+2011,WY,Wyoming,CAP,Captive,14.45,133728080.0
+2011,WY,Wyoming,OM,Open Market,13.17,303695442.0
+2011,WY,Wyoming,TOT,Total,13.56,437423522.0
+2012,AK,Alaska,TOT,Total,48.57,1051044.0
+2012,AL,Alabama,OM,Open Market,85.06,8687990.0
+2012,AL,Alabama,TOT,Total,85.06,8687990.0
+2012,APC,Appalachia Central,CAP,Captive,83.94,33714608.0
+2012,APC,Appalachia Central,OM,Open Market,83.52,77823558.0
+2012,APC,Appalachia Central,TOT,Total,83.65,111538166.0
+2012,APN,Appalachia Northern,CAP,Captive,65.0,18759807.0
+2012,APN,Appalachia Northern,OM,Open Market,59.1,88391166.0
+2012,APN,Appalachia Northern,TOT,Total,60.13,107150973.0
+2012,APP,Appalachia Total,CAP,Captive,77.17,52474415.0
+2012,APP,Appalachia Total,OM,Open Market,71.25,174902714.0
+2012,APP,Appalachia Total,TOT,Total,72.62,227377129.0
+2012,APS,Appalachia Southern,OM,Open Market,85.06,8687990.0
+2012,APS,Appalachia Southern,TOT,Total,85.06,8687990.0
+2012,AR,Arkansas,TOT,Total,53.11,118480.0
+2012,AZ,Arizona,TOT,Total,43.19,7449226.0
+2012,CO,Colorado,CAP,Captive,43.19,4551616.0
+2012,CO,Colorado,OM,Open Market,38.51,20836314.0
+2012,CO,Colorado,TOT,Total,39.35,25387930.0
+2012,EMR,East of Mississippi River,CAP,Captive,70.17,75991373.0
+2012,EMR,East of Mississippi River,OM,Open Market,63.42,263623542.0
+2012,EMR,East of Mississippi River,TOT,Total,64.93,339614915.0
+2012,ENC,East North Central,CAP,Captive,53.7,25340861.0
+2012,ENC,East North Central,OM,Open Market,48.77,71171742.0
+2012,ENC,East North Central,TOT,Total,50.06,96512603.0
+2012,ESC,East South Central,CAP,Captive,73.08,6884019.0
+2012,ESC,East South Central,OM,Open Market,62.93,89403011.0
+2012,ESC,East South Central,TOT,Total,63.65,96287030.0
+2012,EST,East Total,CAP,Captive,73.8,18283668.0
+2012,EST,East Total,OM,Open Market,76.62,34266577.0
+2012,EST,East Total,TOT,Total,75.64,52550245.0
+2012,IL,Illinois,CAP,Captive,54.71,5112501.0
+2012,IL,Illinois,OM,Open Market,49.04,29251572.0
+2012,IL,Illinois,TOT,Total,49.88,34364073.0
+2012,ILL,Illinois Basin,CAP,Captive,54.54,23516958.0
+2012,ILL,Illinois Basin,OM,Open Market,48.86,85655516.0
+2012,ILL,Illinois Basin,TOT,Total,50.09,109172474.0
+2012,IN,Indiana,CAP,Captive,54.5,18404457.0
+2012,IN,Indiana,OM,Open Market,49.16,17126638.0
+2012,IN,Indiana,TOT,Total,51.93,35531095.0
+2012,INO,Other Interior,CAP,Captive,16.67,30918833.0
+2012,INO,Other Interior,OM,Open Market,31.2,18358216.0
+2012,INO,Other Interior,TOT,Total,22.08,49277049.0
+2012,INT,Interior Region Total,CAP,Captive,33.03,54435791.0
+2012,INT,Interior Region Total,OM,Open Market,45.74,104013732.0
+2012,INT,Interior Region Total,TOT,Total,41.38,158449523.0
+2012,KY,Kentucky,CAP,Captive,73.08,6884019.0
+2012,KY,Kentucky,OM,Open Market,61.85,76601575.0
+2012,KY,Kentucky,TOT,Total,62.78,83485594.0
+2012,KYE,Kentucky (East),CAP,Captive,73.08,6884019.0
+2012,KYE,Kentucky (East),OM,Open Market,75.8,37324269.0
+2012,KYE,Kentucky (East),TOT,Total,75.37,44208288.0
+2012,KYW,Kentucky (West),OM,Open Market,48.6,39277306.0
+2012,KYW,Kentucky (West),TOT,Total,48.6,39277306.0
+2012,LA,Louisiana,TOT,Total,36.1,4284423.0
+2012,MAT,Middle Atlantic,CAP,Captive,67.74,14679907.0
+2012,MAT,Middle Atlantic,OM,Open Market,68.54,27907457.0
+2012,MAT,Middle Atlantic,TOT,Total,68.26,42587364.0
+2012,MD,Maryland,OM,Open Market,47.83,2023748.0
+2012,MD,Maryland,TOT,Total,47.83,2023748.0
+2012,MID,Midwest Total,CAP,Captive,47.99,29694113.0
+2012,MID,Midwest Total,OM,Open Market,41.16,95039040.0
+2012,MID,Midwest Total,TOT,Total,42.79,124733153.0
+2012,MO,Missouri,TOT,Total,51.5,421612.0
+2012,MS,Mississippi,TOT,Total,23.49,3065312.0
+2012,MT,Montana,TOT,Total,18.11,36823310.0
+2012,MTN,Mountain,CAP,Captive,16.57,193901874.0
+2012,MTN,Mountain,OM,Open Market,18.64,314614730.0
+2012,MTN,Mountain,TOT,Total,17.85,508516604.0
+2012,ND,North Dakota,TOT,Total,17.4,27798938.0
+2012,NM,New Mexico,TOT,Total,36.74,22880828.0
+2012,OH,Ohio,TOT,Total,47.8,26617435.0
+2012,OK,Oklahoma,OM,Open Market,59.63,1070566.0
+2012,OK,Oklahoma,TOT,Total,59.63,1070566.0
+2012,PA,Pennsylvania,CAP,Captive,67.74,14679907.0
+2012,PA,Pennsylvania,OM,Open Market,68.54,27907457.0
+2012,PA,Pennsylvania,TOT,Total,68.26,42587364.0
+2012,PAA,Pennsylvania (Anthracite),TOT,Total,76.68,2367270.0
+2012,PAB,Pennsylvania (Bituminous),TOT,Total,67.77,40220094.0
+2012,PCN,Pacific Noncontiguous,TOT,Total,48.57,1051044.0
+2012,PRB,Powder River Basin,CAP,Captive,13.95,166195728.0
+2012,PRB,Powder River Basin,OM,Open Market,13.66,251539374.0
+2012,PRB,Powder River Basin,TOT,Total,13.77,417735102.0
+2012,SAT,South Atlantic,CAP,Captive,85.05,29086586.0
+2012,SAT,South Atlantic,OM,Open Market,75.99,75141332.0
+2012,SAT,South Atlantic,TOT,Total,78.52,104227918.0
+2012,STH,South Total,CAP,Captive,49.58,63285677.0
+2012,STH,South Total,OM,Open Market,64.16,173056515.0
+2012,STH,South Total,TOT,Total,60.25,236342192.0
+2012,TN,Tennessee,OM,Open Market,73.51,1048134.0
+2012,TN,Tennessee,TOT,Total,73.51,1048134.0
+2012,TX,Texas,TOT,Total,19.09,40316656.0
+2012,UNT,Uinta Basin,CAP,Captive,39.43,7636313.0
+2012,UNT,Uinta Basin,OM,Open Market,37.16,32222937.0
+2012,UNT,Uinta Basin,TOT,Total,37.59,39859250.0
+2012,US,U.S. Total,CAP,Captive,29.9,305165332.0
+2012,US,U.S. Total,OM,Open Market,38.11,618027906.0
+2012,US,U.S. Total,TOT,Total,35.4,923193238.0
+2012,UT,Utah,TOT,Total,34.69,15949951.0
+2012,VA,Virginia,CAP,Captive,98.48,3603761.0
+2012,VA,Virginia,OM,Open Market,112.1,6359120.0
+2012,VA,Virginia,TOT,Total,107.17,9962881.0
+2012,WBO,Other Western,CAP,Captive,26.95,24423085.0
+2012,WBO,Other Western,OM,Open Market,30.73,55349149.0
+2012,WBO,Other Western,TOT,Total,29.58,79772234.0
+2012,WMR,West of Mississippi River,CAP,Captive,16.55,229173959.0
+2012,WMR,West of Mississippi River,OM,Open Market,19.29,354404364.0
+2012,WMR,West of Mississippi River,TOT,Total,18.21,583578323.0
+2012,WNC,West North Central,CAP,Captive,14.75,4353252.0
+2012,WNC,West North Central,OM,Open Market,18.48,23867298.0
+2012,WNC,West North Central,TOT,Total,17.91,28220550.0
+2012,WSB,Western Region Total,CAP,Captive,16.53,198255126.0
+2012,WSB,Western Region Total,OM,Open Market,18.68,339111460.0
+2012,WSB,Western Region Total,TOT,Total,17.89,537366586.0
+2012,WSC,West South Central,CAP,Captive,16.67,30918833.0
+2012,WSC,West South Central,OM,Open Market,32.21,14871292.0
+2012,WSC,West South Central,TOT,Total,21.72,45790125.0
+2012,WST,West Total,CAP,Captive,16.57,193901874.0
+2012,WST,West Total,OM,Open Market,18.74,315665774.0
+2012,WST,West Total,TOT,Total,17.91,509567648.0
+2012,WV,West Virginia,CAP,Captive,83.15,25482825.0
+2012,WV,West Virginia,OM,Open Market,73.41,66758464.0
+2012,WV,West Virginia,TOT,Total,76.1,92241289.0
+2012,WVN,West Virginia (Northern),TOT,Total,60.32,35922426.0
+2012,WVS,West Virginia (Southern),TOT,Total,86.17,56318863.0
+2012,WY,Wyoming,CAP,Captive,14.83,167104041.0
+2012,WY,Wyoming,OM,Open Market,13.81,232921318.0
+2012,WY,Wyoming,TOT,Total,14.24,400025359.0
+2013,AK,Alaska,TOT,Total,45.75,1623137.0
+2013,AL,Alabama,OM,Open Market,83.43,6989981.0
+2013,AL,Alabama,TOT,Total,88.2,17833295.0
+2013,APC,Appalachia Central,CAP,Captive,83.76,2353919.0
+2013,APC,Appalachia Central,OM,Open Market,77.21,88207293.0
+2013,APC,Appalachia Central,TOT,Total,81.99,127192864.0
+2013,APN,Appalachia Northern,CAP,Captive,55.66,5575161.0
+2013,APN,Appalachia Northern,OM,Open Market,58.74,106305093.0
+2013,APN,Appalachia Northern,TOT,Total,60.97,122679278.0
+2013,APP,Appalachia Total,CAP,Captive,64.0,7929080.0
+2013,APP,Appalachia Total,OM,Open Market,67.68,201502367.0
+2013,APP,Appalachia Total,TOT,Total,72.77,267705437.0
+2013,APS,Appalachia Southern,OM,Open Market,83.43,6989981.0
+2013,APS,Appalachia Southern,TOT,Total,88.2,17833295.0
+2013,AR,Arkansas,TOT,Total,109.72,42973.0
+2013,AZ,Arizona,TOT,Total,44.03,7903288.0
