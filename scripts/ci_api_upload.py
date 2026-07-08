@@ -8,6 +8,7 @@ Data API (blob -> tree -> commit -> ref), exactly as mcp__github__push_files
 does, so it never negotiates a pack and never hits that wall. Parents the new
 commit on the live tip of main, so the branch is a clean per-run diff.
 """
+
 import argparse
 import base64
 import glob
@@ -34,7 +35,9 @@ def req(method, path, body=None):
         with urllib.request.urlopen(r) as resp:
             return json.load(resp)
     except urllib.error.HTTPError as e:
-        sys.stderr.write("%s %s -> %s: %s\n" % (method, path, e.code, e.read().decode()))
+        sys.stderr.write(
+            "%s %s -> %s: %s\n" % (method, path, e.code, e.read().decode())
+        )
         raise
 
 
@@ -57,29 +60,45 @@ def main():
     files += sorted(glob.glob("frontend/data/backcast/bench/CAISO/*.json.gz"))
     files = [f for f in files if os.path.exists(f)]
 
-    base = req("GET", "/repos/%s/%s/git/ref/heads/main" % (OWNER, REPO))["object"]["sha"]
-    base_tree = req("GET", "/repos/%s/%s/git/commits/%s" % (OWNER, REPO, base))["tree"]["sha"]
+    base = req("GET", "/repos/%s/%s/git/ref/heads/main" % (OWNER, REPO))["object"][
+        "sha"
+    ]
+    base_tree = req("GET", "/repos/%s/%s/git/commits/%s" % (OWNER, REPO, base))["tree"][
+        "sha"
+    ]
 
     tree = []
     for p in files:
         with open(p, "rb") as fh:
             payload = base64.b64encode(fh.read()).decode()
-        blob = req("POST", "/repos/%s/%s/git/blobs" % (OWNER, REPO),
-                   {"content": payload, "encoding": "base64"})
+        blob = req(
+            "POST",
+            "/repos/%s/%s/git/blobs" % (OWNER, REPO),
+            {"content": payload, "encoding": "base64"},
+        )
         tree.append({"path": p, "mode": "100644", "type": "blob", "sha": blob["sha"]})
         print("blob %-64s -> %s" % (p, blob["sha"][:8]))
 
-    new_tree = req("POST", "/repos/%s/%s/git/trees" % (OWNER, REPO),
-                   {"base_tree": base_tree, "tree": tree})["sha"]
-    commit = req("POST", "/repos/%s/%s/git/commits" % (OWNER, REPO),
-                 {"message": a.message, "tree": new_tree, "parents": [base]})["sha"]
+    new_tree = req(
+        "POST",
+        "/repos/%s/%s/git/trees" % (OWNER, REPO),
+        {"base_tree": base_tree, "tree": tree},
+    )["sha"]
+    commit = req(
+        "POST",
+        "/repos/%s/%s/git/commits" % (OWNER, REPO),
+        {"message": a.message, "tree": new_tree, "parents": [base]},
+    )["sha"]
 
     ref_path = "/repos/%s/%s/git/refs/heads/%s" % (OWNER, REPO, a.branch)
     try:
         req("PATCH", ref_path, {"sha": commit, "force": True})
     except urllib.error.HTTPError:
-        req("POST", "/repos/%s/%s/git/refs" % (OWNER, REPO),
-            {"ref": "refs/heads/%s" % a.branch, "sha": commit})
+        req(
+            "POST",
+            "/repos/%s/%s/git/refs" % (OWNER, REPO),
+            {"ref": "refs/heads/%s" % a.branch, "sha": commit},
+        )
     print("committed %d files as %s on %s" % (len(files), commit[:8], a.branch))
 
 
