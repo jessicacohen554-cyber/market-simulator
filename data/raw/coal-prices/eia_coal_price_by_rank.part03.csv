@@ -1,0 +1,201 @@
+year,region_id,region_name,coal_rank_id,coal_rank_name,price_usd_per_ton
+2006,AL,Alabama,TOT,All,48.39
+2006,APC,Appalachia Central,BIT,Bituminous,49.32
+2006,APC,Appalachia Central,TOT,All,49.32
+2006,APN,Appalachia Northern,ANT,Anthracite,51.68
+2006,APN,Appalachia Northern,BIT,Bituminous,35.57
+2006,APN,Appalachia Northern,TOT,All,35.74
+2006,APP,Appalachia Total,ANT,Anthracite,51.68
+2006,APP,Appalachia Total,BIT,Bituminous,44.52
+2006,APP,Appalachia Total,TOT,All,44.54
+2006,APS,Appalachia Southern,BIT,Bituminous,48.39
+2006,APS,Appalachia Southern,TOT,All,48.39
+2006,CO,Colorado,TOT,All,25.04
+2006,EMR,East of Mississippi River,ANT,Anthracite,51.68
+2006,EMR,East of Mississippi River,BIT,Bituminous,41.71
+2006,EMR,East of Mississippi River,LIG,Lignite,16.95
+2006,EMR,East of Mississippi River,TOT,All,41.56
+2006,ENC,East North Central,BIT,Bituminous,29.57
+2006,ENC,East North Central,TOT,All,29.57
+2006,ESC,East South Central,BIT,Bituminous,43.5
+2006,ESC,East South Central,TOT,All,42.83
+2006,EST,East Total,ANT,Anthracite,51.68
+2006,EST,East Total,BIT,Bituminous,42.93
+2006,EST,East Total,TOT,All,43.06
+2006,IL,Illinois,BIT,Bituminous,31.64
+2006,IL,Illinois,TOT,All,31.64
+2006,ILL,Illinois Basin,BIT,Bituminous,30.13
+2006,ILL,Illinois Basin,TOT,All,30.13
+2006,IN,Indiana,BIT,Bituminous,29.12
+2006,IN,Indiana,TOT,All,29.12
+2006,INO,Other Interior,BIT,Bituminous,30.25
+2006,INO,Other Interior,LIG,Lignite,15.75
+2006,INO,Other Interior,TOT,All,16.5
+2006,INT,Interior Region Total,BIT,Bituminous,30.13
+2006,INT,Interior Region Total,LIG,Lignite,15.75
+2006,INT,Interior Region Total,TOT,All,25.07
+2006,KY,Kentucky,BIT,Bituminous,42.78
+2006,KY,Kentucky,TOT,All,42.78
+2006,KYE,Kentucky (East),BIT,Bituminous,46.69
+2006,KYE,Kentucky (East),TOT,All,46.69
+2006,KYW,Kentucky (West),BIT,Bituminous,29.63
+2006,KYW,Kentucky (West),TOT,All,29.63
+2006,MAT,Middle Atlantic,ANT,Anthracite,51.68
+2006,MAT,Middle Atlantic,BIT,Bituminous,37.82
+2006,MAT,Middle Atlantic,TOT,All,38.1
+2006,MD,Maryland,BIT,Bituminous,30.63
+2006,MD,Maryland,TOT,All,30.63
+2006,MID,Midwest Total,BIT,Bituminous,29.61
+2006,MID,Midwest Total,LIG,Lignite,10.53
+2006,MID,Midwest Total,TOT,All,24.78
+2006,MT,Montana,TOT,All,10.37
+2006,MTN,Mountain,BIT,Bituminous,25.93
+2006,MTN,Mountain,SUB,Subbituminous,10.02
+2006,MTN,Mountain,TOT,All,11.98
+2006,ND,North Dakota,LIG,Lignite,10.53
+2006,ND,North Dakota,TOT,All,10.53
+2006,NM,New Mexico,TOT,All,27.59
+2006,OH,Ohio,BIT,Bituminous,27.31
+2006,OH,Ohio,TOT,All,27.31
+2006,OK,Oklahoma,BIT,Bituminous,28.85
+2006,OK,Oklahoma,TOT,All,28.85
+2006,PA,Pennsylvania,ANT,Anthracite,51.68
+2006,PA,Pennsylvania,BIT,Bituminous,37.82
+2006,PA,Pennsylvania,TOT,All,38.1
+2006,PAA,Pennsylvania (Anthracite),ANT,Anthracite,51.68
+2006,PAA,Pennsylvania (Anthracite),TOT,All,51.68
+2006,PAB,Pennsylvania (Bituminous),BIT,Bituminous,37.82
+2006,PAB,Pennsylvania (Bituminous),TOT,All,37.82
+2006,PRB,Powder River Basin,SUB,Subbituminous,8.92
+2006,PRB,Powder River Basin,TOT,All,8.92
+2006,SAT,South Atlantic,BIT,Bituminous,47.5
+2006,SAT,South Atlantic,TOT,All,47.5
+2006,STH,South Total,BIT,Bituminous,44.84
+2006,STH,South Total,LIG,Lignite,15.75
+2006,STH,South Total,TOT,All,40.51
+2006,TN,Tennessee,BIT,Bituminous,41.37
+2006,TN,Tennessee,TOT,All,41.37
+2006,TX,Texas,LIG,Lignite,15.08
+2006,TX,Texas,TOT,All,15.08
+2006,UNT,Uinta Basin,BIT,Bituminous,24.34
+2006,UNT,Uinta Basin,SUB,Subbituminous,24.4
+2006,UNT,Uinta Basin,TOT,All,24.35
+2006,US,U.S. Total,ANT,Anthracite,51.68
+2006,US,U.S. Total,BIT,Bituminous,39.61
+2006,US,U.S. Total,LIG,Lignite,13.83
+2006,US,U.S. Total,SUB,Subbituminous,10.12
+2006,US,U.S. Total,TOT,All,24.63
+2006,UT,Utah,BIT,Bituminous,23.49
+2006,UT,Utah,TOT,All,23.49
+2006,VA,Virginia,BIT,Bituminous,54.38
+2006,VA,Virginia,TOT,All,54.38
+2006,WBO,Other Western,BIT,Bituminous,29.76
+2006,WBO,Other Western,LIG,Lignite,10.55
+2006,WBO,Other Western,SUB,Subbituminous,23.52
+2006,WBO,Other Western,TOT,All,20.35
+2006,WMR,West of Mississippi River,BIT,Bituminous,26.1
+2006,WMR,West of Mississippi River,LIG,Lignite,13.69
+2006,WMR,West of Mississippi River,SUB,Subbituminous,10.12
+2006,WMR,West of Mississippi River,TOT,All,12.33
+2006,WNC,West North Central,BIT,Bituminous,33.65
+2006,WNC,West North Central,LIG,Lignite,10.53
+2006,WNC,West North Central,TOT,All,11.15
+2006,WSB,Western Region Total,BIT,Bituminous,25.93
+2006,WSB,Western Region Total,LIG,Lignite,10.55
+2006,WSB,Western Region Total,SUB,Subbituminous,10.12
+2006,WSB,Western Region Total,TOT,All,11.98
+2006,WSC,West South Central,BIT,Bituminous,28.86
+2006,WSC,West South Central,LIG,Lignite,15.66
+2006,WSC,West South Central,TOT,All,16.19
+2006,WST,West Total,BIT,Bituminous,25.93
+2006,WST,West Total,LIG,Lignite,12.25
+2006,WST,West Total,SUB,Subbituminous,10.12
+2006,WST,West Total,TOT,All,12.06
+2006,WV,West Virginia,BIT,Bituminous,46.69
+2006,WV,West Virginia,TOT,All,46.69
+2006,WVN,West Virginia (Northern),BIT,Bituminous,37.0
+2006,WVN,West Virginia (Northern),TOT,All,37.0
+2006,WVS,West Virginia (Southern),BIT,Bituminous,50.34
+2006,WVS,West Virginia (Southern),TOT,All,50.34
+2006,WY,Wyoming,SUB,Subbituminous,9.21
+2006,WY,Wyoming,TOT,All,9.21
+2007,AL,Alabama,BIT,Bituminous,55.56
+2007,AL,Alabama,TOT,All,55.56
+2007,APC,Appalachia Central,BIT,Bituminous,50.21
+2007,APC,Appalachia Central,TOT,All,50.21
+2007,APN,Appalachia Northern,ANT,Anthracite,58.92
+2007,APN,Appalachia Northern,BIT,Bituminous,37.28
+2007,APN,Appalachia Northern,TOT,All,37.5
+2007,APP,Appalachia Total,ANT,Anthracite,58.92
+2007,APP,Appalachia Total,BIT,Bituminous,45.99
+2007,APP,Appalachia Total,TOT,All,46.04
+2007,APS,Appalachia Southern,BIT,Bituminous,55.56
+2007,APS,Appalachia Southern,TOT,All,55.56
+2007,CO,Colorado,TOT,All,25.99
+2007,EMR,East of Mississippi River,ANT,Anthracite,58.92
+2007,EMR,East of Mississippi River,BIT,Bituminous,43.1
+2007,EMR,East of Mississippi River,LIG,Lignite,17.8
+2007,EMR,East of Mississippi River,TOT,All,42.97
+2007,ENC,East North Central,BIT,Bituminous,30.89
+2007,ENC,East North Central,TOT,All,30.89
+2007,ESC,East South Central,BIT,Bituminous,45.24
+2007,ESC,East South Central,TOT,All,44.59
+2007,EST,East Total,ANT,Anthracite,58.92
+2007,EST,East Total,BIT,Bituminous,44.11
+2007,EST,East Total,TOT,All,44.33
+2007,IL,Illinois,BIT,Bituminous,33.64
+2007,IL,Illinois,TOT,All,33.64
+2007,ILL,Illinois Basin,BIT,Bituminous,31.91
+2007,ILL,Illinois Basin,TOT,All,31.91
+2007,IN,Indiana,BIT,Bituminous,29.81
+2007,IN,Indiana,TOT,All,29.81
+2007,INO,Other Interior,BIT,Bituminous,35.69
+2007,INO,Other Interior,LIG,Lignite,17.21
+2007,INO,Other Interior,TOT,All,18.08
+2007,INT,Interior Region Total,BIT,Bituminous,32.0
+2007,INT,Interior Region Total,LIG,Lignite,17.21
+2007,INT,Interior Region Total,TOT,All,27.22
+2007,KY,Kentucky,BIT,Bituminous,43.6
+2007,KY,Kentucky,TOT,All,43.6
+2007,KYE,Kentucky (East),BIT,Bituminous,47.06
+2007,KYE,Kentucky (East),TOT,All,47.06
+2007,KYW,Kentucky (West),BIT,Bituminous,32.63
+2007,KYW,Kentucky (West),TOT,All,32.63
+2007,MAT,Middle Atlantic,ANT,Anthracite,58.92
+2007,MAT,Middle Atlantic,BIT,Bituminous,39.57
+2007,MAT,Middle Atlantic,TOT,All,39.98
+2007,MD,Maryland,BIT,Bituminous,33.02
+2007,MD,Maryland,TOT,All,33.02
+2007,MID,Midwest Total,BIT,Bituminous,30.92
+2007,MID,Midwest Total,LIG,Lignite,11.43
+2007,MID,Midwest Total,TOT,All,26.24
+2007,MT,Montana,TOT,All,11.67
+2007,MTN,Mountain,BIT,Bituminous,27.97
+2007,MTN,Mountain,SUB,Subbituminous,11.16
+2007,MTN,Mountain,TOT,All,13.05
+2007,ND,North Dakota,LIG,Lignite,11.43
+2007,ND,North Dakota,TOT,All,11.43
+2007,NM,New Mexico,TOT,All,28.27
+2007,OH,Ohio,BIT,Bituminous,28.67
+2007,OH,Ohio,TOT,All,28.67
+2007,OK,Oklahoma,BIT,Bituminous,34.8
+2007,OK,Oklahoma,TOT,All,34.8
+2007,PA,Pennsylvania,ANT,Anthracite,58.92
+2007,PA,Pennsylvania,BIT,Bituminous,39.57
+2007,PA,Pennsylvania,TOT,All,39.98
+2007,PAA,Pennsylvania (Anthracite),ANT,Anthracite,58.92
+2007,PAA,Pennsylvania (Anthracite),TOT,All,58.92
+2007,PAB,Pennsylvania (Bituminous),BIT,Bituminous,39.57
+2007,PAB,Pennsylvania (Bituminous),TOT,All,39.57
+2007,PRB,Powder River Basin,SUB,Subbituminous,10.04
+2007,PRB,Powder River Basin,TOT,All,10.04
+2007,SAT,South Atlantic,BIT,Bituminous,48.97
+2007,SAT,South Atlantic,TOT,All,48.97
+2007,STH,South Total,BIT,Bituminous,46.58
+2007,STH,South Total,LIG,Lignite,17.21
+2007,STH,South Total,TOT,All,42.49
+2007,TN,Tennessee,BIT,Bituminous,42.53
+2007,TN,Tennessee,TOT,All,42.53
+2007,TX,Texas,LIG,Lignite,16.53
+2007,TX,Texas,TOT,All,16.53
+2007,UNT,Uinta Basin,BIT,Bituminous,26.16
