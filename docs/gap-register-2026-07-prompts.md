@@ -11,9 +11,11 @@ self-contained: drop it into a fresh Claude Code session on this repo.
 
 ## Disposition ledger
 
+**CLOSED — G-16 NEISO ST_GAS C7 (was L-4):** NEISO is calibration-COMPLETE and C7 was an
+accepted ledgered caveat at completion; `neiso-54-steamgas-ct` (#1743, 2026-07-08) then landed
+the CT evening-ramp RA + ST_GAS Component-B reliability drag. Closed — not reopening.
+
 **DESCOPED per owner 2026-07-08 — do not pursue:**
-- **L-4 NEISO ST_GAS C7 (G-16)** — NEISO is calibration-COMPLETE; C7 is an accepted ledgered
-  caveat, not a blocker. Leave the keeper frozen.
 - **L-5 NYISO downstate tail (G-20c)** — NYISO keeper stands; the deep 2024/25 tail residual is
   #1344 (data-blocked). Leave it.
 - **L-2 ERCOT storage energy-vs-AS (G-37)** — the mechanism IS built and shipped:
@@ -27,11 +29,14 @@ canonical-install + rule-16 caveat), G-26 #1349 (dead code deleted), G-41 code+d
 (market-design I7 split, `00bbd4b` — only a confirmation re-run remains → L-8), G-32 (FOM flip
 + foresight A/B), #1345 (NYISO LI 0.45 → `nyiso_li_lcr_tsl`).
 
-**IN-FLIGHT — a session/PR is on it; do NOT prompt (would duplicate):**
+**IN-FLIGHT / LANDED — a session/PR is on it; do NOT prompt (would duplicate):**
 - **CAISO belly commitment (G-15)** — belly-grounding diagnostic + CAISO ST_GAS overnight drag
   landed (PRs #1733/#1735). The core CAISO backcast-calibration gap is being worked now.
-- **PJM ST_GAS volume driver (G-21/#1483)** — overnight pre-positioning drag (PR #1728);
-  `pjm-89`/`pjm-90` (CC_CHP-SRMC) keeper-candidates in flight.
+- **PJM ST_GAS volume driver (G-21/#1483)** — overnight pre-positioning drag + CC_CHP SRMC
+  re-grounding LANDED: `pjm-90-cchp-srmc` promoted to the PJM keeper (#1744, 2026-07-08). The
+  ST_GAS/SRMC *leg* settled, but PJM overall still scores **NOT-YET** (rubric 2.2): C1 fuel-mix
+  and C3c price-tail/scarcity both FAIL — C3c is the G-20b opportunity-cost reserve magnitude
+  (owner decision below), C1 is the coal-vs-gas volume trade-off the SRMC re-grounding introduced.
 - **ERCOT price-shape / clock (G-22)** — clock-unification round settled into the `ercot46`
   keeper (PR #1740); the offer-surface leg lives here.
 
@@ -39,7 +44,7 @@ canonical-install + rule-16 caveat), G-26 #1349 (dead code deleted), G-41 code+d
 requirement; G-25 posture lever rejected), G-26 #1347/#1335/#1336/#1348 + #1344, G-19, G-40.
 
 **Owner decisions — surface, don't dispatch:** G-61(b) `caiso-66` adoption; G-20b PJM reserve
-magnitude (`pjm-87`/`pjm-88`); G-21 `pjm-89`/`pjm-90` adjudication.
+magnitude (`pjm-87`/`pjm-88`). *(G-21 `pjm-90` adjudication RESOLVED — promoted to keeper #1744.)*
 
 > **Reality check for the four target ISOs:** their live *backcast calibration* is mostly
 > in-flight (CAISO/PJM/ERCOT above) or data-blocked (MISO). The lanes below are the free,
@@ -82,8 +87,8 @@ root cause (#11); register every completed backcast run on the dashboard (`calib
 #1302 (docs/gap-register-2026-07.md G-21 row) generalizes the PJM Manual-15 SRMC
 committed-band re-grounding (landed as the pjm-83 keeper) to the other target
 ISOs' committed offer bands. Scope: MISO and CAISO (NYISO/NEISO are out of scope
-per owner directive; PJM is the worked reference, actively re-grounding CC_CHP
-SRMC via the pjm-90 candidate). DESIGN + AUDIT only — no solves, no keeper touch.
+per owner directive; PJM is the worked reference — its CC_CHP SRMC re-grounding
+LANDED in the pjm-90 keeper, #1744). DESIGN + AUDIT only — no solves, no keeper touch.
 
 For MISO and CAISO: locate each ISO's committed/must-run offer bands in the offer
 path (offer_curves.py, the per-ISO sigmoid/tranche overrides in config/scenarios.py
@@ -194,11 +199,11 @@ from the LP regime, never an adder tuned to a retirement or entry number.
 G-10 in docs/gap-register-2026-07.md, GENUINELY-OPEN (2026-07-08 audit: NO statmode
 bundle exists for any current keeper). Scope: the four unfinished ISOs — ERCOT,
 CAISO, PJM, MISO (NYISO/NEISO out of scope per owner directive). Current keepers
-(re-verify in keepers.json; churn fast): ercot46-clock-steamgas / caiso65 / pjm-83
-/ miso-47-steamgas-ct (ERCOT churned 42->46, MISO 46->47 on 2026-07-08; a pjm-90
-CC_CHP-SRMC candidate is in flight — confirm the live PJM keeper before replaying).
-Every statmode registry sidecar replays a SUPERSEDED bundle (caiso51/58, miso39,
-ercot34). Owns docs/statistical-mode-results-2026-07.md + the statmode registry
+(re-verify in keepers.json; churn fast): ercot46-clock-steamgas / caiso65 /
+pjm-90-cchp-srmc / miso-47-steamgas-ct (ERCOT churned 42->46, MISO 46->47, PJM
+83->90 on 2026-07-08 — re-verify before replaying). Every statmode registry
+sidecar replays a SUPERSEDED bundle (caiso51/58, miso39, ercot34, pjm-77/83).
+Owns docs/statistical-mode-results-2026-07.md + the statmode registry
 sidecars ONLY — do NOT change any keeper config (FROZEN-recipe replay at one SHA,
 not a re-tune).
 
@@ -219,7 +224,8 @@ of the current keeper.
 
 *Verified 2026-07-08 against `origin/main` HEAD via five read-only code/artifact audits, then
 refocused per owner directive (same day) onto the four unfinished ISOs — MISO/CAISO/PJM/ERCOT.
-Descoped: NEISO (complete), NYISO (keeper stands), G-37 (mechanism shipped default-off). The
-four ISOs' live backcast calibration is mostly in-flight (CAISO belly, PJM ST_GAS, ERCOT clock)
-or data-blocked (MISO); the lanes above are the free forecast/audit/hygiene work. The board
-churns hourly — each session re-verifies keepers.json + rebases before solving.*
+Closed: G-16 (NEISO complete, neiso-54 landed). Descoped: NYISO (keeper stands), G-37 (mechanism
+shipped default-off). PJM keeper pjm-90 scores NOT-YET (C1 fuel-mix + C3c scarcity). The four
+ISOs' live backcast calibration is mostly in-flight (CAISO belly, PJM ST_GAS/SRMC) or
+data-blocked (MISO); the lanes above are the free forecast/audit/hygiene work. The board churns
+hourly — each session re-verifies keepers.json + rebases before solving.*
