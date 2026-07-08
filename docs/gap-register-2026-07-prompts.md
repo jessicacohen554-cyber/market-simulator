@@ -28,10 +28,19 @@ drop it into a fresh Claude Code session on this repo.
 
 **IN-FLIGHT — do NOT prompt (a session/PR is on it now; a fresh prompt would duplicate):**
 - **G-21 ST_GAS volume driver (#1483)** — PR #1728 built an overnight pre-positioning drag
-  (`reliability_floor` engine); `pjm-89` keeper-candidate solve pending. The literal
-  register proposal (`gas_st_netload_drag` + 2023 nameplate) was deliberately left OFF.
-- **G-22 active legs** — `ercot43` (rejected), `ercot44` HSL-clock probe (keeper decision
-  owner-pending). Only the ercot37 §8 offer-surface lever is genuinely unbuilt → **L-2** (flagged).
+  (`reliability_floor` engine); `pjm-89`/`pjm-90` (CC_CHP-SRMC) keeper-candidates in flight.
+  The literal register proposal (`gas_st_netload_drag` + 2023 nameplate) was deliberately left OFF.
+- **G-22 offer-surface / clock round** — as of 2026-07-08 an active ERCOT clock-unification
+  effort (`ercot44b`/`ercot45`/`ercot46` A/B/C, corrected-CST re-derived parquets, `ercot46`
+  keeper-candidate, "update G-22 §7 follow-up", PRs #1730/#1736) now covers the offer-surface
+  leg. **L-2 is re-scoped to G-37 only** (see below); the G-22 offer-surface lever is no longer
+  a free lane.
+- **G-15 CAISO belly commitment** — as of 2026-07-08 a session landed the belly-grounding
+  *diagnostic* (`scripts/caiso_belly_commitment_probe.py` +
+  `docs/handoffs/caiso-belly-commitment-probe-2026-07.md`, PRs #1733/#1735) plus a CAISO
+  ST_GAS overnight drag (ships disabled). The grounding *intake/mechanism* is not yet built,
+  but the investigation is ACTIVE — **L-3 pulled from the dispatch set** (coordinate with that
+  session rather than start fresh; kept below as reference, marked IN-FLIGHT).
 - **G-61(b)** — `caiso-66` startup-aware probe registered, held back from promotion; the
   remaining step is an owner-adoption decision, not a build → owner queue below.
 
@@ -47,16 +56,16 @@ drop it into a fresh Claude Code session on this repo.
   λ moved away from actual).
 - **G-20b** PJM reserve magnitude — `pjm-87` (sync) vs `pjm-88` (size-split) vs hold; both
   non-promotion, referred to owner.
-- **G-22** `ercot44` HSL-clock keeper decision (owner-pending).
-- **G-21** `pjm-89` keeper-candidate adjudication (in-flight solve will produce it).
+- **G-22** `ercot44` HSL-clock keeper decision (owner-pending; folded into the ercot46 round).
+- **G-21** `pjm-89`/`pjm-90` keeper-candidate adjudication (in-flight solve will produce it).
 
 ## Open lanes (this pack)
 
 | Lane | Gap(s) | Solve? | Model | ISO namespace |
 |---|---|---|---|---|
 | **L-1** ERCOT hindcast scarcity/retirement regime | G-30 (narrowed) | SH (non-keeper harness) | Opus/Fable | — |
-| **L-2** ERCOT storage energy-vs-AS + offer-surface | G-37, G-22(offer-surface) | SH | Fable | ERCOT |
-| **L-3** CAISO belly-gas commitment + seam base | G-15 | SH | Fable | CAISO |
+| **L-2** ERCOT storage energy-vs-AS (G-22 offer-surface now in-flight) | G-37 | SH | Fable | ERCOT |
+| ~~**L-3** CAISO belly-gas commitment~~ | ~~G-15~~ IN-FLIGHT (belly probe active, PRs #1733/#1735) | — | — | CAISO |
 | **L-4** NEISO ST_GAS C7 diurnal | G-16 | SH | Opus | NEISO |
 | **L-5** NYISO downstate import-limit tail | G-20c | SH | Fable | NYISO |
 | **L-6** Statmode D-7 same-SHA re-solves | G-10 | SH | Opus | all (frozen replay) |
@@ -69,11 +78,11 @@ drop it into a fresh Claude Code session on this repo.
 - **No-solve / light lanes (L-7, L-8, L-9): run all concurrently, any tier** — disjoint
   files, no keeper bundle touched. **This is the true first wave** (small — most of the
   original no-solve wave was already done).
-- **Solve-heavy lanes (L-1 … L-6): cap at 2 solving concurrently** (CLAUDE.md rule 12 —
-  ≤2 per-plant multi-zone invocations; years sequential *within* a run). Each owns a
-  distinct ISO namespace (or the non-keeper hindcast harness), so file ownership never
+- **Solve-heavy lanes (L-1, L-2, L-4, L-5, L-6): cap at 2 solving concurrently** (CLAUDE.md
+  rule 12 — ≤2 per-plant multi-zone invocations; years sequential *within* a run). Each owns
+  a distinct ISO namespace (or the non-keeper hindcast harness), so file ownership never
   conflicts. **L-1 and L-2 are both ERCOT** — L-1 is hindcast-harness-only (no keeper), so
-  they don't collide, but do not have both start a competing ERCOT *keeper* solve.
+  they don't collide, but coordinate ERCOT *keeper* registration with the live clock round.
 - **Every SH lane re-verifies the current keeper** in `frontend/data/backcast/keepers.json`
   and rebases on `origin/main` before solving — the board churns hourly.
 
@@ -103,7 +112,9 @@ per ISO: which committed bands sit BELOW their SRMC floor (the pjm-83 defect
 pattern), the citation backing the current multiplier, and whether it is an
 ISO-local fitted value or an ERCOT byte-copy (rule 25 — a multiplier fitted on
 one ISO's residual must not cross an ISO boundary; the MISO sigmoid family's
-floor/gas_mid/gas_slope are flagged ERCOT byte-copies in the register).
+floor/gas_mid/gas_slope are flagged ERCOT byte-copies in the register). NOTE: PJM
+is actively re-grounding CC_CHP SRMC (pjm-90 candidate) — treat PJM as the worked
+example/reference, not a target.
 
 Deliverable: a cross-ISO SRMC-floor audit table + a per-ISO re-grounding recipe
 (which band -> 1.00x SRMC floor, with the citation), written to a short handoff
@@ -199,49 +210,48 @@ from the LP regime, never an adder tuned to a retirement or entry number.
 
 ---
 
-## L-2 — ERCOT storage energy-vs-AS mechanism + offer-surface  ·  Fable  ·  SH (ERCOT namespace)
+## L-2 — ERCOT storage energy-vs-AS mechanism (G-37)  ·  Fable  ·  SH (ERCOT namespace)
 
 ```
-Two ERCOT structural gaps. COORDINATION FLAG: the ERCOT keeper decision on
-ercot44 (HSL-clock-fix probe) is OWNER-PENDING and ercot43 just rejected — do NOT
-start a competing ERCOT keeper solve until that resolves; the G-37 half below
-touches NO keeper (default-off mechanism) so it is safe to start immediately.
-Re-verify the ERCOT keeper in keepers.json (was 2026-07-07-ercot42). Owns the
-ERCOT registry namespace + dispatch.py storage/reserve section + data/ramp_capability.py.
+G-37 storage energy-vs-AS. COORDINATION FLAG (2026-07-08): an active ERCOT
+clock-unification / ST_GAS-realism effort is churning the ERCOT keeper registry
+(ercot44b/45/46 A/B/C, ercot46 keeper-candidate, G-22 §7 follow-up, PRs
+#1730/#1736) — that effort owns the G-22 offer-surface leg now, so this lane is
+G-37 ONLY. The G-37 mechanism is default-off and touches NO keeper, so it is safe
+to start immediately, but do NOT register a competing ERCOT keeper A/B until the
+ercot46 clock round settles. Re-verify the ERCOT keeper in keepers.json (was
+2026-07-07-ercot42). Owns dispatch.py storage/reserve section + data/ramp_capability.py.
 
-G-37 (storage energy-vs-AS, GENUINELY-OPEN, no active session): validation
-0.54-0.61x below the 0.8-1.3x band, DIAGNOSED as a dispatch-choice limitation, not
-a coupling bug (FINDING-ercot-storage-as-g37-2026-07.md, disposition "LIMITATION —
-documented, not fixed"; dispatch.py:1441-1494 is structurally correct). Evening SOC
-depletion from energy arbitrage forecloses AS via the (correct) gate. Neither
-missing mechanism is built (grep confirms no forward_as / fast_as in src/): (a)
-forward AS commitment under uncertainty vs perfect-foresight greedy arbitrage; (b)
-evening fast-AS scarcity price formation from a grounded ramp-qualified thermal-
-reserve limit (data/ramp_capability.py). Build at least (b), default-off, trivial-
-case test first.
+G-37 (GENUINELY-OPEN, no active session): validation 0.54-0.61x below the
+0.8-1.3x band, DIAGNOSED as a dispatch-choice limitation, not a coupling bug
+(FINDING-ercot-storage-as-g37-2026-07.md, disposition "LIMITATION — documented,
+not fixed"; dispatch.py:1441-1494 is structurally correct). Evening SOC depletion
+from energy arbitrage forecloses AS via the (correct) gate. Neither missing
+mechanism is built (grep confirms no forward_as / fast_as in src/): (a) forward AS
+commitment under uncertainty vs perfect-foresight greedy arbitrage; (b) evening
+fast-AS scarcity price formation from a grounded ramp-qualified thermal-reserve
+limit (data/ramp_capability.py). Build at least (b), default-off, trivial-case
+test first.
 
-G-22 offer-surface (the ONE unbuilt G-22 lever — the rest is in-flight/exhausted):
-the heterogeneity-PRESERVING scarcity-anticipating offer surface filed as ercot37
-§8. The existing peak_ladder (offer_curves.py:586) is the inert static substrate,
-NOT the condition-responsive wall (FINDING-ercot-priceshape §5). Build the surface
-that reprices with net-load/scarcity WITHOUT collapsing offer heterogeneity (the
-prior surfaces' failure), default-off. Gate on reproducing the observed 2023 tail
-WITHOUT over-firing other months/years. Because this touches the ERCOT keeper
-registry, hold its A/B registration until the ercot44 keeper decision lands.
-
-Deliverable: mechanism (b) + the offer surface, each default-off with tests, an
-ERCOT all-years probe registered (offer-surface arm gated on the ercot44 decision).
+Deliverable: mechanism (b) (and ideally (a)), default-off with tests, an ERCOT
+all-years probe registered (coordinate registration timing with the clock round).
 Honesty gate: duals/offers form from the LP + grounded ramp limits, never an adder
 tuned to the MCPC or price residual.
 ```
 
 ---
 
-## L-3 — CAISO belly-gas commitment grounding + seam contracted base (G-15)  ·  Fable  ·  SH (CAISO namespace)
+## L-3 — CAISO belly-gas commitment grounding + seam contracted base (G-15)  ·  IN-FLIGHT (do not dispatch fresh)
+
+> **STATUS 2026-07-08: IN-FLIGHT — coordinate, do not start a fresh session.** A session
+> landed the belly-grounding diagnostic (`scripts/caiso_belly_commitment_probe.py` +
+> `docs/handoffs/caiso-belly-commitment-probe-2026-07.md`, PRs #1733/#1735) and a CAISO
+> ST_GAS overnight drag (ships disabled). The grounding intake/mechanism isn't built yet,
+> but the investigation is live. Continue THAT session (or check its handoff) rather than
+> dispatch the prompt below, which would duplicate the probe. Prompt retained for reference.
 
 ```
-G-15 in docs/gap-register-2026-07.md, GENUINELY-OPEN (no grounding/intake landed,
-no active probe — 2026-07-08 audit). The seam TIMEZONE artifact is resolved and
+G-15 in docs/gap-register-2026-07.md. The seam TIMEZONE artifact is resolved and
 the envelope-clock fix is the current keeper (2026-07-07-caiso65-seam-envelope-
 clock, re-verify in keepers.json). On the TRUE clock the model OVER-imports the
 belly +2.5-3.3 GW yet never curtails, and measured CAISO runs 3.1-5.2 GW MORE
@@ -340,8 +350,10 @@ residual is the #1344 data block — document it, don't force it.
 
 ```
 G-10 in docs/gap-register-2026-07.md, GENUINELY-OPEN (2026-07-08 audit: NO statmode
-bundle exists for ANY of the six current keepers). Current keepers: ercot42 /
-caiso65 / pjm-83 / nyiso-56 / neiso53 / miso-46. Every statmode registry sidecar
+bundle exists for ANY of the six current keepers). Current keepers (re-verify in
+keepers.json; churn fast): ercot42 / caiso65 / pjm-83 / nyiso-56 / neiso53 /
+miso-47-steamgas-ct (MISO churned 46->47 on 2026-07-08; a pjm-90 CC_CHP-SRMC
+candidate is in flight — confirm the live PJM keeper before replaying). Every statmode registry sidecar
 replays a SUPERSEDED bundle (caiso51 / miso39 / neiso48 / nyiso41 / ercot34). The
 doc's own re-solve queue (statistical-mode-results-2026-07.md:443-463) is itself
 doubly stale — it names ercot34/caiso58/nyiso53/neiso50/miso44 as "current", also
@@ -365,6 +377,9 @@ this lane makes that true; it does not manufacture a better number.
 ---
 
 *Verified 2026-07-08 against `origin/main` HEAD via five read-only code/artifact audits
-(ERCOT, CAISO, PJM, NEISO/NYISO, governance/scalar). Supersedes the earlier version of
-this file, which mirrored the register's stale open list. Per-ISO lanes name the keeper
-current at audit time; each session re-verifies before solving.*
+(ERCOT, CAISO, PJM, NEISO/NYISO, governance/scalar), then refreshed against `origin/main`
+`b403666` the same day. Refresh moved three lanes: L-3 (CAISO belly, G-15) → IN-FLIGHT
+(PRs #1733/#1735); L-2 → G-37-only (G-22 offer-surface now in the active ercot46 clock
+round, PRs #1730/#1736); L-6 keeper ids updated (MISO 46→47). L-1/L-4/L-5/L-7/L-8/L-9
+unaffected. The board churns hourly — each session re-verifies keepers.json + rebases
+before solving.*
