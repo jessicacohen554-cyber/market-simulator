@@ -52,6 +52,9 @@ ALL_DATATYPES = [
     "carb-cap-schedule",
     "chp-btm-share",
     "ercot-wtx-congestion",
+    "nyiso-renewable-curtailment",
+    "coal-basin-price",
+    "coal-mining-ppi",
 ]
 
 
