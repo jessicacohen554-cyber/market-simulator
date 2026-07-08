@@ -605,6 +605,22 @@ PJM_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "pjm_zonal_gas_hub.csv"
 # :func:`apply_miso_zonal_gas_basis`.
 MISO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "miso_zonal_gas_hub.csv"
 
+# CAISO per-zone gas-hub basis vs Henry Hub ($/MMBtu) by year. CAISO's zones
+# buy from two LDC systems with separately traded citygate hubs: NP15/ZP26 on
+# **PG&E Citygate** (the PG&E backbone serves both the Bay Area and the San
+# Joaquin Valley between Paths 15 and 26) and SP15 on **SoCal Citygate**
+# (SoCalGas/SDG&E). The committed rows are month-balanced annual means of the
+# EIA NG Weekly Update archive's weekly Wednesday prints (NGI Daily GPI;
+# scripts/fetch_pge_socal_citygate_daily.py + derive_caiso_zonal_gas_hub.py),
+# the same free published print the ERCOT Waha rows cite. Measured N-S spread
+# (PG&E − SoCal): −0.49 (2023) / +0.54 (2024) / −0.18 (2025) $/MMBtu — real but
+# year-varying, so it enters as data, never as a fitted north-premium knob.
+# Like PJM/MISO/ERCOT this is anchored to a gas-capacity-weighted mean of zero
+# in :func:`apply_caiso_zonal_gas_basis`, so the calibrated CAISO aggregate gas
+# level (CA-composite citygate + transport) is preserved and ONLY the measured
+# cross-zonal spread opens. Consumed by :func:`apply_caiso_zonal_gas_basis`.
+CAISO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "caiso_zonal_gas_hub.csv"
+
 # Measured EIA price of natural gas delivered to TX electric-power consumers
 # (series N3045TX3, $/Mcf monthly). This is the gen-weighted ERCOT-wide delivered
 # gas level — the *power-plant* delivered cost, NOT the TX city-gate price
@@ -2872,6 +2888,54 @@ def apply_miso_zonal_gas_basis(
     )
 
 
+def caiso_zonal_gas_basis_by_zone(
+    year: int, path: Path | None = None
+) -> dict[str, float] | None:
+    """Return ``{zone: basis vs Henry Hub ($/MMBtu)}`` for CAISO, or None.
+
+    Same format and semantics as :func:`pjm_zonal_gas_basis_by_zone` but reads
+    :data:`CAISO_ZONAL_GAS_HUB_PATH` (NP15/ZP26 on PG&E Citygate, SP15 on SoCal
+    Citygate — measured weekly EIA NG Weekly prints, month-balanced).
+    """
+    return _zonal_gas_basis_by_zone(
+        Path(path) if path else CAISO_ZONAL_GAS_HUB_PATH, year
+    )
+
+
+def apply_caiso_zonal_gas_basis(
+    fuel_prices: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int,
+    path: Path | None = None,
+) -> None:
+    """Shift each CAISO gas unit's price by its zone's measured citygate basis.
+
+    Delegates to :func:`_apply_meanzero_zonal_gas_basis` — the shared
+    capacity-weighted mean-zero core PJM/MISO use. NP15/ZP26 price off PG&E
+    Citygate and SP15 off SoCal Citygate (measured weekly prints,
+    :data:`CAISO_ZONAL_GAS_HUB_PATH`), so the two halves of CAISO stop sharing
+    one blended CA-composite gas price and the measured north-south marginal-
+    cost gradient reaches the merit order; the fleet-aggregate gas level (the
+    calibrated composite + transport) is preserved by the mean-zero anchor.
+
+    Gated on ``config.caiso_zonal_gas_basis`` and ``config.iso == "CAISO"``
+    (default-off; see the field docstring on ScenarioConfig), so every other
+    ISO and every existing CAISO keeper replay is byte-identical. Mutates
+    ``fuel_prices`` in place; idempotent given the same inputs.
+    """
+    _apply_meanzero_zonal_gas_basis(
+        fuel_prices,
+        fleet,
+        config,
+        year,
+        iso="CAISO",
+        config_field="caiso_zonal_gas_basis",
+        hub_path=CAISO_ZONAL_GAS_HUB_PATH,
+        path_override=Path(path) if path else None,
+    )
+
+
 # Fallback Waha negative-price-day frequency when the measured per-year value
 # (data/raw/ercot_zonal_gas_hub.csv neg_day_freq, e.g. a forward year) is absent.
 # The fraction of hours assigned to the COLLAPSED (deep-negative) regime in the
@@ -3266,6 +3330,12 @@ def resolve_fuel_prices(
         # on Gulf Coast). Same mean-zero core as PJM. Before dual-fuel so oil
         # parity still caps any winter blowout.
         apply_miso_zonal_gas_basis(fuel_prices, fleet, config, year)
+        # CAISO: shift each gas unit to its zone's measured citygate basis
+        # (NP15/ZP26 on PG&E Citygate, SP15 on SoCal Citygate) so the two
+        # halves of CAISO stop sharing one blended composite gas price. Same
+        # mean-zero core as PJM/MISO. Before dual-fuel so oil parity still
+        # caps any winter blowout.
+        apply_caiso_zonal_gas_basis(fuel_prices, fleet, config, year)
         apply_dual_fuel_pricing(fuel_prices, fleet, config, year)
 
     return fuel_prices

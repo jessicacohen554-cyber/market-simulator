@@ -24,6 +24,7 @@ from market_sim.data.fuel import (
     COAL_PRICE_LIGNITE_BY_YEAR,
     COAL_PRICE_PRB_BY_YEAR,
     _prb_monthly_actuals,
+    apply_caiso_zonal_gas_basis,
     apply_coal_supply_pricing,
     apply_hub_basis_overlay,
     apply_miso_zonal_gas_basis,
@@ -34,6 +35,7 @@ from market_sim.data.fuel import (
     iso_hub_monthly_gas_prices,
     iso_monthly_gas_prices,
     load_winter_gas_basis,
+    caiso_zonal_gas_basis_by_zone,
     miso_zonal_gas_basis_by_zone,
     nyiso_downstate_ct_gas_premium,
     nyiso_zonal_gas_offsets,
@@ -1876,6 +1878,82 @@ def test_miso_zonal_gas_basis_skips_other_isos():
     config = ScenarioConfig(iso="PJM", hours=hours, miso_zonal_gas_basis=True)
     prices = base.copy()
     apply_miso_zonal_gas_basis(prices, fleet, config, 2024)
+    np.testing.assert_array_equal(prices, base)
+
+
+# Must mirror the real CAISO config zone order: _apply_meanzero_zonal_gas_basis
+# maps zone basis through get_iso_config("CAISO").zone_names positions.
+_CAISO_ZONES = ["NP15", "ZP26", "SP15", "WECC_import"]
+
+
+def _caiso_gas_fleet(hours: int = 48):
+    """Two identical gas CCs: a northern (PG&E Citygate) and a southern (SoCal)."""
+    generators = [
+        Generator(
+            unit_id="GAS_NORTH",
+            name="North CC",
+            zone="NP15",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+        Generator(
+            unit_id="GAS_SOUTH",
+            name="South CC",
+            zone="SP15",
+            fuel_type="gas_cc",
+            pmax_mw=400.0,
+        ),
+    ]
+    return generators_to_fleet_arrays(generators, _CAISO_ZONES, hours=hours)
+
+
+def test_caiso_zonal_gas_basis_measured_sign_by_year():
+    """The measured PG&E-vs-SoCal spread flips sign across years (data, not knob)."""
+    b24 = caiso_zonal_gas_basis_by_zone(2024)
+    b23 = caiso_zonal_gas_basis_by_zone(2023)
+    assert b24 is not None and b23 is not None
+    assert set(b24) == {"NP15", "ZP26", "SP15"}
+    # ZP26 shares the PG&E backbone with NP15.
+    assert b24["NP15"] == b24["ZP26"]
+    # 2024: PG&E premium (north-dear); 2023: SoCal premium (south-dear).
+    assert b24["NP15"] > b24["SP15"]
+    assert b23["NP15"] < b23["SP15"]
+
+
+def test_caiso_zonal_gas_basis_mean_zero_preserves_level():
+    """With the flag on the cap-weighted mean shift is zero (level preserved)."""
+    hours = 48
+    fleet = _caiso_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.0)
+    config = ScenarioConfig(iso="CAISO", hours=hours)
+
+    off_prices = base.copy()
+    apply_caiso_zonal_gas_basis(off_prices, fleet, config, 2024)
+    np.testing.assert_array_equal(off_prices, base)  # flag off -> no-op
+
+    on_prices = base.copy()
+    apply_caiso_zonal_gas_basis(
+        on_prices, fleet, config.with_overrides(caiso_zonal_gas_basis=True), 2024
+    )
+    north = fleet.unit_ids.index("GAS_NORTH")
+    south = fleet.unit_ids.index("GAS_SOUTH")
+    # 2024: PG&E Citygate premium -> north dearer than south after the shift.
+    assert on_prices[north, 0] > on_prices[south, 0]
+    # Equal pmax -> the (unweighted) mean of the two shifts equals the base,
+    # i.e. the capacity-weighted-zero anchor preserves the aggregate level.
+    np.testing.assert_allclose(
+        np.mean([on_prices[north, 0], on_prices[south, 0]]), 3.0, atol=1e-9
+    )
+
+
+def test_caiso_zonal_gas_basis_skips_other_isos():
+    """A non-CAISO ISO is untouched even with the flag set."""
+    hours = 48
+    fleet = _caiso_gas_fleet(hours)
+    base = np.full((fleet.n_gen, hours), 3.0)
+    config = ScenarioConfig(iso="PJM", hours=hours, caiso_zonal_gas_basis=True)
+    prices = base.copy()
+    apply_caiso_zonal_gas_basis(prices, fleet, config, 2024)
     np.testing.assert_array_equal(prices, base)
 
 
