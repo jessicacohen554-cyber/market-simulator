@@ -634,7 +634,14 @@ def _tranche_bands_for_bundle(bdir: Path) -> dict[int, list]:
         return {}
     try:
         sc = json.loads(cfg_path.read_text())["scenario_config"]
-        config = ScenarioConfig(**sc)
+        # Tolerate configs serialized under an older/newer schema (fields added
+        # or removed since the bundle was written — e.g. the rule-26 removal of
+        # the never-wired coal_*_hr_mult / coal_peak_hr_penalty knobs): keep only
+        # keys ScenarioConfig still defines so historical bundles keep rendering.
+        import dataclasses as _dc
+
+        _known = {f.name for f in _dc.fields(ScenarioConfig)}
+        config = ScenarioConfig(**{k: v for k, v in sc.items() if k in _known})
     except Exception:
         return {}
     bins_path = config.campd_bins_path
