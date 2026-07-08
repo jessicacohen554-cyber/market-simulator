@@ -1,0 +1,9 @@
+year,wind_nameplate_mw,avg_wind_output_rt_gw,avg_wind_output_da_gw,avg_wind_curtailed_mw,peak_wind_curtailment_gw,pct_energy_wind_or_windsolar,is_estimate,source_doc,source_page
+2018,,5.7,5.0,,,,FALSE,2021-MISO-SOM_Report_Body_Final.pdf,"83 (Table 8, historical column)"
+2019,19127,6.5,5.5,,,,FALSE,2022-MISO-SOM_Report_Body-Final.pdf,"81 (Table 9, historical column)"
+2020,24450,8.1,6.6,,,,FALSE,2023-MISO-SOM_Report_Body-Final.pdf,"68 (Table 8, historical column)"
+2021,26862,9.2,8.0,660,6.1,13,FALSE,2021-MISO-SOM_Report_Body_Final.pdf,"ii (Exec Summary), 83 (Table 8)"
+2022,29109,11.3,10.1,726,5.9,,FALSE,2022-MISO-SOM_Report_Body-Final.pdf,"ii (Exec Summary), 81 (Table 9)"
+2023,29830,10.4,9.2,507,5.8,15,FALSE,2023-MISO-SOM_Report_Body-Final.pdf,"ii (Exec Summary), 68 (Table 8)"
+2024,30784,11.2,10.1,607,6.2,15,FALSE,2024-MISO-SOM_Report_Body_Final.pdf,"ii (Exec Summary), 72 (Table 8)"
+2025,49538,14.6,12.7,498,,19,TRUE,2025-State-of-the-Market-Report.pdf,"73 (Table 7); curtailment is a derived quarterly average, see notes"
