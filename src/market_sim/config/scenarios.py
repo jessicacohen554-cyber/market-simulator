@@ -3343,8 +3343,8 @@ class ScenarioConfig:
     # reference table and the year's measured HSL potential both exist. Off by
     # default. See scripts/derive_ercot_wtx_curtailment_share.py.
     ercot_wtx_curtailment_driver: bool = False
-    ercot_wtx_curtail_depth_wind: float = 0.0998
-    ercot_wtx_curtail_depth_solar: float = 0.1633
+    ercot_wtx_curtail_depth_wind: float = 0.1004
+    ercot_wtx_curtail_depth_solar: float = 0.1637
 
     # When True (default), coal generators are repriced to the flat annual
     # lignite/PRB delivered-cost trajectory (apply_coal_supply_pricing),
