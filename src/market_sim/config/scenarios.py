@@ -3150,6 +3150,31 @@ class ScenarioConfig:
     # default.
     cc_nameplate_summer_derate: bool = False
 
+    # Gas-turbine AMBIENT-TEMPERATURE capacity derate (gt_ambient_derate, off by
+    # default). The EIA-860 net-summer rating (applied above/flat _SUMMER_CLASS_
+    # DERATE) is a season-average summer capability; a gas turbine keeps losing
+    # output as ambient rises ABOVE that rating point, so the hottest design-peak
+    # afternoon — exactly the hours scarcity should occur — is materially below
+    # the net-summer rating. This layers an INCREMENTAL, purely-additive derate
+    # on CC_REGULAR/CT_PEAKER (and their CHP variants) for hours whose measured
+    # zone tmax exceeds ``gt_ambient_derate_ref_c``:
+    #     extra(t) = slope_class x max(0, tmax_zone(t) - ref_c);  avail *= 1-extra
+    # ``ref_c`` is the net-summer capability-test reference (~35 C / 95 F, the
+    # standard summer GT rating point — so the increment does NOT double-count the
+    # net-summer derate, it only deepens it on hotter-than-rating hours). The
+    # per-C slopes are physical GT ambient-derate rates (combined-cycle less
+    # sensitive than simple-cycle, the steam bottoming cycle partially
+    # compensating): CC ~0.4 %/C, CT ~0.6 %/C (NREL/GE frame-GT performance
+    # curves, docs/parameter-citations.md). Both the physical slope and the
+    # measured hourly temperature regenerate for a forward year and respond to
+    # changed conditions, so this is a rule-11-admissible physical input in BOTH
+    # backcast and forecast — not a residual-fitted haircut. Only reduces
+    # capacity, only on hot hours; can never loosen the fleet.
+    gt_ambient_derate: bool = False
+    gt_ambient_derate_ref_c: float = 35.0  # net-summer rating reference temp (C)
+    gt_ambient_derate_slope_cc: float = 0.004  # CC fractional loss per C above ref
+    gt_ambient_derate_slope_ct: float = 0.006  # CT fractional loss per C above ref
+
     # Reliability gas-steam (ST_GAS) tranche heat-rate OVERRIDES (relative to
     # the plant's base HR). When set, each reliability ST_GAS bin's committed /
     # economic / peaking heat rate is base_HR x {gas_st_committed_hr_override,
