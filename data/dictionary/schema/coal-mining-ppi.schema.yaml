@@ -1,0 +1,56 @@
+# Canonical schema: BLS Producer Price Index — coal
+#
+# National monthly PPI series for coal, a free elasticity/slope cross-check
+# on the EIA Annual Coal Report region prices (coal-basin-price is annual;
+# this is monthly, so it can sanity-check within-year direction/timing). BLS
+# publishes no regional/basin breakout for coal PPI (commodity and industry
+# PPI programs are national-only for this commodity — confirmed by probing
+# candidate series ids; see the intake memo), so both series here are
+# national.
+#
+# Curated by scripts/curate_coal_mining_ppi.py from
+#   data/raw/coal-prices/bls_coal_ppi.csv
+datatype: coal-mining-ppi
+schema_version: 1
+title: BLS Producer Price Index — coal (national, monthly)
+description: >-
+  National monthly PPI series for coal: WPU051 (commodity "Coal") and
+  PCU2121--2121-- (industry "Coal Mining", NAICS 2121). Free, public-domain,
+  BLS Public Data API v2. Used as a monthly elasticity/slope cross-check
+  against the annual EIA Annual Coal Report region prices
+  (coal-basin-price); no regional breakout exists in BLS PPI for coal.
+
+key_columns: [series_id, year, month]
+allow_additional_columns: false
+
+columns:
+  - name: series_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      BLS series id (WPU051 = PPI commodity Coal; PCU2121--2121-- = PPI
+      industry Coal Mining, NAICS 2121).
+  - name: series_name
+    dtype: string
+    unit: none
+    nullable: false
+    description: Human-readable series description.
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year.
+  - name: month
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar month (1-12).
+  - name: index_value
+    dtype: float64
+    unit: index_1982_100
+    nullable: false
+    description: >-
+      PPI index value (base period varies by series; BLS convention,
+      unscaled — not a dollar price. Use month-over-month / year-over-year
+      ratios for the slope/elasticity cross-check, not the level.).

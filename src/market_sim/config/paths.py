@@ -121,6 +121,7 @@ ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
 PJM_ENERGY_OFFERS_DIR: Path = RAW_DATA_DIR / "pjm-energy-offers"
 ISO_TRANSMISSION_DIR: Path = RAW_DATA_DIR / "iso-specific-transmission"
 GAS_PRICES_DIR: Path = RAW_DATA_DIR / "gas-prices"
+COAL_PRICES_DIR: Path = RAW_DATA_DIR / "coal-prices"
 ERCOT_HSL_DIR: Path = RAW_DATA_DIR / "ercot-hsl"
 CAISO_HSL_DIR: Path = RAW_DATA_DIR / "caiso-hsl"
 # CAISO Production-and-Curtailments workbooks (5-minute), the source for the
