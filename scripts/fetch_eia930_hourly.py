@@ -30,6 +30,7 @@ from __future__ import annotations
 import argparse
 import os
 import sys
+import time
 from pathlib import Path
 
 import pandas as pd
@@ -74,13 +75,27 @@ def _api_key() -> str:
     return key
 
 
+_RATE_LIMIT_BACKOFFS_S = (15, 30, 60, 120, 240)  # DEMO_KEY throttles bursts
+
+
 def _fetch(url: str, params: dict, key: str) -> list[dict]:
-    """Page through an EIA API v2 data endpoint, returning all rows."""
+    """Page through an EIA API v2 data endpoint, returning all rows.
+
+    ``DEMO_KEY`` enforces a tight burst rate limit that a single multi-page
+    pull can trip on its own (not just across separate script invocations),
+    so a 429 retries with backoff rather than failing the whole pull.
+    """
     rows: list[dict] = []
     offset = 0
     while True:
         page = dict(params, api_key=key, offset=offset, length=PAGE_SIZE)
-        resp = requests.get(url, params=page, timeout=120)
+        for backoff in (*_RATE_LIMIT_BACKOFFS_S, None):
+            resp = requests.get(url, params=page, timeout=120)
+            if resp.status_code != 429:
+                break
+            if backoff is None:
+                resp.raise_for_status()
+            time.sleep(backoff)
         resp.raise_for_status()
         data = resp.json()["response"]["data"]
         rows.extend(data)

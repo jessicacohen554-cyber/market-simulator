@@ -64,9 +64,21 @@ def _params(ba: str, start: str, end: str) -> dict:
     }
 
 
+_FUELTYPE_COLUMNS = ["period", "iso", "fueltype", "type_name", "value_mwh"]
+_REGION_COLUMNS = ["period", "iso", "type", "type_name", "value_mwh"]
+
+
 def fetch_fueltype(ba: str, start: str, end: str, key: str) -> pd.DataFrame:
-    """Tidy per-fuel net-generation rows in the ``<BA>_fueltype`` schema."""
+    """Tidy per-fuel net-generation rows in the ``<BA>_fueltype`` schema.
+
+    Some BA/date-range combinations have no EIA-930 fuel-type reporting at all
+    (e.g. NYIS has no fuel-type breakout before 2019) — that is a real
+    reporting gap, not a fetch error, so an empty API response yields an
+    empty (but correctly-schemed) frame rather than raising.
+    """
     rows = _fetch(FUEL_URL, _params(ba, start, end), key)
+    if not rows:
+        return pd.DataFrame(columns=_FUELTYPE_COLUMNS).astype({"value_mwh": float})
     df = pd.DataFrame(rows)
     out = pd.DataFrame(
         {
@@ -84,8 +96,13 @@ def fetch_fueltype(ba: str, start: str, end: str, key: str) -> pd.DataFrame:
 
 
 def fetch_region(ba: str, start: str, end: str, key: str) -> pd.DataFrame:
-    """Tidy demand-family (D/DF/NG/TI) rows in the ``<BA>_region`` schema."""
+    """Tidy demand-family (D/DF/NG/TI) rows in the ``<BA>_region`` schema.
+
+    Same empty-reporting-gap handling as ``fetch_fueltype``.
+    """
     rows = _fetch(REGION_URL, _params(ba, start, end), key)
+    if not rows:
+        return pd.DataFrame(columns=_REGION_COLUMNS).astype({"value_mwh": float})
     df = pd.DataFrame(rows)
     df = df[df["type"].isin(_REGION_TYPE_NAMES)].copy()
     out = pd.DataFrame(
