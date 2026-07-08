@@ -36,9 +36,9 @@ CISO/PJM/MISO extracts) use for that fuel -- unchanged meaning either way.
 Usage:
     python scripts/extend_eia930_hourly_from_balance.py --ba CISO
     python scripts/extend_eia930_hourly_from_balance.py --ba PJM --ba MISO
-    python scripts/extend_eia930_hourly_from_balance.py --ba PJM --ba CISO \\
+    python scripts/extend_eia930_hourly_from_balance.py --ba PJM --ba CISO \
         --ba MISO --year 2018
-    python scripts/extend_eia930_hourly_from_balance.py --ba CISO --ba MISO \\
+    python scripts/extend_eia930_hourly_from_balance.py --ba CISO --ba MISO \
         --year 2026
 """
 
