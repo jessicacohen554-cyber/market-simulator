@@ -1,122 +1,101 @@
 # Gap Register 2026-07 — parallel prompt pack (code-verified 2026-07-08)
 
 Ready-to-paste handoff prompts for the gaps in `docs/gap-register-2026-07.md` that are
-**genuinely open AND not already in-flight**, verified against `origin/main` HEAD on
-2026-07-08 (five read-only code/artifact audits, not the register prose — the register's
-own 2026-07-07 "open ~14" list was substantially stale). Each prompt is self-contained:
-drop it into a fresh Claude Code session on this repo.
+**genuinely open, not in-flight, and in scope**, verified against `origin/main` HEAD on
+2026-07-08 (five read-only code/artifact audits, not the register prose). Each prompt is
+self-contained: drop it into a fresh Claude Code session on this repo.
 
-> **Why this pack is much shorter than the register's open list.** A code audit found the
-> register carries closed and in-flight gaps as "open". The disposition below is the
-> authority; the register rows are not.
+> **Scope (owner directive 2026-07-08): focus on the four unfinished ISOs — MISO, CAISO,
+> PJM, ERCOT.** NEISO is calibration-complete (`calibration-complete.json`) and NYISO's
+> keeper stands — do not re-tune either. NEISO (L-4) and NYISO (L-5) lanes are descoped.
 
-## Disposition ledger (what the audit found)
+## Disposition ledger
 
-**Already CLOSED — no prompt (verified at HEAD):**
-- **G-42** — CAISO Scope2 Mode-A degenerate frontier fixed 2026-07-05 (ADR 0019,
-  `build_tiebreak_epsilon`).
-- **G-51 / G-52** — README has a canonical-install-path section (`uv` canonical,
-  `run-simulator.sh` a convenience launcher) and the single-year/rule-16 smoke-test caveat.
-- **G-26 #1349** — `GAS_AVAILABILITY_FACTOR` dead code deleted (zero refs in `src/`).
-- **G-41 code + owner decision** — market-design I7 backstop split landed
-  (`resolve_reserve_margin_build_enabled`, commit `00bbd4b`); only a backstop-on
-  confirmation re-run remains → **L-8**.
-- **G-32** (co-scoped under G-30) — ATB FOM flip + foresight A/B re-run landed
-  (`fom-scarcity-defaults-flip-2026-07-07.md`); the hindcast *symptom* is what remains → **L-1**.
-- **#1345** (NYISO LI 0.45) — issue CLOSED 2026-07-07; `nyiso_li_lcr_tsl` replaces it
-  (the 0.45 scalar survives only on the default-off legacy path).
+**DESCOPED per owner 2026-07-08 — do not pursue:**
+- **L-4 NEISO ST_GAS C7 (G-16)** — NEISO is calibration-COMPLETE; C7 is an accepted ledgered
+  caveat, not a blocker. Leave the keeper frozen.
+- **L-5 NYISO downstate tail (G-20c)** — NYISO keeper stands; the deep 2024/25 tail residual is
+  #1344 (data-blocked). Leave it.
+- **L-2 ERCOT storage energy-vs-AS (G-37)** — the mechanism IS built and shipped:
+  `ercot_storage_as_duration_gate` → `storage_reserve_dispatch` (dispatch.py:1255/3040-3044/3846)
+  makes the energy-vs-AS split the LP's own choice. The sub-band validation (0.54–0.61×) is a
+  documented default-off limitation the FINDING scopes out (two forward-uncertainty mechanisms),
+  not an active build. Treated as addressed.
 
-**IN-FLIGHT — do NOT prompt (a session/PR is on it now; a fresh prompt would duplicate):**
-- **G-21 ST_GAS volume driver (#1483)** — PR #1728 built an overnight pre-positioning drag
-  (`reliability_floor` engine); `pjm-89`/`pjm-90` (CC_CHP-SRMC) keeper-candidates in flight.
-  The literal register proposal (`gas_st_netload_drag` + 2023 nameplate) was deliberately left OFF.
-- **G-22 offer-surface / clock round** — as of 2026-07-08 an active ERCOT clock-unification
-  effort (`ercot44b`/`ercot45`/`ercot46` A/B/C, corrected-CST re-derived parquets, `ercot46`
-  keeper-candidate, "update G-22 §7 follow-up", PRs #1730/#1736) now covers the offer-surface
-  leg. **L-2 is re-scoped to G-37 only** (see below); the G-22 offer-surface lever is no longer
-  a free lane.
-- **G-15 CAISO belly commitment** — as of 2026-07-08 a session landed the belly-grounding
-  *diagnostic* (`scripts/caiso_belly_commitment_probe.py` +
-  `docs/handoffs/caiso-belly-commitment-probe-2026-07.md`, PRs #1733/#1735) plus a CAISO
-  ST_GAS overnight drag (ships disabled). The grounding *intake/mechanism* is not yet built,
-  but the investigation is ACTIVE — **L-3 pulled from the dispatch set** (coordinate with that
-  session rather than start fresh; kept below as reference, marked IN-FLIGHT).
-- **G-61(b)** — `caiso-66` startup-aware probe registered, held back from promotion; the
-  remaining step is an owner-adoption decision, not a build → owner queue below.
+**Already CLOSED (verified at HEAD):** G-42 (Mode-A tiebreak, ADR 0019), G-51/G-52 (README
+canonical-install + rule-16 caveat), G-26 #1349 (dead code deleted), G-41 code+decision
+(market-design I7 split, `00bbd4b` — only a confirmation re-run remains → L-8), G-32 (FOM flip
++ foresight A/B), #1345 (NYISO LI 0.45 → `nyiso_li_lcr_tsl`).
 
-**Data-blocked / accepted — no prompt:**
-- **G-20e** (MISO scarcity tail — no published Midwest zonal reserve requirement; G-25
-  posture lever honesty-gate-rejected and struck).
-- **G-26 #1347 / #1335 / #1336 / #1348** (coal sigmoids, merchant CHP, coal tranches, wefor —
-  source-data-blocked), **#1344** (NYISO condition-varying reserve requirement — data ask).
-- **G-19** (holdout intake, deferred to declaration time), **G-40** (MISO ~16 GB + swap).
+**IN-FLIGHT — a session/PR is on it; do NOT prompt (would duplicate):**
+- **CAISO belly commitment (G-15)** — belly-grounding diagnostic + CAISO ST_GAS overnight drag
+  landed (PRs #1733/#1735). The core CAISO backcast-calibration gap is being worked now.
+- **PJM ST_GAS volume driver (G-21/#1483)** — overnight pre-positioning drag (PR #1728);
+  `pjm-89`/`pjm-90` (CC_CHP-SRMC) keeper-candidates in flight.
+- **ERCOT price-shape / clock (G-22)** — clock-unification round settled into the `ercot46`
+  keeper (PR #1740); the offer-surface leg lives here.
 
-**Owner decisions — surface, don't dispatch (build is exhausted; needs a human call):**
-- **G-61(b)** adopt `caiso-66` onto the CAISO keeper? (weigh `FINDING-caiso-seam-tz-correction` §4.3:
-  λ moved away from actual).
-- **G-20b** PJM reserve magnitude — `pjm-87` (sync) vs `pjm-88` (size-split) vs hold; both
-  non-promotion, referred to owner.
-- **G-22** `ercot44` HSL-clock keeper decision (owner-pending; folded into the ercot46 round).
-- **G-21** `pjm-89`/`pjm-90` keeper-candidate adjudication (in-flight solve will produce it).
+**Data-blocked / accepted — no prompt:** MISO G-20e (no published Midwest zonal reserve
+requirement; G-25 posture lever rejected), G-26 #1347/#1335/#1336/#1348 + #1344, G-19, G-40.
+
+**Owner decisions — surface, don't dispatch:** G-61(b) `caiso-66` adoption; G-20b PJM reserve
+magnitude (`pjm-87`/`pjm-88`); G-21 `pjm-89`/`pjm-90` adjudication.
+
+> **Reality check for the four target ISOs:** their live *backcast calibration* is mostly
+> in-flight (CAISO/PJM/ERCOT above) or data-blocked (MISO). The lanes below are the free,
+> non-colliding work — forecast-side, cross-ISO audit, and provenance hygiene.
 
 ## Open lanes (this pack)
 
-| Lane | Gap(s) | Solve? | Model | ISO namespace |
+| Lane | Gap(s) | ISOs | Solve? | Model |
 |---|---|---|---|---|
-| **L-1** ERCOT hindcast scarcity/retirement regime | G-30 (narrowed) | SH (non-keeper harness) | Opus/Fable | — |
-| **L-2** ERCOT storage energy-vs-AS (G-22 offer-surface now in-flight) | G-37 | SH | Fable | ERCOT |
-| ~~**L-3** CAISO belly-gas commitment~~ | ~~G-15~~ IN-FLIGHT (belly probe active, PRs #1733/#1735) | — | — | CAISO |
-| **L-4** NEISO ST_GAS C7 diurnal | G-16 | SH | Opus | NEISO |
-| **L-5** NYISO downstate import-limit tail | G-20c | SH | Fable | NYISO |
-| **L-6** Statmode D-7 same-SHA re-solves | G-10 | SH | Opus | all (frozen replay) |
-| **L-7** Cross-ISO SRMC committed-band audit | #1302 | no | Sonnet | — |
-| **L-8** PJM I7 backstop-on confirmation re-run | G-41 remainder | light forecast | Sonnet/Opus | — (hindcast) |
-| **L-9** Seam-ladder provenance comments | G-26 #1350 | no | Sonnet | — |
+| **L-1** ERCOT hindcast scarcity/retirement regime | G-30 (narrowed) | ERCOT | SH (non-keeper harness) | Opus/Fable |
+| **L-6** Statmode D-7 same-SHA re-solves | G-10 | ERCOT/CAISO/PJM/MISO | SH | Opus |
+| **L-7** Cross-ISO SRMC committed-band audit | #1302 | MISO/CAISO/PJM | no | Sonnet |
+| **L-8** PJM I7 backstop-on confirmation re-run | G-41 remainder | PJM | light forecast | Sonnet/Opus |
+| **L-9** Seam-ladder provenance comments | G-26 #1350 | PJM/CAISO | no | Sonnet |
 
 ## How to run these in parallel
 
-- **No-solve / light lanes (L-7, L-8, L-9): run all concurrently, any tier** — disjoint
-  files, no keeper bundle touched. **This is the true first wave** (small — most of the
-  original no-solve wave was already done).
-- **Solve-heavy lanes (L-1, L-2, L-4, L-5, L-6): cap at 2 solving concurrently** (CLAUDE.md
-  rule 12 — ≤2 per-plant multi-zone invocations; years sequential *within* a run). Each owns
-  a distinct ISO namespace (or the non-keeper hindcast harness), so file ownership never
-  conflicts. **L-1 and L-2 are both ERCOT** — L-1 is hindcast-harness-only (no keeper), so
-  they don't collide, but coordinate ERCOT *keeper* registration with the live clock round.
-- **Every SH lane re-verifies the current keeper** in `frontend/data/backcast/keepers.json`
-  and rebases on `origin/main` before solving — the board churns hourly.
+- **No-solve / light lanes (L-7, L-8, L-9): run all concurrently, any tier** — disjoint files,
+  no keeper bundle touched.
+- **Solve lanes (L-1, L-6): run each in its OWN session/environment and both can go at once.**
+  CLAUDE.md rule 12's "≤2 concurrent" is a *per-machine memory* limit (one box OOMs on 2+
+  per-plant multi-zone LPs) — it does not cap separate environments, each with its own RAM. The
+  invariant that always holds: **years run sequentially WITHIN a single invocation**
+  (`--year 2023 2024 2025` is never parallelized).
+- **Every solve lane re-verifies the current keeper** in `frontend/data/backcast/keepers.json`
+  and rebases on `origin/main` first — the board churns hourly.
 
 **Shared rules every prompt inherits (CLAUDE.md):** right structure first, level second (#1);
-measured data only as a reproducible forward-regenerating input, never an outcome pinned to
-the residual (#10/#11); a structurally-correct mechanism stays even if it worsens a metric —
-fix the root cause (#11); register every completed backcast run on the dashboard
-(`calibration-report` + `build_manifest.py`) and commit it same-session (#12); solve ALL
-scoreable years in one bundle (#16); no Python loops over hours in LP construction; push via
-`mcp__github__push_files`, never `git push`.
+measured data only as a reproducible forward-regenerating input, never an outcome pinned to the
+residual (#10/#11); a structurally-correct mechanism stays even if it worsens a metric — fix the
+root cause (#11); register every completed backcast run on the dashboard (`calibration-report` +
+`build_manifest.py`) and commit it same-session (#12); solve ALL scoreable years in one bundle
+(#16); no Python loops over hours in LP construction; push via `mcp__github__push_files`.
 
 ---
 
-## L-7 — Cross-ISO SRMC committed-band audit (#1302)  ·  Sonnet  ·  no solve  · FIRST WAVE
+## L-7 — Cross-ISO SRMC committed-band audit (#1302)  ·  Sonnet  ·  no solve
 
 ```
 #1302 (docs/gap-register-2026-07.md G-21 row) generalizes the PJM Manual-15 SRMC
-committed-band re-grounding (landed as the pjm-83 keeper) to the OTHER four ISOs'
-committed offer bands. This is a DESIGN + AUDIT task only — no solves, no keeper
-touch (each ISO's re-solve belongs to its own per-ISO lane later).
+committed-band re-grounding (landed as the pjm-83 keeper) to the other target
+ISOs' committed offer bands. Scope: MISO and CAISO (NYISO/NEISO are out of scope
+per owner directive; PJM is the worked reference, actively re-grounding CC_CHP
+SRMC via the pjm-90 candidate). DESIGN + AUDIT only — no solves, no keeper touch.
 
-For NYISO, MISO, NEISO, CAISO: locate each ISO's committed/must-run offer bands
-in the offer path (offer_curves.py, the per-ISO sigmoid/tranche overrides in
-config/scenarios.py + constants.py) and compare each sub-SRMC band multiplier to
-that ISO's OWN cited SRMC floor (fuel heat-rate x delivered fuel + VOM). Report,
-per ISO: which committed bands sit BELOW their SRMC floor (the pjm-83 defect
-pattern), the citation backing the current multiplier, and whether it is an
-ISO-local fitted value or an ERCOT byte-copy (rule 25 — a multiplier fitted on
-one ISO's residual must not cross an ISO boundary; the MISO sigmoid family's
-floor/gas_mid/gas_slope are flagged ERCOT byte-copies in the register). NOTE: PJM
-is actively re-grounding CC_CHP SRMC (pjm-90 candidate) — treat PJM as the worked
-example/reference, not a target.
+For MISO and CAISO: locate each ISO's committed/must-run offer bands in the offer
+path (offer_curves.py, the per-ISO sigmoid/tranche overrides in config/scenarios.py
++ constants.py) and compare each sub-SRMC band multiplier to that ISO's OWN cited
+SRMC floor (fuel heat-rate x delivered fuel + VOM). Report, per ISO: which
+committed bands sit BELOW their SRMC floor (the pjm-83 defect pattern), the
+citation backing the current multiplier, and whether it is an ISO-local fitted
+value or an ERCOT byte-copy (rule 25 — a multiplier fitted on one ISO's residual
+must not cross an ISO boundary; the MISO sigmoid family's floor/gas_mid/gas_slope
+are flagged ERCOT byte-copies in the register).
 
-Deliverable: a cross-ISO SRMC-floor audit table + a per-ISO re-grounding recipe
+Deliverable: a MISO+CAISO SRMC-floor audit table + a per-ISO re-grounding recipe
 (which band -> 1.00x SRMC floor, with the citation), written to a short handoff
 doc, committed and pushed. Do NOT change any numeric offer value (that changes a
 solve). Honesty gate: this scopes the work; each ISO's re-grounding + re-solve is
@@ -125,7 +104,7 @@ its own lane and its own keeper decision.
 
 ---
 
-## L-8 — PJM hindcast I7 backstop-on confirmation re-run (G-41 remainder)  ·  Sonnet/Opus  ·  light forecast  · FIRST WAVE
+## L-8 — PJM hindcast I7 backstop-on confirmation re-run (G-41 remainder)  ·  Sonnet/Opus  ·  light forecast
 
 ```
 G-41's code + owner decision already landed: resolve_reserve_margin_build_enabled
@@ -151,7 +130,7 @@ capacity-adequacy structure (rule 1); report whatever the re-run shows.
 
 ---
 
-## L-9 — Seam-ladder provenance comments (G-26 #1350)  ·  Sonnet  ·  no solve  · FIRST WAVE
+## L-9 — Seam-ladder provenance comments (G-26 #1350)  ·  Sonnet  ·  no solve
 
 ```
 G-26 #1350 in docs/gap-register-2026-07.md. MISO and NEISO seam import/export
@@ -160,18 +139,17 @@ BY_YEAR; IMPORT_TRANCHES_BY_YEAR["NEISO"] via scripts/derive_neiso_import_tranch
 The PJM and CAISO ladders are still bare/near-static literals with weaker
 provenance: IMPORT_TRANCHES["PJM"] (interchange_config.py ~:122, no by-year entry
 at all) and IMPORT_TRANCHES_BY_YEAR["CAISO"] (~:165, prices identical across all
-three years per its own comment); NYISO's by-year prices are a fitted literal with
-no derive-script. Owns src/market_sim/config/interchange_config.py (comments only).
+three years per its own comment). Owns src/market_sim/config/interchange_config.py
+(comments only).
 
-Task: for the PJM, CAISO, and NYISO seam ladders, add a citation comment stating
-the source/derivation status and an open-issue pointer (#1350 / #C-6) so each
-literal is honestly labelled as static-fitted-pending-measured, matching the
-MISO/NEISO derived-ladder provenance style. Do NOT change any tranche number or
-price (that changes a solve). This is truth-in-labelling for rule-24/rule-11
-transparency only.
+Task: for the PJM and CAISO seam ladders, add a citation comment stating the
+source/derivation status and an open-issue pointer (#1350 / #C-6) so each literal
+is honestly labelled as static-fitted-pending-measured, matching the MISO/NEISO
+derived-ladder provenance style. Do NOT change any tranche number or price (that
+changes a solve). This is truth-in-labelling for rule-24/rule-11 transparency only.
 
 Deliverable: the provenance comments + a note in the register's G-26 row marking
-#1350 PJM/CAISO/NYISO as labelled-open (MISO/NEISO closed), committed and pushed.
+#1350 PJM/CAISO as labelled-open (MISO/NEISO closed), committed and pushed.
 Honesty gate: byte-identical LP — comments only.
 ```
 
@@ -191,8 +169,8 @@ docs/hindcast-reports/ercot-2021-2025-realized-2026-07-07.md still shows solar
 additions 0.0 GW (-100% FAIL), coal retire +13.96 GW / gas_st +8.83 GW (~22.8 GW
 over-retirement), CO2 -49%. The corrective arm entry_lookahead_reprice is
 default-OFF (scenarios.py:815) and the foresight work is forecast-scoped. Owns the
-hindcast harness scripts + model/capacity.py (coordinate capacity.py section-scope
-with nobody else active there now). NON-KEEPER, forecast-side — no quarantine.
+hindcast harness scripts + model/capacity.py. NON-KEEPER, forecast-side — no
+quarantine.
 
 Task: determine why the hindcast forms ZERO scarcity hours even after the FOM
 flip (perfect-foresight LP on the over-supplied 2020-vintage fleet vs un-grown
@@ -210,176 +188,38 @@ from the LP regime, never an adder tuned to a retirement or entry number.
 
 ---
 
-## L-2 — ERCOT storage energy-vs-AS mechanism (G-37)  ·  Fable  ·  SH (ERCOT namespace)
-
-```
-G-37 storage energy-vs-AS. COORDINATION FLAG (2026-07-08): an active ERCOT
-clock-unification / ST_GAS-realism effort is churning the ERCOT keeper registry
-(ercot44b/45/46 A/B/C, ercot46 keeper-candidate, G-22 §7 follow-up, PRs
-#1730/#1736) — that effort owns the G-22 offer-surface leg now, so this lane is
-G-37 ONLY. The G-37 mechanism is default-off and touches NO keeper, so it is safe
-to start immediately, but do NOT register a competing ERCOT keeper A/B until the
-ercot46 clock round settles. Re-verify the ERCOT keeper in keepers.json (was
-2026-07-07-ercot42). Owns dispatch.py storage/reserve section + data/ramp_capability.py.
-
-G-37 (GENUINELY-OPEN, no active session): validation 0.54-0.61x below the
-0.8-1.3x band, DIAGNOSED as a dispatch-choice limitation, not a coupling bug
-(FINDING-ercot-storage-as-g37-2026-07.md, disposition "LIMITATION — documented,
-not fixed"; dispatch.py:1441-1494 is structurally correct). Evening SOC depletion
-from energy arbitrage forecloses AS via the (correct) gate. Neither missing
-mechanism is built (grep confirms no forward_as / fast_as in src/): (a) forward AS
-commitment under uncertainty vs perfect-foresight greedy arbitrage; (b) evening
-fast-AS scarcity price formation from a grounded ramp-qualified thermal-reserve
-limit (data/ramp_capability.py). Build at least (b), default-off, trivial-case
-test first.
-
-Deliverable: mechanism (b) (and ideally (a)), default-off with tests, an ERCOT
-all-years probe registered (coordinate registration timing with the clock round).
-Honesty gate: duals/offers form from the LP + grounded ramp limits, never an adder
-tuned to the MCPC or price residual.
-```
-
----
-
-## L-3 — CAISO belly-gas commitment grounding + seam contracted base (G-15)  ·  IN-FLIGHT (do not dispatch fresh)
-
-> **STATUS 2026-07-08: IN-FLIGHT — coordinate, do not start a fresh session.** A session
-> landed the belly-grounding diagnostic (`scripts/caiso_belly_commitment_probe.py` +
-> `docs/handoffs/caiso-belly-commitment-probe-2026-07.md`, PRs #1733/#1735) and a CAISO
-> ST_GAS overnight drag (ships disabled). The grounding intake/mechanism isn't built yet,
-> but the investigation is live. Continue THAT session (or check its handoff) rather than
-> dispatch the prompt below, which would duplicate the probe. Prompt retained for reference.
-
-```
-G-15 in docs/gap-register-2026-07.md. The seam TIMEZONE artifact is resolved and
-the envelope-clock fix is the current keeper (2026-07-07-caiso65-seam-envelope-
-clock, re-verify in keepers.json). On the TRUE clock the model OVER-imports the
-belly +2.5-3.3 GW yet never curtails, and measured CAISO runs 3.1-5.2 GW MORE
-belly gas than the model at $13-33 while the model's exact-fit belly is gas-
-marginal at $37-59 -> the C3a body + CT-drag residual are BELLY-GAS COMMITMENT,
-not a seam-delivery problem. Read FINDING-caiso-seam-tz-correction-2026-07-07.md
-§4/§6 and docs/handoffs/caiso-ct-drag-d8-closure-2026-07.md §6-8. Owns the CAISO
-registry namespace + CAISO-only config sections.
-
-Two grounded-input builds (no residual-tuned adders):
-1. Ground the real belly commitment from MEASURED drivers: CEMS belly min-load
-   patterns, must-offer / exceptional-dispatch records, AS-holding — the object
-   that sets CAISO's curtailment/import margin. Wire via the data contract
-   (schema-first, clean seam).
-2. The seam's contracted evening/overnight base: DMM RA-import capacity
-   (undersized vs the revealed 4.3-5.9 GW self-scheduled base), EIM transfer
-   volumes / CARB specified-source imports as the measured objects.
-
-ALSO surface (do not decide): G-61(b) — the caiso-66 startup-aware RA-bridge probe
-(caiso_ra_bridge_startup_aware) is built, registered, and HELD BACK from promotion;
-its λ moved AWAY from actual, consistent with the over-committed-belly finding.
-Adoption is an OWNER decision (weigh tz-correction §4.3) — put it to the owner, do
-not adopt unilaterally. Path (c) caiso_ra_bridge_curtailment_release stays blocked
-on build #1 (P0 curtails 0 MWh 2023-25).
-
-Deliverable: the belly-commitment grounding + contracted-base intake, a CAISO
-all-years re-solve registered, and the G-61(b) adoption memo for the owner.
-Honesty gate: belly commitment + contracted base are measured physical/market
-inputs with a forward analogue (rule 13), never dispatch pinned to actuals.
-```
-
----
-
-## L-4 — NEISO ST_GAS C7 diurnal root cause (G-16)  ·  Opus  ·  SH (NEISO namespace)
-
-```
-G-16 in docs/gap-register-2026-07.md, GENUINELY-OPEN (2026-07-08 audit: PR #1728
-steam-gas work is PJM-only, no NEISO files; NEISO ST_GAS untouched since the
-keeper). NOTE: NEISO is declared calibration-COMPLETE (calibration-complete.json,
-keeper 2026-07-07-neiso53-winter-fuelsec-coldsnap) and C7 was accepted as the
-single ledgered protective-tier caveat at completion — so this is a POST-COMPLETION
-refinement. Any keeper swap that results must be an explicit owner decision (a
-complete ISO's keeper is frozen for its holdout one-shot); DO NOT touch the 2022 /
-H1-2026 holdout years here. Owns the NEISO registry namespace + NEISO-only config.
-
-ST_GAS D-1 diurnal PASSES 2025 (profile_r 0.844) but FAILS 2023 (r 0.49, profile
-mis-phased evening-vs-actual-midday) and 2024 (r 0.725, cv_ratio 0.0, flat-floor-
-only at $2.19 HH gas). Read the keeper's legitimacy_diagnostics.json (D-1 rows)
-and docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md.
-
-Task: root-cause the 2023 evening-vs-midday phase error and the 2024 flat-floor
-collapse (the reliability-commitment limb produces a flat floor when gas is cheap
-— is the diurnal shape driver missing, or is the floor binding in hours the driver
-says the class is offline? cross-check D-4 off-window per rule 12). Fix the SHAPE
-driver — reconcile with the existing limb, do NOT stack a new floor (rule 17, one
-mechanism per phenomenon). Re-solve all TRAIN years (2023-2025). Present any
-keeper-swap as an owner decision given completion status.
-
-Deliverable: the diurnal-driver fix, the NEISO 2023-2025 re-solve registered, and
-whether C7 clears + the owner keeper-swap question. Honesty gate: the diurnal
-shape comes from the class's real hour-of-day CF, never a floor forced to the profile.
-```
-
----
-
-## L-5 — NYISO downstate import-limit scarcity tail (G-20c)  ·  Fable  ·  SH (NYISO namespace)
-
-```
-G-20c in docs/gap-register-2026-07.md, GENUINELY-OPEN on the 2024/25 tail. 2023 is
-resolved by the keeper (2026-07-07-nyiso-56-measured-zonal, re-verify in
-keepers.json; 2023 RT tail 0->21h). IMPORTANT (2026-07-08 audit) — a follow-up
-probe nyiso-57-locational-rcpf ALREADY grounded NYISO_RCPF_LOCATIONAL to SOM
-primary sources; it did NOT close the tail (C3b/C3c still FAIL) and it is a
-DIFFERENT lever — do NOT repeat RCPF grounding. #1345 (LI 0.45) is CLOSED. #1344
-(condition-varying reserve requirement, Ask-B) stays DATA-BLOCKED — file/confirm
-the ask, do NOT hand-size a requirement (rule 11). Owns the NYISO registry
-namespace + NYISO-only config.
-
-The proposed lever is UNBUILT: the measured NYC locality import limit (~2,875 MW,
-below the model's ~3,900 MW Dunwoodie estimate) applied in-window (the same
-in-window pattern the #1345 LI LCR/TSL fix used). Intake it through the data
-contract and apply it as a downstate import discipline; re-solve all years; check
-whether the 2024 (mild) + 2025 deep >$300 tail moves toward the actual ratio band
-(model currently 0h). Do NOT tune the RCPF overlay breakpoints (rule 11).
-
-Deliverable: the NYC locality import-limit intake + NYISO all-years re-solve
-registered + the #1344 data-ask confirmation. Honesty gate: the locality import
-limit is a measured deliverability capability (rule 13), not a flow pinned to the
-measured net interchange. If the tail stays open after the import limit, the
-residual is the #1344 data block — document it, don't force it.
-```
-
----
-
 ## L-6 — Statmode D-7 same-SHA twin re-solves (G-10)  ·  Opus  ·  SH
 
 ```
 G-10 in docs/gap-register-2026-07.md, GENUINELY-OPEN (2026-07-08 audit: NO statmode
-bundle exists for ANY of the six current keepers). Current keepers (re-verify in
-keepers.json; churn fast): ercot42 / caiso65 / pjm-83 / nyiso-56 / neiso53 /
-miso-47-steamgas-ct (MISO churned 46->47 on 2026-07-08; a pjm-90 CC_CHP-SRMC
-candidate is in flight — confirm the live PJM keeper before replaying). Every statmode registry sidecar
-replays a SUPERSEDED bundle (caiso51 / miso39 / neiso48 / nyiso41 / ercot34). The
-doc's own re-solve queue (statistical-mode-results-2026-07.md:443-463) is itself
-doubly stale — it names ercot34/caiso58/nyiso53/neiso50/miso44 as "current", also
-superseded. Owns docs/statistical-mode-results-2026-07.md + the statmode registry
-sidecars ONLY — do NOT change any keeper config (this is a FROZEN-recipe replay at
-one SHA, not a re-tune).
+bundle exists for any current keeper). Scope: the four unfinished ISOs — ERCOT,
+CAISO, PJM, MISO (NYISO/NEISO out of scope per owner directive). Current keepers
+(re-verify in keepers.json; churn fast): ercot46-clock-steamgas / caiso65 / pjm-83
+/ miso-47-steamgas-ct (ERCOT churned 42->46, MISO 46->47 on 2026-07-08; a pjm-90
+CC_CHP-SRMC candidate is in flight — confirm the live PJM keeper before replaying).
+Every statmode registry sidecar replays a SUPERSEDED bundle (caiso51/58, miso39,
+ercot34). Owns docs/statistical-mode-results-2026-07.md + the statmode registry
+sidecars ONLY — do NOT change any keeper config (FROZEN-recipe replay at one SHA,
+not a re-tune).
 
-Task: for each of the six current keepers, replay the keeper recipe (from
-keepers.json) at one pinned HEAD SHA in statistical mode so the D-7 r2/v2 twin is
-same-SHA-comparable to the keeper. Solve all scoreable years per bundle (rule 16).
-SH — obey rule 12 (<=2 concurrent, years sequential within a run); coordinate the
-RAM cap with any live per-ISO solve lane (MISO needs ~16 GB + swap). Update the
+Task: for each of the four in-scope keepers, replay the keeper recipe at one
+pinned HEAD SHA in statistical mode so the D-7 r2/v2 twin is same-SHA-comparable to
+the keeper. Solve all scoreable years per bundle (rule 16). Years run sequentially
+WITHIN each invocation (rule 12 within-box OOM); separate sessions/environments may
+run different keepers' twins concurrently. MISO needs ~16 GB + swap. Update the
 doc's stale-boxes + re-solve queue to CURRENT as each twin lands.
 
-Deliverable: the six same-SHA statmode twins registered + the doc's stale-boxes /
-queue cleared to current, committed and pushed. Honesty gate: a D-7 number may be
-quoted as skill only once its twin is a same-SHA replay of the current keeper —
-this lane makes that true; it does not manufacture a better number.
+Deliverable: the four same-SHA statmode twins registered + the doc's stale-boxes /
+queue cleared to current (for the in-scope ISOs), committed and pushed. Honesty
+gate: a D-7 number may be quoted as skill only once its twin is a same-SHA replay
+of the current keeper.
 ```
 
 ---
 
-*Verified 2026-07-08 against `origin/main` HEAD via five read-only code/artifact audits
-(ERCOT, CAISO, PJM, NEISO/NYISO, governance/scalar), then refreshed against `origin/main`
-`b403666` the same day. Refresh moved three lanes: L-3 (CAISO belly, G-15) → IN-FLIGHT
-(PRs #1733/#1735); L-2 → G-37-only (G-22 offer-surface now in the active ercot46 clock
-round, PRs #1730/#1736); L-6 keeper ids updated (MISO 46→47). L-1/L-4/L-5/L-7/L-8/L-9
-unaffected. The board churns hourly — each session re-verifies keepers.json + rebases
-before solving.*
+*Verified 2026-07-08 against `origin/main` HEAD via five read-only code/artifact audits, then
+refocused per owner directive (same day) onto the four unfinished ISOs — MISO/CAISO/PJM/ERCOT.
+Descoped: NEISO (complete), NYISO (keeper stands), G-37 (mechanism shipped default-off). The
+four ISOs' live backcast calibration is mostly in-flight (CAISO belly, PJM ST_GAS, ERCOT clock)
+or data-blocked (MISO); the lanes above are the free forecast/audit/hygiene work. The board
+churns hourly — each session re-verifies keepers.json + rebases before solving.*
