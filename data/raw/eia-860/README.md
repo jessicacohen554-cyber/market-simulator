@@ -7,13 +7,17 @@ EIA Form 860 annual fleet-registry release, several vintages:
   multifuel {operable,proposed,retired}, solar/wind {operable,retired},
   environmental association/equipment schedules) — the current (2025 Early
   Release) snapshot.
-- `vintage_2020/`, `vintage_2023/`, `vintage_2024/` — the same schema at an
+- `vintage_2018/`, `vintage_2019/`, `vintage_2020/`, `vintage_2021/`,
+  `vintage_2022/`, `vintage_2023/`, `vintage_2024/` — the same schema at an
   earlier EIA-860 release vintage, used for forecast-validation hindcasts
   that need the fleet as it was known at a past point in time (see
-  `docs/hindcast-reports/`).
+  `docs/hindcast-reports/`). 2018/2019/2021/2022 landed 2026-07-08 (data
+  register intake, `docs/data-register-2026-07.md`) to close the pre-2020
+  vintage gap; no 2026 vintage exists yet (EIA has not published the
+  calendar-2025 annual release).
 
-**Source:** EIA Form 860 (`eia8602024.zip` etc.), public domain — see
-`docs/data-licensing.md` §1.
+**Source:** EIA Form 860 (`eia8602024.zip`, `eia860<year>.zip` archive
+releases), public domain — see `docs/data-licensing.md` §1.
 
 **Regeneration:**
 - `python scripts/process_eia860.py --zip data/raw/eia-860/eia8602024.zip --out-dir data/raw/eia-860`

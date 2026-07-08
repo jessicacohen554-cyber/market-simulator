@@ -412,9 +412,21 @@ def main() -> None:
         "parquet, leaving every other year byte-stable (used to intake "
         "the 2025 annual Early Release without re-downloading the "
         "2022/2026 vintages). In this mode the Page-1 generation "
-        "parquet is NOT rewritten: it is a calibration benchmark, and "
-        "refreshing it re-benches every registered run — a separate, "
-        "owner-visible operation.",
+        "parquet is NOT rewritten unless --include-generation is also "
+        "passed: it is a calibration benchmark, and refreshing an "
+        "already-covered year's rows re-benches every registered run — "
+        "a separate, owner-visible operation. Landing brand-new years "
+        "(no existing rows to disturb) is the intended --include-generation "
+        "use case.",
+    )
+    parser.add_argument(
+        "--include-generation",
+        action="store_true",
+        help="With --merge-years, also surgically refresh the Page-1 "
+        "generation parquet for the same years (byte-stable for every "
+        "other year). Use only when landing years with no prior "
+        "generation-parquet coverage, or with owner sign-off — see "
+        "--merge-years help.",
     )
     args = parser.parse_args()
 
@@ -451,6 +463,25 @@ def main() -> None:
             len(fresh),
             (~existing["year"].isin(wanted)).sum(),
         )
+
+        if args.include_generation:
+            gen_path = out_dir / "eia923_monthly_generation.parquet"
+            existing_gen = pd.read_parquet(gen_path)
+            fresh_gen = aggregate_monthly_generation(zips, ba_code=ba)
+            merged_gen = pd.concat(
+                [existing_gen[~existing_gen["year"].isin(wanted)], fresh_gen],
+                ignore_index=True,
+            ).sort_values(
+                ["year", "plant_id", "prime_mover", "fuel_type"], ignore_index=True
+            )
+            merged_gen.to_parquet(gen_path, index=False)
+            logger.info(
+                "merged %s: years %s refreshed (%d rows) onto %d carried rows",
+                gen_path,
+                sorted(wanted),
+                len(fresh_gen),
+                (~existing_gen["year"].isin(wanted)).sum(),
+            )
         return
 
     costs = aggregate_monthly_fuel_costs(zips, ba_code=ba)

@@ -32,18 +32,19 @@ KY LA MA MD ME MI MN MO MS MT NC ND NH NJ NY OH PA RI SD TN TX VA VT WI WV.
 | 2018–2021 | **complete** (34 states each, 2026-07-05) — the forward CO2-rate history (`docs/handoffs/emissions-co2-rate-plan-2026-07.md` §4); all files committed in per-batch pushes |
 | 2022, H1-2026 | **QUARANTINED** (CLAUDE.md rule 22) — do not intake until the ISO is calibration-complete. |
 
-**DATA NEEDED — EIA-923 2018–2021 (parasitic net conversion).** The v2 rate
-artifact converts CAMPD gross → net with per-plant parasitic factors
-(`scripts/derive_parasitic_load.py`, EIA-923 net ÷ CAMPD gross). The committed
-`data/raw/_processed-legacy/eia923_monthly_generation.parquet` covers **2022–2026
-only** (the raw `f923_*.zip` workbooks for 2018–2021 are not on disk and the EIA
-archive URL is not reachable through this environment's proxy). Until those years
-land, the 2018–2021 v2 rows inherit each plant's **pooled** measured parasitic
-factor (a slowly-varying station-service fraction), which
-`derive_plant_emissions_v2.py` applies as its documented fallback — physically
-the right prior. To refine: fetch `f923_2018.zip … f923_2021.zip`, re-run
-`scripts/process_f923_fuel_costs.py`, then `derive_parasitic_load.py --years
-2018 2019 2020 2021` and re-derive v2.
+**RESOLVED 2026-07-08 — EIA-923 2018–2021 (parasitic net conversion) source gap
+closed, re-derive still open.** The v2 rate artifact converts CAMPD gross → net
+with per-plant parasitic factors (`scripts/derive_parasitic_load.py`, EIA-923
+net ÷ CAMPD gross). The committed
+`data/raw/_processed-legacy/eia923_monthly_generation.parquet` now covers
+**2018–2026** (data-register intake landed the four missing `f923_2018.zip …
+f923_2021.zip` releases — see `docs/data-register-2026-07.md`). The 2018–2021
+v2 rows still inherit each plant's **pooled** measured parasitic factor (a
+slowly-varying station-service fraction) — `derive_plant_emissions_v2.py`'s
+documented fallback, physically the right prior — because the re-derive
+itself has not been run yet. To refine: `derive_parasitic_load.py --years
+2018 2019 2020 2021` then re-derive v2 (a separate, owner-visible operation
+per rule #15 — cite this data landing as the trigger).
 
 **Note on the 2018–2021 push:** these 136 files are large binary parquets, so
 they were committed and pushed in small per-batch `git push` commits (each pack
