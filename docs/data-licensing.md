@@ -22,9 +22,12 @@ publisher's terms page changes.
 `eia-930-interchange/`, `campd-unit-level/`, `campd-facility-level/`,
 `campd-outages*.csv`, `campd-unit-outages*.csv`, `fleet-egrid/`, the
 EIA-sourced files in `gas-prices/` (`henry_hub_daily.csv`,
-`henry_hub_monthly.csv`, `eia_citygate_IL_MI_monthly_2023-2025.csv`), and
-the EIA-derived rows of `gas_basis_by_iso_month.csv` / `nyiso_zonal_gas_hub.csv`
-/ `ercot_zonal_gas_hub.csv` / `miso_zonal_gas_hub.csv`.
+`henry_hub_monthly.csv`, `eia_citygate_IL_MI_monthly_2023-2025.csv`), the
+EIA-derived rows of `gas_basis_by_iso_month.csv` / `nyiso_zonal_gas_hub.csv`
+/ `ercot_zonal_gas_hub.csv` / `miso_zonal_gas_hub.csv`, and
+`data/raw/coal-prices/` (EIA Annual Coal Report region/rank f.o.b.-mine
+prices + BLS coal PPI — see that directory's own README for the BLS
+statutory basis, same public-domain rule, different agency).
 
 - **U.S. government works are public domain** under 17 U.S.C. §105 — this is
   a statutory rule, not a discretionary grant, and covers both EIA and EPA.
@@ -44,6 +47,15 @@ the EIA-derived rows of `gas_basis_by_iso_month.csv` / `nyiso_zonal_gas_hub.csv`
   produced by the United States Environmental Protection Agency (EPA) under
   the public domain and is available for use both non-commercially and
   commercially." URL: <https://www.epa.gov/egrid/frequent-questions-about-egrid>.
+- **BLS Producer Price Index** (`coal-prices/bls_coal_ppi.csv`, series
+  WPU051 / PCU2121--2121--): the same 17 U.S.C. §105 statutory public-domain
+  rule applies to all federal statistical agencies, not just EIA/EPA; BLS's
+  own linked-data/API terms state its published data is freely reusable, no
+  registration or license required. URL:
+  <https://www.bls.gov/developers/api_signature_v2.htm>. **Important
+  distinction from §5 below:** this is BLS's *own* index calculation (not a
+  third party's data BLS is merely hosting), so it carries none of the NGI
+  carve-out risk that flags the gas-price weekly-archive series.
 
 **Redistribution:** **Permitted, no restriction.** Attribution appreciated
 but not legally required. This is the largest single share of committed raw
@@ -284,7 +296,8 @@ identified for this category.
 
 | Source family | Redistribution | Confidence |
 |---|---|---|
-| EIA / EPA (EIA-860/923/930, CAMPD, eGRID) | Permitted, public domain | High |
+| EIA / EPA (EIA-860/923/930, CAMPD, eGRID, coal-prices ACR) | Permitted, public domain | High |
+| BLS (coal PPI, `coal-prices/bls_coal_ppi.csv`) | Permitted, public domain | High |
 | NOAA GHCN weather | Permitted, public domain (CC0) | High |
 | ERCOT MIS / 60-day disclosure | Permitted (explicit raw-data carve-out) | High |
 | **PJM DataMiner2** | **Conditional — non-members barred; owner review needed** | High |
