@@ -68,6 +68,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from build_ercot_as_withholding import (  # noqa: E402
     HOURS_PER_YEAR,
     _to_model_clock,
+    prevailing_he_to_cst,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
