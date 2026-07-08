@@ -1,0 +1,60 @@
+name: apply-caiso67-register
+
+# Applies the caiso-67 dashboard-registration commit (registry sidecar + 607KB
+# run payload + slim bundle json) onto this branch, server-side - the
+# apply-caiso-zonalgas-paths precedent. The run payload is a single 607KB line
+# that cannot be inlined losslessly, so the whole commit travels as a
+# gzip'd git-format patch (base64, line-wrapped, split into 5 parts,
+# sha256-pinned on the GZIP so any transport corruption fails LOUDLY before
+# git am). The branch is at origin/main; the patch is applied on top and the
+# force-push replaces the carrier commits.
+# Idempotent: a re-trigger sees the applied sentinel (the run payload) and no-ops.
+on:
+  push:
+    branches:
+      - claude/caiso67-register
+    paths:
+      - .github/patches/2026-07-08-caiso67-register.gz.b64part*
+      - .github/patches/2026-07-08-caiso67-register.trigger
+      - .github/workflows/apply-caiso67-register.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Reassemble, verify, and apply the registration patch
+        run: |
+          set -euo pipefail
+          if [ -f frontend/data/backcast/runs/2026-07-08-caiso-67-zonalgas-asympaths.js ]; then
+            echo "already applied (run payload present) - no-op"
+            exit 0
+          fi
+          for p in 00 01 02 03 04; do
+            if [ ! -f ".github/patches/2026-07-08-caiso67-register.gz.b64part$p" ]; then
+              echo "payload part $p not yet pushed - waiting for the next carrier commit"
+              exit 0
+            fi
+          done
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          cat .github/patches/2026-07-08-caiso67-register.gz.b64part00 \
+              .github/patches/2026-07-08-caiso67-register.gz.b64part01 \
+              .github/patches/2026-07-08-caiso67-register.gz.b64part02 \
+              .github/patches/2026-07-08-caiso67-register.gz.b64part03 \
+              .github/patches/2026-07-08-caiso67-register.gz.b64part04 \
+            | base64 -d > "$RUNNER_TEMP/reg.patch.gz"
+          echo "7114115aaee4e406d63c86bf6355897e0c05efad9f19836e8a3f1b997719c600  $RUNNER_TEMP/reg.patch.gz" | sha256sum -c -
+          gunzip -c "$RUNNER_TEMP/reg.patch.gz" > "$RUNNER_TEMP/reg.patch"
+          git fetch origin main
+          git checkout -B claude/caiso67-register origin/main
+          git am "$RUNNER_TEMP/reg.patch"
+          git push --force origin HEAD:claude/caiso67-register
