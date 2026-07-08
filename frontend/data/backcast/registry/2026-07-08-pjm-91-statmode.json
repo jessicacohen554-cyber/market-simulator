@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-08-pjm-91-statmode",
+ "label": "pjm 91 statmode",
+ "date": "2026-07-08",
+ "shorthand": "pjm-91-statmode",
+ "definition": "D-7 statistical-mode A/B twin — SAME-SHA replay of the CURRENT PJM keeper 2026-07-08-pjm-90-cchp-srmc (bundle pjm90_cchp_srmc), replayed at HEAD fab2254 with every per-hour/per-year answer-injection overlay off (outage_source=statistical, ct_deployment_overlay=False, reliability_deployment_overlay=False, wefor_residual/groups=None, coal_plant_monthly_pricing=False); structural model + realized annual Henry Hub gas price unchanged. G-10 honesty-gate twin: first re-solve of any kind since the original 2026-07-03 pjm-76 probe — the D-7 gap is now same-SHA-comparable to the current keeper (pjm-77/pjm-83/pjm-90 were never re-gated). Fail count 2→8 of 11 scored (C6 governance excluded), the largest swing of the four in-scope ISOs. Overlay-carried coal/gas split confirmed: fuel-mix C1 COAL_BIT balloons 112→213 TWh, sysvol C2 PASS→FAIL (coal +61.5%), CO2 C5a PASS→FAIL (~−1%→+22–26%), dispatch-corr C4 PASS→FAIL (coal r 0.93→0.80), price level C3a CAVEAT→FAIL (+3.1%→−15.2% … −10.2%→−23.8% vs DA), C8 forced-share PASS→FAIL. The historic-outage overlay is doing the heaviest lifting on PJM's coal fleet. Probe only — not a keeper, per CLAUDE.md #1/#13.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "PJM",
+ "file": "frontend/data/backcast/runs/2026-07-08-pjm-91-statmode.js",
+ "bundle": "results/calibration/pjm90_statmode",
+ "statmode_of": "2026-07-08-pjm-90-cchp-srmc",
+ "head_sha": "fab2254"
+}
