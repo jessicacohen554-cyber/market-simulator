@@ -130,8 +130,15 @@ def render_page(sidecars: list[dict]) -> str:
       body += '<div class="fv-inv">'+ (d.invariants||[]).map(function(i){{
         return '<span class="'+cls(i.status)+'" title="'+esc(i.detail)+'">'+i.ident+' '+i.status+'</span>';
       }}).join('') +'</div>';
-      return '<div class="fv-card"><h2>'+ (m.iso||'?') +' &middot; '+ (m.start_year||'') +'–'+ (m.end_year||'') +
-             ' &middot; '+ (m.variant||'') +' fuel</h2>'+
+      const arms=[];
+      if(m.entry_lookahead_reprice) arms.push('lookahead');
+      if(m.staged_oversupply_thinning) arms.push('staged-thin '+(m.staged_thinning_max_gw_per_year||'')+'GW/yr');
+      if(m.limited_foresight_dispatch) arms.push('ltd-foresight');
+      if(m.energy_only_floor) arms.push('energy-only-floor');
+      const armStr = arms.length ? ' &middot; '+arms.join(' + ') : '';
+      return '<div class="fv-card"><h2>'+ esc(d.run_id||m.iso||'?') +'</h2>'+
+             '<p class="bc-page-sub">'+ (m.iso||'?') +' &middot; '+ (m.start_year||'') +'–'+ (m.end_year||'') +
+             ' &middot; '+ (m.variant||'') +' fuel'+ armStr +'</p>'+
              '<p class="bc-page-sub">solved '+JSON.stringify(m.solved_years||[])+', bridged '+
              JSON.stringify(m.bridged_years||[])+' (rule 22) &middot; gas '+(m.gas_price_path||'')+'</p>'+ body +'</div>';
     }}).join('');

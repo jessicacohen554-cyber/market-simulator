@@ -59,6 +59,7 @@ from __future__ import annotations
 import logging
 import math
 from dataclasses import dataclass
+from itertools import groupby
 
 import numpy as np
 
@@ -945,6 +946,74 @@ def _apply_reliability_floor(
     return retention_log
 
 
+def _apply_staged_thinning_cap(
+    eligible: list[Generator],
+    retired: set[str],
+    config: ScenarioConfig,
+    year: int | None,
+    event_sink: dict | None,
+) -> list[Generator]:
+    """Cap each fuel class's economic exits to a per-year MW budget.
+
+    A staged-retirement RATE cap (G-30 first-wave fix, GATED
+    ``config.staged_oversupply_thinning``, default off). When enabled, at most
+    ``config.staged_thinning_max_gw_per_year`` GW of any single fuel class may
+    retire in one simulation year; the least-efficient (highest-heat-rate)
+    eligible units go first (``eligible`` is pre-sorted ``(fuel, -heat_rate)``),
+    and once a class's budget is spent the remaining eligible units of that
+    class are **deferred** — removed from ``retired`` so they survive this year
+    — and re-screened next year with their loss counters intact.
+
+    This is not a price floor or an adder: it does not touch any unit's margin
+    or the underlying retire/keep decision, only how many exits of one fuel
+    class a single year may realize (RTO deactivation-notice / RMR / coal
+    contract-wind-down lead time — a fleet does not exit 14 GW of one fuel in a
+    calendar year). Its purpose (rule 1/11) is to spread a large single-year
+    over-supply exit across years so a later year — with a fleet the LP regime
+    can price as scarce (in-year ORDC overlay or lookahead pro-forma) — makes
+    the retain/exit call on the survivors. It mirrors
+    ``ccs_retrofit_max_gw_per_year``'s throughput logic.
+
+    Mutates ``retired`` in place (discards deferred unit ids) and records the
+    deferrals under ``event_sink["staged_deferred"]`` when a sink is supplied.
+
+    Returns:
+        The list of deferred generators (empty when the gate is off or no
+        class exceeds its budget).
+    """
+    if not config.staged_oversupply_thinning:
+        return []
+    budget_mw = float(config.staged_thinning_max_gw_per_year) * 1000.0
+    if budget_mw <= 0.0:
+        return []
+    deferred: list[Generator] = []
+    # ``eligible`` is sorted by (fuel_type, -heat_rate), so groupby(fuel_type)
+    # yields each class least-efficient-first with no re-sort.
+    for _fuel, group in groupby(eligible, key=lambda g: g.fuel_type):
+        spent_mw = 0.0
+        for g in group:
+            if spent_mw >= budget_mw:
+                retired.discard(g.unit_id)
+                deferred.append(g)
+            else:
+                spent_mw += float(g.pmax_mw)
+    if deferred:
+        logger.info(
+            "staged thinning (year %s): deferred %d units (%.0f MW) past the "
+            "%.1f GW/fuel/yr exit budget",
+            year,
+            len(deferred),
+            sum(float(g.pmax_mw) for g in deferred),
+            config.staged_thinning_max_gw_per_year,
+        )
+        if event_sink is not None:
+            event_sink["staged_deferred"] = [
+                {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
+                for g in deferred
+            ]
+    return deferred
+
+
 def apply_economic_retirements(
     fleet: list[Generator],
     fleet_arrays: FleetArrays,
@@ -1261,6 +1330,18 @@ def apply_economic_retirements(
     eligible.sort(key=lambda g: (g.fuel_type, -g.heat_rate))
     retired = {g.unit_id for g in eligible}
 
+    # Staged over-supply thinning (G-30 first-wave fix, GATED default off): cap
+    # each fuel class's exits to a per-year MW budget so a large single-year
+    # wave spreads across years the LP regime can price. A RATE cap, not a
+    # floor — the retain/exit margin is untouched; deferred units keep their
+    # loss counters and re-screen next year (see the config-field docstring).
+    # Applied BEFORE the reliability floor so the two un-retire sets stay
+    # distinct (staged = lead-time deferral; floor = adequacy retention).
+    staged_deferred = _apply_staged_thinning_cap(
+        eligible, retired, config, year, event_sink
+    )
+    staged_ids = {g.unit_id for g in staged_deferred}
+
     # Reliability floor (accredited basis, plan §3.2): never strip the
     # system's accredited firm capacity below the shared PRM requirement.
     floor_retention_log = _apply_reliability_floor(
@@ -1295,7 +1376,7 @@ def apply_economic_retirements(
         event_sink["floor_retained"] = [
             {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
             for g in eligible
-            if g.unit_id not in retired
+            if g.unit_id not in retired and g.unit_id not in staged_ids
         ]
 
     return survivors, loss_years, floor_retention_log

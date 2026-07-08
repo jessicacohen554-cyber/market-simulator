@@ -413,6 +413,60 @@ class TestEconomicRetirements(unittest.TestCase):
         self.assertEqual(fleet1, [])
         self.assertNotIn("C0", losses1)
 
+    def test_staged_thinning_caps_per_fuel_exits_and_defers_rest(self):
+        # G-31 staged over-supply thinning: with the gate on, at most
+        # staged_thinning_max_gw_per_year GW of a fuel class exits per year;
+        # the least-efficient units go first and the rest are deferred with
+        # their loss counters intact (re-screened next year).
+        config = ScenarioConfig(
+            staged_oversupply_thinning=True,
+            staged_thinning_max_gw_per_year=3.0,  # 3000 MW budget
+        )
+        # 5 coal units @ 1000 MW, distinct heat rates so ordering is
+        # deterministic (higher heat rate == retired first). All deeply
+        # unprofitable at price 10 (coal exits after one loss year).
+        fleet = [
+            _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=12.0 - i) for i in range(5)
+        ]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), 10.0)
+        dispatch = self._dispatch_result(5, 10.0)
+        sink: dict = {}
+        survivors, losses, _ = apply_economic_retirements(
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {},
+            peak_demand=0.0,
+            event_sink=sink,
+        )
+        # 3000 MW budget -> exactly 3 units retire, 2 deferred (survive).
+        self.assertEqual(len(survivors), 2)
+        # The deferred survivors are the two LOWEST-heat-rate units (C3, C4).
+        self.assertEqual(sorted(g.unit_id for g in survivors), ["C3", "C4"])
+        # Deferred units keep their loss counters (not popped like retirees).
+        self.assertEqual(losses.get("C3"), 1)
+        self.assertEqual(losses.get("C4"), 1)
+        self.assertEqual(len(sink["staged_deferred"]), 2)
+        self.assertEqual(sum(d["mw"] for d in sink["staged_deferred"]), 2000.0)
+
+    def test_staged_thinning_off_is_noop(self):
+        # Gate off: the full unprofitable coal fleet exits in one year (the
+        # pre-G-31 behaviour), byte-identical to a run without the flag.
+        config = ScenarioConfig(staged_oversupply_thinning=False)
+        fleet = [
+            _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=12.0 - i) for i in range(5)
+        ]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        prices = np.full((1, self.T), 10.0)
+        dispatch = self._dispatch_result(5, 10.0)
+        survivors, _losses, _ = apply_economic_retirements(
+            fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
+        )
+        self.assertEqual(survivors, [])
+
     def test_gas_cc_survives_two_unprofitable_years(self):
         # retirement_years_gas_cc = 3: two loss years are not enough.
         config = ScenarioConfig()
