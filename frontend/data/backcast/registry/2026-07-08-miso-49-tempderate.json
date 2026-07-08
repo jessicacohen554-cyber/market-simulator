@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-08-miso-49-tempderate",
+  "label": "miso 49 tempderate",
+  "date": "2026-07-08",
+  "shorthand": "miso-49-tempderate",
+  "definition": "MISO 49 (PROBE, not a keeper): the miso-48-stgas-srmc keeper's exact recipe (sourced from its own meta.json) re-solved at HEAD with ONLY temp_dependent_derate=True added -- the per-class dry-bulb-temperature capacity derate curve (CC/CT capacity-neutral reshape, COAL/ST_GAS additive hot-hour derate) replacing the flat net-summer treatment, per docs/handoffs/temp-derate-keeper-rerun-playbook-2026-07.md. C3c scarcity tail (energy-only LMP dual, >$200): keeper's own model was 0/0/0h (2023/24/25) vs DA actual 1/24/38h; this probe is 0/6/3h -- a partial, non-closing improvement in 2024 (25% of the gap) and 2025 (8%), no change in 2023 (actual is only 1h there). C3a mean LMP error narrows materially: 2024 -4.7% -> +0.8%, 2025 -10.7% -> -8.7% (FAIL -> CAVEAT/commercial-band); 2023 -0.1% -> +1.2% (still PASS). C1 fuel-mix 13/16 -> 14/16, but the flipped row (2023 ST_GAS -8.16 -> -7.99 TWh) is a marginal edge-of-band move, not a structural fix. C2 system volume (2025 gas/coal) is unchanged (-14.7%/+16.3%, same pre-existing coal-for-gas substitution miss). C7 diurnal shape and C8 forced-energy share both still PASS -- the capacity reshape does not push any floor/bridge over its budget. Zero-forcing ablation twin registered separately as the -ablation ID. Governance gate UNATTESTED (no calibration_attestation.json -- expected for a probe, not carried over from the keeper).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-08-miso-49-tempderate.js",
+  "bundle": "results/calibration/miso49_tempderate",
+  "ablation_twin": "2026-07-08-miso-49-tempderate-ablation"
+}
