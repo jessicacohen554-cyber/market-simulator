@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-caiso-68-tempderate-ablation",
+  "label": "caiso 68 tempderate ablation",
+  "date": "2026-07-08",
+  "shorthand": "caiso-68-tempderate-ablation",
+  "definition": "temp-derate full-keeper ablation -- caiso65_seam_envelope_clock config + temp_dependent_derate, 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-08-caiso-68-tempderate-ablation.js",
+  "bundle": "results/calibration/caiso68_tempderate-ablation"
+}
