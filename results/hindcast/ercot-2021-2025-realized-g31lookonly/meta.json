@@ -1,0 +1,26 @@
+{
+  "iso": "ERCOT",
+  "variant": "realized",
+  "energy_only_floor": false,
+  "entry_lookahead_reprice": true,
+  "staged_oversupply_thinning": false,
+  "staged_thinning_max_gw_per_year": 3.0,
+  "limited_foresight_dispatch": false,
+  "gas_price_path": "hindcast_realized",
+  "vintage_year": 2020,
+  "start_year": 2021,
+  "end_year": 2025,
+  "cache_key": "4bcffd375f100218",
+  "bundle": "results/hindcast/ercot-2021-2025-realized-g31lookonly/ERCOT/4bcffd375f100218",
+  "solved_years": [
+    2021,
+    2023,
+    2024,
+    2025
+  ],
+  "bridged_years": [
+    2022
+  ],
+  "leakage_violations": [],
+  "started_utc": "2026-07-08T15:15:53Z"
+}
