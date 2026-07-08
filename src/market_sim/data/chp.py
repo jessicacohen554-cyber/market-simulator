@@ -71,7 +71,7 @@ def _correct_chp_steam_credit_hr(generators: list, iso: str) -> None:
 
     Applied to the ISOs in
     :data:`market_sim.data.fleet.CHP_STEAM_CREDIT_HR_CORRECTION_ISOS` (CAISO,
-    PJM). The correction is TURBINE PHYSICS, not a per-ISO residual fit
+    PJM, MISO). The correction is TURBINE PHYSICS, not a per-ISO residual fit
     (CLAUDE.md rule 24 governs fitted curves, not physical limits): the
     thresholds/factors/floor below are universal power-only heat-rate limits
     that hold in every market, so the same values apply wherever a CHP unit's
@@ -88,7 +88,9 @@ def _correct_chp_steam_credit_hr(generators: list, iso: str) -> None:
 
     (PJM 2026-07-07: reported CHP HRs of CC_CHP ~4.95 / CT_CHP ~6.14 MMBtu/MWh
     are equally sub-physical — this correction stops steam-credited PJM CHP from
-    clearing as the cheapest thermal and over-delivering grid energy vs 923.)
+    clearing as the cheapest thermal and over-delivering grid energy vs 923.
+    MISO 2026-07-08: cap-weighted CT_CHP ~6.62 / CC_CHP ~6.76 MMBtu/MWh, median
+    CT_CHP 5.50 and min CC_CHP 4.49 — the same sub-physical distribution.)
     """
     from market_sim.data.fleet import (
         CAISO_CHP_CC_STEAM_CREDIT_FACTOR,
