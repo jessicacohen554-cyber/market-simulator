@@ -1,0 +1,201 @@
+year,region_id,region_name,market_type_id,market_type_name,price_usd_per_ton,sales_short_tons
+2014,US,U.S. Total,TOT,Total,34.83,988230237.0
+2014,UT,Utah,TOT,Total,35.59,17824225.0
+2014,VA,Virginia,TOT,Total,78.44,15093671.0
+2014,WBO,Other Western,CAP,Captive,29.89,24637161.0
+2014,WBO,Other Western,OM,Open Market,31.53,55783970.0
+2014,WBO,Other Western,TOT,Total,31.04,81076333.0
+2014,WMR,West of Mississippi River,CAP,Captive,17.71,205801911.0
+2014,WMR,West of Mississippi River,OM,Open Market,18.07,376392377.0
+2014,WMR,West of Mississippi River,TOT,Total,18.06,588458613.0
+2014,WNC,West North Central,CAP,Captive,19.32,3875996.0
+2014,WNC,West North Central,OM,Open Market,18.34,25200531.0
+2014,WNC,West North Central,TOT,Total,18.47,29076527.0
+2014,WSB,Western Region Total,CAP,Captive,18.17,173417565.0
+2014,WSB,Western Region Total,OM,Open Market,17.45,360435462.0
+2014,WSB,Western Region Total,TOT,Total,17.82,540108177.0
+2014,WSC,West South Central,CAP,Captive,15.23,32384346.0
+2014,WSC,West South Central,OM,Open Market,31.36,15544504.0
+2014,WSC,West South Central,TOT,Total,20.48,47938025.0
+2014,WST,West Total,CAP,Captive,18.15,169541569.0
+2014,WST,West Total,OM,Open Market,17.43,335647342.0
+2014,WST,West Total,TOT,Total,17.81,511444061.0
+2014,WV,West Virginia,CAP,Captive,57.96,7463278.0
+2014,WV,West Virginia,OM,Open Market,65.31,74315068.0
+2014,WV,West Virginia,TOT,Total,65.67,111028211.0
+2014,WVN,West Virginia (Northern),TOT,Total,59.31,48148389.0
+2014,WVS,West Virginia (Southern),TOT,Total,70.54,62879822.0
+2014,WY,Wyoming,TOT,Total,14.05,395376778.0
+2015,AK,Alaska,TOT,Total,53.21,1161568.0
+2015,AL,Alabama,TOT,Total,84.05,13660170.0
+2015,APC,Appalachia Central,CAP,Captive,90.66,1960203.0
+2015,APC,Appalachia Central,OM,Open Market,63.57,61121443.0
+2015,APC,Appalachia Central,TOT,Total,63.88,85458784.0
+2015,APN,Appalachia Northern,CAP,Captive,46.57,17016368.0
+2015,APN,Appalachia Northern,OM,Open Market,57.0,81787316.0
+2015,APN,Appalachia Northern,TOT,Total,55.04,113124806.0
+2015,APP,Appalachia Total,CAP,Captive,51.13,18979432.0
+2015,APP,Appalachia Total,OM,Open Market,60.61,148010897.0
+2015,APP,Appalachia Total,TOT,Total,60.47,212243760.0
+2015,APS,Appalachia Southern,CAP,Captive,73.01,2861.0
+2015,APS,Appalachia Southern,OM,Open Market,83.06,5102138.0
+2015,APS,Appalachia Southern,TOT,Total,84.05,13660170.0
+2015,AR,Arkansas,TOT,Total,36.39,192762.0
+2015,AZ,Arizona,TOT,Total,43.06,6573524.0
+2015,CO,Colorado,CAP,Captive,43.3,9022727.0
+2015,CO,Colorado,OM,Open Market,31.28,8590279.0
+2015,CO,Colorado,TOT,Total,36.12,19254256.0
+2015,EMR,East of Mississippi River,CAP,Captive,44.58,42947712.0
+2015,EMR,East of Mississippi River,OM,Open Market,54.61,241703896.0
+2015,EMR,East of Mississippi River,TOT,Total,54.38,339682326.0
+2015,ENC,East North Central,CAP,Captive,40.41,30783677.0
+2015,ENC,East North Central,OM,Open Market,44.42,67758843.0
+2015,ENC,East North Central,TOT,Total,43.57,108319777.0
+2015,ESC,East South Central,CAP,Captive,58.46,221567.0
+2015,ESC,East South Central,OM,Open Market,55.57,66200872.0
+2015,ESC,East South Central,TOT,Total,59.05,77522848.0
+2015,EST,East Total,CAP,Captive,51.93,3557746.0
+2015,EST,East Total,OM,Open Market,61.47,45926739.0
+2015,EST,East Total,TOT,Total,58.89,63391215.0
+2015,IL,Illinois,TOT,Total,40.77,57040447.0
+2015,ILL,Illinois Basin,CAP,Captive,39.4,23967488.0
+2015,ILL,Illinois Basin,OM,Open Market,45.79,90427467.0
+2015,ILL,Illinois Basin,TOT,Total,44.7,124172212.0
+2015,IN,Indiana,CAP,Captive,44.56,13175204.0
+2015,IN,Indiana,OM,Open Market,47.08,21548384.0
+2015,IN,Indiana,TOT,Total,46.12,34744033.0
+2015,INO,Other Interior,CAP,Captive,18.51,28369948.0
+2015,INO,Other Interior,OM,Open Market,38.36,15921334.0
+2015,INO,Other Interior,TOT,Total,26.02,44796280.0
+2015,INT,Interior Region Total,CAP,Captive,28.08,52337436.0
+2015,INT,Interior Region Total,OM,Open Market,44.68,106348801.0
+2015,INT,Interior Region Total,TOT,Total,39.75,168968492.0
+2015,KS,Kansas,TOT,Total,52.0,199199.0
+2015,KY,Kentucky,CAP,Captive,58.41,217914.0
+2015,KY,Kentucky,OM,Open Market,54.61,56928209.0
+2015,KY,Kentucky,TOT,Total,55.01,59691331.0
+2015,KYE,Kentucky (East),CAP,Captive,58.41,217914.0
+2015,KYE,Kentucky (East),OM,Open Market,60.56,24540477.0
+2015,KYE,Kentucky (East),TOT,Total,60.84,27303599.0
+2015,KYW,Kentucky (West),OM,Open Market,50.1,32387732.0
+2015,KYW,Kentucky (West),TOT,Total,50.1,32387732.0
+2015,LA,Louisiana,TOT,Total,52.39,3647095.0
+2015,MAT,Middle Atlantic,CAP,Captive,51.17,3226248.0
+2015,MAT,Middle Atlantic,OM,Open Market,60.16,39238670.0
+2015,MAT,Middle Atlantic,TOT,Total,57.73,49490347.0
+2015,MD,Maryland,OM,Open Market,48.34,1741450.0
+2015,MD,Maryland,TOT,Total,53.01,1980505.0
+2015,MID,Midwest Total,CAP,Captive,37.94,35029262.0
+2015,MID,Midwest Total,OM,Open Market,37.24,92723871.0
+2015,MID,Midwest Total,TOT,Total,38.16,137530390.0
+2015,MO,Missouri,TOT,Total,52.0,138206.0
+2015,MS,Mississippi,TOT,Total,26.43,3266354.0
+2015,MT,Montana,TOT,Total,17.44,42203988.0
+2015,MTN,Mountain,CAP,Captive,17.68,158736083.0
+2015,MTN,Mountain,OM,Open Market,16.74,316199444.0
+2015,MTN,Mountain,TOT,Total,17.09,477363898.0
+2015,ND,North Dakota,TOT,Total,17.71,28873208.0
+2015,NM,New Mexico,TOT,Total,37.43,19145897.0
+2015,OH,Ohio,TOT,Total,47.84,16535297.0
+2015,OK,Oklahoma,TOT,Total,43.46,772220.0
+2015,PA,Pennsylvania,TOT,Total,57.73,49490347.0
+2015,PAA,Pennsylvania (Anthracite),TOT,Total,97.91,1806793.0
+2015,PAB,Pennsylvania (Bituminous),TOT,Total,56.21,47683554.0
+2015,PCN,Pacific Noncontiguous,TOT,Total,53.21,1161568.0
+2015,PRB,Powder River Basin,CAP,Captive,13.45,129588029.0
+2015,PRB,Powder River Basin,OM,Open Market,13.12,269112655.0
+2015,PRB,Powder River Basin,TOT,Total,13.23,398753058.0
+2015,SAT,South Atlantic,CAP,Captive,56.53,8716220.0
+2015,SAT,South Atlantic,OM,Open Market,60.58,68505511.0
+2015,SAT,South Atlantic,TOT,Total,60.53,104349354.0
+2015,STH,South Total,CAP,Captive,27.35,36975445.0
+2015,STH,South Total,OM,Open Market,56.1,140336711.0
+2015,STH,South Total,TOT,Total,52.97,209163855.0
+2015,TN,Tennessee,OM,Open Market,66.18,904993.0
+2015,TN,Tennessee,TOT,Total,66.18,904993.0
+2015,TX,Texas,CAP,Captive,18.51,28369156.0
+2015,TX,Texas,OM,Open Market,35.71,7706320.0
+2015,TX,Texas,TOT,Total,22.69,36580444.0
+2015,UNT,Uinta Basin,CAP,Captive,41.96,8897898.0
+2015,UNT,Uinta Basin,OM,Open Market,33.28,21100165.0
+2015,UNT,Uinta Basin,TOT,Total,34.91,32242125.0
+2015,US,U.S. Total,CAP,Captive,22.76,234298536.0
+2015,US,U.S. Total,OM,Open Market,32.71,596199383.0
+2015,US,U.S. Total,TOT,Total,31.83,888610926.0
+2015,UT,Utah,TOT,Total,34.53,14399860.0
+2015,VA,Virginia,TOT,Total,63.04,13900868.0
+2015,WBO,Other Western,CAP,Captive,31.67,24495741.0
+2015,WBO,Other Western,OM,Open Market,29.93,51626865.0
+2015,WBO,Other Western,TOT,Total,30.52,76403491.0
+2015,WMR,West of Mississippi River,CAP,Captive,17.86,191350824.0
+2015,WMR,West of Mississippi River,OM,Open Market,17.77,354495487.0
+2015,WMR,West of Mississippi River,TOT,Total,17.87,548928600.0
+2015,WNC,West North Central,CAP,Captive,20.06,4245585.0
+2015,WNC,West North Central,OM,Open Market,17.77,24965028.0
+2015,WNC,West North Central,TOT,Total,18.11,29210613.0
+2015,WSB,Western Region Total,CAP,Captive,17.75,162981668.0
+2015,WSB,Western Region Total,OM,Open Market,16.9,341839685.0
+2015,WSB,Western Region Total,TOT,Total,17.21,507398674.0
+2015,WSC,West South Central,CAP,Captive,18.51,28369156.0
+2015,WSC,West South Central,OM,Open Market,41.15,12318397.0
+2015,WSC,West South Central,TOT,Total,25.77,41192521.0
+2015,WST,West Total,CAP,Captive,17.68,158736083.0
+2015,WST,West Total,OM,Open Market,16.87,317212062.0
+2015,WST,West Total,TOT,Total,17.18,478525466.0
+2015,WV,West Virginia,CAP,Captive,56.42,8384722.0
+2015,WV,West Virginia,OM,Open Market,59.98,60075992.0
+2015,WV,West Virginia,TOT,Total,60.31,88467981.0
+2015,WVN,West Virginia (Northern),TOT,Total,54.82,45118657.0
+2015,WVS,West Virginia (Southern),TOT,Total,66.02,43349324.0
+2015,WY,Wyoming,TOT,Total,13.92,375786373.0
+2016,AK,Alaska,TOT,Total,55.13,972086.0
+2016,AL,Alabama,TOT,Total,91.86,9409997.0
+2016,APC,Appalachia Central,CAP,Captive,59.52,2444268.0
+2016,APC,Appalachia Central,OM,Open Market,57.49,43861608.0
+2016,APC,Appalachia Central,TOT,Total,59.45,66788528.0
+2016,APN,Appalachia Northern,CAP,Captive,44.21,18098301.0
+2016,APN,Appalachia Northern,OM,Open Market,51.1,72449838.0
+2016,APN,Appalachia Northern,TOT,Total,49.58,104901954.0
+2016,APP,Appalachia Total,CAP,Captive,46.14,20655169.0
+2016,APP,Appalachia Total,OM,Open Market,54.2,119279779.0
+2016,APP,Appalachia Total,TOT,Total,55.42,181100479.0
+2016,APS,Appalachia Southern,CAP,Captive,65.15,112600.0
+2016,APS,Appalachia Southern,OM,Open Market,81.12,2968333.0
+2016,APS,Appalachia Southern,TOT,Total,91.86,9409997.0
+2016,AR,Arkansas,TOT,Total,36.39,36781.0
+2016,AZ,Arizona,TOT,Total,43.13,5755860.0
+2016,CO,Colorado,CAP,Captive,51.13,6184270.0
+2016,CO,Colorado,OM,Open Market,35.69,6655232.0
+2016,CO,Colorado,TOT,Total,42.54,13673088.0
+2016,EMR,East of Mississippi River,CAP,Captive,44.44,37644955.0
+2016,EMR,East of Mississippi River,OM,Open Market,49.41,200760174.0
+2016,EMR,East of Mississippi River,TOT,Total,50.65,286068726.0
+2016,ENC,East North Central,CAP,Captive,42.82,21761618.0
+2016,ENC,East North Central,OM,Open Market,41.28,58912128.0
+2016,ENC,East North Central,TOT,Total,41.8,87233469.0
+2016,ESC,East South Central,CAP,Captive,41.04,1300560.0
+2016,ESC,East South Central,OM,Open Market,51.01,48050244.0
+2016,ESC,East South Central,TOT,Total,56.05,56847871.0
+2016,EST,East Total,CAP,Captive,44.6,4039574.0
+2016,EST,East Total,OM,Open Market,51.82,42380292.0
+2016,EST,East Total,TOT,Total,50.64,58542082.0
+2016,IL,Illinois,TOT,Total,39.2,45209469.0
+2016,ILL,Illinois Basin,CAP,Captive,43.12,16695943.0
+2016,ILL,Illinois Basin,OM,Open Market,43.07,78431797.0
+2016,ILL,Illinois Basin,TOT,Total,43.07,101625562.0
+2016,IN,Indiana,CAP,Captive,43.14,12592720.0
+2016,IN,Indiana,OM,Open Market,45.79,16681601.0
+2016,IN,Indiana,TOT,Total,44.55,29446564.0
+2016,INO,Other Interior,CAP,Captive,18.96,32244300.0
+2016,INO,Other Interior,OM,Open Market,29.68,12386260.0
+2016,INO,Other Interior,TOT,Total,21.88,46410517.0
+2016,INT,Interior Region Total,CAP,Captive,27.2,48940243.0
+2016,INT,Interior Region Total,OM,Open Market,41.24,90818057.0
+2016,INT,Interior Region Total,TOT,Total,36.43,148036079.0
+2016,KS,Kansas,TOT,Total,52.0,26567.0
+2016,KY,Kentucky,TOT,Total,50.79,43488826.0
+2016,KYE,Kentucky (East),TOT,Total,55.44,16519297.0
+2016,KYW,Kentucky (West),TOT,Total,47.94,26969529.0
+2016,LA,Louisiana,TOT,Total,47.13,2906451.0
+2016,MAT,Middle Atlantic,CAP,Captive,47.73,3330973.0
+2016,MAT,Middle Atlantic,OM,Open Market,50.27,36067709.0
