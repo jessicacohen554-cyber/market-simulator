@@ -144,6 +144,35 @@ def curate_bin_assignments(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, str]:
     return df, _rel(src)
 
 
+# ---------------------------------------------------------------------------
+# coal-region-crosswalk: coal plant -> EIA producing-region map, per ISO
+# ---------------------------------------------------------------------------
+def curate_coal_region_crosswalk(raw_dir: Path = RAW_DIR) -> tuple[pd.DataFrame, str]:
+    """Normalize ``coal_region_crosswalk.csv`` into the coal-region-crosswalk lookup.
+
+    Built by ``scripts/derive_coal_region_crosswalk.py`` from each ISO's coal
+    fleet + ``market_sim.data.coal.coal_supply_class`` — maps every coal plant
+    onto the EIA Annual Coal Report producing region/state its coal is
+    sourced from (see that script's docstring for the resolution rules). Feeds
+    a future re-derivation of the coal-vs-gas passthrough sigmoids (issue
+    #1347) with a real per-region commodity price instead of the current
+    hand-tuned, cross-ISO-byte-copied literals.
+    """
+    src = raw_dir / "coal_region_crosswalk.csv"
+    raw = pd.read_csv(src)
+
+    df = raw.rename(columns={"plant_code": "plant_id"})
+    df["plant_id"] = df["plant_id"].astype("int64")
+    df["iso"] = df["iso"].astype("string")
+    df["zone"] = pd.array([pd.NA] * len(df), dtype="string")
+    df["key"] = (
+        "coal-region-crosswalk:" + df["iso"] + ":" + df["plant_id"].astype(str)
+    ).astype("string")
+
+    df = _order_key_first(df)
+    return df, _rel(src)
+
+
 def _order_key_first(df: pd.DataFrame) -> pd.DataFrame:
     """Put canonical keys first for readability (``key`` then standard keys)."""
     lead = [c for c in ("key", "plant_id", "iso", "zone", "node") if c in df.columns]
@@ -155,6 +184,7 @@ def _order_key_first(df: pd.DataFrame) -> pd.DataFrame:
 TABLES = {
     "plant-registry": curate_plant_registry,
     "bin-assignments": curate_bin_assignments,
+    "coal-region-crosswalk": curate_coal_region_crosswalk,
 }
 
 
