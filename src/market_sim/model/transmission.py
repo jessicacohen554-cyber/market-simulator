@@ -2303,6 +2303,68 @@ def apply_deliverability_seam_limit(
     return extended
 
 
+# WECC-accepted directional ratings for CAISO's two internal N-S paths
+# (WECC Path Rating Catalog, 2024 public version; Tier 1 measured). Each model
+# link's symmetric ttc_mw is only ONE direction's rating — Path 15's 5,400 MW
+# is its S→N limit and Path 26's 4,000 MW its N→S limit — so the LP's reverse
+# directions run up to 65% too loose. Keyed by the model link orientation
+# (from_zone, to_zone) = the listed/positive direction of the InterfaceLimit;
+# values are (forward_cap_mw, reverse_cap_mw).
+CAISO_PATH_DIRECTIONAL_RATINGS: dict[tuple[str, str], tuple[float, float]] = {
+    # Path 15 (Midway–Los Banos): N→S 3,265 MW / S→N 5,400 MW.
+    ("NP15", "ZP26"): (3265.0, 5400.0),
+    # Path 26 (Midway–Vincent): N→S 4,000 MW / S→N 3,000 MW.
+    ("ZP26", "SP15"): (4000.0, 3000.0),
+}
+
+
+def apply_caiso_asymmetric_path_limits(iso_config: ISOConfig, config) -> ISOConfig:
+    """Cap Path 15 / Path 26 at their WECC directional ratings (CAISO only).
+
+    Gated on ``ScenarioConfig.caiso_asymmetric_path_ratings`` (default off —
+    byte-identical no-op for every existing run). When on, appends one
+    :class:`InterfaceLimit` per entry of :data:`CAISO_PATH_DIRECTIONAL_RATINGS`
+    over that single link, bounding the listed (N→S) direction at
+    ``forward_cap_mw`` and the reverse (S→N) at ``reverse_cap_mw``. The
+    per-link symmetric ``ttc_mw`` is left untouched (it already equals the
+    looser direction's rating), so the effective directional bounds become
+    ``min(ttc, forward)`` / ``min(ttc, reverse)`` — the published ratings.
+
+    Replaces a symmetric estimate with the measured directional data (rule 14):
+    the tightened S→N Path 26 limit (4,000 → 3,000 MW) is what confines the
+    south's midday solar surplus, letting the measured NP15-over-SP15 basis
+    form instead of the zones equalizing through a limit the real system does
+    not have. A no-op when the ISO carries neither listed link (non-CAISO
+    topologies), and idempotent (existing same-named limits are replaced).
+    """
+    if not getattr(config, "caiso_asymmetric_path_ratings", False):
+        return iso_config
+    link_pairs = {(ln.from_zone, ln.to_zone) for ln in iso_config.links}
+    new_limits = [
+        lim
+        for lim in iso_config.interface_limits
+        if not lim.name.startswith("CAISO_path_directional_")
+    ]
+    added = 0
+    for (from_z, to_z), (fwd_mw, rev_mw) in CAISO_PATH_DIRECTIONAL_RATINGS.items():
+        if (from_z, to_z) not in link_pairs and (to_z, from_z) not in link_pairs:
+            continue
+        new_limits.append(
+            InterfaceLimit(
+                name=f"CAISO_path_directional_{from_z}_{to_z}",
+                links=[(from_z, to_z)],
+                cap_mw=fwd_mw,
+                reverse_cap_mw=rev_mw,
+            )
+        )
+        added += 1
+    if added == 0:
+        return iso_config
+    extended = iso_config.model_copy(update={"interface_limits": new_limits})
+    extended.validate_topology()
+    return extended
+
+
 def build_pjm_external_flow_groups(
     links: list[TransferLink],
     import_cap: np.ndarray,
