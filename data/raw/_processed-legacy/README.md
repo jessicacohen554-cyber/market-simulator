@@ -29,9 +29,12 @@ its own producing script under `scripts/`, all confirmed by `grep -rl
 All of the above are **derived from other committed raw sources**
 (EIA-860/923, CAMPD, model config), not independent upstream downloads —
 regenerate by re-running the listed script, not by re-fetching from an
-external source. See `data/raw/campd-unit-level/README.md` for the
-`eia923_monthly_generation.parquet` 2018–2021 coverage gap that limits
-`derive_parasitic_load.py`'s v2 emission-rate conversion.
+external source. `eia923_monthly_fuel_costs.parquet` /
+`eia923_monthly_generation.parquet` now span 2018–2026 (2018–2021 landed
+2026-07-08, data-register intake, `docs/data-register-2026-07.md`); see
+`data/raw/campd-unit-level/README.md` for the resulting still-open
+`derive_parasitic_load.py` v2 re-derivation follow-up (source gap closed,
+re-derive not yet run).
 
 **Consumers:** `scripts/curate_chp_btm_share.py`,
 `src/market_sim/data/{coal.py,fuel.py,eia923.py,chp.py,fleet.py}`.
