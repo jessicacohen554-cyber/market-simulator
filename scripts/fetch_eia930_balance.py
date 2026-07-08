@@ -84,7 +84,25 @@ def fetch(year: int, half: str, force: bool) -> Path:
             "no committed BALANCE sibling of the same taxonomy to verify against"
         )
     ref = pq.read_schema(siblings[-1])
-    df = df[list(ref.names)]
+
+    # EIA didn't publish a per-fuel breakdown for every BA until partway
+    # through 2018 (confirmed against the raw 2018 Jan_Jun archive: it has
+    # only the demand/net-generation/interchange columns, none of the
+    # "Net Generation (MW) from <fuel>" columns the 2019+ archive carries).
+    # A column absent from the SOURCE (not just renamed) is a real reporting
+    # gap, not something to fabricate — reindex it in as NaN rather than
+    # erroring, matching the existing GEO/BAT-fold-to-OTH NaN convention in
+    # extend_eia930_hourly_from_balance.py.
+    missing = [c for c in ref.names if c not in df.columns]
+    if missing:
+        print(
+            f"  NOTE: source lacks {len(missing)} column(s) present in the "
+            f"reference taxonomy (real EIA reporting gap, filled NaN): "
+            f"{missing}"
+        )
+    df = df.reindex(columns=ref.names)
+    for c in missing:
+        df[c] = df[c].astype("float64")
     df.to_parquet(out, index=False)
     got = pq.read_schema(out)
     ref_cols = list(zip(ref.names, (str(t) for t in ref.types)))
