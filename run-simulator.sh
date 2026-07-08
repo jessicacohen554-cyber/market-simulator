@@ -2,6 +2,11 @@
 # Market Simulator - desktop run launcher (macOS / Linux).
 # Mirrors run-simulator.bat: bootstraps a local venv + deps on first run,
 # then opens the launcher UI. Run: ./run-simulator.sh
+#
+# This is a convenience launcher only, not the reference install. The
+# canonical install/run path is `uv` + pyproject.toml/uv.lock (see
+# README.md "Which install path?"); use this script for a quick local UI
+# session when `uv` isn't available.
 set -e
 cd "$(dirname "$0")"
 
