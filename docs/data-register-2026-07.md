@@ -85,16 +85,21 @@ claim needed a direct spot-check), not from documentation claims alone.
 | ERCOT (`ERCO hourly.parquet`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (thru Jun 30) |
 | NEISO (`ISNE hourly.parquet`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | thru ~May 21 |
 | NYISO (`NYIS hourly.parquet`) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | thru ~Jun 13 |
-| PJM (`PJM hourly.parquet`) | — | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (thru Jun 30) |
-| CAISO (`CISO hourly.parquet`) | — | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
-| MISO (`MISO hourly.parquet`) | — | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | — |
+| PJM (`PJM hourly.parquet`) | ✓ (H2 only, phased rollout) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (thru Jun 30) |
+| CAISO (`CISO hourly.parquet`) | ✓ (H2 only) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (thru Jun 30) |
+| MISO (`MISO hourly.parquet`) | ✓ (H2 only) | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ | ✓ (thru Jun 30) |
 
 Verified directly (file min/max timestamp): ERCO/ISNE/NYIS wide files start 2015-07-01;
-PJM/CISO/MISO start 2019-01-01. CISO/MISO end 2025-12-31 (no 2026 rows at all). The `eia-930/`
-long-form supplemental files (per-BA `fueltype`/`region_<year>.parquet`) additionally confirm 2022
-and H1-2026 rows exist for ERCOT and PJM specifically (their calibration-complete holdout intake),
-and are **absent** for CAISO/MISO (the parallel `eia-930` BALANCE half-year files corroborate: 2022
-rows are present but degenerate for CISO/MISO — 9 and 7 hours respectively, not usable years).
+PJM/CISO/MISO now start 2018-01-01 (backfilled 2026-07-08 via the BALANCE bulk archive — 2018 H1
+carries demand/net-generation/interchange only, since EIA-930 per-fuel reporting hadn't started
+yet for any of the three; PJM's own per-fuel reporting ramps up gradually across 2018 H2). CISO/MISO
+now reach H1-2026 (landed 2026-07-08, same BALANCE-archive fold). The `eia-930/` long-form
+supplemental files (per-BA `fueltype`/`region_<year>.parquet`) confirm 2022 and H1-2026 rows now
+exist for ERCOT, PJM, **and (as of 2026-07-08) CAISO/MISO** — `api.eia.gov` was re-confirmed
+reachable with the repo's configured `EIA_API_KEY` (the earlier "blocked" assessment was stale for
+this session). The parallel `eia-930` BALANCE half-year 2022 files remain degenerate for CISO/MISO
+specifically (9 and 7 hours respectively — a real EIA archive gap for that product, not fetchable
+around); the long-form intake above is the usable 2022 source for those two.
 
 ### Zone-specific metered demand
 
@@ -256,15 +261,18 @@ under any holdout-year backcast until it's addressed).
 - **2018-2020, most sources:** on-disk coverage before 2021-2022 is effectively limited to CAMPD
   unit-level CEMS (all states, 2018-2021), Henry Hub gas prices, EIA-923 delivered fuel
   cost/generation and EIA-860 fleet vintages (all closed 2026-07-08, data-register intake), and the
-  EIA-930 hourly wide files for ERCOT/NEISO/NYISO only (which happen to reach back to mid-2015).
-  PJM/CAISO/MISO's EIA-930 wide files start 2019-01-01. Almost nothing else in the register — LMP,
-  AS, HSL/curtailment, zonal demand, weather, gas-hub series, PJM/MISO gen-by-fuel — reaches earlier
+  EIA-930 hourly wide files for ERCOT/NEISO/NYISO (mid-2015 on) plus, as of 2026-07-08,
+  PJM/CAISO/MISO (2018 H2 on for per-fuel columns; demand/net-gen/interchange-only for 2018 H1, a
+  real source gap — see the EIA-930 section above). Almost nothing else in the register — LMP, AS,
+  HSL/curtailment, zonal demand, weather, gas-hub series, PJM/MISO gen-by-fuel — reaches earlier
   than 2020 for any ISO.
-- **2022 (holdout year):** genuinely bifurcated by rule-22 authorization status. ERCOT and PJM
-  (and, as of 2026-07-07, NEISO for CAMPD only) have it across most gated datatypes; CAISO, MISO,
-  and NYISO do not (MISO/NYISO's apparent 2022 CAMPD coverage is a side effect of state overlap
-  with PJM/ERCOT's own intake, not their own).
-- **H1-2026:** ERCOT and PJM again lead (EIA-930, CAMPD Q1, gas price partials, gen-by-fuel); CAISO
-  and MISO have essentially nothing past 2025-12-31 in this repo.
+- **2022 (holdout year):** genuinely bifurcated by rule-22 authorization status. ERCOT, PJM, and
+  (as of 2026-07-08) CAISO/MISO have EIA-930 (fuel-mix bench + demand); CAMPD, LMP, gas-hub, and
+  other gated datatypes remain ERCOT/PJM-only (and, as of 2026-07-07, NEISO for CAMPD only) — CAISO/
+  MISO/NYISO do not have those (MISO/NYISO's apparent 2022 CAMPD coverage is a side effect of state
+  overlap with PJM/ERCOT's own intake, not their own).
+- **H1-2026:** ERCOT and PJM lead on CAMPD Q1, gas price partials, and gen-by-fuel; EIA-930 itself
+  now reaches H1-2026 for ERCOT, PJM, CAISO, **and MISO** (landed 2026-07-08) — CAISO/MISO still
+  have essentially nothing past 2025-12-31 for the other (CAMPD/gas/outage) datatypes in this repo.
 - **Weather is the one universal gap:** capped to 2023-2025 for all six ISOs regardless of ISO
   holdout-authorization status.
