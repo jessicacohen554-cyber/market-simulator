@@ -1903,6 +1903,10 @@ def solve_and_persist(
     curve_smoothing: dict | None = None,
     cc_derate_from_top: bool = False,
     cc_nameplate_summer_derate: bool = False,
+    gt_ambient_derate: bool = False,
+    gt_ambient_derate_ref_c: float | None = None,
+    gt_ambient_derate_slope_cc: float | None = None,
+    gt_ambient_derate_slope_ct: float | None = None,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
@@ -2166,6 +2170,10 @@ def solve_and_persist(
             curve_smoothing=curve_smoothing,
             cc_derate_from_top=cc_derate_from_top,
             cc_nameplate_summer_derate=cc_nameplate_summer_derate,
+            gt_ambient_derate=gt_ambient_derate,
+            gt_ambient_derate_ref_c=gt_ambient_derate_ref_c,
+            gt_ambient_derate_slope_cc=gt_ambient_derate_slope_cc,
+            gt_ambient_derate_slope_ct=gt_ambient_derate_slope_ct,
             must_run_mw=must_run_total,
             inject_biomass_mustrun=inject_biomass,
             priced_interchange=priced_interchange,
@@ -2759,6 +2767,17 @@ def solve_and_persist(
         # Meta-writer audit fix (Stage 7): mirrors run_year; previously
         # entirely absent from recorded_cfg.
         recorded_cfg = recorded_cfg.with_overrides(cc_nameplate_summer_derate=True)
+    if gt_ambient_derate:
+        # Mirror run_year so run_config.json records the GT ambient-derate knobs
+        # (rule 25: every solve-changing tunable appears in the recorded config).
+        _amb_rec = {"gt_ambient_derate": True}
+        if gt_ambient_derate_ref_c is not None:
+            _amb_rec["gt_ambient_derate_ref_c"] = float(gt_ambient_derate_ref_c)
+        if gt_ambient_derate_slope_cc is not None:
+            _amb_rec["gt_ambient_derate_slope_cc"] = float(gt_ambient_derate_slope_cc)
+        if gt_ambient_derate_slope_ct is not None:
+            _amb_rec["gt_ambient_derate_slope_ct"] = float(gt_ambient_derate_slope_ct)
+        recorded_cfg = recorded_cfg.with_overrides(**_amb_rec)
     if coal_mustrun_online_pmin:
         # Meta-writer audit fix (Stage 7): mirrors run_year; previously
         # entirely absent from recorded_cfg.
