@@ -1224,8 +1224,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # Bound storage foresight to within-day arbitrage when the
                 # config asks for it (methodology spec §1.3); previously
                 # only the backcast script honored this flag.
+                # ``limited_foresight_dispatch`` (G-30 in-year scarcity fix)
+                # forces the same within-day bound: a real DAM/RT operator has
+                # no annual lookahead, so denying the single-LP its perfect-
+                # foresight cross-day peak-shaving lets peak/net-load-ramp hours
+                # tighten and the ORDC overlay price scarcity from the LP regime
+                # once the fleet has thinned (pairs with staged thinning).
                 storage_daily_cycle_hours=(
-                    24 if config.storage_daily_cycling else None
+                    24
+                    if (
+                        config.storage_daily_cycling
+                        or config.limited_foresight_dispatch
+                    )
+                    else None
                 ),
                 # Conventional-hydro monthly energy budget: constrains each
                 # hydro plant's monthly generation to its (climatology) budget
