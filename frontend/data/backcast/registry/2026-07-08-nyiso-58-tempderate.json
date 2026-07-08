@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-nyiso-58-tempderate",
+  "label": "nyiso 58 tempderate",
+  "date": "2026-07-08",
+  "shorthand": "nyiso-58-tempderate",
+  "definition": "temp-derate full-keeper main -- 2026-07-07-nyiso-56-measured-zonal config (byte-faithful replay via replay_keeper.build_kwargs) + temp_dependent_derate=True, 2023-2025 -- (PROBE)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-08-nyiso-58-tempderate.js",
+  "bundle": "results/calibration/nyiso58_tempderate"
+}
