@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-07-ercot45-clock-unified",
+  "label": "ercot45 clock unified",
+  "date": "2026-07-07",
+  "shorthand": "ercot45-clock-unified",
+  "definition": "ercot45 clock-unified: the ercot42 keeper recipe replayed byte-faithfully at HEAD on the clock-corrected measured parquets (ORDC reserves / AS / by-restype storage / WTX share table + rule-23 re-derived WS-A + depth constants; PR #1725 builders + this round's rebuild). Pure-clock B arm of the stepwise A/B/C; corrected data kept unconditionally (rule 14).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-07-ercot45-clock-unified.js",
+  "bundle": "results/calibration/ercot45_clock_unified"
+}
