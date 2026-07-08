@@ -40,6 +40,9 @@ CT/ST_GAS reliability drag. Not reopening.
 - **L-10 MISO ST_GAS_INTERMEDIATE SRMC re-grounding** — OWNER RUNNING (2026-07-08); MISO keeper
   still miso-47, re-solve in progress. Prompt retained below for reference. L-6b (MISO statmode)
   waits on its outcome.
+- **L-11 ERCOT limited-foresight dispatch screen (G-30 residual)** — OWNER RUNNING (2026-07-08).
+  Shares `capacity.py`/`dispatch.py` foresight path with the midstream ERCOT keeper run — owner
+  coordinating. Prompt retained below for reference.
 - **CAISO (G-15 belly + zonal-gas/path-ratings)** — belly-commitment probe + CAISO ST_GAS drag
   (#1733/#1735/#1746/#1750/#1751); measured zonal-gas basis + WECC Path-15/26 ratings LANDED
   (#1754); caiso-67 zonalgas+asympaths A/B in flight (#1761). CAISO's own SRMC re-grounding
@@ -48,8 +51,7 @@ CT/ST_GAS reliability drag. Not reopening.
   progress** — do NOT dispatch PJM calibration lanes; coordinate. PJM still scores **NOT-YET**
   (C1 fuel-mix + C3c scarcity FAIL; C3c = G-20b, brief below).
 - **ERCOT** — price-shape/clock settled into the `ercot46` keeper (#1740); a midstream ERCOT
-  keeper run is in progress (owner). L-11 (below) is non-keeper but shares `capacity.py`/
-  `dispatch.py` — coordinate.
+  keeper run is in progress (owner), coordinated with L-11.
 
 **Data-blocked / accepted:** MISO G-20e, G-26 #1347/#1335/#1336/#1348 + #1344, G-19, G-40.
 
@@ -58,25 +60,23 @@ adoption; G-20b PJM reserve magnitude.
 
 ## Open lanes (this pack)
 
-| Lane | Gap(s) | ISOs | Solve? | Model |
-|---|---|---|---|---|
-| **L-11** ERCOT limited-foresight dispatch screen | G-30 residual | ERCOT | SH (non-keeper harness) | Opus/Fable |
-| **L-6b** MISO statmode twin (after L-10) | G-10 (MISO) | MISO | SH | Opus |
+| Lane | Gap(s) | ISOs | Solve? | Model | Status |
+|---|---|---|---|---|---|
+| **L-6b** MISO statmode twin | G-10 (MISO) | MISO | SH | Opus | GATED — waits on L-10 |
 
-*(L-10 MISO SRMC re-grounding is OWNER-RUNNING — see IN-FLIGHT above.)*
+*Everything else is owner-running (L-10, L-11, midstream ERCOT) or gated (see IN-FLIGHT).
+The dispatch queue is drained — next action is to let the running lanes land, then refresh.*
 
 ## How to run
 
-- **DONE:** L-7/L-8/L-9 (no-solve wave), L-1, L-6 (ERCOT/CAISO/PJM statmode). **OWNER-RUNNING:**
-  L-10 (MISO SRMC) + a midstream ERCOT keeper run. **Open to dispatch: L-11** (ERCOT G-30 dispatch
-  screen); **L-6b** (MISO statmode) waits on L-10's outcome.
-- **L-11 (ERCOT hindcast) is non-keeper/forecast-side** — won't touch the ERCOT keeper, but it
-  edits `capacity.py` / `dispatch.py` foresight path. The owner's midstream ERCOT run may touch
-  those files — coordinate ownership or run L-11 in an isolated worktree.
-- Do NOT start a PJM lane (owner midstream fixes) or a CAISO SRMC lane (gated on in-flight CAISO
-  input work). Run each solve lane in its own session/environment; **years sequential WITHIN an
-  invocation**.
-- **Re-verify the current keeper** in `keepers.json` + rebase on `origin/main` before solving.
+- **Dispatch queue drained.** DONE: L-7/L-8/L-9, L-1, L-6(ERCOT/CAISO/PJM). OWNER-RUNNING: L-10
+  (MISO SRMC), L-11 (ERCOT G-30 screen), midstream ERCOT keeper run. GATED: L-6b (MISO statmode,
+  after L-10). IN-FLIGHT elsewhere: CAISO belly, PJM fixes. Data-blocked: MISO G-20e, the #13xx
+  scalars. Owner-pending: G-61(b), G-20b.
+- **Next action: let the running lanes land, then refresh** — fold their results in and re-scope.
+  When L-10 lands, dispatch L-6b against the settled MISO keeper.
+- Run each solve lane in its own session/environment; **years sequential WITHIN an invocation**.
+  **Re-verify the current keeper** in `keepers.json` + rebase on `origin/main` before solving.
 
 **Shared rules (CLAUDE.md):** right structure first (#1); measured data only as a reproducible
 forward input, never pinned to the residual (#10/#11); a correct mechanism stays even if a metric
@@ -121,7 +121,7 @@ value tuned to a residual.
 
 ---
 
-## L-11 — ERCOT limited-foresight dispatch screen (G-30 residual)  ·  Opus/Fable  ·  SH (non-keeper harness)
+## L-11 — ERCOT limited-foresight dispatch screen (G-30 residual)  ·  Opus/Fable  ·  SH (non-keeper harness)  · OWNER-RUNNING
 
 ```
 Follow-on to L-1 (docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md):
@@ -154,7 +154,7 @@ scarcity forms from the LP regime, never an adder tuned to a retirement number.
 
 ---
 
-## L-6b — MISO statmode D-7 twin (after L-10)  ·  Opus  ·  SH
+## L-6b — MISO statmode D-7 twin (after L-10)  ·  Opus  ·  SH  · GATED on L-10
 
 ```
 G-10 remainder: ERCOT/CAISO/PJM same-SHA D-7 statmode twins already landed
@@ -179,8 +179,8 @@ its twin is a same-SHA replay of the current keeper.
 
 *Verified 2026-07-08 against `origin/main` HEAD. Landed since the audit: L-7/L-8/L-9 (no-solve
 wave), L-1 (G-30 lookahead — progressed 22.8→15.8 GW, residual → L-11), L-6 ERCOT/CAISO/PJM
-statmode twins. Owner-running: L-10 (MISO SRMC) + a midstream ERCOT run. Open: L-11 (ERCOT G-30
-dispatch screen), L-6b (MISO statmode, after L-10). Descoped: NEISO (complete), NYISO (keeper
-stands), G-37. PJM is owner-midstream + still NOT-YET; CAISO SRMC re-grounding gated on in-flight
-CAISO input work. Owner decisions in `docs/handoffs/owner-decision-briefs-2026-07-08.md`. Board
-churns hourly — re-verify keepers.json + rebase before solving.*
+statmode twins. Owner-running: L-10 (MISO SRMC), L-11 (ERCOT G-30 screen), midstream ERCOT keeper.
+Gated: L-6b (MISO statmode, after L-10). Descoped: NEISO (complete), NYISO (keeper stands), G-37.
+PJM is owner-midstream + still NOT-YET; CAISO SRMC re-grounding gated on in-flight CAISO input
+work. Owner decisions in `docs/handoffs/owner-decision-briefs-2026-07-08.md`. Board churns hourly
+— re-verify keepers.json + rebase before solving.*
