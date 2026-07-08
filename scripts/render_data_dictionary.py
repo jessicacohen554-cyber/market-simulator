@@ -89,6 +89,8 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "chp-btm-share",
     "nyiso-downstate-gas",
     "ercot-wtx-congestion",
+    "nyiso-renewable-curtailment",
+    "nyiso-renewable-curtailment-monthly",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -255,6 +257,40 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "transport customers). Consumed by "
             "`market_sim.data.fuel.apply_nyiso_downstate_ct_gas_daily` to "
             "re-ground the downstate CT-peaker offer level."
+        ),
+    },
+    "nyiso-renewable-curtailment": {
+        "summary": (
+            "NYISO's coarse annual NYCA-wide + 4-zone wind/FTM-solar "
+            "curtailment aggregate — a labeled diagnostic, not an hourly HSL "
+            "series (NYISO publishes no per-plant uncurtailed-potential data)."
+        ),
+        "reconciles": (
+            "Hand-transcribed from NYISO's annual NYCA Renewables presentation "
+            "series (ICAPWG/MIWG decks, nyiso.com/reports-information): "
+            "NYCA-wide annual curtailed GWh + percent-of-production for wind "
+            "(2017-2025) and FTM solar (2022-2025), plus zonal (West/Central/"
+            "North/Mohawk Valley) annual wind curtailed GWh for the years each "
+            "deck reports its own current year (2020-2023, 2025 — no "
+            "standalone 2024 deck was found). See "
+            "`data/raw/nyiso-renewable-curtailment/README.md` for exact source "
+            "URLs and documented gaps. Read by "
+            "`market_sim.data.nyiso_renewable_curtailment`; not consumed by "
+            "dispatch."
+        ),
+    },
+    "nyiso-renewable-curtailment-monthly": {
+        "summary": (
+            "Monthly companion to `nyiso-renewable-curtailment`: NYCA-wide "
+            "percent-of-production (wind) and zonal curtailed GWh, by month."
+        ),
+        "reconciles": (
+            "Same source decks as `nyiso-renewable-curtailment`: NYCA-wide "
+            "monthly wind curtailment percent (2017-2025, cross-checked across "
+            "overlapping decks) and zonal monthly curtailed GWh for the years "
+            "with a published zonal breakdown (2020-2023, 2025). Read by "
+            "`market_sim.data.nyiso_renewable_curtailment`; not consumed by "
+            "dispatch."
         ),
     },
     "ramp-capability": {
