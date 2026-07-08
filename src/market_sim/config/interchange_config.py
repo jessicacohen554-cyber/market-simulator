@@ -110,6 +110,13 @@ CAISO_IMPORT_DELIVERY_BASIS: dict[str, tuple[float, float]] = {
 # CAISO_FIRM_IMPORT_TRANCHES). The static entry below carries the latest
 # grounded (2025) volumes as the forward story — RA import contracting is a
 # persistent market structure; backcast years use IMPORT_TRANCHES_BY_YEAR.
+#
+# PRICE-LADDER PROVENANCE (gap register G-26, issue #1350 / audit C-6): the
+# volumes above are measured (DMM RA capacity × MIC split, cited above); the
+# $/MWh values are still static-fitted-pending-measured — Tier-3 proxies, not
+# a Q-Q derivation of measured flow x hub LMP like MISO_SEAM_LADDER_BY_YEAR /
+# the NEISO ladders below. Labelled per rule 24/rule 11 honesty; values
+# unchanged.
 IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     "CAISO": [
         ("PNW_hydro_base", 1566.0, 28.0),
@@ -119,6 +126,14 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
         ("DSW_CT", 2200.0, 110.0),
         ("WECC_scarcity", 3000.0, 180.0),
     ],
+    # PJM seam (STATIC-FITTED-PENDING-MEASURED, gap register G-26, issue
+    # #1350 / audit C-6): these two scarcity-rung tranches are bare literals
+    # with no cited primary source and no by-year entry — unlike the
+    # MISO_SEAM_LADDER_BY_YEAR / NEISO ladders below, which are measured Q-Q
+    # derivations coupling EIA-930 seam flow to Day-Ahead hub LMP
+    # (scripts/derive_miso_seam_ladders.py / derive_neiso_import_tranches.py
+    # are the template for a future PJM re-derivation). Labelled per rule
+    # 24/rule 11 honesty; values unchanged.
     "PJM": [
         ("import_scarcity_1", 1000.0, 46.0),
         ("import_scarcity_2", 3000.0, 60.0),
@@ -162,6 +177,12 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
     # comment above). Spot tranches and all prices are identical to the static
     # ladder. 2025 firm total carries the 2024 DMM measurement (open data gap
     # until the DMM 2025 annual report publishes).
+    #
+    # PRICE-LADDER PROVENANCE (gap register G-26, issue #1350 / audit C-6):
+    # the $/MWh values are STATIC-FITTED-PENDING-MEASURED and identical across
+    # all three years — Tier-3 contract-cost proxies, not a measured Q-Q
+    # derivation like MISO_SEAM_LADDER_BY_YEAR or the NEISO ladders below.
+    # Labelled per rule 24/rule 11 honesty; values unchanged.
     "CAISO": {
         2023: [
             ("PNW_hydro_base", 1072.0, 28.0),
@@ -247,6 +268,12 @@ IMPORT_TRANCHES_BY_YEAR: dict[str, dict[int, list[tuple[str, float, float]]]] = 
     },
 }
 
+# CAISO and PJM export sinks below are STATIC-FITTED-PENDING-MEASURED (gap
+# register G-26, issue #1350 / audit C-6) — bare literals with no cited
+# primary source and no by-year entry, unlike the NEISO export ladder in
+# EXPORT_TRANCHES_BY_YEAR, which is a measured derivation (same Q-Q method as
+# its import-side counterpart). Labelled per rule 24/rule 11 honesty; values
+# unchanged.
 EXPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
     "CAISO": [
         ("export_solar", 2500.0, 8.0),
