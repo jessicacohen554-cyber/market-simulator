@@ -64,6 +64,8 @@ for the market split.
 | chp-btm-share | — | — | — | — | — | — |
 | nyiso-downstate-gas | — | — | — | — | — | — |
 | ercot-wtx-congestion | 2019–2025 | — | — | — | — | — |
+| nyiso-renewable-curtailment | — | — | — | — | — | — |
+| nyiso-renewable-curtailment-monthly | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -926,3 +928,58 @@ Measured ERCOT West Texas Export corridor transmission-congestion pressure
 | `congestion_frac` | `float64` | `fraction` | no | n_binding_west / n_intervals in [0,1] — the fraction of the hour's SCED executions with the West Texas Export corridor congested. The measured congestion-pressure intensity the curtailment-share driver's SHAPE is fit to. 0.0 when n_intervals is 0. |
 | `interface_binding_frac` | `float64` | `fraction` | no | Fraction of the hour's executions with the aggregate WESTEX or PNHNDL export GTC binding — the interface-only component (already representable in the model's 8-zone TTC), reported for decomposition against the nodal tail. |
 | `shadow_price_mean_west` | `float64` | `usd_per_mwh` | yes | Mean positive ShadowPrice over the hour's binding West-corridor constraints; null when none bound that hour. |
+
+## nyiso-renewable-curtailment
+
+NYISO's coarse annual NYCA-wide + 4-zone wind/FTM-solar curtailment aggregate —
+a labeled diagnostic, not an hourly HSL series (NYISO publishes no per-plant
+uncurtailed-potential data). Schema:
+[`schema/nyiso-renewable-curtailment.schema.yaml`](schema/nyiso-renewable-curtailment.schema.yaml).
+
+- **Keys:** `iso`, `resource_type`, `geographic_scope`, `year`
+- **Reconciles:** Hand-transcribed from NYISO's annual NYCA Renewables
+  presentation series (ICAPWG/MIWG decks, nyiso.com/reports-information):
+  NYCA-wide annual curtailed GWh + percent-of-production for wind (2017-2025)
+  and FTM solar (2022-2025), plus zonal (West/Central/North/Mohawk Valley)
+  annual wind curtailed GWh for the years each deck reports its own current
+  year (2020-2023, 2025 — no standalone 2024 deck was found). See
+  `data/raw/nyiso-renewable-curtailment/README.md` for exact source URLs and
+  documented gaps. Read by `market_sim.data.nyiso_renewable_curtailment`; not
+  consumed by dispatch.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (NYISO). |
+| `resource_type` | `string` | `none` | no | Curtailed resource type (wind, ftm_solar). |
+| `geographic_scope` | `string` | `none` | no | NYCA (system-wide) or one of NYISO's curtailment-reporting zones (WEST, CENTRAL, NORTH, MOHAWK_VALLEY). Zonal rows are wind-only — FTM solar curtailment is reported NYCA-wide only. |
+| `year` | `int64` | `none` | no | Calendar year. |
+| `curtailed_energy_gwh` | `float64` | `gwh` | no | NYISO's estimated curtailed energy for the year, in GWh. |
+| `curtailed_pct` | `float64` | `percent` | yes | Percent of potential production curtailed, as printed by the source. Only published for NYCA-wide rows; null for zonal rows and for FTM solar years the source didn't print a percent for (2022-2023). |
+| `source_doc` | `string` | `none` | no | Source presentation filename (see raw README for the exact URL). |
+| `source_page` | `string` | `none` | yes | Slide/page number(s) within source_doc the value was read from. |
+| `notes` | `string` | `none` | yes | Source-printed annotations (e.g. a zone's driver footnote) or cross-check notes. |
+
+## nyiso-renewable-curtailment-monthly
+
+Monthly companion to `nyiso-renewable-curtailment`: NYCA-wide
+percent-of-production (wind) and zonal curtailed GWh, by month. Schema:
+[`schema/nyiso-renewable-curtailment-monthly.schema.yaml`](schema/nyiso-renewable-curtailment-monthly.schema.yaml).
+
+- **Keys:** `iso`, `resource_type`, `geographic_scope`, `year`, `month`
+- **Reconciles:** Same source decks as `nyiso-renewable-curtailment`: NYCA-wide
+  monthly wind curtailment percent (2017-2025, cross-checked across overlapping
+  decks) and zonal monthly curtailed GWh for the years with a published zonal
+  breakdown (2020-2023, 2025). Read by
+  `market_sim.data.nyiso_renewable_curtailment`; not consumed by dispatch.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (NYISO). |
+| `resource_type` | `string` | `none` | no | Curtailed resource type (wind is the only one with monthly data published). |
+| `geographic_scope` | `string` | `none` | no | NYCA (system-wide) or one of NYISO's curtailment-reporting zones (WEST, CENTRAL, NORTH, MOHAWK_VALLEY). |
+| `year` | `int64` | `none` | no | Calendar year. |
+| `month` | `int64` | `none` | no | Calendar month (1-12). |
+| `curtailed_energy_gwh` | `float64` | `gwh` | yes | Zonal monthly estimated curtailed energy, in GWh. Null for NYCA-wide rows. |
+| `curtailed_pct` | `float64` | `percent` | yes | NYCA-wide percent of that month's wind production curtailed. Null for zonal rows. |
+| `source_doc` | `string` | `none` | no | Source presentation filename (see raw README for the exact URL). |
+| `source_page` | `string` | `none` | yes | Slide/page number(s) within source_doc the value was read from. |
