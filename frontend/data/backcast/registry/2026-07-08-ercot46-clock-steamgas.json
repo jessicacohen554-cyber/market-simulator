@@ -11,5 +11,7 @@
   ],
   "iso": "ERCOT",
   "file": "frontend/data/backcast/runs/2026-07-08-ercot46-clock-steamgas.js",
-  "bundle": "results/calibration/ercot46_clock_steamgas"
+  "bundle": "results/calibration/ercot46_clock_steamgas",
+  "ablation_twin": "2026-07-08-ercot46-clock-steamgas-ablation",
+  "market_story": "ST_GAS holds its overnight minimum (RUC-style reliability commitment, not economics) because dropping reliability_floor/ct_netload_drag/gas_st_netload_drag/ra_mustoffer_bridge/the WTX curtailment ceiling all at once reopens the ST_GAS under-run to -4.02/-8.69/-6.12 TWh and blows up mean LMP +117%/+163%/+52% - the real market keeps these units committed through low-price troughs for local/system reliability, not because the energy price justifies it; CT_PEAKER's evening ramp floor and the WTX West-corridor curtailment ceiling are the analogous real-market drivers for their classes, each documented with its own window/driver in legitimacy_diagnostics.json."
 }
