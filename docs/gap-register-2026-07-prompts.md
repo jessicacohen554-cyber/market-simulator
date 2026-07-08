@@ -9,12 +9,20 @@ Ready-to-paste handoff prompts for the gaps in `docs/gap-register-2026-07.md` th
 
 ## Disposition ledger
 
-**LANDED this session (first no-solve wave — all merged 2026-07-08):**
+**LANDED (merged 2026-07-08):**
 - **L-7 Cross-ISO SRMC audit (#1302)** — `docs/miso-caiso-srmc-floor-audit-2026-07.md` (#1749).
   Result: MISO's headline defect is **`ST_GAS_INTERMEDIATE.committed = 0.85×`** (uncited generic
   default); CAISO findings scoped too. → unblocks **L-10**.
 - **L-8 PJM I7 backstop-on re-run (G-41)** — hindcast bundle landed (#1753).
 - **L-9 Seam-ladder provenance (#1350)** — PJM/CAISO ladders labelled static-fitted-pending-measured (#1748/#1752).
+- **L-1 ERCOT hindcast G-30** — `entry_lookahead_reprice` arm exercised (#1760). Scarcity now
+  forms from the LP regime; over-retire **22.8 → 15.8 GW**, solar 0 → 4 GW. But coal 13.96 GW
+  false-retire is UNCHANGED (coal exits in the quarantined 2022 bridge before any forward signal
+  reaches the screen). Progressed, not closed → residual is **L-11** (limited-foresight *dispatch*
+  screen). Default-off, forecast-side, no keeper touched.
+- **L-6 statmode (G-10) — 3/4 done** — ERCOT/CAISO/PJM same-SHA twins landed
+  (`ercot46-statmode`, `caiso65-statmode`, `pjm-91-statmode`, #1759/#1762). **MISO twin still
+  pending** (~16 GB + swap) — sequence it AFTER L-10 (which may swap the MISO keeper).
 
 **CLOSED — G-16 NEISO ST_GAS C7:** NEISO complete; `neiso-54-steamgas-ct` (#1743) landed the
 CT/ST_GAS reliability drag. Not reopening.
@@ -30,8 +38,9 @@ CT/ST_GAS reliability drag. Not reopening.
 
 **IN-FLIGHT — do NOT prompt (a session/PR is on it; would duplicate):**
 - **CAISO (G-15 belly + zonal-gas/path-ratings)** — belly-commitment probe + CAISO ST_GAS drag
-  (#1733/#1735/#1746/#1750/#1751); the measured PG&E/SoCal zonal-gas basis + WECC Path-15/26
-  ratings patch LANDED (#1754). CAISO's own SRMC re-grounding (L-7 scoped it) is gated behind this.
+  (#1733/#1735/#1746/#1750/#1751); measured zonal-gas basis + WECC Path-15/26 ratings LANDED
+  (#1754); caiso-67 zonalgas+asympaths A/B in flight (#1761). CAISO's own SRMC re-grounding
+  (L-7 scoped it) is gated behind this.
 - **PJM (G-21 ST_GAS/SRMC)** — `pjm-90-cchp-srmc` keeper; **owner has midstream PJM fixes in
   progress** — do NOT dispatch PJM calibration lanes; coordinate. PJM still scores **NOT-YET**
   (C1 fuel-mix + C3c scarcity FAIL; C3c = G-20b, brief below).
@@ -47,17 +56,19 @@ adoption; G-20b PJM reserve magnitude.
 | Lane | Gap(s) | ISOs | Solve? | Model |
 |---|---|---|---|---|
 | **L-10** MISO ST_GAS_INTERMEDIATE SRMC re-grounding | #1302 / G-21 (MISO) | MISO | SH | Fable |
-| **L-1** ERCOT hindcast scarcity/retirement regime | G-30 (narrowed) | ERCOT | SH (non-keeper harness) | Opus/Fable |
-| **L-6** Statmode D-7 same-SHA re-solves | G-10 | ERCOT/CAISO/PJM/MISO | SH | Opus |
+| **L-11** ERCOT limited-foresight dispatch screen | G-30 residual | ERCOT | SH (non-keeper harness) | Opus/Fable |
+| **L-6b** MISO statmode twin (after L-10) | G-10 (MISO) | MISO | SH | Opus |
 
 ## How to run
 
-- **The no-solve first wave (L-7/L-8/L-9) is done.** The remaining lanes are solve-heavy — run
-  each in its OWN session/environment; they can all go at once (rule 12's ≤2 cap is per-machine,
-  not per-environment). **Years run sequentially WITHIN a single invocation.**
-- **L-10 is MISO-only and MISO is not in-flight** (miso-47 promoted, no active MISO session) — a
-  clean lane. Do NOT start a PJM lane (owner's midstream fixes) or a CAISO SRMC lane (gated on the
-  in-flight CAISO input work).
+- **L-7/L-8/L-9 (no-solve wave) + L-1 + L-6(ERCOT/CAISO/PJM) are DONE.** Remaining: **L-10**
+  (MISO SRMC, headline), **L-11** (ERCOT G-30 dispatch screen), **L-6b** (MISO statmode, after
+  L-10). All solve-heavy — run each in its OWN session/environment; they can go at once (rule 12's
+  ≤2 cap is per-machine, not per-environment). **Years run sequentially WITHIN a single invocation.**
+- **L-10 is the priority** — MISO-only, not in-flight (miso-47, no active MISO session), and the
+  only remaining lane attacking a NOT-YET ISO's backcast calibration. Do NOT start a PJM lane
+  (owner's midstream fixes) or a CAISO SRMC lane (gated on in-flight CAISO input work).
+- **L-11 (ERCOT hindcast) is non-keeper** and can overlap anything. **L-6b waits on L-10.**
 - **Re-verify the current keeper** in `keepers.json` + rebase on `origin/main` before solving.
 
 **Shared rules (CLAUDE.md):** right structure first (#1); measured data only as a reproducible
@@ -103,67 +114,64 @@ value tuned to a residual.
 
 ---
 
-## L-1 — ERCOT hindcast scarcity/retirement regime (G-30, narrowed)  ·  Opus/Fable  ·  SH (non-keeper harness)
+## L-11 — ERCOT limited-foresight dispatch screen (G-30 residual)  ·  Opus/Fable  ·  SH (non-keeper harness)
 
 ```
-G-30 in docs/gap-register-2026-07.md, NARROWED by a 2026-07-08 code audit: the
-co-scoped G-32 work the register listed as the task is DONE — the ATB FOM flip
-landed (scenarios.py:264-282, fixed_om_gas_cc=30 / gas_ct=21 / coal=45, "G-32")
-and the foresight A/B re-ran (docs/handoffs/foresight-ab-ercot-2026-07-0{6,7}.*;
-fom-scarcity-defaults-flip-2026-07-07.md "Closes G-32"). Do NOT redo those.
+Follow-on to L-1 (docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md):
+the entry_lookahead_reprice arm cut ERCOT hindcast over-retire 22.8 -> 15.8 GW and
+made solar entry non-zero, BUT the headline coal 13.96 GW false-retire is
+UNCHANGED. Root cause (from the finding, NOT a fit target): the FIRST
+economic-retirement wave exits coal in the quarantined 2022 bridge on the 2021
+raw-dual signal (ORDC ~ 0 on the un-thinned over-supplied fleet), BEFORE any
+admissible forward signal reaches the screen — the entry-side lookahead only bites
+waves 2+ (2024/25). Owns the hindcast harness scripts + model/capacity.py +
+model/dispatch.py foresight path. NON-KEEPER, forecast-side — no quarantine, no
+keeper/backcast touched.
 
-What REMAINS open: the hindcast SYMPTOM persists at HEAD despite the FOM flip.
-docs/hindcast-reports/ercot-2021-2025-realized-2026-07-07.md still shows solar
-additions 0.0 GW (-100% FAIL), coal retire +13.96 GW / gas_st +8.83 GW (~22.8 GW
-over-retirement), CO2 -49%. The corrective arm entry_lookahead_reprice is
-default-OFF (scenarios.py:815) and the foresight work is forecast-scoped. Owns the
-hindcast harness scripts + model/capacity.py. NON-KEEPER, forecast-side — no
-quarantine.
+Task: build a LIMITED-FORESIGHT *dispatch* screen so the in-year LP itself forms
+scarcity on the over-supplied vintage fleet (which also fixes the inert ORDC
+overlay), instead of the perfect-foresight LP clearing every hour with ample
+reserves. And/or a staged vintage-over-supply thinning so the first coal
+retirement wave spreads into lookahead-priced years rather than firing all at once
+on the 2021 raw dual. Gate: does the coal false-retire drop from the LP regime
+(not a floor/adder)? The 13.96 GW over-retire and 0-scarcity are DIAGNOSTICS to
+close via root cause (rule 11), never fit targets.
 
-Task: determine why the hindcast forms ZERO scarcity hours even after the FOM
-flip (perfect-foresight LP on the over-supplied 2020-vintage fleet vs un-grown
-realized demand -> ORDC overlay inert -> solar can't clear fixed cost -> whole
-coal/gas_st fleet below FOM bar). Evaluate the built-but-off entry_lookahead_reprice
-(and/or a limited-foresight screen) ON the hindcast: does tempering foresight let
-scarcity form so solar entry clears and the false-retire (96% genuine per the
-G-31 per-plant scoring) drops? Over-retirement and 0-GW-solar are DIAGNOSTICS to
-close via root cause, never fit targets (rule 11).
-
-Deliverable: the hindcast re-run with the foresight/entry mechanism exercised,
-registered, + a note on whether scarcity now forms. Honesty gate: scarcity forms
-from the LP regime, never an adder tuned to a retirement or entry number.
+Deliverable: the limited-foresight dispatch screen (and/or staged thinning)
+exercised on the hindcast, both registered on forecast-validation, + a finding on
+whether the coal wave now spreads and scarcity forms in-year. Honesty gate:
+scarcity forms from the LP regime, never an adder tuned to a retirement number.
 ```
 
 ---
 
-## L-6 — Statmode D-7 same-SHA twin re-solves (G-10)  ·  Opus  ·  SH
+## L-6b — MISO statmode D-7 twin (after L-10)  ·  Opus  ·  SH
 
 ```
-G-10 in docs/gap-register-2026-07.md, GENUINELY-OPEN (2026-07-08 audit: NO statmode
-bundle exists for any current keeper). Scope: the four unfinished ISOs — ERCOT,
-CAISO, PJM, MISO (NYISO/NEISO out of scope per owner directive). Current keepers
-(re-verify in keepers.json; churn fast): ercot46-clock-steamgas / caiso65 /
-pjm-90-cchp-srmc / miso-47-steamgas-ct (all churned 2026-07-08 — re-verify before
-replaying; note L-10 may swap the MISO keeper). Every statmode registry sidecar
-replays a SUPERSEDED bundle (caiso51/58, miso39, ercot34, pjm-77/83). Owns
-docs/statistical-mode-results-2026-07.md + the statmode registry sidecars ONLY —
-do NOT change any keeper config (FROZEN-recipe replay at one SHA, not a re-tune).
+G-10 remainder: ERCOT/CAISO/PJM same-SHA D-7 statmode twins already landed
+(2026-07-08-{ercot46,caiso65,pjm-91}-statmode, #1759/#1762). The MISO twin is the
+only one left. SEQUENCE THIS AFTER L-10 — L-10 may swap the MISO keeper, and a
+statmode twin must replay the CURRENT keeper at one pinned SHA. Owns
+docs/statistical-mode-results-2026-07.md + the MISO statmode registry sidecar ONLY
+— do NOT change any keeper config (FROZEN-recipe replay, not a re-tune).
 
-Task: for each in-scope keeper, replay the keeper recipe at one pinned HEAD SHA in
-statistical mode so the D-7 r2/v2 twin is same-SHA-comparable. Solve all scoreable
-years per bundle (rule 16). Years run sequentially WITHIN each invocation; separate
-sessions may run different keepers' twins concurrently. MISO needs ~16 GB + swap.
-Update the doc's stale-boxes + re-solve queue to CURRENT as each twin lands.
+Task: once the MISO keeper is settled (post-L-10 or confirmed unchanged at
+miso-47), replay the MISO keeper recipe at one pinned HEAD SHA in statistical mode
+so its D-7 r2/v2 twin is same-SHA-comparable. Solve all scoreable years in one
+bundle (rule 16); years sequential within the invocation; MISO needs ~16 GB + swap.
+Update the doc's stale-boxes + re-solve queue to CURRENT.
 
-Deliverable: the same-SHA statmode twins registered + the doc's stale-boxes cleared
-to current, committed and pushed. Honesty gate: a D-7 number may be quoted as skill
-only once its twin is a same-SHA replay of the current keeper.
+Deliverable: the MISO same-SHA statmode twin registered + stale-box cleared,
+committed and pushed. Honesty gate: a D-7 number may be quoted as skill only once
+its twin is a same-SHA replay of the current keeper.
 ```
 
 ---
 
-*Verified 2026-07-08 against `origin/main` HEAD. First no-solve wave (L-7/L-8/L-9) landed and
-merged; L-7's audit unblocked L-10. Descoped: NEISO (complete), NYISO (keeper stands), G-37.
-PJM is owner-midstream + still NOT-YET; CAISO SRMC re-grounding is gated on in-flight CAISO input
-work. Owner decisions in `docs/handoffs/owner-decision-briefs-2026-07-08.md`. The board churns
-hourly — each session re-verifies keepers.json + rebases before solving.*
+*Verified 2026-07-08 against `origin/main` HEAD. Landed since the audit: L-7/L-8/L-9 (no-solve
+wave), L-1 (G-30 lookahead — progressed 22.8→15.8 GW, residual → L-11), L-6 ERCOT/CAISO/PJM
+statmode twins. Open: L-10 (MISO SRMC, priority), L-11 (ERCOT G-30 dispatch screen), L-6b (MISO
+statmode, after L-10). Descoped: NEISO (complete), NYISO (keeper stands), G-37. PJM is
+owner-midstream + still NOT-YET; CAISO SRMC re-grounding gated on in-flight CAISO input work.
+Owner decisions in `docs/handoffs/owner-decision-briefs-2026-07-08.md`. Board churns hourly —
+re-verify keepers.json + rebase before solving.*
