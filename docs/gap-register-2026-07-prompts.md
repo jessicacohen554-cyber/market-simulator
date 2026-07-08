@@ -77,11 +77,14 @@ drop it into a fresh Claude Code session on this repo.
 - **No-solve / light lanes (L-7, L-8, L-9): run all concurrently, any tier** — disjoint
   files, no keeper bundle touched. **This is the true first wave** (small — most of the
   original no-solve wave was already done).
-- **Solve-heavy lanes (L-1, L-2, L-4, L-5, L-6): cap at 2 solving concurrently** (CLAUDE.md
-  rule 12 — ≤2 per-plant multi-zone invocations; years sequential *within* a run). Each owns
-  a distinct ISO namespace (or the non-keeper hindcast harness), so file ownership never
-  conflicts. **L-1 and L-2 are both ERCOT** — L-1 is hindcast-harness-only (no keeper), so
-  they don't collide.
+- **Solve-heavy lanes (L-1, L-2, L-4, L-5, L-6): run each in its OWN session/environment and
+  they can ALL go concurrently.** CLAUDE.md rule 12's "≤2 concurrent" is a *per-machine
+  memory* limit (one box OOMs on 2+ per-plant multi-zone LPs) — it does not cap how many
+  separate environments run at once, each with its own RAM. The cap that always holds:
+  **years run sequentially WITHIN a single invocation** (`--year 2023 2024 2025` is never
+  parallelized — that is the within-box OOM risk). Each lane owns a distinct ISO namespace
+  (or the non-keeper hindcast harness), so registry/file ownership never conflicts. **L-1 and
+  L-2 are both ERCOT** — L-1 is hindcast-harness-only (no keeper), so they don't collide.
 - **Every SH lane re-verifies the current keeper** in `frontend/data/backcast/keepers.json`
   and rebases on `origin/main` before solving — the board churns hourly.
 
@@ -327,12 +330,13 @@ DIFFERENT lever — do NOT repeat RCPF grounding. #1345 (LI 0.45) is CLOSED. #13
 the ask, do NOT hand-size a requirement (rule 11). Owns the NYISO registry
 namespace + NYISO-only config.
 
-The proposed lever is UNBUILT: the measured NYC locality import limit (~2,875 MW,
-below the model's ~3,900 MW Dunwoodie estimate) applied in-window (the same
-in-window pattern the #1345 LI LCR/TSL fix used). Intake it through the data
-contract and apply it as a downstate import discipline; re-solve all years; check
-whether the 2024 (mild) + 2025 deep >$300 tail moves toward the actual ratio band
-(model currently 0h). Do NOT tune the RCPF overlay breakpoints (rule 11).
+The proposed lever is UNBUILT (confirmed 2026-07-08: the Dunwoodie-South -> NYC
+zone-J import limit in iso_configs.py is still the ~3,900 MW model ESTIMATE, not
+the measured value): intake the measured NYC locality import limit (~2,875 MW)
+and apply it in-window (the same in-window pattern the #1345 LI LCR/TSL fix used).
+Intake it through the data contract; re-solve all years; check whether the 2024
+(mild) + 2025 deep >$300 tail moves toward the actual ratio band (model currently
+0h). Do NOT tune the RCPF overlay breakpoints (rule 11).
 
 Deliverable: the NYC locality import-limit intake + NYISO all-years re-solve
 registered + the #1344 data-ask confirmation. Honesty gate: the locality import
@@ -362,9 +366,10 @@ one SHA, not a re-tune).
 Task: for each of the six current keepers, replay the keeper recipe (from
 keepers.json) at one pinned HEAD SHA in statistical mode so the D-7 r2/v2 twin is
 same-SHA-comparable to the keeper. Solve all scoreable years per bundle (rule 16).
-SH — obey rule 12 (<=2 concurrent, years sequential within a run); coordinate the
-RAM cap with any live per-ISO solve lane (MISO needs ~16 GB + swap). Update the
-doc's stale-boxes + re-solve queue to CURRENT as each twin lands.
+Years run sequentially WITHIN each invocation (rule 12 within-box OOM); separate
+sessions/environments may run different keepers' twins concurrently. Coordinate
+the RAM cap with any live per-ISO solve lane (MISO needs ~16 GB + swap). Update
+the doc's stale-boxes + re-solve queue to CURRENT as each twin lands.
 
 Deliverable: the six same-SHA statmode twins registered + the doc's stale-boxes /
 queue cleared to current, committed and pushed. Honesty gate: a D-7 number may be
@@ -375,7 +380,9 @@ this lane makes that true; it does not manufacture a better number.
 ---
 
 *Verified 2026-07-08 against `origin/main` HEAD via five read-only code/artifact audits
-(ERCOT, CAISO, PJM, NEISO/NYISO, governance/scalar), then refreshed twice the same day
-(latest: ERCOT keeper 42->46, clock round settled, PR #1740). Prior refresh moved L-3
-(CAISO belly, G-15) → IN-FLIGHT (PRs #1733/#1735) and L-2 → G-37-only. The board churns
-hourly — each session re-verifies keepers.json + rebases before solving.*
+(ERCOT, CAISO, PJM, NEISO/NYISO, governance/scalar), then refreshed thrice the same day
+(latest: ERCOT keeper 42->46, clock round settled, PR #1740; all five solve lanes
+re-confirmed unaddressed). L-3 (CAISO belly, G-15) → IN-FLIGHT (PRs #1733/#1735); L-2 →
+G-37-only. Solve lanes run one-per-session/environment concurrently (rule 12's cap is
+per-machine); years sequential within each invocation. The board churns hourly — each
+session re-verifies keepers.json + rebases before solving.*
