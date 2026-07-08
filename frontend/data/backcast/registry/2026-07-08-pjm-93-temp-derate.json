@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-pjm-93-temp-derate",
+  "label": "pjm 93 temp derate",
+  "date": "2026-07-08",
+  "shorthand": "pjm-93-temp-derate",
+  "definition": "temp-derate full-keeper main -- pjm90_cchp_srmc config + temp_dependent_derate, 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-08-pjm-93-temp-derate.js",
+  "bundle": "results/calibration/pjm93_tempderate"
+}
