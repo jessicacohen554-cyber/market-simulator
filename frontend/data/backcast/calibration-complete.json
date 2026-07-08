@@ -1,10 +1,13 @@
 {
- "note": "Per-ISO calibration-complete markers gating the holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04). The designated holdouts (2022, H1-2026) are under FULL quarantine — no solves, no scoring, no data intake — until an ISO appears in `complete`. Declaring an ISO complete authorizes the ONE-SHOT holdout validation: intake the 2022/H1-2026 bench+fleet data (docs/out-of-sample-results-2026-07.md §1), solve the frozen keeper config once per holdout window, record the result whatever it is, and never re-tune against it. CI (scripts/legitimacy_diagnostics.py --keepers, scripts/audit_keepers.py) FAILS any registered bundle carrying a solve year outside 2023-2025 for an ISO not marked here. Marker format: \"<ISO>\": {\"declared\": \"YYYY-MM-DD\", \"keeper\": \"<run id frozen for the one-shot score>\", \"by\": \"<session/owner>\"}.",
+ "note": "Per-ISO calibration-complete markers gating the holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04). The designated holdouts (2022, H1-2026) are under FULL quarantine \u2014 no solves, no scoring, no data intake \u2014 until an ISO appears in `complete`. Declaring an ISO complete authorizes the ONE-SHOT holdout validation: intake the 2022/H1-2026 bench+fleet data (docs/out-of-sample-results-2026-07.md \u00a71), solve the frozen keeper config once per holdout window, record the result whatever it is, and never re-tune against it. CI (scripts/legitimacy_diagnostics.py --keepers, scripts/audit_keepers.py) FAILS any registered bundle carrying a solve year outside 2023-2025 for an ISO not marked here. Marker format: \"<ISO>\": {\"declared\": \"YYYY-MM-DD\", \"keeper\": \"<run id frozen for the one-shot score>\", \"by\": \"<session/owner>\"}.",
  "complete": {
   "NEISO": {
    "declared": "2026-07-07",
-   "keeper": "2026-07-07-neiso53-winter-fuelsec-coldsnap",
-   "by": "owner (session neiso-calibration-complete-w1c, AskUserQuestion 2026-07-07: 'Declare + run one-shot'; memo docs/handoffs/neiso-calibration-complete-memo-2026-07.md)"
+   "keeper": "2026-07-08-neiso-54-steamgas-ct",
+   "by": "owner (session neiso-calibration-complete-w1c, AskUserQuestion 2026-07-07: 'Declare + run one-shot'; memo docs/handoffs/neiso-calibration-complete-memo-2026-07.md)",
+   "locked_test_scored_on": "2026-07-07-neiso53-winter-fuelsec-coldsnap",
+   "locked_test_note": "The 2019 + H1-2026 locked-test one-shot was scored ONCE with the frozen neiso-53 config and STANDS (rule 22); it was NOT re-scored for neiso-54. neiso-54 (CT_PEAKER evening-ramp reliability drag + ST_GAS->Component-B consolidation) is the current TRAIN-tier (2023-2025) keeper - more structurally faithful (rule 1) with an identical 2023-2025 verdict and no winter degradation - promoted 2026-07-08. No calibration change responded to the locked-test result.",
+   "train_keeper_promoted": "2026-07-08 (session neiso-steamgas-ct-drag)"
   }
  }
 }
