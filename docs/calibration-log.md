@@ -7999,8 +7999,12 @@ unchanged from ercot42's own determination).
 **Dashboard.** Registered A/B/C + ablation (4 new runs); ERCOT pruned to the
 top-15 retention (dropped the 4 oldest: ercot34/34-ablation/35/36 — the
 underlying bundles are untouched, only dashboard registration dropped).
-`status.js` confirmed in sync — **keeper stays `ercot42`** pending owner
-decision on promoting `ercot46`.
+
+**Owner decision (2026-07-08): `ercot46` PROMOTED to ERCOT keeper**, superseding
+`ercot42`. `keepers.json` updated, `calibration-keeper-auditor` ran clean (0
+failures, sidecar `definition`/`ablation_twin`/`market_story` fields already
+accurate), `status.js` rebuilt to reflect ercot46's live C1-C8 verdicts
+(commit `76e4cc3`).
 
 **Holdouts.** No solve, score, or intake touched 2022/H1-2026 (rule 22); all
 three years in one bundle per arm (rule 16); years solved sequentially, arms
