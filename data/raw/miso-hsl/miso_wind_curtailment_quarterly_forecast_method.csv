@@ -1,0 +1,9 @@
+season_year,quarter_label,avg_curtailments_mw_2to3hr_method,avg_real_time_wind_mw,avg_day_ahead_wind_mw,forecast_error_pct,abs_forecast_error_pct,reported_in_doc
+2024,Summer,265,7710,7218,1.8,16.5,IMM-Quarterly-Report_Fall-2025_MSC.pdf
+2024,Fall,780,11611,10548,0.3,7.6,IMM-Quarterly-Report_Fall-2025_MSC.pdf
+2025,Winter,508,13625,11712,2.1,9.1,IMM-Quarterly-Report_Spring-2025-MSC.pdf
+2025,Spring,692,13113,11584,1.5,7.8,IMM-Quarterly-Report_Spring-2025-MSC.pdf
+2025,Summer,187,6921,6405,8.5,16.6,IMM-Quarterly-Report_Summer-2025-MSC.pdf
+2025,Fall,460,10739,9348,0.3,10.7,IMM-Quarterly-Report_Fall-2025_MSC.pdf
+2026,Winter,530,13453,11870,3.5,8.8,IMM-Quarterly-Report_Winter-2026-MSC.pdf
+2026,Spring,798,13796,11993,0.2,8.3,2026-IMM-Quarterly-Report-Spring.pdf
