@@ -1535,9 +1535,22 @@ def backcast_config(
             # boilers (Harding Street, Ames, Nine Mile Pt, Lewis Creek, Sabine)
             # carry almost no peaking band — their energy is sustained, not
             # scarcity — so the steep peaker-shaped ST_GAS curve mis-prices them
-            # above merit and the model under-runs them. Mirrors CT_INTERMEDIATE.
+            # above merit and the model under-runs them. Mirrors CT_INTERMEDIATE,
+            # including its committed-band pricing rule: an always-running unit
+            # amortizes its start over thousands of hours, so its committed
+            # energy is priced at its own delivered marginal cost — the
+            # cost-based-offer SRMC floor (base_HR x delivered gas + VOM; MISO
+            # Tariff Module C / Attachment L, sanity-checked against the MISO
+            # IMM / Potomac Economics SOM report). committed re-grounded
+            # 0.85 -> 1.00 (2026-07-08, G-21/#1302 follow-on,
+            # docs/miso-caiso-srmc-floor-audit-2026-07.md §2): the old 0.85 was
+            # an uncited generic default pricing a non-CHP, non-take-or-pay gas
+            # tranche below its own average-heat-rate fuel cost — the pjm-83
+            # defect pattern. A steam boiler's part-load heat rate is
+            # monotonically WORSE than its average, so 1.0x base_HR is a true
+            # floor (no CC flat-plateau exception applies).
             "ST_GAS_INTERMEDIATE": {
-                "committed": 0.85,
+                "committed": 1.00,
                 "econ_low": 1.00,
                 "econ_high": 1.15,
                 "peak": 2.20,
