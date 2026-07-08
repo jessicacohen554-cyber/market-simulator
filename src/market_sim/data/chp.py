@@ -91,7 +91,13 @@ def _correct_chp_steam_credit_hr(generators: list, iso: str) -> None:
     clearing as the cheapest thermal and over-delivering grid energy vs 923.
     MISO 2026-07-08: audited but NOT added — its HRs are equally sub-physical yet
     its CHP does not over-deliver (BTM-dominated, CT_CHP already under-runs), so
-    the correction only worsens CT_CHP; see CHP_STEAM_CREDIT_HR_CORRECTION_ISOS.)
+    the correction only worsens CT_CHP; see CHP_STEAM_CREDIT_HR_CORRECTION_ISOS.
+    NEISO 2026-07-08: audited but NOT added for the SAME reason — its reported HRs
+    are equally sub-physical (CC_CHP 55% of cap < 6.0, CT_CHP 79% < 8.0) but its
+    CHP does NOT over-deliver: on 2023-2025 the model runs CC_CHP -37..-42% and
+    CT_CHP -71/-71/+5% vs the EIA-923 net-gen class total, and CC_CHP is already
+    L1-pinned to the delivered-outcome bound. Raising the HR would only push the
+    under-running CT_CHP lower, so the correction is not warranted here.)
     """
     from market_sim.data.fleet import (
         CAISO_CHP_CC_STEAM_CREDIT_FACTOR,
