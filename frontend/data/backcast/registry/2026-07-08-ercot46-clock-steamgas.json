@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-ercot46-clock-steamgas",
+  "label": "ercot46 clock steamgas",
+  "date": "2026-07-08",
+  "shorthand": "ercot46-clock-steamgas",
+  "definition": "ercot46 clock+steamgas: ercot45 clock-unified + ST_GAS reliability realism - gas_st_netload_drag (frozen overnight-CF-vs-netload floor, slope 0.00906/GW intercept -0.1376 cap 0.34, docs/ercot-st-gas-netload-drag-2026-06.md) + gas_st_startup_cost (ST_GAS_COMMITMENT_PARAMS startup/min-run/min-down markup so a stop-start costs more than idling). Keeper-candidate C arm of the stepwise A/B/C; a structural mechanism change, scored LOYO within 2023-2025 before promotion (rule 22).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-08-ercot46-clock-steamgas.js",
+  "bundle": "results/calibration/ercot46_clock_steamgas"
+}
