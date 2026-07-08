@@ -154,7 +154,7 @@
           {
             "name": "CAISO 2022 — full stack",
             "reg": "#1,4,2,21,37,40,41",
-            "need": "CAMPD unit-level (CA), EIA-930 supplemental fuel/region rows, TAC zonal load, CAISO zonal gas hub, WECC intertie LMP, LMP validation, weather. Nothing 2022 present today.",
+            "need": "CAMPD unit-level (CA), TAC zonal load, CAISO zonal gas hub, WECC intertie LMP, LMP validation, weather. (EIA-930 fuel-mix + demand landed 2026-07-08.)",
             "source": "EPA CAMPD / EIA / CAISO OASIS",
             "gate": "holdout",
             "pri": "med"
@@ -162,7 +162,7 @@
           {
             "name": "MISO 2022 — full stack",
             "reg": "#1,4,2,20,38,40,41",
-            "need": "Own-state CAMPD (present 2022 rows are only PJM/ERCOT state overlap), EIA-930 supplemental (2022 rows degenerate — 7 hrs), sub-BA demand, MISO zonal gas hub, MISO↔PJM border LMP, LMP validation, weather.",
+            "need": "Own-state CAMPD (present 2022 rows are only PJM/ERCOT state overlap), sub-BA demand, MISO zonal gas hub, MISO↔PJM border LMP, LMP validation, weather. (EIA-930 fuel-mix + demand landed 2026-07-08 via the long-form API pull — the BALANCE-archive product remains degenerate at 7 hrs, but is no longer the only source.)",
             "source": "EPA CAMPD / EIA / MISO / PJM DataMiner",
             "gate": "holdout",
             "pri": "med"
@@ -180,12 +180,12 @@
       {
         "id": "h2026",
         "title": "H1 2026 forward-edge locked test — per-ISO intake",
-        "sub": "H1 2026 is the touch-once forward-edge locked test. ERCOT and PJM lead; CAISO and MISO have essentially nothing past 2025-12-31. Intake is authorization-gated and validated no-LP only; a backcast solve of H1 2026 stays quarantined until the ISO marker exists.",
+        "sub": "H1 2026 is the touch-once forward-edge locked test. ERCOT and PJM lead; CAISO and MISO EIA-930 caught up 2026-07-08, but still have essentially nothing else past 2025-12-31. Intake is authorization-gated and validated no-LP only; a backcast solve of H1 2026 stays quarantined until the ISO marker exists.",
         "items": [
           {
             "name": "CAISO H1 2026 — full stack",
             "reg": "#1,4,26,41,2",
-            "need": "EIA-930 hourly (CISO file ends 2025-12-31), CAMPD unit-level, CAISO citygate gas, weather, TAC load. No 2026 rows exist for CAISO in the tree.",
+            "need": "CAMPD unit-level, CAISO citygate gas, weather, TAC load. (EIA-930 hourly + long-form fuel-mix landed 2026-07-08, thru Jun 30.)",
             "source": "EIA / EPA CAMPD / CAISO OASIS",
             "gate": "holdout",
             "pri": "low"
@@ -193,7 +193,7 @@
           {
             "name": "MISO H1 2026 — full stack",
             "reg": "#1,4,20,41,2",
-            "need": "EIA-930 hourly (MISO file ends 2025-12-31), own-state CAMPD, MISO zonal gas, weather, sub-BA demand. Nothing past 2025-12-31.",
+            "need": "Own-state CAMPD, MISO zonal gas, weather, sub-BA demand. (EIA-930 hourly + long-form fuel-mix landed 2026-07-08, thru Jun 30.)",
             "source": "EIA / EPA CAMPD / MISO",
             "gate": "holdout",
             "pri": "low"
@@ -222,17 +222,9 @@
         "sub": "2019 is the clean-regime locked test; 2018/2020–2021 extend the validation ladder as data lands and is authorized. On-disk coverage before ~2021 is thin outside a few sources, so most of the register is missing here.",
         "items": [
           {
-            "name": "PJM / CAISO / MISO EIA-930 hourly — pre-2019",
-            "reg": "#1",
-            "need": "PJM, CAISO, MISO. Their EIA-930 wide files start 2019-01-01 (ERCOT/NEISO/NYISO reach back to mid-2015). No 2018 for these three.",
-            "source": "U.S. EIA-930 Grid Monitor → data/raw/eia-930-hourly/",
-            "gate": "pre-2020",
-            "pri": "low"
-          },
-          {
             "name": "2018–2020 general — all non-CEMS/non-gas sources",
             "reg": "many",
-            "need": "All ISOs. LMP, AS, HSL/curtailment, zonal demand, weather, zonal gas-hub series, PJM/MISO gen-by-fuel do not reach earlier than ~2020–2021. Exceptions already on disk: CAMPD unit-level (all states 2018–2021), Henry Hub, EIA-930 wide (ERCOT/NEISO/NYISO).",
+            "need": "All ISOs. LMP, AS, HSL/curtailment, zonal demand, weather, zonal gas-hub series, PJM/MISO gen-by-fuel do not reach earlier than ~2020–2021. Exceptions already on disk: CAMPD unit-level (all states 2018–2021), Henry Hub, EIA-930 wide (all six ISOs, as of 2026-07-08 — PJM/CAISO/MISO's 2018 H1 is demand/net-gen/interchange only, no per-fuel split, a real EIA-930 reporting-start gap not a fetch gap).",
             "source": "per register — ISO / EIA / EPA archives",
             "gate": "pre-2020",
             "pri": "low"
@@ -378,7 +370,7 @@
     });
 
     document.getElementById('footNote').innerHTML =
-      'Source of truth: <code>docs/data-register-2026-07.md</code> (data-availability snapshot, 2026-07-07). '+
+      'Source of truth: <code>docs/data-register-2026-07.md</code> (data-availability snapshot, 2026-07-08). '+
       'Full-coverage sources (Henry Hub, CAMPD unit-level 2018–2021, in-sample AS/LMP/gas/transmission for '+
       '2023–2025, etc.) are intentionally omitted — this page lists only what is still <b>missing</b>. '+
       'Reg&nbsp;# references the register\'s Part&nbsp;1 dataset numbers. Checkmarks are stored locally in '+
