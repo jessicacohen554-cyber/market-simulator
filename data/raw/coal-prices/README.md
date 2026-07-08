@@ -12,6 +12,16 @@ coal-vs-gas passthrough sigmoid re-derivation (issue #1347, gap G-26). See
 | `bls_coal_ppi.csv` | BLS Producer Price Index, series `WPU051` (commodity: Coal) + `PCU2121--2121--` (industry: Coal Mining, NAICS 2121), BLS Public Data API v2 | `scripts/fetch_bls_coal_ppi.py` |
 | `SOURCES.md` | per-series provenance detail + licensing statement | — |
 
+**On-disk layout note:** the two EIA CSVs are committed as numbered,
+header-repeating parts (`eia_coal_market_sales_price.part0.csv`,
+`.part1.csv`, ... and `eia_coal_price_by_rank.part0.csv`, ...) rather than
+one file each — an artifact of this session's push tooling (the git-API
+push path used here caps individual file-content size), not a change to the
+data. `scripts/curate_coal_basin_price.py` reads the single-file name if
+present, else concatenates the parts; both layouts are byte-identical once
+joined. A future `fetch_eia_coal_prices.py` re-run writes a single file
+again, which the curate script also reads fine.
+
 **Coverage:** EIA ACR data spans 2001-2024 (annual, ~8-month publication
 lag past calendar year-end — the 2025 ACR is not yet published as of this
 intake). BLS PPI spans 2010-2026 (monthly, current). Both regenerate

@@ -39,8 +39,25 @@ def _repo_rel(path: Path) -> str:
         return str(path)
 
 
-def _build_market_sales_rows(csv_path: Path) -> pd.DataFrame:
-    raw = pd.read_csv(csv_path)
+def _read_raw_csv(raw_dir: Path, stem: str) -> pd.DataFrame:
+    """Read ``<stem>.csv`` if present, else concat ``<stem>.part*.csv``.
+
+    The raw EIA pulls are large single CSVs; some repo-push paths in this
+    environment cap individual file-content size, so a fetch may land as
+    numbered, header-repeating parts instead of one file. Either layout is
+    byte-identical once concatenated — this is a read-time convenience, not
+    a change to the raw data itself.
+    """
+    single = raw_dir / f"{stem}.csv"
+    if single.is_file():
+        return pd.read_csv(single)
+    parts = sorted(raw_dir.glob(f"{stem}.part*.csv"))
+    if not parts:
+        raise FileNotFoundError(f"{single} not found (and no {stem}.part*.csv)")
+    return pd.concat([pd.read_csv(p) for p in parts], ignore_index=True)
+
+
+def _build_market_sales_rows(raw: pd.DataFrame) -> pd.DataFrame:
     required = {
         "year",
         "region_id",
@@ -52,7 +69,7 @@ def _build_market_sales_rows(csv_path: Path) -> pd.DataFrame:
     }
     missing = required - set(raw.columns)
     if missing:
-        raise ValueError(f"{csv_path}: missing columns {sorted(missing)}")
+        raise ValueError(f"market-sales-price raw: missing columns {sorted(missing)}")
     return pd.DataFrame(
         {
             "metric": pd.array(["market_sales_price"] * len(raw), dtype="string"),
@@ -67,12 +84,11 @@ def _build_market_sales_rows(csv_path: Path) -> pd.DataFrame:
     )
 
 
-def _build_price_by_rank_rows(csv_path: Path) -> pd.DataFrame:
-    raw = pd.read_csv(csv_path)
+def _build_price_by_rank_rows(raw: pd.DataFrame) -> pd.DataFrame:
     required = {"year", "region_id", "region_name", "coal_rank_id", "price_usd_per_ton"}
     missing = required - set(raw.columns)
     if missing:
-        raise ValueError(f"{csv_path}: missing columns {sorted(missing)}")
+        raise ValueError(f"price-by-rank raw: missing columns {sorted(missing)}")
     return pd.DataFrame(
         {
             "metric": pd.array(["price_by_rank"] * len(raw), dtype="string"),
@@ -89,14 +105,10 @@ def _build_price_by_rank_rows(csv_path: Path) -> pd.DataFrame:
 
 def build_clean(raw_dir: Path) -> pd.DataFrame:
     """Return the tidied coal-basin-price frame from the two raw CSVs."""
-    market_csv = raw_dir / "eia_coal_market_sales_price.csv"
-    rank_csv = raw_dir / "eia_coal_price_by_rank.csv"
-    if not market_csv.is_file():
-        raise FileNotFoundError(f"{market_csv} not found")
-    if not rank_csv.is_file():
-        raise FileNotFoundError(f"{rank_csv} not found")
+    market_raw = _read_raw_csv(raw_dir, "eia_coal_market_sales_price")
+    rank_raw = _read_raw_csv(raw_dir, "eia_coal_price_by_rank")
     df = pd.concat(
-        [_build_market_sales_rows(market_csv), _build_price_by_rank_rows(rank_csv)],
+        [_build_market_sales_rows(market_raw), _build_price_by_rank_rows(rank_raw)],
         ignore_index=True,
     )
     df["sales_short_tons"] = df["sales_short_tons"].astype("float64")
@@ -105,13 +117,21 @@ def build_clean(raw_dir: Path) -> pd.DataFrame:
     ).reset_index(drop=True)
 
 
+def _source_repr(raw_dir: Path, stem: str) -> str:
+    single = raw_dir / f"{stem}.csv"
+    if single.is_file():
+        return _repo_rel(single)
+    parts = sorted(raw_dir.glob(f"{stem}.part*.csv"))
+    return ";".join(_repo_rel(p) for p in parts) or _repo_rel(single)
+
+
 def curate(raw_dir: Path | None = None) -> Path:
     """Curate coal-basin-price; return the path written."""
     raw_dir = raw_dir or paths.COAL_PRICES_DIR
     df = build_clean(raw_dir)
     source = (
-        f"{_repo_rel(raw_dir / 'eia_coal_market_sales_price.csv')};"
-        f"{_repo_rel(raw_dir / 'eia_coal_price_by_rank.csv')}"
+        f"{_source_repr(raw_dir, 'eia_coal_market_sales_price')};"
+        f"{_source_repr(raw_dir, 'eia_coal_price_by_rank')}"
     )
     out = write_clean(df, _DATATYPE, source=source)
     validate_clean(out)
