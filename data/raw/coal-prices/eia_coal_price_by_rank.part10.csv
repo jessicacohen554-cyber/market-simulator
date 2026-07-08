@@ -1,0 +1,201 @@
+year,region_id,region_name,coal_rank_id,coal_rank_name,price_usd_per_ton
+2017,STH,South Total,LIG,Lignite,20.76
+2017,STH,South Total,TOT,All,59.43
+2017,TN,Tennessee,BIT,Bituminous,65.96
+2017,TN,Tennessee,TOT,All,65.96
+2017,TX,Texas,TOT,All,18.2
+2017,UNT,Uinta Basin,BIT,Bituminous,38.14
+2017,UNT,Uinta Basin,SUB,Subbituminous,43.45
+2017,UNT,Uinta Basin,TOT,All,38.85
+2017,US,U.S. Total,ANT,Anthracite,93.17
+2017,US,U.S. Total,BIT,Bituminous,55.6
+2017,US,U.S. Total,LIG,Lignite,19.51
+2017,US,U.S. Total,SUB,Subbituminous,14.29
+2017,US,U.S. Total,TOT,All,33.72
+2017,UT,Utah,BIT,Bituminous,35.28
+2017,UT,Utah,TOT,All,35.28
+2017,VA,Virginia,BIT,Bituminous,92.84
+2017,VA,Virginia,TOT,All,92.84
+2017,WBO,Other Western,BIT,Bituminous,33.66
+2017,WBO,Other Western,LIG,Lignite,17.85
+2017,WBO,Other Western,SUB,Subbituminous,49.99
+2017,WBO,Other Western,TOT,All,30.18
+2017,WMR,West of Mississippi River,BIT,Bituminous,35.37
+2017,WMR,West of Mississippi River,LIG,Lignite,19.4
+2017,WMR,West of Mississippi River,SUB,Subbituminous,14.29
+2017,WMR,West of Mississippi River,TOT,All,17.45
+2017,WNC,West North Central,LIG,Lignite,17.82
+2017,WNC,West North Central,TOT,All,18.12
+2017,WSB,Western Region Total,BIT,Bituminous,35.76
+2017,WSB,Western Region Total,LIG,Lignite,17.85
+2017,WSB,Western Region Total,SUB,Subbituminous,14.29
+2017,WSB,Western Region Total,TOT,All,17.1
+2017,WSC,West South Central,BIT,Bituminous,27.22
+2017,WSC,West South Central,LIG,Lignite,20.67
+2017,WSC,West South Central,TOT,All,21.18
+2017,WST,West Total,BIT,Bituminous,35.76
+2017,WST,West Total,LIG,Lignite,21.07
+2017,WST,West Total,SUB,Subbituminous,14.29
+2017,WST,West Total,TOT,All,17.05
+2017,WV,West Virginia,BIT,Bituminous,67.75
+2017,WV,West Virginia,TOT,All,67.75
+2017,WVN,West Virginia (Northern),BIT,Bituminous,54.35
+2017,WVN,West Virginia (Northern),TOT,All,54.35
+2017,WVS,West Virginia (Southern),BIT,Bituminous,81.78
+2017,WVS,West Virginia (Southern),TOT,All,81.78
+2017,WY,Wyoming,TOT,All,13.3
+2018,AL,Alabama,BIT,Bituminous,154.35
+2018,AL,Alabama,TOT,All,154.35
+2018,APC,Appalachia Central,BIT,Bituminous,85.9
+2018,APC,Appalachia Central,TOT,All,85.9
+2018,APN,Appalachia Northern,ANT,Anthracite,99.97
+2018,APN,Appalachia Northern,BIT,Bituminous,55.98
+2018,APN,Appalachia Northern,TOT,All,56.74
+2018,APP,Appalachia Total,ANT,Anthracite,99.97
+2018,APP,Appalachia Total,BIT,Bituminous,75.05
+2018,APP,Appalachia Total,TOT,All,75.28
+2018,APS,Appalachia Southern,BIT,Bituminous,154.35
+2018,APS,Appalachia Southern,TOT,All,154.35
+2018,CO,Colorado,TOT,All,43.3
+2018,EMR,East of Mississippi River,ANT,Anthracite,99.97
+2018,EMR,East of Mississippi River,BIT,Bituminous,63.07
+2018,EMR,East of Mississippi River,LIG,Lignite,27.0
+2018,EMR,East of Mississippi River,TOT,All,62.94
+2018,ENC,East North Central,BIT,Bituminous,40.17
+2018,ENC,East North Central,TOT,All,40.17
+2018,ESC,East South Central,BIT,Bituminous,82.76
+2018,ESC,East South Central,TOT,All,79.8
+2018,EST,East Total,ANT,Anthracite,99.97
+2018,EST,East Total,BIT,Bituminous,66.24
+2018,EST,East Total,TOT,All,67.24
+2018,IL,Illinois,BIT,Bituminous,39.29
+2018,IL,Illinois,TOT,All,39.29
+2018,ILL,Illinois Basin,BIT,Bituminous,40.73
+2018,ILL,Illinois Basin,TOT,All,40.73
+2018,IN,Indiana,BIT,Bituminous,40.85
+2018,IN,Indiana,TOT,All,40.85
+2018,INO,Other Interior,BIT,Bituminous,31.49
+2018,INO,Other Interior,LIG,Lignite,23.16
+2018,INO,Other Interior,TOT,All,23.98
+2018,INT,Interior Region Total,BIT,Bituminous,40.47
+2018,INT,Interior Region Total,LIG,Lignite,23.16
+2018,INT,Interior Region Total,TOT,All,37.01
+2018,KY,Kentucky,BIT,Bituminous,55.95
+2018,KY,Kentucky,TOT,All,55.95
+2018,KYE,Kentucky (East),BIT,Bituminous,72.19
+2018,KYE,Kentucky (East),TOT,All,72.19
+2018,KYW,Kentucky (West),BIT,Bituminous,43.75
+2018,KYW,Kentucky (West),TOT,All,43.75
+2018,MAT,Middle Atlantic,ANT,Anthracite,99.97
+2018,MAT,Middle Atlantic,BIT,Bituminous,56.28
+2018,MAT,Middle Atlantic,TOT,All,57.91
+2018,MD,Maryland,BIT,Bituminous,68.17
+2018,MD,Maryland,TOT,All,68.17
+2018,MID,Midwest Total,BIT,Bituminous,40.2
+2018,MID,Midwest Total,LIG,Lignite,17.47
+2018,MID,Midwest Total,TOT,All,34.77
+2018,MT,Montana,SUB,Subbituminous,16.56
+2018,MT,Montana,TOT,All,20.15
+2018,MTN,Mountain,BIT,Bituminous,38.82
+2018,MTN,Mountain,SUB,Subbituminous,13.52
+2018,MTN,Mountain,TOT,All,16.77
+2018,ND,North Dakota,LIG,Lignite,17.47
+2018,ND,North Dakota,TOT,All,17.47
+2018,NM,New Mexico,TOT,All,39.78
+2018,OH,Ohio,BIT,Bituminous,42.21
+2018,OH,Ohio,TOT,All,42.21
+2018,OK,Oklahoma,BIT,Bituminous,49.88
+2018,OK,Oklahoma,TOT,All,49.88
+2018,PA,Pennsylvania,ANT,Anthracite,99.97
+2018,PA,Pennsylvania,BIT,Bituminous,56.28
+2018,PA,Pennsylvania,TOT,All,57.91
+2018,PAA,Pennsylvania (Anthracite),ANT,Anthracite,99.97
+2018,PAA,Pennsylvania (Anthracite),TOT,All,99.97
+2018,PAB,Pennsylvania (Bituminous),BIT,Bituminous,56.28
+2018,PAB,Pennsylvania (Bituminous),TOT,All,56.28
+2018,PRB,Powder River Basin,SUB,Subbituminous,11.85
+2018,PRB,Powder River Basin,TOT,All,11.85
+2018,SAT,South Atlantic,BIT,Bituminous,76.06
+2018,SAT,South Atlantic,TOT,All,76.06
+2018,STH,South Total,BIT,Bituminous,75.27
+2018,STH,South Total,LIG,Lignite,23.16
+2018,STH,South Total,TOT,All,67.39
+2018,TX,Texas,TOT,All,19.03
+2018,UNT,Uinta Basin,BIT,Bituminous,39.91
+2018,UNT,Uinta Basin,SUB,Subbituminous,39.39
+2018,UNT,Uinta Basin,TOT,All,39.85
+2018,US,U.S. Total,ANT,Anthracite,99.97
+2018,US,U.S. Total,BIT,Bituminous,59.43
+2018,US,U.S. Total,LIG,Lignite,20.21
+2018,US,U.S. Total,SUB,Subbituminous,13.64
+2018,US,U.S. Total,TOT,All,35.99
+2018,UT,Utah,BIT,Bituminous,36.31
+2018,UT,Utah,TOT,All,36.31
+2018,VA,Virginia,BIT,Bituminous,103.77
+2018,VA,Virginia,TOT,All,103.77
+2018,WBO,Other Western,BIT,Bituminous,37.84
+2018,WBO,Other Western,LIG,Lignite,17.52
+2018,WBO,Other Western,SUB,Subbituminous,51.76
+2018,WBO,Other Western,TOT,All,31.64
+2018,WMR,West of Mississippi River,BIT,Bituminous,38.41
+2018,WMR,West of Mississippi River,LIG,Lignite,19.84
+2018,WMR,West of Mississippi River,SUB,Subbituminous,13.64
+2018,WMR,West of Mississippi River,TOT,All,17.32
+2018,WNC,West North Central,LIG,Lignite,17.47
+2018,WNC,West North Central,TOT,All,17.77
+2018,WSB,Western Region Total,BIT,Bituminous,38.82
+2018,WSB,Western Region Total,LIG,Lignite,17.52
+2018,WSB,Western Region Total,SUB,Subbituminous,13.64
+2018,WSB,Western Region Total,TOT,All,16.91
+2018,WSC,West South Central,BIT,Bituminous,29.46
+2018,WSC,West South Central,LIG,Lignite,22.69
+2018,WSC,West South Central,TOT,All,23.37
+2018,WST,West Total,BIT,Bituminous,38.82
+2018,WST,West Total,LIG,Lignite,23.09
+2018,WST,West Total,SUB,Subbituminous,13.64
+2018,WST,West Total,TOT,All,16.87
+2018,WV,West Virginia,BIT,Bituminous,72.51
+2018,WV,West Virginia,TOT,All,72.51
+2018,WVN,West Virginia (Northern),BIT,Bituminous,58.21
+2018,WVN,West Virginia (Northern),TOT,All,58.21
+2018,WVS,West Virginia (Southern),BIT,Bituminous,85.91
+2018,WVS,West Virginia (Southern),TOT,All,85.91
+2018,WY,Wyoming,TOT,All,12.68
+2019,AL,Alabama,BIT,Bituminous,137.26
+2019,AL,Alabama,TOT,All,137.26
+2019,APC,Appalachia Central,BIT,Bituminous,87.55
+2019,APC,Appalachia Central,TOT,All,87.55
+2019,APN,Appalachia Northern,ANT,Anthracite,102.22
+2019,APN,Appalachia Northern,BIT,Bituminous,54.14
+2019,APN,Appalachia Northern,TOT,All,55.22
+2019,APP,Appalachia Total,ANT,Anthracite,102.22
+2019,APP,Appalachia Total,BIT,Bituminous,73.11
+2019,APP,Appalachia Total,TOT,All,73.47
+2019,APS,Appalachia Southern,BIT,Bituminous,137.26
+2019,APS,Appalachia Southern,TOT,All,137.26
+2019,CO,Colorado,TOT,All,44.21
+2019,EMR,East of Mississippi River,ANT,Anthracite,102.22
+2019,EMR,East of Mississippi River,BIT,Bituminous,61.55
+2019,EMR,East of Mississippi River,LIG,Lignite,24.5
+2019,EMR,East of Mississippi River,TOT,All,61.55
+2019,ENC,East North Central,BIT,Bituminous,38.58
+2019,ENC,East North Central,TOT,All,38.58
+2019,ESC,East South Central,BIT,Bituminous,77.07
+2019,ESC,East South Central,TOT,All,74.5
+2019,EST,East Total,ANT,Anthracite,102.22
+2019,EST,East Total,BIT,Bituminous,63.33
+2019,EST,East Total,TOT,All,64.82
+2019,IL,Illinois,BIT,Bituminous,36.84
+2019,IL,Illinois,TOT,All,36.84
+2019,ILL,Illinois Basin,BIT,Bituminous,39.36
+2019,ILL,Illinois Basin,TOT,All,39.36
+2019,IN,Indiana,BIT,Bituminous,40.8
+2019,IN,Indiana,TOT,All,40.8
+2019,INO,Other Interior,BIT,Bituminous,33.15
+2019,INO,Other Interior,LIG,Lignite,20.86
+2019,INO,Other Interior,TOT,All,21.75
+2019,INT,Interior Region Total,BIT,Bituminous,39.24
+2019,INT,Interior Region Total,LIG,Lignite,20.86
+2019,INT,Interior Region Total,TOT,All,35.54
+2019,KY,Kentucky,BIT,Bituminous,51.89
+2019,KY,Kentucky,TOT,All,51.89
