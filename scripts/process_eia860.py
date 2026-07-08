@@ -210,9 +210,9 @@ def _join_egrid_heat_rate(df: pd.DataFrame) -> None:
     place (keyed on its ``plant_id`` column); where the join misses, the fleet
     loader falls back to the vintage bin centers in HEAT_RATE_BINS.
     """
-    egrid_path = (
-        Path(__file__).parents[1] / "data" / "fleet" / "egrid2023_data_rev2 2.xlsx"
-    )
+    from market_sim.config.paths import FLEET_DIR
+
+    egrid_path = FLEET_DIR / "egrid2023_data_rev2 2.xlsx"
     if not egrid_path.exists():
         logger.warning(
             "eGRID workbook not found at %s; heat_rate left blank", egrid_path
