@@ -1,0 +1,182 @@
+year,region_id,region_name,market_type_id,market_type_name,price_usd_per_ton,sales_short_tons
+2023,KY,Kentucky,OM,Open Market,69.49,23867638.0
+2023,KY,Kentucky,TOT,Total,76.87,27212548.0
+2023,KYE,Kentucky (East),TOT,Total,106.96,11386476.0
+2023,KYW,Kentucky (West),OM,Open Market,55.5,15066720.0
+2023,KYW,Kentucky (West),TOT,Total,55.22,15826072.0
+2023,LA,Louisiana,TOT,Total,33.73,279905.0
+2023,MAT,Middle Atlantic,CAP,Captive,61.4,410985.0
+2023,MAT,Middle Atlantic,OM,Open Market,83.66,22190180.0
+2023,MAT,Middle Atlantic,TOT,Total,91.71,41948878.0
+2023,MD,Maryland,OM,Open Market,97.04,1066006.0
+2023,MD,Maryland,TOT,Total,101.89,1157899.0
+2023,MID,Midwest Total,CAP,Captive,44.47,18507428.0
+2023,MID,Midwest Total,OM,Open Market,41.75,56873053.0
+2023,MID,Midwest Total,TOT,Total,44.67,85858561.0
+2023,MO,Missouri,TOT,Total,66.0,139699.0
+2023,MS,Mississippi,TOT,Total,29.14,2930799.0
+2023,MT,Montana,TOT,Total,46.56,29075466.0
+2023,MTN,Mountain,CAP,Captive,25.25,108926577.0
+2023,MTN,Mountain,OM,Open Market,19.38,175713214.0
+2023,MTN,Mountain,TOT,Total,21.81,293630136.0
+2023,ND,North Dakota,OM,Open Market,23.33,24027932.0
+2023,ND,North Dakota,TOT,Total,23.33,24027932.0
+2023,NM,New Mexico,TOT,Total,48.68,7819304.0
+2023,OH,Ohio,OM,Open Market,63.74,1730351.0
+2023,OH,Ohio,TOT,Total,66.0,1915834.0
+2023,PA,Pennsylvania,TOT,Total,91.71,41948878.0
+2023,PAA,Pennsylvania (Anthracite),TOT,Total,165.88,2499672.0
+2023,PAB,Pennsylvania (Bituminous),TOT,Total,87.01,39449206.0
+2023,PCN,Pacific Noncontiguous,TOT,Total,68.74,1006436.0
+2023,PRB,Powder River Basin,CAP,Captive,13.76,89349628.0
+2023,PRB,Powder River Basin,OM,Open Market,15.15,156506738.0
+2023,PRB,Powder River Basin,TOT,Total,14.68,252020482.0
+2023,SAT,South Atlantic,CAP,Captive,165.38,415954.0
+2023,SAT,South Atlantic,OM,Open Market,97.86,51845035.0
+2023,SAT,South Atlantic,TOT,Total,125.46,93583718.0
+2023,STH,South Total,CAP,Captive,23.2,13813111.0
+2023,STH,South Total,OM,Open Market,84.86,78848281.0
+2023,STH,South Total,TOT,Total,107.03,141066675.0
+2023,TX,Texas,TOT,Total,18.76,14099859.0
+2023,UNT,Uinta Basin,CAP,Captive,55.59,5580483.0
+2023,UNT,Uinta Basin,OM,Open Market,51.13,10565897.0
+2023,UNT,Uinta Basin,TOT,Total,52.25,18719859.0
+2023,US,U.S. Total,CAP,Captive,27.69,141724538.0
+2023,US,U.S. Total,OM,Open Market,44.17,337739600.0
+2023,US,U.S. Total,TOT,Total,54.04,573690339.0
+2023,UT,Utah,OM,Open Market,57.64,5156925.0
+2023,UT,Utah,TOT,Total,45.01,6868867.0
+2023,VA,Virginia,TOT,Total,171.62,10179653.0
+2023,WBO,Other Western,CAP,Captive,86.48,13996466.0
+2023,WBO,Other Western,OM,Open Market,33.36,33674947.0
+2023,WBO,Other Western,TOT,Total,49.17,47924163.0
+2023,WMR,West of Mississippi River,CAP,Captive,24.32,122288256.0
+2023,WMR,West of Mississippi River,OM,Open Market,20.28,201905366.0
+2023,WMR,West of Mississippi River,TOT,Total,21.96,333183967.0
+2023,WNC,West North Central,OM,Open Market,23.58,24167631.0
+2023,WNC,West North Central,TOT,Total,23.58,24167631.0
+2023,WSB,Western Region Total,CAP,Captive,25.25,108926577.0
+2023,WSB,Western Region Total,OM,Open Market,20.1,200747582.0
+2023,WSB,Western Region Total,TOT,Total,22.08,318664504.0
+2023,WSC,West South Central,CAP,Captive,16.73,13361679.0
+2023,WSC,West South Central,OM,Open Market,49.55,1018085.0
+2023,WSC,West South Central,TOT,Total,19.05,14379764.0
+2023,WST,West Total,CAP,Captive,25.25,108926577.0
+2023,WST,West Total,OM,Open Market,19.66,176719650.0
+2023,WST,West Total,TOT,Total,21.97,294636572.0
+2023,WV,West Virginia,TOT,Total,120.08,82246166.0
+2023,WVN,West Virginia (Northern),TOT,Total,88.86,43782899.0
+2023,WVS,West Virginia (Southern),TOT,Total,155.61,38463267.0
+2023,WY,Wyoming,CAP,Captive,15.57,92003083.0
+2023,WY,Wyoming,OM,Open Market,14.96,143393321.0
+2023,WY,Wyoming,TOT,Total,15.24,237249695.0
+2024,AK,Alaska,TOT,Total,69.49,1038389.0
+2024,AL,Alabama,OM,Open Market,141.12,2794440.0
+2024,AL,Alabama,TOT,Total,180.91,15096134.0
+2024,APC,Appalachia Central,CAP,Captive,163.38,283700.0
+2024,APC,Appalachia Central,OM,Open Market,118.02,29250796.0
+2024,APC,Appalachia Central,TOT,Total,124.82,58559081.0
+2024,APN,Appalachia Northern,CAP,Captive,52.82,551468.0
+2024,APN,Appalachia Northern,OM,Open Market,72.76,46210790.0
+2024,APN,Appalachia Northern,TOT,Total,79.88,83858253.0
+2024,APP,Appalachia Total,CAP,Captive,90.37,835168.0
+2024,APP,Appalachia Total,OM,Open Market,92.12,78256026.0
+2024,APP,Appalachia Total,TOT,Total,106.27,157513468.0
+2024,APS,Appalachia Southern,OM,Open Market,141.12,2794440.0
+2024,APS,Appalachia Southern,TOT,Total,180.91,15096134.0
+2024,CO,Colorado,TOT,Total,64.37,12565390.0
+2024,EMR,East of Mississippi River,CAP,Captive,43.85,19220039.0
+2024,EMR,East of Mississippi River,OM,Open Market,80.02,119989277.0
+2024,EMR,East of Mississippi River,TOT,Total,88.82,228912750.0
+2024,ENC,East North Central,CAP,Captive,41.73,18384871.0
+2024,ENC,East North Central,OM,Open Market,58.17,27363461.0
+2024,ENC,East North Central,TOT,Total,49.08,57137048.0
+2024,ESC,East South Central,OM,Open Market,76.01,26687315.0
+2024,ESC,East South Central,TOT,Total,111.4,40895278.0
+2024,EST,East Total,CAP,Captive,64.0,457782.0
+2024,EST,East Total,OM,Open Market,92.29,23207326.0
+2024,EST,East Total,TOT,Total,95.64,49379355.0
+2024,IL,Illinois,TOT,Total,41.08,34479206.0
+2024,ILL,Illinois Basin,CAP,Captive,41.73,18384871.0
+2024,ILL,Illinois Basin,OM,Open Market,58.65,39811346.0
+2024,ILL,Illinois Basin,TOT,Total,50.88,69477377.0
+2024,IN,Indiana,CAP,Captive,48.62,9435790.0
+2024,IN,Indiana,OM,Open Market,87.96,7166020.0
+2024,IN,Indiana,TOT,Total,60.96,20930337.0
+2024,INO,Other Interior,CAP,Captive,19.61,12368824.0
+2024,INO,Other Interior,OM,Open Market,32.86,2335811.0
+2024,INO,Other Interior,TOT,Total,21.71,14704635.0
+2024,INT,Interior Region Total,CAP,Captive,32.83,30753695.0
+2024,INT,Interior Region Total,OM,Open Market,57.22,42147157.0
+2024,INT,Interior Region Total,TOT,Total,45.78,84182012.0
+2024,KY,Kentucky,OM,Open Market,71.76,21970970.0
+2024,KY,Kentucky,TOT,Total,74.0,23877239.0
+2024,KYE,Kentucky (East),OM,Open Market,91.95,8037090.0
+2024,KYE,Kentucky (East),TOT,Total,94.26,9809405.0
+2024,KYW,Kentucky (West),OM,Open Market,60.11,13933880.0
+2024,KYW,Kentucky (West),TOT,Total,59.87,14067834.0
+2024,LA,Louisiana,TOT,Total,35.19,266592.0
+2024,MAT,Middle Atlantic,CAP,Captive,60.2,376457.0
+2024,MAT,Middle Atlantic,OM,Open Market,86.08,20785970.0
+2024,MAT,Middle Atlantic,TOT,Total,85.48,39768426.0
+2024,MD,Maryland,OM,Open Market,98.49,1103763.0
+2024,MD,Maryland,TOT,Total,101.06,1240580.0
+2024,MID,Midwest Total,CAP,Captive,41.73,18384871.0
+2024,MID,Midwest Total,OM,Open Market,41.73,52651494.0
+2024,MID,Midwest Total,TOT,Total,41.37,82425081.0
+2024,MO,Missouri,TOT,Total,66.0,147314.0
+2024,MS,Mississippi,TOT,Total,29.99,1921905.0
+2024,MT,Montana,TOT,Total,34.35,27313473.0
+2024,MTN,Mountain,CAP,Captive,21.95,97800586.0
+2024,MTN,Mountain,OM,Open Market,23.25,139181092.0
+2024,MTN,Mountain,TOT,Total,23.03,244781515.0
+2024,ND,North Dakota,OM,Open Market,23.7,25140719.0
+2024,ND,North Dakota,TOT,Total,23.7,25140719.0
+2024,NM,New Mexico,TOT,Total,58.09,7051550.0
+2024,OH,Ohio,OM,Open Market,63.62,1485995.0
+2024,OH,Ohio,TOT,Total,64.79,1727505.0
+2024,PA,Pennsylvania,TOT,Total,85.48,39768426.0
+2024,PAA,Pennsylvania (Anthracite),TOT,Total,156.21,2870411.0
+2024,PAB,Pennsylvania (Bituminous),TOT,Total,79.98,36898015.0
+2024,PCN,Pacific Noncontiguous,TOT,Total,69.49,1038389.0
+2024,PRB,Powder River Basin,CAP,Captive,13.84,81562537.0
+2024,PRB,Powder River Basin,OM,Open Market,15.55,117273440.0
+2024,PRB,Powder River Basin,TOT,Total,14.86,204932059.0
+2024,SAT,South Atlantic,CAP,Captive,115.14,458711.0
+2024,SAT,South Atlantic,OM,Open Market,92.83,45152531.0
+2024,SAT,South Atlantic,TOT,Total,105.06,91111998.0
+2024,STH,South Total,CAP,Captive,22.65,12746210.0
+2024,STH,South Total,OM,Open Market,84.34,69685082.0
+2024,STH,South Total,TOT,Total,96.69,135031763.0
+2024,TX,Texas,TOT,Total,19.61,12368824.0
+2024,UNT,Uinta Basin,CAP,Captive,63.88,4725013.0
+2024,UNT,Uinta Basin,OM,Open Market,67.03,12801944.0
+2024,UNT,Uinta Basin,TOT,Total,68.8,19224695.0
+2024,US,U.S. Total,CAP,Captive,24.98,129389449.0
+2024,US,U.S. Total,OM,Open Market,47.32,285763383.0
+2024,US,U.S. Total,TOT,Total,52.47,512820643.0
+2024,UT,Utah,TOT,Total,79.7,7249220.0
+2024,VA,Virginia,TOT,Total,137.66,9610929.0
+2024,WBO,Other Western,CAP,Captive,62.19,11513036.0
+2024,WBO,Other Western,OM,Open Market,34.62,35284816.0
+2024,WBO,Other Western,TOT,Total,41.41,46803869.0
+2024,WMR,West of Mississippi River,CAP,Captive,21.69,110169410.0
+2024,WMR,West of Mississippi River,OM,Open Market,23.66,165774106.0
+2024,WMR,West of Mississippi River,TOT,Total,23.15,283743353.0
+2024,WNC,West North Central,OM,Open Market,23.95,25288033.0
+2024,WNC,West North Central,TOT,Total,23.95,25288033.0
+2024,WSB,Western Region Total,CAP,Captive,21.95,97800586.0
+2024,WSB,Western Region Total,OM,Open Market,23.61,165360200.0
+2024,WSB,Western Region Total,TOT,Total,23.27,270960623.0
+2024,WSC,West South Central,CAP,Captive,19.61,12368824.0
+2024,WSC,West South Central,OM,Open Market,35.19,266592.0
+2024,WSC,West South Central,TOT,Total,19.93,12635416.0
+2024,WST,West Total,CAP,Captive,21.95,97800586.0
+2024,WST,West Total,OM,Open Market,23.59,140219481.0
+2024,WST,West Total,TOT,Total,23.23,245819904.0
+2024,WV,West Virginia,TOT,Total,101.22,80260489.0
+2024,WVN,West Virginia (Northern),TOT,Total,74.46,41121742.0
+2024,WVS,West Virginia (Southern),TOT,Total,129.33,39138747.0
+2024,WY,Wyoming,CAP,Captive,15.23,84267070.0
+2024,WY,Wyoming,OM,Open Market,15.2,105795914.0
+2024,WY,Wyoming,TOT,Total,15.23,190601882.0
