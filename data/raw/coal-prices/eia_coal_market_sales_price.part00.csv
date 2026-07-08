@@ -1,0 +1,201 @@
+year,region_id,region_name,market_type_id,market_type_name,price_usd_per_ton,sales_short_tons
+2001,AL,Alabama,OM,Open Market,34.36,
+2001,APC,Appalachia Central,CAP,Captive,29.12,7131273.0
+2001,APC,Appalachia Central,OM,Open Market,28.1,260848993.0
+2001,APC,Appalachia Central,TOT,Total,28.13,267980266.0
+2001,APN,Appalachia Northern,CAP,Captive,46.89,8864611.0
+2001,APN,Appalachia Northern,OM,Open Market,24.04,132682227.0
+2001,APN,Appalachia Northern,TOT,Total,25.47,141546838.0
+2001,APP,Appalachia Total,CAP,Captive,39.08,16743917.0
+2001,APP,Appalachia Total,OM,Open Market,27.07,412090289.0
+2001,APP,Appalachia Total,TOT,Total,27.54,428834206.0
+2001,APS,Appalachia Southern,CAP,Captive,41.45,748033.0
+2001,APS,Appalachia Southern,OM,Open Market,34.36,18559069.0
+2001,APS,Appalachia Southern,TOT,Total,34.64,19307102.0
+2001,CO,Colorado,OM,Open Market,17.2,
+2001,EMR,East of Mississippi River,CAP,Captive,38.49,17379934.0
+2001,EMR,East of Mississippi River,OM,Open Market,26.1,507312341.0
+2001,EMR,East of Mississippi River,TOT,Total,26.51,524692275.0
+2001,ENC,East North Central,CAP,Captive,64.41,4957593.0
+2001,ENC,East North Central,OM,Open Market,21.92,91354202.0
+2001,ENC,East North Central,TOT,Total,24.11,96311795.0
+2001,ESC,East South Central,CAP,Captive,32.14,2340236.0
+2001,ESC,East South Central,OM,Open Market,27.67,154067090.0
+2001,ESC,East South Central,TOT,Total,27.73,156407326.0
+2001,EST,East Total,CAP,Captive,22.81,2819922.0
+2001,EST,East Total,OM,Open Market,26.16,103035655.0
+2001,EST,East Total,TOT,Total,26.07,105855577.0
+2001,IL,Illinois,OM,Open Market,23.52,34055827.0
+2001,IL,Illinois,TOT,Total,23.52,34055827.0
+2001,ILL,Illinois Basin,CAP,Captive,22.84,636017.0
+2001,ILL,Illinois Basin,OM,Open Market,21.93,94746630.0
+2001,ILL,Illinois Basin,TOT,Total,21.94,95382647.0
+2001,IN,Indiana,OM,Open Market,20.67,
+2001,INO,Other Interior,CAP,Captive,15.48,35745763.0
+2001,INO,Other Interior,OM,Open Market,19.96,15527817.0
+2001,INO,Other Interior,TOT,Total,16.84,51273580.0
+2001,INT,Interior Region Total,CAP,Captive,15.61,36381780.0
+2001,INT,Interior Region Total,OM,Open Market,21.65,110274447.0
+2001,INT,Interior Region Total,TOT,Total,20.15,146656227.0
+2001,KY,Kentucky,CAP,Captive,27.77,1581848.0
+2001,KY,Kentucky,OM,Open Market,26.77,131702198.0
+2001,KY,Kentucky,TOT,Total,26.78,133284046.0
+2001,KYE,Kentucky (East),OM,Open Market,27.96,
+2001,KYW,Kentucky (West),OM,Open Market,21.58,
+2001,MAT,Middle Atlantic,CAP,Captive,23.13,909860.0
+2001,MAT,Middle Atlantic,OM,Open Market,25.07,72174716.0
+2001,MAT,Middle Atlantic,TOT,Total,25.04,73084576.0
+2001,MD,Maryland,OM,Open Market,23.83,
+2001,MID,Midwest Total,CAP,Captive,60.32,5360592.0
+2001,MID,Midwest Total,OM,Open Market,18.62,121991582.0
+2001,MID,Midwest Total,TOT,Total,20.38,127352174.0
+2001,MT,Montana,OM,Open Market,8.83,
+2001,MTN,Mountain,CAP,Captive,12.72,26778847.0
+2001,MTN,Mountain,OM,Open Market,8.68,482971566.0
+2001,MTN,Mountain,TOT,Total,8.89,509750413.0
+2001,ND,North Dakota,OM,Open Market,8.48,
+2001,NM,New Mexico,OM,Open Market,22.02,28889760.0
+2001,NM,New Mexico,TOT,Total,22.02,28889760.0
+2001,OH,Ohio,CAP,Captive,68.47,4514143.0
+2001,OH,Ohio,OM,Open Market,21.48,21149960.0
+2001,OH,Ohio,TOT,Total,29.75,25664103.0
+2001,PA,Pennsylvania,CAP,Captive,23.13,909860.0
+2001,PA,Pennsylvania,OM,Open Market,25.07,72174716.0
+2001,PA,Pennsylvania,TOT,Total,25.04,73084576.0
+2001,PAA,Pennsylvania (Anthracite),OM,Open Market,47.67,1377955.0
+2001,PAA,Pennsylvania (Anthracite),TOT,Total,47.67,1377955.0
+2001,PAB,Pennsylvania (Bituminous),CAP,Captive,23.13,909860.0
+2001,PAB,Pennsylvania (Bituminous),OM,Open Market,24.63,70796761.0
+2001,PAB,Pennsylvania (Bituminous),TOT,Total,24.61,71706621.0
+2001,PRB,Powder River Basin,CAP,Captive,5.87,12339217.0
+2001,PRB,Powder River Basin,OM,Open Market,5.68,380509424.0
+2001,PRB,Powder River Basin,TOT,Total,5.68,392848641.0
+2001,SAT,South Atlantic,CAP,Captive,27.61,9172245.0
+2001,SAT,South Atlantic,OM,Open Market,27.24,189716333.0
+2001,SAT,South Atlantic,TOT,Total,27.26,198888578.0
+2001,STH,South Total,CAP,Captive,18.49,45348182.0
+2001,STH,South Total,OM,Open Market,26.97,327432776.0
+2001,STH,South Total,TOT,Total,25.94,372780958.0
+2001,TN,Tennessee,OM,Open Market,27.57,
+2001,TX,Texas,CAP,Captive,15.48,35745763.0
+2001,UNT,Uinta Basin,CAP,Captive,20.48,8263454.0
+2001,UNT,Uinta Basin,OM,Open Market,18.18,50939899.0
+2001,UNT,Uinta Basin,TOT,Total,18.51,59203353.0
+2001,US,U.S. Total,CAP,Captive,20.01,84930177.0
+2001,US,U.S. Total,OM,Open Market,17.38,1036955162.0
+2001,US,U.S. Total,TOT,Total,17.58,1121885339.0
+2001,UT,Utah,CAP,Captive,16.93,6175437.0
+2001,UT,Utah,OM,Open Market,19.86,20457947.0
+2001,UT,Utah,TOT,Total,19.18,26633384.0
+2001,VA,Virginia,OM,Open Market,28.72,30860939.0
+2001,WBO,Other Western,CAP,Captive,21.02,11201809.0
+2001,WBO,Other Western,OM,Open Market,16.72,83141103.0
+2001,WBO,Other Western,TOT,Total,17.23,94342912.0
+2001,WMR,West of Mississippi River,CAP,Captive,15.26,67550243.0
+2001,WMR,West of Mississippi River,OM,Open Market,9.02,529642821.0
+2001,WMR,West of Mississippi River,TOT,Total,9.73,597193064.0
+2001,WNC,West North Central,CAP,Captive,9.96,402999.0
+2001,WNC,West North Central,OM,Open Market,8.79,30637380.0
+2001,WNC,West North Central,TOT,Total,8.8,31040379.0
+2001,WSB,Western Region Total,CAP,Captive,15.0,31804480.0
+2001,WSB,Western Region Total,OM,Open Market,8.7,514590426.0
+2001,WSB,Western Region Total,TOT,Total,9.07,546394906.0
+2001,WSC,West South Central,CAP,Captive,15.48,35745763.0
+2001,WSC,West South Central,OM,Open Market,19.91,14510292.0
+2001,WSC,West South Central,TOT,Total,16.76,50256055.0
+2001,WST,West Total,CAP,Captive,15.07,31401481.0
+2001,WST,West Total,OM,Open Market,8.71,484495149.0
+2001,WST,West Total,TOT,Total,9.1,515896630.0
+2001,WV,West Virginia,CAP,Captive,29.67,6715625.0
+2001,WV,West Virginia,OM,Open Market,27.03,154835401.0
+2001,WV,West Virginia,TOT,Total,27.14,161551026.0
+2001,WVN,West Virginia (Northern),OM,Open Market,23.48,35337558.0
+2001,WVS,West Virginia (Southern),OM,Open Market,28.08,119497843.0
+2001,WY,Wyoming,CAP,Captive,9.26,18419325.0
+2001,WY,Wyoming,OM,Open Market,5.62,350280108.0
+2001,WY,Wyoming,TOT,Total,5.8,368699433.0
+2002,AL,Alabama,OM,Open Market,34.28,
+2002,APC,Appalachia Central,CAP,Captive,32.7,5959437.0
+2002,APC,Appalachia Central,OM,Open Market,30.16,240690662.0
+2002,APC,Appalachia Central,TOT,Total,30.22,246650099.0
+2002,APN,Appalachia Northern,CAP,Captive,24.55,6037963.0
+2002,APN,Appalachia Northern,OM,Open Market,24.86,122030625.0
+2002,APN,Appalachia Northern,TOT,Total,24.84,128068588.0
+2002,APP,Appalachia Total,CAP,Captive,29.46,12699981.0
+2002,APP,Appalachia Total,OM,Open Market,28.66,380942756.0
+2002,APP,Appalachia Total,TOT,Total,28.68,393642737.0
+2002,APS,Appalachia Southern,CAP,Captive,44.18,702581.0
+2002,APS,Appalachia Southern,OM,Open Market,34.28,18221469.0
+2002,APS,Appalachia Southern,TOT,Total,34.65,18924050.0
+2002,CO,Colorado,OM,Open Market,17.72,
+2002,EMR,East of Mississippi River,CAP,Captive,28.25,15599771.0
+2002,EMR,East of Mississippi River,OM,Open Market,27.47,474036440.0
+2002,EMR,East of Mississippi River,TOT,Total,27.49,489636211.0
+2002,ENC,East North Central,CAP,Captive,21.75,3262972.0
+2002,ENC,East North Central,OM,Open Market,22.74,86044205.0
+2002,ENC,East North Central,TOT,Total,22.7,89307177.0
+2002,ESC,East South Central,CAP,Captive,29.04,3613340.0
+2002,ESC,East South Central,OM,Open Market,28.34,145287268.0
+2002,ESC,East South Central,TOT,Total,28.36,148900608.0
+2002,EST,East Total,CAP,Captive,23.49,2437180.0
+2002,EST,East Total,OM,Open Market,27.42,95330633.0
+2002,EST,East Total,TOT,Total,27.32,97767813.0
+2002,IL,Illinois,OM,Open Market,24.04,
+2002,ILL,Illinois Basin,CAP,Captive,22.94,2899790.0
+2002,ILL,Illinois Basin,OM,Open Market,22.88,90187840.0
+2002,ILL,Illinois Basin,TOT,Total,22.88,93087630.0
+2002,IN,Indiana,OM,Open Market,22.2,
+2002,INO,Other Interior,CAP,Captive,14.26,38139911.0
+2002,INO,Other Interior,OM,Open Market,18.08,16039405.0
+2002,INO,Other Interior,TOT,Total,15.39,54179316.0
+2002,INT,Interior Region Total,CAP,Captive,14.87,41039701.0
+2002,INT,Interior Region Total,OM,Open Market,22.16,106227245.0
+2002,INT,Interior Region Total,TOT,Total,20.13,147266946.0
+2002,KY,Kentucky,CAP,Captive,25.39,2910759.0
+2002,KY,Kentucky,OM,Open Market,27.77,120923133.0
+2002,KY,Kentucky,TOT,Total,27.71,123833892.0
+2002,KYE,Kentucky (East),OM,Open Market,29.04,
+2002,KYW,Kentucky (West),OM,Open Market,22.23,
+2002,MAT,Middle Atlantic,CAP,Captive,23.05,1199026.0
+2002,MAT,Middle Atlantic,OM,Open Market,25.87,66931530.0
+2002,MAT,Middle Atlantic,TOT,Total,25.82,68130556.0
+2002,MD,Maryland,TOT,Total,22.87,4960047.0
+2002,MID,Midwest Total,CAP,Captive,21.75,3262972.0
+2002,MID,Midwest Total,OM,Open Market,18.99,117500298.0
+2002,MID,Midwest Total,TOT,Total,19.06,120763270.0
+2002,MT,Montana,OM,Open Market,9.27,
+2002,MTN,Mountain,CAP,Captive,12.42,26834389.0
+2002,MTN,Mountain,OM,Open Market,9.26,483829993.0
+2002,MTN,Mountain,TOT,Total,9.42,510664382.0
+2002,ND,North Dakota,OM,Open Market,8.46,31003143.0
+2002,ND,North Dakota,TOT,Total,8.46,31003143.0
+2002,NM,New Mexico,OM,Open Market,22.47,27977012.0
+2002,NM,New Mexico,TOT,Total,22.47,27977012.0
+2002,OH,Ohio,OM,Open Market,21.44,18482370.0
+2002,PA,Pennsylvania,CAP,Captive,23.05,1199026.0
+2002,PA,Pennsylvania,OM,Open Market,25.87,66931530.0
+2002,PA,Pennsylvania,TOT,Total,25.82,68130556.0
+2002,PAA,Pennsylvania (Anthracite),OM,Open Market,47.78,1226938.0
+2002,PAA,Pennsylvania (Anthracite),TOT,Total,47.78,1226938.0
+2002,PAB,Pennsylvania (Bituminous),CAP,Captive,23.05,1199026.0
+2002,PAB,Pennsylvania (Bituminous),OM,Open Market,25.46,65704592.0
+2002,PAB,Pennsylvania (Bituminous),TOT,Total,25.41,66903618.0
+2002,PRB,Powder River Basin,CAP,Captive,5.63,13372822.0
+2002,PRB,Powder River Basin,OM,Open Market,6.42,383113426.0
+2002,PRB,Powder River Basin,TOT,Total,6.4,396486248.0
+2002,SAT,South Atlantic,CAP,Captive,31.52,7524433.0
+2002,SAT,South Atlantic,OM,Open Market,29.66,175773437.0
+2002,SAT,South Atlantic,TOT,Total,29.74,183297870.0
+2002,STH,South Total,CAP,Captive,17.82,48039530.0
+2002,STH,South Total,OM,Open Market,28.45,305342213.0
+2002,STH,South Total,TOT,Total,27.01,353381743.0
+2002,TN,Tennessee,OM,Open Market,29.56,3236822.0
+2002,TN,Tennessee,TOT,Total,29.56,3236822.0
+2002,TX,Texas,CAP,Captive,13.93,
+2002,UNT,Uinta Basin,CAP,Captive,20.83,7643262.0
+2002,UNT,Uinta Basin,OM,Open Market,17.87,50875902.0
+2002,UNT,Uinta Basin,TOT,Total,18.25,58519164.0
+2002,US,U.S. Total,CAP,Captive,16.85,86401233.0
+2002,US,U.S. Total,OM,Open Market,17.98,1003161015.0
+2002,US,U.S. Total,TOT,Total,17.89,1089562248.0
+2002,UT,Utah,OM,Open Market,18.3,

@@ -1,0 +1,201 @@
+year,region_id,region_name,market_type_id,market_type_name,price_usd_per_ton,sales_short_tons
+2018,CO,Colorado,CAP,Captive,43.55,5394189.0
+2018,CO,Colorado,OM,Open Market,37.9,4027129.0
+2018,CO,Colorado,TOT,Total,43.3,13683904.0
+2018,EMR,East of Mississippi River,CAP,Captive,43.38,34129150.0
+2018,EMR,East of Mississippi River,OM,Open Market,54.15,189359164.0
+2018,EMR,East of Mississippi River,TOT,Total,62.94,310336746.0
+2018,ENC,East North Central,CAP,Captive,42.33,19392548.0
+2018,ENC,East North Central,OM,Open Market,36.95,55148462.0
+2018,ENC,East North Central,TOT,Total,40.17,94195061.0
+2018,ESC,East South Central,CAP,Captive,67.6,456150.0
+2018,ESC,East South Central,OM,Open Market,57.41,41178728.0
+2018,ESC,East South Central,TOT,Total,79.8,56504359.0
+2018,EST,East Total,CAP,Captive,54.49,1283670.0
+2018,EST,East Total,OM,Open Market,62.65,41800950.0
+2018,EST,East Total,TOT,Total,67.24,62319571.0
+2018,IL,Illinois,TOT,Total,39.29,49563928.0
+2018,ILL,Illinois Basin,CAP,Captive,42.42,18682202.0
+2018,ILL,Illinois Basin,OM,Open Market,38.6,68058787.0
+2018,ILL,Illinois Basin,TOT,Total,40.73,106595053.0
+2018,IN,Indiana,CAP,Captive,43.12,13712830.0
+2018,IN,Indiana,OM,Open Market,39.35,16887926.0
+2018,IN,Indiana,TOT,Total,40.85,34872452.0
+2018,INO,Other Interior,CAP,Captive,14.52,19026336.0
+2018,INO,Other Interior,OM,Open Market,43.64,9234429.0
+2018,INO,Other Interior,TOT,Total,23.98,30362125.0
+2018,INT,Interior Region Total,CAP,Captive,28.35,37708538.0
+2018,INT,Interior Region Total,OM,Open Market,39.2,77293216.0
+2018,INT,Interior Region Total,TOT,Total,37.01,136957178.0
+2018,KY,Kentucky,CAP,Captive,61.14,382702.0
+2018,KY,Kentucky,OM,Open Market,55.63,34002726.0
+2018,KY,Kentucky,TOT,Total,55.95,38797135.0
+2018,KYE,Kentucky (East),CAP,Captive,61.14,382702.0
+2018,KYE,Kentucky (East),OM,Open Market,73.02,13763410.0
+2018,KYE,Kentucky (East),TOT,Total,72.19,16638462.0
+2018,KYW,Kentucky (West),OM,Open Market,43.81,20239316.0
+2018,KYW,Kentucky (West),TOT,Total,43.75,22158673.0
+2018,LA,Louisiana,TOT,Total,93.15,1322729.0
+2018,MAT,Middle Atlantic,CAP,Captive,52.87,1229948.0
+2018,MAT,Middle Atlantic,OM,Open Market,58.47,36245354.0
+2018,MAT,Middle Atlantic,TOT,Total,57.91,49645010.0
+2018,MD,Maryland,OM,Open Market,59.8,1199957.0
+2018,MD,Maryland,TOT,Total,68.17,1317339.0
+2018,MID,Midwest Total,CAP,Captive,37.79,23649415.0
+2018,MID,Midwest Total,OM,Open Market,30.89,80843803.0
+2018,MID,Midwest Total,TOT,Total,34.77,124147269.0
+2018,MO,Missouri,TOT,Total,53.0,258902.0
+2018,MS,Mississippi,TOT,Total,27.0,2996618.0
+2018,MT,Montana,TOT,Total,20.15,38568190.0
+2018,MTN,Mountain,CAP,Captive,16.3,142827869.0
+2018,MTN,Mountain,OM,Open Market,16.29,232971169.0
+2018,MTN,Mountain,TOT,Total,16.77,390035813.0
+2018,ND,North Dakota,TOT,Total,17.47,29693306.0
+2018,NM,New Mexico,TOT,Total,39.78,12199345.0
+2018,OH,Ohio,TOT,Total,42.21,9758681.0
+2018,OK,Oklahoma,OM,Open Market,49.88,639253.0
+2018,OK,Oklahoma,TOT,Total,49.88,639253.0
+2018,PA,Pennsylvania,TOT,Total,57.91,49645010.0
+2018,PAA,Pennsylvania (Anthracite),TOT,Total,99.97,1850975.0
+2018,PAB,Pennsylvania (Bituminous),TOT,Total,56.28,47794035.0
+2018,PCN,Pacific Noncontiguous,TOT,Total,58.56,911600.0
+2018,PRB,Powder River Basin,CAP,Captive,11.86,120322319.0
+2018,PRB,Powder River Basin,OM,Open Market,11.79,197761258.0
+2018,PRB,Powder River Basin,TOT,Total,11.85,324417013.0
+2018,SAT,South Atlantic,CAP,Captive,43.2,13050504.0
+2018,SAT,South Atlantic,OM,Open Market,65.72,56786620.0
+2018,SAT,South Atlantic,TOT,Total,76.06,109992316.0
+2018,STH,South Total,CAP,Captive,26.66,32479268.0
+2018,STH,South Total,OM,Open Market,60.02,98388661.0
+2018,STH,South Total,TOT,Total,67.39,180928719.0
+2018,TN,Tennessee,TOT,Total,90.97,205396.0
+2018,TX,Texas,TOT,Total,19.03,25144623.0
+2018,UNT,Uinta Basin,CAP,Captive,43.44,5231624.0
+2018,UNT,Uinta Basin,OM,Open Market,37.63,14028785.0
+2018,UNT,Uinta Basin,TOT,Total,39.85,27009380.0
+2018,US,U.S. Total,CAP,Captive,20.77,200240222.0
+2018,US,U.S. Total,OM,Open Market,32.69,454916183.0
+2018,US,U.S. Total,TOT,Total,35.99,758416673.0
+2018,UT,Utah,OM,Open Market,37.13,10803022.0
+2018,UT,Utah,TOT,Total,36.31,14443775.0
+2018,VA,Virginia,TOT,Total,103.77,12674561.0
+2018,WBO,Other Western,CAP,Captive,34.72,21530793.0
+2018,WBO,Other Western,OM,Open Market,30.2,47529165.0
+2018,WBO,Other Western,TOT,Total,31.64,69214326.0
+2018,WMR,West of Mississippi River,CAP,Captive,16.12,166111072.0
+2018,WMR,West of Mississippi River,OM,Open Market,17.38,265557019.0
+2018,WMR,West of Mississippi River,TOT,Total,17.32,448006226.0
+2018,WNC,West North Central,CAP,Captive,17.08,4256867.0
+2018,WNC,West North Central,OM,Open Market,17.89,25695341.0
+2018,WNC,West North Central,TOT,Total,17.77,29952208.0
+2018,WSB,Western Region Total,CAP,Captive,16.33,147084736.0
+2018,WSB,Western Region Total,OM,Open Market,16.56,259319208.0
+2018,WSB,Western Region Total,TOT,Total,16.91,420640719.0
+2018,WSC,West South Central,CAP,Captive,14.52,19026336.0
+2018,WSC,West South Central,OM,Open Market,51.58,5978909.0
+2018,WSC,West South Central,TOT,Total,23.37,27106605.0
+2018,WST,West Total,CAP,Captive,16.3,142827869.0
+2018,WST,West Total,OM,Open Market,16.45,233882769.0
+2018,WST,West Total,TOT,Total,16.87,390947413.0
+2018,WV,West Virginia,CAP,Captive,43.0,12996782.0
+2018,WV,West Virginia,OM,Open Market,63.18,50031067.0
+2018,WV,West Virginia,TOT,Total,72.51,96000416.0
+2018,WVN,West Virginia (Northern),TOT,Total,58.21,46466863.0
+2018,WVS,West Virginia (Southern),TOT,Total,85.91,49533553.0
+2018,WY,Wyoming,TOT,Total,12.68,304507979.0
+2019,AK,Alaska,TOT,Total,58.57,999622.0
+2019,AL,Alabama,TOT,Total,137.26,14634943.0
+2019,APC,Appalachia Central,CAP,Captive,121.72,1263014.0
+2019,APC,Appalachia Central,OM,Open Market,80.42,40973425.0
+2019,APC,Appalachia Central,TOT,Total,87.55,69609081.0
+2019,APN,Appalachia Northern,CAP,Captive,43.02,20309070.0
+2019,APN,Appalachia Northern,OM,Open Market,52.95,64534005.0
+2019,APN,Appalachia Northern,TOT,Total,55.22,104846680.0
+2019,APP,Appalachia Total,CAP,Captive,47.93,21661918.0
+2019,APP,Appalachia Total,OM,Open Market,64.28,109031183.0
+2019,APP,Appalachia Total,TOT,Total,73.47,189090704.0
+2019,APS,Appalachia Southern,CAP,Captive,121.43,89834.0
+2019,APS,Appalachia Southern,OM,Open Market,84.12,3523753.0
+2019,APS,Appalachia Southern,TOT,Total,137.26,14634943.0
+2019,AZ,Arizona,TOT,Total,96.38,4025186.0
+2019,CO,Colorado,CAP,Captive,45.52,5573382.0
+2019,CO,Colorado,OM,Open Market,38.55,4685724.0
+2019,CO,Colorado,TOT,Total,44.21,12674108.0
+2019,EMR,East of Mississippi River,CAP,Captive,45.26,38237863.0
+2019,EMR,East of Mississippi River,OM,Open Market,53.83,179425550.0
+2019,EMR,East of Mississippi River,TOT,Total,61.55,288981800.0
+2019,ENC,East North Central,CAP,Captive,41.76,16535744.0
+2019,ENC,East North Central,OM,Open Market,36.59,53920932.0
+2019,ENC,East North Central,TOT,Total,38.58,83310617.0
+2019,ESC,East South Central,CAP,Captive,76.16,1041159.0
+2019,ESC,East South Central,OM,Open Market,51.9,38671573.0
+2019,ESC,East South Central,TOT,Total,74.5,52431411.0
+2019,EST,East Total,CAP,Captive,57.38,3919386.0
+2019,EST,East Total,OM,Open Market,63.27,40106982.0
+2019,EST,East Total,TOT,Total,64.82,61013887.0
+2019,IL,Illinois,TOT,Total,36.84,44864413.0
+2019,ILL,Illinois Basin,CAP,Captive,41.76,16575945.0
+2019,ILL,Illinois Basin,OM,Open Market,38.13,67832828.0
+2019,ILL,Illinois Basin,TOT,Total,39.36,97329557.0
+2019,IN,Indiana,CAP,Captive,43.27,11619583.0
+2019,IN,Indiana,OM,Open Market,39.51,16096960.0
+2019,IN,Indiana,TOT,Total,40.8,30888524.0
+2019,INO,Other Interior,CAP,Captive,17.58,19497572.0
+2019,INO,Other Interior,OM,Open Market,34.44,5908365.0
+2019,INO,Other Interior,TOT,Total,21.75,26962783.0
+2019,INT,Interior Region Total,CAP,Captive,28.69,36073517.0
+2019,INT,Interior Region Total,OM,Open Market,37.84,73741193.0
+2019,INT,Interior Region Total,TOT,Total,35.54,124292340.0
+2019,KY,Kentucky,TOT,Total,51.89,34809622.0
+2019,KYE,Kentucky (East),TOT,Total,67.09,13233002.0
+2019,KYW,Kentucky (West),TOT,Total,42.57,21576620.0
+2019,LA,Louisiana,TOT,Total,84.59,1377410.0
+2019,MAT,Middle Atlantic,CAP,Captive,56.76,3867860.0
+2019,MAT,Middle Atlantic,OM,Open Market,57.39,34799695.0
+2019,MAT,Middle Atlantic,TOT,Total,57.11,49524634.0
+2019,MD,Maryland,OM,Open Market,63.64,1101235.0
+2019,MD,Maryland,TOT,Total,77.28,1394339.0
+2019,MID,Midwest Total,CAP,Captive,41.76,16535744.0
+2019,MID,Midwest Total,OM,Open Market,30.72,81263173.0
+2019,MID,Midwest Total,TOT,Total,33.78,110652858.0
+2019,MO,Missouri,TOT,Total,53.0,189273.0
+2019,MS,Mississippi,TOT,Total,24.5,2561539.0
+2019,MT,Montana,TOT,Total,21.66,34691769.0
+2019,MTN,Mountain,CAP,Captive,16.16,131754954.0
+2019,MTN,Mountain,OM,Open Market,17.99,214416419.0
+2019,MTN,Mountain,TOT,Total,17.61,355610731.0
+2019,ND,North Dakota,OM,Open Market,18.93,27152968.0
+2019,ND,North Dakota,TOT,Total,18.93,27152968.0
+2019,NM,New Mexico,TOT,Total,39.71,13206838.0
+2019,OH,Ohio,TOT,Total,39.88,7557680.0
+2019,OK,Oklahoma,TOT,Total,67.2,226712.0
+2019,PA,Pennsylvania,TOT,Total,57.11,49524634.0
+2019,PAA,Pennsylvania (Anthracite),TOT,Total,102.22,2339082.0
+2019,PAB,Pennsylvania (Bituminous),TOT,Total,54.88,47185552.0
+2019,PCN,Pacific Noncontiguous,TOT,Total,58.57,999622.0
+2019,PRB,Powder River Basin,CAP,Captive,11.21,109058354.0
+2019,PRB,Powder River Basin,OM,Open Market,12.4,180744092.0
+2019,PRB,Powder River Basin,TOT,Total,11.98,294280415.0
+2019,SAT,South Atlantic,CAP,Captive,44.13,16793100.0
+2019,SAT,South Atlantic,OM,Open Market,70.74,52033350.0
+2019,SAT,South Atlantic,TOT,Total,75.57,103715138.0
+2019,STH,South Total,CAP,Captive,31.06,37280305.0
+2019,STH,South Total,OM,Open Market,59.6,88555189.0
+2019,STH,South Total,TOT,Total,65.91,168869267.0
+2019,TN,Tennessee,TOT,Total,66.42,425307.0
+2019,TX,Texas,TOT,Total,16.9,22607849.0
+2019,UNT,Uinta Basin,CAP,Captive,45.17,5569054.0
+2019,UNT,Uinta Basin,OM,Open Market,38.88,15701933.0
+2019,UNT,Uinta Basin,TOT,Total,40.9,26069084.0
+2019,US,U.S. Total,CAP,Captive,22.18,189490389.0
+2019,US,U.S. Total,OM,Open Market,33.45,425341385.0
+2019,US,U.S. Total,TOT,Total,36.07,697172848.0
+2019,UT,Utah,TOT,Total,37.95,14266789.0
+2019,VA,Virginia,TOT,Total,98.06,11489253.0
+2019,WBO,Other Western,CAP,Captive,38.24,17127546.0
+2019,WBO,Other Western,OM,Open Market,34.22,46122984.0
+2019,WBO,Other Western,TOT,Total,35.34,63413822.0
+2019,WMR,West of Mississippi River,CAP,Captive,16.34,151252526.0
+2019,WMR,West of Mississippi River,OM,Open Market,18.59,245915835.0
+2019,WMR,West of Mississippi River,TOT,Total,18.02,408164565.0
+2019,WNC,West North Central,OM,Open Market,19.17,27342241.0

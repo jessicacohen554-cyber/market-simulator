@@ -1,0 +1,201 @@
+year,region_id,region_name,market_type_id,market_type_name,price_usd_per_ton,sales_short_tons
+2002,VA,Virginia,OM,Open Market,31.09,28399103.0
+2002,WBO,Other Western,CAP,Captive,20.36,11645467.0
+2002,WBO,Other Western,OM,Open Market,17.06,82001686.0
+2002,WBO,Other Western,TOT,Total,17.47,93647153.0
+2002,WMR,West of Mississippi River,CAP,Captive,14.34,70801462.0
+2002,WMR,West of Mississippi River,OM,Open Market,9.48,529124575.0
+2002,WMR,West of Mississippi River,TOT,Total,10.06,599926037.0
+2002,WNC,West North Central,OM,Open Market,8.72,31456093.0
+2002,WNC,West North Central,TOT,Total,8.72,31456093.0
+2002,WSB,Western Region Total,CAP,Captive,14.44,32661551.0
+2002,WSB,Western Region Total,OM,Open Market,9.24,515991014.0
+2002,WSB,Western Region Total,TOT,Total,9.55,548652565.0
+2002,WSC,West South Central,CAP,Captive,14.26,38139911.0
+2002,WSC,West South Central,OM,Open Market,18.78,12680611.0
+2002,WSC,West South Central,TOT,Total,15.39,50820522.0
+2002,WST,West Total,CAP,Captive,14.44,32661551.0
+2002,WST,West Total,OM,Open Market,9.29,484987871.0
+2002,WST,West Total,TOT,Total,9.62,517649422.0
+2002,WV,West Virginia,CAP,Captive,33.83,5912242.0
+2002,WV,West Virginia,OM,Open Market,29.59,142788324.0
+2002,WV,West Virginia,TOT,Total,29.76,148700566.0
+2002,WVN,West Virginia (Northern),OM,Open Market,24.98,32030715.0
+2002,WVS,West Virginia (Southern),OM,Open Market,30.92,110757609.0
+2002,WY,Wyoming,CAP,Captive,9.19,18495345.0
+2002,WY,Wyoming,OM,Open Market,6.37,354538576.0
+2002,WY,Wyoming,TOT,Total,6.51,373033921.0
+2003,AL,Alabama,OM,Open Market,33.75,20563439.0
+2003,AL,Alabama,TOT,Total,33.75,20563439.0
+2003,APC,Appalachia Central,CAP,Captive,31.87,12647245.0
+2003,APC,Appalachia Central,OM,Open Market,30.37,218770324.0
+2003,APC,Appalachia Central,TOT,Total,30.45,231417569.0
+2003,APN,Appalachia Northern,CAP,Captive,27.18,8497606.0
+2003,APN,Appalachia Northern,OM,Open Market,25.5,117588289.0
+2003,APN,Appalachia Northern,TOT,Total,25.62,126085895.0
+2003,APP,Appalachia Total,CAP,Captive,29.98,21144851.0
+2003,APP,Appalachia Total,OM,Open Market,28.96,356922052.0
+2003,APP,Appalachia Total,TOT,Total,29.02,378066903.0
+2003,APS,Appalachia Southern,OM,Open Market,33.75,20563439.0
+2003,APS,Appalachia Southern,TOT,Total,33.75,20563439.0
+2003,CO,Colorado,OM,Open Market,18.21,
+2003,EMR,East of Mississippi River,CAP,Captive,28.57,25421197.0
+2003,EMR,East of Mississippi River,OM,Open Market,27.72,444363582.0
+2003,EMR,East of Mississippi River,TOT,Total,27.76,469784779.0
+2003,ENC,East North Central,CAP,Captive,20.63,4048497.0
+2003,ENC,East North Central,OM,Open Market,22.99,84706473.0
+2003,ENC,East North Central,TOT,Total,22.89,88754970.0
+2003,ESC,East South Central,CAP,Captive,26.95,2866389.0
+2003,ESC,East South Central,OM,Open Market,28.64,136977953.0
+2003,ESC,East South Central,TOT,Total,28.6,139844342.0
+2003,EST,East Total,CAP,Captive,30.8,8480016.0
+2003,EST,East Total,OM,Open Market,27.72,87435830.0
+2003,EST,East Total,TOT,Total,28.0,95915846.0
+2003,IL,Illinois,OM,Open Market,24.13,
+2003,ILL,Illinois Basin,CAP,Captive,21.59,4276346.0
+2003,ILL,Illinois Basin,OM,Open Market,22.99,83702177.0
+2003,ILL,Illinois Basin,TOT,Total,22.93,87978523.0
+2003,IN,Indiana,CAP,Captive,20.84,2678556.0
+2003,IN,Indiana,OM,Open Market,22.48,32590495.0
+2003,IN,Indiana,TOT,Total,22.35,35269051.0
+2003,INO,Other Interior,CAP,Captive,13.64,35587510.0
+2003,INO,Other Interior,OM,Open Market,16.34,22066823.0
+2003,INO,Other Interior,TOT,Total,14.67,57654333.0
+2003,INT,Interior Region Total,CAP,Captive,14.49,39863856.0
+2003,INT,Interior Region Total,OM,Open Market,21.6,105769000.0
+2003,INT,Interior Region Total,TOT,Total,19.66,145632856.0
+2003,KY,Kentucky,CAP,Captive,26.95,2866389.0
+2003,KY,Kentucky,OM,Open Market,28.15,110149729.0
+2003,KY,Kentucky,TOT,Total,28.12,113016118.0
+2003,KYE,Kentucky (East),OM,Open Market,29.49,
+2003,KYW,Kentucky (West),OM,Open Market,22.05,
+2003,MAT,Middle Atlantic,CAP,Captive,22.52,627100.0
+2003,MAT,Middle Atlantic,OM,Open Market,26.75,63515663.0
+2003,MAT,Middle Atlantic,TOT,Total,26.71,64142763.0
+2003,MID,Midwest Total,CAP,Captive,20.63,4048497.0
+2003,MID,Midwest Total,OM,Open Market,19.2,116512566.0
+2003,MID,Midwest Total,TOT,Total,19.25,120561063.0
+2003,MT,Montana,OM,Open Market,9.42,
+2003,MTN,Mountain,CAP,Captive,14.81,25254828.0
+2003,MTN,Mountain,OM,Open Market,9.45,486612927.0
+2003,MTN,Mountain,TOT,Total,9.71,511867755.0
+2003,ND,North Dakota,OM,Open Market,8.76,31118998.0
+2003,ND,North Dakota,TOT,Total,8.76,31118998.0
+2003,NM,New Mexico,OM,Open Market,23.18,26452467.0
+2003,NM,New Mexico,TOT,Total,23.18,26452467.0
+2003,OH,Ohio,OM,Open Market,22.1,20853975.0
+2003,OK,Oklahoma,OM,Open Market,28.32,1626092.0
+2003,OK,Oklahoma,TOT,Total,28.32,1626092.0
+2003,PA,Pennsylvania,OM,Open Market,26.75,63515663.0
+2003,PAA,Pennsylvania (Anthracite),OM,Open Market,49.87,1249005.0
+2003,PAA,Pennsylvania (Anthracite),TOT,Total,49.87,1249005.0
+2003,PAB,Pennsylvania (Bituminous),OM,Open Market,26.29,62266658.0
+2003,PRB,Powder River Basin,CAP,Captive,6.45,12719554.0
+2003,PRB,Powder River Basin,OM,Open Market,6.78,387507787.0
+2003,PRB,Powder River Basin,TOT,Total,6.77,400227341.0
+2003,SAT,South Atlantic,CAP,Captive,30.84,17879211.0
+2003,SAT,South Atlantic,OM,Open Market,29.82,159163493.0
+2003,SAT,South Atlantic,TOT,Total,29.92,177042704.0
+2003,STH,South Total,CAP,Captive,17.88,48480194.0
+2003,STH,South Total,OM,Open Market,28.41,289861654.0
+2003,STH,South Total,TOT,Total,26.9,338341848.0
+2003,TN,Tennessee,OM,Open Market,29.09,2525432.0
+2003,TN,Tennessee,TOT,Total,29.09,2525432.0
+2003,TX,Texas,CAP,Captive,13.39,33855265.0
+2003,TX,Texas,OM,Open Market,14.76,13718547.0
+2003,TX,Texas,TOT,Total,13.78,47573812.0
+2003,UNT,Uinta Basin,CAP,Captive,22.72,6989061.0
+2003,UNT,Uinta Basin,OM,Open Market,17.73,51898104.0
+2003,UNT,Uinta Basin,TOT,Total,18.32,58887165.0
+2003,US,U.S. Total,CAP,Captive,18.7,92495408.0
+2003,US,U.S. Total,OM,Open Market,17.85,981510779.0
+2003,US,U.S. Total,TOT,Total,17.92,1074006187.0
+2003,UT,Utah,OM,Open Market,17.08,
+2003,VA,Virginia,CAP,Captive,31.46,7852916.0
+2003,VA,Virginia,OM,Open Market,30.3,23920167.0
+2003,VA,Virginia,TOT,Total,30.59,31773083.0
+2003,WBO,Other Western,CAP,Captive,23.53,11778086.0
+2003,WBO,Other Western,OM,Open Market,17.0,79413836.0
+2003,WBO,Other Western,TOT,Total,17.85,91191922.0
+2003,WMR,West of Mississippi River,CAP,Captive,14.96,67074211.0
+2003,WMR,West of Mississippi River,OM,Open Market,9.69,537147197.0
+2003,WMR,West of Mississippi River,TOT,Total,10.27,604221408.0
+2003,WNC,West North Central,OM,Open Market,9.09,31806093.0
+2003,WNC,West North Central,TOT,Total,9.09,31806093.0
+2003,WSB,Western Region Total,CAP,Captive,16.45,31486701.0
+2003,WSB,Western Region Total,OM,Open Market,9.44,518819727.0
+2003,WSB,Western Region Total,TOT,Total,9.84,550306428.0
+2003,WSC,West South Central,CAP,Captive,13.64,35587510.0
+2003,WSC,West South Central,OM,Open Market,16.43,17640375.0
+2003,WSC,West South Central,TOT,Total,14.56,53227885.0
+2003,WST,West Total,CAP,Captive,16.45,31486701.0
+2003,WST,West Total,OM,Open Market,9.49,487700729.0
+2003,WST,West Total,TOT,Total,9.91,519187430.0
+2003,WV,West Virginia,CAP,Captive,30.36,10026295.0
+2003,WV,West Virginia,OM,Open Market,30.02,130051094.0
+2003,WV,West Virginia,TOT,Total,30.04,140077389.0
+2003,WVN,West Virginia (Northern),OM,Open Market,25.74,28026419.0
+2003,WVS,West Virginia (Southern),OM,Open Market,31.19,102024675.0
+2003,WY,Wyoming,CAP,Captive,12.02,17499265.0
+2003,WY,Wyoming,OM,Open Market,6.74,359270563.0
+2003,WY,Wyoming,TOT,Total,6.99,376769828.0
+2004,AL,Alabama,OM,Open Market,41.73,21435944.0
+2004,AL,Alabama,TOT,Total,41.73,21435944.0
+2004,APC,Appalachia Central,CAP,Captive,38.54,19039872.0
+2004,APC,Appalachia Central,OM,Open Market,36.73,212591722.0
+2004,APC,Appalachia Central,TOT,Total,36.88,231631594.0
+2004,APN,Appalachia Northern,CAP,Captive,32.87,10347027.0
+2004,APN,Appalachia Northern,OM,Open Market,28.65,123425259.0
+2004,APN,Appalachia Northern,TOT,Total,28.97,133772286.0
+2004,APP,Appalachia Total,CAP,Captive,36.54,29386899.0
+2004,APP,Appalachia Total,OM,Open Market,34.24,357452925.0
+2004,APP,Appalachia Total,TOT,Total,34.42,386839824.0
+2004,APS,Appalachia Southern,OM,Open Market,41.73,21435944.0
+2004,APS,Appalachia Southern,TOT,Total,41.73,21435944.0
+2004,CO,Colorado,OM,Open Market,18.1,
+2004,EMR,East of Mississippi River,CAP,Captive,35.29,32500741.0
+2004,EMR,East of Mississippi River,OM,Open Market,32.14,448704195.0
+2004,EMR,East of Mississippi River,TOT,Total,32.35,481204936.0
+2004,ENC,East North Central,CAP,Captive,21.32,3512984.0
+2004,ENC,East North Central,OM,Open Market,24.32,86190235.0
+2004,ENC,East North Central,TOT,Total,24.2,89703219.0
+2004,ESC,East South Central,CAP,Captive,29.06,4887857.0
+2004,ESC,East South Central,OM,Open Market,33.75,137279886.0
+2004,ESC,East South Central,TOT,Total,33.58,142167743.0
+2004,EST,East Total,CAP,Captive,38.85,12752560.0
+2004,EST,East Total,OM,Open Market,32.73,83891701.0
+2004,EST,East Total,TOT,Total,33.54,96644261.0
+2004,IL,Illinois,OM,Open Market,25.72,32181337.0
+2004,IL,Illinois,TOT,Total,25.72,32181337.0
+2004,ILL,Illinois Basin,CAP,Captive,23.44,3113842.0
+2004,ILL,Illinois Basin,OM,Open Market,24.25,87679252.0
+2004,ILL,Illinois Basin,TOT,Total,24.23,90793094.0
+2004,IN,Indiana,CAP,Captive,22.75,2283202.0
+2004,IN,Indiana,OM,Open Market,23.27,32699919.0
+2004,IN,Indiana,TOT,Total,23.24,34983121.0
+2004,INO,Other Interior,CAP,Captive,13.6,34965722.0
+2004,INO,Other Interior,OM,Open Market,17.39,21168934.0
+2004,INO,Other Interior,TOT,Total,15.03,56134656.0
+2004,INT,Interior Region Total,CAP,Captive,14.41,38079564.0
+2004,INT,Interior Region Total,OM,Open Market,22.92,108848186.0
+2004,INT,Interior Region Total,TOT,Total,20.71,146927750.0
+2004,KY,Kentucky,CAP,Captive,29.06,4887857.0
+2004,KY,Kentucky,OM,Open Market,32.74,109474061.0
+2004,KY,Kentucky,TOT,Total,32.59,114361918.0
+2004,KYE,Kentucky (East),OM,Open Market,35.15,
+2004,KYW,Kentucky (West),OM,Open Market,23.6,
+2004,MAT,Middle Atlantic,CAP,Captive,30.3,3021621.0
+2004,MAT,Middle Atlantic,OM,Open Market,30.77,62685613.0
+2004,MAT,Middle Atlantic,TOT,Total,30.75,65707234.0
+2004,MD,Maryland,OM,Open Market,24.58,
+2004,MID,Midwest Total,CAP,Captive,13.81,7676301.0
+2004,MID,Midwest Total,OM,Open Market,20.99,112662779.0
+2004,MID,Midwest Total,TOT,Total,20.53,120339080.0
+2004,MT,Montana,OM,Open Market,10.09,
+2004,MTN,Mountain,CAP,Captive,15.53,25093565.0
+2004,MTN,Mountain,OM,Open Market,9.83,513181491.0
+2004,MTN,Mountain,TOT,Total,10.09,538275056.0
+2004,ND,North Dakota,TOT,Total,9.37,29985464.0
+2004,NM,New Mexico,OM,Open Market,24.09,27017288.0
+2004,NM,New Mexico,TOT,Total,24.09,27017288.0
+2004,OH,Ohio,OM,Open Market,23.82,21308979.0
