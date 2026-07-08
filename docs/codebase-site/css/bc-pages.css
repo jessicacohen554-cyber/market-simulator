@@ -577,6 +577,35 @@ canvas.heat {
   background: linear-gradient(90deg, #e8f3f7, #7fc4e6, #86c98f, #f2d65c, #ef8f3c, #c0392b);
 }
 
+/* Diverging ramp for the LMP delta heatmap: blue (model under) -> white
+   (on top) -> orange (model over). Mirrors lmpDeltaColorRGB() endpoints. */
+.delta-ramp {
+  height: 11px;
+  width: 150px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #2166ac, #86a9d4, #ffffff, #f0b27a, #e67e22);
+  border: 1px solid var(--border-light);
+}
+
+/* Keeper badge — small pill flagging the designated keeper run in the run
+   list, the report header, and the delta-heatmap panel title. */
+.keeper-badge {
+  display: inline-block;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--positive, #16A34A);
+  border-radius: 999px;
+  padding: 1px 7px;
+  margin-left: 6px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.run-opt.is-keeper .run-label { font-weight: 600; }
+
 /* ---------------------------------------------------------------------------
    10. Narration
    --------------------------------------------------------------------------- */
