@@ -8009,3 +8009,53 @@ accurate), `status.js` rebuilt to reflect ercot46's live C1-C8 verdicts
 **Holdouts.** No solve, score, or intake touched 2022/H1-2026 (rule 22); all
 three years in one bundle per arm (rule 16); years solved sequentially, arms
 serial (rule 12 / OOM guardrail); ORDC tariff parameters untouched (rule 26).
+
+## 2026-07-08 — ERCOT coal summer-derate / peaking-tranche investigation: BOTH levers dead ends (lever B data-refuted, lever C inert); rule-26 coal-knob cleanup
+
+**Task.** Diagnose the persistent COAL_PRB over-run (+3.17→+3.52 TWh/yr, 2023-25,
+unmoved by the `ercot46` clock/ST_GAS round) and the under-scarce C3c tail (2023
+model 104 h >$200 vs 311 actual). Owner hypothesis: coal too easy to run flat-out
+in summer via (a) no coal summer ambient derate and/or (b) the flat/inverted CAMPD
+coal offer tranches (peaking 1.05× < committed 1.15×).
+
+**Lever B (coal summer capacity derate) — DATA-REFUTED (rule 11).** Per-plant CAMPD
+daily-max CF (p99, `scripts/derive_coal_max_cf.py` method, split Jun-Sep vs
+shoulder) shows **no summer output depression** for any of the 10 ERCOT coal
+plants — summer p99 ≈ or exceeds shoulder p99 (W A Parish 1.51/1.37, Limestone
+0.95/0.88, all others flat). The cooling-water/condenser-backpressure derate leaves
+no CEMS signature, so a summer derate has no admissible forward driver. The lone
+existing `COAL_SUMMER_MAX_CF={7030:0.87}` (fleet.py) is itself contradicted by
+7030's own record (summer p99 0.997) — an ungrounded magic number flagged for
+removal (not touched this round to avoid a keeper-affecting solve without GO).
+
+**Lever C (coal peaking tranche → measured DAM) — VERIFIED INERT.** Probe
+`ercot47 coalpeak-dam` (registry `2026-07-08-ercot47-coalpeak-dam-probe`) raised
+coal CAMPD `HR_Mult_Peaking` from the flat 1.05× to the measured 60-day-DAM
+peak_body_p50 (COAL_PRB 2.279× / COAL_LIGNITE 3.341×, `derive_dam_offer_hrmults.py`).
+Byte-identical to the `ercot46` keeper control (`ercot_coalpeakA_control`) across all
+3 years — same coal TWh, scarcity tail, LMP, `system.parquet` md5. The coal-peak MC
+delta is +$25/MWh (passthrough=1.0) and the peak tranche is genuinely marginal
+(dispatches 70-94% of cap, partial-loaded), so a correct LP *should* move — it does
+not because **the CSV `HR_Mult_Peaking` does not reach the ERCOT coal dispatch
+offer**: coal's marginal cost is set by the supply/take-or-pay/passthrough-sigmoid
+stack on base HR, not the tranche multiplier. Verified across 4 solves incl. a
+cache-proof run with the fleet built directly from the probe CSV on a distinct path
+(all caches cleared). So finding #2's "peaking inversion" is **cosmetic** and lever C
+is inert by construction.
+
+**Real over-run driver (unchanged conclusion).** Coal's flat *economic-band* offer
+(measured DAM rises econ_low 1.04 → econ_high 1.93 → peak 2.28 for PRB) — the filed
+condition-responsive measured offer surface (G-22 §8 / ercot37) — and it first
+requires fixing the coal-offer/CSV decoupling so the multipliers reach the LP. Not a
+static-mechanism round; no build promoted.
+
+**Rule-26 cleanup.** Deleted the three never-wired coal Tier-3 knobs
+(`coal_peak_hr_penalty`, `coal_committed_hr_mult`, `coal_econ_hr_mult`) — consumed by
+no solve path (CAMPD reads the CSV; legacy `split_coal_tranches` leaves heat_rate
+unchanged). `render_calibration_html` now filters `run_config` keys to the current
+ScenarioConfig schema so historical coal-knob bundles keep rendering. 249 config/
+golden tests pass.
+
+**Holdouts.** No solve/score/intake outside 2023-2025 (rule 22); ORDC tariff
+parameters untouched (rule 26); price/LMP columns never entered any derivation
+(validation only). Probe payload carries the new `lmpDeltaHr` heatmap field.
