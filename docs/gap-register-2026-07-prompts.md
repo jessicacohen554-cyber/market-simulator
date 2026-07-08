@@ -11,10 +11,11 @@ self-contained: drop it into a fresh Claude Code session on this repo.
 
 ## Disposition ledger
 
+**CLOSED — G-16 NEISO ST_GAS C7 (was L-4):** NEISO is calibration-COMPLETE and C7 was an
+accepted ledgered caveat at completion; `neiso-54-steamgas-ct` (#1743, 2026-07-08) then landed
+the CT evening-ramp RA + ST_GAS Component-B reliability drag. Closed — not reopening.
+
 **DESCOPED per owner 2026-07-08 — do not pursue:**
-- **L-4 NEISO ST_GAS C7 (G-16)** — NEISO is calibration-COMPLETE; C7 is an accepted ledgered
-  caveat, not a blocker. (A separate session did land a NEISO ST_GAS/CT drag anyway, keeper
-  now `neiso-54-steamgas-ct`, #1743 — out of our scope; leave it.)
 - **L-5 NYISO downstate tail (G-20c)** — NYISO keeper stands; the deep 2024/25 tail residual is
   #1344 (data-blocked). Leave it.
 - **L-2 ERCOT storage energy-vs-AS (G-37)** — the mechanism IS built and shipped:
@@ -33,7 +34,9 @@ canonical-install + rule-16 caveat), G-26 #1349 (dead code deleted), G-41 code+d
   landed (PRs #1733/#1735). The core CAISO backcast-calibration gap is being worked now.
 - **PJM ST_GAS volume driver (G-21/#1483)** — overnight pre-positioning drag + CC_CHP SRMC
   re-grounding LANDED: `pjm-90-cchp-srmc` promoted to the PJM keeper (#1744, 2026-07-08). The
-  PJM ST_GAS/SRMC calibration leg is now settled.
+  ST_GAS/SRMC *leg* settled, but PJM overall still scores **NOT-YET** (rubric 2.2): C1 fuel-mix
+  and C3c price-tail/scarcity both FAIL — C3c is the G-20b opportunity-cost reserve magnitude
+  (owner decision below), C1 is the coal-vs-gas volume trade-off the SRMC re-grounding introduced.
 - **ERCOT price-shape / clock (G-22)** — clock-unification round settled into the `ercot46`
   keeper (PR #1740); the offer-surface leg lives here.
 
@@ -221,7 +224,8 @@ of the current keeper.
 
 *Verified 2026-07-08 against `origin/main` HEAD via five read-only code/artifact audits, then
 refocused per owner directive (same day) onto the four unfinished ISOs — MISO/CAISO/PJM/ERCOT.
-Descoped: NEISO (complete), NYISO (keeper stands), G-37 (mechanism shipped default-off). The
-four ISOs' live backcast calibration is mostly in-flight (CAISO belly, PJM ST_GAS/SRMC now
-landed in pjm-90) or data-blocked (MISO); the lanes above are the free forecast/audit/hygiene
-work. The board churns hourly — each session re-verifies keepers.json + rebases before solving.*
+Closed: G-16 (NEISO complete, neiso-54 landed). Descoped: NYISO (keeper stands), G-37 (mechanism
+shipped default-off). PJM keeper pjm-90 scores NOT-YET (C1 fuel-mix + C3c scarcity). The four
+ISOs' live backcast calibration is mostly in-flight (CAISO belly, PJM ST_GAS/SRMC) or
+data-blocked (MISO); the lanes above are the free forecast/audit/hygiene work. The board churns
+hourly — each session re-verifies keepers.json + rebases before solving.*
