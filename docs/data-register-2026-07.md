@@ -47,6 +47,7 @@ from the year grid.
 | 27 | ERCOT NP4-732/737 HSL (High Sustained Limit) wind/solar | ERCOT (2024/2025 uploads); 2023 via UMass 60-Day-SCED reconstruction (no ERCOT upload exists for 2023) | Uncurtailed renewable potential; curtailment calibration | `data/raw/ercot-hsl/ercot_<year>_hsl_hourly.parquet`, `np6/<year>/` | Backcast-only |
 | 28 | CAISO delivered generation + reported curtailment | CAISO Production-and-Curtailment workbooks | Same HSL-analogue construction for CAISO | `data/raw/caiso-hsl/`, `data/raw/caiso-curtailment/` | Backcast-only |
 | 29 | MISO wind-shape reanalysis | NASA POWER MERRA-2 wind speed, reconciled to EIA-930 MISO total | MISO wind diurnal/seasonal shape | `data/raw/miso-wind-shape/` | Both (shape reused; level always measured) |
+| 29b | MISO wind curtailment (annual/quarterly aggregate, added 2026-07-08) | Potomac Economics (MISO IMM) State of the Market + IMM Quarterly reports | Coarse HSL-analogue input (MISO's own curtailment reports stay allowlist-blocked); not yet an hourly series | `data/raw/miso-hsl/miso_wind_curtailment_annual.csv`, `miso_wind_curtailment_quarterly*.csv` | Backcast-only |
 | 30 | ERCOT 60-Day DAM cleared Ancillary Services | ERCOT | Measured hourly reserve-withholding MW (system + per-class) | `data/raw/ercot-AS/` | Backcast-only |
 | 31 | PJM Ancillary Services (RT Primary Reserve) | PJM | Measured reserve-withholding MW, gas+oil pool | `data/raw/PJM-AS/` | Backcast-only |
 | 32 | MISO Ancillary Services market data | MISO | Measured AS clearing | `data/raw/MISO-AS/` | Backcast-only |
@@ -148,12 +149,20 @@ has been separately authorized — currently ERCOT, PJM, and (as of 2026-07-07) 
 | ERCOT HSL | — | ✓ (3rd-party UMass reconstruction, no ERCOT upload exists) | ✓ | ✓ | — |
 | ERCOT NP6 monthly source archives | — | — | ✓ (near-complete monthly) | ✓ (near-complete monthly) | — |
 | CAISO HSL / curtailment workbooks | — | ✓ | ✓ | ✓ | — |
-| NYISO / MISO HSL | — | — | — | — | — |
+| NYISO HSL | — | — | — | — | — |
+| MISO HSL (hourly) | — | — | — | — | — |
+| MISO wind curtailment (annual/quarterly aggregate) | ✓ (2021-2022 only) | ✓ | ✓ | ✓ | ✓ (Q1 only) |
 | MISO wind-shape (reanalysis) | — | ✓ | ✓ | ✓ | — |
 
-NYISO/MISO HSL directories are empty (documented `DATA NEEDED`: NYISO only publishes a coarse
-annual curtailment aggregate; MISO's curtailment reports are blocked by this environment's network
-allowlist).
+NYISO HSL directory is empty (documented `DATA NEEDED`: NYISO only publishes a coarse annual
+curtailment aggregate). MISO's own curtailment reports (misoenergy.org) remain blocked by this
+environment's network allowlist, but `data/raw/miso-hsl/` was populated 2026-07-08 from a reachable
+alternate source — Potomac Economics' (MISO's Independent Market Monitor) State of the Market and
+IMM Quarterly reports, which quantify system-wide wind curtailment as annual/quarterly average and
+peak MW (2021 onward; 2018-2020 reports don't quantify it at all). This is still coarser than an
+hourly series, so `miso_<year>_hsl_hourly.parquet` is not yet built and the loader still falls back
+to EIA-930 delivered generation; see `data/raw/miso-hsl/SOURCES.md` for the transcribed figures and
+provenance.
 
 ### Ancillary services / reserves
 
