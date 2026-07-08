@@ -312,6 +312,7 @@ def _lookahead_reprice_signal(
     mc_cost: np.ndarray,
     result,
     n_zones: int,
+    demand_next_total: np.ndarray | None = None,
 ) -> np.ndarray:
     """Stack re-price of the entering year's known net load (plan §2.3.2).
 
@@ -325,11 +326,23 @@ def _lookahead_reprice_signal(
     capacity screens via ``prior_results.price_signal`` — never dispatch,
     results, or the backcast (backcast mode has no capacity evolution).
 
+    ``demand_next_total`` overrides the entering-year total demand ``(T,)``.
+    A **capacity hindcast** (plan §1.3) dispatches the *realized* per-year
+    demand with no growth scaling (``run_scenario_iso`` line ~872), so the
+    "known" entering-year net load must be that same realized next-year load —
+    not ``_scale_demand``'s growth-scaled weather year, which is the forecast
+    path. The caller passes the realized ``load_demand(iso, next_year, ...)``
+    total here; ``None`` (the plain-forecast path) falls back to
+    ``_scale_demand`` unchanged.
+
     Returns:
         ``(n_zones, T)`` system-wide hourly price signal (every zone sees the
         same stack price, matching the screens' system-level use).
     """
-    demand_next = _scale_demand(base_demand, config, next_year).sum(axis=0)  # (T,)
+    if demand_next_total is not None:
+        demand_next = np.asarray(demand_next_total, dtype=float)  # (T,)
+    else:
+        demand_next = _scale_demand(base_demand, config, next_year).sum(axis=0)  # (T,)
     vre = (result.wind_dispatched + result.solar_dispatched).sum(axis=0)  # (T,)
     net_load = demand_next - vre
     # Static merit stack: per-generator time-mean full variable cost against
@@ -1586,27 +1599,62 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # array object — byte-identical). Screens-only: dispatch, results
         # and persisted prices never see it.
         price_signal = econ_prices
+        # The entering year the lookahead re-prices for. A capacity hindcast
+        # (rule 22) may NEVER read a quarantined bridge year's data, so the
+        # look-ahead is suppressed whenever the next year is a bridge year
+        # (2022, 2026) or falls outside this run's own window — the last
+        # solved hindcast year (2025) has no admissible next year to screen
+        # for. A plain forecast is bounded only by the module horizon.
+        next_year = year + 1
+        if config.hindcast:
+            lookahead_next_ok = (
+                next_year <= end_year and next_year not in HINDCAST_BRIDGE_YEARS
+            )
+        else:
+            lookahead_next_ok = year < END_YEAR
         if (
             config.entry_lookahead_reprice
             and config.mode == "forecast"
-            and year < END_YEAR
+            and lookahead_next_ok
         ):
+            # Hindcast: the KNOWN entering-year load is the realized next-year
+            # demand the LP will actually dispatch (line ~872), not a growth-
+            # scaled weather year. Forecast: None → _scale_demand fallback.
+            demand_next_total = None
+            if config.hindcast:
+                _dn = load_demand(
+                    iso,
+                    next_year,
+                    iso_config,
+                    td_loss_factor=config.td_loss_factor,
+                    include_interchange=not import_generators,
+                    strict_demand_profile=config.strict_demand_profile,
+                )
+                if config.hours < _dn.shape[1]:
+                    _dn = _dn[:, : config.hours]
+                demand_next_total = _dn.sum(axis=0)
             price_signal = _lookahead_reprice_signal(
                 config,
-                year + 1,
+                next_year,
                 base_demand,
                 fleet_arrays,
                 mc_cost,
                 result,
                 len(zone_names),
+                demand_next_total=demand_next_total,
             )
+            _ps_h = price_signal[0]  # system row; every zone identical
             logger.info(
                 "year %d: lookahead stack re-price for %d capacity screens — "
-                "mean $%.2f/MWh (raw duals+overlay mean $%.2f)",
+                "mean $%.2f/MWh (raw duals+overlay mean $%.2f); "
+                "pro-forma scarcity >$200 in %d h, >$1000 in %d h, max $%.0f",
                 year,
-                year + 1,
+                next_year,
                 float(price_signal.mean()),
                 float(econ_prices.mean()),
+                int((_ps_h > 200).sum()),
+                int((_ps_h > 1000).sum()),
+                float(_ps_h.max()),
             )
         price_signal = _blend_price_signal(
             price_signal, price_signal_prev, float(config.entry_price_signal_alpha)
