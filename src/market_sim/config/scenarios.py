@@ -25,6 +25,12 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "end_year",
     "hindcast",
     "hindcast_fuel_variant",
+    # G-30 first-wave probes (default-off): dropped from the hash at default so
+    # every pre-existing cached run keeps its key; a non-default value enters
+    # the key (a distinct scenario).
+    "staged_oversupply_thinning",
+    "staged_thinning_max_gw_per_year",
+    "limited_foresight_dispatch",
 )
 
 
@@ -256,6 +262,42 @@ class ScenarioConfig:
     retirement_fom_multiplier_oil: float = 1.0
     retirement_fom_multiplier_gas_cc_ccs: float = 1.0
     retirement_fom_multiplier_nuclear: float = 1.0
+    staged_oversupply_thinning: bool = False  # GATED, default-OFF (G-30
+    # first-wave fix). When True, the economic-retirement screen may retire at
+    # most ``staged_thinning_max_gw_per_year`` GW **per fuel class per year** —
+    # the least-efficient (highest-heat-rate) eligible units go first, the rest
+    # carry their loss counter forward and are re-screened next year. This is a
+    # RATE cap on exits, not a price floor/adder: it does not change any unit's
+    # margin or the retire/keep decision, only how many exits of one fuel class
+    # a single simulation year may realize. Structural driver: a fleet does not
+    # deactivate 14 GW of one fuel in one calendar year — RTO deactivation-notice
+    # periods (ERCOT §3.14 / PJM ~90-day + RMR study), decommissioning lead time,
+    # and coal rail/take-or-pay wind-down stage large exits over multiple years.
+    # Forward analogue (rule 13): any forecast year's economic exits are throttled
+    # by the same physical lead time, and a genuinely over-supplied fleet still
+    # exits fully — just spread across years. The point (G-30 first-wave problem):
+    # spreading the exits gives a year whose fleet has thinned enough for the LP
+    # regime (the in-year ORDC overlay / lookahead pro-forma) to price scarcity
+    # and RETAIN the marginal survivor — the retention decision stays the LP's,
+    # never this cap's. Mirrors ccs_retrofit_max_gw_per_year's throughput logic.
+    staged_thinning_max_gw_per_year: float = 3.0  # GW/yr/fuel-class exit budget
+    # when staged_oversupply_thinning is on. 3.0 GW ≈ the largest single-year
+    # ERCOT coal-deactivation wave observed historically (two ~1.5 GW plants);
+    # it is a lead-time ceiling, never fitted to a retirement residual. Ignored
+    # when staged_oversupply_thinning is off (default).
+    limited_foresight_dispatch: bool = False  # GATED, default-OFF (G-30 in-year
+    # scarcity fix). When True, the in-year dispatch LP is denied perfect annual
+    # foresight for flexible resources: storage/hydro cannot bank energy across
+    # days to shave the annual net-load peak (bounds storage SOC to a within-day
+    # cycle, same machinery as storage_daily_cycling). A real day-ahead/real-time
+    # operator has no annual lookahead either, so the perfect-foresight single-LP
+    # flattens the net-load duration curve more than the actual market can — which
+    # is exactly why the over-supplied-fleet ORDC overlay stays inert (reserves
+    # never tighten). With foresight bounded, the peak/net-load-ramp hours the
+    # storage fleet can no longer pre-empt let the in-year ORDC overlay price
+    # scarcity from the LP regime once the fleet has thinned (pairs with
+    # staged_oversupply_thinning). Dispatch-side structural change, zero fitted
+    # parameters; volumes still solve on the LP, the overlay reads its duals.
     # (retirement_reserve_margin was DELETED, not zeroed — rule 26. The
     # retirement reliability floor now shares the adequacy backstop's margin:
     # constants.PLANNING_RESERVE_MARGIN_BY_ISO, overridable only through
