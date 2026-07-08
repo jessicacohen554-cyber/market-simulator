@@ -11,5 +11,7 @@
   ],
   "iso": "PJM",
   "file": "frontend/data/backcast/runs/2026-07-08-pjm-90-cchp-srmc.js",
-  "bundle": "results/calibration/pjm90_cchp_srmc"
+  "bundle": "results/calibration/pjm90_cchp_srmc",
+  "ablation_twin": "2026-07-08-pjm-90-cchp-ablation",
+  "market_story": "ST_GAS +0.05/0.22 TWh (2024/25): the overnight [0,6] drag is RUC-style reliability commitment holding legacy gas-steam boilers warm at min-load on extreme-temperature / high-net-load days (PJM commits these out-of-merit for local/system reliability) \u2014 a thin scaffolding the LP dispatches above, not a volume driver. CT_PEAKER -0.4/-1.1 TWh: the ct_netload_drag holds fast-start peakers in the evening net-load ramp, but with all floors removed the ablation lets CT clear the freed cheap energy economically, so the net cross-class delta is merit-order redistribution, not a CT-specific forced buy. CC_CHP/CT_CHP/COAL deltas <0.15 TWh \u2014 the offer/HR/outage corrections move level via price, not forcing."
 }
