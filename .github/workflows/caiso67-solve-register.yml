@@ -79,24 +79,8 @@ jobs:
           set -euo pipefail
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
-          # Never commit the deploy-owned shared data files.
-          git checkout -- frontend/data/backcast/manifest.js \
-                          frontend/data/backcast/benchmark.js 2>/dev/null || true
-          # Move the branch pointer to main; keep all working-tree changes.
+          git checkout -- frontend/data/backcast/manifest.js frontend/data/backcast/benchmark.js 2>/dev/null || true
           git reset --mixed origin/main
-          git add \
-            "frontend/data/backcast/registry/${RID}.json" \
-            "frontend/data/backcast/runs/${RID}.js" \
-            frontend/data/backcast/bench \
-            results/calibration/caiso67_zonalgas_asympaths/meta.json \
-            results/calibration/caiso67_zonalgas_asympaths/run_config.json \
-            results/calibration/caiso67_zonalgas_asympaths/metrics.json \
-            results/calibration/caiso67_zonalgas_asympaths/legitimacy_diagnostics.json
-          git commit -m "results: register caiso-67 zonalgas+asympaths PROBE on the backcast dashboard [skip ci]
-
-Registry sidecar + run payload + slim bundle for the make-the-3-zones-real
-A/B (measured PG&E/SoCal zonal gas basis + WECC directional Path 15/26
-ratings). PROBE; CAISO keeper stays caiso65-seam-envelope-clock.
-
-Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>"
+          git add "frontend/data/backcast/registry/${RID}.json" "frontend/data/backcast/runs/${RID}.js" frontend/data/backcast/bench results/calibration/caiso67_zonalgas_asympaths/meta.json results/calibration/caiso67_zonalgas_asympaths/run_config.json results/calibration/caiso67_zonalgas_asympaths/metrics.json results/calibration/caiso67_zonalgas_asympaths/legitimacy_diagnostics.json
+          git commit -m "results: register caiso-67 zonalgas+asympaths PROBE on the backcast dashboard (measured PG&E/SoCal zonal gas + WECC directional Path 15/26; keeper stays caiso65) [skip ci]"
           git push --force origin HEAD:claude/caiso67-register
