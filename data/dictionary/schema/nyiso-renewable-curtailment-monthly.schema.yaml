@@ -1,0 +1,75 @@
+# Canonical schema: NYISO monthly renewable curtailment (coarse aggregate)
+#
+# Monthly companion to nyiso-renewable-curtailment: NYCA-wide monthly percent
+# of wind production curtailed, and zonal (West/Central/North/Mohawk Valley)
+# monthly curtailed energy in GWh, both hand-transcribed from NYISO's annual
+# "NYCA Renewables" presentation series. See
+# data/raw/nyiso-renewable-curtailment/README.md for source decks and the
+# documented year gaps (no 2024 or pre-2020 zonal/monthly breakdown found).
+#
+# One row per (resource_type, geographic_scope, year, month). NYCA rows carry
+# curtailed_pct only (percent of that month's production); zonal rows carry
+# curtailed_energy_gwh only (NYISO doesn't print a zonal monthly percent).
+#
+# Curated by scripts/curate_nyiso_renewable_curtailment.py from
+#   data/raw/nyiso-renewable-curtailment/nyiso_curtailment_monthly.csv
+datatype: nyiso-renewable-curtailment-monthly
+schema_version: 1
+title: NYISO monthly renewable curtailment (coarse NYCA/zonal aggregate)
+description: >-
+  NYISO's published monthly wind curtailment aggregate — NYCA-wide percent of
+  production (all years found) and zonal curtailed GWh (years with a zonal
+  breakdown published) — hand-transcribed from the NYCA Renewables
+  presentation series.
+
+key_columns: [iso, resource_type, geographic_scope, year, month]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (NYISO).
+  - name: resource_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: Curtailed resource type (wind is the only one with monthly data published).
+  - name: geographic_scope
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      NYCA (system-wide) or one of NYISO's curtailment-reporting zones (WEST,
+      CENTRAL, NORTH, MOHAWK_VALLEY).
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year.
+  - name: month
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar month (1-12).
+  - name: curtailed_energy_gwh
+    dtype: float64
+    unit: gwh
+    nullable: true
+    description: Zonal monthly estimated curtailed energy, in GWh. Null for NYCA-wide rows.
+  - name: curtailed_pct
+    dtype: float64
+    unit: percent
+    nullable: true
+    description: NYCA-wide percent of that month's wind production curtailed. Null for zonal rows.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: Source presentation filename (see raw README for the exact URL).
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Slide/page number(s) within source_doc the value was read from.
