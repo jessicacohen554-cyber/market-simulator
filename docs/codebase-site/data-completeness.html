@@ -99,7 +99,7 @@
           {
             "name": "Daily zone temperature — H1 2026 + backward extension",
             "reg": "#41",
-            "need": "All 6 ISOs. On disk spans exactly 2023-01-01→2025-12-31; no 2026, no 2022, no pre-2023. The single gap common to every ISO — a hard floor under any holdout-year backcast.",
+            "need": "GATHERED (2026-07-08). All 6 ISOs now covered 2018–H1 2026 via backfill supplement files (per-quarter/half-year CSVs) plus 2026 vintage files. Base CSVs still span 2023-01-01→2025-12-31; supplement files extend coverage backward to 2018-01-01 and forward through 2026-06-30. Remaining step is loader integration (merge supplements into the loader path or extend base CSVs), not a gathering task.",
             "source": "NOAA / NASA-derived daily TMAX/TMIN → data/raw/<iso>-weather/",
             "gate": "structural",
             "pri": "high"
@@ -107,15 +107,15 @@
           {
             "name": "NYISO renewable HSL / curtailment",
             "reg": "#27-analogue",
-            "need": "NYISO 2023–2025. Directory absent; NYISO only publishes a coarse annual curtailment aggregate, so an HSL-analogue must be constructed. Marked DATA NEEDED.",
-            "source": "NYISO (annual curtailment product) → data/raw/nyiso-hsl/",
+            "need": "NYISO 2023–2025. On disk: annual + monthly aggregates in nyiso-renewable-curtailment/. NYISO only publishes coarse curtailment aggregates, so an hourly HSL-analogue must be constructed from the aggregate plus capacity-factor profiles. No additional raw data is fetchable — remaining work is a build/derivation step.",
+            "source": "NYISO (annual curtailment product) → data/raw/nyiso-renewable-curtailment/",
             "gate": "structural",
             "pri": "med"
           },
           {
             "name": "MISO renewable HSL / curtailment",
             "reg": "#27-analogue / #29b",
-            "need": "2026-07-08: MISO's own curtailment reports are still blocked, but annual (2021-2025) and quarterly (2023-Spring 2026) system-wide wind curtailment MW was collected from Potomac Economics' (MISO IMM) public reports. Still only an annual/quarterly aggregate, not an hourly series — building miso_<year>_hsl_hourly.parquet is the remaining step.",
+            "need": "Partially gathered (2026-07-08). Annual (2021–2025) and quarterly (2023–Spring 2026) system-wide wind curtailment MW collected from Potomac Economics (MISO IMM) public reports → miso-hsl/. Still only aggregate, not hourly — building miso_<year>_hsl_hourly.parquet from the aggregate + wind shape is the remaining derivation step, not a fetch.",
             "source": "Potomac Economics MISO SOM + IMM Quarterly reports → data/raw/miso-hsl/ (see SOURCES.md)",
             "gate": "structural",
             "pri": "low"
@@ -123,7 +123,7 @@
           {
             "name": "NYISO measured hourly locational reserve requirements",
             "reg": "#34",
-            "need": "NYISO 2023–2025. NYISO-AS/requirements/ directory is absent (only DA/RT clearing present). Replaces the published static reserve requirement in the co-opt.",
+            "need": "NYISO 2023–2025. NYISO-AS/requirements/ directory is absent (only DA/RT clearing CSVs present). The as-enforced hourly locational reserve requirement series replaces the published static reserve requirement in the co-opt. Must be fetched from NYISO OASIS (RTD/RTC operating reserve requirement reports).",
             "source": "NYISO OASIS RTD/RTC as-enforced series → data/raw/NYISO-AS/requirements/",
             "gate": "structural",
             "pri": "med"
@@ -131,7 +131,7 @@
           {
             "name": "ERCOT NP6-86 raw monthly binding-constraint (GTC) ZIPs",
             "reg": "#35",
-            "need": "ERCOT 2020–2025. Derived GTC parquets are on disk, but the raw monthly source ZIPs were not re-committed after a prior fetch (README flagged DATA NEEDED). Re-fetch to make the derivation reproducible.",
+            "need": "ERCOT 2020–2025. Derived GTC parquets (SCEDBTCNP686_*.parquet) are on disk in iso-specific-transmission/, but the raw monthly source ZIPs were not re-committed after a prior fetch (README flagged DATA NEEDED). Re-fetch to make the derivation reproducible.",
             "source": "ERCOT MIS (SCEDBTCNP686) → data/raw/iso-specific-transmission/",
             "gate": "structural",
             "pri": "low"
@@ -139,7 +139,7 @@
           {
             "name": "EIA-923 raw Form-923 workbooks (2018–2021)",
             "reg": "#13 / #14",
-            "need": "2018–2021 delivered fuel cost + monthly net generation. Raw F923 workbooks for these years are not on disk; the EIA archive URL is not reachable through this environment's proxy.",
+            "need": "2018–2021 delivered fuel cost + monthly net generation. Raw F923 workbooks for these years are not on disk (only processed-legacy parquets exist: eia923_monthly_fuel_costs.parquet, eia923_monthly_generation.parquet). The EIA archive URL is not reachable through this environment's proxy — fetch from an unrestricted session.",
             "source": "EIA Form 923 annual archive → data/raw/_processed-legacy/",
             "gate": "pre-2020",
             "pri": "low"
@@ -149,12 +149,12 @@
       {
         "id": "v2022",
         "title": "2022 validation holdout — per-ISO intake",
-        "sub": "2022 is the validation-tier holdout. ERCOT, PJM and (CAMPD-only) NEISO are already intaked; CAISO, MISO and NYISO are not. Each row needs its own owner authorization and no-LP (byte-identity) validation before it may be solved.",
+        "sub": "2022 is the validation-tier holdout. ERCOT, PJM and (CAMPD-only) NEISO are already intaked; CAISO, MISO and NYISO are not. Each row needs its own owner authorization and no-LP (byte-identity) validation before it may be solved. Weather for all ISOs has landed via backfill supplements (2026-07-08).",
         "items": [
           {
             "name": "CAISO 2022 — full stack",
             "reg": "#1,4,2,21,37,40,41",
-            "need": "CAMPD unit-level (CA), TAC zonal load, CAISO zonal gas hub, WECC intertie LMP, LMP validation, weather. (EIA-930 fuel-mix + demand landed 2026-07-08.)",
+            "need": "Still needed: CAMPD unit-level CA_2022 (absent), TAC zonal load 2022, CAISO citygate gas 2022, WECC intertie LMP, LMP validation. Landed: EIA-930 fueltype+region (CISO_fueltype_2022, CISO_region_2022), weather (caiso_zone_temp_daily_2022.csv).",
             "source": "EPA CAMPD / EIA / CAISO OASIS",
             "gate": "holdout",
             "pri": "med"
@@ -162,7 +162,7 @@
           {
             "name": "MISO 2022 — full stack",
             "reg": "#1,4,2,20,38,40,41",
-            "need": "Own-state CAMPD (present 2022 rows are only PJM/ERCOT state overlap), sub-BA demand, MISO zonal gas hub, MISO↔PJM border LMP, LMP validation, weather. (EIA-930 fuel-mix + demand landed 2026-07-08 via the long-form API pull — the BALANCE-archive product remains degenerate at 7 hrs, but is no longer the only source.)",
+            "need": "Still needed: own-state CAMPD (IA/MN/WI/MO/AR/LA/MS/ND/SD/MT — 2022 rows are PJM/ERCOT overlap only: IL/IN/MI/etc.), sub-BA demand 2022, MISO zonal gas hub 2022, MISO↔PJM border LMP, LMP validation. Landed: EIA-930 fueltype+region (MISO_fueltype_2022, MISO_region_2022), weather (miso_zone_temp_daily_2022q1-q4.csv).",
             "source": "EPA CAMPD / EIA / MISO / PJM DataMiner",
             "gate": "holdout",
             "pri": "med"
@@ -170,7 +170,7 @@
           {
             "name": "NYISO 2022 — full stack",
             "reg": "#1,4,2,21,40,41",
-            "need": "CAMPD NY units (only NJ present for 2022), per-year zonal load, NYISO zonal gas hub, DART LMP validation, weather. (NYISO raw monthly 'pal' load archive already reaches 2022.)",
+            "need": "Still needed: CAMPD NY_2022 (absent — only NJ present for 2022), EIA-930 NYIS fueltype+region 2022 (absent), NYISO zonal gas hub 2022, DART LMP validation. Landed: weather (nyiso_zone_temp_daily_2022h1/h2.csv), NYISO raw monthly PAL load archive reaches 2022.",
             "source": "EPA CAMPD / EIA / NYISO OASIS & MIS",
             "gate": "holdout",
             "pri": "med"
@@ -180,12 +180,12 @@
       {
         "id": "h2026",
         "title": "H1 2026 forward-edge locked test — per-ISO intake",
-        "sub": "H1 2026 is the touch-once forward-edge locked test. ERCOT and PJM lead; CAISO and MISO EIA-930 caught up 2026-07-08, but still have essentially nothing else past 2025-12-31. Intake is authorization-gated and validated no-LP only; a backcast solve of H1 2026 stays quarantined until the ISO marker exists.",
+        "sub": "H1 2026 is the touch-once forward-edge locked test. ERCOT and PJM lead; CAISO and MISO EIA-930 caught up 2026-07-08. Weather now on disk for all 6 ISOs. Intake is authorization-gated and validated no-LP only; a backcast solve of H1 2026 stays quarantined until the ISO marker exists.",
         "items": [
           {
             "name": "CAISO H1 2026 — full stack",
             "reg": "#1,4,26,41,2",
-            "need": "CAMPD unit-level, CAISO citygate gas, weather, TAC load. (EIA-930 hourly + long-form fuel-mix landed 2026-07-08, thru Jun 30.)",
+            "need": "Still needed: CAMPD CA_2026 (absent), CAISO citygate gas H1 2026, TAC zonal load H1 2026. Landed: EIA-930 (CISO_fueltype_2026, CISO_region_2026, BALANCE_2026_Jan_Jun), weather (caiso_zone_temp_daily_2026.csv).",
             "source": "EIA / EPA CAMPD / CAISO OASIS",
             "gate": "holdout",
             "pri": "low"
@@ -193,23 +193,23 @@
           {
             "name": "MISO H1 2026 — full stack",
             "reg": "#1,4,20,41,2",
-            "need": "Own-state CAMPD, MISO zonal gas, weather, sub-BA demand. (EIA-930 hourly + long-form fuel-mix landed 2026-07-08, thru Jun 30.)",
+            "need": "Still needed: own-state CAMPD (IA/MN/WI/MO/AR/LA/MS/ND/SD/MT — absent for 2026), MISO zonal gas H1 2026, sub-BA demand H1 2026. Landed: EIA-930 (MISO_fueltype_2026, MISO_region_2026, BALANCE_2026_Jan_Jun), weather (miso_zone_temp_daily_2026q1/q2.csv).",
             "source": "EIA / EPA CAMPD / MISO",
             "gate": "holdout",
             "pri": "low"
           },
           {
-            "name": "NEISO H1 2026 — CAMPD unit-level",
+            "name": "NEISO H1 2026 — CAMPD + EIA-930",
             "reg": "#4",
-            "need": "NEISO (ME/NH/MA/CT/RI/VT) CAMPD Q1–Q2 2026. 2022–2025 landed 2026-07-07 but H1 2026 is still absent.",
-            "source": "EPA CAMPD → data/raw/campd-unit-level/",
+            "need": "Still needed: CAMPD (CT/MA/ME/NH/RI/VT)_2026 (all absent — 2022–2025 landed 2026-07-07), EIA-930 ISNE fueltype+region 2026 (absent). Landed: weather (neiso_zone_temp_daily_2026.csv).",
+            "source": "EPA CAMPD / EIA → data/raw/campd-unit-level/ + data/raw/eia-930/",
             "gate": "holdout",
             "pri": "low"
           },
           {
             "name": "ERCOT + PJM H1 2026 — completion",
             "reg": "#4,13,41",
-            "need": "CAMPD is Q1-only (need Q2); EIA-923 early-release is Jan–Apr (need May–Jun); weather 2026 absent. EIA-930 hourly & gas partials already present.",
+            "need": "CAMPD: TX_2026 + most PJM states present (Q1 only — need Q2 when EPA publishes). EIA-923 early-release is Jan–Apr (need May–Jun). Landed: weather 2026 (ercot 2026q1/q2, pjm 2026q1/q2), EIA-930 fueltype+region 2026 for both ISOs.",
             "source": "EPA CAMPD / EIA-923 / NOAA-NASA",
             "gate": "holdout",
             "pri": "low"
@@ -219,12 +219,12 @@
       {
         "id": "pre2020",
         "title": "2019 locked test & pre-2020 validation ladder",
-        "sub": "2019 is the clean-regime locked test; 2018/2020–2021 extend the validation ladder as data lands and is authorized. On-disk coverage before ~2021 is thin outside a few sources, so most of the register is missing here.",
+        "sub": "2019 is the clean-regime locked test; 2018/2020–2021 extend the validation ladder as data lands and is authorized. Weather is now complete for 2018–2022 (all ISOs, via backfill supplements). EIA-930 BALANCE reaches 2018; CAMPD unit-level covers 2018–2021 for all states. Remaining gaps are LMP, AS, HSL, zonal demand, and gas-hub series.",
         "items": [
           {
-            "name": "2018–2020 general — all non-CEMS/non-gas sources",
+            "name": "2018–2020 general — LMP, AS, HSL, zonal demand, gas-hub series",
             "reg": "many",
-            "need": "All ISOs. LMP, AS, HSL/curtailment, zonal demand, weather, zonal gas-hub series, PJM/MISO gen-by-fuel do not reach earlier than ~2020–2021. Exceptions already on disk: CAMPD unit-level (all states 2018–2021), Henry Hub, EIA-930 wide (all six ISOs, as of 2026-07-08 — PJM/CAISO/MISO's 2018 H1 is demand/net-gen/interchange only, no per-fuel split, a real EIA-930 reporting-start gap not a fetch gap).",
+            "need": "All ISOs. Still missing before ~2020–2021: LMP, AS clearing, HSL/curtailment, zonal demand, zonal gas-hub series. Now on disk: CAMPD unit-level (all states 2018–2021), Henry Hub, EIA-930 BALANCE (all six ISOs 2018-onward — PJM/CAISO/MISO 2018 H1 is demand/net-gen/interchange only, no per-fuel split, a real reporting-start gap), weather (all ISOs 2018-onward via backfill supplements).",
             "source": "per register — ISO / EIA / EPA archives",
             "gate": "pre-2020",
             "pri": "low"
@@ -239,15 +239,15 @@
           {
             "name": "EIA-860 fleet vintage — 2026",
             "reg": "ref",
-            "need": "2026 EIA-860 vintage not yet released/on disk (2020, 2023, 2024, 2025 present). Intake when EIA publishes.",
+            "need": "2026 EIA-860 vintage not yet released by EIA. On disk: vintages 2018–2024 (all present, including 2018/2019/2021/2022 which landed 2026-07-08), plus top-level = 2025 Early Release. Intake 2026 when EIA publishes the calendar-2025 annual release.",
             "source": "U.S. EIA-860 → data/raw/eia-860/",
             "gate": "structural",
             "pri": "low"
           },
           {
-            "name": "NERC GADS EFORd benchmarks — 2024+",
+            "name": "NERC GADS EFORd benchmarks — 2025+",
             "reg": "#49",
-            "need": "On disk 2019–2023 only. Extend the class-level forced-outage-rate prior with 2024+ vintages (and 2018 if backfilling the ladder).",
+            "need": "On disk: 2018–2024 (rolling 5-year windows 2018-2022, 2019-2023, 2020-2024 + annual 2018-2024). Need: 2025+ vintages as NERC publishes. The 2024 vintage landed 2026-07-08.",
             "source": "NERC GADS → data/raw/reference/nerc-gads-eford-*",
             "gate": "structural",
             "pri": "low"
@@ -306,7 +306,7 @@
 
       // filters
       filtersEl.innerHTML = FILTERS.map(f =>
-        '<button class="dc-chip'+(f.id===activeFilter?' active':'')+'" data-f="'+f.id+'">'+f.label+'</button>'
+        '<button class="dc-chip'+(f.id===activeFilter?' active':'')+' " data-f="'+f.id+'">'+f.label+'</button>'
       ).join('');
       filtersEl.querySelectorAll('.dc-chip').forEach(b =>
         b.addEventListener('click',()=>{ activeFilter=b.dataset.f; render(); }));
@@ -325,7 +325,7 @@
           '<th>Source &rarr; path</th><th>Reg</th><th>Priority</th><th>Gate</th></tr></thead><tbody>';
         rows.forEach(({it,i})=>{
           const k = keyOf(g.id,i);
-          html += '<tr class="'+(it._done?'done':'')+'">'+
+          html += '<tr class="'+(it._done?'done':'')+'">'+ 
             '<td><input type="checkbox" class="dc-chk" data-k="'+k+'"'+(it._done?' checked':'')+' aria-label="mark gathered"></td>'+
             '<td class="dc-name">'+esc(it.name)+'</td>'+
             '<td class="dc-need">'+esc(it.need)+'</td>'+
@@ -370,9 +370,10 @@
     });
 
     document.getElementById('footNote').innerHTML =
-      'Source of truth: <code>docs/data-register-2026-07.md</code> (data-availability snapshot, 2026-07-08). '+
+      'Source of truth: <code>docs/data-register-2026-07.md</code> (data-availability snapshot, refreshed 2026-07-08). '+
       'Full-coverage sources (Henry Hub, CAMPD unit-level 2018–2021, in-sample AS/LMP/gas/transmission for '+
-      '2023–2025, etc.) are intentionally omitted — this page lists only what is still <b>missing</b>. '+
+      '2023–2025, weather 2018–2026 via backfill supplements, etc.) are intentionally omitted — this page lists only what is still <b>missing</b>. '+
+      'Items marked GATHERED have their raw data on disk; remaining work is loader integration or derivation, not fetching. '+
       'Reg&nbsp;# references the register\'s Part&nbsp;1 dataset numbers. Checkmarks are stored locally in '+
       'your browser only and are not committed.';
 
