@@ -61,15 +61,23 @@ _WEATHER_RAW_ROOT: Path = RAW_DIR
 def _read_zone_temp(path: Path, year: int) -> pd.DataFrame | None:
     """Read a ``date,zone,tmax_c[,tmin_c]`` CSV and return a normalised frame.
 
-    Filters to ``year``, adds ``tmin_c`` (NaN) when absent, gap-fills tmax_c
-    per-zone via ffill/bfill, and returns a ``(date, zone, tmax_c, tmin_c)``
-    DataFrame.  Returns ``None`` when the file is absent or covers no rows for
-    ``year``.
+    Beyond the base ``path``, also reads any year-partitioned supplementary
+    files alongside it (``<stem>_<year|yearQn>.csv``, e.g.
+    ``ercot_zone_temp_daily_2022.csv`` or ``..._2026q1.csv``) so a calendar
+    range can be extended without rewriting the (already-committed) base
+    file's full history. Filters to ``year``, adds ``tmin_c`` (NaN) when
+    absent, gap-fills tmax_c per-zone via ffill/bfill, and returns a
+    ``(date, zone, tmax_c, tmin_c)`` DataFrame. Returns ``None`` when no
+    source file is present or none covers rows for ``year``.
     """
-    if not path.exists():
+    supplements = sorted(path.parent.glob(f"{path.stem}_*.csv"))
+    parts = [p for p in [path, *supplements] if p.exists()]
+    if not parts:
         logger.warning("weather file not found (%s); skipping", path)
         return None
-    df = pd.read_csv(path, parse_dates=["date"])
+    df = pd.concat(
+        (pd.read_csv(p, parse_dates=["date"]) for p in parts), ignore_index=True
+    ).drop_duplicates(subset=["date", "zone"])
     df = df[df["date"].dt.year == year].copy()
     if df.empty:
         logger.warning("%s has no data for %d; skipping", path.name, year)
