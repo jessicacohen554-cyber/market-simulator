@@ -174,9 +174,9 @@ curtailment reports are blocked by this environment's network allowlist).
 
 | Source | 2018-2021 | 2022 | 2023 | 2024 | 2025 | H1 2026 |
 |---|---|---|---|---|---|---|
-| `eia923_monthly_fuel_costs.parquet` / `_generation.parquet` | — (raw F923 workbooks for these years not on disk; EIA archive URL not reachable through this environment's proxy) | ✓ (ERCOT+PJM only) | ✓ | ✓ | ✓ | Jan–Apr (ERCOT+PJM only, "early release" vintage) |
-| Parasitic load factors | — | +ERCOT/PJM (564 rows) | ✓ | ✓ | ✓ | deferred (CAMPD/F923 window mismatch) |
-| Gas/coal take-or-pay derivations | — | — | ✓ | ✓ | ✓ | — |
+| `eia923_monthly_fuel_costs.parquet` / `_generation.parquet` | ✓ (landed 2026-07-08, all 6 ISOs — `f923_2018.zip`…`f923_2021.zip`, merged via `process_f923_fuel_costs.py --merge-years --include-generation`) | ✓ (all 6 ISOs, all 12 months — direct file check 2026-07-08 corrected the prior "ERCOT+PJM only" entry, which was stale) | ✓ | ✓ | ✓ | Jan–Apr (all 6 ISOs — direct file check 2026-07-08 corrected the prior "ERCOT+PJM only" entry; May–Jun genuinely unreleased by EIA yet, not a fetch gap) |
+| Parasitic load factors | source gap closed (F923 2018-2021 above); re-derive (`derive_parasitic_load.py --years 2018 2019 2020 2021`) not yet run — 2018-2021 v2 rows still use the documented pooled-factor fallback | +ERCOT/PJM (564 rows) | ✓ | ✓ | ✓ | deferred (CAMPD/F923 window mismatch) |
+| Gas/coal take-or-pay derivations | — (out of scope for the 2026-07-08 923/860 intake; `derive_coal_takeorpay.py`/`derive_gas_takeorpay.py` per-ISO reruns not done) | — | ✓ | ✓ | ✓ | — |
 
 ### Gas price / basis series
 
@@ -234,8 +234,10 @@ under any holdout-year backcast until it's addressed).
 
 ### Non-calendar reference data (static or forward-only — excluded from the year grid above)
 
-- **EIA-860 fleet snapshots** — vintage releases, not a per-year series: **2020, 2023, 2024, 2025**
-  vintages on disk (no 2018/2019/2021/2022 vintage, no 2026 vintage yet).
+- **EIA-860 fleet snapshots** — vintage releases, not a per-year series: **2018, 2019, 2020, 2021,
+  2022, 2023, 2024, 2025** vintages on disk (2018/2019/2021/2022 landed 2026-07-08, data-register
+  intake — closes the pre-2020 vintage gap; no 2026 vintage yet, since EIA has not published the
+  calendar-2025 annual release).
 - **EPA eGRID** — vintage releases: **2022, 2023, 2024** (2022 is a true 2022-vintage workbook,
   landed 2026-07-04; previously the model stood in the 2024 vintage for 2022).
 - **Confirmed-retirements registry** — forward-looking events (`exit_year >= 2023`); not a
@@ -252,10 +254,12 @@ under any holdout-year backcast until it's addressed).
 ## Headline gaps (2018-2022 / H1-2026 edges)
 
 - **2018-2020, most sources:** on-disk coverage before 2021-2022 is effectively limited to CAMPD
-  unit-level CEMS (all states, 2018-2021), Henry Hub gas prices, and the EIA-930 hourly wide files
-  for ERCOT/NEISO/NYISO only (which happen to reach back to mid-2015). PJM/CAISO/MISO's EIA-930
-  wide files start 2019-01-01. Almost nothing else in the register — LMP, AS, HSL/curtailment, zonal
-  demand, weather, gas-hub series, PJM/MISO gen-by-fuel — reaches earlier than 2020 for any ISO.
+  unit-level CEMS (all states, 2018-2021), Henry Hub gas prices, EIA-923 delivered fuel
+  cost/generation and EIA-860 fleet vintages (all closed 2026-07-08, data-register intake), and the
+  EIA-930 hourly wide files for ERCOT/NEISO/NYISO only (which happen to reach back to mid-2015).
+  PJM/CAISO/MISO's EIA-930 wide files start 2019-01-01. Almost nothing else in the register — LMP,
+  AS, HSL/curtailment, zonal demand, weather, gas-hub series, PJM/MISO gen-by-fuel — reaches earlier
+  than 2020 for any ISO.
 - **2022 (holdout year):** genuinely bifurcated by rule-22 authorization status. ERCOT and PJM
   (and, as of 2026-07-07, NEISO for CAMPD only) have it across most gated datatypes; CAISO, MISO,
   and NYISO do not (MISO/NYISO's apparent 2022 CAMPD coverage is a side effect of state overlap
