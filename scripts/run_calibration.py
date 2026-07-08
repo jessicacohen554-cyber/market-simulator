@@ -77,6 +77,7 @@ from market_sim.data.fleet import (  # noqa: E402
     thermal_tranche_overrides,
 )
 from market_sim.data.fuel import (  # noqa: E402
+    apply_caiso_zonal_gas_basis,
     apply_coal_supply_pricing,
     apply_dual_fuel_pricing,
     apply_ercot_west_netload_gas_shape,
@@ -2232,6 +2233,10 @@ def run_year(
     # MISO per-zone gas basis (north/south gas gradient). Same mean-zero core as
     # PJM. No-op unless miso_zonal_gas_basis is set (MISO only).
     apply_miso_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # CAISO per-zone citygate basis (NP15/ZP26 on PG&E Citygate, SP15 on SoCal
+    # Citygate — measured weekly prints, mean-zero). No-op unless
+    # caiso_zonal_gas_basis is set (CAISO only).
+    apply_caiso_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
     # Net-load-indexed West/Panhandle Waha shape: redistribute the West gas basis
     # across hours (firm at high net-load, collapsed at low) so peakers — which
     # burn only in scarcity hours — see firm Waha and idle, while the West CCs on

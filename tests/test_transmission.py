@@ -1472,5 +1472,58 @@ class TestCaisoSolarDeliverabilityDerate(unittest.TestCase):
         self.assertGreater(1.0 - high[0], 1.0 - low[0])
 
 
+class TestCaisoAsymmetricPathLimits(unittest.TestCase):
+    """apply_caiso_asymmetric_path_limits — WECC directional Path 15/26 caps."""
+
+    def _config(self, on: bool):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        return ScenarioConfig(
+            iso="CAISO", mode="backcast", caiso_asymmetric_path_ratings=on
+        )
+
+    def test_flag_off_is_identity(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_asymmetric_path_limits
+
+        ic = get_iso_config("CAISO")
+        self.assertIs(apply_caiso_asymmetric_path_limits(ic, self._config(False)), ic)
+
+    def test_flag_on_adds_directional_limits(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_asymmetric_path_limits
+
+        out = apply_caiso_asymmetric_path_limits(
+            get_iso_config("CAISO"), self._config(True)
+        )
+        by_name = {lim.name: lim for lim in out.interface_limits}
+        # Path 15 (Midway–Los Banos): N→S 3,265 / S→N 5,400 (WECC catalog).
+        p15 = by_name["CAISO_path_directional_NP15_ZP26"]
+        self.assertEqual(p15.cap_mw, 3265.0)
+        self.assertEqual(p15.reverse_cap_mw, 5400.0)
+        # Path 26 (Midway–Vincent): N→S 4,000 / S→N 3,000 (WECC catalog).
+        p26 = by_name["CAISO_path_directional_ZP26_SP15"]
+        self.assertEqual(p26.cap_mw, 4000.0)
+        self.assertEqual(p26.reverse_cap_mw, 3000.0)
+        # The baked-in simultaneous import cap survives untouched.
+        self.assertIn("WECC_import_simultaneous", by_name)
+
+    def test_idempotent(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_asymmetric_path_limits
+
+        cfg = self._config(True)
+        once = apply_caiso_asymmetric_path_limits(get_iso_config("CAISO"), cfg)
+        twice = apply_caiso_asymmetric_path_limits(once, cfg)
+        self.assertEqual(len(once.interface_limits), len(twice.interface_limits))
+
+    def test_non_caiso_topology_is_identity(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_asymmetric_path_limits
+
+        pjm = get_iso_config("PJM")
+        self.assertIs(apply_caiso_asymmetric_path_limits(pjm, self._config(True)), pjm)
+
+
 if __name__ == "__main__":
     unittest.main()
