@@ -1217,6 +1217,11 @@ def apply_interchange_topology(
        Applied after step 2 so the seam limit's structural identification
        (every link originates at the import node) matches, and the split then
        re-homes the replaced cap onto the corridor links.
+    4. ``config.caiso_asymmetric_path_ratings`` — cap the internal Path 15 /
+       Path 26 links at their WECC-accepted directional ratings
+       (:func:`~market_sim.model.transmission.apply_caiso_asymmetric_path_limits`).
+       Internal links only; applied last so the import-node identification in
+       step 2 is untouched. No-op when the flag is off (default).
 
     Args:
         iso_config: ISO topology (possibly already carrying the import node).
@@ -1267,4 +1272,13 @@ def apply_interchange_topology(
             )
     if spec.use_corridors:
         iso_config = split_caiso_import_node_per_hub(iso_config)
+    # 4. ``config.caiso_asymmetric_path_ratings`` — cap the internal Path 15 /
+    #    Path 26 links at their WECC-accepted directional ratings (the baked-in
+    #    symmetric TTC is only one direction's rating). Internal links only, so
+    #    it composes with the import-node steps above in any order; last keeps
+    #    the import-node structural identification in step 2 untouched. No-op
+    #    when the flag is off (default) or the ISO carries neither link.
+    from market_sim.model.transmission import apply_caiso_asymmetric_path_limits
+
+    iso_config = apply_caiso_asymmetric_path_limits(iso_config, config)
     return iso_config
