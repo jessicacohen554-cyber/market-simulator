@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-08-neiso-54-steamgas-ct",
+ "label": "neiso 54 steamgas ct",
+ "date": "2026-07-08",
+ "shorthand": "neiso-54-steamgas-ct",
+ "definition": "NEISO extreme-day reliability drag on the neiso-53 keeper recipe (winter fuel-security stack + reliability_floor), the only delta living in reliability_floor_coeffs_NEISO.csv. (1) CT_PEAKER EVENING-RAMP DRAG: evening-windowed [15,21] tmax/netload limbs at commit_frac x min_stable (0.38) - the peakers' local-RA net-load-ramp commitment (5 enabled: Boston tmax+netload, Connecticut tmax+netload, North netload; rho>=0.3, n>=30, commit>baseline). Replaces the 2026-07-05 scrubbed all-24h limbs; the evening window clears D-4 off-window (PASS) and lands CT profile_r 0.97-0.98. CT_PEAKER is 0.5-0.7% of ISO load (<2%), so its 26-30% in-window forced share is reported-not-gated (rule 20 v2.1); C8 PASSES. (2) ST_GAS -> COMPONENT B: the lone 81 MW ST_GAS unit sits in a mixed CAMPD facility (no clean pure-play signal), so its overnight limbs ship as visible disabled placeholders and its commitment is owned entirely by the winter fuel-security must-run (Component B) - one program-grounded mechanism, replacing the contaminated all-24h netload limb (rule 14/19). VERDICT: CALIBRATED-WITH-CAVEATS, 0 FAILs, identical to neiso-53 (C1 12/12 free 8/8 PASS, C3a/C3b commercial-band, C3c/C5b ledgered winter-scarcity, C7 SKIPPED immaterial, C8 PASS) - the drag adds real structure the scrub had removed with no scored-metric change and no winter degradation (rule 1). Ablation twin + keeper promotion pending owner sign-off.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-07-08-neiso-54-steamgas-ct.js",
+ "bundle": "results/calibration/neiso54_steamgas_ct_drag",
+ "ablation_twin": "2026-07-08-neiso54-steamgas-ct-ablation",
+ "market_story": "CT_PEAKER +0.087/+0.066/-0.000 TWh vs the zero-forcing twin: NEISO commits its simple-cycle peakers for LOCAL RESOURCE ADEQUACY through the afternoon-evening net-load ramp (cooling load climbs as solar sets) - the real ISO-NE forward-reserve/RA commitment the energy-only LP omits; the floor binds only the evening [15,21] window on hot/high-netload days (D-4 PASS), commits ~0.07-0.09 TWh in the ramp-stress years, and is price-near-neutral (avg LMP within $0.7). ST_GAS +0.024/+0.019/+0.020 TWh: the lone fuel-secure steam unit is postured on winter cold days by the winter fuel-security must-run (Component B, WRP/IEP/OFSA). Both classes are immaterial (<0.7% of ISO load), so the drag adds real, forward-derivable market STRUCTURE with no scored-metric change - a rule-1 faithfulness gain, not a residual fit."
+}

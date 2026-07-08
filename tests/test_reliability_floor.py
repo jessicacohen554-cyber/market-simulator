@@ -693,10 +693,17 @@ class TestNetloadDerivation(unittest.TestCase):
         self.assertAlmostEqual(out["online_frac"].iloc[2], 0.0)
         self.assertAlmostEqual(out["online_frac"].iloc[3], 0.0)
 
-    def test_shipped_neiso_registry_has_the_st_gas_netload_limb(self):
-        """The committed NEISO CSV carries the Connecticut ST_GAS netload limb
-        (enabled, all-24h, 48h steam event bridging) and keeps the two
-        temperature ST_GAS limbs it re-grounds disabled (rule 19)."""
+    def test_shipped_neiso_st_gas_owned_by_component_b(self):
+        """NEISO ST_GAS carries NO enabled reliability limb: its commitment is
+        owned entirely by the winter fuel-security must-run (Component B).
+
+        The lone 81 MW ST_GAS unit sits inside a mixed CAMPD facility (code 546),
+        so no clean pure-play commitment signal exists; the CSV keeps ST_GAS as
+        visible, disabled overnight-windowed placeholders (rule 12) while
+        Component B floors the model ST_GAS all-day on cold days (rule 14/19,
+        neiso-54 consolidation replacing the old contaminated all-24h netload
+        limb). Because no ST_GAS netload limb is enabled, run_calibration keeps
+        ST_GAS inside the winter fuel-security scope."""
         from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
 
         st = [
@@ -704,16 +711,32 @@ class TestNetloadDerivation(unittest.TestCase):
             for s in RELIABILITY_FLOOR_REGISTRY.get("NEISO", [])
             if s.plant_class == "ST_GAS"
         ]
-        by_driver = {s.driver: s for s in st}
-        self.assertIn("netload", by_driver)
-        nl = by_driver["netload"]
-        self.assertTrue(nl.enabled)
-        self.assertEqual(nl.zone, "Connecticut")
-        self.assertIsNone(nl.start_hour)
-        self.assertIsNone(nl.end_hour)
-        self.assertEqual(nl.min_event_hours, 48)
-        self.assertFalse(by_driver["tmax"].enabled)
-        self.assertFalse(by_driver["tmin"].enabled)
+        self.assertTrue(st, "NEISO ST_GAS placeholder rows must stay visible")
+        self.assertTrue(
+            all(not s.enabled for s in st),
+            "no NEISO ST_GAS reliability limb may be enabled (owned by Component B)",
+        )
+        # The placeholders window to the overnight pre-positioning block [0,6].
+        for s in st:
+            self.assertEqual((s.start_hour, s.end_hour), (0, 6))
+
+    def test_shipped_neiso_ct_peaker_evening_ramp_limbs(self):
+        """NEISO CT_PEAKER carries enabled EVENING-windowed [15,21] reliability
+        limbs (the local-RA net-load-ramp commitment) — never all-24h, so the
+        floor never binds overnight where CT CF ~0 (rule 12/18; neiso-54 replaces
+        the 2026-07-05 scrubbed all-day limbs)."""
+        from market_sim.config.iso_configs import RELIABILITY_FLOOR_REGISTRY
+
+        ct = [
+            s
+            for s in RELIABILITY_FLOOR_REGISTRY.get("NEISO", [])
+            if s.plant_class == "CT_PEAKER"
+        ]
+        enabled = [s for s in ct if s.enabled]
+        self.assertTrue(enabled, "at least one CT_PEAKER evening limb must ship")
+        for s in enabled:
+            self.assertEqual((s.start_hour, s.end_hour), (15, 21))
+            self.assertIn(s.driver, ("tmax", "netload"))
 
 
 class DropDragOwnedSpecsTest(unittest.TestCase):
