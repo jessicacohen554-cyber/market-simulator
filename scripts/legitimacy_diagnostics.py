@@ -97,6 +97,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_NAMES,
     MECH_RA_MUSTOFFER,
     MECH_RELIABILITY_FLOOR,
+    MECH_ST_NETLOAD_DRAG,
     NON_THERMAL_MECHS,
 )
 
@@ -201,6 +202,17 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     (MECH_RELIABILITY_FLOOR, "CT_PEAKER"): (14, 22),
     (MECH_RELIABILITY_FLOOR, "CT_CHP"): (14, 22),
     (MECH_CT_NETLOAD_DRAG, None): (15, 22),
+    # ST_GAS netload drag: the driver-justified window is ALL 24 hours — the
+    # CAMPD evidence base (docs/ercot-st-gas-netload-drag-2026-06.md) shows the
+    # gas-steam fleet "committed every day and every night, never fully off",
+    # with the overnight (23-05h) CF itself rising 0.03->0.36 with net-load
+    # (Spearman rho 0.82, year-stable 2023-25). Unlike CT (overnight CF ~ 0),
+    # there is no hour the class's own driver evidence says it is offline, so
+    # the all-hours boiler floor (fleet.apply_gas_st_netload_drag_floor,
+    # ramp_window=None) binds nowhere off-window by measurement, and this row
+    # exists so rubric-v2.2 over-budget escalation scores it on evidence
+    # rather than failing it for a missing declaration (rule 12).
+    (MECH_ST_NETLOAD_DRAG, None): (0, 24),
     # Midday NG:NG slab window (h9-16) — the probe's own gate
     # (transmission.inject_caiso_gas_commitment_floor).
     (MECH_CAISO_GAS_COMMITMENT_FLOOR, None): (9, 17),
