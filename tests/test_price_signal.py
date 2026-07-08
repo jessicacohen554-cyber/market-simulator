@@ -84,6 +84,27 @@ class TestLookaheadReprice(unittest.TestCase):
         # cheapest unit prices it.
         np.testing.assert_allclose(signal[0], [10.0, 10.0, 20.0, 50.0])
 
+    def test_demand_next_total_override_bypasses_scale_demand(self):
+        # Hindcast path (G-30): the caller supplies the realized next-year total
+        # demand directly, so the growth-scaled weather-year base is ignored.
+        fleet_arrays, mc_cost, result, base_demand = self._fixture()
+        config = ScenarioConfig(iso="ERCOT", mode="forecast", hindcast=True)
+        self.assertFalse(config.scarcity_price_overlay)  # no tail here
+        realized_next = np.array([2000.0, 7000.0, 12000.0, 20000.0])
+        signal = _lookahead_reprice_signal(
+            config,
+            2024,
+            base_demand * 999.0,  # deliberately wrong base: must be unused
+            fleet_arrays,
+            mc_cost,
+            result,
+            n_zones=1,
+            demand_next_total=realized_next,
+        )
+        # Identical hand-computed result to the _scale_demand fixture, proving
+        # the override load — not base_demand — set the net load.
+        np.testing.assert_allclose(signal[0], [10.0, 20.0, 50.0, 50.0])
+
     def test_scarcity_tail_applies_ordc_curve(self):
         fleet_arrays, mc_cost, result, base_demand = self._fixture()
         config = ScenarioConfig(
