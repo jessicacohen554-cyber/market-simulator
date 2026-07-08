@@ -11,5 +11,7 @@
  ],
  "iso": "MISO",
  "file": "frontend/data/backcast/runs/2026-07-08-miso-48-stgas-srmc.js",
- "bundle": "results/calibration/MISO/miso_48_stgas_srmc"
+ "bundle": "results/calibration/MISO/miso_48_stgas_srmc",
+ "ablation_twin": "2026-07-08-miso-48-stgas-ablation",
+ "market_story": "CT_PEAKER: MISO commits simple-cycle peakers for local Resource Adequacy through the afternoon-evening net-load ramp (the duck-neck: cooling load climbs while solar collapses at sunset); the evening [15,21] net-load floor reproduces that committed evening SHAPE the energy-only LP decommits (D-1 diurnal r~0.99, forced 5-7.5% under the peaker budget). ST_GAS: legacy gas-steam boilers are held warm at physical min-stable (0.12) through the overnight [0,6] trough on extreme-temperature / high-net-load days to ramp for the NEXT peak rather than pay a multi-hour cold start (forced 0.7-1.2%). Both are commitment scaffolding, not volume levers - the residual CT/ST_GAS annual under-run is a separate merit-position model miss (disclosed), not what the floor buys."
 }
