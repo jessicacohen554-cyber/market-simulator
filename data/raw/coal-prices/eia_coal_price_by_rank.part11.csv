@@ -1,0 +1,201 @@
+year,region_id,region_name,coal_rank_id,coal_rank_name,price_usd_per_ton
+2019,KYE,Kentucky (East),BIT,Bituminous,67.09
+2019,KYE,Kentucky (East),TOT,All,67.09
+2019,KYW,Kentucky (West),BIT,Bituminous,42.57
+2019,KYW,Kentucky (West),TOT,All,42.57
+2019,MAT,Middle Atlantic,ANT,Anthracite,102.22
+2019,MAT,Middle Atlantic,BIT,Bituminous,54.88
+2019,MAT,Middle Atlantic,TOT,All,57.11
+2019,MD,Maryland,BIT,Bituminous,77.28
+2019,MD,Maryland,TOT,All,77.28
+2019,MID,Midwest Total,BIT,Bituminous,38.61
+2019,MID,Midwest Total,LIG,Lignite,18.93
+2019,MID,Midwest Total,TOT,All,33.78
+2019,MT,Montana,SUB,Subbituminous,18.12
+2019,MT,Montana,TOT,All,21.66
+2019,MTN,Mountain,BIT,Bituminous,43.45
+2019,MTN,Mountain,SUB,Subbituminous,13.87
+2019,MTN,Mountain,TOT,All,17.61
+2019,ND,North Dakota,LIG,Lignite,18.93
+2019,ND,North Dakota,TOT,All,18.93
+2019,NM,New Mexico,TOT,All,39.71
+2019,OH,Ohio,BIT,Bituminous,39.88
+2019,OH,Ohio,TOT,All,39.88
+2019,PA,Pennsylvania,ANT,Anthracite,102.22
+2019,PA,Pennsylvania,BIT,Bituminous,54.88
+2019,PA,Pennsylvania,TOT,All,57.11
+2019,PAA,Pennsylvania (Anthracite),ANT,Anthracite,102.22
+2019,PAA,Pennsylvania (Anthracite),TOT,All,102.22
+2019,PAB,Pennsylvania (Bituminous),BIT,Bituminous,54.88
+2019,PAB,Pennsylvania (Bituminous),TOT,All,54.88
+2019,PRB,Powder River Basin,SUB,Subbituminous,11.98
+2019,PRB,Powder River Basin,TOT,All,11.98
+2019,SAT,South Atlantic,BIT,Bituminous,75.57
+2019,SAT,South Atlantic,TOT,All,75.57
+2019,STH,South Total,BIT,Bituminous,73.74
+2019,STH,South Total,LIG,Lignite,20.86
+2019,STH,South Total,TOT,All,65.91
+2019,TX,Texas,TOT,All,16.9
+2019,UNT,Uinta Basin,BIT,Bituminous,40.42
+2019,UNT,Uinta Basin,SUB,Subbituminous,43.82
+2019,UNT,Uinta Basin,TOT,All,40.9
+2019,US,U.S. Total,ANT,Anthracite,102.22
+2019,US,U.S. Total,BIT,Bituminous,58.93
+2019,US,U.S. Total,LIG,Lignite,19.86
+2019,US,U.S. Total,SUB,Subbituminous,14.01
+2019,US,U.S. Total,TOT,All,36.07
+2019,UT,Utah,BIT,Bituminous,37.95
+2019,UT,Utah,TOT,All,37.95
+2019,VA,Virginia,BIT,Bituminous,98.06
+2019,VA,Virginia,TOT,All,98.06
+2019,WBO,Other Western,BIT,Bituminous,46.47
+2019,WBO,Other Western,LIG,Lignite,18.95
+2019,WBO,Other Western,SUB,Subbituminous,50.12
+2019,WBO,Other Western,TOT,All,35.34
+2019,WMR,West of Mississippi River,BIT,Bituminous,43.02
+2019,WMR,West of Mississippi River,LIG,Lignite,19.62
+2019,WMR,West of Mississippi River,SUB,Subbituminous,14.01
+2019,WMR,West of Mississippi River,TOT,All,18.02
+2019,WNC,West North Central,LIG,Lignite,18.93
+2019,WNC,West North Central,TOT,All,19.17
+2019,WSB,Western Region Total,BIT,Bituminous,43.45
+2019,WSB,Western Region Total,LIG,Lignite,18.95
+2019,WSB,Western Region Total,SUB,Subbituminous,14.01
+2019,WSB,Western Region Total,TOT,All,17.81
+2019,WSC,West South Central,BIT,Bituminous,31.04
+2019,WSC,West South Central,LIG,Lignite,20.44
+2019,WSC,West South Central,TOT,All,21.22
+2019,WST,West Total,BIT,Bituminous,43.45
+2019,WST,West Total,LIG,Lignite,20.68
+2019,WST,West Total,SUB,Subbituminous,14.01
+2019,WST,West Total,TOT,All,17.72
+2019,WV,West Virginia,BIT,Bituminous,72.7
+2019,WV,West Virginia,TOT,All,72.7
+2019,WVN,West Virginia (Northern),BIT,Bituminous,55.03
+2019,WVN,West Virginia (Northern),TOT,All,55.03
+2019,WVS,West Virginia (Southern),BIT,Bituminous,91.13
+2019,WVS,West Virginia (Southern),TOT,All,91.13
+2019,WY,Wyoming,TOT,All,12.63
+2020,AL,Alabama,BIT,Bituminous,98.01
+2020,AL,Alabama,TOT,All,98.01
+2020,APC,Appalachia Central,BIT,Bituminous,73.56
+2020,APC,Appalachia Central,TOT,All,73.56
+2020,APN,Appalachia Northern,ANT,Anthracite,90.68
+2020,APN,Appalachia Northern,BIT,Bituminous,48.42
+2020,APN,Appalachia Northern,TOT,All,49.72
+2020,APP,Appalachia Total,ANT,Anthracite,90.68
+2020,APP,Appalachia Total,BIT,Bituminous,61.84
+2020,APP,Appalachia Total,TOT,All,62.34
+2020,APS,Appalachia Southern,BIT,Bituminous,98.01
+2020,APS,Appalachia Southern,TOT,All,98.01
+2020,CO,Colorado,TOT,All,41.45
+2020,EMR,East of Mississippi River,ANT,Anthracite,90.68
+2020,EMR,East of Mississippi River,BIT,Bituminous,52.32
+2020,EMR,East of Mississippi River,LIG,Lignite,27.61
+2020,EMR,East of Mississippi River,TOT,All,52.47
+2020,ENC,East North Central,BIT,Bituminous,31.11
+2020,ENC,East North Central,TOT,All,31.11
+2020,ESC,East South Central,BIT,Bituminous,65.53
+2020,ESC,East South Central,TOT,All,63.12
+2020,EST,East Total,ANT,Anthracite,90.68
+2020,EST,East Total,BIT,Bituminous,54.65
+2020,EST,East Total,TOT,All,56.55
+2020,IL,Illinois,BIT,Bituminous,23.86
+2020,IL,Illinois,TOT,All,23.86
+2020,ILL,Illinois Basin,BIT,Bituminous,33.27
+2020,ILL,Illinois Basin,TOT,All,33.27
+2020,IN,Indiana,BIT,Bituminous,40.49
+2020,IN,Indiana,TOT,All,40.49
+2020,INO,Other Interior,BIT,Bituminous,56.77
+2020,INO,Other Interior,LIG,Lignite,25.2
+2020,INO,Other Interior,TOT,All,26.19
+2020,INT,Interior Region Total,BIT,Bituminous,33.53
+2020,INT,Interior Region Total,LIG,Lignite,25.2
+2020,INT,Interior Region Total,TOT,All,31.45
+2020,KY,Kentucky,BIT,Bituminous,49.04
+2020,KY,Kentucky,TOT,All,49.04
+2020,KYE,Kentucky (East),BIT,Bituminous,64.06
+2020,KYE,Kentucky (East),TOT,All,64.06
+2020,KYW,Kentucky (West),BIT,Bituminous,41.7
+2020,KYW,Kentucky (West),TOT,All,41.7
+2020,MAT,Middle Atlantic,ANT,Anthracite,90.68
+2020,MAT,Middle Atlantic,BIT,Bituminous,49.35
+2020,MAT,Middle Atlantic,TOT,All,52.11
+2020,MD,Maryland,BIT,Bituminous,62.4
+2020,MD,Maryland,TOT,All,62.4
+2020,MID,Midwest Total,BIT,Bituminous,31.18
+2020,MID,Midwest Total,LIG,Lignite,19.48
+2020,MID,Midwest Total,TOT,All,27.42
+2020,MT,Montana,SUB,Subbituminous,17.82
+2020,MT,Montana,TOT,All,20.27
+2020,MTN,Mountain,BIT,Bituminous,36.52
+2020,MTN,Mountain,SUB,Subbituminous,14.24
+2020,MTN,Mountain,TOT,All,17.03
+2020,ND,North Dakota,LIG,Lignite,19.48
+2020,ND,North Dakota,TOT,All,19.48
+2020,NM,New Mexico,TOT,All,40.62
+2020,OH,Ohio,BIT,Bituminous,38.49
+2020,OH,Ohio,TOT,All,38.49
+2020,PA,Pennsylvania,ANT,Anthracite,90.68
+2020,PA,Pennsylvania,BIT,Bituminous,49.35
+2020,PA,Pennsylvania,TOT,All,52.11
+2020,PAA,Pennsylvania (Anthracite),ANT,Anthracite,90.68
+2020,PAA,Pennsylvania (Anthracite),TOT,All,90.68
+2020,PAB,Pennsylvania (Bituminous),BIT,Bituminous,49.35
+2020,PAB,Pennsylvania (Bituminous),TOT,All,49.35
+2020,PRB,Powder River Basin,SUB,Subbituminous,12.11
+2020,PRB,Powder River Basin,TOT,All,12.11
+2020,SAT,South Atlantic,BIT,Bituminous,62.32
+2020,SAT,South Atlantic,TOT,All,62.32
+2020,STH,South Total,BIT,Bituminous,62.46
+2020,STH,South Total,LIG,Lignite,25.2
+2020,STH,South Total,TOT,All,55.86
+2020,TX,Texas,TOT,All,17.98
+2020,UNT,Uinta Basin,BIT,Bituminous,39.07
+2020,UNT,Uinta Basin,SUB,Subbituminous,39.96
+2020,UNT,Uinta Basin,TOT,All,39.22
+2020,US,U.S. Total,ANT,Anthracite,90.68
+2020,US,U.S. Total,BIT,Bituminous,50.05
+2020,US,U.S. Total,LIG,Lignite,22.16
+2020,US,U.S. Total,SUB,Subbituminous,14.43
+2020,US,U.S. Total,TOT,All,31.41
+2020,UT,Utah,BIT,Bituminous,37.22
+2020,UT,Utah,TOT,All,37.22
+2020,VA,Virginia,BIT,Bituminous,72.76
+2020,VA,Virginia,TOT,All,72.76
+2020,WBO,Other Western,BIT,Bituminous,33.64
+2020,WBO,Other Western,LIG,Lignite,19.54
+2020,WBO,Other Western,SUB,Subbituminous,51.94
+2020,WBO,Other Western,TOT,All,30.64
+2020,WMR,West of Mississippi River,BIT,Bituminous,36.94
+2020,WMR,West of Mississippi River,LIG,Lignite,21.86
+2020,WMR,West of Mississippi River,SUB,Subbituminous,14.43
+2020,WMR,West of Mississippi River,TOT,All,17.94
+2020,WNC,West North Central,LIG,Lignite,19.48
+2020,WNC,West North Central,TOT,All,19.68
+2020,WSB,Western Region Total,BIT,Bituminous,36.52
+2020,WSB,Western Region Total,LIG,Lignite,19.54
+2020,WSB,Western Region Total,SUB,Subbituminous,14.43
+2020,WSB,Western Region Total,TOT,All,17.38
+2020,WSC,West South Central,LIG,Lignite,24.9
+2020,WSC,West South Central,TOT,All,25.82
+2020,WST,West Total,BIT,Bituminous,36.52
+2020,WST,West Total,LIG,Lignite,25.12
+2020,WST,West Total,SUB,Subbituminous,14.43
+2020,WST,West Total,TOT,All,17.19
+2020,WV,West Virginia,BIT,Bituminous,60.8
+2020,WV,West Virginia,TOT,All,60.8
+2020,WVN,West Virginia (Northern),BIT,Bituminous,48.19
+2020,WVN,West Virginia (Northern),TOT,All,48.19
+2020,WVS,West Virginia (Southern),BIT,Bituminous,76.43
+2020,WVS,West Virginia (Southern),TOT,All,76.43
+2020,WY,Wyoming,TOT,All,13.04
+2021,AL,Alabama,BIT,Bituminous,150.54
+2021,AL,Alabama,TOT,All,150.54
+2021,APC,Appalachia Central,BIT,Bituminous,99.51
+2021,APC,Appalachia Central,TOT,All,99.51
+2021,APN,Appalachia Northern,ANT,Anthracite,107.08
+2021,APN,Appalachia Northern,BIT,Bituminous,57.04
+2021,APN,Appalachia Northern,TOT,All,57.98
+2021,APP,Appalachia Total,ANT,Anthracite,107.08
+2021,APP,Appalachia Total,BIT,Bituminous,78.32
