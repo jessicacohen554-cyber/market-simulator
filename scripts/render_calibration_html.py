@@ -240,6 +240,26 @@ def _b64(cf: np.ndarray) -> str:
     return base64.b64encode(a[:_T].tobytes()).decode()
 
 
+def _b64_i16(x: np.ndarray) -> str:
+    """Encode a SIGNED hourly series as base64 little-endian int16 of length 8760.
+
+    Used for the Report-tab LMP delta heatmap (model $/MWh minus actual $/MWh):
+    the value can be either sign and span the full scarcity range, so unlike
+    :func:`_b64` (unsigned CF bytes) it keeps 1-$/MWh resolution over
+    ``[-32767, 32767]`` and reserves ``-32768`` as the NOT-A-NUMBER sentinel for
+    hours with no model dual or no actual price (rendered neutral, not colored).
+    ``<i2`` forces little-endian so the browser's ``Int16Array`` decode is
+    byte-order-independent of the machine that rendered the run.
+    """
+    v = np.asarray(x, dtype=float)
+    out = np.full(v.shape, -32768, dtype="<i2")  # sentinel = NaN
+    finite = np.isfinite(v)
+    out[finite] = np.clip(np.round(v[finite]), -32767, 32767).astype("<i2")
+    if out.shape[0] < _T:
+        out = np.concatenate([out, np.full(_T - out.shape[0], -32768, dtype="<i2")])
+    return base64.b64encode(out[:_T].astype("<i2").tobytes()).decode()
+
+
 def _monthly_gwh(mw: np.ndarray) -> list[float]:
     """Return 12 monthly GWh totals from an hourly MW series."""
     return [round(float(mw[_CUM[m] : _CUM[m + 1]].sum()) / 1e3, 2) for m in range(12)]
@@ -1129,6 +1149,9 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # scarcity by construction (energy-only LP), so this tail can collapse
             # — that is the intended, truthful signal, not a thing to tune.
             model_price_by_zone: dict[str, np.ndarray] = {}
+            # Per-zone hourly demand (0-padded), the load weights for the
+            # ISO-wide hourly price the delta heatmap compares against actuals.
+            model_demand_by_zone: dict[str, np.ndarray] = {}
             for zone, zg in sy.groupby("zone", observed=True):
                 price = zg["price"].to_numpy(float)
                 dem = zg["demand"].to_numpy(float)
@@ -1136,6 +1159,9 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 full = np.full(hours, np.nan)
                 full[hr] = price
                 model_price_by_zone[str(zone)] = full
+                full_d = np.zeros(hours)
+                full_d[hr] = dem
+                model_demand_by_zone[str(zone)] = full_d
                 d_tot = float(dem.sum())
                 p = (
                     float((price * dem).sum()) / d_tot
@@ -1281,6 +1307,33 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 "throughput_twh": model_storage if model_storage is not None else 0.0,
                 "monthly_net_gwh": model_storage_monthly,
             }
+            # ---- ISO-wide hourly LMP delta (model - actual RT) ----
+            # Feeds the Report-tab delta heatmap: where the model runs HOT
+            # (model price > actual, orange) or COLD (model < actual, blue) for
+            # each of the 8760 hours. Model system price = load-weighted mean of
+            # the per-zone energy-only duals (the SAME series the avg-LMP KPI and
+            # the settlement tail use); actual = _actual_rt_padded (RT, DA
+            # fallback) — the ISO-wide real-time reference, since the model's
+            # clearing price is a real-time marginal-energy analogue (no
+            # day-ahead unit-commitment smoothing). Hours with no model dual or
+            # no actual price stay NaN (neutral). Serialized as signed int16
+            # (_b64_i16). POPULATE-ON-NEXT-RENDER: only runs rendered after this
+            # field was added carry it; the dashboard omits the panel otherwise.
+            _iso_dz = meta.get("iso", "ERCOT")
+            if model_price_by_zone:
+                zorder = list(model_price_by_zone)
+                pz = np.vstack([model_price_by_zone[z] for z in zorder])
+                dz = np.vstack([model_demand_by_zone[z] for z in zorder])
+                wsum = np.nansum(dz, axis=0)
+                with np.errstate(invalid="ignore", divide="ignore"):
+                    mp_iso = (
+                        np.nansum(np.where(np.isfinite(pz), pz * dz, 0.0), axis=0)
+                        / wsum
+                    )
+                mp_iso[wsum <= 0] = np.nan
+                rt_iso = _actual_rt_padded(_iso_dz, int(year), hours)
+                if rt_iso is not None:
+                    run_years[int(year)]["lmpDeltaHr"] = _b64_i16(mp_iso - rt_iso)
             # Year-level scarcity-overlay summary: demand-weighted monthly LMP
             # MAE vs actual RT for the energy-only and settlement (overlaid)
             # series, and tail-hour counts, for ANY ISO whose derive_*_overlay.py
