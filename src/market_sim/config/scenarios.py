@@ -484,7 +484,11 @@ class ScenarioConfig:
     # multipliers, so scarcity output bids above the economic tranche.
     cc_peak_hr_penalty: float = 1.15  # CC duct-firing increment
     ct_peak_hr_penalty: float = 1.10  # CT / gas-steam peaking increment
-    coal_peak_hr_penalty: float = 1.08  # Coal peaking increment
+    # (No coal_*_hr_mult / coal_peak_hr_penalty: ERCOT coal's offer is set by the
+    # CAMPD-bin CSV HR_Mult_* columns plus the coal supply / take-or-pay /
+    # passthrough-sigmoid stack on base HR — never these Tier-3 knobs, which were
+    # wired to no solve path. Removed 2026-07-08 (rule 26); the ercot47
+    # coalpeak-dam probe confirmed the CSV coal peaking multiplier is inert.)
 
     # Tier 3 (calibration) — Two-tranche HR multipliers for the committed
     # vs economic dispatch range. Real units have convex input-output
@@ -501,8 +505,6 @@ class ScenarioConfig:
     ct_econ_hr_mult: float = 0.97  # CT incremental HR ~3% below avg
     gas_st_committed_hr_mult: float = 1.32  # Gas steam part-load penalty ~32%
     gas_st_econ_hr_mult: float = 0.97  # Gas steam incremental HR
-    coal_committed_hr_mult: float = 1.22  # Coal part-load penalty ~22%
-    coal_econ_hr_mult: float = 0.97  # Coal incremental HR
     must_run_cf: float = 0.85  # assumed CF for CHP must-run emissions post-processing
     # EM-5 / plan §5 R6: when True, the calibration bundle adds a reporting-only
     # startup-CO2 column (model_starts x measured campd startup_co2_kg). Measured
@@ -4890,15 +4892,12 @@ TIER_TAGS: dict[str, int] = {
     "entry_lookahead_reprice": 1,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
-    "coal_peak_hr_penalty": 3,
     "cc_committed_hr_mult": 3,
     "cc_econ_hr_mult": 3,
     "ct_committed_hr_mult": 3,
     "ct_econ_hr_mult": 3,
     "gas_st_committed_hr_mult": 3,
     "gas_st_econ_hr_mult": 3,
-    "coal_committed_hr_mult": 3,
-    "coal_econ_hr_mult": 3,
     "must_run_cf": 3,
     "startup_co2_reporting": 3,
     "renewable_cf_adjustment": 3,
