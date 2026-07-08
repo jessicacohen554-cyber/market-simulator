@@ -1,0 +1,266 @@
+INFO: MISO backcast: NP6 HSL and coal must-run tuning are ERCOT-only and skipped; per-plant CAMPD + EIA-923 benchmark built for the covered states; the report compares fuel mix, prices and net interchange.
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: solving MISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/curate_capacity_deliverability.py. Returning no limits.
+WARNING: MISO 2023: capacity-deliverability clean partition absent — falling back to static PY2025-26 summer CIL/CEL caps; run scripts/curate_capacity_deliverability.py
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 0 / capped 7 plant(s) to demonstrated peak (-2714 MW total) from cc_capacity_reconcile_MISO.csv
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: unit-outage derate (MISO 2023): 735 plant-tranches derated
+INFO: COD ramp (MISO 2023): 476 unit-months masked offline (mid-year COD / retirement), 20 unit(s) fully not-yet-built/retired
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: Loaded MISO 2023 hydro budget: 163 plants, 8789.4 GWh annual, 2465 MW nameplate
+INFO: MISO 2023: 163 hydro plants in LP (2465 MW, 8.79 TWh monthly budget)
+INFO: MISO 2023: priced import/export node — 25 import tranches (15026 MW), 24 export sinks (14300 MW)
+INFO: unit-outage derate (MISO 2023): 735 plant-tranches derated
+INFO: COD ramp (MISO 2023): 515 unit-months masked offline (mid-year COD / retirement), 20 unit(s) fully not-yet-built/retired
+INFO: MISO 2023: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2023: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: F923 fuel costs for 2023: 992 generators priced from their own plant, 1837 gap-filled from nearby (state/zone) plants
+INFO: MISO zonal gas basis (2023): 1496 gas units; cap-weighted mean +0.16 removed, zonal spread -0.26..0.30 $/MMBtu
+INFO: MISO 2023: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2023: Manitoba firm-hydro import baseload floored (must-flow)
+INFO: MISO 2023: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-930 flow durations x MISO DA hub quantiles; PJM/SPP/South, import + export; no added hurdle)
+INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 3438 MW (MSSC + regulating), 11 ORDC steps ($200-$3500), 2556 reserve-eligible units
+INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 2196 MW (within-zone MSSC), published zonal curve steps ['439MW@$200', '1537MW@$1100', '220MW@$3300']
+INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2543 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 38003 / min 33889 MW
+INFO: Matrix build: 6.462s, Solve: 258.016s (cold)
+INFO: Matrix build: 6.462s, Solve: 91.295s (warm)
+INFO: EIA-923 2023: CAMPD-backfilled 8 under-reported plants (8 replaced, 0 added)
+INFO: EIA-923 2023 hydro 7.95 TWh under-counts EIA-930 9.98 TWh; using EIA-930 grid total
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: solving MISO 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/curate_capacity_deliverability.py. Returning no limits.
+WARNING: MISO 2024: capacity-deliverability clean partition absent — falling back to static PY2025-26 summer CIL/CEL caps; run scripts/curate_capacity_deliverability.py
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 0 / capped 7 plant(s) to demonstrated peak (-2714 MW total) from cc_capacity_reconcile_MISO.csv
+INFO: unit-outage derate (MISO 2024): 751 plant-tranches derated
+INFO: COD ramp (MISO 2024): 707 unit-months masked offline (mid-year COD / retirement), 41 unit(s) fully not-yet-built/retired
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: Loaded MISO 2024 hydro budget: 160 plants, 9042.0 GWh annual, 2372 MW nameplate
+INFO: MISO 2024: 160 hydro plants in LP (2372 MW, 9.04 TWh monthly budget)
+INFO: MISO 2024: priced import/export node — 25 import tranches (14831 MW), 24 export sinks (14300 MW)
+INFO: unit-outage derate (MISO 2024): 751 plant-tranches derated
+INFO: COD ramp (MISO 2024): 879 unit-months masked offline (mid-year COD / retirement), 50 unit(s) fully not-yet-built/retired
+INFO: MISO 2024: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2024: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: F923 fuel costs for 2024: 978 generators priced from their own plant, 1896 gap-filled from nearby (state/zone) plants
+INFO: MISO zonal gas basis (2024): 1499 gas units; cap-weighted mean +0.28 removed, zonal spread -0.16..0.11 $/MMBtu
+INFO: MISO 2024: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2024: Manitoba firm-hydro import baseload floored (must-flow)
+INFO: MISO 2024: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-930 flow durations x MISO DA hub quantiles; PJM/SPP/South, import + export; no added hurdle)
+INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 3438 MW (MSSC + regulating), 11 ORDC steps ($200-$3500), 2559 reserve-eligible units
+INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 2196 MW (within-zone MSSC), published zonal curve steps ['439MW@$200', '1537MW@$1100', '220MW@$3300']
+INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2546 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 37955 / min 34458 MW
+INFO: Matrix build: 6.107s, Solve: 253.086s (cold)
+INFO: Matrix build: 6.107s, Solve: 92.146s (warm)
+INFO: EIA-923 2024: CAMPD-backfilled 4 under-reported plants (4 replaced, 0 added)
+INFO: EIA-923 2024 hydro 8.01 TWh under-counts EIA-930 10.74 TWh; using EIA-930 grid total
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: solving MISO 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/curate_capacity_deliverability.py. Returning no limits.
+WARNING: MISO 2025: capacity-deliverability clean partition absent — falling back to static PY2025-26 summer CIL/CEL caps; run scripts/curate_capacity_deliverability.py
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 0 / capped 7 plant(s) to demonstrated peak (-2714 MW total) from cc_capacity_reconcile_MISO.csv
+INFO: unit-outage derate (MISO 2025): 791 plant-tranches derated
+INFO: COD ramp (MISO 2025): 988 unit-months masked offline (mid-year COD / retirement), 69 unit(s) fully not-yet-built/retired
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: Loaded MISO 2025 hydro budget: 14 plants, 969.7 GWh annual, 249 MW nameplate
+INFO: MISO 2025: 14 hydro plants in LP (249 MW, 0.97 TWh monthly budget)
+INFO: MISO 2025: priced import/export node — 25 import tranches (14524 MW), 24 export sinks (14300 MW)
+INFO: unit-outage derate (MISO 2025): 791 plant-tranches derated
+INFO: COD ramp (MISO 2025): 1300 unit-months masked offline (mid-year COD / retirement), 95 unit(s) fully not-yet-built/retired
+INFO: MISO 2025: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2025: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: F923 fuel costs for 2025: 971 generators priced from their own plant, 1820 gap-filled from nearby (state/zone) plants
+INFO: MISO zonal gas basis (2025): 1499 gas units; cap-weighted mean -0.04 removed, zonal spread -0.55..0.13 $/MMBtu
+INFO: MISO 2025: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2025: Manitoba firm-hydro import baseload floored (must-flow)
+INFO: MISO 2025: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-930 flow durations x MISO DA hub quantiles; PJM/SPP/South, import + export; no added hurdle)
+INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 3438 MW (MSSC + regulating), 11 ORDC steps ($200-$3500), 2559 reserve-eligible units
+INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 2196 MW (within-zone MSSC), published zonal curve steps ['439MW@$200', '1537MW@$1100', '220MW@$3300']
+INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2546 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 37656 / min 34167 MW
+INFO: Matrix build: 5.936s, Solve: 232.843s (cold)
+INFO: Matrix build: 5.936s, Solve: 77.533s (warm)
+INFO: EIA-923 2025: CAMPD-backfilled 58 under-reported plants (2 replaced, 56 added)
+INFO: EIA-923 2025 wind 70.36 TWh under-counts EIA-930 98.90 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro 0.28 TWh under-counts EIA-930 9.88 TWh; using EIA-930 grid total
+INFO: wrote calibration bundle to results/calibration/MISO/miso_48_stgas_srmc-ablation
+
+================================================================================
+  CALIBRATION REPORT  (MISO; run 2026-07-08T15:39:46; git 1fb7571)
+  bundle: results/calibration/MISO/miso_48_stgas_srmc-ablation
+================================================================================
+
+================================================================================
+  MISO 2023 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal       179.09  29.5  174.95  28.4  184.00  29.1
+    gas        214.72  35.4  241.24  39.1  248.98  39.3
+    nuclear     87.15  14.4   87.82  14.2   87.18  13.8
+    wind        91.71  15.1   91.71  14.9       —     —
+    solar        6.35   1.0    6.35   1.0       —     —
+    hydro        8.77   1.4    9.98   1.6    8.79   1.4
+    oil          0.00     —       —     —    2.79   0.4
+    biomass      8.13   1.3    8.13   1.3       —     —
+    other       10.33   1.7    4.49   0.7       —     —
+    TOTAL      606.25 100.0  616.54 100.0  633.16 100.0
+    import      35.39   5.5   37.91   5.8       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  606.25 − EIA-930 net gen  616.54 = -10.29 TWh (tol ±3.0)  ⚠ exceeds tol
+WARNING: MISO 2023 energy-balance drift: model gen 606.25 vs EIA-930 net gen 616.54 (-10.29 TWh) exceeds ±3.0 tol
+    note: EIA-930 'gas' (241.2) folds in geothermal+biomass (~18.5 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): -37.91 TWh (-4328 MW avg)
+    model            : -35.39 TWh (-4040 MW avg; priced import/export node)
+    duration curve   : RMSE 1047 MW; p01/p10/p50/p90/p99 model -6771/-5594/-4017/-2670/-1753 vs actual -8941/-7130/-4330/-1596/+398
+    import hours     : model 100.0% vs actual 98.2%
+    diurnal shape    : corr +0.10; model peak->trough 1737 MW vs actual 1020 MW
+
+  [2b] Battery cycling — 2023 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   0.04        —
+                            charge TWh   0.04        —
+    evening (h17-22) discharge share %   41.6        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 2.58 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    MISO-East         31.37        0
+    MISO-Illinois     31.37        0
+    MISO-Indiana      31.37        0
+    MISO-Plains       31.37        0
+    MISO-South        31.36        0
+    MISO-West         31.37        0
+    MISO_external     31.37        0
+
+  [3] System price duration ($/MWh)
+    avg    31.36   max    57.45   p90   36.76   p50   31.14   p10   26.06   min    21.14
+    negative-price hours: 0
+
+================================================================================
+  MISO 2024 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal       167.89  26.8  167.07  26.3  175.13  26.9
+    gas        230.23  36.8  252.08  39.6  257.84  39.6
+    nuclear     90.20  14.4   90.80  14.3   90.42  13.9
+    wind        98.25  15.7   98.25  15.4       —     —
+    solar       14.38   2.3   14.38   2.3       —     —
+    hydro        9.03   1.4   10.74   1.7    9.04   1.4
+    oil          0.00   0.0       —     —    1.85   0.3
+    biomass      7.24   1.2    7.24   1.1       —     —
+    other        8.28   1.3    2.74   0.4       —     —
+    TOTAL      625.50 100.0  636.07 100.0  650.95 100.0
+    import      19.77   3.1   23.08   3.5       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  625.50 − EIA-930 net gen  636.07 = -10.56 TWh (tol ±3.0)  ⚠ exceeds tol
+WARNING: MISO 2024 energy-balance drift: model gen 625.50 vs EIA-930 net gen 636.07 (-10.56 TWh) exceeds ±3.0 tol
+    note: EIA-930 'gas' (252.1) folds in geothermal+biomass (~15.5 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): -23.08 TWh (-2635 MW avg)
+    model            : -19.77 TWh (-2257 MW avg; priced import/export node)
+    duration curve   : RMSE 1060 MW; p01/p10/p50/p90/p99 model -5360/-3621/-2191/-1006/-241 vs actual -7542/-5267/-2608/-89/+2080
+    import hours     : model 99.6% vs actual 90.9%
+    diurnal shape    : corr -0.40; model peak->trough 911 MW vs actual 999 MW
+
+  [2b] Battery cycling — 2024 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   0.09        —
+                            charge TWh   0.11        —
+    evening (h17-22) discharge share %   62.2        —
+    (no EIA-930 battery series in this BA extract — model throughput reported alone)
+    pumped-storage discharge: model 2.49 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    MISO-East         28.83        0
+    MISO-Illinois     28.83        0
+    MISO-Indiana      28.83        0
+    MISO-Plains       28.83        0
+    MISO-South        28.91        0
+    MISO-West         28.83        0
+    MISO_external     28.83        0
+
+  [3] System price duration ($/MWh)
+    avg    28.85   max   118.83   p90   35.77   p50   28.11   p10   23.13   min    19.50
+    negative-price hours: 0
+
+================================================================================
+  MISO 2025 BACKCAST  (energy-only)
+================================================================================
+
+  [1] Generation by fuel (TWh; share of own total)
+    (EIA-930 column = measured grid total (net gen = demand + interchange): itemized fuels + repaired renewables + carried biomass
+     + unspecified 'other' residual — the like-for-like actual total. EIA-923 column = raw reference vintage, biomass/other incomplete in a
+     partial current-year release.)
+    fuel        model  mdl% EIA-930  930% EIA-923  923%
+    coal       223.78  34.4  192.09  29.1  201.01  32.0
+    gas        198.25  30.5  233.24  35.4  207.64  33.0
+    nuclear     90.59  13.9   91.67  13.9   90.73  14.4
+    wind        98.95  15.2   98.90  15.0       —     —
+    solar       29.76   4.6   29.77   4.5       —     —
+    hydro        0.97   0.1    9.88   1.5    0.97   0.2
+    oil          0.00   0.0       —     —    2.45   0.4
+    biomass      2.93   0.4    2.93   0.4       —     —
+    other        5.83   0.9    3.65   0.6       —     —
+    TOTAL      651.06 100.0  659.13 100.0  629.11 100.0
+    import      13.60   2.0   18.96   2.8       —     —   (net; serves load, not in generation total)
+    energy balance: model gen  651.06 − EIA-930 net gen  659.13 =  -8.07 TWh (tol ±3.0)  ⚠ exceeds tol
+WARNING: MISO 2025 energy-balance drift: model gen 651.06 vs EIA-930 net gen 659.13 (-8.07 TWh) exceeds ±3.0 tol
+    note: EIA-930 'gas' (233.2) folds in geothermal+biomass (~8.8 TWh here); compare model gas to the EIA-923 cell, not EIA-930.
+
+  [2] Net interchange (EIA sign: + = net export)
+    actual (EIA-930): -18.96 TWh (-2165 MW avg)
+    model            : -13.60 TWh (-1553 MW avg; priced import/export node)
+    duration curve   : RMSE 1593 MW; p01/p10/p50/p90/p99 model -3851/-2842/-1548/-385/+675 vs actual -7782/-5432/-2027/+1016/+2664
+    import hours     : model 95.0% vs actual 79.2%
+    diurnal shape    : corr +0.25; model peak->trough 1053 MW vs actual 1471 MW
+
+  [2b] Battery cycling — 2025 (model EIA-860 fleet vs EIA-930 BAT)
+                                metric  model  EIA-930
+                         discharge TWh   0.86     0.24
+                            charge TWh   1.01     0.32
+    evening (h17-22) discharge share %   80.2     41.6
+                  hourly net Pearson r  0.253         
+    pumped-storage discharge: model 2.82 TWh; EIA-930 —
+
+  [3] Zonal price level ($/MWh)
+    zone                avg  neg-hrs
+    MISO-East         37.55        0
+    MISO-Illinois     37.55        0
+    MISO-Indiana      37.55        0
+    MISO-Plains       37.55        0
+    MISO-South        37.69        0
+    MISO-West         37.55        0
+    MISO_external     37.55        0
+
+  [3] System price duration ($/MWh)
+    avg    37.57   max   108.55   p90   46.72   p50   36.27   p10   30.05   min    25.85
+    negative-price hours: 0
