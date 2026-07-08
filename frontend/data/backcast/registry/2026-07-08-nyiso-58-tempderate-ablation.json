@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-nyiso-58-tempderate-ablation",
+  "label": "nyiso 58 tempderate ablation",
+  "date": "2026-07-08",
+  "shorthand": "nyiso-58-tempderate-ablation",
+  "definition": "temp-derate full-keeper ablation -- 2026-07-07-nyiso-56-measured-zonal config (byte-faithful replay via replay_keeper.build_kwargs) + temp_dependent_derate=True, 2023-2025 -- (PROBE) (ABLATION TWIN of 2026-07-08-nyiso-58-tempderate)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-08-nyiso-58-tempderate-ablation.js",
+  "bundle": "results/calibration/nyiso58_tempderate-ablation"
+}
