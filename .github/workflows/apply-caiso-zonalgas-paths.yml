@@ -1,0 +1,53 @@
+name: apply-caiso-zonalgas-paths
+
+# Applies the CAISO make-the-3-zones-real commit (measured PG&E/SoCal zonal
+# gas basis + WECC directional Path 15/26 ratings) onto this branch,
+# server-side - the apply-export-cap.yml / apply-miso-1347-edits.yml
+# precedent. The edit spans multi-thousand-line source files a
+# hand-transcribed full-file push could silently corrupt, so the change
+# travels as a git-format patch (base64, split into 3 parts to fit the
+# transport, sha256-pinned so any corruption fails LOUDLY instead of
+# applying). This branch's prior history is fully merged into main (its PR
+# landed), so per the repo's merged-PR rule the branch is REBUILT from
+# origin/main and the patch applied on top; the force-push replaces the
+# carrier commit that delivered these files.
+# Idempotent: a re-trigger sees the applied sentinel file and no-ops.
+on:
+  push:
+    branches:
+      - claude/caiso-steamgas-ct-drag
+    paths:
+      - .github/patches/2026-07-08-caiso-zonalgas-paths.b64.*
+      - .github/workflows/apply-caiso-zonalgas-paths.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebuild branch from main and apply the patch
+        run: |
+          set -euo pipefail
+          if [ -f data/raw/caiso_zonal_gas_hub.csv ]; then
+            echo "already applied (sentinel present) - no-op"
+            exit 0
+          fi
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          cat .github/patches/2026-07-08-caiso-zonalgas-paths.b64.00 \
+              .github/patches/2026-07-08-caiso-zonalgas-paths.b64.01 \
+              .github/patches/2026-07-08-caiso-zonalgas-paths.b64.02 \
+            | base64 -d > "$RUNNER_TEMP/caiso-zonalgas.patch"
+          echo "b088d06c59ddfe2cd27b9ae329d5890608b3b58117603d0209f2265e0bffa638  $RUNNER_TEMP/caiso-zonalgas.patch" | sha256sum -c -
+          git fetch origin main
+          git checkout -B claude/caiso-steamgas-ct-drag origin/main
+          git am "$RUNNER_TEMP/caiso-zonalgas.patch"
+          git push --force origin HEAD:claude/caiso-steamgas-ct-drag
