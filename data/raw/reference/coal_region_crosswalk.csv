@@ -1,0 +1,111 @@
+iso,plant_code,plant_name,state,coal_supply_class,region_id,region_name,confidence,note
+ERCOT,298,Limestone,TX,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+ERCOT,3470,W A Parish,TX,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+ERCOT,6146,Martin Lake,TX,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+ERCOT,6178,Coleto Creek,TX,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+ERCOT,6179,Fayette Power Project,TX,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+ERCOT,6180,Oak Grove (TX),TX,lignite,TX,TX,high,mine-mouth: producing region = plant's own state
+ERCOT,6183,San Miguel,TX,lignite,TX,TX,high,mine-mouth: producing region = plant's own state
+ERCOT,7030,Major Oak Power,TX,lignite,TX,TX,high,mine-mouth: producing region = plant's own state
+ERCOT,7097,J K Spruce,TX,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+CAISO,10684,Argus Cogen Plant,CA,,,,none,"coal.py supply tag unresolved at HEAD; rank per coal.py docstring only, no region match"
+PJM,602,Brandon Shores,MD,bituminous,MD,MD,high,plant's own state has a dedicated EIA producing-region code
+PJM,876,Kincaid Generation LLC,IL,subbituminous,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+PJM,879,Powerton,IL,subbituminous,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+PJM,983,Clifty Creek,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+PJM,1040,Whitewater Valley,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+PJM,1384,Cooper,KY,bituminous,KY,KY,high,plant's own state has a dedicated EIA producing-region code
+PJM,2828,Cardinal,OH,bituminous,OH,OH,high,plant's own state has a dedicated EIA producing-region code
+PJM,2832,Miami Fort,OH,bituminous,OH,OH,high,plant's own state has a dedicated EIA producing-region code
+PJM,2876,Kyger Creek,OH,bituminous,OH,OH,high,plant's own state has a dedicated EIA producing-region code
+PJM,2914,Dover (OH),OH,bituminous,OH,OH,high,plant's own state has a dedicated EIA producing-region code
+PJM,2935,Orrville,OH,bituminous,OH,OH,high,plant's own state has a dedicated EIA producing-region code
+PJM,2936,Painesville,OH,bituminous,OH,OH,high,plant's own state has a dedicated EIA producing-region code
+PJM,3118,Conemaugh,PA,bituminous,PA,PA,high,plant's own state has a dedicated EIA producing-region code
+PJM,3130,Seward (PA),PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,3136,Keystone,PA,bituminous,PA,PA,high,plant's own state has a dedicated EIA producing-region code
+PJM,3935,John E Amos,WV,bituminous,WV,WV,high,plant's own state has a dedicated EIA producing-region code
+PJM,3943,FirstEnergy Fort Martin Power Station,WV,bituminous,WV,WV,high,plant's own state has a dedicated EIA producing-region code
+PJM,3944,FirstEnergy Harrison Power Station,WV,bituminous,WV,WV,high,plant's own state has a dedicated EIA producing-region code
+PJM,3948,Mitchell (WV),WV,bituminous,WV,WV,high,plant's own state has a dedicated EIA producing-region code
+PJM,3954,Mt Storm,WV,bituminous,WV,WV,high,plant's own state has a dedicated EIA producing-region code
+PJM,6004,Pleasants Power Station,WV,bituminous,WV,WV,high,plant's own state has a dedicated EIA producing-region code
+PJM,6018,East Bend,KY,bituminous,KY,KY,high,plant's own state has a dedicated EIA producing-region code
+PJM,6041,H L Spurlock,KY,bituminous,KY,KY,high,plant's own state has a dedicated EIA producing-region code
+PJM,6166,Rockport,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+PJM,6264,Mountaineer,WV,bituminous,WV,WV,high,plant's own state has a dedicated EIA producing-region code
+PJM,7213,Clover,VA,bituminous,VA,VA,high,plant's own state has a dedicated EIA producing-region code
+PJM,8102,"Gavin Power, LLC",OH,bituminous,OH,OH,high,plant's own state has a dedicated EIA producing-region code
+PJM,10113,John B Rich Memorial Power Station,PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,10143,Colver Green Energy,PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,10151,Grant Town Power Plant,WV,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,10343,Foster Wheeler Mt Carmel Cogen,PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,10603,Ebensburg Power,PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,50397,Pixelle Specialty Solutions LLC - Spring,PA,bituminous,PA,PA,high,plant's own state has a dedicated EIA producing-region code
+PJM,50481,Tennessee Eastman Operations,TN,bituminous,ESC,ESC,medium,no dedicated state code; EIA Census-division aggregate
+PJM,50611,Westwood Generation LLC,PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,50776,Panther Creek Energy Facility,PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,50888,Northampton Generating Company LP,PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,50900,Covington Facility,VA,bituminous,VA,VA,high,plant's own state has a dedicated EIA producing-region code
+PJM,50974,Scrubgrass Reclamation CO. LP.,PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,54634,St Nicholas Cogen Project,PA,waste,,,none,"culm/gob reclamation fuel; not commodity-traded, no EIA region"
+PJM,56671,Longview Power Plant,WV,bituminous,WV,WV,high,plant's own state has a dedicated EIA producing-region code
+PJM,56808,Virginia City Hybrid Energy Center,VA,bituminous,VA,VA,high,plant's own state has a dedicated EIA producing-region code
+MISO,889,Baldwin Energy Complex,IL,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,963,Dallman,IL,bituminous,IL,IL,high,plant's own state has a dedicated EIA producing-region code
+MISO,976,Marion,IL,bituminous,IL,IL,high,plant's own state has a dedicated EIA producing-region code
+MISO,994,AES Petersburg,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+MISO,997,Michigan City,IN,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,1001,Cayuga,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+MISO,1004,Edwardsport,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+MISO,1012,F B Culley,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+MISO,1073,Prairie Creek,IA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,1082,Walter Scott Jr Energy Center,IA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,1091,George Neal North,IA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,1167,Muscatine Plant #1,IA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,1393,R S Nelson,LA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,1710,J H Campbell,MI,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,1733,Monroe (MI),MI,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,1893,Clay Boswell,MN,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,1915,Allen S King,MN,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,2103,Labadie,MO,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,2107,Sioux,MO,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,2823,Milton R Young,ND,lignite,ND,ND,high,mine-mouth: producing region = plant's own state
+MISO,4041,South Oak Creek,WI,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,4050,Edgewater,WI,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,4078,Weston,WI,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,4271,John P Madgett,WI,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6009,White Bluff,AR,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6017,Newton,IL,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6030,Coal Creek,ND,bituminous,ND,ND,high,plant's own state has a dedicated EIA producing-region code
+MISO,6034,Belle River,MI,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6055,Big Cajun 2,LA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6085,R M Schahfer,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+MISO,6090,Sherburne County,MN,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6098,Big Stone,SD,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6113,Gibson,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+MISO,6190,Brame Energy Center,LA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6213,Merom,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+MISO,6254,Ottumwa,IA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6641,Independence Steam Electric Station,AR,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6664,Louisa,IA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,6705,Warrick,IN,bituminous,IN,IN,high,plant's own state has a dedicated EIA producing-region code
+MISO,6823,D B Wilson,KY,bituminous,KY,KY,high,plant's own state has a dedicated EIA producing-region code
+MISO,7343,George Neal South,IA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,8023,Columbia (WI),WI,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,8222,Coyote,ND,lignite,ND,ND,high,mine-mouth: producing region = plant's own state
+MISO,10860,Archer Daniels Midland Clinton,IA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,10864,Archer Daniels Midland Cedar Rapids,IA,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,10865,Archer Daniels Midland Decatur,IL,bituminous,IL,IL,high,plant's own state has a dedicated EIA producing-region code
+MISO,50835,TES Filer City Station,MI,bituminous,ENC,ENC,medium,no dedicated state code; EIA Census-division aggregate
+MISO,54210,American Crystal Sugar Hillsboro,ND,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,54212,American Crystal Sugar Crookston,MN,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,54213,American Crystal Sugar Drayton,ND,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,54214,American Crystal Sugar East Grand Forks,MN,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,54533,Southern Minnesota Beet Sugar,MN,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,55856,Prairie State Generating Station,IL,bituminous,IL,IL,high,plant's own state has a dedicated EIA producing-region code
+MISO,56068,Elm Road Generating Station,WI,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,56456,Plum Point Energy Station,AR,prb,PRB,PRB,high,"PRB-by-rail (coal.py/fuel.py docstring), producing region fixed regardless of plant state"
+MISO,57928,SIUC,IL,bituminous,IL,IL,high,plant's own state has a dedicated EIA producing-region code
+MISO,57949,MSC Sebewaing,MI,bituminous,ENC,ENC,medium,no dedicated state code; EIA Census-division aggregate
+NEISO,2364,Merrimack,NH,bituminous,APP,APP,low,no coal-producing region for this state; low-confidence physical-plausibility proxy
