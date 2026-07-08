@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-08-ercot46-clock-steamgas",
+  "run_id": "2026-07-08-ercot46-clock-steamgas-ablation",
   "iso": "ERCOT",
-  "label": "ercot46 clock steamgas",
+  "label": "ercot46 clock steamgas ablation",
   "target_years": [
     2023,
     2024,
@@ -16,17 +16,14 @@
   "rubric_version": 2.2,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_shape, price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
-  "notes": [
-    "C8 2024 ST_GAS: grounded above budget \u2014 34.0% forced (5.8245 of 17.1118 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.974 (\u22650.8) & off-peak CV ratio 1.349 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
-    "C8 2025 ST_GAS: grounded above budget \u2014 32.6% forced (5.0885 of 15.596 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.966 (\u22650.8) & off-peak CV ratio 1.581 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
-  ],
+  "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -37,8 +34,7 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -68,33 +64,29 @@
     "storage_shape": {
       "label": "C5c storage dispatch shape",
       "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
+      "status": "PASS"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
     "protective": [],
-    "ledgered": [
-      "C5c storage dispatch shape"
-    ],
+    "ledgered": [],
     "commercial_band": [
-      "C2 system volume (gas/coal families)",
-      "C3a mean LMP"
+      "C2 system volume (gas/coal families)"
     ],
     "budget": {
       "protective_max": 1,
@@ -102,11 +94,11 @@
     }
   },
   "grade_summary": {
-    "scored": 11,
-    "target_grade": 6,
-    "commercial_grade": 2,
-    "ledgered": 1,
-    "fails": 2
+    "scored": 8,
+    "target_grade": 3,
+    "commercial_grade": 1,
+    "ledgered": 0,
+    "fails": 4
   },
   "free_class_score": {
     "iso": "ERCOT",
@@ -124,13 +116,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 16,
+      "pass": 15,
       "total": 16
     },
     "free": {
-      "pass": 12,
+      "pass": 11,
       "total": 12
     },
-    "headline": "C1 all 16/16 \u00b7 free 12/12"
+    "headline": "C1 all 15/16 \u00b7 free 11/12"
   }
 }
