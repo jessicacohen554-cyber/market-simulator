@@ -63,7 +63,7 @@ for the market split.
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
 | nyiso-downstate-gas | — | — | — | — | — | — |
-| ercot-wtx-congestion | 2019–2025 | — | — | — | — | — |
+| ercot-wtx-congestion | — | — | — | — | — | — |
 | nyiso-renewable-curtailment | — | — | — | — | — | — |
 | nyiso-renewable-curtailment-monthly | — | — | — | — | — | — |
 
@@ -90,6 +90,8 @@ snapshot).
 | egrid | national (EPA eGRID, by vintage year) | n/a |
 | rggi-co2-budgets | — | n/a |
 | carb-cap-schedule | — | n/a |
+| coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
+| coal-mining-ppi | national (BLS PPI, coal) | n/a |
 
 ---
 
@@ -983,3 +985,49 @@ percent-of-production (wind) and zonal curtailed GWh, by month. Schema:
 | `curtailed_pct` | `float64` | `percent` | yes | NYCA-wide percent of that month's wind production curtailed. Null for zonal rows. |
 | `source_doc` | `string` | `none` | no | Source presentation filename (see raw README for the exact URL). |
 | `source_page` | `string` | `none` | yes | Slide/page number(s) within source_doc the value was read from. |
+
+## coal-basin-price
+
+EIA Annual Coal Report region/rank f.o.b.-mine coal price (annual, national).
+Schema:
+[`schema/coal-basin-price.schema.yaml`](schema/coal-basin-price.schema.yaml).
+
+- **Keys:** `metric`, `region_id`, `market_type_id`, `coal_rank_id`, `year`
+- **Reconciles:** EIA `coal/market-sales-price` (region x market-type, all
+  ranks) and `coal/price-by-rank` (region x coal rank) tidied onto one
+  `metric`-keyed frame, with an `ALL` sentinel on whichever dimension the other
+  route doesn't carry. The free public-domain substitute for the
+  S&P/Argus/McCloskey-paywalled daily basin spot indices — collected to give
+  the coal-vs-gas passthrough sigmoids (issue #1347) a real coal commodity
+  price to check their `floor`/`ceil`/`gas_mid` asymptotes against. Region ->
+  ISO-plant crosswalk: `reference` datatype, `market=coal-region-crosswalk`.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `metric` | `string` | `none` | no | Which EIA route this row came from: "market_sales_price" (region x market-type, all ranks) or "price_by_rank" (region x coal rank, all market types). |
+| `region_id` | `string` | `none` | no | EIA stateRegionId — a two/three-letter state code (e.g. TX, WV) or a named producing region/aggregate (e.g. PRB = Powder River Basin, APC/APN/APS = Appalachia Central/Northern/Southern, ILL = Illinois Basin, UNT = Uinta Basin, ENC/WNC/WSC/ESC = Census-division aggregates). |
+| `region_name` | `string` | `none` | no | Human-readable EIA region/state description. |
+| `market_type_id` | `string` | `none` | no | EIA marketTypeId (CAP=captive, OM=open market, TOT=total) for metric="market_sales_price" rows; literal "ALL" for metric="price_by_rank" rows. |
+| `coal_rank_id` | `string` | `none` | no | EIA coalRankId (BIT/SUB/LIG/ANT/TOT) for metric="price_by_rank" rows; literal "ALL" for metric="market_sales_price" rows. |
+| `year` | `int64` | `none` | no | Calendar (ACR publication) year. |
+| `price_usd_per_ton` | `float64` | `usd_per_short_ton` | no | Average sales price at the mine, dollars per short ton. |
+| `sales_short_tons` | `float64` | `short_tons` | yes | Annual sales tonnage for this region/market-type/year (only populated for metric="market_sales_price"; null for metric="price_by_rank" rows, which EIA does not report tonnage for). |
+
+## coal-mining-ppi
+
+BLS Producer Price Index for coal (national, monthly). Schema:
+[`schema/coal-mining-ppi.schema.yaml`](schema/coal-mining-ppi.schema.yaml).
+
+- **Keys:** `series_id`, `year`, `month`
+- **Reconciles:** BLS `WPU051` (PPI commodity Coal) and `PCU2121--2121--` (PPI
+  industry Coal Mining, NAICS 2121) — a monthly elasticity/slope cross-check on
+  the annual `coal-basin-price` region prices. No regional breakout exists in
+  BLS PPI for coal (confirmed by probing candidate series ids).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `series_id` | `string` | `none` | no | BLS series id (WPU051 = PPI commodity Coal; PCU2121--2121-- = PPI industry Coal Mining, NAICS 2121). |
+| `series_name` | `string` | `none` | no | Human-readable series description. |
+| `year` | `int64` | `none` | no | Calendar year. |
+| `month` | `int64` | `none` | no | Calendar month (1-12). |
+| `index_value` | `float64` | `index_1982_100` | no | PPI index value (base period varies by series; BLS convention, unscaled — not a dollar price. Use month-over-month / year-over-year ratios for the slope/elasticity cross-check, not the level.). |
