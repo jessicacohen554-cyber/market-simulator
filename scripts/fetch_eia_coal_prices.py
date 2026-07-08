@@ -133,9 +133,7 @@ def fetch_market_sales_price(key: str, start_year: int, sleep_s: float) -> list[
                 "market_type_name": r["marketTypeDescription"],
                 "price_usd_per_ton": round(float(price), 4),
                 "sales_short_tons": (
-                    None
-                    if r.get("sales") in _WITHHELD
-                    else round(float(r["sales"]), 1)
+                    None if r.get("sales") in _WITHHELD else round(float(r["sales"]), 1)
                 ),
             }
         )
