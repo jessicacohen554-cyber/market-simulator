@@ -1,0 +1,150 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "gas_cc": 43241.04,
+    "gas_ct": 16689.167,
+    "gas_st": 9426.07,
+    "nuclear": 7980.0
+  },
+  "fleet_by_fuel_before": {
+    "gas_cc": 40241.04,
+    "gas_ct": 13689.167,
+    "gas_st": 9426.07,
+    "nuclear": 6980.0
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "ERCOT",
+  "mode": "forecast",
+  "peak_demand_mw": 83573.0,
+  "renewable_additions": [
+    {
+      "mw": 5000.0,
+      "tech": "wind",
+      "zone": "West"
+    }
+  ],
+  "reserve_margin": 0.504562,
+  "retirements": [],
+  "rps_dual": 0.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [
+    {
+      "duration_h": 100.0,
+      "mw": 448.2,
+      "tech": "iron_air",
+      "unit_id": "West_iron_air_new_2025_0",
+      "zone": "West"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 919.2,
+      "tech": "iron_air",
+      "unit_id": "North_iron_air_new_2025_0",
+      "zone": "North"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 105.3,
+      "tech": "iron_air",
+      "unit_id": "Northeast_iron_air_new_2025_0",
+      "zone": "Northeast"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 794.7,
+      "tech": "iron_air",
+      "unit_id": "Houston_iron_air_new_2025_0",
+      "zone": "Houston"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 492.6,
+      "tech": "iron_air",
+      "unit_id": "South_Central_iron_air_new_2025_0",
+      "zone": "South_Central"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 240.0,
+      "tech": "iron_air",
+      "unit_id": "South_iron_air_new_2025_0",
+      "zone": "South"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 298.8,
+      "tech": "li_ion_8hr",
+      "unit_id": "West_li_ion_8hr_new_2025_1",
+      "zone": "West"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 612.8,
+      "tech": "li_ion_8hr",
+      "unit_id": "North_li_ion_8hr_new_2025_1",
+      "zone": "North"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 70.2,
+      "tech": "li_ion_8hr",
+      "unit_id": "Northeast_li_ion_8hr_new_2025_1",
+      "zone": "Northeast"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 529.8000000000001,
+      "tech": "li_ion_8hr",
+      "unit_id": "Houston_li_ion_8hr_new_2025_1",
+      "zone": "Houston"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 328.40000000000003,
+      "tech": "li_ion_8hr",
+      "unit_id": "South_Central_li_ion_8hr_new_2025_1",
+      "zone": "South_Central"
+    },
+    {
+      "duration_h": 8.0,
+      "mw": 160.0,
+      "tech": "li_ion_8hr",
+      "unit_id": "South_li_ion_8hr_new_2025_1",
+      "zone": "South"
+    }
+  ],
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_ct",
+      "mw": 3000.0,
+      "source": "economic",
+      "unit_id": "gas_ct_new_2025_0",
+      "zone": "North"
+    },
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 3000.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2025_1",
+      "zone": "North"
+    },
+    {
+      "eia860_id": null,
+      "fuel": "nuclear",
+      "mw": 1000.0,
+      "source": "economic",
+      "unit_id": "nuclear_smr_new_2025_3",
+      "zone": "North"
+    }
+  ],
+  "year": 2025
+}
