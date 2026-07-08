@@ -1,0 +1,211 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "ercot46 clock-unification + ST_GAS realism keeper-candidate gate, session 2026-07-08 (full scored bundle; stepwise A/B/C attribution; owner sign-off pending)",
+    "note": "Two-part round on the ercot42 keeper recipe: (1) CLOCK UNIFICATION — the CPT->CST placement-defect fix (builders merged PR #1725) rebuilt onto the measured ORDC-reserves (NP6-905), AS withholding/by-restype-storage (NP3-911/60-day), and WTX-congestion (NP6-86) parquets, plus rule-23 re-derives of the WS-A RTOLCAP_FWD shares/deliverability and the WTX curtailment share table/depth pair (all verified pure -1h DST-month placement shifts, r=1.00000 vs the pre-fix parquets, January identity). (2) ST_GAS REALISM — gas_st_netload_drag (the CAMPD overnight-CF-vs-net-load reliability floor, FROZEN coefficients, docs/ercot-st-gas-netload-drag-2026-06.md) + gas_st_startup_cost (ST_GAS_COMMITMENT_PARAMS startup/min-run/min-down markup, constants.py, NREL/SR-5500-55433) so ST_GAS holds its overnight minimum and pays a real stop-start cost instead of cycling like a peaker (rule 18: gates on unit physics, not a class-name tuple). STEPWISE ATTRIBUTION (A=ercot44b control byte-faithful replay on pre-fix data / B=ercot45 clock-unified, data-only delta / C=ercot46, this bundle, B + ST_GAS mechanisms): B isolates the clock effect (a discovered C3a-2023 CAVEAT->FAIL compensation, registered per rule 14, not tuned); C isolates the ST_GAS mechanism effect on top — ST_GAS under-run closes 2024 -5.96->-1.33 TWh, 2025 -4.31->-0.39 TWh (68-91% closure), 2023 mildly overshoots to +2.19 TWh (still C1 PASS, well inside the 8 TWh/2% band); COAL_PRB over-run improves ~1 TWh/yr (not fully absorbed - CC_REGULAR gives back the balance, matching the original derivation's conservation finding); C3a mean-LMP improves in every year with no LOYO-held-out degradation (rule 22): 2023 FAIL->CAVEAT +9.3%, 2024 CAVEAT +6.5%, 2025 CAVEAT->PASS +4.9%. C3b/C3c (the scarcity tail) are UNCHANGED by this round by design - a separate offer-formation round owns them (docs/handoffs/ercot-g22-demand-side-design-2026-07.md §5). D-2/D-4/D-1 (legitimacy_diagnostics.json, this bundle): st_netload_drag clears D-4 cleanly (0% off-window binding all 3 years - the declared all-hours window, scripts/legitimacy_diagnostics.py D4_WINDOWS, matches the CAMPD evidence that ST_GAS is committed every day and night, never fully off). ST_GAS forced share 26.6%/34.0%/32.6% (2023/24/25) - 2023 clears the 30% merchant cap outright; 2024/25 escalate to rubric-v2.2 GROUNDED PASS (D-4 clean + D-1 profile_r 0.97-0.99 / cv_ratio 1.35-1.58, both clearing gates) per the owner's 2026-07-07 amendment: forcing past the budget is legitimate when the mechanism is structurally grounded and shape-faithful. Zero-forcing ablation twin registered alongside (ercot46_clock_steamgas_ablation, ALL merchant floors off per D-3/MECH_ABLATION_FIELDS - reliability_floor, ct_netload_drag, gas_st_netload_drag, ra_mustoffer_bridge, ercot_wtx_curtailment_driver - not an ST_GAS-isolated counterfactual): C3a price mean blows up +117%/+163%/+52% and ST_GAS reverts past its pre-mechanism under-run (-4.02/-8.69/-6.12 TWh, deeper than the A/B baseline because reliability_floor and the WTX driver also touch the class), confirming the floor stack collectively carries real structural weight, not a cosmetic fit. gas_st_startup_cost is NOT in the D-3 min-gen-floor registry (it is a P1 bid-markup, not a forced-energy floor) so it stays ON in the ablation by design - the ablation isolates FORCED ENERGY, not commitment-cost pricing. Discovered compensations registered, not tuned (rule 14): C3a-2023 CAVEAT->FAIL in B, partially recovered by C to CAVEAT (+9.3% vs A's +8.9%) - open root-cause item, no coefficient moved; C5c-2024 storage monthly-shape r degrades across the round (A 0.481 -> B 0.452 -> C 0.409, all FAIL) - the corrected renewable/net-load shape re-couples storage arbitrage timing, an open root-cause item, no coefficient moved. Everything else is the ercot42 stack unchanged; no scalar re-tuned against a residual this round (rules 1/13/20/23/26)."
+  },
+  "exceptions": [
+    {
+      "criterion": "sysvol",
+      "family": "gas",
+      "year": 2025,
+      "magnitude": "-3.7% vs EIA-930 grid",
+      "reason": "Inherited ercot42 limitation: 2025 preliminary EIA-923 vintage (9/41 CC_REGULAR, 24/38 CT_PEAKER, 12/22 ST_GAS plants missing) - no trustworthy per-class actual, family falls back to the EIA-930 aggregate. Re-score when the final 923 vintage lands."
+    },
+    {
+      "criterion": "price_mean",
+      "year": 2023,
+      "magnitude": "+9.3% (CAVEAT, commercial band)",
+      "reason": "DISCOVERED COMPENSATION (rule 14, registered not tuned): the corrected ORDC-reserves/AS/WTX clock data alone (arm B) flips this year from ercot42's +8.9% CAVEAT to +10.0% FAIL - a genuinely new regression from the placement-defect fix, not present pre-fix. The ST_GAS mechanism (arm C) partially recovers it to +9.3% CAVEAT, still short of A's +8.9%. Root-cause open: which corrected series (ORDC reserves, AS withholding, or WTX congestion) drives the 2023 mean-price residual has not been isolated to a single builder; no coefficient was moved in response to this finding."
+    },
+    {
+      "criterion": "storage_shape",
+      "year": 2024,
+      "magnitude": "r=0.409 (FAIL)",
+      "reason": "DISCOVERED COMPENSATION (rule 14, registered not tuned): degrades across the round from ercot42's r=0.518 (A: 0.481, B: 0.452, C: 0.409) - the corrected renewable-potential shape re-couples storage arbitrage timing away from the actual monthly discharge pattern. Open root-cause item; storage dispatch parameters were not touched this round."
+    },
+    {
+      "criterion": "fuelmix",
+      "key": "ST_GAS",
+      "year": 2023,
+      "magnitude": "+2.19 TWh, share +0.5pp (PASS, well within the 8 TWh/2% band)",
+      "reason": "Report-only note, not a caveat: the ST_GAS drag mildly overshoots in 2023 alone (2024/2025 undershoot, closing 68-91% of the prior gap) - the mild-weather year has lower net-load, so the same frozen curve produces less headroom for CC_REGULAR give-back. Watch in future re-derives; the curve is frozen against residuals (rule 23) and was not adjusted."
+    }
+  ],
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session — audit §3 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20) — inherited verbatim by ercot34/ercot42 (no scalar re-tuned); WS-A + West-floor entries appended 2026-07-06; WP-B curtailment-driver entries appended 2026-07-07 (ercot42 promotion gate); clock-unification re-derive deltas + ST_GAS drag/duration entries appended 2026-07-08 (this round)",
+    "n_entries": 16,
+    "n_residual": 8,
+    "entries": [
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "value": {
+          "CC_REGULAR": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "CC_INTERMEDIATE": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "CC_CHP": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "CT_CHP": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "CT_PEAKER": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "CT_INTERMEDIATE": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "ST_GAS": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "ST_GAS_INTERMEDIATE": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "COAL_LIGNITE": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "COAL_PRB": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "COAL_BIT": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "COAL_WC": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "COAL": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"]
+        },
+        "n_scalars": 72,
+        "source": "per-group HR-band multipliers — the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "value": {"offer_curve_smoothing_n": 6, "offer_curve_smoothing_mid": 0.35, "offer_curve_smoothing_exp": 1.0},
+        "n_scalars": 3,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "COAL_SIGMOID_DEFAULTS[ERCOT]",
+        "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_lignite_passthrough_sigmoid)",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "n_scalars": 8,
+        "source": "gas-keyed coal passthrough sigmoids — the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+        "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 — docs/out-of-sample-results-2026-07.md §2C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_multiplier",
+        "where": "run_config.scenario_config.wefor_multiplier",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "value": 0.7,
+        "source": "wind EFOR haircut (audit C-15) — the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "wefor_residual",
+        "where": "run_config.scenario_config.wefor_residual (groups ['ST_CHP', 'ST_GAS'])",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "value": 0.06,
+        "source": "wind-EFOR residual relief term (audit C-15) — residual-identified by name",
+        "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "battery_dispatch_adder",
+        "where": "run_config.scenario_config.battery_dispatch_adder",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "value": 10.0,
+        "source": "grid-battery throughput/cycling adder $/MWh — inside the literature range (NREL ATB 2024 cycle-life ~$15-25/MWh; Xu et al. 2018 $25-50/MWh) but the specific value is calibrated",
+        "root_cause": "reduced-form stand-in for cycling degradation + AS opportunity cost; forward-valid replacement is the measured AS power reservation (storage_as_commitment) + an ATB-derived degradation cost — open item to re-derive from those. NOTE (this round): C5c storage monthly-shape r degrades 0.481->0.409 across the clock+ST_GAS round (open root-cause item, adder NOT moved in response, rule 14)."
+      },
+      {
+        "name": "GAS_AVAILABILITY_FACTOR[ERCOT]",
+        "where": "constants.py GAS_AVAILABILITY_FACTOR",
+        "identification": "published",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "value": 0.866,
+        "source": "NERC GADS Generating Unit Statistical Brochure 3, 2019-2023 (NERC-wide — no per-ISO breakdown exists), 'FOSSIL Gas Primary, All Sizes', EFORd=13.44%",
+        "note": "open R2-vs-R5 disposition (not a residual on this value): GAS_AVAILABILITY_FACTOR is not read anywhere in src/market_sim (dead/orphaned), so this verified value has zero materiality today. Either wire it in with a fleet-mix-weighted reconciliation or delete it as dead code (rule 26) — tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1349"
+      },
+      {
+        "name": "coal_take_or_pay_tranches",
+        "where": "scenarios.py coal tranche shares 0.30/0.25/0.45 + passthrough 0.35 (constants.py:154)",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "n_scalars": 4,
+        "source": "core coal offer-curve step sizes (audit C-8) — 'Tier 3 (calibration)'; sanctioned mechanism, undisciplined values",
+        "root_cause": "audit C-8: ground on contract-structure data (EIA-923 fuel-cost dispersion) or freeze via rule 23; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1336"
+      },
+      {
+        "name": "CHP_BTM_PCT_BY_SECTOR['merchant']",
+        "where": "constants.py CHP_BTM_PCT_BY_SECTOR",
+        "identification": "residual",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "value": 35.0,
+        "source": "merchant CHP behind-the-meter share — industrial/commercial re-derived from EIA-923 Schedule-8 (S3), merchant retained at its prior fitted value (audit C-4; W1d marker)",
+        "root_cause": "no independent merchant-CHP host-load source found yet — replace when one exists; survey: docs/handoffs/merchant-chp-host-load-memo-2026-07.md; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1335"
+      },
+      {
+        "name": "reliability_floor coefficients",
+        "where": "data/raw/reference/reliability_floor_coeffs_ERCOT.csv",
+        "identification": "measured-physical",
+        "lineage_solves": ">=165 solves (audit §5.1)",
+        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+        "note": "D-8 §2B: three sign-flip limbs permanently R1-disabled; remaining R6-keep drift limbs kept enabled with caveat; re-derive trigger is a source-data change (rule 23), never a residual"
+      },
+      {
+        "name": "ercot_rtolcap_forward coefficients",
+        "where": "data/raw/reference/ercot_rtolcap_forward_coeffs (scripts/derive_ercot_rtolcap_forward.py); engaged via ercot_reserve_supply_forward",
+        "identification": "measured",
+        "lineage_solves": "identification on the measured RTOLCAP/RTOFFCAP MW series BEFORE any dispatch run (validate_ercot_rtolcap_forward.py); re-derived this round on the clock-corrected ORDC-reserves parquets (rule 23 — the CPT->CST placement fix, not a residual)",
+        "source": "per-class on-line headroom-realization shares (committed CAMPD extracts, net-load percentile x season) x reserve-eligible capacity x a deliverability coefficient fit to the measured RTOLCAP/RTOFFCAP QUANTITY (rule 23: re-derives only on source-data updates)",
+        "value": {"deliv_online": 0.8959, "deliv_offline": 0.7756, "prior_deliv_online": 0.8899, "prior_deliv_offline": 0.7748},
+        "root_cause": "level residuals +11.4/-4.3/-13.3% (2023 real-time scarcity depletion; 2025 storage/commitment growth beyond the fixed backcast base) — same documented pattern pre- and post-clock-fix (was +11/-6/-12%), never price-fit; coverage-ratio gate (median ~2.1x) guards the ercot27 exact-coverage artifact"
+      },
+      {
+        "name": "ercot_west_gas_delivered_floor",
+        "where": "run_config.scenario_config.ercot_west_gas_delivered_floor",
+        "identification": "measured-physical",
+        "value": 0.4,
+        "source": "West/Panhandle delivered burner-tip floor at the transport-bound minimum during Waha hub collapse — a physical transport-bound input, not a CT residual fit (scenarios.py field doc)",
+        "root_cause": "open: cite the specific transport-rate source in docs/parameter-citations.md (the field pre-dates this run; carried unchanged from ercot32's resolved config)"
+      },
+      {
+        "name": "ercot_wtx_congestion_share(decile,hour,season)",
+        "where": "data/raw/reference/ercot_wtx_curtailment_share.csv (scripts/derive_ercot_wtx_curtailment_share.py)",
+        "identification": "measured",
+        "lineage_solves": "0 (derived from NP6-86 SCED binding incidence + NP4-160 SP crosswalk; frozen against residuals, rule 23); re-derived this round on the clock-corrected ercot-wtx-congestion clean datatype",
+        "value": "measured West-corridor binding-frequency table; LOYO-reproduces the binding-frequency distribution (shape corr +0.34/+0.38/+0.34)"
+      },
+      {
+        "name": "ercot_wtx_curtail_depth_wind / _solar",
+        "where": "ScenarioConfig.ercot_wtx_curtail_depth_wind / _solar",
+        "identification": "outcome-anchored (measured curtailment MW quantity, HSL - delivered; owner-accepted documented assumption 2026-07-07)",
+        "lineage_solves": "derive-time closed form per year + LOYO (no solve sweep); RTOLCAP-forward deliv precedent; re-derived this round on the clock-corrected WTX/HSL basis (rule 23)",
+        "value": {
+          "wind": 0.1004,
+          "solar": 0.1637,
+          "prior_wind": 0.0998,
+          "prior_solar": 0.1633,
+          "loyo_wind": [0.0993, 0.0997, 0.1007]
+        }
+      },
+      {
+        "name": "gas_st_drag_slope_per_gw / _intercept / _cap",
+        "where": "ScenarioConfig.gas_st_drag_slope_per_gw / _intercept / _cap (engaged via gas_st_netload_drag)",
+        "identification": "measured-physical",
+        "lineage_solves": "derive-time closed form (CAMPD overnight ST_GAS capacity factor regressed on contemporaneous system net-load, 2023-2025 pooled least-squares; docs/ercot-st-gas-netload-drag-2026-06.md); FROZEN against residuals (rule 23) — not re-fit this round",
+        "value": {"slope_per_gw": 0.00906, "intercept": -0.1376, "cap": 0.34},
+        "source": "net-load-conditioned physical operating rule (Spearman rho 0.82 vs net-load, year-stable 2023-2025; U-shaped vs temperature, corroborating but not the trigger) — forward-derivable from a forecast year's own net-load, admissible in both backcast and forecast (CLAUDE.md rule 11)",
+        "root_cause": "D-4 clears cleanly (0% off-window binding, all-hours window declared this round, scripts/legitimacy_diagnostics.py D4_WINDOWS); D-1 clears (profile_r 0.97-0.99, cv_ratio 1.35-1.62); D-2 forced share 26.6/34.0/32.6% (2023 within the 30% merchant cap; 2024/25 GROUNDED PASS via rubric-v2.2 escalation — not an over-forcing bug, a real reliability-commitment driver reproducing the measured overnight dispatch)"
+      },
+      {
+        "name": "ST_GAS_COMMITMENT_PARAMS / ST_GAS_STARTUP_PARAMS (via gas_st_startup_cost)",
+        "where": "constants.py ST_GAS_COMMITMENT_PARAMS, ST_GAS_STARTUP_PARAMS; ScenarioConfig.gas_st_startup_cost gates the P1 bid markup",
+        "identification": "measured-physical / published",
+        "lineage_solves": "0 (pre-existing constants, gate flipped on this round — not re-derived or re-fit)",
+        "value": {
+          "efficient_steam": {"startup_per_mw": 55.0, "min_run_hours": 24, "min_down_hours": 8},
+          "older_subcritical": {"startup_per_mw": 75.0, "min_run_hours": 48, "min_down_hours": 12}
+        },
+        "source": "NREL/SR-5500-55433 gas-steam cycling cost + startup cost; min-run/min-down raised to hold a committed boiler across a multi-day heat-wave/cold-snap event rather than two-shifting — unit physics, not a class-name tuple (rule 18); this is a P1 BID-MARKUP mechanism (not a min-gen floor) so it is NOT in the D-3 zero-forcing-ablation registry and stays ON in the ercot46 ablation twin by design",
+        "root_cause": "none — published/measured input, gate flipped, not fit to any residual"
+      }
+    ],
+    "n_outcome_anchored": 1
+  }
+}
