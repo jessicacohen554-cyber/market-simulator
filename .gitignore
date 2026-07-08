@@ -363,3 +363,4 @@ docs/handoffs/_foresight_ab_cache/
 
 # Agent tool worktrees (per-session isolated worktrees, not repo content)
 .claude/worktrees/
+logs_g10/
