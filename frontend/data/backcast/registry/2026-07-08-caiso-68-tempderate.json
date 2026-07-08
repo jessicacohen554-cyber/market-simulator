@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-caiso-68-tempderate",
+  "label": "caiso 68 tempderate",
+  "date": "2026-07-08",
+  "shorthand": "caiso-68-tempderate",
+  "definition": "temp-derate full-keeper main -- caiso65_seam_envelope_clock config + temp_dependent_derate, 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-08-caiso-68-tempderate.js",
+  "bundle": "results/calibration/caiso68_tempderate"
+}
