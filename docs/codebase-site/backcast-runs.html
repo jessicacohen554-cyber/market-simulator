@@ -895,12 +895,12 @@
       }
       html += `</div></div>`;
 
-      // LMP delta heatmap (KEEPER ONLY) — 365×24 hot/cold map of model minus
-      // actual LMP per hour. Only shown for the ISO's keeper and only when the
-      // payload carries the hourly delta field (populate-on-next-render).
-      const deltaYears = isKeeperRun() ? years.filter(yr => RUN(yr).lmpDeltaHr) : [];
+      // LMP delta heatmap — 365×24 hot/cold map of model minus actual LMP per
+      // hour, for ANY run whose payload carries the hourly delta field
+      // (populate-on-next-render; the panel is omitted when it's absent).
+      const deltaYears = years.filter(yr => RUN(yr).lmpDeltaHr);
       if (deltaYears.length) {
-        html += `<div class="bc-panel"><h2>LMP Delta Heatmap <span class="keeper-badge">Keeper</span></h2>
+        html += `<div class="bc-panel"><h2>LMP Delta Heatmap</h2>
           <p class="panel-sub">Model minus actual LMP for every hour of the year — <span style="color:${`rgb(${DELTA_ORANGE.join(',')})`};font-weight:700">orange = model over</span> (runs hot), <span style="color:${`rgb(${DELTA_BLUE.join(',')})`};font-weight:700">blue = model under</span> (runs cold), white ≈ on top. Day-of-year across, hour-of-day down; color capped at the 98th percentile of |Δ| per year.</p>
           <div class="lmp-grid" id="deltaHeatGrid">`;
         for (const yr of deltaYears) {
