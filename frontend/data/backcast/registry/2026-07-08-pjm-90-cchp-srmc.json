@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-pjm-90-cchp-srmc",
+  "label": "pjm 90 cchp srmc",
+  "date": "2026-07-08",
+  "shorthand": "pjm-90-cchp-srmc",
+  "definition": "PJM 90 CC_CHP SRMC re-grounding on the pjm-89 steam-gas-drag recipe. Completes the pjm-79 SRMC re-grounding for the one class it skipped: CC_CHP economic tranches 0.6624/0.684/0.8208 -> 1.0/1.0/1.05 (Manual-15 composite-cost floor). Measured diagnosis: CC_CHP over-DISPATCHED (grid CF ~48% vs measured net-to-grid ~29%) by bidding sub-SRMC, NOT a BTM capacity issue (merchant 35% BTM is the correct host share). The steam credit is the host's (BTM-removed) so the grid MWh bids at true power-only cost; must-run steam floor untouched. Rule 1 offer physics, registered channel. RESULT vs 923 net-to-grid: CC_CHP 2024 10.7->8.7 TWh (+47%->+19%), 2025 9.6->7.3 (+52%->+16%), 2023 10.0->9.1 (+50%). Aggregate held: coal 122 vs 121 (EIA-930), prices flat. Carries all four pjm-89 corrections (ST_GAS overnight drag, CHP HR, outage capture, coal-bit). OPEN: 2023 CC_CHP still +50%; the last mile is a measured grid-export availability cap (net-export envelope, like retiree_cems_cap) - flagged for owner sign-off (rule-11 framing). CANDIDATE; keeper promotion pending ablation twin + leave-one-year-out.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-08-pjm-90-cchp-srmc.js",
+  "bundle": "results/calibration/pjm90_cchp_srmc"
+}
