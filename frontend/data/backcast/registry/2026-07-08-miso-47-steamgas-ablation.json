@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-08-miso-47-steamgas-ablation",
+ "label": "miso 47 steamgas ablation",
+ "date": "2026-07-08",
+ "shorthand": "miso-47-steamgas-ablation",
+ "definition": "(ABLATION TWIN of 2026-07-08-miso-47-steamgas-ct) Zero-forcing reference solve: the miso-47 keeper recipe with every merchant floor/bridge/drag neutralized (reliability_floor OFF - the ST_GAS overnight + CT_PEAKER evening drag limbs removed), keeping the structural protected set (nuclear must-run, CHP steam, coal take-or-pay). Isolates what the drag limbs buy: CT_PEAKER -0.3..-0.7 TWh/yr, ST_GAS ~flat.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-08-miso-47-steamgas-ablation.js",
+ "bundle": "results/calibration/MISO/miso_47_steamgas_ct_drag-ablation"
+}
