@@ -7868,3 +7868,140 @@ attestation + twin regenerated on the corrected data).
 **Holdouts.** No solve, score, or intake touched 2022/H1-2026 (rule 22); all
 three years in one bundle per arm (rule 16); years solved sequentially, arms
 serial (rule 12 / OOM guardrail).
+
+## 2026-07-08 — ERCOT G-22 §7 follow-up executed: clock-unification (ORDC reserves/AS/WTX) + ST_GAS reliability realism — keeper-candidate `ercot46 clock+steamgas` built, LOYO-checked, attested (owner sign-off pending)
+
+Executes the design doc §7 follow-up register row (reserves-parquet clock fix,
+AS-series verification, WTX share-table re-derive) named-but-not-churned by
+the 2026-07-07 G-22 demand-side round, combined per owner direction with the
+deferred ST_GAS reliability-drag/duration integration (the "ST_GAS behaves
+like a peaker" signature flagged against the pre-round keeper `ercot42`: gas
+family under-runs ~4-8 TWh/yr while coal over-runs by almost the same
+magnitude, all 3 years — within the ±8 TWh C2 gate, but a structural bias).
+PR #1725 (merged prior session) fixed the CPT→CST placement defect in the
+ORDC-reserves/AS/WTX **builders**; this round rebuilt the **committed
+parquets** and re-derived the constants that condition on them.
+
+**Step 1 — parquet rebuild (rule 14, corrected data kept unconditionally).**
+Rebuilt `ercot_<year>_ordc_reserves_hourly.parquet` (2023-2025), the AS
+withholding/by-restype-storage series, and the `ercot-wtx-congestion` clean
+datatype from the merged builders. Fixed a latent bug found in the process: a
+missing `prevailing_he_to_cst` import in
+`build_ercot_as_by_restype_from_60day.py` (the `--surgical-storage` path was
+unrunnable on main). Verified every rebuilt series against the committed
+pre-fix parquets: **r=1.00000 at Jan lag 0 / Jul lag -1** on every column, all
+3 years (a pure DST-month placement shift, no value change) — plus the cited
+corrupt 2024 PRC interval (hourly-mean min -56M MW) now nulled+interpolated
+(min 4,778 MW), and the CST clock gapless through both DST transitions (0
+interpolated hours). Added `tests/test_ercot_clock_builders.py` (12 tests:
+winter identity, summer -1h, spring/fall DST coverage, plausibility nulling)
+mirroring `tests/test_ercot_hsl.py`.
+
+**Step 2 — rule-23 re-derives.** `derive_ercot_rtolcap_forward.py`: WS-A
+`ERCOT_RTOLCAP_FWD_ONLINE/OFFLINE_SHARE` + deliverability coefficients
+(0.8899/0.7748 → 0.8959/0.7756); `validate_ercot_rtolcap_forward.py` anti-F1
+coverage gate **PASSED** (median 2.03/2.12/2.18×, unchanged from the
+pre-fix 2.02/2.08/2.21× — still the sane ~2× band, not the ercot27
+exact-coverage artifact); per-year level residual +11.4/-4.3/-13.3% (was
++11/-6/-12%), same documented pattern, not tuned.
+`derive_ercot_wtx_curtailment_share.py`: the SHAPE table + the depth pair
+(the keeper's one outcome-anchored DOF) moved immaterially — wind
+0.0998→0.1004, solar 0.1633→0.1637, LOYO wind 0.0993/0.0997/0.1007 (was
+0.0998/0.0996/0.0984) — no material move, not tuned.
+
+**Step 3 — ST_GAS realism.** Enabled `gas_st_netload_drag` (FROZEN curve —
+slope 0.00906/GW, intercept -0.1376, cap 0.34,
+`docs/ercot-st-gas-netload-drag-2026-06.md`, CAMPD overnight-CF-vs-net-load
+regression, Spearman ρ=0.82, year-stable) and `gas_st_startup_cost`
+(`ST_GAS_COMMITMENT_PARAMS`/`ST_GAS_STARTUP_PARAMS`, NREL/SR-5500-55433 —
+startup cost + min-run/min-down so a stop-start costs more than idling; gates
+on unit physics per rule 18, not a class tuple). Declared the drag's D-4
+off-window: all 24 hours — the CAMPD evidence shows ST_GAS "committed every
+day and night, never fully off" (unlike CT, whose overnight CF ≈ 0), so
+there is no hour the class's own driver evidence says it's offline
+(`scripts/legitimacy_diagnostics.py` `D4_WINDOWS`).
+
+Checked the "deferred min-run/min-down rolling-window rows" follow-up
+(`scenarios.py:1819`, `miso_commitment_posture`'s continuous online-capacity
+`U` column): that lever has **not** landed on main — it is MISO's own G-40
+memory-gated commitment-posture smoothing, a different mechanism on a
+different variable, not an ERCOT ST_GAS lever. Not wired here per the
+task's conditional; ERCOT's ST_GAS min-run/min-down instead engages through
+the existing discrete `ST_GAS_COMMITMENT_PARAMS` (24-48h min-run / 8-12h
+min-down) via `gas_st_startup_cost`'s P1 amortized-startup markup.
+
+**Step 4 — stepwise A/B/C, all 3 years, one arm at a time.**
+Registered: `2026-07-07-ercot44b-control` (A, byte-faithful replay of ercot42
+on pre-fix data), `2026-07-07-ercot45-clock-unified` (B, A + corrected data
+only), `2026-07-08-ercot46-clock-steamgas` (C, B + ST_GAS mechanisms;
+keeper-candidate) + `2026-07-08-ercot46-clock-steamgas-ablation` (D-3
+zero-forcing twin, every merchant floor off).
+
+*B isolates the clock effect* — one discovered compensation (rule 14,
+registered not tuned, no coefficient moved): **C3a-2023 flips CAVEAT +8.9% →
+FAIL +10.0%** — a genuinely new regression from the corrected data alone.
+Everything else moves within noise: C3b-2023 0.256→0.248 (still FAIL),
+C3b-2024 0.180→0.191 (both CAVEAT), C3c unchanged all years (still FAIL),
+C5c-2024 storage-shape r 0.481→0.452 (still FAIL, degrading).
+
+*C isolates the ST_GAS mechanism* on top of B. Class volume (grid-delivered
+TWh, model/actual, Δ):
+
+| class | 2023 (B→C) | 2024 (B→C) | 2025 (B→C) |
+|---|---|---|---|
+| ST_GAS | −1.98→**+2.19** | −5.96→**−1.33** | −4.31→**−0.39** |
+| COAL_PRB | +4.52→+3.52 | +4.20→+3.17 | +3.70→+3.37 |
+| CC_REGULAR | −0.03→−2.74 | +0.05→−3.10 | +2.81→−0.27 |
+
+ST_GAS under-run **closes 68-91% in 2024/2025** (a mild 2023 overshoot to
++2.19 TWh, still C1 PASS well inside the 8 TWh/2% band — the mild-weather
+year has lower net-load, so the frozen curve gives less headroom for
+CC_REGULAR to absorb); COAL_PRB over-run improves ~1 TWh/yr but is not fully
+closed (CC_REGULAR gives back the balance, matching the original
+derivation's conservation finding — `docs/ercot-st-gas-netload-drag-2026-06
+.md`). **C3a improves in every year with no LOYO-held-out degradation (rule
+22):** 2023 FAIL→CAVEAT +9.3%, 2024 CAVEAT +6.5%, 2025 CAVEAT→**PASS +4.9%**.
+C3b/C3c essentially unchanged — the scarcity tail is a separate
+offer-formation round's scope, not touched here (design doc §5).
+
+**D-1/D-2/D-4 (`legitimacy_diagnostics.json`, this bundle).**
+`st_netload_drag` clears **D-4 cleanly (0% off-window binding, all 3
+years)** — the declared all-hours window matches the mechanism by
+construction. ST_GAS forced share **26.6%/34.0%/32.6%** (2023/24/25): 2023
+clears the 30% merchant cap outright; 2024/2025 escalate to a **rubric-v2.2
+GROUNDED PASS** (D-4 clean + D-1 profile_r 0.97-0.99 / cv_ratio 1.35-1.58,
+both clearing gates) per the owner's 2026-07-07 amendment — forcing past
+budget is legitimate when the mechanism is structurally grounded and
+shape-faithful. **C7 and C8 both PASS.**
+
+**Ablation twin.** Every merchant floor off (`reliability_floor`,
+`ct_netload_drag`, `gas_st_netload_drag`, `ra_mustoffer_bridge`,
+`ercot_wtx_curtailment_driver` — NOT an ST_GAS-isolated counterfactual): C3a
+mean LMP blows up +117%/+163%/+52% and ST_GAS reverts to **−4.02/−8.69/−6.12
+TWh** (deeper than the pre-mechanism A/B baseline, since `reliability_floor`
+and the WTX driver also touch the class) — confirms the floor stack
+collectively carries real structural weight, not a cosmetic fit.
+`gas_st_startup_cost` stays ON in the ablation by design (a P1 bid-markup,
+not a D-3 min-gen-floor mechanism, so it is outside the zero-forcing
+registry).
+
+**Step 5 — attestation (`calibration_attestation.json`, C bundle).** DOF
+ledger carried forward from ercot42 (16 entries, 8 residual, 1
+outcome-anchored) — added the frozen `gas_st_drag_slope/intercept/cap` curve
+and `ST_GAS_COMMITMENT_PARAMS`/`STARTUP_PARAMS` (both measured-physical, no
+residual fit), updated the WS-A/WTX-depth values to their re-derived
+figures. Exceptions ledger documents both discovered compensations
+(C3a-2023, C5c-2024 r 0.481→0.452→0.409) as accepted measured-input
+limitations, no coefficient moved. **C6 governance gate: PASS.** Overall
+determination: **NOT-YET** (C3b/C3c FAIL — the separate scarcity-tail round;
+unchanged from ercot42's own determination).
+
+**Dashboard.** Registered A/B/C + ablation (4 new runs); ERCOT pruned to the
+top-15 retention (dropped the 4 oldest: ercot34/34-ablation/35/36 — the
+underlying bundles are untouched, only dashboard registration dropped).
+`status.js` confirmed in sync — **keeper stays `ercot42`** pending owner
+decision on promoting `ercot46`.
+
+**Holdouts.** No solve, score, or intake touched 2022/H1-2026 (rule 22); all
+three years in one bundle per arm (rule 16); years solved sequentially, arms
+serial (rule 12 / OOM guardrail); ORDC tariff parameters untouched (rule 26).
