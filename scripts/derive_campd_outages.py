@@ -110,11 +110,20 @@ WINDOW_DAYS: int = 30
 # stop — mean CF below FULL_STOP_OVERRIDE_CF — lasting at least
 # FULL_STOP_OVERRIDE_DAYS continuous days. Keyed ONLY on measured CAMPD
 # operation (CF) + EIA-930 net load (the mask) — no LMP / price / MWh-residual
-# input (claude.md #11). N=14 d is the measured-anchored knee: at >=14 d the
-# dropped spans are ~98% full stops and ~zero partial backdown, while 21 d / 28 d
-# recover almost nothing the local band does not already keep. Set
-# FULL_STOP_OVERRIDE_DAYS very large (or pass --no-fullstop-override) to disable.
-FULL_STOP_OVERRIDE_DAYS: int = 14
+# input (claude.md #11). N lowered 14 -> 5 d (2026-07-07): a PJM PRB audit
+# (Kincaid/Powerton, 2023-2025) found ~62 plant-days of genuine dead stops
+# (span CF == 0.000) in the 5-13 d SHOULDER band being dropped as "economic
+# idle" because they overlapped < 24 high-net-load hours and fell short of the
+# 14 d override. The real protection here is the DEPTH gate, not the duration:
+# economic idling backs down but "rarely fully STOPS for weeks" — a sustained
+# CF < FULL_STOP_OVERRIDE_CF (0.02) dead stop is the mechanical-outage signature
+# at any duration, and 5 d matches the unit-level detector's own
+# UNIT_OUTAGE_MIN_DAYS floor (outages.py), so no span shorter than an already-
+# recognized outage is admitted. 21 d / 28 d recovered almost nothing the local
+# band did not already keep; 5 d recovers the shoulder-season dead-stop band the
+# 14 d knee left exposed. Set FULL_STOP_OVERRIDE_DAYS very large (or pass
+# --no-fullstop-override) to disable.
+FULL_STOP_OVERRIDE_DAYS: int = 5
 FULL_STOP_OVERRIDE_CF: float = 0.02
 
 
