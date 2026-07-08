@@ -521,16 +521,20 @@ CAISO_CHP_CC_STEAM_CREDIT_HR_FLOOR: float = 6.3
 # in. PJM added 2026-07-07: its CHP reports cap-weighted HRs of CC_CHP ~4.95 /
 # CT_CHP ~6.14 MMBtu/MWh (both physically impossible power-only), which let
 # steam-credited CHP clear as the cheapest thermal and over-deliver grid energy
-# +52-67% vs EIA-923 net-to-grid (docs/FINDING-pjm-burndown-2026-07.md). MISO
-# added 2026-07-08: its CHP reports cap-weighted HRs of CT_CHP ~6.62 (median
-# 5.50; 77/96 units, 2126 MW below the 8.0 power-only floor) / CC_CHP ~6.76
-# (min 4.49; 23 units, 774 MW below the 6.0 floor) MMBtu/MWh — the same
-# sub-physical steam-credited distribution, so the universal turbine-physics
-# correction applies. Other ISOs join as their CHP HR distributions are audited
-# in the all-ISO sweep.
-CHP_STEAM_CREDIT_HR_CORRECTION_ISOS: frozenset[str] = frozenset(
-    {"CAISO", "PJM", "MISO"}
-)
+# +52-67% vs EIA-923 net-to-grid (docs/FINDING-pjm-burndown-2026-07.md). Other
+# ISOs join as their CHP HR distributions are audited in the all-ISO sweep.
+#
+# MISO was AUDITED 2026-07-08 and deliberately NOT added: although its reported
+# HRs are equally sub-physical (cap-weighted CT_CHP ~6.62 / CC_CHP ~6.76, median
+# CT_CHP 5.50, min CC_CHP 4.49 MMBtu/MWh), MISO CHP does NOT over-deliver — the
+# symptom the correction targets. In the miso-46 keeper CC_CHP already matched
+# 923 (+0.8/+1.6/+6.0% by year) and CT_CHP was UNDER (-29/-28/-4.5%), because the
+# MISO CHP fleet is BTM-dominated (chp_btm_floor_pct) and held off the grid, not
+# clearing cheap on the steam-credited HR. Applying the correction there only
+# pushed CT_CHP further under (to -63/-63/-42%) with no gating-criterion gain, so
+# the sub-physical HR is not the operative error for MISO CHP (a BTM/commitment
+# root cause is) and the physics correction is left off until that is addressed.
+CHP_STEAM_CREDIT_HR_CORRECTION_ISOS: frozenset[str] = frozenset({"CAISO", "PJM"})
 
 # Fraction of a unit's WEFOR (forced-outage rate) that applies during the
 # summer peak; the remaining (1 - share) is redistributed into the shoulder
