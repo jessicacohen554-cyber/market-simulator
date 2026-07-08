@@ -2,11 +2,11 @@
  "CAISO": "2026-07-07-caiso65-seam-envelope-clock",
  "ERCOT": "2026-07-08-ercot46-clock-steamgas",
  "NEISO": "2026-07-08-neiso-54-steamgas-ct",
- "PJM": "2026-07-06-pjm-83-srmc-reground",
+ "PJM": "2026-07-08-pjm-90-cchp-srmc",
  "keepers": [
   "2026-07-08-ercot46-clock-steamgas",
   "2026-07-07-caiso65-seam-envelope-clock",
-  "2026-07-06-pjm-83-srmc-reground",
+  "2026-07-08-pjm-90-cchp-srmc",
   "2026-07-07-nyiso-56-measured-zonal",
   "2026-07-08-neiso-54-steamgas-ct",
   "2026-07-08-miso-47-steamgas-ct"
