@@ -5,19 +5,19 @@ name: apply-caiso-zonalgas-paths
 # server-side - the apply-export-cap.yml / apply-miso-1347-edits.yml
 # precedent. The edit spans multi-thousand-line source files a
 # hand-transcribed full-file push could silently corrupt, so the change
-# travels as a git-format patch (base64, split into 3 parts to fit the
-# transport, sha256-pinned so any corruption fails LOUDLY instead of
+# travels as a git-format patch (base64, line-wrapped, split into 4 parts to
+# fit the transport, sha256-pinned so any corruption fails LOUDLY instead of
 # applying). This branch's prior history is fully merged into main (its PR
 # landed), so per the repo's merged-PR rule the branch is REBUILT from
 # origin/main and the patch applied on top; the force-push replaces the
-# carrier commit that delivered these files.
+# carrier commits that delivered these files.
 # Idempotent: a re-trigger sees the applied sentinel file and no-ops.
 on:
   push:
     branches:
       - claude/caiso-steamgas-ct-drag
     paths:
-      - .github/patches/2026-07-08-caiso-zonalgas-paths.b64.*
+      - .github/patches/2026-07-08-caiso-zonalgas-paths.b64part*
       - .github/workflows/apply-caiso-zonalgas-paths.yml
   workflow_dispatch:
 
@@ -40,11 +40,18 @@ jobs:
             echo "already applied (sentinel present) - no-op"
             exit 0
           fi
+          for p in 00 01 02 03; do
+            if [ ! -f ".github/patches/2026-07-08-caiso-zonalgas-paths.b64part$p" ]; then
+              echo "payload part $p not yet pushed - waiting for the next carrier commit"
+              exit 0
+            fi
+          done
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
-          cat .github/patches/2026-07-08-caiso-zonalgas-paths.b64.00 \
-              .github/patches/2026-07-08-caiso-zonalgas-paths.b64.01 \
-              .github/patches/2026-07-08-caiso-zonalgas-paths.b64.02 \
+          cat .github/patches/2026-07-08-caiso-zonalgas-paths.b64part00 \
+              .github/patches/2026-07-08-caiso-zonalgas-paths.b64part01 \
+              .github/patches/2026-07-08-caiso-zonalgas-paths.b64part02 \
+              .github/patches/2026-07-08-caiso-zonalgas-paths.b64part03 \
             | base64 -d > "$RUNNER_TEMP/caiso-zonalgas.patch"
           echo "b088d06c59ddfe2cd27b9ae329d5890608b3b58117603d0209f2265e0bffa638  $RUNNER_TEMP/caiso-zonalgas.patch" | sha256sum -c -
           git fetch origin main
