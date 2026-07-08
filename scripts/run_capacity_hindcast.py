@@ -85,6 +85,7 @@ def build_config(
     end_year: int,
     variant: str,
     energy_only_floor: bool = False,
+    entry_lookahead_reprice: bool = False,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -133,6 +134,16 @@ def build_config(
         # PJM → capacity-market (no-op). Harness default, not a model default.
         scarcity_pricing_enabled=True,
         market_design_retirement_floor=energy_only_floor,
+        # G-30 corrective arm (probe, default-off): re-price each entering
+        # year's KNOWN realized net load against the current (post-retirement)
+        # fleet stack with the published ORDC curve, and feed that pro-forma to
+        # the retirement / new-entry / storage screens. Tempers the perfect-
+        # foresight LP's screen signal: where the thinned fleet is genuinely
+        # short against next year's realized load, the screen sees scarcity the
+        # over-supplied in-year dispatch never forms. Zero fitted parameters
+        # (rule 13); screens-only, never dispatch. See scenarios.py:
+        # entry_lookahead_reprice and the runner call site.
+        entry_lookahead_reprice=entry_lookahead_reprice,
     )
 
 
@@ -189,6 +200,18 @@ def main(argv: list[str] | None = None) -> int:
             "Probe-only, never the harness default — see build_config."
         ),
     )
+    parser.add_argument(
+        "--entry-lookahead-reprice",
+        action="store_true",
+        help=(
+            "G-30 corrective arm (PROBE): enable entry_lookahead_reprice so the "
+            "capacity screens see each entering year's realized net load "
+            "re-priced against the current fleet with the published ORDC curve. "
+            "Tests whether tempering the perfect-foresight screen signal lets "
+            "scarcity form so solar entry clears / over-retirement drops. "
+            "Probe-only — see build_config."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -201,6 +224,7 @@ def main(argv: list[str] | None = None) -> int:
         args.end_year,
         args.fuel_variant,
         energy_only_floor=args.energy_only_floor,
+        entry_lookahead_reprice=args.entry_lookahead_reprice,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) — deliberately
@@ -228,6 +252,7 @@ def main(argv: list[str] | None = None) -> int:
         "iso": iso,
         "variant": args.fuel_variant,
         "energy_only_floor": bool(args.energy_only_floor),
+        "entry_lookahead_reprice": bool(args.entry_lookahead_reprice),
         "gas_price_path": config.gas_price_path,
         "vintage_year": VINTAGE_YEAR,
         "start_year": args.start_year,
