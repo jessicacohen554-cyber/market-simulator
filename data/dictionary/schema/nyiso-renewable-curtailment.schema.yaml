@@ -1,0 +1,82 @@
+# Canonical schema: NYISO annual renewable curtailment (coarse aggregate)
+#
+# NYISO's own annual "NYCA Renewables" presentation reports economic/real-time
+# wind (and, from 2022, FTM solar) curtailment as a coarse NYCA-wide and
+# 4-zone (West/Central/North/Mohawk Valley) annual aggregate — NOT an hourly
+# per-plant uncurtailed-potential (HSL) series comparable to ERCOT NP6 or
+# CAISO's Production-and-Curtailment workbooks. This schema captures that
+# coarse aggregate as a labeled diagnostic dataset; it is deliberately
+# distinct from the (still-empty) hourly HSL stub in
+# market_sim.config.paths.NYISO_HSL_DIR / market_sim.data.renewables._hsl_file
+# — see data/raw/nyiso-renewable-curtailment/README.md for the DATA NEEDED
+# gaps this does not close.
+#
+# One row per (resource_type, geographic_scope, year). geographic_scope=NYCA
+# is the system-wide total; zone rows (wind only) never publish their own
+# percent-of-production, so curtailed_pct is null there.
+#
+# Curated by scripts/curate_nyiso_renewable_curtailment.py from
+#   data/raw/nyiso-renewable-curtailment/nyiso_curtailment_annual.csv
+datatype: nyiso-renewable-curtailment
+schema_version: 1
+title: NYISO annual renewable curtailment (coarse NYCA/zonal aggregate)
+description: >-
+  NYISO's published annual wind and FTM-solar curtailment aggregate (NYCA
+  system-wide and 4-zone), hand-transcribed from the NYCA Renewables
+  presentation series. A coarse diagnostic input, not an hourly HSL series.
+
+key_columns: [iso, resource_type, geographic_scope, year]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (NYISO).
+  - name: resource_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: Curtailed resource type (wind, ftm_solar).
+  - name: geographic_scope
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      NYCA (system-wide) or one of NYISO's curtailment-reporting zones (WEST,
+      CENTRAL, NORTH, MOHAWK_VALLEY). Zonal rows are wind-only — FTM solar
+      curtailment is reported NYCA-wide only.
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year.
+  - name: curtailed_energy_gwh
+    dtype: float64
+    unit: gwh
+    nullable: false
+    description: NYISO's estimated curtailed energy for the year, in GWh.
+  - name: curtailed_pct
+    dtype: float64
+    unit: percent
+    nullable: true
+    description: >-
+      Percent of potential production curtailed, as printed by the source.
+      Only published for NYCA-wide rows; null for zonal rows and for
+      FTM solar years the source didn't print a percent for (2022-2023).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: Source presentation filename (see raw README for the exact URL).
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Slide/page number(s) within source_doc the value was read from.
+  - name: notes
+    dtype: string
+    unit: none
+    nullable: true
+    description: Source-printed annotations (e.g. a zone's driver footnote) or cross-check notes.
