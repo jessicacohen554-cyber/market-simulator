@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-miso-47-steamgas-ct",
+  "label": "miso 47 steamgas ct",
+  "date": "2026-07-08",
+  "shorthand": "miso-47-steamgas-ct",
+  "definition": "MISO 47 steam-gas overnight + CT evening drag keeper candidate: miso-46 seam-ladder recipe re-solved at HEAD, absorbing two base-data structural mechanisms vs miso-46 \u2014 (1) ST_GAS extreme-day overnight [0,6] drag in the reliability_floor engine (tmax/tmin/netload, min-stable 0.12, 4 limbs enabled where the CAMPD overnight pre-positioning is real, forced 0.7-1.2% in-solve), (2) CT_PEAKER evening [15,21] netload drag replacing the temperature-only CT limbs (6 zones, rho 0.49-0.71, forced 5.0-7.5% in-solve \u2014 under the 15% peaker cap; D-1/D-2/D-4 all pass). The MISO CHP steam-credit HR correction was audited and LEFT OFF (MISO CHP does not over-deliver). Recipe byte-unchanged vs miso-46; every delta is one of these two drag mechanisms in reliability_floor_coeffs_MISO.csv.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-08-miso-47-steamgas-ct.js",
+  "bundle": "results/calibration/MISO/miso_47_steamgas_ct_drag"
+}
