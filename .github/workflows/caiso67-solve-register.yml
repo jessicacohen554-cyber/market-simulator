@@ -1,20 +1,18 @@
 name: caiso67-solve-register
 
-# One-shot: regenerate the caiso-67 bundle on CI (the 607KB run payload cannot
-# be inlined through an API push) and register it on the backcast dashboard as
-# a PROBE. Replays the committed caiso65 keeper with the two new measured,
-# default-off flags (caiso_zonal_gas_basis + caiso_asymmetric_path_ratings),
-# scores it, runs dashboard_add_run, and commits ONLY the per-run files
-# (registry sidecar + runs payload + bench + slim bundle json) on top of
-# origin/main -> claude/caiso67-register. Keeper stays caiso65.
-# Self-triggering on its own file + a trigger file (workflow_dispatch is 403
-# for the integration token).
+# One-shot: regenerate the caiso-67 bundle on CI and register it on the backcast
+# dashboard as a PROBE. Replays the committed caiso65 keeper with the two new
+# measured, default-off flags (caiso_zonal_gas_basis + caiso_asymmetric_path_
+# ratings), scores it, runs dashboard_add_run, and commits ONLY the per-run
+# files via the GitHub Data API (git push 413/500s on the 607KB payload even
+# from a runner). Keeper stays caiso65.
 on:
   push:
     branches:
-      - claude/caiso67-register
+      - claude/caiso67-register-api
     paths:
       - .github/workflows/caiso67-solve-register.yml
+      - scripts/ci_api_upload.py
       - .github/caiso67-register.trigger
   workflow_dispatch:
 
@@ -28,7 +26,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
           fetch-depth: 0
 
       - name: Set up Python
@@ -61,8 +58,8 @@ jobs:
         run: |
           set -uo pipefail
           # legitimacy_diagnostics.py exits 1 when a C8 forced-share gate fails
-          # (expected here: CT_PEAKER inherits the caiso65 miss -> NOT-YET). The
-          # gate verdict is NOT a script error: the machine artifact is written
+          # (expected: CT_PEAKER inherits the caiso65 miss -> NOT-YET). The gate
+          # verdict is NOT a script error: the machine artifact is written
           # before the non-zero exit, so tolerate the exit and only fail the job
           # if the artifact is genuinely missing/empty.
           python scripts/legitimacy_diagnostics.py \
@@ -80,13 +77,13 @@ jobs:
           RID=$(grep '^RUN_ID=' /tmp/reg.out | cut -d= -f2)
           echo "RID=$RID" >> "$GITHUB_ENV"
 
-      - name: Commit per-run files onto claude/caiso67-register
+      - name: Upload per-run files via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          git config user.name "Claude"
-          git config user.email "noreply@anthropic.com"
-          git checkout -- frontend/data/backcast/manifest.js frontend/data/backcast/benchmark.js 2>/dev/null || true
-          git reset --mixed origin/main
-          git add "frontend/data/backcast/registry/${RID}.json" "frontend/data/backcast/runs/${RID}.js" frontend/data/backcast/bench results/calibration/caiso67_zonalgas_asympaths/meta.json results/calibration/caiso67_zonalgas_asympaths/run_config.json results/calibration/caiso67_zonalgas_asympaths/metrics.json results/calibration/caiso67_zonalgas_asympaths/legitimacy_diagnostics.json
-          git commit -m "results: register caiso-67 zonalgas+asympaths PROBE on the backcast dashboard (measured PG&E/SoCal zonal gas + WECC directional Path 15/26; keeper stays caiso65) [skip ci]"
-          git push --force origin HEAD:claude/caiso67-register
+          python scripts/ci_api_upload.py \
+            --rid "$RID" \
+            --branch claude/caiso67-register-api \
+            --bundle results/calibration/caiso67_zonalgas_asympaths \
+            --message "results: register caiso-67 zonalgas+asympaths PROBE on the backcast dashboard (measured PG&E/SoCal zonal gas + WECC directional Path 15/26; keeper stays caiso65) [skip ci]"
