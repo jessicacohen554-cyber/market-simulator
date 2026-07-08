@@ -29,6 +29,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import logging
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
@@ -86,6 +87,9 @@ def build_config(
     variant: str,
     energy_only_floor: bool = False,
     entry_lookahead_reprice: bool = False,
+    staged_oversupply_thinning: bool = False,
+    staged_thinning_max_gw_per_year: float = 3.0,
+    limited_foresight_dispatch: bool = False,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -144,6 +148,22 @@ def build_config(
         # (rule 13); screens-only, never dispatch. See scenarios.py:
         # entry_lookahead_reprice and the runner call site.
         entry_lookahead_reprice=entry_lookahead_reprice,
+        # G-31 first-wave corrective arms (PROBE, default-off). The G-30
+        # lookahead only bites evolution waves 2+ because the first (largest)
+        # coal wave is decided on the un-thinned over-supplied fleet's 2021 raw
+        # dual (ORDC ≈ 0). These two attack that first-wave root cause from the
+        # LP regime, not a floor/adder:
+        #   staged_oversupply_thinning — cap each fuel class's exits to
+        #     staged_thinning_max_gw_per_year GW/yr so the coal wave spreads into
+        #     later years whose thinned fleet the LP can price as scarce; the
+        #     retain/exit call stays the screen's (rule 11).
+        #   limited_foresight_dispatch — deny the in-year LP perfect annual
+        #     storage/hydro foresight so peak/net-load-ramp hours tighten and the
+        #     ORDC overlay prices scarcity in-year once the fleet has thinned.
+        # Both zero fitted parameters; see scenarios.py field docstrings.
+        staged_oversupply_thinning=staged_oversupply_thinning,
+        staged_thinning_max_gw_per_year=staged_thinning_max_gw_per_year,
+        limited_foresight_dispatch=limited_foresight_dispatch,
     )
 
 
@@ -183,6 +203,14 @@ def assert_pipeline_from_vintage(iso: str, out_dir: Path, ledgers: dict) -> list
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Emit the runner's INFO logs (per-year ORDC scarcity adder, lookahead
+    # pro-forma, retirement/entry waves) so a hindcast probe is reproducible
+    # from its captured log — runner.main configures this, but the harness
+    # calls run_scenario_iso directly and would otherwise stay silent.
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s %(levelname)s %(name)s: %(message)s",
+    )
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--iso", default="ERCOT", help="ISO to hindcast.")
     parser.add_argument("--start-year", type=int, default=2021)
@@ -212,6 +240,33 @@ def main(argv: list[str] | None = None) -> int:
             "Probe-only — see build_config."
         ),
     )
+    parser.add_argument(
+        "--staged-oversupply-thinning",
+        action="store_true",
+        help=(
+            "G-31 corrective arm (PROBE): cap each fuel class's economic exits "
+            "to --staged-thinning-max-gw-per-year GW/yr so a large single-year "
+            "over-supply wave (e.g. the 14 GW coal first wave) spreads across "
+            "years the LP regime can price as scarce. Rate cap, not a "
+            "floor/adder — see build_config / scenarios.py."
+        ),
+    )
+    parser.add_argument(
+        "--staged-thinning-max-gw-per-year",
+        type=float,
+        default=3.0,
+        help="Per-fuel-class exit budget (GW/yr) for --staged-oversupply-thinning.",
+    )
+    parser.add_argument(
+        "--limited-foresight-dispatch",
+        action="store_true",
+        help=(
+            "G-31 corrective arm (PROBE): deny the in-year dispatch LP perfect "
+            "annual storage/hydro foresight (within-day cycle bound) so peak/"
+            "net-load-ramp hours tighten and the ORDC overlay prices scarcity "
+            "in-year once the fleet has thinned. See build_config / scenarios.py."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -225,6 +280,9 @@ def main(argv: list[str] | None = None) -> int:
         args.fuel_variant,
         energy_only_floor=args.energy_only_floor,
         entry_lookahead_reprice=args.entry_lookahead_reprice,
+        staged_oversupply_thinning=args.staged_oversupply_thinning,
+        staged_thinning_max_gw_per_year=args.staged_thinning_max_gw_per_year,
+        limited_foresight_dispatch=args.limited_foresight_dispatch,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) — deliberately
@@ -253,6 +311,9 @@ def main(argv: list[str] | None = None) -> int:
         "variant": args.fuel_variant,
         "energy_only_floor": bool(args.energy_only_floor),
         "entry_lookahead_reprice": bool(args.entry_lookahead_reprice),
+        "staged_oversupply_thinning": bool(args.staged_oversupply_thinning),
+        "staged_thinning_max_gw_per_year": float(args.staged_thinning_max_gw_per_year),
+        "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
         "gas_price_path": config.gas_price_path,
         "vintage_year": VINTAGE_YEAR,
         "start_year": args.start_year,
