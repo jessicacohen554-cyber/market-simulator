@@ -3109,6 +3109,51 @@ class ScenarioConfig:
     # data.fleet.apply_ercot_ct_offer_surface.
     ercot_ct_offer_surface: bool = False
 
+    # ERCOT G-22 §8 / ercot37-filed HETEROGENEITY-PRESERVING condition-responsive
+    # offer surface (default off, ERCOT-gated). The successor to the rejected flat
+    # ``ercot_ct_offer_surface`` (which collapsed the fleet's offer heterogeneity by
+    # posting one p50 level on every CT econ/peak row → overshoot, calibration-log
+    # 2026-07-06) and the rejected static ``peak_ladder`` wall (which perturbed the
+    # P0→P1 startup-amortization coupling in ALL hours → CT↔ST volume swap,
+    # docs/FINDING-ercot-priceshape-2026-07.md §6). This mechanism posts the MEASURED
+    # peak-band offer DISTRIBUTION (the 60-Day DAM disclosure top-of-curve quantile
+    # ladder, per class) but CONDITION-BINNED by net-load percentile, applied to the
+    # gas peak-band rungs (CC/CT/ST) in the P1 clearing solve ONLY and ONLY in the
+    # anticipated-tight hours — so (a) P0 run lengths (and the CT↔ST coupling) are
+    # byte-identical to the keeper, (b) loose hours are byte-identical (the wall is
+    # clamped never to lower an offer below the keeper's resolved peak height), and
+    # (c) within a tight hour the lower rungs stay competitive while only the upper
+    # rungs reach the cap band — the heterogeneity the flat surface destroyed. Both
+    # the trigger (net-load percentile, forward-native from a load+VRE forecast) and
+    # the level (measured QSE offer quantiles) are rule-13-admissible; parameters are
+    # derived from source data only (rule 21) and frozen against residuals (rule 20).
+    # The measured surface SUPERSEDES the static p50 peak on these classes where it
+    # applies (rule 19: one mechanism per phenomenon — it does not stack on top).
+    # See scripts/derive_dam_offer_hrmults.py --condition-binned and
+    # data.fleet.apply_ercot_offer_surface_conditional.
+    ercot_offer_surface_conditional: bool = False
+    # Path to the measured condition-binned ladder JSON (default: the frozen
+    # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
+    # the mechanism is a no-op even when the flag is on.
+    ercot_offer_surface_binned_path: str | None = None
+    # Net-load percentile bin EDGES separating the loose / mid / tight regimes the
+    # measured ladder is derived and applied over. The n edges define n+1 bins on the
+    # year's own net-load distribution (percentile-ranked, so a forecast year's bins
+    # regenerate); bin 0 is the loosest. MUST match the edges the derive used (the
+    # JSON records them and the mechanism asserts agreement). Default: three edges →
+    # four bins, resolving the top decile where the wall lives.
+    ercot_offer_surface_netload_pcts: tuple[float, ...] = (0.80, 0.90, 0.97)
+    # Minimum net-load bin index (0 = loosest) at which the peak-rung wall engages.
+    # Below it the surface is inert (byte-identical), protecting mild hours from any
+    # residual peak-band repricing. 0 applies the full measured distribution in every
+    # bin (the merit order still self-gates: mild hours reach only the lower rungs).
+    ercot_offer_surface_min_bin: int = 0
+    # Safety cap on the repriced peak offer as a fraction of VOLL, so a measured wall
+    # rung can never tie or exceed the value of lost load (which would let the LP shed
+    # load instead of clearing the peak band). 0.95 × 5000 = $4750, above the measured
+    # p90 wall (~$2,700) and below VOLL.
+    ercot_offer_surface_price_cap_frac: float = 0.95
+
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
     # rate is base_HR x {cc_committed_hr_override, cc_econ_hr_override,
