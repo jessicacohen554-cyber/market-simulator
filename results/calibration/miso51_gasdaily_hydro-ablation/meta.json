@@ -1,6 +1,6 @@
 {
-  "timestamp": "2026-07-09T19:51:27",
-  "iso": "PJM",
+  "timestamp": "2026-07-09T21:15:21",
+  "iso": "MISO",
   "years": [
     2023,
     2024,
@@ -23,14 +23,14 @@
   "outage_source": "historic",
   "coal_prb_passthrough_sigmoid": true,
   "coal_mustrun_per_plant": true,
-  "retiree_cems_cap": true,
+  "retiree_cems_cap": false,
   "ct_mustrun_per_plant": false,
   "ct_mustrun_floor_frac": 1.0,
   "coal_drop_pof": true,
-  "coal_mustrun_online_pmin": true,
-  "coal_sync_srmc_tranche": true,
-  "ct_intermediate_split": true,
-  "ct_intermediate_cf_threshold": 30.0,
+  "coal_mustrun_online_pmin": false,
+  "coal_sync_srmc_tranche": false,
+  "ct_intermediate_split": false,
+  "ct_intermediate_cf_threshold": null,
   "cc_intermediate_split": false,
   "cc_intermediate_cf_threshold": null,
   "tranche_startup_amortization": false,
@@ -41,16 +41,11 @@
   "st_gas_intermediate_cf_threshold": null,
   "coal_prb_passthrough_tiered": true,
   "coal_prb_sigmoid_overrides": {
-    "wefor_residual": 0.015,
-    "coal_sub_passthrough_sigmoid": true,
-    "coal_sub_passthrough_floor": 1.1,
     "cc_capacity_reconcile": true,
-    "cc_capacity_reconcile_path": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_PJM.csv"
+    "cc_capacity_reconcile_path": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_MISO.csv"
   },
   "coal_bit_passthrough_sigmoid": true,
-  "coal_bit_sigmoid_overrides": {
-    "coal_bit_passthrough_floor": 0.65
-  },
+  "coal_bit_sigmoid_overrides": {},
   "coal_econ_srmc_bound": false,
   "coal_plant_monthly_pricing": true,
   "td_loss_factor": 0.0,
@@ -62,7 +57,7 @@
   "strict_demand_profile": false,
   "battery_dispatch_adder": 0.0,
   "as_reserve_withholding": false,
-  "energy_reserve_coopt": true,
+  "energy_reserve_coopt": false,
   "miso_zonal_reserves": false,
   "miso_reserve_pergen": false,
   "miso_commitment_posture": false,
@@ -75,7 +70,7 @@
   "ercot_reserve_supply_cap": false,
   "ercot_reserve_supply_cap_from_year": 2023,
   "ercot_reserve_supply_forward": false,
-  "pjm_reserve_supply_cap": true,
+  "pjm_reserve_supply_cap": false,
   "pjm_reserve_online_gated": false,
   "pjm_reserve_online_rho": 1.0,
   "pjm_reserve_commitment_scoped": false,
@@ -101,100 +96,16 @@
   "ercot_storage_as_endogenous": false,
   "ercot_storage_as_duration_gate": false,
   "gas_offer_curve": false,
-  "gas_monthly_actuals": true,
-  "pjm_zonal_gas_basis": true,
+  "gas_monthly_actuals": false,
+  "pjm_zonal_gas_basis": false,
   "miso_zonal_gas_basis": false,
-  "pjm_congestion": true,
-  "offer_curve_overrides": {
-    "CC_REGULAR": {
-      "committed": 1.0,
-      "econ_low": 1.0,
-      "econ_high": 1.5,
-      "peak": 5.0,
-      "econ_low_share": 0.55
-    },
-    "CC_CHP": {
-      "committed": 1.0,
-      "econ_low": 1.0,
-      "econ_high": 1.05,
-      "peak": 1.62,
-      "econ_low_share": 0.5,
-      "pct_peaking": 8.0
-    },
-    "CT_CHP": {
-      "committed": 0.864,
-      "econ_low": 0.864,
-      "econ_high": 0.864,
-      "peak": 1.008,
-      "econ_low_share": 0.5
-    },
-    "CT_PEAKER": {
-      "committed": 1.05,
-      "econ_low": 1.05,
-      "econ_high": 1.27,
-      "peak": 4.0,
-      "econ_low_share": 0.5,
-      "pct_peaking": 20.0
-    },
-    "CT_INTERMEDIATE": {
-      "committed": 1.0,
-      "econ_low": 1.0,
-      "econ_high": 1.08,
-      "peak": 2.0,
-      "econ_low_share": 0.5,
-      "pct_peaking": 5.0
-    },
-    "ST_GAS": {
-      "committed": 1.0,
-      "econ_low": 1.0,
-      "econ_high": 1.0,
-      "peak": 3.024,
-      "econ_low_share": 0.5,
-      "pct_peaking": 15.0
-    },
-    "COAL_LIGNITE": {
-      "committed": 0.684,
-      "econ_low": 0.8208,
-      "econ_high": 0.828,
-      "peak": 1.116,
-      "econ_low_share": 0.556
-    },
-    "COAL_PRB": {
-      "committed": 0.684,
-      "econ_low": 0.5544,
-      "econ_high": 0.8,
-      "peak": 1.0656,
-      "econ_low_share": 0.556
-    },
-    "COAL_BIT": {
-      "committed": 0.548,
-      "econ_low": 0.6556,
-      "econ_high": 1.2664,
-      "peak": 1.044,
-      "econ_low_share": 0.55
-    },
-    "COAL_WC": {
-      "committed": 0.512,
-      "econ_low": 0.548,
-      "econ_high": 0.6344,
-      "peak": 0.764,
-      "econ_low_share": 0.55
-    },
-    "COAL": {
-      "committed": 0.648,
-      "econ_low": 0.684,
-      "econ_high": 0.792,
-      "peak": 1.044,
-      "econ_low_share": 0.55
-    }
-  },
+  "pjm_congestion": false,
+  "offer_curve_overrides": {},
   "offer_curve_deltas": {},
-  "curve_smoothing": {
-    "cc_duct_peaking_cap_pct": 18.0,
-    "offer_curve_smoothing_mid": 0.35
-  },
-  "cc_derate_from_top": true,
+  "curve_smoothing": {},
+  "cc_derate_from_top": false,
   "cc_nameplate_summer_derate": false,
+  "coal_nameplate_summer_derate": false,
   "temp_dependent_derate": true,
   "ercot_offer_surface_conditional": false,
   "priced_interchange": true,
@@ -204,7 +115,7 @@
   "hydro_year": "normal",
   "interchange_shaping": false,
   "interchange_shaping_export_only": false,
-  "reference_price_interface": true,
+  "reference_price_interface": false,
   "negative_renewable_offers": null,
   "caiso_gas_commitment_floor": null,
   "caiso_gas_floor_frac": null,
@@ -212,16 +123,10 @@
   "caiso_ra_min_load_frac": null,
   "caiso_ra_startup_bridge": null,
   "caiso_ra_bridge_decommit": null,
-  "reliability_floor": true,
-  "ct_netload_drag": true,
-  "gas_st_netload_drag": true,
-  "ct_drag_overrides": {
-    "ct_drag_slope_per_gw": 0.01108,
-    "ct_drag_intercept": -0.9987,
-    "ct_drag_cap": 0.46,
-    "ct_drag_ramp_start": 15,
-    "ct_drag_ramp_end": 22
-  },
+  "reliability_floor": null,
+  "ct_netload_drag": null,
+  "gas_st_netload_drag": false,
+  "ct_drag_overrides": {},
   "scarcity_price_overlay": null,
   "caiso_scarcity_pricing": null,
   "caiso_lcr_commitment_credit": null,
@@ -262,9 +167,9 @@
   "miso_cc_coal_rebalance": false,
   "miso_firm_import_floor": false,
   "miso_seam_measured_ladder": false,
-  "pjm_seam_flow_limit": true,
+  "pjm_seam_flow_limit": false,
   "pjm_seam_flow_percentile": null,
-  "pjm_seam_export_limit": true,
+  "pjm_seam_export_limit": false,
   "gas_hub_basis_overlay": null,
   "chp_export_floor_measured": false,
   "ercot_gtc_limits_measured": false,
@@ -274,12 +179,12 @@
   "mass_cap_enabled": false,
   "mass_cap_tons": null,
   "mass_cap_program": null,
-  "btm_backfill_year": 2024,
+  "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/PJM/eia930-ec2962505b2c.parquet",
-    "eia923": "../_shared/PJM/eia923-6e5b6bbc7120.parquet",
-    "campd": "../_shared/PJM/campd-db315991835d.parquet"
+    "eia930": "../_shared/MISO/eia930-2f4bfa01b1e4.parquet",
+    "eia923": "../_shared/MISO/eia923-b95a9720a5e0.parquet",
+    "campd": "../_shared/MISO/campd-0c8c8860e930.parquet"
   },
-  "git_sha": "e286a4b",
+  "git_sha": "944d6c4",
   "highspy_version": "1.14.0"
 }

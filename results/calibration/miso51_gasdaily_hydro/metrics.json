@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-09-pjm-95-temp-derate",
-  "iso": "PJM",
-  "label": "pjm 95 temp derate",
+  "run_id": "2026-07-09-miso-51-gasdaily-hydro",
+  "iso": "MISO",
+  "label": "miso 51 gasdaily hydro",
   "target_years": [
     2023,
     2024,
@@ -16,7 +16,7 @@
   "rubric_version": 2.3,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, sysvol, price_mean, price_shape, price_tail, dispatch_corr"
   ],
   "notes": [],
   "criteria": {
@@ -28,17 +28,17 @@
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
@@ -48,27 +48,30 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "co2": {
       "label": "C5a CO2 vs eGRID",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
     },
     "storage": {
       "label": "C5b storage throughput",
       "tier": "supporting",
-      "status": "SKIPPED"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "storage_shape": {
       "label": "C5c storage dispatch shape",
       "tier": "supporting",
-      "status": "SKIPPED"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -83,27 +86,33 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
-    "commercial_band": [],
+    "ledgered": [
+      "C5b storage throughput",
+      "C5c storage dispatch shape"
+    ],
+    "commercial_band": [
+      "C5a CO2 vs eGRID"
+    ],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 7,
-    "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 2
+    "scored": 12,
+    "target_grade": 3,
+    "commercial_grade": 1,
+    "ledgered": 2,
+    "fails": 6
   },
   "free_class_score": {
-    "iso": "PJM",
+    "iso": "MISO",
     "pinned_classes": [
       "CC_CHP",
       "CT_CHP",
       "ST_CHP",
       "hydro",
+      "imports",
       "nuclear",
       "solar",
       "wind"
@@ -113,13 +122,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
+      "pass": 9,
       "total": 16
     },
     "free": {
-      "pass": 10,
+      "pass": 5,
       "total": 12
     },
-    "headline": "C1 all 14/16 \u00b7 free 10/12"
+    "headline": "C1 all 9/16 \u00b7 free 5/12"
   }
 }

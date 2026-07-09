@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-09-pjm-95-temp-derate",
-  "iso": "PJM",
-  "label": "pjm 95 temp derate",
+  "run_id": "2026-07-09-miso51-gasdaily-hydro-ablation",
+  "iso": "MISO",
+  "label": "miso51 gasdaily hydro ablation",
   "target_years": [
     2023,
     2024,
@@ -28,17 +28,17 @@
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
@@ -48,22 +48,23 @@
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
       "tier": "supporting",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "co2": {
       "label": "C5a CO2 vs eGRID",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
     },
     "storage": {
       "label": "C5b storage throughput",
       "tier": "supporting",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "storage_shape": {
       "label": "C5c storage dispatch shape",
       "tier": "supporting",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -73,18 +74,20 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
     "protective": [],
     "ledgered": [],
-    "commercial_band": [],
+    "commercial_band": [
+      "C5a CO2 vs eGRID"
+    ],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
@@ -92,18 +95,19 @@
   },
   "grade_summary": {
     "scored": 9,
-    "target_grade": 7,
-    "commercial_grade": 0,
+    "target_grade": 0,
+    "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 2
+    "fails": 8
   },
   "free_class_score": {
-    "iso": "PJM",
+    "iso": "MISO",
     "pinned_classes": [
       "CC_CHP",
       "CT_CHP",
       "ST_CHP",
       "hydro",
+      "imports",
       "nuclear",
       "solar",
       "wind"
@@ -113,13 +117,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
+      "pass": 9,
       "total": 16
     },
     "free": {
-      "pass": 10,
+      "pass": 5,
       "total": 12
     },
-    "headline": "C1 all 14/16 \u00b7 free 10/12"
+    "headline": "C1 all 9/16 \u00b7 free 5/12"
   }
 }
