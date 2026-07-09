@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-09-pjm-95-temp-derate",
+  "run_id": "2026-07-09-pjm-95-ablation-twin",
   "iso": "PJM",
-  "label": "pjm 95 temp derate",
+  "label": "pjm 95 ablation twin",
   "target_years": [
     2023,
     2024,
@@ -13,7 +13,7 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.4,
+  "rubric_version": 2.3,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
@@ -28,7 +28,8 @@
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
     },
     "price_mean": {
       "label": "C3a mean LMP",
@@ -38,7 +39,7 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
@@ -73,29 +74,31 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
     "protective": [],
     "ledgered": [],
-    "commercial_band": [],
+    "commercial_band": [
+      "C2 system volume (gas/coal families)"
+    ],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 6,
-    "commercial_grade": 0,
+    "scored": 7,
+    "target_grade": 2,
+    "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 3
+    "fails": 4
   },
   "free_class_score": {
     "iso": "PJM",
@@ -113,13 +116,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
+      "pass": 13,
       "total": 16
     },
     "free": {
-      "pass": 10,
+      "pass": 9,
       "total": 12
     },
-    "headline": "C1 all 14/16 \u00b7 free 10/12"
+    "headline": "C1 all 13/16 \u00b7 free 9/12"
   }
 }

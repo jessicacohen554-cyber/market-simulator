@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-09-pjm-95-ablation-twin",
+  "label": "pjm 95 ablation twin",
+  "date": "2026-07-09",
+  "shorthand": "pjm-95-ablation-twin",
+  "definition": "D-3 zero-forcing ablation twin of pjm-95 (CLAUDE.md rule 20): the pjm95_stgas_drag_tempderate recipe verbatim (pjm-94 + temp_dependent_derate=True) with every merchant floor/bridge/drag neutralized (ScenarioConfig.as_zero_forcing_ablation; off-list from the D-2 mechanism registry incl. gas_st_netload_drag), structural protected set kept. temp_dependent_derate itself is not a forcing floor (a capacity/availability reshape) so it stays on unchanged. Registered alongside the pjm-95 keeper candidate for the E9 keeper-vs-twin delta -- quantifies what the all-hours ST_GAS net-load drag + CT net-load drag buy on top of the temp-derated capacity envelope.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-09-pjm-95-ablation-twin.js",
+  "bundle": "results/calibration/pjm95_stgas_drag_tempderate-ablation"
+}
