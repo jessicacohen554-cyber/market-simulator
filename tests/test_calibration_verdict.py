@@ -360,6 +360,28 @@ class PriceAndDispatchTests(unittest.TestCase):
         self.assertEqual(r["status"], cv.FAIL)  # -17.5%
         self.assertEqual(r["classification"], cv.MODEL_MISS)
 
+    def test_mean_lmp_v24_lw_basis_preferred(self):
+        # Rubric v2.4: the load-weighted actual (rt_lw) gates when present —
+        # the legacy equal-hour rt is ignored even though it would FAIL the
+        # same model value; the labelled legacy fallback fires only when no
+        # lw field is committed.
+        ypay = {"lmp": {"Z": {"p": 64.0, "d": 100.0}}}
+        bench = {"avgLMP": {"rt": 48.36, "rt_lw": 64.12}}
+        r = cv.score_price_mean(2023, ypay, bench)
+        self.assertEqual(r["status"], cv.PASS)  # -0.2% vs lw; +32% vs legacy
+        self.assertIn("load-weighted", r["metric"])
+        self.assertEqual(r["actual"], 64.12)
+        r = cv.score_price_mean(2023, ypay, {"avgLMP": {"rt": 48.36}})
+        self.assertEqual(r["status"], cv.FAIL)  # legacy fallback still gates
+        self.assertIn("LEGACY equal-hour basis", r["metric"])
+
+    def test_price_shape_v24_lw_monthly_preferred(self):
+        ypay = {"lmp": {"Z": {"pMon": [30.0] * 12, "dMon": [8.3] * 12}}}
+        bench = {"avgLMP": {"rt_mon": [24.0] * 12, "rt_lw_mon": [30.5] * 12}}
+        r = cv.score_price_shape(2024, ypay, bench)
+        self.assertEqual(r["status"], cv.PASS)  # NRMSE 0.016 vs lw monthly
+        self.assertIn("load-weighted", r["metric"])
+
     def test_price_shape_nrmse_single_band(self):
         # Flat monthly vectors, rubric v2.3 single band: NRMSE 0.10 and 0.17
         # both clean PASS (<= 0.20); 0.28 beyond the band -> FAIL.
