@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-09-pjm-94-stgas-netload",
+  "label": "pjm 94 stgas netload",
+  "date": "2026-07-09",
+  "shorthand": "pjm-94-stgas-netload",
+  "definition": "PJM 94 all-hours ST_GAS net-load reliability-commitment drag on the pjm-90 recipe (resolves #1483 / G-21). Enables gas_st_netload_drag with PJM's own hinge clip(0.01029*netGW - 0.7263, 0, 0.39) fit from measured overnight CF vs EIA-930 PJM net-load (derive_pjm_st_gas_netload_drag.py; rule 25 PJM-own coeffs, rule 11 zero residual-fit). A min-gen FLOOR (offers/prices untouched) keyed to net-load \u2014 the ERCOT/NEISO keeper mechanism, NOT the fake sub-SRMC band #1483 warned against; forward-native (#10/#13). Rule 19 drops the pjm-89 overnight h0-6 ST_GAS reliability limbs (no stacking). Diagnosis: measured ST_GAS 8.1/13.0/15.0 TWh vs pjm-90 5.1/4.4/7.4, fleet online 293-337/365 days (weeks-to-months run-lengths, only 9-19% of energy on temp-flagged days). Otherwise pjm-90 verbatim.",
+  "years": [
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-09-pjm-94-stgas-netload.js",
+  "bundle": "results/calibration/pjm94_stgas_netload_drag"
+}
