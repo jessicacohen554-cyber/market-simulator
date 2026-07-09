@@ -8442,3 +8442,55 @@ handoff prompt was re-issued with the v2.4 scope).
 **Holdouts.** 2023–2025 only throughout (bench retrofit included); no solve
 performed; registered payloads byte-untouched (rule 22 / reproducibility
 contract §0a).
+
+## 2026-07-09 — NYISO C8 ST_GAS protective caveat CLEARED via rubric-v2.2 grounding (scorer-only; keeper stays nyiso-56); all-hours `gas_st_netload_drag` re-adjudicated for NYISO and REJECTED on its own honesty gates
+
+**Trigger.** The nyiso-56 keeper's one protective caveat was C8 ST_GAS: "above
+the 30% cap and NOT grounded … no declared D-4 window: reliability_floor" — a
+provenance gap, not a shape miss (D-1 passes r 0.95–0.96 / cv_ratio 0.69–1.04
+every year). Rubric v2.2's grounded-above-budget escalation (rule 19) names
+the fix: a cited `D4_WINDOWS` entry + bundle regen, no re-solve.
+
+**Drag re-adjudication (the G-05 stale premise).** G-05 rejected switching
+NYISO ST_GAS onto `gas_st_netload_drag` when the drag was windowed [15,22);
+the ERCOT-46/PJM-94 keepers have since made it ALL-HOURS — worth re-testing.
+Built `scripts/derive_nyiso_st_gas_netload_drag.py` (PJM-construction-
+faithful: EIA-930 NYIS net-load, CAMPD overnight CF of the 7 pure-play
+6.38-GW ST_GAS plant set, hinge fit). It FAILS its own pre-registered honesty
+gates: overnight Spearman rho 0.32/0.39/0.72 class-wide (0.30/0.28/0.57
+NYC+LI-only) — not year-stable; binned overnight CF FLAT vs net-load below
+~15 GW with the base level drifting across years at equal net-load (11 GW:
+0.087→0.140→0.136); pooled hinge overshoots 2023 measured class energy
+(142%). The downstate commitment is an UNCONDITIONAL local-reliability base
+(DARU/SRE + boiler min-run), not net-load-hinged — the drag is the wrong
+driver for NYISO (rule 1: no run attempted with a mechanism the measurement
+rejects). G-05's mechanism choice stands on measured grounds that no longer
+depend on the stale window premise; dated addendum appended to the G-05
+handoff.
+
+**Grounding applied.** `D4_WINDOWS[(MECH_RELIABILITY_FLOOR, "ST_GAS")] =
+(0, 24)` with the G-05 evidence cited in place (NYC/LI steam online 100% of
+year, overnight CF 0.11–0.20 — no hour the class's own driver evidence says
+it is offline; same construction as the (MECH_ST_NETLOAD_DRAG, None) row).
+Live blast radius NYISO-only (PJM's enabled ST_GAS limbs are drag-owned in
+its keeper and dropped; all other ISOs' are disabled). nyiso-56's committed
+`legitimacy_diagnostics.json` regenerated (payload path, the CI-reproducible
+convention) — this also refreshed the D-2 denominators onto the HEAD CHP
+re-classing (ST_GAS class total 10.4/10.9/13.3 → 8.0/8.6/10.6 TWh; forced
+share 30.5/44.6/38.2% → 36.4/53.8/44.8%), curing a latent G-06 staleness the
+07-07 artifact had accrued. New D-4 rows: `reliability_floor × ST_GAS`
+off-window 0.0% all years, PASS.
+
+**Result (build_status).** C8 → clean PASS, classified GROUNDED ABOVE BUDGET
+all three years, surfaced as report notes (never a caveat, per the owner
+amendment); protective caveat bucket now EMPTY; grade summary 7→8
+target-grade, ledgered 2→1. Determination stays CALIBRATED-WITH-CAVEATS on
+the two remaining non-protective caveats: ledgered C3c (DA-expressible tail;
+#1344 Ask-B + Iroquois Ask-C data-blocked) and commercial-band C5a CO2 2024
+(−7.3%). Those are data-ask-gated, not forced-floor items. Attestation
+`forced_share` exceptions retired with a dated note; registry sidecar
+definition appended. Keeper unchanged; no solve run; LOYO n/a (no mechanism
+change — scorer-only declaration per rule 19).
+
+**Holdouts.** No solve/score/intake anywhere (scorer-only session); rule 22
+untouched.
