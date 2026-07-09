@@ -248,41 +248,82 @@ def _ercot_config() -> ISOConfig:
 def _caiso_config() -> ISOConfig:
     """Build the CAISO topology configuration.
 
-    Three trading zones along CAISO's real north–south split — **NP15**
-    (north of Path 15), **ZP26** (between Path 15 and Path 26), **SP15**
-    (south of Path 26) — plus the ``WECC_import`` node for the rest of the
-    WECC. These mirror CAISO's congestion-revenue-rights trading hubs and
-    the Path 15 / Path 26 interties that bound the state's recurring
-    north–south congestion.
+    Trading zones along CAISO's real north–south split — **NP15**
+    (north of Path 15), **ZP26** (between Path 15 and Path 26) — and, south of
+    Path 26, the former single ``SP15`` zone now split into its three local
+    capacity areas (SP15 local-area split, 2026-07-09):
 
-    Load shares apportion CAISO TAC-area demand onto the three hubs: NP15 ≈
-    PG&E north of Path 15; ZP26 ≈ the PG&E central San Joaquin Valley between
-    Path 15 and Path 26; SP15 ≈ SCE + SDG&E (+ the tiny VEA TAC) south of
-    Path 26. Measured from CAISO OASIS ``SLD_FCST`` ACTUAL TAC-area hourly
-    load (upload U4, Jan-2023 sample; ``scripts/derive_load_shares.py
-    caiso``): PGE-TAC 46.1%, SCE-TAC 44.3%, SDGE-TAC 9.2%, VEA-TAC 0.4% of
-    component-TAC load. PGE-TAC straddles Path 15 and is split 0.86/0.14
-    between NP15 and ZP26, preserving the prior 0.43:0.07 ratio (no TAC
-    boundary exists at Path 15 to measure it; Tier 3 — calibration). Tier 2
-    (derived): the sample is one winter month — summer AC load shifts share
-    south, so SP15 is likely understated — refresh when the full 2023–25 U4
-    pulls land. Hourly *shapes* come from the same file via
-    ``eia_loader.load_zonal_shares``; these static shares are its
-    fallback.
+    - **LA_BASIN** — the SCE LA-basin LCR pocket (Big Creek/Ventura folded in),
+    - **SDGE** — the SDG&E / Path-44 pocket (post-SONGS import-limited),
+    - **SP15_rest** — the remaining SP15 south gateway that Path 26 and Path 46
+      (WOR) feed, and from which the two pockets import over import-limited
+      one-way links.
+
+    Plus the ``WECC_import`` node for the rest of the WECC. These mirror CAISO's
+    congestion-revenue-rights trading hubs, the Path 15 / Path 26 interties, and
+    the LCT-study local capacity areas that set SP15's LA-basin/SDG&E congestion
+    premium (which a single copperplate SP15 zone cannot form; see
+    docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md).
+
+    Load shares apportion CAISO TAC-area demand onto the hubs. NP15 ≈ PG&E
+    north of Path 15; ZP26 ≈ the PG&E central San Joaquin Valley between Path 15
+    and Path 26; the three SP15 sub-zones together are SCE + SDG&E (+ the tiny
+    VEA TAC) south of Path 26, summing to the old SP15 0.5385. The whole-SP15
+    share is measured from CAISO OASIS ``SLD_FCST`` ACTUAL TAC-area hourly load
+    (upload U4, Jan-2023 sample; ``scripts/derive_load_shares.py caiso``):
+    PGE-TAC 46.1%, SCE-TAC 44.3%, SDGE-TAC 9.2%, VEA-TAC 0.4% of component-TAC
+    load. PGE-TAC straddles Path 15 and is split 0.86/0.14 between NP15 and
+    ZP26, preserving the prior 0.43:0.07 ratio (no TAC boundary exists at Path
+    15 to measure it; Tier 3 — calibration). The *intra-SP15* split is measured
+    from the CAISO LCT study's published pocket peak loads (Table 3.3-7 vs the
+    SP26 zone peak, Table 3.2-1): LA_BASIN 19,537 / SDGE 4,768 / SP26 28,149 MW
+    (2023) → LA_BASIN = 0.374, SDGE = 0.091 of full ISO, with SP15_rest the
+    exact residual (0.5385 − 0.374 − 0.091 = 0.0735) so the three sum to the
+    old SP15 share (``validate_topology`` hard-errors otherwise). Note the
+    scope table rounds the residual to 0.074; the exact 0.0735 is used here to
+    keep the total at 1.0.
+
+    Hourly *shapes* come from the same OASIS file via
+    ``eia_loader.load_zonal_shares``; these static shares are its fallback.
+    Source: CAISO Final LCT reports 2023–2025 (``data/raw/capacity-
+    deliverability/caiso/caiso.csv``); ``scripts/derive_load_shares.py caiso``.
     """
     zones = [
         Zone(name="NP15", iso="CAISO", load_share=0.3969),
         Zone(name="ZP26", iso="CAISO", load_share=0.0646),
-        Zone(name="SP15", iso="CAISO", load_share=0.5385),
+        # SP15 local-area split (LCT peak_load ÷ SP26 peak × old SP15 0.5385).
+        # LA_BASIN 19,537/28,149 and SDGE 4,768/28,149 (2023 LCT Table 3.3-7 /
+        # 3.2-1) → 0.374 / 0.091 of the full ISO; SP15_rest is the exact
+        # residual so the three sum to 0.5385 (validate_topology hard-errors on
+        # any drift). Source: data/raw/capacity-deliverability/caiso/caiso.csv.
+        Zone(name="LA_BASIN", iso="CAISO", load_share=0.374),
+        Zone(name="SDGE", iso="CAISO", load_share=0.091),
+        Zone(name="SP15_rest", iso="CAISO", load_share=0.0735),
         # WECC_import is an import node, not a load zone, so it carries no load.
         Zone(name="WECC_import", iso="CAISO", load_share=0.0),
     ]
+    # LCT-sourced import caps into the two SP15 load pockets, using the literal
+    # `import_cap = peak_load − LCR` convention (scope §reserve-margin: take the
+    # published LCR literally; the reserve gross-up is a frozen sensitivity,
+    # never tuned to the residual — rule 24). From the CAISO LCT rows
+    # (data/raw/capacity-deliverability/caiso/caiso.csv, peak_load − requirement):
+    #   LA Basin:  12,008 / 15,224 / 15,174 MW  (2023 / 2024 / 2025)
+    #   SDG&E:      1,436 /  2,074 /  2,071 MW  (2023 / 2024 / 2025)
+    # STATIC tightest-year (2023) values are used here — the smallest import cap,
+    # i.e. the most binding / most conservative pocket boundary. Per-year caps are
+    # the preferred end state (wired through the runner's per-year config build,
+    # like transmission.apply_deliverability_seam_limit), but that requires a new
+    # runner call site outside this foundation task's three-file scope; the static
+    # 2023 value is the documented MVP and downstream tasks can promote it to
+    # per-year. See the FOUNDATION DECISIONS block in the scope doc.
+    _LA_BASIN_IMPORT_CAP_MW = 12008.0  # 19,537 − 7,529 (LCT 2023, tightest year)
+    _SDGE_IMPORT_CAP_MW = 1436.0  # 4,768 − 3,332 (LCT 2023, tightest year; Path-44)
     # CAISO intertie TTCs seeded from the WECC Path Rating Catalog. Path 15
     # (Los Banos–Gates) is rated 5,400 MW N→S after the 2004 third-line
     # upgrade; Path 26 (Midway–Vincent) is rated 4,000 MW N→S. The WECC
     # import splits across the two major intertie groups: Path 66 / COI
     # (California–Oregon Intertie) ~4,800 MW into NP15 to the north, and
-    # Path 46 / West of the River ~10,623 MW E→W into SP15 to the south
+    # Path 46 / West of the River ~10,623 MW E→W into SP15_rest to the south
     # (the Palo Verde / WOR corridor). The two import links sum to ~15,400
     # MW, consistent with the 15,000 MW WECC import supply curve.
     # Source: WECC Path Rating Catalog (Path 15, Path 26, Path 46, Path 66).
@@ -291,13 +332,33 @@ def _caiso_config() -> ISOConfig:
     links = [
         # Path 15: NP15 ↔ ZP26 (Los Banos–Gates).
         TransferLink(from_zone="NP15", to_zone="ZP26", ttc_mw=5400.0),
-        # Path 26: ZP26 ↔ SP15 (Midway–Vincent) — the dominant N–S intertie,
-        # completing the NP15 ↔ SP15 corridor through ZP26.
-        TransferLink(from_zone="ZP26", to_zone="SP15", ttc_mw=4000.0),
+        # Path 26: ZP26 → SP15_rest (Midway–Vincent) — the dominant N–S
+        # intertie, re-pointed onto the SP15 south gateway (same 4,000 MW
+        # rating, re-homed off the removed SP15 zone).
+        TransferLink(from_zone="ZP26", to_zone="SP15_rest", ttc_mw=4000.0),
         # Path 66 / COI: WECC import into NP15 (north).
         TransferLink(from_zone="WECC_import", to_zone="NP15", ttc_mw=4800.0),
-        # Path 46 / West of the River: WECC import into SP15 (south).
-        TransferLink(from_zone="WECC_import", to_zone="SP15", ttc_mw=10623.0),
+        # Path 46 / West of the River: WECC import into SP15_rest (south),
+        # re-pointed off the removed SP15 zone (same 10,623 MW rating).
+        TransferLink(from_zone="WECC_import", to_zone="SP15_rest", ttc_mw=10623.0),
+        # Internal LA-basin import limit: SP15_rest → LA_BASIN, one-way,
+        # capped at the LCT import capability (peak_load − LCR). The one-way
+        # import-limited link is what forms the LA-basin locational premium.
+        TransferLink(
+            from_zone="SP15_rest",
+            to_zone="LA_BASIN",
+            ttc_mw=_LA_BASIN_IMPORT_CAP_MW,
+            is_bidirectional=False,
+        ),
+        # Path 44 / SDG&E import limit: SP15_rest → SDGE, one-way, capped at the
+        # LCT import capability. SDG&E's ~1.4 GW cap is the post-SONGS Path-44
+        # constraint — the physical reason SDGE is the most import-limited pocket.
+        TransferLink(
+            from_zone="SP15_rest",
+            to_zone="SDGE",
+            ttc_mw=_SDGE_IMPORT_CAP_MW,
+            is_bidirectional=False,
+        ),
     ]
     # Aggregate WECC→CAISO import cap. The two import paths' individual ratings
     # are correct, but their SUM (4,800 + 10,623 = 15,423 MW) is NOT the
@@ -332,7 +393,11 @@ def _caiso_config() -> ISOConfig:
     interface_limits = [
         InterfaceLimit(
             name="WECC_import_simultaneous",
-            links=[("WECC_import", "NP15"), ("WECC_import", "SP15")],
+            # Path 46/WOR now terminates on SP15_rest (the SP15 split re-pointed
+            # it off the removed SP15 zone), so the simultaneous-import group's
+            # southern link pair references SP15_rest; validate_topology requires
+            # each pair to join a real TransferLink.
+            links=[("WECC_import", "NP15"), ("WECC_import", "SP15_rest")],
             cap_mw=7500.0,
         ),
     ]

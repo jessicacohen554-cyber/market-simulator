@@ -553,7 +553,9 @@ INTERFACE_NEIGHBORS: dict[str, list[NeighborInterface]] = {
             marginal_heat_rate=12.97,
             hurdle=4.0,
             interface_limit_mw=10623.0,
-            border_zones=("SP15",),
+            # Palo Verde/WOR import terminates on SP15_rest after the 2026-07-09
+            # SP15 local-area split (re-pointed off the removed SP15 zone).
+            border_zones=("SP15_rest",),
             load_shape_kind="net",
             load_shape_exponent=1.0,
             import_emission_factor=0.37,

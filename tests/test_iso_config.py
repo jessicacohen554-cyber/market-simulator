@@ -49,11 +49,18 @@ class TestISOConfig(unittest.TestCase):
         total = sum(zone.load_share for zone in ercot.zones)
         self.assertAlmostEqual(total, 1.0)
 
-    def test_caiso_has_four_zones(self):
-        """CAISO defines three trading zones plus the WECC import node."""
+    def test_caiso_has_six_zones(self):
+        """CAISO defines five trading zones plus the WECC import node.
+
+        SP15 was split into its three local capacity areas (LA_BASIN, SDGE,
+        SP15_rest) by the 2026-07-09 SP15 local-area split.
+        """
         caiso = get_iso_config("CAISO")
-        self.assertEqual(caiso.n_zones, 4)
-        self.assertEqual(set(caiso.zone_names), {"NP15", "ZP26", "SP15", "WECC_import"})
+        self.assertEqual(caiso.n_zones, 6)
+        self.assertEqual(
+            set(caiso.zone_names),
+            {"NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest", "WECC_import"},
+        )
 
     def test_caiso_validates(self):
         """CAISO topology passes the consistency check."""
