@@ -880,6 +880,7 @@ def backcast_config(
     coal_prb_passthrough_tiered: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
+    ercot_offer_surface_conditional: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -1759,4 +1760,27 @@ def backcast_config(
                 config.offer_curve_by_group, offer_curve_deltas
             )
         )
+    # ERCOT condition-responsive offer surface (ercot_offer_surface_conditional):
+    # split the gas peak band into equal-capacity rungs held at the SAME resolved
+    # peak height — a pure structural no-op (N equal sub-bands at one MC == one
+    # flat band, so P0 run lengths and the CT<->ST startup coupling are byte-
+    # identical to the keeper). The rungs exist so the P1-only mechanism
+    # (data.fleet.build_ercot_offer_surface_conditional_markup) can reprice only the
+    # UPPER rungs to the measured wall in anticipated-tight hours. The rung COUNT
+    # matches the measured ladder (len(PEAK_LADDER_QUANTILES) == 5); each carries the
+    # class's already-resolved ``peak`` multiplier so the split adds no LP change.
+    if ercot_offer_surface_conditional and iso == "ERCOT":
+        config = config.with_overrides(ercot_offer_surface_conditional=True)
+        from market_sim.data.offer_curves import CONDITIONAL_SURFACE_GROUPS
+
+        n_rungs = 5  # == len(scripts.derive_dam_offer_hrmults.PEAK_LADDER_QUANTILES)
+        share = round(1.0 / n_rungs, 3)
+        merged = {c: dict(b) for c, b in config.offer_curve_by_group.items()}
+        for cls in CONDITIONAL_SURFACE_GROUPS:
+            bands = merged.get(cls)
+            if not bands or "peak" not in bands:
+                continue
+            pk = float(bands["peak"])
+            bands["peak_ladder"] = [[share, pk] for _ in range(n_rungs)]
+        config = config.with_overrides(offer_curve_by_group=merged)
     return config
