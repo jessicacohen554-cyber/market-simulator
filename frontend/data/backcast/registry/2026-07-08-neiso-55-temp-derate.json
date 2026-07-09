@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-neiso-55-temp-derate",
+  "label": "neiso 55 temp derate",
+  "date": "2026-07-08",
+  "shorthand": "neiso-55-temp-derate",
+  "definition": "temp-derate full-keeper main -- 2026-07-08-neiso-54-steamgas-ct config + temp_dependent_derate, 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-08-neiso-55-temp-derate.js",
+  "bundle": "results/calibration/neiso55_tempderate"
+}
