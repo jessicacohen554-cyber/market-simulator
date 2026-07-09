@@ -157,19 +157,29 @@ def _fetch(url: str) -> bytes:
     raise RuntimeError(f"failed after {_RETRIES} attempts: {url}") from last
 
 
+_API_RETRIES = 8
+_API_BACKOFF_BASE_S = 2.0  # exponential: 2, 4, 8, 16, 32, 64, 128s
+
+
 def _fetch_json_api(url: str, api_key: str) -> dict:
-    """GET ``url`` with the Data Exchange subscription key, retrying transient failures."""
+    """GET ``url`` with the Data Exchange subscription key, retrying transient failures.
+
+    Uses exponential backoff (not just the rate limiter's spacing): observed
+    MISO-side 500/503 bursts lasting longer than 3 near-immediate retries.
+    """
     req = urllib.request.Request(url, headers={"Ocp-Apim-Subscription-Key": api_key})
     last: Exception | None = None
-    for attempt in range(_RETRIES):
+    for attempt in range(_API_RETRIES):
         _api_limiter.wait()
         try:
             with urllib.request.urlopen(req, timeout=_TIMEOUT_S) as resp:
                 return json.loads(resp.read())
         except Exception as exc:  # noqa: BLE001 - retry then re-raise
             last = exc
-            log.warning("retry %d/%d %s (%s)", attempt + 1, _RETRIES, url, exc)
-    raise RuntimeError(f"failed after {_RETRIES} attempts: {url}") from last
+            log.warning("retry %d/%d %s (%s)", attempt + 1, _API_RETRIES, url, exc)
+            if attempt < _API_RETRIES - 1:
+                time.sleep(_API_BACKOFF_BASE_S * (2**attempt))
+    raise RuntimeError(f"failed after {_API_RETRIES} attempts: {url}") from last
 
 
 def _hub_rows_api(day: date, market: str, api_key: str) -> list[list[str]]:
@@ -237,15 +247,44 @@ def _hub_rows(day: date, market: str, api_key: str | None) -> list[list[str]]:
     return rows
 
 
+def _hub_rows_or_none(
+    day: date, market: str, api_key: str | None
+) -> list[list[str]] | None:
+    """Wrap ``_hub_rows`` so one persistently-failing day can't sink the whole year."""
+    try:
+        return _hub_rows(day, market, api_key)
+    except Exception:
+        log.exception("%s %s: giving up on this day after retries", day, market)
+        return None
+
+
 def stage_year(year: int, market: str, api_key: str | None) -> Path:
-    """Fetch every day of ``year`` for ``market`` and write the staged gzip CSV."""
+    """Fetch every day of ``year`` for ``market`` and write the staged gzip CSV.
+
+    A day that fails all its retries is dropped (logged loudly) rather than
+    aborting the whole year — the API path costs ~8 calls/day, so losing one
+    day's rows is cheap to re-fetch but re-running the whole year is not.
+    """
     days = []
     d = date(year, 1, 1)
     while d.year == year:
         days.append(d)
         d += timedelta(days=1)
     with ThreadPoolExecutor(max_workers=_FETCH_WORKERS) as pool:
-        per_day = list(pool.map(lambda dd: _hub_rows(dd, market, api_key), days))
+        per_day = list(
+            pool.map(lambda dd: _hub_rows_or_none(dd, market, api_key), days)
+        )
+
+    failed_days = [dd for dd, rows in zip(days, per_day) if rows is None]
+    if failed_days:
+        log.error(
+            "%s %s: %d/%d days FAILED after retries: %s",
+            year,
+            market,
+            len(failed_days),
+            len(days),
+            ", ".join(dd.isoformat() for dd in failed_days),
+        )
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out = OUT_DIR / f"miso_hub_lmp_{year}_{market}.csv.gz"
@@ -256,9 +295,16 @@ def stage_year(year: int, market: str, api_key: str | None) -> Path:
         w = csv.writer(f)
         w.writerow(header)
         for rows in per_day:
-            w.writerows(rows)
-    n = sum(len(r) for r in per_day)
-    log.info("wrote %s (%d rows, %d days)", out, n, len(days))
+            if rows is not None:
+                w.writerows(rows)
+    n = sum(len(r) for r in per_day if r is not None)
+    log.info(
+        "wrote %s (%d rows, %d/%d days)",
+        out,
+        n,
+        len(days) - len(failed_days),
+        len(days),
+    )
     return out
 
 
