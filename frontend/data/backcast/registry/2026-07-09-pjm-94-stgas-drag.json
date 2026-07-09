@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-09-pjm-94-stgas-drag",
+  "label": "pjm 94 stgas drag",
+  "date": "2026-07-09",
+  "shorthand": "pjm-94-stgas-drag",
+  "definition": "D-3 zero-forcing ablation twin of pjm-94 (CLAUDE.md rule 20): the pjm94_stgas_netload_drag recipe verbatim with every merchant floor/bridge/drag neutralized (ScenarioConfig.as_zero_forcing_ablation; off-list from the D-2 mechanism registry incl. gas_st_netload_drag), structural protected set kept. Registered alongside the keeper candidate for the E9 keeper-vs-twin delta \u2014 quantifies what the all-hours ST_GAS net-load drag + CT net-load drag buy per class.",
+  "years": [
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-09-pjm-94-stgas-drag.js",
+  "bundle": "results/calibration/pjm94_stgas_netload_drag-ablation"
+}
