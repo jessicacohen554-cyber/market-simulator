@@ -3239,6 +3239,33 @@ class ScenarioConfig:
     # default.
     cc_nameplate_summer_derate: bool = False
 
+    # COAL net-summer capacity derate (coal_nameplate_summer_derate, off by
+    # default). The exact coal analogue of cc_nameplate_summer_derate above: a
+    # coal steam unit carries its EIA-860 NAMEPLATE capacity in the LP (the
+    # CAMPD-bin / EIA-860 pmax) but is physically incapable of that output in the
+    # summer — condenser back-pressure and cooling-water-temperature limits pull
+    # an old steam unit's sustainable rating down to its published NET-SUMMER
+    # capacity. This applies the per-plant MEASURED summer availability multiplier
+    # ``net_summer / nameplate`` (fleet.coal_summer_derate_ratio, EIA-860 Operable
+    # "Conventional Steam Coal" / "Coal IGCC" units) on the summer months only —
+    # the same seasonal shape and same published EIA-860 source CC/CT already use,
+    # which coal alone was omitted from ("COAL / ST_GAS carry no existing summer
+    # derate" — the availability loop below). Rule-15 measured-replaces-estimate
+    # and rule-11 physical: the net-summer rating regenerates for any forward year
+    # and responds to changed conditions (a re-rated unit gets a new EIA-860
+    # summer number), so it is admissible in BOTH backcast and forecast, never a
+    # residual-fitted haircut. It is NOT the rejected ``temp_dependent_derate``
+    # (an INCREMENTAL literature-slope cut BELOW net-summer, refuted for the ERCOT
+    # gas fleet 2026-07-09): this only brings coal DOWN to its published
+    # net-summer rating, which the per-plant CEMS summer maxima confirm the fleet
+    # tops out at (Oak Grove 0.937 vs ns 0.952, Major Oak 0.877 vs 0.873, Spruce
+    # 0.893 vs 0.904 — see docs/handoffs/ercot-coal-nameplate-summer-derate-2026-07.md).
+    # A plant whose summer rating meets/exceeds nameplate (Martin Lake 1.03,
+    # Coleto 1.05) clamps to 1.0 (no derate). Only reduces capacity, only in
+    # summer; can never loosen the fleet. ERCOT-scoped in practice (rule 24), but
+    # the EIA-860 lookup is ISO-agnostic. Off by default.
+    coal_nameplate_summer_derate: bool = False
+
     # Gas-turbine AMBIENT-TEMPERATURE capacity derate (gt_ambient_derate, off by
     # default). The EIA-860 net-summer rating (applied above/flat _SUMMER_CLASS_
     # DERATE) is a season-average summer capability; a gas turbine keeps losing
