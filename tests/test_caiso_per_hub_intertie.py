@@ -48,11 +48,12 @@ class TestSplitImportNodePerHub(unittest.TestCase):
         self.assertIn("WECC_PNW", cfg.zone_names)
         self.assertIn("WECC_DSW", cfg.zone_names)
         # The two import links are re-homed onto the corridor zones, keeping the
-        # physical COI(→NP15)/Path-46(→SP15) terminations and ratings; the
-        # internal Path 15/26 links are untouched.
+        # physical COI(→NP15)/Path-46(→SP15_rest) terminations and ratings; the
+        # internal Path 15/26 links are untouched. Path-46/WOR terminates on
+        # SP15_rest after the 2026-07-09 SP15 local-area split.
         link_map = {(ln.from_zone, ln.to_zone): ln.ttc_mw for ln in cfg.links}
         self.assertEqual(link_map[("WECC_PNW", "NP15")], 4800.0)
-        self.assertEqual(link_map[("WECC_DSW", "SP15")], 10623.0)
+        self.assertEqual(link_map[("WECC_DSW", "SP15_rest")], 10623.0)
         self.assertIn(("NP15", "ZP26"), link_map)
         self.assertNotIn(("WECC_import", "NP15"), link_map)
         # The 7.5 GW simultaneous-import cap survives, now spanning the two
@@ -61,7 +62,7 @@ class TestSplitImportNodePerHub(unittest.TestCase):
         lim = cfg.interface_limits[0]
         self.assertEqual(
             {tuple(p) for p in lim.links},
-            {("WECC_PNW", "NP15"), ("WECC_DSW", "SP15")},
+            {("WECC_PNW", "NP15"), ("WECC_DSW", "SP15_rest")},
         )
         self.assertEqual(lim.cap_mw, 7500.0)
         cfg.validate_topology()
