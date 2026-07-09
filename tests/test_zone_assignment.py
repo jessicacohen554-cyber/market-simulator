@@ -157,10 +157,20 @@ def test_caiso_zp26_zone():
     assert assign_zone_by_coords(35.3, -119.0, "CAISO") == "ZP26"
 
 
-def test_caiso_sp15_zone():
-    """A Southern California plant (south of Path 26) lands in SP15."""
-    # Los Angeles: lat ~34.0 — south of the ~35.0 Path 26 line.
-    assert assign_zone_by_coords(34.0, -118.2, "CAISO") == "SP15"
+def test_caiso_sp15_la_basin_zone():
+    """A Southern California plant (south of Path 26) lands in LA_BASIN.
+
+    Los Angeles: lat ~34.0 — south of the ~35.0 Path 26 line, north of the
+    ~33.4 coords-only SDGE cutoff, so the coords-only fallback places it in
+    the LA-basin LCR pocket.
+    """
+    assert assign_zone_by_coords(34.0, -118.2, "CAISO") == "LA_BASIN"
+
+
+def test_caiso_sp15_sdge_zone():
+    """A San Diego-latitude plant (south of the SDGE coords-only cutoff) lands in SDGE."""
+    # San Diego: lat ~32.7 — south of the ~33.4 coords-only SDGE cutoff.
+    assert assign_zone_by_coords(32.7, -117.1, "CAISO") == "SDGE"
 
 
 def test_caiso_central_coast_fips_rule():
@@ -174,8 +184,12 @@ def test_caiso_central_coast_fips_rule():
 
 
 def test_caiso_out_of_state_arizona():
-    """Arizona CISO resources (Palo Verde / West-of-River) land in SP15."""
-    assert assign_zone_by_fips("4", "27", "CAISO") == "SP15"
+    """Arizona CISO resources (Palo Verde / West-of-River) land in SP15_rest.
+
+    Path 46/WOR and the WECC_DSW corridor terminate on SP15_rest post-split
+    (docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md).
+    """
+    assert assign_zone_by_fips("4", "27", "CAISO") == "SP15_rest"
 
 
 def test_caiso_known_plants_resolve_to_expected_zones():
@@ -186,11 +200,12 @@ def test_caiso_known_plants_resolve_to_expected_zones():
         286: "NP15",  # Geysers geothermal (Sonoma)
         52169: "ZP26",  # Midway Sunset Cogen (Kern)
         55151: "ZP26",  # La Paloma Generating Plant (Kern)
-        302: "SP15",  # Encina / Cabrillo (San Diego)
-        350: "SP15",  # Ormond Beach (Ventura)
+        302: "SDGE",  # Encina / Cabrillo (San Diego)
+        350: "LA_BASIN",  # Ormond Beach (Ventura, coords-only LA-basin band)
         6099: "NP15",  # Diablo Canyon (San Luis Obispo, central-coast rule)
-        57373: "SP15",  # Agua Caliente Solar (Arizona)
+        57373: "SP15_rest",  # Agua Caliente Solar (Arizona)
         52015: "NP15",  # Dixie Valley geothermal (northern Nevada)
+        315: "LA_BASIN",  # AES Alamitos (Los Angeles County)
     }
     for oris, expected in cases.items():
         assert assign_zone(oris, "CAISO") == expected, f"ORIS {oris}"
@@ -200,13 +215,15 @@ def test_caiso_every_plant_resolves():
     """Every CISO plant resolves to a real trading zone; none are dropped."""
     lookup = build_zone_lookup("CAISO")
     assert len(lookup) > 1000  # CAISO has ~1,500 plants in eGRID
-    valid = {"NP15", "ZP26", "SP15"}
+    valid = {"NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest"}
     assert set(lookup.values()) <= valid
-    # All three trading zones are populated.
+    # All five trading zones are populated.
     assert valid <= set(lookup.values())
     # The import node is never a plant zone.
     assert "WECC_import" not in lookup.values()
     assert "CAISO_main" not in lookup.values()
+    # No plant silently returns the old, now-deleted SP15 zone name.
+    assert "SP15" not in lookup.values()
 
 
 def test_miso_state_mapping():
@@ -485,6 +502,15 @@ def test_ercot_zone_capacity_balance():
             continue
         share = cap_by_zone[zone] / total
         assert share > 0.03, f"{zone} has only {share:.1%} of capacity"
+
+
+def test_pjm_fleet_loads():
+    """PJM fleet loads and all 4 zones are populated."""
+    config = get_iso_config("PJM")
+    fleet = load_fleet_from_csv("PJM", config)
+    zones_seen = {g.zone for g in fleet}
+    for z in config.zone_names:
+        assert z in zones_seen, f"Zone {z} has no generators"
 
 
 def test_pjm_fleet_loads():
