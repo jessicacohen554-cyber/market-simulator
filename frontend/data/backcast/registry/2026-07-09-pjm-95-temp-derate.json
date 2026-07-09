@@ -1,0 +1,13 @@
+{
+  "id": "2026-07-09-pjm-95-temp-derate",
+  "label": "pjm 95 temp derate",
+  "date": "2026-07-09",
+  "shorthand": "pjm-95-temp-derate",
+  "definition": "PJM 95 ST_GAS net-load drag (pjm-94) + temperature-dependent derate: the pjm-94 recipe verbatim with temp_dependent_derate=True added to target the one remaining load-bearing FAIL (C3c price tail, 2025 0h vs 51h >$200). temp_dependent_derate is a physically-derived per-class dry-bulb capacity curve (arXiv:2311.07001, CPUC R.21-10-002; capacity-neutral CC/CT reshape + additive hot-hour COAL/ST_GAS derate) that improved the 2025 C3c tail 0h->19h on the pjm-90 recipe (pjm-93). Tests whether the ST_GAS drag and the temp derate compose. Otherwise pjm-94 verbatim.",
+  "years": [
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-09-pjm-95-temp-derate.js",
+  "bundle": "results/calibration/pjm95_stgas_drag_tempderate"
+}
