@@ -16,7 +16,7 @@
   "rubric_version": 2.2,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape"
   ],
   "notes": [],
   "criteria": {
@@ -43,7 +43,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -69,7 +70,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -79,12 +80,17 @@
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     }
   },
   "caveats": {
-    "protective": [],
-    "ledgered": [],
+    "protective": [
+      "C8 forced-energy share (D-2)"
+    ],
+    "ledgered": [
+      "C3c price tail / scarcity (DA-expressible)"
+    ],
     "commercial_band": [
       "C5a CO2 vs eGRID"
     ],
@@ -94,11 +100,11 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 4,
+    "scored": 10,
+    "target_grade": 5,
     "commercial_grade": 1,
-    "ledgered": 0,
-    "fails": 4
+    "ledgered": 2,
+    "fails": 2
   },
   "free_class_score": {
     "iso": "NYISO",
