@@ -464,6 +464,7 @@ def run_year(
     curve_smoothing: dict[str, float | int | None] | None = None,
     cc_derate_from_top: bool = False,
     cc_nameplate_summer_derate: bool = False,
+    coal_nameplate_summer_derate: bool = False,
     gt_ambient_derate: bool = False,
     gt_ambient_derate_ref_c: float | None = None,
     gt_ambient_derate_slope_cc: float | None = None,
@@ -1251,6 +1252,8 @@ def run_year(
         config = config.with_overrides(cc_outage_derate_from_top=True)
     if cc_nameplate_summer_derate:
         config = config.with_overrides(cc_nameplate_summer_derate=True)
+    if coal_nameplate_summer_derate:
+        config = config.with_overrides(coal_nameplate_summer_derate=True)
     if gt_ambient_derate:
         # Physics-grounded GT ambient-temperature derate on the hottest hours
         # (fleet.generators_to_fleet_arrays). Slopes/reference default to the

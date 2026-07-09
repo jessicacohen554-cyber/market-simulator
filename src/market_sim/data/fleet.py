@@ -1394,6 +1394,17 @@ def generators_to_fleet_arrays(
                     availability[g_idx, summer] = np.minimum(
                         availability[g_idx, summer], scap
                     )
+                # EIA-860 net-summer capacity derate (config.coal_nameplate_
+                # summer_derate): coal carries nameplate in the LP but an old
+                # steam unit cannot sustain nameplate in the summer — bring the
+                # summer months down to the published net-summer rating
+                # (net_summer / nameplate), the coal analogue of the CC/CT
+                # cc_nameplate_summer_derate. Multiplicative, summer-only, only
+                # reduces capacity; a plant rated at/above nameplate gets 1.0.
+                if getattr(config, "coal_nameplate_summer_derate", False):
+                    _ns_ratio = coal_summer_derate_ratio(_pc)
+                    if _ns_ratio is not None and _ns_ratio < 1.0:
+                        availability[g_idx, summer] *= _ns_ratio
         np.clip(availability, 0.0, 1.0, out=availability)
 
         # Gas-turbine ambient-temperature derate (config.gt_ambient_derate). The
@@ -6067,6 +6078,71 @@ def cc_summer_derate_ratio(plant_code: int) -> float | None:
     derate). ``None`` when the plant is absent from the EIA-860 CC sheet.
     """
     cap = cc_summer_capacity().get(int(plant_code))
+    if cap is None:
+        return None
+    nameplate, net_summer = cap
+    if nameplate <= 0.0:
+        return None
+    return min(1.0, net_summer / nameplate)
+
+
+# EIA-860 Operable technology strings for a coal steam unit (the coal analogue
+# of the CC "Natural Gas Fired Combined Cycle" filter above).
+_COAL_SUMMER_TECH: frozenset[str] = frozenset(
+    {"Conventional Steam Coal", "Coal Integrated Gasification Combined Cycle"}
+)
+
+
+@lru_cache(maxsize=1)
+def coal_summer_capacity() -> dict[int, tuple[float, float]]:
+    """Return ``{plant_code: (nameplate_mw, net_summer_mw)}`` for every coal plant.
+
+    Summed over each plant's coal-steam generators from the EIA-860 Generator_Y
+    Operable sheet (:data:`_COAL_SUMMER_TECH`). The coal analogue of
+    :func:`cc_summer_capacity`, consumed under
+    ``config.coal_nameplate_summer_derate`` to derive the per-plant MEASURED
+    summer derate ``net_summer / nameplate`` applied to coal in the summer
+    months. Unlike CC, coal already carries its nameplate capacity in the LP
+    (the CAMPD-bin / EIA-860 pmax), so this only supplies the summer multiplier;
+    no capacity is raised. Plants absent from the sheet are absent from the map
+    (callers keep full nameplate, as today).
+    """
+    path = active_eia860_dir() / "eia860_generator_operable.parquet"
+    if not path.exists():
+        return {}
+    df = pd.read_parquet(
+        path,
+        columns=[
+            "Plant Code",
+            "Technology",
+            "Nameplate Capacity (MW)",
+            "Summer Capacity (MW)",
+        ],
+    )
+    df = df[pd.to_numeric(df["Plant Code"], errors="coerce").notna()]
+    coal = df[df["Technology"].isin(_COAL_SUMMER_TECH)].copy()
+    if coal.empty:
+        return {}
+    coal["plant_code"] = coal["Plant Code"].astype(float).astype(int)
+    coal["np"] = pd.to_numeric(coal["Nameplate Capacity (MW)"], errors="coerce")
+    coal["ns"] = pd.to_numeric(coal["Summer Capacity (MW)"], errors="coerce")
+    out: dict[int, tuple[float, float]] = {}
+    for code, grp in coal.groupby("plant_code"):
+        np_sum = float(grp["np"].sum())
+        ns_sum = float(grp["ns"].sum())
+        if np_sum > 0.0 and ns_sum > 0.0:
+            out[int(code)] = (np_sum, ns_sum)
+    return out
+
+
+def coal_summer_derate_ratio(plant_code: int) -> float | None:
+    """Return a coal plant's measured summer availability multiplier.
+
+    ``net_summer / nameplate`` from :func:`coal_summer_capacity`, clamped to
+    ``(0, 1]`` (a plant whose summer rating meets or exceeds nameplate gets no
+    derate). ``None`` when the plant is absent from the EIA-860 coal sheet.
+    """
+    cap = coal_summer_capacity().get(int(plant_code))
     if cap is None:
         return None
     nameplate, net_summer = cap
