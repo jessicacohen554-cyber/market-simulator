@@ -1,0 +1,600 @@
+    "NYISO": {  # NY CLCPA — 70% renewable by 2030, 100% zero-emission by 2040
+        2026: 0.40,
+        2030: 0.70,
+        2040: 1.00,
+        2045: 1.00,
+    },
+    "NEISO": {  # MA Clean Energy Standard + regional state CES blend
+        2026: 0.30,
+        2030: 0.45,
+        2040: 0.70,
+        2045: 0.80,
+    },
+    # PJM spans many states with differing RPS rules and no single
+    # ISO-wide clean-energy floor, so no PJM entry is defined here.
+}
+
+# RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.
+#
+# Every real RPS/CES carries an ACP (or an equivalent non-compliance penalty):
+# a load-serving entity short of physical RECs pays the ACP rate per deficient
+# MWh instead of the standard physically failing. The ACP is therefore the
+# price ceiling of the REC market — the marginal cost of the last unit of
+# compliance — so the model enters it as the cost of an RPS ACP escape column
+# (dispatch.build_cost_vector), which both keeps the annual RPS row feasible
+# when in-region wind+solar cannot reach the target and caps the row's dual
+# (the REC shadow price) at this ceiling. Rule 13 admissible: a published policy
+# parameter that regenerates for any forecast year and responds to conditions
+# (as the fleet builds VRE the escape goes unused and the dual falls below it).
+# Tier 3 (calibration) — verify against each state's current ACP schedule.
+# Sources:
+#   CAISO — CA RPS non-compliance penalty $50/MWh (Pub. Util. Code §399.15;
+#     CPUC RPS enforcement), the effective ACP ceiling for SB 100 compliance.
+#   NYISO — NY Clean Energy Standard Tier 1 ACP (NYSERDA/PSC Case 15-E-0302);
+#     ~$40/MWh order of magnitude for recent compliance years.
+#   NEISO — MA Class I RPS ACP ($67.62/MWh, 2024, 225 CMR 14.08) blended with
+#     CT Class I ($55/MWh, Conn. Gen. Stat. §16-245a) across the six-state
+#     region; ~$65/MWh regional Class I ACP.
+# ISOs without a STATE_RPS_FLOORS entry (ERCOT, PJM) need no ACP — their RPS row
+# is never built, so the escape column is absent and the LP is byte-identical.
+STATE_RPS_ACP: dict[str, float] = {
+    "CAISO": 50.0,
+    "NYISO": 40.0,
+    "NEISO": 65.0,
+}
+
+# Annual interconnection queue caps (GW/yr) by ISO.
+# Source: ERCOT CDR, CAISO TPP.
+QUEUE_CAP_GW: dict[str, float] = {
+    "ERCOT": 12,  # ERCOT CDR — annual queue throughput cap
+    "CAISO": 8,  # CAISO TPP — annual queue throughput cap
+    # Eastern-ISO caps are Tier 3 approximations of recent annual
+    # commercial-operation throughput (not queue *requests*, which run far
+    # higher). Source: LBNL "Queued Up" 2024 completion-rate analysis; ISO
+    # planning reports. needs-citation: verify against each ISO's latest
+    # planning report before quoting any eastern-ISO forecast.
+    "PJM": 10,
+    "MISO": 10,
+    "NYISO": 4,
+    "NEISO": 4,
+}
+
+# Per-technology annual interconnection queue caps (GW/yr) by ISO.
+# Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech
+# The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.
+QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
+    "ERCOT": {
+        "wind": 5.0,
+        "solar": 5.0,
+        "gas_cc": 3.0,
+        "gas_ct": 3.0,
+        "nuclear": 2.0,
+        "geothermal": 2.0,  # engineering judgment, EGS resource potential
+        "offshore_wind": 0.0,  # Gulf coast not yet leased. Source: BOEM
+    },
+    "CAISO": {
+        "wind": 3.0,
+        "solar": 4.0,
+        "gas_cc": 2.0,
+        "gas_ct": 1.0,
+        "nuclear": 1.0,
+        "geothermal": 3.0,  # CA geothermal resource assessment
+        "offshore_wind": 3.0,  # BOEM Pacific lease areas, CAISO TPP
+    },
+    # Eastern-ISO per-tech caps: Tier 3, sized from each ISO's recent build
+    # mix (LBNL "Queued Up" 2024; ISO planning reports). needs-citation.
+    "PJM": {
+        "wind": 1.5,
+        "solar": 6.0,
+        "gas_cc": 4.0,
+        "gas_ct": 2.0,
+        "nuclear": 1.0,
+        "geothermal": 0.0,  # no utility-scale resource in footprint
+        "offshore_wind": 2.0,  # NJ/MD/DE BOEM lease areas
+    },
+    "MISO": {
+        "wind": 4.0,
+        "solar": 6.0,
+        "gas_cc": 3.0,
+        "gas_ct": 2.0,
+        "nuclear": 1.0,
+        "geothermal": 0.0,
+        "offshore_wind": 0.0,  # Great Lakes not leased
+    },
+    "NYISO": {
+        "wind": 1.0,
+        "solar": 2.0,
+        "gas_cc": 1.0,
+        "gas_ct": 0.5,
+        "nuclear": 0.5,
+        "geothermal": 0.0,
+        "offshore_wind": 1.5,  # NY Bight BOEM lease areas
+    },
+    "NEISO": {
+        "wind": 1.0,
+        "solar": 2.0,
+        "gas_cc": 1.0,
+        "gas_ct": 0.5,
+        "nuclear": 0.5,
+        "geothermal": 0.0,
+        "offshore_wind": 2.0,  # MA/RI BOEM lease areas
+    },
+}
+# Hydrogen turbines (hydrogen_ct, hydrogen_ccgt) and CCUS (gas_cc_ccs) do not
+# get their own per-tech queue cap: they share the ``gas_cc`` interconnection
+# cap above, since they reuse the same gas-turbine supply chain and queue.
+
+# New entry technology cost and performance parameters.
+# Source: NREL ATB 2024.
+NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
+    "wind": {  # NREL ATB 2024 — onshore wind
+        "capex_per_kw": 1300.0,
+        "fom_per_kw_yr": 28.0,
+        "learning_rate": 0.12,
+        "base_cf": 0.38,
+        "lifetime_yr": 30,
+    },
+    "solar": {  # NREL ATB 2024 — utility-scale solar PV
+        "capex_per_kw": 1100.0,
+        "fom_per_kw_yr": 16.0,
+        "learning_rate": 0.20,
+        "base_cf": 0.27,
+        "lifetime_yr": 30,
+    },
+    "gas_cc": {  # NREL ATB 2024 — combined-cycle gas
+        "capex_per_kw": 1200.0,
+        "fom_per_kw_yr": 30.0,
+        "learning_rate": 0.02,
+        "base_cf": 0.55,
+        "lifetime_yr": 30,
+    },
+    "gas_ct": {  # NREL ATB 2024 frame combustion turbine / peaker. Annualized
+        # fixed cost (capex annuity + FOM) ~ the Brattle ERCOT CONE-for-2026
+        # frame-CT reference (~$162/kW-yr gross). base_cf is a nominal peaker
+        # duty cycle; the new-entry screen prices a gas_ct on its price-duration
+        # energy margin, not base_cf x mean price.
+        "capex_per_kw": 1250.0,
+        "fom_per_kw_yr": 21.0,
+        "learning_rate": 0.02,
+        "base_cf": 0.12,
+        "lifetime_yr": 30,
+    },
+    "nuclear_smr": {  # NREL ATB 2024, NuScale FOAK estimates
+        "capex_per_kw": 6800.0,
+        "fom_per_kw_yr": 100.0,
+        "learning_rate": 0.08,
+        "base_cf": 0.90,
+        "lifetime_yr": 40,
+    },
+    "nuclear_large": {  # NREL ATB 2024 mid-case, Lazard LCOE v17
+        "capex_per_kw": 8500.0,
+        "fom_per_kw_yr": 130.0,
+        "learning_rate": 0.03,
+        "base_cf": 0.92,
+        "lifetime_yr": 60,
+    },
+    "gas_cc_ccs": {
+        "capex_per_kw": 2300.0,  # $/kW total plant cost (host CCGT + capture island).
+        # Source: NETL Cost & Performance Baseline Rev 4, 2021.
+        # Reflects 90% capture, amine-based post-combustion.
+        "fom_per_kw_yr": 45.0,  # $/kW-yr. Source: NETL Rev 4.
+        "learning_rate": 0.10,  # 10% cost reduction per doubling of cumulative deployment.
+        # Source: Rubin et al. (2015) "The cost of CO2 capture
+        # and storage", Int J Greenhouse Gas Control.
+        # Range in literature: 0.08–0.12 for first-of-a-kind
+        # industrial process technologies.
+        # CCS is early on its deployment curve (~2 GW base),
+        # so each doubling comes quickly and has large effect.
+        "base_cf": 0.80,  # Lower than unabated CC (0.85) due to higher MC
+        # pushing it later in merit order at low carbon prices.
+        "lifetime_yr": 30,  # Same as gas CC host plant.
+    },
+}
+
+# Per-tech capex + learning-rate multipliers for the PB-1 tech-cost
+# uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile,
+# docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
+# NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to
+# NREL ATB 2024 technology innovation scenarios: "low"=Advanced (full
+# learning/cost-decline realized), "mid"=Moderate, "high"=Conservative
+# (costs stay closer to flat). "mid" is 1.0 on every tech BY CONSTRUCTION --
+# NEW_ENTRY_COSTS' base values are the model's existing reference case, not
+# a re-scraped ATB Moderate figure, so the neutral default must be an exact
+# no-op. The low/high spreads are engineering-judgment magnitudes anchored to
+# ATB's published case *definitions* and typical per-tech spread ordering
+# (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest --
+# mature, well-characterized plant costs); this environment could not reach
+# atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up
+# should replace these with exact figures the next time ATB is re-pulled
+# (PP-3.2 item 2 tracks the next AEO/ATB refresh).
+TECH_COST_MULTIPLIERS: dict[str, dict[str, dict[str, float]]] = {
+    "wind": {
+        "low": {"capex_per_kw": 0.85, "learning_rate": 1.35},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
+        "high": {"capex_per_kw": 1.12, "learning_rate": 0.65},
+    },
+    "solar": {
+        "low": {"capex_per_kw": 0.65, "learning_rate": 1.25},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
+        "high": {"capex_per_kw": 1.15, "learning_rate": 0.60},
+    },
+    "gas_cc": {
+        "low": {"capex_per_kw": 0.95, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.08, "learning_rate": 0.5},
+    },
+    "gas_ct": {
+        "low": {"capex_per_kw": 0.95, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.08, "learning_rate": 0.5},
+    },
+    "nuclear_smr": {
+        "low": {"capex_per_kw": 0.80, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.25, "learning_rate": 0.5},
+    },
+    "nuclear_large": {
+        "low": {"capex_per_kw": 0.90, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.15, "learning_rate": 0.5},
+    },
+    "gas_cc_ccs": {
+        "low": {"capex_per_kw": 0.85, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.20, "learning_rate": 0.5},
+    },
+}
+
+# --- Emerging generation technologies -------------------------------------
+# Hydrogen turbines, post-combustion CCUS, enhanced geothermal and offshore
+# wind. Each enters the model as a Generator (thermal dispatch) reusing the
+# existing LP variable structure — no LP formulation change.
+
+# Hydrogen-fired turbine parameters. H2 turbines are thermal generators whose
+# fuel cost is DERIVED from renewable LCOE / electrolyzer efficiency (see
+# :mod:`market_sim.data.hydrogen`) rather than an exogenous price path.
+HYDROGEN_TURBINE_PARAMS: dict[str, dict[str, float]] = {
+    "h2_ct": {  # simple-cycle H2 turbine (peaker)
+        "heat_rate": 9.5,  # MMBtu/MWh. GE HA specs, DOE H2 Turbine Program 2023
+        "vom": 4.0,  # $/MWh. NREL ATB 2024 (gas CT analog + H2 premium)
+        "emission_rate_co2": 0.0,  # tCO2/MWh — zero direct CO2 (green H2)
+        "nox_rate": 0.00015,  # tons NOx/MWh — H2 burns hot. DOE/NETL 2023
+        "eford": 0.06,  # above gas CT — immature fleet. Engineering judgment
+        "capex_kw": 1400.0,  # $/kW. NREL ATB 2024, BloombergNEF H2 Outlook 2024
+        "fom_kw_yr": 12.0,  # $/kW-yr. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.10,  # analogy to gas CT maturation
+    },
+    "h2_ccgt": {  # combined-cycle H2 turbine (mid-merit/baseload)
+        "heat_rate": 6.9,  # MMBtu/MWh. DOE H2 Turbine Program 2023
+        "vom": 3.5,  # $/MWh. NREL ATB 2024
+        "emission_rate_co2": 0.0,
+        "nox_rate": 0.00012,  # DOE/NETL 2023
+        "eford": 0.06,
+        "capex_kw": 1800.0,  # $/kW — premium over gas CCGT. NREL ATB 2024
+        "fom_kw_yr": 15.0,  # $/kW-yr. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.10,
+    },
+}
+
+# Electrolyzer parameters used to derive the hydrogen fuel cost. Not an LP
+# variable. Efficiency is MWh_H2 / MWh_electricity (LHV basis) and improves
+# linearly between the 2026 base, 2035 and 2045 milestone years.
+ELECTROLYZER_PARAMS: dict[str, dict[str, float]] = {
+    "pem": {
+        "efficiency": 0.65,  # base year. Source: IRENA Green H2 2023
+        "efficiency_2035": 0.72,  # DOE Hydrogen Shot targets
+        "efficiency_2045": 0.76,  # DOE long-term targets
+        "capex_kw": 1200.0,  # $/kW — for LCOH if needed. BNEF 2024
+        "learning_rate": 0.18,  # aggressive — early on curve. IRENA 2023
+    },
+    "alkaline": {
+        "efficiency": 0.63,  # Source: IRENA Green H2 2023
+        "efficiency_2035": 0.68,
+        "efficiency_2045": 0.72,
+        "capex_kw": 800.0,
+        "learning_rate": 0.12,  # more mature technology. IRENA 2023
+    },
+}
+
+# MMBtu per MWh — thermodynamic identity, used to convert the derived
+# hydrogen electricity cost ($/MWh) into a fuel cost ($/MMBtu).
+MMBTU_PER_MWH: float = 3.412
+
+# Approximate heat content of fuel oil, MMBtu per barrel — the bbl<->MMBtu
+# conversion for the winter oil-inventory budget (component A of
+# docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md), where the
+# winter-fuel-inventory datatype records tank/inventory quantities in barrels
+# but the LP budget row is in MMBtu (then MWh via heat rate).
+# Source: EIA Monthly Energy Review, June 2026, Appendix A, Table A1
+# ("Approximate Heat Content of Petroleum and Biofuels"), p.228.
+MMBTU_PER_BBL_DISTILLATE: float = 5.825  # No. 2 distillate fuel oil
+MMBTU_PER_BBL_RESIDUAL: float = 6.287  # No. 6 residual fuel oil
+
+# Carbon capture, utilization and storage parameters. CCUS is a variant of
+# the base gas CC plant: higher heat rate (parasitic capture load), higher
+# VOM (solvent costs), reduced emission rate, plus a transport+storage cost
+# for the captured CO2.
+CCUS_PARAMS: dict[str, dict[str, float]] = {
+    "gas_cc_ccs_90": {  # gas CCGT with 90% post-combustion capture
+        "heat_rate_penalty": 1.16,  # ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B
+        "vom_adder": 8.0,  # $/MWh — amine solvent, maintenance. NETL 2022
+        "capture_rate": 0.90,  # fraction of CO2 captured. NETL 2022 Case B31B
+        "co2_transport_storage": 15.0,  # $/tCO2 — pipeline + saline injection. NETL 2022, Gulf Coast
+        "capex_kw": 2500.0,  # $/kW installed. NREL ATB 2024
+        "fom_kw_yr": 22.0,  # $/kW-yr. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.05,  # slow — limited deployment. Global CCS Institute 2024
+    },
+}
+
+# Enhanced geothermal (EGS) parameters. EGS enters as a thermal generator
+# with zero fuel cost and high capacity factor, dispatchable down to
+# ``pmin_fraction`` of rated capacity (flexible baseload). Not intermittent.
+GEOTHERMAL_PARAMS: dict[str, dict[str, float]] = {
+    "egs": {
+        "capacity_factor": 0.90,  # high availability. DOE GeoVision 2019
+        "vom": 1.0,  # $/MWh — minimal, no fuel. NREL ATB 2024
+        "emission_rate_co2": 0.0,  # zero direct emissions
+        "nox_rate": 0.0,
+        "eford": 0.05,  # comparable to nuclear. DOE GeoVision 2019
+        "pmin_fraction": 0.20,  # turn down to 20% for flexibility. Fervo 2024
+        "capex_kw": 5000.0,  # $/kW — high upfront, early-stage. NREL ATB 2024
+        "fom_kw_yr": 0.0,  # $/kW-yr — captured in VOM. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.15,  # steep — analogous to early solar. Fervo, ARPA-E
+        "heat_rate": 0.0,  # no fuel
+    },
+}
+
+# Offshore wind parameters. A separate renewable category from onshore wind:
+# higher and less variable capacity factors, higher costs, distinct zones.
+OFFSHORE_WIND_PARAMS: dict[str, dict[str, float]] = {
+    "fixed_bottom": {
+        "base_cf": 0.45,  # annual average. NREL ATB 2024
+        "capex_kw": 4200.0,  # $/kW. NREL ATB 2024
+        "fom_kw_yr": 80.0,  # $/kW-yr — marine access premium. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.08,  # NREL ATB 2024, IRENA 2024
+    },
+    "floating": {
+        "base_cf": 0.48,  # deeper water, better resource. NREL ATB 2024
+        "capex_kw": 5500.0,  # $/kW — early stage. NREL ATB 2024
+        "fom_kw_yr": 95.0,
+        "lifetime_yr": 30,
+        "learning_rate": 0.12,  # steeper — less mature. NREL ATB 2024
+    },
+}
+
+# Offshore wind hourly-profile derivation parameters. The offshore CF profile
+# is derived from the onshore wind profile by a centered rolling-mean smoothing
+# window plus a minimum CF floor (see :mod:`market_sim.data.renewables`).
+# Source: NREL offshore wind variability studies, Musial et al. 2022.
+OFFSHORE_WIND_SMOOTHING_HOURS: int = (
+    6  # rolling-mean window — ocean fetch reduces gustiness
+)
+OFFSHORE_WIND_MIN_CF: float = 0.08  # minimum hourly CF — offshore rarely drops to zero
+
+# Wright's Law reference cumulative installed capacity (GW global).
+# Source: IRENA 2025, IEA WEO 2025, IAEA PRIS 2025, BNEF 2025, DOE LDES.
+WRIGHT_REFERENCE_GW: dict[str, float] = {
+    "wind": 1150.0,  # was 1020. IRENA 2025.
+    "solar": 1800.0,  # was 1420. IRENA 2025.
+    "li_ion": 130.0,  # was 90. BNEF 2025.
+    "gas_cc": 1220.0,  # was 1200. IEA WEO 2025.
+    "nuclear": 445.0,  # was 440. IAEA PRIS 2025.
+    "nuclear_smr": 445.0,  # shares global nuclear fleet
+    "nuclear_large": 445.0,
+    "iron_air": 1.0,  # was 0.5. DOE LDES.
+    "flow_battery": 3.0,  # GW global installed vanadium-redox flow. Source: PNNL 2023,
+    # BNEF LDES tracker 2024 (China VRFB buildout dominates).
+    "compressed_air": 1.5,  # GW global adiabatic/diabatic CAES — Huntorf, McIntosh,
+    # Zhangjiakou, Jintan. Source: NREL ATB 2024, IEA 2024.
+    "gas_cc_ccs": 2.0,  # GW global installed power-sector CCS as of 2024.
+    # Boundary Dam (0.12 GW), miscellaneous pilots/demos.
+    # Petra Nova mothballed 2020, excluded.
+    # Source: Global CCS Institute Global Status Report 2024.
+}
+
+# Annual global deployment (GW/yr) by technology, used to project cumulative
+# installed capacity for Wright's Law learning curves. These represent the
+# worldwide market, not just the modeled ISO.
+# Source: IRENA 2025, IEA WEO 2025, BNEF 2025, IAEA 2025.
+GLOBAL_ANNUAL_DEPLOYMENT_GW: dict[str, float] = {
+    "wind": 130.0,  # was 120. IRENA 2025.
+    "solar": 400.0,  # was 350. IRENA 2025.
+    "li_ion": 50.0,  # was 30. BNEF 2025.
+    "gas_cc": 20.0,  # was 25. IEA WEO 2025.
+    "nuclear": 10.0,  # was 8. IAEA 2025.
+    "nuclear_smr": 5.0,
+    "nuclear_large": 5.0,
+    "iron_air": 1.0,  # was 0.5.
+    "flow_battery": 0.8,  # GW/yr global VRFB additions. Source: BNEF LDES tracker 2024.
+    "compressed_air": 0.3,  # GW/yr global CAES additions. Source: IEA 2024 pipeline.
+    "gas_cc_ccs": 1.5,  # GW/yr global CCS additions on power plants.
+    # Based on announced project pipeline (DOE OCED awards,
+    # UK cluster sequencing, EU Innovation Fund).
+    # Optimistic but reflects policy momentum.
+    # Source: Global CCS Institute project database 2024.
+}
+
+# Annual-average renewable capacity factors (fraction) by ISO and technology.
+# Used to rescale the normalized EIA-930 generation distributions into hourly
+# capacity-factor profiles.
+# Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report.
+# PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly
+#   extract — mean wind/solar net generation over the EIA-860 average-online
+#   capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the
+#   measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set
+#   to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh)
+#   rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports
+#   PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour
+#   shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.
+RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
+    "ERCOT": {"wind": 0.35, "solar": 0.27},
+    "CAISO": {"wind": 0.30, "solar": 0.28},
+    "PJM": {"wind": 0.31, "solar": 0.19},
+    # Tier 3 approximations for the remaining ISOs (forecast-mode inputs;
+    # backcasts use measured profiles). Wind from regional fleet averages
+    # (EIA EPM by-state utility-scale CFs); solar is the physical
+    # utility-PV value for the latitude band. needs-citation: verify
+    # against EIA-923 ISO totals before quoting a forecast.
+    "MISO": {"wind": 0.34, "solar": 0.22},
+    "NYISO": {"wind": 0.26, "solar": 0.15},
+    "NEISO": {"wind": 0.30, "solar": 0.15},
+}
+
+# Installed renewable nameplate capacity (MW) by ISO and technology.
+# Source: ERCOT CDR Dec 2024, CAISO annual report 2024.
+RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
+    "ERCOT": {
+        "wind": 42000.0,  # was 40000. Source: ERCOT CDR Dec 2024.
+        "solar": 38000.0,  # was 25000. Source: EIA Hourly Grid Monitor Oct 2025.
+    },
+    "CAISO": {
+        "wind": 7000.0,  # unchanged. Source: CAISO annual report 2024.
+        "solar": 22000.0,  # was 20000. Source: CAISO annual report 2024.
+    },
+    # Tier 3, ~year-end-2024 utility-scale nameplate (BTM excluded).
+    # Source: EIA-860 2024 / ISO planning reports, rounded. needs-citation:
+    # refresh from the processed EIA-860 parquet before quoting a forecast.
+    "PJM": {"wind": 11000.0, "solar": 14000.0},
+    "MISO": {"wind": 32000.0, "solar": 7000.0},
+    "NYISO": {"wind": 2400.0, "solar": 1500.0},
+    "NEISO": {"wind": 1400.0, "solar": 2700.0},
+}
+
+# CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights.
+# PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with
+# fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC
+# boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit
+# entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's
+# southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split
+# has unverified provenance (Tier 3 — calibration; forecast-risk): refine when
+# a direct Path-15 sub-TAC load measurement becomes available. This IS the
+# rule-14/rule-12 misalignment exception (a single measured TAC-area load
+# spanning a boundary — Path 15 — that our zone model splits, with no direct
+# way to measure the sub-split): the estimate is legitimately kept, not an
+# answer key, per docs/handoffs/scalar-remediation-plan-2026-07.md C-16.
+# G-26/issue #1372 status (2026-07-05 B-CAI-1 attempt, per the DOF ledger):
+# FERC-714 unreachable (403/502 via proxy), CEC planning-area geography
+# boundary-mismatched to Path 15. RE-CHECKED 2026-07-07: CAISO OASIS
+# (oasis.caiso.com SingleZip, SLD_FCST/ACTUAL) IS now reachable from this
+# environment (a zipped-XML load-forecast file fetched successfully) —
+# contradicts the 2026-07-05 "OASIS unreachable" finding and re-opens this
+# item as actionable. Not completed here: finding the specific OASIS report
+# that publishes NP15/ZP26 sub-TAC zonal load (vs. TAC-area load, which is
+# already used), downloading/parsing it, and validating a re-derivation
+# against the CAISO keeper is a data-intake project (new frozen derive
+# script + re-solve + registration, rule 23), not a documentation edit — left
+# for that dedicated session with this reachability finding as the unblock.
+# SCE-TAC spans the LA_BASIN/SP15_rest split (SP15 was split into
+# LA_BASIN/SDGE/SP15_rest — docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md
+# FOUNDATION DECISIONS). w=0.835 is the LCT LA_Basin/(LA_Basin+SP15_rest)
+# peak-load ratio: LA_BASIN 0.374 / (LA_BASIN 0.374 + SP15_rest 0.0735) of full
+# ISO load (same LCT `peak_load` table used for the zones' static load_share,
+# 2023 Table 3.3-7 / 3.2-1) — LCT-sourced, not a tuned weight. SDGE-TAC and
+# VEA-TAC map 1:1 onto their own sub-zones (measured, clean).
+CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
+    "PGE-TAC": {"NP15": 0.86, "ZP26": 0.14},
+    "SCE-TAC": {"LA_BASIN": 0.835, "SP15_rest": 0.165},
+    "SDGE-TAC": {"SDGE": 1.0},
+    "VEA-TAC": {"SP15_rest": 1.0},
+}
+
+# NYISO local self-supply floors (transmission.inject_nyiso_local_selfsupply,
+# gated on ScenarioConfig.nyiso_local_selfsupply). Per downstate load-pocket
+# zone, the fraction of that zone's hourly load that must be met by IN-ZONE
+# dispatchable thermal generation. Long Island (zone K) is cable-islanded and
+# carries NYISO locational-minimum-installed-capacity (LMIC) / local-reliability
+# rules that keep its own gas-steam + peaker fleet running rather than importing
+# the full cable rating of cheap NYC gas. The economic LP under-runs the LI
+# fleet (model 3.7 vs EIA-923 8.52 TWh, 2023).
+#
+# RULE-14 BOUNDARY MISMATCH (audit C-17, B-NYI-1, open root-cause issue #1345):
+# the published Zone-K requirement is now committed on disk
+# (data/raw/capacity-deliverability/nyiso/nyiso.csv, intake PR #1261): LI LCR%
+# (value_pu) 1.052 / 1.053 / 1.065 for 2023/24–2025/26 with a Bulk Power
+# Transmission (import) limit of only 325 / 275 / 275 MW. That LCR is a
+# PEAK-HOUR installed-capacity ratio (local ICAP >= ~105% of LI peak); THIS
+# parameter is an ALL-HOURS energy self-supply fraction (frac x hourly demand).
+# The two live on different boundaries: substituting the LCR% (~1.05) or the
+# TSL-implied peak local fraction ((peak-import)/peak ~= 0.94) into an all-hours
+# energy floor would force ~16 TWh/yr of LI generation vs the ~8.5 TWh that is
+# physically real (LI imports off-peak, self-supplies near peak) — LESS
+# reflective of reality, so a direct scalar re-ground is INADMISSIBLE (rule #14).
+# The only scalar that reproduces the realized annual share would need a
+# load-duration haircut tuned to the 2023 outcome — the very rule-12 pin C-17
+# means to remove. The faithful fix is a MECHANISM change (a peak-capacity / TSL
+# constraint from the committed LCR table), tracked in issue #1345. THAT
+# MECHANISM NOW EXISTS: ScenarioConfig.nyiso_li_lcr_tsl (default off) caps the
+# NYC->Long_Island link at the published locality import limit in the HB14-21
+# window (transmission.apply_nyiso_li_tsl_import_cap) and EXCLUDES Long_Island
+# from this floor (rule 19 — never stacked). Empirical reconciliation of the
+# boundary (CEMS LI hourly gross gen + measured zonal load, 2023-25): measured
+# implied LI inflow at the top-100 load hours is 1,493/1,440/1,598 MW vs the
+# mechanism's in-window import capability (TSL + 1,200 MW external ties) of
+# 1,525/1,475/1,475 MW — the published construction matches the measured
+# peak-hour boundary within ~5%. When the flag is OFF this 0.45 value remains
+# the legacy path (residual-identified, forecast-risk; DOF ledger S5). The 0.45
+# magnitude still approximates the 2023 realized LI self-supply share (~0.48) —
+# it is NOT a validated forward driver and MUST NOT be quoted as one.
+#
+# HOURS NARROWING (floor-rederive 2026-07-05, rule-17/18; NOT a re-level): the
+# floor is applied only in the afternoon-evening peak window
+# (transmission.NYISO_SELFSUPPLY_FLOOR_HOURS, HB14-21) — the summer
+# design-cooling condition the LCR locality requirements are defined at, where
+# the LI cable-import constraint physically binds. Applied all-hours it
+# force-committed in-pocket LM6000 peaker baseload overnight (D-2:
+# nyiso_local_selfsupply forced 1.84/2.87/1.86 TWh of CT_PEAKER, 43/65/42% of the
+# class in nyiso-48; C7 off-peak diurnal FAIL) where measured LI CT_PEAKER CF is
+# ~0.06 flat and LI net import runs well below its cable ceiling
+# (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md Finding 4). The
+# 0.45 LEVEL is unchanged — only the hours it had no driver for are removed. NYC (zone J) is
+# deliberately ABSENT: the diagnostic shows NYC OVER-generates by +11 TWh (it
+# cannot import enough, so it self-supplies) — its idle peakers are a
+# reserve-scarcity gap (RCPF / mechanism B), not an energy must-run. Tier 3.
+# Source: NYISO Locational Minimum ICAP Requirements / LCR reports
+# (data/raw/capacity-deliverability/nyiso/nyiso.csv, intake PR #1261); EIA-923
+# zone-mapped net generation; docs/nyiso-dispatch-validation-2026-06.md.
+NYISO_LOCAL_SELFSUPPLY_FRAC: dict[str, float] = {
+    "Long_Island": 0.45,
+}
+
+
+def resolve_reference_price_interface(flag: bool, iso: str) -> bool:
+    """Resolve whether ``iso`` runs the reference-price interface.
+
+    ``True`` when the CLI ``--reference-price-interface`` flag is set OR the ISO
+    is in :data:`REFERENCE_PRICE_DEFAULT_ISOS` (the per-ISO default-on set). The
+    node itself is still gated on the ISO having an ``INTERFACE_NEIGHBORS`` entry
+    downstream, so an ISO without neighbors stays byte-identical either way.
+    """
+    from market_sim.config.interchange_config import REFERENCE_PRICE_DEFAULT_ISOS
+
+    return bool(flag) or iso in REFERENCE_PRICE_DEFAULT_ISOS
+
+
+# --- PJM transmission-congestion calibration (config.pjm_congestion) ----------
+#
+# PJM clears as a perfect copper-plate (0.000 zonal LMP spread in all 8760 hours)
+# because (1) the priced external star node (PJM_external, IMPORT_NODE_LINKS
+# above) wires ~30 GW of *uncongested* transfer to 5 border zones — so the
+# dear-east load pockets import directly from one price hub and never pull power
+# through the internal west→east lines — and (2) the internal interface TTCs in
+# iso_configs._pjm_config are loose Tier-3 order-of-magnitude estimates that
+# never bind. Both are fixed with MEASURED PJM data, never values tuned to the
+# price/export residual (rules #11/#12).
+#
+# (1) External-node deliverability envelope. Each PJM_external→border link's
+# signed flow is capped, per (month × hour-of-day), at the measured per-border
+# net-interchange percentile (import direction up, export direction down) from
+# eia_loader.pjm_zonal_interchange_envelope — the same measured tie-flow file the
+# IMPORT_NODE_LINKS ratings were read from (PJM import_export_act_sch_interchange,
+# data/raw/iso-specific-transmission/). The dominant direction (ComEd/AEP/EMAAC
+# export, Dominion import) keeps a generous p95 ceiling the LP clears below; the
+# minor direction collapses toward ~0, so the hub can no longer flood the east
+# with cheap imports — closing the copper-plate bypass and shrinking the
+# over-export toward the measured schedule. A capability envelope (high
+# percentile), not the hourly residual, so it stays a forward-reproducible input.
