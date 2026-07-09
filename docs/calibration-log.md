@@ -8228,3 +8228,18 @@ answer for this fleet (rule 15: the measured value replaces the literature
 estimate; rule 13: derived from CEMS + published prices as a selector, no
 residual in the loop). ERCOT-only finding (rule 24); PJM/MISO temp-derate
 keepers rest on their own fleets' evidence.
+
+**Closure (owner decision, 2026-07-09) — temp-derate line REJECTED WITH CAUSE
+for ERCOT; keeper stays `2026-07-08-ercot46-clock-steamgas`.** Cause as
+amended above: the scarcity-hour capability slope is ~0/negative for every
+gas class, the ≥40 °C production lower-bound reaches 95–100 %+ of rating for
+most capacity, and telemetered RTOLCAP shows 6.9–8.3 GW spare in the model's
+deep hours — the literature slopes are refuted by the fleet's own measured
+behaviour, so the measured ERCOT parameterization equals the keeper's flat
+net-summer treatment. All four dashboard entries of the line (ercot48 pair,
+ercot49 pair) carry the rejection in their definitions. The open C3c
+thin-tail miss (104/29/4 h vs DA 311/68/23) is handed off to the
+condition-responsive measured DAM offer-surface thread (G-22 §5.1 / ercot37
+§8): see `docs/handoffs/` — next session's charter is the offer distribution
+across tranches conditioned on a forward-reproducible tightness driver, from
+the on-disk 60-Day DAM Gen Resource Data (2023–2025).
