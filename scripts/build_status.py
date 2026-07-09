@@ -126,22 +126,21 @@ def rubric() -> list[dict]:
             "modeled with offers/adders).",
             "Derived actual hub mean — real-time (avgLMP.rt), falling back to "
             "day-ahead (avgLMP.da) only when no RT actual is committed.",
-            f"±{cv.PRICE_MEAN_TOL * 100:.0f}% target / "
-            f"±{cv.PRICE_MEAN_COMMERCIAL * 100:.0f}% commercial. The target is the "
-            "SEM (Ireland) regulator's stated criterion for its official PLEXOS "
-            "model; the commercial band is the demonstrated planning grade (NYISO's "
-            "accepted GE MAPS benchmark ran −2% to −17% zonal). Between the bands "
-            "→ auto caveat (within commercial grade, target missed); beyond → FAIL "
-            "unless a measured-input limitation is ledgered.",
+            f"±{cv.PRICE_MEAN_TOL * 100:.0f}% passes clean (rubric v2.3: the "
+            "target band is set to the commercial band, so there is no caveat "
+            "range). The band is the demonstrated planning grade (NYISO's "
+            "accepted GE MAPS benchmark ran −2% to −17% zonal; the SEM "
+            "regulator's ±5% PLEXOS criterion stays a reported reference). "
+            "Beyond it → FAIL unless a measured-input limitation is ledgered.",
         ),
         row(
             "price_shape",
             "NRMSE between model and actual monthly load-weighted price vectors.",
             "Actual monthly RT price (avgLMP.rt_mon), falling back to DA.",
-            f"NRMSE ≤ {cv.PRICE_SHAPE_NRMSE_MAX:.2f} target / "
-            f"≤ {cv.PRICE_SHAPE_NRMSE_COMMERCIAL:.2f} commercial (published monthly "
-            "norms run ~5–15%; SEM's regulator-accepted backcast carried −9% "
-            "winter-peak / +11% off-peak period biases).",
+            f"NRMSE ≤ {cv.PRICE_SHAPE_NRMSE_MAX:.2f} passes clean (rubric v2.3: "
+            "single band, no caveat range; published monthly norms run ~5–15%; "
+            "SEM's regulator-accepted backcast carried −9% winter-peak / +11% "
+            "off-peak period biases).",
         ),
         row(
             "price_tail",
@@ -172,8 +171,13 @@ def rubric() -> list[dict]:
         ),
         row(
             "co2",
-            "Annual system CO₂, model vs eGRID ISO total.",
-            "eGRID ISO-year total (committed in the bundle's emissions summary).",
+            "Annual system CO₂, model vs the eGRID/CAMPD-rate actual, on the "
+            "full-plant CHP-inclusive basis (rubric v2.3): eGRID counts each "
+            "cogen's whole burn, so the measured behind-the-meter CHP host "
+            "supply is added back on BOTH sides before the per-class "
+            "intensities are applied.",
+            "Committed bench-part co2.egrid — full EIA-923 class totals × "
+            "net-gen-weighted eGRID/CAMPD class intensities (full-plant basis).",
             f"±{cv.CO2_TOL * 100:.0f}% target / ±{cv.CO2_COMMERCIAL * 100:.0f}% "
             "commercial (no production-cost model publishes a backcast CO₂ error; "
             "the AEO retrospective's 1–3-year CO₂ error SD is 3.2–4.9% on full "
@@ -248,8 +252,8 @@ def benchmark() -> dict:
     rows = [
         {
             "criterion": "C3a mean LMP",
-            "target": f"±{cv.PRICE_MEAN_TOL * 100:.0f}%",
-            "commercial": f"±{cv.PRICE_MEAN_COMMERCIAL * 100:.0f}%",
+            "target": f"±{cv.PRICE_MEAN_TOL * 100:.0f}% (v2.3: single band, passes clean)",
+            "commercial": f"±{cv.PRICE_MEAN_COMMERCIAL * 100:.0f}% (coincident)",
             "published": (
                 "SEM (Ireland) regulator criterion for its official PLEXOS model: "
                 "±5% aggregate vs 3–5 yrs of actuals (ECA SEM-20-004); NERA's 2025 "
@@ -262,8 +266,8 @@ def benchmark() -> dict:
         },
         {
             "criterion": "C3b monthly price shape (NRMSE)",
-            "target": f"≤{cv.PRICE_SHAPE_NRMSE_MAX:.2f}",
-            "commercial": f"≤{cv.PRICE_SHAPE_NRMSE_COMMERCIAL:.2f}",
+            "target": f"≤{cv.PRICE_SHAPE_NRMSE_MAX:.2f} (v2.3: single band, passes clean)",
+            "commercial": f"≤{cv.PRICE_SHAPE_NRMSE_COMMERCIAL:.2f} (coincident)",
             "published": (
                 "SEM regulator-accepted backcast period biases: −9% winter-peak / "
                 "+11% off-peak; published monthly norms ~5–15% with correct "
@@ -311,7 +315,7 @@ def benchmark() -> dict:
             ),
         },
         {
-            "criterion": "C5a system CO₂",
+            "criterion": "C5a system CO₂ (full-plant basis, v2.3)",
             "target": f"±{cv.CO2_TOL * 100:.0f}%",
             "commercial": f"±{cv.CO2_COMMERCIAL * 100:.0f}%",
             "published": (

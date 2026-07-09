@@ -1651,7 +1651,7 @@
       const M = RUN(yr).co2, B = BENCH(yr).co2;
       if (!M || !B) return '';
       const dT = B.egrid > 0 ? 100 * (M.model - B.egrid) / B.egrid : null;
-      let h = `<div class="bc-panel"><h2>Fossil CO2 — model vs actual (Mt) <span class="panel-sub">(eGRID + CAMPD plant rates × grid generation; C5a ±${CO2_BAND}% gate)</span></h2>
+      let h = `<div class="bc-panel"><h2>Fossil CO2 — model vs actual (Mt) <span class="panel-sub">(eGRID + CAMPD plant rates × full-plant generation; C5a ±${CO2_BAND}% gate)</span></h2>
         <div class="bc-table-wrap"><table>
         <thead><tr><th>class</th><th>model Mt</th><th>actual Mt</th><th>Δ</th></tr></thead>
         <tbody>`;
@@ -1666,7 +1666,8 @@
       const gate = dT == null ? '' : (Math.abs(dT) <= CO2_BAND ? '<span class="cs-badge det-cal">PASS</span>' : '<span class="cs-badge det-not">FAIL</span>');
       h += `<tr class="sub"><td><b>total</b></td><td class="num"><b>${M.model.toFixed(1)}</b></td><td class="num"><b>${B.egrid.toFixed(1)}</b></td>
         <td class="num ${dT == null ? '' : dcls(dT)}"><b>${dT == null ? '—' : fmtPctSigned(dT)}</b> ${gate}</td></tr>`;
-      return h + `</tbody></table></div><p class="panel-sub" style="margin-top:6px">Actual CO2 covers ${B.covPct}% of fossil-class EIA-923 generation by a plant-specific rate; the class intensity stands in for the small remainder. Grid-delivered basis (behind-the-meter CHP excluded, matching the model).</p></div>`;
+      const btmTot = Object.values(B.btmClass || {}).reduce((s, v) => s + v, 0);
+      return h + `</tbody></table></div><p class="panel-sub" style="margin-top:6px">Actual CO2 covers ${B.covPct}% of fossil-class EIA-923 generation by a plant-specific rate; the class intensity stands in for the small remainder. Full-plant basis (rubric v2.3): eGRID rates count each cogen's whole burn, so the measured behind-the-meter CHP host supply${btmTot ? ` (${btmTot.toFixed(1)} TWh)` : ''} is added back on both sides — generation-mix tables stay grid-delivered.</p></div>`;
     }
 
     function lmpMonthlyTable(yr) {

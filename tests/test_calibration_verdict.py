@@ -343,26 +343,26 @@ class SysVolTests(unittest.TestCase):
 
 
 class PriceAndDispatchTests(unittest.TestCase):
-    def test_mean_lmp_two_band(self):
-        # Rubric v2 two-band: -3.8% inside the ±5% target -> PASS; -7.2%
-        # between target and the ±10% commercial band -> auto CAVEAT
-        # (COMMERCIAL_BAND, not a ledger conversion); -17.5% beyond the
-        # commercial band -> FAIL (MODEL MISS, ledgerable only).
+    def test_mean_lmp_single_band(self):
+        # Rubric v2.3 (owner amendment 2026-07-09): the target band coincides
+        # with the ±10% commercial band, so -3.8% AND -7.2% are both clean
+        # PASSes (no COMMERCIAL_BAND caveat range on C3a); -17.5% beyond the
+        # band -> FAIL (MODEL MISS, ledgerable only).
         ypay = {"lmp": {"Z": {"p": 28.4, "d": 100.0}}}
         r = cv.score_price_mean(2024, ypay, {"avgLMP": {"rt": 29.53}})
         self.assertEqual(r["status"], cv.PASS)
         ypay = {"lmp": {"Z": {"p": 27.4, "d": 100.0}}}
         r = cv.score_price_mean(2024, ypay, {"avgLMP": {"rt": 29.53}})
-        self.assertEqual(r["status"], cv.CAVEAT)
-        self.assertEqual(r["classification"], cv.COMMERCIAL_BAND)
+        self.assertEqual(r["status"], cv.PASS)  # -7.2%: clean under v2.3
+        self.assertIsNone(r["classification"])
         ypay = {"lmp": {"Z": {"p": 35.4, "d": 100.0}}}
         r = cv.score_price_mean(2024, ypay, {"avgLMP": {"rt": 42.9}})
         self.assertEqual(r["status"], cv.FAIL)  # -17.5%
         self.assertEqual(r["classification"], cv.MODEL_MISS)
 
-    def test_price_shape_nrmse_two_band(self):
-        # Flat monthly vectors: NRMSE 0.10 <= 0.15 target -> PASS; 0.17 inside
-        # the 0.20 commercial band -> auto CAVEAT; 0.28 beyond it -> FAIL.
+    def test_price_shape_nrmse_single_band(self):
+        # Flat monthly vectors, rubric v2.3 single band: NRMSE 0.10 and 0.17
+        # both clean PASS (<= 0.20); 0.28 beyond the band -> FAIL.
         def ypay(pm):
             return {"lmp": {"Z": {"pMon": [pm] * 12, "dMon": [8.3] * 12}}}
 
@@ -370,8 +370,8 @@ class PriceAndDispatchTests(unittest.TestCase):
         r = cv.score_price_shape(2024, ypay(31.9), bench)
         self.assertEqual(r["status"], cv.PASS)
         r = cv.score_price_shape(2024, ypay(33.93), bench)
-        self.assertEqual(r["status"], cv.CAVEAT)
-        self.assertEqual(r["classification"], cv.COMMERCIAL_BAND)
+        self.assertEqual(r["status"], cv.PASS)  # 0.17: clean under v2.3
+        self.assertIsNone(r["classification"])
         r = cv.score_price_shape(2024, ypay(37.12), bench)
         self.assertEqual(r["status"], cv.FAIL)
 
@@ -762,12 +762,13 @@ class DeterminationTests(unittest.TestCase):
 
     def test_commercial_band_caveats_unbudgeted(self):
         # Auto COMMERCIAL_BAND caveats (inside the evidence-anchored outer band,
-        # outside target) are listed but never consume the ledger budget: three
-        # of them (price_mean -6.9%, price_shape NRMSE 0.17, co2 +8%) alongside
-        # zero ledgered caveats -> CALIBRATED-WITH-CAVEATS, not NOT-YET.
+        # outside target) are listed but never consume the ledger budget. Under
+        # rubric v2.3 the price criteria are single-band (price_mean -6.9% and
+        # price_shape NRMSE 0.17 are clean PASSes), so only co2 +8% remains a
+        # commercial-band caveat -> CALIBRATED-WITH-CAVEATS, not NOT-YET.
         ypay = self._clean_year_payload()
-        ypay["lmp"]["Z"]["p"] = 27.0  # -6.9% vs rt 29.0: commercial band
-        ypay["lmp"]["Z"]["pMon"] = [33.93] * 12  # NRMSE 0.17: commercial band
+        ypay["lmp"]["Z"]["p"] = 27.0  # -6.9% vs rt 29.0: clean PASS (v2.3)
+        ypay["lmp"]["Z"]["pMon"] = [33.93] * 12  # NRMSE 0.17: clean PASS (v2.3)
         ypay["co2"] = {"model": 108.0}
         art = _artifacts(
             ypay, attestation=_clean_attestation(), **self._clean_bench_args()
@@ -775,7 +776,7 @@ class DeterminationTests(unittest.TestCase):
         art["bench"][2024]["co2"] = {"egrid": 100.0}
         v = cv.determine_from_artifacts("t", art)
         self.assertEqual(v["determination"], cv.CALIBRATED_CAVEATS)
-        self.assertEqual(len(v["caveats"]["commercial_band"]), 3)
+        self.assertEqual(len(v["caveats"]["commercial_band"]), 1)  # co2 only
         self.assertEqual(v["caveats"]["ledgered"], [])
         self.assertTrue(any("commercial-grade band" in r for r in v["reasons"]))
 
