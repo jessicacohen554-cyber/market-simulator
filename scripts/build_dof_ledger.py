@@ -231,23 +231,53 @@ def config_entries(sc: dict, iso: str) -> list[dict]:
         if sc.get(k)
     ]
     if sigmoids:
-        out.append(
-            _entry(
-                "COAL_SIGMOID_DEFAULTS[" + iso + "]",
-                "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via "
-                + ", ".join(sigmoids)
-                + ")",
-                "residual",
-                iso,
-                n_scalars=4 * len(sigmoids),
-                source="gas-keyed coal passthrough sigmoids — the largest fitted "
-                "surface (audit C-1); owner-sanctioned under rule #1",
-                root_cause="weakly identified: each asymptote is pinned by a "
-                "single gas regime (floor by 2024, gas_mid/ceil by 2025 — "
-                "docs/out-of-sample-results-2026-07.md §2C); open: literature/"
-                "physical anchoring of floor/ceil, plus " + _HOLDOUT_ROOT_CAUSE,
+        if iso.upper() == "MISO":
+            # MISO's COAL_SIGMOID_DEFAULTS were re-derived 2026-07-09 from the
+            # #1803 EIA Annual Coal Report region f.o.b.-mine price + BLS PPI
+            # coal-mining series by scripts/derive_coal_sigmoid.py — each of the
+            # four parameters is grounded in measured coal-commodity data (merit
+            # crossover from region delivered cost; cost-tracking ceil; gas-trough
+            # floor; cross-region dispersion slope), not fitted to a MISO residual
+            # (docs/handoffs/coal-sigmoid-rederive-2026-07.md). So for MISO this
+            # is a measured-physical parameter, no longer a residual DOF — the
+            # frozen derive script + provenance CSV + freeze test are its
+            # identification. Other ISOs' entries remain hand-tuned residuals
+            # until their own re-derive (their live literals are unchanged).
+            out.append(
+                _entry(
+                    "COAL_SIGMOID_DEFAULTS[MISO]",
+                    "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via "
+                    + ", ".join(sigmoids)
+                    + ")",
+                    "measured-physical",
+                    iso,
+                    n_scalars=4 * len(sigmoids),
+                    source="re-derived from #1803 region f.o.b./PPI by "
+                    "scripts/derive_coal_sigmoid.py (frozen; provenance "
+                    "data/raw/_processed-legacy/coal_sigmoid_params.csv; freeze "
+                    "test tests/test_derive_coal_sigmoid.py) — retires the ERCOT "
+                    "byte-copy (issue #1347/G-26); fit to measured coal commodity "
+                    "movement, never a MISO residual",
+                )
             )
-        )
+        else:
+            out.append(
+                _entry(
+                    "COAL_SIGMOID_DEFAULTS[" + iso + "]",
+                    "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via "
+                    + ", ".join(sigmoids)
+                    + ")",
+                    "residual",
+                    iso,
+                    n_scalars=4 * len(sigmoids),
+                    source="gas-keyed coal passthrough sigmoids — the largest fitted "
+                    "surface (audit C-1); owner-sanctioned under rule #1",
+                    root_cause="weakly identified: each asymptote is pinned by a "
+                    "single gas regime (floor by 2024, gas_mid/ceil by 2025 — "
+                    "docs/out-of-sample-results-2026-07.md §2C); open: literature/"
+                    "physical anchoring of floor/ceil, plus " + _HOLDOUT_ROOT_CAUSE,
+                )
+            )
     if sc.get("wefor_multiplier") not in (None, 1.0):
         out.append(
             _entry(
