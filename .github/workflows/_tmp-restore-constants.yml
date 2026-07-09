@@ -1,6 +1,10 @@
 name: _tmp-restore-constants
 on:
-  workflow_dispatch:
+  push:
+    branches:
+      - claude/caiso-sp15-loadshares-nm5xs4
+    paths:
+      - '.github/workflows/_tmp-restore-constants.yml'
 
 permissions:
   contents: write
@@ -18,6 +22,11 @@ jobs:
           set -euo pipefail
           TARGET="src/market_sim/config/constants.py"
           EXPECTED="def60b22804498f0af71c1419e76682589c66837"
+
+          if [ ! -d scripts/_tmp_restore ]; then
+            echo "scripts/_tmp_restore already gone — nothing to do (already restored)."
+            exit 0
+          fi
 
           cat scripts/_tmp_restore/cpart_00.txt \
               scripts/_tmp_restore/cpart_01.txt \
@@ -51,5 +60,7 @@ jobs:
           git config user.email "noreply@anthropic.com"
           git config user.name "Claude"
           git add -A
+          git status
+          git diff --cached --stat
           git commit -m "fix: reassemble constants.py from verified chunks (hash-checked); remove temp restore scaffold"
           git push origin HEAD:claude/caiso-sp15-loadshares-nm5xs4
