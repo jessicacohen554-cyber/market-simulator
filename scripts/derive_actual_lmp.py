@@ -727,6 +727,202 @@ def build(years, isos=None) -> tuple[dict, dict]:
     }
 
 
+# ---------------------------------------------------------------------------
+# Load-weighted (like-for-like) price basis — rubric v2.4
+# ---------------------------------------------------------------------------
+# The C3a/C3b scorer's model side is the system LOAD-WEIGHTED mean LMP
+# (per-zone demand-weighted zonal means, zone-demand-weighted across zones),
+# but the legacy ``rt``/``da`` fields above are EQUAL-HOUR means of a hub
+# series — a mixed basis whose wedge grows with tail realism (a byte-perfect
+# ERCOT 2023 model scores +33.5% against its own actual; see
+# docs/handoffs/ercot-ordc-capdual-adder-2026-07.md §4). The ``*_lw`` fields
+# below put the ACTUAL on the same basis as the model: each ISO's committed
+# hourly actual series weighted by the MEASURED hourly load the model itself
+# dispatches in a backcast (``eia_loader.load_demand`` — same series, so the
+# two sides of C3a finally share weights). Where a committed ZONAL hourly
+# archive exists (ERCOT), the construction mirrors the scorer zone-by-zone;
+# elsewhere it weights the system hub series by system load. The legacy
+# equal-hour fields stay untouched (display continuity + fallback basis).
+
+# Model zone -> ERCOT settlement load zone(s). A model zone spanning several
+# LZs takes their simple mean (South_Central = Austin Energy + CPS Energy +
+# LCRA, the three municipal LZs it aggregates; Northeast = the Rayburn
+# country LZ; Panhandle has no LZ of its own and carries ~0 model load — it
+# rides with LZ_WEST). Documented in docs/rubric-v24-price-basis-memo-2026-07.md.
+ERCOT_MODEL_ZONE_TO_LZ: dict[str, tuple[str, ...]] = {
+    "Houston": ("LZ_HOUSTON",),
+    "North": ("LZ_NORTH",),
+    "Northeast": ("LZ_RAYBN",),
+    "South": ("LZ_SOUTH",),
+    "South_Central": ("LZ_AEN", "LZ_CPS", "LZ_LCRA"),
+    "West": ("LZ_WEST",),
+    "Panhandle": ("LZ_WEST",),
+}
+ERCOT_ZONAL_PARQUET = "actual_lmp_zonal_ERCOT.parquet"
+
+
+def _lw_stats(prices: np.ndarray, weights: np.ndarray) -> tuple[float, list]:
+    """NaN-aware ``(annual, [12 monthly])`` load-weighted means of a series."""
+    p = np.asarray(prices, dtype=float)[:_HOURS_PER_YEAR]
+    w = np.asarray(weights, dtype=float)[: p.size]
+    v = ~np.isnan(p) & (w > 0)
+    annual = float((p[v] * w[v]).sum() / w[v].sum()) if v.any() else float("nan")
+    mon: list = []
+    for m in range(12):
+        lo = _MONTH_START_HOUR[m]
+        hi = lo + _DAYS_IN_MONTH[m] * 24
+        pm, wm, vm = p[lo:hi], w[lo:hi], v[lo:hi]
+        mon.append(
+            round(float((pm[vm] * wm[vm]).sum() / wm[vm].sum()), 2)
+            if vm.any()
+            else None
+        )
+    return round(annual, 2), mon
+
+
+def _measured_zone_demand(iso: str, year: int) -> np.ndarray | None:
+    """Measured hourly zonal demand ``(n_zones, T)`` — the model's own series."""
+    from market_sim.config.iso_configs import get_iso_config
+    from market_sim.data.eia_loader import load_demand
+
+    try:
+        return load_demand(iso, int(year), get_iso_config(iso))
+    except Exception as exc:  # measured series absent for this iso-year
+        print(f"  {iso} {year}: no measured demand ({exc}); lw fields skipped")
+        return None
+
+
+def _lw_fields(iso: str, year: int) -> dict | None:
+    """Return the ``*_lw`` record fields for one ISO-year, or ``None``.
+
+    ERCOT: zone-resolved — the scorer's exact formula mirrored on the actual
+    (per-model-zone LZ hourly series weighted by that zone's measured demand,
+    then zone-demand-weighted across zones). Other ISOs: the committed system
+    hub series weighted by measured system load.
+    """
+    from market_sim.config.iso_configs import get_iso_config
+
+    demand = _measured_zone_demand(iso, year)
+    if demand is None:
+        return None
+    out: dict = {}
+    if iso == "ERCOT":
+        zp = HOURLY_OUT / ERCOT_ZONAL_PARQUET
+        if not zp.exists():
+            return None
+        z = pd.read_parquet(zp)
+        z = z[z["year"] == int(year)]
+        series: dict[str, dict[str, np.ndarray]] = {}
+        for sp, g in z.groupby("settlement_point"):
+            g = g.sort_values("hour")
+            for kind in ("rt", "da"):
+                dense = np.full(_HOURS_PER_YEAR, np.nan)
+                hr = g["hour"].to_numpy(int)
+                ok = hr < _HOURS_PER_YEAR
+                dense[hr[ok]] = g[kind].to_numpy(float)[ok]
+                series.setdefault(str(sp), {})[kind] = dense
+        zone_names = [zn.name for zn in get_iso_config(iso).zones]
+        for kind in ("rt", "da"):
+            pairs: list[tuple[float, list, float]] = []  # (annual, mon, weight)
+            for zi, zone in enumerate(zone_names):
+                lzs = ERCOT_MODEL_ZONE_TO_LZ.get(zone)
+                w = demand[zi]
+                if not lzs or float(w.sum()) <= 0.0:
+                    continue
+                have = [
+                    series[lz][kind]
+                    for lz in lzs
+                    if lz in series and not np.isnan(series[lz][kind]).all()
+                ]
+                if not have:
+                    continue
+                p = np.nanmean(np.vstack(have), axis=0)
+                annual, mon = _lw_stats(p, w)
+                if np.isnan(annual):
+                    continue
+                pairs.append((annual, mon, float(w.sum())))
+            if not pairs:
+                continue
+            wsum = sum(w for _, _, w in pairs)
+            out[f"{kind}_lw"] = round(sum(a * w for a, _, w in pairs) / wsum, 2)
+            out[f"{kind}_lw_mon"] = [
+                (
+                    round(
+                        sum(m[i] * w for _, m, w in pairs if m[i] is not None)
+                        / sum(w for _, m, w in pairs if m[i] is not None),
+                        2,
+                    )
+                    if any(m[i] is not None for _, m, w in pairs)
+                    else None
+                )
+                for i in range(12)
+            ]
+        if out:
+            out["src_lw"] = (
+                "zonal LZ settlement prices (RTM 15-min / DAM hourly) "
+                "load-weighted by measured zonal demand (eia_loader.load_demand), "
+                "model-zone crosswalk ERCOT_MODEL_ZONE_TO_LZ"
+            )
+    else:
+        hp = HOURLY_OUT / f"actual_lmp_hourly_{iso}.parquet"
+        if not hp.exists():
+            return None
+        h = pd.read_parquet(hp)
+        h = h[h["year"] == int(year)].sort_values("hour")
+        if h.empty:
+            return None
+        w = demand.sum(axis=0)
+        for kind in ("rt", "da"):
+            dense = np.full(_HOURS_PER_YEAR, np.nan)
+            hr = h["hour"].to_numpy(int)
+            ok = hr < _HOURS_PER_YEAR
+            dense[hr[ok]] = h[kind].to_numpy(float)[ok]
+            if np.isnan(dense).all():
+                continue
+            annual, mon = _lw_stats(dense, w)
+            if not np.isnan(annual):
+                out[f"{kind}_lw"] = annual
+                out[f"{kind}_lw_mon"] = mon
+        if out:
+            out["src_lw"] = (
+                "system hub hourly series load-weighted by measured system "
+                "demand (eia_loader.load_demand)"
+            )
+    return out or None
+
+
+def lw_retrofit(years: list[int], isos: list[str] | None = None) -> None:
+    """Amend the committed reference with the ``*_lw`` fields in place.
+
+    Reads ``actual_lmp.json``, adds ``rt_lw``/``rt_lw_mon``/``da_lw``/
+    ``da_lw_mon``/``src_lw`` to each covered ISO-year from the committed
+    hourly parquets × measured load, and rewrites the JSON. Legacy fields are
+    never touched; ISO-years without a committed hourly series or measured
+    demand keep their record unchanged (the scorer falls back to the legacy
+    equal-hour basis with an explicit label). Rubric v2.4; re-derivation
+    citation: methodology change (mixed-basis C3), not a residual.
+    """
+    table = json.loads(OUT.read_text())
+    n = 0
+    for iso, yrec in sorted(table.items()):
+        if isos is not None and iso not in isos:
+            continue
+        for y in sorted(yrec):
+            if int(y) not in years:
+                continue
+            fields = _lw_fields(iso, int(y))
+            if fields:
+                yrec[y].update(fields)
+                n += 1
+                print(
+                    f"  {iso} {y}: rt_lw {fields.get('rt_lw')} "
+                    f"da_lw {fields.get('da_lw')} "
+                    f"(legacy rt {yrec[y].get('rt')} da {yrec[y].get('da')})"
+                )
+    OUT.write_text(json.dumps(table, indent=2) + "\n")
+    print(f"wrote {OUT} (+lw fields on {n} iso-years)")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=list(DEFAULT_YEARS))
@@ -738,7 +934,17 @@ def main() -> None:
         "are updated — others keep their committed entry/parquet (their raws "
         "may be staged out of the repo).",
     )
+    ap.add_argument(
+        "--lw-retrofit",
+        action="store_true",
+        help="Do not re-parse raw archives; amend the committed "
+        "actual_lmp.json with the load-weighted (*_lw) price fields from the "
+        "committed hourly parquets × measured demand (rubric v2.4 C3 basis).",
+    )
     args = ap.parse_args()
+    if args.lw_retrofit:
+        lw_retrofit(args.years, isos=args.isos)
+        return
     table, hourly = build(args.years, isos=args.isos)
     # Merge into the committed reference rather than overwriting: ISOs not built
     # this run (or whose source raws are staged out) keep their durable entry.

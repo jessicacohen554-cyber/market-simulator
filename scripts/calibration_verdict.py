@@ -68,8 +68,18 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # (±10% mean LMP / 0.20 NRMSE pass clean, no caveat band), and C5a re-based to
 # the full-plant CHP-inclusive CO2 basis — the measured BTM CHP host supply is
 # added back onto BOTH sides before the comparison, because the eGRID/CAMPD
-# rates that anchor the actual count each cogen's full net generation).
-RUBRIC_VERSION = 2.3
+# rates that anchor the actual count each cogen's full net generation;
+# v2.4 = the 2026-07-09 owner amendment (second): C3a/C3b score on the
+# LIKE-FOR-LIKE load-weighted actual (``rt_lw``/``da_lw`` bench fields —
+# the committed hourly actual weighted by the same measured demand the
+# model dispatches, zone-resolved where a zonal archive exists) instead of
+# the legacy equal-hour hub mean. The legacy basis mixed a demand-weighted
+# model mean with an equal-hour actual, a wedge that grows with tail
+# realism — a byte-perfect ERCOT 2023 model scores +33.5% against its own
+# actual on the old basis (docs/rubric-v24-price-basis-memo-2026-07.md,
+# docs/handoffs/ercot-ordc-capdual-adder-2026-07.md §4). ISO-years without
+# lw fields fall back to the legacy basis with an explicit label).
+RUBRIC_VERSION = 2.4
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -882,11 +892,26 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
     premia), so RT is the honest benchmark and DA is only a fallback when no
     RT actual is committed. The DA comparison is surfaced separately as a
     non-gated diagnostic (:func:`score_price_mean_da_diagnostic`).
+
+    Rubric v2.4: the gated actual is the LIKE-FOR-LIKE load-weighted bench
+    (``rt_lw``/``da_lw`` — the committed hourly actual weighted by the same
+    measured demand the model dispatches; see the RUBRIC_VERSION note). The
+    legacy equal-hour hub fields (``rt``/``da``) remain a labelled fallback
+    for ISO-years the lw retrofit does not cover, so no year loses coverage.
     """
     lmp = ypay.get("lmp", {})
     avg = ybench.get("avgLMP") or {}
-    bench_kind = "RT" if avg.get("rt") is not None else "DA"
-    actual = avg.get("rt", avg.get("da"))
+    # v2.4 basis ladder: load-weighted RT > load-weighted DA > legacy
+    # equal-hour RT > legacy equal-hour DA.
+    if avg.get("rt_lw") is not None:
+        bench_kind, bench_key, lw_basis = "RT", "rt_lw", True
+    elif avg.get("da_lw") is not None:
+        bench_kind, bench_key, lw_basis = "DA", "da_lw", True
+    elif avg.get("rt") is not None:
+        bench_kind, bench_key, lw_basis = "RT", "rt", False
+    else:
+        bench_kind, bench_key, lw_basis = "DA", "da", False
+    actual = avg.get(bench_key)
     # Like-for-like calendar coverage: when the actual series is partial (its
     # monthly vector has empty months — e.g. CAISO 2023, whose Jan–Feb aged
     # out of OASIS retention), the committed actual mean only averages the
@@ -894,7 +919,7 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
     # Comparing a full-year model mean (which correctly carries the $190
     # gas-crisis January) against a Mar–Dec actual is a coverage artifact,
     # not a price error. Full-coverage years are byte-identical.
-    actual_mon = avg.get("rt_mon") if bench_kind == "RT" else avg.get("da_mon")
+    actual_mon = avg.get(f"{bench_key}_mon")
     covered = [i for i, v in enumerate(actual_mon or []) if v is not None]
     masked = bool(actual_mon) and 0 < len(covered) < 12
     if masked:
@@ -916,7 +941,12 @@ def score_price_mean(year: int, ypay: dict, ybench: dict) -> dict:
     status, classification = _band_result(
         abs(err), PRICE_MEAN_TOL, PRICE_MEAN_COMMERCIAL
     )
-    label = "vs RT" if bench_kind == "RT" else "vs DA — no RT actual committed"
+    basis = "load-weighted" if lw_basis else "LEGACY equal-hour basis"
+    label = (
+        f"vs RT ({basis})"
+        if bench_kind == "RT"
+        else f"vs DA ({basis}) — no RT actual committed"
+    )
     if masked:
         label += f" (model masked to actual's {len(covered)}-month coverage)"
     return {
@@ -950,13 +980,21 @@ def score_price_mean_da_diagnostic(year: int, ypay: dict, ybench: dict) -> dict 
     benchmark (no second series to diagnose).
     """
     avg = ybench.get("avgLMP") or {}
-    rt, da = avg.get("rt"), avg.get("da")
+    # v2.4: diagnose on the load-weighted pair when both sides carry it, so
+    # the DART premium is read on the same basis C3a gates on; legacy
+    # equal-hour pair otherwise.
+    if avg.get("rt_lw") is not None and avg.get("da_lw") is not None:
+        rt, da = avg.get("rt_lw"), avg.get("da_lw")
+        da_mon_key = "da_lw_mon"
+    else:
+        rt, da = avg.get("rt"), avg.get("da")
+        da_mon_key = "da_mon"
     if rt is None or da is None:
         return None  # DA absent, or DA is already the gated benchmark
     lmp = ypay.get("lmp", {})
     # Mirror score_price_mean's partial-coverage masking (same calendar on
     # both sides when the DA actual has empty months).
-    da_mon = avg.get("da_mon")
+    da_mon = avg.get(da_mon_key)
     covered = [i for i, v in enumerate(da_mon or []) if v is not None]
     if da_mon and 0 < len(covered) < 12:
         pairs = []
@@ -1005,7 +1043,12 @@ def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
                 pairs.append((pm, dm))
         model_mon.append(_wmean(pairs) if pairs else None)
     avg = ybench.get("avgLMP") or {}
-    actual_mon = avg.get("rt_mon") or avg.get("da_mon")
+    # v2.4 basis ladder mirroring score_price_mean: load-weighted monthly
+    # actual first, legacy equal-hour monthly as labelled fallback.
+    actual_mon = avg.get("rt_lw_mon") or avg.get("da_lw_mon")
+    lw_basis = actual_mon is not None
+    if actual_mon is None:
+        actual_mon = avg.get("rt_mon") or avg.get("da_mon")
     if actual_mon is None or all(v is None for v in model_mon):
         return _skip("price_shape", year, "no monthly model or actual LMP")
     nrmse = _nrmse(model_mon, actual_mon)
@@ -1014,13 +1057,14 @@ def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
     status, classification = _band_result(
         nrmse, PRICE_SHAPE_NRMSE_MAX, PRICE_SHAPE_NRMSE_COMMERCIAL
     )
+    basis = "load-weighted" if lw_basis else "LEGACY equal-hour basis"
     return {
         "criterion": "price_shape",
         "key": None,
         "year": year,
         "status": status,
         "classification": classification,
-        "metric": "monthly load-weighted price NRMSE",
+        "metric": f"monthly load-weighted price NRMSE ({basis} actual)",
         "model": round(nrmse, 3),
         "actual": None,
         "tol": (
