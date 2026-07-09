@@ -8,28 +8,34 @@ them only as one-file-per-day all-node market reports (no annual archives):
     RT final:   https://docs.misoenergy.org/marketreports/YYYYMMDD_rt_lmp_final.csv
 
 Each file carries every node's LMP/MCC/MLC per hour-ending 1-24, Eastern
-Standard Time year-round (no DST — the header says so explicitly). Committing
+Standard Time year-round (no DST -- the header says so explicitly). Committing
 ~2,200 all-node daily files (~1 MB each) is not viable, so this script stages
 the *verbatim rows for the eight named trading hubs only* (ARKANSAS.HUB,
 ILLINOIS.HUB, INDIANA.HUB, LOUISIANA.HUB, MICHIGAN.HUB, MINN.HUB, MS.HUB,
-TEXAS.HUB — all three Value rows: LMP, MCC, MLC) into compact gzip CSVs under
-``data/raw/lmp-data/MISO/``, one per (year, market, ~10-day window):
+TEXAS.HUB -- all three Value rows: LMP, MCC, MLC) into compact plain-text CSVs
+under ``data/raw/lmp-data/MISO/``, one per (year, market, ~7-day window):
 
-    miso_hub_lmp_<year>_<da|rt>_p<NN>.csv.gz   (NN = 01.. , 10 days/chunk, last short)
+    miso_hub_lmp_<year>_<da|rt>_p<NN>.csv   (NN = 01.. , 7 days/chunk, last short)
     columns: date,node,type,value,he01..he24   (values verbatim from the source)
 
-(2023-2025 predate the chunk split and ship as one ``miso_hub_lmp_<year>_
-<da|rt>.csv.gz`` per year instead — ``derive_miso_hub_lmp.py`` reads either
-layout. The split to ~10-day chunks (2026-07-09) exists solely so each file
-is small enough to inline whole into a single ``push_files`` call — this
-repo's git-push rule requires committing over the GitHub API, which means
-every file's full content becomes one base64 tool-call argument; a ~500KB/year
-file is far too large for that, and even a ~40-60KB/month chunk turned out to
-overrun a single Read/tool-call round trip — ~14KB/chunk (~18KB base64) is the
-size that actually stayed reliable.)
+(2023-2025 predate the chunk split and ship as one gzip ``miso_hub_lmp_<year>_
+<da|rt>.csv.gz`` per year instead -- ``derive_miso_hub_lmp.py`` reads either
+layout. The split to ~7-day chunks (2026-07-09) exists solely so each file is
+small enough to read and inline whole into a single ``push_files`` call --
+this repo's git-push rule requires committing over the GitHub API, whose
+``content`` field is written verbatim as the file's bytes with no encoding
+option; gzip binary can't survive that (and base64-encoding the gzip bytes
+first doesn't help -- the base64 *text* just gets committed as the file's
+literal content, corrupting it, as discovered 2026-07-09 on p01-p13). Plain,
+uncompressed CSV is valid UTF-8 and survives ``content`` unmodified, so 2022+
+chunks ship uncompressed; a first pass at ~10-day windows (~40KB/chunk)
+still overran the Read tool's per-file token cap as plain text (denser than
+the old base64-gzip encoding), so the window narrowed to ~7 days (~25-29KB,
+~169 lines) to leave comfortable headroom under both the Read-tool
+truncation cap and push_files' practical size limit.)
 
 The only transformation is filtering to the hub rows and prepending the
-file's date (which the source carries in its header line, not per row) — the
+file's date (which the source carries in its header line, not per row) -- the
 same source-subset pattern as the ERCOT ``DAMLZHBSPP_*.zip`` holdings (LZ/HB/
 SPP settlement points only). Downstream,
 ``scripts/derive_miso_hub_lmp.py`` reduces these to the zonal validation
@@ -39,7 +45,7 @@ parquet ``data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet``.
 files (verified 2026-07-09: 2022-12-31 -> 404, 2023-01-01 -> 200, for both
 reports). For a year that has aged off, this script falls back to the MISO
 Data Exchange Pricing API (``https://apim.misoenergy.org/pricing/v1``,
-subscription-key auth via ``MISO_PRICING_API_KEY``) — same underlying LMP
+subscription-key auth via ``MISO_PRICING_API_KEY``) -- same underlying LMP
 Ex-Post reports, verified byte-identical against the static CSV on an
 overlapping day (2023-01-03 DA, ARKANSAS.HUB, all three LMP/MCC/MLC rows).
 The API's ``node`` filter takes one node per call, so the fallback costs 8
@@ -55,7 +61,6 @@ from __future__ import annotations
 
 import argparse
 import csv
-import gzip
 import io
 import json
 import logging
@@ -142,7 +147,7 @@ _TIMEOUT_S = 60
 
 
 class _NotFound(Exception):
-    """The static daily report 404s — the URL has aged off MISO's retention window."""
+    """The static daily report 404s -- the URL has aged off MISO's retention window."""
 
 
 def _fetch(url: str) -> bytes:
@@ -198,7 +203,7 @@ def _hub_rows_api(day: date, market: str, api_key: str) -> list[list[str]]:
     Fallback for years the static daily CSV has aged off (module docstring).
     The API's ``node`` query param accepts one node per call, so this makes
     8 calls (one per hub), each returning that hub's 24 hourly LMP/MCC/MLC
-    records — reshaped into the same ``[date, node, type, value, he01..he24]``
+    records -- reshaped into the same ``[date, node, type, value, he01..he24]``
     rows the static path produces (node type is always "Hub" for this set).
     """
     iso = day.isoformat()
@@ -268,19 +273,31 @@ def _hub_rows_or_none(
         return None
 
 
-_CHUNK_DAYS = (
-    10  # ~14KB gzip/chunk (module docstring) -- stays under a single push_files call
-)
+_CHUNK_DAYS = 7  # ~25-29KB plain-text/chunk (module docstring) -- stays under a single push_files call
 
 
 def stage_year(year: int, market: str, api_key: str | None) -> list[Path]:
-    """Fetch every day of ``year`` for ``market`` and write ~10-day staged gzip CSVs.
+    """Fetch every day of ``year`` for ``market`` and write ~7-day staged plain CSVs.
 
     A day that fails all its retries is dropped (logged loudly) rather than
-    aborting the whole year — the API path costs ~8 calls/day, so losing one
+    aborting the whole year -- the API path costs ~8 calls/day, so losing one
     day's rows is cheap to re-fetch but re-running the whole year is not.
     Chunked by ``_CHUNK_DAYS`` (not one file per year) so each file is small
     enough to inline whole into a single ``push_files`` call (module docstring).
+
+    Written as **plain, uncompressed CSV** (not gzip): this repo's git-push
+    rule requires committing binary-safe content through
+    ``mcp__github__push_files``' ``content`` string field, which is written
+    verbatim as the file's bytes -- there is no way to hand it real gzip
+    binary without an encoding step, and base64-encoding the gzip bytes and
+    passing *that* string as ``content`` does not decode back to binary, it
+    commits the base64 text itself as the file's literal content (discovered
+    2026-07-09 when p01-p13 were found corrupted on disk). Plain CSV text is
+    valid UTF-8 and survives ``content`` unmodified, so it is the only format
+    this push path can carry correctly; the ~7-day chunk size (~169 lines)
+    keeps each file comfortably under both the Read-tool truncation cap and
+    push_files' practical size limit (a ~10-day/~40KB first pass still
+    overran the Read cap as plain text).
     """
     days = []
     d = date(year, 1, 1)
@@ -312,8 +329,8 @@ def stage_year(year: int, market: str, api_key: str | None) -> list[Path]:
     n_chunks = -(-len(days) // _CHUNK_DAYS)  # ceil
     for i in range(n_chunks):
         window = days[i * _CHUNK_DAYS : (i + 1) * _CHUNK_DAYS]
-        out = OUT_DIR / f"miso_hub_lmp_{year}_{market}_p{i + 1:02d}.csv.gz"
-        with gzip.open(out, "wt", newline="") as f:
+        out = OUT_DIR / f"miso_hub_lmp_{year}_{market}_p{i + 1:02d}.csv"
+        with open(out, "wt", newline="") as f:
             w = csv.writer(f)
             w.writerow(header)
             for dd, rows in zip(days, per_day):
