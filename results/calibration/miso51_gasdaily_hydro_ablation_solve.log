@@ -67,3 +67,10 @@ INFO: MISO 2025: 160 hydro plants in LP (2372 MW, 9.87 TWh monthly budget)
 INFO: unit-outage derate (MISO 2025): 775 plant-tranches derated
 INFO: COD ramp (MISO 2025): 1264 unit-months masked offline (mid-year COD / retirement), 95 unit(s) fully not-yet-built/retired
 INFO: F923 fuel costs for 2025: 871 generators priced from their own plant, 1704 gap-filled from nearby (state/zone) plants
+INFO: Matrix build: 4.365s, Solve: 274.795s (cold)
+INFO: Matrix build: 4.365s, Solve: 62.284s (warm)
+INFO: EIA-923 2025: CAMPD-backfilled 58 under-reported plants (2 replaced, 56 added)
+INFO: EIA-923 2025 wind 70.36 TWh under-counts EIA-930 98.90 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro 0.28 TWh under-counts EIA-930 9.88 TWh; using EIA-930 grid total
+INFO: wrote calibration bundle to /home/user/market-simulator/results/calibration/miso51_gasdaily_hydro-ablation
+DONE ablation -> /home/user/market-simulator/results/calibration/miso51_gasdaily_hydro-ablation
