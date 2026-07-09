@@ -12,5 +12,5 @@
   "iso": "MISO",
   "file": "frontend/data/backcast/runs/2026-07-08-miso-49-tempderate.js",
   "bundle": "results/calibration/miso49_tempderate",
-  "ablation_twin": "2026-07-08-miso-49-tempderate-ablation"
+  "ablation_twin": "2026-07-09-miso-49-tempderate-ablation"
 }
