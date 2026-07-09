@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-07-ercot43-extremeenv-off",
+  "run_id": "2026-07-09-ercot51-coal-netsummer-ablation",
   "iso": "ERCOT",
-  "label": "ercot43 extremeenv off",
+  "label": "ercot51 coal netsummer ablation",
   "target_years": [
     2023,
     2024,
@@ -23,19 +23,17 @@
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
+      "status": "PASS"
     },
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
@@ -75,32 +73,29 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
     "protective": [],
     "ledgered": [],
-    "commercial_band": [
-      "C2 system volume (gas/coal families)",
-      "C3a mean LMP"
-    ],
+    "commercial_band": [],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 4,
-    "commercial_grade": 2,
+    "scored": 10,
+    "target_grade": 6,
+    "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 2
+    "fails": 4
   },
   "free_class_score": {
     "iso": "ERCOT",
@@ -118,13 +113,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 16,
+      "pass": 15,
       "total": 16
     },
     "free": {
-      "pass": 12,
+      "pass": 11,
       "total": 12
     },
-    "headline": "C1 all 16/16 \u00b7 free 12/12"
+    "headline": "C1 all 15/16 \u00b7 free 11/12"
   }
 }

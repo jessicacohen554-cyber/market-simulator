@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-07-ercot43-extremeenv-on-probe",
+  "run_id": "2026-07-09-ercot51-coal-netsummer-derate",
   "iso": "ERCOT",
-  "label": "ercot43 extremeenv on probe",
+  "label": "ercot51 coal netsummer derate",
   "target_years": [
     2023,
     2024,
@@ -18,7 +18,10 @@
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
   ],
-  "notes": [],
+  "notes": [
+    "C8 2024 ST_GAS: grounded above budget \u2014 32.7% forced (5.7061 of 17.459 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.978 (\u22650.8) & off-peak CV ratio 1.397 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 31.3% forced (4.9799 of 15.892 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.968 (\u22650.8) & off-peak CV ratio 1.582 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -64,7 +67,7 @@
     "storage_shape": {
       "label": "C5c storage dispatch shape",
       "tier": "supporting",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -74,12 +77,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -94,11 +97,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 4,
+    "scored": 10,
+    "target_grade": 5,
     "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 3
+    "fails": 4
   },
   "free_class_score": {
     "iso": "ERCOT",

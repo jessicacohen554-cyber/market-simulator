@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-07T07:02:02",
+  "timestamp": "2026-07-09T19:04:44",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -58,7 +58,9 @@
     "ercot_west_netload_gas_shape": true,
     "ercot_west_gas_delivered_floor": 0.4,
     "oil_primary_bin_fuel": true,
-    "ercot_wtx_curtailment_driver": true
+    "ercot_wtx_curtailment_driver": true,
+    "gas_st_netload_drag": true,
+    "gas_st_startup_cost": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -89,7 +91,10 @@
   "pjm_reserve_supply_cap": false,
   "pjm_reserve_online_gated": false,
   "pjm_reserve_online_rho": 1.0,
+  "pjm_reserve_commitment_scoped": false,
   "pjm_reserve_pergen": false,
+  "pjm_reserve_pergen_sync": false,
+  "pjm_reserve_pergen_size_split": false,
   "pjm_commitment_posture": false,
   "measured_ramp_capability": false,
   "ercot_as_forward_requirement": false,
@@ -172,6 +177,9 @@
   },
   "cc_derate_from_top": false,
   "cc_nameplate_summer_derate": false,
+  "coal_nameplate_summer_derate": true,
+  "temp_dependent_derate": false,
+  "ercot_offer_surface_conditional": false,
   "priced_interchange": false,
   "hydro_backfill_year": null,
   "hydro_eia930_monthly": false,
@@ -249,6 +257,6 @@
     "eia923": "../_shared/ERCOT/eia923-1baf3fae644b.parquet",
     "campd": "../_shared/ERCOT/campd-e42e97159860.parquet"
   },
-  "git_sha": "89b8781",
+  "git_sha": "90798f0",
   "highspy_version": "1.14.0"
 }
