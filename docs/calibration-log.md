@@ -8243,3 +8243,69 @@ condition-responsive measured DAM offer-surface thread (G-22 §5.1 / ercot37
 §8): see `docs/handoffs/` — next session's charter is the offer distribution
 across tranches conditioned on a forward-reproducible tightness driver, from
 the on-disk 60-Day DAM Gen Resource Data (2023–2025).
+
+## 2026-07-09 — ERCOT coal net-summer capacity derate: coal was rated at NAMEPLATE (not net-summer) — the omission CC/CT don't have; forms the C3c scarcity tail (owner-directed); C3a overshoot handed to offer re-tune (`ercot51` candidate + ablation, keeper stays ercot46 pending the offer limb)
+
+**Task.** Diagnose the ERCOT coal over-commitment (online-capability wedge, coal
+limb; FINDING §3 conclusion #2) and, if it holds, build a rule-13-admissible
+measured coal availability input. Owner steer mid-session: "old coal can't run at
+100% in summer — look at EIA-860 net summer capacity; it's simply incapable of
+running at the capacity our model is doing it at, which is driving the scarcity
+tail miss."
+
+**Diagnostic (no-solve extension of the CF comparison, `scripts/probes/_ercot51_coal_cf_diag.py`).**
+Reproduced the finding exactly (2023 keeper repro, `_diag_ercot51_baseline`):
+PRB model CF 0.50 / hrs>0.8 1459 / 50.0 TWh vs actual 0.47 / 642 / 47.0; lignite
+0.77 / 4807 / 17.3 vs 0.70 / 3024 / 15.7. Robust across 2023-25: coal
+over-committed ~1 GW in the tightest (demand ≥ p95) hours every year
+(+997/+1067/+1004). Over-commitment concentrates in Limestone (298: model 3156
+hrs>0.8 vs actual 33), Sandy Creek, Fayette, Oak Grove, Major Oak. In the 105
+missed 2023 tail hours (dual < $200, actual RT > $200) the model holds +762 MW
+coal online vs CEMS — but that missed-hour delta is NOT robust (−899/−791 in
+2024/25), so the keeper signal is the tight-hour over-commit + shape, not the
+missed-hour delta.
+
+**Root cause: coal rated at nameplate, missing the EIA-860 net-summer derate.**
+The model's coal `pmax` is nameplate and coal — unlike CC/CT
+(`cc_nameplate_summer_derate`) — carries **no net-summer derate** ("COAL / ST_GAS
+carry no existing summer derate"). Per-plant EIA-860 net_summer/nameplate: Major
+Oak 0.873, Spruce 0.904, Limestone 0.913, Parish 0.919, Sandy Creek 0.925, Oak
+Grove 0.952, Fayette 0.956, San Miguel 0.954 (Martin Lake 1.03, Coleto 1.05 →
+clamp 1.0). CEMS confirms the fleet tops out AT net-summer, never nameplate, and
+FLAT across Jun-Sep (Oak Grove 0.937/0.930/0.930/0.914) — so this is NOT the
+rejected temp-derate (an incremental slope BELOW net-summer; refuted 2026-07-09)
+and NOT refuted by the 2026-07-08 Lever B (which tested a *seasonal* summer-vs-
+shoulder derate, not the absolute nameplate-vs-net-summer gap). Rule-15 published
+rating, rule-11 forward-regenerable, admissible in backcast AND forecast.
+
+**Mechanism.** `ScenarioConfig.coal_nameplate_summer_derate` (default off);
+`fleet.coal_summer_capacity` / `coal_summer_derate_ratio` (EIA-860 Operable coal
+tech, net_summer/nameplate clamped to (0,1]); applied summer-only in the
+availability loop, the exact coal analogue of the CC/CT mechanism. Threaded
+through `solve_and_persist` / `run_year`. Tests
+`tests/test_fleet.py::TestCoalNameplateSummerDerate` (3, pass).
+
+**Result — VALIDATES the owner hypothesis (`ercot51` candidate + zero-forcing
+ablation, full 2023-2025).** C3c scarcity tail rises toward DA every year
+(2023 104→162 h vs 311; 2024 29→37 vs 68; 2025 4→5 vs 23); coal C1 moves toward
+measured (PRB 50.0→48.8 / 46.8→45.9 / 51.0→49.7 TWh; lignite likewise); PRB
+hrs>0.8 1459→1027. But C3a OVERSHOOTS in shoulder-summer (2023 +9.3%→+42.7%,
+2024 +6.5%→+16.0%, 2025 +4.9%→+7.0%), concentrated in June (~+15%) and September
+(~+29%) — July lands near-exact, August improves from a big undershoot to a
+slight over. Because the derate is CEMS-correct in every summer month, the
+Jun/Sept overshoot is the reserve co-opt / gas offer stack OVER-AMPLIFYING the
+correct coal tightening (~0.7 GW coal cut → ~30 pp C3a), not a derate error.
+
+**Disposition (owner decision, 2026-07-09): register as-is; the derate STAYS
+(rule 1), the offer curves move.** `ercot51` is a KEEPER-TRACK candidate,
+registered NOT-YET/UNATTESTED (not promoted): the structural fix is correct and
+admissible, the C3a overshoot is a discovered downstream miscalibration handed to
+the offer-curve re-tune thread (Fable) — re-level the gas econ/peak bands + co-opt
+to bring C3a back while preserving the C3c tail; test the ercot50 G-22 §8 offer
+surface ON on top (the finding's second limb). Do NOT narrow the derate window to
+fix Jun/Sept (CEMS-refuted, rule 11/13) and do NOT make coal offer expensive
+(take-or-pay sunk fuel). Pruned the oldest ERCOT pair (ercot43 extremeenv) for
+top-15. See `docs/handoffs/ercot-coal-nameplate-summer-derate-2026-07.md`.
+
+**Holdouts.** No solve/score/intake outside 2023-2025 (rule 22); the single-year
+2023 A/B (`_diag_ercot51_coalns2023`) was a throwaway, never registered (rule 16).
