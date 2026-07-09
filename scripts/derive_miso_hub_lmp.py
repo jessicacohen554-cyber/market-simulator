@@ -2,7 +2,7 @@
 
 Reads the compact per-(year, market) hub stagings written by
 ``scripts/fetch_miso_hub_lmp.py`` (``data/raw/lmp-data/MISO/
-miso_hub_lmp_<year>_<da|rt>.csv.gz`` — verbatim LMP/MCC/MLC rows for the
+miso_hub_lmp_<year>_<da|rt>.csv.gz`` -- verbatim LMP/MCC/MLC rows for the
 eight named MISO trading hubs, hour-ending 1-24 EST) and writes the
 zone-resolved successor to ``actual_lmp_hourly_MISO.parquet`` (scope decision
 D6, docs/multi-iso/miso-zonal-refinement-scope.md §7):
@@ -30,11 +30,11 @@ MISO-Illinois, INDIANA.HUB -> MISO-Indiana, MICHIGAN.HUB -> MISO-East,
 ARKANSAS.HUB / LOUISIANA.HUB / TEXAS.HUB / MS.HUB -> MISO-South (a zone's
 actual is the simple mean of its member hubs, taken downstream). MISO-Plains
 (LRZ 3+5, IA/MO) has NO trading hub; the parquet carries measured hub rows
-only, and consumers use the documented proxy — the simple mean of MINN.HUB
+only, and consumers use the documented proxy -- the simple mean of MINN.HUB
 and ILLINOIS.HUB, the two hubs bracketing the Iowa/Missouri wheel-through
 corridor (see ``build_miso_lmp_reference.py``).
 
-This file is the SCORING reference for the zonal-spread gate — measured
+This file is the SCORING reference for the zonal-spread gate -- measured
 market data, never model output (CLAUDE.md rule #13's admissibility test does
 not even arise: it is a validation target, not a model input).
 
@@ -90,15 +90,16 @@ _MONTH_START_HOUR = np.concatenate(([0], np.cumsum(_DAYS_IN_MONTH) * 24))[:12]
 def _staged_paths(year: int, market: str) -> list:
     """Return the staged file(s) for (year, market).
 
-    2023-2025 predate the chunk split and ship as one yearly file; 2022
+    2023-2025 predate the chunk split and ship as one gzip yearly file; 2022
     onward (fetched via the Data Exchange API, ``fetch_miso_hub_lmp.py``
-    module docstring) ships as ~10-day ``_p<NN>`` chunks so each fits a
-    single ``push_files`` call. Prefer the legacy yearly file if both exist.
+    module docstring) ships as ~7-day plain-CSV ``_p<NN>`` chunks so each
+    fits a single ``push_files`` call. Prefer the legacy yearly file if both
+    exist.
     """
     legacy = STAGE_DIR / f"miso_hub_lmp_{year}_{market}.csv.gz"
     if legacy.is_file():
         return [legacy]
-    return sorted(STAGE_DIR.glob(f"miso_hub_lmp_{year}_{market}_p??.csv.gz"))
+    return sorted(STAGE_DIR.glob(f"miso_hub_lmp_{year}_{market}_p??.csv"))
 
 
 def _market_frame(year: int, market: str) -> pd.DataFrame:
@@ -114,8 +115,8 @@ def _market_frame(year: int, market: str) -> pd.DataFrame:
     paths = _staged_paths(year, market)
     if not paths:
         raise FileNotFoundError(
-            f"no miso_hub_lmp_{year}_{market}(.csv.gz|_??.csv.gz) under "
-            f"{STAGE_DIR} — stage it with scripts/fetch_miso_hub_lmp.py"
+            f"no miso_hub_lmp_{year}_{market}(.csv.gz|_??.csv) under "
+            f"{STAGE_DIR} -- stage it with scripts/fetch_miso_hub_lmp.py"
         )
     df = pd.concat((pd.read_csv(p) for p in paths), ignore_index=True)
     df = df[df["value"] == "LMP"]
@@ -155,7 +156,7 @@ def build(years) -> pd.DataFrame:
         [hubs, range(_HOURS_PER_YEAR)], names=["hub", "hour"]
     )
     staged_years = sorted(
-        {int(p.name.split("_")[3]) for p in STAGE_DIR.glob("miso_hub_lmp_*_rt*.csv.gz")}
+        {int(p.name.split("_")[3]) for p in STAGE_DIR.glob("miso_hub_lmp_*_rt*.csv*")}
         | set(years)
     )
     long: dict[str, pd.DataFrame] = {}
