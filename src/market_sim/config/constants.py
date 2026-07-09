@@ -32,4 +32,15 @@ HEAT_RATE_BINS: dict[str, dict[str, float]] = {
     },
 }
 
-PLACEHOLDER_MARKER_DO_NOT_USE = True
+# CCS retrofit heat rate penalty: parasitic load from amine scrubbing + CO2 compression.
+# NETL Cost & Performance Baseline Rev 4 (2021): 10-14% for supercritical PC, 12-16% for NGCC.
+# Default 12% reflects modern NGCC with optimized heat integration.
+# The retrofit heat rate is DERIVED per unit as source_hr × (1 + penalty); it is not a
+# fixed bin. At 12% penalty: H-class (6.3) → 7.06, F-class (6.9) → 7.73, older (7.5) → 8.40.
+CCS_RETROFIT_HR_PENALTY_REFERENCE: dict[str, object] = {
+    "netl_ngcc_range": (0.10, 0.16),
+    "default": 0.12,
+    "source": "NETL Cost & Performance Baseline for Fossil Energy Plants, Rev 4, 2021",
+}
+
+PUSH_INCOMPLETE_TEST_MARKER = True
