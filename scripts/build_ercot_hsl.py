@@ -500,6 +500,15 @@ def _to_model_clock(rows: pd.DataFrame, year: int, fuel: str) -> pd.DataFrame:
     known_bad = _known_bad_mask(full_index, year)
     aligned.loc[known_bad, ["gen_mw", "hsl_mw"]] = np.nan
 
+    missing = aligned["gen_mw"].isna().to_numpy()
+    unexplained = int((missing & ~known_bad).sum())
+    if unexplained > _MAX_GAP_HOURS:
+        raise ValueError(
+            f"{year}: {unexplained} of {HOURS_PER_YEAR} hours missing after "
+            f"aggregation (max {_MAX_GAP_HOURS}, beyond the "
+            f"{int(known_bad.sum())} hours already excluded by a cited "
+            "known-bad window) — the NP6 upload looks incomplete"
+        )
     if known_bad.any():
         eia = load_eia_hourly_renewable_gen("ERCOT", year)
         if eia is None or fuel not in eia:
@@ -513,16 +522,6 @@ def _to_model_clock(rows: pd.DataFrame, year: int, fuel: str) -> pd.DataFrame:
         # carry the measured delivered MW as the potential too (HSL = GEN,
         # zero curtailment) rather than fabricating headroom.
         aligned.loc[known_bad, "hsl_mw"] = fill
-
-    missing = aligned["gen_mw"].isna().to_numpy()
-    unexplained = int((missing & ~known_bad).sum())
-    if unexplained > _MAX_GAP_HOURS:
-        raise ValueError(
-            f"{year}: {unexplained} of {HOURS_PER_YEAR} hours missing after "
-            f"aggregation (max {_MAX_GAP_HOURS}, beyond the "
-            f"{int(known_bad.sum())} hours already excluded by a cited "
-            "known-bad window) — the NP6 upload looks incomplete"
-        )
     aligned = aligned.interpolate(limit_direction="both")
     return aligned.reset_index(drop=True)
 
