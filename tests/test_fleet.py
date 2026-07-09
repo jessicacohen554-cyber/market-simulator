@@ -29,6 +29,7 @@ from market_sim.data.fleet import (
     apply_ct_netload_drag_floor,
     apply_gas_st_netload_drag_floor,
     assemble_mc,
+    coal_summer_derate_ratio,
     generators_to_fleet_arrays,
     load_fleet_from_csv,
     load_planned_additions,
@@ -1833,6 +1834,63 @@ class TestTemperatureDependentDerate(unittest.TestCase):
                 0.85 <= ratio <= 1.02,
                 f"{uid} summer-mean on/off ratio {ratio:.3f} not capacity-neutral",
             )
+
+
+class TestCoalNameplateSummerDerate(unittest.TestCase):
+    """EIA-860 net-summer capacity derate for coal (coal_nameplate_summer_derate)."""
+
+    ZONE = "ERCOT_S"
+
+    def test_ratio_from_eia860(self):
+        """net_summer/nameplate per plant, clamped to (0, 1]; None when absent."""
+        # Oak Grove (6180) and Major Oak (7030) are derated; Martin Lake (6146)
+        # is rated at/above nameplate -> clamps to 1.0. 99999 is not a coal plant.
+        self.assertAlmostEqual(coal_summer_derate_ratio(6180), 0.952, places=2)
+        self.assertAlmostEqual(coal_summer_derate_ratio(7030), 0.873, places=2)
+        self.assertEqual(coal_summer_derate_ratio(6146), 1.0)
+        self.assertIsNone(coal_summer_derate_ratio(99999))
+
+    def _avail(self, plant_code: int, flag: bool) -> np.ndarray:
+        gen = Generator(
+            unit_id="coal1",
+            name="coal1",
+            zone=self.ZONE,
+            fuel_type="coal",
+            pmax_mw=1000.0,
+            heat_rate=10.0,
+            eford=0.05,
+            online_year=2010,
+            plant_group="COAL",
+            plant_code=plant_code,
+        )
+        cfg = ScenarioConfig(
+            mode="backcast",
+            weather_year=2023,
+            iso="ERCOT",
+            coal_nameplate_summer_derate=flag,
+        )
+        fa = generators_to_fleet_arrays(
+            [gen], [self.ZONE], iso="ERCOT", config=cfg, year=2023
+        )
+        return fa.availability[0]
+
+    def test_summer_derate_applies_only_in_summer(self):
+        """Flag on: summer availability drops by net_summer/nameplate; winter unchanged."""
+        summer = np.isin(_hour_to_month_index(8760), [5, 6, 7, 8])  # Jun-Sep
+        off = self._avail(6180, flag=False)  # Oak Grove, ratio ~0.952
+        on = self._avail(6180, flag=True)
+        ratio = on[summer].mean() / off[summer].mean()
+        self.assertTrue(
+            0.94 <= ratio <= 0.97, f"summer on/off ratio {ratio:.3f} not net-summer"
+        )
+        np.testing.assert_allclose(on[~summer], off[~summer], rtol=1e-6)
+        self.assertTrue(np.all(on <= off + 1e-9))
+
+    def test_no_derate_for_at_or_above_nameplate_plant(self):
+        """A plant rated at/above nameplate (ratio clamps to 1.0) is unchanged."""
+        off = self._avail(6146, flag=False)  # Martin Lake, ratio 1.0
+        on = self._avail(6146, flag=True)
+        np.testing.assert_allclose(on, off, rtol=1e-6)
 
 
 if __name__ == "__main__":
