@@ -69,6 +69,7 @@ from market_sim.data.fleet import (  # noqa: E402
     assemble_mc,
     build_base_fleet,
     build_dispatch_fleet,
+    build_ercot_offer_surface_conditional_markup,
     fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
@@ -468,6 +469,7 @@ def run_year(
     gt_ambient_derate_slope_cc: float | None = None,
     gt_ambient_derate_slope_ct: float | None = None,
     temp_dependent_derate: bool = False,
+    ercot_offer_surface_conditional: bool = False,
     must_run_mw: "np.ndarray | None" = None,
     inject_biomass_mustrun: bool = False,
     priced_interchange: bool = False,
@@ -660,6 +662,7 @@ def run_year(
         coal_prb_passthrough_tiered,
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
+        ercot_offer_surface_conditional=ercot_offer_surface_conditional,
     )
     if gas_st_netload_drag:
         config = config.with_overrides(
@@ -2351,6 +2354,23 @@ def run_year(
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
         apply_ercot_ct_offer_surface(mc_base, fleet, _ct_surface_net_load, config)
+    # ERCOT G-22 §8 heterogeneity-preserving condition-responsive offer surface
+    # (default off, ERCOT-gated): the P1-ONLY additive markup that reprices the gas
+    # peak-band scarcity wall in anticipated-tight hours. Built here (net-load + the
+    # per-gen fuel price are ready) and threaded into run_energy_solve so it lands on
+    # the P1 clearing objective only — P0 run lengths (and the CT<->ST startup
+    # coupling) stay byte-identical to the keeper (fleet.
+    # build_ercot_offer_surface_conditional_markup). None when the flag is off.
+    offer_surface_mc_bid_adjust = None
+    if getattr(config, "ercot_offer_surface_conditional", False) and iso == "ERCOT":
+        _surface_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        offer_surface_mc_bid_adjust = build_ercot_offer_surface_conditional_markup(
+            fleet_arrays, fleet, fuel_prices, _surface_net_load, config
+        )
     # ── Interchange price/limit injections (orchestrator-unification Stage 5)
     # The forward-native sequence — reference-price seams (generic + CAISO
     # dedicated), firm import/export floors, and the CAISO offer couplings —
@@ -2868,6 +2888,7 @@ def run_year(
         xyear_cache=xyear_cache,
         p1_fleet_prep=ra_p1_prep or pjm_fleet_prep,
         p1_kwargs_prep=pjm_kwargs_prep,
+        mc_bid_adjust=offer_surface_mc_bid_adjust,
     )
     result = energy_solve.p1
     mc_bid = energy_solve.mc_bid
