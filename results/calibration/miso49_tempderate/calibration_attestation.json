@@ -1,0 +1,176 @@
+{
+  "schema": "calibration-attestation/v1",
+  "governance": {
+    "levers_trace_to_measured_input": true,
+    "no_fit_to_price_residuals": true,
+    "no_pinning_to_actuals": true,
+    "outage_filter_exogenous_net_load": true,
+    "attested_by": "miso-49 keeper promotion, MISO temperature-dependent-derate keeper rerun 2026-07-09 (docs/handoffs/temp-derate-keeper-rerun-playbook-2026-07.md)",
+    "note": "miso-49 = the miso-48 keeper recipe (ST_GAS_INTERMEDIATE SRMC-floor re-ground) re-solved byte-identical at HEAD with ONE addition: temp_dependent_derate=True (src/market_sim/config/scenarios.py) -- the flat EIA-860 net-summer/_SUMMER_CLASS_DERATE capacity treatment replaced by a per-class curve in measured hourly zone dry-bulb temperature (src/market_sim/data/fleet.py generators_to_fleet_arrays). CC/CT: capacity-NEUTRAL reshape, rescaled so its Jun-Sep mean reproduces the existing net-summer capability -- heatwave hours fall below net-summer (the scarcity driver), cooler hours rise toward full rating. COAL/ST_GAS: pure additive hot-hour derate (no prior summer derate existed for these classes). Nuclear excluded; zones without weather coverage fall back to the flat derate; availability always clipped to [0,1]. ZERO fitted/free parameters: the four slopes (CT 0.0126/C, CC 0.0076/C, ST_GAS 0.0054/C, COAL 0.0040/C) and two reference temperatures (15 C GT/steam ISO rating point, 25 C coal condenser onset) are literature-cited physical constants (arXiv:2311.07001; CPUC R.21-10-002; docs/parameter-citations.md), not tuned to this run's residual -- verified by the rule-20 zero-forcing ablation twin (2026-07-09-miso-49-tempderate-ablation), which reproduces the same C3c tail hours (0/6/3), same C1/C2/C3/C7/C8 pattern, and fuel-mix TWh within <0.3% of the main run across all three years -- the temperature mechanism's effect does not depend on the commitment floors/bridges. Promoted on structure (rules 1/11): C3a mean LMP error narrows in 2024 (-4.7% -> +0.8% keeper-vs-probe delta at registration, now -1.0% DA-diagnostic / CAVEAT within commercial band) and 2025 (-10.7% -> -8.7%); C3c scarcity tail partially opens in 2024 (0h -> 6h vs DA actual 24h, 25% of the gap) and 2025 (0h -> 3h vs 38h, 8%); 2023 stays 0h (DA actual is only 1h, not a meaningful target). This is a genuine physical mechanism newly engaged, not a fit to price/volume: per rule 1, kept regardless of whether it moves every gate -- C1/C2 volumes are essentially unchanged from miso-48 (temp-derate reshapes thermal availability, not merit order), and C7/C8 confirm the floors/bridges are not pushed over budget by the reshape. Everything else in the miso-48 recipe (seam ladder, reliability drags, reserve co-opt, coal sigmoids, ST_GAS_INTERMEDIATE SRMC floor) is unchanged; sigmoids NOT re-fit (rule 23).",
+    "validation_note": "Reproducible via scripts/probes/_miso_tempderate_ab.py main (git HEAD at promotion; the miso-48 recipe read live from its own meta.json, with temp_dependent_derate=True added -- see the script for the full kwarg mapping). Rule-20 ablation twin: scripts/probes/_miso_tempderate_ab.py ablation, registered as 2026-07-09-miso-49-tempderate-ablation. ~13 GB peak on a 15 GiB box -- completed with a 16 GiB swapfile (no MALLOC_ARENA_MAX / thread-cap flags applied this session). RESULT vs miso-48 (same scorer, rubric v2.2): C1 all 14/16 (was 13/16) -- but the flipped row (2023 ST_GAS -8.16 -> -7.99 TWh) is a marginal edge-of-band move, not attributable to temp-derate structurally fixing anything; C2 2025 unchanged (gas -14.7%, coal +16.3%); C3a improves in every year; C3c partially opens in 2024/2025 as above; C5a CO2 PASS; C5b/C5c unchanged benchmark-basis mismatch (see exceptions below, carried from miso-48); C7/C8 PASS. No unit pinned to observed CEMS generation; no input rescaled to land model output on actuals; the four slopes are the literature values, not values tuned to this residual."
+  },
+  "exceptions": [
+    {
+      "criterion": "storage",
+      "year": 2025,
+      "metric": "C5b storage discharge throughput TWh",
+      "magnitude": "+1418.1% (model 2025 discharge vs EIA-930 battery-only actual; 2023 model 2.622 TWh, 2024 model 2.619 TWh -- both un-benchmarked, EIA-930 reports no PS breakout for these years)",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch -- not a model miss)",
+      "reason": "Carried unchanged from miso-48: EIA-930 MISO reports NO pumped-storage series (the PS column is all-null in every scored year of the balance files); the battery-only actual excludes the 2,417 MW EIA-860 PS fleet (Ludington + Taum Sauk) the model correctly dispatches. temp_dependent_derate does not touch storage; the mismatch and its magnitude are essentially identical to miso-48's own ledgered exception. Full adjudication: results/calibration/FINDING-miso-c5b-storage-benchmark-2026-07.md."
+    },
+    {
+      "criterion": "storage_shape",
+      "year": 2025,
+      "metric": "C5c monthly discharge pearson r",
+      "magnitude": "r=0.473",
+      "classification": "ACCEPTED MEASURED-INPUT LIMITATION (same basis mismatch as C5b)",
+      "reason": "The monthly shape compares model BAT+PS discharge against the battery-only EIA-930 series; the PS seasonal arbitrage shape dominates the model side and is absent from the actual. Rides the C5b scorer fix. Unchanged from miso-48 (r=0.477 there)."
+    }
+  ],
+  "disclosures": {
+    "note": "MODEL MISS grounds for the NOT-YET determination, carried forward from miso-48 -- temp_dependent_derate is a capacity/availability mechanism and does not address any of these open root causes (merit-order CT_PEAKER position, coal-sigmoid offer level, missing scarcity/RDC price formation). These stay open structural issues, not accepted measured-input limitations.",
+    "items": [
+      {
+        "criterion": "fuelmix",
+        "klass": "ST_GAS",
+        "year": "2023-2024",
+        "metric": "C1 fuel-mix by class (grid-delivered)",
+        "magnitude": "2023 ST_GAS -7.99 TWh (edge-of-band, was -8.16 at miso-48 -- crossed back under the +/-8.00 TWh line); 2024 ST_GAS -10.55 TWh share -1.6pp (was -10.72); 2023 COAL_PRB +8.84 TWh share +1.8pp (was +8.80)",
+        "classification": "MODEL MISS (commitment posture -- ST_GAS self-committed dispatch; G-25)",
+        "reason": "Unchanged root cause from miso-48: the SRMC-floor re-ground exposes ST_GAS energy the coal-sigmoid stack (COAL_PRB, #1347) absorbs. temp_dependent_derate reshapes WHEN this energy is forced (hot vs cool hours), not HOW MUCH -- the annual TWh moves by <0.2 TWh either direction, within solve noise of the reshape."
+      },
+      {
+        "criterion": "sysvol",
+        "klass": null,
+        "year": 2025,
+        "metric": "C2 system volume (gas/coal families)",
+        "magnitude": "-14.7% gas, +16.3% coal (2025, preliminary-vintage EIA-930 family fallback) -- unchanged from miso-48 (-14.6%/+16.4%)",
+        "classification": "MODEL MISS (coal-sigmoid offer level #1347 + 2025 import under-run)",
+        "reason": "temp_dependent_derate does not touch merit order or the coal sigmoid; the 2025 coal-for-gas substitution is owned by the PRB sigmoid offer level (#1347, C-1 ledgered DOF) and the residual 2025 net-interchange under-run, exactly as at miso-48."
+      },
+      {
+        "criterion": "price_mean",
+        "klass": null,
+        "year": 2025,
+        "metric": "C3a mean LMP",
+        "magnitude": "-8.7% (2025; improved from miso-48's -10.7%); 2023 -0.1%/2024 +0.8% (both improved and within PASS/CAVEAT range)",
+        "classification": "MODEL MISS (missing scarcity/ELMP-RDC price formation + 2025 import under-run)",
+        "reason": "temp_dependent_derate narrows this in every year by tightening thermal availability on hot hours (more scarcity-priced hours, per C3c below), but does not add the missing MISO ELMP/RDC scarcity-adder mechanism that would close the remainder."
+      },
+      {
+        "criterion": "price_tail",
+        "klass": null,
+        "year": "2024-2025",
+        "metric": "C3c price tail / scarcity (DA-expressible)",
+        "magnitude": "model 6h (2024, was 0h at miso-48) vs DA actual 24h (0.25x); model 3h (2025, was 0h) vs DA actual 38h (0.08x); 2023 model 0h vs DA actual 1h (small-count PASS)",
+        "classification": "MODEL MISS, PARTIALLY NARROWED (no scarcity price formation: MISO ELMP/RDC co-optimization adder not modeled)",
+        "reason": "temp_dependent_derate tightens available thermal capacity on the hottest hours, which is exactly the physical driver of these hours' scarcity -- it opens 25% (2024) and 8% (2025) of the gap versus miso-48's 0h in both years. The remainder is the same missing RDC scarcity-adder mechanism as before; a future lever, never an offer-curve wall (the 4.0x CT peak cap is the MISO-offer-cap-consistent ceiling)."
+      },
+      {
+        "criterion": "fuelmix",
+        "klass": "CT_PEAKER",
+        "year": "2023-2025",
+        "metric": "C1 fuel-mix by class (grid-delivered) -- CT_PEAKER volume under-run",
+        "magnitude": "unchanged from miso-48 within solve noise (CT is in the capacity-neutral CC/CT reshape group -- temp_dependent_derate does not change its Jun-Sep mean availability, only its within-summer distribution)",
+        "classification": "OPEN MODEL MISS (merit-order root cause, not a floor target)",
+        "reason": "Carried unchanged from miso-48: the CT_PEAKER annual volume gap is a merit-position issue, not a commitment-window issue. The reliability_floor commitment scaffolding (forced 5-7.5%, under the 15% peaker budget) reproduces the evening diurnal shape but is deliberately not sized to the volume residual (rule 12/20). Root cause stays a FAIL until the CT merit-position mechanism lands."
+      },
+      {
+        "criterion": "legitimacy",
+        "klass": "ST_GAS",
+        "year": "2023-2025",
+        "metric": "reliability_floor ST_GAS overnight limb LOO identification",
+        "magnitude": "unchanged from miso-48 (4 limbs enabled; forced energy 0.7-1.2% of ST_GAS, non-gating)",
+        "classification": "DISCLOSED MARGINAL IDENTIFICATION (kept; no R1 sign-flip)",
+        "reason": "Carried unchanged from miso-48: reliability_floor_coeffs_MISO.csv is byte-identical in miso-49; temp_dependent_derate is a separate capacity/availability mechanism and does not interact with this commitment-scaffolding floor's identification."
+      }
+    ]
+  },
+  "free_parameters": {
+    "schema": "dof-ledger/v1",
+    "seeded": "2026-07-04 S5 governance session -- audit §3 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+    "n_entries": 6,
+    "n_residual": 3,
+    "entries": [
+      {
+        "name": "temp_dependent_derate",
+        "where": "run_config.scenario_config.temp_dependent_derate + temp_derate_ref_c / temp_derate_ref_c_coal / temp_derate_slope_{cc,ct,st_gas,coal}",
+        "identification": "measured-physical",
+        "lineage_solves": "1 (miso-49 promotion; single-mechanism addition to the frozen miso-48 recipe)",
+        "value": {
+          "temp_derate_ref_c": 15.0,
+          "temp_derate_ref_c_coal": 25.0,
+          "temp_derate_slope_cc": 0.0076,
+          "temp_derate_slope_ct": 0.0126,
+          "temp_derate_slope_st_gas": 0.0054,
+          "temp_derate_slope_coal": 0.004
+        },
+        "n_scalars": 6,
+        "source": "literature-cited thermal-derate physics, not fit to this model's residual: CT 0.0126/C (mid of 0.5-0.9%/F frame-GT range; arXiv:2311.07001 0.0083/C, CPUC R.21-10-002 ~1%/C), CC 0.0076/C net (arXiv:2311.07001 net-CC ~0.75%/C), ST_GAS 0.0054/C (CPUC R.21-10-002), COAL 0.0040/C onset 25C/77F (arXiv:2311.07001 modest steam-coal summer deration). docs/parameter-citations.md.",
+        "root_cause": "physically identified (independent literature sources), not derived from this backcast's price/volume residual -- CC/CT reshape is explicitly capacity-neutral on the Jun-Sep mean by construction (rules 1, 9), so it cannot be a level-fit. Validated via the rule-20 zero-forcing ablation twin (2026-07-09-miso-49-tempderate-ablation): near-identical C3c/C1/C2 outcome with all commitment floors off confirms the mechanism's effect is not floor-forced."
+      },
+      {
+        "name": "offer_curve_by_group",
+        "where": "run_config.scenario_config.offer_curve_by_group",
+        "identification": "residual",
+        "lineage_solves": ">=40 solves (audit §5.1 + miso-39 + miso-48 SRMC-floor re-ground)",
+        "value": {
+          "CC_REGULAR": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "CC_INTERMEDIATE": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "CC_CHP": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "CT_CHP": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "CT_PEAKER": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "CT_INTERMEDIATE": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "ST_GAS": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "ST_GAS_INTERMEDIATE": ["committed", "econ_high", "econ_low", "econ_low_share", "pct_peaking", "peak"],
+          "COAL_LIGNITE": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "COAL_PRB": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "COAL_BIT": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "COAL_WC": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"],
+          "COAL": ["committed", "econ_high", "econ_low", "econ_low_share", "peak"]
+        },
+        "n_scalars": 72,
+        "source": "per-group HR-band multipliers -- the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13); ST_GAS_INTERMEDIATE.committed re-grounded 2026-07-08 to the tariff SRMC floor (1.00x base_HR, MISO Module C / Attachment L + IMM SOM) -- a cited bound, unchanged since miso-48",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists -- open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "offer_curve_smoothing",
+        "where": "run_config.scenario_config.offer_curve_smoothing_*",
+        "identification": "residual",
+        "lineage_solves": ">=40 solves (audit §5.1 + miso-39 + miso-48)",
+        "value": {
+          "offer_curve_smoothing_n": 6,
+          "offer_curve_smoothing_exp": 1.0
+        },
+        "n_scalars": 2,
+        "source": "econ-ramp shape of the offer curve (rule-#1 scope), unchanged since miso-48",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists -- open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+      },
+      {
+        "name": "COAL_SIGMOID_DEFAULTS[MISO]",
+        "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_bit_passthrough_sigmoid)",
+        "identification": "residual",
+        "lineage_solves": ">=40 solves (audit §5.1 + miso-39 + miso-48)",
+        "n_scalars": 8,
+        "source": "gas-keyed coal passthrough sigmoids -- the largest fitted surface (audit C-1); owner-sanctioned under rule #1; unchanged since miso-48",
+        "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 -- docs/out-of-sample-results-2026-07.md §2C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists"
+      },
+      {
+        "name": "reliability_floor coefficients",
+        "where": "data/raw/reference/reliability_floor_coeffs_MISO.csv",
+        "identification": "measured-physical",
+        "lineage_solves": ">=40 solves (audit §5.1 + miso-39 + miso-48)",
+        "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); byte-identical to miso-48",
+        "note": "D-8 §2B: three sign-flip limbs permanently disabled under rule R1 (B-LIMB-1). Remaining R6-keep drift limbs kept unchanged from miso-48; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+      },
+      {
+        "name": "MISO_SEAM_LADDER_BY_YEAR",
+        "where": "interchange_config.py MISO seam band-price ladders",
+        "identification": "measured-physical",
+        "lineage_solves": ">=40 solves (audit §5.1 + miso-39 + miso-48)",
+        "source": "per-seam Q-Q duration coupling of the measured MISO DA hub LMP with measured EIA-930 per-seam flows on the fixed 8-band grid, frozen scripts/derive_miso_seam_ladders.py; unchanged since miso-48",
+        "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: hourly placement of the scheduled seam base is duration-curve-level only"
+      }
+    ]
+  }
+}

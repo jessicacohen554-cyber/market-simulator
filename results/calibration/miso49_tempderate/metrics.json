@@ -16,7 +16,7 @@
   "rubric_version": 2.2,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, sysvol, price_tail"
   ],
   "notes": [],
   "criteria": {
@@ -60,17 +60,19 @@
     "storage": {
       "label": "C5b storage throughput",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "storage_shape": {
       "label": "C5c storage dispatch shape",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -85,7 +87,10 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C5b storage throughput",
+      "C5c storage dispatch shape"
+    ],
     "commercial_band": [
       "C3a mean LMP",
       "C3b price duration/shape"
@@ -96,11 +101,11 @@
     }
   },
   "grade_summary": {
-    "scored": 11,
-    "target_grade": 4,
+    "scored": 12,
+    "target_grade": 5,
     "commercial_grade": 2,
-    "ledgered": 0,
-    "fails": 5
+    "ledgered": 2,
+    "fails": 3
   },
   "free_class_score": {
     "iso": "MISO",
