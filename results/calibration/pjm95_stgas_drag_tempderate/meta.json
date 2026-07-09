@@ -281,5 +281,10 @@
     "campd": "../_shared/PJM/campd-db315991835d.parquet"
   },
   "git_sha": "e286a4b",
-  "highspy_version": "1.14.0"
+  "highspy_version": "1.14.0",
+  "gas_st_drag_overrides": {
+    "gas_st_drag_slope_per_gw": 0.01029,
+    "gas_st_drag_intercept": -0.7263,
+    "gas_st_drag_cap": 0.39
+  }
 }
