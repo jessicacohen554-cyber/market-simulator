@@ -73,8 +73,8 @@ class TestBuildCorridorFlowGroups(unittest.TestCase):
     def _links(self):
         return [
             TransferLink(from_zone="WECC_PNW", to_zone="NP15", ttc_mw=4800.0),
-            TransferLink(from_zone="WECC_DSW", to_zone="SP15", ttc_mw=10623.0),
-            TransferLink(from_zone="NP15", to_zone="SP15", ttc_mw=4000.0),
+            TransferLink(from_zone="WECC_DSW", to_zone="SP15_rest", ttc_mw=10623.0),
+            TransferLink(from_zone="NP15", to_zone="SP15_rest", ttc_mw=4000.0),
         ]
 
     def test_groups_target_corridor_links_one_sided(self):
@@ -93,7 +93,7 @@ class TestBuildCorridorFlowGroups(unittest.TestCase):
         np.testing.assert_allclose(by_link[1][0], 3000.0)
 
     def test_empty_when_no_corridor_link(self):
-        links = [TransferLink(from_zone="NP15", to_zone="SP15", ttc_mw=4000.0)]
+        links = [TransferLink(from_zone="NP15", to_zone="SP15_rest", ttc_mw=4000.0)]
         self.assertEqual(
             build_caiso_corridor_flow_groups(links, {"WECC_DSW": np.ones(T)}), []
         )
@@ -105,15 +105,16 @@ class TestCorridorCapLimitsImport(unittest.TestCase):
     def _solve(self, corridor_cap):
         # One trading zone (LOAD) fed by an expensive in-state gen and a cheap
         # import gen in an external corridor zone, linked LOAD<-CORR.
-        # SP15 (load) fed by an expensive in-state gen and a cheap import gen in
-        # the WECC_DSW corridor zone, over the real WECC_DSW→SP15 corridor link.
-        zone_names = ["SP15", "WECC_DSW"]
-        links = [TransferLink(from_zone="WECC_DSW", to_zone="SP15", ttc_mw=5000.0)]
+        # SP15_rest (load) fed by an expensive in-state gen and a cheap import
+        # gen in the WECC_DSW corridor zone, over the real WECC_DSW→SP15_rest
+        # corridor link (the SP15 split's south gateway).
+        zone_names = ["SP15_rest", "WECC_DSW"]
+        links = [TransferLink(from_zone="WECC_DSW", to_zone="SP15_rest", ttc_mw=5000.0)]
         gens = [
             Generator(
                 unit_id="instate",
                 name="instate",
-                zone="SP15",
+                zone="SP15_rest",
                 fuel_type="gas_cc",
                 pmax_mw=5000.0,
                 pmin_mw=0.0,
@@ -135,7 +136,7 @@ class TestCorridorCapLimitsImport(unittest.TestCase):
         # heat_rate=0 for both, so mc is just each gen's vom (no fuel/carbon).
         mc = np.array([[50.0] * T, [10.0] * T])  # in-state $50, import $10
         demand = np.zeros((2, T))
-        demand[0, :] = 2000.0  # all load in SP15
+        demand[0, :] = 2000.0  # all load in SP15_rest
         incidence = build_incidence_matrix(links, zone_names)
         groups = build_caiso_corridor_flow_groups(links, {"WECC_DSW": corridor_cap})
         res = solve_dispatch(
