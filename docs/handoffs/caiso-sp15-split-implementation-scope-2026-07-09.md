@@ -119,16 +119,34 @@ Minimum edit set (file:line from the code trace). Guardrails fail loud; silent h
    `test_caiso_corridor_flow_limit`, `test_transmission`, `test_interchange_parity`, …). Trivial-case
    first (rule: 1 gen/1 zone/24 h) then scale.
 
-### Phase 2 — Retire `ct_netload_drag` (rule 25 delete, not default-off)
-The drag is the reduced-form proxy for exactly the LA-basin/Big-Creek local commitment the split now
-models structurally (its own derive-script header names those areas as the driver). Same phenomenon,
-two mechanisms — retire the scaffold. Per rule 25 (deleted-means-deleted) a default-off is
-insufficient (CAISO ON-state is set at `backcast_config.py:1201`, not a kwarg, and a parseable fitted
-coefficient is a re-armable answer key). **Delete:** the `ct_netload_drag`/`ct_drag_*` fields
-(`scenarios.py:3089-3094`), `apply_ct_netload_drag_floor` + call sites (`fleet.py:2418-2478, 2628,
-2650`), `MECH_CT_NETLOAD_DRAG` (`floor_mechanisms.py`), the `backcast_config.py:1201, 1218-1219`
-lines, `scripts/derive_caiso_ct_reliability_floor.py`, the DOF-ledger row, and the runner gate. The
-zero-forcing ablation twin naturally captures the retirement.
+### Phase 2 — Turn `ct_netload_drag` OFF for CAISO in the split probe (NOT a delete)
+**Correction (2026-07-09, post-scope):** an earlier draft of this phase called for deleting
+`ct_netload_drag` under rule 25. That was wrong — the mechanism is **shared across ISOs, not a
+CAISO-only scaffold**: it is armed `=True` in ERCOT (`scripts/run_ercot41_integration.py`) and in
+8+ PJM keepers/probes (`run_pjm75_ct_drag_cc_cap.py`, `run_pjm77_ablation_twin.py`,
+`run_pjm78_srmc_baseline.py`, `run_pjm81_coopt_pergen.py`, `run_pjm82_commitment_posture.py`,
+`run_pjm86_pjm83_head_baseline.py`, `run_pjm87_pergen_oppcost.py`,
+`scripts/diag_pjm_burndown_2024.py`), and shares its `apply_netload_reliability_floor` engine
+(`fleet.py:2269`) with the PJM ST_GAS drag (`gas_st_netload_drag`) that landed 2026-07-09
+(`b064a6a`). Deleting the mechanism per rule 25 would break ERCOT and every one of those PJM runs.
+Only CAISO auto-arms it (`backcast_config.py:1201`, `ct_netload_drag=(iso=="CAISO")`) with
+CAISO-specific fitted coefficients (`0.00901 / -0.1124 / 0.36` vs ERCOT's default
+`0.00703 / -0.1427 / 0.47`) — that CAISO-specific arming is the only thing in question here.
+
+**What to actually do:** in the SP15-split probe (Phase 3), solve CAISO with `ct_netload_drag=False`
+as an explicit config override (a one-line kwarg on the run, not a code change) — this is the A/B
+test of whether the sub-pocket import-limited links can call CT_PEAKER onto merit without the floor
+propping it up. Do **not** touch `scenarios.py`, `fleet.py`, `floor_mechanisms.py`, or the derive
+script — the shared mechanism and the ERCOT/PJM arming stay exactly as-is.
+
+**Deferred cleanup (only if/when the split is promoted to keeper):** at that point, and only then,
+CAISO's own use of the drag is genuinely deprecated. The rule-25-scoped cleanup becomes: flip
+`backcast_config.py:1201`'s `ct_netload_drag=(iso=="CAISO")` to a plain `False` (or drop the
+CAISO branch), delete the CAISO-specific coefficient overrides at `backcast_config.py:1218-1219`,
+and delete `scripts/derive_caiso_ct_reliability_floor.py` so the CAISO-fitted coefficients cannot
+be re-swept onto the residual. The shared `ct_netload_drag` field, `apply_ct_netload_drag_floor`,
+`MECH_CT_NETLOAD_DRAG`, and every ERCOT/PJM caller are permanently out of scope for this ISO's
+calibration work.
 
 ### Phase 3 — Solve, score, register (rule 16)
 - Solve **2023–2025 in one bundle** (per-plant multi-zone LP; years sequential within the run; ≤2
