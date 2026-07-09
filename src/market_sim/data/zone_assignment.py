@@ -21,6 +21,12 @@ from pathlib import Path
 import pandas as pd
 
 from market_sim.config.paths import CAMPD_BINS_CSV, EIA_860_DIR, FLEET_DIR
+from market_sim.data.local_capacity import (
+    BOUNDARY_LAT_MAX as _LA_BASIN_BOUNDARY_LAT_MAX,
+)
+from market_sim.data.local_capacity import (
+    BOUNDARY_LON_MAX as _LA_BASIN_BOUNDARY_LON_MAX,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -66,17 +72,22 @@ _ISO_TO_BA_CODE: dict[str, str] = {
 _SINGLE_ZONE: dict[str, str] = {}
 
 # Largest-load-share zone per multi-zone ISO, used as the defensive
-# fallback when a plant's ORIS code is not present in the eGRID lookup.
-# CAISO falls back to SP15: the SCE+SDG&E south is the largest-load-share
-# zone (0.50) and is where unlocated imports physically land via the
-# West-of-River / Palo Verde ties. PJM falls back to PJM_West: the western
+# fallback when a plant's ORIS code is not present in the eGRID lookup. CAISO
+# is pinned to SP15_rest, NOT its largest-load-share zone: post-split, SP15
+# is three sub-zones (LA_BASIN 0.374, SDGE 0.091, SP15_rest 0.0735 — SP15_rest
+# is the smallest of the three), but SP15_rest is the south gateway that
+# Path 26 and Path 46/WOR both feed, so it's where unlocated West-of-River /
+# Palo Verde imports physically land before flowing on into the LA_BASIN/
+# SDGE pockets over the import-limited internal links (see
+# docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md). PJM
+# falls back to PJM_West: the western
 # AEP/ComEd belt is the largest-load-share zone (0.504) and is where the
 # unlocated MISO/PJM-seam plants geographically sit. NYISO falls back to
 # Upstate-West, its largest-load-share zone (0.365).
 _LARGEST_ZONE: dict[str, str] = {
     "ERCOT": "North",
     "PJM": "PJM_AEP_Ohio",
-    "CAISO": "SP15",
+    "CAISO": "SP15_rest",
     # MISO is pinned to MISO-Illinois, NOT its largest-load-share zone: at six
     # zones the largest share flips to MISO-South (0.2711), an unacceptable
     # default for the overwhelmingly Midwest unlocated cohort. Illinois is the
@@ -144,6 +155,41 @@ CAISO_CENTRAL_COAST_NP15_COUNTIES: frozenset[int] = frozenset(
         69,  # San Benito
     }
 )
+
+# LA-basin / SDG&E LCR-pocket county FIPS codes (state 6 = California),
+# matching the county names in local_capacity.COUNTY_AREA_CAISO — the same
+# LCT membership geography that parameterizes the SP15 sub-zone split
+# (docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md).
+CAISO_LA_BASIN_COUNTIES: frozenset[int] = frozenset(
+    {
+        37,  # Los Angeles
+        59,  # Orange
+    }
+)
+CAISO_SDGE_COUNTIES: frozenset[int] = frozenset(
+    {
+        73,  # San Diego
+        25,  # Imperial
+    }
+)
+# Counties the LA Basin LCR boundary bisects (Devers/Mira Loma IN; Lugo/Red
+# Bluff OUT), resolved geographically like local_capacity.caiso_area_of:
+# south of the San Gabriel/Cajon rim AND west of the Red Bluff/Eagle
+# Mountain desert. The lat/lon thresholds are local_capacity's own
+# BOUNDARY_LAT_MAX / BOUNDARY_LON_MAX, reused (not re-derived) for
+# consistency with the LCR membership rule.
+CAISO_LA_BASIN_BOUNDARY_COUNTIES: frozenset[int] = frozenset(
+    {
+        65,  # Riverside
+        71,  # San Bernardino
+    }
+)
+
+# Coords-only (no FIPS county) fallback split of the south-of-Path-26 band
+# into SDGE vs LA_BASIN: San Diego/Imperial sit south of ~lat 33.4, the
+# LA-basin core north of that up to the LCR boundary latitude. Used by the
+# EIA-860 greenfield cohort (_eia860_ba_zones), which has no county code.
+_CAISO_SDGE_MAX_LAT: float = 33.4
 
 # PJM model zone by FIPS state code, for the states that fall cleanly inside
 # one of the eight zones. Ohio, Pennsylvania, Maryland and West Virginia
@@ -520,31 +566,60 @@ def _caiso_zone(
 ) -> str:
     """Return the CAISO model zone for a plant location.
 
-    Zones follow CAISO's north–south split: NP15 (north of Path 15), ZP26
-    (between Path 15 and Path 26), SP15 (south of Path 26). Out-of-state CISO
-    resources are routed first — Arizona (Palo Verde / West-of-River) lands
-    in SP15, Nevada ties to NP15 in the far north and SP15 otherwise. Coastal
-    PG&E counties that fall in the ZP26 latitude band are lifted to NP15.
-    Latitude then carries the remaining (inland California) plants; with no
-    latitude the largest-load-share zone (SP15) is the fallback.
+    Zones follow CAISO's north–south split plus the SP15 local-capacity-area
+    split: NP15 (north of Path 15), ZP26 (between Path 15 and Path 26),
+    LA_BASIN / SDGE (the two LCR pockets south of Path 26), and SP15_rest
+    (the remaining south gateway that feeds them — see
+    docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md).
+    Out-of-state CISO resources are routed first — Arizona (Palo Verde /
+    West-of-River) and Nevada south of the NP15 cutoff land in SP15_rest,
+    the zone Path 46/WOR and the WECC_DSW corridor now terminate on; Nevada
+    north of the cutoff ties to NP15. Coastal PG&E counties that fall in the
+    ZP26 latitude band are lifted to NP15. Los Angeles/Orange (+ the
+    LCR-boundary counties Riverside/San Bernardino, resolved geographically)
+    route to LA_BASIN; San Diego/Imperial route to SDGE — the LCT membership
+    geography reused from local_capacity.COUNTY_AREA_CAISO /
+    caiso_area_of. Latitude then carries the remaining (inland California)
+    plants south of Path 26 into LA_BASIN vs SDGE by a coords-only lat cut,
+    else SP15_rest; with no latitude the largest-load-share zone
+    (SP15_rest) is the fallback.
     """
     if fips_state == _ARIZONA_FIPS:
-        return "SP15"
+        return "SP15_rest"
     if fips_state == _NEVADA_FIPS:
         if lat is not None and lat >= _NEVADA_NORTH_LAT:
             return "NP15"
-        return "SP15"
-    if (
-        fips_state == _CALIFORNIA_FIPS
-        and fips_county in CAISO_CENTRAL_COAST_NP15_COUNTIES
-    ):
-        return "NP15"
+        return "SP15_rest"
+    if fips_state == _CALIFORNIA_FIPS:
+        if fips_county in CAISO_CENTRAL_COAST_NP15_COUNTIES:
+            return "NP15"
+        if fips_county in CAISO_LA_BASIN_COUNTIES:
+            return "LA_BASIN"
+        if fips_county in CAISO_SDGE_COUNTIES:
+            return "SDGE"
+        if fips_county in CAISO_LA_BASIN_BOUNDARY_COUNTIES:
+            if (
+                lat is not None
+                and lon is not None
+                and lat < _LA_BASIN_BOUNDARY_LAT_MAX
+                and lon < _LA_BASIN_BOUNDARY_LON_MAX
+            ):
+                return "LA_BASIN"
     if lat is not None:
         if lat >= _CAISO_PATH15_LAT:
             return "NP15"
         if lat >= _CAISO_PATH26_LAT:
             return "ZP26"
-        return "SP15"
+        # South of Path 26: no county to resolve the LCR pocket, so split
+        # LA_BASIN vs SDGE by latitude alone (San Diego/Imperial sit south
+        # of ~lat 33.4); everything else in the south gateway is SP15_rest.
+        if lat < _CAISO_SDGE_MAX_LAT:
+            return "SDGE"
+        if lat < _LA_BASIN_BOUNDARY_LAT_MAX and (
+            lon is None or lon < _LA_BASIN_BOUNDARY_LON_MAX
+        ):
+            return "LA_BASIN"
+        return "SP15_rest"
     return _LARGEST_ZONE["CAISO"]
 
 
