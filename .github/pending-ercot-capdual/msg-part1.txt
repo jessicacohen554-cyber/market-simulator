@@ -1,0 +1,26 @@
+fix(ercot): ORDC additive adder sources the supply-cap dual, not the balance dual (part 1/3)
+
+The post-solve additive RTORPA construction added the total-family
+balance dual to the energy price. That is correct only while the RTOLCAP
+supply-cap row is the binding reserve constraint (energy cancels out of
+a sum-R cap). When the physical shared headroom binds instead - every
+2023 scarcity hour once the coal net-summer derate is on - the balance
+dual is already folded into the energy LMP by the shared-headroom
+coupling (test_total_shortfall_prices_and_lifts_lmp documents this), so
+re-adding it double-priced exactly the scarcity hours: 100% of adder>$10
+hours had energy duals already >$200, and the energy-only top-quantile
+price-duration curve matches the measured RT tail while the with-adder
+curve overshoots it.
+
+New flag ercot_ordc_cap_dual_adder (default off, keeper-reproducing):
+source the adder from the reserve-supply-cap rows' own duals, the
+exactly-uninternalized component in both regimes (LP duality:
+lambda_balance = lambda_cap + mu_headroom, and only mu passes into the
+energy dual). DispatchResult gains reserve_supply_cap_dual (n_tiers, T),
+sign-flipped >= 0. Same published-ORDC construction, no new parameter,
+no price fit. 2023 A/B (coal derate on): C3a +42.7% -> +31.3%, C3b
+0.435 -> 0.260, C3c tail unchanged at 162h; dispatch and energy duals
+byte-identical.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01HGNZK6eyTRaBQ4f7vUF1LQ
