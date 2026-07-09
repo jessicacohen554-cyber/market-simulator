@@ -8059,3 +8059,74 @@ golden tests pass.
 **Holdouts.** No solve/score/intake outside 2023-2025 (rule 22); ORDC tariff
 parameters untouched (rule 26); price/LMP columns never entered any derivation
 (validation only). Probe payload carries the new `lmpDeltaHr` heatmap field.
+
+## 2026-07-09 — ERCOT offer-curve re-derivation under temp_dependent_derate: offer top-of-stack VERIFIED INERT; root cause is hot-hour availability ~5–7 GW below measured RTOLCAP (`ercot49` PROBE pair; keeper stays ercot46)
+
+The rule-1 sanctioned follow-on to the ercot48 A/B ("keep the physical derate,
+bring the offer level down"). Runner: `scripts/probes/_ercot49_offer_retune.py`
+(keeper config reconstructed from `meta.json`, temp derate forced on, named
+candidate curves swapped in); quick C3 scorer for single-year sweep iterations:
+`scripts/probes/_score_probe.py`. Registered:
+`2026-07-09-ercot49-offer-retune-tempderate` (+ its zero-forcing
+`…-ercot49-retune-tempderate-ablation` twin, rule 20), all three train years in
+one bundle (rule 16), sequential years / ≤2 concurrent arms (rule 12).
+
+**The re-derived curve (candidate `c1_physical_top`).** The ercot46 keeper's
+fitted scarcity walls stripped back to their physically-grounded values, mid/low
+bands untouched: CC_REGULAR peak 4.58→2.25 (the documented F-class duct-burner
+ratio), CC_REGULAR/CC_CHP econ_high →1.27 (CAMPD CC marginal-HR reach),
+CT_PEAKER peak 13.15→4.0 (de-fits the encoded $5,000 ORDC wall — the
+multiproduct co-opt prices that scarcity endogenously, so the wall is exactly
+the rule-19 double-count), ST_GAS peak 3.2→2.2.
+
+**Result — the offer knob is INERT on the temp-derate price blow-out.** A/B vs
+`ercot48-tempderate-full-probe` (identical config, keeper curves): C3a
++269/+161/+42 % → **+264/+156/+36 %**; C3b NRMSE 4.50/2.91/0.62 →
+4.42/2.85/0.56; C3c tail 328/100/42 h vs DA actual 311/68/23 (**PASS all three
+years**, 1.05×/1.47×/1.83×). Cutting the top of the stack by 50–70 % moved the
+annual mean ~5 pp of a ~150–270 pp overshoot, uniformly across all years.
+C1/C4/C5a/C7/C8 stay PASS.
+
+**Why (hour-level decomposition, 2023).** The overshoot is not offer-priced:
+~95 % of the mean-LMP excess sits in ~275 hours — ~210 reserve-shortfall hours
+priced $1,000–5,000 by the co-opt ORDC demand-curve steps plus **65 load-shed
+hours at VOLL (~$8.9 k, mean 1.2 GW slack)**; the sub-$200 price body is
+balanced (slightly *under*). Measured telemetry contradicts the modeled
+scarcity: in the model's >$3,000 hours the real system had median **RTOLCAP
+6.9 GW / RTORPA $13.8**, and in its $1,000–3,000 hours **8.3 GW / $0.3** — the
+real August-2023 evenings were not scarce (consistent with the G-22 thread-A
+finding that the real tail is offer-carried at non-scarce reserve levels). The
+availability stack under the temp derate therefore sits **~5–7 GW below the
+real system's measured online capability** exactly in the scarcity window.
+
+**Interpretation (rules 1/9/11/13).** The keeper's high walls were only ever
+load-bearing in the flat-derate world (manufactured scarcity); under the
+physical derate they are removable at almost no cost — that de-fitting is kept.
+But no admissible offer level can (or may) close a VOLL/ORDC-priced
+availability deficit; tuning the body down to mask it would be a fit to the
+residual. Root cause is the hot-hour availability LEVEL: the summer-mean-
+anchored reshape (heatwave hours land 4–10 % *below* net-summer while EIA-860
+net-summer is itself measured at hot summer-peak conditions) stacking on the
+measured outage overlays, versus the measured RTOLHSL/RTOLCAP capability the
+model itself intakes. Demand-side scarcity formation was already exhausted as a
+mechanism space (G-22 thread A). Named follow-up: reconcile per-class hot-hour
+availability against measured RTOLHSL/RTOLCAP (rule-13-admissible capability
+telemetry) — e.g. anchor the CC/CT reshape at the rating-point temperature
+rather than the Jun–Sep mean — then re-run this A/B; the C3c tail count should
+survive at far shallower depth.
+
+**Ablation twin.** Zero-forcing arm is uniformly worse (C3a +512/+442/+231 %,
+C3c 612/250/183 h): the commitment floors *depress* the deep tail rather than
+create it — the overshoot is availability-driven, not forcing-driven.
+
+**LOYO (rule 22).** Candidate curve selected on 2023 single-year probes only;
+2024/2025 were untouched during selection and act as held-out years: both
+degrade identically to 2023 under the joint change (keeper C3a +6.5/+4.9 % →
++156/+36 %). Held-out degradation is uniform → **promotion rejected**; keeper
+stays `ercot46-clock-steamgas`. The temp derate + de-fitted curves remain the
+registered PROBE pair for the availability follow-up to A/B against.
+
+**Holdouts.** No solve, score, or intake outside 2023–2025 (rule 22); ORDC
+tariff parameters untouched (rule 26); all knobs via
+`offer_curve_overrides`/`offer_curve_deltas` in `run_config.json` (rule 23),
+ERCOT-only (rule 24).
