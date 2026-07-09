@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-08-pjm-93-temp-derate-ablation",
+  "label": "pjm 93 temp derate (ABLATION TWIN)",
+  "date": "2026-07-08",
+  "shorthand": "pjm-93-temp-derate-ablation",
+  "definition": "temp-derate full-keeper ablation -- pjm90_cchp_srmc config + temp_dependent_derate, 2023-2025 (ABLATION TWIN of 2026-07-08-pjm-93-temp-derate)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-08-pjm-93-temp-derate-ablation.js",
+  "bundle": "results/calibration/pjm93_tempderate-ablation"
+}
