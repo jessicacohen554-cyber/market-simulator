@@ -1,9 +1,10 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 2.3** (2026-07-06
+Status: **canonical, machine-enforced. RUBRIC VERSION 2.4** (2026-07-06
 fitness-for-purpose re-anchor + 2026-07-07 C8 grounded-above-budget escalation
-+ 2026-07-09 C3a/C3b single-band re-set and C5a full-plant CO2 re-base;
-v1 history in §9). This document is the single
++ 2026-07-09 C3a/C3b single-band re-set and C5a full-plant CO2 re-base
++ 2026-07-09 C3a/C3b like-for-like load-weighted actual basis —
+`docs/rubric-v24-price-basis-memo-2026-07.md`; v1 history in §9). This document is the single
 auditable definition of when an ISO backcast may be declared *calibrated*. It
 replaces the ad-hoc, per-run sidecar judgement (“this looks good enough”) with a
 fixed rubric that a scorer reproduces byte-for-byte:
@@ -305,8 +306,22 @@ way FAILs C6 regardless.
 - **C3a — Mean LMP.** *(LOAD-BEARING, two-band)*
   - *Metric:* system load-weighted mean LMP, $/MWh (model `lmp[zone].p` weighted
     across zones by `lmp[zone].d` annual demand).
-  - *Actual:* `avgLMP.rt` (real-time), falling back to `avgLMP.da` when RT is
-    absent — the derived `actual_lmp.json` hub mean.
+  - *Actual (v2.4, owner amendment 2026-07-09 — the like-for-like basis):*
+    `avgLMP.rt_lw` (real-time, **load-weighted**), the basis ladder falling
+    back to `da_lw`, then the LEGACY equal-hour hub fields `rt`/`da` (with an
+    explicit "LEGACY equal-hour basis" label) for ISO-years the lw retrofit
+    does not cover. The lw fields weight each ISO's committed hourly actual by
+    the SAME measured demand the model dispatches
+    (`eia_loader.load_demand`) — zone-resolved where a committed zonal archive
+    exists (ERCOT: LZ settlement prices × measured zonal load, model-zone
+    crosswalked), the system hub series × system load elsewhere
+    (`derive_actual_lmp.py --lw-retrofit`, `src_lw` provenance per ISO-year).
+    Rationale: the legacy basis compared a demand-weighted model mean against
+    an equal-hour actual — a wedge that grows with tail realism; a
+    byte-perfect ERCOT 2023 model scores **+33.5%** against its own actual on
+    the legacy basis, and the pre-v2.4 single-digit C3a readings were partly
+    shallow-tail-vs-wedge cancellations
+    (`docs/rubric-v24-price-basis-memo-2026-07.md`).
   - *Coverage masking (2026-07-03):* when the actual series is **partial** (its
     committed monthly vector has empty months — e.g. CAISO 2023, whose Jan–Feb
     aged out of OASIS retention), the model mean is computed over the **same
@@ -342,7 +357,9 @@ way FAILs C6 regardless.
 - **C3b — Duration / shape (quantitative, not eyeballed).** *(LOAD-BEARING, two-band)*
   - *Metric:* normalised RMSE between the model and actual **monthly
     load-weighted price vectors** (12 months; model `pMon` re-weighted across
-    zones by `dMon`, actual `rt_mon`/`da_mon`). NRMSE = RMSE / mean(actual). This
+    zones by `dMon`, actual `rt_lw_mon`/`da_lw_mon` — the v2.4 load-weighted
+    monthly basis, legacy `rt_mon`/`da_mon` as the labelled fallback, same
+    ladder as C3a). NRMSE = RMSE / mean(actual). This
     is the committed-artifact shape metric; where a run additionally commits the
     full hourly price-duration curve, the P50/P90 ratio check of
     `calibration.check_price_duration_curve` is scored in its place.
