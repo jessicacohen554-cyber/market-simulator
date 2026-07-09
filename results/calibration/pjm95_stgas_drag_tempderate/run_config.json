@@ -1,7 +1,7 @@
 {
-  "timestamp": "2026-07-09T18:15:52",
+  "timestamp": "2026-07-09T19:51:27",
   "git": {
-    "sha": "9c846d6",
+    "sha": "e286a4b",
     "branch": "claude/pjm95-temp-derate-vs94nj",
     "dirty": false,
     "changed_files": [],
@@ -12,6 +12,8 @@
   "calibration_flags": {
     "iso": "PJM",
     "years": [
+      2023,
+      2024,
       2025
     ],
     "hours": 8760,
@@ -21,6 +23,8 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
+      "2023": 2.54,
+      "2024": 2.19,
       "2025": 3.52
     },
     "outage_source": "historic",
@@ -137,10 +141,10 @@
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
     "temp_dependent_derate": true,
-    "git_sha": "9c846d6"
+    "git_sha": "e286a4b"
   },
   "scenario_config": {
-    "weather_year": 2025,
+    "weather_year": 2024,
     "iso": "PJM",
     "mode": "backcast",
     "voll": 5000.0,
@@ -672,6 +676,6 @@
     "dual_fuel_oil_reattribution": false,
     "dual_fuel_switching": true,
     "outage_source": "historic",
-    "gas_price_override": 3.52
+    "gas_price_override": 2.19
   }
 }

@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-09T19:26:20",
+  "timestamp": "2026-07-09T19:51:27",
   "iso": "PJM",
   "years": [
     2023,
@@ -280,6 +280,6 @@
     "eia923": "../_shared/PJM/eia923-6e5b6bbc7120.parquet",
     "campd": "../_shared/PJM/campd-db315991835d.parquet"
   },
-  "git_sha": "5c985c4",
+  "git_sha": "e286a4b",
   "highspy_version": "1.14.0"
 }

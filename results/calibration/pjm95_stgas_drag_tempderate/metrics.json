@@ -3,9 +3,13 @@
   "iso": "PJM",
   "label": "pjm 95 temp derate",
   "target_years": [
+    2023,
+    2024,
     2025
   ],
   "scorable_years": [
+    2023,
+    2024,
     2025
   ],
   "data_blocked_years": [],
@@ -19,7 +23,7 @@
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -35,7 +39,8 @@
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
@@ -82,7 +87,8 @@
     "protective": [],
     "ledgered": [],
     "commercial_band": [
-      "C3a mean LMP"
+      "C3a mean LMP",
+      "C3b price duration/shape"
     ],
     "budget": {
       "protective_max": 1,
@@ -90,11 +96,11 @@
     }
   },
   "grade_summary": {
-    "scored": 8,
-    "target_grade": 6,
-    "commercial_grade": 1,
+    "scored": 9,
+    "target_grade": 5,
+    "commercial_grade": 2,
     "ledgered": 0,
-    "fails": 1
+    "fails": 2
   },
   "free_class_score": {
     "iso": "PJM",
@@ -107,15 +113,18 @@
       "solar",
       "wind"
     ],
-    "excluded_from_free": [],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
     "all": {
-      "pass": 0,
-      "total": 0
+      "pass": 14,
+      "total": 16
     },
     "free": {
-      "pass": 0,
-      "total": 0
+      "pass": 10,
+      "total": 12
     },
-    "headline": "C1 all 0/0 · free 0/0"
+    "headline": "C1 all 14/16 \u00b7 free 10/12"
   }
 }
