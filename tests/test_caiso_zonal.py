@@ -1,8 +1,10 @@
 """Zonal-distribution tests for the real CAISO topology.
 
-Exercises the *configured* CAISO network — the NP15 / ZP26 / SP15 trading
-zones plus the ``WECC_import`` node, with their real Path 15 / Path 26 /
-Path 66 / Path 46 transfer capabilities — end to end through
+Exercises the *configured* CAISO network — the NP15 / ZP26 / LA_BASIN / SDGE /
+SP15_rest trading zones (SP15 was split into its LCT local-capacity pockets,
+docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md) plus the
+``WECC_import`` node, with their real Path 15 / Path 26 / Path 66 / Path 46
+transfer capabilities — end to end through
 :func:`~market_sim.model.dispatch.solve_dispatch`, rather than the synthetic
 2-zone toy network in ``test_transmission``. The aim is to catch a TTC value
 or a load-share that breaks the dispatch: an infeasible solve, a flow above a
@@ -28,8 +30,10 @@ from market_sim.model.transmission import (
 T = 24  # 24-hour horizon for every dispatch in this module
 
 # CAISO load (trading) zones, in topology order; WECC_import is excluded as it
-# is an import node, not a load zone.
-LOAD_ZONES = ("NP15", "ZP26", "SP15")
+# is an import node, not a load zone. SP15_rest is the south gateway that
+# Path 26 and Path 46/WOR feed; LA_BASIN and SDGE are the one-way,
+# import-limited local-capacity pockets downstream of it.
+LOAD_ZONES = ("NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest")
 IMPORT_ZONE = "WECC_import"
 
 
@@ -139,12 +143,17 @@ class TestCaisoTopologyInvariants(unittest.TestCase):
 
     def test_import_node_links_into_north_and_south(self):
         by_pair = {(l.from_zone, l.to_zone): l.ttc_mw for l in self.config.links}
-        # Path 66 / COI into NP15 and Path 46 / WOR into SP15.
+        # Path 66 / COI into NP15 and Path 46 / WOR into SP15_rest (the south
+        # gateway zone since the SP15 split).
         self.assertEqual(by_pair[(IMPORT_ZONE, "NP15")], 4800.0)
-        self.assertEqual(by_pair[(IMPORT_ZONE, "SP15")], 10623.0)
+        self.assertEqual(by_pair[(IMPORT_ZONE, "SP15_rest")], 10623.0)
         # The internal N-S corridor: Path 15 and Path 26.
         self.assertEqual(by_pair[("NP15", "ZP26")], 5400.0)
-        self.assertEqual(by_pair[("ZP26", "SP15")], 4000.0)
+        self.assertEqual(by_pair[("ZP26", "SP15_rest")], 4000.0)
+        # The two one-way, import-limited local-capacity pockets downstream
+        # of the south gateway (LCT import_cap = peak_load - LCR, 2023).
+        self.assertEqual(by_pair[("SP15_rest", "LA_BASIN")], 12008.0)
+        self.assertEqual(by_pair[("SP15_rest", "SDGE")], 1436.0)
 
     def test_import_node_already_baked_in(self):
         # CAISO carries WECC_import in its base config, so extending is a no-op
@@ -162,9 +171,17 @@ class TestCaisoZonalDispatch(unittest.TestCase):
         internal = [
             _internal_gen("NP15", 5000.0, 30.0),
             _internal_gen("ZP26", 2000.0, 35.0),
-            _internal_gen("SP15", 8000.0, 40.0),
+            _internal_gen("LA_BASIN", 5000.0, 40.0),
+            _internal_gen("SDGE", 2000.0, 40.0),
+            _internal_gen("SP15_rest", 1500.0, 40.0),
         ]
-        demand = {"NP15": 3000.0, "ZP26": 1000.0, "SP15": 5000.0}
+        demand = {
+            "NP15": 3000.0,
+            "ZP26": 1000.0,
+            "LA_BASIN": 3000.0,
+            "SDGE": 1200.0,
+            "SP15_rest": 1000.0,
+        }
         result, fleet, config = _solve_caiso(internal, demand, with_import_node=True)
         net_flow = _zone_balance(result, fleet, config, demand)
         # No load shedding anywhere.
@@ -177,7 +194,7 @@ class TestCaisoZonalDispatch(unittest.TestCase):
         self.assertTrue(np.all(np.abs(result.flows) <= ttc[:, None] + 1e-6))
 
     def test_load_apportioned_by_share_sums_to_system_total(self):
-        # Split a 40 GW system load across the three trading zones by their
+        # Split a 40 GW system load across the five trading zones by their
         # configured load shares; the zonal demands must sum back to the total
         # and the import node must receive none of it.
         config = get_iso_config("CAISO")
@@ -186,18 +203,22 @@ class TestCaisoZonalDispatch(unittest.TestCase):
         demand = {z: system_mw * shares[z] for z in LOAD_ZONES}
         self.assertAlmostEqual(sum(demand.values()), system_mw, places=3)
         self.assertEqual(shares[IMPORT_ZONE], 0.0)
-        # And it actually dispatches: import tranches alone can serve it.
-        internal = [_internal_gen(z, 0.0, 1000.0) for z in LOAD_ZONES]
+        # LA_BASIN and SDGE only reach the import node through the one-way,
+        # import-limited links off SP15_rest, so each zone needs enough local
+        # backstop generation to actually clear its apportioned demand.
+        internal = [_internal_gen(z, demand[z], 1000.0) for z in LOAD_ZONES]
         result, fleet, config = _solve_caiso(internal, demand, with_import_node=True)
         _zone_balance(result, fleet, config, demand)
+        np.testing.assert_allclose(result.slack, 0.0, atol=1e-6)
 
     def test_imports_serve_load_through_the_intertie_within_ttc(self):
         # No in-state generation: all load is served by the WECC import node
-        # over Path 66 (into NP15) and Path 46 (into SP15). Demand sits inside
-        # both the per-link TTCs and the ~11.2 GW of available import capacity
-        # (11.4 GW nameplate x 0.98 availability), so the solve is feasible and
-        # the import links carry power up to — but not beyond — their TTCs.
-        demand = {"NP15": 4000.0, "SP15": 6000.0}
+        # over Path 66 (into NP15) and Path 46 (into SP15_rest, the south
+        # gateway zone). Demand sits inside both the per-link TTCs and the
+        # ~11.2 GW of available import capacity (11.4 GW nameplate x 0.98
+        # availability), so the solve is feasible and the import links carry
+        # power up to — but not beyond — their TTCs.
+        demand = {"NP15": 4000.0, "SP15_rest": 6000.0}
         internal = []  # pure-import dispatch
         result, fleet, config = _solve_caiso(internal, demand, with_import_node=True)
         net_flow = _zone_balance(result, fleet, config, demand)
@@ -212,12 +233,13 @@ class TestCaisoZonalDispatch(unittest.TestCase):
     def test_north_south_congestion_caps_flows_and_separates_prices(self):
         # Cheap gas only in the north (NP15); demand concentrated in ZP26. The
         # WECC import node is disabled (no import supply), but the zero-load
-        # node is still a passthrough, so NP15 can reach ZP26 two ways: Path 15
-        # directly (5,400 MW) and a wheel NP15 -> WECC_import -> SP15 -> ZP26
-        # bounded by Path 26 (4,000 MW). The combined NP15->ZP26 capability is
-        # therefore 9,400 MW. ZP26 demand above that forces its expensive local
-        # gas to the margin, so both bottleneck links saturate and ZP26 prices
-        # above NP15 — all without the solve falling over.
+        # SP15_rest zone is still a passthrough, so NP15 can reach ZP26 two
+        # ways: Path 15 directly (5,400 MW) and a wheel
+        # NP15 -> WECC_import -> SP15_rest -> ZP26 bounded by Path 26 (4,000
+        # MW). The combined NP15->ZP26 capability is therefore 9,400 MW. ZP26
+        # demand above that forces its expensive local gas to the margin, so
+        # both bottleneck links saturate and ZP26 prices above NP15 — all
+        # without the solve falling over.
         internal = [
             _internal_gen("NP15", 30000.0, 25.0),  # abundant cheap northern gas
             _internal_gen("ZP26", 6000.0, 90.0),  # expensive local backstop
@@ -228,8 +250,9 @@ class TestCaisoZonalDispatch(unittest.TestCase):
         links = {(l.from_zone, l.to_zone): i for i, l in enumerate(config.links)}
         ttc = get_ttc_array(config.links)
         # The two links carrying northern power into ZP26 both saturate:
-        # Path 15 (NP15->ZP26) forward, and Path 26 (ZP26->SP15) in reverse.
-        path15, path26 = links[("NP15", "ZP26")], links[("ZP26", "SP15")]
+        # Path 15 (NP15->ZP26) forward, and Path 26 (ZP26->SP15_rest) in
+        # reverse.
+        path15, path26 = links[("NP15", "ZP26")], links[("ZP26", "SP15_rest")]
         np.testing.assert_allclose(result.flows[path15], ttc[path15], atol=1e-3)
         np.testing.assert_allclose(result.flows[path26], -ttc[path26], atol=1e-3)
         # Every flow still respects its TTC.
@@ -242,15 +265,25 @@ class TestCaisoZonalDispatch(unittest.TestCase):
         self.assertTrue(np.all(result.prices[i_zp26] > result.prices[i_np15] + 1.0))
 
     def test_no_unserved_energy_when_capacity_is_adequate(self):
-        # A stress case across all three zones served by a mix of in-state gas
+        # A stress case across all five zones served by a mix of in-state gas
         # and the import node: the dispatch must remain feasible (no slack) and
-        # every flow must stay within its TTC.
+        # every flow must stay within its TTC. LA_BASIN and SDGE carry their
+        # own local gas since they only reach the import node through the
+        # one-way, import-limited links off SP15_rest.
         internal = [
             _internal_gen("NP15", 12000.0, 30.0),
             _internal_gen("ZP26", 2000.0, 45.0),
-            _internal_gen("SP15", 18000.0, 50.0),
+            _internal_gen("LA_BASIN", 12000.0, 50.0),
+            _internal_gen("SDGE", 3000.0, 50.0),
+            _internal_gen("SP15_rest", 3000.0, 50.0),
         ]
-        demand = {"NP15": 10000.0, "ZP26": 1500.0, "SP15": 16000.0}
+        demand = {
+            "NP15": 10000.0,
+            "ZP26": 1500.0,
+            "LA_BASIN": 10000.0,
+            "SDGE": 2500.0,
+            "SP15_rest": 2000.0,
+        }
         result, fleet, config = _solve_caiso(internal, demand, with_import_node=True)
         _zone_balance(result, fleet, config, demand)
         np.testing.assert_allclose(result.slack, 0.0, atol=1e-6)
