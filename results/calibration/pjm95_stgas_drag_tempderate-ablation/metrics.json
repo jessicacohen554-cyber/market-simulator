@@ -13,7 +13,7 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.3,
+  "rubric_version": 2.4,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
@@ -34,12 +34,12 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
@@ -74,12 +74,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -94,11 +94,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 2,
+    "scored": 9,
+    "target_grade": 6,
     "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 4
+    "fails": 2
   },
   "free_class_score": {
     "iso": "PJM",
