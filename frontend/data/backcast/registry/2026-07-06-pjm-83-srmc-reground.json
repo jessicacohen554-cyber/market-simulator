@@ -11,6 +11,5 @@
   ],
   "iso": "PJM",
   "file": "frontend/data/backcast/runs/2026-07-06-pjm-83-srmc-reground.js",
-  "bundle": "results/calibration/pjm80_srmc_reground_keeper",
-  "ablation_twin": "2026-07-06-pjm-83-reground-ablation"
+  "bundle": "results/calibration/pjm80_srmc_reground_keeper"
 }
