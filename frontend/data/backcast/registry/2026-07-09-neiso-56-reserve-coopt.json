@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-09-neiso-56-reserve-coopt",
+ "label": "neiso 56 reserve coopt",
+ "date": "2026-07-09",
+ "shorthand": "neiso-56-reserve-coopt",
+ "definition": "(PROBE, no keeper swap) The neiso-55 keeper recipe + energy_reserve_coopt \u2014 ISO-NE system-wide energy+reserve co-optimization with the published 3-level nested RCPF demand curves (total-30-min 1,800 MW @ $1,000, total-10-min 1,200 MW @ $1,500, 10-min-spin 600 MW @ $50; Market Rule 1 \u00a7III.2.7A), storage reserve-eligible. Tests the C5b ledger's named closure path for the ledgered C3c/C5b winter scarcity family. Result: DORMANT \u2014 the reserve balance dual is $0.00 in all 26,280 hours (P1 and P2); C3c tail unchanged at 0h >$300 every year, C5b storage discharge byte-similar to the keeper (0.827 vs 0.828 TWh in 2025), fuel mix byte-comparable. Scores CALIBRATED-WITH-CAVEATS with the identical caveat set as the keeper (C2 commercial-band; C3c/C5b ledgered). Closes the closure-path inventory: both the winter fuel-security build (G-24) and in-LP reserve co-optimization are now proven dormant on 2023-2025 \u2014 the two ledgered caveats are irreducible by any admissible mechanism identified to date.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-07-09-neiso-56-reserve-coopt.js",
+ "bundle": "results/calibration/neiso56_reserve_coopt",
+ "ablation_twin": "2026-07-09-neiso-56-coopt-ablation",
+ "market_story": "energy_reserve_coopt adds the real ISO-NE clearing structure: energy and operating reserves co-optimize against the published nested RCPF demand curves, and a reserve-short hour would stack the penalty factor into the LMP while paying reserve value to storage. On 2023-2025 the ample NEISO fleet clears the 1,800/1,200/600 MW requirements out of idle thermal headroom at zero opportunity cost in every hour \u2014 even the January-2025 cold-snap hours with the gas cold-snap derate active \u2014 so the mechanism prices nothing and moves nothing: keeper-vs-twin class deltas are the same small floor effects as the neiso-55 pair, with the reserve dual $0.00 in both arms."
+}
