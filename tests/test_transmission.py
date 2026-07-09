@@ -1218,9 +1218,11 @@ class TestInterfaceGroups(unittest.TestCase):
         limit = cfg.interface_limits[0]
         # The two WECC import paths share one simultaneous cap below their TTC
         # sum (4,800 + 10,623 = 15,423 MW).
+        # Path 46/WOR now terminates on SP15_rest (the SP15 local-area split
+        # re-pointed it off the removed SP15 zone).
         self.assertEqual(
             set(tuple(p) for p in limit.links),
-            {("WECC_import", "NP15"), ("WECC_import", "SP15")},
+            {("WECC_import", "NP15"), ("WECC_import", "SP15_rest")},
         )
         self.assertLess(limit.cap_mw, 15_423.0)
 
@@ -1502,7 +1504,8 @@ class TestCaisoAsymmetricPathLimits(unittest.TestCase):
         self.assertEqual(p15.cap_mw, 3265.0)
         self.assertEqual(p15.reverse_cap_mw, 5400.0)
         # Path 26 (Midway–Vincent): N→S 4,000 / S→N 3,000 (WECC catalog).
-        p26 = by_name["CAISO_path_directional_ZP26_SP15"]
+        # Keyed on the re-pointed link (ZP26 → SP15_rest after the SP15 split).
+        p26 = by_name["CAISO_path_directional_ZP26_SP15_rest"]
         self.assertEqual(p26.cap_mw, 4000.0)
         self.assertEqual(p26.reverse_cap_mw, 3000.0)
         # The baked-in simultaneous import cap survives untouched.
