@@ -14,9 +14,12 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.2,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "2 criterion(s) within the commercial-grade band but outside target: C2 system volume (gas/coal families), C3b price duration/shape",
+    "2 ledgered measured-input caveat(s): C3c price tail / scarcity (DA-expressible), C5b storage throughput",
+    "unscored PROTECTIVE criteria: shape",
+    "unscored criteria: storage_shape"
   ],
   "notes": [],
   "criteria": {
@@ -45,7 +48,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -60,7 +64,8 @@
     "storage": {
       "label": "C5b storage throughput",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "storage_shape": {
       "label": "C5c storage dispatch shape",
@@ -70,7 +75,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -85,7 +90,10 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (DA-expressible)",
+      "C5b storage throughput"
+    ],
     "commercial_band": [
       "C2 system volume (gas/coal families)",
       "C3b price duration/shape"
@@ -96,11 +104,11 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 5,
+    "scored": 10,
+    "target_grade": 6,
     "commercial_grade": 2,
-    "ledgered": 0,
-    "fails": 2
+    "ledgered": 2,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "NEISO",
@@ -125,6 +133,6 @@
       "pass": 8,
       "total": 8
     },
-    "headline": "C1 all 12/12 · free 8/8"
+    "headline": "C1 all 12/12 \u00b7 free 8/8"
   }
 }
