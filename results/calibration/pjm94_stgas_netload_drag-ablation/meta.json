@@ -1,7 +1,9 @@
 {
-  "timestamp": "2026-07-09T17:42:31",
+  "timestamp": "2026-07-09T21:52:31",
   "iso": "PJM",
   "years": [
+    2023,
+    2024,
     2025
   ],
   "hours": 8760,
@@ -11,6 +13,8 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
+    "2023": 2.54,
+    "2024": 2.19,
     "2025": 3.52
   },
   "coal_lignite_mustrun": null,
@@ -192,6 +196,7 @@
   "cc_derate_from_top": true,
   "cc_nameplate_summer_derate": false,
   "temp_dependent_derate": false,
+  "ercot_offer_surface_conditional": false,
   "priced_interchange": true,
   "hydro_backfill_year": 2024,
   "hydro_eia930_monthly": true,
@@ -216,6 +221,11 @@
     "ct_drag_cap": 0.46,
     "ct_drag_ramp_start": 15,
     "ct_drag_ramp_end": 22
+  },
+  "gas_st_drag_overrides": {
+    "gas_st_drag_slope_per_gw": 0.01029,
+    "gas_st_drag_intercept": -0.7263,
+    "gas_st_drag_cap": 0.39
   },
   "scarcity_price_overlay": null,
   "caiso_scarcity_pricing": null,
@@ -271,10 +281,10 @@
   "mass_cap_program": null,
   "btm_backfill_year": 2024,
   "shared_inputs": {
-    "eia930": "../_shared/PJM/eia930-5d75f210361b.parquet",
-    "eia923": "../_shared/PJM/eia923-e6bf5c4e893a.parquet",
-    "campd": "../_shared/PJM/campd-38837d7d575c.parquet"
+    "eia930": "../_shared/PJM/eia930-ec2962505b2c.parquet",
+    "eia923": "../_shared/PJM/eia923-6e5b6bbc7120.parquet",
+    "campd": "../_shared/PJM/campd-db315991835d.parquet"
   },
-  "git_sha": "1594f15",
+  "git_sha": "fcf2f7b",
   "highspy_version": "1.14.0"
 }
