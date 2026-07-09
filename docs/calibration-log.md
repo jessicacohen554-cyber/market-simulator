@@ -8309,3 +8309,82 @@ top-15. See `docs/handoffs/ercot-coal-nameplate-summer-derate-2026-07.md`.
 
 **Holdouts.** No solve/score/intake outside 2023-2025 (rule 22); the single-year
 2023 A/B (`_diag_ercot51_coalns2023`) was a throwaway, never registered (rule 16).
+## 2026-07-09 — ERCOT offer re-tune under the coal net-summer derate: the C3a overshoot was NOT the offer stack — ORDC additive adder was double-counting internalized scarcity (fixed, `ercot52` candidate + ablation) + C3a scoring-frame finding (a PERFECT model scores +33.5%/+15.5%/+11.7%)
+
+**Task (handoff from the 2026-07-09 coal net-summer entry).** Re-tune the gas
+offer stack / co-opt so C3a returns to ~keeper level while KEEPING the C3c
+tail the derate opened (2023 104→162 h); derate stays ON in every arm.
+
+**Diagnosis first (no-solve on the ercot51 hours, then per-hour dual
+decomposition).** The overshoot is not offer-curve level. (a) The model's
+energy-only price-duration curve matches the measured RT tail almost exactly
+(2023 top-100-hour contribution 19.60 vs 20.00 actual $/MWh; top-200 23.41 vs
+23.67), with matching hour-of-day/demand-percentile tail timing. (b) 100% of
+`ordc_adder`>$10 hours have energy duals already >$200 (median $1,957 +$254
+adder → totals ~$3,000 vs measured deep hours ~$1,200–1,800); the adder
+contributed +5.5 $/MWh (dw) of 2023 C3a and ZERO C3c hours. (c) The remaining
+"overshoot" months (Jan +50%, Feb +34%, Apr +36%) are byte-identical to the
+ercot46 keeper — its +9.3% was a cancellation against the August undershoot
+the derate fixed.
+
+**Root cause: the additive RTORPA construction double-counts once the coal
+derate moves the binding constraint.** The post-solve adder added the
+total-family balance dual, valid only while the RTOLCAP supply-cap row binds
+("energy cancels out of a ΣR cap"). Post-derate the PHYSICAL shared headroom
+binds in every 2023 scarcity hour (solved cap-row dual = 0 in all 8760 h), and
+the balance dual is then already folded into the energy LMP
+(`test_total_shortfall_prices_and_lifts_lmp`) — each new shortage hour was
+priced twice, which is exactly how a CEMS-correct ~0.7 GW coal cut moved C3a
+~30 pp.
+
+**Fix (`ercot_ordc_cap_dual_adder`, default off = keeper-reproducing).**
+Source the additive adder from the supply-cap rows' own duals — by LP duality
+(λ_balance = λ_cap + μ_headroom; only μ passes into the energy dual) the
+exactly-uninternalized component in BOTH regimes. `DispatchResult` gains
+`reserve_supply_cap_dual`; 3 new unit tests pin both regimes. No new
+parameter, no price fit; dispatch/energy duals byte-identical; offer-curve
+bands UNCHANGED from the keeper.
+
+**Result (`ercot52 ordc capdual` candidate + zero-forcing ablation, full
+2023-2025, single delta vs ercot51).** LOYO-consistent in every year — C3a
+AND C3b improve, C3c unchanged:
+  year | C3a ercot51 → ercot52 | C3b | C3c (DA actual)
+  2023 | +42.7% → +31.3% | 0.435 → 0.260 | 162 h (311)
+  2024 | +16.0% → +14.2% | 0.392 → 0.354 |  37 h  (68)
+  2025 |  +7.0% →  +6.7% | 0.098 → 0.095 |   5 h  (23)
+Surface arm REJECTED again (2023: C3a +3.9 pp, C3b +0.056 for +4 C3c hours) —
+even with the derate, the missed 2023 tail hours stay econ-band-marginal (the
+online-capability wedge); the remaining 162→311 gap is a missing $100–300
+SHOULDER (model rank-200 price $69 vs actual $191), not missing depth.
+
+**Scoring-frame finding (owner decision needed, rubric territory).** C3a
+compares a demand-weighted model mean against an equal-hour HB_HUBAVG bench.
+Feeding the ACTUAL LZ settlement prices through the scorer's own formula
+scores +33.5% / +15.5% / +11.7% (2023/24/25) against the scorer's own
+benchmark — a byte-perfect model FAILS the ±10% gate in all three years, and
+the wedge grows with tail realism, so C3a and C3c are structurally in tension.
+The ercot52 candidate scores BELOW that perfect-model floor every year; on a
+like-for-like equal-hour basis it is +4.7% / +4.4% / +4.4% — the single-digit
+target of this thread, reached with zero offer-curve movement. Historical
+single-digit C3a values (incl. the keeper's +9.3%) were partly
+shallow-tail-vs-wedge cancellations. Candidate scorer-only fix: score C3a
+like-for-like (model equal-hour system mean vs HB_HUBAVG, or a
+demand-weighted actual bench from the committed LZ archives); check all six
+ISOs for the same asymmetry first. See
+`docs/handoffs/ercot-ordc-capdual-adder-2026-07.md` §4.
+
+**Open item.** The pre-existing winter-shoulder body overshoot (Jan/Feb/Apr,
+CC_REGULAR econ_high marginal ~$26–31 vs actual ~$22–25) is the main C3b
+residual; no admissible driver identified — do NOT close it with a band trim
+(the same bands are already slightly UNDER in the summer body; rule 13).
+
+**Housekeeping.** Keeper stays `2026-07-08-ercot46-clock-steamgas`
+(`keepers.json` untouched); ercot52 registered NOT-YET/unattested pending the
+owner's rubric decision. Pruned the oldest ERCOT pair (ercot44 hsl-clock-fix +
+ercot44b control — both superseded by ercot45/46) for top-15.
+
+**Holdouts.** No solve/score/intake outside 2023-2025 (rule 22); the
+single-year 2023 arms (`ercot52_diag_base_2023`, `ercot52_capdual_2023`,
+`ercot52_capdual_surface_2023`) were throwaway probes, never registered
+(rule 16).
+
