@@ -8209,3 +8209,22 @@ hours the derated model sheds load. Both tests are in
 Conclusion unchanged: no admissible ERCOT-wide hot-hour cut of the modeled
 magnitude; a small measured CT-only slope (CEMS-derived, ~0.3–0.5 %/°C
 equivalent) is the largest signal the data would support.
+
+**Amendment 2 (same session) — scarcity-hour slope derivation (owner-suggested,
+definitive).** Using scarcity hours as the max-incentive sample removes the
+at-max assumption entirely: in hours with actual RT > $200 every available
+unit is priced to run at true capability, and 2023+2024 scarcity hours span
+~30–46 °C (June/Sept evenings, May-2024, August peaks) — exactly the range
+where the derate binds. Fitting the p90 of online plants' output/rating vs
+zone TMAX above 34 °C (`_scarcity_hour_slope` in the same script): CC_REGULAR
+**−0.27 %/°C**, CT_PEAKER **−0.04 %/°C**, ST_GAS **−0.29 %/°C**, CC_CHP
+**−1.41 %/°C** — every class ≈ zero or negative, vs the model's
++0.76/+1.26/+0.54. Online CT p90 is 1.00–1.02× rating in EVERY bin from 30 to
+46 °C, dissolving Amendment 1's CT caveat (the 0.911 lower-bound median was
+the not-called-to-max/AS confound this derivation removes). The measured
+ERCOT parameterization of `temp_dependent_derate` is slope ≈ 0 above the
+rating point — i.e. the keeper's flat net-summer treatment IS the measured
+answer for this fleet (rule 15: the measured value replaces the literature
+estimate; rule 13: derived from CEMS + published prices as a selector, no
+residual in the loop). ERCOT-only finding (rule 24); PJM/MISO temp-derate
+keepers rest on their own fleets' evidence.
