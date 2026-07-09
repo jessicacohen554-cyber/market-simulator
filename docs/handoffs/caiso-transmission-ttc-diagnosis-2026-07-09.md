@@ -9,7 +9,34 @@ adopted default-on (owner decision). Holdout discipline (rule 22): everything be
 
 ---
 
+## ⚠ CORRECTION (2026-07-09, post caiso-69 probe) — the "actual SP15 LMP" column below is wrong
+
+The headline table's "SP15 actual" ($117.52/$124.55/$127.04) and "NP15 actual" ($86.57/$85.07/
+$83.41) columns were read from the keeper run payload's `lmp[zone].d` field. That field is **not a
+price** — it is the dashboard's demand **weight** (the sum of the twelve monthly mean zonal loads
+in GW; `backcast-runs.html` ~line 331 computes the demand-weighted mean LMP as
+`Σ p·d / Σ d`, and the same misread would make ZP26's "actual" $14). The measured DA hub actuals
+(`data/raw/lmp-data/CAISO/CAISO_dam_hourly_<year>.csv`, per-node annual means) are:
+
+| Year | SP15 actual | NP15 actual | NP15−SP15 spread |
+|------|------------:|------------:|-----------------:|
+| 2023 | $49.39 | $51.26 | +$1.87 |
+| 2024 | $32.68 | $40.67 | +$7.99 |
+| 2025 | $32.22 | $38.23 | +$6.01 |
+
+So the caiso-65 keeper (model SP15 $69.62/$47.18/$49.51) **over**-prices SP15 by ~$15–20, and
+actual SP15 clears **below** NP15 — there is no missing $48–78 locational premium. The
+"SP15 copperplate under-pricing" headline below, and every A/B target derived from it (this doc §5
+item 1, and the scope doc's pre-registered A/B "toward $117–127"), are superseded. The CT_PEAKER
+under-dispatch (actual 4.56/5.24/3.09 TWh vs model ~2) and the 2023 tail sign-flip remain real and
+correctly stated. The caiso-69 SP15-split probe (2026-07-09-caiso-69-sp15split-dragoff) confirmed
+the split's import links bind with measured LCT caps but form only a ~$1–4 premium — consistent
+with the corrected actuals — and that dropping `ct_netload_drag` collapses CT to 0.8–0.9 TWh; see
+that sidecar's corrected redirect (commitment/AS-dispatch, not price level).
+
 ## TL;DR — the headline is locational, not the import cap
+
+*(⚠ superseded by the correction above — kept for the record)*
 
 The dominant CAISO structural failure is **SP15 copperplate under-pricing**. SP15's *annual mean*
 LMP is dramatically **under**-forecast — and the gap grows every year:
