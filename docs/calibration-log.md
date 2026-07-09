@@ -8130,3 +8130,101 @@ registered PROBE pair for the availability follow-up to A/B against.
 tariff parameters untouched (rule 26); all knobs via
 `offer_curve_overrides`/`offer_curve_deltas` in `run_config.json` (rule 23),
 ERCOT-only (rule 24).
+
+## 2026-07-09 — ERCOT temp-derate follow-up: the 2023-only ECRS design difference is NOT the double-count (~4 pp), and the derate slopes themselves have NO CEMS signature for the ERCOT gas fleet (measured hot-hour capability is FLAT)
+
+Two follow-on diagnostics to the ercot49 round, prompted by the owner's
+hypothesis that the 2023-vs-2024/25 market-design difference (the
+`ercot_ecrs_conservative_deployment` at-cap step, published pre-2024-08-01
+design) was what the temp derate double-counts.
+
+**ECRS-design A/B (2023, throwaway single-year arm, rule 16 — local only,
+`ercot49_sweep_ecrsoff2023`).** Temp derate + c1 curves with the conservative
+step OFF: C3a +264.0 % → +260.2 %, NRMSE 4.42 → 4.37, Aug $872 → $863; VOLL
+shed hours 65 → 43 (the freed ~0.7 GW ECRS absorbs some shortfall) but the
+deep hours re-price on the lumped total-reserve ORDC curve. The design
+difference owns ~4 pp of a 264 pp overshoot. Corroborating: within 2024 the
+worst month is August ($223 model vs $36 actual) — AFTER the reform, outside
+the withheld window (42 of 71 deep hours post-reform); 2025 carries no step
+and still runs 22 hours >$1,000 vs 3 actual. The keeper (flat derate, step
+ON) sits slightly UNDER in exactly the step-bound months (2023 Aug $155 vs
+$192) — the design representation was never overcorrected in tuning. The
+2023≫2024≫2025 blow-out gradient tracks summer heat, not the design window.
+
+**Measured hot-hour capability envelope
+(`scripts/probes/_ercot_temp_capability_envelope.py`, CAMPD hourly × zone
+TMAX, 2023 + 2024, 108 CC / 88 CT / 40 ST units).** The same admissibility
+test the coal summer-derate investigation applied, now for the gas classes:
+p98 of unit output vs its benign-bin (26–32 °C) p99.5 reference, per TMAX
+bin, Jun–Sep. Measured envelope at 40–46 °C: CC 1.00–1.01, CT 1.08–1.09
+(global-summer-max reference: 0.98–1.00 both), ST_GAS 1.00 — the fleet hits
+its summer maxima ON the hottest hours. The model's raw curves predict
+0.77–0.93 in those bins. The measured incremental hot-hour derate beyond
+EIA-860 net-summer is **~1–2 %, not the 9–23 %** the literature slopes (CT
+1.26 %/°C, CC 0.76 %/°C from a 15 °C ISO rating point) apply: the TX fleet is
+equipped for TX summers (inlet evaporative cooling/chillers), so net-summer
+capability already IS its hot-day rating. No CEMS signature → no admissible
+driver for an ERCOT hot-hour capability cut below net-summer (rule 13; coal
+precedent 2026-07-08).
+
+**Where this leaves the temp-derate line for ERCOT.** The ercot48/49 C3c
+"improvement" (tail count into band) was right-number-wrong-mechanism: it
+manufactured the tail via physical shortage that BOTH system telemetry
+(RTOLCAP 6.9–8.3 GW in the model's deep hours) and now unit-level CEMS refute.
+Recommendation to the owner: (a) do not promote `temp_dependent_derate` for
+ERCOT in its literature-slope parameterization — either re-derive per-class
+slopes from the CEMS envelope (≈ flat → equivalent to the keeper's net-summer
+treatment) or leave the flag off for ERCOT (per-ISO measured grounding, rules
+13/24; PJM/MISO keepers, different fleets/climates, unaffected by this
+finding); (b) the keeper's real open miss — the too-thin C3c tail (104 vs
+311 DA) — is owned by scarcity-anticipating OFFER formation at healthy
+reserves (G-22 thread-A: real tail hours had RTOLCAP p50 8 GW, SCED λ p50
+$443), so the admissible path to the tail is the filed measured DAM offer
+surface (ercot37 §8 / G-22 §8), not physical derates.
+
+**Holdouts.** No solve/score/intake outside 2023–2025; the ECRS-off arm is a
+single-year diagnostic, never registered (rule 16); the envelope analysis is
+no-LP measured-data validation only.
+
+**Amendment (same session) — assumption-free lower-bound test.** Owner
+objection: the envelope assumes units actually reach capability in the benign
+reference bin (realized output only lower-bounds capability, so a flat ratio
+could hide a cut if mild-bin dispatch sat below max). Two answers that need no
+max-output assumption. (1) *Production vs rating*: production can never exceed
+capability, so a plant producing ≥ x% of its EIA-860 net-summer rating while
+its zone TMAX ≥ 40 °C has demonstrated that capability at temperature. 2023:
+the median CC plant produced **99.3 %** of rating at ≥40 °C; **80 % of CC
+capacity demonstrated ≥0.95×** and **50 % ≥1.00×** — where the derate assumes
+≤0.90–0.95× is available (raw curve 0.77–0.90). CC_CHP: 88 % ≥1.00×. Caveat,
+honestly held: CT_PEAKER median is 0.911 with 57 % of capacity ≥0.95× — a real
+hot-hour effect of up to ~5–9 % on part of the CT fleet cannot be excluded by
+the lower bound alone (peakers are also the class most likely to be
+AS-withheld or not dispatched to max) — but that is ≤ ~0.3 GW against the
+3–4 GW the current slopes remove. (2) *Telemetered capability, not
+production*: RTOLHSL/RTOLCAP is the operator's summed real-time High
+Sustainable Limit — the units' own declared max at the actual ambient
+conditions — and it showed 6.9–8.3 GW of spare online capability in the very
+hours the derated model sheds load. Both tests are in
+`scripts/probes/_ercot_temp_capability_envelope.py` (`_rating_lower_bound`).
+Conclusion unchanged: no admissible ERCOT-wide hot-hour cut of the modeled
+magnitude; a small measured CT-only slope (CEMS-derived, ~0.3–0.5 %/°C
+equivalent) is the largest signal the data would support.
+
+**Amendment 2 (same session) — scarcity-hour slope derivation (owner-suggested,
+definitive).** Using scarcity hours as the max-incentive sample removes the
+at-max assumption entirely: in hours with actual RT > $200 every available
+unit is priced to run at true capability, and 2023+2024 scarcity hours span
+~30–46 °C (June/Sept evenings, May-2024, August peaks) — exactly the range
+where the derate binds. Fitting the p90 of online plants' output/rating vs
+zone TMAX above 34 °C (`_scarcity_hour_slope` in the same script): CC_REGULAR
+**−0.27 %/°C**, CT_PEAKER **−0.04 %/°C**, ST_GAS **−0.29 %/°C**, CC_CHP
+**−1.41 %/°C** — every class ≈ zero or negative, vs the model's
++0.76/+1.26/+0.54. Online CT p90 is 1.00–1.02× rating in EVERY bin from 30 to
+46 °C, dissolving Amendment 1's CT caveat (the 0.911 lower-bound median was
+the not-called-to-max/AS confound this derivation removes). The measured
+ERCOT parameterization of `temp_dependent_derate` is slope ≈ 0 above the
+rating point — i.e. the keeper's flat net-summer treatment IS the measured
+answer for this fleet (rule 15: the measured value replaces the literature
+estimate; rule 13: derived from CEMS + published prices as a selector, no
+residual in the loop). ERCOT-only finding (rule 24); PJM/MISO temp-derate
+keepers rest on their own fleets' evidence.
