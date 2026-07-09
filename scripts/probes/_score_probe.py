@@ -37,7 +37,7 @@ def score_bundle(bundle: Path, iso: str = "ERCOT", thr: float = 200.0) -> None:
     sysdf = pd.read_parquet(bundle / "system.parquet")
     if "pass" in sysdf.columns and (sysdf["pass"] == "P1").any():
         sysdf = sysdf[sysdf["pass"] == "P1"]
-    tail_part = json.loads(TAIL.read_text()).get(iso, {})
+    tail_part = json.loads(TAIL.read_text()).get("isos", {}).get(iso, {})
     for year in sorted(sysdf["year"].unique()):
         sy = sysdf[sysdf["year"] == year]
         bpath = BENCH / iso / f"{year}.json.gz"
