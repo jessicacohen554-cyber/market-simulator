@@ -2576,10 +2576,15 @@ def solve_and_persist(
         # floor reconstruction (run_year(fleet_only=True) from meta.json) applies
         # the SAME drag the solve did. Omitting them silently dropped the drag
         # from D-2/D-4 reconstruction, under-counting CT_PEAKER forced energy for
-        # every drag keeper (docs/FINDING-pjm-burndown-2026-07.md).
+        # every drag keeper (docs/FINDING-pjm-burndown-2026-07.md). The
+        # gas_st_drag_overrides key repeats that finding for the ST_GAS drag:
+        # without it a --replay-bundle re-solve of a PJM drag keeper fell back
+        # to the ScenarioConfig default hinge and forced ~4x the ST_GAS energy
+        # the original run did (pjm-94, 2026-07-09).
         "ct_netload_drag": ct_netload_drag,
         "gas_st_netload_drag": gas_st_netload_drag,
         "ct_drag_overrides": ct_drag_overrides or {},
+        "gas_st_drag_overrides": gas_st_drag_overrides or {},
         "scarcity_price_overlay": scarcity_price_overlay,
         "caiso_scarcity_pricing": caiso_scarcity_pricing,
         "caiso_lcr_commitment_credit": caiso_lcr_commitment_credit,
