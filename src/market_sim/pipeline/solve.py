@@ -90,6 +90,7 @@ def run_energy_solve(
     xyear_cache: Optional[list] = None,
     p1_fleet_prep=None,
     p1_kwargs_prep=None,
+    mc_bid_adjust: Optional[np.ndarray] = None,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
 
@@ -155,6 +156,13 @@ def run_energy_solve(
         coal_warm_committed=getattr(config, "coal_warm_committed", False),
     )
     mc_bid = mc_base + markup
+    # P1-only bid adjustment (ERCOT condition-responsive offer surface): an additive
+    # (n_gen, T) markup applied to the P1 clearing objective ONLY — never to the P0
+    # base cost — so the surface reprices the gas peak-band scarcity wall in the
+    # clearing price without perturbing P0 run lengths (and thus the startup-
+    # amortization coupling). None (every non-ERCOT / flag-off path) is byte-identical.
+    if mc_bid_adjust is not None:
+        mc_bid = mc_bid + mc_bid_adjust
     # P1-native floor injection (CAISO RA must-offer bridge): the hook reads the
     # P0 solution and returns a floored fleet for the P1 clearing solve. Changing
     # the column bounds means the warm-start basis no longer applies, so P1 is a
