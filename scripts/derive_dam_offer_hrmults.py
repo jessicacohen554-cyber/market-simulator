@@ -101,6 +101,19 @@ OUT_JSON = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults.json"
 # file stays byte-stable: a run opts into the ladder by naming this file, it
 # never rides in silently on the existing --offer-curve-json path.
 OUT_JSON_LADDER = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_ladder.json"
+# --condition-binned writes the heterogeneity-preserving, condition-responsive
+# surface (ERCOT G-22 §8 / ercot37 filed path): the measured peak-band quantile
+# ladder derived SEPARATELY within each net-load-percentile bin, so the model can
+# select the tighter (higher) wall in its own anticipated-tight hours and leave the
+# loose-hour offer stack untouched. Its own artifact so the p50/ladder files stay
+# byte-stable; a run opts in via ScenarioConfig.ercot_offer_surface_binned_path.
+OUT_JSON_CONDBINNED = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_condbinned.json"
+
+# Net-load percentile bin EDGES for the condition-binned surface. Must match
+# ScenarioConfig.ercot_offer_surface_netload_pcts (the mechanism asserts the JSON's
+# recorded edges agree with the config). n edges → n+1 bins on the year's own
+# net-load distribution (percentile-ranked → forward-native); bin 0 is loosest.
+NETLOAD_PCT_EDGES = (0.80, 0.90, 0.97)
 
 ERCOT_GAS_BASIS = -0.5  # GAS_BASIS_DIFFERENTIAL['ERCOT'], $/MMBtu over Henry Hub
 
@@ -194,6 +207,7 @@ def coal_fuel_price(output_group: str) -> dict[int, float]:
 def load_offers() -> pd.DataFrame:
     cols = [
         "delivery_date",
+        "hour_ending",
         "model_class",
         "resource_name",
         "committed",
@@ -219,6 +233,50 @@ def load_offers() -> pd.DataFrame:
     df["gas"] = df["delivery_date"].map(daily) + ERCOT_GAS_BASIS
     df = df[df["gas"] > 0].copy()
     return df
+
+
+def netload_pct_by_hour() -> pd.DataFrame:
+    """System net-load percentile per (year, delivery_date, hour_ending).
+
+    The tightness driver for the condition-binned surface. Net-load is proxied by
+    the DAM-awarded dispatchable quantity summed over all kept thermal resources
+    per delivery hour (``awarded_qty`` is repeated across a resource-hour's curve
+    points, so each resource-hour is counted once) — the same self-contained,
+    forward-native proxy ``scripts/derive_ct_offer_surface.py`` uses (a load+VRE
+    forecast regenerates it). Ranked to a percentile ``q`` WITHIN each year, so the
+    bins track that year's own scarcity structure rather than an absolute MW line —
+    the identical construction the mechanism applies at solve time on the model's
+    own net-load.
+    """
+    raw = pd.read_parquet(
+        OFFERS,
+        columns=["delivery_date", "hour_ending", "resource_name", "awarded_qty"],
+    )
+    raw["year"] = raw["delivery_date"].dt.year
+    raw = raw[raw["year"].isin(YEARS)]
+    # One awarded value per resource-hour (drop the curve-point duplication), then
+    # sum to a per-hour system dispatchable quantity.
+    rh = raw.drop_duplicates(["delivery_date", "hour_ending", "resource_name"])
+    net = (
+        rh.groupby(["year", "delivery_date", "hour_ending"])["awarded_qty"]
+        .sum()
+        .rename("net_load")
+        .reset_index()
+    )
+    net["q"] = net.groupby("year")["net_load"].rank(pct=True)
+    return net[["delivery_date", "hour_ending", "q"]]
+
+
+def netload_bin_index(q: np.ndarray, edges: tuple[float, ...]) -> np.ndarray:
+    """Map net-load percentiles ``q`` onto bin indices ``0..len(edges)``.
+
+    ``edges`` are ascending percentile cut points; bin 0 is ``q < edges[0]``
+    (loosest), the last bin is ``q >= edges[-1]`` (tightest). The identical
+    partition the mechanism uses at solve time.
+    """
+    return np.searchsorted(
+        np.asarray(edges, dtype=float), np.asarray(q, dtype=float), side="right"
+    )
 
 
 def _wquantile(values: np.ndarray, weights: np.ndarray, q: float) -> float:
@@ -351,6 +409,107 @@ def derive_class(df_cls: pd.DataFrame, base_hr: float, body_cap: float) -> dict:
     }
 
 
+def _peak_ladder_from(
+    topf: pd.DataFrame, mean_fuel: float, base_hr: float, floor_mult: float
+) -> list[list[float]]:
+    """Equal-capacity quantile rungs of the per-resource top-of-curve multiplier.
+
+    ``topf`` carries one ``peak`` (max top-of-curve multiplier) and ``cap`` (HSL)
+    per resource. Returns ``[[share, mult], ...]`` at the capacity-weighted
+    :data:`PEAK_LADDER_QUANTILES`, each rung clamped FROM BELOW at ``floor_mult``
+    (the finding's below-median clamp — a plant's scarcity band never bids below
+    the class all-hours median, so the ladder is a pure upward widening) and from
+    above at the published HCAP offer cap. Empty when the bin has no resources.
+    """
+    tf = topf[np.isfinite(topf["peak"]) & (topf["cap"] > 0)]
+    if tf.empty or not (np.isfinite(mean_fuel) and mean_fuel > 0):
+        return []
+    v = tf["peak"].to_numpy(float)
+    w = tf["cap"].to_numpy(float)
+    cap_mult = HCAP_USD_MWH / (mean_fuel * base_hr)
+    share = round(1.0 / len(PEAK_LADDER_QUANTILES), 3)
+    return [
+        [share, round(min(max(_wquantile(v, w, q), floor_mult), cap_mult), 3)]
+        for q in PEAK_LADDER_QUANTILES
+    ]
+
+
+def derive_peak_binned(
+    df_cls: pd.DataFrame, base_hr: float, edges: tuple[float, ...], floor_mult: float
+) -> list[list[list[float]]]:
+    """Per-net-load-bin measured peak-band quantile ladders for one output group.
+
+    ``df_cls`` must carry the per-row ``fuel`` (delivered $/MMBtu) and ``q`` (system
+    net-load percentile) columns. For each of the ``len(edges)+1`` net-load bins,
+    the per-resource top-of-curve multiplier (mode-B: the max of ``curve_price /
+    (fuel x base_HR)`` over the resource's offer points whose delivery hour falls in
+    that bin) is reduced to equal-capacity quantile rungs (:func:`_peak_ladder_from`).
+    So the tightest bin carries the wall QSEs post when scarcity is anticipated, the
+    loose bins the competitive body — the measured condition response
+    (docs/FINDING-ercot-priceshape-2026-07.md §4). ``floor_mult`` clamps every rung
+    from below (the class all-hours peak median) so no bin lowers the stack.
+
+    Returns one ladder (``[[share, mult], ...]``) per bin, loosest first. A bin with
+    no resources yields ``[]`` — the mechanism treats an empty/loose bin as inert.
+    """
+    d = df_cls[(df_cls["hsl"] > df_cls["lsl"]) & (df_cls["curve_price"] > 0)].copy()
+    d["mult"] = d["curve_price"].to_numpy(float) / (d["fuel"].to_numpy(float) * base_hr)
+    d["cap"] = d["hsl"].astype(float)
+    d["bin"] = netload_bin_index(d["q"].to_numpy(float), edges)
+    ladders: list[list[list[float]]] = []
+    for b in range(len(edges) + 1):
+        db = d[d["bin"] == b]
+        # Per-resource top-of-curve within this tightness bin (incl. near-cap bids).
+        topf = (
+            db.groupby("resource_name")
+            .agg(peak=("mult", "max"), cap=("cap", "median"))
+            .reset_index()
+        )
+        mean_fuel = float(db["fuel"].mean()) if len(db) else float("nan")
+        ladders.append(_peak_ladder_from(topf, mean_fuel, base_hr, floor_mult))
+    return ladders
+
+
+def derive_econ_high_binned(
+    df_cls: pd.DataFrame,
+    base_hr: float,
+    edges: tuple[float, ...],
+    body_cap: float,
+    floor_mult: float,
+) -> list[float]:
+    """Per-net-load-bin measured econ_high (upper economic ramp) multiplier.
+
+    The finding's §6 evidence is decisive: repricing the thin peak band ALONE cannot
+    flip the missed mid-merit hours, whose marginal unit sits in the *economic* band
+    (LP dual ~$43-51, CC econ). So the condition surface must also lift the top of the
+    economic ramp — the ``econ_high`` tranche (curve position ``rel >= 0.67``) — to
+    its MEASURED tight-hour offer, which exhausts the phantom sub-$200 spare so the
+    price finds the next (peak-ladder) offer. Heterogeneity is preserved: ``econ_low``
+    is never touched, only the upper economic ramp. Capacity-weighted per-resource
+    median of the competitive-body (``curve_price < body_cap``) multiplier within each
+    tightness bin, clamped from below at the class all-hours econ_high median (so no
+    bin lowers the stack). ``nan`` for an empty bin (mechanism treats as inert).
+    """
+    e = df_cls[(df_cls["hsl"] > df_cls["lsl"]) & (df_cls["curve_price"] > 0)].copy()
+    e["mult"] = e["curve_price"].to_numpy(float) / (e["fuel"].to_numpy(float) * base_hr)
+    e["rel"] = ((e["curve_mw"] - e["lsl"]) / (e["hsl"] - e["lsl"])).clip(0.0, 1.0)
+    e["cap"] = e["hsl"].astype(float)
+    e["bin"] = netload_bin_index(e["q"].to_numpy(float), edges)
+    hi = e[(e["rel"] >= 0.67) & (e["curve_price"] < body_cap)]
+    out: list[float] = []
+    for b in range(len(edges) + 1):
+        hb = hi[hi["bin"] == b]
+        pr = (
+            hb.groupby("resource_name")
+            .agg(econ_high=("mult", "median"), cap=("cap", "median"))
+            .reset_index()
+        )
+        band = _capwt_band(pr, "econ_high")
+        v = band["p50"]
+        out.append(float(max(v, floor_mult)) if v == v else float("nan"))
+    return out
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(
         description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter
@@ -408,7 +567,22 @@ def main() -> None:
         "dispersion (the scarcity wall) instead of collapsing it to the p50 "
         "(docs/FINDING-ercot-priceshape-2026-07.md §4).",
     )
+    ap.add_argument(
+        "--condition-binned",
+        action="store_true",
+        help="emit the HETEROGENEITY-PRESERVING condition-responsive surface "
+        "(ERCOT G-22 §8 / ercot37 filed path): the measured peak-band quantile "
+        "ladder derived SEPARATELY within each net-load-percentile bin "
+        f"(edges {NETLOAD_PCT_EDGES}), so the model selects the tighter wall in "
+        "its own anticipated-tight hours. Writes "
+        "offer_curve_dam_hrmults_condbinned.json (its own artifact; the p50/ladder "
+        "files are untouched). Implies mode B; coal excluded (gas peak bands only).",
+    )
     args = ap.parse_args()
+
+    if args.condition_binned:
+        derive_condition_binned(NETLOAD_PCT_EDGES, args.out_json)
+        return
 
     fleet_hr = class_base_hr()
     df = load_offers()
@@ -530,6 +704,121 @@ def build_override_curve(
         if peak_ladder and peak_mode == "B" and r.get("peak_ladder"):
             curve[group]["peak_ladder"] = r["peak_ladder"]
     return curve
+
+
+# Gas peak bands the condition-responsive surface prices (rule 19: it supersedes
+# the static p50 peak on exactly these classes). Coal is take-or-pay sunk fuel with
+# its own dedicated sigmoid/floor calibration, and CT_CHP has no measured DAM class,
+# so both are excluded — the surface scopes to the gas energy stack, matching §3 of
+# the finding (the missed-tail spare is CC/CT/ST peak capacity).
+CONDBINNED_GROUPS: tuple[str, ...] = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "ST_GAS")
+
+
+def derive_condition_binned(edges: tuple[float, ...], out_json: str | None) -> None:
+    """Derive and write the condition-binned peak-offer surface (mode B, gas only).
+
+    For each gas peak-band group, the measured peak-band quantile ladder is derived
+    SEPARATELY within each net-load-percentile bin (:func:`derive_peak_binned`),
+    every rung clamped from below at the class all-hours peak median (so no bin
+    lowers the stack) and from above at HCAP. The JSON records the bin edges (the
+    mechanism asserts they match ``ScenarioConfig.ercot_offer_surface_netload_pcts``)
+    and, per group, ``peak_p50`` (the all-hours reference) plus ``binned_ladder``
+    (one ladder per bin, loosest first). Written to
+    ``offer_curve_dam_hrmults_condbinned.json`` by default.
+    """
+    fleet_hr = class_base_hr()
+    df = load_offers()
+    netq = netload_pct_by_hour()
+    df = df.merge(netq, on=["delivery_date", "hour_ending"], how="inner")
+    print(
+        f"Loaded {len(df):,} offer-point rows with net-load percentile, "
+        f"{df['delivery_date'].min().date()} -> {df['delivery_date'].max().date()} "
+        f"(years {YEARS}); edges {edges}\n"
+    )
+
+    payload: dict = {
+        "_provenance": {
+            "source": "ERCOT 60-Day DAM Disclosure Gen Resource Data, delivery "
+            "years 2023-2025 (ercot_dam_offers.parquet)",
+            "method": "mode-B per-resource top-of-curve heat-rate multiplier, "
+            "capacity-weighted quantiles, derived within net-load-percentile bins; "
+            "each rung clamped [class all-hours peak median, HCAP]",
+            "driver": "system net-load percentile within year (DAM dispatchable "
+            "awarded quantity), forward-native (load+VRE forecast regenerates it)",
+            "netload_pct_edges": list(edges),
+            "peak_ladder_quantiles": list(PEAK_LADDER_QUANTILES),
+            "hcap_usd_mwh": HCAP_USD_MWH,
+            "iso": "ERCOT",
+        }
+    }
+    for dam_cls, outputs in CLASS_TO_OUTPUT.items():
+        if dam_cls == "COAL":
+            continue
+        df_cls = df[df["model_class"] == dam_cls].copy()
+        df_cls["fuel"] = df_cls["gas"].astype(float)
+        for out_group, fleet_groups in outputs:
+            if out_group not in CONDBINNED_GROUPS:
+                continue
+            bhr = output_base_hr(fleet_hr, fleet_groups)
+            # All-hours peak median (mode B) — the below-clamp floor and the
+            # reference the mechanism divides by to recover the ratio-on-fleet-height.
+            topf_all = (
+                df_cls[(df_cls["hsl"] > df_cls["lsl"]) & (df_cls["curve_price"] > 0)]
+                .assign(
+                    mult=lambda x: (
+                        x["curve_price"].to_numpy(float)
+                        / (x["fuel"].to_numpy(float) * bhr)
+                    ),
+                    cap=lambda x: x["hsl"].astype(float),
+                )
+                .groupby("resource_name")
+                .agg(peak=("mult", "max"), cap=("cap", "median"))
+                .reset_index()
+            )
+            p50 = _capwt_band(topf_all.rename(columns={"peak": "pk"}), "pk")["p50"]
+            ladders = derive_peak_binned(df_cls, bhr, edges, floor_mult=p50)
+            # All-hours econ_high median — the below-clamp floor for the binned
+            # econ_high (so a loose bin never lowers the upper economic ramp).
+            eh_all = df_cls[
+                (df_cls["hsl"] > df_cls["lsl"]) & (df_cls["curve_price"] > 0)
+            ].copy()
+            eh_all["mult"] = eh_all["curve_price"].to_numpy(float) / (
+                eh_all["fuel"].to_numpy(float) * bhr
+            )
+            eh_all["rel"] = (
+                (eh_all["curve_mw"] - eh_all["lsl"]) / (eh_all["hsl"] - eh_all["lsl"])
+            ).clip(0.0, 1.0)
+            eh_all["cap"] = eh_all["hsl"].astype(float)
+            eh_hi = eh_all[(eh_all["rel"] >= 0.67) & (eh_all["curve_price"] < 1000.0)]
+            eh_pr = (
+                eh_hi.groupby("resource_name")
+                .agg(econ_high=("mult", "median"), cap=("cap", "median"))
+                .reset_index()
+            )
+            eh_p50 = _capwt_band(eh_pr, "econ_high")["p50"]
+            econ_high_binned = derive_econ_high_binned(
+                df_cls, bhr, edges, body_cap=1000.0, floor_mult=eh_p50
+            )
+            payload[out_group] = {
+                "base_hr": round(bhr, 3),
+                "peak_p50": round(float(p50), 3),
+                "econ_high_p50": round(float(eh_p50), 3),
+                "binned_ladder": ladders,
+                "binned_econ_high": [
+                    round(v, 3) if v == v else None for v in econ_high_binned
+                ],
+            }
+            top_by_bin = [round(lad[-1][1], 1) if lad else None for lad in ladders]
+            print(
+                f"  {out_group:11s} base_HR {bhr:5.2f}  peak_p50 {p50:6.2f}  "
+                f"econ_hi_p50 {eh_p50:5.2f}  eh/bin "
+                f"{[round(v, 2) if v == v else None for v in econ_high_binned]}  "
+                f"top-rung/bin {top_by_bin}"
+            )
+
+    out_path = Path(out_json) if out_json else OUT_JSON_CONDBINNED
+    out_path.write_text(json.dumps(payload, indent=1) + "\n")
+    print(f"\nWrote {out_path}  (groups {sorted(CONDBINNED_GROUPS)})")
 
 
 if __name__ == "__main__":
