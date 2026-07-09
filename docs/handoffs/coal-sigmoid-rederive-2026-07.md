@@ -141,6 +141,14 @@ S&P/Argus-paywalled (rule-23 granularity caveat, and the #1803 documented gap).
 Per rule 11 the accurate measured input is **kept**; the fix is the root cause
 (gas daily shape / seam imports / commitment), never an offer re-tune (rule 10).
 
+**Rule-20 zero-forcing ablation twin** (`2026-07-09-miso-50-coalsigmoid-ablation`,
+bundle `results/calibration/miso50_coalsigmoid-ablation`): the same recipe with
+ALL commitment/forcing floors OFF is **near-identical** to the main run —
+COAL_PRB +30.60→+30.65, COAL_BIT +13.88→+13.91, 2024 COAL_PRB +27.06→+27.22 TWh.
+This is decisive evidence that the coal over-run is **100% economic merit**, not
+floor-forcing (independently, C8 reads COAL 0.1–0.2% forced). The measured offer
+genuinely wins coal on merit; the model is not forcing it.
+
 The DOF ledger reflects the honest improvement: `COAL_SIGMOID_DEFAULTS[MISO]`
 moves from a `residual` DOF to `measured-physical` (n_residual 4→3), and the
 governance attestation carries `no_fit_to_price_residuals: true`.
