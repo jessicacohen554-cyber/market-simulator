@@ -2064,7 +2064,7 @@ class TestAllClassBalanceFamily(unittest.TestCase):
             plant_code=np.array([1]),
         )
 
-    def _solve(self, demand_mw, with_total, total_penalty=200.0):
+    def _solve(self, demand_mw, with_total, total_penalty=200.0, supply_cap=None):
         from market_sim.model.dispatch import solve_dispatch
 
         T = self._T
@@ -2099,6 +2099,9 @@ class TestAllClassBalanceFamily(unittest.TestCase):
             reserve_balance_class=np.array(classes),
             reserve_headroom_eligible=np.array([[True]]),
             reserve_headroom_products=np.array([[True, True]]),
+            reserve_supply_cap=(
+                np.full((1, T), float(supply_cap)) if supply_cap is not None else None
+            ),
         )
 
     def test_products_count_toward_total(self):
@@ -2128,3 +2131,37 @@ class TestAllClassBalanceFamily(unittest.TestCase):
         self.assertAlmostEqual(price_base, 7.0, places=3)  # energy MC only
         # marginal MW now trades off against the $200 total-reserve step
         self.assertAlmostEqual(price_tot, 207.0, places=2)
+
+    def test_cap_dual_zero_when_headroom_binds(self):
+        # Headroom-bound shortage (demand 700 -> headroom 300 < total req 400)
+        # with a SLACK supply cap (1000): the total-family balance dual is
+        # folded into the energy LMP (207 above), so the cap rows' dual — the
+        # UNINTERNALIZED reserve scarcity component the additive RTORPA
+        # construction may add post-solve — must be zero. Re-adding the
+        # balance dual here would double-price the hour.
+        res = self._solve(700.0, with_total=True, supply_cap=1000.0)
+        self.assertEqual(res.status, "Optimal")
+        cap_dual = np.asarray(res.reserve_supply_cap_dual)
+        self.assertEqual(cap_dual.shape, (1, self._T))
+        self.assertTrue(np.allclose(cap_dual, 0.0, atol=1e-6))
+        self.assertAlmostEqual(float(np.asarray(res.prices).mean()), 207.0, places=2)
+
+    def test_cap_dual_carries_step_when_cap_binds(self):
+        # Cap-bound shortage (demand 400 -> headroom 600, cap 300 < total req
+        # 400): reserve is short 100 at the $200 step, but the binding row is
+        # the system-wide SUM-R cap, which the energy balance cancels out of —
+        # the energy LMP stays at pure MC and the cap dual carries the FULL
+        # step price. This is the regime where the legacy additive
+        # construction (balance dual) and the cap-dual source agree.
+        res = self._solve(400.0, with_total=True, supply_cap=300.0)
+        self.assertEqual(res.status, "Optimal")
+        self.assertAlmostEqual(float(np.asarray(res.prices).mean()), 7.0, places=3)
+        cap_dual = np.asarray(res.reserve_supply_cap_dual)
+        self.assertTrue(np.allclose(cap_dual, 200.0, atol=1e-4))
+        # balance dual agrees (both constructions add the same $200 here)
+        rpf = np.asarray(res.reserve_price_by_family)
+        self.assertTrue(np.allclose(rpf[:, -1], 200.0, atol=1e-4))
+
+    def test_no_cap_leaves_dual_none(self):
+        res = self._solve(700.0, with_total=True)
+        self.assertIsNone(res.reserve_supply_cap_dual)
