@@ -7,6 +7,7 @@ HSL coverage beyond the 2023 UMass dataset.
 
 import sys
 from pathlib import Path
+from unittest import mock
 
 import numpy as np
 import pandas as pd
@@ -290,11 +291,31 @@ def test_to_model_clock_drops_leap_day_and_fills_dst_gap():
     rows.loc[feb29.nonzero()[0], "gen_mw"] = 1.0e9
     rows = rows[rows["ts"] != pd.Timestamp("2024-03-10 02:00")]
 
-    out = hsl_script._to_model_clock(rows, 2024)
+    # 2024 carries a cited known-bad window, which is filled from the
+    # measured EIA-930 series (patched here so the unit test stays
+    # self-contained); inside the window HSL = GEN by construction.
+    with mock.patch.object(
+        hsl_script,
+        "load_eia_hourly_renewable_gen",
+        return_value={"wind": np.full(HOURS_PER_YEAR, 100.0)},
+    ):
+        out = hsl_script._to_model_clock(rows, 2024, "wind")
     assert len(out) == HOURS_PER_YEAR
     assert not out["gen_mw"].isna().any()
     assert out["gen_mw"].max() == 100.0  # Feb 29 sentinel gone, gap filled
-    np.testing.assert_allclose(out["hsl_mw"], 150.0)
+    known_bad = hsl_script._known_bad_mask(
+        pd.MultiIndex.from_arrays(
+            [
+                pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h").month,
+                pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h").day,
+                pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h").hour,
+            ],
+            names=["month", "day", "hour"],
+        ),
+        2024,
+    )
+    np.testing.assert_allclose(out["hsl_mw"][~known_bad], 150.0)
+    np.testing.assert_allclose(out["hsl_mw"][known_bad], 100.0)  # HSL = GEN fill
 
 
 def test_to_model_clock_rejects_incomplete_upload():
@@ -302,17 +323,20 @@ def test_to_model_clock_rejects_incomplete_upload():
     ts = pd.date_range("2024-01-01", periods=4000, freq="h")
     rows = pd.DataFrame({"ts": ts, "gen_mw": 1.0, "hsl_mw": 2.0})
     with pytest.raises(ValueError, match="incomplete"):
-        hsl_script._to_model_clock(rows, 2024)
+        hsl_script._to_model_clock(rows, 2024, "wind")
 
 
-def test_to_model_clock_excludes_cited_known_bad_window():
-    """The cited 2024-08-20..23 ERCOT telemetry defect is nulled+interpolated.
+def test_to_model_clock_fills_cited_known_bad_window_from_eia930():
+    """The cited 2024-08-20..23 ERCOT telemetry defect is filled from EIA-930.
 
     Even though it carries valid-looking values, the window is a cited
     known-bad ERCOT source defect (``_KNOWN_BAD_NP6_WINDOWS``): it must be
-    excluded and interpolated, not ingested as measured, and doing so must
-    not trip the >24h incomplete-upload guard (the general guard stays
-    exactly as strict for anything outside the cited window).
+    excluded and replaced with the measured EIA-930 hourly series (HSL =
+    GEN inside the window — no fabricated curtailment headroom), NOT
+    linearly interpolated (a night-bounded multi-day hole interpolates
+    solar to identically zero), and doing so must not trip the >24h
+    incomplete-upload guard (the general guard stays exactly as strict for
+    anything outside the cited window).
     """
     ts = pd.date_range("2024-01-01", "2024-12-31 23:00", freq="h")
     assert len(ts) == 8784  # leap year
@@ -322,13 +346,39 @@ def test_to_model_clock_excludes_cited_known_bad_window():
     rows.loc[bad, "gen_mw"] = 310_736.69
     rows.loc[bad, "hsl_mw"] = 302_119.3
 
-    out = hsl_script._to_model_clock(rows, 2024)
+    eia = {"solar": np.full(HOURS_PER_YEAR, 77.0)}
+    with mock.patch.object(
+        hsl_script, "load_eia_hourly_renewable_gen", return_value=eia
+    ):
+        out = hsl_script._to_model_clock(rows, 2024, "solar")
     assert len(out) == HOURS_PER_YEAR
     assert not out["gen_mw"].isna().any()
-    # The spike is gone; interpolation restores the surrounding level.
+    # The spike is gone; the window carries the measured EIA-930 fill.
     assert out["gen_mw"].max() < 200.0
-    np.testing.assert_allclose(out["gen_mw"], 100.0)
-    np.testing.assert_allclose(out["hsl_mw"], 150.0)
+    calendar = pd.date_range("2023-01-01", periods=HOURS_PER_YEAR, freq="h")
+    known_bad = hsl_script._known_bad_mask(
+        pd.MultiIndex.from_arrays(
+            [calendar.month, calendar.day, calendar.hour],
+            names=["month", "day", "hour"],
+        ),
+        2024,
+    )
+    np.testing.assert_allclose(out["gen_mw"][known_bad], 77.0)
+    np.testing.assert_allclose(out["hsl_mw"][known_bad], 77.0)  # HSL = GEN
+    np.testing.assert_allclose(out["gen_mw"][~known_bad], 100.0)
+    np.testing.assert_allclose(out["hsl_mw"][~known_bad], 150.0)
+
+
+def test_to_model_clock_known_bad_fill_requires_eia930():
+    """A cited known-bad window with no EIA-930 series to fill it raises —
+    the corrupt source hours are never silently interpolated or ingested."""
+    ts = pd.date_range("2024-01-01", "2024-12-31 23:00", freq="h")
+    rows = pd.DataFrame({"ts": ts, "gen_mw": 100.0, "hsl_mw": 150.0})
+    with mock.patch.object(
+        hsl_script, "load_eia_hourly_renewable_gen", return_value=None
+    ):
+        with pytest.raises(ValueError, match="EIA-930"):
+            hsl_script._to_model_clock(rows, 2024, "solar")
 
 
 def test_to_model_clock_known_bad_window_does_not_mask_other_gaps():
@@ -338,7 +388,7 @@ def test_to_model_clock_known_bad_window_does_not_mask_other_gaps():
     ts = pd.date_range("2024-01-01", periods=4000, freq="h")
     rows = pd.DataFrame({"ts": ts, "gen_mw": 1.0, "hsl_mw": 2.0})
     with pytest.raises(ValueError, match="incomplete"):
-        hsl_script._to_model_clock(rows, 2024)
+        hsl_script._to_model_clock(rows, 2024, "wind")
 
 
 def test_aggregate_np6_hourly_end_to_end(tmp_path, monkeypatch):
