@@ -64,6 +64,21 @@ jobs:
       - name: Fast pytest tier (not slow, not integration)
         run: uv run python -m pytest tests/ -m "not slow and not integration" --strict-markers -q
 
+  registry-payload-parity:
+    name: Dashboard registry/payload parity
+    runs-on: ubuntu-latest
+    # Stdlib-only, no model deps — catches a sidecar-only run registration
+    # (registry/<id>.json committed without its runs/<id>.js payload), which
+    # scripts/build_manifest.py otherwise skips silently and the run never
+    # renders in the Run Explorer with no visible error anywhere (2026-07
+    # NYISO/PJM/CAISO loading-issue investigation). Also catches dangling
+    # ablation_twin/ablation_of cross-references.
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: check_registry_payload_parity
+        run: python3 scripts/check_registry_payload_parity.py
+
   quarantine-gates:
     name: Rule-22 quarantine gates
     runs-on: ubuntu-latest
