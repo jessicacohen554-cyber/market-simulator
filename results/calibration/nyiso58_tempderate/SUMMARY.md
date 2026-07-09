@@ -38,10 +38,45 @@ into overshoot.
   probe's raw FAIL label is an artifact of no governance attestation/ledger
   on an unattested probe bundle, not a magnitude regression.
 
-Recommendation: HOLD for investigation, not immediate promotion or rejection.
-The mechanism is physically grounded (CLAUDE.md rule 1) and the C8/C3a
-2024-2025 deltas are genuine improvements, but the broad-based 2023
-degradation (C3a, C3b, C3c) suggests an interaction with an existing NYISO
-capacity-tightening mechanism (import caps / reliability floor) calibrated
-against the flat net-summer derate — worth isolating before considering
-promotion.
+## Root cause of the 2023 regression (investigated 2026-07-09)
+
+Isolated the 2023 C3a/C3c regression. It is **downstate locational
+reserve-scarcity over-firing**, NOT load-shed and NOT a transmission bottleneck:
+
+- The spurious >$300 hours (e.g. Aug 14 & Aug 21 2023, when the real RT LBMP
+  was only $45–65) clear at $2000 driven by **`reserve_price` $909–$1336**, not
+  by unserved energy. Annual model load-shed is ~830 MWh (5 thin-margin
+  instances); the keeper (flat derate) sheds **zero** MWh yet still posts 15
+  false >$300 hours — so the tail is a reserve-co-opt price artifact in both.
+- In the false-VOLL hours **no transmission link binds**; Central-East is at its
+  month-specific *measured* DAM-posting limit but downstate imports and the
+  Lower_Hudson→NYC interface sit below their caps. The pocket is short on
+  reserve-eligible **headroom**, not energy transfer capacity.
+- Mechanism: temp-derate (an accurate physical input, rule 11) trims the
+  downstate CT/peaker fleet's available capacity on warm-but-not-extreme
+  afternoons (30–31 °C, well below the 34 °C summer peak). That fleet supplies
+  the East 10-min (1,200 MW / $775 RCPF) and SENY 30-min (1,300 MW / $500 RCPF)
+  reserve families. With less peaker headroom the requirement shorts and the
+  **correctly SOM-sourced** RCPF penalties fire and stack ($775+$500 ≈ the
+  ~$1,300 reserve prices observed), lifting every downstate zone's LBMP.
+
+**This is a PRE-EXISTING weakness the keeper shares** (keeper: 15 false >$300
+hours in 2023 on the same non-event days; temp-derate deepens it to 39). The
+reserve requirements and penalties are already primary-source (NYISO SOM)
+grounded — they are not the bug and must not be tuned down (that would be a
+residual-fit, rules 1/24). The genuine physical suspect is that the temp-derate
+CT slope (0.0126/°C, a *frame*-GT literature value) over-derates NYC's largely
+**aeroderivative** peaker fleet, which is less temperature-sensitive — but
+resolving that is a mechanism-level refinement (per-turbine-technology derate,
+needs EIA-860 turbine-model data + cross-ISO validation), not a promotion-time
+knob. The condition-varying downstate reserve requirement (#1344 Ask-B) that
+would also discipline this remains **data-blocked** per the keeper attestation.
+
+Recommendation: **DO NOT PROMOTE.** Per rules 1 & 11 the temp-derate mechanism
+stays available (it is directionally correct and improves 2024/25 C3a/C8), but
+promoting nyiso-58 now would enshrine a load-bearing C3a/C3c regression whose
+root cause is an unresolved (partly data-blocked) downstate reserve-adequacy
+interaction. nyiso-58 becomes a legitimate keeper candidate only after the
+aero-vs-frame CT-derate refinement and/or the #1344 dynamic reserve requirement
+land — both of which improve the keeper baseline too. Keeper stays
+`2026-07-07-nyiso-56-measured-zonal`.
