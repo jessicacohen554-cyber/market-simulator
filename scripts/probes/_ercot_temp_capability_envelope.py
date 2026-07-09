@@ -118,6 +118,53 @@ def main(years: list[int]) -> None:
             ref_m = 1.0 - slope * (29.0 - 15.0)
             row = " | ".join(f"{(1 - slope * (m - 15)) / ref_m:.3f}" for m in mids)
             print(f"   model {grp:11s} (slope {slope}): " + row)
+        _rating_lower_bound(summer, year)
+
+
+def _rating_lower_bound(summer: pd.DataFrame, year: int) -> None:
+    """Assumption-free lower-bound test: hot-hour PRODUCTION vs the rating.
+
+    The envelope above assumes units reach capability in the benign reference
+    bin; this test does not. Production can never exceed capability, so a
+    plant that PRODUCES >= x% of its EIA-860 net-summer rating while zone
+    TMAX >= 40 degC has demonstrated that capability at that temperature —
+    whatever its mild-hour dispatch did. The temp derate assumes only
+    ~0.90-0.95x of net-summer is available there (raw curve 0.77-0.90), so
+    capacity demonstrating >= 0.95x (half the CC fleet demonstrates >= 1.00x)
+    directly falsifies the cut. Gross-vs-net blurs the ratio upward by the
+    ~2-5 % station load; the >= 1.00x share is robust even to that.
+    """
+    g860 = pd.read_parquet(
+        REPO / "data" / "raw" / "eia-860" / "eia860_generator_operable.parquet"
+    )
+    g860["sc"] = pd.to_numeric(g860["Summer Capacity (MW)"], errors="coerce")
+    g860["pc"] = pd.to_numeric(g860["Plant Code"], errors="coerce")
+    ns = g860.groupby("pc")["sc"].sum().rename("net_summer")
+    ph = summer.groupby(["facilityId", "Plant_Group", "hoy"], as_index=False).agg(
+        gross=("grossLoad", "sum"), T=("T", "first")
+    )
+    ph = ph.merge(ns.reset_index(), left_on="facilityId", right_on="pc", how="inner")
+    ph = ph[ph["net_summer"] >= 20.0]
+    hot = ph[ph["T"] >= 40.0].copy()
+    hot["r"] = hot["gross"] / hot["net_summer"]
+    print(
+        f"   -- {year} lower-bound test: production at TMAX>=40C vs net-summer rating --"
+    )
+    for grp in GROUPS:
+        pm = (
+            hot[hot["Plant_Group"] == grp]
+            .groupby("facilityId")
+            .agg(maxr=("r", "max"), ns=("net_summer", "first"))
+        )
+        if not len(pm):
+            continue
+        w95 = float(pm.loc[pm["maxr"] >= 0.95, "ns"].sum() / pm["ns"].sum())
+        w100 = float(pm.loc[pm["maxr"] >= 1.00, "ns"].sum() / pm["ns"].sum())
+        print(
+            f"   {grp:11s}: plants={len(pm):3d} median max-output/rating "
+            f"{pm['maxr'].median():.3f} | capacity proven >=0.95x: {w95:.0%} "
+            f">=1.00x: {w100:.0%}"
+        )
 
 
 if __name__ == "__main__":
