@@ -1054,7 +1054,22 @@ def backcast_config(
         # level: physics-input correctness (the merit order sees the real
         # day-to-day gas swing), mean-preserving so the annual mix is
         # unchanged. On wherever the monthly-actuals level is.
-        gas_daily_shape=(iso.upper() in ("CAISO", "NYISO", "NEISO")),
+        #   MISO added 2026-07-09 (miso-51): the miso-50 coal-sigmoid
+        #   re-derive isolated the MISO coal-for-gas over-substitution root
+        #   cause as gas-side DAILY granularity — on a flat plant-month gas
+        #   price, dear-gas years (2025, $3.52) hand every hour of a month to
+        #   cheap PRB/BIT coal, while the real market flips to gas on the
+        #   intra-month trough days (docs/handoffs/coal-sigmoid-rederive-
+        #   2026-07.md). The daily HH swing rides mean-preserving on top of
+        #   the per-plant EIA-923 monthly level (apply_plant_monthly_fuel_
+        #   prices re-carries it onto overwritten gas plant-months), so the
+        #   measured monthly delivered level — and the annual mix — is
+        #   unchanged; only the flip days the sigmoid-priced coal competes
+        #   against are resolved. The daily basin spot that would refine the
+        #   basis leg (Chicago Citygate) is S&P/Argus-paywalled; HH daily is
+        #   the free measured commodity swing (see gas_daily_shape_factors —
+        #   forward-reproducible, not backcast-only).
+        gas_daily_shape=(iso.upper() in ("CAISO", "NYISO", "NEISO", "MISO")),
         #   Default-on: the +1.20 SoCal basis seed misses the measured
         #   delivered-gas reality badly in stressed years (EIA-923 implied
         #   basis +7.06 in 2023 — Jan-23 delivered $38.7/MMBtu — +2.26 in
