@@ -12,10 +12,10 @@ Three modes, one per ISO with a per-zone load upload:
     Reads the CAISO TAC-area actual hourly load (upload U4: OASIS ``SLD_FCST``
     with ``market_run_id=ACTUAL``) under
     ``data/raw/zone-specific-demand/CAISO/`` and maps the TAC areas
-    onto the model's three trading-hub zones (PGE-TAC split between NP15 and
-    ZP26, SCE + SDG&E + VEA to SP15) via the same
-    ``eia_loader._CAISO_TAC_ZONE_WEIGHTS`` mapping the hourly-shape loader
-    uses.
+    onto the model's five trading-hub zones (PGE-TAC split between NP15 and
+    ZP26; SCE-TAC split between LA_BASIN and SP15_rest; SDGE-TAC to SDGE;
+    VEA-TAC to SP15_rest) via the same ``eia_loader._CAISO_TAC_ZONE_WEIGHTS``
+    mapping the hourly-shape loader uses.
 
 ``nyiso``
     Reads the NYISO OASIS "pal" actual-load CSVs (upload U3:
@@ -87,7 +87,7 @@ WZ_TO_ZONE = {
 }
 ZONES = ["West", "Panhandle", "North", "Northeast", "Houston", "South_Central", "South"]
 
-CAISO_ZONES = ["NP15", "ZP26", "SP15"]
+CAISO_ZONES = ["NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest"]
 
 NYISO_ZONES = ["Upstate_West", "Capital_Hudson", "Lower_Hudson", "NYC", "Long_Island"]
 
@@ -192,7 +192,8 @@ def derive_caiso() -> None:
         print(f"  {t:10s} {avg[t]:.4f}")
 
     # TAC -> model zone via the same weights the hourly-shape loader uses
-    # (PGE-TAC split 0.86/0.14 between NP15/ZP26, rest to SP15).
+    # (PGE-TAC split 0.86/0.14 between NP15/ZP26; SCE-TAC split 0.835/0.165
+    # between LA_BASIN/SP15_rest; SDGE-TAC to SDGE; VEA-TAC to SP15_rest).
     zshare = {z: 0.0 for z in CAISO_ZONES}
     for t in tacs:
         for zone, weight in _CAISO_TAC_ZONE_WEIGHTS[t].items():
