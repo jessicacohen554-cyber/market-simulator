@@ -85,6 +85,7 @@ from market_sim.config.paths import (  # noqa: E402
     CALIBRATION_DIR,
     ERCOT_HSL_DIR,
 )
+from market_sim.data.eia_loader import load_eia_hourly_renewable_gen  # noqa: E402
 
 # Output HSL parquets and the NP6 upload drop zone resolve through
 # config/paths.py (the single raw root under data/raw/ after the W1
@@ -457,7 +458,7 @@ def _parse_report(name: str, df: pd.DataFrame) -> pd.DataFrame:
     return out.dropna(subset=["ts", "gen_mw", "hsl_mw"])
 
 
-def _to_model_clock(rows: pd.DataFrame, year: int) -> pd.DataFrame:
+def _to_model_clock(rows: pd.DataFrame, year: int, fuel: str) -> pd.DataFrame:
     """Place ``(ts, gen_mw, hsl_mw)`` rows on the non-leap 8760-hour clock.
 
     Rows are filtered to ``year`` with Feb 29 dropped, then averaged by
@@ -465,9 +466,17 @@ def _to_model_clock(rows: pd.DataFrame, year: int) -> pd.DataFrame:
     overlapping rolling-window postings (timestamps are already on the CST
     clock, so DST needs no handling here) — and reindexed onto the fixed
     non-leap hourly calendar. Any cited known-bad ERCOT source window
-    (``_KNOWN_BAD_NP6_WINDOWS``) is then nulled out. Remaining holes
-    (scattered telemetry gaps and the cited known-bad windows) are linearly
-    interpolated.
+    (``_KNOWN_BAD_NP6_WINDOWS``) is then nulled out and refilled from the
+    measured EIA-930 hourly delivered series (``gen`` and ``hsl`` both — a
+    no-curtailment assumption for those hours, since the corrupt NP6 window
+    carries no usable curtailment signal; EIA-930 is already this builder's
+    delivered-total cross-check source). Linear interpolation is only valid
+    for the scattered sub-day telemetry gaps it was written for — across a
+    multi-day window it destroys the diurnal cycle outright (a night-bounded
+    hole interpolates SOLAR to identically zero: the 2024-08-20..23 window
+    shipped ~810 GWh of missing August solar and 17 phantom scarcity-tail
+    hours before this fill existed). Remaining small holes are linearly
+    interpolated as before.
 
     Raises:
         ValueError: when more than ``_MAX_GAP_HOURS`` hours are missing and
@@ -490,6 +499,20 @@ def _to_model_clock(rows: pd.DataFrame, year: int) -> pd.DataFrame:
 
     known_bad = _known_bad_mask(full_index, year)
     aligned.loc[known_bad, ["gen_mw", "hsl_mw"]] = np.nan
+
+    if known_bad.any():
+        eia = load_eia_hourly_renewable_gen("ERCOT", year)
+        if eia is None or fuel not in eia:
+            raise ValueError(
+                f"{year}: cited known-bad NP6 window needs the EIA-930 "
+                f"ERCO hourly {fuel} series to fill it, and none is available"
+            )
+        fill = np.asarray(eia[fuel], dtype=float)[known_bad]
+        aligned.loc[known_bad, "gen_mw"] = fill
+        # No usable curtailment signal inside the corrupt source window:
+        # carry the measured delivered MW as the potential too (HSL = GEN,
+        # zero curtailment) rather than fabricating headroom.
+        aligned.loc[known_bad, "hsl_mw"] = fill
 
     missing = aligned["gen_mw"].isna().to_numpy()
     unexplained = int((missing & ~known_bad).sum())
@@ -552,7 +575,7 @@ def aggregate_np6_hourly(year: int) -> pd.DataFrame | None:
 
     fuels: dict[str, dict[str, np.ndarray]] = {}
     for fuel, frames in per_fuel.items():
-        hourly = _to_model_clock(pd.concat(frames, ignore_index=True), year)
+        hourly = _to_model_clock(pd.concat(frames, ignore_index=True), year, fuel)
         gen = np.clip(hourly["gen_mw"].to_numpy(dtype=float), 0.0, None)
         hsl = np.maximum(hourly["hsl_mw"].to_numpy(dtype=float), gen)
         fuels[fuel] = {"gen": gen, "hsl": hsl}
