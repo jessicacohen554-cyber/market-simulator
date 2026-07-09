@@ -32,8 +32,7 @@ data/raw/ercot-hsl/np6/README.md for the data-needed marker — see
 :data:`_UNCURTAILED_FALLBACK_ISOS`), the dispatch is instead
 handed a **forecast uncurtailed CF**: the EIA-930 weather-year delivered
 profile (its real level and shape) grossed up by the per-tech *reference
-curtailment rate* from the ISO's most recent HSL year, so the potential is
-always >= delivered with headroom equal to that rate (see
+curtailment rate* from the ISO's most recent HSL year (see
 :func:`_forecast_uncurtailed_cf`) — *not* the delivered net-of-curtailment
 series consumed as the upper bound. The LP then curtails endogenously and the
 modeled-vs-reported curtailment gap is a diagnostic, never a fit target
@@ -169,7 +168,9 @@ RENEWABLE_ZONE_ALLOCATION: dict[str, dict[str, str]] = {
     "ERCOT": {"wind": "West", "solar": "West", "offshore_wind": "Houston"},
     "CAISO": {
         "wind": "ZP26",
-        "solar": "SP15",
+        # Fallback only — the primary path sites solar by plant coordinates;
+        # SP15 was split into LA_BASIN/SDGE/SP15_rest (2026-07-09).
+        "solar": "SP15_rest",
         "offshore_wind": "NP15",
     },
     # Eastern-ISO siting zones: Tier 3, the zone holding the bulk of each
