@@ -166,6 +166,16 @@ keeps its `runNN` scheme.
            frontend/data/backcast/bench
    git commit -m "results: <label> — <one-line what changed>"
    ```
+   **Never push the sidecar without its `runs/<id>.js` payload in the same
+   push** — even for a rejected/non-keeper probe, even to keep an API push
+   call small. `build_manifest.py` skips a sidecar with no matching payload
+   silently (no error, no warning surfaced anywhere), so a sidecar-only
+   registration is a run that's on record but permanently invisible in the
+   Run Explorer. This already happened to five probes (nyiso-54, nyiso-58,
+   pjm-84, pjm-85, caiso-66) and is now a CI gate
+   (`scripts/check_registry_payload_parity.py`, wired into `ci.yml`) — a PR
+   that adds a sidecar without its payload fails CI. Run it locally before
+   pushing if you're unsure: `python scripts/check_registry_payload_parity.py`.
    Merging to main auto-deploys (single Pages workflow, <1 min). Report the
    headline **led by the calibration determination** (CALIBRATED /
    CALIBRATED-WITH-CAVEATS / NOT-YET and, when not CALIBRATED, the deciding
