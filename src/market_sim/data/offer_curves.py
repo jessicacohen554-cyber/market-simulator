@@ -24,6 +24,18 @@ from market_sim.config.scenarios import ScenarioConfig
 if TYPE_CHECKING:
     import pandas as pd
 
+# Gas peak-band classes the ERCOT condition-responsive offer surface prices
+# (ScenarioConfig.ercot_offer_surface_conditional). Must match the groups the
+# measured surface is derived over (scripts.derive_dam_offer_hrmults
+# CONDBINNED_GROUPS). Coal (take-or-pay, own sigmoid) and CT_CHP (no measured DAM
+# class) are excluded — the surface scopes to the gas energy stack (finding §3).
+CONDITIONAL_SURFACE_GROUPS: tuple[str, ...] = (
+    "CC_REGULAR",
+    "CC_CHP",
+    "CT_PEAKER",
+    "ST_GAS",
+)
+
 
 def _hr_override(value: float | None, default: float) -> float:
     """Return the configured heat-rate-override multiplier, or its named default.
