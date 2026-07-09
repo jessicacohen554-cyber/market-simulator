@@ -22,8 +22,6 @@ HEAT_RATE_BINS: dict[str, dict[str, float]] = {
         "subcritical": 10.0,  # EIA Table 8 — subcritical steam units
         "older": 10.8,  # EIA Table 8 — legacy subcritical steam units
     },
-    # Oil and biomass classify into a single "default" bin (the EIA-source
-    # classifier carries no vintage sub-bins for them, see fleet._efficiency_bin).
     "oil": {
         "default": 13.5,  # EIA Table 8 — petroleum-fired GT/steam (oil peaker)
     },
@@ -31,3 +29,4 @@ HEAT_RATE_BINS: dict[str, dict[str, float]] = {
         "default": 13.5,  # EIA Table 8 — wood/biomass steam (low-efficiency)
     },
 }
+PUSH_INCOMPLETE_TEST_MARKER = True
