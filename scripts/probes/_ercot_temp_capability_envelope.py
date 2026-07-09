@@ -21,6 +21,15 @@ consumes):
   output hours. A real hot-hour capability cut would cluster the maxima at
   moderate temperatures; the ERCOT fleet instead hits its summer maxima ON
   hot hours.
+* **Scarcity-hour slope** (``_scarcity_hour_slope``, the owner-suggested
+  max-incentive derivation): restrict to hours with actual RT > $200 — where
+  every available unit is priced to run at true capability, removing the
+  not-called-to-max / AS-withholding confound entirely — and fit the p90 of
+  online plants' output/rating against zone TMAX above 34 degC. Measured
+  slopes (2023+2024 pooled): CC_REGULAR −0.27 %/degC, CT_PEAKER −0.04,
+  ST_GAS −0.31, CC_CHP −1.41 — all ≈ zero or negative across 30-46 degC
+  (online CT p90 is 1.00-1.02x rating in EVERY bin), vs the model's
+  +0.76/+1.26/+0.54.
 
 Result (2023 + 2024, TX fleet, 108 CC / 88 CT / 40 ST units): the envelope is
 FLAT — CC 0.99-1.01 and CT 0.98-1.09 of reference at 40-46 degC (global-ref:
@@ -167,5 +176,69 @@ def _rating_lower_bound(summer: pd.DataFrame, year: int) -> None:
         )
 
 
+def _scarcity_hour_slope(years: list[int]) -> None:
+    """Derive the capability-vs-TMAX slope from scarcity hours only.
+
+    Max-incentive derivation (owner-suggested): in hours with actual RT LMP
+    > $200 every available unit is priced to run at true capability, so the
+    output-vs-temperature relation of ONLINE plants (producing > 30 % of
+    rating — offline plants are the outage model's domain, not a temperature
+    effect) measures the capability slope with no at-max assumption. The p90
+    of ``plant gross / EIA-860 net-summer`` per TMAX bin is fit linearly
+    above 34 degC; the fitted slope is directly comparable to the
+    ``temp_derate_slope_*`` parameters. Scarcity hours span ~30-46 degC
+    across 2023+2024 (June/Sept evenings, May-2024, August peaks) — exactly
+    the range where the derate binds.
+    """
+    from market_sim.config.paths import CALIBRATION_DIR
+
+    g860 = pd.read_parquet(
+        REPO / "data" / "raw" / "eia-860" / "eia860_generator_operable.parquet"
+    )
+    g860["sc"] = pd.to_numeric(g860["Summer Capacity (MW)"], errors="coerce")
+    g860["pc"] = pd.to_numeric(g860["Plant Code"], errors="coerce")
+    ns = g860.groupby("pc")["sc"].sum().rename("net_summer")
+    lmp = pd.read_parquet(CALIBRATION_DIR / "actual_lmp_hourly_ERCOT.parquet")
+    frames = []
+    for year in years:
+        s = _summer_frame(year)
+        ph = s.groupby(["facilityId", "Plant_Group", "hoy"], as_index=False).agg(
+            gross=("grossLoad", "sum"), T=("T", "first")
+        )
+        a = lmp[lmp["year"] == year].set_index("hour")
+        rt = np.full(8784, np.nan)
+        rt[a.index.to_numpy()] = a["rt"].to_numpy(float)
+        ph["rt"] = rt[np.clip(ph["hoy"].to_numpy(), 0, 8783)]
+        frames.append(ph)
+    ph = pd.concat(frames).merge(
+        ns.reset_index(), left_on="facilityId", right_on="pc", how="inner"
+    )
+    ph = ph[(ph["net_summer"] >= 20.0) & (ph["rt"] > 200.0)]
+    ph["r"] = ph["gross"] / ph["net_summer"]
+    on = ph[ph["r"] > 0.30]
+    tb = [(30, 34), (34, 36), (36, 38), (38, 40), (40, 42), (42, 46)]
+    print(f"   -- scarcity-hour (RT>$200) capability slope, years {years} --")
+    for grp in GROUPS:
+        gg = on[on["Plant_Group"] == grp]
+        pts = []
+        for lo, hi in tb:
+            s = gg[(gg["T"] >= lo) & (gg["T"] < hi)]
+            if len(s) >= 60:
+                pts.append(((lo + hi) / 2, float(s["r"].quantile(0.90))))
+        fit = [(m, p) for m, p in pts if m >= 34]
+        if len(fit) >= 3:
+            x = np.array([p[0] for p in fit])
+            y = np.array([p[1] for p in fit])
+            slope = -float(np.polyfit(x, y, 1)[0])
+            model = MODEL_SLOPES.get(grp, float("nan"))
+            print(
+                f"   {grp:11s}: measured slope {slope * 100:+.2f} %/degC "
+                f"(model {model * 100:+.2f}) | p90 by bin: "
+                + " ".join(f"{m:.0f}C={p:.3f}" for m, p in pts)
+            )
+
+
 if __name__ == "__main__":
-    main([int(y) for y in sys.argv[1:]] or [2023, 2024])
+    _years = [int(y) for y in sys.argv[1:]] or [2023, 2024]
+    main(_years)
+    _scarcity_hour_slope(_years)
