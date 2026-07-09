@@ -330,6 +330,49 @@ class TestRunnerEndToEndFor2024(unittest.TestCase):
         self.assertTrue((gas_means > 0).all())
         self.assertGreater(gas_means.std(), 0.05)
 
+    def test_daily_shape_survives_gas_plant_monthly_overwrite(self):
+        """gas_daily_shape rides on top of the F923 gas plant-month level.
+
+        The flat monthly overwrite used to erase the daily Henry Hub swing
+        for every F923-covered gas plant; the overwrite now re-carries the
+        mean-preserving factors, so a covered plant-month keeps its measured
+        monthly MEAN while gaining within-month daily variance.
+        """
+        from market_sim.data.fuel import _month_index
+
+        flat = ScenarioConfig(
+            iso="ERCOT", hours=8760, gas_plant_monthly_fuel_pricing=True
+        )
+        shaped = ScenarioConfig(
+            iso="ERCOT",
+            hours=8760,
+            gas_plant_monthly_fuel_pricing=True,
+            gas_daily_shape=True,
+        )
+        bins = load_campd_bins(BINS_CSV)
+        _, arrays = bins_to_fleet(bins, ZONE_NAMES, flat)
+        p_flat = resolve_fuel_prices(flat, arrays, year=2024)
+        p_shaped = resolve_fuel_prices(shaped, arrays, year=2024)
+        gas_rows = np.flatnonzero(
+            np.isin(
+                arrays.fuel_type_idx,
+                [FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]],
+            )
+        )
+        month = _month_index(8760)
+        g = int(gas_rows[0])
+        for m in range(12):
+            mask = month == m
+            # Monthly mean preserved to the factor-normalization tolerance…
+            self.assertAlmostEqual(
+                float(p_shaped[g, mask].mean()),
+                float(p_flat[g, mask].mean()),
+                delta=0.03 * float(p_flat[g, mask].mean()),
+            )
+        # …while the shaped series gains within-month daily variance the
+        # flat overwrite had erased.
+        self.assertGreater(float(p_shaped[g].std()), float(p_flat[g].std()))
+
 
 class PrbPassthroughSigmoidTest(unittest.TestCase):
     """The gas-keyed PRB passthrough sigmoid and its on/off toggle."""
