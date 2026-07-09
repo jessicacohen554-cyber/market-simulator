@@ -3037,6 +3037,17 @@ class DispatchResult:
     # (T, n_families) per-family balance-row dual — the per-product AS clearing
     # price for ERCOT's multi-product co-opt; the per-hour max is the binding MCPC.
     reserve_price_by_family: np.ndarray | None = None
+    # (n_headroom_rows, T) dual of the reserve-supply cap rows (ERCOT RTOLCAP
+    # re-scope), sign-flipped to >= 0. This is the UNINTERNALIZED part of the
+    # reserve scarcity price: when the cap row is the binding reserve
+    # constraint the balance dual does NOT pass into the energy LMP ("energy
+    # cancels out of a sum-R cap") and this dual carries the full ORDC step;
+    # when the physical shared-headroom rows bind instead, the balance dual
+    # IS folded into the energy LMP (see TestErcotOrdcTotalReserve) and this
+    # dual is zero. The post-solve additive RTORPA construction must therefore
+    # add THIS dual, not the balance dual, to avoid double-counting scarcity
+    # already priced into the energy dual. None unless a supply cap was active.
+    reserve_supply_cap_dual: np.ndarray | None = None
     # (n_zones, T) cleared storage AS from the duration-gate mechanism
     # (ercot_storage_as_duration_gate) — the EXACT storage energy-vs-AS split
     # (sum over AS products of the RS[c,z] columns), not the min() attribution
@@ -3599,6 +3610,13 @@ class DispatchModel:
         # per-zone SOC duration-gate row per hour (2 * n_zones * T), inserted
         # between the supply-cap and balance blocks (balance stays final).
         n_storage_gate_rows = 2 * n_zones * T if storage_gate else 0
+        # Stash the tail-block row counts (zonal spec only — pergen has no
+        # supply-cap block) so solve() can recover the supply-cap duals
+        # end-anchored: [.. | supply_cap | online_cap | storage_gate | balance].
+        self._n_supply_cap_rows = 0 if pergen else n_supply_cap_rows
+        self._n_online_cap_rows = 0 if pergen else n_online_cap_rows
+        self._n_storage_gate_rows_zonal = 0 if pergen else n_storage_gate_rows
+        self._n_headroom_tiers = n_headroom_rows
         # Per-gen spec: joint P+R rows (n_reserve*T) + balance rows
         # (n_families*T); the balance rows stay the final n_families*T either
         # way, so the dual extraction below is layout-independent.
@@ -3821,6 +3839,7 @@ class DispatchModel:
         # of the reserve-balance rows (the final T rows), which the per-zone
         # shared-headroom constraint transfers into each zone's energy LMP above.
         reserve_dispatch = reserve_price = reserve_price_by_family = None
+        reserve_supply_cap_dual = None
         if self._coopt:
             reserve_dispatch = block[:, layout._reserve_off : layout._ordc_off].T
             if self._pergen:
@@ -3842,6 +3861,23 @@ class DispatchModel:
             # DAM-AS overlay reads — recovered here from the LP balance-row duals,
             # never an exogenous adder.
             reserve_price_by_family = balance_duals
+            # Reserve-supply cap duals (zonal spec): the cap block sits directly
+            # before [online_cap | storage_gate | balance] at the row tail, one
+            # system-wide <= row per headroom tier per hour (hour-major). A
+            # binding <= row in a HiGHS min problem carries a non-positive dual;
+            # flip sign so the reported series is the >= 0 uninternalized
+            # reserve scarcity price (see DispatchResult docstring).
+            if self._n_supply_cap_rows:
+                tail = (
+                    self._n_families * T
+                    + self._n_storage_gate_rows_zonal
+                    + self._n_online_cap_rows
+                )
+                cap_d = row_dual[-(tail + self._n_supply_cap_rows) : -tail]
+                n_hr_tiers = self._n_headroom_tiers
+                reserve_supply_cap_dual = np.maximum(
+                    0.0, -cap_d.reshape(T, n_hr_tiers).T
+                )
 
         # Duration-gated storage AS (ercot_storage_as_duration_gate): the RS[c,z]
         # columns (after the ORDC block) summed across AS products -> (n_zones, T)
@@ -3895,6 +3931,7 @@ class DispatchModel:
             reserve_dispatch=reserve_dispatch,
             reserve_price=reserve_price,
             reserve_price_by_family=reserve_price_by_family,
+            reserve_supply_cap_dual=reserve_supply_cap_dual,
             storage_reserve_dispatch=storage_reserve_dispatch,
             posture_online_mw=posture_online,
             posture_startup_mw=posture_startup,
