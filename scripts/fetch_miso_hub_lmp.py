@@ -12,11 +12,21 @@ Standard Time year-round (no DST — the header says so explicitly). Committing
 ~2,200 all-node daily files (~1 MB each) is not viable, so this script stages
 the *verbatim rows for the eight named trading hubs only* (ARKANSAS.HUB,
 ILLINOIS.HUB, INDIANA.HUB, LOUISIANA.HUB, MICHIGAN.HUB, MINN.HUB, MS.HUB,
-TEXAS.HUB — all three Value rows: LMP, MCC, MLC) into one compact gzip CSV per
-(year, market) under ``data/raw/lmp-data/MISO/``:
+TEXAS.HUB — all three Value rows: LMP, MCC, MLC) into compact gzip CSVs under
+``data/raw/lmp-data/MISO/``, one per (year, market, ~10-day window):
 
-    miso_hub_lmp_<year>_<da|rt>.csv.gz
+    miso_hub_lmp_<year>_<da|rt>_p<NN>.csv.gz   (NN = 01.. , 10 days/chunk, last short)
     columns: date,node,type,value,he01..he24   (values verbatim from the source)
+
+(2023-2025 predate the chunk split and ship as one ``miso_hub_lmp_<year>_
+<da|rt>.csv.gz`` per year instead — ``derive_miso_hub_lmp.py`` reads either
+layout. The split to ~10-day chunks (2026-07-09) exists solely so each file
+is small enough to inline whole into a single ``push_files`` call — this
+repo's git-push rule requires committing over the GitHub API, which means
+every file's full content becomes one base64 tool-call argument; a ~500KB/year
+file is far too large for that, and even a ~40-60KB/month chunk turned out to
+overrun a single Read/tool-call round trip — ~14KB/chunk (~18KB base64) is the
+size that actually stayed reliable.)
 
 The only transformation is filtering to the hub rows and prepending the
 file's date (which the source carries in its header line, not per row) — the
@@ -258,12 +268,19 @@ def _hub_rows_or_none(
         return None
 
 
-def stage_year(year: int, market: str, api_key: str | None) -> Path:
-    """Fetch every day of ``year`` for ``market`` and write the staged gzip CSV.
+_CHUNK_DAYS = (
+    10  # ~14KB gzip/chunk (module docstring) -- stays under a single push_files call
+)
+
+
+def stage_year(year: int, market: str, api_key: str | None) -> list[Path]:
+    """Fetch every day of ``year`` for ``market`` and write ~10-day staged gzip CSVs.
 
     A day that fails all its retries is dropped (logged loudly) rather than
     aborting the whole year — the API path costs ~8 calls/day, so losing one
     day's rows is cheap to re-fetch but re-running the whole year is not.
+    Chunked by ``_CHUNK_DAYS`` (not one file per year) so each file is small
+    enough to inline whole into a single ``push_files`` call (module docstring).
     """
     days = []
     d = date(year, 1, 1)
@@ -287,25 +304,33 @@ def stage_year(year: int, market: str, api_key: str | None) -> Path:
         )
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
-    out = OUT_DIR / f"miso_hub_lmp_{year}_{market}.csv.gz"
     header = ["date", "node", "type", "value"] + [
         f"he{h:02d}" for h in range(1, _N_HOURS + 1)
     ]
-    with gzip.open(out, "wt", newline="") as f:
-        w = csv.writer(f)
-        w.writerow(header)
-        for rows in per_day:
-            if rows is not None:
-                w.writerows(rows)
-    n = sum(len(r) for r in per_day if r is not None)
+    out_paths: list[Path] = []
+    n = 0
+    n_chunks = -(-len(days) // _CHUNK_DAYS)  # ceil
+    for i in range(n_chunks):
+        window = days[i * _CHUNK_DAYS : (i + 1) * _CHUNK_DAYS]
+        out = OUT_DIR / f"miso_hub_lmp_{year}_{market}_p{i + 1:02d}.csv.gz"
+        with gzip.open(out, "wt", newline="") as f:
+            w = csv.writer(f)
+            w.writerow(header)
+            for dd, rows in zip(days, per_day):
+                if dd in window and rows is not None:
+                    w.writerows(rows)
+                    n += len(rows)
+        out_paths.append(out)
     log.info(
-        "wrote %s (%d rows, %d/%d days)",
-        out,
+        "wrote %d chunk files for %s %s (%d rows, %d/%d days)",
+        len(out_paths),
+        year,
+        market,
         n,
         len(days) - len(failed_days),
         len(days),
     )
-    return out
+    return out_paths
 
 
 def main() -> None:
