@@ -183,17 +183,21 @@ def test_forward_run_uses_renewable_installed_mw():
 
 
 def test_caiso_solar_allocated_to_trading_zones_not_import():
-    """CAISO solar fills the NP15/ZP26/SP15 trading zones, never WECC_import."""
+    """CAISO solar fills the NP15/ZP26/LA_BASIN/SDGE/SP15_rest trading zones, never WECC_import."""
     iso_config = get_iso_config("CAISO")
     config = ScenarioConfig(weather_year=_TEST_YEAR, iso="CAISO")
     _, _, solar_cf, solar_cap = load_renewable_profiles(
         "CAISO", _TEST_YEAR, iso_config, config
     )
-    trading = [iso_config.zone_names.index(z) for z in ("NP15", "ZP26", "SP15")]
+    trading = [
+        iso_config.zone_names.index(z)
+        for z in ("NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest")
+    ]
     wecc = iso_config.zone_names.index("WECC_import")
 
     # Solar capacity spreads across the trading zones (eGRID geography puts
-    # the bulk in SP15's desert), and the import node stays empty.
+    # the bulk in the SP15 (LA_BASIN/SDGE/SP15_rest) desert), and the import
+    # node stays empty.
     assert solar_cap[trading].sum() > 0.0
     assert solar_cf[trading].sum() > 0.0
     assert np.all(solar_cf[wecc] == 0.0)
@@ -203,7 +207,7 @@ def test_caiso_solar_allocated_to_trading_zones_not_import():
 def test_caiso_solar_zones_have_distinct_shapes():
     """Each CAISO solar zone gets its own clear-sky shape from its tracking mix.
 
-    NP15 (NorCal) carries the most fixed-tilt solar and ZP26/SP15 the most
+    NP15 (NorCal) carries the most fixed-tilt solar and ZP26/SP15_rest the most
     tracking, so NP15's diurnal solar profile must peak more sharply (a higher
     midday peak-to-shoulder ratio) than the more-tracking southern zones — the
     spatial diversity the single ISO-wide shape erased.
@@ -215,9 +219,9 @@ def test_caiso_solar_zones_have_distinct_shapes():
     assert shapes.shape == (len(zones), HOURS_PER_YEAR)
 
     np15 = zones.index("NP15")
-    sp15 = zones.index("SP15")
+    sp15_rest = zones.index("SP15_rest")
     # The two trading-zone shapes are genuinely different, not a copy.
-    assert not np.allclose(shapes[np15], shapes[sp15])
+    assert not np.allclose(shapes[np15], shapes[sp15_rest])
 
     def peak_to_shoulder(shape: np.ndarray) -> float:
         diurnal = shape.reshape(365, 24).mean(axis=0)
@@ -226,7 +230,7 @@ def test_caiso_solar_zones_have_distinct_shapes():
         return diurnal[peak_hour] / shoulder
 
     # More fixed-tilt -> a narrower, peakier midday belly.
-    assert peak_to_shoulder(shapes[np15]) > peak_to_shoulder(shapes[sp15])
+    assert peak_to_shoulder(shapes[np15]) > peak_to_shoulder(shapes[sp15_rest])
 
 
 def test_solar_zone_redistribution_preserves_aggregate():
@@ -234,7 +238,7 @@ def test_solar_zone_redistribution_preserves_aggregate():
 
     The capacity-weighted sum of the shaped per-zone CFs must equal the input
     ISO-wide ``cf_profile`` every hour (to machine precision), so annual energy
-    and the system duck curve are unchanged — only NP15-vs-SP15 differ.
+    and the system duck curve are unchanged — only NP15-vs-southern-zones differ.
     """
     iso_config = get_iso_config("CAISO")
     zones = iso_config.zone_names
@@ -264,7 +268,7 @@ def test_solar_zone_redistribution_preserves_aggregate():
     np.testing.assert_allclose(
         (cap[:, None] * shaped).sum(axis=0),
         (cap[:, None] * flat).sum(axis=0),
-        atol=1e-9,
+        atol=1e-6,  # summing 6 zones (post SP15-split) vs 4 adds float round-off
     )
     # The shaped split actually differs from flat in the trading zones.
     np15 = zones.index("NP15")
@@ -414,7 +418,8 @@ def test_caiso_backcast_cf_profile_is_uncurtailed_potential():
     scripts/build_caiso_hsl.py), the profile is the *uncurtailed* potential —
     so the dispatch re-curtails CAISO's multi-TWh solar curtailment instead
     of inheriting it. CAISO is multi-zone, so the measured profile is
-    distributed across the NP15/ZP26/SP15 trading zones by EIA-860 capacity:
+    distributed across the NP15/ZP26/LA_BASIN/SDGE/SP15_rest trading zones by
+    EIA-860 capacity:
     the capacity-weighted sum across zones reconstructs the hourly HSL series
     (floored at zero — EIA-930 reports small negative night-time solar, and a
     CF cannot go negative), sits at or above delivered generation in every
