@@ -1883,7 +1883,9 @@ def test_miso_zonal_gas_basis_skips_other_isos():
 
 # Must mirror the real CAISO config zone order: _apply_meanzero_zonal_gas_basis
 # maps zone basis through get_iso_config("CAISO").zone_names positions.
-_CAISO_ZONES = ["NP15", "ZP26", "SP15", "WECC_import"]
+# SP15 split into LA_BASIN/SDGE/SP15_rest (2026-07-09); SP15_rest stands in as
+# the southern (SoCal Citygate) zone for this two-zone fixture.
+_CAISO_ZONES = ["NP15", "ZP26", "SP15_rest", "WECC_import"]
 
 
 def _caiso_gas_fleet(hours: int = 48):
@@ -1899,7 +1901,7 @@ def _caiso_gas_fleet(hours: int = 48):
         Generator(
             unit_id="GAS_SOUTH",
             name="South CC",
-            zone="SP15",
+            zone="SP15_rest",
             fuel_type="gas_cc",
             pmax_mw=400.0,
         ),
@@ -1912,12 +1914,12 @@ def test_caiso_zonal_gas_basis_measured_sign_by_year():
     b24 = caiso_zonal_gas_basis_by_zone(2024)
     b23 = caiso_zonal_gas_basis_by_zone(2023)
     assert b24 is not None and b23 is not None
-    assert set(b24) == {"NP15", "ZP26", "SP15"}
+    assert set(b24) == {"NP15", "ZP26", "LA_BASIN", "SDGE", "SP15_rest"}
     # ZP26 shares the PG&E backbone with NP15.
     assert b24["NP15"] == b24["ZP26"]
     # 2024: PG&E premium (north-dear); 2023: SoCal premium (south-dear).
-    assert b24["NP15"] > b24["SP15"]
-    assert b23["NP15"] < b23["SP15"]
+    assert b24["NP15"] > b24["SP15_rest"]
+    assert b23["NP15"] < b23["SP15_rest"]
 
 
 def test_caiso_zonal_gas_basis_mean_zero_preserves_level():
