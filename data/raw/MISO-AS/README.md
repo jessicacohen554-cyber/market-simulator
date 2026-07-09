@@ -26,6 +26,23 @@ no annual archives, so this data is staged as yearly rollups.
 URLs above with retries; a 404 means the report was never published for
 that day and is skipped, not treated as an error.
 
+**2022 is confirmed ungettable — do not re-attempt.** Investigated
+2026-07-09: all three report endpoints 404 for every day of 2022
+(1,095/1,095 requests), a genuine `BlobNotFound` from MISO's Azure blob
+storage, while the identical URL pattern is HTTP 200 from 2023-01-01
+onward. This is a rolling retention purge, not a naming change — a
+2021-08-14 `asm_rt_co.zip` that Wayback Machine had crawled as HTTP 200 in
+March 2024 is now also 404 live, confirming MISO ages out old daily
+report files. Ruled out: 5 legacy report-name variants, a consolidated
+annual `_HIST` rollup (the pattern MISO uses elsewhere), and Wayback
+Machine archive recovery (zero captures for any of the three report types
+in 2022). MISO's Data Exchange API doesn't help either — it needs
+registration we don't have, and per MISO's own FAQ it draws on the same
+retention-limited live store; historical data beyond that requires a
+manual Help Center/ITOC request, not an automatable fetch. Full
+investigation: `docs/data-register-2026-07.md` "Ancillary services /
+reserves" section.
+
 **Licensing note:** MISO's own terms pages return HTTP 403 to automated
 fetch and have not been manually verified — redistribution status is
 **unclear**, not cleared. See `docs/data-licensing.md` §7 (MISO). Do not
