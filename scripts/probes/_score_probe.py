@@ -42,7 +42,11 @@ def score_bundle(bundle: Path, iso: str = "ERCOT", thr: float = 200.0) -> None:
         sy = sysdf[sysdf["year"] == year]
         bpath = BENCH / iso / f"{year}.json.gz"
         bench = json.loads(gzip.open(bpath, "rt").read())["bench"]["avgLMP"]
-        rt, rt_mon = bench.get("rt"), bench.get("rt_mon")
+        # Rubric v2.4 like-for-like basis: the load-weighted actual gates when
+        # committed (same ladder as calibration_verdict.score_price_mean);
+        # legacy equal-hour fields otherwise.
+        rt = bench.get("rt_lw", bench.get("rt"))
+        rt_mon = bench.get("rt_lw_mon") or bench.get("rt_mon")
         # per-zone load-weighted annual + monthly means (render logic)
         pairs, model_mon_pairs = [], [[] for _ in range(12)]
         price_by_zone = {}
