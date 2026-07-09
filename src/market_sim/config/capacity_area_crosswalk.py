@@ -263,9 +263,16 @@ _CAISO_LCR_TO_ZONE: dict[str, tuple[str, str]] = {
         "ZP26",
         "central San Joaquin, between Path 15 and Path 26 ≙ ZP26",
     ),
-    "Big Creek/Ventura": ("SP15", "southern, south of Path 26"),
-    "LA Basin": ("SP15", "Los Angeles basin, south of Path 26"),
-    "San Diego/Imperial Valley": ("SP15", "SDG&E/Imperial, south of Path 26"),
+    # SP15 split (2026-07-09 foundation): Big Creek/Ventura has no membership
+    # rows of its own (docs/handoffs/caiso-sp15-split-implementation-scope
+    # -2026-07-09.md "FOUNDATION DECISIONS") and is the SCE LA-basin pocket
+    # per the LCT geography, so it folds into LA_BASIN rather than SP15_rest.
+    "Big Creek/Ventura": ("LA_BASIN", "SCE LA-basin pocket, south of Path 26"),
+    "LA Basin": ("LA_BASIN", "Los Angeles basin LCR pocket, south of Path 26"),
+    "San Diego/Imperial Valley": (
+        "SDGE",
+        "SDG&E/Imperial LCR pocket, south of Path 26, Path-44 import-limited",
+    ),
 }
 # LCR pockets the 3-hub model cannot resolve — documented as unmapped, not guessed.
 _CAISO_LCR_UNMAPPED: dict[str, str] = {

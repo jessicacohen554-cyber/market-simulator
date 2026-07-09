@@ -129,12 +129,18 @@ class LocalCapacityAreaSpec:
 # rows + membership CSVs with no code change (design doc §3).
 LOCAL_CAPACITY_AREAS: dict[str, tuple[LocalCapacityAreaSpec, ...]] = {
     "CAISO": (
+        # SP15 split (2026-07-09 foundation): these areas ARE the new model
+        # zones, so the min-gen floor and the zone split are the same
+        # geography under two mechanisms. Do NOT also enable
+        # `local_capacity_constraints` for CAISO — the split's import-limited
+        # link already prices the pocket; stacking the in-pocket min-gen
+        # floor on top would double up the same phenomenon (rule 12).
         LocalCapacityAreaSpec(
-            name=LA_BASIN, zone="SP15", csv_area="LA Basin", zone_csv_area="SP26"
+            name=LA_BASIN, zone="LA_BASIN", csv_area="LA Basin", zone_csv_area="SP26"
         ),
         LocalCapacityAreaSpec(
             name=SD_IV,
-            zone="SP15",
+            zone="SDGE",
             csv_area="San Diego/Imperial Valley",
             zone_csv_area="SP26",
         ),
@@ -244,9 +250,25 @@ def storage_area_share(iso: str, area: str, zone: str, year: int) -> float:
     plants["lon"] = pd.to_numeric(plants.lon, errors="coerce")
     s = s.merge(plants.drop_duplicates("plant_id"), on="plant_id", how="left")
 
-    # Zone split on the fleet's Path 15 / Path 26 latitude convention
-    # (data/zone_assignment._caiso_zone): SP15 is south of lat 35.0.
-    in_zone = s[s.lat < 35.0] if zone == "SP15" else s[s.lat >= 35.0]
+    # Model-zone split (2026-07-09 SP15 split): a plain lat < 35.0 bucket no
+    # longer isolates one sub-zone (LA_BASIN, SDGE, and SP15_rest are all
+    # south of Path 26). Assign each plant to its model zone the same way
+    # `caiso_area_of` resolves LCR areas, then bucket the residual southern
+    # storage (south of Path 26, in neither pocket) into SP15_rest.
+    def _model_zone_of(county: str, lat: float, lon: float) -> str | None:
+        pocket_area = caiso_area_of(county, lat, lon)
+        if pocket_area == LA_BASIN:
+            return "LA_BASIN"
+        if pocket_area == SD_IV:
+            return "SDGE"
+        if not np.isnan(lat) and lat < 35.0:
+            return "SP15_rest"
+        return None
+
+    model_zones = s.apply(
+        lambda r: _model_zone_of(str(r.county), float(r.lat), float(r.lon)), axis=1
+    )
+    in_zone = s[model_zones == zone]
     if not len(in_zone) or in_zone.mw.sum() <= 0:
         return 0.0
     areas = in_zone.apply(
