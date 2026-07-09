@@ -140,7 +140,7 @@ class TestLocalCapacityT5RhsBuilder(unittest.TestCase):
             plant_code,
             pmax,
             availability,
-            ["SP15"],
+            ["LA_BASIN", "SDGE"],
             demand,
             storage_zone_idx,
             storage_power_cap,
