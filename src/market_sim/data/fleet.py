@@ -2596,6 +2596,180 @@ def apply_ercot_ct_offer_surface(
     return True
 
 
+@lru_cache(maxsize=4)
+def _load_condbinned_surface(path: str) -> dict:
+    """Load and cache the measured condition-binned offer surface JSON.
+
+    Frozen against residuals (rule 20); a re-derive is a data-update commit
+    (scripts/derive_dam_offer_hrmults.py --condition-binned), not a solve-time knob.
+    """
+    return json.loads(Path(path).read_text())
+
+
+def build_ercot_offer_surface_conditional_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+) -> "np.ndarray | None":
+    """Build the P1-only condition-responsive gas peak-band offer markup ``(n_gen, T)``.
+
+    The ERCOT G-22 §8 / ercot37-filed HETEROGENEITY-PRESERVING offer surface
+    (ScenarioConfig.ercot_offer_surface_conditional). Returns an additive markup on
+    the P1 bid MC that reprices ONLY the gas peak-band rungs (CC/CT/ST — split
+    equal-capacity at the resolved peak height by the backcast-config no-op) and ONLY
+    in anticipated-tight hours, so that the top of the offer stack prices like the
+    measured QSE scarcity wall exactly there. Contrast the two rejected predecessors:
+
+      * the flat ``ercot_ct_offer_surface`` posted one p50 level on EVERY CT
+        econ/peak row above a hinge → collapsed offer heterogeneity, removed ~3.2 GW
+        of spare in one step, overshot (calibration-log 2026-07-06);
+      * the STATIC ``peak_ladder`` wall posted the measured ladder in ALL 8760 hours
+        → perturbed P0 run lengths and swapped ~8 TWh CT<->ST through the startup-
+        amortization coupling (docs/FINDING-ercot-priceshape-2026-07.md §6).
+
+    This mechanism fixes both: it is applied to the P1 clearing objective ONLY (P0 is
+    byte-identical → no CT<->ST coupling), the loose bins never lower an offer (ratio
+    clamped >= 1 → loose hours byte-identical), and within a tight hour the lower
+    rungs stay at the resolved peak while only the upper rungs (p70/p90) reach the
+    cap band (heterogeneity preserved). Both the trigger (net-load percentile,
+    forward-native) and the level (measured QSE offer quantiles) are rule-13
+    admissible; parameters are measured (rule 21) and frozen (rule 20).
+
+    For each priced gas class, the peak-rung row ``g`` (rung index ``r``) in hour
+    ``t`` (net-load bin ``b``) is repriced from its baked height (the resolved
+    ``peak`` multiplier the fleet built the rung at) to the measured bin/rung
+    multiplier::
+
+        ratio       = max(1.0, binned_ladder[cls][b][r] / resolved_peak[cls])
+        energy      = heat_rate[g] * fuel_prices[g, t]          # the row's fuel MC
+        ratio_cap   = min(ratio, price_cap / energy)            # keep offer < VOLL
+        markup[g,t] = energy * (ratio_cap - 1.0)                # additive, >= 0
+
+    Vectorised over hours (rule 2). Returns ``None`` (P1 unchanged) when the flag is
+    off, the ISO is not ERCOT, the surface path is unset/empty, or the fleet carries
+    no priced gas peak rungs.
+
+    Args:
+        fleet_arrays: The vectorized fleet (``heat_rate`` supplies each rung's base).
+        generators: The dispatch fleet, aligned row-for-row with ``fleet_arrays``.
+        fuel_prices: The ``(n_gen, T)`` delivered fuel price (same array assemble_mc
+            used), so the repriced offer scales with the hour's fuel like every other
+            band.
+        net_load_mw: System net-load per hour (``load - wind - solar``), shape
+            ``(T,)`` — the same LP-served convention the drag floors / CT surface use.
+        config: Scenario config supplying the enable flag, ISO, surface path, bin
+            edges and price cap.
+    """
+    if not getattr(config, "ercot_offer_surface_conditional", False):
+        return None
+    if config.iso != "ERCOT":
+        return None
+    path = getattr(config, "ercot_offer_surface_binned_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        default = _paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_condbinned.json"
+        if not default.exists():
+            return None
+        path = str(default)
+    surface = _load_condbinned_surface(str(path))
+
+    edges = tuple(float(x) for x in config.ercot_offer_surface_netload_pcts)
+    json_edges = tuple(
+        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
+    )
+    if json_edges and json_edges != edges:
+        raise ValueError(
+            "ercot_offer_surface: config netload_pcts "
+            f"{edges} disagree with the derived surface's edges {json_edges} "
+            "(re-derive with matching --condition-binned edges, or fix the config)."
+        )
+    n_bins = len(edges) + 1
+
+    # Peak-rung rows per priced gas class, tagged with their rung index (peak -> 0,
+    # peakN -> N-1). The resolved peak height each rung was built at comes straight
+    # from the class offer curve so the ratio recovers the measured multiplier.
+    curves = getattr(config, "offer_curve_by_group", None) or {}
+    class_rows: dict[str, list[tuple[int, int]]] = {}
+    resolved_peak: dict[str, float] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None) or getattr(gen, "efficiency_bin", None)
+        if cls not in CONDITIONAL_SURFACE_GROUPS or cls not in surface:
+            continue
+        sfx = gen.unit_id.rpartition("_")[2]
+        if sfx == "peak":
+            rung = 0
+        elif sfx.startswith("peak") and sfx[4:].isdigit():
+            rung = int(sfx[4:]) - 1
+        else:
+            continue
+        class_rows.setdefault(cls, []).append((g, rung))
+        resolved_peak.setdefault(cls, float(curves.get(cls, {}).get("peak", 0.0)))
+    if not class_rows:
+        return None
+
+    hours = int(fuel_prices.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    # Per-hour tightness bin on the year's OWN net-load percentiles (forward-native:
+    # the identical construction the derive used, so bin b at solve time is the same
+    # scarcity state as bin b in the measurement).
+    thresholds = np.quantile(net_load, edges) if len(edges) else np.array([])
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,), 0..n_bins-1
+    # Optional floor: engage the wall only at/above this bin (protect mild hours from
+    # any residual peak-rung repricing). Below it the ratio is forced to 1 (byte-
+    # identical). Default 0 → the full measured distribution applies in every bin.
+    min_bin = int(getattr(config, "ercot_offer_surface_min_bin", 0) or 0)
+
+    price_cap = float(
+        getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
+    ) * float(getattr(config, "voll", 5000.0))
+    heat_rate = fleet_arrays.heat_rate
+    markup = np.zeros((len(generators), hours), dtype=float)
+    n_priced = 0
+    for cls, rows in class_rows.items():
+        pk = resolved_peak.get(cls, 0.0)
+        ladders = surface[cls].get("binned_ladder") or []
+        if pk <= 0.0 or len(ladders) != n_bins:
+            continue
+        # ratio[bin, rung] = measured multiplier / resolved peak, clamped >= 1 so a
+        # loose bin never lowers the offer below the keeper's peak height.
+        n_rungs = max((r for _, r in rows), default=0) + 1
+        ratio = np.ones((n_bins, n_rungs), dtype=float)
+        for b in range(n_bins):
+            if b < min_bin:
+                continue  # mild bin: leave ratio at 1.0 (no repricing)
+            lad = ladders[b] or []
+            for r in range(n_rungs):
+                if r < len(lad):
+                    ratio[b, r] = max(1.0, float(lad[r][1]) / pk)
+        for g, rung in rows:
+            energy = heat_rate[g] * fuel_prices[g, :hours]  # (T,) fuel MC of the rung
+            row_ratio = ratio[hour_bin, min(rung, n_rungs - 1)]  # (T,)
+            # Cap the repriced offer below VOLL so the peak band never ties the load-
+            # shed slack (which would let the LP dump load instead of clearing it).
+            with np.errstate(divide="ignore", invalid="ignore"):
+                ratio_cap = np.where(energy > 0.0, price_cap / energy, row_ratio)
+            eff = np.minimum(row_ratio, np.maximum(1.0, ratio_cap))
+            markup[g, :] = energy * (eff - 1.0)
+            n_priced += 1
+
+    if n_priced == 0 or not np.any(markup > 0.0):
+        return None
+    tight = int((hour_bin >= n_bins - 1).sum())
+    logger.info(
+        "ERCOT conditional offer surface: repriced %d gas peak-rung rows across "
+        "%d net-load bins (tightest bin binds %d/%d hours); P1-only, loose hours "
+        "byte-identical",
+        n_priced,
+        n_bins,
+        tight,
+        hours,
+    )
+    return markup
+
+
 def apply_netload_drag_floors(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
@@ -3014,6 +3188,7 @@ def assemble_mc(
 
 
 from market_sim.data.offer_curves import (  # noqa: E402
+    CONDITIONAL_SURFACE_GROUPS,
     _econ_curve_steps,
     _econ_split_for_group,
     _hr_override,
