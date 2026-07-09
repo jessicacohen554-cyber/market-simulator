@@ -567,11 +567,14 @@ def _caiso_corridor_export_cap_mw(zone: str) -> float:
 
 
 # Per-hub corridor zone → the CAISO trading zone its WECC import link terminates
-# on (COI/Path-66 north → NP15; Path-46/WOR south → SP15). Used both to re-home
-# the WECC_import links onto the per-hub zones and to read each corridor's TTC.
+# on (COI/Path-66 north → NP15; Path-46/WOR south → SP15_rest, the SP15 split's
+# south gateway). Used both to re-home the WECC_import links onto the per-hub
+# zones and to read each corridor's TTC. The DSW (Palo Verde/WOR) termination
+# was re-pointed SP15 → SP15_rest by the 2026-07-09 SP15 local-area split (a
+# miss here silently mis-routes the Palo Verde import — scope Phase 1 item 6).
 _CAISO_CORRIDOR_LINK_TO: dict[str, tuple[str, ...]] = {
     "WECC_PNW": ("NP15",),
-    "WECC_DSW": ("SP15",),
+    "WECC_DSW": ("SP15_rest",),
 }
 
 
@@ -2313,8 +2316,9 @@ def apply_deliverability_seam_limit(
 CAISO_PATH_DIRECTIONAL_RATINGS: dict[tuple[str, str], tuple[float, float]] = {
     # Path 15 (Midway–Los Banos): N→S 3,265 MW / S→N 5,400 MW.
     ("NP15", "ZP26"): (3265.0, 5400.0),
-    # Path 26 (Midway–Vincent): N→S 4,000 MW / S→N 3,000 MW.
-    ("ZP26", "SP15"): (4000.0, 3000.0),
+    # Path 26 (Midway–Vincent): N→S 4,000 MW / S→N 3,000 MW. Keyed on the
+    # re-pointed link orientation after the SP15 split (ZP26 → SP15_rest).
+    ("ZP26", "SP15_rest"): (4000.0, 3000.0),
 }
 
 
