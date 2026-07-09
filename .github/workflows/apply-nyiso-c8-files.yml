@@ -1,0 +1,68 @@
+name: apply-nyiso-c8-files
+
+# Server-side apply for the NYISO C8 ST_GAS grounding — same pattern as
+# apply-ercot-capdual-files.yml (the agent sandbox cannot `git push`, HTTP
+# 413). .github/pending-nyiso-c8/apply_edits.py performs the five anchored
+# hand-edits (D4_WINDOWS entry, calibration-log entry, G-05 addendum,
+# attestation + registry-sidecar dated notes; each idempotent, loud on a
+# missing anchor), then the two machine artifacts are REGENERATED from source
+# so they are CI-reproducible by construction:
+#   - results/calibration/nyiso56_measuredshares/legitimacy_diagnostics.json
+#     via scripts/legitimacy_diagnostics.py (payload path, the committed
+#     rubric contract; picks up the new reliability_floor x ST_GAS window)
+#   - frontend/data/backcast/status.js via scripts/build_status.py (the
+#     sanctioned refresh path, see the keepers.json note)
+# Triggered by the push that adds the pending dir; self-cleans (removes the
+# pending dir and this workflow file) when done.
+on:
+  push:
+    branches:
+      - claude/nyiso-forced-floor-calibration-h5smzc
+    paths:
+      - .github/pending-nyiso-c8/**
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply-edits:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout branch
+        uses: actions/checkout@v4
+        with:
+          ref: claude/nyiso-forced-floor-calibration-h5smzc
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+      - name: Apply edits, regenerate diagnostics + status, commit, clean up
+        run: |
+          set -euo pipefail
+          D=.github/pending-nyiso-c8
+          if [ ! -f "$D/apply_edits.py" ]; then
+            echo "pending edits already consumed; nothing to do"
+            exit 0
+          fi
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          python "$D/apply_edits.py"
+          git add scripts/legitimacy_diagnostics.py \
+                  docs/calibration-log.md \
+                  docs/handoffs/g05-forced-energy-caiso-ct-nyiso-stgas-2026-07.md \
+                  frontend/data/backcast/registry/2026-07-07-nyiso-56-measured-zonal.json \
+                  results/calibration/nyiso56_measuredshares/calibration_attestation.json
+          git commit -F "$D/msg.txt"
+          uv sync --extra dev
+          uv run python scripts/legitimacy_diagnostics.py \
+            --bundle results/calibration/nyiso56_measuredshares --iso NYISO \
+            --json-out results/calibration/nyiso56_measuredshares/legitimacy_diagnostics.json
+          uv run python scripts/build_status.py
+          git add results/calibration/nyiso56_measuredshares/legitimacy_diagnostics.json \
+                  frontend/data/backcast/status.js
+          git commit -m "nyiso: regen nyiso-56 legitimacy diagnostics + status.js — C8 ST_GAS grounded (D-4 row exists, protective caveat cleared)"
+          git rm -rq "$D"
+          git rm -q .github/workflows/apply-nyiso-c8-files.yml
+          git commit -m "chore: remove nyiso-c8 pending-edits helper [skip ci]"
+          git push origin HEAD:claude/nyiso-forced-floor-calibration-h5smzc
