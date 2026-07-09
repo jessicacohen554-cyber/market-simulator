@@ -8388,3 +8388,57 @@ single-year 2023 arms (`ercot52_diag_base_2023`, `ercot52_capdual_2023`,
 `ercot52_capdual_surface_2023`) were throwaway probes, never registered
 (rule 16).
 
+
+## 2026-07-09 — Rubric v2.4: C3a/C3b like-for-like load-weighted basis (owner-authorized); ercot52 re-gated — C3a PASSES all years, promotion blocked by the real 2024 shape miss (keeper stays ercot46)
+
+**Task (owner-directed, this session).** Implement the C3 scoring-basis fix the
+ercot52 diagnosis exposed (`docs/handoffs/ercot-ordc-capdual-adder-2026-07.md`
+§4), re-score every keeper, and re-gate ercot52 — promote only if it clears.
+
+**The defect.** C3a compared a demand-weighted model mean against an
+EQUAL-HOUR hub-mean actual (all six ISOs — per-ISO audit in
+`docs/rubric-v24-price-basis-memo-2026-07.md` §3). The wedge grows with tail
+realism: the ACTUAL 2023–25 ERCOT LZ prices fed through the scorer's own
+formula score +33.5%/+15.5%/+11.7% against the scorer's own bench — a
+byte-perfect model fails ±10% in all three years, and C3a was structurally at
+war with C3c.
+
+**The fix (scorer + bench only, no solve touched).** `rt_lw`/`da_lw`
+(+ monthly) — each ISO's committed hourly actual weighted by the SAME measured
+demand the model dispatches (`eia_loader.load_demand`): zone-resolved for
+ERCOT (committed LZ archives × zonal load, `ERCOT_MODEL_ZONE_TO_LZ`
+crosswalk), system hub series × system load elsewhere.
+`derive_actual_lmp.py --lw-retrofit` (reference),
+`retrofit_lw_price_bench.py` (18 committed bench parts, surgical — registered
+payloads untouched/untouchable), `calibration_verdict.py` RUBRIC_VERSION 2.4
+(basis ladder rt_lw→da_lw→legacy-labelled), `_score_probe.py`, rubric doc §C3.
+Tests: 108 pass incl. 2 new v2.4 cases (lw preference; legacy fallback label).
+
+**Keeper re-score (v2.3→v2.4).** NO determination flips: NYISO/NEISO stay
+CALIBRATED-WITH-CAVEATS; ERCOT/PJM/CAISO/MISO stay NOT-YET. Magnitudes shift
+down ~3–8 pp everywhere (the fleet-wide bias is UNDER-pricing peak-demand
+hours): ercot46 C3a-2023 +9.3%→−17.5% (shallow tail exposed), PJM-2025
+−9.2→−14.9 (FAIL), CAISO shrinks (+21.7→+15.3 etc — its miss is body, not
+tail), NEISO clean, MISO-2025 −10.7→−15.7. Full table memo §4. OPEN owner
+item (memo §5): `_apply_ledger` matches (criterion, year) with no
+magnitude/direction check, so ercot46's "+9.3%" ledger entry now auto-forgives
+−17.5% and nyiso-56's entries cover readings that passed when written —
+tightening it is keeper-affecting and deliberately out of this scope.
+
+**ercot52 re-gate (v2.4): C3a −1.0%/−0.3%/−3.6% PASS all years; C3b
+0.109 PASS / 0.296 FAIL / 0.079 PASS; C3c 162/37/5 h (2023+2024 PASS, first
+ERCOT run ever; 2025 FAIL 5 vs 23).** The 2023 "winter body" C3b failure
+dissolved on the honest basis (monthly: Jun +6.0%, Aug −6.3%, Sep +9.3%; Jan
++26% remains, small in NRMSE). The remaining blockers are honest model
+misses, not frame: **C3b-2024 = 0.296, localized to Aug-2024 +62.6% (a model
+scarcity event the real 2024 didn't have) + shoulder unders (May −33%,
+Mar/Apr/Oct/Nov −13…−18%)**; C3c-2025 tail under; C5c-2024 storage shape
+(ledgerable precedent). **Per the pre-agreed rule: NOT promoted — no
+attestation written; keeper stays `2026-07-08-ercot46-clock-steamgas`;
+ercot52 stays keeper-track candidate.** The promotion blocker is handed to
+the ercot53 thread (2024 August scarcity + shoulder root cause; the Task-3
+handoff prompt was re-issued with the v2.4 scope).
+
+**Holdouts.** 2023–2025 only throughout (bench retrofit included); no solve
+performed; registered payloads byte-untouched (rule 22 / reproducibility
+contract §0a).
