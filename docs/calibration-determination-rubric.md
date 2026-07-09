@@ -1,7 +1,8 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 2.2** (2026-07-06
-fitness-for-purpose re-anchor + 2026-07-07 C8 grounded-above-budget escalation;
+Status: **canonical, machine-enforced. RUBRIC VERSION 2.3** (2026-07-06
+fitness-for-purpose re-anchor + 2026-07-07 C8 grounded-above-budget escalation
++ 2026-07-09 C3a/C3b single-band re-set and C5a full-plant CO2 re-base;
 v1 history in §9). This document is the single
 auditable definition of when an ISO backcast may be declared *calibrated*. It
 replaces the ad-hoc, per-run sidecar judgement (“this looks good enough”) with a
@@ -315,26 +316,29 @@ way FAILs C6 regardless.
     against a Mar–Dec actual is a calendar artifact, not a price error; the
     masking is recorded in the verdict record's metric label. Full-coverage
     years are unchanged.
-  - *Tolerance:* **target ±5% / commercial ±10%.** The target is externally
-    anchored: **±5% aggregate price error is the criterion the SEM (Ireland)
-    regulator states for its official PLEXOS market model** (“an appropriate
-    fit when fitting against 3–5 years of real market data”, ECA SEM-20-004,
-    which also sets monthly within ±10%; NERA’s 2025 SEM backcast achieved
-    +0.1% on a 4-year mean). The commercial band is the demonstrated
-    planning-grade range: NYISO’s accepted GE MAPS 2021 benchmark ran **−2% to
-    −17% zonal** (NYC −10.5%) and was adopted as the Outlook basis; the
-    playbook’s 5–10%. Two floors below all of this: the market monitors’ own
-    competitive re-simulations sit **0–4%** from actual prices (CAISO DMM
-    2021–24, MISO SOM 2023) — a market-conduct wedge a cost-based model cannot
-    and *should not* close, so residuals under ~3% are inside the
-    identification noise floor and must never be chased with tuning (rule 1,
-    now with citable numbers). The **energy-only LP dual structurally
-    under-shoots** the actual LMP; that known gap is what the structural
-    reserve/scarcity mechanisms are for. A persistent miss beyond the
-    commercial band is a signal to build the missing mechanism — not to widen
-    the band, and never to fit an adder (C6).
-  - *Classification:* `MODEL MISS` (offer-curve level / scarcity mechanism);
-    between the bands, the auto `WITHIN COMMERCIAL BAND (TARGET MISS)` caveat.
+  - *Tolerance:* **±10% passes clean** *(v2.3, owner amendment 2026-07-09:
+    the target band is set to the commercial band, so there is no
+    commercial-band caveat range on C3a — inside ±10% is a clean `PASS`,
+    beyond it a `FAIL`)*. The band is the demonstrated planning-grade range:
+    NYISO’s accepted GE MAPS 2021 benchmark ran **−2% to −17% zonal** (NYC
+    −10.5%) and was adopted as the Outlook basis; the playbook’s 5–10%. The
+    former stricter ±5% target (**the criterion the SEM (Ireland) regulator
+    states for its official PLEXOS market model** — ECA SEM-20-004, monthly
+    within ±10%; NERA’s 2025 SEM backcast achieved +0.1% on a 4-year mean)
+    stays as a reported reference magnitude, not a gate: caveating a run
+    between the SEM criterion and the published commercial envelope graded
+    honest runs as second-class for a miss no published model avoids. Two
+    floors below all of this: the market monitors’ own competitive
+    re-simulations sit **0–4%** from actual prices (CAISO DMM 2021–24, MISO
+    SOM 2023) — a market-conduct wedge a cost-based model cannot and *should
+    not* close, so residuals under ~3% are inside the identification noise
+    floor and must never be chased with tuning (rule 1, now with citable
+    numbers). The **energy-only LP dual structurally under-shoots** the
+    actual LMP; that known gap is what the structural reserve/scarcity
+    mechanisms are for. A persistent miss beyond the band is a signal to
+    build the missing mechanism — not to widen the band, and never to fit an
+    adder (C6).
+  - *Classification:* `MODEL MISS` (offer-curve level / scarcity mechanism).
 - **C3b — Duration / shape (quantitative, not eyeballed).** *(LOAD-BEARING, two-band)*
   - *Metric:* normalised RMSE between the model and actual **monthly
     load-weighted price vectors** (12 months; model `pMon` re-weighted across
@@ -342,14 +346,16 @@ way FAILs C6 regardless.
     is the committed-artifact shape metric; where a run additionally commits the
     full hourly price-duration curve, the P50/P90 ratio check of
     `calibration.check_price_duration_curve` is scored in its place.
-  - *Tolerance:* **target NRMSE ≤ 0.15 / commercial ≤ 0.20.** Anchor: SEM’s
+  - *Tolerance:* **NRMSE ≤ 0.20 passes clean** *(v2.3, owner amendment
+    2026-07-09: the target band is set to the commercial band — inside 0.20
+    is a clean `PASS`, no caveat range; beyond it a `FAIL`)*. Anchor: SEM’s
     regulator-accepted backcast carried −9% winter-peak / +11% off-peak period
     biases; published monthly-shape norms for cost-based dispatch models run
     ~5–15% with correct seasonality (memo §2). A 12-month NRMSE of 0.20 is the
     outer edge of that demonstrated band (numerically the pre-2026-07-02
-    ceiling, now externally anchored rather than asserted).
-  - *Classification:* `MODEL MISS` (seasonal merit-order / fuel-shape error);
-    between the bands, the auto commercial-band caveat.
+    ceiling, externally anchored rather than asserted); the former 0.15
+    target stays visible as a reported magnitude, not a gate.
+  - *Classification:* `MODEL MISS` (seasonal merit-order / fuel-shape error).
 - **C3c — Tail / scarcity, DA-expressible.** *(SUPPORTING, single wide band)*
   - *Metric:* count of hours with price above the per-ISO threshold (§5),
     model vs the **day-ahead** actual — **scope-consistent (v2):** the DA
@@ -418,9 +424,25 @@ way FAILs C6 regardless.
 ### C5 — CO2 and storage  *(C5a LOAD-BEARING two-band; C5b/C5c SUPPORTING)*
 
 - **C5a — CO2 vs eGRID.** *(LOAD-BEARING, two-band)*
-  - *Metric:* annual system CO2, model vs eGRID ISO total.
-  - *Actual:* eGRID ISO-year total (the bundle’s emissions summary / eGRID
-    reference).
+  - *Metric:* annual system CO2, model vs the eGRID/CAMPD-rate actual, on the
+    **full-plant CHP-inclusive basis** *(v2.3, owner amendment 2026-07-09)*:
+    eGRID counts each cogen’s FULL net generation — behind-the-meter host
+    self-supply included — so a grid-delivered comparison silently dropped the
+    BTM CHP burn eGRID reports. Both sides now carry the measured BTM CHP
+    host supply added back before the intensities are applied: the actual is
+    the full EIA-923 class totals (`classFull` + the committed per-class
+    `btmClass` add-back) × the net-gen-weighted eGRID/CAMPD class intensity,
+    and the model is its grid LP dispatch (`gmModel`) + the same measured
+    add-back × the same intensity. The add-back is the exact hold-out the LP
+    never dispatched (`run_calibration_full._btm_frame` — EIA-923 class net
+    generation × measured host shares, a pure function of committed inputs,
+    rule #13), so the comparison stays a test of the model’s fuel split and
+    emission-rate assignment, not of plumbing. The generation-mix criteria
+    (C1/C2) remain grid-delivered; only system CO2 — the quantity the
+    atmosphere and the policy uses integrate — is whole-burn.
+  - *Actual:* committed bench-part `co2.egrid` (full-plant basis; the eGRID
+    fleet-wide rates with CAMPD overrides, weighted over the ISO’s EIA-923
+    fossil fleet).
   - *Tolerance:* **target ±7% / commercial ±10%.** Thinnest external evidence
     base of the load-bearing set (memo §2, stated honestly): no production-cost
     model publishes a backcast CO2 error; the citable anchors are NEMS/AEO
@@ -820,11 +842,11 @@ Calibration Status page renders this comparison next to the live keeper scores
 
 | Criterion | Our target band | Our commercial band | Best published comparable |
 |---|---|---|---|
-| C3a mean LMP | ±5% | ±10% | SEM regulator criterion ±5% (ECA SEM-20-004); NERA SEM backcast +0.1% (4-yr); NYISO MAPS benchmark −2…−17% zonal, accepted; monitor competitive re-sims 0–4% (noise floor) |
-| C3b monthly shape | NRMSE ≤ 0.15 | ≤ 0.20 | SEM accepted −9% peak/+11% off-peak period bias; monthly norms ~5–15%; PyPSA-Eur weekly SMAPE 20–26% |
+| C3a mean LMP | ±10% (v2.3: single band, passes clean) | ±10% (coincident) | SEM regulator criterion ±5% (ECA SEM-20-004); NERA SEM backcast +0.1% (4-yr); NYISO MAPS benchmark −2…−17% zonal, accepted; monitor competitive re-sims 0–4% (noise floor) |
+| C3b monthly shape | NRMSE ≤ 0.20 (v2.3: single band, passes clean) | ≤ 0.20 (coincident) | SEM accepted −9% peak/+11% off-peak period bias; monthly norms ~5–15%; PyPSA-Eur weekly SMAPE 20–26% |
 | C1 per-class mix | min(2% load, 8 TWh) & 3 pp | (single-band) | **none published** — external validations stop at family/zonal level; we score stricter deliberately |
 | C2 family volume (prelim fallback) | ±2.5% | ±5% | NYISO zonal energy ~0–4%; AEO 1–3-yr gas-gen SD 5.7–9.6% (forecast upper bound) |
-| C5a CO2 | ±7% | ±10% | **no published PCM backcast CO2 error**; AEO 1–3-yr CO2 SD 3.2–4.9% (forecast) |
+| C5a CO2 (full-plant basis, v2.3) | ±7% | ±10% | **no published PCM backcast CO2 error**; AEO 1–3-yr CO2 SD 3.2–4.9% (forecast) |
 | C3c tail hours (DA) | [0.5×, 2×] | (single wide band) | **none published** — practice excludes spike hours from scoring (ECA) or tunes hurdle rates (NYISO); we keep scoring it |
 | C4 hourly fleet r | r ≥ 0.70, NRMSE ≤ 0.30 | (single-band) | **none published**; NREL guidance: hourly comparison “not a valid test” — we score stricter deliberately |
 | C5b storage cycling | ±30% | (single-band) | none published (cycling-realism band, internal) |
@@ -837,6 +859,28 @@ never a curve to grade down to.
 
 ## 9. Version history
 
+- **v2.3 (2026-07-09, owner amendments)** — two changes, both scorer/payload
+  level (no re-solve). **(a) C3a/C3b single-band re-set:** the price target
+  bands are set to the commercial values — **±10% mean LMP and monthly NRMSE
+  ≤ 0.20 now pass clean, with no commercial-band caveat range** on the two
+  price criteria (the former ±5%/0.15 targets remain visible as reported
+  magnitudes). Rationale: the caveat range between the SEM regulator
+  criterion and the published commercial envelope graded honest runs as
+  second-class for a miss no published model avoids; beyond ±10%/0.20 still
+  FAILs, ledgerable only as a measured-input limitation. **(b) C5a full-plant
+  CO2 re-base:** eGRID includes CHP — its per-plant rates and system totals
+  count each cogen's full net generation including the behind-the-meter host
+  supply — so the C5a comparison now adds the measured BTM CHP MWh back onto
+  BOTH sides (actual = full EIA-923 class totals × intensity; model = grid
+  LP dispatch + the same measured add-back × intensity) instead of comparing
+  grid-delivered totals against CHP-inclusive rates. Committed payloads were
+  re-based in place (`scripts/retrofit_co2_payloads.py`; bench parts carry
+  `co2.btmClass` + `co2.basis = "full-plant"`), reconstruction validated
+  exact against the full-923 class totals. C1/C2 stay grid-delivered.
+  Effect at amendment: no keeper's overall determination flips; ERCOT/PJM/
+  NYISO/NEISO/MISO price caveats clear to PASS where inside the band, all
+  six keepers still PASS C5a on the new basis (NYISO 2024 keeps a
+  commercial-band CO2 caveat at −7.3%).
 - **v2.2 (2026-07-07, owner amendment)** — C8 **grounded-above-budget
   escalation**. The 15 %/30 % caps and the 2 % materiality floor are
   **unchanged**; what changes is that a material class **above** its cap is no
