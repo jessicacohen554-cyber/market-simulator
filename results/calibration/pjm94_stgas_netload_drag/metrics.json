@@ -3,23 +3,27 @@
   "iso": "PJM",
   "label": "pjm 94 stgas netload",
   "target_years": [
+    2023,
+    2024,
     2025
   ],
   "scorable_years": [
+    2023,
+    2024,
     2025
   ],
   "data_blocked_years": [],
   "rubric_version": 2.2,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_tail"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -66,17 +70,17 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -92,11 +96,11 @@
     }
   },
   "grade_summary": {
-    "scored": 6,
-    "target_grade": 3,
+    "scored": 10,
+    "target_grade": 6,
     "commercial_grade": 2,
     "ledgered": 0,
-    "fails": 1
+    "fails": 2
   },
   "free_class_score": {
     "iso": "PJM",
@@ -109,15 +113,18 @@
       "solar",
       "wind"
     ],
-    "excluded_from_free": [],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
     "all": {
-      "pass": 0,
-      "total": 0
+      "pass": 14,
+      "total": 16
     },
     "free": {
-      "pass": 0,
-      "total": 0
+      "pass": 10,
+      "total": 12
     },
-    "headline": "C1 all 0/0 \u00b7 free 0/0"
+    "headline": "C1 all 14/16 \u00b7 free 10/12"
   }
 }
