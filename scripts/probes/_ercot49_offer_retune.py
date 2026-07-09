@@ -200,6 +200,18 @@ def main() -> None:
     ap.add_argument("out_name", help="bundle name under results/calibration/")
     ap.add_argument("--years", type=int, nargs="+", default=[2023, 2024, 2025])
     ap.add_argument("--ablation", action="store_true")
+    ap.add_argument(
+        "--set",
+        dest="overrides",
+        action="append",
+        default=[],
+        metavar="KEY=BOOL",
+        help=(
+            "override one solve_and_persist boolean kwarg (diagnostic probes "
+            "only, e.g. --set ercot_ecrs_conservative_deployment=false); the "
+            "value is recorded in the bundle's run_config.json as usual"
+        ),
+    )
     ap.add_argument("--ablation-of", default=None, help="bundle name of the main run")
     args = ap.parse_args()
 
@@ -211,6 +223,11 @@ def main() -> None:
     kwargs["offer_curve_overrides"] = cand["overrides"]
     kwargs["offer_curve_deltas"] = cand["deltas"]
     kwargs["temp_dependent_derate"] = True
+    for ov in args.overrides:
+        key, _, val = ov.partition("=")
+        if key not in sig:
+            raise ValueError(f"--set {key!r} is not a solve_and_persist kwarg")
+        kwargs[key] = val.strip().lower() in ("1", "true", "yes", "on")
     kwargs["zero_forcing_ablation"] = args.ablation
     kwargs["ablation_of"] = args.ablation_of if args.ablation else None
     kwargs["note"] = (
