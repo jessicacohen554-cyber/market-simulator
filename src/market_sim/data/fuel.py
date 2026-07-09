@@ -3668,6 +3668,21 @@ def apply_plant_monthly_fuel_prices(
 
     T = config.hours
     month_idx = _month_index(T)
+    # Daily Henry Hub within-month swing for GAS plant-months: the flat F923
+    # monthly overwrite below would erase the daily commodity shape
+    # resolve_fuel_prices already applied under ``gas_daily_shape``, leaving
+    # the merit order blind to the intra-month gas troughs/spikes the marginal
+    # gas unit's bid actually tracks (the miso-50 root cause: coal-vs-gas
+    # flip days are unresolvable on a flat plant-month). Re-carry the
+    # mean-preserving factors onto every overwritten gas plant-month so the
+    # plant's measured monthly level is kept exactly and only the within-month
+    # shape rides on top. Coal/oil monthly costs stay flat (delivered coal has
+    # no daily commodity market at the plant burner tip).
+    gas_daily = (
+        gas_daily_shape_factors(year, T)
+        if getattr(config, "gas_daily_shape", False)
+        else None
+    )
     use_nearby = bool(getattr(config, "nearby_fuel_price_fallback", False))
     nearby = _NearbyFuelPrices(costs, year, fleet, config) if use_nearby else None
     states = fleet.state
@@ -3708,7 +3723,10 @@ def apply_plant_monthly_fuel_prices(
             for m in np.nonzero(reported)[0]:
                 mask = month_idx == m
                 if mask.any():
-                    fuel_prices[g, mask] = own[m]
+                    if gas_daily is not None and fuel_group == "Natural Gas":
+                        fuel_prices[g, mask] = own[m] * gas_daily[mask]
+                    else:
+                        fuel_prices[g, mask] = own[m]
             n_overwrites += 1
 
         # 2) Nearby-plant fallback fills the still-unreported months.
@@ -3722,7 +3740,10 @@ def apply_plant_monthly_fuel_prices(
                     continue
                 mask = month_idx == m
                 if mask.any():
-                    fuel_prices[g, mask] = v
+                    if gas_daily is not None and fuel_group == "Natural Gas":
+                        fuel_prices[g, mask] = v * gas_daily[mask]
+                    else:
+                        fuel_prices[g, mask] = v
                     applied = True
             if applied:
                 n_nearby += 1
