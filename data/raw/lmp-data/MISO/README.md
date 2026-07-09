@@ -9,16 +9,19 @@ per-hub validation series behind the MISO zonal-spread gate
 Gzip CSV(s) per (year, market), written by `scripts/fetch_miso_hub_lmp.py`:
 
     miso_hub_lmp_<year>_<da|rt>.csv.gz              (2023-2025, one file/year)
-    miso_hub_lmp_<year>_<da|rt>_<mm>.csv.gz          (2022+, one file/month)
+    miso_hub_lmp_<year>_<da|rt>_p<NN>.csv.gz         (2022+, ~10-day chunks)
     columns: date,node,type,value,he01..he24
 
-2023-2025 predate the monthly split and ship as one file per (year, market).
-2022 onward ships as 12 monthly files instead — this repo's git-push rule
-requires committing over the GitHub API (`push_files`), which means a file's
-full content becomes one base64 tool-call argument; a ~500KB/year file is too
-large to inline that way, a ~40KB/month one isn't. `scripts/derive_miso_hub_
-lmp.py` reads either layout (`_staged_paths`: prefers the legacy yearly file
-if present, else globs the monthly chunks).
+2023-2025 predate the chunk split and ship as one file per (year, market).
+2022 onward ships as ~10-day chunks (NN = 01, 02, ... — 37 chunks/year, last
+one short) instead — this repo's git-push rule requires committing over the
+GitHub API (`push_files`), which means a file's full content becomes one
+base64 tool-call argument; a ~500KB/year file is far too large to inline that
+way, and even a monthly (~40-60KB) chunk overran a single Read/tool-call round
+trip in practice — ~14KB/chunk (~18KB base64) is what actually stayed
+reliable. `scripts/derive_miso_hub_lmp.py` reads either layout
+(`_staged_paths`: prefers the legacy yearly file if present, else globs the
+`_p??` chunks).
 
 Rows are **verbatim** from the source (LMP, MCC and MLC rows per hub; hourly
 values untouched); the only additions are the filter to the eight hubs and
@@ -58,4 +61,4 @@ to the MISO block of `actual_lmp.json`, and
 `scripts/report_miso_zonal_gates.py` scores gate 2 (zonal spread sign and
 magnitude) against these actuals.
 
-Staged years: 2022 (validation holdout, monthly chunks), 2023, 2024, 2025 (RT + DA).
+Staged years: 2022 (validation holdout, ~10-day chunks), 2023, 2024, 2025 (RT + DA).

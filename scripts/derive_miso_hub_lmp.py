@@ -90,15 +90,15 @@ _MONTH_START_HOUR = np.concatenate(([0], np.cumsum(_DAYS_IN_MONTH) * 24))[:12]
 def _staged_paths(year: int, market: str) -> list:
     """Return the staged file(s) for (year, market).
 
-    2023-2025 predate the monthly split and ship as one yearly file; 2022
+    2023-2025 predate the chunk split and ship as one yearly file; 2022
     onward (fetched via the Data Exchange API, ``fetch_miso_hub_lmp.py``
-    module docstring) ships as 12 monthly chunks so each fits a single
-    ``push_files`` call. Prefer the legacy yearly file if both exist.
+    module docstring) ships as ~10-day ``_p<NN>`` chunks so each fits a
+    single ``push_files`` call. Prefer the legacy yearly file if both exist.
     """
     legacy = STAGE_DIR / f"miso_hub_lmp_{year}_{market}.csv.gz"
     if legacy.is_file():
         return [legacy]
-    return sorted(STAGE_DIR.glob(f"miso_hub_lmp_{year}_{market}_??.csv.gz"))
+    return sorted(STAGE_DIR.glob(f"miso_hub_lmp_{year}_{market}_p??.csv.gz"))
 
 
 def _market_frame(year: int, market: str) -> pd.DataFrame:
