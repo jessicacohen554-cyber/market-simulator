@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-09-caiso-69-sp15split",
+  "label": "caiso 69 sp15split",
+  "date": "2026-07-09",
+  "shorthand": "caiso-69-sp15split",
+  "definition": "SP15-split main -- caiso-68 recipe (caiso65 keeper config + temp_dependent_derate) on the LA_BASIN/SDGE/SP15_rest split topology, ct_netload_drag=False per-run override, 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-09-caiso-69-sp15split.js",
+  "bundle": "results/calibration/caiso69_sp15split"
+}

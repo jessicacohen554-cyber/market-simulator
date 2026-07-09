@@ -74,12 +74,12 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -94,8 +94,8 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 0,
+    "scored": 9,
+    "target_grade": 2,
     "commercial_grade": 1,
     "ledgered": 0,
     "fails": 6

@@ -1,6 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
- "bundle": "/home/user/market-simulator/results/calibration/caiso69_sp15split-ablation",
+ "bundle": "/home/runner/work/market-simulator/market-simulator/results/calibration/caiso69_sp15split-ablation",
  "iso": "CAISO",
  "years": [
   2023,
@@ -15,10 +15,10 @@
     {
      "year": 2023,
      "class": "CC_CHP",
-     "profile_r": 0.874,
+     "profile_r": 0.873,
      "model_offpeak_cv": 0.073,
      "actual_offpeak_cv": 0.048,
-     "cv_ratio": 1.524,
+     "cv_ratio": 1.521,
      "gated": false,
      "verdict": "pass"
     },
@@ -65,17 +65,17 @@
     {
      "year": 2023,
      "class": "ST_GAS",
-     "profile_r": 0.934,
-     "model_offpeak_cv": 0.975,
+     "profile_r": 0.933,
+     "model_offpeak_cv": 0.976,
      "actual_offpeak_cv": 0.127,
-     "cv_ratio": 7.667,
+     "cv_ratio": 7.677,
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2024,
      "class": "CC_CHP",
-     "profile_r": 0.768,
+     "profile_r": 0.767,
      "model_offpeak_cv": 0.077,
      "actual_offpeak_cv": 0.055,
      "cv_ratio": 1.411,
@@ -85,7 +85,7 @@
     {
      "year": 2024,
      "class": "CC_REGULAR",
-     "profile_r": 0.897,
+     "profile_r": 0.896,
      "model_offpeak_cv": 0.223,
      "actual_offpeak_cv": 0.255,
      "cv_ratio": 0.877,
@@ -108,27 +108,27 @@
      "profile_r": 0.807,
      "model_offpeak_cv": 0.613,
      "actual_offpeak_cv": 0.352,
-     "cv_ratio": 1.741,
+     "cv_ratio": 1.742,
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2024,
      "class": "ST_GAS",
-     "profile_r": 0.055,
-     "model_offpeak_cv": 0.604,
+     "profile_r": 0.054,
+     "model_offpeak_cv": 0.608,
      "actual_offpeak_cv": 0.396,
-     "cv_ratio": 1.528,
+     "cv_ratio": 1.537,
      "gated": true,
      "verdict": "FAIL"
     },
     {
      "year": 2025,
      "class": "CC_CHP",
-     "profile_r": 0.859,
-     "model_offpeak_cv": 0.022,
+     "profile_r": 0.86,
+     "model_offpeak_cv": 0.021,
      "actual_offpeak_cv": 0.069,
-     "cv_ratio": 0.313,
+     "cv_ratio": 0.311,
      "gated": false,
      "verdict": "pass"
     },
@@ -155,29 +155,29 @@
     {
      "year": 2025,
      "class": "CT_PEAKER",
-     "profile_r": 0.667,
-     "model_offpeak_cv": 0.751,
+     "profile_r": 0.668,
+     "model_offpeak_cv": 0.753,
      "actual_offpeak_cv": 0.344,
-     "cv_ratio": 2.184,
+     "cv_ratio": 2.19,
      "gated": true,
      "verdict": "FAIL"
     },
     {
      "year": 2025,
      "class": "ST_GAS",
-     "profile_r": -0.306,
-     "model_offpeak_cv": 1.084,
+     "profile_r": -0.296,
+     "model_offpeak_cv": 1.03,
      "actual_offpeak_cv": 0.169,
-     "cv_ratio": 6.428,
+     "cv_ratio": 6.108,
      "gated": true,
      "verdict": "FAIL"
     }
    ],
    "summary": [],
    "failures": [
-    "2024 ST_GAS: profile r 0.055 < 0.8",
-    "2025 CT_PEAKER: profile r 0.667 < 0.8",
-    "2025 ST_GAS: profile r -0.306 < 0.8"
+    "2024 ST_GAS: profile r 0.054 < 0.8",
+    "2025 CT_PEAKER: profile r 0.668 < 0.8",
+    "2025 ST_GAS: profile r -0.296 < 0.8"
    ],
    "notes": []
   },
@@ -266,7 +266,7 @@
      "class_total_twh": 64.6022,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.5384,
+     "load_share": null,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -278,8 +278,8 @@
      "class_total_twh": 0.1111,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.0009,
-     "immaterial": true,
+     "load_share": null,
+     "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -290,7 +290,7 @@
      "class_total_twh": 2.0682,
      "forced_share": 0.0,
      "limit": 0.15,
-     "load_share": 0.0258,
+     "load_share": null,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -302,8 +302,8 @@
      "class_total_twh": 1.2541,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.0115,
-     "immaterial": true,
+     "load_share": null,
+     "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -314,7 +314,7 @@
      "class_total_twh": 23.7724,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.1981,
+     "load_share": null,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -326,7 +326,7 @@
      "class_total_twh": 66.9154,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.4933,
+     "load_share": null,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -338,8 +338,8 @@
      "class_total_twh": 0.0868,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.0006,
-     "immaterial": true,
+     "load_share": null,
+     "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -350,7 +350,7 @@
      "class_total_twh": 1.4428,
      "forced_share": 0.0,
      "limit": 0.15,
-     "load_share": 0.0243,
+     "load_share": null,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -362,8 +362,8 @@
      "class_total_twh": 1.0603,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.0078,
-     "immaterial": true,
+     "load_share": null,
+     "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -374,7 +374,7 @@
      "class_total_twh": 21.2219,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.1564,
+     "load_share": null,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -386,7 +386,7 @@
      "class_total_twh": 65.3157,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.5165,
+     "load_share": null,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -398,8 +398,8 @@
      "class_total_twh": 0.1097,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.0009,
-     "immaterial": true,
+     "load_share": null,
+     "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -410,8 +410,8 @@
      "class_total_twh": 0.9842,
      "forced_share": 0.0,
      "limit": 0.15,
-     "load_share": 0.0131,
-     "immaterial": true,
+     "load_share": null,
+     "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -422,8 +422,8 @@
      "class_total_twh": 0.3529,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.0028,
-     "immaterial": true,
+     "load_share": null,
+     "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
     },
@@ -434,7 +434,7 @@
      "class_total_twh": 12.3177,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": 0.0974,
+     "load_share": null,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"

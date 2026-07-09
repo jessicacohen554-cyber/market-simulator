@@ -3,7 +3,7 @@
   "label": "caiso 69 sp15split ablation",
   "date": "2026-07-09",
   "shorthand": "caiso-69-sp15split-ablation",
-  "definition": "(PROBE \u2014 ABLATION TWIN of 2026-07-09-caiso-69-sp15split-dragoff) SP15-split ablation -- caiso-68 recipe (caiso65 keeper config + temp_dependent_derate) on the LA_BASIN/SDGE/SP15_rest split topology, ct_netload_drag=False per-run override, 2023-2025",
+  "definition": "SP15-split ablation -- caiso-68 recipe (caiso65 keeper config + temp_dependent_derate) on the LA_BASIN/SDGE/SP15_rest split topology, ct_netload_drag=False per-run override, 2023-2025",
   "years": [
     2023,
     2024,

@@ -1,6 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
- "bundle": "/home/user/market-simulator/results/calibration/caiso69_sp15split",
+ "bundle": "/home/runner/work/market-simulator/market-simulator/results/calibration/caiso69_sp15split",
  "iso": "CAISO",
  "years": [
   2023,

@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-09-caiso-69-sp15split-dragoff",
+  "run_id": "2026-07-09-caiso-69-sp15split",
   "iso": "CAISO",
-  "label": "caiso 69 sp15split dragoff",
+  "label": "caiso 69 sp15split",
   "target_years": [
     2023,
     2024,
