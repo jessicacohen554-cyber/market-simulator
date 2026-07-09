@@ -1,0 +1,55 @@
+name: _tmp-restore-constants
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/caiso-sp15-loadshares-nm5xs4
+
+      - name: Concatenate parts, verify hash, replace target, clean up
+        run: |
+          set -euo pipefail
+          TARGET="src/market_sim/config/constants.py"
+          EXPECTED="def60b22804498f0af71c1419e76682589c66837"
+
+          cat scripts/_tmp_restore/cpart_00.txt \
+              scripts/_tmp_restore/cpart_01.txt \
+              scripts/_tmp_restore/cpart_02.txt \
+              scripts/_tmp_restore/cpart_03.txt \
+              scripts/_tmp_restore/cpart_04.txt \
+              scripts/_tmp_restore/cpart_05.txt \
+              scripts/_tmp_restore/cpart_06.txt \
+              scripts/_tmp_restore/cpart_07.txt \
+              scripts/_tmp_restore/cpart_08.txt \
+              > /tmp/constants_reassembled.py
+
+          ACTUAL=$(git hash-object /tmp/constants_reassembled.py)
+          echo "expected: $EXPECTED"
+          echo "actual:   $ACTUAL"
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "HASH MISMATCH — aborting, not touching the target file."
+            exit 1
+          fi
+
+          python3 -c "import ast; ast.parse(open('/tmp/constants_reassembled.py').read())"
+          echo "Python syntax OK."
+
+          cp /tmp/constants_reassembled.py "$TARGET"
+          rm -rf scripts/_tmp_restore
+          rm -f .github/workflows/_tmp-restore-constants.yml
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.email "noreply@anthropic.com"
+          git config user.name "Claude"
+          git add -A
+          git commit -m "fix: reassemble constants.py from verified chunks (hash-checked); remove temp restore scaffold"
+          git push origin HEAD:claude/caiso-sp15-loadshares-nm5xs4
