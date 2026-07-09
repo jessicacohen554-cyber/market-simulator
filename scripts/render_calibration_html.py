@@ -513,7 +513,24 @@ def _actual_avg_lmp(iso: str, year: int) -> dict | None:
     numeric day-ahead / real-time means flow into the dashboard payload.
     """
     rec = _actual_lmp_table().get(str(iso), {}).get(str(int(year))) or {}
-    out = {k: rec[k] for k in ("da", "rt", "da_mon", "rt_mon") if k in rec}
+    # Key order is the bench-part serialization order — the v2.4 lw fields
+    # append after the legacy equal-hour fields (matching the committed-part
+    # retrofit in scripts/retrofit_lw_price_bench.py, so re-renders are
+    # byte-stable).
+    out = {
+        k: rec[k]
+        for k in (
+            "da",
+            "rt",
+            "da_mon",
+            "rt_mon",
+            "da_lw",
+            "rt_lw",
+            "da_lw_mon",
+            "rt_lw_mon",
+        )
+        if k in rec
+    }
     return out or None
 
 
