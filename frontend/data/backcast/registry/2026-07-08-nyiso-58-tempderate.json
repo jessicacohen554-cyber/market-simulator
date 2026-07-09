@@ -3,7 +3,7 @@
   "label": "nyiso 58 tempderate",
   "date": "2026-07-08",
   "shorthand": "nyiso-58-tempderate",
-  "definition": "NYISO KEEPER (promoted 2026-07-09, owner: 'promote it, structurally sound even if it is a regression'; rule 1 — keeper = most structurally faithful, not lowest error; same call the owner made for NEISO-55 this session). Determination NOT-YET (honest). The 2026-07-07-nyiso-56-measured-zonal keeper recipe VERBATIM + ONE change: temp_dependent_derate=True, replacing the flat EIA-860 net-summer derate with a per-class curve in MEASURED hourly zone dry-bulb temperature (literature-sourced physics slopes; adds NO free parameter, rule 11). It IMPROVES 2024/2025 (C3a 2024 -7.7%->-3.0%, 2025 -7.5%->+1.6%; C8 ST_GAS forced share falls 30/45/38%->28/41/34%) but REGRESSES 2023: C3a +22.8% (beyond commercial band), C3b NRMSE 0.42, C3c 39h>$300. ROOT CAUSE (diagnosed, SUMMARY + issue): downstate LOCATIONAL RESERVE-SCARCITY over-firing — temp-derate trims the downstate CT/peaker fleet supplying the East 10-min/SENY 30-min reserves, so the SOM-sourced RCPF penalties fire on non-event afternoons (Aug 14/21, real RT $45-65). PRE-EXISTING (keeper: 15 false >$300h in 2023; zero load-shed); temp-derate amplifies it. The 2023 C3a/C3b misses are DISCLOSED as open MODEL MISSES (aero-vs-frame CT slope + data-blocked #1344), deliberately NOT laundered into caveats — hence the honest NOT-YET. Governance ATTESTED (all levers measured, nothing fitted to residuals); registered zero-forcing ablation twin. Owner-promoted on structural faithfulness (rule 1) with the regression fully disclosed and tracked.",
+  "definition": "temp-derate full-keeper rerun -- 2026-07-07-nyiso-56-measured-zonal config + temp_dependent_derate=True, 2023-2025 -- (PROBE) EVALUATED AND REJECTED as keeper 2026-07-09 (owner decision): the temperature reshape improves 2024/2025 (C3a, C8) but REGRESSES 2023 (C3a +22.8% beyond band, C3c 39h) via downstate locational reserve-scarcity over-firing (issue #1844); keeper stays 2026-07-07-nyiso-56-measured-zonal. See results SUMMARY for the full root-cause diagnosis. Governance-unattested probe (determination NOT-YET).",
   "years": [
     2023,
     2024,
@@ -11,7 +11,5 @@
   ],
   "iso": "NYISO",
   "file": "frontend/data/backcast/runs/2026-07-08-nyiso-58-tempderate.js",
-  "bundle": "results/calibration/nyiso58_tempderate",
-  "ablation_twin": "2026-07-08-nyiso-58-tempderate-ablation",
-  "market_story": "The keeper vs its zero-forcing twin isolates what the merchant floors buy on top of the temperature-shaped capacity. The one change from nyiso-56 is temp_dependent_derate=True (a measured/physical capacity treatment, no floor and no free parameter), so the twin delta is dominated by the same downstate reliability floors nyiso-56's twin characterised. What temp-derate adds is the physically-correct hot-hour capacity SHAPE: gas turbines lose air-density-limited output as ambient rises above the 15C rating point, so heatwave hours sit below net-summer (where scarcity should form) and cool hours toward full rating — a real market behaviour kept even though it worsens the 2023 fit (rule 1). Its downside is that on warm-but-moderate 2023 afternoons it thins the downstate peaker headroom that supplies the East/SENY operating reserves, over-firing the RCPF scarcity price — a disclosed, tracked model miss, not a floor buying the residual."
+  "bundle": "results/calibration/nyiso58_tempderate"
 }
