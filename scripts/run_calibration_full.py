@@ -1904,6 +1904,7 @@ def solve_and_persist(
     curve_smoothing: dict | None = None,
     cc_derate_from_top: bool = False,
     cc_nameplate_summer_derate: bool = False,
+    coal_nameplate_summer_derate: bool = False,
     gt_ambient_derate: bool = False,
     gt_ambient_derate_ref_c: float | None = None,
     gt_ambient_derate_slope_cc: float | None = None,
@@ -2173,6 +2174,7 @@ def solve_and_persist(
             curve_smoothing=curve_smoothing,
             cc_derate_from_top=cc_derate_from_top,
             cc_nameplate_summer_derate=cc_nameplate_summer_derate,
+            coal_nameplate_summer_derate=coal_nameplate_summer_derate,
             gt_ambient_derate=gt_ambient_derate,
             gt_ambient_derate_ref_c=gt_ambient_derate_ref_c,
             gt_ambient_derate_slope_cc=gt_ambient_derate_slope_cc,
@@ -2525,6 +2527,7 @@ def solve_and_persist(
         "curve_smoothing": curve_smoothing or {},
         "cc_derate_from_top": cc_derate_from_top,
         "cc_nameplate_summer_derate": cc_nameplate_summer_derate,
+        "coal_nameplate_summer_derate": coal_nameplate_summer_derate,
         "temp_dependent_derate": temp_dependent_derate,
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
         "priced_interchange": priced_interchange,
@@ -2775,6 +2778,10 @@ def solve_and_persist(
         # Meta-writer audit fix (Stage 7): mirrors run_year; previously
         # entirely absent from recorded_cfg.
         recorded_cfg = recorded_cfg.with_overrides(cc_nameplate_summer_derate=True)
+    if coal_nameplate_summer_derate:
+        # Coal net-summer derate: mirror cc_nameplate_summer_derate so the
+        # recorded scenario_config reflects the LP that actually solved.
+        recorded_cfg = recorded_cfg.with_overrides(coal_nameplate_summer_derate=True)
     if gt_ambient_derate:
         # Mirror run_year so run_config.json records the GT ambient-derate knobs
         # (rule 25: every solve-changing tunable appears in the recorded config).
