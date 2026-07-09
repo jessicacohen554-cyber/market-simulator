@@ -171,3 +171,103 @@ vindicated and the offer-curve re-tune (Tier 4 of the diagnosis plan) becomes th
   the $48–78 miss (peak 19.5 GW vs SDGE 4.8 GW) — an `LA_BASIN` + `SP15_rest` (SDGE folded into rest)
   MVP is the 80/20 first probe, with SDGE added second. The topology surgery (Path-26/46 re-home,
   corridor collision) is similar either way, so the incremental cost of the full 3-way is modest.
+
+---
+
+## FOUNDATION DECISIONS (2026-07-09 — Phase 1 items 1 & 6, the topology spine)
+
+This block fixes the topology **unambiguously** for every downstream SP15-split task. It is the
+authoritative reference — where an earlier section of this doc disagrees (e.g. the 0.074 rounding),
+this block wins. Implemented on branch `claude/caiso-sp15-foundation`, touching only
+`config/iso_configs.py`, `model/transmission.py`, `config/interchange_config.py` (+ topology tests).
+
+### Exact zone names (final, case-sensitive)
+`SP15` is **deleted** and replaced by three zones. Full CAISO zone list, in config order:
+
+```
+NP15, ZP26, LA_BASIN, SDGE, SP15_rest, WECC_import
+```
+
+Downstream tasks (load-shares parquet, zone_assignment, crosswalk, gas hub, renewables fallback,
+`derive_load_shares.py CAISO_ZONES`, `_LARGEST_ZONE`) must use these exact strings. No `SP15` zone
+exists anymore.
+
+### Load shares (of full ISO — must sum to 1.0, `validate_topology` hard-errors otherwise)
+| Zone | load_share | Source |
+|------|-----------:|--------|
+| NP15 | 0.3969 | unchanged |
+| ZP26 | 0.0646 | unchanged |
+| LA_BASIN | **0.374** | LCT peak 19,537 ÷ SP26 peak 28,149 × 0.5385 (2023 Table 3.3-7 / 3.2-1) |
+| SDGE | **0.091** | LCT peak 4,768 ÷ SP26 peak 28,149 × 0.5385 |
+| SP15_rest | **0.0735** | exact residual: 0.5385 − 0.374 − 0.091 |
+| WECC_import | 0.0 | import node, no load |
+
+**Ambiguity resolved by judgment:** the scope table above lists SP15_rest as `0.074`, but
+`0.374 + 0.091 + 0.074 = 0.539 ≠ 0.5385`, which fails `validate_topology`'s 1e-6 sum check. The
+exact residual **0.0735** is used so the three sub-zones sum to the old SP15 0.5385 and the ISO
+total is 1.0. LA_BASIN and SDGE keep their measured LCT-ratio values; SP15_rest absorbs the rounding.
+
+### Final link list (direction + TTC)
+| # | from | to | ttc_mw | bidir? | Path / meaning |
+|---|------|----|-------:|:------:|----------------|
+| 0 | NP15 | ZP26 | 5400 | yes | Path 15 (unchanged) |
+| 1 | ZP26 | SP15_rest | 4000 | yes | Path 26, **re-pointed** off SP15 (same rating) |
+| 2 | WECC_import | NP15 | 4800 | yes | Path 66 / COI (unchanged) |
+| 3 | WECC_import | SP15_rest | 10623 | yes | Path 46 / WOR, **re-pointed** off SP15 |
+| 4 | SP15_rest | LA_BASIN | **12008** | **NO (one-way)** | internal LA import limit = LCT import_cap |
+| 5 | SP15_rest | SDGE | **1436** | **NO (one-way)** | Path 44 / SDG&E import limit = LCT import_cap |
+
+`SP15_rest` is the south gateway: Path 26 and Path 46/WOR feed it, and the two pockets import from it
+over the one-way import-limited links (4, 5). The one-way import-limited links are the mechanism that
+forms the LA-basin/SDG&E locational premium.
+
+### Import-cap values: **STATIC tightest-year (2023)** — per-year is the deferred end state
+Convention: **`import_cap = peak_load − LCR`** (literal reading of the LCT `requirement`; the
+reserve gross-up is a frozen sensitivity, never tuned to residual — rule 24). From
+`data/raw/capacity-deliverability/caiso/caiso.csv` (`peak_load − requirement`):
+
+| Pocket | 2023 | 2024 | 2025 |
+|--------|-----:|-----:|-----:|
+| LA_BASIN | **12,008** | 15,224 | 15,174 |
+| SDGE | **1,436** | 2,074 | 2,071 |
+
+**Decision: STATIC, using the 2023 (tightest / smallest / most-binding) caps** — LA 12,008, SDGE
+1,436 — baked into `_caiso_config` as link TTCs. **Why static, not per-year:** per-year caps are the
+preferred end state and should be wired through the runner's per-year config build (the same channel
+as `transmission.apply_deliverability_seam_limit`, which the runner already calls per solve year).
+That requires a **new runner call site** (e.g. an `apply_caiso_local_import_limits(cfg, year)` step),
+which is **outside this foundation task's three-file scope**. The static tightest-year value is the
+scope-sanctioned MVP; it is conservative (strongest pocket premium) and is a clean drop-in point for
+a downstream per-year upgrade — that upgrade only needs to add the runner step and swap links 4/5's
+TTC per year (values tabulated above).
+
+### InterfaceLimit change
+`WECC_import_simultaneous` (cap 7,500 MW, unchanged) now lists
+`[("WECC_import","NP15"), ("WECC_import","SP15_rest")]` — the southern pair follows Path 46's
+re-point to SP15_rest. `split_caiso_import_node_per_hub` rewrites both pairs to
+`[("WECC_PNW","NP15"), ("WECC_DSW","SP15_rest")]` when `caiso_per_hub_intertie` is on, and
+`apply_deliverability_seam_limit` still finds it structurally (all pairs originate at the import
+node), so the published-MIC supersession path is intact.
+
+### Corridor collision fix (Phase 1 item 6, the must-fix)
+- `transmission._CAISO_CORRIDOR_LINK_TO["WECC_DSW"]` → `("SP15_rest",)` (was `("SP15",)`).
+- `transmission.CAISO_PATH_DIRECTIONAL_RATINGS` Path-26 key → `("ZP26","SP15_rest")`.
+- `interchange_config` `WECC_DSW.border_zones` → `("SP15_rest",)`.
+
+So the Palo Verde/WOR import terminates on SP15_rest through every path (base config, per-hub split,
+asymmetric-ratings, corridor-flow-limit, interchange spec).
+
+### Verification (config-level only — model is not end-to-end runnable until 2A lands the parquet)
+- `get_iso_config("CAISO").validate_topology()` passes; zones and links as tabulated above.
+- `split_caiso_import_node_per_hub` re-homes DSW→SP15_rest and validates.
+- `pytest tests/test_iso_config.py tests/test_transmission.py tests/test_caiso_per_hub_intertie.py
+  tests/test_interchange_parity.py` → 171 passed, 2 pre-existing xfails. Four assertions updated to
+  the new topology (documented in the commit): the CAISO zone-set (4→6 zones), the
+  simultaneous-import link pair, the per-hub re-home pair, and the Path-26 directional-limit key.
+  No test was weakened — each encoded the old SP15 topology that legitimately changed.
+
+### Explicitly NOT touched (downstream / parallel tasks)
+Load-shares parquet & `derive_load_shares.py`, `data/zone_assignment.py`, `capacity_area_crosswalk`,
+`data/local_capacity.py` area specs, `renewables.py` / `data/fuel.py` / gas-hub CSV literals,
+`constants.CAISO_TAC_ZONE_WEIGHTS`, and `ct_netload_drag` retirement. Per-year import caps (runner
+wiring) are deferred as noted above.
