@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-09-miso-50-coalsigmoid",
+  "label": "miso 50 coalsigmoid",
+  "date": "2026-07-09",
+  "shorthand": "miso-50-coalsigmoid",
+  "definition": "MISO 50 PROBE (not promoted; keeper stays miso-49): the miso-49 keeper recipe (temp_dependent_derate and all) re-solved 2023-2025 with ONE change -- COAL_SIGMOID_DEFAULTS[MISO] (the coal-vs-gas passthrough sigmoid: prb / prb_follower / bituminous) re-derived from measured coal-commodity price by scripts/derive_coal_sigmoid.py, retiring the ERCOT byte-copy gas_mid 2.85 / gas_slope 2.5 (issue #1347 / gap G-26). Rule-23 trigger: the #1803 intake added the EIA Annual Coal Report region f.o.b.-mine price + BLS PPI coal-mining series a real re-derivation needs; each parameter is grounded in that measured data (gas_mid = coal-vs-gas-CC merit crossover from region delivered cost -> PRB 3.19, bituminous 4.12; ceil = 1.0 cost-tracking; floor = gas-trough/crossover -> 0.687/0.598/0.532; gas_slope = 1/cross-region dispersion -> bituminous 1.09, single-region PRB 2.5). Fit to measured f.o.b./PPI movement, NEVER to the MISO residual (honesty gate; DOF ledger reclassifies COAL_SIGMOID_DEFAULTS[MISO] residual -> measured-physical, n_residual 4->3). DISCOVERED RESULT (rules 1/10/11, not tuned away): grounding the offer in measured f.o.b. makes cheap MISO coal MORE inframarginal, so the pre-existing coal-for-gas over-substitution WORSENS -- C1 2023 COAL_PRB +8.8->+30.6 TWh (COAL_BIT ->+13.9), C2 2025 coal +16.3%->+24.5% / gas -14.7%->-16.5%, C1 free 10/12->5/12, C3a 2023 -2.5%->+18.0%, C5a CO2 2023 ->+13.1%; C4 coal dispatch-corr FAILs; determination NOT-YET (unchanged label, more fails). C8 shows COAL only 0.1-0.2% forced, so the extra coal is ECONOMIC merit, not floor-forcing. This is the honest signal that the residual is a gas-side / daily-basin-spot-granularity root cause (annual ACR f.o.b. cannot resolve daily gas troughs; daily basin spot indices S&P/Argus-paywalled -- rule-23 granularity caveat), NOT a coal-offer-level artifact; the ERCOT byte-copy's shallower discount was silently compensating for it. Kept per rule 11 (accurate measured input); root-cause fix (gas daily shape / seam / commitment) is the open item, not an offer re-tune. Recommendation to owner: HOLD -- do not promote as a fit improvement; keep the measured params in-tree; keeper stays miso-49. Rule-20 zero-forcing ablation twin registered alongside. See docs/handoffs/coal-sigmoid-rederive-2026-07.md.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-09-miso-50-coalsigmoid.js",
+  "bundle": "results/calibration/miso50_coalsigmoid",
+  "ablation_twin": "2026-07-09-miso-50-coalsigmoid-ablation"
+}
