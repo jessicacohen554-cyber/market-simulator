@@ -29,4 +29,4 @@ HEAT_RATE_BINS: dict[str, dict[str, float]] = {
         "default": 13.5,  # EIA Table 8 — wood/biomass steam (low-efficiency)
     },
 }
-PLACEHOLDER_TRUNCATED_DO_NOT_USE = True
+STOP_INCOMPLETE_PLACEHOLDER = True
