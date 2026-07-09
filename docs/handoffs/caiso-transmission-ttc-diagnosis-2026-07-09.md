@@ -146,8 +146,10 @@ not the price tail. It compounds — it does not replace — the locational fix.
    both temp-derate on, all 3 years):* SP15/LA mean LMP → toward $117–127; CT_PEAKER dispatch →
    toward 3–5 TWh; CC_REGULAR ↓; C8 drag-forcing retired; register main + zero-forcing ablation
    twin as **probes**; score leave-one-year-out before proposing promotion. This is a build (new
-   zones, crosswalk, fleet zone-assignment, local limits) and likely needs an **authorized LCT/LCR
-   data intake** — scope it first.
+   zones, crosswalk, fleet zone-assignment, local limits). **The LCT/LCR data intake is already
+   done** (LA Basin + San Diego/Imperial requirement + peak_load + plant membership on disk,
+   schema'd, sourced) — see the companion `caiso-sp15-split-implementation-scope-2026-07-09.md` for
+   the exact file-by-file touchpoints and LCT-sourced split parameters.
 
 2. **Promote the two WECC corridors (`WECC_PNW`/`WECC_DSW`) to first-class** (already half-done via
    `caiso_per_hub_intertie`). Low marginal risk; clean topology; do alongside Tier 1.
