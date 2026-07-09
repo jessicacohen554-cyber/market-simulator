@@ -1237,6 +1237,98 @@ PRB_RAIL_NONDIESEL_SHARE: float = 0.46
 PRB_COMMODITY_DECLINE: float = 0.015  # annual, from 2031 as demand falls
 PRB_COMMODITY_FLAT_THROUGH: int = 2030
 
+# --- Coal-vs-gas passthrough sigmoid re-derivation inputs ---------------------
+# Physical/measured inputs that ``scripts/derive_coal_sigmoid.py`` reads to
+# re-derive the per-(ISO, supply) gas-keyed coal passthrough sigmoid
+# (``COAL_SIGMOID_DEFAULTS`` in scenarios.py) from the EIA Annual Coal Report
+# region f.o.b.-mine price + BLS PPI coal-mining series intaked in #1803
+# (data/raw/coal-prices/, docs/handoffs/coal-price-data-intake-2026-07.md).
+# These are grounded commodity/heat/transport facts — NOT tuned to any ISO's
+# price/volume residual (CLAUDE.md rules 10/11/23). See the derive script's
+# module docstring for how each feeds the floor/ceil/gas_mid/gas_slope fit.
+#
+# Approximate heat content of coal by rank (MMBtu per short ton). Converts the
+# ACR f.o.b. $/ton price to $/MMBtu so it is comparable to gas.
+# Source: EIA Monthly Energy Review, Appendix A5, "Approximate Heat Content of
+# Coal and Coal Coke" (production-basis average heat contents).
+COAL_HEAT_CONTENT_MMBTU_PER_TON: dict[str, float] = {
+    "BIT": 24.93,  # bituminous
+    "SUB": 17.46,  # subbituminous (PRB)
+    "LIG": 13.30,  # lignite
+    "ANT": 25.09,  # anthracite (not in any modeled fleet; completeness)
+}
+
+# Delivered-cost commodity share by delivery mode: the fraction of a coal
+# plant's DELIVERED $/MMBtu that is the mine-gate (f.o.b.) commodity, the
+# remainder being rail/transport. Used to lift the ACR f.o.b. price to a
+# delivered cost comparable to the model's ``COAL_PRICE_BASE`` (delivered =
+# f.o.b. / commodity_share). PRB-by-rail reuses the cited PRB decomposition
+# (:data:`PRB_COMMODITY_SHARE`, 0.42 — long-haul rail dominates delivered
+# cost). Mine-mouth lignite is ~all commodity (no rail). Interior/Appalachian
+# bituminous railed short-haul into the MISO/PJM footprint carries a much
+# smaller freight fraction than long-haul PRB.
+# Source: EIA Coal Transportation Rates to the Electric Power Sector (rail
+# freight as a share of delivered cost: ~55-60% for long-haul PRB, ~15% for
+# short-haul Interior/Appalachian bituminous); mine-mouth lignite ~0.
+COAL_DELIVERY_COMMODITY_SHARE: dict[str, float] = {
+    "prb": PRB_COMMODITY_SHARE,  # 0.42, long-haul rail
+    "subbituminous": PRB_COMMODITY_SHARE,  # same basin economics as prb
+    "bituminous": 0.85,  # short-haul Interior/Appalachian rail
+    "lignite": 1.00,  # mine-mouth, no transport
+    "waste": 1.00,  # reclamation fuel, near-mine
+}
+
+# Representative heat rates (MMBtu/MWh) for locating the coal-vs-gas-CC merit
+# crossover in gas-price space (``gas_mid``): the gas price at which a gas-CC's
+# fuel cost equals the coal plant's fuel cost is
+# ``gas_mid = coal_delivered$/MMBtu x COAL_HR / CC_HR``. Representative EIA
+# Table 8 tested heat rates (subcritical steam coal; F-class combined cycle) —
+# the class-typical values, not per-plant (the LP still prices each unit at its
+# own heat rate; these only place the crossover the sigmoid centers on).
+COAL_SIGMOID_REP_HR_COAL: float = 10.0  # HEAT_RATE_BINS["coal"]["subcritical"]
+COAL_SIGMOID_REP_HR_GAS_CC: float = 6.7  # HEAT_RATE_BINS["gas_cc"]["f_class"]
+
+# Minimum delivered gas price ($/MMBtu) observed over the backcast window
+# (2023-2025), per ISO — the cheapest-gas anchor for the sigmoid floor: coal's
+# deepest bid discount is the fraction that pulls it to merit-order parity with
+# the cheapest gas it competes against (``floor = gas_min / gas_mid``). A
+# market fact (the observed gas trough), not a residual.
+# Source: EIA-923 Schedule-5 delivered gas cost to each ISO's gas fleet, 2024
+# (the cheapest of 2023-2025); Henry Hub 2024 ~$2.19 + small regional basis.
+COAL_SIGMOID_BACKCAST_GAS_MIN_MMBTU: dict[str, float] = {
+    "ERCOT": 2.00,
+    "MISO": 2.19,
+    "PJM": 2.86,  # +0.67 EIA-923 delivered basis (GAS_BASIS_DIFFERENTIAL)
+    "CAISO": 3.40,
+    "NYISO": 2.74,
+    "NEISO": 3.29,
+}
+
+# Baseline logistic slope (per $/MMBtu) for a coal supply group whose plants
+# all draw one producing region, so the annual region f.o.b. resolves no
+# cross-plant crossover dispersion (e.g. MISO's all-PRB group). The physical
+# crossover-sharpness prior at the mechanism's established scale; a multi-region
+# group (e.g. MISO bituminous spanning IL/IN/KY/ENC) instead derives its slope
+# from the real across-region delivered-cost dispersion. Clipped to
+# [SLOPE_MIN, SLOPE_MAX]. PPI intra-year variability adds a (small, ~2% CV)
+# fuzzing term to the dispersion.
+COAL_SIGMOID_BASELINE_SLOPE: float = 2.5
+COAL_SIGMOID_SLOPE_MIN: float = 1.0
+COAL_SIGMOID_SLOPE_MAX: float = 4.0
+
+# Lowest the sigmoid floor may go: a coal plant never bids below this fraction
+# of full delivered fuel cost. Bounds the cheap-gas discount so the floor stays
+# a merit-order discount, not an unbounded giveaway (the sunk take-or-pay
+# tonnage is a SEPARATE mechanism, coal_takeorpay_from_data).
+COAL_SIGMOID_FLOOR_MIN: float = 0.50
+
+# Follower-tier (low-must-run PRB cyclers, mustrun <= coal_prb_follower_mustrun_max)
+# deepen their cheap-gas discount vs the baseload PRB tier: a cycler bids nearer
+# its avoidable cost. Applied as a multiplicative discount on the baseload
+# floor/ceil. Matches the established baseload->follower ordering (follower
+# floor/ceil below baseload).
+COAL_SIGMOID_FOLLOWER_DISCOUNT: float = 0.87
+
 # Delivered oil fuel price ($/MMBtu) for oil-fired peakers and steam units.
 # Distillate (No. 2) fuel oil dominates the NYISO/ISO-NE oil peaker fleet;
 # residual (No. 6) is the legacy oil-steam fuel. The blended delivered cost
