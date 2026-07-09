@@ -87,6 +87,20 @@ _DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
 _MONTH_START_HOUR = np.concatenate(([0], np.cumsum(_DAYS_IN_MONTH) * 24))[:12]
 
 
+def _staged_paths(year: int, market: str) -> list:
+    """Return the staged file(s) for (year, market).
+
+    2023-2025 predate the chunk split and ship as one yearly file; 2022
+    onward (fetched via the Data Exchange API, ``fetch_miso_hub_lmp.py``
+    module docstring) ships as ~10-day ``_p<NN>`` chunks so each fits a
+    single ``push_files`` call. Prefer the legacy yearly file if both exist.
+    """
+    legacy = STAGE_DIR / f"miso_hub_lmp_{year}_{market}.csv.gz"
+    if legacy.is_file():
+        return [legacy]
+    return sorted(STAGE_DIR.glob(f"miso_hub_lmp_{year}_{market}_p??.csv.gz"))
+
+
 def _market_frame(year: int, market: str) -> pd.DataFrame:
     """Return one staged (year, market) as a long ``hub, year, hour, price`` frame.
 
@@ -97,12 +111,13 @@ def _market_frame(year: int, market: str) -> pd.DataFrame:
     cells become NaN). Rows may land in ``year - 1`` (the first EST hours of
     Jan 1 belong to the prior local year in CST).
     """
-    path = STAGE_DIR / f"miso_hub_lmp_{year}_{market}.csv.gz"
-    if not path.is_file():
+    paths = _staged_paths(year, market)
+    if not paths:
         raise FileNotFoundError(
-            f"{path} missing — stage it with scripts/fetch_miso_hub_lmp.py"
+            f"no miso_hub_lmp_{year}_{market}(.csv.gz|_??.csv.gz) under "
+            f"{STAGE_DIR} — stage it with scripts/fetch_miso_hub_lmp.py"
         )
-    df = pd.read_csv(path)
+    df = pd.concat((pd.read_csv(p) for p in paths), ignore_index=True)
     df = df[df["value"] == "LMP"]
     # Hour-beginning EST: date 00:00 + (HE-1); UTC = EST + 5h.
     day_utc = pd.to_datetime(df["date"]).to_numpy() + np.timedelta64(
@@ -140,15 +155,13 @@ def build(years) -> pd.DataFrame:
         [hubs, range(_HOURS_PER_YEAR)], names=["hub", "hour"]
     )
     staged_years = sorted(
-        {int(p.name.split("_")[3]) for p in STAGE_DIR.glob("miso_hub_lmp_*_rt.csv.gz")}
+        {int(p.name.split("_")[3]) for p in STAGE_DIR.glob("miso_hub_lmp_*_rt*.csv.gz")}
         | set(years)
     )
     long: dict[str, pd.DataFrame] = {}
     for market in ("rt", "da"):
         frames = [
-            _market_frame(y, market)
-            for y in staged_years
-            if (STAGE_DIR / f"miso_hub_lmp_{y}_{market}.csv.gz").is_file()
+            _market_frame(y, market) for y in staged_years if _staged_paths(y, market)
         ]
         # Mean over duplicates: the DST fall-back local hour occurs twice.
         long[market] = (
