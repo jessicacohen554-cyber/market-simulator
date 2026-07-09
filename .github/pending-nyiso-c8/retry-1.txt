@@ -1,5 +1,0 @@
-Retry marker: first run failed on the pre-existing disclosed D-5
-nyiso_local_selfsupply exit code (see workflow comment); the workflow now
-tolerates it and verifies the regenerated D-4 artifact instead. This file
-exists only to retrigger the path-filtered push event and is removed by the
-workflow's cleanup commit.
