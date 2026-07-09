@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-09-caiso-69-sp15split-dragoff",
+  "label": "caiso 69 sp15split dragoff",
+  "date": "2026-07-09",
+  "shorthand": "caiso-69-sp15split-dragoff",
+  "definition": "(PROBE \u2014 pre-registered A/B, negative result) SP15-split main -- caiso-68 recipe (caiso65 keeper config + temp_dependent_derate) on the LA_BASIN/SDGE/SP15_rest split topology, ct_netload_drag=False per-run override, 2023-2025 RESULT: pocket links bind (SDGE ~1,000-1,240 h/yr, LA 0-256 h) but form only ~$1-8 mean premium \u2014 in-pocket gas at SRMC caps the congestion rent; SoCal pocket LMP $47-71 vs actual $118-127 (miss unchanged vs caiso-65). CT_PEAKER collapses to 0.8-0.9 TWh without the drag (actual 3.1-5.2): the split alone cannot carry CT dispatch; the drag (or a structural commitment replacement) is still needed. 2023 hrs>$200 530 vs actual 21 (unchanged). Not promotable; redirects root-cause to offer level above SRMC + effective (tighter-than-LCT) local limits.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-09-caiso-69-sp15split-dragoff.js",
+  "bundle": "results/calibration/caiso69_sp15split",
+  "ablation_twin": "2026-07-09-caiso-69-sp15split-ablation"
+}
