@@ -387,10 +387,21 @@ def _gas_series(config: ScenarioConfig, year: int, hours: int) -> np.ndarray:
         ep_basis = ercot_electric_power_gas_basis(year)
         if ep_basis is not None:
             series = series + (ep_basis - GAS_BASIS_DIFFERENTIAL.get("ERCOT", 0.0))
-    if getattr(config, "gas_daily_shape", False):
-        # Inject the within-month daily commodity swing onto the correctly-
-        # levelled monthly series (mean-preserving, so the annual mix holds).
-        series = series * gas_daily_shape_factors(year, hours)
+    # The coal sigmoid's gas key deliberately stays at the MONTHLY level and
+    # does NOT take the gas_daily_shape within-month swing the gas units bid
+    # at (resolve_fuel_prices applies that there). The sigmoid models a coal
+    # fuel contract's discount posture — take-or-pay / mine-mouth / rail
+    # commitments whose delivered cost, and hence how deep a tranche
+    # discounts to hold merit, reprices on a monthly (contract) timescale,
+    # not daily spot. Keying it daily made coal offers whipsaw in lockstep
+    # with every Henry Hub trough, which (a) erased the coal-vs-gas flip
+    # days the daily shape exists to resolve — the merit gap never opened —
+    # and (b) showed up directly as the miso-51 C4 2024 coal dispatch-corr
+    # FAIL (r=0.856) and C3b 2023/24 monthly-shape FAILs; real coal dispatch
+    # is contract/inflexibility-smoothed. One mechanism per timescale: the
+    # gas units see the daily price, the coal contract posture sees the
+    # month. (miso-52; the daily factors were briefly applied here between
+    # the gas_daily_shape intro and this correction.)
     return series
 
 
