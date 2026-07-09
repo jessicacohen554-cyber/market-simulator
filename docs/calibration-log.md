@@ -8185,3 +8185,27 @@ surface (ercot37 §8 / G-22 §8), not physical derates.
 **Holdouts.** No solve/score/intake outside 2023–2025; the ECRS-off arm is a
 single-year diagnostic, never registered (rule 16); the envelope analysis is
 no-LP measured-data validation only.
+
+**Amendment (same session) — assumption-free lower-bound test.** Owner
+objection: the envelope assumes units actually reach capability in the benign
+reference bin (realized output only lower-bounds capability, so a flat ratio
+could hide a cut if mild-bin dispatch sat below max). Two answers that need no
+max-output assumption. (1) *Production vs rating*: production can never exceed
+capability, so a plant producing ≥ x% of its EIA-860 net-summer rating while
+its zone TMAX ≥ 40 °C has demonstrated that capability at temperature. 2023:
+the median CC plant produced **99.3 %** of rating at ≥40 °C; **80 % of CC
+capacity demonstrated ≥0.95×** and **50 % ≥1.00×** — where the derate assumes
+≤0.90–0.95× is available (raw curve 0.77–0.90). CC_CHP: 88 % ≥1.00×. Caveat,
+honestly held: CT_PEAKER median is 0.911 with 57 % of capacity ≥0.95× — a real
+hot-hour effect of up to ~5–9 % on part of the CT fleet cannot be excluded by
+the lower bound alone (peakers are also the class most likely to be
+AS-withheld or not dispatched to max) — but that is ≤ ~0.3 GW against the
+3–4 GW the current slopes remove. (2) *Telemetered capability, not
+production*: RTOLHSL/RTOLCAP is the operator's summed real-time High
+Sustainable Limit — the units' own declared max at the actual ambient
+conditions — and it showed 6.9–8.3 GW of spare online capability in the very
+hours the derated model sheds load. Both tests are in
+`scripts/probes/_ercot_temp_capability_envelope.py` (`_rating_lower_bound`).
+Conclusion unchanged: no admissible ERCOT-wide hot-hour cut of the modeled
+magnitude; a small measured CT-only slope (CEMS-derived, ~0.3–0.5 %/°C
+equivalent) is the largest signal the data would support.
