@@ -8130,3 +8130,58 @@ registered PROBE pair for the availability follow-up to A/B against.
 tariff parameters untouched (rule 26); all knobs via
 `offer_curve_overrides`/`offer_curve_deltas` in `run_config.json` (rule 23),
 ERCOT-only (rule 24).
+
+## 2026-07-09 — ERCOT temp-derate follow-up: the 2023-only ECRS design difference is NOT the double-count (~4 pp), and the derate slopes themselves have NO CEMS signature for the ERCOT gas fleet (measured hot-hour capability is FLAT)
+
+Two follow-on diagnostics to the ercot49 round, prompted by the owner's
+hypothesis that the 2023-vs-2024/25 market-design difference (the
+`ercot_ecrs_conservative_deployment` at-cap step, published pre-2024-08-01
+design) was what the temp derate double-counts.
+
+**ECRS-design A/B (2023, throwaway single-year arm, rule 16 — local only,
+`ercot49_sweep_ecrsoff2023`).** Temp derate + c1 curves with the conservative
+step OFF: C3a +264.0 % → +260.2 %, NRMSE 4.42 → 4.37, Aug $872 → $863; VOLL
+shed hours 65 → 43 (the freed ~0.7 GW ECRS absorbs some shortfall) but the
+deep hours re-price on the lumped total-reserve ORDC curve. The design
+difference owns ~4 pp of a 264 pp overshoot. Corroborating: within 2024 the
+worst month is August ($223 model vs $36 actual) — AFTER the reform, outside
+the withheld window (42 of 71 deep hours post-reform); 2025 carries no step
+and still runs 22 hours >$1,000 vs 3 actual. The keeper (flat derate, step
+ON) sits slightly UNDER in exactly the step-bound months (2023 Aug $155 vs
+$192) — the design representation was never overcorrected in tuning. The
+2023≫2024≫2025 blow-out gradient tracks summer heat, not the design window.
+
+**Measured hot-hour capability envelope
+(`scripts/probes/_ercot_temp_capability_envelope.py`, CAMPD hourly × zone
+TMAX, 2023 + 2024, 108 CC / 88 CT / 40 ST units).** The same admissibility
+test the coal summer-derate investigation applied, now for the gas classes:
+p98 of unit output vs its benign-bin (26–32 °C) p99.5 reference, per TMAX
+bin, Jun–Sep. Measured envelope at 40–46 °C: CC 1.00–1.01, CT 1.08–1.09
+(global-summer-max reference: 0.98–1.00 both), ST_GAS 1.00 — the fleet hits
+its summer maxima ON the hottest hours. The model's raw curves predict
+0.77–0.93 in those bins. The measured incremental hot-hour derate beyond
+EIA-860 net-summer is **~1–2 %, not the 9–23 %** the literature slopes (CT
+1.26 %/°C, CC 0.76 %/°C from a 15 °C ISO rating point) apply: the TX fleet is
+equipped for TX summers (inlet evaporative cooling/chillers), so net-summer
+capability already IS its hot-day rating. No CEMS signature → no admissible
+driver for an ERCOT hot-hour capability cut below net-summer (rule 13; coal
+precedent 2026-07-08).
+
+**Where this leaves the temp-derate line for ERCOT.** The ercot48/49 C3c
+"improvement" (tail count into band) was right-number-wrong-mechanism: it
+manufactured the tail via physical shortage that BOTH system telemetry
+(RTOLCAP 6.9–8.3 GW in the model's deep hours) and now unit-level CEMS refute.
+Recommendation to the owner: (a) do not promote `temp_dependent_derate` for
+ERCOT in its literature-slope parameterization — either re-derive per-class
+slopes from the CEMS envelope (≈ flat → equivalent to the keeper's net-summer
+treatment) or leave the flag off for ERCOT (per-ISO measured grounding, rules
+13/24; PJM/MISO keepers, different fleets/climates, unaffected by this
+finding); (b) the keeper's real open miss — the too-thin C3c tail (104 vs
+311 DA) — is owned by scarcity-anticipating OFFER formation at healthy
+reserves (G-22 thread-A: real tail hours had RTOLCAP p50 8 GW, SCED λ p50
+$443), so the admissible path to the tail is the filed measured DAM offer
+surface (ercot37 §8 / G-22 §8), not physical derates.
+
+**Holdouts.** No solve/score/intake outside 2023–2025; the ECRS-off arm is a
+single-year diagnostic, never registered (rule 16); the envelope analysis is
+no-LP measured-data validation only.
