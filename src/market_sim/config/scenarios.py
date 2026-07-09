@@ -4556,41 +4556,46 @@ COAL_SIGMOID_DEFAULTS: dict[tuple[str, str], dict[str, float]] = {
     # 2023 -4.7% -> -2.7%, 2025 (dear gas, near gas_mid) -1.7% -> -1.0%; gas
     # 2024 +4.6% -> +3.9%. Gas-keyed, so it self-targets the cheap-gas years
     # and leaves the dear-gas ceiling untouched. (scripts/probes/_pjm_bit_floor_probe.)
-    # MISO bituminous (Illinois-Basin / Appalachian blend). Coal's delivered
-    # cost doesn't follow gas — at dear gas, coal is already inherently cheaper
-    # than gas-CC, so a sigmoid that marks coal UP (ceil > 1.0) is backwards:
-    # it prices coal out of the stack exactly when gas-coal merit should favour
-    # coal. Run 30 (ceil 1.20) confirmed this: at $3.52 gas the 1.11× markup
-    # pushed BIT below run 29 by -21.8 TWh and blew gas +14.5 TWh in 2025.
-    # Fix: ceil ≤ 1.0 so the sigmoid only ever DISCOUNTS BIT (deeply at cheap
-    # gas for take-or-pay / stay-running, less at dear gas where coal already
-    # wins on merit). At $2.19 gas → 0.61×, $2.54 → 0.68×, $3.52 → 0.89×.
+    # MISO coal sigmoids — RE-DERIVED 2026-07-09 from measured coal-commodity
+    # price by `scripts/derive_coal_sigmoid.py`, retiring the ERCOT byte-copies
+    # (the old MISO entries reused ERCOT's gas_mid 2.85 / gas_slope 2.5 with
+    # hand-tuned floor/ceil — the rule-24 wart flagged as #1347 / gap G-26).
+    # Rule-23 trigger: the #1803 intake added the EIA Annual Coal Report region
+    # f.o.b.-mine price + BLS PPI coal-mining series that a real re-derivation
+    # needs (data/raw/coal-prices/; docs/handoffs/coal-price-data-intake-2026-07.md,
+    # coal-sigmoid-rederive-2026-07.md). NOT re-tuned to any MISO residual — the
+    # honesty gate. Each parameter is grounded (derive-script docstring):
+    #   gas_mid  = coal-vs-gas-CC merit crossover = deliv$/MMBtu × HR_coal / HR_cc,
+    #              with deliv from the region f.o.b. lifted by delivery-mode
+    #              commodity share (PRB /0.42 long-haul rail → ~$2.01, ILB/App
+    #              bituminous /0.85 short rail → ~$2.57). PRB crosses at $3.19,
+    #              cheaper-than-gas ILB/App bituminous only at $4.12 — the
+    #              region-specific crossover the 2.85 byte-copy got wrong.
+    #   ceil     = 1.0 — cost-tracking basins never bid above full delivered cost
+    #              (retires the residual-tuned 0.92-0.98 markdown).
+    #   floor    = gas_min / gas_mid (gas_min = MISO 2024 delivered-gas trough
+    #              $2.19), the deepest cheap-gas discount to hold merit parity.
+    #   gas_slope= 1 / cross-region delivered-cost dispersion (bituminous spans
+    #              IL/IN/KY/ENC → wide spread → gentle 1.09); single-region PRB
+    #              resolves no spread → baseline 2.5 (annual data can't resolve
+    #              its sharpness — rule-23 granularity caveat).
+    # Provenance artifact: data/raw/_processed-legacy/coal_sigmoid_params.csv.
     ("MISO", "bituminous"): {
-        "floor": 0.55,
-        "ceil": 0.95,
-        "gas_mid": 2.85,
-        "gas_slope": 2.5,
+        "floor": 0.532,
+        "ceil": 1.0,
+        "gas_mid": 4.115,
+        "gas_slope": 1.092,
     },
-    # MISO PRB (mine-mouth/rail PRB plants in the MISO footprint). PRB cost
-    # is mine-mouth/rail and doesn't follow gas — same logic as BIT: ceil must
-    # be ≤ 1.0. Run 30's ceil 1.40 gave a 1.31× markup at $3.52 gas, pricing
-    # PRB completely out of the stack in 2025. Fix: ceil 0.98 so PRB is always
-    # slightly discounted (never marked up); floor 0.78 gives a deeper cheap-gas
-    # discount to hold baseload against CCs. At $2.19 → 0.81×, $2.54 → 0.84×,
-    # $3.52 → 0.95×.
     ("MISO", "prb"): {
-        "floor": 0.78,
-        "ceil": 0.98,
-        "gas_mid": 2.85,
+        "floor": 0.687,
+        "ceil": 1.0,
+        "gas_mid": 3.187,
         "gas_slope": 2.5,
     },
-    # MISO PRB follower tier (low-must-run cyclers, mustrun_pct <=25%). Deeper
-    # cheap-gas discount than baseload PRB; ceil ≤ 1.0 (same logic — coal cost
-    # doesn't follow gas). At $2.19 → 0.72×, $2.54 → 0.76×, $3.52 → 0.88×.
     ("MISO", "prb_follower"): {
-        "floor": 0.68,
-        "ceil": 0.92,
-        "gas_mid": 2.85,
+        "floor": 0.598,
+        "ceil": 1.0,
+        "gas_mid": 3.187,
         "gas_slope": 2.5,
     },
     ("PJM", "bituminous"): {
