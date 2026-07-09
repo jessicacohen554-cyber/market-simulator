@@ -1,0 +1,600 @@
+# which is set by a banked, multi-sector market this power model does not
+# contain (that faithful representation is the measured/projected adder above).
+# Because these region-/economy-wide budgets vastly exceed any single modeled
+# ISO's power-sector emissions, the row is (correctly) slack and its dual ~0 for
+# a real ISO — the mechanism is validated on the trivial binding fixture
+# (tests/test_dispatch.py::TestMassCapConstraint), not by binding here. NO 2022
+# or H1-2026 rows (holdout quarantine, CLAUDE.md rule 22).
+
+# California GHG annual allowance budget (MMT CO2e/yr; 1 CA GHG allowance = 1
+# metric tonne CO2e). Declines per the Scoping Plan trajectory. This is the
+# whole-economy CARB cap (electricity + industry + fuels), so a CAISO
+# power-sector row against it is deeply slack.
+# Source: CARB Cap-and-Trade Regulation, 17 CCR §95841 Table 6-2 (annual
+# allowance budgets 2021-2031). 2022 and 2026 omitted (holdout quarantine).
+CARB_ALLOWANCE_BUDGET: dict[int, float] = {
+    2023: 294.1,
+    2024: 280.7,
+    2025: 267.4,
+    2027: 240.6,
+    2028: 227.3,
+    2029: 213.9,
+    2030: 200.5,
+    2031: 193.8,
+}
+# CARB Auction Reserve (floor) price by year ($/tonne), rising 5% + CPI per
+# §95911(c). Landed as the cited floor-band artifact; the CAISO forecast adder
+# escalator lives in CARB_FLOOR_ESCALATION above.
+# Source: CARB Annual Auction Reserve Price Notices, 2023-2025.
+CARB_FLOOR_PRICE: dict[int, float] = {
+    2023: 22.21,
+    2024: 24.04,
+    2025: 25.94,
+}
+# RGGI member states by year (postal codes). Virginia joined RGGI's CO2 Budget
+# Trading Program in 2021 (regulation 9 VAC 5-140) and exited effective 1 Jan
+# 2024 (2023 Va. Acts of Assembly ch. 2/3, repealing the program); Pennsylvania's
+# entry remains enjoined by the Commonwealth Court (Shirkey v. DEP, ongoing) and
+# was never an actual member, so PA is never included. Used to (a) resolve
+# per-generator RGGI membership exactly from a plant's own state (§5 per-unit
+# mask) and (b) sum each RGGI ISO's own member-state budgets (below) instead of
+# the regional over-bound. 2022 omitted (holdout quarantine, CLAUDE.md rule 22);
+# years beyond 2025 hold the 2025 (post-VA-exit) set — no further membership
+# changes are enacted as of this writing.
+# Source: RGGI, Inc. participating-states list (rggi.org/program-overview-and-
+# design/elements); Virginia Clean Economy and Equity Act repeal, effective
+# 2024-01-01.
+RGGI_MEMBER_STATES_BY_YEAR: dict[int, frozenset[str]] = {
+    2023: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),
+    2024: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
+    2025: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
+}
+
+# RGGI CO2 allowance budgets (short tons/yr), regional ("RGGI") and per
+# member-state (postal code). Per-state values are each state's "CO2 Allowance
+# Base Budget" — the gross annual issuance under its own CO2 Budget Trading
+# Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA,
+# a bank-clearing haircut) — because this model's row is an explicitly no-bank
+# instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle
+# banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's
+# power-sector row sums its own member states' base budgets
+# (policy/cap_and_trade.py::_published_power_sector_budget), which is a much
+# tighter, more faithful bound than the regional total (rule 12: prefer the
+# accurate figure). "RGGI" is kept as the regional fallback for years without a
+# per-state breakdown (2027-2030 projections) or an unmapped ISO.
+# 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official
+# "Distribution of VYyyyy CO2 Allowances By State" spreadsheets ("CO2 Allowance
+# Base Budget" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/
+# {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this
+# replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with
+# the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784).
+# 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward
+# trajectory, not measured); no per-state breakdown is published for projected
+# years, so a RGGI ISO's forecast-year row falls back to this regional
+# over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).
+RGGI_STATE_CO2_BUDGET: dict[str, dict[int, float]] = {
+    "RGGI": {
+        2023: 112_457_784.0,
+        2024: 84_162_784.0,
+        2025: 81_347_784.0,
+        2027: 63_200_000.0,
+        2028: 61_400_000.0,
+        2029: 59_600_000.0,
+        2030: 57_900_000.0,
+    },
+    "CT": {2023: 4_566_218.0, 2024: 4_418_921.0, 2025: 4_271_624.0},
+    "DE": {2023: 3_178_264.0, 2024: 3_075_739.0, 2025: 2_973_215.0},
+    "ME": {2023: 2_569_587.0, 2024: 2_487_656.0, 2025: 2_405_725.0},
+    "MD": {2023: 15_772_679.0, 2024: 15_263_882.0, 2025: 14_755_086.0},
+    "MA": {2023: 11_220_454.0, 2024: 10_858_504.0, 2025: 10_496_554.0},
+    "NH": {2023: 3_723_549.0, 2024: 3_604_823.0, 2025: 3_486_098.0},
+    "NJ": {2023: 16_380_000.0, 2024: 15_840_000.0, 2025: 15_300_000.0},
+    "NY": {2023: 27_295_284.0, 2024: 26_414_791.0, 2025: 25_534_298.0},
+    "RI": {2023: 1_763_884.0, 2024: 1_706_986.0, 2025: 1_650_085.0},
+    "VT": {2023: 507_865.0, 2024: 491_482.0, 2025: 475_099.0},
+    # Virginia: 2023 only (exited 1 Jan 2024, RGGI_MEMBER_STATES_BY_YEAR above).
+    "VA": {2023: 25_480_000.0},
+}
+
+# Storage technology parameters.
+# Source: NREL ATB 2024 (li-ion), DOE LDES Liftoff (iron-air).
+STORAGE_TECHS: dict[str, dict[str, float]] = {
+    "li_ion_4hr": {  # NREL ATB 2024 — 4-hour lithium-ion battery
+        "duration_hr": 4,
+        "rte": 0.86,
+        "cycles": 5000,
+        "capex_per_kw": 1140.0,  # was 1380. ~$285/kWh × 4hr. NREL ATB 2024b, BNEF 2025.
+        "capex_per_kwh": 285.0,  # was 345. LFP pack costs ~$100/kWh + BOS.
+        "fom_per_kw_yr": 30.0,  # was 34.5.
+        "learning_rate": 0.18,
+    },
+    "li_ion_8hr": {  # NREL ATB 2024 — 8-hour lithium-ion battery
+        "duration_hr": 8,
+        "rte": 0.86,
+        "cycles": 5000,
+        "capex_per_kw": 2280.0,  # was 2760. $285/kWh × 8hr.
+        "capex_per_kwh": 285.0,  # was 345.
+        "fom_per_kw_yr": 48.0,  # was 55.2.
+        "learning_rate": 0.18,
+    },
+    "iron_air": {  # DOE LDES Liftoff — 100-hour iron-air battery
+        "duration_hr": 100,
+        "rte": 0.50,
+        "cycles": 3000,
+        "capex_per_kw": 2000.0,
+        "capex_per_kwh": 20.0,
+        "fom_per_kw_yr": 20.0,
+        "learning_rate": 0.10,
+    },
+    # Additional long-duration storage technologies. ``capex_per_kw`` is the
+    # total capital per kW of power (energy capex × duration + power capex),
+    # matching the convention of the li-ion / iron-air entries above.
+    "li_ion_12hr": {  # NREL ATB 2024 — 12-hour lithium-ion battery
+        "duration_hr": 12,
+        "rte": 0.78,  # lower RTE at longer duration. NREL ATB 2024
+        "cycles": 4000,
+        "capex_per_kw": 3100.0,  # was 3560. $240/kWh × 12hr + $220/kW.
+        "capex_per_kwh": 240.0,  # was 280.
+        "fom_per_kw_yr": 10.0,  # was 12.0.
+        "learning_rate": 0.15,  # BNEF lithium-ion learning curve 2024
+        "lifetime_yr": 20,
+    },
+    "flow_battery": {  # PNNL 2023 — vanadium redox flow battery
+        "duration_hr": 10,
+        "rte": 0.70,  # vanadium redox. PNNL 2023 flow battery review
+        "cycles": 15000,  # long cycle life — major advantage. PNNL 2023
+        "capex_per_kw": 4700.0,  # 350 $/kWh × 10 h + 1200 $/kW. PNNL 2023
+        "capex_per_kwh": 350.0,
+        "fom_per_kw_yr": 15.0,
+        "learning_rate": 0.10,
+        "lifetime_yr": 25,
+    },
+    "compressed_air": {  # NREL ATB 2024 — adiabatic compressed-air storage
+        "duration_hr": 8,
+        "rte": 0.55,  # adiabatic CAES. NREL ATB 2024
+        "cycles": 10000,
+        "capex_per_kw": 2700.0,  # 150 $/kWh × 8 h + 1500 $/kW. NREL ATB 2024
+        "capex_per_kwh": 150.0,
+        "fom_per_kw_yr": 10.0,
+        "learning_rate": 0.05,  # mature concept, limited recent deployment
+        "lifetime_yr": 40,  # Huntorf plant operating since 1978
+    },
+}
+
+# Storage power capacity (MW) for the base year (2026).
+# Subsequent years grow via economics-based new entry, not this constant.
+# Source: ERCOT Monthly Dec 2025 — battery capacity ~17 GW.
+# CAISO TPP 2024 — ~8 GW operational + under construction.
+STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
+    "ERCOT": {
+        "low": 12_000.0,
+        "mid": 17_000.0,
+        "high": 25_000.0,
+    },
+    "CAISO": {
+        "low": 6_000.0,
+        "mid": 8_000.0,
+        "high": 12_000.0,
+    },
+    # PJM/NYISO/NEISO base storage — approximate operational + queued
+    # battery capacity. TODO: verify (PJM Load Forecast Report 2024,
+    # NYISO Gold Book 2024, ISO-NE CELT Report 2024).
+    "PJM": {
+        "low": 3_000.0,
+        "mid": 5_000.0,
+        "high": 9_000.0,
+    },
+    "NYISO": {
+        "low": 1_000.0,
+        "mid": 1_500.0,
+        "high": 3_000.0,
+    },
+    "NEISO": {
+        "low": 500.0,
+        "mid": 1_000.0,
+        "high": 2_000.0,
+    },
+}
+
+# Ceiling on total deployed storage power (MW) per ISO, capping cumulative
+# new entry at a realistic share of system peak demand. Each value is roughly
+# half of the ISO's coincident peak — the share studies put at the point where
+# incremental storage capacity value falls off sharply.
+STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
+    "ERCOT": 45_000.0,  # ~53% of ~85 GW peak. Source: ERCOT CDR
+    "CAISO": 25_000.0,  # ~52% of ~48 GW peak. Source: CAISO IEPR
+    "PJM": 75_000.0,  # ~50% of ~150 GW peak. Source: PJM Load Forecast Report 2024
+    "NYISO": 16_000.0,  # ~50% of ~32 GW peak. Source: NYISO Gold Book 2024
+    "NEISO": 13_000.0,  # ~50% of ~26 GW peak. Source: ISO-NE CELT Report 2024
+}
+
+# Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP queue data,
+# eastern-ISO interconnection-queue throughput.
+STORAGE_ANNUAL_BUILD_CAP_MW: dict[str, float] = {
+    "ERCOT": 5_000.0,
+    "CAISO": 3_000.0,
+    "PJM": 4_000.0,  # large queue but slower interconnection. Source: PJM queue 2024
+    "NYISO": 1_500.0,  # Source: NYISO interconnection queue 2024
+    "NEISO": 1_200.0,  # Source: ISO-NE interconnection queue 2024
+}
+
+# Cap on the share of one year's storage build budget that any single
+# technology may take. Below 1.0 the annual build diversifies across the
+# profitable technologies in merit order rather than the top-margin tech
+# monopolizing the whole budget (the "winner-take-all" failure mode).
+# Source: modeling assumption — interconnection queues and supply chains
+# spread build across durations even when one tech leads on margin.
+STORAGE_TECH_BUILD_SHARE_CAP: float = 0.6
+
+# Share of deployed storage power by technology type.
+# Source: NREL ATB 2024 technology mix assumptions.
+STORAGE_TECH_POWER_SHARE: dict[str, float] = {
+    "li_ion_4hr": 0.70,
+    "li_ion_8hr": 0.25,
+    "iron_air": 0.05,
+}
+
+
+# --- Storage capacity / resource-adequacy value, by market design ---------
+#
+# The storage new-entry screen stacks two value streams: energy arbitrage
+# (every market) and resource-adequacy capacity value (only markets that pay
+# for capacity). ERCOT is energy-only — scarcity value already flows through
+# the energy price via ORDC/VOLL — so its capacity stream is OFF. The capacity
+# markets (PJM/NYISO/ISO-NE) and CAISO's RA program pay a separate capacity
+# price, so theirs is ON. Toggling ``capacity_market`` per ISO keeps the screen
+# modular as market designs diverge.
+
+
+@dataclass(frozen=True)
+class MarketDesign:
+    """Storage revenue-stack switches and parameters for one ISO/market.
+
+    ``capacity_market`` gates the resource-adequacy value stream entirely.
+    ``net_cone_per_kw_yr`` is the marginal cost of new entry of the capacity
+    resource the market prices against (the clearing-price anchor), in
+    $/kW-yr. A storage unit earns ``net_cone × ELCC(duration) × derate`` of it,
+    where the ELCC (effective load-carrying capability) credit rises with
+    duration and the derate falls as storage saturates the peak.
+    """
+
+    capacity_market: bool
+    net_cone_per_kw_yr: float = 0.0
+
+
+# Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARKET_DESIGN``
+# (energy-only) so a new ISO is conservative until its capacity rules are added.
+MARKET_DESIGN: dict[str, MarketDesign] = {
+    # Energy-only: scarcity is monetized through the energy price, not a
+    # separate capacity payment. Source: ERCOT market design (ORDC).
+    "ERCOT": MarketDesign(capacity_market=False),
+    # RA program with a soft capacity price. Source: CAISO RA, CPUC net-CONE.
+    "CAISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=90.0),
+    # Capacity markets. Net-CONE anchors near the CT reference resource.
+    # Source: PJM 2025/26 BRA planning parameters (net-CONE ~$100/kW-yr).
+    "PJM": MarketDesign(capacity_market=True, net_cone_per_kw_yr=100.0),
+    # Source: NYISO ICAP demand-curve reset net-CONE.
+    "NYISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=110.0),
+    # Source: ISO-NE FCM net-CONE.
+    "NEISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=95.0),
+    # MISO runs a SEASONAL Planning Resource Auction (PRA): 4 seasons, clearing
+    # in $/MW-day with a sloped demand curve anchored on Net-CONE. We anchor on
+    # MISO's published Net-CONE (the demand-curve reference), NOT the volatile
+    # PRA clearing price (PY24/25 annualized ~$21/MW-day vs PY25/26 ~$217/MW-day
+    # — the summer-only spike to $666.50/MW-day), consistent with how PJM/NYISO/
+    # NEISO anchor on net-CONE rather than a single auction print.
+    #   Reference resource: advanced combustion turbine. Gross CONE PY2024/25
+    #   ~$330/MW-day (= 330 x 365 / 1000 = $120.45/kW-yr). MISO's published
+    #   average Net-CONE for the North/Central region is ~$79,800/MW-yr
+    #   (= $79.8/kW-yr; equivalently $79,800/365 = $218.6/MW-day net-CONE
+    #   reference), i.e. gross CONE less the ~$40/kW-yr inframarginal E&AS
+    #   offset. We use 80.0 $/kW-yr.
+    #   PRA -> $/kW-yr conversion: $/MW-day x 365 / 1000 = $/kW-yr.
+    # Net-CONE varies by LRZ (PY25/26 gross CONE $321/MW-day LRZ10 to
+    # $373/MW-day LRZ5) and by season; the single North/Central anchor is a
+    # representative value pending the M8 seasonal/zonal RA-timing build.
+    # Source: MISO CONE & Net-CONE Update (RASC, 2024-09-23) and MISO PRA
+    # results postings (PY2024/25, PY2025/26). See parameter-citations.md.
+    "MISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=80.0),
+}
+
+DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
+
+# Target planning reserve margin per ISO for the reserve-margin adequacy
+# backstop (capacity.py::apply_reserve_margin_build). Each ISO sets its own
+# installed-reserve-margin / planning-reserve-margin target through its
+# resource-adequacy process; ERCOT's 13.75% is its Board target RM and is NOT
+# every ISO's target. The reserve-margin build resolves
+# ``PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, config.planning_reserve_margin)``,
+# so an explicit ScenarioConfig.planning_reserve_margin still overrides this
+# registry and an ISO absent here falls back to that scalar. Each value is on
+# the counting basis of its OWN ISO's published construction: the requirement
+# and the accredited-capacity ledger must use the same convention (see
+# THERMAL_ACCREDITATION_BASIS_BY_ISO / RENEWABLE_CAPACITY_CREDIT_BY_ISO /
+# ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO below).
+PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
+    # ERCOT Board-established minimum target reserve margin (13.75% of peak),
+    # the benchmark the CDR's planning reserve margins are read against.
+    # NOT an economic optimum: the Brattle/Astrapé MERM/EORM studies for the
+    # PUCT ("Estimation of the Market Equilibrium and Economically Optimal
+    # Reserve Margins for the ERCOT Region", 2018) put the market-equilibrium
+    # RM near 10.25% and the economic optimum near 9%. The 13.75% target is
+    # defined on the CDR counting convention — seasonal-rated thermal (no
+    # EFORd derate), ELCC-accredited wind/solar/storage, firm peak load net
+    # of load-side products — which the per-ISO accreditation registries
+    # below put the floor/backstop ledger on (audit 2026-07-06, L-7c).
+    "ERCOT": 0.1375,
+    # CPUC Resource Adequacy program planning reserve margin (15%). Source:
+    # CPUC RA proceeding (R.21-10-002 / Decision adopting 15% PRM).
+    "CAISO": 0.15,
+    # PJM Installed Reserve Margin, raised to ~17.8% for the 2025/2026 delivery
+    # year. Source: PJM 2024 IRM/FPR study (PC, 2024-03-20), IRM ~17.8%.
+    "PJM": 0.178,
+    # MISO ICAP Planning Reserve Margin Requirement (PRMR). Source: MISO
+    # Planning Year 2024-25 LOLE Study Report (ICAP PRM ~17.9%).
+    "MISO": 0.179,
+    # NYCA Installed Reserve Margin set by NYSRC. Source: NYSRC 2025-2026 IRM
+    # Final Base Case (24.4%); NYISO's IRM is structurally high (locality +
+    # transmission-security constraints).
+    "NYISO": 0.244,
+    # ISO-NE: FCM sizes capacity to Net ICR rather than publishing a single RM,
+    # so this uses the NERC reference margin level for ISO-NE (~15.7%) as a
+    # stand-in until the ICR-implied margin is wired in. Source: NERC 2023 LTRA
+    # reference margin levels. needs-citation (firm ISO-NE RM filing).
+    "NEISO": 0.157,
+}
+
+# Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
+# date deterministically. A self-reported planned-retirement year is credible
+# only at the same near-term grain the additions pipeline trusts its U/V/TS
+# statuses: within EIA860_OPERABLE_VINTAGE + this many years. Beyond the horizon
+# an announced non-fossil date is honored ONLY if the unit carries a binding
+# instrument in the confirmed-retirements registry; otherwise it is ignored, so
+# the 2040-2072 hydro-relicense / solar-EOL placeholders stop force-retiring and
+# far-dated nuclear announcements fall to the economic screen (+ registry). Set
+# to 5 per the methodology spec's "after the data horizon (~2030) the model is
+# fully economics-driven" line (§1.7 / §5); symmetric with the additions
+# pipeline's near-term-only firm-status window. Consumed by
+# model.capacity.apply_announced_retirements.
+NONFOSSIL_ANNOUNCED_HORIZON_YEARS: int = 5
+
+# ERCOT ancillary-service market revenue ($/kW-yr) credited in the capacity
+# economics when ScenarioConfig.as_revenue_enabled (ERCOT energy-only; the
+# capacity-market ISOs recover fixed cost through capacity_revenue_per_mw_yr).
+# This is an exogenous, calibrated revenue stream — the AS analogue of the
+# scarcity overlay — NOT an AS co-optimization (out of scope). Base rates are
+# the 2023 calibration point (IMM 2023 SOM / Modo Energy): batteries earned
+# ~$169/kW-yr from AS in 2023 (~85% of their ~$196/kW total), the AS-eligible
+# fleet then ~4 GW. Thermal AS is a smaller per-kW slice (peakers/steam carry
+# more Reg/RRS/Non-Spin per MW than baseload CC). Source: Potomac Economics
+# 2023/2024 ERCOT State of the Market; Modo Energy ERCOT BESS revenue index.
+ERCOT_AS_REVENUE_PER_KW_YR: dict[str, float] = {
+    "storage": 169.0,
+    "gas_ct": 22.0,
+    "gas_st": 15.0,
+    "gas_cc": 8.0,
+}
+
+# Capacity credit (ELCC) of variable resources for the planning-reserve-margin
+# adequacy accounting — the firm fraction of nameplate each contributes to the
+# system peak. Thermal is accredited at 1 - EFORd (UCAP) unless the ISO's
+# published basis says otherwise (THERMAL_ACCREDITATION_BASIS_BY_ISO); storage
+# uses STORAGE_ELCC_BY_DURATION; these are the GENERIC wind/solar/hydro
+# fallback values (NREL/E3 ELCC studies). ISOs with a published accreditation
+# of their own override them in RENEWABLE_CAPACITY_CREDIT_BY_ISO — a generic
+# value must never masquerade as an ISO's published basis (rule 25 analogue).
+RENEWABLE_CAPACITY_CREDIT: dict[str, float] = {
+    "wind": 0.16,
+    "solar": 0.18,
+    "offshore_wind": 0.30,
+    "hydro": 0.50,
+}
+
+# Per-ISO overrides of RENEWABLE_CAPACITY_CREDIT for the adequacy ledger (the
+# retirement reliability floor and the reserve-margin backstop, capacity.py).
+# ISOs absent here use the generic values above — byte-identical fallback.
+# ERCOT values are the ISO's OWN published accreditation: the December 2025
+# CDR counts wind/solar at probabilistic ELCCs. Implied percentages = the
+# CDR's summer ELCC MW (operational + CDR-eligible planned, peak-load-hour
+# column) over installed nameplate (ERCOT Fact Sheet, June 2026: wind
+# 40,739 MW, utility-scale solar 39,591 MW):
+#   wind : 8,210 / 40,739 = 20.2% for 2026, stable at 20.5-20.8% through
+#          2030 -> 0.20.
+#   solar: 11,097 / 39,591 = 28.0% for 2026, diluting to 20.5-21.1% by
+#          2028-2030 as penetration grows -> 0.21 (the CDR's own plateau;
+#          conservative for 2026-27, right for the forecast horizon where
+#          the floor decision matters).
+# Source: ERCOT, "Report on the Capacity, Demand and Reserves (CDR) in the
+# ERCOT Region", December 2025 (Seasonal Summary + ELCC tabs); ERCOT Fact
+# Sheet, July 2026. See docs/handoffs/ercot-accreditation-audit-2026-07-06.md.
+RENEWABLE_CAPACITY_CREDIT_BY_ISO: dict[str, dict[str, float]] = {
+    "ERCOT": {"wind": 0.20, "solar": 0.21},
+}
+
+# Thermal accreditation basis for the same adequacy ledger, per ISO. Default
+# (ISO absent): "ucap" = pmax x (1 - EFORd). "seasonal_rating" counts thermal
+# at its rating with NO forced-outage derate — ERCOT's CDR convention, where
+# forced-outage risk lives in the 13.75% Board target margin rather than in
+# the capacity count (the CDR's "Installed Seasonal-rated Thermal Capacity"
+# rows carry no EFORd derate). Mixing UCAP-derated supply with the
+# rating-basis 13.75% target double-counts forced-outage risk (~4.4 GW on
+# the 2026 ERCOT thermal fleet). Source: December 2025 CDR, Seasonal Summary.
+THERMAL_ACCREDITATION_BASIS_BY_ISO: dict[str, str] = {
+    "ERCOT": "seasonal_rating",
+}
+
+# Load-side capacity products netted out of gross peak in the ISO's own
+# firm-peak-load construction, as a fraction of the gross seasonal peak.
+# ERCOT (Dec 2025 CDR Seasonal Summary, summer-2026 peak-load-hour column):
+# Load Resources providing RRS 935 + Non-Spin 50 + ECRS 300 + controllable
+# LRs 20 + Emergency Response Service 2,750 + TDSP standard-offer load
+# management 303 + distribution voltage reduction 1,162 = 5,520 MW on the
+# 95,419 MW gross seasonal peak = 5.8%. These are standing ERCOT
+# demand-response programs whose enrollment scales roughly with load, so a
+# fraction of peak regenerates for forward years (rule 13 admissible: a
+# market-design input, not an outcome). Rooftop-PV netting is EXCLUDED —
+# EIA-930 demand is already net of behind-the-meter PV. ISOs absent here
+# net nothing (neutral fallback).
+ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
+    "ERCOT": 0.058,
+}
+
+# Firm import contribution of asynchronous external ties counted by the
+# ISO's own adequacy ledger but absent from the model topology (the model's
+# ERCOT has no import node). ERCOT: 817 MW, "based on average net import
+# contribution during the EEA events: summer 2023 and winter 2020/2021 EEA
+# events" — December 2025 CDR, Seasonal Summary (non-synchronous ties row).
+ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
+    "ERCOT": 817.0,
+}
+
+# ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP
+# pairing audit, 2026-07-06). PJM's IRM and MISO's ICAP-basis PRM in
+# :data:`PLANNING_RESERVE_MARGIN_BY_ISO` are stated on INSTALLED capacity —
+# each ISO's own filing pairs it with a separate UNFORCED-capacity-basis
+# requirement, since the model's supply-side ledger
+# (:func:`market_sim.model.capacity.accredited_firm_capacity_mw`) counts
+# these ISOs' thermal fleet at UCAP (``1 - EFORd``, the registry default).
+# Testing an ICAP-basis requirement against UCAP-basis supply double-counts
+# forced-outage risk, the same error class the ERCOT accreditation audit
+# fixed for CDR seasonal-rating vs UCAP. Values are each ISO's OWN published
+# ICAP<->UCAP conversion ratio (not a model-derived pool EFORd, so nothing
+# here depends on the model's own fleet mix):
+#   PJM: FPR / (1 + IRM) = 0.9170 / 1.191 = 0.7699 (2026/2027 BRA planning
+#     parameters — "Public Installed Reserve Margin (IRM), Forecast Pool
+#     Requirement (FPR)"; FPR states the SAME required reserve level as the
+#     IRM but in UCAP terms, so this ratio is the ISO's own ICAP->UCAP
+#     conversion, stable year to year even as the target IRM itself moves).
+#   MISO: (1 + PRM_UCAP) / (1 + PRM_ICAP) = 1.079 / 1.157 = 0.9326 (PY
+#     2025-2026 LOLE Study Report, Module E-1 — Summer PRM stated both ways:
+#     ICAP 15.7%, UCAP 7.9%).
+# ISOs absent here are byte-identical (ratio 1.0, i.e. their registered PRM
+# is already on the model's own supply basis — ERCOT's is fixed at the CDR
+# seasonal-rating basis by the accreditation audit, not this registry).
+PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO: dict[str, float] = {
+    "PJM": 0.9170 / 1.191,
+    "MISO": 1.079 / 1.157,
+}
+
+# AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
+# the AS-eligible (mostly storage) fleet grows past the calibration point.
+# Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **
+# exponent. Calibrated so the observed crash is reproduced: storage AS ~$169/kW
+# at ~4 GW (2023) -> ~$40/kW at ~6.5 GW (2024) -> ~$15-20/kW at ~10 GW (2025);
+# Modo reports AS revenue down ~90% 2023->2025. The same saturation applies to
+# thermal AS (batteries displaced thermal from Reg/RRS/ECRS).
+ERCOT_AS_SATURATION_REF_GW: float = 4.0
+ERCOT_AS_SATURATION_EXPONENT: float = 2.5
+
+# ISOs that have a per-plant CAMPD bin artifact and therefore take the
+# offer-curve (per-plant tranche) binning path in the runner instead of the
+# legacy equal-width ``aggregate_fleet`` heat-rate binning. ERCOT is driven by
+# the curated ``data/raw/reference/custom-bin-assignments.csv``; CAISO/NEISO/NYISO/PJM/MISO
+# are covered by the CAMPD-derived ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
+# (and the committed ``data/raw/_processed-legacy/bin_assignments_<ISO>.csv`` review
+# artifacts). The runner gate keys
+# off this set so the per-plant path unlocks per ISO as its artifact lands.
+CAMPD_BINNING_ISOS: frozenset[str] = frozenset(
+    {"ERCOT", "CAISO", "NEISO", "NYISO", "PJM", "MISO"}
+)
+
+# Effective default for the historic (facility-summed) CAMPD outage overlay,
+# per ISO. The overlay hard-zeros coal/CC tranches when a plant's CEMS facility
+# sum drops out. It is the PRIMARY outage layer only where the unit-level
+# derate merely SUPPLEMENTS it, and is redundant (double-counting) where the
+# unit-level file is the COMPLETE CAMPD-derived source. The runner resolves the
+# effective flag as ``HISTORIC_OUTAGE_OVERLAY_BY_ISO.get(iso, <config flag>)``,
+# so an ISO absent from this map keeps the global ``ScenarioConfig`` default.
+# Reasoning per ISO:
+#   ERCOT  True  — facility-summed legacy extract is the primary layer; the
+#                  unit-level derate only catches single-unit losses it hides.
+#   CAISO  False — unit-level file derived fresh from ALL CAMPD units (complete).
+#   NEISO  False — same: complete CAMPD-derived unit-level source.
+#   NYISO  False — same: complete CAMPD-derived unit-level source.
+#   PJM    False — unit-level file built fresh by derive_campd_unit_outages.py
+#                  is the complete source; stacking the facility overlay on top
+#                  double-counts and over-derates (see scenarios.py).
+HISTORIC_OUTAGE_OVERLAY_BY_ISO: dict[str, bool] = {
+    "ERCOT": True,
+    "CAISO": False,
+    "NEISO": False,
+    "NYISO": False,
+    "PJM": False,
+}
+
+# Effective load-carrying capability (ELCC) of storage as a function of
+# duration (hours), as (duration_hr, credit) breakpoints; linearly
+# interpolated, clamped at the ends. Short-duration storage covers only the
+# sharpest peak hours so its firm-capacity credit is well below 1; the credit
+# saturates toward 1.0 as duration lengthens enough to ride through a
+# multi-hour net-peak. Source: NREL/E3 ELCC studies, PJM ELCC class ratings.
+STORAGE_ELCC_BY_DURATION: list[tuple[float, float]] = [
+    (2.0, 0.40),
+    (4.0, 0.60),
+    (6.0, 0.75),
+    (8.0, 0.87),
+    (10.0, 0.93),
+    (12.0, 0.97),
+    (24.0, 1.00),
+]
+
+# Marginal ELCC saturation. As cumulative storage power approaches the
+# deployment ceiling (≈ half the system peak), each additional MW of storage
+# adds less firm capacity — the well-documented decline in marginal storage
+# ELCC at high penetration, which is what tilts the economics from short-
+# toward long-duration storage. The marginal credit is multiplied by
+# ``(1 - penetration)^STORAGE_ELCC_SATURATION_EXPONENT`` where ``penetration``
+# is existing storage power / ceiling. Source: NREL ELCC saturation studies.
+STORAGE_ELCC_SATURATION_EXPONENT: float = 1.5
+
+# Portfolio (aggregate accreditation) ELCC dilution — the CDR's own
+# fleet-average BESS ELCC compresses as storage penetration grows (ERCOT
+# accreditation audit, 2026-07-06, §3): "model 2026 storage firm 11.7 GW vs
+# the CDR-implied 12.3 GW (operational + planned, ELCC 60.2% on 20,438 MW
+# installed) — close at fleet level," with the flagged follow-up "the CDR's
+# own BESS ELCC dilutes 60% -> 46% by 2030 as penetration triples." Modeled
+# in ``capacity.py::_storage_portfolio_elcc_dilution`` as a LINEAR
+# interpolation between the two cited (penetration, ELCC) anchors — no
+# fitted exponent, no guessed intermediate MW: at the reference MW below
+# (today's validated point) the dilution factor is 1.0 (the audit's "close
+# at fleet level today" finding, unchanged); at full deployment-ceiling
+# penetration it is the CDR's own ratio, 46/60.2 (below); in between it is
+# a straight line between those two real data points. ISOs absent from
+# either registry get no dilution (byte-identical).
+STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO: dict[str, float] = {
+    "ERCOT": 20_438.0,  # Dec 2025 CDR: operational + CDR-eligible planned BESS
+    # nameplate MW, the installed base the audit's 60.2% portfolio ELCC is
+    # reported against.
+}
+
+# The CDR's own fleet-average BESS ELCC ratio at full deployment-ceiling
+# penetration relative to the reference-MW ELCC above: 46% / 60.2% (accred-
+# itation audit §3, "dilutes 60% -> 46% by 2030"). A floor, not a fitted
+# curve — the model has no CDR data point between the two cited years, so
+# the dilution factor is linear between them (see the reference-MW
+# registry's docstring); this is the value the line reaches at penetration
+# = 1.0, not a value asserted to land exactly in 2030.
+STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO: dict[str, float] = {
+    "ERCOT": 0.46 / 0.602,
+}
+
+# Cycling-degradation cost. Each MWh discharged consumes a slice of the
+# battery's cycle life; replacing it costs a fraction of the energy-capacity
+# capex (only the cell stack degrades, not the power electronics / BOS, and
+# warranties run to ~80% retention, so the full energy capex over rated cycles
+# overstates the true marginal cost). Degradation $/MWh discharged =
+# capex_per_kwh × 1000 / cycles × STORAGE_DEGRADATION_REPLACEMENT_FRACTION.
+# Source: modeling simplification grounded in NREL ATB augmentation costs and
+# LFP warranty cycle life; tunable.
+STORAGE_DEGRADATION_REPLACEMENT_FRACTION: float = 0.25
+
+# State renewable/clean energy standard floors (clean energy fraction) by ISO and year.
+# Source: CA SB 100.
+STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
+    "ERCOT": {2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0},  # No binding state RPS floor
+    "CAISO": {  # CA SB 100 — clean energy trajectory
+        2026: 0.50,
+        2030: 0.60,
+        2040: 0.80,
+        2045: 1.00,
+    },
