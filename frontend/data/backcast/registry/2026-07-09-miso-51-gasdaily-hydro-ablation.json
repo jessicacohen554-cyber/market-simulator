@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-09-miso-51-gasdaily-hydro-ablation",
+ "label": "miso 51 gasdaily hydro ablation",
+ "date": "2026-07-09",
+ "shorthand": "miso-51-gasdaily-hydro-ablation",
+ "definition": "(ABLATION TWIN of 2026-07-09-miso-51-gasdaily-hydro) Rule-20 zero-forcing reference solve of the miso-51 recipe (gas_daily_shape[MISO] + hydro 2024-backfill/EIA-930 repin on the re-derived measured coal sigmoid): every merchant commitment floor/bridge OFF, keeping only nuclear must-run, CHP steam-following and coal take-or-pay. The keeper-vs-twin per-class delta shows what each floor buys; the coal over-run persists with all floors off (economic merit, not forcing), consistent with C8 (~0.1-0.2% coal forced).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-09-miso-51-gasdaily-hydro-ablation.js",
+ "bundle": "results/calibration/miso51_gasdaily_hydro-ablation"
+}

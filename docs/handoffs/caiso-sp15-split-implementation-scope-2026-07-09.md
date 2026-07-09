@@ -161,6 +161,16 @@ calibration work.
 
 ## Pre-registered A/B (vs caiso-65, both temp-derate on, all three years)
 
+**⚠ CORRECTION (2026-07-09, post caiso-69 probe):** the "actual SP15 $117–127" success direction
+below is wrong — it came from the diagnosis doc's misread of the run payload's `lmp[zone].d`
+demand-weight field as an actual price (see the correction block at the top of
+`caiso-transmission-ttc-diagnosis-2026-07-09.md`). Measured DA hub actuals are SP15
+$49.39/$32.68/$32.22 (2023/24/25), **below** NP15 — the keeper already over-prices SP15. The
+CT_PEAKER, CC_REGULAR, C8, and hrs>$200 rows below remain valid targets. Probe outcome
+(2026-07-09-caiso-69-sp15split-dragoff): links bind, ~$1–4 premium, CT collapses to 0.8–0.9 TWh
+without the drag — honest negative on the CT-on-merit hypothesis; redirect is commitment/AS
+dispatch, not offer level.
+
 | Metric | Baseline (caiso-65) | Success direction |
 |--------|--------------------:|-------------------|
 | SP15/LA_BASIN mean LMP | $47–70 | → toward actual $117–127 (the headline) |

@@ -3,7 +3,7 @@
   "label": "caiso 69 sp15split ablation",
   "date": "2026-07-09",
   "shorthand": "caiso-69-sp15split-ablation",
-  "definition": "(PROBE \u2014 ABLATION TWIN of 2026-07-09-caiso-69-sp15split-dragoff) SP15-split ablation -- caiso-68 recipe (caiso65 keeper config + temp_dependent_derate) on the LA_BASIN/SDGE/SP15_rest split topology, ct_netload_drag=False per-run override, 2023-2025",
+  "definition": "(PROBE — ABLATION TWIN of 2026-07-09-caiso-69-sp15split-dragoff, rule 21) SP15-split ablation -- caiso-68 recipe (caiso65 keeper config + temp_dependent_derate) on the LA_BASIN/SDGE/SP15_rest split topology, ct_netload_drag=False per-run override, every merchant floor/bridge neutralized, 2023-2025. Notable: CT_PEAKER clears MORE on pure merit here (2.02/1.41/0.98 TWh) than in the main run with the RA bridge on (0.90/0.91/0.79) — the bridge's forced CC min-gen crowds peakers out of the SoCal pockets; see the main sidecar's 2026-07-09 scoring correction (the A/B's 'actual SP15 $118-127' targets were a demand-field misread; measured DA actuals are SP15 $49.39/$32.68/$32.22, below NP15).",
   "years": [
     2023,
     2024,
