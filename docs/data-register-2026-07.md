@@ -171,9 +171,27 @@ curtailment reports are blocked by this environment's network allowlist).
 |---|---|---|---|---|---|
 | ERCOT-AS | — | ✓ | ✓ | ✓ | — |
 | PJM-AS | — | ✓ | ✓ | ✓ | — |
-| MISO-AS | — | ✓ | ✓ | ✓ | — |
+| MISO-AS | 2022 confirmed **ungettable** (see note) | ✓ | ✓ | ✓ | — |
 | NYISO-AS (DA/RT clearing) | — | ✓ | ✓ | ✓ | — |
 | NYISO measured hourly reserve requirements (Ask B) | — | not independently confirmed present — flagged unresolved in source docs | | | |
+
+**MISO-AS 2022 — confirmed ungettable, not just unattempted (2026-07-09).** All three per-day
+report endpoints `scripts/fetch_miso_asm.py` reads (`asm_exante_damcp`, `asm_rtmcp_final`,
+`asm_rt_co`) return genuine `BlobNotFound` from `docs.misoenergy.org` for every day of 2022
+(1,095/1,095 requests), while the identical URL pattern is HTTP 200 starting exactly 2023-01-01 —
+this is a **rolling retention purge**, not a naming/format change: a 2021-08-14 `asm_rt_co.zip`
+that Wayback Machine had crawled as HTTP 200 in March 2024 is now *also* 404 on the live host,
+confirming MISO ages out old daily report files. Checked and ruled out: 5 legacy report-name
+variants (`asm_expost_damcp`, `asm_rtmcp_prelim`, etc.) across 2022 — all 404; a consolidated
+annual `_HIST` rollup (the pattern MISO uses for some other datasets, e.g. `2019_da_bc_HIST.csv`)
+— no ASM equivalent exists; Wayback Machine CDX search for all three report types across all of
+2022 — zero captures, so no archive-recoverable copy either. MISO's official API platform
+(`data-exchange.misoenergy.org`) doesn't bypass this: it requires account registration we don't
+have, and MISO's own FAQ states historical data beyond a "limited online retention window"
+requires a manual Help Center/ITOC request — i.e. the API reads the same live store, not a deeper
+archive. The only remaining path is a human-filed MISO historical-data request (ITOC
+1-866-296-6476 opt. 1, or `help.misoenergy.org`); not something a fetch script or API credential
+can resolve. Do not re-attempt an automated fetch for this year without new information.
 
 ### Fuel — EIA-923 delivered cost & generation, coal/gas derivations
 
