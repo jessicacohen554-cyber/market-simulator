@@ -3,7 +3,7 @@
   "label": "neiso 55 temp derate",
   "date": "2026-07-08",
   "shorthand": "neiso-55-temp-derate",
-  "definition": "temp-derate full-keeper main -- 2026-07-08-neiso-54-steamgas-ct config + temp_dependent_derate, 2023-2025",
+  "definition": "NEISO keeper. The neiso-54 recipe (winter fuel-security + CT evening-ramp / ST_GAS Component-B reliability drag) plus the physically-grounded temp_dependent_derate (per-class dry-bulb capacity curve replacing the flat net-summer derate; arXiv:2311.07001, CPUC R.21-10-002). Promoted on rule-1 structural fidelity, not fit: C3a mean-LMP improved to all-PASS, C3c scarcity tail unchanged (0h, winter gap dormant), C5b storage marginally deeper. CALIBRATED-WITH-CAVEATS (C3c/C5b ledgered).",
   "years": [
     2023,
     2024,
@@ -11,5 +11,7 @@
   ],
   "iso": "NEISO",
   "file": "frontend/data/backcast/runs/2026-07-08-neiso-55-temp-derate.js",
-  "bundle": "results/calibration/neiso55_tempderate"
+  "bundle": "results/calibration/neiso55_tempderate",
+  "ablation_twin": "2026-07-09-neiso-55-temp-derate",
+  "market_story": "temp_dependent_derate reshapes thermal available capacity by measured hourly zone temperature: gas CC/CT lose output on heatwave hours (air-density/mass-flow limit) and recover it on cool hours (capacity-neutral over the summer mean); coal/steam-gas take an additive hot-hour derate (condenser limit). It replaces a flat season-average net-summer number with the real physical temperature dependence. On NEISO the keeper-vs-twin delta is small (the class floors it shares with neiso-54 are unchanged); the derate itself is a real availability physics, not a residual-buying floor - its effect is a modest summer/shoulder capacity reshape, dormant on the winter cold-hour tail where NEISO's scarcity actually forms."
 }
