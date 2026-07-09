@@ -17,10 +17,15 @@ commercial-grade band, each anchored to a published external benchmark —
 never touches the gitignored ``dispatch``/``system`` parquets, so re-running it
 on any keeper reproduces the verdict byte-for-byte.
 
-The model side is the grid-delivered basis (grid LP dispatch, no behind-the-meter
-CHP add-back); the actual side is EIA-923 minus the per-class BTM host supply
-(``classFull``) and EIA-930 grid totals — model-grid vs actual-grid, the same
-numbers the dashboard renders (``scripts/render_calibration_html.py``).
+The generation-mix criteria (C1/C2/C4) score the grid-delivered basis (grid LP
+dispatch, no behind-the-meter CHP add-back) against EIA-923 minus the per-class
+BTM host supply (``classFull``) and EIA-930 grid totals — model-grid vs
+actual-grid, the same numbers the dashboard renders
+(``scripts/render_calibration_html.py``). C5a (system CO2) is the exception
+(rubric v2.3, owner amendment 2026-07-09): the eGRID/CAMPD rates anchoring the
+actual count each cogen's FULL net generation (host + grid), so both sides of
+the CO2 comparison carry the measured BTM CHP host supply added back — the
+payload's ``co2`` blocks are already on that full-plant basis.
 
 Stdlib-only (json, gzip, base64, re, math) so it runs anywhere the committed
 artifacts are checked out, with no pandas / numpy / model import.
@@ -58,8 +63,13 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # target/commercial tolerances, DA-expressible C3c; v2.1 = the same-day owner
 # amendments: C7/C8 materiality floor + C8 peaker cap 15%; v2.2 = the 2026-07-07
 # owner amendment: C8 grounded-above-budget escalation — an over-cap class passes
-# clean iff it clears D-4 provenance + D-1 shape, surfaced as a note).
-RUBRIC_VERSION = 2.2
+# clean iff it clears D-4 provenance + D-1 shape, surfaced as a note; v2.3 = the
+# 2026-07-09 owner amendments: C3a/C3b target bands set to the commercial values
+# (±10% mean LMP / 0.20 NRMSE pass clean, no caveat band), and C5a re-based to
+# the full-plant CHP-inclusive CO2 basis — the measured BTM CHP host supply is
+# added back onto BOTH sides before the comparison, because the eGRID/CAMPD
+# rates that anchor the actual count each cogen's full net generation).
+RUBRIC_VERSION = 2.3
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -164,27 +174,29 @@ DISP_MIN_TWH = 5.0  # below this a fleet's hourly r/NRMSE is degenerate (NEISO
 # coal); the per-class C1 absolute band is the meaningful check, not correlation.
 VINTAGE_RECONCILE_FRAC = 0.97  # render_calibration_html._VINTAGE_RECONCILE_FRAC
 PRELIM_923_FROM_YEAR = 2025  # current-year preliminary EIA-923 vintage
-# C3 price gates — rubric v2 two-band (2026-07-06 fitness re-anchor). The
-# TARGET band keeps the 2026-07-02 tightened values (price accuracy is the
-# primary market signal; the structural energy-only under-shoot is closed by
-# real mechanisms, never absorbed); the COMMERCIAL band is the evidence-anchored
-# outer bound (docs/rubric-v2-benchmark-memo-2026-07.md §2). Inside target ->
-# PASS; between target and commercial -> auto CAVEAT (COMMERCIAL_BAND, listed
-# not budgeted); beyond commercial -> FAIL (ledgerable only as a measured-input
-# limitation).
+# C3 price gates — rubric v2 two-band (2026-07-06 fitness re-anchor), target
+# bands re-set by the 2026-07-09 owner amendment (rubric v2.3): the target
+# band now COINCIDES with the evidence-anchored commercial-grade band
+# (docs/rubric-v2-benchmark-memo-2026-07.md §2), so a run inside ±10% mean /
+# 0.20 NRMSE is a clean PASS with no COMMERCIAL_BAND caveat; beyond it ->
+# FAIL (ledgerable only as a measured-input limitation). The former stricter
+# targets (±5% / 0.15 — the SEM regulator criterion) remain as reported
+# magnitudes, not gates: the primary market signal is still price, but a
+# caveat between the SEM criterion and the published commercial envelope
+# graded honest runs as second-class for a miss no published model avoids.
 #   Mean anchor: the SEM/Ireland regulator criterion for its official PLEXOS
 #   model is +/-5% aggregate price error with monthly within +/-10% (ECA,
 #   SEM-20-004); NYISO's accepted GE MAPS benchmark ran -2% to -17% zonal
 #   (Outlook Appendix A); monitors' competitive re-simulations sit 0-4% from
 #   actual prices (CAISO DMM / MISO SOM), the market-conduct noise floor.
-PRICE_MEAN_TOL = 0.05  # target: +/-5% mean LMP (= the SEM regulator criterion)
-PRICE_MEAN_COMMERCIAL = 0.10  # commercial-grade outer band (memo §2)
+PRICE_MEAN_TOL = 0.10  # PASS: +/-10% mean LMP (v2.3 owner amendment 2026-07-09)
+PRICE_MEAN_COMMERCIAL = 0.10  # coincident outer band (memo §2)
 #   Shape anchor: SEM's regulator-accepted backcast carried -9% winter-peak /
 #   +11% off-peak period biases; published monthly norms run ~5-15% with
 #   correct seasonality. A 12-month NRMSE of 0.20 is the outer edge of that
 #   demonstrated band (also the pre-2026-07-02 value, now externally anchored).
-PRICE_SHAPE_NRMSE_MAX = 0.15  # target: monthly load-weighted price NRMSE
-PRICE_SHAPE_NRMSE_COMMERCIAL = 0.20  # commercial-grade outer band (memo §2)
+PRICE_SHAPE_NRMSE_MAX = 0.20  # PASS: monthly NRMSE (v2.3 owner amendment)
+PRICE_SHAPE_NRMSE_COMMERCIAL = 0.20  # coincident outer band (memo §2)
 # C3c scarcity tail — v2 scores the DA-EXPRESSIBLE tail (rubric §1 C3c, §5):
 # the committed actual day-ahead tail count (frontend/data/backcast/tail/
 # actual_tail.json, scripts/derive_actual_tail.py), the same hourly resolution
@@ -1198,7 +1210,15 @@ def score_dispatch_corr(year: int, ypay: dict) -> list[dict]:
 
 
 def score_co2(year: int, ypay: dict, ybench: dict) -> dict:
-    """C5a — CO2 vs eGRID; SKIPPED unless an emissions actual is committed."""
+    """C5a — CO2 vs eGRID; SKIPPED unless an emissions actual is committed.
+
+    Both sides are the full-plant CHP-inclusive basis (rubric v2.3): the
+    renderer/retrofit adds the measured BTM CHP host supply back onto the
+    model's grid dispatch and onto the EIA-923 class totals before applying
+    the eGRID/CAMPD intensities, because those per-plant rates are defined
+    over each cogen's FULL net generation. Committed payloads carry the
+    already-based numbers; this gate just compares them.
+    """
     model = (ypay.get("co2") or {}).get("model")
     actual = (ybench.get("co2") or {}).get("egrid")
     if model is None or actual is None:
@@ -1213,7 +1233,7 @@ def score_co2(year: int, ypay: dict, ybench: dict) -> dict:
         "year": year,
         "status": status,
         "classification": classification,
-        "metric": "system CO2 vs eGRID",
+        "metric": "system CO2 vs eGRID (full-plant basis, BTM CHP added back)",
         "model": model,
         "actual": actual,
         "tol": (

@@ -965,10 +965,16 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # Each fossil plant's CO2 rate (kg / net MWh) comes from eGRID — the
             # only source spanning the small non-CEMS units — overridden by the
             # CAMPD-measured intensity where it exists; the rates are net-gen-
-            # weighted within each class to a tonnes/MWh intensity, then applied
-            # to the same grid-delivered class totals (``classFull``) the
-            # generation-mix benchmark uses. So the actual is what the fossil
-            # fleet emitted delivering the grid energy the model is scored on.
+            # weighted within each class to a tonnes/MWh intensity.
+            # FULL-PLANT (CHP-inclusive) basis on both sides (rubric v2.3,
+            # owner directive 2026-07-09): eGRID/CAMPD rates are defined over
+            # each cogen's FULL net generation (host self-supply + grid), so
+            # the intensity is applied to the full EIA-923 class totals — NOT
+            # the BTM-stripped ``classFull`` the generation-mix gate uses —
+            # and the model side adds the same measured BTM host supply back
+            # (see the model payload below). Atmospheric CO2 doesn't stop at
+            # the meter: the system-CO2 number policy consumes must count the
+            # cogen fleet's whole burn, matching what eGRID reports.
             e_fossil = e923[e923["klass"].isin(FOSSIL_GROUPS)]
             co2_rate = egrid.fossil_co2_rate_map(int(year))
             co2_intensity = egrid.class_co2_intensity(
@@ -978,9 +984,12 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 klass_col="klass",
                 gen_col="annual_mwh",
             )
-            actual_co2_mt, actual_co2_by = _fossil_co2(
-                bench[int(year)]["classFull"], co2_intensity
-            )
+            # Full EIA-923 class totals (TWh) BEFORE the BTM subtraction —
+            # the CHP-inclusive basis the eGRID rates were measured on.
+            class_full_923 = {
+                str(g): round(float(v) / 1e6, 4) for g, v in e923_cls.items()
+            }
+            actual_co2_mt, actual_co2_by = _fossil_co2(class_full_923, co2_intensity)
             # Share of fossil-class EIA-923 generation carrying a plant rate —
             # the class intensity is extrapolated to the small remainder.
             _frate = e_fossil.assign(
@@ -993,11 +1002,21 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # activates the CO2 verdict that has been SKIPPED for want of an
             # actual. ("eGRID" names the fleet-wide base; CAMPD overrides the
             # large plants.) byClass / intensity / covPct drive the panel.
+            # ``btmClass`` records the per-class measured BTM CHP host supply
+            # (TWh) added back on the model side, and ``basis`` marks the
+            # payload as full-plant so the scorer/retrofit can tell a v2.3
+            # part from a legacy grid-basis one.
             bench[int(year)]["co2"] = {
                 "egrid": actual_co2_mt,
                 "byClass": actual_co2_by,
                 "intensity": {k: round(v, 5) for k, v in co2_intensity.items()},
                 "covPct": round(100.0 * _gcov / _gall, 1) if _gall > 0 else 0.0,
+                "btmClass": {
+                    str(k): round(float(v), 4)
+                    for k, v in sorted(btm_cls.items())
+                    if float(v) > 0.0
+                },
+                "basis": "full-plant",
             }
 
             # ---- model payload (per run) ----
@@ -1226,13 +1245,22 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 # unchanged run must not show up as a git diff).
                 for g in sorted(set(MIX_GROUPS) | set(mh))
             }
-            # Model fossil CO2 (Mt): the model's grid-delivered class totals
-            # (gm_model) times the SAME per-class CO2 intensity the benchmark
-            # used. The comparison is therefore the model's generation mix
-            # re-weighted by measured carbon intensity — an independent check on
-            # the coal/gas split that a pure MWh volume gate is blind to.
+            # Model fossil CO2 (Mt): the model's class totals times the SAME
+            # per-class CO2 intensity the benchmark used. FULL-PLANT basis
+            # (rubric v2.3): the measured BTM CHP host supply (btm_cls — the
+            # exact hold-out the LP never dispatched, a pure function of
+            # committed inputs) is added back onto the grid totals first,
+            # mirroring the benchmark side, because the eGRID/CAMPD rates are
+            # measured over each cogen's full net generation. The comparison
+            # is therefore the model's generation mix re-weighted by measured
+            # carbon intensity — an independent check on the coal/gas split
+            # that a pure MWh volume gate is blind to.
+            gm_model_full = {
+                g: round(float(gm_model.get(g, 0.0)) + float(btm_cls.get(g, 0.0)), 4)
+                for g in sorted(set(gm_model) | {str(k) for k in btm_cls})
+            }
             model_co2_mt, model_co2_by = _fossil_co2(
-                gm_model, bench[int(year)]["co2"]["intensity"]
+                gm_model_full, bench[int(year)]["co2"]["intensity"]
             )
             # ---- signed volume error per (class, zone, month) ----
             # Model monthly TWh vs the authoritative actuals source for each
@@ -1300,8 +1328,13 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 "gmModel": gm_model,
                 "lmp": lmp,
                 "volErr": vol_err,
-                # Scalar keyed "model" for calibration_verdict's C5a gate.
-                "co2": {"model": model_co2_mt, "byClass": model_co2_by},
+                # Scalar keyed "model" for calibration_verdict's C5a gate;
+                # "basis" marks the v2.3 full-plant (BTM-added-back) payload.
+                "co2": {
+                    "model": model_co2_mt,
+                    "byClass": model_co2_by,
+                    "basis": "full-plant",
+                },
             }
             # Model storage discharge throughput (TWh) for the C5b criterion —
             # li-ion + pumped storage from this run's storage.parquet P1 frame.

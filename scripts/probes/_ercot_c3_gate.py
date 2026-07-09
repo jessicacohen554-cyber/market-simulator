@@ -4,9 +4,10 @@ Reads a solved bundle's ``system.parquet`` and scores the three C3
 sub-criteria of docs/calibration-determination-rubric.md (2026-07-02
 re-balance) against the measured hourly RTSPP:
 
-* **C3a mean** — system demand-weighted annual mean within +/-5% of actual RT.
+* **C3a mean** — system demand-weighted annual mean within +/-10% of actual RT
+  (rubric v2.3 single band, 2026-07-09).
 * **C3b shape** — NRMSE of the 12 demand-weighted monthly price vectors
-  <= 0.15.
+  <= 0.20 (rubric v2.3 single band).
 * **C3c tail** — hours > $200 (and the > $500 deep companion) within
   [0.7x, 1.5x] of actual.
 
@@ -110,7 +111,7 @@ def score_year(
 
     print(
         f"  {year} {label:18s} C3a {mean_m:6.2f}/{mean_a:6.2f} {c3a * 100:+5.1f}% "
-        f"{g(abs(c3a) <= 0.05)} | C3b NRMSE {nrmse:.3f} {g(nrmse <= 0.15)} | "
+        f"{g(abs(c3a) <= 0.10)} | C3b NRMSE {nrmse:.3f} {g(nrmse <= 0.20)} | "
         f"C3c >200 {t200_m}/{t200_a} = {ratio:.2f}x {g(0.7 <= ratio <= 1.5)} "
         f"(>500 {t500_m}/{t500_a})"
     )
