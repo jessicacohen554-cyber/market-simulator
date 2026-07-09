@@ -99,19 +99,76 @@ NOT tuned to close it (rules 10/11).
 
 ## Before/after results (miso-50 vs miso-49 keeper)
 
-_[FILLED AFTER SOLVE]_
+Both bundles solve 2023–2025, per-plant, one bundle (rule 16). miso-50 is the
+miso-49 recipe with ONLY the re-derived MISO sigmoid swapped in.
 
-| criterion | miso-49 | miso-50 | Δ |
+| criterion | miso-49 (keeper) | miso-50 (re-derive) | direction |
 |---|---|---|---|
-| C1 fuel-mix (classes pass) | 14/16 | | |
-| C2 sysvol 2025 gas / coal | −14.7% / +16.3% | | |
-| C3a mean LMP 2025 | −8.7% | | |
-| C3c tail 2024 / 2025 | 6h / 3h vs 24h / 38h | | |
-| determination | NOT-YET | | |
+| C1 fuel-mix — classes pass (all / free) | 14/16 · 10/12 | **9/16 · 5/12** | worse |
+| C1 2023 COAL_PRB | +8.84 TWh | **+30.60 TWh** | worse |
+| C1 2023 COAL_BIT | (in band) | **+13.88 TWh** (new fail) | worse |
+| C1 2024 COAL_PRB / COAL_BIT | (in band) | **+27.06 / +16.32 TWh** | worse |
+| C2 sysvol 2025 gas / coal | −14.7% / +16.3% | **−16.5% / +24.5%** | worse |
+| C3a mean LMP 2023 / 2024 / 2025 | −2.5% / −1.0% / −8.7% | **+18.0% / +6.3% / +5.2%** | worse (over) |
+| C3b NRMSE 2023 / 2024 | (CAVEAT) | **0.280 / 0.291 FAIL** | worse |
+| C3c tail 2023 (model vs DA) | 0h vs 1h | **33h vs 1h** (over) | worse |
+| C4 coal dispatch corr 2023 / 2024 | PASS | **r 0.834 / 0.844 FAIL** | worse |
+| C5a CO₂ 2023 / 2025 | PASS | **+13.1% / +10.8% FAIL** | worse |
+| C6 / C7 / C8 protective | PASS | **PASS** | unchanged |
+| C8 COAL forced share (D-2) | 0.1–0.3% | **0.1–0.2%** | unchanged |
+| determination | NOT-YET | **NOT-YET** | unchanged label, more fails |
 
-## Keeper-swap recommendation
+**Reading it (rules 1/10/11 — this is the discovered result, not a failure to
+tune).** The re-derive grounds the MISO coal offer in measured f.o.b.: cheap
+PRB (delivered ~$2.01, crossover $3.19) and cheaper-still Interior/Appalachian
+bituminous (delivered ~$2.57, crossover $4.12 — above the whole 2.19–3.52
+observed gas window) are, on their measured commodity cost, deeply
+inframarginal, so the sigmoid discounts them harder across the observed range
+(PRB passthrough ~0.74/0.71/0.90 vs miso-49's 0.84/0.81/0.95; bituminous
+~0.60 vs 0.68 at 2023 gas). Result: MISO coal dispatches MORE, and the
+pre-existing coal-for-gas over-substitution **worsens across the board**.
 
-_[FILLED AFTER SOLVE]_
+Crucially, **C8 shows COAL is only 0.1–0.2% forced** — the extra coal is
+*economic merit*, not floor-forcing. So the measured offer genuinely makes coal
+win; the model is not cheating it in. That is exactly the rule-11 signal: the
+ERCOT byte-copy's shallower discount (higher floor/ceil) was silently
+**compensating** for a miscalibration elsewhere by pricing coal artificially
+UP. The real root cause of the MISO coal over-run is **gas-side / daily-basin-
+spot granularity**: the annual ACR f.o.b. (and the annual gas price) cannot
+resolve the daily gas troughs where gas decisively out-competes coal and coal
+cannot ramp to parity; the daily basin spot indices that would close it are
+S&P/Argus-paywalled (rule-23 granularity caveat, and the #1803 documented gap).
+Per rule 11 the accurate measured input is **kept**; the fix is the root cause
+(gas daily shape / seam imports / commitment), never an offer re-tune (rule 10).
+
+The DOF ledger reflects the honest improvement: `COAL_SIGMOID_DEFAULTS[MISO]`
+moves from a `residual` DOF to `measured-physical` (n_residual 4→3), and the
+governance attestation carries `no_fit_to_price_residuals: true`.
+
+## Keeper-swap recommendation — **HOLD (do not promote)**
+
+Owner decision; I do not edit `keepers.json`. Recommendation: **do NOT promote
+miso-50 as a fit improvement — it is not one.** The keeper stays
+`2026-07-08-miso-49-tempderate`.
+
+- **Keep the re-derived MISO sigmoid params in-tree** (they ship in this
+  commit): they are the accurate, measured, forward-reproducible input and
+  retire the rule-24 ERCOT byte-copy (#1347/G-26). Reverting them to chase the
+  fit would re-bury the error inside an inaccurate input (rule 11 forbids this).
+- **The keeper config resolves these same params**, so if/when the owner wants
+  miso-49's *number*, note miso-49 was scored with the OLD sigmoid; a re-score
+  of miso-49 at HEAD now uses the re-derived params (i.e. miso-49 and miso-50
+  are now the same offer surface). The keeper's frozen bundle is unaffected, but
+  a fresh miso-49 solve at HEAD would reproduce miso-50. **This is the real
+  decision the owner must make:** either (a) accept the measured params as the
+  new MISO offer surface and open the gas-side root-cause investigation (rule-1/
+  rule-11 correct path), or (b) if the compensating effect is needed short-term,
+  gate the re-derive behind a flag so the keeper's frozen surface is preserved
+  until the root cause lands. I recommend (a).
+- **Open root-cause item:** MISO coal-for-gas over-substitution is a gas-side /
+  daily-spot-granularity gap, not a coal-offer-level problem — tracked for a
+  future gas-daily-shape / seam / commitment investigation, NOT a sigmoid
+  re-tune.
 
 ## Deliverables
 
