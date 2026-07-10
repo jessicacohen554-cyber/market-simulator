@@ -8664,3 +8664,36 @@ single-year arms (`ercot53_diag_*`, `ercot53_sync_2023`,
 `ercot53_hslfix_2024`) were throwaway probes, never registered (rule 16);
 ORDC tariff parameters untouched (rule 26); no offer-curve or sigmoid value
 changed (rules 13/21/23).
+
+
+## 2026-07-10 — ERCOT keeper PROMOTED: `ercot53 hsl-930fill` (CALIBRATED-WITH-CAVEATS, rubric v2.4) — owner sign-off; supersedes ercot46
+
+**Owner decision (2026-07-10, ercot52 offer-re-tune session, interactive
+sign-off): ercot53 attested and promoted.** The line coal-net-summer-derate
+(ercot51) → ORDC cap-dual adder fix (ercot52) → 2024 HSL known-bad-window
+930-fill (ercot53), scored on the rubric-v2.4 like-for-like basis, clears
+every criterion: C3a −1.0%/−6.8%/−3.6%, C3b 0.109/0.180/0.079, C1/C4/C5a/C7/C8
+PASS, C6 attested. Ledgered caveats (attestation exceptions): C3c-2024 (24h vs
+68 DA — the fill removed 17 phantom tail hours; the remaining gap is the known
+online-capability wedge), C3c-2025 (5h vs 23), C5c-2024 storage shape
+(r=0.350, ercot46-precedent ledger class); C2-2025 gas −2.9% rides the
+commercial band unbudgeted. Zero fitted parameters added across the whole
+line: EIA-860 net-summer ratings (rule 15), an LP-duality dual-source
+correction, and a measured EIA-930 fill of a cited known-bad HSL window — the
+DOF ledger is inherited verbatim from ercot46 (16 entries, 8 residual, offer
+bands untouched since).
+
+**Keeper delta vs ercot46 (v2.4 basis):** C3a-2023 −17.5% CAVEAT → −1.0%
+PASS; C3b-2023 0.363 FAIL → 0.109 PASS; C3c 104/29/4 h (all FAIL) → 162/24/5 h
+(2023 PASSES the gate at 0.52× DA / 0.90× RT — first ERCOT run to do so);
+coal C1 moves toward measured in every year. The ercot46 stale-ledger
+auto-forgiveness noted in `docs/rubric-v24-price-basis-memo-2026-07.md` §5 is
+mooted for ERCOT by this promotion (the superseded ledger retires with the
+keeper); the matcher tightening remains an open owner item for NYISO.
+
+**Bookkeeping.** `keepers.json` ERCOT → `2026-07-10-ercot53-hsl-930fill`;
+attestation `attested_by` records the owner approval; keeper-auditor run
+(sidecar text repaired, status.js rebuilt); metrics.json refreshed
+post-attestation (NOT-YET → CALIBRATED-WITH-CAVEATS). Keeper history: ercot46
+stays registered as the prior keeper reference (top-15 retention unchanged —
+ercot53's own registration already pruned ercot45/ercot47).
