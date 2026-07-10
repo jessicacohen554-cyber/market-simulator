@@ -6,6 +6,12 @@ Immutable raw drops of per-ISO transmission data. Never modified in place.
 
 - `PJM_<year>_transfer_limits_and_flows.csv` — PJM Data Miner 2
   `transfer_limits_and_flows` (hourly interface transfer limits & flows).
+  Consumed by `scripts/curate_transfer_interface_limits.py` → the
+  `transfer-interface-limits` clean datatype (measured hourly interface
+  limits on the model clock; ten series incl. AP-South / Bedington-BlackOak
+  pre+post-contingency, AEP/DOM, 50045005, Cleveland, and the Average
+  Western/Central/Eastern envelopes). One row per series per UTC hour;
+  spanning EPT midnight-to-midnight calendar years.
 - `PJM_<year>_import_export_act_sch_interchange.csv` — Data Miner 2 actual +
   scheduled interchange by interface.
 

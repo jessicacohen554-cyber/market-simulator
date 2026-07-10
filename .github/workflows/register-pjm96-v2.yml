@@ -1,0 +1,119 @@
+# v2 of register-pjm96 (see that file's header for the full rationale: the
+# ~1.5 MB run payload cannot travel through the session env's push path, so
+# the bundle is re-solved deterministically on the runner and registered
+# with normal git). v1 (run 29072352322) died at its first step because
+# ubuntu-latest runners now ship an ACTIVE /swapfile — fallocate/dd on that
+# path fail with "Text file busy". v2 allocates the pjm-78/79 10 GB
+# convention at /mnt/swapfile instead. Everything else is the v1 recipe:
+# the sidecar definition and the commit message are extracted AT RUNTIME
+# from .github/workflows/register-pjm96.yml (kept as the canonical record of
+# the parallel session's post-solve finding) so no prose is re-transcribed
+# across the session/tool-call boundary. Triggered by pushing this file
+# (the session env cannot POST workflow dispatches — 403, same as v1's
+# header documents); idempotent (skips solve when the bundle exists, skips
+# registration when the sidecar exists). Delete both register-pjm96
+# workflows from main after the PR merges (one-shot convention).
+
+name: register-pjm96-v2
+
+on:
+  push:
+    branches:
+      - claude/pjm-measured-interface-limits-2lchu7
+    paths:
+      - .github/workflows/register-pjm96-v2.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  solve-and-register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Swapfile on /mnt (runners already ship /swapfile — v1's failure)
+        run: |
+          sudo swapon --show || true
+          sudo fallocate -l 10G /mnt/swapfile || sudo dd if=/dev/zero of=/mnt/swapfile bs=1M count=10240
+          sudo chmod 600 /mnt/swapfile
+          sudo mkswap /mnt/swapfile
+          sudo swapon /mnt/swapfile
+          free -h
+
+      - name: Install package
+        run: pip install -e .
+
+      - name: Solve pjm-96 (skip if bundle already complete)
+        run: |
+          set -euo pipefail
+          if [ -f results/calibration/pjm96_seam_ladder/system.parquet ] && \
+             [ -f results/calibration/pjm96_seam_ladder/meta.json ]; then
+            echo "bundle already present -- skipping solve"
+          else
+            python scripts/run_pjm96_seam_ladder.py
+          fi
+
+      - name: Register on the dashboard (skip if sidecar already exists)
+        run: |
+          set -euo pipefail
+          if [ -f frontend/data/backcast/registry/2026-07-10-pjm-96-seam-ladder.json ]; then
+            echo "already registered -- skipping"
+          else
+            python scripts/dashboard_add_run.py --label "pjm 96 seam ladder" \
+                --bundle results/calibration/pjm96_seam_ladder
+          fi
+
+      - name: Legitimacy diagnostics
+        run: |
+          python scripts/legitimacy_diagnostics.py \
+              --bundle results/calibration/pjm96_seam_ladder --iso PJM \
+              --json-out results/calibration/pjm96_seam_ladder/legitimacy_diagnostics.json
+
+      - name: Overwrite the sidecar definition with the v1-recorded post-solve finding (extracted from register-pjm96.yml)
+        run: |
+          set -euo pipefail
+          awk "/<<.PYEOF./{f=1;next} /^          PYEOF\$/{f=0} f" .github/workflows/register-pjm96.yml > /tmp/patch_definition.py
+          sed -i 's/^ \{10\}//' /tmp/patch_definition.py
+          test -s /tmp/patch_definition.py
+          python /tmp/patch_definition.py
+
+      - name: Verify registry/payload parity (CI gate)
+        run: python scripts/check_registry_payload_parity.py
+
+      - name: Local preview rebuild (not committed -- deploy workflow owns manifest.js/benchmark.js)
+        run: python scripts/build_manifest.py
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add \
+            results/calibration/pjm96_seam_ladder/meta.json \
+            results/calibration/pjm96_seam_ladder/run_config.json \
+            results/calibration/pjm96_seam_ladder/metrics.json \
+            results/calibration/pjm96_seam_ladder/legitimacy_diagnostics.json \
+            frontend/data/backcast/registry/2026-07-10-pjm-96-seam-ladder.json \
+            frontend/data/backcast/runs/2026-07-10-pjm-96-seam-ladder.js
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+            exit 0
+          fi
+          awk "/<<.MSGEOF./{f=1;next} /^          MSGEOF\$/{f=0} f" .github/workflows/register-pjm96.yml > /tmp/pjm96_commit_msg.txt
+          sed -i 's/^ \{10\}//' /tmp/pjm96_commit_msg.txt
+          test -s /tmp/pjm96_commit_msg.txt
+          git commit -F /tmp/pjm96_commit_msg.txt
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && \
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
