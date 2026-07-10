@@ -100,6 +100,11 @@ sharpening only (true daily citygate commodity index, ICE/Platts/NGI).
 **Housekeeping.** NYISO registrations now 15/15 after this pair — the next
 NYISO registration must prune per the top-15 retention. Twin registered via
 the b5f2607 `_slug` trailing-ablation fix (no hand-repair needed — first use).
+**Owner decisions (2026-07-10, this session):** the nyiso-59 entry's rule-15
+gap on the unregistered `nyiso58_tempderate` pair is resolved as NO ACTION —
+no re-solve; the committed bundle files (SUMMARY/metrics/legitimacy) remain
+the auditable record. The E7 keeper-staleness warnings on CAISO/PJM/NEISO/MISO
+(newer same-ISO runs exist) were reviewed and accepted as-is — keepers stand.
 
 ### 2026-07-10 — NYISO — #1344 dynamic reserve requirements LANDED: measured hourly LRR series in the live co-opt; KEEPER PROMOTED `2026-07-10-nyiso-59-dynamic-rr` replaces `nyiso-56-measured-zonal` (CALIBRATED-WITH-CAVEATS)
 
