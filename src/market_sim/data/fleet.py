@@ -1030,6 +1030,43 @@ def generators_to_fleet_arrays(
                 availability[g_idx, :] = (
                     base if from_actual else (1.0 - gen.eford) * base
                 )
+    # ERCOT unit-level (window-grain) nuclear refuel availability
+    # (config.ercot_nuclear_unit_availability, backcast measured overlay): the
+    # measured per-reactor DAILY series from the 60-Day DAM disclosure replaces
+    # the fleet-month smear above on covered dates — the smear carries the
+    # right monthly energy but mis-times the refuel windows within the month
+    # (e.g. 2024: STP-2 out 3/23-5/19 spanning the Apr/May scarcity events
+    # while all four units were back for the May-24..27 record heat). NaN =
+    # uncovered date -> the monthly value above is kept. Applied BEFORE the
+    # nuclear flat must-run floor is built, so min_gen tracks it automatically.
+    if (
+        _iso == "ERCOT"
+        and _yr is not None
+        and getattr(config, "ercot_nuclear_unit_availability", False)
+    ):
+        from market_sim.data.outages import ercot_nuclear_unit_availability_series
+
+        daily = ercot_nuclear_unit_availability_series(int(_yr), hours)
+        if daily:
+            applied_nuc = 0
+            for g_idx, gen in enumerate(generators):
+                if gen.fuel_type != "nuclear":
+                    continue
+                tail = str(gen.unit_id).rsplit("_", 1)[-1]
+                if not tail.isdigit():
+                    continue
+                series = daily.get((int(gen.plant_code), int(tail)))
+                if series is None:
+                    continue
+                covered = np.isfinite(series)
+                availability[g_idx, covered] = series[covered]
+                applied_nuc += 1
+            logger.info(
+                "ERCOT nuclear unit-availability overlay (%d): %d reactor(s) "
+                "on measured daily windows (uncovered dates keep the monthly CF)",
+                _yr,
+                applied_nuc,
+            )
     # Dormant nuclear (EIA-860 lists OP but the unit is physically offline,
     # e.g. the Crane/TMI-1 restart): zero it in backcast years before its
     # return-to-service year. Forecast runs keep the unit — in backcast mode
