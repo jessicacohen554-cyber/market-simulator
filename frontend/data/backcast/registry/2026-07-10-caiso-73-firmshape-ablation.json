@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-10-caiso-73-firmshape-ablation",
+ "label": "caiso 73 firmshape ablation",
+ "date": "2026-07-10",
+ "shorthand": "caiso-73-firmshape-ablation",
+ "definition": "(PROBE \u2014 ZERO-FORCING ABLATION TWIN of 2026-07-10-caiso-73-firm-shape) caiso-73 shaped firm import base with every merchant floor/bridge OFF (nuclear must-run, CHP steam-following, coal take-or-pay kept; hydro envelope and firm shape kept \u2014 both are caps/capabilities, not floors). CT_PEAKER 2.81/1.86/0.98 TWh vs main 1.68/1.13/0.79: the RA-bridge forced CC still crowds ~0.7-1.1 TWh of CT out of the pockets (caiso-70 signature), unchanged by the import shape.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-10-caiso-73-firmshape-ablation.js",
+ "bundle": "results/calibration/caiso73_firm_shape-ablation"
+}
