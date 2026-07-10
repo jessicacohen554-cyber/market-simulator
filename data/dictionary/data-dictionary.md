@@ -66,6 +66,10 @@ for the market split.
 | ercot-wtx-congestion | — | — | — | — | — | — |
 | nyiso-renewable-curtailment | — | — | — | — | — | — |
 | nyiso-renewable-curtailment-monthly | — | — | — | — | — | — |
+| nyiso-reserve-requirements | — | — | — | — | — | — |
+| nyiso-operating-events | — | — | — | — | — | — |
+| nyiso-interface-flows | — | — | — | — | 2018–2026 | — |
+| nyiso-som-hub-fuel-annual | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -1031,3 +1035,112 @@ BLS Producer Price Index for coal (national, monthly). Schema:
 | `year` | `int64` | `none` | no | Calendar year. |
 | `month` | `int64` | `none` | no | Calendar month (1-12). |
 | `index_value` | `float64` | `index_1982_100` | no | PPI index value (base period varies by series; BLS convention, unscaled — not a dollar price. Use month-over-month / year-over-year ratios for the slope/elasticity cross-check, not the level.). |
+
+## nyiso-reserve-requirements
+
+NYISO's published locational operating-reserve requirements by product x region
+for each dated version of the Locational Reserve Requirements posting,
+including the SENY 30-minute hourly step shape and Thunderstorm-Alert zeroing
+flags (issue #1344 / Ask B3). Schema:
+[`schema/nyiso-reserve-requirements.schema.yaml`](schema/nyiso-reserve-requirements.schema.yaml).
+
+- **Keys:** `iso`, `version`, `region`, `product`, `period_label`, `hb_start`
+- **Reconciles:** Hand-transcription of the dated LRR PDFs (Wayback-bounded
+  versions v2020/v2021/v2026) under `data/raw/NYISO-AS/requirements/`; see that
+  README for the effective-date caveats. Feeds the gated hourly
+  `ReserveFamily.requirement` channel; not yet consumed by any keeper.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (NYISO). |
+| `version` | `string` | `none` | no | Dated document version (v2020, v2021, v2026). Effective windows are Wayback-evidence bounds, not tariff effective dates — see evidence columns and the raw README caveats. |
+| `region` | `string` | `none` | no | Reserve region (NYCA, EAST, SENY, NYC, LI). |
+| `zones` | `string` | `none` | no | NYISO load zones the region spans, as printed (e.g. G-K). |
+| `product` | `string` | `none` | no | Reserve product (spin_10, total_10, total_30). |
+| `period_label` | `string` | `none` | no | Intra-day applicability: "all" (all hours), "hb_range" (explicit hour-beginning window in hb_start/hb_end), or "on_peak"/"off_peak" (LI 30-minute rows; the boundary hours are not defined in the posting). |
+| `hb_start` | `int64` | `hour_beginning` | yes | First hour-beginning (0-23, local) the row applies to; null for on/off-peak rows. |
+| `hb_end` | `int64` | `hour_beginning` | yes | Last hour-beginning (inclusive) the row applies to; null for on/off-peak rows. |
+| `requirement_mw` | `float64` | `mw` | no | Published requirement in MW (0 where the posting prints 0 MW). |
+| `tsa_reduced_to_zero` | `bool` | `none` | no | True when the version's footnotes state the requirement is reduced to zero during Thunderstorm Alerts (v2021+: NYC total_10/total_30 and SENY total_30; v2020: SENY total_30 only). |
+| `evidence_start` | `datetime64[ns]` | `date` | no | Earliest date the version is evidenced in force (Wayback snapshot or retrieval date). |
+| `evidence_end` | `datetime64[ns]` | `date` | yes | Latest bound before the next version is evidenced; null for the current version. |
+| `source_doc` | `string` | `none` | no | PDF filename under data/raw/NYISO-AS/requirements/locational-reserve-requirements/. |
+| `notes` | `string` | `none` | yes | Transcription notes (footnote provenance, unverified effective-date bounds). |
+
+## nyiso-operating-events
+
+Typed NYISO operating events (Thunderstorm Alert windows, system state, reserve
+pick-ups, OOM reliability commitments, emergency transactions) parsed from the
+public MIS message logs, 2018 through H1-2026 (Ask B2). Schema:
+[`schema/nyiso-operating-events.schema.yaml`](schema/nyiso-operating-events.schema.yaml).
+
+- **Keys:** `iso`, `source_dataset`, `seq`
+- **Reconciles:** NYISO MIS P-35 Real-Time Events and P-25 Operational
+  Announcements monthly archives, re-serialized per-year under
+  `data/raw/NYISO-AS/requirements/` and parsed against a controlled template
+  vocabulary (parse-only; unmatched messages stay in raw). Out-of-training
+  years intaken under the 2026-07-10 owner authorization
+  (`docs/out-of-sample-results-2026-07.md` §1.2).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (NYISO). |
+| `source_dataset` | `string` | `none` | no | Originating MIS feed ("realtime_events" or "oper_messages"). |
+| `seq` | `int64` | `none` | no | Stable per-dataset sequence number in source order (file, then row) — disambiguates same-minute events. |
+| `timestamp_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | Event timestamp in UTC. Source stamps are Eastern prevailing wall-clock without an EDT/EST flag; the duplicated DST fall-back hour is resolved first-occurrence-as-EDT in source order. |
+| `timestamp_local` | `datetime64[ns]` | `local_timestamp` | no | Eastern prevailing wall-clock stamp as printed (informational). |
+| `event_type` | `string` | `none` | no | Controlled vocabulary: thunderstorm_alert, system_state, reserve_pickup, capacity_request, oom_commitment, emergency_transaction. |
+| `action` | `string` | `none` | no | Event action. thunderstorm_alert: start/end; system_state: normal/alert/major_emergency; reserve_pickup: start/end; capacity_request: submitted; oom_commitment: requested/updated/removed; emergency_transaction: added/cut. |
+| `start_of_day` | `bool` | `none` | no | True for start-of-day state carryover messages (state/TSA already in effect at 00:00) rather than a live transition. |
+| `detail` | `string` | `none` | yes | Event subject: proxy bus for capacity_request, unit name for oom_commitment, counterparty for emergency_transaction; null otherwise. |
+| `mw` | `float64` | `mw` | yes | MW quantity where the message carries one (emergency transactions). |
+| `message` | `string` | `none` | no | Full original message text (verbatim). |
+| `source_file` | `string` | `none` | no | Daily source CSV inside the MIS monthly archive the row came from. |
+
+## nyiso-interface-flows
+
+Hourly per-interface gross flows and posted limits for NYISO internal
+interfaces and external ties, aggregated from the public 5-minute MIS posting
+(Ask D1). Schema:
+[`schema/nyiso-interface-flows.schema.yaml`](schema/nyiso-interface-flows.schema.yaml).
+
+- **Keys:** `iso`, `interface`, `interval_start_utc`
+- **Reconciles:** NYISO MIS P-32 ExternalLimitsFlows monthly archives, 5-min ->
+  hourly (mean flow, most-binding limits; +/-9999 MW unbounded sentinels
+  nulled), one partition per year 2018 through H1-2026 from
+  `data/raw/NYISO/interface-flows/`.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (NYISO). |
+| `interface` | `string` | `none` | no | Interface name as posted (e.g. "CENTRAL EAST - VC", "SCH - HQ - NY"). |
+| `point_id` | `int64` | `none` | no | NYISO point ID of the interface (stable numeric identifier). |
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC hour-beginning of the aggregated interval. |
+| `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Eastern prevailing wall-clock hour-beginning (informational). |
+| `flow_mw` | `float64` | `mw` | no | Hourly mean of the 5-minute posted flow (positive = flow in the interface's defined direction). |
+| `positive_limit_mw` | `float64` | `mw` | yes | Most-binding (minimum) posted positive limit across the hour's 5-minute intervals; null where the source posts the +/-9999 MW "unbounded" sentinel. |
+| `negative_limit_mw` | `float64` | `mw` | yes | Most-binding (maximum, i.e. closest to zero) posted negative limit across the hour; null where the source posts the sentinel. |
+| `n_intervals` | `int64` | `none` | no | Count of 5-minute observations aggregated (24 in the DST fall-back hour). 0 marks an interior source gap filled from the adjacent actual observation (owner instruction 2026-07-10; see the fetch script) — hours before an interface first exists are never invented. |
+
+## nyiso-som-hub-fuel-annual
+
+Annual average fuel index prices by hub serving New York (incl. Iroquois Zone
+2) transcribed from the NYISO State of the Market reports (Ask C1 annual
+floor). Schema:
+[`schema/nyiso-som-hub-fuel-annual.schema.yaml`](schema/nyiso-som-hub-fuel-annual.schema.yaml).
+
+- **Keys:** `iso`, `year`, `fuel`, `hub`
+- **Reconciles:** SOM Figure A-6 annual tables across the
+  2020/2022/2023/2024/2025 reports (overlapping years cross-check identically),
+  2018-2025, from `data/raw/gas-prices/nyiso_som_hub_fuel_annual.csv`. The
+  daily/monthly Z2 series remains Platts-licensed (open licence ask).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (NYISO). |
+| `year` | `int64` | `none` | no | Calendar year the annual average covers. |
+| `fuel` | `string` | `none` | no | Fuel family ("gas" or "oil"). |
+| `hub` | `string` | `none` | no | Canonical hub/series code: TENNESSEE_Z6, IROQUOIS_Z2, TRANSCO_Z6_NY, TETCO_M3, TENN_Z4_200L (gas); ULSK, ULSD, FO6 (oil). |
+| `price_usd_per_mmbtu` | `float64` | `usd_per_mmbtu` | no | Annual average index price as printed ($/MMBtu; excludes transport and local taxes). |
+| `source_doc` | `string` | `none` | no | SOM report PDF filename under data/raw/NYISO/. |
+| `source_page` | `int64` | `none` | no | PDF page number the table was read from. |

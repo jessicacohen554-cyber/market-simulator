@@ -1,0 +1,896 @@
+source_file,timestamp_local,message
+20210101RealTimeEvents.csv,01/01/2021 00:00:00,Start of day system state is NORMAL
+20210102RealTimeEvents.csv,01/02/2021 00:00:00,Start of day system state is NORMAL
+20210102RealTimeEvents.csv,01/02/2021 12:25:01,NYISO has initiated reserve pick-up.
+20210102RealTimeEvents.csv,01/02/2021 12:25:01,NYISO has initiated reserve pick-up.
+20210102RealTimeEvents.csv,01/02/2021 12:25:01,NYISO has initiated reserve pick-up.
+20210102RealTimeEvents.csv,01/02/2021 12:30:01,NYISO has terminated reserve pick-up.
+20210102RealTimeEvents.csv,01/02/2021 12:30:01,NYISO has terminated reserve pick-up.
+20210102RealTimeEvents.csv,01/02/2021 12:30:01,NYISO has terminated reserve pick-up.
+20210102RealTimeEvents.csv,01/02/2021 12:30:01,NYISO has terminated reserve pick-up.
+20210103RealTimeEvents.csv,01/03/2021 00:00:00,Start of day system state is NORMAL
+20210104RealTimeEvents.csv,01/04/2021 00:00:00,Start of day system state is NORMAL
+20210105RealTimeEvents.csv,01/05/2021 00:00:00,Start of day system state is NORMAL
+20210106RealTimeEvents.csv,01/06/2021 00:00:00,Start of day system state is NORMAL
+20210106RealTimeEvents.csv,01/06/2021 15:55:44,NYISO has initiated reserve pick-up.
+20210106RealTimeEvents.csv,01/06/2021 15:55:44,NYISO has initiated reserve pick-up.
+20210106RealTimeEvents.csv,01/06/2021 15:55:44,NYISO has initiated reserve pick-up.
+20210106RealTimeEvents.csv,01/06/2021 15:55:44,NYISO has initiated reserve pick-up.
+20210106RealTimeEvents.csv,01/06/2021 16:02:32,NYISO has terminated reserve pick-up.
+20210106RealTimeEvents.csv,01/06/2021 16:02:32,NYISO has terminated reserve pick-up.
+20210106RealTimeEvents.csv,01/06/2021 16:02:32,NYISO has terminated reserve pick-up.
+20210106RealTimeEvents.csv,01/06/2021 16:02:32,NYISO has terminated reserve pick-up.
+20210107RealTimeEvents.csv,01/07/2021 00:00:00,Start of day system state is NORMAL
+20210108RealTimeEvents.csv,01/08/2021 00:00:00,Start of day system state is NORMAL
+20210109RealTimeEvents.csv,01/09/2021 00:00:00,Start of day system state is NORMAL
+20210110RealTimeEvents.csv,01/10/2021 00:00:00,Start of day system state is NORMAL
+20210111RealTimeEvents.csv,01/11/2021 00:00:00,Start of day system state is NORMAL
+20210111RealTimeEvents.csv,01/11/2021 07:36:18,NYISO has initiated reserve pick-up.
+20210111RealTimeEvents.csv,01/11/2021 07:36:18,NYISO has initiated reserve pick-up.
+20210111RealTimeEvents.csv,01/11/2021 07:36:18,NYISO has initiated reserve pick-up.
+20210111RealTimeEvents.csv,01/11/2021 07:42:00,NYISO has terminated reserve pick-up.
+20210111RealTimeEvents.csv,01/11/2021 07:42:00,NYISO has terminated reserve pick-up.
+20210111RealTimeEvents.csv,01/11/2021 07:42:00,NYISO has terminated reserve pick-up.
+20210111RealTimeEvents.csv,01/11/2021 07:42:00,NYISO has terminated reserve pick-up.
+20210112RealTimeEvents.csv,01/12/2021 00:00:00,Start of day system state is NORMAL
+20210113RealTimeEvents.csv,01/13/2021 00:00:00,Start of day system state is NORMAL
+20210114RealTimeEvents.csv,01/14/2021 00:00:00,Start of day system state is NORMAL
+20210115RealTimeEvents.csv,01/15/2021 00:00:00,Start of day system state is NORMAL
+20210116RealTimeEvents.csv,01/16/2021 00:00:00,Start of day system state is NORMAL
+20210117RealTimeEvents.csv,01/17/2021 00:00:00,Start of day system state is NORMAL
+20210118RealTimeEvents.csv,01/18/2021 00:00:00,Start of day system state is NORMAL
+20210119RealTimeEvents.csv,01/19/2021 00:00:00,Start of day system state is NORMAL
+20210120RealTimeEvents.csv,01/20/2021 00:00:00,Start of day system state is NORMAL
+20210121RealTimeEvents.csv,01/21/2021 00:00:00,Start of day system state is NORMAL
+20210122RealTimeEvents.csv,01/22/2021 00:00:00,Start of day system state is NORMAL
+20210122RealTimeEvents.csv,01/22/2021 00:11:43,**State Change. System now operating in alert state.**
+20210122RealTimeEvents.csv,01/22/2021 00:11:43,**State Change. System now operating in alert state.**
+20210122RealTimeEvents.csv,01/22/2021 00:11:43,**State Change. System now operating in alert state.**
+20210122RealTimeEvents.csv,01/22/2021 00:11:43,**State Change. System now operating in alert state.**
+20210122RealTimeEvents.csv,01/22/2021 00:19:03,**State Change. System now operating in normal state.**
+20210122RealTimeEvents.csv,01/22/2021 00:19:03,**State Change. System now operating in normal state.**
+20210122RealTimeEvents.csv,01/22/2021 00:19:03,**State Change. System now operating in normal state.**
+20210122RealTimeEvents.csv,01/22/2021 00:19:03,**State Change. System now operating in normal state.**
+20210123RealTimeEvents.csv,01/23/2021 00:00:00,Start of day system state is NORMAL
+20210124RealTimeEvents.csv,01/24/2021 00:00:00,Start of day system state is NORMAL
+20210125RealTimeEvents.csv,01/25/2021 00:00:00,Start of day system state is NORMAL
+20210126RealTimeEvents.csv,01/26/2021 00:00:00,Start of day system state is NORMAL
+20210127RealTimeEvents.csv,01/27/2021 00:00:00,Start of day system state is NORMAL
+20210128RealTimeEvents.csv,01/28/2021 00:00:00,Start of day system state is NORMAL
+20210128RealTimeEvents.csv,01/28/2021 17:23:49,NYISO has initiated reserve pick-up.
+20210128RealTimeEvents.csv,01/28/2021 17:23:49,NYISO has initiated reserve pick-up.
+20210128RealTimeEvents.csv,01/28/2021 17:23:49,NYISO has initiated reserve pick-up.
+20210128RealTimeEvents.csv,01/28/2021 17:26:55,NYISO has terminated reserve pick-up.
+20210128RealTimeEvents.csv,01/28/2021 17:26:55,NYISO has terminated reserve pick-up.
+20210128RealTimeEvents.csv,01/28/2021 17:26:55,NYISO has terminated reserve pick-up.
+20210128RealTimeEvents.csv,01/28/2021 17:26:55,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 00:00:00,Start of day system state is NORMAL
+20210129RealTimeEvents.csv,01/29/2021 00:23:49,**State Change. System now operating in alert state.**
+20210129RealTimeEvents.csv,01/29/2021 00:23:49,**State Change. System now operating in alert state.**
+20210129RealTimeEvents.csv,01/29/2021 00:23:49,**State Change. System now operating in alert state.**
+20210129RealTimeEvents.csv,01/29/2021 00:23:49,**State Change. System now operating in alert state.**
+20210129RealTimeEvents.csv,01/29/2021 00:31:29,**State Change. System now operating in normal state.**
+20210129RealTimeEvents.csv,01/29/2021 00:31:29,**State Change. System now operating in normal state.**
+20210129RealTimeEvents.csv,01/29/2021 00:31:29,**State Change. System now operating in normal state.**
+20210129RealTimeEvents.csv,01/29/2021 00:31:29,**State Change. System now operating in normal state.**
+20210129RealTimeEvents.csv,01/29/2021 06:26:13,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 06:26:13,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 06:26:13,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 06:26:13,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 06:34:37,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 06:34:37,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 06:34:37,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 06:34:37,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 11:30:27,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 11:30:27,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 11:30:27,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 11:30:27,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 11:38:15,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 11:38:15,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 11:38:15,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 11:38:15,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 17:48:29,**State Change. System now operating in alert state.**
+20210129RealTimeEvents.csv,01/29/2021 17:48:29,**State Change. System now operating in alert state.**
+20210129RealTimeEvents.csv,01/29/2021 17:48:29,**State Change. System now operating in alert state.**
+20210129RealTimeEvents.csv,01/29/2021 17:53:51,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 17:53:51,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 17:53:51,NYISO has initiated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 17:57:39,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 17:57:39,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 17:57:39,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 17:57:39,NYISO has terminated reserve pick-up.
+20210129RealTimeEvents.csv,01/29/2021 17:59:25,**State Change. System now operating in normal state.**
+20210129RealTimeEvents.csv,01/29/2021 17:59:25,**State Change. System now operating in normal state.**
+20210129RealTimeEvents.csv,01/29/2021 17:59:25,**State Change. System now operating in normal state.**
+20210129RealTimeEvents.csv,01/29/2021 17:59:25,**State Change. System now operating in normal state.**
+20210130RealTimeEvents.csv,01/30/2021 00:00:00,Start of day system state is NORMAL
+20210131RealTimeEvents.csv,01/31/2021 00:00:00,Start of day system state is NORMAL
+20210201RealTimeEvents.csv,02/01/2021 00:00:00,Start of day system state is NORMAL
+20210202RealTimeEvents.csv,02/02/2021 00:00:00,Start of day system state is NORMAL
+20210202RealTimeEvents.csv,02/02/2021 10:08:25,NYISO has initiated reserve pick-up.
+20210202RealTimeEvents.csv,02/02/2021 10:08:25,NYISO has initiated reserve pick-up.
+20210202RealTimeEvents.csv,02/02/2021 10:08:25,NYISO has initiated reserve pick-up.
+20210202RealTimeEvents.csv,02/02/2021 10:08:25,NYISO has initiated reserve pick-up.
+20210202RealTimeEvents.csv,02/02/2021 10:18:37,NYISO has terminated reserve pick-up.
+20210202RealTimeEvents.csv,02/02/2021 10:18:37,NYISO has terminated reserve pick-up.
+20210202RealTimeEvents.csv,02/02/2021 10:18:37,NYISO has terminated reserve pick-up.
+20210202RealTimeEvents.csv,02/02/2021 10:18:37,NYISO has terminated reserve pick-up.
+20210203RealTimeEvents.csv,02/03/2021 00:00:00,Start of day system state is NORMAL
+20210203RealTimeEvents.csv,02/03/2021 14:47:54,NYISO has initiated reserve pick-up.
+20210203RealTimeEvents.csv,02/03/2021 14:47:54,NYISO has initiated reserve pick-up.
+20210203RealTimeEvents.csv,02/03/2021 14:47:54,NYISO has initiated reserve pick-up.
+20210203RealTimeEvents.csv,02/03/2021 14:47:54,NYISO has initiated reserve pick-up.
+20210203RealTimeEvents.csv,02/03/2021 14:56:53,NYISO has terminated reserve pick-up.
+20210203RealTimeEvents.csv,02/03/2021 14:56:53,NYISO has terminated reserve pick-up.
+20210203RealTimeEvents.csv,02/03/2021 14:56:53,NYISO has terminated reserve pick-up.
+20210203RealTimeEvents.csv,02/03/2021 14:56:53,NYISO has terminated reserve pick-up.
+20210204RealTimeEvents.csv,02/04/2021 00:00:00,Start of day system state is NORMAL
+20210204RealTimeEvents.csv,02/04/2021 00:05:25,NYISO has initiated reserve pick-up.
+20210204RealTimeEvents.csv,02/04/2021 00:05:25,NYISO has initiated reserve pick-up.
+20210204RealTimeEvents.csv,02/04/2021 00:05:25,NYISO has initiated reserve pick-up.
+20210204RealTimeEvents.csv,02/04/2021 00:05:25,NYISO has initiated reserve pick-up.
+20210204RealTimeEvents.csv,02/04/2021 00:08:39,**State Change. System now operating in alert state.**
+20210204RealTimeEvents.csv,02/04/2021 00:08:39,**State Change. System now operating in alert state.**
+20210204RealTimeEvents.csv,02/04/2021 00:08:39,**State Change. System now operating in alert state.**
+20210204RealTimeEvents.csv,02/04/2021 00:16:14,NYISO has terminated reserve pick-up.
+20210204RealTimeEvents.csv,02/04/2021 00:16:14,NYISO has terminated reserve pick-up.
+20210204RealTimeEvents.csv,02/04/2021 00:16:14,NYISO has terminated reserve pick-up.
+20210204RealTimeEvents.csv,02/04/2021 00:18:55,**State Change. System now operating in normal state.**
+20210204RealTimeEvents.csv,02/04/2021 00:18:55,**State Change. System now operating in normal state.**
+20210204RealTimeEvents.csv,02/04/2021 00:18:55,**State Change. System now operating in normal state.**
+20210204RealTimeEvents.csv,02/04/2021 00:18:55,**State Change. System now operating in normal state.**
+20210205RealTimeEvents.csv,02/05/2021 00:00:00,Start of day system state is NORMAL
+20210206RealTimeEvents.csv,02/06/2021 00:00:00,Start of day system state is NORMAL
+20210207RealTimeEvents.csv,02/07/2021 00:00:00,Start of day system state is NORMAL
+20210208RealTimeEvents.csv,02/08/2021 00:00:00,Start of day system state is NORMAL
+20210209RealTimeEvents.csv,02/09/2021 00:00:00,Start of day system state is NORMAL
+20210209RealTimeEvents.csv,02/09/2021 07:35:49,NYISO has initiated reserve pick-up.
+20210209RealTimeEvents.csv,02/09/2021 07:35:49,NYISO has initiated reserve pick-up.
+20210209RealTimeEvents.csv,02/09/2021 07:35:49,NYISO has initiated reserve pick-up.
+20210209RealTimeEvents.csv,02/09/2021 07:35:49,NYISO has initiated reserve pick-up.
+20210209RealTimeEvents.csv,02/09/2021 07:42:26,NYISO has terminated reserve pick-up.
+20210209RealTimeEvents.csv,02/09/2021 07:42:26,NYISO has terminated reserve pick-up.
+20210209RealTimeEvents.csv,02/09/2021 07:42:26,NYISO has terminated reserve pick-up.
+20210209RealTimeEvents.csv,02/09/2021 07:42:26,NYISO has terminated reserve pick-up.
+20210209RealTimeEvents.csv,02/09/2021 11:33:52,**State Change. System now operating in alert state.**
+20210209RealTimeEvents.csv,02/09/2021 11:33:52,**State Change. System now operating in alert state.**
+20210209RealTimeEvents.csv,02/09/2021 11:33:52,**State Change. System now operating in alert state.**
+20210209RealTimeEvents.csv,02/09/2021 11:37:40,**State Change. System now operating in normal state.**
+20210209RealTimeEvents.csv,02/09/2021 11:37:40,**State Change. System now operating in normal state.**
+20210209RealTimeEvents.csv,02/09/2021 11:37:40,**State Change. System now operating in normal state.**
+20210209RealTimeEvents.csv,02/09/2021 11:37:40,**State Change. System now operating in normal state.**
+20210210RealTimeEvents.csv,02/10/2021 00:00:00,Start of day system state is NORMAL
+20210210RealTimeEvents.csv,02/10/2021 01:20:36,NYISO has initiated reserve pick-up.
+20210210RealTimeEvents.csv,02/10/2021 01:20:36,NYISO has initiated reserve pick-up.
+20210210RealTimeEvents.csv,02/10/2021 01:20:36,NYISO has initiated reserve pick-up.
+20210210RealTimeEvents.csv,02/10/2021 01:20:36,NYISO has initiated reserve pick-up.
+20210210RealTimeEvents.csv,02/10/2021 01:29:48,NYISO has terminated reserve pick-up.
+20210210RealTimeEvents.csv,02/10/2021 01:29:48,NYISO has terminated reserve pick-up.
+20210210RealTimeEvents.csv,02/10/2021 01:29:48,NYISO has terminated reserve pick-up.
+20210210RealTimeEvents.csv,02/10/2021 01:29:48,NYISO has terminated reserve pick-up.
+20210211RealTimeEvents.csv,02/11/2021 00:00:00,Start of day system state is NORMAL
+20210212RealTimeEvents.csv,02/12/2021 00:00:00,Start of day system state is NORMAL
+20210212RealTimeEvents.csv,02/12/2021 22:02:10,**State Change. System now operating in alert state.**
+20210212RealTimeEvents.csv,02/12/2021 22:02:10,**State Change. System now operating in alert state.**
+20210212RealTimeEvents.csv,02/12/2021 22:02:10,**State Change. System now operating in alert state.**
+20210212RealTimeEvents.csv,02/12/2021 22:02:10,**State Change. System now operating in alert state.**
+20210212RealTimeEvents.csv,02/12/2021 22:33:34,**State Change. System now operating in normal state.**
+20210212RealTimeEvents.csv,02/12/2021 22:33:34,**State Change. System now operating in normal state.**
+20210212RealTimeEvents.csv,02/12/2021 22:33:34,**State Change. System now operating in normal state.**
+20210212RealTimeEvents.csv,02/12/2021 22:33:34,**State Change. System now operating in normal state.**
+20210213RealTimeEvents.csv,02/13/2021 00:00:00,Start of day system state is NORMAL
+20210214RealTimeEvents.csv,02/14/2021 00:00:00,Start of day system state is NORMAL
+20210215RealTimeEvents.csv,02/15/2021 00:00:00,Start of day system state is NORMAL
+20210216RealTimeEvents.csv,02/16/2021 00:00:00,Start of day system state is NORMAL
+20210217RealTimeEvents.csv,02/17/2021 00:00:00,Start of day system state is NORMAL
+20210218RealTimeEvents.csv,02/18/2021 00:00:00,Start of day system state is NORMAL
+20210219RealTimeEvents.csv,02/19/2021 00:00:00,Start of day system state is NORMAL
+20210219RealTimeEvents.csv,02/19/2021 09:24:32,NYISO has initiated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 09:24:32,NYISO has initiated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 09:24:32,NYISO has initiated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 09:24:32,NYISO has initiated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 09:34:32,NYISO has terminated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 09:34:32,NYISO has terminated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 09:34:32,NYISO has terminated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 09:34:32,NYISO has terminated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 12:07:26,NYISO has initiated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 12:07:26,NYISO has initiated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 12:07:26,NYISO has initiated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 12:07:26,NYISO has initiated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 12:15:21,NYISO has terminated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 12:15:21,NYISO has terminated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 12:15:21,NYISO has terminated reserve pick-up.
+20210219RealTimeEvents.csv,02/19/2021 12:15:21,NYISO has terminated reserve pick-up.
+20210220RealTimeEvents.csv,02/20/2021 00:00:00,Start of day system state is NORMAL
+20210221RealTimeEvents.csv,02/21/2021 00:00:00,Start of day system state is NORMAL
+20210221RealTimeEvents.csv,02/21/2021 18:08:12,NYISO has initiated reserve pick-up.
+20210221RealTimeEvents.csv,02/21/2021 18:08:12,NYISO has initiated reserve pick-up.
+20210221RealTimeEvents.csv,02/21/2021 18:08:12,NYISO has initiated reserve pick-up.
+20210221RealTimeEvents.csv,02/21/2021 18:08:12,NYISO has initiated reserve pick-up.
+20210221RealTimeEvents.csv,02/21/2021 18:13:18,NYISO has terminated reserve pick-up.
+20210221RealTimeEvents.csv,02/21/2021 18:13:18,NYISO has terminated reserve pick-up.
+20210221RealTimeEvents.csv,02/21/2021 18:13:18,NYISO has terminated reserve pick-up.
+20210221RealTimeEvents.csv,02/21/2021 18:13:18,NYISO has terminated reserve pick-up.
+20210222RealTimeEvents.csv,02/22/2021 00:00:00,Start of day system state is NORMAL
+20210223RealTimeEvents.csv,02/23/2021 00:00:00,Start of day system state is NORMAL
+20210224RealTimeEvents.csv,02/24/2021 00:00:00,Start of day system state is NORMAL
+20210225RealTimeEvents.csv,02/25/2021 00:00:00,Start of day system state is NORMAL
+20210226RealTimeEvents.csv,02/26/2021 03:50:29,NYISO has initiated reserve pick-up.
+20210226RealTimeEvents.csv,02/26/2021 03:50:29,NYISO has initiated reserve pick-up.
+20210226RealTimeEvents.csv,02/26/2021 03:50:29,NYISO has initiated reserve pick-up.
+20210226RealTimeEvents.csv,02/26/2021 03:50:29,NYISO has initiated reserve pick-up.
+20210226RealTimeEvents.csv,02/26/2021 03:54:41,NYISO has terminated reserve pick-up.
+20210226RealTimeEvents.csv,02/26/2021 03:54:41,NYISO has terminated reserve pick-up.
+20210226RealTimeEvents.csv,02/26/2021 03:54:41,NYISO has terminated reserve pick-up.
+20210226RealTimeEvents.csv,02/26/2021 03:54:41,NYISO has terminated reserve pick-up.
+20210227RealTimeEvents.csv,02/27/2021 00:00:00,Start of day system state is NORMAL
+20210228RealTimeEvents.csv,02/28/2021 00:00:00,Start of day system state is NORMAL
+20210301RealTimeEvents.csv,03/01/2021 00:00:00,Start of day system state is NORMAL
+20210301RealTimeEvents.csv,03/01/2021 20:28:11,NYISO has initiated reserve pick-up.
+20210301RealTimeEvents.csv,03/01/2021 20:28:11,NYISO has initiated reserve pick-up.
+20210301RealTimeEvents.csv,03/01/2021 20:28:11,NYISO has initiated reserve pick-up.
+20210301RealTimeEvents.csv,03/01/2021 20:28:11,NYISO has initiated reserve pick-up.
+20210301RealTimeEvents.csv,03/01/2021 20:37:41,NYISO has terminated reserve pick-up.
+20210301RealTimeEvents.csv,03/01/2021 20:37:41,NYISO has terminated reserve pick-up.
+20210301RealTimeEvents.csv,03/01/2021 20:37:41,NYISO has terminated reserve pick-up.
+20210301RealTimeEvents.csv,03/01/2021 20:37:41,NYISO has terminated reserve pick-up.
+20210302RealTimeEvents.csv,03/02/2021 00:00:00,Start of day system state is NORMAL
+20210302RealTimeEvents.csv,03/02/2021 18:21:08,**State Change. System now operating in alert state.**
+20210302RealTimeEvents.csv,03/02/2021 18:21:08,**State Change. System now operating in alert state.**
+20210302RealTimeEvents.csv,03/02/2021 18:21:08,**State Change. System now operating in alert state.**
+20210302RealTimeEvents.csv,03/02/2021 18:21:08,**State Change. System now operating in alert state.**
+20210302RealTimeEvents.csv,03/02/2021 18:27:00,**State Change. System now operating in normal state.**
+20210302RealTimeEvents.csv,03/02/2021 18:27:00,**State Change. System now operating in normal state.**
+20210302RealTimeEvents.csv,03/02/2021 18:27:00,**State Change. System now operating in normal state.**
+20210302RealTimeEvents.csv,03/02/2021 18:27:00,**State Change. System now operating in normal state.**
+20210303RealTimeEvents.csv,03/03/2021 00:00:00,Start of day system state is NORMAL
+20210304RealTimeEvents.csv,03/04/2021 00:00:00,Start of day system state is NORMAL
+20210304RealTimeEvents.csv,03/04/2021 16:28:21,NYISO has initiated reserve pick-up.
+20210304RealTimeEvents.csv,03/04/2021 16:28:21,NYISO has initiated reserve pick-up.
+20210304RealTimeEvents.csv,03/04/2021 16:30:33,NYISO has terminated reserve pick-up.
+20210304RealTimeEvents.csv,03/04/2021 16:30:33,NYISO has terminated reserve pick-up.
+20210304RealTimeEvents.csv,03/04/2021 16:30:33,NYISO has terminated reserve pick-up.
+20210305RealTimeEvents.csv,03/05/2021 00:00:00,Start of day system state is NORMAL
+20210306RealTimeEvents.csv,03/06/2021 00:00:00,Start of day system state is NORMAL
+20210307RealTimeEvents.csv,03/07/2021 00:00:00,Start of day system state is NORMAL
+20210308RealTimeEvents.csv,03/08/2021 00:00:00,Start of day system state is NORMAL
+20210309RealTimeEvents.csv,03/09/2021 00:00:00,Start of day system state is NORMAL
+20210310RealTimeEvents.csv,03/10/2021 00:00:00,Start of day system state is NORMAL
+20210310RealTimeEvents.csv,03/10/2021 15:57:39,**State Change. System now operating in alert state.**
+20210310RealTimeEvents.csv,03/10/2021 15:57:39,**State Change. System now operating in alert state.**
+20210310RealTimeEvents.csv,03/10/2021 15:57:39,**State Change. System now operating in alert state.**
+20210310RealTimeEvents.csv,03/10/2021 15:57:39,**State Change. System now operating in alert state.**
+20210310RealTimeEvents.csv,03/10/2021 16:03:43,**State Change. System now operating in normal state.**
+20210310RealTimeEvents.csv,03/10/2021 16:03:43,**State Change. System now operating in normal state.**
+20210310RealTimeEvents.csv,03/10/2021 16:03:43,**State Change. System now operating in normal state.**
+20210310RealTimeEvents.csv,03/10/2021 16:03:43,**State Change. System now operating in normal state.**
+20210311RealTimeEvents.csv,03/11/2021 00:00:00,Start of day system state is NORMAL
+20210312RealTimeEvents.csv,03/12/2021 00:00:00,Start of day system state is NORMAL
+20210313RealTimeEvents.csv,03/13/2021 00:00:00,Start of day system state is NORMAL
+20210314RealTimeEvents.csv,03/14/2021 00:00:00,Start of day system state is NORMAL
+20210314RealTimeEvents.csv,03/14/2021 20:12:31,NYISO has terminated reserve pick-up.
+20210314RealTimeEvents.csv,03/14/2021 20:12:31,NYISO has terminated reserve pick-up.
+20210314RealTimeEvents.csv,03/14/2021 20:12:31,NYISO has terminated reserve pick-up.
+20210314RealTimeEvents.csv,03/14/2021 20:12:31,NYISO has terminated reserve pick-up.
+20210315RealTimeEvents.csv,03/15/2021 00:00:00,Start of day system state is NORMAL
+20210316RealTimeEvents.csv,03/16/2021 00:00:00,Start of day system state is NORMAL
+20210317RealTimeEvents.csv,03/17/2021 00:00:00,Start of day system state is NORMAL
+20210318RealTimeEvents.csv,03/18/2021 00:00:00,Start of day system state is NORMAL
+20210319RealTimeEvents.csv,03/19/2021 00:00:00,Start of day system state is NORMAL
+20210320RealTimeEvents.csv,03/20/2021 00:00:00,Start of day system state is NORMAL
+20210321RealTimeEvents.csv,03/21/2021 00:00:00,Start of day system state is NORMAL
+20210322RealTimeEvents.csv,03/22/2021 00:00:00,Start of day system state is NORMAL
+20210323RealTimeEvents.csv,03/23/2021 00:00:00,Start of day system state is NORMAL
+20210324RealTimeEvents.csv,03/24/2021 00:00:00,Start of day system state is NORMAL
+20210325RealTimeEvents.csv,03/25/2021 00:00:00,Start of day system state is NORMAL
+20210326RealTimeEvents.csv,03/26/2021 00:00:00,Start of day system state is NORMAL
+20210327RealTimeEvents.csv,03/27/2021 00:00:00,Start of day system state is NORMAL
+20210328RealTimeEvents.csv,03/28/2021 00:00:00,Start of day system state is NORMAL
+20210329RealTimeEvents.csv,03/29/2021 00:00:00,Start of day system state is NORMAL
+20210329RealTimeEvents.csv,03/29/2021 08:19:00,**State Change. System now operating in alert state.**
+20210329RealTimeEvents.csv,03/29/2021 08:19:00,**State Change. System now operating in alert state.**
+20210329RealTimeEvents.csv,03/29/2021 08:19:00,**State Change. System now operating in alert state.**
+20210329RealTimeEvents.csv,03/29/2021 08:19:00,**State Change. System now operating in alert state.**
+20210329RealTimeEvents.csv,03/29/2021 08:22:32,NYISO has initiated reserve pick-up.
+20210329RealTimeEvents.csv,03/29/2021 08:22:32,NYISO has initiated reserve pick-up.
+20210329RealTimeEvents.csv,03/29/2021 08:22:32,NYISO has initiated reserve pick-up.
+20210329RealTimeEvents.csv,03/29/2021 08:26:20,NYISO has terminated reserve pick-up.
+20210329RealTimeEvents.csv,03/29/2021 08:26:20,NYISO has terminated reserve pick-up.
+20210329RealTimeEvents.csv,03/29/2021 08:26:20,NYISO has terminated reserve pick-up.
+20210329RealTimeEvents.csv,03/29/2021 08:26:20,NYISO has terminated reserve pick-up.
+20210330RealTimeEvents.csv,03/30/2021 00:00:00,Start of day system state is NORMAL
+20210331RealTimeEvents.csv,03/31/2021 00:00:00,Start of day system state is NORMAL
+20210401RealTimeEvents.csv,04/01/2021 00:00:00,Start of day system state is NORMAL
+20210402RealTimeEvents.csv,04/02/2021 00:00:00,Start of day system state is NORMAL
+20210403RealTimeEvents.csv,04/03/2021 00:00:00,Start of day system state is NORMAL
+20210404RealTimeEvents.csv,04/04/2021 00:00:00,Start of day system state is NORMAL
+20210405RealTimeEvents.csv,04/05/2021 00:00:00,Start of day system state is NORMAL
+20210406RealTimeEvents.csv,04/06/2021 00:00:00,Start of day system state is NORMAL
+20210407RealTimeEvents.csv,04/07/2021 00:00:00,Start of day system state is NORMAL
+20210408RealTimeEvents.csv,04/08/2021 00:00:00,Start of day system state is NORMAL
+20210409RealTimeEvents.csv,04/09/2021 00:00:00,Start of day system state is NORMAL
+20210410RealTimeEvents.csv,04/10/2021 00:00:00,Start of day system state is NORMAL
+20210411RealTimeEvents.csv,04/11/2021 00:00:00,Start of day system state is NORMAL
+20210412RealTimeEvents.csv,04/12/2021 00:00:00,Start of day system state is NORMAL
+20210412RealTimeEvents.csv,04/12/2021 22:02:28,NYISO has initiated reserve pick-up.
+20210412RealTimeEvents.csv,04/12/2021 22:02:28,NYISO has initiated reserve pick-up.
+20210412RealTimeEvents.csv,04/12/2021 22:02:28,NYISO has initiated reserve pick-up.
+20210412RealTimeEvents.csv,04/12/2021 22:02:28,NYISO has initiated reserve pick-up.
+20210412RealTimeEvents.csv,04/12/2021 22:02:28,NYISO has initiated reserve pick-up.
+20210412RealTimeEvents.csv,04/12/2021 22:13:04,NYISO has terminated reserve pick-up.
+20210412RealTimeEvents.csv,04/12/2021 22:13:04,NYISO has terminated reserve pick-up.
+20210412RealTimeEvents.csv,04/12/2021 22:13:04,NYISO has terminated reserve pick-up.
+20210412RealTimeEvents.csv,04/12/2021 22:13:04,NYISO has terminated reserve pick-up.
+20210413RealTimeEvents.csv,04/13/2021 00:00:00,Start of day system state is NORMAL
+20210414RealTimeEvents.csv,04/14/2021 00:00:00,Start of day system state is NORMAL
+20210415RealTimeEvents.csv,04/15/2021 00:00:00,Start of day system state is NORMAL
+20210416RealTimeEvents.csv,04/16/2021 00:00:00,Start of day system state is NORMAL
+20210417RealTimeEvents.csv,04/17/2021 00:00:00,Start of day system state is NORMAL
+20210418RealTimeEvents.csv,04/18/2021 00:00:00,Start of day system state is NORMAL
+20210419RealTimeEvents.csv,04/19/2021 00:00:00,Start of day system state is NORMAL
+20210419RealTimeEvents.csv,04/19/2021 08:12:37,**State Change. System now operating in alert state.**
+20210419RealTimeEvents.csv,04/19/2021 08:12:37,**State Change. System now operating in alert state.**
+20210419RealTimeEvents.csv,04/19/2021 08:12:37,**State Change. System now operating in alert state.**
+20210419RealTimeEvents.csv,04/19/2021 08:12:37,**State Change. System now operating in alert state.**
+20210419RealTimeEvents.csv,04/19/2021 08:20:33,**State Change. System now operating in normal state.**
+20210419RealTimeEvents.csv,04/19/2021 08:20:33,**State Change. System now operating in normal state.**
+20210419RealTimeEvents.csv,04/19/2021 08:20:33,**State Change. System now operating in normal state.**
+20210419RealTimeEvents.csv,04/19/2021 08:20:33,**State Change. System now operating in normal state.**
+20210420RealTimeEvents.csv,04/20/2021 00:00:00,Start of day system state is NORMAL
+20210421RealTimeEvents.csv,04/21/2021 00:00:00,Start of day system state is NORMAL
+20210421RealTimeEvents.csv,04/21/2021 06:08:19,NYISO has initiated reserve pick-up.
+20210421RealTimeEvents.csv,04/21/2021 06:08:19,NYISO has initiated reserve pick-up.
+20210421RealTimeEvents.csv,04/21/2021 06:08:19,NYISO has initiated reserve pick-up.
+20210421RealTimeEvents.csv,04/21/2021 06:08:19,NYISO has initiated reserve pick-up.
+20210421RealTimeEvents.csv,04/21/2021 06:13:49,NYISO has terminated reserve pick-up.
+20210421RealTimeEvents.csv,04/21/2021 06:13:49,NYISO has terminated reserve pick-up.
+20210421RealTimeEvents.csv,04/21/2021 06:13:49,NYISO has terminated reserve pick-up.
+20210421RealTimeEvents.csv,04/21/2021 06:13:49,NYISO has terminated reserve pick-up.
+20210421RealTimeEvents.csv,04/21/2021 14:00:00,**System now operating in thunderstorm alert.**
+20210421RealTimeEvents.csv,04/21/2021 14:00:00,**System now operating in thunderstorm alert.**
+20210421RealTimeEvents.csv,04/21/2021 14:00:00,**System now operating in thunderstorm alert.**
+20210421RealTimeEvents.csv,04/21/2021 15:30:00,**System no longer operating in thunderstorm alert.**
+20210421RealTimeEvents.csv,04/21/2021 15:30:00,**System no longer operating in thunderstorm alert.**
+20210421RealTimeEvents.csv,04/21/2021 15:30:00,**System no longer operating in thunderstorm alert.**
+20210422RealTimeEvents.csv,04/22/2021 00:00:00,Start of day system state is NORMAL
+20210423RealTimeEvents.csv,04/23/2021 00:00:00,Start of day system state is NORMAL
+20210423RealTimeEvents.csv,04/23/2021 11:43:37,NYISO has terminated reserve pick-up.
+20210423RealTimeEvents.csv,04/23/2021 11:43:37,NYISO has terminated reserve pick-up.
+20210423RealTimeEvents.csv,04/23/2021 11:43:37,NYISO has terminated reserve pick-up.
+20210423RealTimeEvents.csv,04/23/2021 11:43:37,NYISO has terminated reserve pick-up.
+20210424RealTimeEvents.csv,04/24/2021 00:00:00,Start of day system state is NORMAL
+20210425RealTimeEvents.csv,04/25/2021 00:00:00,Start of day system state is NORMAL
+20210426RealTimeEvents.csv,04/26/2021 00:00:00,Start of day system state is NORMAL
+20210427RealTimeEvents.csv,04/27/2021 00:00:00,Start of day system state is NORMAL
+20210428RealTimeEvents.csv,04/28/2021 00:00:00,Start of day system state is NORMAL
+20210428RealTimeEvents.csv,04/28/2021 11:35:10,NYISO has initiated reserve pick-up.
+20210428RealTimeEvents.csv,04/28/2021 11:35:10,NYISO has initiated reserve pick-up.
+20210428RealTimeEvents.csv,04/28/2021 11:35:10,NYISO has initiated reserve pick-up.
+20210428RealTimeEvents.csv,04/28/2021 11:35:10,NYISO has initiated reserve pick-up.
+20210428RealTimeEvents.csv,04/28/2021 11:41:58,NYISO has terminated reserve pick-up.
+20210428RealTimeEvents.csv,04/28/2021 11:41:58,NYISO has terminated reserve pick-up.
+20210428RealTimeEvents.csv,04/28/2021 11:41:58,NYISO has terminated reserve pick-up.
+20210428RealTimeEvents.csv,04/28/2021 11:41:58,NYISO has terminated reserve pick-up.
+20210429RealTimeEvents.csv,04/29/2021 00:00:00,Start of day system state is NORMAL
+20210429RealTimeEvents.csv,04/29/2021 21:19:38,NYISO has initiated reserve pick-up.
+20210429RealTimeEvents.csv,04/29/2021 21:19:38,NYISO has initiated reserve pick-up.
+20210429RealTimeEvents.csv,04/29/2021 21:19:38,NYISO has initiated reserve pick-up.
+20210429RealTimeEvents.csv,04/29/2021 21:19:38,NYISO has initiated reserve pick-up.
+20210429RealTimeEvents.csv,04/29/2021 21:29:33,NYISO has terminated reserve pick-up.
+20210429RealTimeEvents.csv,04/29/2021 21:29:33,NYISO has terminated reserve pick-up.
+20210429RealTimeEvents.csv,04/29/2021 21:29:33,NYISO has terminated reserve pick-up.
+20210429RealTimeEvents.csv,04/29/2021 21:29:33,NYISO has terminated reserve pick-up.
+20210430RealTimeEvents.csv,04/30/2021 00:00:00,Start of day system state is NORMAL
+20210501RealTimeEvents.csv,05/01/2021 00:00:00,Start of day system state is NORMAL
+20210502RealTimeEvents.csv,05/02/2021 00:00:00,Start of day system state is NORMAL
+20210503RealTimeEvents.csv,05/03/2021 00:00:00,Start of day system state is NORMAL
+20210504RealTimeEvents.csv,05/04/2021 00:00:00,Start of day system state is NORMAL
+20210505RealTimeEvents.csv,05/05/2021 00:00:00,Start of day system state is NORMAL
+20210506RealTimeEvents.csv,05/06/2021 00:00:00,Start of day system state is NORMAL
+20210507RealTimeEvents.csv,05/07/2021 00:00:00,Start of day system state is NORMAL
+20210508RealTimeEvents.csv,05/08/2021 00:00:00,Start of day system state is NORMAL
+20210509RealTimeEvents.csv,05/09/2021 00:00:00,Start of day system state is NORMAL
+20210510RealTimeEvents.csv,05/10/2021 00:00:00,Start of day system state is NORMAL
+20210511RealTimeEvents.csv,05/11/2021 00:00:00,Start of day system state is NORMAL
+20210511RealTimeEvents.csv,05/11/2021 17:00:57,NYISO has initiated reserve pick-up.
+20210511RealTimeEvents.csv,05/11/2021 17:00:57,NYISO has initiated reserve pick-up.
+20210511RealTimeEvents.csv,05/11/2021 17:00:57,NYISO has initiated reserve pick-up.
+20210511RealTimeEvents.csv,05/11/2021 17:03:39,NYISO has terminated reserve pick-up.
+20210511RealTimeEvents.csv,05/11/2021 17:03:39,NYISO has terminated reserve pick-up.
+20210511RealTimeEvents.csv,05/11/2021 17:03:39,NYISO has terminated reserve pick-up.
+20210512RealTimeEvents.csv,05/12/2021 00:00:00,Start of day system state is NORMAL
+20210513RealTimeEvents.csv,05/13/2021 00:00:00,Start of day system state is NORMAL
+20210514RealTimeEvents.csv,05/14/2021 00:00:00,Start of day system state is NORMAL
+20210515RealTimeEvents.csv,05/15/2021 00:00:00,Start of day system state is NORMAL
+20210516RealTimeEvents.csv,05/16/2021 00:00:00,Start of day system state is NORMAL
+20210517RealTimeEvents.csv,05/17/2021 00:00:00,Start of day system state is NORMAL
+20210518RealTimeEvents.csv,05/18/2021 00:00:00,Start of day system state is NORMAL
+20210519RealTimeEvents.csv,05/19/2021 00:00:00,Start of day system state is NORMAL
+20210520RealTimeEvents.csv,05/20/2021 00:00:00,Start of day system state is NORMAL
+20210521RealTimeEvents.csv,05/21/2021 00:00:00,Start of day system state is NORMAL
+20210522RealTimeEvents.csv,05/22/2021 00:00:00,Start of day system state is NORMAL
+20210522RealTimeEvents.csv,05/22/2021 23:56:56,NYISO has initiated reserve pick-up.
+20210522RealTimeEvents.csv,05/22/2021 23:56:56,NYISO has initiated reserve pick-up.
+20210522RealTimeEvents.csv,05/22/2021 23:56:56,NYISO has initiated reserve pick-up.
+20210522RealTimeEvents.csv,05/22/2021 23:56:56,NYISO has initiated reserve pick-up.
+20210523RealTimeEvents.csv,05/23/2021 00:00:00,Start of day system state is NORMAL
+20210523RealTimeEvents.csv,05/23/2021 00:02:39,NYISO has terminated reserve pick-up.
+20210523RealTimeEvents.csv,05/23/2021 00:02:39,NYISO has terminated reserve pick-up.
+20210523RealTimeEvents.csv,05/23/2021 00:02:39,NYISO has terminated reserve pick-up.
+20210523RealTimeEvents.csv,05/23/2021 00:02:39,NYISO has terminated reserve pick-up.
+20210524RealTimeEvents.csv,05/24/2021 00:00:00,Start of day system state is NORMAL
+20210525RealTimeEvents.csv,05/25/2021 00:00:00,Start of day system state is NORMAL
+20210526RealTimeEvents.csv,05/26/2021 00:00:00,Start of day system state is NORMAL
+20210526RealTimeEvents.csv,05/26/2021 17:15:00,**System now operating in thunderstorm alert.**
+20210526RealTimeEvents.csv,05/26/2021 17:15:00,**System now operating in thunderstorm alert.**
+20210526RealTimeEvents.csv,05/26/2021 17:15:00,**System now operating in thunderstorm alert.**
+20210526RealTimeEvents.csv,05/26/2021 17:15:00,**System now operating in thunderstorm alert.**
+20210526RealTimeEvents.csv,05/26/2021 22:55:00,**System no longer operating in thunderstorm alert.**
+20210526RealTimeEvents.csv,05/26/2021 22:55:00,**System no longer operating in thunderstorm alert.**
+20210526RealTimeEvents.csv,05/26/2021 22:55:00,**System no longer operating in thunderstorm alert.**
+20210527RealTimeEvents.csv,05/27/2021 00:00:00,Start of day system state is NORMAL
+20210528RealTimeEvents.csv,05/28/2021 00:00:00,Start of day system state is NORMAL
+20210529RealTimeEvents.csv,05/29/2021 00:00:00,Start of day system state is NORMAL
+20210530RealTimeEvents.csv,05/30/2021 00:00:00,Start of day system state is NORMAL
+20210531RealTimeEvents.csv,05/31/2021 00:00:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210601RealTimeEvents.csv,6/1/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210602RealTimeEvents.csv,6/2/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210603RealTimeEvents.csv,6/3/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210604RealTimeEvents.csv,6/4/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210604RealTimeEvents.csv,6/4/2021 15:00,**System now operating in thunderstorm alert.**
+20210601RealTimeEvents/20210604RealTimeEvents.csv,6/4/2021 17:20,**System no longer operating in thunderstorm alert.**
+20210601RealTimeEvents/20210605RealTimeEvents.csv,6/5/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210606RealTimeEvents.csv,6/6/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210607RealTimeEvents.csv,6/7/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210608RealTimeEvents.csv,6/8/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210608RealTimeEvents.csv,6/8/2021 13:11,**State Change. System now operating in alert state.**
+20210601RealTimeEvents/20210608RealTimeEvents.csv,6/8/2021 13:14,**State Change. System no longer operating in alert state.**
+20210601RealTimeEvents/20210608RealTimeEvents.csv,6/8/2021 13:20,**System now operating in thunderstorm alert.**
+20210601RealTimeEvents/20210608RealTimeEvents.csv,6/8/2021 18:20,**System no longer operating in thunderstorm alert.**
+20210601RealTimeEvents/20210609RealTimeEvents.csv,6/9/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210610RealTimeEvents.csv,6/10/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210611RealTimeEvents.csv,6/11/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210612RealTimeEvents.csv,6/12/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210613RealTimeEvents.csv,6/13/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210614RealTimeEvents.csv,6/14/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210614RealTimeEvents.csv,6/14/2021 5:04,**State Change. System now operating in alert state.**
+20210601RealTimeEvents/20210614RealTimeEvents.csv,6/14/2021 5:09,**State Change. System no longer operating in alert state.**
+20210601RealTimeEvents/20210614RealTimeEvents.csv,6/14/2021 18:00,**System now operating in thunderstorm alert.**
+20210601RealTimeEvents/20210614RealTimeEvents.csv,6/14/2021 22:30,**System no longer operating in thunderstorm alert.**
+20210601RealTimeEvents/20210615RealTimeEvents.csv,6/15/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210616RealTimeEvents.csv,6/16/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210616RealTimeEvents.csv,6/16/2021 18:35,**State Change. System now operating in alert state.**
+20210601RealTimeEvents/20210616RealTimeEvents.csv,6/16/2021 18:44,**State Change. System no longer operating in alert state.**
+20210601RealTimeEvents/20210617RealTimeEvents.csv,6/17/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210618RealTimeEvents.csv,6/18/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210619RealTimeEvents.csv,6/19/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210620RealTimeEvents.csv,6/20/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210621RealTimeEvents.csv,6/21/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210621RealTimeEvents.csv,6/21/2021 16:36,NYISO has initiated reserve pick-up.
+20210601RealTimeEvents/20210621RealTimeEvents.csv,6/21/2021 16:45,NYISO has terminated reserve pick-up.
+20210601RealTimeEvents/20210621RealTimeEvents.csv,6/21/2021 21:00,**System now operating in thunderstorm alert.**
+20210601RealTimeEvents/20210622RealTimeEvents.csv,6/22/2021 0:00,Start of day thunderstorm alert state is ACTIVE
+20210601RealTimeEvents/20210622RealTimeEvents.csv,6/22/2021 0:35,**System no longer operating in thunderstorm alert.**
+20210601RealTimeEvents/20210623RealTimeEvents.csv,06/23/2021 00:00:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210624RealTimeEvents.csv,06/24/2021 00:00:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210625RealTimeEvents.csv,06/25/2021 00:00:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210626RealTimeEvents.csv,6/26/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210626RealTimeEvents.csv,6/26/2021 4:04,NYISO has initiated reserve pick-up.
+20210601RealTimeEvents/20210626RealTimeEvents.csv,6/26/2021 4:08,NYISO has terminated reserve pick-up.
+20210601RealTimeEvents/20210626RealTimeEvents.csv,6/26/2021 11:14,NYISO has initiated reserve pick-up.
+20210601RealTimeEvents/20210626RealTimeEvents.csv,6/26/2021 11:21,NYISO has terminated reserve pick-up.
+20210601RealTimeEvents/20210627RealTimeEvents.csv,6/27/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210627RealTimeEvents.csv,6/27/2021 17:01,NYISO has initiated reserve pick-up.
+20210601RealTimeEvents/20210627RealTimeEvents.csv,6/27/2021 17:03,**State Change. System now operating in alert state.**
+20210601RealTimeEvents/20210627RealTimeEvents.csv,6/27/2021 17:10,**State Change. System now operating in normal state.**
+20210601RealTimeEvents/20210627RealTimeEvents.csv,6/27/2021 17:11,NYISO has terminated reserve pick-up.
+20210601RealTimeEvents/20210627RealTimeEvents.csv,6/27/2021 18:41,NYISO has initiated reserve pick-up.
+20210601RealTimeEvents/20210627RealTimeEvents.csv,6/27/2021 18:45,NYISO has terminated reserve pick-up.
+20210601RealTimeEvents/20210628RealTimeEvents.csv,06/28/2021 00:00:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210629RealTimeEvents.csv,06/29/2021 00:00:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210630RealTimeEvents.csv,6/30/2021 0:00,Start of day system state is NORMAL
+20210601RealTimeEvents/20210630RealTimeEvents.csv,6/30/2021 17:00,**System now operating in thunderstorm alert.**
+20210601RealTimeEvents/20210630RealTimeEvents.csv,6/30/2021 21:40,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210701RealTimeEvents.csv,7/1/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210702RealTimeEvents.csv,7/2/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210703RealTimeEvents.csv,7/3/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210704RealTimeEvents.csv,7/4/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210705RealTimeEvents.csv,7/5/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210706RealTimeEvents.csv,7/6/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210706RealTimeEvents.csv,7/6/2021 8:12,**State Change. System now operating in alert state.**
+20210701RealTimeEvents/20210706RealTimeEvents.csv,7/6/2021 8:32,**State Change. System now operating in normal state.**
+20210701RealTimeEvents/20210706RealTimeEvents.csv,7/6/2021 16:30,NYISO has initiated reserve pick-up.
+20210701RealTimeEvents/20210706RealTimeEvents.csv,7/6/2021 16:30,**System now operating in thunderstorm alert.**
+20210701RealTimeEvents/20210706RealTimeEvents.csv,7/6/2021 16:35,NYISO has terminated reserve pick-up.
+20210701RealTimeEvents/20210706RealTimeEvents.csv,7/6/2021 21:10,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210707RealTimeEvents.csv,7/7/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210707RealTimeEvents.csv,7/7/2021 13:09,NYISO has initiated reserve pick-up.
+20210701RealTimeEvents/20210707RealTimeEvents.csv,7/7/2021 14:27,NYISO has terminated reserve pick-up.
+20210701RealTimeEvents/20210707RealTimeEvents.csv,7/7/2021 17:00,**System now operating in thunderstorm alert.**
+20210701RealTimeEvents/20210707RealTimeEvents.csv,7/7/2021 17:27,NYISO has initiated reserve pick-up.
+20210701RealTimeEvents/20210707RealTimeEvents.csv,7/7/2021 17:34,NYISO has terminated reserve pick-up.
+20210701RealTimeEvents/20210707RealTimeEvents.csv,7/7/2021 23:05,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210708RealTimeEvents.csv,7/8/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210708RealTimeEvents.csv,7/8/2021 13:55,**System now operating in thunderstorm alert.**
+20210701RealTimeEvents/20210708RealTimeEvents.csv,7/8/2021 13:55,**State Change. System now operating in alert state.**
+20210701RealTimeEvents/20210708RealTimeEvents.csv,7/8/2021 14:04,**State Change. System now operating in normal state.**
+20210701RealTimeEvents/20210708RealTimeEvents.csv,7/8/2021 21:50,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210709RealTimeEvents.csv,07/09/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210710RealTimeEvents.csv,07/10/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210711RealTimeEvents.csv,07/11/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210712RealTimeEvents.csv,7/12/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210712RealTimeEvents.csv,7/12/2021 15:15,**System now operating in thunderstorm alert.**
+20210701RealTimeEvents/20210712RealTimeEvents.csv,7/12/2021 22:15,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210713RealTimeEvents.csv,07/13/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210714RealTimeEvents.csv,7/14/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210714RealTimeEvents.csv,7/14/2021 9:37,NYISO has initiated reserve pick-up.
+20210701RealTimeEvents/20210714RealTimeEvents.csv,7/14/2021 9:41,NYISO has terminated reserve pick-up.
+20210701RealTimeEvents/20210714RealTimeEvents.csv,7/14/2021 17:45,**System now operating in thunderstorm alert.**
+20210701RealTimeEvents/20210714RealTimeEvents.csv,7/14/2021 19:25,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210715RealTimeEvents.csv,07/15/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210716RealTimeEvents.csv,7/16/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210716RealTimeEvents.csv,7/16/2021 0:10,NYISO has initiated reserve pick-up.
+20210701RealTimeEvents/20210716RealTimeEvents.csv,7/16/2021 0:18,NYISO has terminated reserve pick-up.
+20210701RealTimeEvents/20210717RealTimeEvents.csv,7/17/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210717RealTimeEvents.csv,7/17/2021 14:00,**System now operating in thunderstorm alert.**
+20210701RealTimeEvents/20210717RealTimeEvents.csv,7/17/2021 23:10,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210718RealTimeEvents.csv,07/18/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210719RealTimeEvents.csv,7/19/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210719RealTimeEvents.csv,7/19/2021 20:24,NYISO has initiated reserve pick-up.
+20210701RealTimeEvents/20210719RealTimeEvents.csv,7/19/2021 20:30,NYISO has terminated reserve pick-up.
+20210701RealTimeEvents/20210720RealTimeEvents.csv,7/20/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210720RealTimeEvents.csv,7/20/2021 20:34,NYISO has initiated reserve pick-up.
+20210701RealTimeEvents/20210720RealTimeEvents.csv,7/20/2021 20:41,NYISO has terminated reserve pick-up.
+20210701RealTimeEvents/20210721RealTimeEvents.csv,7/21/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210721RealTimeEvents.csv,7/21/2021 12:00,**System now operating in thunderstorm alert.**
+20210701RealTimeEvents/20210721RealTimeEvents.csv,7/21/2021 16:10,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210722RealTimeEvents.csv,07/22/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210723RealTimeEvents.csv,07/23/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210724RealTimeEvents.csv,07/24/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210725RealTimeEvents.csv,7/25/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210725RealTimeEvents.csv,7/25/2021 23:50,**System now operating in thunderstorm alert.**
+20210701RealTimeEvents/20210726RealTimeEvents.csv,7/26/2021 0:00,Start of day thunderstorm alert is ACTIVE
+20210701RealTimeEvents/20210726RealTimeEvents.csv,7/26/2021 1:15,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210726RealTimeEvents.csv,7/26/2021 18:57,**State Change. System now operating in alert state.**
+20210701RealTimeEvents/20210726RealTimeEvents.csv,7/26/2021 19:02,**State Change. System now operating in normal state.**
+20210701RealTimeEvents/20210727RealTimeEvents.csv,07/27/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210728RealTimeEvents.csv,07/28/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210729RealTimeEvents.csv,7/29/2021 0:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210729RealTimeEvents.csv,7/29/2021 17:00,**System now operating in thunderstorm alert.**
+20210701RealTimeEvents/20210729RealTimeEvents.csv,7/29/2021 21:20,**System no longer operating in thunderstorm alert.**
+20210701RealTimeEvents/20210730RealTimeEvents.csv,07/30/2021 00:00:00,Start of day system state is NORMAL
+20210701RealTimeEvents/20210731RealTimeEvents.csv,07/31/2021 00:00:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210801RealTimeEvents.csv,8/1/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210802RealTimeEvents.csv,8/2/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210803RealTimeEvents.csv,8/3/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210804RealTimeEvents.csv,8/4/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210805RealTimeEvents.csv,8/5/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210806RealTimeEvents.csv,8/6/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210807RealTimeEvents.csv,8/7/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210807RealTimeEvents.csv,,
+20210801RealTimeEvents/20210807RealTimeEvents.csv,,
+20210801RealTimeEvents/20210808RealTimeEvents.csv,8/8/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210809RealTimeEvents.csv,8/9/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210810RealTimeEvents.csv,8/10/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210810RealTimeEvents.csv,8/10/2021 19:00:00,**System now operating in thunderstorm alert.**
+20210801RealTimeEvents/20210810RealTimeEvents.csv,8/10/2021 22:15:00,**System no longer operating in thunderstorm alert.**
+20210801RealTimeEvents/20210811RealTimeEvents.csv,8/11/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210811RealTimeEvents.csv,8/11/2021 20:15:00,**System now operating in thunderstorm alert.**
+20210801RealTimeEvents/20210811RealTimeEvents.csv,8/11/2021 22:30:00,**System no longer operating in thunderstorm alert.**
+20210801RealTimeEvents/20210812RealTimeEvents.csv,8/12/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210812RealTimeEvents.csv,8/12/2021 17:00:00,**System now operating in thunderstorm alert.**
+20210801RealTimeEvents/20210812RealTimeEvents.csv,8/12/2021 18:00:00,**System no longer operating in thunderstorm alert.**
+20210801RealTimeEvents/20210813RealTimeEvents.csv,8/13/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210814RealTimeEvents.csv,8/14/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210815RealTimeEvents.csv,8/15/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210816RealTimeEvents.csv,8/16/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210817RealTimeEvents.csv,8/17/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210817RealTimeEvents.csv,8/17/2021 0:14,NYISO has initiated reserve pick-up.
+20210801RealTimeEvents/20210817RealTimeEvents.csv,8/20/2021 0:24,NYISO has terminated reserve pick-up.
+20210801RealTimeEvents/20210818RealTimeEvents.csv,8/18/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210818RealTimeEvents.csv,8/18/2021 23:30,**System now operating in thunderstorm alert.**
+20210801RealTimeEvents/20210819RealTimeEvents.csv,8/19/2021 0:00,Start of day thunderstorm alert is ACTIVE
+20210801RealTimeEvents/20210819RealTimeEvents.csv,8/19/2021 5:30:00,**System no longer operating in thunderstorm alert.**
+20210801RealTimeEvents/20210820RealTimeEvents.csv,8/20/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210820RealTimeEvents.csv,8/20/2021 14:20,NYISO has initiated reserve pick-up.
+20210801RealTimeEvents/20210820RealTimeEvents.csv,8/20/2021 14:25,NYISO has terminated reserve pick-up.
+20210801RealTimeEvents/20210821RealTimeEvents.csv,8/21/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210821RealTimeEvents.csv,8/21/2021 12:53,NYISO has initiated reserve pick-up.
+20210801RealTimeEvents/20210821RealTimeEvents.csv,8/21/2021 12:55,**State Change. System now operating in alert state.**
+20210801RealTimeEvents/20210821RealTimeEvents.csv,8/21/2021 13:04,**State Change. System now operating in normal state.**
+20210801RealTimeEvents/20210821RealTimeEvents.csv,8/21/2021 13:04,NYISO has terminated reserve pick-up.
+20210801RealTimeEvents/20210822RealTimeEvents.csv,08/22/2021 00:00:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210823RealTimeEvents.csv,8/23/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210823RealTimeEvents.csv,8/23/2021 16:45,**State Change. System now operating in alert state.**
+20210801RealTimeEvents/20210823RealTimeEvents.csv,8/23/2021 16:49,**State Change. System now operating in normal state.**
+20210801RealTimeEvents/20210824RealTimeEvents.csv,8/24/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210824RealTimeEvents.csv,8/24/2021 10:42,NYISO has initiated reserve pick-up.
+20210801RealTimeEvents/20210824RealTimeEvents.csv,8/24/2021 10:47,NYISO has terminated reserve pick-up.
+20210801RealTimeEvents/20210824RealTimeEvents.csv,8/24/2021 13:46,Capacity request has been submitted for Proxy: PJDF for Hours: 08/25/2021 13:00 EDT;08/25/2021 14:00 EDT;08/25/2021 15:00 EDT;08/25/2021 16:00 EDT;08/25/2021 17:00 EDT;08/25/2021 18:00 EDT;08/25/2021 19:00 EDT
+20210801RealTimeEvents/20210825RealTimeEvents.csv,08/25/2021 00:00:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210825RealTimeEvents.csv,08/25/2021 10:42:40,Capacity request has been submitted for Proxy: PJDF for Hours: 08/26/2021 13:00 EDT;08/26/2021 14:00 EDT;08/26/2021 15:00 EDT;08/26/2021 16:00 EDT;08/26/2021 17:00 EDT;08/26/2021 18:00 EDT;08/26/2021 19:00 EDT
+20210801RealTimeEvents/20210826RealTimeEvents.csv,08/26/2021 00:00:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210826RealTimeEvents.csv,08/26/2021 10:57:24,Capacity request has been submitted for Proxy: PJDF for Hours: 08/27/2021 13:00 EDT;08/27/2021 14:00 EDT;08/27/2021 15:00 EDT;08/27/2021 16:00 EDT;08/27/2021 17:00 EDT;08/27/2021 18:00 EDT;08/27/2021 19:00 EDT
+20210801RealTimeEvents/20210827RealTimeEvents.csv,08/27/2021 00:00:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210828RealTimeEvents.csv,08/28/2021 00:00:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210829RealTimeEvents.csv,8/29/2021 0:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210829RealTimeEvents.csv,8/29/2021 20:34,NYISO has initiated reserve pick-up.
+20210801RealTimeEvents/20210829RealTimeEvents.csv,8/29/2021 20:40,NYISO has terminated reserve pick-up.
+20210801RealTimeEvents/20210829RealTimeEvents.csv,8/29/2021 20:47,NYISO has initiated reserve pick-up.
+20210801RealTimeEvents/20210829RealTimeEvents.csv,8/29/2021 20:57,NYISO has terminated reserve pick-up.
+20210801RealTimeEvents/20210830RealTimeEvents.csv,08/30/2021 00:00:00,Start of day system state is NORMAL
+20210801RealTimeEvents/20210831RealTimeEvents.csv,08/31/2021 00:00:00,Start of day system state is NORMAL
+20210901RealTimeEvents.csv,09/01/2021 00:00:00,Start of day system state is NORMAL
+20210901RealTimeEvents.csv,09/01/2021 18:15:00,**System now operating in thunderstorm alert.**
+20210901RealTimeEvents.csv,09/01/2021 18:15:00,**System now operating in thunderstorm alert.**
+20210901RealTimeEvents.csv,09/01/2021 18:15:00,**System now operating in thunderstorm alert.**
+20210901RealTimeEvents.csv,09/01/2021 18:15:00,**System now operating in thunderstorm alert.**
+20210901RealTimeEvents.csv,09/01/2021 22:30:00,NYISO has initiated reserve pick-up.
+20210901RealTimeEvents.csv,09/01/2021 22:30:00,NYISO has initiated reserve pick-up.
+20210901RealTimeEvents.csv,09/01/2021 22:30:00,NYISO has initiated reserve pick-up.
+20210901RealTimeEvents.csv,09/01/2021 22:30:00,NYISO has initiated reserve pick-up.
+20210901RealTimeEvents.csv,09/01/2021 22:35:06,NYISO has terminated reserve pick-up.
+20210901RealTimeEvents.csv,09/01/2021 22:35:06,NYISO has terminated reserve pick-up.
+20210901RealTimeEvents.csv,09/01/2021 22:35:06,NYISO has terminated reserve pick-up.
+20210901RealTimeEvents.csv,09/01/2021 22:35:06,NYISO has terminated reserve pick-up.
+20210902RealTimeEvents.csv,09/02/2021 00:00:00,Start of day thunderstorm alert state is ACTIVE
+20210902RealTimeEvents.csv,09/02/2021 02:45:00,**System no longer operating in thunderstorm alert.**
+20210902RealTimeEvents.csv,09/02/2021 02:45:00,**System no longer operating in thunderstorm alert.**
+20210902RealTimeEvents.csv,09/02/2021 02:45:00,**System no longer operating in thunderstorm alert.**
+20210903RealTimeEvents.csv,09/03/2021 00:00:00,Start of day system state is NORMAL
+20210904RealTimeEvents.csv,09/04/2021 00:00:00,Start of day system state is NORMAL
+20210905RealTimeEvents.csv,09/05/2021 00:00:00,Start of day system state is NORMAL
+20210906RealTimeEvents.csv,09/06/2021 00:00:00,Start of day system state is NORMAL
+20210907RealTimeEvents.csv,09/07/2021 00:00:00,Start of day system state is NORMAL
+20210908RealTimeEvents.csv,09/08/2021 00:00:00,Start of day system state is NORMAL
+20210908RealTimeEvents.csv,09/08/2021 21:30:00,**System now operating in thunderstorm alert.**
+20210908RealTimeEvents.csv,09/08/2021 21:30:00,**System now operating in thunderstorm alert.**
+20210908RealTimeEvents.csv,09/08/2021 21:30:00,**System now operating in thunderstorm alert.**
+20210908RealTimeEvents.csv,09/08/2021 21:30:00,**System now operating in thunderstorm alert.**
+20210908RealTimeEvents.csv,09/08/2021 22:54:18,NYISO has initiated reserve pick-up.
+20210908RealTimeEvents.csv,09/08/2021 22:54:18,NYISO has initiated reserve pick-up.
+20210908RealTimeEvents.csv,09/08/2021 22:54:18,NYISO has initiated reserve pick-up.
+20210908RealTimeEvents.csv,09/08/2021 22:59:18,NYISO has terminated reserve pick-up.
+20210908RealTimeEvents.csv,09/08/2021 22:59:18,NYISO has terminated reserve pick-up.
+20210908RealTimeEvents.csv,09/08/2021 22:59:18,NYISO has terminated reserve pick-up.
+20210909RealTimeEvents.csv,09/09/2021 00:00:00,Start of day thunderstorm alert state is ACTIVE
+20210909RealTimeEvents.csv,09/09/2021 02:25:00,**System no longer operating in thunderstorm alert.**
+20210909RealTimeEvents.csv,09/09/2021 02:25:00,**System no longer operating in thunderstorm alert.**
+20210909RealTimeEvents.csv,09/09/2021 02:25:00,**System no longer operating in thunderstorm alert.**
+20210909RealTimeEvents.csv,09/09/2021 08:50:00,**System now operating in thunderstorm alert.**
+20210909RealTimeEvents.csv,09/09/2021 08:50:00,**System now operating in thunderstorm alert.**
+20210909RealTimeEvents.csv,09/09/2021 08:50:00,**System now operating in thunderstorm alert.**
+20210909RealTimeEvents.csv,09/09/2021 08:50:00,**System now operating in thunderstorm alert.**
+20210909RealTimeEvents.csv,09/09/2021 08:55:00,**System no longer operating in thunderstorm alert.**
+20210909RealTimeEvents.csv,09/09/2021 08:55:00,**System no longer operating in thunderstorm alert.**
+20210909RealTimeEvents.csv,09/09/2021 08:55:00,**System no longer operating in thunderstorm alert.**
+20210910RealTimeEvents.csv,09/10/2021 00:00:00,Start of day system state is NORMAL
+20210911RealTimeEvents.csv,09/11/2021 00:00:00,Start of day system state is NORMAL
+20210912RealTimeEvents.csv,09/12/2021 00:00:00,Start of day system state is NORMAL
+20210913RealTimeEvents.csv,09/13/2021 00:00:00,Start of day system state is NORMAL
+20210913RealTimeEvents.csv,09/13/2021 15:22:24,NYISO has initiated reserve pick-up.
+20210913RealTimeEvents.csv,09/13/2021 15:22:24,NYISO has initiated reserve pick-up.
+20210913RealTimeEvents.csv,09/13/2021 15:22:24,NYISO has initiated reserve pick-up.
+20210913RealTimeEvents.csv,09/13/2021 15:22:24,NYISO has initiated reserve pick-up.
+20210913RealTimeEvents.csv,09/13/2021 15:27:48,NYISO has terminated reserve pick-up.
+20210913RealTimeEvents.csv,09/13/2021 15:27:48,NYISO has terminated reserve pick-up.
+20210913RealTimeEvents.csv,09/13/2021 15:27:48,NYISO has terminated reserve pick-up.
+20210913RealTimeEvents.csv,09/13/2021 15:27:48,NYISO has terminated reserve pick-up.
+20210914RealTimeEvents.csv,09/14/2021 00:00:00,Start of day system state is NORMAL
+20210915RealTimeEvents.csv,09/15/2021 00:00:00,Start of day system state is NORMAL
+20210915RealTimeEvents.csv,09/15/2021 13:43:30,**State Change. System now operating in alert state.**
+20210915RealTimeEvents.csv,09/15/2021 13:43:30,**State Change. System now operating in alert state.**
+20210915RealTimeEvents.csv,09/15/2021 13:43:30,**State Change. System now operating in alert state.**
+20210915RealTimeEvents.csv,09/15/2021 13:43:30,**State Change. System now operating in alert state.**
+20210915RealTimeEvents.csv,09/15/2021 13:43:30,**State Change. System now operating in alert state.**
+20210915RealTimeEvents.csv,09/15/2021 13:45:10,**State Change. System now operating in normal state.**
+20210915RealTimeEvents.csv,09/15/2021 13:45:10,**State Change. System now operating in normal state.**
+20210915RealTimeEvents.csv,09/15/2021 13:45:10,**State Change. System now operating in normal state.**
+20210915RealTimeEvents.csv,09/15/2021 13:45:10,**State Change. System now operating in normal state.**
+20210915RealTimeEvents.csv,09/15/2021 13:45:10,**State Change. System now operating in normal state.**
+20210915RealTimeEvents.csv,09/15/2021 13:45:10,**State Change. System now operating in normal state.**
+20210915RealTimeEvents.csv,09/15/2021 18:00:00,**System now operating in thunderstorm alert.**
+20210915RealTimeEvents.csv,09/15/2021 18:00:00,**System now operating in thunderstorm alert.**
+20210915RealTimeEvents.csv,09/15/2021 18:00:00,**System now operating in thunderstorm alert.**
+20210915RealTimeEvents.csv,09/15/2021 18:00:00,**System now operating in thunderstorm alert.**
+20210915RealTimeEvents.csv,09/15/2021 21:25:00,**System no longer operating in thunderstorm alert.**
+20210915RealTimeEvents.csv,09/15/2021 21:25:00,**System no longer operating in thunderstorm alert.**
+20210915RealTimeEvents.csv,09/15/2021 21:25:00,**System no longer operating in thunderstorm alert.**
+20210916RealTimeEvents.csv,09/16/2021 00:00:00,Start of day system state is NORMAL
+20210917RealTimeEvents.csv,09/17/2021 00:00:00,Start of day system state is NORMAL
+20210918RealTimeEvents.csv,09/18/2021 00:00:00,Start of day system state is NORMAL
+20210919RealTimeEvents.csv,09/19/2021 00:00:00,Start of day system state is NORMAL
+20210920RealTimeEvents.csv,09/20/2021 00:00:00,Start of day system state is NORMAL
+20210921RealTimeEvents.csv,09/21/2021 00:00:00,Start of day system state is NORMAL
+20210921RealTimeEvents.csv,09/21/2021 14:04:18,NYISO has initiated reserve pick-up.
+20210921RealTimeEvents.csv,09/21/2021 14:04:18,NYISO has initiated reserve pick-up.
+20210921RealTimeEvents.csv,09/21/2021 14:04:18,NYISO has initiated reserve pick-up.
+20210921RealTimeEvents.csv,09/21/2021 14:04:18,NYISO has initiated reserve pick-up.
+20210921RealTimeEvents.csv,09/21/2021 14:08:00,NYISO has terminated reserve pick-up.
+20210921RealTimeEvents.csv,09/21/2021 14:08:00,NYISO has terminated reserve pick-up.
+20210921RealTimeEvents.csv,09/21/2021 14:08:00,NYISO has terminated reserve pick-up.
+20210921RealTimeEvents.csv,09/21/2021 14:08:00,NYISO has terminated reserve pick-up.
+20210922RealTimeEvents.csv,09/22/2021 00:00:00,Start of day system state is NORMAL
+20210923RealTimeEvents.csv,09/23/2021 00:00:00,Start of day system state is NORMAL
+20210923RealTimeEvents.csv,09/23/2021 20:00:00,**System now operating in thunderstorm alert.**
+20210923RealTimeEvents.csv,09/23/2021 20:00:00,**System now operating in thunderstorm alert.**
+20210923RealTimeEvents.csv,09/23/2021 20:00:00,**System now operating in thunderstorm alert.**
+20210924RealTimeEvents.csv,09/24/2021 00:00:00,Start of day system state is NORMAL
+20210924RealTimeEvents.csv,09/24/2021 00:05:00,**System no longer operating in thunderstorm alert.**
+20210924RealTimeEvents.csv,09/24/2021 00:05:00,**System no longer operating in thunderstorm alert.**
+20210924RealTimeEvents.csv,09/24/2021 00:05:00,**System no longer operating in thunderstorm alert.**
+20210924RealTimeEvents.csv,09/24/2021 00:05:00,**System no longer operating in thunderstorm alert.**
+20210925RealTimeEvents.csv,09/25/2021 00:00:00,Start of day system state is NORMAL
+20210926RealTimeEvents.csv,09/26/2021 00:00:00,Start of day system state is NORMAL
+20210927RealTimeEvents.csv,09/27/2021 00:00:00,Start of day system state is NORMAL
+20210927RealTimeEvents.csv,09/27/2021 09:50:16,**State Change. System now operating in alert state.**
+20210927RealTimeEvents.csv,09/27/2021 09:50:16,**State Change. System now operating in alert state.**
+20210927RealTimeEvents.csv,09/27/2021 09:50:16,**State Change. System now operating in alert state.**
+20210927RealTimeEvents.csv,09/27/2021 09:50:16,**State Change. System now operating in alert state.**
+20210927RealTimeEvents.csv,09/27/2021 09:57:12,**State Change. System now operating in normal state.**
+20210927RealTimeEvents.csv,09/27/2021 09:57:12,**State Change. System now operating in normal state.**
+20210927RealTimeEvents.csv,09/27/2021 09:57:12,**State Change. System now operating in normal state.**
+20210927RealTimeEvents.csv,09/27/2021 09:57:12,**State Change. System now operating in normal state.**
+20210928RealTimeEvents.csv,09/28/2021 00:00:00,Start of day system state is NORMAL
+20210928RealTimeEvents.csv,09/28/2021 12:00:00,**System now operating in thunderstorm alert.**
+20210928RealTimeEvents.csv,09/28/2021 12:00:00,**System now operating in thunderstorm alert.**
+20210928RealTimeEvents.csv,09/28/2021 12:00:00,**System now operating in thunderstorm alert.**
+20210928RealTimeEvents.csv,09/28/2021 12:00:00,**System now operating in thunderstorm alert.**
+20210928RealTimeEvents.csv,09/28/2021 14:50:00,**System no longer operating in thunderstorm alert.**
+20210928RealTimeEvents.csv,09/28/2021 14:50:00,**System no longer operating in thunderstorm alert.**
+20210928RealTimeEvents.csv,09/28/2021 14:50:00,**System no longer operating in thunderstorm alert.**
+20210928RealTimeEvents.csv,09/28/2021 14:50:00,**System no longer operating in thunderstorm alert.**
+20210929RealTimeEvents.csv,09/29/2021 00:00:00,Start of day system state is NORMAL
+20210930RealTimeEvents.csv,09/30/2021 00:00:00,Start of day system state is NORMAL
+20211001RealTimeEvents.csv,10/01/2021 00:00:00,Start of day system state is NORMAL
+20211002RealTimeEvents.csv,10/02/2021 00:00:00,Start of day system state is NORMAL
+20211002RealTimeEvents.csv,10/02/2021 23:00:52,**State Change. System now operating in alert state.**
+20211002RealTimeEvents.csv,10/02/2021 23:14:52,**State Change. System now operating in normal state.**
+20211003RealTimeEvents.csv,10/03/2021 00:00:00,Start of day system state is NORMAL
+20211004RealTimeEvents.csv,10/04/2021 00:00:00,Start of day system state is NORMAL
+20211005RealTimeEvents.csv,10/05/2021 00:00:00,Start of day system state is NORMAL
+20211006RealTimeEvents.csv,10/06/2021 00:00:00,Start of day system state is NORMAL
+20211007RealTimeEvents.csv,10/07/2021 00:00:00,Start of day system state is NORMAL
+20211008RealTimeEvents.csv,10/08/2021 00:00:00,Start of day system state is NORMAL
+20211008RealTimeEvents.csv,10/08/2021 07:08:12,**State Change. System now operating in alert state.**
+20211008RealTimeEvents.csv,10/08/2021 07:16:48,**State Change. System now operating in normal state.**
+20211009RealTimeEvents.csv,10/09/2021 00:00:00,Start of day system state is NORMAL
+20211010RealTimeEvents.csv,10/10/2021 00:00:00,Start of day system state is NORMAL
+20211010RealTimeEvents.csv,10/10/2021 02:52:43,NYISO has initiated reserve pick-up.
+20211010RealTimeEvents.csv,10/10/2021 02:57:30,NYISO has terminated reserve pick-up.
+20211011RealTimeEvents.csv,10/11/2021 00:00:00,Start of day system state is NORMAL
+20211012RealTimeEvents.csv,10/12/2021 00:00:00,Start of day system state is NORMAL
+20211013RealTimeEvents.csv,10/13/2021 00:00:00,Start of day system state is NORMAL
+20211013RealTimeEvents.csv,10/13/2021 09:10:59,NYISO has initiated reserve pick-up.
+20211013RealTimeEvents.csv,10/13/2021 09:19:58,NYISO has terminated reserve pick-up.
+20211013RealTimeEvents.csv,10/13/2021 22:03:38,**State Change. System now operating in alert state.**
+20211013RealTimeEvents.csv,10/13/2021 22:11:06,**State Change. System now operating in normal state.**
+20211014RealTimeEvents.csv,10/14/2021 00:00:00,Start of day system state is NORMAL
+20211014RealTimeEvents.csv,10/14/2021 12:32:08,NYISO has initiated reserve pick-up.
+20211014RealTimeEvents.csv,10/14/2021 12:40:39,NYISO has terminated reserve pick-up.
+20211015RealTimeEvents.csv,10/15/2021 00:00:00,Start of day system state is NORMAL
+20211016RealTimeEvents.csv,10/16/2021 00:00:00,Start of day system state is NORMAL
+20211016RealTimeEvents.csv,10/16/2021 15:12:54,**State Change. System now operating in alert state.**
+20211016RealTimeEvents.csv,10/16/2021 15:15:38,NYISO has initiated reserve pick-up.
+20211016RealTimeEvents.csv,10/16/2021 15:20:32,NYISO has terminated reserve pick-up.
+20211016RealTimeEvents.csv,10/16/2021 15:24:14,**State Change. System now operating in normal state.**
+20211016RealTimeEvents.csv,10/16/2021 17:30:00,**System now operating in thunderstorm alert.**
+20211016RealTimeEvents.csv,10/16/2021 18:40:00,**System no longer operating in thunderstorm alert.**
+20211017RealTimeEvents.csv,10/17/2021 00:00:00,Start of day system state is NORMAL
+20211017RealTimeEvents.csv,10/17/2021 23:27:14,NYISO has initiated reserve pick-up.
+20211017RealTimeEvents.csv,10/17/2021 23:33:38,NYISO has terminated reserve pick-up.
+20211018RealTimeEvents.csv,10/18/2021 00:00:00,Start of day system state is NORMAL
+20211018RealTimeEvents.csv,10/18/2021 10:32:50,NYISO has initiated reserve pick-up.
+20211018RealTimeEvents.csv,10/18/2021 10:38:56,NYISO has terminated reserve pick-up.
+20211019RealTimeEvents.csv,10/19/2021 00:00:00,Start of day system state is NORMAL
+20211020RealTimeEvents.csv,10/20/2021 00:00:00,Start of day system state is NORMAL
+20211021RealTimeEvents.csv,10/21/2021 00:00:00,Start of day system state is NORMAL
+20211021RealTimeEvents.csv,10/21/2021 14:59:55,**State Change. System now operating in alert state.**
+20211021RealTimeEvents.csv,10/21/2021 15:17:54,**State Change. System now operating in normal state.**
+20211022RealTimeEvents.csv,10/22/2021 00:00:00,Start of day system state is NORMAL
+20211023RealTimeEvents.csv,10/23/2021 00:00:00,Start of day system state is NORMAL
+20211023RealTimeEvents.csv,10/23/2021 09:56:04,NYISO has initiated reserve pick-up.
+20211023RealTimeEvents.csv,10/23/2021 10:01:10,NYISO has terminated reserve pick-up.
+20211024RealTimeEvents.csv,10/24/2021 00:00:00,Start of day system state is NORMAL
+20211025RealTimeEvents.csv,10/25/2021 00:00:00,Start of day system state is NORMAL
+20211026RealTimeEvents.csv,10/26/2021 00:00:00,Start of day thunderstorm alert state is ACTIVE
+20211026RealTimeEvents.csv,10/26/2021 00:40:00,**System no longer operating in thunderstorm alert.**
+20211026RealTimeEvents.csv,10/26/2021 23:11:47,**State Change. System now operating in alert state.**
+20211026RealTimeEvents.csv,10/26/2021 23:18:47,**State Change. System now operating in normal state.**
+20211027RealTimeEvents.csv,10/27/2021 00:00:00,Start of day system state is NORMAL
+20211028RealTimeEvents.csv,10/28/2021 00:00:00,Start of day system state is NORMAL
+20211028RealTimeEvents.csv,10/28/2021 21:24:39,**State Change. System now operating in alert state.**
+20211028RealTimeEvents.csv,10/28/2021 21:36:39,**State Change. System now operating in normal state.**
+20211029RealTimeEvents.csv,10/29/2021 00:00:00,Start of day system state is NORMAL
+20211030RealTimeEvents.csv,10/30/2021 00:00:00,Start of day system state is NORMAL
+20211031RealTimeEvents.csv,10/31/2021 00:00:00,Start of day system state is NORMAL
+20211101RealTimeEvents.csv,11/01/2021 00:00:00,Start of day system state is NORMAL
+20211102RealTimeEvents.csv,11/02/2021 00:00:00,Start of day system state is NORMAL
+20211102RealTimeEvents.csv,11/02/2021 14:51:26,**State Change. System now operating in alert state.**
+20211102RealTimeEvents.csv,11/02/2021 14:56:18,**State Change. System now operating in normal state.**
+20211103RealTimeEvents.csv,11/03/2021 00:00:00,Start of day system state is NORMAL
+20211104RealTimeEvents.csv,11/04/2021 00:00:00,Start of day system state is NORMAL
+20211105RealTimeEvents.csv,11/05/2021 00:00:00,Start of day system state is NORMAL
+20211105RealTimeEvents.csv,11/05/2021 12:19:46,**State Change. System now operating in alert state.**
+20211105RealTimeEvents.csv,11/05/2021 12:34:46,**State Change. System now operating in normal state.**
+20211106RealTimeEvents.csv,11/06/2021 00:00:00,Start of day system state is NORMAL
+20211106RealTimeEvents.csv,11/06/2021 11:03:18,**State Change. System now operating in alert state.**
+20211106RealTimeEvents.csv,11/06/2021 11:08:22,**State Change. System now operating in normal state.**
+20211107RealTimeEvents.csv,11/07/2021 00:00:00,Start of day system state is NORMAL
+20211108RealTimeEvents.csv,11/08/2021 00:00:00,Start of day system state is NORMAL
+20211108RealTimeEvents.csv,11/08/2021 10:02:06,**State Change. System now operating in alert state.**
+20211108RealTimeEvents.csv,11/08/2021 10:06:42,**State Change. System now operating in normal state.**
+20211109RealTimeEvents.csv,11/09/2021 00:00:00,Start of day system state is NORMAL
+20211109RealTimeEvents.csv,11/09/2021 09:49:54,**State Change. System now operating in alert state.**
+20211109RealTimeEvents.csv,11/09/2021 09:52:34,**State Change. System now operating in normal state.**
+20211110RealTimeEvents.csv,11/10/2021 00:00:00,Start of day system state is NORMAL
+20211111RealTimeEvents.csv,11/11/2021 00:00:00,Start of day system state is NORMAL
+20211112RealTimeEvents.csv,11/12/2021 00:00:00,Start of day system state is NORMAL
+20211113RealTimeEvents.csv,11/13/2021 00:00:00,Start of day system state is NORMAL
+20211113RealTimeEvents.csv,11/13/2021 12:45:00,**System now operating in thunderstorm alert.**
+20211113RealTimeEvents.csv,11/13/2021 16:05:00,**System no longer operating in thunderstorm alert.**
+20211114RealTimeEvents.csv,11/14/2021 00:00:00,Start of day system state is NORMAL
+20211115RealTimeEvents.csv,11/15/2021 00:00:00,Start of day system state is NORMAL
+20211115RealTimeEvents.csv,11/15/2021 11:18:36,**State Change. System now operating in alert state.**
+20211115RealTimeEvents.csv,11/15/2021 11:24:44,**State Change. System now operating in normal state.**
+20211116RealTimeEvents.csv,11/16/2021 00:00:00,Start of day system state is NORMAL
+20211117RealTimeEvents.csv,11/17/2021 00:00:00,Start of day system state is NORMAL
+20211117RealTimeEvents.csv,11/17/2021 14:05:16,**State Change. System now operating in alert state.**
+20211117RealTimeEvents.csv,11/17/2021 14:05:52,NYISO has initiated reserve pick-up.
+20211117RealTimeEvents.csv,11/17/2021 14:10:52,**State Change. System now operating in normal state.**
+20211117RealTimeEvents.csv,11/17/2021 14:11:46,NYISO has terminated reserve pick-up.
+20211118RealTimeEvents.csv,11/18/2021 00:00:00,Start of day system state is NORMAL
+20211118RealTimeEvents.csv,11/18/2021 10:01:28,**State Change. System now operating in alert state.**
+20211118RealTimeEvents.csv,11/18/2021 10:05:16,**State Change. System now operating in normal state.**
+20211118RealTimeEvents.csv,11/18/2021 12:37:08,NYISO has initiated reserve pick-up.
+20211118RealTimeEvents.csv,11/18/2021 12:44:32,NYISO has terminated reserve pick-up.
+20211119RealTimeEvents.csv,11/19/2021 00:00:00,Start of day system state is NORMAL
+20211120RealTimeEvents.csv,11/20/2021 00:00:00,Start of day system state is NORMAL
+20211121RealTimeEvents.csv,11/21/2021 00:00:00,Start of day system state is NORMAL
+20211122RealTimeEvents.csv,11/22/2021 00:00:00,Start of day system state is NORMAL
+20211123RealTimeEvents.csv,11/23/2021 00:00:00,Start of day system state is NORMAL
+20211124RealTimeEvents.csv,11/24/2021 00:00:00,Start of day system state is NORMAL
+20211125RealTimeEvents.csv,11/25/2021 00:00:00,Start of day system state is NORMAL
+20211126RealTimeEvents.csv,11/26/2021 00:00:00,Start of day system state is NORMAL
+20211127RealTimeEvents.csv,11/27/2021 00:00:00,Start of day system state is NORMAL
+20211128RealTimeEvents.csv,11/28/2021 00:00:00,Start of day system state is NORMAL
+20211129RealTimeEvents.csv,11/29/2021 00:00:00,Start of day system state is NORMAL
+20211130RealTimeEvents.csv,11/30/2021 00:00:00,Start of day system state is NORMAL
+20211201RealTimeEvents.csv,12/01/2021 00:00:00,Start of day system state is NORMAL
+20211202RealTimeEvents.csv,12/02/2021 00:00:00,Start of day system state is NORMAL
+20211203RealTimeEvents.csv,12/03/2021 00:00:00,Start of day system state is NORMAL
+20211204RealTimeEvents.csv,12/04/2021 00:00:00,Start of day system state is NORMAL
+20211205RealTimeEvents.csv,12/05/2021 00:00:00,Start of day system state is NORMAL
+20211206RealTimeEvents.csv,12/06/2021 00:00:00,Start of day system state is NORMAL
+20211207RealTimeEvents.csv,12/07/2021 00:00:00,Start of day system state is NORMAL
+20211208RealTimeEvents.csv,12/08/2021 00:00:00,Start of day system state is NORMAL
+20211209RealTimeEvents.csv,12/09/2021 00:00:00,Start of day system state is NORMAL
+20211210RealTimeEvents.csv,12/10/2021 00:00:00,Start of day system state is NORMAL
+20211211RealTimeEvents.csv,12/11/2021 00:00:00,Start of day system state is NORMAL
+20211212RealTimeEvents.csv,12/12/2021 00:00:00,Start of day system state is NORMAL
+20211213RealTimeEvents.csv,12/13/2021 00:00:00,Start of day system state is NORMAL
+20211214RealTimeEvents.csv,12/14/2021 00:00:00,Start of day system state is NORMAL
+20211215RealTimeEvents.csv,12/15/2021 00:00:00,Start of day system state is NORMAL
+20211216RealTimeEvents.csv,12/16/2021 00:00:00,Start of day system state is NORMAL
+20211217RealTimeEvents.csv,12/17/2021 00:00:00,Start of day system state is NORMAL
+20211217RealTimeEvents.csv,12/17/2021 16:33:39,NYISO has initiated reserve pick-up.
+20211217RealTimeEvents.csv,12/17/2021 16:42:45,NYISO has terminated reserve pick-up.
+20211218RealTimeEvents.csv,12/18/2021 00:00:00,Start of day system state is NORMAL
+20211219RealTimeEvents.csv,12/19/2021 00:00:00,Start of day system state is NORMAL
+20211220RealTimeEvents.csv,12/20/2021 00:00:00,Start of day system state is NORMAL
+20211220RealTimeEvents.csv,12/20/2021 00:08:23,**State Change. System now operating in alert state.**
+20211220RealTimeEvents.csv,12/20/2021 00:16:19,**State Change. System now operating in normal state.**
+20211221RealTimeEvents.csv,12/21/2021 00:00:00,Start of day system state is NORMAL
+20211221RealTimeEvents.csv,12/21/2021 23:16:43,NYISO has initiated reserve pick-up.
+20211221RealTimeEvents.csv,12/21/2021 23:19:43,**State Change. System now operating in alert state.**
+20211221RealTimeEvents.csv,12/21/2021 23:24:43,**State Change. System now operating in normal state.**
+20211222RealTimeEvents.csv,12/22/2021 00:00:00,Start of day system state is NORMAL
+20211223RealTimeEvents.csv,12/23/2021 00:00:00,Start of day system state is NORMAL
+20211224RealTimeEvents.csv,12/24/2021 00:00:00,Start of day system state is NORMAL
+20211225RealTimeEvents.csv,12/25/2021 00:00:00,Start of day system state is NORMAL
+20211226RealTimeEvents.csv,12/26/2021 00:00:00,Start of day system state is NORMAL
+20211227RealTimeEvents.csv,12/27/2021 00:00:00,Start of day system state is NORMAL
+20211228RealTimeEvents.csv,12/28/2021 00:00:00,Start of day system state is NORMAL
+20211229RealTimeEvents.csv,12/29/2021 00:00:00,Start of day system state is NORMAL
+20211230RealTimeEvents.csv,12/30/2021 00:00:00,Start of day system state is NORMAL
+20211231RealTimeEvents.csv,12/31/2021 00:00:00,Start of day system state is NORMAL
