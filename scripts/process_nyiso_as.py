@@ -45,16 +45,25 @@ from pathlib import Path
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
-AS_DIR = REPO / "inputs" / "raw-data" / "NYISO-AS"
+AS_DIR = REPO / "data" / "raw" / "NYISO-AS"
 RAW_DIR = AS_DIR / "raw"
-# The committed download is a single zip-of-zips; the monthly rtasp/damasp
-# zips are extracted into RAW_DIR on demand (RAW_DIR is gitignored — the
-# outer zip is the source of truth).
+# RAW_DIR (gitignored) is normally populated directly by
+# scripts/fetch_nyiso_as.py, one monthly rtasp/damasp zip per file — that is
+# the primary, working path. OUTER_ZIP is a legacy fallback for a
+# hand-supplied zip-of-zips bundle (never observed to exist in this repo);
+# kept only so a manually-assembled bundle would still work if one ever
+# shows up.
 OUTER_ZIP = AS_DIR / "NYISO-AS-Data.zip"
 
 
 def _ensure_raw() -> None:
-    """Extract the outer NYISO-AS-Data.zip into RAW_DIR if not already done."""
+    """Populate RAW_DIR from the outer zip, if needed and available.
+
+    No-op when RAW_DIR is already populated (the expected case:
+    ``scripts/fetch_nyiso_as.py`` writes the monthly zips straight there) or
+    when neither RAW_DIR nor OUTER_ZIP has anything to offer (the caller's
+    ``process()`` then reports "no zips" per market/year, same as before).
+    """
     if RAW_DIR.exists() and any(RAW_DIR.glob("*asp_csv*.zip")):
         return
     if not OUTER_ZIP.exists():
@@ -203,7 +212,7 @@ _MODEL_ZONE_REF = {
     "reserve_Long_Island": "LONGIL",
 }
 
-CAL_DIR = REPO / "inputs" / "calibration"
+CAL_DIR = REPO / "data" / "raw" / "_validation-source"
 
 
 def build_reference(years: list[int]) -> Path | None:
