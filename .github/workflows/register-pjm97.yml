@@ -48,13 +48,20 @@ jobs:
       - name: Gate on the definition file (pushed only after local analysis)
         run: test -s .github/patches/pjm97_definition.txt
 
-      - name: Swapfile on /mnt (runners ship an active /swapfile; pjm-78/79 10 GB convention)
+      - name: Free runner disk (hosted toolchains this job never uses; room for the swapfile)
+        run: |
+          df -h /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /usr/local/share/boost /opt/microsoft || true
+          sudo docker image prune --all --force || true
+          df -h /
+
+      - name: Swapfile at /swapfile2 (runners ship an active 3 GB /swapfile; pjm-78/79 10 GB convention)
         run: |
           sudo swapon --show || true
-          sudo fallocate -l 10G /mnt/swapfile || sudo dd if=/dev/zero of=/mnt/swapfile bs=1M count=10240
-          sudo chmod 600 /mnt/swapfile
-          sudo mkswap /mnt/swapfile
-          sudo swapon /mnt/swapfile
+          sudo fallocate -l 10G /swapfile2 || sudo dd if=/dev/zero of=/swapfile2 bs=1M count=10240
+          sudo chmod 600 /swapfile2
+          sudo mkswap /swapfile2
+          sudo swapon /swapfile2
           free -h
 
       - name: Install package
