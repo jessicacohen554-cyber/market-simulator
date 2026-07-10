@@ -8716,3 +8716,79 @@ attestation `attested_by` records the owner approval; keeper-auditor run
 post-attestation (NOT-YET → CALIBRATED-WITH-CAVEATS). Keeper history: ercot46
 stays registered as the prior keeper reference (top-15 retention unchanged —
 ercot53's own registration already pruned ercot45/ercot47).
+
+## 2026-07-10 — ERCOT-54: the 2024 zonal settlement archive was one day late (leap-day placement bug) — archive + v2.4 bench fixed (owner-authorized); corrected-basis re-read shows the model already TIMES the 2024 shoulder scarcity events, so the residual is depth/breadth (the filed offer-formation thread); keeper is ercot53 (promoted upstream mid-session)
+
+**Task.** This session started on the ercot53 handoff (the C3b-2024 = 0.296
+promotion blocker). The parallel ercot53 session landed first (HSL known-bad
+930 fill, C3b-2024 0.296→0.180, CALIBRATED-WITH-CAVEATS) — so per the owner's
+redirect this thread became ercot54: review ercot53, then own what remains.
+
+**Finding 1 (data bug, fixed): `derive_ercot_zonal_lmp.py` placed every 2024
+row +24 h late after Feb 28.** The builder computed hour-of-year as
+`(Delivery Date − Jan 1).days × 24` on the REAL calendar, so in leap-2024 the
+committed `actual_lmp_zonal_ERCOT.parquet` had all its scarcity events
+displaced one day (May 8 → "May 9", Aug 20 → "Aug 21", Apr 28 → "Apr 29",
+Nov 10 → "Nov 11"; Feb 29 masqueraded as Mar 1; real Dec 31 fell off the
+end). Caught by cross-checking the archive against the raw RTMLZHBSPP
+delivery dates and the measured NP6-323 reserves series — the archive showed
+system-wide $1,000–3,000 settlement hours in hours whose measured SCED λ was
+$10–120 with PRC comfortable, an impossible combination that dissolved once
+the day shift was undone (on the true days λ spikes $695–2,979 and PRC dips
+to 4.8–5.9 GW — genuine reserve scarcity). 2023/2025 (non-leap) rows are
+value-identical; the hub-series builder (`derive_actual_lmp.py::_ercot_hubavg`,
+month/day-parsed, Feb 29 dropped) was already correct, so the legacy
+`rt`/`da` fields and the C3c `actual_tail.json` counts were never affected;
+every other ISO's hourly archive goes through the correct `_hour_index`.
+Blast radius = the ERCOT-2024 `rt_lw`/`da_lw` (+ monthly) v2.4 bench fields
+only.
+
+**Fix (rule 23 re-derivation, citing the code bug; bench regen
+owner-authorized this session).** Builder maps month/day through the non-leap
+month starts and drops Feb 29 (same construction as `derive_actual_lmp.py`);
+parquet regenerated (2024 corrected — verified against an independent rebuild
+and the raw event placement; 2023/2025 value-identical to HEAD);
+`actual_lmp.json` + `bench/ERCOT/2024.json.gz` ERCOT-2024 lw fields
+re-derived through the standing pipeline (`--lw-retrofit` +
+`retrofit_lw_price_bench.py`). Corrected-basis re-score (rt_lw 30.71→30.74;
+May 42.72→44.09, Apr 27.96→26.92, Aug 40.67→41.17): ercot53 C3a-2024
+−6.8%→−7.6% (PASS), C3b-2024 0.180→0.186 (PASS), ercot52 C3b-2024
+0.296→0.295; **no criterion status or determination changes anywhere**
+(bundle `metrics.json` files re-scored byte-identical — statuses only).
+
+**Finding 2 (diagnosis, one 2024 throwaway re-solve at the ercot53 config):
+on the corrected calendar the model already reproduces the timing of the
+2024 shoulder scarcity events.** The pre-correction reading ("the model
+misses May 9 / Apr 29 / Nov 18…") was an artifact of scoring against
+day-shifted actuals. Hour-by-hour on the true days, model settled lw price vs
+measured λ: Mar 4 HB18 $472 vs $695; Apr 16 HB19 $1,007 vs $513 (meas peak
+HB18 $1,242); Apr 28 HB19 $1,020 vs $967; May 8 HB18–19 $912/$1,366 vs
+$2,420/$2,368; Aug 20 HB18–19 $5,000/$2,936 vs $2,979/$1,653; Nov 10 HB17–18
+$935/$693 vs $220/$388 (meas peak HB19 $1,337). The energy+reserve co-opt
+forms scarcity in the right hours from the same measured drivers reality had
+(low wind + outage season + evening ramp). What remains of the 2024 monthly
+under (May −35%, Mar −18%, Apr −14%, Nov −18% on the corrected basis) is
+(a) DEPTH/BREADTH of those same events — reality sustains 4–6 deep hours plus
+wide $100–1,200 shoulders per event, the model prices ~2 deep hours and no
+shoulder — and (b) one fully-missed NON-scarce event (Nov 17 midday, meas λ
+$1,232/$1,160 with RTOLCAP 10.6 GW and RTORPA $0 — energy offers at
+non-scarce reserve levels). Both are the already-filed, already-exhausted
+G-22 residual owners (scarcity-anticipating offer formation / DA-boundary
+expectation — `ercot-g22-demand-side-design-2026-07.md` §5; offer surface and
+envelope families tested and rejected at ercot33/37/41/43). No mechanism
+attempted here (rules 1/13: the admissible space is documented empty pending
+an owner-sanctioned offer-formation round); the C3c-2024/2025 ledger entries
+on ercot53 (promoted to ERCOT keeper upstream during this session) already
+carry exactly this attribution.
+
+**Housekeeping.** ercot53's committed `metrics.json` said NOT-YET/UNATTESTED —
+a scoring-order artifact (scored before its attestation was written);
+refreshed at HEAD to CALIBRATED-WITH-CAVEATS (matches its log entry and
+sidecar; separate commit). The ercot54 diag bundle (`ercot54_diag_2024`,
+2024-only, reproduces ercot53's 2024 metrics exactly: identical monthlies,
+24 h tail) is a rule-16 throwaway — never registered.
+
+**Holdouts.** No solve, score, or intake outside 2023–2025 (rule 22); ORDC
+tariff parameters untouched (rule 26); no offer-curve, sigmoid, or tunable
+changed (rules 13/21/23); the bench change is a measured-input placement
+correction through the standing v2.4 pipeline, not a basis redesign.
