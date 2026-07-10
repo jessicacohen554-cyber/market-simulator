@@ -1,0 +1,158 @@
+# One-shot: re-solve pjm-96 (pjm-94 keeper + measured seam ladder) and
+# register it on the calibration dashboard.
+#
+# The session env's push path cannot carry the run payload
+# (frontend/data/backcast/runs/2026-07-10-pjm-96-seam-ladder.js, ~1.5 MB
+# base64-gzip) through push_files: the content has to be reproduced verbatim
+# in a tool call, and the Read tool caps file views at 256 KB / ~25k tokens
+# -- far short of what's needed to relay it faithfully, and high-entropy
+# base64 cannot be safely hand-transcribed across that boundary anyway.
+# Rather than gamble on a manual byte relay, this workflow re-solves the
+# bundle from scratch on the runner (deterministic: same driver script,
+# same committed inputs, same solver -> byte-identical dispatch) and
+# registers it with normal git, which has no such size ceiling.
+#
+# scripts/run_pjm96_seam_ladder.py is already on main (PR #1941): the pjm-94
+# keeper recipe (byte-faithful via replay_keeper.build_kwargs) plus
+# pjm_seam_measured_ladder=True as the sole delta.
+#
+# Finding (already computed locally this session, reproduced here for the
+# record): the seam ladder does NOT relieve the eastern-zone CC/CT
+# under-run it was hypothesized to fix -- Dominion/SWMAAC got WORSE in most
+# year-class cells -- and C3b price-shape regresses from 1-of-3 years FAIL
+# to 3-of-3. NOT a keeper; PJM keeper stays pjm-94. The corrected registry
+# definition (below) records this so the dashboard doesn't ship the
+# pre-solve hypothesis text instead of the actual result.
+#
+# Trigger: push of this file itself (the session env cannot POST workflow
+# dispatches). Branch-scoped. Idempotent: skips the solve if the bundle
+# already exists with metrics.json, skips registration if the sidecar
+# already exists.
+
+name: register-pjm96
+
+on:
+  push:
+    branches:
+      - claude/pjm96-registration
+    paths:
+      - ".github/workflows/register-pjm96.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  solve-and-register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Swapfile (PJM plant-level solves need headroom beyond default runner RAM; pjm-78/79 10 GB convention)
+        run: |
+          sudo fallocate -l 10G /swapfile || sudo dd if=/dev/zero of=/swapfile bs=1M count=10240
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -h
+
+      - name: Install package
+        run: pip install -e .
+
+      - name: Solve pjm-96 (skip if bundle already complete)
+        run: |
+          set -euo pipefail
+          if [ -f results/calibration/pjm96_seam_ladder/system.parquet ] && \
+             [ -f results/calibration/pjm96_seam_ladder/meta.json ]; then
+            echo "bundle already present -- skipping solve"
+          else
+            python scripts/run_pjm96_seam_ladder.py
+          fi
+
+      - name: Register on the dashboard (skip if sidecar already exists)
+        run: |
+          set -euo pipefail
+          if [ -f frontend/data/backcast/registry/2026-07-10-pjm-96-seam-ladder.json ]; then
+            echo "already registered -- skipping"
+          else
+            python scripts/dashboard_add_run.py --label "pjm 96 seam ladder" \
+                --bundle results/calibration/pjm96_seam_ladder
+          fi
+
+      - name: Legitimacy diagnostics
+        run: |
+          python scripts/legitimacy_diagnostics.py \
+              --bundle results/calibration/pjm96_seam_ladder --iso PJM \
+              --json-out results/calibration/pjm96_seam_ladder/legitimacy_diagnostics.json
+
+      - name: Overwrite the sidecar definition with the actual (post-solve) finding
+        run: |
+          cat > /tmp/patch_definition.py <<'PYEOF'
+          import json
+          from pathlib import Path
+
+          DEFINITION = """PJM 96 (PROBE, NOT a keeper candidate): pjm-94 keeper recipe (byte-faithful via replay_keeper.build_kwargs) + pjm_seam_measured_ladder=True. Single-delta A/B vs pjm-94 isolating the measured PJM interface seam pricing (merged 2026-07-10, PJM_SEAM_LADDER_BY_YEAR, interchange_config.PJM_SEAM_TIE) -- tested whether it would fix the C1 CC_REGULAR seam-driven miss (pjm-95 root-cause lead: 46% import-hours modeled vs ~2% measured, 2023) and relieve the eastern-zone CC/CT under-run (Dominion/EMAAC/SWMAAC) by displacing phantom MISO/NYISO imports. Not stacked with the internal transfer-interface-limit overlay (pjm_congestion's existing measured-median internal-TTC caps are in the shared pjm-94 base both runs carry) -- attribution to the seam mechanism alone is clean. RESULT (2026-07-10, hypothesis REFUTED by the zonal decomposition): 2023 CC_REGULAR system-level miss clears (was -12.65 TWh FAIL, now in-band) and several ComEd/ATSI/Central_PA CT_PEAKER cells improve, but the target zones did NOT recover -- Dominion CC/CT and SWMAAC CC/CT got WORSE in most year-class cells (e.g. Dominion CC 2023 -78% -> -81%, SWMAAC CC 2025 -88% -> -92%), while already-over-running ComEd/AEP_Ohio pulled further over (ComEd CC 2023 +4% -> +14%). The measured ladder's own direction-structural finding -- Dominion imports from Carolinas/TVA/LGEE in 77-97% of hours -- evidently right-sizes Dominion's import reliance UPWARD rather than relieving it, so the seam fix does not touch the internal west->east congestion this session hypothesized it would. C3b price-shape REGRESSED materially: pjm-94 failed only 2025 (NRMSE 0.217); pjm-96 fails all three years (0.232/0.216/0.248), with 2025 itself worse. C3a mean LMP also regressed slightly (-14.9% -> -15.5%) and C2 gas volume dropped from a clean PASS to a commercial-band CAVEAT (+3.0%, 2025). C3c scarcity tail is UNCHANGED (2025: model 0h vs 51h actual, same as pjm-94) -- the mechanism this probe was ultimately aimed at did not move at all. C4/C5a/C7/C8 all PASS. Determination: NOT-YET (governance gate UNATTESTED -- no attestation drafted, this is a rejected probe, not a keeper). Disposition: the measured seam ladder is legitimate structure (rule 13, measured-physical, zero fitted parameters) and may still belong in a future recipe for other reasons, but it is NOT sufficient on its own to fix the zonal skew or the C3c tail, and its price-shape regression means it should not be adopted without root-causing why C3b got worse. PJM keeper stays 2026-07-09-pjm-94-stgas-netload; this run is registered per rule 15 (every completed run goes on the dashboard, keeper or rejected probe) and is NOT promoted -- no attestation, no ablation twin drafted."""
+
+          p = Path("frontend/data/backcast/registry/2026-07-10-pjm-96-seam-ladder.json")
+          d = json.loads(p.read_text())
+          d["definition"] = DEFINITION
+          p.write_text(json.dumps(d, indent=2) + "\n")
+          print("sidecar definition overwritten:", len(DEFINITION), "chars")
+          PYEOF
+          sed -i 's/^ \{10\}//' /tmp/patch_definition.py
+          python /tmp/patch_definition.py
+
+      - name: Verify registry/payload parity (CI gate)
+        run: python scripts/check_registry_payload_parity.py
+
+      - name: Local preview rebuild (not committed -- deploy workflow owns manifest.js/benchmark.js)
+        run: python scripts/build_manifest.py
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add \
+            results/calibration/pjm96_seam_ladder/meta.json \
+            results/calibration/pjm96_seam_ladder/run_config.json \
+            results/calibration/pjm96_seam_ladder/metrics.json \
+            results/calibration/pjm96_seam_ladder/legitimacy_diagnostics.json \
+            frontend/data/backcast/registry/2026-07-10-pjm-96-seam-ladder.json \
+            frontend/data/backcast/runs/2026-07-10-pjm-96-seam-ladder.js
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+            exit 0
+          fi
+          cat > /tmp/pjm96_commit_msg.txt <<'MSGEOF'
+          results: register pjm-96 seam-ladder probe -- hypothesis REFUTED, PJM keeper stays pjm-94
+
+          pjm-96 = pjm-94 keeper recipe + pjm_seam_measured_ladder=True (single-delta
+          A/B, rule 19/21). Tested whether the measured PJM interface seam pricing
+          would fix the C1 CC_REGULAR seam-driven miss and relieve the eastern-zone
+          CC/CT under-run (Dominion/EMAAC/SWMAAC). It does not: those zones got
+          WORSE in most year-class cells while already over-running ComEd/AEP_Ohio
+          pulled further over. C3b price-shape regressed from 1-of-3 years FAIL to
+          3-of-3. C3c scarcity tail is unchanged. Full finding in the sidecar
+          definition. Registered per rule 15 (every completed run goes on the
+          dashboard, keeper or rejected probe) -- NOT promoted, no attestation
+          drafted. PJM keeper remains 2026-07-09-pjm-94-stgas-netload.
+
+          Solved + registered server-side (this workflow) -- the 1.5 MB run payload
+          exceeds what push_files/create_or_update_file's content parameter can
+          carry via this session's tool-call path.
+          MSGEOF
+          sed -i 's/^ \{10\}//' /tmp/pjm96_commit_msg.txt
+          git commit -F /tmp/pjm96_commit_msg.txt
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && \
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
