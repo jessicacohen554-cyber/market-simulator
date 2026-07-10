@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-10-nyiso-59-dynamic-rr-ablation",
+  "label": "nyiso 59 dynamic rr (ABLATION TWIN)",
+  "date": "2026-07-10",
+  "shorthand": "nyiso-59-dynamic-rr-ablation",
+  "definition": "(ABLATION TWIN of 2026-07-10-nyiso-59-dynamic-rr) D-3 zero-forcing ablation twin of 2026-07-10-nyiso-59-dynamic-rr (rule 21): the nyiso-59 recipe verbatim (keeper nyiso-56 config + measured hourly reserve requirements, #1344 Ask-B B2+B3) with all merchant floors/bridges zero-forced.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-10-nyiso-59-dynamic-rr-ablation.js",
+  "bundle": "results/calibration/nyiso59_dynamic_rr-ablation"
+}

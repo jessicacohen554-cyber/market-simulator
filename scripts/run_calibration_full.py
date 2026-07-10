@@ -1831,6 +1831,7 @@ def write_run_config(
                 "ercot_dam_as_overlay_from_year",
                 "ercot_dam_as_scarcity_threshold",
                 "temp_dependent_derate",
+                "nyiso_dynamic_reserve_requirements",
                 "git_sha",
             )
         },
