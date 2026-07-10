@@ -16,6 +16,12 @@
 # attestation). Trigger: push of this file or the definition/callog patch
 # files. Idempotent throughout. Delete this workflow + the patches payload
 # from main after the PR merges (one-shot convention).
+#
+# Re-fired 2026-07-10 (verify session): scripts/run_pjm97_measured_interfaces.py
+# --ablation fix — the twin now lands in <bundle>-ablation with ablation_of
+# recorded (the "-ablation" run_dir derivation lived only in
+# run_calibration_full's CLI path, which the driver bypasses), instead of
+# clobbering the keeper bundle and failing twin registration (run 29104320238).
 
 name: register-pjm97
 
