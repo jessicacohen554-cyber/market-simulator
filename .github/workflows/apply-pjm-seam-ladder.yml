@@ -5,15 +5,21 @@ name: apply-pjm-seam-ladder
 # env cannot push large packs (git push 413s) or raw Data-API blobs (403), so
 # the work travels as (a) a plain-text unified diff of every normal-width file
 # (.github/patches/2026_07_10_pjm96_code.patch: the measured PJM seam ladder +
-# the temp-derate validation probe + calibration-log) and (b) an anchored
-# splice script for the multi-kilobyte single-line JSON files
+# the temp-derate validation probe) and (b) an anchored splice script for the
+# multi-kilobyte single-line JSON files
 # (.github/patches/2026_07_10_pjm96_registry_edits.py: keeper demotion
 # pjm-95 -> pjm-94). status.js is DERIVED and rebuilt here (build_status.py)
-# rather than transcribed. The patch applies with --ignore-whitespace (the
-# transport can blur blank-vs-space context lines; content chars are exact and
-# the post-apply pytest gate catches anything worse). Commit messages ride as
-# files (git commit -F) — inline heredocs at column 0 break the YAML block
-# scalar. Idempotent: the patch no-ops when already applied (reverse-check),
+# rather than transcribed. Two patch sections are FILTERED OUT before apply:
+# the fetch-pjm-interchange.yml new-file section (the Actions GITHUB_TOKEN can
+# never carry the `workflows` scope — that file landed via the session's
+# direct App-auth push) and the docs/calibration-log.md section (upstream
+# sessions append to the log continuously, so the fixed-position hunk goes
+# stale; the entry is appended position-independently from
+# .github/patches/pjm96_callog_entry.md instead, gated on its heading). The
+# patch applies with --ignore-whitespace; the post-apply pytest gate catches
+# anything worse. Commit messages ride as files (git commit -F) — inline
+# heredocs at column 0 break the YAML block scalar. Idempotent: the patch
+# no-ops when already applied (reverse-check), the append is heading-gated,
 # the splice script checks its own markers.
 on:
   push:
@@ -44,10 +50,24 @@ jobs:
           set -euo pipefail
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
-          if git apply --check --reverse --ignore-whitespace .github/patches/2026_07_10_pjm96_code.patch 2>/dev/null; then
+          # Filter: drop the workflow-file section (runner token lacks the
+          # `workflows` scope) and the calibration-log section (appended
+          # position-independently below instead).
+          awk '/^diff --git /{skip = ($0 ~ /fetch-pjm-interchange\.yml|docs\/calibration-log\.md/)} !skip' \
+            .github/patches/2026_07_10_pjm96_code.patch > /tmp/pjm96_filtered.patch
+          test -s /tmp/pjm96_filtered.patch
+          applied=0
+          if git apply --check --reverse --ignore-whitespace /tmp/pjm96_filtered.patch 2>/dev/null; then
             echo "code patch already applied — skipping"
           else
-            git apply --ignore-whitespace --whitespace=nowarn .github/patches/2026_07_10_pjm96_code.patch
+            git apply --ignore-whitespace --whitespace=nowarn /tmp/pjm96_filtered.patch
+            applied=1
+          fi
+          if ! grep -q "PJM keeper DEMOTED: pjm-95" docs/calibration-log.md; then
+            cat .github/patches/pjm96_callog_entry.md >> docs/calibration-log.md
+            applied=1
+          fi
+          if [ "$applied" = "1" ]; then
             git add -A
             git commit -F .github/patches/pjm96_commit1_msg.txt
           fi
