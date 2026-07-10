@@ -1,0 +1,35 @@
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Rebuilt binned fleet cache for CAISO — 782 plants → caiso_fleet_binned.parquet
+WARNING: CAISO TAC-area load for 2024 covers 8758/8760 hours; uncovered hours use the sample-average zone shares
+INFO: solving CAISO 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+INFO: CAISO 2024: capacity_deliverability_limits — seam import cap set to 16452 MW (summed per-area import_limit, delivery year 2024)
+WARNING: CAISO TAC-area load for 2024 covers 8758/8760 hours; uncovered hours use the sample-average zone shares
+INFO: CAISO 2024: endogenous solar spill — full solar potential passed to LP (no pre-LP CF derate); solar sets the midday dual when curtailed
+INFO: CAISO 2024: WECC corridor deliverability cap on 2 link(s) — measured p95 ATC proxy; median import DSW 5.0 GW / PNW 1.7 GW; midday tighter; export-direction cap on (evening net-export ~0 → no wheel-out): median export DSW 0.0 GW / PNW 1.0 GW
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: loaded 26 within-window retiree units for CAISO (1066 MW, plants [356, 7232, 10446, 50388, 50632, 50837, 54626, 57544, 57714, 58296, 58298, 58300, 58301, 59456, 59800, 59804, 59805, 60100, 63604, 63607])
+INFO: unit-outage derate (CAISO 2024): 219 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2024): 326 unit-months masked offline (mid-year COD / retirement), 11 unit(s) fully not-yet-built/retired
+INFO: Loaded CAISO fleet from EIA-860 parquet (782 generators)
+INFO: Binned fleet cache for CAISO is up to date — loaded from caiso_fleet_binned.parquet
+INFO: Loaded CAISO 2024 hydro budget: 160 plants, 21484.8 GWh annual, 6568 MW nameplate
+INFO: CAISO 2024: 160 hydro plants in LP (6568 MW, 21.48 TWh monthly budget)
+INFO: CAISO 2024: priced import/export node — 6 import tranches (12171 MW), 2 export sinks (15423 MW)
+INFO: unit-outage derate (CAISO 2024): 219 plant-tranches derated
+INFO: CC_REGULAR outage derate reallocated top-of-stack for 28 plant(s)
+INFO: COD ramp (CAISO 2024): 340 unit-months masked offline (mid-year COD / retirement), 12 unit(s) fully not-yet-built/retired
+INFO: F923 fuel costs for 2024: 61 generators priced from their own plant, 863 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (CAISO 2024, monthly): 1052 gas generators repriced at the measured hub spot in 12/12 months (winter max 5.86 $/MMBtu)
+INFO: CAISO 2024: per-hub WECC intertie — two signed corridors (Malin/COI → NP15, Palo Verde/Path-46 → SP15), each priced at its OWN measured hub (per-hub basis + per-hub netting, arbitrage-free, one direction per hour per corridor) — firm/contracted tranches held at contract cost (caiso_perhub_firm_base)
+INFO: CAISO 2024: hydro deliverability envelope on 160 units (evening p95 5225 MW)
+INFO: Matrix build: 10.118s, Solve: 195.487s (cold)
+INFO: Matrix build: 1.951s, Solve: 208.744s (cold)
+INFO: EIA-923 2024: CAMPD-backfilled 1 under-reported plants (1 replaced, 0 added)
+INFO: EIA-923 2024 wind 15.42 TWh under-counts EIA-930 20.06 TWh; using EIA-930 grid total
+INFO: wrote calibration bundle to /home/user/market-simulator/results/calibration/caiso73_step0_diag2024
+DONE -> /home/user/market-simulator/results/calibration/caiso73_step0_diag2024
