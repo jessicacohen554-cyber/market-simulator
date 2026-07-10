@@ -1,0 +1,139 @@
+# NYISO ancillary-services (AS) clearing-price holdout intake (2026-07-10
+# session): extend data/raw/NYISO-AS/NYISO_as_{rt,da}_<year>.csv from
+# 2023-2025-only to 2018-2022 + H1-2026.
+#
+# Rule 22 (CLAUDE.md) splits DATA INTAKE (fetching more raw years, allowed at
+# any time under session-logged owner authorization) from SOLVE/SCORE (which
+# stays quarantined until an ISO gets a calibration-complete marker). This
+# workflow is DATA INTAKE ONLY: it downloads NYISO MIS public postings and
+# folds them into per-year CSVs via a no-LP loader path — no dispatch solve,
+# no scoring, nothing touches frontend/data/backcast/calibration-complete.json.
+#
+# Why a workflow and not a direct commit from the intake session: from the
+# Claude remote sandbox, plain `git push` 413s on anything but a tiny text
+# payload, and the GitHub MCP file-commit tool cannot reliably carry this
+# volume of CSV content in one call. Pushing an edit to THIS file is therefore
+# the trigger (workflow_dispatch POSTs 403 from that sandbox) — the same
+# pattern as fetch-nyiso-reserve-interface-intake.yml and
+# holdout-intake-neiso-2022.yml. The runner does the real fetch + fold +
+# commit + push.
+name: holdout-intake-nyiso-as
+
+on:
+  push:
+    paths:
+      - ".github/workflows/holdout-intake-nyiso-as.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: holdout-intake-nyiso-as
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the package
+        run: pip install -e .
+
+      - name: Fetch AS clearing-price monthly zips (rt+da, 2018-01..2026-06)
+        run: |
+          python scripts/fetch_nyiso_as.py \
+            --market rt da --start-month 2018-01 --end-month 2026-06
+
+      - name: Fold monthly zips into per-year CSVs (2018-2022 + 2026)
+        run: |
+          python scripts/process_nyiso_as.py \
+            --years 2018 2019 2020 2021 2022 2026 --market rt da
+
+      - name: No-LP verification — schema/column match against 2023-2025
+        # Loader-level check only (rule 22 quarantine clause): confirms the
+        # new years share the exact column set and dtypes of the already-
+        # committed 2023-2025 CSVs. No dispatch solve, no LP construction.
+        run: |
+          python - <<'EOF'
+          import sys
+          from pathlib import Path
+
+          import pandas as pd
+
+          AS_DIR = Path("data/raw/NYISO-AS")
+          REFERENCE_YEAR = 2023  # already-committed, known-good year
+          NEW_YEARS = [2018, 2019, 2020, 2021, 2022, 2026]
+          EXPECTED_ZONES = 11  # WEST, GENESE, CENTRL, NORTH, MHK VL, CAPITL,
+          # HUD VL, MILLWD, DUNWOD, N.Y.C., LONGIL (NYISO_ZONES in process_nyiso_as.py)
+
+          ok = True
+          for market in ("rt", "da"):
+              ref = pd.read_csv(AS_DIR / f"NYISO_as_{market}_{REFERENCE_YEAR}.csv")
+              for year in NEW_YEARS:
+                  path = AS_DIR / f"NYISO_as_{market}_{year}.csv"
+                  if not path.exists():
+                      print(f"MISSING: {path}")
+                      ok = False
+                      continue
+                  df = pd.read_csv(path)
+                  if list(df.columns) != list(ref.columns):
+                      print(f"COLUMN MISMATCH {path}: {list(df.columns)} != {list(ref.columns)}")
+                      ok = False
+                      continue
+                  n_zones = df["Name"].nunique()
+                  if n_zones != EXPECTED_ZONES:
+                      print(f"ZONE COUNT MISMATCH {path}: {n_zones} != {EXPECTED_ZONES}")
+                      ok = False
+                  print(f"OK {path}: {len(df):,} rows, {n_zones} zones, columns match {REFERENCE_YEAR}")
+
+          if not ok:
+              sys.exit("no-LP verification failed — see mismatches above")
+          EOF
+
+      - name: Integrity report (sha256 + row counts of every landed CSV)
+        run: |
+          for year in 2018 2019 2020 2021 2022 2026; do
+            for market in rt da; do
+              f="data/raw/NYISO-AS/NYISO_as_${market}_${year}.csv"
+              if [ -f "$f" ]; then
+                sha256sum "$f"
+                echo "  rows: $(wc -l < "$f")"
+              fi
+            done
+          done
+
+      - name: Commit and push the raw intake
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/raw/NYISO-AS/NYISO_as_rt_*.csv \
+                  data/raw/NYISO-AS/NYISO_as_da_*.csv
+          if git diff --cached --quiet; then
+            echo "no AS-intake changes to commit"
+            exit 0
+          fi
+          git commit -m "data(nyiso): AS clearing-price holdout intake 2018-2022 + H1-2026 (workflow run ${{ github.run_id }})
+
+          Extends data/raw/NYISO-AS/NYISO_as_{rt,da}_<year>.csv from
+          2023-2025-only to 2018-2022 + H1-2026, using the fixed
+          scripts/process_nyiso_as.py (stale AS_DIR/CAL_DIR path bug from the
+          W1 data-root relocation, now data/raw/NYISO-AS +
+          data/raw/_validation-source) fed by the new
+          scripts/fetch_nyiso_as.py fetcher. Out-of-training years intaken
+          under the 2026-07-10 session-logged owner authorization
+          (CLAUDE.md rule 22; docs/out-of-sample-results-2026-07.md). Data
+          intake only — no LP solve, no scoring, no calibration-complete
+          marker touched."
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && \
+            git push origin "HEAD:${{ github.ref_name }}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
