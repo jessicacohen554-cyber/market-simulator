@@ -22,7 +22,15 @@ import glob
 import zipfile
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
+
+# Cumulative hours before the first of each 1-based month on the model's
+# fixed non-leap 8760-hour clock (same construction as derive_actual_lmp.py).
+_DAYS_IN_MONTH = (31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31)
+_MONTH_START_HOUR = np.asarray(
+    [int(sum(_DAYS_IN_MONTH[:m]) * 24) for m in range(12)], dtype=np.int64
+)
 
 KEEP = {
     "HB_NORTH",
@@ -65,12 +73,22 @@ def _parse(pattern: str, market: str) -> pd.DataFrame:
             hour1 = df["Hour Ending"].astype(str).str.split(":").str[0].astype(int)
         df = df.assign(_h1=hour1)
         df = df[df[spcol].isin(KEEP)].copy()
+        # Fixed non-leap 8760-hour clock: map month/day through the non-leap
+        # month starts and drop Feb 29 outright. The previous ordinal-day
+        # construction ((date - Jan 1).days * 24) counted the real calendar,
+        # so in a leap year every row after Feb 28 landed +24 h late (the
+        # 2024 series had all its scarcity events displaced one day; real
+        # Dec 31 fell off the end) — found 2026-07-10 against the raw
+        # RTMLZHBSPP delivery dates (Aug 20 / May 8 2024 event placement).
+        dt = pd.to_datetime(df["Delivery Date"])
+        mo = dt.dt.month.to_numpy()
+        dy = dt.dt.day.to_numpy()
+        keep = ~((mo == 2) & (dy == 29))
+        df = df[keep]
         df["hoy"] = (
-            (pd.to_datetime(df["Delivery Date"]) - pd.Timestamp(f"{yr}-01-01")).dt.days
-            * 24
-            + df["_h1"]
-            - 1
+            _MONTH_START_HOUR[mo[keep] - 1] + (dy[keep] - 1) * 24 + df["_h1"] - 1
         )
+        df = df[(df["hoy"] >= 0) & (df["hoy"] < 8760)]
         g = df.groupby([spcol, "hoy"])["Settlement Point Price"].mean().reset_index()
         g.columns = ["settlement_point", "hour", market]
         g["year"] = yr
