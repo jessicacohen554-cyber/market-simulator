@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-10-pjm-96-seam-ladder",
+  "label": "pjm 96 seam ladder",
+  "date": "2026-07-10",
+  "shorthand": "pjm-96-seam-ladder",
+  "definition": "PJM 96 (PROBE, NOT a keeper candidate): pjm-94 keeper recipe (byte-faithful via replay_keeper.build_kwargs) + pjm_seam_measured_ladder=True. Single-delta A/B vs pjm-94 isolating the measured PJM interface seam pricing (merged 2026-07-10, PJM_SEAM_LADDER_BY_YEAR, interchange_config.PJM_SEAM_TIE) -- tested whether it would fix the C1 CC_REGULAR seam-driven miss (pjm-95 root-cause lead: 46% import-hours modeled vs ~2% measured, 2023) and relieve the eastern-zone CC/CT under-run (Dominion/EMAAC/SWMAAC) by displacing phantom MISO/NYISO imports. Not stacked with the internal transfer-interface-limit overlay (pjm_congestion's existing measured-median internal-TTC caps are in the shared pjm-94 base both runs carry) -- attribution to the seam mechanism alone is clean. RESULT (2026-07-10, hypothesis REFUTED by the zonal decomposition): 2023 CC_REGULAR system-level miss clears (was -12.65 TWh FAIL, now in-band) and several ComEd/ATSI/Central_PA CT_PEAKER cells improve, but the target zones did NOT recover -- Dominion CC/CT and SWMAAC CC/CT got WORSE in most year-class cells (e.g. Dominion CC 2023 -78% -> -81%, SWMAAC CC 2025 -88% -> -92%), while already-over-running ComEd/AEP_Ohio pulled further over (ComEd CC 2023 +4% -> +14%). The measured ladder's own direction-structural finding -- Dominion imports from Carolinas/TVA/LGEE in 77-97% of hours -- evidently right-sizes Dominion's import reliance UPWARD rather than relieving it, so the seam fix does not touch the internal west->east congestion this session hypothesized it would. C3b price-shape REGRESSED materially: pjm-94 failed only 2025 (NRMSE 0.217); pjm-96 fails all three years (0.232/0.216/0.248), with 2025 itself worse. C3a mean LMP also regressed slightly (-14.9% -> -15.5%) and C2 gas volume dropped from a clean PASS to a commercial-band CAVEAT (+3.0%, 2025). C3c scarcity tail is UNCHANGED (2025: model 0h vs 51h actual, same as pjm-94) -- the mechanism this probe was ultimately aimed at did not move at all. C4/C5a/C7/C8 all PASS. Determination: NOT-YET (governance gate UNATTESTED -- no attestation drafted, this is a rejected probe, not a keeper). Disposition: the measured seam ladder is legitimate structure (rule 13, measured-physical, zero fitted parameters) and may still belong in a future recipe for other reasons, but it is NOT sufficient on its own to fix the zonal skew or the C3c tail, and its price-shape regression means it should not be adopted without root-causing why C3b got worse. PJM keeper stays 2026-07-09-pjm-94-stgas-netload; this run is registered per rule 15 (every completed run goes on the dashboard, keeper or rejected probe) and is NOT promoted -- no attestation, no ablation twin drafted.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-10-pjm-96-seam-ladder.js",
+  "bundle": "results/calibration/pjm96_seam_ladder"
+}
