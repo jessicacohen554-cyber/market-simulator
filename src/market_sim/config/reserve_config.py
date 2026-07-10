@@ -2022,8 +2022,50 @@ def _neiso_design(
     zone_names: list[str],
     n_ramp: int = 8,
 ) -> ReserveDesign:
-    """NEISO system-wide energy+reserve co-optimization (3-level RCPF nesting)."""
+    """NEISO system-wide energy+reserve co-optimization (3-level RCPF nesting).
+
+    Requirement basis: each family's requirement is the static published MW
+    (``NEISO_RCPF_PRODUCTS``) unless
+    ``config.neiso_dynamic_reserve_requirements`` is on, in which case any
+    family with a measured as-enforced hourly series
+    (``data.neiso_reserve_requirements``, the ISO Express Hourly Reserve
+    Requirements intake — the NEISO analogue of the NYISO issue-#1344 Ask-B
+    channel) takes that series instead — the condition-varying requirement
+    that can bind in the hours the static one provably never does (reserve
+    dual $0.00 in all 26,280 train hours at the static values, neiso-56).
+    The ORDC shortfall steps keep the published static (requirement,
+    critical, penalty) SHAPE and translate with the hourly requirement (the
+    published RCPF is itself a stepped curve; translating preserves its
+    penalties and widths).
+
+    Rule-19 reconciliation: the post-solve RCPF overlay (``results.rcpf``,
+    ``config.neiso_rcpf_enabled``) prices the same phenomenon these in-LP
+    families do. Enabling both is a hard error — the overlay is the
+    post-solve comparator for co-opt-off runs only, never a stack on the
+    co-opt duals (CLAUDE.md rule 19: one mechanism per phenomenon).
+    """
     from market_sim.results.scarcity import nyiso_rcpf_product_shortfall_steps
+
+    if bool(getattr(config, "neiso_rcpf_enabled", False)):
+        raise ValueError(
+            "neiso_rcpf_enabled=True with energy_reserve_coopt: the post-solve "
+            "RCPF overlay (results.rcpf) and the in-LP RCPF reserve families "
+            "price the same phenomenon (reserve-shortage rent in the LMP). "
+            "One mechanism per phenomenon (CLAUDE.md rule 19) — keep the "
+            "overlay as the co-opt-off comparator, or disable the co-opt."
+        )
+
+    dynamic_req: dict[str, np.ndarray] = {}
+    if bool(getattr(config, "neiso_dynamic_reserve_requirements", False)):
+        from market_sim.data.neiso_reserve_requirements import (
+            load_neiso_reserve_requirements,
+        )
+
+        # weather_year is the backcast fleet-clock year (the calibration
+        # harness constructs one config per solve year, weather_year=year).
+        dynamic_req = load_neiso_reserve_requirements(
+            int(config.weather_year), int(hours)
+        )
 
     T = int(hours)
     n_zones = len(zone_names)
@@ -2037,7 +2079,14 @@ def _neiso_design(
         zmask = np.zeros(n_zones, dtype=bool)
         zmask[list(all_zones)] = True
         rclass = 1 if "10min" in str(name) or "spin" in str(name) else 0
-        requirement_arr = np.full(T, float(req), dtype=float)
+        if str(name) in dynamic_req:
+            # Measured as-enforced hourly requirement (Limb A): the
+            # condition-varying series replaces the static published MW for
+            # this family; the ORDC steps below stay anchored to the static
+            # published shape and translate with the requirement.
+            requirement_arr = dynamic_req[str(name)]
+        else:
+            requirement_arr = np.full(T, float(req), dtype=float)
         p, w = nyiso_rcpf_product_shortfall_steps(
             float(req), float(crit), float(pen), n_ramp=n_ramp
         )
