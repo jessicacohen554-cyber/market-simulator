@@ -1,0 +1,16 @@
+{
+  "id": "2026-07-10-caiso-70-g61b-decrowd",
+  "label": "caiso 70 g61b decrowd",
+  "date": "2026-07-10",
+  "shorthand": "caiso-70-g61b-decrowd",
+  "definition": "(PROBE — pre-registered A/B, negative result) G-61b de-crowding main -- caiso-69 recipe (SP15-split topology, ct_netload_drag=False per-run override) + caiso_ra_bridge_startup_aware=True single delta, 2023-2025. HYPOTHESIS (from caiso-69's corrected redirect): the RA must-offer bridge's forced CC min-gen crowds CT_PEAKER out of the pockets — releasing the phantom-micro-run share should let pocket CTs clear on merit. RESULT: the release ENGAGED exactly as caiso-63/66 measured (D-2 bridge forced CC 3.62/3.46 -> 2.26/2.02/1.56 TWh, -37/-42/-45%) and CT_PEAKER DID NOT MOVE (0.90/0.92/0.82 vs caiso-69's 0.89/0.91/0.79; actual 4.56/5.24/3.09; ablation ceiling 2.02/1.41/1.01). Pocket LMPs and the tail are also unchanged (LA_BASIN 70.05/47.65/51.45 vs caiso-69 70.18/47.82/51.26; hrs>200 540/0/0 vs 530/0/0). The de-crowding hypothesis is REFUTED: bridge headroom is not what keeps peakers out. ATTRIBUTION of the ablation's CT lift (the signal that motivated this probe): hod deltas show the ablation's extra CT clears in the EVENING RAMP h18-21 (+0.3-0.4 GW) paired with an import pull-back (-1.0 to -1.4 GW same hours), CC also up ~+0.3 GW across the day — whole-bridge removal changes the P0 run pattern/P1 startup amortization and the seam substitution, i.e. a commitment-posture/seam effect, NOT midday pocket headroom. Redirect (handoff probe #2): the CT gap is an AS/reserve-dispatch channel (RTPD/RUC-like awards -> energy, driven by measured CAISO AS procurement) and/or the evening commitment posture (belly-probe: evening CC deficit +1.9/+1.2/+0.3 GW) — the split topology plus bridge-side releases cannot form it. C7 CT shape still FAILs (profile_r 0.76/0.76/0.68 — the retired drag was carrying CT's diurnal shape). C8 PASS (bridge remnant 3.7/3.1/2.4% of CC). FIRST CAISO RUN WITH C6 GOVERNANCE PASS: bundle carries the rubric governance attestation + the caiso-65 DOF ledger (drag entry marked INERT; startup-aware adds zero free parameters). Scored under rubric v2.4 (caiso-69 scored under v2.2 — C5a CO2 is FAIL here where v2.2 gave commercial-band CAVEAT; cross-version comparisons should re-score, not read stored statuses). Not promotable (8 fails).",
+  "ablation_twin": "2026-07-10-caiso-70-g61b-ablation",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-10-caiso-70-g61b-decrowd.js",
+  "bundle": "results/calibration/caiso70_g61b_decrowd"
+}
