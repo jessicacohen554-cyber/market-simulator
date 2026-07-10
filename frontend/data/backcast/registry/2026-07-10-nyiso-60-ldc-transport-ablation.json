@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-10-nyiso-60-ldc-transport-ablation",
+  "label": "nyiso 60 ldc transport ablation",
+  "date": "2026-07-10",
+  "shorthand": "nyiso-60-ldc-transport-ablation",
+  "definition": "(ABLATION TWIN of nyiso60 ldc-transport) zero-forcing ablation of the G-13 fold-in: same recipe, every merchant floor/bridge OFF (rule 20 / D-3).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-10-nyiso-60-ldc-transport-ablation.js",
+  "bundle": "results/calibration/nyiso60_ldc_transport-ablation"
+}
