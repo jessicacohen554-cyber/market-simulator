@@ -213,6 +213,35 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # exists so rubric-v2.2 over-budget escalation scores it on evidence
     # rather than failing it for a missing declaration (rule 12).
     (MECH_ST_NETLOAD_DRAG, None): (0, 24),
+    # reliability_floor × ST_GAS: the driver-justified window is ALL 24 hours.
+    # Live blast radius is NYISO-only: the NYC/LI persistent-24h base limbs
+    # (reliability_floor_coeffs_NYISO.csv, threshold −50 °C ⇒ always flagged,
+    # no sub-daily window) are the only ENABLED ST_GAS limbs a keeper's floor
+    # still owns — PJM's enabled ST_GAS limbs are drag-owned in its keeper
+    # (gas_st_netload_drag drops them via iso_configs.
+    # drop_drag_owned_reliability_specs) and every other ISO's are disabled.
+    # Evidence base (G-05 adjudication, docs/handoffs/g05-forced-energy-caiso-
+    # ct-nyiso-stgas-2026-07.md): measured CAMPD 2023-25 downstate steam is
+    # online 100 % of the year with overnight CF 0.11-0.20 — there is NO hour
+    # the class's own driver evidence says it is offline (the opposite of the
+    # CT overnight-offline signature), so the persistent base binds nowhere
+    # off-window by measurement; D-1 diurnal shape passes every year (profile
+    # r 0.95-0.96, cv_ratio 0.69-0.90). The all-hours gas_st_netload_drag
+    # alternative (the ERCOT-46/PJM-94 keeper mechanism, which post-dates
+    # G-05's windowed-[15,22) rejection premise) was re-evaluated 2026-07-09
+    # and REJECTED on its own honesty gates
+    # (scripts/derive_nyiso_st_gas_netload_drag.py): the downstate base is
+    # flat vs net-load below ~15 GW and its level drifts across years at
+    # equal net-load (overnight Spearman rho 0.32/0.39/0.72 class-wide,
+    # 0.30/0.28/0.57 NYC+LI-only — not year-stable), and the pooled hinge
+    # overshoots the 2023 measured class energy (142 %). The commitment is an
+    # UNCONDITIONAL local-reliability base (downstate DARU/SRE commitments +
+    # steam-boiler min-run blocks), not a net-load-hinged one, so the
+    # persistent reliability_floor remains the class's single grounded
+    # mechanism (rule 19) and this row exists so rubric-v2.2 over-budget
+    # escalation scores it on evidence rather than failing it for a missing
+    # declaration (rule 12).
+    (MECH_RELIABILITY_FLOOR, "ST_GAS"): (0, 24),
     # Midday NG:NG slab window (h9-16) — the probe's own gate
     # (transmission.inject_caiso_gas_commitment_floor).
     (MECH_CAISO_GAS_COMMITMENT_FLOOR, None): (9, 17),
