@@ -3210,6 +3210,39 @@ class ScenarioConfig:
     # p90 wall (~$2,700) and below VOLL.
     ercot_offer_surface_price_cap_frac: float = 0.95
 
+    # NEISO condition-responsive fast-start offer surface — the ISO-NE analogue
+    # of ercot_offer_surface_conditional above (winter scarcity charter Limb B;
+    # the G-22 §8 heterogeneity-preserving design, default off, NEISO-gated).
+    # Posts the MEASURED fast-start offer DISTRIBUTION from ISO-NE's public DA
+    # Energy Market historical offer data (masked assets; the fast-start
+    # population selected by physics, Claim30 >= 0.9 x EcoMax), condition-binned
+    # by within-year net-load percentile, onto the CT_PEAKER peak-band rungs in
+    # the P1 clearing solve ONLY and ONLY in anticipated-tight hours — P0 run
+    # lengths and loose hours stay byte-identical (the ladder is clamped never
+    # to lower an offer below the resolved peak height); within a tight hour
+    # the lower rungs stay competitive while the upper rungs reach the measured
+    # wall. Trigger (net-load percentile, forward-native) and level (measured
+    # offer quantiles over the model's own Algonquin daily gas series) are
+    # rule-13 admissible; parameters are derived from source data only
+    # (scripts/derive_neiso_offer_surface.py, rule 21) and frozen against
+    # residuals (rule 20). NEISO-only (rule 25: the surface carries no generic
+    # fallback and never crosses ISO boundaries).
+    neiso_offer_surface_conditional: bool = False
+    # Path to the measured NEISO condition-binned ladder JSON (default: the
+    # frozen data/raw/_validation-source/neiso_offer_surface_condbinned.json).
+    # None → the mechanism is a no-op even when the flag is on.
+    neiso_offer_surface_binned_path: str | None = None
+    # Net-load percentile bin EDGES (same contract as the ERCOT field above;
+    # the JSON records its edges and the mechanism asserts agreement).
+    neiso_offer_surface_netload_pcts: tuple[float, ...] = (0.80, 0.90, 0.97)
+    # Minimum net-load bin index at which the wall engages (0 = every bin; the
+    # merit order still self-gates in mild hours).
+    neiso_offer_surface_min_bin: int = 0
+    # Safety cap on the repriced offer as a fraction of VOLL (the measured
+    # offers already carry ISO-NE's $1,000/MWh energy offer cap; this guard
+    # only keeps a repriced rung strictly below the load-shed slack).
+    neiso_offer_surface_price_cap_frac: float = 0.95
+
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
     # rate is base_HR x {cc_committed_hr_override, cc_econ_hr_override,
