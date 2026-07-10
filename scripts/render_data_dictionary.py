@@ -98,6 +98,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "nyiso-interface-flows",
     "nyiso-som-hub-fuel-annual",
     "reserve-requirements",
+    "som-competitive-conduct",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -651,6 +652,21 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "step-fill of single-hour publication holes. Locations ROS "
             "(system-wide — the model input), SWCT/CT/NEMABSTN (local, "
             "30-min total only). Train years 2023-2025 only (rule 22)."
+        ),
+    },
+    "som-competitive-conduct": {
+        "summary": (
+            "Market-monitor competitive-conduct metrics (price-cost "
+            "mark-up, output gap, coal economic-offer vs must-run/"
+            "self-commitment start shares) transcribed from the Potomac "
+            "Economics SOM reports and IMM quarterlies."
+        ),
+        "reconciles": (
+            "MISO 2023/2024 SOM Table 7 + Competitive Assessment and the "
+            "2025 IMM quarterly output-gap rows (train-window years only, "
+            "rule 22), from `data/raw/som-competitive-conduct/"
+            "som_competitive_conduct.csv`; PDFs under `data/raw/MISO/`. "
+            "Other ISOs' SOM conduct sections extend the same tidy layout."
         ),
     },
 }
