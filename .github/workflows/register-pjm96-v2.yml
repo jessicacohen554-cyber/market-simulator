@@ -136,3 +136,7 @@ jobs:
           done
           echo "push failed after retries" >&2
           exit 1
+
+# trigger: 2026-07-10 re-run on the recreated branch (PR #1955's merge deleted
+# the prior branch while the registration runs were in flight, orphaning their
+# results pushes).
