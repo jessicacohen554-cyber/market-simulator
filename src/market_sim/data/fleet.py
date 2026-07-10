@@ -2697,6 +2697,104 @@ def build_ercot_offer_surface_conditional_markup(
             f"{edges} disagree with the derived surface's edges {json_edges} "
             "(re-derive with matching --condition-binned edges, or fix the config)."
         )
+    return _conditional_surface_markup(
+        fleet_arrays,
+        generators,
+        fuel_prices,
+        net_load_mw,
+        config,
+        surface=surface,
+        edges=edges,
+        groups=CONDITIONAL_SURFACE_GROUPS,
+        min_bin=int(getattr(config, "ercot_offer_surface_min_bin", 0) or 0),
+        price_cap=float(getattr(config, "ercot_offer_surface_price_cap_frac", 0.95))
+        * float(getattr(config, "voll", 5000.0)),
+        label="ERCOT",
+    )
+
+
+def build_neiso_offer_surface_conditional_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+) -> "np.ndarray | None":
+    """Build the NEISO P1-only fast-start offer-surface markup ``(n_gen, T)``.
+
+    The ISO-NE analogue of :func:`build_ercot_offer_surface_conditional_markup`
+    (``ScenarioConfig.neiso_offer_surface_conditional`` — winter scarcity
+    charter Limb B): the measured fast-start offer distribution from ISO-NE's
+    public DA Energy Market historical offer data
+    (``scripts/derive_neiso_offer_surface.py``), condition-binned by
+    within-year net-load percentile, posted onto the CT_PEAKER peak-band rungs
+    in the P1 clearing objective only. Same mechanics, clamps and rule-13/20/21
+    discipline as the ERCOT surface (the shared
+    :func:`_conditional_surface_markup` core); NEISO-only, its own frozen
+    surface JSON, no cross-ISO fallback (rule 25).
+    """
+    if not getattr(config, "neiso_offer_surface_conditional", False):
+        return None
+    if config.iso != "NEISO":
+        return None
+    path = getattr(config, "neiso_offer_surface_binned_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        default = _paths.CALIBRATION_DIR / "neiso_offer_surface_condbinned.json"
+        if not default.exists():
+            return None
+        path = str(default)
+    surface = _load_condbinned_surface(str(path))
+
+    edges = tuple(float(x) for x in config.neiso_offer_surface_netload_pcts)
+    json_edges = tuple(
+        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
+    )
+    if json_edges and json_edges != edges:
+        raise ValueError(
+            "neiso_offer_surface: config netload_pcts "
+            f"{edges} disagree with the derived surface's edges {json_edges} "
+            "(re-derive scripts/derive_neiso_offer_surface.py with matching "
+            "--edges, or fix the config)."
+        )
+    return _conditional_surface_markup(
+        fleet_arrays,
+        generators,
+        fuel_prices,
+        net_load_mw,
+        config,
+        surface=surface,
+        edges=edges,
+        groups=("CT_PEAKER",),
+        min_bin=int(getattr(config, "neiso_offer_surface_min_bin", 0) or 0),
+        price_cap=float(getattr(config, "neiso_offer_surface_price_cap_frac", 0.95))
+        * float(getattr(config, "voll", 5000.0)),
+        label="NEISO",
+    )
+
+
+def _conditional_surface_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    *,
+    surface: dict,
+    edges: tuple[float, ...],
+    groups: tuple[str, ...],
+    min_bin: int,
+    price_cap: float,
+    label: str,
+) -> "np.ndarray | None":
+    """Shared condition-binned peak-rung repricing core (ERCOT/NEISO wrappers).
+
+    Behavior is exactly the pre-refactor ERCOT body: peak-rung rows of the
+    ``groups`` classes are repriced from their resolved peak height to the
+    measured ``binned_ladder`` multiplier of the hour's net-load bin, clamped
+    never to lower an offer (ratio >= 1) and never to reach ``price_cap``.
+    """
     n_bins = len(edges) + 1
 
     # Peak-rung rows per priced gas class, tagged with their rung index (peak -> 0,
@@ -2707,7 +2805,7 @@ def build_ercot_offer_surface_conditional_markup(
     resolved_peak: dict[str, float] = {}
     for g, gen in enumerate(generators):
         cls = getattr(gen, "plant_group", None) or getattr(gen, "efficiency_bin", None)
-        if cls not in CONDITIONAL_SURFACE_GROUPS or cls not in surface:
+        if cls not in groups or cls not in surface:
             continue
         sfx = gen.unit_id.rpartition("_")[2]
         if sfx == "peak":
@@ -2728,14 +2826,9 @@ def build_ercot_offer_surface_conditional_markup(
     # scarcity state as bin b in the measurement).
     thresholds = np.quantile(net_load, edges) if len(edges) else np.array([])
     hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,), 0..n_bins-1
-    # Optional floor: engage the wall only at/above this bin (protect mild hours from
-    # any residual peak-rung repricing). Below it the ratio is forced to 1 (byte-
-    # identical). Default 0 → the full measured distribution applies in every bin.
-    min_bin = int(getattr(config, "ercot_offer_surface_min_bin", 0) or 0)
-
-    price_cap = float(
-        getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
-    ) * float(getattr(config, "voll", 5000.0))
+    # Optional floor: engage the wall only at/above min_bin (protect mild hours
+    # from any residual peak-rung repricing). Below it the ratio is forced to 1
+    # (byte-identical). 0 → the full measured distribution applies in every bin.
     heat_rate = fleet_arrays.heat_rate
     markup = np.zeros((len(generators), hours), dtype=float)
     n_priced = 0
@@ -2770,9 +2863,10 @@ def build_ercot_offer_surface_conditional_markup(
         return None
     tight = int((hour_bin >= n_bins - 1).sum())
     logger.info(
-        "ERCOT conditional offer surface: repriced %d gas peak-rung rows across "
+        "%s conditional offer surface: repriced %d gas peak-rung rows across "
         "%d net-load bins (tightest bin binds %d/%d hours); P1-only, loose hours "
         "byte-identical",
+        label,
         n_priced,
         n_bins,
         tight,
