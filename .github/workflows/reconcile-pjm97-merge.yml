@@ -1,0 +1,104 @@
+# One-shot: merge origin/main into this branch server-side and resolve the
+# three shared calibration-dashboard files deterministically, so the pjm-97
+# results branch merges clean into a fast-moving main. Written 2026-07-10
+# after main took the NYISO-60 keeper swap + ERCOT prunes while the pjm-97
+# solve ran, conflicting keepers.json, status.js and the calibration-log
+# tail with this branch's results commit (local trial merge confirmed the
+# conflict set). Resolution:
+#   * keepers.json       -> main's version + the PJM -> pjm-97 swap
+#                           re-applied (idempotent)
+#   * calibration-log.md -> main's version + the promotion entry re-appended
+#                           (heading-gated; text from the committed
+#                           .github/patches/pjm97_callog_entry.md)
+#   * status.js          -> rebuilt from the resolved union tree
+#                           (scripts/build_status.py)
+# Registry/payload parity is re-checked before the MERGE COMMIT is pushed
+# (a real two-parent merge -- the session env cannot push merge commits
+# through the GitHub API file-push path). Idempotent: no-ops when the
+# branch already contains main; re-fire by pushing this file again if main
+# moves before the owner merges. Delete with the other one-shot pjm96/97
+# workflows after the results merge (one-shot convention).
+
+name: reconcile-pjm97-merge
+
+on:
+  push:
+    branches:
+      - claude/pjm97-keeper-promotion-verify-n78vhl
+    paths:
+      - .github/workflows/reconcile-pjm97-merge.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  merge-main:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package (build_status / verdict imports)
+        run: pip install -e .
+
+      - name: Merge origin/main and resolve the shared dashboard files
+        run: |
+          set -euo pipefail
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git fetch origin main
+          if git merge-base --is-ancestor origin/main HEAD; then
+            echo "branch already contains main -- nothing to reconcile"
+            exit 0
+          fi
+          git merge --no-commit --no-ff origin/main || true
+          U=$(git diff --name-only --diff-filter=U)
+          echo "conflicted: ${U:-none}"
+          for f in $U; do
+            case "$f" in
+              frontend/data/backcast/keepers.json) ;;
+              frontend/data/backcast/status.js) ;;
+              docs/calibration-log.md) ;;
+              *) echo "::error::unexpected conflict in $f -- manual reconciliation needed"; exit 1 ;;
+            esac
+          done
+          if echo "$U" | grep -q "keepers.json"; then
+            git checkout --theirs frontend/data/backcast/keepers.json
+          fi
+          python - <<'PYEOF'
+          import json
+          from pathlib import Path
+          p = Path("frontend/data/backcast/keepers.json")
+          d = json.loads(p.read_text())
+          old = d["PJM"]
+          new = "2026-07-10-pjm-97-measured-interfaces"
+          d["PJM"] = new
+          d["keepers"] = [new if k == old else k for k in d["keepers"]]
+          p.write_text(json.dumps(d, indent=1) + "\n")
+          print(f"keepers.json: PJM {old} -> {new}")
+          PYEOF
+          if echo "$U" | grep -q "calibration-log.md"; then
+            git checkout --theirs docs/calibration-log.md
+          fi
+          if ! grep -q "KEEPER SWAP pjm-94 -> pjm-97" docs/calibration-log.md; then
+            cat .github/patches/pjm97_callog_entry.md >> docs/calibration-log.md
+            echo "calibration-log entry re-appended"
+          else
+            echo "calibration-log entry already present"
+          fi
+          python scripts/build_status.py
+          git add frontend/data/backcast/keepers.json frontend/data/backcast/status.js docs/calibration-log.md
+          python scripts/check_registry_payload_parity.py
+          git commit -m "merge main: keepers/status/callog reconciled (NYISO-60 state + PJM->pjm-97 swap; status.js rebuilt on the union)"
+          git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+          sleep 10
+          git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+          echo "push failed (branch moved mid-merge?) -- re-fire this workflow to redo the merge on the new tip" >&2
+          exit 1
