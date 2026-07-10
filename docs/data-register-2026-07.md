@@ -151,12 +151,13 @@ has been separately authorized — currently ERCOT, PJM, and (as of 2026-07-07) 
 
 | Source | 2018-2022 | 2023 | 2024 | 2025 | H1 2026 |
 |---|---|---|---|---|---|
-| ERCOT HSL | — | ✓ (3rd-party UMass reconstruction, no ERCOT upload exists) | ✓ | ✓ | — |
+| ERCOT HSL | blocked — Data Portal login wall (see `ercot-hsl/README.md`, 2026-07-10) | ✓ (3rd-party UMass reconstruction, no ERCOT upload exists) | ✓ | ✓ | blocked — same Data Portal wall |
 | ERCOT NP6 monthly source archives | — | — | ✓ (near-complete monthly) | ✓ (near-complete monthly) | — |
-| CAISO HSL / curtailment workbooks | — | ✓ | ✓ | ✓ | — |
+| CAISO HSL / curtailment workbooks | 2018-2022 verified fetchable at source, not committed — see caveat below (2026-07-10) | ✓ | ✓ | ✓ | discontinued by CAISO 6/1/2025, confirmed unfetchable |
 | NYISO / MISO hourly per-plant HSL | — | — | — | — | — |
 | NYISO NYCA-wide + zonal curtailment aggregate (row 51) | partial — NYCA wind annual+monthly 2018-2022 (2017 also on file); zonal wind annual+monthly 2020-2022 only; no solar | ✓ NYCA+zonal wind; FTM solar GWh only (no pct) | ✓ NYCA wind only — no standalone 2024 deck was found, so no zonal/monthly breakdown; solar with pct | ✓ NYCA+zonal wind; FTM solar with pct | — (no deck published yet) |
 | MISO wind-shape (reanalysis) | — | ✓ | ✓ | ✓ | — |
+| MISO wind curtailment aggregate (Potomac IMM, `data/raw/miso-hsl/`, not a numbered register row) | ✓ 2018-2022 (annual figures; 2018-2020 have no curtailment MW at all — a genuine SOM-report gap, not an extraction miss) | ✓ | ✓ | ✓ | Winter+Spring 2026 quarterly only |
 
 NYISO/MISO hourly per-plant HSL directories remain empty (documented `DATA NEEDED`: NYISO does not
 publish an hourly per-plant uncurtailed-potential series at all — see the new coarse-aggregate row
@@ -164,6 +165,40 @@ above, landed 2026-07-08 from the NYCA Renewables presentation series
 (`data/raw/nyiso-renewable-curtailment/README.md`), which is the closest primary-source substitute
 but stays a NYCA-wide/zonal annual-and-monthly diagnostic, never ingested as dispatch HSL; MISO's
 curtailment reports are blocked by this environment's network allowlist).
+
+**2026-07-10 holdout-intake session (rule-22 pre-authorized):**
+
+- **ERCOT HSL 2018-2022 + H1-2026 — confirmed ungettable, not just unattempted.** ERCOT's Data
+  Access Portal is a JS SPA behind Incapsula bot-protection requiring sign-in for any historical
+  archive (302-redirect on `data.ercot.com/data-product-archive/NP4-732-CD`; the live rolling-window
+  API returns an empty listing for this report type). Same wall already documented for NP6-86 and
+  for the 2024/2025 HSL data itself (pulled by hand via an `apiexplorer.ercot.com` account). The
+  UMass fallback used for 2023 is confirmed 2023-only by construction (cloned the dataset directly —
+  its `data/` holds only `*-2023.csv` files); extending it to other years is a new per-plant
+  reconstruction project, not a fetch.
+- **CAISO HSL/curtailment 2018-2022 — verified fetchable, not committed.** All five years' source
+  workbooks (`productionandcurtailmentsdata_<year>.xlsx`) fetched and verified as genuine, full
+  Jan1-Dec31 workbooks at the same stable URL already used for 2023-2025 (also corrected the
+  register's stale source URL — `library/managing-oversupply` now 404s; the live page is
+  `library/production-curtailments-data`). Building the derived HSL series
+  (`scripts/build_caiso_hsl.py`) against them: **2019-2021 built clean** and delivered to the user
+  as file attachments (rounded 2-decimal CSV, ~280KB/year) rather than committed — this session's
+  only available push mechanism cannot transport binary content without corruption, and even the
+  text-safe CSV form hits a hard ~25,000-token read ceiling well before one year's ~8760-row file
+  fits in a single chunk, making manual chunked transcription impractical (see
+  `data/raw/caiso-hsl/README.md`); **2018 flagged, not delivered** — its derived wind total (24.9
+  TWh) is 60%+ above every neighboring year in the wrong direction (CAISO wind buildout only grew),
+  traced to a pre-existing `eia_loader.load_eia_hourly_renewable_gen` bfill/ffill artifact that
+  flat-fills the entire missing-H1 CISO per-fuel window rather than genuinely measuring it — a
+  discovered defect, not something this intake papers over; **2022 confirmed genuinely
+  unavailable** by the builder's own no-full-year-EIA-930 check. **H1-2026 confirmed unfetchable**:
+  CAISO's own library page states the report was discontinued 2025-06-01. The raw xlsx workbooks
+  themselves (~118MB across 5 years) were also delivered as file attachments rather than committed,
+  for the same binary-transport reason — re-fetch from the unchanged, unauthenticated URL to
+  regenerate them, or use the delivered attachments directly.
+- **MISO wind aggregate 2018-2020 — already complete, no new fetch needed.** Verified
+  `data/raw/miso-hsl/miso_wind_curtailment_annual.csv` already carries cited 2018-2025 rows (landed
+  in an earlier session, before this one); this session only confirmed it, did not add to it.
 
 ### Ancillary services / reserves
 
