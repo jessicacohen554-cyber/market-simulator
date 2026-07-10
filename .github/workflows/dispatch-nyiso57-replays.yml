@@ -7,6 +7,9 @@
 # the committed recipe (results/calibration/nyiso57_dynamic_rr/meta.json),
 # registers each run on the dashboard, and publishes to main.
 name: dispatch-nyiso57-replays
+# retry 2: calibration-run.yml now regenerates data/clean and ships _shared
+# benchmark parquets in the bundle artifact (first attempt failed on the
+# missing clean capacity-deliverability table).
 
 on:
   push:
