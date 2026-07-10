@@ -491,18 +491,99 @@ def write_attestations() -> None:
         print("write-attestations: %s" % path.relative_to(REPO))
 
 
+PROMO_MARKER = "## 2026-07-10 — ERCOT keeper PROMOTED: `ercot55 surface-ab`"
+
+PROMO_ENTRY = """
+## 2026-07-10 — ERCOT keeper PROMOTED: `ercot55 surface-ab` (CALIBRATED-WITH-CAVEATS, rubric v2.4) — owner sign-off; supersedes ercot53
+
+**Owner decision (2026-07-10, ercot55 C2-counting/scarcity session,
+interactive sign-off): ercot55 surface-ab promoted.** The line ercot53
+(HSL 930-fill keeper) → ercot55 930gap-c2fix (measured EIA-930 Dec-2025
+gap fill + NG:OTH C2 counting fix, zero config deltas) → ercot55
+surface-ab (+ `ercot_offer_surface_conditional`, the measured G-22 §8
+surface) clears every load-bearing criterion: C3a +2.0/−4.7/−1.1 %, C3b
+0.106/0.196/0.094, C1/C2/C4/C5a/C7 PASS, C8 grounded (ST_GAS above-budget
+GROUNDED both years), C6 attested. Ledgered caveats (attestation
+exceptions): C3c-2024 (27 h vs 68 DA, 0.40× — the open G-22
+depth/breadth + Nov-17 non-scarce-event residual, narrowed from 24 h) and
+C5c-2024 storage shape (r≈0.35, inherited). **C3c-2025 is resolved BY
+MECHANISM** (24 h vs 23 DA, 1.04× PASS — was 5 h/0.22× ledgered) and
+**C2-2025 gas BY COUNTING FIX** (−1.7 % PASS — was −2.9 % commercial-band
+caveat): the keeper's caveat count drops 3 → 2 with no criterion
+regressing (C3c-2023 166 h ≥ the 162 h owner gate).
+
+**LOYO basis (rule 22).** Zero residual-fitted parameters: the surface's
+rungs/bins are measured 60-Day DAM disclosure values (per-year measured
+inputs, not tuned scalars), the C2 fix is benchmark counting, and the
+gap fill is measured data — the ercot53-precedent "zero-parameter"
+clean basis. DOF ledger inherited from ercot53 verbatim (attestation
+`free_parameters` unchanged).
+
+**Bookkeeping.** `keepers.json` ERCOT → `2026-07-10-ercot55-surface-ab`
+(prior keeper ercot53 stays registered as the prior-keeper reference);
+`status.js` rebuilt (ERCOT line CALIBRATED-WITH-CAVEATS); surface sidecar
+carries the promotion note, ercot53 sidecar re-worded superseded;
+attestation `attested_by` records the owner approval; zero-forcing twin
+`2026-07-10-ercot55-surface-ablation` registered alongside (rule 20).
+Registration/publication ran through the `ercot55-solve-register` +
+`ercot55-promote` workflows (session relay-ceiling fallback, caiso67/69
+precedent).
+
+**Holdouts.** No solve, score, or intake outside 2023-2025 (rule 22);
+ORDC tariff parameters untouched (rule 26); promotion changes no model
+code or tunable (rules 13/21/23) — governance files only.
+"""
+
+
+def append_promotion_log() -> None:
+    """Append the keeper-promotion calibration-log entry (marker-guarded)."""
+    text = LOG.read_text()
+    if PROMO_MARKER in text:
+        print("append-promotion-log: already present — no-op")
+        return
+    if not text.endswith("\n"):
+        text += "\n"
+    LOG.write_text(text + PROMO_ENTRY.lstrip("\n"))
+    print("append-promotion-log: appended")
+
+
+
+def approve_attestation() -> None:
+    """Record the owner promotion approval on the surface arm's attestation."""
+    import json
+
+    p = REPO / "results/calibration/ercot55_surface_ab/calibration_attestation.json"
+    a = json.loads(p.read_text())
+    if "APPROVED" in a["governance"]["attested_by"]:
+        print("approve-attestation: already recorded — no-op")
+        return
+    a["governance"]["attested_by"] = (
+        "ercot55 surface-ab keeper-track candidate gate, session 2026-07-10 "
+        "(full scored 2023-2025 bundle + zero-forcing ablation twin "
+        "2026-07-10-ercot55-surface-ablation; owner promotion APPROVED "
+        "2026-07-10 (ercot55 C2-counting/scarcity session, interactive "
+        "sign-off))"
+    )
+    p.write_text(json.dumps(a, indent=1))
+    print("approve-attestation: recorded")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--thread-other", action="store_true")
     ap.add_argument("--append-log", action="store_true")
     ap.add_argument("--patch-scorer", action="store_true")
     ap.add_argument("--write-attestations", action="store_true")
+    ap.add_argument("--append-promotion-log", action="store_true")
+    ap.add_argument("--approve-attestation", action="store_true")
     args = ap.parse_args()
     if not (
         args.thread_other
         or args.append_log
         or args.patch_scorer
         or args.write_attestations
+        or args.append_promotion_log
+        or args.approve_attestation
     ):
         sys.exit("nothing to do: pass at least one --flag")
     if args.thread_other:
@@ -513,6 +594,10 @@ def main() -> None:
         write_attestations()
     if args.append_log:
         append_log()
+    if args.approve_attestation:
+        approve_attestation()
+    if args.append_promotion_log:
+        append_promotion_log()
 
 
 if __name__ == "__main__":
