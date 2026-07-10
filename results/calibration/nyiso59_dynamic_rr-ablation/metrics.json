@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-10-nyiso59-dynamic-rr-ablation",
+  "run_id": "2026-07-10-nyiso-59-dynamic-rr-ablation",
   "iso": "NYISO",
-  "label": "nyiso59 dynamic rr ablation",
+  "label": "nyiso 59 dynamic rr (ABLATION TWIN)",
   "target_years": [
     2023,
     2024,

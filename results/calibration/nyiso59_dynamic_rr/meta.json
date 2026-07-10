@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-10T13:02:16",
+  "timestamp": "2026-07-10T16:08:48",
   "iso": "NYISO",
   "years": [
     2023,
@@ -116,6 +116,7 @@
   "coal_nameplate_summer_derate": false,
   "temp_dependent_derate": false,
   "ercot_offer_surface_conditional": false,
+  "neiso_offer_surface_conditional": false,
   "priced_interchange": true,
   "hydro_backfill_year": null,
   "hydro_eia930_monthly": false,
@@ -181,9 +182,11 @@
   "pjm_seam_flow_limit": false,
   "pjm_seam_flow_percentile": null,
   "pjm_seam_export_limit": false,
+  "pjm_seam_measured_ladder": false,
   "gas_hub_basis_overlay": true,
   "chp_export_floor_measured": false,
   "ercot_gtc_limits_measured": false,
+  "pjm_measured_interface_limits": false,
   "ercot_wtx_curtailment_driver": null,
   "ercot_wtx_curtail_depth_wind": null,
   "ercot_wtx_curtail_depth_solar": null,
@@ -196,6 +199,6 @@
     "eia923": "../_shared/NYISO/eia923-82522d4017c4.parquet",
     "campd": "../_shared/NYISO/campd-bd2b1674776e.parquet"
   },
-  "git_sha": "7291625",
+  "git_sha": "209fa33",
   "highspy_version": "1.14.0"
 }

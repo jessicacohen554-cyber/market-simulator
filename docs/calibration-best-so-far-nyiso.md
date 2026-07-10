@@ -1,5 +1,39 @@
 # NYISO calibration — best config so far
 
+> **KEEPER (2026-07-10): `nyiso 59 dynamic rr` — CALIBRATED-WITH-CAVEATS**
+> (`2026-07-10-nyiso-59-dynamic-rr`, bundle
+> `results/calibration/nyiso59_dynamic_rr`, all 3 years + zero-forcing
+> ablation twin). The `nyiso-56-measured-zonal` keeper recipe VERBATIM with
+> one **measured-data** change (rules 12/13, zero new free parameters):
+> `nyiso_dynamic_reserve_requirements=True` — the in-LP energy+reserve
+> co-opt's static locational reserve requirements are replaced by the
+> **measured as-enforced hourly series** (the #1344 Ask-B intake,
+> `data/raw/NYISO-AS/requirements/`, frozen
+> `derive_nyiso_reserve_requirements_hourly.py`): the published SENY 30-min
+> **hourly step schedule** (1,300 HB0–5 / 1,550 HB6 / 1,800 HB7–21 / 1,550
+> HB22 / 1,300 HB23 — the static 1,300 MW was the overnight floor, 500 MW
+> low in every peak hour) × TSA-window zeroing from the B2 MIS event logs
+> (185/227/120 h). Effect vs nyiso-56 (v2.4 lw basis): C3a/C3b a **wash**
+> (−13.2/−15.7% and 0.221/0.215, all ledgered), C3c gains a real RT-like
+> tail — 2024 0→1 h (RT actual 12), 2025 14→**25 h** (RT actual 42; the
+> 2.08× DA-basis read is the ledgered G-20a scoring artifact) — C1 14/14,
+> C2/C4/C6/C7 PASS, **C8 clean PASS** (ST_GAS 30.3/44.5/38.0% grounded
+> above budget, D-4 windows + D-1 r 0.95). The reserve-scarcity frontier is
+> no longer data-blocked; the residual is the **B1** formal request
+> (condition-varying increments — the derived series is a lower bound in
+> non-TSA hours) + the Iroquois Z2 winter hub (Ask-C) + downstate import
+> discipline (measured NYC locality limit 2,875 MW vs 3,900 MW estimate).
+> CI replay of this recipe OOMs GitHub-hosted runners in regenerate_clean;
+> solve locally (≥15 GB + swap). **Keeper lineage since the 2026-07-04
+> block below:** nyiso-41 → `nyiso-53-li-tsl` (2026-07-06, L-11 Zone-K
+> LCR/TSL) → `nyiso-56-measured-zonal` (2026-07-07, G-20c measured per-zone
+> load shares; first NYISO CALIBRATED-WITH-CAVEATS after the 2026-07-09 C8
+> D-4 grounding) → **nyiso-59** — see the calibration-log entries of those
+> dates; the G-13 LI/NYC delivered-fuel ask below was RESOLVED by
+> `nyiso-55-ldc-transport` (per-zone LDC transport gas, registered
+> CANDIDATE, not yet folded into the keeper line — the next structural
+> combination probe).
+
 > **SESSION 2026-07-04b (probes `nyiso 45 measuredruns` + `nyiso 46
 > decpeaker`, both registered NOT-YET; keeper unchanged): the CT offer level
 > is now PARTIALLY grounded by three measured mechanisms — the residual
