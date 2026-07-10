@@ -1,15 +1,16 @@
-# One-shot dispatcher: launches the two nyiso57 dynamic-RR CI replays
+# One-shot dispatcher: launches the two nyiso59 dynamic-RR CI replays
 # (main + zero-forcing ablation twin) via `gh workflow run`, because the
 # Claude remote env's GitHub integration cannot POST workflow dispatches
 # (403) while the runner's GITHUB_TOKEN can (workflow_dispatch is exempt
 # from the GITHUB_TOKEN recursion guard). Path-scoped to itself: pushing
 # this file is the trigger; calibration-run.yml then solves the replay of
-# the committed recipe (results/calibration/nyiso57_dynamic_rr/meta.json),
+# the committed recipe (results/calibration/nyiso59_dynamic_rr/meta.json),
 # registers each run on the dashboard, and publishes to main.
 name: dispatch-nyiso57-replays
-# retry 3: full clean regen OOM-killed standard runners (emissions/CAMPD
-# curation, exit 143); a read_clean trace shows the replay needs only
-# capacity-deliverability, so the regen step is now targeted.
+# retry 4: commit 209fa33 renamed the recipe bundle nyiso57->nyiso59 on this
+# branch (57/58 shorthands consumed) after retry 3 was dispatched, so retry 3
+# died on the old meta.json path. Targeted clean regen + _shared artifact
+# fixes are verified working (regen step 1s at retry 3).
 
 on:
   push:
@@ -37,9 +38,9 @@ jobs:
             --ref claude/nyiso-data-retrieval-3bm4o8 \
             -f iso=NYISO \
             -f year="2023,2024,2025" \
-            -f run_name=nyiso57_dynamic_rr \
-            -f extra_flags="--replay-bundle results/calibration/nyiso57_dynamic_rr" \
-            -f note="dynamic-reserve-requirements full-keeper A/B -- 2026-07-07-nyiso-56-measured-zonal config + nyiso_dynamic_reserve_requirements: measured hourly LRR schedule (SENY steps 1300/1550/1800) + TSA-window zeroing replacing static requirements, 2023-2025. Co-opt ENGAGES: reserve duals bind 289/163/614 h/yr (max USD 1658); downstate >300 USD tail NYC 18/1/7, LI 23/1/25 vs actual 10/12/42 (nyiso-56: ~0/0/7). 2024 undershoot consistent with the still-missing B1 condition-varying increments (request-only). Twin: nyiso57_dynamic_rr-ablation." \
+            -f run_name=nyiso59_dynamic_rr \
+            -f extra_flags="--replay-bundle results/calibration/nyiso59_dynamic_rr" \
+            -f note="dynamic-reserve-requirements full-keeper A/B -- 2026-07-07-nyiso-56-measured-zonal config + nyiso_dynamic_reserve_requirements: measured hourly LRR schedule (SENY steps 1300/1550/1800) + TSA-window zeroing replacing static requirements, 2023-2025. Co-opt ENGAGES: reserve duals bind 289/163/614 h/yr (max USD 1658); downstate >300 USD tail NYC 18/1/7, LI 23/1/25 vs actual 10/12/42 (nyiso-56: ~0/0/7). 2024 undershoot consistent with the still-missing B1 condition-varying increments (request-only). Twin: nyiso59_dynamic_rr-ablation." \
             -f publish=true
 
       - name: Dispatch ablation-twin replay
@@ -51,7 +52,7 @@ jobs:
             --ref claude/nyiso-data-retrieval-3bm4o8 \
             -f iso=NYISO \
             -f year="2023,2024,2025" \
-            -f run_name=nyiso57_dynamic_rr-ablation \
-            -f extra_flags="--replay-bundle results/calibration/nyiso57_dynamic_rr --zero-forcing-ablation" \
-            -f note="(ABLATION TWIN of nyiso57 dynamic-rr) zero-forcing ablation of the dynamic-RR A/B: same recipe, every merchant floor/bridge OFF (rule 20 / D-3)." \
+            -f run_name=nyiso59_dynamic_rr-ablation \
+            -f extra_flags="--replay-bundle results/calibration/nyiso59_dynamic_rr --zero-forcing-ablation" \
+            -f note="(ABLATION TWIN of nyiso59 dynamic-rr) zero-forcing ablation of the dynamic-RR A/B: same recipe, every merchant floor/bridge OFF (rule 20 / D-3)." \
             -f publish=true
