@@ -40,6 +40,67 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-10 — NYISO — G-13 CLOSED: per-zone daily LDC-transport delivered gas folded into the keeper line; KEEPER PROMOTED `2026-07-10-nyiso-60-ldc-transport` replaces `nyiso-59-dynamic-rr` (CALIBRATED-WITH-CAVEATS)
+
+**Goal.** Execute the nyiso-59 entry's open item (4) ("nyiso-60 = nyiso-59 +
+LDC transport — the natural next combination probe"): fold nyiso-55's G-13
+mechanism (`nyiso_downstate_ct_gas_daily`, the measured per-zone daily
+LDC-transport delivered-gas index) into the dynamic-RR keeper recipe,
+superseding the v1 monthly statewide citygate premium
+(`nyiso_downstate_ct_gas_basis`) the keeper line still carried. Both
+mechanisms are measured (rules 12/13); the combination is the most
+structurally faithful NYISO config to date. Solved locally (15 GiB + 8 GiB
+swap, ~35 min/yr; the nyiso-59 CI-replay OOM stands) via
+`replay_keeper.py --set` on the nyiso-59 meta — exactly one config delta:
+v1 OFF, v2 ON (rule 19, one mechanism per phenomenon).
+
+**Mechanism (rule 12/13, zero new free parameters).** The interruptible
+downstate LM6000 peakers are **transport** customers: commodity at the market
+hub + a published LDC delivery tariff.
+`delivered_gas[zone][day] = Transco Z6 NY daily spot + LDC monthly non-firm
+transport rate[zone]` (KEDNY SC-22 Tier 1 for NYC / KEDLI SC-19 Tier 1 for LI,
+published statnfdr statements; `nyiso-downstate-gas` datatype v2, frozen
+curation). The daily hub leg prices the cold-snap blowouts (Jan-2024 $23.90;
+2025-01-17 **$97.90**) on the exact days the peakers run — the v1 monthly mean
+smeared them away, and the v1 statewide firm-citygate premium was the wrong
+rate class AND the wrong boundary (LI gas island ≠ NYC system). Engagement:
+105 downstate CT_PEAKER units; delivered ranges 2.45–30.84 / 2.76–26.52 /
+4.18–100.87 $/MMBtu (2023/24/25). DOF ledger: the v1 entry is REPLACED by the
+v2 entry (n_entries 11, n_residual unchanged at 5).
+
+**Result (`2026-07-10-nyiso-60-ldc-transport` + `-ablation` twin, both
+registered; v2.4 lw basis).** A metrics **wash-to-slightly-better** with the
+tail identical — and the 2025 shape crosses INTO the band: C3a
+−4.8%/−13.2%/**−13.7%** (keeper −4.8/−13.2/−15.7 — the daily index prices the
+Jan/Feb-2025 arctic-blast months); C3b 0.163/0.223/**0.199 PASS** (keeper
+0.221/0.215-ledgered — one ledgered caveat DROPS); C3c identical 23/1/25 h
+(same G-20a DA-basis artifacts ledgered); C5a +3.3/+2.5/+8.1% (2025
+commercial band). C1 **14/14 all years** (free 10/10), C2/C4/C7 PASS, **C8
+clean PASS** grounded-above-budget (ST_GAS `reliability_floor`
+32.1/44.0/36.0% forced, D-4 off-window 0.0%, D-1 r 0.950–0.957).
+Determination **CALIBRATED-WITH-CAVEATS** — same profile as nyiso-59 on a
+strictly more-measured config with one fewer ledger entry, so per rule 1 (and
+the session brief's promotion conditions: C1 all years, C7/C8 clean, C2-2025 +
+C6 intact — all met) **nyiso-60 is promoted keeper**. Ablation twin:
+floors-off prices sit HIGHER (simple means 32.20/35.07/60.09 vs
+29.05/31.96/54.08) and the 2023 tail max ($2,000) is present in both arms —
+the floors are commitment scaffolding; the level and the tail come from the
+measured requirement's reserve duals plus the measured daily delivered gas.
+
+**Open (carried).** (1) B1 residual: condition-varying requirement increments
+— formal NYISO request only; the 2024 deep-tail undershoot (1 vs 12 RT h)
+sits here. (2) Iroquois Z2 winter hub (Ask-C). (3) Downstate import
+discipline: apply the MEASURED NYC locality import limit 2,875 MW
+(capacity-deliverability) in the summer-peak window exactly as
+`nyiso_li_lcr_tsl` (#1345) does for LI, replacing the 3,900 MW
+Dunwoodie-South estimate — the identified next lever for the 2024/2025 deep
+tail (single-delta probe nyiso-61). (4) G-13 is CLOSED by this run; optional
+sharpening only (true daily citygate commodity index, ICE/Platts/NGI).
+
+**Housekeeping.** NYISO registrations now 15/15 after this pair — the next
+NYISO registration must prune per the top-15 retention. Twin registered via
+the b5f2607 `_slug` trailing-ablation fix (no hand-repair needed — first use).
+
 ### 2026-07-10 — NYISO — #1344 dynamic reserve requirements LANDED: measured hourly LRR series in the live co-opt; KEEPER PROMOTED `2026-07-10-nyiso-59-dynamic-rr` replaces `nyiso-56-measured-zonal` (CALIBRATED-WITH-CAVEATS)
 
 **Goal.** Execute the Ask-B addendum's handoff ("flip
