@@ -1,17 +1,19 @@
 {
-  "timestamp": "2026-07-09T17:42:31",
+  "timestamp": "2026-07-09T21:52:31",
   "git": {
-    "sha": "1594f15",
-    "branch": "claude/steam-gas-underrun-pjm-b48w9i",
+    "sha": "fcf2f7b",
+    "branch": "claude/pjm-runs-94-95-assessment-56ncdv",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "D-3 zero-forcing ablation twin of pjm-94 (CLAUDE.md rule 20): the pjm94_stgas_netload_drag recipe verbatim with every merchant floor/bridge/drag neutralized (ScenarioConfig.as_zero_forcing_ablation; off-list from the D-2 mechanism registry incl. gas_st_netload_drag), structural protected set kept. Registered alongside the keeper candidate for the E9 keeper-vs-twin delta \u2014 quantifies what the all-hours ST_GAS net-load drag + CT net-load drag buy per class.",
+  "model_changes_note": "pjm-94 D-3 zero-forcing ablation twin, all-years re-solve v2 (rules 16/20): pjm-94 recipe with every merchant floor/bridge/drag neutralized",
   "ablation_of": "pjm94_stgas_netload_drag",
   "calibration_flags": {
     "iso": "PJM",
     "years": [
+      2023,
+      2024,
       2025
     ],
     "hours": 8760,
@@ -21,6 +23,8 @@
     "commitment": false,
     "commitment_screen_coal": true,
     "gas_prices": {
+      "2023": 2.54,
+      "2024": 2.19,
       "2025": 3.52
     },
     "outage_source": "historic",
@@ -137,10 +141,10 @@
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
     "temp_dependent_derate": false,
-    "git_sha": "1594f15"
+    "git_sha": "fcf2f7b"
   },
   "scenario_config": {
-    "weather_year": 2025,
+    "weather_year": 2023,
     "iso": "PJM",
     "mode": "backcast",
     "voll": 5000.0,
@@ -503,6 +507,15 @@
     "ct_drag_ramp_start": 15,
     "ct_drag_ramp_end": 22,
     "ercot_ct_offer_surface": false,
+    "ercot_offer_surface_conditional": false,
+    "ercot_offer_surface_binned_path": null,
+    "ercot_offer_surface_netload_pcts": [
+      0.8,
+      0.9,
+      0.97
+    ],
+    "ercot_offer_surface_min_bin": 0,
+    "ercot_offer_surface_price_cap_frac": 0.95,
     "cc_committed_hr_override": null,
     "cc_econ_hr_override": null,
     "cc_peak_hr_override": null,
@@ -663,6 +676,6 @@
     "dual_fuel_oil_reattribution": false,
     "dual_fuel_switching": true,
     "outage_source": "historic",
-    "gas_price_override": 3.52
+    "gas_price_override": 2.54
   }
 }

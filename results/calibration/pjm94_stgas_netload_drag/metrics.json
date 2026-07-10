@@ -3,23 +3,27 @@
   "iso": "PJM",
   "label": "pjm 94 stgas netload",
   "target_years": [
+    2023,
+    2024,
     2025
   ],
   "scorable_years": [
+    2023,
+    2024,
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.2,
+  "rubric_version": 2.4,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, price_tail"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -29,14 +33,12 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
@@ -66,37 +68,34 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
     "protective": [],
     "ledgered": [],
-    "commercial_band": [
-      "C3a mean LMP",
-      "C3b price duration/shape"
-    ],
+    "commercial_band": [],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
     }
   },
   "grade_summary": {
-    "scored": 6,
-    "target_grade": 3,
-    "commercial_grade": 2,
+    "scored": 10,
+    "target_grade": 6,
+    "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 1
+    "fails": 4
   },
   "free_class_score": {
     "iso": "PJM",
@@ -109,15 +108,18 @@
       "solar",
       "wind"
     ],
-    "excluded_from_free": [],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
     "all": {
-      "pass": 0,
-      "total": 0
+      "pass": 14,
+      "total": 16
     },
     "free": {
-      "pass": 0,
-      "total": 0
+      "pass": 10,
+      "total": 12
     },
-    "headline": "C1 all 0/0 \u00b7 free 0/0"
+    "headline": "C1 all 14/16 \u00b7 free 10/12"
   }
 }
