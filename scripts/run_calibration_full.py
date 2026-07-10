@@ -2015,6 +2015,7 @@ def solve_and_persist(
     ct_drag_overrides: dict | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
+    pjm_measured_interface_limits: bool = False,
     ercot_wtx_curtailment_driver: bool | None = None,
     ercot_wtx_curtail_depth_wind: float | None = None,
     ercot_wtx_curtail_depth_solar: float | None = None,
@@ -2291,6 +2292,7 @@ def solve_and_persist(
             ct_drag_overrides=ct_drag_overrides,
             chp_export_floor_measured=chp_export_floor_measured,
             ercot_gtc_limits_measured=ercot_gtc_limits_measured,
+            pjm_measured_interface_limits=pjm_measured_interface_limits,
             ercot_wtx_curtailment_driver=ercot_wtx_curtailment_driver,
             ercot_wtx_curtail_depth_wind=ercot_wtx_curtail_depth_wind,
             ercot_wtx_curtail_depth_solar=ercot_wtx_curtail_depth_solar,
@@ -2652,6 +2654,7 @@ def solve_and_persist(
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "chp_export_floor_measured": chp_export_floor_measured,
         "ercot_gtc_limits_measured": ercot_gtc_limits_measured,
+        "pjm_measured_interface_limits": pjm_measured_interface_limits,
         "ercot_wtx_curtailment_driver": ercot_wtx_curtailment_driver,
         "ercot_wtx_curtail_depth_wind": ercot_wtx_curtail_depth_wind,
         "ercot_wtx_curtail_depth_solar": ercot_wtx_curtail_depth_solar,
@@ -2935,6 +2938,8 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(chp_export_floor_measured=True)
     if ercot_gtc_limits_measured:
         recorded_cfg = recorded_cfg.with_overrides(ercot_gtc_limits_measured=True)
+    if pjm_measured_interface_limits:
+        recorded_cfg = recorded_cfg.with_overrides(pjm_measured_interface_limits=True)
     # WP-B curtailment driver — tri-state (ct_netload_drag pattern): None keeps
     # the backcast_config per-ISO default (ERCOT keeper default-ON, owner GO
     # 2026-07-07); explicit True/False force it, so ablation arms can scrub it.
@@ -7201,6 +7206,22 @@ def main() -> None:
         "--reference-price-interface; PJM-only.",
     )
     parser.add_argument(
+        "--pjm-measured-interface-limits",
+        action="store_true",
+        help="Backcast overlay (PJM-only, default off): the internal links "
+        "whose static ttc_mw was seeded from the PJM Data Miner 2 "
+        "transfer-limit postings follow the measured HOURLY published "
+        "series (transfer-interface-limits clean datatype; "
+        "constants.PJM_INTERFACE_LINK_MAP — 50045005, AEP/DOM, AP-South, "
+        "Bedington-BlackOak min(pre,post), and the Average West/Central/"
+        "Eastern envelopes) in the forward west->east direction, static "
+        "rating kept on the reverse. Supersedes pjm_congestion's static "
+        "medians on mapped links (same feed, hourly). The ERCOT "
+        "--ercot-gtc-limits-measured pattern; forecast years keep the "
+        "static seeds. Run scripts/curate_transfer_interface_limits.py "
+        "first.",
+    )
+    parser.add_argument(
         "--miso-pjm-border-anchor",
         action="store_true",
         help="Re-anchor the MISO eastern PJM seam from PJM's SYSTEM-average "
@@ -7719,6 +7740,7 @@ def main() -> None:
         pjm_seam_flow_percentile=args.pjm_seam_flow_percentile,
         pjm_seam_export_limit=args.pjm_seam_export_limit,
         pjm_seam_measured_ladder=args.pjm_seam_measured_ladder,
+        pjm_measured_interface_limits=args.pjm_measured_interface_limits,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         mass_cap_enabled=args.mass_cap_enabled,

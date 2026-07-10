@@ -46,6 +46,7 @@ DATATYPES: tuple[str, ...] = (
     "capacity-deliverability",
     "confirmed-retirements",
     "gtc-limits",
+    "transfer-interface-limits",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
     "carb-cap-schedule",

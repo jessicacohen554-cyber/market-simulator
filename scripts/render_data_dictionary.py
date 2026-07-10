@@ -82,6 +82,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "capacity-deliverability",
     "confirmed-retirements",
     "gtc-limits",
+    "transfer-interface-limits",
     "ramp-capability",
     "winter-fuel-inventory",
     "rggi-co2-budgets",
@@ -160,6 +161,24 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "counts, and mean positive shadow price. Sparse: a row exists only "
             "for hours the constraint was in SCED's active set. ERCOT-only "
             "(published physical transfer limits, rule #13/#14 admissible)."
+        ),
+    },
+    "transfer-interface-limits": {
+        "summary": (
+            "Measured hourly transmission-interface transfer limits (PJM Data "
+            "Miner 2 transfer_limits_and_flows; pre/post-contingency kept as "
+            "separate series)."
+        ),
+        "reconciles": (
+            "UTC-keyed hourly interface rows onto the fixed non-leap "
+            "8760-hour ISO-local model clock: Feb 29 dropped, the DST "
+            "fall-back repeat merged by clock-hour group-by, the "
+            "spring-forward hour filled from its neighbours and flagged "
+            "(`n_source_rows = 0`). Dense — every (interface, hour) pair "
+            "carries a row. The measured `transfer_mw` column is diagnostic "
+            "only (crosswalk sanity checks), never a model input. Published "
+            "operating-security limits, rule #13/#14 admissible; per-ISO "
+            "specs in `scripts/lib/transfer_interface_limits/` (PJM first)."
         ),
     },
     "ercot-wtx-congestion": {
