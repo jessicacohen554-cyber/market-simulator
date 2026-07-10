@@ -40,6 +40,84 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-10 — NYISO — #1344 dynamic reserve requirements LANDED: measured hourly LRR series in the live co-opt; KEEPER PROMOTED `2026-07-10-nyiso-59-dynamic-rr` replaces `nyiso-56-measured-zonal` (CALIBRATED-WITH-CAVEATS)
+
+**Goal.** Execute the Ask-B addendum's handoff ("flip
+`nyiso_dynamic_reserve_requirements` on, re-solve 2023–2025, keeper-candidate"):
+the keeper's ledgered reserve-scarcity frontier (#1344) was un-data-blocked by
+the 2026-07-08→10 intake (B3 published LRR hourly step schedule + B2 MIS
+TSA-window event logs → `NYISO_reserve_requirements_{2023,2024,2025}.csv`,
+frozen derive script). The two CI replay attempts (4 runs,
+`dispatch-nyiso57-replays.yml`) all died on GitHub-hosted runners — SIGTERM/OOM
+inside `regenerate_clean` — so the A/B was solved locally (15 GB + 8 GB swap,
+~35 min/year) from the committed recipe (`--replay-bundle` path; the recipe
+bundle was renamed `nyiso57_dynamic_rr` → `nyiso59_dynamic_rr`: shorthands 57
+(locational-rcpf) and 58 (tempderate) were already consumed, per the
+temp-derate playbook Step 0.3).
+
+**Mechanism (rule 12/13, zero new free parameters).** The nyiso-56 keeper
+recipe VERBATIM + `nyiso_dynamic_reserve_requirements=True`: each in-LP
+reserve family's static published requirement is replaced by the measured
+as-enforced hourly series — SENY 30-min steps 1,300/1,550/**1,800**/1,550/1,300
+(the static 1,300 MW was the overnight floor, 500 MW low every peak hour) with
+TSA zeroing 185/227/120 h/yr. Reserve prices are the validation target and are
+never read (loader raises on a missing file — no silent static fallback). The
+series is a documented LOWER BOUND in non-TSA hours pending the B1 formal
+request.
+
+**Result (`2026-07-10-nyiso-59-dynamic-rr` + `-ablation` twin, both registered;
+v2.4 lw basis).** C3a/C3b a metrics **wash** vs the keeper (−13.2/−15.7%,
+NRMSE 0.221/0.215 — all within ±0.2 pp of nyiso-56, same 3 ledgered price
+caveats); **C3c gains a real RT-like tail**: 2024 0→1 h (RT actual 12 — the
+mild year's first modeled scarcity hour), 2025 14→**25 h** (RT actual 42 —
+~26% of the residual RT gap closed; the 2.08× DA-expressible read is the same
+ledgered G-20a scoring-basis artifact as 2023's 23 h vs 1 h DA). C1 14/14, C2,
+C4, C6, C7 PASS; **C8 clean PASS** via the v2.2 grounded-above-budget
+escalation (ST_GAS 30.3/44.5/38.0% forced; D-4 off-window 0.0%, D-1 r
+0.948–0.956). C5a: the 2024 commercial-band caveat clears, 2025 reads +8.6%
+(commercial band). Determination **CALIBRATED-WITH-CAVEATS** — identical
+profile to nyiso-56 on a strictly more-measured config, so per rule 1 (and the
+nyiso-55/56 measured>static precedent + the session brief's promotion
+conditions: C1 all years, C7/C8 clean, C2-2025 + C6 intact) **nyiso-59 is
+promoted keeper**. Ablation twin: floors-off prices sit HIGHER (2023 simple
+mean 33.08 vs 29.49) and the 2023 tail max (1341 $/MWh) is present in both
+arms — the floors are commitment scaffolding; the tail is the measured
+requirement's reserve duals. DOF ledger carried from nyiso-56 + one
+measured-physical entry (n_residual unchanged at 5).
+
+**Open (carried).** (1) B1 residual: condition-varying requirement increments
+(largest-contingency, forecast-uncertainty) — formal NYISO request only; the
+2024 deep-tail undershoot (1 vs 12 RT h) sits here. (2) Iroquois Z2 winter hub
+(Ask-C). (3) Downstate import discipline (measured NYC locality import limit
+2,875 MW vs the 3,900 MW Dunwoodie-South estimate). (4) `nyiso-55-ldc-transport`
+(G-13 per-zone LDC transport gas) is still not folded into the keeper line —
+the natural next combination probe (nyiso-60 = nyiso-59 + LDC transport).
+
+**Housekeeping.** Deleted the superseded `dispatch-nyiso57-replays.yml`
+one-shot dispatcher + the dead `nyiso57_dynamic_rr_solve.log` stub (the local
+solve supersedes the CI path; register-pjm96-v1 precedent). **CI-race
+reconciliation:** while the local A/B was solving, a re-fired CI replay (the
+`eafa1c1` targeted-clean-regen fix) succeeded and published a duplicate
+registration pair straight to main (`2026-07-10-nyiso59-dynamic-rr[-ablation]`,
+no-dash ids) carrying only the recipe meta + an UNATTESTED NOT-YET
+metrics.json — no attestation, no legitimacy_diagnostics, and no committed
+parquets to ever generate them from. The complete locally-solved pair
+(dashed ids, this entry) supersedes it; the CI duplicates were pruned in the
+same commit (sidecars + runs payloads removed; the bundle dirs now carry the
+local solve's full artifact set). Recording-fidelity
+fix: `run_replay_bundle` now records `ablation_of` on zero-forcing twins, and
+`nyiso_dynamic_reserve_requirements` joined the `calibration_flags` allowlist
+(both bundles carry it in `scenario_config`; the allowlist entry is
+forward-only). **Rule-15 gap flagged, not repaired:** the 2026-07-09
+`nyiso58_tempderate` + `-ablation` bundles (temp-derate playbook lane, SUMMARY
+verdict "DO NOT PROMOTE" — downstate reserve-scarcity over-firing deepened by
+the frame-GT slope on an aeroderivative fleet) were never dashboard-registered
+and their parquets are gone; registering requires a full re-solve of a
+refuted-parametrization probe (the PJM temp-derate keeper was demoted on main
+under rule 24 the same week). Left for an owner call rather than burning a
+half-day solve; the committed bundle files (SUMMARY/metrics/legitimacy) remain
+the auditable record.
+
 ### 2026-07-07 — MISO — G-23 residual root-caused: 2025 import starvation = the seam's spot-spread clearing rule; measured Q-Q seam ladders land; KEEPER PROMOTED `2026-07-07-miso-46-seam-ladder` (owner decision) replaces `miso-45-cc-capacity`; coal C2 re-attributed to #1347
 
 The miso-45 keeper's re-attributed residual (C2 coal 2025 +22 TWh PRB in a

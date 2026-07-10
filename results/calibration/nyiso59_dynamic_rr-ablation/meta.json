@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-10T16:21:01",
+  "timestamp": "2026-07-10T16:16:24",
   "iso": "NYISO",
   "years": [
     2023,
@@ -199,6 +199,6 @@
     "eia923": "../_shared/NYISO/eia923-82522d4017c4.parquet",
     "campd": "../_shared/NYISO/campd-bd2b1674776e.parquet"
   },
-  "git_sha": "2ad8c26",
-  "highspy_version": "1.15.1"
+  "git_sha": "22ce4f6",
+  "highspy_version": "1.14.0"
 }

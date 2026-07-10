@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-10-nyiso59-dynamic-rr",
+  "run_id": "2026-07-10-nyiso-59-dynamic-rr",
   "iso": "NYISO",
-  "label": "nyiso59 dynamic rr",
+  "label": "nyiso 59 dynamic rr",
   "target_years": [
     2023,
     2024,
@@ -14,11 +14,17 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.4,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "1 criterion(s) within the commercial-grade band but outside target: C5a CO2 vs eGRID",
+    "3 ledgered measured-input caveat(s): C3a mean LMP, C3b price duration/shape, C3c price tail / scarcity (DA-expressible)",
+    "unscored criteria: storage, storage_shape"
   ],
-  "notes": [],
+  "notes": [
+    "C8 2023 ST_GAS: grounded above budget \u2014 30.3% forced (3.1436 of 10.3608 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.956 (\u22650.8) & off-peak CV ratio 0.688 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 ST_GAS: grounded above budget \u2014 44.5% forced (4.837 of 10.8727 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.948 (\u22650.8) & off-peak CV ratio 0.897 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 38.0% forced (5.0635 of 13.3304 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.951 (\u22650.8) & off-peak CV ratio 0.764 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -33,17 +39,20 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -69,22 +78,26 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3a mean LMP",
+      "C3b price duration/shape",
+      "C3c price tail / scarcity (DA-expressible)"
+    ],
     "commercial_band": [
       "C5a CO2 vs eGRID"
     ],
@@ -94,11 +107,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 3,
+    "scored": 10,
+    "target_grade": 6,
     "commercial_grade": 1,
-    "ledgered": 0,
-    "fails": 3
+    "ledgered": 3,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "NYISO",
