@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-10-miso-53-somcoal",
+ "label": "miso 53 somcoal",
+ "date": "2026-07-10",
+ "shorthand": "miso-53-somcoal",
+ "definition": "MISO 53 PROBE (not promoted; keeper decision with owner): the SOM-grounded coal offer REDESIGN the miso-52 residuals_note queued -- the gas-keyed sigmoid deep-discount premise adjudicated against the MISO IMM's measured conduct data and REPLACED for MISO. Evidence (new datatype som-competitive-conduct, freeze-tested): system price-cost mark-up +3.0%/-2.5% (2023/24) -- offers AT reference levels ~= SRMC; output gap de minimis (0.1%/0.06% of load; 2025 quarterlies 22-71 MW/hr); self-commitment is a COMMITMENT phenomenon (must-run status on 56%/53% of regulated coal starts, 'running them regardless of the price'), not an offer discount. Redesign: coal sigmoids OFF (committed/econ/peak bid full measured F923 delivered SRMC), MISO COAL_* bands SOM-grounded (sub-1.0 committed/econ_low -> 1.00, retiring the inherited ERCOT-fitted 0.77 econ_low leak; >=1.0 rising shape kept), per-plant CAMPD fuel-free _mustrun band KEPT as the self-commitment representation (rule 19; the SOM start-share cannot dimensionally size capacity tranches). RESULT: C4 dispatch-corr passes ALL SIX cells (coal r 0.925/0.930/0.900 -- the miso-50/51/52 C4-2024 FAIL is gone: near-cost coal load-follows), C5a CO2 passes all years (+0.6/-3.3/+4.3%), CC_REGULAR back in band (+3.96/+1.86 TWh vs -11/-17), COAL_PRB 2024 -0.53 TWh (was +25.1), 2023 +11.45 (was +29.9), coal family 2025 +14.6% (was +23.6%). C1 all 11/16, free 7/12 (miso-52: 9/16, 5/12); target-grade passes 4->5, fails 6->5. UNMASKED (rule 11, both pre-documented): CT_PEAKER over-run +16.9/+24.6 TWh (the de-leaked neutral-1.0 MISO CT committed hurdle -- its own comment predicted this; queued lane: CAMPD-grounded CT hurdle) and mean-LMP now OVERSHOOTS 2023/24 (+24.2%/+13.4%; 2025 -5.0% PASS) with C3b 0.311/0.304 (2025 0.102 PASS) -- the marginal setter lands on CT/coal-econ_high bands above the measured coal-SRMC anchor; the legacy >=1.0 band levels are the sanctioned rule-1 follow-up. COAL_BIT over-corrects low (-8.5/-11.5 TWh, loses mid-merit to unhurdled CTs). C3c 2024 PASSES (0.54x); 2023 33h vs 1h DA is the RT-like-dual representation gap (RT companion 30h); 2025 0.29x stays the RDC/ELMP scarcity lane. Determination NOT-YET (rubric v2.4). Adjudication record: docs/handoffs/miso-coal-offer-som-redesign-2026-07.md. Rule-20 zero-forcing ablation twin registered alongside; 2025 SOM publication is the rule-23 re-derive trigger.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-10-miso-53-somcoal.js",
+ "bundle": "results/calibration/miso53_som_coal_offers",
+ "ablation_twin": "2026-07-10-miso-53-somcoal-ablation",
+ "market_story": "Twin ~= main on every scored class (deltas <0.4 TWh): the SOM-grounded near-cost surface needs no merchant forcing. What real-market behaviour remains encoded: the fuel-free coal _mustrun band (kept in both runs) is the SOM-measured self-commitment -- regulated owners hold ~24% of coal capacity online regardless of price (must-run status on 53-56% of starts) -- and everything above it clears on measured delivered SRMC exactly as the IMM's mark-up ~ 0 conduct finding says it should."
+}
