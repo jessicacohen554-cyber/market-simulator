@@ -51,7 +51,6 @@ import urllib.request
 import zipfile
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -94,9 +93,9 @@ def _localize_daily(df: pd.DataFrame) -> pd.Series:
     (EDT) and the second as standard (EST).
     """
     ts = pd.to_datetime(df["Timestamp"], format="%m/%d/%Y %H:%M")
-    first = ~pd.Series(
-        list(zip(ts.values, df["Interface Name"].values))
-    ).duplicated(keep="first")
+    first = ~pd.Series(list(zip(ts.values, df["Interface Name"].values))).duplicated(
+        keep="first"
+    )
     ambiguous = first.to_numpy()
     return ts.dt.tz_localize(
         _TZ, ambiguous=ambiguous, nonexistent="raise"
