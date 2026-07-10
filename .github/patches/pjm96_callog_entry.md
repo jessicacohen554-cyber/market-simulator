@@ -9,10 +9,15 @@ exits the keeper the same way ERCOT's did." It does.
 × zone TMAX, class/zone map from the model's own PJM fleet build,
 dominant-group ≥90% purity guard; 2023+2024+2025):
 
-- **Envelope**: p98 output/reference is FLAT — 0.98–1.11× in every TMAX bin
-  up to 36–40 °C for CC_REGULAR (160 units), CT_PEAKER (240–246), ST_GAS
-  (22), CC_CHP (16–17), all three years, where the raw literature curves
-  predict 0.84–0.95.
+- **Envelope**: p98 output/reference is FLAT — 0.975–1.11× in every TMAX
+  bin up to 36–40 °C for CC_REGULAR (160 units), CT_PEAKER (223–246),
+  ST_GAS (20–22), CC_CHP (16–17), all three years, where the raw literature
+  curves predict 0.84–0.95. (One cell excluded as a small-sample artifact:
+  ST_GAS 2025 36–40 °C reads 5.05, a tiny-reference-unit ratio — above 1
+  either way. Merge-audit correction 2026-07-10: the envelope floor is the
+  CC_CHP 2023 0.975, and the CT/ST_GAS unit counts start lower in 2023 than
+  the 240–246/22 first written here; probe re-run reproduced every headline
+  number exactly.)
 - **Lower bound** (production ≤ capability, no at-max assumption):
   CC_REGULAR median max-output/net-summer = 1.00 at TMAX ≥34 °C with 78–89%
   of capacity proven ≥0.95× — the fleet demonstrates its rating on the exact
