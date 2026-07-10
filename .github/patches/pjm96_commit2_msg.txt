@@ -1,0 +1,40 @@
+governance(pjm): keeper DEMOTED pjm-95 -> pjm-94 — own-fleet probe refutes the temp-derate slopes (rule 24)
+
+The pjm-95 promotion carried an open_validation debt: port the ERCOT
+temp-derate closure test to PJM's own fleet; "if PJM's fleet refutes the
+slopes the same way, this mechanism exits the keeper the same way ERCOT's
+did." It does. scripts/probes/_pjm_temp_capability_envelope.py (PJM CAMPD
+unit gross load x zone TMAX, class/zone map from the model's own fleet
+build, dominant-group >=90% purity guard; 2023-2025):
+
+- Envelope FLAT: p98 output/reference 0.98-1.11x in every TMAX bin up to
+  36-40C for CC_REGULAR/CT_PEAKER/ST_GAS/CC_CHP, all three years, where the
+  raw literature curves predict 0.84-0.95.
+- Lower bound (production <= capability, assumption-free): CC_REGULAR
+  median max-output/net-summer 1.00 at TMAX>=34C, 78-89% of capacity proven
+  >=0.95x — the fleet demonstrates its rating on the exact hours the derate
+  cuts it.
+- Max-incentive scarcity-hour slopes (RT>$200: 5,147 plant-hours; RT>$100:
+  25,093): CC_REGULAR -0.10/-0.15 %/degC vs model -0.76; CT_PEAKER
+  +0.16/+0.27 vs -1.26; CC_CHP +0.58 vs -0.76. Only ST_GAS reads near-model
+  (-0.67 vs -0.54, <2%-of-load class, envelope nonetheless flat).
+
+The pjm-95 C3b-2025 PASS / C3c 0h->19h tail gain were bought by deleting
+capability the fleet measurably has (rule 1: right number, unreal
+mechanism). Keeper reverts to 2026-07-09-pjm-94-stgas-netload; honest
+re-opened state: C3b-2025 NRMSE 0.217 FAIL + C3c-2025 0h/51h = the G-20
+Phase-2 scarcity-structure gap.
+
+Recorded in: pjm-95 attestation (open_validation RESOLVED), pjm-95/pjm-94
+registry sidecars, keepers.json (per-ISO map + keepers list), status.js
+(rebuilt server-side by this workflow), the calibration-log entry (rode the
+companion code commit), audit_keepers --iso PJM PASS (E7 newer-run warning =
+the demoted pjm-95, explained in the sidecars). Follow-up flagged: MISO's
+miso-49-tempderate keeper predates both fleet refutations — owes its own
+rule-24 check.
+
+Applied server-side from .github/patches/2026_07_10_pjm96_registry_edits.py
+(apply-pjm-seam-ladder workflow).
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Q2mujpsLrigW5AZXBP1md3
