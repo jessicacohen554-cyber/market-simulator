@@ -1458,14 +1458,96 @@ def measured_seam_import_envelope(
     return out or None
 
 
+# EIA-930 long-format (API) region ``type`` code -> wide extract column, for
+# the measured NaN-window fill below (same map as scripts/convert_eia930.py).
+_EIA930_LONG_REGION_COLUMNS: dict[str, str] = {
+    "D": "Demand",
+    "DF": "Demand forecast",
+    "NG": "Net generation",
+    "TI": "Total interchange",
+}
+
+
+def _fill_hourly_frame_from_long(frame: pd.DataFrame, ba_code: str) -> pd.DataFrame:
+    """Fill a wide hourly frame's NaN hours from the BA's long API series.
+
+    The hand-curated ``<BA> hourly`` extract can carry NaN windows where EIA's
+    bulk download lagged — e.g. the ERCO extract's 48-hour 2025-12-04/05 hole,
+    two real winter-peak days (measured demand tops 58.4 GW) that the
+    per-loader linear interpolation would otherwise bridge as a flat ~48 GW
+    valley, fabricating two days of demand and benchmark generation. The
+    EIA-930 API long-format uploads of the SAME series
+    (``<BA>_region.parquet`` / ``<BA>_fueltype.parquet``,
+    ``scripts/fetch_eia930_long.py``) were fetched after EIA backfilled the
+    window, so the measured hours exist on disk. Fill NaN hours from those
+    measured series BEFORE the per-loader interpolation touches them — a
+    measured-input repair that regenerates for any future gap (no per-window
+    registry), never modifying the immutable extract on disk. Hours absent
+    from BOTH sources stay NaN and fall through to the loaders'
+    isolated-hour interpolation (or, for the battery series, their
+    NaN-preserving not-yet-reporting semantics: the API carries no BAT/UES
+    rows before a BA starts filing them, so the reindex leaves those NaN).
+    """
+    value_cols = [
+        c
+        for c in frame.columns
+        if c in _EIA930_LONG_REGION_COLUMNS.values() or c.startswith("NG: ")
+    ]
+    if not frame[value_cols].isna().to_numpy().any():
+        return frame
+    # The extract's UTC clock is tz-naive; the API ``period`` is tz-aware UTC.
+    utc = pd.DatetimeIndex(frame["UTC time"])
+    if utc.tz is None:
+        utc = utc.tz_localize("UTC")
+    long_series: dict[str, pd.Series] = {}
+    region_path = RAW_DIR / f"{ba_code}_region.parquet"
+    if region_path.exists():
+        piv = pd.read_parquet(region_path).pivot_table(
+            index="period", columns="type", values="value_mwh", aggfunc="first"
+        )
+        for code, col in _EIA930_LONG_REGION_COLUMNS.items():
+            if code in piv.columns:
+                long_series[col] = piv[code]
+    fuel_path = RAW_DIR / f"{ba_code}_fueltype.parquet"
+    if fuel_path.exists():
+        piv = pd.read_parquet(fuel_path).pivot_table(
+            index="period", columns="fueltype", values="value_mwh", aggfunc="first"
+        )
+        for code in piv.columns:
+            long_series[f"NG: {code}"] = piv[code]
+    if not long_series:
+        return frame
+    frame = frame.copy()
+    for col, series in long_series.items():
+        if col not in frame.columns:
+            continue
+        vals = frame[col].to_numpy(dtype=float)
+        gap = np.isnan(vals)
+        if not gap.any():
+            continue
+        fill = series.reindex(utc).to_numpy(dtype=float)
+        vals[gap] = fill[gap]
+        frame[col] = vals
+    return frame
+
+
 @lru_cache(maxsize=8)
 def _ercot_hourly_frame(year: int) -> pd.DataFrame | None:
     """Return the EIA-930 ``ERCO hourly`` rows for one calendar year.
 
     Thin ERCOT-specific wrapper over :func:`_eia_hourly_frame` for the
-    demand/interchange, fossil and nuclear paths that are ERCOT-only today.
+    demand/interchange, fossil and nuclear paths that are ERCOT-only today,
+    with NaN windows filled from the measured long-format API series
+    (:func:`_fill_hourly_frame_from_long`) so a multi-day extract hole is
+    repaired with measured data rather than bridged by interpolation.
+    ERCOT-only for now: other ISOs' committed benchmarks were rendered off
+    the un-filled extracts, so generalizing the fill is a deliberate
+    per-ISO re-render decision, not a silent side effect.
     """
-    return _eia_hourly_frame("ERCO", year)
+    frame = _eia_hourly_frame("ERCO", year)
+    if frame is None:
+        return None
+    return _fill_hourly_frame_from_long(frame, "ERCO")
 
 
 def _load_ercot_hourly(year: int) -> tuple[np.ndarray, np.ndarray] | None:
@@ -1877,6 +1959,32 @@ def load_ercot_nuclear_gen(year: int) -> np.ndarray | None:
     if frame is None or "NG: NUC" not in frame.columns:
         return None
     series = frame["NG: NUC"].interpolate().bfill().ffill()
+    if series.isna().any():
+        return None
+    return series.to_numpy(dtype=float)
+
+
+def load_ercot_other_gen(year: int) -> np.ndarray | None:
+    """Return ERCOT hourly "Other Fuel Sources" net generation (MW) for a year.
+
+    Reads the EIA-930 ``ERCO hourly`` ``NG: OTH`` series on the same
+    chronological clock as the other benchmark series. Threaded into the
+    calibration bundle so the benchmark can tell how much other/biomass
+    generation ERCO reports OUTSIDE its "Natural Gas" cell: since the
+    Nov-2024 EIA-930 storage breakout moved battery discharge out of OTH
+    (into BAT/UES), ERCO's Other series carries roughly biomass alone
+    (~0.26 TWh in 2025) while EIA-923 books ~1.1 TWh of OTHER + biomass grid
+    generation — the balance sits inside ``NG: NG``. Carrying the measured
+    Other series lets the gas fold-in deflation subtract only the
+    genuinely-folded portion (``render_calibration_html._gas_foldin_deflation``
+    and the C2 family fallback in ``calibration_verdict.score_sysvol``)
+    instead of scoring the model's gas fleet against gas + other. Returns
+    ``None`` when the file, the year, or the column is unavailable.
+    """
+    frame = _ercot_hourly_frame(year)
+    if frame is None or "NG: OTH" not in frame.columns:
+        return None
+    series = frame["NG: OTH"].interpolate().bfill().ffill()
     if series.isna().any():
         return None
     return series.to_numpy(dtype=float)
