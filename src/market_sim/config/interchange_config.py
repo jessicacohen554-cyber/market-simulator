@@ -126,14 +126,15 @@ IMPORT_TRANCHES: dict[str, list[tuple[str, float, float]]] = {
         ("DSW_CT", 2200.0, 110.0),
         ("WECC_scarcity", 3000.0, 180.0),
     ],
-    # PJM seam (STATIC-FITTED-PENDING-MEASURED, gap register G-26, issue
-    # #1350 / audit C-6): these two scarcity-rung tranches are bare literals
-    # with no cited primary source and no by-year entry — unlike the
-    # MISO_SEAM_LADDER_BY_YEAR / NEISO ladders below, which are measured Q-Q
-    # derivations coupling EIA-930 seam flow to Day-Ahead hub LMP
-    # (scripts/derive_miso_seam_ladders.py / derive_neiso_import_tranches.py
-    # are the template for a future PJM re-derivation). Labelled per rule
-    # 24/rule 11 honesty; values unchanged.
+    # PJM STATIC tranches (STATIC-FITTED-PENDING-MEASURED, gap register G-26,
+    # issue #1350 / audit C-6): these two scarcity-rung tranches are bare
+    # literals with no cited primary source and no by-year entry. They serve
+    # ONLY the static-node path (reference_price_interface off) — the priced
+    # reference seam now has its own measured Q-Q derivation,
+    # PJM_SEAM_LADDER_BY_YEAR below (scripts/derive_pjm_seam_ladders.py,
+    # 2026-07-10, closing C-6 for PJM's priced path the way
+    # MISO_SEAM_LADDER_BY_YEAR / the NEISO ladders closed theirs). Labelled
+    # per rule 24/rule 11 honesty; values unchanged.
     "PJM": [
         ("import_scarcity_1", 1000.0, 46.0),
         ("import_scarcity_2", 3000.0, 60.0),
@@ -585,6 +586,42 @@ MISO_SEAM_DIBA: dict[str, tuple[str, ...]] = {
     "South": ("SOCO", "TVA", "AECI", "LGEE", "SIKE"),
 }
 
+# PJM tie line (DataMiner act_sch_interchange ``tie_line``) → priced seam.
+# The PJM counterpart of MISO_SEAM_DIBA, at tie level because PJM's canonical
+# measured boundary is its own settlement-grade tie-line file
+# (data/raw/iso-specific-transmission/PJM_{year}_import_export_act_sch_
+# interchange.csv — the file behind eia_loader.pjm_net_interchange and the
+# pjm_seam_flow_limit envelopes), not the EIA-930 BA-to-BA product (whose PJM
+# submission disagrees with both this meter and the counterparty meters on
+# the MISO seam; scripts/derive_pjm_seam_ladders.py BOUNDARY NOTE). Each tie
+# maps to the neighbor BA it physically interconnects: the NJ–NY merchant
+# HVDC ties (Neptune / Hudson / Linden) pool into the NYISO seam; Duke
+# Progress East/West pool with Duke Carolinas; every MISO-member tie —
+# including the MECS Michigan interface and the OVEC / LAGN dynamic
+# schedules — pools into the MISO seam.
+PJM_SEAM_TIE: dict[str, tuple[str, ...]] = {
+    "MISO": (
+        "ALTE",
+        "ALTW",
+        "AMIL",
+        "CIN",
+        "CWLP",
+        "IPL",
+        "LAGN",
+        "MDU",
+        "MEC",
+        "MECS",
+        "NIPS",
+        "OVEC",
+        "SIGE",
+        "WEC",
+    ),
+    "NYISO": ("NYIS", "NEPT", "HUDS", "LIND"),
+    "Carolinas": ("DUK", "CPLE", "CPLW"),
+    "TVA": ("TVA",),
+    "LGEE": ("LGEE",),
+}
+
 # PJM's MISO-facing western border heat rates (for border_anchor re-anchor).
 MISO_PJM_BORDER_HR_BY_YEAR: dict[int, float] = {
     2023: 10.99,
@@ -682,6 +719,134 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
         "South": {
             "import": (68.46, 87.90, 121.12, 155.42, 258.05, 327.25, 433.12, 433.12),
             "export": (53.00, 44.14, 37.04, 32.38, 29.43, 26.61, 24.29, 22.35),
+        },
+    },
+}
+
+
+# PJM per-seam measured band-price ladders (the MISO/NEISO audit-C-6 pattern
+# applied to PJM; pjm-95 C1 root-cause lead "2023 interchange duration miss"):
+# the revealed seam supply curve, derived by scripts/derive_pjm_seam_ladders.py
+# from two measured sources — PJM's settlement-grade tie-line interchange
+# (data/raw/iso-specific-transmission/PJM_{year}_import_export_act_sch_
+# interchange.csv, pooled onto the five priced seams by PJM_SEAM_TIE) Q-Q
+# duration-coupled with the measured PJM Day-Ahead system LMP
+# (actual_lmp_hourly_PJM.parquet; external transactions schedule in the DA
+# market). Band k of a seam's import side is priced at the DA quantile whose
+# exceedance duration equals the measured duration of the seam flowing deeper
+# than the band's midpoint (export side mirrored), on the existing
+# SEAM_FLOW_TRANCHES (8) equal-band grid of each seam's interface limit —
+# capacities and the measured per-border (month x hour-of-day) deliverability
+# envelopes (pjm_seam_flow_limit) are untouched; ONLY the price ladder is
+# measured.
+#
+# Why (rule #1 — right market structure): the measured PJM interchange is
+# direction-STRUCTURAL, not spread-driven — PJM exports to MISO/NYISO in
+# ~97-100% of ALL hours (2023 import hours 0.4%/0.1%) while importing from
+# the south (Carolinas/TVA/LGEE, 77-97% of hours): firm PTP service,
+# long-term schedules and JOA entitlements revealed only statistically. The
+# hurdle-gated gas x HR x load-shape seam clears on the hourly spot spread
+# and structurally inverts that record (pjm-95 2023: imports in 46% of hours
+# vs measured ~2%, diurnal corr -0.50 — phantom imports that displace
+# CC_REGULAR dispatch, the C1 FAIL). The ladder encodes the revealed
+# willingness-to-flow as a rising supply curve the LP still clears
+# ECONOMICALLY hour by hour against its own internal price — nothing is
+# forced: at price extremes even the base band backs off, and flows respond
+# to changed model conditions. Import rungs at the sample extreme (e.g.
+# $308.05 = the 2023 DA max) are bands deeper than the measured record's
+# deepest flow — effectively never-clearing scarcity rungs, kept so the
+# capability exists at the measured price of using it.
+#
+# Identification (rule 23): measured-behaviour, frozen formula, zero fitted
+# parameters — re-derives ONLY when the source data extends (a new tie-line /
+# settlement year). Forward story (rules 12/13): the pooled 2023-2025 ladder
+# printed by the derive script is the multi-year revealed seam structure
+# (persistent firm-transfer base + arbitrage increment) that regenerates as
+# the measured record extends; forecast years keep the gas-elastic
+# reference-price formula (the same two-track design as hr_by_year).
+#
+# Boundary reconciliations (rule 14, documented in the derive script):
+# the tie-line meter is the chosen boundary (PJM's EIA-930 submission
+# disagrees with it AND with the counterparty meters on the MISO seam —
+# 56.6 vs 35.3 vs MISO's own 33.5 TWh in 2023; the tie file is the boundary
+# the model already uses in pjm_net_interchange and the seam envelopes);
+# offline P9 reproduces every seam's measured volume within ±0.06 TWh and
+# the import-hour shares (MISO 0-1% vs 0-2% measured). Same-seam no-wash
+# ordering holds naturally in all years (no clamp fired); cross-seam
+# counterflow (import TVA while exporting MISO) is real wheel-through the
+# multi-link external node carries, bounded by the measured envelopes.
+#
+# Applied by transmission.inject_pjm_seam_ladder_prices under
+# ScenarioConfig.pjm_seam_measured_ladder (default off, backcast years below
+# only); displaces the firm scheduled-export floor
+# (inject_reference_price_firm_export) on the years it covers — the firm
+# base the floor pinned is exactly the deep-duration structure the ladder
+# prices (alternatives, never stacked; rule 19).
+PJM_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
+    2023: {
+        "MISO": {
+            "import": (140.34, 308.05, 308.05, 308.05, 308.05, 308.05, 308.05, 308.05),
+            "export": (72.78, 52.34, 39.12, 31.75, 26.75, 22.22, 18.38, 14.67),
+        },
+        "NYISO": {
+            "import": (308.05, 308.05, 308.05, 308.05, 308.05, 308.05, 308.05, 308.05),
+            "export": (86.28, 48.61, 36.0, 31.11, 27.2, 22.58, 18.08, 13.0),
+        },
+        "Carolinas": {
+            "import": (20.51, 24.1, 28.52, 34.07, 41.91, 57.03, 78.04, 260.2),
+            "export": (17.62, 15.32, 13.65, 12.06, 10.39, 9.88, 7.68, 7.68),
+        },
+        "TVA": {
+            "import": (15.49, 18.43, 22.09, 26.85, 32.19, 38.54, 49.07, 69.66),
+            "export": (13.54, 12.17, 10.95, 10.29, 9.08, 7.68, 7.68, 7.68),
+        },
+        "LGEE": {
+            "import": (21.52, 25.79, 30.44, 36.2, 43.2, 51.02, 61.99, 72.81),
+            "export": (17.96, 15.18, 13.58, 11.8, 9.88, 7.68, 7.68, 7.68),
+        },
+    },
+    2024: {
+        "MISO": {
+            "import": (129.46, 179.14, 276.93, 276.93, 276.93, 276.93, 276.93, 276.93),
+            "export": (62.02, 41.54, 31.09, 24.99, 20.26, 16.13, 12.72, 10.47),
+        },
+        "NYISO": {
+            "import": (276.93, 276.93, 276.93, 276.93, 276.93, 276.93, 276.93, 276.93),
+            "export": (159.98, 95.88, 52.89, 37.29, 28.63, 21.6, 15.5, 9.73),
+        },
+        "Carolinas": {
+            "import": (17.7, 20.81, 24.67, 30.1, 39.13, 55.25, 94.3, 148.67),
+            "export": (15.55, 13.75, 12.5, 11.41, 10.5, 9.59, 8.99, 8.56),
+        },
+        "TVA": {
+            "import": (14.75, 17.31, 20.98, 25.91, 33.2, 43.39, 65.02, 126.63),
+            "export": (12.68, 11.45, 10.6, 9.57, 8.65, 7.77, 7.75, 7.75),
+        },
+        "LGEE": {
+            "import": (19.08, 23.53, 28.98, 36.39, 46.87, 59.61, 76.77, 111.23),
+            "export": (15.75, 12.67, 10.63, 9.22, 8.65, 7.75, 7.75, 7.75),
+        },
+    },
+    2025: {
+        "MISO": {
+            "import": (166.87, 384.6, 502.65, 502.65, 502.65, 502.65, 502.65, 502.65),
+            "export": (84.96, 55.77, 40.86, 32.7, 27.02, 22.09, 17.85, 14.46),
+        },
+        "NYISO": {
+            "import": (502.65, 502.65, 502.65, 502.65, 502.65, 502.65, 502.65, 502.65),
+            "export": (381.93, 178.51, 92.15, 62.13, 44.27, 33.17, 26.61, 19.64),
+        },
+        "Carolinas": {
+            "import": (29.92, 33.71, 38.15, 43.53, 49.96, 58.26, 71.37, 102.29),
+            "export": (25.95, 22.74, 20.18, 18.02, 16.13, 15.08, 13.65, 13.0),
+        },
+        "TVA": {
+            "import": (23.84, 28.08, 32.96, 39.08, 46.77, 58.18, 80.86, 126.23),
+            "export": (21.09, 18.25, 16.14, 15.08, 13.76, 13.26, 11.65, 11.62),
+        },
+        "LGEE": {
+            "import": (28.93, 34.09, 40.64, 49.81, 63.91, 86.47, 129.98, 259.9),
+            "export": (24.18, 20.22, 17.04, 15.08, 13.65, 11.97, 11.88, 11.88),
         },
     },
 }

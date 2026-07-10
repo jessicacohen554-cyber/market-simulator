@@ -35,7 +35,9 @@ The MISO/NEISO measured-ladder pattern applied to PJM:
 - scripts/probes/_pjm_temp_capability_envelope.py + the calibration-log
   entry for this session (the demotion's evidence; the registry/attestation
   edits land in the companion commit).
-- .github/workflows/fetch-pjm-interchange.yml — runner intake for the
+- companion (rode the direct App-auth push, not this applied commit — the
+  Actions token cannot create workflow files):
+  .github/workflows/fetch-pjm-interchange.yml, the runner intake for the
   EIA-930 PJM cross-check parquet (the NYISO intake pattern; the ladder
   itself derives from the committed tie-line CSVs, and the derive script
   skips the cross-check gracefully while the parquet is absent).
