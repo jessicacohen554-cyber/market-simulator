@@ -229,6 +229,14 @@ def _fetch_page(url: str, *, retries: int = 4, sleep_s: float = 1.5) -> list[dic
     no rows — e.g. entirely before a feed's retention floor, or not yet
     published), both return an empty list rather than raising: "no data for
     this window" is a legitimate, expected outcome here, not an error.
+
+    HTTP 400 is treated the same way (logged, not raised): confirmed live
+    2026-07-10 that the ``ancillary_services`` feed returns 400 (not an empty
+    200) for a 2018 full-year window even though its own ``/metadata``
+    advertises ``firstAvailable: 2012-10-01`` — DataMiner2 is evidently
+    inconsistent across feeds about how it signals "before this feed's real
+    data starts." Logged distinctly from 404 so a genuinely malformed request
+    is still visible in the run log, not silently indistinguishable.
     """
     delay = sleep_s
     for attempt in range(retries + 1):
@@ -249,6 +257,9 @@ def _fetch_page(url: str, *, retries: int = 4, sleep_s: float = 1.5) -> list[dic
             return rows
         except urllib.error.HTTPError as exc:
             if exc.code == 404:
+                return []
+            if exc.code == 400:
+                print(f"    HTTP 400 — treating as no data for this window ({url})")
                 return []
             if exc.code in (429, 503) and attempt < retries:
                 print(f"    HTTP {exc.code} — back-off {delay:.0f}s …")
@@ -488,25 +499,44 @@ def main() -> None:
 
     OUT_DIR.mkdir(parents=True, exist_ok=True)
 
+    # Each (feed, year) fetch is independent; one unexpected failure (a real
+    # bug, a transient outage that exhausted retries, ...) must not discard
+    # every other (feed, year) already written to disk in this run — so
+    # failures are logged and skipped rather than aborting the whole script.
+    failures: list[str] = []
     for feed_key in args.feeds:
         for year in sorted(args.years):
-            fetch_feed_year(
-                feed_key,
-                year,
-                h1_only=False,
-                sleep_s=args.sleep,
-                retries=args.retries,
-                force=args.force,
-            )
+            try:
+                fetch_feed_year(
+                    feed_key,
+                    year,
+                    h1_only=False,
+                    sleep_s=args.sleep,
+                    retries=args.retries,
+                    force=args.force,
+                )
+            except Exception as exc:  # noqa: BLE001 - log and continue, see above
+                print(f"[{feed_key} {year}] FAILED unexpectedly: {exc}")
+                failures.append(f"{feed_key} {year}: {exc}")
         if args.h1_2026:
-            fetch_feed_year(
-                feed_key,
-                2026,
-                h1_only=True,
-                sleep_s=args.sleep,
-                retries=args.retries,
-                force=args.force,
-            )
+            try:
+                fetch_feed_year(
+                    feed_key,
+                    2026,
+                    h1_only=True,
+                    sleep_s=args.sleep,
+                    retries=args.retries,
+                    force=args.force,
+                )
+            except Exception as exc:  # noqa: BLE001 - log and continue, see above
+                print(f"[{feed_key} 2026] FAILED unexpectedly: {exc}")
+                failures.append(f"{feed_key} 2026: {exc}")
+
+    if failures:
+        print(f"\n{len(failures)} (feed, year) fetch(es) failed unexpectedly:")
+        for f in failures:
+            print(f"  - {f}")
+        sys.exit(1)
 
 
 if __name__ == "__main__":
