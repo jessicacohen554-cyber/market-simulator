@@ -39,6 +39,15 @@ name: holdout-intake-pjm-as
 # authorized (unlike holdout-intake-neiso-2022.yml, which gated a validation-
 # tier *solve/score* on a calibration-complete marker; nothing here touches
 # that marker or any dashboard/registry file).
+#
+# Fixed 2026-07-10 (first run): reserve_market_results fetched cleanly for
+# 2018-2022 + H1-2026, but the ancillary_services feed returned HTTP 400 (not
+# an empty 200) for the 2018 window even though its own /metadata advertises
+# firstAvailable 2012-10-01 -- DataMiner2 is inconsistent across feeds about
+# how it signals "before this feed's real data starts." fetch_pjm_as.py now
+# treats HTTP 400 the same as 404 (logged, not raised), and the per-(feed,
+# year) fetch loop no longer lets one unexpected failure discard every other
+# feed/year already written in the same run.
 
 on:
   push:
@@ -202,7 +211,7 @@ jobs:
           owner authorization (CLAUDE.md rule 22) -- not a solve, not a score,
           not a dashboard registration."
           for i in 1 2 3 4; do
-            git pull --rebase origin "${{ github.ref_name }}" && \
+            git pull --rebase --autostash origin "${{ github.ref_name }}" && \
             git push origin "HEAD:${{ github.ref_name }}" && exit 0
             sleep $((i * 5))
           done

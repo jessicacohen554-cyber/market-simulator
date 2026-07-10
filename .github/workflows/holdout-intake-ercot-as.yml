@@ -29,6 +29,13 @@ name: Holdout intake - ERCOT ancillary services 2018-2022
 # (b) a future session is separately authorized to add credentialed
 # data.ercot.com/api.ercot.com support (currently declined by the repo owner
 # -- see docs/handoffs/ercot-as-coopt-plan-2026-07.md §WS-E).
+#
+# Fixed 2026-07-10 (first run): fetch + build succeeded (and found real 2022
+# partial coverage via already-committed Gen Resource Data files), but the
+# no-LP verification step crashed on a pyarrow API mismatch --
+# `pf.schema_arrow` fields expose `.type`, not `.physical_type` (that
+# attribute belongs to the low-level `pf.schema` Parquet schema, a different
+# object). Fixed the attribute name; no other logic changed.
 
 on:
   push:
@@ -116,7 +123,7 @@ jobs:
 
           def schema_of(path):
               pf = pq.ParquetFile(path)
-              return {f.name: str(f.physical_type) for f in pf.schema_arrow}
+              return {f.name: str(f.type) for f in pf.schema_arrow}
 
           problems = []
           for stem in ("as_by_restype_hourly", "as_up_mw"):
@@ -189,7 +196,7 @@ jobs:
           documented retention wall -- see the workflow file header and
           scripts/fetch_ercot_as_reports.py's module docstring."
           for i in 1 2 3 4; do
-            git pull --rebase origin "${{ github.ref_name }}" && \
+            git pull --rebase --autostash origin "${{ github.ref_name }}" && \
             git push origin "HEAD:${{ github.ref_name }}" && exit 0
             sleep $((i * 5))
           done
