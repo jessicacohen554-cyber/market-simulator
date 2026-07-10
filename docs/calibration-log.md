@@ -8885,3 +8885,59 @@ an owner decision — LOYO within 2023–2025 required before any promotion
 **Holdouts.** No solve, score, or intake outside 2023–2025 (rule 22); the
 intake downloader defaults to train years only; measured reserve PRICES
 never read (validation-only); no tunable changed (rules 13/21/23).
+## 2026-07-10 — MISO-53: SOM conduct adjudication — the coal deep-discount premise REFUTED; sigmoid REPLACED for MISO by near-cost offers (probe registered; keeper stays miso-49 pending owner)
+
+**The root-cause session miso-52 queued.** The MISO coal over-run (COAL_PRB
++30/+25/+26, COAL_BIT +14/+15/+18 TWh, CC_REGULAR mirror-deficit; robust to
+five interventions and 0.1–0.2 % forced) had one structural suspect left: the
+gas-keyed sigmoid's premise that contracted coal discounts deeply below
+delivered cost to hold merit. Adjudicated against the MISO IMM's own measured
+conduct data, intaken this session as datatype **`som-competitive-conduct`**
+(2023/2024 SOM Table 7 + Competitive Assessment, 2025 IMM quarterly output
+gaps; PDFs `data/raw/MISO/`; freeze test; train-window years only per rule 22
+— the SOMs' 2018-2022 columns and the H1-2026-spanning Winter-2026 quarterly
+deliberately NOT transcribed).
+
+**The measured answer:** MISO offers sit AT cost — system price-cost mark-up
++3.0 % (2023) / −2.5 % (2024), output gap "effectively de minimis" (0.1 % /
+0.06 % of load; 22–71 MW/hr through 2025). Self-commitment is a COMMITMENT
+phenomenon — must-run status on 56 %/53 % of regulated coal starts ("running
+them regardless of the price"; merchants 93 %/74 % economic) — not an energy-
+offer discount. So the deep-discount premise is the wrong market structure
+for 2023-2025 MISO: **mechanism replaced, not re-parameterized** (rule 1).
+
+**miso-53 (`2026-07-10-miso-53-somcoal`, + rule-20 ablation twin):** coal
+sigmoids OFF for MISO (committed/econ/peak bid full measured F923 delivered
+SRMC — the SOM-measured discount depth, ~none); MISO COAL_* offer-curve bands
+SOM-grounded in `_MISO_OFFER_CURVE` (sub-1.0 committed/econ_low → 1.00,
+retiring the inherited ERCOT-fitted 0.77 econ_low, the rule-25 leak; ≥1.0
+rising shape kept byte-identical); per-plant CAMPD fuel-free `_mustrun` band
+KEPT as the self-commitment representation (rule 19; a start-share cannot
+dimensionally size capacity tranches — adjudication in
+`docs/handoffs/miso-coal-offer-som-redesign-2026-07.md` §3).
+
+**Result (NOT-YET, rubric v2.4; fails 6→5, target-grade 4→5):** C4
+dispatch-corr passes ALL SIX cells (coal r 0.925/0.930/0.900 — the
+miso-50/51/52 C4-2024 FAIL is gone: near-cost coal load-follows); C5a CO₂
+passes all years; CC_REGULAR back in band (+3.96/+1.86 TWh); COAL_PRB 2024
+−0.53 TWh (was +25.1), 2023 +11.45 (was +29.9); coal family 2025 +14.6 %
+(was +23.6 %); C1 all 11/16 · free 7/12 (was 9/16 · 5/12). **Unmasked
+compensating errors (rule 11, both pre-documented):** CT_PEAKER over-run
++16.9/+24.6 TWh — the de-leaked neutral-1.0 MISO CT committed hurdle, whose
+de-leak comment predicted exactly this; queued lane: CAMPD-grounded MISO CT
+hurdle/econ ramp — and mean-LMP now OVERSHOOTS 2023/24 (+24.2 %/+13.4 %;
+2025 −5.0 % PASS, C3b 0.102 PASS) — the marginal setter lands on
+CT/coal-econ_high bands above the measured coal-SRMC anchor, so the legacy
+≥1.0 band levels are the next sanctioned rule-1 offer-curve step. COAL_BIT
+over-corrects low (−8.5/−11.5 TWh, mid-merit lost to unhurdled CTs). C3c
+2024 passes (0.54×); 2023's 33 h vs 1 h DA is the RT-like-dual
+representation gap (RT companion 30 h); 2025 0.29× stays the RDC/ELMP lane.
+
+**Recommendation to owner: this is the most structurally faithful MISO
+surface to date** (offers grounded end-to-end in the ISO's own measured
+conduct; zero new parameters, n_scalars 0; DOF ledger drops 10 residual
+scalars). Keeper decision deferred to owner per instruction — the two
+unmasked residual owners (CT hurdle, marginal-band levels) are honest,
+pre-documented lanes, not regressions of the redesign. Retention: miso-40
+band-deleak displaced (16th main). 2025 SOM publication is the rule-23
+re-derive trigger for the carried 2024 mark-up anchor.
