@@ -8793,3 +8793,95 @@ sidecar; separate commit). The ercot54 diag bundle (`ercot54_diag_2024`,
 tariff parameters untouched (rule 26); no offer-curve, sigmoid, or tunable
 changed (rules 13/21/23); the bench change is a measured-input placement
 correction through the standing v2.4 pipeline, not a basis redesign.
+
+## 2026-07-10 — NEISO winter scarcity charter Limb A: measured dynamic reserve requirements (`neiso-57`) — the co-opt ENGAGES; C3c seasonal attribution corrected; gates still short
+
+Charter: close the two ledgered NEISO caveats (C3c 2025 price tail, C5b 2025
+storage throughput) via the two remaining admissible directions; Limb A =
+measured as-enforced ISO-NE hourly reserve requirements, the exact analogue
+of NYISO's `nyiso_dynamic_reserve_requirements` (#1344). (The interrupted
+predecessor session's work never reached the remote and was rebuilt from
+scratch this session.)
+
+**Intake.** ISO-NE ISO Express "Hourly Reserve Requirements" report
+(`ancillary-hourly-rr`; CSV endpoint
+`iso-ne.com/transform/csv/hourlyrequirements`, isox_token cookie bootstrap),
+2023–2025 in 75 fixed 15-day window CSVs (gitignored; committed downloader
+`scripts/fetch_neiso_reserve_requirements.py`). New generic
+`reserve-requirements` clean datatype (schema
+`data/dictionary/schema/reserve-requirements.schema.yaml`, per-ISO registry
+`scripts/lib/reserve_requirements/`, curation
+`scripts/curate_reserve_requirements.py`, NEISO registered first): tidy
+(iso, location, product, utc-hour) rows, hour-ending labels aligned to true
+UTC hours (DST-aware; fall-back `02` repeat and spring-forward skip
+generated, never special-cased), single-hour publication holes step-filled
+under a 72 h/yr budget (`eia_loader` precedent; actual 1–2 h/yr). Locations
+7000=ROS (system — the model input), 7001–7003 SWCT/CT/NEMABSTN (local
+30-min only, carried in clean, unmapped). Loader
+`data.neiso_reserve_requirements`; flag `neiso_dynamic_reserve_requirements`
+(default-off, NEISO-only, hard-error on missing series, rule-19 mutual
+exclusion with `neiso_rcpf_enabled` — a guard `_neiso_design` previously
+lacked), threaded through `_neiso_design` + both calibration CLIs.
+
+**The measured series vs the static design.** System 30-min total EXCEEDS
+the static 1,800 MW in **all 26,280 train hours** (means 2,301/2,329/2,328
+MW; peaks 3,022/3,164/3,167, the 2025 peak in the Jan cold snap); 10-min
+total ~1,550–1,580 vs static 1,200; 10-min spin ~390 vs static 600 (the
+measured spin is LOOSER than the published constant).
+
+**Probe `2026-07-10-neiso-57-dynamic-rr`** (bundle
+`results/calibration/neiso57_dynamic_rr`,
+`scripts/probes/_neiso_dynamic_rr_ab.py` — the neiso-56 keeper meta
+rebuilt verbatim + the flag; zero-forcing twin
+`2026-07-10-neiso-57-dynrr-ablation` concurrent per rule 12; 2023–2025 one
+bundle per rule 16). **The mechanism ENGAGES for the first time on NEISO:**
+on the scored P2 pass the 2025-06-24 18:00 heat-wave hour goes reserve-short
+at the measured 2,909 MW requirement — reserve dual $125/MWh stacks into the
+LMP, system max $397, the model's first >$300 train-year hour, landing ON an
+actual DA>$300 hour (DA $418). Everywhere else the fleet still clears the
+measured requirement free (dual $0.00 in 26,279 of 26,280 hours; 2023/2024
+fully dormant, maxes $249/$204). The zero-forcing twin binds the same event
+DEEPER (2 h, dual to $250, max $531): the winter-fuel/reliability floors
+keep low-output units online whose headroom carries reserve — forcing OFF
+makes the system reserve-shorter, the floors acting as the analogue of the
+real market's reliability commitments.
+
+**Seasonal correction to the C3c ledger.** The actual DA-expressible >$300
+tail is winter-driven ONLY in 2023 (all 5 hours = Feb 3–4 arctic blast).
+2024's 5 hours (Jun 20, Jul 15–16) and 11 of 2025's 12 hours (Jun 24 ×5,
+Jul 16 ×3, Jul 29 ×3; plus Dec 8 ×1) are SUMMER heat-wave evening peaks.
+The ledgered gap is seasonal peak-load scarcity-price formation, not a
+winter-only phenomenon — the "cold-hour oil-parity cap" framing described
+2023, not the caveat-carrying 2025 year.
+
+**Gates.** C3c 2025: model 1h vs DA 12h — improved from 0h but short of the
+charter gate [6, 24] h; 2023/2024 clear the small-count rule at 0h vs 5h.
+C5b 2025: discharge 0.827 TWh unchanged (one binding hour cannot move PS
+cycling). No regressions: C1/C3a/C3b/C4/C5a/C8 all pass; determination
+**CALIBRATED-WITH-CAVEATS with the identical caveat set as the keeper**
+(C2 2025 gas +2.6% commercial-band; C3c/C5b ledgered, updated). Attested
+(new measured-market DOF entry for the requirement series; n_entries 9,
+n_residual unchanged at 5); both runs registered; NEISO registry pruned to
+14 (statmode-d7-r2 + the neiso-50 pair dropped per top-15 retention).
+Bench-drift (the known fresh-render CO₂ seam, 2023 eGRID 22.09→22.109)
+reverted, as in the neiso-56 session.
+
+**Adjudication.** Limb A is real structure that now demonstrably fires —
+a measured market-design input, zero fitted parameters, producing the
+model's first structurally-formed scarcity hour at the right event — but it
+closes neither gate on its own. Per the charter, the remaining admissible
+direction is **Limb B**: ISO-NE DA energy-offer intake (masked asset IDs,
+~4-month lag) and scarcity-anticipating offer formation conditioned on a
+forward-reproducible tightness driver, fitted on measured OFFERS never the
+price residual (G-22 §5.1 / ercot37 §8 discipline). With the tail now known
+to be predominantly SUMMER, the tightness driver should be the summer
+peak-load margin (heat-wave TMAX / net-load margin), not only the cold-snap
+TMIN the charter hypothesized; the Feb-2023 cold snap remains the 2023
+target. Keeper promotion of neiso-57 (a strict structural superset of
+neiso-56 with the same caveat set and a first engaged hour) is presented as
+an owner decision — LOYO within 2023–2025 required before any promotion
+(rule 22); NOT promoted here.
+
+**Holdouts.** No solve, score, or intake outside 2023–2025 (rule 22); the
+intake downloader defaults to train years only; measured reserve PRICES
+never read (validation-only); no tunable changed (rules 13/21/23).
