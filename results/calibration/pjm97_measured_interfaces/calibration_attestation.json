@@ -7,12 +7,12 @@
     "outage_filter_exogenous_net_load": true,
     "attested_by": "pjm-97 measured-interfaces 2026-07-10: pjm-94 recipe + pjm_seam_measured_ladder + pjm_measured_interface_limits + pjm_reserve_pergen + measured_ramp_capability; OWNER-DIRECTED keeper promotion 2026-07-10 (rule 1: most structurally faithful -- both transmission channels measured, zero fitted scalars -- superseding the residual-seeded static estimates in the pjm-94 lineage)",
     "note": "Two measured-physical transmission mechanisms enter vs pjm-94: (1) the external seam bands price at the measured per-year Q-Q ladders (PJM_SEAM_LADDER_BY_YEAR, frozen derive script); (2) the seven mapped internal links' forward TTC follows the measured HOURLY Data Miner 2 transfer limits (transfer-interface-limits clean datatype; min(pre,post); reverse direction keeps the static rating; PJM_INTERFACE_LINK_MAP documents the rule-14 boundary reconciliations, incl. AP-South applied only to its seeded link and Cleveland deliberately unmapped). Plus the pjm-81 owner-recommended structure: per-gen reserve co-opt (nested RTO+MAD measured families) and measured ramp capability (deliverable pool 48.2 -> 37.8 GW). No mechanism in this delta carries a fitted scalar, so the rule-22 LOO-before-promotion clause (which cross-validates TUNED mechanism changes) is vacuous for this flip.",
-    "residuals_note": "Honest fit record vs pjm-94: C1 15/16 free 11/12 (was 14/16 free 10/12; the 2023 CC_REGULAR cell clears via the seam ladder); C2 PASS->CAVEAT (+3.0% 2025 gas, commercial band); C3a -14.9->-15.6% (2025 FAIL); C3b 1-of-3 -> 3-of-3 FAIL (0.232/0.219/0.249; enters with the seam ladder, interface limits neutral on top); C3c unchanged 0/6, 0/18, 0/59 h >$200. The measured caps BIND (AEP->Dominion ~94% of hours at its hourly limit); ComEd corridor over-run cut (CT 2024 +73->+35%, 2025 +111->+85%); eastern under-run persists (Dominion CC 2023 -81%, EMAAC CT -83%, SWMAAC CC 2025 -93%) and CT per-plant capture falls (2023 median r 0.301->0.246). OPEN root cause handed to G-20: with both transmission channels measured, Dominion is a through-corridor (imports at cap, re-exports at cap into SWMAAC 5193-6703 h/yr), no cut binds around the MAD zones, 2025 net export overshoots 27.1 vs 18.0 TWh -- the eastern CC/CT commitment posture (pjm-81 attribution) and the Dominion seam-inflow structure, an offer/commitment problem, not transmission. Per rule 14 the measured inputs stay; the worse CT capture under truer physics is the discovered-bug signal for that layer."
+    "residuals_note": "Honest fit record vs pjm-94: C1 15/16 free 11/12 (was 14/16 free 10/12; the 2023 CC_REGULAR cell clears via the seam ladder); C2 CAVEAT (+3.7% 2025 gas, commercial band; pjm-94 already CAVEAT at +2.5%, live rescore); C3a -14.9->-16.9% (2025 FAIL); C3b 1-of-3 -> 3-of-3 FAIL (0.228/0.226/0.258; enters with the seam ladder, interface limits neutral on top); C3c unchanged in verdict (2025 only FAILs: 0h modeled vs 51h DA-actual >$200; 2023/2024 PASS under the small-count band). The measured caps BIND (AEP->Dominion ~94% of hours at its hourly limit); ComEd corridor over-run cut (CT 2024 +73->+35%, 2025 +111->+85%); eastern under-run persists (Dominion CC 2023 -81%, EMAAC CT -83%, SWMAAC CC 2025 -93%) and CT per-plant capture falls (2023 median r 0.301->0.246). OPEN root cause handed to G-20: with both transmission channels measured, Dominion is a through-corridor (imports at cap, re-exports at cap into SWMAAC 5193-6703 h/yr), no cut binds around the MAD zones, 2025 net export overshoots 27.1 vs 18.0 TWh -- the eastern CC/CT commitment posture (pjm-81 attribution) and the Dominion seam-inflow structure, an offer/commitment problem, not transmission. Per rule 14 the measured inputs stay; the worse CT capture under truer physics is the discovered-bug signal for that layer. Fit numbers re-verified 2026-07-10 against the committed bundle's live scorer (calibration_verdict.py, matches status.js); interim drafting figures corrected by the keeper audit."
   },
   "exceptions": [],
   "free_parameters": {
     "schema": "dof-ledger/v1",
-    "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+    "seeded": "2026-07-04 S5 governance session — audit §3 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
     "n_entries": 9,
     "n_residual": 6,
     "entries": [
@@ -20,7 +20,7 @@
         "name": "offer_curve_by_group",
         "where": "run_config.scenario_config.offer_curve_by_group",
         "identification": "residual",
-        "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+        "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
         "value": {
           "CC_REGULAR": [
             "committed",
@@ -106,14 +106,14 @@
           ]
         },
         "n_scalars": 60,
-        "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
-        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+        "source": "per-group HR-band multipliers — the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
       },
       {
         "name": "offer_curve_committed_below_floor[PJM]",
         "where": "run_config.scenario_config.offer_curve_by_group[*].committed",
         "identification": "residual",
-        "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+        "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
         "value": {
           "COAL_LIGNITE": 0.684,
           "COAL_PRB": 0.684,
@@ -122,14 +122,14 @@
           "COAL": 0.648
         },
         "n_scalars": 5,
-        "source": "committed-tranche multiplier(s) below the audit \u00a72 0.85 physical-floor flag with no written rationale in the config \u2014 pulled out of the R6 bulk offer-curve population per plan \u00a72.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
-        "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched \u2014 rules #1/#18/#19/#26 apply, no blanket fix)"
+        "source": "committed-tranche multiplier(s) below the audit §2 0.85 physical-floor flag with no written rationale in the config — pulled out of the R6 bulk offer-curve population per plan §2.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+        "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched — rules #1/#18/#19/#26 apply, no blanket fix)"
       },
       {
         "name": "offer_curve_smoothing",
         "where": "run_config.scenario_config.offer_curve_smoothing_*",
         "identification": "residual",
-        "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+        "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
         "value": {
           "offer_curve_smoothing_n": 6,
           "offer_curve_smoothing_mid": 0.35,
@@ -137,48 +137,48 @@
         },
         "n_scalars": 3,
         "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
-        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+        "root_cause": "identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
       },
       {
         "name": "COAL_SIGMOID_DEFAULTS[PJM]",
         "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_bit_passthrough_sigmoid, coal_sub_passthrough_sigmoid)",
         "identification": "residual",
-        "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+        "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
         "n_scalars": 12,
-        "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
-        "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+        "source": "gas-keyed coal passthrough sigmoids — the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+        "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 — docs/out-of-sample-results-2026-07.md §2C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
       },
       {
         "name": "wefor_multiplier",
         "where": "run_config.scenario_config.wefor_multiplier",
         "identification": "residual",
-        "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+        "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
         "value": 0.7,
-        "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
-        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+        "source": "wind EFOR haircut (audit C-15) — the name admits residual identification; stated purpose is coal shoulder-month generation",
+        "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
       },
       {
         "name": "wefor_residual",
         "where": "run_config.scenario_config.wefor_residual",
         "identification": "residual",
-        "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+        "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
         "value": 0.015,
-        "source": "wind-EFOR residual relief term (audit C-15) \u2014 residual-identified by name",
-        "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+        "source": "wind-EFOR residual relief term (audit C-15) — residual-identified by name",
+        "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
       },
       {
         "name": "reliability_floor coefficients",
         "where": "data/raw/reference/reliability_floor_coeffs_PJM.csv",
         "identification": "measured-physical",
-        "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+        "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
         "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
-        "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+        "note": "D-8 §2B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs — kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
       },
       {
         "name": "PJM_SEAM_LADDER_BY_YEAR",
         "where": "interchange_config.py PJM seam band-price ladders",
         "identification": "measured-physical",
-        "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+        "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
         "source": "per-seam Q-Q duration coupling of the measured PJM DA system LMP with PJM's measured settlement-grade tie-line flows (act_sch_interchange, pooled by PJM_SEAM_TIE) on the fixed 8-band grid, frozen scripts/derive_pjm_seam_ladders.py (audit C-6 CLOSED for PJM 2026-07-10; pjm-95 C1 2023-interchange-duration fix); displaces the firm scheduled-export floor on ladder years (rule 19, alternatives never stacked)",
         "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: hourly placement of the scheduled seam base is duration-curve-level only (same bound as the MISO ladder)"
       },
@@ -186,8 +186,8 @@
         "name": "PJM_INTERFACE_LINK_MAP hourly TTC overlay",
         "where": "constants.py crosswalk + data/transfer_interface_limits.py (iso_configs._pjm_config static seeds superseded on mapped links, forward direction)",
         "identification": "measured-physical",
-        "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
-        "source": "published hourly interface transfer limits (PJM Data Miner 2 transfer_limits_and_flows, 2023-2025 raw drops; min(pre,post) where both publish), curated by frozen scripts/curate_transfer_interface_limits.py onto the model clock; supersedes PJM_MEASURED_INTERNAL_TTC's pooled medians on mapped links (same feed, hourly \u2014 rule 19). Unmapped links (AEP_Ohio->ATSI, SWMAAC->EMAAC, SWMAAC->Dominion, West_APS->Dominion) and every reverse direction keep the Tier-3 static estimates (boundary misalignments documented at the crosswalk).",
+        "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+        "source": "published hourly interface transfer limits (PJM Data Miner 2 transfer_limits_and_flows, 2023-2025 raw drops; min(pre,post) where both publish), curated by frozen scripts/curate_transfer_interface_limits.py onto the model clock; supersedes PJM_MEASURED_INTERNAL_TTC's pooled medians on mapped links (same feed, hourly — rule 19). Unmapped links (AEP_Ohio->ATSI, SWMAAC->EMAAC, SWMAAC->Dominion, West_APS->Dominion) and every reverse direction keep the Tier-3 static estimates (boundary misalignments documented at the crosswalk).",
         "note": "re-derive trigger is a source-data change only (rule 23); representation bound: AP-South maps to the seeded West_APS->SWMAAC link only (parallel-path split of the reduced mesh), and the Average envelopes are regional means, not per-flowgate boundaries"
       }
     ]
