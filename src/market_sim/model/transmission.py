@@ -2306,6 +2306,78 @@ def apply_deliverability_seam_limit(
     return extended
 
 
+# CAISO SP15-split internal import-limited links (foundation 2026-07-09): the
+# one-way pockets whose TTC is upgraded from the static 2023 baked-in value to
+# the solve year's measured LCT import_cap (peak_load - requirement) by
+# apply_caiso_local_import_limits below. Keyed by the LCT `area` name so it
+# reads the same rows as data.local_capacity.load_lcr_parameters.
+_CAISO_LOCAL_IMPORT_LINKS: dict[str, tuple[str, str]] = {
+    "LA Basin": ("SP15_rest", "LA_BASIN"),
+    "San Diego/Imperial Valley": ("SP15_rest", "SDGE"),
+}
+
+
+def apply_caiso_local_import_limits(
+    iso_config: ISOConfig, iso: str, year: int
+) -> ISOConfig:
+    """Swap the SP15-pocket import-link TTCs to the solve year's measured LCT cap.
+
+    The SP15-split foundation (2026-07-09) baked the two internal import-limited
+    links (``SP15_rest -> LA_BASIN``, ``SP15_rest -> SDGE``) at the STATIC 2023
+    (tightest-year) ``import_cap = peak_load - requirement`` value as the
+    scope-sanctioned MVP; per-year was documented there as the deferred end
+    state (docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md,
+    "Import-cap values"). This is that upgrade: gated on
+    ``ScenarioConfig.caiso_per_year_import_caps`` (default off), it replaces
+    each link's ``ttc_mw`` with the measured cap for ``year`` from
+    :func:`market_sim.data.local_capacity.load_lcr_parameters` — the same
+    ``peak_load - requirement`` convention, frozen per rule 24 (never the
+    reserve-margin gross-up, never tuned to a residual).
+
+    A no-op (returns ``iso_config`` unchanged) for any ISO but CAISO, or when
+    ``year`` has no published LCT row for either area (``load_lcr_parameters``
+    omits the area rather than guessing) — the link keeps its static 2023
+    baked-in default TTC.
+
+    Args:
+        iso_config: CAISO topology carrying the two SP15-split import links.
+        iso: Model ISO name.
+        year: Solve year (resolves the LCT delivery-year row).
+
+    Returns:
+        ``iso_config`` with the matching links' TTC set to the measured value,
+        or unchanged.
+    """
+    if iso.upper() != "CAISO":
+        return iso_config
+    from market_sim.data.local_capacity import load_lcr_parameters
+
+    params = load_lcr_parameters(iso, year)
+    if not params:
+        return iso_config
+    new_ttc: dict[tuple[str, str], float] = {}
+    for area, (from_zone, to_zone) in _CAISO_LOCAL_IMPORT_LINKS.items():
+        p = params.get(area)
+        if p is not None:
+            new_ttc[(from_zone, to_zone)] = float(p["import_cap_mw"])
+    if not new_ttc:
+        return iso_config
+    changed = False
+    new_links: list[TransferLink] = []
+    for link in iso_config.links:
+        cap = new_ttc.get((link.from_zone, link.to_zone))
+        if cap is not None and cap != link.ttc_mw:
+            new_links.append(link.model_copy(update={"ttc_mw": cap}))
+            changed = True
+        else:
+            new_links.append(link)
+    if not changed:
+        return iso_config
+    extended = iso_config.model_copy(update={"links": new_links})
+    extended.validate_topology()
+    return extended
+
+
 # WECC-accepted directional ratings for CAISO's two internal N-S paths
 # (WECC Path Rating Catalog, 2024 public version; Tier 1 measured). Each model
 # link's symmetric ttc_mw is only ONE direction's rating — Path 15's 5,400 MW
