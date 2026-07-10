@@ -1,0 +1,109 @@
+# Canonical schema: ISO State-of-the-Market competitive-conduct metrics
+#
+# Hand-transcription of the market monitor's (Potomac Economics IMM/MMU)
+# published competitive-assessment and fuel-conduct statistics: the
+# system price-cost mark-up, the economic-withholding "output gap", and
+# the coal commitment-conduct decomposition (SOM "Coal-Fired Resource
+# Operation and Profitability" tables — economic-offer vs must-run
+# [self-commitment] start shares and per-MWh net revenue, split
+# regulated vs merchant). These are the measured, citable answers to
+# "how far from cost does a fleet actually offer" and "what fraction of
+# coal commitments are self-scheduled" (CLAUDE.md rule 13-admissible: a
+# market-design/conduct measurement that regenerates with each annual
+# SOM and responds to changed conditions).
+#
+# MISO seeded 2026-07-10 (2023/2024 SOM annual tables + 2025 IMM
+# quarterly output-gap rows) for the coal offer-structure adjudication
+# (docs/handoffs/miso-coal-offer-som-redesign-2026-07.md). Other ISOs'
+# SOMs (NYISO/ERCOT/ISO-NE) publish analogous sections and extend this
+# datatype with new iso rows; annual grain except where a monitor only
+# publishes seasonal/quarterly values.
+#
+# Quarantine note (CLAUDE.md rule 22): only train-window years
+# (2023-2025) are transcribed. The SOM tables also print 2018-2022
+# columns and the Winter-2026 quarterly covers Dec-2025..Feb-2026
+# (H1-2026 locked-test window) — those rows are deliberately NOT
+# transcribed pending owner authorization.
+#
+# Curated by scripts/curate_som_competitive_conduct.py from
+#   data/raw/som-competitive-conduct/som_competitive_conduct.csv
+datatype: som-competitive-conduct
+schema_version: 1
+title: ISO State-of-the-Market competitive-conduct metrics
+description: >-
+  Market-monitor (State of the Market / IMM quarterly) competitive-conduct
+  statistics by ISO, year and fleet segment: price-cost mark-up, output-gap
+  economic-withholding levels, and coal economic-offer vs must-run
+  (self-commitment) start shares with net revenues.
+
+key_columns: [iso, year, period, fleet_segment, metric]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (MISO seeded; NYISO/ERCOT/NEISO extend).
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Market year the statistic describes (not the publication year).
+  - name: period
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Aggregation window within the year: "annual" for SOM full-year values,
+      or the IMM quarterly-report season ("spring", "summer", "fall",
+      "winter") for quarterly values.
+  - name: fleet_segment
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Fleet the metric describes: "system" (all suppliers),
+      "coal_regulated" (SOM Table 7 "Regulated Utilities" coal rows) or
+      "coal_merchant" (SOM Table 7 "Merchants" coal rows).
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Metric code: "price_cost_markup" (simulated actual-offer vs
+      reference-level SMP difference, fraction), "output_gap_share_of_load"
+      (low-threshold monthly-average output gap as a fraction of load),
+      "output_gap_low_threshold_mw" (low-threshold output gap, MW/hr),
+      "starts" (coal unit commitments in the year), "starts_econ_offered_share"
+      (fraction of starts offered economically / scheduled day-ahead),
+      "starts_mustrun_profitable_share" / "starts_mustrun_unprofitable_share"
+      (fraction of starts with must-run [self-commit] status, split by
+      whether market revenues covered commitment + variable cost by the
+      first full day), "net_revenue_usd_per_mwh" (net operating revenue of
+      the segment's starts).
+  - name: value
+    dtype: float64
+    unit: mixed
+    nullable: false
+    description: Metric value; unit given by the unit column.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: One of "fraction", "count", "usd_per_mwh", "mw".
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: Source report PDF filename under data/raw/MISO/ (or the ISO's raw dir).
+  - name: source_page
+    dtype: int64
+    unit: none
+    nullable: false
+    description: PDF page number (1-based, PDF pagination) the value was read from.
+  - name: note
+    dtype: string
+    unit: none
+    nullable: true
+    description: Restatements, definitions, and caveats as printed in the source.
