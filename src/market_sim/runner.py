@@ -1369,9 +1369,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     else:
                         lo = np.full(config.hours, fleet_arrays.pmin[h_idx].sum())
                     env = np.maximum(env, lo)
+                    # CISO's NG:WAT includes pumped-storage net output (no
+                    # separate PS series), so the capped model quantity
+                    # includes PS net discharge — like-for-like with the
+                    # measured envelope.
+                    ps_idx = np.flatnonzero(
+                        np.char.startswith(
+                            np.asarray(storage.tech_names, dtype=str),
+                            "pumped",
+                        )
+                    )
                     dispatch_kwargs.update(
                         hydro_envelope_gen_idx=h_idx,
                         hydro_envelope_mw=env,
+                        hydro_envelope_storage_idx=(ps_idx if ps_idx.size else None),
                     )
                     logger.info(
                         "%s %d: hydro deliverability envelope on %d units "

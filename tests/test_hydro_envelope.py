@@ -115,6 +115,37 @@ class TestGenGroupCapRows(unittest.TestCase):
         self.assertEqual(a0.shape, a1.shape)
 
 
+class TestGroupCapStorageTerm(unittest.TestCase):
+    """The optional pumped-storage net-discharge term of the group cap."""
+
+    def test_storage_columns_carry_signed_coefficients(self):
+        from market_sim.model.dispatch import _build_gen_group_cap_rows
+
+        T = 3
+        layout = VariableLayout(n_gen=2, n_zones=1, n_storage=2, n_links=0, T=T)
+        env = np.array([10.0, 20.0, 30.0])
+        block, lo, hi = _build_gen_group_cap_rows(
+            layout,
+            np.array([0]),
+            env,
+            storage_idx=np.array([1]),
+        )
+        self.assertEqual(block.shape[0], T)
+        np.testing.assert_array_equal(hi, env)
+        self.assertTrue(np.all(np.isneginf(lo)))
+        rows = block.toarray()
+        for t in range(T):
+            r = rows[t]
+            # +1 on hydro P, +1 on storage-1 discharge, -1 on its charge.
+            self.assertEqual(r[layout.p_col(0, t)], 1.0)
+            vph = layout.vars_per_hour
+            self.assertEqual(r[t * vph + layout._dis_off + 1], 1.0)
+            self.assertEqual(r[t * vph + layout._chg_off + 1], -1.0)
+            # Storage 0 (a battery) is not a member.
+            self.assertEqual(r[t * vph + layout._dis_off + 0], 0.0)
+            self.assertEqual(np.count_nonzero(r), 3)
+
+
 class TestEnvelopeDispatchBehaviour(unittest.TestCase):
     """The envelope stops the budget LP hoarding hydro into the peak."""
 
