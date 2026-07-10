@@ -85,3 +85,13 @@ INFO: F923 fuel costs for 2025: 15 generators priced from their own plant, 269 g
 INFO: hub-basis overlay (NEISO 2025, daily): 421 gas generators repriced at the measured hub spot in 12/12 months (winter max 35.56 $/MMBtu)
 INFO: dual-fuel switching (NEISO 2025): 189 gas tranches (6791 MW) capped at the delivered oil price
 INFO: energy+reserve co-opt (NEISO): 3 system reserve families (2 10-min/quick-start), 24 ORDC steps ($6-$1500), 572 full-fleet / 275 quick-start reserve-eligible units
+INFO: Matrix build: 1.375s, Solve: 78.285s (cold)
+INFO: Matrix build: 1.375s, Solve: 25.894s (warm)
+INFO: Matrix build: 1.315s, Solve: 76.221s (cold)
+INFO: EIA-923 2025: CAMPD-backfilled 15 under-reported plants (0 replaced, 15 added)
+INFO: EIA-923 2025 wind 3.04 TWh under-counts EIA-930 4.53 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 solar 1.02 TWh under-counts EIA-930 1.58 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro -0.35 TWh under-counts EIA-930 5.12 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 biomass 1.21 TWh incomplete (vintage 83%); carrying 2024 biomass 2.96 TWh x completeness -> 2.45 TWh
+INFO: wrote calibration bundle to /home/user/market-simulator/results/calibration/neiso57_dynamic_rr-ablation
+DONE ablation -> /home/user/market-simulator/results/calibration/neiso57_dynamic_rr-ablation
