@@ -39,6 +39,17 @@
 # registry ids unaffected). The commit step now also tolerates a pull
 # failure so a mid-run branch deletion (killed rounds 2 AND 3) can no
 # longer strand a finished run: the push recreates the ref.
+#
+# 5th firing 2026-07-10 (~18:15Z): round 4 (run 29110470331) cleared BOTH
+# solves AND both registrations with distinct ids (the _slug fix verified
+# live) and the legitimacy gates, then died on a one-flag CLI mistake in
+# the first-ever execution of the attestation step: build_dof_ledger.py
+# requires --iso with a bundle path. Fixed below. Branch recreated from
+# post-#1974/#1975 main, so keepers/status/callog now build on top of the
+# NYISO-59 state — no post-hoc reconciliation needed. All remaining
+# never-executed steps CLI-audited against main (build_status bare, parity
+# no-args, prune --ignore-unmatch, add-list covers build_dof_ledger's
+# in-place attestation update).
 
 name: register-pjm97
 
@@ -221,7 +232,7 @@ jobs:
           out.write_text(json.dumps(att, indent=1) + "\n")
           print("attestation written")
           PYEOF
-          python scripts/build_dof_ledger.py results/calibration/pjm97_measured_interfaces
+          python scripts/build_dof_ledger.py --iso PJM results/calibration/pjm97_measured_interfaces
 
       - name: Keeper sidecar (definition + twin link + market story) and twin sidecar
         run: |
