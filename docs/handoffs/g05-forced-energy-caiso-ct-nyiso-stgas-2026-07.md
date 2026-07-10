@@ -143,3 +143,42 @@ higher (ST_GAS ~65/76/61%, CT ~95/84/46%) but is not committed (parquets are
 gitignored) or CI-checked. Both breach the caps and both pass the rule-15 D-4
 test, so the determination is identical either way; the committed convention is
 the payload path.
+
+## Addendum 2026-07-09 — ST_GAS grounded under rubric v2.2 (drag re-adjudicated, rejected again)
+
+Two things changed after this memo was written: (a) rubric v2.2 added the
+grounded-above-budget C8 escalation (above-cap passes iff every binding
+mechanism clears a **declared** D-4 window and D-1 shape clears), under which
+the nyiso-56 keeper's ST_GAS scored "above cap, NOT grounded — **no declared
+D-4 window: reliability_floor**" (a provenance gap, not a shape miss — D-1
+passes r 0.95-0.96 / cv_ratio 0.69-0.90 every year); and (b) the
+`gas_st_netload_drag` this memo rejected on its **windowed [15,22)** premise
+became ALL-HOURS (`ramp_window=None`, the ERCOT-46 / PJM-94 keeper mechanism),
+making that premise stale and the drag worth re-testing as an all-hours base
+whose level flexes with net-load.
+
+**Re-adjudication result: the drag is rejected again, now on measurement.**
+`scripts/derive_nyiso_st_gas_netload_drag.py` (new, PJM-construction-faithful:
+EIA-930 NYIS net-load, CAMPD overnight CF, hinge fit) fails its own
+pre-registered honesty gates: overnight Spearman rho 0.32/0.39/0.72
+(class-wide) and 0.30/0.28/0.57 (NYC+LI-only) — not year-stable; the binned
+overnight CF is FLAT vs net-load below ~15 GW (a base, not a hinge) with the
+base level drifting up across years at equal net-load (11 GW: 0.087 → 0.140 →
+0.136); and the pooled hinge overshoots the 2023 measured class energy
+(142 %). The downstate commitment is an **unconditional** local-reliability
+base (DARU/SRE + boiler min-run blocks), not net-load-hinged — so this memo's
+mechanism choice stands: the persistent-24h `reliability_floor` remains the
+class's single grounded mechanism (rule 19), for a measured reason that no
+longer depends on the stale window premise.
+
+**Deliverable (same pattern as the CT_PEAKER window fix above):**
+`D4_WINDOWS[(reliability_floor, ST_GAS)]` → (0, 24), citing this memo's
+measured table (NYC/LI online 100 % of year, overnight CF 0.11-0.20 — no hour
+the driver evidence says the class is offline) plus the drag-rejection
+derivation; nyiso-56's committed `legitimacy_diagnostics.json` regenerated
+(payload path) so the D-4 row exists; status rebuilt. Under rubric v2.2 the
+C8 ST_GAS protective caveat escalates to **GROUNDED ABOVE BUDGET — a clean
+PASS surfaced as a report note**. Blast radius NYISO-only (PJM's enabled
+ST_GAS limbs are drag-owned in its keeper and dropped; every other ISO's are
+disabled). Scorer-only: no re-solve, no mechanism change, keeper stays
+nyiso-56.
