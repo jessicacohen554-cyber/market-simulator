@@ -77,3 +77,33 @@ DATA NEEDED (still open after this intake):
   only available via a NYISO Market Operations data request.
 - The LI on/off-peak boundary + EDRP/SCR-activation 30-min adder history
   (MST Rate Schedule 4 §15.4.6.2) if the requirement builder needs them.
+
+## `NYISO_reserve_requirements_<year>.csv` (DERIVED — the loader-contract series)
+
+Hourly measured requirement series consumed by
+`src/market_sim/data/nyiso_reserve_requirements.py` when
+`ScenarioConfig.nyiso_dynamic_reserve_requirements` is on. DERIVED, not a
+download: reconstructed by `scripts/derive_nyiso_reserve_requirements_hourly.py`
+from the two committed sources above —
+
+    requirement(region, product, hour) =
+        published LRR base (v-version covering the year; SENY 30-min hourly
+        steps included) x (1 - TSA-window fraction of the hour) for the rows
+        the version flags TSA-reduced-to-zero, else the base unchanged.
+
+TSA windows come from the message logs with two documented repairs (both
+itemized in the derive run log, never silent): an explicit "no longer
+operating in thunderstorm alert" message always closes a window (genuine
+overnight TSAs exist whose spanned midnight carries no start-of-day ACTIVE
+attestation, e.g. 2025-03-31 -> 2025-04-01); a start whose end message is
+missing from the log closes at its first midnight NOT attested by a
+"Start of day thunderstorm alert state is ACTIVE" row (e.g. 2025-06-19,
+2025-07-31 — conservative upper bound, the true end time that day is
+unknown). Clock: naive Eastern wall-clock hour-beginning, Feb 29 dropped
+(the model's non-leap 8760 clock; `process_nyiso_as.py` convention).
+
+This is a documented LOWER BOUND on the as-enforced requirement in non-TSA
+hours: the condition-varying RTD/RTC increments (forecast-uncertainty
+adders, largest-single-contingency changes) are the still-open B1 data
+request. Rule 24: re-derive only when the source data above updates —
+never against a residual. Training years 2023-2025 only are committed.
