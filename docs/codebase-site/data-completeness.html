@@ -52,34 +52,58 @@
     .pri-high{background:rgba(220,38,38,.10);color:var(--negative)}
     .pri-med{background:rgba(217,119,6,.12);color:var(--warning)}
     .pri-low{background:rgba(22,163,74,.12);color:var(--positive)}
+    .st{display:inline-block;font-size:.64rem;font-weight:800;letter-spacing:.03em;
+      border-radius:4px;padding:2px 7px;white-space:nowrap}
+    .st-gathered{background:rgba(22,163,74,.14);color:var(--positive)}
+    .st-partial{background:rgba(217,119,6,.14);color:var(--warning)}
+    .st-missing{background:rgba(220,38,38,.12);color:var(--negative)}
+    .st-blocked{background:var(--bg-page);color:var(--text-muted);border:1px solid var(--border-light)}
+    table.dc tr[data-st="missing"] td:first-child{box-shadow:inset 3px 0 0 var(--negative)}
+    table.dc tr[data-st="partial"] td:first-child{box-shadow:inset 3px 0 0 var(--warning)}
+    table.dc tr[data-st="gathered"] td:first-child{box-shadow:inset 3px 0 0 var(--positive)}
+    .dc-legend{font-size:.74rem;color:var(--text-muted);margin-top:7px;display:flex;
+      flex-wrap:wrap;gap:12px}
+    .dc-legend b{color:var(--text-primary);font-variant-numeric:tabular-nums}
+    .dc-progress .bar > i.mixed{background:linear-gradient(90deg,var(--positive) 0%,var(--positive) var(--gpct,0%),var(--warning) var(--gpct,0%),var(--warning) var(--ppct,0%),transparent var(--ppct,0%))}
     .gate{display:inline-block;font-size:.64rem;font-weight:700;border-radius:4px;
       padding:2px 7px;background:var(--bg-page);border:1px solid var(--border-light);
       color:var(--text-muted);white-space:nowrap}
     .dc-note{font-size:.78rem;color:var(--text-muted);line-height:1.6;margin-top:var(--space-md);
       border-top:1px solid var(--border-light);padding-top:var(--space-md);max-width:80ch}
-    @media (max-width:640px){ table.dc th:nth-child(5),table.dc td:nth-child(5){display:none} }
+    @media (max-width:640px){ table.dc th:nth-child(6),table.dc td:nth-child(6){display:none} }
   </style>
 </head>
 <body>
   <nav id="topNav"></nav>
   <div class="content-section" style="padding: var(--space-lg);">
     <div class="bc-page-header"><h1>Data Completeness</h1></div>
-    <p class="bc-page-sub">A gathering checklist of the measured datasets still <b>missing</b> from
-    <code>data/raw/</code> across the <b>Jan&nbsp;2018 – Jun&nbsp;2026</b> backcast window &mdash;
-    distilled from <code>docs/data-register-2026-07.md</code> (full-coverage sources are omitted).
-    Tick items as you gather them; progress is saved in this browser. Holdout-year intake
-    (2022, 2019, &le;2021, H1&nbsp;2026) is gated on per-ISO owner authorization &amp; the
-    <code>calibration-complete</code> marker (rule&nbsp;22).</p>
+    <p class="bc-page-sub">A gathering checklist of the measured datasets for the
+    <b>Jan&nbsp;2018 – Jun&nbsp;2026</b> backcast window &mdash; distilled from
+    <code>docs/data-register-2026-07.md</code> and <b>re-verified against files on disk
+    2026-07-10</b> (full-coverage sources are omitted). The <b>% complete is data-driven</b>: each
+    row carries a status (<span class="st st-gathered">GATHERED</span>
+    <span class="st st-partial">PARTIAL</span> <span class="st st-missing">MISSING</span>
+    <span class="st st-blocked">BLOCKED</span>) and the bar weights them (gathered&nbsp;=&nbsp;1,
+    partial&nbsp;=&nbsp;0.5); <b>BLOCKED</b> items are not fetchable and are excluded from the
+    denominator. Ticking a row marks it gathered locally (saved in this browser only) and updates
+    the bar. Holdout-year intake (2022, 2019, &le;2021, H1&nbsp;2026) is gated on per-ISO owner
+    authorization &amp; the <code>calibration-complete</code> marker (rule&nbsp;22).</p>
 
     <div class="dc-summary">
       <div class="dc-progress">
-        <div class="bar"><i id="barFill"></i></div>
-        <div class="lbl"><b id="doneCount">0</b> of <b id="totalCount">0</b> gathered
-          &middot; <span id="pctDone">0%</span></div>
+        <div class="bar"><i id="barFill" class="mixed"></i></div>
+        <div class="lbl"><b id="pctDone">0%</b> complete
+          &middot; <b id="scoreCount">0</b> of <b id="denomCount">0</b> fetchable datasets gathered</div>
+        <div class="dc-legend">
+          <span><span class="st st-gathered">GATHERED</span> <b id="gCount">0</b></span>
+          <span><span class="st st-partial">PARTIAL</span> <b id="pCount">0</b></span>
+          <span><span class="st st-missing">MISSING</span> <b id="mCount">0</b></span>
+          <span><span class="st st-blocked">BLOCKED</span> <b id="bCount">0</b> <span style="opacity:.7">(not fetchable)</span></span>
+        </div>
       </div>
       <div class="dc-actions">
         <button class="dc-btn" id="hideDone">Hide gathered</button>
-        <button class="dc-btn" id="resetAll">Reset checkmarks</button>
+        <button class="dc-btn" id="resetAll">Reset my ticks</button>
       </div>
     </div>
 
@@ -99,7 +123,8 @@
           {
             "name": "Daily zone temperature — H1 2026 + backward extension",
             "reg": "#41",
-            "need": "GATHERED (2026-07-08). All 6 ISOs now covered 2018–H1 2026 via backfill supplement files (per-quarter/half-year CSVs) plus 2026 vintage files. Base CSVs still span 2023-01-01→2025-12-31; supplement files extend coverage backward to 2018-01-01 and forward through 2026-06-30. Remaining step is loader integration (merge supplements into the loader path or extend base CSVs), not a gathering task.",
+            "status": "gathered",
+            "need": "GATHERED — verified on disk 2026-07-10. All 6 ISOs covered 2018–H1 2026: base CSV (<iso>_zone_temp_daily.csv) spans 2023-01-01→2025-12-31; per-quarter/half-year/annual supplement files (e.g. ercot_zone_temp_daily_2018q1..2022q4, 2026q1/q2) extend backward to 2018 and forward to 2026-06-30. Remaining work is loader integration (merge supplements into the loader path), not a fetch.",
             "source": "NOAA / NASA-derived daily TMAX/TMIN → data/raw/<iso>-weather/",
             "gate": "structural",
             "pri": "high"
@@ -107,15 +132,17 @@
           {
             "name": "NYISO renewable HSL / curtailment",
             "reg": "#27-analogue",
-            "need": "NYISO 2023–2025. On disk: annual + monthly aggregates in nyiso-renewable-curtailment/. NYISO only publishes coarse curtailment aggregates, so an hourly HSL-analogue must be constructed from the aggregate plus capacity-factor profiles. No additional raw data is fetchable — remaining work is a build/derivation step.",
-            "source": "NYISO (annual curtailment product) → data/raw/nyiso-renewable-curtailment/",
+            "status": "gathered",
+            "need": "GATHERED to the extent fetchable. On disk: NYCA-wide + zonal annual & monthly curtailment aggregates 2017–2025 (nyiso_curtailment_{annual,monthly}.csv; 2024 NYCA-level landed from the 2025 deck's trailing chart — no standalone 2024 deck was ever published). NYISO does not publish an hourly per-plant uncurtailed-potential series, so nothing further is fetchable; an hourly HSL-analogue must be derived from the aggregate + CF profiles.",
+            "source": "NYISO NYCA Renewables decks → data/raw/nyiso-renewable-curtailment/",
             "gate": "structural",
             "pri": "med"
           },
           {
             "name": "MISO renewable HSL / curtailment",
             "reg": "#27-analogue / #29b",
-            "need": "Partially gathered (2026-07-08). Annual (2021–2025) and quarterly (2023–Spring 2026) system-wide wind curtailment MW collected from Potomac Economics (MISO IMM) public reports → miso-hsl/. Still only aggregate, not hourly — building miso_<year>_hsl_hourly.parquet from the aggregate + wind shape is the remaining derivation step, not a fetch.",
+            "status": "gathered",
+            "need": "GATHERED to the extent fetchable (2026-07-08). Annual (2021–2025) + quarterly (2023–Spring 2026) system-wide wind curtailment MW from Potomac Economics (MISO IMM) reports → miso-hsl/. MISO's hourly curtailment reports are blocked by this environment's allowlist and MISO publishes no hourly per-plant HSL; building miso_<year>_hsl_hourly.parquet from the aggregate + wind shape is the remaining derivation step.",
             "source": "Potomac Economics MISO SOM + IMM Quarterly reports → data/raw/miso-hsl/ (see SOURCES.md)",
             "gate": "structural",
             "pri": "low"
@@ -123,15 +150,17 @@
           {
             "name": "NYISO measured hourly locational reserve requirements",
             "reg": "#34",
-            "need": "NYISO 2023–2025. NYISO-AS/requirements/ directory is absent (only DA/RT clearing CSVs present). The as-enforced hourly locational reserve requirement series replaces the published static reserve requirement in the co-opt. Must be fetched from NYISO OASIS (RTD/RTC operating reserve requirement reports).",
-            "source": "NYISO OASIS RTD/RTC as-enforced series → data/raw/NYISO-AS/requirements/",
+            "status": "missing",
+            "need": "MISSING — verified 2026-07-10: data/raw/NYISO-AS/requirements/ does not exist (only DA/RT clearing CSVs are present). The loader (nyiso_reserve_requirements.py) hard-errors when nyiso_dynamic_reserve_requirements is on and this file is absent — so even the in-sample 2023–2025 series is not on disk. Fetch the as-enforced hourly locational reserve-requirement series from NYISO OASIS (RTD/RTC).",
+            "source": "NYISO OASIS RTD/RTC as-enforced series → data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_<year>.csv",
             "gate": "structural",
             "pri": "med"
           },
           {
-            "name": "ERCOT NP6-86 raw monthly binding-constraint (GTC) ZIPs",
+            "name": "ERCOT NP6-86 GTC — raw monthly ZIP provenance only",
             "reg": "#35",
-            "need": "ERCOT 2020–2025. Derived GTC parquets (SCEDBTCNP686_*.parquet) are on disk in iso-specific-transmission/, but the raw monthly source ZIPs were not re-committed after a prior fetch (README flagged DATA NEEDED). Re-fetch to make the derivation reproducible.",
+            "status": "gathered",
+            "need": "GATHERED (usable product on disk) — verified 2026-07-10: SCEDBTCNP686_*_2020..2025.parquet are all present in iso-specific-transmission/, so the derived GTC series is complete. Only the raw monthly source ZIPs were never re-committed (README flags DATA NEEDED); re-fetching them is a reproducibility/provenance nicety, NOT a data gap that blocks any solve. Down-graded from the register's earlier 'raw missing' framing.",
             "source": "ERCOT MIS (SCEDBTCNP686) → data/raw/iso-specific-transmission/",
             "gate": "structural",
             "pri": "low"
@@ -139,7 +168,8 @@
           {
             "name": "EIA-923 raw Form-923 workbooks (2018–2021)",
             "reg": "#13 / #14",
-            "need": "2018–2021 delivered fuel cost + monthly net generation. Raw F923 workbooks for these years are not on disk (only processed-legacy parquets exist: eia923_monthly_fuel_costs.parquet, eia923_monthly_generation.parquet). The EIA archive URL is not reachable through this environment's proxy — fetch from an unrestricted session.",
+            "status": "partial",
+            "need": "PARTIAL — the processed products the model actually reads are on disk (eia923_monthly_fuel_costs.parquet, eia923_monthly_generation.parquet, all 6 ISOs incl. 2018–2021, landed 2026-07-08). Only the raw annual F923 workbooks are absent, and the EIA archive URL is not reachable through this environment's proxy — fetch from an unrestricted session for full provenance.",
             "source": "EIA Form 923 annual archive → data/raw/_processed-legacy/",
             "gate": "pre-2020",
             "pri": "low"
@@ -154,7 +184,8 @@
           {
             "name": "CAISO 2022 — full stack",
             "reg": "#1,4,2,21,37,40,41",
-            "need": "Still needed: CAMPD unit-level CA_2022 (absent), TAC zonal load 2022, CAISO citygate gas 2022, WECC intertie LMP, LMP validation. Landed: EIA-930 fueltype+region (CISO_fueltype_2022, CISO_region_2022), weather (caiso_zone_temp_daily_2022.csv).",
+            "status": "partial",
+            "need": "Still needed: CAMPD unit-level CA_2022 (absent — verified), TAC zonal load 2022, CAISO citygate gas 2022, WECC intertie LMP 2022, LMP validation 2022. Landed: EIA-930 fueltype+region (CISO_fueltype_2022, CISO_region_2022), weather (caiso_zone_temp_daily_2022.csv).",
             "source": "EPA CAMPD / EIA / CAISO OASIS",
             "gate": "holdout",
             "pri": "med"
@@ -162,7 +193,8 @@
           {
             "name": "MISO 2022 — full stack",
             "reg": "#1,4,2,20,38,40,41",
-            "need": "Still needed: own-state CAMPD (IA/MN/WI/MO/AR/LA/MS/ND/SD/MT — 2022 rows are PJM/ERCOT overlap only: IL/IN/MI/etc.), sub-BA demand 2022, MISO zonal gas hub 2022, MISO↔PJM border LMP, LMP validation. Landed: EIA-930 fueltype+region (MISO_fueltype_2022, MISO_region_2022), weather (miso_zone_temp_daily_2022q1-q4.csv).",
+            "status": "partial",
+            "need": "Still needed: own-state CAMPD (IA/MN/WI/MO/AR/LA/MS/ND/SD/MT — 2022 rows are PJM/ERCOT overlap only: IL/IN/MI/etc.), sub-BA demand 2022, MISO zonal gas hub 2022 (verified: hub CSV covers 2023–2025 only), MISO↔PJM border LMP 2022. Landed: EIA-930 fueltype+region (MISO_fueltype_2022, MISO_region_2022), weather (miso 2022q1–q4), MISO hub LMP 2022 (miso_hub_lmp_2022_* present).",
             "source": "EPA CAMPD / EIA / MISO / PJM DataMiner",
             "gate": "holdout",
             "pri": "med"
@@ -170,10 +202,38 @@
           {
             "name": "NYISO 2022 — full stack",
             "reg": "#1,4,2,21,40,41",
-            "need": "Still needed: CAMPD NY_2022 (absent — only NJ present for 2022), EIA-930 NYIS fueltype+region 2022 (absent), NYISO zonal gas hub 2022, DART LMP validation. Landed: weather (nyiso_zone_temp_daily_2022h1/h2.csv), NYISO raw monthly PAL load archive reaches 2022.",
+            "status": "partial",
+            "need": "Still needed: CAMPD NY_2022 (absent — only NJ present for 2022, verified), EIA-930 NYIS fueltype+region 2022 (absent), NYISO zonal gas hub 2022 (verified: hub CSV 2023–2025 only), DART LMP validation 2022. Landed: weather (nyiso 2022h1/h2), NYISO raw monthly PAL load archive reaches 2022.",
             "source": "EPA CAMPD / EIA / NYISO OASIS & MIS",
             "gate": "holdout",
             "pri": "med"
+          },
+          {
+            "name": "Ancillary-services clearing — 2022 (ERCOT, PJM, NYISO)",
+            "reg": "#30,31,33",
+            "status": "missing",
+            "need": "MISSING — newly captured 2026-07-10. ercot-AS/, PJM-AS/, NYISO-AS/ all start at 2023 on disk, so 2022 AS clearing is absent for ALL of them — including ERCOT & PJM, which the register otherwise treats as fully-intaked for 2022. Fetchable: ERCOT 60-Day DAM AS, PJM RT Primary Reserve, NYISO DA/RT AS. (MISO-AS 2022 is separately BLOCKED — see below.)",
+            "source": "ERCOT 60-Day DAM / PJM / NYISO → data/raw/{ercot-AS,PJM-AS,NYISO-AS}/",
+            "gate": "holdout",
+            "pri": "med"
+          },
+          {
+            "name": "Interchange & seam LMP — 2022 (CISO/MISO/ISNE + PJM/CAISO seams)",
+            "reg": "#36,37,38,39",
+            "status": "missing",
+            "need": "MISSING — newly captured 2026-07-10. eia-930-interchange wide files (CISO/MISO/ISNE) span 2023-01-01→2026-01-01 only; PJM import/export + transfer-limit CSVs are 2023–2025 only; WECC intertie LMP and MISO↔PJM border LMP have no 2022. So the entire net-import/export envelope + seam pricing is absent for 2022. (MISO hub LMP 2022 IS present — excluded here.)",
+            "source": "EIA-930 / PJM eData / CAISO OASIS / PJM DataMiner → data/raw/{eia-930-interchange,iso-specific-transmission,_validation-source}/",
+            "gate": "holdout",
+            "pri": "low"
+          },
+          {
+            "name": "CAMPD facility-level — 2022 + H1 2026",
+            "reg": "#5",
+            "status": "missing",
+            "need": "MISSING — newly captured 2026-07-10. campd-facility-level/ holds the 13-state set for 2023/2024/2025 only; no _2022 or _2026 files exist. Facility-grain is the outage-derivation cross-check for unit-level CEMS. Coordinate with the unit-level CAMPD session to avoid double-fetching the same EPA windows.",
+            "source": "EPA CAMPD facility-level → data/raw/campd-facility-level/<STATE>_<year>.parquet",
+            "gate": "holdout",
+            "pri": "low"
           }
         ]
       },
@@ -185,6 +245,7 @@
           {
             "name": "CAISO H1 2026 — full stack",
             "reg": "#1,4,26,41,2",
+            "status": "partial",
             "need": "Still needed: CAMPD CA_2026 (absent), CAISO citygate gas H1 2026, TAC zonal load H1 2026. Landed: EIA-930 (CISO_fueltype_2026, CISO_region_2026, BALANCE_2026_Jan_Jun), weather (caiso_zone_temp_daily_2026.csv).",
             "source": "EIA / EPA CAMPD / CAISO OASIS",
             "gate": "holdout",
@@ -193,6 +254,7 @@
           {
             "name": "MISO H1 2026 — full stack",
             "reg": "#1,4,20,41,2",
+            "status": "partial",
             "need": "Still needed: own-state CAMPD (IA/MN/WI/MO/AR/LA/MS/ND/SD/MT — absent for 2026), MISO zonal gas H1 2026, sub-BA demand H1 2026. Landed: EIA-930 (MISO_fueltype_2026, MISO_region_2026, BALANCE_2026_Jan_Jun), weather (miso_zone_temp_daily_2026q1/q2.csv).",
             "source": "EIA / EPA CAMPD / MISO",
             "gate": "holdout",
@@ -201,6 +263,7 @@
           {
             "name": "NEISO H1 2026 — CAMPD + EIA-930",
             "reg": "#4",
+            "status": "partial",
             "need": "Still needed: CAMPD (CT/MA/ME/NH/RI/VT)_2026 (all absent — 2022–2025 landed 2026-07-07), EIA-930 ISNE fueltype+region 2026 (absent). Landed: weather (neiso_zone_temp_daily_2026.csv).",
             "source": "EPA CAMPD / EIA → data/raw/campd-unit-level/ + data/raw/eia-930/",
             "gate": "holdout",
@@ -209,6 +272,7 @@
           {
             "name": "ERCOT + PJM H1 2026 — completion",
             "reg": "#4,13,41",
+            "status": "partial",
             "need": "CAMPD: TX_2026 + most PJM states present (Q1 only — need Q2 when EPA publishes). EIA-923 early-release is Jan–Apr (need May–Jun). Landed: weather 2026 (ercot 2026q1/q2, pjm 2026q1/q2), EIA-930 fueltype+region 2026 for both ISOs.",
             "source": "EPA CAMPD / EIA-923 / NOAA-NASA",
             "gate": "holdout",
@@ -224,7 +288,8 @@
           {
             "name": "2018–2020 general — LMP, AS, HSL, zonal demand, gas-hub series",
             "reg": "many",
-            "need": "All ISOs. Still missing before ~2020–2021: LMP, AS clearing, HSL/curtailment, zonal demand, zonal gas-hub series. Now on disk: CAMPD unit-level (all states 2018–2021), Henry Hub, EIA-930 BALANCE (all six ISOs 2018-onward — PJM/CAISO/MISO 2018 H1 is demand/net-gen/interchange only, no per-fuel split, a real reporting-start gap), weather (all ISOs 2018-onward via backfill supplements).",
+            "status": "partial",
+            "need": "All ISOs. Still missing before ~2020–2021: LMP, AS clearing, HSL/curtailment, zonal demand, zonal gas-hub series. Now on disk: CAMPD unit-level (all states 2018–2021, verified), Henry Hub, EIA-930 BALANCE (all six ISOs 2018-onward — PJM/CAISO/MISO 2018 H1 is demand/net-gen/interchange only, no per-fuel split; see BLOCKED below), weather (all ISOs 2018-onward via backfill supplements).",
             "source": "per register — ISO / EIA / EPA archives",
             "gate": "pre-2020",
             "pri": "low"
@@ -239,7 +304,8 @@
           {
             "name": "EIA-860 fleet vintage — 2026",
             "reg": "ref",
-            "need": "2026 EIA-860 vintage not yet released by EIA. On disk: vintages 2018–2024 (all present, including 2018/2019/2021/2022 which landed 2026-07-08), plus top-level = 2025 Early Release. Intake 2026 when EIA publishes the calendar-2025 annual release.",
+            "status": "blocked",
+            "need": "Not yet released by EIA — cannot be fetched until published. On disk: vintages 2018–2024 (all present, incl. 2018/2019/2021/2022 which landed 2026-07-08) + top-level 2025 Early Release. Intake the 2026 vintage when EIA publishes the calendar-2025 annual release.",
             "source": "U.S. EIA-860 → data/raw/eia-860/",
             "gate": "structural",
             "pri": "low"
@@ -247,9 +313,35 @@
           {
             "name": "NERC GADS EFORd benchmarks — 2025+",
             "reg": "#49",
-            "need": "On disk: 2018–2024 (rolling 5-year windows 2018-2022, 2019-2023, 2020-2024 + annual 2018-2024). Need: 2025+ vintages as NERC publishes. The 2024 vintage landed 2026-07-08.",
+            "status": "blocked",
+            "need": "Not yet published — cannot be fetched until NERC releases it. On disk: 2018–2024 (rolling 5-yr windows 2018-2022, 2019-2023, 2020-2024 + annual 2018-2024; 2024 vintage landed 2026-07-08). Intake 2025+ vintages as NERC publishes them.",
             "source": "NERC GADS → data/raw/reference/nerc-gads-eford-*",
             "gate": "structural",
+            "pri": "low"
+          }
+        ]
+      },
+      {
+        "id": "blocked",
+        "title": "Known-blocked — not fetchable (do not spend a session)",
+        "sub": "Gaps confirmed unreachable from this environment or unavailable at the source. Recorded here so no one wastes a fetch session retrying them. Excluded from the % denominator.",
+        "items": [
+          {
+            "name": "MISO ancillary-services clearing — 2022",
+            "reg": "#32",
+            "status": "blocked",
+            "need": "CONFIRMED UNGETTABLE (2026-07-09). All three per-day ASM report endpoints return genuine BlobNotFound from docs.misoenergy.org for every day of 2022 (1,095/1,095), while 2023-01-01 onward is HTTP 200 — a rolling retention purge, not a naming change. No Wayback capture exists for any 2022 ASM report; MISO's API reads the same live store. The only path is a human-filed MISO historical-data request (ITOC 1-866-296-6476 / help.misoenergy.org). Do NOT re-attempt an automated fetch.",
+            "source": "MISO Help Center / ITOC request (human, not scriptable)",
+            "gate": "holdout",
+            "pri": "low"
+          },
+          {
+            "name": "EIA-930 per-fuel generation — 2018 H1 (PJM / CAISO / MISO)",
+            "reg": "#1",
+            "status": "blocked",
+            "need": "SOURCE GAP, not fetchable. EIA-930 per-fuel reporting had not started for PJM/CAISO/MISO in 2018 H1 — those months carry demand/net-generation/interchange only (backfilled 2026-07-08 from the BALANCE archive). PJM's own per-fuel reporting then ramps up gradually across 2018 H2. No source exists to fill the per-fuel split for 2018 H1.",
+            "source": "EIA-930 — reporting-start gap, no source",
+            "gate": "pre-2020",
             "pri": "low"
           }
         ]
@@ -275,27 +367,34 @@
     const keyOf = (gid, i) => gid + '::' + i;
 
     const FILTERS = [
-      {id:'all',   label:'All'},
-      {id:'high',  label:'High priority'},
-      {id:'structural', label:'Structural'},
-      {id:'holdout', label:'Holdout-gated'},
-      {id:'pre-2020', label:'Pre-2020'}
+      {id:'all',    label:'All'},
+      {id:'missing',label:'Missing'},
+      {id:'partial',label:'Partial'},
+      {id:'gathered',label:'Gathered'},
+      {id:'blocked',label:'Blocked'},
+      {id:'high',   label:'High priority'},
+      {id:'holdout',label:'Holdout-gated'}
     ];
     let activeFilter = 'all';
     let hideDone = false;
 
     const priClass = p => ({high:'pri-high',med:'pri-med',low:'pri-low'}[p]||'pri-low');
     const priLabel = p => ({high:'HIGH',med:'MED',low:'LOW'}[p]||'LOW');
+    const stLabel = s => ({gathered:'GATHERED',partial:'PARTIAL',missing:'MISSING',blocked:'BLOCKED'}[s]||'MISSING');
     const esc = s => (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    // A locally-ticked row counts as gathered; blocked stays blocked (a tick can't unblock a source).
+    const effSt = it => (it._done && it.status !== 'blocked') ? 'gathered' : (it.status || 'missing');
 
     function itemMatches(it){
-      if(hideDone && it._done) return false;
+      if(hideDone && effSt(it) === 'gathered') return false;
       switch(activeFilter){
         case 'all': return true;
+        case 'missing': return effSt(it) === 'missing';
+        case 'partial': return effSt(it) === 'partial';
+        case 'gathered': return effSt(it) === 'gathered';
+        case 'blocked': return effSt(it) === 'blocked';
         case 'high': return it.pri === 'high';
-        case 'structural': return it.gate === 'structural';
         case 'holdout': return it.gate === 'holdout';
-        case 'pre-2020': return it.gate === 'pre-2020';
         default: return true;
       }
     }
@@ -321,12 +420,16 @@
           '<span class="n">'+rows.length+' item'+(rows.length>1?'s':'')+'</span></div>'+
           '<p class="dc-group-sub">'+esc(g.sub)+'</p>'+
           '<div class="dc-table-wrap"><table class="dc">'+
-          '<thead><tr><th></th><th>Dataset</th><th>What&#39;s needed</th>'+
+          '<thead><tr><th></th><th>Status</th><th>Dataset</th><th>What&#39;s needed</th>'+
           '<th>Source &rarr; path</th><th>Reg</th><th>Priority</th><th>Gate</th></tr></thead><tbody>';
         rows.forEach(({it,i})=>{
           const k = keyOf(g.id,i);
-          html += '<tr class="'+(it._done?'done':'')+'">'+ 
-            '<td><input type="checkbox" class="dc-chk" data-k="'+k+'"'+(it._done?' checked':'')+' aria-label="mark gathered"></td>'+
+          const st = effSt(it);
+          const blocked = it.status === 'blocked';
+          html += '<tr data-st="'+st+'" class="'+(st==='gathered'?'done':'')+'">'+
+            '<td><input type="checkbox" class="dc-chk" data-k="'+k+'"'+(it._done?' checked':'')+
+              (blocked?' disabled title="not fetchable"':'')+' aria-label="mark gathered"></td>'+
+            '<td><span class="st st-'+st+'">'+stLabel(st)+'</span></td>'+
             '<td class="dc-name">'+esc(it.name)+'</td>'+
             '<td class="dc-need">'+esc(it.need)+'</td>'+
             '<td class="dc-src">'+esc(it.source)+'</td>'+
@@ -349,15 +452,32 @@
     }
 
     function updateSummary(){
-      let total=0, done=0;
-      data.groups.forEach(g => g.items.forEach((it,i)=>{
-        total++; if(state[keyOf(g.id,i)]) done++;
+      let g=0,p=0,m=0,b=0;
+      data.groups.forEach(gr => gr.items.forEach((it,i)=>{
+        it._done = !!state[keyOf(gr.id,i)];
+        switch(effSt(it)){
+          case 'gathered': g++; break;
+          case 'partial':  p++; break;
+          case 'blocked':  b++; break;
+          default:         m++;
+        }
       }));
-      const pct = total? Math.round(done/total*100) : 0;
-      document.getElementById('doneCount').textContent = done;
-      document.getElementById('totalCount').textContent = total;
+      const denom = g+p+m;                 // fetchable datasets (blocked excluded)
+      const score = g + 0.5*p;             // partial counts half
+      const pct = denom ? Math.round(score/denom*100) : 0;
+      document.getElementById('gCount').textContent = g;
+      document.getElementById('pCount').textContent = p;
+      document.getElementById('mCount').textContent = m;
+      document.getElementById('bCount').textContent = b;
+      document.getElementById('scoreCount').textContent = (Math.round(score*10)/10);
+      document.getElementById('denomCount').textContent = denom;
       document.getElementById('pctDone').textContent = pct+'%';
-      document.getElementById('barFill').style.width = pct+'%';
+      const fill = document.getElementById('barFill');
+      fill.style.width = pct+'%';
+      // gradient split inside the filled portion: full-green for gathered, amber for the partial half
+      const gPctOfFill = pct>0 ? Math.round((g/denom*100)/pct*100) : 0;
+      fill.style.setProperty('--gpct', gPctOfFill+'%');
+      fill.style.setProperty('--ppct', '100%');
     }
 
     document.getElementById('resetAll').addEventListener('click',()=>{
@@ -370,12 +490,15 @@
     });
 
     document.getElementById('footNote').innerHTML =
-      'Source of truth: <code>docs/data-register-2026-07.md</code> (data-availability snapshot, refreshed 2026-07-08). '+
+      'Source of truth: <code>docs/data-register-2026-07.md</code>, <b>re-verified against files in '+
+      '<code>data/raw/</code> on 2026-07-10</b> (several register entries were stale — the AS-2022, '+
+      'interchange-2022, CAMPD-facility and MISO-AS-blocked rows were added from that direct check). '+
       'Full-coverage sources (Henry Hub, CAMPD unit-level 2018–2021, in-sample AS/LMP/gas/transmission for '+
-      '2023–2025, weather 2018–2026 via backfill supplements, etc.) are intentionally omitted — this page lists only what is still <b>missing</b>. '+
-      'Items marked GATHERED have their raw data on disk; remaining work is loader integration or derivation, not fetching. '+
-      'Reg&nbsp;# references the register\'s Part&nbsp;1 dataset numbers. Checkmarks are stored locally in '+
-      'your browser only and are not committed.';
+      '2023–2025, weather 2018–2026 via backfill supplements, etc.) are intentionally omitted. '+
+      'Status is data-driven: GATHERED = usable data on disk (remaining work, if any, is loader integration or '+
+      'derivation, not fetching); PARTIAL = some coverage, more fetchable; MISSING = fetchable, not on disk; '+
+      'BLOCKED = not fetchable (excluded from the %). Reg&nbsp;# references the register\'s Part&nbsp;1 dataset '+
+      'numbers. Ticks are stored locally in your browser only and are not committed.';
 
     render();
   })();
