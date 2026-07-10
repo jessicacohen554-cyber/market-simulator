@@ -2882,6 +2882,44 @@ def run_year(
         if lcr_specs:
             dispatch_kwargs.update(local_capacity_specs=lcr_specs)
 
+    # Hydro hourly deliverability envelope (config.hydro_dispatch_envelope,
+    # GATED default off): fleet-wide hourly ceiling at the measured
+    # per-(month x hod) percentile of EIA-930 NG:WAT — bounds the budget LP's
+    # perfect-foresight hoarding of the monthly hydro energy into the top
+    # price hours (caiso-72 STEP-2; FINDING-caiso72-step0). Mirrored in
+    # runner.py (forecast parity — a forecast year falls back to the pooled
+    # climatology envelope inside the loader). No-op (identical LP) when off,
+    # no hydro fleet, or no measured series.
+    if (
+        getattr(config, "hydro_dispatch_envelope", False)
+        and hydro_gen_idx is not None
+        and len(hydro_gen_idx)
+    ):
+        from market_sim.data.eia_loader import measured_hydro_hourly_envelope
+
+        env = measured_hydro_hourly_envelope(iso, year, config.hours)
+        if env is not None:
+            # Feasibility guard: never cap below the fleet's own hourly lower
+            # bounds (min_gen floors / pmin).
+            h_idx = np.asarray(hydro_gen_idx, dtype=int)
+            if getattr(fleet_arrays, "min_gen", None) is not None:
+                lo = fleet_arrays.min_gen[h_idx, : config.hours].sum(axis=0)
+            else:
+                lo = np.full(config.hours, fleet_arrays.pmin[h_idx].sum())
+            env = np.maximum(env, lo)
+            dispatch_kwargs.update(
+                hydro_envelope_gen_idx=h_idx,
+                hydro_envelope_mw=env,
+            )
+            logger.info(
+                "%s %d: hydro deliverability envelope on %d units "
+                "(evening p95 %.0f MW)",
+                iso,
+                year,
+                h_idx.size,
+                float(np.quantile(env, 0.95)),
+            )
+
     # Energy+reserve co-optimization: the shared pipeline wrapper
     # (orchestrator-unification Stage 2) — the per-ISO reserve designs live in
     # config/reserve_config.py (get_reserve_design), already shared with the
