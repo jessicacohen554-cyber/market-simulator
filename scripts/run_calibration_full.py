@@ -82,6 +82,7 @@ from market_sim.data.eia_loader import (  # noqa: E402
     load_ercot_battery_gen,
     load_ercot_fossil_gen,
     load_ercot_nuclear_gen,
+    load_ercot_other_gen,
     load_ercot_renewable_gen,
 )
 from market_sim.data.zone_assignment import build_zone_lookup  # noqa: E402
@@ -850,6 +851,12 @@ def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
         return None
     nuclear = load_ercot_nuclear_gen(year)
     battery = load_ercot_battery_gen(year)
+    # "Other Fuel Sources" (NG: OTH) — carried so the gas fold-in deflation
+    # can subtract only the genuinely-folded other/biomass portion from the
+    # EIA-930 gas cell (post-Nov-2024 storage breakout, ERCO's Other series
+    # is ~biomass alone and the OTHER-class generation sits inside NG: NG);
+    # see load_ercot_other_gen and calibration_verdict.score_sysvol.
+    other = load_ercot_other_gen(year)
     # net generation = Demand + Interchange = load_demand with no gross-up.
     net_gen = load_demand(iso, year, iso_config, td_loss_factor=0.0).sum(axis=0)
     series = {
@@ -861,6 +868,8 @@ def _eia930_frame(year: int, iso: str, iso_config) -> pd.DataFrame | None:
     }
     if nuclear is not None:
         series["nuclear"] = nuclear
+    if other is not None:
+        series["other"] = other
     if battery is not None:
         series.update(battery)
     out = []
