@@ -32,7 +32,7 @@ numbering on the DST transition days (23 rows skipping HE 3 at spring-forward;
 placement (:func:`prevailing_he_to_cst`, reusing
 ``build_ercot_hsl._prevailing_to_standard``); the CST clock is then covered
 gapless through both transitions. (The pre-2026-07-07 build placed the labels
-unconverted — the naive ``date + (HE-1)`` — leaving the whole mid-Mar–early-Nov
+unconverted — the naive ``date + (HE-1)``, leaving the whole mid-Mar–early-Nov
 series one hour late, the same placement defect class as the NP4-732/737 HSL
 intake; ``docs/handoffs/ercot-g22-demand-side-design-2026-07.md`` §7.) Feb 29
 of a leap year is dropped. A service with no coverage in a year (e.g. NSPNM
@@ -71,6 +71,16 @@ from build_ercot_hsl import _prevailing_to_standard  # noqa: E402
 # which writes the same ``ercot_2023_as_up_mw.parquet`` /
 # ``ercot_2023_as_by_restype_hourly.parquet``. Run that script for 2023; this one
 # covers 2024/2025 (and any later year the 2-Day feed fully spans).
+#
+# 2018-2022 holdout-intake note (2026-07-10,
+# scripts/fetch_ercot_as_reports.py): confirmed live that ERCOT's free MIS
+# doc list for NP3-911-ER is a *rolling* ~31-day window that always ends
+# "today" (ERCOT's own ``misDisplayDuration_i`` catalog field) -- it is not a
+# fixed 2023-12-10 start date that will ever extend further back in time.
+# 2018-2022 (and, going forward, most of any year outside the last ~31 days)
+# is therefore structurally unreachable via this feed and always will be;
+# only the credentialed data.ercot.com/api.ercot.com archive reaches that far,
+# and the repo owner has declined to procure it (see fetch script docstring).
 DEFAULT_YEARS: tuple[int, ...] = (2024, 2025)
 
 # Up-reserve service report tags (the ``2d_cleared_dam_as_<tag>`` suffix).
