@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-10-ercot56-nucwin",
+  "label": "ercot56 nucwin",
+  "date": "2026-07-10",
+  "shorthand": "ercot56-nucwin",
+  "definition": "ercot55: ercot53_hsl_930fill config reconstructed from meta.json, zero config deltas on the main arm \u2014 the delta is the measured EIA-930 long-format fill of the ERCO extract's 48-h 2025-12-04/05 hole (demand + benchmark; 2023/2024 byte-identical) and the NG: OTH series threaded for the C2 gas fold-in; SURFACE ARM: + ercot_offer_surface_conditional (measured G-22 \u00a78 surface, unchanged parameters) \u2014 the missing full-span A/B on the keeper config under v2.4 + ORDC cap-dual",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-10-ercot56-nucwin.js",
+  "bundle": "results/calibration/ercot56_nucwin"
+}

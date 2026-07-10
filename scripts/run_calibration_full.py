@@ -1946,6 +1946,7 @@ def solve_and_persist(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
+    ercot_nuclear_unit_availability: bool = False,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
@@ -2221,6 +2222,7 @@ def solve_and_persist(
             temp_dependent_derate=temp_dependent_derate,
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
+            ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             must_run_mw=must_run_total,
             inject_biomass_mustrun=inject_biomass,
             priced_interchange=priced_interchange,
@@ -2577,6 +2579,7 @@ def solve_and_persist(
         "temp_dependent_derate": temp_dependent_derate,
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
+        "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
@@ -2894,6 +2897,10 @@ def solve_and_persist(
             coal_lignite_mustrun_override=coal_lignite_mustrun,
             coal_prb_mustrun_override=coal_prb_mustrun,
         )
+    if ercot_nuclear_unit_availability:
+        # Mirror run_year's with_overrides so run_config.json records the
+        # window-grain nuclear overlay the LP solved with.
+        recorded_cfg = recorded_cfg.with_overrides(ercot_nuclear_unit_availability=True)
     if interchange_shaping:
         recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:
@@ -5916,6 +5923,19 @@ def main() -> None:
         "gate. No-op under --ercot-storage-as-endogenous. Off (default).",
     )
     parser.add_argument(
+        "--ercot-nuclear-unit-availability",
+        action="store_true",
+        help="ERCOT backcast: replace the NUCLEAR_MONTHLY_CF_BY_YEAR "
+        "fleet-month smear with the measured per-reactor DAILY refuel "
+        "availability from the 60-Day DAM disclosure NUC Resource Status "
+        "(data/raw/ercot-nuclear-availability.csv, monthly energy "
+        "reconciled to the same EIA-923 anchor; "
+        "scripts/derive_ercot_nuclear_availability.py). Window-grain "
+        "measured availability — the nuclear analogue of the CAMPD fossil "
+        "outage windows (rule 14); uncovered dates keep the monthly smear. "
+        "Off (default, keeper-reproducing).",
+    )
+    parser.add_argument(
         "--gas-hh-monthly-shape",
         action="store_true",
         help="Replace the generic climatological monthly gas SHAPE with the "
@@ -7641,6 +7661,7 @@ def main() -> None:
         ercot_ordc_total_reserve=args.ercot_ordc_total_reserve,
         ercot_ordc_cap_dual_adder=args.ercot_ordc_cap_dual_adder,
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
+        ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
         gas_hh_monthly_shape=args.gas_hh_monthly_shape,
         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
         ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,

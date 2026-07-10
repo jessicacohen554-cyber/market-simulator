@@ -3261,6 +3261,27 @@ class ScenarioConfig:
     # p90 wall (~$2,700) and below VOLL.
     ercot_offer_surface_price_cap_frac: float = 0.95
 
+    # ERCOT unit-level (window-grain) nuclear refuel availability (default off,
+    # ERCOT backcast-gated). Replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month
+    # smear for the four ERCOT reactors with the measured per-reactor DAILY
+    # availability from the 60-Day DAM disclosure Gen_Resource NUC status
+    # (data/raw/ercot-nuclear-availability.csv,
+    # scripts/derive_ercot_nuclear_availability.py), monthly energy reconciled
+    # to the same EIA-923 anchor the smear used. The smear carries the right
+    # monthly ENERGY but mis-times refuel windows within the month by up to
+    # ±1.4 GW (2024 type case: STP-2 out 3/23–5/19 spans the Apr-16/Apr-28/
+    # May-8 scarcity events, Comanche Peak 1 out 5/11–5/16 overlaps the May
+    # DA-shoulder days, and all four units were BACK for the May-24..27 record
+    # heat the smear kept derated — docs/DIAGNOSIS-ercot-may2024-outage-
+    # forensics-2026-07.md §2.1). A refuel window is a physical availability
+    # event (rule-14 admissible, the nuclear analogue of the CAMPD fossil
+    # outage windows; forward years regenerate via NUCLEAR_MONTHLY_CF /
+    # refuel-block scheduling). Dates the disclosure does not cover (Oct 2023
+    # hole, Nov-Dec 2025 until the 2026 publications land) keep the monthly
+    # smear. See data.outages.ercot_nuclear_unit_availability_series and the
+    # application in data.fleet.generators_to_fleet_arrays.
+    ercot_nuclear_unit_availability: bool = False
+
     # NEISO condition-responsive fast-start offer surface — the ISO-NE analogue
     # of ercot_offer_surface_conditional above (winter scarcity charter Limb B;
     # the G-22 §8 heterogeneity-preserving design, default off, NEISO-gated).
