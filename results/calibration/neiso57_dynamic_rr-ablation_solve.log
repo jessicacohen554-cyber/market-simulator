@@ -57,3 +57,31 @@ INFO: dual-fuel switching (NEISO 2024): 189 gas tranches (6791 MW) capped at the
 INFO: energy+reserve co-opt (NEISO): 3 system reserve families (2 10-min/quick-start), 24 ORDC steps ($6-$1500), 572 full-fleet / 275 quick-start reserve-eligible units
 INFO: Matrix build: 1.594s, Solve: 81.187s (cold)
 INFO: Matrix build: 1.594s, Solve: 30.095s (warm)
+INFO: Matrix build: 1.565s, Solve: 85.662s (cold)
+INFO: EIA-923 2024: CAMPD-backfilled 2 under-reported plants (2 replaced, 0 added)
+INFO: EIA-923 2024 hydro 6.23 TWh under-counts EIA-930 7.39 TWh; using EIA-930 grid total
+INFO: Loaded NEISO fleet from EIA-860 parquet (431 generators)
+INFO: Binned fleet cache for NEISO is up to date — loaded from neiso_fleet_binned.parquet
+INFO: NEISO net interchange applied for 2025: -928 MW avg (export-positive, measured EIA-930)
+WARNING: NEISO zonal load file not found (/home/user/market-simulator/data/raw/zone-specific-demand/NEISO/NEISO_load_hourly_2025.csv); skipping
+INFO: solving NEISO 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=True)
+INFO: NEISO net interchange applied for 2025: -928 MW avg (export-positive, measured EIA-930)
+WARNING: NEISO zonal load file not found (/home/user/market-simulator/data/raw/zone-specific-demand/NEISO/NEISO_load_hourly_2025.csv); skipping
+INFO: loaded 23 within-window retiree units for NEISO (1746 MW, plants [563, 581, 1588, 50955, 54085, 54586, 56891, 57103, 58365, 59801])
+INFO: Loaded NEISO fleet from EIA-860 parquet (431 generators)
+INFO: Binned fleet cache for NEISO is up to date — loaded from neiso_fleet_binned.parquet
+INFO: unit-outage derate (NEISO 2025): 244 plant-tranches derated
+INFO: COD ramp (NEISO 2025): 396 unit-months masked offline (mid-year COD / retirement), 33 unit(s) fully not-yet-built/retired
+INFO: Loaded NEISO fleet from EIA-860 parquet (431 generators)
+INFO: Binned fleet cache for NEISO is up to date — loaded from neiso_fleet_binned.parquet
+INFO: NEISO 2025 hydro budget: backfilled 161 non-reporting plants (6605.5 GWh) from 2024
+INFO: NEISO 2025 hydro budget pinned to monthly target total 5120.7 GWh (was 6696.2 GWh)
+INFO: Loaded NEISO 2025 hydro budget: 166 plants, 5120.7 GWh annual, 1900 MW nameplate
+INFO: NEISO 2025: 166 hydro plants in LP (1900 MW, 5.12 TWh monthly budget)
+INFO: unit-outage derate (NEISO 2025): 244 plant-tranches derated
+INFO: COD ramp (NEISO 2025): 456 unit-months masked offline (mid-year COD / retirement), 38 unit(s) fully not-yet-built/retired
+INFO: NEISO 2025: winter gas-availability derate — non-dual-fuel gas-CC/CT availability cut by clip(slope*(t0-TMIN),0,cap) over the cold-snap window (TDFOR, NERC cold-weather anchored)
+INFO: F923 fuel costs for 2025: 15 generators priced from their own plant, 269 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (NEISO 2025, daily): 421 gas generators repriced at the measured hub spot in 12/12 months (winter max 35.56 $/MMBtu)
+INFO: dual-fuel switching (NEISO 2025): 189 gas tranches (6791 MW) capped at the delivered oil price
+INFO: energy+reserve co-opt (NEISO): 3 system reserve families (2 10-min/quick-start), 24 ORDC steps ($6-$1500), 572 full-fleet / 275 quick-start reserve-eligible units
