@@ -1,0 +1,70 @@
+# Regenerate the derived NYISO hourly reserve-requirement CSVs on a GitHub
+# runner and commit them back to the branch this workflow runs on. The files
+# (data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_{2023,2024,2025}.csv,
+# ~2.6 MB each) are deterministic derivations of already-committed raw sources
+# — the published LRR schedule + the MIS thunderstorm-alert logs — via
+# scripts/curate_nyiso_reserve_requirements.py (clean seam) then
+# scripts/derive_nyiso_reserve_requirements_hourly.py. Too large for the MCP
+# push path, so they land via this runner (the same route as the raw event-log
+# intake). On-demand only: the derive re-runs solely when its source data
+# updates (CLAUDE.md rule 24), never on a schedule.
+name: Derive NYISO hourly reserve requirements
+
+on:
+  workflow_dispatch:
+  # The Claude remote env's GitHub integration cannot POST workflow dispatches
+  # (403), so pushing an edit to THIS file is the trigger: path-scoped to the
+  # workflow itself, the runner's own data commit can never re-fire it.
+  push:
+    paths:
+      - ".github/workflows/derive-nyiso-reserve-requirements.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  derive:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package
+        run: pip install -e .
+
+      - name: Curate the requirement/event datatypes from raw
+        run: python scripts/curate_nyiso_reserve_requirements.py
+
+      - name: Derive the hourly loader-contract CSVs (training years only)
+        run: python scripts/derive_nyiso_reserve_requirements_hourly.py --year 2023 2024 2025
+
+      - name: Verify the derived files load through the LP loader (no solve)
+        run: |
+          python - <<'EOF'
+          from market_sim.data.nyiso_reserve_requirements import (
+              load_nyiso_reserve_requirements,
+          )
+          for year in (2023, 2024, 2025):
+              out = load_nyiso_reserve_requirements(year, hours=8760)
+              assert len(out) == 7, (year, sorted(out))
+              print(year, "OK:", len(out), "families")
+          EOF
+
+      - name: Commit and push the derived CSVs
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2023.csv \
+                  data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2024.csv \
+                  data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2025.csv
+          if git diff --cached --quiet; then
+            echo "derived CSVs unchanged — nothing to commit"
+            exit 0
+          fi
+          git commit -m "data(nyiso): derived hourly reserve-requirement CSVs 2023-2025 (B2+B3 reconstruction) (run ${{ github.run_id }})"
+          git pull --rebase origin "${GITHUB_REF_NAME}"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
