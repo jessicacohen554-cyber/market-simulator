@@ -9019,3 +9019,78 @@ OUT per the demotion), full 2023–2025 one bundle, targeting C1.
 probe reads 2023–2025 CAMPD/weather only; the seam intake covers 2023–2025.
 No offer-curve or sigmoid touched (rules 13/21/23); the ladder is
 measured-behaviour with a frozen formula (rule 23), zero fitted parameters.
+## 2026-07-10 — ERCOT-55: C2 gas counting root-caused and fixed (EIA-930 fold-in + OTHER_FOSSIL symmetry + measured 48-h gap fill); the ercot50 conditional offer surface RE-TESTED full-span on the keeper config under v2.4 — C3c-2025 closes by mechanism (24 h vs 23 DA); keeper stays ercot53, promotion pending owner
+
+**Task (owner, this session).** (1) Resolve the C2-2025 gas counting vs
+EIA-930 — is the model side full-family or completed-923-only, and is 930
+booking non-gas generation (other/biomass/other-fossil) inside NG? (2) Take
+one more owner-sanctioned crack at the C3c scarcity-hour under-tail.
+
+**C2 counting — three wedges, all fixed (zero tunables).** The fallback was
+already full-model-family vs full-930 NG, but three wedges made it
+apples-to-oranges: (a) the hand-curated ERCO hourly extract has a 48-h NaN
+hole (2025-12-04/05 — two real winter days peaking 58.4 GW measured) that
+every loader bridged by linear interpolation, fabricating ~+0.6 TWh of
+benchmark gas AND feeding the solve a flat ~48 GW demand valley; NaN windows
+now fill from the measured EIA-930 long-format API series before
+interpolation (`eia_loader._fill_hourly_frame_from_long`; 2023/2024 have no
+NaN hours — byte-identical; Dec 4-5 2025 was NOT scarce, RT max $97, so this
+is hygiene, not tail-tuning). (b) Post the Nov-2024 EIA-930 storage breakout
+(BAT/UES series appear; ERCO OTH collapses 1.85 → 0.26 TWh ≈ biomass alone),
+the 923 OTHER-class generation (~0.9 TWh) sits inside NG:NG — but ERCOT's
+dedicated `_eia930_frame` never carried the `other` series, so the standing
+`_gas_foldin_deflation` could not fire for ERCOT (only the CAISO legacy
+allowlist). `load_ercot_other_gen` threads NG:OTH into the bundle. (c)
+`score_sysvol`'s fallback summed model gas WITHOUT the OTHER_FOSSIL mixed
+gas-thermal scoring bucket while its 930 target includes those plants —
+inconsistent with the render-side `_GAS_GROUPS` membership; fixed
+(gas-family fallback only). Result: C2-2025 gas −2.9 % CAVEAT → **−1.7 %
+PASS** (−2.3 % from the scorer fix alone on the committed bench). All five
+other ISO keepers re-scored: no status changes (CAISO/NYISO/NEISO
+byte-identical, PJM +0.09 TWh within PASS, MISO FAIL unchanged).
+
+**Runs (full 2023-2025 bundles + zero-forcing twins, registered via the
+`ercot55-solve-register` workflow).** Baseline recipe = ercot53 keeper
+config reconstructed from its committed meta.json (`_ercot55_ab.py`), zero
+config deltas; the surface arm adds only `ercot_offer_surface_conditional`.
+
+| run | C3a (23/24/25) | C3b | C3c h vs DA 311/68/23 | caveats |
+|---|---|---|---|---|
+| ercot53 keeper | −1.0/−6.9/−3.6 % | .109/.184/.079 | 162/24/5 | 3 (C2, C3c×2, C5c) |
+| ercot55 930gap-c2fix | −1.0/−6.9/−3.5 % | .109/.184/.078 | 162/24/5 | 2 (C3c×2, C5c) |
+| ercot55 surface-ab | +2.0/−4.7/−1.1 % | .106/.196/.094 | 166/27/**24 (1.04×, PASS)** | 2 (C3c-2024, C5c) |
+
+2023/2024 of the main arm reproduce ercot53 exactly (inputs byte-identical),
+isolating the 2025 delta to the measured demand fill. Both arms attested
+(DOF ledger inherited from ercot53 verbatim — zero new free parameters;
+the surface's rungs/bins are measured 60-Day DAM disclosure values) and
+score **CALIBRATED-WITH-CAVEATS (2 caveats)** vs the keeper's 3.
+
+**Surface re-litigation basis (rules 1/13; owner-sanctioned round).** The
+ercot50 rejection (+35 % C3a-2023) predates rubric v2.4 AND the ercot52 ORDC
+cap-dual fix; the ERCOT-54 entry records that no full-span surface A/B
+existed on the current keeper config. On that basis the 2023 objection
+dissolves (+2.0 % PASS, C3c-2023 166 h ≥ the 162 h owner gate) and the
+measured surface closes C3c-2025 outright — scarcity-anticipating offer
+formation pricing the $100-300 shoulder in the measured tight bins. C3c-2024
+narrows 24→27 h (0.35×→0.40×, still ledgered: event depth/breadth + the
+non-scarce Nov-17 event — the filed G-22 residual). C5c-2024 storage shape
+inherited unchanged.
+
+**Recommendation.** Surface arm as new keeper (resolves a caveat by
+mechanism, not ledger; strictly fewer caveats; structurally real market
+behaviour) — owner call, keeper untouched pending sign-off.
+
+**Bookkeeping.** Session env hit both the MCP relay single-call ceiling
+(~200 KB) and the account spend limit mid-push, so registration runs through
+the one-shot `ercot55-solve-register` workflow (caiso67/69 precedent):
+solves all four bundles on CI, registers, and uploads run payloads + bench +
+this log entry via `ci_api_upload_multi.py --extra`. The NG:OTH threading
+lands in `run_calibration_full.py` via the same workflow
+(`_ercot55_ci_patch.py --thread-other`, byte-anchored + guarded), with an
+equivalent no-op-guarded wrapper at the probe seam so local and CI bundles
+are identical either way.
+
+**Holdouts.** No solve, score, or intake outside 2023-2025 (rule 22); ORDC
+tariff parameters untouched (rule 26); no offer-curve, sigmoid, floor, or
+derive-script value changed (rules 13/21/23).
