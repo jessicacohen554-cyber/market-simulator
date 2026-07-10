@@ -1758,6 +1758,26 @@ class ScenarioConfig:
     # split that creates the corridor links). Carried by eia_loader
     # .measured_corridor_flow_envelope + transmission.build_caiso_corridor_flow_
     # groups. Default off (byte-identical); CAISO-only.
+    caiso_firm_import_shape: bool = False  # Shape the firm/contracted CAISO
+    # import blocks' hourly availability by the MEASURED revealed import-base
+    # profile instead of a flat 8760 block (caiso-73; FINDING-caiso72 live
+    # lead #1). The flat firm base makes the same MW available every hour,
+    # while measured CISO corridor net imports run 5.3-6.3 GW overnight,
+    # 0.2-1.3 GW midday and ramp back to 5.4-6.2 GW in the evening — the model
+    # under-imports the deep evening 1.4-2.2 GW and over-imports midday
+    # (+2.3 GW at h14). Level anchor per corridor = the YEAR's DMM RA-import
+    # capacity × MIC corridor split (interchange_config.IMPORT_TRANCHES_BY_
+    # YEAR — the documented published sizing), so annual firm energy
+    # capability is conserved; shape = the unit-mean per-(month × hod) median
+    # of measured total CISO corridor net imports (eia_loader.measured_firm_
+    # import_shape, model-clock mapped), same-year in a backcast and pooled
+    # multi-year climatology in a forecast year (DMM RA import contracting is
+    # a persistent structure). An hour-varying pmax CAPABILITY the LP still
+    # clears below — never a price adder, never a flow pinned to the residual
+    # (rules #13/#14). Carried by transmission.inject_caiso_firm_import_shape
+    # via the shared apply_interchange_injections seam (both orchestrators).
+    # Requires caiso_per_hub_intertie + caiso_perhub_firm_base. Default off
+    # (byte-identical); CAISO-only.
     caiso_intertie_reference_price: bool = False  # Price each CAISO per-hub WECC
     # corridor from the FORWARD reference-price formula instead of the measured
     # OASIS hub LMP: per-hub price = (henry_hub[year] + gas_basis) × neighbor

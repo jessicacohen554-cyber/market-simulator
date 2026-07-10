@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-10-caiso-73-firm-shape",
+ "label": "caiso 73 firm shape",
+ "date": "2026-07-10",
+ "shorthand": "caiso-73-firm-shape",
+ "definition": "(PROBE) caiso-73: measured shaped firm import base \u2014 caiso-72 recipe + caiso_firm_import_shape=True single delta (firm blocks' hourly pmax = year DMM RA-import x MIC-split level x unit-mean per-(month x hod) median of measured CISO corridor net imports), 2023-2025. HEADLINE: C7 D-1 diurnal shape flips FAIL->PASS (CT profile_r 0.782/0.771 -> 0.817/0.819 vs 0.8 gate, 2023/24); 2024 CC_REGULAR +9.0 -> +7.64 TWh (C1), 2025 gas +8.5% -> +6.5% (C2); deep-evening (h19-22) 2024 imports 3,341 -> 3,930 MW toward measured 4.9-5.6 GW; midday h14 over-import down. Disclosed risks realized as predicted: 2024 CT 1.23 -> 1.13 TWh (evening imports displace CT \u2014 battery/commitment channel attribution), 2023 shifts domestic (firm level drops to its own DMM 2,323 MW; CC +0.9 TWh, tail 473->480 h). C6 governance PASS (zero new free parameters) + C8 PASS. See FINDING-caiso73-firm-import-shape-2026-07-10.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-10-caiso-73-firm-shape.js",
+ "bundle": "results/calibration/caiso73_firm_shape",
+ "ablation_twin": "2026-07-10-caiso-73-firmshape-ablation",
+ "market_story": "The firm base is contract structure, not spot economics: CAISO's RA-import and self-scheduled blocks flow on their contracted schedule \u2014 heavy overnight and through the evening ramp, thin midday when CAISO's own solar displaces them \u2014 so shaping the block's availability by the measured revealed schedule (level still the published DMM RA x MIC sizing) lets evening imports land at their real level and the midday over-import fall, without a price adder or a pinned flow."
+}

@@ -963,6 +963,81 @@ def inject_caiso_per_hub_intertie_prices(
     return applied
 
 
+def inject_caiso_firm_import_shape(fleet_arrays, iso: str, year: int) -> bool:
+    """Shape the CAISO firm import blocks by the measured revealed base profile.
+
+    caiso-73 (``config.caiso_firm_import_shape``; FINDING-caiso72 live lead
+    #1): the flat firm base (:data:`CAISO_FIRM_IMPORT_TRANCHES` under
+    ``caiso_perhub_firm_base``) offers the same MW every hour, while the
+    measured CISO corridor net imports are strongly shaped — overnight
+    5.3–6.3 GW, midday 0.2–1.3 GW, evening ramping back to 5.4–6.2 GW
+    (2023–2025, model-clock aligned) — so the model under-imports the deep
+    evening by 1.4–2.2 GW and over-imports midday (+2.3 GW at h14;
+    FINDING-caiso72-step0). For each firm tranche this rewrites the hourly
+    availability CAPABILITY as::
+
+        cap[t] = firm_mw[year] × w[t]        # then pmax = max(cap),
+                                             # availability ∝ cap / max(cap)
+
+    where ``firm_mw[year]`` is the tranche's year-grounded published level —
+    the DMM annual RA-import capacity × MIC corridor split of
+    :data:`~market_sim.config.interchange_config.IMPORT_TRANCHES_BY_YEAR`
+    (full derivation and sources in its comment block; an unmapped year uses
+    the static ladder) — and ``w`` is the unit-mean measured shape of
+    :func:`market_sim.data.eia_loader.measured_firm_import_shape` (per-(month
+    × hod) median of total measured corridor net imports, same-year in a
+    backcast, pooled climatology in a forecast year). Because mean(w) = 1 the
+    firm block's annual energy capability equals the published DMM sizing —
+    the measured series contributes only the shape, never the level.
+
+    STEP-0 sizing (2024, w from the 2024 extract, firm total 3,371 MW):
+    shaped firm ≈ 5.0 GW overnight / 1.0–1.5 GW midday / 4.2–4.9 GW deep
+    evening, vs 3.37 GW flat — against the measured evening import deficit of
+    1.4–2.2 GW at h19–22 and the +2.3 GW midday over-import. Per-corridor
+    maxima (PNW 3.1 GW, DSW 3.6 GW) stay below the corridor link TTCs
+    (COI 4.8 GW, Path-46/WOR 10.6 GW); the corridor ATC envelope
+    (``caiso_corridor_flow_limit``) and the simultaneous-import interface
+    limit still bound the delivered flow. The existing eford derate is
+    preserved multiplicatively; the block stays a capability the LP clears
+    below (pmin = 0) — an hour-varying pmax, not a floor, not a price adder
+    (rules #13/#14).
+
+    Returns ``True`` when at least one firm tranche was shaped, ``False``
+    (byte-identical) when the fleet has no firm rows or no measured shape is
+    available.
+    """
+    from market_sim.data.eia_loader import measured_firm_import_shape
+
+    hours = int(fleet_arrays.availability.shape[1])
+    w = measured_firm_import_shape(iso, year, hours)
+    if w is None:
+        return False
+    ladder = IMPORT_TRANCHES_BY_YEAR.get(iso, {}).get(year) or IMPORT_TRANCHES.get(
+        iso, []
+    )
+    firm_mw = {
+        name: cap for name, cap, _ in ladder if name in CAISO_FIRM_IMPORT_TRANCHES
+    }
+    per_hub_zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
+    applied = False
+    for row, uid in enumerate(fleet_arrays.unit_ids):
+        zone = next((z for z in per_hub_zones if uid.startswith(f"{z}_")), None)
+        if zone is None:
+            continue
+        name = uid[len(zone) + 1 :]
+        level = firm_mw.get(name)
+        if level is None or level <= 0.0:
+            continue
+        shaped = level * w  # (hours,) capability
+        peak = float(shaped.max())
+        if peak <= 0.0:
+            continue
+        fleet_arrays.availability[row, :] *= shaped / peak
+        fleet_arrays.pmax[row] = peak
+        applied = True
+    return applied
+
+
 def inject_caiso_per_hub_reference_prices(
     fleet_arrays,
     mc: np.ndarray,
@@ -4206,6 +4281,27 @@ def apply_interchange_injections(
         if inject_nyiso_firm_imports(fleet_arrays, iso, year):
             _logger.info(
                 "%s %d: firm import baseload floored (HQ/Ontario must-flow)",
+                iso,
+                year,
+            )
+    # CAISO firm-block availability shape (caiso_firm_import_shape, caiso-73):
+    # hour-varying pmax CAPABILITY on the firm/contracted tranches — year
+    # level from the published DMM RA-import × MIC-split ladder, shape from
+    # the measured revealed import base (unit-mean, so annual firm energy is
+    # conserved). An availability mechanism, not a price or a floor; a
+    # forecast year regenerates from the pooled climatological shape inside
+    # the loader.
+    if (
+        per_hub_intertie
+        and getattr(config, "caiso_perhub_firm_base", False)
+        and getattr(config, "caiso_firm_import_shape", False)
+    ):
+        if inject_caiso_firm_import_shape(fleet_arrays, iso, year):
+            _logger.info(
+                "%s %d: firm import blocks shaped by the measured revealed "
+                "base profile (DMM level × unit-mean (month × hod) median of "
+                "measured corridor net imports; flat block replaced by an "
+                "hour-varying capability)",
                 iso,
                 year,
             )
