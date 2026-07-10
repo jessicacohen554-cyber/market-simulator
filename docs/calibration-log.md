@@ -40,6 +40,67 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-10 — NYISO — G-13 CLOSED: per-zone daily LDC-transport delivered gas folded into the keeper line; KEEPER PROMOTED `2026-07-10-nyiso-60-ldc-transport` replaces `nyiso-59-dynamic-rr` (CALIBRATED-WITH-CAVEATS)
+
+**Goal.** Execute the nyiso-59 entry's open item (4) ("nyiso-60 = nyiso-59 +
+LDC transport — the natural next combination probe"): fold nyiso-55's G-13
+mechanism (`nyiso_downstate_ct_gas_daily`, the measured per-zone daily
+LDC-transport delivered-gas index) into the dynamic-RR keeper recipe,
+superseding the v1 monthly statewide citygate premium
+(`nyiso_downstate_ct_gas_basis`) the keeper line still carried. Both
+mechanisms are measured (rules 12/13); the combination is the most
+structurally faithful NYISO config to date. Solved locally (15 GiB + 8 GiB
+swap, ~35 min/yr; the nyiso-59 CI-replay OOM stands) via
+`replay_keeper.py --set` on the nyiso-59 meta — exactly one config delta:
+v1 OFF, v2 ON (rule 19, one mechanism per phenomenon).
+
+**Mechanism (rule 12/13, zero new free parameters).** The interruptible
+downstate LM6000 peakers are **transport** customers: commodity at the market
+hub + a published LDC delivery tariff.
+`delivered_gas[zone][day] = Transco Z6 NY daily spot + LDC monthly non-firm
+transport rate[zone]` (KEDNY SC-22 Tier 1 for NYC / KEDLI SC-19 Tier 1 for LI,
+published statnfdr statements; `nyiso-downstate-gas` datatype v2, frozen
+curation). The daily hub leg prices the cold-snap blowouts (Jan-2024 $23.90;
+2025-01-17 **$97.90**) on the exact days the peakers run — the v1 monthly mean
+smeared them away, and the v1 statewide firm-citygate premium was the wrong
+rate class AND the wrong boundary (LI gas island ≠ NYC system). Engagement:
+105 downstate CT_PEAKER units; delivered ranges 2.45–30.84 / 2.76–26.52 /
+4.18–100.87 $/MMBtu (2023/24/25). DOF ledger: the v1 entry is REPLACED by the
+v2 entry (n_entries 11, n_residual unchanged at 5).
+
+**Result (`2026-07-10-nyiso-60-ldc-transport` + `-ablation` twin, both
+registered; v2.4 lw basis).** A metrics **wash-to-slightly-better** with the
+tail identical — and the 2025 shape crosses INTO the band: C3a
+−4.8%/−13.2%/**−13.7%** (keeper −4.8/−13.2/−15.7 — the daily index prices the
+Jan/Feb-2025 arctic-blast months); C3b 0.163/0.223/**0.199 PASS** (keeper
+0.221/0.215-ledgered — one ledgered caveat DROPS); C3c identical 23/1/25 h
+(same G-20a DA-basis artifacts ledgered); C5a +3.3/+2.5/+8.1% (2025
+commercial band). C1 **14/14 all years** (free 10/10), C2/C4/C7 PASS, **C8
+clean PASS** grounded-above-budget (ST_GAS `reliability_floor`
+32.1/44.0/36.0% forced, D-4 off-window 0.0%, D-1 r 0.950–0.957).
+Determination **CALIBRATED-WITH-CAVEATS** — same profile as nyiso-59 on a
+strictly more-measured config with one fewer ledger entry, so per rule 1 (and
+the session brief's promotion conditions: C1 all years, C7/C8 clean, C2-2025 +
+C6 intact — all met) **nyiso-60 is promoted keeper**. Ablation twin:
+floors-off prices sit HIGHER (simple means 32.20/35.07/60.09 vs
+29.05/31.96/54.08) and the 2023 tail max ($2,000) is present in both arms —
+the floors are commitment scaffolding; the level and the tail come from the
+measured requirement's reserve duals plus the measured daily delivered gas.
+
+**Open (carried).** (1) B1 residual: condition-varying requirement increments
+— formal NYISO request only; the 2024 deep-tail undershoot (1 vs 12 RT h)
+sits here. (2) Iroquois Z2 winter hub (Ask-C). (3) Downstate import
+discipline: apply the MEASURED NYC locality import limit 2,875 MW
+(capacity-deliverability) in the summer-peak window exactly as
+`nyiso_li_lcr_tsl` (#1345) does for LI, replacing the 3,900 MW
+Dunwoodie-South estimate — the identified next lever for the 2024/2025 deep
+tail (single-delta probe nyiso-61). (4) G-13 is CLOSED by this run; optional
+sharpening only (true daily citygate commodity index, ICE/Platts/NGI).
+
+**Housekeeping.** NYISO registrations now 15/15 after this pair — the next
+NYISO registration must prune per the top-15 retention. Twin registered via
+the b5f2607 `_slug` trailing-ablation fix (no hand-repair needed — first use).
+
 ### 2026-07-10 — NYISO — #1344 dynamic reserve requirements LANDED: measured hourly LRR series in the live co-opt; KEEPER PROMOTED `2026-07-10-nyiso-59-dynamic-rr` replaces `nyiso-56-measured-zonal` (CALIBRATED-WITH-CAVEATS)
 
 **Goal.** Execute the Ask-B addendum's handoff ("flip
@@ -9210,6 +9271,106 @@ precedent).
 **Holdouts.** No solve, score, or intake outside 2023-2025 (rule 22);
 ORDC tariff parameters untouched (rule 26); promotion changes no model
 code or tunable (rules 13/21/23) — governance files only.
+## 2026-07-10 — ERCOT-56: May-2024 outage-vs-heat collision forensics — outage-understatement hypothesis REFUTED at the event hours (thermal input faithful to ±0.3 GW on May 8); the ONE real defect found (nuclear refuel monthly smear) fixed as window-grain measured data; C3c-2024 stays the G-22 offer-formation residual (probe 27→27 h); ercot56 nucwin + twin registered, keeper stays ercot55-surface-ab
+
+**Task (owner handoff).** Test the hypothesis that the May-2024 highs (May-8
+deep event; recurring $200-1,500 DA evenings; May-27 Memorial-Day ~77 GW
+record) were spring-maintenance outages colliding with unseasonable heat that
+the model's outage inputs understate — leaving the model too much capacity to
+form the observed depth/breadth (C3c-2024 27 h vs 68 DA, gate ≥34 h; May
+monthly −34.7 % on the keeper).
+
+**Forensics (diagnose-first; full detail in
+docs/DIAGNOSIS-ercot-may2024-outage-forensics-2026-07.md).** (1) Actuals:
+10 May event days; only May 8 is genuine reserve scarcity (PRC 4,778 MW,
+RTORPA $179, λ $2,420). The seven DA-shoulder days (May 2/13/14/17/24/26/27,
+16 of May's 22 DA>$200 h) cleared DA $266-1,518 while RT stayed ≤$180 and
+measured RTORPA ≤$3 — offer/DA-expectation formation, not reserve physics.
+May-27 peak 77.13 GW measured, model demand input 76.4 GW same day/hour;
+2024 demand + HSL hygiene clean (no Dec-2025-style holes). (2) Outage
+forensics — model derate vs 60-Day DAM Gen_Resource OUT (config-collapsed to
+physical trains) and vs CEMS at the RT event hours: the measured overlay
+tracks reality's return-from-maintenance ramp (≈23 GW out May 2 → ≈12 GW
+May 27) within ±3.5 GW; at May-8 HE17-20 the model was NET −0.28 GW MORE
+derated than CEMS reality (misses — the ST_GAS_PEAKER_PLANTS detector
+exclusions [Stryker/Mountain Creek/Graham/Olinger], the CT-class exclusion,
+Handley-5's one-day-late window — CANCEL against over-derates [Sam Seymour
+back midday May 8, Tenaska Gateway, Sandy Creek, Wolf Hollow II one train]);
+May 27 dead even (+0.1 GW). The hypothesis' load-bearing form is REFUTED —
+the collision is IN the model at the right aggregate MW. (3) The one real
+defect: NUCLEAR_MONTHLY_CF_BY_YEAR smears measured monthly energy uniformly
+(May-2024 0.78 × all four reactors × all hours), but the disclosure shows
+STP-2 OUT 2024-03-23→05-19 (spanning Apr-16, Apr-28, May-8) and CP-1 OUT
+05-11→16, with ALL FOUR reactors back for May 20-31 (incl. the record
+May-24..27 heat) — ±1.1-1.4 GW mis-timed within May; the fall refuels (STP-1
+Oct 5–Nov 7, CP-2 Oct 21–Nov 17) smeared across Oct-Nov the same way.
+
+**Rule-16 throwaway probe (2024-only, never registered): window-grain nuclear
+moves the tail 27 → 27** — the C3c-2024 gate is availability-closed, exactly
+as the RTORPA≈0 evidence predicted — while deepening May-8 HE18/19
+$925/$1,405 → $1,371/$1,907 (measured λ $2,420/$2,368), fixing Nov
+(−14.1 → −3.9 %), sign-flipping Jan (+4.9 → −5.1 %), and collapsing a
+spurious May-26 $491 hour (model-tight on a day reality had all reactors
+back — a smear artifact). C3c-2024 therefore STAYS LEDGERED as the filed
+G-22 offer-formation residual (rules 1/13; no retune; ORDC frozen, rule 26).
+
+**Fix landed as measured data (rules 14/15).**
+`scripts/derive_ercot_nuclear_availability.py` →
+`data/raw/ercot-nuclear-availability.csv`: per-reactor DAILY availability
+from the 60-Day DAM disclosure NUC Resource Status (2023-2025 delivery
+dates), monthly energy reconciled to the standing EIA-923 anchor — event
+days (raw < 0.90: windows, trips, ramps, deep derates) kept exactly as
+measured, the ≥0.90 pool scaled per month to the anchor (per-day cap 1.0;
+pool scales 0.96-1.25, month energy on-anchor to <0.01 % everywhere except
+the two winter months where the anchor's own 1.0-cap binds, ≤1.2 %). The
+June-2023 heat-dome structure is cross-validated against the EIA-930 nuclear
+hourly (CP-1 trip Jun 16-18 −1.23 GW, then a real ~0.73 CP-1 derate through
+month-end); the Aug-2023 raw HSL low-read (~0.980 vs 930's 0.992) is
+anchored out. Applied under new `ScenarioConfig.ercot_nuclear_unit_
+availability` (default off; ERCOT backcast; both CLIs; meta/run_config
+recorded; loader `outages.ercot_nuclear_unit_availability_series`; the
+nuclear flat must-run floor tracks automatically; uncovered dates — the
+Oct-2023 disclosure hole, Nov-Dec 2025 until the 2026 publications land —
+keep the smear). Zero new tunables (DOF ledger seeded-note extension,
+ercot53 precedent).
+
+**Runs (full 2023-2025 + zero-forcing twin, solved and registered via the
+`ercot56-solve-register` workflow).** Recipe = the PROMOTED keeper
+(ercot55-surface-ab) reconstructed via `_ercot55_ab.py --surface` + the flag
+(`--set ercot_nuclear_unit_availability=true`); local solves reproduced the
+CI keeper byte-parity first (ercot54 precedent):
+
+| run | C3a (23/24/25) | C3b | C3c h vs DA 311/68/23 | May-24 | caveats |
+|---|---|---|---|---|---|
+| ercot55 surface-ab (keeper) | +2.0/−4.7/−1.1 % | .106/.196/.094 | 166/27/24 | −34.7 % | 2 (C3c-2024, C5c) |
+| ercot56 nucwin | +3.9/−4.5/−1.1 % | .133/.183/.094 | **171**/27/**25** | −33.2 % | (see run metrics) |
+
+2024 improves across C3a/C3b/Nov/Jan/May-8-depth; 2025 ~unchanged (tail
+25 vs 23 DA, 1.09×); C3c-2023 171 h ≥ the 162 h owner gate. **The honest
+2023 movement (C3a +2.0→+3.9 %, C3b 0.106→0.133, both PASS) is the real
+June/Sep heat-dome nuclear structure the smear was hiding: with CP-1's
+measured trip + ~0.73 late-June derate in place of phantom flat nuclear,
+June-2023 overshoots +22 % (was +7 %) — a DISCOVERED COMPENSATION (rule 15:
+the accurate input stays; June scarcity formation was leaning on smeared
+nuclear and is now an open root-cause lane), not a reason to revert.**
+LOYO basis (rule 22): zero fitted parameters — the delta is measured window
+data reconciled to the already-committed measured energy anchor (the
+ercot53/ercot55 "zero-parameter clean basis"); 2023/2025 tail exposure
+pre-checked (2023's DA tail is 93 % Jun-Sep; 2025's 24 h scattered). Keeper
+promotion is the owner's call — keeper stays ercot55-surface-ab; the
+recommendation (adopt: strictly better 2024, honest 2023 exposure, C3c-2025
+still passing) is recorded on the run.
+
+**Registry retention (rule 15).** ERCOT pruned 19 → 14 registrations: the
+superseded ercot46 clock trio + the refuted temp-derate ercot48/49 pairs
+dropped (sidecars + run payloads; bundle dirs kept as the archival record).
+
+**Holdouts.** No solve, score, or intake outside 2023-2025 (rule 22); the
+disclosure intake reads 2023-2025 delivery dates only; ORDC tariff
+parameters untouched (rule 26); no offer-curve, sigmoid, floor, or
+derive-script value changed (rules 13/21/23) — the new deriver is a new
+measured input with a frozen formula (re-runs only on a disclosure-data
+update), and the June-2023 overshoot is explicitly NOT retuned against.
 
 ## 2026-07-10 — PJM — KEEPER SWAP pjm-94 -> pjm-97 (owner decision, rule 1) — G-20 Phase-2 measured internal interface limits + data-intake
 

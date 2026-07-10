@@ -575,5 +575,95 @@ class RetireeCemsEnvelopeTest(unittest.TestCase):
         self.assertIsNone(cap)
 
 
+class ErcotNuclearUnitAvailabilityTest(unittest.TestCase):
+    """The window-grain nuclear refuel series (60-Day DAM disclosure CSV)."""
+
+    def test_committed_series_shape_and_windows(self):
+        from market_sim.data.outages import ercot_nuclear_unit_availability_series
+
+        s = ercot_nuclear_unit_availability_series(2024)
+        # All four reactors present: CP 6145 units 1/2, STP 6251 units 1/2.
+        self.assertEqual(set(s), {(6145, 1), (6145, 2), (6251, 1), (6251, 2)})
+        stp2 = s[(6251, 2)]
+        self.assertEqual(stp2.shape, (HOURS_PER_YEAR,))
+        # STP-2 refuel 2024-03-23 -> 2024-05-19: OUT on the May-8 scarcity
+        # event, back for the May-24..27 record heat.
+        may8_he18 = _hour_of_year(5, 8, 17)
+        self.assertEqual(stp2[may8_he18], 0.0)
+        may27_he18 = _hour_of_year(5, 27, 17)
+        self.assertGreater(stp2[may27_he18], 0.9)
+        # Bounded in [0, 1] wherever covered; NaN only on uncovered dates
+        # (2024 is fully covered -> no NaN at all).
+        finite = np.isfinite(stp2)
+        self.assertTrue(finite.all())
+        self.assertTrue((stp2[finite] >= 0.0).all())
+        self.assertTrue((stp2[finite] <= 1.0).all())
+
+    def test_uncovered_dates_are_nan(self):
+        from market_sim.data.outages import ercot_nuclear_unit_availability_series
+
+        s = ercot_nuclear_unit_availability_series(2025)
+        cp1 = s[(6145, 1)]
+        # Nov-Dec 2025 deliveries publish in the 2026 disclosure files (not
+        # yet on disk), so those dates are NaN -> the caller keeps the
+        # monthly-CF smear there.
+        dec15 = _hour_of_year(12, 15, 12)
+        self.assertTrue(np.isnan(cp1[dec15]))
+        # Spring 2025 is covered: CP-1 refuel 2025-04-21 -> 2025-05-14.
+        may1 = _hour_of_year(5, 1, 12)
+        self.assertEqual(cp1[may1], 0.0)
+
+    def test_fleet_application_gated_and_min_gen_tracks(self):
+        """Flag off -> smear untouched; flag on -> windows land, floor follows."""
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+
+        def nuke(unit_no: int, code: int, mw: float) -> Generator:
+            return Generator(
+                unit_id=f"{code}_{unit_no}",
+                name=f"nuke {code}_{unit_no}",
+                zone="Houston" if code == 6251 else "North",
+                fuel_type="nuclear",
+                pmax_mw=mw,
+                pmin_mw=0.0,
+                heat_rate=10.4,
+                vom=2.0,
+                emission_rate_co2=0.0,
+                nox_rate=0.0,
+                eford=0.03,
+                online_year=1989,
+                plant_code=code,
+            )
+
+        gens = [nuke(1, 6251, 1300.0), nuke(2, 6251, 1280.0)]
+        zones = ["Houston", "North"]
+        base_cfg = dict(weather_year=2024, iso="ERCOT", mode="backcast")
+        cfg_off = ScenarioConfig(**base_cfg)
+        cfg_on = ScenarioConfig(**base_cfg, ercot_nuclear_unit_availability=True)
+        fa_off = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_off, year=2024
+        )
+        fa_on = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_on, year=2024
+        )
+        h = _hour_of_year(5, 8, 17)  # May 8 HE18, STP-2 out in reality
+        # Flag off: the 2024 May smear (0.78) for both units.
+        self.assertAlmostEqual(fa_off.availability[1, h], 0.78, places=2)
+        # Flag on: STP-2 (row 1) zeroed on the event day, STP-1 (row 0) near 1.
+        self.assertEqual(fa_on.availability[1, h], 0.0)
+        self.assertGreater(fa_on.availability[0, h], 0.9)
+        # Nuclear flat must-run floor tracks the overlaid availability.
+        self.assertAlmostEqual(
+            float(fa_on.min_gen[1, h]),
+            float(fa_on.availability[1, h] * 1280.0),
+            places=3,
+        )
+        self.assertAlmostEqual(
+            float(fa_on.min_gen[0, h]),
+            float(fa_on.availability[0, h] * 1300.0),
+            places=3,
+        )
+
+
 if __name__ == "__main__":
     unittest.main()
