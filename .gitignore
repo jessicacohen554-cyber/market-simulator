@@ -201,6 +201,9 @@ data/raw/NYISO-AS/raw/
 # out of the pack per the NYISO-archive precedent; regenerate with
 # scripts/fetch_neiso_reserve_requirements.py (README.md in that dir).
 data/raw/NEISO-AS/requirements/requirements_*.csv
+# ISO-NE DA energy-offer daily CSVs (~1.4 GB for 2023-2025): gitignored, same
+# precedent; regenerate with scripts/fetch_neiso_da_energy_offers.py.
+data/raw/NEISO-AS/da-energy-offers/hbdayaheadenergyoffer_*.csv
 /results/calibration/pjm_29_20*/
 # Intermediate per-year reference-price (pjm_30) run bundles; only the merged
 # 3-year results/calibration/pjm_30 is committed (after the interface-limit fix).
