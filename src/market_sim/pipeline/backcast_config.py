@@ -881,6 +881,7 @@ def backcast_config(
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
     ercot_offer_surface_conditional: bool = False,
+    neiso_offer_surface_conditional: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -1798,4 +1799,20 @@ def backcast_config(
             pk = float(bands["peak"])
             bands["peak_ladder"] = [[share, pk] for _ in range(n_rungs)]
         config = config.with_overrides(offer_curve_by_group=merged)
+    # NEISO condition-responsive fast-start offer surface (charter Limb B):
+    # the identical structural no-op split, CT_PEAKER only — 5 equal-capacity
+    # peak rungs at the SAME resolved height, so P0 and loose hours are
+    # byte-identical until the P1-only markup
+    # (data.fleet.build_neiso_offer_surface_conditional_markup) reprices the
+    # upper rungs in anticipated-tight hours.
+    if neiso_offer_surface_conditional and iso == "NEISO":
+        config = config.with_overrides(neiso_offer_surface_conditional=True)
+        n_rungs = 5  # == derive_neiso_offer_surface --rungs default
+        share = round(1.0 / n_rungs, 3)
+        merged = {c: dict(b) for c, b in config.offer_curve_by_group.items()}
+        bands = merged.get("CT_PEAKER")
+        if bands and "peak" in bands:
+            pk = float(bands["peak"])
+            bands["peak_ladder"] = [[share, pk] for _ in range(n_rungs)]
+            config = config.with_overrides(offer_curve_by_group=merged)
     return config
