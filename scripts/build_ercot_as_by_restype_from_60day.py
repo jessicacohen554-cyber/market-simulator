@@ -46,7 +46,14 @@ Scope of the columns written:
 Run:
     python scripts/build_ercot_as_by_restype_from_60day.py            # 2023 (storage)
     python scripts/build_ercot_as_by_restype_from_60day.py --year 2023
+    python scripts/build_ercot_as_by_restype_from_60day.py --year 2018 2019 2020 2021 2022
     python scripts/build_ercot_as_by_restype_from_60day.py --validate # vs committed
+
+Each requested year is built independently and only writes a parquet if its
+delivery rows are present in the source Gen Resource Data parquets under
+``data/raw/ercot/`` (``build_year`` prints "no delivery rows -- skipping" and
+returns ``None`` for a year with no source coverage, e.g. before that data
+has been intaken -- it does not fabricate a zero-filled file).
 """
 
 from __future__ import annotations
@@ -264,7 +271,17 @@ def validate(big: pd.DataFrame) -> None:
 
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--year", type=int, default=None)
+    ap.add_argument(
+        "--year",
+        type=int,
+        nargs="+",
+        default=None,
+        help="one or more delivery years to build (default: 2023). Extended "
+        "2026-07-10 (ERCOT AS 2018-2022 holdout-intake) to accept multiple "
+        "years in one invocation, matching build_ercot_as_withholding.py; "
+        "each year is still built independently from whatever Gen Resource "
+        "Data parquets are present under data/raw/ercot/ for it.",
+    )
     ap.add_argument("--validate", action="store_true")
     ap.add_argument(
         "--surgical-storage",
@@ -290,9 +307,9 @@ def main() -> None:
         validate(big)
         return
     if args.surgical_storage:
-        surgical_storage_fix(big, args.year or 2024)
+        surgical_storage_fix(big, (args.year or [2024])[0])
         return
-    years = [args.year] if args.year else [2023]
+    years = args.year if args.year else [2023]
     for year in years:
         frame = build_year(big, year, with_thermal=args.with_thermal)
         if frame is not None:
