@@ -9,7 +9,10 @@ Flows" posting (P-32, `mis.nyiso.com/public/csv/ExternalLimitsFlows/`),
 Built by `scripts/fetch_nyiso_interface_flows.py` (download + documented
 5-min→hourly aggregation: mean flow, most-binding limits per hour; the raw
 5-minute zips are ~95 MB/year and are not committed — the script's cache
-regenerates them from the MIS archive). Curated into the
+regenerates them from the MIS archive). Interior source gaps (1–3 hours/year
+system-wide) are filled from the adjacent actual observation and marked
+`n_intervals = 0` (owner instruction 2026-07-10); hours before an interface
+enters service (CHPE 2026) are never invented. Curated into the
 `nyiso-interface-flows` clean datatype by
 `scripts/curate_nyiso_interface_flows.py` (which also nulls the ±9,999 MW
 "unbounded" sentinel limits).
