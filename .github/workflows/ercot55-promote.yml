@@ -1,0 +1,72 @@
+name: ercot55-promote
+
+# One-shot follow-up to ercot55-solve-register: publish the owner-approved
+# ERCOT keeper promotion (ercot53 -> ercot55-surface-ab). The authoring
+# session pushed the small governance edits (keepers.json, sidecars) directly;
+# this job lands the two relay-oversized pieces from the runner — the
+# promotion calibration-log entry (~590 KB log) and the rebuilt status.js
+# (~220 KB) — plus the owner-approval stamp on the surface arm's attestation.
+# caiso67/69 + ercot55-solve-register precedent.
+# Re-trigger 2: run 1 raced the extended _ercot55_ci_patch.py push (the
+# --approve-attestation/--append-promotion-log flags landed one commit later).
+on:
+  push:
+    branches:
+      - claude/ercot-c2-930-scarcity-rd7k2m
+    paths:
+      - .github/workflows/ercot55-promote.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ercot55-promote
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Record owner approval + append the promotion log entry
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot55_ci_patch.py \
+            --approve-attestation --append-promotion-log
+
+      - name: Rebuild status.js for the new keeper set
+        run: |
+          set -euo pipefail
+          python scripts/build_status.py
+
+      - name: Upload via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_multi.py \
+            --rid 2026-07-10-ercot55-surface-ab \
+            --bundle results/calibration/ercot55_surface_ab \
+            --bench-iso ERCOT \
+            --extra docs/calibration-log.md \
+            --extra frontend/data/backcast/status.js \
+            --extra frontend/data/backcast/keepers.json \
+            --extra frontend/data/backcast/registry/2026-07-10-ercot53-hsl-930fill.json \
+            --branch claude/ercot-c2-930-scarcity-rd7k2m \
+            --message "governance(ercot): keeper promotion artifacts — log entry, status.js, owner-approved attestation [skip ci]"
