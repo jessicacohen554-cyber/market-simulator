@@ -33,7 +33,6 @@ Usage:
 from __future__ import annotations
 
 import argparse
-import json
 import os
 import sys
 import urllib.request
@@ -46,51 +45,39 @@ REPO = Path(__file__).resolve().parent.parent
 OUT_DIR = REPO / "data" / "raw" / "campd-unit-level"
 BULK_BASE = "https://api.epa.gov/easey/bulk-files"
 
-# Holdout years under FULL quarantine (CLAUDE.md rule 22): no intake for these
-# years for an ISO until that ISO is declared calibration-complete. Fetching
-# them requires ``--holdout-intake <ISO>`` AND a marker for <ISO> in the
-# calibration-complete registry — the one-shot validation authorization.
+# Holdout years (CLAUDE.md rule 22, amended 2026-07-06 per
+# docs/handoffs/holdout-policy-memo-2026-07.md Option 2): SOLVE and SCORE stay
+# fully quarantined until an ISO is declared calibration-complete, but DATA
+# INTAKE for these years is allowed for any ISO, any time, under explicit,
+# session-logged owner authorization — no calibration-complete marker
+# required. Fetching still requires ``--holdout-intake <ISO>`` so an
+# accidental/un-authorized holdout fetch doesn't slip through unnoticed.
 QUARANTINED_YEARS: frozenset[int] = frozenset({2022, 2026})
-CALIBRATION_COMPLETE_PATH = (
-    REPO / "frontend" / "data" / "backcast" / "calibration-complete.json"
-)
-
-
-def _calibration_complete_isos() -> set[str]:
-    """Return the set of ISOs marked calibration-complete (uppercased)."""
-    try:
-        data = json.loads(CALIBRATION_COMPLETE_PATH.read_text())
-    except (OSError, ValueError):
-        return set()
-    return {str(k).upper() for k in (data.get("complete") or {})}
 
 
 def _enforce_quarantine(year: int, holdout_intake: str | None) -> None:
-    """Refuse a quarantined-year fetch unless authorized (CLAUDE.md rule 22).
+    """Refuse an un-authorized quarantined-year fetch (CLAUDE.md rule 22).
 
-    A holdout year (2022, H1-2026) may only be intaken once the target ISO has
-    been declared calibration-complete — the one-shot holdout-validation gate.
-    Requires ``--holdout-intake <ISO>`` naming that ISO *and* a marker for it in
-    ``frontend/data/backcast/calibration-complete.json``. Raises otherwise so
-    the next accidental holdout intake is blocked at the fetcher.
+    Amended 2026-07-06 (Option 2, docs/handoffs/holdout-policy-memo-2026-07.md):
+    data intake for a holdout year (2022, H1-2026) is permitted for any ISO,
+    at any time, under explicit owner authorization — ``--holdout-intake
+    <ISO>`` naming the target ISO is that authorization record. No
+    ``calibration-complete`` marker is required for intake (that marker still
+    gates *solve* and *score*, enforced elsewhere: ``run_calibration_full.py``'s
+    ``enforce_holdout_year_gate`` and the CI ``quarantine-gates`` job). Raises
+    if no ``--holdout-intake`` is passed, so an accidental holdout fetch is
+    still blocked at the fetcher.
     """
     if year not in QUARANTINED_YEARS:
         return
     if not holdout_intake:
         raise SystemExit(
-            f"refusing to fetch quarantined year {year}: CLAUDE.md rule 22 puts "
-            "2022 and H1-2026 under FULL quarantine (no intake) until the target "
-            "ISO is calibration-complete. Pass --holdout-intake <ISO> to run the "
-            "authorized one-shot holdout intake."
-        )
-    iso = holdout_intake.upper()
-    complete = _calibration_complete_isos()
-    if iso not in complete:
-        raise SystemExit(
-            f"refusing to fetch quarantined year {year} for {iso}: no "
-            f"calibration-complete marker for {iso} in {CALIBRATION_COMPLETE_PATH} "
-            f"(complete: {sorted(complete) or 'none'}). Declare the ISO complete "
-            "before its one-shot holdout intake (CLAUDE.md rule 22)."
+            f"refusing to fetch quarantined year {year}: CLAUDE.md rule 22 "
+            "holds 2022 and H1-2026 solve/score under quarantine until the "
+            "target ISO is calibration-complete, but data intake is allowed "
+            "any time under explicit owner authorization (rule 22 amendment, "
+            "docs/handoffs/holdout-policy-memo-2026-07.md Option 2). Pass "
+            "--holdout-intake <ISO> to record that authorization for this run."
         )
 
 
@@ -291,8 +278,9 @@ def main() -> None:
         "--holdout-intake",
         default=None,
         metavar="ISO",
-        help="authorize the one-shot quarantined-year (2022/2026) intake for "
-        "this ISO (requires its calibration-complete marker; CLAUDE.md rule 22)",
+        help="record explicit owner authorization to intake quarantined-year "
+        "(2022/2026) data for this ISO (no calibration-complete marker "
+        "required for intake; CLAUDE.md rule 22, amended 2026-07-06)",
     )
     args = ap.parse_args()
 
