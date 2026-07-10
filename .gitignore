@@ -197,6 +197,10 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 results/calibration/run119_cps_mustrun/
 results/calibration/run119_cps_mustrun.log
 data/raw/NYISO-AS/raw/
+# ISO-NE hourly reserve-requirement window CSVs (75 files, 2023-2025): kept
+# out of the pack per the NYISO-archive precedent; regenerate with
+# scripts/fetch_neiso_reserve_requirements.py (README.md in that dir).
+data/raw/NEISO-AS/requirements/requirements_*.csv
 /results/calibration/pjm_29_20*/
 # Intermediate per-year reference-price (pjm_30) run bundles; only the merged
 # 3-year results/calibration/pjm_30 is committed (after the interface-limit fix).
