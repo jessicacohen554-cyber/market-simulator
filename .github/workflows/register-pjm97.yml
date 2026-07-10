@@ -29,6 +29,16 @@
 # (its final pull/push targets the deleted ref, so it dies at the last
 # step). Fresh branch from main; this run re-solves deterministically and
 # its results commit lands here.
+#
+# 4th firing 2026-07-10 (~17:25Z): run 29106794956 solved keeper AND twin
+# green but died at registration — render_backcast._slug caps shorthands at
+# 4 words, so "pjm 97 measured-interfaces ablation" slugged to the KEEPER's
+# own id and the twin registration overwrote it (the test -f gate caught
+# it before anything committed). Fix on this branch: a trailing "ablation"
+# survives the cap (D-3 twin id = keeper slug + "-ablation"; all existing
+# registry ids unaffected). The commit step now also tolerates a pull
+# failure so a mid-run branch deletion (killed rounds 2 AND 3) can no
+# longer strand a finished run: the push recreates the ref.
 
 name: register-pjm97
 
@@ -333,7 +343,8 @@ jobs:
           git commit -F /tmp/pjm97_commit_msg.txt
           git reset --hard HEAD
           for i in 1 2 3 4; do
-            git pull --rebase origin "${GITHUB_REF_NAME}" && \
+            git pull --rebase origin "${GITHUB_REF_NAME}" \
+              || echo "pull failed (ref deleted mid-run?) -- pushing anyway recreates the branch"
             git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
             sleep $((i * 5))
           done
