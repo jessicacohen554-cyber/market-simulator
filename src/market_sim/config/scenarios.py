@@ -736,6 +736,39 @@ class ScenarioConfig:
     # (name, requirement_mw, critical_mw, max_penalty_$/MWh) products. None uses
     # the sourced ISO-NE defaults. A forward scenario can widen/tighten the
     # curves (e.g. a tighter reserve margin) without a code edit.
+    neiso_dynamic_reserve_requirements: bool = False  # GATED, default-OFF
+    # condition-varying ISO-NE reserve requirements — the exact NEISO analogue
+    # of nyiso_dynamic_reserve_requirements above (issue #1344; NEISO winter
+    # scarcity charter Limb A). When on (NEISO + energy_reserve_coopt), each
+    # in-LP reserve family's static published requirement
+    # (reserve_config.NEISO_RCPF_PRODUCTS: 1,800/1,200/600 MW) is replaced by
+    # the MEASURED as-enforced hourly requirement series for that (location,
+    # product) — ISO Express "Hourly Reserve Requirements" (ancillary-hourly-
+    # rr), the requirement ISO-NE actually enforced in real time, which RISES
+    # with conditions (largest first/second contingency, cold-weather and
+    # gas-contingency events). The empirical basis: at the static requirements
+    # the co-opt is provably DORMANT on 2023-2025 (reserve dual $0.00 in all
+    # 26,280 hours — the neiso-56 keeper) while the measured system 30-min
+    # requirement EXCEEDS the static 1,800 MW in every one of those hours
+    # (mean ~2,300 MW, peaking 3,167 MW in the Jan-2025 cold snap that carries
+    # the C3c >$300 DA tail). A measured requirement is a market-design INPUT
+    # (rule #13 admissible: regenerates forward as published-static-base +
+    # condition rules applied to forward weather/contingency states, responds
+    # to changed conditions); the measured reserve PRICES stay validation-only
+    # and are never read. Data seam: data/raw/NEISO-AS/requirements/ ->
+    # data/clean/reserve-requirements/NEISO/<year> via
+    # data.neiso_reserve_requirements.load_neiso_reserve_requirements — the
+    # flag HARD-ERRORS when the series is absent (no silent static fallback,
+    # so a run_config claiming dynamic requirements cannot quietly solve
+    # without them). Locations without an in-LP family (the SWCT/CT/NEMABSTN
+    # local reserve zones) are not mapped; a family without a measured series
+    # keeps its static value. ORDC shortfall steps stay anchored to the
+    # published static (req, crit, penalty) shape and TRANSLATE with the
+    # hourly requirement (documented approximation — the published RCPF is
+    # itself a stepped curve). Promotion gate: leave-one-year-out scoring
+    # within 2023-2025 (CLAUDE.md rule 22). Default off (byte-identical);
+    # NEISO-only. Mutually exclusive with neiso_rcpf_enabled under
+    # energy_reserve_coopt (rule 19 — see reserve_config._neiso_design).
 
     reserve_margin_build_enabled: bool | None = None  # Adequacy backstop: after
     # the economic new-entry screen, force-build firm (gas_ct) capacity if the
