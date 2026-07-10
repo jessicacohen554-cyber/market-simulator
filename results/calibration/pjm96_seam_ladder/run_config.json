@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-10T15:01:26",
+  "timestamp": "2026-07-10T16:40:49",
   "git": {
-    "sha": "83320eb",
-    "branch": "claude/pjm-measured-interface-limits-2lchu7",
+    "sha": "d6e750a",
+    "branch": "claude/pjm97-keeper-promotion-verify-n78vhl",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
@@ -141,7 +141,7 @@
     "ercot_dam_as_overlay_from_year": 2024,
     "ercot_dam_as_scarcity_threshold": 150.0,
     "temp_dependent_derate": false,
-    "git_sha": "83320eb"
+    "git_sha": "d6e750a"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -365,6 +365,7 @@
     "caiso_per_hub_intertie": false,
     "caiso_perhub_firm_base": false,
     "caiso_corridor_flow_limit": false,
+    "caiso_firm_import_shape": false,
     "caiso_intertie_reference_price": false,
     "caiso_corridor_atc_forward": false,
     "caiso_reference_price_seam": false,
