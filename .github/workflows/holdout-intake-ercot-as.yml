@@ -1,0 +1,197 @@
+name: Holdout intake - ERCOT ancillary services 2018-2022
+
+# ERCOT AS (ancillary-services) raw intake for 2018-2022, authorized under
+# CLAUDE.md rule 22's data-intake clause: "Data intake is permitted for any
+# out-of-training period ... under explicit, session-logged owner
+# authorization" (this session, 2026-07-10). This is DATA INTAKE ONLY -- no
+# LP is constructed, no dispatch is solved, no backcast is scored. The
+# solve/score quarantine (the calibration-complete marker gate) is untouched
+# and does not apply here; only the fetch + build + no-LP verification below
+# happen.
+#
+# Modeled closely on fetch-nyiso-reserve-interface-intake.yml: the Claude
+# remote env's proxy only permits small TEXT pushes (git push 413s on
+# anything but tiny payloads; the GitHub API's file-write tools cannot carry
+# binary content without corrupting it), so the actual zip/parquet
+# reproduction happens here, on a real GitHub Actions runner with real
+# internet and no payload-size limit, which then commits+pushes the results
+# itself.
+#
+# Extends scripts/fetch_ercot_as_reports.py's own reachability check (see its
+# module docstring): as of 2026-07-10 ERCOT's free/unauthenticated MIS doc
+# list is a ROLLING window (31 days for NP3-911-ER, ~2.3 years observed for
+# NP3-966-ER/NP3-965-ER) whose right edge always tracks "today" -- so
+# 2018-2022 is expected to be OUT OF WINDOW no matter which day this workflow
+# runs, and the fetch step's exit code 2 ("nothing reachable, honestly
+# reported") is treated as a clean, non-failing outcome, not an error. This
+# workflow will start landing real files automatically, with no code changes,
+# the moment either (a) ERCOT's window happens to cover a requested year, or
+# (b) a future session is separately authorized to add credentialed
+# data.ercot.com/api.ercot.com support (currently declined by the repo owner
+# -- see docs/handoffs/ercot-as-coopt-plan-2026-07.md §WS-E).
+
+on:
+  push:
+    paths:
+      # The Claude remote env's GitHub integration cannot POST workflow
+      # dispatches (403), so pushing an edit to THIS file is the trigger:
+      # path-scoped to the workflow itself, so the runner's own data commit
+      # (which touches data/raw/ercot-AS/, not this file) can never re-fire it.
+      - ".github/workflows/holdout-intake-ercot-as.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: holdout-intake-ercot-as
+  cancel-in-progress: false
+
+env:
+  # Delivery years this intake targets (CLAUDE.md rule 22's out-of-training
+  # holdout ladder: 2019 locked-test, 2020-2022 an authorized backward
+  # extension of the validation ladder). Kept as one env var so the fetch,
+  # build, and reporting steps never drift out of sync with each other.
+  TARGET_YEARS: "2018 2019 2020 2021 2022"
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install the package (fetch + build + curation deps)
+        run: pip install -e .
+
+      - name: Fetch NP3-911/966/965-ER bundles for 2018-2022
+        id: fetch
+        run: |
+          set +e
+          python scripts/fetch_ercot_as_reports.py --years ${{ env.TARGET_YEARS }}
+          code=$?
+          echo "exit_code=$code" >> "$GITHUB_OUTPUT"
+          # Exit 2 is the fetch script's own designed, honest "no requested
+          # year is inside ERCOT's currently-listed retention window" signal
+          # (see its module docstring) -- not a failure. Exit 1 (or an
+          # uncaught traceback, which bash -e outside this block would still
+          # surface) is a genuine problem and should fail the job.
+          if [ "$code" != "0" ] && [ "$code" != "2" ]; then
+            echo "fetch script failed unexpectedly (exit $code)"
+            exit "$code"
+          fi
+          echo "fetch step finished with exit $code (0=downloaded something, 2=nothing in window)"
+
+      - name: Build derived AS parquets for any newly-landed years
+        run: |
+          set +e
+          for y in ${{ env.TARGET_YEARS }}; do
+            echo "--- $y ---"
+            python scripts/build_ercot_as_by_restype_from_60day.py --year "$y" || \
+              echo "  (build_ercot_as_by_restype_from_60day: no source rows for $y -- expected if nothing landed)"
+            python scripts/build_ercot_as_withholding.py --year "$y" || \
+              echo "  (build_ercot_as_withholding: no source coverage for $y -- expected if nothing landed)"
+          done
+
+      - name: No-LP verification (schema/dtype match against 2023-2025)
+        # Loader-resolvability / schema-match only -- NEVER a dispatch solve
+        # (CLAUDE.md rule 22's quarantine clause: "validation of intaken data
+        # is no-LP only"). Confirms any newly-written parquet for 2018-2022
+        # is byte-schema-compatible with the already-committed 2023-2025
+        # files it sits alongside, so a downstream loader that reads
+        # `ercot_<year>_as_*.parquet` glob-wise cannot silently choke on a
+        # column/dtype mismatch.
+        run: |
+          python - <<'EOF'
+          import glob
+          import sys
+          import pyarrow.parquet as pq
+
+          AS_DIR = "data/raw/ercot-AS"
+          reference_years = (2023, 2024, 2025)
+          target_years = [int(y) for y in "${{ env.TARGET_YEARS }}".split()]
+
+          def schema_of(path):
+              pf = pq.ParquetFile(path)
+              return {f.name: str(f.physical_type) for f in pf.schema_arrow}
+
+          problems = []
+          for stem in ("as_by_restype_hourly", "as_up_mw"):
+              refs = {}
+              for y in reference_years:
+                  p = f"{AS_DIR}/ercot_{y}_{stem}.parquet"
+                  try:
+                      refs[y] = schema_of(p)
+                  except FileNotFoundError:
+                      continue
+              if not refs:
+                  print(f"{stem}: no reference (2023-2025) file found -- skipping")
+                  continue
+              ref_year, ref_schema = next(iter(refs.items()))
+              for y in target_years:
+                  p = f"{AS_DIR}/ercot_{y}_{stem}.parquet"
+                  new_files = glob.glob(p)
+                  if not new_files:
+                      continue
+                  got = schema_of(p)
+                  missing = set(ref_schema) - set(got)
+                  extra = set(got) - set(ref_schema)
+                  dtype_mismatch = {
+                      c: (ref_schema[c], got[c])
+                      for c in set(ref_schema) & set(got)
+                      if ref_schema[c] != got[c]
+                  }
+                  if missing or dtype_mismatch:
+                      problems.append((p, missing, extra, dtype_mismatch))
+                  else:
+                      print(f"{stem} {y}: schema matches the {ref_year} reference ({len(got)} columns)")
+                      if extra:
+                          print(f"  (extra columns present, not a failure: {sorted(extra)})")
+
+          if problems:
+              print("\nSCHEMA MISMATCH:")
+              for p, missing, extra, mism in problems:
+                  print(f"  {p}: missing={sorted(missing)} dtype_mismatch={mism}")
+              sys.exit(1)
+          print("\nNo newly-built 2018-2022 parquet was found to verify "
+                "(expected under the documented retention wall) -- "
+                "or every one found matched the reference schema.")
+          EOF
+
+      - name: Integrity report (sha256 of any newly-landed raw/derived files)
+        run: |
+          echo "=== raw ERCOT-AS tree ==="
+          find data/raw/ercot-AS -type f \( -name '*.zip' -o -name '*.parquet' \) -newer .git/HEAD -print0 \
+            | xargs -0 -r sha256sum
+          echo "=== git status (data/raw/ercot-AS) ==="
+          git status --porcelain data/raw/ercot-AS/ || true
+
+      - name: Commit and push any newly-landed files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/raw/ercot-AS/
+          if git diff --cached --quiet; then
+            echo "nothing to commit -- no year in ${{ env.TARGET_YEARS }} was inside ERCOT's" \
+                 "currently-listed retention window (see the fetch step's log); this is the" \
+                 "expected, documented outcome, not a failure."
+            exit 0
+          fi
+          git commit -m "data(ercot): AS report bundles landed within the free MIS retention window (workflow run ${{ github.run_id }})
+
+          scripts/fetch_ercot_as_reports.py targeted delivery years ${{ env.TARGET_YEARS }};
+          only years that fell inside ERCOT's rolling, unauthenticated MIS
+          list window at run time are included (see the fetch step's log for
+          exactly which). 2018-2022 is not expected to land under the
+          documented retention wall -- see the workflow file header and
+          scripts/fetch_ercot_as_reports.py's module docstring."
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && \
+            git push origin "HEAD:${{ github.ref_name }}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
