@@ -22,13 +22,20 @@
 # recorded (the "-ablation" run_dir derivation lived only in
 # run_calibration_full's CLI path, which the driver bypasses), instead of
 # clobbering the keeper bundle and failing twin registration (run 29104320238).
+#
+# Rebound AGAIN 2026-07-10 to claude/pjm97-keeper-promotion-verify-n78vhl:
+# PR #1968 merged the driver fix to main (09a6440), but the promotion branch
+# was deleted before the re-fired run 29106087505 could push its results
+# (its final pull/push targets the deleted ref, so it dies at the last
+# step). Fresh branch from main; this run re-solves deterministically and
+# its results commit lands here.
 
 name: register-pjm97
 
 on:
   push:
     branches:
-      - claude/pjm97-keeper-promotion-2lchu7
+      - claude/pjm97-keeper-promotion-verify-n78vhl
     paths:
       - .github/patches/pjm97_definition.txt
       - .github/workflows/register-pjm97.yml
