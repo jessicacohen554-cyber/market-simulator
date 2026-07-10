@@ -1,0 +1,85 @@
+name: Fetch CAMPD unit-level (holdout-year data intake)
+
+# Generic runner for scripts/fetch_campd_unit_level.py — lands
+# data/raw/campd-unit-level/<ST>_<YEAR>.parquet for any ISO/state/year combo.
+# Runs on a GitHub Actions runner (unrestricted egress to api.epa.gov) and
+# commits the landed parquet binaries directly via git push from the runner
+# checkout — the Claude remote session cannot push binaries itself (its only
+# push path, the GitHub API's push_files, stores content literally and
+# corrupts binary parquet; see holdout-intake-neiso-2022.yml).
+#
+# Data intake for 2022/H1-2026 is allowed for any ISO, any time, under
+# explicit owner authorization (CLAUDE.md rule 22, amended 2026-07-06 —
+# docs/handoffs/holdout-policy-memo-2026-07.md Option 2). This workflow does
+# not solve or score anything; --holdout-intake is passed straight through to
+# the fetcher as the authorization record for its own quarantine check.
+
+on:
+  workflow_dispatch:
+    inputs:
+      year:
+        description: "Year to fetch (e.g. 2022 or 2026)"
+        required: true
+        type: string
+      states:
+        description: "Space-separated state codes (e.g. CA, or NY, or CT MA ME NH RI VT)"
+        required: true
+        type: string
+      quarters:
+        description: "Space-separated quarters for an in-progress year (e.g. 1); leave blank for a completed year"
+        required: false
+        default: ""
+        type: string
+      holdout_intake:
+        description: "ISO name authorizing this holdout-year intake (--holdout-intake); leave blank for a non-holdout year"
+        required: false
+        default: ""
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pandas pyarrow
+
+      - name: Fetch CAMPD unit-level
+        env:
+          EPA_API_KEY: ${{ secrets.EPA_API_KEY }}
+        run: |
+          ARGS="--year ${{ inputs.year }} --states ${{ inputs.states }}"
+          if [ -n "${{ inputs.quarters }}" ]; then
+            ARGS="$ARGS --quarters ${{ inputs.quarters }}"
+          fi
+          if [ -n "${{ inputs.holdout_intake }}" ]; then
+            ARGS="$ARGS --holdout-intake ${{ inputs.holdout_intake }}"
+          fi
+          python scripts/fetch_campd_unit_level.py $ARGS
+
+      - name: Commit and push landed parquet
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/raw/campd-unit-level/
+          if git diff --cached --quiet; then
+            echo "no new data to commit"
+            exit 0
+          fi
+          git commit -m "data(campd): unit-level ${{ inputs.year }} intake for ${{ inputs.states }} (workflow run ${{ github.run_id }})"
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && \
+            git push origin "HEAD:${{ github.ref_name }}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
