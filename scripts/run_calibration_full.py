@@ -5099,6 +5099,10 @@ def run_replay_bundle(
     if note:
         kwargs["note"] = note
     kwargs["zero_forcing_ablation"] = zero_forcing_ablation
+    if zero_forcing_ablation:
+        # D-3 linkage: the twin's run_config must name its base bundle
+        # (the dashboard and audit_keepers pair twins by ablation_of).
+        kwargs["ablation_of"] = bundle.name
     run_dir = solve_and_persist(**kwargs)
     report_run(run_dir)
 
