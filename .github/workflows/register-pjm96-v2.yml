@@ -1,34 +1,23 @@
-# v2 of register-pjm96 (see that file's header for the full rationale: the
-# ~1.5 MB run payload cannot travel through the session env's push path, so
-# the bundle is re-solved deterministically on the runner and registered
-# with normal git). v1 (run 29072352322) died at its first step because
-# ubuntu-latest runners now ship an ACTIVE /swapfile — fallocate/dd on that
-# path fail with "Text file busy". v2 first frees the hosted image's unused
-# toolchains (run 29073118649: the checkout of this repo's ~14 GB of raw
-# data left 12 MB free — no room for any swapfile; /mnt is not a separate
-# disk on current runners), then allocates the pjm-78/79 10 GB convention
-# at /swapfile2 alongside the stock 3 GB /swapfile. Run 29094241750 solved
-# and registered but aborted at the legitimacy-diagnostics step (the script
-# exits 1 when any D-gate fails, which a rejected PROBE may legitimately do
-# — the JSON artifact is still written), so that step warns instead of
-# aborting. The build_manifest preview step was REMOVED (register-pjm97 run
-# 29096868050: it regenerates the tracked deploy-owned shared files in the
-# working tree, which blocked `git pull --rebase` at the final push; the
-# Pages deploy is their single writer) and the push step hard-resets the
-# tree after committing. The sidecar definition and the commit message are
-# extracted AT RUNTIME from .github/workflows/register-pjm96.yml (the
-# canonical record of the parallel session's post-solve finding) so no
-# prose is re-transcribed across the session/tool-call boundary. Triggered
-# by pushing this file (the session env cannot POST workflow dispatches —
-# 403); idempotent. Delete both register-pjm96 workflows from main after
-# the PR merges (one-shot convention).
+# v2 of register-pjm96 — solves the pjm-96 seam-ladder probe on the runner
+# and registers it (the ~1.5 MB run payload cannot travel through the session
+# env's push path; see register-pjm96's header). Failure history: v1 died on
+# the runner's active /swapfile; then disk exhaustion (fixed by freeing
+# hosted toolchains); then the legitimacy-diagnostics exit-1-on-gate-fail
+# (now tolerated — the artifact is the deliverable); then build_manifest
+# dirtying the tree before the final pull --rebase (preview step removed,
+# tree hard-reset after committing). Rebound 2026-07-10 to the
+# keeper-promotion branch (PR #1955's merge deleted the prior branch
+# mid-run; owner directed a rebase onto latest main). The sidecar definition
+# and commit message are extracted AT RUNTIME from register-pjm96.yml (the
+# canonical record of the parallel session's finding). Idempotent. Delete
+# both register-pjm96 workflows from main after the PR merges.
 
 name: register-pjm96-v2
 
 on:
   push:
     branches:
-      - claude/pjm-measured-interface-limits-2lchu7
+      - claude/pjm97-keeper-promotion-2lchu7
     paths:
       - .github/workflows/register-pjm96-v2.yml
   workflow_dispatch:
@@ -125,9 +114,6 @@ jobs:
           sed -i 's/^ \{10\}//' /tmp/pjm96_commit_msg.txt
           test -s /tmp/pjm96_commit_msg.txt
           git commit -F /tmp/pjm96_commit_msg.txt
-          # Drop any unstaged edits to tracked files (e.g. regenerated shared
-          # data) so pull --rebase cannot refuse; the commit holds everything
-          # this run publishes.
           git reset --hard HEAD
           for i in 1 2 3 4; do
             git pull --rebase origin "${GITHUB_REF_NAME}" && \
@@ -136,7 +122,3 @@ jobs:
           done
           echo "push failed after retries" >&2
           exit 1
-
-# trigger: 2026-07-10 re-run on the recreated branch (PR #1955's merge deleted
-# the prior branch while the registration runs were in flight, orphaning their
-# results pushes).
