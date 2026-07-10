@@ -1,0 +1,73 @@
+# PJM EIA-930 interchange raw intake (2026-07-10 session): regenerate and
+# commit the PJM BA-to-BA interchange parquet on a GitHub runner — the Claude
+# remote env's push path is text-only (git push 413s; binary Data-API writes
+# fail), so the ~0.8 MB parquet is produced here by the existing reproducible
+# fetch script and pushed back to the branch this workflow runs on. The file
+# is the CROSS-CHECK source for scripts/derive_pjm_seam_ladders.py (the
+# ladder's flow source is PJM's committed tie-line file; the derive script
+# gracefully skips the cross-check when this parquet is absent). Training
+# years only (2023-2025) — no quarantined window is touched (rule 22).
+# Deterministic: EIA-930 history is static. On-demand only.
+name: Fetch PJM EIA-930 interchange raw intake
+
+on:
+  workflow_dispatch:
+  # The Claude remote env's GitHub integration cannot POST workflow dispatches
+  # (403), so pushing an edit to THIS file is the trigger: path-scoped to the
+  # workflow itself, the runner's own data commit can never re-fire it.
+  push:
+    paths:
+      - ".github/workflows/fetch-pjm-interchange.yml"
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install fetch deps
+        run: pip install pandas pyarrow requests
+
+      - name: Fetch PJM interchange (2023-2025, EIA API v2)
+        env:
+          EIA_API_KEY: ${{ secrets.EIA_API_KEY }}
+        run: |
+          if [ -z "$EIA_API_KEY" ] && [ -f .env ]; then
+            EIA_API_KEY="$(grep -E '^EIA_API_KEY=' .env | head -1 | cut -d= -f2- | tr -d '\r\n ')"
+          fi
+          if [ -z "$EIA_API_KEY" ]; then
+            echo "::error::no EIA_API_KEY (set the repo secret or the .env key)"
+            exit 1
+          fi
+          if [ -f "data/raw/eia-930-interchange/PJM interchange hourly.parquet" ]; then
+            echo "parquet already present — nothing to fetch"
+            exit 0
+          fi
+          EIA_API_KEY="$EIA_API_KEY" python scripts/fetch_eia930_interchange.py \
+            --ba PJM --years 2023 2024 2025
+
+      - name: Commit and push the raw intake
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add "data/raw/eia-930-interchange/PJM interchange hourly.parquet"
+          if git diff --cached --quiet; then
+            echo "no raw-intake changes to commit"
+            exit 0
+          fi
+          git commit -F .github/patches/pjm96_intake_msg.txt
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && \
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
