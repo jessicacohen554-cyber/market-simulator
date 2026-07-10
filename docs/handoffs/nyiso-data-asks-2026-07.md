@@ -128,6 +128,23 @@ fetch-script docstring.
 > data — deterministic published shape (B3) + TSA/event windows (B2) — with
 > only the residual condition-varying component (largest-contingency changes,
 > forecast-uncertainty adders) waiting on the B1 request.
+>
+> **ADDENDUM 2026-07-10 (same session): the B2+B3 reconstruction is BUILT and
+> committed.** `scripts/derive_nyiso_reserve_requirements_hourly.py` derives
+> `data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_{2023,2024,2025}.csv`
+> — the exact loader contract of `data/nyiso_reserve_requirements.py`
+> (`nyiso_dynamic_reserve_requirements`) — as published LRR base (SENY hourly
+> steps) × (1 − TSA-window hour fraction) for the TSA-zeroed rows; 7 in-LP
+> families per year (NYCA 3, East 10T, SENY 30T, NYC 10T/30T; LI logged as
+> dropped — no in-LP family). TSA windows from the B2 logs with two documented
+> repairs (explicit ends always trusted — genuine overnight TSAs lack the
+> start-of-day ACTIVE attestation; missing-end starts close at their first
+> unattested midnight). Sanity: SENY peak-hour mean ≈ 1,750–1,775 MW vs the
+> 1,300 MW static overlay; TSA zeroing touches 185/227/120 h in 2023/24/25.
+> Loader-verified end-to-end (no LP solve — rule-22 session constraint). The
+> derived series remains a lower bound on the as-enforced requirement in
+> non-TSA hours until the B1 request lands. Next session: flip
+> `nyiso_dynamic_reserve_requirements` on, re-solve 2023–2025, keeper-candidate.
 
 ## Ask B — condition-varying downstate reserve-requirement series (#1344; priority 1)
 
@@ -232,7 +249,7 @@ to Ask A (the Z2-served CTs price off Z2, not Transco).
 | Ask | Gates | Register/issue | Status (2026-07-10) |
 |---|---|---|---|
 | A (LI/NYC LDC delivered gas) | keeper re-solve legitimacy (G-13) | G-13, §4 NYISO row | **FULFILLED 2026-07-07** (free, National Grid tariff archive) |
-| B (condition-varying reserve requirement) | #1344 scarcity tail (C3a/C3c), rule-20 C8 burn-down | #1344, G-20 | **B2+B3 FULFILLED free** (events 2018–H1-2026 + dated LRR schedule incl. SENY hourly steps); B1/B4 = NYISO data request only |
+| B (condition-varying reserve requirement) | #1344 scarcity tail (C3a/C3c), rule-20 C8 burn-down | #1344, G-20 | **B2+B3 FULFILLED free** (events 2018–H1-2026 + dated LRR schedule incl. SENY hourly steps) **and the hourly loader-contract series is DERIVED** (`NYISO_reserve_requirements_{2023..2025}.csv`, ready for `nyiso_dynamic_reserve_requirements`); B1/B4 = NYISO data request only |
 | C (Iroquois Z2 price/flows) | winter spread, summer over-level | register §4 NYISO row | C1 **annual level free** (SOM 2018–2025); daily/monthly = confirmed licence ask. C2 free-but-bot-walled → manual browser/email step |
 | D (per-interface tie flows) | upstate shoulder | 2026-07-04 log | **FULFILLED 2026-07-10** (MIS P-32, hourly, 2018–H1-2026) |
 
