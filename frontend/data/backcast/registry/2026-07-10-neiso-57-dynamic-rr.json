@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-10-neiso-57-dynamic-rr",
+ "label": "neiso 57 dynamic rr",
+ "date": "2026-07-10",
+ "shorthand": "neiso-57-dynamic-rr",
+ "definition": "(PROBE \u2014 winter scarcity charter Limb A; keeper promotion is the owner's call.) The 2026-07-09-neiso-56-reserve-coopt keeper recipe + neiso_dynamic_reserve_requirements: the in-LP co-opt families' static published 1,800/1,200/600 MW requirements replaced by the MEASURED as-enforced hourly reserve-requirement series (ISO-NE ISO Express 'Hourly Reserve Requirements', system ROS row; mean ~2,300 MW, above static in all 26,280 train hours; the NYISO #1344 analogue, rule-13 measured market-design input, zero fitted parameters). RESULT: the co-opt ENGAGES for the first time on NEISO \u2014 the 2025-06-24 18:00 heat-wave hour binds the measured 2,909 MW requirement on the scored P2 pass, stacking a $125 RCPF (system max $397, the model's first >$300 train-year hour, landing ON an actual DA>$300 hour). C3c 2025 improves 0h -> 1h vs DA 12h (still short of the [6,24]h gate); C5b unchanged (0.827 vs 2.08 TWh). SEASONAL CORRECTION: the actual DA tail is winter only in 2023; 2024 and 11/12 of 2025 hours are summer heat-wave evening peaks. C3a/C3b/C1 no regression.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-07-10-neiso-57-dynamic-rr.js",
+ "bundle": "results/calibration/neiso57_dynamic_rr",
+ "ablation_twin": "2026-07-10-neiso-57-dynrr-ablation",
+ "market_story": "With the measured requirement the reserve constraint finally has the MW ISO-NE actually enforces: in the June 2025 heat wave the fleet's spare headroom drops below the enforced 2,909 MW 30-min requirement for one evening hour, so the RCPF prices into the LMP exactly as ISO-NE's real-time co-optimization does \u2014 the model's first structurally-formed scarcity hour, landing on an actual DA>$300 hour. The zero-forcing twin binds the same event deeper (2h, dual to $250): the winter-fuel/reliability floors keep low-output units on line whose remaining headroom carries reserve, mirroring the reliability commitments the real market makes; stripping them makes the system reserve-shorter, not looser."
+}
