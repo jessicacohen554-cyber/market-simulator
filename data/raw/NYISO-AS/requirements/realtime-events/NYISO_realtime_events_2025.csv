@@ -1,0 +1,600 @@
+source_file,timestamp_local,message
+20250101RealTimeEvents.csv,01/01/2025 00:00:00,Start of day thunderstorm alert state is ACTIVE
+20250101RealTimeEvents.csv,01/01/2025 01:50:00,**System no longer operating in thunderstorm alert.**
+20250102RealTimeEvents.csv,01/02/2025 00:00:00,Start of day system state is NORMAL
+20250103RealTimeEvents.csv,01/03/2025 00:00:00,Start of day system state is NORMAL
+20250104RealTimeEvents.csv,01/04/2025 00:00:00,Start of day system state is NORMAL
+20250104RealTimeEvents.csv,01/04/2025 06:29:45,**State Change. System now operating in alert state.**
+20250104RealTimeEvents.csv,01/04/2025 06:31:55,NYISO has initiated reserve pick-up.
+20250104RealTimeEvents.csv,01/04/2025 06:36:43,NYISO has terminated reserve pick-up.
+20250104RealTimeEvents.csv,01/04/2025 06:40:21,**State Change. System now operating in normal state.**
+20250105RealTimeEvents.csv,01/05/2025 00:00:00,Start of day system state is NORMAL
+20250106RealTimeEvents.csv,01/06/2025 00:00:00,Start of day system state is NORMAL
+20250107RealTimeEvents.csv,01/07/2025 00:00:00,Start of day system state is NORMAL
+20250107RealTimeEvents.csv,01/07/2025 03:05:49,**State Change. System now operating in alert state.**
+20250107RealTimeEvents.csv,01/07/2025 03:12:17,**State Change. System now operating in normal state.**
+20250108RealTimeEvents.csv,01/08/2025 00:00:00,Start of day system state is NORMAL
+20250109RealTimeEvents.csv,01/09/2025 00:00:00,Start of day system state is NORMAL
+20250110RealTimeEvents.csv,01/10/2025 00:00:00,Start of day system state is NORMAL
+20250111RealTimeEvents.csv,01/11/2025 00:00:00,Start of day system state is NORMAL
+20250112RealTimeEvents.csv,01/12/2025 00:00:00,Start of day system state is NORMAL
+20250113RealTimeEvents.csv,01/13/2025 00:00:00,Start of day system state is NORMAL
+20250114RealTimeEvents.csv,01/14/2025 00:00:00,Start of day system state is NORMAL
+20250114RealTimeEvents.csv,01/14/2025 22:04:46,**State Change. System now operating in alert state.**
+20250114RealTimeEvents.csv,01/14/2025 22:09:38,**State Change. System now operating in normal state.**
+20250115RealTimeEvents.csv,01/15/2025 00:00:00,Start of day system state is NORMAL
+20250116RealTimeEvents.csv,01/16/2025 00:00:00,Start of day system state is NORMAL
+20250117RealTimeEvents.csv,01/17/2025 00:00:00,Start of day system state is NORMAL
+20250118RealTimeEvents.csv,01/18/2025 00:00:00,Start of day system state is NORMAL
+20250119RealTimeEvents.csv,01/19/2025 00:00:00,Start of day system state is NORMAL
+20250120RealTimeEvents.csv,01/20/2025 00:00:00,Start of day system state is NORMAL
+20250121RealTimeEvents.csv,01/21/2025 00:00:00,Start of day system state is NORMAL
+20250122RealTimeEvents.csv,01/22/2025 00:00:00,Start of day system state is NORMAL
+20250122RealTimeEvents.csv,01/22/2025 06:35:11,NYISO has initiated reserve pick-up.
+20250122RealTimeEvents.csv,01/22/2025 06:43:54,NYISO has terminated reserve pick-up.
+20250123RealTimeEvents.csv,01/23/2025 00:00:00,Start of day system state is NORMAL
+20250123RealTimeEvents.csv,01/23/2025 10:10:35,NYISO has initiated reserve pick-up.
+20250123RealTimeEvents.csv,01/23/2025 10:17:47,NYISO has terminated reserve pick-up.
+20250124RealTimeEvents.csv,01/24/2025 00:00:00,Start of day system state is NORMAL
+20250124RealTimeEvents.csv,01/24/2025 04:25:00,NYISO has initiated reserve pick-up.
+20250124RealTimeEvents.csv,01/24/2025 04:31:07,NYISO has terminated reserve pick-up.
+20250125RealTimeEvents.csv,01/25/2025 00:00:00,Start of day system state is NORMAL
+20250126RealTimeEvents.csv,01/26/2025 00:00:00,Start of day system state is NORMAL
+20250127RealTimeEvents.csv,01/27/2025 00:00:00,Start of day system state is NORMAL
+20250128RealTimeEvents.csv,01/28/2025 00:00:00,Start of day system state is NORMAL
+20250129RealTimeEvents.csv,01/29/2025 00:00:00,Start of day system state is NORMAL
+20250130RealTimeEvents.csv,01/30/2025 00:00:00,Start of day system state is NORMAL
+20250131RealTimeEvents.csv,01/31/2025 00:00:00,Start of day system state is NORMAL
+20250131RealTimeEvents.csv,01/31/2025 07:16:06,NYISO has initiated reserve pick-up.
+20250131RealTimeEvents.csv,01/31/2025 07:25:48,NYISO has terminated reserve pick-up.
+20250201RealTimeEvents.csv,02/01/2025 00:00:00,Start of day system state is NORMAL
+20250202RealTimeEvents.csv,02/02/2025 00:00:00,Start of day system state is NORMAL
+20250203RealTimeEvents.csv,02/03/2025 00:00:00,Start of day system state is NORMAL
+20250204RealTimeEvents.csv,02/04/2025 00:00:00,Start of day system state is NORMAL
+20250205RealTimeEvents.csv,02/05/2025 00:00:00,Start of day system state is NORMAL
+20250206RealTimeEvents.csv,02/06/2025 00:00:00,Start of day system state is NORMAL
+20250207RealTimeEvents.csv,02/07/2025 00:00:00,Start of day system state is NORMAL
+20250208RealTimeEvents.csv,02/08/2025 00:00:00,Start of day system state is NORMAL
+20250208RealTimeEvents.csv,02/08/2025 15:31:41,NYISO has initiated reserve pick-up.
+20250208RealTimeEvents.csv,02/08/2025 15:42:29,NYISO has terminated reserve pick-up.
+20250209RealTimeEvents.csv,02/09/2025 00:00:00,Start of day system state is NORMAL
+20250210RealTimeEvents.csv,02/10/2025 00:00:00,Start of day system state is NORMAL
+20250211RealTimeEvents.csv,02/11/2025 00:00:00,Start of day system state is NORMAL
+20250211RealTimeEvents.csv,02/11/2025 09:03:20,**State Change. System now operating in alert state.**
+20250211RealTimeEvents.csv,02/11/2025 09:13:20,**State Change. System now operating in normal state.**
+20250212RealTimeEvents.csv,02/12/2025 00:00:00,Start of day system state is NORMAL
+20250213RealTimeEvents.csv,02/13/2025 00:00:00,Start of day system state is NORMAL
+20250214RealTimeEvents.csv,02/14/2025 00:00:00,Start of day system state is NORMAL
+20250214RealTimeEvents.csv,02/14/2025 00:00:00,Replay
+20250214RealTimeEvents.csv,02/14/2025 00:00:00,The start of the day is normal
+20250214RealTimeEvents.csv,02/14/2025 15:15:30,**State Change. System now operating in alert state.**
+20250215RealTimeEvents.csv,02/15/2025 00:00:00,Start of day system state is NORMAL
+20250215RealTimeEvents.csv,02/15/2025 00:00:00,Replay
+20250215RealTimeEvents.csv,02/15/2025 00:00:00,The start of the day is normal
+20250216RealTimeEvents.csv,02/16/2025 00:00:00,Start of day system state is NORMAL
+20250216RealTimeEvents.csv,02/16/2025 00:00:00,The start of the day is normal
+20250217RealTimeEvents.csv,02/17/2025 00:00:00,Start of day system state is NORMAL
+20250218RealTimeEvents.csv,02/18/2025 00:00:00,Start of day system state is NORMAL
+20250219RealTimeEvents.csv,02/19/2025 00:00:00,Start of day system state is NORMAL
+20250220RealTimeEvents.csv,02/20/2025 00:00:00,Start of day system state is NORMAL
+20250221RealTimeEvents.csv,02/21/2025 00:00:00,Start of day system state is NORMAL
+20250221RealTimeEvents.csv,02/21/2025 04:44:58,**State Change. System now operating in alert state.**
+20250221RealTimeEvents.csv,02/21/2025 04:51:34,**State Change. System now operating in normal state.**
+20250222RealTimeEvents.csv,02/22/2025 00:00:00,Start of day system state is NORMAL
+20250223RealTimeEvents.csv,02/23/2025 00:00:00,Start of day system state is NORMAL
+20250224RealTimeEvents.csv,02/24/2025 00:00:00,Start of day system state is NORMAL
+20250225RealTimeEvents.csv,02/25/2025 00:00:00,Start of day system state is NORMAL
+20250226RealTimeEvents.csv,02/26/2025 00:00:00,Start of day system state is NORMAL
+20250227RealTimeEvents.csv,02/27/2025 00:00:00,Start of day system state is NORMAL
+20250228RealTimeEvents.csv,02/28/2025 00:00:00,Start of day system state is NORMAL
+20250301RealTimeEvents.csv,03/01/2025 00:00:00,Start of day system state is NORMAL
+20250301RealTimeEvents.csv,03/01/2025 17:54:56,NYISO has initiated reserve pick-up.
+20250301RealTimeEvents.csv,03/01/2025 18:00:14,NYISO has terminated reserve pick-up.
+20250302RealTimeEvents.csv,03/02/2025 00:00:00,Start of day system state is NORMAL
+20250303RealTimeEvents.csv,03/03/2025 00:00:00,Start of day system state is NORMAL
+20250304RealTimeEvents.csv,03/04/2025 00:00:00,Start of day system state is NORMAL
+20250305RealTimeEvents.csv,03/05/2025 00:00:00,Start of day system state is NORMAL
+20250306RealTimeEvents.csv,03/06/2025 00:00:00,Start of day system state is NORMAL
+20250307RealTimeEvents.csv,03/07/2025 00:00:00,Start of day system state is NORMAL
+20250308RealTimeEvents.csv,03/08/2025 00:00:00,Start of day system state is NORMAL
+20250309RealTimeEvents.csv,03/09/2025 00:00:00,Start of day system state is NORMAL
+20250310RealTimeEvents.csv,03/10/2025 00:00:00,Start of day system state is NORMAL
+20250311RealTimeEvents.csv,03/11/2025 00:00:00,Start of day system state is NORMAL
+20250312RealTimeEvents.csv,03/12/2025 00:00:00,Start of day system state is NORMAL
+20250313RealTimeEvents.csv,03/13/2025 00:00:00,Start of day system state is NORMAL
+20250314RealTimeEvents.csv,03/14/2025 00:00:00,Start of day system state is NORMAL
+20250315RealTimeEvents.csv,03/15/2025 00:00:00,Start of day system state is NORMAL
+20250316RealTimeEvents.csv,03/16/2025 00:00:00,Start of day system state is NORMAL
+20250317RealTimeEvents.csv,03/17/2025 00:00:00,Start of day system state is NORMAL
+20250318RealTimeEvents.csv,03/18/2025 00:00:00,Start of day system state is NORMAL
+20250319RealTimeEvents.csv,03/19/2025 00:00:00,Start of day system state is NORMAL
+20250320RealTimeEvents.csv,03/20/2025 00:00:00,Start of day system state is NORMAL
+20250321RealTimeEvents.csv,03/21/2025 00:00:00,Start of day system state is NORMAL
+20250322RealTimeEvents.csv,03/22/2025 00:00:00,Start of day system state is NORMAL
+20250323RealTimeEvents.csv,03/23/2025 00:00:00,Start of day system state is NORMAL
+20250324RealTimeEvents.csv,03/24/2025 00:00:00,Start of day system state is NORMAL
+20250325RealTimeEvents.csv,03/25/2025 00:00:00,Start of day system state is NORMAL
+20250326RealTimeEvents.csv,03/26/2025 00:00:00,Start of day system state is NORMAL
+20250326RealTimeEvents.csv,03/26/2025 06:04:31,NYISO has initiated reserve pick-up.
+20250326RealTimeEvents.csv,03/26/2025 06:13:07,NYISO has terminated reserve pick-up.
+20250327RealTimeEvents.csv,03/27/2025 00:00:00,Start of day system state is NORMAL
+20250328RealTimeEvents.csv,03/28/2025 00:00:00,Start of day system state is NORMAL
+20250329RealTimeEvents.csv,03/29/2025 00:00:00,Start of day system state is NORMAL
+20250330RealTimeEvents.csv,03/30/2025 00:00:00,Start of day system state is NORMAL
+20250331RealTimeEvents.csv,03/31/2025 00:00:00,Start of day system state is NORMAL
+20250331RealTimeEvents.csv,03/31/2025 21:00:00,**System now operating in thunderstorm alert.**
+20250401RealTimeEvents.csv,04/01/2025 02:15:00,**System no longer operating in thunderstorm alert.**
+20250402RealTimeEvents.csv,04/02/2025 00:00:00,Start of day system state is NORMAL
+20250403RealTimeEvents.csv,04/03/2025 00:00:00,Start of day system state is NORMAL
+20250404RealTimeEvents.csv,04/04/2025 00:00:00,Start of day system state is NORMAL
+20250405RealTimeEvents.csv,04/05/2025 00:00:00,Start of day system state is NORMAL
+20250406RealTimeEvents.csv,04/06/2025 00:00:00,Start of day system state is NORMAL
+20250407RealTimeEvents.csv,04/07/2025 00:00:00,Start of day system state is NORMAL
+20250408RealTimeEvents.csv,04/08/2025 00:00:00,Start of day system state is NORMAL
+20250409RealTimeEvents.csv,04/09/2025 00:00:00,Start of day system state is NORMAL
+20250410RealTimeEvents.csv,04/10/2025 00:00:00,Start of day system state is NORMAL
+20250411RealTimeEvents.csv,04/11/2025 00:00:00,Start of day system state is NORMAL
+20250412RealTimeEvents.csv,04/12/2025 00:00:00,Start of day system state is NORMAL
+20250413RealTimeEvents.csv,04/13/2025 00:00:00,Start of day system state is NORMAL
+20250414RealTimeEvents.csv,04/14/2025 00:00:00,Start of day system state is NORMAL
+20250415RealTimeEvents.csv,04/15/2025 00:00:00,Start of day system state is NORMAL
+20250416RealTimeEvents.csv,04/16/2025 00:00:00,Start of day system state is NORMAL
+20250417RealTimeEvents.csv,04/17/2025 00:00:00,Start of day system state is NORMAL
+20250418RealTimeEvents.csv,04/18/2025 00:00:00,Start of day system state is NORMAL
+20250419RealTimeEvents.csv,04/19/2025 00:00:00,Start of day system state is NORMAL
+20250420RealTimeEvents.csv,04/20/2025 00:00:00,Start of day system state is NORMAL
+20250421RealTimeEvents.csv,04/21/2025 00:00:00,Start of day system state is NORMAL
+20250422RealTimeEvents.csv,04/22/2025 00:00:00,Start of day system state is NORMAL
+20250423RealTimeEvents.csv,04/23/2025 00:00:00,Start of day system state is NORMAL
+20250424RealTimeEvents.csv,04/24/2025 00:00:00,Start of day system state is NORMAL
+20250424RealTimeEvents.csv,04/24/2025 00:00:00,The start of the day is normal. 
+20250424RealTimeEvents.csv,04/24/2025 23:27:50,NYISO has initiated reserve pick-up.
+20250425RealTimeEvents.csv,04/25/2025 00:00:00,Start of day system state is NORMAL
+20250426RealTimeEvents.csv,04/26/2025 00:00:00,Start of day system state is NORMAL
+20250427RealTimeEvents.csv,04/27/2025 00:00:00,Start of day system state is NORMAL
+20250428RealTimeEvents.csv,04/28/2025 00:00:00,Start of day system state is NORMAL
+20250429RealTimeEvents.csv,04/29/2025 00:00:00,Start of day system state is NORMAL
+20250430RealTimeEvents.csv,04/30/2025 00:00:00,Start of day system state is NORMAL
+20250501RealTimeEvents.csv,05/01/2025 00:00:00,Start of day system state is NORMAL
+20250502RealTimeEvents.csv,05/02/2025 00:00:00,Start of day system state is NORMAL
+20250503RealTimeEvents.csv,05/03/2025 00:00:00,Start of day system state is NORMAL
+20250503RealTimeEvents.csv,05/03/2025 15:00:00,**System now operating in thunderstorm alert.**
+20250503RealTimeEvents.csv,05/03/2025 17:20:00,**System no longer operating in thunderstorm alert.**
+20250504RealTimeEvents.csv,05/04/2025 00:00:00,Start of day system state is NORMAL
+20250505RealTimeEvents.csv,05/05/2025 00:00:00,Start of day system state is NORMAL
+20250506RealTimeEvents.csv,05/06/2025 00:00:00,Start of day system state is NORMAL
+20250507RealTimeEvents.csv,05/07/2025 00:00:00,Start of day system state is NORMAL
+20250508RealTimeEvents.csv,05/08/2025 00:00:00,Start of day system state is NORMAL
+20250509RealTimeEvents.csv,05/09/2025 00:00:00,Start of day system state is NORMAL
+20250510RealTimeEvents.csv,05/10/2025 00:00:00,Start of day system state is NORMAL
+20250511RealTimeEvents.csv,05/11/2025 00:00:00,Start of day system state is NORMAL
+20250512RealTimeEvents.csv,05/12/2025 00:00:00,Start of day system state is NORMAL
+20250513RealTimeEvents.csv,05/13/2025 00:00:00,Start of day system state is NORMAL
+20250514RealTimeEvents.csv,05/14/2025 00:00:00,Start of day system state is NORMAL
+20250515RealTimeEvents.csv,05/15/2025 00:00:00,Start of day system state is NORMAL
+20250516RealTimeEvents.csv,05/16/2025 00:00:00,Start of day system state is NORMAL
+20250517RealTimeEvents.csv,05/17/2025 00:00:00,Start of day system state is NORMAL
+20250517RealTimeEvents.csv,05/17/2025 11:30:00,**System now operating in thunderstorm alert.**
+20250517RealTimeEvents.csv,05/17/2025 12:45:00,**System no longer operating in thunderstorm alert.**
+20250518RealTimeEvents.csv,05/18/2025 00:00:00,Start of day system state is NORMAL
+20250519RealTimeEvents.csv,05/19/2025 00:00:00,Start of day system state is NORMAL
+20250520RealTimeEvents.csv,05/20/2025 00:00:00,Start of day system state is NORMAL
+20250521RealTimeEvents.csv,05/21/2025 00:00:00,Start of day system state is NORMAL
+20250522RealTimeEvents.csv,05/22/2025 00:00:00,Start of day system state is NORMAL
+20250523RealTimeEvents.csv,05/23/2025 00:00:00,Start of day system state is NORMAL
+20250524RealTimeEvents.csv,05/24/2025 00:00:00,Start of day system state is NORMAL
+20250525RealTimeEvents.csv,05/25/2025 00:00:00,Start of day system state is NORMAL
+20250526RealTimeEvents.csv,05/26/2025 00:00:00,Start of day system state is NORMAL
+20250527RealTimeEvents.csv,05/27/2025 00:00:00,Start of day system state is NORMAL
+20250528RealTimeEvents.csv,05/28/2025 00:00:00,Start of day system state is NORMAL
+20250529RealTimeEvents.csv,05/29/2025 00:00:00,Start of day system state is NORMAL
+20250530RealTimeEvents.csv,05/30/2025 00:00:00,Start of day system state is NORMAL
+20250531RealTimeEvents.csv,05/31/2025 00:00:00,Start of day system state is NORMAL
+20250531RealTimeEvents.csv,05/31/2025 03:20:00,**System now operating in thunderstorm alert.**
+20250531RealTimeEvents.csv,05/31/2025 07:20:00,**System no longer operating in thunderstorm alert.**
+20250601RealTimeEvents.csv,06/01/2025 00:00:00,Start of day system state is NORMAL
+20250602RealTimeEvents.csv,06/02/2025 00:00:00,Start of day system state is NORMAL
+20250603RealTimeEvents.csv,06/03/2025 00:00:00,The start of the day is normal
+20250604RealTimeEvents.csv,06/04/2025 00:00:00,Start of day system state is NORMAL
+20250605RealTimeEvents.csv,06/05/2025 00:00:00,Start of day system state is NORMAL
+20250606RealTimeEvents.csv,06/06/2025 00:00:00,Start of day system state is NORMAL
+20250606RealTimeEvents.csv,06/06/2025 17:00:00,**System now operating in thunderstorm alert.**
+20250606RealTimeEvents.csv,06/06/2025 20:05:00,**System no longer operating in thunderstorm alert.**
+20250607RealTimeEvents.csv,06/07/2025 00:00:00,Start of day system state is NORMAL
+20250608RealTimeEvents.csv,06/08/2025 00:00:00,Start of day system state is NORMAL
+20250609RealTimeEvents.csv,06/09/2025 00:00:00,Start of day system state is NORMAL
+20250610RealTimeEvents.csv,06/10/2025 00:00:00,Start of day system state is NORMAL
+20250611RealTimeEvents.csv,06/11/2025 00:00:00,Start of day system state is NORMAL
+20250612RealTimeEvents.csv,06/12/2025 00:00:00,Start of day system state is NORMAL
+20250613RealTimeEvents.csv,06/13/2025 00:00:00,Start of day system state is NORMAL
+20250614RealTimeEvents.csv,06/14/2025 00:00:00,Start of day system state is NORMAL
+20250615RealTimeEvents.csv,06/15/2025 00:00:00,Start of day system state is NORMAL
+20250616RealTimeEvents.csv,06/16/2025 00:00:00,Start of day system state is NORMAL
+20250617RealTimeEvents.csv,06/17/2025 00:00:00,Start of day system state is NORMAL
+20250618RealTimeEvents.csv,06/18/2025 00:00:00,Start of day system state is NORMAL
+20250619RealTimeEvents.csv,06/19/2025 00:00:00,Start of day system state is NORMAL
+20250619RealTimeEvents.csv,06/19/2025 14:30:00,**System now operating in thunderstorm alert.**
+20250620RealTimeEvents.csv,06/20/2025 00:00:00,Start of day system state is NORMAL
+20250621RealTimeEvents.csv,06/21/2025 00:00:00,Start of day system state is NORMAL
+20250622RealTimeEvents.csv,06/22/2025 00:00:00,Start of day system state is NORMAL
+20250622RealTimeEvents.csv,06/22/2025 06:15:00,**System now operating in thunderstorm alert.**
+20250622RealTimeEvents.csv,06/22/2025 06:20:00,**System no longer operating in thunderstorm alert.**
+20250622RealTimeEvents.csv,06/22/2025 07:00:00,**System now operating in thunderstorm alert.**
+20250622RealTimeEvents.csv,06/22/2025 11:15:00,**System no longer operating in thunderstorm alert.**
+20250622RealTimeEvents.csv,06/22/2025 19:33:14,**State Change. System now operating in alert state.**
+20250622RealTimeEvents.csv,06/22/2025 19:36:26,**State Change. System now operating in normal state.**
+20250623RealTimeEvents.csv,06/23/2025 00:00:00,Start of day system state is NORMAL
+20250623RealTimeEvents.csv,06/23/2025 08:06:55,Capacity request has been submitted for Proxy: NPX-AC for Hours: 06/23/2025 16:00 EDT;06/23/2025 17:00 EDT;06/23/2025 18:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 08:09:46,Capacity request has been submitted for Proxy: NPX-AC for Hours: 06/23/2025 16:00 EDT;06/23/2025 17:00 EDT;06/23/2025 18:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 08:11:39,Capacity request has been submitted for Proxy: HQCD for Hours: 06/23/2025 16:00 EDT;06/23/2025 17:00 EDT;06/23/2025 18:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 08:12:07,Capacity request has been submitted for Proxy: HQNY for Hours: 06/23/2025 16:00 EDT;06/23/2025 17:00 EDT;06/23/2025 18:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 08:12:38,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 06/23/2025 16:00 EDT;06/23/2025 17:00 EDT;06/23/2025 18:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 08:20:09,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 06/23/2025 16:00 EDT;06/23/2025 17:00 EDT;06/23/2025 18:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 08:23:17,Capacity request has been submitted for Proxy: PJDF for Hours: 06/23/2025 16:00 EDT;06/23/2025 17:00 EDT;06/23/2025 18:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 08:23:41,Capacity request has been submitted for Proxy: OH-AC for Hours: 06/23/2025 16:00 EDT;06/23/2025 17:00 EDT;06/23/2025 18:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 12:03:55,Capacity request has been submitted for Proxy: NPX-AC for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 16:00 EDT;06/24/2025 17:00 EDT;06/24/2025 19:00 EDT;06/24/2025 18:00 EDT;06/24/2025 20:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 12:07:12,Capacity request has been submitted for Proxy: HQCD for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 16:00 EDT;06/24/2025 17:00 EDT;06/24/2025 18:00 EDT;06/24/2025 19:00 EDT;06/24/2025 20:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 12:07:38,Capacity request has been submitted for Proxy: HQNY for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 16:00 EDT;06/24/2025 17:00 EDT;06/24/2025 18:00 EDT;06/24/2025 19:00 EDT;06/24/2025 20:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 12:08:31,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 16:00 EDT;06/24/2025 17:00 EDT;06/24/2025 18:00 EDT;06/24/2025 19:00 EDT;06/24/2025 20:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 12:09:08,Capacity request has been submitted for Proxy: OH-AC for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 17:00 EDT;06/24/2025 16:00 EDT;06/24/2025 18:00 EDT;06/24/2025 19:00 EDT;06/24/2025 20:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 12:09:30,Capacity request has been submitted for Proxy: PJDF for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 16:00 EDT;06/24/2025 17:00 EDT;06/24/2025 18:00 EDT;06/24/2025 19:00 EDT;06/24/2025 20:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 12:10:13,Capacity request has been submitted for Proxy: PJM-AC for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 16:00 EDT;06/24/2025 17:00 EDT;06/24/2025 18:00 EDT;06/24/2025 19:00 EDT;06/24/2025 20:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 12:11:07,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 16:00 EDT;06/24/2025 17:00 EDT;06/24/2025 18:00 EDT;06/24/2025 19:00 EDT;06/24/2025 20:00 EDT
+20250623RealTimeEvents.csv,06/23/2025 18:56:35,NYISO has initiated reserve pick-up.
+20250623RealTimeEvents.csv,06/23/2025 19:06:13,NYISO has terminated reserve pick-up.
+20250624RealTimeEvents.csv,06/24/2025 00:00:00,Start of day system state is NORMAL
+20250624RealTimeEvents.csv,06/24/2025 13:38:36,Capacity request has been submitted for Proxy: HQCD for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 16:00 EDT;06/24/2025 17:00 EDT;06/24/2025 18:00 EDT;06/24/2025 19:00 EDT;06/24/2025 20:00 EDT;06/24/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:40:42,Capacity request has been submitted for Proxy: HQEX for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:40:57,Capacity request has been submitted for Proxy: HQNY for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:41:12,Capacity request has been submitted for Proxy: NENP for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:41:24,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:41:37,Capacity request has been submitted for Proxy: OH-AC for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:41:57,Capacity request has been submitted for Proxy: PJDF for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:42:12,Capacity request has been submitted for Proxy: PJM-AC for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:42:31,Capacity request has been submitted for Proxy: PJM-HTP for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:43:04,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 13:44:19,Capacity request has been submitted for Proxy: NPX-AC for Hours: 06/24/2025 14:00 EDT;06/24/2025 15:00 EDT;06/24/2025 16:00 EDT;06/24/2025 17:00 EDT;06/24/2025 18:00 EDT;06/24/2025 19:00 EDT;06/24/2025 20:00 EDT;06/24/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 14:38:35,Capacity request has been submitted for Proxy: HQCD for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 14:39:13,Capacity request has been submitted for Proxy: HQNY for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 14:39:40,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 14:39:53,Capacity request has been submitted for Proxy: OH-AC for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 14:40:18,Capacity request has been submitted for Proxy: PJDF for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 14:40:54,Capacity request has been submitted for Proxy: PJM-AC for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 14:41:22,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 14:41:39,Capacity request has been submitted for Proxy: NPX-AC for Hours: 06/25/2025 14:00 EDT;06/25/2025 15:00 EDT;06/25/2025 16:00 EDT;06/25/2025 17:00 EDT;06/25/2025 18:00 EDT;06/25/2025 19:00 EDT;06/25/2025 20:00 EDT;06/25/2025 21:00 EDT
+20250624RealTimeEvents.csv,06/24/2025 17:43:15,NYISO has initiated reserve pick-up.
+20250624RealTimeEvents.csv,06/24/2025 17:49:09,NYISO has terminated reserve pick-up.
+20250624RealTimeEvents.csv,06/24/2025 18:14:31,**State Change. System now operating in major emergency state.**
+20250624RealTimeEvents.csv,06/24/2025 20:00:19,**State Change. System now operating in alert state.**
+20250624RealTimeEvents.csv,06/24/2025 21:03:01,**State Change. System now operating in normal state.**
+20250625RealTimeEvents.csv,06/25/2025 00:00:00,Start of day system state is NORMAL
+20250625RealTimeEvents.csv,06/25/2025 09:34:59,NYISO has initiated reserve pick-up.
+20250625RealTimeEvents.csv,06/25/2025 09:42:35,NYISO has terminated reserve pick-up.
+20250626RealTimeEvents.csv,06/26/2025 00:00:00,Start of day system state is NORMAL
+20250626RealTimeEvents.csv,06/26/2025 11:11:42,NYISO has initiated reserve pick-up.
+20250626RealTimeEvents.csv,06/26/2025 11:19:59,NYISO has terminated reserve pick-up.
+20250627RealTimeEvents.csv,06/27/2025 00:00:00,Start of day system state is NORMAL
+20250628RealTimeEvents.csv,06/28/2025 00:00:00,Start of day system state is NORMAL
+20250629RealTimeEvents.csv,06/29/2025 00:00:00,Start of day system state is NORMAL
+20250630RealTimeEvents.csv,06/30/2025 00:00:00,Start of day system state is NORMAL
+20250701RealTimeEvents.csv,07/01/2025 03:25:00,**System now operating in thunderstorm alert.**
+20250701RealTimeEvents.csv,07/01/2025 16:00:00,**System now operating in thunderstorm alert.**
+20250701RealTimeEvents.csv,07/01/2025 20:45:00,**System no longer operating in thunderstorm alert.**
+20250702RealTimeEvents.csv,07/02/2025 00:00:00,Start of day system state is NORMAL
+20250703RealTimeEvents.csv,07/03/2025 00:00:00,Start of day system state is NORMAL
+20250703RealTimeEvents.csv,07/03/2025 17:30:00,**System now operating in thunderstorm alert.**
+20250703RealTimeEvents.csv,07/03/2025 20:25:00,**System no longer operating in thunderstorm alert.**
+20250704RealTimeEvents.csv,07/04/2025 00:00:00,Start of day system state is NORMAL
+20250705RealTimeEvents.csv,07/05/2025 00:00:00,Start of day system state is NORMAL
+20250706RealTimeEvents.csv,07/06/2025 00:00:00,Start of day system state is NORMAL
+20250706RealTimeEvents.csv,07/06/2025 21:03:05,**State Change. System now operating in alert state.**
+20250706RealTimeEvents.csv,07/06/2025 21:11:01,NYISO has terminated reserve pick-up.
+20250707RealTimeEvents.csv,07/07/2025 00:00:00,Start of day system state is NORMAL
+20250708RealTimeEvents.csv,07/08/2025 00:00:00,Start of day system state is NORMAL
+20250708RealTimeEvents.csv,07/08/2025 14:30:00,**System now operating in thunderstorm alert.**
+20250708RealTimeEvents.csv,07/08/2025 19:50:00,**System no longer operating in thunderstorm alert.**
+20250709RealTimeEvents.csv,07/09/2025 00:00:00,Start of day system state is NORMAL
+20250710RealTimeEvents.csv,07/10/2025 00:00:00,Start of day system state is NORMAL
+20250711RealTimeEvents.csv,07/11/2025 00:00:00,Start of day system state is NORMAL
+20250712RealTimeEvents.csv,07/12/2025 00:00:00,Start of day system state is NORMAL
+20250713RealTimeEvents.csv,07/13/2025 00:00:00,Start of day system state is NORMAL
+20250714RealTimeEvents.csv,07/14/2025 00:00:00,Start of day system state is NORMAL
+20250714RealTimeEvents.csv,07/14/2025 14:30:00,**System now operating in thunderstorm alert.**
+20250714RealTimeEvents.csv,07/14/2025 21:35:00,**System no longer operating in thunderstorm alert.**
+20250715RealTimeEvents.csv,07/15/2025 00:00:00,Start of day system state is NORMAL
+20250715RealTimeEvents.csv,07/15/2025 13:37:05,Capacity request has been submitted for Proxy: NPX-AC for Hours: 07/16/2025 15:00 EDT;07/16/2025 22:00 EDT;07/16/2025 21:00 EDT;07/16/2025 20:00 EDT;07/16/2025 19:00 EDT;07/16/2025 18:00 EDT;07/16/2025 17:00 EDT;07/16/2025 16:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:37:53,Capacity request has been submitted for Proxy: HQCD for Hours: 07/16/2025 15:00 EDT;07/16/2025 22:00 EDT;07/16/2025 21:00 EDT;07/16/2025 20:00 EDT;07/16/2025 19:00 EDT;07/16/2025 18:00 EDT;07/16/2025 17:00 EDT;07/16/2025 16:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:38:04,Capacity request has been submitted for Proxy: HQEX for Hours: 07/16/2025 15:00 EDT;07/16/2025 16:00 EDT;07/16/2025 17:00 EDT;07/16/2025 18:00 EDT;07/16/2025 19:00 EDT;07/16/2025 20:00 EDT;07/16/2025 21:00 EDT;07/16/2025 22:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:38:33,Capacity request has been submitted for Proxy: HQNY for Hours: 07/16/2025 15:00 EDT;07/16/2025 16:00 EDT;07/16/2025 17:00 EDT;07/16/2025 18:00 EDT;07/16/2025 19:00 EDT;07/16/2025 20:00 EDT;07/16/2025 21:00 EDT;07/16/2025 22:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:38:53,Capacity request has been submitted for Proxy: NENP for Hours: 07/16/2025 15:00 EDT;07/16/2025 17:00 EDT;07/16/2025 16:00 EDT;07/16/2025 18:00 EDT;07/16/2025 19:00 EDT;07/16/2025 20:00 EDT;07/16/2025 21:00 EDT;07/16/2025 22:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:39:11,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 07/16/2025 15:00 EDT;07/16/2025 16:00 EDT;07/16/2025 17:00 EDT;07/16/2025 18:00 EDT;07/16/2025 19:00 EDT;07/16/2025 20:00 EDT;07/16/2025 21:00 EDT;07/16/2025 22:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:39:33,Capacity request has been submitted for Proxy: OH-AC for Hours: 07/16/2025 15:00 EDT;07/16/2025 16:00 EDT;07/16/2025 17:00 EDT;07/16/2025 18:00 EDT;07/16/2025 19:00 EDT;07/16/2025 20:00 EDT;07/16/2025 21:00 EDT;07/16/2025 22:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:39:48,Capacity request has been submitted for Proxy: PJDF for Hours: 07/16/2025 15:00 EDT;07/16/2025 16:00 EDT;07/16/2025 17:00 EDT;07/16/2025 18:00 EDT;07/16/2025 19:00 EDT;07/16/2025 20:00 EDT;07/16/2025 21:00 EDT;07/16/2025 22:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:40:00,Capacity request has been submitted for Proxy: PJM-AC for Hours: 07/16/2025 22:00 EDT;07/16/2025 21:00 EDT;07/16/2025 20:00 EDT;07/16/2025 19:00 EDT;07/16/2025 18:00 EDT;07/16/2025 17:00 EDT;07/16/2025 15:00 EDT;07/16/2025 16:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:40:13,Capacity request has been submitted for Proxy: PJM-HTP for Hours: 07/16/2025 15:00 EDT;07/16/2025 16:00 EDT;07/16/2025 17:00 EDT;07/16/2025 18:00 EDT;07/16/2025 19:00 EDT;07/16/2025 20:00 EDT;07/16/2025 21:00 EDT;07/16/2025 22:00 EDT
+20250715RealTimeEvents.csv,07/15/2025 13:40:24,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 07/16/2025 15:00 EDT;07/16/2025 16:00 EDT;07/16/2025 17:00 EDT;07/16/2025 18:00 EDT;07/16/2025 19:00 EDT;07/16/2025 20:00 EDT;07/16/2025 21:00 EDT;07/16/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 00:00:00,Start of day system state is NORMAL
+20250716RealTimeEvents.csv,07/16/2025 08:29:41,NYISO has initiated reserve pick-up.
+20250716RealTimeEvents.csv,07/16/2025 08:37:35,NYISO has terminated reserve pick-up.
+20250716RealTimeEvents.csv,07/16/2025 11:21:42,Capacity request has been submitted for Proxy: HQCD for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 11:23:17,Capacity request has been submitted for Proxy: HQNY for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 11:23:32,Capacity request has been submitted for Proxy: NENP for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 11:23:42,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 11:24:16,Capacity request has been submitted for Proxy: OH-AC for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 11:24:26,Capacity request has been submitted for Proxy: PJDF for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 11:24:40,Capacity request has been submitted for Proxy: PJM-AC for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 11:24:49,Capacity request has been submitted for Proxy: PJM-HTP for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 11:24:59,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250716RealTimeEvents.csv,07/16/2025 11:26:41,Capacity request has been submitted for Proxy: NPX-AC for Hours: 07/17/2025 15:00 EDT;07/17/2025 16:00 EDT;07/17/2025 17:00 EDT;07/17/2025 18:00 EDT;07/17/2025 19:00 EDT;07/17/2025 20:00 EDT;07/17/2025 21:00 EDT;07/17/2025 22:00 EDT
+20250717RealTimeEvents.csv,07/17/2025 00:00:00,Start of day system state is NORMAL
+20250717RealTimeEvents.csv,07/17/2025 16:45:09,NYISO has terminated reserve pick-up.
+20250718RealTimeEvents.csv,07/18/2025 00:00:00,Start of day system state is NORMAL
+20250719RealTimeEvents.csv,07/19/2025 00:00:00,Start of day system state is NORMAL
+20250720RealTimeEvents.csv,07/20/2025 00:00:00,Start of day system state is NORMAL
+20250721RealTimeEvents.csv,07/21/2025 00:00:00,Start of day system state is NORMAL
+20250722RealTimeEvents.csv,07/22/2025 00:00:00,Start of day system state is NORMAL
+20250723RealTimeEvents.csv,07/23/2025 00:00:00,Start of day system state is NORMAL
+20250724RealTimeEvents.csv,07/24/2025 00:00:00,Start of day system state is NORMAL
+20250724RealTimeEvents.csv,07/24/2025 10:43:35,Capacity request has been submitted for Proxy: NPX-AC for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 18:00 EDT;07/25/2025 19:00 EDT;07/25/2025 20:00 EDT;07/25/2025 21:00 EDT
+20250724RealTimeEvents.csv,07/24/2025 10:43:59,Capacity request has been submitted for Proxy: HQCD for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 18:00 EDT;07/25/2025 19:00 EDT;07/25/2025 20:00 EDT;07/25/2025 21:00 EDT
+20250724RealTimeEvents.csv,07/24/2025 10:44:10,Capacity request has been submitted for Proxy: HQNY for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 18:00 EDT;07/25/2025 19:00 EDT;07/25/2025 20:00 EDT;07/25/2025 21:00 EDT
+20250724RealTimeEvents.csv,07/24/2025 10:44:19,Capacity request has been submitted for Proxy: NENP for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 18:00 EDT;07/25/2025 20:00 EDT;07/25/2025 19:00 EDT;07/25/2025 21:00 EDT
+20250724RealTimeEvents.csv,07/24/2025 10:44:29,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 18:00 EDT;07/25/2025 19:00 EDT;07/25/2025 20:00 EDT;07/25/2025 21:00 EDT
+20250724RealTimeEvents.csv,07/24/2025 10:44:37,Capacity request has been submitted for Proxy: OH-AC for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 18:00 EDT;07/25/2025 19:00 EDT;07/25/2025 20:00 EDT;07/25/2025 21:00 EDT
+20250724RealTimeEvents.csv,07/24/2025 10:44:46,Capacity request has been submitted for Proxy: PJDF for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 18:00 EDT;07/25/2025 19:00 EDT;07/25/2025 20:00 EDT;07/25/2025 21:00 EDT
+20250724RealTimeEvents.csv,07/24/2025 10:44:54,Capacity request has been submitted for Proxy: PJM-AC for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 18:00 EDT;07/25/2025 19:00 EDT;07/25/2025 20:00 EDT;07/25/2025 21:00 EDT
+20250724RealTimeEvents.csv,07/24/2025 10:45:02,Capacity request has been submitted for Proxy: PJM-HTP for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 18:00 EDT;07/25/2025 19:00 EDT;07/25/2025 20:00 EDT;07/25/2025 21:00 EDT
+20250724RealTimeEvents.csv,07/24/2025 10:45:12,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 07/25/2025 16:00 EDT;07/25/2025 17:00 EDT;07/25/2025 19:00 EDT;07/25/2025 18:00 EDT;07/25/2025 20:00 EDT;07/25/2025 21:00 EDT
+20250725RealTimeEvents.csv,07/25/2025 00:00:00,Start of day system state is NORMAL
+20250725RealTimeEvents.csv,07/25/2025 15:00:00,**System now operating in thunderstorm alert.**
+20250725RealTimeEvents.csv,07/25/2025 18:05:00,**System no longer operating in thunderstorm alert.**
+20250726RealTimeEvents.csv,07/26/2025 00:00:00,Start of day system state is NORMAL
+20250726RealTimeEvents.csv,07/26/2025 07:57:49,NYISO has initiated reserve pick-up.
+20250726RealTimeEvents.csv,07/26/2025 08:01:49,NYISO has terminated reserve pick-up.
+20250727RealTimeEvents.csv,07/27/2025 00:00:00,Start of day system state is NORMAL
+20250727RealTimeEvents.csv,07/27/2025 12:13:03,Capacity request has been submitted for Proxy: NPX-AC for Hours: 07/28/2025 15:00 EDT;07/28/2025 16:00 EDT;07/28/2025 17:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 21:00 EDT;07/28/2025 22:00 EDT
+20250727RealTimeEvents.csv,07/27/2025 12:14:42,Capacity request has been submitted for Proxy: HQCD for Hours: 07/28/2025 15:00 EDT;07/28/2025 16:00 EDT;07/28/2025 17:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 21:00 EDT;07/28/2025 22:00 EDT
+20250727RealTimeEvents.csv,07/27/2025 12:15:33,Capacity request has been submitted for Proxy: NENP for Hours: 07/28/2025 15:00 EDT;07/28/2025 16:00 EDT;07/28/2025 17:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 21:00 EDT;07/28/2025 22:00 EDT
+20250727RealTimeEvents.csv,07/27/2025 12:15:46,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 07/28/2025 15:00 EDT;07/28/2025 16:00 EDT;07/28/2025 17:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 21:00 EDT;07/28/2025 22:00 EDT
+20250727RealTimeEvents.csv,07/27/2025 12:16:00,Capacity request has been submitted for Proxy: OH-AC for Hours: 07/28/2025 15:00 EDT;07/28/2025 16:00 EDT;07/28/2025 17:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 21:00 EDT;07/28/2025 22:00 EDT
+20250727RealTimeEvents.csv,07/27/2025 12:16:14,Capacity request has been submitted for Proxy: PJDF for Hours: 07/28/2025 15:00 EDT;07/28/2025 16:00 EDT;07/28/2025 17:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 21:00 EDT;07/28/2025 22:00 EDT
+20250727RealTimeEvents.csv,07/27/2025 12:16:26,Capacity request has been submitted for Proxy: PJM-AC for Hours: 07/28/2025 15:00 EDT;07/28/2025 16:00 EDT;07/28/2025 17:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 21:00 EDT;07/28/2025 22:00 EDT
+20250727RealTimeEvents.csv,07/27/2025 12:16:37,Capacity request has been submitted for Proxy: PJM-HTP for Hours: 07/28/2025 15:00 EDT;07/28/2025 16:00 EDT;07/28/2025 17:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 21:00 EDT;07/28/2025 22:00 EDT
+20250727RealTimeEvents.csv,07/27/2025 12:16:49,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 07/28/2025 15:00 EDT;07/28/2025 17:00 EDT;07/28/2025 16:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 21:00 EDT;07/28/2025 22:00 EDT
+20250727RealTimeEvents.csv,07/27/2025 12:19:14,Capacity request has been submitted for Proxy: HQNY for Hours: 07/28/2025 15:00 EDT;07/28/2025 16:00 EDT;07/28/2025 17:00 EDT;07/28/2025 18:00 EDT;07/28/2025 19:00 EDT;07/28/2025 20:00 EDT;07/28/2025 22:00 EDT;07/28/2025 21:00 EDT
+20250728RealTimeEvents.csv,07/28/2025 00:00:00,Start of day system state is NORMAL
+20250728RealTimeEvents.csv,07/28/2025 10:12:04,Capacity request has been submitted for Proxy: NPX-AC for Hours: 07/29/2025 15:00 EDT;07/29/2025 16:00 EDT;07/29/2025 17:00 EDT;07/29/2025 18:00 EDT;07/29/2025 19:00 EDT;07/29/2025 20:00 EDT;07/29/2025 21:00 EDT;07/29/2025 22:00 EDT
+20250728RealTimeEvents.csv,07/28/2025 10:12:57,Capacity request has been submitted for Proxy: HQCD for Hours: 07/29/2025 15:00 EDT;07/29/2025 16:00 EDT;07/29/2025 17:00 EDT;07/29/2025 18:00 EDT;07/29/2025 19:00 EDT;07/29/2025 20:00 EDT;07/29/2025 21:00 EDT;07/29/2025 22:00 EDT
+20250728RealTimeEvents.csv,07/28/2025 10:13:17,Capacity request has been submitted for Proxy: HQNY for Hours: 07/29/2025 15:00 EDT;07/29/2025 16:00 EDT;07/29/2025 17:00 EDT;07/29/2025 18:00 EDT;07/29/2025 19:00 EDT;07/29/2025 20:00 EDT;07/29/2025 21:00 EDT;07/29/2025 22:00 EDT
+20250728RealTimeEvents.csv,07/28/2025 10:13:57,Capacity request has been submitted for Proxy: NENP for Hours: 07/29/2025 15:00 EDT;07/29/2025 16:00 EDT;07/29/2025 17:00 EDT;07/29/2025 18:00 EDT;07/29/2025 19:00 EDT;07/29/2025 20:00 EDT;07/29/2025 21:00 EDT;07/29/2025 22:00 EDT
+20250728RealTimeEvents.csv,07/28/2025 10:14:18,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 07/29/2025 15:00 EDT;07/29/2025 16:00 EDT;07/29/2025 17:00 EDT;07/29/2025 18:00 EDT;07/29/2025 19:00 EDT;07/29/2025 20:00 EDT;07/29/2025 21:00 EDT;07/29/2025 22:00 EDT
+20250728RealTimeEvents.csv,07/28/2025 10:14:30,Capacity request has been submitted for Proxy: OH-AC for Hours: 07/29/2025 15:00 EDT;07/29/2025 16:00 EDT;07/29/2025 17:00 EDT;07/29/2025 18:00 EDT;07/29/2025 19:00 EDT;07/29/2025 20:00 EDT;07/29/2025 21:00 EDT;07/29/2025 22:00 EDT
+20250728RealTimeEvents.csv,07/28/2025 10:14:41,Capacity request has been submitted for Proxy: PJDF for Hours: 07/29/2025 15:00 EDT;07/29/2025 16:00 EDT;07/29/2025 17:00 EDT;07/29/2025 18:00 EDT;07/29/2025 19:00 EDT;07/29/2025 20:00 EDT;07/29/2025 21:00 EDT;07/29/2025 22:00 EDT
+20250728RealTimeEvents.csv,07/28/2025 10:14:51,Capacity request has been submitted for Proxy: PJM-AC for Hours: 07/29/2025 15:00 EDT;07/29/2025 16:00 EDT;07/29/2025 17:00 EDT;07/29/2025 18:00 EDT;07/29/2025 19:00 EDT;07/29/2025 20:00 EDT;07/29/2025 21:00 EDT;07/29/2025 22:00 EDT
+20250728RealTimeEvents.csv,07/28/2025 10:15:11,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 07/29/2025 15:00 EDT;07/29/2025 16:00 EDT;07/29/2025 17:00 EDT;07/29/2025 18:00 EDT;07/29/2025 19:00 EDT;07/29/2025 20:00 EDT;07/29/2025 21:00 EDT;07/29/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 00:00:00,Start of day system state is NORMAL
+20250729RealTimeEvents.csv,07/29/2025 08:38:25,Capacity request has been submitted for Proxy: HQCD for Hours: 07/30/2025 15:00 EDT;07/30/2025 22:00 EDT;07/30/2025 21:00 EDT;07/30/2025 20:00 EDT;07/30/2025 19:00 EDT;07/30/2025 18:00 EDT;07/30/2025 17:00 EDT;07/30/2025 16:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:38:38,Capacity request has been submitted for Proxy: HQEX for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:38:52,Capacity request has been submitted for Proxy: HQNY for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:39:07,Capacity request has been submitted for Proxy: NENP for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:39:19,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:39:33,Capacity request has been submitted for Proxy: OH-AC for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:39:46,Capacity request has been submitted for Proxy: PJDF for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:39:58,Capacity request has been submitted for Proxy: PJM-AC for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:40:06,Capacity request has been submitted for Proxy: PJM-HTP for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:40:15,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 08:43:16,Capacity request has been submitted for Proxy: NPX-AC for Hours: 07/30/2025 15:00 EDT;07/30/2025 16:00 EDT;07/30/2025 17:00 EDT;07/30/2025 18:00 EDT;07/30/2025 19:00 EDT;07/30/2025 20:00 EDT;07/30/2025 21:00 EDT;07/30/2025 22:00 EDT
+20250729RealTimeEvents.csv,07/29/2025 16:36:47,NYISO has initiated reserve pick-up.
+20250729RealTimeEvents.csv,07/29/2025 16:44:47,NYISO has terminated reserve pick-up.
+20250730RealTimeEvents.csv,07/30/2025 00:00:00,Start of day system state is NORMAL
+20250730RealTimeEvents.csv,07/30/2025 16:00:00,**System now operating in thunderstorm alert.**
+20250730RealTimeEvents.csv,07/30/2025 16:44:41,NYISO has initiated reserve pick-up.
+20250730RealTimeEvents.csv,07/30/2025 16:53:17,NYISO has terminated reserve pick-up.
+20250730RealTimeEvents.csv,07/30/2025 20:25:00,**System no longer operating in thunderstorm alert.**
+20250731RealTimeEvents.csv,07/31/2025 00:00:00,Start of day system state is NORMAL
+20250731RealTimeEvents.csv,07/31/2025 14:00:00,**System now operating in thunderstorm alert.**
+20250801RealTimeEvents.csv,08/01/2025 00:00:00,Start of day system state is NORMAL
+20250802RealTimeEvents.csv,08/02/2025 00:00:00,Start of day system state is NORMAL
+20250803RealTimeEvents.csv,08/03/2025 00:00:00,Start of day system state is NORMAL
+20250804RealTimeEvents.csv,08/04/2025 00:00:00,Start of day system state is NORMAL
+20250805RealTimeEvents.csv,08/05/2025 00:00:00,Start of day system state is NORMAL
+20250805RealTimeEvents.csv,08/05/2025 06:29:59,NYISO has initiated reserve pick-up.
+20250805RealTimeEvents.csv,08/05/2025 06:36:59,NYISO has terminated reserve pick-up.
+20250806RealTimeEvents.csv,08/06/2025 00:00:00,Start of day system state is NORMAL
+20250807RealTimeEvents.csv,08/07/2025 00:00:00,Start of day system state is NORMAL
+20250807RealTimeEvents.csv,08/07/2025 05:07:30,NYISO has initiated reserve pick-up.
+20250807RealTimeEvents.csv,08/07/2025 05:14:12,NYISO has terminated reserve pick-up.
+20250808RealTimeEvents.csv,08/08/2025 00:00:00,Start of day system state is NORMAL
+20250809RealTimeEvents.csv,08/09/2025 00:00:00,Start of day system state is NORMAL
+20250810RealTimeEvents.csv,08/10/2025 00:00:00,Start of day system state is NORMAL
+20250811RealTimeEvents.csv,08/11/2025 00:00:00,Start of day system state is NORMAL
+20250812RealTimeEvents.csv,08/12/2025 00:00:00,Start of day system state is NORMAL
+20250813RealTimeEvents.csv,08/13/2025 00:00:00,Start of day system state is NORMAL
+20250813RealTimeEvents.csv,08/13/2025 15:00:00,**System now operating in thunderstorm alert.**
+20250813RealTimeEvents.csv,08/13/2025 21:45:00,**System no longer operating in thunderstorm alert.**
+20250813RealTimeEvents.csv,08/13/2025 23:27:14,NYISO has terminated reserve pick-up.
+20250814RealTimeEvents.csv,08/14/2025 00:00:00,Start of day system state is NORMAL
+20250815RealTimeEvents.csv,08/15/2025 00:00:00,Start of day system state is NORMAL
+20250816RealTimeEvents.csv,08/16/2025 00:00:00,Start of day system state is NORMAL
+20250817RealTimeEvents.csv,08/17/2025 00:00:00,Start of day system state is NORMAL
+20250817RealTimeEvents.csv,08/17/2025 18:54:27,NYISO has initiated reserve pick-up.
+20250817RealTimeEvents.csv,08/17/2025 19:04:56,NYISO has terminated reserve pick-up.
+20250817RealTimeEvents.csv,08/17/2025 23:09:30,**State Change. System now operating in alert state.**
+20250817RealTimeEvents.csv,08/17/2025 23:12:46,**State Change. System now operating in normal state.**
+20250818RealTimeEvents.csv,08/18/2025 00:00:00,Start of day system state is NORMAL
+20250819RealTimeEvents.csv,08/19/2025 00:00:00,Start of day system state is NORMAL
+20250820RealTimeEvents.csv,08/20/2025 00:00:00,Start of day system state is NORMAL
+20250821RealTimeEvents.csv,08/21/2025 00:00:00,Start of day system state is NORMAL
+20250822RealTimeEvents.csv,08/22/2025 00:00:00,Start of day system state is NORMAL
+20250823RealTimeEvents.csv,08/23/2025 00:00:00,Start of day system state is NORMAL
+20250824RealTimeEvents.csv,08/24/2025 00:00:00,Start of day system state is NORMAL
+20250825RealTimeEvents.csv,08/25/2025 00:00:00,Start of day system state is NORMAL
+20250826RealTimeEvents.csv,08/26/2025 00:00:00,Start of day system state is NORMAL
+20250827RealTimeEvents.csv,08/27/2025 00:00:00,Start of day system state is NORMAL
+20250828RealTimeEvents.csv,08/28/2025 00:00:00,Start of day system state is NORMAL
+20250829RealTimeEvents.csv,08/29/2025 00:00:00,Start of day system state is NORMAL
+20250830RealTimeEvents.csv,08/30/2025 00:00:00,Start of day system state is NORMAL
+20250831RealTimeEvents.csv,08/31/2025 00:00:00,Start of day system state is NORMAL
+20250831RealTimeEvents.csv,08/31/2025 18:42:04,**State Change. System now operating in alert state.**
+20250831RealTimeEvents.csv,08/31/2025 18:45:43,**State Change. System now operating in normal state.**
+20250901RealTimeEvents.csv,09/01/2025 00:00:00,Start of day system state is NORMAL
+20250902RealTimeEvents.csv,09/02/2025 00:00:00,Start of day system state is NORMAL
+20250903RealTimeEvents.csv,09/03/2025 00:00:00,Start of day system state is NORMAL
+20250904RealTimeEvents.csv,09/04/2025 00:00:00,Start of day system state is NORMAL
+20250904RealTimeEvents.csv,09/04/2025 20:20:00,**System now operating in thunderstorm alert.**
+20250905RealTimeEvents.csv,09/05/2025 00:00:00,Start of day thunderstorm alert state is ACTIVE
+20250905RealTimeEvents.csv,09/05/2025 03:35:00,**System no longer operating in thunderstorm alert.**
+20250906RealTimeEvents.csv,09/06/2025 00:00:00,Start of day system state is NORMAL
+20250906RealTimeEvents.csv,09/06/2025 14:30:00,**System now operating in thunderstorm alert.**
+20250906RealTimeEvents.csv,09/06/2025 18:35:00,**System no longer operating in thunderstorm alert.**
+20250907RealTimeEvents.csv,09/07/2025 00:00:00,Start of day system state is NORMAL
+20250908RealTimeEvents.csv,09/08/2025 00:00:00,Start of day system state is NORMAL
+20250909RealTimeEvents.csv,09/09/2025 00:00:00,Start of day system state is NORMAL
+20250910RealTimeEvents.csv,09/10/2025 00:00:00,The start of the day is normal
+20250911RealTimeEvents.csv,09/11/2025 00:00:00,Start of day system state is NORMAL
+20250912RealTimeEvents.csv,09/12/2025 00:00:00,Start of day system state is NORMAL
+20250913RealTimeEvents.csv,09/13/2025 00:00:00,Start of day system state is NORMAL
+20250914RealTimeEvents.csv,09/14/2025 00:00:00,Start of day system state is NORMAL
+20250915RealTimeEvents.csv,09/15/2025 00:00:00,Start of day system state is NORMAL
+20250916RealTimeEvents.csv,09/16/2025 00:00:00,Start of day system state is NORMAL
+20250917RealTimeEvents.csv,09/17/2025 00:00:00,Start of day system state is NORMAL
+20250918RealTimeEvents.csv,09/18/2025 00:00:00,Start of day system state is NORMAL
+20250919RealTimeEvents.csv,09/19/2025 00:00:00,Start of day system state is NORMAL
+20250920RealTimeEvents.csv,09/20/2025 00:00:00,Start of day system state is NORMAL
+20250920RealTimeEvents.csv,09/20/2025 20:03:52,**State Change. System now operating in alert state.**
+20250920RealTimeEvents.csv,09/20/2025 20:06:52,**State Change. System now operating in normal state.**
+20250921RealTimeEvents.csv,09/21/2025 00:00:00,Start of day system state is NORMAL
+20250922RealTimeEvents.csv,09/22/2025 00:00:00,Start of day system state is NORMAL
+20250923RealTimeEvents.csv,09/23/2025 00:00:00,Start of day system state is NORMAL
+20250924RealTimeEvents.csv,09/24/2025 00:00:00,Start of day system state is NORMAL
+20250925RealTimeEvents.csv,09/25/2025 00:00:00,Start of day system state is NORMAL
+20250926RealTimeEvents.csv,09/26/2025 00:00:00,Start of day system state is NORMAL
+20250927RealTimeEvents.csv,09/27/2025 00:00:00,Start of day system state is NORMAL
+20250928RealTimeEvents.csv,09/28/2025 00:00:00,Start of day system state is NORMAL
+20250929RealTimeEvents.csv,09/29/2025 00:00:00,Start of day system state is NORMAL
+20250929RealTimeEvents.csv,09/29/2025 04:46:27,**State Change. System now operating in alert state.**
+20250929RealTimeEvents.csv,09/29/2025 04:52:15,**State Change. System now operating in normal state.**
+20250930RealTimeEvents.csv,09/30/2025 00:00:00,Start of day system state is NORMAL
+20251001RealTimeEvents.csv,10/01/2025 00:00:00,Start of day system state is NORMAL
+20251002RealTimeEvents.csv,10/02/2025 00:00:00,Start of day system state is NORMAL
+20251003RealTimeEvents.csv,10/03/2025 00:00:00,Start of day system state is NORMAL
+20251004RealTimeEvents.csv,10/04/2025 00:00:00,Start of day system state is NORMAL
+20251005RealTimeEvents.csv,10/05/2025 00:00:00,Start of day system state is NORMAL
+20251006RealTimeEvents.csv,10/06/2025 00:00:00,Start of day system state is NORMAL
+20251006RealTimeEvents.csv,10/06/2025 20:03:06,NYISO has initiated reserve pick-up.
+20251006RealTimeEvents.csv,10/06/2025 20:12:42,NYISO has terminated reserve pick-up.
+20251007RealTimeEvents.csv,10/07/2025 00:00:00,Start of day system state is NORMAL
+20251008RealTimeEvents.csv,10/08/2025 00:00:00,Start of day system state is NORMAL
+20251009RealTimeEvents.csv,10/09/2025 00:00:00,Start of day system state is NORMAL
+20251010RealTimeEvents.csv,10/10/2025 00:00:00,The start of the day is normal
+20251011RealTimeEvents.csv,10/11/2025 00:00:00,Start of day system state is NORMAL
+20251012RealTimeEvents.csv,10/12/2025 00:00:00,Start of day system state is NORMAL
+20251013RealTimeEvents.csv,10/13/2025 00:00:00,Start of day system state is NORMAL
+20251014RealTimeEvents.csv,10/14/2025 00:00:00,Start of day system state is NORMAL
+20251015RealTimeEvents.csv,10/15/2025 00:00:00,Start of day system state is NORMAL
+20251015RealTimeEvents.csv,10/15/2025 17:01:34,**State Change. System now operating in alert state.**
+20251015RealTimeEvents.csv,10/15/2025 17:02:50,**State Change. System now operating in normal state.**
+20251016RealTimeEvents.csv,10/16/2025 00:00:00,Start of day system state is NORMAL
+20251016RealTimeEvents.csv,10/16/2025 18:43:18,NYISO has initiated reserve pick-up.
+20251016RealTimeEvents.csv,10/16/2025 18:48:42,NYISO has terminated reserve pick-up.
+20251017RealTimeEvents.csv,10/17/2025 00:00:00,Start of day system state is NORMAL
+20251018RealTimeEvents.csv,10/18/2025 00:00:00,Start of day system state is NORMAL
+20251019RealTimeEvents.csv,10/19/2025 00:00:00,Start of day system state is NORMAL
+20251019RealTimeEvents.csv,10/19/2025 21:11:28,Capacity request has been submitted for Proxy: NPX-AC for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 18:00 EDT;10/20/2025 19:00 EDT;10/20/2025 20:00 EDT;10/20/2025 21:00 EDT;10/20/2025 22:00 EDT;10/20/2025 23:00 EDT
+20251019RealTimeEvents.csv,10/19/2025 21:11:49,Capacity request has been submitted for Proxy: HQCD for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 18:00 EDT;10/20/2025 19:00 EDT;10/20/2025 20:00 EDT;10/20/2025 21:00 EDT;10/20/2025 22:00 EDT;10/20/2025 23:00 EDT
+20251019RealTimeEvents.csv,10/19/2025 21:12:01,Capacity request has been submitted for Proxy: HQNY for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 18:00 EDT;10/20/2025 19:00 EDT;10/20/2025 20:00 EDT;10/20/2025 21:00 EDT;10/20/2025 22:00 EDT;10/20/2025 23:00 EDT
+20251019RealTimeEvents.csv,10/19/2025 21:12:23,Capacity request has been submitted for Proxy: NENP for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 18:00 EDT;10/20/2025 19:00 EDT;10/20/2025 21:00 EDT;10/20/2025 20:00 EDT;10/20/2025 22:00 EDT;10/20/2025 23:00 EDT
+20251019RealTimeEvents.csv,10/19/2025 21:12:32,Capacity request has been submitted for Proxy: NPX-CSC for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 19:00 EDT;10/20/2025 18:00 EDT;10/20/2025 20:00 EDT;10/20/2025 21:00 EDT;10/20/2025 22:00 EDT;10/20/2025 23:00 EDT
+20251019RealTimeEvents.csv,10/19/2025 21:12:44,Capacity request has been submitted for Proxy: OH-AC for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 18:00 EDT;10/20/2025 19:00 EDT;10/20/2025 20:00 EDT;10/20/2025 21:00 EDT;10/20/2025 23:00 EDT;10/20/2025 22:00 EDT
+20251019RealTimeEvents.csv,10/19/2025 21:12:55,Capacity request has been submitted for Proxy: PJDF for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 18:00 EDT;10/20/2025 19:00 EDT;10/20/2025 20:00 EDT;10/20/2025 21:00 EDT;10/20/2025 22:00 EDT;10/20/2025 23:00 EDT
+20251019RealTimeEvents.csv,10/19/2025 21:13:06,Capacity request has been submitted for Proxy: PJM-AC for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 18:00 EDT;10/20/2025 20:00 EDT;10/20/2025 19:00 EDT;10/20/2025 21:00 EDT;10/20/2025 22:00 EDT;10/20/2025 23:00 EDT
+20251019RealTimeEvents.csv,10/19/2025 21:13:14,Capacity request has been submitted for Proxy: PJM-HTP for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 18:00 EDT;10/20/2025 19:00 EDT;10/20/2025 20:00 EDT;10/20/2025 21:00 EDT;10/20/2025 22:00 EDT;10/20/2025 23:00 EDT
+20251019RealTimeEvents.csv,10/19/2025 21:13:25,Capacity request has been submitted for Proxy: PJM-VFT for Hours: 10/20/2025 16:00 EDT;10/20/2025 17:00 EDT;10/20/2025 18:00 EDT;10/20/2025 19:00 EDT;10/20/2025 20:00 EDT;10/20/2025 21:00 EDT;10/20/2025 22:00 EDT;10/20/2025 23:00 EDT
+20251020RealTimeEvents.csv,10/20/2025 00:00:00,Start of day system state is NORMAL
+20251021RealTimeEvents.csv,10/21/2025 00:00:00,Start of day system state is NORMAL
+20251022RealTimeEvents.csv,10/22/2025 00:00:00,Start of day system state is NORMAL
+20251023RealTimeEvents.csv,10/23/2025 00:00:00,Start of day system state is NORMAL
+20251023RealTimeEvents.csv,10/23/2025 17:05:09,NYISO has initiated reserve pick-up.
+20251023RealTimeEvents.csv,10/23/2025 17:14:45,NYISO has terminated reserve pick-up.
+20251024RealTimeEvents.csv,10/24/2025 00:00:00,Start of day system state is NORMAL
+20251025RealTimeEvents.csv,10/25/2025 00:00:00,Start of day system state is NORMAL
+20251026RealTimeEvents.csv,10/26/2025 00:00:00,Start of day system state is NORMAL
+20251027RealTimeEvents.csv,10/27/2025 00:00:00,Start of day system state is NORMAL
+20251028RealTimeEvents.csv,10/28/2025 00:00:00,Start of day system state is NORMAL
+20251029RealTimeEvents.csv,10/29/2025 00:00:00,Start of day system state is NORMAL
+20251030RealTimeEvents.csv,10/30/2025 00:00:00,Start of day system state is NORMAL
+20251031RealTimeEvents.csv,10/31/2025 00:00:00,Start of day system state is NORMAL
+20251101RealTimeEvents.csv,11/01/2025 00:00:00,Start of day system state is NORMAL
+20251102RealTimeEvents.csv,11/02/2025 00:00:00,Start of day system state is NORMAL
+20251103RealTimeEvents.csv,11/03/2025 00:00:00,Start of day system state is NORMAL
+20251104RealTimeEvents.csv,11/04/2025 00:00:00,Start of day system state is NORMAL
+20251105RealTimeEvents.csv,11/05/2025 00:00:00,Start of day system state is NORMAL
+20251106RealTimeEvents.csv,11/06/2025 00:00:00,Start of day system state is NORMAL
+20251107RealTimeEvents.csv,11/07/2025 00:00:00,Start of day system state is NORMAL
+20251108RealTimeEvents.csv,11/08/2025 00:00:00,Start of day system state is NORMAL
+20251109RealTimeEvents.csv,11/09/2025 00:00:00,Start of day system state is NORMAL
+20251110RealTimeEvents.csv,11/10/2025 00:00:00,Start of day system state is NORMAL
+20251111RealTimeEvents.csv,11/11/2025 00:00:00,Start of day system state is NORMAL
+20251111RealTimeEvents.csv,11/11/2025 23:00:09,**State Change. System now operating in alert state.**
+20251111RealTimeEvents.csv,11/11/2025 23:30:00,**System now operating in thunderstorm alert.**
+20251112RealTimeEvents.csv,11/12/2025 04:55:25,**State Change. System now operating in normal state.**
+20251112RealTimeEvents.csv,11/12/2025 05:10:00,**System no longer operating in thunderstorm alert.**
+20251113RealTimeEvents.csv,11/13/2025 00:00:00,Start of day system state is NORMAL
+20251113RealTimeEvents.csv,11/13/2025 13:50:31,NYISO has initiated reserve pick-up.
+20251113RealTimeEvents.csv,11/13/2025 13:58:07,NYISO has terminated reserve pick-up.
+20251114RealTimeEvents.csv,11/14/2025 00:00:00,Start of day system state is NORMAL
+20251115RealTimeEvents.csv,11/15/2025 00:00:00,Start of day system state is NORMAL
+20251116RealTimeEvents.csv,11/16/2025 00:00:00,Start of day system state is NORMAL
+20251117RealTimeEvents.csv,11/17/2025 00:00:00,Start of day system state is NORMAL
+20251118RealTimeEvents.csv,11/18/2025 00:00:00,Start of day system state is NORMAL
+20251119RealTimeEvents.csv,11/19/2025 00:00:00,Start of day system state is NORMAL
+20251120RealTimeEvents.csv,11/20/2025 00:00:00,Start of day system state is NORMAL
+20251121RealTimeEvents.csv,11/21/2025 00:00:00,Start of day system state is NORMAL
+20251122RealTimeEvents.csv,11/22/2025 00:00:00,Start of day system state is NORMAL
+20251123RealTimeEvents.csv,11/23/2025 00:00:00,Start of day system state is NORMAL
+20251124RealTimeEvents.csv,11/24/2025 00:00:00,Start of day system state is NORMAL
+20251125RealTimeEvents.csv,11/25/2025 00:00:00,Start of day system state is NORMAL
+20251125RealTimeEvents.csv,11/25/2025 15:54:50,NYISO has initiated reserve pick-up.
+20251125RealTimeEvents.csv,11/25/2025 15:57:02,NYISO has terminated reserve pick-up.
+20251126RealTimeEvents.csv,11/26/2025 00:00:00,Start of day system state is NORMAL
+20251127RealTimeEvents.csv,11/27/2025 00:00:00,Start of day system state is NORMAL
+20251128RealTimeEvents.csv,11/28/2025 00:00:00,Start of day system state is NORMAL
+20251129RealTimeEvents.csv,11/29/2025 00:00:00,Start of day system state is NORMAL
+20251130RealTimeEvents.csv,11/30/2025 00:00:00,Start of day system state is NORMAL
+20251201RealTimeEvents.csv,12/01/2025 00:00:00,Start of day system state is NORMAL
+20251202RealTimeEvents.csv,12/02/2025 00:00:00,Start of day system state is NORMAL
+20251203RealTimeEvents.csv,12/03/2025 00:00:00,Start of day system state is NORMAL
+20251204RealTimeEvents.csv,12/04/2025 00:00:00,Start of day system state is NORMAL
+20251205RealTimeEvents.csv,12/05/2025 00:00:00,Start of day system state is NORMAL
+20251206RealTimeEvents.csv,12/06/2025 00:00:00,Start of day system state is NORMAL
+20251207RealTimeEvents.csv,12/07/2025 00:00:00,Start of day system state is NORMAL
+20251208RealTimeEvents.csv,12/08/2025 00:00:00,Start of day system state is NORMAL
+20251209RealTimeEvents.csv,12/09/2025 00:00:00,Start of day system state is NORMAL
+20251210RealTimeEvents.csv,12/10/2025 00:00:00,Start of day system state is NORMAL
+20251211RealTimeEvents.csv,12/11/2025 00:00:00,Start of day system state is NORMAL
+20251212RealTimeEvents.csv,12/12/2025 00:00:00,The start of the day is normal
+20251213RealTimeEvents.csv,12/13/2025 00:00:00,Start of day system state is NORMAL
+20251214RealTimeEvents.csv,12/14/2025 00:00:00,Start of day system state is NORMAL
+20251215RealTimeEvents.csv,12/15/2025 00:00:00,Start of day system state is NORMAL
+20251216RealTimeEvents.csv,12/16/2025 00:00:00,Start of day system state is NORMAL
+20251217RealTimeEvents.csv,12/17/2025 00:00:00,Start of day system state is NORMAL
+20251218RealTimeEvents.csv,12/18/2025 00:00:00,Start of day system state is NORMAL
+20251219RealTimeEvents.csv,12/19/2025 00:00:00,Start of day system state is NORMAL
+20251220RealTimeEvents.csv,12/20/2025 00:00:00,Start of day system state is NORMAL
+20251221RealTimeEvents.csv,12/21/2025 00:00:00,Start of day system state is NORMAL
+20251222RealTimeEvents.csv,12/22/2025 00:00:00,Start of day system state is NORMAL
+20251223RealTimeEvents.csv,12/23/2025 00:00:00,Start of day system state is NORMAL
+20251224RealTimeEvents.csv,12/24/2025 00:00:00,Start of day system state is NORMAL
+20251225RealTimeEvents.csv,12/25/2025 00:00:00,Start of day system state is NORMAL
+20251226RealTimeEvents.csv,12/26/2025 00:00:00,Start of day system state is NORMAL
+20251227RealTimeEvents.csv,12/27/2025 00:00:00,Start of day system state is NORMAL
+20251227RealTimeEvents.csv,12/27/2025 17:36:11,**State Change. System now operating in alert state.**
+20251227RealTimeEvents.csv,12/27/2025 17:46:35,**State Change. System now operating in normal state.**
+20251228RealTimeEvents.csv,12/28/2025 00:00:00,Start of day system state is NORMAL
+20251229RealTimeEvents.csv,12/29/2025 00:00:00,Start of day system state is NORMAL
+20251229RealTimeEvents.csv,12/29/2025 01:03:18,**State Change. System now operating in alert state.**
+20251229RealTimeEvents.csv,12/29/2025 01:09:42,**State Change. System now operating in normal state.**
+20251229RealTimeEvents.csv,12/29/2025 19:10:46,NYISO has initiated reserve pick-up.
+20251229RealTimeEvents.csv,12/29/2025 19:20:40,NYISO has terminated reserve pick-up.
+20251230RealTimeEvents.csv,12/30/2025 00:00:00,Start of day system state is NORMAL
+20251231RealTimeEvents.csv,12/31/2025 00:00:00,Start of day system state is NORMAL
