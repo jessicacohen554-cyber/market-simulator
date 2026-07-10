@@ -97,7 +97,7 @@
    "metric": "C8 D-2 ST_GAS forced share (merchant cap 30%)",
    "magnitude": "30.5% forced (3.160 of 10.367 TWh)",
    "classification": "DISCLOSED BREACH \u2014 owner-promoted with eyes open (LOWER than nyiso-53; same G-05 legitimate reliability commitment)",
-   "reason": "ST_GAS = downstate NYC/LI steam base (measured overnight CF 0.11-0.17, online 100% of year; D-1 shape r 0.94). Forced share FELL vs nyiso-53 (60.8%) because measured downstate load clears more of the base economically. The residual is the same LEGITIMATE reliability commitment adjudicated in G-05 (keep+disclose, rule 1); not a fit move. Root economic-collapse driver is #1344 (data-blocked)."
+   "reason": "ST_GAS = downstate NYC/LI steam base (measured overnight CF 0.11-0.17, online 100% of year; D-1 shape r 0.94). Forced share FELL vs nyiso-53 (60.8%) because measured downstate load clears more of the base economically. The residual is the same LEGITIMATE reliability commitment adjudicated in G-05 (keep+disclose, rule 1); not a fit move. Root economic-collapse driver is #1344 (data-blocked). [2026-07-09 UPDATE \u2014 GROUNDED, exception retired: under rubric v2.2 the above-cap ST_GAS forcing now escalates to a clean PASS (GROUNDED ABOVE BUDGET): D4_WINDOWS gained the cited (reliability_floor, ST_GAS) = (0,24) window (G-05 measured evidence \u2014 NYC/LI steam online 100% of year, overnight CF 0.11-0.20, no hour the driver evidence says the class is offline) and the bundle's legitimacy_diagnostics.json was regenerated (payload path) so the D-4 row exists; D-1 shape already passed (r 0.95-0.96). The all-hours gas_st_netload_drag alternative was re-adjudicated and REJECTED on its own honesty gates (scripts/derive_nyiso_st_gas_netload_drag.py: rho not year-stable, base flat vs net-load, 2023 energy overshoot 142%) \u2014 the persistent reliability_floor stays the class's single mechanism (rule 19). Scorer-only; no re-solve; see the G-05 handoff 2026-07-09 addendum. Regenerated D-2 shares are 36.4/53.8/44.8% on the HEAD CHP-re-classed denominators (class total 8.0/8.6/10.6 TWh).]"
   },
   {
    "criterion": "forced_share",
@@ -105,7 +105,7 @@
    "metric": "C8 D-2 ST_GAS forced share (merchant cap 30%)",
    "magnitude": "44.6% forced (4.852 of 10.877 TWh)",
    "classification": "DISCLOSED BREACH \u2014 owner-promoted with eyes open (LOWER than nyiso-53; same G-05 legitimate reliability commitment)",
-   "reason": "See 2023. nyiso-53 was 69.8%."
+   "reason": "See 2023. nyiso-53 was 69.8%. [2026-07-09 UPDATE \u2014 GROUNDED, exception retired: under rubric v2.2 the above-cap ST_GAS forcing now escalates to a clean PASS (GROUNDED ABOVE BUDGET): D4_WINDOWS gained the cited (reliability_floor, ST_GAS) = (0,24) window (G-05 measured evidence \u2014 NYC/LI steam online 100% of year, overnight CF 0.11-0.20, no hour the driver evidence says the class is offline) and the bundle's legitimacy_diagnostics.json was regenerated (payload path) so the D-4 row exists; D-1 shape already passed (r 0.95-0.96). The all-hours gas_st_netload_drag alternative was re-adjudicated and REJECTED on its own honesty gates (scripts/derive_nyiso_st_gas_netload_drag.py: rho not year-stable, base flat vs net-load, 2023 energy overshoot 142%) \u2014 the persistent reliability_floor stays the class's single mechanism (rule 19). Scorer-only; no re-solve; see the G-05 handoff 2026-07-09 addendum. Regenerated D-2 shares are 36.4/53.8/44.8% on the HEAD CHP-re-classed denominators (class total 8.0/8.6/10.6 TWh).]"
   },
   {
    "criterion": "forced_share",
@@ -113,7 +113,7 @@
    "metric": "C8 D-2 ST_GAS forced share (merchant cap 30%)",
    "magnitude": "38.2% forced (5.088 of 13.325 TWh)",
    "classification": "DISCLOSED BREACH \u2014 owner-promoted with eyes open (LOWER than nyiso-53; same G-05 legitimate reliability commitment)",
-   "reason": "See 2023. nyiso-53 was 59.7%."
+   "reason": "See 2023. nyiso-53 was 59.7%. [2026-07-09 UPDATE \u2014 GROUNDED, exception retired: under rubric v2.2 the above-cap ST_GAS forcing now escalates to a clean PASS (GROUNDED ABOVE BUDGET): D4_WINDOWS gained the cited (reliability_floor, ST_GAS) = (0,24) window (G-05 measured evidence \u2014 NYC/LI steam online 100% of year, overnight CF 0.11-0.20, no hour the driver evidence says the class is offline) and the bundle's legitimacy_diagnostics.json was regenerated (payload path) so the D-4 row exists; D-1 shape already passed (r 0.95-0.96). The all-hours gas_st_netload_drag alternative was re-adjudicated and REJECTED on its own honesty gates (scripts/derive_nyiso_st_gas_netload_drag.py: rho not year-stable, base flat vs net-load, 2023 energy overshoot 142%) \u2014 the persistent reliability_floor stays the class's single mechanism (rule 19). Scorer-only; no re-solve; see the G-05 handoff 2026-07-09 addendum. Regenerated D-2 shares are 36.4/53.8/44.8% on the HEAD CHP-re-classed denominators (class total 8.0/8.6/10.6 TWh).]"
   }
  ],
  "free_parameters": {

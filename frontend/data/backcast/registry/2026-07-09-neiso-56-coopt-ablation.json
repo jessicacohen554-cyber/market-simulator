@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-09-neiso-56-coopt-ablation",
+ "label": "neiso 56 coopt ablation",
+ "date": "2026-07-09",
+ "shorthand": "neiso-56-coopt-ablation",
+ "definition": "(ABLATION TWIN of 2026-07-09-neiso-56-reserve-coopt) rule-20 zero-forcing ablation \u2014 the same neiso-55-keeper-plus-energy_reserve_coopt recipe with all merchant floors/bridges off (nuclear must-run, CHP steam-following, coal take-or-pay kept), 2023-2025. Confirms the co-opt dormancy is not floor-masked: the reserve balance dual is $0.00 in the zero-forcing arm too (tail 0h >$300; storage 0.629/0.559/0.911 TWh).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "NEISO",
+ "file": "frontend/data/backcast/runs/2026-07-09-neiso-56-coopt-ablation.js",
+ "bundle": "results/calibration/neiso56_reserve_coopt-ablation"
+}
