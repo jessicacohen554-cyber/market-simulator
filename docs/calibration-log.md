@@ -8442,3 +8442,105 @@ handoff prompt was re-issued with the v2.4 scope).
 **Holdouts.** 2023–2025 only throughout (bench retrofit included); no solve
 performed; registered payloads byte-untouched (rule 22 / reproducibility
 contract §0a).
+## 2026-07-10 — ERCOT winter/shoulder overshoot root-caused (mostly scoring-frame + one fake winter morning + a 12-month surplus-floor bias); 2024's real C3b error was a corrupt HSL input — 4 zero-solar August days fixed from EIA-930 (`ercot53` candidate + ablation, CALIBRATED-WITH-CAVEATS; keeper stays ercot46)
+
+**Task (ercot53 handoff).** Root-cause the ercot52 winter/shoulder body
+overshoot (Jan +50%, Feb +34%, Apr +36% on the old demand-weighted basis) and
+decompose 2024's C3b 0.354 into scoring-basis wedge vs real shape error.
+Config under test = ercot52 (ercot46 keeper + coal net-summer derate + ORDC
+cap-dual adder), offer curves untouched throughout (rule 13).
+
+**Driver triage (2023, no-solve first, then one re-solve per year).**
+(a) DELIVERED GAS: clean in the overshoot months — model monthly delivered vs
+the measured TX electric-power series (N3045TX3): Jan −2.8%, Feb −5.5%,
+Apr +6.1%. Side findings: Jan-2024 model gas is **−27%** low (Winter Storm
+Heather's delivered-price blowout is invisible to the HH-monthly-shape ×
+annual-basis construction; the measured EP series says $3.94 vs model $2.86 —
+open measured-input item), and Dec-2025 is +16% high. (b) WIND/SOLAR monthly:
+clean (±2%) in every 2023 month. (c) COAL: real seasonal mis-shape — model
+under-runs Jan–Apr 0.4–0.7 TWh/mo (−10..−19%) and over-runs May–Sep +0.4–1.2
+TWh/mo vs EIA-930/CEMS, fleet-wide per-plant; model January coal floor is
+0.77 GW vs a measured CEMS floor of 2.72 GW (real units self-commit at LSL —
+the 60-day DAM disclosure shows winter coal offers FLAT ~$31.6 (Jan) vs ~$19.6
+(summer), i.e. the energy offer is high but the LSL quantity rides through;
+the model's committed band instead prices out under the dear-gas sigmoid
+markup ~1.26 + P1 cold-start amortization, `coal_warm_committed=False`).
+
+**Decomposition of the "overshoot" itself.** On the like-for-like
+demand-weighted basis (actual LZ prices fed through the scorer's own formula)
+the real 2023 winter error is HALF the headline: Jan +25%, Feb +11%, Apr +12%
+(the rest was the C3a/C3b equal-hour-vs-demand-weighted wedge — fixed as
+rubric v2.4 by the parallel session, whose numbers this session's independent
+construction reproduces to 0.001). The real Jan +7.1 $/MWh (equal-hour)
+splits: **+4.1 from ONE fake scarcity morning** (Jan-5 06–08h: model $497/
+$2,825 on a reserve shortfall, actual $60–75 — model wind resource runs ~1 GW
+below the EIA-930 actual in exactly those hours [the 2023 UMass-SCED HSL and
+930 disagree; source conflict, flagged], coal ~0.8 GW short, same availability
+family as the ercot49 hot-hour finding), **+3.7 from the surplus-hour floor**
+(in hours actual clears <$15 the model prices +$9–14 high — ALL 12 months,
+winter-dominant only because winter has 194–292 such hours vs 19–29 in
+summer; the model's floor is the CC committed/econ-low band at ~$19–24 where
+reality clears $6–15 on self-committed coal/wind), −1.0 body. Feb/Apr/Dec are
+the same floor signal (+4.3/+3.4/+3.6) net of the body-under.
+
+**Coal A/B (throwaway, 2023): REJECTED.** `coal_sync_srmc_tranche` +
+`coal_mustrun_online_pmin` (the PJM Thread-D forced take-or-pay min-load,
+measured EIA-923 Sch-5 contract shares, wired for CAMPD bins): C3a +31.3→
++25.2 (old basis; equal-hour +4.7→+0.5%), C3b 0.260→0.197 — but it barely
+moves January (−0.33 $/MWh: the winter gap is committed-band PRICING, not
+min-load quantity) and its ~100 MW of forced summer coal displaces marginal
+units at ORDC knife-edges, giving back 11 C3c-2023 tail hours (162→151,
+below the owner's ≥162 gate; ~5 of the 11 were genuinely scarce in actuals).
+Not registered (rule 16 throwaway). Winter floor remains an open root-cause
+item; candidate mechanisms for a future round: `coal_warm_committed` (P1
+startup exemption on the boiler-hot committed band), committed-band posture
+vs the sigmoid markup semantics ("markup suppresses over-dispatch" belongs to
+marginal tranches, not the stay-online block), CC committed self-commit
+posture (measured DAM committed p25 = 0.35× gas-parity).
+
+**2024 C3b decomposition → a DATA BUG, fixed.** Of ercot52's 0.354 (old
+basis): basis wedge 0.147, real like-for-like 0.297 — and the real error is
+NOT winter: **Aug-2024 +62.6%** dominates (model dw 66.15 vs actual 40.68),
+plus broad spring/fall body-under (May −34%, Mar −21%, Apr −18%, Nov −19%).
+Root cause: the 2024 HSL parquet's cited known-bad NP6 window (2024-08-20..23)
+was nulled then LINEARLY INTERPOLATED — with night-bounded endpoints that
+produced 96 h of identically-ZERO solar potential (~810 GWh) and a flat wind
+bridge. The model ran 4 dark August days: 17 of its 37 2024 tail hours and
+most of the Aug error were phantom scarcity. Fix (`build_ercot_hsl.py`): fill
+cited known-bad windows from the measured EIA-930 ERCO hourly series (HSL =
+GEN inside the window — no fabricated curtailment headroom); rebuilt parquet
+byte-identical outside the window; Aug totals now match 930 (solar 5.78 TWh).
+Measured-input reconciliation (rule 15), no parameter, regenerates forward.
+
+**Result (`ercot53 hsl 930fill` candidate + zero-forcing ablation twin, full
+2023–2025, registered).** Rubric v2.4 basis: C3a −1.0/−6.8/−3.6% (PASS all
+years), C3b 0.109/**0.180**/0.079 (2024 was 0.296 — the stated v2.4 promotion
+blocker), C3c 162/24/5 h. 2023/2025 inputs untouched → reproduce ercot52
+exactly. Old-basis for continuity: C3a +31.3/+6.7/+6.7*, C3b 0.260/0.187/
+0.095 (*2024 old-basis C3a +6.7 = (28.62−26.83)/26.83). Aug-2024 like-for-like
++62.6→+6.6%. C3c-2024 drops 37→24 h (0.54×→0.35×, now FAIL) — an HONEST
+regression: the removed hours were phantom props from the corrupt input; the
+under-tail belongs to the open scarcity-formation thread (ercot50/52 wedge),
+ledgered as an exception, not tuned at (rule 13). Determination:
+**CALIBRATED-WITH-CAVEATS** (attestation carried: DOF ledger inherited from
+ercot46 verbatim — the ercot51/52/53 deltas add zero tunables; exceptions:
+C2-2025 gas vintage, C3c-2024/2025 under-tail, C5c-2024 storage shape
+r=0.350). LOYO n/a-clean: a zero-parameter data correction validated on a
+2024 single-year A/B; 2023/2025 are unchanged by construction. Keeper stays
+`2026-07-08-ercot46-clock-steamgas` (`keepers.json` untouched) — promotion is
+the owner's call; the candidate now strictly dominates ercot52 on the v2.4
+scorecard with no config delta. Pruned ercot45-clock-unified +
+ercot47-coalpeak-dam-probe for top-15.
+
+**Also noted.** 2025 C3c stays 5 vs 23 DA (secondary handoff item, reported
+not forced). Clock conventions audited en route: the model's fixed-CST 8760
+clock is internally consistent (demand = renewables = AS series; the apparent
+2-h offset vs EIA-930 labels is 1 h hour-ending-label convention + 1 h
+CST-vs-CDT in DST months — no defect; the 2023/2025 HSL files are day- and
+hour-aligned).
+
+**Holdouts.** No solve, score, or intake outside 2023–2025 (rule 22); the
+single-year arms (`ercot53_diag_*`, `ercot53_sync_2023`,
+`ercot53_hslfix_2024`) were throwaway probes, never registered (rule 16);
+ORDC tariff parameters untouched (rule 26); no offer-curve or sigmoid value
+changed (rules 13/21/23).
