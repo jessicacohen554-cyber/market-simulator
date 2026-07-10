@@ -1,0 +1,77 @@
+# Canonical schema: NYISO per-interface hourly flows and limits
+#
+# Hourly aggregation of NYISO MIS "Interface Limits and Flows" (P-32,
+# ExternalLimitsFlows, 5-minute) for the internal transfer interfaces
+# (CENTRAL EAST - VC, TOTAL EAST, UPNY CONED, MOSES SOUTH, DYSINGER EAST,
+# WEST CENTRAL, SPR/DUN-SOUTH) and every external tie/wire schedule. Ask D1
+# of docs/handoffs/nyiso-data-asks-2026-07.md: separates measured gross
+# two-way tie flows from the net-interchange wedge (upstate shoulder-collapse
+# diagnosis) and provides the posted interface ratings. Aggregation
+# (mean flow, most-binding limits per hour) is documented in
+# scripts/fetch_nyiso_interface_flows.py; +/-9999 MW sentinel limits
+# ("effectively unbounded") are nulled at curation.
+#
+# Curated by scripts/curate_nyiso_interface_flows.py from
+#   data/raw/NYISO/interface-flows/NYISO_interface_flows_hourly_<year>.csv.gz
+datatype: nyiso-interface-flows
+schema_version: 1
+title: NYISO per-interface hourly flows and posted limits
+description: >-
+  Hourly per-interface gross flow and posted positive/negative limits for
+  NYISO internal interfaces and external ties, aggregated from the public
+  5-minute MIS posting.
+
+key_columns: [iso, interface, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (NYISO).
+  - name: interface
+    dtype: string
+    unit: none
+    nullable: false
+    description: Interface name as posted (e.g. "CENTRAL EAST - VC", "SCH - HQ - NY").
+  - name: point_id
+    dtype: int64
+    unit: none
+    nullable: false
+    description: NYISO point ID of the interface (stable numeric identifier).
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC hour-beginning of the aggregated interval.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Eastern prevailing wall-clock hour-beginning (informational).
+  - name: flow_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Hourly mean of the 5-minute posted flow (positive = flow in the interface's defined direction).
+  - name: positive_limit_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Most-binding (minimum) posted positive limit across the hour's
+      5-minute intervals; null where the source posts the +/-9999 MW
+      "unbounded" sentinel.
+  - name: negative_limit_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Most-binding (maximum, i.e. closest to zero) posted negative limit
+      across the hour; null where the source posts the sentinel.
+  - name: n_intervals
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Count of 5-minute observations aggregated (24 in the DST fall-back hour).
