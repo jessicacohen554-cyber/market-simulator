@@ -9,12 +9,15 @@ name: apply-pjm-seam-ladder
 # splice script for the multi-kilobyte single-line JSON files
 # (.github/patches/2026_07_10_pjm96_registry_edits.py: keeper demotion
 # pjm-95 -> pjm-94). status.js is DERIVED and rebuilt here (build_status.py)
-# rather than transcribed. The patch applies with --ignore-whitespace (the
-# transport can blur blank-vs-space context lines; content chars are exact and
-# the post-apply pytest gate catches anything worse). Commit messages ride as
-# files (git commit -F) — inline heredocs at column 0 break the YAML block
-# scalar. Idempotent: the patch no-ops when already applied (reverse-check),
-# the splice script checks its own markers.
+# rather than transcribed. The patch's leading workflow-file section
+# (fetch-pjm-interchange.yml) is FILTERED OUT before apply — the Actions
+# GITHUB_TOKEN can never carry the `workflows` scope, so that file lands via
+# the session's direct App-auth push instead. The patch applies with
+# --ignore-whitespace (the transport can blur blank-vs-space context lines;
+# content chars are exact and the post-apply pytest gate catches anything
+# worse). Commit messages ride as files (git commit -F) — inline heredocs at
+# column 0 break the YAML block scalar. Idempotent: the patch no-ops when
+# already applied (reverse-check), the splice script checks its own markers.
 on:
   push:
     branches:
@@ -44,10 +47,16 @@ jobs:
           set -euo pipefail
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
-          if git apply --check --reverse --ignore-whitespace .github/patches/2026_07_10_pjm96_code.patch 2>/dev/null; then
+          # Strip the leading fetch-pjm-interchange.yml new-file section: the
+          # runner token cannot push workflow files (no `workflows` scope);
+          # that file arrives via the session's direct App-auth push.
+          awk '/^diff --git a\/data\/raw\/eia-930-interchange\/README.md/{found=1} found' \
+            .github/patches/2026_07_10_pjm96_code.patch > /tmp/pjm96_filtered.patch
+          test -s /tmp/pjm96_filtered.patch
+          if git apply --check --reverse --ignore-whitespace /tmp/pjm96_filtered.patch 2>/dev/null; then
             echo "code patch already applied — skipping"
           else
-            git apply --ignore-whitespace --whitespace=nowarn .github/patches/2026_07_10_pjm96_code.patch
+            git apply --ignore-whitespace --whitespace=nowarn /tmp/pjm96_filtered.patch
             git add -A
             git commit -F .github/patches/pjm96_commit1_msg.txt
           fi
