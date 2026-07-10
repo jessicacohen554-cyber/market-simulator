@@ -389,6 +389,21 @@
     }
 
     function actualLMP(yr) { return BENCH(yr).avgLMP || null; }
+    /* Gated actual-price basis — mirrors calibration_verdict.score_price_mean's
+       ladder (rt_lw > da_lw > rt > da). A perfect-foresight dispatch LP is a
+       real-time analogue (it prices RT physics, not day-ahead risk premia), so
+       RT is the honest benchmark the Calibration Status page gates on; DA is
+       only a fallback when no RT actual is committed. Returns the annual mean,
+       its basis label, and whether it is the load-weighted series. */
+    function actualLMPGated(yr) {
+      const a = actualLMP(yr);
+      if (!a) return null;
+      if (a.rt_lw != null) return { val: a.rt_lw, basis: 'RT', lw: true };
+      if (a.da_lw != null) return { val: a.da_lw, basis: 'DA', lw: true };
+      if (a.rt != null) return { val: a.rt, basis: 'RT', lw: false };
+      if (a.da != null) return { val: a.da, basis: 'DA', lw: false };
+      return null;
+    }
     function ordcInfo(yr) { return RUN(yr).ordc || null; }
     function ordcOverlay(yr) { const o = ordcInfo(yr); return o && o.maeEnergyOnly != null ? o : null; }
 
@@ -859,9 +874,9 @@
         if (!M || !Object.keys(M).length) continue;
         const H = summaryHeadline(yr);
         const fr = fleetR(yr);
-        const aL = actualLMP(yr);
-        const aP = aL ? (aL.da != null ? aL.da : aL.rt) : null;
-        const aLab = aL && aL.da != null ? 'DA' : 'RT';
+        const aG = actualLMPGated(yr);
+        const aP = aG ? aG.val : null;
+        const aLab = aG ? aG.basis + (aG.lw ? ' load-wtd' : '') : 'actual';
         const ov = H.priceScar != null;
         const mp = ov ? H.priceScar : H.price;
         const pdiff = (mp != null && aP) ? 100 * (mp - aP) / aP : null;
@@ -871,7 +886,7 @@
           <div class="kpi-row"><span class="k" title="C1 fuel-mix gate — gas+coal classes only, same set the Calibration Status page scores">Classes in tol (C1)</span><span class="v ${H.n && H.inTol === H.n ? 'clr-good' : H.inTol * 2 >= H.n ? 'clr-ok' : 'clr-bad'}">${H.inTol} / ${H.n}${H.skipped ? ` <span style="font-weight:600;color:var(--text-muted)">· ${H.skipped} skipped</span>` : ''}</span></div>
           <div class="kpi-row"><span class="k">Fleet r</span><span class="v ${rcls(fr)}">${fr == null ? '—' : fr.toFixed(3)}</span></div>
           <div class="kpi-row"><span class="k">Avg LMP${ov ? ' +ORDC' : ''}</span><span class="v" ${ov ? `style="color:${OVERLAY_COLOR}"` : ''}>${mp == null ? '—' : fmtDollars(mp)}</span></div>
-          <div class="kpi-row"><span class="k" title="Model LMP vs actual (${aL ? aLab : 'actual'} series)">LMP vs actual</span><span class="v ${pdiff == null ? '' : dcls(pdiff)}">${pdiff == null ? '—' : fmtPctSigned(pdiff)}</span></div>
+          <div class="kpi-row"><span class="k" title="Model LMP vs actual — gated on RT (${aLab} series), the same basis the Calibration Status page scores; DA only when no RT is committed">LMP vs actual</span><span class="v ${pdiff == null ? '' : dcls(pdiff)}">${pdiff == null ? '—' : fmtPctSigned(pdiff)}</span></div>
           <div class="kpi-row"><span class="k">Worst class</span><span class="v ${H.worst ? 'clr-' + clsTol(H.worst) : ''}">${H.worst ? classLabel(H.worst.grp) + ' ' + fmtPctSigned(H.worst.err) : '—'}</span></div>
         </div>`;
       }
@@ -883,10 +898,10 @@
         <div class="lmp-grid" id="lmpGrid">`;
       for (const yr of years) {
         const mm = avgLMPMon(yr);
-        const aL = actualLMP(yr) || {};
         const annScar = avgLMPScar(yr);
         const ann = annScar != null ? annScar : avgLMP(yr);
-        const aP = aL.da != null ? aL.da : aL.rt;
+        const aG = actualLMPGated(yr);
+        const aP = aG ? aG.val : null;
         const pdiff = (ann != null && aP) ? 100 * (ann - aP) / aP : null;
         html += `<div class="year-card">
           <div class="year-head"><span>${yr}</span><span style="font-size:0.72rem;font-weight:600" class="${pdiff == null ? '' : dcls(pdiff)}">${pdiff == null ? '' : 'ann ' + fmtPctSigned(pdiff)}</span></div>
@@ -1102,20 +1117,22 @@
         const mm = avgLMPMon(yr);
         if (!mm) continue;
         const aL = actualLMP(yr) || {};
-        const am = aL.da_mon || aL.rt_mon;
+        // RT-first monthly actual, matching the annual gating basis below.
+        const am = aL.rt_lw_mon || aL.da_lw_mon || aL.rt_mon || aL.da_mon;
         if (!am) continue;
-        const lab = aL.da_mon ? 'DA' : 'RT';
+        const lab = (aL.rt_lw_mon || aL.rt_mon) ? 'RT' : 'DA';
         const ms = avgLMPMonScar(yr);
         const dvals = ms || mm;
         const errs = MONTHS.map((_, i) => (dvals[i] != null && am[i]) ? dvals[i] - am[i] : null);
         const worst = errs.reduce((a, v, i) => (v != null && (a == null || Math.abs(v) > Math.abs(errs[a]))) ? i : a, null);
         if (worst == null) continue;
         const ann = avgLMPScar(yr) ?? avgLMP(yr);
-        const aP = aL.da ?? aL.rt;
+        const aG = actualLMPGated(yr);
+        const aP = aG ? aG.val : null;
         const annD = (ann != null && aP) ? 100 * (ann - aP) / aP : null;
         if (annD != null && Math.abs(annD) > 10) {
           const sev = Math.abs(annD) > 20 ? 'bad' : 'ok';
-          let txt = `Annual ${ms ? 'model+ORDC' : 'model'} LMP ${ann != null ? '$' + ann.toFixed(1) : '?'} vs actual ${lab} $${aP.toFixed(1)} (${fmtPctSigned(annD)}).`;
+          let txt = `Annual ${ms ? 'model+ORDC' : 'model'} LMP ${ann != null ? '$' + ann.toFixed(1) : '?'} vs actual ${aG.basis} $${aP.toFixed(1)} (${fmtPctSigned(annD)}).`;
           txt += ` Worst month: ${MONTHS[worst]} ($${errs[worst].toFixed(1)} ${ms ? 'overlay' : 'model'} error).`;
           out.push({ cat: 'lmp', sev, title: `LMP ${yr}`, tag: String(yr), txt, score: Math.abs(annD) });
         }
