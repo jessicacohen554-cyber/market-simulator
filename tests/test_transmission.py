@@ -1528,5 +1528,89 @@ class TestCaisoAsymmetricPathLimits(unittest.TestCase):
         self.assertIs(apply_caiso_asymmetric_path_limits(pjm, self._config(True)), pjm)
 
 
+class TestCaisoPerYearImportLimits(unittest.TestCase):
+    """apply_caiso_local_import_limits — per-year SP15-pocket LCT import caps.
+
+    Values from data/raw/capacity-deliverability/caiso/caiso.csv (CAISO Final
+    LCT reports, peak_load - requirement): LA Basin 12,008/15,224/15,174 and
+    San Diego/Imperial Valley 1,436/2,074/2,071 MW (2023/24/25).
+    """
+
+    def _links(self, ic):
+        return {(ln.from_zone, ln.to_zone): ln.ttc_mw for ln in ic.links}
+
+    def test_2023_matches_static_baked_in_default(self):
+        # 2023 is the tightest year already baked into _caiso_config, so the
+        # per-year swap for 2023 is a value no-op (same numbers, new source).
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_local_import_limits
+
+        ic = get_iso_config("CAISO")
+        out = apply_caiso_local_import_limits(ic, "CAISO", 2023)
+        links = self._links(out)
+        self.assertEqual(links[("SP15_rest", "LA_BASIN")], 12008.0)
+        self.assertEqual(links[("SP15_rest", "SDGE")], 1436.0)
+
+    def test_2024_swaps_to_measured_looser_caps(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_local_import_limits
+
+        ic = get_iso_config("CAISO")
+        out = apply_caiso_local_import_limits(ic, "CAISO", 2024)
+        links = self._links(out)
+        self.assertEqual(links[("SP15_rest", "LA_BASIN")], 15224.0)
+        self.assertEqual(links[("SP15_rest", "SDGE")], 2074.0)
+        # Every other link is untouched.
+        base_links = self._links(ic)
+        for pair in base_links:
+            if pair not in (("SP15_rest", "LA_BASIN"), ("SP15_rest", "SDGE")):
+                self.assertEqual(links[pair], base_links[pair])
+
+    def test_2025_swaps_to_measured_caps(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_local_import_limits
+
+        ic = get_iso_config("CAISO")
+        out = apply_caiso_local_import_limits(ic, "CAISO", 2025)
+        links = self._links(out)
+        self.assertEqual(links[("SP15_rest", "LA_BASIN")], 15174.0)
+        self.assertEqual(links[("SP15_rest", "SDGE")], 2071.0)
+
+    def test_unpublished_year_is_identity(self):
+        # No LCT row for e.g. 2030 (forward year beyond the LCT intake) --
+        # the static 2023 baked-in default survives, not a guess.
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_local_import_limits
+
+        ic = get_iso_config("CAISO")
+        out = apply_caiso_local_import_limits(ic, "CAISO", 2030)
+        self.assertIs(out, ic)
+
+    def test_non_caiso_topology_is_identity(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_local_import_limits
+
+        pjm = get_iso_config("PJM")
+        self.assertIs(apply_caiso_local_import_limits(pjm, "PJM", 2024), pjm)
+
+    def test_topology_valid_after_swap(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_caiso_local_import_limits
+
+        ic = get_iso_config("CAISO")
+        out = apply_caiso_local_import_limits(ic, "CAISO", 2024)
+        out.validate_topology()  # must not raise
+
+
+class TestRunnerCaisoPerYearImportCapsFlagOff(unittest.TestCase):
+    """Runner-level gate: config.caiso_per_year_import_caps default off is a
+    byte-identical no-op regardless of solve year."""
+
+    def test_default_config_gate_is_off(self):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        self.assertFalse(ScenarioConfig().caiso_per_year_import_caps)
+
+
 if __name__ == "__main__":
     unittest.main()

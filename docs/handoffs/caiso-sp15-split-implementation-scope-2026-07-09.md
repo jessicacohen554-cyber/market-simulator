@@ -297,5 +297,17 @@ asymmetric-ratings, corridor-flow-limit, interchange spec).
 ### Explicitly NOT touched (downstream / parallel tasks)
 Load-shares parquet & `derive_load_shares.py`, `data/zone_assignment.py`, `capacity_area_crosswalk`,
 `data/local_capacity.py` area specs, `renewables.py` / `data/fuel.py` / gas-hub CSV literals,
-`constants.CAISO_TAC_ZONE_WEIGHTS`, and `ct_netload_drag` retirement. Per-year import caps (runner
-wiring) are deferred as noted above.
+`constants.CAISO_TAC_ZONE_WEIGHTS`, and `ct_netload_drag` retirement.
+
+**Per-year import caps — landed 2026-07-10** (`claude/caiso-per-year-import-caps-tbdutd`, code +
+tests only, no solve/dashboard). `model/transmission.apply_caiso_local_import_limits(iso_config,
+iso, year)` swaps links 4/5's TTC to the solve year's measured LCT `import_cap` (from
+`data.local_capacity.load_lcr_parameters`, same `peak_load - requirement` convention); no-op for
+non-CAISO topologies or a year with no published LCT row (link keeps its static 2023 default).
+Gated by new `ScenarioConfig.caiso_per_year_import_caps` (default off — byte-identical). Wired into
+`runner.py`'s per-year loop (recomputes the `ttc` array right before `DispatchSpec` construction,
+the one place TTC values actually reach the LP) rather than through
+`apply_interchange_topology`/`apply_deliverability_seam_limit`, since that call site only runs once
+at `start_year`, not per solve year — the per-year TTC swap needed its own loop-body call site.
+Tests: `tests/test_transmission.py::TestCaisoPerYearImportLimits` +
+`TestRunnerCaisoPerYearImportCapsFlagOff`.
