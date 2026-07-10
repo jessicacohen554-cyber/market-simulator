@@ -61,6 +61,31 @@
     .dc-note{font-size:.78rem;color:var(--text-muted);line-height:1.6;margin-top:var(--space-md);
       border-top:1px solid var(--border-light);padding-top:var(--space-md);max-width:90ch}
     .dc-note code{font-size:.72rem}
+
+    /* manual-retrieval checklist */
+    .mc-summary{display:flex;align-items:center;gap:10px;font-size:.78rem;color:var(--text-muted);margin-bottom:var(--space-md)}
+    .mc-summary .bar{flex:1 1 220px;max-width:260px;height:10px;border-radius:999px;background:var(--bg-page);
+      border:1px solid var(--border-light);overflow:hidden}
+    .mc-summary .bar>i{display:block;height:100%;background:var(--positive);width:0;transition:width .2s ease}
+    .mc-summary b{color:var(--text-primary);font-variant-numeric:tabular-nums}
+    .mc-list{display:flex;flex-direction:column;gap:10px;margin-bottom:var(--space-lg)}
+    .mc-item{background:var(--bg-card);border:1px solid var(--border-light);border-radius:var(--radius-lg);
+      box-shadow:var(--shadow-sm);padding:12px 14px;transition:opacity .15s ease}
+    .mc-item.done{opacity:.5}
+    .mc-item.done .mc-title{text-decoration:line-through}
+    .mc-check{display:flex;align-items:flex-start;gap:10px;cursor:pointer;font-weight:700;color:var(--text-primary)}
+    .mc-check input{margin-top:3px;width:16px;height:16px;flex:none;accent-color:var(--positive);cursor:pointer}
+    .mc-title{font-size:.86rem}
+    .mc-tag{display:inline-block;margin-left:8px;font-size:.62rem;font-weight:800;text-transform:uppercase;
+      letter-spacing:.03em;padding:2px 7px;border-radius:999px;vertical-align:1px}
+    .mc-tag.blocked-portal{background:rgba(217,119,6,.18);color:var(--warning)}
+    .mc-tag.blocked-source{background:rgba(220,38,38,.13);color:var(--negative)}
+    .mc-body{margin:8px 0 0 26px;font-size:.78rem;color:var(--text-secondary);line-height:1.65}
+    .mc-row{margin-bottom:2px}
+    .mc-row b{color:var(--text-primary)}
+    .mc-row code{font-size:.75rem}
+    .mc-secondary{font-size:.78rem;color:var(--text-muted);line-height:1.6;background:var(--bg-page);
+      border:1px solid var(--border-light);border-radius:var(--radius-md);padding:10px 14px;max-width:90ch}
   </style>
 </head>
 <body>
@@ -92,6 +117,64 @@
         </div>
       </div>
     </div>
+
+    <h2 id="manual-todo" style="font-size:.95rem;margin:0 0 6px;color:var(--text-primary)">Manual retrieval checklist — what you need to get by hand</h2>
+    <p class="bc-page-sub" style="margin-top:0">These three are the only remaining gaps that couldn't be closed by
+    an automated fetch during the 2026-07-10 holdout-intake session — each failed for a source-side reason
+    (login-gated portal, or the upstream archive has physically aged off), not a script bug. Checked state is
+    saved in this browser only (localStorage), so it won't survive a different machine/profile.</p>
+
+    <div class="mc-summary">
+      <div class="bar"><i id="mcBarFill"></i></div>
+      <span><b id="mcDone">0</b> / <b id="mcTotal">3</b> done</span>
+    </div>
+
+    <div class="mc-list" id="manualChecklist">
+      <div class="mc-item" data-key="ercot-np6-86">
+        <label class="mc-check">
+          <input type="checkbox">
+          <span class="mc-title">ERCOT NP6-86-CD — GTC / binding transmission constraints<span class="mc-tag blocked-portal">login-gated</span></span>
+        </label>
+        <div class="mc-body">
+          <div class="mc-row"><b>Missing years:</b> 2018, 2019, and H1-2026 (2020&ndash;2025 already on disk)</div>
+          <div class="mc-row"><b>Get it from:</b> <a href="https://data.ercot.com/data-product-archive/NP6-86-CD" target="_blank" rel="noopener">data.ercot.com &rarr; Data Product Archive &rarr; NP6-86-CD</a> &mdash; requires signing in with an ERCOT Data Portal account (the API subscription key alone isn't enough; ERCOT's public API also needs a username/password login to mint a bearer token)</div>
+          <div class="mc-row"><b>What to grab:</b> the monthly <code>*SCEDBTCNP686*.zip</code> archives for Jan&nbsp;2018&ndash;Dec&nbsp;2019, and Jan&ndash;Jun&nbsp;2026 (one zip per month, "SCED Shadow Prices and Binding Transmission Constraints")</div>
+          <div class="mc-row"><b>Put it in:</b> <code>data/raw/iso-specific-transmission/</code> &mdash; same layout as the existing 2020&ndash;2025 files, read as-is by <code>scripts/curate_gtc_limits.py</code></div>
+        </div>
+      </div>
+
+      <div class="mc-item" data-key="caiso-intertie-lmp">
+        <label class="mc-check">
+          <input type="checkbox">
+          <span class="mc-title">CAISO WECC intertie LMP / CAISO validation LMP<span class="mc-tag blocked-source">source aged out</span></span>
+        </label>
+        <div class="mc-body">
+          <div class="mc-row"><b>Missing years:</b> 2018&ndash;2022 (2023&ndash;2025 on disk; H1-2026 already fetched separately)</div>
+          <div class="mc-row"><b>Get it from:</b> not CAISO OASIS &mdash; confirmed live 2026-07-10 that OASIS returns <code>ERR_CODE 1000</code> for any 2018&ndash;2022 PRC_LMP query. Its retention window is genuinely gone (~39 months), so there's no portal login that unlocks it.</div>
+          <div class="mc-row"><b>What to grab:</b> historical CAISO nodal/hub LMP for Malin &amp; Palo Verde (DAM), 2018-01-01 through 2022-12-31, from a third-party market-data vendor if you or the org has a subscription &mdash; e.g. Yes Energy, S&amp;P Global/Platts, or ABB Velocity Suite. If none of those are available, this window may simply be unrecoverable.</div>
+          <div class="mc-row"><b>Put it in:</b> <code>data/raw/_validation-source/wecc_intertie_lmp_hourly_CAISO.parquet</code> (append rows, same schema: <code>year, hour, hub, price</code>)</div>
+        </div>
+      </div>
+
+      <div class="mc-item" data-key="neiso-smd-hourly">
+        <label class="mc-check">
+          <input type="checkbox">
+          <span class="mc-title">ISO-NE SMD Hourly workbooks<span class="mc-tag blocked-portal">portal navigation</span></span>
+        </label>
+        <div class="mc-body">
+          <div class="mc-row"><b>Missing years:</b> 2018, 2019 (2020&ndash;2025 already on disk)</div>
+          <div class="mc-row"><b>Get it from:</b> <a href="https://www.iso-ne.com/isoexpress" target="_blank" rel="noopener">iso-ne.com &rarr; ISO Express &rarr; Historical Data</a> &mdash; search the reports tree for "SMD Hourly Data"; no stable direct-download URL was found for the 2018/2019 vintages this session (ISO-NE moves the link per report year)</div>
+          <div class="mc-row"><b>What to grab:</b> the annual SMD Hourly workbook (.xlsx) for calendar 2018 and calendar 2019</div>
+          <div class="mc-row"><b>Put it in:</b> <code>data/raw/lmp-data/NEISO/2018_smd_hourly.xlsx</code> and <code>2019_smd_hourly.xlsx</code> &mdash; same naming as the existing years</div>
+        </div>
+      </div>
+    </div>
+
+    <p class="mc-secondary">Not on this list: PJM interchange/transfer/hub-LMP, NYISO validation LMP, and EIA-930
+    BA-to-BA interchange for CISO/MISO/ISNE. Those were all fetched successfully for 2018&ndash;2022 + H1-2026
+    during the 2026-07-10 session &mdash; they just haven't been committed yet (the raw drops are 11&ndash;140&nbsp;MB/year,
+    too large for the current commit path in one sitting). No manual download needed there, just a future
+    session to land the files.</p>
 
     <h2 style="font-size:.95rem;margin:0 0 8px;color:var(--text-primary)">Completeness by year</h2>
     <div class="yr-strip" id="yrStrip"></div>
@@ -170,6 +253,42 @@
 
   <script src="js/nav.js"></script>
   <script>
+  (function(){
+    'use strict';
+    const LS_KEY = 'dc-manual-checklist-v1';
+    const items = Array.from(document.querySelectorAll('#manualChecklist .mc-item'));
+    const store = (() => {
+      try { return JSON.parse(localStorage.getItem(LS_KEY)) || {}; }
+      catch(e){ return {}; }
+    })();
+
+    function renderChecklist(){
+      let done = 0;
+      items.forEach(el => {
+        const key = el.dataset.key;
+        const cb = el.querySelector('input[type=checkbox]');
+        const checked = !!store[key];
+        cb.checked = checked;
+        el.classList.toggle('done', checked);
+        if(checked) done++;
+      });
+      document.getElementById('mcDone').textContent = done;
+      document.getElementById('mcTotal').textContent = items.length;
+      document.getElementById('mcBarFill').style.width = (items.length ? Math.round(done/items.length*100) : 0) + '%';
+    }
+
+    items.forEach(el => {
+      const key = el.dataset.key;
+      const cb = el.querySelector('input[type=checkbox]');
+      cb.addEventListener('change', () => {
+        store[key] = cb.checked;
+        try { localStorage.setItem(LS_KEY, JSON.stringify(store)); } catch(e){}
+        renderChecklist();
+      });
+    });
+
+    renderChecklist();
+  })();
   (function(){
     'use strict';
     const data = JSON.parse(document.getElementById('dcData').textContent);
