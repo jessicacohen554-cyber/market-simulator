@@ -382,5 +382,86 @@ class TestPjmPortSharesMechanism(unittest.TestCase):
         np.testing.assert_allclose(pjm.posture_startup, miso.posture_startup)
 
 
+def _cfg_caiso(posture: bool):
+    return type(
+        "C",
+        (),
+        {
+            "iso": "CAISO",
+            "weather_year": 2024,
+            "energy_reserve_coopt": True,
+            "caiso_reserve_coopt": True,
+            "caiso_commitment_posture": posture,
+        },
+    )()
+
+
+class TestCaisoPortSharesMechanism(unittest.TestCase):
+    """The CAISO port reuses MISO's _posture_pool_params verbatim — not a fork.
+
+    Same fleet through the CAISO design must produce the same posture pools /
+    parameters as MISO/PJM, the default-off path must emit no posture fields
+    (byte-identical caiso-62 co-opt), and the posture must compose with
+    CAISO's storage duration gate (the first design carrying both).
+    """
+
+    def _caiso_design(self, fleet, T, posture: bool):
+        return get_reserve_design(_cfg_caiso(posture), fleet, T, ["z0"])
+
+    def test_caiso_off_emits_no_posture(self):
+        T = 4
+        fleet = _fleet(
+            T,
+            "gas_cc",
+            [7.0, 8.0, 8.0],
+            [2000.0, 1000.0, 1000.0],
+            "CC_REGULAR",
+            [800.0, 400.0, 400.0],
+        )
+        design = self._caiso_design(fleet, T, posture=False)
+        self.assertIsNone(design.posture_pools)
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertNotIn("reserve_posture_pools", kw)
+
+    def test_caiso_slow_cc_pool_postured_with_class_params(self):
+        # Same fleet as the MISO TestPostureParams CC case: shared code must
+        # produce the same postured pool, mlf (WWSIS-2 CC gap-fill 0.52) and
+        # class startup ($30-$50/MW).
+        T = 4
+        fleet = _fleet(
+            T,
+            "gas_cc",
+            [7.0, 8.0, 8.0],
+            [2000.0, 1000.0, 1000.0],
+            "CC_REGULAR",
+            [800.0, 400.0, 400.0],
+        )
+        design = self._caiso_design(fleet, T, posture=True)
+        self.assertEqual(design.posture_pools.size, 1)
+        self.assertAlmostEqual(float(design.posture_mlf[0]), 0.52, places=6)
+        su = float(design.posture_startup[0])
+        self.assertGreater(su, 30.0)
+        self.assertLess(su, 50.0)
+        # CAISO is the first design carrying posture AND the storage duration
+        # gate — both must survive into the design together.
+        self.assertTrue(design.storage_eligible)
+        self.assertIsNotNone(design.storage_duration_h)
+
+    def test_caiso_fast_start_ct_pool_exempt(self):
+        # gas CT frame class: both fast-start thresholds met -> no posture
+        # column (rule 18 parameter gate, shared with MISO/PJM).
+        T = 4
+        fleet = _fleet(
+            T,
+            "gas_ct",
+            [10.5, 10.5, 10.5],
+            [100.0, 100.0, 100.0],
+            "CT_PEAKER",
+            [100.0, 100.0, 100.0],
+        )
+        design = self._caiso_design(fleet, T, posture=True)
+        self.assertEqual(design.posture_pools.size, 0)
+
+
 if __name__ == "__main__":
     unittest.main()

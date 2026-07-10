@@ -56,6 +56,38 @@ can create it.
 Dead ends re-confirmed: pocket-limit tightening and offer-level moves (pockets already
 over-priced ~+15–21 vs corrected actuals); tail unchanged by bridge-side releases.
 
+## Probe-#2 scoping (same session): the posture lever is ported but ex-ante INERT on the system-wide requirement — the binding driver must be locational
+
+The award→energy channel probe #2 calls for exists as machinery: the MISO/PJM pooled
+commitment-posture lever (U/SU columns; providing reserve from a postured pool costs a real
+NREL-table start + a CEMS-measured min-load ride — endogenous, no floor, no D-2 id, zero fitted
+parameters). It is now ported to CAISO (`caiso_commitment_posture`, default off, tested,
+composing with CAISO's storage duration gate; reads only under
+`energy_reserve_coopt + caiso_reserve_coopt`).
+
+**But do not solve it on the current system-wide requirement.** BAL-002-WECC-3 contingency
+(max(MSSC ≈ 2.2 GW, 6 % × load) split spin/non-spin) tops out ~2.2–2.7 GW, while the
+UN-postured free reserve pool is ≥ 3–5× that: hydro ≥ 6.6 GW (ramp10 backfilled at full
+nameplate, fast-start by physics → never postured), fast-start CT ≥ 4.3 GW (rule-18 exempt,
+offline ramp free), batteries ~5–8 GW (0.5 h ASSOC SOC gate, trivially met). The LP will never
+pay a CC start + min-load ride while free supply covers the requirement several times over —
+the same reason caiso-59/62 measured inert, now established ex-ante instead of with another
+solve (rule 1: the mechanism's own driver evidence says it cannot bind).
+
+**What would make it bind — the ranked next build:** CAISO procures AS against published
+SUB-REGIONAL constraints (the expanded-system/SP26/NP26 AS regions with regional
+minima/maxima) — a measured, forward-regenerable, LOCATIONAL requirement. On the split
+topology, a SoCal AS-region minimum that in-region units must serve cannot be met by NP15-side
+hydro — exactly the configuration in which the posture forces SoCal gas online through the
+evening AS hold, which is (i) the RUC-like award→energy channel for pocket CTs/CCs, (ii) an
+evening commitment-posture driver for the C3a body, and (iii) a candidate former of the missing
+2024/25 LOCAL tail (C3c) that the system-wide co-opt could never price. Data intake needed:
+CAISO AS-region definitions + regional procurement minima (OASIS AS_REQ / DMM AS chapters);
+zero fitted parameters. Secondary candidates: the spin product's online gating via the
+sync/non-sync split composed with posture (a dispatch.py extension — the split and posture are
+mutually exclusive today), and an FRP-like intra-hour ramp requirement (measured net-load
+forecast-error percentiles).
+
 ## Governance note
 
 caiso-70 is the **first CAISO bundle with C6 governance PASS** (rubric governance attestation +
