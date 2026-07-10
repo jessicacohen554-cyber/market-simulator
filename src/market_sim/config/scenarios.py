@@ -3815,6 +3815,23 @@ class ScenarioConfig:
     # market_sim.model.transmission.apply_caiso_asymmetric_path_limits.
     caiso_asymmetric_path_ratings: bool = False
 
+    # CAISO per-year SP15-pocket import caps. The SP15-split foundation
+    # (2026-07-09) baked the two internal import-limited links
+    # (SP15_rest->LA_BASIN, SP15_rest->SDGE) at the STATIC 2023 (tightest-year)
+    # LCT import_cap = peak_load - requirement (LA_BASIN 12,008 MW, SDGE 1,436
+    # MW), documenting per-year as the deferred end state (docs/handoffs/
+    # caiso-sp15-split-implementation-scope-2026-07-09.md, "Import-cap values").
+    # When on, each solve year's link TTC is swapped to that year's measured
+    # LCT row (LA_BASIN 12,008/15,224/15,174, SDGE 1,436/2,074/2,071 MW for
+    # 2023/24/25 -- data/raw/capacity-deliverability/caiso/caiso.csv via
+    # data.local_capacity.load_lcr_parameters), same peak_load - requirement
+    # convention, frozen per rule 24 (never the reserve-margin gross-up, never
+    # tuned to a residual). A no-op for any year without a published LCT row
+    # (the link keeps its static 2023 default). Off by default so every
+    # existing CAISO keeper replay is byte-identical. See
+    # market_sim.model.transmission.apply_caiso_local_import_limits.
+    caiso_per_year_import_caps: bool = False
+
     # PJM transmission-congestion lever (break the copper-plate). PJM clears as a
     # perfect single price (0.000 zonal LMP spread in all 8760 hours of all
     # backcast years) because the priced external star node (PJM_external) wires
