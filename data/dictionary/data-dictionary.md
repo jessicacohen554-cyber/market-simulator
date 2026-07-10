@@ -59,6 +59,7 @@ for the market split.
 | capacity-deliverability | — | — | — | — | — | — |
 | confirmed-retirements | — | — | — | — | — | — |
 | gtc-limits | — | — | — | — | — | — |
+| transfer-interface-limits | — | — | 2023–2025 | — | — | — |
 | ramp-capability | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
@@ -739,6 +740,33 @@ export interfaces). Schema:
 | `n_active` | `int64` | `count` | no | Number of distinct SCED executions in the hour where the constraint was in the active set (nominal cadence 12/hour; the DST fall-back clock hour can carry up to 24). |
 | `n_binding` | `int64` | `count` | no | Number of those executions where the constraint was binding (ShadowPrice > 0). |
 | `shadow_price_mean` | `float64` | `usd_per_mwh` | yes | Mean ShadowPrice over the hour's binding intervals; null when the constraint was active but never binding that hour. |
+
+## transfer-interface-limits
+
+Measured hourly transmission-interface transfer limits (PJM Data Miner 2
+transfer_limits_and_flows; pre/post-contingency kept as separate series).
+Schema:
+[`schema/transfer-interface-limits.schema.yaml`](schema/transfer-interface-limits.schema.yaml).
+
+- **Keys:** `iso`, `interface`, `hour`
+- **Reconciles:** UTC-keyed hourly interface rows onto the fixed non-leap
+  8760-hour ISO-local model clock: Feb 29 dropped, the DST fall-back repeat
+  merged by clock-hour group-by, the spring-forward hour filled from its
+  neighbours and flagged (`n_source_rows = 0`). Dense — every (interface, hour)
+  pair carries a row. The measured `transfer_mw` column is diagnostic only
+  (crosswalk sanity checks), never a model input. Published operating-security
+  limits, rule #13/#14 admissible; per-ISO specs in
+  `scripts/lib/transfer_interface_limits/` (PJM first).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO code (currently PJM). |
+| `interface` | `string` | `none` | no | Interface / transfer-limit-area name exactly as published by the source (e.g. "AP-South Post-Contingency", "AEP/DOM Post-Contingency", "Average Western"). The model-side link crosswalk (market_sim.data.transfer_interface_limits) maps the representable ones onto model links. |
+| `hour` | `int64` | `hour_index` | no | Index 0-8759 on the fixed non-leap 8760-hour ISO-local clock (Feb 29 dropped) — the model's dispatch clock. |
+| `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Wall-clock local start of the hour (naive, ISO-local). |
+| `limit_mw` | `float64` | `mw` | no | Enforced transfer limit (MW) for the interface over the local clock hour (mean of the source rows merged into the hour — one normally, two at the DST fall-back). Kept faithful to the source, including the rare zero/negative published values; the model-side consumer documents how those are reconciled onto link bounds. |
+| `transfer_mw` | `float64` | `mw` | yes | Measured actual transfer (MW) across the interface over the hour (mean of merged source rows); null on the filled spring-forward hour. Diagnostic column for crosswalk sanity checks only — never a model input or target. |
+| `n_source_rows` | `int64` | `count` | no | Source rows merged into the clock hour: 1 normally, 2 at the DST fall-back repeat, 0 for the spring-forward hour that never occurs locally (limit_mw filled from the neighbouring hours). |
 
 ## ramp-capability
 

@@ -609,6 +609,39 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "level only (same bound as the MISO ladder)",
             )
         )
+    if iso == "PJM" and sc.get("pjm_measured_interface_limits"):
+        # G-20 Phase-2 internal-interface overlay (pjm-97): the seven mapped
+        # internal links' forward TTC flips static-estimate ->
+        # measured-physical — the hourly published Data Miner 2 transfer
+        # limits (transfer-interface-limits clean datatype) replace the
+        # Tier-3 constants their 2024 means seeded. Zero fitted scalars: the
+        # crosswalk (PJM_INTERFACE_LINK_MAP) is a documented boundary
+        # reconciliation, not a tuned value.
+        out.append(
+            _entry(
+                "PJM_INTERFACE_LINK_MAP hourly TTC overlay",
+                "constants.py crosswalk + data/transfer_interface_limits.py "
+                "(iso_configs._pjm_config static seeds superseded on mapped "
+                "links, forward direction)",
+                "measured-physical",
+                iso,
+                source="published hourly interface transfer limits (PJM Data "
+                "Miner 2 transfer_limits_and_flows, 2023-2025 raw drops; "
+                "min(pre,post) where both publish), curated by frozen "
+                "scripts/curate_transfer_interface_limits.py onto the model "
+                "clock; supersedes PJM_MEASURED_INTERNAL_TTC's pooled "
+                "medians on mapped links (same feed, hourly — rule 19). "
+                "Unmapped links (AEP_Ohio->ATSI, SWMAAC->EMAAC, "
+                "SWMAAC->Dominion, West_APS->Dominion) and every reverse "
+                "direction keep the Tier-3 static estimates (boundary "
+                "misalignments documented at the crosswalk).",
+                root_cause="re-derive trigger is a source-data change only "
+                "(rule 23); representation bound: AP-South maps to the "
+                "seeded West_APS->SWMAAC link only (parallel-path split of "
+                "the reduced mesh), and the Average envelopes are regional "
+                "means, not per-flowgate boundaries",
+            )
+        )
     if (
         iso in ("NYISO", "CAISO")
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))

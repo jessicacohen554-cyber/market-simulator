@@ -3031,6 +3031,70 @@ PJM_MEASURED_INTERNAL_TTC: dict[tuple[str, str], float] = {
     ("PJM_West_APS", "PJM_Central_PA"): 1850.0,
 }
 
+# (2b) HOURLY measured internal interface limits (ScenarioConfig.
+# pjm_measured_interface_limits — supersedes the static medians above on the
+# mapped links; same feed, hourly instead of pooled-median). Model link ->
+# the published transfer-limit series (transfer-interface-limits clean
+# datatype, names verbatim) whose elementwise MIN is the link's forward
+# (west->east) hourly cap; where an interface publishes pre- AND
+# post-contingency limits both are listed, since both are
+# simultaneously-enforced security limits and the operative capability each
+# hour is the tighter one.
+#
+# Crosswalk provenance and reconciliation (CLAUDE.md rule 14 exception
+# clause — each static seed's series maps back to it 1:1):
+#   - ComEd→AEP_Ohio      ← "50045005": iso_configs already names this link
+#     "the 5004/5005 interface"; the static 6000 was a loose estimate
+#     (measured mean ~2,750-3,100).
+#   - AEP_Ohio→Dominion   ← "AEP/DOM" (static 4069 = its 2024 mean).
+#   - West_APS→SWMAAC     ← "AP-South" (static 4453 = its 2024 post mean).
+#     MISALIGNMENT, documented: AP-South is the aggregate western→MAD 500 kV
+#     flowgate, one of several parallel paths this 8-zone mesh splits across
+#     West_APS→SWMAAC and West_APS→Dominion. It is applied ONLY to the
+#     seeded link (West_APS→SWMAAC); West_APS→Dominion keeps its static
+#     3,000 MW so the total west→MAD capability is the reconciled
+#     measured-plus-static sum, never the single flowgate double-applied.
+#   - West_APS→Central_PA ← "Bedington-BlackOak" (static 1947 = 2024 post
+#     mean). Published post-contingency limits touch ≤ 0 in 2024-25 outage
+#     windows; the consumer clamps the forward bound at 0 (no secure
+#     transfer), never a negative bound (which would FORCE counterflow).
+#   - AEP_Ohio→West_APS / ATSI→Central_PA / Central_PA→EMAAC ← the
+#     "Average Western/Central/Eastern" regional envelopes that seeded their
+#     statics (5029/3336/8168 = the 2024 means). MISALIGNMENT, documented:
+#     an envelope is a regional mean across several member interfaces, not
+#     one flowgate on the link's exact boundary (its measured ``transfers``
+#     sign is unreliable for direction checks — Average Central runs
+#     "negative" 80-97% of hours); the hourly envelope is still strictly
+#     closer to the real capability than the constant it seeded.
+# Cleveland is deliberately ABSENT (the N_TO_H pattern in
+# ERCOT_GTC_LINK_MAP): it limits imports into the ATSI-Cleveland sub-pocket,
+# a strict subset of the PJM_ATSI zone boundary, so applying it to
+# AEP_Ohio→ATSI would cap the whole zone at one pocket's limit. SWMAAC→
+# EMAAC, SWMAAC→Dominion, West_APS→Dominion and AEP_Ohio→ATSI have no
+# published series on their boundary and keep their static estimates.
+# Direction sanity (2023-25 measured ``transfers``): AP-South / Bedington-
+# BlackOak / AEP-DOM flows are ≥ 98.5% one-directional west→east, matching
+# the mapped links' forward orientation; binding (≥ 90% utilization) up to
+# 6.5% of hours (BB post, 2025).
+# Source: PJM Data Miner 2 transfer_limits_and_flows via
+# scripts/curate_transfer_interface_limits.py; consumed by
+# market_sim.data.transfer_interface_limits.pjm_interface_ttc_hourly.
+PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
+    ("PJM_ComEd", "PJM_AEP_Ohio"): ("50045005 Post-Contingency",),
+    ("PJM_AEP_Ohio", "PJM_Dominion"): ("AEP/DOM Post-Contingency",),
+    ("PJM_West_APS", "PJM_SWMAAC"): (
+        "AP-South Pre-Contingency",
+        "AP-South Post-Contingency",
+    ),
+    ("PJM_West_APS", "PJM_Central_PA"): (
+        "Bedington-BlackOak Pre-Contingency",
+        "Bedington-BlackOak Post-Contingency",
+    ),
+    ("PJM_AEP_Ohio", "PJM_West_APS"): ("Average Western",),
+    ("PJM_ATSI", "PJM_Central_PA"): ("Average Central",),
+    ("PJM_Central_PA", "PJM_EMAAC"): ("Average Eastern",),
+}
+
 # Year-varying NYISO interface transfer limits that change with the AC
 # Transmission build-out. The static limits in iso_configs._nyiso_config are
 # nominal; an (iso, year) entry here overrides the matching link's TTC for that
