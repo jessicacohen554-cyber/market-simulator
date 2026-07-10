@@ -1,0 +1,278 @@
+{
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
+  "n_entries": 8,
+  "n_residual": 3,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 72,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13). AMENDED miso-53: the five MISO COAL_* curves' committed/econ_low bands (10 scalars) are no longer residual-identified \u2014 they are SOM-pinned at exactly 1.00 (the measured near-cost floor; see the 'MISO COAL SOM near-cost offer floor' measured-physical entry), retiring the inherited ERCOT-fitted sub-1.0 values (COAL_PRB econ_low 0.77 etc., the rule-25 leak). The >=1.0 rising bands (econ_high/peak) remain legacy residual-identified shape, kept byte-identical.",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "MISO COAL SOM near-cost offer floor",
+    "where": "pipeline/backcast_config.py _MISO_OFFER_CURVE COAL_* entries (committed/econ_low = 1.00) + calibration_flags coal_prb/bit_passthrough_sigmoid=False, coal_prb_passthrough_tiered=False",
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "source": "the MISO IMM's measured conduct statistics (datatype som-competitive-conduct; freeze test tests/test_curate_som_competitive_conduct.py): system price-cost mark-up +3.0% (2023) / -2.5% (2024) \u2014 offers AT reference levels ~= SRMC \u2014 and output gap 'effectively de minimis' (0.1%/0.06% of load; 2025 quarterlies 22-71 MW/hr). The measured discount depth is ~none, so every MISO coal tranche above must-run bids full measured F923 delivered SRMC: the gas-keyed passthrough sigmoid MECHANISM is replaced for MISO (not re-parameterized) and the sub-1.0 band multipliers raised to exactly 1.00 \u2014 a zero-discount anchor, no fitted value (n_scalars 0). Self-commitment (SOM Table 7: must-run status on 56%/53% of regulated coal starts) remains represented by the per-plant fuel-free _mustrun band (coal_mustrun_per_plant, CAMPD thermal_tranches_MISO.csv), one mechanism per phenomenon (rule 19). Adjudication record: docs/handoffs/miso-coal-offer-som-redesign-2026-07.md. Re-derive trigger: the 2025 MISO SOM publication (rule 23)."
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[MISO]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS \u2014 NOT ENGAGED in this run (coal_prb/bit_passthrough_sigmoid=False; mechanism replaced for MISO by the SOM near-cost floor above)",
+    "identification": "measured-physical",
+    "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39; engaged through miso-52)",
+    "n_scalars": 0,
+    "source": "re-derived from #1803 region f.o.b./PPI by scripts/derive_coal_sigmoid.py (frozen; provenance data/raw/_processed-legacy/coal_sigmoid_params.csv; freeze test tests/test_derive_coal_sigmoid.py). The measured params stay in-tree (they are data, not tuning, and miso-50/51/52 reproduce through them) but resolve to nothing in this run \u2014 the SOM conduct evidence refuted the deep-discount premise for MISO, so the mechanism is off; other ISOs' entries are their own SOM adjudications (rule 25). n_scalars 0 here because no sigmoid parameter affects this solve."
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_MISO.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[MISO]",
+    "where": "interchange_config.py per-ISO seam supply-curve ladders",
+    "identification": "residual",
+    "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
+    "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback; NEISO closed this item (see the NEISO-only entry, measured-physical), MISO closes it under miso_seam_measured_ladder (its own measured-physical row) \u2014 remaining scope for this item is NYISO/PJM/CAISO's static ladder (and MISO's formula seam only when the measured ladder is off)",
+    "root_cause": "audit C-6/#1350 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam, following the NEISO precedent (scripts/derive_neiso_import_tranches.py); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "gas_daily_shape[MISO]",
+    "where": "backcast_config.py gas_daily_shape (MISO added 2026-07-09); factors from data/raw/gas-prices/henry_hub_daily.csv via fuel.gas_daily_shape_factors",
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "source": "measured Henry Hub daily spot (EIA RNGWHHD), normalized to each month's own daily mean (mean-preserving, so the monthly EIA-923 plant-level delivered gas level and the annual mix are unchanged); no fitted value \u2014 the factors ARE the data. Forward-reproducible (a forward monthly level times a representative daily shape). Closes the miso-50 rule-23 granularity caveat's free-data leg; the daily basin-basis leg (Chicago Citygate daily) remains the open paywalled ask."
+   },
+   {
+    "name": "hydro 2025 completeness (backfill 2024 + EIA-930 monthly repin)",
+    "where": "run_config.calibration_flags hydro_backfill_year=2024, hydro_eia930_monthly=true (the PJM/NEISO keeper pattern)",
+    "identification": "measured-physical",
+    "n_scalars": 0,
+    "source": "the 2025 EIA-923 early release carries 14 of 160 MISO hydro plants (0.97 of ~9.9 TWh); backfill carries the prior-year reporters, and the EIA-930 NG:WAT monthly repin corrects level+shape to the measured realization. Backcast-only measured input (rule 13-admissible: physical inflow availability); the forecast path uses the normal-water-year climatology instead."
+   }
+  ]
+ },
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "miso-53 SOM-grounded coal offer redesign 2026-07-10: the miso-52 recipe with the coal passthrough sigmoids OFF for MISO (near-cost offers per the measured SOM mark-up ~ 0) on the SOM-grounded MISO COAL offer-curve bands at HEAD (sub-1.0 committed/econ_low -> 1.00)",
+  "note": "Identical kwargs to miso-52 (miso-49 keeper flags + gas_daily_shape[MISO] + hydro 2024-backfill/EIA-930 repin) EXCEPT the redesign flags: coal_prb_passthrough_sigmoid=False, coal_bit_passthrough_sigmoid=False, coal_prb_passthrough_tiered=False. The mechanism replacement was adjudicated against the MISO IMM's measured conduct data (intaken this session as datatype som-competitive-conduct), not the residual: the SOM measures offers at reference levels ~= SRMC (mark-up +3.0%/-2.5%, output gap de minimis) and self-commitment as a COMMITMENT phenomenon (must-run status on 56%/53% of regulated coal starts, 'running them regardless of the price') \u2014 so the energy offer above the must-run floor bids full measured F923 delivered SRMC and the per-plant fuel-free _mustrun band (CAMPD-sized) carries the self-commitment, one mechanism per phenomenon (rule 19). Registered whatever it scores (rule 15).",
+  "validation_note": "Reproducible via scripts/probes/_miso53_som_coal_offers.py main (solved at 89c9c01, clean tree). Rule-20 zero-forcing ablation twin: same script, ablation mode. The tranche-share question the task raised is resolved by dimension: the SOM self-commit share is a share of STARTS and cannot size capacity tranches; the CAMPD all-hours per-plant floor (mustrun_pct ~= Pmin x fraction-of-year-held-online) already IS the realized per-plant self-commitment floor, so it remains the sizing input and the SOM share corroborates the mechanism fleet-wide (docs/handoffs/miso-coal-offer-som-redesign-2026-07.md \u00a73).",
+  "residuals_note": "DISCOVERED RESULT \u2014 the coal over-run's root cause is CONFIRMED as the below-cost offer surface. With every coal tranche above must-run at measured delivered SRMC: C4 dispatch-corr passes ALL SIX cells (coal r 0.925/0.930/0.900, gas 0.925/0.893/0.919 \u2014 the miso-50/51/52 C4-2024 FAIL is gone: near-cost coal load-follows like real coal); C5a CO2 passes all years (+0.6/-3.3/+4.3% vs miso-50's +13.1/+10.8% FAILs); CC_REGULAR returns to band (+3.96/+1.86 TWh vs -11.2/-17.3); COAL_PRB 2024 lands at -0.53 TWh (was +25.1), 2023 +11.45 (was +29.9); coal family 2025 +14.6% (was +23.6%), gas -12.4% (was -19.5%). C1 all 11/16, free 7/12 (miso-52: 9/16, 5/12). Removing the compensating discount UNMASKS two pre-documented gaps (rule 11): (a) CT_PEAKER over-run +16.9/+24.6 TWh \u2014 the de-leaked neutral-1.0 MISO CT committed hurdle, whose own de-leak comment predicted 'expect CT over-run'; the deep-discounted coal had been absorbing that energy; the MISO-grounded CAMPD CT hurdle/econ ramp is the queued lane. (b) mean-LMP now OVERSHOOTS 2023/24 (+24.2%/+13.4%; 2025 -5.0% PASS) with monthly NRMSE 0.311/0.304 (2025 0.102 PASS) \u2014 the marginal setter lands on CT/coal-econ_high bands ABOVE the measured coal-SRMC anchor (actual RT mean ~= coal base SRMC), where it used to land below it; the >=1.0 rising bands kept from the legacy residual surface are now the binding marginal-region question for the sanctioned rule-1 offer-curve step. COAL_BIT over-corrects low (-8.5/-11.5 TWh \u2014 full-cost BIT loses mid-merit to the unhurdled CTs, same interaction). C3c: 2024 PASSES (13h, 0.54x DA); 2023 33h vs 1h DA is the DA-representation gap (RT companion 30h, near-exact); 2025 0.29x remains the RDC/ELMP scarcity-tail lane.",
+  "som_redesign": {
+   "evidence": "datatype som-competitive-conduct (data/raw/som-competitive-conduct/som_competitive_conduct.csv; PDFs data/raw/MISO/; freeze test tests/test_curate_som_competitive_conduct.py). 2025 SOM unpublished as of 2026-07-10 \u2014 the 2024 mark-up (~0) carries into 2025 supported by the de-minimis 2025 quarterly output gaps; its publication is the rule-23 re-derive trigger.",
+   "inherited_offer_surface": "the re-derived measured MISO sigmoid params (miso-50) remain in-tree but are NOT engaged (sigmoids off); the SOM-grounded near-cost bands supersede the sigmoid as MISO's offer mechanism"
+  }
+ },
+ "disclosures": {
+  "note": "NOT-YET determination (rubric v2.4): fuelmix, sysvol(2025), price_mean(2023/24 \u2014 now OVER), price_shape(2023/24), price_tail(2023 DA-overshoot / 2025 under). vs miso-52: dispatch_corr and co2 leave the FAIL set; the fail count drops 6->5 and target-grade passes rise 4->5. Recommendation to owner: the structure is now SOM-grounded end-to-end on the coal side; the two unmasked residual owners (CT committed hurdle, marginal-region band levels) are the queued rule-1 lanes. Keeper decision is the owner's; miso-53 is the most structurally faithful MISO surface to date (rule 1: keeper = most faithful, not lowest MAE).",
+  "items": [
+   {
+    "criterion": "fuelmix",
+    "klass": "CT_PEAKER",
+    "year": "2023-2024",
+    "metric": "C1 fuel-mix by class (grid-delivered)",
+    "magnitude": "+16.87 / +24.59 TWh (2023/2024)",
+    "classification": "MODEL MISS (pre-documented: de-leaked neutral-1.0 MISO CT committed hurdle)",
+    "reason": "The _MISO_OFFER_CURVE CT_PEAKER de-leak comment predicted this over-run when the ERCOT 1.55 hurdle was removed with no MISO-grounded replacement; the sigmoid-discounted coal was absorbing the energy. Unmasked, not created, by the near-cost coal redesign. Queued lane: MISO-grounded CT committed hurdle + econ ramp from the CAMPD CT heat-rate spread (rule 23 derive)."
+   },
+   {
+    "criterion": "fuelmix",
+    "klass": "COAL_PRB",
+    "year": 2023,
+    "metric": "C1 fuel-mix by class (grid-delivered)",
+    "magnitude": "+11.45 TWh (2024: -0.53 PASS; miso-52: +29.9/+25.1)",
+    "classification": "MODEL MISS (residual over-run, 62% reduced by the redesign)",
+    "reason": "Remaining cheap-gas-year PRB surplus after the discount removal; interacts with the CT hurdle gap (both catch mid-merit energy the other should price out)."
+   },
+   {
+    "criterion": "fuelmix",
+    "klass": "COAL_BIT",
+    "year": "2023-2024",
+    "metric": "C1 fuel-mix by class (grid-delivered)",
+    "magnitude": "-8.53 / -11.54 TWh (sign flip from miso-52's +13.8/+15.4)",
+    "classification": "MODEL MISS (over-correction: full-cost BIT loses mid-merit to unhurdled CTs)",
+    "reason": "BIT delivered SRMC (~$31-32) now sits above CT SRMC at 2023/24 gas, so the LP swaps real bituminous mid-merit energy into CTs that lack their start/commitment hurdle. Expected to close from the CT-hurdle side, not by re-discounting BIT (rule 11)."
+   },
+   {
+    "criterion": "sysvol",
+    "klass": null,
+    "year": 2025,
+    "metric": "C2 system volume (gas/coal families, EIA-930 vintage-reconciled)",
+    "magnitude": "gas -12.4%, coal +14.6% (miso-52: -19.5% / +23.6%)",
+    "classification": "MODEL MISS (same CT/BIT mid-merit interaction; improved ~40%)",
+    "reason": "Dear-gas 2025 substitution still overweights coal vs gas; the 2025 SOM (unpublished) will supply the year's own conduct anchor on publication (rule 23 trigger)."
+   },
+   {
+    "criterion": "price_mean",
+    "klass": null,
+    "year": "2023-2024",
+    "metric": "C3a mean LMP (RT benchmark)",
+    "magnitude": "+24.2% / +13.4% (2025: -5.0% PASS)",
+    "classification": "MODEL MISS (marginal setter above the measured coal-SRMC anchor)",
+    "reason": "The redesign flips the sign of the price error: the marginal unit now lands on CT / coal econ_high bands (1.10-1.19x HR) above the coal base SRMC the real market clears near. The >=1.0 rising band levels \u2014 kept byte-identical from the legacy residual surface \u2014 are now the binding marginal-region question for the sanctioned rule-1 offer-curve step, downstream of the CT hurdle fix."
+   },
+   {
+    "criterion": "price_shape",
+    "klass": null,
+    "year": "2023-2024",
+    "metric": "C3b monthly price shape NRMSE",
+    "magnitude": "0.311 / 0.304 (2025: 0.102 PASS)",
+    "classification": "MODEL MISS (level overshoot concentrated in cheap-gas months)",
+    "reason": "Rides the C3a overshoot; the monthly shape error tracks where the CT/econ_high marginal band diverges most from the coal-SRMC anchor."
+   },
+   {
+    "criterion": "price_tail",
+    "klass": null,
+    "year": "2023, 2025",
+    "metric": "C3c scarcity tail (energy-only LMP dual, >$200)",
+    "magnitude": "2023 model 33h vs DA actual 1h (RT companion: 30h); 2025 model 11h vs DA 38h (0.29x); 2024 PASSES (13h vs 24h, 0.54x)",
+    "classification": "MODEL MISS (DA-vs-RT representation gap / missing RDC-ELMP scarcity)",
+    "reason": "Unchanged attribution from miso-51/52: our energy-only dual is RT-like by construction (2023 vs RT is near-exact); 2025's under-tail remains the reserve-demand-curve workstream (docs/multi-iso/miso-scarcity-tail-diagnosis.md)."
+   }
+  ]
+ },
+ "exceptions": [
+  {
+   "criterion": "storage",
+   "year": 2025,
+   "metric": "C5b storage discharge throughput TWh",
+   "magnitude": "+1096.3% (model 2025 BAT+PS discharge vs EIA-930 battery-only actual; 2023/2024 un-benchmarked \u2014 EIA-930 reports no PS breakout)",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (benchmark basis mismatch \u2014 not a model miss)",
+   "reason": "Carried unchanged from miso-48/49/50/51/52: EIA-930 MISO reports NO pumped-storage series; the battery-only actual excludes the 2,417 MW EIA-860 PS fleet (Ludington + Taum Sauk) the model correctly dispatches. Full adjudication: results/calibration/FINDING-miso-c5b-storage-benchmark-2026-07.md."
+  },
+  {
+   "criterion": "storage_shape",
+   "year": 2025,
+   "metric": "C5c monthly discharge pearson r",
+   "magnitude": "r=0.353",
+   "classification": "ACCEPTED MEASURED-INPUT LIMITATION (same basis mismatch as C5b)",
+   "reason": "Model BAT+PS discharge vs the battery-only EIA-930 series; the PS seasonal arbitrage shape dominates the model side and is absent from the actual. Rides the C5b scorer fix."
+  }
+ ]
+}
