@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-10-nyiso59-dynamic-rr",
+  "label": "nyiso59 dynamic rr",
+  "date": "2026-07-10",
+  "shorthand": "nyiso59-dynamic-rr",
+  "definition": "dynamic-reserve-requirements full-keeper A/B -- 2026-07-07-nyiso-56-measured-zonal config + nyiso_dynamic_reserve_requirements: measured hourly LRR schedule (SENY steps 1300/1550/1800) + TSA-window zeroing replacing static requirements, 2023-2025. Co-opt ENGAGES: reserve duals bind 289/163/614 h/yr (max USD 1658); downstate >300 USD tail NYC 18/1/7, LI 23/1/25 vs actual 10/12/42 (nyiso-56: ~0/0/7). 2024 undershoot consistent with the still-missing B1 condition-varying increments (request-only). Twin: nyiso59_dynamic_rr-ablation.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-10-nyiso59-dynamic-rr.js",
+  "bundle": "results/calibration/nyiso59_dynamic_rr"
+}
