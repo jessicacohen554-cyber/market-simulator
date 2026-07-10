@@ -1,6 +1,39 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-07-10): `nyiso 59 dynamic rr` — CALIBRATED-WITH-CAVEATS**
+> **KEEPER (2026-07-10b): `nyiso 60 ldc transport` — CALIBRATED-WITH-CAVEATS**
+> (`2026-07-10-nyiso-60-ldc-transport`, bundle
+> `results/calibration/nyiso60_ldc_transport`, all 3 years + zero-forcing
+> ablation twin). The `nyiso-59-dynamic-rr` keeper recipe VERBATIM with one
+> **measured-data** swap (rules 12/13, zero new free parameters): the
+> downstate CT-peaker delivered gas moves from the v1 monthly statewide
+> citygate premium (`nyiso_downstate_ct_gas_basis`) to the **measured
+> per-zone DAILY LDC-transport delivered index**
+> (`nyiso_downstate_ct_gas_daily`, the `nyiso-downstate-gas` datatype v2):
+> Transco Z6 NY daily commodity spot + the zone's LDC monthly non-firm
+> transportation delivery rate (KEDNY SC-22 Tier 1 / NYC, KEDLI SC-19 Tier 1 /
+> Long Island — published statnfdr statements). nyiso-55's G-13 mechanism
+> folded into the keeper line (G-13 CLOSED): the interruptible peakers are
+> transport customers, not firm-sales citygate customers; the daily hub leg
+> prices the cold-snap blowouts (2025-01-17 $97.90) on the exact days the
+> peakers run. v1 OFF, v2 ON (rule 19). Effect vs nyiso-59 (v2.4 lw basis):
+> C3a −4.8/−13.2/**−13.7%** (2025 gains 2.0 pp), C3b 0.163/0.223/**0.199 —
+> 2025 crosses INTO the ≤0.20 band** (one ledgered caveat drops), C3c
+> identical 23/1/25 h (G-20a artifacts ledgered), C5a +3.3/+2.5/+8.1%
+> (commercial band), C1 14/14, C2/C4/C7 PASS, **C8 clean PASS** (ST_GAS
+> 32.1/44.0/36.0% grounded above budget, D-4 off-window 0.0%, D-1 r
+> 0.950–0.957). Ablation twin: floors-off prices sit higher (32.20/35.07/60.09
+> vs 29.05/31.96/54.08 simple-mean) and the 2023 tail max is in both arms.
+> Residual ledger (do NOT chase with tuned adders): (a) B1 condition-varying
+> reserve-requirement increments — formal NYISO request only; (b) Iroquois Z2
+> winter hub (Ask-C); (c) downstate import discipline — the measured NYC
+> locality import limit 2,875 MW vs the 3,900 MW Dunwoodie-South estimate,
+> buildable NOW as single-delta probe nyiso-61 (the identified next lever for
+> the 2024/2025 deep tail). CI replay OOMs GitHub runners in regenerate_clean;
+> solve locally (≥15 GB + swap). **Keeper lineage:** nyiso-41 →
+> `nyiso-53-li-tsl` → `nyiso-56-measured-zonal` → `nyiso-59-dynamic-rr` →
+> **nyiso-60** (see the dated calibration-log entries).
+
+> **KEEPER (2026-07-10, superseded same-day by nyiso-60 above): `nyiso 59 dynamic rr` — CALIBRATED-WITH-CAVEATS**
 > (`2026-07-10-nyiso-59-dynamic-rr`, bundle
 > `results/calibration/nyiso59_dynamic_rr`, all 3 years + zero-forcing
 > ablation twin). The `nyiso-56-measured-zonal` keeper recipe VERBATIM with
