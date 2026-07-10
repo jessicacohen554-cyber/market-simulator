@@ -1,0 +1,102 @@
+# Canonical schema: NYISO operating events (typed message-log extraction)
+#
+# Typed events parsed from the NYISO MIS public message logs (P-35 Real-Time
+# Events, P-25 Operational Announcements) under
+# data/raw/NYISO-AS/requirements/{realtime-events,oper-messages}/ — the Ask-B2
+# event log of docs/handoffs/nyiso-data-asks-2026-07.md from which the
+# condition-varying downstate reserve requirement is reconstructed
+# (Thunderstorm Alert windows, system state, reserve pick-ups, emergency
+# transactions, out-of-merit reliability commitments). Rows are extracted
+# events only; unmatched messages (price-correction notices etc.) remain in
+# the raw per-year CSVs. The curation is parse-only — no window inference or
+# interpretation happens here.
+#
+# Curated by scripts/curate_nyiso_reserve_requirements.py (shared with the
+# nyiso-reserve-requirements datatype; same raw home, same ask).
+datatype: nyiso-operating-events
+schema_version: 1
+title: NYISO operating events (TSA, system state, reserve pick-ups, OOM, emergency transactions)
+description: >-
+  Typed operational events extracted from NYISO's public Real-Time Events and
+  Operational Announcements message logs, 2018 through H1-2026.
+
+key_columns: [iso, source_dataset, seq]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (NYISO).
+  - name: source_dataset
+    dtype: string
+    unit: none
+    nullable: false
+    description: Originating MIS feed ("realtime_events" or "oper_messages").
+  - name: seq
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      Stable per-dataset sequence number in source order (file, then row) —
+      disambiguates same-minute events.
+  - name: timestamp_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: >-
+      Event timestamp in UTC. Source stamps are Eastern prevailing wall-clock
+      without an EDT/EST flag; the duplicated DST fall-back hour is resolved
+      first-occurrence-as-EDT in source order.
+  - name: timestamp_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: false
+    description: Eastern prevailing wall-clock stamp as printed (informational).
+  - name: event_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Controlled vocabulary: thunderstorm_alert, system_state,
+      reserve_pickup, capacity_request, oom_commitment,
+      emergency_transaction.
+  - name: action
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Event action. thunderstorm_alert: start/end; system_state:
+      normal/alert/major_emergency; reserve_pickup: start/end;
+      capacity_request: submitted; oom_commitment:
+      requested/updated/removed; emergency_transaction: added/cut.
+  - name: start_of_day
+    dtype: bool
+    unit: none
+    nullable: false
+    description: >-
+      True for start-of-day state carryover messages (state/TSA already in
+      effect at 00:00) rather than a live transition.
+  - name: detail
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Event subject: proxy bus for capacity_request, unit name for
+      oom_commitment, counterparty for emergency_transaction; null otherwise.
+  - name: mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: MW quantity where the message carries one (emergency transactions).
+  - name: message
+    dtype: string
+    unit: none
+    nullable: false
+    description: Full original message text (verbatim).
+  - name: source_file
+    dtype: string
+    unit: none
+    nullable: false
+    description: Daily source CSV inside the MIS monthly archive the row came from.
