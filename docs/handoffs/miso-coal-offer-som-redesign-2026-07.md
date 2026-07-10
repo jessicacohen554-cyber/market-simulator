@@ -162,11 +162,61 @@ through miso-50/51/52).
   2025 quarterly output gaps. The 2025 SOM's publication is the rule-23
   re-derive trigger (see the raw README's DATA NEEDED).
 
-## 4. Results (miso-53 vs miso-52 / keeper miso-49)
+## 4. Results (miso-53 vs miso-52; NOT-YET, rubric v2.4)
 
-*Filled in after the solve + scoring — see the registered bundle
-`results/calibration/miso53_som_coal_offers` (+ `-ablation` twin) and the
-dashboard entry `2026-07-10-miso-53-somcoal`.*
+Registered `2026-07-10-miso-53-somcoal` (+ rule-20 zero-forcing ablation
+twin). Fails 6→5, target-grade passes 4→5, C1 all 11/16 · free 7/12
+(miso-52: 9/16 · 5/12).
+
+| criterion | miso-52 (sigmoid, monthly key) | miso-53 (SOM near-cost) | direction |
+|---|---|---|---|
+| C1 2023 COAL_PRB / COAL_BIT | +29.9 / +13.8 TWh | **+11.45 / −8.53 TWh** | over-run 62% cut / sign-flip |
+| C1 2024 COAL_PRB / COAL_BIT | +25.1 / +15.4 TWh | **−0.53 (PASS) / −11.54 TWh** | PRB in band |
+| C1 CC_REGULAR 2023 / 2024 | −11.2 / −17.3 TWh | **+3.96 / +1.86 (both PASS)** | fixed |
+| C1 CT_PEAKER 2023 / 2024 | (in band) | **+16.87 / +24.59 TWh FAIL** | unmasked (pre-documented) |
+| C2 2025 gas / coal | −19.5% / +23.6% | **−12.4% / +14.6%** | ~40% closer |
+| C3a mean LMP 2023 / 24 / 25 | +17.7% / +6.1% / −2.4% | **+24.2% / +13.4% / −5.0%** | sign-flipped to overshoot |
+| C3b NRMSE 2023 / 24 / 25 | 0.278 / 0.289 / 0.080 | **0.311 / 0.304 / 0.102** | worse 23/24, 2025 PASS |
+| C3c tail 2023 / 24 / 25 (DA) | 33h vs 1 / 13 vs 24 / 11 vs 38 | **same attribution; 2024 PASS 0.54×** | unchanged |
+| C4 coal r 2023 / 24 / 25 | 0.85 / 0.854 FAIL / 0.865 | **0.925 / 0.930 / 0.900 — ALL PASS** | fixed |
+| C5a CO₂ 2023 / 24 / 25 | PASS (miso-50 had FAILs) | **+0.6% / −3.3% / +4.3% PASS** | clean |
+| C8 coal forced share | 0.1–0.2% | **0.2–0.4%** | unchanged (immaterial-class) |
+
+**Reading it (rules 1/10/11).** The C4 all-pass is the structural
+confirmation: real coal load-follows because its offers sit at cost in the
+marginal region, and the model now reproduces that without any forcing
+(ablation twin ~identical; C8 unchanged). The two remaining big residuals are
+*unmasked compensating errors, both pre-documented before this session*:
+
+1. **CT_PEAKER +16.9/+24.6 TWh** — the `_MISO_OFFER_CURVE` CT de-leak comment
+   literally predicted "Expect CT over-run vs the prior 1.55 hurdle" when the
+   ERCOT-fitted hurdle was removed with no MISO-grounded replacement; the
+   sigmoid-discounted coal had been absorbing that energy. Queued lane: a
+   MISO-grounded CT committed hurdle + econ ramp from the CAMPD CT heat-rate
+   spread (rule-23 derive, same pattern as the CC bands).
+2. **Mean-LMP overshoot 2023/24 (+24.2%/+13.4%)** — the marginal setter now
+   lands on CT / coal-econ_high bands (1.10–1.19× HR) *above* the measured
+   coal-SRMC anchor the real market clears near (burndown Evidence 2), where
+   the sigmoid used to put it *below*. The ≥1.0 rising band levels — kept
+   byte-identical from the legacy residual-fitted surface — are now the
+   binding marginal-region question for the sanctioned rule-1 offer-curve
+   step, downstream of the CT hurdle.
+
+COAL_BIT's over-correction (−8.5/−11.5 TWh) is the same interaction seen from
+the other side: full-cost bituminous loses mid-merit to the unhurdled CTs. Per
+rule 11 the fix is the CT hurdle / marginal-band lanes, never re-discounting
+BIT.
+
+**Keeper recommendation: owner's call, deliberately not applied here.**
+miso-53 is the most structurally faithful MISO surface to date — offers
+grounded end-to-end in the ISO's own measured conduct, zero new parameters
+(the 1.00 floor is a zero-discount anchor, n_scalars 0), 10 residual scalars
+retired from the DOF ledger — but it carries a larger C3a error than the
+miso-49 keeper (−2.5/−1.0/−8.7). Rule 1 says a keeper is the most
+structurally faithful run, not the lowest-MAE one; the honest counter is that
+the unmasked CT/band lanes are open. Recommendation: promote **after** the
+CT-hurdle derive lands (one lane, already scoped), or promote now if the
+owner weighs the C4/C5a/C1 structural gains as decisive.
 
 ## 5. Deliverables
 
