@@ -1935,6 +1935,7 @@ def solve_and_persist(
     gt_ambient_derate_slope_ct: float | None = None,
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
+    neiso_offer_surface_conditional: bool = False,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
@@ -2206,6 +2207,7 @@ def solve_and_persist(
             gt_ambient_derate_slope_ct=gt_ambient_derate_slope_ct,
             temp_dependent_derate=temp_dependent_derate,
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+            neiso_offer_surface_conditional=neiso_offer_surface_conditional,
             must_run_mw=must_run_total,
             inject_biomass_mustrun=inject_biomass,
             priced_interchange=priced_interchange,
@@ -2558,6 +2560,7 @@ def solve_and_persist(
         "coal_nameplate_summer_derate": coal_nameplate_summer_derate,
         "temp_dependent_derate": temp_dependent_derate,
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
+        "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
@@ -2673,6 +2676,7 @@ def solve_and_persist(
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+        neiso_offer_surface_conditional=neiso_offer_surface_conditional,
     )
     # Coal sigmoid flags mirror run_year exactly — run_config.json must
     # record the same enables/params the LP solved with (the prb sigmoid +
