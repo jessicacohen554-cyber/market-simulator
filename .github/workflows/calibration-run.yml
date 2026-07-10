@@ -139,7 +139,12 @@ jobs:
         # runner must rebuild it from the committed raw tree before any
         # loader can read_clean (e.g. capacity-deliverability for the NYISO
         # LI TSL cap, measured neighbor LMPs, outages, fleet).
-        run: python scripts/regenerate_clean.py
+        # Targeted: a read_clean trace of a full NYISO replay (solve + report
+        # + benchmark build) shows exactly two clean datatypes are read —
+        # capacity-deliverability and zonal-shares — and zonal-shares has a
+        # keeper-validated raw fallback (nyiso-56). The full 33-datatype regen
+        # OOM-killed standard runners (the CAMPD-hourly emissions curation).
+        run: python scripts/regenerate_clean.py capacity-deliverability
 
       - name: Build offer-curve deltas from tweaks
         # Turn the friendly "CLASS.BAND <delta>" entries into the delta JSON the
@@ -224,7 +229,12 @@ jobs:
       - name: Regenerate clean datatypes from raw
         # Same as the solve job: the render/verdict path reads through the
         # clean_io seam on a fresh runner.
-        run: python scripts/regenerate_clean.py
+        # Targeted: a read_clean trace of a full NYISO replay (solve + report
+        # + benchmark build) shows exactly two clean datatypes are read —
+        # capacity-deliverability and zonal-shares — and zonal-shares has a
+        # keeper-validated raw fallback (nyiso-56). The full 33-datatype regen
+        # OOM-killed standard runners (the CAMPD-hourly emissions curation).
+        run: python scripts/regenerate_clean.py capacity-deliverability
 
       - name: Download bundle artifact
         uses: actions/download-artifact@v4
