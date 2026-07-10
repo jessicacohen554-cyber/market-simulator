@@ -14,15 +14,15 @@
 #   3. the session's calibration-log entry is appended (heading-gated) and
 #      committed with the results.
 #
-# Trigger: push of .github/patches/pjm97_definition.txt (the post-analysis
-# sidecar finding, written after the session's local solve was scored) or of
-# this file. Idempotent: skips the solve if the bundle is complete, skips
-# registration if the sidecar exists, append is heading-gated. Also prunes
-# the two oldest PJM registrations (pjm-83, pjm-86) per the dashboard's
-# top-15-per-ISO retention (17 after pjm-96 + pjm-97 land). Legitimacy
-# diagnostics may exit 1 (a probe can fail D-gates) — the artifact is the
-# deliverable. Delete this workflow + the patches payload from main after
-# the PR merges (one-shot convention).
+# Run 29096868050 completed everything through the results commit but the
+# push failed: the build_manifest preview step regenerates tracked
+# deploy-owned shared files in the working tree, which blocked
+# `git pull --rebase`. The preview step is removed (the Pages deploy is
+# those files' single writer) and the push hard-resets the tree after
+# committing. Trigger: push of .github/patches/pjm97_definition.txt or of
+# this file. Idempotent; prunes pjm-83 and pjm-86 (top-15 retention).
+# Delete this workflow + the patches payload from main after the PR merges
+# (one-shot convention).
 
 name: register-pjm97
 
@@ -160,9 +160,6 @@ jobs:
       - name: Verify registry/payload parity (CI gate)
         run: python scripts/check_registry_payload_parity.py
 
-      - name: Local preview rebuild (not committed -- deploy workflow owns manifest.js/benchmark.js)
-        run: python scripts/build_manifest.py
-
       - name: Commit and push
         run: |
           set -euo pipefail
@@ -199,6 +196,10 @@ jobs:
           MSGEOF
           sed -i 's/^ \{10\}//' /tmp/pjm97_commit_msg.txt
           git commit -F /tmp/pjm97_commit_msg.txt
+          # Drop any unstaged edits to tracked files (e.g. regenerated shared
+          # data) so pull --rebase cannot refuse; the commit holds everything
+          # this run publishes.
+          git reset --hard HEAD
           for i in 1 2 3 4; do
             git pull --rebase origin "${GITHUB_REF_NAME}" && \
             git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
