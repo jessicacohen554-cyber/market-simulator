@@ -51,8 +51,23 @@ Results" (RT), data/raw/PJM-AS/reserve_market_results_<year>.parquet;
 provenance for the curve/products in docs/multi-iso/pjm-reserve-curve-source.md.
 
 Run:
-    python scripts/build_pjm_as_withholding.py                 # 2023 2024 2025
+    python scripts/build_pjm_as_withholding.py                 # all DEFAULT_YEARS
     python scripts/build_pjm_as_withholding.py --year 2024
+    python scripts/build_pjm_as_withholding.py --year 2018 2019 2020 2021 2022
+
+Year coverage: this builder was already year-parametrized (``--year`` takes
+any int list, and ``build_year`` gracefully skips — prints and returns False,
+never raises — a year whose source parquet is missing). The 2018-2022
+holdout-intake (``scripts/fetch_pjm_as.py``, CLAUDE.md rule 22) lands full-year
+``reserve_market_results_<year>.parquet`` for those years (RT retention goes
+back to 2013-06-14), so DEFAULT_YEARS now includes them and no code change was
+needed beyond that. **H1-2026 is deliberately NOT buildable here**:
+``fetch_pjm_as.py`` writes that partial year under a ``_partial`` filename
+suffix specifically so this builder's plain-name lookup (and its own
+``_MAX_GAP_HOURS`` full-year gap guard, which would otherwise raise on the
+~4400-hour missing H2) never sees it — a half-year 8760-hour withholding
+series would be fabricated data. A full 2026 build must wait for H2 data and
+an explicit merge into the plain-named file.
 """
 
 from __future__ import annotations
@@ -72,7 +87,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 # source and output parquets both live under data/raw/PJM-AS.
 AS_DIR = REPO_ROOT / "data" / "raw" / "PJM-AS"
 
-DEFAULT_YEARS: tuple[int, ...] = (2023, 2024, 2025)
+# 2018-2022 land via scripts/fetch_pjm_as.py's rule-22 holdout intake (RT
+# reserve-market retention runs back to 2013-06-14, so these are full calendar
+# years, not padded); 2023-2025 are the original hand-assembled in-sample
+# years. H1-2026 is intentionally excluded — see module docstring.
+DEFAULT_YEARS: tuple[int, ...] = (2018, 2019, 2020, 2021, 2022, 2023, 2024, 2025)
 
 # Reserve zones (Manual 11 sec 4.2: the RTO Reserve Zone and its one Reserve
 # Subzone, Mid-Atlantic/Dominion) and the binding upward product (Primary,
