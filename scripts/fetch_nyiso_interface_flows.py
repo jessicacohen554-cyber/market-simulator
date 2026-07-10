@@ -26,7 +26,8 @@ hour-beginning UTC):
     positive_limit_mw  = min of "Positive Limit (MWH)"  (most-binding rating)
     negative_limit_mw  = max of "Negative Limit (MWH)"  (most-binding; limits
                          are negative, so max is closest to zero)
-    n_intervals        = observation count (24 in the DST fall-back hour)
+    n_intervals        = observation count (24 in the DST fall-back hour;
+                         0 = interior gap filled from the adjacent actual)
 
 Timestamps: the source is Eastern prevailing wall-clock with no EDT/EST flag.
 Rows within each daily file are in chronological order, so the duplicated
@@ -131,10 +132,39 @@ def _aggregate_hourly(df: pd.DataFrame) -> pd.DataFrame:
             "hour_utc": "interval_start_utc",
         }
     )
+    out = _fill_interior_gaps(out)
     local = out["interval_start_utc"].dt.tz_convert(_TZ).dt.tz_localize(None)
     out.insert(3, "interval_start_local", local)
     out["flow_mw"] = out["flow_mw"].round(2)
     return out.sort_values(["interface", "interval_start_utc"], ignore_index=True)
+
+
+def _fill_interior_gaps(hourly: pd.DataFrame) -> pd.DataFrame:
+    """Fill missing hours from adjacent actual observations (owner 2026-07-10).
+
+    The MIS source drops a handful of hours per year (1-3 system-wide, e.g.
+    partial daily files). Per interface, reindex the UTC hourly range between
+    that interface's FIRST and LAST observed hour and forward-fill flow and
+    limits from the previous actual observation (back-fill only for a gap at
+    the very start of the observed range). Filled rows carry
+    ``n_intervals = 0`` so consumers can always separate measured from
+    gap-filled hours. Hours before an interface first exists (e.g. CHPE
+    pre-in-service in 2026) or after it last posts are NOT invented — only
+    interior gaps are filled.
+    """
+    parts: list[pd.DataFrame] = []
+    for (interface, point_id), g in hourly.groupby(["interface", "point_id"]):
+        g = g.set_index("interval_start_utc").sort_index()
+        full = pd.date_range(g.index.min(), g.index.max(), freq="h", tz="UTC")
+        g = g.reindex(full)
+        g.index.name = "interval_start_utc"
+        g["interface"] = interface
+        g["point_id"] = point_id
+        g["n_intervals"] = g["n_intervals"].fillna(0).astype("int64")
+        for col in ("flow_mw", "positive_limit_mw", "negative_limit_mw"):
+            g[col] = g[col].ffill().bfill()
+        parts.append(g.reset_index())
+    return pd.concat(parts, ignore_index=True)
 
 
 def fetch(
