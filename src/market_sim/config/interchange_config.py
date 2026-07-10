@@ -369,6 +369,19 @@ CAISO_CORRIDOR_DIBA: dict[str, str] = {
 
 CAISO_CORRIDOR_FLOW_PERCENTILE: float = 95.0
 
+# Percentile of the measured total CISO corridor net import, per (month ×
+# hour-of-day) bucket, defining the SHAPE of the firm/contracted import base
+# when ScenarioConfig.caiso_firm_import_shape is on (caiso-73). The MEDIAN is
+# the revealed typical-day schedule of the contracted/self-scheduled base —
+# robust to scarcity spikes (which belong to the spot tranches) and to outage
+# dips. The shape is normalized to unit mean before use
+# (eia_loader.measured_firm_import_shape), so this percentile choice sets only
+# the profile, never the level — the level stays the published DMM RA-import ×
+# MIC-split sizing of IMPORT_TRANCHES_BY_YEAR. Identification: measured
+# (rule 23 — re-derives only when the EIA-930 extract extends). Source:
+# EIA-930 BA-to-BA interchange, CISO extract.
+CAISO_FIRM_IMPORT_SHAPE_PERCENTILE: float = 50.0
+
 # Strength of the midday solar deliverability derate.
 CAISO_CORRIDOR_ATC_SOLAR_K: float = 1.5
 

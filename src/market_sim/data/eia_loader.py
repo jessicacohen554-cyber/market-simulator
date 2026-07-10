@@ -1412,6 +1412,113 @@ def measured_corridor_flow_envelope(
     return out or None
 
 
+def measured_firm_import_shape(
+    iso: str,
+    year: int,
+    hours: int,
+    percentile: float | None = None,
+) -> np.ndarray | None:
+    """Return the unit-mean measured shape of CAISO's firm import base.
+
+    For each hour of the run horizon, the per-(month × hour-of-day)
+    ``percentile`` (default
+    :data:`~market_sim.config.interchange_config.CAISO_FIRM_IMPORT_SHAPE_PERCENTILE`,
+    the median) of the MEASURED total CISO corridor net import from EIA-930
+    BA-to-BA interchange (``data/raw/eia-930-interchange/CISO interchange
+    hourly.parquet``, summed over the corridor DIBAs of
+    :data:`~market_sim.config.interchange_config.CAISO_CORRIDOR_DIBA`),
+    clipped at 0 and normalized to UNIT MEAN over the mapped 8760 — a pure
+    weight profile w(t), mean(w) = 1.
+
+    The caller (:func:`market_sim.model.transmission
+    .inject_caiso_firm_import_shape`) multiplies each firm/contracted import
+    tranche's year-grounded DMM level by this weight, so the firm block's
+    ANNUAL energy capability equals the published DMM RA-import × MIC-split
+    sizing (the ``IMPORT_TRANCHES_BY_YEAR`` derivation) while its diurnal /
+    seasonal availability follows the measured revealed import base: CAISO's
+    net imports run 5.3–6.3 GW overnight, 0.2–1.3 GW midday (its own solar
+    displaces them) and ramp back to 5.4–6.2 GW in the evening — a shape the
+    flat 8760 block cannot represent. The median is the revealed
+    typical-day schedule of the contracted/self-scheduled base, robust to
+    both scarcity spikes and outage dips; because the profile is normalized
+    to unit mean, the level never comes from this series (rule #13: EIA-930
+    net flows cannot size a gross firm block — the DMM ladder carries the
+    level, this carries only the shape).
+
+    A backcast year uses its own measured shape (the same admissibility
+    class as same-year CAMPD outage windows — the market's realized
+    contracted-schedule structure); a year the extract does not cover (a
+    forecast year) pools ALL covered years into one climatological shape, so
+    the mechanism regenerates forward (DMM RA import contracting is a
+    persistent market structure; the pool extends automatically as the
+    extract does, rule #23). The extract's ``local_time`` stamps are mapped
+    onto the model clock via :func:`_caiso_interchange_model_clock` before
+    (month, hod) bucketing — never bucketed by their offset labels.
+
+    Returns ``(hours,)`` unit-mean weights, or ``None`` when the ISO is not
+    CAISO, the parquet is absent, or no usable data survives — the caller
+    leaves the firm blocks flat (byte-identical).
+    """
+    if iso.upper() != "CAISO":
+        return None
+    from market_sim.config.interchange_config import (
+        CAISO_CORRIDOR_DIBA,
+        CAISO_FIRM_IMPORT_SHAPE_PERCENTILE,
+    )
+    from market_sim.data.fleet import _hour_to_month_index
+
+    pct = (
+        CAISO_FIRM_IMPORT_SHAPE_PERCENTILE if percentile is None else float(percentile)
+    )
+    path = RAW_DIR / "eia-930-interchange" / "CISO interchange hourly.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    local = _caiso_interchange_model_clock(pd.DatetimeIndex(frame["local_time"]))
+    covered = frame[local.year == year]
+    if covered.empty:
+        # Forecast year: pooled multi-year climatological shape.
+        work_frame, work_local = frame, local
+    else:
+        work_frame, work_local = covered, local[local.year == year]
+    corridor = work_frame["diba"].astype(str).map(CAISO_CORRIDOR_DIBA)
+    work = pd.DataFrame(
+        {
+            "month": work_local.month.to_numpy(),
+            "hod": work_local.hour.to_numpy(),
+            "ts": work_local.to_numpy(),
+            "mw": pd.to_numeric(work_frame["mw"], errors="coerce").to_numpy(),
+        }
+    )[corridor.notna().to_numpy()].dropna(subset=["mw"])
+    if work.empty:
+        return None
+    # Total net import per timestamp = -sum(interchange over corridor DIBAs).
+    per_ts = (
+        -work.groupby(["ts", "month", "hod"], observed=True)["mw"].sum()
+    ).reset_index(name="net_import")
+    tab = np.full((12, 24), np.nan)
+    for (m, h), g in per_ts.groupby(["month", "hod"], observed=True):
+        tab[m - 1, h] = np.percentile(g["net_import"].to_numpy(), pct)
+    tab = np.clip(tab, 0.0, None)  # a net-export bucket carries zero firm weight
+    # Fill any empty bucket with its month's mean over populated hours, then
+    # the global mean — a weight, so the neutral fill is the mean (the
+    # envelope functions fill with max because theirs is a ceiling).
+    for m in range(12):
+        row = tab[m]
+        if np.all(np.isnan(row)):
+            continue
+        row[np.isnan(row)] = np.nanmean(row)
+    if np.any(np.isnan(tab)):
+        tab = np.where(np.isnan(tab), np.nanmean(tab), tab)
+    rm = _hour_to_month_index(hours)  # 0-based month per model hour
+    rh = np.arange(hours) % 24
+    raw = tab[rm, rh]
+    mean = float(raw.mean())
+    if not np.isfinite(mean) or mean <= 0.0:
+        return None
+    return raw / mean
+
+
 def caiso_solar_fraction(year: int, hours: int) -> np.ndarray | None:
     """Return CISO's hourly solar penetration (solar / demand) on the LP clock.
 
