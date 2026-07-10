@@ -1,0 +1,59 @@
+# One-shot merge-unblock for PR #1933 (pjm-95 -> pjm-94 keeper demotion).
+#
+# The PR's ONLY conflict against main is docs/calibration-log.md: both sides
+# append at EOF (this branch's demotion entry vs newer upstream session
+# entries), which merge-ort cannot reconcile textually — and no head-side
+# content edit can clear a both-appended overlap. Fix: revert this branch's
+# calibration-log.md to the merge-base version so the branch no longer
+# touches the file at all. The demotion entry re-lands on main as a corrected
+# follow-up commit right after the merge (probe re-run audit corrections).
+#
+# Trigger is the push of this file itself (the Claude remote env cannot POST
+# workflow dispatches — the fetch-pjm-interchange.yml precedent). Push-event
+# branch filter pins it to the PR branch, so the post-merge push to main can
+# never fire it. Idempotent: no-ops when the entry is already absent. The
+# post-merge follow-up deletes this workflow from main.
+
+name: merge-unblock-pr1933
+
+on:
+  push:
+    branches:
+      - claude/pjm-calibration-fuel-scarcity-2gd56m
+    paths:
+      - ".github/workflows/merge-unblock-pr1933.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  revert-log:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Revert calibration-log.md to the merge-base version
+        run: |
+          set -euo pipefail
+          if ! grep -q "PJM keeper DEMOTED: pjm-95" docs/calibration-log.md; then
+            echo "entry already absent — nothing to do"
+            exit 0
+          fi
+          MB=$(git merge-base origin/main HEAD)
+          echo "merge-base: $MB"
+          git checkout "$MB" -- docs/calibration-log.md
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          git add docs/calibration-log.md
+          git commit -m "chore(pr1933): drop the calibration-log entry from this branch — EOF append conflicts with newer main entries; the corrected entry re-lands on main as a post-merge follow-up (the entry text is preserved in .github/patches/pjm96_callog_entry.md)"
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && \
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
