@@ -1,0 +1,1113 @@
+source_file,timestamp_local,message
+20260101OperMessages.csv,01-Jan-2026 14:08, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260101OperMessages.csv,01-Jan-2026 14:13,"Prices in the December 31, 2025 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 02, 2026 Day-Ahead Market are correct."
+20260101OperMessages.csv,01-Jan-2026 15:34,"Prices in the January 01, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260102OperMessages.csv,02-Jan-2026 06:01, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260102OperMessages.csv,02-Jan-2026 13:26,"Prices in the January 01, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 03, 2026 Day-Ahead Market are correct."
+20260102OperMessages.csv,02-Jan-2026 15:55,"Prices in the January 02, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260103OperMessages.csv,03-Jan-2026 10:51, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260103OperMessages.csv,03-Jan-2026 14:27,"Prices in the January 02, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 04, 2026 Day-Ahead Market are correct."
+20260103OperMessages.csv,03-Jan-2026 14:56,"Prices in the January 03, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260104OperMessages.csv,04-Jan-2026 10:18,NYISO Locational based curtailment cut 300 MWs.  01/04/2026 10:18 EST
+20260104OperMessages.csv,04-Jan-2026 14:00,"Prices in the January 03, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 05, 2026 Day-Ahead Market are correct."
+20260104OperMessages.csv,04-Jan-2026 14:59,"Prices in the January 04, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260104OperMessages.csv,04-Jan-2026 16:18,NYISO Locational based curtailment cut 200 MWs.  01/04/2026 16:18 EST
+20260105OperMessages.csv,05-Jan-2026 09:15,"Interface: NYCA, 15 minute scheduling disabled beginning 05-Jan-2026 16:00:00 until 05-Jan-2026 18:00:00"
+20260105OperMessages.csv,05-Jan-2026 09:24, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260105OperMessages.csv,05-Jan-2026 14:25,"Prices in the January 04, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 06, 2026 Day-Ahead Market are correct."
+20260105OperMessages.csv,05-Jan-2026 15:53,"Prices in the January 05, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260106OperMessages.csv,06-Jan-2026 00:58,01/06/2026 00:55:11  NYISO large event reserve pick-up executed.
+20260106OperMessages.csv,06-Jan-2026 16:13,"NYISO is reserving HB 13,14 in the January 05, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the January 07, 2026 Day-Ahead Market are correct."
+20260106OperMessages.csv,06-Jan-2026 17:23,O H initiated curtailment cut 561 MWs.  01/06/2026 17:23 EST
+20260106OperMessages.csv,06-Jan-2026 17:34,"Prices in the January 06, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260107OperMessages.csv,07-Jan-2026 15:41,"Prices in the January 06, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 08, 2026 Day-Ahead Market are correct."
+20260107OperMessages.csv,07-Jan-2026 15:45,"Prices in the January 07, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260108OperMessages.csv,08-Jan-2026 15:39, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260108OperMessages.csv,08-Jan-2026 15:57,"Prices in the January 07, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 09, 2026 Day-Ahead Market are correct."
+20260108OperMessages.csv,08-Jan-2026 16:40,"Prices in the January 08, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260108OperMessages.csv,08-Jan-2026 17:40,"NYISO has corrected prices in HB 13 in the January 05, 2026 Real-Time Market.
+NYISO is releasing prices in HB 14 in the January 05, 2026 Real-Time Market."
+20260109OperMessages.csv,09-Jan-2026 13:49, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260109OperMessages.csv,09-Jan-2026 14:05,"Prices in the January 08, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 10, 2026 Day-Ahead Market are correct."
+20260110OperMessages.csv,10-Jan-2026 09:27,"Prices in the January 09, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260110OperMessages.csv,10-Jan-2026 16:29,"Prices in the January 09, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 11, 2026 Day-Ahead Market are correct."
+20260110OperMessages.csv,10-Jan-2026 17:03,"Prices in the January 10, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260111OperMessages.csv,11-Jan-2026 16:01,"Prices in the January 10, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 12, 2026 Day-Ahead Market are correct."
+20260111OperMessages.csv,11-Jan-2026 16:33,"Prices in the January 11, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260112OperMessages.csv,12-Jan-2026 06:45, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260112OperMessages.csv,12-Jan-2026 13:58,"Prices in the January 11, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 13, 2026 Day-Ahead Market are correct."
+20260112OperMessages.csv,12-Jan-2026 15:15,"Prices in the January 12, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260113OperMessages.csv,13-Jan-2026 08:11,NYISO Locational based curtailment cut 210 MWs.  01/13/2026 08:11 EST
+20260113OperMessages.csv,13-Jan-2026 09:32, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260113OperMessages.csv,13-Jan-2026 13:42,"Market Monitoring  Load Pocket Thresholds  2026
+
+
+Day Ahead Load Pocket Thresholds have been updated for market day of
+January 15, 2026
+
+Day Ahead Load Pocket			Threshold $
+	
+DUNWOODIE SOUTH 			$ 42.43
+STATEN ISLAND				$ 7.70
+EAST RIVER					$ 41.41
+IN CITY 345/138 				$ 4.29
+ASTORIA EAST/COR/JAMAICA		$ 4.11
+ASTOR WEST/QUEENB/VERNON	$ 4.11
+ASTORIA WEST/QUEENSBRIDG	$ 4.10
+VERNON/GREENWOOD			$ 4.40
+GREENWOOD/STATEN ISLAND		$ 3.58
+"
+20260113OperMessages.csv,13-Jan-2026 13:42,"Real Time Load Pocket Thresholds have been updated for market day: 
+January 15, 2026, at 10:00:01
+
+Real Time Load Pocket			Threshold $
+	
+DUNWOODIE SOUTH 			$ 81.90
+STATEN ISLAND				$ 34.19
+EAST RIVER					$ 78.47
+IN CITY 345/138 				$ 16.47
+ASTORIA EAST/COR/JAMAICA		$ 15.41
+ASTOR WEST/QUEENB/VERNON	$ 15.28
+ASTORIA WEST/QUEENSBRIDG	$ 15.29
+VERNON/GREENWOOD			$ 17.11
+GREENWOOD/STATEN ISLAND		$ 7.98
+
+"
+20260113OperMessages.csv,13-Jan-2026 15:09,"Prices in the January 12, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 14, 2026 Day-Ahead Market are correct."
+20260113OperMessages.csv,13-Jan-2026 15:48,"Prices in the January 13, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260114OperMessages.csv,14-Jan-2026 08:30,"Interface: NYCA, 15 minute scheduling disabled beginning 14-Jan-2026 18:00:00 until 14-Jan-2026 21:00:00"
+20260114OperMessages.csv,14-Jan-2026 14:01,"Prices in the January 13, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 15, 2026 Day-Ahead Market are correct."
+20260114OperMessages.csv,14-Jan-2026 15:30, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260115OperMessages.csv,15-Jan-2026 09:52, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260115OperMessages.csv,15-Jan-2026 15:39,"NYISO is reserving HB 11 in the January 14, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves."
+20260115OperMessages.csv,15-Jan-2026 15:43,"NYISO is reserving HB 12,13,14 in the January 14, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the January 16, 2026 Day-Ahead Market are correct."
+20260115OperMessages.csv,15-Jan-2026 15:49,"Prices in the January 15, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260116OperMessages.csv,16-Jan-2026 08:06, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260116OperMessages.csv,16-Jan-2026 11:32,NYISO Locational based curtailment cut 205 MWs.  01/16/2026 11:32 EST
+20260116OperMessages.csv,16-Jan-2026 16:32,"Prices in the January 15, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 17, 2026 Day-Ahead Market are correct."
+20260116OperMessages.csv,16-Jan-2026 17:06,"NYISO is releasing prices in HB 11,12,13,14 in the January 14, 2026 Real-Time Market."
+20260116OperMessages.csv,16-Jan-2026 17:11,"Prices in the January 16, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260117OperMessages.csv,17-Jan-2026 12:08, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260117OperMessages.csv,17-Jan-2026 15:56,"Prices in the January 16, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 18, 2026 Day-Ahead Market are correct."
+20260117OperMessages.csv,17-Jan-2026 16:45,"Prices in the January 17, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260118OperMessages.csv,18-Jan-2026 13:22, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260118OperMessages.csv,18-Jan-2026 15:51,"Prices in the January 17, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 19, 2026 Day-Ahead Market are correct."
+20260118OperMessages.csv,18-Jan-2026 17:08,NYISO Locational based curtailment cut 300 MWs.  01/18/2026 17:08 EST
+20260118OperMessages.csv,18-Jan-2026 20:13,NYISO Locational based curtailment cut 300 MWs.  01/18/2026 20:13 EST
+20260119OperMessages.csv,19-Jan-2026 15:59,"NYISO is reserving HB 6,7,8 in the January 18, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves."
+20260119OperMessages.csv,19-Jan-2026 16:10,"Prices in the January 18, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 20, 2026 Day-Ahead Market are correct."
+20260119OperMessages.csv,19-Jan-2026 17:01,"Prices in the January 19, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260120OperMessages.csv,20-Jan-2026 05:27,NYISO Locational based curtailment cut 100 MWs.  01/20/2026 05:27 EST
+20260120OperMessages.csv,20-Jan-2026 05:36, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260120OperMessages.csv,20-Jan-2026 16:03,"Prices in the January 19, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 21, 2026 Day-Ahead Market are correct."
+20260120OperMessages.csv,20-Jan-2026 16:30,"Prices in the January 20, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260121OperMessages.csv,21-Jan-2026 07:31, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260121OperMessages.csv,21-Jan-2026 11:12,"NYISO is releasing prices in HB 6,7,8 in the January 18, 2026 Real-Time Market."
+20260121OperMessages.csv,21-Jan-2026 14:23,"NYISO is reserving HB 23 in the January 20, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the January 22, 2026 Day-Ahead Market are correct."
+20260122OperMessages.csv,22-Jan-2026 05:34, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260122OperMessages.csv,22-Jan-2026 08:00,"Interface: NYCA, 15 minute scheduling disabled beginning 22-Jan-2026 12:00:00 until 22-Jan-2026 14:00:00"
+20260122OperMessages.csv,22-Jan-2026 14:30,H Q initiated curtailment cut 83 MWs.  01/22/2026 14:30 EST
+20260122OperMessages.csv,22-Jan-2026 15:57,"NYISO is reserving HB 0,1,2 in the January 21, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves."
+20260122OperMessages.csv,22-Jan-2026 16:00,"Prices in the January 21, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 23, 2026 Day-Ahead Market are correct."
+20260122OperMessages.csv,22-Jan-2026 17:29,"Prices in the January 22, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260123OperMessages.csv,23-Jan-2026 06:14, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260123OperMessages.csv,23-Jan-2026 15:31,"Prices in the January 22, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 24, 2026 Day-Ahead Market are correct."
+20260123OperMessages.csv,23-Jan-2026 16:22, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260123OperMessages.csv,23-Jan-2026 17:10,"Prices in the January 23, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260124OperMessages.csv,24-Jan-2026 08:36,NYISO Locational based curtailment cut 500 MWs.  01/24/2026 08:36 EST
+20260124OperMessages.csv,24-Jan-2026 11:38,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260124OperMessages.csv,24-Jan-2026 11:39,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260124OperMessages.csv,24-Jan-2026 14:35,"NYISO is reserving HB 23 in the January 23, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the January 25, 2026 Day-Ahead Market are correct."
+20260124OperMessages.csv,24-Jan-2026 17:22,NYISO Locational based curtailment cut 400 MWs.  01/24/2026 17:22 EST
+20260124OperMessages.csv,24-Jan-2026 19:15,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 24-Jan-2026 20:00:00 until 24-Jan-2026 22:00:00"
+20260125OperMessages.csv,25-Jan-2026 11:38,"SCR resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260125OperMessages.csv,25-Jan-2026 11:39,"EDRP resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260125OperMessages.csv,25-Jan-2026 11:44,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260125OperMessages.csv,25-Jan-2026 11:45,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260125OperMessages.csv,25-Jan-2026 12:30,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 25-Jan-2026 16:00:00 until 26-Jan-2026 00:00:00"
+20260125OperMessages.csv,25-Jan-2026 15:40,"NYISO is reserving HB 0,1 in the January 24, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves."
+20260125OperMessages.csv,25-Jan-2026 15:52,"NYISO is reserving HB 17,18 in the January 24, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the January 26, 2026 Day-Ahead Market are correct."
+20260126OperMessages.csv,26-Jan-2026 00:00,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 25-Jan-2026 16:00:00 until 26-Jan-2026 00:00:00"
+20260126OperMessages.csv,26-Jan-2026 11:38,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260126OperMessages.csv,26-Jan-2026 11:39,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260126OperMessages.csv,26-Jan-2026 12:15,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 26-Jan-2026 15:00:00 until 26-Jan-2026 21:00:00"
+20260126OperMessages.csv,26-Jan-2026 12:30,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 26-Jan-2026 16:00:00 until 26-Jan-2026 21:00:00"
+20260126OperMessages.csv,26-Jan-2026 13:38,"SCR resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 16:00 and ending at 22:00."
+20260126OperMessages.csv,26-Jan-2026 13:39,"EDRP resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 16:00 and ending at 22:00."
+20260126OperMessages.csv,26-Jan-2026 14:07,"NYISO is releasing prices in HB 23 in the January 20, 2026 Real-Time Market."
+20260126OperMessages.csv,26-Jan-2026 15:20,"NYISO has corrected prices in HB 0 in the January 21, 2026 Real-Time Market.
+NYISO is releasing prices in HB 1,2 in the January 21, 2026 Real-Time Market."
+20260126OperMessages.csv,26-Jan-2026 16:06,01/26/2026 16:04:22  NYISO large event reserve pick-up executed.
+20260126OperMessages.csv,26-Jan-2026 16:06,01/26/2026 16:05:00  NYISO large event reserve pick-up executed.
+20260126OperMessages.csv,26-Jan-2026 16:06,"Prices in the January 25, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260126OperMessages.csv,26-Jan-2026 16:11,01/26/2026 16:05:34  NYISO large event reserve pick-up executed.
+20260126OperMessages.csv,26-Jan-2026 16:11,01/26/2026 16:10:00  NYISO large event reserve pick-up executed.
+20260126OperMessages.csv,26-Jan-2026 16:49,"Prices in the January 25, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260126OperMessages.csv,26-Jan-2026 17:36,01/26/2026 17:32:28  NYISO large event reserve pick-up executed.
+20260126OperMessages.csv,26-Jan-2026 17:36,01/26/2026 17:35:00  NYISO large event reserve pick-up executed.
+20260126OperMessages.csv,26-Jan-2026 17:39,"Prices in the January 26, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260126OperMessages.csv,26-Jan-2026 21:51,"Prices in the January 27, 2026 Day-Ahead Market are correct."
+20260127OperMessages.csv,27-Jan-2026 11:36,"SCR resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260127OperMessages.csv,27-Jan-2026 11:37,"EDRP resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260127OperMessages.csv,27-Jan-2026 11:43,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260127OperMessages.csv,27-Jan-2026 11:44,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260127OperMessages.csv,27-Jan-2026 14:35,"NYISO is releasing prices in HB 23 in the January 23, 2026 Real-Time Market."
+20260127OperMessages.csv,27-Jan-2026 14:41,"NYISO is releasing prices in HB 0,1,17,18 in the January 24, 2026 Real-Time Market."
+20260127OperMessages.csv,27-Jan-2026 16:17,"Prices in the January 26, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 28, 2026 Day-Ahead Market are correct."
+20260127OperMessages.csv,27-Jan-2026 16:38,"Prices in the January 27, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260127OperMessages.csv,27-Jan-2026 20:15,"Interface: PJM_GEN_KEYSTONE, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 27-Jan-2026 22:00:00"
+20260127OperMessages.csv,27-Jan-2026 20:15,"Interface: PJM_GEN_NEPTUNE_PROXY, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 27-Jan-2026 22:00:00"
+20260127OperMessages.csv,27-Jan-2026 20:15,"Interface: PJM_GEN_VFT_PROXY, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 27-Jan-2026 22:00:00"
+20260127OperMessages.csv,27-Jan-2026 20:15,"Interface: PJM_GEN_HTP_PROXY, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 27-Jan-2026 22:00:00"
+20260127OperMessages.csv,27-Jan-2026 20:30,"Interface: PJM_GEN_KEYSTONE, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 28-Jan-2026 02:00:00"
+20260127OperMessages.csv,27-Jan-2026 20:30,"Interface: PJM_GEN_NEPTUNE_PROXY, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 28-Jan-2026 02:00:00"
+20260127OperMessages.csv,27-Jan-2026 20:30,"Interface: PJM_GEN_VFT_PROXY, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 28-Jan-2026 02:00:00"
+20260127OperMessages.csv,27-Jan-2026 20:30,"Interface: PJM_GEN_HTP_PROXY, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 28-Jan-2026 02:00:00"
+20260127OperMessages.csv,27-Jan-2026 21:15,"Interface: PJM_GEN_KEYSTONE, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 27-Jan-2026 22:00:00"
+20260127OperMessages.csv,27-Jan-2026 21:15,"Interface: PJM_GEN_NEPTUNE_PROXY, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 27-Jan-2026 22:00:00"
+20260127OperMessages.csv,27-Jan-2026 21:15,"Interface: PJM_GEN_VFT_PROXY, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 27-Jan-2026 22:00:00"
+20260127OperMessages.csv,27-Jan-2026 21:15,"Interface: PJM_GEN_HTP_PROXY, 15 minute scheduling disabled beginning 27-Jan-2026 21:00:00 until 27-Jan-2026 22:00:00"
+20260128OperMessages.csv,28-Jan-2026 08:45,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 28-Jan-2026 15:00:00 until 29-Jan-2026 00:00:00"
+20260128OperMessages.csv,28-Jan-2026 11:34,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260128OperMessages.csv,28-Jan-2026 11:35,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260128OperMessages.csv,28-Jan-2026 11:38,"SCR resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260128OperMessages.csv,28-Jan-2026 11:39,"EDRP resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260128OperMessages.csv,28-Jan-2026 14:22,"Prices in the January 27, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 29, 2026 Day-Ahead Market are correct."
+20260128OperMessages.csv,28-Jan-2026 14:46,"Prices in the January 28, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260129OperMessages.csv,29-Jan-2026 00:00,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 28-Jan-2026 15:00:00 until 29-Jan-2026 00:00:00"
+20260129OperMessages.csv,29-Jan-2026 11:34,"SCR resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260129OperMessages.csv,29-Jan-2026 11:35,"EDRP resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260129OperMessages.csv,29-Jan-2026 11:39,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260129OperMessages.csv,29-Jan-2026 11:40,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260129OperMessages.csv,29-Jan-2026 14:29,"Prices in the January 28, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 30, 2026 Day-Ahead Market are correct."
+20260129OperMessages.csv,29-Jan-2026 15:34,"Prices in the January 29, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260130OperMessages.csv,30-Jan-2026 10:00,"Interface: NYCA, 15 minute scheduling disabled beginning 30-Jan-2026 15:00:00 until 31-Jan-2026 00:00:00"
+20260130OperMessages.csv,30-Jan-2026 12:06,"SCR resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260130OperMessages.csv,30-Jan-2026 12:07,"EDRP resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260130OperMessages.csv,30-Jan-2026 12:12,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260130OperMessages.csv,30-Jan-2026 12:13,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260130OperMessages.csv,30-Jan-2026 16:12,"Prices in the January 29, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the January 31, 2026 Day-Ahead Market are correct."
+20260130OperMessages.csv,30-Jan-2026 16:21,"Prices in the January 30, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260131OperMessages.csv,31-Jan-2026 00:00,"Interface: NYCA, 15 minute scheduling disabled beginning 30-Jan-2026 15:00:00 until 31-Jan-2026 00:00:00"
+20260131OperMessages.csv,31-Jan-2026 09:15,"Interface: NYCA, 15 minute scheduling disabled beginning 31-Jan-2026 15:00:00 until 01-Feb-2026 00:00:00"
+20260131OperMessages.csv,31-Jan-2026 13:52,"Prices in the January 30, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 01, 2026 Day-Ahead Market are correct."
+20260131OperMessages.csv,31-Jan-2026 15:41,"Prices in the January 31, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260201OperMessages.csv,01-Feb-2026 00:00,"Interface: NYCA, 15 minute scheduling disabled beginning 31-Jan-2026 15:00:00 until 01-Feb-2026 00:00:00"
+20260201OperMessages.csv,01-Feb-2026 09:30,"Interface: NYCA, 15 minute scheduling disabled beginning 01-Feb-2026 15:00:00 until 02-Feb-2026 00:00:00"
+20260201OperMessages.csv,01-Feb-2026 12:58,"Prices in the January 31, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 02, 2026 Day-Ahead Market are correct."
+20260201OperMessages.csv,01-Feb-2026 15:00,"Prices in the February 01, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260202OperMessages.csv,02-Feb-2026 00:00,"Interface: NYCA, 15 minute scheduling disabled beginning 01-Feb-2026 15:00:00 until 02-Feb-2026 00:00:00"
+20260202OperMessages.csv,02-Feb-2026 15:21,"Prices in the February 01, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 03, 2026 Day-Ahead Market are correct."
+20260202OperMessages.csv,02-Feb-2026 16:51,"Prices in the February 02, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260203OperMessages.csv,03-Feb-2026 08:00,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 03-Feb-2026 13:00:00 until 03-Feb-2026 17:00:00"
+20260203OperMessages.csv,03-Feb-2026 15:34,"NYISO is reserving HB 21,22,23 in the February 02, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the February 04, 2026 Day-Ahead Market are correct."
+20260204OperMessages.csv,04-Feb-2026 07:28, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260204OperMessages.csv,04-Feb-2026 09:00,"Interface: NYCA, 15 minute scheduling disabled beginning 04-Feb-2026 18:00:00 until 04-Feb-2026 21:00:00"
+20260204OperMessages.csv,04-Feb-2026 15:54,"NYISO is releasing prices in HB 21, 22, 23 in the February 02, 2026 Real-Time Market."
+20260204OperMessages.csv,04-Feb-2026 16:01,"Prices in the February 03, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260204OperMessages.csv,04-Feb-2026 16:09,"Prices in the February 03, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 05, 2026 Day-Ahead Market are correct."
+20260205OperMessages.csv,05-Feb-2026 05:46, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260205OperMessages.csv,05-Feb-2026 10:30,"Prices in the February 04, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260205OperMessages.csv,05-Feb-2026 14:50,"Prices in the February 04, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 06, 2026 Day-Ahead Market are correct."
+20260206OperMessages.csv,06-Feb-2026 06:03, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260206OperMessages.csv,06-Feb-2026 10:27,"Prices in the February 05, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260206OperMessages.csv,06-Feb-2026 11:38,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260206OperMessages.csv,06-Feb-2026 11:39,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260206OperMessages.csv,06-Feb-2026 14:06,02/06/2026 14:02:06  NYISO large event reserve pick-up executed.
+20260206OperMessages.csv,06-Feb-2026 14:06,02/06/2026 14:05:00  NYISO large event reserve pick-up executed.
+20260206OperMessages.csv,06-Feb-2026 14:29,"Prices in the February 05, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 07, 2026 Day-Ahead Market are correct."
+20260206OperMessages.csv,06-Feb-2026 16:44,"Prices in the February 06, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260207OperMessages.csv,07-Feb-2026 11:30,"SCR resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260207OperMessages.csv,07-Feb-2026 11:31,"EDRP resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260207OperMessages.csv,07-Feb-2026 11:38,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260207OperMessages.csv,07-Feb-2026 11:39,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260207OperMessages.csv,07-Feb-2026 11:45,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 07-Feb-2026 15:00:00 until 07-Feb-2026 23:00:00"
+20260207OperMessages.csv,07-Feb-2026 12:33,"Prices in the February 06, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 08, 2026 Day-Ahead Market are correct."
+20260207OperMessages.csv,07-Feb-2026 14:06,"Prices in the February 07, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260208OperMessages.csv,08-Feb-2026 10:30,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 08-Feb-2026 15:00:00 until 08-Feb-2026 22:00:00"
+20260208OperMessages.csv,08-Feb-2026 11:36,"SCR resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260208OperMessages.csv,08-Feb-2026 11:37,"EDRP resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260208OperMessages.csv,08-Feb-2026 11:42,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260208OperMessages.csv,08-Feb-2026 11:43,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 15:00 and ending at 22:00."
+20260208OperMessages.csv,08-Feb-2026 14:02,"NYISO is reserving HB 17 in the February 07, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the February 09, 2026 Day-Ahead Market are correct."
+20260208OperMessages.csv,08-Feb-2026 15:00,"Prices in the February 08, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260209OperMessages.csv,09-Feb-2026 15:56,"Prices in the February 08, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 10, 2026 Day-Ahead Market are correct."
+20260210OperMessages.csv,10-Feb-2026 06:11,02/10/2026 06:07:12  NYISO large event reserve pick-up executed.
+20260210OperMessages.csv,10-Feb-2026 06:11,02/10/2026 06:10:00  NYISO large event reserve pick-up executed.
+20260210OperMessages.csv,10-Feb-2026 06:16,02/10/2026 06:15:00  NYISO large event reserve pick-up executed.
+20260210OperMessages.csv,10-Feb-2026 08:00,"Interface: HQ_GEN_WHEEL, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 08:00,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 08:00,"Interface: PJM_GEN_KEYSTONE, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 08:00,"Interface: NPX_GEN_CSC, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 08:00,"Interface: NPX_GEN_1385_PROXY, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 08:00,"Interface: PJM_GEN_NEPTUNE_PROXY, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 08:00,"Interface: HQ_GEN_IMPORT, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 08:00,"Interface: PJM_GEN_VFT_PROXY, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 08:00,"Interface: PJM_GEN_HTP_PROXY, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 08:15,"Interface: NYCA, 15 minute scheduling disabled beginning 10-Feb-2026 11:00:00 until 10-Feb-2026 16:00:00"
+20260210OperMessages.csv,10-Feb-2026 11:09,"Prices in the February 09, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260210OperMessages.csv,10-Feb-2026 14:55,"Prices in the February 09, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 11, 2026 Day-Ahead Market are correct."
+20260211OperMessages.csv,11-Feb-2026 13:18,NYISO Locational based curtailment cut 434 MWs.  02/11/2026 13:18 EST
+20260211OperMessages.csv,11-Feb-2026 13:24,NYISO Locational based curtailment cut 0 MWs.  02/11/2026 13:24 EST
+20260211OperMessages.csv,11-Feb-2026 15:55,"NYISO is releasing prices in HB 17 in the February 07, 2026 Real-Time Market."
+20260211OperMessages.csv,11-Feb-2026 16:18,"Prices in the February 10, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260211OperMessages.csv,11-Feb-2026 16:29,"Prices in the February 10, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 12, 2026 Day-Ahead Market are correct."
+20260211OperMessages.csv,11-Feb-2026 16:55,"Prices in the February 11, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260212OperMessages.csv,12-Feb-2026 15:33,"Prices in the February 11, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 13, 2026 Day-Ahead Market are correct."
+20260212OperMessages.csv,12-Feb-2026 16:23,"Prices in the February 12, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260213OperMessages.csv,13-Feb-2026 10:08, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260213OperMessages.csv,13-Feb-2026 10:19,"Market Monitoring Load Pocket Thresholds 2026
+
+
+Day Ahead Load Pocket Thresholds have been updated for market day of:
+February 15, 2026
+
+Day Ahead Load Pocket			Threshold $
+	
+DUNWOODIE SOUTH 			$ 30.83
+STATEN ISLAND				$ 5.94
+EAST RIVER					$ 30.35
+IN CITY 345/138 				$ 2.84
+ASTORIA EAST/COR/JAMAICA		$ 2.76
+ASTOR WEST/QUEENB/VERNON	$ 2.76
+ASTORIA WEST/QUEENSBRIDG	$ 2.75
+VERNON/GREENWOOD			$ 2.90
+GREENWOOD/STATEN ISLAND		$ 2.48
+"
+20260213OperMessages.csv,13-Feb-2026 10:19,"Real Time Load Pocket Thresholds have been updated for market day: 
+February 15, 2026, at 10:00:01
+
+Real Time Load Pocket			Threshold $
+	
+DUNWOODIE SOUTH 			$ 52.39
+STATEN ISLAND				$ 28.96
+EAST RIVER					$ 50.74
+IN CITY 345/138 				$ 8.16
+ASTORIA EAST/COR/JAMAICA		$ 7.75
+ASTOR WEST/QUEENB/VERNON	$ 7.69
+ASTORIA WEST/QUEENSBRIDG	$ 7.70
+VERNON/GREENWOOD			$ 8.40
+GREENWOOD/STATEN ISLAND		$ 5.13
+"
+20260213OperMessages.csv,13-Feb-2026 16:01,"Prices in the February 12, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 14, 2026 Day-Ahead Market are correct."
+20260213OperMessages.csv,13-Feb-2026 16:24,"Prices in the February 13, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260214OperMessages.csv,14-Feb-2026 01:46,02/14/2026 01:42:18  NYISO large event reserve pick-up executed.
+20260214OperMessages.csv,14-Feb-2026 01:46,02/14/2026 01:45:00  NYISO large event reserve pick-up executed.
+20260214OperMessages.csv,14-Feb-2026 01:51,02/14/2026 01:50:00  NYISO large event reserve pick-up executed.
+20260214OperMessages.csv,14-Feb-2026 13:23,ALL initiated curtailment cut 5 MWs.  02/14/2026 13:23 EST
+20260214OperMessages.csv,14-Feb-2026 14:18,"Prices in the February 13, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 15, 2026 Day-Ahead Market are correct."
+20260214OperMessages.csv,14-Feb-2026 14:54,"Prices in the February 14, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260215OperMessages.csv,15-Feb-2026 14:10,"Prices in the February 14, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 16, 2026 Day-Ahead Market are correct."
+20260215OperMessages.csv,15-Feb-2026 14:46,"Prices in the February 15, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260216OperMessages.csv,16-Feb-2026 08:25, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260216OperMessages.csv,16-Feb-2026 14:43,"Prices in the February 15, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 17, 2026 Day-Ahead Market are correct."
+20260216OperMessages.csv,16-Feb-2026 14:50,"Prices in the February 16, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260217OperMessages.csv,17-Feb-2026 06:21, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260217OperMessages.csv,17-Feb-2026 14:51,"Prices in the February 16, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 18, 2026 Day-Ahead Market are correct."
+20260217OperMessages.csv,17-Feb-2026 17:23,"Prices in the February 17, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260218OperMessages.csv,18-Feb-2026 08:52, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260218OperMessages.csv,18-Feb-2026 14:47,"Prices in the February 17, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 19, 2026 Day-Ahead Market are correct."
+20260218OperMessages.csv,18-Feb-2026 15:10,"Prices in the February 18, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260219OperMessages.csv,19-Feb-2026 07:36, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260219OperMessages.csv,19-Feb-2026 13:46,"Prices in the February 18, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 20, 2026 Day-Ahead Market are correct."
+20260219OperMessages.csv,19-Feb-2026 15:25,"Prices in the February 19, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260219OperMessages.csv,19-Feb-2026 19:18,NYISO Locational based curtailment cut 25 MWs.  02/19/2026 19:18 EST
+20260219OperMessages.csv,19-Feb-2026 22:15,NYISO Locational based curtailment cut 25 MWs.  02/19/2026 22:15 EST
+20260220OperMessages.csv,20-Feb-2026 16:23,"Prices in the February 19, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 21, 2026 Day-Ahead Market are correct."
+20260220OperMessages.csv,20-Feb-2026 16:40,"Prices in the February 20, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260220OperMessages.csv,20-Feb-2026 19:18,NYISO Locational based curtailment cut 486 MWs.  02/20/2026 19:18 EST
+20260221OperMessages.csv,21-Feb-2026 16:26,"Prices in the February 20, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 22, 2026 Day-Ahead Market are correct."
+20260221OperMessages.csv,21-Feb-2026 17:37,"Prices in the February 21, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260222OperMessages.csv,22-Feb-2026 15:21,"Prices in the February 21, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 23, 2026 Day-Ahead Market are correct."
+20260222OperMessages.csv,22-Feb-2026 15:45, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260222OperMessages.csv,22-Feb-2026 16:44,"Prices in the February 22, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260223OperMessages.csv,23-Feb-2026 06:25, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260223OperMessages.csv,23-Feb-2026 13:44,"Prices in the February 22, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 24, 2026 Day-Ahead Market are correct."
+20260223OperMessages.csv,23-Feb-2026 16:17,"Prices in the February 23, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260224OperMessages.csv,24-Feb-2026 06:11,02/24/2026 06:05:56  NYISO small event reserve pick-up executed.
+20260224OperMessages.csv,24-Feb-2026 06:11,02/24/2026 06:10:00  NYISO small event reserve pick-up executed.
+20260224OperMessages.csv,24-Feb-2026 06:16,02/24/2026 06:15:00  NYISO small event reserve pick-up executed.
+20260224OperMessages.csv,24-Feb-2026 07:56, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260224OperMessages.csv,24-Feb-2026 09:55,NYISO Locational based curtailment cut 12 MWs.  02/24/2026 09:55 EST
+20260224OperMessages.csv,24-Feb-2026 13:31,"Prices in the February 23, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 25, 2026 Day-Ahead Market are correct."
+20260224OperMessages.csv,24-Feb-2026 14:39,"Prices in the February 24, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260225OperMessages.csv,25-Feb-2026 06:04, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260225OperMessages.csv,25-Feb-2026 13:20,"Prices in the February 24, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 26, 2026 Day-Ahead Market are correct."
+20260226OperMessages.csv,26-Feb-2026 06:06, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260226OperMessages.csv,26-Feb-2026 08:00,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 26-Feb-2026 16:00:00 until 26-Feb-2026 18:00:00"
+20260226OperMessages.csv,26-Feb-2026 11:45,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 26-Feb-2026 15:00:00 until 26-Feb-2026 18:00:00"
+20260226OperMessages.csv,26-Feb-2026 16:16,"NYISO is reserving HB 10,11 in the February 25, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves."
+20260226OperMessages.csv,26-Feb-2026 16:30,"NYISO is reserving HB 12 in the February 25, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the February 27, 2026 Day-Ahead Market are correct."
+20260227OperMessages.csv,27-Feb-2026 05:56, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260227OperMessages.csv,27-Feb-2026 15:46,"Prices in the February 26, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260227OperMessages.csv,27-Feb-2026 15:48,"Prices in the February 26, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the February 28, 2026 Day-Ahead Market are correct."
+20260227OperMessages.csv,27-Feb-2026 16:21,"NYISO is releasing prices in HB 10,11,12 in the February 25, 2026 Real-Time Market."
+20260227OperMessages.csv,27-Feb-2026 16:36,"Prices in the February 27, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260228OperMessages.csv,28-Feb-2026 12:16,"Prices in the February 27, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 01, 2026 Day-Ahead Market are correct."
+20260228OperMessages.csv,28-Feb-2026 14:46,"Prices in the February 28, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260301OperMessages.csv,01-Mar-2026 12:50,"Prices in the February 28, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 02, 2026 Day-Ahead Market are correct."
+20260301OperMessages.csv,01-Mar-2026 14:54,"Prices in the March 01, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260302OperMessages.csv,02-Mar-2026 13:58,"Prices in the March 01, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 03, 2026 Day-Ahead Market are correct."
+20260302OperMessages.csv,02-Mar-2026 14:59,"Prices in the March 02, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260303OperMessages.csv,03-Mar-2026 05:54, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260303OperMessages.csv,03-Mar-2026 13:38,"Prices in the March 02, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 04, 2026 Day-Ahead Market are correct."
+20260304OperMessages.csv,04-Mar-2026 06:55, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260304OperMessages.csv,04-Mar-2026 12:31,"Prices in the March 03, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260304OperMessages.csv,04-Mar-2026 14:12,"Prices in the March 03, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 05, 2026 Day-Ahead Market are correct."
+20260304OperMessages.csv,04-Mar-2026 16:11,"Prices in the March 04, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260305OperMessages.csv,05-Mar-2026 11:07, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260305OperMessages.csv,05-Mar-2026 14:06,"Prices in the March 04, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 06, 2026 Day-Ahead Market are correct."
+20260305OperMessages.csv,05-Mar-2026 16:04,"Prices in the March 05, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260306OperMessages.csv,06-Mar-2026 07:03, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260306OperMessages.csv,06-Mar-2026 13:43,"Prices in the March 05, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 07, 2026 Day-Ahead Market are correct."
+20260306OperMessages.csv,06-Mar-2026 15:38,"Prices in the March 06, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260307OperMessages.csv,07-Mar-2026 00:29,NYISO Locational based curtailment cut 525 MWs.  03/07/2026 00:29 EST
+20260307OperMessages.csv,07-Mar-2026 15:31,"Prices in the March 06, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 08, 2026 Day-Ahead Market are correct."
+20260307OperMessages.csv,07-Mar-2026 15:38,"Prices in the March 07, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260307OperMessages.csv,07-Mar-2026 19:30,"Interface: NYCA, 15 minute scheduling disabled beginning 07-Mar-2026 23:00:00 until 08-Mar-2026 06:00:00"
+20260308OperMessages.csv,08-Mar-2026 00:00,"Interface: NYCA, 15 minute scheduling disabled beginning 07-Mar-2026 23:00:00 until 08-Mar-2026 06:00:00"
+20260308OperMessages.csv,08-Mar-2026 15:53,"Prices in the March 07, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 09, 2026 Day-Ahead Market are correct."
+20260309OperMessages.csv,09-Mar-2026 15:30,"Prices in the March 08, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260309OperMessages.csv,09-Mar-2026 15:38,"Prices in the March 08, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 10, 2026 Day-Ahead Market are correct."
+20260310OperMessages.csv,10-Mar-2026 11:39,"Prices in the March 09, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260310OperMessages.csv,10-Mar-2026 13:22,"Prices in the March 09, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 11, 2026 Day-Ahead Market are correct."
+20260310OperMessages.csv,10-Mar-2026 15:02,"Prices in the March 10, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260310OperMessages.csv,10-Mar-2026 17:46,03/10/2026 17:42:10  NYISO small event reserve pick-up executed.
+20260310OperMessages.csv,10-Mar-2026 17:46,03/10/2026 17:45:00  NYISO small event reserve pick-up executed.
+20260311OperMessages.csv,11-Mar-2026 15:14,"Prices in the March 10, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 12, 2026 Day-Ahead Market are correct."
+20260312OperMessages.csv,12-Mar-2026 15:54,"NYISO is reserving HB 1,2,4,5 in the March 11, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves."
+20260312OperMessages.csv,12-Mar-2026 16:03,"Prices in the March 11, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 13, 2026 Day-Ahead Market are correct."
+20260312OperMessages.csv,12-Mar-2026 16:11,"Prices in the March 12, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260314OperMessages.csv,14-Mar-2026 14:17,"Prices in the March 13, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 15, 2026 Day-Ahead Market are correct."
+20260314OperMessages.csv,14-Mar-2026 15:02,"Prices in the March 14, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260315OperMessages.csv,15-Mar-2026 12:51,"Prices in the March 14, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 16, 2026 Day-Ahead Market are correct."
+20260315OperMessages.csv,15-Mar-2026 14:39,"Prices in the March 15, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260316OperMessages.csv,16-Mar-2026 10:11,"NYISO is releasing prices in HB 1,2,4,5 in the March 11, 2026 Real-Time Market."
+20260316OperMessages.csv,16-Mar-2026 14:54,"Prices in the March 15, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 17, 2026 Day-Ahead Market are correct."
+20260317OperMessages.csv,17-Mar-2026 15:25,"NYISO is reserving HB 9,10 in the March 16, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves."
+20260317OperMessages.csv,17-Mar-2026 15:45,"Prices in the March 16, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 18, 2026 Day-Ahead Market are correct."
+20260317OperMessages.csv,17-Mar-2026 15:58,"Prices in the March 17, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260317OperMessages.csv,17-Mar-2026 17:44,"NYISO has corrected prices in HB 23 in the March 12, 2026 Real-Time Market."
+20260317OperMessages.csv,17-Mar-2026 17:49,"NYISO has corrected prices in HB 0 in the March 13, 2026 Real-Time Market.
+NYISO is releasing prices in HB 1,2 in the March 13, 2026 Real-Time Market."
+20260318OperMessages.csv,18-Mar-2026 09:49, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260318OperMessages.csv,18-Mar-2026 13:21,"NYISO is releasing prices in HB 9,10 in the March 16, 2026 Real-Time Market."
+20260318OperMessages.csv,18-Mar-2026 15:19,"Prices in the March 17, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 19, 2026 Day-Ahead Market are correct."
+20260318OperMessages.csv,18-Mar-2026 16:14,"Prices in the March 18, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260319OperMessages.csv,19-Mar-2026 16:25,"NYISO is reserving HB 13,14,15 in the March 18, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the March 20, 2026 Day-Ahead Market are correct."
+20260319OperMessages.csv,19-Mar-2026 16:33,"Prices in the March 19, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260320OperMessages.csv,20-Mar-2026 14:44,"Prices in the March 19, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 21, 2026 Day-Ahead Market are correct."
+20260320OperMessages.csv,20-Mar-2026 15:12,"NYISO is releasing prices in HB 13,14,15 in the March 18, 2026 Real-Time Market."
+20260320OperMessages.csv,20-Mar-2026 15:32,"Prices in the March 20, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260321OperMessages.csv,21-Mar-2026 13:22,"Prices in the March 20, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 22, 2026 Day-Ahead Market are correct."
+20260321OperMessages.csv,21-Mar-2026 14:35,"Prices in the March 21, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260322OperMessages.csv,22-Mar-2026 13:00,"Prices in the March 21, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 23, 2026 Day-Ahead Market are correct."
+20260323OperMessages.csv,23-Mar-2026 09:59,"Prices in the March 22, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260323OperMessages.csv,23-Mar-2026 13:52,"Prices in the March 22, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 24, 2026 Day-Ahead Market are correct."
+20260323OperMessages.csv,23-Mar-2026 15:35,"Prices in the March 23, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260324OperMessages.csv,24-Mar-2026 14:23,"Prices in the March 23, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 25, 2026 Day-Ahead Market are correct."
+20260324OperMessages.csv,24-Mar-2026 15:15,"Prices in the March 24, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260325OperMessages.csv,25-Mar-2026 13:58,"Prices in the March 24, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 26, 2026 Day-Ahead Market are correct."
+20260326OperMessages.csv,26-Mar-2026 11:09,"Prices in the March 25, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260326OperMessages.csv,26-Mar-2026 13:52,"Prices in the March 25, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 27, 2026 Day-Ahead Market are correct."
+20260327OperMessages.csv,27-Mar-2026 13:09,"Prices in the March 26, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260327OperMessages.csv,27-Mar-2026 16:51,"Prices in the March 26, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 28, 2026 Day-Ahead Market are correct."
+20260327OperMessages.csv,27-Mar-2026 16:59,"Prices in the March 27, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260328OperMessages.csv,28-Mar-2026 13:17,"Prices in the March 27, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 29, 2026 Day-Ahead Market are correct."
+20260328OperMessages.csv,28-Mar-2026 15:11,"Prices in the March 28, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260329OperMessages.csv,29-Mar-2026 13:30,"Prices in the March 28, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 30, 2026 Day-Ahead Market are correct."
+20260329OperMessages.csv,29-Mar-2026 14:57,"Prices in the March 29, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260330OperMessages.csv,30-Mar-2026 12:59,"Prices in the March 29, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the March 31, 2026 Day-Ahead Market are correct."
+20260330OperMessages.csv,30-Mar-2026 14:29,NYISO Locational based curtailment cut 960 MWs.  03/30/2026 14:29 EDT
+20260330OperMessages.csv,30-Mar-2026 16:02,"Prices in the March 30, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260330OperMessages.csv,30-Mar-2026 18:45,"Interface: NYCA, 15 minute scheduling disabled beginning 30-Mar-2026 20:00:00 until 30-Mar-2026 22:00:00"
+20260330OperMessages.csv,30-Mar-2026 23:24,H Q initiated curtailment cut 100 MWs.  03/30/2026 23:24 EDT
+20260331OperMessages.csv,31-Mar-2026 16:44,"NYISO is reserving HB 15 in the March 30, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the April 01, 2026 Day-Ahead Market are correct."
+20260401OperMessages.csv,01-Apr-2026 14:39,"Prices in the March 31, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260401OperMessages.csv,01-Apr-2026 14:54,"Prices in the March 31, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 02, 2026 Day-Ahead Market are correct."
+20260401OperMessages.csv,01-Apr-2026 15:09,"Prices in the April 01, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260402OperMessages.csv,02-Apr-2026 10:44,"NYISO is releasing prices in HB 15 in the March 30, 2026 Real-Time Market."
+20260402OperMessages.csv,02-Apr-2026 13:35,"Prices in the April 02, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260402OperMessages.csv,02-Apr-2026 14:03,"Prices in the April 01, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 03, 2026 Day-Ahead Market are correct."
+20260403OperMessages.csv,03-Apr-2026 14:30,"Prices in the April 02, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 04, 2026 Day-Ahead Market are correct."
+20260403OperMessages.csv,03-Apr-2026 15:31,"Prices in the April 03, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260404OperMessages.csv,04-Apr-2026 13:15,"Prices in the April 03, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 05, 2026 Day-Ahead Market are correct."
+20260404OperMessages.csv,04-Apr-2026 15:34,"Prices in the April 04, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260405OperMessages.csv,05-Apr-2026 12:26,"Prices in the April 04, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 06, 2026 Day-Ahead Market are correct."
+20260405OperMessages.csv,05-Apr-2026 14:58,"Prices in the April 05, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260406OperMessages.csv,06-Apr-2026 08:00,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 06-Apr-2026 16:00:00 until 06-Apr-2026 18:00:00"
+20260406OperMessages.csv,06-Apr-2026 08:00,"Interface: NPX_GEN_CSC, 15 minute scheduling disabled beginning 06-Apr-2026 16:00:00 until 06-Apr-2026 18:00:00"
+20260406OperMessages.csv,06-Apr-2026 08:00,"Interface: NPX_GEN_1385_PROXY, 15 minute scheduling disabled beginning 06-Apr-2026 16:00:00 until 06-Apr-2026 18:00:00"
+20260406OperMessages.csv,06-Apr-2026 14:38,"Prices in the April 05, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 07, 2026 Day-Ahead Market are correct."
+20260406OperMessages.csv,06-Apr-2026 14:41,"Prices in the April 06, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260407OperMessages.csv,07-Apr-2026 14:03,"Prices in the April 06, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 08, 2026 Day-Ahead Market are correct."
+20260407OperMessages.csv,07-Apr-2026 15:10,"Prices in the April 07, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260408OperMessages.csv,08-Apr-2026 14:41,O H initiated curtailment cut 590 MWs.  04/08/2026 14:41 EDT
+20260408OperMessages.csv,08-Apr-2026 14:46,04/08/2026 14:44:24  NYISO small event reserve pick-up executed.
+20260408OperMessages.csv,08-Apr-2026 14:46,04/08/2026 14:45:00  NYISO small event reserve pick-up executed.
+20260408OperMessages.csv,08-Apr-2026 14:59,"Prices in the April 07, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 09, 2026 Day-Ahead Market are correct."
+20260408OperMessages.csv,08-Apr-2026 15:09,NYISO Locational based curtailment cut 407 MWs.  04/08/2026 15:09 EDT
+20260409OperMessages.csv,09-Apr-2026 14:51,"Prices in the April 08, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260409OperMessages.csv,09-Apr-2026 15:00,"NYISO is reserving HB 15,16 in the April 08, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the April 10, 2026 Day-Ahead Market are correct."
+20260409OperMessages.csv,09-Apr-2026 15:06,"Prices in the April 09, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260410OperMessages.csv,10-Apr-2026 11:33,"NYISO is releasing prices in HB 15,16 in the April 08, 2026 Real-Time Market."
+20260410OperMessages.csv,10-Apr-2026 13:11,"Prices in the April 09, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 11, 2026 Day-Ahead Market are correct."
+20260410OperMessages.csv,10-Apr-2026 15:42,"Prices in the April 10, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260411OperMessages.csv,11-Apr-2026 14:28,"Prices in the April 10, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 12, 2026 Day-Ahead Market are correct."
+20260411OperMessages.csv,11-Apr-2026 14:58,"Prices in the April 11, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260412OperMessages.csv,12-Apr-2026 14:37,"Prices in the April 11, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 13, 2026 Day-Ahead Market are correct."
+20260412OperMessages.csv,12-Apr-2026 15:03,"Prices in the April 12, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260413OperMessages.csv,13-Apr-2026 02:51,04/13/2026 02:49:18  NYISO small event reserve pick-up executed.
+20260413OperMessages.csv,13-Apr-2026 02:51,04/13/2026 02:50:00  NYISO small event reserve pick-up executed.
+20260413OperMessages.csv,13-Apr-2026 11:17,"Day Ahead Load Pocket Thresholds have been updated for market day of:
+April 15, 2026
+Day Ahead Load Pocket Threshold $
+DUNWOODIE SOUTH $ 19.60
+STATEN ISLAND $ 3.90
+EAST RIVER $ 19.60
+IN CITY 345/138 $ 1.58
+ASTORIA EAST/COR/JAMAICA $ 1.58
+ASTOR WEST/QUEENB/VERNON $ 1.57
+ASTORIA WEST/QUEENSBRIDG $ 1.57
+VERNON/GREENWOOD $ 1.60
+GREENWOOD/STATEN ISLAND $ 1.50"
+20260413OperMessages.csv,13-Apr-2026 11:17,"Real Time Load Pocket Thresholds have been updated for market day:
+April 15, 2026, at 10:00:01
+Real Time Load Pocket Threshold $
+DUNWOODIE SOUTH $ 32.68
+STATEN ISLAND $ 13.18
+EAST RIVER $ 32.71
+IN CITY 345/138 $ 4.43
+ASTORIA EAST/COR/JAMAICA $ 4.41
+ASTOR WEST/QUEENB/VERNON $ 4.35
+ASTORIA WEST/QUEENSBRIDG $ 4.35
+VERNON/GREENWOOD $ 4.45
+GREENWOOD/STATEN ISLAND $ 3.55"
+20260413OperMessages.csv,13-Apr-2026 12:00,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 13-Apr-2026 16:00:00 until 13-Apr-2026 19:00:00"
+20260413OperMessages.csv,13-Apr-2026 14:35,"Prices in the April 12, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 14, 2026 Day-Ahead Market are correct."
+20260413OperMessages.csv,13-Apr-2026 16:10,"Prices in the April 13, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260414OperMessages.csv,14-Apr-2026 07:30,"Interface: NYCA, 15 minute scheduling disabled beginning 14-Apr-2026 11:00:00 until 14-Apr-2026 16:00:00"
+20260414OperMessages.csv,14-Apr-2026 11:30,"Interface: NYCA, 15 minute scheduling disabled beginning 14-Apr-2026 11:00:00 until 14-Apr-2026 13:00:00"
+20260414OperMessages.csv,14-Apr-2026 13:50,"Prices in the April 13, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 15, 2026 Day-Ahead Market are correct."
+20260414OperMessages.csv,14-Apr-2026 15:42,"Prices in the April 14, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260414OperMessages.csv,14-Apr-2026 21:01,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J6 starting at 11:00 and ending at 19:00.
+20260414OperMessages.csv,14-Apr-2026 21:02,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J6 starting at 11:00 and ending at 19:00.
+20260415OperMessages.csv,15-Apr-2026 06:51, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260415OperMessages.csv,15-Apr-2026 15:03,"Prices in the April 14, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 16, 2026 Day-Ahead Market are correct."
+20260416OperMessages.csv,16-Apr-2026 06:57, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260416OperMessages.csv,16-Apr-2026 15:44,"Prices in the April 15, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260416OperMessages.csv,16-Apr-2026 15:54,"Prices in the April 15, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 17, 2026 Day-Ahead Market are correct."
+20260416OperMessages.csv,16-Apr-2026 16:04,"Prices in the April 16, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260417OperMessages.csv,17-Apr-2026 10:38, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260417OperMessages.csv,17-Apr-2026 15:31,"Prices in the April 16, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 18, 2026 Day-Ahead Market are correct."
+20260417OperMessages.csv,17-Apr-2026 16:05,"Prices in the April 17, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260418OperMessages.csv,18-Apr-2026 13:41,"Prices in the April 17, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 19, 2026 Day-Ahead Market are correct."
+20260418OperMessages.csv,18-Apr-2026 15:40,NYISO Locational based curtailment cut 50 MWs.  04/18/2026 15:40 EDT
+20260418OperMessages.csv,18-Apr-2026 16:24,"Prices in the April 18, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260419OperMessages.csv,19-Apr-2026 12:32,"Prices in the April 18, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 20, 2026 Day-Ahead Market are correct."
+20260419OperMessages.csv,19-Apr-2026 14:20,"Prices in the April 19, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260420OperMessages.csv,20-Apr-2026 15:10,"Prices in the April 19, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 21, 2026 Day-Ahead Market are correct."
+20260420OperMessages.csv,20-Apr-2026 16:10,"Prices in the April 20, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260421OperMessages.csv,21-Apr-2026 07:45,"Interface: HQ_GEN_WHEEL, 15 minute scheduling disabled beginning 21-Apr-2026 11:00:00 until 21-Apr-2026 16:00:00"
+20260421OperMessages.csv,21-Apr-2026 07:45,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 21-Apr-2026 11:00:00 until 21-Apr-2026 16:00:00"
+20260421OperMessages.csv,21-Apr-2026 07:45,"Interface: PJM_GEN_KEYSTONE, 15 minute scheduling disabled beginning 21-Apr-2026 11:00:00 until 21-Apr-2026 16:00:00"
+20260421OperMessages.csv,21-Apr-2026 07:45,"Interface: PJM_GEN_NEPTUNE_PROXY, 15 minute scheduling disabled beginning 21-Apr-2026 11:00:00 until 21-Apr-2026 16:00:00"
+20260421OperMessages.csv,21-Apr-2026 07:45,"Interface: HQ_GEN_IMPORT, 15 minute scheduling disabled beginning 21-Apr-2026 11:00:00 until 21-Apr-2026 16:00:00"
+20260421OperMessages.csv,21-Apr-2026 07:45,"Interface: PJM_GEN_VFT_PROXY, 15 minute scheduling disabled beginning 21-Apr-2026 11:00:00 until 21-Apr-2026 16:00:00"
+20260421OperMessages.csv,21-Apr-2026 07:45,"Interface: PJM_GEN_HTP_PROXY, 15 minute scheduling disabled beginning 21-Apr-2026 11:00:00 until 21-Apr-2026 16:00:00"
+20260421OperMessages.csv,21-Apr-2026 15:53,"Prices in the April 20, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 22, 2026 Day-Ahead Market are correct."
+20260421OperMessages.csv,21-Apr-2026 16:43,"Prices in the April 21, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260422OperMessages.csv,22-Apr-2026 14:41,"Prices in the April 21, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 23, 2026 Day-Ahead Market are correct."
+20260422OperMessages.csv,22-Apr-2026 15:30,"Prices in the April 22, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260423OperMessages.csv,23-Apr-2026 14:35,"Prices in the April 22, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 24, 2026 Day-Ahead Market are correct."
+20260423OperMessages.csv,23-Apr-2026 16:24,"Prices in the April 23, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260424OperMessages.csv,24-Apr-2026 14:43,"NYISO is reserving HB 22,23 in the April 23, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the April 25, 2026 Day-Ahead Market are correct."
+20260424OperMessages.csv,24-Apr-2026 16:04,"Prices in the April 24, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260425OperMessages.csv,25-Apr-2026 12:51,"Prices in the April 24, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 26, 2026 Day-Ahead Market are correct."
+20260425OperMessages.csv,25-Apr-2026 15:06,"Prices in the April 25, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260426OperMessages.csv,26-Apr-2026 12:46,"Prices in the April 25, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 27, 2026 Day-Ahead Market are correct."
+20260426OperMessages.csv,26-Apr-2026 14:15,"Prices in the April 26, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260427OperMessages.csv,27-Apr-2026 13:23,"Prices in the April 26, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 28, 2026 Day-Ahead Market are correct."
+20260427OperMessages.csv,27-Apr-2026 15:02,"Prices in the April 27, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260427OperMessages.csv,27-Apr-2026 18:14,"NYISO has corrected prices in HB 22 in the April 23, 2026 Real-Time Market.
+NYISO is releasing prices in HB 23 in the April 23, 2026 Real-Time Market."
+20260428OperMessages.csv,28-Apr-2026 11:04,NYISO Locational based curtailment cut 25 MWs.  04/28/2026 11:04 EDT
+20260428OperMessages.csv,28-Apr-2026 11:32,NYISO Locational based curtailment added 25 MWs.  04/28/2026 11:32 EDT
+20260428OperMessages.csv,28-Apr-2026 15:27,"Prices in the April 27, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 29, 2026 Day-Ahead Market are correct."
+20260428OperMessages.csv,28-Apr-2026 18:08,H Q initiated curtailment added 25 MWs.  04/28/2026 18:08 EDT
+20260429OperMessages.csv,29-Apr-2026 09:09,NYISO Locational based curtailment cut 250 MWs.  04/29/2026 09:09 EDT
+20260429OperMessages.csv,29-Apr-2026 09:55,"Prices in the April 28, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260429OperMessages.csv,29-Apr-2026 13:24,"Prices in the April 28, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the April 30, 2026 Day-Ahead Market are correct."
+20260429OperMessages.csv,29-Apr-2026 14:05,NYISO Locational based curtailment cut 500 MWs.  04/29/2026 14:05 EDT
+20260429OperMessages.csv,29-Apr-2026 14:45,NYISO Locational based curtailment cut 500 MWs.  04/29/2026 14:45 EDT
+20260429OperMessages.csv,29-Apr-2026 15:58,"Prices in the April 29, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260430OperMessages.csv,30-Apr-2026 13:09,NYISO Locational based curtailment cut 750 MWs.  04/30/2026 13:09 EDT
+20260430OperMessages.csv,30-Apr-2026 13:16,04/30/2026 13:12:21  NYISO large event reserve pick-up executed.
+20260430OperMessages.csv,30-Apr-2026 13:16,04/30/2026 13:15:00  NYISO large event reserve pick-up executed.
+20260430OperMessages.csv,30-Apr-2026 15:13,"Prices in the April 29, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 01, 2026 Day-Ahead Market are correct."
+20260430OperMessages.csv,30-Apr-2026 16:01,"Prices in the April 30, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260430OperMessages.csv,30-Apr-2026 17:51,NYISO Locational based curtailment cut 79 MWs.  04/30/2026 17:51 EDT
+20260501OperMessages.csv,01-May-2026 14:42,"Prices in the April 30, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 02, 2026 Day-Ahead Market are correct."
+20260501OperMessages.csv,01-May-2026 15:12,"Prices in the May 01, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260501OperMessages.csv,01-May-2026 16:20,NYISO Locational based curtailment cut 1246 MWs.  05/01/2026 16:20 EDT
+20260501OperMessages.csv,01-May-2026 16:36,05/01/2026 16:33:03  NYISO small event reserve pick-up executed.
+20260501OperMessages.csv,01-May-2026 16:36,05/01/2026 16:35:00  NYISO small event reserve pick-up executed.
+20260502OperMessages.csv,02-May-2026 13:34,NYISO Emergency transaction added 100 MWs.  05/02/2026 13:34 EDT
+20260502OperMessages.csv,02-May-2026 13:45,NYISO Emergency transaction added 100 MWs.  05/02/2026 13:45 EDT
+20260502OperMessages.csv,02-May-2026 14:13,"NYISO is reserving HB 15,16,17 in the May 01, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the May 03, 2026 Day-Ahead Market are correct."
+20260502OperMessages.csv,02-May-2026 14:41,NYISO Emergency transaction added 100 MWs.  05/02/2026 14:41 EDT
+20260502OperMessages.csv,02-May-2026 15:45,"Prices in the May 02, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260502OperMessages.csv,02-May-2026 16:03,NYISO Locational based curtailment cut 213 MWs.  05/02/2026 16:03 EDT
+20260502OperMessages.csv,02-May-2026 17:19,NYISO Locational based curtailment cut 478 MWs.  05/02/2026 17:19 EDT
+20260502OperMessages.csv,02-May-2026 19:03,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J6 starting at 10:00 and ending at 17:00.
+20260502OperMessages.csv,02-May-2026 19:04,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J6 starting at 10:00 and ending at 17:00.
+20260502OperMessages.csv,02-May-2026 19:07,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J6 starting at 22:00 and ending at 23:59.
+20260502OperMessages.csv,02-May-2026 19:08,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J6 starting at 22:00 and ending at 23:59.
+20260502OperMessages.csv,02-May-2026 20:03,NYISO Locational based curtailment cut 350 MWs.  05/02/2026 20:03 EDT
+20260503OperMessages.csv,03-May-2026 07:31,TDRP SCR resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260503OperMessages.csv,03-May-2026 07:32,TDRP EDRP resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260503OperMessages.csv,03-May-2026 07:35,TDRP SCR resources have been activated in load pockets J6 starting at 22:00 and ending at 23:59.
+20260503OperMessages.csv,03-May-2026 07:36,TDRP EDRP resources have been activated in load pockets J6 starting at 22:00 and ending at 23:59.
+20260503OperMessages.csv,03-May-2026 10:52,NYISO Locational based curtailment added 850 MWs.  05/03/2026 10:52 EDT
+20260503OperMessages.csv,03-May-2026 11:02,NYISO Locational based curtailment cut 400 MWs.  05/03/2026 11:02 EDT
+20260503OperMessages.csv,03-May-2026 14:16,"NYISO is reserving HB 17,20,21 in the May 02, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the May 04, 2026 Day-Ahead Market are correct."
+20260503OperMessages.csv,03-May-2026 14:59,NYISO Locational based curtailment cut 150 MWs.  05/03/2026 14:59 EDT
+20260503OperMessages.csv,03-May-2026 15:44,NYISO Locational based curtailment cut 1100 MWs.  05/03/2026 15:44 EDT
+20260504OperMessages.csv,04-May-2026 07:28,TDRP SCR resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260504OperMessages.csv,04-May-2026 07:29,TDRP EDRP resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260504OperMessages.csv,04-May-2026 16:05,"NYISO is releasing prices in HB 15,16,17 in the May 01, 2026 Real-Time Market."
+20260504OperMessages.csv,04-May-2026 16:06,"NYISO is releasing prices in HB 17,20,21 in the May 02, 2026 Real-Time Market."
+20260504OperMessages.csv,04-May-2026 16:34,"NYISO is reserving HB 0,1 in the May 03, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves."
+20260504OperMessages.csv,04-May-2026 16:36,"Prices in the May 03, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 05, 2026 Day-Ahead Market are correct."
+20260505OperMessages.csv,05-May-2026 03:40,TDRP SCR resources may be needed later today in load pockets J6 starting at 10:00 and ending at 17:00.
+20260505OperMessages.csv,05-May-2026 03:41,TDRP EDRP resources may be needed later today in load pockets J6 starting at 10:00 and ending at 17:00.
+20260505OperMessages.csv,05-May-2026 07:36,TDRP SCR resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260505OperMessages.csv,05-May-2026 07:37,TDRP EDRP resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260505OperMessages.csv,05-May-2026 10:37,"Prices in the May 04, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260505OperMessages.csv,05-May-2026 11:09,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J6 starting at 10:00 and ending at 17:00.
+20260505OperMessages.csv,05-May-2026 11:10,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J6 starting at 10:00 and ending at 17:00.
+20260505OperMessages.csv,05-May-2026 14:26,"Prices in the May 04, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 06, 2026 Day-Ahead Market are correct."
+20260505OperMessages.csv,05-May-2026 16:02,"Prices in the May 05, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260506OperMessages.csv,06-May-2026 07:33,TDRP SCR resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260506OperMessages.csv,06-May-2026 07:34,TDRP EDRP resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260506OperMessages.csv,06-May-2026 07:36,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J6 starting at 10:00 and ending at 17:00.
+20260506OperMessages.csv,06-May-2026 07:37,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J6 starting at 10:00 and ending at 17:00.
+20260506OperMessages.csv,06-May-2026 12:57,"NYISO is releasing prices in HB 0,1 in the May 03, 2026 Real-Time Market."
+20260506OperMessages.csv,06-May-2026 15:39,"Prices in the May 05, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 07, 2026 Day-Ahead Market are correct."
+20260506OperMessages.csv,06-May-2026 15:55,"Prices in the May 06, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260507OperMessages.csv,07-May-2026 07:34,TDRP SCR resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260507OperMessages.csv,07-May-2026 07:35,TDRP EDRP resources have been activated in load pockets J6 starting at 10:00 and ending at 17:00.
+20260507OperMessages.csv,07-May-2026 11:13,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J6 starting at 10:00 and ending at 17:00.
+20260507OperMessages.csv,07-May-2026 11:14,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J6 starting at 10:00 and ending at 17:00.
+20260507OperMessages.csv,07-May-2026 16:01,"Prices in the May 06, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 08, 2026 Day-Ahead Market are correct."
+20260507OperMessages.csv,07-May-2026 16:25,"Prices in the May 07, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260508OperMessages.csv,08-May-2026 14:54,"Prices in the May 07, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 09, 2026 Day-Ahead Market are correct."
+20260508OperMessages.csv,08-May-2026 16:19,"Prices in the May 08, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260509OperMessages.csv,09-May-2026 10:40,NYISO Locational based curtailment cut 1250 MWs.  05/09/2026 10:40 EDT
+20260509OperMessages.csv,09-May-2026 11:16,05/09/2026 11:12:08  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 11:16,05/09/2026 11:15:00  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 11:56,NYISO Locational based curtailment cut 1250 MWs.  05/09/2026 11:56 EDT
+20260509OperMessages.csv,09-May-2026 12:46,05/09/2026 12:42:08  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 12:46,05/09/2026 12:45:00  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 13:41,NYISO Locational based curtailment cut 480 MWs.  05/09/2026 13:41 EDT
+20260509OperMessages.csv,09-May-2026 14:16,"Prices in the May 08, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 10, 2026 Day-Ahead Market are correct."
+20260509OperMessages.csv,09-May-2026 14:36,05/09/2026 14:32:08  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 14:36,05/09/2026 14:35:00  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 15:41,NYISO Locational based curtailment cut 600 MWs.  05/09/2026 15:41 EDT
+20260509OperMessages.csv,09-May-2026 16:24,ALL Reinstatement added 600 MWs.  05/09/2026 16:24 EDT
+20260509OperMessages.csv,09-May-2026 16:25,NYISO Locational based curtailment cut 600 MWs.  05/09/2026 16:25 EDT
+20260509OperMessages.csv,09-May-2026 16:34,ALL Reinstatement added 600 MWs.  05/09/2026 16:34 EDT
+20260509OperMessages.csv,09-May-2026 16:36,NYISO Locational based curtailment cut 600 MWs.  05/09/2026 16:36 EDT
+20260509OperMessages.csv,09-May-2026 17:16,05/09/2026 17:12:08  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 17:16,05/09/2026 17:15:00  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 17:38,NYISO Locational based curtailment cut 600 MWs.  05/09/2026 17:38 EDT
+20260509OperMessages.csv,09-May-2026 19:29,NYISO Locational based curtailment cut 600 MWs.  05/09/2026 19:29 EDT
+20260509OperMessages.csv,09-May-2026 20:21,05/09/2026 20:17:14  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 20:21,05/09/2026 20:20:00  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 20:26,05/09/2026 20:25:00  NYISO large event reserve pick-up executed.
+20260509OperMessages.csv,09-May-2026 21:38,NYISO Locational based curtailment cut 1250 MWs.  05/09/2026 21:38 EDT
+20260510OperMessages.csv,10-May-2026 14:02,"Prices in the May 09, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260510OperMessages.csv,10-May-2026 14:05,"Prices in the May 09, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 11, 2026 Day-Ahead Market are correct."
+20260510OperMessages.csv,10-May-2026 14:32,"Prices in the May 10, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260511OperMessages.csv,11-May-2026 15:49,"Prices in the May 10, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 12, 2026 Day-Ahead Market are correct."
+20260511OperMessages.csv,11-May-2026 16:34,"Prices in the May 11, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260512OperMessages.csv,12-May-2026 04:21,NYISO Locational based curtailment cut 15 MWs.  05/12/2026 04:21 EDT
+20260512OperMessages.csv,12-May-2026 10:10,NYISO Locational based curtailment cut 43 MWs.  05/12/2026 10:10 EDT
+20260512OperMessages.csv,12-May-2026 14:00,"Prices in the May 11, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 13, 2026 Day-Ahead Market are correct."
+20260512OperMessages.csv,12-May-2026 15:38,"Prices in the May 12, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260513OperMessages.csv,13-May-2026 08:15,"Interface: NYCA, 15 minute scheduling disabled beginning 13-May-2026 18:00:00 until 13-May-2026 21:00:00"
+20260513OperMessages.csv,13-May-2026 12:43,"Market Monitoring Load Pocket Thresholds 2026
+
+
+Day Ahead Load Pocket Thresholds have been updated for market day of:
+May 15, 2026
+
+Day Ahead Load Pocket			Threshold $
+	
+DUNWOODIE SOUTH 			$ 30.95
+STATEN ISLAND				$ 4.37
+EAST RIVER					$ 31.08
+IN CITY 345/138 				$ 1.77
+ASTORIA EAST/COR/JAMAICA		$ 1.76
+ASTOR WEST/QUEENB/VERNON	$ 1.75
+ASTORIA WEST/QUEENSBRIDG	$ 1.75
+VERNON/GREENWOOD			$ 1.78
+GREENWOOD/STATEN ISLAND		$ 1.73
+"
+20260513OperMessages.csv,13-May-2026 12:43,"Real Time Load Pocket Thresholds have been updated for market day: 
+May 15, 2026, at 10:00:01
+
+Real Time Load Pocket			Threshold $
+	
+DUNWOODIE SOUTH 			$ 55.52
+STATEN ISLAND				$ 16.36
+EAST RIVER					$ 55.90
+IN CITY 345/138 				$ 4.57
+ASTORIA EAST/COR/JAMAICA		$ 4.57
+ASTOR WEST/QUEENB/VERNON	$ 4.51
+ASTORIA WEST/QUEENSBRIDG	$ 4.51
+VERNON/GREENWOOD			$ 4.57
+GREENWOOD/STATEN ISLAND		$ 4.13
+"
+20260513OperMessages.csv,13-May-2026 16:36,"NYISO is reserving HB 12,13,14,15,16,17 in the May 12, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the May 14, 2026 Day-Ahead Market are correct."
+20260513OperMessages.csv,13-May-2026 16:45,"Prices in the May 13, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260514OperMessages.csv,14-May-2026 14:14,"NYISO has corrected prices in HB 12 in the May 12, 2026 Real-Time Market.
+NYISO is releasing prices in HB 13,14,15,16,17 in the May 12, 2026 Real-Time Market."
+20260514OperMessages.csv,14-May-2026 14:39,"Prices in the May 13, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 15, 2026 Day-Ahead Market are correct."
+20260514OperMessages.csv,14-May-2026 14:56,"Prices in the May 14, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260514OperMessages.csv,14-May-2026 15:30,"Interface: NYCA, 15 minute scheduling disabled beginning 14-May-2026 18:00:00 until 14-May-2026 21:00:00"
+20260515OperMessages.csv,15-May-2026 13:33,"Prices in the May 14, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 16, 2026 Day-Ahead Market are correct."
+20260515OperMessages.csv,15-May-2026 14:20,"Prices in the May 15, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260516OperMessages.csv,16-May-2026 11:34,"Prices in the May 15, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 17, 2026 Day-Ahead Market are correct."
+20260516OperMessages.csv,16-May-2026 15:04,"Prices in the May 16, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260517OperMessages.csv,17-May-2026 13:05,"Prices in the May 16, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 18, 2026 Day-Ahead Market are correct."
+20260517OperMessages.csv,17-May-2026 15:41,"Prices in the May 17, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260518OperMessages.csv,18-May-2026 06:37, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260518OperMessages.csv,18-May-2026 07:30,"Interface: NYCA, 15 minute scheduling disabled beginning 18-May-2026 18:00:00 until 18-May-2026 21:00:00"
+20260518OperMessages.csv,18-May-2026 13:21,"Prices in the May 17, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 19, 2026 Day-Ahead Market are correct."
+20260518OperMessages.csv,18-May-2026 14:56,"Prices in the May 18, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260519OperMessages.csv,19-May-2026 00:24,TDRP SCR resources may be needed later today in load pockets J8 starting at 13:00 and ending at 21:00.
+20260519OperMessages.csv,19-May-2026 00:25,TDRP EDRP resources may be needed later today in load pockets J8 starting at 13:00 and ending at 21:00.
+20260519OperMessages.csv,19-May-2026 05:46, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260519OperMessages.csv,19-May-2026 09:15,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 19-May-2026 13:00:00 until 19-May-2026 17:00:00"
+20260519OperMessages.csv,19-May-2026 10:45,"CANCELLED: Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 19-May-2026 13:00:00 until 19-May-2026 17:00:00"
+20260519OperMessages.csv,19-May-2026 10:47,TDRP SCR resources have been activated in load pockets J8 starting at 13:00 and ending at 21:00.
+20260519OperMessages.csv,19-May-2026 10:48,TDRP EDRP resources have been activated in load pockets J8 starting at 13:00 and ending at 21:00.
+20260519OperMessages.csv,19-May-2026 14:31,"Prices in the May 18, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 20, 2026 Day-Ahead Market are correct."
+20260519OperMessages.csv,19-May-2026 14:47,"Prices in the May 19, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260519OperMessages.csv,19-May-2026 22:27,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J8 starting at 13:00 and ending at 21:00.
+20260519OperMessages.csv,19-May-2026 22:28,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J8 starting at 13:00 and ending at 21:00.
+20260519OperMessages.csv,19-May-2026 23:06,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J4 starting at 12:00 and ending at 22:00.
+20260519OperMessages.csv,19-May-2026 23:07,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J4 starting at 12:00 and ending at 22:00.
+20260519OperMessages.csv,19-May-2026 23:18,H Q initiated curtailment cut 100 MWs.  05/19/2026 23:18 EDT
+20260519OperMessages.csv,19-May-2026 23:19,H Q initiated curtailment cut 0 MWs.  05/19/2026 23:19 EDT
+20260519OperMessages.csv,19-May-2026 23:44,H Q initiated curtailment cut 448 MWs.  05/19/2026 23:44 EDT
+20260520OperMessages.csv,20-May-2026 03:01,H Q initiated curtailment cut 100 MWs.  05/20/2026 03:01 EDT
+20260520OperMessages.csv,20-May-2026 06:36, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260520OperMessages.csv,20-May-2026 09:11,TDRP SCR resources have been activated in load pockets J4 starting at 12:00 and ending at 22:00.
+20260520OperMessages.csv,20-May-2026 09:12,TDRP EDRP resources have been activated in load pockets J4 starting at 12:00 and ending at 22:00.
+20260520OperMessages.csv,20-May-2026 09:55,TDRP SCR resources have been activated in load pockets J8 starting at 13:00 and ending at 21:00.
+20260520OperMessages.csv,20-May-2026 09:56,TDRP EDRP resources have been activated in load pockets J8 starting at 13:00 and ending at 21:00.
+20260520OperMessages.csv,20-May-2026 15:11,"Prices in the May 19, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 21, 2026 Day-Ahead Market are correct."
+20260520OperMessages.csv,20-May-2026 16:10,"Prices in the May 20, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260520OperMessages.csv,20-May-2026 16:21,05/20/2026 16:17:19  NYISO small event reserve pick-up executed.
+20260520OperMessages.csv,20-May-2026 16:21,05/20/2026 16:20:00  NYISO small event reserve pick-up executed.
+20260521OperMessages.csv,21-May-2026 07:45,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 21-May-2026 13:00:00 until 21-May-2026 17:00:00"
+20260521OperMessages.csv,21-May-2026 12:15,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 21-May-2026 13:00:00 until 21-May-2026 18:00:00"
+20260521OperMessages.csv,21-May-2026 14:33,"Prices in the May 20, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 22, 2026 Day-Ahead Market are correct."
+20260521OperMessages.csv,21-May-2026 14:52,"Prices in the May 21, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260522OperMessages.csv,22-May-2026 14:09,"Prices in the May 21, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 23, 2026 Day-Ahead Market are correct."
+20260522OperMessages.csv,22-May-2026 14:17,"Prices in the May 22, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260523OperMessages.csv,23-May-2026 13:45,"Prices in the May 22, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 24, 2026 Day-Ahead Market are correct."
+20260523OperMessages.csv,23-May-2026 14:20,"Prices in the May 23, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260524OperMessages.csv,24-May-2026 12:15,"Prices in the May 23, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 25, 2026 Day-Ahead Market are correct."
+20260524OperMessages.csv,24-May-2026 14:21,"Prices in the May 24, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260525OperMessages.csv,25-May-2026 13:03,"Prices in the May 24, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 26, 2026 Day-Ahead Market are correct."
+20260525OperMessages.csv,25-May-2026 14:23,"Prices in the May 25, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260526OperMessages.csv,26-May-2026 14:58,"Prices in the May 25, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 27, 2026 Day-Ahead Market are correct."
+20260527OperMessages.csv,27-May-2026 09:15, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260527OperMessages.csv,27-May-2026 14:27,"Prices in the May 26, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260527OperMessages.csv,27-May-2026 15:22,"Prices in the May 26, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 28, 2026 Day-Ahead Market are correct."
+20260527OperMessages.csv,27-May-2026 16:44,"Prices in the May 27, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260528OperMessages.csv,28-May-2026 13:10,"Prices in the May 27, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 29, 2026 Day-Ahead Market are correct."
+20260528OperMessages.csv,28-May-2026 15:46,"Prices in the May 28, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260529OperMessages.csv,29-May-2026 13:43,"Prices in the May 28, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 30, 2026 Day-Ahead Market are correct."
+20260529OperMessages.csv,29-May-2026 14:49,"Prices in the May 29, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260530OperMessages.csv,30-May-2026 12:29,"Prices in the May 29, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the May 31, 2026 Day-Ahead Market are correct."
+20260530OperMessages.csv,30-May-2026 14:41,"Prices in the May 30, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260531OperMessages.csv,31-May-2026 13:02,"Prices in the May 30, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 01, 2026 Day-Ahead Market are correct."
+20260531OperMessages.csv,31-May-2026 14:13,"Prices in the May 31, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260601OperMessages.csv,01-Jun-2026 14:33,"Prices in the May 31, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 02, 2026 Day-Ahead Market are correct."
+20260601OperMessages.csv,01-Jun-2026 15:20,"Prices in the June 01, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260602OperMessages.csv,02-Jun-2026 11:13,NYISO Locational based curtailment cut 50 MWs.  06/02/2026 11:13 EDT
+20260602OperMessages.csv,02-Jun-2026 11:25,NYISO Locational based curtailment cut 0 MWs.  06/02/2026 11:25 EDT
+20260602OperMessages.csv,02-Jun-2026 13:17,"Prices in the June 01, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 03, 2026 Day-Ahead Market are correct."
+20260602OperMessages.csv,02-Jun-2026 14:23,"Prices in the June 02, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260603OperMessages.csv,03-Jun-2026 13:30,"Prices in the June 02, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 04, 2026 Day-Ahead Market are correct."
+20260603OperMessages.csv,03-Jun-2026 15:15,"Prices in the June 03, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260604OperMessages.csv,04-Jun-2026 11:12, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260604OperMessages.csv,04-Jun-2026 13:45,"Prices in the June 03, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 05, 2026 Day-Ahead Market are correct."
+20260604OperMessages.csv,04-Jun-2026 14:24,"Prices in the June 04, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260605OperMessages.csv,05-Jun-2026 13:36, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260605OperMessages.csv,05-Jun-2026 13:42,"Prices in the June 04, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 06, 2026 Day-Ahead Market are correct."
+20260605OperMessages.csv,05-Jun-2026 15:11,NYISO Locational based curtailment cut 200 MWs.  06/05/2026 15:11 EDT
+20260605OperMessages.csv,05-Jun-2026 15:39,"Prices in the June 05, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260606OperMessages.csv,06-Jun-2026 13:09, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260606OperMessages.csv,06-Jun-2026 13:50,H Q initiated curtailment cut 28 MWs.  06/06/2026 13:50 EDT
+20260606OperMessages.csv,06-Jun-2026 14:41,"Prices in the June 05, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 07, 2026 Day-Ahead Market are correct."
+20260606OperMessages.csv,06-Jun-2026 15:59,"Prices in the June 06, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260607OperMessages.csv,07-Jun-2026 03:27,06/07/2026 03:27:08  NYISO small event reserve pick-up executed.
+20260607OperMessages.csv,07-Jun-2026 03:31,06/07/2026 03:30:00  NYISO small event reserve pick-up executed.
+20260607OperMessages.csv,07-Jun-2026 03:36,06/07/2026 03:35:00  NYISO small event reserve pick-up executed.
+20260607OperMessages.csv,07-Jun-2026 04:40,NYISO Locational based curtailment cut 300 MWs.  06/07/2026 04:40 EDT
+20260607OperMessages.csv,07-Jun-2026 15:42,"NYISO is reserving HB 12,13,14 in the June 06, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the June 08, 2026 Day-Ahead Market are correct."
+20260607OperMessages.csv,07-Jun-2026 15:49,"Prices in the June 07, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260607OperMessages.csv,07-Jun-2026 20:33,H Q initiated curtailment cut 134 MWs.  06/07/2026 20:33 EDT
+20260608OperMessages.csv,08-Jun-2026 13:50,"Prices in the June 07, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 09, 2026 Day-Ahead Market are correct."
+20260608OperMessages.csv,08-Jun-2026 14:49, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260608OperMessages.csv,08-Jun-2026 15:15,"NYISO is releasing prices in HB 12,13,14 in the June 06, 2026 Real-Time Market."
+20260608OperMessages.csv,08-Jun-2026 15:18,"Prices in the June 08, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260609OperMessages.csv,09-Jun-2026 13:26,"Prices in the June 08, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 10, 2026 Day-Ahead Market are correct."
+20260609OperMessages.csv,09-Jun-2026 13:32, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260609OperMessages.csv,09-Jun-2026 17:19,"Prices in the June 09, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260610OperMessages.csv,10-Jun-2026 07:37, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260610OperMessages.csv,10-Jun-2026 08:45,"Interface: NYCA, 15 minute scheduling disabled beginning 10-Jun-2026 18:00:00 until 10-Jun-2026 21:00:00"
+20260610OperMessages.csv,10-Jun-2026 13:59,"Prices in the June 09, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 11, 2026 Day-Ahead Market are correct."
+20260610OperMessages.csv,10-Jun-2026 14:26,06/10/2026 14:20:16  NYISO small event reserve pick-up executed.
+20260610OperMessages.csv,10-Jun-2026 14:26,06/10/2026 14:25:00  NYISO small event reserve pick-up executed.
+20260610OperMessages.csv,10-Jun-2026 15:15,"Interface: NYCA, 15 minute scheduling disabled beginning 10-Jun-2026 16:00:00 until 11-Jun-2026 00:00:00"
+20260610OperMessages.csv,10-Jun-2026 15:42,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 16:00 and ending at 22:00."
+20260610OperMessages.csv,10-Jun-2026 15:43,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 16:00 and ending at 22:00."
+20260610OperMessages.csv,10-Jun-2026 15:53,"Prices in the June 10, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260610OperMessages.csv,10-Jun-2026 18:30,"Interface: NYCA, 15 minute scheduling disabled beginning 10-Jun-2026 16:00:00 until 10-Jun-2026 22:00:00"
+20260611OperMessages.csv,11-Jun-2026 06:20, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260611OperMessages.csv,11-Jun-2026 09:31,"SCR resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 16:00 and ending at 22:00."
+20260611OperMessages.csv,11-Jun-2026 09:32,"EDRP resources have been activated in zones A, B, C, D, E, F, G, H, I, J, K starting at 16:00 and ending at 22:00."
+20260611OperMessages.csv,11-Jun-2026 11:06,06/11/2026 11:03:21  NYISO small event reserve pick-up executed.
+20260611OperMessages.csv,11-Jun-2026 11:06,06/11/2026 11:05:00  NYISO small event reserve pick-up executed.
+20260611OperMessages.csv,11-Jun-2026 14:45,"Prices in the June 10, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 12, 2026 Day-Ahead Market are correct."
+20260611OperMessages.csv,11-Jun-2026 16:15,"Interface: NYCA, 15 minute scheduling disabled beginning 11-Jun-2026 17:00:00 until 11-Jun-2026 20:00:00"
+20260611OperMessages.csv,11-Jun-2026 16:24,"Prices in the June 11, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260612OperMessages.csv,12-Jun-2026 05:59, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260612OperMessages.csv,12-Jun-2026 07:11,06/12/2026 07:05:02  NYISO small event reserve pick-up executed.
+20260612OperMessages.csv,12-Jun-2026 07:11,06/12/2026 07:10:00  NYISO small event reserve pick-up executed.
+20260612OperMessages.csv,12-Jun-2026 08:56,"Market Monitoring  Load Pocket Thresholds  2026
+
+
+Day Ahead Load Pocket Thresholds have been updated for market day of:
+June 15, 2026
+
+Day Ahead Load Pocket			Threshold $
+	
+DUNWOODIE SOUTH 			$ 33.12
+STATEN ISLAND				$ 4.77
+EAST RIVER					$ 33.31
+IN CITY 345/138 				$ 2.14
+ASTORIA EAST/COR/JAMAICA		$ 2.14
+ASTOR WEST/QUEENB/VERNON	$ 2.13
+ASTORIA WEST/QUEENSBRIDG	$ 2.13
+VERNON/GREENWOOD			$ 2.15
+GREENWOOD/STATEN ISLAND		$ 2.12
+"
+20260612OperMessages.csv,12-Jun-2026 08:56,"Real Time Load Pocket Thresholds have been updated for market day: 
+June 15, 2026, at 10:00:01
+
+Real Time Load Pocket			Threshold $
+	
+DUNWOODIE SOUTH 			$ 60.83
+STATEN ISLAND				$ 17.97
+EAST RIVER					$ 61.39
+IN CITY 345/138 				$ 4.94
+ASTORIA EAST/COR/JAMAICA		$ 4.96
+ASTOR WEST/QUEENB/VERNON	$ 4.90
+ASTORIA WEST/QUEENSBRIDG	$ 4.90
+VERNON/GREENWOOD			$ 4.94
+GREENWOOD/STATEN ISLAND		$ 4.69
+"
+20260612OperMessages.csv,12-Jun-2026 15:41,"Prices in the June 11, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 13, 2026 Day-Ahead Market are correct."
+20260612OperMessages.csv,12-Jun-2026 15:58,"Prices in the June 12, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260612OperMessages.csv,12-Jun-2026 17:23,H Q initiated curtailment cut 250 MWs.  06/12/2026 17:23 EDT
+20260612OperMessages.csv,12-Jun-2026 18:03,NYISO Locational based curtailment cut 300 MWs.  06/12/2026 18:03 EDT
+20260612OperMessages.csv,12-Jun-2026 18:42,NYISO Locational based curtailment cut 43 MWs.  06/12/2026 18:42 EDT
+20260612OperMessages.csv,12-Jun-2026 18:44,NYISO Locational based curtailment cut 16 MWs.  06/12/2026 18:44 EDT
+20260613OperMessages.csv,13-Jun-2026 06:03, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260613OperMessages.csv,13-Jun-2026 15:18,"NYISO is reserving HB 15,16,23 in the June 12, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the June 14, 2026 Day-Ahead Market are correct."
+20260613OperMessages.csv,13-Jun-2026 20:45,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J3 starting at 08:00 and ending at 19:00.
+20260613OperMessages.csv,13-Jun-2026 20:46,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J3 starting at 08:00 and ending at 19:00.
+20260614OperMessages.csv,14-Jun-2026 05:36,TDRP SCR resources have been activated in load pockets J3 starting at 08:00 and ending at 19:00.
+20260614OperMessages.csv,14-Jun-2026 05:37,TDRP EDRP resources have been activated in load pockets J3 starting at 08:00 and ending at 19:00.
+20260614OperMessages.csv,14-Jun-2026 11:02,"NYISO is reserving HB 0,1 in the June 13, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves."
+20260614OperMessages.csv,14-Jun-2026 14:16,"Prices in the June 13, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 15, 2026 Day-Ahead Market are correct."
+20260614OperMessages.csv,14-Jun-2026 14:52,"Prices in the June 14, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260614OperMessages.csv,14-Jun-2026 17:25,NYISO Locational based curtailment cut 75 MWs.  06/14/2026 17:25 EDT
+20260615OperMessages.csv,15-Jun-2026 05:36, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260615OperMessages.csv,15-Jun-2026 08:46,TDRP SCR resources have been activated in load pockets J3 starting at 11:00 and ending at 21:00.
+20260615OperMessages.csv,15-Jun-2026 08:47,TDRP EDRP resources have been activated in load pockets J3 starting at 11:00 and ending at 21:00.
+20260615OperMessages.csv,15-Jun-2026 15:38,"Prices in the June 14, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 16, 2026 Day-Ahead Market are correct."
+20260615OperMessages.csv,15-Jun-2026 15:46,"Prices in the June 15, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260615OperMessages.csv,15-Jun-2026 18:10,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J3 starting at 10:00 and ending at 21:00.
+20260615OperMessages.csv,15-Jun-2026 18:12,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J3 starting at 10:00 and ending at 21:00.
+20260616OperMessages.csv,16-Jun-2026 07:10,TDRP SCR resources have been activated in load pockets J3 starting at 10:00 and ending at 21:00.
+20260616OperMessages.csv,16-Jun-2026 07:11,TDRP EDRP resources have been activated in load pockets J3 starting at 10:00 and ending at 21:00.
+20260616OperMessages.csv,16-Jun-2026 08:00,"Interface: NYCA, 15 minute scheduling disabled beginning 16-Jun-2026 16:00:00 until 16-Jun-2026 20:00:00"
+20260616OperMessages.csv,16-Jun-2026 14:02,"Prices in the June 15, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 17, 2026 Day-Ahead Market are correct."
+20260616OperMessages.csv,16-Jun-2026 16:35, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260616OperMessages.csv,16-Jun-2026 17:31,06/16/2026 17:13:18  NYISO large event reserve pick-up executed.
+20260616OperMessages.csv,16-Jun-2026 17:31,06/16/2026 17:15:00  NYISO large event reserve pick-up executed.
+20260616OperMessages.csv,16-Jun-2026 17:31,06/16/2026 17:20:00  NYISO large event reserve pick-up executed.
+20260616OperMessages.csv,16-Jun-2026 22:16,A Day-Ahead Advisory has been given to TDRP SCR resources in load pockets J3 starting at 13:00 and ending at 20:00.
+20260616OperMessages.csv,16-Jun-2026 22:17,A Day-Ahead Advisory has been given to TDRP EDRP resources in load pockets J3 starting at 13:00 and ending at 20:00.
+20260617OperMessages.csv,17-Jun-2026 08:00,"Interface: NYCA, 15 minute scheduling disabled beginning 17-Jun-2026 09:00:00 until 17-Jun-2026 12:00:00"
+20260617OperMessages.csv,17-Jun-2026 08:00,"Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 17-Jun-2026 09:00:00 until 17-Jun-2026 12:00:00"
+20260617OperMessages.csv,17-Jun-2026 08:15,"CANCELLED: Interface: N.E._GEN_SANDY PD, 15 minute scheduling disabled beginning 17-Jun-2026 09:00:00 until 17-Jun-2026 12:00:00"
+20260617OperMessages.csv,17-Jun-2026 09:26, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260617OperMessages.csv,17-Jun-2026 10:19,"NYISO is releasing prices in HB 15,16,23 in the June 12, 2026 Real-Time Market."
+20260617OperMessages.csv,17-Jun-2026 10:26,"NYISO is releasing prices in HB 0,1 in the June 13, 2026 Real-Time Market."
+20260617OperMessages.csv,17-Jun-2026 10:36,"Prices in the June 16, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260617OperMessages.csv,17-Jun-2026 10:40,TDRP SCR resources have been activated in load pockets J3 starting at 13:00 and ending at 20:00.
+20260617OperMessages.csv,17-Jun-2026 10:41,TDRP EDRP resources have been activated in load pockets J3 starting at 13:00 and ending at 20:00.
+20260617OperMessages.csv,17-Jun-2026 12:30,"Interface: NYCA, 15 minute scheduling disabled beginning 17-Jun-2026 17:00:00 until 17-Jun-2026 19:00:00"
+20260617OperMessages.csv,17-Jun-2026 15:23,06/17/2026 15:23:43  NYISO large event reserve pick-up executed.
+20260617OperMessages.csv,17-Jun-2026 15:26,06/17/2026 15:25:00  NYISO large event reserve pick-up executed.
+20260617OperMessages.csv,17-Jun-2026 15:31,06/17/2026 15:25:31  NYISO large event reserve pick-up executed.
+20260617OperMessages.csv,17-Jun-2026 15:31,06/17/2026 15:30:00  NYISO large event reserve pick-up executed.
+20260617OperMessages.csv,17-Jun-2026 15:32,06/17/2026 15:30:32  NYISO large event reserve pick-up executed.
+20260617OperMessages.csv,17-Jun-2026 16:05,"Prices in the June 16, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 18, 2026 Day-Ahead Market are correct."
+20260617OperMessages.csv,17-Jun-2026 16:21,"Prices in the June 17, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260618OperMessages.csv,18-Jun-2026 02:00,06/17/2026 15:22:25  NYISO large event reserve pick-up executed.
+20260618OperMessages.csv,18-Jun-2026 08:28, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260618OperMessages.csv,18-Jun-2026 14:39,NYISO Locational based curtailment cut 50 MWs.  06/18/2026 14:39 EDT
+20260618OperMessages.csv,18-Jun-2026 14:51,"Prices in the June 17, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 19, 2026 Day-Ahead Market are correct."
+20260618OperMessages.csv,18-Jun-2026 15:07,"Prices in the June 18, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260618OperMessages.csv,18-Jun-2026 16:50,"NYISO is reserving HB 15 in the June 17, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves. Prices in the June 19, 2026 Day-Ahead Market are correct."
+20260619OperMessages.csv,19-Jun-2026 13:09,"NYISO is reserving HB 15,16 in the June 18, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves.
+Prices in the June 20, 2026 Day-Ahead Market are correct."
+20260619OperMessages.csv,19-Jun-2026 14:48,"Prices in the June 19, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260620OperMessages.csv,20-Jun-2026 13:09,"Prices in the June 19, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 21, 2026 Day-Ahead Market are correct."
+20260620OperMessages.csv,20-Jun-2026 14:53,"Prices in the June 20, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260621OperMessages.csv,21-Jun-2026 12:39,"Prices in the June 20, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 22, 2026 Day-Ahead Market are correct."
+20260621OperMessages.csv,21-Jun-2026 14:14,"Prices in the June 21, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260621OperMessages.csv,21-Jun-2026 17:22,NYISO Locational based curtailment cut 50 MWs.  06/21/2026 17:22 EDT
+20260622OperMessages.csv,22-Jun-2026 05:55, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260622OperMessages.csv,22-Jun-2026 15:04,"NYISO is releasing prices in HB 15 in the June 17, 2026 Real-Time Market."
+20260622OperMessages.csv,22-Jun-2026 15:09,"NYISO is releasing prices in HB 15,16 in the June 18, 2026 Real-Time Market."
+20260622OperMessages.csv,22-Jun-2026 15:15,"Prices in the June 21, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 23, 2026 Day-Ahead Market are correct."
+20260622OperMessages.csv,22-Jun-2026 15:51,"Prices in the June 22, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260623OperMessages.csv,23-Jun-2026 06:23, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260623OperMessages.csv,23-Jun-2026 07:00,"Interface: NYCA, 15 minute scheduling disabled beginning 23-Jun-2026 11:00:00 until 23-Jun-2026 15:00:00"
+20260623OperMessages.csv,23-Jun-2026 08:47,NYISO Locational based curtailment cut 660 MWs.  06/23/2026 08:47 EDT
+20260623OperMessages.csv,23-Jun-2026 13:44,"Prices in the June 22, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 24, 2026 Day-Ahead Market are correct."
+20260623OperMessages.csv,23-Jun-2026 14:04,"Prices in the June 23, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260624OperMessages.csv,24-Jun-2026 09:17, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260624OperMessages.csv,24-Jun-2026 15:15,"Prices in the June 23, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 25, 2026 Day-Ahead Market are correct."
+20260625OperMessages.csv,25-Jun-2026 06:55, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260625OperMessages.csv,25-Jun-2026 12:14,"Prices in the June 24, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260625OperMessages.csv,25-Jun-2026 12:27,"
+Prices in the June 24, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260625OperMessages.csv,25-Jun-2026 13:47,"Prices in the June 24, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 26, 2026 Day-Ahead Market are correct."
+20260625OperMessages.csv,25-Jun-2026 14:15,"Interface: NYCA, 15 minute scheduling disabled beginning 25-Jun-2026 18:00:00 until 25-Jun-2026 21:00:00"
+20260626OperMessages.csv,26-Jun-2026 06:09, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260626OperMessages.csv,26-Jun-2026 10:06,"Prices in the June 25, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260626OperMessages.csv,26-Jun-2026 13:56,"Prices in the June 25, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 27, 2026 Day-Ahead Market are correct."
+20260626OperMessages.csv,26-Jun-2026 15:32,"Prices in the June 26, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260627OperMessages.csv,27-Jun-2026 09:08, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260627OperMessages.csv,27-Jun-2026 13:10,"Prices in the June 26, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 28, 2026 Day-Ahead Market are correct."
+20260627OperMessages.csv,27-Jun-2026 15:16,"Prices in the June 27, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260627OperMessages.csv,27-Jun-2026 15:39,NYISO Locational based curtailment cut 25 MWs.  06/27/2026 15:39 EDT
+20260628OperMessages.csv,28-Jun-2026 11:45, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260628OperMessages.csv,28-Jun-2026 12:20,"Prices in the June 27, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 29, 2026 Day-Ahead Market are correct."
+20260628OperMessages.csv,28-Jun-2026 13:21,NYISO Locational based curtailment cut 30 MWs.  06/28/2026 13:21 EDT
+20260628OperMessages.csv,28-Jun-2026 15:33,"Prices in the June 28, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260629OperMessages.csv,29-Jun-2026 05:00, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260629OperMessages.csv,29-Jun-2026 11:26,06/29/2026 11:23:22  NYISO large event reserve pick-up executed.
+20260629OperMessages.csv,29-Jun-2026 11:26,06/29/2026 11:25:00  NYISO large event reserve pick-up executed.
+20260629OperMessages.csv,29-Jun-2026 11:31,06/29/2026 11:30:00  NYISO large event reserve pick-up executed.
+20260629OperMessages.csv,29-Jun-2026 15:40,"Prices in the June 28, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the June 30, 2026 Day-Ahead Market are correct."
+20260629OperMessages.csv,29-Jun-2026 15:54,"Prices in the June 29, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
+20260629OperMessages.csv,29-Jun-2026 19:27,NYISO Locational based curtailment cut 250 MWs.  06/29/2026 19:27 EDT
+20260629OperMessages.csv,29-Jun-2026 20:13,NYISO Locational based curtailment cut 700 MWs.  06/29/2026 20:13 EDT
+20260629OperMessages.csv,29-Jun-2026 20:21,06/29/2026 20:17:16  NYISO large event reserve pick-up executed.
+20260629OperMessages.csv,29-Jun-2026 20:21,06/29/2026 20:20:00  NYISO large event reserve pick-up executed.
+20260630OperMessages.csv,30-Jun-2026 05:01, Consolidated Edison of NY has Declared Today a Min Oil Burn Day.
+20260630OperMessages.csv,30-Jun-2026 10:36,"A Day-Ahead Advisory has been given to SCR resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 16:00 and ending at 22:00."
+20260630OperMessages.csv,30-Jun-2026 10:37,"A Day-Ahead Advisory has been given to EDRP resources in Zones A, B, C, D, E, F, G, H, I, J, K starting at 16:00 and ending at 22:00."
+20260630OperMessages.csv,30-Jun-2026 14:01,"Prices in the June 29, 2026 Real-Time Market for the period hours beginning 12 through 23 encompassing Energy, Regulation, and Operating Reserves are correct.
+Prices in the July 01, 2026 Day-Ahead Market are correct."
+20260630OperMessages.csv,30-Jun-2026 14:54,"Prices in the June 30, 2026 Real-Time Market for the period hours beginning 0 through 11 encompassing Energy, Regulation, and Operating Reserves are correct."
