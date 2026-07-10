@@ -83,6 +83,24 @@ DATASETS: dict[str, dict] = {
         "out_dir": _LOAD_DIR,
         "per_node": False,
     },
+    # DAM ancillary-service regional requirements (AS_REQ): hourly MW minimum/
+    # maximum per AS region (AS_CAISO/AS_SP26/AS_NP26 + _EXP variants) and
+    # product (SR/NR/RU/RD). The regional MINIMUM is the locational
+    # must-procure-in-region floor — the measured driver for the CAISO
+    # sub-regional reserve families (caiso-70 FINDING probe-#2 redirect).
+    # Verified reachable for Jan-2023 (2026-07-10), so AS_REQ retention
+    # reaches further back than the DAM/RTM LMP ~39-month ageout noted above.
+    "asreq": {
+        "params": {
+            "queryname": "AS_REQ",
+            "market_run_id": "DAM",
+            "version": "1",
+            "anc_type": "ALL",
+            "anc_region": "ALL",
+        },
+        "out_dir": paths.RAW_DATA_DIR / "CAISO-AS",
+        "per_node": False,
+    },
 }
 
 # OASIS datetimes are UTC; 08:00 UTC == midnight PST, so windows tile the
