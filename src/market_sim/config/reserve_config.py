@@ -2241,6 +2241,22 @@ def _caiso_design(
     col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
     np.add.at(col_ramp10, pergen_col, member_ramp_t)
 
+    # Commitment-posture lever (design note §A): U/SU columns on the
+    # non-fast-start pools, gated on caiso_commitment_posture — MISO's
+    # _posture_pool_params verbatim (measured/published pool params, rule-18
+    # fast-start exemption by pool physics). Makes reserve provision cost a
+    # real start + min-load ride, so the spin/non-spin requirement can
+    # commit gas the way CAISO's RTPD/RUC does (caiso-70 FINDING redirect).
+    posture_pools = posture_mlf = posture_startup = None
+    if getattr(config, "caiso_commitment_posture", False):
+        posture_pools, posture_mlf, posture_startup = _posture_pool_params(
+            fleet_arrays,
+            pergen_gen_idx,
+            pergen_col,
+            n_r,
+            str(config.iso),
+        )
+
     return ReserveDesign(
         families=families,
         eligible=eligible.reshape(1, -1),
@@ -2253,4 +2269,7 @@ def _caiso_design(
         pergen_gen_idx=pergen_gen_idx,
         pergen_col=pergen_col.astype(int),
         pergen_ramp10=col_ramp10,
+        posture_pools=posture_pools,
+        posture_mlf=posture_mlf,
+        posture_startup=posture_startup,
     )
