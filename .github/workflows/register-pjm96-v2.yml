@@ -3,16 +3,19 @@
 # the bundle is re-solved deterministically on the runner and registered
 # with normal git). v1 (run 29072352322) died at its first step because
 # ubuntu-latest runners now ship an ACTIVE /swapfile — fallocate/dd on that
-# path fail with "Text file busy". v2 allocates the pjm-78/79 10 GB
-# convention at /mnt/swapfile instead. Everything else is the v1 recipe:
-# the sidecar definition and the commit message are extracted AT RUNTIME
-# from .github/workflows/register-pjm96.yml (kept as the canonical record of
-# the parallel session's post-solve finding) so no prose is re-transcribed
-# across the session/tool-call boundary. Triggered by pushing this file
-# (the session env cannot POST workflow dispatches — 403, same as v1's
-# header documents); idempotent (skips solve when the bundle exists, skips
-# registration when the sidecar exists). Delete both register-pjm96
-# workflows from main after the PR merges (one-shot convention).
+# path fail with "Text file busy". v2 first frees the hosted image's unused
+# toolchains (run 29073118649: the checkout of this repo's ~14 GB of raw
+# data left 12 MB free — no room for any swapfile; /mnt is not a separate
+# disk on current runners), then allocates the pjm-78/79 10 GB convention
+# at /swapfile2 alongside the stock 3 GB /swapfile. Everything else is the
+# v1 recipe: the sidecar definition and the commit message are extracted AT
+# RUNTIME from .github/workflows/register-pjm96.yml (kept as the canonical
+# record of the parallel session's post-solve finding) so no prose is
+# re-transcribed across the session/tool-call boundary. Triggered by
+# pushing this file (the session env cannot POST workflow dispatches —
+# 403); idempotent (skips solve when the bundle exists, skips registration
+# when the sidecar exists). Delete both register-pjm96 workflows from main
+# after the PR merges (one-shot convention).
 
 name: register-pjm96-v2
 
@@ -38,13 +41,20 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Swapfile on /mnt (runners already ship /swapfile — v1's failure)
+      - name: Free runner disk (hosted toolchains this job never uses; room for the swapfile)
+        run: |
+          df -h /
+          sudo rm -rf /usr/local/lib/android /usr/share/dotnet /opt/ghc /usr/local/.ghcup /usr/local/share/boost /opt/microsoft || true
+          sudo docker image prune --all --force || true
+          df -h /
+
+      - name: Swapfile at /swapfile2 (runners ship an active 3 GB /swapfile; pjm-78/79 10 GB convention)
         run: |
           sudo swapon --show || true
-          sudo fallocate -l 10G /mnt/swapfile || sudo dd if=/dev/zero of=/mnt/swapfile bs=1M count=10240
-          sudo chmod 600 /mnt/swapfile
-          sudo mkswap /mnt/swapfile
-          sudo swapon /mnt/swapfile
+          sudo fallocate -l 10G /swapfile2 || sudo dd if=/dev/zero of=/swapfile2 bs=1M count=10240
+          sudo chmod 600 /swapfile2
+          sudo mkswap /swapfile2
+          sudo swapon /swapfile2
           free -h
 
       - name: Install package
