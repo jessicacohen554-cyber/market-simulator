@@ -278,7 +278,7 @@ jobs:
             local n=0 delay=2
             until git push -u origin "$1"; do
               n=$((n+1)); [ $n -ge 4 ] && return 1
-              echo "push failed; retry $n in ${delay}s"; delay=$((delay*2))
+              echo "push failed; retry $n in ${delay}s"; sleep $delay; delay=$((delay*2))
             done
           }
 
