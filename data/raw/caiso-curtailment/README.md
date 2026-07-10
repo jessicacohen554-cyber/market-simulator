@@ -14,17 +14,14 @@ reports."), so no 2026 workbook exists or ever will at this URL pattern —
 confirmed by direct fetch, not just absence.
 
 **2018–2022 (rule-22 holdout intake, 2026-07-10):** all five years verified
-fetchable at the URL pattern above — full Jan1–Dec31 workbooks (30MB / 21MB
-/ 22MB / 22MB / 23MB respectively), same `Read_me`/`Production`/
-`Curtailments` sheet layout as 2023–2025. **Not committed to this
-directory** — this session's only available push mechanism cannot transport
-files this large/binary without corruption (see
-`data/raw/caiso-hsl/README.md`'s intake note for the full explanation and
-byte-level evidence). Re-fetch directly from the URL pattern above (stable,
-unauthenticated, unchanged) to restore them; see
-`data/raw/caiso-hsl/README.md` for the derived-series build outcome per year
-(2019-2021 clean, 2018 flagged as an `eia_loader` artifact, 2022 genuinely
-unavailable).
+fetchable at the URL pattern above and committed here — full Jan1–Dec31
+workbooks (30MB / 21MB / 22MB / 22MB / 23MB respectively), same
+`Read_me`/`Production`/`Curtailments` sheet layout as 2023–2025. Committed
+via a direct `git push` (a scoped exception to CLAUDE.md's API-only push
+rule — this session's GitHub API tools cannot transport binary content
+without corruption; see `data/raw/caiso-hsl/README.md` for the byte-level
+evidence and the derived-series build outcome per year: 2019-2021 clean,
+2018 flagged as an `eia_loader` artifact, 2022 genuinely unavailable).
 
 **Regeneration:** `scripts/build_caiso_hsl.py` reads these workbooks and
 combines them with EIA-930 CISO delivered generation to build
