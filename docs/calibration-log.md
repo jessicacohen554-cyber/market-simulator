@@ -8750,10 +8750,11 @@ parquet regenerated (2024 corrected — verified against an independent rebuild
 and the raw event placement; 2023/2025 value-identical to HEAD);
 `actual_lmp.json` + `bench/ERCOT/2024.json.gz` ERCOT-2024 lw fields
 re-derived through the standing pipeline (`--lw-retrofit` +
-`retrofit_lw_price_bench.py`). Corrected-basis re-score (rt_lw 30.71→30.74;
-May 42.72→44.09, Apr 27.96→26.92, Aug 40.67→41.17): ercot53 C3a-2024
-−6.8%→−7.6% (PASS), C3b-2024 0.180→0.186 (PASS), ercot52 C3b-2024
-0.296→0.295; **no criterion status or determination changes anywhere**
+`retrofit_lw_price_bench.py`). Corrected-basis re-score (official scorer;
+rt_lw 30.71→30.74; May 42.72→44.09, Apr 27.96→26.92, Aug 40.67→41.17):
+ercot53 C3a-2024 −6.8%→−6.9% (PASS), C3b-2024 0.180→0.184 (PASS), ercot52
+C3a-2024 −0.3%→−0.4%, C3b-2024 0.296 unchanged at 3 dp; **no criterion
+status or determination changes anywhere**
 (bundle `metrics.json` files re-scored byte-identical — statuses only).
 
 **Finding 2 (diagnosis, one 2024 throwaway re-solve at the ercot53 config):
