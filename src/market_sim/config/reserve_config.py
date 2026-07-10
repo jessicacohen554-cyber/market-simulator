@@ -430,6 +430,7 @@ def get_reserve_design(
             hours,
             zone_names,
             system_load=system_load,
+            sim_year=sim_year,
         )
     raise ValueError(f"No reserve design for ISO {iso!r}")
 
@@ -2084,6 +2085,78 @@ def _caiso_reserve_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
     return _reserve_eligible(fleet_arrays) | (fuel_names == "hydro")
 
 
+def _caiso_locational_as_families(
+    zone_names: list[str] | None,
+    n_zones: int,
+    hours: int,
+    sim_year: int | None,
+    spin_pen: np.ndarray,
+    spin_wid: np.ndarray,
+    nonspin_pen: np.ndarray,
+    nonspin_wid: np.ndarray,
+) -> list[ReserveFamily]:
+    """Build the measured zone-masked SP26/NP26 spin/non-spin reserve families.
+
+    Reads the CAISO OASIS AS_REQ regional MINIMUM series
+    (``data.caiso_as_requirements.load_caiso_as_requirements``) for ``sim_year``
+    and returns one :class:`ReserveFamily` per (region, product) whose
+    ``zone_mask`` selects the model zones south / north of Path 26
+    (``REGION_ZONES``). The shortfall steps reuse the system product's published
+    tariff curves — a regional shortfall prices at the same ORDC, and each
+    system step total spans the (smaller) regional requirement, keeping the
+    balance feasible at zero reserve.
+
+    Requires ``sim_year`` (the requirement is a forward-indexed measured series);
+    raises when it is absent so the flag never silently adds an empty family.
+    """
+    from market_sim.data.caiso_as_requirements import (
+        REGION_ZONES,
+        load_caiso_as_requirements,
+    )
+
+    if sim_year is None:
+        raise ValueError(
+            "caiso_locational_as_families=True requires sim_year (the measured "
+            "OASIS AS_REQ requirement is indexed by backcast year)."
+        )
+    if zone_names is None:
+        raise ValueError("caiso_locational_as_families=True requires zone_names.")
+
+    names = list(zone_names)
+    idx = {z: i for i, z in enumerate(names)}
+    req = load_caiso_as_requirements(int(sim_year), hours, bound="min")
+    steps = {
+        "spin": (spin_pen, spin_wid),
+        "nonspin": (nonspin_pen, nonspin_wid),
+    }
+    region_key = {"AS_SP26": "sp26", "AS_NP26": "np26"}
+
+    families: list[ReserveFamily] = []
+    for region, zones in REGION_ZONES.items():
+        mask = np.zeros(n_zones, dtype=bool)
+        for z in zones:
+            if z in idx:  # WECC import nodes / absent zones simply drop out
+                mask[idx[z]] = True
+        if not mask.any():
+            continue
+        for product in ("spin", "nonspin"):
+            key = f"{region_key[region]}_{product}"
+            if key not in req:
+                continue
+            pen, wid = steps[product]
+            families.append(
+                ReserveFamily(
+                    name=f"caiso_{region_key[region]}_{product}",
+                    requirement=req[key].astype(float),
+                    zone_mask=mask,
+                    ordc_penalties=pen,
+                    ordc_step_widths=wid,
+                    reserve_class=0,
+                )
+            )
+    return families
+
+
 def _caiso_design(
     config,
     fleet_arrays: FleetArrays,
@@ -2091,6 +2164,7 @@ def _caiso_design(
     zone_names: list[str] | None = None,
     *,
     system_load: np.ndarray | None = None,
+    sim_year: int | None = None,
 ) -> ReserveDesign:
     """CAISO per-generator energy+reserve co-optimization (issue #1492, L-10).
 
@@ -2224,6 +2298,28 @@ def _caiso_design(
             reserve_class=0,
         ),
     ]
+
+    # Locational AS families (caiso_locational_as_families, default off): the
+    # measured OASIS AS_REQ regional MINIMA south / north of Path 26 as
+    # zone-masked spin/non-spin requirements, so a SoCal (SP26) reserve
+    # shortfall must be covered by SoCal units — the locational driver the
+    # system-wide co-opt cannot express. Shortfalls price at the SAME published
+    # tariff curves (the system steps comfortably span each regional
+    # requirement). EX-ANTE INERT on the current split topology — see the flag
+    # docstring and FINDING-caiso71-locational-as-inert-2026-07-10.
+    if getattr(config, "caiso_locational_as_families", False):
+        families.extend(
+            _caiso_locational_as_families(
+                zone_names,
+                n_zones,
+                int(hours),
+                sim_year,
+                spin_pen,
+                spin_wid,
+                nonspin_pen,
+                nonspin_wid,
+            )
+        )
 
     # PER-ASSET R columns (dispatch._build_reserve_rows_pergen), one per
     # (zone, fuel-class) pool of reserve-eligible units deliverable within
