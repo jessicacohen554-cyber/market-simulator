@@ -1996,6 +1996,7 @@ def solve_and_persist(
     pjm_seam_flow_limit: bool = False,
     pjm_seam_flow_percentile: float | None = None,
     pjm_seam_export_limit: bool = False,
+    pjm_seam_measured_ladder: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict | None = None,
@@ -2269,6 +2270,7 @@ def solve_and_persist(
             pjm_seam_flow_limit=pjm_seam_flow_limit,
             pjm_seam_flow_percentile=pjm_seam_flow_percentile,
             pjm_seam_export_limit=pjm_seam_export_limit,
+            pjm_seam_measured_ladder=pjm_seam_measured_ladder,
             gas_hub_basis_overlay=gas_hub_basis_overlay,
             gas_st_netload_drag=gas_st_netload_drag,
             gas_st_drag_overrides=gas_st_drag_overrides,
@@ -2631,6 +2633,7 @@ def solve_and_persist(
         "pjm_seam_flow_limit": pjm_seam_flow_limit,
         "pjm_seam_flow_percentile": pjm_seam_flow_percentile,
         "pjm_seam_export_limit": pjm_seam_export_limit,
+        "pjm_seam_measured_ladder": pjm_seam_measured_ladder,
         "gas_hub_basis_overlay": gas_hub_basis_overlay,
         "chp_export_floor_measured": chp_export_floor_measured,
         "ercot_gtc_limits_measured": ercot_gtc_limits_measured,
@@ -3094,6 +3097,8 @@ def solve_and_persist(
         )
     if pjm_seam_export_limit:
         recorded_cfg = recorded_cfg.with_overrides(pjm_seam_export_limit=True)
+    if pjm_seam_measured_ladder:
+        recorded_cfg = recorded_cfg.with_overrides(pjm_seam_measured_ladder=True)
     if ct_intermediate_split:
         recorded_cfg = recorded_cfg.with_overrides(ct_intermediate_split=True)
     if ct_intermediate_cf_threshold is not None:
@@ -7139,6 +7144,28 @@ def main() -> None:
         "--reference-price-interface; PJM-only.",
     )
     parser.add_argument(
+        "--pjm-seam-measured-ladder",
+        action="store_true",
+        help="Price every PJM seam band (MISO/NYISO/Carolinas/TVA/LGEE, "
+        "import + export) at the MEASURED per-year Q-Q band ladder "
+        "(interchange_config.PJM_SEAM_LADDER_BY_YEAR, derived by "
+        "scripts/derive_pjm_seam_ladders.py: PJM settlement-grade tie-line "
+        "flow duration curves quantile-coupled with the measured PJM DA "
+        "system LMP — the MISO --miso-seam-measured-ladder / NEISO "
+        "audit-C-6 pattern), replacing the gas x HR x load-shape band "
+        "prices + hurdle for backcast years. Fixes the pjm-95 2023 "
+        "interchange duration miss: the measured PJM interchange is "
+        "direction-structural (export to MISO/NYISO ~97-100 percent of "
+        "hours, import from Carolinas/TVA/LGEE 77-97 percent — firm PTP "
+        "schedules revealed only statistically), which spot-spread pricing "
+        "inverts (model imports 46 percent of 2023 hours vs measured ~2, "
+        "displacing CC_REGULAR dispatch). Bands still clear economically "
+        "on the model's own hourly price; envelopes and band capacities "
+        "unchanged. DISPLACES the firm scheduled-export floor on ladder "
+        "years (alternatives, never stacked). Requires "
+        "--reference-price-interface; PJM-only.",
+    )
+    parser.add_argument(
         "--miso-pjm-border-anchor",
         action="store_true",
         help="Re-anchor the MISO eastern PJM seam from PJM's SYSTEM-average "
@@ -7655,6 +7682,7 @@ def main() -> None:
         pjm_seam_flow_limit=args.pjm_seam_flow_limit,
         pjm_seam_flow_percentile=args.pjm_seam_flow_percentile,
         pjm_seam_export_limit=args.pjm_seam_export_limit,
+        pjm_seam_measured_ladder=args.pjm_seam_measured_ladder,
         gas_hub_basis_overlay=args.gas_hub_basis_overlay,
         btm_backfill_year=args.btm_backfill_year,
         mass_cap_enabled=args.mass_cap_enabled,

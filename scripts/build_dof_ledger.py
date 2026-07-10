@@ -582,8 +582,37 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "rootcause-2026-07.md §3)",
             )
         )
-    if iso in ("NYISO", "PJM", "CAISO") or (
-        iso == "MISO" and not sc.get("miso_seam_measured_ladder")
+    if iso == "PJM" and sc.get("pjm_seam_measured_ladder"):
+        # C-6 CLOSED for PJM 2026-07-10 (the MISO/NEISO pattern): every seam
+        # band price comes from PJM_SEAM_LADDER_BY_YEAR — the frozen
+        # scripts/derive_pjm_seam_ladders.py Q-Q coupling of PJM's measured
+        # settlement-grade tie-line flows with the measured PJM DA system
+        # LMP (rule 23). The generic residual bucket below would be a false
+        # positive for this config, so it gets its own measured-physical row.
+        out.append(
+            _entry(
+                "PJM_SEAM_LADDER_BY_YEAR",
+                "interchange_config.py PJM seam band-price ladders",
+                "measured-physical",
+                iso,
+                source="per-seam Q-Q duration coupling of the measured PJM "
+                "DA system LMP with PJM's measured settlement-grade "
+                "tie-line flows (act_sch_interchange, pooled by "
+                "PJM_SEAM_TIE) on the fixed 8-band grid, frozen "
+                "scripts/derive_pjm_seam_ladders.py (audit C-6 CLOSED for "
+                "PJM 2026-07-10; pjm-95 C1 2023-interchange-duration fix); "
+                "displaces the firm scheduled-export floor on ladder years "
+                "(rule 19, alternatives never stacked)",
+                root_cause="re-derive trigger is a source-data change only "
+                "(rule 23), never a residual; representation bound: hourly "
+                "placement of the scheduled seam base is duration-curve-"
+                "level only (same bound as the MISO ladder)",
+            )
+        )
+    if (
+        iso in ("NYISO", "CAISO")
+        or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))
+        or (iso == "PJM" and not sc.get("pjm_seam_measured_ladder"))
     ):
         out.append(
             _entry(
@@ -596,10 +625,11 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "prices on the binding path but the static ladder remains the "
                 "fallback; NEISO closed this item (see the NEISO-only entry, "
                 "measured-physical), MISO closes it under "
-                "miso_seam_measured_ladder (its own measured-physical row) — "
-                "remaining scope for this item is NYISO/PJM/CAISO's static "
-                "ladder (and MISO's formula seam only when the measured "
-                "ladder is off)",
+                "miso_seam_measured_ladder and PJM under "
+                "pjm_seam_measured_ladder (their own measured-physical rows) "
+                "— remaining scope for this item is NYISO/CAISO's static "
+                "ladder (and the MISO/PJM formula seams only when their "
+                "measured ladders are off)",
                 root_cause="audit C-6/#1350 open item: replace year-keyed "
                 "rungs with measured hub prices / published wheeling costs "
                 "per seam, following the NEISO precedent "
