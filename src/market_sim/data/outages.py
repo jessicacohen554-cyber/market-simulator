@@ -691,6 +691,51 @@ def partial_outage_derate_factors(
     return out
 
 
+# ERCOT per-reactor DAILY nuclear availability (60-Day DAM disclosure NUC
+# Resource Status, monthly energy reconciled to the EIA-923 anchor) — the
+# window-grain replacement for the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month
+# smear, gated by ScenarioConfig.ercot_nuclear_unit_availability. Derived by
+# scripts/derive_ercot_nuclear_availability.py (provenance + admissibility in
+# its docstring); a refuel window is a physical availability event, the
+# nuclear analogue of the CAMPD fossil outage windows above.
+ERCOT_NUCLEAR_AVAILABILITY_CSV: Path = RAW_DATA_DIR / "ercot-nuclear-availability.csv"
+
+
+@lru_cache(maxsize=None)
+def ercot_nuclear_unit_availability_series(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> dict[tuple[int, int], np.ndarray]:
+    """Return ``{(plant_code, unit_no): (hours,) availability}`` for ``year``.
+
+    Each covered delivery date contributes a flat 24-hour block of its daily
+    ``avail`` fraction on the model's fixed non-leap clock (real-calendar
+    month/day mapped through :func:`_hour_of_year`; a leap year's Feb 29 row
+    is dropped, matching the archive convention). Hours the disclosure does
+    not cover are ``NaN`` — the caller keeps its existing (monthly-smear)
+    availability there. Returns an empty dict when the CSV is absent or the
+    year has no rows, so callers degrade to the smear unchanged.
+    """
+    if not ERCOT_NUCLEAR_AVAILABILITY_CSV.exists():
+        return {}
+    df = pd.read_csv(ERCOT_NUCLEAR_AVAILABILITY_CSV)
+    df["date"] = pd.to_datetime(df["date"])
+    df = df[df["date"].dt.year == int(year)]
+    if df.empty:
+        return {}
+    out: dict[tuple[int, int], np.ndarray] = {}
+    for r in df.itertuples(index=False):
+        mo, dy = int(r.date.month), int(r.date.day)
+        if mo == 2 and dy == 29:
+            continue  # non-leap model clock (ERCOT-54 convention)
+        lo = _hour_of_year(mo, dy, 0)
+        hi = min(lo + 24, hours)
+        arr = out.setdefault(
+            (int(r.plant_code), int(r.unit_no)), np.full(hours, np.nan)
+        )
+        arr[lo:hi] = float(r.avail)
+    return out
+
+
 # Within-window retiree measured-availability cap (CAMPD unit-level CEMS).
 # A within-window retiree (fleet.load_retired_within_window) is a whole-plant
 # exit the COD ramp ages out on its EIA-860 planned retirement date. But a unit
