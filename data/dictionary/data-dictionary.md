@@ -71,6 +71,7 @@ for the market split.
 | nyiso-interface-flows | — | — | — | — | — | — |
 | nyiso-som-hub-fuel-annual | — | — | — | — | — | — |
 | reserve-requirements | — | — | — | — | — | 2023–2025 |
+| som-competitive-conduct | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -1171,3 +1172,30 @@ co-optimization (`<iso>_dynamic_reserve_requirements`). Schema:
 | `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC hour-beginning of the requirement hour. |
 | `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Prevailing Eastern wall-clock hour-beginning (informational; the fall-back hour repeats its wall-clock stamp, the UTC key stays unique). |
 | `requirement_mw` | `float64` | `mw` | no | Enforced requirement MW (>= 0). Local-zone rows publish 0 for the products they do not carry; zeros are kept as published. |
+
+## som-competitive-conduct
+
+Market-monitor competitive-conduct metrics (price-cost mark-up, output gap,
+coal economic-offer vs must-run/self-commitment start shares) transcribed from
+the Potomac Economics SOM reports and IMM quarterlies. Schema:
+[`schema/som-competitive-conduct.schema.yaml`](schema/som-competitive-conduct.schema.yaml).
+
+- **Keys:** `iso`, `year`, `period`, `fleet_segment`, `metric`
+- **Reconciles:** MISO 2023/2024 SOM Table 7 + Competitive Assessment and the
+  2025 IMM quarterly output-gap rows (train-window years only, rule 22), from
+  `data/raw/som-competitive-conduct/som_competitive_conduct.csv`; PDFs under
+  `data/raw/MISO/`. Other ISOs' SOM conduct sections extend the same tidy
+  layout.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (MISO seeded; NYISO/ERCOT/NEISO extend). |
+| `year` | `int64` | `none` | no | Market year the statistic describes (not the publication year). |
+| `period` | `string` | `none` | no | Aggregation window within the year: "annual" for SOM full-year values, or the IMM quarterly-report season ("spring", "summer", "fall", "winter") for quarterly values. |
+| `fleet_segment` | `string` | `none` | no | Fleet the metric describes: "system" (all suppliers), "coal_regulated" (SOM Table 7 "Regulated Utilities" coal rows) or "coal_merchant" (SOM Table 7 "Merchants" coal rows). |
+| `metric` | `string` | `none` | no | Metric code: "price_cost_markup" (simulated actual-offer vs reference-level SMP difference, fraction), "output_gap_share_of_load" (low-threshold monthly-average output gap as a fraction of load), "output_gap_low_threshold_mw" (low-threshold output gap, MW/hr), "starts" (coal unit commitments in the year), "starts_econ_offered_share" (fraction of starts offered economically / scheduled day-ahead), "starts_mustrun_profitable_share" / "starts_mustrun_unprofitable_share" (fraction of starts with must-run [self-commit] status, split by whether market revenues covered commitment + variable cost by the first full day), "net_revenue_usd_per_mwh" (net operating revenue of the segment's starts). |
+| `value` | `float64` | `mixed` | no | Metric value; unit given by the unit column. |
+| `unit` | `string` | `none` | no | One of "fraction", "count", "usd_per_mwh", "mw". |
+| `source_doc` | `string` | `none` | no | Source report PDF filename under data/raw/MISO/ (or the ISO's raw dir). |
+| `source_page` | `int64` | `none` | no | PDF page number (1-based, PDF pagination) the value was read from. |
+| `note` | `string` | `none` | yes | Restatements, definitions, and caveats as printed in the source. |
