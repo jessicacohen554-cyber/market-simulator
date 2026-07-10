@@ -11,5 +11,7 @@
  ],
  "iso": "MISO",
  "file": "frontend/data/backcast/runs/2026-07-10-miso-53-somcoal.js",
- "bundle": "results/calibration/miso53_som_coal_offers"
+ "bundle": "results/calibration/miso53_som_coal_offers",
+ "ablation_twin": "2026-07-10-miso-53-somcoal-ablation",
+ "market_story": "Twin ~= main on every scored class (deltas <0.4 TWh): the SOM-grounded near-cost surface needs no merchant forcing. What real-market behaviour remains encoded: the fuel-free coal _mustrun band (kept in both runs) is the SOM-measured self-commitment -- regulated owners hold ~24% of coal capacity online regardless of price (must-run status on 53-56% of starts) -- and everything above it clears on measured delivered SRMC exactly as the IMM's mark-up ~ 0 conduct finding says it should."
 }
