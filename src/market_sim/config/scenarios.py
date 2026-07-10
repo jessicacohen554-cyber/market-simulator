@@ -1936,6 +1936,23 @@ class ScenarioConfig:
     # reserve_config._caiso_design, so it requires energy_reserve_coopt +
     # caiso_reserve_coopt + CAISO; default off; GATED CHANGE (alters dispatch
     # volumes).
+    caiso_locational_as_families: bool = False  # CAISO: add zone-masked
+    # spin/non-spin reserve families whose hourly requirement is the MEASURED
+    # CAISO OASIS AS_REQ regional MINIMUM south / north of Path 26 (AS_SP26 →
+    # LA_BASIN/SDGE/SP15_rest, AS_NP26 → NP15/ZP26; data/raw/CAISO-AS,
+    # data.caiso_as_requirements). The must-procure-within-region floor is a
+    # locational, rule-13-admissible market-design input (regenerates forward
+    # from the published BPM regional-requirement rules; zero fitted
+    # parameters). Read only by reserve_config._caiso_design → requires
+    # energy_reserve_coopt + caiso_reserve_coopt + CAISO; default off; GATED.
+    # EX-ANTE INERT on the current 6-zone split topology (rule 1 / the caiso-70
+    # arc): the SP26 minimum (~318 MW evening) is ~15× smaller than SoCal's own
+    # un-postured in-region reserve supply (~4.8 GW), so it forces no SoCal gas
+    # online — see results/calibration/FINDING-caiso71-locational-as-inert-
+    # 2026-07-10.md. Shipped as correct structure (a real, forward-regenerable
+    # locational requirement) that a materially larger local constraint (finer
+    # LA-Basin pockets, RMR / local-capacity) could later populate; NOT in any
+    # keeper.
     ercot_load_resource_reserve: bool = False  # ERCOT co-opt: credit the
     # measured Load-Resource responsive reserve (RRS-UFR, the under-frequency-
     # relay RRS that by protocol only Load Resources provide; ~0.8-0.9 GW) into
