@@ -198,26 +198,26 @@
         {"iso":"MISO","cov":"pyyyyyyyy","note":"2018 H1 = demand/net-gen only (per-fuel not reported yet)."}
       ]},
       {"title":"Zone-specific metered demand","rows":[
-        {"iso":"ERCOT native load","cov":"nnnnyyyyn","note":"2022–2025 on disk. 2018–2021 + H1-2026 to fetch (ERCOT NP3-565-CD)."},
-        {"iso":"PJM zonal metered","cov":"nnnnnyyyn","note":"2023–2025 only."},
-        {"iso":"CAISO TAC hourly","cov":"nnnnnyyyy","note":"2023–2025 + H1-2026 present; 2018–2022 to fetch (CAISO OASIS ACTUAL)."},
-        {"iso":"MISO sub-BA","cov":"nnnnnyyyn","note":"Single 2023–2025 range file."},
-        {"iso":"NYISO per-year","cov":"nnnnnyyyy","note":"2023–2025 + H1-2026 built; 2018–2022 to build (raw monthly PAL archive already reaches 2022–Jun 2026)."}
+        {"iso":"ERCOT native load","cov":"yyyyyyyyy","note":"Full 2018–H1 2026 on disk (owner upload 2026-07-10)."},
+        {"iso":"PJM zonal metered","cov":"yyyyyyyyy","note":"Full 2018–H1 2026 on disk (owner upload 2026-07-10)."},
+        {"iso":"CAISO TAC hourly","cov":"yyyyyyyyy","note":"Full 2018–H1 2026 on disk (owner upload 2026-07-10)."},
+        {"iso":"MISO sub-BA","cov":"nyyyyyyyy","note":"2019–H1 2026 on disk (owner upload). 2018 still to fetch."},
+        {"iso":"NYISO per-year","cov":"yyyyyyyyp","note":"2018–2025 on disk (owner upload). H1-2026 per-year product still to build from the raw PAL archive."}
       ]},
       {"title":"EPA CAMPD hourly CEMS","rows":[
         {"iso":"unit-level (all states)","cov":"yyyyPyyyP","note":"OWNED BY the running unit-level session. 2018–2021 + 2023–2025 complete for all states; 2022 & H1-2026 holes are the CAISO/NYISO/MISO-own states (ERCOT/PJM/NEISO already intaked)."},
         {"iso":"facility-level (13 states)","cov":"nnnnnyyyn","note":"2023–2025 only. 2018–2022 + H1-2026 to fetch (outage-derivation cross-check)."}
       ]},
       {"title":"Ancillary services / reserves","rows":[
-        {"iso":"ERCOT-AS","cov":"nnnnnyyyp","note":"2023–2025 (+2026 partial). 2018–2022 to fetch (60-Day DAM AS)."},
-        {"iso":"PJM-AS","cov":"nnnnnyyyn","note":"2023–2025 only (RT Primary Reserve)."},
-        {"iso":"MISO-AS","cov":"nnnnbyyyn","note":"2023–2025 only. 2022 is BLOCKED (retention purge, human ITOC request only). 2018–2021 + H1-2026 to fetch."},
-        {"iso":"NYISO-AS","cov":"nnnnnyyyn","note":"2023–2025 DA/RT clearing only."},
-        {"iso":"NYISO reserve req (hourly)","cov":"nnnnnnnnn","note":"Loader-target hourly as-enforced series (NYISO_reserve_requirements_<year>.csv) not built for ANY year. Static LRR table + realtime-events/oper-messages 2018–2026 have landed — build the hourly series from those + OASIS RTD/RTC."}
+        {"iso":"ERCOT-AS","cov":"nnnnyyyyp","note":"2022–2025 on disk (+H1-2026 partial). 2018–2021 to fetch (60-Day DAM AS)."},
+        {"iso":"PJM-AS","cov":"yyyyyyyyp","note":"2018–2025 on disk + H1-2026 partial (owner upload)."},
+        {"iso":"MISO-AS","cov":"nnnnbyyyp","note":"2023–2025 + H1-2026 partial. 2022 BLOCKED (retention purge, human ITOC request only). 2018–2021 to fetch."},
+        {"iso":"NYISO-AS","cov":"yyyyyyyyp","note":"2018–2025 DA/RT clearing + H1-2026 partial (owner upload)."},
+        {"iso":"NYISO reserve req (hourly)","cov":"nnnnnyyyn","note":"Hourly as-enforced series (NYISO_reserve_requirements_<year>.csv) now built for 2023–2025. 2018–2022 + H1-2026 still to build (static LRR + events 2018–2026 on disk to source from)."}
       ]},
       {"title":"Renewable HSL / curtailment","rows":[
         {"iso":"ERCOT HSL","cov":"nnnnnyyyn","note":"2023–2025 (2023 = UMass reconstruction). 2018–2022 + H1-2026 to fetch."},
-        {"iso":"CAISO HSL/curtailment","cov":"nnnnnyyyn","note":"2023–2025 production+curtailment workbooks only."},
+        {"iso":"CAISO HSL/curtailment","cov":"pyyypyyyn","note":"HSL hourly 2019–2021 + 2023–2025; production/curtailment workbooks 2018–2025 (owner upload). 2018 & 2022 = curtailment only (no HSL yet); H1-2026 pending."},
         {"iso":"MISO wind (aggregate)","cov":"nnnppyyyn","note":"System-wide aggregate 2021–2025 (hourly per-plant HSL not published — a derivation, effectively blocked). 2018–2020 aggregate to fetch."},
         {"iso":"NYISO curtailment (aggregate)","cov":"yyyyyyyyn","note":"NYCA/zonal annual+monthly aggregate 2017–2025 on disk. Hourly per-plant series does not exist at NYISO (blocked); H1-2026 deck not published yet."}
       ]},
@@ -231,18 +231,18 @@
         {"iso":"NYISO zonal hub","cov":"nnnnnyyyn","note":"2023–2025 only. 2018–2022 + H1-2026 to fetch (NYISO SOM)."}
       ]},
       {"title":"Transmission / interchange / seam LMP","rows":[
-        {"iso":"ERCOT GTC (NP6-86)","cov":"nnyyyyyyn","note":"2020–2025 derived parquets. 2018–2019 + H1-2026 to fetch."},
-        {"iso":"PJM interchange + transfer","cov":"nnnnnyyyn","note":"2023–2025 only (PJM eData)."},
-        {"iso":"CAISO WECC intertie LMP","cov":"nnnnnyyyn","note":"2023–2025 only (Malin/Palo Verde OASIS)."},
+        {"iso":"ERCOT GTC (NP6-86)","cov":"nnyyyyyyn","note":"2020–2025 derived parquets. 2018–2019 + H1-2026 to fetch (login-gated — see manual checklist)."},
+        {"iso":"PJM interchange + transfer","cov":"nnnnnyyyn","note":"2023–2025 on disk; 2018–2022 + H1-2026 fetched 2026-07-10 but not yet committed (large files)."},
+        {"iso":"CAISO WECC intertie LMP","cov":"nnnnnyyyn","note":"2023–2025 only. 2018–2022 aged out of OASIS (vendor-only — see manual checklist)."},
         {"iso":"MISO↔PJM border LMP","cov":"nnnnnyyyn","note":"2023–2025 only (PJM DataMiner hubs)."},
-        {"iso":"EIA-930 BA-to-BA interchange","cov":"nnnnnyyyn","note":"CISO/MISO/ISNE 2023-01→2026-01 only. 2018–2022 to fetch."}
+        {"iso":"EIA-930 BA-to-BA interchange","cov":"nnnnnyyyn","note":"CISO/MISO/ISNE 2023–2025 on disk; 2018–2022 + H1-2026 fetched 2026-07-10 but not yet committed (large files)."}
       ]},
       {"title":"Validation LMP (scoring only)","rows":[
-        {"iso":"CAISO","cov":"nnnnnyyyn","note":"2023–2025 only."},
+        {"iso":"CAISO","cov":"nnnnnyyyn","note":"2023–2025 only. 2018–2022 aged out of OASIS (vendor-only)."},
         {"iso":"MISO","cov":"nnnnyyyyn","note":"2022–2025 (2022 already present). 2018–2021 to fetch."},
-        {"iso":"PJM","cov":"nnnnnyyyn","note":"2023–2025 only."},
-        {"iso":"NYISO","cov":"nnnnnyyyn","note":"2023–2025 (DART monthly index)."},
-        {"iso":"NEISO","cov":"nnppnyyyn","note":"2023–2025 read; orphaned 2020/2021 SMD files on disk but unread by any script."},
+        {"iso":"PJM","cov":"nnnnnyyyn","note":"2023–2025 on disk; 2018–2022 fetched 2026-07-10 but not yet committed (large files)."},
+        {"iso":"NYISO","cov":"nnnnnyyyn","note":"2023–2025 (DART monthly index); 2018–2022 fetched 2026-07-10 but not yet committed."},
+        {"iso":"NEISO","cov":"nnppnyyyn","note":"2023–2025 read; orphaned 2020/2021 SMD files on disk but unread; 2018/2019 login-gated (see manual checklist)."},
         {"iso":"ERCOT","cov":"xxxxxxxxx","note":"Out of scope by design (curate_lmp.py excludes ERCOT) — not counted."}
       ]},
       {"title":"Weather","rows":[
@@ -312,7 +312,6 @@
     };
 
     function totals(){
-      // overall + per-year + per-status counts, over all rows (respecting nothing — the headline is the true picture)
       let score=0, denom=0, cY=0,cP=0,cN=0,cB=0;
       const colScore = Array(NY).fill(0), colDenom = Array(NY).fill(0);
       data.sections.forEach(s => s.rows.forEach(r => {
