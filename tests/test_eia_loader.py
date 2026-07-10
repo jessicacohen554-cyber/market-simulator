@@ -363,6 +363,46 @@ class TestEIALoader(unittest.TestCase):
         self.assertGreater(reported.sum(), 0)
         self.assertLess(reported.sum(), HOURS_PER_YEAR)
 
+    def test_ercot_2025_extract_hole_filled_from_measured_api(self):
+        """The 48-h 2025-12-04/05 extract hole is filled with measured data.
+
+        The hand-curated ERCO extract has all fuels + demand NaN for those two
+        local days; the long-format API series carry the measured hours (both
+        days for demand, Dec 4 for the fuels). A linear bridge would fabricate
+        a flat ~48.6 GW demand valley where the measured days peak at 58.4 GW.
+        """
+        from market_sim.data.eia_loader import _load_ercot_hourly
+
+        demand, _ = _load_ercot_hourly(2025)
+        # Dec 4 = day-of-year 338 -> hours 8088..8135 cover Dec 4-5.
+        window = demand[8088:8136]
+        self.assertGreater(float(window.max()), 57_000.0)  # measured peak 58.4 GW
+        self.assertGreater(float(window.mean()), 52_000.0)  # bridge would be ~49
+
+    def test_ercot_fill_is_noop_for_complete_years(self):
+        """2023 has no NaN hours: the measured fill must be byte-identical."""
+        from market_sim.data.eia_loader import load_ercot_fossil_gen
+
+        fossil = load_ercot_fossil_gen(2023)
+        # Committed bench values (frontend/data/backcast/bench/ERCOT/2023).
+        self.assertAlmostEqual(float(fossil["gas"].sum()) / 1e6, 201.465, places=2)
+        self.assertAlmostEqual(float(fossil["coal"].sum()) / 1e6, 62.293, places=2)
+
+    def test_ercot_other_gen_reflects_930_storage_breakout(self):
+        """NG: OTH collapses post-Nov-2024 (storage moved to BAT/UES)."""
+        from market_sim.data.eia_loader import load_ercot_other_gen
+
+        pre = load_ercot_other_gen(2023)
+        post = load_ercot_other_gen(2025)
+        self.assertEqual(pre.shape, (HOURS_PER_YEAR,))
+        self.assertEqual(post.shape, (HOURS_PER_YEAR,))
+        self.assertFalse(np.isnan(pre).any())
+        self.assertFalse(np.isnan(post).any())
+        self.assertAlmostEqual(float(pre.sum()) / 1e6, 1.15, delta=0.05)
+        # 2025: ~biomass alone (~0.26 TWh) — the OTHER-class generation the
+        # EIA-923 books (~0.9 TWh) sits inside NG: NG (gas fold-in).
+        self.assertLess(float(post.sum()) / 1e6, 0.4)
+
 
 class TestNYISODemand(unittest.TestCase):
     """Tests for NYISO demand loading and zonal disaggregation (P8).
