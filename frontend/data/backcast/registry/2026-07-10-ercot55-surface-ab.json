@@ -12,5 +12,6 @@
   "iso": "ERCOT",
   "file": "frontend/data/backcast/runs/2026-07-10-ercot55-surface-ab.js",
   "bundle": "results/calibration/ercot55_surface_ab",
+  "ablation_twin": "2026-07-10-ercot55-surface-ablation",
   "market_story": "Same floor stack as the ercot46/53 keepers (ST_GAS net-load drag, CT reliability floors, CHP steam-following, coal take-or-pay) plus the measured G-22 conditional offer surface: scarcity-anticipating DA offer formation prices the measured $100-300 shoulder in measured tight net-load bins — real ERCOT market behaviour (60-Day DAM disclosure), not forcing. The delta vs ercot53 is one config flag on an existing measured mechanism + corrected measured inputs (EIA-930 Dec-2025 gap fill, NG:OTH counting)."
 }
