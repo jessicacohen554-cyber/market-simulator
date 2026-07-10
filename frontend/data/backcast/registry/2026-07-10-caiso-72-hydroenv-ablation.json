@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-10-caiso-72-hydroenv-ablation",
+ "label": "caiso 72 hydroenv ablation",
+ "date": "2026-07-10",
+ "shorthand": "caiso-72-hydroenv-ablation",
+ "definition": "(PROBE \u2014 ZERO-FORCING ABLATION TWIN of 2026-07-10-caiso-72-hydro-envelope) all merchant floors/bridges off, hydro envelope kept (it is a measured cap, not a floor). CT_PEAKER 2.72/1.98/1.08 TWh.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-10-caiso-72-hydroenv-ablation.js",
+ "bundle": "results/calibration/caiso72_hydro_envelope-ablation"
+}
