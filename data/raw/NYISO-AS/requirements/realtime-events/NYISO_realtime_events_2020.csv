@@ -1,0 +1,479 @@
+source_file,timestamp_local,message
+20200101RealTimeEvents.csv,01/01/2020 00:00:00,Start of day system state is NORMAL
+20200102RealTimeEvents.csv,01/02/2020 00:00:00,Start of day system state is NORMAL
+20200103RealTimeEvents.csv,01/03/2020 00:00:00,Start of day system state is NORMAL
+20200104RealTimeEvents.csv,01/04/2020 00:00:00,Start of day system state is NORMAL
+20200105RealTimeEvents.csv,01/05/2020 00:00:00,Start of day system state is NORMAL
+20200106RealTimeEvents.csv,01/06/2020 00:00:00,Start of day system state is NORMAL
+20200107RealTimeEvents.csv,01/07/2020 00:00:00,Start of day system state is NORMAL
+20200108RealTimeEvents.csv,01/08/2020 00:00:00,Start of day system state is NORMAL
+20200109RealTimeEvents.csv,01/09/2020 00:00:00,Start of day system state is NORMAL
+20200109RealTimeEvents.csv,01/09/2020 21:13:33,**State Change. System now operating in alert state.**
+20200109RealTimeEvents.csv,01/09/2020 21:23:49,**State Change. System now operating in normal state.**
+20200110RealTimeEvents.csv,01/10/2020 00:00:00,Start of day system state is NORMAL
+20200111RealTimeEvents.csv,01/11/2020 00:00:00,Start of day system state is NORMAL
+20200112RealTimeEvents.csv,01/12/2020 00:00:00,Start of day system state is NORMAL
+20200113RealTimeEvents.csv,01/13/2020 00:00:00,Start of day system state is NORMAL
+20200114RealTimeEvents.csv,01/14/2020 00:00:00,Start of day system state is NORMAL
+20200115RealTimeEvents.csv,01/15/2020 00:00:00,Start of day system state is NORMAL
+20200116RealTimeEvents.csv,01/16/2020 00:00:00,Start of day system state is NORMAL
+20200117RealTimeEvents.csv,01/17/2020 00:00:00,Start of day system state is NORMAL
+20200118RealTimeEvents.csv,01/18/2020 00:00:00,Start of day system state is NORMAL
+20200118RealTimeEvents.csv,01/18/2020 12:58:57,**State Change. System now operating in alert state.**
+20200118RealTimeEvents.csv,01/18/2020 13:03:53,**State Change. System now operating in normal state.**
+20200119RealTimeEvents.csv,01/19/2020 00:00:00,Start of day system state is NORMAL
+20200120RealTimeEvents.csv,01/20/2020 00:00:00,Start of day system state is NORMAL
+20200121RealTimeEvents.csv,01/21/2020 00:00:00,Start of day system state is NORMAL
+20200121RealTimeEvents.csv,01/21/2020 23:10:51,NYISO has initiated reserve pick-up.
+20200121RealTimeEvents.csv,01/21/2020 23:12:33,**State Change. System now operating in alert state.**
+20200121RealTimeEvents.csv,01/21/2020 23:17:53,**State Change. System now operating in normal state.**
+20200121RealTimeEvents.csv,01/21/2020 23:18:45,NYISO has terminated reserve pick-up.
+20200122RealTimeEvents.csv,01/22/2020 00:00:00,Start of day system state is NORMAL
+20200122RealTimeEvents.csv,01/22/2020 00:09:51,**State Change. System now operating in alert state.**
+20200122RealTimeEvents.csv,01/22/2020 00:18:33,**State Change. System now operating in normal state.**
+20200123RealTimeEvents.csv,01/23/2020 00:00:00,Start of day system state is NORMAL
+20200124RealTimeEvents.csv,01/24/2020 00:00:00,Start of day system state is NORMAL
+20200125RealTimeEvents.csv,01/25/2020 00:00:00,Start of day system state is NORMAL
+20200126RealTimeEvents.csv,01/26/2020 00:00:00,Start of day system state is NORMAL
+20200127RealTimeEvents.csv,01/27/2020 00:00:00,Start of day system state is NORMAL
+20200128RealTimeEvents.csv,01/28/2020 00:00:00,Start of day system state is NORMAL
+20200129RealTimeEvents.csv,01/29/2020 00:00:00,Start of day system state is NORMAL
+20200129RealTimeEvents.csv,01/29/2020 06:07:19,NYISO has initiated reserve pick-up.
+20200129RealTimeEvents.csv,01/29/2020 06:14:01,NYISO has terminated reserve pick-up.
+20200130RealTimeEvents.csv,01/30/2020 00:00:00,Start of day system state is NORMAL
+20200131RealTimeEvents.csv,01/31/2020 00:00:00,Start of day system state is NORMAL
+20200201RealTimeEvents.csv,02/01/2020 00:00:00,Start of day system state is NORMAL
+20200202RealTimeEvents.csv,02/02/2020 00:00:00,Start of day system state is NORMAL
+20200203RealTimeEvents.csv,02/03/2020 00:00:00,Start of day system state is NORMAL
+20200204RealTimeEvents.csv,02/04/2020 00:00:00,Start of day system state is NORMAL
+20200205RealTimeEvents.csv,02/05/2020 00:00:00,Start of day system state is NORMAL
+20200206RealTimeEvents.csv,02/06/2020 00:00:00,Start of day system state is NORMAL
+20200207RealTimeEvents.csv,02/07/2020 00:00:00,Start of day system state is NORMAL
+20200208RealTimeEvents.csv,02/08/2020 00:00:00,Start of day system state is NORMAL
+20200209RealTimeEvents.csv,02/09/2020 00:00:00,Start of day system state is NORMAL
+20200210RealTimeEvents.csv,02/10/2020 00:00:00,Start of day system state is NORMAL
+20200211RealTimeEvents.csv,02/11/2020 00:00:00,Start of day system state is NORMAL
+20200212RealTimeEvents.csv,02/12/2020 00:00:00,Start of day system state is NORMAL
+20200213RealTimeEvents.csv,02/13/2020 00:00:00,Start of day system state is NORMAL
+20200214RealTimeEvents.csv,02/14/2020 00:00:00,Start of day system state is NORMAL
+20200215RealTimeEvents.csv,02/15/2020 00:00:00,Start of day system state is NORMAL
+20200216RealTimeEvents.csv,02/16/2020 00:00:00,Start of day system state is NORMAL
+20200217RealTimeEvents.csv,02/17/2020 00:00:00,Start of day system state is NORMAL
+20200218RealTimeEvents.csv,02/18/2020 00:00:00,Start of day system state is NORMAL
+20200219RealTimeEvents.csv,02/19/2020 00:00:00,Start of day system state is NORMAL
+20200220RealTimeEvents.csv,02/20/2020 00:00:00,Start of day system state is NORMAL
+20200221RealTimeEvents.csv,02/21/2020 00:00:00,Start of day system state is NORMAL
+20200222RealTimeEvents.csv,02/22/2020 00:00:00,Start of day system state is NORMAL
+20200223RealTimeEvents.csv,02/23/2020 00:00:00,Start of day system state is NORMAL
+20200224RealTimeEvents.csv,02/24/2020 00:00:00,Start of day system state is NORMAL
+20200225RealTimeEvents.csv,02/25/2020 00:00:00,Start of day system state is NORMAL
+20200226RealTimeEvents.csv,02/26/2020 00:00:00,Start of day system state is NORMAL
+20200227RealTimeEvents.csv,02/27/2020 00:00:00,Start of day system state is NORMAL
+20200228RealTimeEvents.csv,02/28/2020 00:00:00,Start of day system state is NORMAL
+20200229RealTimeEvents.csv,02/29/2020 00:00:00,Start of day system state is NORMAL
+20200301RealTimeEvents.csv,03/01/2020 00:00:00,Start of day system state is NORMAL
+20200302RealTimeEvents.csv,03/02/2020 00:00:00,Start of day system state is NORMAL
+20200303RealTimeEvents.csv,03/03/2020 00:00:00,Start of day system state is NORMAL
+20200304RealTimeEvents.csv,03/04/2020 00:00:00,Start of day system state is NORMAL
+20200305RealTimeEvents.csv,03/05/2020 00:00:00,Start of day system state is NORMAL
+20200306RealTimeEvents.csv,03/06/2020 00:00:00,Start of day system state is NORMAL
+20200307RealTimeEvents.csv,03/07/2020 00:00:00,Start of day system state is NORMAL
+20200308RealTimeEvents.csv,03/08/2020 00:00:00,Start of day system state is NORMAL
+20200309RealTimeEvents.csv,03/09/2020 00:00:00,Start of day system state is NORMAL
+20200310RealTimeEvents.csv,03/10/2020 00:00:00,Start of day system state is NORMAL
+20200311RealTimeEvents.csv,03/11/2020 00:00:00,Start of day system state is NORMAL
+20200312RealTimeEvents.csv,03/12/2020 00:00:00,Start of day system state is NORMAL
+20200313RealTimeEvents.csv,03/13/2020 00:00:00,Start of day system state is NORMAL
+20200314RealTimeEvents.csv,03/14/2020 00:00:00,Start of day system state is NORMAL
+20200315RealTimeEvents.csv,03/15/2020 00:00:00,Start of day system state is NORMAL
+20200316RealTimeEvents.csv,03/16/2020 00:00:00,Start of day system state is NORMAL
+20200317RealTimeEvents.csv,03/17/2020 00:00:00,Start of day system state is NORMAL
+20200318RealTimeEvents.csv,03/18/2020 00:00:00,Start of day system state is NORMAL
+20200319RealTimeEvents.csv,03/19/2020 00:00:00,Start of day system state is NORMAL
+20200320RealTimeEvents.csv,03/20/2020 00:00:00,Start of day system state is NORMAL
+20200321RealTimeEvents.csv,03/21/2020 00:00:00,Start of day system state is NORMAL
+20200322RealTimeEvents.csv,03/22/2020 00:00:00,Start of day system state is NORMAL
+20200323RealTimeEvents.csv,03/23/2020 00:00:00,Start of day system state is NORMAL
+20200324RealTimeEvents.csv,03/24/2020 00:00:00,Start of day system state is NORMAL
+20200325RealTimeEvents.csv,03/25/2020 00:00:00,Start of day system state is NORMAL
+20200326RealTimeEvents.csv,03/26/2020 00:00:00,Start of day system state is NORMAL
+20200327RealTimeEvents.csv,03/27/2020 00:00:00,Start of day system state is NORMAL
+20200328RealTimeEvents.csv,03/28/2020 00:00:00,Start of day system state is NORMAL
+20200329RealTimeEvents.csv,03/29/2020 00:00:00,Start of day system state is NORMAL
+20200330RealTimeEvents.csv,03/30/2020 00:00:00,Start of day system state is NORMAL
+20200331RealTimeEvents.csv,03/31/2020 00:00:00,Start of day system state is NORMAL
+20200401RealTimeEvents.csv,04/01/2020 00:00:00,Start of day system state is NORMAL
+20200402RealTimeEvents.csv,04/02/2020 00:00:00,Start of day system state is NORMAL
+20200403RealTimeEvents.csv,04/03/2020 00:00:00,Start of day system state is NORMAL
+20200404RealTimeEvents.csv,04/04/2020 00:00:00,Start of day system state is NORMAL
+20200405RealTimeEvents.csv,04/05/2020 00:00:00,Start of day system state is NORMAL
+20200406RealTimeEvents.csv,04/06/2020 00:00:00,Start of day system state is NORMAL
+20200407RealTimeEvents.csv,04/07/2020 00:00:00,Start of day system state is NORMAL
+20200408RealTimeEvents.csv,04/08/2020 00:00:00,Start of day system state is NORMAL
+20200409RealTimeEvents.csv,04/09/2020 00:00:00,Start of day system state is NORMAL
+20200410RealTimeEvents.csv,04/10/2020 00:00:00,Start of day system state is NORMAL
+20200411RealTimeEvents.csv,04/11/2020 00:00:00,Start of day system state is NORMAL
+20200412RealTimeEvents.csv,04/12/2020 00:00:00,Start of day system state is NORMAL
+20200413RealTimeEvents.csv,04/13/2020 00:00:00,Start of day system state is NORMAL
+20200414RealTimeEvents.csv,04/14/2020 00:00:00,Start of day system state is NORMAL
+20200415RealTimeEvents.csv,04/15/2020 00:00:00,Start of day system state is NORMAL
+20200416RealTimeEvents.csv,04/16/2020 00:00:00,Start of day system state is NORMAL
+20200417RealTimeEvents.csv,04/17/2020 00:00:00,Start of day system state is NORMAL
+20200418RealTimeEvents.csv,04/18/2020 00:00:00,Start of day system state is NORMAL
+20200419RealTimeEvents.csv,04/19/2020 00:00:00,Start of day system state is NORMAL
+20200420RealTimeEvents.csv,04/20/2020 00:00:00,Start of day system state is NORMAL
+20200421RealTimeEvents.csv,04/21/2020 00:00:00,Start of day system state is NORMAL
+20200422RealTimeEvents.csv,04/22/2020 00:00:00,Start of day system state is NORMAL
+20200423RealTimeEvents.csv,04/23/2020 00:00:00,Start of day system state is NORMAL
+20200424RealTimeEvents.csv,04/24/2020 00:00:00,Start of day system state is NORMAL
+20200425RealTimeEvents.csv,04/25/2020 00:00:00,Start of day system state is NORMAL
+20200426RealTimeEvents.csv,04/26/2020 00:00:00,Start of day system state is NORMAL
+20200427RealTimeEvents.csv,04/27/2020 00:00:00,Start of day system state is NORMAL
+20200428RealTimeEvents.csv,04/28/2020 00:00:00,Start of day system state is NORMAL
+20200429RealTimeEvents.csv,04/29/2020 00:00:00,Start of day system state is NORMAL
+20200430RealTimeEvents.csv,04/30/2020 00:00:00,Start of day system state is NORMAL
+20200501RealTimeEvents.csv,05/01/2020 00:00:00,Start of day system state is NORMAL
+20200502RealTimeEvents.csv,05/02/2020 00:00:00,Start of day system state is NORMAL
+20200503RealTimeEvents.csv,05/03/2020 00:00:00,Start of day system state is NORMAL
+20200504RealTimeEvents.csv,05/04/2020 00:00:00,Start of day system state is NORMAL
+20200505RealTimeEvents.csv,05/05/2020 00:00:00,Start of day system state is NORMAL
+20200506RealTimeEvents.csv,05/06/2020 00:00:00,Start of day system state is NORMAL
+20200507RealTimeEvents.csv,05/07/2020 00:00:00,Start of day system state is NORMAL
+20200508RealTimeEvents.csv,05/08/2020 00:00:00,Start of day system state is NORMAL
+20200509RealTimeEvents.csv,05/09/2020 00:00:00,Start of day system state is NORMAL
+20200510RealTimeEvents.csv,05/10/2020 00:00:00,Start of day system state is NORMAL
+20200511RealTimeEvents.csv,05/11/2020 00:00:00,Start of day system state is NORMAL
+20200512RealTimeEvents.csv,05/12/2020 00:00:00,Start of day system state is NORMAL
+20200513RealTimeEvents.csv,05/13/2020 00:00:00,Start of day system state is NORMAL
+20200514RealTimeEvents.csv,05/14/2020 00:00:00,Start of day system state is NORMAL
+20200515RealTimeEvents.csv,05/15/2020 00:00:00,Start of day system state is NORMAL
+20200516RealTimeEvents.csv,05/16/2020 00:00:00,Start of day system state is NORMAL
+20200517RealTimeEvents.csv,05/17/2020 00:00:00,Start of day system state is NORMAL
+20200518RealTimeEvents.csv,05/18/2020 00:00:00,Start of day system state is NORMAL
+20200519RealTimeEvents.csv,05/19/2020 00:00:00,Start of day system state is NORMAL
+20200520RealTimeEvents.csv,05/20/2020 00:00:00,Start of day system state is NORMAL
+20200521RealTimeEvents.csv,05/21/2020 00:00:00,Start of day system state is NORMAL
+20200522RealTimeEvents.csv,05/22/2020 00:00:00,Start of day system state is NORMAL
+20200523RealTimeEvents.csv,05/23/2020 00:00:00,Start of day system state is NORMAL
+20200524RealTimeEvents.csv,05/24/2020 00:00:00,Start of day system state is NORMAL
+20200525RealTimeEvents.csv,05/25/2020 00:00:00,Start of day system state is NORMAL
+20200526RealTimeEvents.csv,05/26/2020 00:00:00,Start of day system state is NORMAL
+20200527RealTimeEvents.csv,05/27/2020 00:00:00,Start of day system state is NORMAL
+20200527RealTimeEvents.csv,05/27/2020 23:59:58,Start of day system state is NORMAL
+20200528RealTimeEvents.csv,05/28/2020 23:59:58,Start of day system state is NORMAL
+20200529RealTimeEvents.csv,05/29/2020 23:59:58,Start of day system state is NORMAL
+20200530RealTimeEvents.csv,05/30/2020 23:59:58,Start of day system state is NORMAL
+20200531RealTimeEvents.csv,05/31/2020 23:59:58,Start of day system state is NORMAL
+20200601RealTimeEvents.csv,06/01/2020 23:59:58,Start of day system state is NORMAL
+20200602RealTimeEvents.csv,06/02/2020 23:59:57,Start of day system state is NORMAL
+20200603RealTimeEvents.csv,06/03/2020 20:00:00,**System now operating in thunderstorm alert.**
+20200603RealTimeEvents.csv,06/03/2020 22:05:00,**System no longer operating in thunderstorm alert.**
+20200603RealTimeEvents.csv,06/03/2020 23:59:57,Start of day system state is NORMAL
+20200604RealTimeEvents.csv,06/04/2020 23:59:57,Start of day system state is NORMAL
+20200605RealTimeEvents.csv,06/05/2020 23:59:57,Start of day system state is NORMAL
+20200606RealTimeEvents.csv,06/06/2020 23:59:57,Start of day system state is NORMAL
+20200607RealTimeEvents.csv,06/07/2020 23:59:57,Start of day system state is NORMAL
+20200608RealTimeEvents.csv,06/08/2020 23:59:56,Start of day system state is NORMAL
+20200609RealTimeEvents.csv,06/09/2020 23:59:56,Start of day system state is NORMAL
+20200610RealTimeEvents.csv,06/10/2020 23:59:56,Start of day system state is NORMAL
+20200611RealTimeEvents.csv,06/11/2020 23:59:56,Start of day system state is NORMAL
+20200612RealTimeEvents.csv,06/12/2020 23:59:56,Start of day system state is NORMAL
+20200613RealTimeEvents.csv,06/13/2020 23:59:55,Start of day system state is NORMAL
+20200614RealTimeEvents.csv,06/14/2020 23:59:55,Start of day system state is NORMAL
+20200615RealTimeEvents.csv,06/15/2020 23:59:55,Start of day system state is NORMAL
+20200616RealTimeEvents.csv,06/16/2020 23:59:55,Start of day system state is NORMAL
+20200617RealTimeEvents.csv,06/17/2020 23:59:54,Start of day system state is NORMAL
+20200618RealTimeEvents.csv,06/18/2020 23:59:54,Start of day system state is NORMAL
+20200619RealTimeEvents.csv,06/19/2020 23:59:54,Start of day system state is NORMAL
+20200620RealTimeEvents.csv,06/20/2020 23:59:54,Start of day system state is NORMAL
+20200621RealTimeEvents.csv,06/21/2020 23:59:53,Start of day system state is NORMAL
+20200622RealTimeEvents.csv,06/22/2020 23:59:53,Start of day system state is NORMAL
+20200623RealTimeEvents.csv,06/23/2020 00:00:00,Start of day system state is NORMAL
+20200624RealTimeEvents.csv,06/24/2020 00:00:00,Start of day system state is NORMAL
+20200625RealTimeEvents.csv,06/25/2020 00:00:00,Start of day system state is NORMAL
+20200626RealTimeEvents.csv,06/26/2020 00:00:00,Start of day system state is NORMAL
+20200627RealTimeEvents.csv,06/27/2020 00:00:00,Start of day system state is NORMAL
+20200628RealTimeEvents.csv,06/28/2020 00:00:00,Start of day system state is NORMAL
+20200628RealTimeEvents.csv,06/28/2020 16:00:00,**System now operating in thunderstorm alert.**
+20200628RealTimeEvents.csv,06/28/2020 20:05:00,**System no longer operating in thunderstorm alert.**
+20200629RealTimeEvents.csv,06/29/2020 00:00:00,Start of day system state is NORMAL
+20200630RealTimeEvents.csv,06/30/2020 00:00:00,Start of day system state is NORMAL
+20200701RealTimeEvents.csv,07/01/2020 00:00:00,Start of day system state is NORMAL
+20200702RealTimeEvents.csv,07/02/2020 00:00:00,Start of day system state is NORMAL
+20200703RealTimeEvents.csv,07/03/2020 00:00:00,Start of day system state is NORMAL
+20200703RealTimeEvents.csv,07/03/2020 18:15:00,**System now operating in thunderstorm alert.**
+20200703RealTimeEvents.csv,07/03/2020 21:20:00,**System no longer operating in thunderstorm alert.**
+20200704RealTimeEvents.csv,07/04/2020 00:00:00,Start of day system state is NORMAL
+20200705RealTimeEvents.csv,07/05/2020 00:00:00,Start of day system state is NORMAL
+20200706RealTimeEvents.csv,07/06/2020 00:00:00,Start of day system state is NORMAL
+20200706RealTimeEvents.csv,07/06/2020 16:00:00,**System now operating in thunderstorm alert.**
+20200706RealTimeEvents.csv,07/06/2020 21:15:00,**System no longer operating in thunderstorm alert.**
+20200707RealTimeEvents.csv,07/07/2020 00:00:00,Start of day system state is NORMAL
+20200708RealTimeEvents.csv,07/08/2020 00:00:00,Start of day system state is NORMAL
+20200708RealTimeEvents.csv,07/08/2020 12:30:00,**System now operating in thunderstorm alert.**
+20200708RealTimeEvents.csv,07/08/2020 17:15:00,**System no longer operating in thunderstorm alert.**
+20200709RealTimeEvents.csv,07/09/2020 00:00:00,Start of day system state is NORMAL
+20200710RealTimeEvents.csv,07/10/2020 00:00:00,Start of day system state is NORMAL
+20200711RealTimeEvents.csv,07/11/2020 00:00:00,Start of day system state is NORMAL
+20200711RealTimeEvents.csv,07/11/2020 14:15:00,**System now operating in thunderstorm alert.**
+20200711RealTimeEvents.csv,07/11/2020 21:30:00,**System no longer operating in thunderstorm alert.**
+20200712RealTimeEvents.csv,07/12/2020 00:00:00,Start of day system state is NORMAL
+20200713RealTimeEvents.csv,07/13/2020 00:00:00,Start of day system state is NORMAL
+20200714RealTimeEvents.csv,07/14/2020 00:00:00,Start of day system state is NORMAL
+20200715RealTimeEvents.csv,07/15/2020 00:00:00,Start of day system state is NORMAL
+20200716RealTimeEvents.csv,07/16/2020 00:00:00,Start of day system state is NORMAL
+20200717RealTimeEvents.csv,07/17/2020 00:00:00,Start of day system state is NORMAL
+20200718RealTimeEvents.csv,07/18/2020 00:00:00,Start of day system state is NORMAL
+20200719RealTimeEvents.csv,07/19/2020 00:00:00,Start of day system state is NORMAL
+20200720RealTimeEvents.csv,07/20/2020 00:00:00,Start of day system state is NORMAL
+20200721RealTimeEvents.csv,07/21/2020 00:00:00,Start of day system state is NORMAL
+20200722RealTimeEvents.csv,07/22/2020 00:00:00,Start of day system state is NORMAL
+20200722RealTimeEvents.csv,07/22/2020 17:00:00,**System now operating in thunderstorm alert.**
+20200722RealTimeEvents.csv,07/22/2020 20:18:00,**System no longer operating in thunderstorm alert.**
+20200722RealTimeEvents.csv,07/22/2020 20:20:00,**System now operating in thunderstorm alert.**
+20200722RealTimeEvents.csv,07/22/2020 20:30:00,**System no longer operating in thunderstorm alert.**
+20200723RealTimeEvents.csv,07/23/2020 00:00:00,Start of day system state is NORMAL
+20200723RealTimeEvents.csv,07/23/2020 15:00:00,**System now operating in thunderstorm alert.**
+20200723RealTimeEvents.csv,07/23/2020 22:00:00,**System no longer operating in thunderstorm alert.**
+20200724RealTimeEvents.csv,07/24/2020 00:00:00,Start of day system state is NORMAL
+20200725RealTimeEvents.csv,07/25/2020 00:00:00,Start of day system state is NORMAL
+20200726RealTimeEvents.csv,07/26/2020 00:00:00,Start of day system state is NORMAL
+20200727RealTimeEvents.csv,07/27/2020 00:00:00,Start of day system state is NORMAL
+20200728RealTimeEvents.csv,07/28/2020 00:00:00,Start of day system state is NORMAL
+20200729RealTimeEvents.csv,07/29/2020 00:00:00,Start of day system state is NORMAL
+20200730RealTimeEvents.csv,07/30/2020 00:00:00,Start of day system state is NORMAL
+20200730RealTimeEvents.csv,07/30/2020 17:00:00,**System now operating in thunderstorm alert.**
+20200730RealTimeEvents.csv,07/30/2020 17:45:00,**System no longer operating in thunderstorm alert.**
+20200731RealTimeEvents.csv,07/31/2020 00:00:00,Start of day system state is NORMAL
+20200801RealTimeEvents.csv,08/01/2020 00:00:00,Start of day system state is NORMAL
+20200802RealTimeEvents.csv,08/02/2020 00:00:00,Start of day system state is NORMAL
+20200802RealTimeEvents.csv,08/02/2020 19:15:00,**System now operating in thunderstorm alert.**
+20200802RealTimeEvents.csv,08/02/2020 20:05:00,**System no longer operating in thunderstorm alert.**
+20200803RealTimeEvents.csv,08/03/2020 00:00:00,Start of day system state is NORMAL
+20200804RealTimeEvents.csv,08/04/2020 00:00:00,Start of day system state is NORMAL
+20200804RealTimeEvents.csv,08/04/2020 12:00:00,**System now operating in thunderstorm alert.**
+20200804RealTimeEvents.csv,08/04/2020 20:35:00,**System no longer operating in thunderstorm alert.**
+20200805RealTimeEvents.csv,08/05/2020 00:00:00,Start of day system state is NORMAL
+20200806RealTimeEvents.csv,08/06/2020 00:00:00,Start of day system state is NORMAL
+20200807RealTimeEvents.csv,08/07/2020 00:00:00,Start of day system state is NORMAL
+20200808RealTimeEvents.csv,08/08/2020 00:00:00,Start of day system state is NORMAL
+20200809RealTimeEvents.csv,08/09/2020 00:00:00,Start of day system state is NORMAL
+20200810RealTimeEvents.csv,08/10/2020 00:00:00,Start of day system state is NORMAL
+20200811RealTimeEvents.csv,08/11/2020 00:00:00,Start of day system state is NORMAL
+20200812RealTimeEvents.csv,08/12/2020 00:00:00,Start of day system state is NORMAL
+20200812RealTimeEvents.csv,08/12/2020 16:45:00,**System now operating in thunderstorm alert.**
+20200812RealTimeEvents.csv,08/12/2020 19:00:00,**System no longer operating in thunderstorm alert.**
+20200813RealTimeEvents.csv,08/13/2020 00:00:00,Start of day system state is NORMAL
+20200814RealTimeEvents.csv,08/14/2020 00:00:00,Start of day system state is NORMAL
+20200815RealTimeEvents.csv,08/15/2020 00:00:00,Start of day system state is NORMAL
+20200816RealTimeEvents.csv,08/16/2020 00:00:00,Start of day system state is NORMAL
+20200817RealTimeEvents.csv,08/17/2020 00:00:00,Start of day system state is NORMAL
+20200817RealTimeEvents.csv,08/17/2020 21:00:00,**System now operating in thunderstorm alert.**
+20200817RealTimeEvents.csv,08/17/2020 22:00:00,**System no longer operating in thunderstorm alert.**
+20200818RealTimeEvents.csv,08/18/2020 00:00:00,Start of day system state is NORMAL
+20200818RealTimeEvents.csv,08/18/2020 02:00:00,**System now operating in thunderstorm alert.**
+20200818RealTimeEvents.csv,08/18/2020 04:50:00,**System no longer operating in thunderstorm alert.**
+20200819RealTimeEvents.csv,08/19/2020 00:00:00,Start of day system state is NORMAL
+20200820RealTimeEvents.csv,08/20/2020 00:00:00,Start of day system state is NORMAL
+20200821RealTimeEvents.csv,08/21/2020 00:00:00,Start of day system state is NORMAL
+20200822RealTimeEvents.csv,08/22/2020 00:00:00,Start of day system state is NORMAL
+20200823RealTimeEvents.csv,08/23/2020 00:00:00,Start of day system state is NORMAL
+20200824RealTimeEvents.csv,08/24/2020 00:00:00,Start of day system state is NORMAL
+20200825RealTimeEvents.csv,08/25/2020 00:00:00,Start of day system state is NORMAL
+20200825RealTimeEvents.csv,08/25/2020 17:00:00,**System now operating in thunderstorm alert.**
+20200825RealTimeEvents.csv,08/25/2020 19:50:00,**System no longer operating in thunderstorm alert.**
+20200826RealTimeEvents.csv,08/26/2020 00:00:00,Start of day system state is NORMAL
+20200827RealTimeEvents.csv,08/27/2020 00:00:00,Start of day system state is NORMAL
+20200827RealTimeEvents.csv,08/27/2020 13:45:00,**System now operating in thunderstorm alert.**
+20200827RealTimeEvents.csv,08/27/2020 21:25:00,**System no longer operating in thunderstorm alert.**
+20200828RealTimeEvents.csv,08/28/2020 00:00:00,Start of day system state is NORMAL
+20200829RealTimeEvents.csv,08/29/2020 00:00:00,Start of day system state is NORMAL
+20200830RealTimeEvents.csv,08/30/2020 00:00:00,Start of day system state is NORMAL
+20200831RealTimeEvents.csv,08/31/2020 00:00:00,Start of day system state is NORMAL
+20200901RealTimeEvents.csv,09/01/2020 00:00:00,Start of day system state is NORMAL
+20200902RealTimeEvents.csv,09/02/2020 00:00:00,Start of day system state is NORMAL
+20200903RealTimeEvents.csv,09/03/2020 00:00:00,Start of day system state is NORMAL
+20200904RealTimeEvents.csv,09/04/2020 00:00:00,Start of day system state is NORMAL
+20200905RealTimeEvents.csv,09/05/2020 00:00:00,Start of day system state is NORMAL
+20200906RealTimeEvents.csv,09/06/2020 00:00:00,Start of day system state is NORMAL
+20200907RealTimeEvents.csv,09/07/2020 00:00:00,Start of day system state is NORMAL
+20200908RealTimeEvents.csv,09/08/2020 00:00:00,Start of day system state is NORMAL
+20200909RealTimeEvents.csv,09/09/2020 00:00:00,Start of day system state is NORMAL
+20200910RealTimeEvents.csv,09/10/2020 00:00:00,Start of day system state is NORMAL
+20200911RealTimeEvents.csv,09/11/2020 00:00:00,Start of day system state is NORMAL
+20200912RealTimeEvents.csv,09/12/2020 00:00:00,Start of day system state is NORMAL
+20200913RealTimeEvents.csv,09/13/2020 00:00:00,Start of day system state is NORMAL
+20200914RealTimeEvents.csv,09/14/2020 00:00:00,Start of day system state is NORMAL
+20200915RealTimeEvents.csv,09/15/2020 00:00:00,Start of day system state is NORMAL
+20200916RealTimeEvents.csv,09/16/2020 00:00:00,Start of day system state is NORMAL
+20200917RealTimeEvents.csv,09/17/2020 00:00:00,Start of day system state is NORMAL
+20200918RealTimeEvents.csv,09/18/2020 00:00:00,Start of day system state is NORMAL
+20200919RealTimeEvents.csv,09/19/2020 00:00:00,Start of day system state is NORMAL
+20200920RealTimeEvents.csv,09/20/2020 00:00:00,Start of day system state is NORMAL
+20200921RealTimeEvents.csv,09/21/2020 00:00:00,Start of day system state is NORMAL
+20200922RealTimeEvents.csv,09/22/2020 00:00:00,Start of day system state is NORMAL
+20200923RealTimeEvents.csv,09/23/2020 00:00:00,Start of day system state is NORMAL
+20200924RealTimeEvents.csv,09/24/2020 00:00:00,Start of day system state is NORMAL
+20200925RealTimeEvents.csv,09/25/2020 00:00:00,Start of day system state is NORMAL
+20200926RealTimeEvents.csv,09/26/2020 00:00:00,Start of day system state is NORMAL
+20200927RealTimeEvents.csv,09/27/2020 00:00:00,Start of day system state is NORMAL
+20200928RealTimeEvents.csv,09/28/2020 00:00:00,Start of day system state is NORMAL
+20200929RealTimeEvents.csv,09/29/2020 00:00:00,Start of day system state is NORMAL
+20200930RealTimeEvents.csv,09/30/2020 00:00:00,Start of day system state is NORMAL
+20201001RealTimeEvents.csv,10/01/2020 00:00:00,Start of day system state is NORMAL
+20201002RealTimeEvents.csv,10/02/2020 00:00:00,Start of day system state is NORMAL
+20201003RealTimeEvents.csv,10/03/2020 00:00:00,Start of day system state is NORMAL
+20201004RealTimeEvents.csv,10/04/2020 00:00:00,Start of day system state is NORMAL
+20201005RealTimeEvents.csv,10/05/2020 00:00:00,Start of day system state is NORMAL
+20201006RealTimeEvents.csv,10/06/2020 00:00:00,Start of day system state is NORMAL
+20201007RealTimeEvents.csv,10/07/2020 00:00:00,Start of day system state is NORMAL
+20201008RealTimeEvents.csv,10/08/2020 00:00:00,Start of day system state is NORMAL
+20201009RealTimeEvents.csv,10/09/2020 00:00:00,Start of day system state is NORMAL
+20201010RealTimeEvents.csv,10/10/2020 00:00:00,Start of day system state is NORMAL
+20201011RealTimeEvents.csv,10/11/2020 00:00:00,Start of day system state is NORMAL
+20201012RealTimeEvents.csv,10/12/2020 00:00:00,Start of day system state is NORMAL
+20201013RealTimeEvents.csv,10/13/2020 00:00:00,Start of day system state is NORMAL
+20201014RealTimeEvents.csv,10/14/2020 00:00:00,Start of day system state is NORMAL
+20201015RealTimeEvents.csv,10/15/2020 00:00:00,Start of day system state is NORMAL
+20201016RealTimeEvents.csv,10/16/2020 00:00:00,Start of day system state is NORMAL
+20201017RealTimeEvents.csv,10/17/2020 00:00:00,Start of day system state is NORMAL
+20201018RealTimeEvents.csv,10/18/2020 00:00:00,Start of day system state is NORMAL
+20201019RealTimeEvents.csv,10/19/2020 00:00:00,Start of day system state is NORMAL
+20201020RealTimeEvents.csv,10/20/2020 00:00:00,Start of day system state is NORMAL
+20201021RealTimeEvents.csv,10/21/2020 00:00:00,Start of day system state is NORMAL
+20201022RealTimeEvents.csv,10/22/2020 00:00:00,Start of day system state is NORMAL
+20201023RealTimeEvents.csv,10/23/2020 00:00:00,Start of day system state is NORMAL
+20201024RealTimeEvents.csv,10/24/2020 00:00:00,Start of day system state is NORMAL
+20201025RealTimeEvents.csv,10/25/2020 00:00:00,Start of day system state is NORMAL
+20201026RealTimeEvents.csv,10/26/2020 00:00:00,Start of day system state is NORMAL
+20201027RealTimeEvents.csv,10/27/2020 00:00:00,Start of day system state is NORMAL
+20201028RealTimeEvents.csv,10/28/2020 00:00:00,Start of day system state is NORMAL
+20201029RealTimeEvents.csv,10/29/2020 00:00:00,Start of day system state is NORMAL
+20201030RealTimeEvents.csv,10/30/2020 00:00:00,Start of day system state is NORMAL
+20201031RealTimeEvents.csv,10/31/2020 00:00:00,Start of day system state is NORMAL
+20201101RealTimeEvents.csv,11/01/2020 00:00:00,Start of day system state is NORMAL
+20201102RealTimeEvents.csv,11/02/2020 00:00:00,Start of day system state is NORMAL
+20201103RealTimeEvents.csv,11/03/2020 00:00:00,Start of day system state is NORMAL
+20201104RealTimeEvents.csv,11/04/2020 00:00:00,Start of day system state is NORMAL
+20201105RealTimeEvents.csv,11/05/2020 00:00:00,Start of day system state is NORMAL
+20201106RealTimeEvents.csv,11/06/2020 00:00:00,Start of day system state is NORMAL
+20201107RealTimeEvents.csv,11/07/2020 00:00:00,Start of day system state is NORMAL
+20201108RealTimeEvents.csv,11/08/2020 00:00:00,Start of day system state is NORMAL
+20201109RealTimeEvents.csv,11/09/2020 00:00:00,Start of day system state is NORMAL
+20201110RealTimeEvents.csv,11/10/2020 00:00:00,Start of day system state is NORMAL
+20201111RealTimeEvents.csv,11/11/2020 00:00:00,Start of day system state is NORMAL
+20201112RealTimeEvents.csv,11/12/2020 00:00:00,Start of day system state is NORMAL
+20201113RealTimeEvents.csv,11/13/2020 00:00:00,Start of day system state is NORMAL
+20201114RealTimeEvents.csv,11/14/2020 00:00:00,Start of day system state is NORMAL
+20201115RealTimeEvents.csv,11/15/2020 00:00:00,Start of day system state is NORMAL
+20201115RealTimeEvents.csv,11/15/2020 19:00:00,**System now operating in thunderstorm alert.**
+20201115RealTimeEvents.csv,11/15/2020 22:15:00,**System no longer operating in thunderstorm alert.**
+20201116RealTimeEvents.csv,11/16/2020 00:00:00,Start of day system state is NORMAL
+20201117RealTimeEvents.csv,11/17/2020 00:00:00,Start of day system state is NORMAL
+20201118RealTimeEvents.csv,11/18/2020 00:00:00,Start of day system state is NORMAL
+20201118RealTimeEvents.csv,11/18/2020 05:48:56,**State Change. System now operating in alert state.**
+20201118RealTimeEvents.csv,11/18/2020 05:48:56,**State Change. System now operating in alert state.**
+20201118RealTimeEvents.csv,11/18/2020 05:48:56,**State Change. System now operating in alert state.**
+20201118RealTimeEvents.csv,11/18/2020 05:52:04,**State Change. System now operating in normal state.**
+20201118RealTimeEvents.csv,11/18/2020 05:52:04,**State Change. System now operating in normal state.**
+20201118RealTimeEvents.csv,11/18/2020 05:52:04,**State Change. System now operating in normal state.**
+20201118RealTimeEvents.csv,11/18/2020 05:52:04,**State Change. System now operating in normal state.**
+20201119RealTimeEvents.csv,11/19/2020 00:00:00,Start of day system state is NORMAL
+20201119RealTimeEvents.csv,11/19/2020 00:00:00,Start of day system state is NORMAL
+20201119RealTimeEvents.csv,11/19/2020 16:54:50,NYISO has initiated reserve pick-up.
+20201119RealTimeEvents.csv,11/19/2020 16:54:50,NYISO has initiated reserve pick-up.
+20201119RealTimeEvents.csv,11/19/2020 16:54:50,NYISO has initiated reserve pick-up.
+20201119RealTimeEvents.csv,11/19/2020 16:59:15,NYISO has terminated reserve pick-up.
+20201119RealTimeEvents.csv,11/19/2020 16:59:15,NYISO has terminated reserve pick-up.
+20201119RealTimeEvents.csv,11/19/2020 16:59:15,NYISO has terminated reserve pick-up.
+20201120RealTimeEvents.csv,11/20/2020 00:00:00,Start of day system state is NORMAL
+20201121RealTimeEvents.csv,11/21/2020 00:00:00,Start of day system state is NORMAL
+20201121RealTimeEvents.csv,11/21/2020 00:00:00,Start of day system state is NORMAL
+20201122RealTimeEvents.csv,11/22/2020 00:00:00,Start of day system state is NORMAL
+20201123RealTimeEvents.csv,11/23/2020 00:00:00,Start of day system state is NORMAL
+20201124RealTimeEvents.csv,11/24/2020 00:00:00,Start of day system state is NORMAL
+20201124RealTimeEvents.csv,11/24/2020 01:57:30,NYISO has initiated reserve pick-up.
+20201124RealTimeEvents.csv,11/24/2020 01:57:30,NYISO has initiated reserve pick-up.
+20201124RealTimeEvents.csv,11/24/2020 01:57:30,NYISO has initiated reserve pick-up.
+20201124RealTimeEvents.csv,11/24/2020 01:57:30,NYISO has initiated reserve pick-up.
+20201124RealTimeEvents.csv,11/24/2020 02:07:12,NYISO has terminated reserve pick-up.
+20201124RealTimeEvents.csv,11/24/2020 02:07:12,NYISO has terminated reserve pick-up.
+20201124RealTimeEvents.csv,11/24/2020 02:07:12,NYISO has terminated reserve pick-up.
+20201124RealTimeEvents.csv,11/24/2020 02:07:12,NYISO has terminated reserve pick-up.
+20201125RealTimeEvents.csv,11/25/2020 00:00:00,Start of day system state is NORMAL
+20201126RealTimeEvents.csv,11/26/2020 00:00:00,Start of day system state is NORMAL
+20201127RealTimeEvents.csv,11/27/2020 00:00:00,Start of day system state is NORMAL
+20201128RealTimeEvents.csv,11/28/2020 00:00:00,Start of day system state is NORMAL
+20201129RealTimeEvents.csv,11/29/2020 00:00:00,Start of day system state is NORMAL
+20201130RealTimeEvents.csv,11/30/2020 00:00:00,Start of day system state is NORMAL
+20201130RealTimeEvents.csv,11/30/2020 16:37:26,NYISO has initiated reserve pick-up.
+20201130RealTimeEvents.csv,11/30/2020 16:37:26,NYISO has initiated reserve pick-up.
+20201130RealTimeEvents.csv,11/30/2020 16:37:26,NYISO has initiated reserve pick-up.
+20201130RealTimeEvents.csv,11/30/2020 16:37:26,NYISO has initiated reserve pick-up.
+20201130RealTimeEvents.csv,11/30/2020 16:43:26,NYISO has terminated reserve pick-up.
+20201130RealTimeEvents.csv,11/30/2020 16:43:26,NYISO has terminated reserve pick-up.
+20201130RealTimeEvents.csv,11/30/2020 16:43:26,NYISO has terminated reserve pick-up.
+20201130RealTimeEvents.csv,11/30/2020 16:43:26,NYISO has terminated reserve pick-up.
+20201201RealTimeEvents.csv,12/01/2020 00:00:00,Start of day system state is NORMAL
+20201202RealTimeEvents.csv,12/02/2020 00:00:00,Start of day system state is NORMAL
+20201203RealTimeEvents.csv,12/03/2020 00:00:00,Start of day system state is NORMAL
+20201204RealTimeEvents.csv,12/04/2020 00:00:00,Start of day system state is NORMAL
+20201205RealTimeEvents.csv,12/05/2020 00:00:00,Start of day system state is NORMAL
+20201206RealTimeEvents.csv,12/06/2020 00:00:00,Start of day system state is NORMAL
+20201206RealTimeEvents.csv,12/06/2020 18:15:10,**State Change. System now operating in alert state.**
+20201206RealTimeEvents.csv,12/06/2020 18:15:10,**State Change. System now operating in alert state.**
+20201206RealTimeEvents.csv,12/06/2020 18:15:10,**State Change. System now operating in alert state.**
+20201206RealTimeEvents.csv,12/06/2020 18:15:10,**State Change. System now operating in alert state.**
+20201206RealTimeEvents.csv,12/06/2020 18:22:14,**State Change. System now operating in normal state.**
+20201206RealTimeEvents.csv,12/06/2020 18:22:14,**State Change. System now operating in normal state.**
+20201206RealTimeEvents.csv,12/06/2020 18:22:14,**State Change. System now operating in normal state.**
+20201206RealTimeEvents.csv,12/06/2020 18:22:14,**State Change. System now operating in normal state.**
+20201207RealTimeEvents.csv,12/07/2020 00:00:00,Start of day system state is NORMAL
+20201208RealTimeEvents.csv,12/08/2020 00:00:00,Start of day system state is NORMAL
+20201209RealTimeEvents.csv,12/09/2020 00:00:00,Start of day system state is NORMAL
+20201210RealTimeEvents.csv,12/10/2020 00:00:00,Start of day system state is NORMAL
+20201211RealTimeEvents.csv,12/11/2020 00:00:00,Start of day system state is NORMAL
+20201211RealTimeEvents.csv,12/11/2020 13:05:38,**State Change. System now operating in alert state.**
+20201211RealTimeEvents.csv,12/11/2020 13:05:38,**State Change. System now operating in alert state.**
+20201211RealTimeEvents.csv,12/11/2020 13:05:38,**State Change. System now operating in alert state.**
+20201211RealTimeEvents.csv,12/11/2020 13:05:38,**State Change. System now operating in alert state.**
+20201211RealTimeEvents.csv,12/11/2020 13:09:02,**State Change. System now operating in normal state.**
+20201211RealTimeEvents.csv,12/11/2020 13:09:02,**State Change. System now operating in normal state.**
+20201211RealTimeEvents.csv,12/11/2020 13:09:02,**State Change. System now operating in normal state.**
+20201211RealTimeEvents.csv,12/11/2020 13:09:02,**State Change. System now operating in normal state.**
+20201212RealTimeEvents.csv,12/12/2020 00:00:00,Start of day system state is NORMAL
+20201213RealTimeEvents.csv,12/13/2020 00:00:00,Start of day system state is NORMAL
+20201214RealTimeEvents.csv,12/14/2020 00:00:00,Start of day system state is NORMAL
+20201215RealTimeEvents.csv,12/15/2020 00:00:00,Start of day system state is NORMAL
+20201216RealTimeEvents.csv,12/16/2020 00:00:00,Start of day system state is NORMAL
+20201216RealTimeEvents.csv,12/16/2020 05:18:48,NYISO has initiated reserve pick-up.
+20201216RealTimeEvents.csv,12/16/2020 05:18:48,NYISO has initiated reserve pick-up.
+20201216RealTimeEvents.csv,12/16/2020 05:18:48,NYISO has initiated reserve pick-up.
+20201216RealTimeEvents.csv,12/16/2020 05:18:48,NYISO has initiated reserve pick-up.
+20201216RealTimeEvents.csv,12/16/2020 05:25:48,NYISO has terminated reserve pick-up.
+20201216RealTimeEvents.csv,12/16/2020 05:25:48,NYISO has terminated reserve pick-up.
+20201216RealTimeEvents.csv,12/16/2020 05:25:48,NYISO has terminated reserve pick-up.
+20201216RealTimeEvents.csv,12/16/2020 05:25:48,NYISO has terminated reserve pick-up.
+20201216RealTimeEvents.csv,12/16/2020 23:32:39,**State Change. System now operating in alert state.**
+20201216RealTimeEvents.csv,12/16/2020 23:32:39,**State Change. System now operating in alert state.**
+20201216RealTimeEvents.csv,12/16/2020 23:32:39,**State Change. System now operating in alert state.**
+20201216RealTimeEvents.csv,12/16/2020 23:32:39,**State Change. System now operating in alert state.**
+20201216RealTimeEvents.csv,12/16/2020 23:36:55,**State Change. System now operating in normal state.**
+20201216RealTimeEvents.csv,12/16/2020 23:36:55,**State Change. System now operating in normal state.**
+20201216RealTimeEvents.csv,12/16/2020 23:36:55,**State Change. System now operating in normal state.**
+20201216RealTimeEvents.csv,12/16/2020 23:36:55,**State Change. System now operating in normal state.**
+20201217RealTimeEvents.csv,12/17/2020 00:00:00,Start of day system state is NORMAL
+20201218RealTimeEvents.csv,12/18/2020 00:00:00,Start of day system state is NORMAL
+20201219RealTimeEvents.csv,12/19/2020 00:00:00,Start of day system state is NORMAL
+20201220RealTimeEvents.csv,12/20/2020 00:00:00,Start of day system state is NORMAL
+20201221RealTimeEvents.csv,12/21/2020 00:00:00,Start of day system state is NORMAL
+20201222RealTimeEvents.csv,12/22/2020 00:00:00,Start of day system state is NORMAL
+20201223RealTimeEvents.csv,12/23/2020 00:00:00,Start of day system state is NORMAL
+20201224RealTimeEvents.csv,12/24/2020 00:00:00,Start of day system state is NORMAL
+20201225RealTimeEvents.csv,12/25/2020 00:00:00,Start of day system state is NORMAL
+20201226RealTimeEvents.csv,12/26/2020 00:00:00,Start of day system state is NORMAL
+20201227RealTimeEvents.csv,12/27/2020 00:00:00,Start of day system state is NORMAL
+20201228RealTimeEvents.csv,12/28/2020 00:00:00,Start of day system state is NORMAL
+20201229RealTimeEvents.csv,12/29/2020 00:00:00,Start of day system state is NORMAL
+20201230RealTimeEvents.csv,12/30/2020 00:00:00,Start of day system state is NORMAL
+20201231RealTimeEvents.csv,12/31/2020 00:00:00,Start of day system state is NORMAL
