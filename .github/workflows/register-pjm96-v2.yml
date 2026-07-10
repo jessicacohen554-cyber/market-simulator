@@ -11,6 +11,12 @@
 # and commit message are extracted AT RUNTIME from register-pjm96.yml (the
 # canonical record of the parallel session's finding). Idempotent. Delete
 # both register-pjm96 workflows from main after the PR merges.
+#
+# Re-fired 2026-07-10 (verify session): register-pjm96.yml — the extraction
+# source above — was missing from this branch (it never merged to main and
+# its own branch is deleted), which killed run 29104320298 exactly as it had
+# killed the old branch's run at bc72f48. Restored byte-identical (blob
+# 7697b7eb) from the old branch's commit 83320eb in the same push.
 
 name: register-pjm96-v2
 
