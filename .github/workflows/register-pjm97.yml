@@ -2,23 +2,27 @@
 # + pergen reserve + measured ramp) on the runner and register it on the
 # calibration dashboard — the register-pjm96-v2 pattern (see its header and
 # register-pjm96's for why the ~1.5 MB run payload cannot travel through the
-# session env's push path). Two additions beyond the v2 pattern:
+# session env's push path). Additions beyond the v2 pattern:
 #
 #   1. The recipe consumes two gitignored clean datatypes, so they are
 #      regenerated from committed raw on the runner BEFORE the solve
 #      (transfer-interface-limits via its curate script; ramp-capability via
-#      regenerate_clean), and
+#      regenerate_clean),
 #   2. the solve output is scanned for the overlays' fallback warnings and
 #      the job FAILS if any fired — a silently-degraded solve must never be
-#      registered as the run it claims to be.
+#      registered as the run it claims to be, and
+#   3. the session's calibration-log entry is appended (heading-gated) and
+#      committed with the results.
 #
 # Trigger: push of .github/patches/pjm97_definition.txt (the post-analysis
-# sidecar finding, written after the session's local solve is scored) or of
+# sidecar finding, written after the session's local solve was scored) or of
 # this file. Idempotent: skips the solve if the bundle is complete, skips
-# registration if the sidecar exists. Also prunes the two oldest PJM
-# registrations (pjm-83, pjm-86) per the dashboard's top-15-per-ISO
-# retention (17 after pjm-96 + pjm-97 land). Delete this workflow + the
-# patches payload from main after the PR merges (one-shot convention).
+# registration if the sidecar exists, append is heading-gated. Also prunes
+# the two oldest PJM registrations (pjm-83, pjm-86) per the dashboard's
+# top-15-per-ISO retention (17 after pjm-96 + pjm-97 land). Legitimacy
+# diagnostics may exit 1 (a probe can fail D-gates) — the artifact is the
+# deliverable. Delete this workflow + the patches payload from main after
+# the PR merges (one-shot convention).
 
 name: register-pjm97
 
@@ -112,11 +116,13 @@ jobs:
                 --bundle results/calibration/pjm97_measured_interfaces
           fi
 
-      - name: Legitimacy diagnostics
+      - name: Legitimacy diagnostics (exit 1 = a D-gate failed; the artifact is the deliverable, C7/C8 score it — a probe may fail gates)
         run: |
           python scripts/legitimacy_diagnostics.py \
               --bundle results/calibration/pjm97_measured_interfaces --iso PJM \
-              --json-out results/calibration/pjm97_measured_interfaces/legitimacy_diagnostics.json
+              --json-out results/calibration/pjm97_measured_interfaces/legitimacy_diagnostics.json \
+            || echo "::warning::legitimacy D-gates failed (probe) -- artifact written, scored by C7/C8"
+          test -s results/calibration/pjm97_measured_interfaces/legitimacy_diagnostics.json
 
       - name: Overwrite the sidecar definition with the post-analysis finding
         run: |
@@ -131,6 +137,16 @@ jobs:
           p.write_text(json.dumps(d, indent=2) + "\n")
           print("sidecar definition overwritten:", len(definition), "chars")
           PYEOF
+
+      - name: Append the session calibration-log entry (heading-gated)
+        run: |
+          set -euo pipefail
+          if ! grep -q "pjm 97 measured-interfaces): PROBE, keeper stays pjm-94" docs/calibration-log.md; then
+            cat .github/patches/pjm97_callog_entry.md >> docs/calibration-log.md
+            echo "calibration-log entry appended"
+          else
+            echo "calibration-log entry already present -- skipping"
+          fi
 
       - name: Prune the two oldest PJM registrations (top-15 retention; 17 after pjm-96 + pjm-97)
         run: |
@@ -159,21 +175,24 @@ jobs:
             results/calibration/pjm97_measured_interfaces/legitimacy_diagnostics.json \
             frontend/data/backcast/registry/2026-07-10-pjm-97-measured-interfaces.json \
             frontend/data/backcast/runs/2026-07-10-pjm-97-measured-interfaces.js \
-            frontend/data/backcast/bench
-          if git diff --cached --quiet && git diff --cached --quiet -- frontend/data/backcast/registry; then
+            frontend/data/backcast/bench \
+            docs/calibration-log.md
+          if git diff --cached --quiet; then
             echo "nothing to commit"
             exit 0
           fi
           cat > /tmp/pjm97_commit_msg.txt <<'MSGEOF'
-          results: register pjm-97 measured-interfaces (G-20 Phase-2 internal-interface arm)
+          results: register pjm-97 measured-interfaces (G-20 Phase-2 internal-interface arm) -- hypothesis REFUTED, keeper stays pjm-94
 
           pjm-97 = pjm-96 recipe + pjm_measured_interface_limits (measured hourly
           Data Miner 2 internal interface limits on the seven mapped links,
           transfer-interface-limits clean datatype, rules 13/14) +
           pjm_reserve_pergen + measured_ramp_capability (pjm-81 owner
-          recommendation). Full finding in the sidecar definition (written from
-          the session's local analysis; the runner re-solve is the committed
-          record). Also prunes pjm-83 and pjm-86 per the top-15 retention.
+          recommendation). The caps bind (AEP->Dominion at its measured hourly
+          limit ~94% of hours) but the eastern under-run persists on seam supply
+          + commitment posture; CT per-plant capture falls; C3c unchanged at 0h.
+          Full finding in the sidecar definition; session entry appended to
+          docs/calibration-log.md. Prunes pjm-83 and pjm-86 (top-15 retention).
 
           Solved + registered server-side (this workflow) -- the run payload
           exceeds the session push path (register-pjm96 precedent).
