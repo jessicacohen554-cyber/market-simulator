@@ -1993,6 +1993,7 @@ def solve_and_persist(
     nyiso_iroquois_winter_spread: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
+    nyiso_dynamic_reserve_requirements: bool | None = None,
     neiso_dynamic_reserve_requirements: bool | None = None,
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
@@ -2267,6 +2268,7 @@ def solve_and_persist(
             nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread,
             nyiso_synchronised_reserve=nyiso_synchronised_reserve,
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
+            nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements,
             neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements,
             miso_firm_imports=miso_firm_imports,
             miso_seam_flow_limit=miso_seam_flow_limit,
@@ -2631,6 +2633,7 @@ def solve_and_persist(
         "nyiso_iroquois_winter_spread": nyiso_iroquois_winter_spread,
         "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
+        "nyiso_dynamic_reserve_requirements": nyiso_dynamic_reserve_requirements,
         "neiso_dynamic_reserve_requirements": neiso_dynamic_reserve_requirements,
         "miso_firm_imports": miso_firm_imports,
         "miso_seam_flow_limit": miso_seam_flow_limit,
@@ -3074,6 +3077,10 @@ def solve_and_persist(
     if nyiso_spin_headroom_frac is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac
+        )
+    if nyiso_dynamic_reserve_requirements is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements
         )
     if neiso_dynamic_reserve_requirements is not None:
         recorded_cfg = recorded_cfg.with_overrides(
@@ -7043,6 +7050,21 @@ def main() -> None:
         "NOT a price-residual fit.",
     )
     parser.add_argument(
+        "--nyiso-dynamic-reserve-requirements",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="NYISO condition-varying reserve requirements (issue #1344, Ask B): "
+        "replace the in-LP co-opt families' static published requirements with "
+        "the MEASURED hourly series derived from the published LRR schedule "
+        "(SENY 30-min hourly steps 1,300/1,550/1,800 MW) and logged "
+        "Thunderstorm-Alert windows (data/raw/NYISO-AS/requirements/"
+        "NYISO_reserve_requirements_{year}.csv, scripts/"
+        "derive_nyiso_reserve_requirements_hourly.py). A market-design input "
+        "(rule 13); measured reserve PRICES stay validation-only. Hard-errors "
+        "when the derived series is absent. Requires --energy-reserve-coopt; "
+        "NYISO-only. Default (unset) keeps the base config value (off).",
+    )
+    parser.add_argument(
         "--neiso-dynamic-reserve-requirements",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -7654,6 +7676,7 @@ def main() -> None:
         nyiso_iroquois_winter_spread=args.nyiso_iroquois_winter_spread,
         nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
+        nyiso_dynamic_reserve_requirements=args.nyiso_dynamic_reserve_requirements,
         neiso_dynamic_reserve_requirements=args.neiso_dynamic_reserve_requirements,
         miso_firm_imports=miso_firm_imports,
         miso_seam_flow_limit=args.miso_seam_flow_limit,
