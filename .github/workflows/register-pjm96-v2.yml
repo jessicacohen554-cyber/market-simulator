@@ -17,13 +17,20 @@
 # its own branch is deleted), which killed run 29104320298 exactly as it had
 # killed the old branch's run at bc72f48. Restored byte-identical (blob
 # 7697b7eb) from the old branch's commit 83320eb in the same push.
+#
+# Rebound AGAIN 2026-07-10 to claude/pjm97-keeper-promotion-verify-n78vhl:
+# PR #1968 merged the driver fix + this extraction source to main (09a6440),
+# but the promotion branch was deleted before the re-fired runs could push
+# their results (their final pull/push targets the deleted ref, so they die
+# at the last step). Fresh branch from main; the runs re-solve
+# deterministically and their results commits land here.
 
 name: register-pjm96-v2
 
 on:
   push:
     branches:
-      - claude/pjm97-keeper-promotion-2lchu7
+      - claude/pjm97-keeper-promotion-verify-n78vhl
     paths:
       - .github/workflows/register-pjm96-v2.yml
   workflow_dispatch:
