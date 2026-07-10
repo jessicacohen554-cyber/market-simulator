@@ -689,9 +689,14 @@ def _pjm_config() -> ISOConfig:
     # Dominion congestion. The graph is a connected mesh over the west→east
     # gradient; limits not tied to a published interface are order-of-magnitude
     # estimates from the "Average Western/Central/Eastern" envelopes (~5,029 /
-    # 3,336 / 8,168 MW). Tier 3 (calibration) — verify/refine against PJM Data
-    # Miner interface binding frequency, exactly as ERCOT's WESTEX/PNHNDL
-    # limits were derived from SCED binding-constraint data.
+    # 3,336 / 8,168 MW). Tier 3 (calibration) — verified against PJM Data Miner
+    # binding frequency/direction 2026-07-10 (constants.PJM_INTERFACE_LINK_MAP).
+    # Under ScenarioConfig.pjm_measured_interface_limits (backcast overlay,
+    # default off) the seeded links follow the measured HOURLY series
+    # (transfer-interface-limits clean datatype) in the forward direction —
+    # these static seeds remain the forecast-mode forward story and the
+    # reverse-direction/fallback rating, exactly as ERCOT's WESTEX/PNHNDL
+    # statics pair with ercot_gtc_limits_measured.
     links = [
         # West gradient: ComEd exports east into AEP; the 5004/5005 interface.
         TransferLink(from_zone="PJM_ComEd", to_zone="PJM_AEP_Ohio", ttc_mw=6000.0),

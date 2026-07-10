@@ -3623,6 +3623,38 @@ class ScenarioConfig:
     # uses the static (or scenario-built) link ratings.
     ercot_gtc_limits_measured: bool = False
 
+    # Measured PJM internal interface transfer limits (backcast/calibration
+    # overlay — the PJM analogue of ercot_gtc_limits_measured). When True in
+    # backcast mode for PJM, the forward (west->east congestion) direction of
+    # the internal links whose static ttc_mw was seeded from the PJM Data
+    # Miner 2 transfer-limit postings (constants.PJM_INTERFACE_LINK_MAP:
+    # 50045005 -> ComEd->AEP, AEP/DOM -> AEP->Dominion, AP-South ->
+    # West_APS->SWMAAC, Bedington-BlackOak -> West_APS->Central_PA, and the
+    # Average Western/Central/Eastern envelopes on the links they seeded)
+    # follows the measured HOURLY published limit series
+    # (transfer-interface-limits clean datatype) instead of the single static
+    # ttc_mw. Where an interface publishes both pre- and post-contingency
+    # limits, the operative hourly cap is their elementwise min (both are
+    # simultaneously-enforced security limits). The reverse direction keeps
+    # the static capability (the published limits are directional
+    # security limits on the west->east cut, not reverse ratings).
+    # Supersedes constants.PJM_MEASURED_INTERNAL_TTC's static medians on the
+    # mapped links when both are enabled — same measured feed at hourly
+    # rather than pooled-median aggregation (rule 19: one mechanism per
+    # phenomenon), while pjm_congestion still sets the static fill/reverse
+    # value those links carry.
+    # Rule #13/#14 admissibility: an interface transfer limit is PJM's
+    # published operating-security transfer capability — it regenerates
+    # every year from the same Data Miner 2 feed and responds to changed
+    # grid conditions (outages, re-ratings, upgrades); nothing here reads
+    # model outputs or the scoring targets. Two-track by construction
+    # (the hr_by_year pattern): backcast years read the measured hourly
+    # series; FORECAST years keep the static seeds — the static ttc_mw
+    # values (2024 means of this same feed) ARE the forward story, since a
+    # forecast has no realized outage/re-rating sequence to read.
+    # Off by default.
+    pjm_measured_interface_limits: bool = False
+
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
     # scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and
@@ -5228,6 +5260,7 @@ TIER_TAGS: dict[str, int] = {
     "chp_btm_floor_pct": 3,
     "chp_export_floor_measured": 3,
     "ercot_gtc_limits_measured": 3,
+    "pjm_measured_interface_limits": 3,
     "ercot_wtx_curtailment_driver": 3,
     "ercot_wtx_curtail_depth_wind": 3,
     "ercot_wtx_curtail_depth_solar": 3,
