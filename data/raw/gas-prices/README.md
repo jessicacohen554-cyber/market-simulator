@@ -12,6 +12,7 @@ Natural gas spot/citygate price series used for fuel-cost passthrough.
 | `transco_z6_iroquois_monthly.csv` | NGI-adjacent monthly hub series (merged by the NYISO narrative fetcher) | `scripts/fetch_nyiso_gas_narrative.py` |
 | `nyiso_downstate_ct_gas_basis_monthly.csv` | derived: EIA `N3050NY3` (NY citygate) minus `transco_z6_iroquois_monthly.csv` | `scripts/fetch_nyiso_downstate_gas_basis.py` |
 | `SOURCES_miso_citygate.md` | provenance note for the MISO citygate pull (pulled 2026-06-22) | — |
+| `nyiso_som_hub_fuel_annual.csv` | hand-transcribed NYISO SOM Figure A-6 annual per-hub fuel index prices, 2018–2025 (5 gas hubs incl. **Iroquois Z2** + ULSK/ULSD/FO6) — the free measured Z2 annual level; SOM PDFs under `data/raw/NYISO/`; daily/monthly Z2 stays a Platts licence ask (Ask C1, `docs/handoffs/nyiso-data-asks-2026-07.md`) | `scripts/curate_nyiso_som_hub_fuel_annual.py` (transcription is by hand; each row cites doc + page) |
 
 **⚠️ Licensing note — read before treating this directory as uniformly
 public domain.** Henry Hub and the EIA-native citygate series are EIA's own
