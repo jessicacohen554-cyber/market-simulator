@@ -1078,16 +1078,26 @@ def _build_gen_group_cap_rows(
     layout: VariableLayout,
     gen_idx: np.ndarray,
     cap_t: np.ndarray,
+    storage_idx: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Hourly generation-group ceiling rows (``<=``, one row per hour).
 
-    One row per hour enforcing ``sum_{g in group} P[g,t] <= cap_t[t]`` — the
-    generic fleet-level deliverability ceiling. First (only) user: the hydro
-    hourly deliverability envelope (``config.hydro_dispatch_envelope``), where
-    ``cap_t`` is the measured per-(month × hod) percentile of EIA-930
+    One row per hour enforcing::
+
+        sum_{g in group} P[g,t]
+          + sum_{s in storage group} (Dis[s,t] - Chg[s,t]) <= cap_t[t]
+
+    — the generic fleet-level deliverability ceiling. First (only) user: the
+    hydro hourly deliverability envelope (``config.hydro_dispatch_envelope``),
+    where ``cap_t`` is the measured per-(month × hod) percentile of EIA-930
     ``NG: WAT`` (:func:`market_sim.data.eia_loader.measured_hydro_hourly_envelope`)
     bounding the budget LP's perfect-foresight hoarding of the monthly hydro
-    energy into the top price hours.
+    energy into the top price hours. ``storage_idx`` carries the
+    pumped-storage units for BAs whose ``NG: WAT`` includes PS net output
+    (CISO reports no separate PS series), so the capped model quantity is
+    like-for-like with the measured series: conventional hydro plus PS net
+    discharge. A pumping hour (Chg > 0) *loosens* the row, exactly as pumping
+    load lowers the measured WAT.
 
     The per-hour pattern is identical across hours, so the block is one
     ``kron`` over a ``(1, vars_per_hour)`` coefficient row — no Python loop
@@ -1097,6 +1107,8 @@ def _build_gen_group_cap_rows(
         layout: Variable layout describing the column structure.
         gen_idx: Member generator column indices, shape ``(n_members,)``.
         cap_t: Per-hour ceiling in MW, shape ``(T,)``.
+        storage_idx: Optional member storage unit indices whose net discharge
+            (``Dis - Chg``) counts against the ceiling.
 
     Returns:
         Tuple ``(block, row_lower, row_upper)`` with ``block`` a CSR matrix of
@@ -1104,8 +1116,19 @@ def _build_gen_group_cap_rows(
     """
     T = layout.T
     g_idx = np.asarray(gen_idx, dtype=int)
+    cols = [layout._p_off + g_idx]
+    data = [np.ones(g_idx.size)]
+    if storage_idx is not None:
+        s_idx = np.asarray(storage_idx, dtype=int)
+        if s_idx.size:
+            cols.append(layout._dis_off + s_idx)
+            data.append(np.ones(s_idx.size))
+            cols.append(layout._chg_off + s_idx)
+            data.append(-np.ones(s_idx.size))
+    cols_all = np.concatenate(cols)
+    data_all = np.concatenate(data)
     per_hour = sp.coo_matrix(
-        (np.ones(g_idx.size), (np.zeros(g_idx.size), layout._p_off + g_idx)),
+        (data_all, (np.zeros(cols_all.size, dtype=int), cols_all)),
         shape=(1, layout.vars_per_hour),
     ).tocsr()
     block = sp.kron(sp.eye(T, format="csr"), per_hour, format="csr")
@@ -2296,6 +2319,7 @@ def build_constraints(
     ) = None,
     hydro_envelope_gen_idx: np.ndarray | None = None,
     hydro_envelope_mw: np.ndarray | None = None,
+    hydro_envelope_storage_idx: np.ndarray | None = None,
     import_node_gen_idx: np.ndarray | None = None,
     import_node_monthly_lo: np.ndarray | None = None,
     import_node_monthly_hi: np.ndarray | None = None,
@@ -2626,7 +2650,10 @@ def build_constraints(
         env_gen_idx = np.asarray(hydro_envelope_gen_idx, dtype=int)
         if env_gen_idx.size:
             env_block, env_lower, env_upper = _build_gen_group_cap_rows(
-                layout, env_gen_idx, hydro_envelope_mw
+                layout,
+                env_gen_idx,
+                hydro_envelope_mw,
+                storage_idx=hydro_envelope_storage_idx,
             )
             blocks.append(env_block)
             del env_block
@@ -3245,6 +3272,7 @@ class DispatchModel:
         ) = None,
         hydro_envelope_gen_idx: np.ndarray | None = None,
         hydro_envelope_mw: np.ndarray | None = None,
+        hydro_envelope_storage_idx: np.ndarray | None = None,
         import_node_gen_idx: np.ndarray | None = None,
         import_node_monthly_lo: np.ndarray | None = None,
         import_node_monthly_hi: np.ndarray | None = None,
@@ -3479,6 +3507,7 @@ class DispatchModel:
             local_capacity_specs=local_capacity_specs,
             hydro_envelope_gen_idx=hydro_envelope_gen_idx,
             hydro_envelope_mw=hydro_envelope_mw,
+            hydro_envelope_storage_idx=hydro_envelope_storage_idx,
             import_node_gen_idx=import_node_gen_idx,
             import_node_monthly_lo=import_node_monthly_lo,
             import_node_monthly_hi=import_node_monthly_hi,
@@ -4229,6 +4258,7 @@ def solve_dispatch(
     ) = None,
     hydro_envelope_gen_idx: np.ndarray | None = None,
     hydro_envelope_mw: np.ndarray | None = None,
+    hydro_envelope_storage_idx: np.ndarray | None = None,
     import_node_gen_idx: np.ndarray | None = None,
     import_node_monthly_lo: np.ndarray | None = None,
     import_node_monthly_hi: np.ndarray | None = None,
@@ -4386,6 +4416,7 @@ def solve_dispatch(
         local_capacity_specs=local_capacity_specs,
         hydro_envelope_gen_idx=hydro_envelope_gen_idx,
         hydro_envelope_mw=hydro_envelope_mw,
+        hydro_envelope_storage_idx=hydro_envelope_storage_idx,
         import_node_gen_idx=import_node_gen_idx,
         import_node_monthly_lo=import_node_monthly_lo,
         import_node_monthly_hi=import_node_monthly_hi,
