@@ -1,0 +1,17 @@
+{
+  "id": "2026-07-10-ercot53-hsl-930fill",
+  "label": "ercot53 hsl 930fill",
+  "date": "2026-07-10",
+  "shorthand": "ercot53-hsl-930fill",
+  "definition": "ercot53 HSL known-bad-window 930 fill (KEEPER-TRACK CANDIDATE; single measured-input fix on the ercot52 config, zero config deltas -- coal net-summer derate + ORDC cap-dual adder ON, offer curves untouched): the 2024 HSL parquet's cited known-bad NP6 window (2024-08-20..23) was nulled then linearly interpolated, and with night-bounded endpoints that zeroed 4 days of August solar potential (~810 GWh) and bridged wind flat -- 17 of ercot52's 37 2024 tail hours and most of the Aug-2024 like-for-like monthly error (+62.6%) were phantom scarcity from the hole. build_ercot_hsl.py now fills cited known-bad windows from the measured EIA-930 ERCO hourly series (HSL=GEN inside the window, no fabricated curtailment headroom); the rebuilt parquet is byte-identical outside the window. 2023/2025 inputs untouched, solves reproduce ercot52 (v2.4: C3a -1.0%/-3.6%, C3b 0.109/0.079, C3c 162/5 h). 2024 on rubric v2.4: C3a -0.3% -> -6.8% (still PASS; removing the phantom scarcity reveals the underlying body-under -- the known online-capability wedge), C3b 0.296 -> 0.180, C3c 37 -> 24 h (DA actual 68), Aug demand-weighted 66.15 -> 43.38 vs perfect-model 40.68 (+62.6% -> +6.6%).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-10-ercot53-hsl-930fill.js",
+  "bundle": "results/calibration/ercot53_hsl_930fill",
+  "ablation_twin": "2026-07-10-ercot53-hsl-930fill-ablation",
+  "market_story": "Same floor stack as the ercot46 keeper (ST_GAS net-load drag, CT reliability floors, CHP steam-following, coal take-or-pay): legacy gas-steam is committed by real reliability/RUC practice every day and night, CTs hold AS/RUC-deployment energy in load pockets, cogens follow host steam. No new floor this round -- the delta vs ercot52 is a corrected measured renewable input, not forcing."
+}
