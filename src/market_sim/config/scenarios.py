@@ -1913,6 +1913,29 @@ class ScenarioConfig:
     # forward-derivable requirement series). Requires energy_reserve_coopt +
     # CAISO; default off; GATED CHANGE (alters dispatch volumes). See
     # docs/multi-iso/caiso-reserve-coopt.md.
+    caiso_commitment_posture: bool = False  # CAISO: the SAME pooled linear
+    # commitment-posture lever as miso_commitment_posture (design note §A) on
+    # the CAISO per-generator spin/non-spin co-opt pools — U[p,t] online
+    # capacity with joint headroom re-anchored (Σ P + R ≤ U), CEMS-measured
+    # min-load coupling Σ P ≥ mlf·U, NREL-table startup charge on ΔU⁺
+    # (cyclic), and the online ramp gate R ≤ ρ(t)·U (offline capacity
+    # contributes no 10-minute ramp). Fast-start pools exempt by POOL PHYSICS
+    # (capacity-weighted min-down ≤ 2 h AND startup < $30/MW — rule 18, never
+    # class tuples). CAISO rationale (caiso-70 FINDING, 2026-07-10): the
+    # ungated pergen pool clears reserve from idle capacity at zero
+    # opportunity cost, so no RTPD/RUC-like award→energy channel exists — the
+    # posture U makes holding spin/non-spin cost a real start + min-load ride,
+    # the forward-real mechanism by which CAISO's evening reserve procurement
+    # commits gas (the measured evening CC deficit, +1.9/+1.2/+0.3 GW
+    # 2023/24/25, docs/handoffs/caiso-belly-commitment-probe-2026-07.md). NOT
+    # a floor: forces no exogenous energy (the min-load term binds only
+    # capacity the LP itself brings online), carries no min_gen/D-2 mechanism
+    # id, and every input is measured (CEMS mlf), published (NREL startup
+    # tables, BAL-002-WECC-3 requirement, tariff §27.1.2.3.5 curves) or
+    # physics (ramp10) — zero fitted parameters (rules 5/13/23). Read only by
+    # reserve_config._caiso_design, so it requires energy_reserve_coopt +
+    # caiso_reserve_coopt + CAISO; default off; GATED CHANGE (alters dispatch
+    # volumes).
     ercot_load_resource_reserve: bool = False  # ERCOT co-opt: credit the
     # measured Load-Resource responsive reserve (RRS-UFR, the under-frequency-
     # relay RRS that by protocol only Load Resources provide; ~0.8-0.9 GW) into
@@ -4916,6 +4939,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_reserve_zones": 1,
     "miso_reserve_pergen": 1,
     "miso_commitment_posture": 1,
+    "caiso_commitment_posture": 1,
     "ercot_load_resource_reserve": 1,
     "ercot_load_resource_reserve_from_year": 1,
     "ercot_storage_as_reserve": 1,
