@@ -558,6 +558,7 @@ def run_year(
     nyiso_iroquois_winter_spread: bool | None = None,
     nyiso_synchronised_reserve: bool | None = None,
     nyiso_spin_headroom_frac: float | None = None,
+    nyiso_dynamic_reserve_requirements: bool | None = None,
     neiso_dynamic_reserve_requirements: bool | None = None,
     miso_firm_imports: bool | None = None,
     miso_seam_flow_limit: bool = False,
@@ -972,6 +973,10 @@ def run_year(
     if nyiso_spin_headroom_frac is not None:
         config = config.with_overrides(
             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac
+        )
+    if nyiso_dynamic_reserve_requirements is not None:
+        config = config.with_overrides(
+            nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements
         )
     if neiso_dynamic_reserve_requirements is not None:
         config = config.with_overrides(
