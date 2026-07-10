@@ -570,6 +570,7 @@ def run_year(
     pjm_seam_flow_limit: bool = False,
     pjm_seam_flow_percentile: float | None = None,
     pjm_seam_export_limit: bool = False,
+    pjm_seam_measured_ladder: bool = False,
     gas_hub_basis_overlay: bool | None = None,
     gas_st_netload_drag: bool = False,
     gas_st_drag_overrides: dict[str, float] | None = None,
@@ -996,6 +997,8 @@ def run_year(
         )
     if pjm_seam_export_limit:
         config = config.with_overrides(pjm_seam_export_limit=True)
+    if pjm_seam_measured_ladder:
+        config = config.with_overrides(pjm_seam_measured_ladder=True)
     if miso_pjm_border_anchor:
         config = config.with_overrides(miso_pjm_border_anchor=True)
     if miso_cc_coal_rebalance and iso.upper() == "MISO":
@@ -2468,6 +2471,38 @@ def run_year(
                     "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
                     "ladders (EIA-930 flow durations x MISO DA hub quantiles; "
                     "PJM/SPP/South, import + export; no added hurdle)",
+                    iso,
+                    year,
+                )
+        # [measured: per-seam Q-Q band ladders — PJM settlement-grade tie-line
+        #  flow duration curves coupled with the measured PJM DA system LMP
+        #  (interchange_config.PJM_SEAM_LADDER_BY_YEAR, scripts/
+        #  derive_pjm_seam_ladders.py) | forecast substitute: the gas-elastic
+        #  reference-price formula (hr_by_year two-track; pooled ladder = the
+        #  forward story)]. Overwrites EVERY seam band (MISO/NYISO/Carolinas/
+        # TVA/LGEE, both directions) with its measured revealed-supply-curve
+        # price, so the direction-structural record (near-always export to
+        # MISO/NYISO, near-always import from the south) the spot-spread
+        # pricing inverts (pjm-95 2023: imports 46% of hours vs measured ~2%,
+        # displacing CC_REGULAR) clears economically. The firm scheduled-
+        # export floor is displaced on ladder years inside
+        # apply_interchange_injections (alternatives, never stacked; rule 19).
+        if (
+            getattr(config, "reference_price_interface", False)
+            and iso in INTERFACE_NEIGHBORS
+            and iso != "CAISO"
+            and getattr(config, "pjm_seam_measured_ladder", False)
+        ):
+            from market_sim.model.transmission import (
+                inject_pjm_seam_ladder_prices,
+            )
+
+            if inject_pjm_seam_ladder_prices(fleet_arrays, mc_base, iso, year):
+                logger.info(
+                    "%s %d: seam bands repriced to the MEASURED per-seam Q-Q "
+                    "ladders (tie-line flow durations x PJM DA system "
+                    "quantiles; MISO/NYISO/Carolinas/TVA/LGEE, import + "
+                    "export; no added hurdle; firm-export floor displaced)",
                     iso,
                     year,
                 )

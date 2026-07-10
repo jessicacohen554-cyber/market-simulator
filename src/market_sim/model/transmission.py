@@ -1725,7 +1725,62 @@ def inject_miso_seam_ladder_prices(
 
     if iso != "MISO":
         return False
-    ladder = MISO_SEAM_LADDER_BY_YEAR.get(year)
+    return _inject_seam_ladder(fleet_arrays, mc, MISO_SEAM_LADDER_BY_YEAR.get(year))
+
+
+def inject_pjm_seam_ladder_prices(
+    fleet_arrays,
+    mc: np.ndarray,
+    iso: str,
+    year: int,
+) -> bool:
+    """Overwrite PJM's seam band rows of ``mc`` with the measured Q-Q ladders.
+
+    The PJM application of the MISO/NEISO measured-ladder pattern
+    (:func:`inject_miso_seam_ladder_prices`): every reference-price band of
+    every seam (MISO / NYISO / Carolinas / TVA / LGEE, import AND export
+    directions) takes its per-year measured band price from
+    :data:`~market_sim.config.interchange_config.PJM_SEAM_LADDER_BY_YEAR` —
+    the seam's revealed supply curve, derived by
+    ``scripts/derive_pjm_seam_ladders.py`` from PJM's settlement-grade
+    tie-line flow duration curves Q-Q coupled with the measured PJM DA system
+    LMP. The LP — still clearing each band economically on its OWN hourly
+    internal price — reproduces the measured direction-structural record
+    (near-always export to MISO/NYISO, near-always import from
+    Carolinas/TVA/LGEE) that the hurdle-gated spot-spread pricing inverts
+    (the pjm-95 2023 46%-import-hours miss displacing CC_REGULAR dispatch).
+
+    No hurdle is added on top: the ladder prices are revealed clearing
+    thresholds that already embed delivery/wheeling costs. Band capacities
+    and the measured per-border deliverability envelopes
+    (:func:`inject_pjm_seam_flow_limit`) are untouched. The caller skips the
+    firm scheduled-export floor (:func:`inject_reference_price_firm_export`)
+    on the rows/years this ladder covers — the firm base the floor pinned is
+    the same deep-duration structure the ladder prices (alternatives, never
+    stacked; rule 19).
+
+    Returns ``True`` when at least one band row was repriced, ``False`` when
+    ``iso``/``year`` has no ladder entry or the fleet carries no
+    reference-price bands (byte-identical no-op — forecast years fall through
+    to the gas-elastic reference-price formula, the hr_by_year two-track
+    design).
+    """
+    from market_sim.config.interchange_config import PJM_SEAM_LADDER_BY_YEAR
+
+    if iso != "PJM":
+        return False
+    return _inject_seam_ladder(fleet_arrays, mc, PJM_SEAM_LADDER_BY_YEAR.get(year))
+
+
+def _inject_seam_ladder(fleet_arrays, mc: np.ndarray, ladder) -> bool:
+    """Reprice every reference-price band row of ``mc`` from ``ladder``.
+
+    Shared core of the per-ISO measured seam-ladder injectors: ``ladder`` is
+    one year's ``{seam: {"import"/"export": (price per band,)}}`` registry
+    entry (``None`` no-ops). Rows are matched by the reference-node unit-id
+    convention (``<zone><mark><seam>#<k>``); non-band rows and seams absent
+    from the ladder are untouched.
+    """
     if not ladder:
         return False
 
@@ -4061,7 +4116,22 @@ def apply_interchange_injections(
                 if _border_anchor and iso == "MISO"
                 else "",
             )
-        if inject_reference_price_firm_export(fleet_arrays, iso, year):
+        # The measured PJM seam ladder DISPLACES the firm scheduled-export
+        # floor on the years it covers (rule 19 — alternatives, never
+        # stacked): the firm base the floor pins is exactly the deep-duration
+        # structure the ladder prices (its base export band clears in ~97-100%
+        # of hours economically). Forecast years have no ladder entry AND no
+        # floor entry, so both paths no-op identically there.
+        from market_sim.config.interchange_config import PJM_SEAM_LADDER_BY_YEAR
+
+        _pjm_ladder_active = (
+            iso == "PJM"
+            and getattr(config, "pjm_seam_measured_ladder", False)
+            and year in PJM_SEAM_LADDER_BY_YEAR
+        )
+        if not _pjm_ladder_active and inject_reference_price_firm_export(
+            fleet_arrays, iso, year
+        ):
             _logger.info(
                 "%s %d: firm scheduled-export floor applied (must-flow seam base)",
                 iso,
