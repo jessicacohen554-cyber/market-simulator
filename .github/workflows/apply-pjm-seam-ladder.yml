@@ -1,0 +1,168 @@
+name: apply-pjm-seam-ladder
+
+# Applies the 2026-07-10 PJM session's work onto this branch, server-side —
+# the apply-miso-1347-edits / apply-export-cap precedent. The session's remote
+# env cannot push large packs (git push 413s) or raw Data-API blobs (403), so
+# the work travels as (a) a plain-text unified diff of every normal-width file
+# (.github/patches/2026_07_10_pjm96_code.patch: the measured PJM seam ladder +
+# the temp-derate validation probe + calibration-log) and (b) an anchored
+# splice script for the multi-kilobyte single-line JSON files
+# (.github/patches/2026_07_10_pjm96_registry_edits.py: keeper demotion
+# pjm-95 -> pjm-94). status.js is DERIVED and rebuilt here (build_status.py)
+# rather than transcribed. Idempotent: the patch no-ops when already applied
+# (reverse-check), the splice script checks its own markers.
+on:
+  push:
+    branches:
+      - claude/pjm-calibration-fuel-scarcity-2gd56m
+    paths:
+      - .github/patches/2026_07_10_pjm96_code.patch
+      - .github/patches/2026_07_10_pjm96_registry_edits.py
+      - .github/workflows/apply-pjm-seam-ladder.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Apply the code patch (commit 1 — measured seam ladder + probe)
+        run: |
+          set -euo pipefail
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          if git apply --check --reverse .github/patches/2026_07_10_pjm96_code.patch 2>/dev/null; then
+            echo "code patch already applied — skipping"
+          else
+            git apply --whitespace=nowarn .github/patches/2026_07_10_pjm96_code.patch
+            git add -A
+            git commit -F - <<'MSG'
+feat(pjm): measured seam ladder — Q-Q tie-line x DA quantile band prices (audit C-6 closure for the priced seam)
+
+pjm-95 C1 root-cause lead: the spot-spread reference seam imports in 46% of
+2023 hours vs measured ~2% (diurnal corr -0.50) — phantom imports displacing
+CC_REGULAR dispatch (C1 FAIL 2023 -14.1 TWh). The measured PJM interchange
+is direction-structural (export to MISO/NYISO in ~97-100% of ALL hours,
+import from Carolinas/TVA/LGEE in 77-97% — firm PTP schedules revealed only
+statistically), which the hurdle-gated gas x HR x load-shape formula inverts.
+
+The MISO/NEISO measured-ladder pattern applied to PJM:
+
+- scripts/derive_pjm_seam_ladders.py — Q-Q duration coupling of PJM's
+  settlement-grade tie-line flows (pooled onto the five priced seams by the
+  new interchange_config.PJM_SEAM_TIE) with the measured PJM DA system LMP.
+  Offline P9: every seam volume within +/-0.06 TWh of measured, import-hour
+  shares 0-2% vs measured 0-2% (MISO/NYISO), duration RMSE 40-275 MW.
+  Boundary note (rule 14): PJM's EIA-930 submission disagrees with both the
+  tie meter and the counterparty meters on the MISO seam (2023: 56.6 vs
+  35.3 vs MISO's own 33.5 TWh) — the tie-line file (the model's canonical
+  boundary) is the flow source; the 930 parquet is the printed cross-check.
+- interchange_config.PJM_SEAM_LADDER_BY_YEAR (2023/2024/2025 measured
+  ladders + full provenance comment); the static PJM tranches re-labelled
+  (they serve only the static-node path).
+- transmission.inject_pjm_seam_ladder_prices via the shared
+  _inject_seam_ladder core (the MISO injector delegates, byte-identical);
+  DISPLACES the firm scheduled-export floor on ladder years (rule 19 —
+  alternatives, never stacked).
+- ScenarioConfig.pjm_seam_measured_ladder (tier 1) +
+  --pjm-seam-measured-ladder, threaded through run_calibration(_full) with
+  meta.json round-trip (replay-safe).
+- build_dof_ledger: PJM seam bands flip residual -> measured-physical under
+  the flag; residual-row scope re-worded.
+- tests/test_pjm_seam_ladder.py — registry shape/ordering/no-wash,
+  injection, firm-floor displacement (19 tests).
+- scripts/probes/_pjm_temp_capability_envelope.py + the calibration-log
+  entry for this session (the demotion's evidence; the registry/attestation
+  edits land in the companion commit).
+- .github/workflows/fetch-pjm-interchange.yml — runner intake for the
+  EIA-930 PJM cross-check parquet (the NYISO intake pattern; the ladder
+  itself derives from the committed tie-line CSVs, and the derive script
+  skips the cross-check gracefully while the parquet is absent).
+
+Identification: measured-behaviour, frozen formula, zero fitted parameters
+(rule 23); re-derives only when the source data extends. Forecast years keep
+the gas-elastic reference formula (two-track, like hr_by_year).
+
+Applied server-side from .github/patches/2026_07_10_pjm96_code.patch
+(apply-pjm-seam-ladder workflow — the session env cannot push packs).
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Q2mujpsLrigW5AZXBP1md3
+MSG
+          fi
+
+      - name: Install the package (build_status deps)
+        run: pip install -e .
+
+      - name: Registry splices + status rebuild (commit 2 — keeper demotion)
+        run: |
+          set -euo pipefail
+          python .github/patches/2026_07_10_pjm96_registry_edits.py
+          python scripts/build_status.py
+          if git diff --quiet; then
+            echo "no registry changes (edits already applied)"
+          else
+            git add -u
+            git commit -F - <<'MSG'
+governance(pjm): keeper DEMOTED pjm-95 -> pjm-94 — own-fleet probe refutes the temp-derate slopes (rule 24)
+
+The pjm-95 promotion carried an open_validation debt: port the ERCOT
+temp-derate closure test to PJM's own fleet; "if PJM's fleet refutes the
+slopes the same way, this mechanism exits the keeper the same way ERCOT's
+did." It does. scripts/probes/_pjm_temp_capability_envelope.py (PJM CAMPD
+unit gross load x zone TMAX, class/zone map from the model's own fleet
+build, dominant-group >=90% purity guard; 2023-2025):
+
+- Envelope FLAT: p98 output/reference 0.98-1.11x in every TMAX bin up to
+  36-40C for CC_REGULAR/CT_PEAKER/ST_GAS/CC_CHP, all three years, where the
+  raw literature curves predict 0.84-0.95.
+- Lower bound (production <= capability, assumption-free): CC_REGULAR
+  median max-output/net-summer 1.00 at TMAX>=34C, 78-89% of capacity proven
+  >=0.95x — the fleet demonstrates its rating on the exact hours the derate
+  cuts it.
+- Max-incentive scarcity-hour slopes (RT>$200: 5,147 plant-hours; RT>$100:
+  25,093): CC_REGULAR -0.10/-0.15 %/degC vs model -0.76; CT_PEAKER
+  +0.16/+0.27 vs -1.26; CC_CHP +0.58 vs -0.76. Only ST_GAS reads near-model
+  (-0.67 vs -0.54, <2%-of-load class, envelope nonetheless flat).
+
+The pjm-95 C3b-2025 PASS / C3c 0h->19h tail gain were bought by deleting
+capability the fleet measurably has (rule 1: right number, unreal
+mechanism). Keeper reverts to 2026-07-09-pjm-94-stgas-netload; honest
+re-opened state: C3b-2025 NRMSE 0.217 FAIL + C3c-2025 0h/51h = the G-20
+Phase-2 scarcity-structure gap.
+
+Recorded in: pjm-95 attestation (open_validation RESOLVED), pjm-95/pjm-94
+registry sidecars, keepers.json (per-ISO map + keepers list), status.js
+(rebuilt server-side by this workflow), the calibration-log entry (rode the
+companion code commit), audit_keepers --iso PJM PASS (E7 newer-run warning =
+the demoted pjm-95, explained in the sidecars). Follow-up flagged: MISO's
+miso-49-tempderate keeper predates both fleet refutations — owes its own
+rule-24 check.
+
+Applied server-side from .github/patches/2026_07_10_pjm96_registry_edits.py
+(apply-pjm-seam-ladder workflow).
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01Q2mujpsLrigW5AZXBP1md3
+MSG
+          fi
+
+      - name: Push
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && \
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
