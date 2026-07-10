@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-09-miso-52-sigmoid-monthlykey",
+ "label": "miso 52 sigmoid monthlykey",
+ "date": "2026-07-09",
+ "shorthand": "miso-52-sigmoid-monthlykey",
+ "definition": "MISO 52 PROBE (not promoted; keeper stays miso-49): the miso-51 recipe with ONE code change, zero new parameters -- the coal passthrough sigmoid's gas key held at the MONTHLY (contract-repricing) level while gas units keep bidding the daily HH-shaped price (fuel._gas_series). Built to test miso-51's two-part hypothesis: that the daily-keyed sigmoid (a) suppressed the coal-vs-gas flip days and (b) caused the C4 2024 coal-corr and C3b 2023/24 shape FAILs via coal-offer whipsaw. BOTH REFUTED (disclosed, rules 1/10/11): every scored criterion lands within noise of miso-51 -- COAL_PRB +29.9/+25.1/+25.8 TWh, C4 2024 coal r=0.854 (was 0.856), C3b 0.278/0.289 (was 0.277/0.289) -- and C4 was already failing at miso-50 before any daily shape existed. CORRECTED ATTRIBUTION: the C4/C3b regressions vs miso-49 arrived with the sigmoid re-derive itself. The coal over-run is now demonstrated robust to FIVE independent interventions (measured sigmoid params, daily gas granularity, sigmoid key timescale, hydro completeness, zero-forcing ablation) -- it is pure economic merit ordering from the sigmoid's deep-discount premise: ~70% of PRB capacity sits in mustrun/committed tranches offered ~$15-20/MWh, far below CC at any observed gas price, so the merit order never flips. Determination NOT-YET (same surface as miso-51). The monthly key is KEPT (structurally correct timescale). NEXT ROOT-CAUSE LANE: adjudicate the deep-discount premise against measured MISO IMM/Potomac SOM coal offer-to-cost markup data -- if real MISO coal offers near cost, the premise (not its parameters) is the wrong market structure for 2023-2025; secondarily the tranche-share decomposition (how much coal capacity legitimately carries a take-or-pay discount). Rule-20 zero-forcing ablation twin registered alongside.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-09-miso-52-sigmoid-monthlykey.js",
+ "bundle": "results/calibration/miso52_sigmoid_monthly_key"
+}
