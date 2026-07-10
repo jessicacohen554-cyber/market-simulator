@@ -1,17 +1,17 @@
 {
  "CAISO": "2026-07-07-caiso65-seam-envelope-clock",
- "ERCOT": "2026-07-10-ercot55-surface-ab",
+ "ERCOT": "2026-07-10-ercot56-nucwin",
  "NEISO": "2026-07-09-neiso-56-reserve-coopt",
- "PJM": "2026-07-10-pjm-97-measured-interfaces",
+ "PJM": "2026-07-09-pjm-94-stgas-netload",
  "keepers": [
-  "2026-07-10-ercot55-surface-ab",
+  "2026-07-10-ercot56-nucwin",
   "2026-07-07-caiso65-seam-envelope-clock",
-  "2026-07-10-pjm-97-measured-interfaces",
-  "2026-07-10-nyiso-60-ldc-transport",
+  "2026-07-09-pjm-94-stgas-netload",
+  "2026-07-10-nyiso-59-dynamic-rr",
   "2026-07-09-neiso-56-reserve-coopt",
   "2026-07-08-miso-49-tempderate"
  ],
- "note": "Current calibration keeper per ISO \u2014 the newest, most structurally faithful run for each market (claude.md #1/#11/#12: keeper = most faithful, not lowest error). This list drives the dashboard's all-ISO Calibration Status page. When a new keeper supersedes one here, replace the run id and re-run `python scripts/build_status.py` to refresh frontend/data/backcast/status.js (the verdicts need the bundles under results/calibration/, which the Pages deploy does not check out, so status.js is committed, not deploy-generated).",
+ "note": "Current calibration keeper per ISO — the newest, most structurally faithful run for each market (claude.md #1/#11/#12: keeper = most faithful, not lowest error). This list drives the dashboard's all-ISO Calibration Status page. When a new keeper supersedes one here, replace the run id and re-run `python scripts/build_status.py` to refresh frontend/data/backcast/status.js (the verdicts need the bundles under results/calibration/, which the Pages deploy does not check out, so status.js is committed, not deploy-generated).",
  "MISO": "2026-07-08-miso-49-tempderate",
- "NYISO": "2026-07-10-nyiso-60-ldc-transport"
+ "NYISO": "2026-07-10-nyiso-59-dynamic-rr"
 }
