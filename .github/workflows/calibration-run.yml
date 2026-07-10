@@ -134,6 +134,13 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .
 
+      - name: Regenerate clean datatypes from raw
+        # data/clean is derived + gitignored (the clean_io seam), so a fresh
+        # runner must rebuild it from the committed raw tree before any
+        # loader can read_clean (e.g. capacity-deliverability for the NYISO
+        # LI TSL cap, measured neighbor LMPs, outages, fleet).
+        run: python scripts/regenerate_clean.py
+
       - name: Build offer-curve deltas from tweaks
         # Turn the friendly "CLASS.BAND <delta>" entries into the delta JSON the
         # solver consumes (no hand-written JSON), validating class/band names and
@@ -183,7 +190,14 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: bundle-${{ steps.validate.outputs.run_name }}
-          path: results/calibration/${{ steps.validate.outputs.run_name }}
+          # Include the content-hashed shared benchmark parquets the bundle's
+          # meta.json shared_inputs point at (results/calibration/_shared/…,
+          # gitignored) — the dashboard job's render needs them. With two
+          # paths the artifact root is their common ancestor, so it holds
+          # <run_name>/ and _shared/.
+          path: |
+            results/calibration/${{ steps.validate.outputs.run_name }}
+            results/calibration/_shared
           retention-days: 7
           if-no-files-found: error
 
@@ -207,11 +221,18 @@ jobs:
           python -m pip install --upgrade pip
           pip install -e .
 
+      - name: Regenerate clean datatypes from raw
+        # Same as the solve job: the render/verdict path reads through the
+        # clean_io seam on a fresh runner.
+        run: python scripts/regenerate_clean.py
+
       - name: Download bundle artifact
         uses: actions/download-artifact@v4
         with:
           name: bundle-${{ needs.solve.outputs.run_name }}
-          path: results/calibration/${{ needs.solve.outputs.run_name }}
+          # Artifact root is results/calibration (see upload): restores
+          # <run_name>/ and the shared benchmark parquets under _shared/.
+          path: results/calibration
 
       - name: Commit to auto/* branch and publish
         env:
