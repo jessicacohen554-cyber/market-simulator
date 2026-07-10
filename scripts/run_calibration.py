@@ -471,6 +471,7 @@ def run_year(
     gt_ambient_derate_slope_ct: float | None = None,
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
+    neiso_offer_surface_conditional: bool = False,
     must_run_mw: "np.ndarray | None" = None,
     inject_biomass_mustrun: bool = False,
     priced_interchange: bool = False,
@@ -665,6 +666,7 @@ def run_year(
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+        neiso_offer_surface_conditional=neiso_offer_surface_conditional,
     )
     if gas_st_netload_drag:
         config = config.with_overrides(
@@ -2377,6 +2379,17 @@ def run_year(
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
         offer_surface_mc_bid_adjust = build_ercot_offer_surface_conditional_markup(
+            fleet_arrays, fleet, fuel_prices, _surface_net_load, config
+        )
+    # NEISO fast-start offer surface (charter Limb B): the identical P1-only
+    # seam, NEISO-gated (fleet.build_neiso_offer_surface_conditional_markup).
+    if getattr(config, "neiso_offer_surface_conditional", False) and iso == "NEISO":
+        _surface_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        offer_surface_mc_bid_adjust = build_neiso_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
     # ── Interchange price/limit injections (orchestrator-unification Stage 5)
