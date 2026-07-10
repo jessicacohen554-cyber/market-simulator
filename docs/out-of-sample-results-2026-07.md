@@ -244,6 +244,39 @@ fails identically on a clean pre-intake tree — pre-existing, unrelated.)
   dead pre-W1 `inputs/raw-data/` path to the consumed
   `data/raw/campd-partial-outages.csv`.
 
+### 1.2 Intake 2026-07-10 — NYISO 2018–H1-2026 measured inputs (Ask B/C/D acquisition)
+
+Executed under the owner's explicit, session-logged authorization of
+2026-07-10 (the NYISO data-acquisition session for the
+`nyiso-data-asks-2026-07.md` asks): *"grab any data you can for 2018–2026 for
+these asks"*, confirmed as **"Full 2018–H1-2026"** against the explicit
+holdout-quarantine question, overriding the asks-doc deferral of H1-2026
+intake to the one-shot validation step. **Intake-only, no LP**: no 2018–2022
+or 2026 solve was constructed, solved, or scored; no calibration-complete
+marker was set; validation was loader-resolvability only (curate scripts +
+`validate_clean` round-trips + tmp-CLEAN_DIR tests). All series are measured
+physical/market **inputs** (rule 13-admissible: published requirements,
+alert/event logs, interface flows/ratings, published hub price levels) — the
+NYISO reserve **prices** in `data/raw/NYISO-AS/` remain validation-side only.
+
+Per-datatype / per-window (retrieval date 2026-07-10; H2-2026 does not exist):
+
+| Datatype | Window | Coverage | Provenance |
+|---|---|---|---|
+| `nyiso-operating-events` raw logs (P-25 OperMessages, P-35 RealTimeEvents) | 2018–H1-2026 | ✅ complete (20,419 OM + 9,747 RTE source rows → 9,960 typed events) | `mis.nyiso.com/public/csv/{OperMessages,RealTimeEvents}/` monthly zips via `scripts/fetch_nyiso_operating_events.py` → `data/raw/NYISO-AS/requirements/{oper-messages,realtime-events}/` |
+| `nyiso-reserve-requirements` (published LRR schedule, dated versions) | v2020 / v2021 / v2026 regimes | ✅ 3 dated document versions (Wayback-bounded) | nyiso.com Locational Reserve Requirements PDF + Wayback snapshots 2020-10-29 / 2021-12-04 → `data/raw/NYISO-AS/requirements/` |
+| `nyiso-interface-flows` (P-32 ExternalLimitsFlows, hourly-aggregated) | 2018–H1-2026 | ✅ complete, 18 interfaces (19 in 2026 — CHPE) | `mis.nyiso.com/public/csv/ExternalLimitsFlows/` monthly zips via `scripts/fetch_nyiso_interface_flows.py` → `data/raw/NYISO/interface-flows/` |
+| `nyiso-som-hub-fuel-annual` (SOM Figure A-6 annual per-hub fuel prices incl. Iroquois Z2) | 2018–2025 | ✅ annual grain (monthly exists only as vector charts) | NYISO SOM reports 2020/2022/2023/2024/2025 (2020 SOM fetched this session) → `data/raw/gas-prices/nyiso_som_hub_fuel_annual.csv` |
+
+**Quarantine discipline notes.** (a) H1-2026 rows end 2026-06-30 by
+construction; both fetch scripts hard-fail on an `--end-month` past 2026-06.
+(b) The 2018–2022 and 2026 windows remain un-solved and un-scored; any future
+scoring of them follows the rule-22 tier discipline (2022 = validation,
+iterable; 2019 + H1-2026 = locked test, touch-once). (c) This intake gives the
+2023–2025 training years the SENY hourly-step requirement shape (v2021 regime,
+in force for all of 2023–2025) that the current keeper's flat ~1,100 MW
+stand-in lacks — that is training-window structure, not holdout leakage.
+
 ---
 
 ## 2. D-8 — frozen-coefficient stability (RUN)

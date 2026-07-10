@@ -12,6 +12,11 @@ plus two smaller secondary asks recorded by the 2026-07-04 winter-spread session
 data (H1-2026 is a designated holdout; its intake happens only as step 1 of the
 one-shot validation after NYISO's calibration-complete marker exists). If a vendor
 bundles full-history files, strip holdout years at the drop zone before commit.
+*(Amended 2026-07-10: the owner explicitly authorized full **2018–H1-2026**
+acquisition for these asks, overriding the H1-2026 deferral above —
+intake-only, no LP, no scoring; session-logged and itemized in
+`docs/out-of-sample-results-2026-07.md` §1.2. The quarantine on solving/scoring
+out-of-training years is unchanged.)*
 
 Admissibility: every series below is a measured physical/market **input** (delivered
 fuel price, published requirement, scheduled pipeline flow, interface rating) that
@@ -81,6 +86,49 @@ Consumed at the `fuel.py` delivered-price seam exactly like the F923/citygate se
 tight winters). Also retires the summer-premium approximation flagged in the
 fetch-script docstring.
 
+> **PARTIALLY FULFILLED 2026-07-08 → 2026-07-10 (free web sourcing; B1 confirmed
+> request-only).** Findings and landings, in the ask's own structure:
+>
+> - **B1 (continuous as-enforced series): confirmed NOT freely published.** No
+>   MIS/OASIS posting carries the requirement as scheduled into RTD/RTC
+>   (dataset-by-dataset probe of `mis.nyiso.com/public` 2026-07-10), and the
+>   Dynamic Reserves project — which will post condition-varying requirements —
+>   is a forward market design, not deployed for the backcast window. B1 stays
+>   open **only** as the formal NYISO Market Operations data request.
+> - **B2 (event-log reconstruction): FULFILLED, wider than asked.** The MIS
+>   public message logs (P-35 Real-Time Events, P-25 Operational Announcements)
+>   are intaken 2018-01–2026-06 (owner-authorized expanded window, see
+>   `docs/out-of-sample-results-2026-07.md` §1.2) as
+>   `data/raw/NYISO-AS/requirements/{realtime-events,oper-messages}/`
+>   (`scripts/fetch_nyiso_operating_events.py`) and parsed into the
+>   `nyiso-operating-events` clean datatype: 444 Thunderstorm-Alert
+>   transitions, 1,100 reserve pick-ups, 4,170 out-of-merit reliability
+>   commitments (incl. explicit "FOR TSA" commits), 28 emergency
+>   transactions, system-state changes.
+> - **B3 (published requirement schedule): FULFILLED — and it rewrites the ask's
+>   premise.** The dated "Locational Reserve Requirements" postings
+>   (Wayback-bounded v2020/v2021/v2026, PDFs + hand transcription →
+>   `nyiso-reserve-requirements` datatype) show the SENY 30-minute requirement
+>   is an explicit **hourly step schedule** since v2021 (in force all of
+>   2023–2025): 1,300 HB0–5 / 1,550 HB6 / **1,800 HB7–21** / 1,550 HB22 /
+>   1,300 HB23 — so the static 1,300 MW the RCPF overlay enforces is the
+>   overnight floor, **500 MW low in every peak hour** before any
+>   condition-varying increment. During TSAs the NYC 10T/30T and SENY 30T
+>   requirements drop to **zero** (v2021+) — the TSA scarcity channel is
+>   out-of-merit NYC commitment (visible in the B2 OOM log), not a
+>   requirement step-up as this ask assumed. LI carries its own published
+>   products (120 MW 10T; 270/540 MW 30T off/on-peak). NYC rose to 625/1,250
+>   only in 2026 (between 2026-02-14 and 2026-07-10 — after the training
+>   years). Closes the `TODO(SENY-MW)` line (see the 2026-07-10 addendum in
+>   `docs/nyiso-rcpf-overlay.md`).
+> - **B4 (DAM requirements): not separately posted either; folded into the B1
+>   data request.**
+>
+> Net: the in-LP hourly-requirement channel can now be driven by measured
+> data — deterministic published shape (B3) + TSA/event windows (B2) — with
+> only the residual condition-varying component (largest-contingency changes,
+> forecast-uncertainty adders) waiting on the B1 request.
+
 ## Ask B — condition-varying downstate reserve-requirement series (#1344; priority 1)
 
 **Why.** The #1344 blocker, verbatim from the downstate-reserve handoff: the model's
@@ -115,6 +163,25 @@ construction. Without B1/B2 the >$300 downstate tail (C3c 10/12/42 h actual vs
 0/0/7 modeled) stays a ledgered limitation; manufacturing it any other way is
 forbidden (rules 13/26 — the CC econ_high 1.21 re-arm is the named anti-pattern).
 
+> **STATUS 2026-07-10.** **C1 (Z2 price):** the NYISO SOM per-hub table was
+> checked first as instructed — it carries Iroquois Z2 only as an **annual**
+> average (the monthly values are vector charts, not tables), and the MMU
+> footnotes the underlying indices as **Platts-sourced**, so the daily/monthly
+> series is CONFIRMED a licence ask (NGI/ICE/Platts). The free annual level
+> IS intaken: `nyiso-som-hub-fuel-annual` (2018–2025, 5 gas hubs + 3 oils,
+> from the 2020/2022/2023/2024/2025 SOM Figure A-6 tables;
+> `data/raw/gas-prices/nyiso_som_hub_fuel_annual.csv`) — enough to re-level
+> the flat-annual Z2 reconstruction against a measured annual, not enough to
+> fix its intra-year shape. **C2 (Iroquois EBB flows): BLOCKED, not
+> paywalled** — the postings are free and FERC-mandated, but every Iroquois
+> host (`iroquois.com`, `iol.iroquois.com`) sits behind an Imperva/Incapsula
+> bot-wall that this sandbox cannot (and should not try to) pass; the PipeRiv
+> mirror is subscription-gated, and Wayback holds only the ExtJS app shell.
+> Fulfillment route: a human browser session on
+> `iol.iroquois.com/Infopost/Pages/Default.php` (Operationally Available
+> Capacity + Scheduled Quantities, CSV export, date-range query) or an
+> emailed request to Iroquois scheduling — both short-lead manual steps.
+
 ## Ask C — Iroquois Zone 2 (register ask; priority 2)
 
 **Why.** The NYISO zonal gas overlay reconstructs Iroquois Z2 (the Capital/east-NY
@@ -141,6 +208,19 @@ summer over-level, grounds the east-NY winter marginal fuel without the Algonqui
 ceiling approximation, and closes attribution-doc fix #1(b). Secondary contribution
 to Ask A (the Z2-served CTs price off Z2, not Transco).
 
+> **FULFILLED 2026-07-10 (free, wider than asked).** NYISO MIS P-32
+> "ExternalLimitsFlows" (5-minute per-interface flow + positive/negative
+> limits, internal interfaces AND all external ties) intaken 2018-01–2026-06,
+> hourly-aggregated (documented reconciliation) →
+> `data/raw/NYISO/interface-flows/` (`scripts/fetch_nyiso_interface_flows.py`)
+> and the `nyiso-interface-flows` clean datatype (~157.7k rows/year, 18
+> interfaces; 19 from 2026 when CHPE appears). Covers Central-East, Total
+> East, UPNY CONED, Moses South, Dysinger East, West Central, SPR/DUN-SOUTH
+> plus every external schedule (HQ, NE, OH, PJ, NPX 1385/CSC, PJM
+> HTP/Neptune/VFT) with posted limits — the posting has no separate
+> "UPNY-SENY" row; that boundary is spanned by TOTAL EAST / UPNY CONED
+> (crosswalk to be documented at the consumer).
+
 ## Ask D — secondary (recorded 2026-07-04, winter-spread session; priority 3)
 
 | # | Series | Source | What it unblocks |
@@ -149,12 +229,12 @@ to Ask A (the Z2-served CTs price off Z2, not Transco).
 
 ## Summary table
 
-| Ask | Gates | Register/issue | Lead-time risk |
+| Ask | Gates | Register/issue | Status (2026-07-10) |
 |---|---|---|---|
-| A (LI/NYC LDC delivered gas) | keeper re-solve legitimacy (G-13) | G-13, §4 NYISO row | tariff/PSC digging — medium |
-| B (condition-varying reserve requirement) | #1344 scarcity tail (C3a/C3c), rule-20 C8 burn-down | #1344, G-20 | NYISO data request — **longest** |
-| C (Iroquois Z2 price/flows) | winter spread, summer over-level | register §4 NYISO row | vendor licence — medium |
-| D (per-interface tie flows) | upstate shoulder | 2026-07-04 log | OASIS scrape — short |
+| A (LI/NYC LDC delivered gas) | keeper re-solve legitimacy (G-13) | G-13, §4 NYISO row | **FULFILLED 2026-07-07** (free, National Grid tariff archive) |
+| B (condition-varying reserve requirement) | #1344 scarcity tail (C3a/C3c), rule-20 C8 burn-down | #1344, G-20 | **B2+B3 FULFILLED free** (events 2018–H1-2026 + dated LRR schedule incl. SENY hourly steps); B1/B4 = NYISO data request only |
+| C (Iroquois Z2 price/flows) | winter spread, summer over-level | register §4 NYISO row | C1 **annual level free** (SOM 2018–2025); daily/monthly = confirmed licence ask. C2 free-but-bot-walled → manual browser/email step |
+| D (per-interface tie flows) | upstate shoulder | 2026-07-04 log | **FULFILLED 2026-07-10** (MIS P-32, hourly, 2018–H1-2026) |
 
 **Drop zones on arrival:** A → `data/raw/gas-prices/` (extend the basis CSV schema,
 per-LDC rows); B → `data/raw/NYISO-AS/requirements/` (new; schema-first per the

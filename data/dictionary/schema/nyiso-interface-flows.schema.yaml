@@ -74,4 +74,8 @@ columns:
     dtype: int64
     unit: none
     nullable: false
-    description: Count of 5-minute observations aggregated (24 in the DST fall-back hour).
+    description: >-
+      Count of 5-minute observations aggregated (24 in the DST fall-back
+      hour). 0 marks an interior source gap filled from the adjacent actual
+      observation (owner instruction 2026-07-10; see the fetch script) —
+      hours before an interface first exists are never invented.
