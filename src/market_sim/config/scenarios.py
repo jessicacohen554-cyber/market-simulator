@@ -3972,6 +3972,33 @@ class ScenarioConfig:
     # pjm_seam_flow_percentile knob with the import cap (one p90 envelope, both
     # directions). Requires --reference-price-interface; PJM-only (no seam map →
     # no-op, byte-identical). Default off; opt-in.
+    pjm_seam_measured_ladder: bool = False  # PJM reference-price seams: price
+    # every seam band (MISO/NYISO/Carolinas/TVA/LGEE, import + export) at the
+    # MEASURED per-year Q-Q band ladder
+    # (interchange_config.PJM_SEAM_LADDER_BY_YEAR, derived by
+    # scripts/derive_pjm_seam_ladders.py: PJM settlement-grade tie-line flow
+    # duration curves coupled quantile-by-quantile with the measured PJM DA
+    # system LMP — the MISO miso_seam_measured_ladder / NEISO audit-C-6
+    # pattern), replacing the gas x HR x load-shape band prices + hurdle for
+    # backcast years. Fixes the 2023 interchange duration miss (pjm-95 C1
+    # root-cause lead): the measured PJM interchange is direction-STRUCTURAL —
+    # export to MISO/NYISO in ~97-100% of ALL hours, import from
+    # Carolinas/TVA/LGEE in 77-97% — firm PTP schedules revealed only
+    # statistically, which the spot-spread seam inverts (model imports in 46%
+    # of 2023 hours vs measured ~2%, diurnal corr -0.50; the phantom imports
+    # displace CC_REGULAR dispatch). The ladder is the seam's revealed supply
+    # curve: the LP still clears each band economically on ITS OWN hourly
+    # price (nothing forced); band capacities and the measured per-border
+    # (month x hod) envelopes (pjm_seam_flow_limit/pjm_seam_export_limit) are
+    # unchanged. Measured-behaviour identification, frozen formula, zero
+    # fitted parameters (rule 23); forward years keep the gas-elastic
+    # reference-price formula (two-track, like hr_by_year; pooled ladder = the
+    # forward story, see the registry comment). DISPLACES the firm
+    # scheduled-export floor (inject_reference_price_firm_export) on the years
+    # it covers — the floor pins the same deep-duration firm base the ladder
+    # prices (alternatives, never stacked; rule 19). Requires
+    # --reference-price-interface; PJM-only; no-op for years outside the
+    # registry (byte-identical). Default off; opt-in per run.
 
     # Tier 3 (calibration) — ERCOT per-zone gas-hub basis. ERCOT's model zones
     # buy gas off structurally different regional hubs: West/Panhandle on Waha
@@ -5016,6 +5043,7 @@ TIER_TAGS: dict[str, int] = {
     "pjm_seam_flow_limit": 1,
     "pjm_seam_flow_percentile": 3,
     "pjm_seam_export_limit": 1,
+    "pjm_seam_measured_ladder": 1,
     "miso_pjm_border_anchor": 1,
     "miso_cc_coal_rebalance": 1,
     "miso_firm_import_floor": 1,
