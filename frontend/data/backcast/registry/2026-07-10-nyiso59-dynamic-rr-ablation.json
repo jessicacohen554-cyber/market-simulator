@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-10-nyiso59-dynamic-rr-ablation",
+  "label": "nyiso59 dynamic rr ablation",
+  "date": "2026-07-10",
+  "shorthand": "nyiso59-dynamic-rr-ablation",
+  "definition": "(ABLATION TWIN of nyiso59 dynamic-rr) zero-forcing ablation of the dynamic-RR A/B: same recipe, every merchant floor/bridge OFF (rule 20 / D-3).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-10-nyiso59-dynamic-rr-ablation.js",
+  "bundle": "results/calibration/nyiso59_dynamic_rr-ablation"
+}
