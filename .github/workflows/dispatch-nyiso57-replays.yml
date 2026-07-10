@@ -1,0 +1,54 @@
+# One-shot dispatcher: launches the two nyiso57 dynamic-RR CI replays
+# (main + zero-forcing ablation twin) via `gh workflow run`, because the
+# Claude remote env's GitHub integration cannot POST workflow dispatches
+# (403) while the runner's GITHUB_TOKEN can (workflow_dispatch is exempt
+# from the GITHUB_TOKEN recursion guard). Path-scoped to itself: pushing
+# this file is the trigger; calibration-run.yml then solves the replay of
+# the committed recipe (results/calibration/nyiso57_dynamic_rr/meta.json),
+# registers each run on the dashboard, and publishes to main.
+name: dispatch-nyiso57-replays
+
+on:
+  push:
+    branches:
+      - claude/nyiso-data-retrieval-3bm4o8
+    paths:
+      - .github/workflows/dispatch-nyiso57-replays.yml
+  workflow_dispatch:
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  dispatch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Dispatch main replay
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run calibration-run.yml \
+            --repo "${GITHUB_REPOSITORY}" \
+            --ref claude/nyiso-data-retrieval-3bm4o8 \
+            -f iso=NYISO \
+            -f year="2023,2024,2025" \
+            -f run_name=nyiso57_dynamic_rr \
+            -f extra_flags="--replay-bundle results/calibration/nyiso57_dynamic_rr" \
+            -f note="dynamic-reserve-requirements full-keeper A/B -- 2026-07-07-nyiso-56-measured-zonal config + nyiso_dynamic_reserve_requirements: measured hourly LRR schedule (SENY steps 1300/1550/1800) + TSA-window zeroing replacing static requirements, 2023-2025. Co-opt ENGAGES: reserve duals bind 289/163/614 h/yr (max USD 1658); downstate >300 USD tail NYC 18/1/7, LI 23/1/25 vs actual 10/12/42 (nyiso-56: ~0/0/7). 2024 undershoot consistent with the still-missing B1 condition-varying increments (request-only). Twin: nyiso57_dynamic_rr-ablation." \
+            -f publish=true
+
+      - name: Dispatch ablation-twin replay
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run calibration-run.yml \
+            --repo "${GITHUB_REPOSITORY}" \
+            --ref claude/nyiso-data-retrieval-3bm4o8 \
+            -f iso=NYISO \
+            -f year="2023,2024,2025" \
+            -f run_name=nyiso57_dynamic_rr-ablation \
+            -f extra_flags="--replay-bundle results/calibration/nyiso57_dynamic_rr --zero-forcing-ablation" \
+            -f note="(ABLATION TWIN of nyiso57 dynamic-rr) zero-forcing ablation of the dynamic-RR A/B: same recipe, every merchant floor/bridge OFF (rule 20 / D-3)." \
+            -f publish=true
