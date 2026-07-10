@@ -215,6 +215,27 @@ each import tranche from its neighbor's marginal cost), the next structural
 step; the overlay quantifies exactly how much headroom the imports are giving
 away, rather than hiding it.
 
+**Addendum 2026-07-10 (Ask-B intake — the SENY "increment" is partly a
+published hourly shape).** The dated "Locational Reserve Requirements"
+postings intaken at `data/raw/NYISO-AS/requirements/` (datatype
+`nyiso-reserve-requirements`) show the SENY 30-minute requirement has been an
+explicit **deterministic hourly step schedule since the v2021 posting** (in
+force for all of 2023–2025): 1,300 MW HB0–5, 1,550 MW HB6, **1,800 MW
+HB7–21**, 1,550 MW HB22, 1,300 MW HB23 — reduced to **zero during
+Thunderstorm Alerts** (as are NYC 10T/30T from v2021 on). So the SOM's "at
+least 1,300 MW for all hours + a condition-varying increment" decomposes into
+(a) this published deterministic intra-day shape — a rule-13 measured input
+usable directly by the `ReserveFamily.requirement` per-hour channel, no data
+request needed — and (b) the genuinely condition-varying remainder (TSA
+regime switches, largest-contingency changes), whose event log is now also
+intaken (`nyiso-operating-events`: TSA windows, reserve pick-ups, OOM
+commitments, 2018–H1-2026). The 1,300 MW static base in
+`NYISO_RCPF_PRODUCTS` is the HB23–HB5 floor of that schedule, i.e. the
+peak-hour SENY requirement the model enforces is **500 MW too low** before
+any condition-varying increment. Also intaken: LI's own published products
+(10-min total 120 MW; 30-min 270/540 MW off/on-peak), currently absent from
+the overlay's region set.
+
 ## Measured validation (NYISO OASIS ancillary-service prices)
 
 The published `NYISO_RCPF_PRODUCTS` curve values are not taken on faith. NYISO
