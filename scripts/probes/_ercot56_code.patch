@@ -1,0 +1,327 @@
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index c38219c..802c67d 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -472,6 +472,7 @@ def run_year(
+     temp_dependent_derate: bool = False,
+     ercot_offer_surface_conditional: bool = False,
+     neiso_offer_surface_conditional: bool = False,
++    ercot_nuclear_unit_availability: bool = False,
+     must_run_mw: "np.ndarray | None" = None,
+     inject_biomass_mustrun: bool = False,
+     priced_interchange: bool = False,
+@@ -671,6 +672,11 @@ def run_year(
+         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
+     )
++    if ercot_nuclear_unit_availability:
++        # Window-grain nuclear refuel availability (measured 60-Day DAM
++        # disclosure daily series; ScenarioConfig field docstring has the full
++        # provenance/admissibility note). ERCOT-gated in the fleet application.
++        config = config.with_overrides(ercot_nuclear_unit_availability=True)
+     if gas_st_netload_drag:
+         config = config.with_overrides(
+             gas_st_netload_drag=True, **(gas_st_drag_overrides or {})
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index e826381..5586282 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -1945,6 +1945,7 @@ def solve_and_persist(
+     temp_dependent_derate: bool = False,
+     ercot_offer_surface_conditional: bool = False,
+     neiso_offer_surface_conditional: bool = False,
++    ercot_nuclear_unit_availability: bool = False,
+     priced_interchange: bool = False,
+     hydro_backfill_year: int | None = None,
+     hydro_eia930_monthly: bool = False,
+@@ -2220,6 +2221,7 @@ def solve_and_persist(
+             temp_dependent_derate=temp_dependent_derate,
+             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
++            ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
+             must_run_mw=must_run_total,
+             inject_biomass_mustrun=inject_biomass,
+             priced_interchange=priced_interchange,
+@@ -2576,6 +2578,7 @@ def solve_and_persist(
+         "temp_dependent_derate": temp_dependent_derate,
+         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
+         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
++        "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
+         "priced_interchange": priced_interchange,
+         "hydro_backfill_year": hydro_backfill_year,
+         "hydro_eia930_monthly": hydro_eia930_monthly,
+@@ -2893,6 +2896,10 @@ def solve_and_persist(
+             coal_lignite_mustrun_override=coal_lignite_mustrun,
+             coal_prb_mustrun_override=coal_prb_mustrun,
+         )
++    if ercot_nuclear_unit_availability:
++        # Mirror run_year's with_overrides so run_config.json records the
++        # window-grain nuclear overlay the LP solved with.
++        recorded_cfg = recorded_cfg.with_overrides(ercot_nuclear_unit_availability=True)
+     if interchange_shaping:
+         recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
+     if interchange_shaping_export_only:
+@@ -5914,6 +5921,19 @@ def main() -> None:
+         "--ercot-storage-as-reserve's requirement netting; same from-year "
+         "gate. No-op under --ercot-storage-as-endogenous. Off (default).",
+     )
++    parser.add_argument(
++        "--ercot-nuclear-unit-availability",
++        action="store_true",
++        help="ERCOT backcast: replace the NUCLEAR_MONTHLY_CF_BY_YEAR "
++        "fleet-month smear with the measured per-reactor DAILY refuel "
++        "availability from the 60-Day DAM disclosure NUC Resource Status "
++        "(data/raw/ercot-nuclear-availability.csv, monthly energy "
++        "reconciled to the same EIA-923 anchor; "
++        "scripts/derive_ercot_nuclear_availability.py). Window-grain "
++        "measured availability — the nuclear analogue of the CAMPD fossil "
++        "outage windows (rule 14); uncovered dates keep the monthly smear. "
++        "Off (default, keeper-reproducing).",
++    )
+     parser.add_argument(
+         "--gas-hh-monthly-shape",
+         action="store_true",
+@@ -7640,6 +7660,7 @@ def main() -> None:
+         ercot_ordc_total_reserve=args.ercot_ordc_total_reserve,
+         ercot_ordc_cap_dual_adder=args.ercot_ordc_cap_dual_adder,
+         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
++        ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
+         gas_hh_monthly_shape=args.gas_hh_monthly_shape,
+         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
+         ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index a7287d3..b349368 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -3261,6 +3261,27 @@ class ScenarioConfig:
+     # p90 wall (~$2,700) and below VOLL.
+     ercot_offer_surface_price_cap_frac: float = 0.95
+ 
++    # ERCOT unit-level (window-grain) nuclear refuel availability (default off,
++    # ERCOT backcast-gated). Replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month
++    # smear for the four ERCOT reactors with the measured per-reactor DAILY
++    # availability from the 60-Day DAM disclosure Gen_Resource NUC status
++    # (data/raw/ercot-nuclear-availability.csv,
++    # scripts/derive_ercot_nuclear_availability.py), monthly energy reconciled
++    # to the same EIA-923 anchor the smear used. The smear carries the right
++    # monthly ENERGY but mis-times refuel windows within the month by up to
++    # ±1.4 GW (2024 type case: STP-2 out 3/23–5/19 spans the Apr-16/Apr-28/
++    # May-8 scarcity events, Comanche Peak 1 out 5/11–5/16 overlaps the May
++    # DA-shoulder days, and all four units were BACK for the May-24..27 record
++    # heat the smear kept derated — docs/DIAGNOSIS-ercot-may2024-outage-
++    # forensics-2026-07.md §2.1). A refuel window is a physical availability
++    # event (rule-14 admissible, the nuclear analogue of the CAMPD fossil
++    # outage windows; forward years regenerate via NUCLEAR_MONTHLY_CF /
++    # refuel-block scheduling). Dates the disclosure does not cover (Oct 2023
++    # hole, Nov-Dec 2025 until the 2026 publications land) keep the monthly
++    # smear. See data.outages.ercot_nuclear_unit_availability_series and the
++    # application in data.fleet.generators_to_fleet_arrays.
++    ercot_nuclear_unit_availability: bool = False
++
+     # NEISO condition-responsive fast-start offer surface — the ISO-NE analogue
+     # of ercot_offer_surface_conditional above (winter scarcity charter Limb B;
+     # the G-22 §8 heterogeneity-preserving design, default off, NEISO-gated).
+diff --git a/src/market_sim/data/fleet.py b/src/market_sim/data/fleet.py
+index fee0bc5..7f4db1b 100644
+--- a/src/market_sim/data/fleet.py
++++ b/src/market_sim/data/fleet.py
+@@ -1030,6 +1030,43 @@ def generators_to_fleet_arrays(
+                 availability[g_idx, :] = (
+                     base if from_actual else (1.0 - gen.eford) * base
+                 )
++    # ERCOT unit-level (window-grain) nuclear refuel availability
++    # (config.ercot_nuclear_unit_availability, backcast measured overlay): the
++    # measured per-reactor DAILY series from the 60-Day DAM disclosure replaces
++    # the fleet-month smear above on covered dates — the smear carries the
++    # right monthly energy but mis-times the refuel windows within the month
++    # (e.g. 2024: STP-2 out 3/23-5/19 spanning the Apr/May scarcity events
++    # while all four units were back for the May-24..27 record heat). NaN =
++    # uncovered date -> the monthly value above is kept. Applied BEFORE the
++    # nuclear flat must-run floor is built, so min_gen tracks it automatically.
++    if (
++        _iso == "ERCOT"
++        and _yr is not None
++        and getattr(config, "ercot_nuclear_unit_availability", False)
++    ):
++        from market_sim.data.outages import ercot_nuclear_unit_availability_series
++
++        daily = ercot_nuclear_unit_availability_series(int(_yr), hours)
++        if daily:
++            applied_nuc = 0
++            for g_idx, gen in enumerate(generators):
++                if gen.fuel_type != "nuclear":
++                    continue
++                tail = str(gen.unit_id).rsplit("_", 1)[-1]
++                if not tail.isdigit():
++                    continue
++                series = daily.get((int(gen.plant_code), int(tail)))
++                if series is None:
++                    continue
++                covered = np.isfinite(series)
++                availability[g_idx, covered] = series[covered]
++                applied_nuc += 1
++            logger.info(
++                "ERCOT nuclear unit-availability overlay (%d): %d reactor(s) "
++                "on measured daily windows (uncovered dates keep the monthly CF)",
++                _yr,
++                applied_nuc,
++            )
+     # Dormant nuclear (EIA-860 lists OP but the unit is physically offline,
+     # e.g. the Crane/TMI-1 restart): zero it in backcast years before its
+     # return-to-service year. Forecast runs keep the unit — in backcast mode
+diff --git a/src/market_sim/data/outages.py b/src/market_sim/data/outages.py
+index 5e4014e..97eb367 100644
+--- a/src/market_sim/data/outages.py
++++ b/src/market_sim/data/outages.py
+@@ -691,6 +691,51 @@ def partial_outage_derate_factors(
+     return out
+ 
+ 
++# ERCOT per-reactor DAILY nuclear availability (60-Day DAM disclosure NUC
++# Resource Status, monthly energy reconciled to the EIA-923 anchor) — the
++# window-grain replacement for the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month
++# smear, gated by ScenarioConfig.ercot_nuclear_unit_availability. Derived by
++# scripts/derive_ercot_nuclear_availability.py (provenance + admissibility in
++# its docstring); a refuel window is a physical availability event, the
++# nuclear analogue of the CAMPD fossil outage windows above.
++ERCOT_NUCLEAR_AVAILABILITY_CSV: Path = RAW_DATA_DIR / "ercot-nuclear-availability.csv"
++
++
++@lru_cache(maxsize=None)
++def ercot_nuclear_unit_availability_series(
++    year: int, hours: int = HOURS_PER_YEAR
++) -> dict[tuple[int, int], np.ndarray]:
++    """Return ``{(plant_code, unit_no): (hours,) availability}`` for ``year``.
++
++    Each covered delivery date contributes a flat 24-hour block of its daily
++    ``avail`` fraction on the model's fixed non-leap clock (real-calendar
++    month/day mapped through :func:`_hour_of_year`; a leap year's Feb 29 row
++    is dropped, matching the archive convention). Hours the disclosure does
++    not cover are ``NaN`` — the caller keeps its existing (monthly-smear)
++    availability there. Returns an empty dict when the CSV is absent or the
++    year has no rows, so callers degrade to the smear unchanged.
++    """
++    if not ERCOT_NUCLEAR_AVAILABILITY_CSV.exists():
++        return {}
++    df = pd.read_csv(ERCOT_NUCLEAR_AVAILABILITY_CSV)
++    df["date"] = pd.to_datetime(df["date"])
++    df = df[df["date"].dt.year == int(year)]
++    if df.empty:
++        return {}
++    out: dict[tuple[int, int], np.ndarray] = {}
++    for r in df.itertuples(index=False):
++        mo, dy = int(r.date.month), int(r.date.day)
++        if mo == 2 and dy == 29:
++            continue  # non-leap model clock (ERCOT-54 convention)
++        lo = _hour_of_year(mo, dy, 0)
++        hi = min(lo + 24, hours)
++        arr = out.setdefault(
++            (int(r.plant_code), int(r.unit_no)), np.full(hours, np.nan)
++        )
++        arr[lo:hi] = float(r.avail)
++    return out
++
++
+ # Within-window retiree measured-availability cap (CAMPD unit-level CEMS).
+ # A within-window retiree (fleet.load_retired_within_window) is a whole-plant
+ # exit the COD ramp ages out on its EIA-860 planned retirement date. But a unit
+diff --git a/tests/test_outages.py b/tests/test_outages.py
+index 39d33fb..525de16 100644
+--- a/tests/test_outages.py
++++ b/tests/test_outages.py
+@@ -575,5 +575,95 @@ class RetireeCemsEnvelopeTest(unittest.TestCase):
+         self.assertIsNone(cap)
+ 
+ 
++class ErcotNuclearUnitAvailabilityTest(unittest.TestCase):
++    """The window-grain nuclear refuel series (60-Day DAM disclosure CSV)."""
++
++    def test_committed_series_shape_and_windows(self):
++        from market_sim.data.outages import ercot_nuclear_unit_availability_series
++
++        s = ercot_nuclear_unit_availability_series(2024)
++        # All four reactors present: CP 6145 units 1/2, STP 6251 units 1/2.
++        self.assertEqual(set(s), {(6145, 1), (6145, 2), (6251, 1), (6251, 2)})
++        stp2 = s[(6251, 2)]
++        self.assertEqual(stp2.shape, (HOURS_PER_YEAR,))
++        # STP-2 refuel 2024-03-23 -> 2024-05-19: OUT on the May-8 scarcity
++        # event, back for the May-24..27 record heat.
++        may8_he18 = _hour_of_year(5, 8, 17)
++        self.assertEqual(stp2[may8_he18], 0.0)
++        may27_he18 = _hour_of_year(5, 27, 17)
++        self.assertGreater(stp2[may27_he18], 0.9)
++        # Bounded in [0, 1] wherever covered; NaN only on uncovered dates
++        # (2024 is fully covered -> no NaN at all).
++        finite = np.isfinite(stp2)
++        self.assertTrue(finite.all())
++        self.assertTrue((stp2[finite] >= 0.0).all())
++        self.assertTrue((stp2[finite] <= 1.0).all())
++
++    def test_uncovered_dates_are_nan(self):
++        from market_sim.data.outages import ercot_nuclear_unit_availability_series
++
++        s = ercot_nuclear_unit_availability_series(2025)
++        cp1 = s[(6145, 1)]
++        # Nov-Dec 2025 deliveries publish in the 2026 disclosure files (not
++        # yet on disk), so those dates are NaN -> the caller keeps the
++        # monthly-CF smear there.
++        dec15 = _hour_of_year(12, 15, 12)
++        self.assertTrue(np.isnan(cp1[dec15]))
++        # Spring 2025 is covered: CP-1 refuel 2025-04-21 -> 2025-05-14.
++        may1 = _hour_of_year(5, 1, 12)
++        self.assertEqual(cp1[may1], 0.0)
++
++    def test_fleet_application_gated_and_min_gen_tracks(self):
++        """Flag off -> smear untouched; flag on -> windows land, floor follows."""
++        from market_sim.config.scenarios import ScenarioConfig
++        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
++
++        def nuke(unit_no: int, code: int, mw: float) -> Generator:
++            return Generator(
++                unit_id=f"{code}_{unit_no}",
++                name=f"nuke {code}_{unit_no}",
++                zone="Houston" if code == 6251 else "North",
++                fuel_type="nuclear",
++                pmax_mw=mw,
++                pmin_mw=0.0,
++                heat_rate=10.4,
++                vom=2.0,
++                emission_rate_co2=0.0,
++                nox_rate=0.0,
++                eford=0.03,
++                online_year=1989,
++                plant_code=code,
++            )
++
++        gens = [nuke(1, 6251, 1300.0), nuke(2, 6251, 1280.0)]
++        zones = ["Houston", "North"]
++        base_cfg = dict(weather_year=2024, iso="ERCOT", mode="backcast")
++        cfg_off = ScenarioConfig(**base_cfg)
++        cfg_on = ScenarioConfig(**base_cfg, ercot_nuclear_unit_availability=True)
++        fa_off = generators_to_fleet_arrays(
++            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_off, year=2024
++        )
++        fa_on = generators_to_fleet_arrays(
++            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_on, year=2024
++        )
++        h = _hour_of_year(5, 8, 17)  # May 8 HE18, STP-2 out in reality
++        # Flag off: the 2024 May smear (0.78) for both units.
++        self.assertAlmostEqual(fa_off.availability[1, h], 0.78, places=2)
++        # Flag on: STP-2 (row 1) zeroed on the event day, STP-1 (row 0) near 1.
++        self.assertEqual(fa_on.availability[1, h], 0.0)
++        self.assertGreater(fa_on.availability[0, h], 0.9)
++        # Nuclear flat must-run floor tracks the overlaid availability.
++        self.assertAlmostEqual(
++            float(fa_on.min_gen[1, h]),
++            float(fa_on.availability[1, h] * 1280.0),
++            places=3,
++        )
++        self.assertAlmostEqual(
++            float(fa_on.min_gen[0, h]),
++            float(fa_on.availability[0, h] * 1300.0),
++            places=3,
++        )
++
++
+ if __name__ == "__main__":
+     unittest.main()
