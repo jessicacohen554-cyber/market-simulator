@@ -72,7 +72,16 @@ def _gzb64(obj) -> str:
 
 
 def _slug(text: str) -> str:
-    """Return a short kebab shorthand from free text (<= 4 words)."""
+    """Return a short kebab shorthand from free text (<= 4 words).
+
+    D-3 exception: a trailing "ablation" survives the word cap, so a
+    zero-forcing twin's id is always its keeper's slug + "-ablation"
+    (the run_calibration_full --zero-forcing-ablation convention). Without
+    this, a keeper label already filling the 4-word cap slugs its twin to
+    the SAME id and the twin registration overwrites the keeper (pjm-97
+    "pjm 97 measured-interfaces ablation", 2026-07-10). Existing registry
+    ids are unaffected: every prior twin slug fit within 4 words.
+    """
     words = re.findall(r"[A-Za-z0-9]+", text.lower())
     stop = {
         "the",
@@ -90,7 +99,11 @@ def _slug(text: str) -> str:
         "task",
         "ercot",
     }
-    keep = [w for w in words if w not in stop][:4]
+    kept = [w for w in words if w not in stop]
+    if kept and kept[-1] == "ablation":
+        keep = kept[:-1][:4] + ["ablation"]
+    else:
+        keep = kept[:4]
     return "-".join(keep) or "run"
 
 
