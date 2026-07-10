@@ -766,6 +766,14 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
     explicitly scoped to the no-per-class-data case. A preliminary year whose
     family DID fully report (e.g. ERCOT coal 2025) defers to the C1 per-class gate
     exactly like a complete vintage — only the still-incomplete families fall back.
+
+    The fallback compares like for like against the EIA-930 grid cell: the model
+    gas sum spans every gas class PLUS the OTHER_FOSSIL scoring bucket (930 books
+    mixed gas-thermal plants under NG:NG — same membership as
+    ``render_calibration_html._GAS_GROUPS``), and when the bundle carries the
+    EIA-930 "other" series the gas target is deflated by the genuinely-folded
+    OTHER+biomass portion (post-Nov-2024 storage breakout, ERCO's Other series is
+    ~biomass alone, so the 923 OTHER-class generation sits inside NG:NG).
     """
     gm = ypay.get("gmModel", {})
     cf = ybench.get("classFull", {})
@@ -793,21 +801,32 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
             continue
         if use_family_fallback:
             # EIA-930 NG:NG includes ALL gas-fired generation at the grid
-            # meter (CC, CT, ST — including CHP exports), so the model sum
-            # must also include every gas class, not just the C1-scored
-            # subset.  The scored list excludes CT_CHP (a BTM class ungated
-            # in C1), but omitting it here creates an apples-to-oranges gap
-            # of ~6 TWh/yr in ERCOT.
-            m_fam = sum(float(gm.get(c, 0.0)) for c in classes)
+            # meter (CC, CT, ST — including CHP exports AND the genuinely-
+            # mixed gas-thermal plants the scoring transform re-buckets into
+            # OTHER_FOSSIL), so the model sum must also include every gas
+            # class plus OTHER_FOSSIL, not just the C1-scored subset.  The
+            # scored list excludes CT_CHP (a BTM class ungated in C1) and
+            # OTHER_FOSSIL (not a merit-order class), but omitting them here
+            # creates an apples-to-oranges gap of ~6 + ~1 TWh/yr in ERCOT —
+            # the same family membership reconcile_vintage_classes uses
+            # (render_calibration_html._GAS_GROUPS).
+            fam_all = (*classes, "OTHER_FOSSIL") if fam == "gas" else classes
+            m_fam = sum(float(gm.get(c, 0.0)) for c in fam_all)
+            a923_fam = sum(float(cf.get(c, 0.0)) for c in fam_all)
             actual = a930
             if fam == "gas" and actual is not None and "other" in e930:
+                # ERCO's post-Nov-2024 EIA-930 "Other" series carries roughly
+                # biomass alone (the storage breakout moved batteries to
+                # BAT/UES), so the OTHER-class generation the 923 books sits
+                # inside NG:NG — subtract only the genuinely-folded portion
+                # (mirrors render_calibration_html._gas_foldin_deflation).
                 actual -= max(
                     0.0,
                     float(cf.get("OTHER", 0.0))
                     + float(cf.get("biomass", 0.0))
                     - float(e930.get("other", 0.0)),
                 )
-            reconciled = bool(actual and a923 < VINTAGE_RECONCILE_FRAC * actual)
+            reconciled = bool(actual and a923_fam < VINTAGE_RECONCILE_FRAC * actual)
             err = _pct(m_fam, actual) if actual else None
             if err is None:
                 status, classification = SKIPPED, None

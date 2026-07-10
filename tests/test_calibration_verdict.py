@@ -311,6 +311,39 @@ class SysVolTests(unittest.TestCase):
         finally:
             _reset_completeness()
 
+    def test_preliminary_gas_fallback_other_fossil_and_fold_in(self):
+        # The EIA-930 family fallback compares like for like (ERCOT 2025 C2
+        # counting fix): the model gas sum includes the OTHER_FOSSIL scoring
+        # bucket (930 books mixed gas-thermal under NG:NG), and when the
+        # bundle carries the 930 "other" series the gas target is deflated by
+        # the genuinely-folded OTHER+biomass portion. Here the raw comparison
+        # (190.0 vs 196.0 = -3.1%) would breach the ±2.5% target; the
+        # like-for-like one (191.2 vs 195.11 = -2.0%) passes.
+        _completeness({"ERCOT": {}}, {"ERCOT": {"gas": False, "coal": False}})
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"CC_REGULAR": 190.0, "OTHER_FOSSIL": 1.2}},
+                {
+                    "classFull": {
+                        "CC_REGULAR": 188.0,
+                        "OTHER_FOSSIL": 0.6,
+                        "OTHER": 0.9,
+                        "biomass": 0.25,
+                    },
+                    "e930": {"gas": 196.0, "other": 0.26},
+                },
+                "ERCOT",
+            )
+            gas = [r for r in rows if r["key"] == "gas"][0]
+            self.assertEqual(gas["status"], cv.PASS)
+            self.assertIsNone(gas["classification"])
+            self.assertAlmostEqual(gas["model"], 191.2, places=2)
+            # target = 196.0 - max(0, 0.9 + 0.25 - 0.26) = 195.11
+            self.assertAlmostEqual(gas["actual"], 195.11, places=2)
+        finally:
+            _reset_completeness()
+
     def test_preliminary_complete_family_defers_to_c1(self):
         # A 2025 family the audit flags COMPLETE defers to the C1 per-class gate
         # exactly like a complete vintage — no EIA-930 family fallback. Here coal
