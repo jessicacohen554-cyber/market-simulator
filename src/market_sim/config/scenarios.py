@@ -175,6 +175,20 @@ class ScenarioConfig:
     # 1.0, the unscaled climatology. Backcast runs instead pin the budget to the
     # measured EIA-930 NG:WAT realization (--hydro-eia930-monthly) and ignore
     # this lever. Level input only; see docs G9 / methodology-gaps-2026-06.
+    hydro_dispatch_envelope: bool = False  # GATED default off (caiso-72
+    # STEP-2). Cap the conventional-hydro fleet's hourly dispatch at the
+    # measured per-(month x hour-of-day) percentile
+    # (constants.HYDRO_ENVELOPE_PERCENTILE) of the ISO's EIA-930 NG:WAT
+    # hourly output — the head/flow/scheduling deliverability ceiling the
+    # nameplate pmax bound ignores. Without it the budget LP hoards the
+    # monthly hydro energy into the top price hours with perfect foresight
+    # (CAISO 2024: model evening p95 exceeds measured p95 by 1-2+ GW in 9 of
+    # 12 months), displacing the evening gas/CT reality runs. Same measured
+    # capability-envelope class as caiso_corridor_flow_limit — the LP still
+    # clears below the ceiling; nothing is pinned. Backcast uses the solve
+    # year's own measured envelope; a forecast year falls back to the pooled
+    # HYDRO_CLIMATOLOGY_YEARS envelope. See
+    # results/calibration/FINDING-caiso72-step0-evening-displacement-2026-07-10.md.
     eac_price_nuclear: float = 0.0  # $/MWh, e.g. NY/IL Zero Emission Credit ~$17
     eac_price_wind: float = 0.0  # $/MWh, onshore wind REC
     eac_price_solar: float = 0.0  # $/MWh
