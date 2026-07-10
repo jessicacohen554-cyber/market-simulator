@@ -557,10 +557,12 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 # whose band multipliers were fit to ERCOT plants (Colorado Bend II / Wolf Hollow
 # II) and never validated for MISO — including the 13.15x ERCOT-CT "peak" wall
 # that PJM and CAISO already discarded. These are merged on top of that branch
-# (_deep_merge_offer_curve), so ONLY the named gas classes change; coal / CC_CHP /
+# (_deep_merge_offer_curve), so ONLY the named classes change; CC_CHP /
 # CT_CHP / ST_GAS keep the generic defaults (they sit correctly in merit for MISO
-# — see below). Per-plant committed % and duct-firing peaking % still come from
-# CAMPD (cc_committed_per_plant / cc_peaking_per_plant via thermal_tranches_
+# — see below), and the COAL_* entries (added 2026-07-10) replace the generic
+# ERCOT-fitted coal bands with the MISO-SOM-grounded near-cost floor (see the
+# COAL block comment below). Per-plant committed % and must-run % still come from
+# CAMPD (cc_committed_per_plant / coal_mustrun_per_plant via thermal_tranches_
 # MISO.csv) and supersede the class-wide values here.
 #
 # Grounding (band multipliers scale each plant's own measured base heat rate):
@@ -693,6 +695,65 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "peak": 1.0,
         "econ_low_share": 0.50,
         "pct_peaking": 15.0,
+    },
+    # MISO COAL bands, grounded in the MISO IMM's measured conduct statistics
+    # (Potomac Economics SOM; datatype som-competitive-conduct, freeze test
+    # tests/test_curate_som_competitive_conduct.py; adjudication record
+    # docs/handoffs/miso-coal-offer-som-redesign-2026-07.md). Until now MISO
+    # coal inherited the generic ERCOT-lineage entries (COAL_PRB econ_low
+    # 0.77, committed 0.90-0.95, COAL_WC 0.85 — residual-fitted on ERCOT,
+    # the same rule-25 cross-ISO leak the sigmoid byte-copy was, G-26/#1347).
+    # The SOM measures MISO offers at reference levels ~= short-run marginal
+    # cost: system price-cost mark-up +3.0% (2023) / -2.5% (2024), output gap
+    # "effectively de minimis" (0.1% / 0.06% of load; 2025 quarterlies 22-71
+    # MW/hr on ~80 GW). So no MISO coal tranche above the must-run floor may
+    # offer BELOW its own measured delivered cost: every sub-1.0 multiplier
+    # is raised to exactly 1.0 (zero measured discount depth — offers AT
+    # reference), and every band already >= 1.0 (the rising incremental
+    # heat-rate shape toward peak/overfire) is kept byte-identical. The
+    # below-cost premise this retires was the offer-level half of the
+    # gas-keyed sigmoid design; the sigmoid itself is disabled for MISO in
+    # the same redesign (miso-53: coal_prb/bit_passthrough_sigmoid off), so
+    # committed/econ/peak coal bids full measured F923 delivered SRMC.
+    # Self-commitment (SOM Table 7: must-run status on 56%/53% of regulated
+    # coal starts 2023/2024, "running them regardless of the price") stays
+    # represented by the per-plant fuel-free _mustrun band
+    # (coal_mustrun_per_plant + thermal_tranches_MISO.csv) — one mechanism
+    # per phenomenon: the SOM indicts the offer DISCOUNT, not the floor.
+    "COAL_PRB": {
+        "committed": 1.00,  # was 0.95 (generic): SOM mark-up ~ 0, no sub-cost band
+        "econ_low": 1.00,  # was 0.77 (ERCOT-fitted): offers at reference = SRMC
+        "econ_high": 1.19,  # kept: rising incremental HR, above cost
+        "peak": 1.48,  # kept: overfire/scarcity top
+        "econ_low_share": 0.556,  # structural share, kept
+    },
+    "COAL_BIT": {
+        "committed": 1.00,  # was 0.90
+        "econ_low": 1.00,  # was 0.95
+        "econ_high": 1.10,  # kept
+        "peak": 1.45,  # kept
+        "econ_low_share": 0.55,
+    },
+    "COAL_LIGNITE": {
+        "committed": 1.00,  # was 0.95; mine-mouth still offers >= its own cost
+        "econ_low": 1.14,  # kept (already >= 1.0)
+        "econ_high": 1.15,  # kept
+        "peak": 1.55,  # kept
+        "econ_low_share": 0.556,
+    },
+    "COAL_WC": {
+        "committed": 1.00,  # was 0.85
+        "econ_low": 1.00,  # was 0.90
+        "econ_high": 1.02,  # kept
+        "peak": 1.20,  # kept
+        "econ_low_share": 0.55,
+    },
+    "COAL": {
+        "committed": 1.00,  # was 0.90 (generic fallback for unranked plants)
+        "econ_low": 1.00,  # was 0.95
+        "econ_high": 1.10,  # kept
+        "peak": 1.45,  # kept
+        "econ_low_share": 0.55,
     },
 }
 
@@ -1576,6 +1637,9 @@ def backcast_config(
             # Coal split by supply: lignite (mine-mouth) raised +0.05 across the
             # board; PRB uses a pure offer curve (sigmoid off) -- higher commit,
             # lower econ-low start, slightly higher econ-high.
+            # NOTE: MISO no longer inherits these COAL_* entries — its
+            # SOM-grounded near-cost coal bands deep-merge on top
+            # (_MISO_OFFER_CURVE, 2026-07-10).
             "COAL_LIGNITE": {
                 "committed": 0.95,
                 "econ_low": 1.14,
@@ -1729,13 +1793,14 @@ def backcast_config(
                 config.offer_curve_by_group, _CAISO_OFFER_CURVE
             )
         )
-    # MISO gas offer curves (CAMPD-/structure-grounded; see _MISO_OFFER_CURVE).
-    # Merged on top of the generic non-PJM/non-ERCOT branch so only the named gas
-    # classes change (CC_REGULAR flattened to MISO's measured baseload shape;
-    # CT_PEAKER peak capped off the inherited ERCOT 13.15x ORDC wall) and coal /
-    # CC_CHP / CT_CHP / ST_GAS keep their generic defaults. Replaces MISO's silent
-    # inheritance of the ERCOT-fitted `else` values. Operator --offer-curve
-    # overrides/deltas below still merge on top.
+    # MISO gas + coal offer curves (CAMPD-/structure-/SOM-grounded; see
+    # _MISO_OFFER_CURVE). Merged on top of the generic non-PJM/non-ERCOT branch
+    # so only the named classes change (CC_REGULAR flattened to MISO's measured
+    # baseload shape; CT_PEAKER peak capped off the inherited ERCOT 13.15x ORDC
+    # wall; COAL_* sub-1.0 bands raised to the SOM-measured near-cost floor,
+    # 2026-07-10). Replaces MISO's silent inheritance of the ERCOT-fitted
+    # `else` values. Operator --offer-curve overrides/deltas below still merge
+    # on top.
     if iso.upper() == "MISO":
         config = config.with_overrides(
             offer_curve_by_group=_deep_merge_offer_curve(

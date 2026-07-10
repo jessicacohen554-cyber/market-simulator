@@ -1,0 +1,28 @@
+iso,year,period,fleet_segment,metric,value,unit,source_doc,source_page,note
+MISO,2023,annual,coal_regulated,starts,1555,count,2023-MISO-SOM_Report_Body-Final.pdf,67,"Table 7 (printed p.43); 2024 SOM restates as 1549"
+MISO,2023,annual,coal_regulated,starts_econ_offered_share,0.44,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,"offered economically and scheduled day-ahead"
+MISO,2023,annual,coal_regulated,starts_mustrun_profitable_share,0.42,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,"must-run (self-commit) status; revenues cover commitment+variable cost by first full day (fn: startup amortized over 5 days)"
+MISO,2023,annual,coal_regulated,starts_mustrun_unprofitable_share,0.14,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,"must-run status and unprofitable — ran regardless of price"
+MISO,2023,annual,coal_regulated,net_revenue_usd_per_mwh,5.75,usd_per_mwh,2023-MISO-SOM_Report_Body-Final.pdf,67,"2024 SOM restates as 5.81"
+MISO,2023,annual,coal_merchant,starts,42,count,2023-MISO-SOM_Report_Body-Final.pdf,67,
+MISO,2023,annual,coal_merchant,starts_econ_offered_share,0.93,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,"unregulated generators offered economically 93 percent of hours in 2023"
+MISO,2023,annual,coal_merchant,starts_mustrun_profitable_share,0.05,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,
+MISO,2023,annual,coal_merchant,starts_mustrun_unprofitable_share,0.02,fraction,2023-MISO-SOM_Report_Body-Final.pdf,67,
+MISO,2023,annual,coal_merchant,net_revenue_usd_per_mwh,6.75,usd_per_mwh,2023-MISO-SOM_Report_Body-Final.pdf,67,"2024 SOM restates as 6.98"
+MISO,2023,annual,system,price_cost_markup,0.030,fraction,2023-MISO-SOM_Report_Body-Final.pdf,112,"average system marginal price-cost mark-up; 'very small, indicating the markets were highly competitive overall'"
+MISO,2023,annual,system,output_gap_share_of_load,0.001,fraction,2023-MISO-SOM_Report_Body-Final.pdf,112,"average monthly output gap 0.1 percent of load, 'effectively de minimis'"
+MISO,2024,annual,coal_regulated,starts,1428,count,2024-MISO-SOM_Report_Body_Final.pdf,71,"Table 7 (printed p.45)"
+MISO,2024,annual,coal_regulated,starts_econ_offered_share,0.47,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,"offered economically and scheduled day-ahead"
+MISO,2024,annual,coal_regulated,starts_mustrun_profitable_share,0.38,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,"must-run (self-commit) status; profitable by first full day"
+MISO,2024,annual,coal_regulated,starts_mustrun_unprofitable_share,0.15,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,"'regulated utilities often continue to operate their units as must-run, running them regardless of the price' (p.72)"
+MISO,2024,annual,coal_regulated,net_revenue_usd_per_mwh,8.01,usd_per_mwh,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,coal_merchant,starts,39,count,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,coal_merchant,starts_econ_offered_share,0.74,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,"unregulated generators offered economically 74 percent of hours in 2024"
+MISO,2024,annual,coal_merchant,starts_mustrun_profitable_share,0.15,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,coal_merchant,starts_mustrun_unprofitable_share,0.10,fraction,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,coal_merchant,net_revenue_usd_per_mwh,7.50,usd_per_mwh,2024-MISO-SOM_Report_Body_Final.pdf,71,
+MISO,2024,annual,system,price_cost_markup,-0.025,fraction,2024-MISO-SOM_Report_Body_Final.pdf,120,"body headline; appendix p.151 reports -5 percent average with monthly range +6.2 to -17 percent (methodology variant)"
+MISO,2024,annual,system,output_gap_share_of_load,0.0006,fraction,2024-MISO-SOM_Report_Body_Final.pdf,120,"average monthly output gap 0.06 percent of load, 'effectively de minimis and lower than in 2023'"
+MISO,2025,spring,system,output_gap_low_threshold_mw,22,mw,IMM-Quarterly-Report_Spring-2025-MSC.pdf,3,"IMM quarterly summary table, low-threshold output gap MW/hr"
+MISO,2025,summer,system,output_gap_low_threshold_mw,59,mw,IMM-Quarterly-Report_Summer-2025-MSC.pdf,3,"IMM quarterly summary table, low-threshold output gap MW/hr"
+MISO,2025,fall,system,output_gap_low_threshold_mw,71,mw,IMM-Quarterly-Report_Fall-2025_MSC.pdf,3,"IMM quarterly summary table, low-threshold output gap MW/hr; ~0.09% of 80.7 GW average load"
