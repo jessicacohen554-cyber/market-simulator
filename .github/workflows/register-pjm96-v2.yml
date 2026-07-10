@@ -8,14 +8,20 @@
 # the sidecar definition and the commit message are extracted AT RUNTIME
 # from .github/workflows/register-pjm96.yml (kept as the canonical record of
 # the parallel session's post-solve finding) so no prose is re-transcribed
-# across the session/tool-call boundary. Manual dispatch only; idempotent
-# (skips solve when the bundle exists, skips registration when the sidecar
-# exists). Delete both register-pjm96 workflows from main after the PR
-# merges (one-shot convention).
+# across the session/tool-call boundary. Triggered by pushing this file
+# (the session env cannot POST workflow dispatches — 403, same as v1's
+# header documents); idempotent (skips solve when the bundle exists, skips
+# registration when the sidecar exists). Delete both register-pjm96
+# workflows from main after the PR merges (one-shot convention).
 
 name: register-pjm96-v2
 
 on:
+  push:
+    branches:
+      - claude/pjm-measured-interface-limits-2lchu7
+    paths:
+      - .github/workflows/register-pjm96-v2.yml
   workflow_dispatch:
 
 permissions:
