@@ -8664,3 +8664,22 @@ single-year arms (`ercot53_diag_*`, `ercot53_sync_2023`,
 `ercot53_hslfix_2024`) were throwaway probes, never registered (rule 16);
 ORDC tariff parameters untouched (rule 26); no offer-curve or sigmoid value
 changed (rules 13/21/23).
+
+
+## 2026-07-09 — NEISO keeper PROMOTED: `2026-07-09-neiso-56-reserve-coopt` (owner decision; rule-1 structural fidelity, mechanism dormant)
+
+Owner-approved (AskUserQuestion, this session) promotion of the neiso-56
+reserve co-opt run — the neiso-55 recipe + `energy_reserve_coopt` (ISO-NE
+3-level nested RCPF demand curves, storage reserve-eligible) — to NEISO
+keeper. Basis: rule 1 — ISO-NE really clears energy and reserves jointly, so
+the co-opt is the more structurally faithful representation, kept although it
+is DORMANT on 2023–2025 and moves no backcast metric (the winter-fuel-stack
+adopted-though-dormant precedent; forward-live in a tighter fleet). LOYO
+(rule 22) is trivially satisfied: keeper-vs-prior deltas ≈ 0 in every year
+(reserve dual $0.00 every hour; fuel mix byte-comparable; identical
+CALIBRATED-WITH-CAVEATS determination and caveat set under rubric v2.4).
+`keepers.json` swapped; prior keeper sidecar re-worded as superseded;
+`status.js` rebuilt (NEISO line only — the other ISOs' v2.4 NOT-YETs predate
+this swap and belong to their own lanes); keeper-auditor run: NEISO **PASS,
+no repairs** (E1–E9, S1 all clean; twin `2026-07-09-neiso-56-coopt-ablation`
+linked).
