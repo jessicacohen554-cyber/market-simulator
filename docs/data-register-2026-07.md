@@ -181,18 +181,21 @@ curtailment reports are blocked by this environment's network allowlist).
   Jan1-Dec31 workbooks at the same stable URL already used for 2023-2025 (also corrected the
   register's stale source URL — `library/managing-oversupply` now 404s; the live page is
   `library/production-curtailments-data`). Building the derived HSL series
-  (`scripts/build_caiso_hsl.py`) against them: **2019-2021 built clean** (committed as
-  `data/raw/caiso-hsl/caiso_<year>_hsl_hourly.csv` — CSV, not parquet, because this session's only
-  available push mechanism cannot transport binary content without corruption; see
-  `data/raw/caiso-hsl/README.md`); **2018 flagged, not committed** — its derived wind total (24.9
+  (`scripts/build_caiso_hsl.py`) against them: **2019-2021 built clean** and delivered to the user
+  as file attachments (rounded 2-decimal CSV, ~280KB/year) rather than committed — this session's
+  only available push mechanism cannot transport binary content without corruption, and even the
+  text-safe CSV form hits a hard ~25,000-token read ceiling well before one year's ~8760-row file
+  fits in a single chunk, making manual chunked transcription impractical (see
+  `data/raw/caiso-hsl/README.md`); **2018 flagged, not delivered** — its derived wind total (24.9
   TWh) is 60%+ above every neighboring year in the wrong direction (CAISO wind buildout only grew),
   traced to a pre-existing `eia_loader.load_eia_hourly_renewable_gen` bfill/ffill artifact that
   flat-fills the entire missing-H1 CISO per-fuel window rather than genuinely measuring it — a
   discovered defect, not something this intake papers over; **2022 confirmed genuinely
   unavailable** by the builder's own no-full-year-EIA-930 check. **H1-2026 confirmed unfetchable**:
   CAISO's own library page states the report was discontinued 2025-06-01. The raw xlsx workbooks
-  themselves (~118MB across 5 years) were not committed for the same binary-transport reason —
-  re-fetch from the unchanged, unauthenticated URL to regenerate them.
+  themselves (~118MB across 5 years) were also delivered as file attachments rather than committed,
+  for the same binary-transport reason — re-fetch from the unchanged, unauthenticated URL to
+  regenerate them, or use the delivered attachments directly.
 - **MISO wind aggregate 2018-2020 — already complete, no new fetch needed.** Verified
   `data/raw/miso-hsl/miso_wind_curtailment_annual.csv` already carries cited 2018-2025 rows (landed
   in an earlier session, before this one); this session only confirmed it, did not add to it.
