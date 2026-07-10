@@ -8,18 +8,20 @@
 # data left 12 MB free — no room for any swapfile; /mnt is not a separate
 # disk on current runners), then allocates the pjm-78/79 10 GB convention
 # at /swapfile2 alongside the stock 3 GB /swapfile. Run 29094241750 solved
-# and registered but aborted at the legitimacy-diagnostics step: the script
+# and registered but aborted at the legitimacy-diagnostics step (the script
 # exits 1 when any D-gate fails, which a rejected PROBE may legitimately do
-# — the JSON artifact (the deliverable, scored by C7/C8) is still written,
-# so that step now warns instead of aborting. Everything else is the v1
-# recipe: the sidecar definition and the commit message are extracted AT
-# RUNTIME from .github/workflows/register-pjm96.yml (kept as the canonical
-# record of the parallel session's post-solve finding) so no prose is
-# re-transcribed across the session/tool-call boundary. Triggered by
-# pushing this file (the session env cannot POST workflow dispatches —
-# 403); idempotent (skips solve when the bundle exists, skips registration
-# when the sidecar exists). Delete both register-pjm96 workflows from main
-# after the PR merges (one-shot convention).
+# — the JSON artifact is still written), so that step warns instead of
+# aborting. The build_manifest preview step was REMOVED (register-pjm97 run
+# 29096868050: it regenerates the tracked deploy-owned shared files in the
+# working tree, which blocked `git pull --rebase` at the final push; the
+# Pages deploy is their single writer) and the push step hard-resets the
+# tree after committing. The sidecar definition and the commit message are
+# extracted AT RUNTIME from .github/workflows/register-pjm96.yml (the
+# canonical record of the parallel session's post-solve finding) so no
+# prose is re-transcribed across the session/tool-call boundary. Triggered
+# by pushing this file (the session env cannot POST workflow dispatches —
+# 403); idempotent. Delete both register-pjm96 workflows from main after
+# the PR merges (one-shot convention).
 
 name: register-pjm96-v2
 
@@ -103,9 +105,6 @@ jobs:
       - name: Verify registry/payload parity (CI gate)
         run: python scripts/check_registry_payload_parity.py
 
-      - name: Local preview rebuild (not committed -- deploy workflow owns manifest.js/benchmark.js)
-        run: python scripts/build_manifest.py
-
       - name: Commit and push
         run: |
           set -euo pipefail
@@ -126,6 +125,10 @@ jobs:
           sed -i 's/^ \{10\}//' /tmp/pjm96_commit_msg.txt
           test -s /tmp/pjm96_commit_msg.txt
           git commit -F /tmp/pjm96_commit_msg.txt
+          # Drop any unstaged edits to tracked files (e.g. regenerated shared
+          # data) so pull --rebase cannot refuse; the commit holds everything
+          # this run publishes.
+          git reset --hard HEAD
           for i in 1 2 3 4; do
             git pull --rebase origin "${GITHUB_REF_NAME}" && \
             git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
