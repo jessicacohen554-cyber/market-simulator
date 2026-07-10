@@ -1,0 +1,72 @@
+name: apply-pjm97-wiring
+
+# One-shot: applies the 2026-07-10 transfer-interface-limits data-intake +
+# PJM measured interface-limit overlay session's work onto this branch,
+# server-side — the apply-pjm-seam-ladder precedent (the session's remote env
+# cannot push large packs: git push 413s; run_calibration_full.py alone is
+# ~360 KB). The work travels as ONE gzip+base64 unified diff
+# (.github/patches/2026_07_10_pjm97_wiring.patch.gz.b64, sha256-gated before
+# apply) of 16 files against main b0a827f: 10 edits (scenarios/constants/
+# iso_configs, run_calibration{,_full}.py, build_dof_ledger,
+# render_data_dictionary, regenerate_clean, raw README, data dictionary) + 6
+# new files (schema YAML, scripts/lib/transfer_interface_limits registry,
+# curate script, market_sim.data consumer, tests). Idempotent: the patch
+# no-ops when already applied (reverse-check). Delete this workflow + the
+# .github/patches payload from main after the PR merges (the one-shot
+# workflow convention).
+on:
+  push:
+    branches:
+      - claude/pjm-measured-interface-limits-2lchu7
+    paths:
+      - .github/patches/2026_07_10_pjm97_wiring.patch.gz.b64
+      - .github/workflows/apply-pjm97-wiring.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Decode, integrity-check, apply, commit
+        run: |
+          set -euo pipefail
+          git config user.name "Claude"
+          git config user.email "noreply@anthropic.com"
+          base64 -d .github/patches/2026_07_10_pjm97_wiring.patch.gz.b64 | gunzip > /tmp/pjm97.patch
+          echo "f5a7977aa9cc5699743078465ce1ebe7639ac367160f8991cc02a4f3a7830746  /tmp/pjm97.patch" | sha256sum -c
+          if git apply --check --reverse /tmp/pjm97.patch 2>/dev/null; then
+            echo "patch already applied — skipping"
+          else
+            git apply /tmp/pjm97.patch
+            git add -A
+            git commit -F .github/patches/pjm97_commit_msg.txt
+          fi
+
+      - name: Install the package (test deps)
+        run: |
+          pip install -e .
+          pip install pytest
+
+      - name: Post-apply test gate (must pass before any push)
+        run: python -m pytest tests/test_curate_transfer_interface_limits.py tests/test_config.py -q
+
+      - name: Push
+        run: |
+          set -euo pipefail
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && \
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
