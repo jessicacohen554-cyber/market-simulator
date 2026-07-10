@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-10-ercot53-hsl-930fill-ablation",
+  "label": "ercot53 hsl 930fill ablation",
+  "date": "2026-07-10",
+  "shorthand": "ercot53-hsl-930fill-ablation",
+  "definition": "(ABLATION TWIN of 2026-07-10-ercot53-hsl-930fill) (ABLATION TWIN of ercot53 hsl 930fill) zero-forcing reference solve of the identical config (coal net-summer derate + ORDC cap-dual adder, fixed 2024 HSL input with the known-bad window filled from measured EIA-930): every merchant floor/bridge OFF, keeping only nuclear must-run, CHP steam-following and coal take-or-pay (rule 20 / audit D-3).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-10-ercot53-hsl-930fill-ablation.js",
+  "bundle": "results/calibration/ercot53_hsl_930fill_ablation"
+}
