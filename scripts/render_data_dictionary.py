@@ -93,6 +93,10 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "nyiso-renewable-curtailment-monthly",
     "coal-basin-price",
     "coal-mining-ppi",
+    "nyiso-reserve-requirements",
+    "nyiso-operating-events",
+    "nyiso-interface-flows",
+    "nyiso-som-hub-fuel-annual",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -567,6 +571,67 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "cross-check on the annual `coal-basin-price` region prices. No "
             "regional breakout exists in BLS PPI for coal (confirmed by "
             "probing candidate series ids)."
+        ),
+    },
+    "nyiso-reserve-requirements": {
+        "summary": (
+            "NYISO's published locational operating-reserve requirements by "
+            "product x region for each dated version of the Locational "
+            "Reserve Requirements posting, including the SENY 30-minute "
+            "hourly step shape and Thunderstorm-Alert zeroing flags "
+            "(issue #1344 / Ask B3)."
+        ),
+        "reconciles": (
+            "Hand-transcription of the dated LRR PDFs (Wayback-bounded "
+            "versions v2020/v2021/v2026) under "
+            "`data/raw/NYISO-AS/requirements/`; see that README for the "
+            "effective-date caveats. Feeds the gated hourly "
+            "`ReserveFamily.requirement` channel; not yet consumed by any "
+            "keeper."
+        ),
+    },
+    "nyiso-operating-events": {
+        "summary": (
+            "Typed NYISO operating events (Thunderstorm Alert windows, "
+            "system state, reserve pick-ups, OOM reliability commitments, "
+            "emergency transactions) parsed from the public MIS message "
+            "logs, 2018 through H1-2026 (Ask B2)."
+        ),
+        "reconciles": (
+            "NYISO MIS P-35 Real-Time Events and P-25 Operational "
+            "Announcements monthly archives, re-serialized per-year under "
+            "`data/raw/NYISO-AS/requirements/` and parsed against a "
+            "controlled template vocabulary (parse-only; unmatched messages "
+            "stay in raw). Out-of-training years intaken under the "
+            "2026-07-10 owner authorization "
+            "(`docs/out-of-sample-results-2026-07.md` §1.2)."
+        ),
+    },
+    "nyiso-interface-flows": {
+        "summary": (
+            "Hourly per-interface gross flows and posted limits for NYISO "
+            "internal interfaces and external ties, aggregated from the "
+            "public 5-minute MIS posting (Ask D1)."
+        ),
+        "reconciles": (
+            "NYISO MIS P-32 ExternalLimitsFlows monthly archives, "
+            "5-min -> hourly (mean flow, most-binding limits; +/-9999 MW "
+            "unbounded sentinels nulled), one partition per year 2018 "
+            "through H1-2026 from `data/raw/NYISO/interface-flows/`."
+        ),
+    },
+    "nyiso-som-hub-fuel-annual": {
+        "summary": (
+            "Annual average fuel index prices by hub serving New York "
+            "(incl. Iroquois Zone 2) transcribed from the NYISO State of "
+            "the Market reports (Ask C1 annual floor)."
+        ),
+        "reconciles": (
+            "SOM Figure A-6 annual tables across the 2020/2022/2023/2024/"
+            "2025 reports (overlapping years cross-check identically), "
+            "2018-2025, from `data/raw/gas-prices/"
+            "nyiso_som_hub_fuel_annual.csv`. The daily/monthly Z2 series "
+            "remains Platts-licensed (open licence ask)."
         ),
     },
 }
