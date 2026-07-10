@@ -1,5 +1,24 @@
 # Changelog
 
+## 2026-07-09 (replay fidelity: ST_GAS net-load drag hinge now round-trips through meta.json)
+
+- **Fix:** `solve_and_persist` now persists `gas_st_drag_overrides` in the bundle
+  `meta.json` (alongside the existing `ct_drag_overrides` key). Without it, a
+  `--replay-bundle` re-solve of a PJM ST_GAS-drag bundle silently fell back to the
+  ScenarioConfig default hinge (`0.00906·netGW − 0.1376`, cap 0.34) instead of the
+  PJM-fit hinge (`0.01029·netGW − 0.7263`, cap 0.39) and forced ~4× the ST_GAS
+  energy the original run did — the same round-trip gap
+  `docs/FINDING-pjm-burndown-2026-07.md` documented for the CT drag. Found while
+  restoring the pjm-94/pjm-95 bundles to their full 2023–2025 span (rule 16); the
+  same gap also explains why pjm-95's original `run_config.json` recorded the
+  default hinge while its dispatch demonstrably ran the PJM fit (its probe passed
+  the config directly and only the recording lost the coefficients).
+- **Data:** pjm-94 keeper, its zero-forcing ablation twin, and the pjm-95 probe
+  re-solved over 2023–2025 in one bundle each (they were registered 2025-only) and
+  re-registered; `legitimacy_diagnostics.json` / `metrics.json` now score all
+  three years. The v2 re-solve reproduces the pjm-94 attestation's 3-year numbers
+  (ST_GAS 8.4/8.1/11.7 TWh) and the promotion commit's keeper-vs-twin delta.
+
 ## 2026-07-07 (MISO C-6: measured seam ladders — G-23-residual import-starvation fix)
 
 - **Model/config:** new `ScenarioConfig.miso_seam_measured_ladder` (default off,
