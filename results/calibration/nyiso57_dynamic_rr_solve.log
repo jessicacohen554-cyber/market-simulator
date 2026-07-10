@@ -1,0 +1,62 @@
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: solving NYISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+INFO: NYISO 2023 interface TTC: Upstate_West->Capital_Hudson 2850 -> 1750 MW (AC Transmission year-varying limit)
+INFO: NYISO 2023 Upstate_West->Capital_Hudson monthly TTC envelope: 1450-2725 MW (measured Central-East DAM postings)
+INFO: NYISO 2023: Zone-K LCR/TSL import cap on NYC->Long_Island (HB14-21, published locality import limit; replaces the LI self-supply energy floor)
+INFO: loaded 14 within-window retiree units for NYISO (492 MW, plants [2485, 10464, 55243])
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: loaded 14 within-window retiree units for NYISO (492 MW, plants [2485, 10464, 55243])
+INFO: unit-outage derate (NYISO 2023): 317 plant-tranches derated
+INFO: COD ramp (NYISO 2023): 57 unit-months masked offline (mid-year COD / retirement), 3 unit(s) fully not-yet-built/retired
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: Loaded NYISO 2023 hydro budget: 154 plants, 28403.3 GWh annual, 4647 MW nameplate
+INFO: NYISO 2023: 154 hydro plants in LP (4648 MW, 28.40 TWh monthly budget)
+INFO: NYISO 2023: priced import/export node — 5 import tranches (5900 MW), 1 export sinks (600 MW)
+INFO: unit-outage derate (NYISO 2023): 317 plant-tranches derated
+INFO: COD ramp (NYISO 2023): 57 unit-months masked offline (mid-year COD / retirement), 3 unit(s) fully not-yet-built/retired
+INFO: NYISO 2023: reliability floor — 13 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: NYISO 2023: priced import node reconciled to measured EIA-930 net interchange — 6 node rows, annual band [22.98, 23.92] TWh
+INFO: F923 fuel costs for 2023: 49 generators priced from their own plant, 267 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (NYISO 2023, daily): 516 gas generators repriced at the measured hub spot in 12/12 months (winter max 44.53 $/MMBtu)
+INFO: NYISO zonal gas basis (2023): 516 gas units shifted by zone hub offset (min -1.46, max 0.00 $/MMBtu vs Capital_Hudson)
+INFO: NYISO downstate CT interruptible-gas basis (2023): 105 downstate CT_PEAKER units lifted by the LDC city-gate premium (monthly min 1.33, max 4.87 $/MMBtu; summer-peaked)
+INFO: EIA-860 multifuel: 577 (plant, group) dual-fuel gas keys flagged
+INFO: dual-fuel switching (NYISO 2023): 313 gas tranches (16672 MW) capped at the delivered oil price
+INFO: NYISO 2023: firm import baseload floored (HQ/Ontario must-flow)
+INFO: NYISO 2023: import tranches repriced to measured neighbor hourly DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, export sink→hourly min) — static ladder bypassed
+INFO: energy+reserve co-opt (NYISO): 7 locational reserve families (4 10-min/quick-start), 57 ORDC steps ($3-$775), 579 full-fleet / 209 quick-start reserve-eligible units
+INFO: Matrix build: 9.262s, Solve: 102.153s (cold)
+INFO: Matrix build: 9.262s, Solve: 43.124s (warm)
+INFO: EIA-923 2023: CAMPD-backfilled 1 under-reported plants (1 replaced, 0 added)
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: solving NYISO 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+INFO: NYISO 2024 Upstate_West->Capital_Hudson monthly TTC envelope: 2525-3075 MW (measured Central-East DAM postings)
+INFO: NYISO 2024: Zone-K LCR/TSL import cap on NYC->Long_Island (HB14-21, published locality import limit; replaces the LI self-supply energy floor)
+INFO: loaded 14 within-window retiree units for NYISO (492 MW, plants [2485, 10464, 55243])
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: unit-outage derate (NYISO 2024): 316 plant-tranches derated
+INFO: COD ramp (NYISO 2024): 54 unit-months masked offline (mid-year COD / retirement), 3 unit(s) fully not-yet-built/retired
+INFO: Loaded NYISO fleet from EIA-860 parquet (460 generators)
+INFO: Binned fleet cache for NYISO is up to date — loaded from nyiso_fleet_binned.parquet
+INFO: Loaded NYISO 2024 hydro budget: 147 plants, 27875.0 GWh annual, 4587 MW nameplate
+INFO: NYISO 2024: 147 hydro plants in LP (4587 MW, 27.88 TWh monthly budget)
+INFO: NYISO 2024: priced import/export node — 5 import tranches (5900 MW), 1 export sinks (600 MW)
+INFO: unit-outage derate (NYISO 2024): 316 plant-tranches derated
+INFO: COD ramp (NYISO 2024): 63 unit-months masked offline (mid-year COD / retirement), 3 unit(s) fully not-yet-built/retired
+INFO: NYISO 2024: reliability floor — 13 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: NYISO 2024: priced import node reconciled to measured EIA-930 net interchange — 6 node rows, annual band [19.94, 20.75] TWh
+INFO: F923 fuel costs for 2024: 48 generators priced from their own plant, 273 gap-filled from nearby (state/zone) plants
+INFO: hub-basis overlay (NYISO 2024, daily): 521 gas generators repriced at the measured hub spot in 12/12 months (winter max 22.84 $/MMBtu)
+INFO: NYISO zonal gas basis (2024): 521 gas units shifted by zone hub offset (min -1.07, max 0.00 $/MMBtu vs Capital_Hudson)
+INFO: NYISO downstate CT interruptible-gas basis (2024): 105 downstate CT_PEAKER units lifted by the LDC city-gate premium (monthly min 0.00, max 5.34 $/MMBtu; summer-peaked)
+INFO: dual-fuel switching (NYISO 2024): 320 gas tranches (16683 MW) capped at the delivered oil price
+INFO: NYISO 2024: firm import baseload floored (HQ/Ontario must-flow)
+INFO: NYISO 2024: import tranches repriced to measured neighbor hourly DA LMPs (PJM_west→PJM, ISONE_tie→NEISO, scarcity→hourly max, export sink→hourly min) — static ladder bypassed
+INFO: energy+reserve co-opt (NYISO): 7 locational reserve families (4 10-min/quick-start), 57 ORDC steps ($3-$775), 584 full-fleet / 208 quick-start reserve-eligible units
