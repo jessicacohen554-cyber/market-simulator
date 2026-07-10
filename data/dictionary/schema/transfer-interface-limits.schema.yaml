@@ -1,0 +1,98 @@
+# Canonical schema: transfer-interface-limits (measured hourly transmission
+# interface transfer limits on the hourly model clock).
+#
+# Source (PJM, the first registered ISO): PJM Data Miner 2
+# `transfer_limits_and_flows` — hourly rows per published transfer-limit
+# area/interface carrying the enforced transfer limit (MW) and the measured
+# actual transfer (MW). The 2023-2025 raw drops
+# (data/raw/iso-specific-transmission/PJM_<year>_transfer_limits_and_flows.csv)
+# carry ten series: AP-South and Bedington-BlackOak each pre- and
+# post-contingency, AEP/DOM, 50045005, Cleveland (post-contingency reactive
+# interfaces), and the Average Western/Central/Eastern regional envelopes.
+# Pre- and post-contingency limits are DISTINCT series and stay distinct rows
+# here — consumers choose which security posture to enforce.
+#
+# Curation (scripts/curate_transfer_interface_limits.py, per-ISO specs in
+# scripts/lib/transfer_interface_limits/) maps the UTC-keyed source rows onto
+# the fixed non-leap 8760-hour ISO-local clock (Feb 29 dropped, the DST
+# fall-back repeat merged by the clock-hour group-by — the convention shared
+# with gtc-limits and the ercot-hsl/ORDC raw series). The frame is DENSE: the
+# single spring-forward wall-clock hour that never occurs locally is filled
+# from the neighbouring hours and flagged with n_source_rows = 0, so every
+# (interface, hour) pair 0-8759 carries a row.
+#
+# Rule #13/#14 admissibility: an interface transfer limit is the RTO's
+# published operating-security transfer capability — a reproducible
+# physical/market INPUT that regenerates every year from the same feed and
+# responds to changed grid conditions (outages, re-ratings, upgrades).
+# Nothing here reads model outputs; the measured `transfer_mw` column is
+# carried ONLY for crosswalk sanity checks (binding frequency / flow
+# direction), never as a dispatch target.
+datatype: transfer-interface-limits
+schema_version: 1
+title: Measured hourly transmission interface transfer limits
+description: >-
+  Per ISO, published interface/flowgate series and local clock hour: the
+  enforced hourly transfer limit (MW) and the measured actual transfer (MW),
+  reconciled onto the fixed non-leap 8760-hour model clock. Pre- and
+  post-contingency variants of the same interface are separate series, named
+  exactly as published.
+
+key_columns: [iso, interface, hour]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code (currently PJM).
+  - name: interface
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Interface / transfer-limit-area name exactly as published by the source
+      (e.g. "AP-South Post-Contingency", "AEP/DOM Post-Contingency",
+      "Average Western"). The model-side link crosswalk
+      (market_sim.data.transfer_interface_limits) maps the representable
+      ones onto model links.
+  - name: hour
+    dtype: int64
+    unit: hour_index
+    nullable: false
+    description: >-
+      Index 0-8759 on the fixed non-leap 8760-hour ISO-local clock (Feb 29
+      dropped) — the model's dispatch clock.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Wall-clock local start of the hour (naive, ISO-local).
+  - name: limit_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: >-
+      Enforced transfer limit (MW) for the interface over the local clock
+      hour (mean of the source rows merged into the hour — one normally, two
+      at the DST fall-back). Kept faithful to the source, including the rare
+      zero/negative published values; the model-side consumer documents how
+      those are reconciled onto link bounds.
+  - name: transfer_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Measured actual transfer (MW) across the interface over the hour (mean
+      of merged source rows); null on the filled spring-forward hour.
+      Diagnostic column for crosswalk sanity checks only — never a model
+      input or target.
+  - name: n_source_rows
+    dtype: int64
+    unit: count
+    nullable: false
+    description: >-
+      Source rows merged into the clock hour: 1 normally, 2 at the DST
+      fall-back repeat, 0 for the spring-forward hour that never occurs
+      locally (limit_mw filled from the neighbouring hours).

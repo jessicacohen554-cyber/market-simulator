@@ -582,6 +582,7 @@ def run_year(
     ct_drag_overrides: dict[str, float] | None = None,
     chp_export_floor_measured: bool = False,
     ercot_gtc_limits_measured: bool = False,
+    pjm_measured_interface_limits: bool = False,
     ercot_wtx_curtailment_driver: bool | None = None,
     ercot_wtx_curtail_depth_wind: float | None = None,
     ercot_wtx_curtail_depth_solar: float | None = None,
@@ -692,6 +693,12 @@ def run_year(
         # carrying links' export capability follows the hourly NP6-86 series
         # (gtc-limits clean datatype) instead of the static ttc_mw.
         config = config.with_overrides(ercot_gtc_limits_measured=True)
+    if pjm_measured_interface_limits:
+        # Measured PJM internal interface limits (backcast overlay): the
+        # mapped internal links' forward capability follows the hourly Data
+        # Miner 2 series (transfer-interface-limits clean datatype) instead
+        # of the static ttc_mw / pjm_congestion medians.
+        config = config.with_overrides(pjm_measured_interface_limits=True)
     # ERCOT West Texas Export corridor VRE curtailment-share driver (WP-B):
     # the West/Panhandle wind & solar CF ceiling follows the derived
     # net-load-indexed congestion share (data.curtailment_share) so the
@@ -1469,6 +1476,33 @@ def run_year(
                 )
             else:
                 ttc, ttc_import = gtc_out
+
+    # Measured PJM internal interface limits (backcast overlay, ScenarioConfig.
+    # pjm_measured_interface_limits): the internal links whose static ttc_mw
+    # was seeded from the Data Miner 2 transfer-limit postings follow the
+    # measured HOURLY series (constants.PJM_INTERFACE_LINK_MAP; min of pre/post
+    # contingency where both publish) in the forward west->east direction; the
+    # reverse direction keeps the static rating. Applied AFTER pjm_congestion's
+    # static medians so the hourly series supersedes them on mapped links
+    # (same feed, finer aggregation — rule 19) while the run's statics remain
+    # the reverse bound / fallback fill.
+    if getattr(config, "pjm_measured_interface_limits", False) and iso == "PJM":
+        from market_sim.data.transfer_interface_limits import (
+            pjm_interface_ttc_hourly,
+        )
+
+        tif_out = pjm_interface_ttc_hourly(
+            np.asarray(ttc, dtype=float), iso_config, year, demand.shape[1]
+        )
+        if tif_out is None:
+            logger.warning(
+                "pjm_measured_interface_limits: no transfer-interface-limits "
+                "clean partition for %d — static TTC kept (run "
+                "scripts/curate_transfer_interface_limits.py)",
+                year,
+            )
+        else:
+            ttc, ttc_import = tif_out
 
     # ERCOT West Texas Export corridor VRE curtailment-share driver (WP-B): a
     # per-(zone, hour) ceiling on West/Panhandle wind & solar reproducing the
