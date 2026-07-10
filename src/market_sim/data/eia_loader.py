@@ -673,6 +673,116 @@ def climatological_monthly_hydro(
     return np.vstack(monthly).mean(axis=0)
 
 
+def _hydro_wat_month_hod(iso: str, year: int) -> "pd.DataFrame | None":
+    """Return one year's EIA-930 ``NG: WAT`` on the model clock, long-form.
+
+    Columns ``month`` (1-12), ``hod`` (0-23), ``mw``. The (month, hod) keys
+    come from the frame's ROW ORDER (row k = model hour k, the property the
+    dispatch itself relies on — verified byte-identical to the demand the LP
+    serves), NOT from the extract's ``Local time`` labels, whose stamps carry
+    a fixed-offset error against the model clock. Leap years carry 8760 rows
+    (Feb 29 dropped by the frame loader), so the fixed non-leap calendar maps
+    every row. Returns ``None`` when the extract or column is absent.
+    """
+    ba = _ISO_TO_HOURLY_BA.get(iso)
+    if ba is None:
+        return None
+    frame = _eia_hourly_frame_filled(ba, year)
+    if frame is None or "NG: WAT" not in frame.columns:
+        return None
+    from market_sim.data.fleet import _hour_to_month_index
+
+    n = len(frame)
+    wat = pd.to_numeric(frame["NG: WAT"], errors="coerce").to_numpy(dtype=float)
+    return pd.DataFrame(
+        {
+            "month": _hour_to_month_index(n) + 1,
+            "hod": np.arange(n) % 24,
+            "mw": wat,
+        }
+    )
+
+
+def measured_hydro_hourly_envelope(
+    iso: str,
+    year: int,
+    hours: int,
+    percentile: float | None = None,
+) -> np.ndarray | None:
+    """Return the hydro fleet's measured hourly deliverability ceiling (MW).
+
+    For each hour of the run horizon, the ``percentile`` (default
+    :data:`market_sim.config.constants.HYDRO_ENVELOPE_PERCENTILE`) of the
+    measured EIA-930 ``NG: WAT`` hourly output in that hour's (month ×
+    hour-of-day) bucket — the fleet's revealed head/flow/scheduling
+    deliverability, which the nameplate ``pmax`` bound ignores. The same
+    measured capability-envelope construction as
+    :func:`measured_corridor_flow_envelope` (the keeper-blessed corridor ATC
+    proxy): the LP still clears its merit order *below* the ceiling, so this
+    bounds the budget LP's perfect-foresight hoarding without pinning dispatch
+    to the residual (rule #13).
+
+    A backcast year uses its own measured envelope (the same admissibility
+    class as same-year CAMPD outage windows — a physical availability input);
+    a year the extract does not cover (a forecast year) falls back to the
+    pooled per-bucket percentile across
+    :data:`~market_sim.config.constants.HYDRO_CLIMATOLOGY_YEARS`, so the
+    mechanism regenerates forward from climatology. (Month, hod) keys come
+    from the frames' row order — the model clock — not the extracts'
+    fixed-offset ``Local time`` labels; see :func:`_hydro_wat_month_hod`.
+
+    Note: for BAs with no separate pumped-storage series (CISO), ``NG: WAT``
+    includes pumped-storage generation while the model's budget-hydro fleet
+    excludes it — the envelope is therefore *generous* by the PS discharge in
+    the bucket (a documented, conservative misalignment per rule #14; it only
+    weakens the cap, never tightens it beyond the measured water fleet).
+
+    Returns ``(hours,)`` MW, or ``None`` when the ISO has no BA extract or no
+    year (measured or climatology) yields usable data — the caller leaves the
+    fleet uncapped (byte-identical).
+    """
+    from market_sim.config.constants import (
+        HYDRO_CLIMATOLOGY_YEARS,
+        HYDRO_ENVELOPE_PERCENTILE,
+    )
+    from market_sim.data.fleet import _hour_to_month_index
+
+    pct = HYDRO_ENVELOPE_PERCENTILE if percentile is None else float(percentile)
+    frames = []
+    own = _hydro_wat_month_hod(iso, year)
+    if own is not None and np.isfinite(own["mw"]).any() and own["mw"].max() > 0:
+        frames = [own]
+    else:
+        pooled = [_hydro_wat_month_hod(iso, int(y)) for y in HYDRO_CLIMATOLOGY_YEARS]
+        frames = [
+            f
+            for f in pooled
+            if f is not None and np.isfinite(f["mw"]).any() and f["mw"].max() > 0
+        ]
+    if not frames:
+        return None
+    work = pd.concat(frames, ignore_index=True).dropna(subset=["mw"])
+    if work.empty:
+        return None
+
+    tab = np.full((12, 24), np.nan)
+    for (m, h), g in work.groupby(["month", "hod"], observed=True):
+        tab[m - 1, h] = np.percentile(g["mw"].to_numpy(), pct)
+    # Fill any empty bucket with its month's max over hours, then the global
+    # max, so the cap is always finite and never tighter than a populated
+    # neighbour (same fill rule as measured_corridor_flow_envelope).
+    for m in range(12):
+        row = tab[m]
+        if np.all(np.isnan(row)):
+            continue
+        row[np.isnan(row)] = np.nanmax(row)
+    tab[np.isnan(tab)] = np.nanmax(tab)
+
+    rm = _hour_to_month_index(hours)  # 0-based month per model hour
+    rh = np.arange(hours) % 24
+    return np.clip(tab[rm, rh], 0.0, None)
+
+
 def measured_interchange_envelope(
     iso: str, year: int, hours: int, percentile: float = 90.0
 ) -> tuple[np.ndarray, np.ndarray] | None:

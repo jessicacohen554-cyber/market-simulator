@@ -580,6 +580,18 @@ NYISO_HYDRO_TREATY_MIN_FLOW: dict[int, float] = {
 # 2021-2025.
 HYDRO_CLIMATOLOGY_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
 
+# --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
+# Percentile of the measured EIA-930 NG:WAT hourly output, per (month x
+# hour-of-day) bucket, used as the hydro fleet's hourly dispatch ceiling when
+# ScenarioConfig.hydro_dispatch_envelope is on. Same construction and same
+# admissibility class as the CAISO corridor ATC envelope
+# (interchange_config.CAISO_CORRIDOR_FLOW_PERCENTILE, also 95): a measured
+# *capability* ceiling the LP clears below — head/flow/scheduling limits that
+# the nameplate pmax bound ignores — never a flow pinned to the residual.
+# Identification: measured (rule 23 — re-derive only when the EIA-930 source
+# extends). Source: EIA-930 hourly NG:WAT per BA extract.
+HYDRO_ENVELOPE_PERCENTILE: float = 95.0
+
 # Hydro-year scenario lever: a multiplier on the normal-water-year hydro budget
 # selected by ScenarioConfig.hydro_year, the forecast wet/dry-water-year knob.
 # A wet or dry water year shifts annual conventional-hydro energy by roughly
