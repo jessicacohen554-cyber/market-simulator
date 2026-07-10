@@ -15,18 +15,15 @@ session's deltas:
   2026-07-06: real market design, fit-neutral, memory-proven at the MISO
   class tier with the 10 GB swapfile convention).
 
-Hypothesis to score (task brief): Dominion/EMAAC/SWMAAC CC+CT recover toward
-actuals (C1), CT per-plant capture rises, and the nested MAD reserve family
-starts binding in the 2025 heat-wave hours so the C3c tail prices via in-LP
-reserve duals — the NYISO G-20c pattern, no derate, no fitted parameters.
-
-Diffed against pjm-96 (seam-only arm): the interface-limit effect is the
-attributable delta; pergen+ramp were shown dispatch-neutral standalone
-(pjm-81), so any interaction shows up as reserve duals, not volume moves.
+Owner decision 2026-07-10: promoted to PJM keeper (rule 1 — most structurally
+faithful; both transmission channels measured with zero fitted scalars).
+``--ablation`` solves the D-3 zero-forcing ablation twin of the same recipe
+(rule 21; lands in ``<run_dir>-ablation`` and records ``ablation_of``).
 """
 
 from __future__ import annotations
 
+import argparse
 import json
 import sys
 from pathlib import Path
@@ -42,6 +39,15 @@ PJM94_BUNDLE = REPO / "results" / "calibration" / "pjm94_stgas_netload_drag"
 
 
 def main() -> int:
+    ap = argparse.ArgumentParser(description=__doc__.split("\n")[0])
+    ap.add_argument(
+        "--ablation",
+        action="store_true",
+        help="solve the D-3 zero-forcing ablation twin (rule 21; lands in "
+        "<run_dir>-ablation with ablation_of recorded)",
+    )
+    args = ap.parse_args()
+
     meta = json.loads((PJM94_BUNDLE / "meta.json").read_text())
     kwargs = rk.build_kwargs(meta)
 
@@ -49,6 +55,7 @@ def main() -> int:
     kwargs["pjm_measured_interface_limits"] = True
     kwargs["pjm_reserve_pergen"] = True
     kwargs["measured_ramp_capability"] = True
+    kwargs["zero_forcing_ablation"] = bool(args.ablation)
     kwargs["run_dir"] = REPO / "results" / "calibration" / "pjm97_measured_interfaces"
     kwargs["note"] = (
         "PJM 97: pjm-96 recipe (pjm-94 keeper via replay_keeper.build_kwargs + "
@@ -58,11 +65,9 @@ def main() -> int:
         "forward direction; transfer-interface-limits clean datatype, rule "
         "13/14 measured-physical input) + pjm_reserve_pergen + "
         "measured_ramp_capability carried per the pjm-81 owner recommendation. "
-        "G-20 Phase-2: targets the eastern phantom-supply channel (b) — "
-        "Dominion CC -78/-42/-11%, Dominion CT -90/-86/-72%, EMAAC CT -80%, "
-        "SWMAAC CC -46/-88% vs actual in pjm-94 — and the C3b/C3c scarcity "
-        "structure (model never tight: ~10x requirement as free online "
-        "headroom vs PJM's real ~3 GW posture, pjm-81)."
+        "G-20 Phase-2 internal-interface arm; owner-directed keeper promotion "
+        "2026-07-10 (rule 1). "
+        + ("ZERO-FORCING ABLATION TWIN (rule 21/D-3)." if args.ablation else "")
     )
 
     reference = _load_reference()
@@ -73,7 +78,7 @@ def main() -> int:
 
     print(
         "=== pjm-97 solve kwargs (deltas vs pjm-96: pjm_measured_interface_limits, "
-        "pjm_reserve_pergen, measured_ramp_capability) ==="
+        f"pjm_reserve_pergen, measured_ramp_capability; ablation={args.ablation}) ==="
     )
     print(f"years={kwargs['years']} iso={kwargs['iso']} hours={kwargs['hours']}")
     print(f"out_dir={kwargs['run_dir']}")
