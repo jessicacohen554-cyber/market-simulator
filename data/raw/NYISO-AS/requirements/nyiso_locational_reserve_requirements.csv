@@ -1,0 +1,57 @@
+version,region,zones,product,period_label,hb_start,hb_end,requirement_mw,tsa_reduced_to_zero,evidence_start,evidence_end,source_doc,notes
+v2020,NYCA,A-K,spin_10,all,0,23,655,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,half of largest single contingency (1310 MW)
+v2020,NYCA,A-K,total_10,all,0,23,1310,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,largest single contingency
+v2020,NYCA,A-K,total_30,all,0,23,2620,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,2x largest single contingency
+v2020,EAST,F-K,spin_10,all,0,23,330,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,quarter of largest single contingency
+v2020,EAST,F-K,total_10,all,0,23,1200,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,
+v2020,EAST,F-K,total_30,all,0,23,1200,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,
+v2020,SENY,G-K,spin_10,all,0,23,0,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,
+v2020,SENY,G-K,total_10,all,0,23,0,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,
+v2020,SENY,G-K,total_30,all,0,23,1300,True,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,flat (pre hourly-step regime); TSA reduces to zero
+v2020,NYC,J,spin_10,all,0,23,0,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,
+v2020,NYC,J,total_10,all,0,23,500,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,no TSA-zeroing footnote in this version
+v2020,NYC,J,total_30,all,0,23,1000,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,no TSA-zeroing footnote in this version
+v2020,LI,K,spin_10,all,0,23,0,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,
+v2020,LI,K,total_10,all,0,23,120,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,1/10 of EAST total_10; carry-limit = applicable LI total_30 requirement
+v2020,LI,K,total_30,off_peak,,,270,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,on/off-peak hour definition not stated in the LRR posting
+v2020,LI,K,total_30,on_peak,,,540,False,2020-10-29,2021-12-04,lrr_wayback_20201029.pdf,on/off-peak hour definition not stated in the LRR posting
+v2021,NYCA,A-K,spin_10,all,0,23,655,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,half of largest single contingency (1310 MW)
+v2021,NYCA,A-K,total_10,all,0,23,1310,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,largest single contingency
+v2021,NYCA,A-K,total_30,all,0,23,2620,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,2x largest single contingency
+v2021,EAST,F-K,spin_10,all,0,23,330,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,quarter of largest single contingency
+v2021,EAST,F-K,total_10,all,0,23,1200,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,
+v2021,EAST,F-K,total_30,all,0,23,1200,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,
+v2021,SENY,G-K,spin_10,all,0,23,0,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,
+v2021,SENY,G-K,total_10,all,0,23,0,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,
+v2021,SENY,G-K,total_30,hb_range,0,5,1300,True,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2021,SENY,G-K,total_30,hb_range,6,6,1550,True,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2021,SENY,G-K,total_30,hb_range,7,21,1800,True,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2021,SENY,G-K,total_30,hb_range,22,22,1550,True,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2021,SENY,G-K,total_30,hb_range,23,23,1300,True,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2021,NYC,J,spin_10,all,0,23,0,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,
+v2021,NYC,J,total_10,all,0,23,500,True,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,TSA reduces to zero (footnote VIII)
+v2021,NYC,J,total_30,all,0,23,1000,True,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,TSA reduces to zero (footnote IX)
+v2021,LI,K,spin_10,all,0,23,0,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,
+v2021,LI,K,total_10,all,0,23,120,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,1/10 of EAST total_10; carry-limit = applicable LI total_30 requirement
+v2021,LI,K,total_30,off_peak,,,270,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,on/off-peak hour definition not stated in the LRR posting
+v2021,LI,K,total_30,on_peak,,,540,False,2021-12-04,2026-02-14,lrr_wayback_20211204.pdf,on/off-peak hour definition not stated in the LRR posting
+v2026,NYCA,A-K,spin_10,all,0,23,655,False,2026-07-10,,lrr_retrieved_20260710.pdf,half of largest single contingency (1310 MW)
+v2026,NYCA,A-K,total_10,all,0,23,1310,False,2026-07-10,,lrr_retrieved_20260710.pdf,largest single contingency
+v2026,NYCA,A-K,total_30,all,0,23,2620,False,2026-07-10,,lrr_retrieved_20260710.pdf,2x largest single contingency
+v2026,EAST,F-K,spin_10,all,0,23,330,False,2026-07-10,,lrr_retrieved_20260710.pdf,quarter of largest single contingency
+v2026,EAST,F-K,total_10,all,0,23,1200,False,2026-07-10,,lrr_retrieved_20260710.pdf,
+v2026,EAST,F-K,total_30,all,0,23,1200,False,2026-07-10,,lrr_retrieved_20260710.pdf,
+v2026,SENY,G-K,spin_10,all,0,23,0,False,2026-07-10,,lrr_retrieved_20260710.pdf,
+v2026,SENY,G-K,total_10,all,0,23,0,False,2026-07-10,,lrr_retrieved_20260710.pdf,
+v2026,SENY,G-K,total_30,hb_range,0,5,1300,True,2026-07-10,,lrr_retrieved_20260710.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2026,SENY,G-K,total_30,hb_range,6,6,1550,True,2026-07-10,,lrr_retrieved_20260710.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2026,SENY,G-K,total_30,hb_range,7,21,1800,True,2026-07-10,,lrr_retrieved_20260710.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2026,SENY,G-K,total_30,hb_range,22,22,1550,True,2026-07-10,,lrr_retrieved_20260710.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2026,SENY,G-K,total_30,hb_range,23,23,1300,True,2026-07-10,,lrr_retrieved_20260710.pdf,hourly-step regime footnote VII; TSA reduces to zero
+v2026,NYC,J,spin_10,all,0,23,0,False,2026-07-10,,lrr_retrieved_20260710.pdf,
+v2026,NYC,J,total_10,all,0,23,625,True,2026-07-10,,lrr_retrieved_20260710.pdf,raised from 500 between 2026-02-14 and 2026-07-10; basis now LTE-rating rule (Table C-2); TSA reduces to zero
+v2026,NYC,J,total_30,all,0,23,1250,True,2026-07-10,,lrr_retrieved_20260710.pdf,raised from 1000 between 2026-02-14 and 2026-07-10; TSA reduces to zero
+v2026,LI,K,spin_10,all,0,23,0,False,2026-07-10,,lrr_retrieved_20260710.pdf,
+v2026,LI,K,total_10,all,0,23,120,False,2026-07-10,,lrr_retrieved_20260710.pdf,carry-limit = applicable LI total_30 requirement; raised by expected EDRP/SCR response during activations
+v2026,LI,K,total_30,off_peak,,,270,False,2026-07-10,,lrr_retrieved_20260710.pdf,on/off-peak hour definition not stated in the LRR posting
+v2026,LI,K,total_30,on_peak,,,540,False,2026-07-10,,lrr_retrieved_20260710.pdf,on/off-peak hour definition not stated in the LRR posting
