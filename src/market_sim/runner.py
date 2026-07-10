@@ -1189,6 +1189,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 if _wtx_mult is not None
                 else {}
             )
+            # CAISO per-year SP15-pocket import caps (config.caiso_per_year_import_caps,
+            # default off — byte-identical no-op): swap links 4/5's TTC (baked
+            # in at the static 2023 tightest-year value) to this solve year's
+            # measured LCT import_cap before the LP reads it. Only the TTC
+            # array needs recomputing per year; incidence and
+            # link_bidirectional are topology-only and unaffected.
+            year_ttc = ttc
+            if iso == "CAISO" and getattr(config, "caiso_per_year_import_caps", False):
+                _caiso_year_iso_config = apply_caiso_local_import_limits(
+                    iso_config, iso, year
+                )
+                if _caiso_year_iso_config is not iso_config:
+                    year_ttc = get_ttc_array(_caiso_year_iso_config.links)
             # Base dispatch kwargs + priced import-node band: the shared
             # pipeline assembly (orchestrator-unification Stage 2) — the same
             # key set the inline dict carried, byte-identical values.
@@ -1205,7 +1218,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # the market actually clears against instead of a uniform $5k.
                 voll=iso_config.voll,
                 incidence=incidence,
-                ttc=ttc,
+                ttc=year_ttc,
                 interface_groups=interface_groups or None,
                 # One-way links (MISO's RDT directional pair) floor their flow
                 # at 0; all-True for every other ISO (byte-identical bounds).
