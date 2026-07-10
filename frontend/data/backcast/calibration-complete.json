@@ -6,6 +6,12 @@
    "scope": "EIA-930 (data/raw/eia-930-hourly/, data/raw/eia-930/) — 2018 PJM/CAISO/MISO wide-hourly backfill; H1-2026 CAISO/MISO wide-hourly extension; CAISO/MISO 2022 + H1-2026 fueltype/region long-form intake (data/raw/eia-930/{CISO,MISO}_{fueltype,region}_{2022,2026}.parquet)",
    "by": "owner (this session, explicit instruction: 'we can fetch the data we just can't train on it! ... We want data coverage on everything 2018-2026, but we just won't run those years until we are calibrated')",
    "validation": "no-LP: byte-identity check on pre-existing 2019-2025 wide-hourly rows (0 mismatched cells), schema-match check of the new long-form files against the committed ERCO 2022/2026 siblings, loader-resolvability only — no solve"
+  },
+  {
+   "date": "2026-07-10",
+   "scope": "CAMPD unit-level (data/raw/campd-unit-level/) — CAISO CA, NYISO NY 2022 + H1-2026; NEISO CT/MA/ME/NH/RI/VT H1-2026; MISO AR/IA/KS/LA/MN/MO/MS/MT/ND/SD/WI 2022 + H1-2026",
+   "by": "owner (this session, explicit instruction to fetch the remaining missing CAMPD unit-level state/ISO/year combos for 2022/H1-2026; rule 22 amendment, docs/handoffs/holdout-policy-memo-2026-07.md Option 2)",
+   "validation": "no-LP: scripts/fetch_campd_unit_level.py's own arrow-schema-match-vs-sibling + single-year date-range assertion for every landed file (run on a GitHub Actions runner via the fetch-campd-unit-level.yml push-triggered queue path); spot-checked 4 landed files (CA_2022, NY_2026, WI_2022, VT_2026) by reading them back with pyarrow — correct row counts, date ranges, state codes — no solve"
   }
  ],
  "complete": {
