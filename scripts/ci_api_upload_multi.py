@@ -57,6 +57,16 @@ def main():
         default="CAISO",
         help="ISO whose bench/<ISO>/*.json.gz parts ride along (once).",
     )
+    ap.add_argument(
+        "--extra",
+        action="append",
+        default=[],
+        help="Additional repo-relative file(s) to include in the same commit "
+        "(e.g. a bundle's calibration_attestation.json, an appended "
+        "docs/calibration-log.md, a workflow-patched script). Reads from "
+        "disk, so files far beyond the MCP relay's single-call ceiling "
+        "still upload.",
+    )
     a = ap.parse_args()
     if len(a.rid) != len(a.bundle):
         sys.exit("--rid and --bundle must be given the same number of times")
@@ -70,10 +80,12 @@ def main():
             "%s/run_config.json" % bundle,
             "%s/metrics.json" % bundle,
             "%s/legitimacy_diagnostics.json" % bundle,
+            "%s/calibration_attestation.json" % bundle,
         ]
     files += sorted(
         glob.glob("frontend/data/backcast/bench/%s/*.json.gz" % a.bench_iso)
     )
+    files += list(a.extra)
     files = [f for f in files if os.path.exists(f)]
 
     try:
