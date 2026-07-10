@@ -1,0 +1,70 @@
+name: ercot56-promote
+
+# One-shot follow-up to ercot56-solve-register: publish the owner-approved
+# ERCOT keeper promotion (ercot55-surface-ab -> ercot56-nucwin). The
+# authoring session pushed the small governance edits directly (keepers.json,
+# both registry sidecars incl. the keeper-auditor's ablation_twin repair);
+# this job lands the relay-oversized pieces from the runner — the promotion
+# calibration-log entry (~600 KB log), the rebuilt status.js (~220 KB), and
+# the owner-approval stamp on the attestation. ercot55-promote / caiso67/69
+# precedent.
+on:
+  push:
+    branches:
+      - claude/ercot-may-2024-outage-forensics-4sg2dk
+    paths:
+      - .github/workflows/ercot56-promote.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ercot56-promote
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Stamp owner approval + append the keeper-promotion log entry
+        run: |
+          set -euo pipefail
+          cd scripts/probes && python _ercot56_promote.py \
+            --approve-attestation --append-promotion-log
+
+      - name: Rebuild status.js for the new keeper set
+        run: |
+          set -euo pipefail
+          python scripts/build_status.py
+
+      - name: Upload via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_multi.py \
+            --rid 2026-07-10-ercot56-nucwin \
+            --bundle results/calibration/ercot56_nucwin \
+            --bench-iso ERCOT \
+            --extra docs/calibration-log.md \
+            --extra frontend/data/backcast/status.js \
+            --extra frontend/data/backcast/keepers.json \
+            --branch claude/ercot-may-2024-outage-forensics-4sg2dk \
+            --message "governance(ercot): keeper promotion artifacts — ercot56-nucwin log entry, status.js, owner-approved attestation [skip ci]"
