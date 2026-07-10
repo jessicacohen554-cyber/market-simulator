@@ -1,15 +1,26 @@
 # eia-930-interchange — raw
 
 `CISO interchange hourly.parquet`, `MISO interchange hourly.parquet`,
-`ISNE interchange hourly.parquet` — the EIA-930 BA-to-BA net interchange
-product (`TI` interchange family), long form per directly-interconnected
-balancing authority (DIBA): columns `diba, mw, local_time`. EIA sign
-convention: positive = the named BA exports to the DIBA. `local_time` is the
-hour-ending timestamp on the BA's local clock, spanning the covered local
-calendar years (2023-2025).
+`ISNE interchange hourly.parquet`, `PJM interchange hourly.parquet` — the
+EIA-930 BA-to-BA net interchange product (`TI` interchange family), long form
+per directly-interconnected balancing authority (DIBA): columns
+`diba, mw, local_time`. EIA sign convention: positive = the named BA exports
+to the DIBA. `local_time` is the hour-ending timestamp on the BA's local
+clock, spanning the covered local calendar years (2023-2025).
 
 ISNE's DIBAs are its three external seams: `HQT` (Hydro-Québec TransÉnergie —
 the Phase II + Highgate ties), `NBSO` (New Brunswick) and `NYIS` (New York).
+
+PJM's DIBAs are `CPLE`, `CPLW`, `DUK`, `LGEE`, `MISO`, `NYIS`, `TVA`.
+**Boundary caveat:** PJM's 930 submission disagrees materially with both
+PJM's own settlement-grade tie-line file
+(`data/raw/iso-specific-transmission/PJM_{year}_import_export_act_sch_interchange.csv`)
+and the counterparty meters on the MISO seam (2023: 56.6 TWh exported per
+this product vs 35.3 TWh in the tie file vs 33.5 TWh in MISO's own 930 book
+— pseudo-tie / dynamic-schedule attribution differences between
+submissions). The PJM seam-ladder derivation
+(`scripts/derive_pjm_seam_ladders.py`) therefore uses the tie-line file as
+its flow source and keeps this parquet as the printed cross-check.
 
 **Source:** EIA-930 (Hourly Electric Grid Monitor), public domain — see
 `docs/data-licensing.md` §1.
@@ -22,8 +33,9 @@ the Phase II + Highgate ties), `NBSO` (New Brunswick) and `NYIS` (New York).
         --years 2023 2024 2025
 
 The CISO/MISO files predate the script (manual pulls of the same product);
-the ISNE file was fetched with it (2026-07-06). Raw data is immutable — the
-script refuses to overwrite an existing file without `--force`.
+the ISNE file was fetched with it (2026-07-06), the PJM file likewise
+(2026-07-10). Raw data is immutable — the script refuses to overwrite an
+existing file without `--force`.
 
 **Consumers:**
 - `scripts/derive_manitoba_firm_import.py` — filters MISO's file to the
@@ -36,3 +48,6 @@ script refuses to overwrite an existing file without `--force`.
   flow duration curves) to derive the measured NEISO import/export tranche
   ladders (`interchange_config.IMPORT_TRANCHES["NEISO"]` /
   `EXPORT_TRANCHES[_BY_YEAR]["NEISO"]`, audit C-6 closure).
+- `scripts/derive_pjm_seam_ladders.py` — prints PJM's file as the boundary
+  CROSS-CHECK only (the ladder derivation's flow source is PJM's tie-line
+  file; see the boundary caveat above).
