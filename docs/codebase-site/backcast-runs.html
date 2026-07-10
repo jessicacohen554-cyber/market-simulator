@@ -871,7 +871,7 @@
           <div class="kpi-row"><span class="k" title="C1 fuel-mix gate — gas+coal classes only, same set the Calibration Status page scores">Classes in tol (C1)</span><span class="v ${H.n && H.inTol === H.n ? 'clr-good' : H.inTol * 2 >= H.n ? 'clr-ok' : 'clr-bad'}">${H.inTol} / ${H.n}${H.skipped ? ` <span style="font-weight:600;color:var(--text-muted)">· ${H.skipped} skipped</span>` : ''}</span></div>
           <div class="kpi-row"><span class="k">Fleet r</span><span class="v ${rcls(fr)}">${fr == null ? '—' : fr.toFixed(3)}</span></div>
           <div class="kpi-row"><span class="k">Avg LMP${ov ? ' +ORDC' : ''}</span><span class="v" ${ov ? `style="color:${OVERLAY_COLOR}"` : ''}>${mp == null ? '—' : fmtDollars(mp)}</span></div>
-          <div class="kpi-row"><span class="k">LMP vs ${aL ? aLab : 'actual'}</span><span class="v ${pdiff == null ? '' : dcls(pdiff)}">${pdiff == null ? '—' : fmtPctSigned(pdiff)}</span></div>
+          <div class="kpi-row"><span class="k" title="Model LMP vs actual (${aL ? aLab : 'actual'} series)">LMP vs actual</span><span class="v ${pdiff == null ? '' : dcls(pdiff)}">${pdiff == null ? '—' : fmtPctSigned(pdiff)}</span></div>
           <div class="kpi-row"><span class="k">Worst class</span><span class="v ${H.worst ? 'clr-' + clsTol(H.worst) : ''}">${H.worst ? classLabel(H.worst.grp) + ' ' + fmtPctSigned(H.worst.err) : '—'}</span></div>
         </div>`;
       }
