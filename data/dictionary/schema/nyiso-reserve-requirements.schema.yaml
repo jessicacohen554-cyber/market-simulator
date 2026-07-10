@@ -1,0 +1,106 @@
+# Canonical schema: NYISO published locational reserve requirements
+#
+# Hand-transcription of every printed cell of NYISO's "Locational Reserve
+# Requirements" posting across its dated versions (Wayback-snapshot bounded;
+# see data/raw/NYISO-AS/requirements/README.md). One row per
+# (version, region, product, period) requirement value, including the SENY
+# 30-minute hourly step shape (HB0-5 1,300 / HB6 1,550 / HB7-21 1,800 /
+# HB22 1,550 / HB23 1,300 MW) and the per-version Thunderstorm-Alert
+# zeroing flags. This is the measured static/hour-shaped base of the
+# condition-varying requirement reconstruction for issue #1344 (Ask B3 of
+# docs/handoffs/nyiso-data-asks-2026-07.md); it is a rule-13-admissible
+# published market input, never an outcome.
+#
+# Curated by scripts/curate_nyiso_reserve_requirements.py from
+#   data/raw/NYISO-AS/requirements/nyiso_locational_reserve_requirements.csv
+datatype: nyiso-reserve-requirements
+schema_version: 1
+title: NYISO published locational reserve requirements (dated versions)
+description: >-
+  NYISO's published operating-reserve requirements by product x region for
+  each dated version of the Locational Reserve Requirements posting,
+  including hourly step shapes and Thunderstorm-Alert zeroing flags.
+
+key_columns: [iso, version, region, product, period_label, hb_start]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (NYISO).
+  - name: version
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Dated document version (v2020, v2021, v2026). Effective windows are
+      Wayback-evidence bounds, not tariff effective dates — see evidence
+      columns and the raw README caveats.
+  - name: region
+    dtype: string
+    unit: none
+    nullable: false
+    description: Reserve region (NYCA, EAST, SENY, NYC, LI).
+  - name: zones
+    dtype: string
+    unit: none
+    nullable: false
+    description: NYISO load zones the region spans, as printed (e.g. G-K).
+  - name: product
+    dtype: string
+    unit: none
+    nullable: false
+    description: Reserve product (spin_10, total_10, total_30).
+  - name: period_label
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Intra-day applicability: "all" (all hours), "hb_range" (explicit
+      hour-beginning window in hb_start/hb_end), or "on_peak"/"off_peak"
+      (LI 30-minute rows; the boundary hours are not defined in the posting).
+  - name: hb_start
+    dtype: int64
+    unit: hour_beginning
+    nullable: true
+    description: First hour-beginning (0-23, local) the row applies to; null for on/off-peak rows.
+  - name: hb_end
+    dtype: int64
+    unit: hour_beginning
+    nullable: true
+    description: Last hour-beginning (inclusive) the row applies to; null for on/off-peak rows.
+  - name: requirement_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Published requirement in MW (0 where the posting prints 0 MW).
+  - name: tsa_reduced_to_zero
+    dtype: bool
+    unit: none
+    nullable: false
+    description: >-
+      True when the version's footnotes state the requirement is reduced to
+      zero during Thunderstorm Alerts (v2021+: NYC total_10/total_30 and
+      SENY total_30; v2020: SENY total_30 only).
+  - name: evidence_start
+    dtype: datetime64[ns]
+    unit: date
+    nullable: false
+    description: Earliest date the version is evidenced in force (Wayback snapshot or retrieval date).
+  - name: evidence_end
+    dtype: datetime64[ns]
+    unit: date
+    nullable: true
+    description: Latest bound before the next version is evidenced; null for the current version.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: PDF filename under data/raw/NYISO-AS/requirements/locational-reserve-requirements/.
+  - name: notes
+    dtype: string
+    unit: none
+    nullable: true
+    description: Transcription notes (footnote provenance, unverified effective-date bounds).

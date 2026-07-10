@@ -1,0 +1,62 @@
+# Canonical schema: NYISO SOM annual average fuel index prices by hub
+#
+# Hand-transcription of the "Monthly Average Fuel Index Prices" annual
+# summary table (Figure A-6) of the NYISO State of the Market reports
+# (Potomac Economics MMU): average fuel index prices by trading hub,
+# including Iroquois Zone 2 — the only free measured Z2 price level found
+# (Ask C1 of docs/handoffs/nyiso-data-asks-2026-07.md; the underlying daily
+# series is Platts-licensed, so daily/monthly Z2 remains a licence ask).
+# Index prices exclude transportation charges and local taxes (2020 SOM
+# footnote 249). Annual grain only — the SOM's monthly values are printed
+# as vector charts, not tables.
+#
+# Curated by scripts/curate_nyiso_som_hub_fuel_annual.py from
+#   data/raw/gas-prices/nyiso_som_hub_fuel_annual.csv
+datatype: nyiso-som-hub-fuel-annual
+schema_version: 1
+title: NYISO SOM annual average fuel index prices by hub
+description: >-
+  Annual average natural-gas and oil index prices by hub serving New York,
+  transcribed from the NYISO State of the Market report fuel-price tables.
+
+key_columns: [iso, year, fuel, hub]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (NYISO).
+  - name: year
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar year the annual average covers.
+  - name: fuel
+    dtype: string
+    unit: none
+    nullable: false
+    description: Fuel family ("gas" or "oil").
+  - name: hub
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical hub/series code: TENNESSEE_Z6, IROQUOIS_Z2, TRANSCO_Z6_NY,
+      TETCO_M3, TENN_Z4_200L (gas); ULSK, ULSD, FO6 (oil).
+  - name: price_usd_per_mmbtu
+    dtype: float64
+    unit: usd_per_mmbtu
+    nullable: false
+    description: Annual average index price as printed ($/MMBtu; excludes transport and local taxes).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: SOM report PDF filename under data/raw/NYISO/.
+  - name: source_page
+    dtype: int64
+    unit: none
+    nullable: false
+    description: PDF page number the table was read from.
