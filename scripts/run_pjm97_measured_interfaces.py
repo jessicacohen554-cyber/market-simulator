@@ -56,7 +56,17 @@ def main() -> int:
     kwargs["pjm_reserve_pergen"] = True
     kwargs["measured_ramp_capability"] = True
     kwargs["zero_forcing_ablation"] = bool(args.ablation)
-    kwargs["run_dir"] = REPO / "results" / "calibration" / "pjm97_measured_interfaces"
+    base_dir = REPO / "results" / "calibration" / "pjm97_measured_interfaces"
+    if args.ablation:
+        # D-3 twin: land beside the keeper with the "-ablation" suffix and
+        # record the base bundle in run_config.json (the dashboard and
+        # audit_keepers pair twins by ablation_of) — mirrors the CLI-path
+        # derivation in run_calibration_full.main, which solve_and_persist
+        # itself does not perform.
+        kwargs["ablation_of"] = base_dir.name
+        kwargs["run_dir"] = base_dir.with_name(f"{base_dir.name}-ablation")
+    else:
+        kwargs["run_dir"] = base_dir
     kwargs["note"] = (
         "PJM 97: pjm-96 recipe (pjm-94 keeper via replay_keeper.build_kwargs + "
         "pjm_seam_measured_ladder) + pjm_measured_interface_limits=True (the "
