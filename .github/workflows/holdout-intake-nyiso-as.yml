@@ -17,6 +17,13 @@
 # pattern as fetch-nyiso-reserve-interface-intake.yml and
 # holdout-intake-neiso-2022.yml. The runner does the real fetch + fold +
 # commit + push.
+#
+# Fixed 2026-07-10 (first run): the fetch+build+verify steps all succeeded
+# (real 2018-2026 data, verified checksums/row counts) but the commit step's
+# `git pull --rebase` failed with "You have unstaged changes" after the local
+# data commit, losing the push. Added --autostash so any leftover dirty
+# worktree state around the rebase is stashed/reapplied automatically instead
+# of aborting.
 name: holdout-intake-nyiso-as
 
 on:
@@ -131,7 +138,7 @@ jobs:
           intake only — no LP solve, no scoring, no calibration-complete
           marker touched."
           for i in 1 2 3 4; do
-            git pull --rebase origin "${{ github.ref_name }}" && \
+            git pull --rebase --autostash origin "${{ github.ref_name }}" && \
             git push origin "HEAD:${{ github.ref_name }}" && exit 0
             sleep $((i * 5))
           done
