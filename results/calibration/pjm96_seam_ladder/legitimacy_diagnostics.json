@@ -118,7 +118,7 @@
      "profile_r": 0.987,
      "model_offpeak_cv": 0.045,
      "actual_offpeak_cv": 0.047,
-     "cv_ratio": 0.974,
+     "cv_ratio": 0.973,
      "gated": false,
      "verdict": "pass"
     },
@@ -188,7 +188,7 @@
      "profile_r": 0.949,
      "model_offpeak_cv": 0.376,
      "actual_offpeak_cv": 0.142,
-     "cv_ratio": 2.655,
+     "cv_ratio": 2.654,
      "gated": true,
      "verdict": "pass"
     },
@@ -215,7 +215,7 @@
     {
      "year": 2025,
      "class": "COAL_BIT",
-     "profile_r": 0.915,
+     "profile_r": 0.914,
      "model_offpeak_cv": 0.027,
      "actual_offpeak_cv": 0.043,
      "cv_ratio": 0.643,
@@ -225,7 +225,7 @@
     {
      "year": 2025,
      "class": "COAL_PRB",
-     "profile_r": 0.964,
+     "profile_r": 0.963,
      "model_offpeak_cv": 0.098,
      "actual_offpeak_cv": 0.079,
      "cv_ratio": 1.248,
@@ -258,17 +258,17 @@
      "profile_r": 0.963,
      "model_offpeak_cv": 0.345,
      "actual_offpeak_cv": 0.396,
-     "cv_ratio": 0.872,
+     "cv_ratio": 0.873,
      "gated": true,
      "verdict": "pass"
     },
     {
      "year": 2025,
      "class": "ST_CHP",
-     "profile_r": -0.537,
+     "profile_r": -0.538,
      "model_offpeak_cv": 0.042,
      "actual_offpeak_cv": 0.01,
-     "cv_ratio": 4.265,
+     "cv_ratio": 4.269,
      "gated": false,
      "verdict": "pass"
     },
@@ -409,7 +409,7 @@
      "year": 2024,
      "class": "CC_REGULAR",
      "mechanism": "reliability_floor",
-     "forced_twh": 0.1889,
+     "forced_twh": 0.1891,
      "class_total_twh": 339.3337,
      "share_of_class": 0.0006
     },
@@ -433,7 +433,7 @@
      "year": 2024,
      "class": "COAL",
      "mechanism": "coal_mustrun",
-     "forced_twh": 3.5202,
+     "forced_twh": 3.5192,
      "class_total_twh": 117.2218,
      "share_of_class": 0.03
     },
@@ -481,9 +481,9 @@
      "year": 2024,
      "class": "ST_GAS",
      "mechanism": "st_netload_drag",
-     "forced_twh": 4.9568,
+     "forced_twh": 4.9564,
      "class_total_twh": 6.3437,
-     "share_of_class": 0.7814
+     "share_of_class": 0.7813
     },
     {
      "year": 2025,
@@ -497,7 +497,7 @@
      "year": 2025,
      "class": "CC_CHP",
      "mechanism": "chp_steam",
-     "forced_twh": 0.8898,
+     "forced_twh": 0.8901,
      "class_total_twh": 7.2472,
      "share_of_class": 0.1228
     },
@@ -505,7 +505,7 @@
      "year": 2025,
      "class": "CC_REGULAR",
      "mechanism": "reliability_floor",
-     "forced_twh": 0.8742,
+     "forced_twh": 0.8747,
      "class_total_twh": 332.1288,
      "share_of_class": 0.0026
     },
@@ -577,9 +577,9 @@
      "year": 2025,
      "class": "ST_GAS",
      "mechanism": "st_netload_drag",
-     "forced_twh": 4.9757,
+     "forced_twh": 4.9743,
      "class_total_twh": 9.6441,
-     "share_of_class": 0.5159
+     "share_of_class": 0.5158
     }
    ],
    "summary": [
@@ -646,7 +646,7 @@
     {
      "year": 2024,
      "class": "CC_REGULAR",
-     "forced_twh": 0.2806,
+     "forced_twh": 0.2808,
      "class_total_twh": 339.3337,
      "forced_share": 0.0008,
      "limit": 0.3,
@@ -682,9 +682,9 @@
     {
      "year": 2024,
      "class": "ST_GAS",
-     "forced_twh": 4.9568,
+     "forced_twh": 4.9564,
      "class_total_twh": 6.3437,
-     "forced_share": 0.7814,
+     "forced_share": 0.7813,
      "limit": 0.3,
      "load_share": 0.0153,
      "immaterial": true,
@@ -706,7 +706,7 @@
     {
      "year": 2025,
      "class": "CC_REGULAR",
-     "forced_twh": 0.942,
+     "forced_twh": 0.9425,
      "class_total_twh": 332.1288,
      "forced_share": 0.0028,
      "limit": 0.3,
@@ -730,7 +730,7 @@
     {
      "year": 2025,
      "class": "CT_PEAKER",
-     "forced_twh": 4.8993,
+     "forced_twh": 4.8992,
      "class_total_twh": 29.335,
      "forced_share": 0.167,
      "limit": 0.15,
@@ -742,9 +742,9 @@
     {
      "year": 2025,
      "class": "ST_GAS",
-     "forced_twh": 4.9757,
+     "forced_twh": 4.9743,
      "class_total_twh": 9.6441,
-     "forced_share": 0.5159,
+     "forced_share": 0.5158,
      "limit": 0.3,
      "load_share": 0.0169,
      "immaterial": true,
@@ -809,7 +809,7 @@
      "year": 2024,
      "floor": "st_netload_drag",
      "window": "h0-23",
-     "floored_twh": 5.3978,
+     "floored_twh": 5.3974,
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
@@ -827,7 +827,7 @@
      "year": 2025,
      "floor": "st_netload_drag",
      "window": "h0-23",
-     "floored_twh": 5.8556,
+     "floored_twh": 5.8542,
      "offwindow_twh": 0.0,
      "offwindow_share": 0.0,
      "verdict": "pass"
