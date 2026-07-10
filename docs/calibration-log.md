@@ -8442,6 +8442,126 @@ handoff prompt was re-issued with the v2.4 scope).
 **Holdouts.** 2023–2025 only throughout (bench retrofit included); no solve
 performed; registered payloads byte-untouched (rule 22 / reproducibility
 contract §0a).
+
+## 2026-07-09 — NYISO C8 ST_GAS protective caveat CLEARED via rubric-v2.2 grounding (scorer-only; keeper stays nyiso-56); all-hours `gas_st_netload_drag` re-adjudicated for NYISO and REJECTED on its own honesty gates
+
+**Trigger.** The nyiso-56 keeper's one protective caveat was C8 ST_GAS: "above
+the 30% cap and NOT grounded … no declared D-4 window: reliability_floor" — a
+provenance gap, not a shape miss (D-1 passes r 0.95–0.96 / cv_ratio 0.69–1.04
+every year). Rubric v2.2's grounded-above-budget escalation (rule 19) names
+the fix: a cited `D4_WINDOWS` entry + bundle regen, no re-solve.
+
+**Drag re-adjudication (the G-05 stale premise).** G-05 rejected switching
+NYISO ST_GAS onto `gas_st_netload_drag` when the drag was windowed [15,22);
+the ERCOT-46/PJM-94 keepers have since made it ALL-HOURS — worth re-testing.
+Built `scripts/derive_nyiso_st_gas_netload_drag.py` (PJM-construction-
+faithful: EIA-930 NYIS net-load, CAMPD overnight CF of the 7 pure-play
+6.38-GW ST_GAS plant set, hinge fit). It FAILS its own pre-registered honesty
+gates: overnight Spearman rho 0.32/0.39/0.72 class-wide (0.30/0.28/0.57
+NYC+LI-only) — not year-stable; binned overnight CF FLAT vs net-load below
+~15 GW with the base level drifting across years at equal net-load (11 GW:
+0.087→0.140→0.136); pooled hinge overshoots 2023 measured class energy
+(142%). The downstate commitment is an UNCONDITIONAL local-reliability base
+(DARU/SRE + boiler min-run), not net-load-hinged — the drag is the wrong
+driver for NYISO (rule 1: no run attempted with a mechanism the measurement
+rejects). G-05's mechanism choice stands on measured grounds that no longer
+depend on the stale window premise; dated addendum appended to the G-05
+handoff.
+
+**Grounding applied.** `D4_WINDOWS[(MECH_RELIABILITY_FLOOR, "ST_GAS")] =
+(0, 24)` with the G-05 evidence cited in place (NYC/LI steam online 100% of
+year, overnight CF 0.11–0.20 — no hour the class's own driver evidence says
+it is offline; same construction as the (MECH_ST_NETLOAD_DRAG, None) row).
+Live blast radius NYISO-only (PJM's enabled ST_GAS limbs are drag-owned in
+its keeper and dropped; all other ISOs' are disabled). nyiso-56's committed
+`legitimacy_diagnostics.json` regenerated (payload path, the CI-reproducible
+convention) — this also refreshed the D-2 denominators onto the HEAD CHP
+re-classing (ST_GAS class total 10.4/10.9/13.3 → 8.0/8.6/10.6 TWh; forced
+share 30.5/44.6/38.2% → 36.4/53.8/44.8%), curing a latent G-06 staleness the
+07-07 artifact had accrued. New D-4 rows: `reliability_floor × ST_GAS`
+off-window 0.0% all years, PASS.
+
+**Result (build_status).** C8 → clean PASS, classified GROUNDED ABOVE BUDGET
+all three years, surfaced as report notes (never a caveat, per the owner
+amendment); protective caveat bucket now EMPTY; grade summary 7→8
+target-grade, ledgered 2→1. Determination stays CALIBRATED-WITH-CAVEATS on
+the two remaining non-protective caveats: ledgered C3c (DA-expressible tail;
+#1344 Ask-B + Iroquois Ask-C data-blocked) and commercial-band C5a CO2 2024
+(−7.3%). Those are data-ask-gated, not forced-floor items. Attestation
+`forced_share` exceptions retired with a dated note; registry sidecar
+definition appended. Keeper unchanged; no solve run; LOYO n/a (no mechanism
+change — scorer-only declaration per rule 19).
+
+**Holdouts.** No solve/score/intake anywhere (scorer-only session); rule 22
+untouched.
+
+## 2026-07-09 — NEISO C3c/C5b closure-path inventory COMPLETED: in-LP energy+reserve co-optimization (ISO-NE 3-level RCPF nesting) is DORMANT on 2023–2025 (`neiso 56 reserve-coopt` PROBE + zero-forcing twin; keeper stays neiso-55)
+
+Owner task: check whether any further resolution would take NEISO's
+calibration caveat-free under the new rubric, and attempt a run if so.
+
+**Rubric v2.3 re-read of the keeper's caveat set.** `neiso-55` re-scores at
+HEAD as CALIBRATED-WITH-CAVEATS with a *narrower* live caveat set than its
+ledger prose implies: C3a/C3b pass clean (v2.3 single band), and C3c's
+DA-expressible small-count rule (|Δ| ≤ 10 h when the DA actual < 10 h) clears
+2023 and 2024 at model 0h vs DA 5h. What remains: **C3c 2025 only** (model 0h
+vs DA 12h >$300), **C5b 2025 only** (0.83 vs 2.08 TWh, −60.2%), and the **C2
+2025 gas +2.6%** commercial-band caveat — an accepted measured-input
+limitation (preliminary EIA-923 vintage, 57% plant reporting) that no run can
+close; it resolves when the final 2025 vintage publishes. The C7/C5c
+immateriality/degeneracy skips also cap the determination scorer-side, so a
+literally caveat-free NEISO is unreachable this cycle regardless of solves.
+
+**The one untried resolution, and the run.** The winter fuel-security family
+is exhausted (G-24 STRUCK 2026-07-07: Component A+B+cold-snap derate adopted
+but dormant). The C5b ledger names exactly one other closure path: "in-LP
+reserve co-optimization value reaching storage". `reserve_config._neiso_design`
+(system-wide energy+reserve co-opt, published 3-level nested RCPF demand
+curves: total-30-min 1,800 MW @ $1,000, total-10-min 1,200 MW @ $1,500,
+10-min-spin 600 MW @ $50 — Market Rule 1 §III.2.7A; storage reserve-eligible)
+existed in code, tested, never probed on NEISO. Probe
+`2026-07-09-neiso-56-reserve-coopt` (bundle
+`results/calibration/neiso56_reserve_coopt`,
+`scripts/probes/_neiso_reserve_coopt_ab.py`, clean tree `dd7e755`) = the
+neiso-55 keeper recipe + `energy_reserve_coopt=True`, all three years in one
+bundle; zero-forcing twin `2026-07-09-neiso-56-coopt-ablation` registered
+alongside (rule 20).
+
+**Result — decisively DORMANT.** The reserve balance dual is **$0.00 in all
+26,280 hours** of 2023–2025, on both P1 and the scored P2 pass, in the main
+arm AND the zero-forcing twin: the ample NEISO fleet clears the nested
+requirements out of idle thermal headroom at zero opportunity cost in every
+hour, including the January-2025 cold-snap hours with the gas cold-snap derate
+active (the caiso-59/MISO inert-family signature). C3c tail unchanged at 0h
+>$300 every year (system max $249/$204/$272); C5b storage discharge
+byte-similar to the keeper (0.579/0.521/0.827 vs 0.578/0.521/0.828 TWh); fuel
+mix byte-comparable (no class moves >0.05 TWh in any year). Attested
+(measured-market DOF entry for `NEISO_RCPF_PRODUCTS`, n_residual unchanged at
+5); scores **CALIBRATED-WITH-CAVEATS with the identical caveat set as the
+keeper**.
+
+**Adjudication.** Both named structural closure paths for the ledgered
+C3c/C5b winter scarcity-price-formation family — the winter fuel-security
+build and in-LP reserve co-optimization — are now *proven* dormant on these
+backcast years. The two ledgered caveats are irreducible by any admissible
+mechanism identified to date; they stand as honest MODEL MISS ledger entries.
+The only remaining admissible direction on record is the ERCOT G-22 finding's
+ISO-NE analogue — scarcity-anticipating DA offer formation at healthy reserves,
+from a measured offer surface conditioned on a forward-reproducible tightness
+driver — its own session if the owner charters it. **No keeper swap**; whether
+to adopt the co-opt though-dormant (the winter-stack rule-1 precedent: real
+ISO-NE clearing structure, forward-live in a tighter fleet) is an owner call —
+adoption would need the LOYO check (trivial here: deltas ≈ 0) and a keeper
+re-solve is NOT required (neiso-56 IS that solve).
+
+**Bench-drift note (not committed).** Registering the runs re-rendered
+`bench/NEISO/*.json.gz` with ~0.1% CO₂ deltas (2023 eGRID 22.09 → 22.109;
+COAL_BIT intensity 0.155 → 0.174) — a fresh-render vs `retrofit_co2_payloads`
+seam at HEAD, not a taxonomy change. The re-rendered parts were reverted so
+this probe does not move the shared benchmark as a side effect; both bundles
+are scored against the committed bench. Flagged for a deliberate follow-up.
+
+**Holdouts.** No solve/score/intake outside 2023–2025 (rule 22).
 ## 2026-07-10 — ERCOT winter/shoulder overshoot root-caused (mostly scoring-frame + one fake winter morning + a 12-month surplus-floor bias); 2024's real C3b error was a corrupt HSL input — 4 zero-solar August days fixed from EIA-930 (`ercot53` candidate + ablation, CALIBRATED-WITH-CAVEATS; keeper stays ercot46)
 
 **Task (ercot53 handoff).** Root-cause the ercot52 winter/shoulder body
