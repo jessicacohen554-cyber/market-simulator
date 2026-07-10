@@ -11,5 +11,6 @@
   ],
   "iso": "NYISO",
   "file": "frontend/data/backcast/runs/2026-07-10-nyiso-59-dynamic-rr.js",
-  "bundle": "results/calibration/nyiso59_dynamic_rr"
+  "bundle": "results/calibration/nyiso59_dynamic_rr",
+  "ablation_twin": "2026-07-10-nyiso-59-dynamic-rr-ablation"
 }
