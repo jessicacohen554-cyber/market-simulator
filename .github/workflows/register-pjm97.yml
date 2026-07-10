@@ -1,35 +1,28 @@
-# One-shot: solve pjm-97 (pjm-96 recipe + measured internal interface limits
-# + pergen reserve + measured ramp) on the runner and register it on the
-# calibration dashboard — the register-pjm96-v2 pattern (see its header and
-# register-pjm96's for why the ~1.5 MB run payload cannot travel through the
-# session env's push path). Additions beyond the v2 pattern:
-#
-#   1. The recipe consumes two gitignored clean datatypes, so they are
-#      regenerated from committed raw on the runner BEFORE the solve
-#      (transfer-interface-limits via its curate script; ramp-capability via
-#      regenerate_clean),
-#   2. the solve output is scanned for the overlays' fallback warnings and
-#      the job FAILS if any fired — a silently-degraded solve must never be
-#      registered as the run it claims to be, and
-#   3. the session's calibration-log entry is appended (heading-gated) and
-#      committed with the results.
-#
-# Run 29096868050 completed everything through the results commit but the
-# push failed: the build_manifest preview step regenerates tracked
-# deploy-owned shared files in the working tree, which blocked
-# `git pull --rebase`. The preview step is removed (the Pages deploy is
-# those files' single writer) and the push hard-resets the tree after
-# committing. Trigger: push of .github/patches/pjm97_definition.txt or of
-# this file. Idempotent; prunes pjm-83 and pjm-86 (top-15 retention).
-# Delete this workflow + the patches payload from main after the PR merges
-# (one-shot convention).
+# KEEPER-PROMOTION edition (owner decision 2026-07-10, rule 1): solve pjm-97
+# AND its zero-forcing ablation twin on the runner, register both, generate
+# the governance attestation + DOF ledger, swap keepers.json PJM ->
+# 2026-07-10-pjm-97-measured-interfaces, rebuild status.js, append the
+# promotion calibration-log entry, prune pjm-83/86 (top-15; twins exempt),
+# and commit everything to this branch — the register-pjm96-v2 pattern (see
+# its header for the failure history: swapfile path, disk, diagnostics exit
+# code, build_manifest tree-dirtying). The run payloads exceed the session
+# env's push path, so the runner re-solves deterministically and pushes with
+# normal git. Clean inputs are regenerated from committed raw before the
+# solve and the job FAILS on any measured-input fallback warning. Rule-21
+# machinery: attestation (governance + exceptions + build_dof_ledger
+# free_parameters) and the registered, linked ablation twin. Rule-22 LOO
+# note: the mechanism flip carries zero fitted scalars, so the
+# LOO-before-promotion clause for tuned changes is vacuous (recorded in the
+# attestation). Trigger: push of this file or the definition/callog patch
+# files. Idempotent throughout. Delete this workflow + the patches payload
+# from main after the PR merges (one-shot convention).
 
 name: register-pjm97
 
 on:
   push:
     branches:
-      - claude/pjm-measured-interface-limits-2lchu7
+      - claude/pjm97-keeper-promotion-2lchu7
     paths:
       - .github/patches/pjm97_definition.txt
       - .github/workflows/register-pjm97.yml
@@ -89,10 +82,10 @@ jobs:
               missing.append(("ramp-capability", None))
           if missing:
               raise SystemExit(f"clean inputs missing after regeneration: {missing}")
-          print("clean inputs present:", "transfer-interface-limits 2023-2025 + ramp-capability (PJM)")
+          print("clean inputs present")
           PYEOF
 
-      - name: Solve pjm-97 (skip if bundle already complete; FAIL on measured-input fallback)
+      - name: Solve pjm-97 keeper run (skip if complete; FAIL on measured-input fallback)
         run: |
           set -euo pipefail
           if [ -f results/calibration/pjm97_measured_interfaces/system.parquet ] && \
@@ -106,25 +99,108 @@ jobs:
             fi
           fi
 
-      - name: Register on the dashboard (skip if sidecar already exists)
+      - name: Solve the zero-forcing ablation twin (rule 21/D-3; skip if complete)
         run: |
           set -euo pipefail
-          if [ -f frontend/data/backcast/registry/2026-07-10-pjm-97-measured-interfaces.json ]; then
-            echo "already registered -- skipping"
+          if [ -f results/calibration/pjm97_measured_interfaces-ablation/system.parquet ] && \
+             [ -f results/calibration/pjm97_measured_interfaces-ablation/meta.json ]; then
+            echo "twin bundle already present -- skipping solve"
           else
+            python scripts/run_pjm97_measured_interfaces.py --ablation
+          fi
+
+      - name: Register keeper run + twin (skip any that already exist)
+        run: |
+          set -euo pipefail
+          if [ ! -f frontend/data/backcast/registry/2026-07-10-pjm-97-measured-interfaces.json ]; then
             python scripts/dashboard_add_run.py --label "pjm 97 measured-interfaces" \
                 --bundle results/calibration/pjm97_measured_interfaces
           fi
+          if [ ! -f frontend/data/backcast/registry/2026-07-10-pjm-97-measured-interfaces-ablation.json ]; then
+            python scripts/dashboard_add_run.py --label "pjm 97 measured-interfaces ablation" \
+                --bundle results/calibration/pjm97_measured_interfaces-ablation
+          fi
+          test -f frontend/data/backcast/registry/2026-07-10-pjm-97-measured-interfaces-ablation.json
 
-      - name: Legitimacy diagnostics (exit 1 = a D-gate failed; the artifact is the deliverable, C7/C8 score it — a probe may fail gates)
+      - name: Legitimacy diagnostics (exit 1 = a D-gate failed; artifact is the deliverable, C7/C8 score it)
         run: |
           python scripts/legitimacy_diagnostics.py \
               --bundle results/calibration/pjm97_measured_interfaces --iso PJM \
               --json-out results/calibration/pjm97_measured_interfaces/legitimacy_diagnostics.json \
-            || echo "::warning::legitimacy D-gates failed (probe) -- artifact written, scored by C7/C8"
+            || echo "::warning::legitimacy D-gates failed -- artifact written, scored by C7/C8"
           test -s results/calibration/pjm97_measured_interfaces/legitimacy_diagnostics.json
 
-      - name: Overwrite the sidecar definition with the post-analysis finding
+      - name: Governance attestation + DOF ledger (rule 20/21)
+        run: |
+          set -euo pipefail
+          python - <<'PYEOF'
+          import json
+          from pathlib import Path
+          att = {
+              "schema": "calibration-attestation/v1",
+              "governance": {
+                  "levers_trace_to_measured_input": True,
+                  "no_fit_to_price_residuals": True,
+                  "no_pinning_to_actuals": True,
+                  "outage_filter_exogenous_net_load": True,
+                  "attested_by": (
+                      "pjm-97 measured-interfaces 2026-07-10: pjm-94 recipe + "
+                      "pjm_seam_measured_ladder + pjm_measured_interface_limits + "
+                      "pjm_reserve_pergen + measured_ramp_capability; OWNER-DIRECTED "
+                      "keeper promotion 2026-07-10 (rule 1: most structurally faithful "
+                      "-- both transmission channels measured, zero fitted scalars -- "
+                      "superseding the residual-seeded static estimates in the pjm-94 "
+                      "lineage)"
+                  ),
+                  "note": (
+                      "Two measured-physical transmission mechanisms enter vs pjm-94: "
+                      "(1) the external seam bands price at the measured per-year Q-Q "
+                      "ladders (PJM_SEAM_LADDER_BY_YEAR, frozen derive script); (2) the "
+                      "seven mapped internal links' forward TTC follows the measured "
+                      "HOURLY Data Miner 2 transfer limits (transfer-interface-limits "
+                      "clean datatype; min(pre,post); reverse direction keeps the "
+                      "static rating; PJM_INTERFACE_LINK_MAP documents the rule-14 "
+                      "boundary reconciliations, incl. AP-South applied only to its "
+                      "seeded link and Cleveland deliberately unmapped). Plus the "
+                      "pjm-81 owner-recommended structure: per-gen reserve co-opt "
+                      "(nested RTO+MAD measured families) and measured ramp capability "
+                      "(deliverable pool 48.2 -> 37.8 GW). No mechanism in this delta "
+                      "carries a fitted scalar, so the rule-22 LOO-before-promotion "
+                      "clause (which cross-validates TUNED mechanism changes) is "
+                      "vacuous for this flip."
+                  ),
+                  "residuals_note": (
+                      "Honest fit record vs pjm-94: C1 15/16 free 11/12 (was 14/16 "
+                      "free 10/12; the 2023 CC_REGULAR cell clears via the seam "
+                      "ladder); C2 PASS->CAVEAT (+3.0% 2025 gas, commercial band); C3a "
+                      "-14.9->-15.6% (2025 FAIL); C3b 1-of-3 -> 3-of-3 FAIL "
+                      "(0.232/0.219/0.249; enters with the seam ladder, interface "
+                      "limits neutral on top); C3c unchanged 0/6, 0/18, 0/59 h >$200. "
+                      "The measured caps BIND (AEP->Dominion ~94% of hours at its "
+                      "hourly limit); ComEd corridor over-run cut (CT 2024 +73->+35%, "
+                      "2025 +111->+85%); eastern under-run persists (Dominion CC 2023 "
+                      "-81%, EMAAC CT -83%, SWMAAC CC 2025 -93%) and CT per-plant "
+                      "capture falls (2023 median r 0.301->0.246). OPEN root cause "
+                      "handed to G-20: with both transmission channels measured, "
+                      "Dominion is a through-corridor (imports at cap, re-exports at "
+                      "cap into SWMAAC 5193-6703 h/yr), no cut binds around the MAD "
+                      "zones, 2025 net export overshoots 27.1 vs 18.0 TWh -- the "
+                      "eastern CC/CT commitment posture (pjm-81 attribution) and the "
+                      "Dominion seam-inflow structure, an offer/commitment problem, "
+                      "not transmission. Per rule 14 the measured inputs stay; the "
+                      "worse CT capture under truer physics is the discovered-bug "
+                      "signal for that layer."
+                  ),
+              },
+              "exceptions": [],
+          }
+          out = Path("results/calibration/pjm97_measured_interfaces/calibration_attestation.json")
+          out.write_text(json.dumps(att, indent=1) + "\n")
+          print("attestation written")
+          PYEOF
+          python scripts/build_dof_ledger.py results/calibration/pjm97_measured_interfaces
+
+      - name: Keeper sidecar (definition + twin link + market story) and twin sidecar
         run: |
           set -euo pipefail
           python - <<'PYEOF'
@@ -134,21 +210,56 @@ jobs:
           p = Path("frontend/data/backcast/registry/2026-07-10-pjm-97-measured-interfaces.json")
           d = json.loads(p.read_text())
           d["definition"] = definition
+          d["ablation_twin"] = "2026-07-10-pjm-97-measured-interfaces-ablation"
+          d["market_story"] = (
+              "ST_GAS/CT net-load drags encode PJM's real reliability-commitment "
+              "posture (measured CAMPD block-running, weeks-to-months online); coal "
+              "take-or-pay and CHP steam-following are contract/steam-host physics; "
+              "nuclear is must-run baseload. Without them the LP under-commits the "
+              "units PJM actually holds online for reliability rather than energy "
+              "merit -- the twin shows what each floor buys, not residual-buying."
+          )
           p.write_text(json.dumps(d, indent=2) + "\n")
-          print("sidecar definition overwritten:", len(definition), "chars")
+          t = Path("frontend/data/backcast/registry/2026-07-10-pjm-97-measured-interfaces-ablation.json")
+          td = json.loads(t.read_text())
+          td["definition"] = (
+              "(ABLATION TWIN of 2026-07-10-pjm-97-measured-interfaces, rule 21/D-3): "
+              "the identical pjm-97 keeper recipe with every merchant floor/bridge "
+              "neutralized (nuclear must-run, CHP steam-following and coal take-or-pay "
+              "kept), so the keeper-vs-twin per-class delta shows what each floor buys."
+          )
+          t.write_text(json.dumps(td, indent=2) + "\n")
+          print("sidecars updated")
           PYEOF
 
-      - name: Append the session calibration-log entry (heading-gated)
+      - name: keepers.json swap PJM -> pjm-97 + status.js rebuild
         run: |
           set -euo pipefail
-          if ! grep -q "pjm 97 measured-interfaces): PROBE, keeper stays pjm-94" docs/calibration-log.md; then
+          python - <<'PYEOF'
+          import json
+          from pathlib import Path
+          p = Path("frontend/data/backcast/keepers.json")
+          d = json.loads(p.read_text())
+          old = d["PJM"]
+          new = "2026-07-10-pjm-97-measured-interfaces"
+          d["PJM"] = new
+          d["keepers"] = [new if k == old else k for k in d["keepers"]]
+          p.write_text(json.dumps(d, indent=1) + "\n")
+          print(f"keepers.json: PJM {old} -> {new}")
+          PYEOF
+          python scripts/build_status.py
+
+      - name: Append the promotion calibration-log entry (heading-gated)
+        run: |
+          set -euo pipefail
+          if ! grep -q "KEEPER SWAP pjm-94 -> pjm-97" docs/calibration-log.md; then
             cat .github/patches/pjm97_callog_entry.md >> docs/calibration-log.md
             echo "calibration-log entry appended"
           else
             echo "calibration-log entry already present -- skipping"
           fi
 
-      - name: Prune the two oldest PJM registrations (top-15 retention; 17 after pjm-96 + pjm-97)
+      - name: Prune the two oldest PJM registrations (top-15 retention; twins exempt)
         run: |
           set -euo pipefail
           git rm -f --ignore-unmatch \
@@ -170,8 +281,16 @@ jobs:
             results/calibration/pjm97_measured_interfaces/run_config.json \
             results/calibration/pjm97_measured_interfaces/metrics.json \
             results/calibration/pjm97_measured_interfaces/legitimacy_diagnostics.json \
+            results/calibration/pjm97_measured_interfaces/calibration_attestation.json \
+            results/calibration/pjm97_measured_interfaces-ablation/meta.json \
+            results/calibration/pjm97_measured_interfaces-ablation/run_config.json \
+            results/calibration/pjm97_measured_interfaces-ablation/metrics.json \
             frontend/data/backcast/registry/2026-07-10-pjm-97-measured-interfaces.json \
+            frontend/data/backcast/registry/2026-07-10-pjm-97-measured-interfaces-ablation.json \
             frontend/data/backcast/runs/2026-07-10-pjm-97-measured-interfaces.js \
+            frontend/data/backcast/runs/2026-07-10-pjm-97-measured-interfaces-ablation.js \
+            frontend/data/backcast/keepers.json \
+            frontend/data/backcast/status.js \
             frontend/data/backcast/bench \
             docs/calibration-log.md
           if git diff --cached --quiet; then
@@ -179,26 +298,26 @@ jobs:
             exit 0
           fi
           cat > /tmp/pjm97_commit_msg.txt <<'MSGEOF'
-          results: register pjm-97 measured-interfaces (G-20 Phase-2 internal-interface arm) -- hypothesis REFUTED, keeper stays pjm-94
+          results: PJM KEEPER SWAP pjm-94 -> pjm-97 measured-interfaces (owner decision, rule 1) + ablation twin + attestation
 
-          pjm-97 = pjm-96 recipe + pjm_measured_interface_limits (measured hourly
-          Data Miner 2 internal interface limits on the seven mapped links,
-          transfer-interface-limits clean datatype, rules 13/14) +
-          pjm_reserve_pergen + measured_ramp_capability (pjm-81 owner
-          recommendation). The caps bind (AEP->Dominion at its measured hourly
-          limit ~94% of hours) but the eastern under-run persists on seam supply
-          + commitment posture; CT per-plant capture falls; C3c unchanged at 0h.
-          Full finding in the sidecar definition; session entry appended to
-          docs/calibration-log.md. Prunes pjm-83 and pjm-86 (top-15 retention).
+          Owner-directed promotion 2026-07-10: pjm-97 (pjm-94 recipe + measured
+          seam ladder + measured hourly internal interface limits + per-gen
+          reserve co-opt + measured ramp) becomes the PJM keeper -- both
+          transmission channels now run on published measured data with zero
+          fitted scalars, superseding the residual-seeded static estimates.
+          Rule-21 machinery: zero-forcing ablation twin solved + registered +
+          linked; governance attestation + DOF ledger in the bundle. Honest fit
+          record (C2 caveat, C3b 3-of-3 FAIL entering with the seam ladder, C3c
+          unchanged) in the sidecar and attestation; the open G-20 root cause
+          (eastern commitment posture + Dominion seam inflow) is the
+          build-from-here agenda. keepers.json swapped, status.js rebuilt,
+          calibration-log entry appended, pjm-83/86 pruned (top-15).
 
-          Solved + registered server-side (this workflow) -- the run payload
-          exceeds the session push path (register-pjm96 precedent).
+          Solved + registered server-side (this workflow) -- run payloads exceed
+          the session push path (register-pjm96 precedent).
           MSGEOF
           sed -i 's/^ \{10\}//' /tmp/pjm97_commit_msg.txt
           git commit -F /tmp/pjm97_commit_msg.txt
-          # Drop any unstaged edits to tracked files (e.g. regenerated shared
-          # data) so pull --rebase cannot refuse; the commit holds everything
-          # this run publishes.
           git reset --hard HEAD
           for i in 1 2 3 4; do
             git pull --rebase origin "${GITHUB_REF_NAME}" && \
@@ -207,7 +326,3 @@ jobs:
           done
           echo "push failed after retries" >&2
           exit 1
-
-# trigger: 2026-07-10 re-run on the recreated branch (PR #1955's merge deleted
-# the prior branch while the registration runs were in flight, orphaning their
-# results pushes).
