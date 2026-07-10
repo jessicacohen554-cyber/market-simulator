@@ -10,10 +10,17 @@ name: apply-pjm97-wiring
 # iso_configs, run_calibration{,_full}.py, build_dof_ledger,
 # render_data_dictionary, regenerate_clean, raw README, data dictionary) + 6
 # new files (schema YAML, scripts/lib/transfer_interface_limits registry,
-# curate script, market_sim.data consumer, tests). Idempotent: the patch
-# no-ops when already applied (reverse-check). Delete this workflow + the
-# .github/patches payload from main after the PR merges (the one-shot
-# workflow convention).
+# curate script, market_sim.data consumer, tests).
+#
+# v2: the first relay of the b64 carried a single transcribed-byte error
+# (line 280, 's' -> 't'; gzip CRC caught it, run 29072400926). The repair
+# step below line-replaces that one line with the session-verified content
+# before decoding — the sha256 gate still proves the decoded patch
+# byte-identical to the session original — and the corrected b64 is
+# committed back with the applied tree. Idempotent: the line-replace is a
+# no-op once correct, the patch no-ops when already applied (reverse-check).
+# Delete this workflow + the .github/patches payload from main after the PR
+# merges (the one-shot workflow convention).
 on:
   push:
     branches:
@@ -37,15 +44,18 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Decode, integrity-check, apply, commit
+      - name: Repair the known single-byte relay error, decode, integrity-check, apply, commit
         run: |
           set -euo pipefail
           git config user.name "Claude"
           git config user.email "noreply@anthropic.com"
-          base64 -d .github/patches/2026_07_10_pjm97_wiring.patch.gz.b64 | gunzip > /tmp/pjm97.patch
+          B64=.github/patches/2026_07_10_pjm97_wiring.patch.gz.b64
+          sed -i '280c\ECouH+Fvp3E6UtoNoWeOlj/eg8w7Hds6D/4e9fD07ubwersqO53sXTorQv1WhMJz1WsOi+LJ0/Sj' "$B64"
+          base64 -d "$B64" | gunzip > /tmp/pjm97.patch
           echo "f5a7977aa9cc5699743078465ce1ebe7639ac367160f8991cc02a4f3a7830746  /tmp/pjm97.patch" | sha256sum -c
           if git apply --check --reverse /tmp/pjm97.patch 2>/dev/null; then
             echo "patch already applied — skipping"
+            git checkout -- "$B64" || true
           else
             git apply /tmp/pjm97.patch
             git add -A
