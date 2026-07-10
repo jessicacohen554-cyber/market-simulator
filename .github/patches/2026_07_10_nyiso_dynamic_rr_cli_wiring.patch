@@ -1,0 +1,252 @@
+From ae88b3ac956e27d9e872f320b740f6a4e241e1e9 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 10 Jul 2026 03:02:41 +0000
+Subject: [PATCH] feat(nyiso): CLI wiring for
+ nyiso_dynamic_reserve_requirements + nyiso57 A/B probe
+
+Threads --nyiso-dynamic-reserve-requirements through run_calibration.py /
+run_calibration_full.py (8 sites, symmetric to the NEISO flag) so the
+issue-#1344 measured hourly requirement channel is CLI-reachable and
+recorded in meta.json/run_config.json (rule 23). Adds the single-delta
+full-keeper A/B probe (_nyiso_dynamic_rr_ab.py, mirrors the validated
+NEISO pattern): nyiso-56 keeper recipe + the flag, 2023-2025 one bundle.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01SxD3xE2Juz6XUXSWNkii5J
+---
+ scripts/probes/_nyiso_dynamic_rr_ab.py | 129 +++++++++++++++++++++++++
+ scripts/run_calibration.py             |   5 +
+ scripts/run_calibration_full.py        |  23 +++++
+ 3 files changed, 157 insertions(+)
+ create mode 100644 scripts/probes/_nyiso_dynamic_rr_ab.py
+
+diff --git a/scripts/probes/_nyiso_dynamic_rr_ab.py b/scripts/probes/_nyiso_dynamic_rr_ab.py
+new file mode 100644
+index 0000000..46a9bdd
+--- /dev/null
++++ b/scripts/probes/_nyiso_dynamic_rr_ab.py
+@@ -0,0 +1,129 @@
++"""Full-keeper A/B probe: NYISO measured dynamic reserve requirements (#1344).
++
++Reproduces the current NYISO keeper's (2026-07-07-nyiso-56-measured-zonal,
++bundle ``nyiso56_measuredshares``) exact solve configuration for 2023-2025 in
++one bundle (rule 16) and flips only ``nyiso_dynamic_reserve_requirements`` on
++— the measured hourly requirement series derived from the published LRR
++schedule + logged Thunderstorm-Alert windows
++(``data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_{year}.csv``,
++``scripts/derive_nyiso_reserve_requirements_hourly.py``, Ask B of
++``docs/handoffs/nyiso-data-asks-2026-07.md``) replacing the static published
++requirements in the keeper's in-LP energy+reserve co-optimization
++(``reserve_config._nyiso_design``).
++
++Why this probe: the keeper's downstate reserve families are DORMANT at the
++static requirements — NYC holds 2-3x the requirement even in the hours
++reality prices >$300 (the ledgered C3c tail: 10/12/42 h actual vs ~0
++modeled) — while the published SENY 30-minute requirement is an hourly step
++schedule peaking at 1,800 MW, 500 MW above the static 1,300 the overlay
++enforced, in every peak hour of 2023-2025. This is the exact NYISO analogue
++of the NEISO Limb-A probe (``_neiso_dynamic_rr_ab.py``): a rule-13-admissible
++market-design INPUT (regenerates forward as published-base + condition rules
++on forward states), fitted to nothing — measured reserve PRICES stay
++validation-only. Expected effects if the mechanism engages: SENY/NYC families
++bind in peak hours and price their RCPF steps into the downstate LBMP (C3c
++tail formation); TSA hours zero the NYC/SENY requirements by the published
++rule. A still-dormant result is a legitimate finding and is reported and
++registered as such (rule 1). The derived series is a documented LOWER BOUND
++in non-TSA hours (the B1 condition-varying increments are request-only), so
++residual tail shortfall is expected and ledgered, not tuned away.
++
++The keeper's ``meta.json`` records every ``solve_and_persist`` kwarg (mostly
++1:1 by name; a few renamed — ``_RENAME``), so this probe builds its kwargs
++from meta.json rather than hand-translating the recipe — the validated
++``_neiso_dynamic_rr_ab.py`` pattern.
++
++Also runs the rule-20 zero-forcing ablation twin (mode "ablation").
++
++Usage:
++    python scripts/probes/_nyiso_dynamic_rr_ab.py main
++    python scripts/probes/_nyiso_dynamic_rr_ab.py ablation
++"""
++
++import inspect
++import json
++import sys
++from pathlib import Path
++
++sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
++from run_calibration_full import solve_and_persist, _load_reference  # noqa: E402
++
++ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
++KEEPER = ROOT / "nyiso56_measuredshares"
++
++# meta.json key -> solve_and_persist kwarg name, where they differ.
++_RENAME = {
++    "commitment_screen_coal": "screen_coal",
++    "coal_prb_sigmoid_overrides": "prb_overrides",
++    "coal_bit_passthrough_sigmoid": "coal_bit_sigmoid",
++    "coal_bit_sigmoid_overrides": "bit_overrides",
++}
++# meta.json keys that are recorded provenance/derived values, not
++# solve_and_persist kwargs — plus the A/B variable, set explicitly below.
++_SKIP = {
++    "timestamp",
++    "iso",
++    "years",
++    "hours",
++    "passes",
++    "commitment",  # set explicitly below (keeper value False, unchanged)
++    "gas_prices",  # re-derived internally from reference + years
++    "coal_plant_monthly_pricing",  # derived from backcast_config, not a kwarg
++    "td_loss_factor",  # derived from backcast_config, not a kwarg
++    "ercot_zonal_gas_basis",
++    "ercot_west_netload_gas_shape",
++    "ercot_west_gas_delivered_floor",
++    "shared_inputs",
++    "git_sha",
++    "highspy_version",
++    "energy_reserve_coopt",  # keeper value True, set explicitly below
++    "nyiso_dynamic_reserve_requirements",  # the A/B variable (absent in the
++    # keeper's pre-flag meta; skipped defensively for re-runs)
++}
++
++
++def _keeper_kwargs() -> dict:
++    meta = json.loads((KEEPER / "meta.json").read_text())
++    sig = set(inspect.signature(solve_and_persist).parameters)
++    kwargs = {}
++    for key, value in meta.items():
++        if key in _SKIP:
++            continue
++        pname = _RENAME.get(key, key)
++        if pname not in sig:
++            raise SystemExit(f"unmapped meta.json key: {key!r}")
++        kwargs[pname] = value
++    return kwargs
++
++
++def main(mode: str) -> None:
++    kwargs = _keeper_kwargs()
++    ablate = mode == "ablation"
++    out = ROOT / ("nyiso57_dynamic_rr" + ("-ablation" if ablate else ""))
++    out.mkdir(parents=True, exist_ok=True)
++
++    solve_and_persist(
++        [2023, 2024, 2025],
++        "NYISO",
++        8760,
++        _load_reference(),
++        run_dir=out,
++        commitment=False,
++        energy_reserve_coopt=True,
++        nyiso_dynamic_reserve_requirements=True,
++        zero_forcing_ablation=ablate,
++        ablation_of=(out.parent / "nyiso57_dynamic_rr").name if ablate else None,
++        note=(
++            f"dynamic-reserve-requirements full-keeper {mode} -- "
++            "2026-07-07-nyiso-56-measured-zonal config + "
++            "nyiso_dynamic_reserve_requirements (measured hourly LRR "
++            "schedule + TSA windows replacing static requirements), "
++            "2023-2025"
++        ),
++        **kwargs,
++    )
++    print(f"DONE {mode} -> {out}")
++
++
++if __name__ == "__main__":
++    main(sys.argv[1])
+diff --git a/scripts/run_calibration.py b/scripts/run_calibration.py
+index 6059a20..ba7fd1d 100644
+--- a/scripts/run_calibration.py
++++ b/scripts/run_calibration.py
+@@ -557,6 +557,7 @@ def run_year(
+     nyiso_iroquois_winter_spread: bool | None = None,
+     nyiso_synchronised_reserve: bool | None = None,
+     nyiso_spin_headroom_frac: float | None = None,
++    nyiso_dynamic_reserve_requirements: bool | None = None,
+     neiso_dynamic_reserve_requirements: bool | None = None,
+     miso_firm_imports: bool | None = None,
+     miso_seam_flow_limit: bool = False,
+@@ -971,6 +972,10 @@ def run_year(
+         config = config.with_overrides(
+             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac
+         )
++    if nyiso_dynamic_reserve_requirements is not None:
++        config = config.with_overrides(
++            nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements
++        )
+     if neiso_dynamic_reserve_requirements is not None:
+         config = config.with_overrides(
+             neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index 32309a7..366d3c2 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -1983,6 +1983,7 @@ def solve_and_persist(
+     nyiso_iroquois_winter_spread: bool | None = None,
+     nyiso_synchronised_reserve: bool | None = None,
+     nyiso_spin_headroom_frac: float | None = None,
++    nyiso_dynamic_reserve_requirements: bool | None = None,
+     neiso_dynamic_reserve_requirements: bool | None = None,
+     miso_firm_imports: bool | None = None,
+     miso_seam_flow_limit: bool = False,
+@@ -2256,6 +2257,7 @@ def solve_and_persist(
+             nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread,
+             nyiso_synchronised_reserve=nyiso_synchronised_reserve,
+             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac,
++            nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements,
+             neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements,
+             miso_firm_imports=miso_firm_imports,
+             miso_seam_flow_limit=miso_seam_flow_limit,
+@@ -2619,6 +2621,7 @@ def solve_and_persist(
+         "nyiso_iroquois_winter_spread": nyiso_iroquois_winter_spread,
+         "nyiso_synchronised_reserve": nyiso_synchronised_reserve,
+         "nyiso_spin_headroom_frac": nyiso_spin_headroom_frac,
++        "nyiso_dynamic_reserve_requirements": nyiso_dynamic_reserve_requirements,
+         "neiso_dynamic_reserve_requirements": neiso_dynamic_reserve_requirements,
+         "miso_firm_imports": miso_firm_imports,
+         "miso_seam_flow_limit": miso_seam_flow_limit,
+@@ -3062,6 +3065,10 @@ def solve_and_persist(
+         recorded_cfg = recorded_cfg.with_overrides(
+             nyiso_spin_headroom_frac=nyiso_spin_headroom_frac
+         )
++    if nyiso_dynamic_reserve_requirements is not None:
++        recorded_cfg = recorded_cfg.with_overrides(
++            nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements
++        )
+     if neiso_dynamic_reserve_requirements is not None:
+         recorded_cfg = recorded_cfg.with_overrides(
+             neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements
+@@ -7029,6 +7036,21 @@ def main() -> None:
+         "measured requirement). A coverage multiple on the measured requirement, "
+         "NOT a price-residual fit.",
+     )
++    parser.add_argument(
++        "--nyiso-dynamic-reserve-requirements",
++        action=argparse.BooleanOptionalAction,
++        default=None,
++        help="NYISO condition-varying reserve requirements (issue #1344, Ask B): "
++        "replace the in-LP co-opt families' static published requirements with "
++        "the MEASURED hourly series derived from the published LRR schedule "
++        "(SENY 30-min hourly steps 1,300/1,550/1,800 MW) and logged "
++        "Thunderstorm-Alert windows (data/raw/NYISO-AS/requirements/"
++        "NYISO_reserve_requirements_{year}.csv, scripts/"
++        "derive_nyiso_reserve_requirements_hourly.py). A market-design input "
++        "(rule 13); measured reserve PRICES stay validation-only. Hard-errors "
++        "when the derived series is absent. Requires --energy-reserve-coopt; "
++        "NYISO-only. Default (unset) keeps the base config value (off).",
++    )
+     parser.add_argument(
+         "--neiso-dynamic-reserve-requirements",
+         action=argparse.BooleanOptionalAction,
+@@ -7641,6 +7663,7 @@ def main() -> None:
+         nyiso_iroquois_winter_spread=args.nyiso_iroquois_winter_spread,
+         nyiso_synchronised_reserve=args.nyiso_synchronised_reserve,
+         nyiso_spin_headroom_frac=args.nyiso_spin_headroom_frac,
++        nyiso_dynamic_reserve_requirements=args.nyiso_dynamic_reserve_requirements,
+         neiso_dynamic_reserve_requirements=args.neiso_dynamic_reserve_requirements,
+         miso_firm_imports=miso_firm_imports,
+         miso_seam_flow_limit=args.miso_seam_flow_limit,
+-- 
+2.43.0
+
