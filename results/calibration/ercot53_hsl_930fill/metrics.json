@@ -14,9 +14,11 @@
   ],
   "data_blocked_years": [],
   "rubric_version": 2.4,
-  "determination": "NOT-YET",
+  "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "1 criterion(s) within the commercial-grade band but outside target: C2 system volume (gas/coal families)",
+    "2 ledgered measured-input caveat(s): C3c price tail / scarcity (DA-expressible), C5c storage dispatch shape",
+    "unscored criteria: storage"
   ],
   "notes": [
     "C8 2024 ST_GAS: grounded above budget \u2014 32.9% forced (5.7128 of 17.3818 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.976 (\u22650.8) & off-peak CV ratio 1.397 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
@@ -47,7 +49,8 @@
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "dispatch_corr": {
       "label": "C4 fleet hourly dispatch correlation",
@@ -67,12 +70,13 @@
     "storage_shape": {
       "label": "C5c storage dispatch shape",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -87,7 +91,10 @@
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C3c price tail / scarcity (DA-expressible)",
+      "C5c storage dispatch shape"
+    ],
     "commercial_band": [
       "C2 system volume (gas/coal families)"
     ],
@@ -97,11 +104,11 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 7,
+    "scored": 11,
+    "target_grade": 8,
     "commercial_grade": 1,
-    "ledgered": 0,
-    "fails": 2
+    "ledgered": 2,
+    "fails": 0
   },
   "free_class_score": {
     "iso": "ERCOT",
