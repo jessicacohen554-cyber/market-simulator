@@ -19,10 +19,9 @@ INFO: Loaded MISO 2023 hydro budget: 163 plants, 9979.0 GWh annual, 2465 MW name
 INFO: MISO 2023: 163 hydro plants in LP (2465 MW, 9.98 TWh monthly budget)
 INFO: unit-outage derate (MISO 2023): 719 plant-tranches derated
 INFO: COD ramp (MISO 2023): 467 unit-months masked offline (mid-year COD / retirement), 16 unit(s) fully not-yet-built/retired
-INFO: MISO 2023: reliability floor — 12 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
 INFO: F923 fuel costs for 2023: 892 generators priced from their own plant, 1697 gap-filled from nearby (state/zone) plants
-INFO: Matrix build: 4.501s, Solve: 331.313s (cold)
-INFO: Matrix build: 4.501s, Solve: 62.560s (warm)
+INFO: Matrix build: 22.525s, Solve: 343.717s (cold)
+INFO: Matrix build: 22.525s, Solve: 63.125s (warm)
 INFO: EIA-923 2023: CAMPD-backfilled 8 under-reported plants (8 replaced, 0 added)
 INFO: EIA-923 2023 hydro 7.95 TWh under-counts EIA-930 9.98 TWh; using EIA-930 grid total
 INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
@@ -43,37 +42,4 @@ INFO: Loaded MISO 2024 hydro budget: 160 plants, 10710.3 GWh annual, 2372 MW nam
 INFO: MISO 2024: 160 hydro plants in LP (2372 MW, 10.71 TWh monthly budget)
 INFO: unit-outage derate (MISO 2024): 735 plant-tranches derated
 INFO: COD ramp (MISO 2024): 831 unit-months masked offline (mid-year COD / retirement), 46 unit(s) fully not-yet-built/retired
-INFO: MISO 2024: reliability floor — 12 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
 INFO: F923 fuel costs for 2024: 878 generators priced from their own plant, 1764 gap-filled from nearby (state/zone) plants
-INFO: Matrix build: 4.448s, Solve: 309.829s (cold)
-INFO: Matrix build: 4.448s, Solve: 67.202s (warm)
-INFO: EIA-923 2024: CAMPD-backfilled 4 under-reported plants (4 replaced, 0 added)
-INFO: EIA-923 2024 hydro 8.01 TWh under-counts EIA-930 10.74 TWh; using EIA-930 grid total
-INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
-INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
-INFO: solving MISO 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
-WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/curate_capacity_deliverability.py. Returning no limits.
-WARNING: MISO 2025: capacity-deliverability clean partition absent — falling back to static PY2025-26 summer CIL/CEL caps; run scripts/curate_capacity_deliverability.py
-INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
-INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
-INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
-INFO: CC capacity reconcile: raised 0 / capped 7 plant(s) to demonstrated peak (-2714 MW total) from cc_capacity_reconcile_MISO.csv
-INFO: unit-outage derate (MISO 2025): 775 plant-tranches derated
-INFO: COD ramp (MISO 2025): 952 unit-months masked offline (mid-year COD / retirement), 69 unit(s) fully not-yet-built/retired
-INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
-INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
-INFO: MISO 2025 hydro budget: backfilled 146 non-reporting plants (8107.5 GWh) from 2024
-INFO: MISO 2025 hydro budget pinned to monthly target total 9871.8 GWh (was 9077.2 GWh)
-INFO: Loaded MISO 2025 hydro budget: 160 plants, 9871.8 GWh annual, 2372 MW nameplate
-INFO: MISO 2025: 160 hydro plants in LP (2372 MW, 9.87 TWh monthly budget)
-INFO: unit-outage derate (MISO 2025): 775 plant-tranches derated
-INFO: COD ramp (MISO 2025): 1264 unit-months masked offline (mid-year COD / retirement), 95 unit(s) fully not-yet-built/retired
-INFO: MISO 2025: reliability floor — 12 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
-INFO: F923 fuel costs for 2025: 871 generators priced from their own plant, 1704 gap-filled from nearby (state/zone) plants
-INFO: Matrix build: 4.546s, Solve: 272.870s (cold)
-INFO: Matrix build: 4.546s, Solve: 62.009s (warm)
-INFO: EIA-923 2025: CAMPD-backfilled 58 under-reported plants (2 replaced, 56 added)
-INFO: EIA-923 2025 wind 70.36 TWh under-counts EIA-930 98.90 TWh; using EIA-930 grid total
-INFO: EIA-923 2025 hydro 0.28 TWh under-counts EIA-930 9.88 TWh; using EIA-930 grid total
-INFO: wrote calibration bundle to /home/user/market-simulator/results/calibration/miso52_sigmoid_monthly_key
-DONE main -> /home/user/market-simulator/results/calibration/miso52_sigmoid_monthly_key
