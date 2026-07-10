@@ -7,6 +7,8 @@ name: ercot55-promote
 # promotion calibration-log entry (~590 KB log) and the rebuilt status.js
 # (~220 KB) — plus the owner-approval stamp on the surface arm's attestation.
 # caiso67/69 + ercot55-solve-register precedent.
+# Re-trigger 2: run 1 raced the extended _ercot55_ci_patch.py push (the
+# --approve-attestation/--append-promotion-log flags landed one commit later).
 on:
   push:
     branches:
