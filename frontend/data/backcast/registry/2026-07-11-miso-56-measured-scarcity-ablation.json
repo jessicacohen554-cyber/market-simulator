@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-11-miso-56-measured-scarcity-ablation",
+  "label": "miso 56 measured scarcity ablation",
+  "date": "2026-07-11",
+  "shorthand": "miso-56-measured-scarcity-ablation",
+  "definition": "miso-56 Lane-2 measured scarcity (ablation) -- miso-55 meta.json replay (full candidate structure: reserve co-opt pergen + zonal South + priced seam + intermediate splits + SOM coal offers + CT 1.025 measured committed + Order-825 fast-start v3) + measured hourly OR requirements (asm_rt_cleared_mw reg+spin+supp market-wide & South, miso_measured_reserve_requirements) + condition-keyed fast-start amortization horizons (tranche_startup_conditional_runs, campd_ct_run_bands_MISO.csv net-load-percentile band ratios 0.9/1.1/1.1/0.8/0.6), 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-11-miso-56-measured-scarcity-ablation.js",
+  "bundle": "results/calibration/miso56_measured_scarcity-ablation"
+}

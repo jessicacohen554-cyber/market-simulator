@@ -349,3 +349,33 @@ gate pattern).
    open root cause).
 3. Winter delivered-gas fidelity for Heather-window CTs (Jan 2024's −11.5
    $/MWh monthly delta is the entire 2024 miss).
+
+### §10 RESULT (appended after the solve, same session)
+
+**Registered `2026-07-11-miso-56-measured-scarcity` + zero-forcing twin
+`…-ablation` (rubric v2.4: NOT-YET, FAIL set {fuelmix, sysvol, price_mean,
+price_tail, co2} — identical to miso-55, every delta flat-to-better):**
+
+- C1: CT_PEAKER-2024 +8.51 → **+8.27 TWh**; CC_REGULAR/COAL_BIT within
+  0.04 TWh of miso-55 (the standing mid-merit split, untouched as promised).
+- C3a-2025 −13.3 % flat (July-2025 monthly −18.8 vs −18.9 — confirms the
+  July gap lives in the RDT/emergency lanes, exactly as adjudicated ex-ante).
+- C3c 0 h >$200 all years — the pre-committed, measurement-correct outcome
+  on the DA basis. August 2023/24 stays clean (+0.5/+0.2 $/MWh monthly).
+- C3b/C4/C6/C7/C8 PASS (D-2 CT forced 3.7–5.9 % vs 15 % cap); C5b the
+  ledgered benchmark-basis CAVEAT (+1154.7 % this run).
+- Mechanism verification (not score): South LMPs fell −0.1..−1.4 $/MWh (the
+  fabricated withholding released); market-wide requirement now carries the
+  measured event-evening raises; the v4 markup varies hourly with the
+  measured band ratios. Twin near-identical (class-year deltas ≤ 0.3 TWh;
+  the twin even sheds the CT_PEAKER-2024 C1 FAIL by dropping the ~1.0 TWh
+  evening reliability deployment) — the fit is carried economically.
+- DOF ledger: 11 entries, residual count unchanged at 2 (the offer-curve
+  legacies); both new mechanisms enter as measured-physical rows.
+
+**Disposition:** miso-56 strictly dominates miso-55 on structural grounding
+(two wrong estimates replaced by measured series; the evening-timing element
+now exists) at an identical-to-marginally-better score. It is the natural
+successor to the miso-55 recommendation — same owner decision pending;
+keepers.json untouched. Retention: miso-41-ct-evening (+ twin) displaced
+(16th main, oldest first).
