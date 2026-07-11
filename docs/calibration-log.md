@@ -9788,3 +9788,36 @@ changed (rules 13/21/23) — the new deriver is a new measured input with a
 frozen formula (re-runs only on a disclosure-data update), and no residual
 was retuned against (the June overshoot is fixed by the input's ACCURACY, not
 by fitting it).
+
+## 2026-07-11 — MISO keeper PROMOTED: `miso 54 som restored` (owner decision, rule 1; supersedes miso-49-tempderate) — BACKFILLED ENTRY
+
+*Backfill note: this promotion's log entry was written in the promoting
+session (2026-07-10/11) but never landed on main — the branch
+(`claude/miso-august-scarcity-calibration-byr40j`) carried
+keepers.json + sidecars + payloads through the bulk-merge sweep while the
+calibration-log hunk was lost. Recorded here from the committed forensics
+(`results/calibration/FINDING-miso-august-scarcity-2026-07.md` §8) so the log
+matches the dashboard. Facts identical to that section.*
+
+**Keeper:** `2026-07-10-miso-54-som-restored` + zero-forcing twin
+`2026-07-11-miso-54-som-restored-ablation` (bundle
+`results/calibration/miso54_som_restored*`). miso-49's FULL structure (reserve
+co-opt w/ published $200/$1100/$3300 RDC steps, measured priced seam, Manitoba
+firm imports, ct/cc/st_gas intermediate splits, coal_econ_srmc_bound) replayed
+from its exhaustive **meta.json** — fixing the miso-50..53 regression in which
+`run_config.json:calibration_flags` replays silently islanded MISO — with
+exactly two deliberate changes: `temp_dependent_derate=False` (rule-24 own-fleet
+refutation, `scripts/probes/_miso_temp_capability_envelope.py`, third fleet
+after ERCOT/PJM — never re-enable for MISO) and the miso-53 SOM-grounded coal
+offers kept (sigmoids OFF, coal bids measured F923 SRMC per MISO IMM conduct).
+
+**August scarcity artifact CLEARED** (Aug 2023/24 deltas −0.0/−0.5 $/MWh, 0
+hours >$200 all years). The miso-53 C3a 2023/24 overshoots were the islanding,
+not the band levels (−1.6 %/−5.4 % restored vs +24.2 %/+13.4 % islanded).
+Determination **NOT-YET** (rubric v2.4), 6 honest FAILs in two lanes: (1) C1
+(COAL_BIT −16.3/−15.4 TWh, CC_REGULAR +8.7/+8.8, CT_PEAKER-2024 +15.3) +
+C5a CO₂ 2023/24 (−11.1 %/−10.3 %) + C2-2025 — the pre-documented CAMPD-grounded
+CT hurdle lane; (2) C3a/b-2025 + C3c — the RDC/ELMP scarcity depth/timing lane.
+Zero-forcing twin near-identical (every class < 0.3 TWh except CT_PEAKER
++0.53/+0.35 TWh 2023/2025). Retention: `2026-07-06-miso-41-v2rescore-probe`
+pruned (top-15).
