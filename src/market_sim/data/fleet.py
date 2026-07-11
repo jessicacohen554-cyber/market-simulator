@@ -7584,8 +7584,8 @@ def bins_to_fleet(
                 ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, _fsp_peak)
             ]
         # Per-plant gas local-reliability commitment floor
-        # (config.cc_mustrun_per_plant): the merchant CC_REGULAR / CT_PEAKER
-        # committed tranche — already sized to the plant's CEMS minimum stable
+        # (config.cc_mustrun_per_plant): the merchant CC_REGULAR committed
+        # tranche — already sized to the plant's CEMS minimum stable
         # load — is forced on in the plant's measured committed window (its top
         # online_frac fraction of hours by system load; see the ScenarioConfig
         # field for the rule-12/13 grounding). Self-targeting by the
@@ -7594,10 +7594,14 @@ def bins_to_fleet(
         # that already runs above its committed level sees a non-binding
         # bound. CHP groups are excluded — their floor is the steam host
         # (chp_grid_pmin_mw), one mechanism per phenomenon (rule 19).
+        # CT_PEAKER is deliberately EXCLUDED (G-20 probe, 2026-07-11): the CT
+        # leg bound 12.8% of its floored MWh overnight (h23-6) against the
+        # class's own overnight-offline evidence — a rule-12 bug — while
+        # buying almost none of the eastern CT under-run (Dominion CT
+        # 0.9→1.5 vs 8.9 TWh actual), which is an offer/capture residual,
+        # not a commitment-share one.
         cc_mustrun_frac = 0.0
-        if group in ("CC_REGULAR", "CT_PEAKER") and getattr(
-            config, "cc_mustrun_per_plant", False
-        ):
+        if group == "CC_REGULAR" and getattr(config, "cc_mustrun_per_plant", False):
             cc_mustrun_frac = thermal_tranche_online_frac(
                 getattr(config, "iso", "ERCOT") or "ERCOT"
             ).get((plant_code, group), 0.0)

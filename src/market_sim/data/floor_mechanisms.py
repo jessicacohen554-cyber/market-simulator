@@ -50,10 +50,13 @@ MECH_NYISO_SELFSUPPLY: int = 13
 # commitment (NOT structural must-run) — subject to the D-2 forced-share gate and
 # ablated in the zero-forcing twin.
 MECH_WINTER_FUELSEC: int = 14
-# Per-plant gas (CC_REGULAR / CT_PEAKER) local-reliability commitment floor
+# Per-plant gas (CC_REGULAR) local-reliability commitment floor
 # (ScenarioConfig.cc_mustrun_per_plant): the plant's CEMS-measured committed
 # tranche forced on in its measured top-online_frac system-load hours — the
 # out-of-market LDA/voltage reliability commitment (bid-cost recovery / RMR).
+# CC-only: the CT_PEAKER leg was probed and dropped (overnight off-window
+# binding against the class's own evidence, rule 12 — see the ScenarioConfig
+# field docstring).
 # A merchant reliability commitment (NOT structural must-run): parameter-based
 # (committed share + online fraction, thermal_tranches_<ISO>.csv), unlike the
 # quarantined MECH_CT_MUSTRUN_PER_PLANT above which pins observed net-generation
