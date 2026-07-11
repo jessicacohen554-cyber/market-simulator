@@ -223,11 +223,17 @@ def _log_reserve_coopt(
                 int((rclass == 2).sum()),
             )
     elif iso == "MISO":
+        _measured = bool(getattr(config, "miso_measured_reserve_requirements", False))
         logger.info(
             "energy+reserve co-opt (MISO): RBDC market-wide requirement "
-            "%.0f MW (MSSC + regulating), %d ORDC steps ($%.0f-$%.0f), "
+            "%.0f MW at h0 (%s), %d ORDC steps ($%.0f-$%.0f), "
             "%d reserve-eligible units",
             float(req[0, 0]),
+            (
+                "measured hourly cleared reg+spin+supp"
+                if _measured
+                else "MSSC + regulating, flat"
+            ),
             len(pen),
             float(pen.min()) if len(pen) else 0.0,
             float(pen.max()) if len(pen) else 0.0,
@@ -235,10 +241,15 @@ def _log_reserve_coopt(
         )
         for fam in design.families[1:]:
             logger.info(
-                "  MISO zonal reserve family %s: requirement %.0f MW "
-                "(within-zone MSSC), published zonal curve steps %s",
+                "  MISO zonal reserve family %s: requirement %.0f MW at h0 "
+                "(%s), published zonal curve steps %s",
                 fam.name,
                 float(fam.requirement[0]),
+                (
+                    "measured hourly South reservation"
+                    if _measured
+                    else "within-zone MSSC, flat"
+                ),
                 [
                     f"{w:.0f}MW@${p:.0f}"
                     for w, p in zip(fam.ordc_step_widths, fam.ordc_penalties)
