@@ -1,5 +1,18 @@
 # Forecast Testing & Calibration Plan — Retirement and New Build
 
+> **⚠️ SUPERSEDED — historical record only, not the live spec.**
+> This document's 2018→2025 hindcast window and AEO2018 fuel-path design were
+> **replaced 2026-07** by `docs/handoffs/forecast-validation-program-2026-07.md`,
+> which is now the live capacity-hindcast design. The live plan initializes
+> from the **EIA-860 2020 vintage**, solves **2021 / 2023 / 2024 / 2025** with a
+> **2022 bridge year** (no solve — the one-pass evolution loop consumes 2021
+> `prior_results` for both the 2022 and 2023 evolution steps), and uses
+> **AEO2021** as the as-known-then fuel path, not AEO2018. Reasons for the
+> change (no 2018 EIA-860 vintage on disk, demand profiles starting at 2021,
+> etc.) are documented in that file's §1.1. The content below is retained
+> unmodified as the historical original plan — do not treat it as current
+> guidance; see the live doc for anything that conflicts with it.
+
 **Purpose.** Backcast tuning validates *dispatch* against history with the
 answer partially fed in (historic overlays). It says nothing about the
 model's ability to forecast **retirements and new builds** — the capacity-
