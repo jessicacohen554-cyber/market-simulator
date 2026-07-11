@@ -1,0 +1,65 @@
+# One-shot, re-dispatchable: land the G-61(b) decision-closure doc edits
+# (owner decision 2026-07-11 — startup-aware RA bridge ADOPTED, already
+# shipped in keeper caiso-76). Script transport instead of git-am patch
+# transport (ercot57/pjm97/caiso7475 precedent): calibration-log.md is too
+# large to relay whole through push_files, and raw .patch files are fragile
+# against trailing-whitespace stripping in transit; the apply script was
+# verified byte-identical to the session commit before push. Safe to re-run:
+# every edit is idempotency-guarded.
+name: apply-g61b-decision-docs
+
+on:
+  push:
+    branches:
+      - claude/caiso-ra-bridge-startup-6eb12q
+    paths:
+      - .github/workflows/apply-g61b-decision-docs.yml
+      - .github/patches/g61b/apply_g61b_docs.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/caiso-ra-bridge-startup-6eb12q
+          fetch-depth: 0
+
+      - name: Verify apply-script integrity
+        run: |
+          set -euo pipefail
+          p=.github/patches/g61b/apply_g61b_docs.py
+          m=c19e9c2f9be9de32dceccb2176be3b05
+          if ! echo "$m  $p" | md5sum -c -; then
+            printf '\n' >> "$p"
+            echo "$m  $p" | md5sum -c -
+            git checkout -- "$p"
+          fi
+
+      - name: Apply G-61(b) decision-closure doc edits (guarded)
+        run: |
+          set -euo pipefail
+          python3 .github/patches/g61b/apply_g61b_docs.py
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "nothing to commit - already applied"
+          else
+            git add docs/calibration-log.md docs/gap-register-2026-07.md docs/handoffs/owner-decision-briefs-2026-07-08.md
+            git commit \
+              -m "docs: execute owner decision G-61(b) — startup-aware RA bridge ADOPTED, already shipped in keeper caiso-76" \
+              -m "Verification-only closure: the current CAISO keeper 2026-07-11-caiso-76-hydro-budget already carries caiso_ra_bridge_startup_aware=True (entered as caiso-70's single delta, carried through caiso-72/73/75/76), so the decision's requested replay is config-identical to the keeper — no duplicate bundle solved or registered. D-2 confirms the mechanism engaged (bridge-forced CC 2.38/2.26/1.73 TWh, C8 PASS); predicted lambda regression did not materialize on the shipped base; residual C3a body stays attributed to the G-15 belly gap per the brief. build_status --check in sync; keeper auditor PASS. Gap-register G-61 row updated, decision brief marked RESOLVED, calibration-log entry added." \
+              -m "Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>" \
+              -m "Claude-Session: https://claude.ai/code/session_01TC7m34s39nsqdqSZNTALF8"
+            git pull --rebase origin claude/caiso-ra-bridge-startup-6eb12q
+            git push origin HEAD:claude/caiso-ra-bridge-startup-6eb12q
+          fi
