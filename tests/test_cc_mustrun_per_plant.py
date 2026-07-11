@@ -105,19 +105,23 @@ class TestBinsTagging(unittest.TestCase):
 
     def test_committed_tranche_carries_floor(self):
         fleet, _ = _build(flag_on=True)
-        for code, committed_cap in ((_CC_CODE, 400.0), (_CT_CODE, 200.0)):
-            tranches = [g for g in fleet if g.plant_code == code]
-            committed = [g for g in tranches if _suffix(g).startswith("committed")]
-            self.assertTrue(committed)
-            for g in committed:
-                self.assertAlmostEqual(g.cc_mustrun_pmin_mw, g.pmax_mw, places=1)
-                self.assertGreater(g.cc_mustrun_online_frac, 0.0)
-            self.assertAlmostEqual(
-                sum(g.pmax_mw for g in committed), committed_cap, places=1
-            )
-            for g in tranches:
-                if not _suffix(g).startswith("committed"):
-                    self.assertEqual(g.cc_mustrun_pmin_mw, 0.0)
+        tranches = [g for g in fleet if g.plant_code == _CC_CODE]
+        committed = [g for g in tranches if _suffix(g).startswith("committed")]
+        self.assertTrue(committed)
+        for g in committed:
+            self.assertAlmostEqual(g.cc_mustrun_pmin_mw, g.pmax_mw, places=1)
+            self.assertGreater(g.cc_mustrun_online_frac, 0.0)
+        self.assertAlmostEqual(sum(g.pmax_mw for g in committed), 400.0, places=1)
+        for g in tranches:
+            if not _suffix(g).startswith("committed"):
+                self.assertEqual(g.cc_mustrun_pmin_mw, 0.0)
+
+    def test_ct_peaker_excluded(self):
+        """CT leg dropped after the 2026-07-11 probe (rule-12 overnight bug)."""
+        fleet, _ = _build(flag_on=True)
+        for g in fleet:
+            if g.plant_code == _CT_CODE:
+                self.assertEqual(g.cc_mustrun_pmin_mw, 0.0)
 
     def test_uncovered_plant_gets_no_floor(self):
         """Rule 18: self-targeting by the measurement — no artifact row, no floor."""

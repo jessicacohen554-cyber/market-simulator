@@ -176,6 +176,23 @@ verify the floor runs eastern gas + budget/D-4, then the full 2023–2025 bundle
 `pjm98_cc_mustrun` + its `-ablation` twin (`scripts/run_pjm98_cc_mustrun.py`).
 Keeper swap remains the owner's decision (§5 over-forcing risk sign-off).
 
+**Probe result (2024, single-delta off pjm-97) and the CT decision.** The floor
+runs eastern gas without inflating the west (rule 18 confirmed): Dominion CC
+30.1→39.3 TWh (−81%→−30% vs CAMPD 55.9), SWMAAC CC 5.6→7.7 (−35%), EMAAC CC
+over-run 48.5→46.3 (+25%); AEP/Central_PA CC ≈ unchanged. CC forced-at-floor
+share 57.7% (>30% cap ⇒ the run rides the rubric-v2.2 grounded-above-budget
+path: D-4 all-hours declaration + D-1 shape, scored on the full bundle — the
+committed tranche of EVERY covered CC sits at its floor by construction, so
+the D-2 statistic reads the committed share itself; the gate question is
+shape/window fidelity, exactly what v2.2 targets). The **CT_PEAKER leg was
+dropped**: it bound 12.8% of its floored MWh overnight (h23-6) against the CT
+class's own overnight-offline evidence — the rule-12 off-window bug its
+declared h7-22 D-4 window exists to catch — while buying almost none of the
+eastern CT under-run (Dominion CT 0.9→1.5 vs 8.9 measured; −83% before and
+after). The eastern CT under-run therefore remains an OPEN residual and is an
+offer/capture-layer problem (consistent with pjm-97's falling CT per-plant
+capture under truer transmission physics), not a commitment-share one.
+
 ## 6. What was NOT changed
 
 Keeper unchanged (`2026-07-10-pjm-97-measured-interfaces`; keeper swaps are the
