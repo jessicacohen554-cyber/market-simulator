@@ -251,3 +251,101 @@ parameter in the change was fit to any year (published NREL costs + pooled
 2023-25 CAMPD measurements), and the per-year movements are 2023 ✓ / 2024 ✓ /
 2025 mixed-but-improved on price. Lane 2 (RDC/ELMP scarcity depth + evening
 timing) is next and now carries the 2025 C2/C3a/C3c residual cleanly.
+
+## 10. LANE 2 EXECUTED (2026-07-11 — miso-56 measured-scarcity): the measured
+data adjudicates the lane — DA reserve scarcity is ~nonexistent, the flat/static
+requirement estimates were wrong both ways, and the 2025 residual's drivers are
+measured to live in RDT congestion / RT-only constructs
+
+**The measurement came first (rules 1/23), and it re-scoped the lane.** Three
+measured adjudications, all from series already on disk or the IMM's own
+publications:
+
+1. **The DA reserve MCPs never price the RDC steps.** `asm_damcp_zonal`
+   (MISO Wide, GEN*MCP): 2023 max $25 spin / $20 supp, 2024 max $27/$25, 2025
+   one hour at $132 (2025-07-28 HE19). Real day-ahead reserve scarcity is
+   ~nonexistent in the train window — so the model's 0 binding RDC hours is
+   structurally CORRECT on the C3c DA-expressible basis, and any mechanism
+   that forces the in-LP families to bind in DA would fabricate scarcity the
+   measured market does not have. Reserve-scarcity pricing lives in the RT
+   tail (supp/spin RT MCP ≥ $190: ~3-4 h 2023, 8-11 h 2024, 17-19 h 2025 —
+   e.g. Aug 12/20 2023 evenings at $230-486), which the DA-anchored score
+   deliberately does not chase (the miso-53 RT-companion note).
+2. **The DA >$200 LMP anatomy is not reserve-driven.** 2023: 1 h (Aug, $205).
+   2024: all 24 h are Winter Storm Heather (Jan 14-17, HE6-8 + HE17-19, max
+   $285). 2025: 38 h = July (15) + June (11) + Jan (8) + Feb/Sep/Oct, evenings
+   HE15-19 and winter mornings, max $433. These cleared on the energy-offer
+   tail (fuel spikes + commitment-cost recovery + emergency constructs), with
+   DA reserve MCPs ≤ $27 through all of 2023-24.
+3. **The IMM's Summer-2025 quarterly names the 2025 drivers**: RDT S→N
+   congestion ($9.31/MWh Midwest-South separation, $41M RDT+RPE congestion —
+   the transmission lane, not this one); June 23-24 ELMP *ex-post* emergency
+   repricing (2.5× ex ante — an RT-only construct; "MISO did not experience
+   operating reserve shortages during these events"); the hour-18 net-load
+   ramp (evening ramp demand 1,000 MW 2023 → ~6,000 MW 2025; 26 RT OR-shortage
+   intervals, majority HE18 — RT forecast-error events, incl. the July 28
+   40-minute shortage). None of these is a DA in-LP reserve-depth phenomenon.
+
+**What Lane 2 honestly supports — miso-56 = miso-55 meta replay + two measured
+changes** (probe driver `scripts/probes/_miso56_measured_scarcity.py`):
+
+1. **Measured hourly OR requirements** (`miso_measured_reserve_requirements`,
+   new intake `data/miso_reserve_requirements.py` ←
+   `asm_rt_cleared_mw_<year>.parquet`). Market-wide RBDC: flat fleet-MSSC+400
+   (~3,438 MW) → measured hourly cleared reg+spin+supp (mean 2,447/2,557/2,642,
+   max 3,069/3,124/3,295 MW — the event-evening requirement raises MISO
+   actually posts, e.g. Aug 12 2023 HE17-20 2,410→2,830 MW, now in the LP at
+   the right hours). South zonal: within-zone-MSSC static (~2,196 MW) →
+   measured South reservation (mean 321/366/477 MW) — the static basis
+   over-withheld South by ~1.8 GW, capacity the real market never held back.
+   Rule-13 (measured AS power reservation) + rule-14 (mandatory swap).
+   Documented caveats: RT cleared (no DA hourly series exists), cleared <
+   requirement in the rare true-shortage intervals; STR excluded (separate
+   30-min product).
+2. **Condition-keyed fast-start amortization** (`tranche_startup_conditional_runs`,
+   v4 of the Order-825/ELMP lever): CAMPD measures MISO CT runs STARTED in
+   p97.5+ net-load hours at 6 h median vs 10 h pooled (ratios
+   0.9/1.1/1.1/0.8/0.6 across [0-.5/.5-.75/.75-.9/.9-.975/.975+], stable each
+   year; `derive_campd_ct_run_lengths.py --condition-bands`, 61,322 runs) —
+   the v3 ceiling scales per hour by the band ratio of the hour's within-year
+   net-load percentile, so a tight-evening engagement amortizes its NREL
+   start cost over the SHORT commitment block it really is (the ELMP
+   evening-timing element the monthly grain could not express). P1-only,
+   forward-native trigger.
+
+**Pre-committed expectations (recorded before the solve):** correctly-timed
+evening CT markup lift (band-4 ≈ +$1-2/MWh — NREL CT starts are $12-25/MW, so
+this is timing, not level); South withholding release (direction on South
+LMPs down / S→N exports up); market-wide requirement drops ~1 GW in normal
+hours (slight softening — accepted per rule 14). July-2025's −18 $/MWh
+monthly gap is NOT expected to close: its measured drivers (RDT congestion,
+RT-only constructs, hour-18 ramp forecast-error scarcity) are outside this
+lane. C3c likely stays ~0 on the DA basis — which the measurement above says
+is correct, not missing.
+
+**Deferred with documentation (zero-effect for this window):** MISO's
+shortage-pricing redesign effective 2025-09-30 (FERC-approved: Pricing VOLL
+$10,000, System VOLL $35,000 scaling a LOLP-based ORDC capped at $6,000 —
+Updated Shortage Pricing White Paper, Nov 2024) post-dates every 2025 DA
+scarcity cluster (June/July/Jan) and Q4-2025 DA reserve MCPs stayed ≤ $55, so
+a year/hour-gated curve re-anchor provably changes nothing in the 2023-2025
+backcast. It becomes REQUIRED the moment H1-2026 crossover scoring or a 2026+
+forecast leans on the reserve curves; wire it then (ERCOT ECRS-reform date-
+gate pattern).
+
+**Next-lane pointers (from the measured adjudication, NOT tuned lanes):**
+
+1. **RDT S→N congestion depth (transmission/seam lane) — QUANTIFIED as the
+   largest single measured lead on the 2025 residual.** The miso-55
+   payload's 2025 Midwest−South monthly LMP separation (mean of
+   Illinois/Indiana/West/Plains minus South) is **$0.19/MWh over Jun-Aug vs
+   the IMM's measured $9.31/MWh** (Summer-2025 quarterly) — the RDT
+   congestion is essentially ABSENT from the model. With the Midwest
+   carrying most of MISO load, the missing ~$9 separation is plausibly
+   ~$5-8/MWh of the July-2025 −18.0 monthly delta on its own. Check the
+   RDT/RPE contract-path representation (limit level, and whether the S→N
+   direction ever binds under 2025's low-wind/low-import summer pattern).
+2. The COAL_BIT/CC mid-merit split with the import under-run (the standing
+   open root cause).
+3. Winter delivered-gas fidelity for Heather-window CTs (Jan 2024's −11.5
+   $/MWh monthly delta is the entire 2024 miss).

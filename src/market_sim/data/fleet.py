@@ -5444,6 +5444,33 @@ def oil_primary_ct_plants_from_eia860(iso: str) -> frozenset[int]:
 
 
 @lru_cache(maxsize=8)
+def campd_ct_run_band_ratios(
+    iso: str,
+) -> "tuple[tuple[float, ...], tuple[float, ...]] | None":
+    """Return the measured (band_edges, run-length ratios) for an ISO, or None.
+
+    Reads the committed condition-banded CT run-length artifact
+    (``scripts/derive_campd_ct_run_lengths.py --condition-bands`` →
+    ``data/raw/_processed-legacy/campd_ct_run_bands_<ISO>.csv``): per
+    net-load-percentile band, the class-pooled median start-to-stop run
+    length as a RATIO to the all-runs pooled median — the v4
+    condition-keyed amortization's shape factor
+    (``ScenarioConfig.tranche_startup_conditional_runs``). ``edges`` are the
+    interior percentile boundaries (``pct_hi`` of every band but the last),
+    for ``np.searchsorted`` banding of model hours. ``None`` when the ISO
+    has no artifact (the v4 flag is then a documented no-op — never a
+    silent hand number, rule #23; per-ISO artifact, rule #25).
+    """
+    path = PROCESSED_DIR / f"campd_ct_run_bands_{iso.upper()}.csv"
+    if not path.exists():
+        return None
+    df = pd.read_csv(path).sort_values("band")
+    edges = tuple(float(x) for x in df["pct_hi"].to_numpy()[:-1])
+    ratios = tuple(float(x) for x in df["ratio"].to_numpy())
+    return edges, ratios
+
+
+@lru_cache(maxsize=8)
 def campd_ct_run_lengths(iso: str) -> dict[int, float]:
     """Return ``{plant_code: median CT run hours}`` for an ISO, ``0`` = fallback.
 
