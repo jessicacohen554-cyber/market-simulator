@@ -93,6 +93,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from market_sim.data.floor_mechanisms import (  # noqa: E402
     D2_EXEMPT_MECHS,
     MECH_CAISO_GAS_COMMITMENT_FLOOR,
+    MECH_CC_MUSTRUN_PER_PLANT,
     MECH_CT_NETLOAD_DRAG,
     MECH_NAMES,
     MECH_RA_MUSTOFFER,
@@ -245,6 +246,22 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # Midday NG:NG slab window (h9-16) — the probe's own gate
     # (transmission.inject_caiso_gas_commitment_floor).
     (MECH_CAISO_GAS_COMMITMENT_FLOOR, None): (9, 17),
+    # cc_mustrun_per_plant (per-plant gas local-reliability commitment,
+    # fleet.py cc_mustrun_pmin_mw): the floor's REAL window is intrinsic and
+    # per-plant — each plant's committed tranche binds only in its top
+    # measured-online_frac fraction of hours ranked by system load, so the
+    # mechanism is self-windowing by construction. The hour-of-day rows here
+    # declare where that placement is driver-justified: a committed CC is
+    # SYNCHRONIZED around the clock inside its window (the CEMS online_frac
+    # it is sized from counts overnight min-stable hours — same evidence
+    # shape as the ST_GAS rows above), so CC_REGULAR is all-hours; a
+    # committed CT's own evidence says overnight-offline (CAMPD CT overnight
+    # CF ~ 0), and PJM's top-of-load hours include the bimodal WINTER morning
+    # peak (h7-9) the [14, 22) evening-ramp window would mislabel — so
+    # CT_PEAKER declares the daytime block h7-22. Overnight (h23-6) CT
+    # binding is a rule-12 bug this row exists to catch.
+    (MECH_CC_MUSTRUN_PER_PLANT, "CC_REGULAR"): (0, 24),
+    (MECH_CC_MUSTRUN_PER_PLANT, "CT_PEAKER"): (7, 23),
 }
 
 # D-9: overlay probes that must be OFF/zero in every keeper run_config.json
@@ -813,6 +830,17 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         backcast_symbols=("inject_nyiso_local_selfsupply",),
         forecast_symbols=("inject_nyiso_local_selfsupply",),
         note="LMIC market-design rule — mode-independent by intent",
+    ),
+    MechanismSpec(
+        "cc_mustrun_per_plant",
+        "cc_mustrun_per_plant",
+        "both",
+        False,
+        note="per-plant gas local-reliability commitment floor — "
+        "parameter-based (CEMS committed share + online_frac, "
+        "thermal_tranches artifact), applied inside the shared fleet "
+        "builder (fleet.bins_to_fleet / generators_to_fleet_arrays) so "
+        "both mode entries reach it; no entry-script symbol to measure",
     ),
     MechanismSpec(
         "ercot_wtx_curtailment_driver",
