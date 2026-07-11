@@ -267,6 +267,13 @@ _MUSTRUN_CAP: float = 0.60
 # Combined-cycle groups that derive a duct-firing peaking share.
 _PEAKING_GROUPS: frozenset[str] = frozenset({"CC_REGULAR", "CC_CHP"})
 
+# Groups whose measured synchronization fraction (``online_frac``) is emitted:
+# COAL for the step-3a online%-scaled min-load forcing, and the merchant gas
+# committed groups for the per-plant local-reliability commitment floor
+# (``ScenarioConfig.cc_mustrun_per_plant``). The fraction itself is computed for
+# every group (``sync_hours``); this set only gates which rows publish it.
+_ONLINE_FRAC_GROUPS: frozenset[str] = frozenset({"COAL", "CC_REGULAR", "CT_PEAKER"})
+
 # Ceiling on the derived peaking share (% of capacity). Duct burners add at
 # most ~20-25% over a CC's unfired base rating; anything larger from the
 # estimator is distribution noise (a cycler with a thin top tail), not duct.
@@ -520,12 +527,18 @@ def main() -> None:
             "committed_pct": round(100.0 * committed, 1),
             "mustrun_pct": round(100.0 * mustrun, 1),
             "mustrun_online_pct": round(100.0 * mustrun_online, 1),
-            # Synchronization fraction (coal only): the share of the year the
-            # plant has any unit synchronized. Drives the step-3a online%-scaled
-            # min-load forcing (coal_sync_online_frac): an ~always-online
-            # supercritical (~1.0) is held all 8760 h, a two-shifting cycler is
-            # forced only in its top-load online hours. Coal-only because only
-            # coal carries the forced synchronization band.
+            # Synchronization fraction: the share of the year the plant has any
+            # unit synchronized. COAL drives the step-3a online%-scaled min-load
+            # forcing (coal_sync_online_frac): an ~always-online supercritical
+            # (~1.0) is held all 8760 h, a two-shifting cycler is forced only in
+            # its top-load online hours. The merchant gas committed groups
+            # (:data:`_GAS_MUSTRUN_GROUPS`) carry the SAME measured fraction for
+            # the local-reliability commitment floor (cc_mustrun_per_plant,
+            # G-20 eastern under-run follow-up): it sizes the committed window —
+            # the top-online_frac system-load hours the plant's committed
+            # tranche is held on. Same CEMS quantity, same estimator; only the
+            # consumer differs. Other groups (CHP / ST_GAS) stay blank — their
+            # floors come from the steam-host / drag mechanisms.
             "online_frac": (
                 round(
                     min(
@@ -533,7 +546,8 @@ def main() -> None:
                     ),
                     3,
                 )
-                if group == "COAL" and sync_hours.get((code, group), [0, 0])[1] > 0
+                if group in _ONLINE_FRAC_GROUPS
+                and sync_hours.get((code, group), [0, 0])[1] > 0
                 else ""
             ),
             "p25_cf": round(100.0 * float(np.percentile(on_cat, 25)), 1),
