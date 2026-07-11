@@ -1,5 +1,63 @@
 # PJM G-21 — the CC_REGULAR "+21 TWh over-run" is mostly benchmark construction, not dispatch
 
+> **CORRECTION & IMPLEMENTATION (2026-07-11, post-owner-review) — read this first;
+> it supersedes the CAMPD-basis framing in §1(a), §2 and §3 below.**
+>
+> The owner flagged that my original evidence leaned on "CAMPD = grid-delivered
+> truth," which is wrong: CAMPD net (gross × parasitic) still carries
+> behind-the-meter host self-supply and non-grid load, so it is **not** the
+> grid-delivered basis the model is scored on. The corrected, stronger proof
+> uses CAMPD only where it is unimpeachable — **coal, where every unit is
+> CEMS-metered** — and it reframes the defect from "the reconcile deflates CC"
+> to the precise mechanism below.
+>
+> **The defect is EIA-930's fuel SPLIT, and CAMPD-coal proves it.** The old
+> `reconcile_vintage_classes` scaled the gas family and the coal family each to
+> their own EIA-930 cell. But EIA-930's coal/gas attribution is wrong against
+> CEMS:
+>
+> | ISO | 930 coal − CEMS coal (2023/24/25) | reading |
+> |---|---|---|
+> | **PJM** | **+10 / +7 / +11** | 930 over-counts coal, under-counts gas |
+> | **MISO** | **−17 / −18 / −21** | 930 *under*-counts coal (mirror image) |
+> | ERCOT | −0.4 / −1.5 / −1.1 | 930 split ≈ CEMS (anchor safe) |
+> | CAISO/NYISO/NEISO | ~0 (no coal) | n/a |
+>
+> Our row-level EIA-923 coal tracks CEMS to within ~1 TWh (our classification is
+> right); **EIA-930 is the outlier.** Forcing the 923 split onto 930 therefore
+> scaled PJM's correct 923 gas (383.6) DOWN to 930's too-low 368.3 and dumped
+> ~85% of that spurious −15 onto CC_REGULAR (→ read +21 over vs a true ~+3),
+> while scaling coal UP to 930's inflated 122 (hiding a real +2 model coal
+> over-run). Crucially PJM's **total** fossil is within ~1.6% of 930 — only the
+> per-family split breached the ±3% deadband (gas +4.2%, coal −5.9%, offsetting).
+>
+> **Fix (implemented this session):** `reconcile_vintage_classes` now reconciles
+> the **combined** gas+coal total to EIA-930 as one family, scaling every fossil
+> class by the same factor so the CEMS-validated 923 split is preserved — it
+> corrects the fossil *level*, never the *split*. Verified old-vs-new on
+> identical data (`scripts` throwaway `verify_combined_reconcile.py`):
+> **PJM 2024 stops firing → CC_REGULAR actual 321.7→335.1 (model +3, in band),
+> coal 122.4→112.5 (CEMS-matching, exposing model coal +2).** No-coal ISOs
+> (CAISO/NYISO/NEISO) are byte-identical (combined = gas). ERCOT complete years
+> unchanged (anchor safe). **MISO** (not calibrated) is correctly *exposed*: its
+> gas over-run and coal under-run grow, because 930's split was flattering them.
+> Tests: `tests/test_vintage_reconcile_foldin.py` (12 pass; new guards for the
+> offsetting-in-band case and combined split-preservation).
+>
+> **Fleet-group sweep (the WA-Parish question, all 6 ISOs, 2024).** The
+> plant-level `_fleet_group_by_code` map (drives the CAMPD backfill + per-plant
+> displays, NOT the row-level scored totals) buckets some genuinely mixed-fuel
+> plants wholly to one class: coal↔gas mis-bucket ERCOT 2.75 (p3470: 2.4 TWh gas
+> at a coal plant — the WA-Parish pattern, confirmed), PJM 1.4, **MISO 6.2**;
+> CC↔CT mis-bucket PJM 4.97 (Doswell p52019), NYISO 3.0, **MISO 13.9**;
+> CAISO/NEISO ~0. Impact is confined to the CAMPD backfill (preliminary vintages)
+> and per-plant display tables — the row-level 923 family totals are correct — so
+> it's the second-order defect (b). Recommended follow-up: bucket the backfill by
+> unit prime-mover class, not plant (unimplemented this session).
+>
+> Everything from the header down is the original 2026-07-11 diagnosis; where it
+> says "CAMPD basis" or quotes "329.3 measured," read the corrected numbers above.
+
 **Date:** 2026-07-11. **Branch:** `claude/pjm-cc-regular-overrun-09cmbk`.
 **Scope:** diagnosis (rule 1: structure before tuning) of the pjm-98 follow-up
 charter: (1) the aggregate CC_REGULAR over-run + low mean LMP, (2) the open
