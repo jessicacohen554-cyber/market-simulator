@@ -1,5 +1,5 @@
 """Derive AEO2025-grounded fuel-price trajectories: gas, coal, oil, and a
-$/MMBtu nuclear fuel-cycle cost -- CLAUDE.md rule 23 re-derivation triggered by
+$/MMBtu nuclear fuel-cycle cost — CLAUDE.md rule 23 re-derivation triggered by
 the P-0C data intake (data/raw/eia-aeo/, data/raw/uranium-marketing/).
 
 WHY THIS SCRIPT EXISTS: ``HENRY_HUB_TRAJECTORIES`` (constants.py) carried a
@@ -11,12 +11,12 @@ landed the real API-fetched AEO2025 series
 Marketing Annual Report front-end fuel-cycle prices
 (data/raw/uranium-marketing/eia_umar_uranium_price.csv). This script re-derives
 every fuel trajectory FROM that data (never from a residual) and prints
-paste-ready literals for ``constants.py`` -- the same paste-from-derive-script
+paste-ready literals for ``constants.py`` — the same paste-from-derive-script
 convention as ``derive_coal_sigmoid.py``.
 
 GAS: AEO2025 Table 13 Henry Hub spot, real 2024$/MMBtu. AEO scenario ->
 model path: highogs -> "low" (more supply, lower price), ref2025 -> "mid",
-lowogs -> "high" (less supply, higher price) -- same mapping the prior
+lowogs -> "high" (less supply, higher price) — same mapping the prior
 hand-typed table used (constants.py comment above HENRY_HUB_TRAJECTORIES).
 The 2023-2025 historical-actual entries are UNCHANGED (they are measured
 spot averages, not AEO projections, and predate the AEO's 2024-2050 window).
@@ -24,8 +24,8 @@ spot averages, not AEO projections, and predate the AEO's 2024-2050 window).
 COAL: AEO2025 Table 15 delivered-to-electric-power, national, real
 2024$/MMBtu. The model's ``COAL_PRICE_BASE`` stays a per-ISO delivered-cost
 ANCHOR (ERCOT lignite/PRB vs PJM Appalachian vs MISO PRB+ILB blend are
-genuinely different basins the one national AEO series can't resolve -- the
-CLAUDE.md rule-14 misalignment exception) -- but the flat, uncited
+genuinely different basins the one national AEO series can't resolve — the
+CLAUDE.md rule-14 misalignment exception) — but the flat, uncited
 ``COAL_PRICE_ESCALATION`` (1%/yr) forward-YEAR SHAPE is replaced by the AEO's
 own real growth path, applied as a ratio to each ISO's anchor
 (``COAL_PRICE_TRAJECTORIES[path][year] / COAL_PRICE_TRAJECTORIES[path]
@@ -37,17 +37,17 @@ OIL: AEO2025 Table 12 electric-power distillate + residual, real
 ~$20 + residual ~$14, averaged" documented construction) per AEO scenario.
 
 NUCLEAR FUEL ($/MMBtu): the EIA Uranium Marketing Annual Report publishes no
-$/MMBtu nuclear fuel series -- only front-end U3O8 and SWU (enrichment)
+$/MMBtu nuclear fuel series — only front-end U3O8 and SWU (enrichment)
 prices (nominal $, per data/raw/uranium-marketing/README.md). This script
 builds up a $/MMBtu delivered fuel cost from the standard LWR fuel-cycle
-physical constants (World Nuclear Association, "Nuclear Fuel Cycle" --
+physical constants (World Nuclear Association, "Nuclear Fuel Cycle" —
 producing 1 kg of ~4.4% LEU at a 0.25-0.3% tails assay takes ~8.9 kg natural
 U3O8 and ~7.3 SWU of enrichment work; U3O8 is 84.8% U by mass, so the
 elemental-U feed is ~7.55 kgU/kgLEU) plus published conversion
 (~$10/kgU, WNA "The Economics of Nuclear Power", conversion-services range)
-and fabrication (~$300/kgLEU, WNA fabrication cost range) costs -- neither of
+and fabrication (~$300/kgLEU, WNA fabrication cost range) costs — neither of
 which the UMAR publishes a time series for (documented in the README as this
-script's job) -- held flat in real terms since no AEO or EIA forward series
+script's job) — held flat in real terms since no AEO or EIA forward series
 exists for either. The heat content divisor uses a representative U.S. LWR
 burnup of 45,000 MWd/tHM (NRC/EIA-cited current-fleet average) converted to
 MWh-thermal per kg, then to $/MMBtu at 3.412142 MMBtu/MWh. UMAR prices are
@@ -57,7 +57,7 @@ before applying the fuel-cycle formula, so the output is directly comparable
 to the real-2024$ AEO series.
 
 EXTRAPOLATION: fuel.py:178's forward extrapolation beyond a trajectory's last
-knot year used the LAST YEAR-OVER-YEAR RATIO compounded indefinitely -- a
+knot year used the LAST YEAR-OVER-YEAR RATIO compounded indefinitely — a
 silent, unbounded driver with no citation. This script does not change that
 code (see market_sim.data.fuel._extrapolate_flat, the fix in the same P-1D
 session); every trajectory table below carries an explicit final-year entry
@@ -100,7 +100,7 @@ _BURNUP_MWD_PER_TU: float = 45_000.0  # NRC/EIA-cited current US LWR average
 _MMBTU_PER_MWH: float = 3.412142
 
 # EIA heat content of fuel oil delivered to the electric power sector
-# (MMBtu/gal) -- the AEO Table 12 series is priced in $/gal, not $/MMBtu.
+# (MMBtu/gal) — the AEO Table 12 series is priced in $/gal, not $/MMBtu.
 # Source: EIA Monthly Energy Review, Appendix A3/A5 fuel heat contents.
 _DISTILLATE_MMBTU_PER_GAL: float = 0.1385  # No. 2 distillate fuel oil
 _RESIDUAL_MMBTU_PER_GAL: float = 0.1497  # No. 6 residual fuel oil
