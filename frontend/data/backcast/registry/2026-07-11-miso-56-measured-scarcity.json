@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-11-miso-56-measured-scarcity",
+ "label": "miso 56 measured scarcity",
+ "date": "2026-07-11",
+ "shorthand": "miso-56-measured-scarcity",
+ "definition": "miso-56 Lane-2 measured scarcity: the miso-55 candidate recipe replayed from its exhaustive meta.json (strict replay -- errors on unmapped keys) with exactly two measured changes: (1) measured hourly OR requirements (miso_measured_reserve_requirements): the market-wide RBDC family takes the measured hourly cleared reg+spin+supp series (asm_rt_cleared_mw, mean 2,447/2,557/2,642 MW with the event-evening raises MISO actually posts) replacing the flat fleet-MSSC+400 estimate (~3,438 MW), and the South zonal family takes the measured South reservation (mean 321/366/477 MW) replacing the within-zone-MSSC static (~2,196 MW) that fabricated ~1.8 GW of South withholding; (2) condition-keyed fast-start amortization horizons (tranche_startup_conditional_runs, v4): CAMPD measures MISO CT runs started in p97.5+ net-load hours at 6 h median vs 10 h pooled (band ratios 0.9/1.1/1.1/0.8/0.6, per-year stable) -- the ELMP evening-timing element. Zero fitted scalars; DOF residual count unchanged at 2. Scored NOT-YET, FAIL set identical to miso-55 with every class-year delta flat-to-better (CT_PEAKER-2024 +8.51 -> +8.27 TWh; C3a-2025 -13.3% flat; August stays clean +0.5/+0.2). Lane-2's measured adjudication (FINDING sec 10): DA reserve MCPs never reached the RDC steps in 2023-24 (max $27), so C3c's 0 modelled DA hours is structurally CORRECT -- the DA tail's real drivers are the missing RDT congestion (model separation $0.19 vs IMM $9.31 summer-2025), ELMP ex-post emergency repricing, and hour-18 ramp RT shortages: other lanes.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-11-miso-56-measured-scarcity.js",
+ "bundle": "results/calibration/miso56_measured_scarcity",
+ "ablation_twin": "2026-07-11-miso-56-measured-scarcity-ablation",
+ "market_story": "Zero-forcing twin is near-identical (class-year deltas <= 0.3 TWh; twin even sheds the CT_PEAKER-2024 C1 FAIL by dropping the ~1.0 TWh CT evening reliability deployment): the fit is carried economically. Both new mechanisms are measured quantities, not floors -- the requirement series is MISO's own posted reserve procurement (a rule-13 measured AS power reservation) and the v4 horizon is CAMPD-measured commitment-block length by net-load band; D-2 attributes 3.7-5.9% of CT energy to the unchanged evening reliability floor (cap 15%)."
+}
