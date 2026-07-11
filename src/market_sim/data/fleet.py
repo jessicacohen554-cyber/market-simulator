@@ -1759,6 +1759,74 @@ def generators_to_fleet_arrays(
                 applied_dec,
             )
 
+    # ERCOT measured class-day thermal availability (backcast overlay,
+    # config.ercot_thermal_dam_availability): rescale each covered class
+    # (CC_REGULAR, CT_PEAKER — the deriver's scope) so its class-day MEAN
+    # availability fraction equals the 60-Day DAM disclosure's measured
+    # live-HSL / rating fraction. A RESCALE of the finished availability, not a
+    # stacked multiplier: the measured fraction and the model's statistical
+    # WEFOR/EFOR + window stack estimate the SAME quantity, so the class-day
+    # total is set to the measured value while the model's own discrete
+    # windows/plateaus remain the within-class distribution. Uncovered days
+    # (NaN — the Oct-2023 hole, Nov-Dec 2025) keep the statistical model;
+    # forecast mode is untouched (the statistical stack is the forward
+    # analogue — the G4 mode-aware seam). Applied after every other
+    # availability layer and before min_gen is built, so floors clamp to the
+    # measured level. Tranches cap at 1.0; a 3-pass water-fill redistributes
+    # the clipped mass so the class-day total still lands on the measured
+    # fraction where feasible. Provenance + June/Sep-2023 forensics:
+    # docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md.
+    if (
+        config is not None
+        and _iso == "ERCOT"
+        and getattr(config, "ercot_thermal_dam_availability", False)
+        and getattr(config, "mode", "forecast") == "backcast"
+        and _yr is not None
+    ):
+        from market_sim.data.outages import ercot_thermal_dam_availability_series
+
+        _meas = ercot_thermal_dam_availability_series(int(_yr), hours)
+        _n_days = hours // 24
+        for _cls, _target_h in _meas.items():
+            _idx = np.array(
+                [gi for gi, g in enumerate(generators) if g.plant_group == _cls],
+                dtype=int,
+            )
+            if _idx.size == 0:
+                continue
+            _cap = pmax[_idx]  # (n,)
+            _cap_sum = float(_cap.sum())
+            if _cap_sum <= 0.0:
+                continue
+            _a = availability[_idx, : _n_days * 24].reshape(_idx.size, _n_days, 24)
+            _t = _target_h[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)
+            _covered = np.isfinite(_t)
+            if not _covered.any():
+                continue
+            _cur = (_a.mean(axis=2) * _cap[:, None]).sum(axis=0) / _cap_sum
+            _r = np.where(_covered & (_cur > 1e-9), _t / np.maximum(_cur, 1e-9), 1.0)
+            # Cap-1.0 water-fill: re-inflate for the clipped mass (3 passes).
+            for _ in range(3):
+                _scaled = np.minimum(_a * _r[None, :, None], 1.0)
+                _got = (_scaled.mean(axis=2) * _cap[:, None]).sum(axis=0) / _cap_sum
+                _r = _r * np.where(
+                    _covered & (_got > 1e-9),
+                    np.where(_covered, _t, 1.0) / np.maximum(_got, 1e-9),
+                    1.0,
+                )
+            _scaled = np.minimum(_a * _r[None, :, None], 1.0)
+            _scaled[:, ~_covered, :] = _a[:, ~_covered, :]
+            availability[_idx, : _n_days * 24] = _scaled.reshape(_idx.size, -1)
+            logger.info(
+                "ERCOT measured thermal DAM availability (%d): %s rescaled on "
+                "%d covered day(s), median ratio %.3f",
+                _yr,
+                _cls,
+                int(_covered.sum()),
+                float(np.median(_r[_covered])),
+            )
+        np.clip(availability, 0.0, 1.0, out=availability)
+
     # Reallocate each CC_REGULAR plant's outage derate from pro-rata to
     # top-of-stack (config.cc_outage_derate_from_top): the plant's hourly
     # available MW is unchanged, but it now fills the tranches bottom-up in
