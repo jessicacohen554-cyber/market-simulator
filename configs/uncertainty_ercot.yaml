@@ -78,24 +78,29 @@ spearman:
 
 # --- Discrete-dimension probability weights (§2.1) ---------------------------
 discrete_weights:
-  # Weather year: uniform over the ERCOT verified pool (2026-07 widening --
-  # docs/handoffs/probability-bounds-plan-2026-07.md §2.1 flagged the original
-  # n=3 pool as "a cheap widening" once more raw EIA-930 hourly years are
-  # confirmed usable). 2019-2021 were verified end-to-end (clean 8760-hour
-  # demand + wind/solar CF, no fallback needed) alongside the existing
-  # 2023-2025 window; 2022 stays out under the rule-22 holdout quarantine.
-  # Source: constants.WEATHER_YEAR_POOL_BY_ISO["ERCOT"];
-  # docs/weather-pool-coverage-2026-07.md for the verification log. Weights
-  # are kept uniform (a disclosed choice, not a forced one) -- 2020 is a valid
-  # historical draw but carries the documented COVID-19 demand-shape anomaly;
-  # a client wanting to exclude or down-weight it can edit this file directly.
+  # Weather year: uniform over the years the FORECAST renewables path actually
+  # resolves end-to-end (PB-5 run finding, 2026-07-11): in forecast mode
+  # load_renewable_profiles derives wind/solar CF from the EIA-930
+  # generation-DISTRIBUTION parquet (data/raw/eia-930/
+  # eia_generation_profiles.parquet), whose coverage floor is 2021 for every
+  # ISO -- so weather years 2019/2020 raise ("No EIA-930 data for ISO 'ERCOT'
+  # in year 2019") despite being in constants.WEATHER_YEAR_POOL_BY_ISO
+  # ["ERCOT"]; that pool's 2019-2021 verification exercised the BACKCAST
+  # measured-CF path (the ERCO hourly extract), which forecast draws never
+  # take (docs/weather-pool-coverage-2026-07.md verified demand + hourly
+  # NG:WND/NG:SUN, but the forecast CF fallback chain was not covered).
+  # 2019/2020 rejoin this file once the distribution parquet is rebuilt back
+  # to 2019 (a separate data-intake task -- the parquet is a legacy
+  # hand-assembled artifact with no producing script, see
+  # data/raw/eia-930/README.md). 2022 stays out under the rule-22 holdout
+  # quarantine. Weights uniform (a disclosed choice, client-adjustable); the
+  # COVID-anomaly year 2020 is currently excluded by the coverage limit, not
+  # by a weighting judgment.
   weather:
-    2019: 0.1666666667
-    2020: 0.1666666667
-    2021: 0.1666666667
-    2023: 0.1666666667
-    2024: 0.1666666667
-    2025: 0.1666666667
+    2021: 0.25
+    2023: 0.25
+    2024: 0.25
+    2025: 0.25
   # Hydro year: dry 0.25 / normal 0.50 / wet 0.25 -- the climatology behind
   # constants.HYDRO_YEAR_MULTIPLIER (material for CAISO; near-neutral for ERCOT,
   # which has little conventional hydro). Source: HYDRO_YEAR_MULTIPLIER.
