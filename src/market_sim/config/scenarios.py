@@ -3319,6 +3319,33 @@ class ScenarioConfig:
     # application in data.fleet.generators_to_fleet_arrays.
     ercot_nuclear_unit_availability: bool = False
 
+    # ERCOT measured CLASS-day thermal availability (default off, ERCOT
+    # backcast-gated). Rescales the covered gas classes' (CC_REGULAR,
+    # CT_PEAKER) finished availability so each class-day MEAN equals the
+    # measured 60-Day DAM disclosure fraction — config-collapsed live
+    # Gen_Resource HSL over site ratings (an OUT resource counts zero; an OFF
+    # resource counts its reported HSL: commitment state is not an
+    # availability event). data/raw/ercot-thermal-dam-availability.csv,
+    # scripts/derive_ercot_thermal_dam_availability.py. A RESCALE, not a
+    # stacked multiplier: the measured fraction and the statistical WEFOR/EFOR
+    # + outage-window stack estimate the SAME quantity, so the class total is
+    # set to the measured value while the model's own windows remain the
+    # within-class distribution. Motivation (June/Sep-2023 scarcity-formation
+    # forensics, docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md):
+    # the statistical stack ran the gas fleet 13-22 % derated at the
+    # summer-evening reserve margin where the disclosure shows ~97 % of
+    # ratings live — a 2.6-4.1 GW phantom headroom deficit vs measured
+    # RTOLCAP+RTOFFCAP that forced the co-opt's per-product shortfall ladders
+    # to print $417-1,250 into the June/Sep-2023 energy duals on days measured
+    # RTORPA was <= $15 (June-2023 +22 %, Sep-2023 +19 % overshoots). The
+    # measured HSL is a published MW capability quantity, never a price (rule
+    # 13); forecast years keep the statistical stack (the expected-value
+    # forward analogue — the G4 mode-aware seam). Uncovered dates (Oct-2023
+    # publication hole; Nov-Dec 2025 until the 2026 files land) keep the
+    # statistical model. See data.outages.ercot_thermal_dam_availability_series
+    # and the application in data.fleet.generators_to_fleet_arrays.
+    ercot_thermal_dam_availability: bool = False
+
     # NEISO condition-responsive fast-start offer surface — the ISO-NE analogue
     # of ercot_offer_surface_conditional above (winter scarcity charter Limb B;
     # the G-22 §8 heterogeneity-preserving design, default off, NEISO-gated).
