@@ -227,6 +227,22 @@
       color: var(--negative);
     }
 
+    /* v2.x determination vocabulary: CAVEAT / GROUNDED / SKIP */
+    .badge-status.caveat {
+      background: rgba(217, 119, 6, 0.12);
+      color: var(--amber-text);
+    }
+
+    .badge-status.grounded {
+      background: rgba(2, 132, 199, 0.12);
+      color: var(--info);
+    }
+
+    .badge-status.skip {
+      background: rgba(86, 99, 112, 0.10);
+      color: var(--text-muted);
+    }
+
     .badge-status::before {
       content: '';
       display: inline-block;
@@ -234,6 +250,92 @@
       height: 6px;
       border-radius: 50%;
       background: currentColor;
+    }
+
+    /* Tier tags (load-bearing / supporting / protective) */
+    .tier-tag {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
+    }
+
+    .tier-tag.load-bearing { background: rgba(99, 102, 241, 0.12); color: #4F46E5; }
+    .tier-tag.supporting   { background: rgba(14, 165, 233, 0.12); color: var(--hydro-text); }
+    .tier-tag.protective   { background: rgba(38, 166, 154, 0.16); color: #0F766E; }
+
+    /* Determination headline badge */
+    .determination-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      letter-spacing: 0.02em;
+    }
+
+    .determination-badge::before {
+      content: '';
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    .determination-badge.calibrated  { background: rgba(22, 163, 74, 0.12);  color: var(--positive); }
+    .determination-badge.with-caveats { background: rgba(217, 119, 6, 0.12);  color: var(--amber-text); }
+    .determination-badge.not-yet      { background: rgba(220, 38, 38, 0.10);  color: var(--negative); }
+
+    /* Footnote block */
+    .footnote {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      border-top: 1px solid var(--border-light);
+      padding-top: 14px;
+      margin-top: 28px;
+    }
+
+    .footnote-ref {
+      color: var(--hydro-text);
+      font-weight: 700;
+      font-feature-settings: 'sups';
+    }
+
+    /* Ablation delta bar-chart container */
+    .ablation-chart {
+      width: 100%;
+      min-height: 340px;
+      position: relative;
+    }
+
+    /* DOF ledger identification-class pills */
+    .ident-legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin: 20px 0 8px;
+    }
+
+    .ident-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: var(--text-secondary);
+    }
+
+    .ident-pill__dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 3px;
+      flex-shrink: 0;
     }
 
     .calibration-summary {
@@ -597,14 +699,14 @@
             <strong>Why two modes?</strong> Forecast mode answers "what if?"; backcast mode answers "how well does the model reproduce what happened?" Backcasts validate that the model's mechanisms — price formation, commitment, congestion, scarcity — mirror the real market. Only after validation do we trust the forecast.
           </p>
           <p style="margin-bottom: 0;">
-            A run is labeled a <strong>keeper</strong> if it passes calibration checks (generation mix, price duration curve, average price, and capacity factors, each within ±5% of measured). Keepers set the baseline for forward scenarios; probes are diagnostic tools that inform next-run tuning but do not enter the forecast production line.
+            A run is labeled a <strong>keeper</strong> when the C1&ndash;C8 determination rubric grades it structurally sound <em>and</em> it is the most structurally faithful run for its ISO &mdash; not the lowest-error one (the project's structural-fidelity-first rule). Keepers set the baseline for forward scenarios; probes are diagnostic tools that inform next-run tuning but do not enter the forecast production line. The rubric itself is detailed in <a href="#calibration-diagnostics">&sect;&thinsp;Calibration Diagnostics</a> below.
           </p>
         </div>
       </div>
     </section>
 
     <!-- Section 4: Calibration Diagnostics -->
-    <section class="section-light">
+    <section class="section-light" id="calibration-diagnostics">
       <div class="content-section">
         <div class="section-header">
           <div class="section-number">④</div>
@@ -613,179 +715,220 @@
 
         <div class="story-section">
           <p>
-            Every backcast run is validated against four ordered diagnostics (<code>check_generation_mix</code>, <code>check_price_duration_curve</code>, average price, <code>check_cf_band_occupancy</code>). Failure in check #1 usually explains failures in #2–#4, so they're designed to be interpreted top-down. Each metric is graded against a single <code>DEFAULT_TOLERANCE</code> of ±5%, and every comparison is a binary <strong>pass / fail</strong> (a metric with no benchmark supplied is reported <em>skipped</em>) — there is no intermediate "warning" tier. A <code>CalibrationReport</code> passes only when no diagnostic fails.
+            A backcast run is graded by the <strong>v2.x determination rubric</strong> (currently <code>RUBRIC_VERSION&nbsp;2.4</code>) &mdash; a tiered, two-band rubric, not one flat tolerance band applied metric-by-metric. Its most important structural fact is a division of labour across two scripts: <strong>the diagnostic MEASURES, the verdict GATES.</strong>
+          </p>
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><code>legitimacy_diagnostics.py</code> computes the D&#8209;1&hellip;D&#8209;10 legitimacy diagnostics &mdash; the diurnal-shape rows, the per-class forced-share summary, the driver windows &mdash; into the committed bundle artifact <code>legitimacy_diagnostics.json</code>.</li>
+            <li><code>calibration_verdict.py</code> scores the twelve C1&ndash;C8 criterion-years, applies the tiers, tolerances, and caveat budgets, and emits one determination. It is stdlib-only, <strong>reads committed artifacts only, and never re-solves the LP</strong> &mdash; the committed run payload is the model side of every score.</li>
+          </ul>
+          <p style="margin-bottom: 0;">
+            The determination is one of three values, in decreasing order of confidence:
           </p>
         </div>
 
-        <!-- Scorecard summary -->
-        <div class="calibration-summary">
-          <div class="calibration-summary-card">
-            <div class="calibration-summary-card__value">13</div>
-            <div class="calibration-summary-card__label">Pass</div>
+        <!-- Three determinations -->
+        <div style="display: flex; flex-direction: column; gap: 12px; margin: 4px 0 8px;">
+          <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+            <span class="determination-badge calibrated">CALIBRATED</span>
+            <span style="color: var(--text-secondary); font-size: 0.9rem;">Zero caveats of any kind, nothing skipped, no data-blocked target years.</span>
           </div>
-          <div class="calibration-summary-card">
-            <div class="calibration-summary-card__value">1</div>
-            <div class="calibration-summary-card__label">Fail</div>
+          <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+            <span class="determination-badge with-caveats">CALIBRATED-WITH-CAVEATS</span>
+            <span style="color: var(--text-secondary); font-size: 0.9rem;">In-band overall, but with enumerated caveats and/or unscored criteria — each one named in the reasons.</span>
           </div>
-          <div class="calibration-summary-card">
-            <div class="calibration-summary-card__value">±5%</div>
-            <div class="calibration-summary-card__label">Tolerance</div>
-          </div>
-          <div class="calibration-summary-card">
-            <div class="calibration-summary-card__value">93%</div>
-            <div class="calibration-summary-card__label">Pass Rate</div>
+          <div style="display: flex; align-items: baseline; gap: 12px; flex-wrap: wrap;">
+            <span class="determination-badge not-yet">NOT-YET</span>
+            <span style="color: var(--text-secondary); font-size: 0.9rem;">Any FAIL on any tier, or the C6 governance gate not passed, or a caveat budget exceeded.</span>
           </div>
         </div>
 
-        <!-- Scorecard table -->
+        <!-- The eight criteria, three tiers -->
+        <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">The eight criteria, three tiers</h3>
+        <div class="story-section">
+          <p>
+            Twelve scored criterion ids are grouped as C1&ndash;C8, each carrying a <strong>tier</strong>. The tier sets a criterion's tolerance philosophy, not an escape hatch: <strong>a FAIL on <em>any</em> tier forces <code>NOT-YET</code></strong>.
+          </p>
+          <ul style="margin-bottom: 0; padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><span class="tier-tag load-bearing">Load-bearing</span> &nbsp;C1 fuel-mix by class, C2 gas/coal system volume, C3a mean LMP, C3b monthly price shape, C5a CO₂ vs eGRID. These certify the intended uses directly; two-band where a published commercial comparable exists.</li>
+            <li style="margin-bottom: var(--space-sm);"><span class="tier-tag supporting">Supporting</span> &nbsp;C3c scarcity tail, C4 fleet hourly dispatch correlation, C5b/C5c storage throughput &amp; shape. Sub-annual dynamics, scored against a single wide band.</li>
+            <li><span class="tier-tag protective">Protective</span> &nbsp;C6 governance gate, C7 diurnal shape (D&#8209;1), C8 forced-energy share (D&#8209;2). The anti-self-deception gates &mdash; C6 is never caveatable.</li>
+          </ul>
+        </div>
+
+        <!-- Two bands and the caveat budget -->
+        <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">Two bands and the caveat budget</h3>
+        <div class="story-section">
+          <p>
+            Load-bearing criteria with a published commercial comparable are scored against <strong>two bands</strong>: a tight <em>target</em> band (a clean PASS) and a wider <em>commercial</em> band (what a commercial forecaster would accept). Landing between them yields an <strong>auto commercial-band caveat — unbudgeted</strong>, because it sits inside the certification claim by construction. A FAIL becomes a budgeted <code>MEASURED_LIMIT</code> caveat only where an explicit ledger entry documents the <em>actual</em> as the limitation.
+          </p>
+          <p style="margin-bottom: 0;">
+            Budgets are small and asymmetric: <strong>&le;&nbsp;1</strong> protective ledgered caveat (C6 itself is never caveatable) and <strong>&le;&nbsp;3</strong> non-protective ledgered caveats. Exceed either &mdash; or leave any criterion unscored, or fail C6 &mdash; and the run drops to <code>NOT-YET</code>. An unscored criterion is never a silent pass: it caps the determination at <code>CALIBRATED-WITH-CAVEATS</code> and is named in the reasons.
+          </p>
+        </div>
+
+        <div class="insight-box info">
+          <strong>Note — C3a/C3b are single-band in effect.</strong> Since v2.3 the price target bands coincide with the commercial bands (&plusmn;10% on the load-weighted mean LMP, 0.20 monthly NRMSE), so there is <strong>no live commercial-band caveat range on the two price criteria</strong>: inside the band is a clean PASS, outside is a FAIL (ledgerable only as a measured-input limitation). Don't read a price-caveat range into the rubric that no longer exists.
+        </div>
+
+        <!-- The forced-energy budget -->
+        <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">The forced-energy budget (C8)</h3>
+        <div class="story-section">
+          <p>
+            Floors are commitment scaffolding, not the dispatch model &mdash; so C8 caps the share of a class's energy that may clear at binding floors: <strong>&lt;&nbsp;15% for peakers, &lt;&nbsp;30% for merchant classes</strong>, gated only for classes &ge; 2% of ISO load (smaller classes are reported by the diagnostics but never gated).
+          </p>
+          <p style="margin-bottom: 0;">
+            A <em>material</em> class <strong>above</strong> its cap is not an automatic FAIL. It escalates to a <strong>grounded-above-budget</strong> conditional pass requiring <strong>both</strong>: <strong>(a) provenance</strong> &mdash; every binding non-exempt mechanism clears its <strong>D&#8209;4 driver window</strong> (a mechanism with no declared window fails by definition), and <strong>(b) shape</strong> &mdash; the class clears its <strong>D&#8209;1 diurnal</strong> profile gates. Both clear → a clean PASS surfaced as a <em>report note</em> (the high forcing stays visible and auditable, counting against no budget); either fails → FAIL, the "forcing variables are wrong" signal.
+          </p>
+        </div>
+
+        <!-- Delegate to the full rubric page -->
+        <a href="calibration-rubric.html" class="dashboard-link-box">
+          <div class="dashboard-link-box__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 11l3 3L22 4"></path>
+              <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+            </svg>
+          </div>
+          <div class="dashboard-link-box__content">
+            <div class="dashboard-link-box__title">The full determination rubric</div>
+            <p class="dashboard-link-box__desc">Every threshold, the scorer-vs-diagnostic split, the D&#8209;4 driver-window registry, the v1→v2.4 version history, and the frontier-achieved designation live on the <strong>Calibration Rubric</strong> page.</p>
+          </div>
+          <div class="dashboard-link-box__arrow">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="9 18 15 12 9 6"></polyline>
+            </svg>
+          </div>
+        </a>
+
+        <!-- Worked scorecard intro -->
+        <h3 style="margin-top: 32px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">A worked scorecard</h3>
+        <div class="story-section">
+          <p style="margin-bottom: 0;">
+            One illustrative ISO-year, scored end-to-end under v2.4. The status column uses the full determination vocabulary &mdash; <span class="badge-status pass">Pass</span> <span class="badge-status caveat">Caveat</span> <span class="badge-status grounded">Grounded</span> <span class="badge-status skip">Skip</span> &mdash; and the tier column colour-codes load-bearing / supporting / protective. Real keepers score all three bundle years (2023&ndash;2025) together; this single-year excerpt is for illustration only.
+          </p>
+        </div>
+
+        <!-- Determination headline + summary counts (rendered from data/rubric-scorecard-v2.json) -->
+        <div id="rubric-determination" style="margin: 20px 0;"></div>
+        <div class="calibration-summary" id="rubric-summary"></div>
+
+        <!-- Scorecard table (rendered from data/rubric-scorecard-v2.json) -->
         <div class="calibration-table-wrapper">
           <table class="calibration-table">
             <thead>
               <tr>
-                <th>Category</th>
-                <th>Metric</th>
+                <th>Crit</th>
+                <th>Criterion</th>
+                <th>Tier</th>
                 <th>Actual</th>
                 <th>Modeled</th>
-                <th>Error</th>
+                <th>Threshold</th>
                 <th>Status</th>
               </tr>
             </thead>
-            <tbody>
-              <!-- Generation Mix -->
-              <tr>
-                <td>Generation</td>
-                <td>Nuclear (TWh)</td>
-                <td>43.6</td>
-                <td>43.8</td>
-                <td>+0.5%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>Coal (TWh)</td>
-                <td>67.2</td>
-                <td>68.5</td>
-                <td>+1.9%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>Gas-CC (TWh)</td>
-                <td>115.8</td>
-                <td>114.2</td>
-                <td>−1.4%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>Gas-CT (TWh)</td>
-                <td>18.5</td>
-                <td>17.9</td>
-                <td>−3.2%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>Wind (TWh)</td>
-                <td>127.5</td>
-                <td>128.1</td>
-                <td>+0.5%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>Solar (TWh)</td>
-                <td>56.8</td>
-                <td>55.2</td>
-                <td>−2.8%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <!-- Price Duration -->
-              <tr>
-                <td>Prices</td>
-                <td>Mean LMP ($/MWh)</td>
-                <td>41.8</td>
-                <td>42.5</td>
-                <td>+1.7%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>P10 LMP ($/MWh)</td>
-                <td>18.5</td>
-                <td>22.3</td>
-                <td>+20.5%</td>
-                <td><span class="badge-status fail">Fail</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>P50 LMP ($/MWh)</td>
-                <td>35.2</td>
-                <td>36.1</td>
-                <td>+2.6%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>P90 LMP ($/MWh)</td>
-                <td>78.5</td>
-                <td>75.3</td>
-                <td>−4.1%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <!-- Capacity Factors -->
-              <tr>
-                <td>Capacity Factors</td>
-                <td>Coal CF</td>
-                <td>0.540</td>
-                <td>0.557</td>
-                <td>+3.1%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>Gas-CC CF</td>
-                <td>0.472</td>
-                <td>0.462</td>
-                <td>−2.1%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>Wind CF</td>
-                <td>0.430</td>
-                <td>0.432</td>
-                <td>+0.5%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
-              <tr>
-                <td></td>
-                <td>Solar CF</td>
-                <td>0.285</td>
-                <td>0.278</td>
-                <td>−2.4%</td>
-                <td><span class="badge-status pass">Pass</span></td>
-              </tr>
+            <tbody id="rubric-tbody">
+              <tr><td colspan="7" style="text-align:center; color: var(--text-muted); padding: 24px;">Loading scorecard&hellip;</td></tr>
             </tbody>
           </table>
         </div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: <code>data/rubric-scorecard-v2.json</code> (illustrative, <code>_meta.illustrative:&nbsp;true</code>); thresholds mirror <code>scripts/calibration_verdict.py</code> (<code>RUBRIC_VERSION&nbsp;2.4</code>, the <code>CRITERIA</code> map). The full interactive table lives on <a href="calibration-rubric.html">Calibration Rubric</a>.</p>
 
-        <div class="story-section">
+        <div class="story-section" style="margin-top: 24px;">
           <p>
-            <strong>Interpretation:</strong> This example keeper run passes 13 of 14 metrics (93%) within the ±5% band; the single failure is the P10 price overshoot (+20.5%). The near-misses that sit just inside tolerance (gas-CT and solar generation, coal CF) and that one failure all trace to the same root cause: the coal must-run tranche offer curve is priced too low, forcing the model to run coal plants beyond their actual dispatch. The fix is structural (adjust the coal sigmoid steepness parameter in the next run), not a tuning tweak.
+            <strong>Reading it:</strong> the run lands at <code>CALIBRATED-WITH-CAVEATS</code>. C6 governance passes and no criterion FAILs, so the run is admissible. One ledgered caveat (C3c under-forms the scarcity tail) sits inside the &le;&nbsp;3 budget; one unbudgeted commercial-band caveat (C2, which a complete EIA-923 vintage would defer to C1); one skip (C5c &mdash; too flat a seasonal storage shape to correlate); and one grounded note (C8's CT-peaker forcing clears both its D&#8209;4 window and its D&#8209;1 shape, so its 18.2% &gt; 15% cap is a clean pass, not a fail).
           </p>
           <p style="margin-bottom: 0;">
-            Note the distinction: <code>CalibrationReport.passed</code> is strict — it is true only when <em>no</em> diagnostic fails. The <strong>keeper</strong> decision is a separate, human judgment that can certify a structurally-sound run even with a failing diagnostic, provided the failure is traceable to a tunable parameter rather than a missing mechanism (per the project's structural-fidelity-first rule). The moment a run is marked keeper, its bundle and metadata are registered on the calibration dashboard and committed to the repository.
+            <strong>Determination &ne; keeper.</strong> The determination is machine-scored; the <strong>keeper</strong> decision is the human judgment layered on top. A keeper is the <em>most structurally faithful</em> run for its ISO &mdash; never the lowest-error one. A more-accurate run that is missing real market structure is <em>not</em> a keeper (CLAUDE.md rule 1). The moment a run is marked keeper, its bundle and metadata are registered on the calibration dashboard and committed to the repository.
           </p>
         </div>
       </div>
     </section>
 
-    <!-- Section 5: The Dashboard -->
-    <section class="section-light">
+    <!-- Section 5: Ablation Twins & the DOF Ledger -->
+    <section class="section-light" id="ablation-dof">
       <div class="content-section">
         <div class="section-header">
           <div class="section-number">⑤</div>
+          <h2>Ablation Twins &amp; the DOF Ledger</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The rubric proves a run <em>matches</em> the market. Two further keeper obligations prove the match wasn't <em>bought</em> — that the model earns its fit with real mechanisms, not free parameters tuned to the residual. Both are required of every keeper under <strong>CLAUDE.md rule&nbsp;21</strong> ("Every keeper carries a DOF ledger and an ablation twin")<a href="#fn-rule21" class="footnote-ref" id="fnref-rule21"><sup>1</sup></a>: the <strong>zero-forcing ablation twin</strong> quantifies what the floors do, and the <strong>DOF ledger</strong> enumerates every free parameter and how it was identified.
+          </p>
+        </div>
+
+        <!-- The ablation twin -->
+        <h3 style="margin-top: 28px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">The zero-forcing ablation twin</h3>
+        <div class="story-section">
+          <p>
+            An <strong>ablation twin</strong> is a re-solve of a keeper's <em>exact</em> config with <strong>every merchant floor, bridge, drag, and availability-haircut turned off</strong> — keeping only the structural must-run set (nuclear must-run, CHP steam-following, coal take-or-pay) and the firm-import boundary. It is produced by the config transform <code>ScenarioConfig.as_zero_forcing_ablation(cfg)</code>, applied <em>after</em> all per-ISO defaults and overrides so that config-level defaults (e.g. CAISO's net-load drag or RA must-offer) are forced off regardless of how they were set.
+          </p>
+          <p>
+            Crucially, the off-list is <strong>derived, not hand-maintained</strong>: it is the union of every entry in the D&#8209;2 mechanism registry (<code>floor_mechanisms.zero_forcing_field_overrides()</code>) plus the WEFOR availability haircuts. A companion assertion, <code>assert_ablation_coverage()</code>, <strong>raises if any mechanism id is neither explicitly KEPT nor ablated</strong> — so a newly added merchant floor is <em>ablated by default</em> and cannot silently escape the twin.
+          </p>
+          <p style="margin-bottom: 0;">
+            The <strong>keeper-vs-twin per-class energy delta is what each floor buys.</strong> A delta explainable only as "the floor buys the residual" is an open root-cause item, not a calibrated parameter (rule&nbsp;1). In the illustrative twin below, the structural classes (nuclear, coal take-or-pay) barely move; the merchant-floored classes (steam gas, CT peakers) carry real floor-bought energy; and the flexible margin (gas-CC) absorbs the offset with a negative delta — floors mostly <em>reallocate</em> energy between classes rather than add it.
+          </p>
+        </div>
+
+        <!-- Ablation delta bar chart -->
+        <div class="fig">
+          <div class="fig__body ablation-chart" id="ablation-delta-container" style="min-height: 360px;"></div>
+          <div class="fig__caption">
+            <strong>Figure V27:</strong> Per-class annual energy, keeper minus zero-forcing ablation twin (illustrative). Bars to the right are energy the class's merchant floors <em>buy</em>; the bar to the left is the flexible gas-CC margin <em>absorbing</em> the reallocation; near-zero bars are structural must-run kept in the twin. Hover for the keeper vs. twin split. Real deltas are read off the registered twin bundle, not this example.
+          </div>
+        </div>
+
+        <div class="story-section">
+          <p style="margin-bottom: 0;">
+            <strong>Production &amp; linkage.</strong> <code>run_calibration_full.py --zero-forcing-ablation</code> solves the twin over the keeper's full year span; the bundle lands with an <code>-ablation</code> suffix and records <code>ablation_of&nbsp;=&nbsp;&lt;base bundle&gt;</code> in its <code>run_config.json</code>. The twin is registered as an ordinary dashboard run. Linkage back to the keeper is <strong>manual</strong>: the keeper's registry sidecar carries an <code>ablation_twin</code> field naming the twin — <code>dashboard_add_run.py</code> does not auto-wire it.
+          </p>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 0.5rem;">Source: <code>config/scenarios.py</code> (<code>as_zero_forcing_ablation</code>); <code>data/floor_mechanisms.py</code> (<code>MECH_ABLATION_KEPT</code>, <code>zero_forcing_field_overrides</code>, <code>assert_ablation_coverage</code>); <code>scripts/run_calibration_full.py</code> (<code>--zero-forcing-ablation</code>, <code>ablation_of</code>). Chart data: <code>data/ablation-delta.json</code> (illustrative).</p>
+
+        <!-- The DOF ledger -->
+        <h3 style="margin-top: 32px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">The DOF ledger</h3>
+        <div class="story-section">
+          <p>
+            The <strong>degrees-of-freedom (DOF) ledger</strong> is the <code>free_parameters</code> block written into a bundle's <code>calibration_attestation.json</code> (schema <code>dof-ledger/v1</code>): an explicit enumeration of every free parameter the run depends on, each with an entry of the form <code>{ name, where, identification, lineage_solves, value?, source?, root_cause? }</code>, built by <code>scripts/build_dof_ledger.py</code>. The load-bearing field is <strong><code>identification</code></strong> — <em>how</em> the parameter's value was pinned down:
+          </p>
+          <div class="ident-legend">
+            <span class="ident-pill"><span class="ident-pill__dot" style="background: var(--info);"></span><code>published</code> — a published market/physical quantity</span>
+            <span class="ident-pill"><span class="ident-pill__dot" style="background: var(--positive);"></span><code>measured-physical</code> — a frozen derive script over measured data (rule&nbsp;23)</span>
+            <span class="ident-pill"><span class="ident-pill__dot" style="background: var(--warning);"></span><code>residual</code> — moved a backcast residual (only inside the rule&nbsp;1 offer-curve scope)</span>
+          </div>
+          <p style="margin-bottom: 0;">
+            The discipline lives on the last class: <strong>a <code>residual</code> entry must carry a non-empty <code>root_cause</code></strong> — the builder raises a <code>ValueError</code> otherwise. A residual that can only be closed by a tuned value is an <em>open root-cause issue</em>, not a parameter. The ledger makes every such open issue visible and countable rather than buried in an input.
+          </p>
+        </div>
+
+        <!-- Enforcement -->
+        <h3 style="margin-top: 32px; margin-bottom: 16px; font-size: 1.05rem; font-weight: 600; color: var(--navy);">Enforcement — <code>audit_keepers</code> E8 &amp; E9</h3>
+        <div class="story-section">
+          <p style="margin-bottom: 0;">
+            Neither obligation is honour-system: both are checked by <code>scripts/audit_keepers.py</code>, which the CI <code>quarantine-gates</code> job runs on every registered bundle.
+          </p>
+          <ul style="margin-bottom: 0; padding-left: var(--space-xl); margin-top: var(--space-md);">
+            <li style="margin-bottom: var(--space-sm);"><strong>E8 (DOF ledger)</strong> — FAILs a keeper whose attestation has no <code>free_parameters</code> section, or that has a <code>residual</code> entry lacking a root cause. Unconditional; every keeper carried a ledger when it landed.</li>
+            <li><strong>E9 (ablation twin)</strong> — FAILs a keeper without a resolvable <code>ablation_twin</code> sidecar link; a <em>declared-but-broken</em> link FAILs regardless of any grace. The rollout grandfather list was designed to self-empty as keepers were re-registered with twins, and today all current keepers carry registered twins.</li>
+          </ul>
+        </div>
+
+        <!-- Footnote -->
+        <div class="footnote" id="fn-rule21">
+          <p style="margin: 0;">
+            <span class="footnote-ref">1.</span>&nbsp; <strong>A note on rule numbering.</strong> The code comments for both features cite <strong>"CLAUDE.md rule 20"</strong>, but the obligation is <strong>rule&nbsp;21</strong> in the current CLAUDE.md ("Every keeper carries a DOF ledger and an ablation twin"; rule&nbsp;20 there is a different rule, "Forced energy is budgeted"). The gap is a documented renumbering offset, not a contradiction: the protective rules were numbered 16&ndash;25 in the legitimacy audit's §8, then CLAUDE.md later inserted rule&nbsp;16 (all-years-one-bundle), shifting them to 17&ndash;26 — so <em>audit rule 20 = CLAUDE.md rule 21</em>. Both labels point at the same obligation; the code comments simply predate the shift and should not be "fixed" against it. <a href="#fnref-rule21" class="footnote-ref">↩</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 6: The Dashboard -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑥</div>
           <h2>The Calibration Dashboard</h2>
         </div>
 
@@ -798,13 +941,13 @@
           </p>
           <ol style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
             <li style="margin-bottom: var(--space-sm);"><strong>Solver finishes.</strong> A Parquet file lands in <code>results/{iso}/{cache_key}/</code>.</li>
-            <li style="margin-bottom: var(--space-sm);"><strong>Calibration checks run.</strong> The four diagnostics are computed; a <code>CalibrationReport</code> is generated.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>Run is scored.</strong> The C1&ndash;C8 determination rubric scores the committed artifacts (see <a href="#calibration-diagnostics">&sect;&thinsp;Calibration Diagnostics</a>) and emits one determination &mdash; <code>legitimacy_diagnostics.py</code> writes the D-rows, <code>calibration_verdict.py</code> reads and gates them.</li>
             <li style="margin-bottom: var(--space-sm);"><strong>Dashboard registration.</strong> Use the <code>calibration-report</code> skill (or run <code>scripts/dashboard_add_run.py</code>) to commit the run's metadata to <code>frontend/data/backcast/registry/{run_id}.json</code> and the run script to <code>runs/{run_id}.js</code>.</li>
             <li><strong>Push to origin.</strong> The Parquet bundle, sidecar, and run manifest are committed. The GitHub Pages deploy auto-builds the dashboard HTML from the manifest.</li>
           </ol>
 
           <p>
-            <strong>Keeper vs. probe:</strong> A <strong>keeper</strong> is a run passing calibration checks and deemed structurally sound. It becomes the baseline for the next forecast year. A <strong>probe</strong> is a diagnostic run isolating a single-year effect or tuning option; it is never used in production and is pruned from the dashboard after its insights are extracted.
+            <strong>Keeper vs. probe:</strong> A <strong>keeper</strong> grades in-band under the rubric and is judged the most structurally faithful run for its ISO (never the lowest-error one). It becomes the baseline for the next forecast year. A <strong>probe</strong> is a diagnostic run isolating a single-year effect or tuning option; it is never used in production and is pruned from the dashboard after its insights are extracted.
           </p>
 
           <p>
@@ -833,8 +976,11 @@
         </a>
 
         <div class="story-section" style="margin-top: 24px;">
+          <p>
+            The dashboard is the source of truth for calibration status. When reviewing a run, always check the dashboard entry for the keeper decision, action items, and confidence level. The prose notes in the dashboard (linked from each run's metadata) explain the root causes of any caveats or failures and suggest the next tuning step.
+          </p>
           <p style="margin-bottom: 0;">
-            The dashboard is the source of truth for calibration status. When reviewing a run, always check the dashboard entry for the keeper decision, action items, and confidence level. The prose notes in the dashboard (linked from each run's metadata) explain the root causes of any warnings or failures and suggest the next tuning step.
+            <strong>Narrative companions.</strong> Two sibling pages go deeper than this overview. <a href="calibration-rubric.html">Calibration Rubric</a> is the full C1&ndash;C8 determination rubric &mdash; every threshold, the scorer-vs-diagnostic split, the D-4 driver windows, the version history, and the frontier-achieved designation (rendered live on <a href="calibration-status.html">Calibration Status</a>). <a href="model-validity.html">Model Validity</a> covers how the model earns trust out-of-sample: the three-tier train / validation / locked-test holdout program and its quarantine gates.
           </p>
         </div>
       </div>
@@ -924,5 +1070,97 @@
       });
     })();
   </script>
+
+  <!-- Rubric scorecard renderer — reads data/rubric-scorecard-v2.json (the single scorecard source) -->
+  <script>
+    (function () {
+      'use strict';
+
+      // Map the v2.x determination vocabulary to CSS badge/tier classes.
+      const STATUS_CLASS = { PASS: 'pass', CAVEAT: 'caveat', GROUNDED: 'grounded', SKIP: 'skip', FAIL: 'fail' };
+      const STATUS_LABEL = { PASS: 'Pass', CAVEAT: 'Caveat', GROUNDED: 'Grounded', SKIP: 'Skip', FAIL: 'Fail' };
+      const TIER_CLASS   = { 'load-bearing': 'load-bearing', 'supporting': 'supporting', 'protective': 'protective' };
+      const DET_CLASS    = { 'CALIBRATED': 'calibrated', 'CALIBRATED-WITH-CAVEATS': 'with-caveats', 'NOT-YET': 'not-yet' };
+
+      function esc(s) {
+        const d = document.createElement('div');
+        d.textContent = (s === null || s === undefined) ? '' : String(s);
+        return d.innerHTML;
+      }
+      function fmtVal(v) { return (v === null || v === undefined) ? '&mdash;' : esc(v); }
+
+      async function render() {
+        const tbody = document.getElementById('rubric-tbody');
+        if (!tbody) return;
+
+        let data;
+        try {
+          const res = await fetch('data/rubric-scorecard-v2.json');
+          if (!res.ok) throw new Error('HTTP ' + res.status);
+          data = await res.json();
+        } catch (err) {
+          console.error('Failed to load rubric-scorecard-v2 data:', err);
+          tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--text-muted);padding:24px;">Unable to load scorecard data.</td></tr>';
+          return;
+        }
+
+        const rows = data.rows || [];
+
+        // Table
+        tbody.innerHTML = rows.map(r => {
+          const sc = STATUS_CLASS[r.status] || 'skip';
+          const sl = STATUS_LABEL[r.status] || esc(r.status);
+          const tc = TIER_CLASS[r.tier] || '';
+          return '<tr>' +
+            '<td>' + esc(r.crit) + '</td>' +
+            '<td>' + esc(r.name) + '</td>' +
+            '<td><span class="tier-tag ' + tc + '">' + esc(r.tier) + '</span></td>' +
+            '<td>' + fmtVal(r.actual) + '</td>' +
+            '<td>' + fmtVal(r.modeled) + '</td>' +
+            '<td style="font-size:0.78rem;color:var(--text-muted);">' + esc(r.threshold) + '</td>' +
+            '<td><span class="badge-status ' + sc + '">' + sl + '</span></td>' +
+          '</tr>';
+        }).join('');
+
+        // Determination headline
+        const det = data.determination || {};
+        const detEl = document.getElementById('rubric-determination');
+        if (detEl && det.verdict) {
+          const dc = DET_CLASS[det.verdict] || 'with-caveats';
+          detEl.innerHTML =
+            '<span class="determination-badge ' + dc + '">' + esc(det.verdict) + '</span>' +
+            (det.note ? ' <span style="color:var(--text-muted);font-size:0.85rem;margin-left:10px;">' + esc(det.note) + '</span>' : '');
+        }
+
+        // Summary counts by status (drives the card row)
+        const counts = { PASS: 0, GROUNDED: 0, CAVEAT: 0, SKIP: 0, FAIL: 0 };
+        rows.forEach(r => { if (counts[r.status] !== undefined) counts[r.status]++; });
+        const cards = [
+          { value: counts.PASS,     label: 'Pass' },
+          { value: counts.GROUNDED, label: 'Grounded note' },
+          { value: counts.CAVEAT,   label: 'Caveat' },
+          { value: counts.SKIP,     label: 'Skip' },
+        ];
+        if (counts.FAIL > 0) cards.push({ value: counts.FAIL, label: 'Fail' });
+        const sumEl = document.getElementById('rubric-summary');
+        if (sumEl) {
+          sumEl.innerHTML = cards.map(c =>
+            '<div class="calibration-summary-card">' +
+              '<div class="calibration-summary-card__value">' + c.value + '</div>' +
+              '<div class="calibration-summary-card__label">' + c.label + '</div>' +
+            '</div>').join('');
+        }
+      }
+
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', render);
+      } else {
+        render();
+      }
+    })();
+  </script>
+
+  <!-- Ablation twin per-class delta bar chart -->
+  <script type="module" src="js/viz-ablation-delta.js"></script>
 </body>
 </html>
