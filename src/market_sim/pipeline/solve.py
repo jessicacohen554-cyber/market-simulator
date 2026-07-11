@@ -91,6 +91,7 @@ def run_energy_solve(
     p1_fleet_prep=None,
     p1_kwargs_prep=None,
     mc_bid_adjust: Optional[np.ndarray] = None,
+    startup_run_ratio_t: Optional[np.ndarray] = None,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
 
@@ -120,6 +121,12 @@ def run_energy_solve(
             P0 dispatch. Changing the P1 bounds precludes the warm-start basis
             reuse, so that year's P1 is a cold solve; every other path (hook
             ``None`` or returning ``None``) is byte-identical, warm start included.
+        startup_run_ratio_t: Optional ``(T,)`` condition-keyed amortization
+            horizon ratio (``tranche_startup_conditional_runs`` v4), passed
+            through to ``compute_monthly_markup`` — the fast-start measured
+            run ceiling scales per hour by the hour's net-load-percentile
+            band ratio. ``None`` (every flag-off / non-artifact path) keeps
+            the v3 markup byte-identical.
         p1_kwargs_prep: Optional callable ``(r0, p1_fleet_arrays) ->
             Optional[dict]`` invoked after ``p1_fleet_prep`` resolves. A returned
             dict is merged over ``dispatch_kwargs`` for the P1 solve only — the
@@ -154,6 +161,7 @@ def run_energy_solve(
         gas_st_startup_cost=getattr(config, "gas_st_startup_cost", False),
         chp_startup_covered=getattr(config, "chp_startup_covered", False),
         coal_warm_committed=getattr(config, "coal_warm_committed", False),
+        run_ratio_t=startup_run_ratio_t,
     )
     mc_bid = mc_base + markup
     # P1-only bid adjustment (ERCOT condition-responsive offer surface): an additive
