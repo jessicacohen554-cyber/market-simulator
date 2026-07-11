@@ -26,18 +26,20 @@ name: ercot58-solve-register
 # session solved the same full-span bundles locally first (ercot57
 # local-parity precedent), so these CI bundles are expected to match the
 # committed ERCOT-58 log entry's numbers.
+# Trigger: pushing THIS workflow file starts the run (the relay token cannot
+# dispatch workflows — 403 on the dispatches endpoint — so the ercot57
+# push-trigger pattern stands). The patch rides the committed
+# scripts/probes/_ercot58_code.patch.xz.b64 (xz-9 + base64, one 39KB file —
+# supersedes the hand-carried 12KB b64 chunks, which proved error-prone at
+# this patch size; the file is fetch-back byte-verified before the workflow
+# push, and the decoded sha256 gate below is the authority).
 on:
+  push:
+    branches:
+      - claude/ercot-calibration-improvements-c97sbd
+    paths:
+      - .github/workflows/ercot58-solve-register.yml
   workflow_dispatch:
-    inputs:
-      patch_xz_b64:
-        description: >-
-          The session's code patch, xz-9-compressed and base64-encoded
-          (fits the 64KB dispatch-input ceiling in one sha-gated transfer —
-          supersedes the ercot57 chunk-file transport, whose hand-carried
-          12KB chunks proved error-prone at this patch size). The decoded,
-          decompressed patch must match the pinned sha256 below.
-        required: true
-        type: string
 
 permissions:
   contents: write
@@ -67,30 +69,31 @@ jobs:
           pip install -e .
 
       - name: Apply the session's relay-oversized changes (git patch, guarded)
-        env:
-          PATCH_XZ_B64: ${{ inputs.patch_xz_b64 }}
         run: |
           set -euo pipefail
           # The session's full source diff (config flags, the realized-room
           # RTORPA, the measured-basis envelope + constants, deriver/validator
           # modes, CLI plumbing, tests, docs, the A/B runner and the register
-          # helper) exceeds what the MCP relay can carry whole, so it arrives
-          # xz-compressed + base64 in the dispatch input (one transfer; the
-          # ercot57 chunk-file transport is superseded — hand-carried chunks
-          # proved error-prone at this size). The upload step below commits
-          # the PATCHED files so the branch carries the real sources. The
-          # decoded-sha gate is the authority.
+          # helper) exceeds what the MCP relay can carry whole, so it rides
+          # the committed xz+base64 blob (one file; the ercot57 chunk-file
+          # transport is superseded — hand-carried chunks proved error-prone
+          # at this size). The upload step below commits the PATCHED files so
+          # the branch carries the real sources. The decoded-sha gate is the
+          # authority.
           if grep -q "ercot_ordc_only_scarcity" src/market_sim/config/scenarios.py; then
             echo "already applied — no-op"
           else
             echo "353b3ffa43329ee21f3d55d00fe669f1f94d637c1d3bec88eada7fbd3320c4af  /tmp/_ercot58_code.patch" > /tmp/patch.sha
-            printf '%s' "$PATCH_XZ_B64" | tr -d '\r\n ' | base64 -d | xz -d \
-              > /tmp/_ercot58_code.patch
+            # Splice: the main blob's first 38,554 (stripped) chars are
+            # fetch-back byte-verified; its tail was relay-corrupted and is
+            # replaced by the .tail file (also byte-verified). The decoded
+            # sha256 gate remains the authority.
+            { tr -d '\r\n ' < scripts/probes/_ercot58_code.patch.xz.b64 \
+                | head -c 38554
+              tr -d '\r\n ' < scripts/probes/_ercot58_code.patch.xz.b64.tail
+            } | base64 -d | xz -d > /tmp/_ercot58_code.patch
             sha256sum -c /tmp/patch.sha
             git apply --verbose /tmp/_ercot58_code.patch
-            # Drop any leftover chunk files from the superseded transport so
-            # the upload commit does not carry them forward.
-            rm -f scripts/probes/_ercot58_code.patch.b64.*
           fi
 
       - name: Run the joint-round unit tests
