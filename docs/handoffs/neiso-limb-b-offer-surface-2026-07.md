@@ -1,8 +1,10 @@
 # NEISO condition-responsive fast-start offer surface — design note (2026-07-10)
 
-**Branch:** `claude/neiso-winter-scarcity-charter-ac3pzu` (winter scarcity charter Limb B)
-**Status:** BUILT, default-off; surface derive pending the full 2023–2025 offer
-download; A/B (`neiso-58`) not yet solved.
+**Branch:** `claude/neiso-winter-scarcity-charter-ac3pzu` (winter scarcity charter Limb B);
+A/B executed 2026-07-11 on `claude/neiso-calibration-improvements-rz9oqy`.
+**Status:** EXECUTED 2026-07-11 — surface derived, `neiso-58` A/B + twin solved
+full-span and registered. **DORMANT; charter gates not met; keeper stays
+neiso-56.** See §5.
 **Reads first:** `docs/handoffs/ercot-g22-offer-surface-2026-07.md` (§5 the
 honesty gate this note instantiates; §8 why the flat variant was REJECTED and
 what the heterogeneity-preserving successor must do), the 2026-07-10
@@ -91,6 +93,47 @@ retro-justify a parameter:
    2023/2024 within |Δ| ≤ 10 h of DA 5 h; C5b 2025 ≥ 1.456 TWh ±30%; no
    C3a/C3b/C1 regression; C8 holds). Keeper promotion is the owner's call.
 
-## 5. Result
+## 5. Result (2026-07-11 — the A/B ran; DORMANT)
 
-(To be filled by the A/B — see the calibration-log 2026-07-10 entries.)
+Registered: `2026-07-11-neiso-58-offer-surface` (bundle
+`results/calibration/neiso58_offer_surface`) + zero-forcing twin
+`2026-07-11-neiso-58-offsurf-ablation`, full-span 2023–2025, the §4-clause-8
+recipe exactly (neiso-56 keeper meta + Limb A dynamic requirements + the
+surface). Probe runner `scripts/probes/_neiso_offer_surface_ab.py` (the
+neiso-57 meta-rebuild pattern). Two execution notes: the P1 seam had a latent
+`NameError` — `run_calibration.py` called
+`build_neiso_offer_surface_conditional_markup` without importing it (fixed,
+import-only); and the Limb A clean series + NEISO binned-fleet cache are
+gitignored ephemera that had to be regenerated in the fresh container
+(committed fetch/curate scripts reproduced them exactly).
+
+**The derived surface** (1,058/1,096 train days published — the 38 missing
+days are scattered month-ends the endpoint 504s on, documented in provenance;
+all 9 tail-event days verified): body p50 4.318× HR; per-bin top rungs
+10.7–18.7× HR (≈ $310–550 at prevailing gas). The wall is real and present in
+EVERY net-load bin — ISO-NE's fast-start fleet offers its top-of-curve far
+out of the money unconditionally, not only in anticipated-tight hours.
+
+**Effect: none on the scored pass.** The markup engages (40 CT_PEAKER
+peak-rung rows repriced; tightest bin binds 263 h/yr) but the repriced rungs
+never become price-setting: C3c unchanged every year (2025 model 1h vs DA
+12h — the 1h is Limb A's RCPF reserve-short hour, max $397); C5b unchanged
+(0.827 TWh); CT_PEAKER volume-neutral (|Δ| ≤ 0.0011 TWh/yr); monthly LMP Δ vs
+the surface-off neiso-57 arm ≈ $0.00 (max +$2.45, Nov-2024). Honesty-gate
+clauses 4 (volume-neutrality), 5 (no broad elevation), 6 (no new floor) PASS;
+charter gates (C3c-2025 ∈ [6,24] h, C5b-2025 ≥ 1.456 TWh) NOT met. Verdict:
+CALIBRATED-WITH-CAVEATS with the identical caveat set as the keeper.
+
+**The §3 scope clause fired — this is the finding, not a tuning target:** in
+the 11 missed 2025 DA>$300 hours the model clears $256–272 (Jun 24 ±2h,
+Jul 29 — the dual-fuel oil-parity cap region) or $82 (Jul 16 — the model is
+not tight at all that evening). The real market's tail forms while the model
+still carries several GW of cheaper non-fast-start headroom (CC, imports,
+oil-parity dual-fuel), so no repricing of the fast-start band can reach it.
+Per clause 3 the ladder does not move. Any further C3c work needs a NEW
+measured identification on the resources that actually sit at the model's
+tight-hour margin (dual-fuel/oil-parity offers, import offer formation, DA
+load/virtual bids) — each its own charter; none is authorized by this one.
+Both ledgered caveats (C3c, C5b) remain honest MODEL MISS entries; with both
+charter limbs now executed (A engages 1/12; B dormant), the admissible-
+mechanism inventory for this family is exhausted on record.
