@@ -1,0 +1,80 @@
+# Canonical schema: storage ancillary-service awards by resource class
+#
+# The measured MW of ancillary services AWARDED to the storage fleet — the
+# resource-type-resolved counterpart of `ancillary-services` (which carries the
+# system requirement / total procurement, not who holds it). Storage carries a
+# large and growing share of AS in every ISO with a battery fleet; the awarded
+# MW is capacity committed to reserves that cannot simultaneously offer energy
+# arbitrage, so it is the measured input for storage AS power-reservation
+# mechanisms (CLAUDE.md rule 13's own worked example: a measured
+# ancillary-service power reservation).
+#
+# Source layouts reconciled (tidy long absorbs the per-ISO divergence):
+#   CAISO : Daily Energy Storage Report quarterly xlsx (`market_output` sheet,
+#           TRADE_DATE/HOUR/INTERVAL/MARKET/RES_TYPE/TYPE/VALUE): system-level
+#           battery (LESR) and hybrid (HYBD) awards by product RU/RD/SR/NR,
+#           hourly IFM + RUC, 15-min RTPD, 5-min RTD. EN/SOC rows (energy
+#           schedule, state of charge) are NOT awards and are excluded here.
+#   ERCOT : 60-Day DAM disclosure per-resource-type AS series (the legacy
+#           pre-contract intake at data/raw/ercot-AS/*_as_by_restype_hourly
+#           .parquet remains in place; migration to this schema is additive).
+#
+# Product vocabulary is the same reconciled taxonomy as `ancillary-services`:
+#   reg_up, reg_down, spin, nonspin (CAISO RU/RD/SR/NR map 1:1).
+# resource_class vocabulary: `battery` (CAISO LESR: standalone + co-located
+# storage), `hybrid` (CAISO HYBD: co-optimized hybrid resources).
+#
+# Sub-hourly source intervals (RTPD/RTD) are averaged to the hourly mean MW on
+# the way in, so every market run shares one hourly grain.
+datatype: storage-as-awards
+schema_version: 1
+title: Storage ancillary-service awards
+description: >-
+  Hourly-mean ancillary-service award MW held by the storage fleet, by ISO,
+  resource class, market run and product, on the reconciled common product
+  taxonomy. A measured market outcome usable as a reproducible physical/market
+  input (capacity reserved for AS cannot also arbitrage energy).
+
+key_columns: [iso, resource_class, market, product, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: tz-aware UTC start of the hour.
+  - name: interval_start_local
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Prevailing local wall-clock hour start (informational).
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO code.
+  - name: resource_class
+    dtype: string
+    unit: none
+    nullable: false
+    description: Storage resource class holding the award — "battery" or "hybrid".
+  - name: market
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Market run — "DAM" (day-ahead; CAISO IFM) or "RTM" (real-time; CAISO
+      RTPD, hourly-averaged).
+  - name: product
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      AS product on the reconciled taxonomy — "reg_up", "reg_down", "spin",
+      "nonspin".
+  - name: award_mw
+    dtype: float64
+    unit: mw
+    nullable: false
+    description: Hourly-mean awarded AS capacity held by the class, MW.
