@@ -1,0 +1,109 @@
+# Canonical schema: eia-aeo-fuel-prices (EIA Annual Energy Outlook fuel-price
+# trajectories -- natural gas, coal, oil -- across the Reference / High Oil
+# and Gas Supply / Low Oil and Gas Supply scenario cases).
+#
+# This is the machine-readable, API-fetched counterpart to the hand-typed
+# HENRY_HUB_TRAJECTORIES table in constants.py (which carries a standing
+# "TODO: verify against AEO Table 13"). It also adds coal and oil price
+# trajectories the model does not yet have a real-data-cited source for
+# (coal escalates at a flat 1%/yr placeholder; oil is a flat scalar).
+#
+# One row per (fuel, metric, region, scenario, year). ``metric`` distinguishes
+# multiple published series within a fuel (e.g. coal's delivered-to-electric-
+# power price vs. its minemouth price); ``region`` is "usa" for every national
+# series and an EIA coal-supply-region code for the regional coal minemouth
+# breakout (Table 65). Provenance rides in series_id/table_id/table_name (EIA's
+# own identifiers, so a value traces back to the exact AEO table cell) — no
+# separate source_doc/source_page columns are needed since table_name +
+# series_id together are the authoritative citation for this single-source
+# (EIA AEO API v2) datatype.
+#
+# NOT subject to the 2022/H1-2026 holdout quarantine (CLAUDE.md rule 22): AEO
+# trajectories are forward projections (2024-2050), not measured actuals for
+# a solve/scoring year, so they carry no backcast-quarantine risk. They ARE a
+# rule-13-admissible forward-regenerating input either way (re-running this
+# fetch against a future AEO edition reproduces a new trajectory from public
+# EIA data, not a fitted/pinned value).
+datatype: eia-aeo-fuel-prices
+schema_version: 1
+title: EIA Annual Energy Outlook gas/coal/oil price trajectories
+description: >-
+  EIA AEO2025 Henry Hub natural gas, coal (delivered-to-electric-power,
+  minemouth national and by supply region), and oil (WTI crude, electric-
+  power-sector delivered distillate/residual fuel oil) price trajectories,
+  2024-2050, across the Reference / High Oil and Gas Supply / Low Oil and Gas
+  Supply scenario cases. Sourced from the EIA Open Data API v2 ``aeo`` route
+  (scripts/fetch_eia_aeo.py), not a hand transcription of the table browser.
+
+key_columns: [fuel, metric, region, scenario, year]
+allow_additional_columns: false
+
+columns:
+  - name: fuel
+    dtype: string
+    unit: none
+    nullable: false
+    description: One of gas | coal | oil.
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Which published AEO series within the fuel: henry_hub_spot (gas);
+      wti_spot_crude | electric_power_distillate | electric_power_residual
+      (oil); delivered_electric_power | minemouth_average |
+      minemouth_by_region (coal).
+  - name: region
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      "usa" for every national series, or an EIA coal supply-region code
+      (appalachia | east_of_mississippi | interior | west |
+      west_of_mississippi) for the minemouth_by_region metric (AEO Table 65).
+  - name: scenario
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      AEO2025 scenario id: ref2025 (Reference -> model "mid" gas_price_path),
+      highogs (High Oil and Gas Supply -> model "low", more supply/lower
+      price), lowogs (Low Oil and Gas Supply -> model "high").
+  - name: scenario_name
+    dtype: string
+    unit: none
+    nullable: false
+    description: Human-readable AEO scenario description, as returned by the API.
+  - name: year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Calendar year (AEO2025 covers 2024-2050).
+  - name: value
+    dtype: float64
+    unit: mixed
+    nullable: false
+    description: The price, in the unit given by the `unit` column.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      EIA's own unit string for this series, e.g. "2024 $/MMBtu", "2024 $/b",
+      "2024 $/gal", "2024 $/st" — real (2024-dollar) terms throughout, never
+      nominal.
+  - name: series_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: EIA AEO API series identifier (exact-cell traceability).
+  - name: table_id
+    dtype: string
+    unit: none
+    nullable: false
+    description: EIA AEO table number the series belongs to (13, 12, 15, or 94).
+  - name: table_name
+    dtype: string
+    unit: none
+    nullable: false
+    description: Human-readable AEO table title, as returned by the API.
