@@ -1,0 +1,151 @@
+fuel,metric,region,scenario,scenario_name,year,value,unit,series_id,table_id,table_name
+coal,minemouth_average,usa,ref2025,Reference case,2039,4.478799,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2040,4.480106,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2041,4.481376,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2042,4.476346,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2043,4.46525,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2044,4.521903,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2045,4.533944,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2046,4.623732,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2047,4.633484,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2048,4.634148,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2049,4.61148,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_average,usa,ref2025,Reference case,2050,4.617372,2024 $/MMBtu,prce_NA_NA_NA_cl_mnmth_NA_y13dlrpmmbtu,15,"Table 15.  Coal Supply, Disposition, and Prices"
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2024,122.18734,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2025,125.411987,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2026,133.242447,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2027,142.236572,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2028,136.750687,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2029,152.166214,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2030,155.488617,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2031,159.221451,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2032,158.610504,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2033,158.79657,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2034,146.860825,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2035,140.052979,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2036,144.849426,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2037,139.861664,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2038,146.664352,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2039,141.834702,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2040,140.193405,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2041,137.333496,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2042,136.731277,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2043,135.948792,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2044,135.876129,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2045,136.360489,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2046,136.087723,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2047,136.105103,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2048,135.927475,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2049,136.006592,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,highogs,High Oil and Gas Supply,2050,135.818207,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2024,122.188957,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2025,124.025124,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2026,129.619949,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2027,140.358337,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2028,135.865936,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2029,148.271545,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2030,152.723938,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2031,157.12085,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2032,160.56662,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2033,161.593414,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2034,152.324936,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2035,148.283325,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2036,149.564789,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2037,146.927719,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2038,152.414185,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2039,142.104034,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2040,142.287994,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2041,138.72728,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2042,137.099777,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2043,136.249054,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2044,136.319778,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2045,136.74086,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2046,136.418671,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2047,136.479858,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2048,136.629379,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2049,136.840179,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,lowogs,Low Oil and Gas Supply,2050,136.856674,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2024,122.278999,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2025,125.044212,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2026,130.393784,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2027,138.822662,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2028,135.346222,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2029,149.552917,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2030,153.26825,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2031,158.362656,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2032,159.410416,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2033,159.614395,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2034,148.410995,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2035,144.283569,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2036,145.84404,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2037,144.217667,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2038,149.846512,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2039,143.002579,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2040,141.161118,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2041,138.15892,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2042,137.543686,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2043,136.75943,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2044,136.87677,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2045,137.179535,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2046,136.950928,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2047,136.972366,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2048,136.862122,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2049,136.918671,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,appalachia,ref2025,Reference case,2050,136.625397,2024 $/st,prce_NA_NA_NA_cl_mnmth_aplch_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2024,89.485046,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2025,88.106201,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2026,90.951424,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2027,92.307411,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2028,91.358223,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2029,95.569946,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2030,97.538948,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2031,100.964981,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2032,145.78952,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2033,146.067657,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2034,136.724167,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2035,131.219635,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2036,135.7276,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2037,131.836517,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2038,137.668793,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2039,133.756317,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2040,132.438736,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2041,129.920227,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2042,129.453476,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2043,128.769608,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2044,128.777054,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2045,129.03125,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2046,128.647476,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2047,128.732117,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2048,128.927597,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2049,129.092056,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,highogs,High Oil and Gas Supply,2050,128.922531,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2024,89.460884,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2025,86.934135,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2026,86.725121,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2027,88.37999,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2028,87.795822,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2029,88.866829,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2030,88.674416,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2031,88.81472,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2032,116.760635,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2033,121.17601,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2034,118.768974,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2035,119.041626,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2036,120.505615,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2037,121.403511,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2038,126.317329,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2039,125.495415,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2040,126.246254,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2041,123.729561,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2042,122.577972,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2043,122.072548,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2044,126.471977,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2045,127.024529,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2046,126.911964,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2047,127.032349,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2048,128.311951,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2049,128.498108,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,lowogs,Low Oil and Gas Supply,2050,128.491272,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2025,Reference case,2024,89.416405,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2025,Reference case,2025,88.452087,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
+coal,minemouth_by_region,east_of_mississippi,ref2025,Reference case,2026,87.824142,2024 $/st,prce_NA_NA_NA_cl_mnmth_eom_y13dlrptn,94,Table 65.  Coal Production and Minemouth Prices by Region
