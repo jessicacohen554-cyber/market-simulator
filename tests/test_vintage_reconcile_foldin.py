@@ -1,16 +1,20 @@
-"""EIA-923 preliminary-vintage gas/coal reconcile + CAISO geo/biomass fold-in.
+"""COMBINED-fossil EIA-923 reconcile + CAISO geo/biomass fold-in.
 
-``render_calibration_html.reconcile_vintage_classes`` reconciles each fossil
-family's EIA-923 class total to the complete EIA-930 grid series the model is
-calibrated to, in BOTH directions — scaling a preliminary vintage UP, and an
-EIA-923 total that over-states grid delivery (residual CHP behind-the-meter +
-923<->930 assignment) DOWN — so the actual is on the model's grid-delivered
-basis. For balancing authorities whose EIA-930 "Natural Gas" aggregate
-silently folds in geothermal + biomass (CISO is the documented live case), the
-gas target must be DEFLATED by that fold-in first, otherwise the gas classes are
-scaled to gas+geo+biomass and the per-class actual is inflated by ~10 TWh — the
-benchmark bug these tests pin. The guard must leave clean ISOs (whose 930 NG is
-already gas-only) scaling to the full 930 gas cell.
+``render_calibration_html.reconcile_vintage_classes`` reconciles the COMBINED
+fossil (gas+coal) EIA-923 total to the complete EIA-930 grid series in BOTH
+directions — scaling a preliminary vintage UP, and an EIA-923 total that
+over-states grid delivery DOWN — with every fossil class scaled by the SAME
+factor so the CEMS-validated 923 gas/coal SPLIT is preserved. The reconcile
+corrects the fossil LEVEL, never the SPLIT: EIA-930's per-fuel coal/gas
+attribution mis-splits by 7-21 TWh/yr vs CAMPD, so the earlier per-family
+reconcile (gas and coal each scaled to their own 930 cell) manufactured
+per-class errors even when the total fossil was in tolerance (PJM 2024:
+CC_REGULAR read +21 TWh over vs a ~+3 CEMS miss). For balancing authorities
+whose EIA-930 "Natural Gas" aggregate silently folds in geothermal + biomass
+(CISO is the documented live case), the combined target must be DEFLATED by
+that fold-in first, else the fossil classes scale to gas+geo+biomass. The tests
+pin: the fold-in deflation, the deadband, the combined split-preservation, and
+the offsetting-in-band case the combined reconcile now correctly leaves alone.
 """
 
 import importlib.util
@@ -114,16 +118,63 @@ class TestVintageReconcileFoldIn(unittest.TestCase):
         rch.reconcile_vintage_classes(cf, {"gas": 88.02}, "CAISO")
         self.assertEqual(cf, before)
 
-    def test_coal_unaffected_by_gas_foldin(self):
-        """Coal classes reconcile to 930 coal regardless of the gas fold-in."""
-        cf = {
-            "CC_REGULAR": 60.0,
-            "OTHER": 8.0,
-            "biomass": 4.0,
-            "COAL_BIT": 9.0,
-        }
+    def _coal_sum(self, cf):
+        return round(sum(cf[g] for g in rch._COAL_GROUPS if g in cf), 4)
+
+    def test_gas_foldin_deflates_the_combined_target(self):
+        """The CAISO geo/biomass fold-in deflates the COMBINED gas+coal target.
+
+        Combined reconcile (fossil scaled as one family): coal no longer scales
+        to its own 930 coal cell — it scales by the same factor as gas — but the
+        gas fold-in must still be subtracted from the combined target so the
+        fossil classes don't scale to gas+geo+biomass. Here total fossil (69) is
+        below the deflated target so it scales UP, preserving the coal/gas split.
+        """
+        cf = {"CC_REGULAR": 60.0, "OTHER": 8.0, "biomass": 4.0, "COAL_BIT": 9.0}
         rch.reconcile_vintage_classes(cf, {"gas": 85.0, "coal": 10.0}, "CAISO")
-        self.assertAlmostEqual(cf["COAL_BIT"], 10.0, places=2)
+        # combined target = (85 + 10) - foldin(8+4) = 83; cur = 60+9 = 69 -> x1.203
+        target = 85.0 + 10.0 - (8.0 + 4.0)
+        self.assertAlmostEqual(self._gas_sum(cf) + self._coal_sum(cf), target, 1)
+        # split preserved: coal scaled by the same factor as gas, NOT to 930 coal.
+        self.assertAlmostEqual(cf["COAL_BIT"] / cf["CC_REGULAR"], 9.0 / 60.0, 3)
+
+    def test_offsetting_split_within_total_deadband_untouched(self):
+        """The core fix: gas over / coal under that OFFSET to an in-band total.
+
+        PJM-2024 signature — gas +4.2% and coal -5.9% each breach the ±3% band
+        (the old per-family reconcile fired on both, dumping a spurious -15 TWh
+        gas cut ~85% onto CC_REGULAR), but the COMBINED fossil total is only
+        +1.4% and must now be left byte-identical, preserving the CEMS-validated
+        split. Guards the exact regression this change fixes.
+        """
+        cf = {
+            "CC_REGULAR": 336.0,
+            "CT_PEAKER": 24.0,
+            "ST_GAS": 24.0,  # gas sum 384 vs 930 gas 368 -> +4.3% (would fire alone)
+            "COAL_BIT": 115.0,  # coal vs 930 coal 124 -> -7.3% (would fire alone)
+            "OTHER": 2.0,
+            "biomass": 5.0,
+        }
+        before = dict(cf)
+        # 930 'other' ≈ model OTHER+biomass so the fold-in self-zeros (clean BA).
+        e930 = {"gas": 368.0, "coal": 124.0, "other": 7.0}
+        rch.reconcile_vintage_classes(cf, e930, "PJM")
+        self.assertEqual(cf, before)  # total 499 vs 492 = +1.4%, inside deadband
+
+    def test_combined_vintage_scale_preserves_coal_gas_split(self):
+        """A preliminary vintage (total below grid) scales UP preserving the split.
+
+        Both families under-report; the combined reconcile scales every fossil
+        class by ONE factor to the combined 930 total, so the coal/gas ratio is
+        the CEMS-measured 923 ratio, NOT forced onto 930's per-fuel split.
+        """
+        cf = {"CC_REGULAR": 300.0, "COAL_BIT": 100.0, "OTHER": 1.0, "biomass": 1.0}
+        e930 = {"gas": 340.0, "coal": 120.0, "other": 2.0}  # total 460 vs 400
+        rch.reconcile_vintage_classes(cf, e930, "PJM")
+        self.assertAlmostEqual(self._gas_sum(cf) + self._coal_sum(cf), 460.0, places=1)
+        self.assertAlmostEqual(cf["COAL_BIT"] / cf["CC_REGULAR"], 100.0 / 300.0, 3)
+        # coal NOT independently pinned to 930 coal (120) — that was the old bug.
+        self.assertLess(cf["COAL_BIT"], 120.0)
 
     # --- general partial-fold path: bundle carries the EIA-930 "other" series ---
 
