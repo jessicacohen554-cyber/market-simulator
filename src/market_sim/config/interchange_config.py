@@ -1113,6 +1113,13 @@ class InterchangeSpec:
     use_reference_price: bool = False
     use_corridors: bool = False
     caiso_mode: str | None = None
+    # MISO only: host the South seam's reference-price bands in their own
+    # external zone (constants.MISO_SOUTH_EXTERNAL_ZONE) so they ride the
+    # split topology of transmission.split_miso_south_external_node instead
+    # of the shared MISO_external bus (which fabricates a free
+    # South→external→Midwest wheel around the RDT). Resolved from
+    # ScenarioConfig.miso_south_seam_split.
+    miso_south_split: bool = False
 
 
 def get_interchange_spec(config, iso: str, year: int | None = None) -> InterchangeSpec:
@@ -1263,6 +1270,11 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
         use_reference_price=use_ref,
         use_corridors=use_corridors,
         caiso_mode=caiso_mode,
+        miso_south_split=(
+            iso == "MISO"
+            and use_ref
+            and getattr(config, "miso_south_seam_split", False)
+        ),
     )
 
 
@@ -1298,7 +1310,15 @@ def build_interchange_fleet(
     if spec.use_reference_price:
         from market_sim.model.transmission import build_reference_price_node
 
-        gens.extend(build_reference_price_node(spec.iso))
+        overrides = None
+        if spec.miso_south_split:
+            from market_sim.config.constants import MISO_SOUTH_EXTERNAL_ZONE
+
+            # The South seam's bands ride the split topology
+            # (transmission.split_miso_south_external_node) so they clear in
+            # the zone actually linked to MISO-South.
+            overrides = {"South": MISO_SOUTH_EXTERNAL_ZONE}
+        gens.extend(build_reference_price_node(spec.iso, zone_overrides=overrides))
     elif spec.caiso_mode == "per_hub":
         from market_sim.model.transmission import build_caiso_per_hub_intertie
 
@@ -1461,4 +1481,31 @@ def apply_interchange_topology(
     from market_sim.model.transmission import apply_caiso_asymmetric_path_limits
 
     iso_config = apply_caiso_asymmetric_path_limits(iso_config, config)
+    # 5. ``spec.miso_south_split`` — re-home the MISO-South border link (and
+    #    the South seam's SIL member) onto its own external zone, severing the
+    #    free South→external→Midwest wheel around the RDT. Needs the import
+    #    node from step 1, so it only fires when the node was extended.
+    if spec.miso_south_split and iso == "MISO" and extend_node:
+        from market_sim.model.transmission import split_miso_south_external_node
+
+        iso_config = split_miso_south_external_node(iso_config)
+        logger.info(
+            "MISO %d: miso_south_seam_split — South seam re-homed onto its "
+            "own external zone (RDT wheel-through bypass severed)",
+            year,
+        )
+    # 6. ``config.miso_rdt_tcdc`` — replace the static JOA-limit RDT pair with
+    #    the published 92% default derate + two-step TCDC priced tiers
+    #    (transmission.apply_miso_rdt_tcdc). Internal links only, so it
+    #    composes with every step above; last keeps the import-node
+    #    identification untouched.
+    if getattr(config, "miso_rdt_tcdc", False) and iso == "MISO":
+        from market_sim.model.transmission import apply_miso_rdt_tcdc
+
+        iso_config = apply_miso_rdt_tcdc(iso_config)
+        logger.info(
+            "MISO %d: miso_rdt_tcdc — RDT pair replaced with 92%% default "
+            "derate + $40/$500 TCDC tiers (2024 SOM §III.B)",
+            year,
+        )
     return iso_config

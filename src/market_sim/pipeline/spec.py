@@ -118,6 +118,10 @@ class DispatchSpec:
     # caiso_storage_as_reservation) — (n_storage, T) SOC lower bound. UNSET
     # (flag off / other ISOs) omits the key, leaving the 0 lower bound.
     storage_soc_min: Any = UNSET
+    # Per-link directed flow cost (MISO RDT TCDC priced tiers,
+    # miso_rdt_tcdc) — (n_links,) $/MWh, nonzero only on one-way links.
+    # None/UNSET keeps the flow block zero-cost (byte-identical).
+    link_flow_cost: Any = UNSET
 
     def to_dispatch_kwargs(self) -> dict:
         """Return the base ``dispatch_kwargs`` dict, key-for-key.

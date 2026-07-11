@@ -1905,6 +1905,8 @@ def solve_and_persist(
     miso_reserve_pergen: bool = False,
     miso_commitment_posture: bool = False,
     miso_measured_reserve_requirements: bool = False,
+    miso_south_seam_split: bool = False,
+    miso_rdt_tcdc: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_ordc_total_reserve: bool = False,
@@ -2067,6 +2069,13 @@ def solve_and_persist(
             from market_sim.model.transmission import split_caiso_import_node_per_hub
 
             iso_config = split_caiso_import_node_per_hub(iso_config)
+        if miso_south_seam_split and iso == "MISO":
+            # Re-home the South seam onto its own external zone so this
+            # caller's zone_names / report frames match run_year's solve
+            # (run_year applies the same split via apply_interchange_topology).
+            from market_sim.model.transmission import split_miso_south_external_node
+
+            iso_config = split_miso_south_external_node(iso_config)
     zone_names = iso_config.zone_names
     (run_dir / "dispatch").mkdir(parents=True, exist_ok=True)
 
@@ -2191,6 +2200,8 @@ def solve_and_persist(
             miso_reserve_pergen=miso_reserve_pergen,
             miso_commitment_posture=miso_commitment_posture,
             miso_measured_reserve_requirements=miso_measured_reserve_requirements,
+            miso_south_seam_split=miso_south_seam_split,
+            miso_rdt_tcdc=miso_rdt_tcdc,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_ecrs_conservative_deployment=ercot_ecrs_conservative_deployment,
             ercot_ordc_total_reserve=ercot_ordc_total_reserve,
@@ -2561,6 +2572,8 @@ def solve_and_persist(
         "miso_reserve_pergen": miso_reserve_pergen,
         "miso_commitment_posture": miso_commitment_posture,
         "miso_measured_reserve_requirements": miso_measured_reserve_requirements,
+        "miso_south_seam_split": miso_south_seam_split,
+        "miso_rdt_tcdc": miso_rdt_tcdc,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_ecrs_conservative_deployment": ercot_ecrs_conservative_deployment,
         "ercot_ordc_total_reserve": ercot_ordc_total_reserve,
@@ -2782,6 +2795,10 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(
             miso_measured_reserve_requirements=True
         )
+    if miso_south_seam_split:
+        recorded_cfg = recorded_cfg.with_overrides(miso_south_seam_split=True)
+    if miso_rdt_tcdc:
+        recorded_cfg = recorded_cfg.with_overrides(miso_rdt_tcdc=True)
     if pjm_reserve_supply_cap:
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
     if pjm_reserve_pergen:
@@ -6105,6 +6122,30 @@ def main() -> None:
         "Requires --energy-reserve-coopt. MISO-only; default off.",
     )
     parser.add_argument(
+        "--miso-south-seam-split",
+        action="store_true",
+        help="MISO South-seam external-zone split: host the South seam's "
+        "reference-price bands in their own external zone instead of the "
+        "shared MISO_external bus, severing the free "
+        "South→external→Midwest wheel that bypasses the RDT contract path "
+        "(2025 probe: 1.26 GW mean summer wheel vs an RDT S→N that binds "
+        "13 h/yr). Structural topology fix (rule 1); requires "
+        "--reference-price-interface (default on for MISO). MISO-only; "
+        "default off.",
+    )
+    parser.add_argument(
+        "--miso-rdt-tcdc",
+        action="store_true",
+        help="MISO RDT derate + TCDC pricing: replace the static JOA "
+        "contract limits on the RDT pair (3,000 N→S / 2,500 S→N) with the "
+        "published 92%% default operating derate and the two-step RDT "
+        "Transmission Constraint Demand Curve ($40/MWh at the modeled "
+        "limit, $500/MWh from 102%%, hard bound at contract) as priced "
+        "one-way tiers (2024 MISO SOM §III.B; MISO/SPP JOA Attach. A). "
+        "All parameters published; zero fitted scalars. MISO-only; "
+        "default off.",
+    )
+    parser.add_argument(
         "--pjm-reserve-pergen",
         action="store_true",
         help="PJM PER-GENERATOR reserve co-optimization "
@@ -7785,6 +7826,8 @@ def main() -> None:
         miso_reserve_pergen=args.miso_reserve_pergen,
         miso_commitment_posture=args.miso_commitment_posture,
         miso_measured_reserve_requirements=args.miso_measured_reserve_requirements,
+        miso_south_seam_split=args.miso_south_seam_split,
+        miso_rdt_tcdc=args.miso_rdt_tcdc,
         pjm_reserve_pergen=args.pjm_reserve_pergen,
         pjm_reserve_pergen_sync=args.pjm_reserve_pergen_sync,
         pjm_reserve_pergen_size_split=args.pjm_reserve_pergen_size_split,
