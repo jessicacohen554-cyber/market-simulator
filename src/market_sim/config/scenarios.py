@@ -2015,6 +2015,28 @@ class ScenarioConfig:
     # documented memory-gated follow-up, G-40). Requires energy_reserve_coopt
     # + miso_reserve_pergen; default off; GATED CHANGE (alters dispatch
     # volumes).
+    miso_measured_reserve_requirements: bool = False  # MISO: replace the
+    # co-opt families' STATIC requirement estimates with the MEASURED hourly
+    # reserve MW MISO actually cleared (data.miso_reserve_requirements ←
+    # data/raw/MISO-AS/asm_rt_cleared_mw_<year>.parquet, the masked RT
+    # cleared-offers market report; reg + spin + supp, STR excluded). The
+    # market-wide RBDC family drops the flat fleet-MSSC + 400 MW estimate
+    # (~3.4 GW) for the measured hourly series (~2.3-3.1 GW, event-evening
+    # increases carried); the South zonal family drops the within-zone-MSSC
+    # static (~2.2 GW) for the measured South reservation (~0.3-0.5 GW) —
+    # the static reading fabricated ~1.8 GW of South withholding the real
+    # market never held. Rule-13 admissible (a measured AS power reservation,
+    # a quantity, never a price) and rule-14 mandatory (measured beats the
+    # overstated estimates, whatever it does to the residual). ORDC shortfall
+    # steps keep their published static shape (market-wide: the Schedule-28
+    # VOLL-anchored ramp on the static basis; South: the §5.2.1.2 published
+    # fractions anchored to the measured series' annual mean) and translate
+    # with the hourly requirement — the NYISO dynamic-requirements
+    # convention. Backcast-only measured overlay: forecast years keep the
+    # MSSC + regulating formula as the forward generator. Requires
+    # energy_reserve_coopt + MISO; hard-errors when the intake parquet is
+    # absent (no silent fallback to the estimates it replaces). Default off;
+    # GATED CHANGE (alters withholding, hence dispatch volumes).
     caiso_scarcity_pricing: bool = False  # CAISO: enable the post-solve
     # power-balance scarcity price overlay (results.scarcity.caiso_scarcity_
     # overlay). Adds a probabilistic LOLP × (VOLL - λ) adder to the scored
@@ -3091,6 +3113,29 @@ class ScenarioConfig:
     # data updates (rule #23), never from a residual. Default off -> every
     # prior keeper stays byte-identical.
     tranche_startup_measured_runs: bool = False
+
+    # Fast-start amortization v4 — CONDITION-KEYED measured horizon (requires
+    # ``tranche_startup_amortization`` + ``tranche_startup_measured_runs``).
+    # The ELMP evening-timing element (FERC Order 825 / MISO ELMP fast-start
+    # pricing): a fast-start engagement in a TIGHT hour is a short evening
+    # commitment block, so its start recovery is amortized over fewer hours
+    # than the unconditional median — CAMPD measures MISO CT runs STARTED in
+    # p97.5+ net-load hours at a 6 h median vs 9-11 h below p90 (stable each
+    # of 2023/2024/2025; scripts/derive_campd_ct_run_lengths.py
+    # --condition-bands → campd_ct_run_bands_<ISO>.csv). When set, the v3
+    # measured-run ceiling is scaled per hour by the CLASS-level band ratio
+    # (band median / pooled median — shape from the pooled class, level from
+    # the plant median, the repo's standard shape/level split) keyed on the
+    # hour's within-year net-load percentile: markup[g,t] = startup /
+    # max(1, min(P0_month_avg_run, plant_median × ratio[band(t)])). Both the
+    # trigger (net-load percentile — forward-native, recomputes from any
+    # year's own load/wind/solar) and the level (measured CAMPD run lengths,
+    # published NREL start costs) are rule-13 admissible; the ratios
+    # re-derive only on CAMPD source updates (rule 23), never from a
+    # residual. Per-ISO artifact (rule 25 — no cross-ISO fallback); a missing
+    # artifact leaves the v3 basis untouched (never a silent hand number).
+    # Default off -> every prior keeper stays byte-identical.
+    tranche_startup_conditional_runs: bool = False
 
     # NYSDEC 6 NYCRR Subpart 227-3 "peaker rule" availability overlay
     # (NYISO). The regulation caps ozone-season (May 1 - Sep 30) NOx from
@@ -5396,6 +5441,7 @@ TIER_TAGS: dict[str, int] = {
     "gas_st_startup_cost": 3,
     "tranche_startup_amortization": 1,
     "tranche_startup_measured_runs": 1,
+    "tranche_startup_conditional_runs": 1,
     "nysdec_peaker_rule_availability": 1,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
@@ -5405,6 +5451,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_zonal_reserve_zones": 1,
     "miso_reserve_pergen": 1,
     "miso_commitment_posture": 1,
+    "miso_measured_reserve_requirements": 1,
     "caiso_commitment_posture": 1,
     "ercot_load_resource_reserve": 1,
     "ercot_load_resource_reserve_from_year": 1,
