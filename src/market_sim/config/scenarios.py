@@ -3515,7 +3515,7 @@ class ScenarioConfig:
     cc_committed_per_plant: bool = False
 
     # Per-plant gas local-reliability commitment (must-run) floor on the
-    # merchant CC_REGULAR / CT_PEAKER committed tranche — the out-of-market
+    # merchant CC_REGULAR committed tranche — the out-of-market
     # commitment PJM (and peers) issue for LDA/voltage local reliability, paid
     # via bid-cost recovery / RMR so the hub LMP is untouched. When True, each
     # plant's *committed tranche* (already sized to its measured CEMS minimum
@@ -3527,16 +3527,19 @@ class ScenarioConfig:
     # Rule-12 triple: driver = measured CEMS committed operation (multi-year
     # pooled, regenerates forward and responds to changed conditions — rule 13
     # admissible); window = the plant's own measured online share placed in the
-    # top system-load hours (self-limiting: a peaker with online_frac 0.04 is
-    # floored only in the top 4% load hours); forward story = the CEMS-derived
+    # top system-load hours (self-limiting); forward story = the CEMS-derived
     # committed share + online fraction re-derive from CAMPD history exactly
     # like forecast emission rates. Rule 18: self-targeting by the measurement —
     # every artifact-covered plant gets the floor; a western CC that already
     # runs economically above its committed level sees a non-binding bound.
     # Rule 19: this makes the EXISTING committed tranche a forced quantity
     # (its offer price is unchanged) — no second floor is stacked on it.
-    # G-20 eastern CC/CT under-run follow-up
-    # (docs/handoffs/pjm-eastern-ccct-underrun-g20-2026-07.md §5). Off by
+    # CC_REGULAR only: the CT_PEAKER leg was probed 2026-07-11 and dropped —
+    # it bound 12.8% of its floored MWh overnight against the CT class's own
+    # overnight-offline evidence (rule-12 bug) while leaving the eastern CT
+    # under-run essentially untouched (an offer/capture residual, not a
+    # commitment-share one). G-20 eastern CC/CT under-run follow-up
+    # (docs/handoffs/pjm-eastern-ccct-underrun-g20-2026-07.md §5/§5b). Off by
     # default; ablated in the zero-forcing twin (MECH_CC_MUSTRUN_PER_PLANT).
     cc_mustrun_per_plant: bool = False
 
