@@ -1,10 +1,11 @@
 # One-shot, re-dispatchable: (1) land the caiso-74/75 calibration-log entry
-# (git-am patch transport, ercot57/pjm97 precedent — the log is too large to
-# relay whole through push_files); (2) once the caiso7475-solve-register
-# registration commit has landed, prune the four oldest displaced CAISO
-# non-keeper entries (caiso-64, caiso-67, caiso-68 main+ablation) per the
-# top-15-per-ISO retention rule (miso-41 prune precedent: sidecar + run
-# payload). Safe to re-run: both steps are guarded.
+# and the session's sync-docs pass (git-am patch transport, ercot57/pjm97
+# precedent — these docs are too large to relay whole through push_files);
+# (2) once the caiso7475-solve-register registration commit has landed, prune
+# the four oldest displaced CAISO non-keeper entries (caiso-64, caiso-67,
+# caiso-68 main+ablation) per the top-15-per-ISO retention rule (miso-41
+# prune precedent: sidecar + run payload). Safe to re-run: every step is
+# guarded.
 name: apply-caiso7475-docs
 
 on:
@@ -14,6 +15,7 @@ on:
     paths:
       - .github/workflows/apply-caiso7475-docs.yml
       - .github/patches/caiso74/0003-calibration-log-entry.patch
+      - .github/patches/caiso74/0004-sync-docs-pass.patch
   workflow_dispatch:
 
 permissions:
@@ -39,8 +41,21 @@ jobs:
             p=.github/patches/caiso74/0003-calibration-log-entry.patch
             m=519cea80faaec8572658b0bc02088a0d
             if ! echo "$m  $p" | md5sum -c -; then
-              # push_files relay strips the trailing blank line; restore and
-              # re-verify byte-exact against the format-patch md5.
+              printf '\n' >> "$p"
+              echo "$m  $p" | md5sum -c -
+            fi
+            git am "$p"
+          fi
+
+      - name: Apply sync-docs patch (git am, guarded)
+        run: |
+          set -euo pipefail
+          if grep -q "CAISO storage-AS awards + demand-clock realignment" docs/backcast-measured-data-audit-2026-06.md; then
+            echo "sync-docs already applied - skipping"
+          else
+            p=.github/patches/caiso74/0004-sync-docs-pass.patch
+            m=b0def36b670f2e131a25de3ea38c3739
+            if ! echo "$m  $p" | md5sum -c -; then
               printf '\n' >> "$p"
               echo "$m  $p" | md5sum -c -
             fi
