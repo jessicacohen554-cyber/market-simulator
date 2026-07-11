@@ -66,8 +66,11 @@ from market_sim.config.constants import (
     ERCOT_LR_RRS_AVAILABILITY_HOD,
     ERCOT_ONLINE_CAP_DELIV_COEF,
     ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME,
+    ERCOT_ONLINE_CAP_DELIV_PROFILE_MEASURED,
+    ERCOT_ONLINE_CAP_MEASURED_AVAIL_CLASSES,
     ERCOT_ONLINE_CAP_SHARE,
     ERCOT_ONLINE_CAP_SHARE_EXTREME,
+    ERCOT_ONLINE_CAP_SHARE_MEASURED,
     ERCOT_RTOLCAP_FWD_DELIV_COEF,
     ERCOT_RTOLCAP_FWD_N_DECILE,
     ERCOT_RTOLCAP_FWD_OFFLINE_CLASSES,
@@ -1327,7 +1330,10 @@ def ercot_online_capacity_envelope_mw(
     from market_sim.data.fleet import _SUMMER_CLASS_DERATE
 
     extreme = bool(getattr(config, "ercot_online_capacity_envelope_extreme", False))
-    if not (getattr(config, "ercot_online_capacity_envelope", False) or extreme):
+    measured = bool(getattr(config, "ercot_online_capacity_envelope_measured", False))
+    if not (
+        getattr(config, "ercot_online_capacity_envelope", False) or extreme or measured
+    ):
         return None
     T = int(hours)
     plant_group = getattr(fleet_arrays, "plant_group", None)
@@ -1347,7 +1353,22 @@ def ercot_online_capacity_envelope_mw(
     month = _ercot_rtolcap_fwd_month()[:T]
     season = np.asarray(ERCOT_RTOLCAP_FWD_SEASON_BY_MONTH, dtype=int)[month - 1]
     summer = np.isin(month, [6, 7, 8, 9])  # Jun-Sep ambient-derate window
-    if extreme:
+    if measured:
+        # Measured-fleet-basis variant (the ercot57 joint-round re-identification):
+        # same 14-bin extreme driver axis, but for the measured-availability
+        # classes the share is committed-HSL ÷ AVAILABLE capacity and the basis is
+        # the fleet's finished availability (measured under
+        # ercot_thermal_dam_availability in backcast, statistical forward), so
+        # commitment choice and outage state are no longer conflated — the
+        # decomposition that removes the extreme-tail room collapse (ercot43
+        # 2023 top-2% ledger −23%: reality musters near-max availability there,
+        # which a share-of-installed pooled median cannot see).
+        nl_bin = ercot_online_cap_extreme_bin(nl)
+        share_tables = ERCOT_ONLINE_CAP_SHARE_MEASURED
+        deliv_t = np.asarray(ERCOT_ONLINE_CAP_DELIV_PROFILE_MEASURED, dtype=float)[
+            nl_bin
+        ]  # (T,)
+    elif extreme:
         # G-22 §5 extreme-peak-resolved variant: 14-bin driver axis + per-bin
         # deliverability, so the envelope carries the measured commitment
         # saturation / capability margin in the extreme tail instead of the
@@ -1362,6 +1383,7 @@ def ercot_online_capacity_envelope_mw(
         share_tables = ERCOT_ONLINE_CAP_SHARE
         deliv_t = float(ERCOT_ONLINE_CAP_DELIV_COEF)  # scalar broadcast
 
+    avail = np.asarray(fleet_arrays.availability, dtype=float)  # (n_gen, T)
     cap = np.full((n_hr, T), _RESERVE_SUPPLY_CAP_UNCAPPED_MW, dtype=float)
     for h in range(n_hr):
         # Only the ALL-responsive tier (bounds every product) carries the energy
@@ -1375,12 +1397,22 @@ def ercot_online_capacity_envelope_mw(
             tbl = share_tables.get(cls)
             if tbl is None:
                 continue
-            cap_c = float(pmax[(plant_group == cls) & elig[h]].sum())
-            if cap_c <= 0.0:
-                continue
             share_t = np.asarray(tbl, dtype=float)[season, nl_bin]  # (T,), vectorized
-            derate = _SUMMER_CLASS_DERATE.get(cls, 0.0)
-            cap_ct = cap_c * (1.0 - np.where(summer, derate, 0.0))
+            mask = (plant_group == cls) & elig[h]
+            if measured and cls in ERCOT_ONLINE_CAP_MEASURED_AVAIL_CLASSES:
+                # AVAILABLE-capacity basis: Σ_g pmax × availability(t) over the
+                # tier's class members — the same finished availability the LP's
+                # generator bounds carry (ambient/outage state included; no
+                # separate summer-derate, which the measured HSL fraction
+                # already embeds). Matches the deriver's share denominator
+                # (measured class-day disclosure fraction × installed).
+                cap_ct = (pmax[mask, None] * avail[mask, :T]).sum(axis=0)  # (T,)
+            else:
+                cap_c = float(pmax[mask].sum())
+                if cap_c <= 0.0:
+                    continue
+                derate = _SUMMER_CLASS_DERATE.get(cls, 0.0)
+                cap_ct = cap_c * (1.0 - np.where(summer, derate, 0.0))
             out += share_t * cap_ct
         cap[h] = deliv_t * out
     return cap.astype(float)
@@ -1658,6 +1690,108 @@ def scarcity_prices(
         ),
         "scarcity_adder": adder,
     }
+
+
+def ercot_ordc_realized_adder(
+    config,
+    year: int,
+    *,
+    design,
+    dispatch: np.ndarray,
+    prices: np.ndarray,
+    demand: np.ndarray,
+) -> np.ndarray | None:
+    """Post-solve RTORPA on the REALIZED envelope room (ercot57 joint round v2).
+
+    The market-faithful form of ``ercot_ordc_only_scarcity``: pre-RTC+B SCED
+    dispatches energy only — reserve beyond the DAM AS plan is never withheld
+    by the RT market, and the ORDC prices the REALIZED total online reserves
+    post-hoc as an adder (RTSPP = SCED SPP + RTORPA, Nodal Protocols
+    §6.5.7.5). The v1 probe (in-LP ORDC total-reserve family + envelope)
+    reproduced the ercot43 §7.4 defect on the honest measured fleet: the
+    VOLL-floored sub-MCL steps make holding reserve exactly as valuable as
+    serving load, so the LP withheld up the full span inside the envelope,
+    parked 12.8 GW of coal at the Aug-2023 peak and shed 62 GWh — dispatch and
+    prices reality never produced. Here the LP carries only the plan
+    withholding (epsilon-held product families + the rigid pre-reform
+    ECRS_withheld) and the ORDC values what is left:
+
+        online(t)  = max(env_all(t) − Σ_{g∈elig_all} P[g,t], 0)
+                     + measured storage-AS award + LR RRS-UFR credit
+        offline(t) = forward RTOFFCAP (supply-cap row 1 − row 0)
+        RTORPA(t)  = ordc_adder(online + offline, λ; online) — the published
+                     two-half-hour LOLP construction with the OBDRR048 floor.
+
+    ``env_all − ΣP`` is the committed on-line capability headroom the
+    measured-fleet-basis envelope was IDENTIFIED to reproduce against measured
+    RTOLCAP (``validate_ercot_online_capacity.py --measured``: binding regime
+    +4/+0/−3%, pooled top-2% exact), so the reserve level the curve prices is
+    the measured quantity's model analogue — and it regenerates for a forecast
+    year (envelope basis = the fleet's finished availability; forward RTOFFCAP
+    formula; λ from the solve). The storage-AS and LR series count TOWARD the
+    level exactly as they count toward measured RTOLCAP (they are netted out
+    of nothing here — RTORPA's total online reserves include them). λ is the
+    demand-weighted energy dual (the system lambda every settlement point
+    shares). Rule 19: mutually exclusive with the in-LP ORDC total-reserve
+    family (``ScenarioConfig.__post_init__`` hard error) and with the cap-dual
+    adder path in the frame writer — one mechanism prices RT reserve scarcity.
+
+    Returns ``(T,)`` $/MWh, or ``None`` when the design carries no envelope
+    (the room quantity is then undefined and the caller must not price).
+    """
+    # v3: the envelope arrives as the PRICING-ONLY basis (never an LP row —
+    # reserve_config moves it to online_capacity_pricing_mw under
+    # ercot_ordc_only_scarcity); the online_capacity_cap fallback keeps the
+    # function usable on a design that did install the row (diagnostics).
+    oc = getattr(design, "online_capacity_pricing_mw", None)
+    if oc is None:
+        oc = getattr(design, "online_capacity_cap", None)
+    if oc is None:
+        return None
+    oc = np.atleast_2d(np.asarray(oc, dtype=float))
+    hp = np.atleast_2d(np.asarray(design.headroom_products, dtype=bool))
+    he = np.atleast_2d(np.asarray(design.headroom_eligible, dtype=bool))
+    # The all-products tier with a finite (capped) row carries the envelope.
+    h_all = None
+    for h in range(hp.shape[0]):
+        if hp[h].all() and np.all(oc[h] < _RESERVE_SUPPLY_CAP_UNCAPPED_MW):
+            h_all = h
+            break
+    if h_all is None:
+        return None
+    env = oc[h_all]
+    T = env.size
+    P = np.asarray(dispatch, dtype=float)[he[h_all], :T].sum(axis=0)
+    online = np.clip(env - P, 0.0, None)
+
+    if (
+        getattr(config, "ercot_storage_as_reserve", False)
+        and getattr(config, "storage_as_commitment", False)
+        and not getattr(config, "ercot_storage_as_endogenous", False)
+        and year >= int(getattr(config, "ercot_storage_as_reserve_from_year", 2025))
+    ):
+        online = online + ercot_storage_as_reserve_mw(year, T)
+    if getattr(config, "ercot_load_resource_reserve", False) and year >= int(
+        getattr(config, "ercot_load_resource_reserve_from_year", 2023)
+    ):
+        online = online + ercot_load_resource_reserve_credit_mw(config, T, year=year)
+
+    offline = np.zeros(T, dtype=float)
+    sc = getattr(design, "supply_cap", None)
+    if sc is not None:
+        sc = np.atleast_2d(np.asarray(sc, dtype=float))
+        if sc.shape[0] >= 2:
+            offline = np.clip(sc[1, :T] - sc[0, :T], 0.0, None)
+
+    d = np.asarray(demand, dtype=float)[:, :T]
+    p = np.asarray(prices, dtype=float)[:, :T]
+    d_tot = d.sum(axis=0)
+    lam = np.where(
+        d_tot > 0, (p * d).sum(axis=0) / np.where(d_tot > 0, d_tot, 1.0), p.mean(axis=0)
+    )
+    return scarcity_prices(
+        config, year, online + offline, lam, reserves_online_mw=online
+    )["scarcity_adder"]
 
 
 # ===========================================================================

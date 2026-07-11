@@ -16,6 +16,7 @@ from typing import Optional
 
 import numpy as np
 
+from market_sim.config.constants import ERCOT_AS_PLAN_HOLD_EPS
 from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
 
 # ---------------------------------------------------------------------------
@@ -334,6 +335,19 @@ class ReserveDesign:
     # than the real system had on-line (scarcity.ercot_online_capacity_envelope_mw).
     # Non-envelope tiers carry the uncapped sentinel. None keeps the LP unchanged.
     online_capacity_cap: Optional[np.ndarray] = None
+    # (n_hr, T) MW — the same committed on-line capability envelope kept as a
+    # PRICING-ONLY basis (ercot_ordc_only_scarcity, ercot57 joint round v3):
+    # never installed as an LP row. Pre-RTC+B SCED carries no committed-
+    # capability constraint in the dispatch engine (commitment is RUC/self-
+    # commitment, already embodied in availability + floors); the ORDC prices
+    # the REALIZED headroom relative to on-line capability post-hoc, so the
+    # envelope's only role is measuring that capability for the post-solve
+    # RTORPA (scarcity.ercot_ordc_realized_adder). The v2 probe showed why the
+    # hard row is wrong: anchoring an LP cap to reality's committed level
+    # converts every model-vs-reality supply-mix difference at tight hours
+    # into VOLL load-shed (833 GWh across 470 summer hours) — the ercot41/43
+    # over-fire signature, now isolated from availability and span demand.
+    online_capacity_pricing_mw: Optional[np.ndarray] = None
     headroom_eligible: Optional[np.ndarray] = None  # (n_hr, n_gen) bool
     headroom_products: Optional[np.ndarray] = None  # (n_hr, n_families) bool
     headroom_extra_cap: Optional[np.ndarray] = None
@@ -834,6 +848,24 @@ def _ercot_multiproduct_design(
         if req_peak <= 0.0:
             pens = np.zeros(0)
             wids = np.zeros(0)
+        elif getattr(config, "ercot_ordc_only_scarcity", False):
+            # Pre-RTC+B ORDC-only design (the ercot57 product-ladder question,
+            # docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md §4.2):
+            # 2023-25 ERCOT has NO real-time per-product scarcity pricing — RT
+            # reserve scarcity prices via the ORDC on the REALIZED total online
+            # reserves, added post-SCED (RTSPP = SPP + RTORPA;
+            # scarcity.ercot_ordc_realized_adder is the pricing side), and a
+            # product-vs-capability squeeze triggers RUC commitment, not a
+            # price. So the standing product families keep the measured AS-plan
+            # requirement but their shortfall costs only the plan-hold epsilon:
+            # held whenever free headroom exists (the DAM award's physical
+            # withholding), never priced into the energy dual. The pre-reform
+            # ECRS_withheld family below keeps its rigid VOLL step (the
+            # IMM-documented no-price-release design, separately grounded).
+            # The in-LP ORDC total family is forbidden alongside this flag
+            # (ScenarioConfig.__post_init__, rule 19).
+            pens = np.array([ERCOT_AS_PLAN_HOLD_EPS], dtype=float)
+            wids = np.array([req_peak], dtype=float)
         else:
             crit = crit_frac * req_peak
             pens, wids = nyiso_rcpf_product_shortfall_steps(
@@ -1025,8 +1057,10 @@ def _ercot_multiproduct_design(
     # RTOLCAP, never a price (rule #13). None (gate off) leaves the LP
     # unchanged.
     online_capacity_cap = None
-    if getattr(config, "ercot_online_capacity_envelope", False) or getattr(
-        config, "ercot_online_capacity_envelope_extreme", False
+    if (
+        getattr(config, "ercot_online_capacity_envelope", False)
+        or getattr(config, "ercot_online_capacity_envelope_extreme", False)
+        or getattr(config, "ercot_online_capacity_envelope_measured", False)
     ):
         from market_sim.results.scarcity import ercot_online_capacity_envelope_mw
 
@@ -1050,6 +1084,16 @@ def _ercot_multiproduct_design(
                 headroom_eligible=headroom_eligible,
                 headroom_products=headroom_products,
             )
+
+    # ORDC-only scarcity pricing (v3): the envelope is a PRICING-ONLY basis —
+    # pre-RTC+B SCED carries no committed-capability constraint, so the array
+    # moves to online_capacity_pricing_mw (read by the post-solve RTORPA,
+    # scarcity.ercot_ordc_realized_adder) and the LP row is NOT installed
+    # (see the ReserveDesign field comment for the v2 hard-row failure).
+    online_capacity_pricing_mw = None
+    if getattr(config, "ercot_ordc_only_scarcity", False):
+        online_capacity_pricing_mw = online_capacity_cap
+        online_capacity_cap = None
 
     # Storage AS duration gate (config.ercot_storage_as_duration_gate): the
     # published per-product SOC durations (ERCOT_AS_PRODUCT_DURATION_H, index-
@@ -1151,6 +1195,7 @@ def _ercot_multiproduct_design(
         headroom_products=headroom_products,
         supply_cap=supply_cap,
         online_capacity_cap=online_capacity_cap,
+        online_capacity_pricing_mw=online_capacity_pricing_mw,
     )
 
 

@@ -2369,6 +2369,76 @@ class ScenarioConfig:
     # machinery — do not set together with ercot_online_capacity_envelope (the
     # base flag keeps its frozen decile tables for ercot41 replay fidelity).
     # Default off; ERCOT-only; GATED.
+    ercot_online_capacity_envelope_measured: bool = False  # ERCOT: the
+    # MEASURED-FLEET-BASIS variant of the on-line-capacity envelope — the joint
+    # ercot57 round's re-identification (owner-sanctioned 2026-07-11; the
+    # ercot41/43 envelope A/Bs were confounded by the phantom-tight statistical
+    # availability stack the measured 60-Day DAM disclosure replaced, so the
+    # envelope family was never tested on the honest fleet — the ERCOT-57
+    # calibration-log entry). Identical LP row and 14-bin extreme driver axis;
+    # what changes is the DECOMPOSITION of the envelope's basis: the old share
+    # (committed on-line HSL ÷ INSTALLED capacity) conflated the commitment
+    # choice with the outage state, so in the extreme tail — where reality
+    # musters near-max availability — the pooled share embedded average outages
+    # and under-stated the committable capacity (the ercot43 2023 top-2% room
+    # collapse, extreme-tail ledger −23%). This variant separates them: for the
+    # measured-availability classes (CC_REGULAR, CT_PEAKER — the disclosure
+    # deriver's scope) the share is re-derived as committed on-line HSL ÷
+    # MEASURED AVAILABLE capacity (the class-day disclosure fraction × installed)
+    # and the LP basis becomes Σ pmax × availability(t) — the fleet's finished
+    # availability, which under ercot_thermal_dam_availability IS the measured
+    # series in backcast and the statistical stack forward (the G4 mode-aware
+    # seam; the envelope then regenerates for a forecast year and responds to
+    # changed outage conditions, rule 13). Uncovered classes keep the extreme
+    # variant's installed × summer-derate basis and shares unchanged.
+    # ERCOT_ONLINE_CAP_SHARE_MEASURED / ERCOT_ONLINE_CAP_DELIV_PROFILE_MEASURED,
+    # derived by scripts/derive_ercot_rtolcap_forward.py --emit
+    # online-cap-measured-constant; identification gated by
+    # scripts/validate_ercot_online_capacity.py --measured. Every input is a
+    # measured MW quantity (rules #13/#14/#23, never a price); re-derives only
+    # on a disclosure / CAMPD / measured-RTOLCAP source-data update (the
+    # 2026-07-11 derivation cites the ercot-thermal-dam-availability.csv intake).
+    # Mutually exclusive with the other two envelope flags. Default off;
+    # ERCOT-only; GATED.
+    ercot_ordc_only_scarcity: bool = False  # ERCOT: pre-RTC+B ORDC-ONLY reserve
+    # scarcity pricing — the product-ladder design question filed at ERCOT-57
+    # (docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md §4.2;
+    # owner-sanctioned 2026-07-11). 2023-25 ERCOT has NO real-time per-product
+    # scarcity pricing and SCED withholds nothing beyond the DAM AS plan: RT
+    # reserve scarcity prices through the ORDC on the REALIZED total online
+    # reserves, added post-SCED to the energy price (RTSPP = SPP + RTORPA;
+    # Nodal Protocols §6.5.7.5 pays every reserve product that same price). A
+    # product-vs-capability squeeze triggers RUC commitment, not a price. The
+    # June/Sep-2023 forensics measured the imported NYISO-RCPF k×VOLL/12
+    # ladders printing quantized rungs ($417-1,250) into the energy duals on
+    # days measured RTORPA ≤ $15. Under this flag: (1) the standing product
+    # families (RegUp/RRS/NonSpin + post-reform released ECRS) keep their
+    # measured AS-plan requirements but their shortfall ladder becomes a
+    # single ERCOT_AS_PLAN_HOLD_EPS step — the plan is HELD whenever headroom
+    # exists (the DAM award's physical withholding), never priced; the
+    # pre-reform ECRS_withheld family keeps its rigid VOLL step (the
+    # IMM-documented no-price-release design, ERCOT_ECRS_RELEASE_REFORM_*
+    # block in reserve_config). (2) RTORPA is computed POST-SOLVE on the P1
+    # result's realized envelope room (scarcity.ercot_ordc_realized_adder —
+    # env_all − ΣP + measured storage-AS + LR credit, offline = forward
+    # RTOFFCAP) and added to the settled price; the envelope is a
+    # PRICING-ONLY basis under this flag — reserve_config moves it to
+    # ReserveDesign.online_capacity_pricing_mw and the LP row is NOT
+    # installed, because pre-RTC+B SCED carries no committed-capability
+    # dispatch constraint (v3; the v2 hard-row probe shed 833 GWh — an LP
+    # cap anchored to reality's committed level converts every model-vs-
+    # reality supply-mix difference at tight hours into VOLL shed). The v1
+    # in-LP form (the ORDC total family demanding the span inside the
+    # envelope) reproduced the ercot43 §7.4 defect on the honest fleet —
+    # VOLL-floored reserve steps made load-shed and reserve-holding
+    # indistinguishable (62 GWh shed, 12.8 GW coal parked at the Aug-2023
+    # peak) — so rule 19 makes the two mutually exclusive: requires
+    # ercot_multiproduct_as_coopt and an envelope variant (the room basis),
+    # FORBIDS ercot_ordc_total_reserve.
+    # Backcast-probed; the construction regenerates forward (envelope on the
+    # fleet's finished availability + forward RTOFFCAP), but the forecast
+    # runner seam is not yet wired — promotion requires it (G4).
+    # Default off; ERCOT-only; GATED.
     pjm_reserve_supply_cap: bool = False  # PJM analogue of ercot_reserve_supply_cap:
     # cap the energy+reserve co-opt's cleared reserve at the fleet's 10-min
     # DELIVERABLE ramp (FleetArrays.ramp10 = RAMP10_FRAC_BY_GROUP × pmax,
@@ -4507,14 +4577,44 @@ class ScenarioConfig:
         # setting both would be ambiguous about which table governs, so it is a
         # hard error rather than a silent precedence rule (rule 19: one
         # mechanism per phenomenon).
-        if self.ercot_online_capacity_envelope and (
-            self.ercot_online_capacity_envelope_extreme
-        ):
+        _envelope_variants = [
+            self.ercot_online_capacity_envelope,
+            self.ercot_online_capacity_envelope_extreme,
+            self.ercot_online_capacity_envelope_measured,
+        ]
+        if sum(bool(v) for v in _envelope_variants) > 1:
             raise ValueError(
-                "ercot_online_capacity_envelope and "
-                "ercot_online_capacity_envelope_extreme are mutually exclusive "
-                "variants of the same envelope row — set exactly one."
+                "ercot_online_capacity_envelope / _extreme / _measured are "
+                "mutually exclusive variants of the same envelope row — set "
+                "exactly one."
             )
+
+        # ORDC-only scarcity pricing (v2, realized-room RTORPA): needs the
+        # multi-product plan structure and an envelope variant (the room
+        # quantity RTORPA prices), and FORBIDS the in-LP ORDC total-reserve
+        # family — the two price the same phenomenon (rule 19), and the v1
+        # probe showed the in-LP span demand inside the envelope withholds
+        # capacity and sheds load reality never did.
+        if self.ercot_ordc_only_scarcity:
+            if not self.ercot_multiproduct_as_coopt:
+                raise ValueError(
+                    "ercot_ordc_only_scarcity requires "
+                    "ercot_multiproduct_as_coopt: the plan-hold product "
+                    "families are the multi-product design's."
+                )
+            if self.ercot_ordc_total_reserve:
+                raise ValueError(
+                    "ercot_ordc_only_scarcity and ercot_ordc_total_reserve are "
+                    "mutually exclusive (rule 19): the realized-room RTORPA "
+                    "and the in-LP ORDC total-reserve family price the same "
+                    "phenomenon — RT reserve scarcity prices once."
+                )
+            if not any(_envelope_variants):
+                raise ValueError(
+                    "ercot_ordc_only_scarcity requires an on-line-capacity "
+                    "envelope variant: the realized room (envelope − dispatch) "
+                    "is the reserve level RTORPA prices."
+                )
 
         # Endogenous storage energy-vs-AS competition is priced *inside* the
         # reserve co-optimization: without it the flag would silently no-op
@@ -5296,6 +5396,8 @@ TIER_TAGS: dict[str, int] = {
     "ercot_reserve_supply_forward": 1,
     "ercot_online_capacity_envelope": 1,
     "ercot_online_capacity_envelope_extreme": 1,
+    "ercot_online_capacity_envelope_measured": 1,
+    "ercot_ordc_only_scarcity": 1,
     "pjm_reserve_supply_cap": 1,
     "pjm_reserve_online_gated": 1,
     "pjm_reserve_online_rho": 1,
