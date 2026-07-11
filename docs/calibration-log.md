@@ -40,6 +40,43 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-11 — CAISO — owner decision G-61(b) EXECUTED: startup-aware RA bridge ADOPTED — already shipped in keeper caiso-76; verified, no re-solve; keeper stays caiso-76
+
+Owner decision G-61(b) (owner-decision-briefs-2026-07-08.md Decision 1, decided
+2026-07-11): ADOPT `caiso_ra_bridge_startup_aware` on the current keeper config
+(caiso-76), not the old caiso-65 base. Execution session found the requested run
+**already exists as the keeper itself** — no new solve or registration:
+
+- **Lineage**: the flag entered the calibration line as caiso-70's pre-registered
+  single delta (2026-07-10, G-61b de-crowding probe) and was carried through
+  caiso-72 → caiso-73 → caiso-75 → caiso-76; `2026-07-11-caiso-76-hydro-budget`
+  (promoted to keeper 2026-07-11, commit 295510c, years 2023–2025 in one bundle
+  per rule 16, zero-forcing ablation twin registered per rule 20) has
+  `caiso_ra_bridge_startup_aware=True` in `run_config.json` and the bridge listed
+  in its attestation DOF-ledger note (zero free parameters). Replaying caiso-76's
+  config with the flag enabled is config-identical to caiso-76 — a duplicate
+  bundle would add zero information and clutter top-15 retention, so none was
+  produced.
+- **Mechanism engaged in the keeper**: D-2 attributes `ra_mustoffer_bridge`
+  forced CC_REGULAR at 2.38/2.26/1.73 TWh 2023/24/25 (3.8/3.6/3.0% of class,
+  C8 PASS) — the startup-aware level, vs 3.5–4.0 TWh under the unconditional
+  floor (caiso-63/66 baseline). Phantom belly anchoring (~1.5–1.7 TWh/yr) is out.
+- **λ attribution (per the brief)**: the caiso-66 transplant's predicted
+  +$0.30–0.46 λ regression did NOT materialize on the shipped base — the
+  caiso-70 vs caiso-69 A/B (SP15-split, drag-off) shows hub means essentially
+  unchanged (LA_BASIN 70.05/47.65/51.45 vs 70.18/47.82/51.26) with a small 2023
+  tail uptick (530→540 h). The keeper's remaining C3a body miss stays attributed
+  to the documented belly under-commitment gap (measured CAISO runs 3.1–5.2 GW
+  more belly gas than the model — `FINDING-caiso-seam-tz-correction-2026-07-07.md`
+  §4.3), owned by the G-15 belly-grounding lane. Per the brief, the unconditional
+  floor is NOT a fallback: phantom anchoring is a real defect (rules 1/11).
+- **Governance re-verified this session**: `keepers.json` unchanged (already
+  caiso-76); `build_status.py --check` in sync (6 keepers);
+  calibration-keeper-auditor PASS (`audit_keepers.py --iso CAISO` clean —
+  keeper id, v2.4 verdict fields, registry sidecar, twin, and the
+  startup-aware flag all confirmed against the bundle). Gap-register G-61 row
+  updated to ADOPTED; decision brief annotated RESOLVED.
+
 ### 2026-07-11 — CAISO — caiso-76 (measured 2025 hydro budget correction): C2 clears to CAVEAT, **PROMOTED to keeper**; evening-CC build gated off; battery adder resolved no-change
 
 STEP-0-first session on the C2 2025 gas gate (+6.5 %, the promotion blocker vs
