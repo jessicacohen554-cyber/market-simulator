@@ -8,6 +8,7 @@ from market_sim.policy.cap_and_trade import (
     CarbonProgramResolution,
     MassCapSpec,
     measured_price,
+    named_program_price,
     per_generator_membership,
     projected_price,
     resolve_carbon_program,
@@ -80,7 +81,7 @@ class TestMembership:
 
     def test_pjm_dominion_membership_reflects_virginia_exit(self):
         # PJM_Dominion (VA+NC) is ~0.99 member in 2023 (VA still in RGGI) and
-        # 0.0 from 2024 (VA exited 1 Jan 2024) — the year-aware zone_share.
+        # 0.0 from 2024 (VA exited 1 Jan 2024) -- the year-aware zone_share.
         dominion_idx = 5
         res_2023 = resolve_carbon_program(
             ScenarioConfig(iso="PJM", mode="backcast"), 2023
@@ -389,9 +390,9 @@ class TestPerGeneratorMembership:
         # keep it nonzero only on the member unit.
         fleet = self._fleet(
             [
-                ("PJM_EMAAC", 301),  # NJ — member
-                ("PJM_EMAAC", 302),  # PA (Philly-metro slice) — non-member
-                ("PJM_AEP_Ohio", 303),  # OH — non-member
+                ("PJM_EMAAC", 301),  # NJ -- member
+                ("PJM_EMAAC", 302),  # PA (Philly-metro slice) -- non-member
+                ("PJM_AEP_Ohio", 303),  # OH -- non-member
             ]
         )
         program = CAP_AND_TRADE_PROGRAMS["PJM"]
@@ -413,7 +414,7 @@ class TestPerGeneratorMembership:
         assert cap_coeffs[2] == 0.0
 
     def test_non_rggi_program_returns_zone_fallback_unchanged(self):
-        # ERCOT/MISO have no program at all — per_generator_membership is a
+        # ERCOT/MISO have no program at all -- per_generator_membership is a
         # no-op passthrough of the zone broadcast.
         fleet = self._fleet([("North", 401)])
         zone_membership = np.array([0.0])
@@ -459,3 +460,39 @@ class TestPublishedBudgetConstantsMatchRawCsv:
         assert dict(zip(regional["budget_year"], regional["value"])) == pytest.approx(
             RGGI_STATE_CO2_BUDGET["RGGI"]
         )
+
+
+class TestNamedCarbonProgramPricePath:
+    """``ScenarioConfig.carbon_program_price_path`` (P-1D wiring)."""
+
+    def test_none_and_mid_are_byte_identical(self):
+        default = resolve_carbon_program(
+            ScenarioConfig(
+                iso="CAISO", mode="forecast", carbon_program_price_path=None
+            ),
+            2030,
+        )
+        mid = resolve_carbon_program(
+            ScenarioConfig(
+                iso="CAISO", mode="forecast", carbon_program_price_path="mid"
+            ),
+            2030,
+        )
+        assert default.price_adder == mid.price_adder
+
+    def test_low_below_mid_below_high(self):
+        program = CAP_AND_TRADE_PROGRAMS["CAISO"]
+        low = named_program_price(program, "CAISO", 2030, "low")
+        mid = named_program_price(program, "CAISO", 2030, "mid")
+        high = named_program_price(program, "CAISO", 2030, "high")
+        assert low < mid < high
+
+    def test_rggi_low_falls_back_to_mid_no_floor_series(self):
+        program = CAP_AND_TRADE_PROGRAMS["NYISO"]
+        low = named_program_price(program, "NYISO", 2030, "low")
+        mid = named_program_price(program, "NYISO", 2030, "mid")
+        assert low == mid
+
+    def test_pjm_no_measured_anchor_returns_zero(self):
+        program = CAP_AND_TRADE_PROGRAMS["PJM"]
+        assert named_program_price(program, "PJM", 2030, "high") == 0.0
