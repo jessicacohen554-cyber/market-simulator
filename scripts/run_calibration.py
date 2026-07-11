@@ -474,6 +474,8 @@ def run_year(
     neiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
+    ercot_online_capacity_envelope_measured: bool = False,
+    ercot_ordc_only_scarcity: bool = False,
     must_run_mw: "np.ndarray | None" = None,
     inject_biomass_mustrun: bool = False,
     priced_interchange: bool = False,
@@ -683,6 +685,11 @@ def run_year(
         # disclosure HSL/status; ScenarioConfig field docstring has the full
         # provenance/admissibility note). ERCOT-gated in the fleet application.
         config = config.with_overrides(ercot_thermal_dam_availability=True)
+    if ercot_online_capacity_envelope_measured:
+        # Measured-fleet-basis G-22 envelope (the ercot57 joint round;
+        # ScenarioConfig field docstring has the provenance/identification
+        # note). ERCOT-gated in the reserve design.
+        config = config.with_overrides(ercot_online_capacity_envelope_measured=True)
     if gas_st_netload_drag:
         config = config.with_overrides(
             gas_st_netload_drag=True, **(gas_st_drag_overrides or {})
@@ -1135,6 +1142,11 @@ def run_year(
     # see ScenarioConfig.ercot_ordc_total_reserve / reserve_config.
     if ercot_ordc_total_reserve:
         config = config.with_overrides(ercot_ordc_total_reserve=True)
+    # Pre-RTC+B ORDC-only reserve-scarcity pricing (the ercot57 product-ladder
+    # design; ScenarioConfig field docstring has the design note). Applied
+    # AFTER the co-opt/total-reserve flags: __post_init__ requires them.
+    if ercot_ordc_only_scarcity:
+        config = config.with_overrides(ercot_ordc_only_scarcity=True)
     # Measured battery AS award netted off the fast products' requirements
     # (multi-product measured-storage path): reserve_config.
     if ercot_storage_as_product_credit:
@@ -3049,7 +3061,7 @@ def run_year(
     #     parquet series the overwrite applied.
     # sim_year=year is value-identical here: the backcast pins weather_year to
     # the solve year and every sim_year consumer falls back to weather_year.
-    apply_reserve_coopt(
+    reserve_design = apply_reserve_coopt(
         dispatch_kwargs,
         config,
         fleet_arrays,
@@ -3118,6 +3130,39 @@ def run_year(
         solar_cap,
         storage.energy_cap,
     )
+
+    # ORDC-only scarcity pricing (ercot57 joint round v2): RTORPA computed
+    # post-solve on the P1 result's REALIZED envelope room — the published
+    # SCED-plus-adder settlement construction (scarcity.
+    # ercot_ordc_realized_adder has the full design note). Stashed on
+    # p2_state so solve_and_persist's frame writer adds it into the settled
+    # price exactly like the cap-dual adder it replaces (rule 19: the two
+    # never coexist — __post_init__ forbids the in-LP total family here).
+    ercot_ordc_realized = None
+    if (
+        iso == "ERCOT"
+        and getattr(config, "ercot_ordc_only_scarcity", False)
+        and reserve_design is not None
+    ):
+        from market_sim.results.scarcity import ercot_ordc_realized_adder
+
+        ercot_ordc_realized = ercot_ordc_realized_adder(
+            config,
+            year,
+            design=reserve_design,
+            dispatch=result.dispatch,
+            prices=result.prices,
+            demand=demand,
+        )
+        if ercot_ordc_realized is not None:
+            logger.info(
+                "ERCOT ORDC realized-room adder (%d): mean $%.2f/MWh, "
+                ">$10 in %d h, max $%.0f",
+                year,
+                float(ercot_ordc_realized.mean()),
+                int((ercot_ordc_realized > 10).sum()),
+                float(ercot_ordc_realized.max()),
+            )
     # Everything the P2 commitment pass needs, kept so P2 can be re-run as a
     # post-process (see _commitment_pass / run_p2) without re-solving P0/P1.
     p2_state = {
@@ -3143,6 +3188,10 @@ def run_year(
         # per-link flows for interface-binding diagnostics (the MISO zonal
         # gates report binding-hour counts per CIL/CEL group and the RDT).
         "links": iso_config.links,
+        # ORDC-only realized-room RTORPA for the P1 result (None unless
+        # ercot_ordc_only_scarcity computed one above): the frame writer adds
+        # it to the settled price (P1 rows only).
+        "ercot_ordc_realized_adder": ercot_ordc_realized,
     }
 
     # P2 (ARCHIVED — last resort, CLAUDE.md "Dispatch & Commitment"): the

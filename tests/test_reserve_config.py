@@ -887,6 +887,211 @@ class TestErcotOrdcTotalReserve(unittest.TestCase):
         np.testing.assert_allclose(total.requirement, expected_top - 800.0)
 
 
+class TestErcotOrdcOnlyScarcity(unittest.TestCase):
+    """Pre-RTC+B ORDC-only scarcity pricing (ercot57 joint round, v2).
+
+    Under ``ercot_ordc_only_scarcity`` the standing product families keep the
+    measured AS-plan requirement but their k×VOLL/n_ramp shortfall ladders
+    become a single plan-hold epsilon step (held when headroom exists, never
+    priced); the pre-reform ECRS_withheld family keeps its rigid VOLL step;
+    the in-LP ORDC total family is forbidden (rule 19) — RT reserve scarcity
+    prices post-solve on the realized envelope room
+    (``scarcity.ercot_ordc_realized_adder``).
+    """
+
+    def _design(self, **cfg_kw):
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 50.0, "RRS": 100.0, "ECRS": 150.0, "NSPIN": 120.0}
+            return np.full(hours, base[str(code)])
+
+        cfg = _cfg(ercot_multiproduct_as_coopt=True, **cfg_kw)
+        with mock.patch(
+            "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+            side_effect=fake_req,
+        ):
+            return get_reserve_design(cfg, _fleet(), 24, ["Z0"])
+
+    def test_flag_off_keeps_voll_ladders(self):
+        design = self._design()
+        for fam in design.families[:4]:
+            self.assertGreater(fam.ordc_penalties.size, 1)
+            self.assertGreater(float(fam.ordc_penalties.max()), 100.0)
+
+    def test_flag_on_products_carry_plan_hold_eps_only(self):
+        from market_sim.config.constants import ERCOT_AS_PLAN_HOLD_EPS
+
+        design = self._design(ercot_ordc_only_scarcity=True)
+        names = [f.name for f in design.families]
+        # No in-LP ORDC total family under the v2 design (rule 19).
+        self.assertNotIn("ercot_ordc_total", names)
+        self.assertEqual(len(names), 4)
+        for fam in design.families:
+            # One epsilon step spanning the plan peak — held, never priced.
+            self.assertEqual(fam.ordc_penalties.size, 1)
+            self.assertAlmostEqual(float(fam.ordc_penalties[0]), ERCOT_AS_PLAN_HOLD_EPS)
+            np.testing.assert_allclose(
+                fam.ordc_step_widths, [float(fam.requirement.max())]
+            )
+        # Requirements themselves are unchanged (the measured plan is held).
+        self.assertAlmostEqual(float(design.families[0].requirement.max()), 50.0)
+
+    def test_ecrs_withheld_keeps_rigid_voll_step(self):
+        # 2023 conservative-deployment year: the withheld family's single VOLL
+        # step (the IMM-documented no-price-release design) survives ORDC-only.
+        design = self._design(
+            ercot_ordc_only_scarcity=True,
+            ercot_ecrs_conservative_deployment=True,
+            weather_year=2023,
+        )
+        names = [f.name for f in design.families]
+        self.assertIn("ECRS_withheld", names)
+        withheld = design.families[names.index("ECRS_withheld")]
+        self.assertEqual(withheld.ordc_penalties.size, 1)
+        self.assertAlmostEqual(float(withheld.ordc_penalties[0]), 5000.0)
+
+    def test_scenario_config_gates(self):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        base = dict(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            energy_reserve_coopt=True,
+            ercot_multiproduct_as_coopt=True,
+            ercot_online_capacity_envelope_measured=True,
+            ercot_thermal_dam_availability=True,
+        )
+        # Valid v2 combination constructs cleanly.
+        ScenarioConfig(**base, ercot_ordc_only_scarcity=True)
+        # In-LP total family alongside -> rule-19 hard error.
+        with self.assertRaises(ValueError):
+            ScenarioConfig(
+                **base,
+                ercot_ordc_only_scarcity=True,
+                ercot_ordc_total_reserve=True,
+            )
+        # No envelope variant -> no room quantity -> hard error.
+        no_env = dict(base, ercot_online_capacity_envelope_measured=False)
+        with self.assertRaises(ValueError):
+            ScenarioConfig(**no_env, ercot_ordc_only_scarcity=True)
+        # No multi-product co-opt -> hard error.
+        no_mp = dict(base, ercot_multiproduct_as_coopt=False)
+        with self.assertRaises(ValueError):
+            ScenarioConfig(**no_mp, ercot_ordc_only_scarcity=True)
+
+    def test_envelope_is_pricing_only_under_ordc_only(self):
+        # Under ordc_only the envelope array moves to the pricing-basis field
+        # and the LP row is NOT installed (v3: pre-RTC+B SCED carries no
+        # committed-capability dispatch constraint).
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 50.0, "RRS": 100.0, "ECRS": 150.0, "NSPIN": 120.0}
+            return np.full(hours, base[str(code)])
+
+        dummy_env = np.vstack([np.full(24, 1.0e9), np.full(24, 9_000.0)])
+        cfg = _cfg(
+            ercot_multiproduct_as_coopt=True,
+            ercot_ordc_only_scarcity=True,
+            ercot_online_capacity_envelope_measured=True,
+        )
+        with (
+            mock.patch(
+                "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+                side_effect=fake_req,
+            ),
+            mock.patch(
+                "market_sim.results.scarcity.ercot_online_capacity_envelope_mw",
+                return_value=dummy_env,
+            ),
+        ):
+            # The envelope branch needs the net-load driver threaded in.
+            design = get_reserve_design(
+                cfg,
+                _fleet(),
+                24,
+                ["Z0"],
+                system_load=np.full(24, 1_000.0),
+                wind_gen=np.zeros(24),
+                solar_gen=np.zeros(24),
+            )
+        self.assertIsNone(design.online_capacity_cap)
+        np.testing.assert_allclose(design.online_capacity_pricing_mw, dummy_env)
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertNotIn("reserve_online_capacity_cap", kw)
+
+    def test_realized_adder_prices_low_room_not_fat_room(self):
+        from types import SimpleNamespace
+
+        from market_sim.results.scarcity import ercot_ordc_realized_adder
+
+        T = 24
+        cfg = SimpleNamespace(
+            mode="backcast",
+            weather_year=2024,
+            ordc_voll=5000.0,
+            ordc_mcl_mw=3000.0,
+            ordc_lolp_mu_mw=0.0,
+            ordc_lolp_sigma_mw=1400.0,
+            ordc_lolp_shift_sigma=0.5,
+            ordc_multistep_floor=False,
+            ordc_lolp_params_path=None,
+            ercot_storage_as_reserve=False,
+            storage_as_commitment=False,
+            ercot_storage_as_endogenous=False,
+            ercot_load_resource_reserve=False,
+        )
+        # Two units, both all-tier eligible; env 10 GW flat; supply cap rows
+        # give a 1 GW offline term.
+        design = SimpleNamespace(
+            online_capacity_cap=np.vstack([np.full(T, 1.0e9), np.full(T, 10_000.0)]),
+            headroom_products=np.array([[True, False], [True, True]]),
+            headroom_eligible=np.ones((2, 2), dtype=bool),
+            supply_cap=np.vstack([np.full(T, 8_000.0), np.full(T, 9_000.0)]),
+        )
+        prices = np.full((1, T), 30.0)
+        demand = np.full((1, T), 5_000.0)
+        # Fat room: dispatch 2 GW -> room 8 GW -> LOLP ~ 0 -> adder ~ 0.
+        fat = ercot_ordc_realized_adder(
+            cfg,
+            2024,
+            design=design,
+            dispatch=np.full((2, T), 1_000.0),
+            prices=prices,
+            demand=demand,
+        )
+        # Tight room: dispatch 8 GW -> room 2 GW < MCL -> adder ~ VOLL - lambda.
+        tight = ercot_ordc_realized_adder(
+            cfg,
+            2024,
+            design=design,
+            dispatch=np.full((2, T), 4_000.0),
+            prices=prices,
+            demand=demand,
+        )
+        self.assertLess(float(fat.max()), 5.0)
+        self.assertGreater(float(tight.min()), 2_000.0)
+        # No envelope in the design -> None (the caller must not price).
+        none_design = SimpleNamespace(
+            online_capacity_cap=None,
+            headroom_products=design.headroom_products,
+            headroom_eligible=design.headroom_eligible,
+            supply_cap=design.supply_cap,
+        )
+        self.assertIsNone(
+            ercot_ordc_realized_adder(
+                cfg,
+                2024,
+                design=none_design,
+                dispatch=np.full((2, T), 1_000.0),
+                prices=prices,
+                demand=demand,
+            )
+        )
+
+
 class TestErcotStorageAsProductCredit(unittest.TestCase):
     """Measured battery AS award netted pro-rata off the fast products."""
 
