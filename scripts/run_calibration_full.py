@@ -537,6 +537,7 @@ def _system_frame(
     ercot_storage_as_endogenous: bool = False,
     ercot_ordc_total_reserve: bool = False,
     ercot_ordc_cap_dual_adder: bool = False,
+    ercot_ordc_realized_adder: "np.ndarray | None" = None,
 ) -> pd.DataFrame:
     """Return the per-zone hourly price / slack / demand frame.
 
@@ -600,7 +601,16 @@ def _system_frame(
                 scarcity_threshold=ercot_dam_as_scarcity_threshold,
                 from_year=ercot_dam_as_overlay_from_year,
             )
-        if (
+        if ercot_ordc_realized_adder is not None:
+            # ORDC-only scarcity pricing (ercot57 joint round v2): RTORPA
+            # computed post-solve on the P1 result's realized envelope room
+            # (scarcity.ercot_ordc_realized_adder — the published
+            # SCED-plus-adder settlement construction). Takes precedence over
+            # the cap-dual / total-family branches below; rule 19 (one
+            # mechanism per phenomenon) is enforced upstream — the in-LP
+            # total family cannot coexist with ercot_ordc_only_scarcity.
+            ordc_adder = np.asarray(ercot_ordc_realized_adder, dtype=float)[:T].copy()
+        elif (
             ercot_reserve_supply_cap
             and not ercot_storage_as_endogenous
             and ercot_market_regime(year, None) == "ordc"
@@ -1948,6 +1958,8 @@ def solve_and_persist(
     neiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
+    ercot_online_capacity_envelope_measured: bool = False,
+    ercot_ordc_only_scarcity: bool = False,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
@@ -2225,6 +2237,10 @@ def solve_and_persist(
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
+            ercot_online_capacity_envelope_measured=(
+                ercot_online_capacity_envelope_measured
+            ),
+            ercot_ordc_only_scarcity=ercot_ordc_only_scarcity,
             must_run_mw=must_run_total,
             inject_biomass_mustrun=inject_biomass,
             priced_interchange=priced_interchange,
@@ -2355,6 +2371,13 @@ def solve_and_persist(
                     ercot_storage_as_endogenous=ercot_storage_as_endogenous,
                     ercot_ordc_total_reserve=ercot_ordc_total_reserve,
                     ercot_ordc_cap_dual_adder=ercot_ordc_cap_dual_adder,
+                    # ORDC-only realized-room RTORPA: computed on the P1
+                    # result in run_year; None for other passes/configs.
+                    ercot_ordc_realized_adder=(
+                        p2_state.get("ercot_ordc_realized_adder")
+                        if label == "P1"
+                        else None
+                    ),
                 )
             )
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
@@ -2583,6 +2606,10 @@ def solve_and_persist(
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
+        "ercot_online_capacity_envelope_measured": (
+            ercot_online_capacity_envelope_measured
+        ),
+        "ercot_ordc_only_scarcity": ercot_ordc_only_scarcity,
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
@@ -2908,6 +2935,16 @@ def solve_and_persist(
         # Mirror run_year's with_overrides so run_config.json records the
         # measured thermal class-day availability the LP solved with.
         recorded_cfg = recorded_cfg.with_overrides(ercot_thermal_dam_availability=True)
+    if ercot_online_capacity_envelope_measured:
+        # Mirror run_year so run_config.json records the measured-fleet-basis
+        # envelope the LP solved with (ercot57 joint round).
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_online_capacity_envelope_measured=True
+        )
+    if ercot_ordc_only_scarcity:
+        # Mirror run_year so run_config.json records the ORDC-only product-
+        # ladder design the LP solved with (ercot57 joint round).
+        recorded_cfg = recorded_cfg.with_overrides(ercot_ordc_only_scarcity=True)
     if interchange_shaping:
         recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:
@@ -5956,6 +5993,35 @@ def main() -> None:
         "statistical model. Off (default, keeper-reproducing).",
     )
     parser.add_argument(
+        "--ercot-online-capacity-envelope-measured",
+        action="store_true",
+        help="ERCOT: MEASURED-FLEET-BASIS G-22 on-line-capacity envelope (the "
+        "ercot57 joint round, owner-sanctioned 2026-07-11): the extreme "
+        "14-bin envelope row with the share re-derived as committed on-line "
+        "HSL over MEASURED AVAILABLE capacity for the disclosure-covered "
+        "classes (CC_REGULAR/CT_PEAKER) and the LP basis switched to the "
+        "fleet's finished availability (measured under "
+        "--ercot-thermal-dam-availability), separating commitment choice "
+        "from outage state (ERCOT_ONLINE_CAP_SHARE_MEASURED / "
+        "_DELIV_PROFILE_MEASURED; scripts/derive_ercot_rtolcap_forward.py "
+        "--emit online-cap-measured-constant; gate "
+        "scripts/validate_ercot_online_capacity.py --measured). Mutually "
+        "exclusive with the other envelope flags. Off (default).",
+    )
+    parser.add_argument(
+        "--ercot-ordc-only-scarcity",
+        action="store_true",
+        help="ERCOT: pre-RTC+B ORDC-ONLY reserve-scarcity pricing (the "
+        "ercot57 product-ladder design, owner-sanctioned 2026-07-11): the "
+        "per-product NYISO-imported kxVOLL/12 shortfall ladders become a "
+        "single plan-hold epsilon step (products held when headroom exists, "
+        "released along the ORDC total curve — Nodal Protocols §6.5.7.5: RT "
+        "reserve scarcity prices only via the ORDC; a product squeeze "
+        "triggers RUC, not a price). The pre-reform ECRS_withheld family "
+        "keeps its rigid VOLL step (IMM-documented no-release design). "
+        "Requires --ercot-ordc-total-reserve. Off (default).",
+    )
+    parser.add_argument(
         "--gas-hh-monthly-shape",
         action="store_true",
         help="Replace the generic climatological monthly gas SHAPE with the "
@@ -7683,6 +7749,10 @@ def main() -> None:
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
         ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
         ercot_thermal_dam_availability=args.ercot_thermal_dam_availability,
+        ercot_online_capacity_envelope_measured=(
+            args.ercot_online_capacity_envelope_measured
+        ),
+        ercot_ordc_only_scarcity=args.ercot_ordc_only_scarcity,
         gas_hh_monthly_shape=args.gas_hh_monthly_shape,
         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
         ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,

@@ -382,5 +382,117 @@ class TestExtremePeakResolvedVariant(unittest.TestCase):
         self.assertGreaterEqual(env_e[np.argmax(nl)], env_e[np.argmin(nl)])
 
 
+class TestMeasuredFleetBasisVariant(unittest.TestCase):
+    """ercot_online_capacity_envelope_measured: the ercot57 joint-round variant.
+
+    For the disclosure-covered classes (CC_REGULAR, CT_PEAKER) the basis is the
+    fleet's finished availability (Σ pmax × availability(t)), so the envelope
+    responds to the outage state — the decomposition that separates commitment
+    choice from availability. Uncovered classes keep the installed ×
+    summer-derate basis.
+    """
+
+    def _fleet_arrays(self, hours=48):
+        gens = [
+            Generator(
+                unit_id="cc",
+                name="cc",
+                zone="Z0",
+                fuel_type="gas_cc",
+                pmax_mw=500.0,
+                pmin_mw=0.0,
+                plant_group="CC_REGULAR",
+                plant_code=1,
+            ),
+            Generator(
+                unit_id="ct",
+                name="ct",
+                zone="Z0",
+                fuel_type="gas_ct",
+                pmax_mw=200.0,
+                pmin_mw=0.0,
+                plant_group="CT_PEAKER",
+                plant_code=2,
+            ),
+            Generator(
+                unit_id="coal",
+                name="coal",
+                zone="Z0",
+                fuel_type="coal",
+                pmax_mw=800.0,
+                pmin_mw=0.0,
+                plant_group="COAL",
+                plant_code=3,
+            ),
+        ]
+        return generators_to_fleet_arrays(gens, ["Z0"], hours=hours)
+
+    def _kwargs(self, hours=48):
+        return dict(
+            net_load=np.linspace(500.0, 5000.0, hours),
+            headroom_eligible=np.ones((2, 3), dtype=bool),
+            headroom_products=np.array([[True, False], [True, True]], dtype=bool),
+        )
+
+    def _cfg(self, hours=48):
+        return ScenarioConfig(
+            iso="ERCOT",
+            mode="backcast",
+            weather_year=2024,
+            hours=hours,
+            ercot_online_capacity_envelope_measured=True,
+        )
+
+    def test_measured_alone_activates_envelope(self):
+        out = ercot_online_capacity_envelope_mw(
+            self._cfg(), self._fleet_arrays(), 48, **self._kwargs()
+        )
+        self.assertIsNotNone(out)
+        self.assertEqual(out.shape, (2, 48))
+        self.assertTrue(np.all(out[0] > 1e8))  # fast tier uncapped sentinel
+        self.assertTrue(np.all(out[1] < 1500.0))
+        self.assertTrue(np.all(out[1] > 0.0))
+
+    def test_mutually_exclusive_with_extreme(self):
+        with self.assertRaises(ValueError):
+            ScenarioConfig(
+                iso="ERCOT",
+                mode="backcast",
+                weather_year=2024,
+                hours=48,
+                ercot_online_capacity_envelope_extreme=True,
+                ercot_online_capacity_envelope_measured=True,
+            )
+
+    def test_covered_class_availability_moves_envelope(self):
+        # Halving CC_REGULAR availability halves its contribution: the all-tier
+        # envelope drops in every hour — the measured-fleet basis responding to
+        # the outage state (the whole point of the re-identification).
+        fleet_full = self._fleet_arrays()
+        fleet_derated = self._fleet_arrays()
+        fleet_derated.availability[0, :] = 0.5  # the CC_REGULAR unit
+        env_full = ercot_online_capacity_envelope_mw(
+            self._cfg(), fleet_full, 48, **self._kwargs()
+        )[1]
+        env_derated = ercot_online_capacity_envelope_mw(
+            self._cfg(), fleet_derated, 48, **self._kwargs()
+        )[1]
+        self.assertTrue(np.all(env_derated < env_full))
+
+    def test_uncovered_class_availability_does_not_move_envelope(self):
+        # COAL is outside the disclosure scope: its basis stays installed ×
+        # summer-derate, so its availability does not enter the envelope.
+        fleet_full = self._fleet_arrays()
+        fleet_derated = self._fleet_arrays()
+        fleet_derated.availability[2, :] = 0.5  # the COAL unit
+        env_full = ercot_online_capacity_envelope_mw(
+            self._cfg(), fleet_full, 48, **self._kwargs()
+        )[1]
+        env_derated = ercot_online_capacity_envelope_mw(
+            self._cfg(), fleet_derated, 48, **self._kwargs()
+        )[1]
+        np.testing.assert_allclose(env_derated, env_full)
+
+
 if __name__ == "__main__":
     unittest.main()
