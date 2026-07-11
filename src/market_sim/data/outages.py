@@ -736,6 +736,56 @@ def ercot_nuclear_unit_availability_series(
     return out
 
 
+# ERCOT measured CLASS-day thermal availability (60-Day DAM disclosure
+# Gen_Resource HSL + Resource Status, config-collapsed to physical CC trains)
+# — the measured replacement for the statistical WEFOR/EFOR estimate of the
+# same quantity on the covered gas classes, gated by
+# ScenarioConfig.ercot_thermal_dam_availability. Derived by
+# scripts/derive_ercot_thermal_dam_availability.py (provenance, class scope and
+# admissibility in its docstring); the June/Sep-2023 scarcity-formation
+# forensics measured the statistical stack 13-22 % derated at the summer
+# reserve margin where this disclosure shows the same fleet at its ratings.
+ERCOT_THERMAL_DAM_AVAILABILITY_CSV: Path = (
+    RAW_DATA_DIR / "ercot-thermal-dam-availability.csv"
+)
+
+
+@lru_cache(maxsize=None)
+def ercot_thermal_dam_availability_series(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> dict[str, np.ndarray]:
+    """Return ``{plant_group: (hours,) measured class availability}`` for ``year``.
+
+    Each covered delivery date contributes a flat 24-hour block of the class's
+    measured day availability fraction (live config-collapsed HSL / site
+    ratings) on the model's fixed non-leap clock (:func:`_hour_of_year`; a leap
+    year's Feb 29 row dropped, the archive convention). Hours the disclosure
+    does not cover — the Oct-2023 publication hole, Nov-Dec 2025 until the 2026
+    files land — are ``NaN``: the caller keeps the statistical availability
+    there. Returns an empty dict when the CSV is absent or the year has no
+    rows, so callers degrade to the statistical model unchanged.
+    """
+    if not ERCOT_THERMAL_DAM_AVAILABILITY_CSV.exists():
+        return {}
+    df = pd.read_csv(ERCOT_THERMAL_DAM_AVAILABILITY_CSV)
+    # "class" is a Python keyword — itertuples would positionalize it.
+    df = df.rename(columns={"class": "klass"})
+    df["date"] = pd.to_datetime(df["date"])
+    df = df[df["date"].dt.year == int(year)]
+    if df.empty:
+        return {}
+    out: dict[str, np.ndarray] = {}
+    for r in df.itertuples(index=False):
+        mo, dy = int(r.date.month), int(r.date.day)
+        if mo == 2 and dy == 29:
+            continue  # non-leap model clock (ERCOT-54 convention)
+        lo = _hour_of_year(mo, dy, 0)
+        hi = min(lo + 24, hours)
+        arr = out.setdefault(str(r.klass), np.full(hours, np.nan))
+        arr[lo:hi] = float(r.avail)
+    return out
+
+
 # Within-window retiree measured-availability cap (CAMPD unit-level CEMS).
 # A within-window retiree (fleet.load_retired_within_window) is a whole-plant
 # exit the COD ramp ages out on its EIA-860 planned retirement date. But a unit

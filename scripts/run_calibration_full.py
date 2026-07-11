@@ -1947,6 +1947,7 @@ def solve_and_persist(
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
+    ercot_thermal_dam_availability: bool = False,
     priced_interchange: bool = False,
     hydro_backfill_year: int | None = None,
     hydro_eia930_monthly: bool = False,
@@ -2223,6 +2224,7 @@ def solve_and_persist(
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
+            ercot_thermal_dam_availability=ercot_thermal_dam_availability,
             must_run_mw=must_run_total,
             inject_biomass_mustrun=inject_biomass,
             priced_interchange=priced_interchange,
@@ -2580,6 +2582,7 @@ def solve_and_persist(
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
+        "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
         "priced_interchange": priced_interchange,
         "hydro_backfill_year": hydro_backfill_year,
         "hydro_eia930_monthly": hydro_eia930_monthly,
@@ -2901,6 +2904,10 @@ def solve_and_persist(
         # Mirror run_year's with_overrides so run_config.json records the
         # window-grain nuclear overlay the LP solved with.
         recorded_cfg = recorded_cfg.with_overrides(ercot_nuclear_unit_availability=True)
+    if ercot_thermal_dam_availability:
+        # Mirror run_year's with_overrides so run_config.json records the
+        # measured thermal class-day availability the LP solved with.
+        recorded_cfg = recorded_cfg.with_overrides(ercot_thermal_dam_availability=True)
     if interchange_shaping:
         recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
     if interchange_shaping_export_only:
@@ -5936,6 +5943,19 @@ def main() -> None:
         "Off (default, keeper-reproducing).",
     )
     parser.add_argument(
+        "--ercot-thermal-dam-availability",
+        action="store_true",
+        help="ERCOT backcast: rescale the CC_REGULAR/CT_PEAKER classes' "
+        "availability so each class-day mean equals the measured 60-Day DAM "
+        "disclosure fraction (config-collapsed live Gen_Resource HSL over "
+        "site ratings; data/raw/ercot-thermal-dam-availability.csv, "
+        "scripts/derive_ercot_thermal_dam_availability.py). Replaces the "
+        "statistical WEFOR/EFOR estimate of the same quantity with its "
+        "measured realization (rule 14; the thermal analogue of "
+        "--ercot-nuclear-unit-availability); uncovered dates keep the "
+        "statistical model. Off (default, keeper-reproducing).",
+    )
+    parser.add_argument(
         "--gas-hh-monthly-shape",
         action="store_true",
         help="Replace the generic climatological monthly gas SHAPE with the "
@@ -7662,6 +7682,7 @@ def main() -> None:
         ercot_ordc_cap_dual_adder=args.ercot_ordc_cap_dual_adder,
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
         ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
+        ercot_thermal_dam_availability=args.ercot_thermal_dam_availability,
         gas_hh_monthly_shape=args.gas_hh_monthly_shape,
         ercot_as_aware_commitment=args.ercot_as_aware_commitment,
         ercot_reserve_supply_cap=args.ercot_reserve_supply_cap,
