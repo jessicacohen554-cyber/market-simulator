@@ -50,6 +50,18 @@ MECH_NYISO_SELFSUPPLY: int = 13
 # commitment (NOT structural must-run) — subject to the D-2 forced-share gate and
 # ablated in the zero-forcing twin.
 MECH_WINTER_FUELSEC: int = 14
+# Per-plant gas (CC_REGULAR) local-reliability commitment floor
+# (ScenarioConfig.cc_mustrun_per_plant): the plant's CEMS-measured committed
+# tranche forced on in its measured top-online_frac system-load hours — the
+# out-of-market LDA/voltage reliability commitment (bid-cost recovery / RMR).
+# CC-only: the CT_PEAKER leg was probed and dropped (overnight off-window
+# binding against the class's own evidence, rule 12 — see the ScenarioConfig
+# field docstring).
+# A merchant reliability commitment (NOT structural must-run): parameter-based
+# (committed share + online fraction, thermal_tranches_<ISO>.csv), unlike the
+# quarantined MECH_CT_MUSTRUN_PER_PLANT above which pins observed net-generation
+# MWh. Subject to the D-2 forced-share gate; ablated in the zero-forcing twin.
+MECH_CC_MUSTRUN_PER_PLANT: int = 15
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -67,6 +79,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_FIRM_IMPORT: "firm_import",
     MECH_NYISO_SELFSUPPLY: "nyiso_local_selfsupply",
     MECH_WINTER_FUELSEC: "winter_fuelsec_mustrun",
+    MECH_CC_MUSTRUN_PER_PLANT: "cc_mustrun_per_plant",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -111,6 +124,7 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_CAISO_GAS_COMMITMENT_FLOOR: {"caiso_gas_commitment_floor": False},
     MECH_NYISO_SELFSUPPLY: {"nyiso_local_selfsupply": False},
     MECH_WINTER_FUELSEC: {"neiso_winter_fuel_mustrun": False},
+    MECH_CC_MUSTRUN_PER_PLANT: {"cc_mustrun_per_plant": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural
