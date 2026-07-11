@@ -110,16 +110,19 @@ MIX_GROUPS = list(FOSSIL_GROUPS)
 # from the family grid-delivered reconciliation here.
 _GAS_GROUPS = (*classes_for_fuel930("gas"), OTHER_FOSSIL_CLASS)
 _COAL_GROUPS = classes_for_fuel930("coal")
-# Grid-delivered benchmark reconciliation deadband (half-width ~3%). Each fossil
-# family's grid-delivered EIA-923 total is reconciled to the complete EIA-930
-# grid series — the same authority the model's gas/coal volume is scored on —
-# in BOTH directions: scaled UP when a preliminary monthly 923 vintage
-# under-counts thermal generation the CAMPD backfill can't fully repair, and
-# scaled DOWN when the 923 plant total over-states grid delivery (residual CHP
-# behind-the-meter + 923<->930 plant-to-BA assignment). A family already within
-# +/-(1-frac) of the grid series is left byte-identical (well-measured vintages
-# — e.g. ERCOT — unchanged). Keeps the actual gen+imports row reconciled to load
-# and the per-class shares on the model's grid-delivered denominator.
+# Grid-delivered benchmark reconciliation deadband (half-width ~3%). The COMBINED
+# fossil (gas + coal) grid-delivered EIA-923 total is reconciled to the complete
+# EIA-930 grid series — the authority the model's fossil volume is scored on — in
+# BOTH directions: scaled UP when a preliminary monthly 923 vintage under-counts
+# thermal generation the CAMPD backfill can't fully repair, and scaled DOWN when
+# the 923 total over-states grid delivery (residual CHP behind-the-meter +
+# 923<->930 assignment). Every fossil class scales by the SAME factor, so the
+# CEMS-validated 923 gas/coal split is preserved — the reconcile corrects the
+# fossil LEVEL, never the SPLIT (EIA-930's per-fuel coal/gas attribution mis-splits
+# by 7-21 TWh/yr vs CAMPD; see reconcile_vintage_classes). A total already within
+# +/-(1-frac) of the grid series is left byte-identical (well-measured vintages —
+# e.g. ERCOT — unchanged; and offsetting per-family misses that net to an in-band
+# total, e.g. PJM 2024, are now correctly left alone).
 _VINTAGE_RECONCILE_FRAC = 0.97
 # LEGACY FALLBACK ONLY. Balancing authorities whose EIA-930 "Natural Gas"
 # (NG: NG) aggregate silently folds in geothermal + biomass net generation, so
@@ -140,23 +143,39 @@ _T = 8760
 def reconcile_vintage_classes(
     classfull: dict[str, float], e930: dict[str, float], iso: str
 ) -> dict[str, float]:
-    """Reconcile each fossil family's EIA-923 total to the EIA-930 grid series, in place.
+    """Reconcile the COMBINED fossil (gas+coal) EIA-923 total to EIA-930, in place.
 
     Puts the actual fossil benchmark on the SAME grid-delivered basis as the
-    model (and the C2 volume gate): each fossil family's grid-delivered EIA-923
-    class total is scaled to the complete EIA-930 grid series the model is
-    calibrated to, in BOTH directions —
+    model (and the C2 volume gate): the grid-delivered EIA-923 gas+coal total is
+    scaled to the complete EIA-930 grid series the model is calibrated to, in
+    BOTH directions —
       * UP when the current-year 923 release is a preliminary monthly survey that
         under-counts thermal generation the CAMPD backfill can't fully repair, and
-      * DOWN when the 923 plant total over-states grid delivery (residual CHP
+      * DOWN when the 923 total over-states grid delivery (residual CHP
         behind-the-meter the ``btm.parquet`` hold-out under-removes, plus
         923<->930 plant-to-BA assignment) — so the actual "gen + net imports" row
-        reconciles to load instead of reading as a phantom over-supply, and the
-        per-class shares share the model's grid-delivered denominator.
-    The inter-class split and monthly shape are preserved; a family already
-    within :data:`_VINTAGE_RECONCILE_FRAC` of the grid series (well-measured
-    vintages — e.g. ERCOT) is left byte-identical. ISO-agnostic: one rule for
-    every BA, no per-ISO branch.
+        reconciles to load instead of reading as a phantom over-supply.
+
+    Every fossil class scales by the SAME factor, so the reconcile corrects only
+    the fossil LEVEL and NEVER the gas/coal SPLIT. This is deliberate: the earlier
+    per-family reconcile scaled gas and coal each to their own EIA-930 cell, which
+    forced the EIA-923 split onto EIA-930's fuel attribution — and that attribution
+    is unreliable. Against CAMPD (every coal unit and every grid CC/CT/ST gas unit
+    is CEMS-metered), EIA-930 mis-splits coal vs gas by 7-21 TWh/yr (PJM 930 coal
+    runs +7..+11 ABOVE CEMS, under-attributing gas by ~the same; MISO is the mirror,
+    -17..-21 BELOW), so the per-family reconcile manufactured per-class errors even
+    when the total fossil was in tolerance — PJM 2024 gas +4.2% / coal -5.9% both
+    fired, dumping ~85% of a spurious -15 TWh gas cut onto CC_REGULAR (which read
+    +21 TWh over when the CEMS-basis miss is ~+3) and inflating the coal target so a
+    real model coal over-run read as under. The row-level EIA-923 split is
+    CAMPD-validated (923 coal tracks CEMS to within ~1 TWh); the combined reconcile
+    keeps it. A total already within :data:`_VINTAGE_RECONCILE_FRAC` of the grid
+    series is left byte-identical (well-measured vintages — e.g. ERCOT — and
+    offsetting misses that net in-band, e.g. PJM 2024). ISO-agnostic: one rule for
+    every BA, no per-ISO branch. LIMITATION: the uniform scale still distributes a
+    preliminary-vintage (2025) level repair proportionally across coal and gas; a
+    CAMPD-per-class target (complete in every vintage) is the follow-up refinement
+    (docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6).
 
     Some BAs silently fold geothermal + biomass into the EIA-930 "Natural Gas"
     cell, so the GAS target must be deflated by that fold-in before scaling — else
@@ -172,37 +191,43 @@ def reconcile_vintage_classes(
 
     Mutates and returns ``classfull``.
     """
-    for _fuel, _klasses in (("gas", _GAS_GROUPS), ("coal", _COAL_GROUPS)):
-        _present = [g for g in _klasses if g in classfull]
-        _cur = sum(classfull[g] for g in _present)
-        _tgt = float(e930.get(_fuel, 0.0))
-        if _fuel == "gas":
-            _tgt -= _gas_foldin_deflation(classfull, e930, iso)
-        # Reconcile the family's grid-delivered EIA-923 total to the complete
-        # EIA-930 grid series — the same authority the model's gas/coal volume is
-        # scored on — in BOTH directions. Scale UP a preliminary/under-counting
-        # vintage (the original repair), and scale DOWN a vintage whose EIA-923
-        # plant total OVER-states grid delivery: residual CHP behind-the-meter
-        # the btm.parquet hold-out under-removes, plus 923<->930 plant-to-BA
-        # assignment. Either way the family lands on its grid-measured total, so
-        # the actual "gen + net imports" reconciles to load and the per-class
-        # shares use the SAME grid-delivered denominator the model does — without
-        # this the EIA-923 fossil total runs tens of TWh above the grid for
-        # CHP-heavy BAs (MISO 2023 +19 TWh) and the absolute supply row reads as
-        # a phantom over-supply. The inter-class split + monthly shape are
-        # preserved; a family already within +/-(1-frac) of the grid series is
-        # left byte-identical (well-measured vintages — e.g. ERCOT — unchanged).
-        # ISO-agnostic: one rule, no per-ISO branch.
-        if (
-            _tgt > 0.0
-            and _cur > 0.0
-            and not (
-                _VINTAGE_RECONCILE_FRAC * _tgt <= _cur <= _tgt / _VINTAGE_RECONCILE_FRAC
-            )
-        ):
-            _scale = _tgt / _cur
-            for g in _present:
-                classfull[g] = round(classfull[g] * _scale, 4)
+    # Reconcile the COMBINED fossil total (gas + coal) to the EIA-930 grid series
+    # as ONE family, scaling every fossil class by the SAME factor so the
+    # row-level EIA-923 gas/coal SPLIT is preserved. Scaling gas and coal
+    # separately to EIA-930's per-fuel cells (the earlier behaviour) forced the
+    # EIA-923 split onto EIA-930's fuel attribution — which is unreliable: every
+    # coal unit and every grid CC/CT/ST gas unit is CEMS-metered, and against that
+    # CAMPD ground truth EIA-930 MIS-SPLITS coal vs gas by 7–21 TWh/yr (PJM 930
+    # coal runs +7..+11 ABOVE CEMS and under-attributes gas by ~the same; MISO is
+    # the mirror, −17..−21 BELOW). The per-fuel reconcile therefore manufactured
+    # per-class errors even when the TOTAL fossil was fine — e.g. PJM 2024 gas
+    # +4.2% / coal −5.9% each breach the ±(1−frac) band and fire, dumping ~85% of
+    # a spurious −15 TWh gas correction onto CC_REGULAR (read +21 TWh over when the
+    # CEMS-basis miss is ~+3) and inflating the coal target so a real model coal
+    # over-run read as under. Reconciling the combined total corrects only the
+    # GENUINE level miss (CHP over-statement the btm.parquet hold-out under-removes;
+    # preliminary-vintage under-count) and leaves the CAMPD-validated split intact.
+    # PJM 2024's +4.2%/−5.9% OFFSET to a +1.6% total that is now correctly left
+    # byte-identical. ISO-agnostic; the CAISO geo/biomass gas fold-in is still
+    # deflated from the (now combined) target. NOTE: the uniform combined scale
+    # still distributes a preliminary-vintage (2025) level repair proportionally
+    # across coal and gas even when they under-report by different amounts — a
+    # CAMPD-per-class target (complete in every vintage) is the follow-up refinement
+    # (docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md §6).
+    _present = [g for g in (*_GAS_GROUPS, *_COAL_GROUPS) if g in classfull]
+    _cur = sum(classfull[g] for g in _present)
+    _tgt = float(e930.get("gas", 0.0)) + float(e930.get("coal", 0.0))
+    _tgt -= _gas_foldin_deflation(classfull, e930, iso)
+    if (
+        _tgt > 0.0
+        and _cur > 0.0
+        and not (
+            _VINTAGE_RECONCILE_FRAC * _tgt <= _cur <= _tgt / _VINTAGE_RECONCILE_FRAC
+        )
+    ):
+        _scale = _tgt / _cur
+        for g in _present:
+            classfull[g] = round(classfull[g] * _scale, 4)
     return classfull
 
 
