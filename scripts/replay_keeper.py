@@ -52,14 +52,45 @@ _IGNORE = {
     "years",
     "hours",
 }
+# Recorded-only env-gated probe values: resolved inside backcast_config from
+# env vars (ERCOT_ZONAL_GAS / ERCOT_WEST_NETLOAD_GAS /
+# ERCOT_WEST_GAS_DELIVERED_FLOOR — no solve_and_persist kwarg exists, rule-24
+# exception; see the meta-writer comment in run_calibration_full.py). The
+# meta.json value is provenance. A kwargs replay can reproduce only the INERT
+# state; a bundle that ARMED one must re-solve with the same env var, so
+# build_kwargs hard-errors rather than silently dropping the mechanism.
+_ENV_GATED_INERT: dict = {
+    "ercot_zonal_gas_basis": False,
+    "ercot_west_netload_gas_shape": False,
+    "ercot_west_gas_delivered_floor": None,
+}
 
 
 def build_kwargs(meta: dict) -> dict:
-    """Map a bundle's meta.json onto solve_and_persist's keyword arguments."""
+    """Map a bundle's meta.json onto solve_and_persist's keyword arguments.
+
+    STRICT: every meta key must map to a solve kwarg or be a curated
+    provenance/recorded-only key — an unmapped key is a hard error, never a
+    silent drop. This is the closure of the miso-50..53 regression class
+    (recipes reconstructed from a lossy channel silently dropped the whole
+    keeper structure; see the CLAUDE.md critical lesson and
+    results/calibration/FINDING-miso-august-scarcity-2026-07.md §1): the
+    meta.json replay is the ONLY sanctioned recipe reconstruction, and it
+    refuses to lose structure quietly.
+    """
     params = set(inspect.signature(rcf.solve_and_persist).parameters)
     kwargs: dict = {}
+    unmapped: list[str] = []
     for k, v in meta.items():
         if k in _IGNORE:
+            continue
+        if k in _ENV_GATED_INERT:
+            if v != _ENV_GATED_INERT[k]:
+                raise SystemExit(
+                    f"bundle armed the env-gated probe {k}={v!r}, which has no "
+                    "solve kwarg — a kwargs replay cannot reproduce it; re-run "
+                    "with the original env var set instead"
+                )
             continue
         key = _REMAP.get(k, k)
         if key == "coal_plant_monthly_pricing":
@@ -71,6 +102,14 @@ def build_kwargs(meta: dict) -> dict:
             continue
         if key in params:
             kwargs[key] = v
+        else:
+            unmapped.append(k)
+    if unmapped:
+        raise SystemExit(
+            "meta.json keys not bound to solve_and_persist kwargs: "
+            f"{sorted(unmapped)} — extend replay_keeper._REMAP/_IGNORE "
+            "deliberately; silent drops are the miso-50..53 regression class"
+        )
     # Pre-driver bundle backstop: the WP-B curtailment driver became the ERCOT
     # backcast default-ON (owner GO 2026-07-07), and its solve kwarg is
     # tri-state (None = per-ISO backcast_config default). A bundle solved
