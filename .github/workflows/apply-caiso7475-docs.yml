@@ -45,6 +45,7 @@ jobs:
               echo "$m  $p" | md5sum -c -
             fi
             git am "$p"
+            git checkout -- "$p" || true
           fi
 
       - name: Apply sync-docs patch (git am, guarded)
@@ -60,6 +61,7 @@ jobs:
               echo "$m  $p" | md5sum -c -
             fi
             git am "$p"
+            git checkout -- "$p" || true
           fi
 
       - name: Prune displaced CAISO registry entries (top-15 retention)
@@ -88,5 +90,6 @@ jobs:
       - name: Push
         run: |
           set -euo pipefail
+          git checkout -- .github/patches/caiso74/ || true
           git pull --rebase origin claude/caiso-calibration-continuation-3ftscz
           git push origin HEAD:claude/caiso-calibration-continuation-3ftscz
