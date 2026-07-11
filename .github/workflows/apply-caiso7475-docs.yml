@@ -5,7 +5,7 @@
 # the four oldest displaced CAISO non-keeper entries (caiso-64, caiso-67,
 # caiso-68 main+ablation) per the top-15-per-ISO retention rule (miso-41
 # prune precedent: sidecar + run payload). Safe to re-run: every step is
-# guarded.
+# guarded. Re-triggered 2026-07-11 post-registration to execute the prune.
 name: apply-caiso7475-docs
 
 on:
@@ -67,6 +67,8 @@ jobs:
       - name: Prune displaced CAISO registry entries (top-15 retention)
         run: |
           set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
           if [ ! -f frontend/data/backcast/registry/2026-07-11-caiso-75-demand-clock.json ]; then
             echo "caiso-75 registration not landed yet - prune skipped (re-dispatch later)"
           else
