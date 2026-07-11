@@ -1,0 +1,162 @@
+# Canonical schema: capacity-market-demand-curve (published capacity-market
+# demand-curve parameters per ISO — net-CONE, IRM, price cap, and the sloped
+# demand curve's own (x,y) points).
+#
+# ISO-agnostic reconciliation of each capacity-market ISO's published planning
+# parameters onto ONE tidy (long) frame. Companion to capacity-market-elcc
+# (accreditation curves) and capacity-market-auction-price (cleared outcomes);
+# together they are the CR-1 sloped-demand-curve mechanism's data inputs
+# (docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md §3-4).
+#
+#   PJM    : Net CONE + IRM + VRR curve points, from RPM BRA "Planning Period
+#            Parameters" filings.
+#   NYISO  : ICAP Demand Curve reference point + IRM, per locality (NYCA / NYC
+#            / LI / G-J), from the triennial Demand Curve Reset filings.
+#   ISO-NE : Net CONE + ICR + Auction Starting Price + MRI, from FCA parameter
+#            filings/results.
+#   MISO   : seasonal CONE (summer/fall/winter/spring) + PRA reliability-based
+#            demand-curve points, from PRA parameter filings (PY2025-26+).
+#   CAISO  : no centralized auction/demand curve — carries the CPM soft-offer
+#            cap and CPUC RA report bilateral price as the documented
+#            low-fidelity proxy (methodology plan §3.2).
+#   ERCOT  : (excluded) energy-only, no capacity market / demand curve.
+#
+# One row per (iso, delivery_year, area, season, metric, point_index) — area
+# and season disambiguate the ISOs that publish more than one curve per
+# delivery year (NYISO per locality, MISO per season/LRZ); both are blank for
+# ISOs publishing a single RTO-wide annual curve (PJM, ISO-NE). CAISO also
+# repurposes ``area`` to tag which RA product/segment a scalar ra_report_price
+# row represents (e.g. "system", "local", "flexible") since it has no
+# locality curves of its own. Scalar parameters (net_cone, irm, price_cap,
+# soft_offer_cap, ra_report_price) carry point_index/x_value/x_unit null and
+# the value in y_value/y_unit; a sloped curve's points (metric=curve_point)
+# carry point_index 0,1,2,... left-to-right with x_value/x_unit the
+# reserve-margin (or MW) axis and y_value/y_unit the price axis. Provenance
+# (exact filing + page/table) rides in source_doc / source_page so every
+# number traces to its authoritative filing; vintage records the filing's own
+# date/label distinct from the delivery year it governs.
+datatype: capacity-market-demand-curve
+schema_version: 1
+title: Capacity-market demand-curve parameters (net-CONE, IRM, VRR/ICAP/FCA/PRA curves)
+description: >-
+  Per-ISO published capacity-market demand-curve parameters (net-CONE, IRM,
+  price cap, sloped-curve points) by delivery year, reconciled across
+  PJM/NYISO/ISO-NE/MISO/CAISO onto one canonical metric set. Rule-13-admissible
+  published market-design input — never a fit target.
+
+key_columns: [iso, delivery_year, area, season, metric, point_index]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO publishing the value (PJM, NYISO, ISONE, MISO, CAISO).
+  - name: delivery_year
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Delivery/planning/capability year the parameter set governs, as a label
+      (e.g. "2026/2027" for PJM/ISO-NE/MISO planning-year ISOs, "2025" for
+      NYISO capability year or CAISO calendar year). Not a key on its own —
+      see key_columns.
+  - name: area
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Capacity area/locality the row applies to, for ISOs that publish
+      locality-specific curves (NYISO NYCA/NYC/LI/G-J; MISO LRZ). Null (system-
+      wide) for ISOs that publish one curve per delivery year (PJM RTO,
+      ISO-NE system). CAISO repurposes this column to tag the RA product/
+      segment a scalar ra_report_price row represents (e.g. "system",
+      "local", "flexible") since it has no locality curves of its own.
+  - name: season
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Season the value applies to (MISO seasonal CONE/curve: summer | fall |
+      winter | spring). Null for ISOs/metrics that are annual-only.
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical metric: net_cone | gross_cone | irm | price_cap |
+      curve_point | soft_offer_cap | ra_report_price. net_cone is the Net
+      Cost of New Entry anchor (CONE minus inframarginal energy/AS rents);
+      gross_cone is the pre-inframarginal-rent Cost of New Entry where an ISO
+      publishes both as genuinely distinct quantities (e.g. MISO's per-LRZ
+      gross CONE vs its two-subregion Net CONE); irm is the Installed Reserve
+      Margin target (as published — MW or pct per value_unit); price_cap /
+      price_floor are the curve's price ceiling/floor (as a multiple of
+      net_cone or an absolute price, e.g. PJM's ICAP-basis cap/floor before
+      UCAP conversion); curve_point is one (x,y) point on the sloped demand
+      curve; soft_offer_cap and ra_report_price are CAISO's documented
+      fixed-proxy inputs (no centralized auction/curve).
+  - name: point_index
+    dtype: int64
+    unit: none
+    nullable: true
+    description: >-
+      0-based order of this point along the sloped demand curve, left
+      (lowest reserve position) to right. Populated only for metric=curve_point;
+      null for scalar metrics.
+  - name: x_value
+    dtype: float64
+    unit: none
+    nullable: true
+    description: >-
+      X-axis value for a curve_point row (reserve position, per x_unit). Null
+      for scalar metrics.
+  - name: x_unit
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Unit of x_value: pct_of_requirement (reserve margin as a fraction of the
+      published reliability requirement) | mw (absolute reserve MW) |
+      pct_of_irm. Null for scalar metrics.
+  - name: y_value
+    dtype: float64
+    unit: none
+    nullable: true
+    description: >-
+      For curve_point rows, the price at this point (per y_unit) — null when
+      the ISO publishes the curve as a formula whose price at this x-position
+      is not itself a standalone published number (e.g. PJM Manual 18's
+      curve-point formula; the point's x_value still carries the shape). For
+      scalar metrics, the metric's own value (per y_unit); null only when a
+      source publishes a metric as a bound (e.g. ">X") that cannot be
+      recorded as a clean number — such rows are omitted at intake rather
+      than guessed.
+  - name: y_unit
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Unit of y_value: usd_per_mw_day | usd_per_mw_day_icap (PJM's
+      pre-UCAP-conversion ICAP-basis cap/floor) | usd_per_mw_yr |
+      usd_per_kw_month |
+      usd_per_kw_yr | pct | multiple_of_net_cone.
+  - name: vintage
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      The parameter set's own filing/adoption label and date (e.g. "2026/2027
+      RPM BRA Planning Period Parameters, filed 2025-XX-XX"), distinct from
+      delivery_year (the period it governs).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: true
+    description: Authoritative source document (URL or short citation) the value was read from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Page / table / sheet locator within source_doc.
