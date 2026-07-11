@@ -642,6 +642,34 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "means, not per-flowgate boundaries",
             )
         )
+    if sc.get("tranche_startup_amortization") and sc.get(
+        "tranche_startup_measured_runs"
+    ):
+        # Fast-start amortization v3 (Order-825/ELMP analogue): the CT
+        # econ/peak tranches amortize the published NREL start cost over the
+        # CAMPD-measured median start-to-stop run length (the horizon
+        # ceiling; P0 runs may only shorten it). Both inputs are
+        # independently sourced — the artifact is a frozen rule-23 derive,
+        # so it gets a measured-physical row (the flag itself is a structure
+        # gate, not a tuned scalar).
+        out.append(
+            _entry(
+                f"campd_ct_run_lengths_{iso}.csv (fast-start v3 horizon)",
+                "data/raw/_processed-legacy/campd_ct_run_lengths_"
+                f"{iso}.csv via fleet.campd_ct_run_lengths",
+                "measured-physical",
+                iso,
+                source="EPA CAMPD unit-level hourly grossLoad start-to-stop "
+                "run blocks (simple-cycle CT units, pooled 2023-2025), "
+                "frozen scripts/derive_campd_ct_run_lengths.py; start cost "
+                "is the published NREL/SR-5500-55433 CT_STARTUP_PARAMS "
+                "(constants.py)",
+                root_cause="re-derive trigger is a source-data change only "
+                "(rule 23), never a residual; representation bound: "
+                "monthly-granularity amortization (compute_monthly_markup), "
+                "no within-day run-length variation",
+            )
+        )
     if (
         iso in ("NYISO", "CAISO")
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))

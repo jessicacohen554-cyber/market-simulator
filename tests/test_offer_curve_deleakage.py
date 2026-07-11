@@ -107,6 +107,10 @@ def test_grounded_bands_survive_deleakage():
     # NEISO/NYISO CT start hurdle (evening-ramp grounded) kept.
     assert _resolved("NEISO")["CT_PEAKER"]["committed"] == pytest.approx(1.35)
     assert _resolved("NYISO")["CT_PEAKER"]["committed"] == pytest.approx(1.35)
+    # MISO CT committed = the MISO-measured CAMPD min-load part-load premium
+    # (derive_campd_marginal_hr --iso MISO, 2026-07-11; frozen against
+    # residuals — re-derive only on a CAMPD source update, rule 23).
+    assert _resolved("MISO")["CT_PEAKER"]["committed"] == pytest.approx(1.025)
     # NYISO ST_GAS native-steam-grounded curve kept.
     nyiso_st = _resolved("NYISO")["ST_GAS"]
     assert (nyiso_st["committed"], nyiso_st["econ_low"], nyiso_st["econ_high"]) == (
