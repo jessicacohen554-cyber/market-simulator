@@ -59,7 +59,7 @@ for the market split.
 | capacity-deliverability | — | — | — | — | — | — |
 | confirmed-retirements | — | — | — | — | — | — |
 | gtc-limits | — | — | — | — | — | — |
-| transfer-interface-limits | — | — | 2023–2025 | — | — | — |
+| transfer-interface-limits | — | — | — | — | — | — |
 | ramp-capability | — | — | — | — | — | — |
 | winter-fuel-inventory | — | — | — | — | — | — |
 | chp-btm-share | — | — | — | — | — | — |
@@ -71,7 +71,7 @@ for the market split.
 | nyiso-operating-events | — | — | — | — | — | — |
 | nyiso-interface-flows | — | — | — | — | — | — |
 | nyiso-som-hub-fuel-annual | — | — | — | — | — | — |
-| reserve-requirements | — | — | — | — | — | 2023–2025 |
+| reserve-requirements | — | — | — | — | — | — |
 | som-competitive-conduct | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
