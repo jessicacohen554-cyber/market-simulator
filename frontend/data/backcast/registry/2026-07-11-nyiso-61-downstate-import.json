@@ -1,0 +1,17 @@
+{
+  "id": "2026-07-11-nyiso-61-downstate-import",
+  "label": "nyiso 61 downstate import",
+  "date": "2026-07-11",
+  "shorthand": "nyiso-61-downstate-import",
+  "definition": "KEEPER (CALIBRATED-WITH-CAVEATS). nyiso-60 keeper recipe VERBATIM + one measured-data delta nyiso_nyc_lcr_tsl=True (Zone-J analog of the Zone-K nyiso_li_lcr_tsl cap): caps Lower_Hudson->NYC (Dunwoodie-South) at the published NYISO NYC-locality Bulk-Power Transmission import limit 2,875 MW (data/raw/capacity-deliverability/nyiso/nyiso.csv) in the HB14-21 window, replacing the 3,900 MW Gold-Book energy-TTC estimate; HVDC ties (Neptune/HTP/VFT) counted separately via the priced import node (rule 12/13/14/17, zero new free parameters). Promoted on measured structural faithfulness (rule 1), NOT residual movement. All load-bearing/protective criteria intact vs the keeper: C1 14/14, C2/C4/C7/C8 PASS, C3a -3.7/-12.8/-13.7% and C3b 0.156/0.222/0.198 marginally better, C5a identical. FINDING: downstate import discipline is NOT the binding deep-tail lever - near-null price effect, 2025 >$300 tail unchanged at 25h (vs 42h RT); remaining open items are the #1344 B1 reserve-increment ask + the Iroquois Z2 winter hub (both data-blocked, not chased with tuned proxies).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-11-nyiso-61-downstate-import.js",
+  "bundle": "results/calibration/nyiso61_downstate_import",
+  "ablation_twin": "2026-07-11-nyiso-61-downstate-import-ablation",
+  "market_story": "Zero-forcing twin isolates what the merchant floors buy: floors-off simple-mean prices sit HIGHER (twin 32.29/35.10/60.09 vs keeper 29.14/32.00/54.08 for 2023/24/25) because the NYISO reliability/reserve floors force cheap in-city steam-base and CT energy into merit order that the pure-economic LP would leave idle - real NYC/LI locational-reliability commitment (LMIC, D-2 attribution), not residual-buying. The >$300 tail is present in both arms: the floors do not manufacture the level or the scarcity - the tail is the measured hourly reserve-requirement duals plus the measured daily delivered gas. The new NYC 2,875 MW AC-import cap leaves the annual level essentially unchanged vs nyiso-60 (identical twin deltas), confirming NYC AC-import capability is not the binding scarcity lever."
+}
