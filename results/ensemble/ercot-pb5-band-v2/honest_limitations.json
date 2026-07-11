@@ -1,0 +1,37 @@
+[
+ {
+  "id": "lambda-unmeasured",
+  "title": "Dispatch-conditional: fleet-path structural error is NOT covered",
+  "detail": "The PB-3 structural prior is fit from frozen-fleet one-year backcast probes (D-7 statmode, 2023-2025); its horizon-widening term lambda(h) is pinned to 0 and flagged UNMEASURED until the PP-0.3 capacity hindcast supplies a number. The band covers input uncertainty plus dispatch-skill error given the fleet, not error in the fleet trajectory itself."
+ },
+ {
+  "id": "datacenter-axis-absent",
+  "title": "No datacenter/large-load uncertainty dimension",
+  "detail": "The load axis samples only the published ISO low/high demand-growth range (demand_growth_percentile); the datacenter_load_gw lever is gated on unbuilt PP-3.3 machinery. The upper emissions tail is understated by exactly the large-load boom the model cannot yet represent."
+ },
+ {
+  "id": "aeo2025-anchors",
+  "title": "Gas and load widths anchored on AEO2025-vintage sources",
+  "detail": "Gas sigma is anchored front on EIA STEO (Jul 2025) implied vol and back on AEO2025 low/high Henry Hub cases read as the 2050 P10/P90 (assumption A-1); the AEO-implied floor (~0.464) dominates. This certifies the widths are traceable to cited external sources, not tuned; it does not certify the current AEO2026 vintage (PP-3.2(2) unbuilt) nor that the AEO cases span the true tails (A-1/A-3 are disclosed judgments)."
+ },
+ {
+  "id": "reduced-draw-count",
+  "title": "n=16 draws over 2026-2050, below the spec's n=64 batch",
+  "detail": "The committed spec (configs/uncertainty_ercot.yaml) calls for 64 LHS draws (~2.7-day scheduled batch, plan section 5). This run solved n=16 LHS draws over the FULL 2026-2050 horizon at seed 7 -- sized from the PB-5 step-0 measurement (~55-80 min per 25-year member, two concurrent sequential invocations, rule 12) to fit the session. The bootstrap 90% CI attached to every published quantile makes the n=16 sampling noise explicit; scaling to n=64 is a compute/scheduling matter under the same seed and spec, not a code change. Do not quote these quantiles as the n=64 band."
+ },
+ {
+  "id": "weather-pool-forecast-coverage",
+  "title": "Weather pool restricted to 2021/2023/2024/2025 (uniform)",
+  "detail": "constants.WEATHER_YEAR_POOL_BY_ISO lists ERCOT 2019/2020 as verified, but that verification exercised the backcast measured-CF path; in FORECAST mode the renewables CF derives from the EIA-930 generation-distribution parquet, whose coverage floor is 2021, so 2019/2020 draws raise and were removed from this run's spec (a coverage limit, not a weighting judgment -- the COVID-anomaly year 2020 is excluded by this limit, not deliberately). 2022 remains under the rule-22 holdout quarantine. The weather dimension is correspondingly thinner than the widened pool the plan intended."
+ },
+ {
+  "id": "structural-prior-stale-isos",
+  "title": "Structural prior pools basis-stale carbon-priced ISO residuals",
+  "detail": "The pooled noise scale mixes all six ISOs' D-7 statmode residuals; CAISO/NEISO/NYISO's probes predate the R2 measured-rate CO2 basis and are flagged basis_stale pending the W3-P1 re-solves. ERCOT's own residual (the bias this band centres its structural layer on) is re-scored verified-identical under the current basis."
+ },
+ {
+  "id": "sensitivity-reduced-n",
+  "title": "A-2 rho sensitivity swept at paired n=8 per variant",
+  "detail": "The mandatory gas-load rank-correlation sensitivity (rho=0 and rho=0.6 around the main +0.3) runs at n=8 draws per variant with the same seed as each other -- a paired design in which only each draw's induced load percentile moves, so the rho=0.6-minus-rho=0.0 band delta isolates the correlation assumption. It is a bracketing diagnostic at reduced n, not a full n=16 re-run."
+ }
+]
