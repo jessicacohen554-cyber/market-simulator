@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-11-caiso-76-hydro-budget-ablation",
+  "label": "caiso 76 hydro budget ablation",
+  "date": "2026-07-11",
+  "shorthand": "caiso-76-hydro-budget-ablation",
+  "definition": "caiso-76 measured 2025 hydro budget correction ablation -- caiso-75 recipe + hydro_backfill_year=2024 + hydro_eia930_monthly=True single delta, 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-11-caiso-76-hydro-budget-ablation.js",
+  "bundle": "results/calibration/caiso76_hydro_budget-ablation"
+}
