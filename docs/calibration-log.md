@@ -10071,3 +10071,53 @@ only non-CAMPD mass), and deciding pjm-98 promotion together with those
 repairs. No keeper file, measured input, or tunable touched; no run
 registered (single-year probe only, rule 16); holdout years untouched
 (rule 22).
+
+## 2026-07-11 — SCORER FIX (all ISOs): benchmark fossil reconcile switched from per-family EIA-930 targets to a COMBINED gas+coal reconcile that preserves the CEMS-validated split — EIA-930 mis-attributes coal vs gas by 7-21 TWh/yr, which manufactured the PJM CC_REGULAR "over-run"
+
+Owner-directed follow-up to the G-21 diagnosis
+(`docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md`, CORRECTION
+section). The owner flagged that the original G-21 evidence wrongly treated CAMPD
+net as grid-delivered truth (it carries BTM host + non-grid load). The corrected
+proof uses CAMPD only for **coal, where every unit is CEMS-metered**: our
+row-level EIA-923 coal tracks CEMS to within ~1 TWh, while **EIA-930 coal runs
++7..+11 TWh ABOVE CEMS in PJM every year (and −17..−21 BELOW in MISO — the mirror
+image)**. So EIA-930's per-fuel coal/gas split is unreliable, and the old
+`render_calibration_html.reconcile_vintage_classes` — which scaled the gas family
+and coal family EACH to their own EIA-930 cell — forced our correct 923 split onto
+930's wrong one. For PJM 2024 that scaled correct 923 gas (383.6) DOWN to 930's
+368.3 and dumped ~85% of the spurious −15 onto CC_REGULAR (read +21 TWh over vs a
+true CEMS-basis ~+3), while inflating the coal target (hiding a real +2 model coal
+over-run) — even though PJM's TOTAL fossil is within ~1.6% of 930 (only the
+offsetting per-family split, gas +4.2% / coal −5.9%, breached the ±3% deadband).
+
+**Change:** `reconcile_vintage_classes` now reconciles the COMBINED gas+coal total
+to EIA-930 as one family, scaling every fossil class by the same factor — it
+corrects the fossil LEVEL, never the SPLIT, preserving the CAMPD-validated 923
+gas/coal ratio. Verified old-vs-new on identical data
+(`scripts/probes/_g21_verify_combined_reconcile.py`): **PJM 2024 stops firing →
+CC_REGULAR actual 321.7→335.1 (model +3, in band), coal 122.4→112.5 (CEMS-matching,
+exposing model coal +2).** No-coal ISOs (CAISO/NYISO/NEISO) byte-identical
+(combined = gas; the CAISO geo/biomass fold-in deflation is retained on the combined
+target). ERCOT complete years unchanged (930 split ≈ CEMS — anchor safe). MISO (not
+calibrated) correctly EXPOSED: its gas over-run + coal under-run grow, since 930's
+split had been flattering them. Tests `tests/test_vintage_reconcile_foldin.py`
+updated (12 pass; new guards for the offsetting-in-band case and combined
+split-preservation); ruff clean.
+
+**Fleet-group sweep** (the WA-Parish mixed-fuel question, all 6 ISOs, 2024,
+`scripts/probes/_g21_fleet_group_sweep.py`): the plant-level `_fleet_group_by_code`
+map buckets some genuinely mixed plants wholly to one class — coal↔gas ERCOT 2.75
+(p3470, the WA-Parish pattern confirmed), PJM 1.4, MISO 6.2; CC↔CT PJM 4.97
+(Doswell p52019), NYISO 3.0, MISO 13.9; CAISO/NEISO ~0. This affects only the CAMPD
+backfill (preliminary vintages) + per-plant displays, NOT the row-level scored
+totals (which are correct). Follow-up (unimplemented): bucket the backfill by unit
+prime-mover class, not plant.
+
+**Dashboard propagation:** NOT regenerated this session. The committed keepers'
+original `_shared` input parquets were overwritten by a later data refresh, so a
+clean reconcile-only re-render is impossible and re-rendering on today's data would
+confound the fix with data drift. The fix takes effect when bundles are next
+rendered on a controlled re-solve; the isolated reconcile-only impact is the verify
+table above. No keeper swapped; keeper determinations that move under this fix
+(PJM improves, MISO exposed) are owner-visible and flagged for review. Holdout years
+untouched (rule 22).
