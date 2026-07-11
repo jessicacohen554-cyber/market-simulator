@@ -1,0 +1,157 @@
+{
+  "_meta": {
+    "source": "Illustrative example of a rubric v2.4 scorecard. Criteria, tiers, and thresholds mirror scripts/calibration_verdict.py (RUBRIC_VERSION 2.4, CRITERIA at lines 344-357); numbers are faithful in proportion but are NOT raw solver output and do not describe any registered run.",
+    "description": "One ISO-year C1-C8 tiered scorecard for the calibration-rubric narrative page. Each row: criterion id, name, tier (load-bearing / supporting / protective), actual vs modeled value, the coded threshold, and the scored status. Statuses mix PASS / CAVEAT / GROUNDED / SKIP to illustrate the full vocabulary. actual/modeled are null where the criterion scores a derived statistic or a gate rather than an actual-vs-model pair.",
+    "date": "2026-07-11",
+    "illustrative": true
+  },
+  "run_metadata": {
+    "run_id": "example-iso-2024-keeper",
+    "iso": "EXAMPLE",
+    "year": 2024,
+    "rubric_version": "2.4",
+    "note": "Synthetic single-year excerpt; real keepers score all bundle years 2023-2025 together."
+  },
+  "rows": [
+    {
+      "crit": "C1",
+      "name": "Fuel-mix by class, grid-delivered",
+      "tier": "load-bearing",
+      "actual": 285.4,
+      "modeled": 291.2,
+      "units": "TWh (worst class: gas-CC)",
+      "threshold": "|model-actual| <= min(2.0% ISO load, 8 TWh) AND share within +/-3.0 pp",
+      "status": "PASS",
+      "note": "Worst-class delta 5.8 TWh, share delta +0.7 pp; all classes in band."
+    },
+    {
+      "crit": "C2",
+      "name": "Gas/coal family system volume",
+      "tier": "load-bearing",
+      "actual": 402.1,
+      "modeled": 415.0,
+      "units": "TWh (gas+coal family)",
+      "threshold": "Prelim-923 fallback vs EIA-930: target +/-2.5%, commercial +/-5%; immaterial < 10 TWh",
+      "status": "CAVEAT",
+      "note": "Delta +3.2% misses the target band but sits inside the commercial band (two-band caveat, unbudgeted). Complete 2024 EIA-923 vintage would defer this row to C1."
+    },
+    {
+      "crit": "C3a",
+      "name": "Mean LMP",
+      "tier": "load-bearing",
+      "actual": 38.6,
+      "modeled": 40.1,
+      "units": "$/MWh, load-weighted",
+      "threshold": "+/-10% passes clean (target == commercial as of v2.3)",
+      "status": "PASS",
+      "note": "Delta +3.9%."
+    },
+    {
+      "crit": "C3b",
+      "name": "Monthly price shape (NRMSE)",
+      "tier": "load-bearing",
+      "actual": null,
+      "modeled": 0.14,
+      "units": "NRMSE, dimensionless",
+      "threshold": "NRMSE <= 0.20 passes clean",
+      "status": "PASS",
+      "note": "Scored on load-weighted actual monthly means (v2.4); the statistic is model-vs-actual by construction, so no separate actual column."
+    },
+    {
+      "crit": "C3c",
+      "name": "Scarcity tail, DA-expressible",
+      "tier": "supporting",
+      "actual": 21,
+      "modeled": 9,
+      "units": "hours > $200/MWh (DA)",
+      "threshold": "Model within [0.5x, 2.0x] of DA actual; if actual < 10 h, |model-actual| <= 10",
+      "status": "CAVEAT",
+      "note": "Ratio 0.43 falls below the 0.5x band floor: the model under-forms the scarcity tail. Supporting-tier caveat, counts against the ledgered budget."
+    },
+    {
+      "crit": "C4",
+      "name": "Fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "actual": null,
+      "modeled": 0.84,
+      "units": "hourly r (gas fleet); NRMSE 0.22",
+      "threshold": "r >= 0.70 AND NRMSE <= 0.30 (gas, coal); skip fleet < 5 TWh",
+      "status": "PASS",
+      "note": "Gas r=0.84 / NRMSE 0.22; coal r=0.78 / NRMSE 0.26."
+    },
+    {
+      "crit": "C5a",
+      "name": "CO2 vs eGRID (full-plant, CHP-inclusive)",
+      "tier": "load-bearing",
+      "actual": 318.4,
+      "modeled": 305.1,
+      "units": "Mt CO2",
+      "threshold": "target +/-7%, commercial +/-10%",
+      "status": "PASS",
+      "note": "Delta -4.2%, inside the target band."
+    },
+    {
+      "crit": "C5b",
+      "name": "Storage throughput",
+      "tier": "supporting",
+      "actual": 0.42,
+      "modeled": 0.51,
+      "units": "TWh discharged",
+      "threshold": "+/-30%",
+      "status": "PASS",
+      "note": "Delta +21%."
+    },
+    {
+      "crit": "C5c",
+      "name": "Storage dispatch shape (monthly discharge r)",
+      "tier": "supporting",
+      "actual": 0.18,
+      "modeled": null,
+      "units": "actual monthly CV",
+      "threshold": "r >= 0.50; skip if actual CV < 0.25",
+      "status": "SKIP",
+      "note": "Actual monthly discharge CV 0.18 < 0.25 - too flat a seasonal shape to score a correlation; row skipped, not caveated."
+    },
+    {
+      "crit": "C6",
+      "name": "Governance gate",
+      "tier": "protective",
+      "actual": null,
+      "modeled": null,
+      "units": "pass/fail, never caveatable",
+      "threshold": "4 attestation assertions + machine-clean outage source; UNATTESTED -> NOT-YET",
+      "status": "PASS",
+      "note": "Attestation complete: DOF ledger present, ablation twin linked, outage source machine-clean."
+    },
+    {
+      "crit": "C7",
+      "name": "Diurnal shape (D-1)",
+      "tier": "protective",
+      "actual": null,
+      "modeled": 0.91,
+      "units": "worst material class profile r; off-peak CV ratio 0.63",
+      "threshold": "profile r >= 0.8 AND off-peak CV ratio >= 0.5; gated only if class >= 2% load",
+      "status": "PASS",
+      "note": "All material classes clear both gates; sub-2%-load classes reported by D-1 but not gated."
+    },
+    {
+      "crit": "C8",
+      "name": "Forced-energy share (D-2)",
+      "tier": "protective",
+      "actual": 15.0,
+      "modeled": 18.2,
+      "units": "% of class energy at binding floors (CT peaker; cap shown as actual)",
+      "threshold": "< 15% peaker / < 30% merchant; >= 2%-load materiality; above-cap -> grounded escalation",
+      "status": "GROUNDED",
+      "note": "CT-peaker forced share 18.2% exceeds the 15% cap, but every binding mechanism carries a passing D-4 driver window AND the class clears the D-1 shape gates - grounded-above-budget escalation (v2.2): clean PASS surfaced as a report note, never a caveat."
+    }
+  ],
+  "determination": {
+    "verdict": "CALIBRATED-WITH-CAVEATS",
+    "caveats_ledgered": 1,
+    "caveats_commercial_band": 1,
+    "protective_caveats": 0,
+    "budgets": { "MAX_PROTECTIVE_CAVEATS": 1, "MAX_LEDGERED_CAVEATS": 3 },
+    "note": "C6 passes and no criterion FAILs; one ledgered caveat (C3c) within budget, one unbudgeted commercial-band caveat (C2), one skip (C5c), one grounded note (C8)."
+  }
+}
