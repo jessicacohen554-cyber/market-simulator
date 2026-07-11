@@ -1,5 +1,31 @@
 # Changelog
 
+## 2026-07-11 (CAISO: storage-AS-award intake, inert reservation probe, 2023 demand-clock fix)
+
+- **Data:** new `storage-as-awards` datatype (schema + per-ISO registry lib +
+  curation + tests + loader): CAISO Daily Energy Storage Report quarterly xlsx
+  (12 files, 2023–2025) — system-level battery/hybrid AS awards by product,
+  hourly DA (IFM) + RT (RTPD); DA battery means reproduce DMM-published anchors
+  to ~1 %. Raw fetched and committed by the `apply-caiso74-intake` runner.
+- **Model/config:** `ScenarioConfig.caiso_storage_as_reservation` (default off)
+  — measured battery upward-AS award reserved from the battery power cap +
+  SOC floored at the tariff 30-min sustain; new optional
+  `storage_soc_min` bound threaded through `build_variable_bounds` /
+  `DispatchModel` / `solve_dispatch` / `DispatchSpec`. The caiso-74 probe
+  measured the reservation ex-ante inert on the zone-aggregate CAISO fleet
+  (dispatch identical to caiso-73); flag ships default-off, not in any keeper.
+- **Model/config:** `ScenarioConfig.caiso_demand_clock_realign` (default off)
+  — rule-14 clock fix for the EIA-930 CISO `Demand` column, +1 h late for
+  local dates before 2023-11-01 (measured against the extract's own balance
+  identity; OASIS SLD corroborates); guard
+  `scripts/validate_caiso_demand_clock.py`. caiso-75 probe: 2023 C3a
+  +23.5→+22.7 %, tail 480→458 h, C5a-2023 CAVEAT→PASS; 2024/25 byte-identical.
+  Keeper stays caiso65 (C2 regression vs keeper blocks promotion).
+- **Docs realigned:** methodology spec (optional SOC sustain floor in the
+  storage bounds), `docs/backcast-measured-data-audit-2026-06.md` (two new
+  measured-input inventory rows), `docs/calibration-log.md` (dated entry),
+  FINDINGs for both probes, evening-CC commitment design handoff.
+
 ## 2026-07-09 (replay fidelity: ST_GAS net-load drag hinge now round-trips through meta.json)
 
 - **Fix:** `solve_and_persist` now persists `gas_st_drag_overrides` in the bundle
