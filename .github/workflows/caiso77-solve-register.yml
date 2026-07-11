@@ -1,0 +1,152 @@
+# One-shot: solve the caiso-77 (self-scheduled firm import base) A/B probe
+# pair (main + zero-forcing ablation twin) on CI and register both on the
+# backcast dashboard as PROBES. The caiso-67/69/74/75/76 precedent: the
+# session environment cannot transport the ~450 KB run payloads through the
+# MCP push_files relay byte-safely, so the solve+register runs here and the
+# per-run files are committed via the GitHub Data API with the runner's
+# token (scripts/ci_api_upload_multi.py). Keeper stays
+# 2026-07-11-caiso-76-hydro-budget; promotion is a separate decision
+# evaluated from the committed scores.
+#
+# Probe: scripts/probes/_caiso77_firm_selfschedule_ab.py (committed on this
+# branch) — the caiso-76 keeper recipe plus the single caiso-77 delta:
+# caiso_firm_import_selfschedule=True (the firm/contracted import blocks
+# become must-flow at their shaped capability — CPUC D.20-06-028
+# self-schedule behaviour, the Manitoba/HQ firm must-flow pattern;
+# FINDING-caiso77-c1-cluster-firm-selfschedule-2026-07-11.md). Years
+# 2023-2025 sequential within each invocation (CLAUDE.md rule 12); the two
+# invocations run sequentially on this one runner.
+#
+# The CAISO registry is at 15/15, so registration is preceded by the
+# top-15 prune (rule 15 retention): the caiso-65 keeper pair — now
+# NON-exempt (superseded by the caiso-76 promotion) and the oldest entries
+# (d690187 / caiso-69-pair precedent). Bundle dirs stay; only sidecars +
+# payloads are removed (the caiso65 bundle dir also stays because the probe
+# scripts read its run_config.json for the recipe base).
+name: caiso77-solve-register
+
+on:
+  push:
+    branches:
+      - claude/caiso-76-cc-ct-evening-8tniyw
+    paths:
+      - .github/workflows/caiso77-solve-register.yml
+
+permissions:
+  contents: write
+
+jobs:
+  solve-register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply and commit the caiso-77 source patch
+        run: |
+          set -euo pipefail
+          # The session container cannot transport the two large source files
+          # (scenarios.py 381 KB, transmission.py 217 KB) byte-safely through
+          # the push_files relay, so the whole change set travels as a
+          # committed xz+base64 git patch (_ercot57/58_code.patch precedent)
+          # and is applied + committed HERE with real git, making the branch
+          # the reproducible source of the registered runs.
+          if git apply --check --reverse < <(base64 -d scripts/probes/_caiso77_code.patch.xz.b64 | xz -d) 2>/dev/null; then
+            echo "patch already applied and committed — skipping"
+          else
+            base64 -d scripts/probes/_caiso77_code.patch.xz.b64 | xz -d | git apply
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "caiso-77: self-scheduled firm import base (caiso_firm_import_selfschedule) + belly-probe same-fleet fix + FINDING (applied from _caiso77_code.patch.xz.b64) [skip ci]"
+            git push origin HEAD:claude/caiso-76-cc-ct-evening-8tniyw
+          fi
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install openpyxl
+
+      - name: Curate clean partitions the recipe reads
+        run: |
+          set -euo pipefail
+          # data/clean is derived/gitignored — a fresh checkout has neither
+          # partition. Without capacity-deliverability the keeper's published
+          # MIC seam supersession silently skips (caiso-69 precedent).
+          PYTHONPATH="$PWD" python scripts/curate_capacity_deliverability.py --isos CAISO
+
+      - name: Solve caiso-77 main (2023-2025)
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: python scripts/probes/_caiso77_firm_selfschedule_ab.py main
+
+      - name: Solve caiso-77 ablation twin
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: python scripts/probes/_caiso77_firm_selfschedule_ab.py ablation
+
+      - name: Write probe attestations
+        run: python scripts/probes/_caiso77_attestation.py
+
+      - name: Score legitimacy diagnostics (both bundles)
+        env:
+          MALLOC_ARENA_MAX: "2"
+        run: |
+          set -uo pipefail
+          # legitimacy_diagnostics.py exits 1 when a gate fails; the artifact
+          # is written before the exit, so tolerate the exit code and only
+          # fail the job if an artifact is genuinely missing/empty
+          # (caiso67/69/7475/76-solve-register precedent).
+          for b in caiso77_firm_selfschedule caiso77_firm_selfschedule-ablation; do
+            python scripts/legitimacy_diagnostics.py \
+              --bundle "results/calibration/$b" \
+              --iso CAISO --years 2023 2024 2025 \
+              --json-out "results/calibration/$b/legitimacy_diagnostics.json" || true
+            test -s "results/calibration/$b/legitimacy_diagnostics.json"
+          done
+
+      - name: Prune CAISO registry to top-15 (caiso-65 keeper pair, superseded + oldest)
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git rm -q \
+            frontend/data/backcast/registry/2026-07-07-caiso65-seam-envelope-clock.json \
+            frontend/data/backcast/registry/2026-07-07-caiso65-seam-envclock-ablation.json \
+            frontend/data/backcast/runs/2026-07-07-caiso65-seam-envelope-clock.js \
+            frontend/data/backcast/runs/2026-07-07-caiso65-seam-envclock-ablation.js
+          git commit -m "Prune caiso-65 superseded-keeper pair sidecars + payloads (top-15 retention, displaced by caiso-77) [skip ci]"
+          git push origin HEAD:claude/caiso-76-cc-ct-evening-8tniyw
+      - name: Register both runs on the dashboard
+        run: |
+          set -euo pipefail
+          python scripts/dashboard_add_run.py \
+            --label "caiso 77 firm selfschedule" \
+            --bundle results/calibration/caiso77_firm_selfschedule | tee /tmp/r77m.out
+          python scripts/dashboard_add_run.py \
+            --label "caiso 77 firm selfschedule ablation" \
+            --bundle results/calibration/caiso77_firm_selfschedule-ablation | tee /tmp/r77a.out
+          echo "RID77M=$(grep '^RUN_ID=' /tmp/r77m.out | cut -d= -f2)" >> "$GITHUB_ENV"
+          echo "RID77A=$(grep '^RUN_ID=' /tmp/r77a.out | cut -d= -f2)" >> "$GITHUB_ENV"
+
+      - name: Upload per-run files via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_multi.py \
+            --rid "$RID77M" --bundle results/calibration/caiso77_firm_selfschedule \
+            --rid "$RID77A" --bundle results/calibration/caiso77_firm_selfschedule-ablation \
+            --branch claude/caiso-76-cc-ct-evening-8tniyw \
+            --message "results: register caiso-77 (self-scheduled firm import base) PROBE + zero-forcing twin on the backcast dashboard (keeper stays caiso-76) [skip ci]"

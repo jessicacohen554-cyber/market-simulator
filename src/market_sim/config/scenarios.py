@@ -1815,6 +1815,32 @@ class ScenarioConfig:
     # via the shared apply_interchange_injections seam (both orchestrators).
     # Requires caiso_per_hub_intertie + caiso_perhub_firm_base. Default off
     # (byte-identical); CAISO-only.
+    caiso_firm_import_selfschedule: bool = False  # Floor the firm/contracted
+    # CAISO import blocks at their shaped capability — must-flow self-schedule
+    # (caiso-77; gap register G-15 residual (b)). The firm RA/LTC import
+    # blocks are self-scheduled or bid at/below $0/MWh in the real market
+    # (CPUC D.20-06-028 RA import must-offer; the DMM-documented revealed
+    # 4.3-5.9 GW self-scheduled base), i.e. they flow independent of the
+    # hourly spot spread — but the model prices them at static Tier-3
+    # contract-cost proxies ($28/$48, G-26 static-fitted-pending-measured),
+    # a price gate that structurally deletes the overnight/evening contracted
+    # base (model under-imports it 0.6-2.3 GW; the deficit is served by
+    # CC_REGULAR running flat overnight — the C1 CC-over/CT-under cluster).
+    # When on, each firm tranche's hourly min_gen is floored at its FULL
+    # shaped capability (pmax × availability — the published DMM RA-import ×
+    # MIC-split level × the measured unit-mean revealed-base shape of
+    # caiso_firm_import_shape, eford preserved), the exact analogue of the
+    # Manitoba/HQ firm must-flow blocks (transmission.inject_miso_firm_
+    # imports / inject_nyiso_firm_imports, MECH_FIRM_IMPORT — a contract,
+    # ablation-kept, D-2 exempt by construction). Zero new free parameters:
+    # level and shape are the existing measured caiso-73 inputs; the tranche
+    # $/MWh stays as inframarginal contract-cost bookkeeping and can no
+    # longer gate the flow (never sets the margin at pmin = pmax). Forward
+    # story: DMM RA contracting is a persistent structure (static forward
+    # ladder) and the shape pools to climatology in a forecast year.
+    # Requires caiso_per_hub_intertie + caiso_perhub_firm_base +
+    # caiso_firm_import_shape (the shaped capability IS the floor's window).
+    # Default off (byte-identical); CAISO-only.
     caiso_demand_clock_realign: bool = False  # Apply the MEASURED source-data
     # clock correction to the CAISO backcast demand input (caiso-75;
     # FINDING-caiso75-demand-clock-2026-07-11): the EIA-930 CISO extract's
