@@ -1379,6 +1379,7 @@ def run_year(
         iso_config,
         td_loss_factor=config.td_loss_factor,
         include_interchange=not priced_interchange,
+        caiso_demand_clock_realign=getattr(config, "caiso_demand_clock_realign", False),
     )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config
@@ -2741,6 +2742,41 @@ def run_year(
             storage_power_cap, config.weather_year, config.hours
         )
 
+    # CAISO analogue (caiso_storage_as_reservation): reserve the measured
+    # battery AS-award MW (Daily Energy Storage Report, storage-as-awards
+    # clean datatype) out of the battery power cap, and floor the battery SOC
+    # at the tariff 30-min sustain of the spin/non-spin awards
+    # (CAISO_AS_SUSTAIN_DURATION_H). Batteries only — pumped storage is not an
+    # LESR. Zero fitted parameters; see model.storage.
+    storage_soc_min = None
+    if getattr(config, "caiso_storage_as_reservation", False) and iso == "CAISO":
+        from market_sim.data.storage_as_awards import upward_award_mw
+        from market_sim.model.storage import (
+            caiso_storage_as_soc_min,
+            reserve_caiso_storage_as_power,
+        )
+
+        storage_soc_min = caiso_storage_as_soc_min(
+            storage_power_cap,
+            storage_energy_cap,
+            storage_units,
+            config.weather_year,
+            config.hours,
+        )
+        storage_power_cap = reserve_caiso_storage_as_power(
+            storage_power_cap, storage_units, config.weather_year, config.hours
+        )
+        _upward = upward_award_mw("CAISO", config.weather_year, config.hours)
+        logger.info(
+            "CAISO storage-AS reservation (%d): upward award mean %.0f MW "
+            "(max %.0f) reserved from battery power; SOC sustain floor mean "
+            "%.0f MWh",
+            config.weather_year,
+            float(_upward.mean()),
+            float(_upward.max()),
+            float(storage_soc_min.sum(axis=0).mean()),
+        )
+
     if fleet_only:
         # Availability-reconstruction exit (no LP): everything a post-solve
         # consumer needs to recompute pmax x availability per unit-hour,
@@ -2881,6 +2917,12 @@ def run_year(
     dispatch_kwargs = build_base_dispatch_kwargs(
         dispatch_spec, import_node_recon=import_node_recon
     )
+    # Measured storage-AS SOC sustain floor (caiso_storage_as_reservation,
+    # GATED default off): the power-cap leg is already inside
+    # storage_power_cap above; this adds the (n_storage, T) SOC lower bound.
+    # None (flag off / other ISOs) leaves the key unset — identical LP.
+    if storage_soc_min is not None:
+        dispatch_kwargs.update(storage_soc_min=storage_soc_min)
     # Emissions mass-cap rows (policy constraint path, gated; G-29). Mirrors
     # runner.py's forecast-path `mass_caps` block so the backcast calibration
     # harness shares the identical seam — before this wire-through,

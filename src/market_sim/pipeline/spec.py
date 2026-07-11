@@ -114,6 +114,10 @@ class DispatchSpec:
     oil_month_index: Any = UNSET
     oil_gen_hour_coeff: Any = UNSET
     oil_group_index: Any = UNSET
+    # Measured storage-AS SOC sustain floor (CAISO battery reservation,
+    # caiso_storage_as_reservation) — (n_storage, T) SOC lower bound. UNSET
+    # (flag off / other ISOs) omits the key, leaving the 0 lower bound.
+    storage_soc_min: Any = UNSET
 
     def to_dispatch_kwargs(self) -> dict:
         """Return the base ``dispatch_kwargs`` dict, key-for-key.
