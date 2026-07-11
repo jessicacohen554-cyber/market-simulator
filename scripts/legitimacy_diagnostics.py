@@ -93,6 +93,7 @@ sys.path.insert(0, str(REPO_ROOT / "src"))
 from market_sim.data.floor_mechanisms import (  # noqa: E402
     D2_EXEMPT_MECHS,
     MECH_CAISO_GAS_COMMITMENT_FLOOR,
+    MECH_CC_MUSTRUN_PER_PLANT,
     MECH_CT_NETLOAD_DRAG,
     MECH_NAMES,
     MECH_RA_MUSTOFFER,
@@ -245,6 +246,19 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # Midday NG:NG slab window (h9-16) — the probe's own gate
     # (transmission.inject_caiso_gas_commitment_floor).
     (MECH_CAISO_GAS_COMMITMENT_FLOOR, None): (9, 17),
+    # cc_mustrun_per_plant (per-plant gas local-reliability commitment,
+    # fleet.py cc_mustrun_pmin_mw, CC_REGULAR only): the floor's REAL window
+    # is intrinsic and per-plant — each plant's committed tranche binds only
+    # in its top measured-online_frac fraction of hours ranked by system
+    # load, so the mechanism is self-windowing by construction. The
+    # hour-of-day row here declares where that placement is driver-justified:
+    # a committed CC is SYNCHRONIZED around the clock inside its window (the
+    # CEMS online_frac it is sized from counts overnight min-stable hours —
+    # same evidence shape as the ST_GAS rows above), so CC_REGULAR is
+    # all-hours. (The mechanism's CT_PEAKER leg was probed 2026-07-11 under a
+    # declared h7-22 window and DROPPED for 12.8% overnight off-window
+    # binding — the rule-12 check this registry exists to perform.)
+    (MECH_CC_MUSTRUN_PER_PLANT, "CC_REGULAR"): (0, 24),
 }
 
 # D-9: overlay probes that must be OFF/zero in every keeper run_config.json
@@ -813,6 +827,17 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         backcast_symbols=("inject_nyiso_local_selfsupply",),
         forecast_symbols=("inject_nyiso_local_selfsupply",),
         note="LMIC market-design rule — mode-independent by intent",
+    ),
+    MechanismSpec(
+        "cc_mustrun_per_plant",
+        "cc_mustrun_per_plant",
+        "both",
+        False,
+        note="per-plant gas local-reliability commitment floor — "
+        "parameter-based (CEMS committed share + online_frac, "
+        "thermal_tranches artifact), applied inside the shared fleet "
+        "builder (fleet.bins_to_fleet / generators_to_fleet_arrays) so "
+        "both mode entries reach it; no entry-script symbol to measure",
     ),
     MechanismSpec(
         "ercot_wtx_curtailment_driver",
