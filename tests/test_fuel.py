@@ -7,8 +7,10 @@ from market_sim.config.constants import (
     BIOMASS_PRICE_PER_MMBTU,
     CAISO_CITYGATE_TRANSPORT_ADDER,
     COAL_PRICE_BASE,
+    COAL_PRICE_TRAJECTORIES,
     GAS_BASIS_DIFFERENTIAL,
     HENRY_HUB_TRAJECTORIES,
+    NUCLEAR_FUEL_PRICE_HISTORICAL,
     OIL_PRICE_PER_MMBTU,
     START_YEAR,
 )
@@ -40,9 +42,12 @@ from market_sim.data.fuel import (
     nyiso_downstate_ct_gas_premium,
     nyiso_zonal_gas_offsets,
     pjm_zonal_gas_basis_by_zone,
+    resolve_annual_coal_price,
     resolve_annual_gas_price,
+    resolve_annual_oil_price,
     resolve_fuel_prices,
     resolve_nox_price,
+    resolve_nuclear_fuel_price,
 )
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.policy.carbon import resolve_carbon_price
@@ -193,33 +198,66 @@ def test_both_gas_types_get_gas_price():
 
 
 def test_non_gas_zero_fuel():
-    """Nuclear and wind generators get zero fuel price."""
+    """Wind generators get zero fuel price; nuclear pays its derived fuel cost."""
     fleet = _sample_fleet()
     prices = resolve_fuel_prices(_config(), fleet, 2030)
-    nuclear_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["nuclear"]
     wind_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["wind"]
-    assert np.all(prices[nuclear_mask] == 0.0)
     assert np.all(prices[wind_mask] == 0.0)
 
 
+def test_nuclear_units_get_derived_fuel_price():
+    """Nuclear generators pay the EIA-uranium-marketing-derived fuel cost."""
+    fleet = _sample_fleet()
+    prices = resolve_fuel_prices(_config(), fleet, 2030)
+    nuclear_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["nuclear"]
+    expected = resolve_nuclear_fuel_price(_config(), 2030)
+    assert expected > 0.0
+    np.testing.assert_allclose(prices[nuclear_mask], expected)
+
+
+def test_nuclear_fuel_price_holds_flat_beyond_2024():
+    """Forecast years beyond 2024 hold the last real-dollar value flat."""
+    last_year = max(NUCLEAR_FUEL_PRICE_HISTORICAL)
+    expected = NUCLEAR_FUEL_PRICE_HISTORICAL[last_year]
+    assert resolve_nuclear_fuel_price(_config(), 2050) == pytest.approx(expected)
+
+
+def test_nuclear_fuel_price_override():
+    """An explicit override bypasses the derived series entirely."""
+    config = _config(nuclear_fuel_price_override=1.23)
+    assert resolve_nuclear_fuel_price(config, 2030) == pytest.approx(1.23)
+
+
 def test_coal_price_escalated_to_year():
-    """Coal generators get COAL_PRICE_BASE escalated to the resolved year."""
+    """Forecast-mode coal price tracks the AEO2025 real-growth ratio applied
+    to the ISO's own COAL_PRICE_BASE anchor (P-1D — replaces the flat 1%/yr)."""
     fleet = _sample_fleet()
     prices = resolve_fuel_prices(_config(), fleet, 2030)
     coal_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["coal"]
-    expected = COAL_PRICE_BASE["ERCOT"] * 1.01 ** (2030 - START_YEAR)
+    expected = resolve_annual_coal_price(_config(), 2030)
     np.testing.assert_allclose(prices[coal_mask], expected)
 
 
-def test_coal_price_escalates():
-    """Coal price escalates 1%/yr, compounding from the start year."""
+def test_coal_price_forecast_tracks_aeo_growth_ratio():
+    """Forecast coal price ratio between two years matches the AEO trajectory
+    ratio, not the retired flat 1%/yr escalation."""
     config = _config()
     fleet = _coal_fleet()
     prices_2026 = resolve_fuel_prices(config, fleet, 2026)
     prices_2036 = resolve_fuel_prices(config, fleet, 2036)
-    expected_ratio = (1.01) ** 10
+    trajectory = COAL_PRICE_TRAJECTORIES["mid"]
+    expected_ratio = trajectory[2036] / trajectory[2026]
     actual_ratio = prices_2036[0, 0] / prices_2026[0, 0]
     assert abs(actual_ratio - expected_ratio) < 1e-4
+
+
+def test_coal_price_backcast_still_uses_flat_escalation():
+    """Backcast mode keeps the prior flat 1%/yr fallback byte-identical."""
+    config = _config(mode="backcast")
+    fleet = _coal_fleet()
+    prices = resolve_fuel_prices(config, fleet, 2025)
+    expected = COAL_PRICE_BASE["ERCOT"] * 1.01 ** (2025 - START_YEAR)
+    np.testing.assert_allclose(prices[0, 0], expected)
 
 
 def test_fuel_price_shape_is_n_gen_by_hours():
@@ -230,12 +268,13 @@ def test_fuel_price_shape_is_n_gen_by_hours():
 
 
 def test_annual_gas_price_extrapolates_beyond_trajectory():
-    """Years past the trajectory extrapolate from the final growth rate."""
+    """Years past the trajectory hold the last real value flat — no
+    compounding tail (P-1D, replaces the retired last-YoY-ratio extrapolation)."""
     config = _config(gas_price_path="mid")
     traj = HENRY_HUB_TRAJECTORIES["mid"]
-    growth = traj[2050] / traj[2049]
-    expected = traj[2050] * growth + GAS_BASIS_DIFFERENTIAL["ERCOT"]
+    expected = traj[2050] + GAS_BASIS_DIFFERENTIAL["ERCOT"]
     assert abs(resolve_annual_gas_price(config, 2051) - expected) < 1e-9
+    assert abs(resolve_annual_gas_price(config, 2075) - expected) < 1e-9
 
 
 def test_capacity_gas_lcoe_uses_trajectory():
@@ -447,9 +486,20 @@ def _oil_biomass_fleet(hours: int = 24):
 
 
 def test_oil_units_get_oil_price():
-    """Oil generators are priced at the flat delivered oil cost."""
+    """Forecast-mode oil generators price at the AEO2025 oil trajectory."""
     fleet = _oil_biomass_fleet()
-    prices = resolve_fuel_prices(_config(gas_seasonality=False), fleet, 2030)
+    config = _config(gas_seasonality=False)
+    prices = resolve_fuel_prices(config, fleet, 2030)
+    oil_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["oil"]
+    expected = resolve_annual_oil_price(config, 2030)
+    np.testing.assert_allclose(prices[oil_mask], expected)
+
+
+def test_oil_units_backcast_uses_flat_fallback():
+    """Backcast mode keeps the flat OIL_PRICE_PER_MMBTU fallback byte-identical."""
+    fleet = _oil_biomass_fleet()
+    config = _config(mode="backcast", gas_seasonality=False)
+    prices = resolve_fuel_prices(config, fleet, 2024)
     oil_mask = fleet.fuel_type_idx == FUEL_TYPE_MAP["oil"]
     np.testing.assert_allclose(prices[oil_mask], OIL_PRICE_PER_MMBTU)
 
@@ -529,8 +579,8 @@ def test_dual_fuel_switches_to_oil_above_parity(monkeypatch):
     """A dual-fuel unit pays the oil price when gas exceeds oil parity."""
     _patch_dual_fuel_capability(monkeypatch)
     fleet = _dual_fuel_fleet()
-    # Delivered gas = 25 + PJM basis, far above the flat oil price (forward
-    # year: no F923 petroleum data, so oil parity is OIL_PRICE_PER_MMBTU).
+    # Delivered gas = 25 + PJM basis, far above the forecast-year oil price
+    # (no F923 petroleum data, so oil parity is the AEO2025 trajectory).
     config = ScenarioConfig(
         iso="PJM",
         hours=24,
@@ -540,10 +590,11 @@ def test_dual_fuel_switches_to_oil_above_parity(monkeypatch):
     )
     prices = resolve_fuel_prices(config, fleet, 2030)
     delivered_gas = resolve_annual_gas_price(config, 2030)
-    assert delivered_gas > OIL_PRICE_PER_MMBTU
-    np.testing.assert_allclose(prices[0], OIL_PRICE_PER_MMBTU)  # switched
+    oil_price = resolve_annual_oil_price(config, 2030)
+    assert delivered_gas > oil_price
+    np.testing.assert_allclose(prices[0], oil_price)  # switched
     np.testing.assert_allclose(prices[1], delivered_gas)  # gas-only
-    np.testing.assert_allclose(prices[2], OIL_PRICE_PER_MMBTU)  # oil unit
+    np.testing.assert_allclose(prices[2], oil_price)  # oil unit
 
 
 def test_dual_fuel_switch_mask_marks_only_switched_capable_units(monkeypatch):
@@ -624,12 +675,11 @@ def test_dual_fuel_caps_only_above_parity_hours(monkeypatch):
         hours=4,
         dual_fuel_switching=True,
     )
+    oil_price = resolve_annual_oil_price(config, 2030)
     gas = np.array([3.0, 30.0, 17.9, 50.0])
-    fuel_prices = np.vstack([gas, gas, np.full(4, OIL_PRICE_PER_MMBTU)])
+    fuel_prices = np.vstack([gas, gas, np.full(4, oil_price)])
     apply_dual_fuel_pricing(fuel_prices, fleet, config, 2030)
-    np.testing.assert_allclose(
-        fuel_prices[0], [3.0, OIL_PRICE_PER_MMBTU, 17.9, OIL_PRICE_PER_MMBTU]
-    )
+    np.testing.assert_allclose(fuel_prices[0], [3.0, oil_price, 17.9, oil_price])
     np.testing.assert_allclose(fuel_prices[1], gas)  # gas-only untouched
 
 
@@ -652,10 +702,11 @@ def test_dual_fuel_nyiso_switches_on_parity(monkeypatch):
     )
     prices = resolve_fuel_prices(config, fleet, 2030)
     delivered_gas = resolve_annual_gas_price(config, 2030)
-    assert delivered_gas > OIL_PRICE_PER_MMBTU
-    np.testing.assert_allclose(prices[0], OIL_PRICE_PER_MMBTU)  # switched to oil
+    oil_price = resolve_annual_oil_price(config, 2030)
+    assert delivered_gas > oil_price
+    np.testing.assert_allclose(prices[0], oil_price)  # switched to oil
     np.testing.assert_allclose(prices[1], delivered_gas)  # gas-only
-    np.testing.assert_allclose(prices[2], OIL_PRICE_PER_MMBTU)  # pure-oil unit
+    np.testing.assert_allclose(prices[2], oil_price)  # pure-oil unit
 
 
 def test_calibration_config_dual_fuel_gating():
