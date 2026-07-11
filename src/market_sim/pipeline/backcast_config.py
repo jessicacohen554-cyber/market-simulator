@@ -615,11 +615,13 @@ _CAISO_OFFER_CURVE: dict[str, dict[str, float]] = {
 #    13x heat-rate wall is far too high and inflates the high-price tail — the
 #    same reasoning PJM used to cap its CT_PEAKER at 4.0. Drop the peak to 4.0
 #    (~$1500/MWh at a 12.4 base HR and typical MISO gas), the MISO-cap-consistent
-#    ballpark. The committed start-cost hurdle (1.55) and the econ ramp
-#    (1.27 -> 1.98) are left at the generic shape (they are not the ERCOT-specific
-#    artifact; only the $5000-ORDC peak is). MISO currently shows 0 scarcity
-#    (>$200) hours, so this is forward-correctness — removing an inherited tail
-#    that would mis-fire in a forecast — not a live price change.
+#    ballpark. The committed band is grounded in MISO's OWN measured CAMPD
+#    part-load shape (1.025x, see the entry comment); the econ bands are
+#    measurement-AFFIRMED neutral (MISO CT marginal HR is flat-to-falling with
+#    load, so the removed ERCOT 1.27 -> 1.98 ramp has no MISO physical basis —
+#    the NEISO finding, third fleet). MISO currently shows 0 scarcity
+#    (>$200) hours, so the peak cap is forward-correctness — removing an
+#    inherited tail that would mis-fire in a forecast — not a live price change.
 #  - CC_CHP / CT_CHP / ST_GAS: NOT overridden. The generic CC_CHP (econ
 #    0.96 -> 1.12) is already flat and the efficient cogen CCs (measured HR 6.76)
 #    sit correctly below CC_REGULAR. The generic ST_GAS committed 0.81*11.27 =
@@ -651,14 +653,30 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "pct_peaking": 8.0,
     },
     "CT_PEAKER": {
-        # committed / econ bands DE-LEAKED from the ERCOT generic fallback (was
-        # committed 1.55 / econ_low 1.27 / econ_high 1.98 — the "generic shape"
-        # prior comments retained is exactly the ERCOT else-arm) to neutral 1.0:
-        # MISO carries no independent CT part-load heat-rate spread yet. OPEN ROOT
-        # CAUSE (rule #1): a MISO-grounded CT committed hurdle + econ ramp (CAMPD
-        # CT heat-rate spread, base HR ~12.37) is a later disciplined-calibration
-        # item — NOT re-tuned here. Expect CT over-run vs the prior 1.55 hurdle.
-        "committed": 1.0,
+        # MISO-measured bands (closes the open root cause the 2026-07 de-leak
+        # left: "a MISO-grounded CT committed hurdle + econ ramp"). Rule-23
+        # derive `scripts/derive_campd_marginal_hr.py --iso MISO` (provenance
+        # data/raw/reference/miso_campd_marginal_hr_summary.csv; 2023-2025
+        # pooled, n=249 CT units, cap-weighted):
+        #  - committed 1.025 [p25 0.94, p75 1.14] — the measured average-HR
+        #    premium of the min-load block over the class base HR (the CT
+        #    part-load premium), same avg-HR basis as the CC_REGULAR 1.20
+        #    part-load grounding above. Replaces the neutral placeholder.
+        #  - econ bands STAY neutral 1.0 — measurement-AFFIRMED, not just
+        #    de-leaked: MISO's CT marginal HR is flat-to-FALLING with load
+        #    (0.697/0.687/0.691 committed/lo/hi), the same result NEISO
+        #    measured (third fleet), so the removed ERCOT 1.27 -> 1.98 econ
+        #    ramp has no MISO physical basis. Do NOT lower bands to the bare
+        #    marginal HR — it is the marginal COST, not the OFFER (the NYISO
+        #    run-28 rejection).
+        # The commitment-cost component of the real MISO CT offer (start +
+        # no-load recovery) is NOT a static heat-rate multiplier: MISO's ELMP
+        # (FERC Order 825 fast-start pricing) folds fast-start startup/no-load
+        # offer costs into the LMP, represented by the P1 startup amortization
+        # on the CT econ/peak tranches (`tranche_startup_amortization` +
+        # measured-run v3 basis `campd_ct_run_lengths_MISO.csv`) — armed by
+        # the miso-55 candidate, not by a band multiplier here.
+        "committed": 1.025,
         "econ_low": 1.0,
         "econ_high": 1.0,
         "peak": 4.00,  # MISO offer cap ~$1-2k/MWh -> caps the 13.15x ERCOT-ORDC wall
