@@ -374,19 +374,23 @@ Phase 4 — INTEGRATION & QA (sequential)
       audit (calibration-keeper-auditor agent) + D7 /sync-docs
 ```
 
-**Critical path:** 0A → 2A → any Phase 3 page → 4A → 4B (5 sequential steps).
-**Max parallelism:** 5 (Phase 1 docs) then 3 (Phase 3 pages).
+**Critical path:** max(0A, 2A) → any Phase 3 page → 4A → 4B (4 sequential
+steps). **Max parallelism:** 6 — wave 1 runs 0A ∥ 1A–1D ∥ 2A concurrently
+(they touch disjoint files; only 1E — which cross-references the file 0A
+creates — and the Phase 3 pages wait on 0A). *Amended 2026-07-11 after review:
+0A does not block the Phase 1 fixes or the Phase 2 scaffold.*
 
 ## 5. Model assignments (rationale)
 
 | Work | Model | Why |
 |---|---|---|
-| 0A (D1 methodology doc), S1, S2 | **Opus** | Highest-stakes accuracy — these define the authoritative prose and the two new teaching pages; they must reconcile subtle code-vs-doc distinctions (scorer-vs-diagnostic, complete-marker-vs-frontier, roadmap-vs-implemented). |
+| 0A (D1 methodology doc) | **Fable 5** | The single source every site page cites — highest-stakes accuracy; must reconcile subtle code-vs-doc distinctions (scorer-vs-diagnostic, complete-marker-vs-frontier, roadmap-vs-implemented). |
+| S1, S2 (new narrative pages) | **Opus** | High-accuracy teaching pages, built from the 0A doc plus re-verified code. |
 | S3 (results-calibration rewrite) | **Opus** | Replaces a materially-wrong rubric explanation; must not reintroduce the old ±5% framing. |
 | D2–D6 stale-doc fixes | **Sonnet** | Targeted edits with unambiguous correct values from §2; low reasoning load. |
 | S4 illustrative data JSON, S5 nav entries | **Sonnet** | Mechanical, spec-complete. |
 | 4A integration/responsive | **Sonnet** | Pattern-matching against existing pages. |
-| 4B accuracy + keeper-text audit | **Opus** + `calibration-keeper-auditor` agent | Final truth gate; the auditor agent verifies keeper/frontier text matches actual run results. |
+| 4B accuracy + keeper-text audit | **Fable 5** + `calibration-keeper-auditor` agent | Final truth gate; the auditor agent verifies keeper/frontier text matches actual run results. |
 
 ## 6. Non-goals
 
