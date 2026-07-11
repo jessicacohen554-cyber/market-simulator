@@ -90,6 +90,9 @@ EIA, *2024 Uranium Marketing Annual Report* (released September 2025):
 
 ## Consumer
 
-None yet (intake only this session). Future consumer: a `$/MMBtu` nuclear
-fuel cost series in `constants.py`/`fuel.py`, replacing the `$0` placeholder
-(P-1D, cited to this data per CLAUDE.md rule 23).
+Landed P-1D (2026-07): `scripts/derive_fuel_trajectories.py::derive_nuclear_fuel_trajectory`
+builds a `$/MMBtu` nuclear fuel-cycle cost from this data (deflated to real
+2024$, combined with standard WNA fuel-cycle physical constants and a
+representative LWR burnup); the result is `constants.NUCLEAR_FUEL_PRICE_HISTORICAL`,
+consumed by `data.fuel.resolve_nuclear_fuel_price` — replacing the prior
+`$0/MMBtu` non-fuel-burning placeholder for nuclear generators.

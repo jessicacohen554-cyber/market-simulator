@@ -113,7 +113,9 @@ one-off transcription — rule-13 admissible.
 
 ## Consumer
 
-None yet (intake only this session). Future consumer: a re-derivation of
-`HENRY_HUB_TRAJECTORIES`, a new `COAL_PRICE_TRAJECTORIES`, and an oil price
-trajectory in `constants.py` (P-1D, cited to this data change per CLAUDE.md
-rule 23).
+Landed P-1D (2026-07) via `scripts/derive_fuel_trajectories.py`:
+`HENRY_HUB_TRAJECTORIES` (all three paths, 2026-2050) re-derived from this
+data; new `COAL_PRICE_TRAJECTORIES` and `OIL_PRICE_TRAJECTORIES` constants
+added, consumed by `data.fuel.resolve_annual_coal_price` /
+`resolve_annual_oil_price` in forecast mode. See
+`docs/handoffs/aeo-verification-2026-07-11.md` §6 for the execution note.
