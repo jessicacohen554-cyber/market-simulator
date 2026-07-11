@@ -12,6 +12,25 @@ H2_LHV_MMBTU_PER_KG: float = 0.1137  # MMBtu per kg H2 (lower heating value)
 # Source: IRA §45Q.
 CCUS_45Q_CREDIT_PER_TON: float = 85.0  # $/tCO2 geologically stored
 
+# IRA §45U zero-emission (existing) nuclear production tax credit. Base
+# credit 0.3 cents/kWh, multiplied 5x for facilities meeting prevailing
+# wage requirements — this module assumes the prevailing-wage rate
+# throughout (the same convention already used for the wind PTC's
+# ``ira_ptc_wind``, which is likewise the wage-compliant rate, not the
+# unmultiplied base). Source: 26 U.S.C. §45U(a),(d)(1); triangulated in
+# data/raw/policy/ira-credit-parameters/ira-credit-parameters.csv.
+SECTION_45U_BASE_CREDIT_CENTS_PER_KWH: float = 0.3
+SECTION_45U_PREVAILING_WAGE_MULTIPLIER: float = 5.0
+SECTION_45U_CREDIT_CENTS_PER_KWH: float = (
+    SECTION_45U_BASE_CREDIT_CENTS_PER_KWH * SECTION_45U_PREVAILING_WAGE_MULTIPLIER
+)  # 1.5 cents/kWh = $15/MWh
+
+# §45U(b)(2) gross-receipts phase-down: the credit is reduced (not below
+# zero) by 16% of the amount by which the facility's average per-MWh sale
+# price of electricity exceeds 2.5 cents/kWh. Source: 26 U.S.C. §45U(b)(2).
+SECTION_45U_GROSS_RECEIPTS_THRESHOLD_CENTS_PER_KWH: float = 2.5
+SECTION_45U_PHASE_DOWN_RATE: float = 0.16
+
 
 def h2_45v_credit_per_mmbtu(year: int, config: ScenarioConfig) -> float:
     """Return the IRA §45V hydrogen credit as a $/MMBtu fuel-cost reduction.
@@ -56,6 +75,45 @@ def ccus_45q_credit_per_mwh(
     return CCUS_45Q_CREDIT_PER_TON * co2_captured_per_mwh
 
 
+def section_45u_credit_per_mwh(
+    year: int, avg_price_per_mwh: float, config: ScenarioConfig
+) -> float:
+    """Return the IRA §45U existing-nuclear PTC as a $/MWh revenue credit.
+
+    §45U pays :data:`SECTION_45U_CREDIT_CENTS_PER_KWH` per kWh, reduced —
+    never below zero — by :data:`SECTION_45U_PHASE_DOWN_RATE` of the amount
+    by which the unit's own average realized energy-market price (the
+    statute's "gross receipts" basis) exceeds
+    :data:`SECTION_45U_GROSS_RECEIPTS_THRESHOLD_CENTS_PER_KWH`. This is the
+    nuclear retirement screen's revenue input, not a dispatch-cost adder —
+    §45U is a per-MWh production credit paid on realized output, so it
+    enters the same attribute-revenue seam as ``eac_price_nuclear``/the RPS
+    shadow price (the caller takes ``max()``; see
+    ``model.capacity.apply_economic_retirements``). The credit expires
+    after ``config.ira_45u_last_year``.
+
+    Args:
+        year: Simulation year, compared against the §45U expiry year.
+        avg_price_per_mwh: The unit's average realized energy-market price
+            in $/MWh, used as the "gross receipts" phase-down basis.
+        config: Scenario config supplying the §45U expiry year.
+
+    Returns:
+        The §45U credit in $/MWh, or ``0.0`` once expired or fully phased
+        down by the gross-receipts test.
+    """
+    if year > config.ira_45u_last_year:
+        return 0.0
+    avg_price_cents_per_kwh = avg_price_per_mwh / 10.0  # $/MWh -> cents/kWh
+    excess = max(
+        0.0,
+        avg_price_cents_per_kwh - SECTION_45U_GROSS_RECEIPTS_THRESHOLD_CENTS_PER_KWH,
+    )
+    reduction = SECTION_45U_PHASE_DOWN_RATE * excess
+    credit_cents_per_kwh = max(0.0, SECTION_45U_CREDIT_CENTS_PER_KWH - reduction)
+    return credit_cents_per_kwh * 10.0  # cents/kWh -> $/MWh
+
+
 def compute_dispatch_credits(config: ScenarioConfig, year: int) -> tuple[float, float]:
     """Return (wind_mc, solar_mc) dispatch cost adders in $/MWh.
 
@@ -71,18 +129,34 @@ def compute_dispatch_credits(config: ScenarioConfig, year: int) -> tuple[float, 
 
 
 def ira_phaseout_fraction(year: int, config: ScenarioConfig) -> float:
-    """Return the IRA credit fraction for non-wind/solar clean tech.
+    """Return the IRA §45Y/§48E credit fraction for non-wind/solar clean tech.
 
-    100% through ira_other_clean_last_full_year, then linear ramp to 0%
-    by ira_other_clean_phaseout_end.
+    The tech-neutral OBBBA phase-down for facilities other than wind/solar
+    (storage, nuclear, geothermal, hydropower) is a construction-begin-year
+    STEP schedule, not a continuous ramp: 100% through
+    ``ira_other_clean_last_full_year``, 75% through
+    ``ira_other_clean_75pct_year``, 50% through
+    ``ira_other_clean_50pct_year``, 0% from ``ira_other_clean_phaseout_end``
+    on. The model uses a generator's build/entry year as the
+    construction-begin-year proxy. Source: 26 U.S.C. §45Y/§48E, triangulated
+    (not a direct primary-text read — see the confidence note in
+    data/raw/policy/ira-credit-parameters/README.md) in
+    data/raw/policy/ira-credit-parameters/ira-credit-parameters.csv.
+
+    This REPLACES the module's previous continuous 5-step-implied linear
+    ramp (2028 full / 2033 zero, an undocumented estimate that predates this
+    statute citation) with the statute-triangulated 2033/2034/2035/2036
+    100/75/50/0% step schedule — a real default-behavior change for any
+    scenario relying on the prior defaults (CLAUDE.md rule 24: prefer the
+    cited statute reading over the earlier undocumented guess).
     """
     if year <= config.ira_other_clean_last_full_year:
         return 1.0
-    if year >= config.ira_other_clean_phaseout_end:
-        return 0.0
-    span = config.ira_other_clean_phaseout_end - config.ira_other_clean_last_full_year
-    elapsed = year - config.ira_other_clean_last_full_year
-    return max(0.0, 1.0 - elapsed / span)
+    if year <= config.ira_other_clean_75pct_year:
+        return 0.75
+    if year <= config.ira_other_clean_50pct_year:
+        return 0.50
+    return 0.0
 
 
 def apply_ira_credits_to_lcoe(
