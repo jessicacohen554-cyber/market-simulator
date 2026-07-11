@@ -36,14 +36,30 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           if git log --oneline -20 | grep -q "storage-as-awards): intake CAISO"; then
-            echo "patches already applied — skipping git am"
+            echo "patches already applied - skipping git am"
           else
-            # git am is email-transport tolerant (lost trailing whitespace on
-            # context lines) and fails loudly on real corruption; the smoke
-            # tests below re-verify the applied code end-to-end (ercot57
-            # relay-corruption lesson).
-            git am .github/patches/caiso74/0001-storage-as-awards-intake.patch \
-                   .github/patches/caiso74/0002-caiso74-mechanism-demand-clock.patch
+            # The push_files relay dropped two '+' prefixes and each file's
+            # trailing blank line (verified by downloading the pushed bytes
+            # and diffing against the session originals). The repair is
+            # deterministic and then PROVEN byte-exact against the
+            # format-patch md5s recorded at pack time (ercot57 lesson).
+            p1=.github/patches/caiso74/0001-storage-as-awards-intake.patch
+            p2=.github/patches/caiso74/0002-caiso74-mechanism-demand-clock.patch
+            if ! md5sum -c <<'EOF'
+7296b3d5c119d92906d70eb93373b18c  .github/patches/caiso74/0001-storage-as-awards-intake.patch
+cf0645f8402f1874f571724030fcda16  .github/patches/caiso74/0002-caiso74-mechanism-demand-clock.patch
+EOF
+            then
+              sed -i 's/^datatype: storage-as-awards$/+datatype: storage-as-awards/' "$p1"
+              printf '\n' >> "$p1"
+              sed -i 's/^class TestCaisoDemandClockRealign(unittest.TestCase):$/+class TestCaisoDemandClockRealign(unittest.TestCase):/' "$p2"
+              printf '\n' >> "$p2"
+              md5sum -c <<'EOF'
+7296b3d5c119d92906d70eb93373b18c  .github/patches/caiso74/0001-storage-as-awards-intake.patch
+cf0645f8402f1874f571724030fcda16  .github/patches/caiso74/0002-caiso74-mechanism-demand-clock.patch
+EOF
+            fi
+            git am "$p1" "$p2"
           fi
 
       - name: Set up Python
@@ -97,13 +113,6 @@ jobs:
           if git diff --cached --quiet; then
             echo "nothing to commit"
           else
-            git commit -m "data(storage-as-awards): raw CAISO storage-report xlsx + regenerated parameter registry [skip ci]
-
-Raw quarterly xlsx fetched from caiso.com by the apply-caiso74-intake
-runner (binary transport); parameter registry / citations / data
-dictionary regenerated on the applied code.
-
-Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
-Claude-Session: https://claude.ai/code/session_01QafzWFFCueKzpj6iCUjLP1"
+            git commit -m "data(storage-as-awards): raw CAISO storage-report xlsx + regenerated parameter registry [skip ci]" -m "Raw quarterly xlsx fetched from caiso.com by the apply-caiso74-intake runner (binary transport); parameter registry / citations / data dictionary regenerated on the applied code." -m "Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>" -m "Claude-Session: https://claude.ai/code/session_01QafzWFFCueKzpj6iCUjLP1"
           fi
           git push origin HEAD:claude/caiso-calibration-continuation-3ftscz
