@@ -10256,3 +10256,66 @@ rendered on a controlled re-solve; the isolated reconcile-only impact is the ver
 table above. No keeper swapped; keeper determinations that move under this fix
 (PJM improves, MISO exposed) are owner-visible and flagged for review. Holdout years
 untouched (rule 22).
+
+## 2026-07-11 — MISO-56: Lane-2 (RDC/ELMP scarcity) executed on its measured adjudication — DA reserve scarcity measured ~nonexistent (0 modelled RDC hours is CORRECT); two wrong requirement estimates replaced by measured series; ELMP evening-timing element built; score flat-to-better, keeper decision unchanged
+
+**The measurement re-scoped the lane before any build (rules 1/23; full record
+FINDING-miso-august-scarcity-2026-07.md §10).** (1) The measured DA ancillary
+MCPs (`asm_damcp_zonal`, MISO Wide) never reach the published RDC steps in
+2023-24 (spin/supp max $25-27) and once in 2025 ($132) — real day-ahead
+reserve scarcity is ~nonexistent, so the model's 0 binding DA RDC hours is
+structurally correct and forcing the in-LP families to bind would fabricate
+scarcity the measured market does not have. The RT tail (RT supp/spin ≥$190:
+~4/11/19 h) is where reserve scarcity lives — outside the C3c DA-expressible
+frame. (2) The DA >$200 LMP hours are energy-offer-tail events: 2024's 24 h
+are all Winter Storm Heather; 2025's 38 h are June/July evenings + January
+mornings. (3) The IMM's own Summer-2025 quarterly attributes the 2025 tail to
+RDT S→N congestion ($9.31/MWh Midwest-South separation — the model carries
+$0.19, the largest quantified lead on the 2025 residual, transmission lane),
+June-23/24 ELMP *ex-post* emergency repricing (2.5× ex ante, an RT-only
+construct; "no operating reserve shortages"), and hour-18 net-load-ramp RT
+shortage intervals (evening ramp 1→6 GW 2023→2025).
+
+**miso-56 (`2026-07-11-miso-56-measured-scarcity` + rule-20 twin) = miso-55
+meta.json strict replay + two measured changes:** (1)
+`miso_measured_reserve_requirements` — market-wide RBDC requirement ← measured
+hourly cleared reg+spin+supp (new intake `data/miso_reserve_requirements.py` ←
+`asm_rt_cleared_mw_<year>.parquet`; mean 2,447/2,557/2,642 MW, event-evening
+raises carried, e.g. Aug-12-2023 HE17-20 2,410→2,830), South zonal ← measured
+South reservation (321/366/477 MW) replacing the within-zone-MSSC static
+(~2,196 MW) that fabricated ~1.8 GW of South withholding — rule-13 measured
+AS power reservation, rule-14 mandatory swap, NYISO-#1344 conventions
+(published step shapes translate with the hourly requirement; South widths
+max-anchored for feasibility). (2) `tranche_startup_conditional_runs` —
+fast-start amortization v4: CAMPD-measured conditional commitment blocks
+(runs started in p97.5+ net-load hours: 6 h median vs 10 h pooled; band
+ratios 0.9/1.1/1.1/0.8/0.6, per-year stable; frozen derive
+`derive_campd_ct_run_lengths.py --condition-bands`, 61,322 runs) scale the v3
+ceiling hourly — the ELMP evening-timing element. Zero fitted scalars; DOF
+ledger 11 entries, residual count unchanged at 2; both mechanisms
+measured-physical rows.
+
+**Result (NOT-YET rubric v2.4, FAIL set identical to miso-55 — every delta
+flat-to-better):** C1 CT_PEAKER-2024 +8.51→+8.27 TWh (others within 0.04);
+C3a-2025 −13.3% flat (July-2025 −18.8 vs −18.9 — the July gap lives in the
+RDT/emergency lanes, exactly as adjudicated ex-ante); C3c 0 h (the
+measurement-correct DA outcome); August 2023/24 clean (+0.5/+0.2 $/MWh);
+C3b/C4/C6/C7/C8 PASS (D-2 CT 3.7-5.9% vs 15% cap); C5b ledgered CAVEAT
+(+1154.7%). Mechanism verification: South LMPs released −0.1..−1.4 $/MWh;
+requirement carries the real evening shape. Twin near-identical (≤0.3 TWh;
+twin sheds the CT_PEAKER-2024 C1 FAIL by dropping the ~1.0 TWh evening
+reliability deployment) — fit carried economically. LOYO note: no parameter
+was fit to any year (pooled measured series + published costs); per-year
+movements 2023/2024/2025 all flat-or-improved.
+
+**Deferred, documented:** MISO's 2025-09-30 shortage-pricing redesign
+(Pricing VOLL $10k; System VOLL $35k scaling a LOLP ORDC capped $6k) is
+provably zero-effect for 2023-2025 (post-dates every DA scarcity cluster;
+Q4-2025 DA MCPs ≤$55) — wire it with the ERCOT date-gate pattern when
+H1-2026 crossover or 2026+ forecast touches the curves. **Recommendation to
+owner:** miso-56 supersedes the miso-55 recommendation on structural
+grounding at an identical-to-marginally-better score; keeper stays miso-54
+pending decision, keepers.json untouched. Retention: miso-41-ct-evening
+(+ twin) displaced (oldest main). Lane pointers, in measured-impact order:
+RDT congestion depth (model $0.19 vs IMM $9.31), COAL_BIT/CC mid-merit split
+(+ import under-run), Heather-window winter delivered gas.
