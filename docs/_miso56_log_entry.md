@@ -1,22 +1,28 @@
-## 2026-07-11 — Owner decisions: miso-56 PROMOTED to keeper; PJM G-20b reserve co-opt hold CONFIRMED
+## 2026-07-11 — Owner decisions: miso-56 PROMOTED to MISO keeper (supersedes miso-54); PJM G-20b hold CONFIRMED — pjm-87/pjm-88 stay held, keeper stays pjm-97
 
-**MISO keeper swap (owner-authorized this session):** `2026-07-11-miso-56-measured-scarcity`
-promoted, superseding `2026-07-10-miso-54-som-restored`, per the recommendation in the
-2026-07-11 miso-56 entry above — supersedes on structural grounding (two measured series
-replace two wrong requirement estimates; zero fitted scalars) at an identical-to-marginally-
-better score. `keepers.json` updated, `build_status.py` re-run (MISO: NOT-YET, FAIL set
-identical to miso-55 as recorded), keeper-auditor pass clean (0 repairs). Retention was
-already handled at registration (miso-41-ct-evening + twin displaced).
+**Decision 1 — MISO keeper.** Owner promoted `2026-07-11-miso-56-measured-scarcity`
+to MISO keeper (owner authorization, this session, 2026-07-11), superseding
+`2026-07-10-miso-54-som-restored`, per the recommendation in the miso-56 entry
+above: FAIL set identical to miso-55/miso-54-lineage with every class-year delta
+flat-to-better, and strictly stronger structural grounding (both new mechanisms
+measured — rule-13 AS power reservation + CAMPD-measured conditional commitment
+blocks; zero fitted scalars). No re-solve. Executed: `keepers.json` MISO →
+miso-56, keeper sidecar marked, `status.js` rebuilt (`build_status.py`), top-15
+retention pruned MISO to 15 mains — `2026-07-03-miso-statmode-d-7` and
+`2026-07-06-miso-42-coal-econ` (+ twin) displaced (oldest mains; bundles under
+`results/calibration/` kept, dashboard registration only).
 
-**PJM G-20b confirmed HELD (owner, this session):** per
-`docs/handoffs/owner-decision-briefs-2026-07-08.md` Decision 2, neither `pjm-87`
-(`pjm_reserve_pergen_sync`) nor `pjm-88` (`pjm_reserve_pergen_size_split`) is promoted. The
-per-gen reserve dual fires in the correct opportunity-cost regime but at $0–10 — below the
-$75–200 afternoon residual C3c needs — with verdicts criterion-identical to the flag-off
-baseline (and pjm-88 adding a real 2025 CT_PEAKER dispatch distortion). Both stay default-off
-probes; the C3c lane needs a different identification, not a re-sweep of these two. Do not
-re-open without new measured evidence.
-
-**Keeper-auditor E7 staleness notes surfaced for owner (no action taken):** ERCOT keeper is
-one run behind (`2026-07-11-ercot58-joint-ordc-only` is newer) and PJM likewise
-(`2026-07-11-pjm-98-cc-mustrun`). Both keeper determinations remain owner calls.
+**Decision 2 — PJM G-20b hold CONFIRMED (owner-decision brief
+`docs/handoffs/owner-decision-briefs-2026-07-08.md` Decision 2).** Owner
+confirmed 2026-07-11 that `pjm-87` (`pjm_reserve_pergen_sync`) and `pjm-88`
+(`pjm_reserve_pergen_size_split`) STAY HELD: the per-gen reserve dual fires in
+the correct opportunity-cost regime (sub-$32, never the $300 penalty step) but
+at $0–10 vs the $75–200 afternoon residual C3c needs — reserve-supply scoping
+cannot price PJM's residual (LP-tightness class, same as ERCOT G-22). `pjm-87`
+stays the documented default-off structure (rule 26 — real mechanism, kept, not
+re-tuned or deleted); `pjm-88` stays rejected (adds frequency at a real 2025
+dispatch-distortion cost, no magnitude gain). Keeper stays
+`2026-07-10-pjm-97-measured-interfaces`. This question is CLOSED — do not
+re-open reserve-supply probes for PJM C3c; the honest next lever remains
+demand-side/commitment tightness (the ERCOT-G-22 route) or accepting C3c as a
+disclosed limitation.
