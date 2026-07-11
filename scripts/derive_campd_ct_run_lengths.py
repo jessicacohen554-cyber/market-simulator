@@ -60,6 +60,34 @@ UNIT_LEVEL_DIR = RAW_DIR / "campd-unit-level"
 # Model classes whose fast-start tranches consume the measured horizon.
 CT_CLASSES: frozenset[str] = frozenset({"CT_PEAKER", "CT_CHP"})
 
+# Net-load percentile band edges for the v4 condition-keyed horizon
+# (``--condition-bands``): interior boundaries of the within-year net-load
+# percentile bands [0-.5, .5-.75, .75-.9, .9-.975, .975-1]. The same edges the
+# consumer (``ScenarioConfig.tranche_startup_conditional_runs``) buckets model
+# hours with; recorded in the artifact for the parity check.
+CONDITION_BAND_EDGES: tuple[float, ...] = (0.50, 0.75, 0.90, 0.975)
+
+# ISO -> EIA-930 BA code of the measured demand/wind/solar series the run-start
+# condition (net-load percentile) derives from, and the ISO's LOCAL STANDARD
+# timezone (the model's fixed non-DST clock; MISO market data is EST
+# year-round). Measured-input plumbing, not tunables.
+_EIA930_BA_BY_ISO: dict[str, str] = {
+    "ERCOT": "ERCO",
+    "CAISO": "CISO",
+    "PJM": "PJM",
+    "MISO": "MISO",
+    "NYISO": "NYIS",
+    "NEISO": "ISNE",
+}
+_STANDARD_TZ_BY_ISO: dict[str, str] = {
+    "ERCOT": "Etc/GMT+6",
+    "CAISO": "Etc/GMT+8",
+    "PJM": "Etc/GMT+5",
+    "MISO": "Etc/GMT+5",
+    "NYISO": "Etc/GMT+5",
+    "NEISO": "Etc/GMT+5",
+}
+
 
 def unit_run_lengths(on: np.ndarray) -> list[int]:
     """Return the lengths (hours) of maximal True-blocks in ``on``."""
@@ -69,6 +97,48 @@ def unit_run_lengths(on: np.ndarray) -> list[int]:
     starts = np.where(d == 1)[0]
     ends = np.where(d == -1)[0]
     return (ends - starts).tolist()
+
+
+def unit_runs_with_starts(on: np.ndarray) -> list[tuple[int, int]]:
+    """Return ``(start_row, length)`` of maximal True-blocks in ``on``."""
+    if not on.any():
+        return []
+    d = np.diff(np.concatenate([[0], on.astype(np.int8), [0]]))
+    starts = np.where(d == 1)[0]
+    ends = np.where(d == -1)[0]
+    return [(int(s), int(e - s)) for s, e in zip(starts, ends)]
+
+
+def load_net_load_percentiles(iso: str, years: list[int]) -> "pd.Series":
+    """Within-year net-load percentile per local-standard hour (EIA-930).
+
+    Net load = measured BA demand − wind − solar generation
+    (``data/raw/<BA>_region.parquet`` type ``D`` and ``<BA>_fueltype.parquet``
+    ``WND``/``SUN``), UTC → local standard time, ranked within each year.
+    Returns a Series indexed by tz-naive local-standard timestamps. The same
+    measured series family the model's own load/renewables inputs derive
+    from — the run-start condition is exogenous to any model output.
+    """
+    ba = _EIA930_BA_BY_ISO[iso]
+    tz = _STANDARD_TZ_BY_ISO[iso]
+    reg = pd.read_parquet(RAW_DIR / f"{ba}_region.parquet")
+    dem = reg[reg["type"] == "D"][["period", "value_mwh"]].rename(
+        columns={"value_mwh": "load"}
+    )
+    fuel = pd.read_parquet(RAW_DIR / f"{ba}_fueltype.parquet")
+    wind = fuel[fuel["fueltype"] == "WND"][["period", "value_mwh"]].rename(
+        columns={"value_mwh": "wind"}
+    )
+    sun = fuel[fuel["fueltype"] == "SUN"][["period", "value_mwh"]].rename(
+        columns={"value_mwh": "solar"}
+    )
+    nl = dem.merge(wind, on="period", how="left").merge(sun, on="period", how="left")
+    nl["netload"] = nl["load"] - nl["wind"].fillna(0.0) - nl["solar"].fillna(0.0)
+    nl["ts"] = nl["period"].dt.tz_convert(tz).dt.tz_localize(None)
+    nl["year"] = nl["ts"].dt.year
+    nl = nl[nl["year"].isin(years)]
+    nl["pct"] = nl.groupby("year")["netload"].rank(pct=True)
+    return nl.set_index("ts")["pct"]
 
 
 def facility_runs(df: pd.DataFrame) -> dict[str, list[int]]:
@@ -83,6 +153,79 @@ def facility_runs(df: pd.DataFrame) -> dict[str, list[int]]:
     return out
 
 
+def condition_banded_runs(
+    iso: str, years: list[int], ct_plants: set[int]
+) -> pd.DataFrame:
+    """Class-level run-length stats by start-hour net-load percentile band.
+
+    For every simple-cycle CT run (same online convention as the pooled
+    artifact), the run is keyed by the within-year net-load percentile of its
+    START hour (:func:`load_net_load_percentiles`) and bucketed into the
+    :data:`CONDITION_BAND_EDGES` bands. Returns one row per band with the
+    class-pooled median/mean run length and the RATIO to the all-runs pooled
+    median — the shape factor the v4 condition-keyed amortization scales each
+    plant's own median by (shape from the pooled class, level from the plant).
+    """
+    pct_lookup = load_net_load_percentiles(iso, years)
+    rows: list[tuple[float, int]] = []  # (start pct, run hours)
+    for state in states_for_iso(iso):
+        for year in years:
+            path = UNIT_LEVEL_DIR / f"{state}_{year}.parquet"
+            if not path.exists():
+                continue
+            df = pd.read_parquet(
+                path,
+                columns=[
+                    "facilityId",
+                    "unitId",
+                    "unitType",
+                    "date",
+                    "hour",
+                    "grossLoad",
+                ],
+            )
+            df = df[
+                df["unitType"].str.contains("combustion turbine", case=False, na=False)
+            ]
+            df = df[pd.to_numeric(df["facilityId"], errors="coerce").isin(ct_plants)]
+            if df.empty:
+                continue
+            df["_ts"] = pd.to_datetime(df["date"]) + pd.to_timedelta(
+                df["hour"], unit="h"
+            )
+            df = df.sort_values(["facilityId", "unitId", "_ts"])
+            for (_fid, _uid), g in df.groupby(["facilityId", "unitId"], sort=False):
+                on = (g["grossLoad"].fillna(0.0) >= _ONLINE_MW).to_numpy()
+                ts = g["_ts"].to_numpy()
+                for s, length in unit_runs_with_starts(on):
+                    pct = pct_lookup.get(pd.Timestamp(ts[s]), np.nan)
+                    if not np.isnan(pct):
+                        rows.append((float(pct), int(length)))
+    if not rows:
+        raise SystemExit(f"{iso}: no condition-keyed CT runs found")
+    runs = pd.DataFrame(rows, columns=["pct", "run_h"])
+    pooled_median = float(runs["run_h"].median())
+    edges = (0.0,) + CONDITION_BAND_EDGES + (1.0,)
+    out_rows = []
+    for b in range(len(edges) - 1):
+        lo, hi = edges[b], edges[b + 1]
+        upper = (runs["pct"] < hi) if hi < 1.0 else (runs["pct"] <= 1.0)
+        sel = runs[(runs["pct"] >= lo) & upper]
+        med = float(sel["run_h"].median()) if len(sel) else pooled_median
+        out_rows.append(
+            {
+                "band": b,
+                "pct_lo": lo,
+                "pct_hi": hi,
+                "n_runs": int(len(sel)),
+                "median_run_hours": med,
+                "pooled_median_run_hours": pooled_median,
+                "ratio": med / pooled_median if pooled_median > 0 else 1.0,
+            }
+        )
+    return pd.DataFrame(out_rows)
+
+
 def main() -> None:
     """Derive and write the per-facility measured CT run-length artifact."""
     parser = argparse.ArgumentParser(description=__doc__)
@@ -95,6 +238,12 @@ def main() -> None:
         help="CAMPD vintages to pool (default 2023 2024 2025)",
     )
     parser.add_argument("--out", default=None, help="Output CSV path override")
+    parser.add_argument(
+        "--condition-bands",
+        action="store_true",
+        help="ALSO derive the class-level net-load-percentile band ratios "
+        "(campd_ct_run_bands_<ISO>.csv, the v4 condition-keyed horizon shape)",
+    )
     args = parser.parse_args()
     iso = args.iso.upper()
 
@@ -191,6 +340,23 @@ def main() -> None:
             ["plant_code", "plant_name", "n_runs", "median_run_hours", "p90_run_hours"]
         ].to_string(index=False)
     )
+
+    if args.condition_bands:
+        bands = condition_banded_runs(iso, args.years, ct_plants)
+        bands["years"] = years_tag
+        bands["source"] = (
+            "EPA CAMPD unit-level hourly grossLoad runs keyed by start-hour "
+            "within-year net-load percentile (EIA-930 D - WND - SUN), "
+            f"online >= {_ONLINE_MW} MW; ratio = band median / pooled median"
+        )
+        bands_path = PROCESSED_DIR / f"campd_ct_run_bands_{iso}.csv"
+        bands.to_csv(bands_path, index=False)
+        print(f"wrote {bands_path} ({len(bands)} rows)")
+        print(
+            bands[
+                ["band", "pct_lo", "pct_hi", "n_runs", "median_run_hours", "ratio"]
+            ].to_string(index=False)
+        )
 
 
 if __name__ == "__main__":

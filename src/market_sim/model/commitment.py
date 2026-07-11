@@ -216,6 +216,7 @@ def compute_monthly_markup(
     gas_st_startup_cost: bool = False,
     chp_startup_covered: bool = False,
     coal_warm_committed: bool = False,
+    run_ratio_t: np.ndarray | None = None,
 ) -> np.ndarray:
     """Compute the ``(n_gen, T)`` monthly startup-amortization markup.
 
@@ -231,6 +232,15 @@ def compute_monthly_markup(
         fleet_arrays: The vectorized fleet, for per-generator heat rate/Pmax.
         dispatch: The P0 dispatch result, shape ``(n_gen, T)``.
         T: Number of hours in the horizon.
+        run_ratio_t: Optional ``(T,)`` condition-keyed horizon ratio (the v4
+            ``tranche_startup_conditional_runs`` basis): scales each
+            fast-start generator's MEASURED run-length ceiling per hour by
+            the hour's net-load-percentile band ratio (CAMPD-measured — a
+            tight-hour engagement is a shorter commitment block, so its
+            start recovery amortizes over fewer hours). Applies only to
+            generators carrying a v3 measured horizon
+            (``fast_start_run_hours`` > 0); ``None`` keeps the v3 basis
+            byte-identical.
 
     Returns:
         The markup array, shape ``(n_gen, T)``, in ``$/MWh``.
@@ -252,9 +262,19 @@ def compute_monthly_markup(
         amortizes over the measured horizon outright. This removes the v2
         circularity where too-cheap offers → long P0 blocks → ≈0 markup →
         the lever self-disables (nyiso-44 probe finding).
+
+        Returns a scalar, or — when ``run_ratio_t`` is set and the generator
+        carries a v3 measured horizon — the per-hour ``(h_end - h_start,)``
+        markup with the hourly condition-keyed ceiling
+        ``measured_run × run_ratio_t[t]`` (v4; the P0 monthly run still only
+        SHORTENS the horizon, same semantics per hour).
         """
         runs = find_runs(dispatch[g, h_start:h_end] > threshold)
         avg_run = float(np.mean([end - start for start, end in runs])) if runs else 0.0
+        if measured_run > 0.0 and run_ratio_t is not None:
+            ceiling_t = measured_run * run_ratio_t[h_start:h_end]
+            horizon_t = np.minimum(avg_run, ceiling_t) if avg_run > 0.0 else ceiling_t
+            return startup / np.maximum(horizon_t, 1.0)
         if measured_run > 0.0:
             avg_run = min(avg_run, measured_run) if avg_run > 0.0 else measured_run
         return startup / max(avg_run, 1.0)

@@ -1769,6 +1769,35 @@ def _miso_design(
     zone_mask = np.ones(n_zones, dtype=bool)
     requirement = np.full(T, req, dtype=float)
 
+    # Measured hourly requirement basis (miso_measured_reserve_requirements,
+    # Lane-2 miso-56): the market-wide RBDC family takes the measured hourly
+    # cleared reg+spin+supp series in place of the flat fleet-MSSC + 400 MW
+    # estimate, and the South zonal family below takes the measured South
+    # reservation in place of the within-zone-MSSC static (which overstates
+    # the real ~0.3-0.5 GW South holding several-fold). Shortfall steps keep
+    # their published static shape and translate with the hourly requirement
+    # (the NYISO dynamic-requirements convention). Rule-13 measured quantity
+    # intake, rule-14 mandatory swap; hard-errors when the parquet is absent.
+    measured_req: dict[str, np.ndarray] = {}
+    if getattr(config, "miso_measured_reserve_requirements", False):
+        from market_sim.data.miso_reserve_requirements import (
+            load_miso_reserve_requirements,
+        )
+
+        measured_req = load_miso_reserve_requirements(int(config.weather_year), T)
+        requirement = measured_req["market"]
+        if float(requirement.max()) > req:
+            # Feasibility guard: static widths must span the requirement in
+            # every hour (widths are per-family constants). Re-anchor the
+            # published ramp shape to the measured peak when it exceeds the
+            # fleet-MSSC + regulating static basis.
+            penalties, widths = nyiso_rcpf_product_shortfall_steps(
+                float(requirement.max()),
+                MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW,
+                MISO_RESERVE_DEMAND_CURVE_MAX,
+                n_ramp=n_ramp,
+            )
+
     families = [
         ReserveFamily(
             name="miso_rbdc",
@@ -1816,14 +1845,26 @@ def _miso_design(
                 continue
             zmask = np.zeros(n_zones, dtype=bool)
             zmask[z] = True
+            zonal_requirement = np.full(T, zonal_req, dtype=float)
+            width_anchor = zonal_req
+            if zname in measured_req:
+                # Measured hourly South reservation replaces the within-zone
+                # MSSC static; the published §5.2.1.2 curve fractions anchor
+                # to the measured series' annual MAX so the stepped curve
+                # spans the requirement in every hour (widths are static per
+                # family — a narrower anchor could leave requirement beyond
+                # the priced steps, an infeasibility, in peak-requirement
+                # hours). Shape preserved, published proportions unchanged.
+                zonal_requirement = measured_req[zname]
+                width_anchor = float(np.max(zonal_requirement))
             zonal_pen = np.array([p for _, p in MISO_ZONAL_ORDC_STEPS])
             zonal_wid = np.array(
-                [frac * zonal_req for frac, _ in MISO_ZONAL_ORDC_STEPS]
+                [frac * width_anchor for frac, _ in MISO_ZONAL_ORDC_STEPS]
             )
             families.append(
                 ReserveFamily(
                     name=f"miso_zonal_or_{zname.lower().replace('-', '_')}",
-                    requirement=np.full(T, zonal_req, dtype=float),
+                    requirement=zonal_requirement,
                     zone_mask=zmask,
                     ordc_penalties=zonal_pen,
                     ordc_step_widths=zonal_wid,
