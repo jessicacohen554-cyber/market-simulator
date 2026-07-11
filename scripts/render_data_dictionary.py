@@ -100,6 +100,9 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "nyiso-som-hub-fuel-annual",
     "reserve-requirements",
     "som-competitive-conduct",
+    "capacity-market-demand-curve",
+    "capacity-market-auction-price",
+    "capacity-market-elcc",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -685,7 +688,68 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "2025 IMM quarterly output-gap rows (train-window years only, "
             "rule 22), from `data/raw/som-competitive-conduct/"
             "som_competitive_conduct.csv`; PDFs under `data/raw/MISO/`. "
-            "Other ISOs' SOM conduct sections extend the same tidy layout."
+            "Other ISOs' SOM conduct sections extend the same tidy "
+            "layout."
+        ),
+    },
+    "capacity-market-demand-curve": {
+        "summary": (
+            "Published capacity-market demand-curve parameters — net-CONE, "
+            "IRM, price cap, and the sloped curve's own (x,y) points — per "
+            "capacity-market ISO and delivery year. The CR-1 mechanism input "
+            "(rule-13-admissible published market-design parameter)."
+        ),
+        "reconciles": (
+            "PJM VRR curve + Net CONE + IRM (RPM BRA Planning Period "
+            "Parameters), NYISO ICAP Demand Curves per locality (NYCA/NYC/"
+            "LI/G-J), ISO-NE FCA Net CONE/ICR/Auction Starting Price/MRI, "
+            "MISO seasonal PRA reliability-based demand curve + seasonal "
+            "CONE, CAISO's documented CPM soft-offer-cap / CPUC RA report "
+            "fixed-proxy — onto one canonical metric vocabulary (`net_cone`, "
+            "`irm`, `price_cap`, `curve_point`, `soft_offer_cap`, "
+            "`ra_report_price`). ERCOT excluded (energy-only). See "
+            "`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` "
+            "§3-4."
+        ),
+    },
+    "capacity-market-auction-price": {
+        "summary": (
+            "Published capacity-market auction/spot clearing-price history "
+            "per ISO, delivery years <= 2026/27 only. A VALIDATION "
+            "OBSERVABLE (CR-2 / T3.1) — compared against the model's "
+            "implemented demand-curve mechanism, never pinned or fit to "
+            "(rules 1/13)."
+        ),
+        "reconciles": (
+            "PJM Base Residual Auction (RTO + LDA), NYISO monthly Spot "
+            "Market Auction (NYCA + locality), ISO-NE Forward Capacity "
+            "Auction (system + capacity zone), MISO Planning Resource "
+            "Auction (per LRZ, seasonal from PY2025-26) — onto one canonical "
+            "frame keyed on `(iso, delivery_year, season, area, "
+            "auction_round)`. CAISO carries no centralized auction (expected "
+            "empty); ERCOT excluded. Delivery-year cutoff enforced by "
+            "`validate_tidy` in "
+            "`scripts/lib/capacity_market_auction_price/__init__.py`."
+        ),
+    },
+    "capacity-market-elcc": {
+        "summary": (
+            "Published Effective Load Carrying Capability / capacity-"
+            "accreditation ratings for wind/solar/storage resource classes, "
+            "by study vintage and — where an ISO publishes a genuine "
+            "marginal-ELCC study — installed-penetration level. The CR-3.1 "
+            "input that will replace the flat `RENEWABLE_CAPACITY_CREDIT` "
+            "wind/solar constants."
+        ),
+        "reconciles": (
+            "PJM ELCC Class Ratings (single current-fleet point per class), "
+            "MISO wind/solar marginal ELCC by penetration (Accreditation "
+            "Reform — the strongest public multi-point curve), NYISO ICAP/"
+            "UCAP conversion factors (CATF), ISO-NE seasonal-claimed-"
+            "capability / ELCC-based accreditation, CAISO/CPUC NQC + "
+            "E3-authored incremental-ELCC studies — onto one canonical "
+            "frame keyed on `(iso, resource_class, study_vintage, "
+            "penetration_pct)`. ERCOT excluded."
         ),
     },
 }
