@@ -9974,6 +9974,82 @@ their rule-23 trigger (the disclosure intake); registry pruned to top-15
 (the ercot51 coal-net-summer pair — mechanism adopted into every keeper
 since; bundle dirs stay).
 
+## 2026-07-11 — ERCOT storage-cycling lane opened (ERCOT-58 forward path, storage first): the binding-regime storage gap re-grounded against the MEASURED EIA-930 battery series — the model's batteries are 100 % price-elastic arbitrage, so they ~track reality in a scarcity year (2025 evening peak within ~10 %) but collapse in the flat 2023 (0.55 vs ~5.8 TWh capable); the missing structure is the price-INELASTIC net-load-ramp AS-deployment energy (morning + daytime + evening), NOT evening arbitrage and NOT the $10 adder (derived li-ion cycling cost $14.25 > $10). Mechanism specified (measured-award energy co-participation); keeper stays ercot56-nucwin
+
+**Task (ERCOT-58 filed forward path §5(a), this session).** Work the
+binding-regime supply-mix lane storage-first: the +2.4 GW top-30 %-net-load
+thermal excess whose leading identified component was "model storage
+discharges 145 MW at binding hours where the real fleet ran ~1–2 GW at
+evening peaks." Full diagnosis:
+`docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md`.
+
+**Method (rule-16 throwaways, none registered/committed).** Reconstructed the
+promoted keeper's exact config from its `meta.json`
+(`scripts/probes/_obs_keeper_storage.py`) and solved single years, dumping
+`storage.parquet`. Validated against the MEASURED EIA-930 ERCOT battery
+series (`load_ercot_battery_gen`): 2023 unreported, 2024 partial (from
+mid-Nov), **2025 the first full measured year** — the clean like-for-like
+target the ERCOT-58 comparison (CAMPD export-basis, a thermal series) lacked
+for storage.
+
+**Finding 1 — the 2025 measured-year comparison refines the diagnosis.**
+Model vs measured 2025 (fleet 13.7 GW): annual discharge 3.44 vs 5.46 TWh;
+top-30 % net-load-hr 739 vs 931 MW; **HE18/HE19 2,711/3,184 vs 3,004/2,635 MW
+— the evening ramp is already ~captured** (a scarcity year gives arbitrage the
+spread it needs). What the model MISSES: the morning net-load ramp (HE05–07
+~140 vs ~800 MW), the daytime baseload (~10 vs ~200 MW), and ~2 TWh of
+throughput. In the flat 2023 (fleet 3.97 GW / ~16 GWh, no measured series) the
+keeper delivers 0.55 TWh (~0.1 cycle/day) — near-total collapse. Cross-year
+signature: **the model's storage tracks reality in the high-scarcity year and
+collapses in the flat year because its cycling is 100 % price-elastic**, while
+reality's has a large price-inelastic component.
+
+**Finding 2 — the $10 adder is not the defect (rule 14 checked, clears).**
+adder=0 probe (2023): throughput 0.55→1.24 TWh, shape improves (evening
+HE17–19 sharpens) but still ~1/3 of the implied level — a real suppressor,
+not the root cause. The derived per-tech cycling-degradation cost
+(`_degradation_cost_per_mwh`) is **$14.25/MWh for li-ion 4 h, HIGHER than the
+$10 dispatch adder** — so the adder is if anything already below true physical
+cost; lowering it is unjustified (rule 14 fails in the "estimate too high"
+direction). Real batteries cycle at that cost only because AS
+revenue/deployment adds value the arbitrage-only LP never sees. **Do not touch
+the adder.** The AS cap reservation (`storage_as_commitment`,
+`reserve_storage_as_power`) is second-order: at 2023 binding hours ~2,438 MW of
+the 3,973 MW fleet is free of the measured award, yet only 145 MW discharges —
+the binding constraint is incentive, not cap.
+
+**Finding 3 — the missing structure is price-inelastic AS-energy
+participation.** The model represents AS as a pure power reservation (award
+subtracted from the discharge cap in all 8,760 h, never deployed back as
+energy), so batteries only cycle on pure arbitrage. The physical signature of
+the omitted energy is the MEASURED PRC (Physical Responsive Capability)
+draw-down at the morning/evening ramps (2023 HE18 min 5,898 vs HE02 7,832;
+2025 HE18 min 9,069 vs HE03 11,215) — ERCOT deploying ECRS/RRS as energy at the
+ramp, price-inelastically (2023 rtorpa >$0.5 in only 364 h; 2025 in 21 h), so
+no arbitrage retune reproduces it. This is also the coupling that keeps the
+2023 spread flat and the +2.4 GW thermal in: no ramp battery energy → thermal
+serves it → evening not scarce → no arbitrage. An exogenous inelastic injection
+breaks the circle.
+
+**Mechanism specified for the next round (default-off, not yet built).**
+Measured-award energy co-participation (AS deployment): `deploy(t) = measured
+storage-AS award(t) × w(t)`, w = the net-load-ramp PRC draw-down (G4
+mode-aware seam — measured PRC fraction in backcast, WS-A forward ramp formula
+in forecast; NO residual-fitted threshold, rule 1/23), entering the LP as a
+storage discharge lower bound (`build_variable_bounds` gains
+`storage_discharge_min`, the `storage_soc_min` mirror) with the released award
+added back to the discharge cap. Reconciles with `storage_as_commitment`
+(reserve off-ramp, deploy on-ramp — rule 19), mutually exclusive with the
+endogenous co-opt. Spec + LP wiring in the diagnosis §5.
+
+**Disposition / governance.** Keeper stays `2026-07-10-ercot56-nucwin`; no
+code changed, no bundle registered (all solves rule-16 throwaways — a
+single-year or single-measured-year solve is never a keeper, rule 16; the
+diagnosis is the deliverable). No solve/score/intake outside 2023–2025
+(rule 22); ORDC tariff params untouched (rule 26); no offer curve / sigmoid /
+floor / derive value changed (rules 13/21/23). Throwaway obs bundles deleted,
+not committed.
+
 ## 2026-07-11 — NEISO winter scarcity charter Limb B EXECUTED: measured fast-start offer surface (`neiso-58`) — DORMANT; the C3c/C5b closure-path inventory is now fully exhausted (keeper stays neiso-56)
 
 Charter Limb B (`docs/handoffs/neiso-limb-b-offer-surface-2026-07.md`),
