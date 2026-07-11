@@ -1,20 +1,25 @@
-# One-shot: promote miso-56 to MISO keeper on the runner (byte-heavy files
-# never transit the MCP relay — caiso76-promote precedent). Steps:
-# keepers.json swap (miso-54 -> miso-56), calibration-log entry appended
-# from the committed payload docs/_miso56_log_entry.md (payload removed in
-# the same commit), and a deterministic status.js regen via
-# scripts/build_status.py from the already-committed registry + bundles.
-# Promotion authorization: owner decision 2026-07-11 (this session) —
-# "I agree with promoting miso-56" — executing the recommendation in the
-# 2026-07-11 miso-56 calibration-log entry (structural grounding, score
-# flat-to-better, zero fitted scalars). Same commit records the owner's
-# PJM G-20b hold confirmation.
+# One-shot: finish the miso-56 MISO keeper promotion on the runner (byte-heavy
+# files — status.js, docs/calibration-log.md — never transit the MCP relay;
+# caiso76-promote precedent). The keeper swap itself (keepers.json MISO ->
+# 2026-07-11-miso-56-measured-scarcity + the sidecar KEEPER marking) is already
+# committed on this branch. This workflow makes two commits:
+#   1. retention prune — MISO dashboard registration back to top-15 mains:
+#      2026-07-03-miso-statmode-d-7 and 2026-07-06-miso-42-coal-econ (+ twin)
+#      displaced (oldest mains; bundles under results/calibration/ kept);
+#   2. calibration-log owner-decisions entry appended from the committed
+#      payload docs/_miso56_log_entry.md (payload removed in the same commit)
+#      + deterministic status.js regen via scripts/build_status.py from the
+#      already-committed registry + bundles.
+# Promotion authorization: owner decision 2026-07-11 (session-logged), per the
+# recommendation in the 2026-07-11 miso-56 calibration-log entry. The same log
+# entry records the owner's confirmation of the PJM G-20b hold (pjm-87/pjm-88
+# stay held; keeper stays pjm-97).
 name: miso56-promote
 
 on:
   push:
     branches:
-      - claude/maximize-usage-plan-04k910
+      - claude/miso-pjm-owner-decisions-6r94gk
     paths:
       - .github/workflows/miso56-promote.yml
 
@@ -33,46 +38,39 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Apply keeper swap + log entry append
-        run: |
-          set -euo pipefail
-          test -f docs/_miso56_log_entry.md
-          python - <<'PY'
-          import json
-
-          # 1. keepers.json: MISO -> miso-56 (idempotent).
-          p = 'frontend/data/backcast/keepers.json'
-          k = json.load(open(p))
-          old = k['MISO']
-          new = '2026-07-11-miso-56-measured-scarcity'
-          if old != new:
-              k['MISO'] = new
-              k['keepers'] = [new if x == old else x for x in k['keepers']]
-              json.dump(k, open(p, 'w'), indent=1)
-
-          # 2. calibration-log: append the entry at the end, after the
-          #    2026-07-11 miso-56 entry it acts on (idempotent on re-run).
-          lp = 'docs/calibration-log.md'
-          log = open(lp).read()
-          entry = open('docs/_miso56_log_entry.md').read()
-          if 'Owner decisions: miso-56 PROMOTED to keeper' not in log:
-              if not log.endswith('\n'):
-                  log += '\n'
-              log += '\n' + entry
-              open(lp, 'w').write(log)
-          PY
-          git rm -q docs/_miso56_log_entry.md
-
-      - name: Regenerate status.js (deterministic from committed inputs)
-        run: python scripts/build_status.py
-
-      - name: Commit + push
+      - name: Retention prune (top-15 MISO mains, separate commit)
         run: |
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add frontend/data/backcast/keepers.json \
-                  frontend/data/backcast/status.js \
-                  docs/calibration-log.md
-          git commit -m "Promote miso-56 (measured scarcity) to MISO keeper; record PJM G-20b hold — owner decisions 2026-07-11 [skip ci]"
-          git push origin HEAD:claude/maximize-usage-plan-04k910
+          git rm -q \
+            frontend/data/backcast/registry/2026-07-03-miso-statmode-d-7.json \
+            frontend/data/backcast/runs/2026-07-03-miso-statmode-d-7.js \
+            frontend/data/backcast/registry/2026-07-06-miso-42-coal-econ.json \
+            frontend/data/backcast/runs/2026-07-06-miso-42-coal-econ.js \
+            frontend/data/backcast/registry/2026-07-06-miso-42-coal-econ-ablation.json \
+            frontend/data/backcast/runs/2026-07-06-miso-42-coal-econ-ablation.js
+          git commit -m "results: prune MISO registry to top-15 retention — miso-statmode-d-7 + miso-42-coal-econ (+ twin) displaced by miso-56 (bundles kept) [skip ci]"
+
+      - name: Calibration-log owner-decisions entry + status.js regen
+        run: |
+          set -euo pipefail
+          test -f docs/_miso56_log_entry.md
+          python - <<'PY'
+          log_path = 'docs/calibration-log.md'
+          log = open(log_path).read()
+          entry = open('docs/_miso56_log_entry.md').read()
+          # Idempotent on re-run.
+          if 'Owner decisions: miso-56 PROMOTED to MISO keeper' not in log:
+              if not log.endswith('\n'):
+                  log += '\n'
+              log += '\n' + entry.strip() + '\n'
+              open(log_path, 'w').write(log)
+          PY
+          git rm -q docs/_miso56_log_entry.md
+          python scripts/build_status.py
+          git add docs/calibration-log.md frontend/data/backcast/status.js
+          git commit -m "docs+dashboard: record 2026-07-11 owner decisions — miso-56 promoted to MISO keeper (status.js regen); PJM G-20b hold confirmed, keeper stays pjm-97 [skip ci]"
+
+      - name: Push
+        run: git push origin HEAD:claude/miso-pjm-owner-decisions-6r94gk
