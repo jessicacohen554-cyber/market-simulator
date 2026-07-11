@@ -6,8 +6,16 @@
 branch `claude/data-holdout-2022-2026-intake-3oc65k` +
 `claude/data-holdout-intake-followups-fu3w37`) intook 2022 + H1-2026 source
 data for ERCOT and PJM. `frontend/data/backcast/calibration-complete.json`
-still reads `"complete": {}` — no ISO has been declared complete, no holdout
-solve has been run, no holdout year has been registered on the dashboard. The
+at the time this memo was written read `"complete": {}` — no ISO had been
+declared complete, no holdout solve had been run, no holdout year had been
+registered on the dashboard. **Update 2026-07-11:** this is no longer
+current — NEISO was declared complete 2026-07-07 (keeper
+`2026-07-08-neiso-54-steamgas-ct`) and its 2019 + H1-2026 locked-test
+one-shot was scored once, against the frozen `neiso-53` config
+(`2026-07-07-neiso53-winter-fuelsec-coldsnap`), and stands per rule 22 — it
+was not re-scored when neiso-54 was promoted. The rest of this memo's
+analysis (the intake/solve/score gap trace, the Option 1/2 policy choice)
+is otherwise unaffected and is left as written. The
 rule's *intake* clause has been breached in practice, under an explicit,
 repeated owner instruction ("data intake only, no model solve — unblocks
 D-6") recorded in `docs/out-of-sample-results-2026-07.md` §1.1. This memo
