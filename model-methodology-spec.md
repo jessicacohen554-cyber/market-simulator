@@ -746,13 +746,17 @@ short-duration storage more than long-life chemistries.
 Governed by a per-ISO `MarketDesign` switch (`MARKET_DESIGN`): energy-only
 ERCOT pays nothing here (scarcity already flows through the ORDC/VOLL energy
 price), while PJM/NYISO/ISO-NE and CAISO's RA pay
-`net_cone × ELCC(duration) × (1 − penetration)^k`. The ELCC capacity credit
-**rises with duration**; the saturation derate **falls as storage approaches
-the deployment ceiling**. Together they make short-duration capacity value
-collapse at high penetration while long-duration retains its firm credit —
-the mechanism that tilts new entry toward longer durations as storage
-saturates. The stack is toggleable via `config.storage_capacity_value` and
-`config.storage_degradation`.
+`capacity_price × ELCC(duration) × (1 − penetration)^k`, where `capacity_price`
+is the **shared per-firm-MW seam** (§5.9 — the same `MarketDesign` price the
+thermal retirement and new-entry screens use, so storage rides the ISO's one
+demand curve with no screen-specific curve): the fixed net-CONE by default, or
+the CR-1 sloped-curve price `VRR(reserve_position) × net_cone_curve` when
+`config.capacity_market_clearing` is on. The ELCC capacity credit **rises with
+duration**; the saturation derate **falls as storage approaches the deployment
+ceiling**. Together they make short-duration capacity value collapse at high
+penetration while long-duration retains its firm credit — the mechanism that
+tilts new entry toward longer durations as storage saturates. The stack is
+toggleable via `config.storage_capacity_value` and `config.storage_degradation`.
 
 **3. Ancillary-service (AS) value** (ERCOT), the third value-stack slice —
 ~85% of 2023 ERCOT battery revenue and absent from the arbitrage + capacity
@@ -879,6 +883,71 @@ Path-15/26 boundary) are left `unmapped` rather than assigned by guess. See
 `docs/capacity-deliverability-wiring.md` for the full per-ISO mapping table
 and `tests/test_capacity_area_crosswalk.py` /
 `tests/test_capacity_deliverability_wiring.py` for the coverage tests.
+
+### 5.9 Capacity-Market Revenue — Fixed Price and the CR-1 Sloped Demand Curve
+
+In a capacity-market ISO a qualifying resource earns a resource-adequacy
+payment *outside* the energy market (Module M1), which the three
+capacity-evolution screens credit as revenue: economic retirement (§5.2),
+thermal new entry (§5.3), and storage new entry (§5.5). All three price
+adequacy through **one seam** — `MarketDesign.capacity_price_per_firm_mw_yr`
+(rule 19, one curve per ISO, no screen-specific curves) — which returns a
+per-firm-MW-yr price that each screen multiplies by its own accreditation
+(thermal `× (1 − EFORd)` UCAP; storage `× ELCC(duration) × saturation derate`).
+Energy-only ERCOT (and any ISO absent from `MARKET_DESIGN`) pays **zero** in
+every mode — scarcity already flows through its ORDC/VOLL energy price.
+
+**Fixed mode (default).** The seam returns the flat `net_cone_per_kw_yr × 1000`,
+the same per-ISO net-CONE anchor (CAISO 90 / PJM 100 / NYISO 110 / ISO-NE 95 /
+MISO 80 $/kW-yr) every qualifying MW has always earned. The price does not
+respond to the fleet.
+
+**CR-1 sloped demand curve** (`ScenarioConfig.capacity_market_clearing`, GATED,
+default **off**, byte-identical when off). When on, the fixed price is replaced
+by the market's own **net-CONE-anchored sloped demand curve** evaluated at the
+model's own accredited reserve position:
+
+```
+reserve_position = accredited_firm_capacity_mw / requirement_mw
+capacity_price   = VRR_iso(reserve_position) × net_cone_curve_iso
+```
+
+`VRR_iso` is the published, normalized piecewise-linear curve
+(`MarketDesign.demand_curve`, dimensionless `(reserve_ratio,
+price/net-CONE)` points, flat-extrapolated past both ends: the price cap on the
+left, the zero-cross on the right); `net_cone_curve_iso` is the ISO's *published*
+net-CONE (kept distinct from the legacy fixed anchor so the default path stays
+byte-identical until the P-2A default flip reconciles them). The
+`requirement_mw` and the accreditation are the **exact same** ones the
+retirement reliability floor and the reserve-margin backstop compute
+(`capacity_reserve_position` calls `resolve_adequacy_requirement_mw` and
+`accredited_firm_capacity_mw` — one requirement, one basis, rule 19); the runner
+computes the position **once** on the entering-year fleet and threads the one
+value into all three screens. So the capacity price now *responds to the fleet*
+the way real markets do — it collapses toward zero when the system is long (RA
+saturated) and rises toward the cap when short — which a fixed price structurally
+cannot.
+
+Every curve number is a **published market-design parameter** (rule 13 — never a
+fit target), sourced from the `capacity-market-demand-curve` datatype
+(`data/raw/capacity-market/demand-curve`): PJM's VRR points + Net CONE + price
+cap (2026/2027 BRA), NYISO's ICAP demand curve (2025-2026 NYCA reference point +
+12% curve length, modeled annually), ISO-NE's FCA Net CONE + starting price
+(FCA 18) with the reserve-position geometry from FCA 11's published curve, and
+MISO's PRA Net CONE + gross CONE (modeled annually; the seasonal RBDC lands in
+CR-3). CAISO has no centralized auction, so it keeps the fixed proxy in **both**
+modes (re-cited to the CPM soft-offer cap / CPUC RA report — the documented
+low-fidelity registry member). The encoded constants are reconciled against the
+datatype in `tests/test_capacity_demand_curve.py`.
+
+Capacity revenue (fixed or curve, labeled by source) is also reported per plant
+in `results/plant_financials.py` (`capacity_revenue` +
+`capacity_revenue_source`). **This session lands the mechanism default-off
+only**; flipping the default is gated on the CR-2 auction-history validation
+(`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §3.3).
+Explicitly out of scope for CR-1 (revisit on CR-2 evidence): full supply-curve
+auction clearing with unit offers, CP/PAI penalties, Y-3 forward lag, and
+locational LDA-specific curves (composes later with §5.8 part B).
 
 -----
 

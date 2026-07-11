@@ -23,7 +23,13 @@ from dataclasses import dataclass, fields
 import numpy as np
 import pandas as pd
 
-from market_sim.config.constants import HEAT_RATE_BINS, HOURS_PER_YEAR
+from market_sim.config.constants import (
+    DEFAULT_MARKET_DESIGN,
+    EFORD,
+    HEAT_RATE_BINS,
+    HOURS_PER_YEAR,
+    MARKET_DESIGN,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -417,6 +423,9 @@ def compute_plant_annual_summary(
     discount_rate: float = 0.08,
     year: int = 2026,
     base_year: int = 2026,
+    iso: str | None = None,
+    config: "object | None" = None,
+    reserve_position: float | None = None,
 ) -> pd.DataFrame:
     """Aggregate hourly plant financials into an annual per-plant summary.
 
@@ -426,12 +435,30 @@ def compute_plant_annual_summary(
         discount_rate: Discount rate from ``ScenarioConfig``.
         year: Calendar year of the dispatch.
         base_year: NPV reference year — ``discount_factor`` is 1.0 here.
+        iso: ISO whose :data:`MARKET_DESIGN` capacity payment to credit. When
+            given (and the ISO has a capacity market), each plant earns a
+            ``capacity_revenue`` on its UCAP (``nameplate × (1 − EFORd_fuel)``)
+            at the shared per-firm-MW capacity price
+            (:meth:`MarketDesign.capacity_price_per_firm_mw_yr` — the SAME seam
+            the capacity screens price through). ``None`` (default) credits no
+            capacity revenue, so every existing metric is byte-identical.
+        config: Scenario config (duck-typed). Only its
+            ``capacity_market_clearing`` flag is read, to pick fixed vs the CR-1
+            sloped-curve price.
+        reserve_position: System accredited reserve position for the CR-1 curve
+            (see :func:`market_sim.model.capacity.capacity_reserve_position`).
+            ``None`` keeps the fixed net-CONE capacity price.
 
     Returns:
         One row per plant-generator with annual sums, capacity factor,
         spark spread, fixed O&M, net operating income, intensities and the
         NPV of net operating income. Per-MWh metrics are ``NaN`` for plants
-        with zero annual generation (no division by zero).
+        with zero annual generation (no division by zero). ``capacity_revenue``
+        ($/yr, 0.0 unless ``iso`` credits a capacity market),
+        ``capacity_revenue_source`` (``"curve"`` | ``"fixed"`` | ``"none"``)
+        and ``net_operating_income_with_capacity`` (energy NOI + capacity
+        revenue) are always present; the energy-only ``net_operating_income``
+        and its NPV are unchanged.
     """
     sum_cols = [
         "generation_mwh",
@@ -476,6 +503,34 @@ def compute_plant_annual_summary(
     annual["avg_price_captured"] = annual["revenue"] / gen_nz
     annual["avg_marginal_cost"] = annual["total_variable_cost"] / gen_nz
 
+    # Resource-adequacy capacity revenue (labeled by source). Priced off the
+    # shared per-firm-MW seam (rule 19 — the same MarketDesign price the
+    # capacity screens use), credited on each plant's UCAP (nameplate ×
+    # (1 − EFORd_fuel)). Zero and source "none" unless an ``iso`` with a
+    # capacity market is supplied, so the default report is byte-identical.
+    annual["capacity_revenue"] = 0.0
+    annual["capacity_revenue_source"] = "none"
+    if iso is not None:
+        design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
+        price_per_firm_mw_yr = design.capacity_price_per_firm_mw_yr(
+            config, reserve_position
+        )
+        if design.capacity_market and price_per_firm_mw_yr > 0.0:
+            ucap = (1.0 - annual["fuel_type"].map(EFORD).fillna(0.0)).clip(lower=0.0)
+            annual["capacity_revenue"] = (
+                annual["nameplate_mw"] * ucap * price_per_firm_mw_yr
+            )
+            uses_curve = (
+                config is not None
+                and getattr(config, "capacity_market_clearing", False)
+                and bool(design.demand_curve)
+                and reserve_position is not None
+            )
+            annual["capacity_revenue_source"] = "curve" if uses_curve else "fixed"
+    annual["net_operating_income_with_capacity"] = (
+        annual["net_operating_income"] + annual["capacity_revenue"]
+    )
+
     avg_fuel_price = annual["fuel_cost"] / annual["fuel_mmbtu"].where(
         annual["fuel_mmbtu"] > 0.0
     )
@@ -513,6 +568,9 @@ def compute_plant_annual_summary(
             "gross_margin",
             "fom_cost",
             "net_operating_income",
+            "capacity_revenue",
+            "capacity_revenue_source",
+            "net_operating_income_with_capacity",
             "avg_price_captured",
             "avg_marginal_cost",
             "spark_spread",

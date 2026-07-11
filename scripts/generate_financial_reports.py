@@ -232,6 +232,8 @@ def main() -> None:
             discount_rate=discount_rate,
             year=year,
             base_year=base_year,
+            iso=args.iso,
+            config=config,
         )
         annual.to_parquet(out_dir / f"plant_annual_{year}.parquet", index=False)
         del hourly  # release the large hourly frame before the next year
