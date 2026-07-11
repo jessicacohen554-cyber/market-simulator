@@ -547,7 +547,6 @@ def append_promotion_log() -> None:
     print("append-promotion-log: appended")
 
 
-
 def approve_attestation() -> None:
     """Record the owner promotion approval on the surface arm's attestation."""
     import json

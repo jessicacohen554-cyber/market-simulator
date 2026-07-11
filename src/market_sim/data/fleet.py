@@ -61,6 +61,7 @@ from market_sim.config.plant_taxonomy import (
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.floor_mechanisms import (
+    MECH_CC_MUSTRUN_PER_PLANT,
     MECH_CHP_STEAM,
     MECH_COAL_MUSTRUN,
     MECH_CT_DEPLOYMENT_OVERLAY,
@@ -324,6 +325,18 @@ class Generator(BaseModel):
     #                                 the floor all 8760 h; a cycler is forced
     #                                 only in its top online_frac fraction of
     #                                 hours by system load (the rest stay Pmin=0).
+    cc_mustrun_pmin_mw: float = 0.0  # gas local-reliability commitment floor
+    #                                 (MW) forced on via FleetArrays.min_gen for
+    #                                 a CC_REGULAR / CT_PEAKER committed tranche
+    #                                 under config.cc_mustrun_per_plant — the
+    #                                 tranche's own capacity (CEMS committed %).
+    cc_mustrun_online_frac: float = 0.0  # measured share of the year the plant
+    #                                 is synchronized (CEMS online_frac, gas
+    #                                 rows of thermal_tranches_<ISO>.csv). The
+    #                                 floor above binds only in the plant's top
+    #                                 online_frac fraction of hours ranked by
+    #                                 system load (its measured committed
+    #                                 window); 0 disables the floor.
     fast_start_run_hours: float = 0.0  # CAMPD-measured median start-to-stop run
     #                                 length (h) for fast-start CT tranches under
     #                                 config.tranche_startup_measured_runs (v3):
@@ -1871,6 +1884,9 @@ def generators_to_fleet_arrays(
     min_gen_mech = None
     chp_pmin_any = any(getattr(g, "chp_grid_pmin_mw", 0.0) > 0.0 for g in generators)
     coal_sync_any = any(getattr(g, "coal_sync_pmin_mw", 0.0) > 0.0 for g in generators)
+    cc_mustrun_any = any(
+        getattr(g, "cc_mustrun_pmin_mw", 0.0) > 0.0 for g in generators
+    )
     # Nuclear runs flat as must-run baseload — it physically cannot load-follow
     # on price, so it must not back down to a part-load pmin in CAISO's many
     # negative/near-zero midday hours (the ~1 TWh Diablo Canyon under-run). Pin
@@ -1890,6 +1906,7 @@ def generators_to_fleet_arrays(
         or rd_deploy_plants
         or nuclear_flat
         or coal_sync_any
+        or cc_mustrun_any
     ):
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # Parallel mechanism-id array (D-2 forced-energy attribution): each
@@ -1961,6 +1978,46 @@ def generators_to_fleet_arrays(
                     raised = hrs[min_gen[g_idx, hrs] < pmin_mw]
                     min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
                     min_gen_mech[g_idx, raised] = MECH_COAL_MUSTRUN
+        # Per-plant gas local-reliability commitment floor
+        # (config.cc_mustrun_per_plant): each CC_REGULAR / CT_PEAKER committed
+        # tranche is held on at its full capacity in the plant's measured
+        # committed window — the top ``cc_mustrun_online_frac`` fraction of
+        # hours ranked by SYSTEM LOAD (the same online%-scaled placement the
+        # coal synchronization floor uses for cyclers), so the forcing lands
+        # where the committed unit actually ran and relaxes in the deepest
+        # off-peak troughs. The floor is clipped to pmax*availability below,
+        # so an outage hour relaxes it; ``np.maximum`` composes with any floor
+        # already placed (e.g. an EMAAC hot-day reliability_floor limb — the
+        # binding floor wins, no stacking).
+        if cc_mustrun_any:
+            sys_load = (
+                np.asarray(load_shape, dtype=float)
+                if load_shape is not None and len(load_shape) == hours
+                else None
+            )
+            load_rank = (
+                np.argsort(-sys_load, kind="stable") if sys_load is not None else None
+            )
+            for g_idx, gen in enumerate(generators):
+                pmin_mw = getattr(gen, "cc_mustrun_pmin_mw", 0.0)
+                if pmin_mw <= 0.0:
+                    continue
+                frac = float(getattr(gen, "cc_mustrun_online_frac", 0.0))
+                if frac <= 0.0:
+                    continue
+                if frac >= 1.0 or load_rank is None:
+                    raised = min_gen[g_idx, :] < pmin_mw
+                    np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
+                    min_gen_mech[g_idx, raised] = MECH_CC_MUSTRUN_PER_PLANT
+                else:
+                    k = int(round(frac * hours))
+                    if k <= 0:
+                        continue
+                    hrs = load_rank[:k]
+                    # Fancy indexing returns a copy (see the coal block above).
+                    raised = hrs[min_gen[g_idx, hrs] < pmin_mw]
+                    min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
+                    min_gen_mech[g_idx, raised] = MECH_CC_MUSTRUN_PER_PLANT
         # Per-plant CT_PEAKER reliability must-run floor: spread each plant's
         # observed monthly net generation (frac-scaled) across that month's
         # hours, *shaped by system load* — the energy is placed in the
@@ -6163,6 +6220,43 @@ def thermal_tranche_peaking(iso: str) -> dict[tuple[int, str], float]:
     return out
 
 
+@lru_cache(maxsize=8)
+def thermal_tranche_online_frac(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): online_frac}`` for an ISO's gas plants.
+
+    The CEMS-measured synchronization fraction from
+    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``online_frac``,
+    written by ``scripts/derive_thermal_tranches.py`` for the
+    ``_ONLINE_FRAC_GROUPS``: COAL plus the merchant gas committed groups
+    CC_REGULAR / CT_PEAKER): the share of the pooled window the plant has any
+    unit synchronized (net MW > 1% of nameplate). Consumed by the per-plant
+    gas local-reliability commitment floor (``config.cc_mustrun_per_plant``)
+    to size each plant's committed window — the top ``online_frac`` fraction
+    of hours ranked by system load in which its committed tranche is forced
+    on. Empty when the ISO has no artifact or it predates the gas
+    ``online_frac`` extension (coal rows are returned too, but their forcing
+    rides ``coal_sync_online_frac``, not this map). Rows with a blank/NaN
+    fraction are absent (no floor).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "online_frac" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        v = getattr(r, "online_frac", float("nan"))
+        try:
+            frac = float(v)
+        except (TypeError, ValueError):
+            continue
+        if str(getattr(r, "status", "ok")) != "ok" or not frac == frac:
+            continue
+        out[(int(r.plant_code), str(r.plant_group))] = min(1.0, max(0.0, frac))
+    return out
+
+
 from market_sim.data.coal import (  # noqa: E402
     _COAL_CHP_FLOOR_CAP_PCT,
     _COAL_CHP_FLOOR_FACTOR,
@@ -7489,6 +7583,28 @@ def bins_to_fleet(
             peak_tranches = [
                 ("peak", peak_cap, peak_hr, peak_vom_mult, 0, 0, _fsp_peak)
             ]
+        # Per-plant gas local-reliability commitment floor
+        # (config.cc_mustrun_per_plant): the merchant CC_REGULAR committed
+        # tranche — already sized to the plant's CEMS minimum stable
+        # load — is forced on in the plant's measured committed window (its top
+        # online_frac fraction of hours by system load; see the ScenarioConfig
+        # field for the rule-12/13 grounding). Self-targeting by the
+        # measurement (rule 18): only plants with a CEMS-measured online_frac
+        # in the ISO's thermal-tranche artifact carry the floor, and a plant
+        # that already runs above its committed level sees a non-binding
+        # bound. CHP groups are excluded — their floor is the steam host
+        # (chp_grid_pmin_mw), one mechanism per phenomenon (rule 19).
+        # CT_PEAKER is deliberately EXCLUDED (G-20 probe, 2026-07-11): the CT
+        # leg bound 12.8% of its floored MWh overnight (h23-6) against the
+        # class's own overnight-offline evidence — a rule-12 bug — while
+        # buying almost none of the eastern CT under-run (Dominion CT
+        # 0.9→1.5 vs 8.9 TWh actual), which is an offer/capture residual,
+        # not a commitment-share one.
+        cc_mustrun_frac = 0.0
+        if group == "CC_REGULAR" and getattr(config, "cc_mustrun_per_plant", False):
+            cc_mustrun_frac = thermal_tranche_online_frac(
+                getattr(config, "iso", "ERCOT") or "ERCOT"
+            ).get((plant_code, group), 0.0)
         tranches = [
             ("mustrun", mustrun_cap, mustrun_hr, 1.0, 0, 0, 0.0),
             *sync_tranches,
@@ -7505,6 +7621,16 @@ def bins_to_fleet(
             # the measured online Pmin. Other tranches (and non-sync runs) keep
             # the Pmin=0 economic behaviour.
             sync_floor = cap if (coal_sync and suffix in ("mustrun", "sync")) else 0.0
+            # Gas local-reliability commitment forcing: the committed tranche
+            # (every slice under committed_ramp_spread) is held on at its full
+            # capacity via min_gen within the plant's measured committed
+            # window; the offer price is unchanged (the floor makes the
+            # EXISTING committed tranche a forced quantity, no second floor).
+            cc_floor = (
+                cap
+                if (cc_mustrun_frac > 0.0 and suffix.startswith("committed"))
+                else 0.0
+            )
             fleet.append(
                 Generator(
                     unit_id=f"{bin_id}_{suffix}",
@@ -7544,6 +7670,8 @@ def bins_to_fleet(
                     coal_sync_online_frac=(
                         sync_online_frac if sync_floor > 0.0 else 1.0
                     ),
+                    cc_mustrun_pmin_mw=cc_floor,
+                    cc_mustrun_online_frac=(cc_mustrun_frac if cc_floor > 0.0 else 0.0),
                     # Measured amortization horizon only on the fast-start CT
                     # tranches that carry the fsp startup cost (econ + peak of
                     # CT groups); the committed anchor keeps the P0 basis.

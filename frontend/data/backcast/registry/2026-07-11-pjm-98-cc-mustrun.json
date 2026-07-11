@@ -1,0 +1,17 @@
+{
+  "id": "2026-07-11-pjm-98-cc-mustrun",
+  "label": "pjm 98 cc mustrun",
+  "date": "2026-07-11",
+  "shorthand": "pjm-98-cc-mustrun",
+  "definition": "PJM 98: pjm-97 keeper recipe (byte-faithful replay off its meta.json) + cc_mustrun_per_plant=True — the G-20-recommended eastern CC out-of-market local-reliability commitment floor: each plant's CEMS-committed tranche (measured min stable load) forced on in its measured committed window (top online_frac system-load hours); CT leg probed and dropped (rule-12 overnight off-window binding). Zero fitted scalars in the delta. Closes the eastern spatial under-run (2024: Dominion CC -81%→-30%, SWMAAC -52%→-35%) at the cost of aggregate CC volume (2024 +21.1→+23.3 TWh) — NOT a keeper; owner sign-off pending on the G-20 §5 over-forcing flag. docs/handoffs/pjm-eastern-ccct-underrun-g20-2026-07.md §5b.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-11-pjm-98-cc-mustrun.js",
+  "bundle": "results/calibration/pjm98_cc_mustrun",
+  "ablation_twin": "2026-07-11-pjm-98-cc-mustrun-ablation",
+  "market_story": "CC_REGULAR (the only class the floor moves, keeper-vs-twin eastern lift): PJM commits eastern MAAC combined cycles out-of-market for LDA/voltage local reliability (RMR/bid-cost recovery) — within the loose unmapped eastern links, corridor coal always undercuts local gas, so without the commitment the LP wheels power through the pockets instead of running the local units the real market holds on. The floor is the measured commitment itself (CEMS committed share in the measured committed window), not the residual."
+}
