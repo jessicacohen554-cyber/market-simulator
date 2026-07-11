@@ -1,0 +1,142 @@
+{
+ "_provenance": {
+  "source": "ISO-NE ISO Express Day-Ahead Energy Market historical offer data (hbdayaheadenergyoffer daily CSVs), delivery years [2023, 2024, 2025]",
+  "method": "per-asset median top-of-curve heat-rate multiplier of the fast-start population (Claim30 >= 0.9 x EcoMax, ECONOMIC/MUST_RUN), capacity-weighted equal-capacity quantile rungs within net-load-percentile bins; rungs clamped >= all-hours p50; fuel = Algonquin Citygate daily (model series), base_HR = model NEISO CT_PEAKER cap-weighted",
+  "driver": "system net-load percentile within year (EIA-930 ISNE Demand - WND - SUN), forward-native",
+  "netload_pct_edges": [
+   0.8,
+   0.9,
+   0.97
+  ],
+  "peak_ladder_qs": [
+   0.1,
+   0.30000000000000004,
+   0.5,
+   0.7000000000000001,
+   0.9
+  ],
+  "base_hr_mmbtu_mwh": 9.791,
+  "body_p50_mult": 4.318,
+  "day_coverage": {
+   "2023": {
+    "days_in_year": 365,
+    "files": 353
+   },
+   "2024": {
+    "days_in_year": 366,
+    "files": 352
+   },
+   "2025": {
+    "days_in_year": 365,
+    "files": 353
+   }
+  },
+  "n_day_files_parsed": 1058,
+  "n_rows_unmatched_netload": 296,
+  "critical_days_verified": [
+   "20230203",
+   "20230204",
+   "20240620",
+   "20240715",
+   "20240716",
+   "20250624",
+   "20250716",
+   "20250729",
+   "20251208"
+  ]
+ },
+ "CT_PEAKER": {
+  "base_hr": 9.791,
+  "peak_p50": 4.318,
+  "binned_ladder": [
+   [
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     4.347
+    ],
+    [
+     0.2,
+     12.954
+    ],
+    [
+     0.2,
+     18.66
+    ]
+   ],
+   [
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     10.664
+    ],
+    [
+     0.2,
+     14.369
+    ]
+   ],
+   [
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     10.706
+    ],
+    [
+     0.2,
+     15.501
+    ]
+   ],
+   [
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     4.317911060699094
+    ],
+    [
+     0.2,
+     4.614
+    ],
+    [
+     0.2,
+     12.011
+    ],
+    [
+     0.2,
+     17.566
+    ]
+   ]
+  ]
+ }
+}
