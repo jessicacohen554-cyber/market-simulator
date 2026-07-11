@@ -20407,6 +20407,22 @@
       ]
     },
     {
+      "param_id": "scenario.capacity_market_clearing",
+      "display_name": "Capacity Market Clearing (CR-1 Sloped Demand Curve)",
+      "value": false,
+      "unit": "",
+      "domain": "Market Design",
+      "tier": 1,
+      "source": "GATED, default-OFF. CR-1 reserve-margin-indexed capacity demand curve: prices the three capacity screens off each ISO's published net-CONE-anchored sloped demand curve (MARKET_DESIGN[iso].demand_curve) evaluated at the model's accredited reserve position, replacing the flat net-CONE stub. Curve parameters are published market-design inputs (rule 13) from the capacity-market-demand-curve datatype; default OFF is byte-identical to the fixed price. Flipping the default is gated on CR-2 auction-history validation.",
+      "source_date": "2026-07-11",
+      "page_or_table": "docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md §3; model-methodology-spec.md §5.9",
+      "url": "",
+      "notes": "P-1B CR-1 mechanism. See tests/test_capacity_demand_curve.py for the P-0B datatype reconciliation.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-11",
+      "flags": []
+    },
+    {
       "param_id": "scenario.mass_cap_enabled",
       "display_name": "Mass Cap Enabled",
       "value": false,

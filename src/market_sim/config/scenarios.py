@@ -844,6 +844,26 @@ class ScenarioConfig:
     # payment collapse, remains unvalidated in any keeper. Default off
     # (byte-identical); no-ops when the clean partition is absent (ERCOT, or
     # intake not landed).
+    capacity_market_clearing: bool = False  # GATED, default-OFF sloped capacity
+    # demand curve (CR-1, docs/handoffs/
+    # forecast-driver-capacity-revenue-audit-plan-2026-07.md §3). When on, the
+    # three capacity-evolution screens (retirement, thermal new entry, storage
+    # new entry) price resource adequacy off each capacity-market ISO's PUBLISHED
+    # net-CONE-anchored sloped demand curve (MARKET_DESIGN[iso].demand_curve)
+    # evaluated at the model's own accredited reserve position
+    # (accredited_firm_capacity_mw / the shared adequacy requirement — one
+    # requirement, one basis, rule 19) — capacity_price =
+    # VRR_iso(reserve_position) × net_cone_curve, replacing the flat net-CONE ×
+    # UCAP stub so the capacity price responds to the fleet the way real markets
+    # do. Zero fitted parameters: every input is a published market-design
+    # parameter (rule 13) or an existing model quantity. All three screens flow
+    # through the one MarketDesign.capacity_price_per_firm_mw_yr seam (no screen-
+    # specific curves); energy-only ERCOT pays nothing in either mode; CAISO has
+    # no published auction curve so it keeps the fixed proxy even when on.
+    # Default OFF is BYTE-IDENTICAL to the fixed-price stub — the curve is
+    # exercised only end-to-end via the runner (which supplies the reserve
+    # position). Flipping the default is gated on the P-2A auction-history
+    # validation (CR-2); this session lands the mechanism default-off only.
     ramp_limits: bool = False  # GATED, default-OFF plant-group hourly ramp
     # envelopes in the dispatch LP (model/dispatch._build_ramp_rows). One
     # two-sided row per ramp-constrained plant group per hour transition,
@@ -5560,6 +5580,7 @@ TIER_TAGS: dict[str, int] = {
     "neiso_rcpf_products": 2,
     "reserve_margin_build_enabled": 1,
     "market_design_retirement_floor": 1,
+    "capacity_market_clearing": 1,
     "planning_reserve_margin": 2,
     "planning_reserve_margin_override": 2,
     "entry_price_signal_alpha": 2,
