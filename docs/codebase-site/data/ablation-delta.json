@@ -1,0 +1,65 @@
+{
+  "_meta": {
+    "source": "Illustrative keeper-vs-ablation-twin comparison. Mechanism mirrors ScenarioConfig.as_zero_forcing_ablation (src/market_sim/config/scenarios.py) and the D-2 mechanism registry (src/market_sim/data/floor_mechanisms.py): the twin re-solves the keeper's exact config with every merchant floor/bridge/drag/haircut off, structural must-run kept (nuclear must-run, CHP steam-following, coal take-or-pay, import boundaries). Proportions are faithful to typical keeper behaviour but this is NOT raw solver output and describes no registered run.",
+    "description": "Per-class annual energy (TWh), keeper vs zero-forcing ablation twin, for the results-calibration ablation-twin narrative. delta_twh = keeper - ablation: the energy each class's floors 'buy'. Classes with structural-only support (nuclear, coal take-or-pay) show near-zero deltas; merchant-floored classes (ST gas, CT peakers) show the floors' contribution; the flexible margin (gas-CC) absorbs the offset with a negative delta.",
+    "date": "2026-07-11",
+    "illustrative": true
+  },
+  "run_metadata": {
+    "keeper_id": "example-iso-keeper",
+    "ablation_id": "example-iso-keeper-ablation",
+    "iso": "EXAMPLE",
+    "years": [2023, 2024, 2025],
+    "note": "Annual-average TWh across the three bundle years."
+  },
+  "classes": [
+    {
+      "class": "NUCLEAR",
+      "keeper_twh": 271.0,
+      "ablation_twh": 271.0,
+      "delta_twh": 0.0,
+      "note": "Structural must-run - kept in the twin by definition; a nonzero delta here would be a coverage bug (assert_ablation_coverage)."
+    },
+    {
+      "class": "GAS_CC",
+      "keeper_twh": 285.4,
+      "ablation_twh": 297.8,
+      "delta_twh": -12.4,
+      "note": "The flexible margin: with merchant floors off, CC picks up the energy the floors had forced onto ST gas and CT peakers."
+    },
+    {
+      "class": "COAL",
+      "keeper_twh": 58.3,
+      "ablation_twh": 56.9,
+      "delta_twh": 1.4,
+      "note": "Coal take-or-pay is structural and stays on in the twin; the small residual delta is the merchant committed-tranche floor."
+    },
+    {
+      "class": "ST_GAS",
+      "keeper_twh": 14.2,
+      "ablation_twh": 5.6,
+      "delta_twh": 8.6,
+      "note": "Largest floor-bought energy: the RMR/reliability commitment floors carry most of this class's dispatch."
+    },
+    {
+      "class": "CT_PEAKER",
+      "keeper_twh": 6.8,
+      "ablation_twh": 2.1,
+      "delta_twh": 4.7,
+      "note": "Reserve/AS-driven commitment floors; the class the 15% forced-energy budget (C8) watches most closely."
+    },
+    {
+      "class": "OIL_GT",
+      "keeper_twh": 0.9,
+      "ablation_twh": 0.3,
+      "delta_twh": 0.6,
+      "note": "Below the 2%-of-load materiality floor - reported by the D-1/D-2 diagnostics but never gated."
+    }
+  ],
+  "totals": {
+    "keeper_twh": 636.6,
+    "ablation_twh": 633.7,
+    "delta_twh": 2.9,
+    "note": "System totals nearly conserve (demand is fixed); floors mostly reallocate energy between classes rather than add it. The small net delta is absorbed by imports/storage losses not shown."
+  }
+}
