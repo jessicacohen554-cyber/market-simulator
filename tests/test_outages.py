@@ -665,5 +665,133 @@ class ErcotNuclearUnitAvailabilityTest(unittest.TestCase):
         )
 
 
+class ErcotThermalDamAvailabilityTest(unittest.TestCase):
+    """The measured class-day thermal availability series + fleet rescale."""
+
+    def test_committed_series_shape_and_values(self):
+        from market_sim.data.outages import ercot_thermal_dam_availability_series
+
+        s = ercot_thermal_dam_availability_series(2023)
+        self.assertEqual(set(s), {"CC_REGULAR", "CT_PEAKER"})
+        cc = s["CC_REGULAR"]
+        self.assertEqual(cc.shape, (HOURS_PER_YEAR,))
+        # Jun 14 2023 (a June over-formation day): measured CC fraction ~0.834
+        # — well above the model's statistical ~0.76 the forensics measured.
+        jun14 = _hour_of_year(6, 14, 19)
+        self.assertAlmostEqual(cc[jun14], 0.834, places=2)
+        # Oct-2023 disclosure publication hole -> NaN (statistical kept).
+        oct15 = _hour_of_year(10, 15, 12)
+        self.assertTrue(np.isnan(cc[oct15]))
+        finite = np.isfinite(cc)
+        self.assertTrue((cc[finite] >= 0.0).all())
+        self.assertTrue((cc[finite] <= 1.0).all())
+
+    def test_fleet_application_rescales_class_day_mean(self):
+        """Flag on -> covered class-day mean equals the measured fraction;
+        zeroed tranches stay zero; uncovered days and forecast mode no-op."""
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+
+        def cc(i: int, mw: float) -> Generator:
+            return Generator(
+                unit_id=f"55555_{i}",
+                name=f"cc {i}",
+                zone="Houston",
+                fuel_type="gas_cc",
+                pmax_mw=mw,
+                pmin_mw=0.0,
+                heat_rate=7.5,
+                vom=2.0,
+                emission_rate_co2=0.4,
+                nox_rate=0.0,
+                eford=0.05,
+                online_year=2005,
+                plant_code=55555,
+                is_campd_bin=True,
+                plant_group="CC_REGULAR",
+            )
+
+        gens = [cc(1, 400.0), cc(2, 300.0), cc(3, 300.0)]
+        zones = ["Houston"]
+        base = dict(weather_year=2023, iso="ERCOT", mode="backcast")
+        cfg_off = ScenarioConfig(**base)
+        cfg_on = ScenarioConfig(**base, ercot_thermal_dam_availability=True)
+        fa_off = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_off, year=2023
+        )
+        fa_on = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_on, year=2023
+        )
+        from market_sim.data.outages import ercot_thermal_dam_availability_series
+
+        target = ercot_thermal_dam_availability_series(2023)["CC_REGULAR"]
+        pmax = np.array([400.0, 300.0, 300.0])
+        d0 = _hour_of_year(6, 14, 0)  # Jun 14, a covered day
+        day = slice(d0, d0 + 24)
+        got = float((fa_on.availability[:, day].mean(axis=1) * pmax).sum() / pmax.sum())
+        self.assertAlmostEqual(got, float(target[d0]), places=3)
+        # Flag off: the statistical availability differs from the measured.
+        off = float(
+            (fa_off.availability[:, day].mean(axis=1) * pmax).sum() / pmax.sum()
+        )
+        self.assertNotAlmostEqual(off, float(target[d0]), places=3)
+        # Uncovered day (Oct-2023 hole): byte-identical to the flag-off run.
+        o0 = _hour_of_year(10, 15, 0)
+        np.testing.assert_array_equal(
+            fa_on.availability[:, o0 : o0 + 24], fa_off.availability[:, o0 : o0 + 24]
+        )
+        # Forecast mode: overlay never applies.
+        cfg_fc = ScenarioConfig(
+            weather_year=2023,
+            iso="ERCOT",
+            mode="forecast",
+            ercot_thermal_dam_availability=True,
+        )
+        fa_fc = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg_fc, year=2023
+        )
+        fc_frac = float(
+            (fa_fc.availability[:, day].mean(axis=1) * pmax).sum() / pmax.sum()
+        )
+        self.assertNotAlmostEqual(fc_frac, float(target[d0]), places=3)
+
+    def test_zeroed_tranches_stay_zero_and_cap_holds(self):
+        """The rescale is multiplicative (zeros preserved) and caps at 1.0."""
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+
+        def ct(i: int) -> Generator:
+            return Generator(
+                unit_id=f"66666_{i}",
+                name=f"ct {i}",
+                zone="North",
+                fuel_type="gas_ct",
+                pmax_mw=100.0,
+                pmin_mw=0.0,
+                heat_rate=10.5,
+                vom=4.0,
+                emission_rate_co2=0.55,
+                nox_rate=0.0,
+                eford=0.06,
+                online_year=2001,
+                plant_code=66666,
+                is_campd_bin=True,
+                plant_group="CT_PEAKER",
+            )
+
+        gens = [ct(1), ct(2)]
+        cfg = ScenarioConfig(
+            weather_year=2023,
+            iso="ERCOT",
+            mode="backcast",
+            ercot_thermal_dam_availability=True,
+        )
+        fa = generators_to_fleet_arrays(
+            gens, ["North"], hours=HOURS_PER_YEAR, iso="ERCOT", config=cfg, year=2023
+        )
+        self.assertTrue((fa.availability <= 1.0 + 1e-9).all())
+        self.assertTrue((fa.availability >= 0.0).all())
+
+
 if __name__ == "__main__":
     unittest.main()

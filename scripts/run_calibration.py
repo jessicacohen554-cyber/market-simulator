@@ -473,6 +473,7 @@ def run_year(
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
+    ercot_thermal_dam_availability: bool = False,
     must_run_mw: "np.ndarray | None" = None,
     inject_biomass_mustrun: bool = False,
     priced_interchange: bool = False,
@@ -677,6 +678,11 @@ def run_year(
         # disclosure daily series; ScenarioConfig field docstring has the full
         # provenance/admissibility note). ERCOT-gated in the fleet application.
         config = config.with_overrides(ercot_nuclear_unit_availability=True)
+    if ercot_thermal_dam_availability:
+        # Measured class-day thermal availability rescale (60-Day DAM
+        # disclosure HSL/status; ScenarioConfig field docstring has the full
+        # provenance/admissibility note). ERCOT-gated in the fleet application.
+        config = config.with_overrides(ercot_thermal_dam_availability=True)
     if gas_st_netload_drag:
         config = config.with_overrides(
             gas_st_netload_drag=True, **(gas_st_drag_overrides or {})

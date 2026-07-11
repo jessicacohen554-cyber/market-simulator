@@ -9559,3 +9559,134 @@ fallback; ercot55-promote precedent).
 **Holdouts.** No solve, score, or intake outside 2023-2025 (rule 22); ORDC
 tariff parameters untouched (rule 26); promotion changes no model code or
 tunable (rules 13/21/23) — governance files only.
+## 2026-07-11 — ERCOT-57: June/Sep-2023 scarcity-formation forensics — the +22 % June overshoot root-caused to PHANTOM reserve-shortfall pricing (statistical gas availability 13-22 % derated at the summer reserve margin vs the measured disclosure fleet; per-product VOLL-ramp ladders print it into the energy duals); fixed as measured data (`ercot_thermal_dam_availability`), which ALSO exposes the July-Sep scarcity formation as leaning on the same phantom tightness — ercot57 thermavail + twin registered as the honest record, keeper stays ercot56-nucwin
+
+**Task (owner lane, opened at the ercot56 promotion).** With the measured
+nuclear structure in place, June-2023 overshoots +22 % (was +7 %) — find the
+real owner of June scarcity over-formation; measured-comparison first, no
+retune of the nuclear input / offer curves / sigmoids / ORDC (rules
+1/13/15/26).
+
+**Forensics (diagnose-first; full detail in
+docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md).** (1) The June
+overshoot lives on FIVE days (Jun 14/16/18/19/26 carry ~127 % of the net gap;
+the one real scarcity day, Jun 20, is UNDER-priced −$153/h) — at QUANTIZED
+prices ~$470/~$900/~$1,350 = the co-opt product-family shortfall steps
+k×VOLL/12 + marginal fuel. On every over-formed day measured RTORPA ≤ $15 and
+PRC ≥ 4,880 — reality priced no reserve scarcity there. Sep-2023 (+19 %
+equal-hour) is the same signature (Sep 20/22/23/24/26; RTORPA ≤ $7).
+(2) Suspects tested against measured series: AS-plan requirement + LR/storage
+credits FAITHFUL (zero June hours with fast-req > measured RTOLCAP); the WS-A
+forward reserve-supply cap SLACK (10.3-10.7 GW vs 4.2-6.6 GW headroom, dual
+0.0 — REFUTED as driver); the conditional offer surface NOT the price-setter
+(rungs are reserve-step penalties). (3) The defect: at every over-form hour
+the model's entire spare responsive capacity is already holding reserve
+(headroom == cleared, 4.2-6.6 GW) vs measured RTOLCAP+RTOFFCAP 6.3-12.4 GW —
+a 2.6-4.1 GW phantom headroom deficit with the energy side faithful (model
+thermal dispatch −0.2..−1.2 GW vs EIA-930). Class forensics (60-Day DAM
+Gen_Resource, config-collapsed; the May-2024 method): June-evening model
+derates CC_REGULAR 23.8 % / CT_PEAKER 23.9 % vs measured class-day fractions
+0.79-0.87 — the statistical WEFOR/EFOR stack (relief configured only for
+ST_CHP/ST_GAS) runs 7-10 pp tighter than the measured realization exactly at
+the margin; window-edge errors are secondary (~1-1.5 GW: Bastrop 2-days-early,
+Tenaska non-out zeroing, Wharton idle-vs-out). The product families short
+0.3-2.6 GW and their NYISO-imported VOLL-ramp ladders (no pre-RTC+B ERCOT
+analogue — RT reserve scarcity prices ONLY via the ORDC total curve, which the
+model's fifth family carries CORRECTLY, $15-43 ≈ measured RTORPA at matching
+levels) print $417-1,250 into the energy duals. ercot55 cross-check: Jun 14/16
+over-formed pre-nuclear too (day-means $213/$211 vs actual $54/$95) — the
+defect PRE-DATES ercot56; the honest nuclear input moved more days over the
+same cliff.
+
+**Fix landed as measured data (rules 13/14/15).**
+`scripts/derive_ercot_thermal_dam_availability.py` →
+`data/raw/ercot-thermal-dam-availability.csv`: measured CLASS-day thermal
+availability from the 60-Day DAM disclosure (config-collapsed live Gen_Resource
+HSL / site p98 ratings; OUT counts zero, OFF counts its reported HSL —
+commitment state is not an availability event; 2023-2025 delivery years;
+Oct-2023 hole + Nov-Dec 2025 uncovered → statistical kept). Applied under new
+`ScenarioConfig.ercot_thermal_dam_availability` (default off; ERCOT
+backcast-gated; both CLIs; meta/run_config recorded; loader
+`outages.ercot_thermal_dam_availability_series`) as a class-day RESCALE of the
+finished availability (CC_REGULAR + CT_PEAKER scope) — the measured fraction
+and the statistical stack estimate the SAME quantity, so the class-day total
+is set to the measured value while the model's own outage windows stay the
+within-class distribution (no stacking, no double-count; cap-1.0 water-fill;
+floors clamp automatically; forecast keeps the statistical stack — the G4
+mode-aware seam). Zero new tunables (DOF ledger seeded-note extension).
+
+**Rule-16 throwaway probe (2023-only, never registered): the phantom days are
+CURED and a SECOND compensation is exposed.** Jun 14: $194.9 → $30.7 day-mean
+(actual $53.6); Jun 16: $175.8 → $30.2 ($95.0); Jun 19: $212.2 → $31.4
+($48.4); Jun 26: $103.6 → $31.0 ($35.8); Sep 20/23/24 → $34-36 (actuals
+$43-91). June monthly +26.7 % → −41.9 %; Sep +19.3 % → −59.7 %; Aug +0.9 % →
+−65.1 %; 2023 tail 171 → 33 h. The measured RTORPA series discriminates the
+collapse day-by-day: reality's TRUE reserve-scarcity days survive the measured
+fleet (Aug 17/24/25/30 — PRC 3.3-4.7 GW, RTORPA $205-651 — still form
+$1,216-5,000 max), while the offer-carried days collapse (Aug 10/28 — PRC ≥
+5.2 GW, RTORPA ≤ $19.5 — to $103/$54), exactly like June 14/16. **The keeper's
+July-Sep 2023 fit was riding the same phantom tightness: a rule-15 DISCOVERED
+COMPENSATION one layer deeper** — the statistical availability stack was
+standing in for BOTH real derates AND the missing commitment-thinness
+structure (the LP's full-fleet headroom vs reality's ~RTOLCAP online room) AND
+part of the G-22 offer-formation residual (whose true size was masked).
+
+**Confound discovered in the ercot41 envelope rejection (documented, not
+actioned — rejected-family, owner lane).** The G-22 on-line-capacity envelope
+was identified (deliv_env) and A/B'd ON the phantom-tight fleet:
+envelope-on-phantom-fleet double-tightens (the recorded over-fire),
+measured-fleet-no-envelope double-loosens (this probe). The joint
+configuration — measured availability + an envelope re-identified on the
+measured-fleet basis — was NEVER TESTED and is the structurally-indicated
+completion of this lane (its re-derivation trigger is this data change, rule
+23), together with the product-ladder design question (per-product VOLL ramps
+vs ORDC-only scarcity pricing). Both need owner sanction (rules 1/22: LOYO
+before promotion).
+
+**Runs (full 2023-2025 + zero-forcing twin, solved locally then re-solved and
+registered via the `ercot57-solve-register` workflow).** Recipe = the PROMOTED
+keeper (ercot56-nucwin) reconstructed from its meta.json via `_ercot57_ab.py`
++ the flag — ONE measured-input delta, zero new free parameters:
+
+| run | C3a (23/24/25) | C3b | C3c h vs DA 311/68/23 | Jun-23 | Aug-23 | May-24 |
+|---|---|---|---|---|---|---|
+| ercot56 nucwin (keeper) | +3.9/−4.5/−1.1 % | .133/.183/.094 | 171/27/25 | +22 % | +1 % | −33.2 % |
+| ercot57 thermavail | −45.4/−14.1/−8.7 % | .845/.188/.106 | 33/14/2 | −41.9 % | −65.1 % | **−1.6 %** |
+
+Determination NOT-YET (C3a 2023/2024, C3b-2023, C3c all years — the honest
+residual). Inside the losses, two measured-input WINS that validate the series
+independently of 2023: **May-2024 −33.2 % → −1.6 %** (the spring-2024
+"+1.5-4.1 GW excess-available May 2-16" input fatness the May forensics
+documented is CURED by the same measured series — the statistical stack was
+too tight in summer-2023 AND too loose in spring-2024, and the measurement
+fixes both in the measurement's direction), 2024 C3b 0.183→0.188 ≈ flat and
+2025 near-keeper (C3b 0.106, C3a −8.7 % PASS). C1 16/16 (free 12/12) and
+C2/C4/C5a PASS on the measured fleet — the volumes never depended on the
+phantom derate.
+
+**Why this registers with a WORSE fit (rules 1/14/15 verbatim).** The measured
+input is rule-14 accurate data replacing a statistical estimate; the fit
+collapse is the discovered-bug signal, not a reason to revert: "if swapping a
+hand estimate for real data makes the backcast worse, that is a signal that
+something else in the model is miscalibrated and the estimate was silently
+compensating — keep the accurate input, find and fix the real root cause."
+The real root causes now have honest sizes: (a) commitment thinness (the
+envelope lane, confound documented above), (b) the G-22 offer/DA-expectation
+formation (the already-filed residual, true size now visible). Keeper stays
+ercot56-nucwin (owner's call, rule 1: the keeper is the most structurally
+faithful COMPLETE model; ercot57 is more faithful on inputs but missing the
+real structure those inputs expose — the owner decides which side of that
+trade the keeper sits on, with the joint envelope round as the filed path
+out).
+
+**Registry retention (rule 15).** ERCOT pruned 16 → 14: the superseded
+ercot50 origin-surface pair dropped (sidecars + run payloads; bundle dirs
+kept as the archival record).
+
+**Holdouts.** No solve, score, or intake outside 2023-2025 (rule 22); the
+disclosure intake reads 2023-2025 delivery dates only; ORDC tariff parameters
+untouched (rule 26); no offer-curve, sigmoid, floor, or derive-script value
+changed (rules 13/21/23) — the new deriver is a new measured input with a
+frozen formula (re-runs only on a disclosure-data update), and no residual
+was retuned against (the June overshoot is fixed by the input's ACCURACY, not
+by fitting it).
