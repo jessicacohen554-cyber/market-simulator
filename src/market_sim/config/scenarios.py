@@ -1324,6 +1324,43 @@ class ScenarioConfig:
     # skips Long_Island (one mechanism per phenomenon, rule 19); the 0.45
     # scalar remains only for the default-off legacy path. Default off
     # (byte-identical); NYISO-only.
+    nyiso_nyc_lcr_tsl: bool = False  # NYISO New York City (Zone J) LCR/TSL
+    # mechanism (nyiso-61, the Zone-J analog of nyiso_li_lcr_tsl above):
+    # REPLACES the Lower_Hudson->NYC (Dunwoodie-South) link's 3,900 MW energy-TTC
+    # ESTIMATE (a Gold-Book calibration seed, iso_configs.py) with the PUBLISHED
+    # NYC-locality transmission-security import limit. In the peak window
+    # (transmission.NYISO_SELFSUPPLY_FLOOR_HOURS, HB14-21 — the design-cooling
+    # condition the LCR locality requirements are defined at), the
+    # Lower_Hudson->NYC link's import limit is capped at the PUBLISHED NYC
+    # locality import limit (data/raw/capacity-deliverability/nyiso/nyiso.csv,
+    # "NYC" import_limit: 2,875 MW every capability year 2023/24-2025/26, NYISO
+    # Locality Bulk-Power Transmission Capability reports), so NYC in-window
+    # supply beyond (the HVDC ties + the security-limited AC import) clears from
+    # the in-zone Zone-J fleet ECONOMICALLY (LP merit order). This is the
+    # measured-input swap for the identified 2024/2025 deep-price-tail lever
+    # (the model under-runs the NYC scarcity tail; a tighter, published import
+    # limit lets more of the dear in-city gas set price at the summer peak).
+    # RULE-14 BOUNDARY NOTE (clean, parallel to the LI mechanism): the published
+    # 2,875 MW is the NYC-locality LCR/ICAP peak-condition transmission-security
+    # boundary (the AC import the locality may count on at the design peak), with
+    # the controllable HVDC ties into Zone J (Neptune / HTP / Linden-VFT)
+    # counted SEPARATELY as the priced import-node link (interchange_config.
+    # IMPORT_NODE_LINKS["NYISO"] ("NYC", 1000.0)), which stays at its physical
+    # rating — exactly as the LI cap leaves the ~1.2 GW UDR cables uncapped. So
+    # the cap limits ONLY the Dunwoodie-South AC link, not total NYC import.
+    # Applied ONLY in the HB14-21 design-condition window (the window where the
+    # security constraint's own driver — summer design cooling — is active);
+    # every other hour keeps the physical 3,900 MW rating (measured off-peak NYC
+    # imports run below the interface ceiling and the constraint is inactive).
+    # The cap is symmetric on the AC link in-window (the LP bidirectional bound);
+    # measured NYC peak-window exports toward Lower_Hudson are ~0, a documented,
+    # immaterial misalignment accepted over one-way link plumbing. This is a
+    # transmission limit, NOT a min_gen floor: it forces no energy (the D-2
+    # budget is unchanged; NYC reliability energy clears in merit order), so it
+    # is not on the zero-forcing ablation off-list and stays ON in the twin.
+    # Forward-reproducible: the NYISO Locality Bulk-Power Transmission Capability
+    # tables publish every capability year and respond to new cables / topology
+    # (rule #12/#13/#17). Default off (byte-identical); NYISO-only.
     nyiso_firm_imports: bool = False  # NYISO firm (must-flow) import baseload:
     # Hydro-Québec (Châteauguay/Cedars) and Ontario (IESO) sell NY firm,
     # long-term scheduled hydro/nuclear baseload that flows regardless of NY's
@@ -5198,6 +5235,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_rcpf_locational": 2,
     "nyiso_dynamic_reserve_requirements": 1,
     "nyiso_li_lcr_tsl": 1,
+    "nyiso_nyc_lcr_tsl": 1,
     "neiso_rcpf_enabled": 1,
     "neiso_rcpf_products": 2,
     "reserve_margin_build_enabled": 1,
