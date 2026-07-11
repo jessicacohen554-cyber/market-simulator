@@ -183,7 +183,7 @@ def _net_load(year: int) -> np.ndarray:
     return nl
 
 
-def _class_hourly(year: int):
+def _class_hourly(year: int, chp_export_basis: bool = False):
     """Per-class hourly on-line headroom + off-line quick-start capacity (MW).
 
     Returns ``(online_reserve, offline_cap, class_cap, online_cap, online_gross)``
@@ -198,8 +198,32 @@ def _class_hourly(year: int):
     (the measured-data anchor: ``online_cap - gross`` reproduces measured RTOLCAP).
     Everything here is a measured physical quantity (CAMPD gross output + model
     capacity), never a price and never the LP's own dispatch.
+
+    ``chp_export_basis`` (the measured-fleet-basis variant ONLY -- the frozen
+    base/extreme derivations keep their full basis, rule 23) scales each CHP
+    plant's capacity and gross by its measured export share
+    ``1 - chp_btm_pct`` (data.chp, the measured BTM host-share artifact):
+    CAMPD CEMS measures FULL cogen gross (host + grid) while the model's CHP
+    units and dispatch are grid-export-basis (host supply is netted from
+    demand), so a full-basis envelope target over-states the model-comparable
+    committed capability by the host component (~2.5 GW at the 2023 summer
+    peak) -- which would inflate the realized-room RTORPA's reserve level by
+    the same amount.
     """
     plant_group, plant_cap, summer_derate = _fleet_class_maps(year)
+    chp_export_factor: dict[int, float] = {}
+    if chp_export_basis:
+        from market_sim.data.chp import chp_btm_pct
+
+        for pc, grp in plant_group.items():
+            if grp in ("CC_CHP", "CT_CHP", "ST_CHP"):
+                # chp_btm_pct returns a PERCENT of nameplate (0-100).
+                chp_export_factor[pc] = (
+                    1.0 - float(chp_btm_pct(pc, grp, "ERCOT")) / 100.0
+                )
+        plant_cap = {
+            pc: cap * chp_export_factor.get(pc, 1.0) for pc, cap in plant_cap.items()
+        }
     df = campd.load_campd_hourly(["TX"], [year])
     df = df[df["plant_id"].isin(plant_group)].copy()
     ph = df.groupby(["plant_id", "hour_of_year"])["gross_mw"].sum().reset_index()
@@ -207,6 +231,10 @@ def _class_hourly(year: int):
     ph["cap"] = ph["plant_id"].map(plant_cap)
     ph["derate"] = ph["plant_id"].map(summer_derate)
     ph["gross"] = ph["gross_mw"].clip(lower=0.0)
+    if chp_export_factor:
+        ph["gross"] = ph["gross"] * ph["plant_id"].map(
+            lambda pc: chp_export_factor.get(pc, 1.0)
+        )
     summer = np.isin(_hour_month()[ph["hour_of_year"].to_numpy()], [6, 7, 8, 9])
     eff_cap = ph["cap"].to_numpy() * (
         1.0 - np.where(summer, ph["derate"].to_numpy(), 0.0)
@@ -762,6 +790,241 @@ def derive_online_capacity_extreme():
     return share_extreme, deliv_profile, preview
 
 
+# --- ercot57 joint round: MEASURED-FLEET-BASIS variant ------------------------
+
+# Classes whose measured class-day DAM-disclosure availability
+# (data/raw/ercot-thermal-dam-availability.csv, the ERCOT-57 intake) carries the
+# envelope basis. Must match constants.ERCOT_ONLINE_CAP_MEASURED_AVAIL_CLASSES
+# and the fleet rescale scope (fleet.generators_to_fleet_arrays).
+MEASURED_AVAIL_CLASSES = ("CC_REGULAR", "CT_PEAKER")
+
+
+def _model_class_availcap(year: int) -> dict[str, np.ndarray]:
+    """Per-class model-fleet available capacity ``{class: (8760,) MW}``.
+
+    The measured-fleet-basis analogue of :func:`_model_class_cap`: for each
+    responsive class, ``Σ_g pmax × availability(g, t)`` over the model fleet
+    built with ``ercot_thermal_dam_availability=True`` (backcast), so the
+    covered classes' class-day availability means equal the measured disclosure
+    fractions — the same basis the production envelope sums from the LP's own
+    ``FleetArrays.availability``. Fitting ``deliv`` on any other basis would
+    repeat the ercot41 validator-basis mismatch.
+    """
+    from market_sim.config.reserve_config import RESERVE_FUEL_TYPES
+    from market_sim.data.fleet import FUEL_TYPE_NAMES, generators_to_fleet_arrays
+
+    cfg = ScenarioConfig(
+        iso="ERCOT",
+        weather_year=year,
+        mode="backcast",
+        ercot_multiproduct_as_coopt=True,
+        ercot_thermal_dam_availability=True,
+    )
+    iso = get_iso_config("ERCOT")
+    gens = load_fleet_from_csv("ERCOT", iso, year=year)
+    fleet = generators_to_fleet_arrays(
+        gens, [z.name for z in iso.zones], HOURS, iso="ERCOT", config=cfg, year=year
+    )
+    pmax = np.asarray(fleet.pmax, dtype=float)
+    avail = np.asarray(fleet.availability, dtype=float)[:, :HOURS]
+    pg = np.asarray(getattr(fleet, "plant_group"))
+    fn = np.array([FUEL_TYPE_NAMES[i] for i in fleet.fuel_type_idx])
+    responsive = np.isin(fn, sorted(RESERVE_FUEL_TYPES))
+    out: dict[str, np.ndarray] = {}
+    for grp in ONLINE_CAP_CLASSES:
+        m = (pg == grp) & responsive
+        out[grp] = (pmax[m, None] * avail[m, :]).sum(axis=0)
+    return out
+
+
+def derive_online_capacity_measured():
+    """Derive the MEASURED-FLEET-BASIS on-line-capacity share + deliv profile.
+
+    The ercot57 joint-round re-identification (owner-sanctioned 2026-07-11;
+    re-derivation trigger: the ``data/raw/ercot-thermal-dam-availability.csv``
+    intake, rule #23). Same 14-bin extreme axis and measured thermal on-line
+    HSL target as :func:`derive_online_capacity_extreme`; what changes is the
+    DECOMPOSITION for the measured-availability classes
+    (:data:`MEASURED_AVAIL_CLASSES`):
+
+    * **Share** — committed on-line HSL ÷ MEASURED AVAILABLE capacity
+      (``CAMPD online_cap / (disclosure class-day fraction × installed)``), a
+      pure commitment-choice fraction; the old share-of-installed conflated
+      commitment with outage state, so in the extreme tail — where reality
+      musters near-max availability — the pooled median under-stated the
+      committable capacity (the ercot43 top-2% room collapse). Hours the
+      disclosure does not cover (Oct-2023 hole, Nov-Dec 2025) are excluded
+      from the covered classes' share pooling AND from the deliv fit.
+    * **Basis** — the model fleet's available capacity
+      (:func:`_model_class_availcap`, ``Σ pmax × availability(t)`` with the
+      measured rescale applied), matching what the production envelope sums
+      from the LP's ``FleetArrays.availability``. Availability then carries
+      the outage state (measured in backcast, statistical forward), and the
+      share carries only commitment — the envelope regenerates for a forecast
+      year and responds to changed outage conditions (rule #13).
+
+    Uncovered classes keep the extreme variant's construction unchanged
+    (installed × summer-derate basis, share-of-installed). Everything on the
+    path is a measured MW quantity, never a price (rules #13/#14/#23).
+
+    Returns ``(share_measured, deliv_profile, preview)``.
+    """
+    from market_sim.data.outages import ercot_thermal_dam_availability_series
+    from market_sim.results.scarcity import (
+        ercot_load_resource_reserve_mw,
+        ercot_online_cap_extreme_bin,
+        ercot_storage_as_reserve_mw,
+    )
+
+    season = _season_index()
+    summer = np.isin(_hour_month(), [6, 7, 8, 9])
+    per_year = {}
+    for year in YEARS:
+        _onl, _off, class_cap, online_cap, online_gross = _class_hourly(
+            year, chp_export_basis=True
+        )
+        nl = _net_load(year)
+        meas_avail = ercot_thermal_dam_availability_series(year, HOURS)
+        per_year[year] = (class_cap, online_cap, online_gross, nl, meas_avail)
+
+    # 1. Pooled (season, bin) median share per class. Covered classes: committed
+    # on-line HSL / measured AVAILABLE capacity, covered hours only. Uncovered
+    # classes: the extreme construction (share of installed) unchanged.
+    share_measured: dict[str, np.ndarray] = {}
+    fallback_cells: list[tuple[str, int, int, int]] = []
+    for grp in ONLINE_CAP_CLASSES:
+        tbl = np.full((N_SEASON, N_BIN_EXTREME), np.nan)
+        for s in range(N_SEASON):
+            for b in range(N_BIN_EXTREME):
+                vals, nh = [], 0
+                for year in YEARS:
+                    ccap, oncap, _g, nl, mavail = per_year[year]
+                    cap = ccap.get(grp, 0.0)
+                    if cap <= 0 or grp not in oncap:
+                        continue
+                    m = (season == s) & (ercot_online_cap_extreme_bin(nl) == b)
+                    if grp in MEASURED_AVAIL_CLASSES:
+                        frac = mavail.get(grp)
+                        if frac is None:
+                            continue
+                        m = m & np.isfinite(frac)
+                        denom = np.maximum(frac, 1e-9) * cap
+                    else:
+                        denom = np.full(HOURS, cap)
+                    nh += int(m.sum())
+                    if m.any():
+                        vals.append(oncap[grp][m] / denom[m])
+                if vals and (b < 9 or nh >= MIN_CELL_HOURS_EXTREME):
+                    tbl[s, b] = float(np.median(np.concatenate(vals)))
+                elif b >= 9:
+                    fallback_cells.append((grp, s, b, nh))
+        # Parent decile-9 fallback per season (bins 9-13 pooled), same basis.
+        dec9 = np.zeros(N_SEASON)
+        for s in range(N_SEASON):
+            vals = []
+            for year in YEARS:
+                ccap, oncap, _g, nl, mavail = per_year[year]
+                cap = ccap.get(grp, 0.0)
+                if cap <= 0 or grp not in oncap:
+                    continue
+                m = (season == s) & (ercot_online_cap_extreme_bin(nl) >= 9)
+                if grp in MEASURED_AVAIL_CLASSES:
+                    frac = mavail.get(grp)
+                    if frac is None:
+                        continue
+                    m = m & np.isfinite(frac)
+                    denom = np.maximum(frac, 1e-9) * cap
+                else:
+                    denom = np.full(HOURS, cap)
+                if m.any():
+                    vals.append(oncap[grp][m] / denom[m])
+            dec9[s] = float(np.median(np.concatenate(vals))) if vals else 0.0
+        nanm = np.isnan(tbl)
+        tbl[nanm] = np.repeat(dec9[:, None], N_BIN_EXTREME, axis=1)[nanm]
+        share_measured[grp] = tbl
+
+    # 2. Per-bin deliverability profile on the measured-fleet basis. Hours the
+    # disclosure leaves uncovered are excluded from the fit (the model basis
+    # is statistical there, not the measured quantity the share was built on).
+    F_y, Y_y, gross_y, meas_y, nonth_y, nl_y, cov_y = {}, {}, {}, {}, {}, {}, {}
+    for year in YEARS:
+        ccap, oncap, ongross, nl, mavail = per_year[year]
+        mcap = _model_class_cap(year)  # installed basis (uncovered classes)
+        mavailcap = _model_class_availcap(year)  # available basis (covered)
+        b = ercot_online_cap_extreme_bin(nl)
+        F = np.zeros(HOURS)
+        gross = np.zeros(HOURS)
+        covered = np.ones(HOURS, dtype=bool)
+        for grp in ONLINE_CAP_CLASSES:
+            if grp in MEASURED_AVAIL_CLASSES:
+                frac = mavail.get(grp)
+                if frac is not None:
+                    covered &= np.isfinite(frac)
+                F += share_measured[grp][season, b] * mavailcap.get(
+                    grp, np.zeros(HOURS)
+                )
+            else:
+                cap = mcap.get(grp, 0.0)
+                if cap <= 0:
+                    continue
+                derate = _SUMMER_CLASS_DERATE.get(grp, 0.0)
+                cap_t = cap * (1.0 - np.where(summer, derate, 0.0))
+                F += share_measured[grp][season, b] * cap_t
+            gross += ongross.get(grp, np.zeros(HOURS))
+        stor = ercot_storage_as_reserve_mw(year, HOURS)
+        lr = ercot_load_resource_reserve_mw(year, HOURS)
+        meas = pd.read_parquet(
+            REPO / f"data/raw/ercot/ercot_{year}_ordc_reserves_hourly.parquet"
+        )["rtolcap"].to_numpy(dtype=float)[:HOURS]
+        F_y[year] = F
+        Y_y[year] = gross + (meas - stor - lr)  # measured thermal on-line HSL
+        gross_y[year], meas_y[year], nonth_y[year], nl_y[year], cov_y[year] = (
+            gross,
+            meas,
+            stor + lr,
+            nl,
+            covered,
+        )
+    FF = np.concatenate([F_y[y] for y in YEARS])
+    YY = np.concatenate([Y_y[y] for y in YEARS])
+    BB = np.concatenate([ercot_online_cap_extreme_bin(nl_y[y]) for y in YEARS])
+    CC = np.concatenate([cov_y[y] for y in YEARS])
+    ok = ~np.isnan(YY) & (FF > 0) & CC
+    deliv_profile = np.zeros(N_BIN_EXTREME)
+    for b in range(N_BIN_EXTREME):
+        m = ok & (BB == b)
+        deliv_profile[b] = float(YY[m].sum() / FF[m].sum()) if m.any() else 1.0
+
+    # 3. Per-year identification preview (covered hours), binding + extreme.
+    preview = {"fallback_cells": fallback_cells}
+    for year in YEARS:
+        b = ercot_online_cap_extreme_bin(nl_y[year])
+        env = deliv_profile[b] * F_y[year]
+        headroom = env - gross_y[year] + nonth_y[year]
+        meas = meas_y[year]
+        okm = ~np.isnan(meas) & cov_y[year]
+        nl = nl_y[year]
+        row = {}
+        for regime, mask in [
+            ("all", okm),
+            ("bind", (nl >= np.percentile(nl, 70)) & okm),
+            ("extreme", (nl >= np.percentile(nl, 98)) & okm),
+        ]:
+            h = headroom[mask].mean() / 1000.0
+            mm = meas[mask].mean() / 1000.0
+            row[regime] = {
+                "headroom_gw": h,
+                "meas_gw": mm,
+                "err_pct": 100.0 * (h / mm - 1.0),
+            }
+        row["corr"] = float(np.corrcoef(headroom[okm], meas[okm])[0, 1])
+        row["headroom_p"] = np.percentile(headroom[okm], [10, 50, 90]) / 1000.0
+        row["meas_p"] = np.percentile(meas[okm], [10, 50, 90]) / 1000.0
+        row["covered_h"] = int(cov_y[year].sum())
+        preview[year] = row
+    return share_measured, deliv_profile, preview
+
+
 def _fmt_table(tbl: np.ndarray) -> str:
     rows = []
     for s in range(N_SEASON):
@@ -781,10 +1044,79 @@ def main() -> None:
             "online-cap-report",
             "online-cap-extreme-constant",
             "online-cap-extreme-report",
+            "online-cap-measured-constant",
+            "online-cap-measured-report",
         ],
         default="report",
     )
     args = ap.parse_args()
+
+    # ercot57 joint round: MEASURED-FLEET-BASIS envelope derivation (share =
+    # commitment fraction of measured available capacity for the disclosure-
+    # covered classes; basis = the model fleet's finished availability).
+    if args.emit in ("online-cap-measured-constant", "online-cap-measured-report"):
+        share_measured, deliv_profile, preview = derive_online_capacity_measured()
+        if args.emit == "online-cap-measured-constant":
+            print("# Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON);")
+            print(
+                "# each inner tuple is the 14 extreme-resolved net-load bins "
+                "(deciles 0-8 + five 2-pp sub-bins of the top decile, low->high)."
+            )
+            print(
+                "ERCOT_ONLINE_CAP_SHARE_MEASURED: "
+                "dict[str, tuple[tuple[float, ...], ...]] = {"
+            )
+            for grp in ONLINE_CAP_CLASSES:
+                print(f'    "{grp}": (')
+                print(_fmt_table(share_measured[grp]))
+                print("    ),")
+            print("}")
+            vals = ", ".join(f"{v:.4f}" for v in deliv_profile)
+            print("ERCOT_ONLINE_CAP_DELIV_PROFILE_MEASURED: tuple[float, ...] = (")
+            print(f"    {vals}")
+            print(")")
+            return
+        print(
+            "=== ERCOT MEASURED-FLEET-BASIS on-line-capacity envelope "
+            "(ercot57 joint round) ==="
+        )
+        print("deliv profile (bins 0-8 deciles, 9-13 = 2-pp sub-bins of top decile):")
+        print("  " + " ".join(f"{v:.3f}" for v in deliv_profile))
+        fb = preview["fallback_cells"]
+        print(
+            f"share fallback cells (< {MIN_CELL_HOURS_EXTREME} pooled h, inherit "
+            f"parent decile-9 median): {len(fb)}"
+        )
+        print(
+            "\nIdentification (disclosure-covered hours): (envelope − CAMPD "
+            "on-line gross + measured storage-AS + LR credit) vs measured RTOLCAP\n"
+        )
+        print(
+            f"{'year':>5} {'cov h':>6} {'corr':>5}  {'hdrm p10/50/90':>20}  "
+            f"{'meas p10/50/90':>20}  {'BIND h/m/err':>18}  "
+            f"{'EXTREME(top2%) h/m/err':>24}"
+        )
+        for year in YEARS:
+            p = preview[year]
+            pp = "/".join(f"{v:.1f}" for v in p["headroom_p"])
+            mp = "/".join(f"{v:.1f}" for v in p["meas_p"])
+            bind = (
+                f"{p['bind']['headroom_gw']:.1f}/{p['bind']['meas_gw']:.1f}/"
+                f"{p['bind']['err_pct']:+.0f}%"
+            )
+            ext = (
+                f"{p['extreme']['headroom_gw']:.1f}/{p['extreme']['meas_gw']:.1f}/"
+                f"{p['extreme']['err_pct']:+.0f}%"
+            )
+            print(
+                f"{year:>5} {p['covered_h']:>6} {p['corr']:5.2f}  {pp:>20}  "
+                f"{mp:>20}  {bind:>18}  {ext:>24}"
+            )
+        print(
+            "\nGate: scripts/validate_ercot_online_capacity.py --measured "
+            "(binding ±10% AND extreme-tail reproduction, band, coverage)."
+        )
+        return
 
     # G-22 EXTREME-PEAK-RESOLVED on-line-capacity envelope derivation (the §5
     # forward path after the ercot41 rejection; separate emit modes so the base
