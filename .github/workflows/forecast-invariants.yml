@@ -35,6 +35,12 @@
 # invocation; the four paired-run solves here are also run one-at-a-time
 # rather than concurrently, which is stricter than the rule requires but
 # keeps a single runner's memory bounded).
+#
+# The final `commit-findings` job persists the paired-invariant results into
+# docs/handoffs/weekly-invariant-findings/ (append-only, one dated file per
+# run) so the weekly results stop being ephemeral 14-day artifacts
+# (testing-audit G9). It adds no solve — just a download + commit — so the
+# runtime budget of the heavy tier is unchanged.
 name: Forecast invariants (heavy tier)
 
 on:
@@ -43,6 +49,7 @@ on:
     # Weekly, Sunday 11:00 UTC — after bench-repro.yml's 09:00 slot.
     - cron: "0 11 * * 0"
 
+# Read by default; the commit-findings job elevates to contents: write.
 permissions:
   contents: read
 
@@ -212,3 +219,86 @@ jobs:
           name: golden-band-regression
           path: /tmp/golden_band_junit.xml
           retention-days: 14
+
+  commit-findings:
+    name: Persist weekly findings (append-only, testing-audit G9)
+    needs: [real-lp-e2e, paired-invariants]
+    # Run even if an invariant FAILed — a FAIL is exactly the result worth
+    # keeping. Only skip when the whole job was cancelled.
+    if: ${{ always() && !cancelled() }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download paired-invariant findings
+        uses: actions/download-artifact@v4
+        with:
+          name: forecast-invariants-paired
+          path: /tmp/paired
+
+      - name: Download e2e junit
+        uses: actions/download-artifact@v4
+        with:
+          name: forecast-invariants-e2e
+          path: /tmp/e2e
+        continue-on-error: true
+
+      - name: Assemble the dated findings file
+        env:
+          # The date the run fired (UTC) and the Actions run number make the
+          # filename unique per run, so this is strictly append-only — no run
+          # ever overwrites another's file.
+          RUN_NUMBER: ${{ github.run_number }}
+          RUN_ID: ${{ github.run_id }}
+          E2E_RESULT: ${{ needs.real-lp-e2e.result }}
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import subprocess
+          from datetime import datetime, timezone
+          from pathlib import Path
+
+          out_dir = Path("docs/handoffs/weekly-invariant-findings")
+          out_dir.mkdir(parents=True, exist_ok=True)
+
+          paired_path = Path("/tmp/paired/paired_invariant_findings.json")
+          paired = (
+              json.loads(paired_path.read_text()) if paired_path.exists() else None
+          )
+
+          date = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+          commit = subprocess.run(
+              ["git", "rev-parse", "HEAD"], capture_output=True, text=True
+          ).stdout.strip()
+          payload = {
+              "date": date,
+              "run_id": os.environ.get("RUN_ID"),
+              "run_number": os.environ.get("RUN_NUMBER"),
+              "commit": commit,
+              # The e2e slow test (real 3-year ERCOT solve + I1-I14) passed iff
+              # its job concluded 'success'.
+              "e2e_slow_passed": os.environ.get("E2E_RESULT") == "success",
+              "paired_invariants": paired,
+          }
+          fname = out_dir / f"weekly-{date}-run{os.environ['RUN_NUMBER']}.json"
+          fname.write_text(json.dumps(payload, indent=2) + "\n")
+          print(f"wrote {fname}")
+          PY
+
+      - name: Commit the findings (append-only)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs/handoffs/weekly-invariant-findings/
+          if git diff --cached --quiet; then
+            echo "no new findings file to commit"
+            exit 0
+          fi
+          git commit -m "chore(invariants): persist weekly forecast-invariant findings"
+          # Push to the branch that triggered the run (main on schedule). Retry
+          # once on a race with a concurrent push.
+          git push || { git pull --rebase && git push; }
