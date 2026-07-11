@@ -11,5 +11,6 @@
   ],
   "iso": "CAISO",
   "file": "frontend/data/backcast/runs/2026-07-11-caiso-76-hydro-budget.js",
-  "bundle": "results/calibration/caiso76_hydro_budget"
+  "bundle": "results/calibration/caiso76_hydro_budget",
+  "ablation_twin": "2026-07-11-caiso-76-hydro-budget-ablation"
 }
