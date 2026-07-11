@@ -8,6 +8,20 @@ are known, and the choice is a judgment about rule 1 (structure) vs a moved metr
 
 ## Decision 1 — G-61(b): adopt the CAISO startup-aware RA bridge (`caiso-66`)?
 
+> **RESOLVED — ADOPTED (owner decision, 2026-07-11).** Ship on the current keeper config
+> (`2026-07-11-caiso-76-hydro-budget`), not the caiso-65 base. Executed by verification:
+> the caiso-76 keeper already carries `caiso_ra_bridge_startup_aware=True` — it entered
+> the line as caiso-70's pre-registered single delta (2026-07-10) and was carried through
+> caiso-72 → 73 → 75 → 76, promoted to keeper 2026-07-11 (commit 295510c) with all three
+> years and the zero-forcing ablation twin. The decision's requested replay is therefore
+> config-identical to the keeper itself; no duplicate bundle was solved or registered.
+> Mechanism engaged in the keeper (D-2 `ra_mustoffer_bridge` CC_REGULAR 2.38/2.26/1.73 TWh,
+> C8 PASS). The predicted λ regression did not materialize on the shipped base (caiso-70 vs
+> caiso-69 A/B: hub means ~unchanged, 2023 tail 530→540 h); the residual C3a body miss is
+> attributed to the belly under-commitment gap (tz-correction FINDING §4.3 / G-15 lane) —
+> the unconditional floor is not a fallback. Closure record: calibration-log 2026-07-11
+> G-61(b) entry; gap-register G-61 row updated.
+
 **The mechanism.** `caiso_ra_bridge_startup_aware` replaces the RA must-offer bridge's
 unconditional floor. Today the bridge floors *every* eligible merchant CC across any gap
 shorter than its min-down (6–8 h > the midday solar belly), so essentially the whole
