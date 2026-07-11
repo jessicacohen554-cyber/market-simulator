@@ -62,9 +62,22 @@ def _hoy(date: pd.Series, hour: pd.Series) -> np.ndarray:
     return np.where((m == 2) & (d == 29), -1, base + (d - 1) * 24 + h)
 
 
-def actual_cc_mw(year: int) -> np.ndarray:
-    """Measured CAISO CC_REGULAR+CC_CHP fleet MW per hour (8760), from CAMPD."""
+def actual_cc_mw(year: int, bench: dict[str, dict]) -> np.ndarray:
+    """Measured CAISO CC_REGULAR+CC_CHP fleet MW per hour (8760), from CAMPD.
+
+    RESTRICTED to the model's own CAISO bench fleet (2026-07-11 correction):
+    the CAMPD ``CA_<year>`` parquet is the whole CEMS *state* extract and the
+    dominant-class map is not ISO-filtered, so the unrestricted sum counted
+    16.6-18.5 TWh/yr of NON-CAISO California CC (LADWP Haynes / Scattergood /
+    Valley, SMUD Cosumnes, TID Walnut, Burbank Magnolia, IID El Centro, the
+    BANC-area plants, ...) as "actual" — inflating the apparent belly/evening
+    commitment gap by ~1.9-2.1 GW mean. Filtering the effective plant code to
+    the bench plant set makes both sides the SAME fleet (the bench is the
+    CAISO model fleet with CAMPD coverage), which is the comparison the
+    probe's committed users (the evening-CC design's §0 gate) assumed.
+    """
     dom = eia923_dominant_class_by_plant(year)
+    bench_ids = {int(pid) for pid in bench if str(pid).isdigit()}
     path = REPO / "data" / "raw" / "campd-unit-level" / f"CA_{year}.parquet"
     raw = pd.read_parquet(
         path, columns=["facilityId", "unitId", "date", "hour", "grossLoad"]
@@ -75,8 +88,9 @@ def actual_cc_mw(year: int) -> np.ndarray:
         CAMPD_UNIT_PLANT_REMAP.get((int(f), str(u)), int(f))
         for f, u in zip(raw["fac"], raw["unitId"])
     ]
+    raw["eff"] = eff
     raw["klass"] = [dom.get(pc) for pc in eff]
-    raw = raw[raw["klass"].isin(_CC_CLASSES)]
+    raw = raw[raw["klass"].isin(_CC_CLASSES) & raw["eff"].isin(bench_ids)]
     hoy = _hoy(pd.to_datetime(raw["date"]), raw["hour"].astype(int))
     ok = (hoy >= 0) & (hoy < HOURS)
     raw = raw[ok].copy()
@@ -89,9 +103,8 @@ def actual_cc_mw(year: int) -> np.ndarray:
     )
 
 
-def model_cc_mw(sidecar: dict, year: int) -> np.ndarray:
+def model_cc_mw(sidecar: dict, year: int, bench: dict[str, dict]) -> np.ndarray:
     """Model CC fleet MW per hour (8760), decoded from the run-payload sidecar."""
-    bench = L.load_bench(REPO, "CAISO", year)
     plants = L.load_payload_plants(REPO, sidecar, year, bench)
     out = np.zeros(HOURS)
     for pid, arr in plants.items():
@@ -120,8 +133,9 @@ def main() -> None:
         "(GW online, model / actual / actual-model)"
     )
     for year in args.years:
-        m = model_cc_mw(sidecar, year)
-        a = actual_cc_mw(year)
+        bench = L.load_bench(REPO, "CAISO", year)
+        m = model_cc_mw(sidecar, year, bench)
+        a = actual_cc_mw(year, bench)
         mb, ab = _window_mean_gw(m, BELLY_HOURS), _window_mean_gw(a, BELLY_HOURS)
         me, ae = _window_mean_gw(m, EVENING_HOURS), _window_mean_gw(a, EVENING_HOURS)
         print(
