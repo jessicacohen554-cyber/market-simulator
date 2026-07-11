@@ -182,3 +182,37 @@ SOM-grounded coal conduct). Then run the two lanes in order: (1) CAMPD-grounded 
 committed hurdle + econ ramp (rule-23 derive), (2) RDC/ELMP scarcity depth/timing. Prune
 note: `2026-07-06-miso-41-v2rescore-probe` displaced (16th main; no-solve rescore duplicate
 of miso-41).
+
+## 9. LANE 1 EXECUTED (2026-07-11 — miso-55 ct-faststart): the static CT hurdle
+hypothesis REFUTED on MISO's own fleet; the commitment cost priced by ELMP
+fast-start amortization instead
+
+**The measurement came first (rule 23), and it overturned the §8 lane-1 framing.**
+`derive_campd_marginal_hr.py --iso MISO` (2023-2025 pooled, n=249 CT units,
+cap-weighted; provenance `data/raw/reference/miso_campd_marginal_hr_summary.csv`)
+measures the MISO CT min-load block's average-HR premium at **1.025** [p25 0.94,
+p75 1.14] over class base — NOT a 1.55-style hurdle — and the CT marginal
+(incremental) HR **flat-to-FALLING** with load (0.697/0.687/0.691
+committed/lo/hi), the same result NEISO measured on its fleet (2026-07-06 entry)
+and NYISO's run-28 saw (CT marg 0.66-0.85x). Heat-rate physics supplies ~+2.5%
+at min load and no rising econ ramp: re-arming a large static committed
+multiplier would have been residual-fitting with a measurement veneer (rules
+1/13). What the de-leaked 1.55 was actually proxying is the **commitment-cost
+component** of a real CT offer — start + no-load recovery — which is not a
+heat-rate multiplier at all. MISO's own price formation (ELMP, FERC Order 825
+fast-start pricing) folds exactly that component into the LMP.
+
+**miso-55 = miso-54 meta.json replay + two deliberate changes** (probe driver
+`scripts/probes/_miso55_ct_faststart.py`, strict replay — errors on unmapped
+keys):
+
+1. `_MISO_OFFER_CURVE["CT_PEAKER"]` at HEAD: committed 1.0 → **1.025**
+   (measured), econ bands **measurement-affirmed neutral 1.0**.
+2. `tranche_startup_amortization=True` + `tranche_startup_measured_runs=True`:
+   the existing Order-825 lever (NEISO keeper carries v2; NYISO probes validated
+   v3) on a new rule-23 artifact `campd_ct_run_lengths_MISO.csv`
+   (`derive_campd_ct_run_lengths.py --iso MISO`: 95 plants, median start-to-stop
+   runs 3-17 h, class fallback 10 h over 61,322 measured runs). NREL
+   CT_STARTUP_PARAMS start costs over measured horizons ⇒ engaged CT econ/peak
+   markup ≈ **$1.9/MWh cap-weighted median** (p75 $2.7, max $9.5). Zero fitted
+   scalars.
