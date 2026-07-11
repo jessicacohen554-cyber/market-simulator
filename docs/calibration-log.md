@@ -9973,3 +9973,69 @@ value changed (rules 13/21/23); the envelope constants re-derived under
 their rule-23 trigger (the disclosure intake); registry pruned to top-15
 (the ercot51 coal-net-summer pair — mechanism adopted into every keeper
 since; bundle dirs stay).
+
+## 2026-07-11 — NEISO winter scarcity charter Limb B EXECUTED: measured fast-start offer surface (`neiso-58`) — DORMANT; the C3c/C5b closure-path inventory is now fully exhausted (keeper stays neiso-56)
+
+Charter Limb B (`docs/handoffs/neiso-limb-b-offer-surface-2026-07.md`),
+executed under the pre-committed honesty gate written before any data was
+derived. Intake: the full ISO-NE public DA Energy Market historical offer
+archive for 2023–2025 (`hbdayaheadenergyoffer` daily CSVs, masked assets;
+1,058/1,096 days — the 38 absent days are scattered month-ends the endpoint
+504s on at its own gateway timeout, retried across sessions, documented in
+the derive provenance; all 9 DA>$300 tail-event days verified present).
+Derive `scripts/derive_neiso_offer_surface.py` → frozen
+`data/raw/_validation-source/neiso_offer_surface_condbinned.json`: ~1.78M
+asset-hours, 110 physics-selected fast-start assets (Claim30 ≥ 0.9×EcoMax);
+per-asset median top-of-curve HR multipliers, capacity-weighted into 5
+equal-capacity rungs per pre-committed net-load bin (0.80/0.90/0.97); body
+p50 4.318× HR, top rungs 10.7–18.7× (≈$310–550). **Measured fact: the
+fast-start wall exists in EVERY bin** — the fleet offers its top-of-curve
+out of the money unconditionally, not only in anticipated-tight hours.
+
+**Probe `2026-07-11-neiso-58-offer-surface`** (bundle
+`results/calibration/neiso58_offer_surface`,
+`scripts/probes/_neiso_offer_surface_ab.py` — neiso-56 keeper meta rebuilt
+verbatim + `neiso_dynamic_reserve_requirements` (Limb A stays on) +
+`neiso_offer_surface_conditional`; zero-forcing twin
+`2026-07-11-neiso-58-offsurf-ablation`; 2023–2025 one bundle per arm, rules
+16/20). En route: fixed a latent NameError in the never-solved Limb B P1
+seam (`run_calibration.py` missing the markup-builder import — import-only
+fix), and regenerated the gitignored Limb A clean series + NEISO
+binned-fleet cache from their committed scripts.
+
+**Result — decisively DORMANT on the scored pass.** The markup engages (40
+CT_PEAKER peak-rung rows; tightest bin 263 h/yr) but never price-sets: C3c
+unchanged all years (2025 model 1h vs DA 12h; the 1h is Limb A's RCPF hour,
+max $397); C5b unchanged (0.827 TWh); CT_PEAKER volume-neutral (|Δ| ≤
+0.0011 TWh/yr); monthly LMP Δ vs the surface-off neiso-57 arm ≈ $0.00 (max
++$2.45 Nov-2024). Honesty-gate clauses 4/5/6 PASS; charter gates (C3c-2025
+∈ [6,24] h, C5b-2025 ≥ 1.456 TWh) NOT met; per clause 3 the ladder does not
+move. Scores **CALIBRATED-WITH-CAVEATS with the identical caveat set as the
+keeper** (C2 2025 gas commercial-band; C3c/C5b ledgered). Attested (new
+measured-market DOF entry for the surface ladder; n_entries 10, n_residual
+unchanged at 5). Registered + twin; NEISO registry pruned to 14 (the
+2026-07-06 wfuelsec A/B pair dropped per top-15 retention — its stack was
+adopted into neiso-53). Bench-drift (the known fresh-render CO₂ seam)
+reverted again, as in the neiso-56/57 sessions; both bundles scored against
+the committed bench.
+
+**The §3 scope clause fired — the finding:** in the 11 missed 2025 DA>$300
+hours the model clears $256–272 (the dual-fuel oil-parity cap region) or
+$82 (Jul 16 — the model is not even tight). The real tail forms while the
+model still carries GW of cheaper non-fast-start headroom (CC, imports,
+oil-parity dual-fuel) — no fast-start repricing can reach it. Any further
+C3c work needs a NEW measured identification on the resources at the
+model's actual tight-hour margin (dual-fuel/oil-parity offer formation,
+import offers, DA load/virtual bids) — its own charter if the owner wants
+it. **Adjudication:** with Limb A (engages 1/12) and Limb B (dormant) both
+executed, every admissible closure path named for the ledgered C3c/C5b
+family has now been tried on record; the two caveats stand as honest MODEL
+MISS entries. Keeper stays `2026-07-09-neiso-56-reserve-coopt`; neiso-57/58
+promotion remains the owner's call (both carry the identical caveat set;
+58 is the structural superset).
+
+**Holdouts.** No solve, score, or intake outside 2023–2025 (rule 22; both
+downloaders default to train years); measured offer PRICES entered only as
+offer-surface parameters, clearing prices validation-only (rule 13); no
+tunable changed (rules 13/21/23); bin edges and fast-start threshold
+pre-committed before the derive ran (rule 20).
