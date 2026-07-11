@@ -1,19 +1,19 @@
 """Unified carbon-program resolver: one channel, exactly one price source.
 
-Every carbon path routes through the same two fleet quantities --
-``emission_rate`` (tCO2/MWh) and a per-generator membership weight ``m[g]`` --
+Every carbon path routes through the same two fleet quantities —
+``emission_rate`` (tCO2/MWh) and a per-generator membership weight ``m[g]`` —
 so backcast and forecast share one structure
 (``docs/handoffs/emissions-mass-cap-plan-2026-07.md`` §3). The effective
 carbon cost on a member generator is always ``emission_rate[g] * m[g] *
 p_allowance``; only the *source* of ``p_allowance`` differs:
 
 * **Adder path** (the faithful RGGI/CARB representation): a known-ex-ante
-  allowance price -- measured in backcast, projected forward -- folded into
+  allowance price — measured in backcast, projected forward — folded into
   marginal cost. This is what CAISO/NYISO/NEISO use, because RGGI/CARB clear
   in a banked, multi-sector market this power model does not contain (plan §2).
 * **Row path** (the PP-2.1 IPM-parity mechanism, opt-in): a genuine
   power-sector mass budget whose LP dual is the endogenous allowance price.
-  Faithfully represents EPA 111(d)/CSAPR or a user scenario cap -- a
+  Faithfully represents EPA 111(d)/CSAPR or a user scenario cap — a
   power-sector-only, no-bank scenario price (plan §2, §8), NOT the RGGI/CARB
   market price.
 
@@ -49,7 +49,7 @@ class MassCapSpec:
             the dispatch builder broadcasts it to generators via
             ``fleet.zone_idx`` and multiplies by ``emission_rate`` to form the
             cap-row coefficient. Import/flow columns get zero coefficient.
-        cap_tons: The annual emissions budget (tons CO2) -- the row upper bound.
+        cap_tons: The annual emissions budget (tons CO2) — the row upper bound.
         label: Short program/pollutant label (e.g. ``"co2"``), surfaced on the
             reported allowance price.
     """
@@ -63,7 +63,7 @@ class MassCapSpec:
 class CarbonProgramResolution:
     """The active carbon-program resolution for one (ISO, year, solve).
 
-    Exactly one of :attr:`price_adder` / :attr:`cap_spec` is non-``None`` -- the
+    Exactly one of :attr:`price_adder` / :attr:`cap_spec` is non-``None`` — the
     core two-source design invariant (plan §6). ``membership`` is always set.
 
     Attributes:
@@ -94,7 +94,7 @@ def _zone_share_for_year(year_shares: "dict[int, float] | None", year: int) -> f
 
     Exact match when available; otherwise holds at the nearest computed year
     (the fleet's state-mix composition is assumed static outside the derived
-    window -- a structural, forecast-reproducible assumption, never a
+    window — a structural, forecast-reproducible assumption, never a
     residual-tuned choice, mirroring how :func:`projected_price` anchors on
     the last measured value). Returns ``0.0`` for an absent/empty map (a zone
     with no member-state fossil fleet at all).
@@ -133,7 +133,7 @@ def _membership(
 def measured_price(iso: str, year: int) -> float | None:
     """Return the measured backcast allowance price ($/tCO2), or ``None``.
 
-    Looks up :data:`STATE_CARBON_PRICE_BY_ISO` -- the CARB (CAISO) and RGGI
+    Looks up :data:`STATE_CARBON_PRICE_BY_ISO` — the CARB (CAISO) and RGGI
     (NYISO/NEISO) quarterly-auction annual averages, 2023-2025. ``None`` when
     the ISO has no measured series or the year is outside it.
     """
@@ -176,11 +176,11 @@ def named_program_price(
 
     * ``"mid"``/``"high"`` reuse :func:`projected_price`'s anchor (last
       measured clearing price) and scale its escalation rate by the named
-      multiplier -- ``"mid"`` is BYTE-IDENTICAL to the default (``path=None``).
+      multiplier — ``"mid"`` is BYTE-IDENTICAL to the default (``path=None``).
     * ``"low"`` anchors on the program's published regulatory floor
       (:data:`~market_sim.config.constants.CARB_FLOOR_PRICE`, CAISO only) and
       escalates at CPI only. Falls back to ``"mid"`` when no floor series is
-      landed for the program (RGGI -- no guessing a floor value).
+      landed for the program (RGGI — no guessing a floor value).
 
     Returns ``0.0`` when the ISO has no measured anchor series (PJM).
     """
@@ -218,10 +218,10 @@ def resolve_carbon_program(
     :class:`CarbonProgramResolution` with the per-zone membership and exactly
     one price source:
 
-    * **Row path** -- when ``mass_cap_enabled`` is set and a power-sector cap is
+    * **Row path** — when ``mass_cap_enabled`` is set and a power-sector cap is
       configured for the program/year (:func:`_power_sector_cap`): a
       :class:`MassCapSpec` whose LP dual is the endogenous allowance price.
-    * **Adder path** -- otherwise: the measured (backcast) or projected
+    * **Adder path** — otherwise: the measured (backcast) or projected
       (forecast) exogenous allowance price. In forecast the projected program
       price is used only when the caller has not chosen an explicit exogenous
       RFF ``carbon_price_path`` (default ``"zero"``), so an explicit RFF path
@@ -238,13 +238,13 @@ def resolve_carbon_program(
             already extended the topology with an import/external node at
             runtime (``runner.py``'s ``apply_interchange_topology``, e.g.
             PJM's dynamically-appended external zone) MUST pass that extended
-            list -- the mass-cap row's per-generator coefficient vector is
+            list — the mass-cap row's per-generator coefficient vector is
             broadcast by ``fleet_arrays.zone_idx``, which indexes into the
             *runtime* zone list, not the static one. Passing the static list
             when the runtime topology is longer under-sizes ``membership``
             and index-errors downstream (the external node then implicitly
             gets 0.0 membership once included, as it should since it is
-            outside the capped region -- plan §4 leakage).
+            outside the capped region — plan §4 leakage).
     """
     program = CAP_AND_TRADE_PROGRAMS.get(config.iso)
     if program is None:
@@ -262,13 +262,13 @@ def resolve_carbon_program(
         if cap_spec is not None:
             return CarbonProgramResolution(membership=membership, cap_spec=cap_spec)
 
-    # Adder path -- the faithful RGGI/CARB representation.
+    # Adder path — the faithful RGGI/CARB representation.
     if config.mode == "backcast":
         price = measured_price(config.iso, year)
     else:
         # Forecast: an explicit exogenous RFF path (non-default) wins so
         # pre-EM-6 forecast configs keep their behaviour; otherwise carry the
-        # projected program price (the EM-6 seam fix -- forecast carbon is no
+        # projected program price (the EM-6 seam fix — forecast carbon is no
         # longer zero for a program ISO).
         if getattr(config, "carbon_price_path", "zero") not in ("zero", None):
             price = None
@@ -292,17 +292,17 @@ def _published_power_sector_budget(
     each to the model's internal metric-tonne emission-rate unit so the value is
     directly comparable to ``emission_rate[g] * P[g,t]``:
 
-    * **CARB** -- :data:`CARB_ALLOWANCE_BUDGET` (MMT CO2e; 1 CA GHG allowance = 1
+    * **CARB** — :data:`CARB_ALLOWANCE_BUDGET` (MMT CO2e; 1 CA GHG allowance = 1
       metric tonne) scaled by ``1e6``. This is the whole-economy cap, so a CAISO
       power-sector row against it is deeply slack (plan §2).
-    * **RGGI** -- the SUM of the program's own member states' published
+    * **RGGI** — the SUM of the program's own member states' published
       per-state budgets (:data:`RGGI_STATE_CO2_BUDGET`, short tons, converted
       at :data:`SHORT_TON_TO_METRIC_TONNE`) for the states that are actual
       RGGI members in ``year`` (:data:`RGGI_MEMBER_STATES_BY_YEAR` ∩
-      ``program.member_states`` -- e.g. Virginia's row only counts toward
+      ``program.member_states`` — e.g. Virginia's row only counts toward
       PJM's 2023 budget). Falls back to the regional
-      :data:`RGGI_STATE_CO2_BUDGET`\\ ``["RGGI"]`` total -- a looser over-bound
-      -- only for years without a per-state breakdown (the 2027-2030
+      :data:`RGGI_STATE_CO2_BUDGET`\\ ``["RGGI"]`` total — a looser over-bound
+      — only for years without a per-state breakdown (the 2027-2030
       projections).
 
     Returns ``None`` when the program has no published budget for ``year``
@@ -345,7 +345,7 @@ def _power_sector_cap(
     1. An explicit ``config.mass_cap_tons`` scenario budget when set (a bespoke
        counterfactual cap; taken as-is, already in metric tonnes).
     2. Otherwise the ISO program's **published** budget for ``year``
-       (:func:`_published_power_sector_budget`) -- the RGGI/CARB schedules landed
+       (:func:`_published_power_sector_budget`) — the RGGI/CARB schedules landed
        in ``constants.py``, unit-converted to metric tonnes.
 
     Returns ``None`` when neither is available (no explicit budget and no
@@ -388,7 +388,7 @@ def per_generator_membership(
     """Return the per-generator membership weight ``m[g]``, per-unit where possible.
 
     Starts from the zone-level broadcast (``zone_membership[fleet_arrays.
-    zone_idx]`` -- today's approximation, exact for CAISO/NYISO/NEISO where
+    zone_idx]`` — today's approximation, exact for CAISO/NYISO/NEISO where
     membership is uniform, and PJM's fractional fallback for zones the fleet
     representation can't resolve further) and then, for every generator whose
     ``plant_code`` names a real physical plant (``plant_code > 0``), overrides
@@ -397,7 +397,7 @@ def per_generator_membership(
     (:data:`RGGI_MEMBER_STATES_BY_YEAR` for RGGI; ``program.member_states`` for
     CARB, which is static), else 0.0. A unit with no resolvable state (missing
     from the EIA-860 plant file) or a synthetic aggregate unit (``plant_code
-    <= 0`` -- a legacy equal-width heat-rate bin spanning many plants/states)
+    <= 0`` — a legacy equal-width heat-rate bin spanning many plants/states)
     keeps the zone-level fallback (plan §5, §9.6).
 
     Args:
