@@ -9,6 +9,10 @@
 # 2026-07-11 miso-56 calibration-log entry (structural grounding, score
 # flat-to-better, zero fitted scalars). Same commit records the owner's
 # PJM G-20b hold confirmation.
+# Rev 2: run 1 applied everything but its final push hit a transient HTTP
+# 500 while PR #2030 merge-deleted the target branch mid-run; the branch is
+# recreated from main (which now carries this workflow + payload) and the
+# push step retries with backoff. All apply steps are idempotent.
 name: miso56-promote
 
 on:
@@ -75,4 +79,8 @@ jobs:
                   frontend/data/backcast/status.js \
                   docs/calibration-log.md
           git commit -m "Promote miso-56 (measured scarcity) to MISO keeper; record PJM G-20b hold — owner decisions 2026-07-11 [skip ci]"
-          git push origin HEAD:claude/maximize-usage-plan-04k910
+          for delay in 2 4 8 16 0; do
+            git push origin HEAD:claude/maximize-usage-plan-04k910 && exit 0
+            [ "$delay" = 0 ] && exit 1
+            sleep "$delay"
+          done
