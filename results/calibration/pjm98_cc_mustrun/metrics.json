@@ -1,0 +1,131 @@
+{
+  "run_id": "2026-07-11-pjm-98-cc-mustrun",
+  "iso": "PJM",
+  "label": "pjm 98 cc mustrun",
+  "target_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "rubric_version": 2.4,
+  "determination": "NOT-YET",
+  "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, price_tail, shape"
+  ],
+  "notes": [
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 20.9% forced (4.0189 of 19.2447 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.947 (\u22650.8) & off-peak CV ratio 0.744 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 16.3% forced (4.8267 of 29.5807 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.963 (\u22650.8) & off-peak CV ratio 0.752 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
+  "criteria": {
+    "fuelmix": {
+      "label": "C1 fuel-mix by class (grid-delivered)",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "sysvol": {
+      "label": "C2 system volume (gas/coal families)",
+      "tier": "load-bearing",
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
+    },
+    "price_mean": {
+      "label": "C3a mean LMP",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_shape": {
+      "label": "C3b price duration/shape",
+      "tier": "load-bearing",
+      "status": "FAIL"
+    },
+    "price_tail": {
+      "label": "C3c price tail / scarcity (DA-expressible)",
+      "tier": "supporting",
+      "status": "FAIL"
+    },
+    "dispatch_corr": {
+      "label": "C4 fleet hourly dispatch correlation",
+      "tier": "supporting",
+      "status": "PASS"
+    },
+    "co2": {
+      "label": "C5a CO2 vs eGRID",
+      "tier": "load-bearing",
+      "status": "PASS"
+    },
+    "storage": {
+      "label": "C5b storage throughput",
+      "tier": "supporting",
+      "status": "SKIPPED"
+    },
+    "storage_shape": {
+      "label": "C5c storage dispatch shape",
+      "tier": "supporting",
+      "status": "SKIPPED"
+    },
+    "governance": {
+      "label": "C6 governance gate",
+      "tier": "protective",
+      "status": "PASS"
+    },
+    "shape": {
+      "label": "C7 diurnal shape (D-1)",
+      "tier": "protective",
+      "status": "FAIL"
+    },
+    "forced_share": {
+      "label": "C8 forced-energy share (D-2)",
+      "tier": "protective",
+      "status": "PASS"
+    }
+  },
+  "caveats": {
+    "protective": [],
+    "ledgered": [],
+    "commercial_band": [
+      "C2 system volume (gas/coal families)"
+    ],
+    "budget": {
+      "protective_max": 1,
+      "ledgered_max": 3
+    }
+  },
+  "grade_summary": {
+    "scored": 10,
+    "target_grade": 4,
+    "commercial_grade": 1,
+    "ledgered": 0,
+    "fails": 5
+  },
+  "free_class_score": {
+    "iso": "PJM",
+    "pinned_classes": [
+      "CC_CHP",
+      "CT_CHP",
+      "ST_CHP",
+      "hydro",
+      "nuclear",
+      "solar",
+      "wind"
+    ],
+    "excluded_from_free": [
+      "CC_CHP",
+      "ST_CHP"
+    ],
+    "all": {
+      "pass": 13,
+      "total": 16
+    },
+    "free": {
+      "pass": 9,
+      "total": 12
+    },
+    "headline": "C1 all 13/16 \u00b7 free 9/12"
+  }
+}
