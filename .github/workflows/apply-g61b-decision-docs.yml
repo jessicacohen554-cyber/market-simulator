@@ -6,6 +6,8 @@
 # against trailing-whitespace stripping in transit; the apply script was
 # verified byte-identical to the session commit before push. Safe to re-run:
 # every edit is idempotency-guarded.
+# Re-triggered 2026-07-11: run 1 applied cleanly but its push raced the
+# PR #2035 auto-merge (branch deleted mid-run); branch recreated from main.
 name: apply-g61b-decision-docs
 
 on:
