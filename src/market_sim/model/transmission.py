@@ -26,6 +26,13 @@ import scipy.sparse as sp
 
 from market_sim.config.constants import (
     CARB_UNSPECIFIED_IMPORT_EF,
+    MISO_RDT_CONTRACT_N_TO_S_MW,
+    MISO_RDT_CONTRACT_S_TO_N_MW,
+    MISO_RDT_DEFAULT_DERATE_FRAC,
+    MISO_RDT_TCDC_STEP1_PRICE,
+    MISO_RDT_TCDC_STEP2_PRICE,
+    MISO_RDT_TCDC_STEP2_START_FRAC,
+    MISO_SOUTH_EXTERNAL_ZONE,
     NYISO_LOCAL_SELFSUPPLY_FRAC,
 )
 from market_sim.config.interchange_config import (
@@ -164,6 +171,18 @@ def get_link_bidirectional_array(links: list[TransferLink]) -> np.ndarray:
     return np.array(
         [getattr(link, "is_bidirectional", True) for link in links], dtype=bool
     )
+
+
+def get_link_flow_cost_array(links: list[TransferLink]) -> np.ndarray | None:
+    """Return the ``(n_links,)`` per-MWh flow-cost array, or ``None`` if all zero.
+
+    Nonzero entries carry a priced transfer step (MISO's RDT TCDC tiers, see
+    :func:`apply_miso_rdt_tcdc`) into the LP objective's flow block. Returning
+    ``None`` when every link is free keeps the default cost vector
+    byte-identical (the flow block stays zero-cost).
+    """
+    costs = np.array([getattr(link, "flow_cost", 0.0) for link in links], dtype=float)
+    return costs if np.any(costs != 0.0) else None
 
 
 def wecc_border_carbon_adder(carbon_price: float) -> float:
@@ -1310,7 +1329,9 @@ _REF_IMPORT_MARK = "_refimp_"
 _REF_EXPORT_MARK = "_refexp_"
 
 
-def build_reference_price_node(iso: str) -> list[Generator]:
+def build_reference_price_node(
+    iso: str, zone_overrides: dict[str, str] | None = None
+) -> list[Generator]:
     """Return the reference-price seam as import/export pseudo-generators.
 
     The forecast-grade replacement for the fitted
@@ -1339,6 +1360,10 @@ def build_reference_price_node(iso: str) -> list[Generator]:
     Args:
         iso: ISO identifier; must have an entry in ``INTERFACE_NEIGHBORS`` and
             in :data:`~market_sim.config.interchange_config.IMPORT_ZONE`.
+        zone_overrides: Optional neighbor-name → zone map re-homing a seam's
+            bands into a different external zone (MISO's South seam under
+            ``miso_south_seam_split``). Non-CAISO only; ``None`` keeps every
+            band in the shared external node (byte-identical).
 
     Returns:
         Import + export pseudo-generators; empty for an ISO with no neighbor
@@ -1354,8 +1379,13 @@ def build_reference_price_node(iso: str) -> list[Generator]:
         # (the neighbor name IS the per-hub zone WECC_DSW / WECC_PNW, created by
         # split_caiso_import_node_per_hub), so the corridor link and its ATC
         # envelope cap each corridor independently. Every other ISO uses the
-        # single appended external node (byte-identical).
+        # single appended external node (byte-identical), unless the caller
+        # re-homes a specific seam via ``zone_overrides`` (neighbor name →
+        # zone; MISO's South seam under miso_south_seam_split, hosted in
+        # MISO_SOUTH_EXTERNAL_ZONE by split_miso_south_external_node).
         zone = neighbor.name if iso == "CAISO" else import_zone
+        if zone_overrides and neighbor.name in zone_overrides:
+            zone = zone_overrides[neighbor.name]
         # Split each direction into SEAM_FLOW_TRANCHES bands of equal width so
         # the flow-responsive injector can price each band at its midpoint flow
         # along the neighbor's supply curve. The bands sum to the interface
@@ -2499,6 +2529,155 @@ def apply_deliverability_seam_limit(
     if not replaced:
         return iso_config
     extended = iso_config.model_copy(update={"interface_limits": new_limits})
+    extended.validate_topology()
+    return extended
+
+
+def split_miso_south_external_node(iso_config: ISOConfig) -> ISOConfig:
+    """Re-home the MISO-South border link onto its own external zone.
+
+    The shared ``MISO_external`` bus links to all five border zones, so the
+    LP can wheel energy South→external→Midwest through the external zone's
+    energy balance without touching any priced seam band — a free 3,000 MW
+    bypass around the RDT contract path, which is the ONLY real South↔Midwest
+    boundary (MISO's footprints are not directly interconnected; MISO/SPP
+    JOA). The southern seam's neighbors (SOCO/TVA/AECI —
+    ``MISO_SEAM_DIBA["South"]``) are electrically on the *South* side of the
+    RDT, so their seam cannot deliver into MISO Midwest. This transform:
+
+    1. appends the zero-load :data:`~market_sim.config.constants.MISO_SOUTH_EXTERNAL_ZONE`,
+    2. re-points the ``(MISO_external, MISO-South)`` border link onto it, and
+    3. rewrites any interface-limit member pair referencing the old link
+       (the ``MISO_simultaneous_import`` SIL keeps its South member).
+
+    The South seam's reference-price bands must be hosted in the new zone by
+    :func:`build_reference_price_node` (``zone_overrides``) — wired by
+    ``build_interchange_fleet`` off the same ``miso_south_seam_split`` flag.
+    Idempotent: a topology already carrying the zone is returned unchanged.
+
+    Raises:
+        ValueError: When the topology has no ``(MISO_external, MISO-South)``
+            link to re-home (fail loud — never silently skip the fix).
+    """
+    external = IMPORT_ZONE.get("MISO")
+    if MISO_SOUTH_EXTERNAL_ZONE in iso_config.zone_names:
+        return iso_config
+    new_links: list[TransferLink] = []
+    repointed = False
+    for ln in iso_config.links:
+        pair = (ln.from_zone, ln.to_zone)
+        if pair == (external, "MISO-South") or pair == ("MISO-South", external):
+            new_links.append(
+                ln.model_copy(
+                    update={
+                        "from_zone": (
+                            MISO_SOUTH_EXTERNAL_ZONE
+                            if ln.from_zone == external
+                            else ln.from_zone
+                        ),
+                        "to_zone": (
+                            MISO_SOUTH_EXTERNAL_ZONE
+                            if ln.to_zone == external
+                            else ln.to_zone
+                        ),
+                    }
+                )
+            )
+            repointed = True
+        else:
+            new_links.append(ln)
+    if not repointed:
+        raise ValueError(
+            "split_miso_south_external_node: no (MISO_external, MISO-South) "
+            "border link found — apply after extend_with_import_node"
+        )
+    new_limits: list[InterfaceLimit] = []
+    for lim in iso_config.interface_limits:
+        pairs = [tuple(p) for p in lim.links]
+        rewritten = [
+            (
+                tuple(MISO_SOUTH_EXTERNAL_ZONE if z == external else z for z in pair)
+                if set(pair) == {external, "MISO-South"}
+                else pair
+            )
+            for pair in pairs
+        ]
+        new_limits.append(
+            lim.model_copy(update={"links": rewritten}) if rewritten != pairs else lim
+        )
+    extended = iso_config.model_copy(
+        update={
+            "zones": [
+                *iso_config.zones,
+                Zone(name=MISO_SOUTH_EXTERNAL_ZONE, iso="MISO", load_share=0.0),
+            ],
+            "links": new_links,
+            "interface_limits": new_limits,
+        }
+    )
+    extended.validate_topology()
+    return extended
+
+
+def apply_miso_rdt_tcdc(iso_config: ISOConfig) -> ISOConfig:
+    """Replace the static RDT pair with the published derate + TCDC tiers.
+
+    The real market does not run the RDT at the JOA contract limits: MISO
+    derates the modeled limit to 92% of contract by default (2024 SOM
+    §III.B), and flow above the modeled limit is *priced* by the two-step
+    RDT Transmission Constraint Demand Curve ($40/MWh at the modeled limit,
+    $500/MWh from 102% of it) rather than hard-capped. Each one-way RDT link
+    (``Plains→South`` at :data:`~market_sim.config.constants.MISO_RDT_CONTRACT_N_TO_S_MW`,
+    ``South→Plains`` at :data:`~market_sim.config.constants.MISO_RDT_CONTRACT_S_TO_N_MW`)
+    becomes three parallel one-way tiers:
+
+    * base: ``[0, derate × contract]`` free — the modeled (derated) limit;
+    * step 1: width ``(STEP2_START_FRAC − 1) × modeled`` at ``STEP1_PRICE``;
+    * step 2: the remainder up to the JOA contract entitlement at
+      ``STEP2_PRICE`` (scheduled transfers cannot exceed the contract path).
+
+    The LP's Midwest−South dual separation then reproduces the market's
+    price formation: $0 below the modeled limit, ~$40-class while the first
+    TCDC step clears, up to $500-class in deep violation — instead of a
+    degenerate hard cap at a limit the operators never run to.
+    :func:`build_interface_groups` picks up all tiers automatically (every
+    link joining a listed zone pair joins the group), so the Plains CIL/CEL
+    still reads the net corridor flow. All parameters published
+    (``constants.MISO_RDT_*``); zero fitted scalars.
+
+    Raises:
+        ValueError: When either one-way RDT link is missing (fail loud).
+    """
+    tiers: list[TransferLink] = []
+    new_links: list[TransferLink] = []
+    found = set()
+    for ln in iso_config.links:
+        pair = (ln.from_zone, ln.to_zone)
+        if pair == ("MISO-Plains", "MISO-South") and not ln.is_bidirectional:
+            contract = MISO_RDT_CONTRACT_N_TO_S_MW
+        elif pair == ("MISO-South", "MISO-Plains") and not ln.is_bidirectional:
+            contract = MISO_RDT_CONTRACT_S_TO_N_MW
+        else:
+            new_links.append(ln)
+            continue
+        found.add(pair)
+        modeled = MISO_RDT_DEFAULT_DERATE_FRAC * contract
+        step1_top = min(MISO_RDT_TCDC_STEP2_START_FRAC * modeled, contract)
+        for ttc, cost in (
+            (modeled, 0.0),
+            (step1_top - modeled, MISO_RDT_TCDC_STEP1_PRICE),
+            (contract - step1_top, MISO_RDT_TCDC_STEP2_PRICE),
+        ):
+            if ttc <= 0.0:
+                continue
+            tiers.append(ln.model_copy(update={"ttc_mw": ttc, "flow_cost": cost}))
+    if len(found) != 2:
+        raise ValueError(
+            "apply_miso_rdt_tcdc: expected the one-way RDT pair "
+            "(MISO-Plains↔MISO-South), found "
+            f"{sorted(found) or 'neither'}"
+        )
+    extended = iso_config.model_copy(update={"links": [*new_links, *tiers]})
     extended.validate_topology()
     return extended
 

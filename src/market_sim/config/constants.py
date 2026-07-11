@@ -3228,6 +3228,52 @@ MISO_SEAM_FLOW_PERCENTILE: float = 90.0
 # neighbor level via pjm_zonal_interchange_envelope). Same convention as MISO.
 PJM_SEAM_FLOW_PERCENTILE: float = 90.0
 
+# ---------------------------------------------------------------------------
+# MISO Regional Directional Transfer (RDT) — contract limits, default derate,
+# and the Transmission Constraint Demand Curve (TCDC) steps.
+# ---------------------------------------------------------------------------
+# The RDT is the contractual constraint on scheduled transfers between MISO
+# Midwest and MISO South over the contract path across SPP. Contract limits
+# are directional and asymmetric. Source: MISO/SPP Joint Operating Agreement
+# Attach. A (RDT limits); restated in 2024 MISO State of the Market Report
+# §III.B ("limiting physical flows to 3,000 MW Midwest-to-South and 2,500 MW
+# South-to-Midwest").
+MISO_RDT_CONTRACT_N_TO_S_MW: float = 3000.0
+MISO_RDT_CONTRACT_S_TO_N_MW: float = 2500.0
+
+# MISO's standing operating practice derates the modeled RDT limit below the
+# contract limit to account for unmodeled physical flows (e.g. regulation
+# deployments in the South): "MISO derates the RDT limit to 92 percent of the
+# contract limit by default and often by more" (2024 MISO SOM §III.B). The
+# default 92% is the published standing policy and the forward-regenerating
+# quantity; the deeper condition-driven operator derates (utilization averaged
+# 84% of contract when binding in 2024, i.e. ~390 MW below contract — SOM
+# §II.E/III.B) are real but hourly-varying with no published series, so this
+# constant deliberately UNDER-states binding-hour congestion rather than
+# fitting a deeper haircut (rules 5/13: published value, not a residual fit).
+MISO_RDT_DEFAULT_DERATE_FRAC: float = 0.92
+
+# RDT Transmission Constraint Demand Curve (TCDC): MISO prices RDT violation
+# rather than hard-capping it — "a two-step TCDC for the RDT with a lower step
+# at $40 per MWh at the limit and the second step at $500 per MWh starting at
+# 102 percent of the modeled limit" (2024 MISO SOM §III.B). Scheduled
+# transfers are hard-bounded at the JOA contract limit (the entitlement);
+# the TCDC governs pricing between the derated modeled limit and contract.
+MISO_RDT_TCDC_STEP1_PRICE: float = 40.0
+MISO_RDT_TCDC_STEP2_PRICE: float = 500.0
+MISO_RDT_TCDC_STEP2_START_FRAC: float = 1.02
+
+# External zone hosting the MISO-South seam's reference-price bands when
+# ScenarioConfig.miso_south_seam_split is on: the southern neighbors
+# (SOCO/TVA/AECI — MISO_SEAM_DIBA["South"]) are electrically on the SOUTH
+# side of the RDT, while the shared MISO_external bus links to all five
+# border zones — so a single bus fabricates a free 3,000 MW
+# South→external→Midwest wheel that bypasses the RDT contract path (the
+# model's only binding internal boundary). Splitting the South seam onto its
+# own external zone removes the fabricated bypass. (Same hazard the PJM
+# import-node docstring flags; see transmission.extend_with_import_node.)
+MISO_SOUTH_EXTERNAL_ZONE: str = "MISO_external_South"
+
 # Exogenous EAC price reference ranges ($/MWh) by resource type, as
 # low/mid/high values. Documentation only — these are NOT used as defaults
 # (every ScenarioConfig.eac_price_* defaults to 0.0); they give plausible
