@@ -1,7 +1,0 @@
-data(pjm): EIA-930 BA-to-BA interchange 2023-2025 (runner intake)
-
-Raw intake for the PJM seam-ladder boundary cross-check
-(scripts/derive_pjm_seam_ladders.py; the ladder's flow source is the
-committed tie-line file). Fetched on a GitHub runner with the existing
-scripts/fetch_eia930_interchange.py --ba PJM — the session env's push
-path is text-only. Training years only (2023-2025), rule 22 untouched.
