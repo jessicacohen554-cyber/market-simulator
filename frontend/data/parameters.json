@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-07-06",
+  "generated": "2026-07-11",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -2091,7 +2091,7 @@
     {
       "param_id": "scenario.fixed_om_gas_cc",
       "display_name": "ScenarioConfig.fixed_om_gas_cc",
-      "value": 12.0,
+      "value": 30.0,
       "unit": "$/kW-yr",
       "domain": "Supply Stack",
       "tier": 2,
@@ -2107,7 +2107,7 @@
     {
       "param_id": "scenario.fixed_om_gas_ct",
       "display_name": "ScenarioConfig.fixed_om_gas_ct",
-      "value": 8.0,
+      "value": 21.0,
       "unit": "$/kW-yr",
       "domain": "Supply Stack",
       "tier": 2,
@@ -2123,7 +2123,7 @@
     {
       "param_id": "scenario.fixed_om_coal",
       "display_name": "ScenarioConfig.fixed_om_coal",
-      "value": 40.0,
+      "value": 45.0,
       "unit": "$/kW-yr",
       "domain": "Supply Stack",
       "tier": 2,
@@ -3262,6 +3262,47 @@
       ]
     },
     {
+      "param_id": "caiso_curtail_release_eps_mw",
+      "display_name": "Caiso Curtail Release Eps Mw",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Float-noise guard on the RA bridge's curtailed-VRE release (gap G-61 path (c), ScenarioConfig.caiso_ra_bridge_curtailment_release): a P0 hour counts as genuinely curtailing renewables only when wind+solar dispatch sits more than this many MW below the available potential. Purely numerical (LP round-off on Σ cf × cap sums spans ~1e-6..1e-2 MW); NOT a behavioural threshold — any physically-real curtailment event is orders of magnitude above it.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "caiso_ra_mustoffer_gas_mw",
+      "display_name": "Caiso Ra Mustoffer Gas Mw",
+      "value": {
+        "2023": 19130.0,
+        "2024": 15566.0,
+        "2025": 15566.0
+      },
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "CAISO gas-fired MUST-OFFER Resource-Adequacy capacity (MW), by compliance year — the PUBLISHED quantity the RA must-offer bridge is gated to when ScenarioConfig.caiso_ra_mustoffer_quantity_gate is on (gap G-61 path (a)). Real CAISO attaches the must-offer obligation only to RA-CONTRACTED (shown) capacity; the ungated bridge floors the WHOLE merchant gas CC fleet, which over-commits CC through the solar belly (D-8 closure §7). Source: CAISO Department of Market Monitoring, Annual Report on Market Issues and Performance — \"Average system resource adequacy capacity, availability, and performance by fuel type (RMO+ hours)\": the \"Must-Offer: Gas-fired generators\" row (the category the California ISO inserts bids for — the literal 24x7 must-offer fleet; the separate \"use-limited gas\" category is NOT bid-inserted and is excluded here). 2023: 19,130 MW (2023 Annual Report, Jul 2024, Table 8.4); 2024: 15,566 MW (2024 Annual Report, Aug 2025, RA chapter table). 2025 carries the LATEST PUBLISHED vintage (the 2024 value) — the DMM 2025 Annual Report is unpublished as of 2026-07; refresh on its publication (a source-data change, rule 23 — never a residual). Values are NQC-basis annual RMO+-hour averages; the gate consumes them against model plant pmax (pmax ≥ NQC, so the gate is conservative in the strict direction — disclosed, not fitted).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "caiso_tac_zone_weights.PGE-TAC.NP15",
       "display_name": "Caiso Tac Zone Weights / Pge-Tac / Np15",
       "value": 0.86,
@@ -3300,6 +3341,24 @@
       ]
     },
     {
+      "param_id": "caiso_tac_zone_weights.SCE-TAC.LA_BASIN",
+      "display_name": "Caiso Tac Zone Weights / Sce-Tac / La Basin",
+      "value": 0.835,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available. This IS the rule-14/rule-12 misalignment exception (a single measured TAC-area load spanning a boundary — Path 15 — that our zone model splits, with no direct way to measure the sub-split): the estimate is legitimately kept, not an answer key, per docs/handoffs/scalar-remediation-plan-2026-07.md C-16. G-26/issue #1372 status (2026-07-05 B-CAI-1 attempt, per the DOF ledger): FERC-714 unreachable (403/502 via proxy), CEC planning-area geography boundary-mismatched to Path 15. RE-CHECKED 2026-07-07: CAISO OASIS (oasis.caiso.com SingleZip, SLD_FCST/ACTUAL) IS now reachable from this environment (a zipped-XML load-forecast file fetched successfully) — contradicts the 2026-07-05 \"OASIS unreachable\" finding and re-opens this item as actionable. Not completed here: finding the specific OASIS report that publishes NP15/ZP26 sub-TAC zonal load (vs. TAC-area load, which is already used), downloading/parsing it, and validating a re-derivation against the CAISO keeper is a data-intake project (new frozen derive script + re-solve + registration, rule 23), not a documentation edit — left for that dedicated session with this reachability finding as the unblock. SCE-TAC spans the LA_BASIN/SP15_rest split (SP15 was split into LA_BASIN/SDGE/SP15_rest — docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md FOUNDATION DECISIONS). w=0.835 is the LCT LA_Basin/(LA_Basin+SP15_rest) peak-load ratio: LA_BASIN 0.374 / (LA_BASIN 0.374 + SP15_rest 0.0735) of full ISO load (same LCT `peak_load` table used for the zones' static load_share, 2023 Table 3.3-7 / 3.2-1) — LCT-sourced, not a tuned weight. SDGE-TAC and VEA-TAC map 1:1 onto their own sub-zones (measured, clean).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "caiso_tac_zone_weights.SCE-TAC.SP15",
       "display_name": "Caiso Tac Zone Weights / Sce-Tac / Sp15",
       "value": 1.0,
@@ -3316,6 +3375,42 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "caiso_tac_zone_weights.SCE-TAC.SP15_rest",
+      "display_name": "Caiso Tac Zone Weights / Sce-Tac / Sp15 Rest",
+      "value": 0.165,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available. This IS the rule-14/rule-12 misalignment exception (a single measured TAC-area load spanning a boundary — Path 15 — that our zone model splits, with no direct way to measure the sub-split): the estimate is legitimately kept, not an answer key, per docs/handoffs/scalar-remediation-plan-2026-07.md C-16. G-26/issue #1372 status (2026-07-05 B-CAI-1 attempt, per the DOF ledger): FERC-714 unreachable (403/502 via proxy), CEC planning-area geography boundary-mismatched to Path 15. RE-CHECKED 2026-07-07: CAISO OASIS (oasis.caiso.com SingleZip, SLD_FCST/ACTUAL) IS now reachable from this environment (a zipped-XML load-forecast file fetched successfully) — contradicts the 2026-07-05 \"OASIS unreachable\" finding and re-opens this item as actionable. Not completed here: finding the specific OASIS report that publishes NP15/ZP26 sub-TAC zonal load (vs. TAC-area load, which is already used), downloading/parsing it, and validating a re-derivation against the CAISO keeper is a data-intake project (new frozen derive script + re-solve + registration, rule 23), not a documentation edit — left for that dedicated session with this reachability finding as the unblock. SCE-TAC spans the LA_BASIN/SP15_rest split (SP15 was split into LA_BASIN/SDGE/SP15_rest — docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md FOUNDATION DECISIONS). w=0.835 is the LCT LA_Basin/(LA_Basin+SP15_rest) peak-load ratio: LA_BASIN 0.374 / (LA_BASIN 0.374 + SP15_rest 0.0735) of full ISO load (same LCT `peak_load` table used for the zones' static load_share, 2023 Table 3.3-7 / 3.2-1) — LCT-sourced, not a tuned weight. SDGE-TAC and VEA-TAC map 1:1 onto their own sub-zones (measured, clean).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "caiso_tac_zone_weights.SDGE-TAC.SDGE",
+      "display_name": "Caiso Tac Zone Weights / Sdge-Tac / Sdge",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available. This IS the rule-14/rule-12 misalignment exception (a single measured TAC-area load spanning a boundary — Path 15 — that our zone model splits, with no direct way to measure the sub-split): the estimate is legitimately kept, not an answer key, per docs/handoffs/scalar-remediation-plan-2026-07.md C-16. G-26/issue #1372 status (2026-07-05 B-CAI-1 attempt, per the DOF ledger): FERC-714 unreachable (403/502 via proxy), CEC planning-area geography boundary-mismatched to Path 15. RE-CHECKED 2026-07-07: CAISO OASIS (oasis.caiso.com SingleZip, SLD_FCST/ACTUAL) IS now reachable from this environment (a zipped-XML load-forecast file fetched successfully) — contradicts the 2026-07-05 \"OASIS unreachable\" finding and re-opens this item as actionable. Not completed here: finding the specific OASIS report that publishes NP15/ZP26 sub-TAC zonal load (vs. TAC-area load, which is already used), downloading/parsing it, and validating a re-derivation against the CAISO keeper is a data-intake project (new frozen derive script + re-solve + registration, rule 23), not a documentation edit — left for that dedicated session with this reachability finding as the unblock. SCE-TAC spans the LA_BASIN/SP15_rest split (SP15 was split into LA_BASIN/SDGE/SP15_rest — docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md FOUNDATION DECISIONS). w=0.835 is the LCT LA_Basin/(LA_Basin+SP15_rest) peak-load ratio: LA_BASIN 0.374 / (LA_BASIN 0.374 + SP15_rest 0.0735) of full ISO load (same LCT `peak_load` table used for the zones' static load_share, 2023 Table 3.3-7 / 3.2-1) — LCT-sourced, not a tuned weight. SDGE-TAC and VEA-TAC map 1:1 onto their own sub-zones (measured, clean).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -3354,6 +3449,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "caiso_tac_zone_weights.VEA-TAC.SP15_rest",
+      "display_name": "Caiso Tac Zone Weights / Vea-Tac / Sp15 Rest",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights. PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split has unverified provenance (Tier 3 — calibration; forecast-risk): refine when a direct Path-15 sub-TAC load measurement becomes available. This IS the rule-14/rule-12 misalignment exception (a single measured TAC-area load spanning a boundary — Path 15 — that our zone model splits, with no direct way to measure the sub-split): the estimate is legitimately kept, not an answer key, per docs/handoffs/scalar-remediation-plan-2026-07.md C-16. G-26/issue #1372 status (2026-07-05 B-CAI-1 attempt, per the DOF ledger): FERC-714 unreachable (403/502 via proxy), CEC planning-area geography boundary-mismatched to Path 15. RE-CHECKED 2026-07-07: CAISO OASIS (oasis.caiso.com SingleZip, SLD_FCST/ACTUAL) IS now reachable from this environment (a zipped-XML load-forecast file fetched successfully) — contradicts the 2026-07-05 \"OASIS unreachable\" finding and re-opens this item as actionable. Not completed here: finding the specific OASIS report that publishes NP15/ZP26 sub-TAC zonal load (vs. TAC-area load, which is already used), downloading/parsing it, and validating a re-derivation against the CAISO keeper is a data-intake project (new frozen derive script + re-solve + registration, rule 23), not a documentation edit — left for that dedicated session with this reachability finding as the unblock. SCE-TAC spans the LA_BASIN/SP15_rest split (SP15 was split into LA_BASIN/SDGE/SP15_rest — docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md FOUNDATION DECISIONS). w=0.835 is the LCT LA_Basin/(LA_Basin+SP15_rest) peak-load ratio: LA_BASIN 0.374 / (LA_BASIN 0.374 + SP15_rest 0.0735) of full ISO load (same LCT `peak_load` table used for the zones' static load_share, 2023 Table 3.3-7 / 3.2-1) — LCT-sourced, not a tuned weight. SDGE-TAC and VEA-TAC map 1:1 onto their own sub-zones (measured, clean).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -4116,6 +4229,177 @@
       ]
     },
     {
+      "param_id": "coal_delivery_commodity_share.bituminous",
+      "display_name": "Coal Delivery Commodity Share / Bituminous",
+      "value": 0.85,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "short-haul Interior/Appalachian rail",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_delivery_commodity_share.lignite",
+      "display_name": "Coal Delivery Commodity Share / Lignite",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "mine-mouth, no transport",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_delivery_commodity_share.prb",
+      "display_name": "Coal Delivery Commodity Share / Prb",
+      "value": 0.42,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "0.42, long-haul rail",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_delivery_commodity_share.subbituminous",
+      "display_name": "Coal Delivery Commodity Share / Subbituminous",
+      "value": 0.42,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "same basin economics as prb",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_delivery_commodity_share.waste",
+      "display_name": "Coal Delivery Commodity Share / Waste",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "reclamation fuel, near-mine",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_heat_content_mmbtu_per_ton.ANT",
+      "display_name": "Coal Heat Content Mmbtu Per Ton / Ant",
+      "value": 25.09,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "anthracite (not in any modeled fleet; completeness)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_heat_content_mmbtu_per_ton.BIT",
+      "display_name": "Coal Heat Content Mmbtu Per Ton / Bit",
+      "value": 24.93,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "bituminous",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_heat_content_mmbtu_per_ton.LIG",
+      "display_name": "Coal Heat Content Mmbtu Per Ton / Lig",
+      "value": 13.3,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "lignite",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_heat_content_mmbtu_per_ton.SUB",
+      "display_name": "Coal Heat Content Mmbtu Per Ton / Sub",
+      "value": 17.46,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "subbituminous (PRB)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "coal_max_cf_by_plant",
       "display_name": "Coal Max Cf By Plant",
       "value": {
@@ -4227,6 +4511,248 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_backcast_gas_min_mmbtu.CAISO",
+      "display_name": "Coal Sigmoid Backcast Gas Min Mmbtu / Caiso",
+      "value": 3.4,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Minimum delivered gas price ($/MMBtu) observed over the backcast window (2023-2025), per ISO — the cheapest-gas anchor for the sigmoid floor: coal's deepest bid discount is the fraction that pulls it to merit-order parity with the cheapest gas it competes against (``floor = gas_min / gas_mid``). A market fact (the observed gas trough), not a residual. Source: EIA-923 Schedule-5 delivered gas cost to each ISO's gas fleet, 2024 (the cheapest of 2023-2025); Henry Hub 2024 ~$2.19 + small regional basis.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_backcast_gas_min_mmbtu.ERCOT",
+      "display_name": "Coal Sigmoid Backcast Gas Min Mmbtu / Ercot",
+      "value": 2.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Minimum delivered gas price ($/MMBtu) observed over the backcast window (2023-2025), per ISO — the cheapest-gas anchor for the sigmoid floor: coal's deepest bid discount is the fraction that pulls it to merit-order parity with the cheapest gas it competes against (``floor = gas_min / gas_mid``). A market fact (the observed gas trough), not a residual. Source: EIA-923 Schedule-5 delivered gas cost to each ISO's gas fleet, 2024 (the cheapest of 2023-2025); Henry Hub 2024 ~$2.19 + small regional basis.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_backcast_gas_min_mmbtu.MISO",
+      "display_name": "Coal Sigmoid Backcast Gas Min Mmbtu / Miso",
+      "value": 2.19,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Minimum delivered gas price ($/MMBtu) observed over the backcast window (2023-2025), per ISO — the cheapest-gas anchor for the sigmoid floor: coal's deepest bid discount is the fraction that pulls it to merit-order parity with the cheapest gas it competes against (``floor = gas_min / gas_mid``). A market fact (the observed gas trough), not a residual. Source: EIA-923 Schedule-5 delivered gas cost to each ISO's gas fleet, 2024 (the cheapest of 2023-2025); Henry Hub 2024 ~$2.19 + small regional basis.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_backcast_gas_min_mmbtu.NEISO",
+      "display_name": "Coal Sigmoid Backcast Gas Min Mmbtu / Neiso",
+      "value": 3.29,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Minimum delivered gas price ($/MMBtu) observed over the backcast window (2023-2025), per ISO — the cheapest-gas anchor for the sigmoid floor: coal's deepest bid discount is the fraction that pulls it to merit-order parity with the cheapest gas it competes against (``floor = gas_min / gas_mid``). A market fact (the observed gas trough), not a residual. Source: EIA-923 Schedule-5 delivered gas cost to each ISO's gas fleet, 2024 (the cheapest of 2023-2025); Henry Hub 2024 ~$2.19 + small regional basis.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_backcast_gas_min_mmbtu.NYISO",
+      "display_name": "Coal Sigmoid Backcast Gas Min Mmbtu / Nyiso",
+      "value": 2.74,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Minimum delivered gas price ($/MMBtu) observed over the backcast window (2023-2025), per ISO — the cheapest-gas anchor for the sigmoid floor: coal's deepest bid discount is the fraction that pulls it to merit-order parity with the cheapest gas it competes against (``floor = gas_min / gas_mid``). A market fact (the observed gas trough), not a residual. Source: EIA-923 Schedule-5 delivered gas cost to each ISO's gas fleet, 2024 (the cheapest of 2023-2025); Henry Hub 2024 ~$2.19 + small regional basis.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_backcast_gas_min_mmbtu.PJM",
+      "display_name": "Coal Sigmoid Backcast Gas Min Mmbtu / Pjm",
+      "value": 2.86,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "+0.67 EIA-923 delivered basis (GAS_BASIS_DIFFERENTIAL)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_baseline_slope",
+      "display_name": "Coal Sigmoid Baseline Slope",
+      "value": 2.5,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Baseline logistic slope (per $/MMBtu) for a coal supply group whose plants all draw one producing region, so the annual region f.o.b. resolves no cross-plant crossover dispersion (e.g. MISO's all-PRB group). The physical crossover-sharpness prior at the mechanism's established scale; a multi-region group (e.g. MISO bituminous spanning IL/IN/KY/ENC) instead derives its slope from the real across-region delivered-cost dispersion. Clipped to [SLOPE_MIN, SLOPE_MAX]. PPI intra-year variability adds a (small, ~2% CV) fuzzing term to the dispersion.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_floor_min",
+      "display_name": "Coal Sigmoid Floor Min",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Lowest the sigmoid floor may go: a coal plant never bids below this fraction of full delivered fuel cost. Bounds the cheap-gas discount so the floor stays a merit-order discount, not an unbounded giveaway (the sunk take-or-pay tonnage is a SEPARATE mechanism, coal_takeorpay_from_data).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_follower_discount",
+      "display_name": "Coal Sigmoid Follower Discount",
+      "value": 0.87,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Follower-tier (low-must-run PRB cyclers, mustrun <= coal_prb_follower_mustrun_max) deepen their cheap-gas discount vs the baseload PRB tier: a cycler bids nearer its avoidable cost. Applied as a multiplicative discount on the baseload floor/ceil. Matches the established baseload->follower ordering (follower floor/ceil below baseload).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_rep_hr_coal",
+      "display_name": "Coal Sigmoid Rep Hr Coal",
+      "value": 10.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "HEAT_RATE_BINS[\"coal\"][\"subcritical\"]",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_rep_hr_gas_cc",
+      "display_name": "Coal Sigmoid Rep Hr Gas Cc",
+      "value": 6.7,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "HEAT_RATE_BINS[\"gas_cc\"][\"f_class\"]",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_slope_max",
+      "display_name": "Coal Sigmoid Slope Max",
+      "value": 4.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "coal_sigmoid_slope_min",
+      "display_name": "Coal Sigmoid Slope Min",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -4541,6 +5067,263 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.CAISO.high",
+      "display_name": "Datacenter Additions Mw / Caiso / High",
+      "value": {
+        "2024": 0.0,
+        "2030": 1800.0,
+        "2040": 4900.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.CAISO.low",
+      "display_name": "Datacenter Additions Mw / Caiso / Low",
+      "value": {
+        "2024": 0.0,
+        "2030": 0.0,
+        "2040": 0.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.CAISO.mid",
+      "display_name": "Datacenter Additions Mw / Caiso / Mid",
+      "value": {
+        "2024": 0.0,
+        "2030": 1800.0,
+        "2040": 4900.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.ERCOT.high",
+      "display_name": "Datacenter Additions Mw / Ercot / High",
+      "value": {
+        "2024": 0.0,
+        "2030": 122000.0,
+        "2035": 158000.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.ERCOT.low",
+      "display_name": "Datacenter Additions Mw / Ercot / Low",
+      "value": {
+        "2024": 0.0,
+        "2030": 0.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.ERCOT.mid",
+      "display_name": "Datacenter Additions Mw / Ercot / Mid",
+      "value": {
+        "2024": 0.0,
+        "2030": 37000.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.NYISO.high",
+      "display_name": "Datacenter Additions Mw / Nyiso / High",
+      "value": {
+        "2025": 0.0,
+        "2031": 10000.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.NYISO.low",
+      "display_name": "Datacenter Additions Mw / Nyiso / Low",
+      "value": {
+        "2025": 0.0,
+        "2031": 0.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.NYISO.mid",
+      "display_name": "Datacenter Additions Mw / Nyiso / Mid",
+      "value": {
+        "2025": 0.0,
+        "2031": 3000.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.PJM.high",
+      "display_name": "Datacenter Additions Mw / Pjm / High",
+      "value": {
+        "2025": 0.0,
+        "2030": 30000.0,
+        "2040": 60000.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.PJM.low",
+      "display_name": "Datacenter Additions Mw / Pjm / Low",
+      "value": {
+        "2025": 0.0,
+        "2030": 0.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "datacenter_additions_mw.PJM.mid",
+      "display_name": "Datacenter Additions Mw / Pjm / Mid",
+      "value": {
+        "2025": 0.0,
+        "2030": 30000.0
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- Data-center load block (CX-4, gap G-34) ------------------------------ Cumulative data-center MW trajectories per ISO/path, consumed by data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis; default path \"off\" => unused, byte-identical to today). Piecewise-linear between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES derived from the published headline figures in the design memo docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to its primary ISO forecast / interconnection-queue source with the arithmetic shown); they are the low/mid/high support the PB sampler interpolates, refined on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6). parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob). ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -5955,9 +6738,1091 @@
       ]
     },
     {
+      "param_id": "ercot_online_cap_deliv_coef",
+      "display_name": "Ercot Online Cap Deliv Coef",
+      "value": 1.083,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Envelope deliverability coefficient: fit to reproduce the measured on-line HSL MW quantity (CAMPD on-line gross + measured thermal RTOLCAP) in the BINDING REGIME (top-30% net-load hours), on the PRODUCTION cap basis (model FleetArrays pmax by responsive plant_group + summer derate, matching scarcity.ercot_online_capacity_envelope_mw exactly — the derive's own CAMPD-nameplate class cap runs ~20-30% too tight in the LP). The binding regime is where the envelope is not slack and its reproduction of the measured RTOLCAP capability decides whether the co-opt tightens. A whole-year fit reproduces the annual mean but lets the pooled-median share undershoot the *committable* capacity in the tight tail (room collapses far below measured RTOLCAP -> over-fire); the envelope is a CAP (upper bound on what can be on-line), so it is fit where it binds. On this basis the binding regime reproduces measured RTOLCAP within -1/+2/-1% (2023/24/25); the slack hours (over-reproduced) never reach the LP because the ENERGY term keeps the envelope slack there. With the model's unconstrained thermal dispatch ~= measured CAMPD gross in these hours (verified on the control arm, within 0.2-1.4 GW), the resulting in-LP on-line room reproduces measured RTOLCAP + ~1 GW. A measured-MW-quantity fit to the RTOLCAP band, never a price (rule #13).",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share.CC_CHP",
+      "display_name": "Ercot Online Cap Share / Cc Chp",
+      "value": [
+        [
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943
+        ],
+        [
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943
+        ],
+        [
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249
+        ],
+        [
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.648,
+          0.6383,
+          0.6249,
+          0.6249,
+          0.6249
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 10 net-load-percentile deciles (low→high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share.CC_REGULAR",
+      "display_name": "Ercot Online Cap Share / Cc Regular",
+      "value": [
+        [
+          0.4194,
+          0.4974,
+          0.5762,
+          0.6525,
+          0.6991,
+          0.7315,
+          0.7453,
+          0.7777,
+          0.8339,
+          0.89
+        ],
+        [
+          0.3933,
+          0.5444,
+          0.6376,
+          0.6859,
+          0.7083,
+          0.7428,
+          0.7731,
+          0.8237,
+          0.8523,
+          0.8657
+        ],
+        [
+          0.5756,
+          0.5925,
+          0.6462,
+          0.6657,
+          0.7004,
+          0.73,
+          0.7449,
+          0.7628,
+          0.7809,
+          0.8097
+        ],
+        [
+          0.437,
+          0.538,
+          0.6202,
+          0.6651,
+          0.6797,
+          0.7212,
+          0.7458,
+          0.7743,
+          0.7848,
+          0.8107
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 10 net-load-percentile deciles (low→high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share.COAL",
+      "display_name": "Ercot Online Cap Share / Coal",
+      "value": [
+        [
+          0.9525,
+          0.9717,
+          0.9717,
+          0.9717,
+          0.9717,
+          0.9717,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.9242,
+          0.9242,
+          0.9242,
+          0.9242,
+          0.9242,
+          0.9025,
+          0.9025,
+          0.9525,
+          0.9025,
+          0.8776
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.9242,
+          0.9242,
+          0.9717,
+          0.9717,
+          0.9717,
+          0.9717,
+          0.9717,
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 10 net-load-percentile deciles (low→high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share.CT_CHP",
+      "display_name": "Ercot Online Cap Share / Ct Chp",
+      "value": [
+        [
+          0.3241,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3698,
+          0.3698
+        ],
+        [
+          0.3331,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3503
+        ],
+        [
+          0.3065,
+          0.3065,
+          0.3065,
+          0.2994,
+          0.2994,
+          0.2994,
+          0.2994,
+          0.2994,
+          0.2994,
+          0.3236
+        ],
+        [
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3236,
+          0.3236,
+          0.3503
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 10 net-load-percentile deciles (low→high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share.CT_PEAKER",
+      "display_name": "Ercot Online Cap Share / Ct Peaker",
+      "value": [
+        [
+          0.0507,
+          0.0507,
+          0.0639,
+          0.0769,
+          0.0945,
+          0.123,
+          0.1641,
+          0.2533,
+          0.3536,
+          0.4567
+        ],
+        [
+          0.0753,
+          0.0969,
+          0.1176,
+          0.149,
+          0.2066,
+          0.244,
+          0.3768,
+          0.4296,
+          0.545,
+          0.7131
+        ],
+        [
+          0.065,
+          0.0763,
+          0.0443,
+          0.0443,
+          0.0827,
+          0.0827,
+          0.0847,
+          0.1148,
+          0.2158,
+          0.4981
+        ],
+        [
+          0.0945,
+          0.0969,
+          0.0969,
+          0.1037,
+          0.1185,
+          0.1234,
+          0.1411,
+          0.1257,
+          0.2657,
+          0.5198
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 10 net-load-percentile deciles (low→high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share.ST_CHP",
+      "display_name": "Ercot Online Cap Share / St Chp",
+      "value": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 10 net-load-percentile deciles (low→high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share.ST_GAS",
+      "display_name": "Ercot Online Cap Share / St Gas",
+      "value": [
+        [
+          0.0228,
+          0.0228,
+          0.0228,
+          0.1153,
+          0.1153,
+          0.1429,
+          0.1734,
+          0.288,
+          0.5149,
+          0.8842
+        ],
+        [
+          0.1602,
+          0.2592,
+          0.3493,
+          0.4078,
+          0.4598,
+          0.5093,
+          0.5788,
+          0.6631,
+          0.7193,
+          0.8014
+        ],
+        [
+          0.1734,
+          0.1734,
+          0.3117,
+          0.4077,
+          0.4818,
+          0.6042,
+          0.6791,
+          0.7454,
+          0.8204,
+          0.9105
+        ],
+        [
+          0.2819,
+          0.3269,
+          0.3631,
+          0.3975,
+          0.5241,
+          0.573,
+          0.6396,
+          0.6782,
+          0.7822,
+          0.8796
+        ]
+      ],
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 10 net-load-percentile deciles (low→high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share_extreme.CC_CHP",
+      "display_name": "Ercot Online Cap Share Extreme / Cc Chp",
+      "value": [
+        [
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943
+        ],
+        [
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943
+        ],
+        [
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249
+        ],
+        [
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.6943,
+          0.648,
+          0.6383,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249,
+          0.6249
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 + five 2-pp sub-bins of the top decile, low->high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share_extreme.CC_REGULAR",
+      "display_name": "Ercot Online Cap Share Extreme / Cc Regular",
+      "value": [
+        [
+          0.4194,
+          0.4974,
+          0.5762,
+          0.6525,
+          0.6991,
+          0.7315,
+          0.7453,
+          0.7777,
+          0.8339,
+          0.8655,
+          0.884,
+          0.8833,
+          0.8921,
+          0.904
+        ],
+        [
+          0.3933,
+          0.5444,
+          0.6376,
+          0.6859,
+          0.7083,
+          0.7428,
+          0.7731,
+          0.8237,
+          0.8523,
+          0.8657,
+          0.8657,
+          0.8657,
+          0.8657,
+          0.8657
+        ],
+        [
+          0.5756,
+          0.5925,
+          0.6462,
+          0.6657,
+          0.7004,
+          0.73,
+          0.7449,
+          0.7628,
+          0.7809,
+          0.7968,
+          0.7999,
+          0.7999,
+          0.8177,
+          0.8293
+        ],
+        [
+          0.437,
+          0.538,
+          0.6202,
+          0.6651,
+          0.6797,
+          0.7212,
+          0.7458,
+          0.7743,
+          0.7848,
+          0.7955,
+          0.8106,
+          0.8051,
+          0.8212,
+          0.8293
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 + five 2-pp sub-bins of the top decile, low->high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share_extreme.COAL",
+      "display_name": "Ercot Online Cap Share Extreme / Coal",
+      "value": [
+        [
+          0.9525,
+          0.9717,
+          0.9717,
+          0.9717,
+          0.9717,
+          0.9717,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.9242,
+          0.9242,
+          0.9242,
+          0.9242,
+          0.9242,
+          0.9025,
+          0.9025,
+          0.9525,
+          0.9025,
+          0.8776,
+          0.8776,
+          0.8776,
+          0.8776,
+          0.8776
+        ],
+        [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        [
+          0.9242,
+          0.9242,
+          0.9717,
+          0.9717,
+          0.9717,
+          0.9717,
+          0.9717,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 + five 2-pp sub-bins of the top decile, low->high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share_extreme.CT_CHP",
+      "display_name": "Ercot Online Cap Share Extreme / Ct Chp",
+      "value": [
+        [
+          0.3241,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3698,
+          0.3503,
+          0.3503,
+          0.3698,
+          0.3503,
+          0.3698
+        ],
+        [
+          0.3331,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3241,
+          0.3503,
+          0.3503,
+          0.3503,
+          0.3503,
+          0.3503
+        ],
+        [
+          0.3065,
+          0.3065,
+          0.3065,
+          0.2994,
+          0.2994,
+          0.2994,
+          0.2994,
+          0.2994,
+          0.2994,
+          0.3065,
+          0.3065,
+          0.3236,
+          0.349,
+          0.349
+        ],
+        [
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3422,
+          0.3236,
+          0.3236,
+          0.3236,
+          0.3576,
+          0.3648,
+          0.3648,
+          0.3648
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 + five 2-pp sub-bins of the top decile, low->high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share_extreme.CT_PEAKER",
+      "display_name": "Ercot Online Cap Share Extreme / Ct Peaker",
+      "value": [
+        [
+          0.0507,
+          0.0507,
+          0.0639,
+          0.0769,
+          0.0945,
+          0.123,
+          0.1641,
+          0.2533,
+          0.3536,
+          0.3711,
+          0.4197,
+          0.4486,
+          0.4267,
+          0.5636
+        ],
+        [
+          0.0753,
+          0.0969,
+          0.1176,
+          0.149,
+          0.2066,
+          0.244,
+          0.3768,
+          0.4296,
+          0.545,
+          0.7131,
+          0.7131,
+          0.7131,
+          0.7131,
+          0.7131
+        ],
+        [
+          0.065,
+          0.0763,
+          0.0443,
+          0.0443,
+          0.0827,
+          0.0827,
+          0.0847,
+          0.1148,
+          0.2158,
+          0.395,
+          0.4509,
+          0.4891,
+          0.5204,
+          0.6108
+        ],
+        [
+          0.0945,
+          0.0969,
+          0.0969,
+          0.1037,
+          0.1185,
+          0.1234,
+          0.1411,
+          0.1257,
+          0.2657,
+          0.412,
+          0.4845,
+          0.5022,
+          0.568,
+          0.6151
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 + five 2-pp sub-bins of the top decile, low->high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share_extreme.ST_CHP",
+      "display_name": "Ercot Online Cap Share Extreme / St Chp",
+      "value": [
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ],
+        [
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0,
+          0.0
+        ]
+      ],
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 + five 2-pp sub-bins of the top decile, low->high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "ercot_online_cap_share_extreme.ST_GAS",
+      "display_name": "Ercot Online Cap Share Extreme / St Gas",
+      "value": [
+        [
+          0.0228,
+          0.0228,
+          0.0228,
+          0.1153,
+          0.1153,
+          0.1429,
+          0.1734,
+          0.288,
+          0.5149,
+          0.7454,
+          0.8157,
+          0.8842,
+          0.7894,
+          0.9282
+        ],
+        [
+          0.1602,
+          0.2592,
+          0.3493,
+          0.4078,
+          0.4598,
+          0.5093,
+          0.5788,
+          0.6631,
+          0.7193,
+          0.8014,
+          0.8014,
+          0.8014,
+          0.8014,
+          0.8014
+        ],
+        [
+          0.1734,
+          0.1734,
+          0.3117,
+          0.4077,
+          0.4818,
+          0.6042,
+          0.6791,
+          0.7454,
+          0.8204,
+          0.8756,
+          0.8842,
+          0.9105,
+          0.9241,
+          0.9681
+        ],
+        [
+          0.2819,
+          0.3269,
+          0.3631,
+          0.3975,
+          0.5241,
+          0.573,
+          0.6396,
+          0.6782,
+          0.7822,
+          0.8092,
+          0.8842,
+          0.878,
+          0.8842,
+          0.9418
+        ]
+      ],
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 + five 2-pp sub-bins of the top decile, low->high).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "ercot_rtolcap_fwd_deliv_coef",
       "display_name": "Ercot Rtolcap Fwd Deliv Coef",
-      "value": 0.8899,
+      "value": 0.8959,
       "unit": "",
       "domain": "Uncategorized",
       "tier": 2,
@@ -6013,7 +7878,7 @@
     {
       "param_id": "ercot_rtolcap_fwd_offline_deliv_coef",
       "display_name": "Ercot Rtolcap Fwd Offline Deliv Coef",
-      "value": 0.7748,
+      "value": 0.7756,
       "unit": "",
       "domain": "Uncategorized",
       "tier": 2,
@@ -6046,6 +7911,7 @@
           0.6302
         ],
         [
+          0.6578,
           0.6759,
           0.6759,
           0.6759,
@@ -6054,7 +7920,6 @@
           0.6759,
           0.6759,
           0.6759,
-          0.6497,
           0.6497
         ],
         [
@@ -6104,41 +7969,41 @@
         [
           0.9493,
           0.9493,
-          0.9307,
-          0.9303,
+          0.9361,
+          0.9231,
           0.9055,
-          0.8759,
-          0.8433,
-          0.7684,
-          0.6426,
-          0.5343
+          0.8762,
+          0.8365,
+          0.7448,
+          0.6469,
+          0.535
         ],
         [
-          0.9266,
+          0.9257,
           0.9031,
-          0.8815,
-          0.8522,
-          0.7953,
-          0.7392,
-          0.6,
-          0.5641,
-          0.4546,
-          0.2869
+          0.8851,
+          0.8502,
+          0.7932,
+          0.754,
+          0.5987,
+          0.5718,
+          0.4462,
+          0.2842
         ],
         [
           0.81,
+          0.7987,
           0.7923,
-          0.8132,
           0.8307,
           0.8076,
+          0.7925,
           0.7923,
-          0.7923,
-          0.7569,
-          0.64,
-          0.3676
+          0.7648,
+          0.6445,
+          0.3691
         ],
         [
-          0.9256,
+          0.9212,
           0.9031,
           0.9031,
           0.857,
@@ -6147,7 +8012,7 @@
           0.7713,
           0.7688,
           0.6208,
-          0.3611
+          0.3615
         ]
       ],
       "unit": "",
@@ -6170,52 +8035,52 @@
       "display_name": "Ercot Rtolcap Fwd Online Share / Cc Chp",
       "value": [
         [
-          0.3,
-          0.2435,
-          0.2043,
-          0.1719,
-          0.148,
-          0.1311,
-          0.1148,
+          0.3011,
+          0.2446,
+          0.2092,
+          0.1718,
+          0.1483,
+          0.1303,
+          0.1161,
           0.0979,
-          0.0906,
-          0.0675
+          0.0884,
+          0.068
         ],
         [
-          0.2817,
+          0.2813,
           0.2435,
-          0.2173,
-          0.1989,
-          0.1814,
+          0.2188,
+          0.1988,
+          0.1822,
           0.1728,
-          0.1592,
-          0.1553,
-          0.1364,
+          0.1594,
+          0.1565,
+          0.1353,
           0.1069
         ],
         [
-          0.186,
-          0.172,
-          0.1482,
-          0.125,
-          0.1199,
-          0.107,
-          0.0963,
-          0.0774,
-          0.068,
-          0.0609
+          0.158,
+          0.1453,
+          0.1546,
+          0.1257,
+          0.1209,
+          0.1085,
+          0.0965,
+          0.0776,
+          0.0686,
+          0.0607
         ],
         [
-          0.2869,
-          0.2554,
-          0.2352,
-          0.2055,
-          0.1772,
-          0.1588,
+          0.2829,
+          0.2541,
+          0.236,
+          0.2094,
+          0.177,
+          0.1582,
           0.1382,
-          0.0967,
-          0.0719,
-          0.0622
+          0.0972,
+          0.0724,
+          0.062
         ]
       ],
       "unit": "",
@@ -6238,52 +8103,52 @@
       "display_name": "Ercot Rtolcap Fwd Online Share / Cc Regular",
       "value": [
         [
-          0.2377,
-          0.2455,
-          0.2395,
-          0.2318,
-          0.2118,
-          0.1871,
-          0.1612,
-          0.1444,
-          0.1366,
-          0.108
+          0.2387,
+          0.2454,
+          0.2403,
+          0.2314,
+          0.2145,
+          0.1876,
+          0.1626,
+          0.1443,
+          0.1349,
+          0.1079
         ],
         [
-          0.2207,
-          0.2677,
-          0.2644,
-          0.2462,
-          0.2254,
-          0.2142,
+          0.2209,
+          0.2673,
+          0.267,
+          0.2466,
+          0.2234,
+          0.215,
           0.2028,
-          0.1946,
-          0.1819,
-          0.1392
+          0.1923,
+          0.1781,
+          0.1335
         ],
         [
-          0.2674,
-          0.297,
-          0.2736,
-          0.2266,
-          0.1972,
-          0.171,
-          0.141,
-          0.1168,
+          0.28,
+          0.2888,
+          0.2789,
+          0.2254,
+          0.1995,
+          0.1732,
+          0.1415,
+          0.1167,
           0.0941,
-          0.0716
+          0.0718
         ],
         [
-          0.2526,
-          0.2568,
-          0.2544,
-          0.2342,
-          0.2041,
-          0.1846,
-          0.1654,
-          0.1436,
-          0.1106,
-          0.0758
+          0.2532,
+          0.2543,
+          0.2543,
+          0.2356,
+          0.2052,
+          0.1857,
+          0.1652,
+          0.1438,
+          0.1112,
+          0.0757
         ]
       ],
       "unit": "",
@@ -6306,52 +8171,52 @@
       "display_name": "Ercot Rtolcap Fwd Online Share / Coal",
       "value": [
         [
-          0.6087,
-          0.5673,
-          0.5217,
-          0.4914,
-          0.4492,
-          0.3962,
-          0.3451,
-          0.2969,
-          0.2672,
-          0.1623
+          0.611,
+          0.5678,
+          0.5251,
+          0.4928,
+          0.4435,
+          0.3979,
+          0.3429,
+          0.2934,
+          0.2679,
+          0.1621
         ],
         [
-          0.59,
-          0.5421,
-          0.5146,
-          0.4685,
-          0.4163,
-          0.3816,
-          0.3569,
-          0.3401,
-          0.2811,
-          0.2345
+          0.5876,
+          0.5444,
+          0.5153,
+          0.4647,
+          0.4135,
+          0.3837,
+          0.3597,
+          0.3364,
+          0.2798,
+          0.2338
         ],
         [
-          0.6055,
-          0.5418,
-          0.5257,
-          0.5132,
-          0.5045,
-          0.4611,
-          0.4092,
-          0.346,
-          0.2533,
-          0.1859
+          0.5964,
+          0.5105,
+          0.5159,
+          0.5149,
+          0.5026,
+          0.4625,
+          0.413,
+          0.3471,
+          0.2531,
+          0.1866
         ],
         [
-          0.5879,
-          0.5189,
-          0.5099,
-          0.4622,
-          0.4179,
-          0.3796,
-          0.3352,
-          0.2844,
-          0.2257,
-          0.157
+          0.5844,
+          0.5158,
+          0.5115,
+          0.4651,
+          0.419,
+          0.3804,
+          0.3382,
+          0.2851,
+          0.2255,
+          0.1562
         ]
       ],
       "unit": "",
@@ -6374,28 +8239,28 @@
       "display_name": "Ercot Rtolcap Fwd Online Share / Ct Chp",
       "value": [
         [
-          0.0445,
-          0.0347,
-          0.033,
-          0.0263,
-          0.0247,
-          0.0205,
+          0.0454,
+          0.0343,
+          0.0325,
+          0.0282,
+          0.0242,
+          0.0186,
           0.0233,
           0.0171,
           0.0162,
           0.0392
         ],
         [
-          0.0506,
-          0.0537,
-          0.0695,
-          0.0755,
-          0.0731,
-          0.0795,
-          0.0837,
-          0.0823,
-          0.0815,
-          0.0628
+          0.0498,
+          0.0559,
+          0.0696,
+          0.0747,
+          0.0727,
+          0.0797,
+          0.0832,
+          0.0819,
+          0.0812,
+          0.0612
         ],
         [
           0.0,
@@ -6411,13 +8276,13 @@
         ],
         [
           0.0328,
-          0.0352,
-          0.0445,
+          0.0355,
+          0.0436,
           0.039,
-          0.0268,
-          0.0238,
-          0.0205,
+          0.0273,
+          0.0231,
           0.02,
+          0.0205,
           0.0187,
           0.0152
         ]
@@ -6442,52 +8307,52 @@
       "display_name": "Ercot Rtolcap Fwd Online Share / Ct Peaker",
       "value": [
         [
-          0.0137,
-          0.0141,
-          0.0217,
-          0.0204,
-          0.0315,
-          0.0419,
-          0.065,
-          0.1139,
-          0.1351,
-          0.147
+          0.0136,
+          0.0147,
+          0.0196,
+          0.0232,
+          0.029,
+          0.0414,
+          0.0714,
+          0.1155,
+          0.1349,
+          0.1467
         ],
         [
-          0.0327,
-          0.0447,
-          0.0504,
-          0.0616,
-          0.0971,
-          0.1063,
-          0.1549,
-          0.185,
-          0.24,
-          0.239
+          0.0329,
+          0.045,
+          0.0489,
+          0.0619,
+          0.0975,
+          0.0997,
+          0.1494,
+          0.1873,
+          0.2406,
+          0.2386
         ],
         [
-          0.0269,
-          0.0304,
-          0.0242,
+          0.0274,
+          0.0312,
+          0.0295,
           0.0108,
-          0.0148,
-          0.017,
-          0.0222,
-          0.0345,
-          0.091,
-          0.1078
+          0.0146,
+          0.0144,
+          0.0223,
+          0.0333,
+          0.0884,
+          0.1085
         ],
         [
-          0.0358,
-          0.0387,
-          0.0408,
-          0.0426,
-          0.0429,
-          0.051,
-          0.0479,
-          0.0444,
-          0.1172,
-          0.1291
+          0.0378,
+          0.0393,
+          0.041,
+          0.0423,
+          0.0425,
+          0.0483,
+          0.0476,
+          0.0441,
+          0.1176,
+          0.1283
         ]
       ],
       "unit": "",
@@ -6580,50 +8445,50 @@
         [
           0.0211,
           0.0211,
-          0.0472,
-          0.0851,
-          0.1002,
-          0.1045,
-          0.1192,
+          0.0211,
+          0.0724,
+          0.1054,
+          0.1017,
+          0.1228,
           0.1786,
-          0.2943,
-          0.3536
+          0.3014,
+          0.3539
         ],
         [
-          0.1291,
-          0.1828,
-          0.2495,
-          0.2772,
-          0.3017,
-          0.3298,
-          0.3312,
-          0.3591,
-          0.3656,
-          0.3174
+          0.1314,
+          0.1703,
+          0.2491,
+          0.2929,
+          0.3013,
+          0.3309,
+          0.3332,
+          0.3595,
+          0.3663,
+          0.306
         ],
         [
-          0.1456,
-          0.2235,
-          0.3094,
-          0.3514,
-          0.4091,
-          0.4522,
-          0.4999,
-          0.5172,
-          0.448,
-          0.3125
+          0.1455,
+          0.1454,
+          0.3084,
+          0.3393,
+          0.4066,
+          0.4537,
+          0.5087,
+          0.5255,
+          0.4477,
+          0.3141
         ],
         [
-          0.2351,
-          0.2659,
-          0.2879,
-          0.2967,
-          0.3575,
-          0.3883,
-          0.4042,
-          0.4458,
-          0.4345,
-          0.3385
+          0.2501,
+          0.2631,
+          0.2866,
+          0.2989,
+          0.361,
+          0.3833,
+          0.4191,
+          0.4472,
+          0.435,
+          0.3384
         ]
       ],
       "unit": "",
@@ -7706,6 +9571,25 @@
       "domain": "Reliability",
       "tier": 2,
       "source": "Effective default for the historic (facility-summed) CAMPD outage overlay, per ISO. The overlay hard-zeros coal/CC tranches when a plant's CEMS facility sum drops out. It is the PRIMARY outage layer only where the unit-level derate merely SUPPLEMENTS it, and is redundant (double-counting) where the unit-level file is the COMPLETE CAMPD-derived source. The runner resolves the effective flag as ``HISTORIC_OUTAGE_OVERLAY_BY_ISO.get(iso, <config flag>)``, so an ISO absent from this map keeps the global ``ScenarioConfig`` default. Reasoning per ISO: ERCOT  True  — facility-summed legacy extract is the primary layer; the unit-level derate only catches single-unit losses it hides. CAISO  False — unit-level file derived fresh from ALL CAMPD units (complete). NEISO  False — same: complete CAMPD-derived unit-level source. NYISO  False — same: complete CAMPD-derived unit-level source. PJM    False — unit-level file built fresh by derive_campd_unit_outages.py is the complete source; stacking the facility overlay on top double-counts and over-derates (see scenarios.py).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "hydro_envelope_percentile",
+      "display_name": "Hydro Envelope Percentile",
+      "value": 95.0,
+      "unit": "",
+      "domain": "Hydro",
+      "tier": 2,
+      "source": "--- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------ Percentile of the measured EIA-930 NG:WAT hourly output, per (month x hour-of-day) bucket, used as the hydro fleet's hourly dispatch ceiling when ScenarioConfig.hydro_dispatch_envelope is on. Same construction and same admissibility class as the CAISO corridor ATC envelope (interchange_config.CAISO_CORRIDOR_FLOW_PERCENTILE, also 95): a measured *capability* ceiling the LP clears below — head/flow/scheduling limits that the nameplate pmax bound ignores — never a flow pinned to the residual. Identification: measured (rule 23 — re-derive only when the EIA-930 source extends). Source: EIA-930 hourly NG:WAT per BA extract.",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -10850,6 +12734,48 @@
       ]
     },
     {
+      "param_id": "pjm_interface_link_map",
+      "display_name": "Pjm Interface Link Map",
+      "value": {
+        "('PJM_ComEd', 'PJM_AEP_Ohio')": [
+          "50045005 Post-Contingency"
+        ],
+        "('PJM_AEP_Ohio', 'PJM_Dominion')": [
+          "AEP/DOM Post-Contingency"
+        ],
+        "('PJM_West_APS', 'PJM_SWMAAC')": [
+          "AP-South Pre-Contingency",
+          "AP-South Post-Contingency"
+        ],
+        "('PJM_West_APS', 'PJM_Central_PA')": [
+          "Bedington-BlackOak Pre-Contingency",
+          "Bedington-BlackOak Post-Contingency"
+        ],
+        "('PJM_AEP_Ohio', 'PJM_West_APS')": [
+          "Average Western"
+        ],
+        "('PJM_ATSI', 'PJM_Central_PA')": [
+          "Average Central"
+        ],
+        "('PJM_Central_PA', 'PJM_EMAAC')": [
+          "Average Eastern"
+        ]
+      },
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "(2b) HOURLY measured internal interface limits (ScenarioConfig. pjm_measured_interface_limits — supersedes the static medians above on the mapped links; same feed, hourly instead of pooled-median). Model link -> the published transfer-limit series (transfer-interface-limits clean datatype, names verbatim) whose elementwise MIN is the link's forward (west->east) hourly cap; where an interface publishes pre- AND post-contingency limits both are listed, since both are simultaneously-enforced security limits and the operative capability each hour is the tighter one.  Crosswalk provenance and reconciliation (CLAUDE.md rule 14 exception clause — each static seed's series maps back to it 1:1): - ComEd→AEP_Ohio      ← \"50045005\": iso_configs already names this link \"the 5004/5005 interface\"; the static 6000 was a loose estimate (measured mean ~2,750-3,100). - AEP_Ohio→Dominion   ← \"AEP/DOM\" (static 4069 = its 2024 mean). - West_APS→SWMAAC     ← \"AP-South\" (static 4453 = its 2024 post mean). MISALIGNMENT, documented: AP-South is the aggregate western→MAD 500 kV flowgate, one of several parallel paths this 8-zone mesh splits across West_APS→SWMAAC and West_APS→Dominion. It is applied ONLY to the seeded link (West_APS→SWMAAC); West_APS→Dominion keeps its static 3,000 MW so the total west→MAD capability is the reconciled measured-plus-static sum, never the single flowgate double-applied. - West_APS→Central_PA ← \"Bedington-BlackOak\" (static 1947 = 2024 post mean). Published post-contingency limits touch ≤ 0 in 2024-25 outage windows; the consumer clamps the forward bound at 0 (no secure transfer), never a negative bound (which would FORCE counterflow). - AEP_Ohio→West_APS / ATSI→Central_PA / Central_PA→EMAAC ← the \"Average Western/Central/Eastern\" regional envelopes that seeded their statics (5029/3336/8168 = the 2024 means). MISALIGNMENT, documented: an envelope is a regional mean across several member interfaces, not one flowgate on the link's exact boundary (its measured ``transfers`` sign is unreliable for direction checks — Average Central runs \"negative\" 80-97% of hours); the hourly envelope is still strictly closer to the real capability than the constant it seeded. Cleveland is deliberately ABSENT (the N_TO_H pattern in ERCOT_GTC_LINK_MAP): it limits imports into the ATSI-Cleveland sub-pocket, a strict subset of the PJM_ATSI zone boundary, so applying it to AEP_Ohio→ATSI would cap the whole zone at one pocket's limit. SWMAAC→ EMAAC, SWMAAC→Dominion, West_APS→Dominion and AEP_Ohio→ATSI have no published series on their boundary and keep their static estimates. Direction sanity (2023-25 measured ``transfers``): AP-South / Bedington- BlackOak / AEP-DOM flows are ≥ 98.5% one-directional west→east, matching the mapped links' forward orientation; binding (≥ 90% utilization) up to 6.5% of hours (BB post, 2025). Source: PJM Data Miner 2 transfer_limits_and_flows via scripts/curate_transfer_interface_limits.py; consumed by market_sim.data.transfer_interface_limits.pjm_interface_ttc_hourly.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "pjm_measured_internal_ttc",
       "display_name": "Pjm Measured Internal Ttc",
       "value": {
@@ -12868,41 +14794,41 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "VA",
           "MA",
+          "ME",
+          "VT",
           "CT",
+          "VA",
+          "NJ",
+          "MD",
+          "DE",
           "NH",
           "RI",
-          "VT",
-          "NJ",
-          "DE",
-          "ME",
-          "NY",
-          "MD"
+          "NY"
         ],
         "2024": [
           "MA",
+          "ME",
+          "VT",
           "CT",
+          "NJ",
+          "MD",
+          "DE",
           "NH",
           "RI",
-          "VT",
-          "NJ",
-          "DE",
-          "ME",
-          "NY",
-          "MD"
+          "NY"
         ],
         "2025": [
           "MA",
+          "ME",
+          "VT",
           "CT",
+          "NJ",
+          "MD",
+          "DE",
           "NH",
           "RI",
-          "VT",
-          "NJ",
-          "DE",
-          "ME",
-          "NY",
-          "MD"
+          "NY"
         ]
       },
       "unit": "",
@@ -13280,6 +15206,24 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_asymmetric_path_ratings",
+      "display_name": "Caiso Asymmetric Path Ratings",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CAISO asymmetric measured Path 15 / Path 26 directional ratings. The internal N-S links carry symmetric TTCs (5,400 / 4,000 MW) although each is only ONE direction's WECC-accepted rating: Path 15 (Midway–Los Banos) is 3,265 MW N→S / 5,400 MW S→N and Path 26 (Midway–Vincent) is 4,000 MW N→S / 3,000 MW S→N (WECC Path Rating Catalog, 2024 public version). The loose directions let the LP equalize the zones (Path 15 never binds; NP15==ZP26 byte-identical all years) and ship the south's midday solar surplus north past the real 3,000 MW Path-26 S→N limit, suppressing the measured NP15-over-SP15 LMP premium. When on, two InterfaceLimit rows cap each path's directional flow at the published rating (the per-link TTC keeps the looser direction). Measured data over estimate (rule 14); off by default so every existing CAISO keeper replay is byte-identical. See market_sim.model.transmission.apply_caiso_asymmetric_path_limits.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_bidir_intertie",
       "display_name": "Caiso Bidir Intertie",
       "value": false,
@@ -13287,6 +15231,25 @@
       "domain": "Structural",
       "tier": 2,
       "source": "Model CAISO's WECC tie as a SINGLE",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_commitment_posture",
+      "display_name": "Caiso Commitment Posture",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "CAISO: the SAME pooled linear",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -13325,6 +15288,44 @@
       "domain": "Structural",
       "tier": 2,
       "source": "Cap each CAISO per-hub corridor's",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_demand_clock_realign",
+      "display_name": "Caiso Demand Clock Realign",
+      "value": false,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Apply the MEASURED source-data",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_firm_import_shape",
+      "display_name": "Caiso Firm Import Shape",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Shape the firm/contracted CAISO",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -13470,6 +15471,25 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_locational_as_families",
+      "display_name": "Caiso Locational As Families",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CAISO: add zone-masked",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_per_hub_intertie",
       "display_name": "Caiso Per Hub Intertie",
       "value": false,
@@ -13486,6 +15506,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_per_year_import_caps",
+      "display_name": "Caiso Per Year Import Caps",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CAISO per-year SP15-pocket import caps. The SP15-split foundation (2026-07-09) baked the two internal import-limited links (SP15_rest->LA_BASIN, SP15_rest->SDGE) at the STATIC 2023 (tightest-year) LCT import_cap = peak_load - requirement (LA_BASIN 12,008 MW, SDGE 1,436 MW), documenting per-year as the deferred end state (docs/handoffs/ caiso-sp15-split-implementation-scope-2026-07-09.md, \"Import-cap values\"). When on, each solve year's link TTC is swapped to that year's measured LCT row (LA_BASIN 12,008/15,224/15,174, SDGE 1,436/2,074/2,071 MW for 2023/24/25 -- data/raw/capacity-deliverability/caiso/caiso.csv via data.local_capacity.load_lcr_parameters), same peak_load - requirement convention, frozen per rule 24 (never the reserve-margin gross-up, never tuned to a residual). A no-op for any year without a published LCT row (the link keeps its static 2023 default). Off by default so every existing CAISO keeper replay is byte-identical. See market_sim.model.transmission.apply_caiso_local_import_limits.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -13508,6 +15546,25 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_ra_bridge_curtailment_release",
+      "display_name": "Caiso Ra Bridge Curtailment Release",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "CAISO RA bridge",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_ra_bridge_decommit",
       "display_name": "Caiso Ra Bridge Decommit",
       "value": false,
@@ -13515,6 +15572,25 @@
       "domain": "Structural",
       "tier": 1,
       "source": "Solar-proportional / seasonal",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_ra_bridge_startup_aware",
+      "display_name": "Caiso Ra Bridge Startup Aware",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "CAISO RA bridge STARTUP-AWARE",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -13553,6 +15629,25 @@
       "domain": "Structural",
       "tier": 1,
       "source": "CAISO Resource-Adequacy must-offer",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_ra_mustoffer_quantity_gate",
+      "display_name": "Caiso Ra Mustoffer Quantity Gate",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "CAISO RA must-offer",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -13774,9 +15869,46 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_storage_as_reservation",
+      "display_name": "Caiso Storage As Reservation",
+      "value": false,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Reserve the MEASURED hourly",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_zonal_gas_basis",
+      "display_name": "Caiso Zonal Gas Basis",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on SoCal Citygate — but the model prices every zone off the single blended CA-composite series, so the gas fleets are equally cheap and the LP develops no systematic north-south dispatch gradient (its NP15/ZP26 clear byte-identical prices and its N-S LMP basis carries the wrong sign vs the measured hub LMPs). This adds each zone's measured hub basis vs Henry Hub (data/raw/caiso_zonal_gas_hub.csv — month-balanced annual means of the EIA NG Weekly archive's weekly Wednesday prints, NGI Daily GPI; the same published print the ERCOT Waha rows cite) as a mean-zero capacity-weighted spread, identical to the PJM/MISO mechanism, preserving the calibrated composite+transport aggregate level. Measured N-S spread (PG&E − SoCal): −0.49 / +0.54 / −0.18 $/MMBtu (2023/24/25) — year-varying measured data, not a fitted north-premium knob. Off by default so every existing CAISO keeper replay is byte-identical. Backcast-only (no hub rows in forward years). See market_sim.data.fuel.apply_caiso_zonal_gas_basis.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.campd_bins_path",
       "display_name": "Campd Bins Path",
-      "value": "/home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv",
+      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/reference/custom-bin-assignments.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -13871,7 +16003,7 @@
     {
       "param_id": "scenario.cc_capacity_reconcile_path",
       "display_name": "Cc Capacity Reconcile Path",
-      "value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -14774,6 +16906,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_nameplate_summer_derate",
+      "display_name": "Coal Nameplate Summer Derate",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "COAL net-summer capacity derate (coal_nameplate_summer_derate, off by default). The exact coal analogue of cc_nameplate_summer_derate above: a coal steam unit carries its EIA-860 NAMEPLATE capacity in the LP (the CAMPD-bin / EIA-860 pmax) but is physically incapable of that output in the summer — condenser back-pressure and cooling-water-temperature limits pull an old steam unit's sustainable rating down to its published NET-SUMMER capacity. This applies the per-plant MEASURED summer availability multiplier ``net_summer / nameplate`` (fleet.coal_summer_derate_ratio, EIA-860 Operable \"Conventional Steam Coal\" / \"Coal IGCC\" units) on the summer months only — the same seasonal shape and same published EIA-860 source CC/CT already use, which coal alone was omitted from (\"COAL / ST_GAS carry no existing summer derate\" — the availability loop below). Rule-15 measured-replaces-estimate and rule-11 physical: the net-summer rating regenerates for any forward year and responds to changed conditions (a re-rated unit gets a new EIA-860 summer number), so it is admissible in BOTH backcast and forecast, never a residual-fitted haircut. It is NOT the rejected ``temp_dependent_derate`` (an INCREMENTAL literature-slope cut BELOW net-summer, refuted for the ERCOT gas fleet 2026-07-09): this only brings coal DOWN to its published net-summer rating, which the per-plant CEMS summer maxima confirm the fleet tops out at (Oak Grove 0.937 vs ns 0.952, Major Oak 0.877 vs 0.873, Spruce 0.893 vs 0.904 — see docs/handoffs/ercot-coal-nameplate-summer-derate-2026-07.md). A plant whose summer rating meets/exceeds nameplate (Martin Lake 1.03, Coleto 1.05) clamps to 1.0 (no derate). Only reduces capacity, only in summer; can never loosen the fleet. ERCOT-scoped in practice (rule 24), but the EIA-860 lookup is ISO-agnostic. Off by default.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -15707,7 +17857,7 @@
     {
       "param_id": "scenario.control_retrofit_path",
       "display_name": "Control Retrofit Path",
-      "value": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
+      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -16053,6 +18203,63 @@
       "domain": "Structural",
       "tier": 3,
       "source": "CT / gas-steam peaking increment",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.datacenter_load_factor",
+      "display_name": "Datacenter Load Factor",
+      "value": 0.85,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Flat hourly CF of the DC block.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.datacenter_load_path",
+      "display_name": "Datacenter Load Path",
+      "value": "off",
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "\"off\" | \"low\" | \"mid\" | \"high\" —",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.datacenter_percentile",
+      "display_name": "Datacenter Percentile",
+      "value": 0.5,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Continuous PB-2 sampler lever",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -16747,6 +18954,160 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_nuclear_unit_availability",
+      "display_name": "Ercot Nuclear Unit Availability",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ERCOT unit-level (window-grain) nuclear refuel availability (default off, ERCOT backcast-gated). Replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month smear for the four ERCOT reactors with the measured per-reactor DAILY availability from the 60-Day DAM disclosure Gen_Resource NUC status (data/raw/ercot-nuclear-availability.csv, scripts/derive_ercot_nuclear_availability.py), monthly energy reconciled to the same EIA-923 anchor the smear used. The smear carries the right monthly ENERGY but mis-times refuel windows within the month by up to ±1.4 GW (2024 type case: STP-2 out 3/23–5/19 spans the Apr-16/Apr-28/ May-8 scarcity events, Comanche Peak 1 out 5/11–5/16 overlaps the May DA-shoulder days, and all four units were BACK for the May-24..27 record heat the smear kept derated — docs/DIAGNOSIS-ercot-may2024-outage- forensics-2026-07.md §2.1). A refuel window is a physical availability event (rule-14 admissible, the nuclear analogue of the CAMPD fossil outage windows; forward years regenerate via NUCLEAR_MONTHLY_CF / refuel-block scheduling). Dates the disclosure does not cover (Oct 2023 hole, Nov-Dec 2025 until the 2026 publications land) keep the monthly smear. See data.outages.ercot_nuclear_unit_availability_series and the application in data.fleet.generators_to_fleet_arrays.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_binned_path",
+      "display_name": "Ercot Offer Surface Binned Path",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Path to the measured condition-binned ladder JSON (default: the frozen data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None → the mechanism is a no-op even when the flag is on.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_conditional",
+      "display_name": "Ercot Offer Surface Conditional",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "ERCOT G-22 §8 / ercot37-filed HETEROGENEITY-PRESERVING condition-responsive offer surface (default off, ERCOT-gated). The successor to the rejected flat ``ercot_ct_offer_surface`` (which collapsed the fleet's offer heterogeneity by posting one p50 level on every CT econ/peak row → overshoot, calibration-log 2026-07-06) and the rejected static ``peak_ladder`` wall (which perturbed the P0→P1 startup-amortization coupling in ALL hours → CT↔ST volume swap, docs/FINDING-ercot-priceshape-2026-07.md §6). This mechanism posts the MEASURED peak-band offer DISTRIBUTION (the 60-Day DAM disclosure top-of-curve quantile ladder, per class) but CONDITION-BINNED by net-load percentile, applied to the gas peak-band rungs (CC/CT/ST) in the P1 clearing solve ONLY and ONLY in the anticipated-tight hours — so (a) P0 run lengths (and the CT↔ST coupling) are byte-identical to the keeper, (b) loose hours are byte-identical (the wall is clamped never to lower an offer below the keeper's resolved peak height), and (c) within a tight hour the lower rungs stay competitive while only the upper rungs reach the cap band — the heterogeneity the flat surface destroyed. Both the trigger (net-load percentile, forward-native from a load+VRE forecast) and the level (measured QSE offer quantiles) are rule-13-admissible; parameters are derived from source data only (rule 21) and frozen against residuals (rule 20). The measured surface SUPERSEDES the static p50 peak on these classes where it applies (rule 19: one mechanism per phenomenon — it does not stack on top). See scripts/derive_dam_offer_hrmults.py --condition-binned and data.fleet.apply_ercot_offer_surface_conditional.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_min_bin",
+      "display_name": "Ercot Offer Surface Min Bin",
+      "value": 0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Minimum net-load bin index (0 = loosest) at which the peak-rung wall engages. Below it the surface is inert (byte-identical), protecting mild hours from any residual peak-band repricing. 0 applies the full measured distribution in every bin (the merit order still self-gates: mild hours reach only the lower rungs).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_netload_pcts",
+      "display_name": "Ercot Offer Surface Netload Pcts",
+      "value": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Net-load percentile bin EDGES separating the loose / mid / tight regimes the measured ladder is derived and applied over. The n edges define n+1 bins on the year's own net-load distribution (percentile-ranked, so a forecast year's bins regenerate); bin 0 is the loosest. MUST match the edges the derive used (the JSON records them and the mechanism asserts agreement). Default: three edges → four bins, resolving the top decile where the wall lives.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_price_cap_frac",
+      "display_name": "Ercot Offer Surface Price Cap Frac",
+      "value": 0.95,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Safety cap on the repriced peak offer as a fraction of VOLL, so a measured wall rung can never tie or exceed the value of lost load (which would let the LP shed load instead of clearing the peak band). 0.95 × 5000 = $4750, above the measured p90 wall (~$2,700) and below VOLL.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_online_capacity_envelope",
+      "display_name": "Ercot Online Capacity Envelope",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "ERCOT: cap the multi-product",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_online_capacity_envelope_extreme",
+      "display_name": "Ercot Online Capacity Envelope Extreme",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "ERCOT: the",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_ordc_total_reserve",
       "display_name": "Ercot Ordc Total Reserve",
       "value": false,
@@ -17009,6 +19370,62 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_wtx_curtail_depth_solar",
+      "display_name": "Ercot Wtx Curtail Depth Solar",
+      "value": 0.1637,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_wtx_curtail_depth_wind",
+      "display_name": "Ercot Wtx Curtail Depth Wind",
+      "value": 0.1004,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_wtx_curtailment_driver",
+      "display_name": "Ercot Wtx Curtailment Driver",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "ERCOT West Texas Export corridor VRE curtailment-share driver (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology- scope-2026-07.md, WP-B). When True in backcast mode for ERCOT, the West and Panhandle zones' wind (and solar) CF upper bound is multiplied by 1 - depth * congestion_share(net_load_decile, hour_of_day, season), the reduced-form stand-in for the sub-zonal Permian/CREZ nodal congestion the 8-zone reduction cannot resolve -- dozens of internal 138/345 kV lines that chronically curtail West wind even when the aggregate West->North interface has headroom (the C2 / [3e] under-curtailment gap; step-2 handoff). congestion_share is the SHAPE: the measured NP6-86 SCED West-corridor binding frequency (data.curtailment_share reads the derived reference table data/raw/reference/ercot_wtx_curtailment_share.csv), geo-attributed via ERCOT's authoritative Settlement-Point/electrical-bus load-zone mapping (NP4-160) and reproducing the measured binding-frequency distribution leave-one-year-out (rule #23). It is a function of the model's OWN net-load, so it regenerates for a forecast year (more West VRE -> deeper net-load troughs -> higher congestion share). depth is the LEVEL: a single per-tech coefficient centred on the measured curtailment MW quantity like the RTOLCAP-forward ``deliv`` coefficient (never a price residual), a LOYO-stable structural constant (~0.10 wind across 2023-2025); depth=0.0 is the zero-forcing ablation (driver inert). Applied per year only when the derived reference table and the year's measured HSL potential both exist. Off by default. See scripts/derive_ercot_wtx_curtailment_share.py.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -17540,6 +19957,82 @@
       ]
     },
     {
+      "param_id": "scenario.gt_ambient_derate",
+      "display_name": "Gt Ambient Derate",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Gas-turbine AMBIENT-TEMPERATURE capacity derate (gt_ambient_derate, off by default). The EIA-860 net-summer rating (applied above/flat _SUMMER_CLASS_ DERATE) is a season-average summer capability; a gas turbine keeps losing output as ambient rises ABOVE that rating point, so the hottest design-peak afternoon — exactly the hours scarcity should occur — is materially below the net-summer rating. This layers an INCREMENTAL, purely-additive derate on CC_REGULAR/CT_PEAKER (and their CHP variants) for hours whose measured zone tmax exceeds ``gt_ambient_derate_ref_c``: extra(t) = slope_class x max(0, tmax_zone(t) - ref_c);  avail *= 1-extra ``ref_c`` is the net-summer capability-test reference (~35 C / 95 F, the standard summer GT rating point — so the increment does NOT double-count the net-summer derate, it only deepens it on hotter-than-rating hours). The per-C slopes are physical GT ambient-derate rates (combined-cycle less sensitive than simple-cycle, the steam bottoming cycle partially compensating): CC ~0.4 %/C, CT ~0.6 %/C (NREL/GE frame-GT performance curves, docs/parameter-citations.md). Both the physical slope and the measured hourly temperature regenerate for a forward year and respond to changed conditions, so this is a rule-11-admissible physical input in BOTH backcast and forecast — not a residual-fitted haircut. Only reduces capacity, only on hot hours; can never loosen the fleet.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.gt_ambient_derate_ref_c",
+      "display_name": "Gt Ambient Derate Ref C",
+      "value": 35.0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "net-summer rating reference temp (C)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.gt_ambient_derate_slope_cc",
+      "display_name": "Gt Ambient Derate Slope Cc",
+      "value": 0.004,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CC fractional loss per C above ref",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.gt_ambient_derate_slope_ct",
+      "display_name": "Gt Ambient Derate Slope Ct",
+      "value": 0.006,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CT fractional loss per C above ref",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.h2_available_year",
       "display_name": "H2 Available Year",
       "value": 2035,
@@ -17621,6 +20114,25 @@
       "domain": "Reliability",
       "tier": 2,
       "source": "Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC tranches when a plant's CEMS facility sum drops out. For ERCOT this is the primary outage layer and the unit-level derate only SUPPLEMENTS it (catching single-unit outages the facility sum hides). For an ISO whose unit-level outage file is derived fresh from ALL CAMPD unit data (e.g. PJM via derive_campd_unit_outages.py), the unit-level layer is the COMPLETE outage source and this facility overlay is redundant — stacking both double-counts and over-derates. Set False for those ISOs so the unit-level derate alone applies.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.hydro_dispatch_envelope",
+      "display_name": "Hydro Dispatch Envelope",
+      "value": false,
+      "unit": "",
+      "domain": "Hydro",
+      "tier": 2,
+      "source": "GATED default off (caiso-72",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -17816,6 +20328,25 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.limited_foresight_dispatch",
+      "display_name": "Limited Foresight Dispatch",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "GATED, default-OFF (G-30 in-year",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -18141,6 +20672,25 @@
       ]
     },
     {
+      "param_id": "scenario.miso_seam_measured_ladder",
+      "display_name": "Miso Seam Measured Ladder",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "MISO reference-price seams: price",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.miso_zonal_gas_basis",
       "display_name": "Miso Zonal Gas Basis",
       "value": false,
@@ -18274,6 +20824,25 @@
       ]
     },
     {
+      "param_id": "scenario.neiso_dynamic_reserve_requirements",
+      "display_name": "Neiso Dynamic Reserve Requirements",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "GATED, default-OFF",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.neiso_gas_coldsnap_derate",
       "display_name": "Neiso Gas Coldsnap Derate",
       "value": false,
@@ -18338,6 +20907,105 @@
       "domain": "Fuel Prices",
       "tier": 1,
       "source": "Cold-limb zero-crossing (~20 degF): above",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.neiso_offer_surface_binned_path",
+      "display_name": "Neiso Offer Surface Binned Path",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Path to the measured NEISO condition-binned ladder JSON (default: the frozen data/raw/_validation-source/neiso_offer_surface_condbinned.json). None → the mechanism is a no-op even when the flag is on.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.neiso_offer_surface_conditional",
+      "display_name": "Neiso Offer Surface Conditional",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "NEISO condition-responsive fast-start offer surface — the ISO-NE analogue of ercot_offer_surface_conditional above (winter scarcity charter Limb B; the G-22 §8 heterogeneity-preserving design, default off, NEISO-gated). Posts the MEASURED fast-start offer DISTRIBUTION from ISO-NE's public DA Energy Market historical offer data (masked assets; the fast-start population selected by physics, Claim30 >= 0.9 x EcoMax), condition-binned by within-year net-load percentile, onto the CT_PEAKER peak-band rungs in the P1 clearing solve ONLY and ONLY in anticipated-tight hours — P0 run lengths and loose hours stay byte-identical (the ladder is clamped never to lower an offer below the resolved peak height); within a tight hour the lower rungs stay competitive while the upper rungs reach the measured wall. Trigger (net-load percentile, forward-native) and level (measured offer quantiles over the model's own Algonquin daily gas series) are rule-13 admissible; parameters are derived from source data only (scripts/derive_neiso_offer_surface.py, rule 21) and frozen against residuals (rule 20). NEISO-only (rule 25: the surface carries no generic fallback and never crosses ISO boundaries).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.neiso_offer_surface_min_bin",
+      "display_name": "Neiso Offer Surface Min Bin",
+      "value": 0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Minimum net-load bin index at which the wall engages (0 = every bin; the merit order still self-gates in mild hours).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.neiso_offer_surface_netload_pcts",
+      "display_name": "Neiso Offer Surface Netload Pcts",
+      "value": [
+        0.8,
+        0.9,
+        0.97
+      ],
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Net-load percentile bin EDGES (same contract as the ERCOT field above; the JSON records its edges and the mechanism asserts agreement).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.neiso_offer_surface_price_cap_frac",
+      "display_name": "Neiso Offer Surface Price Cap Frac",
+      "value": 0.95,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Safety cap on the repriced offer as a fraction of VOLL (the measured offers already carry ISO-NE's $1,000/MWh energy offer cap; this guard only keeps a repriced rung strictly below the load-shed slack).",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -18728,6 +21396,25 @@
       ]
     },
     {
+      "param_id": "scenario.nyiso_nyc_lcr_tsl",
+      "display_name": "Nyiso Nyc Lcr Tsl",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "NYISO New York City (Zone J) LCR/TSL",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.nyiso_spin_headroom_frac",
       "display_name": "Nyiso Spin Headroom Frac",
       "value": 1.0,
@@ -19014,6 +21701,43 @@
       ]
     },
     {
+      "param_id": "scenario.pjm_measured_interface_limits",
+      "display_name": "Pjm Measured Interface Limits",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Measured PJM internal interface transfer limits (backcast/calibration overlay — the PJM analogue of ercot_gtc_limits_measured). When True in backcast mode for PJM, the forward (west->east congestion) direction of the internal links whose static ttc_mw was seeded from the PJM Data Miner 2 transfer-limit postings (constants.PJM_INTERFACE_LINK_MAP: 50045005 -> ComEd->AEP, AEP/DOM -> AEP->Dominion, AP-South -> West_APS->SWMAAC, Bedington-BlackOak -> West_APS->Central_PA, and the Average Western/Central/Eastern envelopes on the links they seeded) follows the measured HOURLY published limit series (transfer-interface-limits clean datatype) instead of the single static ttc_mw. Where an interface publishes both pre- and post-contingency limits, the operative hourly cap is their elementwise min (both are simultaneously-enforced security limits). The reverse direction keeps the static capability (the published limits are directional security limits on the west->east cut, not reverse ratings). Supersedes constants.PJM_MEASURED_INTERNAL_TTC's static medians on the mapped links when both are enabled — same measured feed at hourly rather than pooled-median aggregation (rule 19: one mechanism per phenomenon), while pjm_congestion still sets the static fill/reverse value those links carry. Rule #13/#14 admissibility: an interface transfer limit is PJM's published operating-security transfer capability — it regenerates every year from the same Data Miner 2 feed and responds to changed grid conditions (outages, re-ratings, upgrades); nothing here reads model outputs or the scoring targets. Two-track by construction (the hr_by_year pattern): backcast years read the measured hourly series; FORECAST years keep the static seeds — the static ttc_mw values (2024 means of this same feed) ARE the forward story, since a forecast has no realized outage/re-rating sequence to read. Off by default.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_reserve_commitment_scoped",
+      "display_name": "Pjm Reserve Commitment Scoped",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "PJM path B (G-20b): scope the",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.pjm_reserve_online_gated",
       "display_name": "Pjm Reserve Online Gated",
       "value": false,
@@ -19059,6 +21783,44 @@
       "domain": "Reliability",
       "tier": 1,
       "source": "PJM: PER-GENERATOR reserve co-optimization",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_reserve_pergen_size_split",
+      "display_name": "Pjm Reserve Pergen Size Split",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "PJM: SIZE-SPLIT the pergen",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_reserve_pergen_sync",
+      "display_name": "Pjm Reserve Pergen Sync",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "PJM: per-gen OPPORTUNITY-COST reserve",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -19147,6 +21909,25 @@
       ]
     },
     {
+      "param_id": "scenario.pjm_seam_measured_ladder",
+      "display_name": "Pjm Seam Measured Ladder",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "PJM reference-price seams: price",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.pjm_zonal_gas_basis",
       "display_name": "Pjm Zonal Gas Basis",
       "value": false,
@@ -19206,7 +21987,7 @@
     {
       "param_id": "scenario.plant_emission_rates_path",
       "display_name": "Plant Emission Rates Path",
-      "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
+      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -19225,7 +22006,7 @@
     {
       "param_id": "scenario.plant_emission_rates_v2_path",
       "display_name": "Plant Emission Rates V2 Path",
-      "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
+      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -19263,7 +22044,7 @@
     {
       "param_id": "scenario.plant_registry_path",
       "display_name": "Plant Registry Path",
-      "value": "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv",
+      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/reference/master-plant-registry.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -19472,7 +22253,7 @@
     {
       "param_id": "scenario.reserve_margin_build_enabled",
       "display_name": "Reserve Margin Build Enabled",
-      "value": false,
+      "value": null,
       "unit": "",
       "domain": "Reliability",
       "tier": 1,
@@ -19887,6 +22668,44 @@
       ]
     },
     {
+      "param_id": "scenario.staged_oversupply_thinning",
+      "display_name": "Staged Oversupply Thinning",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "GATED, default-OFF (G-30",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.staged_thinning_max_gw_per_year",
+      "display_name": "Staged Thinning Max Gw Per Year",
+      "value": 3.0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "GW/yr/fuel-class exit budget",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.start_year",
       "display_name": "Start Year",
       "value": null,
@@ -20043,6 +22862,139 @@
       "domain": "Structural",
       "tier": 1,
       "source": "Continuous counterpart of",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_dependent_derate",
+      "display_name": "Temp Dependent Derate",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "TEMPERATURE-DEPENDENT capacity derate (temp_dependent_derate, off by default) -- a physically-derived ALTERNATIVE to the flat EIA-860 net-summer / _SUMMER_CLASS_DERATE treatment, not an increment on top of it (contrast gt_ambient_derate above). When on it REPLACES the flat summer derate (and the per-plant measured CC ratio) with a per-class curve in measured hourly zone dry-bulb temperature and supersedes gt_ambient_derate for the affected classes. Two physical mechanisms: * gas turbines (CC/CT) -- air-density / mass-flow limited: usable output falls ~linearly as ambient dry-bulb rises above the 15 C (59 F) ISO rating point. CT (simple cycle) is steepest; CC is shallower because the steam bottoming cycle recovers part of the lost GT exhaust heat. * steam plants (ST_GAS / COAL) -- condenser back-pressure limited: a smaller loss with a warmer onset; dry-bulb TMAX is a proxy for the true wet-bulb / cooling-water driver (documented approximation). Curve:  raw(t) = 1 - slope_class * max(0, tmax_zone(t) - ref_class). For classes that already carry a net-summer derate (CC/CT, or the per-plant measured CC ratio under cc_nameplate_summer_derate) the curve is rescaled so its SUMMER-hours (Jun-Sep) mean reproduces that same net-summer capability: capacity-NEUTRAL on the seasonal average, only RESHAPING it by temperature so heatwave hours sit below net-summer (where scarcity should occur) and cooler hours toward full rating -- it does NOT tune the level (rules 1, 9). COAL / ST_GAS carry no existing summer derate, so they take the raw curve directly: a pure, additive hot-hour condenser derate. Availability is never driven above 1.0, so capacity never exceeds the net-summer pmax basis. Physics slope x measured hourly temperature -> forward-reproducible in BOTH backcast and forecast (rule 11); never fitted to a price/volume residual. Slopes are fractional loss per degree C. Sources (docs/parameter-citations): CT 0.0126/C  = 0.70 %/F, mid of the 0.5-0.9 %/F industry frame-GT range (arXiv:2311.07001 uses 0.0083/C; CPUC R.21-10-002 ~1 %/C). CC 0.0076/C  = 0.42 %/F net, from ~22.6 % net loss over 41->95 F (arXiv:2311.07001 net-CC ~0.75 %/C). ST_GAS 0.0054/C = 0.30 %/F (CPUC R.21-10-002: steam slope > GT slope, but plant-level condenser derate is modest). COAL 0.0040/C = 0.22 %/F, onset 25 C / 77 F (arXiv:2311.07001 reports a modest steam-coal summer deration, condenser-onset limited).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_derate_ref_c",
+      "display_name": "Temp Derate Ref C",
+      "value": 15.0,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "ISO 59 F rating point (GT + gas-steam)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_derate_ref_c_coal",
+      "display_name": "Temp Derate Ref C Coal",
+      "value": 25.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "coal condenser-derate onset (~77 F)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_derate_slope_cc",
+      "display_name": "Temp Derate Slope Cc",
+      "value": 0.0076,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CC fractional loss per C above ref",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_derate_slope_coal",
+      "display_name": "Temp Derate Slope Coal",
+      "value": 0.004,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "coal fractional loss per C above ref",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_derate_slope_ct",
+      "display_name": "Temp Derate Slope Ct",
+      "value": 0.0126,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CT fractional loss per C above ref",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.temp_derate_slope_st_gas",
+      "display_name": "Temp Derate Slope St Gas",
+      "value": 0.0054,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "gas-steam fractional loss per C",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -20301,6 +23253,60 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "state_rps_acp.CAISO",
+      "display_name": "State Rps Acp / Caiso",
+      "value": 50.0,
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  Every real RPS/CES carries an ACP (or an equivalent non-compliance penalty): a load-serving entity short of physical RECs pays the ACP rate per deficient MWh instead of the standard physically failing. The ACP is therefore the price ceiling of the REC market — the marginal cost of the last unit of compliance — so the model enters it as the cost of an RPS ACP escape column (dispatch.build_cost_vector), which both keeps the annual RPS row feasible when in-region wind+solar cannot reach the target and caps the row's dual (the REC shadow price) at this ceiling. Rule 13 admissible: a published policy parameter that regenerates for any forecast year and responds to conditions (as the fleet builds VRE the escape goes unused and the dual falls below it). Tier 3 (calibration) — verify against each state's current ACP schedule. Sources: CAISO — CA RPS non-compliance penalty $50/MWh (Pub. Util. Code §399.15; CPUC RPS enforcement), the effective ACP ceiling for SB 100 compliance. NYISO — NY Clean Energy Standard Tier 1 ACP (NYSERDA/PSC Case 15-E-0302); ~$40/MWh order of magnitude for recent compliance years. NEISO — MA Class I RPS ACP ($67.62/MWh, 2024, 225 CMR 14.08) blended with CT Class I ($55/MWh, Conn. Gen. Stat. §16-245a) across the six-state region; ~$65/MWh regional Class I ACP. ISOs without a STATE_RPS_FLOORS entry (ERCOT, PJM) need no ACP — their RPS row is never built, so the escape column is absent and the LP is byte-identical.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "state_rps_acp.NEISO",
+      "display_name": "State Rps Acp / Neiso",
+      "value": 65.0,
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  Every real RPS/CES carries an ACP (or an equivalent non-compliance penalty): a load-serving entity short of physical RECs pays the ACP rate per deficient MWh instead of the standard physically failing. The ACP is therefore the price ceiling of the REC market — the marginal cost of the last unit of compliance — so the model enters it as the cost of an RPS ACP escape column (dispatch.build_cost_vector), which both keeps the annual RPS row feasible when in-region wind+solar cannot reach the target and caps the row's dual (the REC shadow price) at this ceiling. Rule 13 admissible: a published policy parameter that regenerates for any forecast year and responds to conditions (as the fleet builds VRE the escape goes unused and the dual falls below it). Tier 3 (calibration) — verify against each state's current ACP schedule. Sources: CAISO — CA RPS non-compliance penalty $50/MWh (Pub. Util. Code §399.15; CPUC RPS enforcement), the effective ACP ceiling for SB 100 compliance. NYISO — NY Clean Energy Standard Tier 1 ACP (NYSERDA/PSC Case 15-E-0302); ~$40/MWh order of magnitude for recent compliance years. NEISO — MA Class I RPS ACP ($67.62/MWh, 2024, 225 CMR 14.08) blended with CT Class I ($55/MWh, Conn. Gen. Stat. §16-245a) across the six-state region; ~$65/MWh regional Class I ACP. ISOs without a STATE_RPS_FLOORS entry (ERCOT, PJM) need no ACP — their RPS row is never built, so the escape column is absent and the LP is byte-identical.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "state_rps_acp.NYISO",
+      "display_name": "State Rps Acp / Nyiso",
+      "value": 40.0,
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  Every real RPS/CES carries an ACP (or an equivalent non-compliance penalty): a load-serving entity short of physical RECs pays the ACP rate per deficient MWh instead of the standard physically failing. The ACP is therefore the price ceiling of the REC market — the marginal cost of the last unit of compliance — so the model enters it as the cost of an RPS ACP escape column (dispatch.build_cost_vector), which both keeps the annual RPS row feasible when in-region wind+solar cannot reach the target and caps the row's dual (the REC shadow price) at this ceiling. Rule 13 admissible: a published policy parameter that regenerates for any forecast year and responds to conditions (as the fleet builds VRE the escape goes unused and the dual falls below it). Tier 3 (calibration) — verify against each state's current ACP schedule. Sources: CAISO — CA RPS non-compliance penalty $50/MWh (Pub. Util. Code §399.15; CPUC RPS enforcement), the effective ACP ceiling for SB 100 compliance. NYISO — NY Clean Energy Standard Tier 1 ACP (NYSERDA/PSC Case 15-E-0302); ~$40/MWh order of magnitude for recent compliance years. NEISO — MA Class I RPS ACP ($67.62/MWh, 2024, 225 CMR 14.08) blended with CT Class I ($55/MWh, Conn. Gen. Stat. §16-245a) across the six-state region; ~$65/MWh regional Class I ACP. ISOs without a STATE_RPS_FLOORS entry (ERCOT, PJM) need no ACP — their RPS row is never built, so the escape column is absent and the LP is byte-identical.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
