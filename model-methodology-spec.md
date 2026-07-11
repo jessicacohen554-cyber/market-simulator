@@ -96,6 +96,17 @@ SOC[s,t] = SOC[s,t-1] + η_chg[s] × Chg[s,t] - Dis[s,t] / η_dis[s]
 SOC[s,0] = SOC[s,8759]          # cyclic boundary
 ```
 
+The SOC lower bound is optionally raised per unit-hour by a measured
+ancillary-service sustain floor (`build_variable_bounds(storage_soc_min=…)`,
+`dispatch.py`): under `caiso_storage_as_reservation` (GATED, default off,
+backcast) CAISO battery SOC is floored at the tariff 30-minute sustain of the
+measured spin/non-spin award and the battery power cap is derated by the
+measured upward award (`model/storage.py::reserve_caiso_storage_as_power`,
+the ERCOT `storage_as_commitment` pattern). The caiso-74 probe measured this
+reservation **ex-ante inert** on CAISO's zone-aggregate fleet (the LP
+discharges 3.7–6 GW below the nameplate cap), so it is not part of any keeper
+recipe — see `results/calibration/FINDING-caiso74-storage-as-reservation-2026-07-11.md`.
+
 No hard cycling-limit constraint, but cycling is no longer free: beyond the ε tiebreaker, each storage unit's discharge slot can carry a per-unit dispatch cost (`StorageUnit.vom` → `build_cost_vector(storage_discharge_cost=...)`, `model/dispatch.py`). Two reduced-form throughput costs use it, both standing in for real economics the energy-only LP otherwise ignores (cycling degradation plus ancillary-service/reserve opportunity cost): pumped storage *can* carry a per-ISO calibrated adder (`resolve_pumped_storage_dispatch_adder`, `constants.PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`), though that registry is currently **empty** (`{}`) so every ISO resolves to 0.0 — the former PJM $10/MWh adder was retired per non-negotiable rule #12 (it had been fitted to a *mis-measured* residual; the in-code comment at `constants.py` documents the round-trip-loss vs. gross-discharge measurement error in full), and grid batteries carry `ScenarioConfig.battery_dispatch_adder` (Tier 3, default 0; the ERCOT backcast keeper sets $10/MWh, landing 2025 battery discharge within −1.5% of the EIA-930 measured 5.44 TWh where the un-priced LP over-cycled +48% — see `docs/calibration-log.md`, ERCOT E2 entry). The original "flag for future sensitivity if unrealistic cycling appears" fired and was resolved by these adders. Both solve paths (forecast `runner.py` and backcast `scripts/run_calibration.py`) pass `storage_discharge_cost=storage.vom`, so the throughput adders are active in all dispatch modes.
 
 **Perfect-foresight limitation (known, accepted for now).** The full horizon is solved as one LP, so storage sees the entire year's prices at once and charges/discharges at the globally optimal hours its energy cap permits. A real operator has only ~day-ahead foresight and an imperfect price forecast, so the model is an *upper bound* on realized arbitrage and tends to over-flatten net load — which, in a backcast, can be absorbed into the thermal offer-curve parameters being calibrated against CAMPD. The `SOC ≤ energy_cap` bound keeps this small for the short-duration (≈4 h) li-ion fleet that dominates the 2023 backcast — such a battery physically cannot shift energy across days or seasons, so its only foresight advantage is picking the best in-day hours. The error grows with long-duration storage (12 h+, flow, CAES, iron-air).
