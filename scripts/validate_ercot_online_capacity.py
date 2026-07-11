@@ -94,7 +94,9 @@ ONLINE_CAP_CLASSES = (
 )
 
 
-def _envelope_headroom(year: int, extreme: bool = False) -> tuple[np.ndarray, int]:
+def _envelope_headroom(
+    year: int, extreme: bool = False, measured: bool = False
+) -> tuple[np.ndarray, int]:
     """Return (headroom_remainder MW, hours, net_load) for ``year``.
 
     Builds the production envelope from the model's own drivers, subtracts the
@@ -102,15 +104,20 @@ def _envelope_headroom(year: int, extreme: bool = False) -> tuple[np.ndarray, in
     non-thermal credits back, so the remainder is the modeled on-line reserve
     capability the envelope reproduces — compared below to measured RTOLCAP.
     ``extreme`` selects the extreme-peak-resolved variant (whose target also
-    netted the LR credit, added back in :func:`main` for the comparison).
+    netted the LR credit, added back in :func:`main` for the comparison);
+    ``measured`` the measured-fleet-basis variant (ercot57 joint round), whose
+    fleet is built with the measured class-day availability rescale — the same
+    joint basis the production LP runs it on.
     """
     cfg = ScenarioConfig(
         iso="ERCOT",
         weather_year=year,
         mode="backcast",
         ercot_multiproduct_as_coopt=True,
-        ercot_online_capacity_envelope=not extreme,
+        ercot_online_capacity_envelope=not (extreme or measured),
         ercot_online_capacity_envelope_extreme=extreme,
+        ercot_online_capacity_envelope_measured=measured,
+        ercot_thermal_dam_availability=measured,
     )
     iso = get_iso_config("ERCOT")
     gens = load_fleet_from_csv("ERCOT", iso, year=year)
@@ -146,14 +153,27 @@ def _envelope_headroom(year: int, extreme: bool = False) -> tuple[np.ndarray, in
     # variants; the LR RRS-UFR credit additionally for the extreme variant —
     # the keeper LP credits both against the requirement, so the thermal
     # envelope's target excludes them and the RTOLCAP comparison adds them back).
-    _onl, _off, _ccap, _oncap, online_gross = _class_hourly(year)
+    # Export-basis CHP gross under --measured (matches the derivation's basis;
+    # the base/extreme variants keep the frozen full-basis construction).
+    _onl, _off, _ccap, _oncap, online_gross = _class_hourly(
+        year, chp_export_basis=measured
+    )
     gross = np.zeros(hours)
     for grp in ONLINE_CAP_CLASSES:
         gross += online_gross.get(grp, np.zeros(hours))
     storage = ercot_storage_as_reserve_mw(year, hours)
     headroom = all_row - gross + storage
-    if extreme:
+    if extreme or measured:
         headroom = headroom + ercot_load_resource_reserve_mw(year, hours)
+    if measured:
+        # Restrict to disclosure-covered hours — the measured-basis share and
+        # deliv profile are identified there only (the Oct-2023 hole and
+        # Nov-Dec 2025 run the statistical basis and are not scored).
+        from market_sim.data.outages import ercot_thermal_dam_availability_series
+
+        mavail = ercot_thermal_dam_availability_series(year, hours)
+        for arr in mavail.values():
+            headroom = np.where(np.isfinite(arr), headroom, np.nan)
     return headroom, hours, nl
 
 
@@ -166,25 +186,44 @@ def main() -> int:
         "(ercot_online_capacity_envelope_extreme): adds the top-2% "
         "extreme-tail reproduction gate on the pooled mean",
     )
+    ap.add_argument(
+        "--measured",
+        action="store_true",
+        help="validate the measured-fleet-basis variant "
+        "(ercot_online_capacity_envelope_measured, the ercot57 joint round): "
+        "same gates as --extreme, on the disclosure-covered hours, with the "
+        "fleet built under the measured class-day availability rescale",
+    )
     args = ap.parse_args()
-    variant = "EXTREME-PEAK-RESOLVED" if args.extreme else "base"
+    if args.extreme and args.measured:
+        ap.error("--extreme and --measured are mutually exclusive variants")
+    variant = (
+        "MEASURED-FLEET-BASIS"
+        if args.measured
+        else ("EXTREME-PEAK-RESOLVED" if args.extreme else "base")
+    )
+    # The measured variant scores the same extreme-tail gate as --extreme.
+    tail_gate = args.extreme or args.measured
     print(f"On-line-capacity envelope identification gate — {variant} variant")
     print(
         f"{'year':>5} {'hdrm GW':>8} {'meas GW':>8} {'err%':>7} {'corr':>5}  "
         f"{'hdrm p10/50/90':>20}  {'meas p10/50/90':>20}  {'BIND h/m/err':>16}"
-        + ("  {:>18}".format("EXTREME h/m/err") if args.extreme else "")
+        + ("  {:>18}".format("EXTREME h/m/err") if tail_gate else "")
     )
-    print("-" * (100 + (20 if args.extreme else 0)))
+    print("-" * (100 + (20 if tail_gate else 0)))
     bind_ok = True
     coverage_medians = []
     ext_h_pool: list[np.ndarray] = []
     ext_m_pool: list[np.ndarray] = []
     for year in YEARS:
-        headroom, hours, nl = _envelope_headroom(year, extreme=args.extreme)
+        headroom, hours, nl = _envelope_headroom(
+            year, extreme=args.extreme, measured=args.measured
+        )
         meas = pd.read_parquet(
             REPO / f"data/raw/ercot/ercot_{year}_ordc_reserves_hourly.parquet"
         )["rtolcap"].to_numpy(dtype=float)[:hours]
-        ok = ~np.isnan(meas)
+        # NaN headroom = disclosure-uncovered hours under --measured (not scored).
+        ok = ~np.isnan(meas) & ~np.isnan(headroom)
         hm = headroom[ok].mean() / 1000.0
         mm = meas[ok].mean() / 1000.0
         err = 100.0 * (hm / mm - 1.0) if mm else float("nan")
@@ -203,7 +242,7 @@ def main() -> int:
         bmm = meas[bind].mean() / 1000.0
         berr = 100.0 * (bh / bmm - 1.0) if bmm else float("nan")
         ext_str = ""
-        if args.extreme:
+        if tail_gate:
             # EXTREME TAIL (top-2% net-load) — the regime whose room collapse
             # rejected ercot41. Per-year residuals are the recorded ledger; the
             # GATE is on the pooled mean below (the profile's identification).
@@ -270,7 +309,7 @@ def main() -> int:
             "the binding-regime deliv (or the on-line-capacity share) first."
         )
         return 1
-    if args.extreme:
+    if tail_gate:
         # Pooled extreme-tail gate: the top-2% headroom over ALL source years
         # must reproduce the pooled measured RTOLCAP there (±10%). This is the
         # gate ercot41's base construction fails (its pooled top-2% headroom
@@ -296,7 +335,7 @@ def main() -> int:
     print(
         f"GATE PASSED ({variant}): the on-line-capacity envelope reproduces "
         "the measured RTOLCAP in the BINDING regime (±10%)"
-        + (" AND the pooled EXTREME tail (±10%)" if args.extreme else "")
+        + (" AND the pooled EXTREME tail (±10%)" if tail_gate else "")
         + " at a sane ~2× coverage — not the exact-coverage artifact, and not "
         "the tail-collapse over-fire."
     )
