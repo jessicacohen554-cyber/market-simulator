@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-11-caiso-75-demand-clock-ablation",
+  "label": "caiso 75 demand clock ablation",
+  "date": "2026-07-11",
+  "shorthand": "caiso-75-demand-clock-ablation",
+  "definition": "caiso-75 measured 2023 demand-clock realignment ablation -- caiso-73 recipe + caiso_demand_clock_realign=True single delta, 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-11-caiso-75-demand-clock-ablation.js",
+  "bundle": "results/calibration/caiso75_demand_clock-ablation"
+}
