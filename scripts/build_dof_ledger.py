@@ -670,6 +670,53 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "no within-day run-length variation",
             )
         )
+    if sc.get("tranche_startup_conditional_runs"):
+        # Fast-start amortization v4 (condition-keyed horizon): the v3
+        # measured ceiling scales per hour by the class net-load-percentile
+        # band ratio — measured shape (CAMPD runs keyed by start-hour
+        # EIA-930 net-load percentile), forward-native trigger (within-year
+        # percentile of the run's own net-load series). Frozen rule-23
+        # derive; no tuned scalar.
+        out.append(
+            _entry(
+                f"campd_ct_run_bands_{iso}.csv (fast-start v4 band ratios)",
+                "data/raw/_processed-legacy/campd_ct_run_bands_"
+                f"{iso}.csv via fleet.campd_ct_run_band_ratios",
+                "measured-physical",
+                iso,
+                source="EPA CAMPD start-to-stop runs keyed by start-hour "
+                "within-year net-load percentile (EIA-930 D-WND-SUN), "
+                "class-pooled band medians / pooled median (shape), plant "
+                "median (level); frozen scripts/derive_campd_ct_run_lengths"
+                ".py --condition-bands",
+                root_cause="re-derive trigger is a CAMPD/EIA-930 source-data "
+                "change only (rule 23); band edges recorded in the artifact "
+                "and checked against the consumer",
+            )
+        )
+    if sc.get("miso_measured_reserve_requirements"):
+        # Measured hourly OR requirement basis: a measured AS power
+        # reservation (rule-13 admissible quantity, never a price) replacing
+        # the flat fleet-MSSC+400 and South within-zone-MSSC estimates
+        # (rule-14 mandatory swap). Forecast years keep the MSSC+regulating
+        # formula as the forward generator.
+        out.append(
+            _entry(
+                "miso_measured_reserve_requirements (hourly OR series)",
+                "data/raw/MISO-AS/asm_rt_cleared_mw_<year>.parquet via "
+                "data.miso_reserve_requirements",
+                "measured-physical",
+                iso,
+                source="MISO ASM real-time cleared-offers market report "
+                "(masked unit MW, reg+spin+supp summed; STR excluded), "
+                "fetch_miso_asm.py rollups; published curve shapes translate "
+                "with the hourly requirement (NYISO #1344 convention)",
+                root_cause="basis caveats documented in the module "
+                "docstring: RT cleared (no DA hourly series is published) "
+                "and cleared < requirement in rare true-shortage intervals; "
+                "refresh rides the fetch pipeline only (rule 23)",
+            )
+        )
     if (
         iso in ("NYISO", "CAISO")
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))
