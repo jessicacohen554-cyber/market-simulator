@@ -1,0 +1,23 @@
+program,year,quarter,auction_date,auction_number,clearing_price,price_unit,allowances_sold,allowances_offered,source_doc,source_page
+CARB,2023,1,,34,27.85,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://ww2.arb.ca.gov/news/california-and-quebec-release-summary-results-34th-joint-cap-and-trade-allowance-auction
+CARB,2023,2,,35,30.33,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://ww2.arb.ca.gov/news/california-and-quebec-release-summary-results-35th-joint-cap-and-trade-allowance-auction
+CARB,2023,3,,36,35.2,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://ww2.arb.ca.gov/news/california-and-quebec-release-summary-results-36th-joint-cap-and-trade-allowance-auction
+CARB,2023,4,,37,38.73,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://ww2.arb.ca.gov/news/california-and-quebec-release-summary-results-37th-joint-cap-and-trade-allowance-auction
+CARB,2024,1,,38,41.76,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://ww2.arb.ca.gov/news/california-and-quebec-release-summary-results-38th-joint-cap-and-trade-allowance-auction
+CARB,2024,2,,,37.02,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://blogs.edf.org/climate411/2024/05/30/californias-second-carbon-market-auction-of-the-year-raises-revenue-at-critical-time-for-climate-funds/
+CARB,2024,3,,40,30.24,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://ww2.arb.ca.gov/news/california-and-quebec-release-summary-results-40th-joint-cap-and-trade-allowance-auction
+CARB,2024,4,,,31.91,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://www.eia.gov/todayinenergy/detail.php?id=62644
+CARB,2025,1,,,29.27,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://www.eia.gov/todayinenergy/detail.php?id=62644
+CARB,2025,2,2025-05-29,43,25.87,usd_per_tonne,,,CARB press release / EIA Today in Energy (secondary reporting on CARB results),https://ww2.arb.ca.gov/news/california-and-quebec-release-summary-results-43rd-joint-cap-and-trade-allowance-auction
+RGGI,2023,1,2023-03-08,59,12.5,usd_per_short_ton,21522877,21522877,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2023,2,2023-06-07,60,12.73,usd_per_short_ton,22026639,22026639,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2023,3,2023-09-06,61,13.85,usd_per_short_ton,21948358,21948358,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2023,4,2023-12-06,62,14.88,usd_per_short_ton,27656000,27656000,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2024,1,2024-03-13,63,16.0,usd_per_short_ton,24272157,24272157,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2024,2,2024-06-05,64,21.03,usd_per_short_ton,16053188,16053188,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2024,3,2024-09-04,65,25.75,usd_per_short_ton,15943608,15943608,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2024,4,2024-12-04,66,20.05,usd_per_short_ton,15943608,15943608,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2025,1,2025-03-12,67,19.76,usd_per_short_ton,23527000,23527000,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2025,2,2025-06-04,68,19.63,usd_per_short_ton,15244479,15244479,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2025,3,2025-09-03,69,22.25,usd_per_short_ton,15177783,15177783,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
+RGGI,2025,4,2025-12-03,70,26.73,usd_per_short_ton,15230235,15230235,"RGGI, Inc. Allowance Prices and Volumes",https://www.rggi.org/auctions/auction-results/prices-volumes
