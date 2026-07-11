@@ -136,10 +136,13 @@ class TestGasMarginal(unittest.TestCase):
     def test_floor_widens_back_years(self):
         floored = GasMarginal(sigma_front=0.35, sigma_back=0.41, floor_to_aeo=True)
         raw = GasMarginal(sigma_front=0.35, sigma_back=0.41, floor_to_aeo=False)
-        # The AEO 2050 spread (~0.46) exceeds the 0.41 back anchor, so the floor
-        # lifts the reference sigma above the un-floored schedule.
+        # The AEO 2050 spread (~0.55, re-derived from the actual AEO2025 Table
+        # 13 data in P-1D -- HENRY_HUB_TRAJECTORIES's low/high 2050 spread
+        # widened from the prior hand-typed values) exceeds the 0.41 back
+        # anchor, so the floor lifts the reference sigma above the
+        # un-floored schedule.
         self.assertGreater(floored.sigma_reference(), raw.sigma_reference())
-        self.assertAlmostEqual(floored.sigma_reference(), 0.464, delta=0.01)
+        self.assertAlmostEqual(floored.sigma_reference(), 0.555, delta=0.01)
 
     def test_reference_is_horizon_max(self):
         gas = GasMarginal(sigma_front=0.35, sigma_back=0.41)
