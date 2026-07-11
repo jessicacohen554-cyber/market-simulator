@@ -1,0 +1,101 @@
+From 07a365074537795633193e9976393549611c9539 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 11 Jul 2026 03:28:10 +0000
+Subject: [PATCH] docs: sync-docs pass for the caiso-74/75 session
+
+Methodology spec gains the gated storage SOC sustain-floor note; the
+measured-data audit inventory gains the storage-AS-award reservation
+(inert) and demand-clock realignment rows; CHANGELOG entry appended.
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01QafzWFFCueKzpj6iCUjLP1
+---
+ CHANGELOG.md                                 | 26 ++++++++++++++++++++
+ docs/backcast-measured-data-audit-2026-06.md | 16 ++++++++++++
+ model-methodology-spec.md                    | 11 +++++++++
+ 3 files changed, 53 insertions(+)
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index a93bb82..21b79d2 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1,5 +1,31 @@
+ # Changelog
+ 
++## 2026-07-11 (CAISO: storage-AS-award intake, inert reservation probe, 2023 demand-clock fix)
++
++- **Data:** new `storage-as-awards` datatype (schema + per-ISO registry lib +
++  curation + tests + loader): CAISO Daily Energy Storage Report quarterly xlsx
++  (12 files, 2023–2025) — system-level battery/hybrid AS awards by product,
++  hourly DA (IFM) + RT (RTPD); DA battery means reproduce DMM-published anchors
++  to ~1 %. Raw fetched and committed by the `apply-caiso74-intake` runner.
++- **Model/config:** `ScenarioConfig.caiso_storage_as_reservation` (default off)
++  — measured battery upward-AS award reserved from the battery power cap +
++  SOC floored at the tariff 30-min sustain; new optional
++  `storage_soc_min` bound threaded through `build_variable_bounds` /
++  `DispatchModel` / `solve_dispatch` / `DispatchSpec`. The caiso-74 probe
++  measured the reservation ex-ante inert on the zone-aggregate CAISO fleet
++  (dispatch identical to caiso-73); flag ships default-off, not in any keeper.
++- **Model/config:** `ScenarioConfig.caiso_demand_clock_realign` (default off)
++  — rule-14 clock fix for the EIA-930 CISO `Demand` column, +1 h late for
++  local dates before 2023-11-01 (measured against the extract's own balance
++  identity; OASIS SLD corroborates); guard
++  `scripts/validate_caiso_demand_clock.py`. caiso-75 probe: 2023 C3a
++  +23.5→+22.7 %, tail 480→458 h, C5a-2023 CAVEAT→PASS; 2024/25 byte-identical.
++  Keeper stays caiso65 (C2 regression vs keeper blocks promotion).
++- **Docs realigned:** methodology spec (optional SOC sustain floor in the
++  storage bounds), `docs/backcast-measured-data-audit-2026-06.md` (two new
++  measured-input inventory rows), `docs/calibration-log.md` (dated entry),
++  FINDINGs for both probes, evening-CC commitment design handoff.
++
+ ## 2026-07-09 (replay fidelity: ST_GAS net-load drag hinge now round-trips through meta.json)
+ 
+ - **Fix:** `solve_and_persist` now persists `gas_st_drag_overrides` in the bundle
+diff --git a/docs/backcast-measured-data-audit-2026-06.md b/docs/backcast-measured-data-audit-2026-06.md
+index 3abddde..5b1b2ef 100644
+--- a/docs/backcast-measured-data-audit-2026-06.md
++++ b/docs/backcast-measured-data-audit-2026-06.md
+@@ -262,3 +262,19 @@ the `DATA NEEDED` note in `data/raw/iso-specific-transmission/README.md`.
+ The full pipeline is validated end-to-end on the live 7-day MIS window
+ (10 GTCs recovered, PNHNDL/WESTEX/NE_LOB limits consistent with the 2023-24
+ derived statics).
++## CAISO storage-AS awards + demand-clock realignment — two new measured inputs (2026-07-11)
++
++Two CAISO backcast inputs added by the caiso-74/75 probe session, both scored
++against the admissibility test:
++
++| input | flag | verdict |
++|---|---|---|
++| **Battery AS-award reservation** — the measured hourly CAISO battery (LESR) AS awards (`storage-as-awards` clean datatype from the CAISO Daily Energy Storage Report quarterly xlsx; DA means 1,010/1,484/1,652 MW 2023-25, ~1 % off the DMM-published anchors) reserved out of the battery power cap, with SOC floored at the tariff 30-min sustain of the spin/non-spin award (`CAISO_AS_SUSTAIN_DURATION_H`). | `caiso_storage_as_reservation` (default **off**) | **PASSES the test** (market-design commitment, regenerates forward via the endogenous co-opt path — the CAISO analogue of ERCOT's `storage_as_commitment` row above) but measured **ex-ante inert** on the zone-aggregate fleet (caiso-74: LP battery discharge peaks 3.7–6 GW below nameplate, the 0.7–2.8 GW derate never binds). Not in any keeper; kept available with the intake. |
++| **2023 demand-clock realignment** — the EIA-930 CISO `Demand` column rides +1 h late vs the extract's own astronomy-verified generation frame for local dates before 2023-11-01 (best-lag −1 at r 0.984–0.997 vs the extract's balance identity; OASIS SLD corroborates at 0.9953); the window is pulled forward 1 h onto the wall-true frame. | `caiso_demand_clock_realign` (default **off**; ON in the caiso-75 line) | **PASSES** — a rule-14 reconciled-real-data *clock* correction derived only from the source series' internal identity: annual energy conserved to +0.1 MW, no level rescale, no residual in the derivation. Frozen against residuals (rule 23), guarded by `scripts/validate_caiso_demand_clock.py` (fails loudly if EIA restates the series, so it cannot silently double-shift). Forward story by construction: 2024+ needs no correction. |
++
++Adjudication record: `results/calibration/FINDING-caiso75-demand-clock-2026-07-11.md`
++(the demand BASIS stays EIA-930 `Demand` — corroborated at 0.9994 by the OASIS
++SLD TAC actual; the "supply-implied load" alternative was REJECTED as a
++zero-daily-mean 930 supply-side artifact, so no outcome series entered the
++demand input). Inert-probe record:
++`results/calibration/FINDING-caiso74-storage-as-reservation-2026-07-11.md`.
+diff --git a/model-methodology-spec.md b/model-methodology-spec.md
+index ab47561..3f217b5 100644
+--- a/model-methodology-spec.md
++++ b/model-methodology-spec.md
+@@ -96,6 +96,17 @@ SOC[s,t] = SOC[s,t-1] + η_chg[s] × Chg[s,t] - Dis[s,t] / η_dis[s]
+ SOC[s,0] = SOC[s,8759]          # cyclic boundary
+ ```
+ 
++The SOC lower bound is optionally raised per unit-hour by a measured
++ancillary-service sustain floor (`build_variable_bounds(storage_soc_min=…)`,
++`dispatch.py`): under `caiso_storage_as_reservation` (GATED, default off,
++backcast) CAISO battery SOC is floored at the tariff 30-minute sustain of the
++measured spin/non-spin award and the battery power cap is derated by the
++measured upward award (`model/storage.py::reserve_caiso_storage_as_power`,
++the ERCOT `storage_as_commitment` pattern). The caiso-74 probe measured this
++reservation **ex-ante inert** on CAISO's zone-aggregate fleet (the LP
++discharges 3.7–6 GW below the nameplate cap), so it is not part of any keeper
++recipe — see `results/calibration/FINDING-caiso74-storage-as-reservation-2026-07-11.md`.
++
+ No hard cycling-limit constraint, but cycling is no longer free: beyond the ε tiebreaker, each storage unit's discharge slot can carry a per-unit dispatch cost (`StorageUnit.vom` → `build_cost_vector(storage_discharge_cost=...)`, `model/dispatch.py`). Two reduced-form throughput costs use it, both standing in for real economics the energy-only LP otherwise ignores (cycling degradation plus ancillary-service/reserve opportunity cost): pumped storage *can* carry a per-ISO calibrated adder (`resolve_pumped_storage_dispatch_adder`, `constants.PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`), though that registry is currently **empty** (`{}`) so every ISO resolves to 0.0 — the former PJM $10/MWh adder was retired per non-negotiable rule #12 (it had been fitted to a *mis-measured* residual; the in-code comment at `constants.py` documents the round-trip-loss vs. gross-discharge measurement error in full), and grid batteries carry `ScenarioConfig.battery_dispatch_adder` (Tier 3, default 0; the ERCOT backcast keeper sets $10/MWh, landing 2025 battery discharge within −1.5% of the EIA-930 measured 5.44 TWh where the un-priced LP over-cycled +48% — see `docs/calibration-log.md`, ERCOT E2 entry). The original "flag for future sensitivity if unrealistic cycling appears" fired and was resolved by these adders. Both solve paths (forecast `runner.py` and backcast `scripts/run_calibration.py`) pass `storage_discharge_cost=storage.vom`, so the throughput adders are active in all dispatch modes.
+ 
+ **Perfect-foresight limitation (known, accepted for now).** The full horizon is solved as one LP, so storage sees the entire year's prices at once and charges/discharges at the globally optimal hours its energy cap permits. A real operator has only ~day-ahead foresight and an imperfect price forecast, so the model is an *upper bound* on realized arbitrage and tends to over-flatten net load — which, in a backcast, can be absorbed into the thermal offer-curve parameters being calibrated against CAMPD. The `SOC ≤ energy_cap` bound keeps this small for the short-duration (≈4 h) li-ion fleet that dominates the 2023 backcast — such a battery physically cannot shift energy across days or seasons, so its only foresight advantage is picking the best in-day hours. The error grows with long-duration storage (12 h+, flow, CAES, iron-air).
+-- 
+2.43.0
