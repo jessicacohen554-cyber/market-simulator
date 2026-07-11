@@ -360,6 +360,10 @@ results/hindcast/*/*/*/year_*.parquet
 scratch_logs/
 docs/handoffs/_fom_grid_cache/
 docs/handoffs/_foresight_ab_cache/
+# Driver-battery (run_driver_battery.py) disposable solve caches + per-rung
+# metrics memo; the committed deliverable is driver-battery-<iso>-<date>.{md,json}.
+docs/handoffs/_battery_cache_*/
+docs/handoffs/_battery_metrics/
 
 # ERCOT G-22 offer-surface A/B probe bundles: large disposable solve outputs
 # (dispatch/system parquets, 115M each). The reproducibility record
