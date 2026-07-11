@@ -247,21 +247,18 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # (transmission.inject_caiso_gas_commitment_floor).
     (MECH_CAISO_GAS_COMMITMENT_FLOOR, None): (9, 17),
     # cc_mustrun_per_plant (per-plant gas local-reliability commitment,
-    # fleet.py cc_mustrun_pmin_mw): the floor's REAL window is intrinsic and
-    # per-plant — each plant's committed tranche binds only in its top
-    # measured-online_frac fraction of hours ranked by system load, so the
-    # mechanism is self-windowing by construction. The hour-of-day rows here
-    # declare where that placement is driver-justified: a committed CC is
-    # SYNCHRONIZED around the clock inside its window (the CEMS online_frac
-    # it is sized from counts overnight min-stable hours — same evidence
-    # shape as the ST_GAS rows above), so CC_REGULAR is all-hours; a
-    # committed CT's own evidence says overnight-offline (CAMPD CT overnight
-    # CF ~ 0), and PJM's top-of-load hours include the bimodal WINTER morning
-    # peak (h7-9) the [14, 22) evening-ramp window would mislabel — so
-    # CT_PEAKER declares the daytime block h7-22. Overnight (h23-6) CT
-    # binding is a rule-12 bug this row exists to catch.
+    # fleet.py cc_mustrun_pmin_mw, CC_REGULAR only): the floor's REAL window
+    # is intrinsic and per-plant — each plant's committed tranche binds only
+    # in its top measured-online_frac fraction of hours ranked by system
+    # load, so the mechanism is self-windowing by construction. The
+    # hour-of-day row here declares where that placement is driver-justified:
+    # a committed CC is SYNCHRONIZED around the clock inside its window (the
+    # CEMS online_frac it is sized from counts overnight min-stable hours —
+    # same evidence shape as the ST_GAS rows above), so CC_REGULAR is
+    # all-hours. (The mechanism's CT_PEAKER leg was probed 2026-07-11 under a
+    # declared h7-22 window and DROPPED for 12.8% overnight off-window
+    # binding — the rule-12 check this registry exists to perform.)
     (MECH_CC_MUSTRUN_PER_PLANT, "CC_REGULAR"): (0, 24),
-    (MECH_CC_MUSTRUN_PER_PLANT, "CT_PEAKER"): (7, 23),
 }
 
 # D-9: overlay probes that must be OFF/zero in every keeper run_config.json
