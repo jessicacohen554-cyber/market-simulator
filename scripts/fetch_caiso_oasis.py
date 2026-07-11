@@ -101,6 +101,28 @@ DATASETS: dict[str, dict] = {
         "out_dir": paths.RAW_DATA_DIR / "CAISO-AS",
         "per_node": False,
     },
+    # DAM ancillary-service market results (AS_RESULTS): hourly procured MW per
+    # AS region and product — RESULT_TYPE AS_MW (total = market + self),
+    # AS_BUY_MW (market-procured), AS_SELF_MW (self-provided), AS_COST.
+    # XML_DATA_ITEM {SP,NS,RU,RD,RMU,RMD}_{TOT,SPROC,PROC}_MW. The measured
+    # TOTAL-procurement denominator (all resource types): the battery-held
+    # award itself comes from the Daily Energy Storage Report intake
+    # (data/raw/storage-as-awards, caiso_storage_as_reservation), so this
+    # dataset is a cross-check / battery-share denominator and the eventual
+    # measured replacement for the as_reserve_formula scaffold. Verified
+    # reachable and complete-format for Jul-2024 (2026-07-11); not yet
+    # fetched in bulk.
+    "asresults": {
+        "params": {
+            "queryname": "AS_RESULTS",
+            "market_run_id": "DAM",
+            "version": "1",
+            "anc_type": "ALL",
+            "anc_region": "ALL",
+        },
+        "out_dir": paths.RAW_DATA_DIR / "CAISO-AS",
+        "per_node": False,
+    },
 }
 
 # OASIS datetimes are UTC; 08:00 UTC == midnight PST, so windows tile the
