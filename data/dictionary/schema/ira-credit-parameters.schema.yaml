@@ -1,0 +1,87 @@
+# Canonical schema: ira-credit-parameters (post-OBBBA §45U existing-nuclear
+# PTC and §45Y/§48E tech-neutral clean-electricity credit statute
+# parameters).
+#
+# Resolves D5 (bounded gap) in the forecast-driver audit: "no §45U (nuclear
+# retirement screens see only exogenous ZEC/EAC), no 45Y/48E semantics."
+# `ira.py` today has §45V/§45Q/wind-PTC/solar-ITC but nothing for existing
+# nuclear or the IRA's tech-neutral successors to the wind/solar credits.
+# This is the cited statute-parameter registry P-1C wires into ira.py.
+#
+# One row per (statute_section, parameter). This is a small, heterogeneous,
+# hand-curated table -- rates, thresholds, dates, and boolean flags, not a
+# time series -- so `value` is deliberately a string column with a
+# `value_type` tag rather than forcing every row into one numeric dtype;
+# P-1C's consumer code parses by `value_type`. NOT subject to CLAUDE.md rule
+# 22's 2022/H1-2026 holdout quarantine: these are enacted statute parameters
+# (forward-applicable law), not measured actuals for a solve/scoring year.
+datatype: ira-credit-parameters
+schema_version: 1
+title: Post-OBBBA IRA credit statute parameters (45U, 45Y, 48E)
+description: >-
+  Section 45U (zero-emission nuclear power production credit), 45Y (clean
+  electricity production credit), and 48E (clean electricity investment
+  credit) statute parameters as enacted, including the One Big Beautiful
+  Bill Act (OBBBA, Pub. L. 119-21, 2025-07-04) amendments: FEOC (foreign
+  entity of concern) restrictions, the wind/solar placed-in-service cutoff,
+  and the technology-neutral construction-based phase-down schedule for
+  other technologies (nuclear, geothermal, hydropower, storage). Cited to
+  26 U.S.C. text (law.cornell.edu) and OBBBA secondary analysis where the
+  primary statute/Treasury text could not be directly fetched in this
+  environment -- see README for the per-row confidence/citation detail and
+  one flagged conflict with this repo's pre-existing scenarios.py comment.
+
+key_columns: [statute_section, parameter]
+allow_additional_columns: false
+
+columns:
+  - name: statute_section
+    dtype: string
+    unit: none
+    nullable: false
+    description: One of 45U | 45Y | 48E.
+  - name: parameter
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Snake_case parameter name within the section (e.g.
+      base_credit_rate, phase_down_boc_year_75pct, wind_solar_placed_in_service_cutoff).
+      See README for the full per-section parameter list.
+  - name: value
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The parameter's value as a string; parse per `value_type`. Kept as
+      string (not split across typed columns) because this table
+      deliberately mixes rates, dates, and booleans in one small
+      hand-curated registry.
+  - name: value_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: How to parse `value` -- numeric | date (ISO YYYY-MM-DD) | boolean.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Unit for a numeric value (cents_per_kwh | percent | multiplier_x |
+      years | year | gCO2e_per_kwh), or the literal "date"/"boolean" for
+      those value_types.
+  - name: notes
+    dtype: string
+    unit: none
+    nullable: true
+    description: Free-text clarification of the parameter's meaning or scope.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: Authoritative statute citation or secondary-source document.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Subsection/citation pinpoint within source_doc.
