@@ -2,11 +2,11 @@
  "CAISO": "2026-07-07-caiso65-seam-envelope-clock",
  "ERCOT": "2026-07-10-ercot56-nucwin",
  "NEISO": "2026-07-09-neiso-56-reserve-coopt",
- "PJM": "2026-07-09-pjm-94-stgas-netload",
+ "PJM": "2026-07-10-pjm-97-measured-interfaces",
  "keepers": [
   "2026-07-10-ercot56-nucwin",
   "2026-07-07-caiso65-seam-envelope-clock",
-  "2026-07-09-pjm-94-stgas-netload",
+  "2026-07-10-pjm-97-measured-interfaces",
   "2026-07-11-nyiso-61-downstate-import",
   "2026-07-09-neiso-56-reserve-coopt",
   "2026-07-08-miso-49-tempderate"
