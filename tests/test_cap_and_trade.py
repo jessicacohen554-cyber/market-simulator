@@ -81,7 +81,7 @@ class TestMembership:
 
     def test_pjm_dominion_membership_reflects_virginia_exit(self):
         # PJM_Dominion (VA+NC) is ~0.99 member in 2023 (VA still in RGGI) and
-        # 0.0 from 2024 (VA exited 1 Jan 2024) -- the year-aware zone_share.
+        # 0.0 from 2024 (VA exited 1 Jan 2024) — the year-aware zone_share.
         dominion_idx = 5
         res_2023 = resolve_carbon_program(
             ScenarioConfig(iso="PJM", mode="backcast"), 2023
@@ -390,9 +390,9 @@ class TestPerGeneratorMembership:
         # keep it nonzero only on the member unit.
         fleet = self._fleet(
             [
-                ("PJM_EMAAC", 301),  # NJ -- member
-                ("PJM_EMAAC", 302),  # PA (Philly-metro slice) -- non-member
-                ("PJM_AEP_Ohio", 303),  # OH -- non-member
+                ("PJM_EMAAC", 301),  # NJ — member
+                ("PJM_EMAAC", 302),  # PA (Philly-metro slice) — non-member
+                ("PJM_AEP_Ohio", 303),  # OH — non-member
             ]
         )
         program = CAP_AND_TRADE_PROGRAMS["PJM"]
@@ -414,7 +414,7 @@ class TestPerGeneratorMembership:
         assert cap_coeffs[2] == 0.0
 
     def test_non_rggi_program_returns_zone_fallback_unchanged(self):
-        # ERCOT/MISO have no program at all -- per_generator_membership is a
+        # ERCOT/MISO have no program at all — per_generator_membership is a
         # no-op passthrough of the zone broadcast.
         fleet = self._fleet([("North", 401)])
         zone_membership = np.array([0.0])
