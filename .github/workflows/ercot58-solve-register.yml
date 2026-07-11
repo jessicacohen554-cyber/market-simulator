@@ -1,0 +1,188 @@
+name: ercot58-solve-register
+
+# One-shot: solve the ercot58 JOINT-ROUND line (ercot56 keeper recipe + the
+# three owner-sanctioned deltas: measured thermal DAM availability +
+# measured-fleet-basis on-line-capacity envelope as a PRICING-ONLY basis +
+# pre-RTC+B ORDC-only scarcity pricing via the post-solve realized-room
+# RTORPA) + its zero-forcing ablation twin, full 2023-2025 each, on CI —
+# then register both on the backcast dashboard, prune the ERCOT registry to
+# the top-15 retention, and upload the per-run files + the ERCOT-58
+# calibration-log entry via the GitHub Data API. ercot57/ercot56 precedent:
+# the authoring session's environment cannot git-push (413 on the ~1 MB run
+# payloads) and the MCP relay caps single-call content ~200 KB, so the
+# oversized pieces land from the runner. Keeper stays ercot56-nucwin — the
+# joint round registers as the HONEST RECORD (rule 15 keeper-or-probe either
+# way): the market-faithful v3 construction is LP-healthy and cures the
+# phantom-scarcity channel, but its realized room measures a +2.4 GW
+# binding-regime thermal-dispatch excess (leading component: model storage
+# under-discharge at evening peaks, the C5c/G-37 lane) that prices 2023-25
+# far outside the gates. Full adjudication:
+# docs/DIAGNOSIS-ercot58-joint-round-2026-07.md.
+#
+# Config: scripts/probes/_ercot58_ab.py (the ercot56_nucwin keeper meta.json
+# reconstruction) with the three deltas baked in — zero new fitted
+# parameters (the envelope share/deliv tables are measured-MW-identified;
+# ERCOT_AS_PLAN_HOLD_EPS is a fixed tie-break epsilon). The authoring
+# session solved the same full-span bundles locally first (ercot57
+# local-parity precedent), so these CI bundles are expected to match the
+# committed ERCOT-58 log entry's numbers.
+on:
+  workflow_dispatch:
+    inputs:
+      patch_xz_b64:
+        description: >-
+          The session's code patch, xz-9-compressed and base64-encoded
+          (fits the 64KB dispatch-input ceiling in one sha-gated transfer —
+          supersedes the ercot57 chunk-file transport, whose hand-carried
+          12KB chunks proved error-prone at this patch size). The decoded,
+          decompressed patch must match the pinned sha256 below.
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ercot58-solve-register
+  cancel-in-progress: false
+
+jobs:
+  solve-register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Apply the session's relay-oversized changes (git patch, guarded)
+        env:
+          PATCH_XZ_B64: ${{ inputs.patch_xz_b64 }}
+        run: |
+          set -euo pipefail
+          # The session's full source diff (config flags, the realized-room
+          # RTORPA, the measured-basis envelope + constants, deriver/validator
+          # modes, CLI plumbing, tests, docs, the A/B runner and the register
+          # helper) exceeds what the MCP relay can carry whole, so it arrives
+          # xz-compressed + base64 in the dispatch input (one transfer; the
+          # ercot57 chunk-file transport is superseded — hand-carried chunks
+          # proved error-prone at this size). The upload step below commits
+          # the PATCHED files so the branch carries the real sources. The
+          # decoded-sha gate is the authority.
+          if grep -q "ercot_ordc_only_scarcity" src/market_sim/config/scenarios.py; then
+            echo "already applied — no-op"
+          else
+            echo "353b3ffa43329ee21f3d55d00fe669f1f94d637c1d3bec88eada7fbd3320c4af  /tmp/_ercot58_code.patch" > /tmp/patch.sha
+            printf '%s' "$PATCH_XZ_B64" | tr -d '\r\n ' | base64 -d | xz -d \
+              > /tmp/_ercot58_code.patch
+            sha256sum -c /tmp/patch.sha
+            git apply --verbose /tmp/_ercot58_code.patch
+            # Drop any leftover chunk files from the superseded transport so
+            # the upload commit does not carry them forward.
+            rm -f scripts/probes/_ercot58_code.patch.b64.*
+          fi
+
+      - name: Run the joint-round unit tests
+        run: |
+          set -euo pipefail
+          pip install pytest
+          python -m pytest tests/test_reserve_config.py \
+            tests/test_ercot_online_capacity_envelope.py -q
+
+      - name: Identification gate (measured-fleet-basis envelope)
+        run: |
+          set -euo pipefail
+          python scripts/validate_ercot_online_capacity.py --measured
+
+      - name: Solve ercot58 joint main (keeper recipe + the three deltas, 2023-2025)
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot58_ab.py ercot58_joint
+
+      - name: Solve the zero-forcing ablation twin (2023-2025)
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot58_ab.py ercot58_joint_ablation \
+            --ablation --ablation-of ercot58_joint
+
+      - name: Write attestations (main + twin)
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot58_register.py --write-attestations
+
+      - name: Score legitimacy diagnostics (both bundles)
+        env:
+          MALLOC_ARENA_MAX: "2"
+        run: |
+          set -uo pipefail
+          for b in ercot58_joint ercot58_joint_ablation; do
+            python scripts/legitimacy_diagnostics.py \
+              --bundle "results/calibration/$b" \
+              --iso ERCOT --years 2023 2024 2025 \
+              --json-out "results/calibration/$b/legitimacy_diagnostics.json" || true
+            test -s "results/calibration/$b/legitimacy_diagnostics.json"
+          done
+
+      - name: Register both runs on the dashboard
+        run: |
+          set -euo pipefail
+          python scripts/dashboard_add_run.py \
+            --label "ercot58 joint ordc-only" \
+            --bundle results/calibration/ercot58_joint | tee /tmp/reg_main.out
+          python scripts/dashboard_add_run.py \
+            --label "ercot58 joint ordc-only ablation" \
+            --bundle results/calibration/ercot58_joint_ablation | tee /tmp/reg_abl.out
+          echo "RID_MAIN=$(grep '^RUN_ID=' /tmp/reg_main.out | cut -d= -f2)" >> "$GITHUB_ENV"
+          echo "RID_ABL=$(grep '^RUN_ID=' /tmp/reg_abl.out | cut -d= -f2)" >> "$GITHUB_ENV"
+
+      - name: Upload per-run files + log entry via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot58_register.py --append-log
+          python scripts/ci_api_upload_multi.py \
+            --rid "$RID_MAIN" --bundle results/calibration/ercot58_joint \
+            --rid "$RID_ABL" --bundle results/calibration/ercot58_joint_ablation \
+            --extra docs/calibration-log.md \
+            --extra docs/DIAGNOSIS-ercot58-joint-round-2026-07.md \
+            --extra scripts/probes/_ercot58_ab.py \
+            --extra scripts/probes/_ercot58_register.py \
+            --extra src/market_sim/config/scenarios.py \
+            --extra src/market_sim/config/constants.py \
+            --extra src/market_sim/config/reserve_config.py \
+            --extra src/market_sim/results/scarcity.py \
+            --extra scripts/derive_ercot_rtolcap_forward.py \
+            --extra scripts/validate_ercot_online_capacity.py \
+            --extra scripts/run_calibration_full.py \
+            --extra scripts/run_calibration.py \
+            --extra tests/test_reserve_config.py \
+            --extra tests/test_ercot_online_capacity_envelope.py \
+            --bench-iso ERCOT \
+            --branch claude/ercot-calibration-improvements-c97sbd \
+            --message "results: register ercot58 joint round (measured-basis envelope as pricing basis + ORDC-only realized-room RTORPA) + zero-forcing twin; land the relay-oversized sources (keeper stays ercot56-nucwin) [skip ci]"
+
+      - name: Prune ERCOT registry to top-15 retention
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot58_register.py --prune-registry \
+            --branch claude/ercot-calibration-improvements-c97sbd
