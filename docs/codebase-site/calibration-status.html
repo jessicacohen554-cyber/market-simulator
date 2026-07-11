@@ -167,11 +167,15 @@
         // Color accent from ISO palette
         const colorVar = isoColorVar(keeper.iso);
 
-        // Header
+        // Header (frontier = owner-declared "frontier achieved": every named
+        // admissible mechanism tried on record; declarative, never gating)
         let html = `
           <div class="cs-card-header">
             <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
-            <span class="cs-badge ${dc}">${detLabel(keeper.determination)}</span>
+            <span class="cs-badges">
+              ${keeper.frontier ? `<span class="cs-badge det-frontier" title="Frontier achieved ${esc(keeper.frontier.declared || '')}: ${esc(keeper.frontier.note || '')}">FRONTIER</span>` : ''}
+              <span class="cs-badge ${dc}">${detLabel(keeper.determination)}</span>
+            </span>
           </div>`;
 
         // Keeper info
@@ -274,8 +278,25 @@
       html += `
         <div class="cs-results-header">
           <span class="cs-iso-name" style="color: var(${colorVar})">${esc(keeper.iso)}</span>
-          <span class="cs-badge ${dc}">${detLabel(keeper.determination)}</span>
+          <span class="cs-badges">
+            ${keeper.frontier ? `<span class="cs-badge det-frontier">FRONTIER ACHIEVED${keeper.frontier.declared ? ' ' + esc(keeper.frontier.declared) : ''}</span>` : ''}
+            <span class="cs-badge ${dc}">${detLabel(keeper.determination)}</span>
+          </span>
         </div>`;
+
+      // Frontier note — owner-declared designation (keepers.json "frontier"):
+      // the admissible-mechanism inventory is exhausted on record; remaining
+      // residuals are inadmissible to close (residual-fitting) or blocked on
+      // non-public data. Declarative only, never gating.
+      if (keeper.frontier && keeper.frontier.note) {
+        html += `
+        <div class="cs-reason" style="margin-top: 8px;">
+          <p style="margin: 4px 0;">
+            <span class="cs-tag tag-lim">FRONTIER</span>
+            ${esc(keeper.frontier.note)}
+          </p>
+        </div>`;
+      }
 
       // Keeper run info
       if (keeper.run_id) {
