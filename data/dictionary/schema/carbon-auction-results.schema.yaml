@@ -1,0 +1,104 @@
+# Canonical schema: carbon-auction-results (RGGI and CARB/Quebec joint
+# cap-and-trade auction clearing-price history).
+#
+# Distinct from `rggi-co2-budgets` / `carb-cap-schedule`: those two land each
+# program's published allowance BUDGET and Auction-Reserve/CCR/ECR
+# price-control-band SCHEDULE (the forecast anchors + escalators,
+# CLAUDE.md-admissible forward-regenerating inputs). This datatype instead
+# lands the actual per-auction CLEARING price each program has realized --
+# a validation OBSERVABLE (compare model output/adder trajectories against
+# it, never fit or pin to it -- CLAUDE.md rules 1/13, same governance as the
+# capacity-market auction-history datatype from the P-0B sibling session)
+# and the "refresh anchors" data source for `STATE_CARBON_PRICE_BY_ISO`
+# (constants.py -- currently only 2023-2025 annual averages; this is the
+# finer-grained quarterly series those annual anchors were built from).
+#
+# One row per (program, year, quarter). `auction_date` and `auction_number`
+# are nullable: RGGI's own results page publishes an exact date and a
+# sequential auction number for every auction (landed for all rows); CARB's
+# results are scattered across individual press releases and only some were
+# recoverable with an exact date/number during this intake (ww2.arb.ca.gov
+# blocks automated fetches -- see README) -- (year, quarter) is always
+# populated regardless, since the calendar quarter of a quarterly auction is
+# never in doubt even when the exact day is unconfirmed.
+#
+# HOLDOUT QUARANTINE (CLAUDE.md rule 22): rows for 2022 or any 2026 auction
+# are rejected -- those periods are under the standing backcast holdout
+# quarantine (validation/locked-test years), same restriction the sibling
+# rggi-co2-budgets/carb-cap-schedule datatypes enforce.
+datatype: carbon-auction-results
+schema_version: 1
+title: RGGI and CARB/Quebec cap-and-trade auction clearing-price history
+description: >-
+  Per-auction clearing price, and allowance volumes where known, for RGGI's
+  quarterly CO2 allowance auctions and CARB/Quebec's quarterly joint
+  cap-and-trade allowance auctions, 2023-2025. Validation observable --
+  compare model carbon-price trajectories against it, never fit to it.
+
+key_columns: [program, year, quarter]
+allow_additional_columns: false
+
+columns:
+  - name: program
+    dtype: string
+    unit: none
+    nullable: false
+    description: RGGI or CARB (the CARB rows are the joint California-Quebec auction).
+  - name: year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Calendar year the auction was held.
+  - name: quarter
+    dtype: int64
+    unit: none
+    nullable: false
+    description: Calendar quarter (1-4) the auction was held in.
+  - name: auction_date
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Exact auction date (ISO YYYY-MM-DD string), where confirmed by the
+      source. Null when only the (year, quarter) is confirmed.
+  - name: auction_number
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      The program's own sequential auction number (e.g. RGGI "70", CARB
+      "44th joint auction"), where explicitly confirmed by a source --
+      never inferred by arithmetic from neighboring auctions (CLAUDE.md: no
+      value guessing).
+  - name: clearing_price
+    dtype: float64
+    unit: mixed
+    nullable: false
+    description: The settlement/clearing price, in the unit given by `price_unit`.
+  - name: price_unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: usd_per_short_ton (RGGI) | usd_per_tonne (CARB, metric tonne CO2e).
+  - name: allowances_sold
+    dtype: float64
+    unit: none
+    nullable: true
+    description: >-
+      Allowances sold at this auction, where known (populated for every RGGI
+      row; not recovered for any CARB row during this intake).
+  - name: allowances_offered
+    dtype: float64
+    unit: none
+    nullable: true
+    description: Allowances offered at this auction, where known.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: Authoritative document/page the value is drawn from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: URL or section reference within source_doc.
