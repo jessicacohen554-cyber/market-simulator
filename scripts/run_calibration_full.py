@@ -1889,6 +1889,7 @@ def solve_and_persist(
     cc_intermediate_cf_threshold: float | None = None,
     tranche_startup_amortization: bool = False,
     tranche_startup_measured_runs: bool = False,
+    tranche_startup_conditional_runs: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     st_gas_intermediate: bool = False,
@@ -1903,6 +1904,7 @@ def solve_and_persist(
     miso_zonal_reserves: bool = False,
     miso_reserve_pergen: bool = False,
     miso_commitment_posture: bool = False,
+    miso_measured_reserve_requirements: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_ordc_total_reserve: bool = False,
@@ -2174,6 +2176,7 @@ def solve_and_persist(
             cc_intermediate_cf_threshold=cc_intermediate_cf_threshold,
             tranche_startup_amortization=tranche_startup_amortization,
             tranche_startup_measured_runs=tranche_startup_measured_runs,
+            tranche_startup_conditional_runs=tranche_startup_conditional_runs,
             nysdec_peaker_rule_availability=nysdec_peaker_rule_availability,
             oil_primary_bin_fuel=oil_primary_bin_fuel,
             st_gas_intermediate=st_gas_intermediate,
@@ -2187,6 +2190,7 @@ def solve_and_persist(
             miso_zonal_reserves=miso_zonal_reserves,
             miso_reserve_pergen=miso_reserve_pergen,
             miso_commitment_posture=miso_commitment_posture,
+            miso_measured_reserve_requirements=miso_measured_reserve_requirements,
             ercot_multiproduct_as_coopt=ercot_multiproduct_as_coopt,
             ercot_ecrs_conservative_deployment=ercot_ecrs_conservative_deployment,
             ercot_ordc_total_reserve=ercot_ordc_total_reserve,
@@ -2510,6 +2514,7 @@ def solve_and_persist(
         "cc_intermediate_cf_threshold": cc_intermediate_cf_threshold,
         "tranche_startup_amortization": tranche_startup_amortization,
         "tranche_startup_measured_runs": tranche_startup_measured_runs,
+        "tranche_startup_conditional_runs": tranche_startup_conditional_runs,
         "nysdec_peaker_rule_availability": nysdec_peaker_rule_availability,
         "oil_primary_bin_fuel": oil_primary_bin_fuel,
         "st_gas_intermediate": st_gas_intermediate,
@@ -2555,6 +2560,7 @@ def solve_and_persist(
         "miso_zonal_reserves": miso_zonal_reserves,
         "miso_reserve_pergen": miso_reserve_pergen,
         "miso_commitment_posture": miso_commitment_posture,
+        "miso_measured_reserve_requirements": miso_measured_reserve_requirements,
         "ercot_multiproduct_as_coopt": ercot_multiproduct_as_coopt,
         "ercot_ecrs_conservative_deployment": ercot_ecrs_conservative_deployment,
         "ercot_ordc_total_reserve": ercot_ordc_total_reserve,
@@ -2772,6 +2778,10 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(miso_reserve_pergen=True)
     if miso_commitment_posture:
         recorded_cfg = recorded_cfg.with_overrides(miso_commitment_posture=True)
+    if miso_measured_reserve_requirements:
+        recorded_cfg = recorded_cfg.with_overrides(
+            miso_measured_reserve_requirements=True
+        )
     if pjm_reserve_supply_cap:
         recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
     if pjm_reserve_pergen:
@@ -3192,6 +3202,10 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(tranche_startup_amortization=True)
     if tranche_startup_measured_runs:
         recorded_cfg = recorded_cfg.with_overrides(tranche_startup_measured_runs=True)
+    if tranche_startup_conditional_runs:
+        recorded_cfg = recorded_cfg.with_overrides(
+            tranche_startup_conditional_runs=True
+        )
     if nysdec_peaker_rule_availability:
         recorded_cfg = recorded_cfg.with_overrides(nysdec_peaker_rule_availability=True)
     if oil_primary_bin_fuel:
@@ -5462,6 +5476,22 @@ def main() -> None:
         "keep the v2 P0 basis. Default OFF.",
     )
     parser.add_argument(
+        "--tranche-startup-conditional-runs",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="Fast-start amortization v4 (requires "
+        "--tranche-startup-amortization --tranche-startup-measured-runs): "
+        "the v3 measured run-length ceiling scales per hour by the "
+        "CAMPD-measured net-load-percentile band ratio "
+        "(derive_campd_ct_run_lengths.py --condition-bands -> "
+        "campd_ct_run_bands_<ISO>.csv) - a tight-hour engagement is a "
+        "shorter commitment block, so its start recovery amortizes over "
+        "fewer hours (the ELMP evening-timing element; MISO measures 6 h "
+        "top-band vs 10 h pooled). Forward-native trigger (within-year "
+        "net-load percentile); per-ISO artifact, no cross-ISO fallback; "
+        "no-op without the artifact. Default OFF.",
+    )
+    parser.add_argument(
         "--nysdec-peaker-rule",
         dest="nysdec_peaker_rule_availability",
         action=argparse.BooleanOptionalAction,
@@ -6058,6 +6088,21 @@ def main() -> None:
         "MISO ASM cleared-reserve/MCP series (data/raw/MISO-AS), never the "
         "tail residual. Requires --energy-reserve-coopt --miso-reserve-"
         "pergen. MISO-only; default off.",
+    )
+    parser.add_argument(
+        "--miso-measured-reserve-requirements",
+        action="store_true",
+        help="MISO measured hourly OR requirement basis: the market-wide "
+        "RBDC family takes the measured hourly cleared reg+spin+supp series "
+        "(data/raw/MISO-AS/asm_rt_cleared_mw_<year>.parquet) in place of "
+        "the flat fleet-MSSC+400 estimate, and the South zonal family takes "
+        "the measured South reservation in place of the within-zone-MSSC "
+        "static (which overstates the real ~0.3-0.5 GW South holding "
+        "several-fold). Rule-13 measured AS power reservation, rule-14 "
+        "mandatory swap; shortfall steps keep the published shape and "
+        "translate with the hourly requirement (NYISO #1344 convention). "
+        "Backcast-only; hard-errors when the intake parquet is absent. "
+        "Requires --energy-reserve-coopt. MISO-only; default off.",
     )
     parser.add_argument(
         "--pjm-reserve-pergen",
@@ -7715,6 +7760,7 @@ def main() -> None:
         cc_intermediate_split=args.cc_intermediate_split,
         tranche_startup_amortization=args.tranche_startup_amortization,
         tranche_startup_measured_runs=args.tranche_startup_measured_runs,
+        tranche_startup_conditional_runs=args.tranche_startup_conditional_runs,
         nysdec_peaker_rule_availability=args.nysdec_peaker_rule_availability,
         oil_primary_bin_fuel=args.oil_primary_bin_fuel,
         cc_intermediate_cf_threshold=args.cc_intermediate_cf_threshold,
@@ -7738,6 +7784,7 @@ def main() -> None:
         miso_zonal_reserves=args.miso_zonal_reserves,
         miso_reserve_pergen=args.miso_reserve_pergen,
         miso_commitment_posture=args.miso_commitment_posture,
+        miso_measured_reserve_requirements=args.miso_measured_reserve_requirements,
         pjm_reserve_pergen=args.pjm_reserve_pergen,
         pjm_reserve_pergen_sync=args.pjm_reserve_pergen_sync,
         pjm_reserve_pergen_size_split=args.pjm_reserve_pergen_size_split,
