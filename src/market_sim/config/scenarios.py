@@ -16,3 +16,24 @@ from market_sim.config.paths import (
     PLANT_REGISTRY_CSV,
     PROCESSED_DIR,
 )
+
+# Config fields introduced after the results cache existed. ``cache_key`` omits
+# each from its hash while it holds its default value, keeping every historical
+# cache key byte-stable; a non-default value still enters the key.
+_CACHE_KEY_OPTIONAL_FIELDS = (
+    "start_year",
+    "end_year",
+    "hindcast",
+    "hindcast_fuel_variant",
+    # G-30 first-wave probes (default-off): dropped from the hash at default so
+    # every pre-existing cached run keeps its key; a non-default value enters
+    # the key (a distinct scenario).
+    "staged_oversupply_thinning",
+    "staged_thinning_max_gw_per_year",
+    "limited_foresight_dispatch",
+)
+
+
+@dataclass
+class ScenarioConfig:
+    pass
