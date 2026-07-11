@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-11-pjm-98-cc-mustrun-ablation",
+  "label": "pjm 98 cc mustrun ablation",
+  "date": "2026-07-11",
+  "shorthand": "pjm-98-cc-mustrun-ablation",
+  "definition": "(ABLATION TWIN of 2026-07-11-pjm-98-cc-mustrun) D-3 zero-forcing reference solve (rule 20): identical config, every merchant floor/bridge/drag neutralized via ScenarioConfig.as_zero_forcing_ablation (off-list from the D-2 mechanism registry, incl. the new MECH_CC_MUSTRUN_PER_PLANT), keeping only nuclear must-run / CHP steam / coal take-or-pay.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-11-pjm-98-cc-mustrun-ablation.js",
+  "bundle": "results/calibration/pjm98_cc_mustrun-ablation"
+}
