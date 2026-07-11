@@ -137,7 +137,7 @@ class TestGasMarginal(unittest.TestCase):
         floored = GasMarginal(sigma_front=0.35, sigma_back=0.41, floor_to_aeo=True)
         raw = GasMarginal(sigma_front=0.35, sigma_back=0.41, floor_to_aeo=False)
         # The AEO 2050 spread (~0.55, re-derived from the actual AEO2025 Table
-        # 13 data in P-1D -- HENRY_HUB_TRAJECTORIES's low/high 2050 spread
+        # 13 data in P-1D — HENRY_HUB_TRAJECTORIES's low/high 2050 spread
         # widened from the prior hand-typed values) exceeds the 0.41 back
         # anchor, so the floor lifts the reference sigma above the
         # un-floored schedule.
@@ -227,7 +227,3 @@ class TestUncertaintySpec(unittest.TestCase):
             )
             with self.assertRaises(ValueError):
                 UncertaintySpec.from_yaml(path)
-
-
-if __name__ == "__main__":
-    unittest.main()
