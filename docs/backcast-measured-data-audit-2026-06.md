@@ -262,3 +262,19 @@ the `DATA NEEDED` note in `data/raw/iso-specific-transmission/README.md`.
 The full pipeline is validated end-to-end on the live 7-day MIS window
 (10 GTCs recovered, PNHNDL/WESTEX/NE_LOB limits consistent with the 2023-24
 derived statics).
+## CAISO storage-AS awards + demand-clock realignment — two new measured inputs (2026-07-11)
+
+Two CAISO backcast inputs added by the caiso-74/75 probe session, both scored
+against the admissibility test:
+
+| input | flag | verdict |
+|---|---|---|
+| **Battery AS-award reservation** — the measured hourly CAISO battery (LESR) AS awards (`storage-as-awards` clean datatype from the CAISO Daily Energy Storage Report quarterly xlsx; DA means 1,010/1,484/1,652 MW 2023-25, ~1 % off the DMM-published anchors) reserved out of the battery power cap, with SOC floored at the tariff 30-min sustain of the spin/non-spin award (`CAISO_AS_SUSTAIN_DURATION_H`). | `caiso_storage_as_reservation` (default **off**) | **PASSES the test** (market-design commitment, regenerates forward via the endogenous co-opt path — the CAISO analogue of ERCOT's `storage_as_commitment` row above) but measured **ex-ante inert** on the zone-aggregate fleet (caiso-74: LP battery discharge peaks 3.7–6 GW below nameplate, the 0.7–2.8 GW derate never binds). Not in any keeper; kept available with the intake. |
+| **2023 demand-clock realignment** — the EIA-930 CISO `Demand` column rides +1 h late vs the extract's own astronomy-verified generation frame for local dates before 2023-11-01 (best-lag −1 at r 0.984–0.997 vs the extract's balance identity; OASIS SLD corroborates at 0.9953); the window is pulled forward 1 h onto the wall-true frame. | `caiso_demand_clock_realign` (default **off**; ON in the caiso-75 line) | **PASSES** — a rule-14 reconciled-real-data *clock* correction derived only from the source series' internal identity: annual energy conserved to +0.1 MW, no level rescale, no residual in the derivation. Frozen against residuals (rule 23), guarded by `scripts/validate_caiso_demand_clock.py` (fails loudly if EIA restates the series, so it cannot silently double-shift). Forward story by construction: 2024+ needs no correction. |
+
+Adjudication record: `results/calibration/FINDING-caiso75-demand-clock-2026-07-11.md`
+(the demand BASIS stays EIA-930 `Demand` — corroborated at 0.9994 by the OASIS
+SLD TAC actual; the "supply-implied load" alternative was REJECTED as a
+zero-daily-mean 930 supply-side artifact, so no outcome series entered the
+demand input). Inert-probe record:
+`results/calibration/FINDING-caiso74-storage-as-reservation-2026-07-11.md`.
