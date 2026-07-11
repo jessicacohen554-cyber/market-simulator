@@ -1,0 +1,103 @@
+# Canonical schema: capacity-market-elcc (published Effective Load Carrying
+# Capability / capacity-accreditation curves per ISO, by resource class and
+# penetration level).
+#
+# Companion to capacity-market-demand-curve (the mechanism the accreditation
+# feeds) and capacity-market-auction-price (validation observable); this
+# datatype is the CR-3.1 input (docs/handoffs/
+# forecast-driver-capacity-revenue-audit-plan-2026-07.md §3.4.1, N6) — the
+# penetration-indexed ELCC studies that replace the model's flat
+# RENEWABLE_CAPACITY_CREDIT wind 0.16 / solar 0.18 constants.
+#
+# Captures the PENETRATION AXIS where an ISO publishes a genuine
+# marginal/incremental ELCC-vs-penetration curve (MISO's wind/solar
+# accreditation studies are the strongest public example), not just the
+# current single class-average rating most ISOs publish (PJM ELCC class
+# ratings, NYISO/ISO-NE accreditation filings). A single-point ISO still fits
+# this schema (penetration_pct/penetration_unit left null, one row per
+# resource_class/study_vintage) — the shape is documented per-ISO in the raw
+# README rather than forced into a fabricated curve.
+datatype: capacity-market-elcc
+schema_version: 1
+title: Capacity-market ELCC / accreditation curves
+description: >-
+  Per-ISO published Effective Load Carrying Capability (or equivalent
+  capacity-accreditation) ratings for wind/solar/storage resource classes, by
+  study vintage and (where published) installed-penetration level,
+  reconciled across PJM/NYISO/ISO-NE/MISO/CAISO onto one canonical frame.
+  Rule-13-admissible published market-design input.
+
+key_columns: [iso, resource_class, study_vintage, penetration_pct]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO publishing the study (PJM, NYISO, ISONE, MISO, CAISO).
+  - name: resource_class
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical resource class: wind | solar | wind_offshore |
+      hybrid_solar_storage | storage_2hr | storage_4hr | storage_6hr |
+      storage_8hr | storage_10hr | storage_ldes (long-duration storage where
+      the ISO study does not state a discrete hour duration) | other
+      (ISO-native duration/class labels map onto the nearest storage_Nhr bucket; a class
+      with no clean map uses "other" and
+      documents the native label in source_page).
+  - name: study_vintage
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The study or filing year/label the rating applies to (e.g. "2026/2027"
+      delivery year for an annual class-rating filing, or the ELCC study's own
+      publication year for a standalone study).
+  - name: penetration_pct
+    dtype: float64
+    unit: pct
+    nullable: true
+    description: >-
+      Installed-penetration level this point is measured at (per
+      penetration_unit), for ISOs that publish a genuine multi-point
+      ELCC-vs-penetration curve. Null when the ISO publishes only a single
+      current-fleet-average rating (documented as such in the raw README) —
+      never back-filled with a guessed penetration level.
+  - name: penetration_unit
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Basis of penetration_pct — pct_of_peak_load | pct_of_installed_capacity
+      | installed_mw. Null when penetration_pct is null.
+  - name: elcc_pct
+    dtype: float64
+    unit: pct
+    nullable: true
+    description: >-
+      The ELCC / accreditation rating at this point, as a percent of nameplate
+      (e.g. 43.7 for a wind class rated at 43.7% UCAP). Null only when a
+      source publishes the rating in MW terms without a percent basis (rare);
+      never guessed.
+  - name: elcc_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      class_average (single current fleet-wide rating) | marginal (rating of
+      the next incremental MW at this penetration) | incremental (rating of a
+      discrete tranche added at this penetration — used interchangeably with
+      marginal by some ISOs; recorded as published).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: true
+    description: Authoritative source document (URL or short citation) the value was read from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Page / table locator within source_doc (also carries the zone/subregion label when the ISO publishes per-zone curves).
