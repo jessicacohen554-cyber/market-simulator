@@ -29,12 +29,21 @@ class TransferLink(BaseModel):
     """A transmission interface connecting two zones.
 
     ``ttc_mw`` is the total transfer capability across the link.
+
+    ``flow_cost`` is an optional $/MWh charge on the link's directed flow —
+    the LP mechanism for a *priced* transfer step (MISO's RDT Transmission
+    Constraint Demand Curve prices flow above the derated limit at $40 then
+    $500/MWh rather than hard-capping it; 2024 MISO SOM §III.B). Nonzero
+    only on one-way links (``is_bidirectional=False``): a positive cost on a
+    signed bidirectional flow would *credit* the reverse direction
+    (validated in :func:`market_sim.model.dispatch.DispatchModel`).
     """
 
     from_zone: str
     to_zone: str
     ttc_mw: float = Field(gt=0.0)
     is_bidirectional: bool = True
+    flow_cost: float = Field(default=0.0, ge=0.0)
 
 
 class InterfaceLimit(BaseModel):

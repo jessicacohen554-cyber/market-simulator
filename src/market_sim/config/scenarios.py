@@ -2063,6 +2063,35 @@ class ScenarioConfig:
     # energy_reserve_coopt + MISO; hard-errors when the intake parquet is
     # absent (no silent fallback to the estimates it replaces). Default off;
     # GATED CHANGE (alters withholding, hence dispatch volumes).
+    miso_south_seam_split: bool = False  # MISO: host the South seam's
+    # reference-price bands in their own external zone
+    # (constants.MISO_SOUTH_EXTERNAL_ZONE) instead of the shared
+    # MISO_external bus. The shared bus links to all five border zones, so
+    # energy can wheel South→external→Midwest through the external zone's
+    # balance without touching any priced band — a free 3,000 MW bypass
+    # around the RDT contract path (the only real S↔N boundary; MISO South
+    # exchanges power with the Midwest ONLY over the RDT across SPP —
+    # MISO/SPP JOA). Structural topology fix (rule 1): the southern
+    # neighbors (SOCO/TVA/AECI) are electrically south of the RDT and their
+    # seam cannot deliver into MISO Midwest. Applies in both modes (it is
+    # market structure, not an overlay). Default off; GATED CHANGE (alters
+    # S↔N transfer capability, hence congestion and dispatch volumes).
+    miso_rdt_tcdc: bool = False  # MISO: replace the static JOA contract
+    # limits on the RDT one-way pair (3,000 N→S / 2,500 S→N) with the
+    # published operating representation: the modeled limit is the 92%
+    # default derate of contract ("MISO derates the RDT limit to 92 percent
+    # of the contract limit by default", 2024 SOM §III.B), and flow above
+    # the modeled limit is PRICED — not hard-capped — by the two-step RDT
+    # Transmission Constraint Demand Curve ($40/MWh at the modeled limit,
+    # $500/MWh from 102% of it, hard bound at the JOA contract entitlement),
+    # encoded as parallel one-way tiered links carrying
+    # TransferLink.flow_cost. This is how the real market prices
+    # Midwest↔South separation (the RDT bound >25% of RT intervals in 2024
+    # at ~$3/MWh average separation; $9.31/MWh in Summer 2025 — 2024 SOM
+    # §III.B, IMM Summer-2025 quarterly). All parameters published
+    # (constants.MISO_RDT_*); zero fitted scalars. Applies in both modes
+    # (standing market design). Default off; GATED CHANGE (alters
+    # congestion depth and dispatch volumes).
     caiso_scarcity_pricing: bool = False  # CAISO: enable the post-solve
     # power-balance scarcity price overlay (results.scarcity.caiso_scarcity_
     # overlay). Adds a probabilistic LOLP × (VOLL - λ) adder to the scored
@@ -5478,6 +5507,8 @@ TIER_TAGS: dict[str, int] = {
     "miso_reserve_pergen": 1,
     "miso_commitment_posture": 1,
     "miso_measured_reserve_requirements": 1,
+    "miso_south_seam_split": 1,
+    "miso_rdt_tcdc": 1,
     "caiso_commitment_posture": 1,
     "ercot_load_resource_reserve": 1,
     "ercot_load_resource_reserve_from_year": 1,
