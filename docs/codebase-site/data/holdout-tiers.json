@@ -1,0 +1,30 @@
+{
+  "_meta": {
+    "source": "Three-tier holdout program per CLAUDE.md rule 22 and docs/handoffs/holdout-policy-memo-2026-07.md, as enforced by scripts/run_calibration_full.py (enforce_holdout_year_gate) and the CI quarantine-gates job. Tier assignments are the program's real design; 'scored' flags are program-level illustration (only NEISO has a calibration-complete marker and a scored one-shot as of 2026-07-11), NOT a per-ISO status feed.",
+    "description": "Year-by-year tier timeline (2018-2030) for the model-validity narrative page. tier: data (intaken, never solved) | train (2023-2025, the only tuned years) | validation (2022, iterable) | locked (2019 + H1-2026, touch-once) | forecast (2026+ forward horizon, extends to END_YEAR 2050). flags carry secondary roles: 2024-2025 carry 'crossover-overlap-roadmap' - the dual-mode backcast/forecast crossover scoring is a labelled ROADMAP target, not implemented code (forecast START_YEAR is 2026; no dual-mode scorer exists).",
+    "date": "2026-07-11",
+    "illustrative": true
+  },
+  "tiers": {
+    "data": "Raw data intaken on disk (owner-authorized, no-LP validation only); never solved or scored.",
+    "train": "Calibration window - the ONLY years tuned against; every keeper solves all three in one bundle.",
+    "validation": "Iterable holdout - a miss may send you back to re-tune the train window; selection evidence, not certified skill.",
+    "locked": "Touch-once test - scored exactly once per ISO with the frozen keeper config; no calibration change may respond to the result.",
+    "forecast": "Forward horizon (constants.py START_YEAR 2026 to END_YEAR 2050); forecast mode uses no measured actuals."
+  },
+  "years": [
+    { "year": 2018, "tier": "data", "scored": false, "note": "Intake ladder floor; candidate for future validation-ladder extension." },
+    { "year": 2019, "tier": "locked", "scored": false, "note": "Clean-regime locked test. Scored once only where a calibration-complete marker exists (NEISO, 2026-07); result stands, never re-enters tuning." },
+    { "year": 2020, "tier": "data", "scored": false, "note": "Intaken; staged validation-ladder candidate (2022 -> 2020-2022 -> earlier)." },
+    { "year": 2021, "tier": "data", "scored": false, "note": "Intaken; staged validation-ladder candidate." },
+    { "year": 2022, "tier": "validation", "scored": false, "note": "The iterable validation holdout; unlocked per-ISO by the calibration-complete marker." },
+    { "year": 2023, "tier": "train", "scored": true, "note": "Train window start." },
+    { "year": 2024, "tier": "train", "scored": true, "flags": ["crossover-overlap-roadmap"], "note": "Train year; also the first year of the ROADMAP 2024-2025 backcast/forecast crossover overlap (target design, not implemented)." },
+    { "year": 2025, "tier": "train", "scored": true, "flags": ["crossover-overlap-roadmap"], "note": "Train year; second ROADMAP crossover-overlap year." },
+    { "year": 2026, "tier": "locked", "scored": false, "span": "H1-2026", "flags": ["forecast-horizon-start"], "note": "H1-2026 measured actuals are the forward-edge locked test (touch-once). Full-year 2026 is simultaneously the forecast horizon start - forecast-mode runs use no measured H1-2026 data and are unrestricted." },
+    { "year": 2027, "tier": "forecast", "scored": false },
+    { "year": 2028, "tier": "forecast", "scored": false },
+    { "year": 2029, "tier": "forecast", "scored": false },
+    { "year": 2030, "tier": "forecast", "scored": false, "note": "Forecast horizon continues to END_YEAR 2050; timeline truncated here for display." }
+  ]
+}
