@@ -10039,3 +10039,35 @@ downloaders default to train years); measured offer PRICES entered only as
 offer-surface parameters, clearing prices validation-only (rule 13); no
 tunable changed (rules 13/21/23); bin edges and fast-start threshold
 pre-committed before the derive ran (rule 20).
+
+## 2026-07-11 — PJM G-21: the CC_REGULAR "+21 TWh over-run" root-caused to BENCHMARK CONSTRUCTION (two scorer-layer defects), not dispatch — eastern "CT under-run" ~80 % a plant-bucketing artifact; pjm-98's scored C1 costs mostly evaporate on the measured basis (keeper stays pjm-97; pjm-98 promotion re-flagged to the owner alongside the proposed benchmark repairs)
+
+Full diagnosis: `docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md`.
+The pjm-98 follow-up charter (aggregate CC over-run + low LMP, eastern CT
+under-run, C7 2023 CT cell, C3c tail) was executed as pure diagnosis — one
+rule-16 throwaway 2024 replay of the keeper config for dispatch parquets
+(`pjm_g21_keeper2024_diag`, never registered), everything else from committed
+payloads + CAMPD/EIA-923 measured sources. Findings: (1) the proportional
+EIA-930 gas-family reconcile (`reconcile_vintage_classes`) prices the 2024
+CC_REGULAR actual 12.3 TWh BELOW its CAMPD-measured value — on the measured
+basis the keeper's 2024 CC over-run is +8.8 TWh (not +21.1) and pjm-98's is
++11.0 (not +23.3); pjm-98's "2023 CC flip" (+5.0 measured, in band) and "2024
+CT flip" (−1.3 measured) are artifacts. (2) The last-generator-wins
+plant→group map (`_fleet_group_by_code`, feeding the CAMPD backfill + all
+per-plant/zone displays) books ~10 TWh/yr of measured CC energy at mixed
+CC+CT plants (Doswell 52019, Linden 2406, …) under CT_PEAKER — the G-20
+"Dominion CT −90 % / EMAAC CT −84 %" cells were phantom (true eastern CT
+actuals ≈ 4–5 TWh/yr; EMAAC CT actually over-runs). (3) Real residuals,
+ranked: peak price-formation gap (C3a is summer-only — Jul −11 $/MWh; model
+holds 15–17 GW idle supply + net exports through measured scarcity hours; the
+published-ORDC overlay VALIDATES vs measured MCPs but fires 0 h — inert until
+peak supply depth is explained; temp-derate stays refuted per pjm-95 rule-24
+demotion), ST_GAS −6 TWh mid-merit (real), seam volumes (under-export 8 TWh
+23/24, over-export 10 TWh 25 — masks/inflates the CC bias respectively),
+eastern CC spatial (pjm-98's target), west-CT-flat-off-peak 2023 (the C7
+cell, model off-peak CV 0.223 vs actual 0.455). Proposed OWNER items: unit-
+class bucketing for the backfill/displays, CEMS-anchored reconcile (scale
+only non-CAMPD mass), and deciding pjm-98 promotion together with those
+repairs. No keeper file, measured input, or tunable touched; no run
+registered (single-year probe only, rule 16); holdout years untouched
+(rule 22).
