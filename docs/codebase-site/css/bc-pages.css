@@ -682,6 +682,16 @@ canvas.heat {
 .cs-badge.det-cal { background: var(--positive); }
 .cs-badge.det-cav { background: #cf9a1e; }
 .cs-badge.det-not { background: var(--negative); }
+/* Owner-declared "frontier achieved" designation (declarative, never gating) */
+.cs-badge.det-frontier { background: #4c5fd5; }
+
+.cs-badges {
+  display: inline-flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
 
 .cs-keeper-info {
   font-size: 0.82rem;
