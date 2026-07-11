@@ -1,0 +1,78 @@
+# One-shot: promote miso-56 to MISO keeper on the runner (byte-heavy files
+# never transit the MCP relay — caiso76-promote precedent). Steps:
+# keepers.json swap (miso-54 -> miso-56), calibration-log entry appended
+# from the committed payload docs/_miso56_log_entry.md (payload removed in
+# the same commit), and a deterministic status.js regen via
+# scripts/build_status.py from the already-committed registry + bundles.
+# Promotion authorization: owner decision 2026-07-11 (this session) —
+# "I agree with promoting miso-56" — executing the recommendation in the
+# 2026-07-11 miso-56 calibration-log entry (structural grounding, score
+# flat-to-better, zero fitted scalars). Same commit records the owner's
+# PJM G-20b hold confirmation.
+name: miso56-promote
+
+on:
+  push:
+    branches:
+      - claude/maximize-usage-plan-04k910
+    paths:
+      - .github/workflows/miso56-promote.yml
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Apply keeper swap + log entry append
+        run: |
+          set -euo pipefail
+          test -f docs/_miso56_log_entry.md
+          python - <<'PY'
+          import json
+
+          # 1. keepers.json: MISO -> miso-56 (idempotent).
+          p = 'frontend/data/backcast/keepers.json'
+          k = json.load(open(p))
+          old = k['MISO']
+          new = '2026-07-11-miso-56-measured-scarcity'
+          if old != new:
+              k['MISO'] = new
+              k['keepers'] = [new if x == old else x for x in k['keepers']]
+              json.dump(k, open(p, 'w'), indent=1)
+
+          # 2. calibration-log: append the entry at the end, after the
+          #    2026-07-11 miso-56 entry it acts on (idempotent on re-run).
+          lp = 'docs/calibration-log.md'
+          log = open(lp).read()
+          entry = open('docs/_miso56_log_entry.md').read()
+          if 'Owner decisions: miso-56 PROMOTED to keeper' not in log:
+              if not log.endswith('\n'):
+                  log += '\n'
+              log += '\n' + entry
+              open(lp, 'w').write(log)
+          PY
+          git rm -q docs/_miso56_log_entry.md
+
+      - name: Regenerate status.js (deterministic from committed inputs)
+        run: python scripts/build_status.py
+
+      - name: Commit + push
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add frontend/data/backcast/keepers.json \
+                  frontend/data/backcast/status.js \
+                  docs/calibration-log.md
+          git commit -m "Promote miso-56 (measured scarcity) to MISO keeper; record PJM G-20b hold — owner decisions 2026-07-11 [skip ci]"
+          git push origin HEAD:claude/maximize-usage-plan-04k910
