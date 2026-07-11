@@ -1,0 +1,95 @@
+# One-shot, re-dispatchable: (1) land the caiso-74/75 calibration-log entry
+# and the session's sync-docs pass (git-am patch transport, ercot57/pjm97
+# precedent — these docs are too large to relay whole through push_files);
+# (2) once the caiso7475-solve-register registration commit has landed, prune
+# the four oldest displaced CAISO non-keeper entries (caiso-64, caiso-67,
+# caiso-68 main+ablation) per the top-15-per-ISO retention rule (miso-41
+# prune precedent: sidecar + run payload). Safe to re-run: every step is
+# guarded.
+name: apply-caiso7475-docs
+
+on:
+  push:
+    branches:
+      - claude/caiso-calibration-continuation-3ftscz
+    paths:
+      - .github/workflows/apply-caiso7475-docs.yml
+      - .github/patches/caiso74/0003-calibration-log-entry.patch
+      - .github/patches/caiso74/0004-sync-docs-pass.patch
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply calibration-log patch (git am, guarded)
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if grep -q "caiso-74 (measured battery AS-award reservation: INERT)" docs/calibration-log.md; then
+            echo "log entry already applied - skipping"
+          else
+            p=.github/patches/caiso74/0003-calibration-log-entry.patch
+            m=519cea80faaec8572658b0bc02088a0d
+            if ! echo "$m  $p" | md5sum -c -; then
+              printf '\n' >> "$p"
+              echo "$m  $p" | md5sum -c -
+            fi
+            git am "$p"
+            git checkout -- "$p" || true
+          fi
+
+      - name: Apply sync-docs patch (git am, guarded)
+        run: |
+          set -euo pipefail
+          if grep -q "CAISO storage-AS awards + demand-clock realignment" docs/backcast-measured-data-audit-2026-06.md; then
+            echo "sync-docs already applied - skipping"
+          else
+            p=.github/patches/caiso74/0004-sync-docs-pass.patch
+            m=b0def36b670f2e131a25de3ea38c3739
+            if ! echo "$m  $p" | md5sum -c -; then
+              printf '\n' >> "$p"
+              echo "$m  $p" | md5sum -c -
+            fi
+            git am "$p"
+            git checkout -- "$p" || true
+          fi
+
+      - name: Prune displaced CAISO registry entries (top-15 retention)
+        run: |
+          set -euo pipefail
+          if [ ! -f frontend/data/backcast/registry/2026-07-11-caiso-75-demand-clock.json ]; then
+            echo "caiso-75 registration not landed yet - prune skipped (re-dispatch later)"
+          else
+            pruned=0
+            for id in 2026-07-07-caiso-64-g61c-curtail \
+                      2026-07-08-caiso-67-zonalgas-asympaths \
+                      2026-07-08-caiso-68-tempderate \
+                      2026-07-08-caiso-68-tempderate-ablation; do
+              for f in "frontend/data/backcast/registry/$id.json" \
+                       "frontend/data/backcast/runs/$id.js"; do
+                if [ -f "$f" ]; then git rm -q "$f"; pruned=1; fi
+              done
+            done
+            if [ "$pruned" = "1" ]; then
+              git commit -m "Prune caiso-64/67/68 probe sidecars + payloads (top-15 retention, displaced by caiso-74/75) [skip ci]" -m "Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>" -m "Claude-Session: https://claude.ai/code/session_01QafzWFFCueKzpj6iCUjLP1"
+            else
+              echo "nothing to prune"
+            fi
+          fi
+
+      - name: Push
+        run: |
+          set -euo pipefail
+          git checkout -- .github/patches/caiso74/ || true
+          git pull --rebase origin claude/caiso-calibration-continuation-3ftscz
+          git push origin HEAD:claude/caiso-calibration-continuation-3ftscz
