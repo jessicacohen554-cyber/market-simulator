@@ -1,5 +1,62 @@
 # NYISO calibration — best config so far
 
+## Frontier achieved (2026-07-11)
+
+**Formal designation**, registered in `frontend/data/backcast/keepers.json`
+(`frontier.NYISO`, `declared: 2026-07-11`):
+
+> "Frontier achieved: the deep >$300 tail's two candidate reserve levers are
+> chased to ground — the largest-contingency requirement formula is already in
+> the model as the measured NYCA families, and the ORDC/RCPF stack is verified
+> complete and SOM-grounded (fires to VOLL in 2023). The sole remaining gap is
+> the net-load forecast-uncertainty reserve increment — IMM Recommendation
+> 2021-1, which NYISO has not implemented and which has no published formula;
+> adding it in-model would be residual-fitting (rule 26). No admissible
+> mechanism exists today. 2026-07-11 calibration-log entry (nyiso-61
+> follow-up research)."
+
+This closes the two-lever chase that `nyiso-61` (above) left open after the
+downstate-import-limit swap produced only a near-null price effect and did
+not move the 2025 deep tail (unchanged at 25 h, `docs/calibration-log.md`
+lines 173-210): (1) the largest-contingency reserve requirement is already
+modeled — it is the measured NYCA family series, not a missing lever; (2) the
+ORDC/RCPF scarcity stack is independently verified complete and SOM-grounded,
+confirmed firing to VOLL in 2023. With both candidate reserve levers
+eliminated, the **sole remaining gap** is the net-load forecast-uncertainty
+reserve increment specified by IMM Recommendation 2021-1 — a lever NYISO
+itself has never implemented and for which no published formula exists.
+Per rule 26 (derive scripts are frozen against residuals — measured-behaviour
+parameters re-derive only when source data updates, never to chase a
+residual), building an in-model proxy for an unpublished, unimplemented
+NYISO mechanism would be residual-fitting dressed as structure: **no
+admissible mechanism exists today**, so the deep >$300 tail gap is
+formally closed out as data/methodology-blocked, not chased further.
+
+**Disambiguation from informal "frontier" language elsewhere in this file.**
+Earlier entries below use the word "frontier" loosely — e.g. nyiso-34's
+"documented frontier, non-closable with grounded inputs," nyiso-59's "the
+reserve-scarcity frontier is no longer data-blocked," and nyiso-60/61's
+"downstate import discipline… the identified next lever for the deep tail."
+Those are informal, in-passing descriptions of an open residual at the time
+they were written — not a status. The **2026-07-11 designation above is the
+first and only formal "Frontier achieved" declaration**: it is a dated,
+registered entry in `keepers.json` asserting that every admissible reserve
+lever for the NYISO deep price tail has been enumerated and either already
+modeled or ruled inadmissible (rule 26), so the tail residual is a
+documented, structural stopping point rather than an open lead.
+
+**Not a calibration-complete marker.** Verified against
+`frontend/data/backcast/calibration-complete.json`: NYISO does **not** appear
+under `"complete"` — only `NEISO` is declared complete there (`declared:
+2026-07-07`, keeper `2026-07-08-neiso-54-steamgas-ct`). The two are separate
+mechanisms: `calibration-complete.json`'s marker is the rule-22 holdout gate
+that authorizes the one-shot validation/locked-test solve (2022, 2019,
+H1-2026) for an ISO; the frontier designation above is a train-tier
+(2023-2025) finding that the price-tail reserve-lever search is exhausted.
+NYISO carries the latter but not the former — its 2022/2019/H1-2026 holdout
+years remain fully quarantined (no solve, no score, no registration) until a
+separate calibration-complete marker is declared for NYISO.
+
 > **KEEPER (2026-07-11): `nyiso 61 downstate import` — CALIBRATED-WITH-CAVEATS**
 > (`2026-07-11-nyiso-61-downstate-import`, bundle
 > `results/calibration/nyiso61_downstate_import`, all 3 years + zero-forcing
