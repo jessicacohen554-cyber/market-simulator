@@ -1612,5 +1612,255 @@ class TestRunnerCaisoPerYearImportCapsFlagOff(unittest.TestCase):
         self.assertFalse(ScenarioConfig().caiso_per_year_import_caps)
 
 
+class TestMisoSouthSeamSplit(unittest.TestCase):
+    """MISO South-seam external-zone split (miso_south_seam_split)."""
+
+    def _split(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import (
+            extend_with_import_node,
+            split_miso_south_external_node,
+        )
+
+        return split_miso_south_external_node(
+            extend_with_import_node(get_iso_config("MISO"))
+        )
+
+    def test_south_link_rehomed_and_sil_rewritten(self):
+        from market_sim.config.constants import MISO_SOUTH_EXTERNAL_ZONE
+
+        out = self._split()
+        self.assertIn(MISO_SOUTH_EXTERNAL_ZONE, out.zone_names)
+        ext_pairs = [
+            (ln.from_zone, ln.to_zone) for ln in out.links if "external" in ln.from_zone
+        ]
+        # The shared bus no longer touches MISO-South; the new zone does.
+        self.assertNotIn(("MISO_external", "MISO-South"), ext_pairs)
+        self.assertIn((MISO_SOUTH_EXTERNAL_ZONE, "MISO-South"), ext_pairs)
+        sil = next(
+            lim
+            for lim in out.interface_limits
+            if lim.name == "MISO_simultaneous_import"
+        )
+        self.assertIn(
+            (MISO_SOUTH_EXTERNAL_ZONE, "MISO-South"),
+            [tuple(p) for p in sil.links],
+        )
+
+    def test_idempotent(self):
+        out = self._split()
+        from market_sim.model.transmission import split_miso_south_external_node
+
+        self.assertIs(split_miso_south_external_node(out), out)
+
+    def test_fails_loud_without_import_node(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import split_miso_south_external_node
+
+        with self.assertRaises(ValueError):
+            split_miso_south_external_node(get_iso_config("MISO"))
+
+    def test_south_seam_bands_rehomed(self):
+        from market_sim.config.constants import MISO_SOUTH_EXTERNAL_ZONE
+        from market_sim.model.transmission import build_reference_price_node
+
+        gens = build_reference_price_node(
+            "MISO", zone_overrides={"South": MISO_SOUTH_EXTERNAL_ZONE}
+        )
+        south = [g for g in gens if g.unit_id.rsplit("_", 1)[-1].startswith("South#")]
+        self.assertTrue(south)
+        self.assertTrue(all(g.zone == MISO_SOUTH_EXTERNAL_ZONE for g in south))
+        others = [
+            g for g in gens if not g.unit_id.rsplit("_", 1)[-1].startswith("South#")
+        ]
+        self.assertTrue(all(g.zone == "MISO_external" for g in others))
+
+
+class TestMisoRdtTcdc(unittest.TestCase):
+    """MISO RDT default derate + TCDC priced tiers (miso_rdt_tcdc)."""
+
+    def _tiers(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_miso_rdt_tcdc
+
+        out = apply_miso_rdt_tcdc(get_iso_config("MISO"))
+        sn = [
+            ln
+            for ln in out.links
+            if (ln.from_zone, ln.to_zone) == ("MISO-South", "MISO-Plains")
+        ]
+        ns = [
+            ln
+            for ln in out.links
+            if (ln.from_zone, ln.to_zone) == ("MISO-Plains", "MISO-South")
+        ]
+        return out, sn, ns
+
+    def test_tier_widths_sum_to_contract(self):
+        from market_sim.config.constants import (
+            MISO_RDT_CONTRACT_N_TO_S_MW,
+            MISO_RDT_CONTRACT_S_TO_N_MW,
+            MISO_RDT_DEFAULT_DERATE_FRAC,
+        )
+
+        _, sn, ns = self._tiers()
+        self.assertEqual(len(sn), 3)
+        self.assertEqual(len(ns), 3)
+        self.assertAlmostEqual(sum(ln.ttc_mw for ln in sn), MISO_RDT_CONTRACT_S_TO_N_MW)
+        self.assertAlmostEqual(sum(ln.ttc_mw for ln in ns), MISO_RDT_CONTRACT_N_TO_S_MW)
+        # Free tier = the derated modeled limit.
+        self.assertAlmostEqual(
+            sn[0].ttc_mw,
+            MISO_RDT_DEFAULT_DERATE_FRAC * MISO_RDT_CONTRACT_S_TO_N_MW,
+        )
+
+    def test_tier_prices_and_oneway(self):
+        from market_sim.config.constants import (
+            MISO_RDT_TCDC_STEP1_PRICE,
+            MISO_RDT_TCDC_STEP2_PRICE,
+        )
+
+        _, sn, ns = self._tiers()
+        for tiers in (sn, ns):
+            self.assertEqual(
+                [ln.flow_cost for ln in tiers],
+                [0.0, MISO_RDT_TCDC_STEP1_PRICE, MISO_RDT_TCDC_STEP2_PRICE],
+            )
+            self.assertTrue(all(not ln.is_bidirectional for ln in tiers))
+
+    def test_interface_groups_capture_all_tiers(self):
+        from market_sim.model.transmission import build_interface_groups
+
+        out, _, _ = self._tiers()
+        plains = next(
+            g
+            for g, lim in zip(
+                build_interface_groups(out.links, out.interface_limits),
+                out.interface_limits,
+            )
+            if lim.name == "MISO_CIL_Plains"
+        )
+        # (West,Plains) + (Illinois,Plains) + six RDT tiers = 8 members.
+        self.assertEqual(len(plains[0]), 8)
+
+    def test_flow_cost_array_none_when_all_free(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import get_link_flow_cost_array
+
+        self.assertIsNone(get_link_flow_cost_array(get_iso_config("MISO").links))
+
+    def test_default_config_gates_are_off(self):
+        from market_sim.config.scenarios import ScenarioConfig
+
+        cfg = ScenarioConfig()
+        self.assertFalse(cfg.miso_south_seam_split)
+        self.assertFalse(cfg.miso_rdt_tcdc)
+
+
+class TestLinkFlowCostLP(unittest.TestCase):
+    """Priced one-way tiers in the LP: fills below the step price, dual
+    separation follows the tier economics, bidirectional pricing rejected."""
+
+    def test_tiered_link_fills_in_merit_order(self):
+        import numpy as np
+
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+        from market_sim.model.dispatch import solve_dispatch
+
+        T = 24
+        gens = [
+            Generator(
+                unit_id="cheapA",
+                name="cheapA",
+                zone="A",
+                fuel_type="gas_cc",
+                pmax_mw=500,
+                pmin_mw=0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="direB",
+                name="direB",
+                zone="B",
+                fuel_type="gas_cc",
+                pmax_mw=500,
+                pmin_mw=0,
+                eford=0.0,
+            ),
+        ]
+        fleet = generators_to_fleet_arrays(gens, ["A", "B"], hours=T)
+        demand = np.zeros((2, T))
+        demand[0, :] = 100.0
+        demand[1, :] = 300.0
+        mc = np.vstack([np.full(T, 20.0), np.full(T, 100.0)])
+        # A->B tiers: 150 free, 50 @ $40 (lands at $60 < B's $100 -> fills),
+        # 50 @ $500 (lands at $520 > $100 -> stays empty).
+        res = solve_dispatch(
+            fleet,
+            demand,
+            mc=mc,
+            incidence=np.array([[-1, -1, -1], [1, 1, 1]], dtype=float),
+            ttc=np.array([150.0, 50.0, 50.0]),
+            link_bidirectional=np.array([False, False, False]),
+            link_flow_cost=np.array([0.0, 40.0, 500.0]),
+            voll=5000,
+            T=T,
+            wind_cf=np.zeros((2, T)),
+            wind_cap=np.zeros(2),
+            solar_cf=np.zeros((2, T)),
+            solar_cap=np.zeros(2),
+        )
+        np.testing.assert_allclose(res.flows[0, :], 150.0)
+        np.testing.assert_allclose(res.flows[1, :], 50.0)
+        np.testing.assert_allclose(res.flows[2, :], 0.0)
+        np.testing.assert_allclose(res.prices[0, :], 20.0)
+        np.testing.assert_allclose(res.prices[1, :], 100.0)
+
+    def test_priced_bidirectional_link_rejected(self):
+        import numpy as np
+
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+        from market_sim.model.dispatch import solve_dispatch
+
+        T = 24
+        gens = [
+            Generator(
+                unit_id="a",
+                name="a",
+                zone="A",
+                fuel_type="gas_cc",
+                pmax_mw=500,
+                pmin_mw=0,
+                eford=0.0,
+            ),
+            Generator(
+                unit_id="b",
+                name="b",
+                zone="B",
+                fuel_type="gas_cc",
+                pmax_mw=500,
+                pmin_mw=0,
+                eford=0.0,
+            ),
+        ]
+        fleet = generators_to_fleet_arrays(gens, ["A", "B"], hours=T)
+        with self.assertRaises(ValueError):
+            solve_dispatch(
+                fleet,
+                np.full((2, T), 100.0),
+                mc=np.vstack([np.full(T, 20.0), np.full(T, 100.0)]),
+                incidence=np.array([[-1], [1]], dtype=float),
+                ttc=np.array([100.0]),
+                link_bidirectional=np.array([True]),
+                link_flow_cost=np.array([40.0]),
+                voll=5000,
+                T=T,
+                wind_cf=np.zeros((2, T)),
+                wind_cap=np.zeros(2),
+                solar_cf=np.zeros((2, T)),
+                solar_cap=np.zeros(2),
+            )
+
+
 if __name__ == "__main__":
     unittest.main()

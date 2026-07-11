@@ -267,6 +267,7 @@ def build_cost_vector(
     ordc_penalties: np.ndarray | None = None,
     posture_startup_cost: np.ndarray | None = None,
     rps_acp_price: float = 0.0,
+    link_flow_cost: np.ndarray | None = None,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
@@ -307,6 +308,10 @@ def build_cost_vector(
             cost of buying out of the RPS with an ACP, which caps the RPS row's
             dual (the REC price) at this ceiling. Ignored when the layout
             carries no ACP column.
+        link_flow_cost: Optional ``(n_links,)`` per-MWh cost on each link's
+            directed flow (MISO RDT TCDC priced tiers). ``None`` keeps the
+            flow block zero-cost (byte-identical). Nonzero entries are only
+            valid on one-way links — enforced by :class:`DispatchModel`.
 
     Returns:
         Cost vector of length ``layout.total_columns``.
@@ -339,6 +344,15 @@ def build_cost_vector(
         )
         - storage_discharge_eac
     )
+
+    # Transmission flow: zero-cost by default; ``link_flow_cost`` prices a
+    # link's directed flow (MISO RDT TCDC tiers — one-way links only, the
+    # caller validates, since a positive cost on a signed bidirectional flow
+    # would credit the reverse direction).
+    if link_flow_cost is not None and layout.n_links:
+        block[:, layout._flow_off : layout._slack_off] = np.asarray(
+            link_flow_cost, dtype=float
+        )[np.newaxis, :]
 
     # Load slack: value of lost load.
     block[:, layout._slack_off : layout._dump_off] = voll
@@ -3317,6 +3331,7 @@ class DispatchModel:
         reserve_pergen_col_pool: np.ndarray | None = None,
         reserve_balance_col_mask: np.ndarray | None = None,
         link_bidirectional: np.ndarray | None = None,
+        link_flow_cost: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
         build_start = time.perf_counter()
@@ -3669,6 +3684,32 @@ class DispatchModel:
         self.solar_mc = solar_mc
         self.storage_discharge_eac = storage_discharge_eac
         self.storage_discharge_cost = storage_discharge_cost
+        # Per-link directed flow cost (MISO RDT TCDC tiers). A positive cost
+        # on a signed bidirectional flow would CREDIT the reverse direction,
+        # so nonzero entries require one-way links — fail loud, never solve a
+        # credit-farming LP.
+        if link_flow_cost is not None:
+            lfc = np.asarray(link_flow_cost, dtype=float)
+            if lfc.shape != (n_links,):
+                raise ValueError(
+                    f"link_flow_cost shape {lfc.shape} != (n_links={n_links},)"
+                )
+            nonzero = lfc != 0.0
+            if nonzero.any():
+                bidir = (
+                    np.asarray(link_bidirectional, dtype=bool)
+                    if link_bidirectional is not None
+                    else np.ones(n_links, dtype=bool)
+                )
+                if (nonzero & bidir).any():
+                    raise ValueError(
+                        "link_flow_cost is nonzero on bidirectional link(s) "
+                        f"{np.flatnonzero(nonzero & bidir).tolist()} — priced "
+                        "flow requires one-way links (is_bidirectional=False)"
+                    )
+            self.link_flow_cost = lfc
+        else:
+            self.link_flow_cost = None
         self.rps_target = rps_target
         self.rps_acp_price = rps_acp_price
         self._lcr_row_offset = lcr_row_offset
@@ -3861,6 +3902,7 @@ class DispatchModel:
             ordc_penalties=self.ordc_penalties,
             posture_startup_cost=self._posture_startup,
             rps_acp_price=(self.rps_acp_price or 0.0),
+            link_flow_cost=self.link_flow_cost,
         )
 
         h = self._h
@@ -4305,6 +4347,7 @@ def solve_dispatch(
     reserve_pergen_col_pool: np.ndarray | None = None,
     reserve_balance_col_mask: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
+    link_flow_cost: np.ndarray | None = None,
     T: int | None = None,
 ) -> DispatchResult:
     """Solve the linear economic-dispatch problem with HiGHS.
@@ -4464,6 +4507,7 @@ def solve_dispatch(
         reserve_pergen_col_pool=reserve_pergen_col_pool,
         reserve_balance_col_mask=reserve_balance_col_mask,
         link_bidirectional=link_bidirectional,
+        link_flow_cost=link_flow_cost,
         T=T,
     )
     return model.solve(
