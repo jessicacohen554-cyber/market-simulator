@@ -1,0 +1,77 @@
+# Canonical schema: uranium-marketing-price (EIA Uranium Marketing Annual
+# Report -- weighted-average uranium and enrichment-services prices paid by
+# U.S. civilian nuclear power reactor owners/operators).
+#
+# Resolves the D2 gap flagged in the forecast-driver audit: "nuclear fuel =
+# $0" (`fuel.py:113-115` -- non-fuel-burning units, which nuclear is
+# incorrectly grouped with). This is the measured front-end-fuel-cycle price
+# data a $/MMBtu nuclear fuel cost would be built from: the uranium
+# concentrate (U3O8e) price plus the enrichment-services (SWU) price -- the
+# two dominant, EIA-published cost components. Converting to $/MMBtu needs a
+# burnup/thermal-efficiency assumption and a conversion-cost component EIA's
+# UMAR does not itself publish as a time series; that build-up is left to the
+# consuming derivation (P-1D), cited to this data (CLAUDE.md rule 23) rather
+# than guessed here.
+#
+# One row per (metric, delivery_year). Provenance rides in source_doc /
+# source_page (the exact table within the EIA Uranium Marketing Annual
+# Report). Prices are NOMINAL (not inflation-adjusted) -- the source report's
+# own footnote states "prices are not adjusted for inflation" -- so a
+# consumer wanting real terms must deflate explicitly (never silently mixed
+# with the real-2024$ AEO fuel-price series in eia-aeo-fuel-prices).
+datatype: uranium-marketing-price
+schema_version: 1
+title: EIA Uranium Marketing Annual Report price series
+description: >-
+  Weighted-average uranium (U3O8 equivalent) purchase price and quantity, and
+  weighted-average enrichment-services (SWU) price, paid by owners/operators
+  of U.S. civilian nuclear power reactors, 2002-2024 (delivery year). Sourced
+  from EIA's 2024 Uranium Marketing Annual Report (Tables S1a, S1b, S2) --
+  the report's only public distribution is PDF (no EIA Open Data API v2
+  route exists for uranium; verified during intake), so this is a documented
+  transcription of the report's own summary tables, not a derived or
+  estimated figure.
+
+key_columns: [metric, delivery_year]
+allow_additional_columns: false
+
+columns:
+  - name: metric
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      One of total_purchased_quantity (Table S1a "Total purchased", million
+      lb U3O8e) | total_purchased_price (Table S1b "Total purchased
+      (weighted-average price)", $/lb U3O8e) | enrichment_services_price
+      (Table S2 "Average price (US$ per SWU)").
+  - name: delivery_year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: >-
+      Calendar delivery year, 2002-2024. enrichment_services_price has no
+      rows for 2002-2005 (the source report marks those years "not
+      available", not zero -- omitted rather than a fabricated/null value).
+  - name: value
+    dtype: float64
+    unit: mixed
+    nullable: false
+    description: The quantity or price, in the unit given by the `unit` column.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      million_lb_u3o8e (quantity) | usd_per_lb_u3o8e (uranium price,
+      nominal $) | usd_per_swu (enrichment price, nominal $).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: Authoritative EIA document the value is drawn from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Table reference within source_doc (e.g. "Table S1b").
