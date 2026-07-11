@@ -195,6 +195,46 @@ in the FINDINGs.
   commitment design (`docs/handoffs/caiso-evening-cc-commitment-design-2026-07.md`,
   re-measure gate on the caiso-75 line).
 
+### Frontier achieved (2026-07-11)
+
+**Designation.** `frontend/data/backcast/keepers.json` `"frontier".NYISO` records a
+FORMAL frontier designation for NYISO, declared 2026-07-11:
+
+> Frontier achieved: the deep >$300 tail's two candidate reserve levers are chased to
+> ground — the largest-contingency requirement formula is already in the model as the
+> measured NYCA families, and the ORDC/RCPF stack is verified complete and SOM-grounded
+> (fires to VOLL in 2023). The sole remaining gap is the net-load forecast-uncertainty
+> reserve increment — IMM Recommendation 2021-1, which NYISO has not implemented and
+> which has no published formula; adding it in-model would be residual-fitting (rule
+> 26). No admissible mechanism exists today. 2026-07-11 calibration-log entry (nyiso-61
+> follow-up research).
+
+This is the ONE formal frontier designation for NYISO in this file — distinct from the
+many informal "…frontier keeper"/"legitimate frontier" phrasings elsewhere in this log
+(e.g. the nyiso-61 follow-up research entry below, which is the evidence this
+designation cites). Those informal mentions describe the same conclusion in narrative
+form; this section and the `keepers.json` `frontier.NYISO` block are the record of
+record.
+
+**Evidence (quoted from the nyiso-61 follow-up research, below):**
+- **B1 largest-contingency requirement** — already in the model as the measured NYCA
+  families (`reserve_config.NYISO_RCPF_PRODUCTS`: `nyca_10min_total`=1310,
+  `nyca_30min_total`=2620, `nyca_10min_spin`=655 — exactly 1×/2×/½× the 1,310 MW
+  contingency), carried as a flat series (std=0). Not built further.
+- **ORDC/RCPF height** — verified complete and SOM-grounded (East 10-min $775, SENY
+  30-min $500, NYC $25; 2024 SOM p.297); the keeper proves the stack fires, reaching
+  $2,000 (VOLL) in 2023 with 22 zone-hours >$1,000. No miss.
+- **Sole remaining gap** — the net-load forecast-uncertainty reserve increment (IMM
+  Recommendation 2021-1, Potomac Economics 2024 NYISO SOM), which NYISO has not
+  implemented and which has no published formula. Closing it in-model would be
+  residual-fitting (rule 26); no admissible mechanism exists today.
+
+**Status caveat.** This frontier designation is NOT a calibration-complete marker.
+NYISO does not appear in `frontend/data/backcast/calibration-complete.json`'s
+`"complete"` object — the holdout quarantine (rule 22) still fully applies, and no
+validation/locked-test year may be solved, scored, or registered for NYISO until an
+explicit calibration-complete declaration is made separately.
+
 ### 2026-07-11 — NYISO — downstate import discipline: measured NYC (Zone J) LCR/TSL import cap; KEEPER PROMOTED `2026-07-11-nyiso-61-downstate-import` replaces `nyiso-60-ldc-transport` (CALIBRATED-WITH-CAVEATS)
 
 **Goal.** Execute the nyiso-60 entry's open item (1) — the identified next
