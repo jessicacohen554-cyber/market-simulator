@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-11-nyiso-61-downstate-import-ablation",
+  "label": "nyiso 61 downstate import ablation",
+  "date": "2026-07-11",
+  "shorthand": "nyiso-61-downstate-import-ablation",
+  "definition": "(ABLATION TWIN of nyiso61 downstate-import) zero-forcing ablation: nyiso-61 recipe (nyiso_nyc_lcr_tsl + nyiso_li_lcr_tsl transmission caps ON), every merchant floor/bridge OFF (rule 20 / D-3).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-11-nyiso-61-downstate-import-ablation.js",
+  "bundle": "results/calibration/nyiso61_downstate_import-ablation"
+}

@@ -1,6 +1,41 @@
 # NYISO calibration — best config so far
 
-> **KEEPER (2026-07-10b): `nyiso 60 ldc transport` — CALIBRATED-WITH-CAVEATS**
+> **KEEPER (2026-07-11): `nyiso 61 downstate import` — CALIBRATED-WITH-CAVEATS**
+> (`2026-07-11-nyiso-61-downstate-import`, bundle
+> `results/calibration/nyiso61_downstate_import`, all 3 years + zero-forcing
+> ablation twin). The `nyiso-60-ldc-transport` keeper recipe VERBATIM with one
+> **measured-data transmission-limit swap** (rules 12/13/14/17, zero new free
+> parameters): `nyiso_nyc_lcr_tsl=True` — the Zone-J analog of the Zone-K
+> `nyiso_li_lcr_tsl` cap (#1345). In the HB14-21 summer-peak window the
+> **Lower_Hudson→NYC (Dunwoodie-South)** link is capped at the **published NYISO
+> NYC-locality Bulk-Power Transmission import limit, 2,875 MW** every capability
+> year (`data/raw/capacity-deliverability/nyiso/nyiso.csv`), **replacing the
+> link's 3,900 MW Gold-Book energy-TTC estimate**; every other hour keeps the
+> physical rating. Rule-14 boundary (clean, parallel to LI): the 2,875 MW is the
+> AC transmission-security limit; the HVDC ties into Zone J (Neptune/HTP/VFT) are
+> the separate priced import-node link (`("NYC", 1000.0)`) and stay uncapped, so
+> the cap limits only the Dunwoodie AC link, not total NYC import. A transmission
+> limit, not a min_gen floor (forces no energy; stays ON in the ablation twin).
+> Effect vs nyiso-60: a **near-null price change** — C3a −3.7/−12.8/−13.7%
+> (keeper −4.8/−13.2/−13.7, marginally better/equal), C3b 0.156/0.222/0.198
+> (keeper 0.163/0.223/0.199, marginally better), C3c 28/3/25 h (keeper 23/1/25 —
+> 2023 slightly more over-count on the ledgered G-20a DA-basis artifact; **2025
+> deep tail UNCHANGED at 25 h vs 42 h RT**), C5a +3.3/+2.5/+8.1% **identical**,
+> C1 14/14, C2/C4/C7/C8 PASS all identical to the keeper. Ablation twin: floors-
+> off simple means 32.29/35.10/60.09 vs keeper 29.14/32.00/54.08 (identical
+> deltas to nyiso-60). **FINDING (rule 1 promotion on measured faithfulness, NOT
+> residual movement):** downstate import discipline is **NOT** the binding
+> deep-tail lever — the measured NYC AC-import limit barely moves the level and
+> does not close the 2025 tail. The two remaining open items (do NOT chase with
+> tuned adders, rules 11/26): (a) **#1344 B1** condition-varying reserve-
+> requirement increments (formal NYISO Market Operations request only; measured
+> series is a documented lower bound in non-TSA hours), (b) **Iroquois Z2 winter
+> hub** (Ask-C, licensed data). CI replay OOMs GitHub runners in
+> regenerate_clean; solve locally (≥15 GB + swap). **Keeper lineage:** nyiso-41 →
+> `nyiso-53-li-tsl` → `nyiso-56-measured-zonal` → `nyiso-59-dynamic-rr` →
+> `nyiso-60-ldc-transport` → **nyiso-61** (see the dated calibration-log entries).
+
+> **KEEPER (2026-07-10b, superseded same-week by nyiso-61 above): `nyiso 60 ldc transport` — CALIBRATED-WITH-CAVEATS**
 > (`2026-07-10-nyiso-60-ldc-transport`, bundle
 > `results/calibration/nyiso60_ldc_transport`, all 3 years + zero-forcing
 > ablation twin). The `nyiso-59-dynamic-rr` keeper recipe VERBATIM with one
