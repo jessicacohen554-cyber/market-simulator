@@ -45,19 +45,17 @@ jobs:
             # format-patch md5s recorded at pack time (ercot57 lesson).
             p1=.github/patches/caiso74/0001-storage-as-awards-intake.patch
             p2=.github/patches/caiso74/0002-caiso74-mechanism-demand-clock.patch
-            if ! md5sum -c <<'EOF'
-7296b3d5c119d92906d70eb93373b18c  .github/patches/caiso74/0001-storage-as-awards-intake.patch
-cf0645f8402f1874f571724030fcda16  .github/patches/caiso74/0002-caiso74-mechanism-demand-clock.patch
-EOF
-            then
+            m1=7296b3d5c119d92906d70eb93373b18c
+            m2=cf0645f8402f1874f571724030fcda16
+            if ! echo "$m1  $p1" | md5sum -c -; then
               sed -i 's/^datatype: storage-as-awards$/+datatype: storage-as-awards/' "$p1"
               printf '\n' >> "$p1"
+              echo "$m1  $p1" | md5sum -c -
+            fi
+            if ! echo "$m2  $p2" | md5sum -c -; then
               sed -i 's/^class TestCaisoDemandClockRealign(unittest.TestCase):$/+class TestCaisoDemandClockRealign(unittest.TestCase):/' "$p2"
               printf '\n' >> "$p2"
-              md5sum -c <<'EOF'
-7296b3d5c119d92906d70eb93373b18c  .github/patches/caiso74/0001-storage-as-awards-intake.patch
-cf0645f8402f1874f571724030fcda16  .github/patches/caiso74/0002-caiso74-mechanism-demand-clock.patch
-EOF
+              echo "$m2  $p2" | md5sum -c -
             fi
             git am "$p1" "$p2"
           fi
