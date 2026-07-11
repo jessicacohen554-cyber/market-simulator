@@ -64,7 +64,7 @@ practical effect: the hardcoded curve **overstates** gas prices by 12-20%
 through 2026-2031, then **understates** them by up to 17% through 2033-2036.
 Both directions matter for dispatch (understating late-2020s gas suppresses
 coal-to-gas switching and marginal price in gas-set hours in the near term;
-overs​tating mid-2030s gas has the opposite effect there).
+overstating mid-2030s gas has the opposite effect there).
 
 ### "low" path (AEO High Oil and Gas Supply ↔ `highogs`)
 
