@@ -9869,3 +9869,107 @@ measured/published, every score movement a by-product). Full record: FINDING §9
 replay path is now STRICT (`replay_keeper.build_kwargs` hard-errors on unmapped
 keys; all six keepers verified; `tests/test_replay_keeper_strict.py`) — the
 miso-50..53 calibration_flags trap class is closed permanently.
+## 2026-07-11 — ERCOT-58: the ercot57 joint round executed (owner-sanctioned) — measured availability + the envelope RE-IDENTIFIED on the measured-fleet basis + the ORDC-only product-ladder question ADJUDICATED across three probes; the market-faithful form (plan-only in-LP withholding + post-solve realized-room RTORPA) is LP-healthy and cures the phantom-scarcity channel, but its realized room measures a +2.4 GW binding-regime thermal-dispatch excess (storage under-discharge at evening peaks, the C5c/G-37 lane) — ercot58 joint + twin registered as the honest record, keeper stays ercot56-nucwin
+
+**Task (owner sanction 2026-07-11, this session — the ERCOT-57 filed
+completion, opening the rule-26 reserve-demand/product-ladder design round).**
+Test the never-tested joint configuration: `ercot_thermal_dam_availability` +
+an on-line-capacity envelope re-identified on the measured-fleet basis + the
+per-product-VOLL-ramps vs ORDC-only scarcity-pricing design question. Full
+three-probe adjudication: docs/DIAGNOSIS-ercot58-joint-round-2026-07.md.
+
+**Leg B re-identification (measured-fleet basis, rules 13/14/23 — trigger:
+the ercot-thermal-dam-availability.csv intake).** The ercot41/43 share tables
+(committed on-line HSL / INSTALLED capacity) conflated commitment choice with
+outage state. New `ercot_online_capacity_envelope_measured`: share =
+committed HSL / MEASURED AVAILABLE capacity for the disclosure-covered
+classes (CC_REGULAR, CT_PEAKER); basis = the fleet's finished availability
+(measured rescale in backcast, statistical stack forward — the G4 seam); CHP
+on the export basis (CAMPD gross is full cogen host+grid, the model's CHP is
+grid-export — a ~2.5 GW room inflation otherwise). Identification gate
+PASSED (`validate_ercot_online_capacity.py --measured`): binding regime
++3/+1/−3 %, pooled top-2 % extreme tail EXACT (−0.0 %), coverage 2.11×; the
+per-year extreme-tail ledger tightens from ercot43's −23/−2/+18 % to
+−13/−0/+9 % — the availability decomposition carries about half the
+cross-year capability spread (the ERCOT-57 confound confirmed). A measured
+check of the commitment share on the availability basis is FLAT
+(~0.94-0.95) across years and across both a within-year-rank and an
+absolute-net-load axis: availability, not commitment, was the cross-year
+term.
+
+**Leg C adjudication (rule-16 2023-only throwaways, never registered).**
+* **v1 — in-LP ORDC total family + envelope LP row: REJECTED.** C3a +55 %,
+  62 GWh shed, 12.8 GW of coal parked at the Aug-25 peak: the total curve's
+  VOLL-floored sub-MCL steps (OBDRR048) make reserve-holding and load-shed
+  exactly degenerate, so the LP withholds up the full span inside the
+  envelope — the ercot43 §7.4 defect reproduced with the availability
+  confound removed. The in-LP span demand is the defect, not the fleet.
+* **v2 — plan-only withholding + envelope as a HARD LP row: REJECTED.**
+  833 GWh shed across 476 summer hours (C3a +707 %): an LP cap anchored to
+  reality's committed capability converts every model-vs-reality supply-mix
+  difference at tight hours into VOLL shed. Pre-RTC+B SCED carries no
+  committed-capability dispatch constraint at all.
+* **v3 — the market-faithful form (registered):** ε-held product plans (the
+  DAM award's physical withholding; `ERCOT_AS_PLAN_HOLD_EPS` = 0.001, a
+  fixed tie-break, not a fit) + the rigid pre-reform ECRS_withheld + NO
+  envelope LP row + NO in-LP total family; RTORPA computed POST-SOLVE on the
+  realized room (`scarcity.ercot_ordc_realized_adder`: online = env_all − ΣP
+  + measured storage-AS + LR credit; offline = forward RTOFFCAP; the
+  published two-half-hour LOLP construction with the OBDRR048 floor mask —
+  RTSPP = SPP + RTORPA, Nodal Protocols §6.5.7.5). LP-healthy (shed
+  0.2 GWh); the June/Sep-2023 phantom channel stays cured; rule 19 enforced
+  (`ercot_ordc_only_scarcity` FORBIDS `ercot_ordc_total_reserve` and the
+  cap-dual adder path).
+
+**Runs (full 2023-2025 + zero-forcing twin, solved locally then re-solved
+and registered via the `ercot58-solve-register` workflow).** Recipe = the
+PROMOTED keeper (ercot56-nucwin) reconstructed from its meta.json via
+`_ercot58_ab.py` + the three deltas; zero new residual-fitted parameters.
+Session-computed scores (official rubric lands with the registered sidecar):
+
+| run | C3a lw (23/24/25) | monthly NRMSE | h>$200 vs DA 310/68/24 |
+|---|---|---|---|
+| ercot56 nucwin (keeper) | +3.9/−4.5/−1.1 % | .133/.183/.094 (C3b) | 171/27/25 |
+| ercot57 thermavail | −45.4/−14.1/−8.7 % | .845/.188/.106 (C3b) | 33/14/2 |
+| ercot58 joint (v3) | **+324/+71/+206 %** | 4.78/2.18/7.20 | 1022/255/457 |
+
+Determination NOT-YET — registered as the honest record (rules 1/15/16);
+**keeper stays ercot56-nucwin.**
+
+**The uncovered root cause (the round's real yield).** The realized room runs
+systematically tight because the model serves ~+2.4 GW MORE of the
+binding-regime (top-30 % net-load) load with envelope-class thermal than the
+CAMPD export-basis gross shows reality did — sitting exactly on the steep end
+of the ORDC. Leading identified component: **model storage discharges 145 MW
+mean at binding hours (net +108 MW) where the real 2023 battery fleet ran
+~1-2 GW at evening peaks** — the batteries are AS-committed (measured award
+reserved out of the power cap) and the perfect-foresight arbitrage does not
+reproduce the real evening-peak discharge. This is the SAME open lane as the
+keeper's ledgered C5c-2024 storage-shape caveat (r = 0.361) and the G-37
+duration-gate finding; the realized-room construction converts that known
+dispatch-shape error into a price error — exactly what a structurally honest
+mechanism should do (rule 14: keep the accurate structure, fix the real root
+cause). Secondary terms: ST_GAS +1.3 GW / CT_PEAKER −0.6 GW binding-regime
+class-mix shifts, and the CAMPD-gross-vs-model-net metering wedge (which
+biases the room LOOSE, i.e. the supply-mix gap is somewhat larger than
++2.4 GW).
+
+**Filed forward path.** (a) The binding-regime supply mix, storage first
+(evening-peak battery discharge — the C5c/G-37 lane: forward AS commitment
+under uncertainty and/or measured-award energy co-participation), then the
+ST_GAS/CT class-mix at the peak; (b) re-probe v3 when that lane closes — its
+room is bounded by the same gap, and every other component (availability,
+envelope identification, plan withholding, adder construction) is
+measured-anchored and already gated. The G-22 DA-shoulder offer-formation
+residual stays with its filed owner (the conditional-offer-distribution
+lane), untouched by this round. LOYO (rule 22) not run — required only
+before promotion, and nothing here is promotable.
+
+**Holdouts / governance.** No solve, score, or intake outside 2023-2025
+(rule 22); ORDC tariff parameters (VOLL, MCL, LOLP μ/σ, floor steps)
+untouched at every step (rule 26) — the three probes changed only WHICH
+mechanism carries them; no offer curve, sigmoid, floor, or derive-script
+value changed (rules 13/21/23); the envelope constants re-derived under
+their rule-23 trigger (the disclosure intake); registry pruned to top-15
+(the ercot51 coal-net-summer pair — mechanism adopted into every keeper
+since; bundle dirs stay).
