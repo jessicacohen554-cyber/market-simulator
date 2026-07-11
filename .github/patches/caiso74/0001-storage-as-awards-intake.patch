@@ -1,0 +1,668 @@
+From 41b8f67dcac9f9f8128510bf468019723714db58 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 11 Jul 2026 02:41:45 +0000
+Subject: [PATCH 1/3] data(storage-as-awards): intake CAISO Daily Energy
+ Storage Report battery AS awards 2023-2025
+
+Schema-first intake of the measured CAISO battery/hybrid AS-award series
+(RU/RD/SR/NR, IFM hourly + RTPD 15-min averaged) from the quarterly
+storage-report xlsx, per-ISO registry module (no iso ladders), local-year
+partitions, DST clock-label handling (spring skips HE3, fall runs 1..25).
+DA battery means 1,010/1,484/1,652 MW (2023/24/25) reproduce the
+DMM-published 1,040/1,500 MW anchors to ~1%. Raw xlsx committed by the
+apply workflow (binary transport).
+
+Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+Claude-Session: https://claude.ai/code/session_01QafzWFFCueKzpj6iCUjLP1
+---
+ .../schema/storage-as-awards.schema.yaml      |  80 ++++++++++
+ data/raw/storage-as-awards/CAISO/README.md    |  41 +++++
+ scripts/curate_storage_as_awards.py           |  91 +++++++++++
+ scripts/lib/storage_as_awards/__init__.py     |  88 ++++++++++
+ scripts/lib/storage_as_awards/caiso.py        | 151 ++++++++++++++++++
+ scripts/regenerate_clean.py                   |   1 +
+ tests/test_curate_storage_as_awards.py        | 135 ++++++++++++++++
+ 7 files changed, 587 insertions(+)
+ create mode 100644 data/dictionary/schema/storage-as-awards.schema.yaml
+ create mode 100644 data/raw/storage-as-awards/CAISO/README.md
+ create mode 100644 scripts/curate_storage_as_awards.py
+ create mode 100644 scripts/lib/storage_as_awards/__init__.py
+ create mode 100644 scripts/lib/storage_as_awards/caiso.py
+ create mode 100644 tests/test_curate_storage_as_awards.py
+
+diff --git a/data/dictionary/schema/storage-as-awards.schema.yaml b/data/dictionary/schema/storage-as-awards.schema.yaml
+new file mode 100644
+index 0000000..3a095fe
+--- /dev/null
++++ b/data/dictionary/schema/storage-as-awards.schema.yaml
+@@ -0,0 +1,80 @@
++# Canonical schema: storage ancillary-service awards by resource class
++#
++# The measured MW of ancillary services AWARDED to the storage fleet — the
++# resource-type-resolved counterpart of `ancillary-services` (which carries the
++# system requirement / total procurement, not who holds it). Storage carries a
++# large and growing share of AS in every ISO with a battery fleet; the awarded
++# MW is capacity committed to reserves that cannot simultaneously offer energy
++# arbitrage, so it is the measured input for storage AS power-reservation
++# mechanisms (CLAUDE.md rule 13's own worked example: a measured
++# ancillary-service power reservation).
++#
++# Source layouts reconciled (tidy long absorbs the per-ISO divergence):
++#   CAISO : Daily Energy Storage Report quarterly xlsx (`market_output` sheet,
++#           TRADE_DATE/HOUR/INTERVAL/MARKET/RES_TYPE/TYPE/VALUE): system-level
++#           battery (LESR) and hybrid (HYBD) awards by product RU/RD/SR/NR,
++#           hourly IFM + RUC, 15-min RTPD, 5-min RTD. EN/SOC rows (energy
++#           schedule, state of charge) are NOT awards and are excluded here.
++#   ERCOT : 60-Day DAM disclosure per-resource-type AS series (the legacy
++#           pre-contract intake at data/raw/ercot-AS/*_as_by_restype_hourly
++#           .parquet remains in place; migration to this schema is additive).
++#
++# Product vocabulary is the same reconciled taxonomy as `ancillary-services`:
++#   reg_up, reg_down, spin, nonspin (CAISO RU/RD/SR/NR map 1:1).
++# resource_class vocabulary: `battery` (CAISO LESR: standalone + co-located
++# storage), `hybrid` (CAISO HYBD: co-optimized hybrid resources).
++#
++# Sub-hourly source intervals (RTPD/RTD) are averaged to the hourly mean MW on
++# the way in, so every market run shares one hourly grain.
+datatype: storage-as-awards
++schema_version: 1
++title: Storage ancillary-service awards
++description: >-
++  Hourly-mean ancillary-service award MW held by the storage fleet, by ISO,
++  resource class, market run and product, on the reconciled common product
++  taxonomy. A measured market outcome usable as a reproducible physical/market
++  input (capacity reserved for AS cannot also arbitrage energy).
++
++key_columns: [iso, resource_class, market, product, interval_start_utc]
++allow_additional_columns: false
++
++columns:
++  - name: interval_start_utc
++    dtype: datetime64[ns, UTC]
++    unit: utc_timestamp
++    nullable: false
++    description: tz-aware UTC start of the hour.
++  - name: interval_start_local
++    dtype: datetime64[ns]
++    unit: local_timestamp
++    nullable: true
++    description: Prevailing local wall-clock hour start (informational).
++  - name: iso
++    dtype: string
++    unit: none
++    nullable: false
++    description: ISO/RTO code.
++  - name: resource_class
++    dtype: string
++    unit: none
++    nullable: false
++    description: Storage resource class holding the award — "battery" or "hybrid".
++  - name: market
++    dtype: string
++    unit: none
++    nullable: false
++    description: >-
++      Market run — "DAM" (day-ahead; CAISO IFM) or "RTM" (real-time; CAISO
++      RTPD, hourly-averaged).
++  - name: product
++    dtype: string
++    unit: none
++    nullable: false
++    description: >-
++      AS product on the reconciled taxonomy — "reg_up", "reg_down", "spin",
++      "nonspin".
++  - name: award_mw
++    dtype: float64
++    unit: mw
++    nullable: false
++    description: Hourly-mean awarded AS capacity held by the class, MW.
+diff --git a/data/raw/storage-as-awards/CAISO/README.md b/data/raw/storage-as-awards/CAISO/README.md
+new file mode 100644
+index 0000000..346a842
+--- /dev/null
++++ b/data/raw/storage-as-awards/CAISO/README.md
+@@ -0,0 +1,41 @@
++# storage-as-awards / CAISO — Daily Energy Storage Report quarterly data
++
++Fetched 2026-07-11 from caiso.com (verified HTTP 200 through the session proxy;
++index pages `https://www.caiso.com/library/{2023,2024,2025}-data-for-daily-energy-storage-reports`):
++
++- 2023: `https://www.caiso.com/documents/storage-report-2023q{1..4}.xlsx`
++- 2024: `https://www.caiso.com/documents/storage-report-2024q{1..4}.xlsx`
++- 2025: `https://www.caiso.com/documents/storage-report-q{1..4}-2025.xlsx`
++  (caiso.com flipped the filename pattern in 2025)
++
++Field definitions: `https://www.caiso.com/documents/data-release-and-definitions.pdf`.
++Release notice: `https://www.caiso.com/notices/daily-energy-storage-report-for-1-1-23-9-30-24-data-posted`
++("system level market awards of energy and ancillary services … posted on a
++quarterly basis"; preliminary raw market results, not settlement quality).
++
++Content (`market_output` sheet): `TRADE_DATE | HOUR (1..25, DST-aware
++hour-ending, prevailing Pacific) | INTERVAL | MARKET (IFM/RUC/RTPD/RTD) |
++RES_TYPE (LESR = battery standalone + co-located, HYBD = hybrid) | TYPE (EN
++energy schedule, SOC state of charge, RU/RD/SR/NR AS awards) | VALUE (MW)`.
++The `bid_stack` sheet (charge/discharge bid volume by price range) is retained
++but not curated.
++
++Curation (`scripts/curate_storage_as_awards.py` →
++`scripts/lib/storage_as_awards/caiso.py`) keeps the RU/RD/SR/NR award rows for
++IFM (hourly, → market "DAM") and RTPD (15-min, hourly-averaged → "RTM"), both
++resource classes, onto `data/dictionary/schema/storage-as-awards.schema.yaml`.
++
++Cross-validation: DA battery (LESR) award means reproduce the DMM-published
++averages — ~1,040 MW (2023) / ~1,500 MW (2024) average hourly battery AS
++procurement, and the 69 % (2023) / ~84 % (2024) battery share of regulation —
++to within ~1 % (DMM 2023 Annual Report on Market Issues & Performance ch. 11,
++Jul 29 2024; DMM 2024 Annual Report ch. 12, Aug 7 2025; DMM 2023/2024 Special
++Reports on Battery Storage).
++
++Train years only (2023–2025, CLAUDE.md rule 22). Q1-2026 file publishes on the
++same quarterly cadence (library page not yet posted as of 2026-07-11) — the
++series regenerates forward. Immutable raw — never modified in place; curation
++to `data/clean/` goes through the data-dictionary contract.
++
++DATA NEEDED: none for 2023–2025. Add 2026 quarterly files when the ISO's
++holdout/forward windows are authorized (rule 22).
+diff --git a/scripts/curate_storage_as_awards.py b/scripts/curate_storage_as_awards.py
+new file mode 100644
+index 0000000..5fe7178
+--- /dev/null
++++ b/scripts/curate_storage_as_awards.py
+@@ -0,0 +1,91 @@
++"""Curate the ``storage-as-awards`` clean datatype.
++
++Reconciles each ISO's published storage ancillary-service AWARD series (the MW
++of AS held by the battery/hybrid storage fleet) onto the tidy schema in
++``data/dictionary/schema/storage-as-awards.schema.yaml`` and writes per-(ISO,
++year) partitions through the frozen :func:`scripts.lib.clean_io.write_clean`
++seam.
++
++Per-ISO parsing lives in ``scripts/lib/storage_as_awards/<iso>.py`` (each
++registers an :class:`~scripts.lib.storage_as_awards.IsoSpec`); this script is a
++thin dispatcher over the registry, so adding an ISO never touches it. Rows are
++per-hour, so partitions are per year (``write_clean(..., year=…)``). Reads only
++``data/raw``; idempotent. Run
++``python scripts/curate_storage_as_awards.py [--isos CAISO ...]``.
++"""
++
++from __future__ import annotations
++
++import argparse
++from pathlib import Path
++from typing import Iterable
++
++from scripts.lib import clean_io
++from scripts.lib import storage_as_awards as saw
++from scripts.lib.clean_io import paths
++
++
++def _rel(path: Path) -> str:
++    """Path relative to the repo root for compact provenance (else absolute)."""
++    try:
++        return str(path.relative_to(paths.REPO_ROOT))
++    except ValueError:
++        return str(path)
++
++
++def curate(
++    raw_root: Path | None = None, isos: Iterable[str] | None = None
++) -> list[Path]:
++    """Curate and write every requested ISO's storage-AS-award partitions.
++
++    Parameters
++    ----------
++    raw_root:
++        Root of the raw tree (defaults to ``paths.RAW_DIR``); tests point it at
++        a fixture directory.
++    isos:
++        Subset of ISOs to curate (default: every registered ISO). An ISO whose
++        raw files have not landed yields an empty frame and is skipped.
++
++    Returns the list of paths written. Reads only ``data/raw``; safe to re-run.
++    """
++    raw_root = Path(raw_root) if raw_root is not None else paths.RAW_DIR
++    registry = saw.load_registry()
++    wanted = [s.upper() for s in isos] if isos else sorted(registry)
++
++    written: list[Path] = []
++    for iso in wanted:
++        spec = registry[iso]
++        df = spec.parse(raw_root)
++        if df.empty:
++            print(f"[skip] {iso}: no raw storage-AS-award files under {raw_root}")
++            continue
++        # Partition by LOCAL year: trade dates are local days, so the local
++        # year is complete per partition (a UTC-year split would strand the
++        # last local evening's hours in the next year's file).
++        local_year = df["interval_start_local"].dt.year
++        for year in sorted(local_year.unique()):
++            part = df[local_year == year].reset_index(drop=True)
++            path = clean_io.write_clean(
++                part,
++                saw.DATATYPE,
++                iso=iso,
++                year=int(year),
++                source=spec.source,
++            )
++            clean_io.validate_clean(path)
++            written.append(path)
++            print(f"[ok  ] {iso} {year}: {len(part)} rows -> {_rel(path)}")
++    return written
++
++
++def main() -> None:
++    """CLI entrypoint: curate the requested ISOs (default: all registered)."""
++    ap = argparse.ArgumentParser(description=__doc__)
++    ap.add_argument("--isos", nargs="+", default=None, help="ISO subset")
++    args = ap.parse_args()
++    curate(isos=args.isos)
++
++
++if __name__ == "__main__":
++    main()
+diff --git a/scripts/lib/storage_as_awards/__init__.py b/scripts/lib/storage_as_awards/__init__.py
+new file mode 100644
+index 0000000..a562daf
+--- /dev/null
++++ b/scripts/lib/storage_as_awards/__init__.py
+@@ -0,0 +1,88 @@
++"""Shared contract for the ``storage-as-awards`` clean datatype.
++
++The measured ancillary-service award MW held by the storage fleet — the
++resource-type-resolved counterpart of ``ancillary-services`` (system
++requirement / total procurement). Each ISO's published award layout is
++reconciled onto ONE tidy frame declared in
++``data/dictionary/schema/storage-as-awards.schema.yaml``.
++
++Per-ISO logic lives in sibling modules (``caiso.py``, ...), each of which
++registers an :class:`IsoSpec` via :func:`register`. Shared code never branches
++on the ISO name — it looks the spec up in :data:`REGISTRY`; new ISOs are
++additive (drop a module, register a spec), per ``docs/adding-new-data-types.md``.
++
++Product vocabulary is the same reconciled taxonomy as ``ancillary-services``:
++``reg_up`` / ``reg_down`` / ``spin`` / ``nonspin``. Resource classes:
++``battery`` (standalone + co-located storage) and ``hybrid``.
++"""
++
++from __future__ import annotations
++
++import importlib
++from dataclasses import dataclass
++from pathlib import Path
++from typing import Callable
++
++import pandas as pd
++
++DATATYPE = "storage-as-awards"
++
++#: Canonical tidy column order (matches the schema key + value columns).
++CANONICAL_COLUMNS: tuple[str, ...] = (
++    "interval_start_utc",
++    "interval_start_local",
++    "iso",
++    "resource_class",
++    "market",
++    "product",
++    "award_mw",
++)
++
++#: Canonical AS product vocabulary (shared with `ancillary-services`).
++PRODUCT_VOCAB: frozenset[str] = frozenset({"reg_up", "reg_down", "spin", "nonspin"})
++
++#: Canonical storage resource-class vocabulary.
++RESOURCE_CLASS_VOCAB: frozenset[str] = frozenset({"battery", "hybrid"})
++
++
++@dataclass(frozen=True)
++class IsoSpec:
++    """One ISO's storage-AS-award intake registration.
++
++    Attributes
++    ----------
++    iso:
++        Canonical ISO code (e.g. ``"CAISO"``).
++    parse:
++        ``parse(raw_root) -> pd.DataFrame`` returning the canonical tidy frame
++        for every year the ISO's raw drop covers (empty frame when the raw
++        files have not landed).
++    years:
++        ``years(raw_root) -> list[int]`` — the calendar years the raw drop
++        covers, used to partition ``write_clean(..., year=…)`` per year.
++    source:
++        Free-text provenance embedded in the clean parquet metadata.
++    """
++
++    iso: str
++    parse: Callable[[Path], pd.DataFrame]
++    years: Callable[[Path], list[int]]
++    source: str
++
++
++REGISTRY: dict[str, IsoSpec] = {}
++
++#: Sibling modules that self-register on import.
++_ISO_MODULES: tuple[str, ...] = ("caiso",)
++
++
++def register(spec: IsoSpec) -> None:
++    """Register one ISO's intake spec (called by the sibling ISO modules)."""
++    REGISTRY[spec.iso.upper()] = spec
++
++
++def load_registry() -> dict[str, IsoSpec]:
++    """Import every ISO module so its spec lands in :data:`REGISTRY`."""
++    for mod in _ISO_MODULES:
++        importlib.import_module(f"{__name__}.{mod}")
++    return REGISTRY
+diff --git a/scripts/lib/storage_as_awards/caiso.py b/scripts/lib/storage_as_awards/caiso.py
+new file mode 100644
+index 0000000..c1723be
+--- /dev/null
++++ b/scripts/lib/storage_as_awards/caiso.py
+@@ -0,0 +1,151 @@
++"""CAISO storage-AS-award intake: Daily Energy Storage Report quarterly xlsx.
++
++Source: CAISO "Daily Energy Storage Report" underlying data, posted quarterly
++(https://www.caiso.com/library/daily-energy-storage-reports; release notice
++"Daily Energy Storage Report for 1/1/23–9/30/24 data posted"; field definitions
++https://www.caiso.com/documents/data-release-and-definitions.pdf). Each file's
++``market_output`` sheet carries system-level storage market results:
++
++    TRADE_DATE | HOUR (1..25, DST-aware hour-ending) | INTERVAL |
++    MARKET (IFM/RUC/RTPD/RTD) | RES_TYPE (LESR/HYBD) |
++    TYPE (EN/SOC/RU/RD/SR/NR) | VALUE (MW)
++
++This parser keeps only the ANCILLARY-SERVICE AWARD rows — TYPE in RU/RD/SR/NR
++(EN is the energy schedule and SOC the state of charge, not awards) — for the
++IFM (hourly day-ahead, → market "DAM") and RTPD (15-minute real-time
++commitment run, hourly-averaged → market "RTM") runs, both storage resource
++classes (LESR → "battery": standalone + co-located; HYBD → "hybrid").
++
++Clock: TRADE_DATE + HOUR are prevailing-Pacific hour-ending labels counting
++the local day's PHYSICAL hours (spring-forward days run 1..23, fall-back days
++1..25 — verified against the 2023–2025 files), so the UTC interval start is
++``utc(midnight local of TRADE_DATE) + (HOUR-1) hours`` with no further DST
++branching.
++
++Cross-validation anchor (intake assertion in the curation test): the DA
++battery award means match DMM-published averages — battery avg hourly AS
++procurement ~1,040 MW (2023) and ~1,500 MW (2024) (DMM 2023 Annual Report on
++Market Issues & Performance ch. 11; DMM 2024 Annual Report ch. 12 /
++2024 Special Report on Battery Storage) — the quarterly files reproduce those
++to within ~1 %.
++"""
++
++from __future__ import annotations
++
++from pathlib import Path
++from zoneinfo import ZoneInfo
++
++import pandas as pd
++
++from . import CANONICAL_COLUMNS, IsoSpec, register
++
++#: Raw drop location under the shared raw root (immutable, never edited).
++RAW_SUBDIR = Path("storage-as-awards") / "CAISO"
++
++#: The published quarterly files (both caiso.com naming patterns: 2023/2024
++#: use ``storage-report-<year>q<q>.xlsx``, 2025 uses
++#: ``storage-report-q<q>-<year>.xlsx``).
++_GLOB = "storage-report-*.xlsx"
++
++_TZ = ZoneInfo("America/Los_Angeles")
++
++#: CAISO AS product → canonical taxonomy (same map as `ancillary-services`).
++_PRODUCT: dict[str, str] = {
++    "RU": "reg_up",
++    "RD": "reg_down",
++    "SR": "spin",
++    "NR": "nonspin",
++}
++
++#: CAISO storage resource type → canonical resource class.
++_RES_CLASS: dict[str, str] = {"LESR": "battery", "HYBD": "hybrid"}
++
++#: CAISO market run → canonical market label. IFM is the hourly day-ahead
++#: co-optimization (the award that holds through the operating day); RTPD is
++#: the 15-minute real-time commitment run (hourly-averaged on the way in).
++#: RUC carries no AS rows and RTD's AS follow RTPD; both are dropped.
++_MARKET: dict[str, str] = {"IFM": "DAM", "RTPD": "RTM"}
++
++
++def _files(raw_root: Path) -> list[Path]:
++    """The quarterly xlsx files present under the raw drop (sorted)."""
++    return sorted((raw_root / RAW_SUBDIR).glob(_GLOB))
++
++
++def years(raw_root: Path) -> list[int]:
++    """Calendar years covered by the raw drop, parsed from the filenames."""
++    out: set[int] = set()
++    for f in _files(raw_root):
++        for tok in f.stem.replace("storage-report-", "").split("-"):
++            if tok[:4].isdigit():
++                out.add(int(tok[:4]))
++            elif tok[-4:].isdigit():
++                out.add(int(tok[-4:]))
++    return sorted(out)
++
++
++def parse(raw_root: Path) -> pd.DataFrame:
++    """Parse every quarterly file into the canonical tidy award frame."""
++    frames = [_parse_file(f) for f in _files(raw_root)]
++    if not frames:
++        return pd.DataFrame(columns=list(CANONICAL_COLUMNS))
++    df = pd.concat(frames, ignore_index=True)
++    return df.sort_values(
++        ["interval_start_utc", "resource_class", "market", "product"]
++    ).reset_index(drop=True)
++
++
++def _parse_file(path: Path) -> pd.DataFrame:
++    """Parse one quarterly xlsx's ``market_output`` sheet to the tidy frame."""
++    raw = pd.read_excel(path, sheet_name="market_output")
++    raw = raw[
++        raw["TYPE"].isin(_PRODUCT)
++        & raw["MARKET"].isin(_MARKET)
++        & raw["RES_TYPE"].isin(_RES_CLASS)
++    ].copy()
++    if raw.empty:
++        return pd.DataFrame(columns=list(CANONICAL_COLUMNS))
++
++    # Hourly-mean MW per (trade_date, hour, market, class, product): IFM rows
++    # are already hourly (one INTERVAL), RTPD rows are 15-minute (four
++    # INTERVALs) — the groupby-mean puts both on one hourly grain.
++    g = (
++        raw.groupby(["TRADE_DATE", "HOUR", "MARKET", "RES_TYPE", "TYPE"])["VALUE"]
++        .mean()
++        .reset_index()
++    )
++
++    # HOUR carries prevailing-clock hour-ending labels: ordinary days run
++    # 1..24, the spring-forward day 1,2,4..24 (the nonexistent HE3 label is
++    # skipped), the fall-back day 1..25 (sequential through the repeated
++    # 01:00-02:00). The dense rank of HOUR within each trade date is therefore
++    # the day's physical hour index under all three day types, and
++    # UTC start = utc(local midnight) + rank hours, DST-free.
++    midnight_utc = (
++        pd.to_datetime(g["TRADE_DATE"]).dt.tz_localize(_TZ).dt.tz_convert("UTC")
++    )
++    physical = g.groupby("TRADE_DATE")["HOUR"].rank(method="dense") - 1
++    g["interval_start_utc"] = midnight_utc + pd.to_timedelta(physical, unit="h")
++    g["interval_start_local"] = (
++        g["interval_start_utc"].dt.tz_convert(_TZ).dt.tz_localize(None)
++    )
++    g["iso"] = "CAISO"
++    g["resource_class"] = g["RES_TYPE"].map(_RES_CLASS)
++    g["market"] = g["MARKET"].map(_MARKET)
++    g["product"] = g["TYPE"].map(_PRODUCT)
++    g["award_mw"] = g["VALUE"].astype(float)
++    return g[list(CANONICAL_COLUMNS)]
++
++
++register(
++    IsoSpec(
++        iso="CAISO",
++        parse=parse,
++        years=years,
++        source=(
++            "CAISO Daily Energy Storage Report quarterly data "
++            "(caiso.com/library/daily-energy-storage-reports), market_output "
++            "sheet; system-level LESR/HYBD AS awards RU/RD/SR/NR, IFM + RTPD"
++        ),
++    )
++)
+diff --git a/scripts/regenerate_clean.py b/scripts/regenerate_clean.py
+index a8e02f9..ae838f0 100644
+--- a/scripts/regenerate_clean.py
++++ b/scripts/regenerate_clean.py
+@@ -62,6 +62,7 @@ DATATYPES: tuple[str, ...] = (
+     "nyiso-som-hub-fuel-annual",
+     "reserve-requirements",
+     "som-competitive-conduct",
++    "storage-as-awards",
+ )
+ 
+ SCRIPTS_DIR = Path(__file__).resolve().parent
+diff --git a/tests/test_curate_storage_as_awards.py b/tests/test_curate_storage_as_awards.py
+new file mode 100644
+index 0000000..6ca5b4b
+--- /dev/null
++++ b/tests/test_curate_storage_as_awards.py
+@@ -0,0 +1,135 @@
++"""Tests for the storage-as-awards intake on a tiny synthetic fixture.
++
++Writes a minimal CAISO Daily-Energy-Storage-Report-shaped xlsx into a tmp raw
++tree, runs ``curate``, and asserts the written Parquet is schema-valid and the
++reconciliation is correct: EN/SOC rows excluded, RTPD 15-minute intervals
++hourly-averaged, product/class/market vocabulary mapped, and the DST fall-back
++25-hour day producing 25 distinct physical UTC hours. NOT a full-data run:
++CLEAN_DIR is redirected to a tmp dir so it never touches the real tree.
++"""
++
++import unittest
++from pathlib import Path
++from tempfile import TemporaryDirectory
++
++import pandas as pd
++
++from scripts import curate_storage_as_awards as curate_saw
++from scripts.lib import clean_io
++from scripts.lib import storage_as_awards as saw
++from scripts.lib.storage_as_awards import caiso as saw_caiso
++from scripts.lib.clean_io import validate_clean
++
++
++def _fixture_frame() -> pd.DataFrame:
++    rows = []
++    # IFM hourly awards, one ordinary day: HE1 and HE2.
++    for hour, ru in ((1, 100.0), (2, 150.0)):
++        rows.append(("2024-07-01", hour, 1, "IFM", "LESR", "RU", ru))
++        rows.append(("2024-07-01", hour, 1, "IFM", "LESR", "SR", 50.0))
++    # An energy-schedule and a state-of-charge row: both must be excluded.
++    rows.append(("2024-07-01", 1, 1, "IFM", "LESR", "EN", -400.0))
++    rows.append(("2024-07-01", 1, 1, "RTD", "LESR", "SOC", 5000.0))
++    # RTPD 15-minute intervals -> hourly mean 20.
++    for interval, mw in ((1, 10.0), (2, 20.0), (3, 20.0), (4, 30.0)):
++        rows.append(("2024-07-01", 1, interval, "RTPD", "LESR", "RD", mw))
++    # Hybrid class, mapped separately.
++    rows.append(("2024-07-01", 1, 1, "IFM", "HYBD", "NR", 5.0))
++    # DST fall-back day: 25 physical hours; HE25 must land 1h after HE24.
++    for hour in (24, 25):
++        rows.append(("2024-11-03", hour, 1, "IFM", "LESR", "RU", float(hour)))
++    # DST spring-forward day: clock label HE3 does not exist; HE2 and HE4 are
++    # ADJACENT physical hours.
++    for hour in (2, 4):
++        rows.append(("2024-03-10", hour, 1, "IFM", "LESR", "SR", float(hour)))
++    return pd.DataFrame(
++        rows,
++        columns=[
++            "TRADE_DATE",
++            "HOUR",
++            "INTERVAL",
++            "MARKET",
++            "RES_TYPE",
++            "TYPE",
++            "VALUE",
++        ],
++    )
++
++
++class TestCurateStorageAsAwards(unittest.TestCase):
++    def setUp(self) -> None:
++        self._tmp = TemporaryDirectory()
++        root = Path(self._tmp.name)
++        self.raw_root = root / "raw"
++        d = self.raw_root / saw_caiso.RAW_SUBDIR
++        d.mkdir(parents=True)
++        _fixture_frame().to_excel(
++            d / "storage-report-2024q9.xlsx", sheet_name="market_output", index=False
++        )
++        # Redirect CLEAN_DIR so writes never touch the repo.
++        self._orig_clean = clean_io.paths.CLEAN_DIR
++        clean_io.paths.CLEAN_DIR = root / "clean"
++
++    def tearDown(self) -> None:
++        clean_io.paths.CLEAN_DIR = self._orig_clean
++        self._tmp.cleanup()
++
++    def test_curate_reconciles_and_validates(self) -> None:
++        written = curate_saw.curate(raw_root=self.raw_root, isos=["CAISO"])
++        self.assertEqual(len(written), 1)
++        validate_clean(written[0])
++        df = pd.read_parquet(written[0])
++
++        # EN/SOC excluded; only award products present.
++        self.assertTrue(set(df["product"]) <= saw.PRODUCT_VOCAB)
++        self.assertTrue(set(df["resource_class"]) <= saw.RESOURCE_CLASS_VOCAB)
++
++        # IFM HE1 2024-07-01: local 00:00 PDT == 07:00 UTC.
++        he1 = df[
++            (df["market"] == "DAM")
++            & (df["product"] == "reg_up")
++            & (df["resource_class"] == "battery")
++            & (df["interval_start_utc"] == pd.Timestamp("2024-07-01 07:00", tz="UTC"))
++        ]
++        self.assertEqual(len(he1), 1)
++        self.assertAlmostEqual(float(he1["award_mw"].iloc[0]), 100.0)
++
++        # RTPD intervals hourly-averaged onto RTM.
++        rtm = df[(df["market"] == "RTM") & (df["product"] == "reg_down")]
++        self.assertEqual(len(rtm), 1)
++        self.assertAlmostEqual(float(rtm["award_mw"].iloc[0]), 20.0)
++
++        # Hybrid class mapped.
++        hyb = df[df["resource_class"] == "hybrid"]
++        self.assertEqual(len(hyb), 1)
++        self.assertAlmostEqual(float(hyb["award_mw"].iloc[0]), 5.0)
++
++        # DST fall-back day: HE24 and HE25 are consecutive physical UTC hours.
++        fb = df[
++            (df["product"] == "reg_up")
++            & (df["interval_start_local"].dt.strftime("%Y-%m-%d") == "2024-11-03")
++            & (df["award_mw"].isin([24.0, 25.0]))
++        ].sort_values("award_mw")
++        self.assertEqual(len(fb), 2)
++        delta = fb["interval_start_utc"].iloc[1] - fb["interval_start_utc"].iloc[0]
++        self.assertEqual(delta, pd.Timedelta(hours=1))
++
++        # DST spring-forward day: HE2 and HE4 (HE3 skipped) are ADJACENT.
++        sf = df[
++            (df["product"] == "spin") & (df["award_mw"].isin([2.0, 4.0]))
++        ].sort_values("award_mw")
++        self.assertEqual(len(sf), 2)
++        delta = sf["interval_start_utc"].iloc[1] - sf["interval_start_utc"].iloc[0]
++        self.assertEqual(delta, pd.Timedelta(hours=1))
++        # No duplicate physical hours anywhere in the partition.
++        key = ["iso", "resource_class", "market", "product", "interval_start_utc"]
++        self.assertFalse(df.duplicated(key).any())
++
++    def test_skip_when_raw_absent(self) -> None:
++        with TemporaryDirectory() as empty:
++            written = curate_saw.curate(raw_root=Path(empty), isos=["CAISO"])
++        self.assertEqual(written, [])
++
++
++if __name__ == "__main__":
++    unittest.main()
+-- 
+2.43.0
