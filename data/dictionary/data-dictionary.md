@@ -73,6 +73,9 @@ for the market split.
 | nyiso-som-hub-fuel-annual | — | — | — | — | — | — |
 | reserve-requirements | — | — | — | — | — | — |
 | som-competitive-conduct | — | — | — | — | — | — |
+| capacity-market-demand-curve | — | — | — | — | — | — |
+| capacity-market-auction-price | — | — | — | — | — | — |
+| capacity-market-elcc | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -1227,3 +1230,98 @@ the Potomac Economics SOM reports and IMM quarterlies. Schema:
 | `source_doc` | `string` | `none` | no | Source report PDF filename under data/raw/MISO/ (or the ISO's raw dir). |
 | `source_page` | `int64` | `none` | no | PDF page number (1-based, PDF pagination) the value was read from. |
 | `note` | `string` | `none` | yes | Restatements, definitions, and caveats as printed in the source. |
+
+## capacity-market-demand-curve
+
+Published capacity-market demand-curve parameters — net-CONE, IRM, price cap,
+and the sloped curve's own (x,y) points — per capacity-market ISO and delivery
+year. The CR-1 mechanism input (rule-13-admissible published market-design
+parameter). Schema:
+[`schema/capacity-market-demand-curve.schema.yaml`](schema/capacity-market-demand-curve.schema.yaml).
+
+- **Keys:** `iso`, `delivery_year`, `area`, `season`, `metric`, `point_index`
+- **Reconciles:** PJM VRR curve + Net CONE + IRM (RPM BRA Planning Period
+  Parameters), NYISO ICAP Demand Curves per locality (NYCA/NYC/LI/G-J), ISO-NE
+  FCA Net CONE/ICR/Auction Starting Price/MRI, MISO seasonal PRA
+  reliability-based demand curve + seasonal CONE, CAISO's documented CPM
+  soft-offer-cap / CPUC RA report fixed-proxy — onto one canonical metric
+  vocabulary (`net_cone`, `irm`, `price_cap`, `curve_point`, `soft_offer_cap`,
+  `ra_report_price`). ERCOT excluded (energy-only). See
+  `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §3-4.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO publishing the value (PJM, NYISO, ISONE, MISO, CAISO). |
+| `delivery_year` | `string` | `none` | no | Delivery/planning/capability year the parameter set governs, as a label (e.g. "2026/2027" for PJM/ISO-NE/MISO planning-year ISOs, "2025" for NYISO capability year or CAISO calendar year). Not a key on its own — see key_columns. |
+| `area` | `string` | `none` | yes | Capacity area/locality the row applies to, for ISOs that publish locality-specific curves (NYISO NYCA/NYC/LI/G-J; MISO LRZ). Null (system- wide) for ISOs that publish one curve per delivery year (PJM RTO, ISO-NE system). CAISO repurposes this column to tag the RA product/ segment a scalar ra_report_price row represents (e.g. "system", "local", "flexible") since it has no locality curves of its own. |
+| `season` | `string` | `none` | yes | Season the value applies to (MISO seasonal CONE/curve: summer \| fall \| winter \| spring). Null for ISOs/metrics that are annual-only. |
+| `metric` | `string` | `none` | no | Canonical metric: net_cone \| gross_cone \| irm \| price_cap \| curve_point \| soft_offer_cap \| ra_report_price. net_cone is the Net Cost of New Entry anchor (CONE minus inframarginal energy/AS rents); gross_cone is the pre-inframarginal-rent Cost of New Entry where an ISO publishes both as genuinely distinct quantities (e.g. MISO's per-LRZ gross CONE vs its two-subregion Net CONE); irm is the Installed Reserve Margin target (as published — MW or pct per value_unit); price_cap / price_floor are the curve's price ceiling/floor (as a multiple of net_cone or an absolute price, e.g. PJM's ICAP-basis cap/floor before UCAP conversion); curve_point is one (x,y) point on the sloped demand curve; soft_offer_cap and ra_report_price are CAISO's documented fixed-proxy inputs (no centralized auction/curve). |
+| `point_index` | `int64` | `none` | yes | 0-based order of this point along the sloped demand curve, left (lowest reserve position) to right. Populated only for metric=curve_point; null for scalar metrics. |
+| `x_value` | `float64` | `none` | yes | X-axis value for a curve_point row (reserve position, per x_unit). Null for scalar metrics. |
+| `x_unit` | `string` | `none` | yes | Unit of x_value: pct_of_requirement (reserve margin as a fraction of the published reliability requirement) \| mw (absolute reserve MW) \| pct_of_irm. Null for scalar metrics. |
+| `y_value` | `float64` | `none` | yes | For curve_point rows, the price at this point (per y_unit) — null when the ISO publishes the curve as a formula whose price at this x-position is not itself a standalone published number (e.g. PJM Manual 18's curve-point formula; the point's x_value still carries the shape). For scalar metrics, the metric's own value (per y_unit); null only when a source publishes a metric as a bound (e.g. ">X") that cannot be recorded as a clean number — such rows are omitted at intake rather than guessed. |
+| `y_unit` | `string` | `none` | yes | Unit of y_value: usd_per_mw_day \| usd_per_mw_day_icap (PJM's pre-UCAP-conversion ICAP-basis cap/floor) \| usd_per_mw_yr \| usd_per_kw_month \| usd_per_kw_yr \| pct \| multiple_of_net_cone. |
+| `vintage` | `string` | `none` | yes | The parameter set's own filing/adoption label and date (e.g. "2026/2027 RPM BRA Planning Period Parameters, filed 2025-XX-XX"), distinct from delivery_year (the period it governs). |
+| `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
+| `source_page` | `string` | `none` | yes | Page / table / sheet locator within source_doc. |
+
+## capacity-market-auction-price
+
+Published capacity-market auction/spot clearing-price history per ISO, delivery
+years <= 2026/27 only. A VALIDATION OBSERVABLE (CR-2 / T3.1) — compared against
+the model's implemented demand-curve mechanism, never pinned or fit to (rules
+1/13). Schema:
+[`schema/capacity-market-auction-price.schema.yaml`](schema/capacity-market-auction-price.schema.yaml).
+
+- **Keys:** `iso`, `delivery_year`, `season`, `area`, `auction_round`
+- **Reconciles:** PJM Base Residual Auction (RTO + LDA), NYISO monthly Spot
+  Market Auction (NYCA + locality), ISO-NE Forward Capacity Auction (system +
+  capacity zone), MISO Planning Resource Auction (per LRZ, seasonal from
+  PY2025-26) — onto one canonical frame keyed on `(iso, delivery_year, season,
+  area, auction_round)`. CAISO carries no centralized auction (expected empty);
+  ERCOT excluded. Delivery-year cutoff enforced by `validate_tidy` in
+  `scripts/lib/capacity_market_auction_price/__init__.py`.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO publishing the value (PJM, NYISO, ISONE, MISO, CAISO). |
+| `delivery_year` | `string` | `none` | no | Delivery/planning/capability year the auction covers, as a label (e.g. "2026/2027"). Restricted at intake to delivery years <= 2026/27. |
+| `season` | `string` | `none` | no | Season the clearing price applies to: annual \| summer \| fall \| winter \| spring. Only MISO (seasonal since PY2025-26) and NYISO (summer/winter capability periods, where published separately) use non-annual seasons; all other ISOs use "annual". |
+| `area` | `string` | `none` | no | Capacity area the price applies to — an LDA (PJM), Local Resource Zone (MISO), locality (NYISO), capacity zone (ISO-NE), or the system-wide label (RTO / NYCA / SYSTEM / MISO) for system rows. |
+| `area_type` | `string` | `none` | no | Kind of area — one of lda \| lrz \| locality \| capacity_zone \| rto \| resource (CAISO's CPM backstop designates/clears at individual-resource granularity, not a zone) \| import_interface (an external tie that clears its own price, e.g. ISO-NE's New Brunswick interface). |
+| `auction_round` | `string` | `none` | no | Canonical auction/product type: base_residual_auction (PJM) \| incremental_auction (PJM) \| spot (NYISO) \| forward_capacity_auction (ISO-NE) \| planning_resource_auction (MISO) \| cpm_backstop (CAISO, if any clears). |
+| `clearing_price` | `float64` | `none` | yes | The published clearing price (per price_unit). Null only when the row exists solely to carry a cleared_mw value the source publishes without a price (rare); at least one of clearing_price / cleared_mw must be non-null (enforced by validate_tidy, not the writer's dtype check). |
+| `price_unit` | `string` | `none` | yes | Unit of clearing_price — usd_per_mw_day \| usd_per_kw_month \| usd_per_kw_yr \| usd_per_mw_yr. |
+| `cleared_mw` | `float64` | `mw` | yes | Total capacity cleared in this area/round, if published. Null when not stated. |
+| `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
+| `source_page` | `string` | `none` | yes | Page / table locator within source_doc. |
+
+## capacity-market-elcc
+
+Published Effective Load Carrying Capability / capacity-accreditation ratings
+for wind/solar/storage resource classes, by study vintage and — where an ISO
+publishes a genuine marginal-ELCC study — installed-penetration level. The
+CR-3.1 input that will replace the flat `RENEWABLE_CAPACITY_CREDIT` wind/solar
+constants. Schema:
+[`schema/capacity-market-elcc.schema.yaml`](schema/capacity-market-elcc.schema.yaml).
+
+- **Keys:** `iso`, `resource_class`, `study_vintage`, `penetration_pct`
+- **Reconciles:** PJM ELCC Class Ratings (single current-fleet point per
+  class), MISO wind/solar marginal ELCC by penetration (Accreditation Reform —
+  the strongest public multi-point curve), NYISO ICAP/UCAP conversion factors
+  (CATF), ISO-NE seasonal-claimed-capability / ELCC-based accreditation,
+  CAISO/CPUC NQC + E3-authored incremental-ELCC studies — onto one canonical
+  frame keyed on `(iso, resource_class, study_vintage, penetration_pct)`. ERCOT
+  excluded.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO publishing the study (PJM, NYISO, ISONE, MISO, CAISO). |
+| `resource_class` | `string` | `none` | no | Canonical resource class: wind \| solar \| wind_offshore \| hybrid_solar_storage \| storage_2hr \| storage_4hr \| storage_6hr \| storage_8hr \| storage_10hr \| storage_ldes (long-duration storage where the ISO study does not state a discrete hour duration) \| other (ISO-native duration/class labels map onto the nearest storage_Nhr bucket; a class with no clean map uses "other" and documents the native label in source_page). |
+| `study_vintage` | `string` | `none` | no | The study or filing year/label the rating applies to (e.g. "2026/2027" delivery year for an annual class-rating filing, or the ELCC study's own publication year for a standalone study). |
+| `penetration_pct` | `float64` | `pct` | yes | Installed-penetration level this point is measured at (per penetration_unit), for ISOs that publish a genuine multi-point ELCC-vs-penetration curve. Null when the ISO publishes only a single current-fleet-average rating (documented as such in the raw README) — never back-filled with a guessed penetration level. |
+| `penetration_unit` | `string` | `none` | yes | Basis of penetration_pct — pct_of_peak_load \| pct_of_installed_capacity \| installed_mw. Null when penetration_pct is null. |
+| `elcc_pct` | `float64` | `pct` | yes | The ELCC / accreditation rating at this point, as a percent of nameplate (e.g. 43.7 for a wind class rated at 43.7% UCAP). Null only when a source publishes the rating in MW terms without a percent basis (rare); never guessed. |
+| `elcc_type` | `string` | `none` | no | class_average (single current fleet-wide rating) \| marginal (rating of the next incremental MW at this penetration) \| incremental (rating of a discrete tranche added at this penetration — used interchangeably with marginal by some ISOs; recorded as published). |
+| `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
+| `source_page` | `string` | `none` | yes | Page / table locator within source_doc (also carries the zone/subregion label when the ISO publishes per-zone curves). |
