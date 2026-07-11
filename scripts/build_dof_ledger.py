@@ -717,6 +717,52 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "refresh rides the fetch pipeline only (rule 23)",
             )
         )
+    if sc.get("miso_south_seam_split"):
+        # Topology fix, ZERO scalars: the South seam's bands re-home onto
+        # their own external zone, severing the fabricated free
+        # South→external→Midwest wheel around the RDT contract path (the
+        # only real S↔N boundary; MISO/SPP JOA). No parameter — the entry
+        # documents the mechanism's provenance for the attestation.
+        out.append(
+            _entry(
+                "miso_south_seam_split (South-seam external-zone split)",
+                "transmission.split_miso_south_external_node + "
+                "build_reference_price_node zone_overrides",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="MISO/SPP JOA (Midwest and South footprints exchange "
+                "power only over the RDT contract path across SPP); 2025 "
+                "diagnostic probe measured the shared-bus bypass at 1,255 MW "
+                "summer mean / 7.7 TWh-yr vs an RDT S->N binding 13 h/yr",
+                root_cause="pure topology correction — no tunable; reverts "
+                "only if the JOA interconnection structure changes",
+            )
+        )
+    if sc.get("miso_rdt_tcdc"):
+        # Published RDT operating representation, ZERO fitted scalars: 92%
+        # default derate + $40/$500 two-step TCDC + JOA contract hard bound,
+        # all published values (constants.MISO_RDT_*).
+        out.append(
+            _entry(
+                "miso_rdt_tcdc (RDT 92% default derate + $40/$500 TCDC tiers)",
+                "constants.MISO_RDT_* via transmission.apply_miso_rdt_tcdc; "
+                "priced one-way tiers (TransferLink.flow_cost)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="2024 MISO SOM §III.B (92% default derate; two-step "
+                "TCDC $40 at the modeled limit, $500 from 102%); MISO/SPP "
+                "JOA Attach. A (3,000 N->S / 2,500 S->N contract limits)",
+                root_cause="deliberately conservative: the 92% DEFAULT "
+                "derate is used, not the deeper condition-driven operator "
+                "derates (utilization averaged 84% of contract when binding "
+                "in 2024, SOM §II.E) — no published hourly derate series, so "
+                "binding-hour congestion under-shoots rather than fitting a "
+                "haircut; re-derives only when MISO publishes new TCDC/derate "
+                "parameters (rule 23)",
+            )
+        )
     if (
         iso in ("NYISO", "CAISO")
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))
