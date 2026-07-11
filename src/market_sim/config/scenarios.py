@@ -32,8 +32,3 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "staged_thinning_max_gw_per_year",
     "limited_foresight_dispatch",
 )
-
-
-@dataclass
-class ScenarioConfig:
-    pass
