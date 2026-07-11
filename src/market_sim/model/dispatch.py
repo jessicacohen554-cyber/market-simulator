@@ -2851,6 +2851,7 @@ def build_variable_bounds(
     posture_ucap: np.ndarray | None = None,
     wind_curtail_share: np.ndarray | None = None,
     solar_curtail_share: np.ndarray | None = None,
+    storage_soc_min: np.ndarray | None = None,
 ) -> tuple[np.ndarray, np.ndarray]:
     """Assemble the LP column (decision-variable) bound vectors.
 
@@ -2940,6 +2941,16 @@ def build_variable_bounds(
         col_upper[:, layout._chg_off : layout._dis_off] = power_cap
         col_upper[:, layout._dis_off : layout._soc_off] = power_cap
         col_upper[:, layout._soc_off : layout._flow_off] = energy_cap
+        if storage_soc_min is not None:
+            # Measured AS sustain floor (CAISO battery reservation): the SOC
+            # may not be arbitraged below the tariff sustain energy of the
+            # hour's awards. Clipped at the (possibly hour-varying) energy cap
+            # so the bound pair stays feasible by construction.
+            soc_min = np.asarray(storage_soc_min, dtype=float)
+            soc_min = soc_min.T if soc_min.ndim == 2 else soc_min[np.newaxis, :]
+            col_lower[:, layout._soc_off : layout._flow_off] = np.minimum(
+                soc_min, energy_cap
+            )
 
     # Transmission flow: -ttc <= Flow <= ttc (bidirectional). A 1-D ``ttc``
     # (n_links,) broadcasts across all hours (the static-limit path); a 2-D
@@ -3243,6 +3254,7 @@ class DispatchModel:
         solar_curtail_share: np.ndarray | None = None,
         storage_power_cap: np.ndarray | None = None,
         storage_energy_cap: np.ndarray | None = None,
+        storage_soc_min: np.ndarray | None = None,
         storage_zone_idx: np.ndarray | None = None,
         eta_chg: "np.ndarray | float | None" = None,
         eta_dis: "np.ndarray | float | None" = None,
@@ -3547,6 +3559,7 @@ class DispatchModel:
             solar_cap,
             storage_power_cap=storage_power_cap,
             storage_energy_cap=storage_energy_cap,
+            storage_soc_min=storage_soc_min,
             ttc=ttc,
             ordc_step_widths=ordc_step_widths,
             link_bidirectional=link_bidirectional,
@@ -4229,6 +4242,7 @@ def solve_dispatch(
     solar_curtail_share: np.ndarray | None = None,
     storage_power_cap: np.ndarray | None = None,
     storage_energy_cap: np.ndarray | None = None,
+    storage_soc_min: np.ndarray | None = None,
     storage_zone_idx: np.ndarray | None = None,
     eta_chg: np.ndarray | float | None = None,
     eta_dis: np.ndarray | float | None = None,
@@ -4389,6 +4403,7 @@ def solve_dispatch(
         solar_curtail_share=solar_curtail_share,
         storage_power_cap=storage_power_cap,
         storage_energy_cap=storage_energy_cap,
+        storage_soc_min=storage_soc_min,
         storage_zone_idx=storage_zone_idx,
         eta_chg=eta_chg,
         eta_dis=eta_dis,
