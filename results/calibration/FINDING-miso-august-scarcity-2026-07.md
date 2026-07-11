@@ -216,3 +216,38 @@ keys):
    CT_STARTUP_PARAMS start costs over measured horizons ⇒ engaged CT econ/peak
    markup ≈ **$1.9/MWh cap-weighted median** (p75 $2.7, max $9.5). Zero fitted
    scalars.
+
+**RESULT (registered `2026-07-11-miso-55-ct-faststart` + zero-forcing twin
+`...-ablation`).** NOT-YET (rubric v2.4) but strictly dominates miso-54 on both
+structure and score, with zero new fitted scalars (DOF residual count 3→2):
+
+- **C3b price-duration shape flips FAIL→PASS all years** (the miso-54 2025
+  0.200 NRMSE FAIL clears — the fast-start markup restores the mid-curve).
+- **C1: 6 → 4 class-year FAILs.** CT_PEAKER-2024 +15.29 → **+8.51 TWh**;
+  CT-2023 lands **+0.3 TWh** (near-exact vs actual 25.4); COAL_PRB-2024
+  −10.50 → −8.0 (back in band); ST_GAS-2024 −6.1 → +1.9. Remaining:
+  COAL_BIT −15.3/−14.4 and CC_REGULAR +9.0/+9.1 — the pre-flagged CC/coal
+  mid-merit split (CC flat measured econ body + import under-run), now THE
+  C1 residual, no longer masked by the CT over-run.
+- **C3a-2025 −14.7 % → −13.3 %** (2023 +0.1 %, 2024 −3.3 % DA-diagnostic);
+  C3c unchanged (0 h >$200 vs DA 1/24/38 h) — the RDC/ELMP Lane-2 item.
+  C2-2025 gas −11.0 %/coal +8.8 % (was −9.9/+7.7): the 2025
+  coal-over/gas-under regime absorbs part of what the CTs shed — Lane-2's
+  scarcity/AS price formation is what the 2025 merit inversion is waiting on.
+- **C5a CO₂ ≈ unchanged** (−11.0/−10.2 % vs −11.1/−10.3): the CT→coal/steam
+  reallocation is roughly carbon-neutral; C5a belongs to the COAL_BIT/CC
+  split, as predicted in the probe's pre-commitment.
+- **August artifact stays cleared** (Aug 2023/24 deltas +0.4/+0.4 $/MWh;
+  0 modelled hours >$200 in 2023/24). C4 dispatch-corr PASS retained; C7/C8
+  PASS (D-1 CT diurnal r 0.99/0.99/0.92; D-2 CT forced share 3.7–8.1 %,
+  cap 15 %). Twin near-identical (CT_PEAKER +0.6/+0.27/+0.47 TWh, all else
+  <0.3): the fit is carried economically.
+
+**Recommendation to owner:** promote miso-55 over miso-54 (rule 1: same
+structure plus a measured mechanism MISO's real market actually has — ELMP
+fast-start pricing — and the measured CT part-load premium; every score
+movement is a by-product, none was tuned). Leave-one-year-out evidence: no
+parameter in the change was fit to any year (published NREL costs + pooled
+2023-25 CAMPD measurements), and the per-year movements are 2023 ✓ / 2024 ✓ /
+2025 mixed-but-improved on price. Lane 2 (RDC/ELMP scarcity depth + evening
+timing) is next and now carries the 2025 C2/C3a/C3c residual cleanly.
