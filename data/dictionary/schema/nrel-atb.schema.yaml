@@ -1,0 +1,164 @@
+# Canonical schema: nrel-atb (NREL Annual Technology Baseline generation and
+# storage technology cost/performance trajectories by year and cost case).
+#
+# The calendar-year CAPEX/Fixed O&M trajectories this model's D4 gap needs
+# (docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md §1 —
+# "ATB 2024 values hardcoded... no calendar-year ATB decline"). Today
+# `NEW_ENTRY_COSTS` in constants.py is a single hardcoded snapshot per tech
+# (implicitly "today's" cost) with cost decline applied only via a separate
+# Wright's-Law curve on hardcoded global deployment — never ATB's own
+# published year-by-year trajectory. This datatype lands that trajectory.
+#
+# One row per (atb_edition_year, technology, techdetail, parameter,
+# financial_case, tax_credit_case, cost_case, year). Tidy/long because ATB
+# crosses many axes (11 technologies x up to 5 storage durations x 2
+# parameters x 3 cost cases x 27 years) a wide frame can't represent cleanly.
+# `technology`/`techdetail` are ATB's own vocabulary (verified present in the
+# source file, not invented); a single representative techdetail per
+# technology was selected via ATB's own `is_default_class` flag where one
+# exists (LandbasedWind Class4, UtilityPV Class5, Nuclear Large/Small, ...),
+# or an explicit verified techdetail string where ATB carries no default
+# (NaturalGas_FE combined-cycle/combustion-turbine/CCS variants) — see
+# data/raw/nrel-atb/README.md for the full tech -> techdetail selection table
+# and citation. ATB's cost-recovery-period (`crpyears`) axis is DROPPED: the
+# source file's own values are verified byte-identical across every crpyears
+# option for a fixed (technology, techdetail, parameter, case, year) — see
+# scripts/fetch_nrel_atb.py's dedup step — so carrying it would triple row
+# count for zero information.
+datatype: nrel-atb
+schema_version: 1
+title: NREL Annual Technology Baseline generation/storage cost trajectories
+description: >-
+  NREL ATB 2024 (v3.0.0) CAPEX and Fixed O&M trajectories (2022-2050) for the
+  technologies this model builds as new entry (wind, solar, gas CC/CT/CCS,
+  nuclear SMR/large, utility battery storage at 5 durations) plus a few
+  cross-reference technologies (existing coal, biomass, hydro, geothermal,
+  offshore wind), across the Advanced/Moderate/Conservative cost cases.
+  Scoped to exactly the D4 calendar-year capex/FOM trajectories (see the
+  audit-plan citation above) — ATB's Variable O&M/CF/Heat Rate parameters
+  are out of scope (not consumed by this model's cost tables) and excluded
+  from this intake. Sourced from the public OEDI data lake CSV (not the
+  atb.nrel.gov site, which is blocked in this environment's network policy —
+  see README), technology-filtered from the full ~572k-row electricity ATB
+  file down to this model's tech list and these two parameters, with the
+  value-invariant crpyears axis dropped (see README).
+
+key_columns:
+  [
+    atb_edition_year,
+    technology,
+    techdetail,
+    parameter,
+    financial_case,
+    tax_credit_case,
+    cost_case,
+    year,
+  ]
+allow_additional_columns: false
+
+columns:
+  - name: atb_edition_year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: >-
+      ATB report edition/vintage (e.g. 2024 for this intake) -- NOT the
+      projection year. Lets a future ATB 2025/2026 edition land as new rows
+      without a schema change.
+  - name: technology
+    dtype: string
+    unit: none
+    nullable: false
+    description: ATB's technology field (e.g. LandbasedWind, UtilityPV, Nuclear).
+  - name: techdetail
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      ATB's resource-class / configuration detail within technology (e.g.
+      Class4, "Nuclear - Large", "NG 2-on-1 Combined Cycle (F-Frame)",
+      "4Hr Battery Storage").
+  - name: display_name
+    dtype: string
+    unit: none
+    nullable: false
+    description: ATB's human-readable technology + techdetail label.
+  - name: parameter
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      One of CAPEX | Fixed O&M (ATB's core_metric_parameter, filtered to
+      this subset).
+  - name: financial_case
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      ATB's core_metric_case. Only "Market" is landed (the market-financed
+      view a capacity-expansion screen wants); ATB's "R&D" (program-cost)
+      case is out of scope and never appears here.
+  - name: tax_credit_case
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      ATB's tax_credit_case tag (ITC | PTC), where the technology carries
+      one; null for technologies with neither (e.g. natural gas). Informational
+      only -- verified during intake that CAPEX/Fixed O&M/etc. do not vary
+      by this tag for a fixed (technology, techdetail, year, cost_case); it
+      does not multiply row count.
+  - name: cost_case
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      ATB's scenario field, renamed to avoid clashing with this model's own
+      "scenario" concept: Advanced | Moderate | Conservative. Maps to this
+      model's tech_cost_path lever ("low"/"mid"/"high" -> Advanced/Moderate/
+      Conservative respectively, matching TECH_COST_MULTIPLIERS' existing
+      documented mapping in constants.py).
+  - name: is_default_class
+    dtype: bool
+    unit: none
+    nullable: false
+    description: >-
+      Whether ATB flags this techdetail as the technology's own representative/
+      default resource class (its `default` column). Informational -- lets a
+      consumer that only wants one row per technology filter on this.
+  - name: year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Calendar (projection) year, ATB's core_metric_variable (2022-2050).
+  - name: value
+    dtype: float64
+    unit: mixed
+    nullable: false
+    description: The metric's value, in the unit given by the `unit` column.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Unit for `value`, by parameter (the raw ATBe.csv's own `units` column
+      ships empty for every row -- confirmed during intake, not a fetch bug
+      -- so this is an annotation applied during curation from ATB's public
+      documentation/glossary convention, not extracted verbatim from the
+      source file): CAPEX = "2022 $/kW", Fixed O&M = "2022 $/kW-yr".
+      ATB 2024's dollar year is 2022 (see README -- atb.nrel.gov's own
+      documentation confirms this, but that domain is proxy-blocked in this
+      environment, so the citation is via indexed/cached content, flagged
+      for verification with browser access).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Fixed citation string for this intake ("NREL ATB 2024 v3.0.0
+      electricity, OEDI data lake").
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: The originating S3 object key (full traceability to the source file).
