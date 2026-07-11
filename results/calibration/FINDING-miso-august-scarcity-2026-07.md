@@ -334,8 +334,18 @@ forecast leans on the reserve curves; wire it then (ERCOT ECRS-reform date-
 gate pattern).
 
 **Next-lane pointers (from the measured adjudication, NOT tuned lanes):**
-RDT S→N congestion depth in summer 2025 (transmission/seam lane — check the
-model's Midwest-South separation vs the IMM's $9.31); the COAL_BIT/CC
-mid-merit split with the import under-run (the standing open root cause);
-winter delivered-gas fidelity for Heather-window CTs (Jan 2024's −11.5 $/MWh
-monthly delta is the entire 2024 miss).
+
+1. **RDT S→N congestion depth (transmission/seam lane) — QUANTIFIED as the
+   largest single measured lead on the 2025 residual.** The miso-55
+   payload's 2025 Midwest−South monthly LMP separation (mean of
+   Illinois/Indiana/West/Plains minus South) is **$0.19/MWh over Jun-Aug vs
+   the IMM's measured $9.31/MWh** (Summer-2025 quarterly) — the RDT
+   congestion is essentially ABSENT from the model. With the Midwest
+   carrying most of MISO load, the missing ~$9 separation is plausibly
+   ~$5-8/MWh of the July-2025 −18.0 monthly delta on its own. Check the
+   RDT/RPE contract-path representation (limit level, and whether the S→N
+   direction ever binds under 2025's low-wind/low-import summer pattern).
+2. The COAL_BIT/CC mid-merit split with the import under-run (the standing
+   open root cause).
+3. Winter delivered-gas fidelity for Heather-window CTs (Jan 2024's −11.5
+   $/MWh monthly delta is the entire 2024 miss).
