@@ -143,3 +143,42 @@ run registers on the dashboard either way (rule 15).
 - `results/calibration/miso54_som_restored*/` — bundles (main + ablation twin).
 - Forensics reproduced from committed dashboard payloads (`frontend/data/backcast/runs/*miso*.js`)
   + `bench/MISO/*.json.gz` + `data/raw/lmp-data/MISO/miso_hub_lmp_{2023,2024}_rt.csv.gz`.
+
+## 8. RESULT (appended 2026-07-11 — miso-54 solved, registered)
+
+Registered: **`2026-07-10-miso-54-som-restored`** (bundle
+`results/calibration/miso54_som_restored`) + rule-20 zero-forcing twin
+**`2026-07-11-miso-54-som-restored-ablation`**.
+
+**The August artifact is GONE.** Aug 2023 delta −0.0 $/MWh (model $34.4 vs actual $34.4),
+Aug 2024 −0.5 ($31.6 vs $32.1); 0 modelled hours > $200 and 0 slack hours in any year (vs
+miso-53's +28.6/+32.5 monthly deltas on ~$1.9-2.0k midday spike plateaus).
+
+**The miso-53 C3a 2023/24 overshoots were the islanding, not the band levels:** miso-54 reads
+−1.6 % (2023) / −5.4 % (2024) DA-diagnostic vs miso-53's +24.2 %/+13.4 % — so the "legacy
+≥1.0 band levels" lane loses its headline evidence and shrinks to the C1 mid-merit split
+below. C4 dispatch-corr PASS retained (the SOM redesign's structural win), C3b 2023/24 PASS,
+C1 CT_PEAKER-2023 back in band, C2-2025 improves to gas −9.9 %/coal +7.7 % (was −14.7/+16.3
+at miso-49).
+
+**Honest NOT-YET FAIL set (rubric v2.4), one shared root + one lane:**
+
+- C1 (COAL_BIT −16.3/−15.4 TWh, CC_REGULAR +8.7/+8.8, CT_PEAKER 2024 +15.3), C5a CO₂
+  2023/24 (−11.1 %/−10.3 %), C2-2025 — near-cost bituminous loses mid-merit to the
+  unhurdled neutral-1.0 CT committed band: the pre-documented **CAMPD-grounded MISO CT
+  hurdle lane**, now at clean magnitudes (the islanded run overstated it ~2×).
+- C3a-2025 −14.7 %, C3b-2025 0.200, C3c 0 h all years (DA actual 1/24/38 h) — the honest
+  scarcity-representation undershoot (**RDC/ELMP lane**), no longer maskable by deleted
+  capacity. The co-opt's published RDC steps ($200/$1100/$3300) are in the LP; what's
+  missing is engagement depth/timing (evening net-load peaks), not a capacity deletion.
+
+**Zero-forcing twin:** near-identical (every class < 0.3 TWh except CT_PEAKER +0.53/+0.35
+TWh 2023/2025 — the evening reliability-deployment window). Floors are commitment
+scaffolding on this surface; the fit is carried economically.
+
+**Recommendation to owner:** promote miso-54 over miso-49 (rule 1 — miso-49 carries a
+mechanism its own fleet refutes; miso-54 is the same structure without it, plus the
+SOM-grounded coal conduct). Then run the two lanes in order: (1) CAMPD-grounded CT
+committed hurdle + econ ramp (rule-23 derive), (2) RDC/ELMP scarcity depth/timing. Prune
+note: `2026-07-06-miso-41-v2rescore-probe` displaced (16th main; no-solve rescore duplicate
+of miso-41).
