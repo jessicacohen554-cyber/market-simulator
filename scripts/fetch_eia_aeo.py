@@ -8,7 +8,7 @@ the flat 1%/yr coal escalation and flat oil scalars used elsewhere. It pulls
 the AEO's own Reference / High Oil and Gas Supply / Low Oil and Gas Supply
 cases straight from the EIA Open Data API v2 ``aeo`` route (not a scrape of
 the table-browser HTML), landing them as an immutable raw CSV. Nothing in
-``config/constants.py`` is changed by this script -- see
+``config/constants.py`` is changed by this script — see
 ``docs/handoffs/aeo-verification-<date>.md`` for the hardcoded-vs-fetched
 diff; re-deriving the trajectories from this data is a separate, deliberate
 step (CLAUDE.md rule 23: derive scripts cite the data change that triggered
