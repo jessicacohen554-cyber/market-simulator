@@ -176,3 +176,36 @@ reminder that a single flat scalar averages over two products with a real
    is in $/short ton, not $/MMBtu — a heat-content conversion (coal rank
    dependent) is needed before it's comparable to the per-ISO
    `COAL_PRICE_BASE` figures.
+
+## 6. P-1D execution note (2026-07)
+
+Executed per the recommendation above:
+
+1. `HENRY_HUB_TRAJECTORIES` (all three paths, 2026-2050) re-derived from
+   `data/raw/eia-aeo/eia_aeo2025_fuel_prices.part*.csv`
+   (`scripts/derive_fuel_trajectories.py::derive_gas_trajectory`); 2023-2025
+   historical-actual entries unchanged.
+2. `COAL_PRICE_TRAJECTORIES` added (national `delivered_electric_power`
+   series, low/mid/high). Per-ISO `COAL_PRICE_BASE` anchors are unchanged;
+   only the flat `COAL_PRICE_ESCALATION` forward SHAPE is replaced, and only
+   in forecast mode (`data.fuel.resolve_annual_coal_price`) — backcast keeps
+   the byte-identical flat-escalation fallback.
+3. `OIL_PRICE_TRAJECTORIES` added (distillate+residual average,
+   Btu-content-converted from the AEO's $/gal series: 0.1385 MMBtu/gal
+   distillate, 0.1497 MMBtu/gal residual). Used for forecast-year oil pricing
+   (`data.fuel.resolve_annual_oil_price`); backcast keeps the flat
+   `OIL_PRICE_PER_MMBTU` fallback / measured EIA-923 receipts.
+4. The `minemouth_by_region` $/short-ton caveat is noted but not consumed —
+   no per-region coal cost feed exists in the model yet (`COAL_PRICE_BASE` is
+   already per-ISO, not per-region); revisit if regional coal cost fidelity
+   becomes a priority.
+5. Also (data/raw/uranium-marketing/, not part of this doc's original scope
+   but landed alongside): a $/MMBtu nuclear fuel-cycle cost series
+   (`NUCLEAR_FUEL_PRICE_HISTORICAL`, `data.fuel.resolve_nuclear_fuel_price`),
+   replacing the prior `$0/MMBtu` non-fuel-burning default.
+
+`fuel.py:178`'s forward extrapolation (beyond a trajectory's last knot) was
+also fixed in the same session: the prior last-year-over-year-ratio
+compounding is replaced by a hold-flat-at-last-real-value rule
+(`data.fuel._hold_flat_extrapolate`), shared by the gas/coal/oil/nuclear
+resolvers.
