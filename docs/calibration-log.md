@@ -111,6 +111,45 @@ This nyiso-61 promotion restores the correct NYISO pointer. The PJM pjm-97→pjm
 revert is flagged for owner review, not acted on here (out of NYISO scope;
 PJM keeper-staleness is owner-resolved per the 2026-07-10 decisions).
 
+**Follow-up research (2026-07-11) — deep-tail reserve lever chased to ground; NYISO
+is at the legitimate frontier (NO build; rules #11/#26).** After nyiso-61 confirmed
+downstate import discipline is near-null, the two candidate reserve levers for the
+2024/2025 deep >$300 tail (25h model vs 42h RT in 2025) were investigated against
+primary sources and **both are already faithfully modeled or admissibly blocked** —
+neither is buildable without residual-fitting:
+
+- **B1 largest-contingency requirement** — the NYISO *Ancillary Services Manual*
+  (Manual 2, §"Minimum Operating Reserve Requirement", p.44) sets Total 10-min ≥
+  largest single Contingency, Total ≥ 2×, 10-min Spin ≥ ½×. This formula is **already
+  in the model** as the measured NYCA families (`reserve_config.NYISO_RCPF_PRODUCTS`:
+  `nyca_10min_total`=1310, `nyca_30min_total`=2620, `nyca_10min_spin`=655 — exactly
+  1×/2×/½× the 1,310 MW contingency), and the measured requirements file carries these
+  as a **flat** series (std=0). Making it condition-varying can only *lower* it (NYISO's
+  largest source ≈ 1,310 MW = Nine Mile Pt 2, dropping only in its refuel outage) → it
+  would slightly *reduce* prices, not close the tail. **Not built.**
+- **(b) ORDC / RCPF height** — verified complete and SOM-grounded (East 10-min $775,
+  SENY 30-min $500, NYC $25; 2024 SOM p.297), with locational adders nesting/stacking
+  NYCA⊃East⊃SENY⊃NYC. The keeper *proves* the stack fires: 2023 reaches **$2,000 (VOLL)**
+  with 22 zone-hours >$1,000. 2024/2025 top at $671/$773 only because those years trigger
+  *single-product* shortages, not simultaneous multi-product ones — a requirement-frequency
+  effect, **not** a missing curve value. **No miss.**
+- **The sole remaining gap** is shortage frequency/depth, driven by the **net-load
+  forecast-uncertainty reserve increment** that raises the requirement in tight RT hours.
+  Per the Potomac Economics **2024 NYISO State-of-Market report**, this is **IMM
+  Recommendation 2021-1 — a recommendation NYISO has *not* implemented**, with no published
+  formula. Adding it in-model = a coefficient tuned to our residual = residual-fitting
+  (rule #26 forbidden). The SOM independently sizes the residual: system-wide 30-min
+  reserve shortages occur in ~**0.6% of intervals** (~52 h/yr) at deep-shortage pricing
+  ~**$1,000/MWh** — our ~25–61 zone-hours and $773 single-product cap sit at roughly *half*
+  the real shortage frequency, exactly what a missing requirement increment predicts.
+
+**Conclusion:** nyiso-61 stands as the frontier keeper. Closing the deep tail requires
+either NYISO's operational RTC/RTD reserve-requirement series (formal NYISO Market
+Operations request) or NYISO implementing Rec 2021-1 upstream — neither is a data-on-disk
+or public-formula input, so no admissible mechanism exists today. Sources: NYISO Manual 2
+(`ancserv.pdf`); Potomac Economics 2024 NYISO SOM (Rec 2021-1; §V.H, VI.A/E); NYISO RECA /
+Dynamic Reserves MIWG (locational/NYC-pocket scope, partly unimplemented).
+
 ### 2026-07-10 — NYISO — G-13 CLOSED: per-zone daily LDC-transport delivered gas folded into the keeper line; KEEPER PROMOTED `2026-07-10-nyiso-60-ldc-transport` replaces `nyiso-59-dynamic-rr` (CALIBRATED-WITH-CAVEATS)
 
 **Goal.** Execute the nyiso-59 entry's open item (4) ("nyiso-60 = nyiso-59 +
