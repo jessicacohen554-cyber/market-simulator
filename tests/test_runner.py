@@ -801,5 +801,46 @@ class TestDatacenterBlockWiring(RunnerTestBase):
         )
 
 
+class TestCapacityMarketClearingWiring(RunnerTestBase):
+    """The runner threads the CR-1 reserve position into evolve_fleet (P-1B)."""
+
+    def _run_capturing_reserve_position(self, config):
+        captured = {}
+        original = runner.evolve_fleet
+
+        def spy(fleet, prior_results, year, config, loss_tracker, **kw):
+            captured[year] = kw.get("reserve_position")
+            return original(fleet, prior_results, year, config, loss_tracker, **kw)
+
+        with (
+            patch.object(runner, "END_YEAR", 2027),
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
+            patch.object(runner, "evolve_fleet", side_effect=spy),
+        ):
+            runner.run_scenario_iso(config, config.iso)
+        return captured
+
+    def test_reserve_position_none_when_gate_off(self):
+        # Default (gate off): no reserve position is computed or threaded, so
+        # the screens keep the fixed capacity price (byte-identical path).
+        captured = self._run_capturing_reserve_position(ScenarioConfig(iso="ERCOT"))
+        self.assertIn(2027, captured)
+        self.assertIsNone(captured[2027])
+
+    def test_reserve_position_threaded_when_gate_on(self):
+        # Gate on: the runner computes the entering-fleet reserve position once
+        # and threads a real float into evolve_fleet for every evolved year.
+        captured = self._run_capturing_reserve_position(
+            ScenarioConfig(iso="ERCOT", capacity_market_clearing=True)
+        )
+        self.assertIn(2027, captured)
+        self.assertIsInstance(captured[2027], float)
+        self.assertGreater(captured[2027], 0.0)
+
+
 if __name__ == "__main__":
     unittest.main()
