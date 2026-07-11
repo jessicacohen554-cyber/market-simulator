@@ -1,5 +1,18 @@
 # CAISO Evening CC Commitment Posture — Mechanism Design (2026-07-11)
 
+> **DEAD — DO NOT BUILD (2026-07-11, caiso-77 session,
+> `results/calibration/FINDING-caiso77-c1-cluster-firm-selfschedule-2026-07-11.md`
+> §1).** The motivating measurement was an artifact:
+> `scripts/caiso_belly_commitment_probe.py`'s actual side counted the whole
+> CAMPD **CA state** extract (16.6–18.5 TWh/yr of non-CAISO CC — LADWP
+> Haynes/Scattergood/Valley, SMUD Cosumnes, TID Walnut, IID El Centro, …), so
+> the "+1.9/+1.2/+0.3 GW evening CC gap" this design was written against never
+> existed. Same-fleet (probe corrected 2026-07-11), the model CC is
+> **over**-committed in both the belly and the evening in every year
+> (evening actual−model −0.6/−1.3/−1.4 GW). A floor that ADDS evening CC
+> energy pushes the wrong direction in all three years. The §0 re-measures
+> recorded below (and in FINDING-caiso76 §1) carry the same contamination.
+
 **Design only — no build, no solve.** The mechanism-design deliverable for the
 evening gas-CC commitment gap measured by
 `docs/handoffs/caiso-belly-commitment-probe-2026-07.md` (model CC under-runs

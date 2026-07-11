@@ -1038,6 +1038,73 @@ def inject_caiso_firm_import_shape(fleet_arrays, iso: str, year: int) -> bool:
     return applied
 
 
+def inject_caiso_firm_import_selfschedule(fleet_arrays, iso: str, year: int) -> bool:
+    """Floor the CAISO firm import blocks at their shaped capability (must-flow).
+
+    caiso-77 (``config.caiso_firm_import_selfschedule``; gap register G-15
+    residual (b)): the firm/contracted tranches
+    (:data:`CAISO_FIRM_IMPORT_TRANCHES`) proxy RA import contracts and
+    long-term specified-source ownership shares that in the real market are
+    self-scheduled or bid at/below $0/MWh (CPUC D.20-06-028 RA import
+    must-offer; the block comment above :data:`CAISO_FIRM_IMPORT_TRANCHES`
+    documents the same behaviour) — they flow largely independent of the
+    hourly spot spread. Pricing them at static contract-cost proxies makes
+    them price-GATED instead: any hour the model's LMP sits below the proxy
+    (overnight, shoulder) the LP leaves the contracted base untaken and
+    serves the load with domestic CC_REGULAR running flat — the measured
+    signature is the model's −0.6..−2.3 GW overnight/evening import deficit
+    against the revealed 4.3–5.9 GW self-scheduled base while same-fleet
+    CAMPD shows CC_REGULAR +0.9–1.6 GW over in exactly those hours.
+
+    This floors each firm tranche's hourly ``min_gen`` at its FULL shaped
+    capability ``pmax × availability`` — the published DMM RA-import ×
+    MIC-split level × the measured unit-mean revealed-base shape installed by
+    :func:`inject_caiso_firm_import_shape` (eford preserved multiplicatively
+    inside ``availability``) — the exact analogue of the Manitoba / HQ firm
+    must-flow blocks (:func:`inject_miso_firm_imports` /
+    :func:`inject_nyiso_firm_imports`, floor frac 1.0). Mechanism attribution
+    is :data:`~market_sim.data.floor_mechanisms.MECH_FIRM_IMPORT`: a
+    CONTRACT, ablation-kept and D-2 exempt by construction
+    (``NON_THERMAL_MECHS`` / ``MECH_ABLATION_KEPT``). At ``pmin = pmax`` the
+    tranche can never set the margin, so its ladder $/MWh becomes pure
+    inframarginal contract-cost bookkeeping — the two G-26
+    static-fitted-pending-measured firm prices stop influencing dispatch.
+
+    Zero new free parameters: the floor reuses the caiso-73 measured level ×
+    shape unchanged. Rule-17 declaration: driver = RA/LTC contract must-offer
+    (CPUC D.20-06-028) and the DMM revealed self-scheduled base; window =
+    every hour AT the measured (month × hod) median self-schedule (the shape
+    is the window — midday the measured base itself collapses to
+    0.2–1.3 GW); forward story = the DMM forward ladder level × pooled
+    climatology shape regenerate in any forecast year.
+
+    Modifies ``fleet_arrays`` in place. Returns ``True`` when at least one
+    firm tranche was floored, ``False`` (byte-identical) when the fleet has
+    no firm rows.
+    """
+    hours = int(fleet_arrays.availability.shape[1])
+    per_hub_zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
+    applied = False
+    for r, uid in enumerate(fleet_arrays.unit_ids):
+        zone = next((z for z in per_hub_zones if uid.startswith(f"{z}_")), None)
+        if zone is None:
+            continue
+        name = uid[len(zone) + 1 :]
+        if name not in CAISO_FIRM_IMPORT_TRANCHES or fleet_arrays.pmax[r] <= 0.0:
+            continue
+        floor = fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+        if fleet_arrays.min_gen is None:
+            fleet_arrays.min_gen = np.broadcast_to(
+                fleet_arrays.pmin[:, np.newaxis],
+                (fleet_arrays.pmin.size, hours),
+            ).copy()
+        raised = fleet_arrays.min_gen[r, :] < floor
+        np.maximum(fleet_arrays.min_gen[r, :], floor, out=fleet_arrays.min_gen[r, :])
+        ensure_mechanism(fleet_arrays)[r, raised] = MECH_FIRM_IMPORT
+        applied = True
+    return applied
+
+
 def inject_caiso_per_hub_reference_prices(
     fleet_arrays,
     mc: np.ndarray,
@@ -4403,6 +4470,20 @@ def apply_interchange_injections(
                 iso,
                 year,
             )
+        # CAISO firm-block self-schedule floor (caiso_firm_import_selfschedule,
+        # caiso-77): the shaped contracted base becomes must-flow — RA/LTC
+        # imports are self-scheduled or bid ≤ $0 in the real market (CPUC
+        # D.20-06-028), the Manitoba/HQ firm must-flow pattern. Requires the
+        # shape above (the shaped capability IS the floor).
+        if getattr(config, "caiso_firm_import_selfschedule", False):
+            if inject_caiso_firm_import_selfschedule(fleet_arrays, iso, year):
+                _logger.info(
+                    "%s %d: firm import blocks floored at their shaped "
+                    "capability (self-scheduled must-flow contracted base; "
+                    "MECH_FIRM_IMPORT)",
+                    iso,
+                    year,
+                )
 
     # --- 4. Backcast measured-price overlays (caller-supplied; forecast
     #     passes None). Must land after the forward base prices and before
