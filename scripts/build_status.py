@@ -455,12 +455,21 @@ def build() -> dict:
     statmode = (
         json.loads(STATMODE_D7_FILE.read_text()) if STATMODE_D7_FILE.exists() else {}
     )
+    # Owner-declared "frontier achieved" designations (keepers.json "frontier"
+    # map): every named admissible mechanism for the ISO's residual caveats has
+    # been tried on record, and what remains is either inadmissible
+    # (residual-fitting, rule 26) or blocked on data that does not exist
+    # publicly. Rendered as a badge + note on the Calibration Status page;
+    # purely declarative — never gating, never touching the verdict.
+    frontier = spec.get("frontier", {})
     keepers = []
     for run_id in spec.get("keepers", []):
         if not (cv.REGISTRY_DIR / f"{run_id}.json").exists():
             print(f"  skip {run_id}: no registry sidecar", file=sys.stderr)
             continue
         verdict = cv.determine(run_id)
+        if verdict["iso"] in frontier:
+            verdict["frontier"] = frontier[verdict["iso"]]
         d7 = statmode.get("isos", {}).get(verdict["iso"])
         if d7:
             # REPORTED line, never gating: the overlay-vs-statistical fail
