@@ -1,0 +1,115 @@
+# Canonical schema: capacity-market-auction-price (published capacity-market
+# auction/spot clearing-price history per ISO).
+#
+# Companion to capacity-market-demand-curve (the mechanism) and
+# capacity-market-elcc (accreditation); this datatype is the CR-2 validation
+# input (docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md
+# §3.3, T3.1) — a VALIDATION OBSERVABLE, compared against the implemented
+# demand-curve mechanism's output, NEVER a fit target (CLAUDE.md rules 1/13).
+#
+#   PJM    : Base Residual Auction (BRA) RTO + zonal (LDA) clearing prices.
+#   NYISO  : monthly Spot Market Auction ICAP clearing prices, NYCA + locality
+#            (NYC / LI / G-J), rolled up annually where only annual is public.
+#   ISO-NE : Forward Capacity Auction (FCA) system + capacity-zone clearing
+#            prices.
+#   MISO   : Planning Resource Auction (PRA) clearing prices, annual through
+#            PY2024-25 then seasonal (summer/fall/winter/spring) from
+#            PY2025-26, per Local Resource Zone (LRZ).
+#   CAISO  : no centralized auction (bilateral RA) — expected empty; any CPM
+#            backstop-procurement clearing event is recorded if published.
+#   ERCOT  : (excluded) energy-only, no capacity auction.
+#
+# One row per (iso, delivery_year, season, area, auction_round). Delivery
+# years are restricted at intake to <= 2026/27 (CLAUDE.md rule 22 — auction
+# results for later delivery years are not yet cleared / would cross the
+# holdout quarantine boundary for any consuming validation script).
+datatype: capacity-market-auction-price
+schema_version: 1
+title: Capacity-market auction/spot clearing-price history
+description: >-
+  Per-ISO published capacity-market auction and spot clearing prices by
+  delivery year (and season/area where the ISO publishes sub-annual or
+  locational results), reconciled across PJM/NYISO/ISO-NE/MISO/CAISO onto one
+  canonical frame. A validation observable (CR-2 / T3.1) — compare against the
+  model's implemented demand curve, never pin or fit to it.
+
+key_columns: [iso, delivery_year, season, area, auction_round]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO/RTO publishing the value (PJM, NYISO, ISONE, MISO, CAISO).
+  - name: delivery_year
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Delivery/planning/capability year the auction covers, as a label (e.g.
+      "2026/2027"). Restricted at intake to delivery years <= 2026/27.
+  - name: season
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Season the clearing price applies to: annual | summer | fall | winter |
+      spring. Only MISO (seasonal since PY2025-26) and NYISO (summer/winter
+      capability periods, where published separately) use non-annual seasons;
+      all other ISOs use "annual".
+  - name: area
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Capacity area the price applies to — an LDA (PJM), Local Resource Zone
+      (MISO), locality (NYISO), capacity zone (ISO-NE), or the system-wide
+      label (RTO / NYCA / SYSTEM / MISO) for system rows.
+  - name: area_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Kind of area — one of lda | lrz | locality | capacity_zone | rto |
+      resource (CAISO's CPM backstop designates/clears at individual-resource
+      granularity, not a zone) | import_interface (an external tie that
+      clears its own price, e.g. ISO-NE's New Brunswick interface).
+  - name: auction_round
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical auction/product type: base_residual_auction (PJM) |
+      incremental_auction (PJM) | spot (NYISO) | forward_capacity_auction
+      (ISO-NE) | planning_resource_auction (MISO) | cpm_backstop (CAISO, if
+      any clears).
+  - name: clearing_price
+    dtype: float64
+    unit: none
+    nullable: true
+    description: >-
+      The published clearing price (per price_unit). Null only when the row
+      exists solely to carry a cleared_mw value the source publishes without a
+      price (rare); at least one of clearing_price / cleared_mw must be
+      non-null (enforced by validate_tidy, not the writer's dtype check).
+  - name: price_unit
+    dtype: string
+    unit: none
+    nullable: true
+    description: Unit of clearing_price — usd_per_mw_day | usd_per_kw_month | usd_per_kw_yr | usd_per_mw_yr.
+  - name: cleared_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: Total capacity cleared in this area/round, if published. Null when not stated.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: true
+    description: Authoritative source document (URL or short citation) the value was read from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Page / table locator within source_doc.

@@ -63,6 +63,9 @@ DATATYPES: tuple[str, ...] = (
     "reserve-requirements",
     "som-competitive-conduct",
     "storage-as-awards",
+    "capacity-market-demand-curve",
+    "capacity-market-auction-price",
+    "capacity-market-elcc",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
