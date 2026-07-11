@@ -6,43 +6,46 @@
 > to match code, citing `file:line`.** Never trust the current site or prose as
 > correct.
 >
-> **Phase order is sequential** (a phase must finish before the next starts);
-> **prompts within a phase run in parallel** unless marked SEQUENTIAL.
-> Model assignment is on each prompt header. The code-grounded fact base every
-> prompt references is `UPDATE-PLAN-2026-07.md` §2 — read it first, then
-> re-open the cited code to confirm before writing.
+> **Dispatch by waves** (see map): wave 1 runs six prompts concurrently; a
+> wave must finish before the next starts. Model assignment is on each prompt
+> header. The code-grounded fact base every prompt references is
+> `UPDATE-PLAN-2026-07.md` §2 — read it first, then re-open the cited code to
+> confirm before writing. Treat cited line numbers as hints (the repo moves
+> fast) — re-locate by symbol/constant name if a reference has drifted.
 
 ---
 
 ## Execution map
 
 ```
-Phase 0  ──  0A  (Opus)  authoritative methodology doc   ── BLOCKING
-                 │
-     ┌───────────┬─────────────────────────────────┐
-     ▼           ▼                                 ▼
-Phase 1 (DOCS, parallel)          Phase 2 (SCAFFOLD, SEQUENTIAL gate)
-  1A 1B 1C 1D 1E (Sonnet)           2A (Sonnet)  nav + data + page shells
-                                          │
-                            ┌─────────────┬─────────────┐
-                            ▼             ▼             ▼
-                   Phase 3 (SITE PAGES, parallel)
-                     3A (Opus)     3B (Opus)     3C (Opus)
-                            │
-                            ▼
-                   Phase 4 (INTEGRATION & QA, SEQUENTIAL)
-                     4A (Sonnet)  →  4B (Opus + keeper-auditor agent)
+WAVE 1 — all six concurrent (independent files, no interdependencies)
+  0A (Fable 5)    authoritative methodology doc
+  1A–1D (Sonnet)  stale-doc fixes
+  2A (Sonnet)     nav + data JSON + page shells
+        │   (wave 1 complete — 0A is the source, 2A the scaffold)
+        ▼
+WAVE 2 — parallel
+  1E (Sonnet)     spec cross-reference (needs 0A's file to exist)
+  3A (Opus)       calibration-rubric.html      ┐
+  3B (Opus)       model-validity.html          ├─ need 0A + 2A
+  3C (Opus)       results-calibration refresh  ┘
+        │
+        ▼
+WAVE 3 — sequential
+  4A (Sonnet) integration/responsive
+        →  4B (Fable 5 + calibration-keeper-auditor agent) accuracy audit
 ```
 
-Phase 1 (docs) may run concurrently with Phase 2 (site scaffold) — they touch
-disjoint files. Phase 3 must wait for 0A (its source) **and** 2A (nav + data +
-shells).
+1E is the only Phase 1 prompt deferred to wave 2 — it adds a cross-reference
+to the file 0A creates. Everything else in wave 1 touches disjoint files, so
+0A ∥ 1A–1D ∥ 2A run concurrently. Phase 3 must wait for 0A (its source) **and**
+2A (nav + data + shells).
 
 ---
 
-## Phase 0 — Authoritative methodology doc (BLOCKING)
+## Phase 0 — Authoritative methodology doc (blocks 1E + Phase 3 only)
 
-### 0A — Write `docs/calibration-and-validation-methodology.md`  ·  **Opus**
+### 0A — Write `docs/calibration-and-validation-methodology.md`  ·  **Fable 5**
 
 ```
 CONTEXT
@@ -159,8 +162,9 @@ ACCEPTANCE
 
 ## Phase 1 — Stale-doc fixes (PARALLEL)  ·  all **Sonnet**
 
-> Independent files; run 1A–1E concurrently. Each: read the code/data named,
-> confirm the correct value, edit the doc, done. May run alongside Phase 2.
+> Independent files. 1A–1D run in wave 1, concurrently with 0A and 2A. 1E is
+> wave 2 — it cross-references the file 0A creates. Each: read the code/data
+> named, confirm the correct value, edit the doc, done.
 
 ### 1A — Fix `docs/calibration-best-so-far-neiso.md`
 
@@ -407,9 +411,10 @@ TASK
 1. Rewrite §Calibration Diagnostics: replace the ±5% binary explanation with a
    brief, correct v2.x summary (C1-C8, tiers, two bands, forced-energy budget)
    and DELEGATE the depth to the new calibration-rubric.html (link prominently).
-   Replace the stale 13/14 scorecard example with a v2.x tiered example (reuse
-   data/rubric-scorecard-v2.json, or refresh calibration-scorecard.json to the
-   C1-C8 shape).
+   Replace the stale 13/14 scorecard example with a v2.x tiered example. Reuse
+   data/rubric-scorecard-v2.json as the SINGLE scorecard source and retire
+   data/calibration-scorecard.json (only this page loads it) — do not leave two
+   divergent scorecard shapes in data/.
 2. Add a NEW subsection "Ablation twins & the DOF ledger" explaining: the
    zero-forcing twin (every merchant floor off, structural must-run kept), the
    keeper-vs-twin per-class delta = what each floor buys (illustrate with
@@ -453,7 +458,7 @@ Modify HTML/CSS/JS as needed; no new files. Do NOT touch deploy-owned generated
 data.
 ```
 
-### 4B — Accuracy audit + keeper-text verification  ·  **Opus** + `calibration-keeper-auditor` agent
+### 4B — Accuracy audit + keeper-text verification  ·  **Fable 5** + `calibration-keeper-auditor` agent
 
 ```
 Final truth gate. CODE IS THE SOURCE OF TRUTH.
@@ -489,10 +494,10 @@ ACCEPTANCE
 
 - **Total prompts:** 11 (1 methodology doc + 5 doc fixes + 1 scaffold + 3 pages
   + 2 integration/QA).
-- **Max parallelism:** 5 (Phase 1 docs), then 3 (Phase 3 pages).
-- **Critical path:** 0A → 2A → any Phase 3 page → 4A → 4B (5 steps).
-- **Model mix:** Opus for the methodology doc, the three high-accuracy pages,
-  and the final audit; Sonnet for the mechanical doc fixes, scaffold, and
+- **Max parallelism:** 6 (wave 1: 0A ∥ 1A–1D ∥ 2A), then 4 (wave 2).
+- **Critical path:** max(0A, 2A) → any Phase 3 page → 4A → 4B (4 steps).
+- **Model mix:** Fable 5 for the methodology doc and the final audit; Opus for
+  the three narrative pages; Sonnet for the mechanical doc fixes, scaffold, and
   integration pass.
 - **Invariant across all prompts:** validate against code first; the current
   site and prose are not trusted as correct.
