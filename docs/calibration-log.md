@@ -9821,3 +9821,51 @@ CT hurdle lane; (2) C3a/b-2025 + C3c — the RDC/ELMP scarcity depth/timing lane
 Zero-forcing twin near-identical (every class < 0.3 TWh except CT_PEAKER
 +0.53/+0.35 TWh 2023/2025). Retention: `2026-07-06-miso-41-v2rescore-probe`
 pruned (top-15).
+
+## 2026-07-11 — MISO-55: the CAMPD CT-hurdle lane executed — static 1.55-style hurdle REFUTED on MISO's own fleet (measured part-load premium 1.025x); commitment cost priced by Order-825/ELMP fast-start amortization instead; C3b flips PASS, C1 CT over-run halves; keeper stays miso-54, promotion recommended
+
+**Lane 1 of the miso-54 handoff, measurement-first (rule 23).**
+`derive_campd_marginal_hr.py --iso MISO` (2023-2025, n=249 CT units, cap-weighted;
+provenance `data/raw/reference/miso_campd_marginal_hr_summary.csv`) measures the
+MISO CT min-load average-HR premium at **1.025** [0.94, 1.14] and the CT marginal
+HR **flat-to-falling** with load (0.697/0.687/0.691) — the NEISO result on a third
+fleet. So the pre-documented "CAMPD-grounded CT committed hurdle + econ ramp" lane
+resolves as: committed 1.0 → **1.025** in `_MISO_OFFER_CURVE` (freeze-tested), econ
+bands **measurement-AFFIRMED neutral**, and NO static start-cost hurdle — the
+commitment-cost component of a real MISO CT offer is priced by **MISO's own ELMP
+(FERC Order 825) fast-start pricing**, armed as `tranche_startup_amortization` +
+`tranche_startup_measured_runs` (v3) over the new rule-23 artifact
+`campd_ct_run_lengths_MISO.csv` (95 plants, median start-to-stop runs 3-17 h,
+class fallback 10 h over 61,322 measured runs; NREL CT_STARTUP_PARAMS start
+costs; engaged CT econ/peak markup ≈ $1.9/MWh cap-weighted median, max $9.5).
+Zero fitted scalars; DOF residual count 3 → 2; bare marginal HR never used as an
+offer (NYISO run-28 rejection respected).
+
+**Registered `2026-07-11-miso-55-ct-faststart` + twin `…-ablation`** (bundle
+`results/calibration/miso55_ct_faststart*`; miso-54 meta.json strict replay —
+errors on unmapped keys). **NOT-YET (rubric v2.4), FAIL set 6 → 5 criteria:**
+
+- **C3b price-duration shape FAIL → PASS all years** (miso-54's 2025 0.200 clears).
+- **C1: 6 → 4 class-year FAILs.** CT_PEAKER-2024 **+15.29 → +8.51 TWh**; CT-2023
+  **+0.3 TWh** (near-exact); COAL_PRB-2024 −10.5 → −8.0 (in band);
+  ST_GAS-2024 −6.1 → +1.9. Remaining: COAL_BIT −15.3/−14.4 + CC_REGULAR
+  +9.0/+9.1 — the CC/coal mid-merit split is now THE C1 residual (pre-flagged:
+  CC measured-flat econ body + import under-run; rules 1/11, not offer-tunable).
+- **C3a-2025 −14.7 % → −13.3 %** (2023 +0.1 %, 2024 −3.3 % DA-diagnostic); C3c
+  0 h >$200 unchanged (DA actual 1/24/38) — the RDC/ELMP Lane-2 target, which
+  also owns C2-2025 (gas −11.0 %/coal +8.8 %, the 2025 coal-over/gas-under
+  regime). C5a CO₂ ≈ unchanged (−11.0/−10.2 %): the CT→coal/steam reallocation
+  is carbon-neutral; C5a belongs to the COAL_BIT/CC split.
+- **August artifact stays cleared** (+0.4/+0.4 $/MWh Aug 2023/24; 0 h >$200 in
+  2023/24). C4 PASS retained; C7/C8 PASS (D-1 CT r 0.99/0.99/0.92; D-2 CT forced
+  3.7-8.1 % vs 15 % cap). Twin near-identical (CT_PEAKER +0.6/+0.27/+0.47 TWh,
+  rest <0.3 TWh) — the fit is carried economically.
+
+**Keeper stays miso-54; promotion of miso-55 recommended to owner** (rule 1: the
+same structure plus a mechanism MISO's real market actually has, all inputs
+measured/published, every score movement a by-product). Full record: FINDING §9
+(`results/calibration/FINDING-miso-august-scarcity-2026-07.md`). Retention:
+`2026-07-06-miso-43-commitment-posture` pruned (top-15). Infra: the meta.json
+replay path is now STRICT (`replay_keeper.build_kwargs` hard-errors on unmapped
+keys; all six keepers verified; `tests/test_replay_keeper_strict.py`) — the
+miso-50..53 calibration_flags trap class is closed permanently.
