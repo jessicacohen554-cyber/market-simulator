@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-11-miso-55-ct-faststart",
+ "label": "miso 55 ct faststart",
+ "date": "2026-07-11",
+ "shorthand": "miso-55-ct-faststart",
+ "definition": "miso-55 KEEPER-CANDIDATE (recommended to owner 2026-07-11; keeper stays miso-54 pending decision): the miso-54 keeper recipe replayed from its exhaustive meta.json (strict replay -- errors on unmapped keys) with exactly two measured changes: (1) MISO-measured CT_PEAKER offer bands -- committed 1.025 (CAMPD min-load part-load premium, n=249 units; the handoff-hypothesized 1.55-style static hurdle is REFUTED on MISO's own fleet), econ bands measurement-affirmed neutral (marginal HR flat-to-falling, the NEISO finding on a third fleet); (2) FERC Order-825 / MISO ELMP fast-start pricing armed (tranche_startup_amortization + measured-run v3: NREL start costs amortized over CAMPD-measured median start-to-stop run lengths, campd_ct_run_lengths_MISO.csv; engaged CT markup ~$1.9/MWh cap-weighted median). Zero fitted scalars; DOF residual count 3->2. NOT-YET (rubric v2.4) but C3b price-shape flips FAIL->PASS all years, C1 CT_PEAKER-2023 lands +0.3 TWh (was +6.2), CT-2024 +8.5 (was +15.3), COAL_PRB-2024 back in band, C3a-2025 -13.3% (was -14.7%); August artifact stays cleared (Aug 2023/24 deltas +0.4/+0.4). Remaining FAILs: the COAL_BIT/CC_REGULAR mid-merit split and the RDC/ELMP 2025 scarcity lanes (pre-documented, unchanged root causes).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-11-miso-55-ct-faststart.js",
+ "bundle": "results/calibration/miso55_ct_faststart",
+ "ablation_twin": "2026-07-11-miso-55-ct-faststart-ablation",
+ "market_story": "Zero-forcing twin is near-identical (CT_PEAKER +0.6/+0.27/+0.47 TWh 2023/24/25, all other classes < 0.3 TWh): the only binding merchant floor is the CT evening reliability deployment -- real MISO commits peakers for evening net-load-peak reliability (RA/LOLE-driven commitment the LP's energy-only merit cannot see), D-2 attributes 3.7-8.1% of CT energy to it (cap 15%). The CT offer level itself is measured (CAMPD part-load 1.025 + Order-825/ELMP fast-start start-cost amortization over CAMPD-measured run lengths), so the class's energy is carried economically, not forced."
+}

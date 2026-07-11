@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-11-miso-55-ct-faststart-ablation",
+ "label": "miso 55 ct faststart ablation",
+ "date": "2026-07-11",
+ "shorthand": "miso-55-ct-faststart-ablation",
+ "definition": "(ABLATION TWIN of 2026-07-11-miso-55-ct-faststart -- rule 20 zero-forcing reference: same config, every merchant floor/bridge OFF, keeping only nuclear must-run / CHP steam-following / coal take-or-pay.) Near-identical to the main (CT_PEAKER +0.6/+0.27/+0.47 TWh 2023/24/25, COAL_PRB/BIT -0.26/+0.25 TWh 2024, every other class < 0.25 TWh): the measured CT offer grounding + fast-start amortization carries the fit economically; floors are commitment scaffolding.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-11-miso-55-ct-faststart-ablation.js",
+ "bundle": "results/calibration/miso55_ct_faststart-ablation"
+}
