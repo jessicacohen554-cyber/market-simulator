@@ -192,7 +192,7 @@
   "note": "The handoff-hypothesized static CT committed hurdle (the de-leaked ERCOT 1.55) is REFUTED by MISO's own CAMPD part-load shape (measured premium 1.025); the commitment-cost component of the real MISO CT offer is priced by the ELMP fast-start amortization instead \u2014 structure before level (rule 1). August 2023/24 artifact stays cleared. The remaining COAL_BIT under-run / CC_REGULAR over-run mid-merit split is the pre-flagged separate root cause (CC measured-flat econ body + import under-run), NOT re-tuned here (rules 1/11)."
  },
  "disclosures": {
-  "note": "PENDING SCORE (filled by the registration step; see metrics.json determination + reasons).",
+  "note": "NOT-YET (rubric v2.4): fuelmix, sysvol(2025), price_mean(2025), price_tail(2024/25), co2(2023/24) \u2014 price_shape (C3b) now PASSES all years (was the 2025 0.200 FAIL at miso-54): the ELMP fast-start markup restores the price-duration shape. Remaining fails are the two pre-documented lanes, now sharper: (1) the COAL_BIT under-run / CC_REGULAR over-run mid-merit split (COAL_BIT -15.3/-14.4 TWh, CC_REGULAR +9.0/+9.1, CO2 -11.0/-10.2%) \u2014 the CT over-run is no longer the driver (CT-2023 +0.3 in band, CT-2024 +8.5 marginal vs +15.3 at miso-54); (2) the 2025 scarcity-representation undershoot (C3a-2025 -13.3% vs -14.7%, C3c 0h vs DA 1/24/38h) \u2014 the RDC/ELMP depth/timing lane, plus the 2025 coal-over/gas-under regime (C2-2025 gas -11.0%/coal +8.8%) it feeds.",
   "items": []
  },
  "exceptions": [
