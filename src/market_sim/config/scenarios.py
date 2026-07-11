@@ -1815,6 +1815,52 @@ class ScenarioConfig:
     # via the shared apply_interchange_injections seam (both orchestrators).
     # Requires caiso_per_hub_intertie + caiso_perhub_firm_base. Default off
     # (byte-identical); CAISO-only.
+    caiso_demand_clock_realign: bool = False  # Apply the MEASURED source-data
+    # clock correction to the CAISO backcast demand input (caiso-75;
+    # FINDING-caiso75-demand-clock-2026-07-11): the EIA-930 CISO extract's
+    # `Demand` column rides a convention +1 h LATE relative to the extract's
+    # own astronomy-verified generation frame for local dates before
+    # 2023-11-01 (monthly best-lag −1 at r 0.984-0.997 vs the extract's own
+    # balance identity net_gen − interchange; OASIS SLD TAC actual
+    # corroborates at 0.9953) and is aligned from 2023-11-01 on — an upstream
+    # EIA-930 submission-convention flip. When on, the misaligned window's
+    # demand rows are pulled forward 1 h onto the wall-true frame the
+    # renewables ride (eia_loader._CAISO_DEMAND_CLOCK_LAG_H /
+    # _CAISO_DEMAND_CLOCK_REALIGN_END). Rule-14 reconciled real data: a clock
+    # fix derived ONLY from the source series' internal identity, never a
+    # level rescale, no fitted parameters; frozen against residuals
+    # (rule 23). Default off (byte-identical); CAISO backcast only (the
+    # forecast path never reads the 2023 window).
+    caiso_storage_as_reservation: bool = False  # Reserve the MEASURED hourly
+    # CAISO battery AS-award MW out of the battery fleet's dispatch headroom
+    # (caiso-74; FINDING-caiso72 STEP-0 channel #1 / FINDING-caiso73 live lead
+    # #1). The energy-only LP dispatches the battery fleet's FULL power as
+    # perfect-foresight arbitrage, discharging h15-17 (real fleet still
+    # charging) and h21-23 (real fleet SOC-spent); the real fleet holds
+    # 1.0-1.7 GW average (DA) of AS — reg-up/reg-down/spin/non-spin awards
+    # peaking 1.2-1.5 GW midday-to-afternoon (2024/25) — that cannot
+    # simultaneously offer energy. Two legs, both from the measured award
+    # series (data/clean storage-as-awards, CAISO Daily Energy Storage Report
+    # quarterly data; scripts/curate_storage_as_awards.py):
+    #   (a) POWER: subtract the hourly upward-award MW (reg_up + spin +
+    #       nonspin) from the battery power cap pro-rata by available power —
+    #       the exact ERCOT storage_as_commitment / reserve_storage_as_power
+    #       pattern, batteries only (pumped storage is not an LESR);
+    #   (b) SOC SUSTAIN: floor the battery SOC at CAISO_AS_SUSTAIN_DURATION_H
+    #       (0.5 h, CAISO Tariff §8.4/App. K ASSOC) × the spin+nonspin award —
+    #       the tariff deliverability energy an awarded battery cannot
+    #       arbitrage away (reserve_config's own sustain constant; no new
+    #       number).
+    # ZERO fitted parameters (rule 23): level and shape are the published
+    # award series. Rule-13 forward story: the AS requirement regenerates from
+    # forward drivers (load/VRE growth) and the storage share responds to
+    # fleet growth and AS saturation — the forward path prices the energy-vs-AS
+    # split endogenously (the ercot_storage_as_endogenous pattern); the
+    # measured award is the backcast realization of that same market design.
+    # Mutually exclusive with an in-LP reserve co-opt that hands storage its
+    # own reserve columns (energy_reserve_coopt; rule 19 — one mechanism per
+    # phenomenon), enforced by a config validator. Default off
+    # (byte-identical); CAISO-only.
     caiso_intertie_reference_price: bool = False  # Price each CAISO per-hub WECC
     # corridor from the FORWARD reference-price formula instead of the measured
     # OASIS hub LMP: per-hub price = (henry_hub[year] + gas_basis) × neighbor
@@ -4454,6 +4500,18 @@ class ScenarioConfig:
                 "endogenous storage energy-vs-AS split is priced by the reserve "
                 "co-optimization, which is off. Enable energy_reserve_coopt "
                 "(ERCOT multi-product) or clear ercot_storage_as_endogenous."
+            )
+        # Measured CAISO battery AS reservation vs in-LP reserve co-opt: the
+        # co-opt hands storage its own reserve columns and prices the
+        # energy-vs-AS split endogenously, so pre-subtracting the measured
+        # award would double-reserve the same power (rule 19 — one mechanism
+        # per phenomenon; the ERCOT storage_as_commitment/endogenous pair has
+        # the same exclusivity).
+        if self.caiso_storage_as_reservation and self.energy_reserve_coopt:
+            raise ValueError(
+                "caiso_storage_as_reservation is the measured-award storage AS "
+                "path; energy_reserve_coopt prices storage AS endogenously in "
+                "the LP. Enable exactly one (rule 19)."
             )
         # CAISO's reserve co-optimization (reserve_config._caiso_design, issue
         # #1492) is priced inside the shared reserve co-opt; without it the flag

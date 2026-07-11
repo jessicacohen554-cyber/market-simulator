@@ -514,6 +514,98 @@ def reserve_storage_as_power(
     return np.clip(pc2 - weight * as_storage[np.newaxis, :], 0.0, None)
 
 
+def _battery_mask(units: list["StorageUnit"]) -> np.ndarray:
+    """Boolean (n_storage,) mask of battery units (pumped storage excluded).
+
+    CAISO's LESR award series covers batteries (standalone + co-located);
+    pumped-storage hydro is not an LESR and holds none of that award.
+    """
+    return np.array([u.tech_name != "pumped_storage" for u in units], dtype=bool)
+
+
+def reserve_caiso_storage_as_power(
+    power_cap: np.ndarray,
+    units: list["StorageUnit"],
+    year: int,
+    hours: int,
+) -> np.ndarray:
+    """Reserve CAISO's measured hourly battery upward-AS award from the power cap.
+
+    The measured CAISO battery fleet holds 1.0-1.7 GW average (DA) of AS
+    awards (Daily Energy Storage Report quarterly data, curated to the
+    ``storage-as-awards`` clean datatype); the upward products (reg-up + spin
+    + non-spin, peaking 1.2-1.5 GW midday-to-afternoon in 2024/25) are power
+    committed to reserve that cannot simultaneously arbitrage energy. This
+    subtracts that measured hourly MW from the BATTERY units' dispatch power
+    cap, allocated pro-rata by available battery power — the exact ERCOT
+    :func:`reserve_storage_as_power` pattern (``storage_as_commitment``),
+    scoped to batteries because pumped storage is not an LESR.
+
+    Rule-13 admissibility: the AS requirement regenerates for a forward year
+    from forward drivers (load/VRE growth) and the storage share responds to
+    fleet growth and AS saturation — forward runs price the energy-vs-AS split
+    endogenously (the ``ercot_storage_as_endogenous`` pattern); the measured
+    award enters the backcast only as a capability input the LP dispatches
+    beneath, never a pinned outcome. Zero fitted parameters (rule 23).
+
+    Returns the ``(n_storage, hours)`` cap; an empty fleet passes through.
+    """
+    from market_sim.data.storage_as_awards import upward_award_mw
+
+    pc = np.asarray(power_cap, dtype=float)
+    if pc.size == 0 or not units:
+        return power_cap
+    up = upward_award_mw("CAISO", year, hours)
+    pc2 = np.repeat(pc[:, np.newaxis], hours, axis=1) if pc.ndim == 1 else pc.copy()
+    mask = _battery_mask(units)
+    batt = pc2[mask]
+    total = batt.sum(axis=0)  # (hours,) battery power available
+    with np.errstate(divide="ignore", invalid="ignore"):
+        weight = np.where(total[np.newaxis, :] > 0.0, batt / total[np.newaxis, :], 0.0)
+    pc2[mask] = np.clip(batt - weight * up[np.newaxis, :], 0.0, None)
+    return pc2
+
+
+def caiso_storage_as_soc_min(
+    power_cap: np.ndarray,
+    energy_cap: np.ndarray,
+    units: list["StorageUnit"],
+    year: int,
+    hours: int,
+) -> np.ndarray:
+    """SOC sustain floor for CAISO's measured battery contingency-AS awards.
+
+    CAISO AS certification requires spin/non-spin awards to be sustainable for
+    30 minutes from available state of charge
+    (:data:`market_sim.config.reserve_config.CAISO_AS_SUSTAIN_DURATION_H`,
+    CAISO Tariff §8.4 / App. K, ASSOC initiative — the reserve co-opt's own
+    sustain constant, no new number), so an awarded battery must hold
+    ``0.5 h × (spin + nonspin)`` MWh it cannot arbitrage away. Allocated across
+    battery units by the same pro-rata power weights as the power reservation
+    and clipped at each unit's energy cap; pumped-storage rows are 0.
+
+    Returns the ``(n_storage, hours)`` SOC lower bound for
+    ``dispatch.build_variable_bounds(storage_soc_min=...)``.
+    """
+    from market_sim.data.storage_as_awards import sustain_energy_mwh
+
+    pc = np.asarray(power_cap, dtype=float)
+    ec = np.asarray(energy_cap, dtype=float)
+    pc2 = np.repeat(pc[:, np.newaxis], hours, axis=1) if pc.ndim == 1 else pc.copy()
+    ec2 = np.repeat(ec[:, np.newaxis], hours, axis=1) if ec.ndim == 1 else ec.copy()
+    soc_min = np.zeros_like(pc2)
+    mask = _battery_mask(units)
+    if not mask.any():
+        return soc_min
+    sustain = sustain_energy_mwh("CAISO", year, hours)
+    batt = pc2[mask]
+    total = batt.sum(axis=0)
+    with np.errstate(divide="ignore", invalid="ignore"):
+        weight = np.where(total[np.newaxis, :] > 0.0, batt / total[np.newaxis, :], 0.0)
+    soc_min[mask] = np.minimum(weight * sustain[np.newaxis, :], ec2[mask])
+    return soc_min
+
+
 def load_eia860_pumped_storage(
     iso: str, year: int, config: ScenarioConfig | None = None
 ) -> list[StorageUnit]:
