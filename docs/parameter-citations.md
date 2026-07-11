@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-07-06. Every numeric input to the model traces to a primary source
+_Generated 2026-07-11. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1144 parameters registered** (627 flagged `needs-citation`).
+**1258 parameters registered** (706 flagged `needs-citation`).
 
 
 ## Calibration
@@ -150,13 +150,18 @@ inline comment and still need a dated primary source — search the table for
 | `demand_growth_rates.PJM.mid.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.PJM.mid.near` | 0.035 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_transition_year` | 2030 | 2 | Year at which demand growth transitions from near-term to long-term… | 2030 | auto-generated |
+| `scenario.caiso_demand_clock_realign` | False | 2 | Apply the MEASURED source-data |  | auto-generated, needs-citation |
 | `scenario.caiso_ra_min_load_frac` | 0.4 | 2 | Minimum stable load of a committed |  | auto-generated, needs-citation |
 | `scenario.ct_netload_drag` | False | 3 | CT_PEAKER net-load reliability drag (the simple-cycle analog of the… | 2023 | auto-generated |
+| `scenario.datacenter_load_factor` | 0.85 | 2 | Flat hourly CF of the DC block. |  | auto-generated, needs-citation |
+| `scenario.datacenter_load_path` | off | 2 | "off" \| "low" \| "mid" \| "high" — |  | auto-generated, needs-citation |
 | `scenario.demand_growth_path` | mid | 1 | "low", "mid", "high" — selects from DEMAND_GROWTH_RATES |  | auto-generated, needs-citation |
 | `scenario.demand_growth_percentile` | 0.5 | 1 | Continuous counterpart of |  | auto-generated, needs-citation |
 | `scenario.demand_growth_rate` | 0.01 | 1 | Market simulator model design decision | 2026-05 | modeled |
+| `scenario.ercot_offer_surface_netload_pcts` | [0.8, 0.9, 0.97] | 2 | Net-load percentile bin EDGES separating the loose / mid / tight re… |  | auto-generated, needs-citation |
 | `scenario.ercot_west_netload_gas_shape` | False | 3 | Tier 3 (calibration) — STRUCTURAL net-load-indexed West/Panhandle W… |  | auto-generated, needs-citation |
 | `scenario.gas_st_netload_drag` | False | 3 | Net-load-indexed ST_GAS reliability-drag floor — the endogenous, we… | 2023 | auto-generated |
+| `scenario.neiso_offer_surface_netload_pcts` | [0.8, 0.9, 0.97] | 2 | Net-load percentile bin EDGES (same contract as the ERCOT field abo… |  | auto-generated, needs-citation |
 | `scenario.strict_demand_profile` | False | 2 | When True, threaded through to |  | auto-generated, needs-citation |
 
 ## Emerging Tech
@@ -272,8 +277,8 @@ inline comment and still need a dated primary source — search the table for
 | `rggi_state_co2_budget.VT` | {"2023": 507865.0, "2024": 491482.0, … | 2 | RGGI CO2 allowance budgets (short tons/yr), regional ("RGGI") and p… | 2027 | auto-generated |
 | `scenario.carbon_price_path` | zero | 1 | "zero", "low", "mid", "high"; used when carbon_price is 0.0 |  | auto-generated, needs-citation |
 | `scenario.carbon_program_price_path` | None | 1 | named projected forecast path |  | auto-generated, needs-citation |
-| `scenario.plant_emission_rates_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `scenario.plant_emission_rates_v2_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.plant_emission_rates_path` | /home/runner/work/market-simulator/ma… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.plant_emission_rates_v2_path` | /home/runner/work/market-simulator/ma… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.so2_price` | 0.0 | 1 | $/ton SO2 |  | auto-generated, needs-citation |
 | `scenario.state_carbon_pricing` | True | 1 | Toggle: charge the ISO's state carbon-program allowance cost (CA ca… | 2026-06 |  |
 | `scenario.use_plant_emission_rates` | True | 2 | When True, generators pinned to a single plant take that plant's CA… |  | auto-generated, needs-citation |
@@ -294,7 +299,17 @@ inline comment and still need a dated primary source — search the table for
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
 | `biomass_price_per_mmbtu` | 2.5 | 2 | Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas un… | 2024 | auto-generated |
+| `caiso_ra_mustoffer_gas_mw` | {"2023": 19130.0, "2024": 15566.0, "2… | 2 | CAISO gas-fired MUST-OFFER Resource-Adequacy capacity (MW), by comp… | 2023 | auto-generated |
 | `carb_floor_price` | {"2023": 22.21, "2024": 24.04, "2025"… | 2 | CARB Auction Reserve (floor) price by year ($/tonne), rising 5% + C… | 2023 | auto-generated |
+| `coal_delivery_commodity_share.bituminous` | 0.85 | 2 | short-haul Interior/Appalachian rail |  | auto-generated, needs-citation |
+| `coal_delivery_commodity_share.lignite` | 1.0 | 2 | mine-mouth, no transport |  | auto-generated, needs-citation |
+| `coal_delivery_commodity_share.prb` | 0.42 | 2 | 0.42, long-haul rail |  | auto-generated, needs-citation |
+| `coal_delivery_commodity_share.subbituminous` | 0.42 | 2 | same basin economics as prb |  | auto-generated, needs-citation |
+| `coal_delivery_commodity_share.waste` | 1.0 | 2 | reclamation fuel, near-mine |  | auto-generated, needs-citation |
+| `coal_heat_content_mmbtu_per_ton.ANT` | 25.09 | 2 | anthracite (not in any modeled fleet; completeness) |  | auto-generated, needs-citation |
+| `coal_heat_content_mmbtu_per_ton.BIT` | 24.93 | 2 | bituminous |  | auto-generated, needs-citation |
+| `coal_heat_content_mmbtu_per_ton.LIG` | 13.3 | 2 | lignite |  | auto-generated, needs-citation |
+| `coal_heat_content_mmbtu_per_ton.SUB` | 17.46 | 2 | subbituminous (PRB) |  | auto-generated, needs-citation |
 | `coal_max_cf_by_plant` | {"298": 0.95, "6179": 0.99, "7097": 0… | 2 | Per-plant ERCOT coal sustained-output ceilings (fraction of capacit… | 2023 | auto-generated |
 | `coal_price_base.CAISO` | 2.5 | 2 | EIA AEO 2024 — delivered coal price | 2024 | auto-generated |
 | `coal_price_base.ERCOT` | 2.0 | 2 | EIA AEO 2024 — delivered coal price | 2024 | auto-generated |
@@ -303,6 +318,19 @@ inline comment and still need a dated primary source — search the table for
 | `coal_price_base.NYISO` | 2.3 | 2 | NY grid coal fleet retired (Somerset/Cayuga, 2020); no 2023+ unit p… | 2024 |  |
 | `coal_price_base.PJM` | 2.3 | 2 | Central/Northern Appalachian bituminous + PRB-by-rail |  | auto-generated, needs-citation |
 | `coal_price_escalation` | 0.01 | 2 | Annual real escalation rate for coal prices. Reflects mine closures… | 2024 | auto-generated |
+| `coal_sigmoid_backcast_gas_min_mmbtu.CAISO` | 3.4 | 2 | Minimum delivered gas price ($/MMBtu) observed over the backcast wi… | 2023 | auto-generated |
+| `coal_sigmoid_backcast_gas_min_mmbtu.ERCOT` | 2.0 | 2 | Minimum delivered gas price ($/MMBtu) observed over the backcast wi… | 2023 | auto-generated |
+| `coal_sigmoid_backcast_gas_min_mmbtu.MISO` | 2.19 | 2 | Minimum delivered gas price ($/MMBtu) observed over the backcast wi… | 2023 | auto-generated |
+| `coal_sigmoid_backcast_gas_min_mmbtu.NEISO` | 3.29 | 2 | Minimum delivered gas price ($/MMBtu) observed over the backcast wi… | 2023 | auto-generated |
+| `coal_sigmoid_backcast_gas_min_mmbtu.NYISO` | 2.74 | 2 | Minimum delivered gas price ($/MMBtu) observed over the backcast wi… | 2023 | auto-generated |
+| `coal_sigmoid_backcast_gas_min_mmbtu.PJM` | 2.86 | 2 | +0.67 EIA-923 delivered basis (GAS_BASIS_DIFFERENTIAL) |  | auto-generated, needs-citation |
+| `coal_sigmoid_baseline_slope` | 2.5 | 2 | Baseline logistic slope (per $/MMBtu) for a coal supply group whose… |  | auto-generated, needs-citation |
+| `coal_sigmoid_floor_min` | 0.5 | 2 | Lowest the sigmoid floor may go: a coal plant never bids below this… |  | auto-generated, needs-citation |
+| `coal_sigmoid_follower_discount` | 0.87 | 2 | Follower-tier (low-must-run PRB cyclers, mustrun <= coal_prb_follow… |  | auto-generated, needs-citation |
+| `coal_sigmoid_rep_hr_coal` | 10.0 | 2 | HEAT_RATE_BINS["coal"]["subcritical"] |  | auto-generated, needs-citation |
+| `coal_sigmoid_rep_hr_gas_cc` | 6.7 | 2 | HEAT_RATE_BINS["gas_cc"]["f_class"] |  | auto-generated, needs-citation |
+| `coal_sigmoid_slope_max` | 4.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `coal_sigmoid_slope_min` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_geothermal.high` | 15.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_geothermal.low` | 5.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_geothermal.mid` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
@@ -321,8 +349,12 @@ inline comment and still need a dated primary source — search the table for
 | `ercot_as_revenue_per_kw_yr.gas_cc` | 8.0 | 2 | ERCOT ancillary-service market revenue ($/kW-yr) credited in the ca… | 2023 | auto-generated |
 | `ercot_as_revenue_per_kw_yr.gas_ct` | 22.0 | 2 | ERCOT ancillary-service market revenue ($/kW-yr) credited in the ca… | 2023 | auto-generated |
 | `ercot_as_revenue_per_kw_yr.gas_st` | 15.0 | 2 | ERCOT ancillary-service market revenue ($/kW-yr) credited in the ca… | 2023 | auto-generated |
-| `ercot_rtolcap_fwd_online_share.COAL` | [[0.6087, 0.5673, 0.5217, 0.4914, 0.4… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `ercot_rtolcap_fwd_online_share.ST_GAS` | [[0.0211, 0.0211, 0.0472, 0.0851, 0.1… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `ercot_online_cap_share.COAL` | [[0.9525, 0.9717, 0.9717, 0.9717, 0.9… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share.ST_GAS` | [[0.0228, 0.0228, 0.0228, 0.1153, 0.1… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share_extreme.COAL` | [[0.9525, 0.9717, 0.9717, 0.9717, 0.9… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share_extreme.ST_GAS` | [[0.0228, 0.0228, 0.0228, 0.1153, 0.1… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_rtolcap_fwd_online_share.COAL` | [[0.611, 0.5678, 0.5251, 0.4928, 0.44… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `ercot_rtolcap_fwd_online_share.ST_GAS` | [[0.0211, 0.0211, 0.0211, 0.0724, 0.1… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `gas_basis_differential.CAISO` | 1.2 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
 | `gas_basis_differential.ERCOT` | -0.5 | 2 | EIA Natural Gas Weekly Update | 2024 |  |
 | `gas_basis_differential.MISO` | 0.3 | 2 | Chicago Citygate footprint blend to Henry Hub. EIA Illinois natural… | 2024 |  |
@@ -367,6 +399,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_import_hub_prices` | False | 2 | Price the CAISO priced-import node's |  | auto-generated, needs-citation |
 | `scenario.caiso_intertie_reference_price` | False | 1 | Price each CAISO per-hub WECC |  | auto-generated, needs-citation |
 | `scenario.caiso_reference_price_seam` | False | 1 | Price BOTH legs of CAISO's two WECC |  | auto-generated, needs-citation |
+| `scenario.caiso_zonal_gas_basis` | False | 2 | CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy fro… | 2023 | auto-generated |
 | `scenario.coal_bit_dispatchable` | False | 2 | Bituminous spot-coal marginal treatment (PJM): unlike PRB/lignite m… |  | auto-generated, needs-citation |
 | `scenario.coal_bit_passthrough_ceil` | None | 3 | dear-gas asymptote (>1 = markup) |  | auto-generated, needs-citation |
 | `scenario.coal_bit_passthrough_floor` | None | 3 | cheap-gas asymptote |  | auto-generated, needs-citation |
@@ -385,6 +418,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.coal_lignite_passthrough_sigmoid` | False | 3 | Lignite (mine-mouth; full cost / no sigmoid everywhere today — the … |  | auto-generated, needs-citation |
 | `scenario.coal_mustrun_online_pmin` | False | 2 | Online-Pmin coal must-run floor (rebuild step 2): size the coal mus… | 2026-06 | auto-generated |
 | `scenario.coal_mustrun_per_plant` | False | 3 | When True, coal must-run % comes from the per-plant CAMPD-derived t… |  | auto-generated, needs-citation |
+| `scenario.coal_nameplate_summer_derate` | False | 2 | COAL net-summer capacity derate (coal_nameplate_summer_derate, off … | 2026-07 | auto-generated |
 | `scenario.coal_peak_hr_penalty` | 1.08 | 3 | Coal peaking increment |  | auto-generated, needs-citation |
 | `scenario.coal_plant_monthly_pricing` | True | 3 | When True (default), coal generators that report EIA-923 monthly fu… |  | auto-generated, needs-citation |
 | `scenario.coal_prb_contract_passthrough` | 1.0 | 3 | Tier 3 (calibration) — CAMPD coal pricing. Plant-specific coal deli… |  | auto-generated, needs-citation |
@@ -430,6 +464,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.entry_price_signal_alpha` | 1.0 | 2 | EWMA blend of the price signal the |  | auto-generated, needs-citation |
 | `scenario.ercot_gas_contract_haircut` | False | 3 | Tier 3 (calibration) — MEASURED re-grounding of the West/Waha floor… |  | auto-generated, needs-citation |
 | `scenario.ercot_gas_delivered_floor_basis` | None | 3 | Tier 3 (calibration) — delivered-gas floor on the ERCOT zonal basis… | 2024 | auto-generated |
+| `scenario.ercot_offer_surface_price_cap_frac` | 0.95 | 2 | Safety cap on the repriced peak offer as a fraction of VOLL, so a m… |  | auto-generated, needs-citation |
 | `scenario.ercot_west_gas_collapse_freq` | None | 3 | Optional override of the measured Waha negative-price-day frequency… | 2024 | auto-generated |
 | `scenario.ercot_west_gas_delivered_floor` | None | 3 | Burner-tip delivered floor ($/MMBtu) for the COLLAPSE regime of the… |  | auto-generated, needs-citation |
 | `scenario.ercot_west_gas_endogenous_collapse` | False | 3 | Make the two-regime split frequency ENDOGENOUS (the forward analogu… |  | auto-generated, needs-citation |
@@ -465,6 +500,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.neiso_gas_derate_cap` | 0.2 | 2 | Max incremental gas-fired forced-out |  | auto-generated, needs-citation |
 | `scenario.neiso_gas_derate_slope_per_c` | 0.018 | 3 | Incremental gas forced-out |  | auto-generated, needs-citation |
 | `scenario.neiso_gas_derate_t0_c` | -7.0 | 1 | Cold-limb zero-crossing (~20 degF): above |  | auto-generated, needs-citation |
+| `scenario.neiso_offer_surface_price_cap_frac` | 0.95 | 2 | Safety cap on the repriced offer as a fraction of VOLL (the measure… |  | auto-generated, needs-citation |
 | `scenario.neiso_winter_fuel_inventory` | False | 1 | NEISO winter (Nov-Mar) oil-burn |  | auto-generated, needs-citation |
 | `scenario.neiso_winter_fuel_mustrun` | False | 2 | NEISO winter fuel-security |  | auto-generated, needs-citation |
 | `scenario.neiso_winter_fuel_start_fill_bbl` | None | 1 | Start-of-winter |  | auto-generated, needs-citation |
@@ -481,6 +517,9 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.scarcity_price_overlay` | False | 2 | ISO eligibility gate for the |  | auto-generated, needs-citation |
 | `scenario.st_gas_intermediate_cf_threshold` | 50.0 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.st_gas_intermediate_split` | False | 1 | ST_GAS analogue of ct_intermediate_split. MISO's legacy gas-steam f… |  | auto-generated, needs-citation |
+| `scenario.temp_derate_ref_c_coal` | 25.0 | 2 | coal condenser-derate onset (~77 F) |  | auto-generated, needs-citation |
+| `scenario.temp_derate_slope_coal` | 0.004 | 2 | coal fractional loss per C above ref |  | auto-generated, needs-citation |
+| `scenario.temp_derate_slope_st_gas` | 0.0054 | 2 | gas-steam fractional loss per C |  | auto-generated, needs-citation |
 | `tech_cost_multipliers.gas_cc.high.capex_per_kw` | 1.08 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc.high.learning_rate` | 0.5 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
 | `tech_cost_multipliers.gas_cc.low.capex_per_kw` | 0.95 | 2 | Per-tech capex + learning-rate multipliers for the PB-1 tech-cost u… | 2026-07 | auto-generated |
@@ -499,12 +538,14 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
+| `hydro_envelope_percentile` | 95.0 | 2 | --- Hydro hourly deliverability envelope (caiso-72 STEP-2) --------… |  | auto-generated, needs-citation |
 | `hydro_year_multiplier.dry` | 0.85 | 2 | Hydro-year scenario lever: a multiplier on the normal-water-year hy… | 2021 | auto-generated |
 | `hydro_year_multiplier.normal` | 1.0 | 2 | Hydro-year scenario lever: a multiplier on the normal-water-year hy… | 2021 | auto-generated |
 | `hydro_year_multiplier.wet` | 1.15 | 2 | Hydro-year scenario lever: a multiplier on the normal-water-year hy… | 2021 | auto-generated |
 | `nyiso_firm_import_floor_frac.HQ_hydro` | 1.0 | 2 | NYISO firm (must-flow) import baseload (transmission.inject_nyiso_f… | 2023 | auto-generated |
 | `nyiso_hydro_treaty_min_flow` | {"2693": 0.25, "2694": 0.5} | 2 | NYISO treaty-mandated minimum flows for the two large NYPA hydro pl… | 1957 | auto-generated |
 | `renewable_capacity_credit.hydro` | 0.5 | 2 | Capacity credit (ELCC) of variable resources for the planning-reser… |  | auto-generated, needs-citation |
+| `scenario.hydro_dispatch_envelope` | False | 2 | GATED default off (caiso-72 |  | auto-generated, needs-citation |
 | `scenario.hydro_year` | normal | 1 | "dry" \| "normal" \| "wet" — forecast wet/dry |  | auto-generated, needs-citation |
 
 ## Market Design
@@ -540,6 +581,9 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ira_wind_solar_last_year` | 2027 | 2 | IRA credit schedule per OBBBA (One Big Beautiful Bill Act), enacted… | 2025 | auto-generated |
 | `scenario.nox_price` | 0.0 | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.rps_enabled` | True | 1 | whether to enforce RPS as LP constraint |  | auto-generated, needs-citation |
+| `state_rps_acp.CAISO` | 50.0 | 2 | RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  E… | 2024 | auto-generated |
+| `state_rps_acp.NEISO` | 65.0 | 2 | RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  E… | 2024 | auto-generated |
+| `state_rps_acp.NYISO` | 40.0 | 2 | RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.  E… | 2024 | auto-generated |
 | `state_rps_floors.CAISO` | {"2026": 0.5, "2030": 0.6, "2040": 0.… | 1 | California SB 100 — The 100 Percent Clean Energy Act of 2018 | 2018-09 | stale |
 | `state_rps_floors.ERCOT` | {"2026": 0.0, "2030": 0.0, "2040": 0.… | 1 | Market simulator model design decision | 2026-05 |  |
 | `state_rps_floors.NEISO` | {"2026": 0.3, "2030": 0.45, "2040": 0… | 2 | MA Clean Energy Standard + regional state CES blend |  | auto-generated, needs-citation |
@@ -593,6 +637,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.energy_reserve_coopt` | False | 1 | Co-optimize energy and operating |  | auto-generated, needs-citation |
 | `scenario.ercot_load_resource_reserve` | False | 1 | ERCOT co-opt: credit the |  | auto-generated, needs-citation |
 | `scenario.ercot_load_resource_reserve_from_year` | 2023 | 1 | First weather year the |  | auto-generated, needs-citation |
+| `scenario.ercot_nuclear_unit_availability` | False | 2 | ERCOT unit-level (window-grain) nuclear refuel availability (defaul… | 2024 | auto-generated |
 | `scenario.ercot_ordc_total_reserve` | False | 1 | ERCOT multi-product co-opt: ALSO |  | auto-generated, needs-citation |
 | `scenario.ercot_reserve_supply_cap` | False | 1 | ERCOT: cap the multi-product co-opt's |  | auto-generated, needs-citation |
 | `scenario.ercot_reserve_supply_cap_from_year` | 2023 | 1 | First weather year the |  | auto-generated, needs-citation |
@@ -603,6 +648,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.miso_reserve_pergen` | False | 1 | MISO: PER-ASSET reserve co-optimization |  | auto-generated, needs-citation |
 | `scenario.miso_zonal_reserve_zones` | None | 1 | Optional override of the zonal reserve family zone set; None -> (MI… | 2026-07-01 |  |
 | `scenario.miso_zonal_reserves` | False | 1 | MISO BPM-002 §3.3/§3.3.2 (minimum Zonal Operating Reserve Requireme… | 2022-09-30 |  |
+| `scenario.neiso_dynamic_reserve_requirements` | False | 2 | GATED, default-OFF |  | auto-generated, needs-citation |
 | `scenario.nyiso_dynamic_reserve_requirements` | False | 1 | GATED, default-OFF |  | auto-generated, needs-citation |
 | `scenario.nyiso_synchronised_reserve` | False | 1 | NYISO online-gated SPINNING |  | auto-generated, needs-citation |
 | `scenario.nysdec_peaker_rule_availability` | False | 1 | NYSDEC 6 NYCRR Subpart 227-3 "peaker rule" availability overlay (NY… | 2023-05 | auto-generated |
@@ -611,10 +657,12 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.pjm_reserve_online_gated` | False | 1 | PJM: gate co-opt reserve to ONLINE |  | auto-generated, needs-citation |
 | `scenario.pjm_reserve_online_rho` | 1.0 | 1 | online-headroom multiplier for the gated |  | auto-generated, needs-citation |
 | `scenario.pjm_reserve_pergen` | False | 1 | PJM: PER-GENERATOR reserve co-optimization |  | auto-generated, needs-citation |
+| `scenario.pjm_reserve_pergen_size_split` | False | 1 | PJM: SIZE-SPLIT the pergen |  | auto-generated, needs-citation |
+| `scenario.pjm_reserve_pergen_sync` | False | 1 | PJM: per-gen OPPORTUNITY-COST reserve |  | auto-generated, needs-citation |
 | `scenario.pjm_reserve_supply_cap` | False | 1 | PJM analogue of ercot_reserve_supply_cap: |  | auto-generated, needs-citation |
 | `scenario.planning_reserve_margin` | 0.1375 | 2 | Fallback/override planning |  | auto-generated, needs-citation |
 | `scenario.planning_reserve_margin_override` | None | 2 | Sensitivity lever: |  | auto-generated, needs-citation |
-| `scenario.reserve_margin_build_enabled` | False | 1 | Adequacy backstop: after the |  | auto-generated, needs-citation |
+| `scenario.reserve_margin_build_enabled` | None | 1 | Adequacy backstop: after the |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_coal` | 1.3 | 2 | coal faces higher effective FOM |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_gas_cc` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_gas_ct` | 1.0 | 2 | (regulatory risk, carbon liability, rising insurance). Source: Laza… | 2024 | auto-generated |
@@ -653,6 +701,7 @@ inline comment and still need a dated primary source — search the table for
 | `ercot_rtolcap_fwd_storage_reserve_frac` | 0.35 | 2 | Forward on-line storage responsive-reserve fraction of installed st… | 2023 | auto-generated |
 | `pumped_storage_duration_hours` | 10.0 | 2 | Pumped-storage hydro fleet parameters (EIA-860 PS units enter the s… | 2023 | auto-generated |
 | `pumped_storage_rte` | 0.8 | 2 | Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia… |  | auto-generated, needs-citation |
+| `scenario.caiso_storage_as_reservation` | False | 2 | Reserve the MEASURED hourly |  | auto-generated, needs-citation |
 | `scenario.co2_transport_storage_cost` | 15.0 | 2 | $/tCO2 for captured CO2 |  | auto-generated, needs-citation |
 | `scenario.eac_price_storage` | 0.0 | 1 | $/MWh on discharge |  | auto-generated, needs-citation |
 | `scenario.ercot_storage_as_duration_gate` | False | 1 | ERCOT endogenous storage AS duration gate: adds the published per-p… | 2022-12 |  |
@@ -762,14 +811,20 @@ inline comment and still need a dated primary source — search the table for
 | `nyiso_rcpf_locational.SENY.zones` | ["Lower_Hudson", "NYC", "Long_Island"] | 2 | NYISO 'Southeastern New York' (SENY) operating-reserve region = loa… | 2021-07 |  |
 | `scenario.as_revenue_enabled` | False | 1 | Credit ERCOT ancillary-service market |  | auto-generated, needs-citation |
 | `scenario.as_revenue_multiplier` | 1.0 | 2 | Scenario scale on the calibrated AS |  | auto-generated, needs-citation |
+| `scenario.caiso_asymmetric_path_ratings` | False | 2 | CAISO asymmetric measured Path 15 / Path 26 directional ratings. Th… | 2024 | auto-generated |
 | `scenario.caiso_bidir_intertie` | False | 2 | Model CAISO's WECC tie as a SINGLE |  | auto-generated, needs-citation |
 | `scenario.caiso_corridor_atc_forward` | False | 1 | Cap each CAISO per-hub corridor's |  | auto-generated, needs-citation |
 | `scenario.caiso_corridor_flow_limit` | False | 2 | Cap each CAISO per-hub corridor's |  | auto-generated, needs-citation |
+| `scenario.caiso_firm_import_shape` | False | 2 | Shape the firm/contracted CAISO |  | auto-generated, needs-citation |
 | `scenario.caiso_import_solar_shape` | False | 2 | Restore the CAISO negative midday |  | auto-generated, needs-citation |
+| `scenario.caiso_locational_as_families` | False | 2 | CAISO: add zone-masked |  | auto-generated, needs-citation |
 | `scenario.caiso_per_hub_intertie` | False | 2 | Model CAISO's WECC tie as TWO signed |  | auto-generated, needs-citation |
+| `scenario.caiso_per_year_import_caps` | False | 2 | CAISO per-year SP15-pocket import caps. The SP15-split foundation (… | 2026-07 | auto-generated |
 | `scenario.caiso_perhub_firm_base` | False | 2 | Keep the firm/contracted import |  | auto-generated, needs-citation |
+| `scenario.caiso_ra_bridge_curtailment_release` | False | 1 | CAISO RA bridge |  | auto-generated, needs-citation |
 | `scenario.caiso_ra_bridge_decommit` | False | 1 | Solar-proportional / seasonal |  | auto-generated, needs-citation |
 | `scenario.caiso_ra_mustoffer` | False | 1 | CAISO Resource-Adequacy must-offer |  | auto-generated, needs-citation |
+| `scenario.caiso_ra_mustoffer_quantity_gate` | False | 1 | CAISO RA must-offer |  | auto-generated, needs-citation |
 | `scenario.caiso_scarcity_pricing` | False | 1 | CAISO: enable the post-solve |  | auto-generated, needs-citation |
 | `scenario.caiso_solar_cap_at_delivered` | False | 1 | INTERIM STOPGAP (Lever-D P6), |  | auto-generated, needs-citation |
 | `scenario.caiso_solar_deliverability` | False | 1 | CAISO Lever-D structural solar |  | auto-generated, needs-citation |
@@ -778,10 +833,10 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_solar_endogenous_spill` | False | 1 | CAISO midday price fix: give the |  | auto-generated, needs-citation |
 | `scenario.caiso_solar_shape_nl_hi_pct` | 30.0 | 2 | Net-load percentile (of the |  | auto-generated, needs-citation |
 | `scenario.caiso_solar_shape_nl_lo_pct` | 10.0 | 2 | Net-load percentile at/below |  | auto-generated, needs-citation |
-| `scenario.campd_bins_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.campd_bins_path` | /home/runner/work/market-simulator/ma… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.capacity_deliverability_limits` | False | 2 | GATED, default-OFF locational |  | auto-generated, needs-citation |
 | `scenario.cc_capacity_reconcile` | False | 2 | When True (ERCOT backcast), each CC_REGULAR plant's LP capacity is … |  | auto-generated, needs-citation |
-| `scenario.cc_capacity_reconcile_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.cc_capacity_reconcile_path` | /home/runner/work/market-simulator/ma… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.cc_committed_hr_mult` | 1.23 | 3 | CC part-load penalty ~23% |  | auto-generated, needs-citation |
 | `scenario.cc_committed_hr_override` | None | 3 | Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's… |  | auto-generated, needs-citation |
 | `scenario.cc_committed_per_plant` | False | 2 | When True, each CC_REGULAR bin's committed-tranche % (minimum stabl… |  | auto-generated, needs-citation |
@@ -802,7 +857,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.committed_ramp_spread` | 0.0 | 2 | Render the per-plant committed band as an n-slice rising ramp (span… |  | auto-generated, needs-citation |
 | `scenario.confirmed_exits_enabled` | True | 2 | GATED, default-ON (flipped 2026-07-05). Owner sign-off once the con… | 2026-07-05 | curated |
 | `scenario.control_retrofit_forward` | False | 2 | Forward emission-control retrofit channel (Tier 2; default OFF). do… | 2026-07 | auto-generated |
-| `scenario.control_retrofit_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.control_retrofit_path` | /home/runner/work/market-simulator/ma… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.ct_committed_hr_mult` | 1.28 | 3 | CT part-load penalty ~28% |  | auto-generated, needs-citation |
 | `scenario.ct_committed_hr_override` | None | 3 | CT_CHP tranche heat-rate overrides (relative to base HR), applied t… |  | auto-generated, needs-citation |
 | `scenario.ct_deployment_floor_frac` | 1.0 | 3 | Fraction of the measured deployment energy to force (1.0 = the full… |  | auto-generated, needs-citation |
@@ -820,6 +875,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ct_mustrun_per_plant` | False | 3 | When True, simple-cycle peakers (CT_PEAKER) carry a per-plant month… |  | auto-generated, needs-citation |
 | `scenario.ct_peak_hr_override` | None | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.ct_peak_hr_penalty` | 1.1 | 3 | CT / gas-steam peaking increment |  | auto-generated, needs-citation |
+| `scenario.datacenter_percentile` | 0.5 | 2 | Continuous PB-2 sampler lever |  | auto-generated, needs-citation |
 | `scenario.econ_split_by_group` | {} | 2 | Economic-tranche split. Maps a CAMPD bin's Plant_Group to a 3-eleme… |  | auto-generated, needs-citation |
 | `scenario.egs_available_year` | 2030 | 1 | year EGS enters the candidate pool |  | auto-generated, needs-citation |
 | `scenario.egs_pmin_fraction` | 0.2 | 2 | EGS turn-down floor (fraction of rated) |  | auto-generated, needs-citation |
@@ -835,8 +891,20 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ercot_ecrs_requirement_from_year` | 2023 | 1 | First weather year the ECRS |  | auto-generated, needs-citation |
 | `scenario.ercot_gtc_limits_measured` | False | 3 | Measured ERCOT GTC transfer limits (backcast/calibration overlay). … |  | auto-generated, needs-citation |
 | `scenario.ercot_multiproduct_as_coopt` | False | 1 | ERCOT: replace the single lumped |  | auto-generated, needs-citation |
+| `scenario.ercot_offer_surface_binned_path` | None | 2 | Path to the measured condition-binned ladder JSON (default: the fro… |  | auto-generated, needs-citation |
+| `scenario.ercot_offer_surface_conditional` | False | 2 | ERCOT G-22 §8 / ercot37-filed HETEROGENEITY-PRESERVING condition-re… | 2026-07 | auto-generated |
+| `scenario.ercot_offer_surface_min_bin` | 0 | 2 | Minimum net-load bin index (0 = loosest) at which the peak-rung wal… |  | auto-generated, needs-citation |
+| `scenario.ercot_online_capacity_envelope` | False | 1 | ERCOT: cap the multi-product |  | auto-generated, needs-citation |
+| `scenario.ercot_online_capacity_envelope_extreme` | False | 1 | ERCOT: the |  | auto-generated, needs-citation |
 | `scenario.ercot_thermal_as_endogenous` | False | 1 | ERCOT forward: the thermal |  | auto-generated, needs-citation |
+| `scenario.ercot_wtx_curtail_depth_solar` | 0.1637 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.ercot_wtx_curtail_depth_wind` | 0.1004 | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.ercot_wtx_curtailment_driver` | False | 3 | ERCOT West Texas Export corridor VRE curtailment-share driver (back… | 2026-07 | auto-generated |
 | `scenario.fixed_om_oil` | 25.0 | 2 | legacy oil/distillate steam & CT — high O&M, |  | auto-generated, needs-citation |
+| `scenario.gt_ambient_derate` | False | 2 | Gas-turbine AMBIENT-TEMPERATURE capacity derate (gt_ambient_derate,… |  | auto-generated, needs-citation |
+| `scenario.gt_ambient_derate_ref_c` | 35.0 | 2 | net-summer rating reference temp (C) |  | auto-generated, needs-citation |
+| `scenario.gt_ambient_derate_slope_cc` | 0.004 | 2 | CC fractional loss per C above ref |  | auto-generated, needs-citation |
+| `scenario.gt_ambient_derate_slope_ct` | 0.006 | 2 | CT fractional loss per C above ref |  | auto-generated, needs-citation |
 | `scenario.hindcast` | False | 2 | Capacity-hindcast mode (W2-P5): forecast machinery run backwards fr… | 2022 | auto-generated |
 | `scenario.hours` | 8760 | 0 | Market simulator model design decision | 2026-05 |  |
 | `scenario.interchange_shape_export_pct` | 90.0 | 3 | Percentile of the measured |  | auto-generated, needs-citation |
@@ -844,6 +912,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.interchange_shaping` | False | 1 | Priced-interchange node: shape the |  | auto-generated, needs-citation |
 | `scenario.interchange_shaping_export_only` | False | 1 | Like interchange_shaping but |  | auto-generated, needs-citation |
 | `scenario.iso` | ERCOT | 0 | Market simulator model design decision | 2026-05 |  |
+| `scenario.limited_foresight_dispatch` | False | 2 | GATED, default-OFF (G-30 in-year |  | auto-generated, needs-citation |
 | `scenario.local_capacity_constraints` | False | 3 | GATED, default-OFF local- |  | auto-generated, needs-citation |
 | `scenario.maintenance_monthly_shape` | True | 3 | FORECAST-mode planned-maintenance |  | auto-generated, needs-citation |
 | `scenario.mass_cap_enabled` | False | 1 | Emissions mass-cap / cap-and-trade LP row (PP-2.1 IPM parity). GATE… | 2026-07 | auto-generated |
@@ -857,10 +926,14 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.miso_seam_export_limit` | False | 1 | MISO reference-price seam: the EXPORT |  | auto-generated, needs-citation |
 | `scenario.miso_seam_flow_limit` | False | 1 | MISO reference-price seam: cap each |  | auto-generated, needs-citation |
 | `scenario.miso_seam_flow_percentile` | None | 3 | Override the per-seam import |  | auto-generated, needs-citation |
+| `scenario.miso_seam_measured_ladder` | False | 1 | MISO reference-price seams: price |  | auto-generated, needs-citation |
 | `scenario.mode` | forecast | 0 | "forecast" \| "backcast". Backcast pins the run |  | auto-generated, needs-citation |
 | `scenario.must_run_cf` | 0.85 | 3 | assumed CF for CHP must-run emissions post-processing |  | auto-generated, needs-citation |
 | `scenario.negative_renewable_offers` | False | 1 | Let curtailable wind/solar set a |  | auto-generated, needs-citation |
 | `scenario.neighbor_hr_forward_skill` | None | 2 | FORWARD-SKILL validation |  | auto-generated, needs-citation |
+| `scenario.neiso_offer_surface_binned_path` | None | 2 | Path to the measured NEISO condition-binned ladder JSON (default: t… |  | auto-generated, needs-citation |
+| `scenario.neiso_offer_surface_conditional` | False | 2 | NEISO condition-responsive fast-start offer surface — the ISO-NE an… |  | auto-generated, needs-citation |
+| `scenario.neiso_offer_surface_min_bin` | 0 | 2 | Minimum net-load bin index at which the wall engages (0 = every bin… |  | auto-generated, needs-citation |
 | `scenario.neiso_oil_burn_budget` | False | 1 | NEISO oil-burn inventory budget. |  | auto-generated, needs-citation |
 | `scenario.neiso_rcpf_enabled` | False | 1 | Master flag for the NEISO RCPF overlay. |  | auto-generated, needs-citation |
 | `scenario.neiso_rcpf_products` | None | 2 | Optional override of the ISO-NE |  | auto-generated, needs-citation |
@@ -870,6 +943,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.nyiso_iroquois_winter_spread` | False | 1 | NYISO eastern (Iroquois Z2) |  | auto-generated, needs-citation |
 | `scenario.nyiso_li_lcr_tsl` | False | 1 | NYISO Long Island Zone-K LCR/TSL mechanism |  | auto-generated, needs-citation |
 | `scenario.nyiso_local_selfsupply` | False | 1 | NYISO Long Island (zone K) local |  | auto-generated, needs-citation |
+| `scenario.nyiso_nyc_lcr_tsl` | False | 1 | NYISO New York City (Zone J) LCR/TSL |  | auto-generated, needs-citation |
 | `scenario.nyiso_rcpf_enabled` | False | 1 | Model design decision — post-solve NYISO Reserve Constraint Penalty… | 2021-07 |  |
 | `scenario.nyiso_rcpf_locational` | None | 2 | Model design decision — override of the NYISO locational reserve-re… | 2021-07 |  |
 | `scenario.nyiso_rcpf_products` | None | 2 | NYISO operating-reserve requirements (largest single contingency ~1… | 2021-07 |  |
@@ -882,11 +956,13 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ordc_mcl_mw` | 3000.0 | 1 | OBDRR038 (Minimum Contingency Level Updates to Align with PUCT Orde… | 2022-01 |  |
 | `scenario.ordc_multistep_floor` | True | 2 | OBDRR048 multi-step RTORPA price floor, PUCT-approved 2023-10-12, e… | 2023-11 |  |
 | `scenario.pjm_congestion` | False | 3 | PJM transmission-congestion lever (break the copper-plate). PJM cle… |  | auto-generated, needs-citation |
+| `scenario.pjm_measured_interface_limits` | False | 3 | Measured PJM internal interface transfer limits (backcast/calibrati… | 2024 | auto-generated |
 | `scenario.pjm_seam_export_limit` | False | 1 | PJM reference-price seam: the EXPORT |  | auto-generated, needs-citation |
 | `scenario.pjm_seam_flow_limit` | False | 1 | PJM reference-price seam: the PJM |  | auto-generated, needs-citation |
 | `scenario.pjm_seam_flow_percentile` | None | 3 | Override the per-seam |  | auto-generated, needs-citation |
+| `scenario.pjm_seam_measured_ladder` | False | 1 | PJM reference-price seams: price |  | auto-generated, needs-citation |
 | `scenario.plant_level_fleet` | False | 3 | Tier 3 (calibration) — keep the non-ERCOT fleet at full per-plant g… |  | auto-generated, needs-citation |
-| `scenario.plant_registry_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.plant_registry_path` | /home/runner/work/market-simulator/ma… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.policy_bundle` | current | 1 | "current" / "tight" / "rollback" — the |  | auto-generated, needs-citation |
 | `scenario.ramp_limits` | False | 3 | GATED, default-OFF plant-group hourly ramp |  | auto-generated, needs-citation |
 | `scenario.reliability_deployment_floor_frac` | 1.0 | 3 | Fraction of the measured reliability-deployment energy to force (1.… |  | auto-generated, needs-citation |
@@ -898,9 +974,15 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.rtcb_reliability_deployment_mw` | 0.0 | 2 | Reliability-deployment offset |  | auto-generated, needs-citation |
 | `scenario.scarcity_pricing_enabled` | False | 1 | Model design decision — post-solve ORDC overlay replicating ERCOT r… | 2014-06 |  |
 | `scenario.screen_reserve_value_enabled` | True | 1 | Model design decision — the retirement/new-entry screens value each… | 2014-06 |  |
+| `scenario.staged_oversupply_thinning` | False | 2 | GATED, default-OFF (G-30 |  | auto-generated, needs-citation |
+| `scenario.staged_thinning_max_gw_per_year` | 3.0 | 2 | GW/yr/fuel-class exit budget |  | auto-generated, needs-citation |
 | `scenario.start_year` | None | 2 | Simulation horizon. ``None`` defers to constants.START_YEAR / END_Y… | 2026 | auto-generated |
 | `scenario.tech_cost_path` | mid | 1 | "low"/"mid"/"high" -> NREL ATB 2024 | 2024 | auto-generated |
 | `scenario.tech_cost_percentile` | 0.5 | 1 | Continuous counterpart of |  | auto-generated, needs-citation |
+| `scenario.temp_dependent_derate` | False | 2 | TEMPERATURE-DEPENDENT capacity derate (temp_dependent_derate, off b… |  | auto-generated, needs-citation |
+| `scenario.temp_derate_ref_c` | 15.0 | 2 | ISO 59 F rating point (GT + gas-steam) |  | auto-generated, needs-citation |
+| `scenario.temp_derate_slope_cc` | 0.0076 | 2 | CC fractional loss per C above ref |  | auto-generated, needs-citation |
+| `scenario.temp_derate_slope_ct` | 0.0126 | 2 | CT fractional loss per C above ref |  | auto-generated, needs-citation |
 | `scenario.use_campd_bins` | True | 2 | Tier 2 (expert/sensitivity) — CAMPD operational binning When True t… |  | auto-generated, needs-citation |
 | `scenario.weather_year` | 2024 | 0 | Market simulator model design decision | 2026-05 |  |
 | `start_year` | 2026 | 0 | Market simulator model design decision | 2026-05 |  |
@@ -1001,8 +1083,10 @@ inline comment and still need a dated primary source — search the table for
 | `queue_cap_per_tech_gw.NEISO.nuclear` | 0.5 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.NYISO.nuclear` | 0.5 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
 | `queue_cap_per_tech_gw.PJM.nuclear` | 1.0 | 2 | Per-technology annual interconnection queue caps (GW/yr) by ISO. So… |  | auto-generated, needs-citation |
+| `scenario.caiso_commitment_posture` | False | 1 | CAISO: the SAME pooled linear |  | auto-generated, needs-citation |
 | `scenario.caiso_gas_commitment_floor` | False | 1 | CAISO Resource-Adequacy |  | auto-generated, needs-citation |
 | `scenario.caiso_lcr_commitment_credit` | False | 1 | CAISO: credit the LCR |  | auto-generated, needs-citation |
+| `scenario.caiso_ra_bridge_startup_aware` | False | 1 | CAISO RA bridge STARTUP-AWARE |  | auto-generated, needs-citation |
 | `scenario.caiso_ra_startup_bridge` | False | 1 | CAISO RA must-offer STARTUP-COST-AWARE |  | auto-generated, needs-citation |
 | `scenario.ccs_available_year` | 2030 | 1 | year CCUS enters the candidate pool |  | auto-generated, needs-citation |
 | `scenario.ccs_capture_rate` | 0.9 | 2 | fraction of CO2 captured by CCUS |  | auto-generated, needs-citation |
@@ -1029,10 +1113,10 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.commitment_storage_weight` | 1.0 | 2 | 0 disables. The P2 commitment |  | auto-generated, needs-citation |
 | `scenario.eac_price_gas_cc_ccs` | 0.0 | 1 | $/MWh, CCS-equipped gas CC only (45Q-linked) |  | auto-generated, needs-citation |
 | `scenario.ercot_as_aware_commitment` | False | 1 | ERCOT: run a P2 commitment screen |  | auto-generated, needs-citation |
-| `scenario.fixed_om_coal` | 40.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
-| `scenario.fixed_om_gas_cc` | 12.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
+| `scenario.fixed_om_coal` | 45.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
+| `scenario.fixed_om_gas_cc` | 30.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
 | `scenario.fixed_om_gas_cc_ccs` | 25.0 | 2 | CC + capture island going-forward fixed |  | auto-generated, needs-citation |
-| `scenario.fixed_om_gas_ct` | 8.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
+| `scenario.fixed_om_gas_ct` | 21.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
 | `scenario.fixed_om_nuclear` | 130.0 | 2 | existing nuclear avoidable fixed O&M |  | auto-generated, needs-citation |
 | `scenario.gas_offer_curve` | False | 3 | Tier 3 (calibration) — give the non-ERCOT per-plant gas fleet a ste… |  | auto-generated, needs-citation |
 | `scenario.gas_st_startup_cost` | False | 3 | ISO-gated gas-steam startup amortization. The ST_GAS startup cost +… |  | auto-generated, needs-citation |
@@ -1045,6 +1129,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.offer_curve_smoothing_mid` | None | 2 | Optional midpoint anchor for the econ ramp shape: the fraction of t… |  | auto-generated, needs-citation |
 | `scenario.offer_curve_smoothing_n` | 6 | 2 | N-slice smoothing of the economic offer curve. When offer_curve_smo… |  | auto-generated, needs-citation |
 | `scenario.pjm_commitment_posture` | False | 1 | PJM: the SAME pooled linear |  | auto-generated, needs-citation |
+| `scenario.pjm_reserve_commitment_scoped` | False | 1 | PJM path B (G-20b): scope the |  | auto-generated, needs-citation |
 | `scenario.plant_tranche_config_path` | None | 2 | Optional per-plant tranche-config override CSV (one row per plant w… |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_gas_cc_ccs` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_years_gas_cc_ccs` | 3 | 2 | CCS-equipped CC, like a modern CC |  | auto-generated, needs-citation |
@@ -1083,9 +1168,13 @@ inline comment and still need a dated primary source — search the table for
 |---|---|---|---|---|---|
 | `caiso_tac_zone_weights.PGE-TAC.NP15` | 0.86 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
 | `caiso_tac_zone_weights.PGE-TAC.ZP26` | 0.14 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
+| `caiso_tac_zone_weights.SCE-TAC.LA_BASIN` | 0.835 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… | 2026-07 | auto-generated |
 | `caiso_tac_zone_weights.SCE-TAC.SP15` | 1.0 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
+| `caiso_tac_zone_weights.SCE-TAC.SP15_rest` | 0.165 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… | 2026-07 | auto-generated |
+| `caiso_tac_zone_weights.SDGE-TAC.SDGE` | 1.0 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… | 2026-07 | auto-generated |
 | `caiso_tac_zone_weights.SDGE-TAC.SP15` | 1.0 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
 | `caiso_tac_zone_weights.VEA-TAC.SP15` | 1.0 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… |  | auto-generated, needs-citation |
+| `caiso_tac_zone_weights.VEA-TAC.SP15_rest` | 1.0 | 2 | CAISO TAC-area actual hourly load (data.eia_loader) -> model zone w… | 2026-07 | auto-generated |
 | `import_zone.CAISO` | WECC_import | 2 | Name of each ISO's external import/export zone. CAISO's is baked in… |  | auto-generated, needs-citation |
 | `import_zone.MISO` | MISO_external | 2 | Name of each ISO's external import/export zone. CAISO's is baked in… |  | auto-generated, needs-citation |
 | `import_zone.NEISO` | HQ_import | 2 | Name of each ISO's external import/export zone. CAISO's is baked in… |  | auto-generated, needs-citation |
@@ -1110,6 +1199,7 @@ inline comment and still need a dated primary source — search the table for
 |---|---|---|---|---|---|
 | `adequacy_external_tie_firm_mw.ERCOT` | 817.0 | 2 | Firm import contribution of asynchronous external ties counted by t… | 2023 | auto-generated |
 | `caiso_citygate_transport_adder` | 0.46 | 2 | CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO g… | 2024 | auto-generated |
+| `caiso_curtail_release_eps_mw` | 1.0 | 2 | Float-noise guard on the RA bridge's curtailed-VRE release (gap G-6… |  | auto-generated, needs-citation |
 | `cap_and_trade_programs.CAISO` | {"name": "CARB", "member_states": ["C… | 2 | ISO → cap-and-trade program. ERCOT and MISO have no program (no ent… |  | auto-generated, needs-citation |
 | `cap_and_trade_programs.NEISO` | {"name": "RGGI", "member_states": ["C… | 2 | ISO → cap-and-trade program. ERCOT and MISO have no program (no ent… |  | auto-generated, needs-citation |
 | `cap_and_trade_programs.NYISO` | {"name": "RGGI", "member_states": ["N… | 2 | ISO → cap-and-trade program. ERCOT and MISO have no program (no ent… |  | auto-generated, needs-citation |
@@ -1132,21 +1222,44 @@ inline comment and still need a dated primary source — search the table for
 | `control_retrofit_type_map.SR` | ["nox", 0.9] | 2 | Selective catalytic reduction (SCR) |  | auto-generated, needs-citation |
 | `ct_econ_hr_override_default` | 1.1 | 2 | CT_CHP economic band ≈ 1.1× base HR |  | auto-generated, needs-citation |
 | `ct_peak_hr_override_default` | 1.3 | 2 | CT_CHP peak band ≈ 1.3× base HR |  | auto-generated, needs-citation |
+| `datacenter_additions_mw.CAISO.high` | {"2024": 0.0, "2030": 1800.0, "2040":… | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.CAISO.low` | {"2024": 0.0, "2030": 0.0, "2040": 0.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.CAISO.mid` | {"2024": 0.0, "2030": 1800.0, "2040":… | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.ERCOT.high` | {"2024": 0.0, "2030": 122000.0, "2035… | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.ERCOT.low` | {"2024": 0.0, "2030": 0.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.ERCOT.mid` | {"2024": 0.0, "2030": 37000.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.NYISO.high` | {"2025": 0.0, "2031": 10000.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.NYISO.low` | {"2025": 0.0, "2031": 0.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.NYISO.mid` | {"2025": 0.0, "2031": 3000.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.PJM.high` | {"2025": 0.0, "2030": 30000.0, "2040"… | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.PJM.low` | {"2025": 0.0, "2030": 0.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.PJM.mid` | {"2025": 0.0, "2030": 30000.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
 | `ercot_as_saturation_exponent` | 2.5 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `ercot_as_saturation_ref_gw` | 4.0 | 2 | AS is a small, quickly-saturated market: per-kW AS revenue falls st… | 2023 | auto-generated |
 | `ercot_gtc_link_map.NE_LOB` | [[["Northeast", "North"], 1.0]] | 2 | Crosswalk from ERCOT's published Generic Transmission Constraints (… | 2020 | auto-generated |
 | `ercot_gtc_link_map.PNHNDL` | [[["Panhandle", "North"], 1.0]] | 2 | Crosswalk from ERCOT's published Generic Transmission Constraints (… | 2020 | auto-generated |
 | `ercot_gtc_link_map.WESTEX` | [[["West", "North"], 0.72727272727272… | 2 | Crosswalk from ERCOT's published Generic Transmission Constraints (… | 2020 | auto-generated |
-| `ercot_rtolcap_fwd_deliv_coef` | 0.8899 | 2 | Deliverability coefficient: fit to the measured RTOLCAP MW quantity… | 2023 | auto-generated |
+| `ercot_online_cap_deliv_coef` | 1.083 | 2 | Envelope deliverability coefficient: fit to reproduce the measured … | 2023 | auto-generated |
+| `ercot_online_cap_share.CC_CHP` | [[0.6943, 0.6943, 0.6943, 0.6943, 0.6… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share.CC_REGULAR` | [[0.4194, 0.4974, 0.5762, 0.6525, 0.6… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share.CT_CHP` | [[0.3241, 0.3422, 0.3422, 0.3422, 0.3… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share.CT_PEAKER` | [[0.0507, 0.0507, 0.0639, 0.0769, 0.0… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share.ST_CHP` | [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, … | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share_extreme.CC_CHP` | [[0.6943, 0.6943, 0.6943, 0.6943, 0.6… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share_extreme.CC_REGULAR` | [[0.4194, 0.4974, 0.5762, 0.6525, 0.6… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share_extreme.CT_CHP` | [[0.3241, 0.3422, 0.3422, 0.3422, 0.3… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share_extreme.CT_PEAKER` | [[0.0507, 0.0507, 0.0639, 0.0769, 0.0… | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_online_cap_share_extreme.ST_CHP` | [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, … | 2 | Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON); eac… |  | auto-generated, needs-citation |
+| `ercot_rtolcap_fwd_deliv_coef` | 0.8959 | 2 | Deliverability coefficient: fit to the measured RTOLCAP MW quantity… | 2023 | auto-generated |
 | `ercot_rtolcap_fwd_n_decile` | 10 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `ercot_rtolcap_fwd_n_season` | 4 | 2 | -------------------------------------------------------------------… |  | auto-generated, needs-citation |
-| `ercot_rtolcap_fwd_offline_deliv_coef` | 0.7748 | 2 | Off-line deliverability coefficient: fit to the measured RTOFFCAP M… |  | auto-generated, needs-citation |
+| `ercot_rtolcap_fwd_offline_deliv_coef` | 0.7756 | 2 | Off-line deliverability coefficient: fit to the measured RTOFFCAP M… |  | auto-generated, needs-citation |
 | `ercot_rtolcap_fwd_offline_share.CT_CHP` | [[0.6759, 0.6578, 0.6578, 0.6578, 0.6… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `ercot_rtolcap_fwd_offline_share.CT_PEAKER` | [[0.9493, 0.9493, 0.9307, 0.9303, 0.9… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `ercot_rtolcap_fwd_online_share.CC_CHP` | [[0.3, 0.2435, 0.2043, 0.1719, 0.148,… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `ercot_rtolcap_fwd_online_share.CC_REGULAR` | [[0.2377, 0.2455, 0.2395, 0.2318, 0.2… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `ercot_rtolcap_fwd_online_share.CT_CHP` | [[0.0445, 0.0347, 0.033, 0.0263, 0.02… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `ercot_rtolcap_fwd_online_share.CT_PEAKER` | [[0.0137, 0.0141, 0.0217, 0.0204, 0.0… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `ercot_rtolcap_fwd_offline_share.CT_PEAKER` | [[0.9493, 0.9493, 0.9361, 0.9231, 0.9… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `ercot_rtolcap_fwd_online_share.CC_CHP` | [[0.3011, 0.2446, 0.2092, 0.1718, 0.1… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `ercot_rtolcap_fwd_online_share.CC_REGULAR` | [[0.2387, 0.2454, 0.2403, 0.2314, 0.2… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `ercot_rtolcap_fwd_online_share.CT_CHP` | [[0.0454, 0.0343, 0.0325, 0.0282, 0.0… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `ercot_rtolcap_fwd_online_share.CT_PEAKER` | [[0.0136, 0.0147, 0.0196, 0.0232, 0.0… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `ercot_rtolcap_fwd_online_share.ST_CHP` | [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, … | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `ercot_sced_intervals_per_hour` | 12 | 2 | ERCOT SCED cadence: one SCED execution every ~5 minutes (ERCOT Noda… |  | auto-generated, needs-citation |
 | `global_annual_deployment_gw.compressed_air` | 0.3 | 2 | GW/yr global CAES additions. Source: IEA 2024 pipeline. | 2024 | auto-generated |
@@ -1180,6 +1293,7 @@ inline comment and still need a dated primary source — search the table for
 | `nyiso_local_selfsupply_frac.Long_Island` | 0.45 | 2 | NYISO local self-supply floors (transmission.inject_nyiso_local_sel… | 2023 | auto-generated |
 | `ordc_floor_start_hour_2023` | 7296 | 2 | OBDRR048 effective date 2023-11-01 (ERCOT market notice M-A101623-0… | 2023-11 |  |
 | `pjm_external_flow_percentile` | 95.0 | 2 | --- PJM transmission-congestion calibration (config.pjm_congestion)… |  | auto-generated, needs-citation |
+| `pjm_interface_link_map` | {"('PJM_ComEd', 'PJM_AEP_Ohio')": ["5… | 2 | (2b) HOURLY measured internal interface limits (ScenarioConfig. pjm… | 2024 | auto-generated |
 | `pjm_ordc_curve_path` | /home/user/market-simulator/data/raw/… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `pjm_seam_flow_percentile` | 90.0 | 2 | PJM analogue: per-(month × hod) percentile of measured per-neighbor… |  | auto-generated, needs-citation |
 | `prb_commodity_decline` | 0.015 | 2 | annual, from 2031 as demand falls | 2031 | auto-generated |
@@ -1233,7 +1347,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_installed_mw.NYISO.wind` | 2400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.PJM.solar` | 14000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.PJM.wind` | 11000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
-| `rggi_member_states_by_year` | {"2023": ["VA", "MA", "CT", "NH", "RI… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
+| `rggi_member_states_by_year` | {"2023": ["MA", "ME", "VT", "CT", "VA… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
 | `short_ton_to_metric_tonne` | 0.90718474 | 2 | Short ton -> metric tonne. RGGI allowances are denominated in SHORT… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.CAISO` | 2026-07-03-caiso-statmode-d-7 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.ERCOT` | 2026-07-04-statmode-d7-probe-ercot32 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |

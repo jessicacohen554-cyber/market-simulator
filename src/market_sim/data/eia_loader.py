@@ -1264,6 +1264,21 @@ def measured_miso_pjm_border_prices(
 _CAISO_INTERCHANGE_LAG_STD_H: int = 1
 _CAISO_INTERCHANGE_LAG_DST_H: int = 2
 
+# The CISO extract's ``Demand`` column rides a clock convention +1 h LATE
+# relative to the extract's own (astronomy-verified) generation columns for
+# local dates BEFORE 2023-11-01, then flips to aligned — an upstream
+# EIA-930 submission-convention change, not a loader artifact. Measured
+# 2026-07-11 (FINDING-caiso75-demand-clock-2026-07-11.md): monthly best lag of
+# Demand vs the extract's own balance identity (net_gen − interchange) is −1
+# for 2023-01..2023-10 at r = 0.984-0.997 (near-identity), 0 from 2023-12 and
+# all of 2024/2025 (November 2023 is the mixed transition month, r = 0.68);
+# the OASIS SLD TAC actual corroborates (corr 0.9953 at the same shift,
+# Jan-2023, seam-tz FINDING §2 "open ±1h question" — closed by this window).
+# Frozen against residuals (rule 23): re-derives only from the lag scan in
+# scripts/validate_caiso_demand_clock.py when the extract is re-fetched.
+_CAISO_DEMAND_CLOCK_LAG_H: int = 1
+_CAISO_DEMAND_CLOCK_REALIGN_END: str = "2023-11-01"  # exclusive, local date
+
 
 def _caiso_interchange_model_clock(stamps: pd.DatetimeIndex) -> pd.DatetimeIndex:
     """Map CISO per-DIBA ``local_time`` stamps onto the model's hourly clock.
@@ -1794,7 +1809,9 @@ def _load_ercot_hourly(year: int) -> tuple[np.ndarray, np.ndarray] | None:
     return demand, interchange
 
 
-def _load_caiso_hourly_demand(year: int) -> np.ndarray | None:
+def _load_caiso_hourly_demand(
+    year: int, clock_realign: bool = False
+) -> np.ndarray | None:
     """Return CAISO hourly metered demand (MW) for a year, or ``None``.
 
     Reads the EIA-930 ``CISO hourly`` extract so demand shares the
@@ -1815,6 +1832,17 @@ def _load_caiso_hourly_demand(year: int) -> np.ndarray | None:
 
     Returns ``None`` when no usable full-year frame is available, signaling
     the caller to fall back to the per-ISO demand-profiles parquet.
+
+    ``clock_realign`` (``ScenarioConfig.caiso_demand_clock_realign``, GATED
+    default off) applies the measured source-data clock correction: the
+    extract's ``Demand`` column is +1 h late relative to its own wall-true
+    generation frame for local dates before
+    :data:`_CAISO_DEMAND_CLOCK_REALIGN_END` (see the constant's derivation
+    comment), so those rows are pulled forward by
+    :data:`_CAISO_DEMAND_CLOCK_LAG_H`. The single seam hour at the window
+    boundary duplicates the first aligned value (a one-hour, ~3 a.m.-load
+    approximation, documented in the FINDING). A reconciled-real-data clock
+    fix (rule 14) — never a level rescale.
     """
     frame = _eia_hourly_frame_filled("CISO", year)
     if frame is None:
@@ -1822,6 +1850,22 @@ def _load_caiso_hourly_demand(year: int) -> np.ndarray | None:
     demand = frame["Demand"].interpolate().bfill().ffill().to_numpy(dtype=float)
     if np.isnan(demand).any():
         return None
+    if clock_realign and "Local date" in frame.columns:
+        end = pd.Timestamp(_CAISO_DEMAND_CLOCK_REALIGN_END)
+        misaligned = (pd.to_datetime(frame["Local date"]) < end).to_numpy()
+        n = int(misaligned.sum())
+        if 0 < n < len(demand):
+            lag = _CAISO_DEMAND_CLOCK_LAG_H
+            demand = demand.copy()
+            demand[: n - lag] = demand[lag:n]
+            demand[n - lag : n] = demand[n]
+            logger.info(
+                "CAISO %d demand clock realigned: first %d rows pulled "
+                "forward %d h (measured source-data convention window)",
+                year,
+                n,
+                lag,
+            )
     return demand
 
 
@@ -2770,6 +2814,7 @@ def load_demand(
     data_dir: Path = DATA_DIR,
     include_interchange: bool = True,
     strict_demand_profile: bool = False,
+    caiso_demand_clock_realign: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -2863,7 +2908,9 @@ def load_demand(
         if ercot_hourly is not None:
             raw_mw, interchange = ercot_hourly
     elif iso == "CAISO":
-        raw_mw = _load_caiso_hourly_demand(year)
+        raw_mw = _load_caiso_hourly_demand(
+            year, clock_realign=caiso_demand_clock_realign
+        )
     elif iso == "NYISO":
         raw_mw = _load_nyiso_hourly_demand(year)
     elif iso == "NEISO":
