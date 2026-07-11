@@ -142,6 +142,40 @@ SWMAAC→Dominion and West_APS→Dominion "have no published series on their
 boundary." Tuning their static seeds to the residual is forbidden (rule 11) and
 is the transmission route the attestation explicitly rules out.
 
+## 5b. Build (2026-07-11 follow-up session) — `cc_mustrun_per_plant`
+
+The §5 recommendation was built as ``ScenarioConfig.cc_mustrun_per_plant``
+(default **off**; rule 20 on-registry):
+
+- **Level** = the plant's EXISTING committed tranche (CEMS minimum stable load,
+  `thermal_tranches_PJM.csv committed_pct`) — the tranche becomes a forced
+  QUANTITY, its offer price untouched (rule 19: no second floor stacked).
+- **Window** = the plant's top ``online_frac`` fraction of hours ranked by
+  system load — the measured CEMS synchronization fraction, now emitted for the
+  gas committed groups (CC_REGULAR / CT_PEAKER) by
+  `scripts/derive_thermal_tranches.py` (same estimator the coal step-3a
+  forcing already publishes; the 139 gas `online_frac` cells were patched into
+  the committed artifact with every existing column frozen, rule 21 — a full
+  regen today drifts the CAMPD-derived columns, so only the new column landed).
+- **Attribution**: new `MECH_CC_MUSTRUN_PER_PLANT` (id 15) — merchant
+  reliability commitment, D-2 gated (NOT exempt), auto-ablated in zero-forcing
+  twins via `MECH_ABLATION_FIELDS`; D-4 declared windows (CC_REGULAR all-hours
+  — a committed CC is synchronized around the clock inside its window; the
+  load-ranked placement relaxes the deepest troughs — CT_PEAKER h7-22, so
+  overnight CT binding is caught); D-5 parity row (mode-independent, applied
+  in the shared fleet builder).
+- Rule 18: self-targeting — only plants with a measured `online_frac` +
+  committed tranche carry the floor; western CCs that run economically see a
+  non-binding bound. Parameter-based (share + fraction), UNLIKE the
+  quarantined `ct_mustrun_per_plant` probe (which pins observed net-gen MWh).
+- Zero fitted scalars in the delta ⇒ the rule-22 LOO clause (cross-validating
+  TUNED changes) is vacuous, as it was for the pjm-97 promotion itself.
+
+Run lineage: single-year 2024 throwaway probe (never registered, rule 16) to
+verify the floor runs eastern gas + budget/D-4, then the full 2023–2025 bundle
+`pjm98_cc_mustrun` + its `-ablation` twin (`scripts/run_pjm98_cc_mustrun.py`).
+Keeper swap remains the owner's decision (§5 over-forcing risk sign-off).
+
 ## 6. What was NOT changed
 
 Keeper unchanged (`2026-07-10-pjm-97-measured-interfaces`; keeper swaps are the
