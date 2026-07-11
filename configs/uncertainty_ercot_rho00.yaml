@@ -1,3 +1,13 @@
+# ERCOT sampler spec -- A-2 SENSITIVITY VARIANT (gas<->load Spearman = 0.0).
+#
+# Identical to configs/uncertainty_ercot.yaml in every respect EXCEPT the
+# gas<->load rank correlation, which the plan mandates sensitivity-swept at
+# 0 and +0.6 around the main run's +0.3 (assumption A-2,
+# docs/handoffs/probability-bounds-plan-2026-07.md SS2.3/SS7): independence lower bracket.
+# Same seed => identical LHS matrix, identical gas/tech/discrete draws; ONLY
+# each draw's induced load percentile moves, so the rho00-vs-rho06 band delta
+# is a paired contrast with the sampling noise largely cancelled.
+#
 # ERCOT forecast-uncertainty sampler spec (PB-2, reference).
 #
 # The committed, cited specification consumed by `market-sim ensemble --sampler`
@@ -62,12 +72,12 @@ spearman:
     # High Economic Growth case carries both higher demand and a higher Henry
     # Hub path than Reference), NOT an estimated statistic; sensitivity-swept at
     # 0 and +0.6. Source: EIA STEO 2025 data-center narrative; AEO2025 cases.
-    load: 0.3
+    load: 0.0
     # gas <-> tech = 0: no defensible cited source for a sign; independence
     # disclosed (§2.3).
     tech: 0.0
   load:
-    gas: 0.3
+    gas: 0.0
     load: 1.0
     # load <-> tech = 0 (§2.3): independence disclosed.
     tech: 0.0
