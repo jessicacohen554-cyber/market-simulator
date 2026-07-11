@@ -3617,6 +3617,104 @@ def apply_nyiso_li_tsl_import_cap(
     return ttc_t
 
 
+def apply_nyiso_nyc_tsl_import_cap(
+    ttc: np.ndarray,
+    iso_config,
+    iso: str,
+    year: int,
+    hours: int,
+) -> np.ndarray:
+    """Cap the Lower_Hudson->NYC link at the published NYC (Zone-J) locality
+    import limit during the peak window (nyiso-61, ``config.nyiso_nyc_lcr_tsl``).
+
+    The Zone-J analog of :func:`apply_nyiso_li_tsl_import_cap`. The published
+    NYISO NYC-locality Bulk-Power Transmission Capability import limit
+    (``data/raw/capacity-deliverability/nyiso/nyiso.csv``: 2,875 MW for every
+    capability year 2023/24-2025/26) is the transmission-security boundary the
+    NYC LCR is derived against — the AC import NYC may count on at the summer
+    design-cooling peak. It REPLACES the Lower_Hudson->NYC (Dunwoodie-South)
+    link's 3,900 MW energy-TTC estimate (iso_configs.py Gold-Book seed) inside
+    the design-condition window (:data:`NYISO_SELFSUPPLY_FLOOR_HOURS`, HB14-21 —
+    the same window and driver document the LI cap uses); every other hour keeps
+    the physical 3,900 MW rating (measured off-peak NYC imports run below the
+    interface ceiling and the security constraint's driver is inactive).
+
+    RULE-14 boundary (clean, parallel to the LI cap): the 2,875 MW is the
+    AC-import transmission-security limit; the controllable HVDC ties into
+    Zone J (Neptune / HTP / Linden-VFT) are counted SEPARATELY as the priced
+    import-node link (``interchange_config.IMPORT_NODE_LINKS["NYISO"]``
+    ``("NYC", 1000.0)``), which stays at its physical rating — so this caps
+    ONLY the Dunwoodie-South AC link, not total NYC import. In-window NYC supply
+    beyond (external HVDC ties + the security-limited AC import) then clears
+    from the in-city fleet ECONOMICALLY, letting the dear Zone-J gas set price
+    at the summer peak (the identified 2024/2025 deep-tail lever). This is a
+    transmission limit, not a ``min_gen`` floor — it forces no energy (the D-2
+    budget is unchanged).
+
+    The cap is symmetric on the AC link in-window (the LP's bidirectional
+    bound); measured NYC peak-window exports toward Lower_Hudson are ~0 MW, a
+    documented, immaterial misalignment accepted over one-way link plumbing.
+
+    Args:
+        ttc: ``(n_links,)`` static or ``(hours, n_links)`` per-hour transfer
+            capabilities (MW).
+        iso_config: ISO topology (``links`` searched for Lower_Hudson->NYC).
+        iso: ISO identifier; every ISO but ``"NYISO"`` returns ``ttc``
+            unchanged.
+        year: Backcast/solve calendar year (resolves the capability-year row).
+        hours: LP horizon length T.
+
+    Returns:
+        ``(hours, n_links)`` per-hour TTC matrix with the in-window NYC cap
+        applied (a copy), or ``ttc`` unchanged for non-NYISO.
+
+    Raises:
+        ValueError: NYISO without a published NYC import limit for the resolved
+            capability year, or no Lower_Hudson->NYC link — the mechanism must
+            never silently no-op when explicitly enabled.
+    """
+    if iso != "NYISO":
+        return ttc
+
+    from market_sim.data.capacity_deliverability import (
+        import_limit_by_area,
+        resolve_delivery_year,
+    )
+
+    delivery_year = resolve_delivery_year(iso, int(year))
+    limits = import_limit_by_area(iso, delivery_year)
+    tsl = limits.get("NYC")
+    if tsl is None:
+        raise ValueError(
+            f"nyiso_nyc_lcr_tsl=True but no published NYC import limit "
+            f"for delivery year {delivery_year} in the capacity-deliverability "
+            f"table (data/raw/capacity-deliverability/nyiso/nyiso.csv); "
+            f"available areas: {sorted(limits)}"
+        )
+
+    nyc_idx = [
+        i
+        for i, ln in enumerate(iso_config.links)
+        if (ln.from_zone, ln.to_zone) == ("Lower_Hudson", "NYC")
+    ]
+    if not nyc_idx:
+        raise ValueError(
+            "nyiso_nyc_lcr_tsl=True but the NYISO topology has no "
+            "Lower_Hudson->NYC link to cap."
+        )
+
+    ttc_arr = np.asarray(ttc, dtype=float)
+    if ttc_arr.ndim == 1:
+        ttc_t = np.broadcast_to(ttc_arr, (int(hours), ttc_arr.shape[0])).copy()
+    else:
+        ttc_t = ttc_arr.copy()
+    hod = np.arange(int(hours)) % 24
+    in_window = np.isin(hod, np.asarray(NYISO_SELFSUPPLY_FLOOR_HOURS))
+    for i in nyc_idx:
+        ttc_t[in_window, i] = np.minimum(ttc_t[in_window, i], float(tsl))
+    return ttc_t
+
+
 def inject_nyiso_local_selfsupply(
     fleet_arrays,
     iso: str,

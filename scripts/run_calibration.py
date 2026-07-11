@@ -1449,6 +1449,24 @@ def run_year(
             iso,
             year,
         )
+    # NYISO Zone-J (NYC) LCR/TSL mechanism (nyiso-61, config.nyiso_nyc_lcr_tsl):
+    # cap the Lower_Hudson->NYC (Dunwoodie-South) link at the published NYC
+    # locality import limit (2,875 MW) in the HB14-21 design-condition window,
+    # replacing the link's 3,900 MW energy-TTC estimate. The Zone-J analog of
+    # the Zone-K cap above; a transmission limit, not a floor (forces no energy).
+    if getattr(config, "nyiso_nyc_lcr_tsl", False):
+        from market_sim.model.transmission import apply_nyiso_nyc_tsl_import_cap
+
+        ttc = apply_nyiso_nyc_tsl_import_cap(
+            ttc, iso_config, iso, year, demand.shape[1]
+        )
+        logger.info(
+            "%s %d: Zone-J LCR/TSL import cap on Lower_Hudson->NYC (HB14-21, "
+            "published NYC locality import limit; replaces the 3,900 MW "
+            "Dunwoodie-South energy-TTC estimate)",
+            iso,
+            year,
+        )
     # Measured ERCOT GTC export limits (backcast overlay, ScenarioConfig.
     # ercot_gtc_limits_measured): the GTC-carrying links' export direction
     # follows the hourly NP6-86 measured limit series so West/Panhandle
