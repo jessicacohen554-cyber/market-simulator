@@ -449,6 +449,7 @@ def run_year(
     cc_intermediate_cf_threshold: float | None = None,
     tranche_startup_amortization: bool = False,
     tranche_startup_measured_runs: bool = False,
+    tranche_startup_conditional_runs: bool = False,
     nysdec_peaker_rule_availability: bool = False,
     oil_primary_bin_fuel: bool = False,
     plant_tranche_config: str | None = None,
@@ -487,6 +488,7 @@ def run_year(
     miso_zonal_reserves: bool = False,
     miso_reserve_pergen: bool = False,
     miso_commitment_posture: bool = False,
+    miso_measured_reserve_requirements: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_ordc_total_reserve: bool = False,
@@ -815,6 +817,13 @@ def run_year(
         # P0 runs may only shorten it — removing the v2 circularity where
         # too-cheap offers → long P0 blocks → ≈0 markup (nyiso-44 finding).
         config = config.with_overrides(tranche_startup_measured_runs=True)
+    if tranche_startup_conditional_runs:
+        # v4 condition-keyed horizon: the v3 measured ceiling scales per hour
+        # by the CAMPD-measured net-load-percentile band ratio (tight-hour
+        # engagements are shorter commitment blocks — the ELMP evening-timing
+        # element). Measured shape (campd_ct_run_bands_<ISO>.csv), forward-
+        # native trigger (within-year net-load percentile); rules 13/23/25.
+        config = config.with_overrides(tranche_startup_conditional_runs=True)
     if nysdec_peaker_rule_availability:
         # NYSDEC 6 NYCRR 227-3 peaker-rule availability overlay: curated
         # unit-level ozone-season compliance windows (Gold Book IV-3..IV-6),
@@ -1132,6 +1141,12 @@ def run_year(
     # docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A).
     if miso_commitment_posture:
         config = config.with_overrides(miso_commitment_posture=True)
+    # Measured hourly OR requirement basis for the MISO co-opt families
+    # (asm_rt_cleared_mw intake, data.miso_reserve_requirements): replaces
+    # the flat fleet-MSSC+400 and South within-zone-MSSC estimates with the
+    # measured hourly reservation (rules 13/14; NYISO #1344 pattern).
+    if miso_measured_reserve_requirements:
+        config = config.with_overrides(miso_measured_reserve_requirements=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     # Published pre-reform ECRS deployment design (no price-based release
@@ -2478,6 +2493,30 @@ def run_year(
         offer_surface_mc_bid_adjust = build_neiso_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
+    # v4 condition-keyed fast-start amortization horizon
+    # (tranche_startup_conditional_runs): the hour's within-year net-load
+    # percentile band scales the v3 CAMPD-measured run-length ceiling by the
+    # class band ratio (campd_ct_run_bands_<ISO>.csv — measured shape, plant
+    # median level). Same LP-served net-load convention as the offer
+    # surfaces above; None (flag off / no per-ISO artifact) keeps the v3
+    # markup byte-identical.
+    startup_run_ratio_t = None
+    if getattr(config, "tranche_startup_conditional_runs", False):
+        from market_sim.data.fleet import campd_ct_run_band_ratios
+
+        _bands = campd_ct_run_band_ratios(iso)
+        if _bands is not None:
+            _edges, _ratios = _bands
+            _nl = (
+                demand.sum(axis=0)
+                - (solar_cap[:, None] * solar_cf).sum(axis=0)
+                - (wind_cap[:, None] * wind_cf).sum(axis=0)
+            )
+            _pct = (np.argsort(np.argsort(_nl)) + 1.0) / float(_nl.shape[0])
+            _band_idx = np.searchsorted(
+                np.asarray(_edges, dtype=float), _pct, side="right"
+            )
+            startup_run_ratio_t = np.asarray(_ratios, dtype=float)[_band_idx]
     # ── Interchange price/limit injections (orchestrator-unification Stage 5)
     # The forward-native sequence — reference-price seams (generic + CAISO
     # dedicated), firm import/export floors, and the CAISO offer couplings —
@@ -3114,6 +3153,7 @@ def run_year(
         p1_fleet_prep=ra_p1_prep or pjm_fleet_prep,
         p1_kwargs_prep=pjm_kwargs_prep,
         mc_bid_adjust=offer_surface_mc_bid_adjust,
+        startup_run_ratio_t=startup_run_ratio_t,
     )
     result = energy_solve.p1
     mc_bid = energy_solve.mc_bid
