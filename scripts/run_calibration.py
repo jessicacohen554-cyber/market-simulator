@@ -128,6 +128,7 @@ from market_sim.model.transmission import (  # noqa: E402
     build_incidence_matrix,
     build_interface_groups,
     get_link_bidirectional_array,
+    get_link_flow_cost_array,
     get_ttc_array,
     wecc_border_carbon_adder,
 )
@@ -489,6 +490,8 @@ def run_year(
     miso_reserve_pergen: bool = False,
     miso_commitment_posture: bool = False,
     miso_measured_reserve_requirements: bool = False,
+    miso_south_seam_split: bool = False,
+    miso_rdt_tcdc: bool = False,
     ercot_multiproduct_as_coopt: bool = False,
     ercot_ecrs_conservative_deployment: bool = False,
     ercot_ordc_total_reserve: bool = False,
@@ -1147,6 +1150,15 @@ def run_year(
     # measured hourly reservation (rules 13/14; NYISO #1344 pattern).
     if miso_measured_reserve_requirements:
         config = config.with_overrides(miso_measured_reserve_requirements=True)
+    # MISO RDT congestion-depth pair (miso-57 lane): sever the free
+    # South→external→Midwest wheel around the RDT (topology split) and price
+    # the RDT with the published 92% default derate + $40/$500 TCDC tiers
+    # (2024 SOM §III.B). Both structural, zero fitted scalars; the flags ride
+    # config into apply_interchange_topology / get_interchange_spec.
+    if miso_south_seam_split:
+        config = config.with_overrides(miso_south_seam_split=True)
+    if miso_rdt_tcdc:
+        config = config.with_overrides(miso_rdt_tcdc=True)
     if ercot_multiproduct_as_coopt:
         config = config.with_overrides(ercot_multiproduct_as_coopt=True)
     # Published pre-reform ECRS deployment design (no price-based release
@@ -2963,6 +2975,9 @@ def run_year(
         # built in dispatch but never wired here, so the RDT asymmetry was
         # silently symmetric (+/-ttc per leg) before the six-zone refinement.
         link_bidirectional=get_link_bidirectional_array(iso_config.links),
+        # Priced RDT TCDC tiers (miso_rdt_tcdc): $/MWh on the tiered one-way
+        # links' directed flow; None (all links free) is byte-identical.
+        link_flow_cost=get_link_flow_cost_array(iso_config.links),
         hydro_monthly_energy=hydro_monthly_energy,
         hydro_gen_idx=hydro_gen_idx,
         oil_monthly_budget=oil_monthly_budget,
