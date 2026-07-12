@@ -116,6 +116,7 @@ from market_sim.policy.ira import (
     apply_ira_credits_to_lcoe,
     ccus_45q_credit_per_mwh,
     h2_45v_credit_per_mmbtu,
+    section_45u_credit_per_mwh,
 )
 from market_sim.policy.eac import get_eac_price_for_new_entry
 
@@ -1140,7 +1141,10 @@ def apply_economic_retirements(
             (thermal-and-fleet-only) floor.
         storage_firm_mw: Pre-accredited storage ELCC MW counted toward the
             floor requirement. Default 0.0 (conservative).
-        year: Simulation year stamped on floor-retention log rows.
+        year: Simulation year, stamped on floor-retention log rows and used
+            to evaluate the IRA §45U existing-nuclear PTC expiry
+            (``config.ira_45u_last_year``). ``None`` (legacy callers) skips
+            the §45U nuclear credit.
         event_sink: Optional dict populated in place with the retirement
             attribution the evolution ledger needs (CX-3): ``"retired"`` (the
             units actually retired) and ``"floor_retained"`` (units the
@@ -1258,6 +1262,27 @@ def apply_economic_retirements(
         # support instead flows through eac_price (ZEC/CES).
         annual_gen_mwh = float(sum(np.sum(dispatch[i]) for i in rows))
         eac_price = get_eac_price_for_new_entry(g.fuel_type, config)
+        # IRA §45U existing-nuclear PTC: a per-MWh production credit on the
+        # unit's realized output that supports nuclear retention exactly like
+        # eac_price_nuclear (ZEC/CES) — so it enters the SAME attribute-revenue
+        # seam, NEVER stacked with it (rule 19, one mechanism per phenomenon).
+        # We fold it into eac_price via max(), then compute_attribute_revenue's
+        # own max(eac_price, rps) yields max(§45U, eac_price_nuclear) for the
+        # (nuclear, rps=0) case. The credit's gross-receipts phase-down keys on
+        # the unit's own average realized energy price (this year's
+        # generation-weighted zonal price), and it expires after
+        # config.ira_45u_last_year. Nuclear only; needs a simulation year to
+        # evaluate the expiry (None on legacy callers -> no §45U). Source:
+        # 26 U.S.C. §45U; see policy.ira.section_45u_credit_per_mwh.
+        if g.fuel_type == "nuclear" and year is not None and annual_gen_mwh > 0.0:
+            gross_energy_revenue = float(
+                sum(np.dot(prices[zone], dispatch[i]) for i in rows)
+            )
+            avg_realized_price = gross_energy_revenue / annual_gen_mwh
+            eac_price = max(
+                eac_price,
+                section_45u_credit_per_mwh(year, avg_realized_price, config),
+            )
         rps_for_unit = rps_shadow_price if g.fuel_type in _RPS_ELIGIBLE_FUELS else 0.0
         net_revenue += compute_attribute_revenue(
             g.fuel_type, annual_gen_mwh, eac_price, rps_for_unit
