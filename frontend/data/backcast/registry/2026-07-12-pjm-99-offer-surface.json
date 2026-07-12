@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-12-pjm-99-offer-surface",
+  "label": "pjm 99 offer surface",
+  "date": "2026-07-12",
+  "shorthand": "pjm-99-offer-surface",
+  "definition": "(PROBE \u2014 REJECTED, no-op) PJM 99: pjm-98 keeper recipe (byte-faithful replay off its meta.json) + pjm_offer_surface_conditional=True \u2014 the G-22 lever-A measured PJM energy-offer surface (DataMiner2 energy_market_offers top-of-curve distribution, 36 months, condition-binned by within-year net-load percentile) posted onto the CC_REGULAR + CT_PEAKER peak-band rungs, P1-only. Zero fitted scalars in the delta (scripts/derive_pjm_offer_surface.py; rules 13/20/21). RESULT: price-identical to the same-day pjm-98 baseline in all 3 years \u2014 the repriced upper rungs never become marginal (0.3 GWh dispatched) because the summer-peak dual is capped by the 21-24 GW sub-actual-price mid-curve (idle coal $28-55, CT econ $42-115, ST_GAS $42-110), not the peak band. Falsifies the 'too-cheap top' scoping; re-scopes G-22 to the measured mid-curve + DA procurement depth (docs/FINDING-pjm-offer-surface-noop-2026-07.md). Mechanism + frozen surface stay (rule 1; they bind once the body is fixed). Scorer note: the C8 CT_PEAKER grounded-pass flip vs pjm-98 is rung-split attribution noise (0.02 TWh, 0.1% of class, cross-attributed floor MWh; the grounded-pass has no de-minimis on the mechanism list) \u2014 not a real forcing change (dispatch totals identical).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-12-pjm-99-offer-surface.js",
+  "bundle": "results/calibration/pjm99_offer_surface"
+}
