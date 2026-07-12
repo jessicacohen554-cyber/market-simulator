@@ -73,7 +73,7 @@ jobs:
           if grep -q "ercot_storage_as_deployment" src/market_sim/config/scenarios.py; then
             echo "already applied — no-op"
           else
-            echo "957d02028e835daa81ce4e6347faecd8231ea91daccee1290ac7f7518f7a89a5  /tmp/_storage_deploy_code.patch" > /tmp/patch.sha
+            echo "1cb3f01893bf0b5326653bda009fb9c6f4b0fa13ce5aae2026f2b9ba56fb6c45  /tmp/_storage_deploy_code.patch" > /tmp/patch.sha
             tr -d '\r\n ' < scripts/probes/_ercot_storage_deploy_patch/code.patch.xz.b64 \
               | base64 -d | xz -d > /tmp/_storage_deploy_code.patch
             sha256sum -c /tmp/patch.sha
