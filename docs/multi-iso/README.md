@@ -19,9 +19,15 @@ backcast across **CAISO, PJM, ISO-NE (NEISO), MISO, SPP, and NYISO**.
 | `04-transmission-zones-and-congestion.md` | Per-ISO zone topology, congestion corridors, TTC sourcing (binding-frequency method), renewable HSL sourcing. |
 | `05-backcast-playbook.md` | **Canonical process reference (v2).** The end-to-end recipe at ERCOT/PJM parity; copy doc 06's pack structure per new ISO. |
 | `06-caiso-prompt-pack.md` | CAISO instantiation — the template prompt pack (P0–P14 waves). |
-| `07-nyiso-prompt-pack.md` | **NYISO** instantiation — hydro (Niagara/St-Lawrence), downstate congestion, dual-fuel winter, HQ/PJM imports, RGGI, ICAP. Topology/zone-assignment/outage-windows already landed; starts at Stage E. |
-| `08-neiso-prompt-pack.md` | **NEISO (ISO-NE)** instantiation — Algonquin winter basis + dual-fuel (the headline), HQ Phase II imports, Northfield PS, FCM, RGGI. Best CEMS coverage of the new ISOs; starts at Stage E. |
+| `07-nyiso-prompt-pack.md` | **Moved → `docs/sessions/multi-iso/07-nyiso-prompt-pack.md`** (archived, 2026-07 triage). NYISO instantiation — hydro (Niagara/St-Lawrence), downstate congestion, dual-fuel winter, HQ/PJM imports, RGGI, ICAP; P0–P13 merged + P14 doc-sync done. |
+| `08-neiso-prompt-pack.md` | **Moved → `docs/sessions/multi-iso/08-neiso-prompt-pack.md`** (archived, 2026-07 triage). NEISO (ISO-NE) instantiation — Algonquin winter basis + dual-fuel, HQ Phase II imports, Northfield PS, FCM, RGGI; P0–P13 + P14 Stage G/H sign-off done. |
 | `09-ercot-propagation-prompt-pack.md` | **Reverse direction.** Audit of ERCOT's accumulated changes + a sequenced pack to perpetuate the *generic* engine improvements across all ISOs while leaving the *energy-only-specific* ones (ORDC, AS revenue, RTC+B) in ERCOT. |
+
+> **Archived session notes → `docs/sessions/multi-iso/`.** The 2026-07 triage
+> (`docs/handoffs/multi-iso-triage-2026-07.md`) moved **27** dated, point-in-time
+> investigation / backcast notes (including docs 07–08 above) out of this
+> directory to `docs/sessions/multi-iso/`; see `docs/sessions/README.md` for the
+> index. This directory now keeps only the living, still-authoritative references.
 
 ## At-a-glance roadmap
 
