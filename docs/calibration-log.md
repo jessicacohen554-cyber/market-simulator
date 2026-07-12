@@ -40,6 +40,67 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-12 — CAISO — caiso-78 (fleet_to_bins CC heat-rate/capacity-basis fix): C1 FAIL→PASS, C5a improved, C3a pre-registered counter-move, **PROMOTED to keeper**; bench-basis 930 NG corruption filed
+
+Executes the code-level fix identified in
+`FINDING-caiso78-cc-hr-basis-2026-07-12.md` §3. Under
+`cc_nameplate_summer_derate` (on for CAISO/PJM/NYISO/NEISO) the
+`fleet_to_bins` aggregation computed `base_hr = hr_cap / cap` AFTER the
+nameplate rescale (`cap = cap / ratio`), deflating every CC plant's base heat
+rate by its own net-summer/nameplate ratio — Moss Landing −27%, AES
+Alamitos/Huntington Beach −10/−11%, Otay Mesa −17%, La Paloma −13%, CAISO CC
+median −9%. The deflation was DIFFERENTIAL, scrambling the within-CC merit
+order: the C1 CC-over cluster was five deflated plants over-running
+(+1.9..+3.3 TWh each) with Pastoria (least-deflated peer) under-running
+−1.7 TWh/yr. Fix: `base_hr` computed pre-rescale (line ~6596 of fleet.py).
+Regression test: `TestCcNameplateRescaleHeatRate` (2 tests, pass). Zero new
+free parameters, zero flags; the offer-curve multipliers are untouched
+(CAMPD-grounded RELATIVE bands, now multiplying the correct base). Rule-14
+measured-input correction.
+
+- **caiso-78** (`2026-07-12-caiso-78-cc-hr` + zero-forcing ablation twin
+  `2026-07-12-caiso-78-cc-hr-ablation`): single delta on the caiso-77 keeper
+  recipe — the fleet_to_bins HR/capacity-basis fix.
+- **A/B vs the caiso-77 keeper (v2.4):** C1 CC_REGULAR **+4.54/+3.20/+1.46 →
+  +2.32/+0.97/−0.67 TWh** (2023/24/25) — the CC over-run halved in 2023,
+  sub-TWh in 2024, essentially zeroed in 2025; C1 status **FAIL → PASS**
+  (all classes in band). C5a CO₂ **+5.8/+11.8/+28.3 → +3.2/+9.1/+25.0 %**
+  (2024 FAIL→CAVEAT). C6/C7/C8 PASS hold.
+- **C3a +21.8/+29.9/+38.2 → +26.9/+37.0/+45.1 %** — the DISCLOSED
+  counter-move (FINDING §4): the corrected marginal CC offer is ~10% higher;
+  the deflated HR was silently compensating the body overprice, whose root
+  cause stays an open lane (rule 1: structural accuracy over backcast fit).
+- **C2-2025 gas: −7.6 → −10.2 %** — adjudicated per the
+  `FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md`: the CISO EIA-930 NG
+  cell carries a growing noon-peaked, solar-shaped block from ~2024-05
+  (+4.2/+7.9 TWh unexplained in 2024/25 against CEMS+cogens+fold-in). The
+  G-21 combined reconcile scales classFull to this cell (×1.10/×1.21/×1.44).
+  The 2025 actual (68.53 TWh) is corrupted; on measured populations (CEMS
+  46.09 gross + flat cogen block) the true grid-gas actual is ~57–60 TWh —
+  the model (61.54 TWh) is not under it. Bench-basis rework design filed
+  (scorer/bench layer, CAISO only, pending owner sign-off).
+- **C4 gas r: 0.887/0.834/0.590 → 0.888/0.830/0.565** — essentially flat;
+  2024/25 degradation scores the 930 NG benchmark corruption, not the model.
+- **PROMOTED per the FINDING §4 pre-registered bar:** C6+C7+C8 PASS; C1
+  FAIL→PASS (the targeted improvement); C5a improved; C2/C3a/C4 moves
+  adjudicated against the bench-basis FINDING. v2.4 determination stays
+  NOT-YET. Keeper `2026-07-12-caiso-77-firm-selfschedule` →
+  `2026-07-12-caiso-78-cc-hr`; more structurally faithful under rule 1 (a
+  measured physical input corrected — HR is intensive, the deflation was an
+  accounting error). LOYO exemption claimed — nothing is fit, the fix is
+  code-level and year-invariant by construction.
+- **Registry**: caiso-70 refuted-probe pair pruned by the CI workflow
+  (top-15 retention).
+- **Blast radius**: PJM/NYISO/NEISO keepers must re-gate on the fixed code
+  (they use `cc_nameplate_summer_derate`); flagged for follow-up, not
+  silently re-solved. ERCOT (CAMPD bins) and MISO (flag off) unaffected.
+- **Open after caiso-78** (priority order per rule 1): CT_PEAKER evening-ramp
+  under-run (the STEP-0 confirmed pure offer-band ordering, not commitment;
+  local-commitment granularity lane — Bay-Area/LA-Basin topology); bench-basis
+  rework (the §5 design in the 930-NG FINDING — scorer layer, CAISO only,
+  pending owner sign-off); offer-curve level for the C3a body base (LAST per
+  rule 1, and the bench-basis rework may substantially change the target).
+
 ### 2026-07-12 — PJM — pjm-99 (G-22 lever A EXECUTED: measured energy-offer surface): INERT — price-identical to pjm-98; the "too-cheap top" re-scoped to the sub-actual MID-CURVE + DA procurement depth (PROBE — REJECTED; keeper stays pjm-98)
 
 The G-22 charter's lever A built exactly to spec (the neiso-58 analogue,
