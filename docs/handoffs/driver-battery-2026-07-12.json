@@ -1,0 +1,1555 @@
+{
+  "session": "P-1A",
+  "plan": "docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md#2-tier-1",
+  "run_date": "2026-07-12",
+  "config": {
+    "start_year": 2026,
+    "end_year": 2030,
+    "use_campd_bins": false,
+    "concurrency": "ERCOT + PJM concurrent (2 invocations, rule 12); NEISO sequential after"
+  },
+  "runs": {
+    "ERCOT": {
+      "elapsed_s": 6030.4,
+      "ladders": [
+        {
+          "test_id": "T1.1",
+          "iso": "ERCOT",
+          "driver": "carbon price $/t",
+          "note": "",
+          "rungs": [
+            {
+              "rung_id": "T1.1:ERCOT:co2_0",
+              "test_id": "T1.1",
+              "iso": "ERCOT",
+              "rung_label": "co2_0",
+              "overrides": {
+                "carbon_price": 0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.1:ERCOT:co2_25",
+              "test_id": "T1.1",
+              "iso": "ERCOT",
+              "rung_label": "co2_25",
+              "overrides": {
+                "carbon_price": 25
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 218.8565,
+                "gas_cc_twh": 1260.4129,
+                "co2_mt_total": 770.2207,
+                "lw_price": 35.296,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 5.3098,
+                "renewable_build_gw": 10.0,
+                "total_build_gw": 21.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0576
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.1:ERCOT:co2_50",
+              "test_id": "T1.1",
+              "iso": "ERCOT",
+              "rung_label": "co2_50",
+              "overrides": {
+                "carbon_price": 50
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 56.9371,
+                "gas_cc_twh": 1238.6415,
+                "co2_mt_total": 616.3063,
+                "lw_price": 46.536,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 5.3098,
+                "renewable_build_gw": 20.0,
+                "total_build_gw": 37.3098,
+                "retired_thermal_gw": 3.827,
+                "reserve_margin_final": 0.12783
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.1:ERCOT:co2_100",
+              "test_id": "T1.1",
+              "iso": "ERCOT",
+              "rung_label": "co2_100",
+              "overrides": {
+                "carbon_price": 100
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 3.0309,
+                "gas_cc_twh": 1185.55,
+                "co2_mt_total": 523.5923,
+                "lw_price": 70.198,
+                "scarcity_hours": 141,
+                "entry_thermal_gw": 17.3098,
+                "renewable_build_gw": 30.0,
+                "total_build_gw": 63.3098,
+                "retired_thermal_gw": 8.809,
+                "reserve_margin_final": 0.20983
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.1a",
+              "description": "coal generation monotone ↓",
+              "metric": "coal_twh",
+              "rule": "monotone_down",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↓ [369.284, 218.857, 56.937, 3.031]"
+            },
+            {
+              "expr_id": "T1.1b",
+              "description": "system CO2 monotone ↓",
+              "metric": "co2_mt_total",
+              "rule": "monotone_down",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↓ [888.683, 770.221, 616.306, 523.592]"
+            },
+            {
+              "expr_id": "T1.1c",
+              "description": "load-weighted price ↑ (report)",
+              "metric": "lw_price",
+              "rule": "monotone_up",
+              "gate": false,
+              "status": "PASS",
+              "detail": "↑ [24.418, 35.296, 46.536, 70.198]"
+            },
+            {
+              "expr_id": "T1.1d",
+              "description": "coal gen actually moves across the ladder",
+              "metric": "coal_twh",
+              "rule": "strictly_changes",
+              "gate": true,
+              "status": "PASS",
+              "detail": "|last-first|=366 (> 0.001)"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.2",
+          "iso": "ERCOT",
+          "driver": "mass-cap vs carbon-adder duality",
+          "note": "Strongest internal-consistency check the carbon stack has (§2): a mass cap set to the carbon=25 emissions must price its allowance at ≈ $25; a slack cap prices at 0. Requires a LIVE mass-cap program for the ISO — on an ISO with no covered budget (ERCOT; PJM RGGI is inert per audit D1) the row builds no covered coefficients, no co2_cap_price is returned, and T1.2a SKIPs. A SKIP here is therefore a mass-cap WIRING finding to route to P-1A, not a harness failure (confirmed by the P-0A smoke: the ERCOT cap rungs solve but emit the uncapped tonnage with a null allowance dual).",
+          "rungs": [
+            {
+              "rung_id": "T1.2:ERCOT:anchor_c25",
+              "test_id": "T1.2",
+              "iso": "ERCOT",
+              "rung_label": "anchor_c25",
+              "overrides": {
+                "carbon_price": 25.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 218.8565,
+                "gas_cc_twh": 1260.4129,
+                "co2_mt_total": 770.2207,
+                "lw_price": 35.296,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 5.3098,
+                "renewable_build_gw": 10.0,
+                "total_build_gw": 21.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0576
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.2:ERCOT:cap_binding",
+              "test_id": "T1.2",
+              "iso": "ERCOT",
+              "rung_label": "cap_binding",
+              "overrides": {
+                "mass_cap_enabled": true,
+                "mass_cap_tons": 770220700.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.2:ERCOT:cap_slack",
+              "test_id": "T1.2",
+              "iso": "ERCOT",
+              "rung_label": "cap_slack",
+              "overrides": {
+                "mass_cap_enabled": true,
+                "mass_cap_tons": 1540441400.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.2a",
+              "description": "binding-cap allowance dual ≈ $25",
+              "metric": "mass_cap_price",
+              "rule": "approx_target_first",
+              "gate": true,
+              "status": "SKIP",
+              "detail": "no data"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.3",
+          "iso": "ERCOT",
+          "driver": "gas price factor",
+          "note": "",
+          "rungs": [
+            {
+              "rung_id": "T1.3:ERCOT:gas_0.5",
+              "test_id": "T1.3",
+              "iso": "ERCOT",
+              "rung_label": "gas_0.5",
+              "overrides": {
+                "gas_price_factor": 0.5
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 242.0162,
+                "gas_cc_twh": 1272.9089,
+                "co2_mt_total": 818.4308,
+                "lw_price": 12.538,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.3:ERCOT:gas_1.0",
+              "test_id": "T1.3",
+              "iso": "ERCOT",
+              "rung_label": "gas_1.0",
+              "overrides": {
+                "gas_price_factor": 1.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.3:ERCOT:gas_1.5",
+              "test_id": "T1.3",
+              "iso": "ERCOT",
+              "rung_label": "gas_1.5",
+              "overrides": {
+                "gas_price_factor": 1.5
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 505.7628,
+                "gas_cc_twh": 1005.7189,
+                "co2_mt_total": 947.4167,
+                "lw_price": 35.374,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 5.3098,
+                "renewable_build_gw": 10.0,
+                "total_build_gw": 21.3098,
+                "retired_thermal_gw": 0.991,
+                "reserve_margin_final": 0.03757
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.3a",
+              "description": "coal generation monotone ↑ with gas",
+              "metric": "coal_twh",
+              "rule": "monotone_up",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↑ [242.016, 369.284, 505.763]"
+            },
+            {
+              "expr_id": "T1.3b",
+              "description": "load-weighted price monotone ↑ with gas",
+              "metric": "lw_price",
+              "rule": "monotone_up",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↑ [12.538, 24.418, 35.374]"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.4",
+          "iso": "ERCOT",
+          "driver": "demand growth path",
+          "note": "",
+          "rungs": [
+            {
+              "rung_id": "T1.4:ERCOT:low",
+              "test_id": "T1.4",
+              "iso": "ERCOT",
+              "rung_label": "low",
+              "overrides": {
+                "demand_growth_path": "low"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 172.6249,
+                "gas_cc_twh": 1164.8202,
+                "co2_mt_total": 671.5949,
+                "lw_price": 25.694,
+                "scarcity_hours": 34,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 17.3098,
+                "retired_thermal_gw": 10.183,
+                "reserve_margin_final": 0.08613
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.4:ERCOT:mid",
+              "test_id": "T1.4",
+              "iso": "ERCOT",
+              "rung_label": "mid",
+              "overrides": {
+                "demand_growth_path": "mid"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.4:ERCOT:high",
+              "test_id": "T1.4",
+              "iso": "ERCOT",
+              "rung_label": "high",
+              "overrides": {
+                "demand_growth_path": "high"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 402.856,
+                "gas_cc_twh": 1373.5516,
+                "co2_mt_total": 1055.1746,
+                "lw_price": 36.614,
+                "scarcity_hours": 58,
+                "entry_thermal_gw": 11.3098,
+                "renewable_build_gw": 9.0,
+                "total_build_gw": 29.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": -0.042
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.4a",
+              "description": "scarcity (slack) hours monotone ↑",
+              "metric": "scarcity_hours",
+              "rule": "monotone_up",
+              "gate": true,
+              "status": "FAIL",
+              "detail": "fell: [34.0, 0.0, 58.0]"
+            },
+            {
+              "expr_id": "T1.4b",
+              "description": "final-year reserve margin monotone ↓",
+              "metric": "reserve_margin_final",
+              "rule": "monotone_down",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↓ [0.086, 0.031, -0.042]"
+            },
+            {
+              "expr_id": "T1.4c",
+              "description": "thermal entry GW monotone ↑ (report)",
+              "metric": "entry_thermal_gw",
+              "rule": "monotone_up",
+              "gate": false,
+              "status": "PASS",
+              "detail": "↑ [3.31, 3.31, 11.31]"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.5",
+          "iso": "ERCOT",
+          "driver": "IRA wind/solar credit cliff year",
+          "note": "Discontinuity check: entry economics must shift when the credit cliff moves relative to the build horizon.",
+          "rungs": [
+            {
+              "rung_id": "T1.5:ERCOT:cliff_early",
+              "test_id": "T1.5",
+              "iso": "ERCOT",
+              "rung_label": "cliff_early",
+              "overrides": {
+                "ira_wind_solar_last_year": 2026
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 374.2119,
+                "gas_cc_twh": 1227.6212,
+                "co2_mt_total": 917.6543,
+                "lw_price": 27.19,
+                "scarcity_hours": 1,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 0.0,
+                "total_build_gw": 6.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": -0.00429
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.5:ERCOT:cliff_late",
+              "test_id": "T1.5",
+              "iso": "ERCOT",
+              "rung_label": "cliff_late",
+              "overrides": {
+                "ira_wind_solar_last_year": 2035
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 362.951,
+                "gas_cc_twh": 1119.8002,
+                "co2_mt_total": 851.484,
+                "lw_price": 22.652,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 20.0,
+                "total_build_gw": 35.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.10984
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.5a",
+              "description": "renewable entry responds to the cliff move",
+              "metric": "renewable_build_gw",
+              "rule": "strictly_changes",
+              "gate": false,
+              "status": "PASS",
+              "detail": "|last-first|=20 (> 0.001)"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.7",
+          "iso": "ERCOT",
+          "driver": "capacity-market net-CONE scalar",
+          "note": "Expectation T1.7a applies to PJM; T1.7b is the ERCOT negative control — the scorer picks per ISO (see EXPECTATIONS_BY_ISO).",
+          "rungs": [
+            {
+              "rung_id": "T1.7:ERCOT:cone_0x",
+              "test_id": "T1.7",
+              "iso": "ERCOT",
+              "rung_label": "cone_0x",
+              "overrides": {
+                "_net_cone_scalar": 0.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.7:ERCOT:cone_1x",
+              "test_id": "T1.7",
+              "iso": "ERCOT",
+              "rung_label": "cone_1x",
+              "overrides": {
+                "_net_cone_scalar": 1.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.7:ERCOT:cone_2x",
+              "test_id": "T1.7",
+              "iso": "ERCOT",
+              "rung_label": "cone_2x",
+              "overrides": {
+                "_net_cone_scalar": 2.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.7b",
+              "description": "ERCOT retirements byte-identical across the net-CONE ladder (energy-only negative control)",
+              "metric": "retired_thermal_gw",
+              "rule": "all_equal",
+              "gate": true,
+              "status": "PASS",
+              "detail": "spread 0 over [0.0, 0.0, 0.0]"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.8",
+          "iso": "ERCOT",
+          "driver": "technology cost path",
+          "note": "Cheaper tech → more entry; the *mix* shift toward the cheapened tech is reported in the per-rung build tables.",
+          "rungs": [
+            {
+              "rung_id": "T1.8:ERCOT:low",
+              "test_id": "T1.8",
+              "iso": "ERCOT",
+              "rung_label": "low",
+              "overrides": {
+                "tech_cost_path": "low"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 366.7122,
+                "gas_cc_twh": 1152.7942,
+                "co2_mt_total": 870.4867,
+                "lw_price": 24.006,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 10.0,
+                "total_build_gw": 19.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.04004
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.8:ERCOT:mid",
+              "test_id": "T1.8",
+              "iso": "ERCOT",
+              "rung_label": "mid",
+              "overrides": {
+                "tech_cost_path": "mid"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.8:ERCOT:high",
+              "test_id": "T1.8",
+              "iso": "ERCOT",
+              "rung_label": "high",
+              "overrides": {
+                "tech_cost_path": "high"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 369.2839,
+                "gas_cc_twh": 1180.1171,
+                "co2_mt_total": 888.6835,
+                "lw_price": 24.418,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 3.3098,
+                "renewable_build_gw": 5.0,
+                "total_build_gw": 14.3098,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.03083
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.8a",
+              "description": "cumulative builds monotone ↓ as tech cost ↑",
+              "metric": "total_build_gw",
+              "rule": "monotone_down",
+              "gate": false,
+              "status": "PASS",
+              "detail": "↓ [19.31, 14.31, 14.31]"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.9",
+          "iso": "ERCOT",
+          "driver": "storage ELCC saturation (seed GW)",
+          "note": "ELCC(duration) x saturation derate must fall as the fleet saturates the peak; report-only until the value-stack probe lands.",
+          "rungs": [
+            {
+              "rung_id": "T1.9:ERCOT:seed_5gw",
+              "test_id": "T1.9",
+              "iso": "ERCOT",
+              "rung_label": "seed_5gw",
+              "overrides": {
+                "_storage_seed_gw": 5
+              },
+              "status": "failed",
+              "metrics": {},
+              "cached": false,
+              "error": "AttributeError: 'ScenarioConfig' object has no attribute 'ira_other_clean_75pct_year'"
+            },
+            {
+              "rung_id": "T1.9:ERCOT:seed_15gw",
+              "test_id": "T1.9",
+              "iso": "ERCOT",
+              "rung_label": "seed_15gw",
+              "overrides": {
+                "_storage_seed_gw": 15
+              },
+              "status": "failed",
+              "metrics": {},
+              "cached": false,
+              "error": "AttributeError: 'ScenarioConfig' object has no attribute 'ira_other_clean_75pct_year'"
+            },
+            {
+              "rung_id": "T1.9:ERCOT:seed_25gw",
+              "test_id": "T1.9",
+              "iso": "ERCOT",
+              "rung_label": "seed_25gw",
+              "overrides": {
+                "_storage_seed_gw": 25
+              },
+              "status": "failed",
+              "metrics": {},
+              "cached": false,
+              "error": "AttributeError: 'ScenarioConfig' object has no attribute 'ira_other_clean_75pct_year'"
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.9a",
+              "description": "storage capacity value per MW monotone ↓",
+              "metric": "storage_cap_value_per_mw",
+              "rule": "monotone_down",
+              "gate": false,
+              "status": "SKIP",
+              "detail": "insufficient rungs (0)"
+            }
+          ]
+        }
+      ]
+    },
+    "PJM": {
+      "elapsed_s": 5296.2,
+      "ladders": [
+        {
+          "test_id": "T1.1",
+          "iso": "PJM",
+          "driver": "carbon price $/t",
+          "note": "",
+          "rungs": [
+            {
+              "rung_id": "T1.1:PJM:co2_0",
+              "test_id": "T1.1",
+              "iso": "PJM",
+              "rung_label": "co2_0",
+              "overrides": {
+                "carbon_price": 0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8346,
+                "gas_cc_twh": 1758.4542,
+                "co2_mt_total": 1961.4154,
+                "lw_price": 34.44,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0086,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.1:PJM:co2_25",
+              "test_id": "T1.1",
+              "iso": "PJM",
+              "rung_label": "co2_25",
+              "overrides": {
+                "carbon_price": 25
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 762.0145,
+                "gas_cc_twh": 2092.3414,
+                "co2_mt_total": 1590.3425,
+                "lw_price": 46.514,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 10.5,
+                "total_build_gw": 26.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.01673,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.1:PJM:co2_50",
+              "test_id": "T1.1",
+              "iso": "PJM",
+              "rung_label": "co2_50",
+              "overrides": {
+                "carbon_price": 50
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 291.452,
+                "gas_cc_twh": 2425.5323,
+                "co2_mt_total": 1238.4324,
+                "lw_price": 59.534,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 24.0,
+                "total_build_gw": 40.0,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.02964,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.1:PJM:co2_100",
+              "test_id": "T1.1",
+              "iso": "PJM",
+              "rung_label": "co2_100",
+              "overrides": {
+                "carbon_price": 100
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 55.5648,
+                "gas_cc_twh": 2304.9766,
+                "co2_mt_total": 996.6573,
+                "lw_price": 86.342,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 20.0,
+                "renewable_build_gw": 20.0,
+                "total_build_gw": 40.0,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.04643,
+                "net_cone": 100.0
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.1a",
+              "description": "coal generation monotone ↓",
+              "metric": "coal_twh",
+              "rule": "monotone_down",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↓ [1233.835, 762.014, 291.452, 55.565]"
+            },
+            {
+              "expr_id": "T1.1b",
+              "description": "system CO2 monotone ↓",
+              "metric": "co2_mt_total",
+              "rule": "monotone_down",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↓ [1961.415, 1590.342, 1238.432, 996.657]"
+            },
+            {
+              "expr_id": "T1.1c",
+              "description": "load-weighted price ↑ (report)",
+              "metric": "lw_price",
+              "rule": "monotone_up",
+              "gate": false,
+              "status": "PASS",
+              "detail": "↑ [34.44, 46.514, 59.534, 86.342]"
+            },
+            {
+              "expr_id": "T1.1d",
+              "description": "coal gen actually moves across the ladder",
+              "metric": "coal_twh",
+              "rule": "strictly_changes",
+              "gate": true,
+              "status": "PASS",
+              "detail": "|last-first|=1.18e+03 (> 0.001)"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.2",
+          "iso": "PJM",
+          "driver": "mass-cap vs carbon-adder duality",
+          "note": "Strongest internal-consistency check the carbon stack has (§2): a mass cap set to the carbon=25 emissions must price its allowance at ≈ $25; a slack cap prices at 0. Requires a LIVE mass-cap program for the ISO — on an ISO with no covered budget (ERCOT; PJM RGGI is inert per audit D1) the row builds no covered coefficients, no co2_cap_price is returned, and T1.2a SKIPs. A SKIP here is therefore a mass-cap WIRING finding to route to P-1A, not a harness failure (confirmed by the P-0A smoke: the ERCOT cap rungs solve but emit the uncapped tonnage with a null allowance dual).",
+          "rungs": [
+            {
+              "rung_id": "T1.2:PJM:anchor_c25",
+              "test_id": "T1.2",
+              "iso": "PJM",
+              "rung_label": "anchor_c25",
+              "overrides": {
+                "carbon_price": 25.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 762.0145,
+                "gas_cc_twh": 2092.3414,
+                "co2_mt_total": 1590.3425,
+                "lw_price": 46.514,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 10.5,
+                "total_build_gw": 26.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.01673,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.2:PJM:cap_binding",
+              "test_id": "T1.2",
+              "iso": "PJM",
+              "rung_label": "cap_binding",
+              "overrides": {
+                "mass_cap_enabled": true,
+                "mass_cap_tons": 1590342500.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8391,
+                "gas_cc_twh": 1758.4059,
+                "co2_mt_total": 1961.4004,
+                "lw_price": 34.438,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0086,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.2:PJM:cap_slack",
+              "test_id": "T1.2",
+              "iso": "PJM",
+              "rung_label": "cap_slack",
+              "overrides": {
+                "mass_cap_enabled": true,
+                "mass_cap_tons": 3180685000.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8391,
+                "gas_cc_twh": 1758.4059,
+                "co2_mt_total": 1961.4004,
+                "lw_price": 34.438,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0086,
+                "net_cone": 100.0
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.2a",
+              "description": "binding-cap allowance dual ≈ $25",
+              "metric": "mass_cap_price",
+              "rule": "approx_target_first",
+              "gate": true,
+              "status": "SKIP",
+              "detail": "no data"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.3",
+          "iso": "PJM",
+          "driver": "gas price factor",
+          "note": "",
+          "rungs": [
+            {
+              "rung_id": "T1.3:PJM:gas_0.5",
+              "test_id": "T1.3",
+              "iso": "PJM",
+              "rung_label": "gas_0.5",
+              "overrides": {
+                "gas_price_factor": 0.5
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 811.8587,
+                "gas_cc_twh": 2293.6797,
+                "co2_mt_total": 1751.7251,
+                "lw_price": 23.766,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0086,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.3:PJM:gas_1.0",
+              "test_id": "T1.3",
+              "iso": "PJM",
+              "rung_label": "gas_1.0",
+              "overrides": {
+                "gas_price_factor": 1.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8346,
+                "gas_cc_twh": 1758.4542,
+                "co2_mt_total": 1961.4154,
+                "lw_price": 34.44,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0086,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.3:PJM:gas_1.5",
+              "test_id": "T1.3",
+              "iso": "PJM",
+              "rung_label": "gas_1.5",
+              "overrides": {
+                "gas_price_factor": 1.5
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1393.5717,
+                "gas_cc_twh": 1461.6679,
+                "co2_mt_total": 2014.1278,
+                "lw_price": 46.958,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 10.5,
+                "total_build_gw": 26.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.01673,
+                "net_cone": 100.0
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.3a",
+              "description": "coal generation monotone ↑ with gas",
+              "metric": "coal_twh",
+              "rule": "monotone_up",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↑ [811.859, 1233.835, 1393.572]"
+            },
+            {
+              "expr_id": "T1.3b",
+              "description": "load-weighted price monotone ↑ with gas",
+              "metric": "lw_price",
+              "rule": "monotone_up",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↑ [23.766, 34.44, 46.958]"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.4",
+          "iso": "PJM",
+          "driver": "demand growth path",
+          "note": "",
+          "rungs": [
+            {
+              "rung_id": "T1.4:PJM:low",
+              "test_id": "T1.4",
+              "iso": "PJM",
+              "rung_label": "low",
+              "overrides": {
+                "demand_growth_path": "low"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1206.8088,
+                "gas_cc_twh": 1535.3848,
+                "co2_mt_total": 1840.6315,
+                "lw_price": 33.63,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.10093,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.4:PJM:mid",
+              "test_id": "T1.4",
+              "iso": "PJM",
+              "rung_label": "mid",
+              "overrides": {
+                "demand_growth_path": "mid"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8346,
+                "gas_cc_twh": 1758.4542,
+                "co2_mt_total": 1961.4154,
+                "lw_price": 34.44,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0086,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.4:PJM:high",
+              "test_id": "T1.4",
+              "iso": "PJM",
+              "rung_label": "high",
+              "overrides": {
+                "demand_growth_path": "high"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1274.3782,
+                "gas_cc_twh": 2121.7668,
+                "co2_mt_total": 2181.0429,
+                "lw_price": 39.48,
+                "scarcity_hours": 101,
+                "entry_thermal_gw": 23.5951,
+                "renewable_build_gw": 5.5,
+                "total_build_gw": 29.0951,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": -0.08944,
+                "net_cone": 100.0
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.4a",
+              "description": "scarcity (slack) hours monotone ↑",
+              "metric": "scarcity_hours",
+              "rule": "monotone_up",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↑ [0.0, 0.0, 101.0]"
+            },
+            {
+              "expr_id": "T1.4b",
+              "description": "final-year reserve margin monotone ↓",
+              "metric": "reserve_margin_final",
+              "rule": "monotone_down",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↓ [0.101, 0.009, -0.089]"
+            },
+            {
+              "expr_id": "T1.4c",
+              "description": "thermal entry GW monotone ↑ (report)",
+              "metric": "entry_thermal_gw",
+              "rule": "monotone_up",
+              "gate": false,
+              "status": "PASS",
+              "detail": "↑ [16.0, 16.0, 23.595]"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.5",
+          "iso": "PJM",
+          "driver": "IRA wind/solar credit cliff year",
+          "note": "Discontinuity check: entry economics must shift when the credit cliff moves relative to the build horizon.",
+          "rungs": [
+            {
+              "rung_id": "T1.5:PJM:cliff_early",
+              "test_id": "T1.5",
+              "iso": "PJM",
+              "rung_label": "cliff_early",
+              "overrides": {
+                "ira_wind_solar_last_year": 2026
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.9541,
+                "gas_cc_twh": 1773.8386,
+                "co2_mt_total": 1967.562,
+                "lw_price": 34.472,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 0.0,
+                "total_build_gw": 16.0,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.00732,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.5:PJM:cliff_late",
+              "test_id": "T1.5",
+              "iso": "PJM",
+              "rung_label": "cliff_late",
+              "overrides": {
+                "ira_wind_solar_last_year": 2035
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1232.3918,
+                "gas_cc_twh": 1736.3327,
+                "co2_mt_total": 1951.1856,
+                "lw_price": 34.384,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 6.0,
+                "total_build_gw": 22.0,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.01243,
+                "net_cone": 100.0
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.5a",
+              "description": "renewable entry responds to the cliff move",
+              "metric": "renewable_build_gw",
+              "rule": "strictly_changes",
+              "gate": false,
+              "status": "PASS",
+              "detail": "|last-first|=6 (> 0.001)"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.7",
+          "iso": "PJM",
+          "driver": "capacity-market net-CONE scalar",
+          "note": "Expectation T1.7a applies to PJM; T1.7b is the ERCOT negative control — the scorer picks per ISO (see EXPECTATIONS_BY_ISO).",
+          "rungs": [
+            {
+              "rung_id": "T1.7:PJM:cone_0x",
+              "test_id": "T1.7",
+              "iso": "PJM",
+              "rung_label": "cone_0x",
+              "overrides": {
+                "_net_cone_scalar": 0.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8346,
+                "gas_cc_twh": 1758.4542,
+                "co2_mt_total": 1961.4154,
+                "lw_price": 34.44,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 15.5468,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.0468,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": -0.09269,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.7:PJM:cone_1x",
+              "test_id": "T1.7",
+              "iso": "PJM",
+              "rung_label": "cone_1x",
+              "overrides": {
+                "_net_cone_scalar": 1.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8346,
+                "gas_cc_twh": 1758.4542,
+                "co2_mt_total": 1961.4154,
+                "lw_price": 34.44,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0086,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.7:PJM:cone_2x",
+              "test_id": "T1.7",
+              "iso": "PJM",
+              "rung_label": "cone_2x",
+              "overrides": {
+                "_net_cone_scalar": 2.0
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8346,
+                "gas_cc_twh": 1758.4542,
+                "co2_mt_total": 1961.4154,
+                "lw_price": 34.44,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 24.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 25.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.04898,
+                "net_cone": 100.0
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.7a",
+              "description": "thermal retirements monotone ↓ in net-CONE (capacity-market ISO)",
+              "metric": "retired_thermal_gw",
+              "rule": "monotone_down",
+              "gate": true,
+              "status": "PASS",
+              "detail": "↓ [0.0, 0.0, 0.0]"
+            }
+          ]
+        },
+        {
+          "test_id": "T1.8",
+          "iso": "PJM",
+          "driver": "technology cost path",
+          "note": "Cheaper tech → more entry; the *mix* shift toward the cheapened tech is reported in the per-rung build tables.",
+          "rungs": [
+            {
+              "rung_id": "T1.8:PJM:low",
+              "test_id": "T1.8",
+              "iso": "PJM",
+              "rung_label": "low",
+              "overrides": {
+                "tech_cost_path": "low"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1228.9887,
+                "gas_cc_twh": 1727.5798,
+                "co2_mt_total": 1942.2178,
+                "lw_price": 34.378,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 12.0,
+                "total_build_gw": 28.0,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.01864,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.8:PJM:mid",
+              "test_id": "T1.8",
+              "iso": "PJM",
+              "rung_label": "mid",
+              "overrides": {
+                "tech_cost_path": "mid"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8346,
+                "gas_cc_twh": 1758.4542,
+                "co2_mt_total": 1961.4154,
+                "lw_price": 34.44,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0086,
+                "net_cone": 100.0
+              },
+              "cached": false
+            },
+            {
+              "rung_id": "T1.8:PJM:high",
+              "test_id": "T1.8",
+              "iso": "PJM",
+              "rung_label": "high",
+              "overrides": {
+                "tech_cost_path": "high"
+              },
+              "status": "ok",
+              "metrics": {
+                "coal_twh": 1233.8346,
+                "gas_cc_twh": 1758.4542,
+                "co2_mt_total": 1961.4154,
+                "lw_price": 34.44,
+                "scarcity_hours": 0,
+                "entry_thermal_gw": 16.0,
+                "renewable_build_gw": 1.5,
+                "total_build_gw": 17.5,
+                "retired_thermal_gw": 0.0,
+                "reserve_margin_final": 0.0086,
+                "net_cone": 100.0
+              },
+              "cached": false
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.8a",
+              "description": "cumulative builds monotone ↓ as tech cost ↑",
+              "metric": "total_build_gw",
+              "rule": "monotone_down",
+              "gate": false,
+              "status": "PASS",
+              "detail": "↓ [28.0, 17.5, 17.5]"
+            }
+          ]
+        }
+      ]
+    },
+    "NEISO": {
+      "elapsed_s": 94.7,
+      "ladders": [
+        {
+          "test_id": "T1.6",
+          "iso": "NEISO",
+          "driver": "RPS/ACP vs VRE supply (short→long)",
+          "note": "rps_dual_over_acp is the final-year REC dual divided by the ISO's ACP ceiling; ≤ 1 means the ACP escape column caps the dual as designed, and it should fall as physical VRE covers the target.",
+          "rungs": [
+            {
+              "rung_id": "T1.6:NEISO:vre_short",
+              "test_id": "T1.6",
+              "iso": "NEISO",
+              "rung_label": "vre_short",
+              "overrides": {
+                "renewable_buildout_pace": "slow"
+              },
+              "status": "failed",
+              "metrics": {},
+              "cached": false,
+              "error": "AttributeError: 'ScenarioConfig' object has no attribute 'ira_other_clean_75pct_year'"
+            },
+            {
+              "rung_id": "T1.6:NEISO:vre_long",
+              "test_id": "T1.6",
+              "iso": "NEISO",
+              "rung_label": "vre_long",
+              "overrides": {
+                "renewable_buildout_pace": "aggressive"
+              },
+              "status": "failed",
+              "metrics": {},
+              "cached": false,
+              "error": "AttributeError: 'ScenarioConfig' object has no attribute 'ira_other_clean_75pct_year'"
+            }
+          ],
+          "expectations": [
+            {
+              "expr_id": "T1.6a",
+              "description": "REC dual ≤ ACP ceiling",
+              "metric": "rps_dual_over_acp",
+              "rule": "le_target",
+              "gate": true,
+              "status": "PASS",
+              "detail": "all ≤ 1.0"
+            },
+            {
+              "expr_id": "T1.6b",
+              "description": "REC dual ↓ as VRE builds toward the target",
+              "metric": "rps_dual_over_acp",
+              "rule": "monotone_down",
+              "gate": true,
+              "status": "SKIP",
+              "detail": "insufficient rungs (0)"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "scoreboard": {
+    "pass": 24,
+    "fail": 1,
+    "warn": 0,
+    "skip": 4,
+    "total": 29
+  },
+  "findings": [
+    {
+      "id": "F1",
+      "severity": "critical",
+      "title": "AttributeError in ira_phaseout_fraction crashes T1.6/T1.9",
+      "github_issue": "https://github.com/jessicacohen554-cyber/market-simulator/issues/2063",
+      "affected_tests": [
+        "T1.6",
+        "T1.9"
+      ],
+      "module": "src/market_sim/policy/ira.py (ira_phaseout_fraction), called from model/storage.py:917 and model/capacity.py:1572"
+    },
+    {
+      "id": "F2",
+      "severity": "directional_fail",
+      "title": "ERCOT T1.4a scarcity hours non-monotone across demand-growth ladder",
+      "github_issue": "https://github.com/jessicacohen554-cyber/market-simulator/issues/2064",
+      "affected_tests": [
+        "T1.4"
+      ],
+      "module": "src/market_sim/model/capacity.py (economic retirement + reserve-margin backstop, evolution steps 2/6)"
+    },
+    {
+      "id": "F3",
+      "severity": "expected",
+      "title": "T1.2a SKIPs on ERCOT and PJM (no live mass-cap program) — anticipated by the ladder note, not a new issue",
+      "github_issue": null,
+      "affected_tests": [
+        "T1.2"
+      ],
+      "module": null
+    },
+    {
+      "id": "F4",
+      "severity": "report_only",
+      "title": "PJM T1.7a passes vacuously (retired_thermal_gw flat at 0 across all net-CONE rungs); net-CONE signal expresses via entry, not retirement, over a 5-year window",
+      "github_issue": null,
+      "affected_tests": [
+        "T1.7"
+      ],
+      "module": null
+    }
+  ]
+}
