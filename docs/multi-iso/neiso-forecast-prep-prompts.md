@@ -25,7 +25,7 @@ the step-2/step-3 over-export finding), src/market_sim/data/neighbor_price.py,
 the INTERFACE_NEIGHBORS registry in config/constants.py,
 model/transmission.py::build_import_generators / build_export_sinks
 (constants.IMPORT_TRANCHES / EXPORT_TRANCHES), scripts/validate_neighbor_price.py,
-scripts/derive_import_tranches.py, and docs/multi-iso/08-neiso-prompt-pack.md §3.4
+scripts/derive_import_tranches.py, and docs/sessions/multi-iso/08-neiso-prompt-pack.md §3.4 (archived)
 + P9. Today NEISO's backcast serves the measured EIA-930 ISNE net interchange as
 a fixed schedule (exact by construction); a forecast has no schedule, so the seam
 must respond to NEISO's own price.

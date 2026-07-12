@@ -361,8 +361,8 @@ CAISO backcast: calibrate the WECC import node. Read
 model/transmission.py::build_import_generators / build_export_sinks (the
 J1-generalized machinery — constants.IMPORT_TRANCHES / EXPORT_TRANCHES),
 scripts/derive_import_tranches.py (the PJM fitting workflow to reuse),
-playbook §8.2, and the PJM writeup (docs/multi-iso/pjm-backcast-2023.md
-§4). The machinery is built AND on by default for CAISO
+playbook §8.2, and the PJM writeup (docs/sessions/multi-iso/pjm-backcast-2023.md
+§4, archived). The machinery is built AND on by default for CAISO
 (constants.PRICED_INTERCHANGE_DEFAULT_ISOS — CAISO backcasts serve the
 priced WECC node without the --priced-interchange flag, since CAISO has no
 measured-schedule mode); this pack only fits CAISO's tranche entries.
@@ -504,7 +504,7 @@ CAISO Stage H. Run the sync-docs flow: reconcile docs (00 status table,
 01 manifest staleness, 05/06, data dictionary, offer-curve doc if CAISO
 introduced variants) with the as-built code; append parameter citations;
 write docs/multi-iso/caiso-backcast-<year>.md in the style of
-pjm-backcast-2023.md (results tables, gaps, hypotheses); CHANGELOG entry.
+docs/sessions/multi-iso/pjm-backcast-2023.md (archived; results tables, gaps, hypotheses); CHANGELOG entry.
 ```
 
 ---
@@ -591,7 +591,7 @@ now emits `actual_lmp_hourly_PJM.parquet` + duration-curve percentiles in
 `actual_lmp.json`, and `analyze_lmp_residual.py` localizes the residual:
 Jul/Aug −4.9 (2023) / −6.4 (2024), concentrated in the 11:00–18:00 ramp
 and the actual ≥$75 regime (92% of the 2024 $·h gap), p50 matches —
-see `pjm-lmp-residual.md` before any reserve/ORDC work.
+see `docs/sessions/multi-iso/pjm-lmp-residual.md` (archived) before any reserve/ORDC work.
 (b) CAMPD unit-level gaps: MD/DE/NC/TN (and MI 2023/2025) still on
 statistical availability — upload + regenerate `campd-unit-outages-PJM.csv`
 (TN is now in `campd.ISO_STATES["PJM"]`, so the derivation widens
