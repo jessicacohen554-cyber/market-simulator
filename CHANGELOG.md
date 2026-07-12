@@ -1,5 +1,23 @@
 # Changelog
 
+## 2026-07-12 — ERCOT gas commitment bridge (ERCOT-63)
+
+- **Model:** new P1-native committed-state mechanism `ercot_gas_commitment_bridge`
+  (default off, ERCOT-only): the ISO-neutral CAISO RA-mustoffer bridge internals
+  scoped to merchant gas-CC with the measured committed-CC LSL/HSL cap-weighted
+  p50 min-load (0.574, 60-Day DAM disclosure), economic ≥min-down bridging on the
+  model's own P0 duals bounded to one DA operating day. Internals gained two
+  default-neutral params (`fuel_types`, `max_econ_gap_hours`); D-2 id
+  `gas_commitment_bridge` (17) + ablation entry + cited D-4 window; forecast and
+  backcast orchestrators both carry the hook. Full-span candidate
+  `2026-07-12-ercot63-gas-bridge` registered CALIBRATED-WITH-CAVEATS (one
+  ledgered caveat vs the keeper's two; C5c-2024 storage-shape FAIL flips to
+  PASS); keeper stays ercot59-storage-deploy pending owner decision. Meta-writer
+  fix: `ercot_storage_as_deployment(_from_year)` now recorded in meta.json.
+- **Docs realigned:** CLAUDE.md + model-methodology-spec.md (P1-native bridges
+  section; caiso_ra_mustoffer no longer listed as a P2 trigger), trough
+  diagnosis §7, calibration-log ERCOT-63 entry, parameter registry.
+
 ## 2026-07-12 (forecast: CR-3.1 penetration-indexed ELCC accreditation curves for wind/solar)
 
 - **CR-3.1 (P-2C, audit plan §3.4.1; P-2B Option A basis):** the adequacy
