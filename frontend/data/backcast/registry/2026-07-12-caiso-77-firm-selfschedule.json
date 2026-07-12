@@ -11,5 +11,6 @@
   ],
   "iso": "CAISO",
   "file": "frontend/data/backcast/runs/2026-07-12-caiso-77-firm-selfschedule.js",
-  "bundle": "results/calibration/caiso77_firm_selfschedule"
+  "bundle": "results/calibration/caiso77_firm_selfschedule",
+  "ablation_twin": "2026-07-12-caiso-77-firm-selfschedule-ablation"
 }

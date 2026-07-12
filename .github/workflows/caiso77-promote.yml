@@ -1,0 +1,91 @@
+# One-shot: promote caiso-77 to CAISO keeper on the runner (byte-heavy files
+# never transit the MCP relay — caiso76-promote / apply-caiso7475-docs
+# precedent). Steps: keepers.json swap (caiso-76 -> caiso-77),
+# calibration-log entry insertion from the committed payload
+# docs/_caiso77_log_entry.md (payload removed by the session afterwards —
+# the Data API upload cannot delete), and a deterministic status.js regen
+# via scripts/build_status.py from the already-committed registry + bundles.
+#
+# Publish is Data-API-only (scripts/ci_api_upload_multi.py) — NO `git push`:
+# the caiso77-solve-register v1 runner lost a full solve to a
+# workflows-permission push rejection (PR #2037 auto-merge race), so this
+# workflow never touches the ref with git. The --rid/--bundle pairs re-send
+# the already-committed caiso-77 files (byte-identical blobs, no-op in the
+# tree); the promotion payload rides in --extra.
+#
+# Promotion authorization: the FINDING §4 pre-registered bar — C6+C7+C8
+# PASS, no gate regressed with the C2-2025 print adjudicated against the
+# CEMS same-fleet evidence per the §4 subject-to clause (every year moves
+# toward the CEMS truth: +6.22/+11.11/+14.32 -> +5.74/+7.58/+12.32 TWh),
+# and the targeted C1 2023/24 cluster improved (2024 clears). See
+# results/calibration/FINDING-caiso77-c1-cluster-firm-selfschedule-2026-07-11.md
+# §5 and the log entry.
+name: caiso77-promote
+
+on:
+  push:
+    branches:
+      - claude/caiso-calibration-next-steps-m1h3tj
+    paths:
+      - .github/workflows/caiso77-promote.yml
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Apply keeper swap + log entry insertion
+        run: |
+          set -euo pipefail
+          test -f docs/_caiso77_log_entry.md
+          python - <<'PY'
+          import json
+
+          # 1. keepers.json: CAISO -> caiso-77 (idempotent).
+          p = 'frontend/data/backcast/keepers.json'
+          k = json.load(open(p))
+          old = k['CAISO']
+          new = '2026-07-12-caiso-77-firm-selfschedule'
+          if old != new:
+              k['CAISO'] = new
+              k['keepers'] = [new if x == old else x for x in k['keepers']]
+              json.dump(k, open(p, 'w'), indent=1)
+
+          # 2. calibration-log: insert the entry before the current top
+          #    (G-61(b) decision) entry (idempotent on re-run).
+          lp = 'docs/calibration-log.md'
+          log = open(lp).read()
+          entry = open('docs/_caiso77_log_entry.md').read()
+          marker = '### 2026-07-11 — CAISO — owner decision G-61(b)'
+          assert marker in log
+          if 'caiso-77 (self-scheduled firm import base)' not in log:
+              log = log.replace(marker, entry + '\n' + marker, 1)
+              open(lp, 'w').write(log)
+          PY
+
+      - name: Regenerate status.js (deterministic from committed inputs)
+        run: python scripts/build_status.py
+
+      - name: Publish via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_multi.py \
+            --rid 2026-07-12-caiso-77-firm-selfschedule --bundle results/calibration/caiso77_firm_selfschedule \
+            --rid 2026-07-12-caiso-77-firm-selfschedule-ablation --bundle results/calibration/caiso77_firm_selfschedule-ablation \
+            --branch claude/caiso-calibration-next-steps-m1h3tj \
+            --extra frontend/data/backcast/keepers.json \
+            --extra frontend/data/backcast/status.js \
+            --extra docs/calibration-log.md \
+            --message "Promote caiso-77 (self-scheduled firm import base) to CAISO keeper — C1-2024 clears, all pre-registered directions confirmed, C2-2025 print adjudicated vs CEMS per the FINDING §4 clause [skip ci]"

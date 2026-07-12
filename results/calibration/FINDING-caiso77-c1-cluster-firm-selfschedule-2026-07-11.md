@@ -137,3 +137,53 @@ adjudication), and the targeted C1 2023/24 cluster improved. LOYO exemption
 claimed per the caiso-76 precedent: nothing is fit — the delta is a behavioral
 correction on existing measured inputs with zero tunable parameters (the
 mechanism is identical in all years by construction); noted for owner review.
+
+## 5. Result (2026-07-12): every pre-registered direction confirmed — PROMOTED
+
+Solved 2023-2025 (main + zero-forcing ablation twin) on CI. Provenance: the
+original `caiso77-solve-register` runner (29170225341) solved both bundles
+clean and then lost the outputs at its publish step (runner token may not
+push a ref whose new commits touch `.github/workflows/*` — the PR #2037
+auto-merge race); re-solved identically on `caiso77-solve-register-v2`
+(29182026361, Data-API-only publish). Registered
+`2026-07-12-caiso-77-firm-selfschedule` (+ `-ablation`).
+
+Scored A/B vs the caiso-76 keeper (rubric v2.4):
+
+| gate | caiso-76 | caiso-77 | pre-registered direction |
+|---|---|---|---|
+| C1 CC_REGULAR 2023 | +5.05 TWh FAIL | +4.54 TWh FAIL | ✓ down |
+| C1 CC_REGULAR 2024 | +7.04 TWh FAIL | **in band — clears** | ✓ down |
+| C2 gas 2025 (930 family) | −4.1 % CAVEAT | −7.6 % FAIL | disclosed (§4), adjudicated below |
+| C3a mean LMP | +22.2/+32.1/+40.7 % | +21.8/+29.9/+38.2 % | ✓ overnight λ eases |
+| C3b NRMSE | 0.308/0.427/0.434 | 0.307/0.408/0.413 | ✓ |
+| C3c tail | 458 h / 0 h | 458 h / 0 h | unchanged |
+| C4 gas r (2024/25) | 0.805 / 0.576 | 0.834 / 0.590 | ✓ rises (still FAIL) |
+| C5a CO₂ (2024/25) | +17.9 / +32.7 % | +11.8 / +28.3 % | ✓ (still FAIL) |
+| C6/C7/C8 | PASS | PASS | ✓ hold |
+
+CT_PEAKER volumes byte-flat (−2.02/−2.47/−0.78 TWh same-fleet) — the
+bridge-crowding channel untouched as called; lead (c) stays open.
+
+**§2 basis adjudication (the C2-2025 print).** Same-fleet (bench-restricted
+CAMPD, the §2 construction) CC_REGULAR excess, model − actual TWh:
+
+| year | caiso-76 | caiso-77 |
+|---|---|---|
+| 2023 | +6.22 | **+5.74** |
+| 2024 | +11.11 | **+7.58** |
+| 2025 | +14.32 | **+12.32** |
+
+Corrected belly/evening online gaps (§1 probe, actual−model GW): 2023
+−0.5/−0.6 → −0.5/−0.5, 2024 −0.8/−1.3 → −0.5/−1.0, 2025 −1.5/−1.4 →
+−1.3/−1.1. Every year moves toward the CEMS truth — 2025 included, where the
+930-family gate prints further under. Per the §4 subject-to clause the
+C2-2025 print is adjudicated a bench-basis artifact (the family actual's
+non-CEMS residual balloons −5 → −8 → −17 TWh across 2023→25, mutually
+inconsistent with same-year CEMS; rework filed, caiso-76 FINDING §4), NOT a
+mechanism regression.
+
+**Promotion bar: MET** — C6+C7+C8 PASS; no gate regressed under the
+adjudication; the targeted C1 2023/24 cluster improved with 2024 clearing.
+Promoted to CAISO keeper 2026-07-12 (v2.4 determination stays NOT-YET). The
+LOYO exemption (§4) remains flagged for owner review.
