@@ -618,18 +618,18 @@ NYISO,2021,9,Transco Z6 NY / Iroquois (EIA NY citygate proxy),4.0471,EIA N3050NY
 NYISO,2021,10,Transco Z6 NY / Iroquois (EIA NY citygate proxy),2.8163,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
 NYISO,2021,11,Transco Z6 NY / Iroquois (EIA NY citygate proxy),0.4514,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
 NYISO,2021,12,Transco Z6 NY / Iroquois (EIA NY citygate proxy),1.0686,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,1,Transco Z6 NY / Iroquois (EIA NY citygate proxy),0.9162,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,2,Transco Z6 NY / Iroquois (EIA NY citygate proxy),0.2312,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,3,Transco Z6 NY / Iroquois (EIA NY citygate proxy),-0.2651,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,4,Transco Z6 NY / Iroquois (EIA NY citygate proxy),-0.3991,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,5,Transco Z6 NY / Iroquois (EIA NY citygate proxy),0.7741,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,6,Transco Z6 NY / Iroquois (EIA NY citygate proxy),4.5843,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,7,Transco Z6 NY / Iroquois (EIA NY citygate proxy),3.7966,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,8,Transco Z6 NY / Iroquois (EIA NY citygate proxy),4.4279,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,9,Transco Z6 NY / Iroquois (EIA NY citygate proxy),4.9091,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,10,Transco Z6 NY / Iroquois (EIA NY citygate proxy),1.7237,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,11,Transco Z6 NY / Iroquois (EIA NY citygate proxy),1.4892,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
-NYISO,2022,12,Transco Z6 NY / Iroquois (EIA NY citygate proxy),2.1442,EIA N3050NY3 citygate - Henry Hub (RNGWHHD monthly mean)
+NYISO,2022,1,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),8.362,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,2,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),2.661,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,3,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),1.3408,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,4,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),1.3765,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,5,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),1.0985,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,6,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),0.9986,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,7,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),1.487,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,8,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),1.1565,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,9,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),0.3271,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,10,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),0.969,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,11,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),0.749,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
+NYISO,2022,12,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),3.5705,"EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)"
 NYISO,2023,1,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),1.3681,EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)
 NYISO,2023,2,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),2.8134,EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)
 NYISO,2023,3,Transco Z6 NY / Iroquois Z2 (EIA NG Weekly spot),1.2552,EIA NG Weekly spot Transco Z6 NY + NYISO SOM Iroquois-Transco spread; basis = Iroquois Z2 - Henry Hub (RNGWHHDm)
