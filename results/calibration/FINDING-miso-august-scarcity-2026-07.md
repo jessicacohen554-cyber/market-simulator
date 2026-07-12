@@ -607,3 +607,84 @@ contradicted; D-1 shape r=0.98; grounded C8) and improves the volume/mix
 interior, at a one-FAIL price-side regression owned by named deferred
 mechanisms. Owner directive (this session): MISO dashboard pruned to the
 keeper + post-keeper runs (25 pre-keeper registrations removed; bundles kept).
+
+## 14. PRICE-SIDE LANE 1 EXECUTED (2026-07-12 — miso-61 rpe-pricing): the RPE
+$200 additive violation pricing built as market design; the measured RDT
+binding record intaken as the lane's validation series; C5c-2025 adjudicated
+basis-broken
+
+**The adjudication came first (rules 1/13/14), and it sharpened both lanes.**
+
+1. **RPE pinned to primary sources** (2024 SOM body pp.9/51-52, §II.E/§III.B):
+   RPE = Reserve Procurement Enhancement — "MISO enforces STR requirements in
+   its two subregions by enforcing reserve procurement enhancement (RPE)
+   constraints over the RDT"; "the RPE binds when headroom on the RDT plus
+   the available STR in the importing subregion is limited"; it "limits flows
+   between subregions after a supply-side contingency and has a single demand
+   value of $200 per MWh". In the 2023-2025 design the RDT TCDC and RPE
+   demand values "apply additively" in real violations — measured $700
+   subregion-wide spreads ($500+$200), with even SMALL violations (the $40
+   first step) overpriced "by $200 per MWh" (→ $240). The IMM's cap-at-$500
+   recommendation was NOT implemented in-window, so additive-in-violation IS
+   the honest historical representation (date-gate a re-anchor if adopted,
+   rule 23).
+2. **Lane 2 (hourly measured RDT limit intake) re-verified DATA-BLOCKED** for
+   the limit series (RT Data Broker RDT endpoint deprecated without archive;
+   Data Exchange key-gated; pbc reports carry no limit MW; no new public
+   source as of 2026-07 — the quarterly's derate-behavior evidence, p.30, is
+   chart-only). The admissible measured series is the pbc BINDING record —
+   intaken this session as the `transfer-constraint-binding` clean datatype
+   (MISO `{da,rt}_pbc`, market dates 2023-2025 only per rule 22, verbatim raw
+   consolidation via `scripts/fetch_miso_pbc.py`; per-ISO registry
+   `scripts/lib/transfer_constraint_binding/`). VALIDATION ONLY (rule 13:
+   binding is a dispatch outcome).
+3. **Measured basis discovery — the SOM's ">25% of RT intervals" is the
+   RDT+RPE FAMILY, not the RDT proper.** The pbc RDT-proper record reads
+   (hours-equivalent; RT rows are 5-min):
+
+   | year | da S→N bind h | da mean\|shadow\| | da at-$40 h | rt S→N bind h-eq | rt N→S bind h-eq | rt violation h-eq (≥$40) |
+   |---|---|---|---|---|---|---|
+   | 2023 | 8 | $5.13 | 0 | 280 | 13 | 40 |
+   | 2024 | 241 | $6.28 | 0 | 661 | 34 | 61 + 10 N→S |
+   | 2025 | 919 | $9.88 | 18 | 264 | 8 | 50 |
+
+   RT-2024 RDT-proper ≈ 7.5% of intervals vs the SOM family figure >25% —
+   the gap is the RPE's own binding ("Tx Only"/"Both"/"RPE Only" split, IMM
+   Summer-2025 quarterly p.29, with "RPE Only" large). Two consequences:
+   (a) the model's single RDT constraint stands in for the whole family, so
+   its binding frequency legitimately sits BETWEEN the two measured bases;
+   (b) the earlier anchor readings that matched model "binding ≈25% of
+   hours" to the SOM figure were family-vs-proper conflations — the new
+   probe (`scripts/probes/_miso61_rdt_anchors.py`) scores both bases and
+   fixes a second legacy-basis artifact (the old probe counted tier-ROWS,
+   not hours, where the TCDC's parallel tiers exist; its cross-run deltas
+   remain valid same-script comparisons).
+   The DA S→N regime shift is measured directly: binding hours 8 → 241 →
+   919 across 2023/24/25 — the 2025 S→N-dominant year the model has been
+   missing, now as an hourly validation series.
+
+**miso-61 = miso-60 strict meta replay + `miso_rpe_pricing=True`, zero new
+scalars** (probe driver `scripts/probes/_miso61_rpe_pricing.py`): adds
+`constants.MISO_RPE_DEMAND_VALUE` ($200, published) to both VIOLATION tiers'
+flow_cost on each one-way RDT link (free tier untouched — the adder engages
+only in the constraint's own driver window, rule 12). Conservative documented
+gap, same direction as miso-57's: the "RPE Only" STR-scarcity channel is
+unrepresented (no STR product in the LP) → separation UNDER-states measured.
+Expected direction (ex-ante): violation hours reprice $40→$240 / $500→$700;
+the LP redispatches up to $240 before violating; 2023/24 anchors HOLD or move
+toward measured ~$3 separation-when-binding; 2025 moves only where the
+model's S→N flow reaches the violation region (July-2025's gap pre-owned by
+ELMP ex-post/emergency + deeper derates + upstream mid-merit, §10).
+
+**C5c-2025 storage shape (handoff lane 5) adjudicated in parallel:
+basis-broken → ledgered exception, no mechanism.** The 2025 battery-only
+actual's monthly "shape" is the fleet's COD ramp (r=0.934 vs cumulative
+in-service MW, EIA-860 198→804 MW in-year); per in-service MW the residual
+shape is degenerate by the scorer's own CV floor (0.175 < 0.25) and
+uncorrelated with the model (r≈0.02). Full write-up:
+`results/calibration/FINDING-miso-c5c-storage-shape-basis-2026-07.md`;
+(storage_shape, 2025) enters the miso-61 exceptions ledger alongside the
+carried C5b entry (2 of 3 budgeted). Scorer-side BAT-vs-BAT + per-MW fix
+flagged to the rubric-infrastructure lane.
+
+**RESULT — to be appended after the solve + scoring (same session).**
