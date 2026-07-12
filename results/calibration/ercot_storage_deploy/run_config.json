@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-12T04:49:17",
+  "timestamp": "2026-07-12T05:19:14",
   "git": {
-    "sha": "e2ca39f7",
-    "branch": "claude/ercot-storage-discharge-g22mr4",
+    "sha": "42442d0f",
+    "branch": "claude/ercot-storage-cycling-lane-h4k2wq",
     "dirty": true,
     "changed_files": [
       "cripts/run_calibration.py",
@@ -132,7 +132,7 @@
     "ercot_dam_as_scarcity_threshold": 150.0,
     "temp_dependent_derate": false,
     "nyiso_dynamic_reserve_requirements": null,
-    "git_sha": "e2ca39f7"
+    "git_sha": "42442d0f"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -545,6 +545,15 @@
     ],
     "neiso_offer_surface_min_bin": 0,
     "neiso_offer_surface_price_cap_frac": 0.95,
+    "pjm_offer_surface_conditional": false,
+    "pjm_offer_surface_binned_path": null,
+    "pjm_offer_surface_netload_pcts": [
+      0.8,
+      0.9,
+      0.97
+    ],
+    "pjm_offer_surface_min_bin": 0,
+    "pjm_offer_surface_price_cap_frac": 0.95,
     "cc_committed_hr_override": null,
     "cc_econ_hr_override": null,
     "cc_peak_hr_override": null,
