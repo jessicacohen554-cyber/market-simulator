@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-12-miso-60-stgas-vlr",
+ "label": "miso 60 stgas vlr",
+ "date": "2026-07-12",
+ "shorthand": "miso-60-stgas-vlr",
+ "definition": "miso-60 ST_GAS local-reliability commitment floor (main) -- miso-59 meta.json replay (coal warm-boiler committed band + RDT congestion structure: South-seam split + 92% derate/TCDC + reserve co-opt pergen + zonal South + priced seam + SOM coal offers + CT 1.025 measured committed + Order-825 fast-start v4 + measured hourly OR requirements) + st_gas_mustrun_per_plant=True (each gas steamer's measured committed tranche forced on in its measured top-online_frac system-load window -- the Entergy MISO-South VLR/self-commitment trace: Nine Mile synchronized 98.2% of ALL hours, Sabine 85.6%, Lewis Creek 87.8%) + corrected MISO-South 2025 delivered-gas basis (+0.095 -> +0.343, mismatched-window construction bug in miso_zonal_gas_hub.csv; counter-directional, kept per rule 15). The 2025 Southern-gas starvation / RDT regional-reversal lane (FINDING \u00a711/\u00a712 continuity).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-12-miso-60-stgas-vlr.js",
+ "bundle": "results/calibration/miso60_stgas_vlr",
+ "ablation_twin": "2026-07-12-miso-60-stgas-vlr-ablation",
+ "market_story": "MISO commits Entergy's legacy gas steamers out of market for voltage and local reliability (VLR) in the South region (Amite South / DSG / WOTAB): the CEMS trace shows Nine Mile Point synchronized 98.2% of ALL hours 2023-2025 (414 MW plant floor), Sabine 85.6%, Lewis Creek 87.8% -- while an economically-dispatched model leaves them dark and serves the South from Plains coal over an N->S RDT flow, the exact reverse of the measured 2025 S->N congestion ($9.31 summer separation, $41M RDT+RPE). miso-60 arms the ST_GAS leg of the per-plant local-reliability commitment floor: each steamer's measured committed tranche is forced on in its measured top-online_frac system-load window (zero new scalars, self-targeting by measurement). Also carries the rule-15 fix to the MISO-South 2025 delivered-gas basis (+0.095 -> +0.343, mismatched-window construction bug; counter-directional and kept)."
+}
