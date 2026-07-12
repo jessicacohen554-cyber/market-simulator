@@ -362,6 +362,8 @@ scratch_hindcast/
 
 # Capacity-hindcast raw dispatch parquets are reproducible; commit ledgers+score only.
 results/hindcast/*/*/*/year_*.parquet
+# Capacity-hindcast harness stdout logs are scratch (bundles carry the record).
+results/hindcast/*.log
 scratch_logs/
 docs/handoffs/_fom_grid_cache/
 docs/handoffs/_foresight_ab_cache/
