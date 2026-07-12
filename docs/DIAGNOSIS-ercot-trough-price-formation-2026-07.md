@@ -230,3 +230,103 @@ startup-aware screen re-derived for ERCOT economics (or dropped with cause),
 coal-side committed-state reconciliation (rule 19), composed with the
 low-curve markdown; full-span 2023-2025 + zero-forcing twin + LOYO before any
 promotion talk.
+
+## 7. ERCOT-63: the real bridge built and probe-adjudicated — the STATE ALONE closes what the composition was credited with; the markdown stays off
+
+The real mechanism (`ercot_gas_commitment_bridge`, this session): the CAISO
+bridge internals (§5) behind an own ERCOT gate — merchant gas-CC only,
+`min_load_frac` = the measured committed-CC LSL/HSL cap-weighted p50 (0.574),
+physical (< min-down) restart bar + economic (≥ min-down) startup-restart
+bridging on the model's own P0 duals, the economic leg bounded to ONE DA
+operating day (`DA_COMMITMENT_HORIZON_HOURS`, tariff-cited), P1-native at the
+shared P0→P1 seam in both orchestrators. D-2 id `gas_commitment_bridge` (17)
+with a D-3 ablation entry; cited D-4 window (self-windowing: floors exist
+only inside P0-detected idle gaps ≤ one DA day; measured incidence
+overnight-dominated — the 902 CC plant-nights/yr driver). Recorded
+adjudications:
+
+* **Class scope — CC only.** CT_PEAKER is physics-inert for the economic leg
+  (min-down 1-2 h < `RA_BRIDGE_ECON_MIN_DOWN_HOURS`; rule 18 — the real
+  market cycles fast-start iron off overnight) and its measured committed
+  band ≈ the model's (ERCOT-61); ST_GAS is rule-19-excluded (its committed
+  state is the all-hours `gas_st_netload_drag` floor's, and the class is C8
+  grounded-above-budget at ~33 % — a second floor would stack mechanisms on
+  one phenomenon). CT 0.744 / ST_GAS 0.205 recorded unused.
+* **Startup-aware screen — dropped with cause, not re-derived.** Its anchor
+  test prices run margins off the model's own duals; ERCOT's modelled
+  troughs are the +$5-7-overpriced, spread-flattened quantity under repair
+  (§2), so margins are circularly thin and the screen refuses every anchor
+  (the 62b no-op). Re-deriving a lower threshold "for ERCOT economics" would
+  be a scalar tuned until anchors survive — a residual-fitted knob (rules
+  13/20). The phantom-micro-run failure mode it guards is bounded by
+  measurement instead: the real gate's 2023 floored-gap distribution is
+  p10/p50/p90 = 2/6/14 h with 0 gaps > 24 h — day-run-anchored overnight
+  bridging, not belly-chopping fragments.
+
+**2023 probe ladder** (rule-16 throwaways vs the byte-faithful ercot59
+keeper reconstruction — C3a +3.9 %, C3b 0.133, C3c 171 h reproduced exactly;
+note the ercot59 base's `ercot_storage_as_deployment` raises the storage
+baseline vs the §6 ercot56-based rows, and its defining delta was missing
+from meta.json — meta-writer fixed this session):
+
+| 2023 | keeper | bridge ALONE | bridge+markdown | RT |
+|---|---|---|---|---|
+| C3a lw | +3.9 % | +3.1 % | **+0.3 %** | — |
+| C3b | 0.133 | 0.131 | 0.125 | — |
+| C3c h | 171 | 171 | 171 | 311 DA |
+| trough h < $10 | 27 | 107 | 143 | 681 |
+| trough h < $15 | 101 | 228 | 277 | 1,493 |
+| trough h < $20 | 861 | 1,202 | 1,541 | 2,645 |
+| median daily spread | $13.5 | **$14.9** | $13.5 | $35.3 |
+| spread days > $24.25 | 81 | **85** | 69 | 247 |
+| storage throughput | 0.65 TWh | **0.74** | 0.67 | — |
+| HE18/19 discharge | 205/437 MW | **243/505** | 225/474 | — |
+| coal annual Δ | — | −1.37 TWh | −3.30 TWh | — |
+| slack | 7.5 GWh | 7.5 | 7.5 | — |
+
+* **The real gate reproduces the 62b monkeypatch row** (bridge+markdown C3a
+  +0.3 %, <$10 143 h — identical) with the residual differences traced to
+  the known construction deltas (CC-only scope, DA-horizon cap, ercot59
+  base): the bridge floors 37,788 unit-hours / 7.91 TWh vs the spoof's
+  39,446 / 8.26. C8: gas-CC at-floor 6.5 % (bridge-attributed 5.6 %) vs the
+  30 % cap. The DA-horizon cap was isolated with a fourth rung
+  (`bridge_md_nohorizon`, the 62b-exact uncapped construction): only 35
+  gaps > 24 h exist to drop (0.31 TWh), and uncapping moves nothing
+  measurable (C3a identical, <$15 277 → 288 h, spread +$0.1, storage
+  +0.01 TWh) — the tariff-grounded one-operating-day bound keeps the
+  declared D-4 window exact at zero fit cost. Kept on.
+* **The new information is the bridge-ALONE rung the 62b probe never ran:
+  the state alone wins every circle target** — spread median 13.5 → 14.9,
+  viable-arbitrage days 81 → 85, storage 0.65 → 0.74 TWh, HE18/19 discharge
+  205/437 → 243/505 MW, troughs deepening (101 → 228 h < $15), C3a/C3b
+  improving, C3c and slack untouched. Composing the markdown back on
+  RE-INSTATES its §5 failure signature even with the state present: the
+  spread compresses back to 13.5, viable days fall to 69 (below the
+  keeper's 81), storage gives back half the gain, and the merit order
+  overshoots (CT_PEAKER 6.38 → 7.77 TWh vs 7.10 actual; CC_REGULAR 139.7 →
+  143.8 vs 141.7 actual). The composition's C3a gain is bought by
+  mis-pricing the committed tranche's ABOVE-floor (mid-merit) capacity at
+  the LSL bid — the right number through a wrong mechanism (rule 1). **The
+  markdown stays default-off; the candidate is the bridge alone.** (The §5
+  "state, not price" determination lands stronger than filed: the state is
+  not merely necessary — for the circle it is sufficient, and the
+  tranche-wide LSL reprice is refuted even in composition. The remaining
+  admissible price-side lever for the still-open trough-depth gap — model
+  228 h < $15 vs RT 1,493 — is a FLOOR-SCOPED markdown: the measured LSL
+  bid applied only in the bridge's own floored plant-hours, where the
+  tranche genuinely plays its LSL role. Enumerated for ERCOT-64; not built
+  this session.)
+* **Coal reconciliation (charter step 4) — resolved by measurement, no coal
+  mechanism needed.** The keeper OVER-dispatches coal vs the committed
+  actuals (PRB 48.87 vs 45.09 TWh; lignite 16.93 vs 15.33) while
+  under-dispatching CC_REGULAR (139.74 vs 141.74): the model was papering
+  the missing overnight gas-CC committed state WITH coal. The bridge-alone
+  shuffle (−1.37 TWh, spread across coal committed AND econ tranches, all
+  above coal's own floors) moves every class TOWARD its measured actual —
+  CC_REGULAR lands within 0.1 TWh of actual — and coal remains ABOVE its
+  actual after it. The 62b −3.3 TWh row was the composition's (markdown
+  competition on top); the state's own displacement is a correction, not a
+  defect. Rule 19 is satisfied with no new mechanism: coal's committed
+  state stays owned by its existing take-or-pay/must-run floors
+  (untouched), and the committed-state energy returns to the class
+  measurement says holds it.

@@ -2147,6 +2147,10 @@ def solve_and_persist(
     caiso_ra_min_load_frac: float | None = None,
     caiso_ra_startup_bridge: bool | None = None,
     caiso_ra_bridge_decommit: bool | None = None,
+    ercot_gas_commitment_bridge: bool | None = None,
+    ercot_gas_bridge_min_load_frac: float | None = None,
+    ercot_gas_bridge_startup: bool | None = None,
+    ercot_gas_bridge_da_horizon: bool | None = None,
     reliability_floor: bool | None = None,
     scarcity_price_overlay: bool | None = None,
     caiso_scarcity_pricing: bool | None = None,
@@ -2449,6 +2453,10 @@ def solve_and_persist(
             caiso_ra_min_load_frac=caiso_ra_min_load_frac,
             caiso_ra_startup_bridge=caiso_ra_startup_bridge,
             caiso_ra_bridge_decommit=caiso_ra_bridge_decommit,
+            ercot_gas_commitment_bridge=ercot_gas_commitment_bridge,
+            ercot_gas_bridge_min_load_frac=ercot_gas_bridge_min_load_frac,
+            ercot_gas_bridge_startup=ercot_gas_bridge_startup,
+            ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon,
             reliability_floor=reliability_floor,
             scarcity_price_overlay=scarcity_price_overlay,
             caiso_scarcity_pricing=caiso_scarcity_pricing,
@@ -2806,6 +2814,14 @@ def solve_and_persist(
         "ordc_lolp_params_path": ordc_lolp_params_path,
         "as_reserve_formula": as_reserve_formula,
         "storage_as_commitment": storage_as_commitment,
+        # ERCOT-63 meta-writer gap fix: the ercot59 keeper's defining delta was
+        # threaded to run_year and recorded in run_config.json but never in
+        # meta.json, so a meta-based reconstruction silently rebuilt the
+        # ercot56 recipe (probes reconstruct keepers from meta, rule 15/25).
+        "ercot_storage_as_deployment": ercot_storage_as_deployment,
+        "ercot_storage_as_deployment_from_year": (
+            ercot_storage_as_deployment_from_year
+        ),
         "ercot_storage_as_endogenous": ercot_storage_as_endogenous,
         "ercot_storage_as_duration_gate": ercot_storage_as_duration_gate,
         "gas_offer_curve": gas_offer_curve,
@@ -2847,6 +2863,10 @@ def solve_and_persist(
         "caiso_ra_min_load_frac": caiso_ra_min_load_frac,
         "caiso_ra_startup_bridge": caiso_ra_startup_bridge,
         "caiso_ra_bridge_decommit": caiso_ra_bridge_decommit,
+        "ercot_gas_commitment_bridge": ercot_gas_commitment_bridge,
+        "ercot_gas_bridge_min_load_frac": ercot_gas_bridge_min_load_frac,
+        "ercot_gas_bridge_startup": ercot_gas_bridge_startup,
+        "ercot_gas_bridge_da_horizon": ercot_gas_bridge_da_horizon,
         "reliability_floor": reliability_floor,
         # Net-load deployment drags — persisted so the legitimacy-diagnostics
         # floor reconstruction (run_year(fleet_only=True) from meta.json) applies
@@ -3227,6 +3247,22 @@ def solve_and_persist(
     if caiso_ra_bridge_decommit is not None:
         recorded_cfg = recorded_cfg.with_overrides(
             caiso_ra_bridge_decommit=caiso_ra_bridge_decommit
+        )
+    if ercot_gas_commitment_bridge is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_gas_commitment_bridge=ercot_gas_commitment_bridge
+        )
+    if ercot_gas_bridge_min_load_frac is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_gas_bridge_min_load_frac=ercot_gas_bridge_min_load_frac
+        )
+    if ercot_gas_bridge_startup is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_gas_bridge_startup=ercot_gas_bridge_startup
+        )
+    if ercot_gas_bridge_da_horizon is not None:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon
         )
     if reliability_floor is not None:
         recorded_cfg = recorded_cfg.with_overrides(reliability_floor=reliability_floor)
@@ -7025,6 +7061,51 @@ def main() -> None:
         "(byte-identical caiso-45 bridge).",
     )
     parser.add_argument(
+        "--ercot-gas-commitment-bridge",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ERCOT gas-CC COMMITMENT BRIDGE (ERCOT-63, the committed-state "
+        "mechanism promoted from the ERCOT-62b probe — diagnosis "
+        "docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6). "
+        "P1-native: before the single scored P1 solve, hold each merchant "
+        "gas-CC that the base-cost P0 pattern runs before AND after an idle "
+        "gap at min-load across the gap, when the gap is shorter than its "
+        "physical min-down OR (with --ercot-gas-bridge-startup, default on) "
+        "re-paying its published startup cost exceeds the net hold cost at "
+        "the model's own P0 duals. min-load = the MEASURED committed-CC "
+        "LSL/HSL capacity-weighted p50 (60-Day DAM disclosure 2023-25). "
+        "CC-only (CT physics-inert, ST_GAS rule-19-excluded — see the "
+        "ScenarioConfig field). ERCOT-only; default off (byte-identical).",
+    )
+    parser.add_argument(
+        "--ercot-gas-bridge-min-load-frac",
+        type=float,
+        default=None,
+        help="Min-load fraction for --ercot-gas-commitment-bridge (default "
+        "0.574 — the measured ERCOT committed-CC LSL/HSL capacity-weighted "
+        "p50, 60-Day DAM disclosure 2023-2025; frozen, rule 21/23). In "
+        "practice clips at the plant's committed-tranche capacity.",
+    )
+    parser.add_argument(
+        "--ercot-gas-bridge-startup",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Economic (>= min-down) leg of --ercot-gas-commitment-bridge on "
+        "the startup-restart inequality — the overnight-between-run-days "
+        "carrier (default on with the gate; --no-ercot-gas-bridge-startup = "
+        "the physical-restart-bar-only probe arm).",
+    )
+    parser.add_argument(
+        "--ercot-gas-bridge-da-horizon",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Cap economic bridges at one DA operating day (24 h, "
+        "DA_COMMITMENT_HORIZON_HOURS — a longer idle is a next-day "
+        "decommit/re-offer decision, never an intra-day hold). Default on "
+        "with the gate; --no-ercot-gas-bridge-da-horizon reproduces the "
+        "ERCOT-62b monkeypatch construction (any gap length).",
+    )
+    parser.add_argument(
         "--reliability-floor",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -8166,6 +8247,10 @@ def main() -> None:
         caiso_ra_min_load_frac=args.caiso_ra_min_load_frac,
         caiso_ra_startup_bridge=args.caiso_ra_startup_bridge,
         caiso_ra_bridge_decommit=args.caiso_ra_bridge_decommit,
+        ercot_gas_commitment_bridge=args.ercot_gas_commitment_bridge,
+        ercot_gas_bridge_min_load_frac=args.ercot_gas_bridge_min_load_frac,
+        ercot_gas_bridge_startup=args.ercot_gas_bridge_startup,
+        ercot_gas_bridge_da_horizon=args.ercot_gas_bridge_da_horizon,
         reliability_floor=args.reliability_floor,
         scarcity_price_overlay=args.scarcity_price_overlay,
         caiso_scarcity_pricing=args.caiso_scarcity_pricing,
