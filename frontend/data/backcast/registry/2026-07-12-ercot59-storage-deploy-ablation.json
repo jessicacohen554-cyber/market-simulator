@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-12-ercot59-storage-deploy-ablation",
+  "label": "ercot59 storage deploy ablation",
+  "date": "2026-07-12",
+  "shorthand": "ercot59-storage-deploy-ablation",
+  "definition": "ercot-storage-deploy: ercot56_nucwin keeper config reconstructed from meta.json + ercot_storage_as_deployment=True (the storage-cycling-lane fix, docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md \u00a75): forces the measured hourly storage-AS-award draw-down as a battery discharge floor on the net-load up-ramp (median-crossing to daily net-load peak hour), releasing exactly the MW storage_as_commitment reserves out of the discharge cap. Zero new fitted parameters (every term measured); 2023-only + 2025 measured-year rule-16 probes validated LP-healthy and price-neutral (2025 load-weighted price byte-identical) with improved storage hourly shape correlation vs EIA-930 (0.807->0.820).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-12-ercot59-storage-deploy-ablation.js",
+  "bundle": "results/calibration/ercot_storage_deploy_ablation"
+}
