@@ -146,3 +146,9 @@ CAISO,2024,annual,SP26,zone,peak_load,28310,,https://stakeholdercenter.caiso.com
 CAISO,2025,annual,LA Basin,local_area,peak_load,19297,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.3-7 Load+Losses+Pumps
 CAISO,2025,annual,San Diego/Imperial Valley,local_area,peak_load,4780,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.3-7 Load+Losses+Pumps
 CAISO,2025,annual,SP26,zone,peak_load,27736,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.2-1
+CAISO,2023,annual,Greater Bay,local_area,peak_load,11136,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,Table 3.3-29 Load+Losses+Pumps
+CAISO,2024,annual,Greater Bay,local_area,peak_load,11081,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,Table 3.3-27 Load+Losses+Pumps
+CAISO,2025,annual,Greater Bay,local_area,peak_load,11992,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.3-27 Load+Losses+Pumps
+CAISO,2023,annual,NP26,zone,peak_load,20748,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,Table 3.2-1
+CAISO,2024,annual,NP26,zone,peak_load,20867,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,Table 3.2-1
+CAISO,2025,annual,NP26,zone,peak_load,21140,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.2-1
