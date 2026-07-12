@@ -121,7 +121,7 @@
       "units": "pass/fail, never caveatable",
       "threshold": "4 attestation assertions + machine-clean outage source; UNATTESTED -> NOT-YET",
       "status": "PASS",
-      "note": "Attestation complete: DOF ledger present, ablation twin linked, outage source machine-clean."
+      "note": "All four governance assertions attested true (levers trace to measured input; no fit to price residuals; no pinning to actuals; exogenous outage filter) and the machine check is clean (exogenous outage source, no forbidden flags). The DOF ledger and ablation twin are keeper obligations checked by audit_keepers E8/E9, not by C6."
     },
     {
       "crit": "C7",
