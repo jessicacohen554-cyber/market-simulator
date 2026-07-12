@@ -95,6 +95,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_CAISO_GAS_COMMITMENT_FLOOR,
     MECH_CC_MUSTRUN_PER_PLANT,
     MECH_CT_NETLOAD_DRAG,
+    MECH_GAS_COMMITMENT_BRIDGE,
     MECH_NAMES,
     MECH_RA_MUSTOFFER,
     MECH_RELIABILITY_FLOOR,
@@ -275,6 +276,27 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # rubric-v2.2 over-budget escalation scores on evidence rather than
     # failing a missing declaration (rule 12).
     (MECH_ST_GAS_MUSTRUN_PER_PLANT, "ST_GAS"): (0, 24),
+    # ercot_gas_commitment_bridge (ERCOT-63, MECH_GAS_COMMITMENT_BRIDGE —
+    # pipeline.commitment.ercot_gas_bridge_p1_floor_fleet): the P1-native
+    # gas-CC committed-state bridge. Rule-12 declaration:
+    # * WINDOW — self-windowing by construction: the floor exists ONLY inside
+    #   idle gaps between two P0-detected runs of the same plant, each gap
+    #   shorter than the unit's physical min-down (a restart bar) or bounded
+    #   by one DA operating day (DA_COMMITMENT_HORIZON_HOURS) on the economic
+    #   leg. The hour-of-day window is ALL 24 hours because the driver does
+    #   not restrict clock hours — the gap placement is the model's own
+    #   run pattern; measured incidence is overnight-dominated (the keeper's
+    #   2023 dispatch cycles 902 CC plant-nights/yr off overnight between
+    #   run-days, ~1.07 GW mean — diagnosis §5), the overnight analogue of
+    #   the CAISO midday gap.
+    # * DRIVER — DAM one-operating-day commitment + the unit-commitment
+    #   restart inequality (published per-MW startup costs, physical
+    #   min-down, the model's own P0 duals); min-load = the measured
+    #   committed-CC LSL/HSL cap-weighted p50 (60-Day DAM disclosure).
+    # * FORWARD STORY — regenerates in any forecast year from the model's
+    #   own P0 run pattern + physical constants; no measured series enters
+    #   (the CAISO RA bridge convention, rules 13/18).
+    (MECH_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
 }
 
 # D-9: overlay probes that must be OFF/zero in every keeper run_config.json

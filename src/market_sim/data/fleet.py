@@ -3284,6 +3284,8 @@ def build_pjm_offer_midcurve_conditional_markup(
         else "pooled",
     )
     return markup
+
+
 # Model tranche suffixes carrying the gas fleet's committed (LSL) block and the
 # economic ramp — the rows the low-curve markdown reprices. ``econc``-prefixed
 # suffixes are the N-slice smoothed econ ramp (``_econ_curve_steps``); ``econ``/

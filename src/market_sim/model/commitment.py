@@ -705,6 +705,8 @@ def caiso_ra_mustoffer_min_gen(
     surplus_floor_value: float = 0.0,
     startup_aware: bool = False,
     release_hours: np.ndarray | None = None,
+    fuel_types: tuple[str, ...] = ("gas_cc", "gas_ct"),
+    max_econ_gap_hours: float | None = None,
 ) -> np.ndarray:
     """Return the ``(n_gen, T)`` CAISO RA must-offer minimum-load floor.
 
@@ -840,6 +842,20 @@ def caiso_ra_mustoffer_min_gen(
             real renewable curtailment displaces curtailable energy, and the
             real market decommits RA units in oversupply rather than curtail
             more VRE. ``None`` (default) is byte-identical.
+        fuel_types: Merchant-gas fuel types eligible for the bridge. The
+            default ``("gas_cc", "gas_ct")`` is the CAISO RA scope,
+            byte-identical; the ERCOT gas commitment bridge passes
+            ``("gas_cc",)`` (class adjudication at the
+            ``ercot_gas_commitment_bridge`` field: CT is physics-inert for
+            the economic leg and carries a different measured min-load).
+            The CHP / non-gas exclusions apply on top regardless.
+        max_econ_gap_hours: Optional cap on the ECONOMIC (≥ min-down) bridge
+            gap length, independent of ``bridge_decommit`` — a DAM commits
+            one operating day, so a gap longer than one DA cycle is a
+            next-day decommit/re-offer decision (the ERCOT bridge passes
+            ``DA_COMMITMENT_HORIZON_HOURS``). ``None`` (default) is
+            byte-identical; physical (< min-down) bridges are never capped
+            (a restart bar is physics, not commitment horizon).
 
     Returns:
         The ``(n_gen, T)`` min-load floor; all-zero (a no-op) when
@@ -882,10 +898,7 @@ def caiso_ra_mustoffer_min_gen(
         # RA-bridged; gas steamers' multi-day thermal inertia is carried by
         # their own drag/startup mechanisms (one mechanism per phenomenon);
         # coal/nuclear/non-thermal have no gas commitment params.
-        if gen.plant_group.endswith("_CHP") or gen.fuel_type not in (
-            "gas_cc",
-            "gas_ct",
-        ):
+        if gen.plant_group.endswith("_CHP") or gen.fuel_type not in fuel_types:
             continue
         resolved = _ra_bridge_unit_params(gen, float(fleet_arrays.heat_rate[g]))
         if resolved is None:
@@ -968,6 +981,10 @@ def caiso_ra_mustoffer_min_gen(
             # operating day, so a gap longer than one DA cycle is a next-day
             # decommit/re-offer, never an intra-day min-load hold.
             if bridge_decommit and gap > DA_COMMITMENT_HORIZON_HOURS:
+                continue
+            # Standalone DA-horizon cap (the ERCOT bridge): same market-design
+            # bound as above, decoupled from the CAISO surplus machinery.
+            if max_econ_gap_hours is not None and gap > max_econ_gap_hours:
                 continue
             # Net $/MW-capacity cost of holding at min-load through the gap:
             # (MC − LMP) × min_load_frac × gap_hours. Averaged over the gap.
