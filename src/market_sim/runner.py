@@ -69,6 +69,7 @@ from market_sim.model.capacity import (
     capacity_reserve_position,
     deliverability_headroom_by_zone,
     evolve_fleet,
+    renewable_credits_applied,
 )
 from market_sim.model.ancillary import (
     realized_storage_as_revenue_per_mw_yr,
@@ -1908,6 +1909,21 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             float(np.sum(solar_cap)),
             prior_results["storage_firm_mw"],
             iso=iso,
+            peak_demand_mw=peak_demand,
+            elcc_curves_enabled=config.renewable_elcc_curves,
+        )
+        # CR-3.1 observability: the credit each VRE class actually earned on
+        # this year's own penetration (same resolver/basis as firm_mw above),
+        # plus the storage fleet's power and pre-dilution accredited MW — the
+        # per-year accreditation trail the capacity-hindcast before/after
+        # diagnostic and the T1.9 storage-saturation ladder read.
+        credits_applied = renewable_credits_applied(
+            fleet,
+            float(np.sum(wind_cap)),
+            float(np.sum(solar_cap)),
+            iso,
+            peak_demand_mw=peak_demand,
+            elcc_curves_enabled=config.renewable_elcc_curves,
         )
         ledger = dict(evo_events)
         ledger.update(
@@ -1926,6 +1942,19 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             reserve_margin=round(firm_mw / peak_demand - 1.0, 6)
             if peak_demand > 0
             else None,
+            # Accreditation trail (CR-3.1): pool nameplates, resolved VRE
+            # credits, and the storage fleet's power / pre-dilution firm MW
+            # (dilution applies at the evolve consumer, capacity.py — see
+            # _storage_portfolio_elcc_dilution).
+            wind_cap_mw=round(float(np.sum(wind_cap)), 3),
+            solar_cap_mw=round(float(np.sum(solar_cap)), 3),
+            renewable_credit_applied={
+                fuel: round(credit, 6) for fuel, credit in credits_applied.items()
+            },
+            storage_power_mw=round(
+                float(sum(u.power_cap_mw for u in storage_units)), 3
+            ),
+            storage_firm_mw=round(float(prior_results["storage_firm_mw"]), 3),
             rps_dual=round(float(result.rps_shadow_price or 0.0), 6),
             storage_additions=_storage_additions_since(
                 storage_units, prior_storage_ids, zone_names
