@@ -17,11 +17,15 @@ per ISO**. The NEISO one-shot execution is HELD on exactly this
 
 **Status (2026-07-12): register CREATED - `docs/holdout-data-equivalency-register-2026-07.md`.**
 
-- **NEISO section AUTHORED** (2026-07-12 data-readiness lane). NEISO 2022 intake
-  is LANDED under the 2026-07-12 owner authorization (MERGE-not-replace, all
-  2023-2025 in-sample rows byte-frozen; no-LP, no solve - the G-19 HOLD stands).
-  Verdict tally for NEISO 2022: **EQUIVALENT 21 / DEGRADED 2 / MISSING 1
-  (non-default limb) / accepted-absence 1**.
+- **NEISO 2022 readiness DONE** (2026-07-12 data-readiness lane). The register
+  (`docs/holdout-data-equivalency-register-2026-07.md`) is the shared cross-ISO
+  doc the parallel NYISO lane merged; the **NEISO section is added additively by
+  this lane's lander** (`apply_neiso_2022_readiness_docs.py`, run by
+  `holdout-intake-neiso-2022.yml`) and its full audit lives here + in
+  out-of-sample §1.3. NEISO 2022 intake is prepared under the 2026-07-12 owner
+  authorization (MERGE-not-replace, all 2023-2025 in-sample rows byte-frozen;
+  no-LP, no solve - the G-19 HOLD stands). Verdict tally for NEISO 2022:
+  **EQUIVALENT 21 / DEGRADED 2 / MISSING 1 (non-default limb) / accepted-absence 1**.
   - **DEGRADED**: (1) daily Algonquin gas basis - weekly-anchored, densified
     38 -> 62 prints, still sparse; (2) outage-window detector vintage - 2022 is
     a HEAD re-derive, committed in-sample windows are an older vintage
@@ -37,8 +41,9 @@ per ISO**. The NEISO one-shot execution is HELD on exactly this
 - **ERCOT / PJM** (2022 intake landed 2026-07-04, out-of-sample §1.1):
   equivalency audit PENDING (their own lane).
 - **CAISO / MISO**: no holdout intake - register rows start MISSING.
-- **NYISO**: 2018-H1-2026 measured *inputs* landed 2026-07-10 (out-of-sample
-  §1.2); keeper-specific + bench series still MISSING; audit PENDING.
+- **NYISO**: register **§NYISO DONE** (its own lane, merged to main) -
+  EQUIVALENT 24 / DEGRADED 4 / MISSING 5 for the 2022 window (2026-07-12 intake);
+  owner sign-off + a `complete.NYISO` marker still pending per its section.
 
 **Exit:** owner sign-off per ISO. For NEISO, the sign-off decision also carries
 two surfaced items (register "Exit criterion"): the keeper-identity
