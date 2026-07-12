@@ -1,0 +1,60 @@
+# One-shot: apply the miso-57 session docs to the repo (miso56-promote
+# precedent — byte-heavy docs/calibration-log.md never transits the MCP
+# relay). The miso-57 registration itself is ALREADY on main (PR #2089/#2090,
+# ids 2026-07-11-miso-57-rdt-congestion{,-ablation}); what is missing is the
+# rule-15 calibration-log entry and FINDING §11, whose text sits in the
+# committed payload docs docs/_miso57_log_entry.md /
+# docs/_miso57_finding_s11.md (pushed by the session, PR #2085). This
+# workflow appends both (idempotent), corrects the run-id date in the entry
+# text (the session's verification solve was dated 2026-07-12; the
+# registered canonical bundle is 2026-07-11), removes the three payload
+# docs, and pushes the one docs commit to this branch (small pack — the
+# 413 limit applies to run payloads, not docs; miso56-promote precedent).
+name: miso57-docs-apply
+
+on:
+  push:
+    branches:
+      - claude/miso57-docs-apply-f0owj2
+    paths:
+      - .github/workflows/miso57-docs-apply.yml
+
+permissions:
+  contents: write
+
+jobs:
+  docs-apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Append log entry + FINDING §11, remove payload docs, push
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          log_path = 'docs/calibration-log.md'
+          log = open(log_path).read()
+          entry = open('docs/_miso57_log_entry.md').read()
+          # The canonical registered bundle carries the 2026-07-11 id (the
+          # parallel registration that landed first); fix the session text.
+          entry = entry.replace('2026-07-12-miso-57-rdt-congestion',
+                                '2026-07-11-miso-57-rdt-congestion')
+          if 'MISO-57: RDT S→N congestion lane executed' not in log:
+              log = log.rstrip('\n') + '\n\n' + entry.strip() + '\n'
+              open(log_path, 'w').write(log)
+          f_path = 'results/calibration/FINDING-miso-august-scarcity-2026-07.md'
+          f = open(f_path).read()
+          s11 = open('docs/_miso57_finding_s11.md').read()
+          s11 = s11.replace('2026-07-12-miso-57-rdt-congestion',
+                            '2026-07-11-miso-57-rdt-congestion')
+          if 'LANE EXECUTED (2026-07-12' not in f:
+              f = f.rstrip('\n') + '\n\n' + s11.strip() + '\n'
+              open(f_path, 'w').write(f)
+          PY
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git rm -q docs/_miso57_log_entry.md docs/_miso57_sidecar_patch.json docs/_miso57_finding_s11.md
+          git add docs/calibration-log.md results/calibration/FINDING-miso-august-scarcity-2026-07.md
+          git commit -m "docs: miso-57 calibration-log entry + FINDING §11 — RDT lane executed; keeper recommendation to owner (keepers.json untouched); session payload docs removed [skip ci]"
+          git push origin HEAD:claude/miso57-docs-apply-f0owj2
