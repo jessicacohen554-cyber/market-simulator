@@ -1755,6 +1755,58 @@ class TestMisoRdtTcdc(unittest.TestCase):
         cfg = ScenarioConfig()
         self.assertFalse(cfg.miso_south_seam_split)
         self.assertFalse(cfg.miso_rdt_tcdc)
+        self.assertFalse(cfg.miso_rpe_pricing)
+
+    def test_rpe_pricing_adds_demand_value_to_violation_tiers_only(self):
+        from market_sim.config.constants import (
+            MISO_RDT_TCDC_STEP1_PRICE,
+            MISO_RDT_TCDC_STEP2_PRICE,
+            MISO_RPE_DEMAND_VALUE,
+        )
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_miso_rdt_tcdc
+
+        out = apply_miso_rdt_tcdc(get_iso_config("MISO"), rpe_pricing=True)
+        for pair in (
+            ("MISO-South", "MISO-Plains"),
+            ("MISO-Plains", "MISO-South"),
+        ):
+            tiers = [ln for ln in out.links if (ln.from_zone, ln.to_zone) == pair]
+            # Free tier untouched; both violation tiers carry the RPE adder.
+            self.assertEqual(
+                [ln.flow_cost for ln in tiers],
+                [
+                    0.0,
+                    MISO_RDT_TCDC_STEP1_PRICE + MISO_RPE_DEMAND_VALUE,
+                    MISO_RDT_TCDC_STEP2_PRICE + MISO_RPE_DEMAND_VALUE,
+                ],
+            )
+
+    def test_rpe_pricing_leaves_tier_widths_unchanged(self):
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import apply_miso_rdt_tcdc
+
+        base = apply_miso_rdt_tcdc(get_iso_config("MISO"))
+        rpe = apply_miso_rdt_tcdc(get_iso_config("MISO"), rpe_pricing=True)
+        self.assertEqual(
+            [(ln.from_zone, ln.to_zone, ln.ttc_mw) for ln in base.links],
+            [(ln.from_zone, ln.to_zone, ln.ttc_mw) for ln in rpe.links],
+        )
+
+    def test_rpe_without_tcdc_fails_loud(self):
+        from market_sim.config.interchange_config import (
+            apply_interchange_topology,
+            get_interchange_spec,
+        )
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.config.scenarios import ScenarioConfig
+
+        cfg = ScenarioConfig().with_overrides(
+            miso_rpe_pricing=True, miso_rdt_tcdc=False
+        )
+        spec = get_interchange_spec(cfg, "MISO")
+        with self.assertRaises(ValueError):
+            apply_interchange_topology(get_iso_config("MISO"), spec, cfg, year=2024)
 
 
 class TestLinkFlowCostLP(unittest.TestCase):

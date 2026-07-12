@@ -32,6 +32,7 @@ from market_sim.config.constants import (
     MISO_RDT_TCDC_STEP1_PRICE,
     MISO_RDT_TCDC_STEP2_PRICE,
     MISO_RDT_TCDC_STEP2_START_FRAC,
+    MISO_RPE_DEMAND_VALUE,
     MISO_SOUTH_EXTERNAL_ZONE,
     NYISO_LOCAL_SELFSUPPLY_FRAC,
 )
@@ -2619,7 +2620,7 @@ def split_miso_south_external_node(iso_config: ISOConfig) -> ISOConfig:
     return extended
 
 
-def apply_miso_rdt_tcdc(iso_config: ISOConfig) -> ISOConfig:
+def apply_miso_rdt_tcdc(iso_config: ISOConfig, rpe_pricing: bool = False) -> ISOConfig:
     """Replace the static RDT pair with the published derate + TCDC tiers.
 
     The real market does not run the RDT at the JOA contract limits: MISO
@@ -2645,9 +2646,24 @@ def apply_miso_rdt_tcdc(iso_config: ISOConfig) -> ISOConfig:
     still reads the net corridor flow. All parameters published
     (``constants.MISO_RDT_*``); zero fitted scalars.
 
+    With ``rpe_pricing`` (``ScenarioConfig.miso_rpe_pricing``), the Reserve
+    Procurement Enhancement constraint's single published demand value
+    (:data:`~market_sim.config.constants.MISO_RPE_DEMAND_VALUE`, $200/MWh)
+    is added to both *violation* tiers — the 2023-2025 market's measured
+    pricing, where the RDT TCDC and the RPE demand curve "apply additively"
+    whenever the RDT is in real violation, producing $240 spreads in small
+    violation ($40 + $200) and $700 in deep violation ($500 + $200)
+    (2024 SOM §II.E/§III.B). The free tier below the modeled limit is
+    untouched, so the adder engages only in the constraint's own driver
+    window (flow above the derated limit). The RPE's STR-scarcity binding
+    channel (binding *without* an RDT violation) is deliberately
+    unrepresented — the LP carries no STR product — a documented one-way
+    under-separation gap.
+
     Raises:
         ValueError: When either one-way RDT link is missing (fail loud).
     """
+    rpe_adder = MISO_RPE_DEMAND_VALUE if rpe_pricing else 0.0
     tiers: list[TransferLink] = []
     new_links: list[TransferLink] = []
     found = set()
@@ -2665,8 +2681,8 @@ def apply_miso_rdt_tcdc(iso_config: ISOConfig) -> ISOConfig:
         step1_top = min(MISO_RDT_TCDC_STEP2_START_FRAC * modeled, contract)
         for ttc, cost in (
             (modeled, 0.0),
-            (step1_top - modeled, MISO_RDT_TCDC_STEP1_PRICE),
-            (contract - step1_top, MISO_RDT_TCDC_STEP2_PRICE),
+            (step1_top - modeled, MISO_RDT_TCDC_STEP1_PRICE + rpe_adder),
+            (contract - step1_top, MISO_RDT_TCDC_STEP2_PRICE + rpe_adder),
         ):
             if ttc <= 0.0:
                 continue

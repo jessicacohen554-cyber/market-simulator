@@ -763,6 +763,37 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "parameters (rule 23)",
             )
         )
+    if sc.get("miso_rpe_pricing"):
+        # RPE additive violation pricing, ZERO scalars: the single published
+        # $200/MWh demand value added to both RDT violation tiers — the
+        # measured 2023-2025 additive price formation ($240 small-violation /
+        # $700 deep-violation spreads).
+        out.append(
+            _entry(
+                "miso_rpe_pricing (RPE $200 additive on RDT violation tiers)",
+                "constants.MISO_RPE_DEMAND_VALUE via "
+                "transmission.apply_miso_rdt_tcdc (rpe_pricing=True); adds to "
+                "the two violation tiers' TransferLink.flow_cost only",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="2024 MISO SOM §II.E ('MISO enforces STR requirements "
+                "in its two subregions by enforcing reserve procurement "
+                "enhancement (RPE) constraints over the RDT') + §III.B "
+                "(single $200/MWh demand value; RDT+RPE 'apply additively' "
+                "in real violations — measured $700 spreads, small "
+                "violations overpriced by $200); IMM Summer-2025 quarterly "
+                "($41M RDT+RPE congestion, +121% YoY)",
+                root_cause="deliberately conservative: the RPE's "
+                "STR-scarcity binding channel (binds with NO RDT violation "
+                "when importing-subregion STR is limited — the quarterly's "
+                "'RPE Only' category) is unrepresented because the LP "
+                "carries no STR product, so separation under-shoots; the "
+                "IMM's cap-at-$500 recommendation was not implemented "
+                "in-window — date-gate the re-anchor if MISO adopts it "
+                "(rule 23)",
+            )
+        )
     if sc.get("coal_warm_committed"):
         # Warm-boiler exemption, ZERO scalars: the P1 startup-amortization
         # markup (compute_monthly_markup, NREL $100/MW coal cold start) is

@@ -4019,6 +4019,25 @@ MISO_RDT_TCDC_STEP1_PRICE: float = 40.0
 MISO_RDT_TCDC_STEP2_PRICE: float = 500.0
 MISO_RDT_TCDC_STEP2_START_FRAC: float = 1.02
 
+# Reserve Procurement Enhancement (RPE): MISO "models a Reserve Procurement
+# Enhancement (RPE) constraint that limits flows between subregions after a
+# supply-side contingency and has a single demand value of $200 per MWh"
+# (2024 MISO SOM §III.B). It is how MISO enforces the subregional Short-Term
+# Reserve requirements "over the Regional Directional Transfer (RDT)
+# constraint. The RPE binds when headroom on the RDT plus the available STR
+# in the importing subregion is limited" (2024 SOM §II.E). In the 2023-2025
+# design the RPE demand value applies ADDITIVELY with the RDT TCDC whenever
+# the RDT is in real violation: "when the transfer constraints are violated,
+# it often produces subregion-wide price spreads of $700 because the demand
+# curve values for the RDT ($500) and the RPE ($200) apply additively, which
+# was unintended", and even small violations (the $40 first TCDC step) are
+# "overpric[ed] ... by $200 per MWh" (2024 SOM §III.B pp.51-52). The IMM's
+# recommendation to cap the combined effect at $500 was NOT implemented in
+# the 2023-2025 window (restated in the IMM Summer-2025 quarterly, which
+# books $41M of RDT+RPE congestion); if MISO adopts it, date-gate the
+# re-anchor to the tariff change (rule 23: cite the data change).
+MISO_RPE_DEMAND_VALUE: float = 200.0
+
 # External zone hosting the MISO-South seam's reference-price bands when
 # ScenarioConfig.miso_south_seam_split is on: the southern neighbors
 # (SOCO/TVA/AECI — MISO_SEAM_DIBA["South"]) are electrically on the SOUTH
