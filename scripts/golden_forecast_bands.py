@@ -26,11 +26,11 @@ Usage::
 
     # Seed (only works once; refuses to overwrite an existing golden without
     # --force):
-    python scripts/golden_forecast_bands.py seed \\
+    python scripts/golden_forecast_bands.py seed \
         --reason "initial W2-P5 §2.3 golden seed, HEAD 455ed9f"
 
     # Regenerate after an intentional behavior change:
-    python scripts/golden_forecast_bands.py seed --force \\
+    python scripts/golden_forecast_bands.py seed --force \
         --reason "PR #NNNN changed the ORDC scarcity adder; goldens re-seeded to reflect it"
 
     # Check the current code against the pinned golden (this is what CI runs,
