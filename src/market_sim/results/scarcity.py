@@ -881,6 +881,67 @@ def ercot_storage_as_reserve_mw(year: int, hours: int) -> np.ndarray:
     return series[: int(hours)]
 
 
+def ercot_storage_as_deployment_mw(
+    year: int, hours: int, net_load: np.ndarray
+) -> np.ndarray:
+    """ERCOT measured-award storage AS→energy co-participation MW, ``(hours,)``.
+
+    The storage-cycling-lane mechanism (``ercot_storage_as_deployment``,
+    docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md). ``storage_as_commitment``
+    reserves the full measured up-AS award (:func:`ercot_storage_as_reserve_mw`)
+    out of the battery discharge cap in every hour and never returns it to energy —
+    but the real fleet visibly moves capacity from AS to energy at the net-load
+    ramp: the measured award RISES to a midday peak then DECLINES into the evening
+    (HE17 1624 → HE20 1112 MW in 2023) as batteries release reserve to sell the
+    ramp. This returns exactly that measured draw-down:
+
+        deploy(t) = max(0, daily_peak(award) − award(t))  gated to the
+                    net-load UP-RAMP: net_load(t) ≥ its own calendar-day median
+                    AND hour ≤ the day's net-load peak hour
+
+    i.e. the award released since the day's procurement peak, restricted to the
+    evening net-load up-ramp — from the median-crossing up to the daily net-load
+    peak, then stopped. That is the physical window ERCOT batteries discharge in
+    (solar drops, net load climbs to its peak; after the peak net load falls and
+    batteries recharge/idle): validated against the EIA-930 2025 measured battery
+    series, the pre-peak gate lifts the floor↔measured hour-of-day correlation
+    from 0.27 (elevated-half only) to 0.62 and removes the spurious HE21-23
+    late-night forcing the looser gate produced. Every term is MEASURED (the award
+    series + net-load) with NO fitted threshold (rule 1/23): the daily-max,
+    daily-median and daily-peak-hour are the award's and net-load's own envelopes,
+    not swept knobs. Forward-valid — the award shape and net-load regenerate from
+    forward drivers and respond to fleet/VRE growth.
+
+    ``net_load`` is the system net load ``(hours,)`` (demand − wind − solar
+    potential), used only for the daily-median window gate. Returns ``(hours,)``
+    MW, all-zero when the award file is absent.
+    """
+    import pandas as pd
+
+    award = ercot_storage_as_reserve_mw(year, hours)
+    if not award.any():
+        return np.zeros(int(hours), dtype=float)
+    nl = np.asarray(net_load, dtype=float)[: int(hours)]
+    if nl.shape[0] < hours:
+        nl = np.concatenate([nl, np.full(int(hours) - nl.shape[0], nl.mean())])
+    # day: calendar-day index on the non-leap 8760 clock (24-hour blocks); hod:
+    # hour-of-day 0-23.
+    day = np.arange(int(hours)) // 24
+    hod = np.arange(int(hours)) % 24
+    frame = pd.DataFrame({"award": award, "nl": nl, "day": day, "hod": hod})
+    daily_peak = frame.groupby("day")["award"].cummax().to_numpy()
+    daily_median_nl = frame.groupby("day")["nl"].transform("median").to_numpy()
+    # Hour-of-day of each day's net-load peak (the up-ramp end).
+    peak_hod = (
+        frame.groupby("day")["nl"]
+        .transform(lambda s: float(np.argmax(s.to_numpy())))
+        .to_numpy()
+    )
+    drawdown = np.maximum(daily_peak - award, 0.0)
+    gate = ((nl >= daily_median_nl) & (hod <= peak_hod)).astype(float)
+    return drawdown * gate
+
+
 _ERCOT_ASPLAN_DIR = RAW_DATA_DIR / "ercot"
 
 
