@@ -1,0 +1,13 @@
+# ERCOT forecast base, truncated to the 2026-2032 window (PB-5 A-2 sensitivity).
+#
+# Identical to configs/scenarios/ercot_base.yaml except end_year: the A-2
+# gas<->load rank-correlation sensitivity (docs/handoffs/probability-bounds-
+# plan-2026-07.md SS2.3/SS7, "mandatory sensitivity members at rho=0 and +0.6")
+# only needs to demonstrate the band-delta direction/magnitude, not repeat a
+# full 25-year solve per member -- this is the same horizon
+# tests/golden/ercot_2026_2032.json already uses as its scored window, so it
+# is a real, previously-validated forecast horizon, not an ad hoc truncation.
+mode: forecast
+iso: ERCOT
+start_year: 2026
+end_year: 2032
