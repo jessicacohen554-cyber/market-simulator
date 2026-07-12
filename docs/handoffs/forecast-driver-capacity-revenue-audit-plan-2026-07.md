@@ -143,6 +143,25 @@ storage-specific saturation derates. The code itself flags the refinement
 
 ### 3.2 Target design — CR-1: reserve-margin-indexed sloped demand curve
 
+> **STATUS — CR-1 IMPLEMENTED, default-off (P-1B, 2026-07-11).** The mechanism
+> below is landed: `MarketDesign` (`config/constants.py`) grew the normalized
+> `demand_curve` points + published `net_cone_curve_per_kw_yr` + citation fields
+> for PJM/NYISO/ISO-NE/MISO (CAISO keeps the fixed proxy, re-cited to CPM/CPUC-RA),
+> reconciled against the P-0B `capacity-market-demand-curve` datatype in
+> `tests/test_capacity_demand_curve.py`. The shared seam is
+> `MarketDesign.capacity_price_per_firm_mw_yr`; the reserve position is
+> `capacity_reserve_position` (reusing `resolve_adequacy_requirement_mw` +
+> `accredited_firm_capacity_mw` — one requirement, one basis), computed once by the
+> runner and threaded into all three screens (retirement, thermal entry, storage
+> entry). Gate `ScenarioConfig.capacity_market_clearing` defaults **off** and is
+> proven byte-identical. Capacity revenue (fixed/curve, labeled) added to
+> `results/plant_financials.py`. Methodology spec §5.9 documents it. **No default
+> flip this session** — that is gated on P-2A (CR-2). Open first-order items for
+> CR-2/CR-3: MISO's RBDC shape reserve positions are representative (only its CONE
+> levels are data-derived); NYISO/ISO-NE are modeled annually (seasonal in CR-3);
+> the `plant_financials` report path supplies no live reserve position, so it
+> reports fixed-mode capacity revenue.
+
 Replace the fixed price with the mechanism the real markets use: a published,
 net-CONE-anchored **sloped capacity demand curve** evaluated at the model's own
 accredited position. Structural (rule 1), zero fitted parameters (rule 13 —

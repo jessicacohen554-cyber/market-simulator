@@ -845,13 +845,25 @@ def estimate_capacity_value(
     existing_mw: float,
     config: ScenarioConfig,
     iso: str,
+    reserve_position: float | None = None,
 ) -> float:
     """Resource-adequacy capacity value per MW-yr for the next unit built.
 
     Zero unless the ISO's :data:`MARKET_DESIGN` has a capacity market and
     ``config.storage_capacity_value`` is on. Otherwise:
 
-        net_cone × 1000 × ELCC(duration) × (1 - penetration)^exponent
+        capacity_price × ELCC(duration) × (1 - penetration)^exponent
+
+    where ``capacity_price`` is the shared per-firm-MW capacity price
+    (:meth:`MarketDesign.capacity_price_per_firm_mw_yr` — rule 19, the SAME
+    seam the thermal retirement and new-entry screens price through, so storage
+    entry rides the ISO's one demand curve with no screen-specific curve). It
+    is the flat ``net_cone × 1000`` by default and — when
+    ``config.capacity_market_clearing`` is on, the ISO has a published curve,
+    and ``reserve_position`` is supplied — the CR-1 sloped-curve price
+    ``VRR(reserve_position) × net_cone_curve × 1000``. Storage's own
+    accreditation (ELCC × saturation derate) multiplies it afterwards, distinct
+    from the thermal UCAP.
 
     The ELCC credit rises with duration; the saturation derate falls as
     existing storage approaches the deployment ceiling. Together they make
@@ -862,7 +874,8 @@ def estimate_capacity_value(
     if not config.storage_capacity_value:
         return 0.0
     design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
-    if not design.capacity_market or design.net_cone_per_kw_yr <= 0.0:
+    base_price = design.capacity_price_per_firm_mw_yr(config, reserve_position)
+    if base_price <= 0.0:
         return 0.0
 
     duration_hr = float(STORAGE_TECHS[tech_name]["duration_hr"])
@@ -872,7 +885,7 @@ def estimate_capacity_value(
     penetration = 0.0 if ceiling <= 0.0 else min(1.0, existing_mw / ceiling)
     derate = (1.0 - penetration) ** STORAGE_ELCC_SATURATION_EXPONENT
 
-    return design.net_cone_per_kw_yr * 1000.0 * elcc * derate
+    return base_price * elcc * derate
 
 
 def compute_storage_annual_cost(
@@ -988,6 +1001,7 @@ def apply_storage_new_entry(
     cumulative: CumulativeDeployment | None = None,
     deliverability_headroom: dict[str, float] | None = None,
     endogenous_as_revenue_per_mw_yr: float | None = None,
+    reserve_position: float | None = None,
 ) -> list[StorageUnit]:
     """Add storage whose stacked value beats its annualized cost.
 
@@ -998,7 +1012,10 @@ def apply_storage_new_entry(
       MARKET_DESIGN has a capacity market and when
       ``config.storage_capacity_value`` is on. Its duration-rising ELCC credit
       and penetration-falling saturation derate tilt entry toward longer
-      durations as storage saturates the peak.
+      durations as storage saturates the peak. The per-firm-MW capacity price
+      it scales is the shared seam (rule 19): fixed net-CONE by default, or the
+      CR-1 sloped-curve price when ``config.capacity_market_clearing`` is on and
+      the runner supplies ``reserve_position`` (accredited firm ÷ requirement).
 
     Profitable techs are ranked by margin and built in merit order, but no
     single tech may take more than ``STORAGE_TECH_BUILD_SHARE_CAP`` of one
@@ -1064,7 +1081,9 @@ def apply_storage_new_entry(
             degradation_cost_per_mwh=_degradation_cost_per_mwh(tech_name, config),
         )
         capacity_value = (
-            estimate_capacity_value(tech_name, existing_mw, config, iso)
+            estimate_capacity_value(
+                tech_name, existing_mw, config, iso, reserve_position
+            )
             * deliverability_factor
         )
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin) — ~85% of
