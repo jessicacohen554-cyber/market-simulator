@@ -119,6 +119,7 @@ ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
 # Monthly raw parquets: pjm_energy_offers_YYYY_MM.parquet.  Files are gitignored
 # because the 3-year corpus is ~4 GB; re-fetch with scripts/fetch_pjm_energy_offers.py.
 PJM_ENERGY_OFFERS_DIR: Path = RAW_DATA_DIR / "pjm-energy-offers"
+PJM_DA_VIRTUALS_DIR: Path = RAW_DATA_DIR / "pjm-da-virtuals"
 # PJM ancillary-services / reserve-market DataMiner2 exports (reserve_market_
 # results, da_reserve_market_results, ancillary_services, da_ancillary_services,
 # and the derived pjm_<year>_as_up_mw withholding series). See

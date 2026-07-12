@@ -477,6 +477,8 @@ def run_year(
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
+    pjm_da_virtual_bids: bool = False,
+    pjm_offer_midcurve_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -685,6 +687,8 @@ def run_year(
         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
         pjm_offer_surface_conditional=pjm_offer_surface_conditional,
+        pjm_da_virtual_bids=pjm_da_virtual_bids,
+        pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
     )
     if ercot_nuclear_unit_availability:
         # Window-grain nuclear refuel availability (measured 60-Day DAM
@@ -1918,6 +1922,26 @@ def run_year(
         imports_after_hydro=True,
         apply_emission_overrides=False,
     )
+    # PJM DA virtual-bid layer (G-22 lever B, config.pjm_da_virtual_bids,
+    # PJM-gated, default off): the year's measured HOURLY submitted INC/DEC
+    # bid curves as pseudo-units with endogenous clearing (data.virtual_bids
+    # module docstring has the structure/admissibility notes). Units append
+    # to the plain fleet list here; their hourly MW bounds apply after the
+    # arrays are built (availability for INC, min_gen for DEC) and their
+    # hourly bid prices land on their fuel_prices rows before assemble_mc.
+    virtual_profiles: dict = {}
+    virtual_price_rows: dict = {}
+    if getattr(config, "pjm_da_virtual_bids", False) and iso == "PJM":
+        from market_sim.data.virtual_bids import build_pjm_da_virtual_units
+
+        virtual_units, virtual_profiles, virtual_price_rows = (
+            build_pjm_da_virtual_units(config, iso, year, demand, zone_names)
+        )
+        fleet = fleet + virtual_units
+        # fuel_fracs is row-parallel with the fleet list (apply_coal_tranches
+        # indexes it by generator position): virtual units pass their full
+        # "fuel" cost through (frac 1.0 = no take-or-pay discount).
+        fuel_fracs = fuel_fracs + [1.0] * len(virtual_units)
     # CT_PEAKER reliability must-run floor: pass the peakers' CAMPD/CEMS hourly
     # on/off shape so the floor starts/stops with the real unit (zero in every
     # hour the plant did not report load), instead of being smeared flat. The
@@ -1962,6 +1986,17 @@ def run_year(
         iso,
         year,
     )
+    # PJM DA virtual-bid layer: hourly MW bounds for the pseudo-units built
+    # above (INC upper bound via availability, DEC lower bound via min_gen).
+    if virtual_profiles:
+        from market_sim.data.virtual_bids import apply_virtual_profiles
+
+        n_bound = apply_virtual_profiles(fleet_arrays, virtual_profiles)
+        logger.info(
+            "PJM %d DA virtual-bid layer: hourly bounds applied to %d pseudo-unit rows",
+            year,
+            n_bound,
+        )
     # ══════════════════════════════════════════════════════════════════════
     # BACKCAST MEASURED INTERCHANGE OVERLAYS — availability / seam limits.
     # Every block below feeds a MEASURED series into the priced node's bounds
@@ -2474,6 +2509,21 @@ def run_year(
     # gas price — the AGT-hub winter spot, so the gas->oil switch trips on cold
     # days (NEISO) — not the per-plant monthly cost alone (PJM).
     apply_dual_fuel_pricing(fuel_prices, fleet_arrays, config, year)
+    # PJM DA virtual-bid layer: the pseudo-units' hourly bid prices are their
+    # fuel_prices rows (heat_rate 1.0, vom 0) — written LAST among the
+    # fuel-price appliers so no gas/coal overlay can touch them.
+    if virtual_price_rows:
+        from market_sim.data.virtual_bids import apply_virtual_bid_prices
+
+        n_priced = apply_virtual_bid_prices(
+            fuel_prices, fleet_arrays, virtual_price_rows
+        )
+        logger.info(
+            "PJM %d DA virtual-bid layer: hourly bid prices applied to %d "
+            "pseudo-unit rows",
+            year,
+            n_priced,
+        )
     carbon_price = resolve_carbon_price(config, year)
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
     # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous EACs,
@@ -2533,6 +2583,29 @@ def run_year(
         offer_surface_mc_bid_adjust = build_pjm_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
+    # PJM MID-CURVE offer surface (G-22 lever A'): floors the econ-tranche
+    # rows' P1 bids at the measured capacity-share offer level
+    # (fleet.build_pjm_offer_midcurve_conditional_markup). Targets econ rows
+    # (+ LONG_RUN peak rows) only — disjoint from the top-of-curve surface's
+    # CC/CT peak rungs, so the two markups SUM without overlap when both
+    # flags are armed (one mechanism per row, rule 19).
+    if getattr(config, "pjm_offer_midcurve_conditional", False) and iso == "PJM":
+        from market_sim.data.fleet import build_pjm_offer_midcurve_conditional_markup
+
+        _surface_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        _midcurve = build_pjm_offer_midcurve_conditional_markup(
+            fleet_arrays, fleet, mc_base, _surface_net_load, config, year
+        )
+        if _midcurve is not None:
+            offer_surface_mc_bid_adjust = (
+                _midcurve
+                if offer_surface_mc_bid_adjust is None
+                else offer_surface_mc_bid_adjust + _midcurve
+            )
     # v4 condition-keyed fast-start amortization horizon
     # (tranche_startup_conditional_runs): the hour's within-year net-load
     # percentile band scales the v3 CAMPD-measured run-length ceiling by the
