@@ -6,14 +6,17 @@
 # direct GitHub API access), so the solve+register runs here and every file
 # is committed via the GitHub Data API with the runner's token.
 #
-# v2 (branch-independent): the first trigger attempt ran on the session
-# branch, which the platform auto-merged and DELETED seconds after the push —
-# so mid-run `git push origin HEAD:<branch>` steps cannot be relied on.
-# This version is workflow_dispatch on main (everything it needs — probe
-# script, miso_rdt wiring, the docs/_miso57_* payload docs — is on main),
-# does NO git pushes, and publishes at the end in two Data-API commits
-# (adds + deletions in one tree each) onto a fresh results branch cut from
-# the CURRENT main tip. Keeper stays 2026-07-11-miso-56-measured-scarcity;
+# v3 (branch-independent body, push trigger): the first attempt ran on the
+# session branch, which the platform auto-merged and DELETED seconds after
+# the push — so mid-run `git push origin HEAD:<branch>` steps cannot be
+# relied on (and the MCP integration cannot fire workflow_dispatch, 403).
+# This version triggers on a push of this file to the session branch but
+# CHECKS OUT MAIN (everything it needs — probe script, miso_rdt wiring, the
+# docs/_miso57_* payload docs — is on main), does NO git pushes, and
+# publishes at the end in two Data-API commits (adds + deletions in one tree
+# each) onto a fresh results branch cut from the CURRENT main tip — so the
+# job is unaffected if the session branch is merged/deleted mid-run. Keeper
+# stays 2026-07-11-miso-56-measured-scarcity;
 # the miso-57 promotion recommendation is in the appended calibration-log
 # entry (owner decision pending).
 #
@@ -39,6 +42,11 @@ name: miso57-solve-register
 
 on:
   workflow_dispatch: {}
+  push:
+    branches:
+      - claude/miso-rdt-south-north-lane-f0owj2
+    paths:
+      - .github/workflows/miso57-solve-register.yml
 
 permissions:
   contents: write
