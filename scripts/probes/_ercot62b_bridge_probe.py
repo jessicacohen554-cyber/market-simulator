@@ -58,10 +58,33 @@ _orig_prep = rc.build_caiso_ra_p1_prep
 def _spoofed_prep(config, iso, fleet, fleet_arrays, mc_base, **kw):
     """Route ERCOT through the ISO-neutral bridge internals (diagnostic only)."""
     if iso == "ERCOT" and getattr(config, "caiso_ra_mustoffer", False):
+        import os
+
+        import numpy as np
+
+        from market_sim.data.floor_mechanisms import MECH_RA_MUSTOFFER
+
         # startup-aware run screen: a ScenarioConfig-only field (no
-        # solve_and_persist kwarg), applied here for the diagnostic.
-        config = config.with_overrides(caiso_ra_bridge_startup_aware=True)
-        return _orig_prep(config, "CAISO", fleet, fleet_arrays, mc_base, **kw)
+        # solve_and_persist kwarg); ON unless ERCOT62B_NO_STARTUP_AWARE is set
+        # (the screen may kill every anchor in the model's flat troughs).
+        if not os.environ.get("ERCOT62B_NO_STARTUP_AWARE"):
+            config = config.with_overrides(caiso_ra_bridge_startup_aware=True)
+        inner = _orig_prep(config, "CAISO", fleet, fleet_arrays, mc_base, **kw)
+        if inner is None:
+            print("[62b] bridge prep is None (gate)", flush=True)
+            return None
+
+        def wrapped(r0):
+            out = inner(r0)
+            if out is None:
+                print("[62b] bridge floored NOTHING", flush=True)
+                return None
+            n = int((out.min_gen_mechanism == MECH_RA_MUSTOFFER).sum())
+            mw = float(np.where(out.min_gen_mechanism == MECH_RA_MUSTOFFER, out.min_gen, 0.0).sum())
+            print(f"[62b] bridge floored unit-hours: {n}, TWh {mw/1e6:.2f}", flush=True)
+            return out
+
+        return wrapped
     return _orig_prep(config, iso, fleet, fleet_arrays, mc_base, **kw)
 
 
