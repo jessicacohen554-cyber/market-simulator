@@ -146,6 +146,64 @@ zero fitted scalars and fully measured inputs) but the INC formulation must
 be reworked to the net-demand form before promotion. Both probes and the
 ablation twin are registered.
 
+## 6. pjm-102 — the net-demand fix (INC phantom supply removed)
+
+**Date:** 2026-07-12. **Run:** `2026-07-12-pjm-102-net-virtual`
+(`results/calibration/pjm102_net_virtual_bids`). Baseline:
+`pjm98_baseline_20260712`. **Determination: REJECT** — the fix is
+structurally correct, but the combination it was meant to unblock is not
+promotable, and for a *second* reason the §5 analysis did not anticipate.
+
+**The fix worked.** `build_pjm_da_virtual_units` was rebuilt to the single
+per-hour NET virtual-demand curve `net(λ) = Σ DEC≥λ − Σ INC≤λ`, rendered
+entirely as DEC-form withdrawal blocks (each submitted price point → a
+combined `dec+inc` block at its price; the lowest-priced `Σdec` MW kept, the
+net-negative tail clamped to zero). **INC cleared 0 GW in all three years**
+(vs pjm-101's ~56 TWh of fuel-type-`import` generation), while the net cleared
+depth held at **+7.8 / +8.3 / +8.1 GW** at the top-150 hours — squarely in the
+measured +7-11 GW band. No phantom supply enters the physical mix. This is the
+correct, real mechanism form and should replace the separate-INC construction
+in any future virtual-bid work.
+
+**But the combo (net + top surface + mid-curve) fails on BOTH load-bearing
+price/mix criteria** (calibration_verdict, rubric 2.4):
+
+| criterion | pjm-101 (INC form) | **pjm-102 (net form)** |
+|---|---|---|
+| C3a mean LMP | PASS* | **FAIL** (2023 +12.4 %) |
+| C1 fuel-mix | FAIL | **FAIL** (CT_PEAKER −10.9/−12.1 TWh) |
+| C4 / C5a | PASS | PASS |
+
+1. **C1 does NOT recover — a different root cause than §5 named.** With INC=0
+   there is no phantom supply, yet CT_PEAKER is still −10.9/−12.1 TWh
+   (2023/24) and CC_REGULAR is +8.3 TWh (2024), both out of band vs actual
+   (actual CT_PEAKER 2024 = 24.0 TWh, baseline 23.0 ≈ exact, pjm-102 11.9).
+   The added net demand is absorbed by **CC_REGULAR, not peakers**, because
+   the **offer surfaces raise the peaker offers** above CC in the depth region
+   — a merit reshuffle. The §5 diagnosis ("C1 fails because INC injects
+   supply") was only half the story; the surfaces carry their own C1 cost.
+2. **C3a REGRESSES from pass to fail — pjm-101's C3a "PASS" was partly
+   spurious.** The cheap INC injection in pjm-101 was doing double duty: it
+   displaced peakers (the C1 regression) AND it suppressed average prices
+   toward actual (the C3a "gain"). Removing the non-physical supply (rule 1)
+   removes the price suppression too, so the honest mean LMP now overshoots
+   (2023 +12.4 %). The G-22 mean-price target was, in part, being met through
+   a mechanism that isn't real — exactly what rule 1 forbids.
+
+**Net-only control** (`pjm102b_net_only`, net virtual bids, no surfaces) —
+isolates the net mechanism from the surfaces:
+
+_Solving; results and the CT_PEAKER isolation land in a follow-up commit._
+
+**Recommendation to owner (updated):** keep **pjm-98** as the keeper. The
+net-demand form is the correct mechanism and is now the committed form of
+`pjm_da_virtual_bids`, but the G-22 price-formation target is **not** met by
+the net + surfaces combo: the pjm-101 C3a pass was partly an artifact of the
+INC phantom supply, and the offer surfaces over-displace peakers vs actual.
+The remaining gap is the DA reserve/ORDC scarcity tail and seam response (the
+extreme-tail maxes of §4), not more offer-surface level. pjm-102 and the
+net-only control are registered as rejects.
+
 ## 5. Discipline
 
 - Rules 13/20/21: every input is a submitted ex-ante measured quantity
