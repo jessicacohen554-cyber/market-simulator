@@ -504,3 +504,99 @@ REGIONAL (South ST_GAS/CT starved while Plains coal/CC over-runs, import
 under-run −4 TWh) rather than an ISO-wide family swap; the warm-committed fix
 is watched against the 2023-24 RDT anchors and the 2025 direction, not
 claimed to close it.
+
+## 13. SOUTHERN-GAS LANE EXECUTED (2026-07-12 — miso-60 stgas-vlr): the 2025
+starvation is the Entergy steam fleet's measured VLR self-commitment, invisible
+to the model; the South-basis "suspect" was a real data bug but counter-directional
+
+**Input adjudication first (rules 14/15, the handoff's suspects in order).**
+
+1. *South delivered-gas basis*: the committed MISO-South 2025 row (+0.095)
+   does NOT reproduce from the file's own methodology — it subtracted the
+   full-year Henry Hub mean (3.529) from the 6-reported-month LA mean (3.560),
+   while every other cell is like-for-like per-month diffs. The correct value
+   is +0.343 (months Feb/May/Jun/Jul/Sep/Oct; EIA API re-pull this session).
+   FIXED in miso_zonal_gas_hub.csv — and counter-directional: the bug
+   FLATTERED South by $0.25/MMBtu (~$2.6/MWh at HR 10.4), so with South at
+   its relatively cheapest basis in three years the model STILL starved it.
+   Basis is not the driver; the honest correction stays (rule 15).
+2. *Seam import ladders*: measured/frozen-formula (rule 23), validated at
+   intake; the −4.2 TWh import gap is outcome-level. No input defect.
+3. *ST_GAS representation*: ROOT CAUSE — CEMS unit-grain forensics:
+
+| plant | online % of ALL hours 2023-25 | plant P5-all-hours | artifact mustrun_pct |
+|---|---|---|---|
+| Nine Mile Point | 98.2% | 414 MW (28% of nameplate) | 0.0 |
+| Sabine | 85.6% | 0 (unit rotation; P5-online 122 MW) | 0.0 |
+| Lewis Creek | 87.8% | 0 (P5-online 55 MW) | 0.0 |
+| Little Gypsy | 50.8% | 0 | 0.0 |
+| Gerald Andrus / Lake Catherine / Waterford | 13.9 / 14.6 / 19.4% | 0 | 0.0 |
+
+The thermal-tranche derive computes the same P5-all-hours floor that grounds
+the coal mustrun tranche, then class-gates it to COAL ("recorded as zero even
+when its high capacity factor would make the all-hours floor look high").
+With no floor, a 1.32× part-load HR on the committed band, and startup
+amortization, the LP leaves the Entergy steamers dark: model South ST_GAS ~6
+vs 16.4 TWh measured (2025); classFull −4.2/−5.1/−9.2 all years. The South's
+load is then served by Plains coal/CC over an N→S RDT flow — the §11
+direction reversal, quantified at its source.
+
+**miso-60 = miso-59 strict meta replay + `st_gas_mustrun_per_plant=True`,
+zero new scalars** (+ the rule-15 basis fix riding as data). The mechanism is
+the EXISTING cc_mustrun_per_plant architecture's ST_GAS leg: each plant's
+measured committed tranche (CEMS P5-when-online) forced on in its measured
+top-online_frac system-load window; offers untouched (rule 19); self-targeting
+by measurement (rule 18 — Gerald Andrus is floored only in its top-load 13.9%);
+own mechanism id + D4_WINDOWS all-24h row (same evidence shape as the ST_GAS
+drag/reliability rows). Driver: MISO SOM-documented out-of-market VLR/
+self-commitment in the South region (Amite South / DSG / WOTAB). Forward
+story: committed share + online fraction re-derive from multi-year CAMPD
+(rule 13). The CT G-20 rejection does not transfer (opposite evidence
+signature). Floors: Nine Mile 467 MW, Sabine 303, Lewis Creek 106, Little
+Gypsy 100 (+ measured Midwest legs, e.g. plant 990 at 97.4% online). LOYO by
+construction (zero-scalar boolean over 2023-25-pooled per-plant measurements).
+
+**RESULT (scored, rubric v2.4):**
+
+| anchor / metric | miso-59 (keeper) | miso-60 main | miso-60 twin (floor off) |
+|---|---|---|---|
+| 2023 S→N mean-flowing / sep-when-binding | 1551 MW / $2.48 | 1600 MW / $2.61 | — |
+| 2024 S→N mean-flowing / sep-when-binding | 1523 MW / $2.43 | 1549 MW / $2.48 | — |
+| 2025 S→N mean-flowing | 322 MW (4% binding) | 1083 MW (7.9% flowing) | — |
+| 2025 N→S binding share of hours | 29% | 11.9% | — |
+| 2025 summer Midwest−South separation | ~$0 | −$0.15 (vs IMM $9.31) | — |
+| C1 all / free | 12/16 · 8/12 | **13/16 · 9/12** (CC-2024 clears) | 12/16 (CC-2024 +8.27 stays) |
+| sysvol-2025 gas | −6.9% FAIL | **−5.5% FAIL** (0.5pp out) | −6.6% FAIL |
+| C3a-2025 | −14.7% | −15.8% (regression) | −14.7% |
+| C3b-2025 duration shape | PASS | FAIL (NRMSE 0.206, regression) | PASS |
+| interchange-2025 (actual −19.0) | −14.0 | −11.6 (regression) | — |
+| ST_GAS TWh 23/24/25 | under-run all years | 16.7 / 19.6 / 12.1 | — |
+| C8 ST_GAS-2025 | n/a | 36.6% forced → **grounded PASS** (D-4 0 off-window, D-1 r 0.98 / cv 2.18) | — |
+| FAIL set | 5 | 6 (+price_shape) | 5 (same as miso-59) |
+
+*(2025 RDT baseline caveat: the 322 MW / 29% row is §11's miso-57/58
+construction — miso-59 recorded "2025 direction unchanged" and its parquets
+are gone, so the exact same-script comparison is unavailable; the miso-60
+column is scripts/probes/_miso59_rdt_anchors.py on this bundle. The 2023/24
+anchor rows ARE same-script comparisons vs the miso-59 disclosure.)*
+
+The twin isolates the trade exactly: the floor buys the CC_REGULAR-2024 C1
+clear, +1.1pp of sysvol-2025 gas, and the RDT direction movement, at the cost
+of −1.1pp C3a-2025 and the C3b-2025 flip — forced supply depresses a 2025 LMP
+that is already too low for reasons this lane does not own (the July-2025
+−18.8% was pre-adjudicated in §10 to ELMP ex-post/emergency constructs +
+deeper operator derates + RPE, none modeled). The price regressions are the
+flip side of a real supply mechanism landing BEFORE the price mechanisms
+exist; the named build-out that would reprice it is unchanged: RPE ($200
+post-contingency, additive in violations), hourly measured RDT limit intake
+(rule-14 upgrade over the 92% static derate), the 2025-09-30 shortage-pricing
+redesign, and the commitment-posture window rows (COAL_BIT −15.7 both years,
+CT_PEAKER-2024 +11.2 — untouched by this lane, as expected).
+
+**Disposition:** registered 2026-07-12-miso-60-stgas-vlr (+ zero-forcing twin).
+Keeper promotion is the owner's call: miso-60 is strictly more structurally
+faithful (a measured, SOM-documented commitment the model previously
+contradicted; D-1 shape r=0.98; grounded C8) and improves the volume/mix
+interior, at a one-FAIL price-side regression owned by named deferred
+mechanisms. Owner directive (this session): MISO dashboard pruned to the
+keeper + post-keeper runs (25 pre-keeper registrations removed; bundles kept).

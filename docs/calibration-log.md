@@ -11070,3 +11070,48 @@ monthly shape stays its own root-cause item.
 **Holdouts / governance.** No solve, score, or intake outside 2023 (train
 year); no offer curve, sigmoid, floor, hinge, or derive-script value changed;
 no dashboard registration (rule 16); ORDC tariff params untouched (rule 26).
+
+## 2026-07-12 — MISO-60 stgas-vlr: ST_GAS VLR commitment floor (Southern-gas
+lane executed) + South-basis construction fix + dashboard prune to keeper era
+
+**Lane adjudication (FINDING §13).** The miso-59 handoff's suspects in order:
+(1) MISO-South 2025 delivered-gas basis had a REAL construction bug — the
+committed +0.095 subtracted the full-year HH mean from a 6-month LA mean; the
+like-for-like formula reproducing every other cell gives +0.343 (fixed in
+miso_zonal_gas_hub.csv) — but it FLATTERED South, so basis is NOT the
+starvation driver (kept per rule 15). (2) Seam ladders: no input defect.
+(3) ST_GAS representation: ROOT CAUSE — the Entergy South steam fleet is
+measured always/mostly-online under VLR self-commitment (Nine Mile 98.2% of
+ALL hours 2023-25 with a 414 MW P5-all-hours plant floor — the same P5
+quantity that grounds coal mustrun; Sabine 85.6%; Lewis Creek 87.8%) while
+derive_thermal_tranches class-gates the measured floor to COAL and the LP
+runs the class near-dark (~6 vs 16.4 TWh measured South 2025).
+
+**miso-60 = miso-59 strict meta replay + `st_gas_mustrun_per_plant=True`**
+(zero new scalars): the ST_GAS leg of the cc_mustrun_per_plant per-plant
+local-reliability commitment floor — measured committed tranche forced in the
+plant's measured top-online_frac system-load window; own mech id, D4 all-24h
+row, DOF auto-row, twin auto-ablates. Registered
+2026-07-12-miso-60-stgas-vlr (+ zero-forcing twin). SCORED NOT-YET, FAIL set
+{fuelmix, sysvol, price_mean, price_shape, price_tail, storage_shape} — one
+MORE than miso-59. What it buys: C1 13/16 (free 9/12; CC_REGULAR-2024 +8.2
+clears — twin keeps it, so the floor owns the fix), sysvol-2025 gas
+−6.9→−5.5% (twin isolates +1.1pp to the floor), ST_GAS 16.7/19.6/12.1 TWh,
+2025 RDT moves strongly toward measured (S→N mean-flowing →1083 MW, N→S
+binding →11.9% of hours) without flipping (summer separation ~$0 vs $9.31);
+2023/24 RDT anchors hold (1600/1549 MW, $2.61/$2.48). What it costs:
+C3a-2025 −14.7→−15.8%, C3b-2025 flips FAIL (NRMSE 0.206), interchange-2025
+−14.0→−11.6 vs −19.0 — forced supply depresses an LMP already low for
+reasons owned by the named deferred price mechanisms (RPE $200, ELMP ex-post,
+2025-09-30 shortage redesign, hourly measured RDT limits). C8 ST_GAS-2025
+grounded above budget: 36.6% forced > 30% cap, PASSES the v2.2 escalation
+(D-4 zero off-window; D-1 profile_r 0.98, cv_ratio 2.18) — the forcing is
+shape-faithful. LOYO by construction (zero-scalar boolean; the miso-59
+argument). Keeper promotion: OWNER-FLAGGED with recommendation (structural
+fidelity + tunable path forward vs one price-side FAIL regression); keepers
+.json untouched this session pending the owner's call.
+
+**Dashboard prune (owner directive, this session):** MISO run explorer pruned
+to the keeper era — 25 pre-keeper registrations removed (sidecars + runs
+payloads; bundles stay under results/calibration/). Remaining: miso-59 pair +
+miso-60 pair.
