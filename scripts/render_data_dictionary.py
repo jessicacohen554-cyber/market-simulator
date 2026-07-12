@@ -103,6 +103,7 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "capacity-market-demand-curve",
     "capacity-market-auction-price",
     "capacity-market-elcc",
+    "transfer-constraint-binding",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -182,6 +183,28 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "only (crosswalk sanity checks), never a model input. Published "
             "operating-security limits, rule #13/#14 admissible; per-ISO "
             "specs in `scripts/lib/transfer_interface_limits/` (PJM first)."
+        ),
+    },
+    "transfer-constraint-binding": {
+        "summary": (
+            "Measured binding record (posted shadow prices + live demand-curve "
+            "breakpoints) for published inter-regional transfer constraints — "
+            "MISO's RDT from the public `{da,rt}_pbc` market reports."
+        ),
+        "reconciles": (
+            "Verbatim per-day pbc rows (one row per constraint-interval with a "
+            "nonzero preliminary shadow price; DA hourly, RT 5-minute; MISO "
+            "market time = EST year-round) consolidated per (market, "
+            "market-date year), directions normalized from the posted "
+            "constraint names. Backcast VALIDATION series ONLY — when a "
+            "constraint binds is a dispatch outcome, so this is never an LP "
+            "input (rule #13); it anchors model-vs-measured RDT binding "
+            "frequency, shadow depth, and violation incidence. The posted "
+            "shadow is the pbc constraint's own dual; the RPE's additive $200 "
+            "lands on subregional price separation and has no public record "
+            "(2024 MISO SOM §II.E/§III.B). Per-ISO specs in "
+            "`scripts/lib/transfer_constraint_binding/` (MISO first); "
+            "train-window years only (rule #22 guard in the fetch script)."
         ),
     },
     "ercot-wtx-congestion": {
