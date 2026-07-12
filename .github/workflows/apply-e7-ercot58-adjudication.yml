@@ -1,0 +1,75 @@
+# One-shot, re-dispatchable: land the 2026-07-12 E7 adjudication docs +
+# status.js refresh (ERCOT ercot56-vs-ercot58 pair adjudicated KEEP; pair
+# recorded in E7_STALENESS_ADJUDICATED by the same push that carries this
+# workflow). Script transport instead of whole-file transport (g61b/ercot57/
+# pjm97/caiso7475 precedent): calibration-log.md is too large to relay whole
+# through the MCP push_files call, and status.js is regenerated, not relayed —
+# scripts/build_status.py is stdlib-only and the bundles it scores live under
+# results/calibration/ in this checkout. The apply script was verified
+# byte-identical to the session's local commit before push; every edit is
+# idempotency-guarded, so re-runs are safe. Checks out the pushed SHA
+# (survives auto-merge branch deletion) and recreates the branch on push when
+# it is gone.
+name: apply-e7-ercot58-adjudication
+
+on:
+  push:
+    branches:
+      - claude/market-sim-calibration-irfebd
+    paths:
+      - .github/workflows/apply-e7-ercot58-adjudication.yml
+      - .github/patches/e7-ercot58/apply_e7_log_entry.py
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+
+      - name: Apply E7 adjudication edits (guarded)
+        run: |
+          set -euo pipefail
+          python3 .github/patches/e7-ercot58/apply_e7_log_entry.py
+
+      - name: Rebuild status.js (S1 was stale)
+        run: |
+          set -euo pipefail
+          python3 scripts/build_status.py
+          python3 scripts/build_status.py --check
+
+      - name: Keeper audit must pass
+        run: |
+          set -euo pipefail
+          python3 scripts/audit_keepers.py --check
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          BR=claude/market-sim-calibration-irfebd
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet; then
+            echo "nothing to commit - already applied"
+            exit 0
+          fi
+          git add scripts/audit_keepers.py docs/calibration-log.md frontend/data/backcast/status.js
+          git commit \
+            -m "E7 adjudication: KEEP ercot56-nucwin over ercot58 probe record; rebuild status.js" \
+            -m "ercot58-joint-ordc-only is the registered honest record of the owner-sanctioned joint probe round (rules 1/15/16), not a keeper candidate: its v3 realized-room RTORPA converts the ledgered C5c/G-37 storage-dispatch-shape error into price errors (C3a +324/+71/+206%). Pair recorded in E7_STALENESS_ADJUDICATED dated 2026-07-12 (annotation only, WARN stays visible per G-04); calibration-log entry appended; status.js rebuilt (S1 was stale); audit_keepers green (0 FAIL). MISO E7 WARN (miso-56 vs miso-57) left unadjudicated - live PROMOTE recommendation awaiting the owner." \
+            -m "Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>"
+          if git ls-remote --exit-code origin "refs/heads/$BR" >/dev/null 2>&1; then
+            git pull --rebase origin "$BR"
+          else
+            echo "branch $BR deleted upstream (auto-merged) - recreating it with the docs commit"
+            git fetch origin main
+            git rebase origin/main
+          fi
+          git push origin "HEAD:$BR"
