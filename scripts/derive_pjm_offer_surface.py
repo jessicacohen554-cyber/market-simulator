@@ -363,27 +363,46 @@ def main(argv: list[str] | None = None) -> int:
         & ~zero_top
     )
     segments = {"CT_PEAKER": seg_ct, "CC_REGULAR": seg_cc}
-    seg_validation = {}
-    for cls, mask in segments.items():
-        seg_mw = float(per_unit.loc[mask, "ecomax"].sum())
-        model_mw = basis[cls]["class_mw"]
-        seg_validation[cls] = {
-            "n_units": int(mask.sum()),
-            "segment_mw": round(seg_mw, 0),
-            "model_class_mw": round(model_mw, 0),
-            "mw_ratio_segment_over_model": round(seg_mw / model_mw, 3),
-        }
-        print(
-            f"  segment {cls}: {int(mask.sum())} units, "
-            f"{seg_mw / 1e3:.1f} GW vs model class {model_mw / 1e3:.1f} GW "
-            f"(x{seg_mw / model_mw:.2f})"
-        )
 
     edges = tuple(args.edges)
     n_bins = len(edges) + 1
     offers["bin"] = np.searchsorted(
         np.asarray(edges), offers["q"].to_numpy(), side="right"
     ).astype("int8")
+
+    # Hour counts per net-load bin across the derive span (for the per-hour
+    # offered-MW validation below: total offered rows are unit-hours, so the
+    # honest comparison against the model's class MW is MW per HOUR, not the
+    # multi-year union of ever-offering units).
+    nl_bin = np.searchsorted(np.asarray(edges), nl["q"].to_numpy(), side="right")
+    hours_per_bin = np.bincount(nl_bin, minlength=n_bins).astype(float)
+
+    seg_validation = {}
+    for cls, mask in segments.items():
+        seg_uids = per_unit.index[mask]
+        seg_rows = offers[offers["uid"].isin(seg_uids)]
+        model_mw = basis[cls]["class_mw"]
+        # Mean simultaneous offered MW: all hours, and in the tightest bin —
+        # the per-hour footprint the ladder actually represents.
+        per_hour_mw = float(seg_rows["ecomax"].sum() / hours_per_bin.sum())
+        top_bin_mw = float(
+            seg_rows.loc[seg_rows["bin"] == n_bins - 1, "ecomax"].sum()
+            / hours_per_bin[n_bins - 1]
+        )
+        seg_validation[cls] = {
+            "n_units": int(mask.sum()),
+            "union_mw_all_units": round(float(per_unit.loc[mask, "ecomax"].sum()), 0),
+            "offered_mw_per_hour_mean": round(per_hour_mw, 0),
+            "offered_mw_per_hour_top_bin": round(top_bin_mw, 0),
+            "model_class_mw": round(model_mw, 0),
+            "mw_ratio_top_bin_over_model": round(top_bin_mw / model_mw, 3),
+        }
+        print(
+            f"  segment {cls}: {int(mask.sum())} units; offered "
+            f"{per_hour_mw / 1e3:.1f} GW/h mean, {top_bin_mw / 1e3:.1f} GW/h in "
+            f"the top bin, vs model class {model_mw / 1e3:.1f} GW "
+            f"(top-bin x{top_bin_mw / model_mw:.2f})"
+        )
 
     cap_share = 1.0 / args.rungs
     qs = [(i + 0.5) * cap_share for i in range(args.rungs)]
