@@ -16,14 +16,14 @@
   "rubric_version": 2.4,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: sysvol, price_mean, price_shape, price_tail, dispatch_corr, co2"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, sysvol, price_mean, price_shape, price_tail, dispatch_corr, co2"
   ],
   "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -73,7 +73,7 @@
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
@@ -91,11 +91,11 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 4,
+    "scored": 9,
+    "target_grade": 2,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 6
+    "fails": 7
   },
   "free_class_score": {
     "iso": "CAISO",
@@ -113,13 +113,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 12,
+      "pass": 10,
       "total": 12
     },
     "free": {
-      "pass": 8,
+      "pass": 6,
       "total": 8
     },
-    "headline": "C1 all 12/12 \u00b7 free 8/8"
+    "headline": "C1 all 10/12 \u00b7 free 6/8"
   }
 }

@@ -241,5 +241,50 @@ class TestVintageReconcileFoldIn(unittest.TestCase):
         self.assertAlmostEqual(self._gas_sum(cf), round(85.37 - 8.08 - 4.41, 4), 2)
 
 
+class TestCemsAnchorCap(unittest.TestCase):
+    """CEMS-anchor cap on the combined reconcile (owner-signed 2026-07-12).
+
+    For an :data:`EIA930_NG_CELL_CORRUPT` ISO whose bench part carries
+    ``fossil_cems_grid``, the reconcile target may never exceed the measured
+    fossil total — the CISO 930 NG cell carries a fabricated solar-shaped block
+    from ~2024-05 (FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md §3), so
+    scaling classFull up to it inflated the actual ×1.10-×1.44.
+    """
+
+    def test_cap_binds_below_corrupt_930_cell(self):
+        # 2025-shaped: booked 47.65 vs 930 target 68.53 (×1.44) — the cap holds
+        # the scale at the measured 51.67 (×1.084) instead.
+        cf = {"CC_REGULAR": 37.43, "CC_CHP": 6.5, "CT_PEAKER": 2.2, "ST_GAS": 1.52}
+        e930 = {"gas": 68.53, "coal": 0.0, "other": 0.0, "fossil_cems_grid": 51.67}
+        rch.reconcile_vintage_classes(cf, e930, "CAISO")
+        total = round(sum(cf.values()), 2)
+        self.assertAlmostEqual(total, 51.67, places=1)
+        self.assertLess(total, 60.0)  # never the corrupted 930 level
+
+    def test_cap_inert_within_deadband(self):
+        # 2023/24-shaped: booked total within ±3% of the anchor — classFull is
+        # left byte-identical (no scale fires at all).
+        cf = {"CC_REGULAR": 51.86, "CC_CHP": 8.0, "CT_PEAKER": 4.6, "ST_GAS": 2.8}
+        e930 = {"gas": 74.24, "coal": 0.0, "other": 0.0, "fossil_cems_grid": 68.76}
+        before = dict(cf)
+        rch.reconcile_vintage_classes(cf, e930, "CAISO")
+        self.assertEqual(cf, before)
+
+    def test_930_below_anchor_still_governs(self):
+        # One-directional cap: a 930 total BELOW the anchor is not raised to it.
+        cf = {"CC_REGULAR": 50.0}
+        e930 = {"gas": 45.0, "coal": 0.0, "other": 0.0, "fossil_cems_grid": 60.0}
+        rch.reconcile_vintage_classes(cf, e930, "CAISO")
+        self.assertAlmostEqual(cf["CC_REGULAR"], 45.0, places=1)
+
+    def test_non_member_iso_ignores_anchor_field(self):
+        # A non-corrupt ISO with a (hypothetical) anchor field keeps the plain
+        # 930 reconcile — membership is CEMS-evidence-gated per ISO.
+        cf = {"CC_REGULAR": 90.0}
+        e930 = {"gas": 100.0, "coal": 0.0, "other": 0.0, "fossil_cems_grid": 95.0}
+        rch.reconcile_vintage_classes(cf, e930, "ERCOT")
+        self.assertAlmostEqual(cf["CC_REGULAR"], 100.0, places=1)
+
+
 if __name__ == "__main__":
     unittest.main()
