@@ -518,7 +518,7 @@ FAILS regardless of every score above.** Four assertions, all required:
 
 1. **Every active lever traces to a measured input** (a physical/market quantity
    that would regenerate for a forward year and respond to changed conditions —
-   the rule #12 admissibility test). No lever exists only to move a residual.
+   the rule #13 admissibility test). No lever exists only to move a residual.
 2. **No fitting to price residuals** — no adder/haircut/sigmoid tuned to the price
    error.
 3. **No pinning to actuals** — no unit pinned to its observed CEMS generation, no
@@ -619,7 +619,8 @@ FAILS regardless of every score above.** Four assertions, all required:
     1. **Provenance (D-4):** every binding non-exempt mechanism forcing the class
        clears D-4 off-window binding — it binds only inside its driver-justified
        `D4_WINDOWS` window. A mechanism with **no declared window** fails here
-       (rule 12: no floor without a window), as does one that binds off-window.
+       (CLAUDE.md rule 17 — "no floor without a window", cited as "rule 12" in
+       older code comments), as does one that binds off-window.
     2. **Shape (D-1):** the class's D-1 hour-of-day profile clears the artifact
        gates (`profile_r ≥ d1_min_profile_r` and off-peak `cv_ratio ≥
        d1_min_cv_ratio`), applied to **any** escalating class (not only the
