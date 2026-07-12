@@ -1,0 +1,198 @@
+# One-shot: solve the miso-57 (RDT S->N congestion lane) probe pair (main +
+# zero-forcing ablation twin) on CI and register both on the backcast
+# dashboard. The caiso-67/69/74/75/76/77 precedent: the session environment
+# cannot transport the ~1 MB run payloads or the binary bench parts through
+# the MCP push_files relay byte-safely (and this session's container has no
+# direct GitHub API access), so the solve+register runs here and the per-run
+# files are committed via the GitHub Data API with the runner's token
+# (scripts/ci_api_upload_multi.py). Keeper stays
+# 2026-07-11-miso-56-measured-scarcity; the miso-57 promotion recommendation
+# is recorded in the calibration-log entry (owner decision pending).
+#
+# Probe: scripts/probes/_miso57_rdt_congestion.py (already on main) — the
+# miso-56 keeper recipe replayed from its exhaustive meta.json plus exactly
+# two structural transmission changes: miso_south_seam_split (severs the free
+# 3 GW South->external->Midwest wheel around the RDT) and miso_rdt_tcdc
+# (published 92% default derate + $40/$500 two-step TCDC priced tiers;
+# constants.MISO_RDT_*, 2024 SOM §III.B / MISO-SPP JOA). Years 2023-2025
+# sequential within each invocation (CLAUDE.md rule 12); the two invocations
+# run sequentially on this one runner (a MISO full-structure year needs
+# ~15 GB — swap is provisioned below, the _miso57_chain.sh convention).
+#
+# DELIBERATELY NO capacity-deliverability curation: the miso-56 keeper (and
+# this session's verification solve) ran with the MISO clean partition absent
+# — static PY2025-26 summer CIL/CEL fallback. Curating it here would change
+# the comparison basis vs the keeper (strict-replay discipline).
+#
+# The MISO registry is at 15/15 mains, so registration is preceded by the
+# top-15 prune (rule 15 retention): 2026-07-06-miso-44-wefor-neutral (+ twin)
+# — the oldest MISO mains. Bundle dirs stay; only sidecars + payloads go.
+name: miso57-solve-register
+
+on:
+  push:
+    branches:
+      - claude/miso-rdt-south-north-lane-f0owj2
+    paths:
+      - .github/workflows/miso57-solve-register.yml
+
+permissions:
+  contents: write
+
+jobs:
+  solve-register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Provision swap (MISO full-structure year needs ~15 GB)
+        run: |
+          set -euo pipefail
+          sudo fallocate -l 16G /swapfile-miso
+          sudo chmod 600 /swapfile-miso
+          sudo mkswap /swapfile-miso
+          sudo swapon /swapfile-miso
+          free -g
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install openpyxl
+
+      - name: Solve miso-57 main (2023-2025, sequential years)
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: python scripts/probes/_miso57_rdt_congestion.py main 2>&1 | tee results/calibration/miso57_rdt_congestion_solve.log
+
+      - name: Solve miso-57 ablation twin
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: python scripts/probes/_miso57_rdt_congestion.py ablation 2>&1 | tee results/calibration/miso57_rdt_congestion_ablation_solve.log
+
+      - name: DOF ledgers + attestations (ledger FIRST, then attestation merge)
+        run: |
+          set -euo pipefail
+          python scripts/build_dof_ledger.py results/calibration/miso57_rdt_congestion --iso MISO
+          python scripts/build_dof_ledger.py results/calibration/miso57_rdt_congestion-ablation --iso MISO
+          python scripts/gen_miso57_attestation.py main
+          python scripts/gen_miso57_attestation.py ablation
+
+      - name: Score legitimacy diagnostics (both bundles)
+        env:
+          MALLOC_ARENA_MAX: "2"
+        run: |
+          set -uo pipefail
+          # legitimacy_diagnostics.py exits 1 when a gate fails; the artifact
+          # is written before the exit, so tolerate the exit code and only
+          # fail the job if an artifact is genuinely missing/empty
+          # (caiso77-solve-register precedent).
+          for b in miso57_rdt_congestion miso57_rdt_congestion-ablation; do
+            python scripts/legitimacy_diagnostics.py \
+              --bundle "results/calibration/$b" \
+              --iso MISO --years 2023 2024 2025 \
+              --json-out "results/calibration/$b/legitimacy_diagnostics.json" || true
+            test -s "results/calibration/$b/legitimacy_diagnostics.json"
+          done
+
+      - name: Prune MISO registry to top-15 (miso-44 pair, oldest mains)
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git rm -q \
+            frontend/data/backcast/registry/2026-07-06-miso-44-wefor-neutral.json \
+            frontend/data/backcast/registry/2026-07-06-miso-44-ablation.json \
+            frontend/data/backcast/runs/2026-07-06-miso-44-wefor-neutral.js \
+            frontend/data/backcast/runs/2026-07-06-miso-44-ablation.js
+          git commit -m "results: prune MISO registry to top-15 retention — miso-44-wefor-neutral (+ twin) displaced by miso-57 (bundles kept) [skip ci]"
+          git push origin HEAD:claude/miso-rdt-south-north-lane-f0owj2
+
+      - name: Register both runs on the dashboard
+        run: |
+          set -euo pipefail
+          python scripts/dashboard_add_run.py \
+            --label "miso 57 rdt congestion" \
+            --bundle results/calibration/miso57_rdt_congestion | tee /tmp/r57m.out
+          python scripts/dashboard_add_run.py \
+            --label "miso 57 rdt congestion ablation" \
+            --bundle results/calibration/miso57_rdt_congestion-ablation | tee /tmp/r57a.out
+          echo "RID57M=$(grep '^RUN_ID=' /tmp/r57m.out | cut -d= -f2)" >> "$GITHUB_ENV"
+          echo "RID57A=$(grep '^RUN_ID=' /tmp/r57a.out | cut -d= -f2)" >> "$GITHUB_ENV"
+
+      - name: Write condensed metrics sidecars (G-49)
+        run: |
+          set -euo pipefail
+          python scripts/calibration_verdict.py --run-id "$RID57M" --write-metrics
+          python scripts/calibration_verdict.py --run-id "$RID57A" --write-metrics
+
+      - name: Patch sidecar definitions (session-refined text + twin link)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json, os
+          patch = json.load(open('docs/_miso57_sidecar_patch.json'))
+          R = 'frontend/data/backcast/registry'
+          m, a = os.environ['RID57M'], os.environ['RID57A']
+          s = json.load(open(f'{R}/{m}.json'))
+          s['definition'] = patch['main']['definition']
+          s['ablation_twin'] = a
+          s['market_story'] = patch['main']['market_story']
+          json.dump(s, open(f'{R}/{m}.json', 'w'), indent=1)
+          t = json.load(open(f'{R}/{a}.json'))
+          t['definition'] = patch['ablation']['definition']
+          json.dump(t, open(f'{R}/{a}.json', 'w'), indent=1)
+          print('sidecars patched:', m, a)
+          PY
+
+      - name: Append calibration-log entry + FINDING §11; remove session payload docs
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          log_path = 'docs/calibration-log.md'
+          log = open(log_path).read()
+          entry = open('docs/_miso57_log_entry.md').read()
+          # Idempotent on re-run.
+          if 'MISO-57: RDT S→N congestion lane executed' not in log:
+              if not log.endswith('\n'):
+                  log += '\n'
+              log += '\n' + entry.strip() + '\n'
+              open(log_path, 'w').write(log)
+          f_path = 'results/calibration/FINDING-miso-august-scarcity-2026-07.md'
+          f = open(f_path).read()
+          s11 = open('docs/_miso57_finding_s11.md').read()
+          if 'LANE EXECUTED (2026-07-12' not in f:
+              if not f.endswith('\n'):
+                  f += '\n'
+              f += '\n' + s11.strip() + '\n'
+              open(f_path, 'w').write(f)
+          PY
+          git rm -q docs/_miso57_log_entry.md docs/_miso57_sidecar_patch.json docs/_miso57_finding_s11.md
+          git add docs/calibration-log.md results/calibration/FINDING-miso-august-scarcity-2026-07.md
+          git commit -m "docs: miso-57 calibration-log entry + FINDING §11 — RDT lane executed; 2025 separation gap re-attributed to the mid-merit split lane; keeper recommendation to owner (keepers.json untouched) [skip ci]"
+          git push origin HEAD:claude/miso-rdt-south-north-lane-f0owj2
+
+      - name: Upload per-run files via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_multi.py \
+            --rid "$RID57M" --bundle results/calibration/miso57_rdt_congestion \
+            --rid "$RID57A" --bundle results/calibration/miso57_rdt_congestion-ablation \
+            --branch claude/miso-rdt-south-north-lane-f0owj2 \
+            --bench-iso MISO \
+            --extra results/calibration/miso57_rdt_congestion_solve.log \
+            --extra results/calibration/miso57_rdt_congestion_ablation_solve.log \
+            --message "results: register miso-57 (RDT S->N congestion lane: bypass severed + published 92% derate/TCDC) + zero-forcing twin on the backcast dashboard (keeper stays miso-56) [skip ci]"
