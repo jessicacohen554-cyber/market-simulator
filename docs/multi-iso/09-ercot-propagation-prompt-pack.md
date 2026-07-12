@@ -247,7 +247,7 @@ are in the retirement screen; an import node resolves where the ISO has import
 tranches; and ERCOT carries no import node and a zero state carbon price
 (parity). **No config gap was found — no backfill and no engine-code change
 were needed.** Per-ISO results are tabulated in
-`docs/multi-iso/propagation-coverage.md`.
+`docs/sessions/multi-iso/propagation-coverage.md` (archived).
 
 ---
 

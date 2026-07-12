@@ -13,7 +13,7 @@
 > 2023–2025 backcast** (Stage H complete, 2026-06-12): 4 load zones
 > (North/Central/Boston/Connecticut) + HQ_import node, measured AGT
 > winter basis, RGGI in MC, dual-fuel switching, measured interchange
-> schedule. See `docs/multi-iso/neiso-backcast-2024.md`.
+> schedule. See `docs/sessions/multi-iso/neiso-backcast-2024.md` (archived).
 
 Status: **topology landed; calibration pending.** All seven ISOs are now
 registered in `config/iso_configs.py` with real (cited, Tier-3) zone load

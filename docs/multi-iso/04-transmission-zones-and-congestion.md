@@ -2,17 +2,11 @@
 
 > **As-built note:** the topologies *proposed* below have since landed in
 > `config/iso_configs.py`, in several cases at a finer grain than this plan
-> sketched. The authoritative current zone/link counts are:
->
-> | ISO | Zones | Links | Notes |
-> |-----|-------|-------|-------|
-> | ERCOT | 7 (6 carry load) | 9 | calibrated reference |
-> | CAISO | 3 + WECC import | 4 | +1 interface limit |
-> | PJM | **8** (ComEd, AEP_Ohio, ATSI, West_APS, Central_PA, Dominion, EMAAC, SWMAAC) | 11 | built at 8 zones, not the 4–5 sketched below |
-> | MISO | 3 (N/C/S) | 3 | |
-> | SPP | 2 (N/S) | 1 | |
-> | NYISO | 5 | 4 | |
-> | NEISO | 4 + HQ import | 7 | |
+> sketched. **The authoritative, current per-ISO zone/link counts live in
+> `config/iso_configs.py`** (summarized in CLAUDE.md's Architecture section) — this
+> doc no longer maintains a duplicate topology table, which had drifted from code
+> (e.g. it still listed MISO at 3 zones N/C/S after the live build refined MISO to
+> 6 zones, per the MISO section below).
 >
 > Read the per-ISO "Target topology" / "Start" lines below as the original
 > sourcing plan, not current state. **Code is the source of truth for topology.**
