@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-12-miso-60-stgas-vlr-ablation",
+ "label": "miso 60 stgas vlr ablation",
+ "date": "2026-07-12",
+ "shorthand": "miso-60-stgas-vlr-ablation",
+ "definition": "miso-60 ST_GAS local-reliability commitment floor (ablation) -- miso-59 meta.json replay (coal warm-boiler committed band + RDT congestion structure: South-seam split + 92% derate/TCDC + reserve co-opt pergen + zonal South + priced seam + SOM coal offers + CT 1.025 measured committed + Order-825 fast-start v4 + measured hourly OR requirements) + st_gas_mustrun_per_plant=True (each gas steamer's measured committed tranche forced on in its measured top-online_frac system-load window -- the Entergy MISO-South VLR/self-commitment trace: Nine Mile synchronized 98.2% of ALL hours, Sabine 85.6%, Lewis Creek 87.8%) + corrected MISO-South 2025 delivered-gas basis (+0.095 -> +0.343, mismatched-window construction bug in miso_zonal_gas_hub.csv; counter-directional, kept per rule 15). The 2025 Southern-gas starvation / RDT regional-reversal lane (FINDING \u00a711/\u00a712 continuity).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-12-miso-60-stgas-vlr-ablation.js",
+ "bundle": "results/calibration/miso60_stgas_vlr-ablation"
+}
