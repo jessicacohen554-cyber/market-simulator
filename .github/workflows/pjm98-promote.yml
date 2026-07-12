@@ -70,8 +70,12 @@ jobs:
           set -euo pipefail
           for b in pjm98_cc_mustrun pjm97_measured_interfaces \
                    pjm98_cc_mustrun-ablation pjm97_measured_interfaces-ablation; do
+            # calibration_verdict exits non-zero on a NOT-YET determination (it
+            # is the gate, not a crash) yet still writes metrics.json; tolerate
+            # that exit, then assert the sidecar was written and parses.
             PYTHONPATH="$PWD" python scripts/calibration_verdict.py \
-              "results/calibration/$b" --write-metrics
+              "results/calibration/$b" --write-metrics || true
+            python -c "import json; json.load(open('results/calibration/$b/metrics.json'))"
           done
 
       - name: Regenerate status.js (deterministic from committed inputs)
