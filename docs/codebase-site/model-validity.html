@@ -9,6 +9,291 @@
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/shared.css">
   <link rel="stylesheet" href="css/site.css">
+
+  <style>
+    /* ============================================================
+       Model-validity page — scoped styles
+       Reuses shared tokens (--hydro, --nuclear, --amber-text, …);
+       everything below is page-local.
+       ============================================================ */
+
+    /* ---- Source-citation footer line per section ---- */
+    .source-cite {
+      margin-top: var(--space-lg);
+      padding-top: var(--space-md);
+      border-top: 1px dashed var(--border);
+      font-size: 0.78rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+    .source-cite strong { color: var(--text-secondary); font-weight: 600; }
+    .source-cite code {
+      font-size: 0.9em;
+      background: rgba(14,165,233,0.08);
+      color: var(--hydro-text);
+      padding: 1px 5px;
+      border-radius: 4px;
+    }
+
+    /* ---- Two-lane "data vs solving" diagram ---- */
+    .lane-scroll { overflow-x: auto; padding-bottom: 4px; }
+    .lane-diagram { margin: var(--space-lg) 0; display: flex; flex-direction: column; gap: 14px; }
+    .lane {
+      display: grid;
+      grid-template-columns: 190px 1fr;
+      gap: 16px;
+      align-items: center;
+    }
+    .lane__label { text-align: right; }
+    .lane__label b { display: block; font-size: 0.92rem; color: var(--navy); font-weight: 700; }
+    .lane__label span { font-size: 0.74rem; color: var(--text-muted); }
+    .lane__track {
+      position: relative;
+      display: grid;
+      grid-template-columns: repeat(9, 1fr);
+      gap: 4px;
+      background: rgba(0,0,0,0.02);
+      border-radius: 8px;
+      padding: 6px;
+    }
+    .lane__cell {
+      text-align: center;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 10px 2px;
+      border-radius: 5px;
+      border: 1px solid transparent;
+      color: var(--text-muted);
+      background: rgba(0,0,0,0.03);
+      white-space: nowrap;
+    }
+    .lane__cell.on-intake {
+      background: rgba(22,163,74,0.12);
+      border-color: rgba(22,163,74,0.35);
+      color: var(--green-text);
+    }
+    .lane__cell.on-solve {
+      background: rgba(14,165,233,0.16);
+      border-color: var(--hydro);
+      color: var(--hydro-text);
+    }
+    .lane__cell.locked {
+      background: repeating-linear-gradient(45deg, rgba(0,0,0,0.03), rgba(0,0,0,0.03) 4px, rgba(0,0,0,0.06) 4px, rgba(0,0,0,0.06) 8px);
+      color: var(--text-muted);
+      border-color: var(--border-light);
+    }
+    .lane__cell .lock { opacity: 0.6; }
+
+    /* ============================================================
+       Interactive holdout-tiers timeline (viz-holdout-tiers.js)
+       Per-tier tokens (explicit rgba — no color-mix, for broad support):
+         --ht-c  accent (solid)   --ht-bg soft tint   --ht-bd border tint
+         --ht-ring focus/active ring
+       ============================================================ */
+    #holdout-tiers-viz { margin: 8px 0 4px; }
+    .ht-error { color: var(--negative); font-size: 0.85rem; }
+
+    .ht-tier--data       { --ht-c:#566370; --ht-bg:rgba(86,99,112,0.08);  --ht-bd:rgba(86,99,112,0.32);  --ht-ring:rgba(86,99,112,0.45); }
+    .ht-tier--train      { --ht-c:#0369A1; --ht-bg:rgba(3,105,161,0.09);   --ht-bd:rgba(3,105,161,0.34);   --ht-ring:rgba(3,105,161,0.45); }
+    .ht-tier--validation { --ht-c:#B45309; --ht-bg:rgba(180,83,9,0.09);    --ht-bd:rgba(180,83,9,0.40);    --ht-ring:rgba(180,83,9,0.50); }
+    .ht-tier--locked     { --ht-c:#6366F1; --ht-bg:rgba(99,102,241,0.11);  --ht-bd:rgba(99,102,241,0.45);  --ht-ring:rgba(99,102,241,0.45); }
+    .ht-tier--forecast   { --ht-c:#0F766E; --ht-bg:rgba(15,118,110,0.10);  --ht-bd:rgba(15,118,110,0.34);  --ht-ring:rgba(15,118,110,0.45); }
+
+    .ht-legend {
+      display: flex; flex-wrap: wrap; gap: 8px;
+      margin-bottom: 18px;
+    }
+    .ht-legend__chip {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 12px 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border-light);
+      background: var(--bg-card);
+      font-size: 0.78rem;
+    }
+    .ht-legend__swatch {
+      width: 12px; height: 12px; border-radius: 3px;
+      background: var(--ht-c); flex-shrink: 0;
+    }
+    .ht-legend__name { font-weight: 700; color: var(--navy); }
+    .ht-legend__disc { color: var(--text-muted); font-size: 0.72rem; }
+
+    .ht-scroll { overflow-x: auto; padding-bottom: 6px; }
+    .ht-timeline {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(78px, 1fr);
+      gap: 6px;
+      min-width: 720px;
+    }
+    .ht-cell {
+      position: relative;
+      display: flex; flex-direction: column; align-items: center; gap: 3px;
+      padding: 12px 4px 10px;
+      border-radius: 10px;
+      border: 1.5px solid var(--ht-bd);
+      background: var(--ht-bg);
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-family: inherit;
+      transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+    }
+    .ht-cell:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .ht-cell:focus-visible { outline: 3px solid var(--ht-ring); outline-offset: 2px; }
+    .ht-cell.is-active {
+      box-shadow: 0 0 0 3px var(--ht-ring);
+      border-color: var(--ht-c);
+    }
+    .ht-cell__year { font-size: 0.92rem; font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
+    .ht-cell__glyph { font-size: 1.05rem; line-height: 1; }
+    .ht-cell__tier { font-size: 0.7rem; font-weight: 700; color: var(--ht-c); text-transform: uppercase; letter-spacing: 0.02em; }
+    .ht-cell__disc { font-size: 0.66rem; color: var(--text-muted); }
+    .ht-cell__scored {
+      margin-top: 2px; font-size: 0.6rem; font-weight: 700;
+      color: var(--ht-c);
+      background: var(--ht-bg);
+      border: 1px solid var(--ht-bd);
+      padding: 1px 6px; border-radius: 999px;
+    }
+    .ht-cell__dual {
+      margin-top: 2px; font-size: 0.58rem; font-weight: 700;
+      color: var(--purple-text);
+    }
+
+    /* Touch-once (locked) — sealed: heavy solid border + inner ring */
+    .ht-cell.ht-tier--locked {
+      border-width: 2.5px;
+      border-style: solid;
+      box-shadow: inset 0 0 0 2px rgba(99,102,241,0.16);
+    }
+    /* Iterable (validation) — open loop: dashed border (distinct from sealed) */
+    .ht-cell.ht-tier--validation {
+      border-style: dashed;
+      border-width: 2px;
+    }
+    /* Roadmap-overlap marker on train years 2024/2025 */
+    .ht-cell.is-crossover::after {
+      content: "\25C7";
+      position: absolute; top: 4px; right: 6px;
+      font-size: 0.7rem; color: var(--purple-text); opacity: 0.7;
+    }
+
+    .ht-detail { margin-top: 16px; min-height: 76px; }
+    .ht-detail__prompt { color: var(--text-muted); font-size: 0.88rem; font-style: italic; margin: 8px 0; }
+    .ht-detail__card {
+      border-left: 4px solid var(--ht-c);
+      background: var(--ht-bg);
+      border-radius: 8px;
+      padding: 14px 18px;
+    }
+    .ht-detail__head { display: flex; align-items: baseline; flex-wrap: wrap; gap: 12px; margin-bottom: 8px; }
+    .ht-detail__badge { font-weight: 800; color: var(--ht-c); font-size: 0.92rem; }
+    .ht-detail__year { font-weight: 800; color: var(--navy); font-size: 1.1rem; }
+    .ht-detail__disc { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--text-muted); }
+    .ht-detail__tiernote { font-size: 0.86rem; color: var(--text-secondary); margin: 0 0 6px; }
+    .ht-detail__yearnote { font-size: 0.84rem; color: var(--text-muted); margin: 0; }
+    .ht-detail__flags { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .ht-flag {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      background: rgba(124,58,237,0.10); color: var(--purple-text);
+      padding: 2px 8px; border-radius: 5px;
+    }
+
+    .ht-contrast { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+    .ht-contrast__card {
+      border: 1px solid var(--ht-bd);
+      border-top: 4px solid var(--ht-c);
+      border-radius: 10px;
+      padding: 16px 18px;
+      background: var(--ht-bg);
+    }
+    .ht-contrast__card.ht-tier--validation { border-style: dashed; border-top-style: solid; }
+    .ht-contrast__head { font-weight: 800; color: var(--ht-c); margin-bottom: 8px; font-size: 0.95rem; }
+    .ht-contrast__glyph { font-size: 1.1rem; }
+    .ht-contrast__card p { font-size: 0.85rem; color: var(--text-secondary); line-height: 1.55; margin: 0; }
+
+    /* ---- Workflow stepper (section 3) ---- */
+    .flow-steps { display: flex; flex-direction: column; gap: 0; margin: var(--space-lg) 0; }
+    .flow-step { display: grid; grid-template-columns: 44px 1fr; gap: 16px; position: relative; padding-bottom: 22px; }
+    .flow-step:not(:last-child)::before {
+      content: ""; position: absolute; left: 21px; top: 40px; bottom: -4px;
+      width: 2px; background: var(--border);
+    }
+    .flow-step__num {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800; font-size: 1rem; color: #fff; z-index: 1;
+    }
+    .flow-step:nth-child(1) .flow-step__num { background: var(--nuclear); }
+    .flow-step:nth-child(2) .flow-step__num { background: var(--amber-text); }
+    .flow-step:nth-child(3) .flow-step__num { background: var(--purple-text); }
+    .flow-step__body h4 { margin: 8px 0 4px; font-size: 1rem; color: var(--navy); }
+    .flow-step__body p { margin: 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
+    .flow-step__loop {
+      display: inline-block; margin-top: 8px;
+      font-size: 0.78rem; font-weight: 700; color: var(--amber-text);
+      background: rgba(180,83,9,0.08); border: 1px dashed var(--amber-text);
+      border-radius: 6px; padding: 4px 10px;
+    }
+
+    /* ---- Enforcement "three files" cards (section 4) ---- */
+    .enforce-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: var(--space-lg) 0; }
+    .enforce-card {
+      border: 1px solid var(--border-light); border-radius: 10px;
+      padding: 16px; background: var(--bg-card);
+    }
+    .enforce-card__file { font-family: var(--font-mono); font-size: 0.76rem; color: var(--hydro-text); word-break: break-all; }
+    .enforce-card__const { font-family: var(--font-mono); font-size: 0.82rem; font-weight: 700; color: var(--navy); margin: 6px 0; }
+    .enforce-card__val { font-family: var(--font-mono); font-size: 0.74rem; color: var(--text-muted); }
+    .enforce-card__role { font-size: 0.78rem; color: var(--text-secondary); margin-top: 8px; line-height: 1.5; }
+
+    .gate-flow { display: flex; flex-wrap: wrap; align-items: stretch; gap: 10px; margin: var(--space-lg) 0; }
+    .gate-node {
+      flex: 1 1 180px; border-radius: 10px; padding: 14px 16px;
+      border: 1px solid var(--border-light); background: var(--bg-card);
+    }
+    .gate-node__k { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700; }
+    .gate-node__v { font-size: 0.88rem; color: var(--text-secondary); margin-top: 6px; line-height: 1.5; }
+    .gate-node.pass { border-color: rgba(22,163,74,0.4); background: rgba(22,163,74,0.05); }
+    .gate-node.fail { border-color: rgba(220,38,38,0.4); background: rgba(220,38,38,0.05); }
+    .gate-and { align-self: center; font-weight: 800; color: var(--text-muted); font-size: 0.9rem; }
+
+    .status-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+    .iso-pill {
+      font-size: 0.76rem; font-weight: 700; padding: 5px 12px; border-radius: 999px;
+      border: 1px solid var(--border-light); color: var(--text-muted); background: var(--bg-card);
+    }
+    .iso-pill.complete { border-color: var(--positive); color: var(--green-text); background: rgba(22,163,74,0.08); }
+
+    /* ---- Span diagram (section 6) ---- */
+    .span-svg { width: 100%; height: auto; display: block; }
+    .roadmap-panel {
+      position: relative; margin: var(--space-lg) 0;
+      border: 2px dashed var(--purple-text); border-radius: 14px;
+      background: repeating-linear-gradient(135deg, rgba(124,58,237,0.03), rgba(124,58,237,0.03) 12px, rgba(124,58,237,0.06) 12px, rgba(124,58,237,0.06) 24px);
+      padding: 20px 22px 24px;
+    }
+    .roadmap-panel__stamp {
+      display: inline-block; margin-bottom: 12px;
+      font-size: 0.72rem; font-weight: 800; letter-spacing: 0.08em; text-transform: uppercase;
+      color: #fff; background: var(--purple-text);
+      padding: 5px 12px; border-radius: 6px;
+      transform: rotate(-1.5deg);
+    }
+    .roadmap-panel h3 { margin: 4px 0 6px; color: var(--navy); font-size: 1.05rem; }
+    .roadmap-panel p { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.6; }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 760px) {
+      /* Keep the label+track alignment; scroll the whole diagram as a unit
+         (both lanes share the year columns, so they stay in register). */
+      .lane-diagram { min-width: 620px; }
+      .lane { grid-template-columns: 150px 1fr; }
+      .lane__cell { font-size: 0.68rem; padding: 9px 2px; }
+      .ht-contrast { grid-template-columns: 1fr; }
+      .enforce-grid { grid-template-columns: 1fr; }
+    }
+  </style>
 </head>
 <body>
   <!-- Navigation (injected by nav.js) -->
@@ -20,16 +305,487 @@
     <header class="header" data-header-variant="pulse">
       <div class="header__inner">
         <span class="header__eyebrow">Backcast</span>
-        <h1 class="header__title">Model Validity</h1>
+        <h1 class="header__title">Model Validity &amp; Holdouts</h1>
         <p class="header__subtitle">
-          How the model earns trust out-of-sample. The three-tier train / validation / locked-test holdout program, the touch-once discipline and its quarantine gates, and the backcast-data vs scored vs forecast year spans.
+          How the model earns trust out-of-sample. The three-tier train / validation / locked-test holdout program, the touch-once discipline and its quarantine gates, the forecast-side hindcast, and the backcast-data vs scored vs forecast year spans.
         </p>
         <div class="header-accent" aria-hidden="true"></div>
       </div>
     </header>
 
-    <!-- Phase 3 (S2): page content goes here -->
+    <!-- ============================================================
+         Section 1 — Data vs solving
+         ============================================================ -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">①</div>
+          <h2>Data vs solving</h2>
+        </div>
 
+        <div class="story-section">
+          <p>
+            Raw data sits on disk from <strong>2018 through H1-2026</strong>. That is <em>not</em> the same as what the model is allowed to solve and score. Under <a href="/CLAUDE.md">CLAUDE.md rule 22</a>, data flows through <strong>two entirely separate channels</strong>, and conflating them is the most common way to accidentally launder a holdout year into the calibration.
+          </p>
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><strong>Intake — ungated.</strong> Data for any out-of-training year may be fetched at any time, for any ISO, under explicit, session-logged owner authorization. It is validated <strong>no-LP only</strong> — byte-identity checks and loader-resolvability, <em>never a dispatch solve</em> — and each intake is recorded in the <code>intake_log</code> of <code>calibration-complete.json</code>.</li>
+            <li><strong>Solve · Score · Register — quarantined.</strong> Solving a year, scoring its dispatch against actuals, or registering it on the dashboard stays under <strong>full quarantine</strong> until that ISO carries a <code>calibration-complete</code> marker. Even then, only the frozen-config one-shot is permitted.</li>
+          </ul>
+        </div>
+
+        <!-- Two-lane diagram -->
+        <div class="fig">
+          <div class="fig__chart" style="min-height:0;">
+            <div class="lane-scroll">
+            <div class="lane-diagram" role="img" aria-label="Intake spans 2018 to H1-2026 and is ungated; solving is quarantined to 2023 to 2025 only.">
+              <div class="lane">
+                <div class="lane__label">
+                  <b>Intake</b>
+                  <span>ungated · no-LP validation</span>
+                </div>
+                <div class="lane__track">
+                  <div class="lane__cell on-intake">2018</div>
+                  <div class="lane__cell on-intake">2019</div>
+                  <div class="lane__cell on-intake">2020</div>
+                  <div class="lane__cell on-intake">2021</div>
+                  <div class="lane__cell on-intake">2022</div>
+                  <div class="lane__cell on-intake">2023</div>
+                  <div class="lane__cell on-intake">2024</div>
+                  <div class="lane__cell on-intake">2025</div>
+                  <div class="lane__cell on-intake">H1&nbsp;’26</div>
+                </div>
+              </div>
+              <div class="lane">
+                <div class="lane__label">
+                  <b>Solve · Score · Register</b>
+                  <span>quarantined to the train window</span>
+                </div>
+                <div class="lane__track">
+                  <div class="lane__cell locked"><span class="lock">🔒</span> 2018</div>
+                  <div class="lane__cell locked"><span class="lock">🔒</span> 2019</div>
+                  <div class="lane__cell locked"><span class="lock">🔒</span> 2020</div>
+                  <div class="lane__cell locked"><span class="lock">🔒</span> 2021</div>
+                  <div class="lane__cell locked"><span class="lock">🔒</span> 2022</div>
+                  <div class="lane__cell on-solve">2023</div>
+                  <div class="lane__cell on-solve">2024</div>
+                  <div class="lane__cell on-solve">2025</div>
+                  <div class="lane__cell locked"><span class="lock">🔒</span> H1&nbsp;’26</div>
+                </div>
+              </div>
+            </div>
+            </div>
+          </div>
+          <div class="fig__caption">
+            <strong>Figure MV1:</strong> The two channels of rule 22. Intake (top) is open across the full 2018→H1-2026 range; solving/scoring/registration (bottom) is confined to the 2023–2025 train window until an ISO is declared calibration-complete. The lock hatches mark years that are on disk but must not be solved.
+          </div>
+        </div>
+
+        <div class="story-section">
+          <p style="margin-bottom:0;">
+            The two logged intakes to date illustrate the discipline: on <strong>2026-07-08</strong>, EIA-930 wide-hourly backfills and CAISO/MISO long-form generation for 2018, 2022 and H1-2026 were fetched and checked for byte-identity against pre-existing rows; on <strong>2026-07-10</strong>, the remaining CAMPD unit-level state/ISO/year combinations for 2022 and H1-2026 landed with arrow-schema and date-range assertions only. Neither triggered a solve.
+          </p>
+        </div>
+
+        <div class="source-cite">
+          <strong>Source:</strong> <code>frontend/data/backcast/calibration-complete.json</code> (channel note + <code>intake_log</code>); <a href="/CLAUDE.md">CLAUDE.md</a> rule 22; <code>docs/handoffs/holdout-policy-memo-2026-07.md</code> §(e); <code>docs/calibration-and-validation-methodology.md</code> §3.2.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Section 2 — Three tiers
+         ============================================================ -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">②</div>
+          <h2>Three tiers</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The holdout program splits every year into one of three disciplines. The distinction that matters most is <strong>iterable vs touch-once</strong>: whether a miss on that year is <em>allowed</em> to change the model.
+          </p>
+        </div>
+
+        <!-- Tier reference table -->
+        <div style="overflow-x:auto; margin: var(--space-md) 0 var(--space-lg);">
+          <table class="data-table" style="min-width:640px;">
+            <thead>
+              <tr><th>Tier</th><th>Years</th><th>Discipline</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Train / calibration</strong></td>
+                <td>2023–2025</td>
+                <td>The <strong>only</strong> years ever tuned against. Every keeper is built and scored here — all three in one bundle (rule 16).</td>
+              </tr>
+              <tr>
+                <td><strong>Validation holdout</strong></td>
+                <td>2022 <span style="color:var(--text-muted)">(ladder → 2020–2022 → earlier)</span></td>
+                <td><strong>Iterable.</strong> Unlocked by the calibration-complete marker; a miss <em>may</em> send you back to re-tune 2023–2025. Selection evidence — <strong>never</strong> a certified skill number.</td>
+              </tr>
+              <tr>
+                <td><strong>Locked test</strong></td>
+                <td>2019 &amp; H1-2026</td>
+                <td><strong>Touch once, ever.</strong> Scored exactly once per ISO with the frozen config; the result stands, whatever it is. 2019 is the clean-regime test; H1-2026 the forward edge.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="story-section">
+          <p style="margin-bottom: 8px;">
+            <strong>Interactive timeline.</strong> Select any year to read the discipline that governs it. Note the visual grammar: <strong>locked</strong> years are <em>sealed</em> (heavy solid border, lock glyph); the <strong>validation</strong> year is an <em>open loop</em> (dashed border, cycle glyph) — you are allowed to go back around.
+          </p>
+        </div>
+
+        <!-- Interactive timeline (viz-holdout-tiers.js) -->
+        <div class="fig">
+          <div class="fig__chart" style="min-height:0;">
+            <div id="holdout-tiers-viz"></div>
+          </div>
+          <div class="fig__caption">
+            <strong>Figure MV2:</strong> The 2018–2030 tier ladder from <code>data/holdout-tiers.json</code>. Tier assignments are the program's real design; the <em>scored</em> flags are program-level illustration — as of 2026-07-11 only NEISO has a calibration-complete marker and an actually-scored one-shot. The ◇ marks on 2024/2025 flag the roadmap crossover overlap (§6), not current behaviour.
+          </div>
+        </div>
+
+        <div class="source-cite">
+          <strong>Source:</strong> <a href="/CLAUDE.md">CLAUDE.md</a> rule 22 (amended 2026-07-07); <code>docs/calibration-and-validation-methodology.md</code> §3.1; <code>docs/handoffs/holdout-policy-memo-2026-07.md</code>; data in <code>docs/codebase-site/data/holdout-tiers.json</code>.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Section 3 — First 2022, then 2019 — operationally
+         ============================================================ -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">③</div>
+          <h2>First 2022, then 2019 — operationally</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The order is not arbitrary. Validation comes first because you are <em>permitted</em> to learn from it; the locked test comes last because you are permitted to learn from it <strong>exactly once</strong>.
+          </p>
+        </div>
+
+        <div class="flow-steps">
+          <div class="flow-step">
+            <div class="flow-step__num">1</div>
+            <div class="flow-step__body">
+              <h4>Declare the ISO calibration-complete</h4>
+              <p>
+                Add the ISO's marker to <code>frontend/data/backcast/calibration-complete.json</code>. This is the gate: it unlocks the rule-22 holdout solves for that ISO and nothing else. No marker → every out-of-training year stays quarantined.
+              </p>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step__num">2</div>
+            <div class="flow-step__body">
+              <h4>Iterate the 2022 validation</h4>
+              <p>
+                Solve the frozen keeper on 2022 and score it. <strong>If it misses, you may go back</strong>, re-tune the 2023–2025 train window, and repeat — that back-and-forth is exactly the point. 2022 is a model-selection instrument.
+              </p>
+              <span class="flow-step__loop">↺ miss → re-tune 2023–2025 → re-solve → re-score</span>
+            </div>
+          </div>
+          <div class="flow-step">
+            <div class="flow-step__num">3</div>
+            <div class="flow-step__body">
+              <h4>Fire the one-shot 2019 + H1-2026 locked test</h4>
+              <p>
+                Only when satisfied with the validation, solve the frozen config <strong>once</strong> on 2019 and H1-2026, record the number whatever it is, and <strong>never let it re-enter tuning</strong>. A calibration change may respond to a locked-test result only by designating a new, never-touched year as its replacement.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="insight-box info">
+          <strong>Why 2019 is the honest number and 2022 is not.</strong> The moment you iterate against a dataset — re-tuning whenever it misses — that dataset stops being an unbiased out-of-sample estimator. It has, through the selection loop, participated in fitting the model. 2022 is therefore <strong>selection evidence</strong>: useful for choosing between candidate models, but it must never be quoted as a certified skill number. 2019 (and H1-2026) is the honest out-of-sample figure <em>precisely because it is never iterated against</em> — it sees the frozen model exactly once, so its error is a clean estimate of forward skill. This is the classic train / validation / test separation, enforced as discipline rather than convenience.
+        </div>
+
+        <div class="source-cite">
+          <strong>Source:</strong> <code>docs/calibration-and-validation-methodology.md</code> §3.1 (operational sequence); <a href="/CLAUDE.md">CLAUDE.md</a> rule 22; <code>docs/handoffs/holdout-policy-memo-2026-07.md</code>.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Section 4 — How it's enforced
+         ============================================================ -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">④</div>
+          <h2>How it's enforced</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The in-sample window <code>{2023, 2024, 2025}</code> is a hard-coded <code>frozenset</code> in <strong>three parallel places</strong>, kept as separate stdlib literals by repo convention with a parity test asserting they agree:
+          </p>
+        </div>
+
+        <div class="enforce-grid">
+          <div class="enforce-card">
+            <div class="enforce-card__file">scripts/run_calibration_full.py</div>
+            <div class="enforce-card__const">HOLDOUT_CALIBRATION_YEARS</div>
+            <div class="enforce-card__val">frozenset({2023, 2024, 2025})</div>
+            <div class="enforce-card__role">Drives the CLI solve gate.</div>
+          </div>
+          <div class="enforce-card">
+            <div class="enforce-card__file">scripts/audit_keepers.py</div>
+            <div class="enforce-card__const">CALIBRATION_YEARS</div>
+            <div class="enforce-card__val">frozenset({2023, 2024, 2025})</div>
+            <div class="enforce-card__role">Drives the CI keeper-registration gate.</div>
+          </div>
+          <div class="enforce-card">
+            <div class="enforce-card__file">scripts/legitimacy_diagnostics.py</div>
+            <div class="enforce-card__const">D6_CALIBRATION_YEARS</div>
+            <div class="enforce-card__val">frozenset({2023, 2024, 2025})</div>
+            <div class="enforce-card__role">Drives the D-6 holdout-quarantine diagnostic.</div>
+          </div>
+        </div>
+
+        <div class="story-section">
+          <p><strong>Solve gate (CLI).</strong> <code>enforce_holdout_year_gate</code> hard-fails any <code>--year</code> outside the window unless <em>both</em> conditions hold:</p>
+        </div>
+
+        <div class="gate-flow">
+          <div class="gate-node">
+            <div class="gate-node__k">Requested</div>
+            <div class="gate-node__v"><code>--year 2022</code> or <code>--year 2026</code> — outside <code>{2023,2024,2025}</code>.</div>
+          </div>
+          <div class="gate-node pass">
+            <div class="gate-node__k">Requires ①</div>
+            <div class="gate-node__v"><code>--holdout-authorized</code> passed on the command line.</div>
+          </div>
+          <div class="gate-and">AND</div>
+          <div class="gate-node pass">
+            <div class="gate-node__k">Requires ②</div>
+            <div class="gate-node__v">The target ISO already carries a <code>calibration-complete</code> marker.</div>
+          </div>
+          <div class="gate-node fail">
+            <div class="gate-node__k">Else</div>
+            <div class="gate-node__v"><code>SystemExit</code> — the solve is refused.</div>
+          </div>
+        </div>
+
+        <div class="story-section">
+          <p style="margin-bottom:0;">
+            The <strong>marker</strong>, not the flag alone, is what turns a holdout year into an authorized one-shot score. <strong>Score / registration gate (CI):</strong> the <code>quarantine-gates</code> job in <code>.github/workflows/ci.yml</code> runs <code>audit_keepers.py --check</code> (E1–E9 plus the H1 holdout-quarantine check) and <code>legitimacy_diagnostics.py --keepers</code> (D-6 + D-9 + the D-2 recompute-vs-committed staleness check), failing any registered bundle whose solve years breach the window for an ISO without a marker.
+          </p>
+        </div>
+
+        <div class="insight-box warn">
+          <strong>The code enforces one binary — the tier distinction is discipline.</strong> Every gate above checks a single thing: is the year in <code>{2023, 2024, 2025}</code> or not? The <strong>validation-vs-locked distinction is deliberately <em>not</em> machine-enforced</strong> — the CI gate is tier-agnostic. So re-solving a locked-test year <em>after</em> its one-shot would be a <strong>governance breach, not a CI failure</strong>: nothing in the pipeline would stop it. The touch-once rule lives in the operator's discipline, not in an assertion.
+        </div>
+
+        <div class="story-section">
+          <p><strong>Current state.</strong> Only <strong>NEISO</strong> carries a complete marker (declared 2026-07-07); its 2019 + H1-2026 one-shot was scored once with the then-frozen <code>neiso-53</code> config and stands. The other five ISOs remain fully quarantined for holdout solving.</p>
+          <div class="status-row" aria-label="Per-ISO calibration-complete status">
+            <span class="iso-pill complete">NEISO ✓ complete</span>
+            <span class="iso-pill">ERCOT — quarantined</span>
+            <span class="iso-pill">CAISO — quarantined</span>
+            <span class="iso-pill">PJM — quarantined</span>
+            <span class="iso-pill">MISO — quarantined</span>
+            <span class="iso-pill">NYISO — quarantined</span>
+          </div>
+        </div>
+
+        <div class="insight-box danger">
+          <strong>Known gap, stated honestly.</strong> The gate lives in <code>run_calibration_full.py</code>. The non-<code>_full</code> sibling <code>scripts/run_calibration.py</code> has <strong>no year gate at all</strong> — its own usage examples show <code>--year 2021 2022 2023 2024</code>. Any claim that "the solve entry points are gated" must carry this asterisk: one of the two does not enforce the window in code.
+        </div>
+
+        <div class="source-cite">
+          <strong>Source:</strong> <code>scripts/run_calibration_full.py:5056</code> (frozenset), <code>:5060-5104</code> (<code>enforce_holdout_year_gate</code>); <code>scripts/audit_keepers.py:185</code>; <code>scripts/legitimacy_diagnostics.py:319</code>; <code>.github/workflows/ci.yml:82-115</code>; <code>frontend/data/backcast/calibration-complete.json</code>; <code>scripts/run_calibration.py</code> (no gate); methodology §3.2.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Section 5 — Forecast-side validation
+         ============================================================ -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑤</div>
+          <h2>Forecast-side validation</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            The three-tier holdout program validates <em>dispatch</em>. The <strong>forecast machinery</strong> — capacity evolution, entry/retirement, forward invariants — is validated separately, and honestly: its headline results are <strong>documented misses</strong>, because the job is to measure the machinery, not to certify it.
+          </p>
+        </div>
+
+        <div class="story-section">
+          <p><strong>Capacity hindcast.</strong> Initialize the fleet at a <strong>2020 vintage</strong> and run the capacity-evolution loop forward, solving <code>{2021, 2023, 2024, 2025}</code> only:</p>
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><strong>2021</strong> is solved to seed the price/margin signal but <em>not scored</em>.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>2022 is a bridge</strong> — evolved but never solved, its data never read (rule 22).</li>
+            <li style="margin-bottom: var(--space-sm);">Run for <strong>ERCOT and PJM</strong>, in both fuel variants (realized-fuel and as-known / AEO2021).</li>
+            <li>Registered under <code>results/hindcast/</code> + <code>frontend/data/hindcast/</code> — <strong>outside</strong> the backcast registry.</li>
+          </ul>
+          <p style="margin-bottom:0;">
+            The current runs are documented bad-misses — e.g. ERCOT builds <strong>~0 GW solar vs ~25 GW actual</strong> — and that is the point: they measure the capacity-evolution machinery rather than pretending it is calibrated.
+          </p>
+        </div>
+
+        <div class="story-section">
+          <p><strong>Forecast invariants &amp; stability probes.</strong></p>
+          <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
+            <li style="margin-bottom: var(--space-sm);"><strong>I1–I14</strong> single-run invariants over one scenario cache, plus <strong>P1–P3</strong> paired-run invariants (two scenarios differing in one driver) — <code>scripts/check_forecast_invariants.py</code>, wired into <code>.github/workflows/forecast-invariants.yml</code>.</li>
+            <li style="margin-bottom: var(--space-sm);"><strong>D-7</strong> — the overlay-vs-statistical-mode fail-count gap per keeper (reported beside each keeper on the status page, never gating).</li>
+            <li><strong>D-8</strong> — frozen-coefficient stability probe. Both D-7 and D-8 are computed only on 2023–2025, never on a holdout year.</li>
+          </ul>
+        </div>
+
+        <!-- Cross-link to forecast-validation.html -->
+        <a href="forecast-validation.html" class="dashboard-link-box" style="display:flex; align-items:center; gap:16px; background:var(--bg-card); border:1px solid var(--border-light); border-radius:var(--radius-lg); padding:20px 24px; text-decoration:none; color:inherit;">
+          <div style="width:48px;height:48px;background:var(--hydro-bg);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:22px;">🏁</div>
+          <div style="flex:1;">
+            <div style="font-weight:600;color:var(--navy);margin-bottom:4px;">Forecast Validation →</div>
+            <p style="font-size:0.9rem;color:var(--text-muted);margin:0;">The full capacity-hindcast scorecards and I1–I14 invariant status, per run — the forecast-side sibling of Calibration Status.</p>
+          </div>
+        </a>
+
+        <div class="source-cite">
+          <strong>Source:</strong> <code>scripts/run_capacity_hindcast.py:1-78</code> (<code>ALLOWED_SOLVE_YEARS</code>, bridge); <code>frontend/data/hindcast/</code>; <code>scripts/check_forecast_invariants.py:20-23</code>; <code>scripts/build_status.py:43-46</code>; <code>scripts/d8_coefficient_stability.py</code>; methodology §3.3.
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Section 6 — Backcast and forecast spans
+         ============================================================ -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="section-header">
+          <div class="section-number">⑥</div>
+          <h2>Backcast and forecast spans</h2>
+        </div>
+
+        <div class="story-section">
+          <p>
+            Three spans, cleanly separated. <strong>Data</strong> on disk is the widest; <strong>scored backcast dispatch</strong> is a narrow governed subset; <strong>forecast</strong> runs forward from 2026. "The backcast covers 2018–2025" is true of <em>data intake</em> — never of what is solved or scored.
+          </p>
+        </div>
+
+        <!-- Implemented spans diagram -->
+        <div class="fig">
+          <div class="fig__chart" style="min-height:0;">
+            <svg class="span-svg" viewBox="0 0 1000 250" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Implemented spans: data 2018 to H1-2026, scored backcast 2023 to 2025, forecast 2026 to 2050.">
+              <!-- Axis -->
+              <line x1="60" y1="210" x2="940" y2="210" stroke="var(--border)" stroke-width="1.5"/>
+              <!-- Ticks every 4 years: 2018..2050 -->
+              <g font-family="var(--font-mono)" font-size="11" fill="var(--text-muted)" text-anchor="middle">
+                <line x1="60"  y1="206" x2="60"  y2="214" stroke="var(--border)"/><text x="60"  y="230">2018</text>
+                <line x1="170" y1="206" x2="170" y2="214" stroke="var(--border)"/><text x="170" y="230">2022</text>
+                <line x1="280" y1="206" x2="280" y2="214" stroke="var(--border)"/><text x="280" y="230">2026</text>
+                <line x1="390" y1="206" x2="390" y2="214" stroke="var(--border)"/><text x="390" y="230">2030</text>
+                <line x1="500" y1="206" x2="500" y2="214" stroke="var(--border)"/><text x="500" y="230">2034</text>
+                <line x1="610" y1="206" x2="610" y2="214" stroke="var(--border)"/><text x="610" y="230">2038</text>
+                <line x1="720" y1="206" x2="720" y2="214" stroke="var(--border)"/><text x="720" y="230">2042</text>
+                <line x1="830" y1="206" x2="830" y2="214" stroke="var(--border)"/><text x="830" y="230">2046</text>
+                <line x1="940" y1="206" x2="940" y2="214" stroke="var(--border)"/><text x="940" y="230">2050</text>
+              </g>
+
+              <!-- Data span 2018 -> H1-2026 (x 60 -> 294) -->
+              <rect x="60" y="46" width="234" height="34" rx="8" fill="rgba(22,163,74,0.14)" stroke="var(--positive)" stroke-width="1.5"/>
+              <text x="70" y="68" font-size="13" font-weight="700" fill="var(--green-text)">Data on disk · 2018 → H1-2026</text>
+              <text x="304" y="68" font-size="11" fill="var(--text-muted)">intake only (§1)</text>
+
+              <!-- Scored backcast 2023 -> 2025 (x 197.5 -> 280) -->
+              <rect x="197" y="98" width="83" height="34" rx="8" fill="rgba(14,165,233,0.20)" stroke="var(--hydro)" stroke-width="2"/>
+              <text x="308" y="120" font-size="13" font-weight="700" fill="var(--hydro-text)">Scored backcast · 2023–2025 only</text>
+              <!-- NEISO one-shot markers at 2019 (x 87.5) and H1-2026 (x 294) -->
+              <line x1="87.5" y1="96" x2="87.5" y2="134" stroke="var(--nuclear)" stroke-width="2" stroke-dasharray="3,2"/>
+              <line x1="294" y1="96" x2="294" y2="134" stroke="var(--nuclear)" stroke-width="2" stroke-dasharray="3,2"/>
+              <text x="87.5" y="150" font-size="9.5" fill="var(--purple-text)" text-anchor="middle">NEISO 1-shot</text>
+
+              <!-- Forecast 2026 -> 2050 (x 280 -> 940) -->
+              <rect x="280" y="160" width="660" height="34" rx="8" fill="rgba(15,118,110,0.14)" stroke="#0F766E" stroke-width="1.5"/>
+              <text x="290" y="182" font-size="13" font-weight="700" fill="#0F766E">Forecast · 2026 → 2050 (START_YEAR → END_YEAR)</text>
+            </svg>
+          </div>
+          <div class="fig__caption">
+            <strong>Figure MV3 — implemented today.</strong> Data spans 2018→H1-2026; scored backcast dispatch is confined to 2023–2025 (dashed indigo marks = the single authorized NEISO 2019 + H1-2026 locked-test one-shot); forecast runs 2026→2050 per <code>constants.py START_YEAR / END_YEAR</code>.
+          </div>
+        </div>
+
+        <!-- ROADMAP panel -->
+        <div class="roadmap-panel">
+          <span class="roadmap-panel__stamp">◇ Roadmap — planned, not yet implemented</span>
+          <h3>The intended 2018–2025 backcast / 2024–2030 forecast crossover</h3>
+          <p style="margin-bottom:14px;">
+            The <em>target</em> design widens the backcast to 2018–2025 and starts the forecast at 2024, with <strong>2024–2025 (extending to H1-2026) scored in <em>both</em> modes against the same actuals</strong> to measure the backcast→forecast input gap. This is a design intention, drawn here with dashed bars to keep it visually distinct from what runs today.
+          </p>
+          <svg class="span-svg" viewBox="0 0 1000 190" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Roadmap: backcast 2018 to 2025 and forecast 2024 to 2030 with a 2024 to 2025 dual-mode overlap. Not implemented.">
+            <line x1="60" y1="150" x2="940" y2="150" stroke="var(--border)" stroke-width="1.5"/>
+            <g font-family="var(--font-mono)" font-size="11" fill="var(--text-muted)" text-anchor="middle">
+              <line x1="60"  y1="146" x2="60"  y2="154" stroke="var(--border)"/><text x="60"  y="170">2018</text>
+              <line x1="207" y1="146" x2="207" y2="154" stroke="var(--border)"/><text x="207" y="170">2020</text>
+              <line x1="353" y1="146" x2="353" y2="154" stroke="var(--border)"/><text x="353" y="170">2022</text>
+              <line x1="500" y1="146" x2="500" y2="154" stroke="var(--border)"/><text x="500" y="170">2024</text>
+              <line x1="647" y1="146" x2="647" y2="154" stroke="var(--border)"/><text x="647" y="170">2026</text>
+              <line x1="793" y1="146" x2="793" y2="154" stroke="var(--border)"/><text x="793" y="170">2028</text>
+              <line x1="940" y1="146" x2="940" y2="154" stroke="var(--border)"/><text x="940" y="170">2030</text>
+            </g>
+            <!-- Backcast 2018 -> 2025 (x 60 -> 573.5) -->
+            <rect x="60" y="40" width="513" height="30" rx="7" fill="rgba(14,165,233,0.10)" stroke="var(--hydro)" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <text x="70" y="60" font-size="12" font-weight="700" fill="var(--hydro-text)">Backcast · 2018–2025</text>
+            <!-- Forecast 2024 -> 2030 (x 500 -> 940) -->
+            <rect x="500" y="86" width="440" height="30" rx="7" fill="rgba(15,118,110,0.10)" stroke="#0F766E" stroke-width="1.5" stroke-dasharray="6,4"/>
+            <text x="700" y="106" font-size="12" font-weight="700" fill="#0F766E" text-anchor="middle">Forecast · 2024–2030</text>
+            <!-- Overlap 2024 -> 2025 (x 500 -> 573.5) -->
+            <rect x="500" y="34" width="73" height="88" rx="6" fill="rgba(124,58,237,0.12)" stroke="var(--purple-text)" stroke-width="1.5" stroke-dasharray="4,3"/>
+            <text x="536" y="132" font-size="9.5" font-weight="700" fill="var(--purple-text)" text-anchor="middle">dual-mode</text>
+          </svg>
+        </div>
+
+        <div class="insight-box warn">
+          <strong>⚠️ The 2024–2025 dual-mode overlap is not behaviour — it is a target design.</strong> No code path today scores 2024–2026 dispatch in both modes: the forecast horizon starts at 2026 (<code>START_YEAR = 2026</code>), and grepping <code>crossover</code> across the Python sources returns only unrelated coal-sigmoid code. The closest implemented analogue is the capacity hindcast (§5), which overlaps the 2023–2025 backcast years at the <em>capacity layer only</em>, not in dual-mode dispatch scoring. Any description of the crossover — here or in the diagram above — is a planned design, not current behaviour.
+        </div>
+
+        <div class="source-cite">
+          <strong>Source:</strong> <code>src/market_sim/config/constants.py:3292-3293</code> (<code>START_YEAR</code> / <code>END_YEAR</code>); methodology §4; <code>docs/codebase-site/UPDATE-PLAN-2026-07.md</code> §2.4 (crossover grep validated 2026-07).
+        </div>
+      </div>
+    </section>
+
+    <!-- Closing takeaway + cross-links -->
+    <section class="section-light">
+      <div class="content-section">
+        <div class="insight-box success">
+          <strong>🎯 Key takeaway:</strong> Data intake is open; solving is governed. Train (2023–2025) is tuned, validation (2022) is iterable selection evidence, and the locked test (2019 + H1-2026) is the touch-once honest number. The code enforces a single binary — in-window or not — and the tier discipline rides on top of it. Forecast-side skill is validated separately and reported as honest misses, and the 2024–2025 dual-mode crossover remains a labelled roadmap item.
+        </div>
+
+        <div style="display:flex; flex-wrap:wrap; gap:12px; margin-top:16px;">
+          <a href="calibration-rubric.html" class="iso-pill" style="text-decoration:none; padding:10px 16px; border-color:var(--hydro); color:var(--hydro-text);">→ Calibration Rubric (how a keeper is scored)</a>
+          <a href="forecast-validation.html" class="iso-pill" style="text-decoration:none; padding:10px 16px; border-color:var(--hydro); color:var(--hydro-text);">→ Forecast Validation (hindcast scorecards)</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Breadcrumb -->
+    <section class="section-light" style="padding-top: 0;">
+      <div class="content-section">
+        <nav class="breadcrumb" aria-label="Page navigation">
+          <a href="calibration-rubric.html" class="breadcrumb__item breadcrumb__item--prev">
+            <span class="breadcrumb__dir">← Previous</span>
+            <span class="breadcrumb__title">Calibration Rubric</span>
+          </a>
+          <a href="forecast-validation.html" class="breadcrumb__item breadcrumb__item--next">
+            <span class="breadcrumb__dir">Next →</span>
+            <span class="breadcrumb__title">Forecast Validation</span>
+          </a>
+        </nav>
+      </div>
+    </section>
   </main>
 
   <!-- Footer -->
@@ -59,5 +815,6 @@
   <script src="js/nav.js"></script>
   <script src="js/shared-header.js"></script>
   <script src="js/shared.js"></script>
+  <script src="js/viz-holdout-tiers.js"></script>
 </body>
 </html>
