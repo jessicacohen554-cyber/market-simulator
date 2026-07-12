@@ -365,6 +365,150 @@ class SysVolTests(unittest.TestCase):
         finally:
             _reset_completeness()
 
+    def test_g21b_coal_fallback_uses_cems_anchor(self):
+        # G-21b: an incomplete COAL family gates against the CEMS anchor, not
+        # the raw EIA-930 coal cell. MISO-shaped numbers: 930 coal 192.1 is
+        # −20.9 TWh below CEMS 213.0 (the documented attribution swap), so the
+        # raw cell reads the 206.8 model +7.6% (FAIL) while the CEMS anchor
+        # (213.0 × k, k from the complete 2023/24 vintages ≈ 0.961) reads +0.9%
+        # (PASS). k here: 2023 185.8/191.8, 2024 176.3/185.1.
+        _completeness({"MISO": {}}, {"MISO": {"gas": False, "coal": False}})
+        bench_all = {
+            2023: {
+                "classFull": {"COAL_PRB": 121.7, "COAL_BIT": 57.1, "COAL_LIGNITE": 7.0},
+                "e930": {"coal": 174.9, "coal_cems": 191.8},
+            },
+            2024: {
+                "classFull": {"COAL_PRB": 116.5, "COAL_BIT": 53.3, "COAL_LIGNITE": 6.5},
+                "e930": {"coal": 167.1, "coal_cems": 185.1},
+            },
+            2025: {
+                "classFull": {},
+                "e930": {"gas": 233.2, "coal": 192.1, "coal_cems": 213.0},
+            },
+        }
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"COAL_PRB": 145.2, "COAL_BIT": 56.0, "COAL_LIGNITE": 5.6}},
+                bench_all[2025],
+                "MISO",
+                bench_all=bench_all,
+            )
+            coal = [r for r in rows if r["key"] == "coal"][0]
+            self.assertEqual(coal["status"], cv.PASS)
+            self.assertIn("CEMS", coal["source"])
+            # anchor = 213.0 × mean(185.8/191.8, 176.3/185.1) ≈ 204.7
+            self.assertAlmostEqual(coal["actual"], 204.71, delta=0.1)
+        finally:
+            _reset_completeness()
+
+    def test_g21b_gas_fallback_combined_minus_coal_anchor(self):
+        # G-21b: an incomplete GAS family gates against the 930 COMBINED fossil
+        # total minus the coal anchor — the mirror correction. Same MISO-shaped
+        # bench: raw gas cell 233.2 carries ~+20 TWh of misattributed coal, so
+        # the raw comparison reads −12.0% (FAIL) while combined-minus-anchor
+        # (233.2+192.1−204.7 = 220.6) reads −7.0 ... −4.9%-class (CAVEAT range).
+        _completeness({"MISO": {}}, {"MISO": {"gas": False, "coal": False}})
+        bench_all = {
+            2023: {
+                "classFull": {"COAL_PRB": 121.7, "COAL_BIT": 57.1, "COAL_LIGNITE": 7.0},
+                "e930": {"coal": 174.9, "coal_cems": 191.8},
+            },
+            2025: {
+                "classFull": {},
+                "e930": {"gas": 233.2, "coal": 192.1, "coal_cems": 213.0},
+            },
+        }
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"CC_REGULAR": 205.2}},
+                bench_all[2025],
+                "MISO",
+                bench_all=bench_all,
+            )
+            gas = [r for r in rows if r["key"] == "gas"][0]
+            self.assertIn("combined fossil minus coal anchor", gas["source"])
+            # anchor (single k year 2023: 185.8/191.8=0.9687) = 206.3;
+            # actual = 233.2 + 192.1 − 206.3 = 219.0
+            self.assertAlmostEqual(gas["actual"], 218.99, delta=0.1)
+        finally:
+            _reset_completeness()
+
+    def test_g21b_gas_fallback_complete_coal_uses_classfull_anchor(self):
+        # PJM-shaped sub-case: gas incomplete but coal COMPLETE — the gas
+        # remainder subtracts the trustworthy classFull coal-family sum, no
+        # CEMS needed. 930 books +10.4 TWh of PJM gas as coal, so the raw gas
+        # cell (366.6) reads +3.9% (CAVEAT) while combined-minus-923-coal
+        # (366.6+145.9−135.5 = 377.0) reads +1.0% (PASS).
+        _completeness(
+            {"PJM": {"COAL_BIT": True}}, {"PJM": {"gas": False, "coal": True}}
+        )
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"CC_REGULAR": 380.9}},
+                {
+                    "classFull": {"COAL_BIT": 135.5},
+                    "e930": {"gas": 366.6, "coal": 145.9},
+                },
+                "PJM",
+            )
+            gas = [r for r in rows if r["key"] == "gas"][0]
+            self.assertEqual(gas["status"], cv.PASS)
+            self.assertIn("combined fossil minus coal anchor", gas["source"])
+            self.assertAlmostEqual(gas["actual"], 377.0, delta=0.1)
+        finally:
+            _reset_completeness()
+
+    def test_g21b_legacy_fallback_when_no_anchor(self):
+        # A bench part predating the coal_cems splice (or a run with no
+        # complete coal vintage) keeps the legacy raw-930 cell, labelled.
+        _completeness({"MISO": {}}, {"MISO": {"gas": False, "coal": False}})
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"COAL_PRB": 206.8}},
+                {"classFull": {}, "e930": {"gas": 233.2, "coal": 192.1}},
+                "MISO",
+            )
+            coal = [r for r in rows if r["key"] == "coal"][0]
+            self.assertEqual(coal["status"], cv.FAIL)  # raw cell still gates
+            self.assertIn("EIA-930 grid", coal["source"])
+        finally:
+            _reset_completeness()
+
+    def test_g21b_anchor_safe_where_930_matches_cems(self):
+        # Where the BA's 930 attribution agrees with CEMS (ERCOT-shaped), the
+        # combined-minus-anchor construction reproduces the raw gas cell to
+        # within the anchor-ratio noise — the correction self-neutralizes.
+        _completeness({"ERCOT": {}}, {"ERCOT": {"gas": False, "coal": False}})
+        bench_all = {
+            2023: {
+                "classFull": {"COAL_PRB": 60.4},
+                "e930": {"coal": 62.3, "coal_cems": 62.7},
+            },
+            2025: {
+                "classFull": {},
+                "e930": {"gas": 200.2, "coal": 63.4, "coal_cems": 64.4},
+            },
+        }
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"CC_REGULAR": 199.0}},
+                bench_all[2025],
+                "ERCOT",
+                bench_all=bench_all,
+            )
+            gas = [r for r in rows if r["key"] == "gas"][0]
+            # anchor = 64.4 × (60.4/62.7) = 62.04; actual = 200.2+63.4−62.04
+            # = 201.56 vs raw 200.2 — within 0.7%, same PASS either way.
+            self.assertEqual(gas["status"], cv.PASS)
+        finally:
+            _reset_completeness()
+
     def test_immaterial_family_skipped(self):
         rows = cv.score_sysvol(
             2024,
