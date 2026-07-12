@@ -2,8 +2,15 @@
 # CHANGELOG.md after line 2 (the file is too large to round-trip through the
 # API-only push path in one call), verifies the exact target git blob SHA,
 # and deletes this workflow + the entry file in the same commit.
+# Triggered by the push of this very commit (App token cannot dispatch).
 name: apply-changelog
 on:
+  push:
+    branches:
+      - claude/calibration-docs-code-audit-t125f4
+    paths:
+      - .github/workflows/apply-changelog.yml
+      - .github/changelog-entry.txt
   workflow_dispatch: {}
 permissions:
   contents: write
@@ -12,6 +19,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: claude/calibration-docs-code-audit-t125f4
       - name: Splice entry, verify blob SHA, commit, push
         shell: bash
         run: |
@@ -37,4 +46,4 @@ jobs:
           git rm -q .github/workflows/apply-changelog.yml .github/changelog-entry.txt
           git add CHANGELOG.md
           git commit -F /tmp/msg
-          git push origin HEAD
+          git push origin HEAD:claude/calibration-docs-code-audit-t125f4
