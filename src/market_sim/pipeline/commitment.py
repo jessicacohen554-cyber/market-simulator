@@ -20,6 +20,12 @@ CLAUDE.md; P2 never runs unless a gate below is set):
   ``--enable-legacy-p2`` path but is unreachable on the CAISO default path (it
   gates on ``not commitment_enabled``, and P2 on CAISO now triggers only via
   ``commitment_enabled``).
+- **ERCOT gas commitment bridge** (``ercot_gas_commitment_bridge``, ERCOT
+  only) — P1-native like the CAISO bridge, never a P2 trigger: the same
+  ISO-neutral detector scoped to merchant gas-CC with the measured ERCOT
+  committed-CC LSL/HSL p50 min-load and a DA-operating-day cap on the
+  economic leg (:func:`ercot_gas_bridge_p1_floor_fleet` /
+  :func:`build_ercot_gas_bridge_p1_prep`).
 - **Economic commitment screen** (``commitment_enabled``): CC/CT run-length
   screening on P1 margins + the coal pin
   (``model.commitment.compute_commitment`` →
@@ -51,6 +57,8 @@ two bodies are provably byte-identical).
 
 from __future__ import annotations
 
+import logging
+
 import numpy as np
 
 from market_sim.model.commitment import (
@@ -60,6 +68,8 @@ from market_sim.model.commitment import (
     reserve_adequacy_commit,
 )
 from market_sim.model.dispatch import solve_dispatch
+
+logger = logging.getLogger(__name__)
 
 
 def caiso_ra_p1_floor_fleet(
@@ -95,7 +105,6 @@ def caiso_ra_p1_floor_fleet(
     """
     if not (getattr(config, "caiso_ra_mustoffer", False) and iso == "CAISO"):
         return None
-    import dataclasses
 
     from market_sim.data.floor_mechanisms import MECH_RA_MUSTOFFER
     from market_sim.model.commitment import caiso_ra_mustoffer_min_gen
@@ -148,27 +157,38 @@ def caiso_ra_p1_floor_fleet(
             apply_ra_mustoffer_quantity_gate(ra_floor, fleet, fleet_arrays, cap_mw)
     if not np.any(ra_floor > 0.0):
         return None
+    return _bridge_floored_fleet(fleet_arrays, ra_floor, MECH_RA_MUSTOFFER)
+
+
+def _bridge_floored_fleet(fleet_arrays, bridge_floor: np.ndarray, mech_id: int):
+    """Compose a P1-native bridge floor onto a ``FleetArrays`` (shared tail).
+
+    The floor-composition/attribution/feasibility sequence both P1-native
+    commitment bridges share (CAISO RA must-offer, ERCOT gas commitment
+    bridge): maximum-compose the bridge floor onto ``min_gen``, tag the D-2
+    mechanism id wherever the bridge strictly raised the composed floor
+    (data.floor_mechanisms maximum-composition rule), and raise availability
+    to at least ``min_gen / pmax`` on every floored gen-hour so the floor
+    never makes the P1 bound ``min_gen <= P <= pmax * availability``
+    infeasible — the same guard the P2 preserve_min_gen path applied, minus
+    the coal pin / commitment mask (P1 solves every unit freely above the
+    floor; there is no second pass to lock a prior dispatch into).
+    """
+    import dataclasses
+
     base_min_gen = (
         fleet_arrays.min_gen
         if fleet_arrays.min_gen is not None
-        else np.broadcast_to(fleet_arrays.pmin[:, None], ra_floor.shape)
+        else np.broadcast_to(fleet_arrays.pmin[:, None], bridge_floor.shape)
     )
-    new_min_gen = np.maximum(base_min_gen, ra_floor)
-    # D-2 attribution: the RA bridge owns every gen-hour where it strictly raised
-    # the composed floor (maximum-composition, data.floor_mechanisms).
+    new_min_gen = np.maximum(base_min_gen, bridge_floor)
     base_mech = getattr(fleet_arrays, "min_gen_mechanism", None)
     new_mech = (
         base_mech.copy()
         if base_mech is not None
-        else np.zeros(ra_floor.shape, dtype=np.int8)
+        else np.zeros(bridge_floor.shape, dtype=np.int8)
     )
-    new_mech[ra_floor > base_min_gen] = MECH_RA_MUSTOFFER
-    # Feasibility: the LP binds ``min_gen <= P <= pmax * availability``. Raise
-    # availability to at least ``min_gen / pmax`` on every floored gen-hour so the
-    # floor never makes the P1 bound infeasible — the same guard the P2
-    # preserve_min_gen path applied, minus the coal pin / commitment mask (P1
-    # solves coal and every unit freely above the floor; there is no second pass
-    # to lock a prior dispatch into).
+    new_mech[bridge_floor > base_min_gen] = mech_id
     avail = fleet_arrays.availability.copy()
     pmax_safe = np.maximum(fleet_arrays.pmax, 1.0)[:, None]
     floored = new_min_gen > 0.0
@@ -235,6 +255,116 @@ def build_caiso_ra_p1_prep(
             r0.prices,
             mc_base,
             release_hours=release_hours,
+        )
+
+    return _prep
+
+
+def ercot_gas_bridge_p1_floor_fleet(
+    config,
+    iso: str,
+    fleet: list,
+    fleet_arrays,
+    p0_dispatch: np.ndarray,
+    p0_prices: np.ndarray | None,
+    mc_base: np.ndarray,
+):
+    """Return the bridge-floored ``FleetArrays`` for the ERCOT P1 solve.
+
+    The ERCOT gas-CC commitment bridge (``ercot_gas_commitment_bridge``, the
+    committed-state mechanism promoted from the ERCOT-62b probe — see the
+    ScenarioConfig field docstring and
+    docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6): the same
+    ISO-neutral detector as the CAISO RA must-offer bridge
+    (:func:`model.commitment.caiso_ra_mustoffer_min_gen`, fed the model's own
+    base-cost P0 run pattern and duals), scoped to the merchant gas-CC fleet
+    (``fuel_types=("gas_cc",)`` — the recorded ERCOT-63 class adjudication),
+    with ``min_load_frac`` = the measured committed-CC LSL/HSL
+    capacity-weighted p50 and the economic (≥ min-down) leg bounded to one DA
+    operating day (``DA_COMMITMENT_HORIZON_HOURS``) when
+    ``ercot_gas_bridge_da_horizon`` is on. D-2 attribution:
+    ``MECH_GAS_COMMITMENT_BRIDGE``.
+
+    Returns ``None`` when the mechanism is off, the ISO is not ERCOT, or the
+    detector produces no floor (the caller keeps the ordinary warm-started P1).
+    """
+    if not (getattr(config, "ercot_gas_commitment_bridge", False) and iso == "ERCOT"):
+        return None
+
+    from market_sim.config.constants import DA_COMMITMENT_HORIZON_HOURS
+    from market_sim.data.floor_mechanisms import MECH_GAS_COMMITMENT_BRIDGE
+    from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
+
+    # Economic ≥min-down bridging (the overnight-between-run-days carrier):
+    # priced off the P0 duals + base MC, exactly the CAISO startup-bridge
+    # construction. The CAISO startup-AWARE run screen is deliberately not
+    # exposed here (dropped with cause — see the ScenarioConfig field note).
+    startup_bridge = bool(getattr(config, "ercot_gas_bridge_startup", True))
+    max_gap = (
+        float(DA_COMMITMENT_HORIZON_HOURS)
+        if getattr(config, "ercot_gas_bridge_da_horizon", True)
+        else None
+    )
+    bridge_floor = caiso_ra_mustoffer_min_gen(
+        p0_dispatch,
+        fleet_arrays,
+        fleet,
+        float(config.ercot_gas_bridge_min_load_frac),
+        p1_prices=p0_prices if startup_bridge else None,
+        base_mc=mc_base if startup_bridge else None,
+        startup_bridge=startup_bridge,
+        fuel_types=("gas_cc",),
+        max_econ_gap_hours=max_gap,
+    )
+    if not np.any(bridge_floor > 0.0):
+        return None
+    # Diagnostic trace for the D-4 window / probe analysis: every floored
+    # segment IS a bridged gap, so its length distribution is the direct
+    # evidence the declared window (idle gaps within one DA operating day)
+    # is what actually binds.
+    seg_lengths = [
+        e - s
+        for g in np.flatnonzero((bridge_floor > 0.0).any(axis=1))
+        for s, e in find_runs(bridge_floor[g] > 0.0)
+    ]
+    if seg_lengths:
+        seg = np.array(seg_lengths)
+        buckets = {
+            "<4h": int((seg < 4).sum()),
+            "4-8h": int(((seg >= 4) & (seg < 8)).sum()),
+            "8-16h": int(((seg >= 8) & (seg < 16)).sum()),
+            "16-24h": int(((seg >= 16) & (seg <= 24)).sum()),
+            ">24h": int((seg > 24).sum()),
+        }
+        logger.info(
+            "ERCOT gas commitment bridge: %d unit-hours floored "
+            "(%.2f TWh floor volume), %d bridged gaps by length %s",
+            int((bridge_floor > 0.0).sum()),
+            float(bridge_floor.sum()) / 1e6,
+            len(seg_lengths),
+            buckets,
+        )
+    return _bridge_floored_fleet(fleet_arrays, bridge_floor, MECH_GAS_COMMITMENT_BRIDGE)
+
+
+def build_ercot_gas_bridge_p1_prep(
+    config, iso: str, fleet: list, fleet_arrays, mc_base
+):
+    """Return a ``p1_fleet_prep`` hook for the ERCOT gas commitment bridge.
+
+    The hook is called with the P0 result once P0 has solved and returns the
+    bridge-floored ``FleetArrays`` the P1 solve should use
+    (:func:`ercot_gas_bridge_p1_floor_fleet`), or ``None`` to keep the
+    ordinary warm-started P1. ``None`` when the mechanism is off or the ISO
+    is not ERCOT, so every other path is byte-identical. ISO-exclusive with
+    the CAISO and PJM P1-prep hooks by construction (each gates on its ISO).
+    """
+    if not (getattr(config, "ercot_gas_commitment_bridge", False) and iso == "ERCOT"):
+        return None
+
+    def _prep(r0):
+        return ercot_gas_bridge_p1_floor_fleet(
+            config, iso, fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
         )
 
     return _prep

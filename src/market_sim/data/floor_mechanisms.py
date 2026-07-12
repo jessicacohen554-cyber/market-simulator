@@ -71,6 +71,19 @@ MECH_CC_MUSTRUN_PER_PLANT: int = 15
 # Sabine 85.6%, Lewis Creek 87.8%). A merchant reliability commitment —
 # subject to the D-2 forced-share gate; ablated in the zero-forcing twin.
 MECH_ST_GAS_MUSTRUN_PER_PLANT: int = 16
+# ERCOT gas-CC commitment bridge (ScenarioConfig.ercot_gas_commitment_bridge):
+# the P1-native committed-state floor promoted from the ERCOT-62b probe
+# (docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6). The same
+# ISO-neutral internals as the CAISO RA must-offer bridge
+# (model.commitment.caiso_ra_mustoffer_min_gen — min-down physics + the
+# startup-restart inequality on the model's OWN P0 run pattern and duals),
+# routed onto the ERCOT merchant gas-CC fleet with min_load_frac = the
+# MEASURED committed-CC LSL/HSL capacity-weighted p50 (60-Day DAM disclosure
+# 2023-2025). Separate id from MECH_RA_MUSTOFFER so D-2/D-4 attribution and
+# per-ISO arming stay independent (the MECH_ST_GAS_MUSTRUN_PER_PLANT
+# precedent). A merchant commitment floor — subject to the D-2 forced-share
+# gate; ablated in the zero-forcing twin.
+MECH_GAS_COMMITMENT_BRIDGE: int = 17
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -90,6 +103,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_WINTER_FUELSEC: "winter_fuelsec_mustrun",
     MECH_CC_MUSTRUN_PER_PLANT: "cc_mustrun_per_plant",
     MECH_ST_GAS_MUSTRUN_PER_PLANT: "st_gas_mustrun_per_plant",
+    MECH_GAS_COMMITMENT_BRIDGE: "gas_commitment_bridge",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -136,6 +150,7 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_WINTER_FUELSEC: {"neiso_winter_fuel_mustrun": False},
     MECH_CC_MUSTRUN_PER_PLANT: {"cc_mustrun_per_plant": False},
     MECH_ST_GAS_MUSTRUN_PER_PLANT: {"st_gas_mustrun_per_plant": False},
+    MECH_GAS_COMMITMENT_BRIDGE: {"ercot_gas_commitment_bridge": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural

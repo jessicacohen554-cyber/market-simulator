@@ -1,0 +1,17 @@
+{
+ "id": "2026-07-12-ercot63-gas-bridge",
+ "label": "ercot63 gas bridge",
+ "date": "2026-07-12",
+ "shorthand": "ercot63-gas-bridge",
+ "definition": "ercot63 keeper candidate: the promoted ercot59-storage-deploy recipe + ONE structural delta, ercot_gas_commitment_bridge (P1-native gas-CC committed-state bridge; CC-only scope, measured committed-CC LSL/HSL cap-weighted p50 min-load 0.574, economic leg on the startup-restart inequality bounded to one DA operating day, no startup-aware screen — adjudications recorded at the ScenarioConfig field and in the 2026-07-12 ERCOT-63 calibration-log entry). ercot_offer_surface_lowcurve stays OFF: the 2023 probe ladder showed the composition re-instates the markdown's spread-compression signature (diagnosis §5) while the bridge alone moves every storage/spread circle target the right way.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-12-ercot63-gas-bridge.js",
+ "bundle": "results/calibration/ercot63_gas_bridge",
+ "ablation_twin": "2026-07-12-ercot63-gas-bridge-ablation",
+ "market_story": "The bridge holds P0-committed merchant gas-CC at min-load across sub-DA-day idle gaps (overnight between run-days — the 902 CC plant-nights/yr the keeper cycled off) because re-paying the published startup cost exceeds the net cost of holding at LSL: real ERCOT CCs stay synchronized overnight at their LSL block. That committed-state energy deepens the price troughs toward the measured $10-15 epochs, widens the daily spread from below, lets batteries cross the round-trip hurdle on more days (storage 0.65->0.74 TWh, HE18/19 discharge up), and returns the overnight energy the keeper served with coal to gas-CC — toward BOTH classes' measured actuals (CC_REGULAR onto 141.7 actual; coal -1.4 TWh toward its 60.4 actual). C5c-2024 monthly storage shape, the keeper's own ledgered FAIL, flips to PASS."
+}
