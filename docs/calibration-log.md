@@ -11341,3 +11341,90 @@ byte-identical); the drag hinge and ST_GAS deltas stay frozen (ERCOT-61);
 probes 2023-only throwaways, never registered; bundles deleted, not
 committed. No dashboard registration this session beyond the promotion/prune
 bookkeeping above (no promotable full-span run was produced).
+
+## 2026-07-12 — ERCOT-63: the real gas commitment bridge built, probe-adjudicated and registered full-span — `ercot_gas_commitment_bridge` (state ALONE) is the keeper candidate; the low-curve markdown refuted even in composition; coal shuffle resolved as a measured-mix correction; C5c storage-shape caveat CLEARED
+
+**Task (the ERCOT-62 §6 charter).** Promote the 62b monkeypatch into the real,
+gated `ercot_gas_commitment_bridge` and test whether state+price closes the
+storage/spread circle. Full workings: diagnosis §7
+(`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md`).
+
+**Built (default-off, ERCOT-gated).** The ISO-neutral CAISO-bridge internals
+(`caiso_ra_mustoffer_min_gen`) behind an own gate at the shared P0→P1 seam in
+BOTH orchestrators: merchant gas-CC only, `min_load_frac` = the measured
+committed-CC LSL/HSL cap-weighted p50 (0.574, 60-Day DAM disclosure — CT
+0.744/ST_GAS 0.205 recorded unused), physical <min-down restart bar +
+economic ≥min-down bridging on the model's own P0 duals, economic leg bounded
+to one DA operating day (`DA_COMMITMENT_HORIZON_HOURS`, tariff-cited;
+measured near-costless — only 35 gaps >24 h exist to drop). Two
+default-neutral internals params (`fuel_types`, `max_econ_gap_hours`); CAISO
+paths byte-identical (suite green). D-2 id `gas_commitment_bridge` (17) +
+D-3 ablation entry + cited D-4 window (self-windowing; 0.0 off-window all
+years); 12 new unit tests. Recorded adjudications: CT/ST_GAS excluded
+(rule 18 physics / rule 19 one-mechanism); the CAISO startup-aware screen
+DROPPED WITH CAUSE, not re-derived (it prices anchors off the model's own
+circularly-thin trough margins and refuses everything — re-thresholding
+would be a residual-fitted knob; the phantom-run mode it guards is bounded by
+the measured gap distribution: p10/p50/p90 = 2/6/14 h, 0 >24 h). Bonus fix:
+the meta-writer never recorded `ercot_storage_as_deployment` — the ercot59
+keeper's own defining delta was missing from its meta.json (probes
+reconstructing from meta silently rebuilt ercot56); writer fixed, probe
+compensates explicitly.
+
+**2023 probe ladder (rule-16 throwaways vs the byte-faithful ercot59
+reconstruction — C3a +3.9%, C3b 0.133, C3c 171 h reproduced exactly).** The
+bridge ALONE — the rung 62b never ran — moves EVERY circle target the right
+way: median daily spread $13.5→14.9, viable-arbitrage days 81→85, trough
+h<$15 101→228 (h<$10 27→107), storage 0.65→0.74 TWh, HE18/19 discharge
+205/437→243/505 MW, C3a +3.9→+3.1%, C3b 0.133→0.131, C3c/slack byte-stable.
+Composing `ercot_offer_surface_lowcurve` back on reproduces the 62b row
+(C3a +0.3%) but RE-INSTATES the §5 spread-compression signature even with
+the state present (spread back to 13.5, viable days 69 < the keeper's 81,
+storage gives back half the gain, CT_PEAKER overshoots past actual) — the
+composition's C3a gain is bought by mis-pricing the committed tranche's
+above-floor mid-merit capacity at the LSL bid (rule 1: no right number
+through a wrong mechanism). **The markdown stays default-off; the §5
+determination lands stronger than filed: for the circle the state is
+sufficient.** The remaining admissible price-side lever for the still-open
+trough-depth gap (228 vs 1,493 h<$15) is a FLOOR-SCOPED markdown (LSL bid
+only in the bridge's own floored plant-hours) — enumerated for ERCOT-64, not
+built. **Coal reconciliation resolved by measurement, no new mechanism:**
+the keeper OVER-dispatched coal vs actuals (+5.4 TWh) while under-running
+CC_REGULAR — it papered the missing overnight committed state with coal;
+the bridge's −1.37 TWh returns that energy to gas-CC, landing CC_REGULAR
+within 0.1 TWh of its measured actual with coal still above its own.
+
+**Full-span 2023-2025 + twin (registered): `2026-07-12-ercot63-gas-bridge`
+DETERMINATION CALIBRATED-WITH-CAVEATS — one ledgered caveat vs the keeper's
+two.** C1 16/16, C2, C3a (2023 +3.1%; 2024 −6.4%; 2025 −3.0% — all inside
+±10%; the 2024/25 drift is the honest trough-deepening signature on
+already-under-priced years, reported not buried), C3b (0.131/0.192/0.104),
+C4, C5a, C7, C8 all PASS; **C5c-2024 monthly storage shape — the keeper's
+own ledgered FAIL (r=0.329) — flips to PASS** (the mechanism's design axis:
+storage cycling against a real daily spread). C3c-2024 inherited
+byte-identical (27 h vs DA 68 — the G-22 scarcity-formation residual this
+mechanism does not touch; ledgered). C8: gas-CC at-floor 1.3% lower-bound
+(clean); ST_GAS grounded-above-budget same as keeper (33.6/32.2%, D-4+D-1
+pass-path). The bridge fires condition-responsively every year (7.91 / 9.56
+/ 8.15 TWh; 0 gaps >24 h) with zero year-fitted parameters, so LOYO reduces
+to per-year gate stability — no gate flips in any year. Zero-forcing twin
+`2026-07-12-ercot63-gas-bridge-ablation` registered and linked; DOF ledger
+in the bundle attestation (4 entries, every one measured/published/model-own).
+
+**Promotion case (owner decision pending, rule 1).** More structurally
+faithful than ercot59: the committed-state inflexibility of the gas-CC LSL
+block is real market structure the keeper lacks (902 measured CC
+plant-nights/yr cycle off overnight in the keeper against observed
+synchronization), built forward-native from the model's own P0 pattern +
+physical constants. It moves the storage/spread circle the right way on
+every target, corrects the coal/CC mix onto measured actuals, clears the
+keeper's C5c storage-shape caveat, and costs 1.8-1.9 pp of C3a drift in the
+two under-priced years (inside every gate). Caveat count 2→1 at the same
+CALIBRATED-WITH-CAVEATS tier.
+
+**Holdouts / governance.** No solve, score, or intake outside 2023-2025
+(rule 22); ORDC parameters untouched (rule 26); no offer curve, sigmoid,
+floor, or derive value changed (rules 13/21/23); the drag hinge, ST_GAS
+deltas, and `ercot_storage_as_deployment` untouched. Probe bundles
+(`ercot63_{keeper,bridge,bridge_md,bridge_md_nohorizon}_2023`) are 2023-only
+throwaways — never registered.

@@ -110,6 +110,7 @@ from market_sim.pipeline import (  # noqa: E402
     backcast_config,
     build_base_dispatch_kwargs,
     build_caiso_ra_p1_prep,
+    build_ercot_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
     run_energy_solve,
@@ -543,6 +544,10 @@ def run_year(
     caiso_ra_min_load_frac: float | None = None,
     caiso_ra_startup_bridge: bool | None = None,
     caiso_ra_bridge_decommit: bool | None = None,
+    ercot_gas_commitment_bridge: bool | None = None,
+    ercot_gas_bridge_min_load_frac: float | None = None,
+    ercot_gas_bridge_startup: bool | None = None,
+    ercot_gas_bridge_da_horizon: bool | None = None,
     reliability_floor: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     scarcity_price_overlay: bool | None = None,
@@ -909,6 +914,22 @@ def run_year(
         config = config.with_overrides(caiso_ra_min_load_frac=caiso_ra_min_load_frac)
     if caiso_ra_startup_bridge is not None:
         config = config.with_overrides(caiso_ra_startup_bridge=caiso_ra_startup_bridge)
+    if ercot_gas_commitment_bridge is not None:
+        config = config.with_overrides(
+            ercot_gas_commitment_bridge=ercot_gas_commitment_bridge
+        )
+    if ercot_gas_bridge_min_load_frac is not None:
+        config = config.with_overrides(
+            ercot_gas_bridge_min_load_frac=ercot_gas_bridge_min_load_frac
+        )
+    if ercot_gas_bridge_startup is not None:
+        config = config.with_overrides(
+            ercot_gas_bridge_startup=ercot_gas_bridge_startup
+        )
+    if ercot_gas_bridge_da_horizon is not None:
+        config = config.with_overrides(
+            ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon
+        )
     if caiso_ra_bridge_decommit is not None:
         config = config.with_overrides(
             caiso_ra_bridge_decommit=caiso_ra_bridge_decommit
@@ -3353,6 +3374,13 @@ def run_year(
             (wind_cap[:, None] * wind_cf) + (solar_cap[:, None] * solar_cf)
         ).sum(axis=0),
     )
+    # P1-native ERCOT gas commitment bridge (ERCOT-63): the committed-state
+    # floor on the merchant gas-CC fleet, detected from the P0 run pattern —
+    # the ISO-exclusive sibling of the CAISO hook above. None for every
+    # non-ERCOT / gate-off run (byte-identical).
+    ercot_bridge_prep = build_ercot_gas_bridge_p1_prep(
+        config, iso, fleet, fleet_arrays, mc_base
+    )
     # P1-native PJM commitment-scoped reserve supply (path B, G-20b): the fleet
     # hook zeroes non-fast-start reserve-eligible units' availability in their
     # plant's P0-offline hours (the fa_p2-style mask), the kwargs hook
@@ -3371,7 +3399,7 @@ def run_year(
         dispatch_kwargs,
         config,
         xyear_cache=xyear_cache,
-        p1_fleet_prep=ra_p1_prep or pjm_fleet_prep,
+        p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
         p1_kwargs_prep=pjm_kwargs_prep,
         mc_bid_adjust=offer_surface_mc_bid_adjust,
         p1_bid_adjust_prep=lowcurve_bid_adjust_prep,

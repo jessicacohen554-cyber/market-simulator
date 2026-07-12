@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-12-ercot63-gas-bridge-ablation",
+  "label": "ercot63 gas bridge ablation",
+  "date": "2026-07-12",
+  "shorthand": "ercot63-gas-bridge-ablation",
+  "definition": "ercot63 zero-forcing ablation twin (rule 20 / D-3) of ercot63_gas_bridge: every merchant floor/bridge neutralized via the D-2 mechanism registry \u2014 including the new ercot_gas_commitment_bridge \u2014 keeping only structural must-run (nuclear / CHP-steam / coal take-or-pay).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-12-ercot63-gas-bridge-ablation.js",
+  "bundle": "results/calibration/ercot63_gas_bridge_ablation"
+}

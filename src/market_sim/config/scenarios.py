@@ -3635,6 +3635,82 @@ class ScenarioConfig:
     # the mechanism is a no-op even when the flag is on.
     ercot_offer_surface_lowcurve_path: str | None = None
 
+    # ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the committed-
+    # STATE half of the trough-price-formation circle, promoted from the
+    # ERCOT-62b probe (docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md
+    # §5-6; calibration-log 2026-07-12). The low-curve markdown above restores
+    # the measured cheap LSL bids but was probe-REFUTED as the circle's carrier
+    # alone: in reality those bids coexist with wide daily spreads because the
+    # LSL block is INFLEXIBLE — must-take while the unit is on, never setting
+    # the margin. This supplies that state: the ISO-neutral P1-native
+    # commitment-bridge internals already adopted for CAISO
+    # (model.commitment.caiso_ra_mustoffer_min_gen via
+    # pipeline.commitment.ercot_gas_bridge_p1_floor_fleet /
+    # build_ercot_gas_bridge_p1_prep, injected at the same P0→P1 seam) applied
+    # to the ERCOT merchant gas-CC fleet: a CC that the model's OWN base-cost
+    # P0 pattern runs before AND after an idle gap is held at min-load across
+    # the gap when (a) the gap is shorter than its physical min-down (a restart
+    # bar), or (b) re-paying its published startup cost exceeds the net cost of
+    # holding at min-load priced at the model's own P0 duals (the standard UC
+    # restart inequality — the overnight-between-run-days carrier: the keeper's
+    # 2023 dispatch cycles 902 CC plant-nights/yr off overnight, ~1.07 GW mean,
+    # the overnight analogue of the CAISO midday gap). Forward-native by
+    # construction (P0 pattern + physical constants; no measured generation
+    # enters — rules 13/18); D-2 id MECH_GAS_COMMITMENT_BRIDGE, D-4 window in
+    # scripts/legitimacy_diagnostics.py. CLASS ADJUDICATION (ERCOT-63, recorded
+    # here per the charter): CC only. CT_PEAKER is excluded by its own physics
+    # (min-down 1-2 h < RA_BRIDGE_ECON_MIN_DOWN_HOURS — a fast-start CT is
+    # never economically bridged, rule 18 — and its measured committed band
+    # 1.32-1.44 ≈ the model's, ERCOT-61); ST_GAS is excluded by rule 19 (its
+    # committed state is already carried by the all-hours gas_st_netload_drag
+    # floor + ST startup mechanisms, and the class is C8
+    # grounded-above-budget at ~33% — a second floor would stack mechanisms on
+    # one phenomenon). Measured per-class committed LSL/HSL capacity-weighted
+    # p50s from the same 60-Day DAM disclosure derive (ERCOT-62, 2026-07-12),
+    # recorded for the register: CC 0.574 (used), CT 0.744 / ST_GAS 0.205
+    # (excluded classes, unused). Composes with ercot_offer_surface_lowcurve
+    # (the bridge supplies the state, the markdown the price — diagnosis §5).
+    ercot_gas_commitment_bridge: bool = False
+    # Minimum stable load of a bridged ERCOT gas-CC as a fraction of the
+    # PLANT's available capacity — the MEASURED committed-CC LSL/HSL
+    # capacity-weighted p50, 60-Day DAM disclosure Gen Resource data 2023-2025
+    # (the ercot_dam_offers.parquet corpus, ERCOT-62 derive; diagnosis §5).
+    # A measured physical/market quantity frozen against residuals (rules
+    # 13/21/23); in practice the floor clips at the plant's committed-tranche
+    # capacity (the LP bound — median committed share 25%), so this is the
+    # ceiling, not a tuning surface. Only read when the bridge gate is on.
+    ercot_gas_bridge_min_load_frac: float = 0.574
+    # Economic (≥ min-down) bridging on the startup-restart inequality — the
+    # overnight-between-run-days carrier (a CC's 4-6 h min-down is shorter
+    # than the 8-14 h overnight gap, so the physical bar alone catches almost
+    # nothing). Same construction and admissibility as caiso_ra_startup_bridge
+    # (MC and LMP are the model's own P0 quantities). Default on WITH the
+    # gate; off = the physical-restart-bar-only probe arm.
+    ercot_gas_bridge_startup: bool = True
+    # Cap economic bridges at one DA operating day
+    # (constants.DA_COMMITMENT_HORIZON_HOURS = 24, tariff-cited — the same
+    # one-operating-day horizon every US ISO's DAM uses): a unit idle LONGER
+    # than one DA cycle is a next-day decommit/re-offer decision, never an
+    # intra-day min-load hold. This bounds the mechanism to its declared D-4
+    # window (idle gaps between run-days) — the market-design analogue of
+    # caiso_ra_bridge_decommit's horizon piece WITHOUT the CAISO
+    # surplus-repricing machinery (ERCOT is an island: no import backdown /
+    # export-sink absorption to measure surplus against). Default on with the
+    # gate; off reproduces the ERCOT-62b monkeypatch construction exactly
+    # (economic bridges at any gap length).
+    ercot_gas_bridge_da_horizon: bool = True
+    # NOTE (ERCOT-63 startup-aware adjudication): the CAISO
+    # caiso_ra_bridge_startup_aware run screen is deliberately NOT exposed for
+    # the ERCOT bridge. Its anchor test prices a run's margin off the model's
+    # own P0 duals; ERCOT's modelled troughs are the +$5-7-overpriced,
+    # spread-flattened quantity under repair (diagnosis §2), so run margins
+    # are circularly thin and the screen refuses every anchor (the 62b first
+    # probe arm's silent no-op). Re-deriving a lower margin threshold "for
+    # ERCOT economics" would be a scalar tuned until anchors survive — a
+    # residual-fitted knob (rules 13/20). Dropped with cause; the phantom-
+    # micro-run failure mode it guards is bounded instead by the anchor
+    # run-length evidence recorded in the ERCOT-63 probe analysis.
+
     # ERCOT unit-level (window-grain) nuclear refuel availability (default off,
     # ERCOT backcast-gated). Replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month
     # smear for the four ERCOT reactors with the measured per-reactor DAILY
@@ -5810,6 +5886,10 @@ TIER_TAGS: dict[str, int] = {
     "storage_as_commitment": 1,
     "ercot_storage_as_deployment": 1,
     "ercot_storage_as_deployment_from_year": 1,
+    "ercot_gas_commitment_bridge": 1,
+    "ercot_gas_bridge_min_load_frac": 2,
+    "ercot_gas_bridge_startup": 1,
+    "ercot_gas_bridge_da_horizon": 1,
     "ercot_storage_as_endogenous": 1,
     "ercot_thermal_as_endogenous": 1,
     "ercot_storage_as_duration_gate": 1,
