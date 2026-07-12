@@ -3606,6 +3606,35 @@ class ScenarioConfig:
     # p90 wall (~$2,700) and below VOLL.
     ercot_offer_surface_price_cap_frac: float = 0.95
 
+    # ERCOT G-22 conditional-offer-distribution LOW leg (default off, ERCOT-gated):
+    # the trough-price-formation MIRROR of ``ercot_offer_surface_conditional`` above.
+    # The adopted surface restored the measured offer distribution's UPPER tail in
+    # anticipated-tight bins; this leg restores its LOWER tail — the measured cheap
+    # committed-fleet segments the all-hours p50 band collapse deleted. Two measured
+    # facts (60-Day DAM disclosure, committed/online resources only): (a) committed
+    # units' Min-Gen-Cost (LSL block) bids run FAR below the model's committed band
+    # (CC capacity-weighted p50 multiplier ~0.52-0.64 in loose net-load bins,
+    # 0.13-0.37 in tight ones, vs the model's ~1.0) — cycling-avoidance / stay-on
+    # bidding; (b) the committed fleet's lower-body incremental curve (rel < 0.67)
+    # carries an always-posted cheap tail (CC p10 ~0.65, p25 ~0.84, bin-stable). The
+    # model prices both at the band p50, which floors its price troughs at the CC
+    # econ band (~$19-23) where the real 2023 market spent ~1,500 h below $15 — the
+    # missing HALF of the daily spread that starves battery arbitrage (the ERCOT-58
+    # §4 / ERCOT-60 §7 storage/price-formation circle). Mechanics mirror the top
+    # leg exactly: P1-only additive adjustment (P0 run lengths byte-identical),
+    # measured quantile ladders per net-load bin (same edges, same derive corpus),
+    # rank-mapped onto the gas committed/econ rungs, ratio clamped <= 1 (a markdown
+    # can only lower an offer; loose-vs-tight conditionality comes from the ladder),
+    # never below $1/MWh on the energy part, gas classes only (coal untouched —
+    # take-or-pay/passthrough already governs its low bids, rule 19). Zero fitted
+    # scalars (rules 13/20/21). See scripts/derive_dam_offer_hrmults.py
+    # --low-curve-binned and data.fleet.build_ercot_offer_surface_lowcurve_markdown.
+    ercot_offer_surface_lowcurve: bool = False
+    # Path to the measured low-curve condition-binned JSON (default: the frozen
+    # data/raw/_validation-source/offer_curve_dam_lowcurve_condbinned.json). None →
+    # the mechanism is a no-op even when the flag is on.
+    ercot_offer_surface_lowcurve_path: str | None = None
+
     # ERCOT unit-level (window-grain) nuclear refuel availability (default off,
     # ERCOT backcast-gated). Replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month
     # smear for the four ERCOT reactors with the measured per-reactor DAILY
