@@ -3284,6 +3284,180 @@ def build_pjm_offer_midcurve_conditional_markup(
         else "pooled",
     )
     return markup
+# Model tranche suffixes carrying the gas fleet's committed (LSL) block and the
+# economic ramp — the rows the low-curve markdown reprices. ``econc``-prefixed
+# suffixes are the N-slice smoothed econ ramp (``_econ_curve_steps``); ``econ``/
+# ``econlo``/``econhi`` are the unsmoothed variants. Peak rungs are the TOP
+# surface's rows and are never touched here (disjoint by construction, rule 19).
+_LOWCURVE_ECON_SUFFIXES: tuple[str, ...] = ("econ", "econlo", "econhi")
+
+
+def _lowcurve_row_family(unit_id: str) -> str | None:
+    """Return ``"committed"`` / ``"econ"`` for a low-curve-eligible row, else None."""
+    sfx = str(unit_id).rpartition("_")[2]
+    if sfx == "committed":
+        return "committed"
+    if sfx in _LOWCURVE_ECON_SUFFIXES:
+        return "econ"
+    if sfx.startswith("econc") and sfx[5:].isdigit():
+        return "econ"
+    return None
+
+
+def build_ercot_offer_surface_lowcurve_markdown(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+) -> "np.ndarray | None":
+    """Build the P1-only conditional low-curve gas offer markdown ``(n_gen, T)``.
+
+    The trough-price-formation MIRROR of
+    :func:`build_ercot_offer_surface_conditional_markup`
+    (``ScenarioConfig.ercot_offer_surface_lowcurve``): where the adopted top leg
+    restores the measured offer distribution's UPPER tail in anticipated-tight
+    net-load bins (clamped never to lower an offer), this leg restores its LOWER
+    tail — the committed fleet's cheap segments the all-hours p50 band collapse
+    deleted (clamped never to RAISE one). Two measured bands from the same
+    60-Day DAM disclosure corpus, committed/online resources only:
+
+    * ``binned_committed`` — the Min-Gen-Cost (LSL block) multiplier quantile
+      ladder per net-load bin. Committed units bid their LSL far below SRMC
+      (cycling-avoidance / stay-on bidding), and MORE so in tight bins.
+    * ``binned_low_ladder`` — the lower-body (``rel < 0.67``) incremental-curve
+      multiplier quantile ladder per bin: the always-posted cheap tail
+      (CC p10 ~0.65 x base-HR SRMC).
+
+    Each eligible model row (gas ``_committed`` tranche / econ-ramp rung) is
+    rank-mapped by its capacity-weighted measured-basis multiplier position
+    within its (class, family) and repriced to the measured quantile at that
+    position — heterogeneity-preserving exactly as the top leg's rung ladder.
+    The ratio is clamped ``<= 1`` (a markdown can only lower; where the model
+    band already sits at or below the measured value the row is byte-identical)
+    and the repriced energy part is floored at $1/MWh. P1-only via the shared
+    ``mc_bid_adjust`` seam: P0 run lengths, the startup-amortization coupling
+    and every floor are byte-identical. Gas classes only (coal's low bids are
+    governed by take-or-pay/passthrough — rule 19). Zero fitted scalars: the
+    trigger (net-load percentile) and every level (measured QSE quantiles) are
+    rule-13-admissible, derived from source data only (rule 21) and frozen
+    against residuals (rule 20). See ``scripts/derive_dam_offer_hrmults.py
+    --low-curve-binned``.
+
+    Returns ``None`` (P1 unchanged) when the flag is off, the ISO is not ERCOT,
+    the surface JSON is absent, or no eligible rows exist.
+    """
+    if not getattr(config, "ercot_offer_surface_lowcurve", False):
+        return None
+    if config.iso != "ERCOT":
+        return None
+    path = getattr(config, "ercot_offer_surface_lowcurve_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        default = _paths.CALIBRATION_DIR / "offer_curve_dam_lowcurve_condbinned.json"
+        if not default.exists():
+            return None
+        path = str(default)
+    surface = _load_condbinned_surface(str(path))
+
+    edges = tuple(float(x) for x in config.ercot_offer_surface_netload_pcts)
+    json_edges = tuple(
+        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
+    )
+    if json_edges and json_edges != edges:
+        raise ValueError(
+            "ercot_offer_surface_lowcurve: config netload_pcts "
+            f"{edges} disagree with the derived surface's edges {json_edges} "
+            "(re-derive with matching --low-curve-binned edges, or fix the config)."
+        )
+    n_bins = len(edges) + 1
+
+    heat_rate = np.asarray(fleet_arrays.heat_rate, dtype=float)
+    pmax = np.asarray(fleet_arrays.pmax, dtype=float)
+    hours = int(fuel_prices.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net_load, edges) if len(edges) else np.array([])
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    # Eligible rows per (class, family), with the row's measured-basis
+    # multiplier (heat_rate / measured class base HR — the same divisor the
+    # derive normalized the QSE offers by, so ranks and ratios are basis-true).
+    members: dict[tuple[str, str], list[int]] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None)
+        if cls not in surface or not isinstance(surface.get(cls), dict):
+            continue
+        fam = _lowcurve_row_family(gen.unit_id)
+        if fam is None:
+            continue
+        members.setdefault((cls, fam), []).append(g)
+    if not members:
+        return None
+
+    markdown = np.zeros((len(generators), hours), dtype=float)
+    n_repriced = 0
+    for (cls, fam), rows in members.items():
+        entry = surface[cls]
+        base_hr = float(entry.get("base_hr", 0.0) or 0.0)
+        ladders = entry.get(
+            "binned_committed" if fam == "committed" else "binned_low_ladder"
+        )
+        if base_hr <= 0.0 or not ladders or len(ladders) != n_bins:
+            continue
+        idx = np.asarray(rows, dtype=int)
+        row_mult = heat_rate[idx] / base_hr  # (n_rows,) measured-basis multiplier
+        w = np.maximum(pmax[idx], 0.0)
+        order = np.argsort(row_mult, kind="stable")
+        cw = np.cumsum(w[order]) - 0.5 * w[order]
+        tot = float(w.sum())
+        if tot <= 0.0:
+            continue
+        pos = np.empty(len(idx), dtype=float)
+        pos[order] = cw / tot  # capacity-weighted midpoint rank, cheapest first
+
+        # target multiplier per (row, bin): measured quantile ladder interpolated
+        # at the row's rank position; rows ranked past the ladder's top quantile
+        # are untouched (their half of the band belongs to the top leg).
+        ratio = np.ones((len(idx), n_bins), dtype=float)
+        for b in range(n_bins):
+            lad = ladders[b] or []
+            qs = np.array([float(p[0]) for p in lad], dtype=float)
+            vals = np.array([float(p[1]) for p in lad], dtype=float)
+            good = np.isfinite(vals)
+            qs, vals = qs[good], vals[good]
+            if qs.size == 0:
+                continue
+            target = np.interp(pos, qs, vals)
+            in_scope = pos <= qs.max()
+            with np.errstate(divide="ignore", invalid="ignore"):
+                r = np.where(row_mult > 0.0, target / row_mult, 1.0)
+            ratio[:, b] = np.where(in_scope, np.minimum(r, 1.0), 1.0)
+
+        for j, g in enumerate(idx):
+            energy = heat_rate[g] * fuel_prices[g, :hours]  # (T,) fuel MC of the row
+            row_ratio = ratio[j, hour_bin]  # (T,)
+            adj = energy * (row_ratio - 1.0)  # <= 0
+            # Floor the repriced energy part at $1/MWh (never negative offers
+            # from this leg; measured low quantiles are positive anyway).
+            adj = np.maximum(adj, np.minimum(0.0, 1.0 - energy))
+            if np.any(adj < 0.0):
+                markdown[g, :] = adj
+                n_repriced += 1
+
+    if n_repriced == 0 or not np.any(markdown < 0.0):
+        return None
+    loose = int((hour_bin == 0).sum())
+    logger.info(
+        "ERCOT conditional low-curve surface: marked down %d gas committed/econ "
+        "rows across %d net-load bins (loosest bin %d/%d hours); P1-only, "
+        "ratio clamped <= 1",
+        n_repriced,
+        n_bins,
+        loose,
+        hours,
+    )
+    return markdown
 
 
 def apply_netload_drag_floors(

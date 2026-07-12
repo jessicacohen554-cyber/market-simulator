@@ -108,6 +108,20 @@ OUT_JSON_LADDER = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_ladder.json"
 # loose-hour offer stack untouched. Its own artifact so the p50/ladder files stay
 # byte-stable; a run opts in via ScenarioConfig.ercot_offer_surface_binned_path.
 OUT_JSON_CONDBINNED = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_condbinned.json"
+# --low-curve-binned writes the trough-price-formation MIRROR of the condition-
+# binned surface: the measured LOWER-tail quantile ladders (committed Min-Gen-Cost
+# LSL block + lower-body incremental curve) per net-load bin, COMMITTED resources
+# only. Its own artifact so the adopted top-surface JSON stays byte-stable
+# (rule 23); a run opts in via ScenarioConfig.ercot_offer_surface_lowcurve.
+OUT_JSON_LOWCURVE = paths.CALIBRATION_DIR / "offer_curve_dam_lowcurve_condbinned.json"
+
+# Low-curve quantile ladders (capacity-weighted across per-resource medians).
+# The committed (LSL) ladder stops at p75: the top quartile of measured LSL bids
+# is at/above the model's band so a markdown clamped <= 1 leaves it untouched.
+# The body ladder stops at p50: the upper half of the economic ramp belongs to
+# the top leg's econ_high/peak repricing (rule 19 — disjoint by construction).
+LOWCURVE_COMMITTED_QUANTILES = (0.25, 0.50, 0.75)
+LOWCURVE_BODY_QUANTILES = (0.10, 0.25, 0.50)
 
 # Net-load percentile bin EDGES for the condition-binned surface. Must match
 # ScenarioConfig.ercot_offer_surface_netload_pcts (the mechanism asserts the JSON's
@@ -578,10 +592,23 @@ def main() -> None:
         "offer_curve_dam_hrmults_condbinned.json (its own artifact; the p50/ladder "
         "files are untouched). Implies mode B; coal excluded (gas peak bands only).",
     )
+    ap.add_argument(
+        "--low-curve-binned",
+        action="store_true",
+        help="emit the conditional LOW-curve surface (the trough-price-formation "
+        "mirror of --condition-binned): the measured lower-tail quantile ladders "
+        "(committed Min-Gen-Cost LSL block + lower-body incremental curve) per "
+        f"net-load-percentile bin (edges {NETLOAD_PCT_EDGES}), COMMITTED "
+        "resources only. Writes offer_curve_dam_lowcurve_condbinned.json (its "
+        "own artifact; the adopted top-surface JSON is untouched). Gas only.",
+    )
     args = ap.parse_args()
 
     if args.condition_binned:
         derive_condition_binned(NETLOAD_PCT_EDGES, args.out_json)
+        return
+    if args.low_curve_binned:
+        derive_lowcurve_binned(NETLOAD_PCT_EDGES, args.out_json)
         return
 
     fleet_hr = class_base_hr()
@@ -817,6 +844,150 @@ def derive_condition_binned(edges: tuple[float, ...], out_json: str | None) -> N
             )
 
     out_path = Path(out_json) if out_json else OUT_JSON_CONDBINNED
+    out_path.write_text(json.dumps(payload, indent=1) + "\n")
+    print(f"\nWrote {out_path}  (groups {sorted(CONDBINNED_GROUPS)})")
+
+
+def _lowcurve_binned_ladder(
+    per_res: pd.DataFrame, quantiles: tuple[float, ...]
+) -> list[list[float]] | None:
+    """Capacity-weighted quantile ladder ``[[q, mult], ...]`` from per-resource rows."""
+    d = per_res[np.isfinite(per_res["mult"]) & (per_res["cap"] > 0)]
+    if d.empty:
+        return None
+    v = d["mult"].to_numpy(float)
+    w = d["cap"].to_numpy(float)
+    return [[q, round(_wquantile(v, w, q), 3)] for q in quantiles]
+
+
+def derive_lowcurve_binned(edges: tuple[float, ...], out_json: str | None) -> None:
+    """Derive and write the conditional LOW-curve gas offer surface (gas only).
+
+    The trough-price-formation mirror of :func:`derive_condition_binned`
+    (the ERCOT G-22 conditional-offer-distribution lane's LOW leg): for each gas
+    group and each net-load-percentile bin, the measured LOWER-tail quantile
+    ladders of the offer distribution, restricted to COMMITTED (online)
+    resources — an OFF unit's cheap segments are not in the cleared supply
+    stack, so the low side is derived online-only where the top-of-curve wall
+    is rightly derived offer-posted-regardless-of-award (the asymmetry is
+    deliberate and documented here).
+
+    Two bands per group per bin:
+
+    * ``binned_committed`` — the Min-Gen-Cost (LSL block) multiplier ladder at
+      ``LOWCURVE_COMMITTED_QUANTILES``: committed units bid their LSL far below
+      SRMC to stay on (cycling avoidance), and more so in tight bins.
+    * ``binned_low_ladder`` — the lower-body (``rel < 0.67``) incremental-curve
+      multiplier ladder at ``LOWCURVE_BODY_QUANTILES``: the always-posted cheap
+      tail of the competitive body (``curve_price < $1000``).
+
+    Written to ``offer_curve_dam_lowcurve_condbinned.json`` (its own artifact —
+    the adopted top-surface JSON stays byte-stable, rule 23). Applied by
+    ``data.fleet.build_ercot_offer_surface_lowcurve_markdown`` (P1-only,
+    ratio clamped <= 1).
+    """
+    fleet_hr = class_base_hr()
+    df = load_offers()
+    netq = netload_pct_by_hour()
+    df = df.merge(netq, on=["delivery_date", "hour_ending"], how="inner")
+    df = df[df["committed"] == True].copy()  # noqa: E712 — online resources only
+    print(
+        f"Loaded {len(df):,} COMMITTED offer-point rows with net-load percentile, "
+        f"{df['delivery_date'].min().date()} -> {df['delivery_date'].max().date()} "
+        f"(years {YEARS}); edges {edges}\n"
+    )
+
+    payload: dict = {
+        "_provenance": {
+            "source": "ERCOT 60-Day DAM Disclosure Gen Resource Data, delivery "
+            "years 2023-2025 (ercot_dam_offers.parquet), COMMITTED (online-status) "
+            "resources only",
+            "method": "capacity-weighted quantile ladders of per-resource median "
+            "heat-rate multipliers, derived within net-load-percentile bins: "
+            "committed = Min Gen Cost (LSL block); low body = incremental curve "
+            "rel < 0.67, competitive body (< $1000). Lower-tail mirror of the "
+            "condition-binned peak surface; applied P1-only with ratio <= 1.",
+            "driver": "system net-load percentile within year (DAM dispatchable "
+            "awarded quantity), forward-native (load+VRE forecast regenerates it)",
+            "netload_pct_edges": list(edges),
+            "committed_quantiles": list(LOWCURVE_COMMITTED_QUANTILES),
+            "body_quantiles": list(LOWCURVE_BODY_QUANTILES),
+            "iso": "ERCOT",
+        }
+    }
+    n_bins = len(edges) + 1
+    for dam_cls, outputs in CLASS_TO_OUTPUT.items():
+        if dam_cls == "COAL":
+            continue
+        df_cls = df[df["model_class"] == dam_cls].copy()
+        df_cls["fuel"] = df_cls["gas"].astype(float)
+        df_cls["bin"] = netload_bin_index(df_cls["q"].to_numpy(float), edges)
+        for out_group, fleet_groups in outputs:
+            if out_group not in CONDBINNED_GROUPS:
+                continue
+            bhr = output_base_hr(fleet_hr, fleet_groups)
+
+            # committed (LSL block) band: Min Gen Cost multiplier, point==1 rows
+            cm = df_cls[
+                (df_cls["point"] == 1)
+                & df_cls["min_gen_cost"].notna()
+                & (df_cls["min_gen_cost"] > 0)
+                & (df_cls["lsl"] > 0)
+            ].copy()
+            cm["mult"] = cm["min_gen_cost"].to_numpy(float) / (
+                cm["fuel"].to_numpy(float) * bhr
+            )
+            cm["cap"] = cm["hsl"].astype(float)
+
+            # lower-body incremental band: rel < 0.67, competitive body only
+            e = df_cls[
+                (df_cls["hsl"] > df_cls["lsl"])
+                & (df_cls["curve_price"] > 0)
+                & (df_cls["curve_price"] < SCARCITY_THRESH)
+            ].copy()
+            e["mult"] = e["curve_price"].to_numpy(float) / (
+                e["fuel"].to_numpy(float) * bhr
+            )
+            e["rel"] = ((e["curve_mw"] - e["lsl"]) / (e["hsl"] - e["lsl"])).clip(
+                0.0, 1.0
+            )
+            e["cap"] = e["hsl"].astype(float)
+            lo = e[e["rel"] < 0.67]
+
+            binned_committed: list = []
+            binned_low: list = []
+            for b in range(n_bins):
+                cb = cm[cm["bin"] == b]
+                pr = (
+                    cb.groupby("resource_name")
+                    .agg(mult=("mult", "median"), cap=("cap", "median"))
+                    .reset_index()
+                )
+                binned_committed.append(
+                    _lowcurve_binned_ladder(pr, LOWCURVE_COMMITTED_QUANTILES)
+                )
+                lb = lo[lo["bin"] == b]
+                pr = (
+                    lb.groupby("resource_name")
+                    .agg(mult=("mult", "median"), cap=("cap", "median"))
+                    .reset_index()
+                )
+                binned_low.append(_lowcurve_binned_ladder(pr, LOWCURVE_BODY_QUANTILES))
+
+            payload[out_group] = {
+                "base_hr": round(bhr, 3),
+                "binned_committed": binned_committed,
+                "binned_low_ladder": binned_low,
+            }
+            fmt = lambda lads: [  # noqa: E731
+                (None if lad is None else lad[len(lad) // 2][1]) for lad in lads
+            ]
+            print(
+                f"  {out_group:11s} base_HR {bhr:5.2f}  committed p50/bin "
+                f"{fmt(binned_committed)}  low-body p25/bin {fmt(binned_low)}"
+            )
+
+    out_path = Path(out_json) if out_json else OUT_JSON_LOWCURVE
     out_path.write_text(json.dumps(payload, indent=1) + "\n")
     print(f"\nWrote {out_path}  (groups {sorted(CONDBINNED_GROUPS)})")
 

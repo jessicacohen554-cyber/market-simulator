@@ -2122,6 +2122,7 @@ def solve_and_persist(
     gt_ambient_derate_slope_ct: float | None = None,
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
+    ercot_offer_surface_lowcurve: bool = False,
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
@@ -2417,6 +2418,7 @@ def solve_and_persist(
             gt_ambient_derate_slope_ct=gt_ambient_derate_slope_ct,
             temp_dependent_derate=temp_dependent_derate,
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+            ercot_offer_surface_lowcurve=ercot_offer_surface_lowcurve,
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
             pjm_offer_surface_conditional=pjm_offer_surface_conditional,
             pjm_da_virtual_bids=pjm_da_virtual_bids,
@@ -2793,6 +2795,7 @@ def solve_and_persist(
         "coal_nameplate_summer_derate": coal_nameplate_summer_derate,
         "temp_dependent_derate": temp_dependent_derate,
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
+        "ercot_offer_surface_lowcurve": ercot_offer_surface_lowcurve,
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
         "pjm_offer_surface_conditional": pjm_offer_surface_conditional,
         "pjm_da_virtual_bids": pjm_da_virtual_bids,
@@ -2926,6 +2929,10 @@ def solve_and_persist(
         pjm_da_virtual_bids=pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
     )
+    if ercot_offer_surface_lowcurve:
+        # Meta-writer mirror of run_year's with_overrides (rule 25): the LOW-leg
+        # flag must land in scenario_config exactly as the LP solved with it.
+        recorded_cfg = recorded_cfg.with_overrides(ercot_offer_surface_lowcurve=True)
     # Coal sigmoid flags mirror run_year exactly — run_config.json must
     # record the same enables/params the LP solved with (the prb sigmoid +
     # tiered flags, outage_source, coal_drop_pof, the per-plant must-run and
