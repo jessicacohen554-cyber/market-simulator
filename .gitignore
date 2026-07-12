@@ -382,3 +382,6 @@ docs/handoffs/_battery_metrics/
 # Agent tool worktrees (per-session isolated worktrees, not repo content)
 .claude/worktrees/
 logs_g10/
+# ERCOT-61 binding-regime ST_GAS lane: rule-16 2023-only throwaway probe
+# bundles + solve logs (never registered; regenerable from the probe runners).
+/results/calibration/ercot61*
