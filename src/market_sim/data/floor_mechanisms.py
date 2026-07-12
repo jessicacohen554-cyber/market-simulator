@@ -62,6 +62,15 @@ MECH_WINTER_FUELSEC: int = 14
 # quarantined MECH_CT_MUSTRUN_PER_PLANT above which pins observed net-generation
 # MWh. Subject to the D-2 forced-share gate; ablated in the zero-forcing twin.
 MECH_CC_MUSTRUN_PER_PLANT: int = 15
+# The ST_GAS leg of the same per-plant local-reliability commitment floor
+# (ScenarioConfig.st_gas_mustrun_per_plant): identical mechanics and artifact
+# columns, separate gate + id so D-2/D-4 attribution and per-ISO arming stay
+# independent of the CC leg. Driver: the Entergy MISO-South steam fleet's
+# VLR/self-commitment (MISO SOM out-of-market voltage-and-local-reliability
+# commitments; CEMS shows Nine Mile synchronized 98.2% of ALL hours 2023-2025,
+# Sabine 85.6%, Lewis Creek 87.8%). A merchant reliability commitment —
+# subject to the D-2 forced-share gate; ablated in the zero-forcing twin.
+MECH_ST_GAS_MUSTRUN_PER_PLANT: int = 16
 
 MECH_NAMES: dict[int, str] = {
     MECH_NONE: "none",
@@ -80,6 +89,7 @@ MECH_NAMES: dict[int, str] = {
     MECH_NYISO_SELFSUPPLY: "nyiso_local_selfsupply",
     MECH_WINTER_FUELSEC: "winter_fuelsec_mustrun",
     MECH_CC_MUSTRUN_PER_PLANT: "cc_mustrun_per_plant",
+    MECH_ST_GAS_MUSTRUN_PER_PLANT: "st_gas_mustrun_per_plant",
 }
 
 # Mechanisms whose forced energy is exempt from the D-2 merchant-class gates
@@ -125,6 +135,7 @@ MECH_ABLATION_FIELDS: dict[int, dict[str, object]] = {
     MECH_NYISO_SELFSUPPLY: {"nyiso_local_selfsupply": False},
     MECH_WINTER_FUELSEC: {"neiso_winter_fuel_mustrun": False},
     MECH_CC_MUSTRUN_PER_PLANT: {"cc_mustrun_per_plant": False},
+    MECH_ST_GAS_MUSTRUN_PER_PLANT: {"st_gas_mustrun_per_plant": False},
 }
 
 # Mechanisms KEPT in the ablation twin (carry NO ablation entry): the structural
