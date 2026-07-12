@@ -1,0 +1,33 @@
+{
+  "date": "2026-07-12",
+  "run_id": "29190777901",
+  "run_number": "1",
+  "commit": "8fa79d027ad2d29c090c519eea267b695a29c4e5",
+  "e2e_slow_passed": true,
+  "paired_invariants": {
+    "carbon": [
+      {
+        "ident": "P1",
+        "name": "CO2 monotone vs carbon",
+        "status": "SKIP",
+        "detail": "emissions absent"
+      }
+    ],
+    "gas_up": [
+      {
+        "ident": "P2",
+        "name": "merit-order sign",
+        "status": "PASS",
+        "detail": "year 2028: all signs correct"
+      }
+    ],
+    "gas_pm5": [
+      {
+        "ident": "P3",
+        "name": "perturbation stability",
+        "status": "PASS",
+        "detail": "cumulative builds moved 0.0% (base 12965 MW, pert 12965 MW)"
+      }
+    ]
+  }
+}
