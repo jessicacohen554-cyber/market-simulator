@@ -962,6 +962,8 @@ def backcast_config(
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
+    pjm_da_virtual_bids: bool = False,
+    pjm_offer_midcurve_conditional: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -1919,4 +1921,15 @@ def backcast_config(
                 changed = True
         if changed:
             config = config.with_overrides(offer_curve_by_group=merged)
+    # PJM Day-Ahead virtual-bid layer (G-22 lever B): flag only — the
+    # pseudo-unit construction happens at fleet-build time
+    # (data.virtual_bids.build_pjm_da_virtual_units); no offer-curve or
+    # demand-basis change rides here.
+    if pjm_da_virtual_bids and iso == "PJM":
+        config = config.with_overrides(pjm_da_virtual_bids=True)
+    # PJM mid-curve offer surface (G-22 lever A'): flag only — the P1-only
+    # markup is built at the mc_bid_adjust seam
+    # (fleet.build_pjm_offer_midcurve_conditional_markup).
+    if pjm_offer_midcurve_conditional and iso == "PJM":
+        config = config.with_overrides(pjm_offer_midcurve_conditional=True)
     return config

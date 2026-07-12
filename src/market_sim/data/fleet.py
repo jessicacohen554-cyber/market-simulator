@@ -3108,6 +3108,184 @@ def _conditional_surface_markup(
     return markup
 
 
+#: Model class -> measured physics segment of the PJM mid-curve surface
+#: (scripts/derive_pjm_offer_midcurve.py). CHP classes are deliberately
+#: absent (steam-host economics, small idle footprint).
+_PJM_MIDCURVE_SEGMENT_OF = {
+    "CC_REGULAR": "CC_LIKE",
+    "CT_PEAKER": "CT_FAST",
+    "COAL": "LONG_RUN",
+    "COAL_BIT": "LONG_RUN",
+    "COAL_PRB": "LONG_RUN",
+    "ST_GAS": "LONG_RUN",
+}
+
+
+def build_pjm_offer_midcurve_conditional_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+) -> "np.ndarray | None":
+    """Build the PJM P1-only MID-CURVE offer-floor markup ``(n_gen, T)``.
+
+    G-22 lever A' (``ScenarioConfig.pjm_offer_midcurve_conditional``): the
+    pjm-99 probe proved the measured TOP-of-curve surface is inert in PJM —
+    the dual is capped by the ~21 GW idle mid-curve (COAL / CT_PEAKER /
+    ST_GAS / CC econ bands) offered at $28-45 where the measured fleet
+    prices the same curve region $35-83+, and the depth sweep showed +10 GW
+    of procurement depth buys only +$2-4/MWh on that too-cheap body. This
+    mechanism floors each targeted econ-tranche row's P1 bid at the
+    MEASURED capacity-share-matched offer level of its physics segment
+    (``scripts/derive_pjm_offer_midcurve.py``):
+
+        target[g, t] = mult(segment, year, bin(t), share_g) x gas_day(t)
+        markup[g, t] = max(0, min(target, 0.95 x VOLL) - mc_base[g, t])
+
+    * ``share_g`` is the row's WITHIN-PLANT cumulative-capacity midpoint
+      (scale-free — immune to the model-fleet vs measured-segment capacity
+      mismatch), read off the model's own tranche structure ordered by
+      base cost.
+    * Targeted rows: the econ tranches (``econ*`` suffixes) of the mapped
+      classes, plus the LONG_RUN classes' ``peak`` tranche (CC/CT peak
+      rungs stay owned by the pjm-99 top-of-curve surface — one mechanism
+      per row, rule 19). Committed / must-run / sync tranches are never
+      touched (their pricing is owned by the coal take-or-pay/passthrough
+      sigmoids and the commitment scaffolding).
+    * P1-only (the ``mc_bid_adjust`` seam): P0 run lengths and the startup
+      amortization coupling are unperturbed — the pjm-99 finding's explicit
+      caution for econ-band repricing (the rejected ERCOT flat-CT
+      precedent).
+    * The floor only ever RAISES a bid to the measured level (max(0, .)),
+      mirroring the top-of-curve surface's ratio >= 1 clamp, and is capped
+      below VOLL so no tranche ties the load-shed slack.
+
+    Measured OFFER prices are the input; clearing prices stay
+    validation-only (rule 13); the surface JSON is frozen against
+    residuals (rule 20). PJM-only, no cross-ISO fallback (rule 25).
+    """
+    if not getattr(config, "pjm_offer_midcurve_conditional", False):
+        return None
+    if config.iso != "PJM":
+        return None
+    path = getattr(config, "pjm_offer_midcurve_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        path = str(_paths.CALIBRATION_DIR / "pjm_offer_midcurve_condbinned.json")
+    surface = json.loads(Path(path).read_text())
+    prov = surface.get("_provenance", {})
+    edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
+    shares = np.asarray(prov.get("shares", ()), dtype=float)
+    if not edges or shares.size == 0:
+        raise ValueError(
+            "pjm_offer_midcurve: surface JSON carries no edges/shares — "
+            "re-derive scripts/derive_pjm_offer_midcurve.py"
+        )
+    n_bins = len(edges) + 1
+
+    hours = int(mc_base.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net_load, edges)
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    # Delivered-gas day series on the model clock (the derive's own price
+    # normalizer: HH daily + PJM basis, forward-filled).
+    from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
+    from market_sim.data.fuel import HENRY_HUB_DAILY_PATH
+
+    hh = pd.read_csv(HENRY_HUB_DAILY_PATH, parse_dates=["date"])
+    s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
+    full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
+    daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["PJM"])
+    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
+
+    # Per-segment (n_bins, n_shares) mult tables for this delivery year
+    # (pooled fallback for an unmapped year, e.g. a forward year).
+    tables: dict[str, np.ndarray] = {}
+    for seg in set(_PJM_MIDCURVE_SEGMENT_OF.values()):
+        entry = surface.get(seg)
+        if not entry:
+            continue
+        ladders = entry.get("years", {}).get(str(year)) or entry.get("pooled")
+        if not ladders or len(ladders) != n_bins:
+            continue
+        tables[seg] = np.array(
+            [[float(pt[1]) for pt in lad] for lad in ladders], dtype=float
+        )  # (n_bins, n_shares)
+
+    # Target rows + within-plant shares. A plant key is the unit_id prefix
+    # (everything before the tranche suffix); the share base is EVERY
+    # tranche of the plant ordered by its annual-mean base cost, so the
+    # model's own rising tranche curve defines each row's curve position.
+    prefixes: dict[str, list[int]] = {}
+    row_cls: dict[int, str] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None) or ""
+        if cls not in _PJM_MIDCURVE_SEGMENT_OF:
+            continue
+        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+        row_cls[g] = cls
+
+    pmax = fleet_arrays.pmax
+    voll_cap = 0.95 * float(getattr(config, "voll", 5000.0))
+    markup = np.zeros_like(mc_base)
+    n_priced = 0
+    mean_mc = mc_base.mean(axis=1)
+    for rows in prefixes.values():
+        rows_arr = np.asarray(rows, dtype=int)
+        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
+        caps = pmax[order]
+        total = caps.sum()
+        if total <= 0.0:
+            continue
+        cum = np.cumsum(caps)
+        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
+        for g, s_g in zip(order, mids):
+            gen = generators[g]
+            sfx = gen.unit_id.rpartition("_")[2]
+            seg = _PJM_MIDCURVE_SEGMENT_OF[row_cls[g]]
+            is_target = sfx.startswith("econ") or (sfx == "peak" and seg == "LONG_RUN")
+            if not is_target or seg not in tables:
+                continue
+            # mult per bin at this row's share (linear interp on the grid).
+            table = tables[seg]  # (n_bins, n_shares)
+            mult_b = np.array(
+                [
+                    np.interp(s_g, shares, table[b])
+                    if np.isfinite(table[b]).all()
+                    else np.nan
+                    for b in range(n_bins)
+                ]
+            )
+            target = mult_b[hour_bin] * gas_day  # (T,)
+            target = np.minimum(target, voll_cap)
+            row = np.maximum(0.0, np.nan_to_num(target, nan=0.0) - mc_base[g, :])
+            if row.any():
+                markup[g, :] = row
+                n_priced += 1
+
+    if n_priced == 0 or not np.any(markup > 0.0):
+        return None
+    tight = int((hour_bin >= n_bins - 1).sum())
+    logger.info(
+        "PJM mid-curve offer surface: floored %d econ/long-run tranche rows "
+        "at the measured capacity-share offer level (%d net-load bins, "
+        "tightest bin %d/%d hours, year table %s); P1-only",
+        n_priced,
+        n_bins,
+        tight,
+        hours,
+        str(year)
+        if any(str(year) in (surface.get(s, {}).get("years", {})) for s in tables)
+        else "pooled",
+    )
+    return markup
+
+
 def apply_netload_drag_floors(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
