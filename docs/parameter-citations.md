@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1258 parameters registered** (706 flagged `needs-citation`).
+**1261 parameters registered** (705 flagged `needs-citation`).
 
 
 ## Calibration
@@ -573,10 +573,13 @@ inline comment and still need a dated primary source — search the table for
 | `carbon_price_paths.zero` | {"2026": 0, "2030": 0, "2040": 0, "20… | 1 | Resources for the Future (RFF) carbon price scenario set | 2023-09 | modeled |
 | `scenario.carbon_price` | 0.0 | 1 | Market simulator model design decision | 2026-05 |  |
 | `scenario.ira_expiry_year` | 2035 | 2 | CBO scoring of Inflation Reduction Act energy provisions | 2023-04 | modeled, stale |
+| `scenario.ira_45u_last_year` | 2032 | 2 | 26 U.S.C. §45U(e) — §45U zero-emission (existing) nuclear PTC termi… | 2025-07 |  |
 | `scenario.ira_itc_solar` | 0.3 | 2 | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 |  |
 | `scenario.ira_itc_storage` | 0.3 | 2 | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 |  |
-| `scenario.ira_other_clean_last_full_year` | 2028 | 2 | Other clean (storage, nuclear, geothermal, hydro): §48E graduated p… | 2029 | auto-generated |
-| `scenario.ira_other_clean_phaseout_end` | 2033 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.ira_other_clean_50pct_year` | 2035 | 2 | 26 U.S.C. §45Y(d) / §48E(e) tech-neutral phase-down (non-wind/solar… | 2025-07 | confidence-flagged |
+| `scenario.ira_other_clean_75pct_year` | 2034 | 2 | 26 U.S.C. §45Y(d) / §48E(e) tech-neutral phase-down (non-wind/solar… | 2025-07 | confidence-flagged |
+| `scenario.ira_other_clean_last_full_year` | 2033 | 2 | 26 U.S.C. §45Y(d) / §48E(e) tech-neutral phase-down (non-wind/solar… | 2025-07 | confidence-flagged |
+| `scenario.ira_other_clean_phaseout_end` | 2036 | 2 | 26 U.S.C. §45Y(d) / §48E(e) tech-neutral phase-down (non-wind/solar… | 2025-07 | confidence-flagged |
 | `scenario.ira_ptc_wind` | 26.0 | 2 | IRS Inflation Reduction Act final rules (IRC sections 45, 48, 48E) | 2024-04 |  |
 | `scenario.ira_wind_solar_last_year` | 2027 | 2 | IRA credit schedule per OBBBA (One Big Beautiful Bill Act), enacted… | 2025 | auto-generated |
 | `scenario.nox_price` | 0.0 | 1 | Market simulator model design decision | 2026-05 |  |
