@@ -3726,6 +3726,33 @@ class ScenarioConfig:
     # slack).
     pjm_offer_surface_price_cap_frac: float = 0.95
 
+    # PJM Day-Ahead virtual-bid layer (G-22 lever B — DA procurement depth,
+    # default off, PJM-gated). Posts the MEASURED hourly INC (virtual supply)
+    # / DEC (virtual demand) bid curves from PJM's public DataMiner2
+    # hrl_da_incs_decs feed (data/raw/pjm-da-virtuals/,
+    # scripts/fetch_pjm_da_virtuals.py) into the LP as pseudo-units
+    # (data.virtual_bids): DEC steps are export-sink-form withdrawal
+    # capacity that clears whenever the zonal dual is below the bid, INC
+    # steps ordinary zero-emission supply clearing above the offer — so the
+    # DA market's extra procurement depth at peaks (net cleared DEC − INC ≈
+    # +7-11 GW at the July-2024 top hours; the ~9-10 GW gap of
+    # docs/FINDING-pjm-offer-surface-noop-2026-07.md) is carried as real
+    # market structure and the cleared virtual volume stays ENDOGENOUS.
+    # Rule-13 admissibility: the surface is built from SUBMITTED ex-ante bid
+    # curves (participant inputs exactly like generator energy offers,
+    # condition-binned by within-year net-load percentile, MW as a fraction
+    # of hourly load, prices as implied heat rate vs delivered gas — all
+    # forward-native axes that regenerate from a forecast year's own
+    # load/VRE/gas drivers); cleared volumes and clearing prices are
+    # outcomes and are never read. Parameters derive from source data only
+    # (scripts/derive_pjm_da_virtual_surface.py, rule 21) and are frozen
+    # against residuals (rule 20). PJM-only (rule 25).
+    pjm_da_virtual_bids: bool = False
+    # Path to the measured condition-binned virtual-bid surface JSON
+    # (default: the frozen
+    # data/raw/_validation-source/pjm_da_virtual_surface_condbinned.json).
+    pjm_da_virtual_surface_path: str | None = None
+
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
     # rate is base_HR x {cc_committed_hr_override, cc_econ_hr_override,
