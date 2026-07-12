@@ -136,6 +136,25 @@ _VINTAGE_RECONCILE_FRAC = 0.97
 # already-committed bundles byte-identical. Re-extracting a bundle's eia930
 # parquet retires its dependence on this set.
 EIA930_GAS_FOLDS_GEO_BIOMASS: frozenset[str] = frozenset({"CAISO"})
+# BAs whose EIA-930 "Natural Gas" cell is demonstrably CORRUPTED against two
+# independent measured sources (CEMS hourly + EIA-923), so the combined
+# vintage reconcile must be CAPPED at a CEMS-anchored fossil total instead of
+# scaling classFull up to the 930 cell. CAISO: from ~2024-05 the CISO NG cell
+# carries a growing noon-peaked, solar-shaped block no gas fleet produced
+# (+4.2/+7.9 TWh unexplained in 2024/25 vs CEMS bench gas + the flat non-CEMS
+# cogen block + the geo/biomass fold-in; the raw series RISES 8.1→13.2 GW into
+# noon in Jun-Aug 2025 — the inverse of the measured duck curve). Scaling to
+# it fabricated ×1.10/×1.21/×1.44 classFull inflation. Owner-signed rework
+# 2026-07-12; see results/calibration/
+# FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md §3/§5. The anchor fields
+# (``gas_cems_grid``/``gas_cogen_grid``/``fossil_cems_grid``) are written into
+# the bench part's ``e930`` dict by the render (sole writer, same coverage
+# basis as ``coal_cems``); other ISOs carry no anchor and are unchanged.
+EIA930_NG_CELL_CORRUPT: frozenset[str] = frozenset({"CAISO"})
+# First VINTAGE year the corruption contaminates (CISO onset ~2024-05): the
+# hourly gas actual (fuelRows / C4) switches to the CEMS+cogen basis from this
+# vintage; earlier years keep 930 for continuity — the two agree pre-onset.
+EIA930_NG_CORRUPT_ONSET: dict[str, int] = {"CAISO": 2024}
 _CUM = np.cumsum([0] + list(rcf._DAYS_IN_MONTH)) * 24  # month hour boundaries
 _T = 8760
 
@@ -218,6 +237,17 @@ def reconcile_vintage_classes(
     _cur = sum(classfull[g] for g in _present)
     _tgt = float(e930.get("gas", 0.0)) + float(e930.get("coal", 0.0))
     _tgt -= _gas_foldin_deflation(classfull, e930, iso)
+    # CEMS-anchor cap (owner-signed 2026-07-12): for a BA whose 930 NG cell is
+    # corrupted (EIA930_NG_CELL_CORRUPT), the reconcile target may never
+    # exceed the measured fossil total — CEMS bench-gas net + the 923
+    # non-CEMS cogen block + 923 coal, all grid-delivered
+    # (``fossil_cems_grid``, written by this render). One-directional by
+    # design: the cap protects against scaling UP to a fabricated cell; a 930
+    # total below the anchor still governs.
+    if iso in EIA930_NG_CELL_CORRUPT:
+        _anchor = e930.get("fossil_cems_grid")
+        if _anchor is not None and float(_anchor) > 0.0:
+            _tgt = min(_tgt, float(_anchor))
     if (
         _tgt > 0.0
         and _cur > 0.0
@@ -255,6 +285,32 @@ def _gas_foldin_deflation(
     if "other" in e930:
         return max(0.0, model_other_bio - float(e930.get("other", 0.0)))
     return model_other_bio if iso in EIA930_GAS_FOLDS_GEO_BIOMASS else 0.0
+
+
+def _eia923_gas_family_incomplete(iso: str, year: int) -> bool:
+    """Whether the EIA-923 gas family is preliminary/incomplete for (iso, year).
+
+    Reads the committed completeness part
+    (``frontend/data/backcast/completeness/eia923_<year>.json``, written by
+    ``scripts/audit_eia923_completeness.py``) — the same source of truth
+    ``calibration_verdict.family_is_complete`` scores from. A year with no
+    part is a complete vintage. Used by the CEMS-anchor writer to decide when
+    the non-CEMS cogen block must be carried from the latest complete vintage
+    (a preliminary 923 release under-counts the non-CEMS cogens the anchor
+    needs at full coverage).
+    """
+    part = (
+        REPO
+        / "frontend"
+        / "data"
+        / "backcast"
+        / "completeness"
+        / (f"eia923_{int(year)}.json")
+    )
+    if not part.exists():
+        return False
+    fams = json.loads(part.read_text()).get("families", {})
+    return not bool(fams.get(str(iso).upper(), {}).get("gas", True))
 
 
 def _b64(cf: np.ndarray) -> str:
@@ -770,6 +826,11 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
         meta = json.loads((bdir / "meta.json").read_text())
         tr_bands = _tranche_bands_for_bundle(bdir)
         run_years: dict[int, dict] = {}
+        # Non-CEMS gas-class cogen block per rendered year — (grid, full-plant)
+        # TWh — for the CEMS-anchor writer (EIA930_NG_CELL_CORRUPT ISOs): a
+        # preliminary-923 year carries the latest complete vintage's block
+        # (rule 16 keeps all years in one bundle, so it is always available).
+        gas_cogen_by_year: dict[int, tuple[float, float]] = {}
         e923_all = pd.read_parquet(bundle_input_path(bdir, "eia923"))
         e930_all = pd.read_parquet(bundle_input_path(bdir, "eia930"))
         campd_all = pd.read_parquet(bundle_input_path(bdir, "campd"))
@@ -955,6 +1016,74 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 / 1e6,
                 3,
             )
+            # CEMS-anchored fossil actual (EIA930_NG_CELL_CORRUPT ISOs only —
+            # owner-signed rework 2026-07-12, FINDING-caiso-c2c4-bench-basis-
+            # 930ng-2026-07-12.md §5). Three fields, same bplants coverage
+            # basis as ``coal_cems`` (the render is the sole writer):
+            #   gas_cems_grid  — CEMS bench-gas net (CAMPD hourly-integrated,
+            #                    parasitic-scaled) minus the measured BTM CHP
+            #                    host supply → grid-delivered CEMS gas block.
+            #   gas_cogen_grid — the 923 non-CEMS gas-class block (plants with
+            #                    no usable CAMPD series), grid-delivered; a
+            #                    preliminary-923 vintage carries the latest
+            #                    complete vintage's block (the prelim survey
+            #                    under-counts exactly these cogens).
+            #   fossil_cems_grid — gas anchor + the 923 coal grid block: the
+            #                    combined-family reconcile cap.
+            _iso_anchor = str(meta.get("iso", "ERCOT"))
+            fossil_cems_full_anchor: float | None = None  # C5a full-plant cap
+            if _iso_anchor in EIA930_NG_CELL_CORRUPT:
+                _gas_grps = set(_GAS_GROUPS)
+                # A dispatch plant with NO usable CAMPD series (nodata) is not
+                # CEMS-covered: it contributes nothing to the CEMS block and
+                # its EIA-923 mass falls to the cogen block below instead.
+                _cems_ids = {int(c) for c, p in bplants.items() if not p["nodata"]}
+                _gas_cems_full = sum(
+                    float(p["c_ann"])
+                    for p in bplants.values()
+                    if p["group"] in _gas_grps and not p["nodata"]
+                )
+                _gas_cems_grid = _gas_cems_full - sum(
+                    float(p["btm"])
+                    for p in bplants.values()
+                    if p["group"] in _gas_grps and not p["nodata"]
+                )
+                _nc = e923[
+                    e923["klass"].isin(_gas_grps)
+                    & ~e923["plant_id"].astype(int).isin(_cems_ids)
+                ]
+                _cogen_full = float(_nc["annual_mwh"].sum()) / 1e6
+                _cogen = sum(
+                    float(r["annual_mwh"])
+                    / 1e6
+                    * (
+                        1.0
+                        - _btm_share(int(r["plant_id"]), str(r["klass"]), _iso_anchor)
+                    )
+                    for _, r in _nc.iterrows()
+                )
+                if _eia923_gas_family_incomplete(_iso_anchor, int(year)):
+                    _complete = [y for y in sorted(gas_cogen_by_year) if y < int(year)]
+                    if _complete:
+                        _cogen, _cogen_full = gas_cogen_by_year[_complete[-1]]
+                else:
+                    gas_cogen_by_year[int(year)] = (_cogen, _cogen_full)
+                _coal_grid = sum(
+                    float(e923_cls.get(c, 0.0)) / 1e6 - float(btm_cls.get(c, 0.0))
+                    for c in _COAL_GROUPS
+                    if c in e923_cls.index
+                )
+                _coal_full = sum(
+                    float(e923_cls.get(c, 0.0)) / 1e6
+                    for c in _COAL_GROUPS
+                    if c in e923_cls.index
+                )
+                _e930d["gas_cems_grid"] = round(_gas_cems_grid, 3)
+                _e930d["gas_cogen_grid"] = round(_cogen, 3)
+                _e930d["fossil_cems_grid"] = round(
+                    _gas_cems_grid + _cogen + _coal_grid, 3
+                )
+                fossil_cems_full_anchor = _gas_cems_full + _cogen_full + _coal_full
             bench[int(year)] = {
                 "plants": bplants,
                 "e930": _e930d,
@@ -1065,6 +1194,31 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             class_full_923 = {
                 str(g): round(float(v) / 1e6, 4) for g, v in e923_cls.items()
             }
+            # CEMS-anchor complete-coverage repair (C5a): a preliminary-923
+            # vintage under-counts fossil generation, so the CO2 actual built
+            # from it is vintage-understated (the caiso-76 FINDING §4 defect —
+            # 2025 CO2-implied CC 37.5 TWh vs a ~54 TWh family gate). For a
+            # corrupted-NG-cell ISO the measured full-plant total exists (CEMS
+            # bench gas + carried cogen block + coal); scale the fossil classes
+            # to it — the same uniform level-repair the classFull reconcile
+            # applies, on the full-plant basis — before the intensity multiply.
+            # Complete vintages: anchor ≈ booked total → inside the same ±3%
+            # deadband, untouched (owner-signed rework 2026-07-12).
+            if fossil_cems_full_anchor is not None and _eia923_gas_family_incomplete(
+                _iso_anchor, int(year)
+            ):
+                _fclasses = [
+                    g for g in class_full_923 if g in (*_GAS_GROUPS, *_COAL_GROUPS)
+                ]
+                _cur_full = sum(class_full_923[g] for g in _fclasses)
+                if _cur_full > 0.0 and not (
+                    _VINTAGE_RECONCILE_FRAC * fossil_cems_full_anchor
+                    <= _cur_full
+                    <= fossil_cems_full_anchor / _VINTAGE_RECONCILE_FRAC
+                ):
+                    _sc = fossil_cems_full_anchor / _cur_full
+                    for g in _fclasses:
+                        class_full_923[g] = round(class_full_923[g] * _sc, 4)
             actual_co2_mt, actual_co2_by = _fossil_co2(class_full_923, co2_intensity)
             # Share of fossil-class EIA-923 generation carrying a plant rate —
             # the class intensity is extrapolated to the small remainder.
@@ -1162,7 +1316,43 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 # double-showed the CC_REGULAR/CC_CHP classification split already
                 # scored per class by C1.)
                 ms = sum((mh.get(c, np.zeros(_T)) for c in classes), np.zeros(_T))
-                if is_gas and ob is not None and "other" in e:
+                if (
+                    is_gas
+                    and _iso_anchor in EIA930_NG_CELL_CORRUPT
+                    and int(year) >= EIA930_NG_CORRUPT_ONSET.get(_iso_anchor, 9999)
+                    and "gas_cogen_grid" in _e930d
+                ):
+                    # Corrupted-NG-cell BA, on/after the corruption onset
+                    # vintage: the gas hourly actual is the MEASURED series —
+                    # CEMS bench-gas hourly (grid-delivered: flat BTM CHP host
+                    # supply removed) plus the flat non-CEMS cogen block — not
+                    # the 930 NG cell (FINDING-caiso-c2c4-bench-basis-930ng-
+                    # 2026-07-12.md §5.2; flat adjustments preserve pearson r).
+                    # Pre-onset years keep 930 for continuity (the two agree).
+                    _btm_gas_flat = (
+                        sum(
+                            float(p["btm"])
+                            for p in bplants.values()
+                            if p["group"] in set(classes) and not p["nodata"]
+                        )
+                        * 1e6
+                        / _T
+                    )
+                    ob = (
+                        sum(
+                            (
+                                cn_p[int(c)]
+                                for c, p in bplants.items()
+                                if p["group"] in set(classes)
+                                and not p["nodata"]
+                                and int(c) in cn_p
+                            ),
+                            np.zeros(_T),
+                        )
+                        - _btm_gas_flat
+                        + float(_e930d["gas_cogen_grid"]) * 1e6 / _T
+                    )
+                elif is_gas and ob is not None and "other" in e:
                     # Gas fold-in correction, identical to the C2 verdict
                     # (calibration_verdict.score_sysvol): some BAs (MISO) fold
                     # biomass/process gas into the EIA-930 NG series while the

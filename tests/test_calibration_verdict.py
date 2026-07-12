@@ -403,6 +403,54 @@ class SysVolTests(unittest.TestCase):
         finally:
             _reset_completeness()
 
+    def test_cems_gas_anchor_fallback_caiso(self):
+        # Owner-signed 2026-07-12 rework: a CEMS_GAS_ANCHOR_ISOS incomplete gas
+        # family gates against the committed CEMS anchor (gas_cems_grid +
+        # gas_cogen_grid), never the corrupted 930 NG cell, and no fold-in
+        # deflation applies (the anchor carries no geothermal/biomass).
+        _completeness({"CAISO": {}}, {"CAISO": {"gas": False, "coal": False}})
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"CC_REGULAR": 52.0}},
+                {
+                    "classFull": {"CC_REGULAR": 40.59, "OTHER": 5.5, "biomass": 3.2},
+                    "e930": {
+                        "gas": 68.53,
+                        "other": 0.0,
+                        "gas_cems_grid": 44.0,
+                        "gas_cogen_grid": 7.6,
+                        "fossil_cems_grid": 51.67,
+                    },
+                },
+                "CAISO",
+            )
+            gas = [r for r in rows if r["key"] == "gas"][0]
+            self.assertIn("CEMS bench-gas", gas["source"])
+            self.assertAlmostEqual(gas["actual"], 51.6, places=2)
+            self.assertEqual(gas["status"], cv.PASS)  # 52.0 vs 51.6 = +0.8%
+        finally:
+            _reset_completeness()
+
+    def test_cems_gas_anchor_absent_keeps_legacy_930_path(self):
+        # A CAISO bench part predating the anchor splice keeps the legacy
+        # 930-based fallback (with fold-in), labelled as such.
+        _completeness({"CAISO": {}}, {"CAISO": {"gas": False, "coal": False}})
+        try:
+            rows = cv.score_sysvol(
+                2025,
+                {"gmModel": {"CC_REGULAR": 60.0}},
+                {
+                    "classFull": {"CC_REGULAR": 40.59, "OTHER": 5.5, "biomass": 3.2},
+                    "e930": {"gas": 68.53, "other": 0.0},
+                },
+                "CAISO",
+            )
+            gas = [r for r in rows if r["key"] == "gas"][0]
+            self.assertIn("930", gas["source"])
+        finally:
+            _reset_completeness()
+
     def test_g21b_gas_fallback_combined_minus_coal_anchor(self):
         # G-21b: an incomplete GAS family gates against the 930 COMBINED fossil
         # total minus the coal anchor — the mirror correction. Same MISO-shaped
@@ -722,6 +770,76 @@ class StorageTests(unittest.TestCase):
         }
         coal = [r for r in cv.score_dispatch_corr(2024, ypay) if r["key"] == "coal"][0]
         self.assertEqual(coal["status"], cv.SKIPPED)
+
+    @staticmethod
+    def _cems_fixture():
+        """Synthetic committed artifacts for the CEMS-basis C4 recompute.
+
+        One 100-MW gas plant whose payload and CAMPD hourly CF% series are the
+        SAME diurnal ramp, so the recomputed CEMS-basis r is ~1.0 while the
+        payload's committed 930-based fuelRow carries r=0.10 (the corrupted
+        comparator). Series are the committed b64 uint8 CF% encoding.
+        """
+        import base64 as _b64mod
+
+        cf = bytes((h % 24) * 4 for h in range(8760))  # 0-92% diurnal ramp
+        b64 = _b64mod.b64encode(cf).decode()
+        ybench = {
+            "plants": {
+                "1": {
+                    "group": "CC_REGULAR",
+                    "npl": 100,
+                    "nodata": False,
+                    "campd": b64,
+                    "btm": 0.0,
+                }
+            },
+            "e930": {"gas_cems_grid": 0.4, "gas_cogen_grid": 1.0},
+        }
+        ypay = {
+            "plants": {"1": {"m": b64}},
+            "fuelRows": [
+                {"fuel": "gas", "m": 20.0, "b": 70.0, "r": 0.10, "nrmse": 0.44}
+            ],
+        }
+        return ypay, ybench
+
+    def test_dispatch_corr_cems_recompute_caiso_post_onset(self):
+        # CAISO ≥ 2024: the gas fit is recomputed from the committed hourly
+        # series (payload m vs bench campd + flat cogen block) — the 930-based
+        # payload values (r=0.10) score the corrupted benchmark, not the model.
+        ypay, ybench = self._cems_fixture()
+        gas = [
+            r
+            for r in cv.score_dispatch_corr(2024, ypay, ybench, "CAISO")
+            if r["key"] == "gas"
+        ][0]
+        self.assertIn("r=1.0", gas["model"])  # identical shapes -> r ~ 1.0
+        self.assertIn("CEMS", gas["metric"])
+
+    def test_dispatch_corr_cems_pre_onset_keeps_930(self):
+        # 2023 predates the corruption onset: the committed 930-based fit
+        # stands (the two bases agree there — continuity).
+        ypay, ybench = self._cems_fixture()
+        gas = [
+            r
+            for r in cv.score_dispatch_corr(2023, ypay, ybench, "CAISO")
+            if r["key"] == "gas"
+        ][0]
+        self.assertIn("r=0.1 ", gas["model"])
+        self.assertNotIn("CEMS", gas["metric"])
+
+    def test_dispatch_corr_cems_other_iso_unchanged(self):
+        # Membership is CEMS-evidence-gated per ISO: a non-member ISO keeps
+        # the payload's committed fit even if anchor-shaped fields exist.
+        ypay, ybench = self._cems_fixture()
+        gas = [
+            r
+            for r in cv.score_dispatch_corr(2024, ypay, ybench, "ERCOT")
+            if r["key"] == "gas"
+        ][0]
+        self.assertIn("r=0.1 ", gas["model"])
+        self.assertNotIn("CEMS", gas["metric"])
 
 
 class GovernanceTests(unittest.TestCase):
