@@ -69,6 +69,7 @@ from market_sim.data.floor_mechanisms import (
     MECH_CT_NETLOAD_DRAG,
     MECH_NUCLEAR,
     MECH_RELIABILITY_DEPLOYMENT_OVERLAY,
+    MECH_ST_GAS_MUSTRUN_PER_PLANT,
     MECH_ST_NETLOAD_DRAG,
     clear_where_unfloored,
     ensure_mechanism,
@@ -1979,16 +1980,18 @@ def generators_to_fleet_arrays(
                     min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
                     min_gen_mech[g_idx, raised] = MECH_COAL_MUSTRUN
         # Per-plant gas local-reliability commitment floor
-        # (config.cc_mustrun_per_plant): each CC_REGULAR / CT_PEAKER committed
-        # tranche is held on at its full capacity in the plant's measured
-        # committed window — the top ``cc_mustrun_online_frac`` fraction of
-        # hours ranked by SYSTEM LOAD (the same online%-scaled placement the
-        # coal synchronization floor uses for cyclers), so the forcing lands
-        # where the committed unit actually ran and relaxes in the deepest
-        # off-peak troughs. The floor is clipped to pmax*availability below,
-        # so an outage hour relaxes it; ``np.maximum`` composes with any floor
-        # already placed (e.g. an EMAAC hot-day reliability_floor limb — the
-        # binding floor wins, no stacking).
+        # (config.cc_mustrun_per_plant / st_gas_mustrun_per_plant): each
+        # gate-armed committed tranche is held on at its full capacity in the
+        # plant's measured committed window — the top
+        # ``cc_mustrun_online_frac`` fraction of hours ranked by SYSTEM LOAD
+        # (the same online%-scaled placement the coal synchronization floor
+        # uses for cyclers), so the forcing lands where the committed unit
+        # actually ran and relaxes in the deepest off-peak troughs. The floor
+        # is clipped to pmax*availability below, so an outage hour relaxes
+        # it; ``np.maximum`` composes with any floor already placed (e.g. an
+        # EMAAC hot-day reliability_floor limb — the binding floor wins, no
+        # stacking). The ST_GAS leg stamps its own mechanism id so D-2/D-4
+        # attribution stays per-leg.
         if cc_mustrun_any:
             sys_load = (
                 np.asarray(load_shape, dtype=float)
@@ -2005,10 +2008,15 @@ def generators_to_fleet_arrays(
                 frac = float(getattr(gen, "cc_mustrun_online_frac", 0.0))
                 if frac <= 0.0:
                     continue
+                mech_id = (
+                    MECH_ST_GAS_MUSTRUN_PER_PLANT
+                    if getattr(gen, "plant_group", "") == "ST_GAS"
+                    else MECH_CC_MUSTRUN_PER_PLANT
+                )
                 if frac >= 1.0 or load_rank is None:
                     raised = min_gen[g_idx, :] < pmin_mw
                     np.maximum(min_gen[g_idx, :], pmin_mw, out=min_gen[g_idx, :])
-                    min_gen_mech[g_idx, raised] = MECH_CC_MUSTRUN_PER_PLANT
+                    min_gen_mech[g_idx, raised] = mech_id
                 else:
                     k = int(round(frac * hours))
                     if k <= 0:
@@ -2017,7 +2025,7 @@ def generators_to_fleet_arrays(
                     # Fancy indexing returns a copy (see the coal block above).
                     raised = hrs[min_gen[g_idx, hrs] < pmin_mw]
                     min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
-                    min_gen_mech[g_idx, raised] = MECH_CC_MUSTRUN_PER_PLANT
+                    min_gen_mech[g_idx, raised] = mech_id
         # Per-plant CT_PEAKER reliability must-run floor: spread each plant's
         # observed monthly net generation (frac-scaled) across that month's
         # hours, *shaped by system load* — the energy is placed in the
@@ -7690,8 +7698,17 @@ def bins_to_fleet(
         # buying almost none of the eastern CT under-run (Dominion CT
         # 0.9→1.5 vs 8.9 TWh actual), which is an offer/capture residual,
         # not a commitment-share one.
+        # ST_GAS carries the same floor under its OWN gate
+        # (config.st_gas_mustrun_per_plant — the Entergy MISO-South VLR/self-
+        # commitment trace; see that field's docstring): the CT rejection does
+        # not transfer because the steamers' measured evidence is the opposite
+        # of a CT's (synchronized a supermajority of ALL hours, Nine Mile
+        # 98.2%), and the mechanism id is separate so D-2/D-4 attribution
+        # stays per-leg.
         cc_mustrun_frac = 0.0
-        if group == "CC_REGULAR" and getattr(config, "cc_mustrun_per_plant", False):
+        if (
+            group == "CC_REGULAR" and getattr(config, "cc_mustrun_per_plant", False)
+        ) or (group == "ST_GAS" and getattr(config, "st_gas_mustrun_per_plant", False)):
             cc_mustrun_frac = thermal_tranche_online_frac(
                 getattr(config, "iso", "ERCOT") or "ERCOT"
             ).get((plant_code, group), 0.0)
