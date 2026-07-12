@@ -11,5 +11,6 @@
   ],
   "iso": "CAISO",
   "file": "frontend/data/backcast/runs/2026-07-12-caiso-78-cc-hr.js",
-  "bundle": "results/calibration/caiso78_cc_hr_basis"
+  "bundle": "results/calibration/caiso78_cc_hr_basis",
+  "ablation_twin": "2026-07-12-caiso-78-cc-hr-ablation"
 }
