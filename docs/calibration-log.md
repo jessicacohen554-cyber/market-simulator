@@ -10525,6 +10525,20 @@ table above. No keeper swapped; keeper determinations that move under this fix
 (PJM improves, MISO exposed) are owner-visible and flagged for review. Holdout years
 untouched (rule 22).
 
+> **SUPERSEDED-BY (2026-07-12, benchmark-basis settle session):** the "dashboard
+> propagation NOT regenerated" caveat above is resolved as **go-forward default**,
+> not a pending re-render. Per owner directive 2026-07-12
+> (session_01SfBzT4EggvRfh35MYgoYXH), the combined reconcile (this entry) + the
+> #2049 unit-class backfill + the G-21b C2 CEMS split anchor are THE benchmark
+> basis for every ISO, unconditional in code and CI-guarded
+> (`tests/test_benchmark_basis_default.py`, rubric §0b, methodology spec §1.8).
+> Every NEW registration renders on the new basis and every re-score already takes
+> the anchor path (all 18 bench parts carry `coal_cems`). Frontier keepers whose
+> committed `classFull` predates fixes 1+2 are re-solved/re-rendered by the owner
+> in separate non-Fable sessions — staleness inventory + ready-to-paste re-run
+> prompts: `docs/handoffs/benchmark-basis-inventory-2026-07.md`. Determination
+> flips are honest and stand (pjm-98 precedent); nothing is tuned to un-flip them.
+
 ## 2026-07-11 — MISO-56: Lane-2 (RDC/ELMP scarcity) executed on its measured adjudication — DA reserve scarcity measured ~nonexistent (0 modelled RDC hours is CORRECT); two wrong requirement estimates replaced by measured series; ELMP evening-timing element built; score flat-to-better, keeper decision unchanged
 
 **The measurement re-scoped the lane before any build (rules 1/23; full record
