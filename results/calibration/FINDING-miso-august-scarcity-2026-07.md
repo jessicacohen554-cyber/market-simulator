@@ -450,3 +450,57 @@ swap is the owner's call; recommended. Deferred (documented in the attestation):
 RPE constraint family; hourly measured RDT limit/flow series intake (MISO posts
 RT limit data — a future rule-14 upgrade replacing the 92% static default);
 Midwest–South separation as a scored metric.
+
+## 12. MID-MERIT LANE FORENSICS (2026-07-12, pre-miso-59): the scorer-basis
+check reframed the lane, and the model-side wedge is a fabricated cold-start
+premium on self-committed coal
+
+**Scorer basis first (the miso-58 handoff's mandated first step — G-21b,
+calibration-log 2026-07-12).** The C2 preliminary-vintage fallback gated raw
+EIA-930 per-fuel cells; the G-21 cross-ISO probe re-run shows MISO 930 books
+coal −16.9/−18.0/−20.9 TWh below CEMS (2023/24/25) with the mirror in NG:NG.
+Consequences:
+
+- miso-58's C2-2025 FAIL pair (gas −10.1%/coal +7.6%) was substantially that
+  swap: CEMS-corrected, 2025 reads coal −2.9% / gas ~−3.3%. **"The model
+  over-coals 2025" is FALSE.** (Scorer fixed → sysvol FAIL → commercial
+  CAVEAT; keeper re-scored in place.)
+- The REAL 2023/24 miss is ~2× the handoff's number: coal family −34/−42 TWh
+  vs CEMS (classFull: COAL_BIT −18.2/−17.1, COAL_PRB −9.2/−13.8), mirrored by
+  CT_PEAKER +8.8/+16.0 and CC_REGULAR +2.9/+9.4. The handoff's "CC_REGULAR
+  +9.0/+9.1" was the pre-G-21 scorer basis; on the corrected basis the
+  compensation spreads across CT_PEAKER (larger) and CC.
+
+**Model-side forensics (replayed miso-58 2023 solve, on/off LMP crossing
+points — an LP price-taker runs iff LMP ≥ mc):**
+
+| band | crossing | static measured-fuel SRMC | wedge |
+|---|---|---|---|
+| CC_REGULAR committed+econ | always-on (< $20.6 LMP floor) | ~$17-24 | — |
+| COAL_PRB committed (11.0 GW) | $34.6 | ~$26 (F923 $2.2-2.3/MMBtu) | **+$8** |
+| COAL_BIT committed (3.8 GW) | $43.8 | ~$29-31 | **+$13** |
+| COAL_PRB econ | $32.0 | ramp top ~$30 | ~0 |
+| COAL_BIT econ | $36.4 | ramp top ~$34 | ~0 |
+
+The wedge is `compute_monthly_markup`'s $100/MW cold-start amortization
+(committed band only, raw P0 run lengths, no measured ceiling; a no-run month
+amortizes over 1 hour) — applied while the SAME plants' fuel-free mustrun
+bands hold their boilers ONLINE 84-98% of hours in the same solve. A hot
+boiler's committed band is an output ramp, not a cold start. And the IMM's
+measured conduct (miso-53 SOM adjudication) prices MISO offers AT cost
+(system markup +3.0%/−2.5%) — the fabricated premium contradicts the
+measured market; self-committed units recover start costs outside the
+energy offer.
+
+**Fix = miso-59 (`coal_warm_committed=True`, existing gated exemption, zero
+new parameters).** The ERCOT 98a/98b rejection of the same flag was
+ERCOT-shaped (their 2023 coal already calibrated; their CT/ST under-running
+were stolen from) and does not cross the ISO boundary — MISO's measured
+residual is its exact mirror in both years and both directions.
+
+**RDT-2025 linkage (§11 continuity).** With the 2025 family miss reframed as
+benchmark artifact, the ~1,000+ MW direction reversal is now expected to be
+REGIONAL (South ST_GAS/CT starved while Plains coal/CC over-runs, import
+under-run −4 TWh) rather than an ISO-wide family swap; the warm-committed fix
+is watched against the 2023-24 RDT anchors and the 2025 direction, not
+claimed to close it.
