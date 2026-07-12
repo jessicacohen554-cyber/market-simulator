@@ -10791,3 +10791,55 @@ No parameter, offer curve, floor, or derive script changed (rules 13/21/23/24);
 `ercot_storage_as_deployment` and its gate byte-identical; keeper stays
 `2026-07-10-ercot56-nucwin`; dashboard unchanged (no run produced — rule 15
 N/A).
+## 2026-07-12 — G-21b: the C2 preliminary-vintage fallback's per-fuel split CEMS-anchored (scorer-layer, all-ISO) — MISO-58's sysvol FAIL was substantially a fabricated EIA-930 attribution artifact; PJM-98 honestly EXPOSED (+5.8% coal)
+
+**The check the miso-58 handoff mandated ("does the COAL_BIT/CC split survive
+on the measured CEMS basis — this may be partly a scorer-layer issue too") —
+it was.** The G-21 combined-fossil reconcile (2026-07-11, 870d6ef) fixed C1's
+`classFull`, but `score_sysvol`'s PRELIMINARY-vintage fallback (both MISO 2025
+families; PJM 2025 gas+coal; small gas rows elsewhere) still gated the RAW
+EIA-930 per-fuel cell. Re-running the G-21 cross-ISO probe on today's data
+confirms the BA-reported 930 gas/coal attribution is broken exactly where it
+gates: **MISO 930 coal runs −16.9/−18.0/−20.9 TWh below CEMS** (2023/24/25;
+every coal unit ≥25 MW is metered) with the mirror booked in NG:NG
+(g923−g930 −13.9/−16.3), and **PJM 930 coal runs +10.1/+7.3/+11.1 above CEMS**.
+MISO-58's C2-2025 FAIL pair (gas −10.1% / coal +7.6%) is that swap, not model
+error.
+
+**Fix (mirrors 870d6ef's "correct the level, never the split" — here: keep the
+930 level, correct the SPLIT with measured data).** In the fallback only: an
+incomplete COAL family gates against the CEMS anchor — CAMPD coal
+(`e930.coal_cems`, spliced into all 18 bench parts by the new
+`scripts/splice_bench_coal_cems.py`, byte-identical to the G-21 probe's
+construction) × the run's own complete-vintage CEMS→923-grid ratio
+(`_fallback_coal_anchor`, k≈0.96 MISO / 1.01 PJM — the measured
+parasitic/coverage gap). An incomplete GAS family gates against the 930
+COMBINED fossil total minus the coal anchor (classFull coal when the coal
+family is complete, else the CEMS anchor); the OTHER/biomass fold-in
+deflation is unchanged. Where 930 agrees with CEMS the construction
+self-neutralizes (ERCOT byte-equivalent — anchor safe); a bench part without
+`coal_cems` or a run with no complete coal vintage keeps the legacy raw-930
+cell, labelled. Zero model tunables; scorer+benchmark layer only; 5 new
+verdict tests (114 pass).
+
+**Re-scores (keepers re-score in place, rubric v2.2 pattern):**
+- **MISO-58 (keeper) + twin: sysvol FAIL → commercial CAVEAT** — 2025 coal
+  +0.9% vs the CEMS anchor (PASS), gas −4.9% (CAVEAT). FAIL set now
+  fuelmix/price_mean/price_tail (3, was 4). Sidecar + both attestations
+  annotated; the class-level lane evidence is REFRAMED (see the companion
+  MISO-59 entry): the 2023/24 coal under-run is real and BIGGER on CEMS
+  (family −34/−42 TWh), while "2025 model over-coals" is FALSE (CEMS-corrected
+  2025: coal −2.9%, gas −3.3%).
+- **PJM-98 (keeper) + twin: C2 CAVEAT → FAIL, honestly** — the corrected
+  coal target exposes a real 2025 model coal over-run (+5.8% vs the CEMS
+  anchor ≈ 135.9 TWh; the raw 930 cell 145.9 was hiding it — the same defect
+  G-21 documented for PJM 2024 C1). Its 2025 gas +3.9% CAVEAT improves to
+  +1.0% PASS (mirror correction). Determination stays NOT-YET (fail set was
+  already non-empty); this is a discovered open lane for PJM, not a
+  regression of the fix.
+- ERCOT/CAISO/NYISO/NEISO: unchanged (±0.1pp magnitude drift on NEISO's tiny
+  0.26 TWh coal anchor).
+
+status.js rebuilt; metrics.json re-written for miso-58 main+twin and pjm-98
+main+twin. Rule 15: the corrected benchmark lands regardless of score
+direction — it flatters MISO and indicts PJM, and both are the truth.
