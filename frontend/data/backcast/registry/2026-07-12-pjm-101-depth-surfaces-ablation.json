@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-12-pjm-101-depth-surfaces-ablation",
+  "label": "pjm 101 depth surfaces ablation",
+  "date": "2026-07-12",
+  "shorthand": "pjm-101-depth-surfaces-ablation",
+  "definition": "(ABLATION TWIN of 2026-07-12-pjm-101-depth-surfaces) Zero-forcing twin: the pjm-101 combo recipe with every merchant floor/bridge OFF (nuclear must-run, CHP steam, coal take-or-pay retained). Isolates what the drag/must-run floors buy on top of the measured virtual-depth + offer-surface levers. NOT-YET (twin).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-12-pjm-101-depth-surfaces-ablation.js",
+  "bundle": "results/calibration/pjm101_depth_surfaces-ablation"
+}
