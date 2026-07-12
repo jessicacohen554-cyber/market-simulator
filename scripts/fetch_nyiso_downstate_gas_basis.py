@@ -71,11 +71,11 @@ DELIVERED_ELECTRIC = "N3045NY3"
 START, END = "2023-01", "2025-12"
 
 
-def _fetch(series: str, api_key: str) -> dict[str, float]:
+def _fetch(series: str, api_key: str, start: str, end: str) -> dict[str, float]:
     url = (
         "https://api.eia.gov/v2/natural-gas/pri/sum/data/"
         f"?frequency=monthly&data[0]=value&facets[series][]={series}"
-        f"&start={START}&end={END}"
+        f"&start={start}&end={end}"
         "&sort[0][column]=period&sort[0][direction]=asc"
         f"&api_key={api_key}"
     )
@@ -92,10 +92,18 @@ def _transco_monthly() -> dict[str, float]:
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--api-key", default="DEMO_KEY")
+    # Window + output overrides (defaults reproduce the committed 2023-2025
+    # file exactly). Used by the rule-22 holdout intake to fetch an
+    # out-of-training window into a scratch file that is then MERGED with the
+    # committed rows (in-sample rows byte-frozen) — this script REPLACES its
+    # output, so never point --out at the committed file for a partial window.
+    ap.add_argument("--start", default=START, help="first month, YYYY-MM")
+    ap.add_argument("--end", default=END, help="last month, YYYY-MM")
+    ap.add_argument("--out", type=Path, default=OUT)
     args = ap.parse_args()
 
-    citygate = _fetch(CITYGATE, args.api_key)
-    delivered = _fetch(DELIVERED_ELECTRIC, args.api_key)
+    citygate = _fetch(CITYGATE, args.api_key, args.start, args.end)
+    delivered = _fetch(DELIVERED_ELECTRIC, args.api_key, args.start, args.end)
     transco = _transco_monthly()
 
     rows = []
@@ -118,12 +126,12 @@ def main() -> None:
         f"EIA NG {CITYGATE} (NY citygate) minus Transco Z6 NY hub "
         "(transco_z6_iroquois_monthly.csv), $/Mcf/1.037, floored 0"
     )
-    OUT.parent.mkdir(parents=True, exist_ok=True)
-    with OUT.open("w") as fh:
+    args.out.parent.mkdir(parents=True, exist_ok=True)
+    with args.out.open("w") as fh:
         fh.write(header)
         for y, m, cg, hub, de, pr in rows:
             fh.write(f'{y},{m},{cg},{hub},{de},{pr},"{src}"\n')
-    print(f"wrote {len(rows)} rows -> {OUT}")
+    print(f"wrote {len(rows)} rows -> {args.out}")
     ann: dict[int, list[float]] = {}
     for y, m, cg, hub, de, pr in rows:
         ann.setdefault(y, []).append(pr)
