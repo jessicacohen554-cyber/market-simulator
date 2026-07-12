@@ -183,6 +183,24 @@ SYSVOL_MIN_TWH = 10.0  # below this a family is immaterial: C1's per-class
 DISP_MIN_TWH = 5.0  # below this a fleet's hourly r/NRMSE is degenerate (NEISO
 # coal); the per-class C1 absolute band is the meaningful check, not correlation.
 VINTAGE_RECONCILE_FRAC = 0.97  # render_calibration_html._VINTAGE_RECONCILE_FRAC
+# ISOs whose EIA-930 "Natural Gas" cell is demonstrably corrupted against two
+# independent measured sources, with the CEMS-anchored replacement committed in
+# the bench part by render_calibration_html (owner-signed rework 2026-07-12;
+# results/calibration/FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md §5).
+# CAISO: from ~2024-05 the CISO NG cell carries a growing noon-peaked,
+# solar-shaped block no gas fleet produced (+4.2/+7.9 TWh unexplained in
+# 2024/25 vs CEMS + cogens + fold-in). Effects here:
+#  * C2 gas family fallback gates against the committed anchor fields
+#    (``e930.gas_cems_grid`` + ``e930.gas_cogen_grid``) instead of the 930 cell.
+#  * C4 gas hourly r/NRMSE is recomputed from the committed hourly series
+#    (payload ``plants[].m`` vs bench ``plants[].campd`` + flat cogen block)
+#    from the onset VINTAGE onward; pre-onset years keep the payload's 930-based
+#    fit for continuity (the two agree there).
+# Mirrors render_calibration_html.EIA930_NG_CELL_CORRUPT / _ONSET; membership
+# is CEMS-evidence-gated per ISO, never generic (the other ISOs' NG cells show
+# no corruption and keep G-21/G-21b unchanged).
+CEMS_GAS_ANCHOR_ISOS: frozenset = frozenset({"CAISO"})
+CEMS_GAS_ANCHOR_ONSET = {"CAISO": 2024}  # first contaminated vintage year
 PRELIM_923_FROM_YEAR = 2025  # current-year preliminary EIA-923 vintage
 # C3 price gates — rubric v2 two-band (2026-07-06 fitness re-anchor), target
 # bands re-set by the 2026-07-09 owner amendment (rubric v2.3): the target
@@ -878,6 +896,55 @@ def score_sysvol(
             anchor = _fallback_coal_anchor(iso, ybench, bench_all)
             actual = a930
             source = "EIA-930 grid (preliminary-923 vintage)"
+            if (
+                fam == "gas"
+                and iso in CEMS_GAS_ANCHOR_ISOS
+                and e930.get("gas_cems_grid") is not None
+                and e930.get("gas_cogen_grid") is not None
+            ):
+                # Corrupted-NG-cell ISO: the family actual is the committed
+                # CEMS anchor — CEMS bench-gas net (grid-delivered) + the
+                # carried 923 non-CEMS cogen block — never the 930 NG cell
+                # (which carries the fabricated solar-shaped block). No
+                # fold-in deflation applies: the anchor contains no
+                # geothermal/biomass by construction.
+                actual = float(e930["gas_cems_grid"]) + float(e930["gas_cogen_grid"])
+                source = (
+                    "CAMPD CEMS bench-gas + EIA-923 non-CEMS cogen block "
+                    "(930 NG cell corrupted; FINDING 2026-07-12)"
+                )
+                err = _pct(m_fam, actual) if actual else None
+                status, classification = (
+                    (SKIPPED, None)
+                    if err is None
+                    else _band_result(abs(err), SYSVOL_TOL, SYSVOL_COMMERCIAL)
+                )
+                out.append(
+                    {
+                        "criterion": "sysvol",
+                        "key": fam,
+                        "year": year,
+                        "status": status,
+                        "classification": classification,
+                        "metric": (
+                            f"{fam} family grid-delivered TWh "
+                            "(preliminary vintage, CEMS-anchored)"
+                        ),
+                        "model": round(m_fam, 2),
+                        "actual": round(actual, 2) if actual else None,
+                        "tol": (
+                            f"±{SYSVOL_TOL * 100:.1f}% target / "
+                            f"±{SYSVOL_COMMERCIAL * 100:.1f}% commercial "
+                            "(family, no per-class actual)"
+                        ),
+                        "magnitude": (
+                            f"{err * 100:+.1f}%" if err is not None else "n/a"
+                        ),
+                        "source": source,
+                        "vintage_reconciled": False,
+                    }
+                )
+                continue
             if fam == "coal" and anchor is not None:
                 actual, _k, _n = anchor
                 source = (
@@ -1312,13 +1379,110 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
     return out
 
 
-def score_dispatch_corr(year: int, ypay: dict) -> list[dict]:
-    """C4 — fleet hourly r/NRMSE floors for the gas and coal fleets."""
+def _pearson_nrmse(m: list, o: list) -> tuple[float, float]:
+    """Pearson r and mean-normalized RMSE of two equal-length hourly series."""
+    n = len(m)
+    mm = sum(m) / n
+    om = sum(o) / n
+    sxy = sxx = syy = sse = 0.0
+    for a, b in zip(m, o):
+        da, db = a - mm, b - om
+        sxy += da * db
+        sxx += da * da
+        syy += db * db
+        sse += (a - b) * (a - b)
+    denom = math.sqrt(sxx * syy)
+    r = sxy / denom if denom > 0 else 0.0
+    nrmse = math.sqrt(sse / n) / om if om > 0 else 9.9
+    return r, nrmse
+
+
+def _cems_gas_hourly_fit(
+    ypay: dict, ybench: dict, model_twh: float | None
+) -> tuple[float, float, float] | None:
+    """C4 gas fit on the CEMS basis, from committed artifacts only.
+
+    Returns ``(r, nrmse, actual_twh)`` of the model's hourly gas fleet against
+    the MEASURED gas hourly actual — CEMS bench-gas hourly (bench part
+    ``plants[].campd``, CAMPD net, grid-delivered via a flat BTM CHP removal)
+    plus the flat non-CEMS cogen block (``e930.gas_cogen_grid``) — instead of
+    the corrupted EIA-930 NG cell. Both sides decode the committed base64 CF%
+    series (payload ``plants[].m`` / bench ``plants[].campd``, uint8 percent of
+    nameplate): the model core is the CEMS-covered gas plants' dispatch, and
+    the payload's remaining gas mass (plants with no CAMPD series) is added as
+    a flat fill up to the committed fuel-row level ``model_twh`` — flat terms
+    are pearson-invariant, so ``r`` measures the measured-fleet shape while
+    NRMSE keeps the coherent grid level on both sides. Payloads rendered after
+    the rework carry the same basis natively in ``fuelRows``; this recompute
+    scores committed pre-rework payloads identically (to b64 quantization,
+    ≤~0.01 in r). ``None`` when the committed artifacts lack the series.
+    """
+    e930 = ybench.get("e930") or {}
+    cogen = e930.get("gas_cogen_grid")
+    bplants = ybench.get("plants") or {}
+    pplants = ypay.get("plants") or {}
+    if cogen is None or not bplants or not pplants:
+        return None
+    t = 8760
+    model = [0.0] * t
+    act = [0.0] * t
+    btm_twh = 0.0
+    n_used = 0
+    for code, bp in bplants.items():
+        if bp.get("group") not in GAS_CLASSES or bp.get("nodata"):
+            continue
+        cap = float(bp.get("npl") or 0.0)
+        camp_b64 = bp.get("campd")
+        pp = pplants.get(str(code))
+        if cap <= 0.0 or not camp_b64 or not pp or not pp.get("m"):
+            continue
+        scale = cap / 100.0
+        for h, v in enumerate(base64.b64decode(camp_b64)[:t]):
+            act[h] += v * scale
+        for h, v in enumerate(base64.b64decode(pp["m"])[:t]):
+            model[h] += v * scale
+        btm_twh += float(bp.get("btm") or 0.0)
+        n_used += 1
+    if n_used == 0:
+        return None
+    btm_mw = btm_twh * 1e6 / t  # flat BTM CHP host removal (both sides carry it)
+    act = [a - btm_mw + float(cogen) * 1e6 / t for a in act]
+    core_twh = sum(model) / 1e6 - btm_twh
+    fill_mw = 0.0
+    if model_twh is not None:
+        fill_mw = (float(model_twh) - core_twh) * 1e6 / t
+    model = [m - btm_mw + fill_mw for m in model]
+    r, nrmse = _pearson_nrmse(model, act)
+    return round(r, 3), round(nrmse, 3), round(sum(act) / 1e6, 2)
+
+
+def score_dispatch_corr(
+    year: int, ypay: dict, ybench: dict | None = None, iso: str = "ERCOT"
+) -> list[dict]:
+    """C4 — fleet hourly r/NRMSE floors for the gas and coal fleets.
+
+    For a :data:`CEMS_GAS_ANCHOR_ISOS` ISO from the onset vintage onward, the
+    gas fit is recomputed on the CEMS basis (:func:`_cems_gas_hourly_fit`) —
+    the committed payload's 930-based ``fuelRows`` values score benchmark
+    corruption there, not the model. Pre-onset years and every other ISO keep
+    the payload's committed fit unchanged.
+    """
     rows = {r.get("fuel"): r for r in ypay.get("fuelRows", [])}
     out = []
     for fam in ("gas", "coal"):
         r = rows.get(fam, {})
         rr, nr = r.get("r"), r.get("nrmse")
+        cems_fit = None
+        if (
+            fam == "gas"
+            and iso in CEMS_GAS_ANCHOR_ISOS
+            and year >= CEMS_GAS_ANCHOR_ONSET.get(iso, 9999)
+            and ybench is not None
+        ):
+            cems_fit = _cems_gas_hourly_fit(ypay, ybench, r.get("m"))
+            if cems_fit is not None:
+                rr, nr = cems_fit[0], cems_fit[1]
+                r = dict(r, b=cems_fit[2])
         if rr is None and nr is None:
             out.append(
                 _skip("dispatch_corr", year, f"{fam} hourly fit absent", key=fam)
@@ -1346,7 +1510,15 @@ def score_dispatch_corr(year: int, ypay: dict) -> list[dict]:
                 "year": year,
                 "status": PASS if ok else FAIL,
                 "classification": None if ok else MODEL_MISS,
-                "metric": f"{fam} fleet hourly r / NRMSE",
+                "metric": (
+                    f"{fam} fleet hourly r / NRMSE"
+                    + (
+                        " (CEMS hourly + flat cogen block; 930 NG cell "
+                        "corrupted — FINDING 2026-07-12)"
+                        if cems_fit is not None
+                        else ""
+                    )
+                ),
                 "model": f"r={rr} nrmse={nr}",
                 "actual": None,
                 "tol": f"r≥{DISP_R_FLOOR:.2f}, NRMSE≤{DISP_NRMSE_MAX:.2f}",
@@ -1999,7 +2171,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
             records.append(da_diag)
         records.append(score_price_shape(year, ypay, ybench))
         records += score_price_tail(year, ypay, iso)
-        records += score_dispatch_corr(year, ypay)
+        records += score_dispatch_corr(year, ypay, ybench, iso)
         records.append(score_co2(year, ypay, ybench))
         records.append(score_storage(year, ypay, ybench))
         records.append(score_storage_shape(year, ypay, ybench))
