@@ -35,7 +35,7 @@ name: ercot-storage-deploy-solve-register
 on:
   push:
     branches:
-      - claude/ercot-storage-discharge-g22mr4
+      - claude/ercot-storage-cycling-lane-h4k2wq
     paths:
       - .github/workflows/ercot-storage-deploy-solve-register.yml
   workflow_dispatch:
@@ -160,7 +160,7 @@ jobs:
             --extra scripts/run_calibration.py \
             --extra tests/test_caiso_storage_as_reservation.py \
             --bench-iso ERCOT \
-            --branch claude/ercot-storage-discharge-g22mr4 \
+            --branch claude/ercot-storage-cycling-lane-h4k2wq \
             --message "results: register ercot59 storage-cycling-lane fix (measured-award AS->energy co-participation) + zero-forcing twin; land the relay-oversized sources (keeper stays ercot56-nucwin) [skip ci]"
 
       - name: Prune ERCOT registry to top-15 retention
@@ -169,4 +169,4 @@ jobs:
         run: |
           set -euo pipefail
           python scripts/probes/_ercot_storage_deploy_register.py --prune-registry \
-            --branch claude/ercot-storage-discharge-g22mr4
+            --branch claude/ercot-storage-cycling-lane-h4k2wq
