@@ -20278,38 +20278,37 @@
     {
       "param_id": "scenario.ira_other_clean_last_full_year",
       "display_name": "Ira Other Clean Last Full Year",
-      "value": 2028,
+      "value": 2033,
       "unit": "",
       "domain": "Policy",
       "tier": 2,
-      "source": "Other clean (storage, nuclear, geothermal, hydro): §48E graduated phaseout 2029-2033. 100% through 2028, 80% in 2029, 60% in 2030, 40% in 2031, 20% in 2032, 0% after.",
-      "source_date": "2029",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "26 U.S.C. §45Y(d) / §48E(e) tech-neutral phase-down (non-wind/solar) — 100% credit for facilities beginning construction through 2033.",
+      "source_date": "2025-07",
+      "page_or_table": "§45Y(d)/§48E(e) phase-down; triangulated in data/raw/policy/ira-credit-parameters/ (NOT confirmed vs primary Treasury/IRS final-rule text)",
+      "url": "https://www.law.cornell.edu/uscode/text/26/45Y",
+      "notes": "Statute-TRIANGULATED (2-source agreement: Sidley Austin + CLA/Grant-Thornton-style OBBBA client alerts), NOT confirmed against primary Treasury/IRS final-rule text — see the CONFIDENCE NOTE in data/raw/policy/ira-credit-parameters/README.md. Construction-begin-year STEP schedule read by policy.ira.ira_phaseout_fraction. RULE-24 default change (2026-07): superseded the earlier undocumented 2028/2033 linear ramp.",
       "old_repo_location": "",
-      "last_verified": "",
+      "last_verified": "2026-07-12",
       "flags": [
-        "auto-generated"
+        "confidence-flagged"
       ]
     },
     {
       "param_id": "scenario.ira_other_clean_phaseout_end",
       "display_name": "Ira Other Clean Phaseout End",
-      "value": 2033,
+      "value": 2036,
       "unit": "",
       "domain": "Policy",
       "tier": 2,
-      "source": "NEEDS CITATION — no source comment found in code",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "source": "26 U.S.C. §45Y(d) / §48E(e) tech-neutral phase-down (non-wind/solar) — 0% (fully phased out) for construction beginning in 2036 or later.",
+      "source_date": "2025-07",
+      "page_or_table": "§45Y(d)/§48E(e) phase-down; triangulated in data/raw/policy/ira-credit-parameters/ (NOT confirmed vs primary Treasury/IRS final-rule text)",
+      "url": "https://www.law.cornell.edu/uscode/text/26/45Y",
+      "notes": "Statute-TRIANGULATED (2-source agreement: Sidley Austin + CLA/Grant-Thornton-style OBBBA client alerts), NOT confirmed against primary Treasury/IRS final-rule text — see the CONFIDENCE NOTE in data/raw/policy/ira-credit-parameters/README.md. Construction-begin-year STEP schedule read by policy.ira.ira_phaseout_fraction. RULE-24 default change (2026-07): superseded the earlier undocumented 2028/2033 linear ramp.",
       "old_repo_location": "",
-      "last_verified": "",
+      "last_verified": "2026-07-12",
       "flags": [
-        "auto-generated",
-        "needs-citation"
+        "confidence-flagged"
       ]
     },
     {
@@ -26134,6 +26133,58 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ira_45u_last_year",
+      "display_name": "Ira 45U Last Year",
+      "value": 2032,
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "26 U.S.C. §45U(e) — §45U zero-emission (existing) nuclear PTC terminates for electricity produced after 2032-12-31, so 2032 is the last credited year.",
+      "source_date": "2025-07",
+      "page_or_table": "§45U(e) (termination); credit_end_date 2032-12-31 in data/raw/policy/ira-credit-parameters/",
+      "url": "https://www.law.cornell.edu/uscode/text/26/45U",
+      "notes": "§45U existing-nuclear PTC expiry, read directly from primary statute text (unambiguous — no conflicting secondary reporting; see data/raw/policy/ira-credit-parameters/README.md). Read by policy.ira.section_45u_credit_per_mwh (nuclear retirement screen).",
+      "old_repo_location": "",
+      "last_verified": "2026-07-12",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.ira_other_clean_75pct_year",
+      "display_name": "Ira Other Clean 75Pct Year",
+      "value": 2034,
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "26 U.S.C. §45Y(d) / §48E(e) tech-neutral phase-down (non-wind/solar) — 75% credit for construction beginning in 2034.",
+      "source_date": "2025-07",
+      "page_or_table": "§45Y(d)/§48E(e) phase-down; triangulated in data/raw/policy/ira-credit-parameters/ (NOT confirmed vs primary Treasury/IRS final-rule text)",
+      "url": "https://www.law.cornell.edu/uscode/text/26/45Y",
+      "notes": "Statute-TRIANGULATED (2-source agreement: Sidley Austin + CLA/Grant-Thornton-style OBBBA client alerts), NOT confirmed against primary Treasury/IRS final-rule text — see the CONFIDENCE NOTE in data/raw/policy/ira-credit-parameters/README.md. Construction-begin-year STEP schedule read by policy.ira.ira_phaseout_fraction. RULE-24 default change (2026-07): superseded the earlier undocumented 2028/2033 linear ramp.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-12",
+      "flags": [
+        "confidence-flagged"
+      ]
+    },
+    {
+      "param_id": "scenario.ira_other_clean_50pct_year",
+      "display_name": "Ira Other Clean 50Pct Year",
+      "value": 2035,
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "26 U.S.C. §45Y(d) / §48E(e) tech-neutral phase-down (non-wind/solar) — 50% credit for construction beginning in 2035.",
+      "source_date": "2025-07",
+      "page_or_table": "§45Y(d)/§48E(e) phase-down; triangulated in data/raw/policy/ira-credit-parameters/ (NOT confirmed vs primary Treasury/IRS final-rule text)",
+      "url": "https://www.law.cornell.edu/uscode/text/26/45Y",
+      "notes": "Statute-TRIANGULATED (2-source agreement: Sidley Austin + CLA/Grant-Thornton-style OBBBA client alerts), NOT confirmed against primary Treasury/IRS final-rule text — see the CONFIDENCE NOTE in data/raw/policy/ira-credit-parameters/README.md. Construction-begin-year STEP schedule read by policy.ira.ira_phaseout_fraction. RULE-24 default change (2026-07): superseded the earlier undocumented 2028/2033 linear ramp.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-12",
+      "flags": [
+        "confidence-flagged"
       ]
     }
   ]

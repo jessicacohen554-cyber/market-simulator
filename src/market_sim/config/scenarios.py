@@ -372,11 +372,27 @@ class ScenarioConfig:
     # 2027. For an annual model, treat 2027 as the last year wind/solar
     # credits are available.
     ira_wind_solar_last_year: int = 2027
-    # Other clean (storage, nuclear, geothermal, hydro): §48E graduated
-    # phaseout 2029-2033. 100% through 2028, 80% in 2029, 60% in 2030,
-    # 40% in 2031, 20% in 2032, 0% after.
-    ira_other_clean_last_full_year: int = 2028
-    ira_other_clean_phaseout_end: int = 2033
+    # §45U zero-emission (existing) nuclear PTC: credited for electricity
+    # produced and sold after 2023, terminating for electricity produced
+    # after Dec 31, 2032 — so 2032 is the last year the credit is available.
+    # Read by policy.ira.section_45u_credit_per_mwh (the nuclear retirement
+    # screen's attribute-revenue input). Source: 26 U.S.C. §45U(e).
+    ira_45u_last_year: int = 2032
+    # Other clean (storage, geothermal, hydro, new nuclear): §45Y/§48E
+    # tech-neutral phase-down modeled as a construction-begin-year STEP
+    # schedule (100% / 75% / 50% / 0%), keyed on the four breakpoints below
+    # and read by policy.ira.ira_phaseout_fraction. RULE-24 DEFAULT CHANGE
+    # (2026-07): the prior 2028 / 2033 defaults encoded an undocumented
+    # linear ramp; they move here to the statute-triangulated
+    # 2033 / 2034 / 2035 / 2036 step years — a real behaviour change for any
+    # scenario relying on the old defaults. Source: 26 U.S.C. §45Y(d) /
+    # §48E(e); the 75% / 50% / 0% step years are triangulated from secondary
+    # OBBBA sources (NOT primary statute text) — see the confidence note in
+    # data/raw/policy/ira-credit-parameters/README.md.
+    ira_other_clean_last_full_year: int = 2033  # 100% through this year
+    ira_other_clean_75pct_year: int = 2034  # 75% step (BOC in this year)
+    ira_other_clean_50pct_year: int = 2035  # 50% step (BOC in this year)
+    ira_other_clean_phaseout_end: int = 2036  # 0% from this year on
     # §45V hydrogen production credit: construction start by Dec 31, 2027.
     ira_h2_45v_last_year: int = 2027
     # §45Q CCUS credit: extended but phasing out post-2032.
@@ -5103,7 +5119,10 @@ def resolve_demand_growth_rate(config: "ScenarioConfig", year: int) -> float:
 # offsets apply to every ira_*_last_year field uniformly.
 _IRA_LAST_YEAR_FIELDS: tuple[str, ...] = (
     "ira_wind_solar_last_year",
+    "ira_45u_last_year",
     "ira_other_clean_last_full_year",
+    "ira_other_clean_75pct_year",
+    "ira_other_clean_50pct_year",
     "ira_other_clean_phaseout_end",
     "ira_h2_45v_last_year",
     "ira_ccus_45q_last_year",
@@ -5432,7 +5451,10 @@ TIER_TAGS: dict[str, int] = {
     "ira_itc_solar": 2,
     "ira_itc_storage": 2,
     "ira_wind_solar_last_year": 2,
+    "ira_45u_last_year": 2,
     "ira_other_clean_last_full_year": 2,
+    "ira_other_clean_75pct_year": 2,
+    "ira_other_clean_50pct_year": 2,
     "ira_other_clean_phaseout_end": 2,
     "ira_h2_45v_last_year": 2,
     "ira_ccus_45q_last_year": 2,
