@@ -743,7 +743,48 @@ def score_fuelmix(
     return out
 
 
-def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> list[dict]:
+def _fallback_coal_anchor(
+    iso: str, ybench: dict, bench_all: dict | None
+) -> tuple[float, float, int] | None:
+    """CEMS-anchored coal-family actual for a preliminary-vintage year.
+
+    Every coal unit ≥25 MW is CEMS-metered, so CAMPD coal is complete even when
+    the EIA-923 vintage is not. The bench part carries the CEMS-net coal total
+    (``e930["coal_cems"]``, spliced by ``scripts/splice_bench_coal_cems.py``);
+    this helper translates it onto the 923-grid family scale with the measured
+    CEMS→923-grid ratio ``k`` from the run's own complete-vintage years
+    (Σ classFull coal classes ÷ that year's ``coal_cems`` — the parasitic-factor
+    / coverage gap, ~0.95–1.01 per ISO). Returns ``(anchor_twh, k, n_years)``
+    or ``None`` when the bench predates the splice or no complete coal vintage
+    is in the run (the caller then keeps the legacy raw-930 fallback).
+    """
+    cems = float((ybench.get("e930") or {}).get("coal_cems", 0.0) or 0.0)
+    if cems <= 0.0 or not bench_all:
+        return None
+    ratios = []
+    for y2, yb2 in bench_all.items():
+        e2 = yb2.get("e930") or {}
+        cems2 = float(e2.get("coal_cems", 0.0) or 0.0)
+        if cems2 <= 0.0 or not family_is_complete(iso, "coal", int(y2)):
+            continue
+        grid2 = sum(
+            float((yb2.get("classFull") or {}).get(c, 0.0)) for c in COAL_CLASSES
+        )
+        if grid2 > 0.0:
+            ratios.append(grid2 / cems2)
+    if not ratios:
+        return None
+    k = sum(ratios) / len(ratios)
+    return cems * k, k, len(ratios)
+
+
+def score_sysvol(
+    year: int,
+    ypay: dict,
+    ybench: dict,
+    iso: str = "ERCOT",
+    bench_all: dict | None = None,
+) -> list[dict]:
     """C2 — gas/coal family system volume, folded into the per-class universal gate.
 
     For COMPLETE-VINTAGE years a family passes iff EVERY constituent fossil class
@@ -774,6 +815,22 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
     EIA-930 "other" series the gas target is deflated by the genuinely-folded
     OTHER+biomass portion (post-Nov-2024 storage breakout, ERCO's Other series is
     ~biomass alone, so the 923 OTHER-class generation sits inside NG:NG).
+
+    **G-21b (2026-07-12) — the fallback's per-fuel SPLIT is CEMS-anchored.**
+    EIA-930's per-fuel gas/coal attribution is BA-reported and demonstrably
+    unreliable against CEMS (every coal unit ≥25 MW is metered): on the
+    complete vintages 930 coal runs −17..−21 TWh below CEMS in MISO and
+    +7..+11 above in PJM, with the mirror error booked in the NG:NG cell —
+    so gating a preliminary family on the raw 930 per-fuel cell fabricates
+    misses of exactly that size (the same defect class the G-21 combined
+    reconcile fixed for C1's ``classFull``). The fallback therefore keeps the
+    930 level but corrects the split with measured data: an incomplete COAL
+    family gates against the CEMS anchor (:func:`_fallback_coal_anchor` —
+    CAMPD coal × the run's complete-vintage CEMS→923-grid ratio), and an
+    incomplete GAS family gates against the 930 COMBINED fossil total minus
+    the coal anchor (the anchor from classFull when coal is complete, else
+    CEMS). A bench part predating the ``coal_cems`` splice — or a run with no
+    complete coal vintage — keeps the legacy raw-930 cell, labelled as such.
     """
     gm = ypay.get("gmModel", {})
     cf = ybench.get("classFull", {})
@@ -813,7 +870,32 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
             fam_all = (*classes, "OTHER_FOSSIL") if fam == "gas" else classes
             m_fam = sum(float(gm.get(c, 0.0)) for c in fam_all)
             a923_fam = sum(float(cf.get(c, 0.0)) for c in fam_all)
+            # G-21b: correct the 930 per-fuel split with the CEMS coal anchor
+            # (docstring above); keep the 930 combined level. Falls back to
+            # the legacy raw cell when the anchor is unavailable.
+            anchor = _fallback_coal_anchor(iso, ybench, bench_all)
             actual = a930
+            source = "EIA-930 grid (preliminary-923 vintage)"
+            if fam == "coal" and anchor is not None:
+                actual, _k, _n = anchor
+                source = (
+                    "CAMPD CEMS coal × complete-vintage grid ratio "
+                    f"(k={_k:.3f}, {_n} yr; G-21b split anchor)"
+                )
+            elif fam == "gas":
+                coal930 = float(e930.get("coal", 0.0) or 0.0)
+                coal_anchor = None
+                if family_is_complete(iso, "coal", year):
+                    _grid = sum(float(cf.get(c, 0.0)) for c in COAL_CLASSES)
+                    coal_anchor = _grid if _grid > 0.0 else None
+                elif anchor is not None:
+                    coal_anchor = anchor[0]
+                if coal_anchor is not None and a930 is not None and coal930 > 0.0:
+                    actual = (a930 + coal930) - coal_anchor
+                    source = (
+                        "EIA-930 combined fossil minus coal anchor "
+                        "(G-21b split correction)"
+                    )
             if fam == "gas" and actual is not None and "other" in e930:
                 # ERCO's post-Nov-2024 EIA-930 "Other" series carries roughly
                 # biomass alone (the storage breakout moved batteries to
@@ -850,7 +932,7 @@ def score_sysvol(year: int, ypay: dict, ybench: dict, iso: str = "ERCOT") -> lis
                         "(family, no per-class actual)"
                     ),
                     "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
-                    "source": "EIA-930 grid (preliminary-923 vintage)",
+                    "source": source,
                     "vintage_reconciled": reconciled,
                 }
             )
@@ -1908,7 +1990,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         ypay = payload["years"][str(year)]
         ybench = bench.get(year, {})
         records += score_fuelmix(year, ypay, ybench, iso)
-        records += score_sysvol(year, ypay, ybench, iso)
+        records += score_sysvol(year, ypay, ybench, iso, bench_all=bench)
         records.append(score_price_mean(year, ypay, ybench))
         da_diag = score_price_mean_da_diagnostic(year, ypay, ybench)
         if da_diag is not None:
