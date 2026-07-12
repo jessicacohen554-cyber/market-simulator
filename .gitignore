@@ -109,6 +109,11 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # committed pjm98_cc_mustrun meta.json. Never registered.
 /results/calibration/pjm97_baseline_*
 /results/calibration/pjm98_baseline_*
+# Console solve logs for the G-22 lever-B/A' probe bundles (regenerable; the
+# committed slim files + dashboard sidecars are the deliverable).
+/results/calibration/pjm100_da_virtual_bids_solve.log
+/results/calibration/pjm101_depth_surfaces_solve.log
+/results/calibration/pjm101_depth_surfaces-ablation_solve.log
 /results/calibration/caiso_reprice_pass*/
 /results/calibration/caiso_probe2_*/
 /results/calibration/caiso_tune*/
