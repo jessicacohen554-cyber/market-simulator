@@ -91,7 +91,14 @@ CALIBRATION_ISOS: tuple[str, ...] = (
 # CALIBRATION_YEARS span.
 CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     "CAISO": (2023, 2024, 2025),
-    "NYISO": (2023, 2025),
+    # NYISO gained 2022 on 2026-07-12 under the owner-authorized rule-22 DATA
+    # intake (calibration-complete.json intake_log; NO marker, NO solve — the
+    # one-shot stays quarantined): 2022 is reference/bench data readiness
+    # only, never a calibration year. The missing in-sample 2024 entry is a
+    # separate, FLAGGED gap (the "gated on unit-level outages" rationale
+    # above is stale — NY_2024 CEMS exists; NYISO-calibration-owner decision,
+    # docs/holdout-data-equivalency-register-2026-07.md).
+    "NYISO": (2022, 2023, 2025),
     # NEISO gained 2022 on 2026-07-07: the calibration-complete marker
     # (frontend/data/backcast/calibration-complete.json) authorizes the ONE-SHOT
     # 2022 holdout validation (CLAUDE.md rule 22) — 2022 is a validation year

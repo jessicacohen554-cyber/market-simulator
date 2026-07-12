@@ -40,6 +40,67 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-12 — CAISO — caiso-78 (fleet_to_bins CC heat-rate/capacity-basis fix): C1 FAIL→PASS, C5a improved, C3a pre-registered counter-move, **PROMOTED to keeper**; bench-basis 930 NG corruption filed
+
+Executes the code-level fix identified in
+`FINDING-caiso78-cc-hr-basis-2026-07-12.md` §3. Under
+`cc_nameplate_summer_derate` (on for CAISO/PJM/NYISO/NEISO) the
+`fleet_to_bins` aggregation computed `base_hr = hr_cap / cap` AFTER the
+nameplate rescale (`cap = cap / ratio`), deflating every CC plant's base heat
+rate by its own net-summer/nameplate ratio — Moss Landing −27%, AES
+Alamitos/Huntington Beach −10/−11%, Otay Mesa −17%, La Paloma −13%, CAISO CC
+median −9%. The deflation was DIFFERENTIAL, scrambling the within-CC merit
+order: the C1 CC-over cluster was five deflated plants over-running
+(+1.9..+3.3 TWh each) with Pastoria (least-deflated peer) under-running
+−1.7 TWh/yr. Fix: `base_hr` computed pre-rescale (line ~6596 of fleet.py).
+Regression test: `TestCcNameplateRescaleHeatRate` (2 tests, pass). Zero new
+free parameters, zero flags; the offer-curve multipliers are untouched
+(CAMPD-grounded RELATIVE bands, now multiplying the correct base). Rule-14
+measured-input correction.
+
+- **caiso-78** (`2026-07-12-caiso-78-cc-hr` + zero-forcing ablation twin
+  `2026-07-12-caiso-78-cc-hr-ablation`): single delta on the caiso-77 keeper
+  recipe — the fleet_to_bins HR/capacity-basis fix.
+- **A/B vs the caiso-77 keeper (v2.4):** C1 CC_REGULAR **+4.54/+3.20/+1.46 →
+  +2.32/+0.97/−0.67 TWh** (2023/24/25) — the CC over-run halved in 2023,
+  sub-TWh in 2024, essentially zeroed in 2025; C1 status **FAIL → PASS**
+  (all classes in band). C5a CO₂ **+5.8/+11.8/+28.3 → +3.2/+9.1/+25.0 %**
+  (2024 FAIL→CAVEAT). C6/C7/C8 PASS hold.
+- **C3a +21.8/+29.9/+38.2 → +26.9/+37.0/+45.1 %** — the DISCLOSED
+  counter-move (FINDING §4): the corrected marginal CC offer is ~10% higher;
+  the deflated HR was silently compensating the body overprice, whose root
+  cause stays an open lane (rule 1: structural accuracy over backcast fit).
+- **C2-2025 gas: −7.6 → −10.2 %** — adjudicated per the
+  `FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md`: the CISO EIA-930 NG
+  cell carries a growing noon-peaked, solar-shaped block from ~2024-05
+  (+4.2/+7.9 TWh unexplained in 2024/25 against CEMS+cogens+fold-in). The
+  G-21 combined reconcile scales classFull to this cell (×1.10/×1.21/×1.44).
+  The 2025 actual (68.53 TWh) is corrupted; on measured populations (CEMS
+  46.09 gross + flat cogen block) the true grid-gas actual is ~57–60 TWh —
+  the model (61.54 TWh) is not under it. Bench-basis rework design filed
+  (scorer/bench layer, CAISO only, pending owner sign-off).
+- **C4 gas r: 0.887/0.834/0.590 → 0.888/0.830/0.565** — essentially flat;
+  2024/25 degradation scores the 930 NG benchmark corruption, not the model.
+- **PROMOTED per the FINDING §4 pre-registered bar:** C6+C7+C8 PASS; C1
+  FAIL→PASS (the targeted improvement); C5a improved; C2/C3a/C4 moves
+  adjudicated against the bench-basis FINDING. v2.4 determination stays
+  NOT-YET. Keeper `2026-07-12-caiso-77-firm-selfschedule` →
+  `2026-07-12-caiso-78-cc-hr`; more structurally faithful under rule 1 (a
+  measured physical input corrected — HR is intensive, the deflation was an
+  accounting error). LOYO exemption claimed — nothing is fit, the fix is
+  code-level and year-invariant by construction.
+- **Registry**: caiso-70 refuted-probe pair pruned by the CI workflow
+  (top-15 retention).
+- **Blast radius**: PJM/NYISO/NEISO keepers must re-gate on the fixed code
+  (they use `cc_nameplate_summer_derate`); flagged for follow-up, not
+  silently re-solved. ERCOT (CAMPD bins) and MISO (flag off) unaffected.
+- **Open after caiso-78** (priority order per rule 1): CT_PEAKER evening-ramp
+  under-run (the STEP-0 confirmed pure offer-band ordering, not commitment;
+  local-commitment granularity lane — Bay-Area/LA-Basin topology); bench-basis
+  rework (the §5 design in the 930-NG FINDING — scorer layer, CAISO only,
+  pending owner sign-off); offer-curve level for the C3a body base (LAST per
+  rule 1, and the bench-basis rework may substantially change the target).
+
 ### 2026-07-12 — PJM — pjm-99 (G-22 lever A EXECUTED: measured energy-offer surface): INERT — price-identical to pjm-98; the "too-cheap top" re-scoped to the sub-actual MID-CURVE + DA procurement depth (PROBE — REJECTED; keeper stays pjm-98)
 
 The G-22 charter's lever A built exactly to spec (the neiso-58 analogue,
@@ -10525,6 +10586,20 @@ table above. No keeper swapped; keeper determinations that move under this fix
 (PJM improves, MISO exposed) are owner-visible and flagged for review. Holdout years
 untouched (rule 22).
 
+> **SUPERSEDED-BY (2026-07-12, benchmark-basis settle session):** the "dashboard
+> propagation NOT regenerated" caveat above is resolved as **go-forward default**,
+> not a pending re-render. Per owner directive 2026-07-12
+> (session_01SfBzT4EggvRfh35MYgoYXH), the combined reconcile (this entry) + the
+> #2049 unit-class backfill + the G-21b C2 CEMS split anchor are THE benchmark
+> basis for every ISO, unconditional in code and CI-guarded
+> (`tests/test_benchmark_basis_default.py`, rubric §0b, methodology spec §1.8).
+> Every NEW registration renders on the new basis and every re-score already takes
+> the anchor path (all 18 bench parts carry `coal_cems`). Frontier keepers whose
+> committed `classFull` predates fixes 1+2 are re-solved/re-rendered by the owner
+> in separate non-Fable sessions — staleness inventory + ready-to-paste re-run
+> prompts: `docs/handoffs/benchmark-basis-inventory-2026-07.md`. Determination
+> flips are honest and stand (pjm-98 precedent); nothing is tuned to un-flip them.
+
 ## 2026-07-11 — MISO-56: Lane-2 (RDC/ELMP scarcity) executed on its measured adjudication — DA reserve scarcity measured ~nonexistent (0 modelled RDC hours is CORRECT); two wrong requirement estimates replaced by measured series; ELMP evening-timing element built; score flat-to-better, keeper decision unchanged
 
 **The measurement re-scoped the lane before any build (rules 1/23; full record
@@ -11070,3 +11145,78 @@ monthly shape stays its own root-cause item.
 **Holdouts / governance.** No solve, score, or intake outside 2023 (train
 year); no offer curve, sigmoid, floor, hinge, or derive-script value changed;
 no dashboard registration (rule 16); ORDC tariff params untouched (rule 26).
+
+## 2026-07-12 — MISO-60 stgas-vlr: ST_GAS VLR commitment floor (Southern-gas
+lane executed) + South-basis construction fix + dashboard prune to keeper era
+
+**Lane adjudication (FINDING §13).** The miso-59 handoff's suspects in order:
+(1) MISO-South 2025 delivered-gas basis had a REAL construction bug — the
+committed +0.095 subtracted the full-year HH mean from a 6-month LA mean; the
+like-for-like formula reproducing every other cell gives +0.343 (fixed in
+miso_zonal_gas_hub.csv) — but it FLATTERED South, so basis is NOT the
+starvation driver (kept per rule 15). (2) Seam ladders: no input defect.
+(3) ST_GAS representation: ROOT CAUSE — the Entergy South steam fleet is
+measured always/mostly-online under VLR self-commitment (Nine Mile 98.2% of
+ALL hours 2023-25 with a 414 MW P5-all-hours plant floor — the same P5
+quantity that grounds coal mustrun; Sabine 85.6%; Lewis Creek 87.8%) while
+derive_thermal_tranches class-gates the measured floor to COAL and the LP
+runs the class near-dark (~6 vs 16.4 TWh measured South 2025).
+
+**miso-60 = miso-59 strict meta replay + `st_gas_mustrun_per_plant=True`**
+(zero new scalars): the ST_GAS leg of the cc_mustrun_per_plant per-plant
+local-reliability commitment floor — measured committed tranche forced in the
+plant's measured top-online_frac system-load window; own mech id, D4 all-24h
+row, DOF auto-row, twin auto-ablates. Registered
+2026-07-12-miso-60-stgas-vlr (+ zero-forcing twin). SCORED NOT-YET, FAIL set
+{fuelmix, sysvol, price_mean, price_shape, price_tail, storage_shape} — one
+MORE than miso-59. What it buys: C1 13/16 (free 9/12; CC_REGULAR-2024 +8.2
+clears — twin keeps it, so the floor owns the fix), sysvol-2025 gas
+−6.9→−5.5% (twin isolates +1.1pp to the floor), ST_GAS 16.7/19.6/12.1 TWh,
+2025 RDT moves strongly toward measured (S→N mean-flowing →1083 MW, N→S
+binding →11.9% of hours) without flipping (summer separation ~$0 vs $9.31);
+2023/24 RDT anchors hold (1600/1549 MW, $2.61/$2.48). What it costs:
+C3a-2025 −14.7→−15.8%, C3b-2025 flips FAIL (NRMSE 0.206), interchange-2025
+−14.0→−11.6 vs −19.0 — forced supply depresses an LMP already low for
+reasons owned by the named deferred price mechanisms (RPE $200, ELMP ex-post,
+2025-09-30 shortage redesign, hourly measured RDT limits). C8 ST_GAS-2025
+grounded above budget: 36.6% forced > 30% cap, PASSES the v2.2 escalation
+(D-4 zero off-window; D-1 profile_r 0.98, cv_ratio 2.18) — the forcing is
+shape-faithful. LOYO by construction (zero-scalar boolean; the miso-59
+argument). Keeper promotion: OWNER-FLAGGED with recommendation (structural
+fidelity + tunable path forward vs one price-side FAIL regression); keepers
+.json untouched this session pending the owner's call.
+
+**Dashboard prune (owner directive, this session):** MISO run explorer pruned
+to the keeper era — 25 pre-keeper registrations removed (sidecars + runs
+payloads; bundles stay under results/calibration/). Remaining: miso-59 pair +
+miso-60 pair.
+
+## 2026-07-12 — MISO keeper PROMOTED: `miso 60 stgas-vlr` (owner decision, rule 1; supersedes miso-59-coal-warm) + scoring-basis confirmation
+
+Owner promotion on the flagged recommendation (calibration-log MISO-60 entry,
+FINDING §13): miso-60 is strictly more structurally faithful — a measured,
+SOM-documented VLR self-commitment the model previously contradicted (Nine
+Mile synchronized 98.2% of ALL hours vs a dark model class), D-1 profile_r
+0.98, C8 grounded-above-budget PASS — and improves the volume/mix interior
+(C1 13/16, sysvol-2025 gas −5.5%, 2025 RDT strongly toward measured, 2023/24
+anchors held) at a one-FAIL price-side regression (C3a-2025 −15.8%, C3b-2025
+0.206) owned by the named deferred price mechanisms (RPE $200, ELMP ex-post,
+2025-09-30 shortage redesign, hourly measured RDT limits, commitment-posture
+window rows). Owner regression tolerance recorded: acceptable so long as
+tunable/buildable elements continue progression toward calibration.
+keepers.json MISO key + array → miso-60; status.js rebuilt (MISO NOT-YET,
+6 FAILs); calibration-keeper-auditor PASS post-swap (E7 ERCOT/PJM staleness
+warnings are the pre-adjudicated honest-record probes, unchanged).
+
+**Scoring-basis confirmation (owner question).** miso-60's class and fuel
+totals are already on the G-21/G-21b ("new PJM") basis, the unconditional
+all-ISO default since 2026-07-11/12: C1 class totals and complete-vintage C2
+score per-class against the 923/CAMPD `classFull` (the combined reconcile
+corrects only the fossil LEVEL to EIA-930, preserving the CEMS-validated 923
+gas/coal split); a preliminary-vintage family (MISO 2025 gas: 17–74% of
+plants unreported, so a pure-923 per-class gate is impossible) scores on the
+EIA-930 combined-fossil LEVEL with the G-21b CEMS-anchored split. No raw
+EIA-930 per-fuel cell gates any current MISO number. Residual old-basis
+exposure is limited to other ISOs' keeper bench parts rendered before G-21
+(already flagged in the 2026-07-11 scorer-fix entry as unpropagatable without
+a controlled re-render; PJM re-scored, MISO current).
