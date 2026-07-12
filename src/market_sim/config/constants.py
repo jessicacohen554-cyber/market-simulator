@@ -911,11 +911,15 @@ DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {}
 #   "mid"  -> AEO Reference case
 #   "high" -> AEO Low Oil and Gas Supply case (less supply -> higher prices)
 #
-# TODO: verify against AEO Table 13. The values below are approximate
-# interpolations from published AEO2025 charts and text. Verify/update by
-# running scripts/fetch_eia_aeo.py with an EIA API key, or against the AEO
-# Data Browser at https://www.eia.gov/outlooks/aeo/data/browser/ (Table 13).
-# AEO2026 was released April 8, 2026 and may carry updated trajectories.
+# RE-DERIVED 2026-07 (P-1D, CLAUDE.md rule 23) from the actual AEO2025 Table
+# 13 data (data/raw/eia-aeo/eia_aeo2025_fuel_prices.part*.csv, API-fetched by
+# scripts/fetch_eia_aeo.py in the P-0C intake), replacing the prior
+# hand-typed "approximate interpolations from published AEO2025 charts and
+# text" this TODO used to flag. Re-derive with
+# scripts/derive_fuel_trajectories.py::derive_gas_trajectory and paste; see
+# docs/handoffs/aeo-verification-2026-07-11.md for the before/after diff.
+# AEO2026 was released April 8, 2026 and may carry updated trajectories —
+# re-run scripts/fetch_eia_aeo.py --aeo-year 2026 when that vintage is wanted.
 #
 # The 2023 and 2024 entries are historical actuals, not AEO projections:
 # they are the EIA Henry Hub spot price annual averages ($2.54 in 2023,
@@ -935,31 +939,31 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
         # forecast value). Consumed only by the backcast neighbor-price seam for
         # 2025 (forecasts start at START_YEAR 2026), so this keeps each
         # neighbor's gas consistent with the ISO's own 2025 delivered gas.
-        2026: 2.70,
-        2027: 2.55,
-        2028: 2.50,
-        2029: 2.48,
-        2030: 2.45,
-        2031: 2.43,
-        2032: 2.42,
-        2033: 2.41,
-        2034: 2.40,
-        2035: 2.40,
-        2036: 2.42,
-        2037: 2.45,
-        2038: 2.48,
-        2039: 2.52,
-        2040: 2.55,
-        2041: 2.60,
-        2042: 2.65,
-        2043: 2.70,
-        2044: 2.75,
-        2045: 2.80,
-        2046: 2.85,
+        2026: 2.11,
+        2027: 2.03,
+        2028: 2.14,
+        2029: 2.21,
+        2030: 2.32,
+        2031: 2.42,
+        2032: 2.68,
+        2033: 2.76,
+        2034: 2.79,
+        2035: 2.81,
+        2036: 2.82,
+        2037: 2.79,
+        2038: 2.78,
+        2039: 2.79,
+        2040: 2.84,
+        2041: 2.89,
+        2042: 2.92,
+        2043: 2.91,
+        2044: 2.88,
+        2045: 2.89,
+        2046: 2.92,
         2047: 2.90,
-        2048: 2.95,
-        2049: 3.00,
-        2050: 3.05,
+        2048: 2.89,
+        2049: 2.86,
+        2050: 2.83,
     },
     # AEO Reference case -> model "mid" gas price path.
     "mid": {
@@ -970,30 +974,30 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
         # forecast value). Consumed only by the backcast neighbor-price seam for
         # 2025 (forecasts start at START_YEAR 2026), so this keeps each
         # neighbor's gas consistent with the ISO's own 2025 delivered gas.
-        2026: 3.40,
-        2027: 3.20,
-        2028: 3.30,
-        2029: 3.40,
-        2030: 3.50,
-        2031: 3.55,
-        2032: 3.60,
-        2033: 3.65,
-        2034: 3.70,
-        2035: 3.80,
-        2036: 3.90,
-        2037: 4.00,
-        2038: 4.05,
-        2039: 4.10,
-        2040: 4.15,
-        2041: 4.20,
-        2042: 4.25,
-        2043: 4.30,
-        2044: 4.40,
-        2045: 4.45,
-        2046: 4.50,
-        2047: 4.55,
-        2048: 4.65,
-        2049: 4.70,
+        2026: 2.74,
+        2027: 2.62,
+        2028: 2.73,
+        2029: 2.89,
+        2030: 3.08,
+        2031: 3.23,
+        2032: 3.70,
+        2033: 4.10,
+        2034: 4.34,
+        2035: 4.43,
+        2036: 4.42,
+        2037: 4.37,
+        2038: 4.31,
+        2039: 4.24,
+        2040: 4.27,
+        2041: 4.34,
+        2042: 4.42,
+        2043: 4.56,
+        2044: 4.64,
+        2045: 4.70,
+        2046: 4.78,
+        2047: 4.83,
+        2048: 4.83,
+        2049: 4.81,
         2050: 4.80,
     },
     # AEO Low Oil and Gas Supply case -> model "high" gas price path.
@@ -1006,31 +1010,31 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
         # forecast value). Consumed only by the backcast neighbor-price seam for
         # 2025 (forecasts start at START_YEAR 2026), so this keeps each
         # neighbor's gas consistent with the ISO's own 2025 delivered gas.
-        2026: 3.60,
-        2027: 3.80,
-        2028: 4.10,
-        2029: 4.40,
-        2030: 4.70,
-        2031: 4.90,
-        2032: 5.10,
-        2033: 5.30,
-        2034: 5.50,
-        2035: 5.70,
-        2036: 5.90,
-        2037: 6.10,
-        2038: 6.30,
-        2039: 6.50,
-        2040: 6.70,
-        2041: 6.90,
-        2042: 7.10,
-        2043: 7.30,
-        2044: 7.50,
-        2045: 7.70,
-        2046: 7.90,
-        2047: 8.10,
-        2048: 8.30,
-        2049: 8.50,
-        2050: 8.70,
+        2026: 4.07,
+        2027: 4.12,
+        2028: 4.44,
+        2029: 4.94,
+        2030: 5.90,
+        2031: 6.58,
+        2032: 7.28,
+        2033: 7.63,
+        2034: 7.84,
+        2035: 8.02,
+        2036: 8.32,
+        2037: 8.40,
+        2038: 8.31,
+        2039: 8.47,
+        2040: 8.50,
+        2041: 8.55,
+        2042: 8.50,
+        2043: 8.36,
+        2044: 8.55,
+        2045: 8.59,
+        2046: 8.69,
+        2047: 8.97,
+        2048: 9.25,
+        2049: 9.50,
+        2050: 9.75,
     },
     # --- Capacity-hindcast gas paths (W2-P5, plan §1.2) --------------------
     # "hindcast_realized": the year's ACTUAL Henry Hub spot annual average
@@ -1218,11 +1222,120 @@ COAL_PRICE_BASE: dict[str, float] = {
     #   fuel-cost overlay where reported (MISO has full CEMS/EIA-923 coverage).
 }
 
-# Annual real escalation rate for coal prices.
-# Reflects mine closures, rising rail transport costs, and declining
-# domestic demand reducing economies of scale.
+# Annual real escalation rate for coal prices — retained as the DEFAULT
+# forward shape only where no AEO year is available (before START_YEAR, or a
+# horizon extension beyond COAL_PRICE_TRAJECTORIES' last year is handled by
+# the flat hold, not this rate). Reflects mine closures, rising rail transport
+# costs, and declining domestic demand reducing economies of scale.
 # Source: EIA AEO 2024 coal supply module — ~1% real escalation.
 COAL_PRICE_ESCALATION: float = 0.01
+
+# --- National delivered coal-price trajectories (real 2024$/MMBtu) ---
+# AEO2025 Table 15 ("Coal Supply, Disposition, and Prices"), delivered to the
+# electric power sector, national ("usa") — data/raw/eia-aeo/
+# eia_aeo2025_fuel_prices.part*.csv, derived via
+# scripts/derive_fuel_trajectories.py::derive_coal_trajectory (P-1D, CLAUDE.md
+# rule 23 — resolves the D2 gap: "coal flat 1%/yr escalation" with no AEO
+# grounding). Replaces the flat COAL_PRICE_ESCALATION forward SHAPE — each
+# ISO's own COAL_PRICE_BASE level anchor is unchanged (a single national
+# series can't resolve ERCOT lignite vs PJM Appalachian vs MISO PRB+ILB basin
+# economics, the CLAUDE.md rule-14 misalignment exception), but the year-over-
+# year real growth now tracks the AEO's modeled coal-supply dynamics instead
+# of a guessed constant rate. Scenario mapping matches
+# HENRY_HUB_TRAJECTORIES: highogs -> "low", ref2025 -> "mid", lowogs -> "high"
+# (AEO's High/Low Oil and Gas Supply cases also vary coal-sector fuel
+# competition and mining diesel costs, so the same axis is reused rather than
+# inventing an independent coal scenario lever). Selected via
+# ``ScenarioConfig.coal_price_path`` (default "mid").
+COAL_PRICE_TRAJECTORIES: dict[str, dict[int, float]] = {
+    "low": {
+        2024: 2.4892,
+        2025: 2.4487,
+        2026: 2.3346,
+        2027: 2.2747,
+        2028: 2.1624,
+        2029: 2.1008,
+        2030: 2.1363,
+        2031: 2.0803,
+        2032: 1.9438,
+        2033: 1.9227,
+        2034: 1.9102,
+        2035: 1.8753,
+        2036: 1.9415,
+        2037: 1.7727,
+        2038: 1.7835,
+        2039: 1.6129,
+        2040: 1.6268,
+        2041: 1.6452,
+        2042: 1.6734,
+        2043: 1.6889,
+        2044: 1.6997,
+        2045: 1.7125,
+        2046: 1.7257,
+        2047: 2.5028,
+        2048: 2.5050,
+        2049: 2.5103,
+        2050: 2.5186,
+    },
+    "mid": {
+        2024: 2.4894,
+        2025: 2.4296,
+        2026: 2.3760,
+        2027: 2.3295,
+        2028: 2.2352,
+        2029: 2.2066,
+        2030: 2.2390,
+        2031: 2.1980,
+        2032: 1.9780,
+        2033: 1.9591,
+        2034: 1.9663,
+        2035: 1.9590,
+        2036: 1.9698,
+        2037: 1.9409,
+        2038: 1.9523,
+        2039: 2.0667,
+        2040: 2.0647,
+        2041: 2.0645,
+        2042: 2.0657,
+        2043: 2.0720,
+        2044: 2.0491,
+        2045: 2.0574,
+        2046: 1.8790,
+        2047: 2.3516,
+        2048: 2.3543,
+        2049: 2.3533,
+        2050: 2.3608,
+    },
+    "high": {
+        2024: 2.4888,
+        2025: 2.4729,
+        2026: 2.5108,
+        2027: 2.4361,
+        2028: 2.3718,
+        2029: 2.3786,
+        2030: 2.4118,
+        2031: 2.3955,
+        2032: 2.2343,
+        2033: 2.2295,
+        2034: 2.2286,
+        2035: 2.2222,
+        2036: 2.2280,
+        2037: 2.2003,
+        2038: 2.1834,
+        2039: 2.1566,
+        2040: 2.1498,
+        2041: 2.1658,
+        2042: 2.1537,
+        2043: 2.1320,
+        2044: 2.0534,
+        2045: 2.0908,
+        2046: 2.0391,
+        2047: 2.1600,
+        2048: 2.1896,
+        2049: 2.1906,
+        2050: 2.1325,
+    },
+}
 
 # --- ERCOT lignite / PRB delivered coal cost, 2023-2025 -----------------------
 # ERCOT's two coal supply classes are genuinely different costs: mine-mouth
@@ -1352,9 +1465,113 @@ COAL_SIGMOID_FOLLOWER_DISCOUNT: float = 0.87
 # Also the dual-fuel switching parity fallback: in backcast years the measured
 # EIA-923 Schedule 5 monthly Petroleum receipt series
 # (market_sim.data.fuel.iso_monthly_oil_prices; PJM ~$17-23/MMBtu, 2023-2025)
-# takes precedence, and this flat value fills unreported months and forward
-# years.
+# takes precedence, and this flat value fills unreported months and any
+# forecast year outside OIL_PRICE_TRAJECTORIES' range.
 OIL_PRICE_PER_MMBTU: float = 18.0
+
+# --- Forecast-year oil-price trajectories (real 2024$/MMBtu) ---
+# AEO2025 Table 12 ("Petroleum and Other Liquids Prices"), electric-power
+# distillate + residual fuel oil, averaged (same blend construction as
+# OIL_PRICE_PER_MMBTU above) — data/raw/eia-aeo/
+# eia_aeo2025_fuel_prices.part*.csv, derived via
+# scripts/derive_fuel_trajectories.py::derive_oil_trajectory (P-1D, CLAUDE.md
+# rule 23). AEO prices this series at $/gal; converted to $/MMBtu via EIA fuel
+# heat contents (0.1385 MMBtu/gal distillate, 0.1497 MMBtu/gal residual).
+# Replaces the flat OIL_PRICE_PER_MMBTU scalar for FORECAST years (backcast
+# months keep the measured EIA-923 receipt series; OIL_PRICE_PER_MMBTU stays
+# the fallback for unreported backcast months and any year outside this
+# table's range). Selected via ``ScenarioConfig.oil_price_path`` (default
+# "mid"); scenario mapping matches HENRY_HUB_TRAJECTORIES (highogs -> "low",
+# ref2025 -> "mid", lowogs -> "high").
+OIL_PRICE_TRAJECTORIES: dict[str, dict[int, float]] = {
+    "low": {
+        2024: 21.67,
+        2025: 20.49,
+        2026: 19.98,
+        2027: 19.48,
+        2028: 18.91,
+        2029: 18.42,
+        2030: 17.95,
+        2031: 17.91,
+        2032: 17.80,
+        2033: 17.93,
+        2034: 17.94,
+        2035: 17.95,
+        2036: 17.98,
+        2037: 18.07,
+        2038: 18.18,
+        2039: 18.22,
+        2040: 18.26,
+        2041: 18.27,
+        2042: 18.30,
+        2043: 18.85,
+        2044: 18.62,
+        2045: 18.54,
+        2046: 18.59,
+        2047: 18.67,
+        2048: 18.75,
+        2049: 18.76,
+        2050: 18.72,
+    },
+    "mid": {
+        2024: 21.67,
+        2025: 19.07,
+        2026: 18.41,
+        2027: 18.51,
+        2028: 18.68,
+        2029: 18.91,
+        2030: 19.22,
+        2031: 19.25,
+        2032: 19.49,
+        2033: 19.78,
+        2034: 19.91,
+        2035: 20.09,
+        2036: 20.13,
+        2037: 20.23,
+        2038: 20.38,
+        2039: 20.45,
+        2040: 20.58,
+        2041: 20.73,
+        2042: 20.76,
+        2043: 20.91,
+        2044: 20.83,
+        2045: 20.64,
+        2046: 20.90,
+        2047: 21.41,
+        2048: 21.46,
+        2049: 21.52,
+        2050: 21.70,
+    },
+    "high": {
+        2024: 21.67,
+        2025: 22.30,
+        2026: 21.91,
+        2027: 21.45,
+        2028: 21.12,
+        2029: 20.84,
+        2030: 20.82,
+        2031: 20.90,
+        2032: 21.27,
+        2033: 21.64,
+        2034: 21.81,
+        2035: 21.99,
+        2036: 22.39,
+        2037: 22.59,
+        2038: 22.73,
+        2039: 22.97,
+        2040: 23.10,
+        2041: 23.21,
+        2042: 23.23,
+        2043: 23.21,
+        2044: 23.23,
+        2045: 23.26,
+        2046: 23.49,
+        2047: 23.84,
+        2048: 24.08,
+        2049: 24.22,
+        2050: 24.29,
+    },
+}
 
 # NOTE: AGT_DAILY_BASIS_CONVEXITY (the within-month NEISO daily-AGT-basis
 # demand-convexity exponent, formerly 7.0) was RETIRED 2026-06. It redistributed
@@ -1379,6 +1596,51 @@ OIL_PRICE_PER_MMBTU: float = 18.0
 # at parity with cheap coal on a $/MMBtu basis.
 # Source: EIA wood & waste biomass delivered fuel cost, AEO 2024 (~$2.5/MMBtu).
 BIOMASS_PRICE_PER_MMBTU: float = 2.5
+
+# --- Nuclear fuel price ($/MMBtu, real 2024$) ---
+# D2 fix (P-1D, CLAUDE.md rule 23): nuclear was priced at $0/MMBtu alongside
+# wind/solar/hydro (fuel.py's non-fuel-burning default), but nuclear plants do
+# burn a real, priced fuel. The EIA Uranium Marketing Annual Report publishes
+# no $/MMBtu series directly (data/raw/uranium-marketing/, P-0C intake) — only
+# front-end U3O8 purchase price ($/lb U3O8e) and SWU enrichment-services
+# price, both nominal. This series is derived
+# (scripts/derive_fuel_trajectories.py::derive_nuclear_fuel_trajectory) by
+# deflating both to real 2024$ (INFLATION_RATE) and building up a delivered
+# $/MMBtu cost from the standard LWR fuel-cycle physical constants (World
+# Nuclear Association "Nuclear Fuel Cycle": ~8.9 kg natural U3O8 and ~7.3 SWU
+# per kg of ~4.4% LEU at a 0.25-0.3% tails assay) plus WNA-cited conversion
+# (~$10/kgU) and fabrication (~$300/kgLEU) costs — neither published as a time
+# series by EIA, so held flat in real terms — divided by the heat content of
+# a representative 45,000 MWd/tHM US LWR burnup (NRC/EIA-cited current-fleet
+# average). 2006 is the first year with both a U3O8 and a SWU price (SWU
+# series starts there); years without both are not derived (no guessing).
+# Forecast years (2025-2050) hold the last derived value (2024: $0.576/MMBtu)
+# flat in real terms — neither EIA nor AEO publishes a forward SWU/U3O8
+# trajectory, so a hold-flat real anchor is the documented, non-speculative
+# default (same "no silent compounding tail" principle as the
+# fuel.resolve_annual_gas_price extrapolation fix). ScenarioConfig-overridable
+# via ``nuclear_fuel_price_override`` ($/MMBtu, e.g. for a sensitivity case).
+NUCLEAR_FUEL_PRICE_HISTORICAL: dict[int, float] = {
+    2006: 0.5608,
+    2007: 0.6831,
+    2008: 0.7884,
+    2009: 0.7994,
+    2010: 0.8235,
+    2011: 0.8528,
+    2012: 0.8456,
+    2013: 0.8115,
+    2014: 0.7540,
+    2015: 0.7175,
+    2016: 0.6796,
+    2017: 0.6318,
+    2018: 0.5979,
+    2019: 0.5551,
+    2020: 0.5102,
+    2021: 0.5051,
+    2022: 0.5283,
+    2023: 0.5568,
+    2024: 0.5760,
+}
 
 # Thermal-fleet availability model by plant-group category. Three additive
 # components (summed, not compounded):
@@ -1678,6 +1940,33 @@ CARB_FLOOR_ESCALATION: float = 0.07
 # (RGGI 2017 Model Rule §5.3(c)); used as the forward escalation of the last
 # realized RGGI clearing price for NYISO/NEISO.
 RGGI_RESERVE_ESCALATION: float = 0.07
+
+# --- Named carbon-program price paths (P-1D: wires the previously-dead
+# ``ScenarioConfig.carbon_program_price_path`` field, CLAUDE.md rule 23) ---
+# An explicit, scenario-matrix alternative to the single default floor-band
+# escalator (:func:`market_sim.policy.cap_and_trade.projected_price`), in the
+# same spirit as the exogenous RFF :data:`CARBON_PRICE_PATHS` low/mid/high
+# scenario paths (an explicitly-labelled sensitivity axis, not a fitted value,
+# CLAUDE.md rule 1):
+#   "low"  — anchors on the program's own published REGULATORY FLOOR
+#            (:data:`CARB_FLOOR_PRICE`, CAISO-only — no RGGI floor-price
+#            series is landed in-repo) and escalates at CPI only
+#            (:data:`INFLATION_RATE`) — a lower bound where the market never
+#            clears above its floor with no real risk premium. RGGI ISOs fall
+#            back to "mid" (undocumented floor series -> no guessing).
+#   "mid"  — IDENTICAL to the default (``carbon_program_price_path=None``):
+#            anchors on the last measured clearing price and escalates at the
+#            program's own published reserve/CCR rate
+#            (:data:`CARB_FLOOR_ESCALATION` / :data:`RGGI_RESERVE_ESCALATION`).
+#   "high" — the same anchor, escalated at DOUBLE the published reserve rate
+#            — an explicit upper-bound sensitivity multiplier (no separate
+#            primary-sourced "high" trajectory exists for either program;
+#            multiplier documented here rather than invented as a fake data
+#            point).
+CARBON_PROGRAM_PRICE_PATH_ESCALATION_MULTIPLIER: dict[str, float] = {
+    "mid": 1.0,
+    "high": 2.0,
+}
 
 
 @dataclass(frozen=True)

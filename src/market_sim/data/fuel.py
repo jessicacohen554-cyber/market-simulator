@@ -42,6 +42,7 @@ from market_sim.config.constants import (
     CAISO_CITYGATE_TRANSPORT_ADDER,
     COAL_PRICE_BASE,
     COAL_PRICE_ESCALATION,
+    COAL_PRICE_TRAJECTORIES,
     END_YEAR,
     GAS_BASIS_DIFFERENTIAL,
     GAS_MONTHLY_SEASONALITY,
@@ -49,7 +50,9 @@ from market_sim.config.constants import (
     HOURS_PER_YEAR,
     INFLATION_RATE,
     LIGNITE_PRICE_2023_25,
+    NUCLEAR_FUEL_PRICE_HISTORICAL,
     OIL_PRICE_PER_MMBTU,
+    OIL_PRICE_TRAJECTORIES,
     PRB_COMMODITY_DECLINE,
     PRB_COMMODITY_FLAT_THROUGH,
     PRB_COMMODITY_SHARE,
@@ -110,7 +113,11 @@ _HYDROGEN_FUEL_IDX: tuple[int, int] = (
     FUEL_TYPE_MAP["hydrogen_ccgt"],
 )
 
-# Fuel price ($/MMBtu) for non-fuel-burning units (e.g. wind, solar, nuclear,
+# Fuel-type integer code for nuclear units, which pay the derived
+# EIA-uranium-marketing $/MMBtu fuel-cycle cost (:func:`resolve_nuclear_fuel_price`).
+_NUCLEAR_FUEL_IDX: int = FUEL_TYPE_MAP["nuclear"]
+
+# Fuel price ($/MMBtu) for non-fuel-burning units (e.g. wind, solar,
 # hydro, imports), which carry no commodity fuel cost in this model.
 _ZERO_FUEL_PRICE: float = 0.0
 
@@ -132,6 +139,33 @@ def _use_clean_data() -> bool:
     return os.environ.get(_USE_CLEAN_ENV, "").strip().lower() in _USE_CLEAN_TRUTHY
 
 
+def _hold_flat_extrapolate(trajectory: dict[int, float], year: int) -> float:
+    """Return ``trajectory[year]``, holding flat at the nearest known year.
+
+    ``year`` beyond the trajectory's last knot holds the LAST value flat in
+    real terms — no compounding tail. This replaces the prior
+    last-year-over-year-ratio extrapolation (a silent, unbounded, uncited
+    driver — P-1D, CLAUDE.md rule 23): a naive compounding tail invents a
+    forever-rising or forever-falling price the source data says nothing
+    about, whereas holding the last real, cited value flat only ever asserts
+    what the data actually supports.
+
+    ``year`` before the trajectory's first knot, or inside an interior gap
+    (e.g. a rule-22 holdout-quarantine year omitted from a hindcast path),
+    holds flat at the nearest EARLIER known year (or, if none exists, the
+    earliest known year) — never a backward-compounding extrapolation.
+    """
+    if year in trajectory:
+        return trajectory[year]
+    last_year = max(trajectory)
+    if year > last_year:
+        return trajectory[last_year]
+    earlier = [y for y in trajectory if y < year]
+    if earlier:
+        return trajectory[max(earlier)]
+    return trajectory[min(trajectory)]
+
+
 def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
     """Return the delivered annual gas price ($/MMBtu) for the scenario year.
 
@@ -140,10 +174,11 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
 
         delivered = HENRY_HUB_TRAJECTORIES[path][year] + basis
 
-    Years beyond the trajectory's last entry are extrapolated using the
-    final year-over-year growth rate. This annual (seasonality-free) price
-    is the one capacity new-entry LCOE screening should charge gas units,
-    so dispatch and capacity evolution see the same gas cost for a year.
+    Years beyond the trajectory's last entry hold the last real value flat
+    (:func:`_hold_flat_extrapolate`) — no compounding tail. This annual
+    (seasonality-free) price is the one capacity new-entry LCOE screening
+    should charge gas units, so dispatch and capacity evolution see the same
+    gas cost for a year.
 
     When ``config.gas_price_override`` is set the trajectory lookup is
     bypassed entirely: the override is treated as the measured Henry Hub
@@ -172,15 +207,64 @@ def resolve_annual_gas_price(config: ScenarioConfig, year: int) -> float:
         return config.gas_price_override + basis
 
     trajectory = HENRY_HUB_TRAJECTORIES[config.gas_price_path]
-    if year in trajectory:
-        henry_hub = trajectory[year]
-    else:
-        # Extrapolate beyond the trajectory using the last growth rate.
-        last_year = max(trajectory)
-        annual_growth = trajectory[last_year] / trajectory[last_year - 1]
-        henry_hub = trajectory[last_year] * annual_growth ** (year - last_year)
+    henry_hub = _hold_flat_extrapolate(trajectory, year)
 
     return henry_hub * config.gas_price_factor + basis
+
+
+def resolve_annual_coal_price(config: ScenarioConfig, year: int) -> float:
+    """Return the delivered annual coal price ($/MMBtu) for an ISO/year.
+
+    Anchors on the ISO's own :data:`COAL_PRICE_BASE` level (each ISO's basin
+    economics — ERCOT lignite/PRB, PJM Appalachian, MISO PRB+ILB — are
+    genuinely different delivered costs a single national series can't
+    resolve) and escalates it by the REAL growth ratio of the AEO2025
+    national delivered-coal trajectory (:data:`COAL_PRICE_TRAJECTORIES`,
+    ``config.coal_price_path``) from ``START_YEAR`` to ``year``, holding flat
+    beyond the trajectory's last knot (:func:`_hold_flat_extrapolate`). This
+    replaces the flat, uncited :data:`COAL_PRICE_ESCALATION` (1%/yr) forward
+    SHAPE with the AEO's modeled coal-supply dynamics, while preserving each
+    ISO's own anchor level (P-1D, CLAUDE.md rules 14/23).
+    """
+    trajectory = COAL_PRICE_TRAJECTORIES[config.coal_price_path]
+    anchor_year = min(trajectory)
+    anchor_value = _hold_flat_extrapolate(trajectory, anchor_year)
+    year_value = _hold_flat_extrapolate(trajectory, year)
+    growth_ratio = year_value / anchor_value
+    return COAL_PRICE_BASE[config.iso] * growth_ratio
+
+
+def resolve_annual_oil_price(config: ScenarioConfig, year: int) -> float:
+    """Return the delivered annual oil price ($/MMBtu) for a forecast year.
+
+    Forecast years use the AEO2025 distillate+residual blend trajectory
+    (:data:`OIL_PRICE_TRAJECTORIES`, ``config.oil_price_path``), holding flat
+    beyond its last knot (:func:`_hold_flat_extrapolate`). Backcast callers
+    (measured EIA-923 receipts, :func:`dual_fuel_oil_price_series`) and any
+    year outside the trajectory's range keep the flat
+    :data:`OIL_PRICE_PER_MMBTU` fallback — this function is only consulted
+    for the annual forecast default in :func:`resolve_fuel_prices`.
+    """
+    trajectory = OIL_PRICE_TRAJECTORIES[config.oil_price_path]
+    if year < min(trajectory):
+        return OIL_PRICE_PER_MMBTU
+    return _hold_flat_extrapolate(trajectory, year)
+
+
+def resolve_nuclear_fuel_price(config: ScenarioConfig, year: int) -> float:
+    """Return the delivered nuclear fuel cost ($/MMBtu) for a year.
+
+    ``config.nuclear_fuel_price_override`` (e.g. a sensitivity case), when
+    set, is returned as-is. Otherwise the EIA-uranium-marketing-derived
+    series (:data:`NUCLEAR_FUEL_PRICE_HISTORICAL`) holds flat beyond its last
+    (2024) real-dollar value (:func:`_hold_flat_extrapolate`) — neither EIA
+    nor AEO publishes a forward U3O8/SWU trajectory (P-1D, CLAUDE.md rule 23;
+    replaces the prior ``$0/MMBtu`` non-fuel-burning default).
+    """
+    override = getattr(config, "nuclear_fuel_price_override", None)
+    if override is not None:
+        return float(override)
+    return _hold_flat_extrapolate(NUCLEAR_FUEL_PRICE_HISTORICAL, year)
 
 
 def _seasonal_factors(hours: int) -> np.ndarray:
@@ -3225,20 +3309,25 @@ def resolve_fuel_prices(
          is set — the *same* price for every gas unit in the ISO that year.
          Per-plant EIA-923 monthly gas costs are applied only when
          ``config.gas_plant_monthly_fuel_pricing`` is set (off by default).
-      2. **Coal** units pay :data:`COAL_PRICE_BASE` escalated from
-         :data:`START_YEAR` at :data:`COAL_PRICE_ESCALATION` per year, then
-         (historical years, ``coal_plant_monthly_pricing`` on) overwritten
-         by each plant's own measured EIA-923 monthly delivered cost where
-         reported. Months with no reported cost keep the trajectory.
+      2. **Coal** units pay :data:`COAL_PRICE_BASE` escalated to ``year``:
+         in forecast mode via the AEO2025 real-growth ratio
+         (:func:`resolve_annual_coal_price`); in backcast mode via the flat
+         :data:`COAL_PRICE_ESCALATION` rate (unchanged), then (historical
+         years, ``coal_plant_monthly_pricing`` on) overwritten by each
+         plant's own measured EIA-923 monthly delivered cost where reported.
+         Months with no reported cost keep the trajectory.
 
     Hydrogen turbines (``hydrogen_ct``, ``hydrogen_ccgt``) pay the
     derived hydrogen fuel cost from
     :func:`market_sim.data.hydrogen.compute_h2_fuel_cost`. Oil units
-    (``oil``) pay the flat delivered distillate/residual price
-    (:data:`~market_sim.config.constants.OIL_PRICE_PER_MMBTU`) and biomass
-    units (``biomass``) the delivered biomass fuel cost
-    (:data:`~market_sim.config.constants.BIOMASS_PRICE_PER_MMBTU`). All other
-    generators carry a zero fuel price.
+    (``oil``) pay the AEO2025 oil-price trajectory in forecast mode
+    (:func:`resolve_annual_oil_price`) or the flat delivered price
+    (:data:`~market_sim.config.constants.OIL_PRICE_PER_MMBTU`) in backcast
+    mode. Biomass units (``biomass``) pay the delivered biomass fuel cost
+    (:data:`~market_sim.config.constants.BIOMASS_PRICE_PER_MMBTU`). Nuclear
+    units (``nuclear``) pay the EIA-uranium-marketing-derived fuel-cycle cost
+    (:func:`resolve_nuclear_fuel_price`) in both modes. All other generators
+    (wind, solar, hydro, imports) carry a zero fuel price.
 
     When ``config.dual_fuel_switching`` is set (and ``apply_monthly`` is
     True), EIA-860 oil/gas switch-capable gas units are finally capped at
@@ -3289,20 +3378,43 @@ def resolve_fuel_prices(
     if getattr(config, "gas_daily_shape", False):
         gas_price_hourly = gas_price_hourly * gas_daily_shape_factors(year, T)
 
-    coal_price = COAL_PRICE_BASE[config.iso] * (1.0 + COAL_PRICE_ESCALATION) ** (
-        year - START_YEAR
-    )
+    if config.mode == "forecast":
+        # Forecast years track the AEO2025 national coal-price REAL GROWTH
+        # applied to the ISO's own delivered-cost anchor (resolve_annual_coal_price)
+        # rather than the flat, uncited COAL_PRICE_ESCALATION rate.
+        coal_price = resolve_annual_coal_price(config, year)
+    else:
+        # Backcast: unchanged flat-escalation fallback (superseded within the
+        # backcast window by the EIA-923 monthly overwrite pass below for any
+        # plant/month with reported delivered cost).
+        coal_price = COAL_PRICE_BASE[config.iso] * (1.0 + COAL_PRICE_ESCALATION) ** (
+            year - START_YEAR
+        )
 
     fuel_type_idx = fleet.fuel_type_idx
     fuel_prices = np.zeros((fleet.n_gen, T), dtype=float)
     fuel_prices[np.isin(fuel_type_idx, _GAS_FUEL_IDX)] = gas_price_hourly
     fuel_prices[fuel_type_idx == _COAL_FUEL_IDX] = coal_price
 
-    # Oil (distillate/residual) and biomass burn at a flat delivered cost: oil
-    # sits far above gas (peaker economics), biomass near cheap-coal parity.
-    # Neither has a commodity trajectory or F923 plant-monthly override here.
-    fuel_prices[fuel_type_idx == _OIL_FUEL_IDX] = OIL_PRICE_PER_MMBTU
+    # Oil (distillate/residual) and biomass burn at a flat delivered cost in
+    # backcast (oil sits far above gas — peaker economics — and any measured
+    # EIA-923 receipts take precedence via the dual-fuel pass below); forecast
+    # years use the AEO2025 delivered-oil trajectory. Biomass has no commodity
+    # trajectory or F923 plant-monthly override at all.
+    oil_price = (
+        resolve_annual_oil_price(config, year)
+        if config.mode == "forecast"
+        else OIL_PRICE_PER_MMBTU
+    )
+    fuel_prices[fuel_type_idx == _OIL_FUEL_IDX] = oil_price
     fuel_prices[fuel_type_idx == _BIOMASS_FUEL_IDX] = BIOMASS_PRICE_PER_MMBTU
+
+    # Nuclear burns a real, priced fuel (EIA-uranium-marketing-derived
+    # fuel-cycle cost) in both backcast and forecast — not the non-fuel-burning
+    # $0 default (D2 fix).
+    fuel_prices[fuel_type_idx == _NUCLEAR_FUEL_IDX] = resolve_nuclear_fuel_price(
+        config, year
+    )
 
     # Hydrogen turbines burn green H2 whose cost is derived from renewable
     # LCOE and electrolyzer efficiency rather than a commodity market.
@@ -3363,16 +3475,22 @@ def dual_fuel_oil_price_series(
 
     The measured ISO-month EIA-923 Petroleum series
     (:func:`iso_monthly_oil_prices`) expanded to hours, with unreported
-    months — and years with no F923 data at all (forward years) — filled
-    from the flat cited default
-    (:data:`~market_sim.config.constants.OIL_PRICE_PER_MMBTU`).
+    months filled from the same fallback :func:`resolve_fuel_prices` uses for
+    the (non-dual-fuel) oil fleet: the AEO2025 oil trajectory
+    (:func:`resolve_annual_oil_price`) in forecast mode, or the flat cited
+    default (:data:`~market_sim.config.constants.OIL_PRICE_PER_MMBTU`) in
+    backcast mode / years with no F923 data at all — keeping the dual-fuel
+    parity price consistent with a plain oil unit's price in the same year.
     """
+    fallback = (
+        resolve_annual_oil_price(config, year)
+        if config.mode == "forecast"
+        else OIL_PRICE_PER_MMBTU
+    )
     monthly = iso_monthly_oil_prices(config, year, monthly_costs_path)
     if monthly is None:
-        return np.full(config.hours, OIL_PRICE_PER_MMBTU, dtype=float)
-    filled = np.where(
-        np.isnan(monthly), OIL_PRICE_PER_MMBTU, np.asarray(monthly, dtype=float)
-    )
+        return np.full(config.hours, fallback, dtype=float)
+    filled = np.where(np.isnan(monthly), fallback, np.asarray(monthly, dtype=float))
     return _expand_monthly_to_hourly(filled, config.hours)
 
 
