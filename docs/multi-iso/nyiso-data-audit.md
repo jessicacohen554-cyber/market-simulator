@@ -1,6 +1,6 @@
 # NYISO Data Audit
 
-Companion to `docs/multi-iso/07-nyiso-prompt-pack.md` and the upload manifest
+Companion to `docs/sessions/multi-iso/07-nyiso-prompt-pack.md` (archived) and the upload manifest
 there (U1–U7). Each section is owned by the pack that filled it.
 
 > **Scope note.** Started by **P1 (unit-outage windows)** with §3 (CEMS
@@ -328,15 +328,15 @@ stay carbon-free and CAISO keeps its CARB prices — all unchanged.
 | # | Item | Destination | Status |
 |---|------|-------------|--------|
 | U1 | CAMPD unit-level `NY_2024.parquet` | `data/raw/campd-unit-level/` | **missing** — gates the 2024 backcast year + 2024 outage windows; 2023/2025 present |
-| U2 | DA+RT hourly zonal LBMP (WEST/CAPITL/N.Y.C./LONGIL) 2023–2025 | `data/raw/lmp-data/NYISO/` | **missing** — needed by P10; price calibration is level-only without it |
+| U2 | DA+RT hourly zonal LBMP (WEST/CAPITL/N.Y.C./LONGIL) 2023–2025 | `data/raw/lmp-data/NYISO/` | **landed 2026-06-12** — P10 price calibration done (scored against `actual_lmp.json` + `actual_lmp_hourly_NYISO.parquet`; see archived `docs/sessions/multi-iso/nyiso-backcast-2023.md` §3) |
 | U3 | Zonal hourly load A–K 2023–2025 | `data/raw/zone-specific-demand/NYISO/` | **missing** — zonal load stays on static Gold-Book shares (0.365/0.175/0.06/0.28/0.12) until landed (P8) |
 | U4 | Transco Z6 NY / Iroquois delivered gas basis 2023–2025 | cite into `constants.py` / gas path | **missing** — `gas_basis_by_iso_month.csv` is header-only; gas falls back to measured EIA-923 (see §4). Downstate winter spike not yet fully captured (P7/P13) |
 | U5 | Niagara/St-Lawrence + Blenheim-Gilboa monthly generation (optional) | `data/raw/nyiso-hydro/` | **not needed yet** — EIA-923 monthly hydro is in-repo (P4 refinement only) |
 | U6 | RGGI allowance prices 2023–2025 (optional) | cite into `STATE_CARBON_PRICE_BY_ISO` | **satisfied (web-search)** — RGGI auction clearing prices cited; active default-on (see §4) |
 | U7 | Central-East / Total-East / Dunwoodie-South interface flows + limits (optional) | `data/raw/iso-specific-transmission/NYISO/` | **missing** — TTCs stay on Tier-3 Gold-Book seeds (P10 validation) |
 
-U2–U4 unblock the full pack; the Stage-E reference and fleet/CEMS audit are
-complete without them.
+U3–U4 unblock the remaining pack items (U2 landed 2026-06-12); the Stage-E
+reference and fleet/CEMS audit are complete without them.
 
 ## 6. Out-of-scope observations for the backlog
 
