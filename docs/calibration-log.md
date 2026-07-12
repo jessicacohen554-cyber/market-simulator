@@ -10493,73 +10493,90 @@ dispatch-distortion cost, no magnitude gain). Keeper stays
 re-open reserve-supply probes for PJM C3c; the honest next lever remains
 demand-side/commitment tightness (the ERCOT-G-22 route) or accepting C3c as a
 disclosed limitation.
+## 2026-07-12 — ERCOT-59: the storage-cycling-lane fix executed — measured-award AS->energy co-participation forces the storage-AS-award draw-down as a battery discharge floor on the net-load ramp; LP-healthy and price-neutral, hourly shape improves vs measured (0.807->0.820), but the official C5c-2024 MONTHLY metric regresses slightly (r=0.361->0.329, both FAIL) — ercot59 storage-deploy + twin registered as the honest record (CALIBRATED-WITH-CAVEATS, same tier as keeper), keeper stays ercot56-nucwin
 
-## 2026-07-11 — MISO-57: transmission lane (RDT S→N congestion depth) executed — the fabricated free RDT wheel-bypass severed and the published RDT derate + TCDC market design added; RDT now binds at measured 2023-24 frequencies; the 2025 gap is root-caused to an UPSTREAM direction reversal, not a transmission limit
+**Task (this session, the ERCOT-58 filed forward path §5(a) — storage
+first).** Build the measured-award AS->energy co-participation mechanism
+specified in docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md §5: force
+the measured hourly storage-AS-award draw-down as a battery discharge floor
+at the net-load ramp, releasing exactly the MW ``storage_as_commitment``
+reserves out of the discharge cap.
 
-**The sanity chain came first (rules 1/14; full record FINDING §11).** A
-2025-only throwaway diagnostic (miso-56 replay, `_miso57_rdt_diag.py`, never
-registered per rule 16) measured WHY the model carried ~$0 Midwest–South
-separation against the IMM's measured $9.31/MWh (Summer-2025 quarterly): the
-shared `MISO_external` bus links to all five border zones, so the LP wheeled
-South energy South→external→Midwest through the bus's energy balance without
-touching any priced band — a fabricated, cost-free 3,000 MW bypass around the
-RDT contract path (MISO's only real South↔Midwest boundary; MISO/SPP JOA).
-Measured bypass: **1,255 MW summer-2025 mean** (1,563 of 2,208 summer hours;
-7.7 TWh/yr) while the RDT S→N link carried 54 MW mean and saturated 13 h/yr.
+**Mechanism (`ercot_storage_as_deployment`, default off, ERCOT-only).**
+`scarcity.ercot_storage_as_deployment_mw`: `deploy(t) = max(0,
+daily_peak(award) - award(t))` gated to the net-load UP-RAMP (net_load(t) >=
+its own calendar-day median AND hour <= the day's net-load peak hour). Every
+term measured (the award series + net load); the daily-max, daily-median and
+daily-peak-hour are the award's and net-load's own envelopes, not swept
+knobs (rule 1/23). Wired as a new `storage_discharge_min` lower bound in
+`build_variable_bounds` (mirroring the existing `storage_soc_min`), threaded
+through the full dispatch call chain. Validator enforces rule 19: requires
+`storage_as_commitment` (the reservation it releases from), mutually
+exclusive with `ercot_storage_as_endogenous` (the co-opt path prices the
+same choice differently).
 
-**miso-57 (`2026-07-11-miso-57-rdt-congestion` + rule-20 twin) = miso-56
-meta.json strict replay + two structural changes, zero fitted scalars:**
-(1) `miso_south_seam_split` — the South seam's reference-price bands re-home
-onto their own external zone (`transmission.split_miso_south_external_node`;
-the southern neighbors SOCO/TVA/AECI are electrically south of the RDT), which
-severs the wheel outright. (2) `miso_rdt_tcdc` — the static JOA contract pair
-(3,000 N→S / 2,500 S→N) becomes the published operating representation: 92%
-default derate ("MISO derates the RDT limit to 92 percent of the contract
-limit by default", 2024 SOM §III.B) as the free tier, then the two-step RDT
-Transmission Constraint Demand Curve ($40/MWh at the modeled limit, $500/MWh
-from 102%, hard bound at contract) as priced one-way tiers via the new
-`TransferLink.flow_cost` / LP `link_flow_cost` path (one-way-only validated so
-a signed bidirectional flow can never farm the cost as a reverse credit).
-Deliberately conservative: the 92% DEFAULT derate, not the deeper
-measured-when-binding 84% (no published hourly derate series; rule 13 forbids
-the haircut), and the RPE ($200, additive in real violations) is not modeled —
-both gaps point the same way (under-separation). All parameters published
-(`constants.MISO_RDT_*`, cited to 2024 SOM §III.B + MISO/SPP JOA Attach. A).
+**Weight-form iteration (rule-16 2023-only + 2025-measured-year throwaways,
+never registered).** First form (PRC-relative draw-down against the day's
+own PRC envelope) tested near-zero in 2023 — the ORDC LOLP mu=0 in the
+backcast years, so PRC almost never dips into scarcity; the routine evening
+battery discharge is NOT ORDC-scarcity deployment. Second form (measured
+award draw-down gated to net-load >= daily median) fired but OVER-forced
+late-night hours (HE21-23) against the measured 2025 EIA-930 battery series
+(hourly shape correlation 0.807->0.630, a regression) — the gate was too
+loose. Final form adds the net-load UP-RAMP restriction (hour <= the day's
+net-load peak hour): hourly correlation improves 0.807->0.820, HE21-23
+forcing drops to ~zero, and the evening HE17-18 lift moves toward measured
+(988->1209 / 2711->2875 MW in the 2025 probe). Both 2023 and 2025 probes
+price-neutral (2025 load-weighted price BYTE-IDENTICAL, every month
+unchanged; 2023 +0.02%) and LP-healthy (shed unchanged).
 
-**Result — the mechanism reproduces measured RDT behaviour in 2023-24:**
-2023 S→N mean 1,139 MW (measured 917, SOM §IV.E), 2024 1,035 MW (measured
-1,108, §II.E); binds 27%/25%/4% of hours (measured >25% in 2024, §III.B);
-separation-when-binding $2.77/$2.89 (measured ~$3, §III.B). Score
-(NOT-YET, FAIL set carried): 2025 annual C3a **−13.3% → −11.7%** (June −6.4,
-Aug −5.2 improved), July-2025 −18.8 unchanged (its drivers are ELMP
-ex-post/emergency + deeper operator derates + RPE, none fabricated here —
-exactly as §10 pre-adjudicated); August 2023/24 hold clean (+0.5/+0.5
-monthly); D-2 CT forced 5.8/3.7/8.1% vs 15% cap; DOF ledger 13 entries,
-residual count unchanged at 2 (offer-curve legacies), both mechanisms
-measured-physical zero-scalar rows; C5b ledgered CAVEAT carried.
+**Full 2023-2025 bundle + zero-forcing ablation twin (solved locally, then
+re-solved and registered via this CI workflow — the ercot58 precedent; this
+container's 15 GB RAM cannot run 2 concurrent full ERCOT per-plant solves,
+OOM-confirmed via dmesg, so main and twin ran as sequential steps).** Recipe
+= the PROMOTED keeper (ercot56-nucwin) reconstructed from its meta.json via
+`_ercot_storage_deploy_ab.py` + the ONE delta
+(`ercot_storage_as_deployment=True`); zero new residual-fitted parameters.
 
-**The 2025 finding — direction reversal, upstream of the RDT:** the model runs
-the RDT predominantly N→S in 2025 (mean 1,350 MW, binding 29%) with S→N at
-322 MW / 4%, while the real 2025 market ran predominantly S→N ($9.31 summer
-separation, RDT+RPE congestion $41M +121% YoY). The model's Midwest is too
-cheap / South relatively too dear in exactly the hours reality pulled 2,100+
-MW north — the standing mid-merit split root cause (COAL_BIT −15 TWh under-run
-/ CC_REGULAR +9 TWh over-run, import under-run co-driving) now quantified as a
-~1,000 MW RDT direction reversal. No admissible transmission-side change
-closes it (S→N never saturates even the derated limit in 2025), and rule 1
-forbids tightening the limit against the residual. The $9.31 separation will
-emerge when the mid-merit lane fixes the upstream misallocation; the
-constraint that will price it is now in place and validated on 2023-24.
+**Determination: CALIBRATED-WITH-CAVEATS** (`scripts/calibration_verdict.py`)
+— the SAME tier as the keeper. C1/C2/C3a/C3b/C4/C5a/C7/C8 unchanged PASS.
+C3c-2024 unchanged (27h vs 68h DA, the inherited G-22 offer-formation
+residual this mechanism does not target). **C5c-2024 (the official MONTHLY
+storage-shape metric) moves r=0.361 -> r=0.329 — a small HONEST REGRESSION**,
+reported not buried (rule 11): the mechanism targets INTRA-day (hour-of-day)
+shape at the net-load ramp, validated at hourly resolution against the
+EIA-930 2025 measured series (0.807->0.820, its actual design target); C5c
+scores month-to-month totals, a different axis the mechanism was never built
+to move — it adds MW roughly in proportion to each day's own ramp, which
+shifted 2024's monthly totals slightly further from the actual profile. Both
+r=0.361 (keeper) and r=0.329 (candidate) sit in FAIL/CAVEAT territory — no
+PASS/FAIL boundary crossed. Root cause of the monthly-shape gap is unchanged
+and unaddressed; still an open item, same as the keeper's inherited caveat.
 
-**Recommendation to owner:** miso-57 supersedes miso-56 (the current keeper)
-on structural grounding — it removes a fabricated free transfer path and adds
-the published RDT market design, reproducing three measured anchors in-window
-— at a strictly-better score (2025 +1.6 pts, everything else flat-to-better).
-Keeper swap is the owner's call; keepers.json untouched. Retention: MISO at
-the 15-main cap, oldest main (miso-42-coal-econ + twin) displaced by miso-57.
-**Deferred, documented in the attestation:** the RPE ($200 post-contingency)
-constraint family; hourly measured RDT limit/flow series intake (MISO posts RT
-limit data — a future rule-14 upgrade replacing the 92% static default);
-Midwest–South separation as a scored metric. Remaining MISO lanes, in
-measured-impact order: COAL_BIT/CC mid-merit split (drives the 2025 RDT
-reversal), Heather-window (Jan-2024) winter delivered-gas fidelity.
+**Disposition.** Mechanism KEPT (rule 1: structurally correct, price-neutral,
+LP-healthy — not reverted for a residual that moved the wrong way on an axis
+it was not built to move; the axis it WAS built to move improved). NOT
+self-promoted — same determination tier as the keeper, does not clearly
+supersede it. **Keeper stays ercot56-nucwin** (owner promotion call).
+Registered as the honest record (rules 1/15/16). Registry pruned to top-15
+(the ercot52 ordc-capdual pair; bundle dirs stay).
+
+**Filed forward path.** The +2.4 GW binding-regime supply-mix gap
+(docs/DIAGNOSIS-ercot58-joint-round-2026-07.md) is only partially addressed
+— storage throughput improves (2023 +18%, 2025 +7%) but remains well short
+of the ~5.8 TWh (2023) / measured 5.46 TWh (2025) capable levels; the
++2.4 GW binding-regime thermal excess is not materially displaced. Next: (a)
+a deeper investigation of why the daily-median/peak-hour gate under-releases
+relative to the measured award's full range (the award itself carries
+~1.2-2.8 GW; the released draw-down averages only ~20-100 MW), which may
+point to the award-drawdown construction itself being too conservative
+rather than the gate window; (b) the C5c monthly-shape residual as a
+separate root-cause item, orthogonal to the hourly mechanism built here; (c)
+re-probe the ERCOT-58 v3 realized-room RTORPA once the supply-mix gap
+narrows further — its room is bounded by exactly this gap.
+
+**Holdouts / governance.** No solve, score, or intake outside 2023-2025
+(rule 22); ORDC tariff parameters untouched (rule 26); no offer curve,
+sigmoid, floor, or derive-script value changed (rules 13/21/23); zero new
+fitted parameters (every mechanism term is measured, DOF ledger inherited
+verbatim from the keeper — rule 25).
