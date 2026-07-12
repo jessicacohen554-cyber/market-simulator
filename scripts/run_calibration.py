@@ -71,6 +71,7 @@ from market_sim.data.fleet import (  # noqa: E402
     build_dispatch_fleet,
     build_ercot_offer_surface_conditional_markup,
     build_neiso_offer_surface_conditional_markup,
+    build_pjm_offer_surface_conditional_markup,
     fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
@@ -475,6 +476,7 @@ def run_year(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
+    pjm_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -682,6 +684,7 @@ def run_year(
         offer_curve_deltas=offer_curve_deltas,
         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
+        pjm_offer_surface_conditional=pjm_offer_surface_conditional,
     )
     if ercot_nuclear_unit_availability:
         # Window-grain nuclear refuel availability (measured 60-Day DAM
@@ -2517,6 +2520,17 @@ def run_year(
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
         offer_surface_mc_bid_adjust = build_neiso_offer_surface_conditional_markup(
+            fleet_arrays, fleet, fuel_prices, _surface_net_load, config
+        )
+    # PJM energy-offer surface (G-22 lever A): the identical P1-only seam,
+    # PJM-gated (fleet.build_pjm_offer_surface_conditional_markup).
+    if getattr(config, "pjm_offer_surface_conditional", False) and iso == "PJM":
+        _surface_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        offer_surface_mc_bid_adjust = build_pjm_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
     # v4 condition-keyed fast-start amortization horizon
