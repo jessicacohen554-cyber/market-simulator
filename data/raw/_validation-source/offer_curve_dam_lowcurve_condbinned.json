@@ -1,0 +1,143 @@
+{
+ "_provenance": {
+  "source": "ERCOT 60-Day DAM Disclosure Gen Resource Data, delivery years 2023-2025 (ercot_dam_offers.parquet), COMMITTED (online-status) resources only",
+  "method": "capacity-weighted quantile ladders of per-resource median heat-rate multipliers, derived within net-load-percentile bins: committed = Min Gen Cost (LSL block); low body = incremental curve rel < 0.67, competitive body (< $1000). Lower-tail mirror of the condition-binned peak surface; applied P1-only with ratio <= 1.",
+  "driver": "system net-load percentile within year (DAM dispatchable awarded quantity), forward-native (load+VRE forecast regenerates it)",
+  "netload_pct_edges": [
+   0.8,
+   0.9,
+   0.97
+  ],
+  "rel_bands": [
+   0.0,
+   0.22,
+   0.44,
+   0.67
+  ],
+  "iso": "ERCOT"
+ },
+ "CC_REGULAR": {
+  "base_hr": 7.741,
+  "binned_committed_p50": [
+   0.585,
+   0.37,
+   0.282,
+   0.133
+  ],
+  "binned_low_body": [
+   [
+    0.916,
+    1.159,
+    1.307
+   ],
+   [
+    0.927,
+    1.107,
+    1.284
+   ],
+   [
+    0.936,
+    1.113,
+    1.272
+   ],
+   [
+    0.965,
+    0.941,
+    1.256
+   ]
+  ]
+ },
+ "CC_CHP": {
+  "base_hr": 7.884,
+  "binned_committed_p50": [
+   0.574,
+   0.363,
+   0.277,
+   0.13
+  ],
+  "binned_low_body": [
+   [
+    0.9,
+    1.138,
+    1.283
+   ],
+   [
+    0.91,
+    1.087,
+    1.26
+   ],
+   [
+    0.919,
+    1.093,
+    1.249
+   ],
+   [
+    0.947,
+    0.924,
+    1.234
+   ]
+  ]
+ },
+ "CT_PEAKER": {
+  "base_hr": 10.908,
+  "binned_committed_p50": [
+   1.325,
+   1.437,
+   1.344,
+   1.323
+  ],
+  "binned_low_body": [
+   [
+    1.173,
+    1.163,
+    1.241
+   ],
+   [
+    1.246,
+    1.165,
+    1.219
+   ],
+   [
+    1.156,
+    1.1,
+    1.161
+   ],
+   [
+    1.196,
+    1.117,
+    1.18
+   ]
+  ]
+ },
+ "ST_GAS": {
+  "base_hr": 11.18,
+  "binned_committed_p50": [
+   1.316,
+   1.318,
+   1.518,
+   1.407
+  ],
+  "binned_low_body": [
+   [
+    0.898,
+    1.077,
+    1.175
+   ],
+   [
+    0.906,
+    1.088,
+    1.201
+   ],
+   [
+    0.818,
+    1.097,
+    1.247
+   ],
+   [
+    0.826,
+    1.079,
+    1.145
+   ]
+  ]
+ }
+}
