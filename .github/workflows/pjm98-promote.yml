@@ -1,0 +1,146 @@
+# One-shot: promote pjm-98 to PJM keeper on the runner — the byte-heavy /
+# binary bench parts never transit the MCP relay (caiso76-promote precedent).
+# The keeper swap (keepers.json), both registry sidecars, the calibration-log
+# entry and the regen script are already committed as TEXT via the MCP push
+# that carries this workflow. The runner does the parts MCP cannot:
+#   1. regenerate the G-21 corrected PJM bench parts (binary .json.gz) from the
+#      committed EIA-923/930/CAMPD/LMP reference data — no LP solve, no
+#      transfer-interface-limits needed (scripts/regen_pjm98_bench.py, with a
+#      hard CC_REGULAR guard so a data mismatch fails loudly),
+#   2. re-score the two keeper bundles + their ablation twins on the corrected
+#      bench (calibration_verdict --write-metrics),
+#   3. deterministically regenerate status.js (scripts/build_status.py),
+# then the bot commits the binary bench parts + metrics.json + status.js.
+# Promotion authorization: owner-directed 2026-07-12 on the G-21 corrected
+# basis — pjm-98 C1 fuel-mix PASS (16/16, free 12/12) vs pjm-97 C1 FAIL (2023
+# CC_REGULAR -11.1 TWh under-run); C6/C8 PASS; both NOT-YET only on the shared
+# C3 price residual. docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md.
+name: pjm98-promote
+
+on:
+  push:
+    branches:
+      - claude/pjm-run-98-vs-97-r32tbm
+    paths:
+      - .github/workflows/pjm98-promote.yml
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install openpyxl
+
+      - name: Swap PJM keeper -> pjm-98 (idempotent)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          p = 'frontend/data/backcast/keepers.json'
+          k = json.load(open(p))
+          old = '2026-07-10-pjm-97-measured-interfaces'
+          new = '2026-07-11-pjm-98-cc-mustrun'
+          if k.get('PJM') != new:
+              k['PJM'] = new
+              k['keepers'] = [new if x == old else x for x in k['keepers']]
+              json.dump(k, open(p, 'w'), indent=1)
+              open(p, 'a').write('\n')
+          PY
+
+      - name: Regenerate corrected PJM bench parts (no solve; guarded)
+        run: PYTHONPATH="$PWD" python scripts/regen_pjm98_bench.py
+
+      - name: Re-score keeper bundles + ablation twins on the corrected bench
+        run: |
+          set -euo pipefail
+          for b in pjm98_cc_mustrun pjm97_measured_interfaces \
+                   pjm98_cc_mustrun-ablation pjm97_measured_interfaces-ablation; do
+            PYTHONPATH="$PWD" python scripts/calibration_verdict.py \
+              "results/calibration/$b" --write-metrics
+          done
+
+      - name: Regenerate status.js (deterministic from committed inputs)
+        run: PYTHONPATH="$PWD" python scripts/build_status.py
+
+      - name: Insert calibration-log entry (idempotent; from committed payload)
+        run: |
+          set -euo pipefail
+          test -f docs/_pjm98_log_entry.md
+          python - <<'PY'
+          lp = 'docs/calibration-log.md'
+          log = open(lp).read()
+          entry = open('docs/_pjm98_log_entry.md').read().rstrip() + '\n\n'
+          marker = '### 2026-07-11 — CAISO — owner decision G-61(b)'
+          assert marker in log, 'anchor entry missing from calibration-log.md'
+          if 'KEEPER PROMOTED `2026-07-11-pjm-98-cc-mustrun`' not in log:
+              log = log.replace(marker, entry + marker, 1)
+              open(lp, 'w').write(log)
+          PY
+          git rm -q --ignore-unmatch docs/_pjm98_log_entry.md
+
+      - name: Append promotion addendum to pjm-98 attestation (idempotent)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          p = 'results/calibration/pjm98_cc_mustrun/calibration_attestation.json'
+          s = open(p).read()
+          if 'PROMOTION ADDENDUM (2026-07-12)' not in s:
+              anchor = 'are its honest cost."'
+              assert anchor in s, 'attestation residuals_note anchor missing'
+              add = (
+                  ' PROMOTION ADDENDUM (2026-07-12): PROMOTED to PJM keeper '
+                  '(owner-directed). The G-20 section-5 over-forcing flag is resolved '
+                  'by G-21: the pre-G21 honest-fit figures above (C1 15/16 -> 13/16; '
+                  '2024 CC +21.1 -> +23.3 TWh) were computed on the OLD benchmark, whose '
+                  'EIA-923<->EIA-930 gas/coal split artifact deflated the CC actual. On '
+                  'the corrected benchmark (bundles re-scored 2026-07-12, no re-solve) '
+                  "this run's C1 fuel-mix PASSES (all 16/16, free 12/12) and pjm-97 FAILS "
+                  '(2023 CC_REGULAR -11.1 TWh under-run, out of band); the real scored '
+                  '2024 CC over is +5.1 TWh on the official/classFull basis, well inside '
+                  'the 8-band. Zero fitted scalars in the delta stand. See the registry '
+                  'sidecar, docs/calibration-log.md 2026-07-12 entry, and '
+                  'docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md.'
+              )
+              s = s.replace(anchor, 'are its honest cost.' + add + '"', 1)
+              open(p, 'w').write(s)
+          PY
+
+      - name: Commit + push (bot; binary-safe)
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Remove the binary round-trip probe left by the promotion session.
+          git rm -q --ignore-unmatch scratch/binprobe.json.gz
+          git add frontend/data/backcast/keepers.json \
+                  docs/calibration-log.md \
+                  results/calibration/pjm98_cc_mustrun/calibration_attestation.json \
+                  frontend/data/backcast/bench/PJM/2023.json.gz \
+                  frontend/data/backcast/bench/PJM/2024.json.gz \
+                  frontend/data/backcast/bench/PJM/2025.json.gz \
+                  frontend/data/backcast/status.js \
+                  results/calibration/pjm98_cc_mustrun/metrics.json \
+                  results/calibration/pjm97_measured_interfaces/metrics.json \
+                  results/calibration/pjm98_cc_mustrun-ablation/metrics.json \
+                  results/calibration/pjm97_measured_interfaces-ablation/metrics.json
+          if git diff --cached --quiet; then
+            echo "nothing to commit (already up to date)"
+          else
+            git commit -m "Promote pjm-98 to PJM keeper: corrected-basis bench + re-score (G-21) [skip ci]"
+            git push origin HEAD:claude/pjm-run-98-vs-97-r32tbm
+          fi
