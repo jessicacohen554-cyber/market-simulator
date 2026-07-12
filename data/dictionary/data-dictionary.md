@@ -76,6 +76,7 @@ for the market split.
 | capacity-market-demand-curve | — | — | — | — | — | — |
 | capacity-market-auction-price | — | — | — | — | — | — |
 | capacity-market-elcc | — | — | — | — | — | — |
+| transfer-constraint-binding | — | — | — | 2023–2025 | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -1325,3 +1326,44 @@ constants. Schema:
 | `elcc_type` | `string` | `none` | no | class_average (single current fleet-wide rating) \| marginal (rating of the next incremental MW at this penetration) \| incremental (rating of a discrete tranche added at this penetration — used interchangeably with marginal by some ISOs; recorded as published). |
 | `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
 | `source_page` | `string` | `none` | yes | Page / table locator within source_doc (also carries the zone/subregion label when the ISO publishes per-zone curves). |
+
+## transfer-constraint-binding
+
+Measured binding record (posted shadow prices + live demand-curve breakpoints)
+for published inter-regional transfer constraints — MISO's RDT from the public
+`{da,rt}_pbc` market reports. Schema:
+[`schema/transfer-constraint-binding.schema.yaml`](schema/transfer-constraint-binding.schema.yaml).
+
+- **Keys:** `iso`, `market`, `constraint`, `interval_start_utc`
+- **Reconciles:** Verbatim per-day pbc rows (one row per constraint-interval
+  with a nonzero preliminary shadow price; DA hourly, RT 5-minute; MISO market
+  time = EST year-round) consolidated per (market, market-date year),
+  directions normalized from the posted constraint names. Backcast VALIDATION
+  series ONLY — when a constraint binds is a dispatch outcome, so this is never
+  an LP input (rule #13); it anchors model-vs-measured RDT binding frequency,
+  shadow depth, and violation incidence. The posted shadow is the pbc
+  constraint's own dual; the RPE's additive $200 lands on subregional price
+  separation and has no public record (2024 MISO SOM §II.E/§III.B). Per-ISO
+  specs in `scripts/lib/transfer_constraint_binding/` (MISO first);
+  train-window years only (rule #22 guard in the fetch script).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO identifier (MISO). |
+| `market` | `string` | `none` | no | Market run — "da" (hourly) or "rt" (5-minute intervals). |
+| `constraint` | `string` | `none` | no | Constraint name exactly as posted, e.g. "RDT_SO_MW (South_North)" / "RDT_MW_SO (North_South)". |
+| `direction` | `string` | `none` | no | Normalized transfer direction parsed from the constraint name: "S_to_N" or "N_to_S". |
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC interval start. Source timestamps are MISO market time (EST, UTC-5 fixed year-round — the report's MARKET_HOUR_EST column); DA rows are hour-beginning (labels 00-23), RT rows are 5-minute interval starts. |
+| `interval_start_est` | `datetime64[ns]` | `local_timestamp` | yes | Posted EST wall-clock interval start (informational). |
+| `shadow_price_usd_mwh` | `float64` | `usd_per_mwh` | no | Preliminary shadow price exactly as posted (negative while binding; -40 marks the first TCDC step's plateau, i.e. flow in real violation within (100%, 102%] of the modeled limit). |
+| `curvetype` | `string` | `none` | yes | Demand-curve type as posted (observed values — PERCENT). |
+| `bp1_pct` | `float64` | `percent_of_modeled_limit` | yes | Demand-curve breakpoint 1 (percent of the modeled limit). |
+| `pc1_usd_mwh` | `float64` | `usd_per_mwh` | yes | Demand-curve price at/above breakpoint 1. |
+| `bp2_pct` | `float64` | `percent_of_modeled_limit` | yes | Demand-curve breakpoint 2. |
+| `pc2_usd_mwh` | `float64` | `usd_per_mwh` | yes | Demand-curve price at/above breakpoint 2. |
+| `bp3_pct` | `float64` | `percent_of_modeled_limit` | yes | Demand-curve breakpoint 3. |
+| `pc3_usd_mwh` | `float64` | `usd_per_mwh` | yes | Demand-curve price at/above breakpoint 3. |
+| `bp4_pct` | `float64` | `percent_of_modeled_limit` | yes | Demand-curve breakpoint 4 (DA posts a 999999 sentinel top). |
+| `pc4_usd_mwh` | `float64` | `usd_per_mwh` | yes | Demand-curve price at/above breakpoint 4 (often blank). |
+| `override` | `bool` | `none` | no | Operator override flag as posted (OVERRIDE column; 3 RT rows in 2023 carry it, coinciding with a $3,000 emergency curve variant). |
+| `override_reason` | `string` | `none` | yes | Posted override REASON text (blank in almost all rows). |

@@ -2162,6 +2162,30 @@ class ScenarioConfig:
     # (constants.MISO_RDT_*); zero fitted scalars. Applies in both modes
     # (standing market design). Default off; GATED CHANGE (alters
     # congestion depth and dispatch volumes).
+    miso_rpe_pricing: bool = False  # MISO: price the Reserve Procurement
+    # Enhancement (RPE) constraint's demand value additively on the RDT
+    # violation tiers. MISO enforces the subregional Short-Term Reserve
+    # requirements "by enforcing reserve procurement enhancement (RPE)
+    # constraints over the RDT" (2024 SOM §II.E); in the 2023-2025 design
+    # the RPE's single $200/MWh demand value applies ADDITIVELY with the
+    # RDT TCDC in real violations — measured subregion-wide spreads of
+    # $700 = $500 (TCDC step 2) + $200 (RPE), and small violations price
+    # $240 = $40 + $200 ("which was unintended" but is the real market's
+    # pricing; 2024 SOM §III.B pp.51-52, IMM Summer-2025 quarterly $41M
+    # RDT+RPE congestion). Encoded by adding
+    # constants.MISO_RPE_DEMAND_VALUE to the flow_cost of both violation
+    # tiers of each one-way RDT link (transmission.apply_miso_rdt_tcdc),
+    # so it engages ONLY on flow above the derated modeled limit — the
+    # constraint's own driver window (rule 12). Deliberately conservative,
+    # documented one-way gap: the RPE also binds WITHOUT an RDT violation
+    # when importing-subregion STR is scarce ("RPE Only" / "Both Binding"
+    # binding-frequency categories, IMM Summer-2025 quarterly p.29) —
+    # unrepresented because the LP carries no STR product, so modeled
+    # separation UNDER-states the measured $9.31 Summer-2025 spread.
+    # Requires miso_rdt_tcdc (fails loud otherwise). Applies in both modes
+    # (standing market design through 2025; date-gate per rule 23 if MISO
+    # adopts the IMM's cap-at-$500 recommendation). Zero fitted scalars.
+    # Default off; GATED CHANGE (alters congestion depth).
     caiso_scarcity_pricing: bool = False  # CAISO: enable the post-solve
     # power-balance scarcity price overlay (results.scarcity.caiso_scarcity_
     # overlay). Adds a probabilistic LOLP × (VOLL - λ) adder to the scored
@@ -5851,6 +5875,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_measured_reserve_requirements": 1,
     "miso_south_seam_split": 1,
     "miso_rdt_tcdc": 1,
+    "miso_rpe_pricing": 1,
     "caiso_commitment_posture": 1,
     "ercot_load_resource_reserve": 1,
     "ercot_load_resource_reserve_from_year": 1,
