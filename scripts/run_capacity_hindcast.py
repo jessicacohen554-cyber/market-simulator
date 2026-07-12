@@ -90,6 +90,7 @@ def build_config(
     staged_oversupply_thinning: bool = False,
     staged_thinning_max_gw_per_year: float = 3.0,
     limited_foresight_dispatch: bool = False,
+    legacy_renewable_credit: bool = False,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -164,6 +165,11 @@ def build_config(
         staged_oversupply_thinning=staged_oversupply_thinning,
         staged_thinning_max_gw_per_year=staged_thinning_max_gw_per_year,
         limited_foresight_dispatch=limited_foresight_dispatch,
+        # CR-3.1 frozen-penetration byte-compat arm: pin the VRE adequacy
+        # credits back to the pre-curve flat constants for the BEFORE leg of
+        # the before/after diagnostic. Default (False) keeps the model
+        # default renewable_elcc_curves=True — the AFTER leg.
+        renewable_elcc_curves=not legacy_renewable_credit,
     )
 
 
@@ -258,6 +264,17 @@ def main(argv: list[str] | None = None) -> int:
         help="Per-fuel-class exit budget (GW/yr) for --staged-oversupply-thinning.",
     )
     parser.add_argument(
+        "--legacy-renewable-credit",
+        action="store_true",
+        help=(
+            "CR-3.1 BASELINE arm: renewable_elcc_curves=False, pinning the "
+            "VRE adequacy credits to the pre-P-2C flat constants "
+            "(frozen-penetration byte-compat mode) for the before/after "
+            "hindcast diagnostic. Default runs the penetration-indexed "
+            "published ELCC curves (the model default)."
+        ),
+    )
+    parser.add_argument(
         "--limited-foresight-dispatch",
         action="store_true",
         help=(
@@ -283,6 +300,7 @@ def main(argv: list[str] | None = None) -> int:
         staged_oversupply_thinning=args.staged_oversupply_thinning,
         staged_thinning_max_gw_per_year=args.staged_thinning_max_gw_per_year,
         limited_foresight_dispatch=args.limited_foresight_dispatch,
+        legacy_renewable_credit=args.legacy_renewable_credit,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) — deliberately
@@ -314,6 +332,7 @@ def main(argv: list[str] | None = None) -> int:
         "staged_oversupply_thinning": bool(args.staged_oversupply_thinning),
         "staged_thinning_max_gw_per_year": float(args.staged_thinning_max_gw_per_year),
         "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
+        "renewable_elcc_curves": bool(config.renewable_elcc_curves),
         "gas_price_path": config.gas_price_path,
         "vintage_year": VINTAGE_YEAR,
         "start_year": args.start_year,
