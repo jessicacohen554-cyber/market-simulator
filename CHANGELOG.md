@@ -1,5 +1,32 @@
 # Changelog
 
+## 2026-07-12 (docs: final truth-gate QA on the calibration/validity documentation refresh)
+
+- **Docs (truth-gate audit, no code changes):** audited every factual claim on
+  `docs/codebase-site/calibration-rubric.html`, `model-validity.html`, the
+  changed sections of `results-calibration.html`, and
+  `docs/calibration-and-validation-methodology.md` against source
+  (`calibration_verdict.py`, `legitimacy_diagnostics.py`, `audit_keepers.py`,
+  `build_dof_ledger.py`, `floor_mechanisms.py`, `scenarios.py`,
+  `run_calibration_full.py`, `constants.py`, `build_status.py`, ci.yml,
+  `keepers.json`, `calibration-complete.json`). Fixed: six drifted line
+  citations in the methodology doc + two in model-validity.html
+  (`as_zero_forcing_ablation` now 4957-4985; holdout gate now 5217/5221;
+  `START_YEAR`/`END_YEAR` now constants.py:3871-3872; DOF schema tag now
+  build_dof_ledger.py:802); the rubric page's D-4 window table gained the two
+  missing `D4_WINDOWS` registry rows (`caiso_gas_commitment_floor` [9,17),
+  `cc_mustrun_per_plant` × CC_REGULAR [0,24)) and its citation now spans
+  184-262; the illustrative scorecard's C6 note no longer claims C6 checks the
+  DOF ledger / ablation twin (those are audit_keepers E8/E9);
+  results-calibration.html's measured-data box now cites rule #13 (was #12);
+  `docs/calibration-determination-rubric.md` rule citations aligned (rule #13
+  admissibility at C6.1; rule 17 "no floor without a window" at C8, with the
+  older "rule 12" comment numbering noted). The calibration-keeper-auditor
+  agent verified all keeper/frontier text against `keepers.json`,
+  `calibration-complete.json`, sidecars, and `status.js`: 0 mismatches (E7
+  newer-run warnings on ERCOT/PJM noted, not doc drift). Findings table:
+  `docs/codebase-site/QA-REPORT-2026-07.md`.
+
 ## 2026-07-11 (docs: multi-ISO triage archive reorg; calibration: fleet-group CAMPD backfill bucketing fix)
 
 - **Docs (multi-ISO reorg):** executed the 2026-07 triage
