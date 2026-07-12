@@ -109,6 +109,56 @@ EIA-923 minus the per-class BTM host supply — model-grid vs actual-grid, per
 
 ---
 
+## 0b. Benchmark basis — the actual-side construction (go-forward default, all ISOs)
+
+**Owner directive 2026-07-12** (session_01SfBzT4EggvRfh35MYgoYXH): the actual-side
+(benchmark) construction below is **THE default for every ISO**, unconditional —
+no flag, no env knob, no `getattr` fallback can re-arm the retired basis
+(CLAUDE.md rule 24). It is three mechanisms, all landed 2026-07-11/12 and pinned
+by `tests/test_benchmark_basis_default.py` (the integration guard) plus the
+per-mechanism unit tests. **The governing invariant: no raw EIA-930 per-fuel cell
+ever gates a scored class or family number** — EIA-930's BA-reported gas/coal
+attribution mis-splits vs CEMS by 7–21 TWh/yr, so it is used for the fossil
+*level* only, never the *split*.
+
+1. **G-21 combined-fossil reconcile** (`render_calibration_html.reconcile_vintage_classes`).
+   The EIA-923 row-level + CAMPD-backfilled fossil total reconciles to EIA-930 as
+   ONE combined gas+coal family — the fossil LEVEL is corrected (both directions,
+   within `_VINTAGE_RECONCILE_FRAC = 0.97`) while the CEMS-validated 923 gas/coal
+   SPLIT is preserved (every fossil class scaled by the same factor). The retired
+   per-family reconcile scaled gas and coal each to their own unreliable EIA-930
+   cell, manufacturing PJM's phantom "+21 TWh CC_REGULAR over-run" from a ~+3 TWh
+   real miss. Log: 2026-07-11 "SCORER FIX (all ISOs)" + 2026-07-12 pjm-98
+   promotion; `docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md`.
+2. **#2049 unit-class CAMPD backfill bucketing** (`run_calibration_full._backfill_eia923_with_campd`
+   × `_plant_class_shares`). A genuinely mixed non-ERCOT plant's CAMPD net is
+   split across the classes physically at it by its measured EIA-923 prime-mover
+   class shares, mass-preserving. The retired last-generator-wins path
+   double-counted minority-class plants (PJM Linden p2406 ≈9.5 → ≈4.8 TWh),
+   changing SCORED complete-year non-ERCOT benchmarks. ERCOT keeps its curated
+   bin-sheet single-class path (`class_shares=None`), byte-identical.
+3. **G-21b C2 preliminary-vintage split anchor** (`calibration_verdict.score_sysvol`
+   + `_fallback_coal_anchor`). An incomplete family gates on the EIA-930
+   COMBINED-fossil LEVEL with a **CEMS-anchored coal/gas split** — coal =
+   CAMPD CEMS coal × the run's complete-vintage CEMS→923-grid ratio `k`; gas =
+   930 combined minus that coal anchor — never the raw 930 per-fuel cell. The
+   `e930.coal_cems` anchor is built inside `render_calibration_html` (its SOLE
+   writer; an earlier post-hoc splice script was deleted 2026-07-12). Only when
+   the anchor is unavailable (a bench part predating `coal_cems`, or no complete
+   coal vintage in the run) does the explicitly-labelled legacy raw-930 fallback
+   apply. All 18 committed bench parts carry `coal_cems`, so every re-score and
+   every new registration already takes the anchor path.
+
+**Determination flips under this basis are honest and stand** (pjm-98
+CAVEAT→FAIL / PASS-reversal precedent): a number that moves because the benchmark
+was corrected is a fixed defect, not a regression, and nothing may be tuned to
+un-flip it (rules 1/13/23). Existing keepers re-score in place; frontier keepers
+whose committed `classFull` predates fixes 1+2 are re-rendered on a controlled
+re-solve by the owner (staleness inventory:
+`docs/handoffs/benchmark-basis-inventory-2026-07.md`).
+
+---
+
 ## 1. Criteria
 
 Each criterion below names: **the metric**, **the authoritative actual source**,
@@ -275,9 +325,20 @@ class mix while nothing external certifies it).
     the family’s classes are scaled up to the EIA-930 total (inter-class split and
     monthly shape preserved); a complete vintage (≥ 0.97×) is left untouched
     (byte-identical). For the preliminary year the scorer therefore takes the
-    **authoritative actual = EIA-930 grid total** (`e930[gas|coal]`) and records
-    the reconcile that fired, so the model is compared against a *complete*
-    benchmark, not a partial survey.
+    **authoritative actual on the EIA-930 grid LEVEL**, so the model is compared
+    against a *complete* benchmark, not a partial survey.
+    - **G-21b split anchor (2026-07-12, §0b): the fallback level is EIA-930 but
+      the per-fuel SPLIT is CEMS-anchored, never the raw 930 cell.** EIA-930's
+      BA-reported gas/coal attribution is demonstrably unreliable against CEMS
+      (−17..−21 TWh below CEMS on MISO coal, +7..+11 above on PJM, with the mirror
+      error in NG:NG), so gating a preliminary family on the raw `e930[gas|coal]`
+      cell fabricates misses of exactly that size. Instead an incomplete **coal**
+      family gates against the CEMS anchor (`_fallback_coal_anchor`: CAMPD CEMS
+      coal × the run's complete-vintage CEMS→923-grid ratio `k`), and an
+      incomplete **gas** family against the 930 COMBINED fossil total minus that
+      coal anchor. The raw 930 per-fuel cell is used only on the labelled legacy
+      path (no `coal_cems`, or no complete coal vintage in the run). The scorer
+      records which source fired.
 - **Failure classification:** `MODEL MISS` by default (the fleet is delivering the
   wrong amount of gas or coal to the grid — fuel-price passthrough, must-run, or
   interchange wedge wrong). `ACCEPTED MEASURED-INPUT LIMITATION` only for the
