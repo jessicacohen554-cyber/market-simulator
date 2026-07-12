@@ -12401,6 +12401,24 @@
       ]
     },
     {
+      "param_id": "miso_rpe_demand_value",
+      "display_name": "Miso Rpe Demand Value",
+      "value": 200.0,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Reserve Procurement Enhancement (RPE): MISO \"models a Reserve Procurement Enhancement (RPE) constraint that limits flows between subregions after a supply-side contingency and has a single demand value of $200 per MWh\" (2024 MISO SOM §III.B). It is how MISO enforces the subregional Short-Term Reserve requirements \"over the Regional Directional Transfer (RDT) constraint. The RPE binds when headroom on the RDT plus the available STR in the importing subregion is limited\" (2024 SOM §II.E). In the 2023-2025 design the RPE demand value applies ADDITIVELY with the RDT TCDC whenever the RDT is in real violation: \"when the transfer constraints are violated, it often produces subregion-wide price spreads of $700 because the demand curve values for the RDT ($500) and the RPE ($200) apply additively, which was unintended\", and even small violations (the $40 first TCDC step) are \"overpric[ed] ... by $200 per MWh\" (2024 SOM §III.B pp.51-52). The IMM's recommendation to cap the combined effect at $500 was NOT implemented in the 2023-2025 window (restated in the IMM Summer-2025 quarterly, which books $41M of RDT+RPE congestion); if MISO adopts it, date-gate the re-anchor to the tariff change (rule 23: cite the data change).",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "miso_seam_flow_percentile",
       "display_name": "Miso Seam Flow Percentile",
       "value": 90.0,
@@ -16264,41 +16282,41 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
+          "NJ",
+          "CT",
+          "MD",
+          "NY",
+          "MA",
           "VT",
-          "ME",
+          "NH",
           "DE",
           "VA",
-          "NY",
-          "RI",
-          "MD",
-          "NH",
-          "CT",
-          "MA",
-          "NJ"
+          "ME",
+          "RI"
         ],
         "2024": [
-          "VT",
-          "ME",
-          "DE",
-          "NY",
-          "RI",
-          "MD",
-          "NH",
+          "NJ",
           "CT",
+          "MD",
+          "NY",
           "MA",
-          "NJ"
+          "VT",
+          "NH",
+          "DE",
+          "ME",
+          "RI"
         ],
         "2025": [
-          "VT",
-          "ME",
-          "DE",
-          "NY",
-          "RI",
-          "MD",
-          "NH",
+          "NJ",
           "CT",
+          "MD",
+          "NY",
           "MA",
-          "NJ"
+          "VT",
+          "NH",
+          "DE",
+          "ME",
+          "RI"
         ]
       },
       "unit": "",
@@ -22335,6 +22353,25 @@
       "domain": "Reliability",
       "tier": 1,
       "source": "MISO: PER-ASSET reserve co-optimization",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.miso_rpe_pricing",
+      "display_name": "Miso Rpe Pricing",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "MISO: price the Reserve Procurement",
       "source_date": "",
       "page_or_table": "",
       "url": "",
