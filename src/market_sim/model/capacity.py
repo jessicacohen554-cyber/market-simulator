@@ -598,29 +598,41 @@ def _dispatch_rows(gen: Generator, idx_of: dict[str, int]) -> list[int]:
     return []
 
 
-def capacity_revenue_per_mw_yr(iso: str, eford: float) -> float:
+def capacity_revenue_per_mw_yr(
+    iso: str,
+    eford: float,
+    config: ScenarioConfig | None = None,
+    reserve_position: float | None = None,
+) -> float:
     """Return the resource-adequacy capacity payment in $/MW-yr (Module M1).
 
     In a capacity-market ISO a thermal unit earns a payment on its
     qualifying (UCAP) capacity *outside* the energy market, which can keep
-    it solvent even on a negative energy margin. This monetizes the per-ISO
-    net-CONE from :data:`MARKET_DESIGN` against the unit's UCAP, approximated
-    as ``1 - EFORd`` (PJM/NYISO/ISO-NE accredit roughly on unforced
-    capacity)::
+    it solvent even on a negative energy margin. The payment is the shared
+    per-firm-MW capacity price (rule 19 — one seam for all three screens)
+    times the unit's UCAP, approximated as ``1 - EFORd`` (PJM/NYISO/ISO-NE
+    accredit roughly on unforced capacity)::
 
-        $/MW-yr = net_cone_per_kw_yr * 1000 * (1 - eford)
+        $/MW-yr = capacity_price_per_firm_mw_yr(...) * (1 - eford)
+
+    The price itself is :meth:`MarketDesign.capacity_price_per_firm_mw_yr`,
+    which is the flat net-CONE (default) or — when
+    ``config.capacity_market_clearing`` is on, the ISO has a published demand
+    curve, and ``reserve_position`` (accredited firm ÷ requirement) is supplied
+    — the CR-1 sloped-curve price ``VRR(reserve_position) × net_cone_curve``.
+    Passing neither ``config`` nor ``reserve_position`` reproduces the pre-CR-1
+    fixed price byte-identically.
 
     Energy-only ISOs (ERCOT, and any ISO absent from the registry) have
-    ``capacity_market = False`` and earn zero here, so their retirement and
-    new-entry economics are unchanged. The capacity price is exogenous and
-    citable (the net-CONE anchor), mirroring how EAC revenue already enters;
-    BRA/auction clearing prices can refine it later.
+    ``capacity_market = False`` and earn zero here in both modes, so their
+    retirement and new-entry economics are unchanged.
     """
     design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
-    if not design.capacity_market or design.net_cone_per_kw_yr <= 0.0:
+    price = design.capacity_price_per_firm_mw_yr(config, reserve_position)
+    if price <= 0.0:
         return 0.0
     ucap = max(0.0, 1.0 - float(eford))
-    return design.net_cone_per_kw_yr * 1000.0 * ucap
+    return price * ucap
 
 
 # A zone whose deliverable firm capacity exceeds its locational requirement by
@@ -1034,6 +1046,7 @@ def apply_economic_retirements(
     event_sink: dict | None = None,
     reserve_price_signal: np.ndarray | None = None,
     reserve_price_signal_slow: np.ndarray | None = None,
+    reserve_position: float | None = None,
 ) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -1148,6 +1161,12 @@ def apply_economic_retirements(
         reserve_price_signal_slow: Hourly ``(T,)`` reserve price for the
             offline-capable quick-start tier (gas_ct/oil — Non-Spin only,
             mirroring the co-opt's headroom cascade).
+        reserve_position: System accredited reserve position (accredited firm ÷
+            requirement) for the CR-1 sloped capacity demand curve. ``None``
+            (default) or ``capacity_market_clearing`` off keeps the fixed
+            net-CONE capacity payment (byte-identical); when supplied and the
+            gate is on, the capacity payment slides along the ISO's published
+            demand curve.
 
     Returns:
         Tuple ``(survivors, loss_years, floor_retention_log)`` -- the fleet
@@ -1253,7 +1272,9 @@ def apply_economic_retirements(
         # NO capacity payment (RA saturated there), so surplus in a long zone
         # retires as it should while short zones keep their units.
         if not _zone_is_long(deliverability_headroom, g.zone):
-            net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(config.iso, g.eford)
+            net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(
+                config.iso, g.eford, config, reserve_position
+            )
 
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin): a real
         # income stream the energy-only LP cannot produce. Exactly one
@@ -1876,6 +1897,7 @@ def apply_economic_new_entry(
     zone_names: list[str] | None = None,
     wind_cf: np.ndarray | None = None,
     solar_cf: np.ndarray | None = None,
+    reserve_position: float | None = None,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
@@ -1953,6 +1975,12 @@ def apply_economic_new_entry(
             candidate's actual capture shape, including its share of
             scarcity-priced hours — instead of the shape-blind flat mean
             (plan §6 CX-6c). ``None`` keeps the scalar base-CF screen.
+        reserve_position: System accredited reserve position for the CR-1
+            sloped capacity demand curve (see
+            :func:`capacity_reserve_position`). ``None`` / gate off keeps the
+            fixed net-CONE capacity payment thermal entry sees (byte-identical);
+            when supplied and ``capacity_market_clearing`` is on, the capacity
+            payment for a new thermal unit slides along the ISO's demand curve.
 
     Returns:
         Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
@@ -2073,7 +2101,9 @@ def apply_economic_new_entry(
             capacity_payment = (
                 0.0
                 if build_zone_long
-                else capacity_revenue_per_mw_yr(iso_config.name, EFORD[tech])
+                else capacity_revenue_per_mw_yr(
+                    iso_config.name, EFORD[tech], config, reserve_position
+                )
             )
             # AS credit — exactly one mechanism prices thermal AS (rule 19):
             # the hourly reserve signal (already folded into energy_margin as
@@ -2219,6 +2249,43 @@ def accredited_firm_capacity_mw(
         else:
             firm += _thermal_firm_mw(g, iso)
     return firm
+
+
+def capacity_reserve_position(
+    fleet: list[Generator],
+    wind_pool_mw: float,
+    solar_pool_mw: float,
+    storage_firm_mw: float,
+    config: ScenarioConfig,
+    iso: str,
+    peak_demand_mw: float,
+) -> float | None:
+    """Return the system's accredited reserve position for the CR-1 curve.
+
+    ``accredited_firm_capacity_mw / resolve_adequacy_requirement_mw`` — the
+    SAME accreditation ledger and the SAME requirement the retirement
+    reliability floor and the reserve-margin backstop already compute (one
+    requirement, one basis, rule 19), so the sloped-demand-curve position feeds
+    the three capacity screens off a signal consistent with the adequacy
+    mechanisms it sits beside. A value of ``1.0`` means the accredited fleet is
+    exactly at the requirement (curve pays net-CONE); ``> 1.0`` is long (price
+    slides toward zero), ``< 1.0`` is short (price rises toward the cap).
+
+    Returns ``None`` when the peak or the requirement is non-positive, so the
+    caller (and ``MarketDesign.capacity_price_per_firm_mw_yr``) cleanly falls
+    back to the fixed price. Consumed only when
+    ``config.capacity_market_clearing`` is on; the runner computes it once on
+    the entering-year fleet and threads the one value into all three screens.
+    """
+    if peak_demand_mw <= 0.0:
+        return None
+    requirement_mw = resolve_adequacy_requirement_mw(config, iso, peak_demand_mw)
+    if requirement_mw <= 0.0:
+        return None
+    accredited_mw = accredited_firm_capacity_mw(
+        fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw, iso=iso
+    )
+    return accredited_mw / requirement_mw
 
 
 def resolve_reserve_margin_build_enabled(config: ScenarioConfig, iso: str) -> bool:
@@ -2515,6 +2582,7 @@ def evolve_fleet(
     confirmed_exits: list[ConfirmedExit] | None = None,
     peak_demand_next: float | None = None,
     announced_reversal_plants: frozenset[int] = frozenset(),
+    reserve_position: float | None = None,
 ) -> tuple[
     list[Generator],
     dict[str, int],
@@ -2594,6 +2662,14 @@ def evolve_fleet(
             (:func:`apply_announced_retirements`'s ``reversed_plant_codes``).
             Independent of ``confirmed_exits_enabled``: honoring a documented
             reversal is a data correction, not an exit injection.
+        reserve_position: System accredited reserve position (accredited firm ÷
+            requirement) for the CR-1 sloped capacity demand curve, computed
+            once on the entering fleet by the runner (see
+            :func:`capacity_reserve_position`) and threaded verbatim into BOTH
+            the retirement and thermal-entry screens so all screens share one
+            requirement and one basis (rule 19). ``None`` (default) /
+            ``capacity_market_clearing`` off keeps the fixed net-CONE capacity
+            payment — byte-identical to the pre-CR-1 path.
 
     Returns:
         Tuple ``(fleet, loss_tracker, renewable_additions, retrofit_log,
@@ -2801,6 +2877,7 @@ def evolve_fleet(
             event_sink=_econ_sink,
             reserve_price_signal=reserve_price_signal,
             reserve_price_signal_slow=reserve_price_signal_slow,
+            reserve_position=reserve_position,
         )
         if _rec:
             events["retirements"].extend(
@@ -2887,6 +2964,7 @@ def evolve_fleet(
             zone_names=screen_zone_names,
             wind_cf=screen_wind_cf,
             solar_cf=screen_solar_cf,
+            reserve_position=reserve_position,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
     if _rec:
