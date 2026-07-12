@@ -11115,3 +11115,33 @@ fidelity + tunable path forward vs one price-side FAIL regression); keepers
 to the keeper era — 25 pre-keeper registrations removed (sidecars + runs
 payloads; bundles stay under results/calibration/). Remaining: miso-59 pair +
 miso-60 pair.
+
+## 2026-07-12 — MISO keeper PROMOTED: `miso 60 stgas-vlr` (owner decision, rule 1; supersedes miso-59-coal-warm) + scoring-basis confirmation
+
+Owner promotion on the flagged recommendation (calibration-log MISO-60 entry,
+FINDING §13): miso-60 is strictly more structurally faithful — a measured,
+SOM-documented VLR self-commitment the model previously contradicted (Nine
+Mile synchronized 98.2% of ALL hours vs a dark model class), D-1 profile_r
+0.98, C8 grounded-above-budget PASS — and improves the volume/mix interior
+(C1 13/16, sysvol-2025 gas −5.5%, 2025 RDT strongly toward measured, 2023/24
+anchors held) at a one-FAIL price-side regression (C3a-2025 −15.8%, C3b-2025
+0.206) owned by the named deferred price mechanisms (RPE $200, ELMP ex-post,
+2025-09-30 shortage redesign, hourly measured RDT limits, commitment-posture
+window rows). Owner regression tolerance recorded: acceptable so long as
+tunable/buildable elements continue progression toward calibration.
+keepers.json MISO key + array → miso-60; status.js rebuilt (MISO NOT-YET,
+6 FAILs); calibration-keeper-auditor PASS post-swap (E7 ERCOT/PJM staleness
+warnings are the pre-adjudicated honest-record probes, unchanged).
+
+**Scoring-basis confirmation (owner question).** miso-60's class and fuel
+totals are already on the G-21/G-21b ("new PJM") basis, the unconditional
+all-ISO default since 2026-07-11/12: C1 class totals and complete-vintage C2
+score per-class against the 923/CAMPD `classFull` (the combined reconcile
+corrects only the fossil LEVEL to EIA-930, preserving the CEMS-validated 923
+gas/coal split); a preliminary-vintage family (MISO 2025 gas: 17–74% of
+plants unreported, so a pure-923 per-class gate is impossible) scores on the
+EIA-930 combined-fossil LEVEL with the G-21b CEMS-anchored split. No raw
+EIA-930 per-fuel cell gates any current MISO number. Residual old-basis
+exposure is limited to other ISOs' keeper bench parts rendered before G-21
+(already flagged in the 2026-07-11 scorer-fix entry as unpropagatable without
+a controlled re-render; PJM re-scored, MISO current).
