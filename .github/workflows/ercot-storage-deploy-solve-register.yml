@@ -1,0 +1,172 @@
+name: ercot-storage-deploy-solve-register
+
+# One-shot: solve the ERCOT storage-cycling-lane fix (ercot56 keeper recipe +
+# ONE delta, ercot_storage_as_deployment=True — the measured-award AS->energy
+# co-participation mechanism, docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md
+# §5) + its zero-forcing ablation twin, full 2023-2025 each, on CI — then
+# register both on the backcast dashboard, prune the ERCOT registry to the
+# top-15 retention, and upload the per-run files + the ERCOT-59 calibration-log
+# entry via the GitHub Data API. ercot58/ercot57 precedent: the authoring
+# session's environment cannot git-push (413 on the ~150 MB bundles) and the
+# MCP relay caps single-call content ~200 KB, so the oversized pieces land
+# from the runner. Keeper stays ercot56-nucwin — the candidate registers as
+# the honest record (rule 15 keeper-or-probe either way): CALIBRATED-WITH-
+# CAVEATS, the SAME tier as the keeper (structurally sound, price-neutral,
+# LP-healthy, but the official C5c-2024 monthly storage-shape metric
+# regresses slightly, r=0.361->0.329, an honest finding — the mechanism
+# targets hourly/intra-day shape, which improves against the measured EIA-930
+# 2025 series, 0.807->0.820). Full write-up:
+# docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md.
+#
+# Config: scripts/probes/_ercot_storage_deploy_ab.py (the ercot56_nucwin
+# keeper meta.json reconstruction) with the one delta baked in — zero new
+# fitted parameters (the deployment MW is 100% measured-input-derived).
+# The authoring session solved the same full-span bundles locally first
+# (local-parity precedent): LP-healthy, price-neutral (2025 load-weighted
+# price byte-identical), CALIBRATED-WITH-CAVEATS. Main and twin run
+# SEQUENTIALLY (not concurrent) — the authoring session's 15 GB container
+# OOM-killed a concurrent second full ERCOT per-plant solve (dmesg-confirmed);
+# CI runners are typically larger but sequential is the safe default here.
+# Trigger: pushing THIS workflow file starts the run (the relay token cannot
+# dispatch workflows — 403 on the dispatches endpoint — the ercot58 pattern).
+# The patch rides scripts/probes/_ercot_storage_deploy_patch/code.patch.xz.b64
+# (xz-9 + base64), fetch-back byte-verified before the workflow push, and the
+# decoded sha256 gate below is the authority.
+on:
+  push:
+    branches:
+      - claude/ercot-storage-discharge-g22mr4
+    paths:
+      - .github/workflows/ercot-storage-deploy-solve-register.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ercot-storage-deploy-solve-register
+  cancel-in-progress: false
+
+jobs:
+  solve-register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Apply the session's relay-oversized source patch (sha-gated)
+        run: |
+          set -euo pipefail
+          if grep -q "ercot_storage_as_deployment" src/market_sim/config/scenarios.py; then
+            echo "already applied — no-op"
+          else
+            echo "957d02028e835daa81ce4e6347faecd8231ea91daccee1290ac7f7518f7a89a5  /tmp/_storage_deploy_code.patch" > /tmp/patch.sha
+            tr -d '\r\n ' < scripts/probes/_ercot_storage_deploy_patch/code.patch.xz.b64 \
+              | base64 -d | xz -d > /tmp/_storage_deploy_code.patch
+            sha256sum -c /tmp/patch.sha
+            git apply --verbose /tmp/_storage_deploy_code.patch
+          fi
+
+      - name: Run the mechanism unit tests
+        run: |
+          set -euo pipefail
+          pip install pytest
+          python -m pytest tests/test_caiso_storage_as_reservation.py \
+            tests/test_recorded_cfg_fidelity.py -q
+
+      - name: Solve ercot-storage-deploy main (keeper recipe + the one delta, 2023-2025)
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot_storage_deploy_ab.py ercot_storage_deploy
+
+      - name: Solve the zero-forcing ablation twin (2023-2025, sequential)
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot_storage_deploy_ab.py ercot_storage_deploy_ablation \
+            --ablation --ablation-of ercot_storage_deploy
+
+      - name: Write attestations (main only; D-3 twins carry none)
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot_storage_deploy_register.py --write-attestations
+
+      - name: Score legitimacy diagnostics (both bundles)
+        env:
+          MALLOC_ARENA_MAX: "2"
+        run: |
+          set -uo pipefail
+          for b in ercot_storage_deploy ercot_storage_deploy_ablation; do
+            python scripts/legitimacy_diagnostics.py \
+              --bundle "results/calibration/$b" \
+              --iso ERCOT --years 2023 2024 2025 \
+              --json-out "results/calibration/$b/legitimacy_diagnostics.json" || true
+            test -s "results/calibration/$b/legitimacy_diagnostics.json"
+          done
+
+      - name: Print the calibration determination (log only, not gating)
+        run: |
+          set -uo pipefail
+          python scripts/calibration_verdict.py results/calibration/ercot_storage_deploy || true
+
+      - name: Register both runs on the dashboard
+        run: |
+          set -euo pipefail
+          python scripts/dashboard_add_run.py \
+            --label "ercot59 storage deploy" \
+            --bundle results/calibration/ercot_storage_deploy | tee /tmp/reg_main.out
+          python scripts/dashboard_add_run.py \
+            --label "ercot59 storage deploy (ABLATION TWIN)" \
+            --bundle results/calibration/ercot_storage_deploy_ablation | tee /tmp/reg_abl.out
+          echo "RID_MAIN=$(grep '^RUN_ID=' /tmp/reg_main.out | cut -d= -f2)" >> "$GITHUB_ENV"
+          echo "RID_ABL=$(grep '^RUN_ID=' /tmp/reg_abl.out | cut -d= -f2)" >> "$GITHUB_ENV"
+
+      - name: Upload per-run files + log entry via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot_storage_deploy_register.py --append-log
+          python scripts/ci_api_upload_multi.py \
+            --rid "$RID_MAIN" --bundle results/calibration/ercot_storage_deploy \
+            --rid "$RID_ABL" --bundle results/calibration/ercot_storage_deploy_ablation \
+            --extra docs/calibration-log.md \
+            --extra docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md \
+            --extra scripts/probes/_ercot_storage_deploy_ab.py \
+            --extra scripts/probes/_ercot_storage_deploy_register.py \
+            --extra scripts/probes/_obs_keeper_storage.py \
+            --extra src/market_sim/config/scenarios.py \
+            --extra src/market_sim/model/dispatch.py \
+            --extra src/market_sim/results/scarcity.py \
+            --extra scripts/run_calibration_full.py \
+            --extra scripts/run_calibration.py \
+            --extra tests/test_caiso_storage_as_reservation.py \
+            --bench-iso ERCOT \
+            --branch claude/ercot-storage-discharge-g22mr4 \
+            --message "results: register ercot59 storage-cycling-lane fix (measured-award AS->energy co-participation) + zero-forcing twin; land the relay-oversized sources (keeper stays ercot56-nucwin) [skip ci]"
+
+      - name: Prune ERCOT registry to top-15 retention
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/probes/_ercot_storage_deploy_register.py --prune-registry \
+            --branch claude/ercot-storage-discharge-g22mr4
