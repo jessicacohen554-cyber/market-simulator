@@ -71,7 +71,6 @@ from market_sim.data.fleet import (  # noqa: E402
     build_dispatch_fleet,
     build_ercot_offer_surface_conditional_markup,
     build_neiso_offer_surface_conditional_markup,
-    build_pjm_offer_surface_conditional_markup,
     fleet_to_bins,
     generators_to_fleet_arrays,
     load_campd_bins,
@@ -476,7 +475,6 @@ def run_year(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
-    pjm_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -521,6 +519,8 @@ def run_year(
     ercot_storage_as_product_credit: bool = False,
     gas_hh_monthly_shape: bool = False,
     storage_as_commitment: bool = False,
+    ercot_storage_as_deployment: bool = False,
+    ercot_storage_as_deployment_from_year: int = 2023,
     ercot_storage_as_endogenous: bool = False,
     ercot_storage_as_duration_gate: bool = False,
     hydro_eia930_monthly: bool = False,
@@ -682,7 +682,6 @@ def run_year(
         offer_curve_deltas=offer_curve_deltas,
         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
-        pjm_offer_surface_conditional=pjm_offer_surface_conditional,
     )
     if ercot_nuclear_unit_availability:
         # Window-grain nuclear refuel availability (measured 60-Day DAM
@@ -1272,6 +1271,18 @@ def run_year(
     # dispatch power cap (applied after storage_cap_profiles below).
     if storage_as_commitment:
         config = config.with_overrides(storage_as_commitment=True)
+    # Measured-award AS->energy co-participation (run_calibration_full
+    # --ercot-storage-as-deployment): force the measured evening award draw-down
+    # as a battery discharge floor at the net-load ramp (the storage-cycling-lane
+    # fix, applied after storage_cap_profiles/reservation below). Requires
+    # storage_as_commitment (the reservation it releases from).
+    if ercot_storage_as_deployment:
+        config = config.with_overrides(
+            ercot_storage_as_deployment=True,
+            ercot_storage_as_deployment_from_year=int(
+                ercot_storage_as_deployment_from_year
+            ),
+        )
     # Endogenous storage energy-vs-AS co-opt (run_calibration_full
     # --ercot-storage-as-endogenous, G5): the battery CHOOSES energy vs upward-AS
     # inside the multi-product co-opt, replacing the measured-award reservation.
@@ -2508,17 +2519,6 @@ def run_year(
         offer_surface_mc_bid_adjust = build_neiso_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
-    # PJM energy-offer surface (G-22 lever A): the identical P1-only seam,
-    # PJM-gated (fleet.build_pjm_offer_surface_conditional_markup).
-    if getattr(config, "pjm_offer_surface_conditional", False) and iso == "PJM":
-        _surface_net_load = (
-            demand.sum(axis=0)
-            - (solar_cap[:, None] * solar_cf).sum(axis=0)
-            - (wind_cap[:, None] * wind_cf).sum(axis=0)
-        )
-        offer_surface_mc_bid_adjust = build_pjm_offer_surface_conditional_markup(
-            fleet_arrays, fleet, fuel_prices, _surface_net_load, config
-        )
     # v4 condition-keyed fast-start amortization horizon
     # (tranche_startup_conditional_runs): the hour's within-year net-load
     # percentile band scales the v3 CAMPD-measured run-length ceiling by the
@@ -2826,6 +2826,63 @@ def run_year(
             storage_power_cap, config.weather_year, config.hours
         )
 
+    # Measured-award AS->energy CO-PARTICIPATION (ercot_storage_as_deployment,
+    # the storage-cycling-lane fix; docs/DIAGNOSIS-ercot-storage-cycling-lane-
+    # 2026-07.md). storage_as_commitment reserves the measured up-AS award out of
+    # the discharge cap in every hour and never returns it to energy — but the
+    # real fleet moves capacity from AS to energy at the net-load ramp (the
+    # measured award declines from its midday peak into the evening). This forces
+    # exactly that measured draw-down as a battery discharge FLOOR, so the ramp
+    # co-participation the arbitrage-only LP misses enters the energy balance.
+    # Rule 19: the floor draw-down = daily_peak(award) - award(t) sits INSIDE the
+    # room the reservation left (cap = P - award(t) >= peak - award(t) since the
+    # daily-peak award <= fleet power), so it releases exactly the reserved MW,
+    # never stacked and never above the physical cap. Requires storage_as_commit-
+    # ment (the reservation it reconciles with); off under the endogenous split.
+    storage_discharge_min = None
+    if (
+        getattr(config, "ercot_storage_as_deployment", False)
+        and getattr(config, "storage_as_commitment", False)
+        and not getattr(config, "ercot_storage_as_endogenous", False)
+        and iso == "ERCOT"
+        and int(config.weather_year)
+        >= int(getattr(config, "ercot_storage_as_deployment_from_year", 2023))
+        and storage.n_storage
+    ):
+        from market_sim.results.scarcity import ercot_storage_as_deployment_mw
+
+        net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        deploy_sys = ercot_storage_as_deployment_mw(
+            config.weather_year, config.hours, net_load
+        )  # (T,) system measured-award draw-down at the net-load ramp
+        # Allocate across BATTERY units pro-rata by their (post-reservation)
+        # available power — pumped storage is not an LESR and holds no measured
+        # battery award (the reserve_storage_as_power / reserve_caiso pattern).
+        batt = np.array(
+            [u.tech_name != "pumped_storage" for u in storage_units], dtype=bool
+        )
+        pc = np.asarray(storage_power_cap, dtype=float)
+        pc2 = np.repeat(pc[:, None], config.hours, axis=1) if pc.ndim == 1 else pc
+        dmin = np.zeros((storage.n_storage, config.hours), dtype=float)
+        if batt.any():
+            bpow = pc2[batt]
+            total = bpow.sum(axis=0)  # (T,) battery discharge cap available
+            with np.errstate(divide="ignore", invalid="ignore"):
+                weight = np.where(total[None, :] > 0.0, bpow / total[None, :], 0.0)
+            dmin[batt] = np.minimum(weight * deploy_sys[None, :], bpow)
+        storage_discharge_min = dmin
+        logger.info(
+            "ERCOT storage AS->energy deployment (%d): mean %.0f MW, max %.0f MW "
+            "forced as a battery discharge floor at the net-load ramp",
+            config.weather_year,
+            float(deploy_sys.mean()),
+            float(deploy_sys.max()),
+        )
+
     # CAISO analogue (caiso_storage_as_reservation): reserve the measured
     # battery AS-award MW (Daily Energy Storage Report, storage-as-awards
     # clean datatype) out of the battery power cap, and floor the battery SOC
@@ -3016,6 +3073,11 @@ def run_year(
     # None (flag off / other ISOs) leaves the key unset — identical LP.
     if storage_soc_min is not None:
         dispatch_kwargs.update(storage_soc_min=storage_soc_min)
+    # Measured-award AS->energy deployment floor (ercot_storage_as_deployment):
+    # the (n_storage, T) battery discharge lower bound. None (flag off / other
+    # ISOs / no award file) leaves the key unset — identical LP.
+    if storage_discharge_min is not None:
+        dispatch_kwargs.update(storage_discharge_min=storage_discharge_min)
     # Emissions mass-cap rows (policy constraint path, gated; G-29). Mirrors
     # runner.py's forecast-path `mass_caps` block so the backcast calibration
     # harness shares the identical seam — before this wire-through,

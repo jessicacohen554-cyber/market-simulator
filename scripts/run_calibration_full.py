@@ -2101,6 +2101,8 @@ def solve_and_persist(
     ordc_lolp_params_path: str | None = None,
     as_reserve_formula: bool = False,
     storage_as_commitment: bool = False,
+    ercot_storage_as_deployment: bool = False,
+    ercot_storage_as_deployment_from_year: int = 2023,
     ercot_storage_as_endogenous: bool = False,
     ercot_storage_as_duration_gate: bool = False,
     gas_offer_curve: bool = False,
@@ -2121,7 +2123,6 @@ def solve_and_persist(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
-    pjm_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -2392,6 +2393,8 @@ def solve_and_persist(
             ordc_lolp_params_path=ordc_lolp_params_path,
             as_reserve_formula=as_reserve_formula,
             storage_as_commitment=storage_as_commitment,
+            ercot_storage_as_deployment=ercot_storage_as_deployment,
+            ercot_storage_as_deployment_from_year=ercot_storage_as_deployment_from_year,
             ercot_storage_as_endogenous=ercot_storage_as_endogenous,
             ercot_storage_as_duration_gate=ercot_storage_as_duration_gate,
             gas_offer_curve=gas_offer_curve,
@@ -2412,7 +2415,6 @@ def solve_and_persist(
             temp_dependent_derate=temp_dependent_derate,
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
-            pjm_offer_surface_conditional=pjm_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
             ercot_online_capacity_envelope_measured=(
@@ -2786,7 +2788,6 @@ def solve_and_persist(
         "temp_dependent_derate": temp_dependent_derate,
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
-        "pjm_offer_surface_conditional": pjm_offer_surface_conditional,
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
         "ercot_online_capacity_envelope_measured": (
@@ -2912,7 +2913,6 @@ def solve_and_persist(
         offer_curve_deltas=offer_curve_deltas,
         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
-        pjm_offer_surface_conditional=pjm_offer_surface_conditional,
     )
     # Coal sigmoid flags mirror run_year exactly — run_config.json must
     # record the same enables/params the LP solved with (the prb sigmoid +
@@ -3027,6 +3027,13 @@ def solve_and_persist(
         recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
     if storage_as_commitment:
         recorded_cfg = recorded_cfg.with_overrides(storage_as_commitment=True)
+    if ercot_storage_as_deployment:
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_storage_as_deployment=True,
+            ercot_storage_as_deployment_from_year=int(
+                ercot_storage_as_deployment_from_year
+            ),
+        )
     if ercot_storage_as_endogenous:
         recorded_cfg = recorded_cfg.with_overrides(ercot_storage_as_endogenous=True)
     if ercot_storage_as_duration_gate:
@@ -6580,6 +6587,14 @@ def main() -> None:
         "committed capacity cannot also arbitrage energy. Off (default).",
     )
     parser.add_argument(
+        "--ercot-storage-as-deployment",
+        action="store_true",
+        help="ERCOT: measured-award AS->energy co-participation — force the "
+        "measured evening storage-award draw-down as a battery discharge floor "
+        "at the net-load ramp (the storage-cycling-lane fix). Requires "
+        "--storage-as-commitment. Off (default).",
+    )
+    parser.add_argument(
         "--ercot-storage-as-endogenous",
         action="store_true",
         help="ERCOT multi-product co-opt (G5): the battery CHOOSES energy vs "
@@ -6679,19 +6694,6 @@ def main() -> None:
         "peak and derate to EIA-860 net summer capacity during cooling "
         "months, correcting plants whose nameplate understates actual "
         "capability (the Hinds / Zeeland 131%% CF issue).",
-    )
-    parser.add_argument(
-        "--pjm-offer-surface-conditional",
-        action=argparse.BooleanOptionalAction,
-        default=False,
-        help="PJM G-22 lever A: post the MEASURED condition-binned top-of-curve "
-        "offer surface (PJM DataMiner2 energy_market_offers, "
-        "scripts/derive_pjm_offer_surface.py) onto the CC_REGULAR + CT_PEAKER "
-        "peak-band rungs in the P1 clearing solve only, keyed by within-year "
-        "net-load percentile. Loose hours and P0 run lengths stay "
-        "byte-identical (ladder clamped >= the resolved peak height). "
-        "PJM-gated; reads the frozen "
-        "data/raw/_validation-source/pjm_offer_surface_condbinned.json.",
     )
     parser.add_argument(
         "--temp-dependent-derate",
@@ -8041,6 +8043,7 @@ def main() -> None:
         ordc_lolp_params_path=args.ordc_lolp_params_path,
         as_reserve_formula=args.as_reserve_formula,
         storage_as_commitment=args.storage_as_commitment,
+        ercot_storage_as_deployment=args.ercot_storage_as_deployment,
         ercot_storage_as_endogenous=args.ercot_storage_as_endogenous,
         ercot_storage_as_duration_gate=args.ercot_storage_as_duration_gate,
         ercot_ecrs_conservative_deployment=args.ercot_ecrs_conservative_deployment,
@@ -8056,7 +8059,6 @@ def main() -> None:
         cc_derate_from_top=args.cc_derate_from_top,
         cc_nameplate_summer_derate=args.cc_nameplate_summer_derate,
         temp_dependent_derate=args.temp_dependent_derate,
-        pjm_offer_surface_conditional=args.pjm_offer_surface_conditional,
         priced_interchange=(
             True
             if reference_price_interface and args.priced_interchange is not False
