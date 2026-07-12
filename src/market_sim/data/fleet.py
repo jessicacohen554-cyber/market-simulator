@@ -2936,6 +2936,69 @@ def build_neiso_offer_surface_conditional_markup(
     )
 
 
+def build_pjm_offer_surface_conditional_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+) -> "np.ndarray | None":
+    """Build the PJM P1-only energy-offer-surface markup ``(n_gen, T)``.
+
+    The PJM analogue of :func:`build_ercot_offer_surface_conditional_markup`
+    (``ScenarioConfig.pjm_offer_surface_conditional`` — G-22 lever A): the
+    measured top-of-curve offer distribution from PJM's public DataMiner2
+    ``energy_market_offers`` feed (``scripts/derive_pjm_offer_surface.py``),
+    condition-binned by within-year net-load percentile, posted onto the
+    CC_REGULAR + CT_PEAKER peak-band rungs in the P1 clearing objective only
+    — the two classes whose idle supply is offered above the model price but
+    below the actual DA price at the missed summer peaks
+    (docs/handoffs/pjm-summer-peak-price-formation-g22-2026-07.md §1-2).
+    Same mechanics, clamps and rule-13/20/21 discipline as the ERCOT/NEISO
+    surfaces (the shared :func:`_conditional_surface_markup` core); PJM-only,
+    its own frozen surface JSON, no cross-ISO fallback (rule 25).
+    """
+    if not getattr(config, "pjm_offer_surface_conditional", False):
+        return None
+    if config.iso != "PJM":
+        return None
+    path = getattr(config, "pjm_offer_surface_binned_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        default = _paths.CALIBRATION_DIR / "pjm_offer_surface_condbinned.json"
+        if not default.exists():
+            return None
+        path = str(default)
+    surface = _load_condbinned_surface(str(path))
+
+    edges = tuple(float(x) for x in config.pjm_offer_surface_netload_pcts)
+    json_edges = tuple(
+        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
+    )
+    if json_edges and json_edges != edges:
+        raise ValueError(
+            "pjm_offer_surface: config netload_pcts "
+            f"{edges} disagree with the derived surface's edges {json_edges} "
+            "(re-derive scripts/derive_pjm_offer_surface.py with matching "
+            "--edges, or fix the config)."
+        )
+    return _conditional_surface_markup(
+        fleet_arrays,
+        generators,
+        fuel_prices,
+        net_load_mw,
+        config,
+        surface=surface,
+        edges=edges,
+        groups=("CC_REGULAR", "CT_PEAKER"),
+        min_bin=int(getattr(config, "pjm_offer_surface_min_bin", 0) or 0),
+        price_cap=float(getattr(config, "pjm_offer_surface_price_cap_frac", 0.95))
+        * float(getattr(config, "voll", 5000.0)),
+        label="PJM",
+    )
+
+
 def _conditional_surface_markup(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
