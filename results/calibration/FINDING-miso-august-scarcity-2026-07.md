@@ -688,3 +688,51 @@ carried C5b entry (2 of 3 budgeted). Scorer-side BAT-vs-BAT + per-MW fix
 flagged to the rubric-infrastructure lane.
 
 **RESULT — to be appended after the solve + scoring (same session).**
+
+### §14 RESULT (appended after the solve + scoring, same session)
+
+**Registered `2026-07-12-miso-61-rpe-pricing`** (+ rule-20 zero-forcing twin,
+registered on its own completion). **Scored NOT-YET (rubric v2.4), FAIL
+{fuelmix, sysvol, price_mean, price_shape, price_tail} — one FEWER than the
+miso-60 keeper** (storage_shape → ledgered measured-input CAVEAT via the §14
+C5c adjudication; ledgered caveats 2 of 3 budgeted).
+
+- **Every quoted metric identical to miso-60**: C1 13/16 · free 9/12
+  (COAL_BIT 2023/24 −15.7-class, CT_PEAKER-2024 — the commitment-posture
+  lane, untouched as expected); sysvol-2025 gas −5.5%; C3a-2025 −15.8%;
+  C3b-2025 NRMSE 0.206; C3c 3h/0h (2024/25); C5a −7.3/−7.4 commercial-band;
+  C8 ST_GAS-2025 grounded PASS (36.6%, D-4 zero off-window, D-1 r 0.98 /
+  cv 2.177). DOF ledger 16 entries / 2 legacy residuals (the RPE row enters
+  as measured-physical, zero scalars).
+- **RDT anchors HELD to the cent** (new net-corridor probe): S→N
+  mean-flowing 1599/1550/1083 MW vs miso-60's 1600/1549/1083;
+  separation-when-binding $2.62/$2.49 vs $2.61/$2.48; August clean
+  (33.66/31.48/35.19). The miso-60 "N→S binding 11.9% of 2025 hours"
+  reproduces exactly as 3134 h on the corrected hours basis (the legacy
+  probe's 3× tier-rows deflation, quantified and documented).
+- **The mechanism is surgically active in its driver window**: ~30 h in 2024
+  repriced in the $40–$240 violation band (max separation $195.5; Aug-2024
+  Plains monthly +$0.07) — under the old curve the $40 first step acted as a
+  fake relief valve capping exactly those hours. 2023/2025 monthly zonal
+  prices are byte-identical: the model's S→N flow reaches the violation
+  region only in the 2024 heat event, and 2025's missing separation stays
+  owned by the upstream S→N flow deficit — now measured directly (model 236
+  S→N binding hours vs the pbc DA record's 919 in 2025; the model
+  over-binds 2023/24 on the RDT-proper DA basis, 2292/2059 vs 8/241, which
+  the family-basis caveat (§14.3) says is expected to sit high but is now
+  trackable run over run).
+- **Violations: 0 h all years** — the LP redispatches below $240 rather than
+  violating, which is exactly what the $200 RPE adder is for; the measured
+  RT record's real violations (25-43 h-eq at the $40 plateau + 15-18 deeper)
+  are RT-interval phenomena the DA-grain LP resolves by redispatch.
+
+**Disposition / recommendation to owner:** miso-61 strictly dominates
+miso-60 on structural grounding — it adds the market's real published RPE
+violation pricing (the same "add the real design, conservative side" pattern
+as miso-57's TCDC) at an identical score with one fewer FAIL and both
+storage criteria now honestly ledgered. Recommended keeper swap; keepers.json
+untouched pending the owner's call. The 2025 price side's next levers remain,
+in order: commitment-posture window rows (COAL_BIT/CT_PEAKER — now THE
+dominant free-C1 residual), the 2025-09-30 shortage-pricing redesign
+date-gate (required pre-H1-2026/forecast), and the upstream S→N mid-merit
+economics the RPE will price when flow reaches the limit.

@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-12-miso-61-rpe-pricing",
+  "label": "miso 61 rpe pricing",
+  "date": "2026-07-12",
+  "shorthand": "miso-61-rpe-pricing",
+  "definition": "miso-61 RPE additive violation pricing (main) -- miso-60 meta.json replay (ST_GAS VLR per-plant commitment floor + coal warm-boiler committed band + RDT congestion structure: South-seam split + 92% derate/TCDC + reserve co-opt pergen + zonal South + priced seam + SOM coal offers + CT 1.025 measured committed + Order-825 fast-start v4 + measured hourly OR requirements) + miso_rpe_pricing=True (the published Reserve Procurement Enhancement $200/MWh demand value added to both RDT violation tiers -- the 2023-2025 market's measured additive price formation: $240 small-violation / $700 deep-violation spreads, 2024 SOM SS II.E/III.B, IMM Summer-2025 quarterly $41M RDT+RPE congestion). The 2025 price-side lane (FINDING SS 11/13 continuity); zero new scalars. SCORED (rubric v2.4): NOT-YET, FAIL {fuelmix, sysvol, price_mean, price_shape, price_tail} -- one FEWER than the miso-60 keeper (storage_shape converted to a ledgered measured-input CAVEAT by the C5c basis adjudication, FINDING-miso-c5c-storage-shape-basis-2026-07). Every quoted metric identical to miso-60: C1 13/16 free 9/12, sysvol-2025 gas -5.5%, C3a-2025 -15.8%, C3b-2025 NRMSE 0.206, C3c 3h/0h 2024/25, C5a -7.3/-7.4, C8 ST_GAS-2025 grounded PASS (36.6%). RDT anchors HELD to the cent (S->N mean-flowing 1599/1550/1083, sep-when-binding $2.62/$2.49; August clean). The RPE is surgically active in its window: ~30 h/yr repriced in the $40-$240 violation band (Aug-2024 Plains monthly +$0.07; 2023/2025 byte-identical -- the model's S->N flow reaches the violation region only in the 2024 heat event; the 2025 gap stays owned by the upstream mid-merit S->N flow deficit, model 236 binding h vs measured DA 919 h).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-12-miso-61-rpe-pricing.js",
+  "bundle": "results/calibration/miso61_rpe_pricing"
+}
