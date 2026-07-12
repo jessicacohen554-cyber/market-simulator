@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-12-pjm-100-da-virtual",
+  "label": "pjm 100 da virtual",
+  "date": "2026-07-12",
+  "shorthand": "pjm-100-da-virtual",
+  "definition": "(PROBE \u2014 lever B alone) PJM 100: pjm-98 keeper + pjm_da_virtual_bids (G-22 lever B, DA procurement depth). Measured hourly SUBMITTED INC/DEC virtual bid curves (DataMiner2 hrl_da_incs_decs) as LP pseudo-units with ENDOGENOUS clearing (data.virtual_bids). Cleared net depth +9.9/+10.4/+11.2 GW at top-150 hours (measured +7-11 GW). Top-150 LW $40/$53/$86 vs baseline $31/$34/$45, actual $76/$83/$136 \u2014 closes ~half the price gap; the mid-curve level (A', pjm-101) is the complementary half. Zero fitted scalars (rules 13/20/21). NOT-YET (probe, unattested).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-12-pjm-100-da-virtual.js",
+  "bundle": "results/calibration/pjm100_da_virtual_bids"
+}
