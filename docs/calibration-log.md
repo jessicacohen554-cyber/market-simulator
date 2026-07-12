@@ -10325,6 +10325,26 @@ backfill (preliminary vintages) + per-plant displays, NOT the row-level scored
 totals (which are correct). Follow-up (unimplemented): bucket the backfill by unit
 prime-mover class, not plant.
 
+**UPDATE — follow-up IMPLEMENTED (2026-07-11, docs-reorg/fleet-group session; issue
+#2049).** `_backfill_eia923_with_campd` now takes `class_shares` from the new
+`_plant_class_shares`, splitting a mixed plant's CAMPD net across the classes
+physically at it by its **measured EIA-923 prime-mover class shares** (prior-year
+shares for incomplete vintages) instead of booking the whole net to the single
+last-generator-wins class. Non-ERCOT plant-level path only; ERCOT (curated bin
+sheet → `class_shares=None`) is byte-identical, verified. **CORRECTION to the
+italicized claim above:** on the refreshed data the "affects only preliminary
+vintages / scored totals correct" line is WRONG. Last-generator-wins maps several
+genuinely mixed plants (Linden p2406, p1571, p2393) to their *minority* class,
+whose EIA-923 annual is below the 50 GWh backfill gate, so the OLD code booked the
+plant's WHOLE CAMPD net there **on top of** the adequately-reported majority row —
+a ~2× **double-count** in the *scored* benchmark (PJM 2024 Linden ≈9.5→≈4.8 TWh =
+CAMPD net). So complete-year non-ERCOT scored benchmarks DO change (double-count
+removed, mass-preserving; Doswell p52019 unchanged — its CT clears the gate). No
+keeper re-solved or re-registered; PJM/non-ERCOT keeper re-score flagged for owner
+review in **#2049**. Regression coverage: `tests/test_campd_backfill_bucketing.py`
+(11 cases). This supersedes only the "scored totals unchanged" expectation; the
+mis-bucketing diagnosis and per-ISO magnitudes above stand.
+
 **Dashboard propagation:** NOT regenerated this session. The committed keepers'
 original `_shared` input parquets were overwritten by a later data refresh, so a
 clean reconcile-only re-render is impossible and re-rendering on today's data would
