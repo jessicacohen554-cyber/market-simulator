@@ -156,21 +156,49 @@ both orchestrators so every later change is quantified against a real baseline.
 
 ## Execution order
 
-| # | Workstream | Prompt | Expected win |
-|---|-----------|--------|--------------|
-| 0 | Phase-timing instrumentation + baseline capture | P-0 | enabler |
-| 1 | Data-layer cache batch (T1.2, T2.1–T2.6) | P-1 | 10–30 s/yr, more on big fleets |
-| 2 | Cross-year warm-start default flip, backcast only (T1.1) | P-2 | ~1.5–2× on years ≥2 |
-| 3 | Calibration `--reuse-solved` opt-in (T1.3) | P-3 | whole solves skipped on re-runs |
-| 4 | HiGHS bench: IPM+crossover, numpy setBasis, threads (T3) | P-4 | measure first |
+| # | Workstream | Prompt | Model | Expected win |
+|---|-----------|--------|-------|--------------|
+| 0 | Phase-timing instrumentation + baseline capture | P-0 | Sonnet 5 | enabler |
+| 1 | Data-layer cache batch (T1.2, T2.1–T2.6) | P-1 | Opus 4.8 | 10–30 s/yr, more on big fleets |
+| 2 | Cross-year warm-start default flip, backcast only (T1.1) | P-2 | Opus 4.8 | ~1.5–2× on years ≥2 |
+| 3 | Calibration `--reuse-solved` opt-in (T1.3) | P-3 | Fable 5 | whole solves skipped on re-runs |
+| 4 | HiGHS bench: IPM+crossover, numpy setBasis, threads (T3) | P-4 | Opus 4.8 | measure first |
 
-P-1 and P-2 are independent (run in separate sessions, either order). P-0 first, always.
+### Waves (parallel vs sequential)
+
+```
+Wave 1:  P-0  ──────────────► merge to main   (blocking; everyone rebases on it)
+                                │
+Wave 2:         ┌──────────────┴──────────────┐
+                P-1 ‖ P-4   (parallel)  ──────► merge each
+                                │
+Wave 3:                        P-2 ──► merge ──► P-3 ──► merge
+```
+
+- **Wave 1 — blocking:** P-0 lands the phase-timing log lines every later prompt cites for
+  before/after evidence, plus the baseline doc. Merge before launching anything.
+- **Wave 2 — fully parallel, zero conflict:** P-1 (data layer: `fleet.py`, `offer_curves.py`,
+  demand-load region) and P-4 (`dispatch.py` options block + bench scripts) touch disjoint files.
+- **Wave 3 — sequential:** P-2 then P-3 both add argparse flags and edit `solve_and_persist` in
+  `run_calibration_full.py` — a hard conflict if simultaneous. Run P-2 (bigger win) first, merge,
+  then P-3 rebases on top. P-1's `run_calibration_full.py` edits are in different functions, so it
+  coexists with Wave 3 fine.
+- Alternative: run Waves 2+3 all at once and eat one manual P-2/P-3 merge resolution — trades one
+  conflict cleanup for wall-clock.
+
+Model rationale: P-0 is mechanical instrumentation whose wallclock is in the solves, not the
+reasoning (Sonnet 5). P-1/P-2 are mostly mechanical but cross-cutting — kwargs-equivalence
+reasoning, forecast-path quarantine, repro pins — with a byte-identity gate as the safety net
+(Opus 4.8). P-3 has the highest correctness stakes in the pack: a cache key that under-covers
+silently serves stale solves as fresh science, and the contract design is judgment-heavy
+(Fable 5). P-4's adoption rule is mechanical (≥10 % + identical outputs), so bench execution
+fits Opus 4.8.
 
 ## Prompt pack
 
 Each prompt is self-contained for a fresh session on a fresh branch off `main`.
 
-### P-0 — timing instrumentation + baseline
+### P-0 — timing instrumentation + baseline — **model: Sonnet 5**
 
 ```
 In market-simulator, add per-year phase timing to both orchestrators, then capture a baseline. This is a wallclock-efficiency enabler; outputs must be byte-identical.
@@ -181,7 +209,7 @@ In market-simulator, add per-year phase timing to both orchestrators, then captu
 Commit with the baseline doc. Do not change any solver options or caching in this session.
 ```
 
-### P-1 — data-layer cache batch (zero-risk, byte-identical)
+### P-1 — data-layer cache batch (zero-risk, byte-identical) — **model: Opus 4.8**
 
 ```
 In market-simulator, apply a batch of caching/access-pattern fixes in the data layer. Hard requirement: model outputs must be BYTE-IDENTICAL — capture goldens with scripts/capture_keeper_goldens.py before starting and diff after each item. No accuracy, no new tunables.
@@ -195,7 +223,7 @@ In market-simulator, apply a batch of caching/access-pattern fixes in the data l
 Verification: (a) golden replay byte-identical per item (revert any item that isn't and report why); (b) full pytest; (c) before/after per-phase timings from the P-0 instrumentation for ERCOT + PJM or MISO backcast years, reported in the PR body. Watch memory: new caches are small (CSV-derived frames/frozensets), but confirm no growth in peak RSS on a big-ISO year.
 ```
 
-### P-2 — cross-year warm-start default ON for backcast
+### P-2 — cross-year warm-start default ON for backcast — **model: Opus 4.8**
 
 ```
 In market-simulator, flip the already-validated cross-year warm-start to default ON for the calibration/backcast path only. Context: MARKET_SIM_WARMSTART_XYEAR (default off) gates apply_cross_year_basis (src/market_sim/model/dispatch.py:4111-4188), threaded through pipeline/solve.py:145,215 and the xyear_cache in scripts/run_calibration.py:~3885. Benchmarked on real ERCOT 2023-2025 LPs (docs/cross-year-warmstart.md): P0 2.3x faster on warm years, ~1.47x total 3-year wall, +4% RSS, objective/prices/total-gen identical, ~0.003% marginal-tie reshuffle only.
@@ -206,7 +234,7 @@ In market-simulator, flip the already-validated cross-year warm-start to default
 4. Do NOT register these probe runs on the dashboard. Update docs/cross-year-warmstart.md's "default" wording and CHANGELOG.
 ```
 
-### P-3 — opt-in reuse of solved years in calibration re-runs
+### P-3 — opt-in reuse of solved years in calibration re-runs — **model: Fable 5 (high reasoning)**
 
 ```
 In market-simulator, add an OPT-IN way to skip re-solving unchanged years when re-running scripts/run_calibration_full.py. Today solve_and_persist (line ~2278) always re-solves every --year into a fresh timestamped bundle; results/cache.py::is_cached protects only the forecast path (runner.py:1036).
@@ -217,7 +245,7 @@ In market-simulator, add an OPT-IN way to skip re-solving unchanged years when r
 4. Verify: (a) reuse run vs fresh run of an identical config produces identical bundle payloads (minus timestamps/meta); (b) changing any config field forces a re-solve of the affected year; (c) full pytest. Report wall-clock for a reporting-only re-run (3 years reused) in the PR body.
 ```
 
-### P-4 — HiGHS solver experiments (bench-only; adopt on measured win)
+### P-4 — HiGHS solver experiments (bench-only; adopt on measured win) — **model: Opus 4.8**
 
 ```
 In market-simulator, run three bounded HiGHS experiments for the cold first solve. These are BENCH-FIRST: no default changes unless the bench shows a clear win with unchanged results. Options block: src/market_sim/model/dispatch.py:3636-3652 (currently: output_flag off, presolve off, optional threads/scale via env). Harnesses: scripts/bench_warmstart.py and scripts/bench_warmstart_xyear.py (capture real ERCOT year LPs and time cold/warm solves).
