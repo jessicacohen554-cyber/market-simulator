@@ -2124,6 +2124,7 @@ def solve_and_persist(
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
+    pjm_da_virtual_bids: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -2417,6 +2418,7 @@ def solve_and_persist(
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
             pjm_offer_surface_conditional=pjm_offer_surface_conditional,
+            pjm_da_virtual_bids=pjm_da_virtual_bids,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
             ercot_online_capacity_envelope_measured=(
@@ -2791,6 +2793,7 @@ def solve_and_persist(
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
         "pjm_offer_surface_conditional": pjm_offer_surface_conditional,
+        "pjm_da_virtual_bids": pjm_da_virtual_bids,
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
         "ercot_online_capacity_envelope_measured": (
@@ -2917,6 +2920,7 @@ def solve_and_persist(
         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
         pjm_offer_surface_conditional=pjm_offer_surface_conditional,
+        pjm_da_virtual_bids=pjm_da_virtual_bids,
     )
     # Coal sigmoid flags mirror run_year exactly — run_config.json must
     # record the same enables/params the LP solved with (the prb sigmoid +
@@ -6713,6 +6717,20 @@ def main() -> None:
         "data/raw/_validation-source/pjm_offer_surface_condbinned.json.",
     )
     parser.add_argument(
+        "--pjm-da-virtual-bids",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="PJM G-22 lever B: carry the Day-Ahead market's virtual bid "
+        "layer as measured SUBMITTED INC/DEC bid curves (PJM DataMiner2 "
+        "hrl_da_incs_decs, scripts/derive_pjm_da_virtual_surface.py) posted "
+        "into the LP as pseudo-units with ENDOGENOUS clearing — the DA "
+        "procurement depth at peaks (net cleared DEC-INC ~ +7-11 GW at the "
+        "2024 top hours) becomes real market structure instead of the dual "
+        "being read ~9-10 GW too shallow into the stack. PJM-gated; reads "
+        "the frozen "
+        "data/raw/_validation-source/pjm_da_virtual_surface_condbinned.json.",
+    )
+    parser.add_argument(
         "--temp-dependent-derate",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -8077,6 +8095,7 @@ def main() -> None:
         cc_nameplate_summer_derate=args.cc_nameplate_summer_derate,
         temp_dependent_derate=args.temp_dependent_derate,
         pjm_offer_surface_conditional=args.pjm_offer_surface_conditional,
+        pjm_da_virtual_bids=args.pjm_da_virtual_bids,
         priced_interchange=(
             True
             if reference_price_interface and args.priced_interchange is not False
