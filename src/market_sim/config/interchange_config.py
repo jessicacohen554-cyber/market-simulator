@@ -1498,14 +1498,31 @@ def apply_interchange_topology(
     #    the published 92% default derate + two-step TCDC priced tiers
     #    (transmission.apply_miso_rdt_tcdc). Internal links only, so it
     #    composes with every step above; last keeps the import-node
-    #    identification untouched.
+    #    identification untouched. ``config.miso_rpe_pricing`` rides the same
+    #    transform: the RPE constraint's published $200/MWh demand value is
+    #    added to both violation tiers (2023-2025 additive pricing, 2024 SOM
+    #    §II.E/§III.B) — it has no meaning without the TCDC tiers, so arming
+    #    it alone fails loud rather than silently doing nothing.
+    rpe_pricing = getattr(config, "miso_rpe_pricing", False)
+    if rpe_pricing and iso == "MISO" and not getattr(config, "miso_rdt_tcdc", False):
+        raise ValueError(
+            "miso_rpe_pricing requires miso_rdt_tcdc: the RPE demand value "
+            "prices the RDT violation tiers, which only exist under the "
+            "TCDC representation (transmission.apply_miso_rdt_tcdc)"
+        )
     if getattr(config, "miso_rdt_tcdc", False) and iso == "MISO":
         from market_sim.model.transmission import apply_miso_rdt_tcdc
 
-        iso_config = apply_miso_rdt_tcdc(iso_config)
+        iso_config = apply_miso_rdt_tcdc(iso_config, rpe_pricing=rpe_pricing)
         logger.info(
             "MISO %d: miso_rdt_tcdc — RDT pair replaced with 92%% default "
-            "derate + $40/$500 TCDC tiers (2024 SOM §III.B)",
+            "derate + $40/$500 TCDC tiers (2024 SOM §III.B)%s",
             year,
+            (
+                " + RPE $200 additive on violation tiers "
+                "(miso_rpe_pricing, 2024 SOM §II.E/§III.B)"
+                if rpe_pricing
+                else ""
+            ),
         )
     return iso_config
