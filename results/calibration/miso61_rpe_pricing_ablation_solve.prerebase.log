@@ -1,4 +1,4 @@
-=== miso-61 ABLATION rerun (post-restart, rebased code) start 2026-07-12T23:24:15Z ===
+=== miso-61 ABLATION start 2026-07-12T19:38:07Z ===
 INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
 INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
 INFO: solving MISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
@@ -33,3 +33,38 @@ INFO: MISO 2023: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-9
 INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 2424 MW at h0 (measured hourly cleared reg+spin+supp), 11 ORDC steps ($200-$3500), 2556 reserve-eligible units
 INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 269 MW at h0 (measured hourly South reservation), published zonal curve steps ['206MW@$200', '722MW@$1100', '103MW@$3300']
 INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2543 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 38003 / min 33889 MW
+INFO: Matrix build: 38.102s, Solve: 1115.377s (cold)
+INFO: Matrix build: 38.102s, Solve: 802.233s (warm)
+INFO: EIA-923 2023: CAMPD-backfilled 6 under-reported plant(s) across 7 class-row(s) (7 replaced, 0 added)
+INFO: EIA-923 2023 hydro 7.95 TWh under-counts EIA-930 9.98 TWh; using EIA-930 grid total
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: solving MISO 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+INFO: MISO 2024: miso_south_seam_split — South seam re-homed onto its own external zone (RDT wheel-through bypass severed)
+INFO: MISO 2024: miso_rdt_tcdc — RDT pair replaced with 92% default derate + $40/$500 TCDC tiers (2024 SOM §III.B) + RPE $200 additive on violation tiers (miso_rpe_pricing, 2024 SOM §II.E/§III.B)
+WARNING: capacity-deliverability: clean partition for MISO absent; run scripts/curate_capacity_deliverability.py. Returning no limits.
+WARNING: MISO 2024: capacity-deliverability clean partition absent — falling back to static PY2025-26 summer CIL/CEL caps; run scripts/curate_capacity_deliverability.py
+INFO: loaded 54 within-window retiree units for MISO (3337 MW, plants [202, 862, 1024, 1047, 1740, 1741, 1846, 1971, 2050, 6155, 6356, 7842, 10075, 10149, 10477, 52006, 54748, 56247, 57208, 59808, 63709, 65494])
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: CC capacity reconcile: raised 0 / capped 7 plant(s) to demonstrated peak (-2714 MW total) from cc_capacity_reconcile_MISO.csv
+INFO: unit-outage derate (MISO 2024): 751 plant-tranches derated
+INFO: COD ramp (MISO 2024): 707 unit-months masked offline (mid-year COD / retirement), 41 unit(s) fully not-yet-built/retired
+INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
+INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
+INFO: MISO 2024 hydro budget pinned to monthly target total 10710.3 GWh (was 9042.0 GWh)
+INFO: Loaded MISO 2024 hydro budget: 160 plants, 10710.3 GWh annual, 2372 MW nameplate
+INFO: MISO 2024: 160 hydro plants in LP (2372 MW, 10.71 TWh monthly budget)
+INFO: MISO 2024: priced import/export node — 25 import tranches (14831 MW), 24 export sinks (14300 MW)
+INFO: unit-outage derate (MISO 2024): 751 plant-tranches derated
+INFO: COD ramp (MISO 2024): 879 unit-months masked offline (mid-year COD / retirement), 50 unit(s) fully not-yet-built/retired
+INFO: MISO 2024: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
+INFO: MISO 2024: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
+INFO: F923 fuel costs for 2024: 978 generators priced from their own plant, 1896 gap-filled from nearby (state/zone) plants
+INFO: MISO zonal gas basis (2024): 1499 gas units; cap-weighted mean +0.28 removed, zonal spread -0.16..0.11 $/MMBtu
+INFO: MISO 2024: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
+INFO: MISO 2024: Manitoba firm-hydro import baseload floored (must-flow)
+INFO: MISO 2024: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-930 flow durations x MISO DA hub quantiles; PJM/SPP/South, import + export; no added hurdle)
+INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 2410 MW at h0 (measured hourly cleared reg+spin+supp), 11 ORDC steps ($200-$3500), 2559 reserve-eligible units
+INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 521 MW at h0 (measured hourly South reservation), published zonal curve steps ['238MW@$200', '835MW@$1100', '119MW@$3300']
+INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2546 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 37955 / min 34458 MW
