@@ -1,0 +1,81 @@
+# One-shot: land the caiso-79 STEP-0 Greater Bay package (docs/
+# _caiso79_step0_greaterbay.patch.xz.b64, sha-gated) and splice its
+# calibration-log entry on the runner (the 761 KB log exceeds the MCP
+# relay's single-call ceiling — caiso77-port pattern). Publishes via the
+# Data API (NO `git push`). No LP is solved: the STEP-0 bind test REFUTED
+# the NP15 → GREATER_BAY split ex-ante (results/calibration/
+# FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md), so this lands data
+# intake + probe + FINDING + the local-commitment driver design doc only.
+name: caiso79-step0-land
+
+on:
+  push:
+    branches:
+      - claude/caiso-79-calibration-mghmqt
+    paths:
+      - .github/workflows/caiso79-step0-land.yml
+
+permissions:
+  contents: write
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply the STEP-0 patch (sha-gated)
+        run: |
+          set -euo pipefail
+          base64 -d docs/_caiso79_step0_greaterbay.patch.xz.b64 | xz -d > /tmp/caiso79b.patch
+          echo "46b5c0a83f6b258e77ca544b65fbec752fcce2ed50f69f406bc3ceb99f800633  /tmp/caiso79b.patch" | sha256sum -c -
+          git apply /tmp/caiso79b.patch
+          git status --short
+
+      - name: Set up uv + Python
+        uses: astral-sh/setup-uv@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: uv sync --extra dev
+
+      - name: Run the touched-module tests
+        run: |
+          uv run python -m pytest tests/test_local_capacity.py -q
+
+      - name: Splice the STEP-0 calibration-log entry
+        run: |
+          set -euo pipefail
+          test -f docs/_caiso79_step0_log_entry.md
+          python - <<'PY'
+          lp = 'docs/calibration-log.md'
+          log = open(lp).read()
+          entry = open('docs/_caiso79_step0_log_entry.md').read()
+          marker = ('### 2026-07-12 — CAISO — bench-basis rework EXECUTED')
+          assert marker in log
+          if 'caiso-79 STEP-0 (Greater Bay LCT bind test)' not in log:
+              log = log.replace(marker, entry.rstrip() + '\n\n' + marker, 1)
+              open(lp, 'w').write(log)
+          PY
+
+      - name: Publish via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          uv run python scripts/ci_api_upload_multi.py \
+            --rid 2026-07-12-caiso-78-cc-hr --bundle results/calibration/caiso78_cc_hr_basis \
+            --branch claude/caiso-79-calibration-mghmqt \
+            --bench-iso CAISO \
+            --extra docs/calibration-log.md \
+            --extra docs/_caiso79_step0_log_entry.md \
+            --extra scripts/probes/_caiso79_step0_greaterbay_bind.py \
+            --extra scripts/derive_lcr_membership.py \
+            --extra src/market_sim/data/local_capacity.py \
+            --extra data/raw/capacity-deliverability/caiso/caiso.csv \
+            --extra data/raw/reference/lcr_area_membership_CAISO.csv \
+            --extra results/calibration/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md \
+            --extra docs/handoffs/caiso-local-commitment-driver-design-2026-07.md \
+            --message "caiso-79 STEP-0: Greater Bay LCT bind test — NP15 split REFUTED ex-ante (import cap cannot bind); GB peak_load/NP26 intake + membership (Moss Landing substation rule) + local-commitment driver design filed [skip ci]"

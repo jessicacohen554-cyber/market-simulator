@@ -126,3 +126,34 @@ owner sign-off before bench parts are regenerated and keepers re-scored; until
 then C2-2025/C4-2024/25 prints carry the adjudication note (caiso-77 §5
 precedent). Filed as the concrete design for the open "2025 bench basis
 rework" lane.
+
+## 6. EXECUTED (2026-07-12, owner-signed — caiso-79 session)
+
+The owner signed off the §5 design as filed, with the §5 disclosure accepted
+(the honest basis raises the true 2023/24 CC-over; C1 may print worse or FAIL
+and the rework is NOT reverted for it). Implementation, all scorer/bench
+layer, no re-solve:
+
+- `render_calibration_html`: `EIA930_NG_CELL_CORRUPT = {CAISO}` /
+  `EIA930_NG_CORRUPT_ONSET = {CAISO: 2024}`; the render writes
+  `e930.gas_cems_grid` / `gas_cogen_grid` / `fossil_cems_grid` into CAISO
+  bench parts (coverage basis = the part's own plant map, the `coal_cems`
+  convention; preliminary vintages carry the latest complete vintage's cogen
+  block), `reconcile_vintage_classes` caps the combined reconcile at
+  `fossil_cems_grid` (one-directional), the fuelRows gas hourly actual
+  switches to CEMS+flat-cogen from the onset vintage, and the C5a CO2 actual
+  for an incomplete-gas vintage scales the full-plant fossil classes to the
+  CEMS anchor before the intensity multiply.
+- `calibration_verdict`: `CEMS_GAS_ANCHOR_ISOS` — C2 gas preliminary fallback
+  gates on the anchor fields (§5.1); C4 gas r/NRMSE recomputed from the
+  committed hourly series from vintage 2024, 2023 kept on 930 (§5.2).
+- `scripts/regen_caiso_bench_cems.py` — the guarded no-solve splice of the
+  three committed CAISO parts (§5.1/§5.3).
+
+Result of the in-place caiso-78 + twin re-score (details in the calibration
+log entry of the same date): classFull CC 57.21/55.64/53.84 →
+51.84/45.99/40.59; C4 gas 2024 FAIL→PASS (r 0.899) and 2025 r 0.829 (NRMSE
+0.38 = the honest level miss); C5a-2025 +25.0 → +14.6 % on the rebuilt 23.65
+Mt actual; C2-2025 −10.2 % under → +19.3 % over; C1 CC_REGULAR reopens FAIL
+at +7.69/+10.62 TWh (2023/24) — the pre-registered §5 consequence, now the
+single honest statement of the open CC lane.
