@@ -277,6 +277,58 @@ iterable; 2019 + H1-2026 = locked test, touch-once). (c) This intake gives the
 in force for all of 2023–2025) that the current keeper's flat ~1,100 MW
 stand-in lacks — that is training-window structure, not holdout leakage.
 
+### 1.3 Intake 2026-07-12 — NYISO 2022 validation-holdout data readiness
+
+Executed under the owner's explicit, session-logged rule-22 Option-2
+authorization (verbatim in `calibration-complete.json` `intake_log`):
+**intake + equivalency register only, NO solves** — NYISO has NO
+calibration-complete marker (frontier ≠ complete; the quarantine fully
+applies) and the global one-shot HOLD (G-19) is in force. All validation was
+no-LP (byte-identity / loader-resolvability / row counts / schema-match vs
+sibling years). Full per-input grading:
+`docs/holdout-data-equivalency-register-2026-07.md` §NYISO (the register this
+doc's §1 coverage table feeds).
+
+Landed (2022, in-sample rows byte-frozen in every touched file; producers are
+the SAME committed scripts as the 2023–2025 rows):
+
+| Series | What landed | Producer |
+|---|---|---|
+| LMP bench (hourly + annual) | `actual_lmp_hourly_NYISO.parquet` +2022 block (8760 h DA+RT, full coverage); `actual_lmp.json` NYISO 2022 DA $72.74 / RT $74.77 | `derive_actual_lmp.py` NYISO builder on the same MIS lineage (12 DA damlbmp_zone + 12 RT realtime_zone monthly zips, mis.nyiso.com), driven by `holdout_intake_nyiso_2022_lmp.py` (frozen-row merge + SOM-2022 published-average cross-anchors, ratios 0.90–0.95 = the expected equal-hour vs load-weighted wedge) |
+| Scarcity tail | deliberately NOT emitted — `derive_actual_tail.py` is marker-aware; the extended parquet auto-emits NYISO 2022 at marker time (re-run verified byte-identical today) | marker gate working as designed |
+| Reserve requirements | `NYISO_reserve_requirements_2022.csv` (7 in-LP families × 8760 h; v2021 LRR regime; 17 TSA windows / 69 h zeroed) after the producer re-proved 2023–2025 **byte-identical** | `derive_nyiso_reserve_requirements_hourly.py` |
+| AS-reserve validation analogue | `actual_as_reserve_NYISO.parquet` rebuilt 2022–2025, in-sample rows verified identical | `process_nyiso_as.build_reference` |
+| Gas hubs | `transco_z6_ny_daily.csv` +239 2022 prints (238 table + 1 narrative — table-scrape grain parity confirmed for 2022 pages); `transco_z6_iroquois_monthly.csv` +12 rows (SOM-2022 spread $1.78); `gas_basis_by_iso_month.csv` NYISO-2022 rows **re-based** from the citygate-proxy vintage onto the in-sample Iroquois−HH construction; `nyiso_downstate_ct_gas_basis_monthly.csv` +12; `nyiso_downstate_ldc_transport_monthly.csv` +24 (2022 statnfdr statements exist and fetch cleanly); `nyiso_zonal_gas_hub.csv` +5 (SOM-2022 Fig A-6) | `fetch_transco_daily_spot.py`, `fetch_nyiso_gas_narrative.py`, `fetch_nyiso_downstate_gas_basis.py` (window-parameterized), `fetch_nyiso_downstate_ldc_transport.py`, merged via `holdout_intake_nyiso_2022_inputs.py` |
+| CAMPD facility-level | `campd-facility-level/{NY,NJ}_2022.parquet` derived from the landed unit-level extracts; recipe proven cell-exact on NY/NJ 2023–2025 (except a discovered committed-lineage drift: Edgewood 55786 Jan-2025, 53 hours, EPA resubmission between fetches — flagged) | `derive_campd_facility_from_units.py` (new, committed) |
+| Weather | `nyiso_zone_temp_daily.csv` +1,825 zone-days (from the on-disk 2022h1/h2 split raws); `nyiso_downstate_tmax_daily.csv` +365 days (same NCEI producer) | `holdout_intake_nyiso_2022_inputs.py` steps |
+| Sidecars | `NYISO_2022_renewable_capacity.csv`; `calibration_reference.json` spliced with ONLY `isos.NYISO.2022` (all other churn restored) | `build_calibration_reference.py` (NYISO years gained 2022, intake-comment documented) |
+
+**Known holes, graded not filled** (register §NYISO): unit-outage windows
+(`campd-unit-outages-NYISO.csv` — committed vintage does not reproduce at
+HEAD, 1,598 vs 2,641 windows, NEISO-class detector-vintage issue; 2022
+deliberately NOT derived), plant emission rates v1/v2 2022 (intake tools
+still marker-gated — pre-amendment policy skew, owner call),
+capacity-deliverability 2022/23 delivery year, firm-import-floor 2022
+constant, and the Dec-22→31 Transco daily archive hole (EIA published no
+weekly editions 2022-12-22→2023-01-12; the Elliott-week prints are
+structurally unavailable free — same class as the committed Dec-2024 hole).
+
+**In-sample flags (not fixed, calibration owner):** NYISO 2024
+`calibration_reference`/renewable-capacity entries missing (builder pins
+NYISO to (2023, 2025) on a stale rationale); the Edgewood facility-lineage
+drift above; and the NEISO §1.2 landing residuals observed at this branch's
+base (no NEISO 2022 in `actual_lmp*`/tail, no
+`NEISO_2022_renewable_capacity.csv`, `docs/gap-register-2026-07.md` still a
+placeholder stub) — being closed in parallel by the NEISO readiness session
+of the same date (`scripts/land_neiso_2022_readiness.py` + its own
+intake_log entry).
+
+**G-19 status:** the register file now exists
+(`docs/holdout-data-equivalency-register-2026-07.md`) with the NYISO section
+complete; ERCOT/PJM/CAISO/MISO/NEISO sections remain pending their lanes.
+NYISO 2022 remaining blockers are governance, not data: owner
+calibration-complete declaration + register sign-off.
+
 ---
 
 ## 2. D-8 — frozen-coefficient stability (RUN)
