@@ -616,6 +616,7 @@ def run_year(
     zero_forcing_ablation: bool = False,
     fleet_only: bool = False,
     xyear_cache: "list | None" = None,
+    demand: "np.ndarray | None" = None,
 ) -> "tuple[object, FleetContext, object | None, dict] | dict":
     """Solve the single-year calibration dispatch for one ISO-year.
 
@@ -663,6 +664,15 @@ def run_year(
             ``policy.cap_and_trade._power_sector_cap``.
         mass_cap_program: Optional cap label override (see
             ``policy.cap_and_trade._power_sector_cap``).
+        demand: Optional pre-loaded hourly zonal demand array
+            (``(n_zones, hours)``). When ``None`` (the default) it is loaded
+            here via :func:`load_demand`. A caller may thread in the array it
+            already loaded to avoid the duplicate read, but only when that
+            array is byte-identical to what this function would load — i.e.
+            same ``iso_config`` zones/load-shares, ``td_loss_factor``,
+            ``include_interchange`` and ``caiso_demand_clock_realign``, and
+            non-strict demand profile (this function never passes
+            ``strict_demand_profile`` to :func:`load_demand`).
 
     Returns:
         A tuple ``(result, context, result_p1, p2_state)``. ``result`` is the
@@ -1469,14 +1479,22 @@ def run_year(
         )
     zone_names = iso_config.zone_names
 
-    demand = load_demand(
-        iso,
-        year,
-        iso_config,
-        td_loss_factor=config.td_loss_factor,
-        include_interchange=not priced_interchange,
-        caiso_demand_clock_realign=getattr(config, "caiso_demand_clock_realign", False),
-    )
+    # Demand: reuse a caller-supplied array when threaded in (the backcast
+    # orchestrator already loads it once for the must-run residual pass), else
+    # load it here. The caller only threads it when it matches this load
+    # exactly (see the ``demand`` arg docstring), so the two paths are
+    # byte-identical.
+    if demand is None:
+        demand = load_demand(
+            iso,
+            year,
+            iso_config,
+            td_loss_factor=config.td_loss_factor,
+            include_interchange=not priced_interchange,
+            caiso_demand_clock_realign=getattr(
+                config, "caiso_demand_clock_realign", False
+            ),
+        )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config
     )
