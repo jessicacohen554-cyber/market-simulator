@@ -10915,3 +10915,17 @@ commercial CAVEAT; its keeper texts updated).
 
 **Holdouts.** No solve, score, or intake outside 2023-2025 (rule 22). Years
 sequential within each invocation; main and twin sequential (rule 12).
+## 2026-07-12 — MISO keeper PROMOTED: `miso 59 coal-warm` (owner decision, rule 1; supersedes miso-58-rdt-congestion)
+
+Owner-authorized promotion of `2026-07-12-miso-59-coal-warm` (+ registered
+zero-forcing twin) — the warm-boiler committed-band exemption run (see the
+MISO-59 entry above): the fabricated $100/MW cold-start premium on
+self-committed coal removed, zero new parameters, C1 12/16 (free 8/12),
+coal on its 2025 CEMS anchor, RDT anchors held. The two 2025-only FAIL
+regressions vs miso-58 (sysvol gas −7.0%; C5c storage shape r=0.476 on the
+battery-only basis family of the ledgered C5b exception) are accepted per
+rule 1 — the keeper is the most structurally faithful run, not the lowest
+FAIL count — and remain chartered lanes (Southern-gas starvation / regional
+2025 reversal; storage shape under the repaired LMP body).
+keepers.json MISO key + array → miso-59; status.js rebuilt (MISO NOT-YET);
+calibration-keeper-auditor run post-swap.
