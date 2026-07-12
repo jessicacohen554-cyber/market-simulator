@@ -32,10 +32,15 @@ from market_sim.model.capacity import (
     evolve_fleet,
     wright_cost,
 )
-from market_sim.model.storage import compute_storage_annual_cost
+from market_sim.model.storage import STORAGE_TECHS, compute_storage_annual_cost
 from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
-from market_sim.policy.ira import apply_ira_credits_to_lcoe, ira_phaseout_fraction
+from market_sim.policy.ira import (
+    apply_ira_credits_to_lcoe,
+    compute_dispatch_credits,
+    ira_phaseout_fraction,
+    section_45u_credit_per_mwh,
+)
 from market_sim.policy.rps import get_rps_acp, get_rps_target
 
 
@@ -2094,12 +2099,18 @@ class TestIRACreditsToLCOE(unittest.TestCase):
         self.assertEqual(apply_ira_credits_to_lcoe("wind", 50.0, 2028, config), 50.0)
 
     def test_ira_phaseout_fraction(self):
-        config = ScenarioConfig()  # defaults: last_full=2028, end=2033
-        self.assertEqual(ira_phaseout_fraction(2028, config), 1.0)
-        self.assertAlmostEqual(ira_phaseout_fraction(2029, config), 0.8)
-        self.assertAlmostEqual(ira_phaseout_fraction(2030, config), 0.6)
-        self.assertAlmostEqual(ira_phaseout_fraction(2031, config), 0.4)
-        self.assertEqual(ira_phaseout_fraction(2033, config), 0.0)
+        # P-1C statute-triangulated §45Y/§48E STEP schedule (100/75/50/0%),
+        # replacing the earlier undocumented 2028/2033 linear ramp (rule 24
+        # default change). Canonical coverage lives in
+        # tests/test_ira.py::TestIRAPhaseoutFraction; kept here so this
+        # class's geothermal-LCOE path (which reads the same fraction) stays
+        # self-consistent. Defaults: last_full=2033, 75pct=2034, 50pct=2035,
+        # phaseout_end=2036.
+        config = ScenarioConfig()
+        self.assertEqual(ira_phaseout_fraction(2033, config), 1.0)
+        self.assertAlmostEqual(ira_phaseout_fraction(2034, config), 0.75)
+        self.assertAlmostEqual(ira_phaseout_fraction(2035, config), 0.50)
+        self.assertEqual(ira_phaseout_fraction(2036, config), 0.0)
         self.assertEqual(ira_phaseout_fraction(2040, config), 0.0)
 
 
@@ -2831,6 +2842,131 @@ class TestCapacityIntegration(unittest.TestCase):
         # later years accumulate profitable wind/solar builds.
         self.assertGreater(yearly_cap[2030], yearly_cap[2026])
         self.assertGreater(yearly_cap[2030], 0.0)
+
+
+class TestIRANuclear45UAndCleanPhaseout(unittest.TestCase):
+    """IRA §45U existing-nuclear PTC in the retirement screen, plus the
+    §45Y/§48E step schedule's effect on storage entry economics and the
+    (unchanged) wind/solar hard cliff (P-1C).
+    """
+
+    T = 10
+
+    def _run_nuclear_screen(
+        self, year, loss_counter, *, fixed_om, eac_price=0.0, price=20.0
+    ):
+        """Screen one 100-MW nuclear unit; return (survivor_ids, loss_year).
+
+        Scales are hand-chosen so §45U (max $15/MWh while ``price`` <= the
+        $25/MWh gross-receipts threshold) is the pivotal revenue: energy
+        margin = price x 100 MW x T; §45U revenue = credit x 100 MW x T;
+        going-forward cost = ``fixed_om`` $/kW-yr x 100 MW x 1000. ERCOT
+        default => no capacity or AS revenue for nuclear, so energy + the
+        attribute payment is the whole stack; ``eford=0`` makes the pro-forma
+        margin basis the full 100 MW.
+        """
+        config = ScenarioConfig(fixed_om_nuclear=fixed_om, eac_price_nuclear=eac_price)
+        fleet = [_gen("N0", "nuclear", pmax=100.0, eford=0.0)]
+        arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
+        dispatch = SimpleNamespace(dispatch=np.full((1, self.T), 100.0))
+        prices = np.full((1, self.T), price)
+        mc = np.zeros((1, self.T))
+        survivors, losses, _ = apply_economic_retirements(
+            fleet,
+            arrays,
+            dispatch,
+            prices,
+            config,
+            {"N0": loss_counter},
+            peak_demand=0.0,
+            mc=mc,
+            year=year,
+        )
+        return [g.unit_id for g in survivors], losses.get("N0")
+
+    def test_section_45u_credit_enters_retirement_seam(self):
+        # Sanity that the screen actually consults §45U: at price=20 (<25) the
+        # full $15/MWh credit is live in 2030 and fully expired in 2033.
+        config = ScenarioConfig()
+        self.assertEqual(section_45u_credit_per_mwh(2030, 20.0, config), 15.0)
+        self.assertEqual(section_45u_credit_per_mwh(2033, 20.0, config), 0.0)
+
+    def test_nuclear_survives_when_45u_covers_fom_gap(self):
+        # price = 20 $/MWh (< the 25 $/MWh gross-receipts threshold => full
+        # §45U = $15/MWh). Over T=10 h at 100 MW: energy margin = 20 x 100 x
+        # 10 = 20_000; §45U revenue = 15 x 100 x 10 = 15_000; going-forward =
+        # 0.30 x 100 x 1000 = 30_000. With §45U (2030 <= ira_45u_last_year):
+        # 20_000 + 15_000 = 35_000 >= 30_000 -> profitable -> counter resets.
+        # The unit sat one loss year short of the nuclear threshold (3), so
+        # §45U is exactly what keeps it online.
+        survivors, loss = self._run_nuclear_screen(2030, 2, fixed_om=0.30)
+        self.assertEqual(survivors, ["N0"])
+        self.assertEqual(loss, 0)
+
+    def test_nuclear_retires_after_45u_expiry(self):
+        # Same unit and gap, but 2033 > ira_45u_last_year (2032): §45U = 0, so
+        # energy alone (20_000) < going-forward (30_000) -> a 3rd consecutive
+        # loss year -> the unit retires.
+        survivors, loss = self._run_nuclear_screen(2033, 2, fixed_om=0.30)
+        self.assertEqual(survivors, [])
+        self.assertIsNone(loss)  # retired units drop out of the loss counter
+
+    def test_45u_and_eac_nuclear_do_not_stack(self):
+        # §45U and eac_price_nuclear (ZEC/CES) both support nuclear retention
+        # but MUST NOT stack (rule 19): the screen credits max(§45U, eac), not
+        # their sum. Construct a gap only their SUM could close: price=20 =>
+        # §45U=$15/MWh, eac_price_nuclear=$15/MWh; energy=20_000, going-forward
+        # = 0.40 x 100 x 1000 = 40_000. max(15,15) x 100 x 10 = 15_000 =>
+        # 35_000 < 40_000 (retire); a buggy sum (30 x 1000 = 30_000) => 50_000
+        # >= 40_000 would keep it online. All three configs below — both
+        # credits, eac-only, §45U-only — must land on the SAME outcome
+        # (retirement), proving the second credit adds nothing.
+        both, _ = self._run_nuclear_screen(2030, 2, fixed_om=0.40, eac_price=15.0)
+        eac_only, _ = self._run_nuclear_screen(2033, 2, fixed_om=0.40, eac_price=15.0)
+        u45_only, _ = self._run_nuclear_screen(2030, 2, fixed_om=0.40, eac_price=0.0)
+        self.assertEqual(both, [])
+        self.assertEqual(eac_only, [])
+        self.assertEqual(u45_only, [])
+
+    def test_storage_entry_cost_steps_across_45y48e_transition(self):
+        # §45Y/§48E storage ITC phases down 100/75/50/0% across the 2033->2036
+        # breakpoints (ira_phaseout_fraction). The ITC discounts capex, so as
+        # the credit STEPS DOWN the storage entry cost STEPS UP, holding flat
+        # on the plateaus (2032-2033 at 100%, 2036+ at 0%).
+        config = ScenarioConfig()
+        name = "li_ion_4hr"
+        self.assertIn(name, STORAGE_TECHS)
+        cost = {
+            y: compute_storage_annual_cost(name, y, config)
+            for y in (2032, 2033, 2034, 2035, 2036, 2037)
+        }
+        # 100% plateau: 2032 and 2033 identical.
+        self.assertAlmostEqual(cost[2032], cost[2033])
+        # Strictly rising as the credit steps 100 -> 75 -> 50 -> 0%.
+        self.assertLess(cost[2033], cost[2034])
+        self.assertLess(cost[2034], cost[2035])
+        self.assertLess(cost[2035], cost[2036])
+        # 0% plateau: 2036 and 2037 identical (credit fully expired).
+        self.assertAlmostEqual(cost[2036], cost[2037])
+        # The step boundaries are exactly the phase-down schedule.
+        self.assertEqual(ira_phaseout_fraction(2033, config), 1.0)
+        self.assertEqual(ira_phaseout_fraction(2034, config), 0.75)
+        self.assertEqual(ira_phaseout_fraction(2035, config), 0.50)
+        self.assertEqual(ira_phaseout_fraction(2036, config), 0.0)
+
+    def test_wind_solar_keep_hard_cliff_not_the_45y_ramp(self):
+        # Wind/solar credits are a HARD binary cliff at ira_wind_solar_last_year
+        # (OBBBA, 2027), NOT the §45Y/§48E step schedule the other clean techs
+        # follow. Wind dispatch MC is -ira_ptc_wind through 2027 and 0 after;
+        # solar never affects dispatch MC. Guard: at 2034 — where the step
+        # schedule sits at 0.75 — wind/solar are already fully off, proving
+        # they do not ride the ramp.
+        config = ScenarioConfig()
+        self.assertEqual(
+            compute_dispatch_credits(config, 2027), (-config.ira_ptc_wind, 0.0)
+        )
+        self.assertEqual(compute_dispatch_credits(config, 2028), (0.0, 0.0))
+        self.assertEqual(compute_dispatch_credits(config, 2034), (0.0, 0.0))
 
 
 if __name__ == "__main__":
