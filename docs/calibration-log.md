@@ -10791,3 +10791,127 @@ No parameter, offer curve, floor, or derive script changed (rules 13/21/23/24);
 `ercot_storage_as_deployment` and its gate byte-identical; keeper stays
 `2026-07-10-ercot56-nucwin`; dashboard unchanged (no run produced — rule 15
 N/A).
+## 2026-07-12 — G-21b: the C2 preliminary-vintage fallback's per-fuel split CEMS-anchored (scorer-layer, all-ISO) — MISO-58's sysvol FAIL was substantially a fabricated EIA-930 attribution artifact; PJM-98 honestly EXPOSED (+5.8% coal)
+
+**The check the miso-58 handoff mandated ("does the COAL_BIT/CC split survive
+on the measured CEMS basis — this may be partly a scorer-layer issue too") —
+it was.** The G-21 combined-fossil reconcile (2026-07-11, 870d6ef) fixed C1's
+`classFull`, but `score_sysvol`'s PRELIMINARY-vintage fallback (both MISO 2025
+families; PJM 2025 gas+coal; small gas rows elsewhere) still gated the RAW
+EIA-930 per-fuel cell. Re-running the G-21 cross-ISO probe on today's data
+confirms the BA-reported 930 gas/coal attribution is broken exactly where it
+gates: **MISO 930 coal runs −16.9/−18.0/−20.9 TWh below CEMS** (2023/24/25;
+every coal unit ≥25 MW is metered) with the mirror booked in NG:NG
+(g923−g930 −13.9/−16.3), and **PJM 930 coal runs +10.1/+7.3/+11.1 above CEMS**.
+MISO-58's C2-2025 FAIL pair (gas −10.1% / coal +7.6%) is that swap, not model
+error.
+
+**Fix (mirrors 870d6ef's "correct the level, never the split" — here: keep the
+930 level, correct the SPLIT with measured data).** In the fallback only: an
+incomplete COAL family gates against the CEMS anchor — CAMPD coal
+(`e930.coal_cems`, spliced into all 18 bench parts by the new
+`scripts/splice_bench_coal_cems.py`, byte-identical to the G-21 probe's
+construction) × the run's own complete-vintage CEMS→923-grid ratio
+(`_fallback_coal_anchor`, k≈0.96 MISO / 1.01 PJM — the measured
+parasitic/coverage gap). An incomplete GAS family gates against the 930
+COMBINED fossil total minus the coal anchor (classFull coal when the coal
+family is complete, else the CEMS anchor); the OTHER/biomass fold-in
+deflation is unchanged. Where 930 agrees with CEMS the construction
+self-neutralizes (ERCOT byte-equivalent — anchor safe); a bench part without
+`coal_cems` or a run with no complete coal vintage keeps the legacy raw-930
+cell, labelled. Zero model tunables; scorer+benchmark layer only; 5 new
+verdict tests (114 pass).
+
+**Re-scores (keepers re-score in place, rubric v2.2 pattern):**
+- **MISO-58 (keeper) + twin: sysvol FAIL → commercial CAVEAT** — 2025 coal
+  +0.9% vs the CEMS anchor (PASS), gas −4.9% (CAVEAT). FAIL set now
+  fuelmix/price_mean/price_tail (3, was 4). Sidecar + both attestations
+  annotated; the class-level lane evidence is REFRAMED (see the companion
+  MISO-59 entry): the 2023/24 coal under-run is real and BIGGER on CEMS
+  (family −34/−42 TWh), while "2025 model over-coals" is FALSE (CEMS-corrected
+  2025: coal −2.9%, gas −3.3%).
+- **PJM-98 (keeper) + twin: C2 CAVEAT → FAIL, honestly** — the corrected
+  coal target exposes a real 2025 model coal over-run (+5.8% vs the CEMS
+  anchor ≈ 135.9 TWh; the raw 930 cell 145.9 was hiding it — the same defect
+  G-21 documented for PJM 2024 C1). Its 2025 gas +3.9% CAVEAT improves to
+  +1.0% PASS (mirror correction). Determination stays NOT-YET (fail set was
+  already non-empty); this is a discovered open lane for PJM, not a
+  regression of the fix.
+- ERCOT/CAISO/NYISO/NEISO: unchanged (±0.1pp magnitude drift on NEISO's tiny
+  0.26 TWh coal anchor).
+
+status.js rebuilt; metrics.json re-written for miso-58 main+twin and pjm-98
+main+twin. Rule 15: the corrected benchmark lands regardless of score
+direction — it flatters MISO and indicts PJM, and both are the truth.
+## 2026-07-12 — MISO-59: the mid-merit lane executed — the fabricated cold-start premium on self-committed coal removed (`coal_warm_committed`); C1 12/16 (was 9/16), coal lands on its 2025 CEMS anchor; two honest 2025-only regressions chartered; keeper stays miso-58 pending owner
+
+**The scorer-basis check came FIRST (the miso-58 handoff's mandate) and
+reframed the lane** — see the G-21b entry above and FINDING §12: the C2-2025
+"COAL over-run" was the EIA-930 attribution swap, the REAL miss is the
+2023/24 coal under-run at ~2× the handoff's number (CEMS-basis family
+−34/−42 TWh; classFull COAL_BIT −18.2/−17.1, COAL_PRB −9.2/−13.8, mirrored
+by CT_PEAKER +8.8/+16.0 and CC_REGULAR +2.9/+9.4 — the old "+9/+9 CC" figure
+was the pre-G-21 scorer basis).
+
+**Model-side root cause, measured (FINDING §12).** Dispatch forensics on the
+replayed miso-58 2023 solve (on/off LMP crossing points): COAL_PRB committed
+cleared only from $34.6 vs ~$26 static measured-fuel SRMC (F923 delivered
+$2.2-2.3/MMBtu), COAL_BIT from $43.8 vs ~$29-31 — while the same plants'
+fuel-free mustrun bands held their boilers ONLINE 84-98% of hours. The wedge
+is `compute_monthly_markup`'s $100/MW cold-start amortization (committed band
+only, raw P0 run lengths, no measured ceiling). It contradicts the IMM's own
+measured conduct (miso-53 SOM adjudication: offers AT cost, system markup
++3.0%/−2.5% — self-committed units recover start costs outside the energy
+offer). The ERCOT 98a/98b rejection of the exemption was ERCOT-shaped (their
+2023 coal was already calibrated; their CT/ST under-ran) and does not cross
+the ISO boundary; MISO's residual is its exact mirror.
+
+**miso-59 (`2026-07-12-miso-59-coal-warm` + rule-20 zero-forcing twin):**
+miso-58 meta.json strict replay + `coal_warm_committed=True` — one existing
+physics-gated boolean, ZERO new parameters (DOF ledger 14 entries, the
+mechanism auto-generates as a measured-physical zero-scalar row; residuals
+unchanged at 2). LOYO (rule 22): no year-fitted value exists — satisfied by
+construction.
+
+**Result (NOT-YET, rubric v2.4 on the CEMS-anchored C2 basis):**
+- **Wedge removed, merit order repaired:** PRB committed crossing $34.6 →
+  $30.4, BIT $43.8 → $34.4; coal +9.9/+9.1/+5.1 TWh; 2025 coal lands ON its
+  CEMS anchor (+3.7% commercial CAVEAT). C1 all **12/16 (was 9/16), free 8/12
+  (was 5/12)** — 2023 CT_PEAKER and 2023+2024 COAL_PRB rows all clear into
+  band. C5a CO₂ −8.4 → −7.2% both years (commercial CAVEAT). Remaining C1
+  FAILs: COAL_BIT −15.3/−15.3 (was −18.2/−17.1), CC_REGULAR 2024 +8.2,
+  CT_PEAKER 2024 +11.9 (was +16.0) — the residual coal deficit is the
+  adjudicated commitment-posture family (miso-43: linear form insufficient,
+  window rows deferred), NOT this lane re-tuned.
+- **Two honest 2025-only regressions (FAIL set 5 vs miso-58's 3):**
+  (a) sysvol-2025 gas deepens −5.0 → −7.0% (the added 2025 coal displaces gas
+  whose under-run belongs to the open Southern-gas-starvation / regional
+  reversal lane — FINDING §12 RDT linkage); (b) C5c-2025 storage shape flips
+  PASS → FAIL at r=0.476 under a ~$1 flatter LMP body — on the battery-only
+  EIA-930 basis, the same benchmark family as the ledgered C5b exception
+  (MISO publishes no pumped-storage series).
+- **RDT anchors HOLD (watched, not tuned):** S→N mean-flowing 1,551/1,523 MW
+  (miso-58: 1,596/1,572), separation-when-binding $2.48/$2.43 vs SOM ~$3,
+  August 2023/24 within ~$1.2. 2025 direction unchanged (N→S binding 9.7 →
+  10.9% of hours; separation-when-S→N-binding $2.81 → $3.12).
+- **Twin within $0.06-$0.11/MWh of the main all three years** — the
+  mechanism's effect is carried economically, not by floors. D1/D2/D4 pass;
+  CT forced 7.4/4.7/8.9% vs the 15% cap.
+
+**Keeper: stays miso-58; promotion recommended to owner on rule-1 grounds**
+(the run removes a fabricated offer premium contradicting measured conduct,
+zero scalars, RDT anchors hold; the FAIL-count regression is two 2025-only
+rows whose root causes are chartered lanes, and rule 1 forbids rejecting a
+structurally-correct mechanism on the residual). Registered: main + twin;
+retention prune: miso-45-cc-capacity + twin (15-main cap).
+
+**G-21b hardening en route:** `dashboard_add_run`'s bench regen silently
+dropped the post-hoc `coal_cems` splice — the anchor now builds INSIDE the
+bench renderer (`render_calibration_html`, dispatch-class coverage, k-ratio
+coverage-invariant) and the splice script is DELETED (two writers with
+different coverage bases would contaminate k). miso-58/59 main+twin
+re-scored on the final basis (miso-58 main C2-2025 gas −4.9 → −5.0%, still
+commercial CAVEAT; its keeper texts updated).
+
+**Holdouts.** No solve, score, or intake outside 2023-2025 (rule 22). Years
+sequential within each invocation; main and twin sequential (rule 12).

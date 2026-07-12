@@ -16,7 +16,7 @@
   "rubric_version": 2.4,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape, price_tail, shape"
+    "undocumented out-of-tolerance (FAIL) criteria: sysvol, price_mean, price_shape, price_tail, shape"
   ],
   "notes": [
     "C8 2024 CT_PEAKER: grounded above budget \u2014 20.9% forced (4.0189 of 19.2447 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.947 (\u22650.8) & off-peak CV ratio 0.744 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
@@ -31,8 +31,7 @@
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
+      "status": "FAIL"
     },
     "price_mean": {
       "label": "C3a mean LMP",
@@ -88,9 +87,7 @@
   "caveats": {
     "protective": [],
     "ledgered": [],
-    "commercial_band": [
-      "C2 system volume (gas/coal families)"
-    ],
+    "commercial_band": [],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
@@ -99,9 +96,9 @@
   "grade_summary": {
     "scored": 10,
     "target_grade": 5,
-    "commercial_grade": 1,
+    "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 4
+    "fails": 5
   },
   "free_class_score": {
     "iso": "PJM",
