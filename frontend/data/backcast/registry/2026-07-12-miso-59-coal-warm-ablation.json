@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-12-miso-59-coal-warm-ablation",
+ "label": "miso 59 coal warm ablation",
+ "date": "2026-07-12",
+ "shorthand": "miso-59-coal-warm-ablation",
+ "definition": "(ABLATION TWIN of 2026-07-12-miso-59-coal-warm, rule 20) miso-59 zero-forcing ablation: identical recipe \u2014 miso-58 keeper replay + coal_warm_committed \u2014 with merchant floors neutralized; structural mechanisms (South-seam split, RDT TCDC, warm-boiler offer exemption) stay armed, they are market structure / offer pricing, not floors. SCORED NOT-YET, FAIL set IDENTICAL to the main: fuelmix, sysvol, price_mean, price_tail, storage_shape (C2-2025 gas -7.1% FAIL / coal +3.8% CAVEAT vs the main's -7.0%/+3.7%). Annual load-weighted price within $0.06-$0.11/MWh of the main all three years \u2014 the fit is carried economically, not by forcing.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-12-miso-59-coal-warm-ablation.js",
+ "bundle": "results/calibration/miso59_coal_warm-ablation"
+}
