@@ -6,7 +6,11 @@ Requirement area consumed by the local-capacity dispatch rows
 ``market_sim.data.local_capacity``; design:
 docs/ramp-locational-design-2026-07.md §3). Phase 1 covers the two SP15 load
 pockets the evening-CT finding names: **LA Basin** and **San Diego-Imperial
-Valley**.
+Valley**. Phase 2 (caiso-79 STEP-0) adds **Greater Bay** — county rule for
+the five core Bay counties plus the LCT §3.3.5.1 substation-rule overrides
+(Moss Landing bus in; Lambie SW Sta in) — to ground the local-commitment
+driver's unit list (the GB import cap itself was measured non-binding:
+results/calibration/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md).
 
 Assignment logic, most-authoritative first:
 
@@ -56,6 +60,7 @@ from market_sim.data.fleet import load_fleet_from_csv  # noqa: E402
 from market_sim.data.local_capacity import (  # noqa: E402
     BOUNDARY_COUNTIES_CAISO,
     COUNTY_AREA_CAISO,
+    GREATER_BAY,
     LA_BASIN,
     caiso_area_of,
 )
@@ -74,6 +79,20 @@ _NQC_OVERRIDES: dict[int, str | None] = {
     55295: None,  # Blythe Energy (BUCKBL_2_PL1X3: "CAISO System")
     55518: None,  # High Desert, Victorville (HIDSRT_2_UNITS: "CAISO System")
     55077: None,  # Desert Star (Clark County NV; "CAISO System")
+}
+
+# Greater Bay substation-rule overrides (Final 2023 LCT §3.3.5.1 area
+# definition — the delineating-substation list, not a county line): the Moss
+# Landing bus is IN ("Los Banos is out Moss Landing is in", Monterey county),
+# and the Lambie switching station is IN ("Lambie SW Sta is in Vaca Dixon is
+# out", Solano county) — the three Lambie-bus LM6000 peakers. Every other
+# Monterey / Solano / Santa Cruz plant is outside the area (Coburn, Las
+# Aguilas, Vaca Dixon all out).
+_SUBSTATION_OVERRIDES: dict[int, str] = {
+    260: GREATER_BAY,  # Moss Landing (Moss Landing 500/230 kV bus)
+    55625: GREATER_BAY,  # Creed Energy Center (Lambie bus)
+    55626: GREATER_BAY,  # Lambie Energy Center (Lambie bus)
+    55627: GREATER_BAY,  # Goose Haven Energy Center (Lambie bus)
 }
 
 
@@ -104,6 +123,9 @@ def main() -> None:
         if pid in _NQC_OVERRIDES:
             area = _NQC_OVERRIDES[pid]
             source = "nqc-list"
+        elif pid in _SUBSTATION_OVERRIDES:
+            area = _SUBSTATION_OVERRIDES[pid]
+            source = "substation-rule"
         elif p.county in COUNTY_AREA_CAISO:
             area = COUNTY_AREA_CAISO[p.county]
             source = "county-rule"

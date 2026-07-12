@@ -66,6 +66,7 @@ logger = logging.getLogger(__name__)
 
 LA_BASIN = "LA Basin"
 SD_IV = "San Diego/Imperial Valley"
+GREATER_BAY = "Greater Bay"
 
 # ---------------------------------------------------------------------------
 # Area assignment rules (shared by scripts/derive_lcr_membership.py and the
@@ -73,12 +74,27 @@ SD_IV = "San Diego/Imperial Valley"
 # ---------------------------------------------------------------------------
 
 # Counties wholly inside a covered area for CAISO-metered plants (LADWP is a
-# separate BA and never enters the fleet).
+# separate BA and never enters the fleet). Greater Bay counties per the Final
+# LCT area definition (§3.3.5.1 tie-line/substation list): the five core Bay
+# counties lie wholly inside; Sonoma/Napa/Marin belong to the separate North
+# Coast/North Bay area (Lakeville/Ignacio are OUT) and are NOT covered here;
+# the Monterey (Moss Landing bus IS in) and Solano (Lambie SW Sta IS in,
+# Vaca Dixon out) boundary plants are pinned by the substation-override table
+# in scripts/derive_lcr_membership.py. NOTE: Greater Bay has NO
+# LocalCapacityAreaSpec registration (caiso-79 STEP-0 measured the LCT import
+# cap as non-binding — FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md);
+# the membership rows exist to ground the local-commitment driver's unit
+# list, not an import-limited zone.
 COUNTY_AREA_CAISO: dict[str, str] = {
     "Los Angeles": LA_BASIN,
     "Orange": LA_BASIN,
     "San Diego": SD_IV,
     "Imperial": SD_IV,
+    "San Francisco": GREATER_BAY,
+    "San Mateo": GREATER_BAY,
+    "Santa Clara": GREATER_BAY,
+    "Alameda": GREATER_BAY,
+    "Contra Costa": GREATER_BAY,
 }
 # Counties the LA Basin boundary bisects (Devers/Mira Loma IN; Lugo/Red Bluff
 # OUT per the LCT report area definition), resolved geographically: south of
