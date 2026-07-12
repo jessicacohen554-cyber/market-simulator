@@ -40,6 +40,56 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-12 — PJM — pjm-99 (G-22 lever A EXECUTED: measured energy-offer surface): INERT — price-identical to pjm-98; the "too-cheap top" re-scoped to the sub-actual MID-CURVE + DA procurement depth (PROBE — REJECTED; keeper stays pjm-98)
+
+The G-22 charter's lever A built exactly to spec (the neiso-58 analogue,
+single delta off the pjm-98 keeper): the measured condition-binned
+top-of-curve offer surface from all 36 months of PJM DataMiner2
+`energy_market_offers` (25.95M unit-hours, 3,595 units; physics-segmented —
+fast-start `min_runtime <= 2 h` → CT_PEAKER, mid-runtime + ecomin-share →
+CC_REGULAR; per-hour footprint validated: CC-like 72.1 GW/h vs model class
+59.8 GW, CT-like 15.4 GW/h vs 26.0 GW installed), frozen into
+`pjm_offer_surface_condbinned.json` and posted onto 5-rung CC/CT peak-band
+ladders at the P1-only `mc_bid_adjust` seam
+(`ScenarioConfig.pjm_offer_surface_conditional`; top-bin walls CC ≈
+$119/$270, CT ≈ $186/$310 at 2024 gas — reproducing the measured $200–500
+band on ~4 GW). Zero fitted scalars; rule-13/20/21 discipline throughout.
+
+**Result: byte-identical prices to the same-day rule-16 baseline
+(`pjm98_baseline_20260712`) in all three years** — LW mean 28.47/27.15/37.23,
+top-150 30.7/34.4/44.5, max 48/129/81, all to the cent; the repriced upper
+rungs dispatched 0.3 GWh of a 0.84–1.72 TWh peak band. The mechanism engaged
+(497 repriced rows/year) and entered the P1 objective; it is inert because
+the model's marginal unit at the missed summer peaks sits at $30–45 with
+21–24 GW of idle thermal offered BELOW the actual DA price (idle coal p50
+$28.7, CT econ $42.6, ST_GAS $42.8) — the peak bands (5.0×/4.0×HR ≈ $91–134)
+were ALREADY extramarginal, and repricing capacity above the margin cannot
+move an LP dual. This falsifies the charter's "too-cheap top-of-stack"
+scoping for PJM (it held for ERCOT/NEISO because those fleets get tight
+enough for the peak rungs to become marginal): the price-capping capacity is
+the **$28–115 mid-curve**, and the measured curve clears $76–136 because real
+DA cleared demand (load + exports + reserves + virtuals) eats ~9–10 GW deeper
+into the $35–200 band than the model's served load. Re-scoped levers (next
+session): **A′ — measured MID-CURVE (econ-band) surface** from the same
+DataMiner2 corpus (needs a P0-safe design; the coal side must reconcile with
+take-or-pay/passthrough, rule 19), and **B — DA procurement depth as a
+precondition, not a follow-up** (the handoff's A→B dependency was backwards).
+Full decomposition: `docs/FINDING-pjm-offer-surface-noop-2026-07.md`.
+
+Registered `2026-07-12-pjm-99-offer-surface` (NOT-YET; C1 PASS 16/16 on the
+corrected G-21 bench, C3a/b/c FAIL unchanged — the shared price-formation
+gap). No ablation twin (rejected probe, rule 21 scopes twins to keepers; the
+delta is inert so the twin would equal pjm-98's). Scorer note recorded in the
+sidecar: the C8 CT_PEAKER "grounded" flip vs pjm-98 is rung-split floor-
+attribution noise (0.02 TWh, 0.1% of class), not a forcing change. The
+mechanism + frozen surface STAY in the codebase default-off (rule 1 — real,
+measured, correctly clamped; they bind the moment the mid-curve/procurement
+is fixed). Keeper stays `2026-07-11-pjm-98-cc-mustrun`. Locally-regenerated
+PJM bench parts were deliberately NOT committed — the local regen drifts from
+the owner-promoted G-21 corrected basis (CHP classFull, CT_PEAKER co2, 3
+plants incl. 2406 halved); the committed corrected bench remains the scoring
+basis.
+
 ### 2026-07-11 — CAISO — owner decision G-61(b) EXECUTED: startup-aware RA bridge ADOPTED — already shipped in keeper caiso-76; verified, no re-solve; keeper stays caiso-76
 
 Owner decision G-61(b) (owner-decision-briefs-2026-07-08.md Decision 1, decided

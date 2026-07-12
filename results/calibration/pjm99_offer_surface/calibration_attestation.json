@@ -1,0 +1,16 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "pjm-99 offer-surface 2026-07-12: pjm-98 cc-mustrun recipe VERBATIM (byte-faithful replay off its meta.json) + pjm_offer_surface_conditional=True — the G-22 lever-A measured PJM energy-offer surface. REJECTED (no-op) probe, not a keeper candidate: the A/B against the same-day rule-16 baseline (pjm98_baseline_20260712) is price-identical in all three years; see docs/FINDING-pjm-offer-surface-noop-2026-07.md.",
+  "note": "One mechanism enters vs pjm-98: pjm_offer_surface_conditional (CC_REGULAR + CT_PEAKER peak bands split into 5 equal-capacity rungs at the resolved peak height — a structural no-op — with the upper rungs repriced P1-only to the MEASURED condition-binned top-of-curve distribution from PJM DataMiner2 energy_market_offers, 36 months 2023-2025, 25.95M unit-hours; scripts/derive_pjm_offer_surface.py). Rule-13 admissible: measured OFFER prices over the model's own HH-daily + PJM-basis gas series and the model fleet's own cap-weighted base-HR (round-trip basis); clearing prices validation-only. Segments selected by unit physics (fast-start min_runtime <= 2 h; CC-like runtime + ecomin share), never fuel labels; segment footprint validated per-hour (CC-like 72.1 GW/h vs model class 59.8 GW; CT-like 15.4 GW/h vs 26.0 GW installed). Surface frozen against residuals (rule 20). The mechanism engaged in every year (497 repriced peak-rung rows) and entered the P1 objective; the repriced rungs never became marginal (0.3 GWh dispatched across 3 years), so prices are byte-identical to pjm-98 — the model's summer-peak dual is capped by the 21-24 GW sub-actual-price mid-curve (idle coal $28-55, CT econ $42-115, ST_GAS $42-110), not by the peak band. Honesty gate honoured: the surface does NOT move in response to this result.",
+  "residuals_note": "Zero residual movement by construction: every C1-C8 metric is identical to the same-day pjm-98 baseline (LW mean 28.47/27.15/37.23 vs actual 29.33/29.79/43.71; top-150 LW 30.7/34.4/44.5 vs 76.2/82.8/136.2). The probe's value is diagnostic: it falsifies the G-22 charter's 'reprice the top of the stack' scoping for PJM and re-scopes the summer-peak residual to the measured mid-curve ($35-200 band) and DA procurement depth (docs/FINDING-pjm-offer-surface-noop-2026-07.md §Re-scoped levers)."
+ },
+ "dof_ledger": {
+  "new_free_parameters": [],
+  "note": "The delta adds ZERO fitted degrees of freedom. Every surface parameter is measured from source data (per-unit median top-of-curve multipliers, capacity-weighted quantile rungs) or inherited from the ERCOT/NEISO precedent as a fixed structural constant (net-load bin edges 0.80/0.90/0.97; 5 rungs; ratio clamp >= 1; price cap 0.95 x VOLL). The base-HR divisors (CC 6.372, CT 11.697) are the model fleet's own cap-weighted values (round-trip identities, not tunables). No ablation twin is required: the probe is REJECTED, not a keeper candidate (rule 21 scopes twins to keepers), and its zero-forcing twin would be numerically identical to pjm98_cc_mustrun-ablation plus an inert markup."
+ }
+}
