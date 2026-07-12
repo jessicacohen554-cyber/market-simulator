@@ -79,7 +79,6 @@ def _report(config, fleet_arrays, zone_names):
         fast = ~unit_postured & m
         post = unit_postured & m
         hyd = (fu == "hydro") & m
-        gas_fast = fast & np.isin(fu, ["gas"]) if "gas" in set(fu) else fast
         return {
             "fast_start_ramp": float(r[fast].sum()),
             "fast_start_ex_hydro": float(r[fast & ~(fu == "hydro")].sum()),
