@@ -3,7 +3,7 @@
  "free_parameters": {
   "schema": "dof-ledger/v1",
   "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-  "n_entries": 12,
+  "n_entries": 13,
   "n_residual": 2,
   "entries": [
    {
@@ -129,6 +129,14 @@
     "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
    },
    {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_MISO.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=39 solves (audit \u00a75.1 + miso-39)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
     "name": "MISO_SEAM_LADDER_BY_YEAR",
     "where": "interchange_config.py MISO seam band-price ladders",
     "identification": "measured-physical",
@@ -215,10 +223,10 @@
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
   "attested_by": "miso-57 RDT-congestion 2026-07-11: the miso-56 candidate meta.json replayed in full (scripts/probes/_miso57_rdt_congestion.py, strict RENAME/SKIP signature-check machinery \u2014 errors on unmapped keys) with exactly two deliberate changes: (1) miso_south_seam_split \u2014 the South seam's reference-price bands re-home onto their own external zone (transmission.split_miso_south_external_node), severing the shared-bus wheel that let energy flow South->external->Midwest without touching any priced band \u2014 a fabricated free 3,000 MW bypass around the RDT contract path, measured by the 2025 diagnostic probe at a 1,255 MW summer mean (1,563 of 2,208 summer hours; 7.7 TWh/yr) while the RDT S->N link carried 54 MW mean and saturated 13 h/yr; (2) miso_rdt_tcdc \u2014 the static JOA contract limits (3,000 N->S / 2,500 S->N) become the published operating representation: the 92% default derate as the free tier and the two-step RDT Transmission Constraint Demand Curve ($40/MWh at the modeled limit, $500/MWh from 102%, hard bound at contract) as priced one-way tiers (TransferLink.flow_cost; 2024 MISO SOM \u00a7III.B, MISO/SPP JOA Attach. A). Zero fitted scalars: both mechanisms carry only published market parameters; nothing chosen against a residual (rules 1/5/13/23).",
-  "note": "Lane scope was adjudicated on measured data BEFORE the build (2024 SOM \u00a7II.E/III.B; IMM Summer-2025 quarterly pp.4-6/29-31): summer-2025 RDT flows were predominantly South->North with a $9.31/MWh Midwest-South separation and $41M RDT+RPE congestion (+121% YoY), while the model carried ~$0 separation because the shared external bus bypassed the RDT entirely. The deliberately conservative parameter choice is the published 92% DEFAULT derate, not the deeper condition-driven operator derates (utilization averaged 84% of contract when binding in 2024 \u2014 no published hourly derate series exists), so binding-hour congestion is expected to UNDER-shoot the measured separation rather than fit a haircut (rule 13). The RPE (Reserve Procurement Enhancement, $200 demand value, additive with the RDT TCDC in real violations) is NOT modeled \u2014 a documented gap in the same direction (under-separation). August 2023/24 holds are watched, not tuned: the derate+TCDC also applies there (RDT bound >25% of RT intervals in 2024 at ~$3/MWh average separation, so mild added separation is the structurally correct direction). ZERO-FORCING ABLATION TWIN of 2026-07-11-miso-57-rdt-congestion (rule 20): merchant floors off, structural floors kept \u2014 the topology split and RDT TCDC are market structure, not floors, and stay armed."
+  "note": "Lane scope was adjudicated on measured data BEFORE the build (2024 SOM \u00a7II.E/III.B; IMM Summer-2025 quarterly pp.4-6/29-31): summer-2025 RDT flows were predominantly South->North with a $9.31/MWh Midwest-South separation and $41M RDT+RPE congestion (+121% YoY), while the model carried ~$0 separation because the shared external bus bypassed the RDT entirely. The deliberately conservative parameter choice is the published 92% DEFAULT derate, not the deeper condition-driven operator derates (utilization averaged 84% of contract when binding in 2024 \u2014 no published hourly derate series exists), so binding-hour congestion is expected to UNDER-shoot the measured separation rather than fit a haircut (rule 13). The RPE (Reserve Procurement Enhancement, $200 demand value, additive with the RDT TCDC in real violations) is NOT modeled \u2014 a documented gap in the same direction (under-separation). August 2023/24 holds are watched, not tuned: the derate+TCDC also applies there (RDT bound >25% of RT intervals in 2024 at ~$3/MWh average separation, so mild added separation is the structurally correct direction)."
  },
  "disclosures": {
-  "note": "SCORED NOT-YET (rubric v2.4) -- ZERO-FORCING ABLATION TWIN. FAIL set: fuelmix, sysvol, price_mean, price_tail (one fewer than the main -- drops co2). Annual load-weighted price within $0.09/MWh of the main all three years: the fit is carried economically, confirming the RDT mechanisms are structure, not forcing. C5b storage the ledgered benchmark-basis CAVEAT.",
+  "note": "SCORED NOT-YET (rubric v2.4). FAIL set: fuelmix, sysvol, price_mean, price_tail -- ONE FEWER than the outgoing miso-56 keeper, which additionally FAILs co2 (C5a): the RDT dispatch shift improves system CO2 from a FAIL to a commercial-band CAVEAT (-8.4%/-8.4% 2023/2024). The RDT mechanisms reproduce three measured in-window anchors (2023/24 S->N mean flow, 2024 binding frequency, separation-when-binding) and move 2025 annual C3a -13.3% -> -11.7% (+1.6 pts); July-2025 -18.8 is unchanged (ELMP ex-post/emergency + deeper operator derates + RPE, none fabricated here). August 2023/24 hold clean (+0.5/+0.5). The 2025 residual is root-caused to an upstream RDT direction reversal (the COAL_BIT/CC mid-merit split), not a transmission limit -- rule 1 forbids tightening the derated limit against it. C5b storage remains the ledgered benchmark-basis CAVEAT (EIA-930 has no MISO PS series).",
   "items": []
  },
  "exceptions": [
