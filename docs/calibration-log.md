@@ -10649,3 +10649,39 @@ YYYYMMDD_{da,rt}_pbc.csv` (2023–2025, no auth) — the RDT binding record
 (direction-specific constraint names `RDT_SO_MW (South_North)` /
 `RDT_MW_SO (North_South)`, 5-min RT / hourly DA timestamps, shadow prices,
 live TCDC breakpoints confirming $40/$500 + RPE $200).
+
+## 2026-07-12 — MISO-58: RDT congestion-depth lane registered + PROMOTED to MISO keeper (supersedes miso-56); renumbered 57→58 to avoid a collision with the parallel f0owj2 miso-57 RDT docs
+
+**Same run, clean number.** The RDT South→North congestion-depth lane (built and
+solved this session as "miso-57": `miso_south_seam_split` severs the fabricated
+free South→external→Midwest RDT wheel-bypass — measured 1,255 MW summer-2025
+mean / 7.7 TWh-yr — and `miso_rdt_tcdc` adds MISO's published 92% default derate
++ two-step $40/$500 TCDC priced tiers, 2024 SOM §III.B / MISO-SPP JOA) is
+registered as **`2026-07-12-miso-58-rdt-congestion`** (+ rule-20 zero-forcing
+twin) to avoid a numbering collision with a parallel `f0owj2` automation that
+independently applied "miso-57" RDT docs (FINDING §11, PR #2093). The bundle,
+mechanisms, and scoring are unchanged from the solved run; only the dashboard
+identity was renumbered. Source mechanisms + FINDING §11 are already on main.
+
+**Owner-authorized keeper promotion.** `keepers.json` MISO key + array →
+miso-58, `status.js` rebuilt (`build_status.py`, MISO NOT-YET),
+calibration-keeper-auditor PASS (0 failures), registry/payload parity OK.
+miso-58 supersedes miso-56 on structural faithfulness (rule 1: keeper = most
+faithful, not lowest MAE) — it removes a fabricated free transfer path and adds
+MISO's real published RDT market design, reproducing three measured in-window
+anchors (2023/24 S→N mean flow 1,139/1,035 vs measured 917/1,108 MW; 2024
+binding frequency 25% vs measured >25%; separation-when-binding $2.77/$2.89 vs
+measured ~$3).
+
+**Scoring correction (caught by the keeper-auditor).** Ground truth from
+`metrics.json`: **co2 (C5a) is a commercial-band CAVEAT in miso-58 (both main
+and twin), not a FAIL** — while the outgoing miso-56 keeper FAILs it. So
+miso-58's FAIL set {fuelmix, sysvol, price_mean, price_tail} is **one fewer than
+miso-56** (the RDT dispatch shift improves system CO2 from FAIL to CAVEAT,
+−8.4%/−8.4% 2023/2024). The earlier "co2 FAIL / twin drops co2" phrasings were
+wrong and are corrected in the sidecar, both attestation notes, and here. 2025
+annual C3a −13.3% → −11.7%; July-2025 −18.8 unchanged (ELMP/emergency + RPE,
+other lanes); August 2023/24 clean. The 2025 residual's root cause is the
+upstream COAL_BIT/CC mid-merit split (the model runs the RDT N→S while reality
+ran S→N) — the constraint that will price the IMM's $9.31 separation is now in
+place and validated on 2023-24; next lane.
