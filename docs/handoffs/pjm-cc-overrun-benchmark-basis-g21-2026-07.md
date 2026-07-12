@@ -55,6 +55,16 @@
 > it's the second-order defect (b). Recommended follow-up: bucket the backfill by
 > unit prime-mover class, not plant (unimplemented this session).
 >
+> **[Update 2026-07-11 — IMPLEMENTED.** The non-ERCOT plant-level CAMPD backfill
+> now splits a mixed plant's net across its classes by measured EIA-923
+> prime-mover class shares (`_plant_class_shares`; prior-year shares for
+> incomplete vintages), and the fix also removed a mixed-plant **double-count**
+> (plants mapped to their under-gate minority class were booked the whole plant
+> net on top of the adequately-reported majority row), so complete-year
+> non-ERCOT scored benchmarks change. ERCOT byte-identical. See the
+> `docs/calibration-log.md` G-21 fleet-group entry and issue #2049 (keeper
+> re-score review).**]
+>
 > Everything from the header down is the original 2026-07-11 diagnosis; where it
 > says "CAMPD basis" or quotes "329.3 measured," read the corrected numbers above.
 
