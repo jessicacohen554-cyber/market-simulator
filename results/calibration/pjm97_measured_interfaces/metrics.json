@@ -16,9 +16,12 @@
   "rubric_version": 2.4,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, price_tail, shape"
   ],
-  "notes": [],
+  "notes": [
+    "C8 2024 CT_PEAKER: grounded above budget \u2014 21.0% forced (4.093 of 19.4491 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.947 (\u22650.8) & off-peak CV ratio 0.831 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 CT_PEAKER: grounded above budget \u2014 16.5% forced (4.8729 of 29.4736 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.963 (\u22650.8) & off-peak CV ratio 0.866 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -69,17 +72,17 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "FAIL"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
@@ -94,11 +97,11 @@
     }
   },
   "grade_summary": {
-    "scored": 7,
-    "target_grade": 2,
+    "scored": 10,
+    "target_grade": 4,
     "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 4
+    "fails": 5
   },
   "free_class_score": {
     "iso": "PJM",
