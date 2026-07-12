@@ -546,8 +546,12 @@ def build_ladders() -> list[Ladder]:
                     gate=False,
                 ),
             ],
-            note="ELCC(duration) x saturation derate must fall as the fleet "
-            "saturates the peak; report-only until the value-stack probe lands.",
+            note="ELCC(4h) x saturation derate x portfolio dilution must fall "
+            "as the fleet saturates the peak. Metric = the model's own "
+            "marginal storage accreditation at the final fleet (from the "
+            "evolution ledger's storage_power_mw — CR-3.1); in energy-only "
+            "ERCOT the $ capacity price is 0 by design, so the accreditation "
+            "fraction is the saturating observable. Report-only.",
         )
     )
 
@@ -760,9 +764,55 @@ def _extract_metrics(spec, config, cache, key, ledgers, summarize) -> dict:
         metrics["mass_cap_price"] = round(mass_cap_prices[-1], 3)
     if rps_final is not None and acp:
         metrics["rps_dual_over_acp"] = round(rps_final / acp, 4)
-    # Storage capacity-value-per-MW proxy for T1.9: net-CONE x ELCC-ish credit
-    # is not persisted per-year here; the value stack probe lands separately, so
-    # leave the metric absent (SKIP) rather than fabricate one.
+    # T1.9 storage capacity value per MW — the model's OWN marginal storage
+    # accreditation at the final fleet: ELCC(4h reference duration) x the
+    # saturation derate x the portfolio dilution, evaluated at the last
+    # solved year's storage fleet power (persisted in the evolution ledger
+    # since CR-3.1). This is the physical firm-capacity value of the next
+    # storage MW — the quantity the plan's T1.9 expectation names; in
+    # energy-only ERCOT the $ capacity price is 0 by design, so the
+    # accreditation fraction (not a fabricated $ value) is the saturating
+    # observable. Absent (SKIP) only when no ledger carries the fleet state
+    # (pre-CR-3.1 caches).
+    storage_rows = [
+        (y, ledgers[y])
+        for y in sorted(ledgers)
+        if ledgers[y].get("storage_power_mw") is not None
+    ]
+    if storage_rows:
+        from market_sim.config.constants import STORAGE_ELCC_SATURATION_EXPONENT
+        from market_sim.config.constants import (
+            STORAGE_DEPLOYMENT_CEILING_MW as _CEIL,
+        )
+        from market_sim.model.capacity import _storage_portfolio_elcc_dilution
+        from market_sim.model.storage import _elcc_for_duration
+
+        _, last = storage_rows[-1]
+        fleet_mw = float(last["storage_power_mw"])
+        ceiling = _CEIL.get(spec.iso, 0.0)
+        pen = 0.0 if ceiling <= 0.0 else min(1.0, fleet_mw / ceiling)
+        marginal = (
+            _elcc_for_duration(4.0)
+            * (1.0 - pen) ** STORAGE_ELCC_SATURATION_EXPONENT
+            * _storage_portfolio_elcc_dilution(fleet_mw, spec.iso)
+        )
+        metrics["storage_fleet_mw"] = round(fleet_mw, 1)
+        metrics["storage_cap_value_per_mw"] = round(marginal, 5)
+        firm = last.get("storage_firm_mw")
+        if firm and fleet_mw > 0.0:
+            metrics["storage_fleet_avg_elcc"] = round(float(firm) / fleet_mw, 5)
+        # Duration tilt (report column): share of new-built storage MW with
+        # duration >= 6 h across the horizon — rises with saturation if the
+        # duration-ELCC economics are doing their job.
+        new_mw = longdur_mw = 0.0
+        for _, led in storage_rows:
+            for add in led.get("storage_additions", []) or []:
+                mw = float(add.get("mw", 0.0))
+                new_mw += mw
+                if float(add.get("duration_h", 0.0)) >= 6.0:
+                    longdur_mw += mw
+        if new_mw > 0.0:
+            metrics["storage_new_longdur_share"] = round(longdur_mw / new_mw, 4)
     design = MARKET_DESIGN.get(spec.iso)
     if design is not None and design.capacity_market:
         metrics["net_cone"] = design.net_cone_per_kw_yr

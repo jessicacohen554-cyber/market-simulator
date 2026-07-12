@@ -86,12 +86,14 @@ from market_sim.config.constants import (
     QUEUE_CAP_PER_TECH_GW,
     RENEWABLE_CAPACITY_CREDIT,
     RENEWABLE_CAPACITY_CREDIT_BY_ISO,
+    RENEWABLE_ELCC_CURVES_BY_ISO,
     STORAGE_DEPLOYMENT_CEILING_MW,
     STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO,
     STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO,
     THERMAL_ACCREDITATION_BASIS_BY_ISO,
     VOM,
     WRIGHT_REFERENCE_GW,
+    evaluate_renewable_elcc_curve,
 )
 from market_sim.config.capacity_area_crosswalk import aggregate_by_zone
 from market_sim.config.iso_configs import get_iso_config
@@ -839,13 +841,58 @@ def _renewable_credit(fuel_type: str, iso: str | None) -> float | None:
     Returns ``None`` for fuels that are not credit-accredited (thermal),
     mirroring ``RENEWABLE_CAPACITY_CREDIT.get``. An ISO with a published
     accreditation (:data:`RENEWABLE_CAPACITY_CREDIT_BY_ISO`) wins over the
-    generic fallback for exactly the fuels it publishes.
+    generic fallback for exactly the fuels it publishes. This is the
+    POINT-basis ladder — the penetration-indexed curve layer sits above it
+    in :func:`resolve_renewable_capacity_credit`.
     """
     if iso is not None:
         override = RENEWABLE_CAPACITY_CREDIT_BY_ISO.get(iso)
         if override is not None and fuel_type in override:
             return override[fuel_type]
     return RENEWABLE_CAPACITY_CREDIT.get(fuel_type)
+
+
+def resolve_renewable_capacity_credit(
+    fuel_type: str,
+    iso: str | None,
+    installed_mw: float | None = None,
+    peak_demand_mw: float | None = None,
+    curves_enabled: bool = False,
+) -> float | None:
+    """Resolve one VRE class's adequacy capacity credit (CR-3.1 ladder).
+
+    The ONE resolver every adequacy consumer prices VRE accreditation
+    through (rule 19): :func:`accredited_firm_capacity_mw` and, through it,
+    the retirement reliability floor, the reserve-margin backstop and the
+    CR-1 reserve position all move together. Resolution ladder:
+
+    1. **Published penetration-indexed ELCC curve**
+       (:data:`RENEWABLE_ELCC_CURVES_BY_ISO`, gate
+       ``ScenarioConfig.renewable_elcc_curves``) evaluated at the model's
+       own installed share — ``installed_mw`` is the class's ISO-wide
+       nameplate (pools + fleet units), ``peak_demand_mw`` the system peak
+       for pct-of-peak curves. The credit therefore falls (or moves) as the
+       MODEL builds, regenerating forward with zero fitted parameters
+       (rule 13).
+    2. **Published single-point per-ISO override**
+       (:data:`RENEWABLE_CAPACITY_CREDIT_BY_ISO` — ERCOT's CDR basis).
+    3. **Generic flat fallback** (:data:`RENEWABLE_CAPACITY_CREDIT`) for
+       ISOs/classes with no published accreditation (cited neutral
+       fallback, rule 25 spirit).
+
+    ``curves_enabled=False`` (the frozen-penetration byte-compat mode) or a
+    curve whose axis quantity is unavailable falls through to steps 2-3,
+    reproducing the pre-CR-3.1 behaviour byte-identically. Returns ``None``
+    for fuels that are not credit-accredited (thermal), mirroring
+    ``RENEWABLE_CAPACITY_CREDIT.get``.
+    """
+    if curves_enabled and iso is not None:
+        curve = RENEWABLE_ELCC_CURVES_BY_ISO.get(iso, {}).get(fuel_type)
+        if curve is not None:
+            credit = evaluate_renewable_elcc_curve(curve, installed_mw, peak_demand_mw)
+            if credit is not None:
+                return credit
+    return _renewable_credit(fuel_type, iso)
 
 
 def _floor_retention_merit(
@@ -928,7 +975,13 @@ def _apply_reliability_floor(
     requirement_mw = resolve_adequacy_requirement_mw(config, config.iso, peak_demand)
     survivors = [g for g in fleet if g.unit_id not in retired]
     accredited_mw = accredited_firm_capacity_mw(
-        survivors, wind_pool_mw, solar_pool_mw, storage_firm_mw, iso=config.iso
+        survivors,
+        wind_pool_mw,
+        solar_pool_mw,
+        storage_firm_mw,
+        iso=config.iso,
+        peak_demand_mw=peak_demand,
+        elcc_curves_enabled=config.renewable_elcc_curves,
     )
     retention_log: list[dict] = []
     if accredited_mw >= requirement_mw:
@@ -2237,12 +2290,77 @@ def apply_economic_new_entry(
     return new_fleet, renewable_additions
 
 
+def _renewable_nameplate_by_fuel(
+    fleet: list[Generator],
+    wind_pool_mw: float,
+    solar_pool_mw: float,
+    iso: str | None,
+) -> dict[str, float]:
+    """ISO-wide installed nameplate MW per credit-accredited class.
+
+    The penetration axis for the published ELCC curves (rule 13 — the
+    model's own installed share): each class's zonal pool plus any fleet
+    units carrying a credit-bearing fuel type. One computation shared by
+    :func:`accredited_firm_capacity_mw` and
+    :func:`renewable_credits_applied` so the ledger and its diagnostics can
+    never disagree on the penetration basis.
+    """
+    nameplate_by_fuel: dict[str, float] = {
+        "wind": float(wind_pool_mw),
+        "solar": float(solar_pool_mw),
+    }
+    for g in fleet:
+        if (
+            g.fuel_type in RENEWABLE_CAPACITY_CREDIT
+            or g.fuel_type in RENEWABLE_ELCC_CURVES_BY_ISO.get(iso or "", {})
+        ):
+            nameplate_by_fuel[g.fuel_type] = nameplate_by_fuel.get(
+                g.fuel_type, 0.0
+            ) + float(g.pmax_mw)
+    return nameplate_by_fuel
+
+
+def renewable_credits_applied(
+    fleet: list[Generator],
+    wind_pool_mw: float,
+    solar_pool_mw: float,
+    iso: str | None,
+    peak_demand_mw: float | None = None,
+    elcc_curves_enabled: bool = False,
+) -> dict[str, float]:
+    """Resolved wind/solar credits on the ledger's exact basis (diagnostic).
+
+    The same resolution :func:`accredited_firm_capacity_mw` applies —
+    same nameplate computation, same ladder — surfaced so the evolution
+    ledger can record the credit each class actually earned this year
+    (the CR-3.1 penetration response made observable per run, e.g. for the
+    capacity-hindcast before/after diagnostic).
+    """
+    nameplate_by_fuel = _renewable_nameplate_by_fuel(
+        fleet, wind_pool_mw, solar_pool_mw, iso
+    )
+    out: dict[str, float] = {}
+    for fuel_type in ("wind", "solar"):
+        credit = resolve_renewable_capacity_credit(
+            fuel_type,
+            iso,
+            installed_mw=nameplate_by_fuel.get(fuel_type),
+            peak_demand_mw=peak_demand_mw,
+            curves_enabled=elcc_curves_enabled,
+        )
+        if credit is not None:
+            out[fuel_type] = float(credit)
+    return out
+
+
 def accredited_firm_capacity_mw(
     fleet: list[Generator],
     wind_pool_mw: float = 0.0,
     solar_pool_mw: float = 0.0,
     storage_firm_mw: float = 0.0,
     iso: str | None = None,
+    peak_demand_mw: float | None = None,
+    elcc_curves_enabled: bool = False,
 ) -> float:
     """Return the system's accredited firm (ELCC/UCAP) capacity in MW.
 
@@ -2251,24 +2369,47 @@ def accredited_firm_capacity_mw(
     convention when ``iso`` is given: thermal at ``1 - EFORd`` (UCAP) or at
     its seasonal rating (:func:`_thermal_firm_mw` /
     :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO` — ERCOT's CDR basis),
-    variable renewables at their capacity credit (per-ISO published ELCC
-    via :func:`_renewable_credit`, generic
-    :data:`RENEWABLE_CAPACITY_CREDIT` fallback), storage at its
-    duration-dependent ELCC (passed in pre-accredited as ``storage_firm_mw``,
-    since the ELCC helper lives in the storage module), plus any
-    asynchronous-tie firm import the ISO's ledger counts but the model
-    topology lacks (:data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW`). Wind/solar held
-    in the zonal pools (not Generators) are passed as ``wind_pool_mw`` /
-    ``solar_pool_mw``. ``iso=None`` reproduces the legacy generic basis
-    byte-identically (UCAP thermal, generic credits, no tie MW).
+    variable renewables at their capacity credit
+    (:func:`resolve_renewable_capacity_credit` — penetration-indexed
+    published ELCC curve when ``elcc_curves_enabled``, per-ISO point
+    override, generic :data:`RENEWABLE_CAPACITY_CREDIT` fallback), storage
+    at its duration-dependent ELCC (passed in pre-accredited as
+    ``storage_firm_mw``, since the ELCC helper lives in the storage module),
+    plus any asynchronous-tie firm import the ISO's ledger counts but the
+    model topology lacks (:data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW`). Wind/solar
+    held in the zonal pools (not Generators) are passed as ``wind_pool_mw``
+    / ``solar_pool_mw``.
+
+    For the CR-3.1 curves each credit-accredited class's penetration is its
+    ISO-WIDE installed nameplate — the zonal pool plus any fleet units of
+    that fuel — against ``peak_demand_mw``, both the model's own quantities
+    (rule 13). One credit per class per call: every MW of a class is
+    accredited at the same class rating, exactly the ISOs' own class-rating
+    construction. ``iso=None`` reproduces the legacy generic basis
+    byte-identically (UCAP thermal, generic credits, no tie MW), and
+    ``elcc_curves_enabled=False`` (or an unavailable axis quantity) is the
+    frozen-penetration byte-compat mode — the pre-CR-3.1 point basis.
     """
+    nameplate_by_fuel = _renewable_nameplate_by_fuel(
+        fleet, wind_pool_mw, solar_pool_mw, iso
+    )
+
+    def _credit(fuel_type: str) -> float | None:
+        return resolve_renewable_capacity_credit(
+            fuel_type,
+            iso,
+            installed_mw=nameplate_by_fuel.get(fuel_type),
+            peak_demand_mw=peak_demand_mw,
+            curves_enabled=elcc_curves_enabled,
+        )
+
     firm = float(storage_firm_mw)
-    firm += wind_pool_mw * (_renewable_credit("wind", iso) or 0.0)
-    firm += solar_pool_mw * (_renewable_credit("solar", iso) or 0.0)
+    firm += wind_pool_mw * (_credit("wind") or 0.0)
+    firm += solar_pool_mw * (_credit("solar") or 0.0)
     if iso is not None:
         firm += ADEQUACY_EXTERNAL_TIE_FIRM_MW.get(iso, 0.0)
     for g in fleet:
-        credit = _renewable_credit(g.fuel_type, iso)
+        credit = _credit(g.fuel_type)
         if credit is not None:
             firm += g.pmax_mw * credit
         else:
@@ -2308,7 +2449,13 @@ def capacity_reserve_position(
     if requirement_mw <= 0.0:
         return None
     accredited_mw = accredited_firm_capacity_mw(
-        fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw, iso=iso
+        fleet,
+        wind_pool_mw,
+        solar_pool_mw,
+        storage_firm_mw,
+        iso=iso,
+        peak_demand_mw=peak_demand_mw,
+        elcc_curves_enabled=config.renewable_elcc_curves,
     )
     return accredited_mw / requirement_mw
 
@@ -3020,7 +3167,13 @@ def evolve_fleet(
         and peak_demand_used > 0.0
     ):
         firm_mw = accredited_firm_capacity_mw(
-            fleet, wind_pool_mw, solar_pool_mw, storage_firm_mw, iso=config.iso
+            fleet,
+            wind_pool_mw,
+            solar_pool_mw,
+            storage_firm_mw,
+            iso=config.iso,
+            peak_demand_mw=peak_demand_used,
+            elcc_curves_enabled=config.renewable_elcc_curves,
         )
         _pre_backstop_ids = {g.unit_id for g in fleet} if _rec else None
         fleet, adequacy_mw = apply_reserve_margin_build(
