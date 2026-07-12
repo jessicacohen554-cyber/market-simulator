@@ -2280,6 +2280,9 @@ def solve_and_persist(
     storage_as_frames: list[pd.DataFrame] = []
     gas_prices: dict[int, float] = {}
     passes_seen: set[str] = set()
+    # First year's pristine backcast_config, retained for the meta block below
+    # so it doesn't rebuild the same config (with the same args) several times.
+    first_year_cfg = None
 
     for year in years:
         _t_year = time.perf_counter()
@@ -2288,6 +2291,8 @@ def solve_and_persist(
         if not is_ercot:
             group_by_code = _fleet_group_by_code(iso, iso_config, year)
         cfg = backcast_config(year, iso, hours, gas_price)
+        if first_year_cfg is None:
+            first_year_cfg = cfg
         demand = load_demand(
             iso,
             year,
@@ -2327,6 +2332,23 @@ def solve_and_persist(
             commitment,
         )
         _t_pre_solve = time.perf_counter()
+        # Thread the demand we already loaded above into run_year to skip its
+        # duplicate load_demand — but only when this load is byte-identical to
+        # run_year's own: run_year never passes strict_demand_profile (always
+        # loads the non-strict series) and reads caiso_demand_clock_realign from
+        # its config, whereas this load used the CLI strict flag and the default
+        # (False) realign. iso_config / td_loss_factor / include_interchange
+        # already match by construction (same topology sequence, same per-ISO
+        # td, same not-priced gate). When either flag would diverge, pass None so
+        # run_year loads its own array and behaviour is unchanged.
+        _run_year_demand = (
+            demand
+            if (
+                not strict_demand_profile
+                and not getattr(cfg, "caiso_demand_clock_realign", False)
+            )
+            else None
+        )
         result, context, result_p1, p2_state = run_year(
             year,
             iso,
@@ -2438,6 +2460,7 @@ def solve_and_persist(
             ercot_ordc_only_scarcity=ercot_ordc_only_scarcity,
             must_run_mw=must_run_total,
             inject_biomass_mustrun=inject_biomass,
+            demand=_run_year_demand,
             priced_interchange=priced_interchange,
             hydro_backfill_year=hydro_backfill_year,
             hydro_eia930_monthly=hydro_eia930_monthly,
@@ -2746,12 +2769,8 @@ def solve_and_persist(
             k: v for k, v in (bit_overrides or {}).items() if v is not None
         },
         "coal_econ_srmc_bound": coal_econ_srmc_bound,
-        "coal_plant_monthly_pricing": backcast_config(
-            years[0], iso, hours, gas_prices[years[0]]
-        ).coal_plant_monthly_pricing,
-        "td_loss_factor": backcast_config(
-            years[0], iso, hours, gas_prices[years[0]]
-        ).td_loss_factor,
+        "coal_plant_monthly_pricing": first_year_cfg.coal_plant_monthly_pricing,
+        "td_loss_factor": first_year_cfg.td_loss_factor,
         # ERCOT gas-basis mechanisms: env-var-gated inside backcast_config
         # (ERCOT_ZONAL_GAS / ERCOT_WEST_NETLOAD_GAS / ERCOT_GAS_FLOOR /
         # ERCOT_WEST_GAS_DELIVERED_FLOOR — no solve_and_persist kwarg exists
@@ -2760,15 +2779,9 @@ def solve_and_persist(
         # value the same way as coal_plant_monthly_pricing/td_loss_factor
         # above, so a run whose environment enabled one of these probes has
         # it in the reproducibility record instead of silently escaping it.
-        "ercot_zonal_gas_basis": backcast_config(
-            years[0], iso, hours, gas_prices[years[0]]
-        ).ercot_zonal_gas_basis,
-        "ercot_west_netload_gas_shape": backcast_config(
-            years[0], iso, hours, gas_prices[years[0]]
-        ).ercot_west_netload_gas_shape,
-        "ercot_west_gas_delivered_floor": backcast_config(
-            years[0], iso, hours, gas_prices[years[0]]
-        ).ercot_west_gas_delivered_floor,
+        "ercot_zonal_gas_basis": first_year_cfg.ercot_zonal_gas_basis,
+        "ercot_west_netload_gas_shape": first_year_cfg.ercot_west_netload_gas_shape,
+        "ercot_west_gas_delivered_floor": first_year_cfg.ercot_west_gas_delivered_floor,
         "storage_daily_cycling": storage_daily_cycling,
         "storage_vintage_ramp": storage_vintage_ramp,
         "strict_demand_profile": strict_demand_profile,
