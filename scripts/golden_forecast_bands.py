@@ -1,12 +1,12 @@
 #!/usr/bin/env python
 """Golden-scenario band regression for forecast runs (W2-P5, plan §2.3).
 
-One pinned reference scenario — ERCOT reference config, 2026-2032, solved on
+One pinned reference scenario — ERCOT reference config, 2026-2040, solved on
 real HiGHS (rule 12: years sequential within the invocation) — with banded
-quantities stored in ``tests/golden/ercot_2026_2032.json``:
+quantities stored in ``tests/golden/ercot_2026_2040.json``:
 
 * annual CO2 (±2%)
-* capacity by fuel at the final solved year, 2032 (±1 GW/fuel)
+* capacity by fuel at the final solved year, 2040 (±1 GW/fuel)
 * annual load-weighted price (±5%)
 * total system cost, the LP objective value (±2%)
 * cumulative builds by tech, summed from the evolution ledger (±10%, or a
@@ -26,11 +26,11 @@ Usage::
 
     # Seed (only works once; refuses to overwrite an existing golden without
     # --force):
-    python scripts/golden_forecast_bands.py seed \
+    python scripts/golden_forecast_bands.py seed \\
         --reason "initial W2-P5 §2.3 golden seed, HEAD 455ed9f"
 
     # Regenerate after an intentional behavior change:
-    python scripts/golden_forecast_bands.py seed --force \
+    python scripts/golden_forecast_bands.py seed --force \\
         --reason "PR #NNNN changed the ORDC scarcity adder; goldens re-seeded to reflect it"
 
     # Check the current code against the pinned golden (this is what CI runs,
@@ -67,21 +67,26 @@ from market_sim.runner import run_scenario_iso  # noqa: E402
 from scripts import check_forecast_invariants as C  # noqa: E402
 
 GOLDEN_DIR = REPO / "tests" / "golden"
-GOLDEN_PATH = GOLDEN_DIR / "ercot_2026_2032.json"
-RUN_CONFIG_PATH = GOLDEN_DIR / "ercot_2026_2032.run_config.json"
+GOLDEN_PATH = GOLDEN_DIR / "ercot_2026_2040.json"
+RUN_CONFIG_PATH = GOLDEN_DIR / "ercot_2026_2040.run_config.json"
 
-# The pinned reference scenario (plan §2.3: "ERCOT reference config,
-# 2026-2032"). use_campd_bins=False (legacy heat-rate bins, not ERCOT's
-# CAMPD-default per-plant binning) bounds runtime for the weekly CI tier --
-# the same tradeoff forecast-invariants.yml's existing paired-invariants job
-# already makes for the same reason. Every other field is ScenarioConfig's
-# default, including confirmed_exits_enabled=True (flipped default-on by
-# PR #1434, 2026-07-05) -- the goldens below bake that default in.
+# The pinned reference scenario. Originally plan §2.3's "ERCOT reference
+# config, 2026-2032"; extended to 2026-2040 (P-3A, full-horizon findings
+# 2026-07-12) to add a deeper mid-horizon checkpoint -- the end-year capacity
+# snapshot now pins 2040 (past the OBBBA IRA cliffs and the bulk of the
+# announced-retirement wave) instead of 2032, and the annual CO2/price/cost
+# series covers 15 years instead of 7. use_campd_bins=False (legacy
+# heat-rate bins, not ERCOT's CAMPD-default per-plant binning) bounds runtime
+# for the weekly CI tier -- the same tradeoff forecast-invariants.yml's
+# existing paired-invariants job already makes for the same reason. Every
+# other field is ScenarioConfig's default, including confirmed_exits_enabled=
+# True (flipped default-on by PR #1434, 2026-07-05) -- the goldens below bake
+# that default in.
 REFERENCE_SCENARIO_KWARGS = dict(
     iso="ERCOT",
     mode="forecast",
     start_year=2026,
-    end_year=2032,
+    end_year=2040,
     hours=8760,
     use_campd_bins=False,
 )
@@ -108,7 +113,7 @@ REGEN_POLICY = (
     "and CLAUDE.md rule 23's frozen-against-residuals spirit). To "
     "regenerate: run `python scripts/golden_forecast_bands.py seed --force "
     '--reason "<explicit citation of the causal code change>"` and commit '
-    "the new tests/golden/ercot_2026_2032*.json alongside that change."
+    "the new tests/golden/ercot_2026_2040*.json alongside that change."
 )
 
 
@@ -296,10 +301,11 @@ def cmd_seed(args: argparse.Namespace) -> int:
             "schema_version": 1,
             "description": (
                 "Golden-scenario band regression fixture (forecast-validation "
-                "program W2-P5, plan §2.3). Pins an ERCOT reference forecast, "
-                "2026-2032, on real HiGHS; check_bands() compares a fresh "
-                "solve of the same REFERENCE_SCENARIO_KWARGS against the "
-                "values below."
+                "program W2-P5, plan §2.3; horizon extended 2032->2040 in "
+                "P-3A, 2026-07-12, for a deeper checkpoint). Pins an ERCOT "
+                "reference forecast, 2026-2040, on real HiGHS; check_bands() "
+                "compares a fresh solve of the same REFERENCE_SCENARIO_KWARGS "
+                "against the values below."
             ),
             "scenario": REFERENCE_SCENARIO_KWARGS,
             "provenance": {
