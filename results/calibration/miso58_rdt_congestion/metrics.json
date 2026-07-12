@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-11-miso-57-rdt-congestion",
+  "run_id": "2026-07-12-miso-58-rdt-congestion",
   "iso": "MISO",
-  "label": "miso 57 rdt congestion",
+  "label": "miso 58 rdt-congestion",
   "target_years": [
     2023,
     2024,
@@ -16,7 +16,7 @@
   "rubric_version": 2.4,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, sysvol, price_mean, price_tail"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_tail"
   ],
   "notes": [],
   "criteria": {
@@ -28,7 +28,8 @@
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "commercial-band"
     },
     "price_mean": {
       "label": "C3a mean LMP",
@@ -89,6 +90,7 @@
       "C5b storage throughput"
     ],
     "commercial_band": [
+      "C2 system volume (gas/coal families)",
       "C5a CO2 vs eGRID"
     ],
     "budget": {
@@ -99,9 +101,9 @@
   "grade_summary": {
     "scored": 12,
     "target_grade": 6,
-    "commercial_grade": 1,
+    "commercial_grade": 2,
     "ledgered": 1,
-    "fails": 4
+    "fails": 3
   },
   "free_class_score": {
     "iso": "MISO",
