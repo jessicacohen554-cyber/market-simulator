@@ -3284,6 +3284,228 @@ def build_pjm_offer_midcurve_conditional_markup(
         else "pooled",
     )
     return markup
+# Model tranche suffixes carrying the gas fleet's committed (LSL) block and the
+# economic ramp — the rows the low-curve markdown reprices. ``econc``-prefixed
+# suffixes are the N-slice smoothed econ ramp (``_econ_curve_steps``); ``econ``/
+# ``econlo``/``econhi`` are the unsmoothed variants. Peak rungs are the TOP
+# surface's rows and are never touched here (disjoint by construction, rule 19).
+_LOWCURVE_ECON_SUFFIXES: tuple[str, ...] = ("econ", "econlo", "econhi")
+
+
+def _lowcurve_row_family(unit_id: str) -> str | None:
+    """Return ``"committed"`` / ``"econ"`` for a low-curve-eligible row, else None."""
+    sfx = str(unit_id).rpartition("_")[2]
+    if sfx == "committed":
+        return "committed"
+    if sfx in _LOWCURVE_ECON_SUFFIXES:
+        return "econ"
+    if sfx.startswith("econc") and sfx[5:].isdigit():
+        return "econ"
+    return None
+
+
+def build_ercot_offer_surface_lowcurve_markdown(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    p0_dispatch: "np.ndarray | None" = None,
+) -> "np.ndarray | None":
+    """Build the P1-only conditional low-curve gas offer markdown ``(n_gen, T)``.
+
+    The trough-price-formation MIRROR of
+    :func:`build_ercot_offer_surface_conditional_markup`
+    (``ScenarioConfig.ercot_offer_surface_lowcurve``): where the adopted top leg
+    restores the measured offer distribution's UPPER tail in anticipated-tight
+    net-load bins (clamped never to lower an offer), this leg restores its LOWER
+    tail — the committed fleet's cheap segments the all-hours p50 band collapse
+    deleted (clamped never to RAISE one). Measured bands from the same 60-Day
+    DAM disclosure corpus, committed/online resources only
+    (``scripts/derive_dam_offer_hrmults.py --low-curve-binned``):
+
+    * ``binned_committed_p50`` — the Min-Gen-Cost (LSL block) multiplier per
+      net-load bin. Committed units bid their LSL far below SRMC
+      (cycling-avoidance / stay-on bidding), and MORE so in tight bins (CC p50
+      0.585 loose -> 0.133 tight vs the model's resolved ~1.0). Applied to each
+      plant's ``_committed`` tranche as a class-level ratio
+      ``min(1, measured / resolved_committed)`` — plant heterogeneity rides on
+      each plant's own heat rate, exactly the top leg's resolved-peak
+      construction.
+    * ``binned_low_body`` — the lower-body incremental-curve multiplier per
+      curve-position band (rel < 0.22 / 0.44 / 0.67) per bin, matched to each
+      plant's own rising econ ramp position-for-position (a cross-fleet RANK
+      mapping conflated plant cheapness with curve position, eroding the
+      mild-day evening margin and shuffling dispatch from coal — the v1 probe
+      finding). With the keeper's delta-adjusted econ ramp already at/below the
+      measured band medians, the <= 1 clamp leaves the econ rungs largely
+      byte-identical — kept for completeness and forward honesty, not effect.
+
+    ``p0_dispatch`` (the P0 base-cost solution, ``(n_gen, T)``) gates the
+    markdown to plant-hours the model's OWN commitment discovery runs the plant
+    (plant dispatch > 1 MW): the measured discounts are committed-unit bidding,
+    and the model analogue of "committed" is its own P0 solve — the
+    forward-regenerating construction the CAISO RA bridge and the PJM path-B
+    reserve scoping already use. Without the gate, offline plants' discounted
+    blocks undercut coal/ST in P1 and steal dispatch reality's committed-state
+    bidding cannot (the v1 probe's -1.7 TWh coal shuffle). ``None`` applies the
+    markdown ungated (unit tests / diagnostics).
+
+    P1-only via the shared ``mc_bid_adjust`` seam: P0 run lengths, the
+    startup-amortization coupling and every floor are byte-identical. Gas
+    classes only (coal untouched — take-or-pay/passthrough governs its low
+    bids, rule 19; peak rungs are the top leg's — disjoint). Zero fitted
+    scalars: the trigger (net-load percentile) and every level (measured QSE
+    quantiles) are rule-13-admissible, derived from source data only (rule 21)
+    and frozen against residuals (rule 20).
+
+    Returns ``None`` (P1 unchanged) when the flag is off, the ISO is not ERCOT,
+    the surface JSON is absent, or no eligible rows exist.
+    """
+    if not getattr(config, "ercot_offer_surface_lowcurve", False):
+        return None
+    if config.iso != "ERCOT":
+        return None
+    path = getattr(config, "ercot_offer_surface_lowcurve_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        default = _paths.CALIBRATION_DIR / "offer_curve_dam_lowcurve_condbinned.json"
+        if not default.exists():
+            return None
+        path = str(default)
+    surface = _load_condbinned_surface(str(path))
+
+    edges = tuple(float(x) for x in config.ercot_offer_surface_netload_pcts)
+    json_edges = tuple(
+        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
+    )
+    if json_edges and json_edges != edges:
+        raise ValueError(
+            "ercot_offer_surface_lowcurve: config netload_pcts "
+            f"{edges} disagree with the derived surface's edges {json_edges} "
+            "(re-derive with matching --low-curve-binned edges, or fix the config)."
+        )
+    n_bins = len(edges) + 1
+    rel_bands = tuple(
+        float(x)
+        for x in surface.get("_provenance", {}).get(
+            "rel_bands", (0.0, 0.22, 0.44, 0.67)
+        )
+    )
+
+    heat_rate = np.asarray(fleet_arrays.heat_rate, dtype=float)
+    hours = int(fuel_prices.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net_load, edges) if len(edges) else np.array([])
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    curves = getattr(config, "offer_curve_by_group", None) or {}
+
+    # Plant grouping: rows keyed by the unit_id prefix up to the tranche suffix,
+    # families tagged committed/econ. All of a plant's rows (any suffix) feed
+    # the P0 online mask.
+    plant_committed: dict[str, int] = {}
+    plant_econ: dict[str, list[int]] = {}
+    plant_rows: dict[str, list[int]] = {}
+    plant_cls: dict[str, str] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None)
+        if cls not in surface or not isinstance(surface.get(cls), dict):
+            continue
+        key = str(gen.unit_id).rpartition("_")[0]
+        plant_rows.setdefault(key, []).append(g)
+        plant_cls[key] = cls
+        fam = _lowcurve_row_family(gen.unit_id)
+        if fam == "committed":
+            plant_committed[key] = g
+        elif fam == "econ":
+            plant_econ.setdefault(key, []).append(g)
+    if not plant_committed:
+        return None
+
+    markdown = np.zeros((len(generators), hours), dtype=float)
+    n_repriced = 0
+    for key, crow in plant_committed.items():
+        cls = plant_cls[key]
+        entry = surface[cls]
+        committed_p50 = entry.get("binned_committed_p50") or []
+        low_body = entry.get("binned_low_body") or []
+        resolved_c = float((curves.get(cls) or {}).get("committed", 0.0) or 0.0)
+        if resolved_c <= 0.0 or len(committed_p50) != n_bins:
+            continue
+
+        # P0 online gate: the plant runs this hour in the model's own base-cost
+        # commitment discovery. None -> ungated (all hours eligible).
+        if p0_dispatch is not None:
+            rows = np.asarray(plant_rows[key], dtype=int)
+            online = p0_dispatch[rows, :hours].sum(axis=0) > 1.0  # (T,)
+        else:
+            online = np.ones(hours, dtype=bool)
+
+        # committed (LSL) tranche: class-level ratio per bin on the resolved band.
+        ratio_c = np.ones(n_bins, dtype=float)
+        for b in range(n_bins):
+            v = committed_p50[b]
+            if v is not None and np.isfinite(v):
+                ratio_c[b] = min(1.0, float(v) / resolved_c)
+        row_ratio = np.where(online, ratio_c[hour_bin], 1.0)  # (T,)
+        if np.any(row_ratio < 1.0):
+            energy = heat_rate[crow] * fuel_prices[crow, :hours]
+            adj = energy * (row_ratio - 1.0)
+            adj = np.maximum(adj, np.minimum(0.0, 1.0 - energy))
+            if np.any(adj < 0.0):
+                markdown[crow, :] = adj
+                n_repriced += 1
+
+        # econ ramp rungs: within-plant curve position -> measured rel-band
+        # median (largely clamped to no-op on the keeper's delta-adjusted ramp).
+        erows = plant_econ.get(key)
+        if not erows or len(low_body) != n_bins:
+            continue
+        plant_hr = heat_rate[crow] / resolved_c  # the plant's base heat rate
+        order = sorted(erows, key=lambda g: heat_rate[g])
+        n_e = len(order)
+        for i, g in enumerate(order):
+            rel = (i + 0.5) / n_e * rel_bands[-1]  # position within [0, 0.67]
+            k = int(np.searchsorted(np.asarray(rel_bands[1:]), rel, side="right"))
+            if k >= len(rel_bands) - 1:
+                continue
+            rung_mult = heat_rate[g] / plant_hr
+            if rung_mult <= 0.0:
+                continue
+            ratio_e = np.ones(n_bins, dtype=float)
+            moved = False
+            for b in range(n_bins):
+                bands = low_body[b] or []
+                v = bands[k] if k < len(bands) else None
+                if v is not None and np.isfinite(v) and float(v) < rung_mult:
+                    ratio_e[b] = float(v) / rung_mult
+                    moved = True
+            if not moved:
+                continue
+            row_ratio = np.where(online, ratio_e[hour_bin], 1.0)
+            energy = heat_rate[g] * fuel_prices[g, :hours]
+            adj = energy * (row_ratio - 1.0)
+            adj = np.maximum(adj, np.minimum(0.0, 1.0 - energy))
+            if np.any(adj < 0.0):
+                markdown[g, :] = adj
+                n_repriced += 1
+
+    if n_repriced == 0 or not np.any(markdown < 0.0):
+        return None
+    loose = int((hour_bin == 0).sum())
+    logger.info(
+        "ERCOT conditional low-curve surface: marked down %d gas committed/econ "
+        "rows across %d net-load bins (loosest bin %d/%d hours); P1-only, "
+        "ratio clamped <= 1, %s",
+        n_repriced,
+        n_bins,
+        loose,
+        hours,
+        "P0-online-gated" if p0_dispatch is not None else "ungated",
+    )
+    return markdown
 
 
 def apply_netload_drag_floors(
