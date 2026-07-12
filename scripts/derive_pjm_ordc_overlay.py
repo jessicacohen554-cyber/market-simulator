@@ -98,6 +98,11 @@ def _run_year_kwargs(meta: dict) -> dict:
         # it reports full headroom against a withheld dispatch and over-states
         # the reserve by the withdrawn MW.
         as_reserve_withholding=meta.get("as_reserve_withholding", False),
+        # DA virtual-bid layer (G-22 lever B): a bundle solved with the
+        # pseudo-units must rebuild them here too, or the diagnostics'
+        # fleet/mc reconstruction drops the virtual rows the dispatch
+        # parquet carries.
+        pjm_da_virtual_bids=meta.get("pjm_da_virtual_bids", False),
         fleet_only=True,
     )
 
