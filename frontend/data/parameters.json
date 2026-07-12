@@ -16264,40 +16264,40 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "VA",
-          "DE",
           "VT",
+          "ME",
+          "DE",
+          "VA",
           "NY",
           "RI",
-          "MA",
-          "NH",
           "MD",
+          "NH",
           "CT",
-          "ME",
+          "MA",
           "NJ"
         ],
         "2024": [
-          "DE",
           "VT",
+          "ME",
+          "DE",
           "NY",
           "RI",
-          "MA",
-          "NH",
           "MD",
+          "NH",
           "CT",
-          "ME",
+          "MA",
           "NJ"
         ],
         "2025": [
-          "DE",
           "VT",
+          "ME",
+          "DE",
           "NY",
           "RI",
-          "MA",
-          "NH",
           "MD",
+          "NH",
           "CT",
-          "ME",
+          "MA",
           "NJ"
         ]
       },
@@ -17397,7 +17397,7 @@
     {
       "param_id": "scenario.campd_bins_path",
       "display_name": "Campd Bins Path",
-      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/reference/custom-bin-assignments.csv",
+      "value": "/home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -17492,7 +17492,7 @@
     {
       "param_id": "scenario.cc_capacity_reconcile_path",
       "display_name": "Cc Capacity Reconcile Path",
-      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+      "value": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -19383,7 +19383,7 @@
     {
       "param_id": "scenario.control_retrofit_path",
       "display_name": "Control Retrofit Path",
-      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
+      "value": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -20348,6 +20348,80 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_gas_bridge_da_horizon",
+      "display_name": "Ercot Gas Bridge Da Horizon",
+      "value": true,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 1,
+      "source": "Cap economic bridges at one DA operating day (constants.DA_COMMITMENT_HORIZON_HOURS = 24, tariff-cited — the same one-operating-day horizon every US ISO's DAM uses): a unit idle LONGER than one DA cycle is a next-day decommit/re-offer decision, never an intra-day min-load hold. This bounds the mechanism to its declared D-4 window (idle gaps between run-days) — the market-design analogue of caiso_ra_bridge_decommit's horizon piece WITHOUT the CAISO surplus-repricing machinery (ERCOT is an island: no import backdown / export-sink absorption to measure surplus against). Default on with the gate; off reproduces the ERCOT-62b monkeypatch construction exactly (economic bridges at any gap length).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_gas_bridge_min_load_frac",
+      "display_name": "Ercot Gas Bridge Min Load Frac",
+      "value": 0.574,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Minimum stable load of a bridged ERCOT gas-CC as a fraction of the PLANT's available capacity — the MEASURED committed-CC LSL/HSL capacity-weighted p50, 60-Day DAM disclosure Gen Resource data 2023-2025 (the ercot_dam_offers.parquet corpus, ERCOT-62 derive; diagnosis §5). A measured physical/market quantity frozen against residuals (rules 13/21/23); in practice the floor clips at the plant's committed-tranche capacity (the LP bound — median committed share 25%), so this is the ceiling, not a tuning surface. Only read when the bridge gate is on.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_gas_bridge_startup",
+      "display_name": "Ercot Gas Bridge Startup",
+      "value": true,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "Economic (≥ min-down) bridging on the startup-restart inequality — the overnight-between-run-days carrier (a CC's 4-6 h min-down is shorter than the 8-14 h overnight gap, so the physical bar alone catches almost nothing). Same construction and admissibility as caiso_ra_startup_bridge (MC and LMP are the model's own P0 quantities). Default on WITH the gate; off = the physical-restart-bar-only probe arm.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_gas_commitment_bridge",
+      "display_name": "Ercot Gas Commitment Bridge",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the committed- STATE half of the trough-price-formation circle, promoted from the ERCOT-62b probe (docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6; calibration-log 2026-07-12). The low-curve markdown above restores the measured cheap LSL bids but was probe-REFUTED as the circle's carrier alone: in reality those bids coexist with wide daily spreads because the LSL block is INFLEXIBLE — must-take while the unit is on, never setting the margin. This supplies that state: the ISO-neutral P1-native commitment-bridge internals already adopted for CAISO (model.commitment.caiso_ra_mustoffer_min_gen via pipeline.commitment.ercot_gas_bridge_p1_floor_fleet / build_ercot_gas_bridge_p1_prep, injected at the same P0→P1 seam) applied to the ERCOT merchant gas-CC fleet: a CC that the model's OWN base-cost P0 pattern runs before AND after an idle gap is held at min-load across the gap when (a) the gap is shorter than its physical min-down (a restart bar), or (b) re-paying its published startup cost exceeds the net cost of holding at min-load priced at the model's own P0 duals (the standard UC restart inequality — the overnight-between-run-days carrier: the keeper's 2023 dispatch cycles 902 CC plant-nights/yr off overnight, ~1.07 GW mean, the overnight analogue of the CAISO midday gap). Forward-native by construction (P0 pattern + physical constants; no measured generation enters — rules 13/18); D-2 id MECH_GAS_COMMITMENT_BRIDGE, D-4 window in scripts/legitimacy_diagnostics.py. CLASS ADJUDICATION (ERCOT-63, recorded here per the charter): CC only. CT_PEAKER is excluded by its own physics (min-down 1-2 h < RA_BRIDGE_ECON_MIN_DOWN_HOURS — a fast-start CT is never economically bridged, rule 18 — and its measured committed band 1.32-1.44 ≈ the model's, ERCOT-61); ST_GAS is excluded by rule 19 (its committed state is already carried by the all-hours gas_st_netload_drag floor + ST startup mechanisms, and the class is C8 grounded-above-budget at ~33% — a second floor would stack mechanisms on one phenomenon). Measured per-class committed LSL/HSL capacity-weighted p50s from the same 60-Day DAM disclosure derive (ERCOT-62, 2026-07-12), recorded for the register: CC 0.574 (used), CT 0.744 / ST_GAS 0.205 (excluded classes, unused). Composes with ercot_offer_surface_lowcurve (the bridge supplies the state, the markdown the price — diagnosis §5).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_gas_contract_haircut",
       "display_name": "Ercot Gas Contract Haircut",
       "value": false,
@@ -20532,6 +20606,43 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_lowcurve",
+      "display_name": "Ercot Offer Surface Lowcurve",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "ERCOT G-22 conditional-offer-distribution LOW leg (default off, ERCOT-gated): the trough-price-formation MIRROR of ``ercot_offer_surface_conditional`` above. The adopted surface restored the measured offer distribution's UPPER tail in anticipated-tight bins; this leg restores its LOWER tail — the measured cheap committed-fleet segments the all-hours p50 band collapse deleted. Two measured facts (60-Day DAM disclosure, committed/online resources only): (a) committed units' Min-Gen-Cost (LSL block) bids run FAR below the model's committed band (CC capacity-weighted p50 multiplier ~0.52-0.64 in loose net-load bins, 0.13-0.37 in tight ones, vs the model's ~1.0) — cycling-avoidance / stay-on bidding; (b) the committed fleet's lower-body incremental curve (rel < 0.67) carries an always-posted cheap tail (CC p10 ~0.65, p25 ~0.84, bin-stable). The model prices both at the band p50, which floors its price troughs at the CC econ band (~$19-23) where the real 2023 market spent ~1,500 h below $15 — the missing HALF of the daily spread that starves battery arbitrage (the ERCOT-58 §4 / ERCOT-60 §7 storage/price-formation circle). Mechanics mirror the top leg exactly: P1-only additive adjustment (P0 run lengths byte-identical), measured quantile ladders per net-load bin (same edges, same derive corpus), rank-mapped onto the gas committed/econ rungs, ratio clamped <= 1 (a markdown can only lower an offer; loose-vs-tight conditionality comes from the ladder), never below $1/MWh on the energy part, gas classes only (coal untouched — take-or-pay/passthrough already governs its low bids, rule 19). Zero fitted scalars (rules 13/20/21). See scripts/derive_dam_offer_hrmults.py --low-curve-binned and data.fleet.build_ercot_offer_surface_lowcurve_markdown.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_lowcurve_path",
+      "display_name": "Ercot Offer Surface Lowcurve Path",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Path to the measured low-curve condition-binned JSON (default: the frozen data/raw/_validation-source/offer_curve_dam_lowcurve_condbinned.json). None → the mechanism is a no-op even when the flag is on.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -23379,6 +23490,43 @@
       ]
     },
     {
+      "param_id": "scenario.pjm_da_virtual_bids",
+      "display_name": "Pjm Da Virtual Bids",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "PJM Day-Ahead virtual-bid layer (G-22 lever B — DA procurement depth, default off, PJM-gated). Posts the MEASURED hourly INC (virtual supply) / DEC (virtual demand) bid curves from PJM's public DataMiner2 hrl_da_incs_decs feed (data/raw/pjm-da-virtuals/, scripts/fetch_pjm_da_virtuals.py) into the LP as pseudo-units (data.virtual_bids): DEC steps are export-sink-form withdrawal capacity that clears whenever the zonal dual is below the bid, INC steps ordinary zero-emission supply clearing above the offer — so the DA market's extra procurement depth at peaks (net cleared DEC − INC ≈ +7-11 GW at the July-2024 top hours; the ~9-10 GW gap of docs/FINDING-pjm-offer-surface-noop-2026-07.md) is carried as real market structure and the cleared virtual volume stays ENDOGENOUS. Rule-13 admissibility: the surface is built from SUBMITTED ex-ante bid curves (participant inputs exactly like generator energy offers, condition-binned by within-year net-load percentile, MW as a fraction of hourly load, prices as implied heat rate vs delivered gas — all forward-native axes that regenerate from a forecast year's own load/VRE/gas drivers); cleared volumes and clearing prices are outcomes and are never read. Parameters derive from source data only (scripts/derive_pjm_da_virtual_surface.py, rule 21) and are frozen against residuals (rule 20). PJM-only (rule 25).",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_da_virtual_surface_path",
+      "display_name": "Pjm Da Virtual Surface Path",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Path to the measured condition-binned virtual-bid surface JSON (default: the frozen data/raw/_validation-source/pjm_da_virtual_surface_condbinned.json).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.pjm_measured_interface_limits",
       "display_name": "Pjm Measured Interface Limits",
       "value": false,
@@ -23394,6 +23542,44 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_offer_midcurve_conditional",
+      "display_name": "Pjm Offer Midcurve Conditional",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "PJM MID-CURVE offer surface (G-22 lever A', default off, PJM-gated). pjm-99 proved the top-of-curve surface inert: the dual is capped by the ~21 GW idle mid-curve (COAL / CT_PEAKER / ST_GAS / CC econ bands at $28-45 where the measured fleet prices the same curve region $35-83+), and the depth sweep showed +10 GW of DA depth buys only +$2-4/MWh on that body. This floors each targeted econ-tranche row's P1 bid at the MEASURED offer level of its physics segment at the row's own within-plant capacity share (scale-free mapping), keyed by within-year net-load percentile and reconstructed over the model's delivered-gas day series (scripts/derive_pjm_offer_midcurve.py; fleet.build_pjm_offer_midcurve_conditional_markup). P1-only at the mc_bid_adjust seam so P0 run lengths are unperturbed (the pjm-99 finding's econ-band caution); committed/must-run tranches never touched (coal cost/commitment stays owned by the take-or-pay/passthrough sigmoids, rule 19); the floor only raises bids (clamp >= current) and caps below VOLL. Measured OFFER prices are the input; clearing prices stay validation-only (rule 13); frozen against residuals (rule 20); PJM-only (rule 25).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_offer_midcurve_path",
+      "display_name": "Pjm Offer Midcurve Path",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Path to the measured mid-curve surface JSON (default: the frozen data/raw/_validation-source/pjm_offer_midcurve_condbinned.json).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
@@ -23763,7 +23949,7 @@
     {
       "param_id": "scenario.plant_emission_rates_path",
       "display_name": "Plant Emission Rates Path",
-      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
+      "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -23782,7 +23968,7 @@
     {
       "param_id": "scenario.plant_emission_rates_v2_path",
       "display_name": "Plant Emission Rates V2 Path",
-      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
+      "value": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
       "unit": "",
       "domain": "Emissions",
       "tier": 2,
@@ -23820,7 +24006,7 @@
     {
       "param_id": "scenario.plant_registry_path",
       "display_name": "Plant Registry Path",
-      "value": "/home/runner/work/market-simulator/market-simulator/data/raw/reference/master-plant-registry.csv",
+      "value": "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv",
       "unit": "",
       "domain": "Structural",
       "tier": 2,
@@ -24460,6 +24646,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.st_gas_mustrun_per_plant",
+      "display_name": "St Gas Mustrun Per Plant",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "The ST_GAS leg of the same per-plant local-reliability commitment floor (identical mechanics: the plant's measured committed tranche is FORCED ON in its top ``online_frac`` fraction of hours ranked by system load; offer prices untouched, no second floor — rule 19). Separate gate and mechanism id (MECH_ST_GAS_MUSTRUN_PER_PLANT) so D-2/D-4 attribution and per-ISO arming stay independent of the CC leg. Rule-12 triple: driver = the Entergy MISO-South steam fleet's VLR/self-commitment (MISO SOM documents out-of-market voltage-and-local-reliability commitments in the South region — Amite South / DSG / WOTAB; the CEMS trace shows Nine Mile synchronized 98.2% of ALL hours 2023-2025 with a 414 MW P5-all-hours floor, Sabine 85.6%, Lewis Creek 87.8%, while the model's economically- dispatched ST_GAS ran them near-dark — the 2025 Southern-gas starvation lane); window = each plant's own measured synchronization share placed in the top system-load hours (self-limiting: a true cycler like Gerald Andrus, online 13.9%, is floored only in its top-load sliver); forward story = committed share + online fraction re-derive from multi-year CAMPD exactly like the CC leg and forecast emission rates (rule 13 admissible). Rule 18: self-targeting by measurement — only plants whose artifact row publishes a nonzero online_frac carry the floor. The CT G-20 rejection (overnight off-window binding) does not transfer: a CT's evidence says offline overnight, while these steamers' evidence is the opposite (online supermajority of all hours). Off by default; MISO backcast arms it. Ablated in the zero-forcing twin.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
