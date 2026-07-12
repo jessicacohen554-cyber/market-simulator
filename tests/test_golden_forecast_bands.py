@@ -3,11 +3,12 @@
 Two things this module guards:
 
 * **Fixture presence (always runs, per-PR):** the golden fixture
-  (``tests/golden/ercot_2026_2032.json``) and its ``run_config.json``
+  (``tests/golden/ercot_2026_2040.json``) and its ``run_config.json``
   provenance sidecar exist and are well-formed. Cheap, no solve.
 * **Band regression (`test_golden_bands_hold`, gated `RUN_GOLDEN_FORECAST=1`):**
-  a fresh solve of the pinned reference scenario (real HiGHS, ~7 ERCOT LP
-  years) stays within every banded quantity's tolerance from plan §2.3.
+  a fresh solve of the pinned reference scenario (real HiGHS, 15 ERCOT LP
+  years, 2026-2040) stays within every banded quantity's tolerance from
+  plan §2.3.
   Weekly CI tier, never per-PR -- mirrors
   ``tests/test_forecast_invariants.py``'s ``RUN_SLOW_FORECAST`` gate.
 
@@ -56,7 +57,7 @@ def test_golden_fixture_present_and_well_formed():
 @pytest.mark.slow
 @pytest.mark.skipif(
     os.environ.get("RUN_GOLDEN_FORECAST") != "1",
-    reason="set RUN_GOLDEN_FORECAST=1 to solve the real 7-year ERCOT reference forecast",
+    reason="set RUN_GOLDEN_FORECAST=1 to solve the real 15-year ERCOT reference forecast (2026-2040)",
 )
 def test_golden_bands_hold():
     """Solve the pinned reference scenario fresh and check every golden band.
