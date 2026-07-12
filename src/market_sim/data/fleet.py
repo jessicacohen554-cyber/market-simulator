@@ -6773,6 +6773,15 @@ def fleet_to_bins(
         cap = a["cap"]
         if cap <= 0.0:
             continue
+        # Heat rate is an intensive property: divide the accumulated
+        # capacity-weighted sum by the SAME capacity basis the weights were
+        # accumulated on (the net-summer ratings above), BEFORE any nameplate
+        # rescale. Dividing by the rescaled capacity deflated every CC plant's
+        # base heat rate — and every offer band built on it — by its own
+        # net-summer/nameplate ratio (differentially, up to −27 % for Moss
+        # Landing), scrambling the within-class merit order
+        # (FINDING-caiso78-cc-hr-basis-2026-07-12.md §3).
+        base_hr = a["hr_cap"] / cap
         # CC nameplate capacity (config.cc_nameplate_summer_derate): the fleet
         # carries each unit's net-summer rating, so a CC plant's summed cap is
         # net-summer. Rescale it up to full nameplate (cap / (net_summer /
@@ -6785,7 +6794,6 @@ def fleet_to_bins(
             _ratio = cc_summer_derate_ratio(code)
             if _ratio is not None and _ratio > 0.0:
                 cap = cap / _ratio
-        base_hr = a["hr_cap"] / cap if cap > 0 else _fill_plant_hr(None, group)
         d_mr, d_mc, d_peak = _DEFAULT_TRANCHE_PCT_BY_GROUP.get(group, (0.0, 30.0, 8.0))
         committed, mustrun = overrides.get((code, group), (d_mc, d_mr))
         pct_mc = committed
