@@ -66,6 +66,7 @@ from market_sim.model.capacity import (
     _FIRM_CLEAN_FUELS,
     CumulativeDeployment,
     accredited_firm_capacity_mw,
+    capacity_reserve_position,
     deliverability_headroom_by_zone,
     evolve_fleet,
 )
@@ -678,6 +679,30 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         year_demand = add_datacenter_block(year_demand, config, iso, year, zone_names)
         peak_demand = float(year_demand.sum(axis=0).max())
 
+        # CR-1 sloped capacity demand-curve reserve position (default-off gate).
+        # Accredited firm capacity ÷ the shared adequacy requirement on the
+        # ENTERING fleet, computed ONCE per year and threaded verbatim into all
+        # three capacity screens — retirement + thermal entry (via evolve_fleet)
+        # and storage entry (below) — so every screen prices adequacy off one
+        # requirement and one basis (rule 19). None (gate off, base year with no
+        # fleet, or no prior pools) keeps the fixed net-CONE price and is
+        # byte-identical to the pre-CR-1 path.
+        curve_reserve_position: float | None = None
+        if (
+            config.capacity_market_clearing
+            and fleet is not None
+            and prior_results is not None
+        ):
+            curve_reserve_position = capacity_reserve_position(
+                fleet,
+                float(prior_results.get("wind_cap_mw", 0.0) or 0.0),
+                float(prior_results.get("solar_cap_mw", 0.0) or 0.0),
+                float(prior_results.get("storage_firm_mw", 0.0) or 0.0),
+                config,
+                iso,
+                peak_demand,
+            )
+
         if fleet is None:
             # First year: build the base fleet. With CAMPD binning the fleet
             # comes from the operational bin assignments (base + peak
@@ -733,6 +758,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 confirmed_exits=confirmed_exits,
                 peak_demand_next=peak_demand,
                 announced_reversal_plants=announced_reversal_plants,
+                reserve_position=curve_reserve_position,
             )
             # Persist the reliability floor's attribution log next to the
             # per-year results parquet (rule 20 analogue: floor-retained MW
@@ -803,6 +829,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 endogenous_as_revenue_per_mw_yr=prior_results.get(
                     "storage_as_revenue_per_mw_yr"
                 ),
+                reserve_position=curve_reserve_position,
             )
         storage = storage_units_to_arrays(storage_units, zone_names)
 

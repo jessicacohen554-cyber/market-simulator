@@ -2059,20 +2059,210 @@ STORAGE_TECH_POWER_SHARE: dict[str, float] = {
 
 
 @dataclass(frozen=True)
+class CapacityDemandCurvePoint:
+    """One point on a normalized (dimensionless) capacity demand curve.
+
+    ``reserve_ratio`` is the accredited firm capacity as a fraction of the
+    published reliability requirement (``accredited_firm_capacity_mw /
+    requirement_mw``; 1.0 = exactly at the requirement).
+    ``price_frac_net_cone`` is the capacity price at that reserve position as
+    a *multiple of net-CONE* (1.0 = net-CONE, 0.0 = zero-cross, > 1.0 = the
+    price cap / shortage region). Points are ordered left-to-right by
+    ``reserve_ratio`` and the curve is monotone non-increasing in it.
+    """
+
+    reserve_ratio: float
+    price_frac_net_cone: float
+
+
+def evaluate_demand_curve(
+    points: "tuple[CapacityDemandCurvePoint, ...]", reserve_position: float
+) -> float:
+    """Piecewise-linear value of a normalized capacity demand curve.
+
+    ``points`` are ordered left-to-right by ``reserve_ratio`` (ascending). The
+    return is the capacity price as a *fraction of net-CONE* at
+    ``reserve_position``, linearly interpolated between the two bracketing
+    points and **flat-extrapolated** past both ends — so below the leftmost
+    point the price clamps to the cap (the highest fraction) and above the
+    rightmost point it clamps to the zero-cross value (0.0 for every published
+    curve). Returns ``0.0`` for an empty curve. Pure Python (no numpy) so the
+    config layer keeps its light import surface.
+    """
+    if not points:
+        return 0.0
+    x = float(reserve_position)
+    if x <= points[0].reserve_ratio:
+        return points[0].price_frac_net_cone
+    if x >= points[-1].reserve_ratio:
+        return points[-1].price_frac_net_cone
+    for lo, hi in zip(points, points[1:]):
+        if lo.reserve_ratio <= x <= hi.reserve_ratio:
+            span = hi.reserve_ratio - lo.reserve_ratio
+            if span <= 0.0:
+                return lo.price_frac_net_cone
+            frac = (x - lo.reserve_ratio) / span
+            return lo.price_frac_net_cone + frac * (
+                hi.price_frac_net_cone - lo.price_frac_net_cone
+            )
+    return points[-1].price_frac_net_cone  # unreachable; satisfies type checkers
+
+
+@dataclass(frozen=True)
 class MarketDesign:
     """Storage revenue-stack switches and parameters for one ISO/market.
 
     ``capacity_market`` gates the resource-adequacy value stream entirely.
     ``net_cone_per_kw_yr`` is the marginal cost of new entry of the capacity
-    resource the market prices against (the clearing-price anchor), in
+    resource the market prices against (the FIXED clearing-price anchor), in
     $/kW-yr. A storage unit earns ``net_cone × ELCC(duration) × derate`` of it,
     where the ELCC (effective load-carrying capability) credit rises with
     duration and the derate falls as storage saturates the peak.
+
+    **CR-1 sloped demand curve (default-off).** When
+    ``ScenarioConfig.capacity_market_clearing`` is on and this ISO carries a
+    published ``demand_curve``, the fixed price is replaced by the market's own
+    net-CONE-anchored sloped curve evaluated at the system's accredited reserve
+    position — ``VRR(reserve_position) × net_cone_curve_per_kw_yr`` (see
+    :meth:`capacity_price_per_firm_mw_yr`). The curve is the normalized,
+    dimensionless shape (:class:`CapacityDemandCurvePoint`); the $ level is
+    ``net_cone_curve_per_kw_yr`` (the PUBLISHED net-CONE, distinct from the
+    legacy ``net_cone_per_kw_yr`` fixed anchor so the default path stays
+    byte-identical until the P-2A default flip reconciles the two). Every curve
+    number traces to the P-0B ``capacity-market-demand-curve`` datatype
+    (``data/raw/capacity-market/demand-curve``); the reconciliation is asserted
+    in ``tests/test_capacity_demand_curve.py`` (rule 13 — published input, never
+    a fit target).
     """
 
     capacity_market: bool
     net_cone_per_kw_yr: float = 0.0
+    # CR-1 sloped demand curve (normalized (reserve_ratio, price/net-CONE)
+    # points, ascending reserve_ratio); empty ⇒ no published curve, fixed
+    # fallback. ``net_cone_curve_per_kw_yr`` is the PUBLISHED net-CONE anchor
+    # the curve scales (kept separate from the legacy fixed anchor above for
+    # default byte-identity). ``demand_curve_delivery_year`` / ``_source`` are
+    # provenance for the reconciliation test + docs.
+    demand_curve: tuple[CapacityDemandCurvePoint, ...] = ()
+    net_cone_curve_per_kw_yr: float = 0.0
+    demand_curve_delivery_year: str = ""
+    demand_curve_source: str = ""
 
+    def capacity_price_per_firm_mw_yr(
+        self,
+        config: "object | None" = None,
+        reserve_position: "float | None" = None,
+    ) -> float:
+        """Capacity clearing price in $/firm-MW-yr — the shared seam (rule 19).
+
+        All three capacity screens (retirement, thermal entry, storage entry)
+        price adequacy through this one function, then apply their own
+        accreditation (thermal ``× (1 − EFORd)``; storage ``× ELCC × derate``),
+        so there is one curve per ISO and no screen-specific curves.
+
+        Two modes:
+
+        * **Fixed** (default, and whenever the curve gate is off, the ISO has
+          no published curve, or no ``reserve_position`` is supplied): the flat
+          ``net_cone_per_kw_yr × 1000``, byte-identical to the pre-CR-1 stub.
+        * **Curve** (CR-1): when ``config.capacity_market_clearing`` is on, this
+          ISO has a published ``demand_curve``, and a ``reserve_position``
+          (accredited firm capacity ÷ the shared adequacy requirement) is
+          supplied — ``VRR(reserve_position) × net_cone_curve_per_kw_yr × 1000``,
+          where ``VRR`` is the normalized sloped curve
+          (:func:`evaluate_demand_curve`).
+
+        Energy-only ISOs (``capacity_market`` False — ERCOT and any ISO absent
+        from :data:`MARKET_DESIGN`) return ``0.0`` in **both** modes.
+        ``config`` is duck-typed via ``getattr`` so the config layer needs no
+        import of :class:`ScenarioConfig`.
+        """
+        if not self.capacity_market:
+            return 0.0
+        if (
+            reserve_position is not None
+            and self.demand_curve
+            and config is not None
+            and getattr(config, "capacity_market_clearing", False)
+        ):
+            anchor = self.net_cone_curve_per_kw_yr or self.net_cone_per_kw_yr
+            frac = evaluate_demand_curve(self.demand_curve, float(reserve_position))
+            return frac * anchor * 1000.0
+        if self.net_cone_per_kw_yr <= 0.0:
+            return 0.0
+        return self.net_cone_per_kw_yr * 1000.0
+
+
+# --- CR-1 sloped capacity demand curves (normalized) ----------------------
+#
+# Each ISO's published capacity demand curve, reduced to the dimensionless
+# (reserve_ratio, price/net-CONE) shape the CR-1 mechanism evaluates at the
+# model's own accredited reserve position (accredited_firm_capacity_mw /
+# requirement_mw; 1.0 = at the requirement). Consumed only when
+# ScenarioConfig.capacity_market_clearing is on (default off). Every number
+# traces to the P-0B capacity-market-demand-curve datatype
+# (data/raw/capacity-market/demand-curve/<iso>/<iso>.csv); the reconciliation
+# is asserted in tests/test_capacity_demand_curve.py (rule 13 — published
+# market-design input, never a fit target). The $ level each curve scales is
+# MarketDesign.net_cone_curve_per_kw_yr (the PUBLISHED net-CONE), kept distinct
+# from the legacy fixed net_cone_per_kw_yr so the default path is byte-identical
+# until the P-2A default flip reconciles them.
+#
+# PJM 2026/2027 RPM BRA (the current published curve with a full cap/net-CONE/
+# zero triple). x = pct_of_requirement curve points (0.99, 1.015, 1.045);
+# y-fractions: cap = price_cap/net_cone = 329.17/212.14 = 1.5517 (both
+# $/MW-day, so the ratio is basis-independent), the middle point is Net CONE by
+# PJM Manual 18 §3.4 construction (1.0), the third point is the published
+# zero-cross (y=0). Net-CONE anchor 60.396 $/kW-yr (60,396 $/MW-yr row).
+_PJM_VRR_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(0.99, 1.5517),  # price cap (329.17/212.14)
+    CapacityDemandCurvePoint(1.015, 1.0),  # Net CONE reference point
+    CapacityDemandCurvePoint(1.045, 0.0),  # zero-cross (published y=0)
+)
+# NYISO 2025-2026 ICAP demand curve, NYCA (system) locality, modeled ANNUALLY
+# (the ISO clears monthly; CR-3 adds the seasonal split). The curve is a single
+# straight line: net-CONE at the requirement, zero at the requirement + the
+# published 12% "Demand Curve Length" (zero-cross 1.12), extended left to the
+# maximum clearing price. Cap fraction = summer max/reference-point =
+# 21.69/5.72 = 3.792 (both $/kW-month, so basis-independent); its reserve
+# position (0.665) is where that fraction meets the reference→zero line. The
+# reference point is placed at net-CONE (frac 1.0) at the requirement — the
+# documented annual reduction of NYISO's seasonal reference-point prices.
+# Net-CONE anchor 50.55 $/kW-yr (NYCA Annual Reference Value).
+_NYISO_ICAP_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(0.665, 3.792),  # max clearing price (21.69/5.72)
+    CapacityDemandCurvePoint(1.0, 1.0),  # reference point = Net CONE
+    CapacityDemandCurvePoint(1.12, 0.0),  # zero (100% + 12% curve length)
+)
+# ISO-NE FCA/MRI curve, modeled ANNUALLY. Price levels from FCA 18 (2027/2028):
+# cap = starting price/net-CONE = 14.525/9.078 = 1.600 ($/kW-month, ratio
+# basis-independent); net-CONE at the requirement (1.0). The reserve-position
+# geometry is taken from the last FCA that published explicit curve points
+# (FCA 11, 2020/2021, in MW): its Net ICR (where price = that year's net-CONE
+# 11.64) ≈ 34,217 MW, so the cap plateau end (33,457 MW) is 0.978 and the
+# zero-cross (37,053 MW) is 1.083 of the requirement. A first-order linear
+# reduction of the MRI slope (skips FCA 11's interior kink); refined in CR-3.
+# Net-CONE anchor 108.94 $/kW-yr (9.078 $/kW-month × 12).
+_NEISO_FCA_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(0.978, 1.600),  # starting price (14.525/9.078)
+    CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
+    CapacityDemandCurvePoint(1.083, 0.0),  # zero-cross (FCA 11 geometry)
+)
+# MISO seasonal PRA reliability-based demand curve (RBDC), modeled ANNUALLY
+# (CR-3 adds the four-season split). The P-0B intake captured MISO's CONE
+# levels and PRA clearing OUTCOMES but not the RBDC's own shape parameters, so
+# only the price levels are data-derived: net-CONE at the requirement (1.0);
+# cap = North/Central gross CONE / net CONE ≈ 127,361 / 79,800 = 1.596 (annual
+# $/MW-yr; the RBDC caps at gross CONE). The cap (0.97) and zero-cross (1.05)
+# reserve positions are FIRST-ORDER representative values (documented, not
+# claimed as published — the seasonal RBDC parameters land in CR-3), so the
+# reconciliation test asserts only the net-CONE anchor and the cap fraction.
+# Net-CONE anchor 79.8 $/kW-yr (North/Central Net CONE, 79,800 $/MW-yr).
+_MISO_RBDC_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(0.97, 1.596),  # ≈ gross/net CONE (RBDC cap)
+    CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
+    CapacityDemandCurvePoint(1.05, 0.0),  # zero-cross (first-order, CR-3)
+)
 
 # Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARKET_DESIGN``
 # (energy-only) so a new ISO is conservative until its capacity rules are added.
@@ -2080,15 +2270,56 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
     # Energy-only: scarcity is monetized through the energy price, not a
     # separate capacity payment. Source: ERCOT market design (ORDC).
     "ERCOT": MarketDesign(capacity_market=False),
-    # RA program with a soft capacity price. Source: CAISO RA, CPUC net-CONE.
+    # RA program with a soft capacity price — no centralized auction/demand
+    # curve, so CAISO keeps the FIXED proxy in BOTH modes (documented
+    # low-fidelity member of the registry, CR-1 §3.2). Re-cited: the 90 $/kW-yr
+    # anchor ≈ the CPM soft-offer cap ($7.34/kW-month × 12 = $88.08/kW-yr,
+    # FERC ER24-1225 effective 2024-06-01), between it and the CPUC 2023 RA
+    # report system price ($14.51/kW-month = $174/kW-yr for 2024). No
+    # demand_curve ⇒ capacity_price_per_firm_mw_yr returns the fixed anchor even
+    # when capacity_market_clearing is on. Source: CPUC 2023 Resource Adequacy
+    # Report; CAISO CPM soft-offer-cap tariff (P-0B caiso.csv).
     "CAISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=90.0),
-    # Capacity markets. Net-CONE anchors near the CT reference resource.
-    # Source: PJM 2025/26 BRA planning parameters (net-CONE ~$100/kW-yr).
-    "PJM": MarketDesign(capacity_market=True, net_cone_per_kw_yr=100.0),
-    # Source: NYISO ICAP demand-curve reset net-CONE.
-    "NYISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=110.0),
-    # Source: ISO-NE FCM net-CONE.
-    "NEISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=95.0),
+    # Capacity markets. The legacy net_cone_per_kw_yr is the FIXED-mode anchor
+    # (unchanged — default byte-identity); net_cone_curve_per_kw_yr is the
+    # PUBLISHED net-CONE the CR-1 curve scales.
+    # Source: PJM 2025/26 BRA planning parameters (fixed anchor ~$100/kW-yr).
+    "PJM": MarketDesign(
+        capacity_market=True,
+        net_cone_per_kw_yr=100.0,
+        demand_curve=_PJM_VRR_CURVE,
+        net_cone_curve_per_kw_yr=60.396,
+        demand_curve_delivery_year="2026/2027",
+        demand_curve_source=(
+            "PJM 2026/2027 RPM BRA Planning Period Parameters (Net CONE, price "
+            "cap) + Manual 18 Rev.62 §3.4 VRR curve points"
+        ),
+    ),
+    # Source: NYISO ICAP demand-curve reset net-CONE (fixed anchor ~$110/kW-yr).
+    "NYISO": MarketDesign(
+        capacity_market=True,
+        net_cone_per_kw_yr=110.0,
+        demand_curve=_NYISO_ICAP_CURVE,
+        net_cone_curve_per_kw_yr=50.55,
+        demand_curve_delivery_year="2025-2026",
+        demand_curve_source=(
+            "NYISO 'Demand Curve Parameters 2025-2026', NYCA locality (Annual "
+            "Reference Value, summer reference-point/max clearing price, 12% "
+            "Demand Curve Length)"
+        ),
+    ),
+    # Source: ISO-NE FCM net-CONE (fixed anchor ~$95/kW-yr).
+    "NEISO": MarketDesign(
+        capacity_market=True,
+        net_cone_per_kw_yr=95.0,
+        demand_curve=_NEISO_FCA_CURVE,
+        net_cone_curve_per_kw_yr=108.94,
+        demand_curve_delivery_year="2027-2028",
+        demand_curve_source=(
+            "ISO-NE FCA 18 (2027/2028) Net CONE + starting price; FCA 11 "
+            "(2020/2021) demand-curve points for the reserve-position geometry"
+        ),
+    ),
     # MISO runs a SEASONAL Planning Resource Auction (PRA): 4 seasons, clearing
     # in $/MW-day with a sloped demand curve anchored on Net-CONE. We anchor on
     # MISO's published Net-CONE (the demand-curve reference), NOT the volatile
@@ -2107,7 +2338,20 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
     # representative value pending the M8 seasonal/zonal RA-timing build.
     # Source: MISO CONE & Net-CONE Update (RASC, 2024-09-23) and MISO PRA
     # results postings (PY2024/25, PY2025/26). See parameter-citations.md.
-    "MISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=80.0),
+    # The CR-1 curve scales the published North/Central Net CONE (79.8 $/kW-yr);
+    # the fixed anchor keeps its 80.0 rounding for default byte-identity.
+    "MISO": MarketDesign(
+        capacity_market=True,
+        net_cone_per_kw_yr=80.0,
+        demand_curve=_MISO_RBDC_CURVE,
+        net_cone_curve_per_kw_yr=79.8,
+        demand_curve_delivery_year="2025-2026",
+        demand_curve_source=(
+            "MISO PY2025-26 PRA Results Posting (North/Central Net CONE + LRZ "
+            "gross CONE for the cap); RBDC shape reserve positions first-order "
+            "(seasonal parameters land in CR-3)"
+        ),
+    ),
 }
 
 DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
