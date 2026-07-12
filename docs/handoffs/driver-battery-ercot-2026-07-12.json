@@ -1,0 +1,109 @@
+{
+  "iso": "ERCOT",
+  "start_year": 2026,
+  "end_year": 2030,
+  "max_rungs": null,
+  "elapsed_s": 1935.2,
+  "ladders": [
+    {
+      "test_id": "T1.9",
+      "iso": "ERCOT",
+      "driver": "storage ELCC saturation (seed GW)",
+      "note": "ELCC(4h) x saturation derate x portfolio dilution must fall as the fleet saturates the peak. Metric = the model's own marginal storage accreditation at the final fleet (from the evolution ledger's storage_power_mw \u2014 CR-3.1); in energy-only ERCOT the $ capacity price is 0 by design, so the accreditation fraction is the saturating observable. Report-only.",
+      "rungs": [
+        {
+          "rung_id": "T1.9:ERCOT:seed_5gw",
+          "test_id": "T1.9",
+          "iso": "ERCOT",
+          "rung_label": "seed_5gw",
+          "overrides": {
+            "_storage_seed_gw": 5
+          },
+          "status": "ok",
+          "metrics": {
+            "coal_twh": 335.8514,
+            "gas_cc_twh": 1194.764,
+            "co2_mt_total": 862.0042,
+            "lw_price": 20.63,
+            "scarcity_hours": 0,
+            "entry_thermal_gw": 5.3098,
+            "renewable_build_gw": 5.0,
+            "total_build_gw": 16.3098,
+            "retired_thermal_gw": 0.0,
+            "reserve_margin_final": 0.01821,
+            "storage_fleet_mw": 18000.0,
+            "storage_cap_value_per_mw": 0.27885,
+            "storage_fleet_avg_elcc": 0.79167,
+            "storage_new_longdur_share": 1.0
+          },
+          "cached": false
+        },
+        {
+          "rung_id": "T1.9:ERCOT:seed_15gw",
+          "test_id": "T1.9",
+          "iso": "ERCOT",
+          "rung_label": "seed_15gw",
+          "overrides": {
+            "_storage_seed_gw": 15
+          },
+          "status": "ok",
+          "metrics": {
+            "coal_twh": 335.0934,
+            "gas_cc_twh": 1197.3298,
+            "co2_mt_total": 861.4082,
+            "lw_price": 20.626,
+            "scarcity_hours": 0,
+            "entry_thermal_gw": 5.3098,
+            "renewable_build_gw": 5.0,
+            "total_build_gw": 16.3098,
+            "retired_thermal_gw": 0.0,
+            "reserve_margin_final": 0.04838,
+            "storage_fleet_mw": 23000.0,
+            "storage_cap_value_per_mw": 0.20005,
+            "storage_fleet_avg_elcc": 0.76902,
+            "storage_new_longdur_share": 1.0
+          },
+          "cached": false
+        },
+        {
+          "rung_id": "T1.9:ERCOT:seed_25gw",
+          "test_id": "T1.9",
+          "iso": "ERCOT",
+          "rung_label": "seed_25gw",
+          "overrides": {
+            "_storage_seed_gw": 25
+          },
+          "status": "ok",
+          "metrics": {
+            "coal_twh": 243.6385,
+            "gas_cc_twh": 1265.3418,
+            "co2_mt_total": 804.4821,
+            "lw_price": 26.762,
+            "scarcity_hours": 130,
+            "entry_thermal_gw": 5.3098,
+            "renewable_build_gw": 5.0,
+            "total_build_gw": 24.3098,
+            "retired_thermal_gw": 4.681,
+            "reserve_margin_final": 0.12352,
+            "storage_fleet_mw": 39000.0,
+            "storage_cap_value_per_mw": 0.024,
+            "storage_fleet_avg_elcc": 0.79301,
+            "storage_new_longdur_share": 1.0
+          },
+          "cached": false
+        }
+      ],
+      "expectations": [
+        {
+          "expr_id": "T1.9a",
+          "description": "storage capacity value per MW monotone \u2193",
+          "metric": "storage_cap_value_per_mw",
+          "rule": "monotone_down",
+          "gate": false,
+          "status": "PASS",
+          "detail": "\u2193 [0.279, 0.2, 0.024]"
+        }
+      ]
+    }
+  ]
+}
