@@ -1,0 +1,144 @@
+# Canonical schema: sub-regional / transfer-constraint binding record
+#
+# Measured binding record (shadow prices + live demand-curve breakpoints) for
+# an ISO's published inter-regional transfer constraints. First ISO: MISO's
+# Regional Directional Transfer (RDT), from the public "Binding Sub-Regional
+# Power Balance Constraints" market reports
+# (docs.misoenergy.org/marketreports/YYYYMMDD_{da,rt}_pbc.csv) — rows exist
+# ONLY for intervals where the constraint carried a nonzero shadow price, so
+# absence of a row means "did not bind", not "missing data".
+#
+# This is a backcast VALIDATION series, never an LP input: when a constraint
+# binds is an outcome of dispatch (rule 13 — feeding it back would pin the
+# backcast to actuals). It upgrades the MISO RDT calibration anchors from SOM
+# annual aggregates to a measured hourly (DA) / 5-minute (RT) record, and it
+# separates the RDT-proper binding record from the wider RDT+RPE constraint
+# FAMILY the SOM's ">25% of RT intervals" figure describes (the IMM
+# Summer-2025 quarterly's binding-frequency chart splits "Tx Only" / "Both
+# Binding" / "RPE Only" — the RPE constraint has NO public binding record).
+#
+# Note on shadow-price basis: the posted value is the pbc CONSTRAINT's own
+# dual (capped by its demand-curve step, e.g. -$40 while in the first TCDC
+# step). The Reserve Procurement Enhancement's additive $200 lands on the
+# subregional price SEPARATION, not on this constraint's dual — so model
+# separation compares against |shadow| + any RPE contribution, never against
+# this column alone (2024 MISO SOM §III.B).
+#
+# Curated by scripts/curate_transfer_constraint_binding.py from
+#   data/raw/transfer-constraint-binding/MISO/miso_pbc_<market>_<year>.csv.gz
+datatype: transfer-constraint-binding
+schema_version: 1
+title: Transfer-constraint binding record (shadow prices + live demand curve)
+description: >-
+  Interval-level binding record for published inter-regional transfer
+  constraints (MISO RDT): posted shadow price and the live demand-curve
+  breakpoints in force, one row per (market, constraint, interval) where the
+  constraint bound.
+
+key_columns: [iso, market, constraint, interval_start_utc]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO identifier (MISO).
+  - name: market
+    dtype: string
+    unit: none
+    nullable: false
+    description: Market run — "da" (hourly) or "rt" (5-minute intervals).
+  - name: constraint
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Constraint name exactly as posted, e.g. "RDT_SO_MW (South_North)" /
+      "RDT_MW_SO (North_South)".
+  - name: direction
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Normalized transfer direction parsed from the constraint name:
+      "S_to_N" or "N_to_S".
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: >-
+      tz-aware UTC interval start. Source timestamps are MISO market time
+      (EST, UTC-5 fixed year-round — the report's MARKET_HOUR_EST column);
+      DA rows are hour-beginning (labels 00-23), RT rows are 5-minute
+      interval starts.
+  - name: interval_start_est
+    dtype: datetime64[ns]
+    unit: local_timestamp
+    nullable: true
+    description: Posted EST wall-clock interval start (informational).
+  - name: shadow_price_usd_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: false
+    description: >-
+      Preliminary shadow price exactly as posted (negative while binding;
+      -40 marks the first TCDC step's plateau, i.e. flow in real violation
+      within (100%, 102%] of the modeled limit).
+  - name: curvetype
+    dtype: string
+    unit: none
+    nullable: true
+    description: Demand-curve type as posted (observed values — PERCENT).
+  - name: bp1_pct
+    dtype: float64
+    unit: percent_of_modeled_limit
+    nullable: true
+    description: Demand-curve breakpoint 1 (percent of the modeled limit).
+  - name: pc1_usd_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Demand-curve price at/above breakpoint 1.
+  - name: bp2_pct
+    dtype: float64
+    unit: percent_of_modeled_limit
+    nullable: true
+    description: Demand-curve breakpoint 2.
+  - name: pc2_usd_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Demand-curve price at/above breakpoint 2.
+  - name: bp3_pct
+    dtype: float64
+    unit: percent_of_modeled_limit
+    nullable: true
+    description: Demand-curve breakpoint 3.
+  - name: pc3_usd_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Demand-curve price at/above breakpoint 3.
+  - name: bp4_pct
+    dtype: float64
+    unit: percent_of_modeled_limit
+    nullable: true
+    description: Demand-curve breakpoint 4 (DA posts a 999999 sentinel top).
+  - name: pc4_usd_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: Demand-curve price at/above breakpoint 4 (often blank).
+  - name: override
+    dtype: bool
+    unit: none
+    nullable: false
+    description: >-
+      Operator override flag as posted (OVERRIDE column; 3 RT rows in 2023
+      carry it, coinciding with a $3,000 emergency curve variant).
+  - name: override_reason
+    dtype: string
+    unit: none
+    nullable: true
+    description: Posted override REASON text (blank in almost all rows).
