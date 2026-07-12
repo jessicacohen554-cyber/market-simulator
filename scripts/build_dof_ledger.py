@@ -792,6 +792,34 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "artifact refresh)",
             )
         )
+    if sc.get("st_gas_mustrun_per_plant"):
+        # ST_GAS local-reliability commitment floor, ZERO fitted scalars:
+        # each plant's measured committed tranche (thermal_tranches_<ISO>.csv
+        # committed_pct, CEMS P5-when-online) is forced on in its measured
+        # top-online_frac system-load window. Both quantities are CAMPD-
+        # measured per plant; the boolean adds no tunable.
+        out.append(
+            _entry(
+                "st_gas_mustrun_per_plant (ST_GAS local-reliability "
+                "commitment floor, measured committed window)",
+                "fleet.bins_to_fleet cc_mustrun_pmin_mw ST_GAS branch; "
+                "window = top online_frac system-load hours "
+                "(thermal_tranches_<ISO>.csv, derive_thermal_tranches.py)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="CAMPD/CEMS 2023-2025: Entergy MISO-South steam fleet "
+                "synchronized supermajority of ALL hours (Nine Mile 98.2%, "
+                "P5-all-hours 414 MW; Sabine 85.6%; Lewis Creek 87.8%) under "
+                "VLR/self-commitment (MISO SOM out-of-market local-"
+                "reliability commitments, South region) while the "
+                "economically-dispatched class ran near-dark",
+                root_cause="the committed share and online fraction re-derive "
+                "from multi-year CAMPD when the record extends (rule 23); "
+                "true cyclers publish small fractions and force little "
+                "(self-limiting by measurement, rule 18)",
+            )
+        )
     if (
         iso in ("NYISO", "CAISO")
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))
