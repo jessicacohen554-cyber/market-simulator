@@ -898,7 +898,23 @@ class ScenarioConfig:
     # exercised only end-to-end via the runner (which supplies the reserve
     # position). Flipping the default is gated on the P-2A auction-history
     # validation (CR-2); this session lands the mechanism default-off only.
-    ramp_limits: bool = False  # GATED, default-OFF plant-group hourly ramp
+    renewable_elcc_curves: bool = True  # CR-3.1 (plan §3.4.1; P-2B Option A
+    # basis): the adequacy ledger accredits wind/solar (and any published VRE
+    # class) at the ISO's OWN published penetration-indexed ELCC curve
+    # (constants.RENEWABLE_ELCC_CURVES_BY_ISO — PJM class ratings, MISO
+    # capacity-credit-vs-penetration curve, NYISO CAFs), evaluated at the
+    # MODEL'S OWN installed share so accreditation responds to modeled build
+    # (rule 13) and VRE saturates its own capacity value. Flows through ONE
+    # resolver (capacity.resolve_renewable_capacity_credit) into all four
+    # consumers together — accredited_firm_capacity_mw, the retirement
+    # reliability floor, the reserve-margin backstop, and the CR-1 curve
+    # position (rule 19). ISOs/classes with no published study keep the flat
+    # generic constants (cited neutral fallback, rule 25 spirit); ERCOT's CDR
+    # accreditation stays in RENEWABLE_CAPACITY_CREDIT_BY_ISO either way.
+    # Default ON (rule 15: published accreditation over a generic estimate).
+    # False = the frozen-penetration byte-compat mode: credits pin back to
+    # the pre-CR-3.1 flat constants (the capacity-hindcast BASELINE arm and
+    # the byte-identity tests) — no curve, no penetration response.
     # envelopes in the dispatch LP (model/dispatch._build_ramp_rows). One
     # two-sided row per ramp-constrained plant group per hour transition,
     # bounding the group's hourly dispatch delta by its CAMPD-measured max

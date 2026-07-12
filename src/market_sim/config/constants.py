@@ -2752,8 +2752,231 @@ RENEWABLE_CAPACITY_CREDIT: dict[str, float] = {
 # Source: ERCOT, "Report on the Capacity, Demand and Reserves (CDR) in the
 # ERCOT Region", December 2025 (Seasonal Summary + ELCC tabs); ERCOT Fact
 # Sheet, July 2026. See docs/handoffs/ercot-accreditation-audit-2026-07-06.md.
+# (ERCOT deliberately stays HERE, not in RENEWABLE_ELCC_CURVES_BY_ISO below:
+# the CDR seasonal-rating accreditation basis stays per the CR-3 plan §3.4.1
+# and the P-2B adopted basis — "ERCOT/CAISO untouched".)
 RENEWABLE_CAPACITY_CREDIT_BY_ISO: dict[str, dict[str, float]] = {
     "ERCOT": {"wind": 0.20, "solar": 0.21},
+}
+
+
+@dataclass(frozen=True)
+class RenewableElccCurve:
+    """One ISO's published ELCC/accreditation curve for a VRE resource class.
+
+    ``points`` are ``(penetration, credit)`` pairs ascending in penetration:
+    ``credit`` is the accredited firm fraction of nameplate (0.41 = 41 % of
+    nameplate counts toward the requirement) and ``penetration`` is measured
+    on ``penetration_basis`` —
+
+    * ``"pct_of_peak_load"`` — installed nameplate of the class as a percent
+      of the system peak (MISO's published axis; the classic ELCC-literature
+      basis). Evaluation needs the model's peak demand.
+    * ``"installed_mw"`` — absolute installed nameplate MW of the class
+      (PJM's ELCC/RRS axis). Evaluation needs only the model's installed MW.
+    * ``None`` — a single published point with no penetration axis (NYISO's
+      CAFs): the curve is a constant and ``points`` holds one pair whose
+      penetration value is ignored. Never fabricate an axis the ISO did not
+      publish (P-0B intake discipline / schema note).
+
+    Evaluated by :func:`evaluate_renewable_elcc_curve` — piecewise-linear,
+    flat-clamped at both ends (beyond the last published point the credit
+    holds its endpoint value; no extrapolated slope is invented). The
+    penetration argument is the MODEL'S OWN installed share, so the credit
+    regenerates forward and responds to modeled build (rule 13).
+    """
+
+    penetration_basis: str | None
+    points: tuple[tuple[float, float], ...]
+    source: str
+
+
+def evaluate_renewable_elcc_curve(
+    curve: "RenewableElccCurve",
+    installed_mw: float | None,
+    peak_demand_mw: float | None,
+) -> float | None:
+    """Credit fraction of ``curve`` at the model's own penetration.
+
+    Resolves the curve's penetration axis from the model quantities: the
+    class's installed nameplate for ``"installed_mw"``, ``100 × installed /
+    peak`` for ``"pct_of_peak_load"``, and nothing for a single-point curve
+    (constant). Linear interpolation between published points, flat-clamped
+    outside them (mirrors :func:`evaluate_demand_curve` — no slope beyond
+    the published domain). Returns ``None`` when the axis quantity the curve
+    needs is unavailable (caller falls back to the point-basis resolution),
+    so a missing peak can never silently misprice a pct-of-peak curve. Pure
+    Python — the config layer keeps its light import surface.
+    """
+    if not curve.points:
+        return None
+    if curve.penetration_basis is None:
+        return curve.points[0][1]
+    if installed_mw is None:
+        return None
+    if curve.penetration_basis == "pct_of_peak_load":
+        if peak_demand_mw is None or peak_demand_mw <= 0.0:
+            return None
+        x = 100.0 * float(installed_mw) / float(peak_demand_mw)
+    elif curve.penetration_basis == "installed_mw":
+        x = float(installed_mw)
+    else:  # unknown basis — never guess a conversion
+        return None
+    pts = curve.points
+    if x <= pts[0][0]:
+        return pts[0][1]
+    if x >= pts[-1][0]:
+        return pts[-1][1]
+    for (x_lo, c_lo), (x_hi, c_hi) in zip(pts, pts[1:]):
+        if x_lo <= x <= x_hi:
+            span = x_hi - x_lo
+            if span <= 0.0:
+                return c_lo
+            return c_lo + (x - x_lo) / span * (c_hi - c_lo)
+    return pts[-1][1]  # unreachable; satisfies type checkers
+
+
+# Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan
+# docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md §3.4.1;
+# adopted basis = P-2B Option A per-ISO published-basis consistency,
+# docs/handoffs/accreditation-basis-memo-2026-07-12.md §4.1). Replaces the
+# flat generic wind 0.16 / solar 0.18 for exactly the ISOs with a published
+# ELCC study on disk (data/raw/capacity-market/elcc/<iso>/<iso>.csv, the
+# P-0B/N6 intake); every point below is digitized from those committed rows
+# and reconciled against them by tests/test_renewable_elcc_curves.py — a
+# published market-design input, never a fit target (rules 13/23).
+#
+# Resolution ladder (model/capacity.py::resolve_renewable_capacity_credit):
+# curve here (when ScenarioConfig.renewable_elcc_curves is on) → per-ISO
+# point override (RENEWABLE_CAPACITY_CREDIT_BY_ISO) → generic fallback
+# (RENEWABLE_CAPACITY_CREDIT). ISOs / classes ABSENT here keep the flat
+# constants — a cited, neutral fallback (rule 25 spirit), never a foreign
+# study masquerading as the ISO's basis:
+#
+# * NEISO — NO ISO-published ELCC study: the on-disk rows are third-party
+#   (2022 GE/NRDC, 2024 E3/Mettetal — both explicitly "not ISO-NE-adopted");
+#   ISO-NE accredits intermittents via seasonal claimed capability today.
+#   Falls back to the generic constants until ISO-NE's RCA marginal-ELCC
+#   values are published/intaken.
+# * CAISO — the on-disk CPUC E3/Astrapé study publishes INCREMENTAL
+#   (marginal-tranche) ELCCs conditioned on the IRP portfolio (solar rises
+#   6.6→8.8 % with storage buildout), not fleet-average accreditation;
+#   using a marginal value as the whole-fleet ledger credit would misstate
+#   the supply block (rule 15's misalignment exception, documented). CAISO
+#   keeps the generic fallback ("CAISO untouched", P-2B §4.1) pending a
+#   class-average NQC/ELCC intake.
+# * ERCOT — CDR seasonal-rating basis stays in
+#   RENEWABLE_CAPACITY_CREDIT_BY_ISO above (plan §3.4.1).
+RENEWABLE_ELCC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
+    "PJM": {
+        # PJM accredits every class at its published ELCC class rating
+        # (2025/26 CIFP reform; P-2B Option A end-to-end basis). The official
+        # final ratings pair each class's rating with its installed MW
+        # (ELCC/RRS Table 5), giving a 2-point installed-MW axis. Onshore
+        # wind rates 41 % at both published fleet sizes — flat over the
+        # observed range, clamped at 0.41 beyond it. (PJM's preliminary
+        # ER24-99 indicative table shows the marginal rating declining
+        # 35 % → 19 % by 2032/33, but it is delivery-year-indexed with no
+        # published MW axis — never converted here; extend when PJM
+        # publishes the pairing. R3/Option-A step 3 covers thermal classes.)
+        "wind": RenewableElccCurve(
+            penetration_basis="installed_mw",
+            points=((3549.0, 0.41), (3956.0, 0.41)),
+            source=(
+                "PJM 2026/27 + 2027/28 BRA final ELCC class ratings, Onshore "
+                "Wind 41%/41% at 3,549/3,956 MW installed (2025 PJM ELCC/RRS "
+                "Table 24 ratings, Table 5 installed MW) — "
+                "data/raw/capacity-market/elcc/pjm/pjm.csv"
+            ),
+        ),
+        # Model 'solar' = the PJM solar fleet: MW-weighted blend of the two
+        # published solar classes per vintage (same-document arithmetic):
+        #   2026/27: (8,713×11% + 1,189×8%) / 9,902  = 10.64 %
+        #   2027/28: (11,612×8% + 1,494×7%) / 13,106 =  7.89 %
+        # Declining with penetration, clamped at 0.0789 beyond 13.1 GW —
+        # in line with (slightly above) the ER24-99 indicative tracking-solar
+        # trajectory (~5-8 % by the early 2030s), so the clamp is the
+        # conservative published anchor, not an invented slope.
+        "solar": RenewableElccCurve(
+            penetration_basis="installed_mw",
+            points=((9902.0, 0.1064), (13106.0, 0.0789)),
+            source=(
+                "PJM 2026/27 + 2027/28 BRA final ELCC class ratings, "
+                "Tracking Solar 11%/8% at 8,713/11,612 MW + Fixed-Tilt Solar "
+                "8%/7% at 1,189/1,494 MW, MW-weighted per vintage — "
+                "data/raw/capacity-market/elcc/pjm/pjm.csv"
+            ),
+        ),
+    },
+    "MISO": {
+        # MISO's 2019 Wind & Solar Capacity Credit Report publishes the
+        # genuine article: the adopted ("MISO Capacity Credit") class-average
+        # wind accreditation by penetration as % of coincident peak, PY2010-
+        # PY2020. All published points as-is (the PY2012/PY2015 pair is one
+        # deduplicated point — identical x and y), including the real
+        # year-to-year wiggle; sorted by penetration. Beyond 16.7 % of peak
+        # the credit clamps at 0.166 — conservative against the PY2023-24 /
+        # PY2025-26 seasonal marginal ELCCs (18.1-30.7 % at ~28.3 GW
+        # installed, a different axis+grain, recorded in the same CSV but
+        # not blended into this annual class-average curve).
+        # MISO SOLAR has no published probabilistic ELCC curve (only flat
+        # seasonal defaults for <30-day-metered resources) → generic
+        # fallback, per the registry-level note above.
+        "wind": RenewableElccCurve(
+            penetration_basis="pct_of_peak_load",
+            points=(
+                (7.6, 0.080),
+                (9.7, 0.129),
+                (11.8, 0.141),
+                (12.2, 0.147),
+                (13.0, 0.133),
+                (13.1, 0.156),
+                (13.7, 0.156),
+                (14.8, 0.152),
+                (16.7, 0.166),
+            ),
+            source=(
+                "MISO 2019 Wind & Solar Capacity Credit Report, Tables "
+                "2-1/2-2 'MISO Capacity Credit (%)' vs 'Historical "
+                "Penetration (%)' (PY2010-PY2020) — "
+                "data/raw/capacity-market/elcc/miso/miso.csv"
+            ),
+        ),
+    },
+    "NYISO": {
+        # NYISO publishes single current-point Capacity Accreditation
+        # Factors (CAFs) per Capacity Accreditation Resource Class and
+        # locality — a marginal-reliability-based rating applied to every MW
+        # of the class (NYISO's adopted design), with NO penetration axis.
+        # Single-point curves (constant), never a fabricated axis. Values
+        # are the Rest-of-State column — the locality where nearly all NYISO
+        # land-based wind and utility solar physically sits; offshore wind
+        # uses Long Island, the only locality with OSW resources.
+        "wind": RenewableElccCurve(
+            penetration_basis=None,
+            points=((0.0, 0.1684),),
+            source=(
+                "NYISO 2025-2026 Final CAFs (2.4.2025), land-based wind, ROS "
+                "column 16.84% — data/raw/capacity-market/elcc/nyiso/nyiso.csv"
+            ),
+        ),
+        "solar": RenewableElccCurve(
+            penetration_basis=None,
+            points=((0.0, 0.1224),),
+            source=(
+                "NYISO 2025-2026 Final CAFs (2.4.2025), solar, ROS column "
+                "12.24% — data/raw/capacity-market/elcc/nyiso/nyiso.csv"
+            ),
+        ),
+        "offshore_wind": RenewableElccCurve(
+            penetration_basis=None,
+            points=((0.0, 0.3579),),
+            source=(
+                "NYISO 2025-2026 Final CAFs (2.4.2025), offshore wind, LI "
+                "column 35.79% — data/raw/capacity-market/elcc/nyiso/nyiso.csv"
+            ),
+        ),
+    },
 }
 
 # Thermal accreditation basis for the same adequacy ledger, per ISO. Default
