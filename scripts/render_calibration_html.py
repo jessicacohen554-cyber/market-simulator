@@ -921,6 +921,25 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             # EIA930_GAS_FOLDS_GEO_BIOMASS allowlist — no silent regression.
             if "other" in e:
                 _e930d["other"] = round(float(e["other"].sum()) / 1e6, 3)
+            # G-21b split anchor: CEMS-net coal-family total (every coal unit
+            # ≥25 MW is metered), consumed by calibration_verdict's C2
+            # preliminary-vintage fallback so an incomplete family gates the
+            # measured split, not the BA-reported 930 per-fuel cell (whose
+            # coal attribution runs −17..−21 TWh below CEMS in MISO and
+            # +7..+11 above in PJM). Built from the same CAMPD frame as the
+            # plant benchmark above — regenerating the bench part can never
+            # silently drop the anchor (the post-hoc splice script
+            # scripts/splice_bench_coal_cems.py remains only as the one-shot
+            # backfill for parts no render has touched).
+            _e930d["coal_cems"] = round(
+                sum(
+                    float(cn.sum())
+                    for code, cn in cn_p.items()
+                    if str(grp_p.get(code, "")).startswith("COAL")
+                )
+                / 1e6,
+                3,
+            )
             bench[int(year)] = {
                 "plants": bplants,
                 "e930": _e930d,

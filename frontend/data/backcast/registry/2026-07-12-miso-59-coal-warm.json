@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-12-miso-59-coal-warm",
+  "label": "miso 59 coal warm",
+  "date": "2026-07-12",
+  "shorthand": "miso-59-coal-warm",
+  "definition": "miso-59 coal warm-boiler committed band (main) -- miso-58 meta.json replay (RDT congestion structure: South-seam split + 92% derate/TCDC + reserve co-opt pergen + zonal South + priced seam + SOM coal offers + CT 1.025 measured committed + Order-825 fast-start v4 + measured hourly OR requirements) + coal_warm_committed=True: the P1 $100/MW cold-start amortization is removed from coal committed bands whose fuel-free mustrun tranche holds the boiler online (measured 84-98% of hours) -- the fabricated +$8-15/MWh wedge that priced 15 GW of self-committed coal out of mid-merit against the SOM's measured at-cost conduct (G-21b/forensics, 2026-07-12 calibration log).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-12-miso-59-coal-warm.js",
+  "bundle": "results/calibration/miso59_coal_warm"
+}

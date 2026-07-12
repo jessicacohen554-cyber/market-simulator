@@ -1,4 +1,4 @@
-=== miso-59 MAIN start 2026-07-12T06:43:54Z ===
+=== miso-59 ABLATION start 2026-07-12T07:11:45Z ===
 INFO: Loaded MISO fleet from EIA-860 parquet (1975 generators)
 INFO: Binned fleet cache for MISO is up to date — loaded from miso_fleet_binned.parquet
 INFO: solving MISO 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
@@ -25,7 +25,6 @@ INFO: unit-outage derate (MISO 2023): 735 plant-tranches derated
 INFO: COD ramp (MISO 2023): 515 unit-months masked offline (mid-year COD / retirement), 20 unit(s) fully not-yet-built/retired
 INFO: MISO 2023: reference-price seam import capped at measured EIA-930 BA-to-BA deliverability envelope (p90; SPP/South clip toward ~0 import, PJM keeps its measured eastern transfer)
 INFO: MISO 2023: reference-price seam export capped at measured EIA-930 BA-to-BA net-export envelope (p90; PJM seam clips export toward ~0, SPP/South keep their measured export headroom)
-INFO: MISO 2023: reliability floor — 12 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
 INFO: F923 fuel costs for 2023: 992 generators priced from their own plant, 1837 gap-filled from nearby (state/zone) plants
 INFO: MISO zonal gas basis (2023): 1496 gas units; cap-weighted mean +0.16 removed, zonal spread -0.26..0.30 $/MMBtu
 INFO: MISO 2023: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
@@ -34,4 +33,4 @@ INFO: MISO 2023: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-9
 INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 2424 MW at h0 (measured hourly cleared reg+spin+supp), 11 ORDC steps ($200-$3500), 2556 reserve-eligible units
 INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 269 MW at h0 (measured hourly South reservation), published zonal curve steps ['206MW@$200', '722MW@$1100', '103MW@$3300']
 INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2543 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 38003 / min 33889 MW
-=== miso-59 MAIN exit 0 2026-07-12T07:11:45Z ===
+INFO: Matrix build: 7.524s, Solve: 337.159s (cold)
