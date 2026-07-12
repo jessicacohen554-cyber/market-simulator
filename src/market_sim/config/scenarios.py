@@ -3753,6 +3753,29 @@ class ScenarioConfig:
     # data/raw/_validation-source/pjm_da_virtual_surface_condbinned.json).
     pjm_da_virtual_surface_path: str | None = None
 
+    # PJM MID-CURVE offer surface (G-22 lever A', default off, PJM-gated).
+    # pjm-99 proved the top-of-curve surface inert: the dual is capped by the
+    # ~21 GW idle mid-curve (COAL / CT_PEAKER / ST_GAS / CC econ bands at
+    # $28-45 where the measured fleet prices the same curve region $35-83+),
+    # and the depth sweep showed +10 GW of DA depth buys only +$2-4/MWh on
+    # that body. This floors each targeted econ-tranche row's P1 bid at the
+    # MEASURED offer level of its physics segment at the row's own
+    # within-plant capacity share (scale-free mapping), keyed by within-year
+    # net-load percentile and reconstructed over the model's delivered-gas
+    # day series (scripts/derive_pjm_offer_midcurve.py;
+    # fleet.build_pjm_offer_midcurve_conditional_markup). P1-only at the
+    # mc_bid_adjust seam so P0 run lengths are unperturbed (the pjm-99
+    # finding's econ-band caution); committed/must-run tranches never touched
+    # (coal cost/commitment stays owned by the take-or-pay/passthrough
+    # sigmoids, rule 19); the floor only raises bids (clamp >= current) and
+    # caps below VOLL. Measured OFFER prices are the input; clearing prices
+    # stay validation-only (rule 13); frozen against residuals (rule 20);
+    # PJM-only (rule 25).
+    pjm_offer_midcurve_conditional: bool = False
+    # Path to the measured mid-curve surface JSON (default: the frozen
+    # data/raw/_validation-source/pjm_offer_midcurve_condbinned.json).
+    pjm_offer_midcurve_path: str | None = None
+
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
     # rate is base_HR x {cc_committed_hr_override, cc_econ_hr_override,
