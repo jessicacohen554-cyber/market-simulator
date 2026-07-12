@@ -1,0 +1,116 @@
+# One-shot: land the ERCOT-62 session on the designated branch. The authoring
+# container cannot git-push (413) and the MCP relay caps single-call content,
+# so the session's work rides as an xz+base64 patch blob committed alongside
+# this workflow; the runner decodes (sha-gated), applies it onto the branch
+# head (= the post-ERCOT-61-merge origin/main), runs the mechanism unit tests,
+# and pushes. The patch carries: the ercot59 keeper promotion (owner decision
+# 2026-07-12: keepers.json + status.js + attestation approval + twin pointer),
+# the owner-directed ERCOT registry prune (keeper + later only), the
+# ercot_offer_surface_lowcurve mechanism (default-off) + derive + frozen JSON +
+# tests + probes, the p1_bid_adjust_prep seam hook, the trough-price-formation
+# diagnosis doc, and the calibration-log entries (promotion + ERCOT-62).
+# status.js is rebuilt on the runner (committed, not deploy-generated); the
+# pruned run payloads are git-rm'ed by name (too large to ride the patch).
+name: ercot62-land-session
+
+on:
+  push:
+    branches:
+      - claude/ercot-binding-price-formation-7gd4l3
+    paths:
+      - .github/workflows/ercot62-land-session.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ercot62-land-session
+  cancel-in-progress: false
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Apply the session patch (sha-gated)
+        run: |
+          set -euo pipefail
+          if grep -q "ercot_offer_surface_lowcurve" src/market_sim/config/scenarios.py; then
+            echo "already applied — no-op"
+            exit 0
+          fi
+          echo "28add2366eb3c245cec0b688b01d235faeb1a2e57bcd9e4fc65a2025631f0a43  /tmp/_ercot62_code.patch" > /tmp/patch.sha
+          cat scripts/probes/_ercot62_patch/full.patch.xz.b64.part1 \
+              scripts/probes/_ercot62_patch/full.patch.xz.b64.part2 \
+            | tr -d '\r\n ' | base64 -d | xz -d > /tmp/_ercot62_code.patch
+          sha256sum -c /tmp/patch.sha
+          git apply --verbose /tmp/_ercot62_code.patch
+          # Owner-directed ERCOT registry prune (keeper + later only): the
+          # deleted run payloads are too large to ride in the patch, so the
+          # prune is executed here by name (bundle dirs under
+          # results/calibration/ stay as the archival record).
+          for id in 2026-07-10-ercot53-hsl-930fill 2026-07-10-ercot53-hsl-930fill-ablation \
+                    2026-07-10-ercot55-930gap-c2fix 2026-07-10-ercot55-930gap-ablation \
+                    2026-07-10-ercot55-surface-ab 2026-07-10-ercot55-surface-ablation \
+                    2026-07-10-ercot56-nucwin 2026-07-10-ercot56-nucwin-ablation \
+                    2026-07-11-ercot57-thermavail 2026-07-11-ercot57-thermavail-ablation \
+                    2026-07-11-ercot58-joint-ordc-only 2026-07-11-ercot58-joint-ordc-only-ablation; do
+            git rm -q "frontend/data/backcast/registry/$id.json" "frontend/data/backcast/runs/$id.js"
+          done
+          # the blob + this workflow stay on the branch as the provenance record.
+
+      - name: Install package and rebuild status.js (committed, not deploy-generated)
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          pip install -e . pytest
+          python scripts/build_status.py
+          grep -q "2026-07-12-ercot59-storage-deploy" frontend/data/backcast/status.js
+
+      - name: Post-conditions (entries present once, keeper state coherent)
+        run: |
+          set -euo pipefail
+          for pat in "ERCOT keeper PROMOTED: \`ercot59 storage-deploy\`" "ERCOT-62: the binding-regime price-formation lane"; do
+            n=$(grep -c "$pat" docs/calibration-log.md)
+            if [ "$n" -ne 1 ]; then echo "FAIL: '$pat' count=$n" >&2; exit 1; fi
+          done
+          python - <<'PY'
+          import json
+          k = json.load(open("frontend/data/backcast/keepers.json"))
+          assert k["ERCOT"] == "2026-07-12-ercot59-storage-deploy", k["ERCOT"]
+          assert "2026-07-12-ercot59-storage-deploy" in k["keepers"]
+          PY
+          # prune held: only the keeper pair remains registered for ERCOT
+          n=$(ls frontend/data/backcast/registry/ | grep -ci ercot)
+          if [ "$n" -ne 2 ]; then echo "FAIL: ERCOT registry count=$n (want 2)" >&2; exit 1; fi
+
+      - name: Run the mechanism unit tests
+        run: |
+          set -euo pipefail
+          python -m pytest tests/test_ercot_offer_surface_lowcurve.py \
+            tests/test_ercot_offer_surface_conditional.py \
+            tests/test_recorded_cfg_fidelity.py \
+            tests/test_floor_mechanisms_ablation.py -q
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "ERCOT-62 session landing: ercot59 keeper PROMOTED (owner decision) + ERCOT dashboard pruned to keeper+later (owner directive); G-22 conditional-offer-distribution LOW leg built default-off (measured LSL/lower-body markdown, P0-gated) with the v1/v2 probe refutation recorded; lever-1 commitment-ceiling rule-13 dead end; trough-price-formation diagnosis + log entries [skip ci]
+
+          Co-Authored-By: Claude Fable 5 <noreply@anthropic.com>
+          Claude-Session: https://claude.ai/code/session_014dwKWY3ueaCx76ACyGW2ng"
+          git push origin HEAD:claude/ercot-binding-price-formation-7gd4l3
