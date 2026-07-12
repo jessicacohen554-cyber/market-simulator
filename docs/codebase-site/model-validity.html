@@ -35,6 +35,11 @@
       border-radius: 4px;
     }
 
+    /* Long inline code identifiers/paths wrap rather than overflow at narrow
+       viewports (≤400px); table code stays in its own overflow-x wrapper. */
+    .content-section p code,
+    .content-section li code { overflow-wrap: break-word; }
+
     /* ---- Two-lane "data vs solving" diagram ---- */
     .lane-scroll { overflow-x: auto; padding-bottom: 4px; }
     .lane-diagram { margin: var(--space-lg) 0; display: flex; flex-direction: column; gap: 14px; }
@@ -70,7 +75,7 @@
     .lane__cell.on-intake {
       background: rgba(22,163,74,0.12);
       border-color: rgba(22,163,74,0.35);
-      color: var(--green-text);
+      color: #166534;
     }
     .lane__cell.on-solve {
       background: rgba(14,165,233,0.16);
@@ -224,14 +229,14 @@
       display: flex; align-items: center; justify-content: center;
       font-weight: 800; font-size: 1rem; color: #fff; z-index: 1;
     }
-    .flow-step:nth-child(1) .flow-step__num { background: var(--nuclear); }
+    .flow-step:nth-child(1) .flow-step__num { background: #4F46E5; } /* darker indigo: white text clears 4.5:1 (var(--nuclear) sat at ~4.47) */
     .flow-step:nth-child(2) .flow-step__num { background: var(--amber-text); }
     .flow-step:nth-child(3) .flow-step__num { background: var(--purple-text); }
     .flow-step__body h4 { margin: 8px 0 4px; font-size: 1rem; color: var(--navy); }
     .flow-step__body p { margin: 0; font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6; }
     .flow-step__loop {
       display: inline-block; margin-top: 8px;
-      font-size: 0.78rem; font-weight: 700; color: var(--amber-text);
+      font-size: 0.78rem; font-weight: 700; color: #92400E;
       background: rgba(180,83,9,0.08); border: 1px dashed var(--amber-text);
       border-radius: 6px; padding: 4px 10px;
     }
@@ -263,7 +268,7 @@
       font-size: 0.76rem; font-weight: 700; padding: 5px 12px; border-radius: 999px;
       border: 1px solid var(--border-light); color: var(--text-muted); background: var(--bg-card);
     }
-    .iso-pill.complete { border-color: var(--positive); color: var(--green-text); background: rgba(22,163,74,0.08); }
+    .iso-pill.complete { border-color: var(--positive); color: #166534; background: rgba(22,163,74,0.08); }
 
     /* ---- Span diagram (section 6) ---- */
     .span-svg { width: 100%; height: auto; display: block; }
@@ -325,7 +330,7 @@
 
         <div class="story-section">
           <p>
-            Raw data sits on disk from <strong>2018 through H1-2026</strong>. That is <em>not</em> the same as what the model is allowed to solve and score. Under <a href="/CLAUDE.md">CLAUDE.md rule 22</a>, data flows through <strong>two entirely separate channels</strong>, and conflating them is the most common way to accidentally launder a holdout year into the calibration.
+            Raw data sits on disk from <strong>2018 through H1-2026</strong>. That is <em>not</em> the same as what the model is allowed to solve and score. Under CLAUDE.md rule 22, data flows through <strong>two entirely separate channels</strong>, and conflating them is the most common way to accidentally launder a holdout year into the calibration.
           </p>
           <ul style="margin-bottom: var(--space-lg); padding-left: var(--space-xl);">
             <li style="margin-bottom: var(--space-sm);"><strong>Intake — ungated.</strong> Data for any out-of-training year may be fetched at any time, for any ISO, under explicit, session-logged owner authorization. It is validated <strong>no-LP only</strong> — byte-identity checks and loader-resolvability, <em>never a dispatch solve</em> — and each intake is recorded in the <code>intake_log</code> of <code>calibration-complete.json</code>.</li>
@@ -387,7 +392,7 @@
         </div>
 
         <div class="source-cite">
-          <strong>Source:</strong> <code>frontend/data/backcast/calibration-complete.json</code> (channel note + <code>intake_log</code>); <a href="/CLAUDE.md">CLAUDE.md</a> rule 22; <code>docs/handoffs/holdout-policy-memo-2026-07.md</code> §(e); <code>docs/calibration-and-validation-methodology.md</code> §3.2.
+          <strong>Source:</strong> <code>frontend/data/backcast/calibration-complete.json</code> (channel note + <code>intake_log</code>); CLAUDE.md rule 22; <code>docs/handoffs/holdout-policy-memo-2026-07.md</code> §(e); <code>docs/calibration-and-validation-methodology.md</code> §3.2.
         </div>
       </div>
     </section>
@@ -451,7 +456,7 @@
         </div>
 
         <div class="source-cite">
-          <strong>Source:</strong> <a href="/CLAUDE.md">CLAUDE.md</a> rule 22 (amended 2026-07-07); <code>docs/calibration-and-validation-methodology.md</code> §3.1; <code>docs/handoffs/holdout-policy-memo-2026-07.md</code>; data in <code>docs/codebase-site/data/holdout-tiers.json</code>.
+          <strong>Source:</strong> CLAUDE.md rule 22 (amended 2026-07-07); <code>docs/calibration-and-validation-methodology.md</code> §3.1; <code>docs/handoffs/holdout-policy-memo-2026-07.md</code>; data in <code>docs/codebase-site/data/holdout-tiers.json</code>.
         </div>
       </div>
     </section>
@@ -508,7 +513,7 @@
         </div>
 
         <div class="source-cite">
-          <strong>Source:</strong> <code>docs/calibration-and-validation-methodology.md</code> §3.1 (operational sequence); <a href="/CLAUDE.md">CLAUDE.md</a> rule 22; <code>docs/handoffs/holdout-policy-memo-2026-07.md</code>.
+          <strong>Source:</strong> <code>docs/calibration-and-validation-methodology.md</code> §3.1 (operational sequence); CLAUDE.md rule 22; <code>docs/handoffs/holdout-policy-memo-2026-07.md</code>.
         </div>
       </div>
     </section>
