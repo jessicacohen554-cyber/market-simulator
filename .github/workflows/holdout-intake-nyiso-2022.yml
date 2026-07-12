@@ -1,0 +1,240 @@
+name: holdout-intake-nyiso-2022
+
+# One-shot NYISO 2022 holdout-intake BINARY lander (CLAUDE.md rule 22,
+# Option-2 DATA-intake channel — generalized from
+# holdout-intake-neiso-2022.yml per the equivalency-register handoff).
+#
+# The 2026-07-12 owner authorization (verbatim in
+# frontend/data/backcast/calibration-complete.json intake_log) covers DATA
+# intake only: NYISO has NO calibration-complete marker, so the guard here
+# checks the intake_log entry, not `complete` — intake does not require a
+# marker (Option-2 amendment; the marker gates solve/score only). It is NOT a
+# solve: no LP is constructed; everything is loader-level data intake.
+#
+# The GitHub API file tools cannot carry binary content (and large generated
+# text wastes an agent session's context), so this workflow reproduces the
+# intake session's BINARY + LARGE-GENERATED artifacts on an Actions runner
+# from the same committed scripts (pinned deps via uv.lock so parquet bytes
+# match) and pushes them to the intake branch:
+#   * data/raw/lmp-data/NYISO/2022MM01realtime_zone_csv.zip  (12 files, MIS archive)
+#   * data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet
+#       (2022 block appended; 2023-2025 rows asserted frozen by the script)
+#     + data/raw/_validation-source/actual_lmp.json (NYISO 2022 record — same
+#       script, all other ISO blocks asserted byte-identical)
+#   * data/raw/_validation-source/actual_as_reserve_NYISO.parquet
+#       (2022-2025 rebuild from the committed AS CSVs; in-sample rows identical)
+#   * data/raw/campd-facility-level/{NY,NJ}_2022.parquet
+#       (derived from the committed unit-level extracts; recipe --prove gated)
+#   * data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2022.csv
+#       (committed producer; 2023-2025 re-derivation byte-compared first)
+#   * data/raw/nyiso-weather/nyiso_zone_temp_daily.csv (2022 merge from the
+#       committed 2022h1/h2 split raws) + nyiso_downstate_tmax_daily.csv
+#       (same NCEI producer)
+#   * data/raw/gas-prices/transco_z6_ny_daily.csv (2022 EIA archive re-scrape,
+#       table + narrative, frozen-merged) + data/raw/gas_basis_by_iso_month.csv
+#       (NYISO-2022 re-base; pure arithmetic from the committed monthly hubs)
+#   * data/raw/_validation-source/calibration_reference.json (isos.NYISO.2022
+#       splice from a rebuild; all other churn restored)
+#
+# Small hand-verified TEXT artifacts (scripts, docs, the monthly gas CSVs,
+# the renewable-capacity sidecar, the intake_log) land via the API from the
+# intake session itself.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Preview only — run everything but do not commit or push"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: holdout-intake-nyiso-2022
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rule-22 intake-authorization guard (Option-2 channel)
+        run: |
+          python - <<'EOF'
+          import json, sys
+          data = json.load(open("frontend/data/backcast/calibration-complete.json"))
+          entries = [
+              e for e in data.get("intake_log", [])
+              if "NYISO 2022" in e.get("scope", "") and e.get("date") == "2026-07-12"
+          ]
+          if not entries:
+              sys.exit("no session-logged NYISO 2022 intake authorization in "
+                       "intake_log — rule 22 forbids this intake")
+          print("NYISO 2022 intake authorization present:", entries[0]["date"])
+          EOF
+
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Install pinned dependencies (uv.lock — parquet bytes must match
+              the intake session's pinned pyarrow/pandas)
+        run: uv sync --frozen
+
+      - name: Fetch the 2022 MIS monthly LBMP archives (12 DA + 12 RT)
+        run: |
+          cd data/raw/lmp-data/NYISO
+          for m in 01 02 03 04 05 06 07 08 09 10 11 12; do
+            curl -sS --fail --retry 3 -O "http://mis.nyiso.com/public/csv/damlbmp/2022${m}01damlbmp_zone_csv.zip"
+            curl -sS --fail --retry 3 -O "http://mis.nyiso.com/public/csv/realtime/2022${m}01realtime_zone_csv.zip"
+          done
+          # derive_actual_lmp reads the DA monthly zips from this outer
+          # container (never committed — the scoped git add below excludes it,
+          # like the gitignored DA zips themselves).
+          zip -q -0 NYISO_zonal_hourly.zip 2022*damlbmp_zone_csv.zip
+          ls -la 2022*zip NYISO_zonal_hourly.zip
+
+      - name: Build + frozen-merge the NYISO LMP bench 2022 block (skip if landed)
+        run: |
+          uv run python scripts/holdout_intake_nyiso_2022_lmp.py
+
+      - name: Derive NYISO_reserve_requirements_2022.csv (repro-gated)
+        run: |
+          if [ -f data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2022.csv ]; then
+            echo "2022 reserve-requirements file already landed — skipping"
+          else
+            uv run python scripts/curate_nyiso_reserve_requirements.py
+            mkdir -p /tmp/rrsnap
+            cp data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_202{3,4,5}.csv /tmp/rrsnap/
+            uv run python scripts/derive_nyiso_reserve_requirements_hourly.py --year 2022 2023 2024 2025
+            for y in 2023 2024 2025; do
+              cmp data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_$y.csv /tmp/rrsnap/NYISO_reserve_requirements_$y.csv \
+                || { echo "in-sample $y drifted — refusing"; git checkout -- data/raw/NYISO-AS/requirements/; exit 1; }
+            done
+            echo "2023-2025 re-derivation byte-identical; 2022 derived"
+          fi
+
+      - name: Extend the Transco Z6 NY daily series with 2022 (table + narrative)
+        run: |
+          if grep -q '^2022-' data/raw/gas-prices/transco_z6_ny_daily.csv; then
+            echo "2022 daily prints already landed — skipping"
+          else
+            uv run python scripts/fetch_transco_daily_spot.py --start-year 2022 --end-year 2022 \
+              --out /tmp/transco_2022_table.csv
+            uv run python scripts/holdout_intake_nyiso_2022_inputs.py transco-table --csv /tmp/transco_2022_table.csv
+            uv run python scripts/fetch_nyiso_gas_narrative.py --start-year 2022 --end-year 2022
+            rm -f data/raw/gas-prices/iroquois_z2_daily.csv  # 2022-only artifact; not an in-sample input (register N2 area)
+          fi
+
+      - name: Re-base the NYISO 2022 monthly basis rows (pure arithmetic)
+        run: |
+          uv run python scripts/holdout_intake_nyiso_2022_inputs.py basis
+
+      - name: Extend the NYISO weather dailies with 2022
+        run: |
+          uv run python scripts/holdout_intake_nyiso_2022_inputs.py weather
+          uv run python scripts/holdout_intake_nyiso_2022_inputs.py downstate-tmax
+
+      - name: Splice isos.NYISO.2022 into calibration_reference.json
+        run: |
+          uv run python - <<'EOF'
+          import json, pathlib
+          p = pathlib.Path("data/raw/_validation-source/calibration_reference.json")
+          committed = json.loads(p.read_text())
+          if "2022" in committed["isos"]["NYISO"]:
+              print("isos.NYISO.2022 already present — skipping")
+              raise SystemExit(0)
+          import subprocess
+          subprocess.run(["uv", "run", "python", "scripts/build_calibration_reference.py"], check=True)
+          rebuilt = json.loads(p.read_text())
+          committed["isos"]["NYISO"]["2022"] = rebuilt["isos"]["NYISO"]["2022"]
+          p.write_text(json.dumps(committed, indent=2, sort_keys=True) + "\n")
+          EOF
+          # restore every churned sidecar; keep only the new NYISO 2022 CSV
+          git checkout -- data/raw/_validation-source/*_renewable_capacity.csv 2>/dev/null || true
+          git clean -f data/raw/_validation-source/ --dry-run | grep -v NYISO_2022 | awk '{print $3}' | xargs -r rm -f
+
+      - name: Rebuild the AS-reserve validation parquet (2022-2025, in-sample identical)
+        run: |
+          uv run python - <<'EOF'
+          import sys
+          sys.path.insert(0, "scripts"); sys.path.insert(0, "src")
+          import pandas as pd
+          committed = pd.read_parquet("data/raw/_validation-source/actual_as_reserve_NYISO.parquet")
+          if (committed["year"] == 2022).any():
+              print("actual_as_reserve_NYISO.parquet already spans 2022 — skipping")
+              raise SystemExit(0)
+          from process_nyiso_as import build_reference
+          build_reference([2022, 2023, 2024, 2025])
+          new = pd.read_parquet("data/raw/_validation-source/actual_as_reserve_NYISO.parquet")
+          ins = new[new["year"].isin([2023, 2024, 2025])].reset_index(drop=True)
+          com = committed.reset_index(drop=True)
+          ok = ins.shape == com.shape and all(
+              ((ins[c].isna() & com[c].isna()) | (ins[c] == com[c])).all()
+              for c in com.columns
+          )
+          assert ok, "in-sample AS-reserve rows changed — refusing"
+          print("in-sample rows identical; 2022 added")
+          EOF
+
+      - name: Derive CAMPD facility-level NY/NJ 2022 (recipe --prove gated)
+        run: |
+          uv run python scripts/derive_campd_facility_from_units.py --states NY NJ --prove
+          uv run python scripts/derive_campd_facility_from_units.py \
+            --states NY NJ --year 2022 --persefoni-sibling 2023
+
+      - name: Materialize base64 relay files (*.b64 -> binary sibling)
+        run: |
+          python - <<'EOF'
+          import base64, pathlib
+          for b64 in pathlib.Path(".").rglob("*.b64"):
+              if ".git" in b64.parts:
+                  continue
+              target = b64.with_suffix("")
+              target.write_bytes(base64.b64decode(b64.read_text()))
+              b64.unlink()
+              print(f"materialized {target} ({target.stat().st_size} bytes)")
+          EOF
+
+      - name: Integrity report (sha256 of every landed artifact)
+        run: |
+          sha256sum \
+            data/raw/lmp-data/NYISO/2022*realtime_zone_csv.zip \
+            data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet \
+            data/raw/_validation-source/actual_lmp.json \
+            data/raw/_validation-source/actual_as_reserve_NYISO.parquet \
+            data/raw/_validation-source/calibration_reference.json \
+            data/raw/campd-facility-level/NY_2022.parquet \
+            data/raw/campd-facility-level/NJ_2022.parquet \
+            data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2022.csv \
+            data/raw/gas-prices/transco_z6_ny_daily.csv \
+            data/raw/gas_basis_by_iso_month.csv \
+            data/raw/nyiso-weather/nyiso_zone_temp_daily.csv \
+            data/raw/nyiso-weather/nyiso_downstate_tmax_daily.csv
+
+      - name: Commit landed artifacts to the branch
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/raw/lmp-data/NYISO/2022*realtime_zone_csv.zip \
+                  data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet \
+                  data/raw/_validation-source/actual_lmp.json \
+                  data/raw/_validation-source/actual_as_reserve_NYISO.parquet \
+                  data/raw/_validation-source/calibration_reference.json \
+                  data/raw/campd-facility-level/NY_2022.parquet \
+                  data/raw/campd-facility-level/NJ_2022.parquet \
+                  data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_2022.csv \
+                  data/raw/gas-prices/transco_z6_ny_daily.csv \
+                  data/raw/gas_basis_by_iso_month.csv \
+                  data/raw/nyiso-weather/nyiso_zone_temp_daily.csv \
+                  data/raw/nyiso-weather/nyiso_downstate_tmax_daily.csv
+          if git diff --cached --quiet; then
+            echo "nothing to commit (artifacts already landed)"
+            exit 0
+          fi
+          git commit -m "data(nyiso): 2022 holdout-intake binaries + regenerated large text (rule-22 Option-2 intake, workflow run ${{ github.run_id }})"
+          git push origin "HEAD:${{ github.ref_name }}"
