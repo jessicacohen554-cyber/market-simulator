@@ -3649,6 +3649,45 @@ class ScenarioConfig:
     # only keeps a repriced rung strictly below the load-shed slack).
     neiso_offer_surface_price_cap_frac: float = 0.95
 
+    # PJM condition-responsive energy-offer surface — the PJM analogue of the
+    # ERCOT/NEISO conditional surfaces above (G-22 lever A, default off,
+    # PJM-gated). Posts the MEASURED top-of-curve offer DISTRIBUTION from
+    # PJM's public DataMiner2 energy_market_offers feed
+    # (data/raw/pjm-energy-offers/, scripts/fetch_pjm_energy_offers.py) onto
+    # the CC_REGULAR + CT_PEAKER peak-band rungs in the P1 clearing solve
+    # ONLY and ONLY in anticipated-tight hours — P0 run lengths and loose
+    # hours stay byte-identical (the ladder is clamped never to lower an
+    # offer below the resolved peak height). The G-22 diagnosis
+    # (docs/handoffs/pjm-summer-peak-price-formation-g22-2026-07.md): at the
+    # top-150 load hours the real fleet's top-of-curve reaches p90 $238 /
+    # p99 $514 while the keeper's CC/CT peak bands cap ~$115-130, so the
+    # energy dual is set by a deep sub-$35 body and the summer peak never
+    # prices. The offer population is segmented by unit PHYSICS (min_runtime
+    # <= 2 h -> fast-start CT-like; the CC-like block by runtime + ecomin
+    # share), never by fuel labels. Trigger (within-year net-load percentile,
+    # forward-native) and level (measured OFFER prices over the model's own
+    # HH-daily + PJM-basis delivered-gas day series) are rule-13 admissible —
+    # clearing prices stay validation-only; parameters are derived from
+    # source data only (scripts/derive_pjm_offer_surface.py, rule 21) and
+    # frozen against residuals (rule 20). PJM-only (rule 25: the surface
+    # carries no generic fallback and never crosses ISO boundaries).
+    pjm_offer_surface_conditional: bool = False
+    # Path to the measured PJM condition-binned ladder JSON (default: the
+    # frozen data/raw/_validation-source/pjm_offer_surface_condbinned.json).
+    # None → the mechanism is a no-op even when the flag is on.
+    pjm_offer_surface_binned_path: str | None = None
+    # Net-load percentile bin EDGES (same contract as the ERCOT/NEISO fields
+    # above; the JSON records its edges and the mechanism asserts agreement).
+    pjm_offer_surface_netload_pcts: tuple[float, ...] = (0.80, 0.90, 0.97)
+    # Minimum net-load bin index at which the wall engages (0 = every bin; the
+    # merit order still self-gates in mild hours).
+    pjm_offer_surface_min_bin: int = 0
+    # Safety cap on the repriced offer as a fraction of VOLL (the measured
+    # offers already carry PJM's $1,000 soft / $2,000 hard energy offer cap;
+    # this guard only keeps a repriced rung strictly below the load-shed
+    # slack).
+    pjm_offer_surface_price_cap_frac: float = 0.95
+
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
     # rate is base_HR x {cc_committed_hr_override, cc_econ_hr_override,
