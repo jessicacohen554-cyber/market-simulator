@@ -5775,6 +5775,18 @@ def get_eford(fuel: str) -> float:
     return EFORD.get(fuel, 0.05)
 
 
+@lru_cache(maxsize=4)
+def _load_plant_registry_cached(csv_path: str) -> pd.DataFrame:
+    """Cached read of one master-plant-registry CSV path.
+
+    Keyed on the path string so the (identical) registry is parsed once per
+    fleet build instead of once per :func:`bins_to_fleet` call. Callers receive
+    a defensive ``.copy()`` via :func:`load_plant_registry`, so this shared
+    frame is never handed out directly.
+    """
+    return pd.read_csv(csv_path)
+
+
 def load_plant_registry(csv_path: str | Path) -> pd.DataFrame:
     """Load the master plant registry CSV.
 
@@ -5787,9 +5799,10 @@ def load_plant_registry(csv_path: str | Path) -> pd.DataFrame:
         csv_path: Path to ``master-plant-registry.csv``.
 
     Returns:
-        The registry as a DataFrame.
+        The registry as a DataFrame (a fresh copy of the cached read, so the
+        caller may mutate it freely).
     """
-    return pd.read_csv(csv_path)
+    return _load_plant_registry_cached(str(csv_path)).copy()
 
 
 # EIA-860 "Technology" string that marks an oil/distillate-fired unit. The
@@ -6445,6 +6458,13 @@ def _reconcile_cc_capacity(
     return bins
 
 
+# Memoized per-(path, year, reconcile-path) bin frames. ``load_campd_bins`` is
+# invoked repeatedly per fleet build (the dispatch path plus every outage
+# overlay), and the CSV read + tranche arithmetic is pure w.r.t. its args, so
+# the frame is computed once per key and callers receive a defensive copy.
+_CAMPD_BINS_CACHE: dict[tuple[str, int | None, str | None], pd.DataFrame] = {}
+
+
 def load_campd_bins(
     csv_path: str | Path,
     year: int | None = None,
@@ -6511,6 +6531,15 @@ def load_campd_bins(
         ``plant_codes`` (a one-element list with the plant code),
         ``fuel``.
     """
+    cache_key = (
+        str(csv_path),
+        year,
+        None if capacity_reconcile_path is None else str(capacity_reconcile_path),
+    )
+    cached = _CAMPD_BINS_CACHE.get(cache_key)
+    if cached is not None:
+        return cached.copy()
+
     detail = pd.read_csv(csv_path)
     fuel_series = detail["Plant_Group"].map(BIN_GROUP_TO_FUEL)
     unmapped = detail[fuel_series.isna()]
@@ -6620,7 +6649,8 @@ def load_campd_bins(
         csv_path,
         bins["capacity_mw"].sum() / 1000.0,
     )
-    return bins
+    _CAMPD_BINS_CACHE[cache_key] = bins
+    return bins.copy()
 
 
 # Default tranche split (% of nameplate) per group for the synthetic per-plant
@@ -7187,6 +7217,7 @@ def ct_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
     return frozenset(codes)
 
 
+@lru_cache(maxsize=8)
 def st_gas_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
     """EIA plant codes of intermediate-duty ``ST_GAS`` units for an ISO.
 
@@ -7218,6 +7249,7 @@ def st_gas_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
     return frozenset(int(c) for c in st["plant_code"].dropna())
 
 
+@lru_cache(maxsize=8)
 def cc_intermediate_plants(iso: str, threshold: float) -> frozenset[int]:
     """EIA plant codes of intermediate-duty ``CC_REGULAR`` units for an ISO.
 
@@ -7457,7 +7489,13 @@ def bins_to_fleet(
             int(getattr(config, "weather_year", 0) or 0)
         )
 
-    for _, b in bins.iterrows():
+    # Iterate as record dicts rather than ``iterrows()``: the per-row ``b["col"]``
+    # / ``b.get(col, default)`` access below is unchanged, but ``to_dict`` skips
+    # building a fresh per-row Series (and the object-dtype upcast) hundreds of
+    # times per fleet build. Every cell is coerced via ``int``/``float``/``str``
+    # at point of use, and pandas 3.0 ``to_dict("records")`` preserves NaN (not
+    # None), so the ``... or label`` fallbacks resolve identically — byte-neutral.
+    for b in bins.to_dict("records"):
         pct_mr = float(b["pct_mr"])
         nameplate = float(b["capacity_mw"])
         fuel = BIN_GROUP_TO_FUEL[b["Plant_Group"]]
