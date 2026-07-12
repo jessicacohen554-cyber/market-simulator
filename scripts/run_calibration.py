@@ -71,6 +71,7 @@ from market_sim.data.fleet import (  # noqa: E402
     build_base_fleet,
     build_dispatch_fleet,
     build_ercot_offer_surface_conditional_markup,
+    build_ercot_offer_surface_lowcurve_markdown,
     build_neiso_offer_surface_conditional_markup,
     build_pjm_offer_surface_conditional_markup,
     fleet_to_bins,
@@ -476,6 +477,7 @@ def run_year(
     gt_ambient_derate_slope_ct: float | None = None,
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
+    ercot_offer_surface_lowcurve: bool = False,
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
@@ -691,6 +693,11 @@ def run_year(
         pjm_da_virtual_bids=pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
     )
+    if ercot_offer_surface_lowcurve:
+        # G-22 conditional-offer-distribution LOW leg (measured trough-side
+        # quantile ladders, P1-only markdown; ScenarioConfig field docstring has
+        # the full provenance/admissibility note). ERCOT-gated in the builder.
+        config = config.with_overrides(ercot_offer_surface_lowcurve=True)
     if ercot_nuclear_unit_availability:
         # Window-grain nuclear refuel availability (measured 60-Day DAM
         # disclosure daily series; ScenarioConfig field docstring has the full
@@ -2562,6 +2569,34 @@ def run_year(
         offer_surface_mc_bid_adjust = build_ercot_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
+    # ERCOT G-22 conditional-offer-distribution LOW leg: the trough-side mirror
+    # of the surface above at the P1-only seam, but P0-CONDITIONED — the
+    # measured committed-unit LSL/lower-body markdown (ratio clamped <= 1) is
+    # gated to plant-hours the model's OWN P0 commitment discovery runs the
+    # plant (the CAISO-RA/PJM-path-B forward-regenerating construction), so
+    # offline plants' discounted blocks never undercut coal/ST in P1. Built
+    # inside run_energy_solve via the p1_bid_adjust_prep hook (it needs the P0
+    # solution); composes additively with the top leg's static markup
+    # (disjoint rows: peak rungs vs committed/econ rungs, rule 19). None when
+    # the flag is off (byte-identical).
+    lowcurve_bid_adjust_prep = None
+    if getattr(config, "ercot_offer_surface_lowcurve", False) and iso == "ERCOT":
+        _lowcurve_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+
+        def lowcurve_bid_adjust_prep(r0):  # noqa: E306
+            return build_ercot_offer_surface_lowcurve_markdown(
+                fleet_arrays,
+                fleet,
+                fuel_prices,
+                _lowcurve_net_load,
+                config,
+                p0_dispatch=r0.dispatch,
+            )
+
     # NEISO fast-start offer surface (charter Limb B): the identical P1-only
     # seam, NEISO-gated (fleet.build_neiso_offer_surface_conditional_markup).
     if getattr(config, "neiso_offer_surface_conditional", False) and iso == "NEISO":
@@ -3339,6 +3374,7 @@ def run_year(
         p1_fleet_prep=ra_p1_prep or pjm_fleet_prep,
         p1_kwargs_prep=pjm_kwargs_prep,
         mc_bid_adjust=offer_surface_mc_bid_adjust,
+        p1_bid_adjust_prep=lowcurve_bid_adjust_prep,
         startup_run_ratio_t=startup_run_ratio_t,
     )
     _t_solve_end = time.perf_counter()
