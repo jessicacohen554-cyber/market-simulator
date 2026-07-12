@@ -23,6 +23,12 @@
       display: block;
     }
 
+    /* Let long inline code identifiers/paths wrap instead of spilling past the
+       right edge at narrow viewports (≤400px). Block <pre> code (white-space:
+       pre) is unaffected and keeps its own horizontal scroll. */
+    .content-section p code,
+    .content-section li code { overflow-wrap: break-word; }
+
     /* Forecast vs Backcast toggle section */
     .forecast-backcast-container {
       display: grid;
@@ -212,30 +218,33 @@
       white-space: nowrap;
     }
 
+    /* Status text uses the darker "-text" tokens (not the mid-tone --positive/
+       --info/--warning/--negative) so each badge clears WCAG-AA 4.5:1 on its
+       pale tint; mid-tone tokens sat at ~2.7–3.9:1. */
     .badge-status.pass {
       background: rgba(22, 163, 74, 0.12);
-      color: var(--positive);
+      color: #166534;
     }
 
     .badge-status.warn {
       background: rgba(217, 119, 6, 0.12);
-      color: var(--warning);
+      color: #92400E;
     }
 
     .badge-status.fail {
       background: rgba(220, 38, 38, 0.12);
-      color: var(--negative);
+      color: #B91C1C;
     }
 
     /* v2.x determination vocabulary: CAVEAT / GROUNDED / SKIP */
     .badge-status.caveat {
       background: rgba(217, 119, 6, 0.12);
-      color: var(--amber-text);
+      color: #92400E;
     }
 
     .badge-status.grounded {
       background: rgba(2, 132, 199, 0.12);
-      color: var(--info);
+      color: var(--hydro-text);
     }
 
     .badge-status.skip {
@@ -266,7 +275,7 @@
 
     .tier-tag.load-bearing { background: rgba(99, 102, 241, 0.12); color: #4F46E5; }
     .tier-tag.supporting   { background: rgba(14, 165, 233, 0.12); color: var(--hydro-text); }
-    .tier-tag.protective   { background: rgba(38, 166, 154, 0.16); color: #0F766E; }
+    .tier-tag.protective   { background: rgba(38, 166, 154, 0.16); color: #0C6E63; }
 
     /* Determination headline badge */
     .determination-badge {
@@ -288,9 +297,9 @@
       background: currentColor;
     }
 
-    .determination-badge.calibrated  { background: rgba(22, 163, 74, 0.12);  color: var(--positive); }
-    .determination-badge.with-caveats { background: rgba(217, 119, 6, 0.12);  color: var(--amber-text); }
-    .determination-badge.not-yet      { background: rgba(220, 38, 38, 0.10);  color: var(--negative); }
+    .determination-badge.calibrated  { background: rgba(22, 163, 74, 0.12);  color: #166534; }
+    .determination-badge.with-caveats { background: rgba(217, 119, 6, 0.12);  color: #92400E; }
+    .determination-badge.not-yet      { background: rgba(220, 38, 38, 0.10);  color: #B91C1C; }
 
     /* Footnote block */
     .footnote {
@@ -502,7 +511,8 @@
         <!-- Result flow diagram -->
         <div class="fig">
           <div class="fig__chart">
-            <svg id="result-flow-svg" viewBox="0 0 1000 320" preserveAspectRatio="xMidYMid meet">
+            <svg id="result-flow-svg" viewBox="0 0 1000 320" preserveAspectRatio="xMidYMid meet"
+                 role="img" aria-label="Result data flow, five stages left to right: LP Solve produces a DispatchResult over 8760 hours; Parquet Cache stores it with check-before-run caching; Aggregation derives emissions and plant financials; JSON Export writes a scenario summary under 2 MB; Dashboard publishes it as the public view.">
               <!-- Define markers for arrows -->
               <defs>
                 <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
@@ -691,7 +701,7 @@
 
         <!-- Insight box warning -->
         <div class="insight-box warn">
-          <strong>⚠️ Measured data is allowed only as a reproducible physical/market input, never as the answer.</strong> You can use CAMPD outage windows, actual fuel prices, and metered renewable output because these are grounded in physics or market design and could be regenerated for a forward year. What is <strong>forbidden:</strong> pinning a unit's dispatch to its observed generation, adding an offset tuned to the price residual, or rescaling an input to force the backcast to match. Those moves make the "fit" measure plumbing, not model skill. If a measured input makes the backcast worse, keep it and find the real root cause in the model. (See <a href="/CLAUDE.md">CLAUDE.md rule #12</a>.)
+          <strong>⚠️ Measured data is allowed only as a reproducible physical/market input, never as the answer.</strong> You can use CAMPD outage windows, actual fuel prices, and metered renewable output because these are grounded in physics or market design and could be regenerated for a forward year. What is <strong>forbidden:</strong> pinning a unit's dispatch to its observed generation, adding an offset tuned to the price residual, or rescaling an input to force the backcast to match. Those moves make the "fit" measure plumbing, not model skill. If a measured input makes the backcast worse, keep it and find the real root cause in the model. (See CLAUDE.md rule #12.)
         </div>
 
         <div class="story-section" style="margin-top: 24px;">
@@ -784,7 +794,7 @@
         <!-- Delegate to the full rubric page -->
         <a href="calibration-rubric.html" class="dashboard-link-box">
           <div class="dashboard-link-box__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <path d="M9 11l3 3L22 4"></path>
               <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
             </svg>
@@ -794,7 +804,7 @@
             <p class="dashboard-link-box__desc">Every threshold, the scorer-vs-diagnostic split, the D&#8209;4 driver-window registry, the v1→v2.4 version history, and the frontier-achieved designation live on the <strong>Calibration Rubric</strong> page.</p>
           </div>
           <div class="dashboard-link-box__arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </div>
@@ -958,7 +968,7 @@
         <!-- Link to dashboard -->
         <a href="backcast-runs.html" class="dashboard-link-box">
           <div class="dashboard-link-box__icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <line x1="3" y1="12" x2="21" y2="12"></line>
               <line x1="3" y1="6" x2="21" y2="6"></line>
               <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -969,7 +979,7 @@
             <p class="dashboard-link-box__desc">Explore calibration results, keeper timelines, and per-run diagnostics across all ISOs and years.</p>
           </div>
           <div class="dashboard-link-box__arrow">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
               <polyline points="9 18 15 12 9 6"></polyline>
             </svg>
           </div>
