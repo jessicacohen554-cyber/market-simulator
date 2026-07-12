@@ -379,3 +379,74 @@ now exists) at an identical-to-marginally-better score. It is the natural
 successor to the miso-55 recommendation — same owner decision pending;
 keepers.json untouched. Retention: miso-41-ct-evening (+ twin) displaced
 (16th main, oldest first).
+
+## 11. TRANSMISSION LANE EXECUTED (2026-07-11 — miso-57 rdt-congestion): the
+RDT now binds at measured frequencies in 2023-24; the 2025 gap is a quantified
+UPSTREAM direction-reversal, not a transmission-limit issue
+
+**The sanity chain came first (rules 1/14).** A 2025-only throwaway diagnostic
+(miso-56 replay, `scripts/probes/_miso57_rdt_diag.py`, never registered) measured
+WHY the model carried ~$0 Midwest–South separation against the IMM's $9.31: the
+shared `MISO_external` bus links to all five border zones, so the LP wheeled South
+energy South→external→Midwest through the bus's energy balance without touching
+any priced band — a fabricated, cost-free 3,000 MW bypass around the RDT contract
+path. Measured bypass: **1,255 MW summer-2025 mean** (1,563 of 2,208 summer hours;
+7.7 TWh/yr) while the RDT S→N link carried 54 MW mean and saturated **13 h/yr**.
+
+**miso-57 = miso-56 meta replay + two structural changes, zero fitted scalars**
+(probe driver `scripts/probes/_miso57_rdt_congestion.py`):
+
+1. `miso_south_seam_split` — the South seam's reference-price bands re-home onto
+   their own external zone (`transmission.split_miso_south_external_node`; the
+   southern neighbors SOCO/TVA/AECI are electrically south of the RDT). Severs the
+   wheel outright.
+2. `miso_rdt_tcdc` — the static JOA contract pair (3,000 N→S / 2,500 S→N) becomes
+   the published operating representation: 92% default derate ("MISO derates the
+   RDT limit to 92 percent of the contract limit by default", 2024 SOM §III.B) as
+   the free tier, then the two-step TCDC ($40/MWh at the modeled limit, $500/MWh
+   from 102%, hard bound at contract) as priced one-way tiers
+   (`TransferLink.flow_cost`, one-way-only validated). Deliberately conservative:
+   the 92% DEFAULT derate, not the deeper measured-when-binding 84% (no published
+   hourly derate series; rule 13 forbids the haircut), and the RPE ($200, additive
+   in real violations) is NOT modeled — both gaps point the same way
+   (under-separation).
+
+**RESULT — the mechanism reproduces the measured RDT behaviour in 2023-24:**
+
+| anchor | measured (SOM / facts note) | miso-57 |
+|---|---|---|
+| 2023 S→N mean flow | 917 MW (§IV.E p.39) | 1,139 MW |
+| 2024 S→N mean flow | 1,108 MW (§II.E) | 1,035 MW |
+| 2024 binding frequency | >25% of RT intervals (§III.B) | 25% (2,183 h; 2023: 27%) |
+| 2024 separation when binding | ~$3/MWh (§III.B) | $2.89 (2023: $2.77) |
+
+Score: 2025 annual C3a **−13.3% → −11.7%** (model +$0.71/MWh; June −6.4, Aug −5.2
+both improved), July-2025 **−18.8 unchanged** — exactly as pre-adjudicated in §10
+(its drivers are ELMP ex-post/emergency constructs + deeper operator derates +
+RPE, none of which this lane fabricates). August 2023/24 hold clean (+0.5/+0.5
+monthly). D-2 CT forced 5.8/3.7/8.1% vs 15% cap. DOF ledger 13 entries, residual
+count unchanged at 2 (offer-curve legacies); both mechanisms enter as
+measured-physical zero-scalar rows.
+
+**The 2025 finding — direction reversal, upstream of the RDT:** in 2025 the model
+runs the RDT predominantly N→S (mean 1,350 MW, binding N→S 2,559 h ≈ 29%) with
+S→N at only 322 MW mean / 371 binding h (4%) — while the real 2025 market ran
+predominantly S→N ($9.31 summer separation, RDT+RPE congestion $41M, +121% YoY).
+The model's Midwest is too cheap / South relatively too dear in exactly the hours
+reality pulled 2,100+ MW north: this is the standing mid-merit split root cause
+(COAL_BIT −15 TWh under-run / CC_REGULAR +9 TWh over-run, import under-run
+co-driving) now quantified as a ~1,000+ MW RDT direction reversal. No admissible
+transmission-side change can close it (S→N never saturates even the derated
+limit in 2025), and rule 1 forbids tightening the limit against the residual.
+The $9.31 separation will emerge when the mid-merit lane fixes the upstream
+misallocation — the constraint that will price it is now in place and validated
+on 2023-24.
+
+**Disposition:** miso-57 supersedes miso-56 (the promoted keeper) on structural
+grounding — it removes a fabricated free transfer path and adds the published
+RDT market design, reproducing three measured anchors in-window — at a
+strictly-better score (2025 +1.6 pts, everything else flat-to-better). Keeper
+swap is the owner's call; recommended. Deferred (documented in the attestation):
+RPE constraint family; hourly measured RDT limit/flow series intake (MISO posts
+RT limit data — a future rule-14 upgrade replacing the 92% static default);
+Midwest–South separation as a scored metric.
