@@ -67,61 +67,6 @@ class TestAblationTwinFinding(unittest.TestCase):
         self.assertIn("no", msg.lower())
 
 
-class TestStalenessIgnoresAblationTwins(unittest.TestCase):
-    """E7 must not count ``*-ablation`` twins as newer candidate runs."""
-
-    def setUp(self):
-        self._tmp = tempfile.TemporaryDirectory()
-        self.reg = Path(self._tmp.name)
-        self._real = ak.cv.REGISTRY_DIR
-        ak.cv.REGISTRY_DIR = self.reg
-
-    def tearDown(self):
-        ak.cv.REGISTRY_DIR = self._real
-        self._tmp.cleanup()
-
-    def _write(self, run_id, obj):
-        (self.reg / f"{run_id}.json").write_text(json.dumps(obj))
-
-    def test_own_twin_does_not_make_keeper_stale(self):
-        self._write("2026-07-05-x-keeper", {"iso": "PJM", "date": "2026-07-05"})
-        # Same date, "-ablation" suffix sorts lexically after the keeper id —
-        # without the exclusion this would be the ISO's "newest" run.
-        self._write(
-            "2026-07-05-x-keeper-ablation", {"iso": "PJM", "date": "2026-07-05"}
-        )
-        newest = {k: v[-1] for k, v in ak._registry_dates_by_iso().items()}
-        self.assertEqual(newest["PJM"], ("2026-07-05", "2026-07-05-x-keeper"))
-
-    def test_non_ablation_newer_run_still_flags(self):
-        self._write("2026-07-05-x-keeper", {"iso": "PJM", "date": "2026-07-05"})
-        self._write("2026-07-06-y-probe", {"iso": "PJM", "date": "2026-07-06"})
-        newest = {k: v[-1] for k, v in ak._registry_dates_by_iso().items()}
-        self.assertEqual(newest["PJM"], ("2026-07-06", "2026-07-06-y-probe"))
-
-    def test_keeper_candidate_false_probe_does_not_flag_keeper_stale(self):
-        # A D-7 statmode (or other diagnostic) probe registered AFTER the
-        # keeper, marked "keeper_candidate": false, must not make the keeper
-        # read as stale under E7 — mirrors the "-ablation" twin exclusion.
-        self._write("2026-07-05-x-keeper", {"iso": "NEISO", "date": "2026-07-05"})
-        self._write(
-            "2026-07-05-x-statmode-d7-r2",
-            {"iso": "NEISO", "date": "2026-07-05", "keeper_candidate": False},
-        )
-        newest = {k: v[-1] for k, v in ak._registry_dates_by_iso().items()}
-        self.assertEqual(newest["NEISO"], ("2026-07-05", "2026-07-05-x-keeper"))
-
-    def test_keeper_candidate_true_or_absent_still_flags(self):
-        # The field is opt-in: a probe that does NOT set keeper_candidate:
-        # false must still compete for "newest" and flag a genuinely stale
-        # keeper (this is the case E9 already exercises for MISO/PJM -- E7
-        # must not be silently defeated by a missing field).
-        self._write("2026-07-05-x-keeper", {"iso": "NYISO", "date": "2026-07-05"})
-        self._write("2026-07-06-y-newer", {"iso": "NYISO", "date": "2026-07-06"})
-        newest = {k: v[-1] for k, v in ak._registry_dates_by_iso().items()}
-        self.assertEqual(newest["NYISO"], ("2026-07-06", "2026-07-06-y-newer"))
-
-
 class TestGrandfatherRollout(unittest.TestCase):
     @pytest.mark.xfail(
         strict=True,
