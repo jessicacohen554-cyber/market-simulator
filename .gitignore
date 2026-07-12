@@ -98,6 +98,11 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # ercot40, compared against the committed ercot32 keeper).
 /results/calibration/ercot40_measured_baseline*
 /results/calibration/_warm_2023/
+# G-22 PJM same-day re-solve baselines (rule-16 throwaways): the A/B base for
+# the pjm-99 offer-surface probe; regenerable via replay_keeper off the
+# committed pjm98_cc_mustrun meta.json. Never registered.
+/results/calibration/pjm97_baseline_*
+/results/calibration/pjm98_baseline_*
 /results/calibration/caiso_reprice_pass*/
 /results/calibration/caiso_probe2_*/
 /results/calibration/caiso_tune*/
