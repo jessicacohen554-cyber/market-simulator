@@ -43,6 +43,7 @@ import os
 import pickle
 import subprocess
 import sys
+import time
 from datetime import datetime
 from functools import lru_cache
 from pathlib import Path
@@ -2276,6 +2277,7 @@ def solve_and_persist(
     passes_seen: set[str] = set()
 
     for year in years:
+        _t_year = time.perf_counter()
         gas_price = _henry_hub_actual(reference, year)
         gas_prices[year] = gas_price
         if not is_ercot:
@@ -2319,6 +2321,7 @@ def solve_and_persist(
             gas_price,
             commitment,
         )
+        _t_pre_solve = time.perf_counter()
         result, context, result_p1, p2_state = run_year(
             year,
             iso,
@@ -2508,6 +2511,7 @@ def solve_and_persist(
             mass_cap_program=mass_cap_program,
             zero_forcing_ablation=zero_forcing_ablation,
         )
+        _t_post_solve = time.perf_counter()
         if persist_p2_state:
             _save_p2_state(run_dir, year, p2_state)
         labelled = [("P2" if result_p1 is not None else "P1", result)]
@@ -2619,6 +2623,28 @@ def solve_and_persist(
             )
             if campd_year is not None:
                 campd_frames.append(campd_year)
+
+        _t_end = time.perf_counter()
+        _ti = p2_state.get("_timing", {})
+        _solve_p0 = _ti.get("solve_p0_s", 0.0)
+        _solve_p1 = _ti.get("solve_p1_s", 0.0)
+        _build = _ti.get("build_s", 0.0)
+        _energy = _ti.get("energy_solve_s", 0.0)
+        _markup = max(0.0, _energy - _build - _solve_p0 - _solve_p1)
+        _results_write = _t_end - _t_post_solve
+        _total = _t_end - _t_year
+        _data_prep = _total - _solve_p0 - _markup - _solve_p1 - _results_write
+        logger.info(
+            "year %d phase timing: data_prep=%.1fs solve_p0=%.1fs "
+            "markup=%.1fs solve_p1=%.1fs results_write=%.1fs total=%.1fs",
+            year,
+            _data_prep,
+            _solve_p0,
+            _markup,
+            _solve_p1,
+            _results_write,
+            _total,
+        )
 
         # Release this year's solve state before the next year allocates its
         # own LP. A PJM per-plant year peaks ~13 GB inside HiGHS; carrying the

@@ -7,6 +7,7 @@ byte-compatible with collate_full_horizon.py. Timing (per_year_perf) is left
 empty for partials — it was never recorded (the run didn't finish); feasibility
 data comes from the ISOs that completed (CAISO/NEISO).
 """
+
 from __future__ import annotations
 
 import json
