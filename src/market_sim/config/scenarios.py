@@ -2767,6 +2767,28 @@ class ScenarioConfig:
     # ERCOT-only. Unlike thermal AS (tiny), storage carries ~2-3 GW of AS — a
     # large share of the battery fleet — and the energy-only LP otherwise dumps
     # the full fleet into the few highest-price hours. Reserves power, not SOC.
+    ercot_storage_as_deployment: bool = False  # ERCOT: measured-award energy
+    # CO-PARTICIPATION (the storage-cycling-lane fix,
+    # docs/DIAGNOSIS-ercot-storage-cycling-lane-2026-07.md). storage_as_commitment
+    # reserves the measured up-AS award out of the discharge cap in ALL hours and
+    # never deploys it back as energy — but the real fleet visibly moves capacity
+    # from AS to energy at the net-load ramp (the measured 60-Day DAM storage award
+    # DECLINES from its midday peak into the evening, HE17 1624 → HE20 1112 MW in
+    # 2023). This releases that measured draw-down back to energy AND forces it as a
+    # storage discharge floor at the ramp, so the co-participation the arbitrage-only
+    # LP misses (the morning/daytime/evening ramp discharge, the ~2 TWh throughput
+    # gap vs the EIA-930 battery series) enters the energy balance. deploy(t) =
+    # max(0, daily_peak(award) − award(t)) gated to net-load ≥ its daily median (the
+    # elevated-demand window where the AS→energy shift physically happens) —
+    # every term MEASURED (rule 13), NO fitted threshold (rule 1/23), forward-valid
+    # (award shape + net-load regenerate forward). Rule 19: the deployed MW is
+    # RELEASED from storage_as_commitment's reservation (reserved = award − deploy),
+    # never stacked; requires storage_as_commitment, mutually exclusive with
+    # ercot_storage_as_endogenous (which prices the split itself). Default off
+    # (byte-identical); ERCOT-only.
+    ercot_storage_as_deployment_from_year: int = 2023  # First weather year the
+    # measured-award deployment applies (the storage AS-by-restype series starts
+    # 2023, when ECRS launched); earlier years no-op.
     ercot_storage_as_endogenous: bool = False  # ERCOT forward (G5): make the
     # battery CHOOSE energy vs upward-AS endogenously inside the multi-product
     # co-opt, REPLACING the measured-award reservation (storage_as_commitment +
@@ -3648,45 +3670,6 @@ class ScenarioConfig:
     # offers already carry ISO-NE's $1,000/MWh energy offer cap; this guard
     # only keeps a repriced rung strictly below the load-shed slack).
     neiso_offer_surface_price_cap_frac: float = 0.95
-
-    # PJM condition-responsive energy-offer surface — the PJM analogue of the
-    # ERCOT/NEISO conditional surfaces above (G-22 lever A, default off,
-    # PJM-gated). Posts the MEASURED top-of-curve offer DISTRIBUTION from
-    # PJM's public DataMiner2 energy_market_offers feed
-    # (data/raw/pjm-energy-offers/, scripts/fetch_pjm_energy_offers.py) onto
-    # the CC_REGULAR + CT_PEAKER peak-band rungs in the P1 clearing solve
-    # ONLY and ONLY in anticipated-tight hours — P0 run lengths and loose
-    # hours stay byte-identical (the ladder is clamped never to lower an
-    # offer below the resolved peak height). The G-22 diagnosis
-    # (docs/handoffs/pjm-summer-peak-price-formation-g22-2026-07.md): at the
-    # top-150 load hours the real fleet's top-of-curve reaches p90 $238 /
-    # p99 $514 while the keeper's CC/CT peak bands cap ~$115-130, so the
-    # energy dual is set by a deep sub-$35 body and the summer peak never
-    # prices. The offer population is segmented by unit PHYSICS (min_runtime
-    # <= 2 h -> fast-start CT-like; the CC-like block by runtime + ecomin
-    # share), never by fuel labels. Trigger (within-year net-load percentile,
-    # forward-native) and level (measured OFFER prices over the model's own
-    # HH-daily + PJM-basis delivered-gas day series) are rule-13 admissible —
-    # clearing prices stay validation-only; parameters are derived from
-    # source data only (scripts/derive_pjm_offer_surface.py, rule 21) and
-    # frozen against residuals (rule 20). PJM-only (rule 25: the surface
-    # carries no generic fallback and never crosses ISO boundaries).
-    pjm_offer_surface_conditional: bool = False
-    # Path to the measured PJM condition-binned ladder JSON (default: the
-    # frozen data/raw/_validation-source/pjm_offer_surface_condbinned.json).
-    # None → the mechanism is a no-op even when the flag is on.
-    pjm_offer_surface_binned_path: str | None = None
-    # Net-load percentile bin EDGES (same contract as the ERCOT/NEISO fields
-    # above; the JSON records its edges and the mechanism asserts agreement).
-    pjm_offer_surface_netload_pcts: tuple[float, ...] = (0.80, 0.90, 0.97)
-    # Minimum net-load bin index at which the wall engages (0 = every bin; the
-    # merit order still self-gates in mild hours).
-    pjm_offer_surface_min_bin: int = 0
-    # Safety cap on the repriced offer as a fraction of VOLL (the measured
-    # offers already carry PJM's $1,000 soft / $2,000 hard energy offer cap;
-    # this guard only keeps a repriced rung strictly below the load-shed
-    # slack).
-    pjm_offer_surface_price_cap_frac: float = 0.95
 
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
@@ -4850,6 +4833,28 @@ class ScenarioConfig:
                 "co-optimization, which is off. Enable energy_reserve_coopt "
                 "(ERCOT multi-product) or clear ercot_storage_as_endogenous."
             )
+        # Measured-award AS->energy deployment (ercot_storage_as_deployment, the
+        # storage-cycling-lane mechanism): it RELEASES the measured MW that
+        # storage_as_commitment reserves out of the discharge cap (rule 19 — one
+        # mechanism per phenomenon, reserve off-ramp / deploy on-ramp reconciled,
+        # not stacked), and is mutually exclusive with the endogenous co-opt split
+        # (which prices the same energy-vs-AS choice a different way — pairing
+        # them would force AND endogenously price the same MW).
+        if self.ercot_storage_as_deployment:
+            if not self.storage_as_commitment:
+                raise ValueError(
+                    "ercot_storage_as_deployment requires storage_as_commitment: "
+                    "the deployment floor releases the measured award that "
+                    "commitment reserves out of the discharge cap; without it "
+                    "there is no reservation to release from."
+                )
+            if self.ercot_storage_as_endogenous:
+                raise ValueError(
+                    "ercot_storage_as_deployment and ercot_storage_as_endogenous "
+                    "are mutually exclusive (rule 19): the measured-award "
+                    "deployment floor and the endogenous co-opt split both price "
+                    "the storage energy-vs-AS choice. Enable one or the other."
+                )
         # Measured CAISO battery AS reservation vs in-LP reserve co-opt: the
         # co-opt hands storage its own reserve columns and prices the
         # energy-vs-AS split endogenously, so pre-subtracting the measured
@@ -5644,6 +5649,8 @@ TIER_TAGS: dict[str, int] = {
     "measured_ramp_capability": 1,
     "ercot_as_forward_requirement": 1,
     "storage_as_commitment": 1,
+    "ercot_storage_as_deployment": 1,
+    "ercot_storage_as_deployment_from_year": 1,
     "ercot_storage_as_endogenous": 1,
     "ercot_thermal_as_endogenous": 1,
     "ercot_storage_as_duration_gate": 1,
