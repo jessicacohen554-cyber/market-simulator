@@ -5,7 +5,12 @@ band. Produced by the F-1 planning session of `docs/fable-prompt-pack-2026-07.md
 companion prompts in `docs/handoffs/probability-bounds-prompts-2026-07.md`. **Status:**
 PB-0 through PB-4 machinery has since landed (`matrix.py` scenario matrix, `uncertainty.py`
 multivariate sampler, `structural_prior.py` structural-error convolution, plus `ensemble.py`'s
-existing weather-year draws) — PB-5, the production ERCOT band run, has not.
+existing weather-year draws) — the full PB-5 production ERCOT band run remains **deferred**
+(gap register G-35). A 2026-07-12 partial exercise ran 5 real members end-to-end through the
+actual PB-0/PB-2 solve paths (not the synthetic fixture), confirming the machinery works and
+fixing a forecast-path weather-pool coverage bug it surfaced, but stopped short of a
+statistically meaningful batch and published no band — see
+`docs/probability-bounds-ercot-2026-07.md` for the closeout record.
 
 **Source findings.** `docs/fable-repo-audit-2026-07.md` §J-T4 (probability machinery open:
 `ensemble.py` weather-only, no LHS/copula, mass-cap unbuilt),
