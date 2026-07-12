@@ -480,12 +480,14 @@
               <tr><td><code>ct_netload_drag</code> × any</td><td>[15, 22)</td><td>CT net-load ramp window; overnight CT fleet effectively offline.</td></tr>
               <tr><td><code>st_netload_drag</code> × any</td><td>[0, 24)</td><td>Gas-steam fleet committed day and night — no hour its own driver evidence says it is offline (overnight CF rises 0.03 → 0.36 with net load).</td></tr>
               <tr><td><code>reliability_floor</code> × ST_GAS</td><td>[0, 24)</td><td>NYC/LI persistent-24h base limbs; measured downstate steam online 100% of the year.</td></tr>
+              <tr><td><code>caiso_gas_commitment_floor</code> × any</td><td>[9, 17)</td><td>Midday NG:NG slab window — the probe's own gate (<code>transmission.inject_caiso_gas_commitment_floor</code>).</td></tr>
+              <tr><td><code>cc_mustrun_per_plant</code> × CC_REGULAR</td><td>[0, 24)</td><td>A committed CC is synchronized around the clock inside its per-plant window; the CEMS <code>online_frac</code> it is sized from counts overnight min-stable hours.</td></tr>
             </tbody>
           </table>
         </div>
 
         <p class="src-cap">
-          <code>scripts/calibration_verdict.py:288–338</code> (caps + escalation constants) · <code>:1626–1748</code> (<code>score_forced_share</code>) · <code>scripts/legitimacy_diagnostics.py:184–229</code> (<code>D4_WINDOWS</code>, <code>D4_MAX_OFFWINDOW_SHARE</code>) · <code>docs/calibration-and-validation-methodology.md</code> §1.4
+          <code>scripts/calibration_verdict.py:288–338</code> (caps + escalation constants) · <code>:1626–1748</code> (<code>score_forced_share</code>) · <code>scripts/legitimacy_diagnostics.py:184–262</code> (<code>D4_WINDOWS</code>, <code>D4_MAX_OFFWINDOW_SHARE</code>) · <code>docs/calibration-and-validation-methodology.md</code> §1.4
         </p>
       </div>
     </section>

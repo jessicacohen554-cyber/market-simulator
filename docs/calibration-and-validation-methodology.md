@@ -232,11 +232,11 @@ the residual" is an open root-cause item, not a calibrated parameter.
   twins**, so the exemption no longer applies to anything (one stale literal
   remains in the set — dead code awaiting deletion, per its own docstring).
 
-Source: `src/market_sim/config/scenarios.py:4848-4876`
+Source: `src/market_sim/config/scenarios.py:4957-4985`
 (`as_zero_forcing_ablation`); `src/market_sim/data/floor_mechanisms.py:130-187`
 (`MECH_ABLATION_KEPT`, `EXTRA_ZERO_FORCING_FIELDS`,
 `assert_ablation_coverage`, `zero_forcing_field_overrides`);
-`scripts/run_calibration_full.py:5131-5171, 5581-5620` (CLI + `ablation_of`);
+`scripts/run_calibration_full.py:5340-5350, 5759-5800` (CLI + `ablation_of`);
 `scripts/audit_keepers.py:106-137, 213-252, 493-501` (grandfather list + E9).
 
 ### 2.2 The DOF ledger (degrees-of-freedom ledger, audit D-12)
@@ -261,7 +261,7 @@ identification source.
   `free_parameters` section or whose any residual entry lacks a root cause.
   E8 is unconditional (every keeper already carried a ledger when it landed).
 
-Source: `scripts/build_dof_ledger.py:1-10, 118-144, 756` (contract, residual
+Source: `scripts/build_dof_ledger.py:1-10, 118-144, 802` (contract, residual
 check, schema tag); `scripts/audit_keepers.py:47-48, 449-491` (E8).
 
 ---
@@ -296,12 +296,12 @@ The in-sample window `{2023, 2024, 2025}` is a hard-coded frozenset in
 **three parallel places**, kept as separate stdlib literals by repo convention
 with a parity test asserting they agree:
 
-- `scripts/run_calibration_full.py:5039` (`HOLDOUT_CALIBRATION_YEARS`),
+- `scripts/run_calibration_full.py:5217` (`HOLDOUT_CALIBRATION_YEARS`),
 - `scripts/audit_keepers.py:185` (`CALIBRATION_YEARS`),
 - `scripts/legitimacy_diagnostics.py:319` (`D6_CALIBRATION_YEARS`).
 
 **Solve gate (CLI):** `enforce_holdout_year_gate`
-(`run_calibration_full.py:5043`) hard-fails any `--year` outside the window
+(`run_calibration_full.py:5221`) hard-fails any `--year` outside the window
 unless **both** `--holdout-authorized` is passed **and** the target ISO
 carries a marker in `calibration-complete.json` — the marker is what turns a
 holdout year into an authorized one-shot score, never the flag alone.
@@ -334,7 +334,7 @@ dashboard registration* are quarantined.
 **no** year gate. Any claim that "the solve entry points are gated" should
 carry this asterisk.
 
-Source: `scripts/run_calibration_full.py:5031-5090`;
+Source: `scripts/run_calibration_full.py:5210-5267`;
 `scripts/audit_keepers.py:181-210`;
 `scripts/legitimacy_diagnostics.py:313-320`; `.github/workflows/ci.yml:82-115`;
 `frontend/data/backcast/calibration-complete.json` (marker + intake_log);
@@ -392,7 +392,7 @@ hindcast (§3.3), which overlaps the 2023–2025 backcast years at the capacity
 layer only. Any doc or site page describing the crossover must label it as a
 planned design.
 
-Source: `src/market_sim/config/constants.py:3292-3293`;
+Source: `src/market_sim/config/constants.py:3871-3872`;
 `docs/codebase-site/UPDATE-PLAN-2026-07.md` §2.4 (validated 2026-07: grepping
 `crossover` in `.py` returns only unrelated coal-sigmoid code).
 
