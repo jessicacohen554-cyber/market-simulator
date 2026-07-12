@@ -32,6 +32,7 @@ import argparse
 import json
 import logging
 import sys
+import time
 from pathlib import Path
 
 import numpy as np
@@ -3326,6 +3327,7 @@ def run_year(
     pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
         config, iso, fleet_arrays
     )
+    _t_solve_start = time.perf_counter()
     energy_solve = run_energy_solve(
         fleet,
         fleet_arrays,
@@ -3339,6 +3341,7 @@ def run_year(
         mc_bid_adjust=offer_surface_mc_bid_adjust,
         startup_run_ratio_t=startup_run_ratio_t,
     )
+    _t_solve_end = time.perf_counter()
     result = energy_solve.p1
     mc_bid = energy_solve.mc_bid
     # The fleet P1 actually solved on — the RA-floored fleet when the bridge
@@ -3417,6 +3420,12 @@ def run_year(
         # ercot_ordc_only_scarcity computed one above): the frame writer adds
         # it to the settled price (P1 rows only).
         "ercot_ordc_realized_adder": ercot_ordc_realized,
+        "_timing": {
+            "energy_solve_s": _t_solve_end - _t_solve_start,
+            "build_s": energy_solve.p1.build_time,
+            "solve_p0_s": energy_solve.r0.solve_time,
+            "solve_p1_s": energy_solve.p1.solve_time,
+        },
     }
 
     # P2 (ARCHIVED — last resort, CLAUDE.md "Dispatch & Commitment"): the
