@@ -2,26 +2,26 @@
  "CAISO": "2026-07-11-caiso-76-hydro-budget",
  "ERCOT": "2026-07-10-ercot56-nucwin",
  "NEISO": "2026-07-09-neiso-56-reserve-coopt",
- "PJM": "2026-07-10-pjm-97-measured-interfaces",
+ "PJM": "2026-07-11-pjm-98-cc-mustrun",
  "keepers": [
   "2026-07-10-ercot56-nucwin",
   "2026-07-11-caiso-76-hydro-budget",
-  "2026-07-10-pjm-97-measured-interfaces",
+  "2026-07-11-pjm-98-cc-mustrun",
   "2026-07-11-nyiso-61-downstate-import",
   "2026-07-09-neiso-56-reserve-coopt",
   "2026-07-11-miso-56-measured-scarcity"
  ],
- "note": "Current calibration keeper per ISO — the newest, most structurally faithful run for each market (claude.md #1/#11/#12: keeper = most faithful, not lowest error). This list drives the dashboard's all-ISO Calibration Status page. When a new keeper supersedes one here, replace the run id and re-run `python scripts/build_status.py` to refresh frontend/data/backcast/status.js (the verdicts need the bundles under results/calibration/, which the Pages deploy does not check out, so status.js is committed, not deploy-generated).",
+ "note": "Current calibration keeper per ISO \u2014 the newest, most structurally faithful run for each market (claude.md #1/#11/#12: keeper = most faithful, not lowest error). This list drives the dashboard's all-ISO Calibration Status page. When a new keeper supersedes one here, replace the run id and re-run `python scripts/build_status.py` to refresh frontend/data/backcast/status.js (the verdicts need the bundles under results/calibration/, which the Pages deploy does not check out, so status.js is committed, not deploy-generated).",
  "MISO": "2026-07-11-miso-56-measured-scarcity",
  "NYISO": "2026-07-11-nyiso-61-downstate-import",
  "frontier": {
   "NEISO": {
    "declared": "2026-07-11",
-   "note": "Frontier achieved: every named admissible mechanism for the ledgered C3c/C5b winter/summer scarcity-price-formation family has been tried on record — winter fuel-security stack (adopted, dormant), in-LP reserve co-optimization (keeper, dormant at static requirements), measured dynamic reserve requirements (Limb A, engages 1 of 12 2025 tail hours), and the measured fast-start DA offer surface (Limb B, dormant — the real tail forms while the model still carries cheaper non-fast-start headroom). Further C3c work needs a NEW measured identification (oil-parity/import/DA-bid offer formation), its own charter; C2 waits on the final 2025 EIA-923 vintage. 2026-07-11 calibration-log entry; docs/handoffs/neiso-limb-b-offer-surface-2026-07.md §5."
+   "note": "Frontier achieved: every named admissible mechanism for the ledgered C3c/C5b winter/summer scarcity-price-formation family has been tried on record \u2014 winter fuel-security stack (adopted, dormant), in-LP reserve co-optimization (keeper, dormant at static requirements), measured dynamic reserve requirements (Limb A, engages 1 of 12 2025 tail hours), and the measured fast-start DA offer surface (Limb B, dormant \u2014 the real tail forms while the model still carries cheaper non-fast-start headroom). Further C3c work needs a NEW measured identification (oil-parity/import/DA-bid offer formation), its own charter; C2 waits on the final 2025 EIA-923 vintage. 2026-07-11 calibration-log entry; docs/handoffs/neiso-limb-b-offer-surface-2026-07.md \u00a75."
   },
   "NYISO": {
    "declared": "2026-07-11",
-   "note": "Frontier achieved: the deep >$300 tail's two candidate reserve levers are chased to ground — the largest-contingency requirement formula is already in the model as the measured NYCA families, and the ORDC/RCPF stack is verified complete and SOM-grounded (fires to VOLL in 2023). The sole remaining gap is the net-load forecast-uncertainty reserve increment — IMM Recommendation 2021-1, which NYISO has not implemented and which has no published formula; adding it in-model would be residual-fitting (rule 26). No admissible mechanism exists today. 2026-07-11 calibration-log entry (nyiso-61 follow-up research)."
+   "note": "Frontier achieved: the deep >$300 tail's two candidate reserve levers are chased to ground \u2014 the largest-contingency requirement formula is already in the model as the measured NYCA families, and the ORDC/RCPF stack is verified complete and SOM-grounded (fires to VOLL in 2023). The sole remaining gap is the net-load forecast-uncertainty reserve increment \u2014 IMM Recommendation 2021-1, which NYISO has not implemented and which has no published formula; adding it in-model would be residual-fitting (rule 26). No admissible mechanism exists today. 2026-07-11 calibration-log entry (nyiso-61 follow-up research)."
   }
  }
 }

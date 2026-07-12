@@ -116,13 +116,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 14,
+      "pass": 13,
       "total": 16
     },
     "free": {
-      "pass": 10,
+      "pass": 9,
       "total": 12
     },
-    "headline": "C1 all 14/16 \u00b7 free 10/12"
+    "headline": "C1 all 13/16 \u00b7 free 9/12"
   }
 }
