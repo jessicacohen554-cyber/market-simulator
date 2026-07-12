@@ -1142,6 +1142,17 @@ _CAMPD_BACKFILL_MIN_MWH: float = 50_000.0  # 50 GWh
 _BACKFILL_GROUPS: frozenset[str] = frozenset(
     {"COAL", "CC_REGULAR", "ST_GAS", "CT_PEAKER"}
 )
+# The fine EIA-923 klasses those groups resolve to — the classes a mixed plant's
+# CAMPD net may be split across: the non-CHP gas grid classes (CC_REGULAR /
+# CT_PEAKER / ST_GAS) and every coal supply subclass. Derived from the canonical
+# taxonomy (no hardcoded lists); CHP is excluded, matching _BACKFILL_GROUPS.
+_BACKFILL_TARGET_KLASSES: frozenset[str] = frozenset({*_NONCHP_GAS, *_COAL_CLASSES})
+
+
+def _plant_klass_annual(e923: pd.DataFrame, plant_id: int, klass: str) -> float:
+    """Return the EIA-923 benchmark annual MWh for one ``(plant_id, klass)``."""
+    mask = (e923["plant_id"] == plant_id) & (e923["klass"] == klass)
+    return float(e923.loc[mask, "annual_mwh"].sum())
 
 
 def _backfill_eia923_with_campd(
@@ -1149,41 +1160,64 @@ def _backfill_eia923_with_campd(
     campd_year: pd.DataFrame | None,
     group_by_code: dict[int, str],
     year: int,
+    class_shares: dict[int, dict[str, float]] | None = None,
 ) -> pd.DataFrame:
     """Backfill EIA-923 with CAMPD net for model plants it under-reports.
 
     For each non-CHP grid plant (coal / CC_REGULAR / ST_GAS / CT_PEAKER) whose
-    EIA-923 annual is below :data:`_CAMPD_BACKFILL_MIN_MWH` while CAMPD net is
-    above it, set the benchmark annual + monthly to CAMPD net (gross x
-    parasitic factor), keyed to the plant's class. Plants EIA-923 already
-    reports (e.g. V H Braunig, R W Miller) are untouched.
+    EIA-923 annual for its *mapped* grid class is below
+    :data:`_CAMPD_BACKFILL_MIN_MWH` while CAMPD net is above it, set the benchmark
+    annual + monthly from CAMPD net (gross x parasitic factor). Plants EIA-923
+    already reports (e.g. V H Braunig, R W Miller) are untouched.
+
+    ``class_shares`` (the non-ERCOT plant-level path only; from
+    :func:`_plant_class_shares`) buckets the CAMPD net by **unit prime-mover
+    class**: a genuinely mixed plant's net is split across the classes physically
+    at it (WA-Parish coal+gas, Doswell/Linden CC+CT) in proportion to its measured
+    EIA-923 prime-mover class shares, instead of booking the whole plant net to
+    the single ``group_by_code`` last-generator-wins class — which mislabels, and
+    (when the mapped class is the plant's *minority* fuel) double-counts, large
+    energy blocks. When ``class_shares`` is ``None`` (ERCOT, whose curated bin
+    sheet drives ``group_by_code``) or has no entry for a plant, that plant keeps
+    the exact single-class behavior, so those paths stay byte-identical. The
+    *firing test* is unchanged (still the plant's mapped class), so the set of
+    plants the backfill touches — and therefore every plant it leaves alone — is
+    identical to the pre-split code; only the distribution across a firing plant's
+    own classes changes.
+
+    Min-MWH gating once a plant is split: a class EIA-923 already reports
+    >= :data:`_CAMPD_BACKFILL_MIN_MWH` is measured and kept as-is (rule 11, never
+    overwritten); only the *residual* CAMPD net not already booked to those
+    classes is distributed across the under-reported classes by their shares. When
+    the whole plant is truncated (every eligible class below the threshold — the
+    incomplete-vintage case this fix targets) the residual is the full net, so the
+    per-class split sums to the plant's CAMPD net (mass preserved). A single
+    eligible class reduces to the old whole-net-to-mapped-class behavior.
     """
     if campd_year is None or campd_year.empty:
         return e923
     e923 = e923.copy()
     mcols = [f"m{i:02d}" for i in range(1, 13)]
     month1 = _hour_to_month(int(campd_year["hour"].max()) + 1)  # 1-based
-    add, n_repl = [], 0
-    for pid, sub in campd_year.groupby("plant_id"):
-        group = group_by_code.get(int(pid))
-        if group not in _BACKFILL_GROUPS:
-            continue
-        net = sub.sort_values("hour")["net_mw"].to_numpy(dtype=float)
-        if net.sum() < _CAMPD_BACKFILL_MIN_MWH:
-            continue
-        if group == "COAL":
-            klass = _coal_supply_class(int(pid))
-        else:
-            klass = group
-        cur = e923[(e923["plant_id"] == int(pid)) & (e923["klass"] == klass)]
-        if float(cur["annual_mwh"].sum()) >= _CAMPD_BACKFILL_MIN_MWH:
-            continue  # EIA-923 reports it adequately
+    add: list[dict] = []
+    fired: set[int] = set()
+    n_repl = 0
+
+    def _book(plant_id: int, klass: str, annual: float, net: np.ndarray) -> None:
+        """Set the ``(plant_id, klass)`` benchmark row to ``annual`` MWh, shaped by
+        the plant's CAMPD net monthly profile scaled to ``annual`` (identity scale
+        of 1.0 for a single/whole-net class, so that path is byte-identical)."""
+        nonlocal n_repl
+        net_total = float(net.sum())
+        scale = (annual / net_total) if net_total > 0.0 else 0.0
         monthly = {
-            mcols[m]: float(net[month1[: len(net)] == m + 1].sum()) for m in range(12)
+            mcols[m]: float(net[month1[: len(net)] == m + 1].sum()) * scale
+            for m in range(12)
         }
+        cur = e923[(e923["plant_id"] == plant_id) & (e923["klass"] == klass)]
         if len(cur):
             i = cur.index[0]
-            e923.at[i, "annual_mwh"] = float(net.sum())
+            e923.at[i, "annual_mwh"] = annual
             for k, v in monthly.items():
                 e923.at[i, k] = v
             n_repl += 1
@@ -1191,17 +1225,54 @@ def _backfill_eia923_with_campd(
             add.append(
                 {
                     "year": np.int16(year),
-                    "plant_id": int(pid),
+                    "plant_id": plant_id,
                     "klass": klass,
-                    "annual_mwh": float(net.sum()),
+                    "annual_mwh": annual,
                     **monthly,
                 }
             )
-    if add or n_repl:
+        fired.add(plant_id)
+
+    for pid_raw, sub in campd_year.groupby("plant_id"):
+        pid = int(pid_raw)
+        group = group_by_code.get(pid)
+        if group not in _BACKFILL_GROUPS:
+            continue
+        net = sub.sort_values("hour")["net_mw"].to_numpy(dtype=float)
+        net_total = float(net.sum())
+        if net_total < _CAMPD_BACKFILL_MIN_MWH:
+            continue
+        mapped = _coal_supply_class(pid) if group == "COAL" else group
+        # Firing test unchanged from the single-class code: only when the plant's
+        # mapped grid class is under-reported. Keeps the touched-plant set (hence
+        # every left-alone plant) byte-identical; the split changes only HOW a
+        # firing plant's net is distributed.
+        if _plant_klass_annual(e923, pid, mapped) >= _CAMPD_BACKFILL_MIN_MWH:
+            continue  # EIA-923 reports it adequately
+        # Measured prime-mover class shares (non-ERCOT) or the single mapped class
+        # (ERCOT / no share info -> byte-identical to the pre-split code).
+        shares = (class_shares or {}).get(pid) or {mapped: 1.0}
+        reported_mass = 0.0
+        under: dict[str, float] = {}
+        for klass, share in shares.items():
+            cur_ann = _plant_klass_annual(e923, pid, klass)
+            if cur_ann >= _CAMPD_BACKFILL_MIN_MWH:
+                reported_mass += cur_ann  # adequately reported -> keep measured
+            else:
+                under[klass] = share
+        residual = max(0.0, net_total - reported_mass)
+        if not under or residual <= 0.0:
+            continue
+        wsum = sum(under.values())
+        for klass, share in under.items():
+            frac = (share / wsum) if wsum > 0.0 else (1.0 / len(under))
+            _book(pid, klass, residual * frac, net)
+    if fired:
         logger.info(
-            "EIA-923 %d: CAMPD-backfilled %d under-reported plants "
-            "(%d replaced, %d added)",
+            "EIA-923 %d: CAMPD-backfilled %d under-reported plant(s) across "
+            "%d class-row(s) (%d replaced, %d added)",
             year,
+            len(fired),
             n_repl + len(add),
             n_repl,
             len(add),
@@ -1425,6 +1496,88 @@ def _backfill_renewables_eia930(
     return e923
 
 
+# Bounded look-back (years) for a plant's prior-year EIA-923 class shares when its
+# current vintage under-reports it. In practice the immediately prior complete year
+# resolves it (mirroring _reconciled_mustrun_class's single-year carry); the walk
+# only reaches further for a plant sparse in several consecutive vintages.
+_CLASS_SHARE_MAX_PRIOR_YEARS: int = 4
+
+
+def _plant_class_shares(
+    iso: str,
+    generation: pd.DataFrame,
+    year: int,
+) -> dict[int, dict[str, float]]:
+    """Return ``{plant_id: {klass: share}}`` — each plant's EIA-923 prime-mover
+    class split across the CAMPD-backfill-eligible thermal classes, shares summing
+    to 1.
+
+    The non-ERCOT plant-level analogue of per-unit-class bucketing: it lets the
+    CAMPD backfill split a genuinely mixed plant's net across the classes
+    physically at it (WA-Parish coal+gas, Doswell/Linden CC+CT) rather than book
+    the whole plant net to one last-generator-wins class. Shares are the EIA-923
+    survey's **measured** per-class net energies — rule 11: measured, never a
+    nameplate-capacity estimate (which would ignore the very different CC-vs-CT
+    capacity factors). They are read from the plant's **current-year** vintage when
+    it reports the plant adequately (its eligible-class total clears
+    :data:`_CAMPD_BACKFILL_MIN_MWH` — the same threshold the backfill gates on),
+    and otherwise from the **most recent prior year** that does: an incomplete
+    current vintage — the reason the backfill fires at all — carries an unreliable
+    split, so a prior complete year's split is preferred (same prior-year carry
+    idea as :func:`_reconciled_mustrun_class`). A plant with no adequate vintage
+    anywhere returns no entry, so the backfill falls back to its single-class
+    behavior for it (no regression). Deterministic; no residual-tuned constants
+    (rule 24). ERCOT never calls this (its curated bin sheet drives the backfill).
+    """
+
+    def _vintage(yr: int) -> pd.Series:
+        df = _eia923_frame(yr, generation, iso)
+        df = df[df["klass"].isin(_BACKFILL_TARGET_KLASSES)]
+        return df.groupby(["plant_id", "klass"])["annual_mwh"].sum()
+
+    cur = _vintage(year)
+    prior_cache: dict[int, pd.Series] = {}
+
+    def _prior(yr: int) -> pd.Series:
+        if yr not in prior_cache:
+            prior_cache[yr] = _vintage(yr)
+        return prior_cache[yr]
+
+    cur_tot = cur.groupby(level=0).sum() if not cur.empty else pd.Series(dtype=float)
+    # Candidate plants: any with eligible EIA-923 in the current or recent prior
+    # vintages, so a plant truncated to ~zero this year but split in a prior year
+    # is still splittable.
+    pids: set[int] = {int(p) for p in cur_tot.index}
+    for back in range(1, _CLASS_SHARE_MAX_PRIOR_YEARS + 1):
+        pv = _prior(year - back)
+        if not pv.empty:
+            pids.update(int(p) for p in pv.index.get_level_values(0).unique())
+
+    out: dict[int, dict[str, float]] = {}
+    for pid in pids:
+        src: pd.Series | None = None
+        if float(cur_tot.get(pid, 0.0)) >= _CAMPD_BACKFILL_MIN_MWH:
+            src = cur
+        else:
+            for back in range(1, _CLASS_SHARE_MAX_PRIOR_YEARS + 1):
+                pv = _prior(year - back)
+                if pv.empty or pid not in pv.index.get_level_values(0):
+                    continue
+                if float(pv.loc[pid].sum()) >= _CAMPD_BACKFILL_MIN_MWH:
+                    src = pv
+                    break
+        if src is None:
+            continue
+        sub = src.loc[pid]
+        total = float(sub.sum())
+        if total <= 0.0:
+            continue
+        shares = {str(k): float(v) / total for k, v in sub.items() if float(v) > 0.0}
+        if shares:
+            out[pid] = shares
+    return out
+
+
 def _benchmark_eia923_frame(
     year: int,
     generation: pd.DataFrame,
@@ -1435,12 +1588,20 @@ def _benchmark_eia923_frame(
 ) -> pd.DataFrame:
     """The bundle's per-class EIA-923 benchmark: CAMPD thermal backfill + the
     EIA-930 renewable / prior-year biomass repair for incomplete vintages.
+
+    Non-ERCOT plants split the CAMPD backfill by measured prime-mover class shares
+    (:func:`_plant_class_shares`); ERCOT keeps the single-class bin-sheet path
+    (``class_shares=None``), so its output is byte-identical.
     """
+    class_shares = (
+        None if iso == "ERCOT" else _plant_class_shares(iso, generation, year)
+    )
     e923 = _backfill_eia923_with_campd(
         _eia923_frame(year, generation, iso),
         campd_year,
         group_by_code,
         year,
+        class_shares=class_shares,
     )
     return _backfill_renewables_eia930(e923, year, iso, generation, e930)
 
