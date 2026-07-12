@@ -593,8 +593,15 @@ post-contingency, additive in violations), hourly measured RDT limit intake
 redesign, and the commitment-posture window rows (COAL_BIT −15.7 both years,
 CT_PEAKER-2024 +11.2 — untouched by this lane, as expected).
 
-**Disposition:** registered 2026-07-12-miso-60-stgas-vlr (+ zero-forcing twin).
-Keeper promotion is the owner's call: miso-60 is strictly more structurally
+**Disposition:** registered 2026-07-12-miso-60-stgas-vlr (+ zero-forcing twin);
+**PROMOTED to MISO keeper (owner decision, same session — supersedes
+miso-59-coal-warm)** on the recommendation below. Scoring-basis note (owner
+question answered): miso-60's totals are on the G-21/G-21b basis — C1 class
+totals and complete-vintage C2 score per-class on the 923/CAMPD classFull
+(combined reconcile preserves the CEMS-validated 923 split); the 2025 gas
+family (preliminary vintage) scores on the EIA-930 combined-fossil LEVEL with
+the CEMS-anchored split — already the all-ISO unconditional default. The
+original recommendation: miso-60 is strictly more structurally
 faithful (a measured, SOM-documented commitment the model previously
 contradicted; D-1 shape r=0.98; grounded C8) and improves the volume/mix
 interior, at a one-FAIL price-side regression owned by named deferred
