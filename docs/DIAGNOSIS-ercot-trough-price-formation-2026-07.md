@@ -148,7 +148,53 @@ Mechanics mirror the adopted top leg exactly, with the clamp reversed:
   percentile (forward-native), levels = measured QSE quantiles, frozen
   against residuals. Tests: `tests/test_ercot_offer_surface_lowcurve.py`.
 
-## 5. A/B result (2023 probe)
+## 5. A/B results (2023 probes) — the markdown family is REFUTED for the circle; the missing structure is the block's INFLEXIBILITY
 
-*(filled by `_ercot62_lowcurve_analyze.py` — see the calibration-log entry for
-the adjudicated numbers and disposition)*
+Two variants, each keeper + the low leg as the single delta, vs the zero-delta
+keeper reconstruction (C3a +3.9 %, C3b 0.133, C3c 171 h reproduced exactly):
+
+| 2023 | keeper | v1 (cross-fleet rank) | v2 (plant-anchored + P0-gate) | RT actual |
+|---|---|---|---|---|
+| C3a lw | +3.9 % | +2.1 % | **+0.6 %** | — |
+| C3b | 0.133 | 0.128 | 0.125 | — |
+| C3c h | 171 | 171 | 171 | 311 DA |
+| trough h < $15 | 112 | 245 | 192 | 1,493 |
+| trough h < $20 | 860 | 1,268 | **1,472** | 2,645 |
+| median daily spread | $13.5 | $13.3 | $12.7 | $35.3 |
+| spread days > $24.25 | 81 | 82 | **67** | 247 |
+| storage throughput | 0.55 TWh | 0.56 | **0.51** | — |
+| coal annual Δ | — | −2.1 TWh | −2.9 TWh | — |
+
+* **Levels move decisively toward reality** (v2 C3a-2023 +0.6 %, the $15–20
+  trough band substantially fills) — the measured LSL markdown is a real
+  price-formation ingredient.
+* **The spread target moves the WRONG way in both variants** (median 13.5 →
+  12.7; viable-arbitrage days 81 → 67; storage 0.55 → 0.51 TWh): the model's
+  committed tranche is the marginal segment at mild-day EVENINGS too, so
+  repricing it lowers both ends of the day. v2's P0-online gate and
+  plant-position mapping fixed v1's specific artifacts (peak-rung erosion,
+  offline-plant undercutting) but cannot fix this — it is inherent to
+  repricing a tranche that plays both the LSL-block and mid-merit roles.
+* **The merit-order shuffle persists** (coal −2.4/−0.5 TWh PRB/lignite, CT
+  +1.5, CC +3.5 annual in v2): cheap committed blocks out-compete coal for
+  dispatch, which reality's committed-STATE bidding cannot do (both fleets run
+  at their committed levels; the margin competition happens above them).
+
+**Determination.** In reality the cheap LSL bids coexist with wide daily
+spreads because the block is INFLEXIBLE — must-take while the unit is on; its
+bid never sets the margin. The model needs the STATE, not (only) the PRICE:
+the P1-native commitment-bridge construction (`caiso_ra_mustoffer` /
+`caiso_ra_p1_floor_fleet` — min-down + startup-restart economics detected from
+the model's OWN P0 run pattern, physics-gated per rule 18, forward-native by
+construction) applied to the ERCOT gas-CC fleet, with `min_load_frac` = the
+MEASURED committed-CC LSL/HSL capacity-weighted p50 (0.574; CT 0.744, ST_GAS
+0.205 — this session's derive from the same disclosure corpus). Keeper-probe
+pre-check: 902 CC plant-nights/yr cycle off overnight between run-days
+(~1.07 GW mean capacity) — the overnight analogue of the midday gap the CAISO
+bridge was built for. The composition (bridge + markdown) is probed by
+`scripts/probes/_ercot62b_bridge_probe.py` (rule-16 monkeypatch diagnostic —
+the ISO-neutral bridge internals routed onto ERCOT with zero repo mechanisms);
+the real `ercot_gas_commitment_bridge` gate + D-2/D-4 declarations are built
+only on a positive probe. The low-curve markdown itself stays in the codebase
+default-off (rule 1 — real, measured, correctly clamped; it composes with the
+bridge the moment the state structure exists).

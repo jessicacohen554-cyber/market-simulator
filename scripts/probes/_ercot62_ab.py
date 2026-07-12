@@ -48,15 +48,22 @@ def main() -> None:
     meta = json.loads((KEEPER / "meta.json").read_text())
     kwargs = build_kwargs(meta, set(sig))
 
+    # Base = the PROMOTED ercot59-storage-deploy keeper (owner decision
+    # 2026-07-12): the ercot56-nucwin meta.json recipe + the storage-cycling
+    # measured-award AS->energy co-participation delta it was promoted on.
+    kwargs["ercot_storage_as_deployment"] = True
+    kwargs["ercot_storage_as_deployment_from_year"] = 2023
     # The ONE delta vs the promoted keeper: the conditional-offer-distribution
-    # LOW leg (measured trough-side quantile ladders, P1-only markdown).
+    # LOW leg (measured trough-side quantile ladders, P0-online-gated P1-only
+    # markdown).
     kwargs["ercot_offer_surface_lowcurve"] = True
 
     kwargs["zero_forcing_ablation"] = args.ablation
     kwargs["ablation_of"] = args.ablation_of if args.ablation else None
     kwargs["note"] = (
-        "ercot62 lowcurve: ercot56_nucwin keeper config reconstructed from "
-        "meta.json + ercot_offer_surface_lowcurve=True (the G-22 conditional-"
+        "ercot62 lowcurve: the PROMOTED ercot59-storage-deploy keeper recipe "
+        "(ercot56_nucwin meta.json + ercot_storage_as_deployment) "
+        "+ ercot_offer_surface_lowcurve=True (the G-22 conditional-"
         "offer-distribution LOW leg, docs/DIAGNOSIS-ercot-trough-price-"
         "formation-2026-07.md): the measured committed-fleet lower-tail offer "
         "quantile ladders (LSL Min-Gen-Cost block + lower-body econ segments, "
