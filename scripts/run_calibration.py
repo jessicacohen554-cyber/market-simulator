@@ -2851,7 +2851,11 @@ def run_year(
         # Availability-reconstruction exit (no LP): everything a post-solve
         # consumer needs to recompute pmax x availability per unit-hour,
         # the renewable potential (cf x cap) and the storage power caps,
-        # aligned with the persisted bundle.
+        # aligned with the persisted bundle. ``mc_base`` / ``fuel_prices``
+        # are the assembled P0 objective (fuel + VOM + carbon + NOx + EAC +
+        # coal tranches, all pricing overlays applied) so post-solve offer-
+        # stack diagnostics read the SAME offer prices the LP solved on —
+        # never a re-derivation that could drift (G-22 idle-supply audit).
         return {
             "config": config,
             "fleet": fleet,
@@ -2864,6 +2868,8 @@ def run_year(
             "solar_cf": solar_cf,
             "solar_cap": solar_cap,
             "demand": demand,
+            "mc_base": mc_base,
+            "fuel_prices": fuel_prices,
         }
 
     # Oil-burn inventory budget (NEISO-gated). When the budget binds in a
