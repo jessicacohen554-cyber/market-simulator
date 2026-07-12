@@ -11159,3 +11159,124 @@ EIA-930 per-fuel cell gates any current MISO number. Residual old-basis
 exposure is limited to other ISOs' keeper bench parts rendered before G-21
 (already flagged in the 2026-07-11 scorer-fix entry as unpropagatable without
 a controlled re-render; PJM re-scored, MISO current).
+## 2026-07-12 — ERCOT keeper PROMOTED: `ercot59 storage-deploy` (CALIBRATED-WITH-CAVEATS, rubric v2.4) — owner sign-off; supersedes ercot56-nucwin; ERCOT dashboard pruned to keeper-and-later (owner directive)
+
+**Owner decision (2026-07-12, binding-price-formation session, interactive
+sign-off): ercot59 storage-deploy promoted** — "if it's structurally more
+sound with minimal regression it should be keeper." The run is the promoted
+ercot56-nucwin recipe + ONE measured-input delta,
+`ercot_storage_as_deployment` (the storage-cycling-lane fix: measured-award
+AS→energy co-participation forcing the storage-AS-award draw-down as a
+battery discharge floor on the net-load ramp; zero new fitted parameters).
+Structural case per rule 1: real market structure the keeper lacked (the
+price-INELASTIC AS-deployment energy), release scale verified CORRECT and
+FROZEN on measured data (ERCOT-60), LP-healthy and price-neutral; the sole
+regression is the official C5c-2024 MONTHLY storage metric (r 0.361→0.329,
+both FAIL either way) while the physically meaningful hourly shape vs the
+measured EIA-930 2025 series improves (0.807→0.820). Determination
+CALIBRATED-WITH-CAVEATS, the same tier as ercot56-nucwin.
+
+**Bookkeeping.** `keepers.json` ERCOT → `2026-07-12-ercot59-storage-deploy`
+(+ keepers array); `status.js` rebuilt; the keeper sidecar's `ablation_twin`
+pointer set (E9); attestation `attested_by` stamped with the owner approval;
+`audit_keepers.py --iso ERCOT` PASS; calibration-keeper-auditor run PASS
+(zero drift). **Owner-directed registry prune (supersedes top-15 retention
+for ERCOT, session-logged):** the dashboard shows the keeper and anything
+run after it ONLY — the 12 pre-keeper ERCOT registrations (ercot53 pair,
+ercot55 ×4, ercot56 pair, ercot57 pair, ercot58 pair — including the prior
+keeper) are deregistered (sidecars + run payloads removed; every bundle dir
+under `results/calibration/` stays as the archival record).
+
+## 2026-07-12 — ERCOT-62: the binding-regime price-formation lane executed (two levers adjudicated on measured data + three rule-16 probes) — the commitment-ceiling is a rule-13 dead end (year-drifting posture); the flat spread re-scoped to the TROUGH side and its measured mechanism (the committed-fleet LSL/lower-body offer tail) built default-off; the markdown family is probe-REFUTED for the spread target (state, not price); keeper is ercot59-storage-deploy (promoted this session)
+
+**Task (the ERCOT-61 §5 hand-back).** Close the storage/price-formation
+circle endogenously (flat evening/morning spread ↔ battery under-discharge ↔
+binding-hour thermal excess), levers in the filed order: (1) DA-commitment
+thinness (`gas_st_commitment_ceiling`); (2) the G-22 DA-shoulder
+conditional-offer-distribution lane. Full workings:
+`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md`.
+
+**Lever 1 — REFUTED, a rule-13 dead end (the mirror of ERCOT-60's
+morning-discharge dead end).** The ERCOT-61 §4 recorded operating rule
+reproduces exactly on 2023 unit-level CAMPD (r 0.806, `frac = 0.0179·nl_GW −
+0.310`, deciles 0.039→0.767) but is NOT year-stable on any tested axis —
+absolute net-load (nl 16-20 GW: 2023 0.005-0.04 vs 2025 0.176-0.19, curves
+CROSSING ~38 GW), within-year rank, year-max-normalized, daily-peak net-load
+(52-60 GW day-peak: 2023 0.70 / 2025 0.45) — a year-level commitment-posture
+economics (the 2025 battery fleet serving the peaks) that no net-load-family
+driver carries. A frozen pooled curve clips 5.5 TWh of phantom tightness onto
+the keeper's own 2023 (vs 0.56 for the inadmissible own-year envelope) — the
+ercot57 phantom-scarcity failure class; per-year curves are commitment-state
+replay in curve clothing; and the hourly commitment state is inadmissible by
+the repo's own adjudication ("commitment state is not an availability event",
+the ercot57 derive). Struck from the lever list; the ceiling's own honest
+upper bound (the measured hourly envelope) clips just 0.46 TWh at binding
+hours — never the excess's carrier (confirms ERCOT-61 §4).
+
+**The measured re-scoping (the round's real yield).** The missing daily
+spread is at the BOTTOM of the price curve, not the top: model (keeper) 2023
+median daily top4−bottom4 spread $13.5 vs RT $35.3/DA $34.3; viable-arbitrage
+days (>$24.25 round-trip hurdle) 81 vs 247; the model's evening peak is
+~right while its overnight floor is +$5 and midday +$6 over RT — every month
+(Jan 10.8 vs 29.5, Mar 12.7 vs 38.6). Band occupancy: RT spent 1,493
+overnight+midday hours below $15 (137 negative); the model 111 (0) — it
+prices nothing between ~$0 and its all-hours-p50 gas bands. The measured
+mechanism (60-Day DAM disclosure, committed resources): committed units bid
+their LSL (Min-Gen-Cost) block FAR below SRMC — CC capacity-weighted p50
+multiplier 0.585/0.370/0.282/0.133 by net-load bin vs the model's resolved
+~1.0 (cycling-avoidance / stay-on bidding; CT 1.32-1.44 and ST_GAS 1.32-1.52
+measured ≈ the model's bands, consistent with ERCOT-61's exoneration) — plus
+an always-posted cheap lower-body tail. The model's baked bands are the
+measured all-hours p50s: the p50 collapse deleted BOTH tails; the adopted
+surface restored the upper one; the lower one was still missing.
+
+**Built (default-off, rule 1): `ercot_offer_surface_lowcurve`** — the
+conditional-offer-distribution LOW leg, the exact mirror of the adopted top
+surface: same corpus, same net-load bins, same P1-only `mc_bid_adjust` seam,
+reversed clamp (ratio ≤ 1, a markdown can only lower), committed-resources-
+only derive (`derive_dam_offer_hrmults.py --low-curve-binned` → frozen
+`offer_curve_dam_lowcurve_condbinned.json`), gas classes only, zero fitted
+scalars. v2 form: committed-LSL markdown as a class-level ratio on the
+resolved band, P0-ONLINE-GATED (the CAISO-RA/PJM-path-B forward-regenerating
+construction — the model's own P0 commitment is the "committed" set) via a
+new `p1_bid_adjust_prep` hook at the shared solve seam; econ rungs mapped
+within-plant to measured rel-band medians (largely clamp-inert — the keeper's
+delta-adjusted ramp already sits at/below them). Tests
+`test_ercot_offer_surface_lowcurve.py` (7).
+
+**Probe adjudication (rule-16 2023-only throwaways vs the byte-faithful
+keeper reconstruction; never registered).** The markdown moves LEVELS
+decisively toward reality — C3a-2023 +3.9→+0.6 %, C3b 0.133→0.125, C3c
+untouched (171 h), the $15-20 trough band fills (860→1,472 h vs RT 2,645) —
+but the SPREAD target moves the wrong way in both variants (median
+13.5→12.7; viable days 81→67; storage 0.55→0.51 TWh) and a coal→gas
+merit shuffle appears (coal −2.9 TWh): the model's committed tranche is the
+marginal segment at mild-day EVENINGS too, so repricing it lowers both ends
+of the day. **The markdown family is refuted as the circle's carrier: in
+reality the cheap LSL bids coexist with wide spreads because the block is
+INFLEXIBLE (must-take while on) — the STATE does the work, not the price.**
+The mechanism stays in the code default-off (real, measured, correctly
+clamped — the price-formation layer that composes with the state structure
+once it exists).
+
+**The state-side probe (ERCOT-62b) and the filed next lever.** The existing
+physics-gated commitment bridge (`caiso_ra_p1_floor_fleet` — min-down +
+startup-restart economics from the model's OWN P0 run pattern; ISO-neutral
+internals) was spoofed onto the ERCOT gas-CC fleet (rule-16 monkeypatch
+diagnostic, `_ercot62b_bridge_probe.py`; `min_load_frac` = the measured
+committed-CC LSL/HSL capacity-weighted p50, 0.574, derived this session from
+the same disclosure corpus; keeper-dispatch pre-check: 902 CC plant-nights/yr
+cycle off overnight between run-days, ~1.07 GW mean). Composed with the markdown (and WITHOUT the startup-aware screen — the model's thin trough run-margins refuse every anchor under it, the first probe arm's silent no-op), the bridge floors 39,446 unit-hours (8.26 TWh floor volume, D-2 `ra_mustoffer_bridge`; LP-healthy, slack unchanged): C3a-2023 lands +0.3 % (the session's best), the deepest trough epochs finally form (<$10: 29→143 h vs RT 681; <$15: 112→292 vs 1,493) and — the first variant moving the circle the RIGHT way — storage throughput RISES 0.55→0.59 TWh with evening HE18/19 discharge up 193/397→214/443 MW while the median spread stops shrinking (13.5→13.7). Still a fraction of the gap (viable-arbitrage days 68 vs RT 247) and the coal→gas merit shuffle persists (coal −3.3 TWh: the markdown competes dispatch where reality's committed-state bidding cannot — coal's own take-or-pay block carries the same state-not-price gap and needs co-treatment).
+The chartered next lever is the real `ercot_gas_commitment_bridge` gate
+(own config, D-2/D-4 declarations, measured ERCOT min-load fractions per
+class) composed with the low-curve markdown — state + price together.
+
+**Holdouts / governance.** No solve, score, or intake outside 2023-2025
+(rule 22); ORDC tariff parameters untouched (rule 26); no existing offer
+curve, sigmoid, floor, or derive-script value changed (rules 13/21/23 — the
+new derive is a new measured artifact; the adopted top-surface JSON is
+byte-identical); the drag hinge and ST_GAS deltas stay frozen (ERCOT-61);
+`ercot_storage_as_deployment` untouched (ERCOT-60, now the keeper). All
+probes 2023-only throwaways, never registered; bundles deleted, not
+committed. No dashboard registration this session beyond the promotion/prune
+bookkeeping above (no promotable full-span run was produced).

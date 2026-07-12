@@ -198,3 +198,35 @@ the real `ercot_gas_commitment_bridge` gate + D-2/D-4 declarations are built
 only on a positive probe. The low-curve markdown itself stays in the codebase
 default-off (rule 1 — real, measured, correctly clamped; it composes with the
 bridge the moment the state structure exists).
+
+## 6. ERCOT-62b: the state-side probe result and the chartered next lever
+
+With the spoofed bridge composed on the markdown (startup-aware OFF — the
+screen's run-margin test refuses every anchor in the model's flat troughs,
+the first probe arm's silent no-op; and note the double-import trap: patch
+``scripts.run_calibration``, not the top-level alias):
+
+| 2023 | keeper | v2 markdown | 62b bridge+markdown | RT |
+|---|---|---|---|---|
+| C3a lw | +3.9 % | +0.6 % | **+0.3 %** | — |
+| trough h < $10 | 29 | 43 | **143** | 681 |
+| trough h < $15 | 112 | 192 | **292** | 1,493 |
+| median daily spread | $13.5 | $12.7 | **$13.7** | $35.3 |
+| storage throughput | 0.55 TWh | 0.51 | **0.59** | — |
+| evening HE18/19 discharge | 193/397 MW | 190/381 | **214/443** | — |
+| coal annual Δ | — | −2.9 TWh | −3.3 TWh | — |
+
+The bridge floors 39,446 unit-hours (8.26 TWh floor volume, D-2
+``ra_mustoffer_bridge``; slack unchanged). First variant where the circle
+moves the right way: troughs deepen AND batteries discharge more at the
+evening peak. Still a fraction of the gap (viable-arbitrage days 68 vs 247),
+and the coal→gas merit shuffle persists — coal's take-or-pay block carries
+the same state-not-price gap and needs co-treatment.
+
+**Chartered next lever (ERCOT-63): the real `ercot_gas_commitment_bridge`** —
+own gate + config (measured per-class min-load fractions: CC 0.574, CT 0.744,
+ST_GAS 0.205), D-2/D-4 declarations and forced-energy budget, the
+startup-aware screen re-derived for ERCOT economics (or dropped with cause),
+coal-side committed-state reconciliation (rule 19), composed with the
+low-curve markdown; full-span 2023-2025 + zero-forcing twin + LOYO before any
+promotion talk.
