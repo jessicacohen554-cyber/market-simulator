@@ -182,3 +182,92 @@ lane the ERCOT-58 forward path named. Specification:
 * When the deployment mechanism lands and clears its 2023 probe + measured-year
   (2024/2025) shape gate, re-probe the ERCOT-58 v3 realized-room RTORPA — its
   realized room is bounded by exactly this supply-mix gap.
+
+## 7. Thread-1 determination (2026-07-12, ERCOT-60): the release scale is CORRECT — the residual gap is incentive-bound and lives outside the AS-release window
+
+**Question filed by ERCOT-59:** the mechanism's released draw-down averages only
+~20–100 MW against an award that carries 1.2–2.8 GW — is the daily-median/pre-peak
+gate too conservative, or is the modest scale right and the +2.4 GW binding-regime
+thermal excess needs a different mechanism? **Answer: the scale is right.** All
+numbers below are measured-data-only (no solve): the 60-Day DAM award series, the
+EIA-930 2025 battery series, and the keeper's committed diagnostics.
+
+### 7.1 ~96 % of the remaining throughput gap lies outside the evening up-ramp
+
+Window decomposition of the 2025 measured-vs-keeper battery discharge (measured
+hod from EIA-930; model hod from §1, its unquoted 16 hod carrying the residual
+0.20 TWh ≈ 35 MW/hod of the 3.44 TWh annual):
+
+| window (hod) | measured TWh | model TWh | gap |
+|---|---|---|---|
+| morning ramp 5–7 | 0.88 | 0.12 | **+0.77** |
+| daytime 0–4 + 8–16 | 1.09 | 0.17 | **+0.91** |
+| evening up-ramp 17–20 | 3.20 | 3.11 | +0.09 |
+| late night 21–23 | 0.31 | 0.04 | +0.27 |
+
+The evening up-ramp — the only window where AS-award release is physically
+justified (§5) — is already ~closed by arbitrage in the scarcity year. The
+morning ramp, daytime and late windows carry ~1.95 of the ~2.0 TWh gap, and in
+every one of them the award-release construction is *structurally* zero or
+dishonest:
+
+* **Morning (hod 5–7): the award is RISING** (2025: 2,084 → 2,144 → 2,598 MW —
+  procurement follows load), so the cummax draw-down is ~0 by construction
+  (proxy-basis deploy ≈ 1–3 MW there). No release construction can produce
+  energy where nothing has yet been released.
+* **Post-peak / late night: the award's decline is procurement shape, not
+  deployment.** The ungated cummax draw-down grows to 2.2–2.5 GW at hod 21–23
+  (2025) while measured discharge *falls* to 465/202/184 MW. Forcing it is
+  exactly the loose-gate shape failure ERCOT-59 already demonstrated and
+  rejected (hourly r 0.807 → 0.630).
+* **Binding-hour ceiling:** even the UNGATED cummax draw-down at top-30 %
+  net-load hours averages only 263 MW (2023) / 626 MW (2025) on the EIA-930
+  net-load proxy basis. No honest variant of this construction reaches the
+  +1–2 GW the binding regime is missing.
+
+(Proxy caveat: these deploy numbers use EIA-930 actual-generation net load, not
+the model's demand − VRE-potential gate; annual magnitudes line up with the
+registered in-model deltas — 2023 +0.10 TWh, 2025 +0.23 TWh — the hod detail
+differs slightly.)
+
+### 7.2 The gap is incentive-bound, not reservation-bound
+
+In every gap window the fleet holds abundant **free (non-AS)** capacity: 2025
+fleet 13,709 MW vs award ≈ 2.1–2.6 GW at the morning ramp → ~11 GW free against
+≤ 1 GW measured discharge; 2023 binding hours ≈ 2.4–2.7 GW free against the
+model's 145 MW. The binding constraint is the *incentive* — the modelled spread,
+flattened by the +2.4 GW binding-regime thermal excess (§4 circle) — not the AS
+reservation. Releasing more award MW cannot fix an incentive gap; it would force
+procurement-shape MWh into hours the measured fleet does not discharge in.
+
+**Rule-13 dead end, recorded:** no admissible measured input exists for a
+morning/daytime discharge floor. The PRC morning dip is not battery-specific,
+and the EIA-930 battery series is the *outcome* being validated — pinning
+dispatch to it is exactly what rule 13 forbids. The morning/daytime energy must
+come endogenously from price formation, i.e. from the thermal side of the
+circle. The daytime baseload (~120–250 MW) additionally reflects RegUp/ECRS
+deployment energy and RT sub-hourly volatility capture that an hourly LP
+cannot see — a representational bound, not a build item.
+
+### 7.3 Disposition and the sharpened forward path
+
+* **`ercot_storage_as_deployment` stays exactly as built** (gate and
+  construction unchanged). Enlarging it in any direction is residual-fitting on
+  a window its own driver evidence contradicts (rules 1/11/12).
+* **The next lever is the binding-regime thermal side, ST_GAS first** (the
+  ERCOT-58 §5 lane): the keeper's own D-2 shows `st_netload_drag` forcing
+  4.96/5.70/4.97 TWh (25/33/31 % of ST_GAS class energy, 2023/24/25) under an
+  all-hours declared window, and ERCOT-58 §4 measured ST_GAS **+1.3 GW** at
+  top-30 % net-load hours vs CAMPD (4,841 vs 3,555 MW) — while D-1 diurnal
+  shape passes (r 0.97–1.00), i.e. a binding-hour *level* excess, not a shape
+  error. First probe for that lane: from a 2023 throwaway, mask which
+  binding-hour ST_GAS MWh sit ON the drag floor vs above it economically —
+  that decides whether the defect is the drag hinge's high-net-load
+  extrapolation (derived from *overnight* CF vs net load, applied at all
+  net-load levels) or the offer curve above it. Displacing that excess
+  steepens the evening/morning spread and lets the existing arbitrage close
+  the storage windows endogenously — breaking the §4 circle at its other end.
+* **The ERCOT-58 v3 realized-room RTORPA re-probe stays parked** — the
+  supply-mix gap narrowed by only ~0.23 of ~2.0 TWh, so its realized room is
+  still bounded by the same excess.
+* The C5c monthly-shape residual remains a separate, untouched root-cause item.
