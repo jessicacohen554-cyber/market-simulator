@@ -1,0 +1,154 @@
+iso,delivery_year,season,area,area_type,metric,value_mw,value_pu,source_doc,source_page
+CAISO,2023,annual,Humboldt,local_area,requirement,141,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,North Coast/North Bay,local_area,requirement,857,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,Sierra,local_area,requirement,1150,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,Stockton,local_area,requirement,579,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,Greater Bay,local_area,requirement,7312,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,Greater Fresno,local_area,requirement,1870,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,Kern,local_area,requirement,439,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,Big Creek/Ventura,local_area,requirement,2240,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,LA Basin,local_area,requirement,7529,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,San Diego/Imperial Valley,local_area,requirement,3332,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,4
+CAISO,2024,annual,Humboldt,local_area,requirement,133,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2024,annual,North Coast/North Bay,local_area,requirement,983,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2024,annual,Sierra,local_area,requirement,1212,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2024,annual,Stockton,local_area,requirement,750,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2024,annual,Greater Bay,local_area,requirement,7329,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2024,annual,Greater Fresno,local_area,requirement,2028,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2024,annual,Kern,local_area,requirement,427,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2024,annual,Big Creek/Ventura,local_area,requirement,1971,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2024,annual,LA Basin,local_area,requirement,4413,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2024,annual,San Diego/Imperial Valley,local_area,requirement,2834,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,4
+CAISO,2025,annual,Humboldt,local_area,requirement,164,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2025,annual,North Coast/North Bay,local_area,requirement,967,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2025,annual,Sierra,local_area,requirement,1532,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2025,annual,Stockton,local_area,requirement,735,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2025,annual,Greater Bay,local_area,requirement,7441,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2025,annual,Greater Fresno,local_area,requirement,2532,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2025,annual,Kern,local_area,requirement,434,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2025,annual,Big Creek/Ventura,local_area,requirement,2145,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2025,annual,LA Basin,local_area,requirement,4123,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2025,annual,San Diego/Imperial Valley,local_area,requirement,2709,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,4
+CAISO,2023,annual,IPP-DC,branch_group,import_limit,481,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,IPP-DC,branch_group,import_limit,481,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,IPP-DC,branch_group,import_limit,481,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,McCullough-Marketplace,branch_group,import_limit,35,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,McCullough-Marketplace,branch_group,import_limit,66,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2023,annual,Mead-T-Mead,branch_group,import_limit,16,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Mead-T-Mead,branch_group,import_limit,6,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2023,annual,Marketplace-Adelanto,branch_group,import_limit,89,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Marketplace-Adelanto,branch_group,import_limit,90,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Marketplace-Adelanto,branch_group,import_limit,145,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Mona-IPP-DC,branch_group,import_limit,182,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Mona-IPP-DC,branch_group,import_limit,180,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Mona-IPP-DC,branch_group,import_limit,189,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Westwing-Mead,branch_group,import_limit,67,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Westwing-Mead,branch_group,import_limit,40,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Westwing-Mead,branch_group,import_limit,85,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Blythe,branch_group,import_limit,2,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Blythe,branch_group,import_limit,16,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Blythe,branch_group,import_limit,23,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Cascade,branch_group,import_limit,60,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Cascade,branch_group,import_limit,60,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Cascade,branch_group,import_limit,40,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Eldorado,branch_group,import_limit,391,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Eldorado,branch_group,import_limit,357,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Eldorado,branch_group,import_limit,637,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,IID-SCE,branch_group,import_limit,312,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,IID-SCE,branch_group,import_limit,540,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,IID-SCE,branch_group,import_limit,540,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,IID-SDGE,branch_group,import_limit,150,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,IID-SDGE,branch_group,import_limit,162,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,IID-SDGE,branch_group,import_limit,162,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,McCullough,branch_group,import_limit,745,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,McCullough,branch_group,import_limit,732,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,McCullough,branch_group,import_limit,720,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Mead,branch_group,import_limit,1447,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Mead,branch_group,import_limit,1252,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Mead,branch_group,import_limit,1494,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Merchant,branch_group,import_limit,387,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Merchant,branch_group,import_limit,516,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Merchant,branch_group,import_limit,422,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,North Gila 500,branch_group,import_limit,223,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,North Gila 500,branch_group,import_limit,223,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,North Gila 500,branch_group,import_limit,168,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,NOB,branch_group,import_limit,1559,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,NOB,branch_group,import_limit,1622,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,NOB,branch_group,import_limit,1413,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Palo Verde,branch_group,import_limit,3042,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Palo Verde,branch_group,import_limit,2999,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Palo Verde,branch_group,import_limit,2543,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Parker,branch_group,import_limit,115,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Parker,branch_group,import_limit,163,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Parker,branch_group,import_limit,163,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Rancho Seco/Lake,branch_group,import_limit,48,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Rancho Seco/Lake,branch_group,import_limit,48,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Rancho Seco/Lake,branch_group,import_limit,48,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2024,annual,Silver Peak,branch_group,import_limit,13,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2023,annual,Summit,branch_group,import_limit,18,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Summit,branch_group,import_limit,13,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Summit,branch_group,import_limit,5,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Sylmar-AC,branch_group,import_limit,830,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Sylmar-AC,branch_group,import_limit,880,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Sylmar-AC,branch_group,import_limit,743,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Victorville,branch_group,import_limit,130,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Victorville,branch_group,import_limit,133,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Victorville,branch_group,import_limit,133,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Round Mountain 230,branch_group,import_limit,328,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Round Mountain 230,branch_group,import_limit,328,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Round Mountain 230,branch_group,import_limit,328,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Cottonwood 230,branch_group,import_limit,114,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Cottonwood 230,branch_group,import_limit,40,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Cottonwood 230,branch_group,import_limit,204,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Malin 500,branch_group,import_limit,2926,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Malin 500,branch_group,import_limit,2957,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Malin 500,branch_group,import_limit,2869,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,COTP,branch_group,import_limit,30,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,COTP,branch_group,import_limit,20,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,COTP,branch_group,import_limit,14,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Tracy 230,branch_group,import_limit,400,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Tracy 230,branch_group,import_limit,420,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Tracy 230,branch_group,import_limit,405,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Tracy 500,branch_group,import_limit,724,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Tracy 500,branch_group,import_limit,796,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Tracy 500,branch_group,import_limit,875,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Tracy-TEA,branch_group,import_limit,306,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Tracy-TEA,branch_group,import_limit,306,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Tracy-TEA,branch_group,import_limit,306,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,New Melones,branch_group,import_limit,384,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,New Melones,branch_group,import_limit,384,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,New Melones,branch_group,import_limit,384,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Westley-Los Banos,branch_group,import_limit,22,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Westley-Los Banos,branch_group,import_limit,22,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Westley-Fink,branch_group,import_limit,22,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Westley-Tesla,branch_group,import_limit,102,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Westley-Tesla,branch_group,import_limit,102,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Westley-Tesla,branch_group,import_limit,102,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Standiford,branch_group,import_limit,176,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Standiford,branch_group,import_limit,306,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Standiford,branch_group,import_limit,306,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Oakdale,branch_group,import_limit,194,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Oakdale,branch_group,import_limit,164,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Oakdale,branch_group,import_limit,164,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Marble,branch_group,import_limit,15,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2024,annual,Marble,branch_group,import_limit,15,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2024.pdf,1
+CAISO,2025,annual,Marble,branch_group,import_limit,15,,https://www.caiso.com/documents/iso-maximum-resource-adequacy-import-capability-for-year-2025.pdf,1
+CAISO,2023,annual,Northwest 230,branch_group,import_limit,5,,https://www.caiso.com/documents/isomaximumresourceadequacyimportcapabilityforyear2023.pdf,1
+CAISO,2023,annual,CAISO,rto,system_requirement,,0.16,https://www.cpuc.ca.gov/-/media/cpuc-website/divisions/energy-division/documents/resource-adequacy-homepage/fact-sheet-on-ra-d2306029-on-implementation-track-phase-3.pdf,1
+CAISO,2024,annual,CAISO,rto,system_requirement,,0.17,https://www.cpuc.ca.gov/-/media/cpuc-website/divisions/energy-division/documents/resource-adequacy-homepage/fact-sheet-on-ra-d2306029-on-implementation-track-phase-3.pdf,1
+CAISO,2025,annual,CAISO,rto,system_requirement,,0.17,https://www.cpuc.ca.gov/-/media/cpuc-website/divisions/energy-division/documents/resource-adequacy-homepage/fact-sheet-on-ra-d2306029-on-implementation-track-phase-3.pdf,1
+CAISO,2023,annual,LA Basin,local_area,peak_load,19537,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,Table 3.3-7 Load+Losses+Pumps
+CAISO,2023,annual,San Diego/Imperial Valley,local_area,peak_load,4768,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,Table 3.3-7 Load+Losses+Pumps
+CAISO,2023,annual,SP26,zone,peak_load,28149,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,Table 3.2-1
+CAISO,2024,annual,LA Basin,local_area,peak_load,19637,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,Table 3.3-7 Load+Losses+Pumps
+CAISO,2024,annual,San Diego/Imperial Valley,local_area,peak_load,4908,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,Table 3.3-7 Load+Losses+Pumps
+CAISO,2024,annual,SP26,zone,peak_load,28310,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,Table 3.2-1
+CAISO,2025,annual,LA Basin,local_area,peak_load,19297,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.3-7 Load+Losses+Pumps
+CAISO,2025,annual,San Diego/Imperial Valley,local_area,peak_load,4780,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.3-7 Load+Losses+Pumps
+CAISO,2025,annual,SP26,zone,peak_load,27736,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.2-1
+CAISO,2023,annual,Greater Bay,local_area,peak_load,11136,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,Table 3.3-29 Load+Losses+Pumps
+CAISO,2024,annual,Greater Bay,local_area,peak_load,11081,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,Table 3.3-27 Load+Losses+Pumps
+CAISO,2025,annual,Greater Bay,local_area,peak_load,11992,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.3-27 Load+Losses+Pumps
+CAISO,2023,annual,NP26,zone,peak_load,20748,,https://www.caiso.com/Documents/Final2023LocalCapacityTechnicalReport.pdf,Table 3.2-1
+CAISO,2024,annual,NP26,zone,peak_load,20867,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final-2024-Local-Capacity-Technical-Report.pdf,Table 3.2-1
+CAISO,2025,annual,NP26,zone,peak_load,21140,,https://stakeholdercenter.caiso.com/InitiativeDocuments/Final2025LocalCapacityTechnicalReport.pdf,Table 3.2-1
