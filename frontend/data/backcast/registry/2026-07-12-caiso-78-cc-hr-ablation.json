@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-12-caiso-78-cc-hr-ablation",
+  "label": "caiso 78 cc hr ablation",
+  "date": "2026-07-12",
+  "shorthand": "caiso-78-cc-hr-ablation",
+  "definition": "caiso-78 corrected CC heat-rate basis ablation -- caiso-77 keeper recipe on the fleet_to_bins HR/capacity-basis fix (FINDING-caiso78-cc-hr-basis-2026-07-12.md), 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-12-caiso-78-cc-hr-ablation.js",
+  "bundle": "results/calibration/caiso78_cc_hr_basis-ablation"
+}

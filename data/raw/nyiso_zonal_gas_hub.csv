@@ -1,16 +1,21 @@
 zone,year,hub,hub_usd_mmbtu,source
+Upstate_West,2022,Tenn Z4 200L,5.75,NYISO 2022 SOM (Potomac Economics) Figure A-6 annual avg
 Upstate_West,2023,Tenn Z4 200L,1.82,NYISO 2023 State of the Market (Potomac Economics) Figure A-6 annual avg
 Upstate_West,2024,Tenn Z4 200L,1.83,NYISO 2024 State of the Market (Potomac Economics) Figure A-6 annual avg
 Upstate_West,2025,Tenn Z4 200L,2.94,NYISO 2025 State of the Market (Potomac Economics) Figure A-6 annual avg
+Capital_Hudson,2022,Iroquois Z2,8.82,NYISO 2022 SOM (Potomac Economics) Figure A-6 annual avg
 Capital_Hudson,2023,Iroquois Z2,3.28,NYISO 2023 SOM Figure A-6 annual avg (Capital/Hudson on Iroquois Z2 / Tenn Z6)
 Capital_Hudson,2024,Iroquois Z2,2.90,NYISO 2024 SOM Figure A-6 annual avg
 Capital_Hudson,2025,Iroquois Z2,6.02,NYISO 2025 SOM Figure A-6 annual avg
+Lower_Hudson,2022,Iroquois Z2,8.82,NYISO 2022 SOM (Potomac Economics) Figure A-6 annual avg
 Lower_Hudson,2023,Iroquois Z2,3.28,NYISO 2023 SOM Figure A-6 annual avg (LHV/GHI on Iroquois Z2)
 Lower_Hudson,2024,Iroquois Z2,2.90,NYISO 2024 SOM Figure A-6 annual avg
 Lower_Hudson,2025,Iroquois Z2,6.02,NYISO 2025 SOM Figure A-6 annual avg
+NYC,2022,Transco Z6 NY,7.04,NYISO 2022 SOM (Potomac Economics) Figure A-6 annual avg
 NYC,2023,Transco Z6 NY,1.94,NYISO 2023 SOM Figure A-6 annual avg (NYC on Transco Zone 6 NY)
 NYC,2024,Transco Z6 NY,2.19,NYISO 2024 SOM Figure A-6 annual avg
 NYC,2025,Transco Z6 NY,4.64,NYISO 2025 SOM Figure A-6 annual avg
+Long_Island,2022,Iroquois Z2,8.82,NYISO 2022 SOM (Potomac Economics) Figure A-6 annual avg
 Long_Island,2023,Iroquois Z2,3.28,NYISO 2023 SOM Figure A-6 annual avg (LI on Iroquois Z2)
 Long_Island,2024,Iroquois Z2,2.90,NYISO 2024 SOM Figure A-6 annual avg
 Long_Island,2025,Iroquois Z2,6.02,NYISO 2025 SOM Figure A-6 annual avg
