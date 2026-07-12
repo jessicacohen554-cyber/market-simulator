@@ -1893,5 +1893,60 @@ class TestCoalNameplateSummerDerate(unittest.TestCase):
         np.testing.assert_allclose(on, off, rtol=1e-6)
 
 
+class TestCcNameplateRescaleHeatRate(unittest.TestCase):
+    """The CC nameplate rescale must not deflate the plant heat rate.
+
+    ``fleet_to_bins`` accumulates the capacity-weighted heat rate on the
+    fleet's net-summer ratings; under ``cc_nameplate_summer_derate`` the
+    plant's capacity is rescaled up to full nameplate. Heat rate is an
+    intensive property — dividing the net-summer-weighted sum by the rescaled
+    capacity deflated every CC plant's base heat rate (and every offer band
+    built on it) by its own net-summer/nameplate ratio, scrambling the
+    within-class merit order (FINDING-caiso78-cc-hr-basis-2026-07-12.md §3).
+    """
+
+    def _bins(self, flag: bool):
+        from market_sim.data.fleet import fleet_to_bins
+
+        gen = Generator(
+            unit_id="999901_1",
+            name="Test CC",
+            zone="NP15",
+            fuel_type="gas_cc",
+            pmax_mw=80.0,  # net-summer rating (the fleet-carried pmax)
+            heat_rate=8.0,
+            plant_group="CC_REGULAR",
+            plant_code=999901,
+        )
+        cfg = ScenarioConfig(
+            mode="backcast",
+            weather_year=2023,
+            iso="CAISO",
+            cc_nameplate_summer_derate=flag,
+        )
+        with unittest.mock.patch(
+            "market_sim.data.fleet.cc_summer_derate_ratio", return_value=0.8
+        ):
+            return fleet_to_bins([gen], "CAISO", cfg)
+
+    def test_rescale_inflates_capacity_but_preserves_heat_rate(self):
+        """Flag on: capacity 80 -> 100 (nameplate); base HR stays 8.0."""
+        row = self._bins(flag=True).iloc[0]
+        self.assertAlmostEqual(float(row["capacity_mw"]), 100.0, places=6)
+        self.assertAlmostEqual(float(row["hr_weighted"]), 8.0, places=6)
+        # every band multiplies the (undeflated) base heat rate
+        self.assertAlmostEqual(
+            float(row["hr_econ"]) / 8.0,
+            float(row["hr_econ"]) / row["hr_weighted"],
+            places=9,
+        )
+
+    def test_flag_off_unchanged(self):
+        """Flag off: net-summer capacity and the same base heat rate."""
+        row = self._bins(flag=False).iloc[0]
+        self.assertAlmostEqual(float(row["capacity_mw"]), 80.0, places=6)
+        self.assertAlmostEqual(float(row["hr_weighted"]), 8.0, places=6)
+
+
 if __name__ == "__main__":
     unittest.main()
