@@ -1035,10 +1035,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
         if is_cached(iso, cache_key, year):
             result = load_result(iso, cache_key, year)
+            _t_cached = time.perf_counter()
+            _total = _t_cached - year_start
             logger.info(
-                "year %d: cached, skipped (%.3fs)",
+                "year %d phase timing: data_prep=%.1fs cached=True total=%.1fs",
                 year,
-                time.perf_counter() - year_start,
+                _total,
+                _total,
             )
         else:
             wind_mc, solar_mc = compute_dispatch_credits(config, year)
@@ -1468,6 +1471,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
                 config, iso, fleet_arrays
             )
+            _t_pre_solve = time.perf_counter()
             energy_solve = run_energy_solve(
                 dispatch_fleet,
                 fleet_arrays,
@@ -1479,6 +1483,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 p1_fleet_prep=ra_p1_prep or pjm_fleet_prep,
                 p1_kwargs_prep=pjm_kwargs_prep,
             )
+            _t_post_solve = time.perf_counter()
             p1_result = energy_solve.p1
             mc_bid = energy_solve.mc_bid
             # The fleet P1 solved on — RA-floored when the bridge fired, else the
@@ -1544,10 +1549,25 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 )
             # === END LEGACY: P2 Commitment Screen ===
             save_result(result, config, iso, year, context=context, demand=year_demand)
+            _t_end = time.perf_counter()
+            _solve_p0 = energy_solve.r0.solve_time
+            _solve_p1 = energy_solve.p1.solve_time
+            _build = energy_solve.p1.build_time
+            _energy_s = _t_post_solve - _t_pre_solve
+            _markup_s = max(0.0, _energy_s - _build - _solve_p0 - _solve_p1)
+            _results_write = _t_end - _t_post_solve
+            _total = _t_end - year_start
+            _data_prep = _total - _solve_p0 - _markup_s - _solve_p1 - _results_write
             logger.info(
-                "year %d: solved and cached (%.3fs)",
+                "year %d phase timing: data_prep=%.1fs solve_p0=%.1fs "
+                "markup=%.1fs solve_p1=%.1fs results_write=%.1fs total=%.1fs",
                 year,
-                time.perf_counter() - year_start,
+                _data_prep,
+                _solve_p0,
+                _markup_s,
+                _solve_p1,
+                _results_write,
+                _total,
             )
 
         # CHP must-run post-processing: non-coal must-run capacity is
