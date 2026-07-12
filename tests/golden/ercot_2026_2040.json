@@ -1,0 +1,135 @@
+{
+  "bands": {
+    "annual_co2_tons": {
+      "kind": "relative",
+      "tol": 0.02
+    },
+    "annual_lw_price_per_mwh": {
+      "kind": "relative",
+      "tol": 0.05
+    },
+    "capacity_by_fuel_end_year_mw": {
+      "kind": "absolute",
+      "tol": 1000.0
+    },
+    "cumulative_builds_by_tech_mw": {
+      "abs_floor": 50.0,
+      "kind": "relative_or_absolute",
+      "tol": 0.1
+    },
+    "system_cost_usd": {
+      "kind": "relative",
+      "tol": 0.02
+    }
+  },
+  "description": "Golden-scenario band regression fixture (forecast-validation program W2-P5, plan §2.3; horizon extended 2032->2040 in P-3A, 2026-07-12, for a deeper checkpoint). Pins an ERCOT reference forecast, 2026-2040, on real HiGHS; check_bands() compares a fresh solve of the same REFERENCE_SCENARIO_KWARGS against the values below.",
+  "golden": {
+    "annual_co2_tons": {
+      "2026": 151466476.4605254,
+      "2027": 155930563.4449494,
+      "2028": 170345842.70626485,
+      "2029": 186824417.56971624,
+      "2030": 196840937.88721988,
+      "2031": 208044934.00384155,
+      "2032": 217099395.4216818,
+      "2033": 217270299.17239186,
+      "2034": 212652985.6457923,
+      "2035": 213205724.7300955,
+      "2036": 217713408.44245118,
+      "2037": 211626896.56518883,
+      "2038": 220042817.20662,
+      "2039": 228925778.4936371,
+      "2040": 238276355.3618807
+    },
+    "annual_lw_price_per_mwh": {
+      "2026": 21.845629056517463,
+      "2027": 21.103488858466427,
+      "2028": 22.250627265003903,
+      "2029": 23.810285404015435,
+      "2030": 25.71518308812089,
+      "2031": 27.34448751807013,
+      "2032": 31.2359002622566,
+      "2033": 34.65065945567321,
+      "2034": 36.23048400381035,
+      "2035": 37.43592351214082,
+      "2036": 66.41010118845132,
+      "2037": 34.92191105945909,
+      "2038": 35.13200442252185,
+      "2039": 35.56309344306644,
+      "2040": 70.18488368723553
+    },
+    "capacity_by_fuel_end_year_mw": {
+      "biomass": 123.0,
+      "coal": 12678.0,
+      "gas_cc": 43749.2,
+      "gas_ct": 25333.50000000002,
+      "geothermal": 14000.0,
+      "nuclear": 4980.0,
+      "oil": 671.2,
+      "solar": 47999.99999999999,
+      "wind": 51000.00000000001
+    },
+    "capacity_end_year": 2040,
+    "cumulative_builds_by_tech_mw": {
+      "gas_cc": 5018.8,
+      "gas_ct": 4291.0,
+      "geothermal": 14000.0,
+      "iron_air": 9000.0,
+      "solar": 10000.0,
+      "wind": 9000.0
+    },
+    "storage_energy_cap_end_year_mwh": 1066600.0,
+    "system_cost_usd": {
+      "2026": 1432426792.2275708,
+      "2027": 1045245423.2726401,
+      "2028": 5300263993.759363,
+      "2029": 6130501726.110216,
+      "2030": 6819151242.872146,
+      "2031": 7479183040.636103,
+      "2032": 8386137359.023249,
+      "2033": 9162460391.443062,
+      "2034": 9332800594.37375,
+      "2035": 9546499303.949993,
+      "2036": 10172694470.134289,
+      "2037": 9351794253.513256,
+      "2038": 9839608164.93594,
+      "2039": 10392236408.85981,
+      "2040": 11432188894.144007
+    },
+    "years": [
+      2026,
+      2027,
+      2028,
+      2029,
+      2030,
+      2031,
+      2032,
+      2033,
+      2034,
+      2035,
+      2036,
+      2037,
+      2038,
+      2039,
+      2040
+    ]
+  },
+  "provenance": {
+    "notes": "confirmed_exits_enabled default-ON as of PR #1434 (commit bc4a3f3, 2026-07-05) is baked into these golden values -- ScenarioConfig.confirmed_exits_enabled defaults True and REFERENCE_SCENARIO_KWARGS does not override it. Never auto-regenerate on a band exit (this is a finding, not a widening target -- see docs/handoffs/forecast-validation-program-2026-07.md §2.3 and CLAUDE.md rule 23's frozen-against-residuals spirit). To regenerate: run `python scripts/golden_forecast_bands.py seed --force --reason \"<explicit citation of the causal code change>\"` and commit the new tests/golden/ercot_2026_2040*.json alongside that change.",
+    "run_config_file": "ercot_2026_2040.run_config.json",
+    "seed_reason": "P-3A full-horizon findings 2026-07-12: extend reference golden horizon 2026-2032 -> 2026-2040 for a deeper mid-horizon (2040) checkpoint (plan §2 G1). Seeded --allow-dirty with the horizon edit uncommitted on top of origin/main f0f7c67; the end_year=2040 change ships in this same commit. No model behavior change.",
+    "seeded_by": "scripts/golden_forecast_bands.py seed",
+    "seeded_git_commit_date": "2026-07-11T22:51:13-07:00",
+    "seeded_git_sha": "f0f7c67d937c11e487255784e8298faf3c98c0c1",
+    "seeded_git_sha_short": "f0f7c67d937c"
+  },
+  "scenario": {
+    "end_year": 2040,
+    "hours": 8760,
+    "iso": "ERCOT",
+    "mode": "forecast",
+    "start_year": 2026,
+    "use_campd_bins": false
+  },
+  "schema_version": 1
+}
