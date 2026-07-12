@@ -270,9 +270,19 @@ _PEAKING_GROUPS: frozenset[str] = frozenset({"CC_REGULAR", "CC_CHP"})
 # Groups whose measured synchronization fraction (``online_frac``) is emitted:
 # COAL for the step-3a online%-scaled min-load forcing, and the merchant gas
 # committed groups for the per-plant local-reliability commitment floor
-# (``ScenarioConfig.cc_mustrun_per_plant``). The fraction itself is computed for
-# every group (``sync_hours``); this set only gates which rows publish it.
-_ONLINE_FRAC_GROUPS: frozenset[str] = frozenset({"COAL", "CC_REGULAR", "CT_PEAKER"})
+# (``ScenarioConfig.cc_mustrun_per_plant`` / ``st_gas_mustrun_per_plant``).
+# ST_GAS joined 2026-07-12 (MISO 2025 Southern-gas lane): the Entergy South
+# steam fleet is measured mostly-/always-online (Nine Mile 98.2% of all hours,
+# Sabine 85.6%, Lewis Creek 87.8% over 2023-2025 CEMS) under VLR/self-
+# commitment, so its synchronization fraction is a real measured quantity the
+# runtime floor needs — the old "ST gas cycles off, floors come from the drag
+# mechanisms" assumption is contradicted by the measurement itself for these
+# plants (true cyclers still publish their small fractions and force little).
+# The fraction itself is computed for every group (``sync_hours``); this set
+# only gates which rows publish it.
+_ONLINE_FRAC_GROUPS: frozenset[str] = frozenset(
+    {"COAL", "CC_REGULAR", "CT_PEAKER", "ST_GAS"}
+)
 
 # Ceiling on the derived peaking share (% of capacity). Duct burners add at
 # most ~20-25% over a CC's unfired base rating; anything larger from the
@@ -536,9 +546,11 @@ def main() -> None:
             # the local-reliability commitment floor (cc_mustrun_per_plant,
             # G-20 eastern under-run follow-up): it sizes the committed window —
             # the top-online_frac system-load hours the plant's committed
-            # tranche is held on. Same CEMS quantity, same estimator; only the
-            # consumer differs. Other groups (CHP / ST_GAS) stay blank — their
-            # floors come from the steam-host / drag mechanisms.
+            # tranche is held on. ST_GAS carries it for the same floor under
+            # its own gate (st_gas_mustrun_per_plant — the VLR/self-commitment
+            # trace of the Entergy South steam fleet). Same CEMS quantity,
+            # same estimator; only the consumer differs. CHP groups stay
+            # blank — their floor is the steam host (rule 19).
             "online_frac": (
                 round(
                     min(

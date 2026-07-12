@@ -98,6 +98,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     MECH_NAMES,
     MECH_RA_MUSTOFFER,
     MECH_RELIABILITY_FLOOR,
+    MECH_ST_GAS_MUSTRUN_PER_PLANT,
     MECH_ST_NETLOAD_DRAG,
     NON_THERMAL_MECHS,
 )
@@ -259,6 +260,21 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # declared h7-22 window and DROPPED for 12.8% overnight off-window
     # binding — the rule-12 check this registry exists to perform.)
     (MECH_CC_MUSTRUN_PER_PLANT, "CC_REGULAR"): (0, 24),
+    # st_gas_mustrun_per_plant (the ST_GAS leg of the same per-plant
+    # local-reliability commitment floor, fleet.py cc_mustrun_pmin_mw with
+    # MECH_ST_GAS_MUSTRUN_PER_PLANT attribution): self-windowing by
+    # construction like the CC leg — each plant's committed tranche binds
+    # only in its top measured-online_frac fraction of hours ranked by
+    # system load. The driver-justified hour-of-day window is ALL 24 hours:
+    # the evidence base is the Entergy MISO-South VLR/self-commitment trace
+    # (Nine Mile synchronized 98.2% of ALL hours 2023-2025 incl. overnight
+    # min-stable, Sabine 85.6%, Lewis Creek 87.8%), the same around-the-
+    # clock-synchronized evidence shape as the ST_GAS rows above — no hour
+    # the class's own driver evidence says these boilers are offline
+    # (opposite of the CT overnight-offline signature). Row exists so
+    # rubric-v2.2 over-budget escalation scores on evidence rather than
+    # failing a missing declaration (rule 12).
+    (MECH_ST_GAS_MUSTRUN_PER_PLANT, "ST_GAS"): (0, 24),
 }
 
 # D-9: overlay probes that must be OFF/zero in every keeper run_config.json

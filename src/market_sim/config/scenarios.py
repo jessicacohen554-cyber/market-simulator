@@ -3774,6 +3774,31 @@ class ScenarioConfig:
     # default; ablated in the zero-forcing twin (MECH_CC_MUSTRUN_PER_PLANT).
     cc_mustrun_per_plant: bool = False
 
+    # The ST_GAS leg of the same per-plant local-reliability commitment floor
+    # (identical mechanics: the plant's measured committed tranche is FORCED ON
+    # in its top ``online_frac`` fraction of hours ranked by system load;
+    # offer prices untouched, no second floor — rule 19). Separate gate and
+    # mechanism id (MECH_ST_GAS_MUSTRUN_PER_PLANT) so D-2/D-4 attribution and
+    # per-ISO arming stay independent of the CC leg. Rule-12 triple: driver =
+    # the Entergy MISO-South steam fleet's VLR/self-commitment (MISO SOM
+    # documents out-of-market voltage-and-local-reliability commitments in the
+    # South region — Amite South / DSG / WOTAB; the CEMS trace shows Nine Mile
+    # synchronized 98.2% of ALL hours 2023-2025 with a 414 MW P5-all-hours
+    # floor, Sabine 85.6%, Lewis Creek 87.8%, while the model's economically-
+    # dispatched ST_GAS ran them near-dark — the 2025 Southern-gas starvation
+    # lane); window = each plant's own measured synchronization share placed
+    # in the top system-load hours (self-limiting: a true cycler like Gerald
+    # Andrus, online 13.9%, is floored only in its top-load sliver); forward
+    # story = committed share + online fraction re-derive from multi-year
+    # CAMPD exactly like the CC leg and forecast emission rates (rule 13
+    # admissible). Rule 18: self-targeting by measurement — only plants whose
+    # artifact row publishes a nonzero online_frac carry the floor. The CT
+    # G-20 rejection (overnight off-window binding) does not transfer: a CT's
+    # evidence says offline overnight, while these steamers' evidence is the
+    # opposite (online supermajority of all hours). Off by default; MISO
+    # backcast arms it. Ablated in the zero-forcing twin.
+    st_gas_mustrun_per_plant: bool = False
+
     # When True (ERCOT backcast), each CC_REGULAR plant's LP capacity is raised
     # to its demonstrated CAMPD peak where that exceeds the curated bin
     # nameplate — the cold-weather (winter) over-rating an F-class CC delivers

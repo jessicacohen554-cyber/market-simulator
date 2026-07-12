@@ -7,6 +7,11 @@ load (thermal_tranches_<ISO>.csv gas ``online_frac``, CEMS synchronization
 fraction). G-20 eastern CC/CT under-run follow-up; see
 docs/handoffs/pjm-eastern-ccct-underrun-g20-2026-07.md §5 and the
 ScenarioConfig field docstring for the rule-12/13 grounding.
+
+``ScenarioConfig.st_gas_mustrun_per_plant`` is the ST_GAS leg of the same
+floor (separate gate + mechanism id MECH_ST_GAS_MUSTRUN_PER_PLANT): the
+Entergy MISO-South VLR/self-commitment trace (2025 Southern-gas starvation
+lane; see that field's docstring).
 """
 
 import unittest
@@ -21,7 +26,10 @@ from market_sim.data.fleet import (
     generators_to_fleet_arrays,
     thermal_tranche_online_frac,
 )
-from market_sim.data.floor_mechanisms import MECH_CC_MUSTRUN_PER_PLANT
+from market_sim.data.floor_mechanisms import (
+    MECH_CC_MUSTRUN_PER_PLANT,
+    MECH_ST_GAS_MUSTRUN_PER_PLANT,
+)
 
 ZONES = ["Dominion"]
 
@@ -29,6 +37,9 @@ ZONES = ["Dominion"]
 # online_frac in the committed thermal_tranches_PJM.csv artifact.
 _CC_CODE = 3797
 _CT_CODE = 54
+# Nine Mile Point (Entergy MISO-South gas steamer): carries a measured
+# ST_GAS online_frac (0.982) in the committed thermal_tranches_MISO.csv.
+_ST_CODE = 1403
 
 
 def _bin_row(code: int, group: str, name: str, pct_mc: float) -> dict:
@@ -130,6 +141,92 @@ class TestBinsTagging(unittest.TestCase):
         )
         for g in fleet:
             self.assertEqual(g.cc_mustrun_pmin_mw, 0.0)
+
+
+def _build_st_gas(st_flag: bool, cc_flag: bool = False):
+    """A MISO ST_GAS plant (Nine Mile) + a CC, under the two gates."""
+    bins = pd.DataFrame(
+        [
+            _bin_row(_ST_CODE, "ST_GAS", "NineMile", 31.9),
+            _bin_row(_CC_CODE, "CC_REGULAR", "SomeCC", 40.0),
+        ]
+    )
+    bins.loc[bins.Plant_Group == "ST_GAS", "fuel"] = "gas_st"
+    cfg = ScenarioConfig(
+        iso="MISO",
+        weather_year=2024,
+        mode="backcast",
+        hours=8760,
+        st_gas_mustrun_per_plant=st_flag,
+        cc_mustrun_per_plant=cc_flag,
+    )
+    return bins_to_fleet(bins, ZONES, cfg)
+
+
+class TestStGasLeg(unittest.TestCase):
+    """The ST_GAS leg arms independently under st_gas_mustrun_per_plant."""
+
+    def test_miso_artifact_has_st_gas_rows(self):
+        frac = thermal_tranche_online_frac("MISO")
+        self.assertIn((_ST_CODE, "ST_GAS"), frac)
+        # Nine Mile is measured synchronized ~98% of all hours 2023-2025.
+        self.assertGreater(frac[(_ST_CODE, "ST_GAS")], 0.9)
+
+    def test_flag_off_no_floor(self):
+        fleet, _ = _build_st_gas(st_flag=False)
+        for g in fleet:
+            if g.plant_code == _ST_CODE:
+                self.assertEqual(g.cc_mustrun_pmin_mw, 0.0)
+
+    def test_st_gate_floors_st_committed_only(self):
+        fleet, _ = _build_st_gas(st_flag=True)
+        st = [g for g in fleet if g.plant_code == _ST_CODE]
+        committed = [g for g in st if _suffix(g).startswith("committed")]
+        self.assertTrue(committed)
+        for g in committed:
+            self.assertAlmostEqual(g.cc_mustrun_pmin_mw, g.pmax_mw, places=1)
+            self.assertGreater(g.cc_mustrun_online_frac, 0.9)
+        for g in st:
+            if not _suffix(g).startswith("committed"):
+                self.assertEqual(g.cc_mustrun_pmin_mw, 0.0)
+        # The CC gate is off: the CC plant carries no floor from the ST gate.
+        for g in fleet:
+            if g.plant_code == _CC_CODE:
+                self.assertEqual(g.cc_mustrun_pmin_mw, 0.0)
+
+    def test_cc_gate_does_not_arm_st(self):
+        fleet, _ = _build_st_gas(st_flag=False, cc_flag=True)
+        for g in fleet:
+            if g.plant_code == _ST_CODE:
+                self.assertEqual(g.cc_mustrun_pmin_mw, 0.0)
+
+    def test_st_gas_mech_id_stamped(self):
+        hours = 8760
+        load = np.arange(hours, 0, -1, dtype=float)
+        gen = Generator(
+            unit_id="ST_GAS_Dominion_p1403_committed",
+            name="NineMile committed",
+            zone="Dominion",
+            fuel_type="gas_st",
+            pmax_mw=100.0,
+            plant_group="ST_GAS",
+            plant_code=_ST_CODE,
+            is_campd_bin=True,
+            cc_mustrun_pmin_mw=50.0,
+            cc_mustrun_online_frac=0.25,
+        )
+        fa = generators_to_fleet_arrays(
+            [gen], ZONES, hours=hours, iso="MISO", load_shape=load
+        )
+        self.assertIsNotNone(fa.min_gen)
+        k = int(round(0.25 * hours))
+        in_window = fa.min_gen[0, :k]
+        self.assertTrue((in_window > 0.0).all())
+        self.assertTrue((fa.min_gen[0, k:] == 0.0).all())
+        mech = fa.min_gen_mechanism
+        self.assertTrue(
+            (mech[0, :k][in_window > 0.0] == MECH_ST_GAS_MUSTRUN_PER_PLANT).all()
+        )
 
 
 class TestWindowPlacement(unittest.TestCase):
