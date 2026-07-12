@@ -113,7 +113,83 @@ duration-ELCC/saturation/dilution stack (rule 19). Reconciling
 
 ## 5. Results — T1.9 re-run + ERCOT/PJM capacity hindcast before/after
 
-*(filled in at end of session — runs in flight)*
+### 5.1 T1.9 storage-ELCC saturation ladder (re-run at HEAD) — T1.9a **PASS**
+
+First real read (P-1A's round crashed all three rungs on #2063 and the
+metric was a SKIP placeholder). ERCOT 2026–2030, legacy bins, seeds
+{5, 15, 25} GW via the storage-deployment pace mapping; report
+`docs/handoffs/driver-battery-ercot-2026-07-12.md`:
+
+| rung | final storage fleet | marginal accreditation (ELCC₄ₕ × saturation × dilution) | fleet-avg ELCC | long-duration share of new builds |
+|---|---|---|---|---|
+| seed_5gw | 18.0 GW | **0.279** | 0.792 | 1.00 |
+| seed_15gw | 23.0 GW | **0.200** | 0.769 | 1.00 |
+| seed_25gw | 39.0 GW | **0.024** | 0.793 | 1.00 |
+
+Storage capacity value per MW is strictly monotone ↓ (the pre-registered
+T1.9a expectation) — the duration-ELCC × saturation × dilution stack does
+its job, measured on the model's own ledger state. Entry is fully
+long-duration (≥6 h) at every seed — consistent with saturated
+short-duration economics, though the tilt gradient itself is not visible at
+share 1.0. The fleet-average ELCC is non-monotone by construction
+(duration-mix composition), which is why the MARGINAL accreditation is the
+scored observable.
+
+### 5.2 PJM capacity hindcast before/after (the CR-3.1 diagnostic)
+
+Both arms at this HEAD, identical harness defaults, differing ONLY in
+`renewable_elcc_curves` (base = frozen flat credits, elcc = curves).
+Registered: `pjm-2021-2025-realized-p2c-base` / `-p2c-elcc` on the
+forecast-validation dashboard.
+
+| year | credit wind (base→elcc) | credit solar (base→elcc) | accredited reserve margin (base→elcc) |
+|---|---|---|---|
+| 2023 | 0.16 → **0.41** | 0.18 → **0.0789** | 0.2281 → 0.2422 (+1.41 pp) |
+| 2024 | 0.16 → **0.41** | 0.18 → **0.0789** | 0.2102 → 0.2263 (+1.61 pp) |
+| 2025 | 0.16 → **0.41** | 0.18 → **0.0789** | 0.1556 → 0.1733 (+1.77 pp) |
+
+Hand-check (2025): wind 17 GW × (0.41−0.16) − solar 14 GW × (0.18−0.0789)
+= +2.84 GW firm on a 160.6 GW peak = +1.77 pp ✓. Both credits sit on their
+published clamps (PJM pools exceed the 2-point published domains), so the
+within-window penetration RESPONSE expresses as the level correction the
+P-2B memo predicted (wind under-credited 2.5×, solar over-credited ~2×;
+net ±2–4-point position move — memo §5.1).
+
+**Screen behavior: unchanged, as predicted.** Floor retentions 0 GW,
+backstop builds 0 GW, retirements/additions identical in both arms
+(retire −63.1 %, solar 0 vs 13.1 GW — the standing G-31/retirement-lane
+misses, untouched by accreditation). The 2021–25 PJM hindcast fleet sits at
+position ~1.29 (P-2A), far past every adequacy trigger, so CR-3.1 alone
+cannot (and honestly should not) move behavior there — the correction
+matters where the fleet is near the requirement: the CR-1 position (now
++~2 pp more accurate on the wind/solar block), the floor/backstop in
+scarce forecast states, and the T2.2/T2.4 equilibrium tests. Forecast
+invariants: identical between arms (the I3/I7 2021 FAILs are the
+pre-existing seed-year demand sentinel — see §5.4).
+
+### 5.3 ERCOT hindcast (negative control + HEAD refresh)
+
+`ercot-2021-2025-realized-p2c` registered. Credit trail: wind 0.20 / solar
+0.21 every year — exactly the CDR point overrides; the curve mechanism is
+**byte-inert for ERCOT** (no curve entry; locked by
+`test_ercot_stays_on_cdr_point_override`), so a single arm suffices.
+Score vs the registered `-s3` (2026-07-05 HEAD): retirements 22.8 GW vs
+9.7 GW (coal 14.0 + gas_st 8.8), wind adds 15 vs 10 GW, storage 14 vs
+12 GW — **HEAD drift from the week of merged ERCOT work since 07-05
+(fom-scarcity default flips, AS-co-opt lanes), not from P-2C** (the credits
+are identical by construction). Flagged for the G-30/G-31
+hindcast-over-retirement lane, whose 07-05 baseline is stale.
+
+### 5.4 Observed pre-existing quirk (not introduced here)
+
+The PJM hindcast 2021 seed-year ledger carries
+`peak_demand_mw ≈ 2.147e9` (an int32-max sentinel; identical in the
+registered s3 bundle) — it drives the long-standing I3/I7 2021 invariant
+FAILs on every PJM hindcast sidecar. Harmless to scoring (2021 is
+seed-only) and to PJM's ELCC curves (installed-MW axes, peak-independent),
+but a pct-of-peak curve (MISO) would clamp at its first point in such a
+year. Root cause lives in the 2021 PJM demand-profile load, owned by the
+hindcast-harness lane.
 
 ## 6. Follow-ups opened / flagged
 
