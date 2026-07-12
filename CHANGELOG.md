@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-07-11 (docs: multi-ISO triage archive reorg; calibration: fleet-group CAMPD backfill bucketing fix)
+
+- **Docs (multi-ISO reorg):** executed the 2026-07 triage
+  (`docs/handoffs/multi-iso-triage-2026-07.md`) — moved 27 resolved
+  session/investigation notes from `docs/multi-iso/` to
+  `docs/sessions/multi-iso/` (the 22 living references + 8 open-issue notes stay
+  in place), applied the flagged trims (doc 04's stale as-built topology table →
+  pointer to `config/iso_configs.py`; inlined the `pjm-lmp-residual` afternoon
+  reserve-scarcity finding into the living `pjm-reserve-ordc.md`; marked NYISO
+  upload U2 landed 2026-06-12 in `nyiso-data-audit.md`; archival closing pointer
+  on `outage-gate-fullstop-override-2026-06.md`), and refreshed the
+  `docs/multi-iso/README.md` index. Living cross-references repointed to the new
+  archive paths.
+- **Calibration benchmark (`scripts/run_calibration_full.py`):** the non-ERCOT
+  plant-level CAMPD backfill now buckets a genuinely mixed-fuel plant's net
+  across the classes physically at it by measured EIA-923 prime-mover class
+  shares (`_plant_class_shares`; prior-year shares for incomplete vintages),
+  instead of booking the whole plant net to one last-generator-wins class
+  (implements the G-21 fleet-group-sweep follow-up: WA-Parish coal↔gas, Doswell/
+  Linden CC↔CT). The fix also removes a mixed-plant **double-count** — plants
+  whose mapped class is their under-gate minority fuel had the whole plant CAMPD
+  net booked there on top of the adequately-reported majority row (~2×). ERCOT
+  (curated bin sheet → `class_shares=None`) is byte-identical; complete-year
+  non-ERCOT scored benchmarks change (double-count removed), so the PJM/non-ERCOT
+  keeper re-score is flagged for owner review (issue #2049). Regression coverage:
+  `tests/test_campd_backfill_bucketing.py` (11 cases). Docs realigned:
+  `docs/calibration-log.md` G-21 entry + `docs/handoffs/pjm-cc-overrun-benchmark-basis-g21-2026-07.md`
+  §6 banner.
+
 ## 2026-07-11 (CAISO: storage-AS-award intake, inert reservation probe, 2023 demand-clock fix)
 
 - **Data:** new `storage-as-awards` datatype (schema + per-ISO registry lib +
