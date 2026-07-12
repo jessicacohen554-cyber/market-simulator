@@ -194,19 +194,6 @@ jobs:
           uv run python scripts/derive_campd_facility_from_units.py \
             --states NY NJ --year 2022 --persefoni-sibling 2023
 
-      - name: Materialize base64 relay files (*.b64 -> binary sibling)
-        run: |
-          python - <<'EOF'
-          import base64, pathlib
-          for b64 in pathlib.Path(".").rglob("*.b64"):
-              if ".git" in b64.parts:
-                  continue
-              target = b64.with_suffix("")
-              target.write_bytes(base64.b64decode(b64.read_text()))
-              b64.unlink()
-              print(f"materialized {target} ({target.stat().st_size} bytes)")
-          EOF
-
       - name: Integrity report (sha256 of every landed artifact)
         run: |
           sha256sum \
