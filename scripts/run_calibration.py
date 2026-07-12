@@ -478,6 +478,7 @@ def run_year(
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
+    pjm_offer_midcurve_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -687,6 +688,7 @@ def run_year(
         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
         pjm_offer_surface_conditional=pjm_offer_surface_conditional,
         pjm_da_virtual_bids=pjm_da_virtual_bids,
+        pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
     )
     if ercot_nuclear_unit_availability:
         # Window-grain nuclear refuel availability (measured 60-Day DAM
@@ -1936,6 +1938,10 @@ def run_year(
             build_pjm_da_virtual_units(config, iso, year, demand, zone_names)
         )
         fleet = fleet + virtual_units
+        # fuel_fracs is row-parallel with the fleet list (apply_coal_tranches
+        # indexes it by generator position): virtual units pass their full
+        # "fuel" cost through (frac 1.0 = no take-or-pay discount).
+        fuel_fracs = fuel_fracs + [1.0] * len(virtual_units)
     # CT_PEAKER reliability must-run floor: pass the peakers' CAMPD/CEMS hourly
     # on/off shape so the floor starts/stops with the real unit (zero in every
     # hour the plant did not report load), instead of being smeared flat. The
@@ -2577,6 +2583,29 @@ def run_year(
         offer_surface_mc_bid_adjust = build_pjm_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
+    # PJM MID-CURVE offer surface (G-22 lever A'): floors the econ-tranche
+    # rows' P1 bids at the measured capacity-share offer level
+    # (fleet.build_pjm_offer_midcurve_conditional_markup). Targets econ rows
+    # (+ LONG_RUN peak rows) only — disjoint from the top-of-curve surface's
+    # CC/CT peak rungs, so the two markups SUM without overlap when both
+    # flags are armed (one mechanism per row, rule 19).
+    if getattr(config, "pjm_offer_midcurve_conditional", False) and iso == "PJM":
+        from market_sim.data.fleet import build_pjm_offer_midcurve_conditional_markup
+
+        _surface_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        _midcurve = build_pjm_offer_midcurve_conditional_markup(
+            fleet_arrays, fleet, mc_base, _surface_net_load, config, year
+        )
+        if _midcurve is not None:
+            offer_surface_mc_bid_adjust = (
+                _midcurve
+                if offer_surface_mc_bid_adjust is None
+                else offer_surface_mc_bid_adjust + _midcurve
+            )
     # v4 condition-keyed fast-start amortization horizon
     # (tranche_startup_conditional_runs): the hour's within-year net-load
     # percentile band scales the v3 CAMPD-measured run-length ceiling by the

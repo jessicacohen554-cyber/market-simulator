@@ -2125,6 +2125,7 @@ def solve_and_persist(
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
+    pjm_offer_midcurve_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -2419,6 +2420,7 @@ def solve_and_persist(
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
             pjm_offer_surface_conditional=pjm_offer_surface_conditional,
             pjm_da_virtual_bids=pjm_da_virtual_bids,
+            pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
             ercot_online_capacity_envelope_measured=(
@@ -2794,6 +2796,7 @@ def solve_and_persist(
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
         "pjm_offer_surface_conditional": pjm_offer_surface_conditional,
         "pjm_da_virtual_bids": pjm_da_virtual_bids,
+        "pjm_offer_midcurve_conditional": pjm_offer_midcurve_conditional,
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
         "ercot_online_capacity_envelope_measured": (
@@ -2921,6 +2924,7 @@ def solve_and_persist(
         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
         pjm_offer_surface_conditional=pjm_offer_surface_conditional,
         pjm_da_virtual_bids=pjm_da_virtual_bids,
+        pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
     )
     # Coal sigmoid flags mirror run_year exactly — run_config.json must
     # record the same enables/params the LP solved with (the prb sigmoid +
@@ -6731,6 +6735,19 @@ def main() -> None:
         "data/raw/_validation-source/pjm_da_virtual_surface_condbinned.json.",
     )
     parser.add_argument(
+        "--pjm-offer-midcurve-conditional",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="PJM G-22 lever A': floor the COAL/CT_PEAKER/ST_GAS/CC econ-"
+        "tranche P1 bids at the MEASURED mid-curve offer level of their "
+        "physics segment at each row's own within-plant capacity share "
+        "(PJM DataMiner2 energy_market_offers full-curve sampling, "
+        "scripts/derive_pjm_offer_midcurve.py), keyed by within-year "
+        "net-load percentile. P1-only (P0 run lengths unperturbed); the "
+        "floor only raises bids. PJM-gated; reads the frozen "
+        "data/raw/_validation-source/pjm_offer_midcurve_condbinned.json.",
+    )
+    parser.add_argument(
         "--temp-dependent-derate",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -8096,6 +8113,7 @@ def main() -> None:
         temp_dependent_derate=args.temp_dependent_derate,
         pjm_offer_surface_conditional=args.pjm_offer_surface_conditional,
         pjm_da_virtual_bids=args.pjm_da_virtual_bids,
+        pjm_offer_midcurve_conditional=args.pjm_offer_midcurve_conditional,
         priced_interchange=(
             True
             if reference_price_interface and args.priced_interchange is not False

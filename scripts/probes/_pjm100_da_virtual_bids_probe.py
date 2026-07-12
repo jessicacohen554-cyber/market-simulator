@@ -61,6 +61,14 @@ def main() -> int:
         "reaches it)",
     )
     ap.add_argument(
+        "--with-midcurve",
+        action="store_true",
+        help="also arm the measured MID-CURVE offer floor (G-22 lever A', "
+        "pjm_offer_midcurve_conditional) — the depth sweep showed the "
+        "too-cheap econ body caps the dual, so depth (B) and the mid-curve "
+        "level (A') are complementary halves of one price-formation fix",
+    )
+    ap.add_argument(
         "--zero-forcing-ablation",
         action="store_true",
         help="solve the D-3 zero-forcing ablation twin instead (rule 21); "
@@ -93,6 +101,16 @@ def main() -> int:
             "(pjm_offer_surface_conditional=True) — the prescribed "
             "combination re-test: the wall binds only once the DA depth "
             "reaches it."
+        )
+    if args.with_midcurve:
+        kwargs["pjm_offer_midcurve_conditional"] = True
+        note += (
+            " PLUS the measured MID-CURVE offer floor "
+            "(pjm_offer_midcurve_conditional=True, G-22 lever A': "
+            "scripts/derive_pjm_offer_midcurve.py) — the depth sweep showed "
+            "+10 GW of depth buys only +$2-4/MWh on the model's too-cheap "
+            "econ body, so the measured mid-curve level is the "
+            "price-forming half of the fix."
         )
     kwargs["note"] = note
     if args.zero_forcing_ablation:
