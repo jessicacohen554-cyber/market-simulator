@@ -39,6 +39,15 @@ if str(_ROOT) not in sys.path:
 
 from market_sim.model.dispatch import DispatchResult  # noqa: E402
 
+# Importing results.outputs attaches ``DispatchResult.from_parquet`` (defined
+# there as a late-bound classmethod, outputs.py:333). Without this the bare
+# ``from market_sim.model.dispatch import DispatchResult`` above lacks the
+# method and every ``_slack_hours`` read raises AttributeError -> silently
+# returns -1 (the #2064 slack metric never computed). The invariant checker
+# gets it for free via its ``results.outputs`` import; the collator must
+# import it explicitly.
+from market_sim.results import outputs as _outputs  # noqa: E402,F401
+
 ISO_ORDER = ["ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"]
 SNAPSHOT_YEARS = [2026, 2030, 2040, 2050]
 INVARIANT_IDS = [f"I{i}" for i in range(1, 15)]
