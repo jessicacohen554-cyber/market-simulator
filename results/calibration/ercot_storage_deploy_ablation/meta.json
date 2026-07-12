@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-12T05:01:41",
+  "timestamp": "2026-07-12T05:32:15",
   "iso": "ERCOT",
   "years": [
     2023,
@@ -186,6 +186,7 @@
   "temp_dependent_derate": false,
   "ercot_offer_surface_conditional": true,
   "neiso_offer_surface_conditional": false,
+  "pjm_offer_surface_conditional": false,
   "ercot_nuclear_unit_availability": true,
   "ercot_thermal_dam_availability": false,
   "ercot_online_capacity_envelope_measured": false,
@@ -272,6 +273,6 @@
     "eia923": "../_shared/ERCOT/eia923-c9af23c26b01.parquet",
     "campd": "../_shared/ERCOT/campd-e42e97159860.parquet"
   },
-  "git_sha": "e2ca39f7",
+  "git_sha": "42442d0f",
   "highspy_version": "1.15.1"
 }
