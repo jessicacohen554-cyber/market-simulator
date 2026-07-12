@@ -582,7 +582,12 @@ def main(argv: list[str] | None = None) -> int:
     (cache_dir / "score.json").write_text(json.dumps(score, indent=2))
 
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
-    report_path = args.report_dir / f"{iso.lower()}-2021-2025-{variant}-{stamp}.md"
+    # Name the report after the bundle's run id (the out-dir name), so probe
+    # arms of one ISO/variant scored the same day (e.g. the CR-3.1
+    # -p2c-elcc / -p2c-base before/after pair) never overwrite each other;
+    # falls back to the legacy iso-window-variant stem for bare dirs.
+    run_id = args.bundle.name or f"{iso.lower()}-2021-2025-{variant}"
+    report_path = args.report_dir / f"{run_id}-{stamp}.md"
     write_report(iso, variant, meta, ret, add, co2, baselines, report_path)
 
     print(

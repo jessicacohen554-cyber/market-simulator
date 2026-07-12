@@ -1,5 +1,41 @@
 # Changelog
 
+## 2026-07-12 (forecast: CR-3.1 penetration-indexed ELCC accreditation curves for wind/solar)
+
+- **CR-3.1 (P-2C, audit plan §3.4.1; P-2B Option A basis):** the adequacy
+  ledger now accredits wind/solar at each ISO's OWN published
+  penetration-indexed ELCC accreditation instead of the flat generic
+  wind 0.16 / solar 0.18. New `constants.RENEWABLE_ELCC_CURVES_BY_ISO`
+  (+ `RenewableElccCurve` / `evaluate_renewable_elcc_curve`, piecewise-linear
+  flat-clamped) digitized from the P-0B `capacity-market-elcc` datatype and
+  reconciled against the committed rows by `tests/test_renewable_elcc_curves.py`:
+  PJM BRA final class ratings on an installed-MW axis (wind 41 % flat; solar
+  MW-weighted 10.64 % → 7.89 % declining), MISO's 2019-report
+  capacity-credit-vs-penetration-of-peak curve (9 published points), NYISO's
+  2025-26 CAFs as single points (wind 16.84 % / solar 12.24 % / OSW 35.79 %,
+  ROS/LI). Penetration = the model's own installed share (pools + fleet vs
+  the year's peak) so accreditation responds to modeled build (rule 13).
+  One resolver (`capacity.resolve_renewable_capacity_credit`: curve → per-ISO
+  point override → generic fallback) feeds all four consumers together —
+  `accredited_firm_capacity_mw`, the retirement reliability floor, the
+  reserve-margin backstop, and the CR-1 reserve position (rule 19). Gate
+  `ScenarioConfig.renewable_elcc_curves` default ON (rule 15);
+  `False` = frozen-penetration byte-compat mode (pre-CR-3.1 flat credits,
+  byte-identical — the hindcast baseline arm,
+  `run_capacity_hindcast.py --legacy-renewable-credit`). NEISO/CAISO keep the
+  generic fallback (no ISO-published / incremental-basis-only study —
+  documented in the registry comment); ERCOT's CDR point override is
+  untouched and byte-inert under the gate (tested). Storage is deliberately
+  untouched — its duration-ELCC × saturation × dilution stack stays the one
+  storage mechanism (rule 19; passthrough locked by test; the datatype's
+  storage rows stay unwired pending Option-A step 3). Evolution ledger grew
+  an accreditation trail (`renewable_credit_applied`, `wind/solar_cap_mw`,
+  `storage_power_mw`/`storage_firm_mw`). T1.9's `storage_cap_value_per_mw`
+  metric is now real (marginal 4-h accreditation from the ledger fleet state)
+  and the #2063 crash (fixed by P-1C's step-schedule fields) carries a
+  regression lock. Methodology spec §5.2 + parameter registry updated.
+  Handoff: `docs/handoffs/elcc-curves-p2c-2026-07.md`.
+
 ## 2026-07-12 (docs: final truth-gate QA on the calibration/validity documentation refresh)
 
 - **Docs (truth-gate audit, no code changes):** audited every factual claim on
