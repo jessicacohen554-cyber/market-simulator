@@ -763,6 +763,35 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "parameters (rule 23)",
             )
         )
+    if sc.get("coal_warm_committed"):
+        # Warm-boiler exemption, ZERO scalars: the P1 startup-amortization
+        # markup (compute_monthly_markup, NREL $100/MW coal cold start) is
+        # skipped for coal bins whose fuel-free mustrun tranche keeps the
+        # boiler online — committed-band dispatch is a hot-unit output ramp,
+        # not a cold start. No parameter; the boolean gates on the plant's
+        # own CAMPD-derived must-run floor (must_run_pct > 0).
+        out.append(
+            _entry(
+                "coal_warm_committed (warm-boiler committed-band exemption)",
+                "model.commitment.compute_monthly_markup warm-boiler branch; "
+                "gated per plant on must_run_pct > 0 (CAMPD thermal-tranche "
+                "artifact)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="dispatch forensics on the miso-58 2023 replay "
+                "(on/off LMP crossings: COAL_PRB committed $34.6 vs ~$26 "
+                "static F923 SRMC, COAL_BIT $43.8 vs ~$29-31, mustrun bands "
+                "online 84-98% of the same hours) + MISO IMM measured "
+                "conduct (som-competitive-conduct: offers AT cost, system "
+                "price-cost markup +3.0%/-2.5% — self-committed units "
+                "recover start costs outside the energy offer)",
+                root_cause="removes a fabricated cold-start premium, adds "
+                "no tunable; reverts only if the fleet's measured must-run "
+                "floors disappear (rule 23: rides the thermal-tranche "
+                "artifact refresh)",
+            )
+        )
     if (
         iso in ("NYISO", "CAISO")
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))

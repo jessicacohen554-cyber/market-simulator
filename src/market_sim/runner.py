@@ -88,6 +88,7 @@ from market_sim.config.interchange_config import (
     get_interchange_spec,
 )
 from market_sim.model.transmission import (
+    apply_caiso_local_import_limits,
     apply_interchange_injections,
     build_incidence_matrix,
     build_interface_groups,

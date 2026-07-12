@@ -511,12 +511,3 @@ def test_pjm_fleet_loads():
     zones_seen = {g.zone for g in fleet}
     for z in config.zone_names:
         assert z in zones_seen, f"Zone {z} has no generators"
-
-
-def test_pjm_fleet_loads():
-    """PJM fleet loads and all 4 zones are populated."""
-    config = get_iso_config("PJM")
-    fleet = load_fleet_from_csv("PJM", config)
-    zones_seen = {g.zone for g in fleet}
-    for z in config.zone_names:
-        assert z in zones_seen, f"Zone {z} has no generators"
