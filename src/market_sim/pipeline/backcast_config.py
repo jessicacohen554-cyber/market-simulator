@@ -961,6 +961,7 @@ def backcast_config(
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
+    pjm_offer_surface_conditional: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -1897,5 +1898,25 @@ def backcast_config(
         if bands and "peak" in bands:
             pk = float(bands["peak"])
             bands["peak_ladder"] = [[share, pk] for _ in range(n_rungs)]
+            config = config.with_overrides(offer_curve_by_group=merged)
+    # PJM condition-responsive energy-offer surface (G-22 lever A): the
+    # identical structural no-op split for CC_REGULAR + CT_PEAKER — 5
+    # equal-capacity peak rungs at the SAME resolved height, so P0 and loose
+    # hours are byte-identical until the P1-only markup
+    # (data.fleet.build_pjm_offer_surface_conditional_markup) reprices the
+    # upper rungs in anticipated-tight hours.
+    if pjm_offer_surface_conditional and iso == "PJM":
+        config = config.with_overrides(pjm_offer_surface_conditional=True)
+        n_rungs = 5  # == derive_pjm_offer_surface --rungs default
+        share = round(1.0 / n_rungs, 3)
+        merged = {c: dict(b) for c, b in config.offer_curve_by_group.items()}
+        changed = False
+        for cls in ("CC_REGULAR", "CT_PEAKER"):
+            bands = merged.get(cls)
+            if bands and "peak" in bands:
+                pk = float(bands["peak"])
+                bands["peak_ladder"] = [[share, pk] for _ in range(n_rungs)]
+                changed = True
+        if changed:
             config = config.with_overrides(offer_curve_by_group=merged)
     return config
