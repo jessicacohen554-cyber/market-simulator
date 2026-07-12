@@ -2569,25 +2569,33 @@ def run_year(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
     # ERCOT G-22 conditional-offer-distribution LOW leg: the trough-side mirror
-    # of the surface above at the identical P1-only seam — the measured
-    # committed/lower-body markdown (ratio clamped <= 1), composed additively
-    # with the top leg's markup (disjoint rows: peak rungs vs committed/econ
-    # rungs, rule 19). None when the flag is off (byte-identical).
+    # of the surface above at the P1-only seam, but P0-CONDITIONED — the
+    # measured committed-unit LSL/lower-body markdown (ratio clamped <= 1) is
+    # gated to plant-hours the model's OWN P0 commitment discovery runs the
+    # plant (the CAISO-RA/PJM-path-B forward-regenerating construction), so
+    # offline plants' discounted blocks never undercut coal/ST in P1. Built
+    # inside run_energy_solve via the p1_bid_adjust_prep hook (it needs the P0
+    # solution); composes additively with the top leg's static markup
+    # (disjoint rows: peak rungs vs committed/econ rungs, rule 19). None when
+    # the flag is off (byte-identical).
+    lowcurve_bid_adjust_prep = None
     if getattr(config, "ercot_offer_surface_lowcurve", False) and iso == "ERCOT":
         _lowcurve_net_load = (
             demand.sum(axis=0)
             - (solar_cap[:, None] * solar_cf).sum(axis=0)
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
-        _lowcurve_markdown = build_ercot_offer_surface_lowcurve_markdown(
-            fleet_arrays, fleet, fuel_prices, _lowcurve_net_load, config
-        )
-        if _lowcurve_markdown is not None:
-            offer_surface_mc_bid_adjust = (
-                _lowcurve_markdown
-                if offer_surface_mc_bid_adjust is None
-                else offer_surface_mc_bid_adjust + _lowcurve_markdown
+
+        def lowcurve_bid_adjust_prep(r0):  # noqa: E306
+            return build_ercot_offer_surface_lowcurve_markdown(
+                fleet_arrays,
+                fleet,
+                fuel_prices,
+                _lowcurve_net_load,
+                config,
+                p0_dispatch=r0.dispatch,
             )
+
     # NEISO fast-start offer surface (charter Limb B): the identical P1-only
     # seam, NEISO-gated (fleet.build_neiso_offer_surface_conditional_markup).
     if getattr(config, "neiso_offer_surface_conditional", False) and iso == "NEISO":
@@ -3364,6 +3372,7 @@ def run_year(
         p1_fleet_prep=ra_p1_prep or pjm_fleet_prep,
         p1_kwargs_prep=pjm_kwargs_prep,
         mc_bid_adjust=offer_surface_mc_bid_adjust,
+        p1_bid_adjust_prep=lowcurve_bid_adjust_prep,
         startup_run_ratio_t=startup_run_ratio_t,
     )
     result = energy_solve.p1

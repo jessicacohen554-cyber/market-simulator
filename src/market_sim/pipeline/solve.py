@@ -91,6 +91,7 @@ def run_energy_solve(
     p1_fleet_prep=None,
     p1_kwargs_prep=None,
     mc_bid_adjust: Optional[np.ndarray] = None,
+    p1_bid_adjust_prep=None,
     startup_run_ratio_t: Optional[np.ndarray] = None,
 ) -> EnergySolveResult:
     """Run the shared P0 → markup → P1 energy solve (both orchestrators).
@@ -171,6 +172,17 @@ def run_energy_solve(
     # amortization coupling). None (every non-ERCOT / flag-off path) is byte-identical.
     if mc_bid_adjust is not None:
         mc_bid = mc_bid + mc_bid_adjust
+    # P0-conditioned P1-only bid adjustment (ERCOT low-curve leg): the hook reads
+    # the P0 solution — the model's own commitment discovery — and returns an
+    # additive (n_gen, T) adjustment for the P1 clearing objective (e.g. the
+    # committed-unit LSL markdown gated to plant-hours the plant runs in P0, the
+    # CAISO-RA/PJM-path-B forward-regenerating construction). Objective-only:
+    # the warm-start basis reuse is unaffected. None (every flag-off path) is
+    # byte-identical.
+    if p1_bid_adjust_prep is not None:
+        _extra_bid_adjust = p1_bid_adjust_prep(r0)
+        if _extra_bid_adjust is not None:
+            mc_bid = mc_bid + _extra_bid_adjust
     # P1-native floor injection (CAISO RA must-offer bridge): the hook reads the
     # P0 solution and returns a floored fleet for the P1 clearing solve. Changing
     # the column bounds means the warm-start basis no longer applies, so P1 is a

@@ -115,13 +115,14 @@ OUT_JSON_CONDBINNED = paths.CALIBRATION_DIR / "offer_curve_dam_hrmults_condbinne
 # (rule 23); a run opts in via ScenarioConfig.ercot_offer_surface_lowcurve.
 OUT_JSON_LOWCURVE = paths.CALIBRATION_DIR / "offer_curve_dam_lowcurve_condbinned.json"
 
-# Low-curve quantile ladders (capacity-weighted across per-resource medians).
-# The committed (LSL) ladder stops at p75: the top quartile of measured LSL bids
-# is at/above the model's band so a markdown clamped <= 1 leaves it untouched.
-# The body ladder stops at p50: the upper half of the economic ramp belongs to
-# the top leg's econ_high/peak repricing (rule 19 — disjoint by construction).
-LOWCURVE_COMMITTED_QUANTILES = (0.25, 0.50, 0.75)
-LOWCURVE_BODY_QUANTILES = (0.10, 0.25, 0.50)
+# Low-curve rel-band edges: the lower-body (rel < 0.67) incremental curve is
+# measured in three equal curve-position bands, matching the model's per-plant
+# rising econ ramp position-for-position (the v2 within-plant mapping — a
+# cross-fleet RANK mapping conflated plant cheapness with curve position and
+# eroded the mild-day evening margin, the v1 probe finding). The upper third
+# (rel >= 0.67) belongs to the top leg's econ_high/peak repricing (rule 19 —
+# disjoint by construction).
+LOWCURVE_REL_BANDS = (0.0, 0.22, 0.44, 0.67)
 
 # Net-load percentile bin EDGES for the condition-binned surface. Must match
 # ScenarioConfig.ercot_offer_surface_netload_pcts (the mechanism asserts the JSON's
@@ -848,16 +849,14 @@ def derive_condition_binned(edges: tuple[float, ...], out_json: str | None) -> N
     print(f"\nWrote {out_path}  (groups {sorted(CONDBINNED_GROUPS)})")
 
 
-def _lowcurve_binned_ladder(
-    per_res: pd.DataFrame, quantiles: tuple[float, ...]
-) -> list[list[float]] | None:
-    """Capacity-weighted quantile ladder ``[[q, mult], ...]`` from per-resource rows."""
+def _lowcurve_p50(per_res: pd.DataFrame) -> float | None:
+    """Capacity-weighted p50 multiplier from per-resource median rows."""
     d = per_res[np.isfinite(per_res["mult"]) & (per_res["cap"] > 0)]
     if d.empty:
         return None
     v = d["mult"].to_numpy(float)
     w = d["cap"].to_numpy(float)
-    return [[q, round(_wquantile(v, w, q), 3)] for q in quantiles]
+    return round(_wquantile(v, w, 0.50), 3)
 
 
 def derive_lowcurve_binned(edges: tuple[float, ...], out_json: str | None) -> None:
@@ -874,12 +873,16 @@ def derive_lowcurve_binned(edges: tuple[float, ...], out_json: str | None) -> No
 
     Two bands per group per bin:
 
-    * ``binned_committed`` — the Min-Gen-Cost (LSL block) multiplier ladder at
-      ``LOWCURVE_COMMITTED_QUANTILES``: committed units bid their LSL far below
-      SRMC to stay on (cycling avoidance), and more so in tight bins.
-    * ``binned_low_ladder`` — the lower-body (``rel < 0.67``) incremental-curve
-      multiplier ladder at ``LOWCURVE_BODY_QUANTILES``: the always-posted cheap
-      tail of the competitive body (``curve_price < $1000``).
+    * ``binned_committed_p50`` — the capacity-weighted p50 of the per-resource
+      median Min-Gen-Cost (LSL block) multiplier: committed units bid their LSL
+      far below SRMC to stay on (cycling avoidance), and more so in tight bins.
+    * ``binned_low_body`` — the capacity-weighted p50 of the per-resource median
+      incremental-curve multiplier within each ``LOWCURVE_REL_BANDS`` curve-
+      position band (``rel`` < 0.22 / 0.44 / 0.67), competitive body
+      (``curve_price < $1000``) — the measured price of each plant's FIRST
+      segments, matched to the model's per-plant rising econ ramp position-for-
+      position (the v2 within-plant mapping; heterogeneity rides on each
+      plant's own heat rate).
 
     Written to ``offer_curve_dam_lowcurve_condbinned.json`` (its own artifact —
     the adopted top-surface JSON stays byte-stable, rule 23). Applied by
@@ -910,8 +913,7 @@ def derive_lowcurve_binned(edges: tuple[float, ...], out_json: str | None) -> No
             "driver": "system net-load percentile within year (DAM dispatchable "
             "awarded quantity), forward-native (load+VRE forecast regenerates it)",
             "netload_pct_edges": list(edges),
-            "committed_quantiles": list(LOWCURVE_COMMITTED_QUANTILES),
-            "body_quantiles": list(LOWCURVE_BODY_QUANTILES),
+            "rel_bands": list(LOWCURVE_REL_BANDS),
             "iso": "ERCOT",
         }
     }
@@ -963,28 +965,30 @@ def derive_lowcurve_binned(edges: tuple[float, ...], out_json: str | None) -> No
                     .agg(mult=("mult", "median"), cap=("cap", "median"))
                     .reset_index()
                 )
-                binned_committed.append(
-                    _lowcurve_binned_ladder(pr, LOWCURVE_COMMITTED_QUANTILES)
-                )
+                binned_committed.append(_lowcurve_p50(pr))
+                bands: list = []
                 lb = lo[lo["bin"] == b]
-                pr = (
-                    lb.groupby("resource_name")
-                    .agg(mult=("mult", "median"), cap=("cap", "median"))
-                    .reset_index()
-                )
-                binned_low.append(_lowcurve_binned_ladder(pr, LOWCURVE_BODY_QUANTILES))
+                for k in range(len(LOWCURVE_REL_BANDS) - 1):
+                    kb = lb[
+                        (lb["rel"] >= LOWCURVE_REL_BANDS[k])
+                        & (lb["rel"] < LOWCURVE_REL_BANDS[k + 1])
+                    ]
+                    pr = (
+                        kb.groupby("resource_name")
+                        .agg(mult=("mult", "median"), cap=("cap", "median"))
+                        .reset_index()
+                    )
+                    bands.append(_lowcurve_p50(pr))
+                binned_low.append(bands)
 
             payload[out_group] = {
                 "base_hr": round(bhr, 3),
-                "binned_committed": binned_committed,
-                "binned_low_ladder": binned_low,
+                "binned_committed_p50": binned_committed,
+                "binned_low_body": binned_low,
             }
-            fmt = lambda lads: [  # noqa: E731
-                (None if lad is None else lad[len(lad) // 2][1]) for lad in lads
-            ]
             print(
                 f"  {out_group:11s} base_HR {bhr:5.2f}  committed p50/bin "
-                f"{fmt(binned_committed)}  low-body p25/bin {fmt(binned_low)}"
+                f"{binned_committed}  low-body bands/bin {binned_low}"
             )
 
     out_path = Path(out_json) if out_json else OUT_JSON_LOWCURVE
