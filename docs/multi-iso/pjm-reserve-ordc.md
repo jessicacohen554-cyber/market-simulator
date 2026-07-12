@@ -20,10 +20,25 @@ the honesty gate is sharper and the conclusion is different.
 
 ## Why (the gap this closes — or doesn't)
 
-`docs/multi-iso/pjm-lmp-residual.md` localized the PJM model's miss as a missing
-**$75–200 afternoon reserve-scarcity regime** (energy-only annual LMP −1/−7/−17%
-for 2023/24/25; the 11:00–18:00 ramp carries the gap, p90+ of the duration curve
-explodes). PJM's real RT price = energy LMP + a reserve price component from the
+The now-archived point-in-time note
+`docs/sessions/multi-iso/pjm-lmp-residual.md` (2026-06-11, `pjm_9`/`pjm_10d`
+baseline — the *numbers* are ~65 runs stale, but the *localization* still holds)
+localized the PJM model's miss as a missing **$75–200 afternoon reserve-scarcity
+regime** (energy-only annual LMP −1/−7/−17% for 2023/24/25; the 11:00–18:00 ramp
+carries the gap, p90+ of the duration curve explodes). Its core finding, inlined
+here so this doc stands alone without the archived note:
+
+> The miss is the **$75–200 afternoon-peak price regime** — not VOLL events and
+> not the offer-curve level (full-year p50 matches). It lives in the 11:00–18:00
+> ramp (peaking 16:00–17:00) and the duration-curve tail: Jul/Aug 2024 model
+> p90/p95/p99 = 34/37/54 $/MWh vs actual 68/86/165. Hours with actual RT ≥ $75
+> are only ~4–7% of the Jul/Aug window but carry **92% of the 2024 $·h gap**; the
+> model almost never enters that regime (10 model hours >$75 vs 110 actual in
+> 2024; 4 vs 57 in 2023), while the LP throws a few spurious >$500 slack spikes
+> (max $1,156) that actuals (max $301) never show — hard-scarcity slack pricing,
+> with the broad $75–200 regime in between missing.
+
+PJM's real RT price = energy LMP + a reserve price component from the
 co-optimized Operating Reserve Demand Curve (ORDC). The energy-only LP cannot
 produce that component. This overlay reconstructs it from PJM's published market
 design and adds it post-solve, leaving the LP's volumes/emissions untouched.
@@ -310,7 +325,7 @@ the ramp cap alone. The per-gen build is **memory-infeasible on the 15 GB box**
 plant scale are heavier) and is **blocked on ramp-rate data absent from
 `FleetArrays`**. Reported per claude.md #11 — breakpoint not lowered, penalty not
 inflated. Commitment posture (Phase 1) is the prerequisite lever, coupled with the
-cheap-marginal-coal suppression (`docs/multi-iso/pjm-coal-offer-handoff-2026-06.md`).
+cheap-marginal-coal suppression (`docs/sessions/multi-iso/pjm-coal-offer-handoff-2026-06.md`, archived).
 
 **Phase 2 re-gate (2026-06-28, pjm-price-compression-61 branch).** Two of the
 three blockers above have since cleared, but the binding one has not:

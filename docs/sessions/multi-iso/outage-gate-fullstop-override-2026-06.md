@@ -153,3 +153,22 @@ for iso in ERCOT PJM CAISO NEISO NYISO MISO; do
 done
 # A/B without the override: add  --no-fullstop-override
 ```
+
+---
+
+**[Archival note — 2026-07-11, docs reorg]** STEP 3's re-gate results were never
+appended here. What actually landed:
+
+- The shared full-stop override shipped in `scripts/derive_campd_outages.py`
+  (`FULL_STOP_OVERRIDE_DAYS` / `FULL_STOP_OVERRIDE_CF`, shared by the facility- and
+  unit-level detectors); the 14-day knee described in STEP 2 was subsequently
+  re-tuned to **5 days** (`FULL_STOP_OVERRIDE_DAYS = 5`; see
+  `scripts/gen_pjm90_attestation.py`: "FULL_STOP_OVERRIDE_DAYS 14->5, measured
+  CAMPD"). The outage CSVs for all six ISOs were regenerated
+  (`data/raw/campd-outages*.csv`, `data/raw/campd-unit-outages-*.csv`).
+- The decisive PJM re-solve `pjm_41` was produced (`results/calibration/pjm_41`);
+  the outage-side fix was carried forward into the then-current PJM keeper
+  **`2026-07-03-pjm-76-outage-fix`** (named for exactly this workstream).
+- No standalone dated `docs/calibration-log.md` entry for the 2026-06-22 re-gate
+  itself was located at archival — the outcome was absorbed into the PJM keeper
+  lineage rather than logged as a discrete entry.
