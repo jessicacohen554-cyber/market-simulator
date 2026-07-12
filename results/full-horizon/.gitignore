@@ -1,0 +1,7 @@
+# Disposable P-3A full-horizon forecast-probe solve caches (dispatch/system
+# parquets + per-year full_horizon_summary.json) from scripts/run_full_horizon.py.
+# Forecast probes are never dashboard-registered (plan §5); the committed
+# deliverable is docs/handoffs/full-horizon-findings-<date>.md. Rule-16
+# throwaway-baseline spirit.
+*
+!.gitignore
