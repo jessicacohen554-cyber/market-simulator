@@ -19,6 +19,12 @@ data/raw/eia-860/*.csv
 data/raw/pjm-energy-offers/*
 !data/raw/pjm-energy-offers/README.md
 
+# PJM DataMiner2 DA virtual-bid feeds (hrl_da_incs_decs, hrl_dmd_bids): same
+# non-member redistribution restriction as pjm-energy-offers; refetch with
+# scripts/fetch_pjm_da_virtuals.py (see data/raw/pjm-da-virtuals/README.md).
+data/raw/pjm-da-virtuals/*
+!data/raw/pjm-da-virtuals/README.md
+
 # NYISO MIS public DAM zonal LBMP monthly archives (36 zips, ~13 MB): raw
 # source of nyiso_proxy_lmp_hourly_NEISO.parquet (committed). Regenerable
 # byte-identical from the stable public URLs
