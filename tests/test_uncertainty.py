@@ -227,3 +227,7 @@ class TestUncertaintySpec(unittest.TestCase):
             )
             with self.assertRaises(ValueError):
                 UncertaintySpec.from_yaml(path)
+
+
+if __name__ == "__main__":
+    unittest.main()
