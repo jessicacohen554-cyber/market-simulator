@@ -125,6 +125,7 @@ from market_sim.pipeline import (
     apply_reserve_coopt,
     build_base_dispatch_kwargs,
     build_caiso_ra_p1_prep,
+    build_ercot_gas_bridge_p1_prep,
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
     run_energy_solve,
@@ -1462,6 +1463,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             ra_p1_prep = build_caiso_ra_p1_prep(
                 config, iso, dispatch_fleet, fleet_arrays, mc_base
             )
+            # P1-native ERCOT gas commitment bridge (ERCOT-63): committed-state
+            # floor on merchant gas-CC from the P0 run pattern — forward-native
+            # by construction, so the forecast path carries it identically.
+            # None for every non-ERCOT / gate-off run (byte-identical).
+            ercot_bridge_prep = build_ercot_gas_bridge_p1_prep(
+                config, iso, dispatch_fleet, fleet_arrays, mc_base
+            )
             # P1-native PJM commitment-scoped reserve supply (path B, G-20b):
             # fa_p2-style availability mask from the P0 run pattern + the
             # deliverable supply cap recomputed on the masked fleet. (None,
@@ -1480,7 +1488,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 dispatch_kwargs,
                 config,
                 xyear_cache=None,
-                p1_fleet_prep=ra_p1_prep or pjm_fleet_prep,
+                p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
                 p1_kwargs_prep=pjm_kwargs_prep,
             )
             _t_post_solve = time.perf_counter()
