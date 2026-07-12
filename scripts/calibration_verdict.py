@@ -750,7 +750,9 @@ def _fallback_coal_anchor(
 
     Every coal unit ≥25 MW is CEMS-metered, so CAMPD coal is complete even when
     the EIA-923 vintage is not. The bench part carries the CEMS-net coal total
-    (``e930["coal_cems"]``, spliced by ``scripts/splice_bench_coal_cems.py``);
+    (``e930["coal_cems"]``, written solely by ``render_calibration_html`` when the
+    bench part is built — the earlier post-hoc splice script was deleted
+    2026-07-12 to keep a single writer, per the owner default directive);
     this helper translates it onto the 923-grid family scale with the measured
     CEMS→923-grid ratio ``k`` from the run's own complete-vintage years
     (Σ classFull coal classes ÷ that year's ``coal_cems`` — the parasitic-factor
