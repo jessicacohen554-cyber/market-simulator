@@ -48,6 +48,14 @@ on:
         required: false
         default: false
         type: boolean
+  # The GitHub App the intake session pushes with cannot POST workflow
+  # dispatches (403), so the run is triggered by pushing this file to the
+  # intake branch — the repo's established push-triggered queue pattern
+  # (fetch-campd-unit-level.yml). Scoped to THIS file so data commits from
+  # the run itself never re-trigger it; steps are idempotent regardless.
+  push:
+    branches: ["claude/nyiso-2022-holdout-intake-ieo1lu"]
+    paths: [".github/workflows/holdout-intake-nyiso-2022.yml"]
 
 permissions:
   contents: write
