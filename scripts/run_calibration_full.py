@@ -2123,6 +2123,7 @@ def solve_and_persist(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     neiso_offer_surface_conditional: bool = False,
+    pjm_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -2415,6 +2416,7 @@ def solve_and_persist(
             temp_dependent_derate=temp_dependent_derate,
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
+            pjm_offer_surface_conditional=pjm_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
             ercot_online_capacity_envelope_measured=(
@@ -2788,6 +2790,7 @@ def solve_and_persist(
         "temp_dependent_derate": temp_dependent_derate,
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
+        "pjm_offer_surface_conditional": pjm_offer_surface_conditional,
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
         "ercot_online_capacity_envelope_measured": (
@@ -2913,6 +2916,7 @@ def solve_and_persist(
         offer_curve_deltas=offer_curve_deltas,
         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
+        pjm_offer_surface_conditional=pjm_offer_surface_conditional,
     )
     # Coal sigmoid flags mirror run_year exactly — run_config.json must
     # record the same enables/params the LP solved with (the prb sigmoid +
@@ -6696,6 +6700,19 @@ def main() -> None:
         "capability (the Hinds / Zeeland 131%% CF issue).",
     )
     parser.add_argument(
+        "--pjm-offer-surface-conditional",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="PJM G-22 lever A: post the MEASURED condition-binned top-of-curve "
+        "offer surface (PJM DataMiner2 energy_market_offers, "
+        "scripts/derive_pjm_offer_surface.py) onto the CC_REGULAR + CT_PEAKER "
+        "peak-band rungs in the P1 clearing solve only, keyed by within-year "
+        "net-load percentile. Loose hours and P0 run lengths stay "
+        "byte-identical (ladder clamped >= the resolved peak height). "
+        "PJM-gated; reads the frozen "
+        "data/raw/_validation-source/pjm_offer_surface_condbinned.json.",
+    )
+    parser.add_argument(
         "--temp-dependent-derate",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -8059,6 +8076,7 @@ def main() -> None:
         cc_derate_from_top=args.cc_derate_from_top,
         cc_nameplate_summer_derate=args.cc_nameplate_summer_derate,
         temp_dependent_derate=args.temp_dependent_derate,
+        pjm_offer_surface_conditional=args.pjm_offer_surface_conditional,
         priced_interchange=(
             True
             if reference_price_interface and args.priced_interchange is not False
