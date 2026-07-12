@@ -85,8 +85,14 @@ def _spoofed_prep(config, iso, fleet, fleet_arrays, mc_base, **kw):
                 print("[62b] bridge floored NOTHING", flush=True)
                 return None
             n = int((out.min_gen_mechanism == MECH_RA_MUSTOFFER).sum())
-            mw = float(np.where(out.min_gen_mechanism == MECH_RA_MUSTOFFER, out.min_gen, 0.0).sum())
-            print(f"[62b] bridge floored unit-hours: {n}, TWh {mw/1e6:.2f}", flush=True)
+            mw = float(
+                np.where(
+                    out.min_gen_mechanism == MECH_RA_MUSTOFFER, out.min_gen, 0.0
+                ).sum()
+            )
+            print(
+                f"[62b] bridge floored unit-hours: {n}, TWh {mw / 1e6:.2f}", flush=True
+            )
             return out
 
         return wrapped
