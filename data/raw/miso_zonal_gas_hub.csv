@@ -1,0 +1,19 @@
+zone,year,basis_vs_hh_usd_mmbtu,hub,source
+MISO-West,2023,0.459,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-West,2024,0.357,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-West,2025,-0.585,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean; MN (N3045MN3) withheld 2025
+MISO-Plains,2023,0.459,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2024,0.357,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Plains,2025,-0.585,MidCon / Northern Natural (IA),IA delivered-to-electric-power (EIA N3045IA3) minus Henry Hub monthly mean
+MISO-Illinois,2023,-0.108,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean
+MISO-Illinois,2024,0.120,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean
+MISO-Illinois,2025,0.018,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean
+MISO-Indiana,2023,-0.108,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; IN proxy pending N3045IN3 pull
+MISO-Indiana,2024,0.120,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; IN proxy pending N3045IN3 pull
+MISO-Indiana,2025,0.018,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; IN proxy pending N3045IN3 pull
+MISO-East,2023,-0.108,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; WI/MI (MichCon) proxy pending N3045MI3 pull
+MISO-East,2024,0.120,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; WI/MI (MichCon) proxy pending N3045MI3 pull
+MISO-East,2025,0.018,Chicago Citygate (IL),IL delivered-to-electric-power (EIA N3045IL3) minus Henry Hub monthly mean; WI/MI (MichCon) proxy pending N3045MI3 pull
+MISO-South,2023,0.295,Gulf Coast (LA),LA delivered-to-electric-power (EIA N3045LA3) minus Henry Hub monthly mean
+MISO-South,2024,0.388,Gulf Coast (LA),LA delivered-to-electric-power (EIA N3045LA3) minus Henry Hub monthly mean
+MISO-South,2025,0.343,Gulf Coast (LA),LA delivered-to-electric-power (EIA N3045LA3 partial 6/12 months: Feb May Jun Jul Sep Oct) minus Henry Hub SAME-MONTH mean — like-for-like per-month diffs matching every other row; prior 0.095 subtracted the full-year HH mean from the 6-month LA mean (mismatched-window construction bug; fixed 2026-07-12); MS (N3045MS3) withheld 2025
