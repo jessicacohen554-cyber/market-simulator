@@ -39,7 +39,12 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import run_calibration as rc  # noqa: E402
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
+# run_calibration_full imports run_year from the PACKAGE path
+# (scripts.run_calibration) — patch THAT module object, not the top-level
+# alias (the first probe arm patched `run_calibration` and was silently
+# inert: two distinct module objects under two import names).
+import scripts.run_calibration as rc  # noqa: E402
 from run_calibration_full import _load_reference, solve_and_persist  # noqa: E402
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
