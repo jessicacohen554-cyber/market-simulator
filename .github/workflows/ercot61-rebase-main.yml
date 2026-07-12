@@ -1,0 +1,76 @@
+# One-shot: rebase this branch onto origin/main so PR #2107 merges clean. The
+# only conflict is the calibration-log.md append-append: main added the G-21b
+# scorer-layer entry (124 lines) and this branch added the ERCOT-61 entry
+# (68 lines), both after the same tail line — disjoint entries, so the
+# resolution is the UNION (main's file + this branch's appended entry, in that
+# order), computed with `git merge-file --union` on the three index stages.
+# Rehearsed locally on a throwaway branch before pushing: union merge is
+# marker-free, 10985 = 10917 (main) + 68 (branch entry) lines, every entry
+# present exactly once, merged-log sha256
+# 1dc17baa9a4e3a6b5b7d15d447d6c191cb030ec733fc96755192aef3cc598212 (echoed
+# below, not hard-gated — main may legitimately move again). Post-condition
+# greps guard the result before the force-push. git push must run from a
+# runner (the container's remote 413s).
+name: ercot61-rebase-main
+
+on:
+  push:
+    branches:
+      - claude/ercot-st-gas-drag-floor-lj3mek
+    paths:
+      - .github/workflows/ercot61-rebase-main.yml
+
+permissions:
+  contents: write
+
+jobs:
+  rebase:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Rebase onto origin/main, resolve log by union, force-push
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          if git merge-base --is-ancestor origin/main HEAD; then
+            echo "already based on main tip; nothing to do"
+            exit 0
+          fi
+          git rebase origin/main || true
+          while [ -d .git/rebase-merge ] || [ -d .git/rebase-apply ]; do
+            conflicts=$(git diff --name-only --diff-filter=U)
+            if [ "$conflicts" != "docs/calibration-log.md" ]; then
+              echo "unexpected conflicts: [$conflicts]" >&2
+              exit 1
+            fi
+            # Union: main's file (ours) + this branch's appended entry (theirs
+            # minus base). Both sides are pure appends after the same line, so
+            # merge-file --union emits ours' block then theirs' block, no markers.
+            git show :1:docs/calibration-log.md > /tmp/log_base.md
+            git show :2:docs/calibration-log.md > /tmp/log_ours.md
+            git show :3:docs/calibration-log.md > /tmp/log_theirs.md
+            cp /tmp/log_ours.md /tmp/log_merged.md
+            git merge-file --union /tmp/log_merged.md /tmp/log_base.md /tmp/log_theirs.md
+            if grep -qE '^(<{7}|={7}|>{7})' /tmp/log_merged.md; then
+              echo "FAIL: conflict markers survived the union merge" >&2
+              exit 1
+            fi
+            cp /tmp/log_merged.md docs/calibration-log.md
+            git add docs/calibration-log.md
+            GIT_EDITOR=true git rebase --continue
+          done
+          # Post-conditions: every entry present exactly once, payload doc gone.
+          for pat in "G-21b: the C2 preliminary-vintage fallback" "MISO-59: the mid-merit lane" "ERCOT-60: thread-1" "ERCOT-61: the binding-regime ST_GAS drag-floor lane adjudicated"; do
+            n=$(grep -c "$pat" docs/calibration-log.md)
+            if [ "$n" -ne 1 ]; then echo "FAIL: '$pat' count=$n" >&2; exit 1; fi
+          done
+          test ! -e docs/_ercot61_log_entry.md
+          git merge-base --is-ancestor origin/main HEAD
+          echo "merged-log sha256: $(sha256sum docs/calibration-log.md)"
+          git push --force-with-lease origin HEAD:claude/ercot-st-gas-drag-floor-lj3mek
