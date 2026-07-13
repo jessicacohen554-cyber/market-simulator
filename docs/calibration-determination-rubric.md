@@ -714,10 +714,17 @@ fails with `--statistical-mode` (all per-hour/per-year answer-injection
 overlays off), from the registered D-7 probes
 (`docs/statistical-mode-results-2026-07.md`; data:
 `frontend/data/backcast/statmode_d7.json`). It is a **reported line, not a
-criterion**: it measures how much of the in-sample fit the backcast-only
-overlays carry (the forecast-machinery skill prior), which is out-of-sample
-*evidence*, not an in-sample gate. The gap should shrink release-over-release
-(audit §7 D-7); re-measure it whenever a keeper changes.
+criterion — and not a caveat on the keeper's backcast determination**
+*(reframed 2026-07-13, owner directive)*. The gap has two components read
+differently: the part carried by **admissible measured inputs** (historic
+outage windows, F923 fuel pricing — the rule-13 class) is the
+**backcast→forecast input gap** — the year's correct physical inputs versus
+their statistical stand-ins — which is forecast-uncertainty information for
+error bars and the crossover window, never a deduction from backcast skill (a
+backcast is scored with those inputs by construction). Only the component
+carried by answer-injection floors (the D-9 quarantine class) bears on
+legitimacy, and it is that component which should shrink release-over-release
+(audit §7 D-7); re-measure the gap whenever a keeper changes.
 
 ### C-VRE note (solar / wind)
 
