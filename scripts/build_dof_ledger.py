@@ -794,6 +794,36 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "(rule 23)",
             )
         )
+    if sc.get("unit_outage_short_windows"):
+        # Short (< 5-day) baseload-coal unit-outage windows, ZERO scalars:
+        # each window is the unit's own CEMS record; the derive-script guards
+        # (coal-only detector, CF >= 0.55 baseload screen, in-merit filter)
+        # are shared published constants of the parent outage derivation.
+        out.append(
+            _entry(
+                "unit_outage_short_windows (< 5-day baseload-coal CEMS windows)",
+                "data/raw/campd-unit-outages-short-{ISO}.csv via "
+                "outages.unit_outage_short_derate_factors (applied next to "
+                "the >= 5-day parent overlay; disjoint by construction)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="per-unit EPA CAMPD hourly gross generation "
+                "(scripts/derive_campd_unit_outages.py --short-windows); "
+                "identification guards: coal-only detector + unit annual "
+                "CF >= 0.55 (the partial-outage detector's baseload "
+                "constant) + the revealed-availability in-merit filter "
+                "(derive_campd_outages.filter_revealed_outages; the "
+                "full-stop override cannot engage below the 5-day cap)",
+                root_cause="the >= 5-day duration floor makes "
+                "event-coincident short forced outages invisible (MISO "
+                "Jul 28-29 2025: ~2.8 GW coal offline at the peak block "
+                "beyond the overlay; "
+                "docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md); CT/CC event "
+                "unavailability stays unmodeled pending a max-gen-event "
+                "registry intake (no identification without it)",
+            )
+        )
     if sc.get("coal_warm_committed"):
         # Warm-boiler exemption, ZERO scalars: the P1 startup-amortization
         # markup (compute_monthly_markup, NREL $100/MW coal cold start) is
