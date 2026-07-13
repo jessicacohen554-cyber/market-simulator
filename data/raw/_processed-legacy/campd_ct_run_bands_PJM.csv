@@ -1,0 +1,6 @@
+band,pct_lo,pct_hi,n_runs,median_run_hours,pooled_median_run_hours,ratio,years,source
+0,0.0,0.5,45322,6.0,7.0,0.8571428571428571,2023-2024-2025,"EPA CAMPD unit-level hourly grossLoad runs keyed by start-hour within-year net-load percentile (EIA-930 D - WND - SUN), online >= 1.0 MW; ratio = band median / pooled median"
+1,0.5,0.75,23853,6.0,7.0,0.8571428571428571,2023-2024-2025,"EPA CAMPD unit-level hourly grossLoad runs keyed by start-hour within-year net-load percentile (EIA-930 D - WND - SUN), online >= 1.0 MW; ratio = band median / pooled median"
+2,0.75,0.9,20930,8.0,7.0,1.1428571428571428,2023-2024-2025,"EPA CAMPD unit-level hourly grossLoad runs keyed by start-hour within-year net-load percentile (EIA-930 D - WND - SUN), online >= 1.0 MW; ratio = band median / pooled median"
+3,0.9,0.975,12510,8.0,7.0,1.1428571428571428,2023-2024-2025,"EPA CAMPD unit-level hourly grossLoad runs keyed by start-hour within-year net-load percentile (EIA-930 D - WND - SUN), online >= 1.0 MW; ratio = band median / pooled median"
+4,0.975,1.0,3154,6.0,7.0,0.8571428571428571,2023-2024-2025,"EPA CAMPD unit-level hourly grossLoad runs keyed by start-hour within-year net-load percentile (EIA-930 D - WND - SUN), online >= 1.0 MW; ratio = band median / pooled median"
