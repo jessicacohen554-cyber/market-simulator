@@ -330,3 +330,79 @@ from meta.json — meta-writer fixed this session):
   state stays owned by its existing take-or-pay/must-run floors
   (untouched), and the committed-state energy returns to the class
   measurement says holds it.
+
+## 8. ERCOT-64: the FLOOR-SCOPED LSL markdown is PROVABLY INERT — the LSL price-side enumeration closes; the lane is NOT at frontier (the negative-price epoch pair remains)
+
+The §7 enumerated price-side lever was built this session
+(`ercot_offer_surface_lowcurve_floorscoped`, own gate, rule 24): the measured
+committed-CC LSL bid (the frozen ERCOT-62 `binned_committed_p50` quantiles —
+NOT re-derived) applied to the gas-CC committed tranche ONLY in the bridge's
+own floored plant-hours, keyed on the BRIDGE FLOOR MASK (never the v2
+P0-online gate, which is False in bridged gaps by construction), the floor
+computed ONCE and shared across the P1 fleet and bid hooks
+(`pipeline.commitment.build_ercot_gas_bridge_p1_preps`; forecast parity in
+`runner.py`). Mutually exclusive with the refuted tranche-wide v2 (rule 19,
+enforced loud). Probe (rule-16 2023-only throwaway,
+`scripts/probes/_ercot64_ladder_probe.py`, deleted): keeper rung reproduces
+the promoted ercot63-gas-bridge byte-exactly (C3a +3.1 %, C3b 0.131, C3c
+171 h, trough <$10/15/20 = 107/228/1,202 h, spread $14.9, arb-days 85,
+storage 0.74 TWh, HE18/19 243/505 MW).
+
+**Result: the fs_markdown rung is EXACTLY the keeper.** The mechanism fired
+(40 committed tranches marked down over all 37,788 bridge-floored
+plant-hours) and moved NOTHING: price max |Δ| = 0.0 across all zone-hours,
+per-unit annual dispatch max |Δ| = 0.0 MWh, every score/trough/spread/storage
+metric identical.
+
+**Failure anatomy — inert by construction, not by accident.** The bridge's
+floor target is `min(0.574 × plant_pmax, tranche_pmax)`; the committed
+tranche's capacity share is below 0.574 for every bridged plant (median
+committed share ~25 %), so the target clips at the tranche bound on ALL 40
+floored rows and the floor lands exclusively on committed rows. In every
+floored gen-hour the LP bound is therefore `min_gen = pmax × availability`
+— the tranche is exactly pinned (measured: max `P − floor` = 0.0 over all
+37,788 hours, in BOTH the keeper and the markdown rung — no headroom exists
+anywhere in the window; the apparent sub-1.0 floor/annual-cap ratios on 24
+rows are availability derates, not headroom). A variable pinned between
+equal bounds contributes no degree of freedom, so its objective coefficient
+can affect neither the solution nor any dual: the markdown is provably a
+no-op on its entire declared window. The window where the tranche genuinely
+plays its LSL role is precisely the window where its bid cannot price — the
+model already reproduces the measured "the LSL block never sets the margin"
+inflexibility (§5) through the STATE alone, and reality's cheap LSL bid is
+inert in the model for the same reason it coexists with wide spreads in
+reality.
+
+**The LSL / offer-lower-tail price-side enumeration is now CLOSED,
+exhaustively:** (a) the top leg is adopted (peak rungs); (b) the econ
+lower-body is clamp-inert — the keeper's delta-adjusted ramp already sits
+at/below the measured band medians (§4); (c) the tranche-wide committed-LSL
+markdown is refuted — it reprices above-floor mid-merit capacity and
+compresses the spread (§5, §7); (d) the floor-scoped committed-LSL markdown
+is inert — the only capacity it touches is pinned (this section). Any
+committed-LSL markdown variant must scope its window somewhere between (c)
+and (d), i.e. it either leaks onto mid-merit capacity (refuted) or touches
+only forced volume (inert). No admissible offer-level change to the gas
+committed/lower tail remains for the trough gap. The mechanism stays in the
+codebase default-off as the recorded closure (zero fitted scalars — not a
+rule-26 re-armable knob); its unit tests pin the mask/scope mechanics.
+
+**Lane status — NOT at frontier: one named admissible pair remains, the
+NEGATIVE-PRICE EPOCH formation.** The remaining trough-depth gap re-measured
+on the keeper (2023): RT spent 1,493 trough hours < $15 (137 of them
+NEGATIVE); the model 228, and its floor is $0 by construction (renewable
+MC = 0, `negative_renewable_offers=False` in the keeper) — the deepest RT
+epochs are UNREPRESENTABLE, not merely under-produced. The model already
+forms 2,651 zonal wind-marginal epochs (some zone's dual ≤ $0.01) where a
+negative keep-running offer would price: (i) `negative_renewable_offers`
+(existing registry field, unprobed on ERCOT) — the PTC keep-running bid is
+statutory market structure (a PTC-subsidized wind unit is whole down to
+≈ −$PTC), forward-native and measured, the exact CAISO lever-audit
+"KEEP offer mechanism" precedent; (ii) its reach is bounded by the OPEN VRE
+under-curtailment lane (2026-07-07 step-2 diagnosis: the reduced West→North
+corridor is a too-wide relief valve; the sanctioned WP-B curtailment-share
+driver `ercot_wtx_curtailment_driver` was built but is NOT in the keeper
+recipe) — the epoch COUNT and its propagation to the load-weighted hubs is
+that lane's topology question. Chartered as ERCOT-65: probe (i) on the
+keeper, with (ii) as its enabling co-lane; no offer parameter may be tuned
+to the C3c scarcity tail (separately open, G-22 ledger).

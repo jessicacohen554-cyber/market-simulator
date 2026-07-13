@@ -110,7 +110,7 @@ from market_sim.pipeline import (  # noqa: E402
     backcast_config,
     build_base_dispatch_kwargs,
     build_caiso_ra_p1_prep,
-    build_ercot_gas_bridge_p1_prep,
+    build_ercot_gas_bridge_p1_preps,
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
     run_energy_solve,
@@ -479,6 +479,7 @@ def run_year(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
+    ercot_offer_surface_lowcurve_floorscoped: bool = False,
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
@@ -713,6 +714,13 @@ def run_year(
         # quantile ladders, P1-only markdown; ScenarioConfig field docstring has
         # the full provenance/admissibility note). ERCOT-gated in the builder.
         config = config.with_overrides(ercot_offer_surface_lowcurve=True)
+    if ercot_offer_surface_lowcurve_floorscoped:
+        # ERCOT-64 FLOOR-SCOPED committed-LSL markdown (the measured LSL bid
+        # only in the gas commitment bridge's own floored plant-hours;
+        # ScenarioConfig field docstring has the full provenance/composition
+        # note). Requires the bridge and excludes the tranche-wide v2 —
+        # enforced loud at pipeline.commitment.build_ercot_gas_bridge_p1_preps.
+        config = config.with_overrides(ercot_offer_surface_lowcurve_floorscoped=True)
     if ercot_nuclear_unit_availability:
         # Window-grain nuclear refuel availability (measured 60-Day DAM
         # disclosure daily series; ScenarioConfig field docstring has the full
@@ -2639,6 +2647,38 @@ def run_year(
                 p0_dispatch=r0.dispatch,
             )
 
+    # ERCOT-64 FLOOR-SCOPED committed-LSL markdown: the same measured LSL
+    # artifact applied ONLY in the gas commitment bridge's own floored
+    # plant-hours (never the v2 P0-online gate — P0-online is False in
+    # bridged gaps by construction). The closure receives the bridge's own
+    # floor mask from build_ercot_gas_bridge_p1_preps, which computes the
+    # floor ONCE and shares it across the fleet and bid hooks (charter
+    # wiring traps #1/#2). None when the flag is off (byte-identical).
+    floorscoped_markdown_fn = None
+    if (
+        getattr(config, "ercot_offer_surface_lowcurve_floorscoped", False)
+        and iso == "ERCOT"
+    ):
+        from market_sim.data.fleet import (
+            build_ercot_offer_surface_lowcurve_floorscoped_markdown,
+        )
+
+        _floorscoped_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+
+        def floorscoped_markdown_fn(floor_mask):  # noqa: E306
+            return build_ercot_offer_surface_lowcurve_floorscoped_markdown(
+                fleet_arrays,
+                fleet,
+                fuel_prices,
+                _floorscoped_net_load,
+                config,
+                floor_mask,
+            )
+
     # NEISO fast-start offer surface (charter Limb B): the identical P1-only
     # seam, NEISO-gated (fleet.build_neiso_offer_surface_conditional_markup).
     if getattr(config, "neiso_offer_surface_conditional", False) and iso == "NEISO":
@@ -3399,8 +3439,13 @@ def run_year(
     # floor on the merchant gas-CC fleet, detected from the P0 run pattern —
     # the ISO-exclusive sibling of the CAISO hook above. None for every
     # non-ERCOT / gate-off run (byte-identical).
-    ercot_bridge_prep = build_ercot_gas_bridge_p1_prep(
-        config, iso, fleet, fleet_arrays, mc_base
+    ercot_bridge_prep, ercot_bridge_bid_prep = build_ercot_gas_bridge_p1_preps(
+        config,
+        iso,
+        fleet,
+        fleet_arrays,
+        mc_base,
+        floorscoped_markdown_fn=floorscoped_markdown_fn,
     )
     # P1-native PJM commitment-scoped reserve supply (path B, G-20b): the fleet
     # hook zeroes non-fast-start reserve-eligible units' availability in their
@@ -3423,7 +3468,10 @@ def run_year(
         p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
         p1_kwargs_prep=pjm_kwargs_prep,
         mc_bid_adjust=offer_surface_mc_bid_adjust,
-        p1_bid_adjust_prep=lowcurve_bid_adjust_prep,
+        # The v2 lowcurve and the ERCOT-64 floor-scoped bid hooks are mutually
+        # exclusive (rule 19, enforced at build_ercot_gas_bridge_p1_preps), so
+        # at most one is non-None here.
+        p1_bid_adjust_prep=lowcurve_bid_adjust_prep or ercot_bridge_bid_prep,
         startup_run_ratio_t=startup_run_ratio_t,
     )
     _t_solve_end = time.perf_counter()
