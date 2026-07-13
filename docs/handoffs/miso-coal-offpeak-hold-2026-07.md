@@ -120,6 +120,35 @@ design question is whether to drive the discount off the measured contract share
 (grounded, preferred) vs the gas-keyed `coal_bit_passthrough_sigmoid`
 (fitted floor/ceil/mid/slope — rule-1 risk unless anchored).
 
+## BIT-only vs all-contracted-coal (the scope fork discovered in the build)
+
+The full BIT-only 2023-25 build fixes COAL_BIT (both years) + CT_PEAKER-2024 but
+flips COAL_PRB PASS→FAIL (2023/2024): cheap fuel-free BIT committed steals PRB's
+merit slot (PRB is equally ~100% contracted but got no discount). Net +1
+free-class (≈10/12). Generalized to `coal_committed_takeorpay_all` (discount all
+contracted coal); throwaway 2024 A/B (8 TWh C1 band):
+
+| class | actual 2024 | miso-60 | BIT-only | all-coal |
+|---|---|---|---|---|
+| COAL_BIT | 53.33 | 37.66 FAIL | 53.44 PASS | 52.82 PASS |
+| COAL_PRB | 116.46 | 108.56 PASS | 103.08 FAIL | 124.25 PASS (+7.79, marginal) |
+| CT_PEAKER | 19.22 | 30.45 FAIL | 26.36 PASS | 19.87 PASS |
+| total coal | 176.3 | 150.5 | 160.5 | **182.6 (+6.3 over)** |
+
+- **BIT-only:** surgical (fixes the genuinely priced-out class), no overshoot,
+  clean 2025 (all coal/CT PASS); leaves a PRB redistribution break (the exposed
+  total-coal deficit — a rule-11 root-cause item, not a mechanism flaw).
+- **all-coal:** sweeps 2024 clean, but **overshoots** — PRB +7.79 (was −7.9;
+  a big swing that only just passes) and total coal +6.3 over actual, a rule-1
+  over-forcing signal; and it risks the already-high 2025 PRB (146 vs 139
+  actual) since a blanket fuel-free committed floor raises PRB in every year.
+  Needs a full 3-year build to know the 2025 PRB verdict.
+
+Both mechanisms are built, tested, backward-compatible, and pushed. Owner steer
+pending on which to register as miso-62 (recommendation: BIT-only — the
+owner-chosen scope, surgical, no overshoot; PRB break ledgered as the total-coal
+root-cause item).
+
 ## Refutations / settled (do not revisit without new evidence)
 - min-DOWN gap-bridge on coal: REFUTED (bridgeable volume ~1 TWh ≪ 15.7).
 - coal_sync_srmc_tranche for the COAL_BIT residual: REFUTED (probe +1.6, shape
