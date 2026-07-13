@@ -248,6 +248,75 @@ effective-flag series so must-run derivation, the persisted
   formation + the 2023 spurious-tail regression, (v) PJM/NYISO/NEISO
   re-gate on the fixed `fleet_to_bins` (caiso-78 blast radius, still
   pending).
+### 2026-07-13 — MISO — July-2025 LMP miss DIAGNOSED (owner directive) + miso-63 composed candidate (miso-62 keeper + miso-61 RPE + short-outage channel): every scored 2025 price/volume metric improves on the identical fail set; keeper CANDIDATE with promotion recommendation, keepers.json unchanged (owner promotes)
+
+**Owner directive (interactive, 2026-07-13):** identify the huge July-2025 LMP
+miss — outage/capacity-availability (more capacity assumed than real) or an
+import shortage; "I don't care if you test two variables at once." Full
+measured diagnosis: `docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md`. July
+(model 39.48 vs DA actual 58.79, Indiana basis) decomposes into (1) the
+North–South separation ~$11 (spread positive in 82% of July hours, mean
+$21.5; the pbc record's 185 S→N DA binding hours are July's — the most of any
+month — but the separation is broad, not binding-hour-only: the model's own
+S→N link binds AT its cap with $0.24 separation, so the miss is the NORTH
+supply curve's depth/cost, lane 3); (2) broad tightness ~$5; (3) the scarcity
+tail ~$3 (actual 88 RT h >$200, model 0). **No import shortage**: actual
+event imports ran 5–9.6 GW and the model UNDER-imports 2025 (13.2 vs 19.0
+TWh, G-23). Demand/wind/solar pinned exactly. **The availability finding**:
+the ≥5-day outage-detector floor makes event-coincident short forced outages
+invisible — at the Jul 28–29 peak block ~8.4 GW of July-demonstrated
+capability was missing beyond the overlay (6.5 GW North; model coal available
+37.7 GW vs 32.1 actual peak; model stack prices the real peak at $45–54 with
+14–20 GW headroom). Compatible with the MISO temp-derate refutation (the
+envelope conditions on ONLINE units — the fleet loses discrete units, it
+does not derate smoothly; `temp_dependent_derate` stays never-re-enable).
+
+**Mechanism built** (gated default-off, zero fitted parameters):
+`unit_outage_short_windows` — `derive_campd_unit_outages.py --short-windows`
+emits sub-5-day baseload-coal CEMS full stops
+(`campd-unit-outages-short-MISO.csv`, 205 windows 2023–2025, incl. Cayuga
+531 MW Jul 25–29 and Belle River 700 MW Jul 29–Aug 2 at the 2025 event) under
+three measured guards: coal-only detector, unit annual CF ≥ 0.55 (the
+partial-outage detector's baseload constant), and the revealed-availability
+in-merit filter (the full-stop override cannot engage below the 5-day cap);
+windows stay strictly below the standard floor so the extracts are disjoint.
+Throwaway 2025-only A/B (`_miso_shortout_probe.py`, rule 16, bundle
+gitignored): July +0.53, annual +0.27, coal −1.8 TWh against the 2025 +9.9
+over-run, tail unchanged — directionally right everywhere, insufficient
+alone. CT/CC event unavailability (~4.1 GW) stays UNMODELED pending a
+max-gen-event registry intake (no identification without it).
+
+**Runs (registered + scored, rubric v2.4):** `2026-07-13-miso-63-shortout-rpe`
++ zero-forcing twin (bundle `results/calibration/miso63_shortout_rpe*`) —
+the miso-62 keeper meta.json strict replay + exactly two separately-evidenced
+changes: `miso_rpe_pricing` (the chartered lane-2 composition of registered
+miso-61) + `unit_outage_short_windows`. **NOT-YET, FAIL set IDENTICAL to the
+v2.5-rescored miso-62 keeper** {fuelmix, price_mean, price_shape, price_tail}
+(scored on rubric v2.5, whose owner amendment re-classes the C2
+preliminary-vintage families as SKIPPED diagnostics — the same relief the
+miso-62 keeper receives), with every scored 2025 metric improved: C3a-2025
+−16.5% → −15.9%; C3b-2025 0.212 → 0.206; the C2-2025 diagnostic rows gas
+−6.8% → −6.1%, coal-over +4.0% → +3.1%; C3c-2024 3 → 4 h
+>$200 (DA actual 24); C8 ST_GAS-2025 grounded 37.5% → 36.2%; C1 UNCHANGED at
+the MISO-best 14/16 all / 10/12 free (fails stay COAL_PRB 2023/24
+−8.89/−13.32; 2023 deepens 0.48 TWh — real availability removed, the lane-1
+root-cause item). DOF 17 measured-physical / 2 legacy residuals (+1 entry,
+zero fitted scalars). LOYO by construction (two zero-scalar booleans: a
+published tariff constant; each unit's own CEMS windows). **Promotion
+recommended** (strictly-improved metrics, identical fail set); owner's call.
+
+**Lane-1 anchors measured** (in the diagnosis doc §6): the 2024 CT_PEAKER
+over-run is ~94% economic (D-2), and two measured causes surfaced: (a) real
+2024 PRB dispatch violates SRMC merit (83% of PRB capacity above the CC
+fleet's $21/MWh cap-wtd SRMC yet CF 0.43 — the SOM's 56% self-commit share is
+the grounded PRB-discount scale for a future scoped mechanism, NOT the
+overshooting `coal_committed_takeorpay_all`); (b) the F923 gas gap-fill donor
+is class-blind and quantity-weighted — CT filers pay $4.13/MMBtu cap-wtd vs
+CC $2.57, but the 33% of CT capacity without own filings inherits the
+CC-dominated ~$2.6 state mean, pricing those CTs ~$16–20/MWh cheap (feeds the
+2024 CT+7.1 over-run at PRB's expense AND July's cheap North margin).
+Candidate fix: a GATED class-aware donor (same-class state/zone mean first);
+untested, needs its own 3-year A/B.
 
 ### 2026-07-13 — MISO — miso-62 (grounded bituminous committed take-or-pay bid discount): closes the COAL_BIT −15.7 TWh off-peak-hold residual; C1 best of any MISO run (14/16 all, 10/12 free); keeper CANDIDATE, keepers.json unchanged (owner promotes)
 
