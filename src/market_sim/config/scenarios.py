@@ -1927,6 +1927,27 @@ class ScenarioConfig:
     # level rescale, no fitted parameters; frozen against residuals
     # (rule 23). Default off (byte-identical); CAISO backcast only (the
     # forecast path never reads the 2023 window).
+    caiso_supply_consistent_demand: bool = False  # Replace the CAISO backcast
+    # demand input (the raw EIA-930 CISO `Demand` cell) with the
+    # supply-consistent honest series demand(t) = [930 NetGen(t) − NG cell(t)
+    # + CEMS bench-gas grid(t) + cogen grid flat + geo/biomass fold-in flat]
+    # − TI(t) (caiso-80, owner-signed Option A;
+    # FINDING-caiso80-demand-basis-wedge-2026-07-13): the CISO Demand cell
+    # carries the SAME fabricated solar-shaped block as the corrupt NG cell
+    # by the Demand = NetGen + TI identity (onset 2024-05), plus a ~6 TWh/yr
+    # flat CHP host-accounting wedge and the chronic 930 identity gap —
+    # +10.4/+11.6/+18.5 TWh/yr (2023/24/25) no real grid fleet served. The
+    # replacement makes the model's demand basis identical to the honest
+    # CEMS-anchored basis it is scored against (the demand-side completion of
+    # the owner-signed bench rework). Series is a derived measured artifact
+    # (scripts/derive_caiso_supply_consistent_demand.py →
+    # data/raw/reference/caiso-supply-consistent-demand/), rule-14 admissible
+    # (every term measured, regenerates per year, responds to conditions;
+    # never an output pinned back); re-derives only on source-data updates
+    # (rule 23). Takes precedence over caiso_demand_clock_realign (the
+    # reconstruction is built on the generation frame's clock, so the Demand
+    # cell's clock defect never enters). Default off (byte-identical); CAISO
+    # backcast only.
     caiso_storage_as_reservation: bool = False  # Reserve the MEASURED hourly
     # CAISO battery AS-award MW out of the battery fleet's dispatch headroom
     # (caiso-74; FINDING-caiso72 STEP-0 channel #1 / FINDING-caiso73 live lead

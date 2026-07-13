@@ -159,6 +159,15 @@ PLANT_REGISTRY_CSV: Path = REFERENCE_DIR / "master-plant-registry.csv"
 CAMPD_BINS_CSV: Path = REFERENCE_DIR / "custom-bin-assignments.csv"
 TX_UNIT_OUTAGES_CSV: Path = REFERENCE_DIR / "tx-jan-aug23-unit-outages.csv"
 
+# Supply-consistent CAISO backcast demand series (caiso-80, owner-signed
+# Option A; FINDING-caiso80-demand-basis-wedge-2026-07-13). Derived measured
+# artifact written by scripts/derive_caiso_supply_consistent_demand.py, read
+# by eia_loader._load_caiso_hourly_demand under
+# ScenarioConfig.caiso_supply_consistent_demand.
+CAISO_SUPPLY_CONSISTENT_DEMAND_DIR: Path = (
+    REFERENCE_DIR / "caiso-supply-consistent-demand"
+)
+
 # ---------------------------------------------------------------------------
 # Raw/clean layout. ``RAW_DIR`` is now live and identical to ``RAW_DATA_DIR``
 # (the W1 relocation made data/raw the single raw root). ``CLEAN_DIR`` /
