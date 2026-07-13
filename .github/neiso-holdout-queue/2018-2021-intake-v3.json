@@ -1,0 +1,8 @@
+{
+  "requested_by": "owner (2026-07-13)",
+  "scope": "NEISO 2018-2021 holdout-intake + 2022 residual closure, requeue #3",
+  "prior_runs": [
+    "29259546224 (failed: external runner shutdown mid-step curate_emissions_unit_annual, old branch claude/neiso-holdout-data-register-kme0yy)",
+    "29265458840 (failed: external runner shutdown mid-step curate_emissions_unit_annual, new branch claude/neiso-holdout-data-register-v2-958191 -- steps before it succeeded: derive_actual_lmp rebuild + lw-retrofit landed NEISO 2020/2021/2022/2023/2024/2025 cleanly)"
+  ]
+}
