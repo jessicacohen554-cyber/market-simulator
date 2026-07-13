@@ -64,6 +64,12 @@ _IGNORE = {
     "iso",
     "years",
     "hours",
+    # --reuse-solved labeling block: which years a mixed bundle byte-copied
+    # from which source bundle. Pure provenance — the recipe kwargs above are
+    # complete regardless, and a replay of a mixed bundle re-solves every
+    # year fresh (which is exactly what "reused years are not fresh
+    # evidence" demands of a re-gate).
+    "reuse",
 }
 # Recorded-only env-gated probe values: resolved inside backcast_config from
 # env vars (ERCOT_ZONAL_GAS / ERCOT_WEST_NETLOAD_GAS /
