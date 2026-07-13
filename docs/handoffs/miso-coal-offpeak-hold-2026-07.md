@@ -1,12 +1,43 @@
 # MISO COAL_BIT under-generation lane — diagnosis, two refutations, pricing re-diagnosis
 
 **Date:** 2026-07-13. **Lane:** miso-60 handoff sanctioned lane 1
-("commitment-posture window rows"). **Status: BOTH commitment candidates
-REFUTED with evidence; residual re-diagnosed as a coal-BIT take-or-pay
-BID-PRICING phenomenon. Awaiting owner steer before opening the pricing lane
-(different mechanism class; rule-1 grounding required).** Companion to
-`docs/multi-iso/miso-scarcity-posture-design-2026-07.md` (§A pooled-U lever,
-REJECTED as miso-43).
+("commitment-posture window rows"). **Status: both commitment candidates
+REFUTED; residual re-diagnosed as coal-BIT take-or-pay BID-PRICING; owner chose
+the grounded contract-share fix; mechanism BUILT + unit-tested; throwaway 2024
+probe GREEN (COAL_BIT +15.78 onto measured); full 2023-25 keeper build in
+flight.** Companion to `docs/multi-iso/miso-scarcity-posture-design-2026-07.md`
+(§A pooled-U lever, REJECTED as miso-43).
+
+## RESOLUTION — grounded bituminous committed take-or-pay bid discount (miso-62)
+
+Mechanism `coal_bit_committed_takeorpay` (`ScenarioConfig`; `fleet.py`
+`campd_tranche_fuel_frac`): the `_committed` tranche of a **bituminous** coal
+plant in the measured take-or-pay map passes ``1 − contract_share`` of its fuel
+— the same sunk-contract rule already on `_mustrun`. MISO coal is ~100%
+contracted (`coal_takeorpay_MISO.csv`), so contracted BIT baseload bids down to
+hold against cheap gas; econ*/peak keep full delivered cost (`coal_econ_srmc_bound`,
+already on) so BIT price-follows above the committed band. **Zero fitted
+parameters** — the discount is each plant's own EIA-923 Schedule-5 share
+(rule 1/13). Default off; scoped to bituminous (PRB/lignite carry their own
+levers). Unit-tested (`tests/test_coal_sync_tranche.py`, 5 new cases).
+
+**Throwaway 2024 A/B (rule 16, vs scored miso-60):**
+
+| class | miso-60 | probe | Δ | actual |
+|---|---|---|---|---|
+| **COAL_BIT** | 37.66 | **53.44** | **+15.78** | **~53.4 ✓** |
+| CT_PEAKER | 30.45 | 26.36 | −4.09 | lower ✓ |
+| COAL_PRB | 108.56 | 103.08 | −5.48 | (redistribution to watch) |
+| total coal | 150.5 | 160.5 | +10.0 | 167.1 |
+
+COAL_BIT lands **almost exactly on the measured ~53.4** with no residual tuning
+— right structure → right number (rule 1 ideal). The BIT→PRB redistribution
+(some PRB econ displaced by cheap BIT committed) is the item the full 2023-25
+build must clear (COAL_PRB staying in C1 tolerance). The apparent ST_GAS +5.6
+is the OTHER_FOSSIL→0 raw-klass relabel artifact (OTHER_FOSSIL raw = 0 vs
+gmModel 8.95), not a real rise. Twin: the discount is a PRICING input (forces no
+energy) so it stays ARMED in the zero-forcing twin (like the passthrough
+sigmoids / miso_rpe_pricing).
 
 ## The residual (recorded before any build, per the diagnosis discipline)
 
@@ -88,6 +119,35 @@ residual-tuned sigmoid — rule 1). The take-or-pay data already exists; the ope
 design question is whether to drive the discount off the measured contract share
 (grounded, preferred) vs the gas-keyed `coal_bit_passthrough_sigmoid`
 (fitted floor/ceil/mid/slope — rule-1 risk unless anchored).
+
+## BIT-only vs all-contracted-coal (the scope fork discovered in the build)
+
+The full BIT-only 2023-25 build fixes COAL_BIT (both years) + CT_PEAKER-2024 but
+flips COAL_PRB PASS→FAIL (2023/2024): cheap fuel-free BIT committed steals PRB's
+merit slot (PRB is equally ~100% contracted but got no discount). Net +1
+free-class (≈10/12). Generalized to `coal_committed_takeorpay_all` (discount all
+contracted coal); throwaway 2024 A/B (8 TWh C1 band):
+
+| class | actual 2024 | miso-60 | BIT-only | all-coal |
+|---|---|---|---|---|
+| COAL_BIT | 53.33 | 37.66 FAIL | 53.44 PASS | 52.82 PASS |
+| COAL_PRB | 116.46 | 108.56 PASS | 103.08 FAIL | 124.25 PASS (+7.79, marginal) |
+| CT_PEAKER | 19.22 | 30.45 FAIL | 26.36 PASS | 19.87 PASS |
+| total coal | 176.3 | 150.5 | 160.5 | **182.6 (+6.3 over)** |
+
+- **BIT-only:** surgical (fixes the genuinely priced-out class), no overshoot,
+  clean 2025 (all coal/CT PASS); leaves a PRB redistribution break (the exposed
+  total-coal deficit — a rule-11 root-cause item, not a mechanism flaw).
+- **all-coal:** sweeps 2024 clean, but **overshoots** — PRB +7.79 (was −7.9;
+  a big swing that only just passes) and total coal +6.3 over actual, a rule-1
+  over-forcing signal; and it risks the already-high 2025 PRB (146 vs 139
+  actual) since a blanket fuel-free committed floor raises PRB in every year.
+  Needs a full 3-year build to know the 2025 PRB verdict.
+
+Both mechanisms are built, tested, backward-compatible, and pushed. Owner steer
+pending on which to register as miso-62 (recommendation: BIT-only — the
+owner-chosen scope, surgical, no overshoot; PRB break ledgered as the total-coal
+root-cause item).
 
 ## Refutations / settled (do not revisit without new evidence)
 - min-DOWN gap-bridge on coal: REFUTED (bridgeable volume ~1 TWh ≪ 15.7).
