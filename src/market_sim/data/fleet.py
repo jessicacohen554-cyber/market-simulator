@@ -3203,10 +3203,22 @@ def build_pjm_offer_midcurve_conditional_markup(
     hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
     gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
 
+    # Optional measured-segment scope (ScenarioConfig.pjm_offer_midcurve_segments):
+    # None floors every mapped segment (pjm-101/102, byte-identical); a tuple
+    # restricts the floor to those segments so another mechanism can own the
+    # rest of the stack (rule 19 — e.g. ("LONG_RUN",) leaves the CT_FAST rows
+    # to the fast-start startup amortization).
+    seg_scope = getattr(config, "pjm_offer_midcurve_segments", None)
+    scoped = (
+        set(_PJM_MIDCURVE_SEGMENT_OF.values())
+        if seg_scope is None
+        else {str(s) for s in seg_scope}
+    )
+
     # Per-segment (n_bins, n_shares) mult tables for this delivery year
     # (pooled fallback for an unmapped year, e.g. a forward year).
     tables: dict[str, np.ndarray] = {}
-    for seg in set(_PJM_MIDCURVE_SEGMENT_OF.values()):
+    for seg in set(_PJM_MIDCURVE_SEGMENT_OF.values()) & scoped:
         entry = surface.get(seg)
         if not entry:
             continue

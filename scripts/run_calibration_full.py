@@ -2129,6 +2129,7 @@ def solve_and_persist(
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
     pjm_offer_midcurve_conditional: bool = False,
+    pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -2479,6 +2480,7 @@ def solve_and_persist(
             pjm_offer_surface_conditional=pjm_offer_surface_conditional,
             pjm_da_virtual_bids=pjm_da_virtual_bids,
             pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
+            pjm_offer_midcurve_segments=pjm_offer_midcurve_segments,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
             ercot_online_capacity_envelope_measured=(
@@ -2885,6 +2887,11 @@ def solve_and_persist(
         "pjm_offer_surface_conditional": pjm_offer_surface_conditional,
         "pjm_da_virtual_bids": pjm_da_virtual_bids,
         "pjm_offer_midcurve_conditional": pjm_offer_midcurve_conditional,
+        "pjm_offer_midcurve_segments": (
+            list(pjm_offer_midcurve_segments)
+            if pjm_offer_midcurve_segments is not None
+            else None
+        ),
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
         "ercot_online_capacity_envelope_measured": (
@@ -3018,6 +3025,12 @@ def solve_and_persist(
         pjm_da_virtual_bids=pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
     )
+    if pjm_offer_midcurve_segments is not None:
+        # Meta-writer mirror of run_year's with_overrides (rule 25): the
+        # segment scope must land in scenario_config exactly as solved.
+        recorded_cfg = recorded_cfg.with_overrides(
+            pjm_offer_midcurve_segments=tuple(pjm_offer_midcurve_segments)
+        )
     if ercot_offer_surface_lowcurve:
         # Meta-writer mirror of run_year's with_overrides (rule 25): the LOW-leg
         # flag must land in scenario_config exactly as the LP solved with it.
