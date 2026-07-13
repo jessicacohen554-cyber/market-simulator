@@ -5097,6 +5097,28 @@ class ScenarioConfig:
     # market_sim.data.outages and generators_to_fleet_arrays.
     outage_source: str = "statistical"
 
+    # Tier 3 (calibration) — short (1-5 day) unit-outage windows for baseload
+    # coal, the sub-floor companion of the >= 5-day unit-outage overlay.
+    # Driver (rule 12): discrete forced-outage events measured in per-unit
+    # CEMS — the MISO 2025 heat events showed ~2.8 GW of coal capability that
+    # ran elsewhere in July but was offline at the Jul 28-29 peak block and is
+    # invisible to the >= 5-day detector (the own-fleet temp-capability
+    # envelope is FLAT, so the fleet loses discrete units under stress rather
+    # than derating smoothly; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md).
+    # Window: the measured off-window itself, kept only when it survives the
+    # derive script's triple identification guard (coal-only detector +
+    # unit annual CF >= 0.55 baseload screen + the revealed-availability
+    # in-merit filter, so economic idling is never classified as an outage).
+    # Forward story (rule 13): same as the parent overlay — a physical
+    # availability event whose forecast analogue is the statistical
+    # WEFOR/POF draw; backcast-mode calibration input, never a forecast
+    # methodology. Applies only when ``outage_source == "historic"`` and the
+    # ISO's ``campd-unit-outages-short-<ISO>.csv`` exists (built by
+    # ``scripts/derive_campd_unit_outages.py --short-windows --iso <ISO>``).
+    # Windows are < 5 days by construction, so the two overlays are disjoint
+    # and never double-count. Default off; GATED CHANGE (alters availability).
+    unit_outage_short_windows: bool = False
+
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -6187,6 +6209,7 @@ TIER_TAGS: dict[str, int] = {
     "dual_fuel_switching": 3,
     "dual_fuel_oil_reattribution": 3,
     "outage_source": 3,
+    "unit_outage_short_windows": 3,
     "gas_price_override": 3,
 }
 

@@ -44,6 +44,18 @@ economically), so plants whose model bin is ``CT_PEAKER`` — and the
 ``ST_GAS`` peaker plants in
 :data:`market_sim.data.outages.ST_GAS_PEAKER_PLANTS` — are skipped, matching the
 overlay's convention.
+
+``--short-windows`` derives the companion SHORT extract instead
+(``campd-unit-outages-short[-{ISO}].csv``): baseload-coal full stops of 1-5
+days, which the standard 5-day duration floor excludes but which concentrate
+exactly in stressed periods (MISO Jul 28-29 2025: ~2.8 GW of coal capability
+offline at the peak block invisibly to the standard overlay). Identification
+guards: coal-only detector + unit annual CF >= :data:`SHORT_BASELOAD_CF` +
+the revealed-availability in-merit filter (never bypassed — the full-stop
+override cannot engage below 5 days). Windows are capped strictly below the
+standard floor so the two extracts are disjoint. Consumed by
+``market_sim.data.outages.unit_outage_short_derate_factors`` under
+``ScenarioConfig.unit_outage_short_windows`` (default off).
 """
 
 from __future__ import annotations
@@ -87,6 +99,17 @@ from scripts.derive_campd_outages import (  # noqa: E402
 # CAMPD unit-level extracts live in their own subdirectory; the flat raw-data
 # files are facility-summed and carry no unitId.
 UNIT_LEVEL_DIR: Path = RAW_DATA_DIR / "campd-unit-level"
+
+# --short-windows mode: the standard overlay's duration floor
+# (outages.UNIT_OUTAGE_MIN_DAYS = 5) is this mode's hard CAP, so the short
+# extract and the standard extract are disjoint by construction.
+SHORT_WINDOW_MAX_DAYS: int = 5
+# Baseload guard for short windows — same constant/philosophy as the
+# partial-outage detector's _BASELOAD_CF (scripts/derive_partial_outages.py):
+# only units that normally run near their ceiling qualify, because a cycling
+# unit's brief stop can be economic dispatch while a baseload unit's 1-5 day
+# full stop (given 10+ h starts and take-or-pay fuel) is a forced event.
+SHORT_BASELOAD_CF: float = 0.55
 
 # The revealed-availability (high-load) filter and its constants
 # (HIGH_LOAD_PCTL, MIN_INMERIT_HOURS, high_load_mask) are shared with the
@@ -311,6 +334,19 @@ def main() -> None:
     ap.add_argument("--iso", default="ERCOT")
     ap.add_argument("--min-outage-days", type=float, default=5.0)
     ap.add_argument(
+        "--short-windows",
+        action="store_true",
+        help="Derive the SHORT (< 5-day) baseload-coal window companion file "
+        "instead of the standard >= 5-day extract: coal units only, unit "
+        "annual CF >= 0.55 (the partial-outage detector's baseload guard — a "
+        "cycling unit's brief stop can be economics; a baseload unit's cannot), "
+        "windows capped below the standard overlay's 5-day floor so the two "
+        "files are disjoint, and the revealed-availability in-merit filter "
+        "always enforced (the full-stop override never engages below 5 days). "
+        "min-outage-days defaults to 1.0 in this mode; output defaults to "
+        "campd-unit-outages-short[-{ISO}].csv.",
+    )
+    ap.add_argument(
         "--no-inmerit-filter",
         action="store_true",
         help="Disable the revealed-availability filter (keep every detected "
@@ -378,14 +414,38 @@ def main() -> None:
     args = ap.parse_args()
     if args.no_fullstop_override:
         args.fullstop_override_days = 10**9
+    if args.short_windows and args.min_outage_days == 5.0:
+        args.min_outage_days = 1.0  # the mode's floor; the 5-day cap is fixed
+    if args.short_windows and args.min_inmerit_hours == MIN_INMERIT_HOURS:
+        # The parent gate's 24 h floor is sized for >= 5-day (>= 120 h) spans —
+        # a ~20% overlap fraction. Keep the same fraction for the mode's
+        # minimum span (24 h): 6 high-net-load hours. Explicit
+        # --min-inmerit-hours still wins.
+        args.min_inmerit_hours = 6
     min_outage_hours = int(round(args.min_outage_days * 24))
+    # Short mode: windows must stay strictly below the standard overlay's
+    # UNIT_OUTAGE_MIN_DAYS floor so the two extracts are disjoint by
+    # construction (outages.unit_outage_short_derate_factors re-enforces it).
+    short_max_hours = SHORT_WINDOW_MAX_DAYS * 24 if args.short_windows else None
+    if args.short_windows and min_outage_hours >= (short_max_hours or 0):
+        raise SystemExit(
+            "--short-windows requires --min-outage-days < "
+            f"{SHORT_WINDOW_MAX_DAYS} (got {args.min_outage_days})"
+        )
     iso = args.iso.upper()
     if args.out is None:
-        fname = (
-            "campd-unit-outages.csv"
-            if iso == "ERCOT"
-            else f"campd-unit-outages-{iso}.csv"
-        )
+        if args.short_windows:
+            fname = (
+                "campd-unit-outages-short.csv"
+                if iso == "ERCOT"
+                else f"campd-unit-outages-short-{iso}.csv"
+            )
+        else:
+            fname = (
+                "campd-unit-outages.csv"
+                if iso == "ERCOT"
+                else f"campd-unit-outages-{iso}.csv"
+            )
         args.out = str(RAW_DATA_DIR / fname)
 
     # Each facility's model plant group (the LP bin the derate routes into).
@@ -710,6 +770,16 @@ def main() -> None:
                     )
                     if ugroup not in QUALIFYING_PLANT_GROUPS:
                         continue
+                    # Short-windows mode: baseload coal only. A cycling unit's
+                    # brief stop can be economics; a baseload (annual CF >=
+                    # SHORT_BASELOAD_CF) coal unit's 1-5 day full stop cannot
+                    # (10+ h starts, take-or-pay fuel) — the same guard the
+                    # partial-outage detector uses (_BASELOAD_CF).
+                    if args.short_windows:
+                        if not unit_is_coal[uid]:
+                            continue
+                        if float(np.mean(gross)) < SHORT_BASELOAD_CF * detect_cap:
+                            continue
                     # Coal (baseload): a sustained low-output gap is an outage.
                     # Everything else (load-following CC / gas-steam): only a
                     # genuine dead span — no output at all — counts, via the
@@ -723,6 +793,19 @@ def main() -> None:
                         windows = detect_outages_eventbased(
                             gross, detect_cap, min_outage_hours, ST_GAS_CF_PEAK
                         )
+                    if short_max_hours is not None:
+                        # Keep only sub-floor windows; >= 5-day spans belong to
+                        # the standard extract (disjointness by construction).
+                        # The cap tests the ROUNDED duration the loader filters
+                        # on (< UNIT_OUTAGE_MIN_DAYS), so a 119.5 h span that
+                        # would round to 5.0 days is not emitted into a crack
+                        # where both loaders drop it.
+                        windows = [
+                            (s, e)
+                            for s, e in windows
+                            if (e - s) < short_max_hours
+                            and round((e - s) / 24.0, 1) < SHORT_WINDOW_MAX_DAYS
+                        ]
                     if not windows:
                         continue
                     clock = pd.date_range(f"{year}-01-01", horizon_end, freq="h")
@@ -811,7 +894,9 @@ def main() -> None:
     # Plants that stopped filing F923 but still report CAMPD gross (Colver,
     # Cordova) are NOT flagged: the benchmark backfills them and they
     # genuinely serve the grid. One full-year window per plant-year.
-    if iso != "ERCOT":
+    if iso != "ERCOT" and not args.short_windows:
+        # The net-zero full-year fallback belongs to the standard extract
+        # only — the short file carries nothing but sub-5-day windows.
         e923 = pd.read_parquet(
             PROCESSED_DIR / "eia923_monthly_generation.parquet",
             columns=["plant_id", "netgen_annual_mwh", "year"],
