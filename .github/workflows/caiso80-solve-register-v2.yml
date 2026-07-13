@@ -1,0 +1,153 @@
+# One-shot v2: solve the caiso-80 (supply-consistent honest demand) A/B probe
+# pair (main + zero-forcing ablation twin) on CI and register both on the
+# backcast dashboard as PROBES — Data-API-ONLY publish (caiso-77 v2 pattern:
+# no `git commit`/`git push` from the runner at any step, so the
+# bulk-merge-auto-runs race that merged+deleted this branch mid-run-1 cannot
+# strand a publish; the uploader recreates the branch off main if it was
+# merged away).
+#
+# v1 postmortem (run 29222546770): the v1 core patch + derived artifact were
+# committed by run 1's early git-push steps and auto-merged to main (PR
+# #2165) before the solves finished; run 1 then died at its prune step (the
+# branch was deleted under it) — by design nothing mis-scored was published.
+# The v1 gate fix made the LP solve on the honest series but left the
+# orchestrator's OWN demand load raw, so system.parquet's demand column (and
+# the payload's load-weights, i.e. the scored C3a weighting) rode the corrupt
+# cell. This v2 run applies the small remaining delta
+# (scripts/probes/_caiso80_v2.patch.xz.b64, run_calibration_full.py only):
+# the orchestrator loads the honest series too, so must-run derivation, the
+# persisted demand column, the payload load-weights, and the LP all ride ONE
+# demand basis; the realign-only path keeps its historical caiso-75..78
+# behavior. The patch is applied IN-WORKSPACE (never committed by git); the
+# patched run_calibration_full.py rides the final Data API commit as an
+# --extra so the branch stays the reproducible source of the registered runs.
+#
+# The caiso-74 inert-probe pair was pruned from the registry by the session
+# (top-15 retention) before this workflow was pushed.
+name: caiso80-solve-register-v2
+
+on:
+  push:
+    branches:
+      - claude/caiso-80-c3a-decomposition-fm9460
+    paths:
+      - .github/workflows/caiso80-solve-register-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  solve-register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply the caiso-80 v2 delta patch (sha-gated, in-workspace only)
+        run: |
+          set -euo pipefail
+          base64 -d scripts/probes/_caiso80_v2.patch.xz.b64 | xz -d > /tmp/caiso80_v2.patch
+          echo "905e60a7896769fceb4dea8ebfa8cff91e13709024739411ee7c2ab2ce4693b3  /tmp/caiso80_v2.patch" | sha256sum -c -
+          git apply /tmp/caiso80_v2.patch
+          git status --short
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install openpyxl pytest
+
+      - name: Regression-test the demand seam
+        run: |
+          python -m pytest tests/test_caiso_supply_consistent_demand.py \
+            tests/test_caiso_demand_clock.py tests/test_config.py -q
+
+      - name: Curate clean partitions the recipe reads
+        run: |
+          set -euo pipefail
+          # data/clean is derived/gitignored — a fresh checkout has neither
+          # partition. Without capacity-deliverability the keeper's published
+          # MIC seam supersession silently skips (caiso-69 precedent).
+          PYTHONPATH="$PWD" python scripts/curate_capacity_deliverability.py --isos CAISO
+
+      - name: Solve caiso-80 main (2023-2025)
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: python scripts/probes/_caiso80_supply_consistent_demand_ab.py main
+
+      - name: Solve caiso-80 ablation twin
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: python scripts/probes/_caiso80_supply_consistent_demand_ab.py ablation
+
+      - name: Tripwire — the LP must have served the honest demand
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          # The v1 defect fingerprint: dispatch energy at the raw cell level
+          # (~218/226/226 TWh) instead of honest (~208/213/207 incl. storage
+          # losses). Fail loudly if the recorded system demand is not the
+          # honest series.
+          import pandas as pd
+          s = pd.read_parquet(
+              "results/calibration/caiso80_supply_consistent_demand/system.parquet"
+          )
+          p1 = s[s["pass"] == "P1"]
+          want = {2023: 207.40, 2024: 212.19, 2025: 205.59}
+          for y, w in want.items():
+              got = p1[p1["year"] == y]["demand"].sum() / 1e6
+              assert abs(got - w) < 1.0, f"{y}: system demand {got:.2f} != honest {w}"
+              print(f"{y}: system demand {got:.2f} TWh == honest basis OK")
+          PY
+
+      - name: Write probe attestations
+        run: python scripts/probes/_caiso80_attestation.py
+
+      - name: Score legitimacy diagnostics (both bundles)
+        env:
+          MALLOC_ARENA_MAX: "2"
+        run: |
+          set -uo pipefail
+          # legitimacy_diagnostics.py exits 1 when a gate fails; the artifact
+          # is written before the exit, so tolerate the exit code and only
+          # fail the job if an artifact is genuinely missing/empty
+          # (caiso67/69/7475/76/77/78-solve-register precedent).
+          for b in caiso80_supply_consistent_demand caiso80_supply_consistent_demand-ablation; do
+            python scripts/legitimacy_diagnostics.py \
+              --bundle "results/calibration/$b" \
+              --iso CAISO --years 2023 2024 2025 \
+              --json-out "results/calibration/$b/legitimacy_diagnostics.json" || true
+            test -s "results/calibration/$b/legitimacy_diagnostics.json"
+          done
+
+      - name: Register both runs on the dashboard
+        run: |
+          set -euo pipefail
+          python scripts/dashboard_add_run.py \
+            --label "caiso 80 supply demand" \
+            --bundle results/calibration/caiso80_supply_consistent_demand | tee /tmp/r80m.out
+          python scripts/dashboard_add_run.py \
+            --label "caiso 80 supply demand ablation" \
+            --bundle results/calibration/caiso80_supply_consistent_demand-ablation | tee /tmp/r80a.out
+          echo "RID80M=$(grep '^RUN_ID=' /tmp/r80m.out | cut -d= -f2)" >> "$GITHUB_ENV"
+          echo "RID80A=$(grep '^RUN_ID=' /tmp/r80a.out | cut -d= -f2)" >> "$GITHUB_ENV"
+
+      - name: Upload per-run files via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_multi.py \
+            --rid "$RID80M" --bundle results/calibration/caiso80_supply_consistent_demand \
+            --rid "$RID80A" --bundle results/calibration/caiso80_supply_consistent_demand-ablation \
+            --branch claude/caiso-80-c3a-decomposition-fm9460 \
+            --extra scripts/run_calibration_full.py \
+            --message "results: register caiso-80 (supply-consistent honest demand, owner-signed Option A) PROBE + zero-forcing twin; run_calibration_full demand-basis consistency (v2 delta) [skip ci]"
