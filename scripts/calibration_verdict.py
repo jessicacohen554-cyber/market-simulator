@@ -78,8 +78,16 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # realism — a byte-perfect ERCOT 2023 model scores +33.5% against its own
 # actual on the old basis (docs/rubric-v24-price-basis-memo-2026-07.md,
 # docs/handoffs/ercot-ordc-capdual-adder-2026-07.md §4). ISO-years without
-# lw fields fall back to the legacy basis with an explicit label).
-RUBRIC_VERSION = 2.4
+# lw fields fall back to the legacy basis with an explicit label);
+# v2.5 = the 2026-07-13 owner amendment: C2 gates ONLY fully-reported
+# EIA-923 families — EIA-923 is the C2 source of truth, and a
+# preliminary-vintage family (incomplete 923 booking, e.g. every ISO's
+# 2025) is NOT gated against any fallback basis (the G-21b 930-derived
+# family total or the CAISO CEMS anchor): those rows print as SKIPPED
+# diagnostics and re-gate when the final vintage lands. Mirrors C1's
+# incomplete-class skip — an incomplete benchmark can fabricate a miss in
+# either direction, so it is evidence, not a gate.
+RUBRIC_VERSION = 2.5
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -807,6 +815,15 @@ def score_sysvol(
 ) -> list[dict]:
     """C2 — gas/coal family system volume, folded into the per-class universal gate.
 
+    **Rubric v2.5 (owner amendment 2026-07-13): C2 gates ONLY fully-reported
+    EIA-923 families.** EIA-923 is the C2 source of truth; a
+    preliminary-vintage family (incomplete 923 booking) is NOT gated against
+    any fallback basis — the G-21b 930-derived family total and the CAISO
+    CEMS anchor below now print as SKIPPED diagnostics only, and the family
+    re-gates when the final vintage lands. Mirrors C1's incomplete-class
+    skip: an incomplete benchmark can fabricate a miss in either direction,
+    so it is evidence, not a gate.
+
     For COMPLETE-VINTAGE years a family passes iff EVERY constituent fossil class
     is within the universal per-class gate (|model−actual| within the C1 volume
     band AND share within ±FUELMIX_SHARE_PP) — the same scale-relative band C1
@@ -914,11 +931,10 @@ def score_sysvol(
                     "(930 NG cell corrupted; FINDING 2026-07-12)"
                 )
                 err = _pct(m_fam, actual) if actual else None
-                status, classification = (
-                    (SKIPPED, None)
-                    if err is None
-                    else _band_result(abs(err), SYSVOL_TOL, SYSVOL_COMMERCIAL)
-                )
+                # Rubric v2.5 (owner amendment 2026-07-13): a preliminary-923
+                # vintage is never gated — the anchor comparison prints as a
+                # SKIPPED diagnostic and re-gates when the final vintage lands.
+                status, classification = SKIPPED, None
                 out.append(
                     {
                         "criterion": "sysvol",
@@ -928,7 +944,8 @@ def score_sysvol(
                         "classification": classification,
                         "metric": (
                             f"{fam} family grid-delivered TWh "
-                            "(preliminary vintage, CEMS-anchored)"
+                            "(preliminary vintage, CEMS-anchored diagnostic — "
+                            "not gated, rubric v2.5)"
                         ),
                         "model": round(m_fam, 2),
                         "actual": round(actual, 2) if actual else None,
@@ -979,12 +996,10 @@ def score_sysvol(
                 )
             reconciled = bool(actual and a923_fam < VINTAGE_RECONCILE_FRAC * actual)
             err = _pct(m_fam, actual) if actual else None
-            if err is None:
-                status, classification = SKIPPED, None
-            else:
-                status, classification = _band_result(
-                    abs(err), SYSVOL_TOL, SYSVOL_COMMERCIAL
-                )
+            # Rubric v2.5 (owner amendment 2026-07-13): a preliminary-923
+            # vintage is never gated — the fallback comparison prints as a
+            # SKIPPED diagnostic and re-gates when the final vintage lands.
+            status, classification = SKIPPED, None
             out.append(
                 {
                     "criterion": "sysvol",
@@ -992,7 +1007,10 @@ def score_sysvol(
                     "year": year,
                     "status": status,
                     "classification": classification,
-                    "metric": f"{fam} family grid-delivered TWh (preliminary vintage)",
+                    "metric": (
+                        f"{fam} family grid-delivered TWh (preliminary "
+                        "vintage diagnostic — not gated, rubric v2.5)"
+                    ),
                     "model": round(m_fam, 2),
                     "actual": round(actual, 2) if actual else None,
                     "tol": (
