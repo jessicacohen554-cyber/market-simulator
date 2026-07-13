@@ -43,6 +43,7 @@ data/raw/pjm-da-virtuals/*
 # energy-offer corpus above; fetch + rebuild:
 # scripts/build_nyiso_proxy_lmp_neiso.py (docstring has the curl loop).
 data/raw/lmp-data/NYISO/*damlbmp_zone_csv.zip
+data/raw/lmp-data/NYISO/*realtime_zone_csv.zip
 
 # Derived binned-fleet cache (side output of the fleet loader)
 data/raw/_processed-legacy/*.parquet
