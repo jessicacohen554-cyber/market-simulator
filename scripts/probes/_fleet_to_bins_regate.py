@@ -42,9 +42,11 @@ import run_calibration_full as rcf  # noqa: E402
 ROOT = Path(__file__).resolve().parents[2] / "results" / "calibration"
 
 # ISO -> (keeper bundle, new probe bundle dir). Session numbering: next free
-# per-ISO number at authoring time (pjm-104 / nyiso-61 / neiso-58 highest).
+# per-ISO number at authoring time (nyiso-61 / neiso-58 highest; PJM is 106 —
+# a concurrent session minted 2026-07-13-pjm-105-symmetric-net while this
+# driver's first launch was in flight, so 105 is claimed).
 REGATES: dict[str, tuple[str, str]] = {
-    "PJM": ("pjm98_cc_mustrun", "pjm105_cc_hr_regate"),
+    "PJM": ("pjm98_cc_mustrun", "pjm106_cc_hr_regate"),
     "NYISO": ("nyiso61_downstate_import", "nyiso62_cc_hr_regate"),
     "NEISO": ("neiso56_reserve_coopt", "neiso59_cc_hr_regate"),
 }
