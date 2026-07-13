@@ -285,6 +285,56 @@ ablation twin; **keeper candidate with a qualified promotion recommendation** �
 `keepers.json` unchanged, promotion is the owner's call (miso-61 pattern). LOYO by
 construction (a zero-scalar boolean routing each plant's own measured contract share).
 
+### 2026-07-13 — PJM — G-22 lever B FINAL FORM (pjm-105 SYMMETRIC net DA-virtual layer): the clamp's one-sided phantom replaced by the whole measured net(λ) curve — C1 ALL-PASS (16/16, free 12/12), C7 clears, C2 2025 coal +5.4% ≤ the keeper's +5.8% bar; **keeper recommendation FLAGGED to owner** (keepers.json untouched)
+
+Full analysis: `docs/FINDING-pjm-midmerit-level-2026-07.md` §7. Owner
+decision (2026-07-13, lever-B charter): the clamped net-DEC form is NOT
+keeper-eligible — diagnostic scaffolding whose work was done. Build:
+`data.virtual_bids` rebuilt (pjm-105) so `pjm_da_virtual_bids` renders the
+WHOLE measured per-hour `net(λ) = Σ DEC≥λ − Σ INC≤λ` curve symmetrically —
+`net > 0` → the byte-identical DEC withdrawal rungs; `net < 0` → INC-form
+net-supply rungs (new `VIRTUAL_INC` group, fuel_type `import`, no bench
+class; capacities = the increments of `|net(λ)|` above the crossing λ0,
+prices = the measured MW-weighted quantiles, 8 rungs/side resolution-only).
+DEC prices ≤ λ0 ≤ INC prices by construction, so the sides can never clear
+against each other; endogenous clearing both sides. NOT pjm-101: the supply
+side is bounded by the measured NET position (≈ 0 annual), enters at
+measured submitted prices, never gross INC curves (module docstring carries
+the distinction). One guard, mirroring the DEC VOLL cap: INC offers floored
+at the dump-safe credit bound — verified structural no-op (min measured
+rung −$1.31 vs ≈ −$27). Zero fitted scalars; zero flag changes vs pjm-104.
+
+- **Pre-registered expectation verified no-LP BEFORE the solve**
+  (`scripts/probes/_pjm105_symmetric_equilibrium.py`): the rendered rungs
+  cleared at actual DA prices net to **−0.68/−0.95/+1.32 TWh** (2023/24/25)
+  vs the finding-§2 unclamped −0.6/−0.9/+1.3 (clamped equivalent
+  +10.1/+14.7/+17.2); INC incidence lands overnight/evening (h19–02).
+- **Run `2026-07-13-pjm-105-symmetric-net`**
+  (`results/calibration/pjm105_symmetric_net`, pjm-104 recipe via
+  `_pjm105_symmetric_net_probe.py`): **C1 PASS 16/16 gated rows, free-class
+  12/12** — 2024 CC_REGULAR +9.07 → **−1.78**; 2023 CT +3.45 → +0.67, BIT
+  +1.85 → −1.21, CC +2.27 → −5.93; ST_GAS 2024 −3.93 (in-band). **C2 2025
+  coal family +8.0% → +5.4%** (meets the ≤ +5.8% de-regression bar). C3a
+  PASS (DA-diag +0.8/−5.3/−11.4% — 2023 near-exact; 2024/25 now read LOW:
+  the flagged soft spot, inside the band). C3b PASS. **C7 flips FAIL→PASS**
+  (the pjm-104 2023 CT off-peak flatness cv 0.495 clears — the INC side
+  restores off-peak variability). C8 PASS (2024 CT 16.1%
+  grounded-above-budget, clean pass per v2.2). C4/C5a PASS. C3c 2025 FAIL
+  unchanged (17h vs 51h >$200 — the untouched scarcity-tail layer; NOT
+  ledgered: a model miss, not a measured-input limitation). Determination
+  NOT-YET on C3c alone — the same open item the keeper line carries.
+- LP cleared virtuals: DEC 12.5/16.1/20.0, INC 18.3/20.3/18.1, net
+  −5.8/−4.2/+1.9 TWh — INC-heavier than the actual-DA equilibrium in
+  2023/24 (model trough duals sit above actual, so more net supply clears;
+  endogenous, nothing pinned).
+- Governance: `calibration_attestation.json` (DOF ledger = pjm-98's ten
+  entries verbatim + four measured/cited G-22 entries, zero new
+  residual-identified); D-3 zero-forcing ablation twin
+  `2026-07-13-pjm-105-symmetric-net-ablation` registered alongside.
+  **Keeper recommendation flagged to the owner** — pjm-105 strictly
+  dominates pjm-104 on every gated criterion and meets the charter's
+  promotion bar; `keepers.json` is owner-only and untouched.
+
 ### 2026-07-13 — PJM — G-22 lever C EXECUTED (pjm-103 CT fast-start amortization / pjm-104 + LONG_RUN measured mid-curve floor): 2023 C1 ALL-PASS + C3a/C3b PASS; the offer LEVEL is exhausted — the residual C1 miss is the net-virtual clamp's one-sided phantom (mechanism form, owner adjudication filed); keeper stays pjm-98
 
 Full analysis: `docs/FINDING-pjm-midmerit-level-2026-07.md`. Runs (both
