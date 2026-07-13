@@ -1,4 +1,14 @@
 iso,delivery_year,season,area,area_type,metric,value_mw,value_pu,source_doc,source_page
+NYISO,2018/2019,annual,NYC,locality,requirement,,0.805,20182019-NYSRC-RELIABILITY-RULE-A.2-REQUIREMENTS-R1-R2-R3-COMPLIANCE-SUBMITTAL.pdf,1
+NYISO,2018/2019,annual,Long Island,locality,requirement,,1.035,20182019-NYSRC-RELIABILITY-RULE-A.2-REQUIREMENTS-R1-R2-R3-COMPLIANCE-SUBMITTAL.pdf,1
+NYISO,2018/2019,annual,G-J,locality,requirement,,0.945,20182019-NYSRC-RELIABILITY-RULE-A.2-REQUIREMENTS-R1-R2-R3-COMPLIANCE-SUBMITTAL.pdf,1
+NYISO,2022/2023,annual,NYC,locality,requirement,,0.812,LCR2022-Report.pdf,2
+NYISO,2022/2023,annual,Long Island,locality,requirement,,0.995,LCR2022-Report.pdf,2
+NYISO,2022/2023,annual,G-J,locality,requirement,,0.892,LCR2022-Report.pdf,2
+NYISO,2022/2023,annual,NYC,locality,import_limit,2900,,LCR2022-Report.pdf,4
+NYISO,2022/2023,annual,Long Island,locality,import_limit,325,,LCR2022-Report.pdf,4
+NYISO,2022/2023,annual,G-J,locality,import_limit,3425,,LCR2022-Report.pdf,4
+NYISO,2022/2023,annual,NYCA,rto,system_requirement,,0.196,LCR2022-Report.pdf,2
 NYISO,2023/2024,annual,NYC,locality,requirement,9224,0.817,2023-LCR-Report.pdf,5
 NYISO,2023/2024,annual,Long Island,locality,requirement,5400,1.052,2023-LCR-Report.pdf,2
 NYISO,2023/2024,annual,G-J,locality,requirement,13162,0.854,2023-LCR-Report.pdf,5
