@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-13-pjm-103-ct-faststart",
+ "label": "pjm 103 ct faststart",
+ "date": "2026-07-13",
+ "shorthand": "pjm-103-ct-faststart",
+ "definition": "(PROBE) PJM 103 probe: pjm-98 keeper recipe (byte-faithful replay off its meta.json) + the CT fast-start offer LEVEL: tranche_startup_amortization + tranche_startup_measured_runs on the simple-cycle CT econ/peak tranches (and CC duct peak) — the cited NREL start cost amortized over the plant's CAMPD-measured median start-to-stop run (campd_ct_run_lengths_PJM.csv), the fuel-price-invariant commitment-cost component of the real CT offer stack (FERC Order 825 fast-start pricing analogue), plus the v4 condition-keyed horizon (campd_ct_run_bands_PJM.csv — a tight-hour engagement is a shorter commitment block). Grounding: the measured PJM offer corpus prices fast-start CTs at ~18-38x the delivered-gas day vs the model's 12.3-14.9x band; the gap is start/no-load recovery, not heat rate (docs/FINDING-pjm-offer-surface-noop-2026-07.md re-scoped levers; the pjm-101/102 HR-multiplier surfaces over-correct and stay off). Zero fitted scalars in the delta (rules 13/20/21). PLUS pjm_da_virtual_bids=True in the committed NET DA-virtual-demand form (net(λ)=Σ DEC≥λ − Σ INC≤λ, DEC-form withdrawal blocks, no supply injected) — the G-22 measured DA procurement depth whose C1 coal/peaker over-service this probe's offer level is scored against.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "PJM",
+ "file": "frontend/data/backcast/runs/2026-07-13-pjm-103-ct-faststart.js",
+ "bundle": "results/calibration/pjm103_ct_faststart_level"
+}

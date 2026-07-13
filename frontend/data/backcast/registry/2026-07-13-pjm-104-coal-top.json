@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-13-pjm-104-coal-top",
+ "label": "pjm 104 coal top",
+ "date": "2026-07-13",
+ "shorthand": "pjm-104-coal-top",
+ "definition": "(PROBE) PJM 104 probe: pjm-103 (pjm-98 keeper recipe + net DA virtual depth + CT fast-start startup amortization v3/v4 on CAMPD-measured run horizons) + the measured LONG_RUN top-of-curve floor: pjm_offer_midcurve_conditional scoped to segments=('LONG_RUN',) — coal/gas-steam econ+peak tranche rows floored at the measured capacity-share-matched offer level of the extended mid-curve surface (shares grid + 0.975/0.995, the last-5% wall the decile grid missed; derive_pjm_offer_midcurve.py re-derived from the 36-month DataMiner2 corpus). CT_FAST rows stay owned by the startup amortization and CC_LIKE by the keeper curve (rule 19 scope — the pjm-101/102 CT double-pricing cannot recur). Zero fitted scalars in the delta (rules 13/20/21: submitted ex-ante measured offers, frozen against residuals).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "PJM",
+ "file": "frontend/data/backcast/runs/2026-07-13-pjm-104-coal-top.js",
+ "bundle": "results/calibration/pjm104_coal_top"
+}
