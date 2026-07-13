@@ -3428,6 +3428,22 @@ class ScenarioConfig:
     # miso-coal-offpeak-hold-2026-07.md.
     coal_bit_committed_takeorpay: bool = False
 
+    # Same grounded committed-band take-or-pay discount as
+    # ``coal_bit_committed_takeorpay`` but applied to EVERY contracted coal
+    # supply (not just bituminous): the sunk-contract logic covers PRB /
+    # subbituminous / lignite / waste equally when they are contracted (MISO
+    # coal is ~100% contracted across supplies), so their `_committed` bands
+    # also pass ``1 − contract_share``. Prevents the BIT-only discount from
+    # cannibalizing PRB's merit-order slot (the miso-62 BIT-only build flipped
+    # COAL_PRB from a marginal C1 pass to fail as cheap BIT displaced it): with
+    # all contracted coal defending its committed baseload, total coal rises
+    # toward actual instead of redistributing between supplies. Bounded below
+    # by each supply's own passthrough curve; econ*/peak keep full delivered
+    # cost. Grounded per plant (EIA-923 Schedule-5), zero fitted parameters.
+    # Requires `coal_takeorpay_from_data`. Default off. Supersedes
+    # `coal_bit_committed_takeorpay` when both are set (the union scope).
+    coal_committed_takeorpay_all: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
@@ -6085,6 +6101,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_bit_passthrough_gas_slope": 3,
     "coal_econ_srmc_bound": 3,
     "coal_bit_committed_takeorpay": 3,
+    "coal_committed_takeorpay_all": 3,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,
