@@ -40,6 +40,107 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-12 — CAISO — caiso-79 STEP-0 (Greater Bay LCT bind test): the NP15 → GREATER_BAY split REFUTED ex-ante — the measured import cap cannot bind; lane redirected to a measured local-commitment driver (design filed, NO solve)
+
+The CT_PEAKER local-commitment granularity lane's STEP-0 gate (plan §3),
+decided by measurement before any build
+(`scripts/probes/_caiso79_step0_greaterbay_bind.py`, no LP):
+
+- **Data completion (committed):** Greater Bay `peak_load` 11,136/11,081/
+  11,992 MW (Final LCT Table 3.3-29/3.3-27 Load+Losses+Pumps) + NP26 zonal
+  rows (Table 3.2-1) into `capacity-deliverability/caiso/caiso.csv`;
+  Greater Bay membership (77 plants, 6,969 MW) into
+  `lcr_area_membership_CAISO.csv` via `derive_lcr_membership.py` — county
+  rule for the five core Bay counties + LCT §3.3.5.1 substation-rule
+  overrides (**Moss Landing bus is IN the area**; Lambie SW Sta in — the
+  Solano LM6000 trio). Existing LA Basin/SDGE rows byte-unchanged; Greater
+  Bay is deliberately NOT registered as a `LocalCapacityAreaSpec`, so every
+  solve-path consumer is untouched.
+- **The gate:** `import_cap = peak_load − LCR` = 3,824/3,752/4,551 MW
+  (34–38 % of pocket peak — between LA_BASIN's never-binding 61 % and
+  SDGE's binding 30 %). Ex-ante bind test on measured hourly data (PGE-TAC /
+  EIA-930 load share, CAMPD in-pocket supply, LCT At-Peak non-CEMS credits):
+  with non-CT thermal at 93 % CAPACITY the residual needing CT is positive
+  in **≤ 0.1 % of hours** in every year (2024 max +20 MW; without any
+  battery credit 0.4 %, ≤ 1 GW) — while the real GB CTs are ON in
+  **22–43 % of evening hours** (p90 402/309/87 MW) and even reality's own
+  non-CT dispatch leaves a positive residual in only 1–11 % of them. The
+  measured cap cannot move 3–4 TWh/yr of CT, cannot form the 2024/25 local
+  C3c tail — and reality's CT commitment is demonstrably NOT
+  energy-cap-driven: it is contingency positioning / local-RA commitment
+  (RMR, exceptional dispatch), the caiso-71 §3 conclusion with the
+  import-cap alternative now measured and eliminated. The caiso-78 model
+  already serves the pocket with comparable local thermal (evening p50
+  3,149/3,203/2,917 MW vs measured 3,325/2,866/2,318) — the miss is the
+  MIX (model CC vs real CT starts), not the import share.
+- **Fork taken (pre-registered):** do NOT build the split — an import wall
+  tuned tight enough to force CT would be structurally unreal (rule 1).
+  **No caiso-79 solve was run.** The lane redirects to a measured
+  local-commitment driver on the pocket's named CT units — min-gen window
+  HE15–23, driver = pocket net-load ramp via a CAMPD-fitted response curve
+  (rule-13 construction, regenerates forward), D4_WINDOWS entry in the same
+  PR, LOYO-scored, `ra_mustoffer_bridge` non-stacking — design filed for
+  owner review BEFORE implementation:
+  `docs/handoffs/caiso-local-commitment-driver-design-2026-07.md`.
+  Sequencing: the honest-bench C3a/CC re-tune (plan §4) lands first; the
+  driver sizes against whatever CT deficit survives it. Full evidence:
+  `results/calibration/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md`.
+
+### 2026-07-12 — CAISO — bench-basis rework EXECUTED (930-NG FINDING §5, owner-signed): CEMS-anchored fossil actual, caiso-78 + twin re-scored in place — C4-2024 flips PASS, C5a-2025 +25.0→+14.6%, C2-2025 −10.2% under → +19.3% over (honest), **C1 CC reopens FAIL (+7.7/+10.6 TWh) as pre-registered**
+
+Owner sign-off obtained this session on the
+`FINDING-caiso-c2c4-bench-basis-930ng-2026-07-12.md` §5 design: scorer/bench
+layer, CAISO only, NO re-solve. The CISO EIA-930 NG cell carries a growing
+noon-peaked solar-shaped block from ~2024-05 (+4.2/+7.9 TWh unexplained in
+2024/25 vs CEMS + cogens + fold-in); the G-21 combined reconcile was scaling
+the whole CAISO fossil classFull to it (×1.104/×1.211/×1.438).
+
+- **Mechanics** (all committed, rule 23: benchmark-data correction citing a
+  demonstrated source defect, never a residual-chase):
+  `render_calibration_html` writes CEMS-anchor fields into the CAISO bench
+  `e930` (`gas_cems_grid` = CAMPD-net bench-gas − BTM; `gas_cogen_grid` = the
+  923 non-CEMS gas-class block, 2025 carrying 2024's complete-vintage block;
+  `fossil_cems_grid` = + the 923 coal grid block) and
+  `reconcile_vintage_classes` CAPS the combined reconcile at the anchor for
+  `EIA930_NG_CELL_CORRUPT = {CAISO}` (one-directional; other ISOs carry no
+  anchor and are byte-unchanged). `calibration_verdict`: the C2 gas
+  preliminary fallback gates on the anchor instead of the 930 cell; C4 gas
+  r/NRMSE is recomputed from the committed hourly series (payload
+  `plants[].m` vs bench `plants[].campd` + flat cogen block) from vintage
+  2024 (2023 keeps 930 — the bases agree pre-onset); the C5a preliminary
+  vintage is rebuilt at complete coverage (full-plant fossil scaled to the
+  CEMS anchor before the intensity multiply — the caiso-76 §4 filing).
+  `scripts/regen_caiso_bench_cems.py` splices the three committed parts
+  (guards: the UNCAPPED recompute must reproduce the committed classFull;
+  the CEMS gas block must match the FINDING §3 measured values). Tests:
+  `TestCemsAnchorCap` (4) + CEMS sysvol/dispatch-corr verdict tests (5).
+- **Bench moves**: classFull CC_REGULAR 57.21/55.64/53.84 →
+  **51.84/45.99/40.59** TWh (2023/24 land inside the ±3% deadband of the
+  anchor — no scale at all; 2025 scales ×1.084 to the anchored 51.67 instead
+  of ×1.438 to the corrupt 68.53); 2025 CO2 actual 21.68 → 23.65 Mt
+  (complete-coverage rebuild).
+- **caiso-78 re-score** (`calibration_verdict.py --write-metrics`, keeper
+  unchanged, v2.4 determination stays NOT-YET): C4 gas r/NRMSE
+  0.888·0.249 PASS / **0.899·0.279 PASS** (was FAIL-family) / 0.829·0.38
+  (r floor clears; 2025 now FAILs on NRMSE alone = the honest ~+10 TWh level
+  miss, not the noon corruption). C5a +3.2% PASS / +9.1% CAVEAT / **+14.6%**
+  (was +25.0 on the understated actual). C2-2025 **+19.3% over** (was −10.2%
+  fabricated under) — the same story C1 tells. **C1 CC_REGULAR +2.32/+0.97
+  → +7.69/+10.62 TWh FAIL (2023/24)** — the pre-registered rule-14
+  counter-move, disclosed at sign-off: the inflated actual was flattering
+  the CC level; the CC lane reopens honestly (twin: +8.48/+12.12). C7
+  CT_PEAKER drops below the 2% materiality floor on the honest actuals
+  (SKIPPED — reported, not gated; D-1 profile r 0.899/0.822/0.724). C6/C8
+  PASS hold. All other C1 classes in band (10/12 cells).
+- **Reading**: four bench-side FAILs are retired or honestly re-based
+  (C2-2025, C4-2024, C4-2025, C5a-2025), and the ONE real model miss is now
+  visible on a single consistent basis — ~8–11 TWh/yr of model CC the
+  measured fleet didn't run, the same root-cause family as the C3a/C3b body
+  overprice. That is the open CC/price-formation lane (caiso-79 plan §4
+  decomposition), NOT a reason to revert the honest benchmark (rule 14).
+  Earlier CAISO bundles' metrics sidecars predate this rework and re-score
+  on the new basis only when next touched.
+
 ### 2026-07-12 — CAISO — caiso-78 (fleet_to_bins CC heat-rate/capacity-basis fix): C1 FAIL→PASS, C5a improved, C3a pre-registered counter-move, **PROMOTED to keeper**; bench-basis 930 NG corruption filed
 
 Executes the code-level fix identified in
@@ -11428,3 +11529,75 @@ floor, or derive value changed (rules 13/21/23); the drag hinge, ST_GAS
 deltas, and `ercot_storage_as_deployment` untouched. Probe bundles
 (`ercot63_{keeper,bridge,bridge_md,bridge_md_nohorizon}_2023`) are 2023-only
 throwaways — never registered.
+
+## 2026-07-12/13 — MISO-61: RPE additive violation pricing built (lane 1 of the 2025 price side); the measured RDT binding record intaken as a clean datatype; C5c-2025 adjudicated basis-broken (ledgered); anchors held to the cent
+
+**Lane execution (miso-60 handoff, lanes in order).** (1) **RPE pinned to
+primary sources and BUILT**: RPE = Reserve Procurement Enhancement — MISO
+enforces subregional STR requirements "by enforcing reserve procurement
+enhancement (RPE) constraints over the RDT"; single published demand value
+$200/MWh; in the 2023-2025 design it applies ADDITIVELY with the RDT TCDC in
+real violations ($700 deep / $240 small-violation spreads; the IMM
+cap-at-$500 recommendation was NOT implemented in-window) — 2024 SOM §II.E
+p.9 / §III.B pp.51-52, IMM Summer-2025 quarterly ($41M RDT+RPE, +121% YoY).
+Mechanism `miso_rpe_pricing` (GATED default-off): `MISO_RPE_DEMAND_VALUE`
+added to both VIOLATION tiers' flow_cost in `transmission.apply_miso_rdt_tcdc`
+(free tier untouched — engages only in the constraint's own driver window;
+fails loud without `miso_rdt_tcdc`). Zero new scalars; the "RPE Only"
+STR-scarcity channel documented as a conservative one-way under-separation
+gap (no STR product in the LP). (2) **Hourly measured RDT limit intake
+re-verified DATA-BLOCKED** (Data Broker deprecated w/o archive; Data Exchange
+key-gated; pbc carries no limit MW; quarterly p.30 derate evidence is
+chart-only). The admissible series — the pbc BINDING record — intaken as the
+new `transfer-constraint-binding` clean datatype (MISO `{da,rt}_pbc`, market
+dates 2023-2025 only per rule 22; schema + per-ISO registry
+`scripts/lib/transfer_constraint_binding/` + `fetch_miso_pbc.py` +
+curation + tests + dictionary). VALIDATION ONLY (rule 13). Measured basis
+discovery: the SOM ">25% of RT intervals" is the RDT+RPE FAMILY; the
+RDT-proper record reads DA S→N 8/241/919 binding h (2023/24/25) with 2025's
+18 h at the $40 plateau — the 2025 S→N regime shift as an hourly series.
+New probe `_miso61_rdt_anchors.py` scores both bases and fixes the legacy
+probe's tier-rows basis (3× deflation where TCDC tiers exist).
+
+**Runs (registered + scored, rubric v2.4):** `2026-07-12-miso-61-rpe-pricing`
+— **NOT-YET, FAIL {fuelmix, sysvol, price_mean, price_shape, price_tail} —
+one FEWER than miso-60** (storage_shape → ledgered CAVEAT: the C5c-2025
+adjudication found the actual's monthly "shape" is the battery fleet's COD
+ramp, r=0.934 vs cumulative in-service MW, per-MW residual degenerate at
+CV 0.175 < 0.25 — FINDING-miso-c5c-storage-shape-basis-2026-07.md; ledgered
+2 of 3 budget). Every quoted metric IDENTICAL to miso-60 (C1 13/16 · 9/12;
+sysvol-2025 gas −5.5%; C3a-2025 −15.8%; C3b-2025 0.206; C3c 3h/0h; C5a
+−7.3/−7.4; C8 ST_GAS-2025 grounded PASS 36.6%). RDT anchors HELD to the cent
+(S→N mean-flowing 1599/1550/1083 vs 1600/1549/1083; sep-when-binding
+$2.62/$2.49; August clean). The RPE is surgically active in its window: ~30
+2024 hours repriced $40→$240-bound (max sep $195.5, Aug-2024 Plains monthly
++$0.07); 2023/2025 byte-identical — the model reaches the violation region
+only in the 2024 heat event; 2025's separation stays owned by the upstream
+S→N flow deficit (model 236 vs measured DA 919 binding h). Twin
+`2026-07-12-miso-61-rpe-pricing-ablation`: NOT-YET {fuelmix, sysvol,
+price_mean, price_tail} — sheds price_shape, drops C1 to 12/16 (the miso-60
+trade signature); delta ST_GAS +1.7/+1.8/+2.5 TWh + OTHER_FOSSIL from Plains
+coal/CC/CT/imports. DOF ledger 16 entries / 2 legacy residuals. LOYO: zero-
+scalar boolean arming one published tariff constant — by construction.
+
+**Ops notes:** container restarted mid-twin (killed the original run —
+the handoff's warning verified); the re-run on the rebased branch was
+validated by an EXACT-ZERO 2023-leg value diff (24.5M rows) vs the surviving
+pre-rebase partial, so the intervening main merges (incl. #2154 data
+caching) are solve-neutral for MISO and the twin is a clean A/B. Also: this
+container's clone was SHALLOW (--depth 1) — `git push` re-packed the whole
+repo and the gateway 413'd it; `git fetch --unshallow` restored delta packs
+and pushes flow normally (flagging for the push-mechanics guidance: "fresh
+branch off latest main" only avoids 413s on a FULL clone).
+
+**Recommendation to owner (rule 1):** miso-61 strictly dominates miso-60 on
+structural grounding — the market's real published RPE violation pricing
+added at an identical score with one fewer FAIL and both storage criteria
+honestly ledgered (same promotion pattern as miso-56→57). Keeper swap is the
+owner's call; keepers.json untouched this session. Next levers in order:
+commitment-posture window rows (COAL_BIT −15.7 both years / CT_PEAKER-2024 —
+now THE dominant free-C1 residual), the 2025-09-30 shortage-pricing redesign
+date-gate (REQUIRED before H1-2026 crossover / 2026+ forecast), the upstream
+S→N mid-merit economics (the RPE prices it once flow reaches the limit), and
+the deferred Midwest–South separation scored metric (the intaken pbc series
+is its measured side).
