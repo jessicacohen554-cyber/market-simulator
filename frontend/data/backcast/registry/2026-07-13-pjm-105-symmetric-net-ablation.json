@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-13-pjm-105-symmetric-net-ablation",
+  "label": "pjm 105 symmetric net ablation",
+  "date": "2026-07-13",
+  "shorthand": "pjm-105-symmetric-net-ablation",
+  "definition": "PJM 105 probe: the pjm-104 recipe (pjm-98 keeper recipe + net DA virtual depth + CT fast-start startup amortization v3/v4 on CAMPD-measured run horizons + the measured LONG_RUN top-of-curve floor) with the DA-virtual layer in its SYMMETRIC net form (pjm-105): the whole measured per-hour net(\u03bb) = \u03a3 DEC\u2265\u03bb \u2212 \u03a3 INC\u2264\u03bb curve rendered as DEC-form withdrawal rungs (net>0) plus INC-form net-supply rungs (net<0), endogenous clearing on both sides \u2014 replacing the one-sided clamp whose +10-17 TWh/yr phantom demand was the adjudicated C1 blocker (owner decision 2026-07-13: the clamp was diagnostic scaffolding, not keeper-eligible). The supply side is bounded by the measured NET position (\u22480 annual at actual DA prices), enters at measured submitted offer prices, and is not the condemned pjm-101 gross-INC construction. Zero fitted scalars in the delta (rules 1/13/20/21: submitted ex-ante measured curves, frozen against residuals).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-13-pjm-105-symmetric-net-ablation.js",
+  "bundle": "results/calibration/pjm105_symmetric_net-ablation"
+}
