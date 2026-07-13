@@ -484,6 +484,7 @@ def run_year(
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
     pjm_offer_midcurve_conditional: bool = False,
+    pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
@@ -709,6 +710,13 @@ def run_year(
         pjm_da_virtual_bids=pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
     )
+    if pjm_offer_midcurve_segments is not None:
+        # Rule-19 scope: floor only the named measured segments (e.g.
+        # ("LONG_RUN",) so the CT_FAST rows stay owned by the fast-start
+        # startup amortization). None = every mapped segment (pjm-101/102).
+        config = config.with_overrides(
+            pjm_offer_midcurve_segments=tuple(pjm_offer_midcurve_segments)
+        )
     if ercot_offer_surface_lowcurve:
         # G-22 conditional-offer-distribution LOW leg (measured trough-side
         # quantile ladders, P1-only markdown; ScenarioConfig field docstring has
