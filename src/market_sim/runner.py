@@ -1046,6 +1046,20 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
         else:
             wind_mc, solar_mc = compute_dispatch_credits(config, year)
+            if getattr(config, "wind_ptc_vintage_offers", False):
+                # ERCOT-65 PTC vintage scoping — D-5 forecast parity with the
+                # backcast orchestrator's wind_mc seam: the flat -ira_ptc_wind
+                # offer becomes the per-zone-month measured EIA-860 vintage
+                # blend (policy.ira.wind_ptc_vintage_dispatch_offer; full
+                # adjudication at the ScenarioConfig field). Falls back to
+                # the flat offer when the share data is unavailable.
+                from market_sim.policy.ira import wind_ptc_vintage_dispatch_offer
+
+                _vintage_wind_mc = wind_ptc_vintage_dispatch_offer(
+                    iso, year, zone_names, config, wind_cf.shape[1]
+                )
+                if _vintage_wind_mc is not None:
+                    wind_mc = _vintage_wind_mc
             # Base marginal cost: the full variable cost above, then
             # exogenous EACs, then the coal take-or-pay tranche discount.
             # This is the generators' bid basis — no startup-cost markup.
