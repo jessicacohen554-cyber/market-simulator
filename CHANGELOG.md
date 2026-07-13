@@ -23,6 +23,31 @@
   bridges section — the preps pairing + verdict), trough diagnosis §8,
   calibration-log ERCOT-64 entry, parameter registry.
 
+## 2026-07-13 — Cross-year LP warm-start default ON for calibration
+
+- **Perf:** `MARKET_SIM_WARMSTART_XYEAR` (carry each backcast year's optimal LP
+  basis into the next year's cold P0) now defaults **ON** on the calibration/
+  backcast path — the calibration CLIs (`scripts/run_calibration.py`,
+  `scripts/run_calibration_full.py`) enable it unless `--no-xyear-warmstart` is
+  passed or the env var is set explicitly. New shared resolver
+  `resolve_xyear_warmstart_default()` (precedence: flag > explicit env > default
+  ON). `run_calibration_full.py`'s year loop now threads an `xyear_cache` (it
+  previously did not). Gated by a full 3-year ERCOT + MISO bundle A/B
+  (`diff_warmstart_bundles.py`, 8760 h, one-thread): warm-year P0 2.3–2.5×
+  faster; objective, served load and total generation bit-identical; per-unit
+  dispatch reshuffle 0.004–0.112% confined to marginal ties, plus one small
+  MISO-2025 dual-degeneracy price set (182/61,320 zone-hours, load-wt
+  Δ 2.4e-4 $/MWh). +~4% peak RSS. See docs/cross-year-warmstart.md.
+- **Forecast stays cold-only:** `runner.py` passes `xyear_cache=None` and cannot
+  consume the basis regardless of the env var — the capacity-evolution tie-flip
+  rejection stands. `tests/test_xyear_warmstart_default.py` pins this invariant
+  and the resolver precedence.
+- **Reproducibility pinned:** `scripts/replay_keeper.py` now hard-pins
+  `MARKET_SIM_WARMSTART_XYEAR=0` at import (like `capture_keeper_goldens.py`),
+  and the D-13 `bench-repro.yml` gate pins it at the job level, so byte-identity
+  baselines stay basis-independent.
+- **Docs:** `docs/cross-year-warmstart.md` default wording updated.
+
 ## 2026-07-12 — ERCOT gas commitment bridge (ERCOT-63)
 
 - **Model:** new P1-native committed-state mechanism `ercot_gas_commitment_bridge`
