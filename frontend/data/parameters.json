@@ -16282,41 +16282,41 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "RI",
+          "NY",
           "VT",
-          "VA",
-          "MD",
-          "DE",
-          "NH",
+          "RI",
           "CT",
           "ME",
-          "NY",
+          "NH",
+          "MD",
           "NJ",
-          "MA"
+          "VA",
+          "MA",
+          "DE"
         ],
         "2024": [
-          "RI",
+          "NY",
           "VT",
-          "MD",
-          "DE",
-          "NH",
+          "RI",
           "CT",
           "ME",
-          "NY",
+          "NH",
+          "MD",
           "NJ",
-          "MA"
+          "MA",
+          "DE"
         ],
         "2025": [
-          "RI",
+          "NY",
           "VT",
-          "MD",
-          "DE",
-          "NH",
+          "RI",
           "CT",
           "ME",
-          "NY",
+          "NH",
+          "MD",
           "NJ",
-          "MA"
+          "MA",
+          "DE"
         ]
       },
       "unit": "",
@@ -18114,6 +18114,24 @@
       ]
     },
     {
+      "param_id": "scenario.coal_bit_committed_takeorpay",
+      "display_name": "Coal Bit Committed Takeorpay",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Bituminous committed-band take-or-pay bid discount. The `_committed` CAMPD coal tranche is the plant's baseload stay-online band; its fuel is covered by the same take-or-pay contract as the `_mustrun` band (MISO coal receipts are ~100% contracted — data/raw/_processed-legacy/ coal_takeorpay_MISO.csv, EIA-923 Schedule-5 Purchase Type), so it is sunk, not bought at market. Yet with `coal_bit_passthrough_sigmoid` off the committed tranche passes FULL delivered cost (passthrough 1.0) and bituminous baseload is priced out by cheap gas (the miso-60 COAL_BIT −15.7 TWh 2023/2024 free-C1 residual: BIT synchronized ~all hours at LMP ≈ its delivered SRMC, its committed band backing down under $2.19 gas — refuted as a min-load/commitment problem by the 2026-07-13 coal_sync throwaway probe, COAL_BIT moved only +1.6/+15.7). With this on, the committed tranche of a **bituminous** coal plant present in the measured take-or-pay map passes ``1 − contract_share`` of its fuel (the same sunk-contract rule already applied to `_mustrun`), so the contracted baseload bids down to hold against cheap gas while the econ*/peak tranches above still bid full delivered cost (`coal_econ_srmc_bound`) and BIT price-follows above the committed band. Grounded, not fitted: the discount is the plant's own MEASURED contract share (rule 1/11/13 — no residual tuning, no sigmoid), forward-reproducible from EIA-923 Schedule-5. Requires `coal_takeorpay_from_data` (the share map). Default off (all existing keepers unchanged); scoped to bituminous (PRB/lignite carry their own already-calibrated passthrough levers). See docs/handoffs/ miso-coal-offpeak-hold-2026-07.md.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.coal_bit_dispatchable",
       "display_name": "Coal Bit Dispatchable",
       "value": false,
@@ -18234,6 +18252,25 @@
       "domain": "Fuel Prices",
       "tier": 3,
       "source": "Coal part-load penalty ~22%",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.coal_committed_takeorpay_all",
+      "display_name": "Coal Committed Takeorpay All",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Same grounded committed-band take-or-pay discount as ``coal_bit_committed_takeorpay`` but applied to EVERY contracted coal supply (not just bituminous): the sunk-contract logic covers PRB / subbituminous / lignite / waste equally when they are contracted (MISO coal is ~100% contracted across supplies), so their `_committed` bands also pass ``1 − contract_share``. Prevents the BIT-only discount from cannibalizing PRB's merit-order slot (the miso-62 BIT-only build flipped COAL_PRB from a marginal C1 pass to fail as cheap BIT displaced it): with all contracted coal defending its committed baseload, total coal rises toward actual instead of redistributing between supplies. Bounded below by each supply's own passthrough curve; econ*/peak keep full delivered cost. Grounded per plant (EIA-923 Schedule-5), zero fitted parameters. Requires `coal_takeorpay_from_data`. Default off. Supersedes `coal_bit_committed_takeorpay` when both are set (the union scope).",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -23658,6 +23695,25 @@
       ]
     },
     {
+      "param_id": "scenario.pjm_offer_midcurve_segments",
+      "display_name": "Pjm Offer Midcurve Segments",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Optional measured-segment scope for the mid-curve floor. None (default) floors every mapped segment (the pjm-101/102 behaviour, byte-identical). A tuple of segment names (e.g. (\"LONG_RUN\",)) restricts the floor to those physics segments only — the rule-19 scoping that lets the LONG_RUN (coal / gas-steam) body+top floor coexist with the fast-start startup-amortization pricing of the CT stack (pjm-103): CT_FAST rows are then owned by tranche_startup_amortization, never double-priced by this floor (the pjm-101/102 combo's CT over-correction).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.pjm_offer_surface_binned_path",
       "display_name": "Pjm Offer Surface Binned Path",
       "value": null,
@@ -25125,6 +25181,24 @@
       "tier": 1,
       "source": "Fast-start amortization v3 — MEASURED run-length basis (requires ``tranche_startup_amortization``). v2 amortizes each fast-start tranche's NREL start cost over the tranche's own P0 run lengths, which is circular when the offer level itself is wrong: offers too cheap -> P0 runs the CTs in long blocks -> per-MWh amortized start cost ~0 -> the lever self-disables (the nyiso-44 probe finding: CT_PEAKER moved only 4.90 -> 4.75 TWh vs 2.13 actual). When set, the simple-cycle CT tranches (CT_PEAKER / CT_CHP) instead amortize over the unit's CAMPD-MEASURED median start-to-stop run length (scripts/derive_campd_ct_run_lengths.py: consecutive grossLoad-online hours from the unit-level CAMPD extracts, pooled 2023-2025, ISO-class median fallback for plants without CEMS). Basis choice (documented per the derivation): the measured median is the EX-ANTE expected-run horizon real GT offers amortize start recovery over (the NYISO/ISO-NE fast-start pricing convention); the endogenous P0 run length may only SHORTEN the horizon (a unit the model itself starts for 2 h genuinely pays its start over 2 h), never lengthen it beyond the measured basis — markup = startup / max(1, min(P0_month_avg_run, measured_median)), a month with no P0 runs uses the measured median outright. This removes the self-disabling circularity while keeping the month-resolved dynamics. CC peak (duct-burner) bands keep the v2 P0 basis — a duct burner's \"run\" is not a CEMS start-to-stop block, so the measured statistic does not describe it. The measured run length is a rule-#12-admissible measured market-behaviour parameter (same class as the CAMPD committed shares / min-stable loads): it regenerates from the CAMPD pipeline for any new vintage and re-derives only when its source data updates (rule #23), never from a residual. Default off -> every prior keeper stays byte-identical.",
       "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.unit_outage_short_windows",
+      "display_name": "Unit Outage Short Windows",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — short (1-5 day) unit-outage windows for baseload coal, the sub-floor companion of the >= 5-day unit-outage overlay. Driver (rule 12): discrete forced-outage events measured in per-unit CEMS — the MISO 2025 heat events showed ~2.8 GW of coal capability that ran elsewhere in July but was offline at the Jul 28-29 peak block and is invisible to the >= 5-day detector (the own-fleet temp-capability envelope is FLAT, so the fleet loses discrete units under stress rather than derating smoothly; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md). Window: the measured off-window itself, kept only when it survives the derive script's triple identification guard (coal-only detector + unit annual CF >= 0.55 baseload screen + the revealed-availability in-merit filter, so economic idling is never classified as an outage). Forward story (rule 13): same as the parent overlay — a physical availability event whose forecast analogue is the statistical WEFOR/POF draw; backcast-mode calibration input, never a forecast methodology. Applies only when ``outage_source == \"historic\"`` and the ISO's ``campd-unit-outages-short-<ISO>.csv`` exists (built by ``scripts/derive_campd_unit_outages.py --short-windows --iso <ISO>``). Windows are < 5 days by construction, so the two overlays are disjoint and never double-count. Default off; GATED CHANGE (alters availability).",
+      "source_date": "2025",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",

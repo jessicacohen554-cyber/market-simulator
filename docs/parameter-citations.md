@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1327 parameters registered** (743 flagged `needs-citation`).
+**1331 parameters registered** (745 flagged `needs-citation`).
 
 
 ## Calibration
@@ -417,6 +417,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_intertie_reference_price` | False | 1 | Price each CAISO per-hub WECC |  | auto-generated, needs-citation |
 | `scenario.caiso_reference_price_seam` | False | 1 | Price BOTH legs of CAISO's two WECC |  | auto-generated, needs-citation |
 | `scenario.caiso_zonal_gas_basis` | False | 2 | CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy fro… | 2023 | auto-generated |
+| `scenario.coal_bit_committed_takeorpay` | False | 3 | Bituminous committed-band take-or-pay bid discount. The `_committed… | 2023 | auto-generated |
 | `scenario.coal_bit_dispatchable` | False | 2 | Bituminous spot-coal marginal treatment (PJM): unlike PRB/lignite m… |  | auto-generated, needs-citation |
 | `scenario.coal_bit_passthrough_ceil` | None | 3 | dear-gas asymptote (>1 = markup) |  | auto-generated, needs-citation |
 | `scenario.coal_bit_passthrough_floor` | None | 3 | cheap-gas asymptote |  | auto-generated, needs-citation |
@@ -424,6 +425,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.coal_bit_passthrough_gas_slope` | None | 3 | logistic slope per $/MMBtu |  | auto-generated, needs-citation |
 | `scenario.coal_bit_passthrough_sigmoid` | False | 3 | Tier 3 (calibration) — gas-keyed BITUMINOUS passthrough sigmoid (PJ… | 2023 | auto-generated |
 | `scenario.coal_committed_hr_mult` | 1.22 | 3 | Coal part-load penalty ~22% |  | auto-generated, needs-citation |
+| `scenario.coal_committed_takeorpay_all` | False | 3 | Same grounded committed-band take-or-pay discount as ``coal_bit_com… |  | auto-generated, needs-citation |
 | `scenario.coal_drop_pof` | False | 3 | When True, drop the statistical planned-outage (POF) derate on coal… |  | auto-generated, needs-citation |
 | `scenario.coal_econ_hr_mult` | 0.97 | 3 | Coal incremental HR |  | auto-generated, needs-citation |
 | `scenario.coal_econ_srmc_bound` | False | 3 | Marginal-coal measured-SRMC offer bound. The gas-keyed passthrough … | 2026-07 | auto-generated |
@@ -704,6 +706,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.retirement_years_gas_st` | 2 | 2 | legacy gas steam — same grace as a CT |  | auto-generated, needs-citation |
 | `scenario.retirement_years_nuclear` | 3 | 2 | nuclear — long grace (irreversible exit) |  | auto-generated, needs-citation |
 | `scenario.retirement_years_oil` | 2 | 2 | oil/distillate peakers/steam |  | auto-generated, needs-citation |
+| `scenario.unit_outage_short_windows` | False | 3 | Tier 3 (calibration) — short (1-5 day) unit-outage windows for base… | 2025 | auto-generated |
 | `scenario.voll` | 5000.0 | 0 | Public Utility Commission of Texas / ERCOT Nodal Protocols | 2023-01 | stale |
 | `scenario.wefor_multiplier` | 1.0 | 3 | Global scale on every thermal class's |  | auto-generated, needs-citation |
 | `scenario.wefor_residual` | None | 3 | Historic-backcast WEFOR floor for |  | auto-generated, needs-citation |
@@ -1009,6 +1012,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.pjm_measured_interface_limits` | False | 3 | Measured PJM internal interface transfer limits (backcast/calibrati… | 2024 | auto-generated |
 | `scenario.pjm_offer_midcurve_conditional` | False | 2 | PJM MID-CURVE offer surface (G-22 lever A', default off, PJM-gated)… |  | auto-generated, needs-citation |
 | `scenario.pjm_offer_midcurve_path` | None | 2 | Path to the measured mid-curve surface JSON (default: the frozen da… |  | auto-generated, needs-citation |
+| `scenario.pjm_offer_midcurve_segments` | None | 2 | Optional measured-segment scope for the mid-curve floor. None (defa… |  | auto-generated, needs-citation |
 | `scenario.pjm_offer_surface_binned_path` | None | 2 | Path to the measured PJM condition-binned ladder JSON (default: the… |  | auto-generated, needs-citation |
 | `scenario.pjm_offer_surface_conditional` | False | 2 | PJM condition-responsive energy-offer surface — the PJM analogue of… | 2026-07 | auto-generated |
 | `scenario.pjm_offer_surface_min_bin` | 0 | 2 | Minimum net-load bin index at which the wall engages (0 = every bin… |  | auto-generated, needs-citation |
@@ -1416,7 +1420,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_installed_mw.NYISO.wind` | 2400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.PJM.solar` | 14000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.PJM.wind` | 11000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
-| `rggi_member_states_by_year` | {"2023": ["RI", "VT", "VA", "MD", "DE… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
+| `rggi_member_states_by_year` | {"2023": ["NY", "VT", "RI", "CT", "ME… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
 | `short_ton_to_metric_tonne` | 0.90718474 | 2 | Short ton -> metric tonne. RGGI allowances are denominated in SHORT… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.CAISO` | 2026-07-03-caiso-statmode-d-7 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.ERCOT` | 2026-07-04-statmode-d7-probe-ercot32 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
