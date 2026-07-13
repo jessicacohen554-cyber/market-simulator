@@ -1,0 +1,188 @@
+name: holdout-intake-neiso-2018-2021
+
+# NEISO 2018-2021 (+ 2022 residual-closure) holdout-intake lander. Extends
+# holdout-intake-neiso-2022.yml's one-shot pattern to the remaining
+# out-of-training years, under CLAUDE.md rule 22 (Option 2) and the owner's
+# 2026-07-13 authorization (frontend/data/backcast/calibration-complete.json
+# intake_log): "This data can literally be collected for all years - we're
+# not running anything on it. Fetch it all at once for 2018-2022 and first
+# half 2026 if available."
+#
+# This workflow exists because the GitHub push-files API used by Claude
+# sessions cannot carry BINARY content (parquet/xlsx corrupt as text) and
+# cannot practically carry very large text artifacts either. Instead of
+# transporting bytes, this runner REPRODUCES each artifact from its
+# committed, deterministic producer - the identical approach
+# holdout-intake-neiso-2022.yml already uses. Two of the three SMD workbooks
+# needed (2020, 2021) are ALREADY committed blobs at the wrong path
+# (data/raw/lmp-data/{2020,2021}_smd_hourly.xlsx); step 1 just `git mv`s them
+# - zero new bytes. Everything else re-derives from already-committed inputs
+# (CAMPD unit-level, NOAA weather splits, EIA-860/-923/-930) with in-sample
+# rows asserted byte-frozen by each producer's own checks before writing.
+#
+# NOT a solve: no LP is constructed (rule 22's solve/score quarantine - the
+# G-19 one-shot execution HOLD - is untouched); everything here is
+# loader-level data intake under NEISO's existing calibration-complete marker
+# (declared 2026-07-07) and the rule-22 Option-2 DATA-INTAKE channel.
+#
+# Artifacts landed:
+#   * data/raw/lmp-data/NEISO/{2020,2021}_smd_hourly.xlsx  (git mv, blob reuse;
+#     2022 already relocated by the prior 2022-only workflow)
+#   * data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet  (rebuilt
+#     2020-2025; 2023-2025 byte-identical by construction)
+#   * data/raw/_validation-source/actual_lmp.json  (NEISO 2020/2021 blocks +
+#     load-weighted _lw fields on 2020/2021; 2022 already present)
+#   * data/raw/_processed-legacy/plant_emission_rates_v2.{parquet,csv}
+#     (NEISO 2022 frozen-row merge, skipped if already landed)
+#   * data/raw/neiso-weather/neiso_zone_temp_daily.csv  (+2018-2021 per-zone
+#     NOAA splits; 2022 already landed by the prior workflow)
+#   * data/raw/neiso-weather/neiso_load_weighted_temp_daily.csv  (+2018-2021)
+#   * data/raw/_validation-source/calibration_reference.json  (isos.NEISO.2021
+#     splice) + NEISO_2021_renewable_capacity.csv
+#   * data/raw/campd-unit-outages-NEISO.csv  (+2018-2021-start windows,
+#     HEAD-vintage detector - same DEGRADED vintage-asymmetry caveat as the
+#     committed 2023-2025 windows, not resolved here)
+#
+# Guard: refuses to run unless the NEISO marker exists on the target branch.
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Preview only - run everything but do not commit or push"
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: holdout-intake-neiso-2018-2021
+  cancel-in-progress: false
+
+jobs:
+  intake:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Rule-22 marker guard
+        run: |
+          python - <<'EOF'
+          import json, sys
+          data = json.load(open("frontend/data/backcast/calibration-complete.json"))
+          if "NEISO" not in (data.get("complete") or {}):
+              sys.exit("no NEISO calibration-complete marker - rule 22 forbids this intake")
+          print("NEISO marker present:", data["complete"]["NEISO"])
+          EOF
+
+      - uses: astral-sh/setup-uv@v4
+
+      - name: Install pinned dependencies (uv.lock - parquet bytes must match
+              the intake session's pinned pyarrow/pandas)
+        run: uv sync --frozen
+
+      - name: Relocate the 2020/2021 SMD workbooks into NEISO/ (blob reuse via git mv)
+        run: |
+          for y in 2020 2021; do
+            if [ -f "data/raw/lmp-data/${y}_smd_hourly.xlsx" ]; then
+              git mv "data/raw/lmp-data/${y}_smd_hourly.xlsx" "data/raw/lmp-data/NEISO/${y}_smd_hourly.xlsx"
+            else
+              echo "${y} workbook already relocated"
+            fi
+          done
+
+      - name: Rebuild NEISO actual-LMP hourly parquet + annual JSON (2020-2025)
+        # 2023-2025 re-derivation is byte-identical (same committed producer,
+        # same SMD workbooks); 2020-2022 are new blocks. Merge semantics are
+        # the script's own (merges into the committed reference, only
+        # rewrites the NEISO parquet).
+        run: |
+          uv run python scripts/derive_actual_lmp.py --years 2020 2021 2022 2023 2024 2025 --isos NEISO
+
+      - name: Backfill load-weighted (_lw) price fields on all NEISO years
+        run: |
+          uv run python scripts/derive_actual_lmp.py --years 2020 2021 2022 2023 2024 2025 --isos NEISO --lw-retrofit
+
+      - name: Curate emissions-unit-annual 2022 (clean, gitignored intermediate)
+        run: |
+          uv run python scripts/curate_emissions_unit_annual.py --years 2022 --holdout-intake NEISO
+
+      - name: Extend plant_emission_rates_v2 with NEISO 2022 (frozen-row merge; skip if landed)
+        run: |
+          if uv run python - <<'EOF'
+          import pandas as pd, sys
+          df = pd.read_parquet("data/raw/_processed-legacy/plant_emission_rates_v2.parquet")
+          sys.exit(0 if ((df["iso"] == "NEISO") & (df["year"] == 2022)).any() else 1)
+          EOF
+          then echo "NEISO 2022 rows already in the v2 artifact - skipping (one-shot merge already ran)"
+          else uv run python scripts/derive_plant_emissions_v2.py --iso NEISO --years 2022 --holdout-intake NEISO
+          fi
+
+      - name: Land NEISO 2022 zone/load-weighted temp + calref + outages (skip actual_lmp/actual_tail, handled above)
+        run: |
+          uv run python scripts/land_neiso_2022_readiness.py --only zone_temp lw_temp calref outages
+
+      - name: Land NEISO 2022 actual_tail (needs the hourly parquet rebuilt above)
+        run: |
+          uv run python scripts/land_neiso_2022_readiness.py --only actual_tail
+
+      - name: Land NEISO 2018-2021 zone/load-weighted temp + calref + outages
+        run: |
+          uv run python scripts/land_neiso_holdout_multiyear.py --only zone_temp lw_temp outages calref --years 2018 2019 2020 2021
+
+      - name: Integrity report (sha256 of landed binaries + row/date checks on text)
+        run: |
+          sha256sum \
+            data/raw/_processed-legacy/plant_emission_rates_v2.parquet \
+            data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet \
+            data/raw/lmp-data/NEISO/2020_smd_hourly.xlsx \
+            data/raw/lmp-data/NEISO/2021_smd_hourly.xlsx
+          uv run python - <<'EOF'
+          import json, pandas as pd
+          def yr(df, c="date"):
+              return sorted(df[c].astype(str).str[:4].unique().tolist())
+          z = pd.read_csv("data/raw/neiso-weather/neiso_zone_temp_daily.csv")
+          lw = pd.read_csv("data/raw/neiso-weather/neiso_load_weighted_temp_daily.csv")
+          ou = pd.read_csv("data/raw/campd-unit-outages-NEISO.csv")
+          al = json.load(open("data/raw/_validation-source/actual_lmp.json"))
+          at = json.load(open("frontend/data/backcast/tail/actual_tail.json"))
+          cr = json.load(open("data/raw/_validation-source/calibration_reference.json"))
+          v2 = pd.read_parquet("data/raw/_processed-legacy/plant_emission_rates_v2.parquet")
+          print("zone_temp years:", yr(z), "rows", len(z))
+          print("lw_temp years:", yr(lw), "rows", len(lw))
+          print("outages years:", sorted(ou["outage_start"].astype(str).str[:4].unique()), "rows", len(ou))
+          print("actual_lmp NEISO years:", sorted(al["NEISO"].keys()))
+          print("actual_tail NEISO years:", sorted(at["isos"]["NEISO"].keys()))
+          print("calref NEISO years:", sorted(cr["isos"]["NEISO"].keys()))
+          print("v2 NEISO years:", sorted(v2[v2["iso"] == "NEISO"]["year"].unique().tolist()))
+          EOF
+
+      - name: Commit intake artifacts to the branch
+        if: ${{ !inputs.dry_run }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A \
+                  data/raw/lmp-data/NEISO/2020_smd_hourly.xlsx \
+                  data/raw/lmp-data/NEISO/2021_smd_hourly.xlsx \
+                  data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet \
+                  data/raw/_validation-source/actual_lmp.json \
+                  data/raw/_processed-legacy/plant_emission_rates_v2.parquet \
+                  data/raw/_processed-legacy/plant_emission_rates_v2.csv \
+                  data/raw/_validation-source/calibration_reference.json \
+                  data/raw/_validation-source/NEISO_2021_renewable_capacity.csv \
+                  data/raw/_validation-source/NEISO_2022_renewable_capacity.csv \
+                  data/raw/neiso-weather/neiso_zone_temp_daily.csv \
+                  data/raw/neiso-weather/neiso_load_weighted_temp_daily.csv \
+                  data/raw/campd-unit-outages-NEISO.csv \
+                  frontend/data/backcast/tail/actual_tail.json
+          git rm --cached data/raw/lmp-data/2020_smd_hourly.xlsx data/raw/lmp-data/2021_smd_hourly.xlsx 2>/dev/null || true
+          if git diff --cached --quiet; then
+            echo "nothing to commit (artifacts already landed)"
+            exit 0
+          fi
+          git commit -m "data(neiso): 2018-2021 holdout-intake artifacts + 2022 residual closure (marker-gated, workflow run ${{ github.run_id }})"
+          git push origin "HEAD:${{ github.ref_name }}"
