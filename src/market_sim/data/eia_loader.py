@@ -1809,8 +1809,49 @@ def _load_ercot_hourly(year: int) -> tuple[np.ndarray, np.ndarray] | None:
     return demand, interchange
 
 
+def _load_caiso_supply_consistent_demand(year: int) -> np.ndarray:
+    """Return the supply-consistent CAISO hourly demand series (MW).
+
+    Reads the derived measured artifact written by
+    ``scripts/derive_caiso_supply_consistent_demand.py`` (caiso-80,
+    owner-signed Option A —
+    ``results/calibration/FINDING-caiso80-demand-basis-wedge-2026-07-13.md``):
+    ``demand(t) = 930 NetGen(t) − NG_cell(t) + CEMS bench-gas grid(t) +
+    cogen grid flat + geo/biomass fold-in flat − TI(t)`` — the honest
+    CEMS-anchored basis the backcast is scored against, replacing the raw
+    EIA-930 ``Demand`` cell (which carries the corrupt NG cell's fabricated
+    block by the Demand = NetGen + TI identity, plus the CHP host-accounting
+    wedge and the chronic 930 identity gap). Built on the generation frame's
+    clock, so no clock realign applies.
+
+    Raises (never silently falls back to the corrupt cell):
+        FileNotFoundError: when the artifact for ``year`` is missing.
+        AssertionError: when the artifact is not a full clean year.
+    """
+    from market_sim.config.paths import CAISO_SUPPLY_CONSISTENT_DEMAND_DIR
+
+    path = (
+        CAISO_SUPPLY_CONSISTENT_DEMAND_DIR
+        / f"caiso_supply_consistent_demand_{year}.csv"
+    )
+    if not path.exists():
+        raise FileNotFoundError(
+            f"caiso_supply_consistent_demand: no artifact for {year} at "
+            f"{path} — run scripts/derive_caiso_supply_consistent_demand.py"
+        )
+    demand = pd.read_csv(path)["demand_mw"].to_numpy(dtype=float)
+    assert demand.shape[0] == HOURS_PER_YEAR, (
+        f"caiso_supply_consistent_demand {year}: {demand.shape[0]} rows"
+    )
+    assert not np.isnan(demand).any(), (
+        f"caiso_supply_consistent_demand {year}: NaN demand"
+    )
+    assert demand.min() > 0.0, f"caiso_supply_consistent_demand {year}: <=0 hour"
+    return demand
+
+
 def _load_caiso_hourly_demand(
-    year: int, clock_realign: bool = False
+    year: int, clock_realign: bool = False, supply_consistent: bool = False
 ) -> np.ndarray | None:
     """Return CAISO hourly metered demand (MW) for a year, or ``None``.
 
@@ -1843,7 +1884,25 @@ def _load_caiso_hourly_demand(
     boundary duplicates the first aligned value (a one-hour, ~3 a.m.-load
     approximation, documented in the FINDING). A reconciled-real-data clock
     fix (rule 14) — never a level rescale.
+
+    ``supply_consistent`` (``ScenarioConfig.caiso_supply_consistent_demand``,
+    GATED default off) replaces the raw ``Demand`` cell with the
+    supply-consistent honest series (caiso-80 owner-signed Option A; see
+    :func:`_load_caiso_supply_consistent_demand`). Takes precedence over
+    ``clock_realign``.
     """
+    if supply_consistent:
+        # caiso-80 Option A: the supply-consistent honest series supersedes
+        # both the raw Demand cell and the clock realign (it is built on the
+        # generation frame's clock by construction).
+        if clock_realign:
+            logger.info(
+                "CAISO %d: caiso_supply_consistent_demand supersedes "
+                "caiso_demand_clock_realign (reconstruction rides the "
+                "generation frame's clock)",
+                year,
+            )
+        return _load_caiso_supply_consistent_demand(year)
     frame = _eia_hourly_frame_filled("CISO", year)
     if frame is None:
         return None
@@ -2815,6 +2874,7 @@ def load_demand(
     include_interchange: bool = True,
     strict_demand_profile: bool = False,
     caiso_demand_clock_realign: bool = False,
+    caiso_supply_consistent_demand: bool = False,
 ) -> np.ndarray:
     """Load hourly ISO demand and allocate it across zones.
 
@@ -2885,6 +2945,14 @@ def load_demand(
             behavior) — a solve entry point that wants fail-closed
             protection against PR #1426's silent-corruption trap should pass
             ``True`` here.
+        caiso_demand_clock_realign: CAISO only — apply the measured +1 h
+            source-data clock correction to the ``Demand`` cell (caiso-75;
+            see :func:`_load_caiso_hourly_demand`).
+        caiso_supply_consistent_demand: CAISO only — replace the EIA-930
+            ``Demand`` cell with the supply-consistent honest series
+            (caiso-80 owner-signed Option A; see
+            :func:`_load_caiso_supply_consistent_demand`). Takes precedence
+            over ``caiso_demand_clock_realign``.
 
     Returns:
         A ``(n_zones, HOURS_PER_YEAR)`` array of zonal demand in MW, ordered
@@ -2909,7 +2977,9 @@ def load_demand(
             raw_mw, interchange = ercot_hourly
     elif iso == "CAISO":
         raw_mw = _load_caiso_hourly_demand(
-            year, clock_realign=caiso_demand_clock_realign
+            year,
+            clock_realign=caiso_demand_clock_realign,
+            supply_consistent=caiso_supply_consistent_demand,
         )
     elif iso == "NYISO":
         raw_mw = _load_nyiso_hourly_demand(year)
