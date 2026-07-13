@@ -2293,6 +2293,26 @@ def solve_and_persist(
         cfg = backcast_config(year, iso, hours, gas_price)
         if first_year_cfg is None:
             first_year_cfg = cfg
+
+        # Effective CAISO demand flags: they arrive through the generic
+        # ``prb_overrides`` ScenarioConfig channel, which run_year's own
+        # backcast_config applies but this loop's pristine ``cfg`` does NOT
+        # carry — checking ``cfg`` alone silently threaded the RAW demand
+        # into a probe-channel realigned/supply-consistent solve (caiso-80
+        # fix of the 48ec6b9 threading optimization).
+        def _caiso_demand_flag(name: str) -> bool:
+            v = (prb_overrides or {}).get(name)
+            return bool(v) if v is not None else bool(getattr(cfg, name, False))
+
+        _supply_consistent = _caiso_demand_flag("caiso_supply_consistent_demand")
+        _clock_realign = _caiso_demand_flag("caiso_demand_clock_realign")
+        # Under caiso_supply_consistent_demand the honest series is loaded
+        # HERE too, so the must-run residual derivation, the persisted
+        # system.parquet demand column, and the LP all ride ONE demand basis
+        # (the LP-vs-recorded divergence was a caiso-80 STEP-2 discovery).
+        # The realign-only path deliberately keeps its historical behavior:
+        # this load stays on the raw clock (must_run/system.parquet as in the
+        # caiso-75..78 keepers) and run_year loads its own realigned series.
         demand = load_demand(
             iso,
             year,
@@ -2300,6 +2320,7 @@ def solve_and_persist(
             td_loss_factor=cfg.td_loss_factor,
             include_interchange=not priced_interchange,
             strict_demand_profile=strict_demand_profile,
+            caiso_supply_consistent_demand=_supply_consistent,
         )
         # Must-run residual classes (biomass / other-gas / ...) are netted out
         # of demand for the LP and re-added as pseudo-units in the dispatch
@@ -2336,29 +2357,18 @@ def solve_and_persist(
         # Thread the demand we already loaded above into run_year to skip its
         # duplicate load_demand — but only when this load is byte-identical to
         # run_year's own: run_year never passes strict_demand_profile (always
-        # loads the non-strict series) and reads caiso_demand_clock_realign /
-        # caiso_supply_consistent_demand from its config, whereas this load
-        # used the CLI strict flag and the defaults (False) for both CAISO
-        # demand flags. iso_config / td_loss_factor / include_interchange
-        # already match by construction (same topology sequence, same per-ISO
-        # td, same not-priced gate). When any flag would diverge, pass None so
-        # run_year loads its own array and behaviour is unchanged.
-        # IMPORTANT (caiso-80 fix): the CAISO demand flags arrive through the
-        # generic ``prb_overrides`` ScenarioConfig channel, which run_year's
-        # own backcast_config applies but this loop's pristine ``cfg`` does
-        # NOT carry — checking ``cfg`` alone silently threaded the RAW demand
-        # into a realigned/supply-consistent solve (probe-channel flags made
-        # inert by the threading optimization).
-        def _caiso_demand_flag(name: str) -> bool:
-            v = (prb_overrides or {}).get(name)
-            return bool(v) if v is not None else bool(getattr(cfg, name, False))
-
+        # loads the non-strict series) and reads the CAISO demand flags from
+        # its config. Under caiso_supply_consistent_demand the two loads are
+        # identical by construction (the honest series supersedes the clock
+        # realign inside the loader), so threading is correct; under a
+        # realign-ONLY recipe they diverge (this load is raw-clock, run_year's
+        # is realigned) and None is passed so run_year loads its own array
+        # (historical caiso-75..78 behavior). iso_config / td_loss_factor /
+        # include_interchange already match by construction.
         _run_year_demand = (
             demand
             if (
-                not strict_demand_profile
-                and not _caiso_demand_flag("caiso_demand_clock_realign")
-                and not _caiso_demand_flag("caiso_supply_consistent_demand")
+                not strict_demand_profile and (_supply_consistent or not _clock_realign)
             )
             else None
         )
