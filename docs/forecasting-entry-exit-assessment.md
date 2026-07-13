@@ -1,326 +1,207 @@
-# Is this model fit to forecast ERCOT retirements and new entry?
+# Is this model fit to forecast retirements and new entry? — 2026-07 verdict
 
-> **Update 2026-06-15 — all four gaps now addressed (see `docs/ordc-overlay.md`
-> and the CHANGELOG).** The fixes below are implemented; each is default-off
-> and ERCOT-scoped where applicable, so the backcast calibration is unchanged
-> and dispatch is byte-identical (the scarcity/AS/adequacy logic lives in the
-> capacity-economics and overlay paths, not the LP):
-> 1. **Reliability-deployment overlay** (`ordc_reliability_deployment_mw`, the
->    RTORDPA analogue): at the recommended 2,500 MW the 2023 monthly LMP MAE
->    drops 32.5 → 12.3 and 2023 tail scarcity rent rises ~10× (CT_PEAKER net
->    12 → 109 $/kW-yr, ST_GAS 21 → 127, COAL_PRB 22 → 143). It is
->    **regime-gated** (`ercot_market_design`): applied in the ORDC era (≤2025,
->    so the 2023 backcast is reproduced under its own design) but **not carried
->    into the RTC+B forecast** (≥2026) unless a scenario opts in — the erroneous
->    2023 conservatism is contained to the design that produced it.
-> 2. **AS revenue** (`as_revenue_enabled`): calibrated, saturating
->    ancillary-service revenue (storage $169/kW-yr at the 2023 fleet, falling to
->    ~$17 by 10 GW) credited in the retirement/new-entry/storage-entry screens —
->    storage was ~6× undervalued without it.
-> 3. **Entry-side**: `gas_ct` is now a new-entry candidate (with a CONE-class
->    cost and its own queue cap), and dispatchable-thermal entry is priced on a
->    **price-duration energy margin vs annualized fixed cost** (the
->    net-revenue-vs-CONE test) rather than flat CF × mean price.
-> 4. **Reserve-margin adequacy backstop** (`reserve_margin_build_enabled`):
->    force-builds firm capacity to peak × (1 + 13.75%) when the economic screen
->    under-builds — the ReEDS/NEMS/CDR structural mechanism.
-> Plus: **every fossil class (incl. oil, CCS-CC) and nuclear can now retire**
-> on economics (previously only gas_cc/gas_ct/coal — and gas_st/oil/CCS/nuclear
-> were unconditionally immortal). The verdict table below predates these fixes;
-> the peaker/steam-gas/storage entry-exit calls are now materially better,
-> especially in stress years. Remaining refinements: a tightness-responsive
-> (vs flat) reliability-deployment offset for the milder years, and validating
-> the forward trajectory end-to-end.
+> **Rewritten 2026-07-13 (P-3C,
+> `docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md` §2 T3.3/T3.2).**
+> Supersedes the 2026-06-15 ERCOT-only verdict (git history preserves it). Scope is
+> now **all six ISOs**, and the verdict is graded against *measured* program
+> evidence, not code inspection: the Tier-1 driver battery (P-1A,
+> `docs/handoffs/driver-battery-2026-07-12.md`), the CR-1 curve validation (P-2A,
+> `docs/handoffs/capacity-price-validation-2026-07-12.md`), the accreditation-basis
+> adjudication (P-2B, `docs/handoffs/accreditation-basis-memo-2026-07-12.md`), the
+> CR-3.1 ELCC curves (P-2C, `docs/handoffs/elcc-curves-p2c-2026-07.md`), the first
+> full-horizon 2026–2050 runs (P-3A, `docs/handoffs/full-horizon-findings-2026-07-12.md`),
+> the capacity-market equilibrium battery (P-3B,
+> `docs/handoffs/equilibrium-battery-2026-07-12.md`), the HEAD capacity hindcasts
+> (`docs/hindcast-reports/{ercot,pjm}-2021-2025-realized-p2c*-2026-07-12.md`), and
+> the cross-model corridor + SOM benchmark report (this session,
+> `docs/handoffs/cross-model-corridor-2026-07-13.md`). All evidence is in-train
+> (2021–2025 hindcasts, 2026+ forecast probes); no holdout year was solved or
+> scored (rule 22).
 
+**Question.** Can this model's capacity-evolution loop — economic retirement,
+economic new entry, adequacy backstop, storage value stack — legitimately drive
+entry/exit *forecasts*, per ISO and per technology?
 
-
-**Question.** The ERCOT energy-only LP backcast (keeper
-`results/calibration/run115b_ccduct_prb73_relief06`) reproduces dispatch
-volumes well but is materially off on prices, and badly off on the scarcity
-tail. Retirement and new-build decisions hinge on **net revenue** (energy
-margin + AS + scarcity rents) versus going-forward fixed cost (exit) or
-annualized CONE (entry). Can a model that nails MWh but misses the spike tail
-legitimately drive entry/exit forecasts?
-
-**Verdict (one line).** **No — not as it stands for the technologies whose
-entry/exit actually turns on net revenue (peakers, storage, and any new build
-screened against CONE).** It *is* defensible for the *relative ranking* of the
-dispatchable fleet and for the retire/keep verdict on clearly-inframarginal
-baseload (nuclear, efficient CC, most coal). The decisive
-annual-scarcity-rent reconciliation **fails**: the overlay does not put "the
-right total money in the wrong hours" — for peakers and storage it puts in
-**~1–6 % of the right total money**. The fix is not better hourly prices; it
-is a deliberately *calibrated annual* scarcity + AS rent and a reserve-margin
-constraint, which is how the field actually does this (§4, §5).
-
-Every model number below is reproduced from the keeper with
-`scripts/derive_ordc_overlay.py … --revenue-report` (gross energy revenue) and
-a net-margin reconstruction that applies the *exact* retirement-screen cost
-basis — `assemble_mc(fleet_arrays, resolve_fuel_prices(...), …)`, the same
-`mc_cost` the runner hands to `capacity.apply_economic_retirements`
-(`runner.py:402`, `capacity.py:226`). External figures are cited inline.
+**Verdict (one line).** **Mostly no — and the two market designs now fail in
+opposite, well-measured directions.** In the five capacity-market ISOs the
+fixed capacity payment makes fossil retirement *arithmetically impossible*
+(§2) and inverts the retirement signal onto nuclear, the one class the payment
+doesn't carry; in energy-only ERCOT the screens over-retire coal/steam ~15×
+against history while missing all solar entry. The defensible uses are narrow:
+ERCOT storage-entry pace (the single green hindcast band), within-ERCOT
+relative ranking of the dispatchable fleet, and directional single-driver
+sensitivities (carbon, gas, load, net-CONE, tech-cost — 24/25 Tier-1
+expectations PASS). Absolute entry/exit calls are not yet defensible in any
+ISO, and MISO cannot produce a forecast at all.
 
 ---
 
-## 1. Net-revenue decomposition per technology (the keeper's own numbers)
+## 1. What changed since the 2026-06-15 verdict
 
-The retirement/entry screens do **not** work on gross energy revenue; they work
-on **net inframarginal margin** `Σ_t (price[z,t] + adder[t] − mc[g,t]) ·
-dispatch[g,t]` (`capacity.py:317-327`). So the decision-relevant decomposition
-is *net* margin, split into the base energy margin (energy-only LP duals) and
-the ORDC scarcity-adder rent. Per class, with installed capacity from the
-solved fleet (`fleet_arrays.pmax`):
+The old verdict's five "what it would take" items, honestly scored:
 
-### Net revenue, $/kW-yr (energy margin + scarcity rent)
-
-| class | cap GW | CF % | 2023 base | 2023 scar | 2023 **net** | 2024 **net** | 2025 **net** |
-|---|--:|--:|--:|--:|--:|--:|--:|
-| nuclear     | 5.0  | 88–95 | 160.9 | 14.2 | **175.0** | 130.0 | 241.2 |
-| CC_REGULAR  | 33.1 | 48–52 | 31.1  | 11.6 | **42.7**  | 28.5  | 43.2 |
-| CC_CHP      | 6.4  | 57–61 | 29.4  | 11.6 | **40.9**  | 28.7  | 41.1 |
-| COAL_PRB    | 11.4 | 39–47 | 9.7   | 12.1 | **21.7**  | −1.4  | 42.9 |
-| ST_GAS      | 12.3 | 14–17 | 10.6  | 10.5 | **21.1**  | 8.2   | 11.9 |
-| COAL_LIGNITE| 2.6  | 58–73 | −20.5 | 12.6 | **−7.9**  | −28.3 | 29.5 |
-| **CT_PEAKER** | 8.5 | 7–8 | **2.3** | **10.1** | **12.3** | **1.7** | **0.8** |
-| CT_CHP      | 1.3  | 56–58 | −8.6  | 11.4 | **2.8**   | −5.3  | −12.2 |
-| **STORAGE** | 4.0+ | — | 2.5 (arb) | 7.6 | **10.1** | 3.2 | 7.6 |
-
-(Storage net = energy arbitrage `disch·p − chg·p` plus scarcity on discharge,
-from `storage.parquet`; capacity ~4/5.5/8 GW across 2023–25.)
-
-### What fraction of each technology's margin is the scarcity tail?
-
-- **CT_PEAKER: 82 % of 2023 net revenue is scarcity rent** (10.1 of 12.3
-  $/kW-yr); 54 % in 2024; 0 % in 2025.
-- **STORAGE: 75 % of 2023 net** is the scarcity adder; the energy-arbitrage
-  spread alone is only ~$2.5/kW-yr.
-- **The inframarginal classes are the mirror image.** Nuclear's scarcity
-  share is 8 % (2023) and <1 % (2024–25); CC_REGULAR 27 %/2 %/0 %. Their
-  margin lives in the *body* of the dispatch stack, not the tail.
-
-This confirms the brief's smoking gun and sharpens it: the technologies whose
-entry/exit you care about (CT, storage) earn the **majority** of their thin
-margin in exactly the few hundred hours the model gets wrong, while the units
-whose margin the model captures well (baseload) are the ones whose retire/keep
-status is never in doubt anyway.
-
-> **A second, quieter problem the net basis exposes:** the going-forward FOM
-> thresholds the retirement screen compares against are **far below reality** —
-> `fixed_om_gas_ct 8`, `fixed_om_gas_cc 12`, `fixed_om_coal 40×1.3 = 52`
-> $/kW-yr (`scenarios.py`), versus NREL ATB-class values of roughly
-> $21 / $30 / $45. So the model has **two compensating errors**: it understates
-> peaker revenue *and* understates the bar that revenue must clear. They do not
-> net out (§3), but they mean the model is not "conservative" in any clean
-> direction — it is wrong on both sides of the inequality.
-
----
-
-## 2. Level vs shape: which does the model preserve?
-
-**Shape (relative ranking): preserved.** Ranking the dispatchable fleet by
-net $/kW-yr gives, every year, nuclear ≫ efficient CC ≈ CC_CHP > PRB coal >
-ST_GAS > CT_PEAKER, with lignite and CT_CHP at/below break-even. That is the
-correct ERCOT merit-order-by-profitability and it is stable across 2023–25. A
-retirement *screen* that only needs "rank the fleet and cut from the bottom"
-gets a sensible ordering.
-
-**Level (absolute net revenue): not preserved, and the error is
-technology-correlated.** The price miss is not confined to the >$200 tail. The
-2023 monthly demand-weighted LMP MAE is **$32.5/MWh energy-only, $30.1 with the
-overlay** (`--revenue-report`), spread across summer hours — so the model
-shaves inframarginal margins broadly *and* misses the tail entirely. The
-understatement therefore grows monotonically with a unit's tail-dependence:
-small for baseload, ~5× for mid-merit CC (§3), and 1–2 orders of magnitude for
-peakers/storage.
-
-**Consequence.** Retirement screening that needs only *ranking + a fixed
-threshold* is partly salvageable; **new-build screening, which needs absolute
-net revenue vs CONE, is not** — the level is the whole question there and the
-level is wrong.
-
----
-
-## 3. The decisive test: does the ANNUAL scarcity rent reconcile?
-
-The crux hypothesis was: even if hourly placement is wrong, maybe the overlay
-injects approximately the *right annual total* scarcity rent per technology. If
-so, the model could support entry/exit on an annual basis despite bad hourly
-prices. **It does not.** Measured against the canonical published benchmark —
-the ERCOT IMM/Potomac Economics **Peaker Net Margin (PNM)**, which is by
-construction the annual net revenue a hypothetical new gas peaker earns in the
-**real-time energy market** (the cleanest possible comparator to the model's
-energy margin + scarcity adder, since both are energy-only and exclude AS):
-
-### CT_PEAKER — model energy+scarcity net vs ERCOT PNM ($/kW-yr)
-
-| year | model | ERCOT PNM (actual) | model as % of actual |
-|---|--:|--:|--:|
-| 2023 | 12.3 | **197** | **6 %** |
-| 2024 | 1.7  | **~100** | **2 %** |
-| 2025 | 0.8  | lower (mild yr; no SOM yet) | ~1 % |
-
-PNM history: 2021 ≈ $760/kW-yr (Uri), 2022 $167, 2023 **$197**, 2024 **~$100**;
-administrative CONE/PNM threshold **$105/kW-yr** (Brattle's 2024 ERCOT study
-updates the Frame-CT reference CONE to **$162/kW-yr**, Aero CT $280–293).
-
-### STORAGE — model net vs IMM realized battery revenue ($/kW-yr)
-
-| year | model (energy+scarcity, no AS) | actual ERCOT battery (incl AS) | model % |
-|---|--:|--:|--:|
-| 2023 | 10.1 | **$193** | 5 % |
-| 2024 | 3.2  | **$56**  | 6 % |
-| 2025 | 7.6  | **~$29** | 26 % |
-
-The reconciliation fails decisively for both tail-dependent technologies. Three
-findings fall out of it:
-
-1. **The overlay's annual rent is itself a ~10× under-count, not just
-   mis-placed.** It credits CT_PEAKER $10.1/kW-yr of scarcity in 2023 but
-   recovers only **17 of 181** actual >$200 hours and **7 of 104** >$500 hours
-   (`--revenue-report`). The "right money, wrong hours" defense requires the
-   *total* to be right; here the total is ~6 % of PNM.
-2. **2025 is the clincher.** The overlay credits **$0** scarcity to every class
-   in 2025, yet 2025 still had 31 actual >$200 hours. Any spike-dependent
-   unit's 2025 scarcity component is entirely missing.
-3. **AS revenue — unmodeled — is the larger half of the miss for storage and a
-   material slice for CTs.** The model has **zero** AS *revenue* in the
-   capacity economics: `apply_economic_retirements` net revenue = energy
-   margin + EAC/RPS attribute + capacity payment (0 for energy-only ERCOT) —
-   there is no AS term (`capacity.py`). AS-*aware* volume/cost layers do exist
-   (the `--ct-deployment` out-of-merit floor captures the AS/RUC-deployment
-   effect on CT *volumes*; `battery_dispatch_adder` folds in the AS
-   opportunity cost) — but no AS market *revenue* is credited to any unit.
-   ERCOT batteries earned the *majority* of 2023–24 revenue from
-   RRS/ECRS/Reg/non-spin, not energy. So even a perfectly calibrated energy
-   scarcity rent would leave storage and peaker revenue badly short.
-
-**Even the inframarginal level is low.** The IMM reports 2024 CT *and* CC
-market revenue at **20–25 % below CONE**; with CC reference CONE ~$210/kW-yr
-that implies real CC net revenue ~$160/kW-yr, versus the model's CC_REGULAR
-**$28/kW-yr** in 2024 — a ~5–6× gap (part is new-vs-existing-fleet and AS, but
-the shaved summer LMP is the bulk). The model understates net revenue *across
-the board*; it is merely least wrong for baseload.
-
----
-
-## 4. Is decoupling dispatch accuracy from revenue accuracy normal?
-
-**Yes — it is the textbook "missing money" problem of energy-only markets, and
-the standard practice is precisely to NOT trust an LP's hourly duals for
-revenue.** How practitioners actually forecast entry/exit:
-
-- **Capacity-expansion models (NREL ReEDS, EIA NEMS/EMM).** These do *not*
-  derive adequacy from hourly scarcity prices. They impose a **planning
-  reserve-margin constraint** and assign each resource a **firm-capacity credit
-  / ELCC**; new entry is priced against **full annualized cost**, and the
-  "missing money" is supplied by the reserve-margin constraint's shadow price,
-  not by getting the price tail right. Adequacy is *structural*, not
-  price-formation-dependent.
-- **Production-cost models (PLEXOS, Aurora).** When used for revenue, operators
-  add an explicit **ORDC/scarcity adder and AS co-optimization**, and routinely
-  **calibrate annual scarcity rents to historicals** — they treat raw LP duals
-  as a known under-count of the tail, exactly the failure documented here.
-- **ERCOT's own adequacy process is the CDR** — a reserve-margin accounting,
-  not a price/revenue model. The PNM is a *monitoring* metric, not the
-  adequacy mechanism.
-
-So the model's instinct — own the volumes with the LP, own the price tail with
-a post-solve overlay (`docs/ordc-overlay.md`) — is the *right architecture*.
-The problem is execution: the overlay is honestly anchored to defensible ORDC
-parameters and therefore recovers only ~7–12 % of the 2023 summer scarcity gap
-(the rest is documented as RTORDPA/ECRS deployment pricing and the unverified
-σ — `docs/ordc-overlay.md` §Validation), AS is absent, and the only thing
-standing between the under-counted revenue and mass over-retirement is the
-**15 % reliability floor** in `apply_economic_retirements` — which makes
-retirements *reliability-driven, not economic*, defeating the purpose of an
-economic signal. Using raw LP duals (no overlay) for ERCOT capacity economics
-is a known, documented over-retirement bias (`runner.py:529-569`,
-`docs/ordc-overlay.md` §Forecast-mode revenue wiring).
-
----
-
-## 5. Verdict and what it would take to make it fit
-
-### Fitness, stated plainly
-
-| Use case | Fit? | Why |
+| 2026-06 next step | Status at HEAD | Evidence |
 |---|---|---|
-| **Retire/keep — baseload (nuclear, efficient CC, most coal)** | **Yes** | Net revenue dominated by base energy margin the model captures; clears the (low) going-forward bar by a wide margin in both model and reality. Verdict robust even though level is understated. |
-| **Retire/keep — peakers, storage, marginal steamers** | **No** | Net revenue is 1–2 orders of magnitude understated; model says "retire" where PNM ($100–197/kW) says "comfortably solvent." **Systematic over-retirement bias.** |
-| **New build — vs CONE, any technology** | **No** | Absolute net revenue understated ~5× (CC) to ~16–50× (CT); peakers (`gas_ct`) and storage handled weakly or absent as entry candidates; expected revenue uses flat CF × *mean* price, ignoring the price shape that defines peaker/storage value. **Systematic under-build.** |
-| **Relative ranking of the dispatchable fleet** | **Yes** | Merit-order-by-profitability is correct and stable across years. |
+| Realistic going-forward FOM (CT 21 / CC 30 / coal 45) | **DONE** — ATB values are the `ScenarioConfig` defaults (flip 2026-07-07) | `scenarios.py:338-362`, `fom-scarcity-defaults-flip-2026-07-07.md` |
+| AS revenue in the screens | **PARTLY DONE** — hourly reserve-price signal in the retirement/entry margin (`screen_reserve_value_enabled`, default on; co-opt duals else ORDC adder); the ERCOT AS *market-revenue* module `as_revenue_enabled` remains **default off** | `scenarios.py:664,697`; capacity-economics plan Stage 2 |
+| CONE-class entry hurdles; `gas_ct`/storage as entry candidates; price-duration expected revenue | **DONE** — `_NEW_ENTRY_TECHS` includes `gas_ct`; storage has its own value stack; entry margins are price-duration based | `capacity.py:1489`, `storage.py` |
+| Planning-reserve-margin backstop | **DONE (design-resolved)** — tri-state: ON by default in capacity-market ISOs, OFF in ERCOT (G-41 decision) | `capacity.py:2463` |
+| Calibrated annual scarcity rent per class | **NOT DONE as calibration — and correctly so** (rule 13 forbids pinning rent to the residual). The structural replacements (screen basis = attainable pro-forma margin; reserve-price signal; AS co-opt lane) moved ERCOT first-screen-year CT revenue **1.5 → 17.2 $/kW-yr vs the Potomac SOM ≈ 68 anchor** — i.e. from ~2 % to ~25 % of benchmark. The level gap is still open (G-20/G-22 lane) | capacity-economics plan Stage-2 note |
 
-### Concrete next steps to make it fit (in priority order)
+Plus mechanisms the old verdict didn't have: CR-1 sloped capacity demand
+curves (landed, **default off** per P-2A), CR-3.1 penetration-indexed VRE ELCC
+(landed, default on), the confirmed-retirement registry (default on), IRA §45U
+and the 45Y/48E ramps, AEO2025-derived fuel files (P-1D), and — most
+importantly — an actual measurement apparatus: driver ladders, forecast
+invariants I1–I14, capacity hindcasts, the equilibrium battery, and the
+full-horizon harness. **The 2026-06 verdict was written from code inspection;
+this one is written from runs.**
 
-1. **Calibrate the *annual* scarcity rent per class to a published anchor.**
-   Scale the overlay so each technology's annual $/kW-yr matches the historical
-   PNM (CT), IMM net-revenue figures (CC/steam), and the battery-revenue
-   benchmark (storage) — distributed across the top price hours. This converts
-   the overlay from "honest but ~10× short" to "deliberately calibrated total,
-   acknowledged wrong hours," which is what production-cost practice does. The
-   plumbing exists (`scarcity_prices`, `econ_prices = prices + adder`); it needs
-   an annual-rent calibration target, not just defensible ORDC parameters.
-2. **Add an AS-revenue module** (Reg-Up/Down, RRS, ECRS, non-spin). Today it is
-   exactly zero and it is the *majority* of real battery income and a material
-   slice of CT income. Without it, storage/peaker net revenue cannot reconcile
-   no matter how good the energy price is.
-3. **Add a per-technology CONE benchmark** as the new-entry hurdle (Brattle
-   ERCOT: Frame CT $162, Aero $280–293, CC ~$210/kW-yr), and **add `gas_ct` and
-   storage as first-class new-entry candidates** — `_NEW_ENTRY_TECHS` is only
-   {wind, solar, gas_cc, nuclear_smr}, so the model literally cannot forecast
-   new simple-cycle peaker entry. Replace flat-CF × mean-price expected revenue
-   (`estimate_expected_revenue`) with a price-duration-curve dot product so
-   tail value is counted.
-4. **Impose a planning-reserve-margin constraint on the expansion loop** (the
-   ReEDS/NEMS/CDR approach). This is the robust adequacy backstop that does
-   *not* depend on getting hourly scarcity prices exactly right, and it lets
-   retirements be screened economically without the 15 % floor doing all the
-   work.
-5. **Use realistic going-forward FOM** ($/kW-yr ≈ CT 21, CC 30, coal 45) so the
-   exit threshold is honest rather than accidentally offsetting the revenue
-   under-count.
+## 2. The central analytic finding: the fixed capacity payment makes fossil exit impossible
 
-### The loop, once those exist
+P-3B found NEISO retires **exactly 0 thermal MW over all 25 forecast years**
+even at a 67.5 % reserve margin, and hypothesized the flat capacity payment
+alone covers going-forward cost (its §8.3 asked for the no-LP ratio check).
+Here it is, from the registry arithmetic the screens actually use —
+`net_cone_per_kw_yr × (1 − EFORd)` (`MARKET_DESIGN`, `constants.py:2558`;
+`EFORD`, `constants.py:760`) against the FOM-only going-forward cost
+(`scenarios.py:338-362`, coal ×1.3 per `retirement_fom_multiplier_coal`):
 
-```
-solve dispatch (LP — volumes, validated)
-  → net revenue per unit = energy margin (duals)
-                         + CALIBRATED annual scarcity rent   (new: anchored to PNM/IMM)
-                         + AS revenue                         (new: module)
-  → retire if net revenue < going-forward FOM for N years    (realistic FOM)
-  → build  if net revenue > annualized CONE                  (new: CONE + gas_ct/storage candidates)
-  → subject to planning-reserve-margin constraint            (new: adequacy backstop)
-  → re-solve next year
-```
+**Flat capacity payment ÷ going-forward cost (fixed mode, the active default):**
 
-**Bottom line.** The model is a validated *volumes/emissions* engine with a
-*structurally correct but quantitatively under-calibrated* revenue overlay and
-no AS. For ERCOT entry/exit it is usable today only for baseload retire/keep
-calls and relative ranking. Driving peaker/storage retirement or any new-build
-forecast off it would systematically over-predict retirements and under-predict
-entry for exactly the marginal, tail-dependent resources the analysis is meant
-to be about — until the annual scarcity rent and AS revenue are calibrated to
-the published net-revenue benchmarks above.
+| class | GFC $/kW-yr | PJM (100) | NYISO (110) | NEISO (95) | MISO (80) | CAISO (90) |
+|---|--:|--:|--:|--:|--:|--:|
+| gas_ct | 21.0 | **4.5×** | **4.9×** | **4.3×** | **3.6×** | **4.0×** |
+| gas_cc | 30.0 | **3.2×** | **3.5×** | **3.0×** | **2.5×** | **2.9×** |
+| gas_st | 35.0 | **2.7×** | **2.9×** | **2.5×** | **2.1×** | **2.4×** |
+| oil | 25.0 | **3.6×** | **4.0×** | **3.4×** | **2.9×** | **3.2×** |
+| coal | 58.5 | **1.6×** | **1.7×** | **1.5×** | **1.3×** | **1.4×** |
+| nuclear | 130.0 | *0.75×* | *0.82×* | *0.71×* | *0.60×* | *0.67×* |
+
+Since the screen's test is `net_revenue = energy margin + reserve value +
+capacity payment ≥ GFC` (`apply_economic_retirements`), a ratio ≥ 1 means the
+unit **can never post a loss year, whatever the energy market does**. Every
+fossil class in every capacity-market ISO is ≥ 1.3×. Nuclear is the **only**
+class below 1.0 — the only class whose retirement the energy margin can
+decide. The consequences are not hypothetical; they are the measured record:
+
+- **T2.4c (P-3B):** zero NEISO thermal retirements, 25/25 years, including
+  under a +10 GW overbuild shock.
+- **PJM hindcast at HEAD:** thermal retirements −63 % vs actual; per-fuel
+  recall **coal 0/6.9 GW, gas_ct 0/3.5 GW, oil 0/0.6 GW** — and the model's
+  only retirements are **4.1 GW of nuclear, 100 % false** (actual nuclear
+  retirements: zero). The retirement pattern is exactly the ratio table's
+  ordering: the sign of the retirement signal is *inverted onto the wrong
+  technology*.
+- **Contrast (the control):** ERCOT, with no capacity payment, retires
+  11.7 GW the year after the same +10 GW shock (T2.5) — the economic screen
+  itself works when the price it reads can respond.
+
+The CR-1 sloped curve is the designed fix, but it is default-off for cause:
+fed the model's own PJM position (1.29–1.36, past the 1.045 zero-cross) it
+pays **$0 every year including the near-cap 2025/26 shortage** (P-2A Pass 2).
+So today's choice is between a capacity price that is *always too high to
+allow exit* (fixed) and one that is *always $0* (curve on an untrustworthy
+position). Neither supports an exit forecast in PJM/MISO/NYISO/NEISO/CAISO.
+
+## 3. ERCOT: the opposite failure, plus one genuine success
+
+The HEAD realized hindcast (`ercot-2021-2025-realized-p2c-2026-07-12.md`)
+against 2021–2025 actuals:
+
+| call | actual | model | verdict |
+|---|--:|--:|---|
+| thermal retirements | 1.5 GW | **22.8 GW (+1386 %)** — coal 14.0 vs 0.9, gas_st 8.8 vs 0.0 | massive over-retirement |
+| solar additions | 25.1 GW | **0.0 GW (−100 %)** | total miss |
+| wind additions | 12.7 GW | 15.0 GW (+18 %) | order right, band FAIL |
+| gas additions (CC+CT) | 3.9 GW | 0.0 GW (−100 %) | miss |
+| storage additions | 13.7 GW | **14.0 GW (+2 %) ✅** | **the one green band** |
+| CO2 2025 | 193.6 Mt | 95.2 Mt (−51 %) | fleet+dispatch error compound |
+
+The over-retirement direction is the old verdict's prediction realized: with
+scarcity/AS revenue at ~25 % of the SOM benchmark (§1) and no capacity
+payment, marginal coal/steam margins read negative and the screen cuts them
+— the "systematic over-retirement bias" the 2026-06 document forecast for
+peakers now lands on coal/gas-steam. (Note the direction *flipped* for the
+tail-dependent classes themselves: 2026-07-05 vintage hindcasts retired
+~9.7 GW; the week of AS-co-opt/FOM merges moved it to 22.8 GW — the screens
+are highly sensitive to the still-uncalibrated scarcity level, which is
+exactly why absolute exit calls remain unfit.) The storage-pace PASS is real
+but partly pace-capped by design (`storage_deployment` pace mapping), so it
+validates the value stack + cap jointly, not the economics alone.
+
+## 4. Verdict table
+
+"Fit" = usable today for a decision at that grain, with documented caveats.
+Grades: **YES / PARTIAL / NO / BLOCKED**. Every NO carries its blocker ID (§5).
+
+| # | Use case | Fit? | Decisive evidence | Blockers |
+|---|---|:--:|---|---|
+| 1 | **Directional single-driver sensitivity** (carbon, gas, load level, tech cost, net-CONE, IRA cliffs) — ERCOT/PJM | **YES** | Tier-1: 24 PASS / 1 FAIL; carbon slope 0.46–0.52 $/MWh per $/t at the analytic band edge; T1.2 duality untested (no live mass-cap) | #2064 (the 1 FAIL, load ladder) |
+| 2 | **Relative ranking of the dispatchable fleet** — ERCOT | **YES** | Backcast keepers reproduce merit-order-by-profitability, stable 2023–25 | — |
+| 3 | **Storage entry pace** — ERCOT | **PARTIAL** | Hindcast +2 % (only green band); T1.9 saturation monotone ↓ | pace-cap co-determines the pass; `as_revenue_enabled` default off (BLK-6) |
+| 4 | **Retire/keep nuclear + efficient CC** — ERCOT | **PARTIAL** | Both kept in model and reality; margins far from threshold in both | inherits BLK-5 sensitivity |
+| 5 | **Retire/keep coal / gas-steam / peakers** — ERCOT | **NO** | Hindcast +1386 % thermal retirement, 96 % false-retire | BLK-5, BLK-6 |
+| 6 | **New build vs CONE (solar/wind/gas)** — ERCOT | **NO** | Solar 0 vs 25.1 GW; gas 0 vs 3.9 GW; wind +18 % | BLK-6, BLK-7, BLK-8 |
+| 7 | **Retire/keep fossil** — PJM/MISO/NYISO/NEISO/CAISO | **NO (by construction)** | §2 ratio ≥ 1.3× all fossil classes; T2.4c zero retirements ×25 yr; PJM hindcast coal/CT recall 0 % | BLK-3, BLK-4, BLK-9 |
+| 8 | **Retire/keep nuclear** — capacity-market ISOs | **NO (sign-inverted)** | Only class the flat payment doesn't carry; PJM hindcast: 4.1 GW retired, 100 % false | BLK-9 (+§45U/ZEC interaction untested at HEAD) |
+| 9 | **New-entry thermal** — capacity-market ISOs | **PARTIAL (direction only)** | T1.7a entry monotone in net-CONE; T2.4b entry stops after +10 GW (energy channel); but PJM hindcast mix badly wrong (gas_ct +347 %, gas_cc +41 %) and the payment's CT/CC accreditation distortion is +20 %/−6 % (P-2B §3.4) | BLK-3, BLK-4 |
+| 10 | **New-entry VRE** — capacity-market ISOs | **NO** | PJM hindcast solar −100 %, wind +271 %; VRE entry screens earn **zero capacity revenue** even where the ISO pays it | BLK-7, BLK-8 |
+| 11 | **Reserve-margin / adequacy trajectory** (timing of tightness) | **NO** | I12 FAILs every scored ISO; two-phase de-firm→overshoot (CAISO→60 %, NEISO→67 %, PJM 0.3 %→32 %); ERCOT #2064 non-monotone scarcity; T2.2b zero oscillation | BLK-2, BLK-3, BLK-4, BLK-9 |
+| 12 | **Capacity-price forecasting** (CR-1) | **NO (instrument validated, inputs not)** | P-2A: curve shapes exact, PJM spike direction reproduces; but model position pays $0 (Pass 2), anchor −22 % (ICAP/UCAP), MISO seasonal + NYISO vintage unscoreable | BLK-3, BLK-4 |
+| 13 | **Anything — MISO** | **BLOCKED** | forecast raises `ValueError` before the first solve | BLK-1 |
+| 14 | **Long-horizon CO2 / energy-mix trajectory** | **NO** | corridor report: PJM CO2 +57 % / ERCOT +34 % by 2040 under default policy while every external model shows declines; direct consequence of rows 5/7/10 | BLK-9 → rows 5/7/10; corridor §1 |
+
+Rows 1–4 are the honest extent of "fit to forecast" today. The program's own
+framing stands confirmed end-to-end: *an entry/retirement loop driven by a
+non-responsive capacity price cannot equilibrate* — and the backcast
+dashboard's dispatch skill does not transfer to capacity evolution until the
+blockers below clear.
+
+## 5. Blocker register
+
+| ID | Blocker | Owner / gap ID | What it blocks |
+|---|---|---|---|
+| **BLK-1** | `STORAGE_BASE_FLEET_MW` omits MISO → `build_default_storage` raises; **1/6 ISOs has no runnable forecast path** | P-3A ranked issue #1 (`full-horizon-findings-2026-07-12.md` §3); needs a cited EIA-860 base fleet (rules 5/24) | verdict rows — all of MISO |
+| **BLK-2** | ERCOT scarcity non-monotone in load/one-pass evolution (slack hours [34,0,58] across the T1.4 ladder; [0,…,11,0,39,107] over 2026–2040) | GitHub **#2064** | row 11 (adequacy timing); any scarcity-driven exit call |
+| **BLK-3** | ICAP/UCAP/FPR accreditation basis: PJM position ~18 pp too long from basis alone; anchor −22 %; payment CT/CC distortion. **P-2B adopted Option A — none of R1–R6 implemented yet** | **#1532** / P-2B memo §4 | rows 7–12; P-2A flip prerequisite 1 |
+| **BLK-4** | `capacity_market_clearing` default-off and unflippable until position/anchor/vintage fixed (P-2A §7 prerequisites 1–4: #1532; position calibration incl. retirement fix + CR-3.1; per-year net-CONE; MISO seasonal + NYISO vintage) | P-2A §7 | rows 7–12 |
+| **BLK-5** | Retirement-screen level miscalibration, ERCOT direction (22.8 vs 1.5 GW; false-retire 96 %) | G-30/G-31 hindcast lane | rows 4–6 |
+| **BLK-6** | ERCOT scarcity/AS revenue level: screens capture ~25 % of the SOM CT net-revenue anchor (17.2 vs ≈68 $/kW-yr); `as_revenue_enabled` default off | G-20/G-22 AS co-opt lane; corridor report §2 (T3.2) | rows 3, 5, 6 |
+| **BLK-7** | VRE new-entry screens earn no capacity revenue anywhere (even in ISOs that pay it), and PJM wind ELCC has no published declining axis yet | audit D7; P-2C follow-ups #1/#4 | rows 6, 10 |
+| **BLK-8** | Solar entry = 0 GW in BOTH hindcasts against 25.1 (ERCOT) / 13.1 (PJM) GW actual — the single largest additions miss; root cause in the entry-economics stack (cost/queue/negative-price interaction), not yet diagnosed | hindcast lane (G-30 adjacent); no dedicated gap row — **should get one** | rows 6, 10, 14 |
+| **BLK-9** | Fixed capacity payment ≥ 1.3× GFC for all fossil (§2): fossil exit impossible, nuclear-only retirement inversion | this report + P-3B §8.3; **new — needs a gap-register row**; resolution = BLK-3 + BLK-4 (the CR chain), not a payment haircut (rule 13) | rows 7, 8, 11, 14 |
+| ~~BLK-10~~ | ~~#2063 IRA phaseout crash~~ — **CLOSED at HEAD** (P-1C fields + regression test; verified by P-2C) | #2063 | — |
+
+## 6. What would flip the table (ordered, no new mechanisms invented)
+
+1. **BLK-1** is a one-session cited-data fix → unblocks MISO everywhere.
+2. **P-2B Option A steps R1–R4** (anchor 60.4→77.43; FPR requirement; ELCC
+   class-rating supply+payment basis; thermal-ratings intake R3) → removes
+   ~2/3 of the PJM position bias and the −22 % anchor → re-run P-2A Pass 2.
+3. **Retirement/entry level calibration** (G-30/G-31 + BLK-8 root cause) —
+   the remaining ~1/3 of the position error and the solar-entry miss. This is
+   root-cause work on the screens' revenue inputs, not tuning (rules 1/13).
+4. **Flip `capacity_market_clearing`** per P-2A's re-validation protocol (per
+   ISO, only once its Pass-2 position lands in its curve's priced region) →
+   rows 7–12 become testable; re-run T1.7 + tornado; re-run P-3A to completion
+   (all six ISOs, full horizon) and P-3D re-scores.
+5. **ERCOT scarcity level** stays with G-20/G-22 (structural co-opt, never a
+   fitted rent) — gates rows 5–6.
+
+Until step 4, every capacity-market entry/exit output of this model should be
+labeled what it is: **a fixed-price screen, not a market equilibrium.**
 
 ---
 
 ### Sources
 
-Model: keeper `results/calibration/run115b_ccduct_prb73_relief06`;
-`scripts/derive_ordc_overlay.py --revenue-report`; `src/market_sim/model/capacity.py`,
-`src/market_sim/runner.py`, `src/market_sim/data/fleet.py`,
-`src/market_sim/config/{scenarios,constants}.py`; `docs/ordc-overlay.md`,
-`docs/calibration-best-so-far.md`.
-
-External (accessed 2026-06-15):
-- ERCOT IMM / Potomac Economics, 2023 & 2024 State of the Market Reports
-  (PNM $197k/2023, ~$100k/2024; CONE $105k; CT/CC 20–25 % below CONE in 2024;
-  battery $192–193/kW in 2023): potomaceconomics.com; ercot.com IMM postings;
-  energychoicematters.com (2023-05-30).
-- Brattle Group, *ERCOT CONE for 2026* (2024): Frame CT $162/kW-yr, Aero CT
-  $280–293/kW-yr — brattle.com.
-- Modo Energy, ERCOT battery revenue benchmarks (2024 $56/kW; 2025 ~$29/kW;
-  AS revenue −90 % YoY) — modoenergy.com; pv-magazine-usa.com (2025-11-21).
-- NREL ATB 2024 (FOM / cost references) — already cited in `constants.py`.
-</content>
-</invoke>
+Program reports listed in the header; `src/market_sim/model/capacity.py`
+(`capacity_revenue_per_mw_yr`, `apply_economic_retirements`,
+`_NEW_ENTRY_TECHS`, `resolve_reserve_margin_build_enabled`),
+`src/market_sim/config/constants.py` (`MARKET_DESIGN`, `EFORD`),
+`src/market_sim/config/scenarios.py` (FOM defaults, gates);
+`docs/handoffs/cross-model-corridor-2026-07-13.md` (T3.3 corridor + T3.2 SOM
+tables, incl. external citations); ERCOT Potomac SOM PNM anchors as cited
+there. Historical (2026-06-15) ERCOT net-revenue reconciliation: git history
+of this file.
