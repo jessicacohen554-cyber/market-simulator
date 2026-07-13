@@ -104,6 +104,7 @@ from scripts.run_calibration import (  # noqa: E402
     _commitment_pass,
     _henry_hub_actual,
     _load_reference,
+    resolve_xyear_warmstart_default,
     run_year,
 )
 
@@ -2286,6 +2287,14 @@ def solve_and_persist(
     # so it doesn't rebuild the same config (with the same args) several times.
     first_year_cfg = None
 
+    # Single-element holder carrying the prior year's optimal basis across the
+    # sequential year loop for cross-year warm-start. Consumed only when
+    # MARKET_SIM_WARMSTART_XYEAR!=0 (the calibration CLI sets it ON by default;
+    # main() resolves the gate before this call, replay/probe callers leave the
+    # global default OFF). Basis-neutral either way — see docs/cross-year-
+    # warmstart.md. Years must run chronologically for the basis to line up.
+    xyear_cache: list = []
+
     for year in years:
         _t_year = time.perf_counter()
         gas_price = _henry_hub_actual(reference, year)
@@ -2572,6 +2581,7 @@ def solve_and_persist(
             mass_cap_tons=mass_cap_tons,
             mass_cap_program=mass_cap_program,
             zero_forcing_ablation=zero_forcing_ablation,
+            xyear_cache=xyear_cache,
         )
         _t_post_solve = time.perf_counter()
         if persist_p2_state:
@@ -5531,6 +5541,19 @@ def main() -> None:
     )
     parser.add_argument("--hours", type=int, default=_HOURS_PER_YEAR)
     parser.add_argument(
+        "--no-xyear-warmstart",
+        action="store_true",
+        help="Disable cross-year LP warm-start (MARKET_SIM_WARMSTART_XYEAR). "
+        "It is ON by default for a fresh calibration solve — each year's "
+        "optimal basis warm-starts the next year's P0 (~2.3x faster on warm "
+        "years, basis-neutral; see docs/cross-year-warmstart.md). Pass this "
+        "for the cold path (e.g. a basis-independent A/B baseline). An "
+        "explicit MARKET_SIM_WARMSTART_XYEAR env var is honored over the "
+        "default; this flag overrides both. No effect on --report / "
+        "--replay-bundle / --rebuild-benchmark (those stay at the global "
+        "default OFF for reproducibility).",
+    )
+    parser.add_argument(
         "--cf-band-width",
         type=float,
         default=_CF_BAND_WIDTH,
@@ -8089,6 +8112,13 @@ def main() -> None:
     if args.zero_forcing_ablation:
         ablation_of = run_dir.name
         run_dir = run_dir.with_name(f"{run_dir.name}-ablation")
+    # Cross-year warm-start defaults ON for a fresh calibration solve
+    # (--no-xyear-warmstart to opt out, explicit env var honored). Resolved here
+    # — only on the fresh-solve path, so --report / --replay-bundle /
+    # --rebuild-benchmark returned above and stay at the global default OFF.
+    # Forecast (runner.py) is unaffected (xyear_cache=None).
+    _xwarm = resolve_xyear_warmstart_default(args.no_xyear_warmstart)
+    logger.info("cross-year LP warm-start: %s", "ON" if _xwarm else "OFF")
     run_dir = solve_and_persist(
         args.year,
         iso,
