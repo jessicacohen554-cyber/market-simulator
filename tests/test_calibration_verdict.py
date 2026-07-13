@@ -430,7 +430,9 @@ class SysVolTests(unittest.TestCase):
             gas = [r for r in rows if r["key"] == "gas"][0]
             self.assertIn("CEMS bench-gas", gas["source"])
             self.assertAlmostEqual(gas["actual"], 51.6, places=2)
-            self.assertEqual(gas["status"], cv.SKIPPED)  # v2.5: prelim not gated (+0.8% diag)
+            self.assertEqual(
+                gas["status"], cv.SKIPPED
+            )  # v2.5: prelim not gated (+0.8% diag)
         finally:
             _reset_completeness()
 
@@ -524,7 +526,9 @@ class SysVolTests(unittest.TestCase):
                 "MISO",
             )
             coal = [r for r in rows if r["key"] == "coal"][0]
-            self.assertEqual(coal["status"], cv.SKIPPED)  # v2.5: prelim not gated (raw-cell diagnostic)
+            self.assertEqual(
+                coal["status"], cv.SKIPPED
+            )  # v2.5: prelim not gated (raw-cell diagnostic)
             self.assertIn("EIA-930 grid", coal["source"])
         finally:
             _reset_completeness()
