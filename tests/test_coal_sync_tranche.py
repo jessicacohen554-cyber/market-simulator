@@ -161,6 +161,33 @@ class TestCommittedTakeorpayBit(unittest.TestCase):
             1.0,
         )
 
+    def test_all_scope_discounts_prb(self):
+        # committed_takeorpay_all extends the discount to every contracted coal
+        # supply (PRB here); bit-only leaves PRB at full cost.
+        g = self._committed(supply="prb")
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g, {"prb": 1.0}, {2832: 1.0}, committed_takeorpay_bit=True
+            ),
+            1.0,
+        )
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g, {"prb": 1.0}, {2832: 1.0}, committed_takeorpay_all=True
+            ),
+            0.0,
+        )
+
+    def test_all_scope_still_spares_econ(self):
+        g = self._committed(supply="prb")
+        g.unit_id = "COAL_X_p2832_econ1"
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g, {"prb": 1.0}, {2832: 1.0}, committed_takeorpay_all=True
+            ),
+            1.0,
+        )
+
 
 class TestSyncSplit(unittest.TestCase):
     """The min-load band split + forcing under coal_sync_srmc_tranche."""
