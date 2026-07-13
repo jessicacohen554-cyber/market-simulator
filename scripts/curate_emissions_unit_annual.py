@@ -237,12 +237,23 @@ def _finalize_dtypes(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def curate_year(
-    year: int, *, unit_dir: Path = RAW_UNIT_DIR, allow_quarantined: bool = False
+    year: int,
+    *,
+    unit_dir: Path = RAW_UNIT_DIR,
+    allow_quarantined: bool = False,
+    states: frozenset[str] | None = None,
 ) -> Path:
     """Curate one year of unit-level CAMPD into ``emissions-unit-annual``.
 
     Raises ``ValueError`` for a quarantined year (never rolled up) and
     ``FileNotFoundError`` when no extract is present. Returns the written path.
+
+    ``states``, when given, restricts the input glob to those state-code
+    extracts (e.g. a single ISO's states) instead of every state on disk.
+    The written file is still the whole-year ``emissions-unit-annual``
+    artifact — downstream readers (``derive_plant_emissions_v2.py``) already
+    filter by state after reading, so a state-scoped curate is equivalent for
+    any consumer that only wants those states' rows, just cheaper to compute.
     """
     if year in QUARANTINED_YEARS and not allow_quarantined:
         raise ValueError(
@@ -250,10 +261,16 @@ def curate_year(
             f"{DATATYPE} never rolls up 2022/H1-2026 (pass --holdout-intake "
             "<ISO> with its calibration-complete marker for the one-shot)"
         )
-    paths_in = sorted(unit_dir.glob(f"*_{year}.parquet")) if unit_dir.is_dir() else []
+    if unit_dir.is_dir():
+        paths_in = sorted(unit_dir.glob(f"*_{year}.parquet"))
+        if states is not None:
+            paths_in = [p for p in paths_in if p.name.split("_")[0] in states]
+    else:
+        paths_in = []
     if not paths_in:
         raise FileNotFoundError(
             f"no unit-level CAMPD extracts for {year} in {unit_dir}"
+            + (f" (states filter: {sorted(states)})" if states else "")
         )
 
     frames = [_normalize_unit_hourly(pd.read_parquet(p), year) for p in paths_in]
@@ -310,6 +327,16 @@ def main(argv: list[str] | None = None) -> int:
         "named ISO's one-shot holdout validation (requires its "
         "calibration-complete marker; CLAUDE.md rule 22).",
     )
+    parser.add_argument(
+        "--states",
+        nargs="*",
+        default=None,
+        metavar="STATE",
+        help="restrict the input glob to these 2-letter state codes instead of "
+        "every state extract on disk (cheaper when only one ISO's rows are "
+        "needed downstream — derive_plant_emissions_v2.py already filters by "
+        "state after reading, so this is equivalent for that consumer).",
+    )
     args = parser.parse_args(argv)
 
     allow_quarantined = False
@@ -348,8 +375,9 @@ def main(argv: list[str] | None = None) -> int:
     if not years:
         logger.error("no curatable years found under %s", RAW_UNIT_DIR)
         return 1
+    states = frozenset(s.upper() for s in args.states) if args.states else None
     for year in years:
-        curate_year(year, allow_quarantined=allow_quarantined)
+        curate_year(year, allow_quarantined=allow_quarantined, states=states)
     return 0
 
 
