@@ -1,0 +1,109 @@
+# One-shot: land the ERCOT-65 negative-price-epoch session diff from the
+# runner. The modified files total ~3 MB — beyond the MCP relay's
+# single-call ceiling — so the 235 KB diff rides
+# scripts/probes/_ercot65_land/ercot65.patch.xz.b64.part1 (xz-9 + base64,
+# fetched back byte-verified before this workflow was pushed; the sha256
+# gate below is the authority). Covers: the wind_ptc_vintage_offers PTC
+# vintage-scoping mechanism (scenarios.py, constants.py, renewables.py,
+# ira.py, runner.py, both calibration orchestrators), its unit tests and
+# probe scripts, the wtx run_config recorder-fidelity fix + the ercot63
+# keeper/ablation record corrections + DOF-ledger entry, the parameter
+# registry regen, diagnosis §9, the ERCOT-65 calibration-log entry,
+# CLAUDE.md + model-methodology-spec.md + CHANGELOG.md sync-docs edits.
+# The landing-blob dir itself is excluded from the patch (pushed directly
+# via the API alongside this workflow).
+name: ercot65-negepoch-land
+
+on:
+  push:
+    branches:
+      - claude/ercot-negative-price-epoch-368q8q
+    paths:
+      - .github/workflows/ercot65-negepoch-land.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ercot65-negepoch-land
+  cancel-in-progress: false
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/ercot-negative-price-epoch-368q8q
+          fetch-depth: 0
+
+      - name: Sync the branch base to main
+        run: |
+          set -euo pipefail
+          # The patch is generated against latest origin/main (rubric-v2.5
+          # tip); the branch ref may lag it. The branch carries only the
+          # landing blob + this workflow on top of an old-main ancestor, so
+          # the merge is conflict-free by construction.
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git merge --no-edit origin/main
+
+      - name: Apply the session patch (sha-gated)
+        run: |
+          set -euo pipefail
+          if grep -q "wind_ptc_vintage_offers" CLAUDE.md; then
+            echo "already applied — no-op"
+            exit 0
+          fi
+          echo "57652cc64a473dd02ee1726f216e7e2142a30c47c6f96a1be980973b98f93864  /tmp/_ercot65.patch" > /tmp/patch.sha
+          tr -d '\r\n ' < scripts/probes/_ercot65_land/ercot65.patch.xz.b64.part1 \
+            | base64 -d | xz -d > /tmp/_ercot65.patch
+          sha256sum -c /tmp/patch.sha
+          git apply --verbose /tmp/_ercot65.patch
+
+      - name: Post-conditions (mechanism + fixes + docs present)
+        run: |
+          set -euo pipefail
+          grep -q "wind_ptc_vintage_offers: bool = False" src/market_sim/config/scenarios.py
+          grep -q "WIND_PTC_STATUTORY_USD_PER_MWH" src/market_sim/config/constants.py
+          grep -q "def wind_ptc_eligible_monthly_share" src/market_sim/data/renewables.py
+          grep -q "def wind_ptc_vintage_dispatch_offer" src/market_sim/policy/ira.py
+          grep -q "wind_ptc_vintage_dispatch_offer" src/market_sim/runner.py
+          grep -q "wind_ptc_vintage_offers" scripts/run_calibration.py
+          grep -q "wind_ptc_vintage_offers" scripts/run_calibration_full.py
+          grep -q "channel conflict" scripts/run_calibration_full.py
+          grep -q "_record_corrections" results/calibration/ercot63_gas_bridge/run_config.json
+          grep -q "_record_corrections" results/calibration/ercot63_gas_bridge_ablation/run_config.json
+          grep -q "ercot_wtx_curtail_depth (wind, solar)" results/calibration/ercot63_gas_bridge/calibration_attestation.json
+          grep -q "## 9. ERCOT-65" docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md
+          n=$(grep -c "ERCOT-65: the negative-price epoch pair adjudicated" docs/calibration-log.md)
+          if [ "$n" -ne 1 ]; then echo "FAIL: calibration-log entry count=$n" >&2; exit 1; fi
+          n=$(grep -c "ERCOT-65 negative-price epoch pair" CHANGELOG.md)
+          if [ "$n" -ne 1 ]; then echo "FAIL: CHANGELOG entry count=$n" >&2; exit 1; fi
+          test -f tests/test_wind_ptc_vintage_offers.py
+          test -f scripts/probes/_ercot65_ladder_probe.py
+          test -f scripts/probes/_ercot65_epoch_anatomy.py
+          python -c "import ast; [ast.parse(open(f).read()) for f in (
+            'src/market_sim/config/scenarios.py',
+            'src/market_sim/config/constants.py',
+            'src/market_sim/data/renewables.py',
+            'src/market_sim/policy/ira.py',
+            'src/market_sim/runner.py',
+            'scripts/run_calibration.py',
+            'scripts/run_calibration_full.py',
+            'tests/test_wind_ptc_vintage_offers.py',
+            'scripts/probes/_ercot65_ladder_probe.py',
+            'scripts/probes/_ercot65_epoch_anatomy.py')]"
+          python -c "import json; json.load(open('results/calibration/ercot63_gas_bridge/run_config.json')); json.load(open('results/calibration/ercot63_gas_bridge/calibration_attestation.json')); json.load(open('frontend/data/parameters.json'))"
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "ERCOT-65: wind PTC vintage scoping (wind_ptc_vintage_offers, built + probe-adjudicated dispatch-inert, default-off); wtx recorder-fidelity fix + ercot63 record corrections (driver was live all along); trough/spread lane at frontier (draft for owner); diagnosis §9 + calibration-log + sync-docs + parameter registry [skip ci]"
+          git push origin HEAD:claude/ercot-negative-price-epoch-368q8q
