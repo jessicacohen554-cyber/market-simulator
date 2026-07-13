@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-13-nyiso-62-cc-hr",
+  "label": "nyiso 62 cc hr",
+  "date": "2026-07-13",
+  "shorthand": "nyiso-62-cc-hr",
+  "definition": "fleet_to_bins CC HR-basis re-gate (caiso-78 blast radius): keeper recipe VERBATIM via replay_keeper.build_kwargs off nyiso61_downstate_import/meta.json, re-solved on the fixed base_hr-pre-rescale code (fleet.py, caiso-78 2026-07-12). Zero recipe changes, zero new parameters.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NYISO",
+  "file": "frontend/data/backcast/runs/2026-07-13-nyiso-62-cc-hr.js",
+  "bundle": "results/calibration/nyiso62_cc_hr_regate"
+}
