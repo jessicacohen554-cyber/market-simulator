@@ -1,0 +1,115 @@
+# One-shot v2: the PJM leg of the caiso-78 blast-radius re-gate (see
+# caiso81-fleet-to-bins-regate.yml, whose PJM matrix job died at 16:49Z —
+# the hosted runner OOM'd at the per-gen reserve co-opt LP build (39 R
+# columns x 2396 member units x 8760 h; "runner received a shutdown signal"
+# one minute into the 2023 matrix build; NYISO/NEISO legs succeeded). The
+# solve peaks well above the 7 GB hosted-runner RAM (a session-container
+# rerun of the identical twin recipe was OOM-killed at 16 GB RSS mid-2024
+# and completed with swap), so this v2 adds a 20 GB swapfile before solving
+# — slow under thrash but bounded, and the 350-min budget absorbs it.
+#
+# Registers as pjm-106 (NOT 105: a concurrent session minted
+# 2026-07-13-pjm-105-symmetric-net while the first launch was in flight).
+# Data-API-only publish to a fresh branch parented on main (multi-uploader
+# fallback), no runner git-push anywhere.
+name: caiso81-pjm-regate-v2
+
+on:
+  push:
+    branches:
+      - claude/caiso-81-calibration-gvz68q
+    paths:
+      - .github/workflows/caiso81-pjm-regate-v2.yml
+
+permissions:
+  contents: write
+
+jobs:
+  regate-pjm:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Add swap for the per-gen reserve LP peak
+        run: |
+          set -euo pipefail
+          sudo fallocate -l 20G /swapfile
+          sudo chmod 600 /swapfile
+          sudo mkswap /swapfile
+          sudo swapon /swapfile
+          free -g
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install openpyxl pytest
+
+      - name: Tripwire — the runner code must carry the caiso-78 HR fix
+        run: python -m pytest tests/test_fleet.py -q -k CcNameplateRescale
+
+      - name: Curate clean partitions the keeper recipe reads
+        run: |
+          set -euo pipefail
+          # ramp-capability: measured_ramp_capability=True in the pjm-98
+          # recipe — without the partition the solve silently falls back to
+          # class ramp fractions (smoke-tested, caiso-81 session).
+          PYTHONPATH="$PWD" python scripts/curate_ramp_capability.py
+          PYTHONPATH="$PWD" python scripts/curate_capacity_deliverability.py --isos PJM
+
+      - name: Solve re-gate main (2023-2025)
+        env:
+          MALLOC_ARENA_MAX: "1"
+          OMP_NUM_THREADS: "1"
+        run: python scripts/probes/_fleet_to_bins_regate.py PJM main
+
+      - name: Solve zero-forcing twin
+        env:
+          MALLOC_ARENA_MAX: "1"
+          OMP_NUM_THREADS: "1"
+        run: python scripts/probes/_fleet_to_bins_regate.py PJM ablation
+
+      - name: Score legitimacy diagnostics (both bundles)
+        env:
+          MALLOC_ARENA_MAX: "1"
+        run: |
+          set -uo pipefail
+          for b in pjm106_cc_hr_regate pjm106_cc_hr_regate-ablation; do
+            python scripts/legitimacy_diagnostics.py \
+              --bundle "results/calibration/$b" \
+              --iso PJM --years 2023 2024 2025 \
+              --json-out "results/calibration/$b/legitimacy_diagnostics.json" || true
+            test -s "results/calibration/$b/legitimacy_diagnostics.json"
+          done
+
+      - name: Register both runs on the dashboard
+        run: |
+          set -euo pipefail
+          python scripts/dashboard_add_run.py \
+            --label "pjm 106 cc hr regate" \
+            --bundle results/calibration/pjm106_cc_hr_regate | tee /tmp/rm.out
+          python scripts/dashboard_add_run.py \
+            --label "pjm 106 cc hr regate ablation" \
+            --bundle results/calibration/pjm106_cc_hr_regate-ablation | tee /tmp/ra.out
+          echo "RIDM=$(grep '^RUN_ID=' /tmp/rm.out | cut -d= -f2)" >> "$GITHUB_ENV"
+          echo "RIDA=$(grep '^RUN_ID=' /tmp/ra.out | cut -d= -f2)" >> "$GITHUB_ENV"
+
+      - name: Upload per-run files via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_multi.py \
+            --rid "$RIDM" --bundle results/calibration/pjm106_cc_hr_regate \
+            --rid "$RIDA" --bundle results/calibration/pjm106_cc_hr_regate-ablation \
+            --branch claude/caiso81-regate-pjm-v2 \
+            --bench-iso PJM \
+            --extra scripts/probes/_fleet_to_bins_regate.py \
+            --message "results: register PJM fleet_to_bins CC-HR re-gate PROBE (pjm-106) + zero-forcing twin (caiso-78 blast radius; v2 swap-enabled runner) [skip ci]"
