@@ -109,9 +109,13 @@ jobs:
         run: |
           uv run python scripts/derive_actual_lmp.py --years 2020 2021 2022 2023 2024 2025 --isos NEISO --lw-retrofit
 
-      - name: Curate emissions-unit-annual 2022 (clean, gitignored intermediate)
+      - name: Curate emissions-unit-annual 2022 (clean, gitignored intermediate; NEISO
+              states only -- the nationwide 34-state 2022 unit-level extract landed by
+              the 2026-07-10 CAMPD intake made the unscoped rollup too slow for this
+              runner, timing out the last two attempts; derive_plant_emissions_v2.py
+              already filters by state after reading, so this is equivalent for NEISO)
         run: |
-          uv run python scripts/curate_emissions_unit_annual.py --years 2022 --holdout-intake NEISO
+          uv run python scripts/curate_emissions_unit_annual.py --years 2022 --holdout-intake NEISO --states ME NH MA CT RI VT
 
       - name: Extend plant_emission_rates_v2 with NEISO 2022 (frozen-row merge; skip if landed)
         run: |
