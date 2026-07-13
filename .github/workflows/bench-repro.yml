@@ -67,6 +67,14 @@ jobs:
         iso: ${{ fromJson(needs.resolve-matrix.outputs.isos) }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
+    env:
+      # Reproducibility pin (belt-and-suspenders with replay_keeper.py's own
+      # module-level pin): the byte-identity gate requires a basis-independent
+      # solve, so cross-year LP warm-start stays OFF here. It is basis-neutral
+      # on the calibration path but reshuffles marginal-tie dispatch ~0.003%,
+      # which would break build1==build2==committed. See docs/cross-year-
+      # warmstart.md and the calibration CLIs' default-ON gate.
+      MARKET_SIM_WARMSTART_XYEAR: "0"
     steps:
       - name: Checkout (full history not needed — committed code + data/raw only)
         uses: actions/checkout@v4

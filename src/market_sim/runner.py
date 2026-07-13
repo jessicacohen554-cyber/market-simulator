@@ -1456,6 +1456,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # docs/cross-year-warmstart.md). Wiring it forecast-side is
             # blocked on a basis-independent capacity screen (warm-start
             # backlog #4) — do not thread a cache here before that lands.
+            # NOTE: the calibration CLIs now default MARKET_SIM_WARMSTART_XYEAR
+            # ON, but that gate is inert here — a None cache means the shared
+            # solve core never applies OR exports a basis, whatever the env var
+            # says. Keep this literal None (tests/test_xyear_warmstart_default.py
+            # statically asserts it) so the forecast stays cold-only.
             # P1-native CAISO RA must-offer bridge (P2 archived — CLAUDE.md:
             # P0/P1 only): floor the merchant gas CC/CT fleet from the P0 run
             # pattern before P1, so the scored P1 carries the RA structure. None
