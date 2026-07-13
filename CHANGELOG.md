@@ -1,5 +1,28 @@
 # Changelog
 
+## 2026-07-13 — ERCOT floor-scoped LSL markdown: built, probe-adjudicated provably inert (ERCOT-64)
+
+- **Model:** new default-off gate `ercot_offer_surface_lowcurve_floorscoped`
+  (ERCOT-only) — the measured committed-CC LSL bid (the frozen ERCOT-62
+  `offer_curve_dam_lowcurve_condbinned.json` quantiles) applied to the gas-CC
+  committed tranche ONLY in the gas commitment bridge's own floored
+  plant-hours (`data/fleet.py::build_ercot_offer_surface_lowcurve_floorscoped_markdown`),
+  keyed on the bridge floor mask (never the v2 P0-online gate). New pairing
+  seam `pipeline/commitment.py::build_ercot_gas_bridge_p1_preps` computes the
+  bridge floor ONCE per P0 result and shares it across the P1 fleet hook and
+  the `p1_bid_adjust_prep` bid hook, in both orchestrators; mutually exclusive
+  with the tranche-wide v2 and hard-requires the bridge (fail loud). 13 unit
+  tests. **Probe verdict (rule-16 2023 ladder, bundles deleted): provably
+  inert** — the bridge floor clips at the committed-tranche bound on every
+  bridged plant, so the markdown's entire window is pinned and the probe is
+  byte-identical to the ercot63 keeper (price/dispatch max |Δ| = 0.0). The
+  LSL price-side enumeration is closed; ERCOT-65 chartered on the
+  negative-price epoch pair (`negative_renewable_offers` + the West-corridor
+  curtailment topology lane). Keeper unchanged.
+- **Docs realigned:** CLAUDE.md + model-methodology-spec.md (P1-native
+  bridges section — the preps pairing + verdict), trough diagnosis §8,
+  calibration-log ERCOT-64 entry, parameter registry.
+
 ## 2026-07-12 — ERCOT gas commitment bridge (ERCOT-63)
 
 - **Model:** new P1-native committed-state mechanism `ercot_gas_commitment_bridge`
