@@ -37,3 +37,9 @@ INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 2665 MW at h0 (
 INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 412 MW at h0 (measured hourly South reservation), published zonal curve steps ['343MW@$200', '1201MW@$1100', '172MW@$3300']
 INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2546 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 37605 / min 34167 MW
 INFO: Matrix build: 20.793s, Solve: 370.029s (cold)
+INFO: Matrix build: 20.793s, Solve: 109.439s (warm)
+INFO: EIA-923 2025: CAMPD-backfilled 57 under-reported plant(s) across 59 class-row(s) (1 replaced, 58 added)
+INFO: EIA-923 2025 wind 70.36 TWh under-counts EIA-930 98.90 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro 0.28 TWh under-counts EIA-930 9.88 TWh; using EIA-930 grid total
+INFO: year 2025 phase timing: data_prep=70.6s solve_p0=370.0s markup=51.7s solve_p1=109.4s results_write=36.8s total=638.5s
+INFO: wrote calibration bundle to /home/user/market-simulator/results/calibration/_probe_miso_shortout_2025
