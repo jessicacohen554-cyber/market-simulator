@@ -17,24 +17,34 @@ per ISO**. The NEISO one-shot execution is HELD on exactly this
 
 **Status (2026-07-12): register CREATED - `docs/holdout-data-equivalency-register-2026-07.md`.**
 
-- **NEISO 2022 readiness DONE** (2026-07-12 data-readiness lane). The register
-  (`docs/holdout-data-equivalency-register-2026-07.md`) is the shared cross-ISO
-  doc the parallel NYISO lane merged; the **NEISO section is added additively by
-  this lane's lander** (`apply_neiso_2022_readiness_docs.py`, run by
-  `holdout-intake-neiso-2022.yml`) and its full audit lives here + in
-  out-of-sample §1.3. NEISO 2022 intake is prepared under the 2026-07-12 owner
-  authorization (MERGE-not-replace, all 2023-2025 in-sample rows byte-frozen;
-  no-LP, no solve - the G-19 HOLD stands). Verdict tally for NEISO 2022:
-  **EQUIVALENT 21 / DEGRADED 2 / MISSING 1 (non-default limb) / accepted-absence 1**.
-  - **DEGRADED**: (1) daily Algonquin gas basis - weekly-anchored, densified
-    38 -> 62 prints, still sparse; (2) outage-window detector vintage - 2022 is
-    a HEAD re-derive, committed in-sample windows are an older vintage
-    (calibration-owner decision, not resolved).
-  - **MISSING**: NEISO-AS measured hourly reserve requirements (raw absent all
-    years) - needed only by the non-keeper dynamic-RR limb (neiso-57), not the
-    frozen keeper; owner decision on committing the raw exports.
-  - **accepted-absence**: EIA-930 storage breakout for 2022 (C5b/C5c SKIP -
-    structural, holds in-sample too).
+- **NEISO 2018-2022 readiness DONE, register §NEISO complete** (2026-07-13
+  lane, extending the 2026-07-12 2022-only readiness). Owner authorization
+  (verbatim, `calibration-complete.json` intake_log): *"This data can
+  literally be collected for all years — we're not running anything on it.
+  Fetch it all at once for 2018-2022 and first half 2026 if available."* The
+  2026-07-12 landing residuals (§NYISO N5: no NEISO 2022 in `actual_lmp*`/
+  tail, no `NEISO_2022_renewable_capacity.csv`, this file a placeholder stub)
+  are now CLOSED, and readiness extended back to 2018 where source data
+  permits (`scripts/land_neiso_2022_readiness.py` +
+  `scripts/land_neiso_holdout_multiyear.py`). Full audit:
+  `docs/holdout-data-equivalency-register-2026-07.md` §NEISO. Verdict tally
+  for the 2018-2022 window: **EQUIVALENT 12 / DEGRADED 8 / MISSING 6 (zero
+  unresolved — every MISSING row carries an explicit fix or acceptance)**.
+  - **DEGRADED**: outage-window detector vintage (all appended years, same
+    class as the original 2022 finding); daily Algonquin gas (still
+    2023-2025-only — monthly basis covers every year as the accepted
+    fallback); fleet statics + dual-fuel switch roster + winter-fuel-security
+    figures (static, accepted); parasitic load factors + fossil CO2 rates
+    2018-2021 (pooled-fallback / v2-superseded, accepted).
+  - **MISSING**: driver-demand model profile (`eia_demand_profiles.parquet`)
+    2018-2020 — **HIGH**, blocks dispatch outright, same F3/F4 class as the
+    ERCOT/PJM doc, not fixed in this data-only lane; `calibration_reference`
+    2018-2020 (same root cause); ISO-NE SMD LMP bench 2018-2019 (no workbook
+    on disk, hand-obtained artifact class); `actual_tail.json` 2018-2021
+    (deriver's `HOLDOUT_YEARS` constant is shared cross-ISO, not hand-edited
+    here); plant emission rates v1 (accepted-structural, same as NYISO);
+    NEISO-AS measured hourly reserve requirements (unchanged from
+    2026-07-12 finding, non-keeper limb).
   - **H1-2026**: BLOCKED (publication horizon - CAMPD Q2-2026, delivered gas
     May-2026+, F3 demand profiles, F4 reference-year registration). Locked test
     (rule 22, touch-once); executes later under the same marker.
