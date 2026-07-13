@@ -4526,6 +4526,20 @@ class ScenarioConfig:
     nearby_fuel_price_min_state_plants: int = 2  # state-mean sample floor;
     #   below it the broader model-zone mean is used instead.
 
+    # Tier 3 (calibration) — class-aware "nearby plant" donor pools. When True
+    # (with ``nearby_fuel_price_fallback`` on and a fleet that carries
+    # ``plant_group``), a generator's gap-fill months are priced from reporting
+    # plants of its OWN model class (CT_PEAKER, CC_REGULAR, …) first —
+    # same-class state mean, then same-class zone mean — before dropping to
+    # the class-blind fuel-group-wide pools. Measured basis (MISO 2024 F923,
+    # capacity-weighted): CT filers pay $4.13/MMBtu vs CC filers $2.57, but the
+    # fuel-group pool is quantity-weighted and hence CC-burn-dominated, so the
+    # ~33% of MISO CT capacity without its own filing inherits a ~$2.6 CC
+    # price — ~$16–20/MWh below its measured class cost
+    # (docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6). Off by default so every
+    # existing keeper replays byte-identical.
+    class_aware_fuel_price_fallback: bool = False
+
     # Tier 3 (calibration) — keep the non-ERCOT fleet at full per-plant
     # granularity (no efficiency-bin aggregation) so each generator retains
     # its EIA plant code, plant group and state. Required for the per-plant
@@ -6183,6 +6197,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_plant_monthly_pricing": 3,
     "nearby_fuel_price_fallback": 3,
     "nearby_fuel_price_min_state_plants": 3,
+    "class_aware_fuel_price_fallback": 3,
     "plant_level_fleet": 3,
     "gas_offer_curve": 3,
     "pumped_storage_dispatch_adder": 3,
