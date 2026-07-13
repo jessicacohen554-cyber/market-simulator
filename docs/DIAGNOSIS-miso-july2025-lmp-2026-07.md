@@ -160,7 +160,7 @@ persistent CHP/steam under-generation cluster (ST_GAS + ST_CHP + CT_CHP ≈
 and belong in lane-1's root-cause ledger before any all-coal pricing lever is
 re-tested.
 
-Two further lane-1 anchors measured this session:
+Three further lane-1 anchors measured this session:
 
 - **The 2024 CT_PEAKER over-run is ~94% ECONOMIC** (D-2: only 1.16 of
   19.5 TWh forced, reliability floor) — at $2.19 gas the model's CT SRMC
@@ -173,7 +173,23 @@ Two further lane-1 anchors measured this session:
   take-or-pay discount scoped by the measured self-commit share — rather than
   the blanket `coal_committed_takeorpay_all` (which overshoots PRB +7.8) — is
   the natural grounded scale-down to test once the availability channel and
-  lane-3 are settled.
+  lane-3 are settled. The 2024 revealed-merit measurement (F923 + EIA-923,
+  no model): PRB cap-wtd SRMC $27.9 ran at CF 0.458 while CC at SRMC $21.0
+  ran 0.591 — **83% of PRB capacity sat above the CC fleet's SRMC and still
+  ran at CF 0.43**. Real PRB dispatch does not follow full-SRMC offers.
+- **The CT fuel-price gap-fill donor is class-blind and measurably cheap.**
+  Measured 2024 delivered gas (F923, cap-weighted): CT filers $4.13/MMBtu vs
+  CC $2.57 — a +$1.56 small-volume/retail-transport premium. Only 67% of
+  MISO CT_PEAKER capacity files its own F923 price; the other 33% gap-fills
+  from the `_NearbyFuelPrices` state/zone mean, which is **fuel-group-wide
+  and quantity-weighted** (`fuel.py`), i.e. dominated by cheap CC burn
+  (~$2.6-2.8). Those CTs are priced ~$16-20/MWh below their measured class
+  cost — feeding BOTH the 2024 CT_PEAKER +7.1 economic over-run (at PRB's
+  expense: the lane-1 "gas undercutting coal" candidate, now with a measured
+  mechanism) AND July-2025's too-cheap North margin. Candidate fix (rule 14,
+  gated default-off so every keeper replay stays byte-identical): a
+  class-aware donor — same-class state/zone mean first, fuel-group mean as
+  the fallback. Untested; needs its own A/B across all three years.
 
 ## 7. Recommended sequence
 
