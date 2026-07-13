@@ -260,39 +260,26 @@ def build_caiso_ra_p1_prep(
     return _prep
 
 
-def ercot_gas_bridge_p1_floor_fleet(
+def _ercot_gas_bridge_floor(
     config,
-    iso: str,
     fleet: list,
     fleet_arrays,
     p0_dispatch: np.ndarray,
     p0_prices: np.ndarray | None,
     mc_base: np.ndarray,
-):
-    """Return the bridge-floored ``FleetArrays`` for the ERCOT P1 solve.
+) -> np.ndarray | None:
+    """Compute the raw ``(n_gen, T)`` ERCOT gas-CC bridge floor (or ``None``).
 
-    The ERCOT gas-CC commitment bridge (``ercot_gas_commitment_bridge``, the
-    committed-state mechanism promoted from the ERCOT-62b probe — see the
-    ScenarioConfig field docstring and
-    docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6): the same
-    ISO-neutral detector as the CAISO RA must-offer bridge
-    (:func:`model.commitment.caiso_ra_mustoffer_min_gen`, fed the model's own
-    base-cost P0 run pattern and duals), scoped to the merchant gas-CC fleet
-    (``fuel_types=("gas_cc",)`` — the recorded ERCOT-63 class adjudication),
-    with ``min_load_frac`` = the measured committed-CC LSL/HSL
-    capacity-weighted p50 and the economic (≥ min-down) leg bounded to one DA
-    operating day (``DA_COMMITMENT_HORIZON_HOURS``) when
-    ``ercot_gas_bridge_da_horizon`` is on. D-2 attribution:
-    ``MECH_GAS_COMMITMENT_BRIDGE``.
-
-    Returns ``None`` when the mechanism is off, the ISO is not ERCOT, or the
-    detector produces no floor (the caller keeps the ordinary warm-started P1).
+    The detector body shared by the P1 fleet hook (the floor itself) and the
+    floor-scoped LSL markdown bid hook (its hour mask) — hoisted out of
+    :func:`ercot_gas_bridge_p1_floor_fleet` so
+    :func:`build_ercot_gas_bridge_p1_preps` computes the floor ONCE per P0
+    result and shares it (the ERCOT-64 charter wiring trap #2: two hooks
+    re-running the detector independently could diverge). Assumes the caller
+    already checked the ``ercot_gas_commitment_bridge`` + ISO gate. Returns
+    ``None`` when the detector produces no floor.
     """
-    if not (getattr(config, "ercot_gas_commitment_bridge", False) and iso == "ERCOT"):
-        return None
-
     from market_sim.config.constants import DA_COMMITMENT_HORIZON_HOURS
-    from market_sim.data.floor_mechanisms import MECH_GAS_COMMITMENT_BRIDGE
     from market_sim.model.commitment import caiso_ra_mustoffer_min_gen, find_runs
 
     # Economic ≥min-down bridging (the overnight-between-run-days carrier):
@@ -344,6 +331,49 @@ def ercot_gas_bridge_p1_floor_fleet(
             len(seg_lengths),
             buckets,
         )
+    return bridge_floor
+
+
+def ercot_gas_bridge_p1_floor_fleet(
+    config,
+    iso: str,
+    fleet: list,
+    fleet_arrays,
+    p0_dispatch: np.ndarray,
+    p0_prices: np.ndarray | None,
+    mc_base: np.ndarray,
+):
+    """Return the bridge-floored ``FleetArrays`` for the ERCOT P1 solve.
+
+    The ERCOT gas-CC commitment bridge (``ercot_gas_commitment_bridge``, the
+    committed-state mechanism promoted from the ERCOT-62b probe — see the
+    ScenarioConfig field docstring and
+    docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §5-6): the same
+    ISO-neutral detector as the CAISO RA must-offer bridge
+    (:func:`model.commitment.caiso_ra_mustoffer_min_gen`, fed the model's own
+    base-cost P0 run pattern and duals), scoped to the merchant gas-CC fleet
+    (``fuel_types=("gas_cc",)`` — the recorded ERCOT-63 class adjudication),
+    with ``min_load_frac`` = the measured committed-CC LSL/HSL
+    capacity-weighted p50 and the economic (≥ min-down) leg bounded to one DA
+    operating day (``DA_COMMITMENT_HORIZON_HOURS``) when
+    ``ercot_gas_bridge_da_horizon`` is on. D-2 attribution:
+    ``MECH_GAS_COMMITMENT_BRIDGE``. Detector body:
+    :func:`_ercot_gas_bridge_floor` (shared with the floor-scoped markdown's
+    bid hook via :func:`build_ercot_gas_bridge_p1_preps`).
+
+    Returns ``None`` when the mechanism is off, the ISO is not ERCOT, or the
+    detector produces no floor (the caller keeps the ordinary warm-started P1).
+    """
+    if not (getattr(config, "ercot_gas_commitment_bridge", False) and iso == "ERCOT"):
+        return None
+
+    from market_sim.data.floor_mechanisms import MECH_GAS_COMMITMENT_BRIDGE
+
+    bridge_floor = _ercot_gas_bridge_floor(
+        config, fleet, fleet_arrays, p0_dispatch, p0_prices, mc_base
+    )
+    if bridge_floor is None:
+        return None
     return _bridge_floored_fleet(fleet_arrays, bridge_floor, MECH_GAS_COMMITMENT_BRIDGE)
 
 
@@ -352,22 +382,118 @@ def build_ercot_gas_bridge_p1_prep(
 ):
     """Return a ``p1_fleet_prep`` hook for the ERCOT gas commitment bridge.
 
-    The hook is called with the P0 result once P0 has solved and returns the
-    bridge-floored ``FleetArrays`` the P1 solve should use
-    (:func:`ercot_gas_bridge_p1_floor_fleet`), or ``None`` to keep the
-    ordinary warm-started P1. ``None`` when the mechanism is off or the ISO
-    is not ERCOT, so every other path is byte-identical. ISO-exclusive with
-    the CAISO and PJM P1-prep hooks by construction (each gates on its ISO).
+    The fleet-hook-only convenience wrapper over
+    :func:`build_ercot_gas_bridge_p1_preps` (kept for callers/tests that
+    predate the floor-scoped markdown's shared-floor pairing). ``None`` when
+    the mechanism is off or the ISO is not ERCOT, so every other path is
+    byte-identical. ISO-exclusive with the CAISO and PJM P1-prep hooks by
+    construction (each gates on its ISO).
     """
-    if not (getattr(config, "ercot_gas_commitment_bridge", False) and iso == "ERCOT"):
-        return None
+    fleet_prep, _ = build_ercot_gas_bridge_p1_preps(
+        config, iso, fleet, fleet_arrays, mc_base
+    )
+    return fleet_prep
 
-    def _prep(r0):
-        return ercot_gas_bridge_p1_floor_fleet(
-            config, iso, fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
+
+def build_ercot_gas_bridge_p1_preps(
+    config,
+    iso: str,
+    fleet: list,
+    fleet_arrays,
+    mc_base,
+    floorscoped_markdown_fn=None,
+):
+    """Return ``(p1_fleet_prep, p1_bid_adjust_prep)`` sharing ONE bridge floor.
+
+    The ERCOT-64 pairing seam: the gas commitment bridge's P1 ``min_gen``
+    floor (the committed STATE) and the floor-scoped committed-LSL markdown
+    (``ercot_offer_surface_lowcurve_floorscoped`` — the measured LSL bid on
+    exactly those floored plant-hours) both key on the SAME detector output,
+    so the floor is computed once per P0 result and memoized; the two hooks
+    :func:`pipeline.solve.run_energy_solve` calls (bid adjust first, fleet
+    prep second) read the shared value — never two detector runs that could
+    diverge (charter wiring trap #2). The markdown keys on the BRIDGE FLOOR
+    MASK, never the v2 P0-online gate, which is False in bridged gap hours
+    by construction (trap #1).
+
+    Args:
+        floorscoped_markdown_fn: Optional callable ``(floor_mask) ->
+            Optional[np.ndarray]`` building the ``(n_gen, T)`` P1-only
+            additive markdown from the bridge's boolean floor mask (the
+            orchestrator closes over its fuel prices / net load —
+            ``data.fleet.build_ercot_offer_surface_lowcurve_floorscoped_markdown``).
+            Only consulted when ``ercot_offer_surface_lowcurve_floorscoped``
+            is on.
+
+    Returns:
+        ``(p1_fleet_prep, p1_bid_adjust_prep)`` — either may be ``None``
+        (flag off / not ERCOT / nothing to do), keeping every other path
+        byte-identical.
+
+    Raises:
+        ValueError: If ``ercot_offer_surface_lowcurve_floorscoped`` is on
+            without ``ercot_gas_commitment_bridge`` (the scope IS the
+            bridge's floor mask — there is no window without it), or together
+            with the refuted tranche-wide ``ercot_offer_surface_lowcurve``
+            (same rows, same phenomenon — rule 19: one mechanism per
+            phenomenon).
+    """
+    floorscoped = bool(
+        getattr(config, "ercot_offer_surface_lowcurve_floorscoped", False)
+    )
+    bridge_on = bool(
+        getattr(config, "ercot_gas_commitment_bridge", False) and iso == "ERCOT"
+    )
+    if floorscoped and iso == "ERCOT":
+        if not getattr(config, "ercot_gas_commitment_bridge", False):
+            raise ValueError(
+                "ercot_offer_surface_lowcurve_floorscoped requires "
+                "ercot_gas_commitment_bridge: the markdown's window IS the "
+                "bridge's floored plant-hours (no floor, no LSL role)."
+            )
+        if getattr(config, "ercot_offer_surface_lowcurve", False):
+            raise ValueError(
+                "ercot_offer_surface_lowcurve_floorscoped is mutually "
+                "exclusive with the tranche-wide ercot_offer_surface_lowcurve "
+                "(same committed rows, same phenomenon — CLAUDE.md rule 19; "
+                "the tranche-wide form is probe-refuted, diagnosis §7)."
+            )
+    if not bridge_on:
+        return None, None
+
+    # Per-P0-result memo: run_energy_solve calls the bid hook, then the fleet
+    # hook, with the same r0 — the detector must run once for both.
+    _memo: dict = {"key": None, "floor": None}
+
+    def _floor_for(r0):
+        key = id(r0)
+        if _memo["key"] != key:
+            _memo["key"] = key
+            _memo["floor"] = _ercot_gas_bridge_floor(
+                config, fleet, fleet_arrays, r0.dispatch, r0.prices, mc_base
+            )
+        return _memo["floor"]
+
+    def _fleet_prep(r0):
+        from market_sim.data.floor_mechanisms import MECH_GAS_COMMITMENT_BRIDGE
+
+        bridge_floor = _floor_for(r0)
+        if bridge_floor is None:
+            return None
+        return _bridge_floored_fleet(
+            fleet_arrays, bridge_floor, MECH_GAS_COMMITMENT_BRIDGE
         )
 
-    return _prep
+    bid_prep = None
+    if floorscoped and floorscoped_markdown_fn is not None:
+
+        def bid_prep(r0):
+            bridge_floor = _floor_for(r0)
+            if bridge_floor is None:
+                return None
+            return floorscoped_markdown_fn(bridge_floor > 0.0)
+
+    return _fleet_prep, bid_prep
 
 
 def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:

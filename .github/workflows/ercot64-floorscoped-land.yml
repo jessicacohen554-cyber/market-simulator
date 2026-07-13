@@ -1,0 +1,83 @@
+# One-shot: land the ERCOT-64 floor-scoped LSL markdown session diff from the
+# runner. The 14 modified files total ~3.7 MB — beyond the MCP relay's
+# single-call ceiling — so the 69 KB diff rides
+# scripts/probes/_ercot64_land/ercot64.patch.xz.b64.part1 (xz-9 + base64,
+# fetched back byte-verified before this workflow was pushed; the sha256 gate
+# below is the authority). Covers: the ercot_offer_surface_lowcurve_floorscoped
+# mechanism (scenarios.py, fleet.py, pipeline/commitment.py + __init__,
+# runner.py, both calibration orchestrators), the probe verdict docstrings,
+# diagnosis §8, the ERCOT-64 calibration-log entry, CLAUDE.md +
+# model-methodology-spec.md + CHANGELOG.md sync-docs edits, and the parameter
+# registry regen. The two NEW files (the floorscoped unit tests + the ercot64
+# ladder probe) were pushed directly via the API alongside the blob.
+name: ercot64-floorscoped-land
+
+on:
+  push:
+    branches:
+      - claude/ercot-floor-scoped-lsl-5d490o
+    paths:
+      - .github/workflows/ercot64-floorscoped-land.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ercot64-floorscoped-land
+  cancel-in-progress: false
+
+jobs:
+  land:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: claude/ercot-floor-scoped-lsl-5d490o
+          fetch-depth: 0
+
+      - name: Apply the session patch (sha-gated)
+        run: |
+          set -euo pipefail
+          if grep -q "ercot_offer_surface_lowcurve_floorscoped" CLAUDE.md; then
+            echo "already applied — no-op"
+            exit 0
+          fi
+          echo "94af63e3284d3b723d1d426db42d2d042817f95a3c070438165e29b89ccf998b  /tmp/_ercot64.patch" > /tmp/patch.sha
+          tr -d '\r\n ' < scripts/probes/_ercot64_land/ercot64.patch.xz.b64.part1 \
+            | base64 -d | xz -d > /tmp/_ercot64.patch
+          sha256sum -c /tmp/patch.sha
+          git apply --verbose /tmp/_ercot64.patch
+
+      - name: Post-conditions (mechanism + docs present)
+        run: |
+          set -euo pipefail
+          grep -q "ercot_offer_surface_lowcurve_floorscoped: bool = False" src/market_sim/config/scenarios.py
+          grep -q "def build_ercot_offer_surface_lowcurve_floorscoped_markdown" src/market_sim/data/fleet.py
+          grep -q "def build_ercot_gas_bridge_p1_preps" src/market_sim/pipeline/commitment.py
+          grep -q "build_ercot_gas_bridge_p1_preps" src/market_sim/runner.py
+          grep -q "build_ercot_gas_bridge_p1_preps" scripts/run_calibration.py
+          grep -q "ercot_offer_surface_lowcurve_floorscoped" scripts/run_calibration_full.py
+          grep -q "## 8. ERCOT-64" docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md
+          n=$(grep -c "ERCOT-64: the FLOOR-SCOPED LSL markdown built and probe-adjudicated PROVABLY INERT" docs/calibration-log.md)
+          if [ "$n" -ne 1 ]; then echo "FAIL: calibration-log entry count=$n" >&2; exit 1; fi
+          n=$(grep -c "probe-adjudicated provably inert (ERCOT-64)" CHANGELOG.md)
+          if [ "$n" -ne 1 ]; then echo "FAIL: CHANGELOG entry count=$n" >&2; exit 1; fi
+          python -c "import ast; [ast.parse(open(f).read()) for f in (
+            'src/market_sim/config/scenarios.py',
+            'src/market_sim/data/fleet.py',
+            'src/market_sim/pipeline/commitment.py',
+            'src/market_sim/pipeline/__init__.py',
+            'src/market_sim/runner.py',
+            'scripts/run_calibration.py',
+            'scripts/run_calibration_full.py')]"
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "ERCOT-64: floor-scoped LSL markdown (ercot_offer_surface_lowcurve_floorscoped) — built, probe-adjudicated provably inert, stays default-off; shared bridge-floor preps seam in both orchestrators; diagnosis §8 + calibration-log + sync-docs + parameter registry [skip ci]"
+          git push origin HEAD:claude/ercot-floor-scoped-lsl-5d490o
