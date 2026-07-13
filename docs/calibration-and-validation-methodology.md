@@ -204,6 +204,20 @@ and the import boundary. The keeper-vs-twin **per-class energy delta**
 quantifies what each floor buys; a delta explainable only as "the floor buys
 the residual" is an open root-cause item, not a calibrated parameter.
 
+**What the twin is NOT — an overlay ablation (clarified 2026-07-13, owner
+directive).** Admissible measured *inputs* — historic outage windows, F923
+delivered fuel prices, same-year CEMS emission rates, weather-year pinning
+(the CLAUDE.md rule-13 class) — stay **ON** in the ablation twin. They are the
+year's physical/market inputs, not forcing; turning them off tests nothing
+about a keeper's legitimacy. The overlay on/off comparison exists separately
+as the **D-7 statistical-mode twin**, and its delta is read as the
+**backcast→forecast input gap** — how much accuracy a forecast gives up
+because it has only statistical inputs in place of the realized ones — i.e.
+forecast-uncertainty information (error bars, the crossover-window story),
+**never a caveat or deduction on the backcast result itself**. A backcast that
+hits commercial grade with its admissible measured inputs on *is* the
+measurement; it is reported without an asterisk.
+
 - **Definition:** `ScenarioConfig.as_zero_forcing_ablation(cfg)` — a config
   transform applied *after* all per-ISO defaults and overrides, so
   config-level defaults (e.g. CAISO `ct_netload_drag` / `caiso_ra_mustoffer`)
