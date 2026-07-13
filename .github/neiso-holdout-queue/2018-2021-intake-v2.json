@@ -1,0 +1,5 @@
+{
+  "requested_by": "owner (2026-07-13)",
+  "scope": "NEISO 2018-2021 holdout-intake + 2022 residual closure, requeued on fresh branch claude/neiso-holdout-data-register-v2-958191 after rebase onto origin/main (concurrent NYISO session merge required rebase + new branch per owner instruction 'Also rebase bc your merge can't land')",
+  "prior_run": "29259546224 (failed: external runner shutdown mid-step, old branch claude/neiso-holdout-data-register-kme0yy)"
+}
