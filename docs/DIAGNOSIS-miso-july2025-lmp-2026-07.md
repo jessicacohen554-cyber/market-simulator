@@ -160,6 +160,21 @@ persistent CHP/steam under-generation cluster (ST_GAS + ST_CHP + CT_CHP ≈
 and belong in lane-1's root-cause ledger before any all-coal pricing lever is
 re-tested.
 
+Two further lane-1 anchors measured this session:
+
+- **The 2024 CT_PEAKER over-run is ~94% ECONOMIC** (D-2: only 1.16 of
+  19.5 TWh forced, reliability floor) — at $2.19 gas the model's CT SRMC
+  genuinely crosses below its full-cost PRB offer. The deficit's counterpart
+  is a merit-order crossing, not a floor artifact.
+- **The measured PRB conduct anchor exists in-repo**
+  (`data/raw/som-competitive-conduct/som_competitive_conduct.csv`, 2023 SOM
+  Table 7): 56% of MISO regulated-coal starts are must-run/self-commit (42%
+  profitable + 14% ran-regardless), 44% offered economically. A PRB
+  take-or-pay discount scoped by the measured self-commit share — rather than
+  the blanket `coal_committed_takeorpay_all` (which overshoots PRB +7.8) — is
+  the natural grounded scale-down to test once the availability channel and
+  lane-3 are settled.
+
 ## 7. Recommended sequence
 
 1. Size the §4 channel with the 2025-only throwaway probe
