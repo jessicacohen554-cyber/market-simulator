@@ -11,5 +11,6 @@
   ],
   "iso": "NYISO",
   "file": "frontend/data/backcast/runs/2026-07-13-nyiso-62-cc-hr.js",
-  "bundle": "results/calibration/nyiso62_cc_hr_regate"
+  "bundle": "results/calibration/nyiso62_cc_hr_regate",
+  "ablation_twin": "2026-07-13-nyiso-62-cc-hr-ablation"
 }
