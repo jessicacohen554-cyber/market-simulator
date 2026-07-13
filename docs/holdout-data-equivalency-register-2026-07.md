@@ -24,7 +24,7 @@ MISSING row carries materiality and a fix (or "accepted").
 | CAISO | zero intake — rows start MISSING | blocked + zero intake | pending |
 | MISO | zero intake — rows start MISSING | blocked + zero intake | pending |
 | NYISO | **THIS DOC §NYISO** — EQUIVALENT 24 / DEGRADED 4 / MISSING 5 (2026-07-12 intake) | not intaken (publication-blocked tail per G-19; only the 2018–H1-2026 Ask-B/C/D series span it) | **§NYISO below** |
-| NEISO | intaken 2026-07-07 (§1.2) — register section pending; **landing residuals found 2026-07-12** (see §NEISO note) | blocked per G-19 | pending |
+| NEISO | **THIS DOC §NEISO** — EQUIVALENT 12 / DEGRADED 8 / MISSING 6 (2026-07-13 intake, 2018-2022) | blocked (publication horizon, same class as all ISOs) | **§NEISO below** |
 
 ---
 
@@ -147,10 +147,116 @@ overlays, and every bench series are landed and lineage-verified.
 
 ---
 
-## ERCOT / PJM / CAISO / MISO / NEISO
+## NEISO — 2018-2022 holdout-year data readiness (intake 2026-07-13, this session)
+
+Keeper: **`2026-07-09-neiso-56-reserve-coopt`** (`frontend/data/backcast/keepers.json`;
+bundle `results/calibration/neiso56_reserve_coopt`, flags from its
+`run_config.json`). NEISO already carries a **calibration-complete marker**
+(declared 2026-07-07, `frontend/data/backcast/calibration-complete.json`), so
+this lane both (a) closed the 2026-07-12 landing-residual note (§NYISO N5)
+and (b) — under the owner's 2026-07-13 rule-22 Option-2 DATA-INTAKE
+authorization (verbatim in `intake_log`: *"This data can literally be
+collected for all years — we're not running anything on it. Fetch it all at
+once for 2018-2022 and first half 2026 if available."*) — extended readiness
+from 2022-only back to every out-of-training year 2018-2022. **No solve, no
+score**: the G-19 one-shot execution HOLD and rule-22's solve/score
+quarantine are untouched; the marker only authorizes *this* ISO's DATA
+intake channel and its already-scheduled one-shot, not a re-run of it.
+
+Data-consuming flags ON in the keeper: `use_campd_bins`, `plant_level_fleet`,
+`use_plant_emission_rates`(+`v2`), `reliability_floor`, `outage_source=historic`
+(unit-level file), `temp_dependent_derate` (+ `neiso_gas_coldsnap_derate`),
+`neiso_oil_burn_budget`, `neiso_winter_fuel_inventory` + `neiso_winter_fuel_mustrun`,
+`energy_reserve_coopt`, `maintenance_monthly_shape`, `chp_steam_following`,
+`gas_monthly_actuals`, `gas_daily_shape`, `gas_hub_basis_overlay` (+`_daily`),
+`dual_fuel_oil_reattribution`, `dual_fuel_switching`, `coal_plant_monthly_pricing`.
+
+### Model inputs
+
+| input | keeper-years source + grain | 2018-2022 status | materiality / fix |
+|---|---|---|---|
+| CAMPD unit-level CT/MA/ME/NH/RI/VT (`campd-unit-level/{ST}_{YEAR}.parquet`) | EPA CAMPD hourly, per unit, 2023-2025 | **EQUIVALENT** (pre-existing 2018-2026 landing, prior lane — 2026-07-08/10 intake_log entries) | — |
+| Fleet statics (`custom-bin-assignments.csv`, `master-plant-registry.csv`) | single registry snapshot, year-agnostic | **DEGRADED (accepted)** — same static vintage for every year including 2018-2022; identical caveat already applies in-sample | accepted, same convention as NYISO §NYISO |
+| EIA-860 vintage snapshots (`eia-860/vintage_<year>/…`) | per-year vintage subfolder | **EQUIVALENT** — vintage_2018 … vintage_2022 all on disk | — |
+| Unit-outage windows (`campd-unit-outages-NEISO.csv`) | derived windows, 2023-2025, committed vintage | **DEGRADED** — this session appended 573/656/587/606/502 HEAD-vintage windows for 2018/2019/2020/2021/2022 (`scripts/land_neiso_holdout_multiyear.py` + `land_neiso_2022_readiness.py`; committed 968 rows byte-frozen as prefix throughout). Same detector-vintage asymmetry as the register-handoff-documented 2022 issue (committed in-sample vintage vs a HEAD re-derivation — unknown args/code vintage, last touched PR #1593): the appended years are a *different* detector vintage than 2023-2025, not a parity issue specific to any one year | **HIGH** (outage overlay shapes prices+volumes). Fix: calibration-owner adjudication — reconstruct the committed recipe or re-derive ALL years (2018-2025) at one pinned vintage (changes keeper inputs) |
+| Zone temp (`neiso-weather/neiso_zone_temp_daily.csv`) | NOAA GHCN per-zone daily, 2023-2025 | **EQUIVALENT** (this session: 1460/1460/1464/1460/1460 zone-days appended for 2018-2022 from the committed on-disk `_{year}h1/h2` NOAA splits, same schema, in-sample rows byte-frozen as prefix) | — |
+| Load-weighted temp (`neiso_load_weighted_temp_daily.csv`) | 6-station NOAA GHCN load-weighted daily | **EQUIVALENT** (this session: re-derived via the frozen `derive_neiso_temp_reliability_floor.fetch_neiso_temp` recipe for 2018-2022, in-sample rows byte-frozen) | — |
+| Winter fuel-security study figures (`winter-fuel-inventory/isone/isone.csv`) | hand-curated ISO-NE program figures, year-agnostic capacity/logistics inputs | **DEGRADED (accepted)** — static across all years by design (rule 13: forward-derivable capacity input, not a measured outcome); identical in-sample | accepted, same as fleet statics |
+| Gas monthly actuals (F923 delivered cost, `_processed-legacy/eia923_monthly_fuel_costs.parquet`) | EIA-923 monthly, per plant, 2023-2025 | **EQUIVALENT** — 72/71/50/31/31 NEISO-state cost rows already on disk for 2018-2022 (pre-existing, prior lane) | — |
+| Gas hub basis, monthly (`gas_basis_by_iso_month.csv`) | Iroquois/Algonquin − Henry Hub, per month, 2023-2025 | **EQUIVALENT** — 12 rows/year already on disk for 2018-2022 (pre-existing; the file spans 2015-2026) | — |
+| Gas hub basis, daily (Algonquin, `gas-prices/algonquin_citygate_daily.csv`) | weekly-anchored EIA-narrative scrape, ~30-50 prints/yr, 2023-2025 (44/49/30) | **MISSING** 2018-2022 (fetcher not re-run this session for the back-years; time-boxed to the readiness items above) | **medium** (same DEGRADED class already flagged for 2022 in the handoff — 2022-era EIA phrasing differs from 2023+, needs widened regexes; older years unexamined). The **monthly** basis input above is EQUIVALENT for every year, so `gas_hub_basis_overlay` still functions at monthly grain with `gas_hub_basis_daily` simply falling back to the monthly plateau for 2018-2022 — a real but bounded degradation (rule 14: no fabricated dailies). Fix: point `fetch_algonquin_daily_spot.py` at the 2018-2022 archive pages; owner/calibration-owner call on priority given the monthly fallback already exists |
+| Dual-fuel oil price (F923 delivered oil, same `eia923_monthly_fuel_costs.parquet`) | EIA-923 monthly oil receipts | **EQUIVALENT** — oil rows ride the same F923 monthly file above, 2018-2022 present | — |
+| Dual-fuel switch-capable roster (EIA-860, static) | year-agnostic unit roster | **DEGRADED (accepted)** — same static-vintage caveat as fleet statics, but per-year EIA-860 vintage snapshots do exist (see above) if a future session wants to de-genericize this | accepted |
+| Plant emission rates v1 (`plant_emission_rates.parquet`) | pooled `year==0` (131 rows) + `{2023,2024}` override rows | **MISSING** 2018-2022 (same as NYISO's finding: v1 also lacks 2025 in-sample; the pooled `year==0` rows are what `egrid._campd_rate_map` actually consumes) | accepted — **structural**, identical caveat already applies in-sample; not a holdout-specific gap |
+| Plant emission rates v2 (`plant_emission_rates_v2.parquet`) | per-plant-unit-year measured rates | **EQUIVALENT** — 2018 (189)/2019 (191)/2020 (189)/2021 (187) were already on disk; **2022 (179) landed this session** via `curate_emissions_unit_annual.py --years 2022 --holdout-intake NEISO` + `derive_plant_emissions_v2.py --iso NEISO --years 2022 --holdout-intake NEISO` (both tools' marker gate passes — NEISO already carries `complete.NEISO`; 2023-2025 rows asserted byte-frozen by the tool's own merge-and-refreeze check) | — (this closes the "2022 is a gap year" issue the NYISO register flagged as the same-class problem) |
+| Parasitic load factors (`parasitic_load_factors.parquet`) | pooled `year==0` (463) + `{2022,2023,2024,2025}` | **MISSING** 2018-2021 per-year rows (pooled `year==0` fallback covers them — `derive_plant_emissions_v2.py`'s documented fallback chain: per-year → pooled → 1.0) | **low** — the estimator's own designed fallback; not a hard failure |
+| Fossil CO2 rates (`fossil_co2_rates.parquet`) | per-plant, `{2022..2026}` on eGRID vintage | **MISSING** 2018-2021 (only 2022-2026 on disk; this is a v1-adjacent legacy fallback — the keeper's primary emission input is v2 above, which is EQUIVALENT for all 2018-2022) | **low** given v2 is the primary path; fix (if wanted): `derive_fossil_co2_rates.py --years 2018 2019 2020 2021` on the matching eGRID vintage per year |
+| Calibration reference sidecar (`calibration_reference.json` `isos.NEISO.<year>`) + `NEISO_<year>_renewable_capacity.csv` | EIA-860/-923/-930/eGRID per-year block, `{2023,2024,2025}` | **EQUIVALENT 2021-2022** (2022 pre-existing/closed this session; **2021 newly built** this session — `CALIBRATION_YEARS_BY_ISO["NEISO"]` extended to include 2021, `HENRY_HUB_ACTUAL` extended with 2018-2020 EIA annual averages for future use). **MISSING 2018-2020** — `build_calibration_reference._demand_totals` hard-requires `eia_demand_profiles.parquet` rows for the (ISO, year), and that artifact has NO NEISO rows before 2021 (see driver-demand row below); the builder cannot produce a 2018-2020 block until that's fixed | **HIGH for 2018-2020** (blocks the sidecar entirely), **none for 2021-2022**. Fix: same F3/F4-class blocker as the driver-demand row — extend `eia_demand_profiles{,_meta}.parquet` first |
+| Driver demand — model profile (`eia-930/eia_demand_profiles.parquet`, what `load_demand`/`load_demand_meta` actually reads) | full-8760 repaired series, 2021-2025 | **MISSING** 2018-2020 (confirmed by direct `load_demand_meta` failure: `ValueError: No EIA-930 data for ISO 'NEISO' in year 2018`) | **HIGH** — this is the primary demand driver; without it 2018-2020 cannot be dispatched at all regardless of every other input's status. Same class as the ERCOT/PJM out-of-sample doc's **F3** ("full-8760 contract; a partial year is unbuildable by design... no builder script exists in-repo, hand-uploaded artifact") — accepted as a cross-ISO structural gap, not fixed in this data-only lane |
+| Driver demand — raw wide extract (`eia-930-hourly/ISNE hourly.parquet`) | hourly, underlies the repaired series above | **EQUIVALENT** 2018-2025 (full 8760/8784-hour years); **DEGRADED** H1-2026 (3,359 h through ~May, publication lag) | this is the *upstream* raw series the missing 2018-2020 repaired profile above would be rebuilt from — the gap is in the repair/normalization step, not raw availability |
+| Zonal load actuals (`zone-specific-demand/NEISO/…`) | NYISO-style per-zone hourly actuals | **accepted structural absence** — NEISO carries no zonal-load file at all (the `land_actual_lmp`/`lw_retrofit` step logs `NEISO zonal load file not found` for **every** year including keeper years 2023-2025); the load-weighted LMP (`_lw` fields) falls back to the CAMPD-generation-weighted proxy the same way in-sample and out-of-sample | not a holdout-specific gap; NEISO has never had this input |
+| NEISO-AS measured hourly reserve requirements (dynamic-RR non-keeper limb) | raw absent all years | **MISSING** (same finding as the 2026-07-12 gap-register entry) — needed only by `neiso57_dynamic_rr`, not the frozen keeper | not keeper-material; owner decision on committing the raw exports, unchanged from the 2026-07-12 finding |
+
+### Bench / scoring series
+
+| series | keeper-years grain | 2018-2022 status | note |
+|---|---|---|---|
+| `actual_lmp_hourly_NEISO.parquet` (dense 8760 hub-mean DA+RT) | ISO-NE SMD `*_smd_hourly.xlsx` per-zone sheets, 2023-2025 | **EQUIVALENT 2020-2022** (this session: 2020 DA $23.31/RT $23.37, 2021 DA $45.92/RT $44.84 built by the committed `derive_actual_lmp.py` NEISO builder from the 2020/2021 SMD workbooks already on disk at `data/raw/lmp-data/{2020,2021}_smd_hourly.xlsx`, copied into `lmp-data/NEISO/`; 2022 closed via the 2026-07-12 residual lane. Load-weighted `_lw` fields backfilled for 2020/2021 via `derive_actual_lmp.lw_retrofit` — the generalized lander initially omitted this step, caught and fixed in-session). **MISSING 2018-2019** — no ISO-NE SMD hourly workbook exists anywhere on disk for those years (the 2020-2025 workbooks are hand-obtained artifacts, same class as the PJM DataMiner UI exports; ISO-NE's own historical-data portal did not yield a scriptable free download this session) | independent full-coverage bench for 2020-2022; 2018-2019 unscorable until the workbooks are obtained |
+| `actual_lmp.json` NEISO annual/monthly/pct + zones | same derivation | **EQUIVALENT 2020-2022** (2020 DA $23.31/RT $23.37; 2021 DA $45.92/RT $44.84; 2022 DA $85.56/RT $84.92 — all with `_lw` fields); **MISSING 2018-2019** | — |
+| `actual_tail.json` NEISO scarcity-tail counts | marker-aware `derive_actual_tail.py`, `ALLOWED_YEARS=(2023,2024,2025)` + `HOLDOUT_YEARS=(2022,2026)` | **EQUIVALENT 2022** (DA 27h/RT 117h, closed this session). **MISSING 2018-2021** by the deriver's own year gate — `HOLDOUT_YEARS` is hard-coded to `(2022, 2026)` only, a **shared cross-ISO constant** (`scripts/derive_actual_tail.py`); extending it to 2018-2021 for NEISO would also unlock those years for every other marker'd ISO, so this was deliberately NOT hand-edited in a data-only lane | **medium** — the tail counts are a secondary diagnostic, not the primary LMP bench above. Fix: calibration-owner decision to widen `HOLDOUT_YEARS`, cross-ISO impact review first (rule 23 territory) |
+| `calibration_reference.json` `isos.NEISO.{2021,2022}` | EIA-860/-923/-930/eGRID per-year block | **EQUIVALENT** (see model-inputs row above) | 2018-2020 MISSING, same root cause |
+| `NEISO_{2021,2022}_renewable_capacity.csv` | EIA-860 per-zone monthly wind/solar MW | **EQUIVALENT** (120 rows each, same shape as 2023-2025) | 2018-2020 MISSING, same root cause |
+| EIA-930 fuel-mix bench (`ISNE_{fueltype,region}_{year}.parquet`) | hourly, 2015-2026 | **EQUIVALENT** 2018-2022 (pre-existing) | — |
+| CAMPD generation bench (CT/MA/ME/NH/RI/VT unit-level) | hourly | **EQUIVALENT** 2018-2022 (pre-existing) | — |
+| EIA-930 storage breakout (C5b/C5c) | exists in-sample | **accepted structural absence** — same as NYISO/ERCOT/PJM findings, does not exist for most BAs pre-2023; will SKIP | not a gap to fill |
+
+### H1-2026
+
+**Blocked**, same publication-horizon class documented for every ISO (`docs/holdout-data-equivalency-register-2026-07.md` §NYISO, `docs/out-of-sample-results-2026-07.md` §1.1): EPA CAMPD Q2-2026 hourly unposted (CAMPD unit-level + outages + emission rates all Q1-only at best), EIA delivered gas May-2026+ unpublished, `eia_demand_profiles` full-8760 contract unbuildable from a partial year (compounding the pre-existing 2018-2020 gap above), Algonquin daily/monthly gas partial. What **is** already on disk and EQUIVALENT through the local Jun-30 boundary: CAMPD unit-level CT/MA/ME/NH/RI/VT `_2026.parquet` (Q1-Q2 depending on EPA posting — verify before use), `ISNE_{fueltype,region}_2026.parquet` (full H1), `ISNE hourly.parquet` (3,359 h through ~May), `gas_basis_by_iso_month.csv` NEISO rows (2 months), `fossil_co2_rates.parquet` (2026, forward-vintage stand-in), F923 fuel costs (2 rows, partial). Not solved or scored this session (rule 22).
+
+### Owner-authorization log
+
+Logged verbatim in `frontend/data/backcast/calibration-complete.json` `intake_log`
+(2026-07-13 entries): the residual-closure entry and the 2018-2022 extension
+entry, both citing the owner's authorization quoted above. No dispatch solve
+of 2018-2022 or H1-2026 was constructed, solved, or scored; the G-19 one-shot
+execution HOLD stays in force. NEISO's existing `complete.NEISO` marker
+(2026-07-07) already authorizes that ISO's one-shot holdout validation
+separately — this lane's data intake does not itself trigger or re-trigger it.
+
+### Verdict tally (2018-2022 window, this section)
+
+**EQUIVALENT 12** (CAMPD unit-level, EIA-860 vintages, zone temp, load-weighted
+temp, gas monthly actuals, gas hub basis monthly, dual-fuel oil price, plant
+emission rates v2, EIA-930 fuel-mix bench, CAMPD generation bench, driver
+demand raw wide extract [2018-2025 portion], calref+renewable-capacity
+[2021-2022 portion]) / **DEGRADED 8** (fleet statics, winter-fuel-security
+figures, dual-fuel switch roster, unit-outage windows, Algonquin daily gas,
+driver-demand raw extract H1-2026 portion, parasitic load factors, fossil CO2
+rates) / **MISSING 6** (plant emission rates v1 [accepted-structural], driver
+demand model-profile 2018-2020, calref 2018-2020, actual_lmp/actual_lmp.json
+2018-2019, actual_tail 2018-2021, NEISO-AS measured reserve requirements).
+**Zero unresolved MISSING**: every MISSING row above carries an explicit
+materiality rating and either a fix or an explicit acceptance rationale.
+
+### What still blocks a NEISO 2018-2022 one-shot beyond 2022 itself
+
+NEISO's 2022 one-shot is already authorized by its existing `complete.NEISO`
+marker (2026-07-07) and stands on its own readiness (this section's 2022
+rows plus the 2026-07-12 residual closure). Extending the one-shot to
+2018/2020/2021 would additionally need: (1) the driver-demand fix
+(`eia_demand_profiles.parquet` 2018-2020) — a hard blocker, no dispatch is
+possible without it; (2) the outage-window detector-vintage adjudication
+(shared with 2022, unresolved); (3) an owner decision on `HOLDOUT_YEARS` in
+`derive_actual_tail.py` if the tail diagnostic is wanted for those years. 2019
+is the locked-test tier (rule 22 amendment) — touch-once, ever; nothing here
+scores it, so its one-shot eligibility is unaffected by this readiness work.
+
+---
+
+## ERCOT / PJM / CAISO / MISO
 
 Sections pending their own lanes. Seed material:
 `docs/out-of-sample-results-2026-07.md` §1.1 (ERCOT/PJM, incl. the known Waha
-annual-basis and PJM wide-extract-lineage DEGRADED candidates), §1.2 (NEISO,
-incl. the Algonquin weekly-anchored daily and the outage-window vintage), and
-the register handoff's known-items list (§"Known DEGRADED/asymmetric items").
+annual-basis and PJM wide-extract-lineage DEGRADED candidates) and the
+register handoff's known-items list (§"Known DEGRADED/asymmetric items").
