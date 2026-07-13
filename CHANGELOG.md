@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-13 — ERCOT-65 negative-price epoch pair: both premises corrected, PTC vintage scoping built (probe-inert), wtx recorder defect fixed, trough/spread lane at frontier
+
+- **Model:** new default-off gate `wind_ptc_vintage_offers` (ISO-agnostic) —
+  the wind dispatch offer becomes `-PTC_statutory(year) x EIA-860
+  PTC-window-eligible capacity share[zone, month]`
+  (`data/renewables.py::wind_ptc_eligible_monthly_share` +
+  `policy/ira.py::wind_ptc_vintage_dispatch_offer`; statutory $28/29/30 for
+  2023-25 in `constants.WIND_PTC_STATUTORY_USD_PER_MWH`, IRS FR notices)
+  instead of the flat `-ira_ptc_wind` on every MW. Wired through both
+  orchestrators + the forecast runner (D-5 parity), meta/recorded-cfg
+  mirrors, `--wind-ptc-vintage-offers` CLI. 13 unit tests. **Probe verdict
+  (rule-16 2023 ladder, bundles deleted): dispatch-byte-identical;** only
+  the Panhandle epoch dual deepens -26.00 -> -27.03 (96.5% in-window fleet);
+  West's -14.8 blend never prices (West wind is never marginal — the
+  relief-valve topology). Kept as the recorded closure, default off.
+- **Discovery/fix:** the WP-B `ercot_wtx_curtailment_driver` has been LIVE
+  in every ercot42+ lineage solve — the generic `prb_overrides` channel
+  (applied last in `run_year`) carries `true` and stomps the explicit
+  tri-state kwarg, while the `run_calibration_full` recorder applied the
+  override in the opposite order and mis-wrote `driver: false` into
+  `run_config.json`. Recorder now mirrors the live order (+ loud channel-
+  conflict warnings in both paths); the ercot63 keeper + ablation twin
+  `run_config.json` corrected (annotated `_record_corrections`), keeper DOF
+  ledger gains the omitted depth pair (0.1004/0.1637). No solve changes
+  (probe byte-evidence in diagnosis §9).
+- **Adjudication:** `negative_renewable_offers` on ERCOT is rule-25 refused
+  (it would only push solar to the CAISO $20 REC value); the trough/spread
+  lane is AT FRONTIER — frontier block drafted in the calibration log for
+  owner sign-off; remaining named lever is the West/Panhandle topology
+  split (own charter). Keeper `2026-07-12-ercot63-gas-bridge` unchanged.
+
 ## 2026-07-13 — ERCOT floor-scoped LSL markdown: built, probe-adjudicated provably inert (ERCOT-64)
 
 - **Model:** new default-off gate `ercot_offer_surface_lowcurve_floorscoped`
