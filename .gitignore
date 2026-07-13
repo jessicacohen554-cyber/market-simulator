@@ -10,6 +10,16 @@ build/
 # Calibration bundle model_changes.diff (captured git diff at solve time, large, regenerable)
 /results/calibration/*/model_changes.diff
 
+# Calibration solve outputs are expendable/re-solvable: only the slim bundle
+# JSONs (meta/metrics/run_config/legitimacy_diagnostics/attestation) are
+# committed (via the registration workflow); the large per-year dispatch and
+# system parquets are never hand-committed. Throwaway probe dirs (rule 16) are
+# never registered at all.
+/results/calibration/*/dispatch/
+/results/calibration/*/*.parquet
+/results/calibration/*probe*/
+/results/calibration/miso_probe_*/
+
 # Per-ISO EIA-860 override CSVs — raw source files (parquet/json) are committed
 data/raw/eia-860/*.csv
 
