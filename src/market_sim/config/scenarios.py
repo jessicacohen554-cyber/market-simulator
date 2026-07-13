@@ -3713,8 +3713,11 @@ class ScenarioConfig:
     # one phenomenon). Measured per-class committed LSL/HSL capacity-weighted
     # p50s from the same 60-Day DAM disclosure derive (ERCOT-62, 2026-07-12),
     # recorded for the register: CC 0.574 (used), CT 0.744 / ST_GAS 0.205
-    # (excluded classes, unused). Composes with ercot_offer_surface_lowcurve
-    # (the bridge supplies the state, the markdown the price — diagnosis §5).
+    # (excluded classes, unused). Composition with the tranche-wide
+    # ercot_offer_surface_lowcurve was probe-REFUTED (diagnosis §7 — it
+    # re-instates the §5 spread-compression signature even with the state
+    # present); the admissible price-side companion is the FLOOR-SCOPED
+    # markdown below (ercot_offer_surface_lowcurve_floorscoped, ERCOT-64).
     ercot_gas_commitment_bridge: bool = False
     # Minimum stable load of a bridged ERCOT gas-CC as a fraction of the
     # PLANT's available capacity — the MEASURED committed-CC LSL/HSL
@@ -3744,6 +3747,48 @@ class ScenarioConfig:
     # gate; off reproduces the ERCOT-62b monkeypatch construction exactly
     # (economic bridges at any gap length).
     ercot_gas_bridge_da_horizon: bool = True
+    # ERCOT FLOOR-SCOPED committed-LSL markdown (default off, ERCOT-gated —
+    # ERCOT-64, the enumerated price-side lever from the ERCOT-63 diagnosis
+    # §7): the measured committed-CC LSL (Min-Gen-Cost) bid from the SAME
+    # frozen ERCOT-62 artifact the v2 lowcurve reads
+    # (offer_curve_dam_lowcurve_condbinned.json, resolved via
+    # ercot_offer_surface_lowcurve_path), applied to the gas-CC committed
+    # tranche ONLY in the bridge's own floored plant-hours — the hours the
+    # tranche genuinely plays its LSL role. The tranche-wide v2 markdown
+    # (ercot_offer_surface_lowcurve above) was probe-REFUTED even in
+    # composition with the bridge because it repriced the tranche's
+    # ABOVE-floor mid-merit capacity at the LSL bid (spread compression,
+    # CT/CC overshoot past actuals — diagnosis §5/§7); scoping to the floored
+    # hours removes exactly that defect, so the two flags are MUTUALLY
+    # EXCLUSIVE (rule 19 — same rows, same phenomenon; enforced at the
+    # bridge-preps builder). REQUIRES ercot_gas_commitment_bridge: the
+    # scope IS the bridge's floor mask, so the flag fails loud without it.
+    # COMPOSITION NOTE (rule 19 bookkeeping): this is a BID change on
+    # already-floored hours — no new floor, no D-2 id; it composes with the
+    # bridge (the committed STATE) and is disjoint from the top-leg surface
+    # (peak rungs). Wiring: the bridge floor is computed ONCE and shared
+    # between the P1 fleet hook and this bid hook
+    # (pipeline.commitment.build_ercot_gas_bridge_p1_preps) — the mask is
+    # the bridge's, never re-detected, and never the v2 P0-online gate
+    # (P0-online is FALSE in bridged gap hours by construction — the floor
+    # exists because P0 cycled the plant off). Zero fitted scalars: trigger
+    # = the bridge's own floor mask + within-year net-load bin, levels = the
+    # frozen measured QSE quantiles (rules 13/20/21).
+    # PROBE VERDICT (ERCOT-64, 2026-07-13 — diagnosis §8): PROVABLY INERT.
+    # The bridge's floor target (0.574 × plant pmax) exceeds every bridged
+    # plant's committed-tranche capacity, so the floor clips at the tranche
+    # bound and the tranche is EXACTLY PINNED (min_gen = pmax × availability,
+    # max P − floor = 0.0 across all 37,788 floored gen-hours, 2023) in the
+    # markdown's entire window; a pinned variable's objective coefficient
+    # cannot move the LP solution or its duals — the 2023 probe is
+    # byte-identical to the keeper (price max |Δ| = 0.0). The window where
+    # the tranche genuinely plays its LSL role is precisely the window where
+    # its bid cannot price — the model reproduces the measured
+    # "LSL block never sets the margin" inflexibility via the STATE alone.
+    # Stays default-off as the recorded closure of the LSL price-side
+    # enumeration (tranche-wide: refuted; floor-scoped: inert); not a
+    # re-armable fitted knob (zero scalars — rule 26 does not apply).
+    ercot_offer_surface_lowcurve_floorscoped: bool = False
     # NOTE (ERCOT-63 startup-aware adjudication): the CAISO
     # caiso_ra_bridge_startup_aware run screen is deliberately NOT exposed for
     # the ERCOT bridge. Its anchor test prices a run's margin off the model's
@@ -5936,6 +5981,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_gas_bridge_min_load_frac": 2,
     "ercot_gas_bridge_startup": 1,
     "ercot_gas_bridge_da_horizon": 1,
+    "ercot_offer_surface_lowcurve_floorscoped": 1,
     "ercot_storage_as_endogenous": 1,
     "ercot_thermal_as_endogenous": 1,
     "ercot_storage_as_duration_gate": 1,

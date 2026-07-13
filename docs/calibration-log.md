@@ -11636,3 +11636,75 @@ gap (model 228 h < $15 vs RT 1,493; viable-arbitrage days 85 vs 247). The
 C3c scarcity-tail residual (27 h vs DA 68 in 2024) remains the separate open
 G-22 online-capability/DA-boundary root-cause item (ledgered; no offer
 parameter may be tuned to close it, rule 13).
+
+## 2026-07-13 — ERCOT-64: the FLOOR-SCOPED LSL markdown built and probe-adjudicated PROVABLY INERT — the LSL price-side enumeration CLOSES; lane NOT at frontier (the negative-price epoch pair chartered as ERCOT-65); keeper stays ercot63-gas-bridge unchanged
+
+**Task (the ERCOT-63 hand-back).** Build and test the enumerated price-side
+lever: the measured committed-LSL bid applied ONLY in the gas commitment
+bridge's own floored plant-hours. Full workings: diagnosis §8
+(`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md`).
+
+**Built (default-off, ERCOT-gated, own gate per rule 24):**
+`ercot_offer_surface_lowcurve_floorscoped` — the frozen ERCOT-62 LSL quantile
+artifact (`offer_curve_dam_lowcurve_condbinned.json`, NOT re-derived) applied
+to the gas-CC committed tranche only, hour-gated on the BRIDGE FLOOR MASK
+(never the v2 P0-online gate — P0-online is False in bridged gaps by
+construction, charter trap #1); the bridge floor computed ONCE and shared
+across the P1 fleet and bid hooks via the new
+`pipeline.commitment.build_ercot_gas_bridge_p1_preps` pairing seam (trap #2),
+mirrored in `runner.py` (D-5 forecast parity). Mutually exclusive with the
+refuted tranche-wide v2 and hard-requires the bridge (both fail loud).
+Rule-19 bookkeeping: a BID change on already-floored hours — no new floor,
+no D-2 id; C7/C8 and the D-4 rows untouched. Zero fitted scalars. 13 new
+unit tests (`test_ercot_offer_surface_lowcurve_floorscoped.py`); the
+commitment/pipeline/ablation/recorded-cfg suites green.
+
+**Probe (rule-16 2023-only throwaways vs the byte-faithful ercot63
+reconstruction from its post-fix meta.json — C3a +3.1%, C3b 0.131, C3c 171 h,
+trough <$10/15/20 107/228/1,202 h, spread $14.9, arb-days 85, storage
+0.74 TWh all reproduced exactly; `_ercot64_ladder_probe.py`, bundles
+deleted): the fs_markdown rung fired on its full window (40 committed
+tranches, all 37,788 bridge-floored plant-hours) and is EXACTLY the keeper —
+price max |Δ| 0.0 across all zone-hours, per-unit annual dispatch max |Δ|
+0.0 MWh, every trough/spread/storage metric identical.**
+
+**Adjudication — inert by construction (diagnosis §8).** The bridge floor
+target `min(0.574 × plant_pmax, tranche_pmax)` clips at the committed
+tranche's own capacity on every bridged plant (committed share < 0.574
+universally), so in the markdown's entire window the tranche is exactly
+pinned (`min_gen = pmax × availability`; measured max `P − floor` = 0.0 in
+both rungs — zero headroom anywhere). A pinned variable's objective
+coefficient cannot move the LP solution or its duals. The window where the
+tranche genuinely plays its LSL role is precisely the window where its bid
+cannot price — the model reproduces the measured "LSL block never sets the
+margin" inflexibility through the STATE alone. **The LSL/offer-lower-tail
+enumeration is closed exhaustively:** top leg adopted; econ lower-body
+clamp-inert at the measured medians; tranche-wide LSL refuted (mid-merit
+repricing, spread compression); floor-scoped LSL inert (pinned window). Any
+variant between those windows either leaks onto mid-merit capacity or
+touches only forced volume. The mechanism stays in the codebase default-off
+as the recorded closure (zero scalars — not a rule-26 re-armable knob).
+
+**Lane status — NOT at frontier; ERCOT-65 chartered.** The deepest remaining
+trough epochs are UNREPRESENTABLE, not under-produced: RT 2023 spent 137
+trough hours NEGATIVE (681 < $10) while the keeper's price floor is $0 by
+construction (`negative_renewable_offers=False`). The model already forms
+2,651 zonal wind-marginal epochs (some zone's dual ≤ $0.01) where a negative
+keep-running offer would price. The named admissible pair: (i)
+`negative_renewable_offers` — the statutory PTC keep-running bid, existing
+registry field, unprobed on ERCOT (the CAISO lever-audit "KEEP offer
+mechanism" precedent); (ii) the open VRE under-curtailment topology lane
+(West→North relief-valve; the built-but-unpromoted
+`ercot_wtx_curtailment_driver`) which governs the epoch count and its
+propagation to the load-weighted hubs. No frontier block is drafted. The
+C3c scarcity-tail residual stays the separate open G-22 item (ledgered; no
+offer parameter may be tuned to it, rule 13).
+
+**Holdouts / governance.** No solve, score, or intake outside 2023 (probes)
+— no out-of-training year touched (rule 22); ORDC parameters untouched
+(rule 26); no offer curve, sigmoid, floor, or derive value changed (rules
+13/21/23 — the frozen ERCOT-62 artifact is read, not re-derived); the drag
+hinge, ST_GAS deltas, `ercot_storage_as_deployment` and the bridge params
+untouched. Probe bundles (`ercot64_{keeper,fs_markdown}_2023`) are 2023-only
+throwaways — never registered, deleted. No dashboard change (no full-span
+run was produced; keeper `2026-07-12-ercot63-gas-bridge` + twin unchanged).
