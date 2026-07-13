@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-07-12. Every numeric input to the model traces to a primary source
+_Generated 2026-07-13. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1325 parameters registered** (741 flagged `needs-citation`).
+**1327 parameters registered** (743 flagged `needs-citation`).
 
 
 ## Calibration
@@ -153,6 +153,7 @@ inline comment and still need a dated primary source — search the table for
 | `miso_rpe_demand_value` | 200.0 | 2 | Reserve Procurement Enhancement (RPE): MISO "models a Reserve Procu… | 2024 | auto-generated |
 | `scenario.caiso_demand_clock_realign` | False | 2 | Apply the MEASURED source-data |  | auto-generated, needs-citation |
 | `scenario.caiso_ra_min_load_frac` | 0.4 | 2 | Minimum stable load of a committed |  | auto-generated, needs-citation |
+| `scenario.caiso_supply_consistent_demand` | False | 2 | Replace the CAISO backcast |  | auto-generated, needs-citation |
 | `scenario.ct_netload_drag` | False | 3 | CT_PEAKER net-load reliability drag (the simple-cycle analog of the… | 2023 | auto-generated |
 | `scenario.datacenter_load_factor` | 0.85 | 2 | Flat hourly CF of the DC block. |  | auto-generated, needs-citation |
 | `scenario.datacenter_load_path` | off | 2 | "off" \| "low" \| "mid" \| "high" — |  | auto-generated, needs-citation |
@@ -933,6 +934,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ercot_offer_surface_binned_path` | None | 2 | Path to the measured condition-binned ladder JSON (default: the fro… |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_conditional` | False | 2 | ERCOT G-22 §8 / ercot37-filed HETEROGENEITY-PRESERVING condition-re… | 2026-07 | auto-generated |
 | `scenario.ercot_offer_surface_lowcurve` | False | 2 | ERCOT G-22 conditional-offer-distribution LOW leg (default off, ERC… | 2023 | auto-generated |
+| `scenario.ercot_offer_surface_lowcurve_floorscoped` | False | 1 | ERCOT FLOOR-SCOPED committed-LSL markdown (default off, ERCOT-gated… |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_lowcurve_path` | None | 2 | Path to the measured low-curve condition-binned JSON (default: the … |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_min_bin` | 0 | 2 | Minimum net-load bin index (0 = loosest) at which the peak-rung wal… |  | auto-generated, needs-citation |
 | `scenario.ercot_online_capacity_envelope` | False | 1 | ERCOT: cap the multi-product |  | auto-generated, needs-citation |
@@ -1414,7 +1416,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_installed_mw.NYISO.wind` | 2400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.PJM.solar` | 14000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.PJM.wind` | 11000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
-| `rggi_member_states_by_year` | {"2023": ["NJ", "CT", "MD", "NY", "MA… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
+| `rggi_member_states_by_year` | {"2023": ["RI", "VT", "VA", "MD", "DE… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
 | `short_ton_to_metric_tonne` | 0.90718474 | 2 | Short ton -> metric tonne. RGGI allowances are denominated in SHORT… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.CAISO` | 2026-07-03-caiso-statmode-d-7 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.ERCOT` | 2026-07-04-statmode-d7-probe-ercot32 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
