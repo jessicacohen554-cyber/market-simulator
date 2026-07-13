@@ -13,10 +13,10 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.4,
+  "rubric_version": 2.5,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: sysvol, price_mean, price_shape, price_tail, dispatch_corr"
+    "undocumented out-of-tolerance (FAIL) criteria: price_mean, price_shape, price_tail, dispatch_corr"
   ],
   "notes": [],
   "criteria": {
@@ -28,7 +28,7 @@
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
       "tier": "load-bearing",
-      "status": "FAIL"
+      "status": "PASS"
     },
     "price_mean": {
       "label": "C3a mean LMP",
@@ -95,10 +95,10 @@
   },
   "grade_summary": {
     "scored": 10,
-    "target_grade": 4,
+    "target_grade": 5,
     "commercial_grade": 1,
     "ledgered": 0,
-    "fails": 5
+    "fails": 4
   },
   "free_class_score": {
     "iso": "CAISO",

@@ -13,7 +13,7 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.4,
+  "rubric_version": 2.5,
   "determination": "NOT-YET",
   "reasons": [
     "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_shape, price_tail, dispatch_corr"

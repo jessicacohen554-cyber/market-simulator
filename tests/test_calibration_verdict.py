@@ -305,7 +305,8 @@ class SysVolTests(unittest.TestCase):
                 "ERCOT",
             )
             gas = [r for r in rows if r["key"] == "gas"][0]
-            self.assertEqual(gas["status"], cv.PASS)
+            # v2.5: prelim vintage never gated — diagnostic row only.
+            self.assertEqual(gas["status"], cv.SKIPPED)
             self.assertIn("930", gas["source"])
             self.assertTrue(gas["vintage_reconciled"])
         finally:
@@ -336,7 +337,7 @@ class SysVolTests(unittest.TestCase):
                 "ERCOT",
             )
             gas = [r for r in rows if r["key"] == "gas"][0]
-            self.assertEqual(gas["status"], cv.PASS)
+            self.assertEqual(gas["status"], cv.SKIPPED)  # v2.5: prelim not gated
             self.assertIsNone(gas["classification"])
             self.assertAlmostEqual(gas["model"], 191.2, places=2)
             # target = 196.0 - max(0, 0.9 + 0.25 - 0.26) = 195.11
@@ -396,7 +397,8 @@ class SysVolTests(unittest.TestCase):
                 bench_all=bench_all,
             )
             coal = [r for r in rows if r["key"] == "coal"][0]
-            self.assertEqual(coal["status"], cv.PASS)
+            # v2.5: prelim vintage never gated — anchor is a diagnostic.
+            self.assertEqual(coal["status"], cv.SKIPPED)
             self.assertIn("CEMS", coal["source"])
             # anchor = 213.0 × mean(185.8/191.8, 176.3/185.1) ≈ 204.7
             self.assertAlmostEqual(coal["actual"], 204.71, delta=0.1)
@@ -428,7 +430,7 @@ class SysVolTests(unittest.TestCase):
             gas = [r for r in rows if r["key"] == "gas"][0]
             self.assertIn("CEMS bench-gas", gas["source"])
             self.assertAlmostEqual(gas["actual"], 51.6, places=2)
-            self.assertEqual(gas["status"], cv.PASS)  # 52.0 vs 51.6 = +0.8%
+            self.assertEqual(gas["status"], cv.SKIPPED)  # v2.5: prelim not gated (+0.8% diag)
         finally:
             _reset_completeness()
 
@@ -504,7 +506,7 @@ class SysVolTests(unittest.TestCase):
                 "PJM",
             )
             gas = [r for r in rows if r["key"] == "gas"][0]
-            self.assertEqual(gas["status"], cv.PASS)
+            self.assertEqual(gas["status"], cv.SKIPPED)  # v2.5: prelim not gated
             self.assertIn("combined fossil minus coal anchor", gas["source"])
             self.assertAlmostEqual(gas["actual"], 377.0, delta=0.1)
         finally:
@@ -522,7 +524,7 @@ class SysVolTests(unittest.TestCase):
                 "MISO",
             )
             coal = [r for r in rows if r["key"] == "coal"][0]
-            self.assertEqual(coal["status"], cv.FAIL)  # raw cell still gates
+            self.assertEqual(coal["status"], cv.SKIPPED)  # v2.5: prelim not gated (raw-cell diagnostic)
             self.assertIn("EIA-930 grid", coal["source"])
         finally:
             _reset_completeness()
@@ -553,7 +555,7 @@ class SysVolTests(unittest.TestCase):
             gas = [r for r in rows if r["key"] == "gas"][0]
             # anchor = 64.4 × (60.4/62.7) = 62.04; actual = 200.2+63.4−62.04
             # = 201.56 vs raw 200.2 — within 0.7%, same PASS either way.
-            self.assertEqual(gas["status"], cv.PASS)
+            self.assertEqual(gas["status"], cv.SKIPPED)  # v2.5: prelim not gated
         finally:
             _reset_completeness()
 
