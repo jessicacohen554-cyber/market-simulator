@@ -1494,6 +1494,9 @@ def run_year(
             caiso_demand_clock_realign=getattr(
                 config, "caiso_demand_clock_realign", False
             ),
+            caiso_supply_consistent_demand=getattr(
+                config, "caiso_supply_consistent_demand", False
+            ),
         )
     wind_cf, wind_cap, solar_cf, solar_cap = load_renewable_profiles(
         iso, year, iso_config, config

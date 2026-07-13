@@ -2332,20 +2332,33 @@ def solve_and_persist(
             commitment,
         )
         _t_pre_solve = time.perf_counter()
+
         # Thread the demand we already loaded above into run_year to skip its
         # duplicate load_demand — but only when this load is byte-identical to
         # run_year's own: run_year never passes strict_demand_profile (always
-        # loads the non-strict series) and reads caiso_demand_clock_realign from
-        # its config, whereas this load used the CLI strict flag and the default
-        # (False) realign. iso_config / td_loss_factor / include_interchange
+        # loads the non-strict series) and reads caiso_demand_clock_realign /
+        # caiso_supply_consistent_demand from its config, whereas this load
+        # used the CLI strict flag and the defaults (False) for both CAISO
+        # demand flags. iso_config / td_loss_factor / include_interchange
         # already match by construction (same topology sequence, same per-ISO
-        # td, same not-priced gate). When either flag would diverge, pass None so
+        # td, same not-priced gate). When any flag would diverge, pass None so
         # run_year loads its own array and behaviour is unchanged.
+        # IMPORTANT (caiso-80 fix): the CAISO demand flags arrive through the
+        # generic ``prb_overrides`` ScenarioConfig channel, which run_year's
+        # own backcast_config applies but this loop's pristine ``cfg`` does
+        # NOT carry — checking ``cfg`` alone silently threaded the RAW demand
+        # into a realigned/supply-consistent solve (probe-channel flags made
+        # inert by the threading optimization).
+        def _caiso_demand_flag(name: str) -> bool:
+            v = (prb_overrides or {}).get(name)
+            return bool(v) if v is not None else bool(getattr(cfg, name, False))
+
         _run_year_demand = (
             demand
             if (
                 not strict_demand_profile
-                and not getattr(cfg, "caiso_demand_clock_realign", False)
+                and not _caiso_demand_flag("caiso_demand_clock_realign")
+                and not _caiso_demand_flag("caiso_supply_consistent_demand")
             )
             else None
         )
