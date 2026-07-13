@@ -3510,6 +3510,176 @@ def build_ercot_offer_surface_lowcurve_markdown(
     return markdown
 
 
+def build_ercot_offer_surface_lowcurve_floorscoped_markdown(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    bridge_floor_mask: "np.ndarray | None",
+) -> "np.ndarray | None":
+    """Build the FLOOR-SCOPED committed-LSL P1 markdown ``(n_gen, T)`` (ERCOT-64).
+
+    The enumerated price-side lever from the ERCOT-63 adjudication
+    (``ScenarioConfig.ercot_offer_surface_lowcurve_floorscoped``;
+    docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §7): the measured
+    committed-CC LSL (Min-Gen-Cost) bid — the SAME frozen ERCOT-62 quantile
+    artifact the v2 markdown reads (``binned_committed_p50`` per net-load bin,
+    ``offer_curve_dam_lowcurve_condbinned.json``) — applied to each gas plant's
+    ``_committed`` tranche ONLY in the hours the ERCOT gas commitment bridge
+    floors that plant (``bridge_floor_mask``), where the tranche genuinely
+    plays its LSL role. The tranche-wide v2
+    (:func:`build_ercot_offer_surface_lowcurve_markdown`) was probe-refuted
+    even in composition with the bridge because it repriced the tranche's
+    ABOVE-floor mid-merit capacity at the LSL bid in every online hour
+    (spread compression, CT/CC overshoot — diagnosis §5/§7); this variant
+    keeps every non-floored hour byte-identical.
+
+    Scope deltas vs the v2 (deliberate, both remove refuted surface):
+
+    * **Committed tranche only** — no econ low-body leg. The econ rungs were
+      "largely clamp-inert, kept for completeness" in the v2; in bridged gap
+      hours they are not playing an LSL role (the plant is held AT min-load
+      by the floor), so there is nothing measured to reprice them to.
+    * **Hour gate = the bridge's own floor mask, never P0-online.** P0-online
+      is FALSE in bridged gap hours by construction — the floor exists
+      because the base-cost P0 cycled the plant off — so the v2 gate zeroes
+      the markdown exactly where this variant must act (the ERCOT-64 charter
+      wiring trap #1). The mask is computed ONCE by the bridge and shared
+      (``pipeline.commitment.build_ercot_gas_bridge_p1_preps``), never
+      re-detected here.
+
+    Rule-19 bookkeeping: a BID change on already-floored hours — no new
+    floor, no D-2 id; composes with the bridge (the committed STATE) and is
+    disjoint from the top-leg surface (peak rungs). Zero fitted scalars:
+    trigger = the bridge floor mask + within-year net-load bin (both the
+    model's own / forward-native), levels = the frozen measured QSE
+    quantiles (rules 13/20/21). P1-only via the shared ``mc_bid_adjust``
+    seam — P0 run lengths, the startup coupling and every floor
+    byte-identical; the repriced energy part is floored at $1/MWh and the
+    ratio clamped <= 1 (a markdown can only lower).
+
+    PROBE VERDICT (ERCOT-64, 2026-07-13): provably INERT on the keeper — the
+    bridge floor clips at the committed tranche's own capacity for every
+    bridged plant, so the tranche is exactly pinned (``min_gen == pmax ×
+    availability``) in this markdown's entire window and its bid coefficient
+    cannot move the LP solution or duals (2023 probe byte-identical to the
+    keeper). Recorded as the closure of the LSL price-side enumeration; see
+    the ScenarioConfig field docstring and diagnosis §8.
+
+    Args:
+        bridge_floor_mask: ``(n_gen, T)`` boolean — the gen-hours the ERCOT
+            gas commitment bridge floored (``bridge_floor > 0``). A plant is
+            "in its LSL role" in hour ``t`` when ANY of its rows is floored.
+            ``None`` / all-False returns ``None`` (no bridged hours — the
+            markdown has no window).
+
+    Returns ``None`` (P1 unchanged) when the flag is off, the ISO is not
+    ERCOT, the surface JSON is absent, the mask is empty, or no committed row
+    moves.
+    """
+    if not getattr(config, "ercot_offer_surface_lowcurve_floorscoped", False):
+        return None
+    if config.iso != "ERCOT":
+        return None
+    if bridge_floor_mask is None or not np.any(bridge_floor_mask):
+        return None
+    # Same frozen artifact + path field as the v2 (one measured source,
+    # rule 23); the default resolves to the ERCOT-62 derive output.
+    path = getattr(config, "ercot_offer_surface_lowcurve_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        default = _paths.CALIBRATION_DIR / "offer_curve_dam_lowcurve_condbinned.json"
+        if not default.exists():
+            return None
+        path = str(default)
+    surface = _load_condbinned_surface(str(path))
+
+    edges = tuple(float(x) for x in config.ercot_offer_surface_netload_pcts)
+    json_edges = tuple(
+        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
+    )
+    if json_edges and json_edges != edges:
+        raise ValueError(
+            "ercot_offer_surface_lowcurve_floorscoped: config netload_pcts "
+            f"{edges} disagree with the derived surface's edges {json_edges} "
+            "(re-derive with matching --low-curve-binned edges, or fix the config)."
+        )
+    n_bins = len(edges) + 1
+
+    heat_rate = np.asarray(fleet_arrays.heat_rate, dtype=float)
+    hours = int(fuel_prices.shape[1])
+    mask = np.asarray(bridge_floor_mask, dtype=bool)[:, :hours]
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net_load, edges) if len(edges) else np.array([])
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    curves = getattr(config, "offer_curve_by_group", None) or {}
+
+    # Plant grouping: identical prefix keying to the v2 builder — all of a
+    # plant's rows (any tranche suffix) feed its floored-hours mask.
+    plant_committed: dict[str, int] = {}
+    plant_rows: dict[str, list[int]] = {}
+    plant_cls: dict[str, str] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None)
+        if cls not in surface or not isinstance(surface.get(cls), dict):
+            continue
+        key = str(gen.unit_id).rpartition("_")[0]
+        plant_rows.setdefault(key, []).append(g)
+        plant_cls[key] = cls
+        if _lowcurve_row_family(gen.unit_id) == "committed":
+            plant_committed[key] = g
+    if not plant_committed:
+        return None
+
+    markdown = np.zeros((len(generators), hours), dtype=float)
+    n_repriced = 0
+    floored_plant_hours = 0
+    for key, crow in plant_committed.items():
+        cls = plant_cls[key]
+        committed_p50 = surface[cls].get("binned_committed_p50") or []
+        resolved_c = float((curves.get(cls) or {}).get("committed", 0.0) or 0.0)
+        if resolved_c <= 0.0 or len(committed_p50) != n_bins:
+            continue
+
+        # THE scope: hours the bridge floors this plant (any of its rows).
+        rows = np.asarray(plant_rows[key], dtype=int)
+        floored = mask[rows, :].any(axis=0)  # (T,)
+        if not np.any(floored):
+            continue
+        floored_plant_hours += int(floored.sum())
+
+        # committed (LSL) tranche: class-level ratio per bin on the resolved
+        # band — the v2 construction, gated to the floored hours.
+        ratio_c = np.ones(n_bins, dtype=float)
+        for b in range(n_bins):
+            v = committed_p50[b]
+            if v is not None and np.isfinite(v):
+                ratio_c[b] = min(1.0, float(v) / resolved_c)
+        row_ratio = np.where(floored, ratio_c[hour_bin], 1.0)  # (T,)
+        if np.any(row_ratio < 1.0):
+            energy = heat_rate[crow] * fuel_prices[crow, :hours]
+            adj = energy * (row_ratio - 1.0)
+            adj = np.maximum(adj, np.minimum(0.0, 1.0 - energy))
+            if np.any(adj < 0.0):
+                markdown[crow, :] = adj
+                n_repriced += 1
+
+    if n_repriced == 0 or not np.any(markdown < 0.0):
+        return None
+    logger.info(
+        "ERCOT floor-scoped LSL markdown: %d gas committed tranches marked "
+        "down over %d bridge-floored plant-hours (%d net-load bins); P1-only, "
+        "committed rows only, ratio clamped <= 1",
+        n_repriced,
+        floored_plant_hours,
+        n_bins,
+    )
+    return markdown
+
+
 def apply_netload_drag_floors(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
