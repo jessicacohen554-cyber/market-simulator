@@ -1,0 +1,233 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "pjm-105 symmetric-net 2026-07-13: pjm-98 keeper recipe (byte-faithful replay off its meta.json) + the G-22 measured stack — net DA-virtual depth in its SYMMETRIC form (pjm-105 rebuild of data.virtual_bids: the whole measured per-hour net(λ)=ΣDEC≥λ−ΣINC≤λ curve rendered as DEC-form withdrawal rungs (net>0) plus INC-form net-supply rungs (net<0), endogenous clearing both sides — replacing the one-sided clamp the owner adjudicated NOT keeper-eligible, 2026-07-13) + CT fast-start startup amortization v3/v4 on CAMPD-measured run horizons (pjm-103) + the measured LONG_RUN top-of-curve floor (pjm-104). KEEPER RECOMMENDATION FLAGGED to owner — keepers.json untouched (keeper swaps are the owner's decision).",
+  "note": "The delta vs pjm-104 is mechanism FORM only — zero flag changes, zero fitted scalars: the clamp's one-sided phantom (+10.1/+14.7/+17.2 TWh at actual DA) is replaced by the whole measured curve whose annual net at actual DA is ≈0 (−0.68/−0.95/+1.32 TWh, verified no-LP BEFORE the solve as the pre-registered expectation; scripts/probes/_pjm105_symmetric_equilibrium.py). The INC side is bounded by the measured NET position, enters at measured submitted prices, and is not the condemned pjm-101 gross-INC construction (56 TWh of zero-cost supply); the dump-safety INC offer floor is a verified structural no-op (min measured rung −$1.31 vs ≈−$27 floor). Rule 19: the supply side owns ONLY the virtual layer's net-negative region — no stacking on any existing mechanism. Rule-22 LOO is vacuous for this flip (no tuned change; the scored delta is a mechanism-form replacement carrying no free parameter). D-3 zero-forcing ablation twin registered alongside (pjm105_symmetric_net-ablation).",
+  "residuals_note": "Honest fit record vs pjm-104 (same scorer, rubric v2.4): C1 flips FAIL->PASS — all 16/16 gated rows in-band, free-class 12/12 (2024 CC_REGULAR +9.07->−1.78 TWh; 2023 CT_PEAKER +3.45->+0.67, COAL_BIT +1.85->−1.21, CC_REGULAR +2.27->−5.93; ST_GAS 2024 −3.60->−3.93, in-band). C2 2025 coal family +8.0%->+5.4% (meets the ≤ keeper's +5.8% de-regression bar; 2025 rows remain SKIPPED-preliminary). C3a PASS (DA-diag 2023 +3.8%->+0.8%, 2024 −2.2%->−5.3%, 2025 −9.0%->−11.4% — the INC side pulls trough prices toward actual; 2023 lands near-exact, 2024/2025 now read LOW vs DA: the one soft spot, flagged, within the PASS band). C3b PASS. C3c 2025 FAIL unchanged (17h vs 51h >$200 — the untouched DA reserve/ORDC scarcity tail, pre-existing in pjm-104 and the keeper line). C4/C5a PASS unchanged. C7 flips FAIL->PASS: pjm-104's 2023 CT_PEAKER off-peak flatness (cv_ratio 0.495) clears with the INC side restoring off-peak price variability. C8 PASS (2024 CT_PEAKER 16.1% grounded-above-budget — clean pass per rubric v2.2, D-4 + shape gates). LP cleared virtuals: DEC 12.5/16.1/20.0 TWh, INC 18.3/20.3/18.1 TWh, net −5.8/−4.2/+1.9 TWh — INC-heavier than the actual-DA equilibrium in 2023/24 (model duals sit above actual in troughs, so more net supply clears; endogenous, nothing pinned). Determination NOT-YET on C6 only until this attestation lands; keeper decision owner-only."
+ },
+ "exceptions": [],
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session — audit §3 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20) — pjm-105 carries the pjm-98 ledger verbatim (recipe base) + the G-22 measured-stack entries (all measured/cited, zero residual-identified)",
+  "n_entries": 14,
+  "n_residual": 6,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ]
+    },
+    "n_scalars": 60,
+    "source": "per-group HR-band multipliers — the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_committed_below_floor[PJM]",
+    "where": "run_config.scenario_config.offer_curve_by_group[*].committed",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+    "value": {
+     "COAL_LIGNITE": 0.684,
+     "COAL_PRB": 0.684,
+     "COAL_BIT": 0.548,
+     "COAL_WC": 0.512,
+     "COAL": 0.648
+    },
+    "n_scalars": 5,
+    "source": "committed-tranche multiplier(s) below the audit §2 0.85 physical-floor flag with no written rationale in the config — pulled out of the R6 bulk offer-curve population per plan §2.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+    "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched — rules #1/#18/#19/#26 apply, no blanket fix)"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_mid": 0.35,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 3,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[PJM]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_bit_passthrough_sigmoid, coal_sub_passthrough_sigmoid)",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+    "n_scalars": 12,
+    "source": "gas-keyed coal passthrough sigmoids — the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 — docs/out-of-sample-results-2026-07.md §2C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) — the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_residual",
+    "where": "run_config.scenario_config.wefor_residual",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+    "value": 0.015,
+    "source": "wind-EFOR residual relief term (audit C-15) — residual-identified by name",
+    "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists — open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_PJM.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 §2B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs — kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "PJM_SEAM_LADDER_BY_YEAR",
+    "where": "interchange_config.py PJM seam band-price ladders",
+    "identification": "measured-physical",
+    "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+    "source": "per-seam Q-Q duration coupling of the measured PJM DA system LMP with PJM's measured settlement-grade tie-line flows (act_sch_interchange, pooled by PJM_SEAM_TIE) on the fixed 8-band grid, frozen scripts/derive_pjm_seam_ladders.py (audit C-6 CLOSED for PJM 2026-07-10; pjm-95 C1 2023-interchange-duration fix); displaces the firm scheduled-export floor on ladder years (rule 19, alternatives never stacked)",
+    "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: hourly placement of the scheduled seam base is duration-curve-level only (same bound as the MISO ladder)"
+   },
+   {
+    "name": "PJM_INTERFACE_LINK_MAP hourly TTC overlay",
+    "where": "constants.py crosswalk + data/transfer_interface_limits.py (iso_configs._pjm_config static seeds superseded on mapped links, forward direction)",
+    "identification": "measured-physical",
+    "lineage_solves": ">=76 solves (audit §5.1 + pjm-76)",
+    "source": "published hourly interface transfer limits (PJM Data Miner 2 transfer_limits_and_flows, 2023-2025 raw drops; min(pre,post) where both publish), curated by frozen scripts/curate_transfer_interface_limits.py onto the model clock; supersedes PJM_MEASURED_INTERNAL_TTC's pooled medians on mapped links (same feed, hourly — rule 19). Unmapped links (AEP_Ohio->ATSI, SWMAAC->EMAAC, SWMAAC->Dominion, West_APS->Dominion) and every reverse direction keep the Tier-3 static estimates (boundary misalignments documented at the crosswalk).",
+    "note": "re-derive trigger is a source-data change only (rule 23); representation bound: AP-South maps to the seeded West_APS->SWMAAC link only (parallel-path split of the reduced mesh), and the Average envelopes are regional means, not per-flowgate boundaries"
+   },
+   {
+    "name": "cc_mustrun_per_plant inputs (committed_pct, online_frac)",
+    "where": "data/raw/_processed-legacy/thermal_tranches_PJM.csv (gas rows; consumed via fleet.thermal_tranche_online_frac + the committed tranche sizing)",
+    "identification": "measured-physical",
+    "lineage_solves": "1 probe + this bundle (G-20 follow-up build)",
+    "value": {
+     "committed_pct": "CEMS P5 of CF when online, pooled 2023-2025 (pre-existing column, frozen)",
+     "online_frac": "CEMS synchronization fraction (net MW > 1% nameplate), pooled 2023-2025 (new gas emission of the pre-existing coal estimator; no tunable — the floor level and window are both measured)"
+    }
+   },
+   {
+    "name": "CT_STARTUP_PARAMS (tranche_startup_amortization)",
+    "where": "constants.CT_STARTUP_PARAMS",
+    "identification": "cited-published",
+    "lineage_solves": "pjm-103/104/105 (G-22 lever C)",
+    "value": "NREL/SR-5500-55433 start-cost table; fuel-price-invariant start/no-load recovery amortized into P1 fast-start tranche bids"
+   },
+   {
+    "name": "campd_ct_run_lengths_PJM.csv + campd_ct_run_bands_PJM.csv",
+    "where": "data/raw/_processed-legacy/ (tranche_startup_measured_runs + _conditional_runs)",
+    "identification": "measured-market-behaviour",
+    "lineage_solves": "pjm-103/104/105; re-derives only on CAMPD updates (rule 23)",
+    "value": "CAMPD-measured median start-to-stop run horizons, condition-banded"
+   },
+   {
+    "name": "pjm_offer_midcurve_condbinned.json (LONG_RUN scope)",
+    "where": "pjm_offer_midcurve_conditional + pjm_offer_midcurve_segments=('LONG_RUN',)",
+    "identification": "measured-market-behaviour",
+    "lineage_solves": "pjm-104/105",
+    "value": "36-month DataMiner2 submitted-offer surface, shares grid + 0.975/0.995; floors coal/gas-steam econ+peak rows only (rule 19)"
+   },
+   {
+    "name": "pjm_da_virtual_bids symmetric net curves",
+    "where": "data.virtual_bids (hrl_da_incs_decs measured hourly submitted curves)",
+    "identification": "measured-market-behaviour",
+    "lineage_solves": "pjm-100/102/102b/103/104 (clamped) -> pjm-105 (symmetric)",
+    "value": "whole net(λ)=ΣDEC≥λ−ΣINC≤λ rendered both sides; N_RUNGS=8/side is resolution-only; DEC VOLL cap and INC dump-safe floor are verified structural no-ops on the measured corpus; zero tunable values"
+   }
+  ]
+ }
+}
