@@ -736,3 +736,16 @@ in order: commitment-posture window rows (COAL_BIT/CT_PEAKER — now THE
 dominant free-C1 residual), the 2025-09-30 shortage-pricing redesign
 date-gate (required pre-H1-2026/forecast), and the upstream S→N mid-merit
 economics the RPE will price when flow reaches the limit.
+
+**Twin (appended on its completion):** `2026-07-12-miso-61-rpe-pricing-ablation`
+scored NOT-YET, FAIL {fuelmix, sysvol, price_mean, price_tail} — sheds the
+main's price_shape FAIL (C3b-2025 passes without the ST_GAS floor's supply
+depression) but drops C1 to 12/16 · 8/12 (CC_REGULAR-2024 clear reverts):
+the identical trade the miso-60 twin isolated. Keeper-vs-twin delta (TWh):
+ST_GAS +1.7/+1.8/+2.5, OTHER_FOSSIL +1.3/+1.3/+2.5, from COAL_PRB /
+CC_REGULAR / COAL_BIT / CT_PEAKER / imports. Operational note: the container
+restarted mid-twin (killing the original run and confirming the handoff's
+warning); the re-run on the rebased branch was validated by an EXACT-ZERO
+value diff (24.5M rows, mw+lmp) between its 2023 leg and the surviving
+pre-rebase partial — the intervening main merges (incl. #2154 data caching)
+are solve-neutral for MISO, so the twin remains a clean A/B vs the main run.
