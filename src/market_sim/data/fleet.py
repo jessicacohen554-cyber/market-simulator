@@ -91,6 +91,7 @@ from market_sim.data.outages import (
     reliability_deployment_floor_for_year,
     retiree_availability_caps,
     unit_outage_derate_factors,
+    unit_outage_short_derate_factors,
 )
 
 logger = logging.getLogger(__name__)
@@ -1656,6 +1657,37 @@ def generators_to_fleet_arrays(
                     else ""
                 ),
             )
+        # Short (< 5-day) baseload-coal unit-outage windows (gated,
+        # config.unit_outage_short_windows): the sub-floor companion of the
+        # unit-outage derate above. The >= 5-day duration floor makes
+        # event-coincident short forced outages invisible (MISO Jul 28-29
+        # 2025: ~2.8 GW of coal capability offline at the peak block beyond
+        # the overlay), while the own-fleet temp-capability envelope is flat —
+        # the fleet loses discrete units under stress rather than derating
+        # smoothly. Windows are < 5 days by construction (disjoint from the
+        # overlay above) and pass the derive script's identification guards
+        # (coal-only, baseload CF >= 0.55, revealed-availability filter).
+        if getattr(config, "unit_outage_short_windows", False):
+            sfac = unit_outage_short_derate_factors(
+                config.weather_year,
+                hours,
+                getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV)),
+                iso=_iso or "ERCOT",
+            )
+            if sfac:
+                applied_s = 0
+                for g_idx, gen in enumerate(generators):
+                    f = sfac.get((int(gen.plant_code), gen.plant_group))
+                    if f is not None:
+                        availability[g_idx, :] *= f
+                        applied_s += 1
+                logger.info(
+                    "short unit-outage derate (%s %d): %d plant-tranches "
+                    "derated (< 5-day baseload-coal windows)",
+                    _iso or "ERCOT",
+                    config.weather_year,
+                    applied_s,
+                )
         # Within-window retiree measured-availability cap (CAMPD unit-level):
         # a unit winding down to retirement is held at its coal must-run floor
         # by the cost-based LP while reality barely ran it (out-of-market

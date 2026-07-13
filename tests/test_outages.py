@@ -793,5 +793,106 @@ class ErcotThermalDamAvailabilityTest(unittest.TestCase):
         self.assertTrue((fa.availability >= 0.0).all())
 
 
+class ShortUnitOutageDerateTest(unittest.TestCase):
+    """The < 5-day baseload-coal short-window companion overlay.
+
+    Windows come from ``campd-unit-outages-short-<ISO>.csv`` (derive script
+    ``--short-windows`` mode); the loader must (a) no-op when the file is
+    absent, (b) drop rows at/above the standard overlay's 5-day floor
+    (disjointness) and non-COAL rows (defense in depth), and (c) derate the
+    plant's COAL bin by the unit's capacity share over the window only.
+    """
+
+    # Baldwin Energy Complex — a real MISO coal plant present in the model
+    # fleet, so _iso_plant_capacity("MISO") carries its (code, COAL) bin.
+    PLANT = 889
+    UNIT_MW = 625.1
+
+    def _write_short_csv(self, tmpdir: str, rows: list[dict]) -> Path:
+        path = Path(tmpdir) / "campd-unit-outages-short-MISO.csv"
+        cols = [
+            "facility_name",
+            "facility_id",
+            "unit_id",
+            "unit_capacity_mw",
+            "plant_capacity_mw",
+            "unit_pct_of_plant",
+            "plant_group",
+            "capacity_source",
+            "outage_start",
+            "outage_end",
+            "duration_days",
+            "peer_units_online",
+            "total_units_at_plant",
+        ]
+        pd.DataFrame(rows, columns=cols).to_csv(path, index=False)
+        return path
+
+    def _factors(self, csv_path: Path | None, year: int):
+        from unittest.mock import patch
+
+        from market_sim.data import outages
+
+        outages.unit_outage_short_derate_factors.cache_clear()
+        target = csv_path if csv_path else Path("/nonexistent/short.csv")
+        with patch.object(
+            outages, "unit_outage_short_csv_for_iso", return_value=target
+        ):
+            return outages.unit_outage_short_derate_factors(year, iso="MISO")
+
+    def _row(self, start: str, end: str, days: float, group: str = "COAL") -> dict:
+        return {
+            "facility_name": "Baldwin Energy Complex",
+            "facility_id": self.PLANT,
+            "unit_id": "1",
+            "unit_capacity_mw": self.UNIT_MW,
+            "plant_capacity_mw": 1259.6,
+            "unit_pct_of_plant": 49.6,
+            "plant_group": group,
+            "capacity_source": "eia_exact",
+            "outage_start": start,
+            "outage_end": end,
+            "duration_days": days,
+            "peer_units_online": 1,
+            "total_units_at_plant": 2,
+        }
+
+    def test_missing_file_is_a_noop(self):
+        self.assertEqual(self._factors(None, 2025), {})
+
+    def test_short_coal_window_derates_only_its_span(self):
+        with tempfile.TemporaryDirectory() as td:
+            csv = self._write_short_csv(
+                td, [self._row("2025-07-28", "2025-07-29", 2.0)]
+            )
+            factors = self._factors(csv, 2025)
+        key = (self.PLANT, "COAL")
+        self.assertIn(key, factors)
+        arr = factors[key]
+        self.assertEqual(arr.shape, (HOURS_PER_YEAR,))
+        jul28 = _hour_of_year(7, 28, 0)
+        jul30 = _hour_of_year(7, 30, 0)
+        # Derated by the unit's share of the plant bin inside the window...
+        self.assertTrue((arr[jul28:jul30] < 1.0).all())
+        self.assertGreater(arr[jul28], 0.0)
+        # ...and untouched outside it.
+        self.assertTrue((arr[:jul28] == 1.0).all())
+        self.assertTrue((arr[jul30:] == 1.0).all())
+
+    def test_rows_at_or_above_floor_and_non_coal_are_dropped(self):
+        with tempfile.TemporaryDirectory() as td:
+            csv = self._write_short_csv(
+                td,
+                [
+                    # >= 5 days: belongs to the standard overlay, not here.
+                    self._row("2025-03-01", "2025-03-10", 9.5),
+                    # Non-coal: the mode never emits these; drop defensively.
+                    self._row("2025-07-28", "2025-07-29", 2.0, group="ST_GAS"),
+                ],
+            )
+            factors = self._factors(csv, 2025)
+        self.assertEqual(factors, {})
+
+
 if __name__ == "__main__":
     unittest.main()

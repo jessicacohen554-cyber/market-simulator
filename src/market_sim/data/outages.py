@@ -503,6 +503,21 @@ def unit_outage_csv_for_iso(iso: str | None) -> Path:
     return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-{iso.upper()}.csv")
 
 
+def unit_outage_short_csv_for_iso(iso: str | None) -> Path:
+    """Return the SHORT (< 5-day) unit-outage CSV path for an ISO.
+
+    Written by ``scripts/derive_campd_unit_outages.py --short-windows``:
+    baseload-coal full stops of 1-5 days that the standard >= 5-day floor
+    excludes, kept only when they survive the derive script's identification
+    guards (coal-only detector, unit annual CF >= 0.55, revealed-availability
+    in-merit filter). Consumed by :func:`unit_outage_short_derate_factors`
+    under ``ScenarioConfig.unit_outage_short_windows``.
+    """
+    if iso is None or iso.upper() == "ERCOT":
+        return UNIT_OUTAGE_CSV.with_name("campd-unit-outages-short.csv")
+    return UNIT_OUTAGE_CSV.with_name(f"campd-unit-outages-short-{iso.upper()}.csv")
+
+
 # Columns unit_outage_derate_factors reads (event-grain; the same columns the
 # raw CAMPD unit-outage CSV and the clean unit-outage-events table both carry).
 _UNIT_OUTAGE_EVENT_COLUMNS: tuple[str, ...] = (
@@ -604,6 +619,25 @@ def unit_outage_derate_factors(
     df = _load_unit_outage_events(csv_path, iso)
     if df is None:
         return {}
+    df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
+    return _unit_outage_factors_from_events(df, year, hours, bins_path, iso)
+
+
+def _unit_outage_factors_from_events(
+    df: pd.DataFrame,
+    year: int,
+    hours: int,
+    bins_path: str | Path,
+    iso: str,
+) -> dict[tuple[int, str], np.ndarray]:
+    """Accumulate unit-outage event rows into per-bin availability factors.
+
+    Shared core of :func:`unit_outage_derate_factors` (>= 5-day windows) and
+    :func:`unit_outage_short_derate_factors` (< 5-day baseload-coal windows):
+    each row derates its plant's ``(plant_code, plant_group)`` bin by
+    ``unit_capacity_mw / plant_capacity_mw`` over the window clipped to
+    ``year`` on the model clock; concurrent units sum, clipped at full derate.
+    """
     if iso == "ERCOT":
         from market_sim.data.fleet import load_campd_bins
 
@@ -619,7 +653,6 @@ def unit_outage_derate_factors(
     else:
         cap = _iso_plant_capacity(iso)
         target_fn = _generic_unit_outage_target
-    df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
         tgt = target_fn(int(r.facility_id), r.unit_id, r.plant_group)
@@ -639,6 +672,37 @@ def unit_outage_derate_factors(
         arr = sums.setdefault(tgt, np.zeros(hours))
         arr[mask] += float(ucap) / cap[tgt]
     return {k: np.clip(1.0 - v, 0.0, 1.0) for k, v in sums.items()}
+
+
+@lru_cache(maxsize=None)
+def unit_outage_short_derate_factors(
+    year: int,
+    hours: int = HOURS_PER_YEAR,
+    bins_path: str | Path = BINS_CSV_DEFAULT,
+    iso: str = "ERCOT",
+) -> dict[tuple[int, str], np.ndarray]:
+    """Return short-window (< 5-day) unit-outage availability multipliers.
+
+    The sub-floor companion of :func:`unit_outage_derate_factors`, gated by
+    ``ScenarioConfig.unit_outage_short_windows``: baseload-coal full stops of
+    1-5 days from ``campd-unit-outages-short-<ISO>.csv`` (built by
+    ``scripts/derive_campd_unit_outages.py --short-windows``, which enforces
+    the identification guards — coal-only detector, unit annual CF >= 0.55,
+    revealed-availability in-merit filter — so economic idling never enters).
+    Defensively re-filters to ``plant_group == "COAL"`` and
+    ``duration_days < UNIT_OUTAGE_MIN_DAYS`` so the two overlays stay disjoint
+    (a window >= the floor belongs to the standard overlay and is dropped
+    here). ISOs without the file get an empty dict (no effect).
+    """
+    iso = (iso or "ERCOT").upper()
+    csv_path = unit_outage_short_csv_for_iso(iso)
+    if not csv_path.exists():
+        return {}
+    df = pd.read_csv(csv_path)
+    df = df[
+        (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"] == "COAL")
+    ]
+    return _unit_outage_factors_from_events(df, year, hours, bins_path, iso)
 
 
 # Partial (unit-level) outage derates approximated from CAMPD CF-ceiling
