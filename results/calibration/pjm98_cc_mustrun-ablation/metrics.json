@@ -13,7 +13,7 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.4,
+  "rubric_version": 2.5,
   "determination": "NOT-YET",
   "reasons": [
     "governance gate UNATTESTED: no governance attestation in bundle"
@@ -28,8 +28,7 @@
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
       "tier": "load-bearing",
-      "status": "CAVEAT",
-      "caveat_kind": "commercial-band"
+      "status": "PASS"
     },
     "price_mean": {
       "label": "C3a mean LMP",
@@ -85,9 +84,7 @@
   "caveats": {
     "protective": [],
     "ledgered": [],
-    "commercial_band": [
-      "C2 system volume (gas/coal families)"
-    ],
+    "commercial_band": [],
     "budget": {
       "protective_max": 1,
       "ledgered_max": 3
@@ -95,8 +92,8 @@
   },
   "grade_summary": {
     "scored": 9,
-    "target_grade": 4,
-    "commercial_grade": 1,
+    "target_grade": 5,
+    "commercial_grade": 0,
     "ledgered": 0,
     "fails": 4
   },
