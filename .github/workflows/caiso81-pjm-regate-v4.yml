@@ -43,7 +43,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Add swap (defensive: measure, place, size, fall back)
+      - name: "Add swap (defensive: measure, place, size, fall back)"
         run: |
           set -uo pipefail
           df -h / /mnt 2>/dev/null || true
