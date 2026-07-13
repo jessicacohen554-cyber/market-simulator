@@ -1,4 +1,13 @@
-# Cross-year LP warm-starting (prototype)
+# Cross-year LP warm-starting
+
+**Status: default ON for the calibration/backcast path** (the calibration CLIs
+`scripts/run_calibration.py` / `scripts/run_calibration_full.py` set
+`MARKET_SIM_WARMSTART_XYEAR=1` unless `--no-xyear-warmstart` is passed or the env
+var is set explicitly). The forecast path (`runner.py`) stays **cold-only** —
+see [Why the forecast path is not wired](#why-the-forecast-path-is-not-wired).
+Reproducibility baselines (`scripts/replay_keeper.py`,
+`scripts/capture_keeper_goldens.py`, the D-13 `bench-repro.yml` gate) pin it OFF
+so byte-identity stays basis-independent.
 
 ## Problem
 
@@ -10,10 +19,12 @@ exist around it:
   model is built once and P1 re-costs P0's optimal basis in place
   (`changeColsCost`). P1 then converges in a handful of simplex iterations — the
   ~5x the calibration banks. Toggle `MARKET_SIM_WARMSTART=0`.
-- **Cross-year (this prototype, `MARKET_SIM_WARMSTART_XYEAR=1`):** once intra-year
-  warm-start has made the P1 second solve cheap, the one remaining cold solve in
-  each year is **P0**. Adjacent years share zones, network and most units, so the
-  previous year's optimal basis is a strong warm start for this year's P0.
+- **Cross-year (`MARKET_SIM_WARMSTART_XYEAR`, default on for calibration):** once
+  intra-year warm-start has made the P1 second solve cheap, the one remaining cold
+  solve in each year is **P0**. Adjacent years share zones, network and most
+  units, so the previous year's optimal basis is a strong warm start for this
+  year's P0. The calibration CLIs enable it by default (`--no-xyear-warmstart`
+  opts out); the forecast path stays cold-only.
 
 `runner.py` (the frontend / scenario-export path) previously did **two cold**
 `solve_dispatch` calls for P0/P1, ignoring intra-year warm-start entirely. This
@@ -68,12 +79,20 @@ memory penalty, where (a) would inflate every year's matrix.
 - `DispatchModel.apply_cross_year_basis(prev)` — remaps `prev` onto this model's
   columns/rows and loads it as an *alien* HiGHS basis. Must precede the first
   `solve`. Returns `False` (cold fallback) on horizon mismatch.
-- `scripts/run_calibration.py` threads a single-element `xyear_cache` through
-  `main()` → `run_year()`: each year applies the prior basis to P0 and stores its
-  own basis for the next year. Years run in the order requested, so list them
-  chronologically.
-- Regression test `tests/test_cross_year_warmstart.py` pins generation/price
-  neutrality across a changed fleet.
+- `scripts/run_calibration.py` and `scripts/run_calibration_full.py` each thread
+  a single-element `xyear_cache` through their sequential year loop → `run_year()`:
+  each year applies the prior basis to P0 and stores its own basis for the next
+  year. Years run in the order requested, so list them chronologically.
+- `resolve_xyear_warmstart_default()` (in `run_calibration.py`, shared by both
+  CLIs) resolves the gate: `--no-xyear-warmstart` forces OFF, an explicit
+  `MARKET_SIM_WARMSTART_XYEAR` env var is honored, otherwise it defaults ON. It
+  runs only on the fresh-solve path — `--report`/`--replay-bundle`/
+  `--rebuild-benchmark` and the direct `solve_and_persist` callers
+  (`scripts/replay_keeper.py` et al.) stay at the global default OFF.
+- Regression tests: `tests/test_cross_year_warmstart.py` pins generation/price
+  neutrality across a changed fleet; `tests/test_xyear_warmstart_default.py` pins
+  the default-resolution precedence and the forecast cold-only invariant
+  (`runner.py` passes `xyear_cache=None`).
 
 ## Measured results (ERCOT 2023 → 2024 → 2025, 8760h)
 
@@ -151,7 +170,12 @@ quantities without writing six multi-GB dispatch bundles.)
 ## Recommendation
 
 <!-- RECO:BEGIN -->
-**Ship behind the flag (`MARKET_SIM_WARMSTART_XYEAR=1`), default off for now.**
+**Default ON for the calibration/backcast path** (`MARKET_SIM_WARMSTART_XYEAR`,
+flipped from default-off after the single-bundle A/B gate below passed for ERCOT
+and MISO). The calibration CLIs (`run_calibration.py`, `run_calibration_full.py`)
+enable it unless `--no-xyear-warmstart` is passed or the env var is set
+explicitly; the forecast path (`runner.py`) stays cold-only, and reproducibility
+baselines pin it off.
 
 - **Worth it.** The remaining cold cost after intra-year warm-start is P0, and
   cross-year warm-start cuts it **~2.3× in steady state** (every year after the
@@ -168,11 +192,60 @@ quantities without writing six multi-GB dispatch bundles.)
 - **Markup propagation already checked.** The end-to-end `run_year` A/B (above)
   recomputes the monthly markup inside each run and still comes out bit-identical
   on objective, prices and total generation, so the P0-vertex → markup → P1 path
-  is neutral, not just the isolated P1 LP. Kept default-off only so it lands as a
-  reviewable, A/B-able flag; a single calibration-bundle re-score
-  (`diff_warmstart_bundles.py`) is the natural gate before flipping the default
-  on, after which there is no downside beyond the ~4% memory.
+  is neutral, not just the isolated P1 LP. The gate before flipping the default
+  on was a single calibration-bundle re-score (`diff_warmstart_bundles.py`) for
+  ERCOT and a big co-opt ISO (MISO) — see [Bundle-level gate](#bundle-level-gate-ercot--miso-full-8760h)
+  below. That passed, so the default is now ON for calibration — the only
+  downside is the ~4% memory.
 <!-- RECO:END -->
+
+## Bundle-level gate (ERCOT + MISO, full 8760h)
+
+The pre-flip gate: full 3-year backcast (2023→2024→2025, 8760 h, one-thread so
+cold-vs-cold is deterministic) solved cold (`--no-xyear-warmstart`) and warm
+(default), then diffed with `scripts/diff_warmstart_bundles.py` and a price /
+served-load check on `system.parquet`.
+
+**Speedup — the warm-year P0 (the solve cross-year warm-start changes):**
+
+| ISO | year | P0 cold | P0 warm | P0× | total cold | total warm |
+|-----|-----:|--------:|--------:|----:|-----------:|-----------:|
+| ERCOT | 2023 | 195.9 s | 197.2 s | 0.99 (first year, no prior basis) | 318.0 s | 312.7 s |
+| ERCOT | 2024 | 194.5 s |  93.3 s | **2.08** | 281.7 s | 181.8 s |
+| ERCOT | 2025 | 224.0 s |  87.2 s | **2.57** | 300.7 s | 178.9 s |
+| MISO  | 2023 | 311.6 s | 312.6 s | 1.00 (first year) | 513.2 s | 517.0 s |
+| MISO  | 2024 | 312.5 s | 124.2 s | **2.52** | 473.9 s | 309.3 s |
+| MISO  | 2025 | 267.0 s | 104.6 s | **2.55** | 401.3 s | 267.7 s |
+
+Across the warm years only (2024–25): ERCOT P0 **2.32×** (418.5 → 180.5 s), MISO
+P0 **2.53×** (579.5 → 228.8 s). Whole-run wall: ERCOT 933 → 706 s (1.32×), MISO
+1400 → 1106 s (1.27×) — diluted by the always-cold first year and the fixed
+data-prep / markup / results-write overhead a single 3-year run also carries.
+
+**Neutrality (cold vs warm, per year):**
+
+- **Objective:** identical — an LP's optimum value is basis-independent and both
+  solves reach it.
+- **Served load** (`demand − slack`) **and dump/spill:** bit-identical in every
+  ISO-year (max |Δ| = 0 MW).
+- **Total generation:** bit-identical (|Δ| ≤ 0.06 GWh on 463–664 TWh, i.e.
+  ~1e-7 relative — display rounding).
+- **Zonal prices:** bit-identical for ERCOT (all three years, max |Δ| ≤ 2e-14
+  $/MWh) and MISO 2023–2024. **MISO 2025** is the one exception: 182 of 61,320
+  zone-hours (0.3 %) report a **0.1495 $/MWh** price difference (load-weighted
+  Δ = 2.4e-4 $/MWh). This is **dual degeneracy** — the price analogue of the
+  primal marginal-tie reshuffle: at a degenerate optimal vertex the marginal
+  unit is not unique (here two units at mc 32.59 vs 32.74), so cold and warm
+  report different-but-equally-optimal clearing duals. The primal (served load,
+  total gen, objective) is untouched.
+- **Per-unit dispatch reshuffle** (Σ|Δ hourly MW| / total gen): ERCOT 0.038 %
+  (2024) / 0.112 % (2025); MISO 0.004 % (2024) / 0.005 % (2025) — all confined
+  to units tied at the marginal price, the same alternate-optima the intra-year
+  warm start already ships (`total gen Δ = 0`).
+
+Verdict: objective, served load and total generation identical; price and
+per-unit dispatch differences confined to marginal ties (primal) and their dual
+analogue (MISO-2025 degeneracy). Passed → default flipped ON for calibration.
 
 ## Why the forecast path is not wired
 
