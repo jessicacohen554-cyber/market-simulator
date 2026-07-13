@@ -1,0 +1,56 @@
+name: materialize-b64-relay
+
+# Generic base64-relay materializer. The GitHub file-push API tools used by
+# Claude sessions cannot carry BINARY content (a parquet/xlsx round-trips
+# corrupted as raw bytes-in-a-text-field) — see holdout-intake-neiso-2022.yml's
+# "Materialize base64 relay files" step, which this workflow lifts into a
+# standalone, reusable job. A session pushes a binary file as a base64 TEXT
+# sibling (<path>.b64) via the ordinary text-safe push path; this workflow
+# decodes every *.b64 file on the branch into its real binary sibling, removes
+# the relay, and commits. It performs no derivation and no LP — it only
+# decodes bytes already computed and pushed as text.
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: materialize-b64-relay
+  cancel-in-progress: false
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Materialize base64 relay files (*.b64 -> binary sibling)
+        run: |
+          python - <<'EOF'
+          import base64, pathlib
+          n = 0
+          for b64 in pathlib.Path(".").rglob("*.b64"):
+              if ".git" in b64.parts:
+                  continue
+              target = b64.with_suffix("")
+              target.write_bytes(base64.b64decode(b64.read_text()))
+              b64.unlink()
+              print(f"materialized {target} ({target.stat().st_size} bytes)")
+              n += 1
+          print(f"{n} file(s) materialized")
+          EOF
+
+      - name: Commit materialized binaries
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+            exit 0
+          fi
+          git commit -m "data: materialize base64-relayed binaries (workflow run ${{ github.run_id }})"
+          git push origin "HEAD:${{ github.ref_name }}"

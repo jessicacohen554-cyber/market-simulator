@@ -102,8 +102,15 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
     # NEISO gained 2022 on 2026-07-07: the calibration-complete marker
     # (frontend/data/backcast/calibration-complete.json) authorizes the ONE-SHOT
     # 2022 holdout validation (CLAUDE.md rule 22) — 2022 is a validation year
-    # for the frozen keeper, never a calibration year.
-    "NEISO": (2022, 2023, 2024, 2025),
+    # for the frozen keeper, never a calibration year. 2021 added 2026-07-13
+    # under the same marker's rule-22 Option-2 DATA-INTAKE channel (owner
+    # authorization, calibration-complete.json intake_log) — a pre-window
+    # holdout year, never a calibration year either. 2018-2020 are NOT added:
+    # eia_demand_profiles.parquet (the demand driver load_demand_meta reads)
+    # has no NEISO rows before 2021, so _demand_totals hard-fails — see
+    # docs/holdout-data-equivalency-register-2026-07.md sec. NEISO (MISSING,
+    # fix = extend eia_demand_profiles{,_meta}.parquet, F3/F4-class).
+    "NEISO": (2021, 2022, 2023, 2024, 2025),
     # MISO is the Stage-F addition: the EIA-923/930 by-fuel and demand
     # extracts all cover 2023-2025 (the 2025 EIA-923 release is the partial
     # monthly survey, handled by the incomplete-vintage guard).
@@ -114,6 +121,9 @@ CALIBRATION_YEARS_BY_ISO: dict[str, tuple[int, ...]] = {
 # Source: EIA Henry Hub Natural Gas Spot Price, annual averages.
 # URL: https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm
 HENRY_HUB_ACTUAL: dict[int, float] = {
+    2018: 3.15,
+    2019: 2.57,
+    2020: 2.03,
     2021: 3.72,
     2022: 6.45,
     2023: 2.54,
