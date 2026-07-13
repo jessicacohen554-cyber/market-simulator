@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-13-neiso-59-cc-hr-ablation",
+  "label": "neiso 59 cc hr ablation",
+  "date": "2026-07-13",
+  "shorthand": "neiso-59-cc-hr-ablation",
+  "definition": "fleet_to_bins CC HR-basis re-gate (caiso-78 blast radius): keeper recipe VERBATIM via replay_keeper.build_kwargs off neiso56_reserve_coopt/meta.json, re-solved on the fixed base_hr-pre-rescale code (fleet.py, caiso-78 2026-07-12). Zero recipe changes, zero new parameters. ZERO-FORCING TWIN (D-3): every merchant floor/bridge neutralized via the registry off-list.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "NEISO",
+  "file": "frontend/data/backcast/runs/2026-07-13-neiso-59-cc-hr-ablation.js",
+  "bundle": "results/calibration/neiso59_cc_hr_regate-ablation"
+}
