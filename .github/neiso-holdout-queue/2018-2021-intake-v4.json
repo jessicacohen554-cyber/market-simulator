@@ -1,0 +1,9 @@
+{
+  "requested_by": "owner (2026-07-13)",
+  "scope": "NEISO 2018-2021 holdout-intake + 2022 residual closure, requeue #4 -- root cause fixed: curate_emissions_unit_annual.py had no state filter and was re-rolling all 34 states' 2022 CEMS (nationwide, post 2026-07-10 CAMPD intake) every run; scoped to NEISO's 6 states (ME NH MA CT RI VT), confirmed locally 10.7s vs prior timeout",
+  "prior_runs": [
+    "29259546224 (failed: external runner shutdown mid-step curate_emissions_unit_annual, old branch)",
+    "29265458840 (failed: same step/symptom, new branch)",
+    "29267224161 (failed: same step/symptom again -- confirmed systematic, not random flakiness)"
+  ]
+}
