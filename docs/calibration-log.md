@@ -11601,3 +11601,38 @@ date-gate (REQUIRED before H1-2026 crossover / 2026+ forecast), the upstream
 S→N mid-merit economics (the RPE prices it once flow reaches the limit), and
 the deferred Midwest–South separation scored metric (the intaken pbc series
 is its measured side).
+
+## 2026-07-13 — ERCOT keeper PROMOTED: `ercot63 gas bridge` (CALIBRATED-WITH-CAVEATS, one ledgered caveat) — owner sign-off; supersedes ercot59-storage-deploy; ERCOT dashboard pruned to keeper-and-later (standing owner directive)
+
+**Owner decision (2026-07-13, interactive sign-off: "Ok promote"):
+ercot63-gas-bridge promoted.** The run is the promoted ercot59-storage-deploy
+recipe + ONE structural delta, `ercot_gas_commitment_bridge` (the P1-native
+gas-CC committed-state bridge — measured committed-CC LSL/HSL cap-weighted
+p50 min-load, startup-restart economics at the model's own P0 duals, one
+DA-operating-day horizon; zero fitted parameters). Structural case per rule 1
+(the ERCOT-63 entry above): real committed-state structure the keeper lacked,
+every storage/spread circle target moved the right way, the coal/CC mix
+corrected onto measured actuals, and the keeper's own C5c-2024 storage-shape
+ledgered FAIL flips to PASS; the honest cost is 1.8-1.9 pp of C3a drift in
+the two already-under-priced years (all years inside the ±10% gate). Caveat
+count 2→1 at the same CALIBRATED-WITH-CAVEATS tier.
+
+**Bookkeeping.** `keepers.json` ERCOT → `2026-07-12-ercot63-gas-bridge`
+(+ keepers array); attestation `attested_by` stamped with the owner approval;
+DOF `free_parameters` ledger seeded (`build_dof_ledger.py`, E8);
+`status.js` rebuilt; `audit_keepers.py --iso ERCOT` PASS;
+calibration-keeper-auditor run. **Standing owner-directed ERCOT registry
+prune (keeper-and-later, the ERCOT-62 precedent):** the ercot59 pair
+(`2026-07-12-ercot59-storage-deploy` + `-ablation`) deregistered (sidecars +
+run payloads removed; both bundle dirs under `results/calibration/` stay as
+the archival record). ERCOT registry = the ercot63 keeper pair.
+
+**Frontier status: NOT declared.** The bridge family succeeded rather than
+exhausted the lane, and a named admissible lever remains chartered for
+ERCOT-64: the FLOOR-SCOPED low-curve markdown (the measured LSL bid applied
+only in the bridge's own floored plant-hours, where the committed tranche
+genuinely plays its LSL role — diagnosis §7) for the still-open trough-depth
+gap (model 228 h < $15 vs RT 1,493; viable-arbitrage days 85 vs 247). The
+C3c scarcity-tail residual (27 h vs DA 68 in 2024) remains the separate open
+G-22 online-capability/DA-boundary root-cause item (ledgered; no offer
+parameter may be tuned to close it, rule 13).
