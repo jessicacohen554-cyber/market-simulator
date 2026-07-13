@@ -824,6 +824,34 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "registry intake (no identification without it)",
             )
         )
+    if sc.get("class_aware_fuel_price_fallback"):
+        # Class-aware F923 gap-fill donor, ZERO scalars: gap-filled months
+        # are priced from same-class reporting plants first (state, then
+        # zone), the class-blind fuel-group pools remaining the fallback.
+        # The donor pools are the ISO's own EIA-923 Schedule-5 filings
+        # re-aggregated by the recipient's plant class — no tunable exists.
+        out.append(
+            _entry(
+                "class_aware_fuel_price_fallback (same-class F923 donor pools)",
+                "data.fuel._NearbyFuelPrices same-class tier (state -> zone "
+                "-> class-blind fuel-group fallback); donor plants "
+                "classified by capacity-dominant model class within the "
+                "fuel group",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="EIA-923 Schedule-5 delivered fuel costs (the same "
+                "F923 parquet the fallback already reads), re-pooled by "
+                "plant class; measured basis: MISO 2024 CT filers "
+                "$4.13/MMBtu cap-wtd vs CC $2.57 while the quantity-weighted "
+                "class-blind pool is CC-burn-dominated (~$2.6)",
+                root_cause="the class-blind donor priced the ~33% of "
+                "non-filing CT capacity ~$16-20/MWh below its measured "
+                "class cost, feeding the 2024 CT_PEAKER economic over-run "
+                "at PRB's expense and July-2025's too-cheap North margin "
+                "(docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6, lane 1(b))",
+            )
+        )
     if sc.get("coal_warm_committed"):
         # Warm-boiler exemption, ZERO scalars: the P1 startup-amortization
         # markup (compute_monthly_markup, NREL $100/MW coal cold start) is
