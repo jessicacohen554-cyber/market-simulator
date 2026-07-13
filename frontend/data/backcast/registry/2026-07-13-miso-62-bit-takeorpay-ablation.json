@@ -1,0 +1,16 @@
+{
+ "id": "2026-07-13-miso-62-bit-takeorpay-ablation",
+ "label": "miso 62 bit takeorpay ablation",
+ "date": "2026-07-13",
+ "shorthand": "miso-62-bit-takeorpay-ablation",
+ "definition": "miso-62 grounded bituminous committed take-or-pay bid discount (ablation) -- miso-60 meta.json replay + coal_bit_committed_takeorpay=True (the _committed tranche of a bituminous plant in the measured take-or-pay map passes 1-contract_share of its fuel -- contracted baseload is sunk, so it holds against cheap gas while econ*/peak keep full delivered cost). Closes the COAL_BIT -15.7 TWh 2023/2024 free-C1 residual (re-diagnosed as bid-pricing, not commitment; both commitment candidates refuted). Grounded by each plant's EIA-923 Schedule-5 share (rule 1/13); zero fitted parameters.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-13-miso-62-bit-takeorpay-ablation.js",
+ "bundle": "results/calibration/miso62_bitpricing-ablation",
+ "ablation_of": "2026-07-13-miso-62-bit-takeorpay"
+}
