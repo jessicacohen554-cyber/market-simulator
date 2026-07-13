@@ -1,0 +1,16 @@
+{
+ "id": "2026-07-13-miso-63-shortout-rpe-ablation",
+ "label": "miso 63 shortout rpe ablation",
+ "date": "2026-07-13",
+ "shorthand": "miso-63-shortout-rpe-ablation",
+ "definition": "miso-63 composed candidate (ablation) -- miso-62 keeper meta.json replay + miso_rpe_pricing (the miso-61 published $200 RPE demand value on the RDT violation tiers) + unit_outage_short_windows (< 5-day baseload-coal CEMS windows, the July-2025 availability layer; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md). Zero fitted parameters added; both mechanisms separately evidenced (miso-61 registered run; _miso_shortout_probe 2025 A/B).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-13-miso-63-shortout-rpe-ablation.js",
+ "bundle": "results/calibration/miso63_shortout_rpe-ablation",
+ "ablation_of": "2026-07-13-miso-63-shortout-rpe"
+}
