@@ -11529,3 +11529,75 @@ floor, or derive value changed (rules 13/21/23); the drag hinge, ST_GAS
 deltas, and `ercot_storage_as_deployment` untouched. Probe bundles
 (`ercot63_{keeper,bridge,bridge_md,bridge_md_nohorizon}_2023`) are 2023-only
 throwaways — never registered.
+
+## 2026-07-12/13 — MISO-61: RPE additive violation pricing built (lane 1 of the 2025 price side); the measured RDT binding record intaken as a clean datatype; C5c-2025 adjudicated basis-broken (ledgered); anchors held to the cent
+
+**Lane execution (miso-60 handoff, lanes in order).** (1) **RPE pinned to
+primary sources and BUILT**: RPE = Reserve Procurement Enhancement — MISO
+enforces subregional STR requirements "by enforcing reserve procurement
+enhancement (RPE) constraints over the RDT"; single published demand value
+$200/MWh; in the 2023-2025 design it applies ADDITIVELY with the RDT TCDC in
+real violations ($700 deep / $240 small-violation spreads; the IMM
+cap-at-$500 recommendation was NOT implemented in-window) — 2024 SOM §II.E
+p.9 / §III.B pp.51-52, IMM Summer-2025 quarterly ($41M RDT+RPE, +121% YoY).
+Mechanism `miso_rpe_pricing` (GATED default-off): `MISO_RPE_DEMAND_VALUE`
+added to both VIOLATION tiers' flow_cost in `transmission.apply_miso_rdt_tcdc`
+(free tier untouched — engages only in the constraint's own driver window;
+fails loud without `miso_rdt_tcdc`). Zero new scalars; the "RPE Only"
+STR-scarcity channel documented as a conservative one-way under-separation
+gap (no STR product in the LP). (2) **Hourly measured RDT limit intake
+re-verified DATA-BLOCKED** (Data Broker deprecated w/o archive; Data Exchange
+key-gated; pbc carries no limit MW; quarterly p.30 derate evidence is
+chart-only). The admissible series — the pbc BINDING record — intaken as the
+new `transfer-constraint-binding` clean datatype (MISO `{da,rt}_pbc`, market
+dates 2023-2025 only per rule 22; schema + per-ISO registry
+`scripts/lib/transfer_constraint_binding/` + `fetch_miso_pbc.py` +
+curation + tests + dictionary). VALIDATION ONLY (rule 13). Measured basis
+discovery: the SOM ">25% of RT intervals" is the RDT+RPE FAMILY; the
+RDT-proper record reads DA S→N 8/241/919 binding h (2023/24/25) with 2025's
+18 h at the $40 plateau — the 2025 S→N regime shift as an hourly series.
+New probe `_miso61_rdt_anchors.py` scores both bases and fixes the legacy
+probe's tier-rows basis (3× deflation where TCDC tiers exist).
+
+**Runs (registered + scored, rubric v2.4):** `2026-07-12-miso-61-rpe-pricing`
+— **NOT-YET, FAIL {fuelmix, sysvol, price_mean, price_shape, price_tail} —
+one FEWER than miso-60** (storage_shape → ledgered CAVEAT: the C5c-2025
+adjudication found the actual's monthly "shape" is the battery fleet's COD
+ramp, r=0.934 vs cumulative in-service MW, per-MW residual degenerate at
+CV 0.175 < 0.25 — FINDING-miso-c5c-storage-shape-basis-2026-07.md; ledgered
+2 of 3 budget). Every quoted metric IDENTICAL to miso-60 (C1 13/16 · 9/12;
+sysvol-2025 gas −5.5%; C3a-2025 −15.8%; C3b-2025 0.206; C3c 3h/0h; C5a
+−7.3/−7.4; C8 ST_GAS-2025 grounded PASS 36.6%). RDT anchors HELD to the cent
+(S→N mean-flowing 1599/1550/1083 vs 1600/1549/1083; sep-when-binding
+$2.62/$2.49; August clean). The RPE is surgically active in its window: ~30
+2024 hours repriced $40→$240-bound (max sep $195.5, Aug-2024 Plains monthly
++$0.07); 2023/2025 byte-identical — the model reaches the violation region
+only in the 2024 heat event; 2025's separation stays owned by the upstream
+S→N flow deficit (model 236 vs measured DA 919 binding h). Twin
+`2026-07-12-miso-61-rpe-pricing-ablation`: NOT-YET {fuelmix, sysvol,
+price_mean, price_tail} — sheds price_shape, drops C1 to 12/16 (the miso-60
+trade signature); delta ST_GAS +1.7/+1.8/+2.5 TWh + OTHER_FOSSIL from Plains
+coal/CC/CT/imports. DOF ledger 16 entries / 2 legacy residuals. LOYO: zero-
+scalar boolean arming one published tariff constant — by construction.
+
+**Ops notes:** container restarted mid-twin (killed the original run —
+the handoff's warning verified); the re-run on the rebased branch was
+validated by an EXACT-ZERO 2023-leg value diff (24.5M rows) vs the surviving
+pre-rebase partial, so the intervening main merges (incl. #2154 data
+caching) are solve-neutral for MISO and the twin is a clean A/B. Also: this
+container's clone was SHALLOW (--depth 1) — `git push` re-packed the whole
+repo and the gateway 413'd it; `git fetch --unshallow` restored delta packs
+and pushes flow normally (flagging for the push-mechanics guidance: "fresh
+branch off latest main" only avoids 413s on a FULL clone).
+
+**Recommendation to owner (rule 1):** miso-61 strictly dominates miso-60 on
+structural grounding — the market's real published RPE violation pricing
+added at an identical score with one fewer FAIL and both storage criteria
+honestly ledgered (same promotion pattern as miso-56→57). Keeper swap is the
+owner's call; keepers.json untouched this session. Next levers in order:
+commitment-posture window rows (COAL_BIT −15.7 both years / CT_PEAKER-2024 —
+now THE dominant free-C1 residual), the 2025-09-30 shortage-pricing redesign
+date-gate (REQUIRED before H1-2026 crossover / 2026+ forecast), the upstream
+S→N mid-merit economics (the RPE prices it once flow reaches the limit), and
+the deferred Midwest–South separation scored metric (the intaken pbc series
+is its measured side).
