@@ -1,10 +1,10 @@
 {
  "CAISO": "2026-07-12-caiso-78-cc-hr",
- "ERCOT": "2026-07-12-ercot59-storage-deploy",
+ "ERCOT": "2026-07-12-ercot63-gas-bridge",
  "NEISO": "2026-07-09-neiso-56-reserve-coopt",
  "PJM": "2026-07-11-pjm-98-cc-mustrun",
  "keepers": [
-  "2026-07-12-ercot59-storage-deploy",
+  "2026-07-12-ercot63-gas-bridge",
   "2026-07-12-caiso-78-cc-hr",
   "2026-07-11-pjm-98-cc-mustrun",
   "2026-07-11-nyiso-61-downstate-import",
