@@ -1,0 +1,194 @@
+# One-shot v5: the PJM leg of the caiso-78 blast-radius re-gate. History:
+# v1 (run 29267506581) OOM'd the 7 GB runner at the per-gen reserve co-opt
+# LP build; v2 (run 29272572298) died on the runner's pre-existing ACTIVE
+# /swapfile; v3 (run 29279657044) failed YAML parse is wrong — v3 died at
+# /mnt fallocate with logs lost; v4 run 1 (29287899762) failed YAML parse
+# (unquoted colon in a step name); v4 run 2 (29288424318) PROVED the memory
+# architecture — both solves completed on /mnt-swap runners (main 32 min,
+# twin 27 min, no OOM) — but the post-solve steps referenced the stale
+# pjm105_* bundle dirs while the renumbered driver writes pjm106_* (and the
+# main job's `[ ... ] && b=...` died under default bash -e). v5 fixes both.
+#
+# Main and zero-forcing twin solve as PARALLEL jobs; a third job downloads
+# both bundle artifacts, registers the pair as pjm-106 PROBES, links the
+# ablation twin in the keeper sidecar (keeper-auditor E9 class), and
+# publishes ONE commit parented on current main via ci_api_upload_onmain.
+# keepers.json is deliberately NOT touched: the session-container
+# verification A/B shows the HR fix flips C1 CC_REGULAR-2023 PASS->FAIL
+# (the deflated HRs were compensating a PJM CC under-run), so promotion is
+# an owner rule-1 adjudication (miso-62 pattern). Data-API-only publish.
+name: caiso81-pjm-regate-v5
+
+on:
+  push:
+    branches:
+      - claude/caiso-81-calibration-gvz68q
+    paths:
+      - .github/workflows/caiso81-pjm-regate-v5.yml
+
+permissions:
+  contents: write
+
+jobs:
+  solve:
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [main, ablation]
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Add swap (defensive: measure, place, size, fall back)"
+        run: |
+          set -uo pipefail
+          df -h / /mnt 2>/dev/null || true
+          swapon --show || true
+          set -e
+          target=/mnt/swapfile
+          avail_kb=$(df --output=avail /mnt 2>/dev/null | tail -1 | tr -d ' ' || echo 0)
+          if [ "${avail_kb:-0}" -lt $((14*1024*1024)) ]; then
+            target=/swapfile2
+            avail_kb=$(df --output=avail / | tail -1 | tr -d ' ')
+          fi
+          size_g=12
+          max_g=$(( avail_kb/1024/1024 - 2 ))
+          if [ "$max_g" -lt "$size_g" ]; then size_g=$max_g; fi
+          if [ "$size_g" -lt 4 ]; then echo "not enough disk for swap (avail ${avail_kb} KB)"; exit 1; fi
+          echo "creating ${size_g}G swap at ${target}"
+          sudo fallocate -l ${size_g}G "$target" || sudo dd if=/dev/zero of="$target" bs=1M count=$((size_g*1024)) status=none
+          sudo chmod 600 "$target"
+          sudo mkswap "$target"
+          sudo swapon "$target"
+          free -g
+          swapon --show
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install openpyxl pytest
+
+      - name: Tripwire — the runner code must carry the caiso-78 HR fix
+        run: python -m pytest tests/test_fleet.py -q -k CcNameplateRescale
+
+      - name: Curate clean partitions the pjm-98 recipe reads
+        run: |
+          set -euo pipefail
+          PYTHONPATH="$PWD" python scripts/curate_ramp_capability.py
+          PYTHONPATH="$PWD" python scripts/curate_capacity_deliverability.py --isos PJM
+
+      - name: Solve (2023-2025, years sequential)
+        env:
+          MALLOC_ARENA_MAX: "1"
+          OMP_NUM_THREADS: "1"
+        run: python scripts/probes/_fleet_to_bins_regate.py PJM ${{ matrix.mode }}
+
+      - name: Score legitimacy diagnostics
+        env:
+          MALLOC_ARENA_MAX: "2"
+        run: |
+          set -uo pipefail
+          b=pjm106_cc_hr_regate
+          if [ "${{ matrix.mode }}" = "ablation" ]; then b="$b-ablation"; fi
+          python scripts/legitimacy_diagnostics.py \
+            --bundle "results/calibration/$b" \
+            --iso PJM --years 2023 2024 2025 \
+            --json-out "results/calibration/$b/legitimacy_diagnostics.json" || true
+          test -s "results/calibration/$b/legitimacy_diagnostics.json"
+
+      - name: Upload bundle artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: pjm106-${{ matrix.mode }}
+          path: results/calibration/pjm106_cc_hr_regate${{ matrix.mode == 'ablation' && '-ablation' || '' }}
+          retention-days: 3
+          if-no-files-found: error
+
+  register:
+    needs: solve
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install openpyxl
+
+      - name: Download solved bundles
+        uses: actions/download-artifact@v4
+        with:
+          name: pjm106-main
+          path: results/calibration/pjm106_cc_hr_regate
+
+      - name: Download twin bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: pjm106-ablation
+          path: results/calibration/pjm106_cc_hr_regate-ablation
+
+      - name: Register both runs on the dashboard
+        run: |
+          set -euo pipefail
+          python scripts/dashboard_add_run.py \
+            --label "pjm 106 cc hr" \
+            --bundle results/calibration/pjm106_cc_hr_regate | tee /tmp/rm.out
+          python scripts/dashboard_add_run.py \
+            --label "pjm 106 cc hr ablation" \
+            --bundle results/calibration/pjm106_cc_hr_regate-ablation | tee /tmp/ra.out
+          echo "RIDM=$(grep '^RUN_ID=' /tmp/rm.out | cut -d= -f2)" >> "$GITHUB_ENV"
+          echo "RIDA=$(grep '^RUN_ID=' /tmp/ra.out | cut -d= -f2)" >> "$GITHUB_ENV"
+
+      - name: Link the ablation twin in the keeper sidecar (E9)
+        run: |
+          set -euo pipefail
+          python - <<PY
+          import json, os
+          rid, rida = os.environ["RIDM"], os.environ["RIDA"]
+          p = f"frontend/data/backcast/registry/{rid}.json"
+          d = json.load(open(p))
+          d["ablation_twin"] = rida
+          open(p, "w").write(json.dumps(d, indent=2) + "\n")
+          print("linked", rida, "into", p)
+          PY
+
+      - name: Publish via the GitHub Data API (one commit parented on main)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_onmain.py \
+            --branch claude/caiso81-regate-pjm-v5-pub \
+            --message "results: register pjm-106 fleet_to_bins CC-HR re-gate PROBE + zero-forcing twin (caiso-78 blast radius; keeper CANDIDATE, owner promotes) [skip ci]" \
+            --file "frontend/data/backcast/registry/$RIDM.json" \
+            --file "frontend/data/backcast/registry/$RIDA.json" \
+            --file "frontend/data/backcast/runs/$RIDM.js" \
+            --file "frontend/data/backcast/runs/$RIDA.js" \
+            --file frontend/data/backcast/bench/PJM/2023.json.gz \
+            --file frontend/data/backcast/bench/PJM/2024.json.gz \
+            --file frontend/data/backcast/bench/PJM/2025.json.gz \
+            --file results/calibration/pjm106_cc_hr_regate/meta.json \
+            --file results/calibration/pjm106_cc_hr_regate/run_config.json \
+            --file results/calibration/pjm106_cc_hr_regate/metrics.json \
+            --file results/calibration/pjm106_cc_hr_regate/legitimacy_diagnostics.json \
+            --file results/calibration/pjm106_cc_hr_regate/calibration_attestation.json \
+            --file results/calibration/pjm106_cc_hr_regate-ablation/meta.json \
+            --file results/calibration/pjm106_cc_hr_regate-ablation/run_config.json \
+            --file results/calibration/pjm106_cc_hr_regate-ablation/metrics.json \
+            --file results/calibration/pjm106_cc_hr_regate-ablation/legitimacy_diagnostics.json
