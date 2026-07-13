@@ -34,6 +34,13 @@
    "locked_test_scored_on": "2026-07-07-neiso53-winter-fuelsec-coldsnap",
    "locked_test_note": "The 2019 + H1-2026 locked-test one-shot was scored ONCE with the frozen neiso-53 config and STANDS (rule 22); it was NOT re-scored for neiso-54. neiso-54 (CT_PEAKER evening-ramp reliability drag + ST_GAS->Component-B consolidation) is the current TRAIN-tier (2023-2025) keeper - more structurally faithful (rule 1) with an identical 2023-2025 verdict and no winter degradation - promoted 2026-07-08. No calibration change responded to the locked-test result.",
    "train_keeper_promoted": "2026-07-08 (session neiso-steamgas-ct-drag)"
+  },
+  "NYISO": {
+   "declared": "2026-07-13",
+   "keeper": "2026-07-11-nyiso-61-downstate-import",
+   "by": "owner (this session, explicit instruction 2026-07-13: 'NYISO is calibration complete and should be marked that')",
+   "basis": "Frontier declared 2026-07-11 (keepers.json frontier.NYISO): the deep >$300 tail's two reserve levers are chased to ground — the largest-contingency requirement is already in-model as the measured NYCA families, and the ORDC/RCPF stack is verified complete and SOM-grounded (fires to VOLL in 2023). The sole remaining gap — IMM Recommendation 2021-1's net-load forecast-uncertainty reserve increment — has no published formula, and adding it in-model would be residual-fitting (rule 26). No admissible mechanism remains.",
+   "one_shot_status": "AUTHORIZED, NOT YET RUN. Declaring complete authorizes the one-shot holdout validation (frozen nyiso-61 config, solve once per already-intaken holdout window, record whatever it is, never re-tune — rule 22). NYISO 2022 + H1-2026 data intaken (intake_log 2026-07-10); 2019 locked-test data to be confirmed before its one-shot. The one-shot is the authorized follow-on, not run in this marker edit."
   }
  }
 }
