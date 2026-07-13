@@ -1,11 +1,11 @@
 {
- "CAISO": "2026-07-12-caiso-78-cc-hr",
+ "CAISO": "2026-07-13-caiso-80-supply-demand",
  "ERCOT": "2026-07-12-ercot63-gas-bridge",
  "NEISO": "2026-07-09-neiso-56-reserve-coopt",
  "PJM": "2026-07-11-pjm-98-cc-mustrun",
  "keepers": [
   "2026-07-12-ercot63-gas-bridge",
-  "2026-07-12-caiso-78-cc-hr",
+  "2026-07-13-caiso-80-supply-demand",
   "2026-07-11-pjm-98-cc-mustrun",
   "2026-07-11-nyiso-61-downstate-import",
   "2026-07-09-neiso-56-reserve-coopt",
