@@ -15,6 +15,21 @@ passthrough sigmoids, cc-duct band, storage cycling — and the realized annual
 Henry Hub gas price are untouched, so the delta isolates the forecast-machinery
 skill prior from the backcast-only measured overlays.
 
+> **Framing (2026-07-13, owner directive).** The single `--statistical-mode`
+> switch groups two different classes of lever: **admissible measured inputs**
+> (the historic outage overlay, per-plant F923 monthly coal pricing — CLAUDE.md
+> rule-13 physical/market inputs with a forward analogue) and **merchant
+> deployment floors** (the CT AS/RUC floor, the spatial
+> reliability-deployment floor, the ST WEFOR-residual relief). For the
+> admissible inputs, the keeper−statmode delta is the **backcast→forecast
+> input gap** — what a forecast gives up to statistical stand-ins — and is
+> **not** a caveat, deduction, or asterisk on the keeper's backcast result:
+> a backcast is scored with the year's actual physical inputs by
+> construction. Language below reading overlay-carried fit as "propping up"
+> a keeper applies, under this framing, only to the deployment-floor
+> component; the admissible-input component is forecast-uncertainty
+> information (error bars, the crossover window), not a legitimacy signal.
+
 **Method.** Each probe is a byte-faithful replay of the keeper's own
 `meta.json` (`scripts/run_statmode_probe.py`, built on the existing
 `replay_keeper.py` kwarg-mapping) with only the statistical-mode delta
