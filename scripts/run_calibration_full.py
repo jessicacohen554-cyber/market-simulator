@@ -37,10 +37,13 @@ from __future__ import annotations
 import argparse
 import gc
 import gzip
+import hashlib
+import inspect
 import json
 import logging
 import os
 import pickle
+import shutil
 import subprocess
 import sys
 import time
@@ -2010,6 +2013,11 @@ def write_run_config(
         },
         "scenario_config": dataclasses.asdict(cfg),
     }
+    if "reuse" in meta:
+        # Mixed --reuse-solved bundle: mirror the reuse labeling into the
+        # self-contained run record. Absent the flag this key never exists
+        # and the payload is byte-identical to before the flag was added.
+        payload["reuse"] = meta["reuse"]
     (run_dir / "run_config.json").write_text(
         json.dumps(payload, indent=2, default=_json_default)
     )
@@ -2017,6 +2025,411 @@ def write_run_config(
         diff = _git("diff", "HEAD", "--", *_GIT_STATE_EXCLUDE)
         if diff:
             (run_dir / "model_changes.diff").write_text(diff)
+
+
+# ---------------------------------------------------------------------------
+# --reuse-solved: opt-in reuse of a prior bundle's per-year solve artifacts
+# ---------------------------------------------------------------------------
+
+# solve_and_persist parameters that do NOT change what a year's solve produces
+# (destination/provenance plumbing, or handled per-year by plan_reuse_solved).
+# Everything else must match the prior bundle's meta-reconstructed kwargs
+# exactly for any year to be reused.
+_REUSE_KWARG_EXEMPT = frozenset(
+    {
+        "years",
+        "iso",
+        "hours",
+        "reference",
+        "run_dir",
+        "note",
+        "ablation_of",
+        "reuse_solved",
+    }
+)
+
+_REUSE_WARNING = (
+    "Reused years are byte-copies of a prior bundle's solve, NOT fresh "
+    "evidence — keeper promotion still requires a full fresh solve of every "
+    "year."
+)
+
+
+def _norm_reuse_value(v):
+    """Normalize one solve kwarg for reuse comparison across a JSON round-trip.
+
+    The prior side of the comparison comes from ``meta.json`` (tuples became
+    lists, frozensets became sorted lists via ``_json_default``, ``None``
+    dict entries were dropped by the meta writer), so the live side is
+    normalized the same way before equality is tested. ``None``-valued dict
+    entries are dropped and an empty dict collapses to ``None`` because both
+    sides treat them as "no override".
+    """
+    if isinstance(v, dict):
+        d = {str(k): _norm_reuse_value(x) for k, x in v.items() if x is not None}
+        return d or None
+    if isinstance(v, (list, tuple)):
+        return [_norm_reuse_value(x) for x in v]
+    if isinstance(v, (set, frozenset)):
+        return sorted(v)
+    if isinstance(v, Path):
+        return str(v)
+    return v
+
+
+def _untracked_data_newest_mtime() -> tuple[float, str]:
+    """Return (newest mtime, path) over non-git-tracked files under ``data/``.
+
+    Git-tracked data changes are caught by the commit/worktree checks in
+    :func:`plan_reuse_solved`; this covers the rest — gitignored raw drops
+    and the derived ``data/clean`` store — whose only change signal is the
+    filesystem. Returns ``(0.0, "")`` when everything under ``data/`` is
+    tracked.
+    """
+    tracked = set(_git("ls-files", "--", "data").splitlines())
+    newest, newest_path = 0.0, ""
+    for dirpath, _dirnames, filenames in os.walk(REPO / "data"):
+        for fn in filenames:
+            p = Path(dirpath) / fn
+            rel = p.relative_to(REPO).as_posix()
+            if rel in tracked:
+                continue
+            try:
+                m = p.stat().st_mtime
+            except OSError:
+                continue
+            if m > newest:
+                newest, newest_path = m, rel
+    return newest, newest_path
+
+
+def plan_reuse_solved(
+    prior: Path,
+    *,
+    iso: str,
+    hours: int,
+    years: list[int],
+    gas_prices: dict[int, float],
+    current_kwargs: dict,
+    recorded_config_for_year,
+) -> "tuple[dict[int, dict], dict]":
+    """Decide which requested years may be reused from a prior bundle.
+
+    Returns ``(plan, record)``: ``plan`` maps each reusable year to
+    ``{"passes", "cache_key", "scenario_config_sha256"}``; ``record`` is the
+    ``meta.json``/``run_config.json`` ``"reuse"`` labeling block (source
+    bundle, per-year hashes, refusal reasons, and the not-fresh-evidence
+    warning). Any failed check refuses conservatively — the year (or the
+    whole bundle) simply solves fresh, with the reason logged and recorded.
+
+    A year is reusable only when ALL of the following hold:
+
+    * the prior bundle's ``meta.json`` kwargs (reconstructed through
+      ``replay_keeper.build_kwargs``, the sanctioned recipe channel) equal
+      this invocation's solve-affecting kwargs (``_REUSE_KWARG_EXEMPT``
+      excluded), and its ``run_config.json`` ``scenario_config`` equals the
+      full-field dump of :func:`_recorded_config` for the prior bundle's
+      first year — so the per-year effective ``ScenarioConfig`` (and hence
+      ``cache_key()``) is identical for every shared year, since per-year
+      configs are the same pure function of (kwargs, year, Henry Hub price)
+      and the code is pinned by the git checks below;
+    * the working tree is CLEAN under ``src/``, ``scripts/`` and ``data/``,
+      the prior bundle was solved from a clean tree, and ``git diff`` from
+      the prior bundle's recorded commit to HEAD touches nothing under
+      ``src/``, ``scripts/`` or ``data/``;
+    * no non-git-tracked file under ``data/`` (gitignored raw, derived
+      ``data/clean``) has an mtime newer than the prior run's last write
+      (the newest file in the prior bundle — its report phase lazily
+      re-derives ``data/clean`` caches after ``meta.json`` is stamped, and
+      those deterministic re-derivations of git-pinned raw inputs must not
+      poison the gate);
+    * the installed ``highspy`` version matches the prior bundle's (solver
+      upgrades legitimately move alternate-optimal vertices);
+    * per year: the year is in the prior bundle, its Henry Hub actual is
+      unchanged, and its per-year artifacts (``dispatch/<year>_<pass>``
+      files for every recorded pass, ``system.parquet`` rows) exist.
+
+    What the key does NOT cover (documented residual risk, all conservative
+    only in the sense that they cannot be detected, not that they refuse):
+
+    * mtime-preserving edits to untracked data (``touch -r`` /
+      ``cp --preserve``) and clock skew — the untracked-data gate compares
+      file mtimes against the prior run's last bundle write and assumes
+      both runs happened on this machine's clock (bundle payload parquets
+      are gitignored, so reuse sources are local by construction); a
+      concurrent parallel run (rule 13) rewriting a ``data/clean`` cache
+      during the prior run's window is likewise invisible — benign, since
+      clean caches re-derive deterministically from git-pinned raw data;
+    * the Python/numpy/pandas/scipy environment beyond ``highspy`` (only
+      the solver version is recorded in bundles);
+    * environment variables that are not resolved into the recorded config
+      (the recorded env-gated probes ARE covered via the scenario_config
+      dump; performance knobs like ``MARKET_SIM_WARMSTART_XYEAR`` are
+      basis-neutral by design, see docs/cross-year-warmstart.md).
+    """
+    import dataclasses
+
+    prior = Path(prior)
+    record: dict = {
+        "source_bundle": str(prior),
+        "requested_years": [int(y) for y in years],
+        "reused_years": {},
+        "fresh_years": [],
+        "refusals": {},
+        "warning": _REUSE_WARNING,
+    }
+
+    def _refuse_all(reason: str) -> "tuple[dict[int, dict], dict]":
+        logger.warning("--reuse-solved: no year reused: %s", reason)
+        record["refusals"]["bundle"] = reason
+        record["fresh_years"] = [int(y) for y in years]
+        return {}, record
+
+    meta_path, rc_path = prior / "meta.json", prior / "run_config.json"
+    if not meta_path.exists() or not rc_path.exists():
+        return _refuse_all(f"{prior} is missing meta.json/run_config.json")
+    try:
+        prior_meta = json.loads(meta_path.read_text())
+        prior_rc = json.loads(rc_path.read_text())
+    except (json.JSONDecodeError, OSError) as exc:
+        return _refuse_all(f"unreadable prior bundle metadata: {exc}")
+    record["source_timestamp"] = prior_meta.get("timestamp")
+
+    if str(prior_meta.get("iso", "")).upper() != iso.upper():
+        return _refuse_all(
+            f"prior bundle is {prior_meta.get('iso')!r}, this run is {iso!r}"
+        )
+    if int(prior_meta.get("hours", -1)) != int(hours):
+        return _refuse_all(
+            f"prior bundle solved hours={prior_meta.get('hours')}, "
+            f"this run wants hours={hours}"
+        )
+    prior_highs = prior_meta.get("highspy_version", "")
+    if prior_highs != _highspy_version():
+        return _refuse_all(
+            f"highspy version changed (prior {prior_highs!r}, "
+            f"current {_highspy_version()!r}) — alternate-optimal vertices "
+            "may move; solve fresh"
+        )
+
+    # --- solve recipe: kwargs through the sanctioned replay channel --------
+    import replay_keeper as rk  # deferred: replay_keeper imports this module
+
+    try:
+        prior_kwargs = rk.build_kwargs(prior_meta)
+    except SystemExit as exc:
+        return _refuse_all(f"prior meta.json is not kwargs-reconstructable: {exc}")
+    sig_params = inspect.signature(solve_and_persist).parameters
+    mismatched = []
+    for name, p in sig_params.items():
+        if name in _REUSE_KWARG_EXEMPT:
+            continue
+        default = None if p.default is inspect.Parameter.empty else p.default
+        cur = _norm_reuse_value(current_kwargs.get(name, default))
+        pri = _norm_reuse_value(prior_kwargs.get(name, default))
+        if cur != pri:
+            mismatched.append(name)
+    if mismatched:
+        return _refuse_all(
+            "solve kwargs differ from the prior bundle: "
+            + ", ".join(sorted(mismatched))
+        )
+
+    # --- effective per-year ScenarioConfig ---------------------------------
+    prior_years = [int(y) for y in prior_meta.get("years", [])]
+    if not prior_years:
+        return _refuse_all("prior meta.json records no years")
+    prior_sc = prior_rc.get("scenario_config")
+    if not isinstance(prior_sc, dict):
+        return _refuse_all("prior run_config.json has no scenario_config record")
+
+    def _canon(d: dict) -> dict:
+        return json.loads(json.dumps(d, sort_keys=True, default=_json_default))
+
+    try:
+        probe = _canon(dataclasses.asdict(recorded_config_for_year(prior_years[0])))
+    except Exception as exc:  # e.g. config validation under current code
+        return _refuse_all(
+            f"cannot rebuild the recorded config for year {prior_years[0]}: {exc}"
+        )
+    prior_sc_canon = _canon(prior_sc)
+    if probe != prior_sc_canon:
+        diff_keys = sorted(
+            k
+            for k in set(probe) | set(prior_sc_canon)
+            if probe.get(k) != prior_sc_canon.get(k)
+        )
+        return _refuse_all(
+            f"effective ScenarioConfig for year {prior_years[0]} differs from "
+            f"the prior bundle's persisted scenario_config: {diff_keys}"
+        )
+
+    # --- git state: code + tracked data pinned to the prior solve ----------
+    cur_sha = _git("rev-parse", "--short", "HEAD")
+    if not cur_sha:
+        return _refuse_all("git state unavailable — cannot pin code identity")
+    dirty = _git("status", "--porcelain", "--", "src", "scripts", "data")
+    if dirty:
+        return _refuse_all(
+            "working tree is dirty under src/scripts/data — reuse requires a "
+            f"clean tree:\n{dirty}"
+        )
+    prior_git = prior_rc.get("git") or {}
+    if prior_git.get("dirty"):
+        return _refuse_all(
+            "prior bundle was solved from a dirty tree (see its "
+            "model_changes.diff) — its code state is not commit-addressable"
+        )
+    prior_sha = prior_git.get("sha") or prior_meta.get("git_sha") or ""
+    record["source_git_sha"] = prior_sha
+    if not prior_sha:
+        return _refuse_all("prior bundle records no git sha")
+    if prior_sha != cur_sha:
+        if not _git("rev-parse", "--verify", f"{prior_sha}^{{commit}}"):
+            return _refuse_all(
+                f"prior bundle's commit {prior_sha} is not resolvable here"
+            )
+        changed = _git(
+            "diff", "--name-only", prior_sha, "HEAD", "--", "src", "scripts", "data"
+        )
+        if changed:
+            return _refuse_all(
+                f"src/scripts/data changed between the prior bundle's commit "
+                f"{prior_sha} and HEAD {cur_sha}: "
+                + ", ".join(changed.splitlines()[:8])
+                + ("…" if len(changed.splitlines()) > 8 else "")
+            )
+
+    # --- untracked/derived data: mtime gate against the prior run's end ----
+    # The anchor is the prior run's LAST write into its own bundle, not its
+    # meta.json timestamp: the report phase runs after meta/run_config are
+    # written and lazily (re)derives data/clean caches, so an artifact the
+    # prior run itself produced legitimately postdates its timestamp. Those
+    # caches are deterministic re-derivations of git-pinned raw inputs (the
+    # diff/status gates above), so they don't invalidate reuse — only a file
+    # touched AFTER the prior process finished does.
+    try:
+        prior_epoch = datetime.fromisoformat(prior_meta["timestamp"]).timestamp()
+    except (KeyError, TypeError, ValueError):
+        return _refuse_all("prior meta.json has no parseable timestamp")
+    for p in prior.rglob("*"):
+        if p.is_file():
+            try:
+                prior_epoch = max(prior_epoch, p.stat().st_mtime)
+            except OSError:
+                continue
+    newest, newest_path = _untracked_data_newest_mtime()
+    if newest > prior_epoch:
+        return _refuse_all(
+            f"untracked/derived data artifact {newest_path} was modified "
+            "after the prior run finished — inputs may have changed; "
+            "solve fresh"
+        )
+
+    # --- per-year artifact + Henry Hub checks ------------------------------
+    prior_passes = sorted(prior_meta.get("passes") or [])
+    if not prior_passes:
+        return _refuse_all("prior meta.json records no solve passes")
+    sys_path = prior / "system.parquet"
+    if not sys_path.exists():
+        return _refuse_all(
+            "prior bundle has no system.parquet (payload parquets are "
+            "gitignored/pruned — reuse needs the full local bundle)"
+        )
+    sys_years = set(
+        pd.read_parquet(sys_path, columns=["year"])["year"].astype(int).tolist()
+    )
+    prior_gas = {int(k): v for k, v in (prior_meta.get("gas_prices") or {}).items()}
+
+    plan: dict[int, dict] = {}
+    for y in years:
+        y = int(y)
+        reason = None
+        if y not in prior_years:
+            reason = "year not solved in the prior bundle"
+        elif y not in prior_gas or prior_gas[y] != gas_prices[y]:
+            reason = (
+                f"Henry Hub actual differs (prior {prior_gas.get(y)!r}, "
+                f"current {gas_prices[y]!r})"
+            )
+        elif y not in sys_years:
+            reason = "prior system.parquet has no rows for this year"
+        else:
+            missing = [
+                lb
+                for lb in prior_passes
+                if not (prior / "dispatch" / f"{y}_{lb}.parquet").exists()
+            ]
+            if missing:
+                reason = f"prior dispatch files missing for passes {missing}"
+        if reason:
+            record["refusals"][str(y)] = reason
+            record["fresh_years"].append(y)
+            logger.warning("--reuse-solved: year %d will solve fresh: %s", y, reason)
+            continue
+        cfg_y = recorded_config_for_year(y)
+        try:
+            cache_key = cfg_y.cache_key()
+        except Exception:  # non-default frozenset fields are not cache_key-able
+            cache_key = None
+        sc_sha = hashlib.sha256(
+            json.dumps(
+                dataclasses.asdict(cfg_y), sort_keys=True, default=_json_default
+            ).encode()
+        ).hexdigest()[:16]
+        plan[y] = {
+            "passes": prior_passes,
+            "cache_key": cache_key,
+            "scenario_config_sha256": sc_sha,
+        }
+        record["reused_years"][str(y)] = dict(plan[y])
+    return plan, record
+
+
+def _load_prior_bundle_tables(prior: Path) -> "dict[str, pd.DataFrame | None]":
+    """Load the per-year-sliceable tables of a ``--reuse-solved`` source bundle.
+
+    ``system.parquet`` is required (plan_reuse_solved already checked it);
+    the rest are optional — a table the prior bundle lacks would also not
+    have been produced by a fresh solve of the identical recipe.
+    """
+    tables: dict[str, pd.DataFrame | None] = {
+        "system": pd.read_parquet(prior / "system.parquet")
+    }
+    for name in ("storage", "posture", "flows", "storage_as", "btm"):
+        p = prior / f"{name}.parquet"
+        tables[name] = pd.read_parquet(p) if p.exists() else None
+    for name in ("eia930", "eia923", "campd"):
+        p = bundle_input_path(prior, name)
+        tables[name] = pd.read_parquet(p) if p is not None else None
+    return tables
+
+
+def _copy_reused_year(
+    prior: Path,
+    run_dir: Path,
+    year: int,
+    passes: list[str],
+    persist_p2_state: bool,
+) -> None:
+    """Byte-copy one reused year's per-year artifact FILES from the prior bundle.
+
+    Dispatch parquets are copied for every recorded pass (their existence was
+    verified by plan_reuse_solved); floors/p2_state are copied when present —
+    a fleet with no floor matrix legitimately writes no floors npz.
+    """
+    for label in passes:
+        src = prior / "dispatch" / f"{year}_{label}.parquet"
+        shutil.copy2(src, run_dir / "dispatch" / src.name)
+        floors = prior / "floors" / f"{year}_{label}.npz"
+        if floors.exists():
+            (run_dir / "floors").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(floors, run_dir / "floors" / floors.name)
+    if persist_p2_state:
+        p2 = prior / "p2_state" / f"{year}.pkl.gz"
+        if p2.exists():
+            (run_dir / "p2_state").mkdir(parents=True, exist_ok=True)
+            shutil.copy2(p2, run_dir / "p2_state" / p2.name)
 
 
 def solve_and_persist(
@@ -2219,6 +2632,7 @@ def solve_and_persist(
     btm_backfill_year: int | None = None,
     zero_forcing_ablation: bool = False,
     ablation_of: str | None = None,
+    reuse_solved: "Path | None" = None,
     note: str = "",
 ) -> Path:
     """Solve every year/pass, write the parquet bundle, return the run dir.
@@ -2227,7 +2641,22 @@ def solve_and_persist(
     ablation twin — every merchant floor/bridge neutralized in ``run_year`` via
     ``ScenarioConfig.as_zero_forcing_ablation`` — and record ``ablation_of`` (the
     base keeper bundle name) at the top of ``run_config.json``.
+
+    ``reuse_solved`` (OPT-IN, ``--reuse-solved``): a prior bundle dir whose
+    per-year artifacts are copied instead of re-solved for every year that
+    passes :func:`plan_reuse_solved`'s eligibility checks (identical
+    effective per-year config, pinned code + data state). Years that fail
+    any check solve fresh; the mix is labeled in ``meta.json["reuse"]``.
+    Reused years are NOT fresh evidence (see ``_REUSE_WARNING``). Default
+    ``None`` keeps behavior byte-identical to a plain fresh run.
     """
+    # Snapshot every solve-affecting keyword argument BEFORE any other local
+    # is bound (locals() here is exactly the parameter set): plan_reuse_solved
+    # compares it against the prior bundle's meta-reconstructed kwargs
+    # (replay_keeper.build_kwargs, the sanctioned recipe channel).
+    _solve_kwargs_snapshot = {
+        k: v for k, v in locals().items() if k not in _REUSE_KWARG_EXEMPT
+    }
     iso_config = get_iso_config(iso)
     if priced_interchange:
         # Interchange served by the priced import/export node (external zone
@@ -2281,7 +2710,13 @@ def solve_and_persist(
     posture_frames: list[pd.DataFrame] = []
     flows_frames: list[pd.DataFrame] = []
     storage_as_frames: list[pd.DataFrame] = []
-    gas_prices: dict[int, float] = {}
+    # Henry Hub actuals for every requested year, computed up front so the
+    # per-year recorded config (and the --reuse-solved eligibility check) can
+    # be built before the solve loop. Same values the loop used to compute
+    # per iteration; _henry_hub_actual is a pure lookup on ``reference``.
+    gas_prices: dict[int, float] = {
+        year: _henry_hub_actual(reference, year) for year in years
+    }
     passes_seen: set[str] = set()
     # First year's pristine backcast_config, retained for the meta block below
     # so it doesn't rebuild the same config (with the same args) several times.
@@ -2295,10 +2730,717 @@ def solve_and_persist(
     # warmstart.md. Years must run chronologically for the basis to line up.
     xyear_cache: list = []
 
+    def _recorded_config(cfg_year: int) -> "ScenarioConfig":
+        """Rebuild the as-solved (recorded) config for one backcast year.
+
+        The rule-25 reproducibility record: ``backcast_config`` for
+        ``cfg_year`` WITH the same overrides + deltas applied that
+        ``run_year`` applies, so ``run_config.json``'s ``scenario_config``
+        (built for ``years[0]``) records the exact merged config the LP
+        solved against (e.g. ``offer_curve_by_group`` is the merged curve,
+        not the bare defaults). ``--reuse-solved`` also calls this per
+        candidate year: the full-field dump is the reuse-eligibility config
+        comparison against the prior bundle's persisted ``scenario_config``,
+        and ``cache_key()`` of the result is the per-year config hash
+        recorded for reused years (see :func:`plan_reuse_solved`).
+        """
+        cfg_gas_price = (
+            gas_prices[cfg_year]
+            if cfg_year in gas_prices
+            else _henry_hub_actual(reference, cfg_year)
+        )
+        recorded_cfg = backcast_config(
+            cfg_year,
+            iso,
+            hours,
+            cfg_gas_price,
+            commitment_screen_coal=screen_coal,
+            coal_prb_passthrough=coal_prb_passthrough,
+            outage_source=outage_source,
+            coal_mustrun_per_plant=coal_mustrun_per_plant,
+            retiree_cems_cap=retiree_cems_cap,
+            ct_mustrun_per_plant=ct_mustrun_per_plant,
+            ct_mustrun_floor_frac=ct_mustrun_floor_frac,
+            coal_drop_pof=coal_drop_pof,
+            offer_curve_overrides=offer_curve_overrides,
+            offer_curve_deltas=offer_curve_deltas,
+            ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+            neiso_offer_surface_conditional=neiso_offer_surface_conditional,
+            pjm_offer_surface_conditional=pjm_offer_surface_conditional,
+            pjm_da_virtual_bids=pjm_da_virtual_bids,
+            pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
+        )
+        if pjm_offer_midcurve_segments is not None:
+            # Meta-writer mirror of run_year's with_overrides (rule 25): the
+            # segment scope must land in scenario_config exactly as solved.
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_offer_midcurve_segments=tuple(pjm_offer_midcurve_segments)
+            )
+        if ercot_offer_surface_lowcurve:
+            # Meta-writer mirror of run_year's with_overrides (rule 25): the LOW-leg
+            # flag must land in scenario_config exactly as the LP solved with it.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_offer_surface_lowcurve=True
+            )
+        if ercot_offer_surface_lowcurve_floorscoped:
+            # Same rule-25 mirror for the ERCOT-64 floor-scoped LSL markdown.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_offer_surface_lowcurve_floorscoped=True
+            )
+        # Coal sigmoid flags mirror run_year exactly — run_config.json must
+        # record the same enables/params the LP solved with (the prb sigmoid +
+        # tiered flags, outage_source, coal_drop_pof, the per-plant must-run and
+        # screen flags used to be skipped here, so scenario_config under-reported
+        # what the LP actually solved — e.g. coal_drop_pof dumped False while the
+        # run used True).
+        recorded_cfg = recorded_cfg.with_overrides(
+            coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,
+            coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,
+        )
+        if prb_overrides:
+            recorded_cfg = recorded_cfg.with_overrides(
+                **{k: v for k, v in prb_overrides.items() if v is not None}
+            )
+        if coal_bit_sigmoid:
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_bit_passthrough_sigmoid=True
+            )
+        if bit_overrides:
+            recorded_cfg = recorded_cfg.with_overrides(
+                **{k: v for k, v in bit_overrides.items() if v is not None}
+            )
+        if coal_econ_srmc_bound:
+            recorded_cfg = recorded_cfg.with_overrides(coal_econ_srmc_bound=True)
+        if plant_tranche_config:
+            recorded_cfg = recorded_cfg.with_overrides(
+                plant_tranche_config_path=plant_tranche_config
+            )
+        if storage_daily_cycling:
+            recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
+        if storage_vintage_ramp:
+            recorded_cfg = recorded_cfg.with_overrides(storage_vintage_ramp=True)
+        if strict_demand_profile:
+            recorded_cfg = recorded_cfg.with_overrides(strict_demand_profile=True)
+        if as_reserve_withholding:
+            recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
+        if energy_reserve_coopt:
+            recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
+        if miso_zonal_reserves:
+            recorded_cfg = recorded_cfg.with_overrides(miso_zonal_reserves=True)
+        if miso_reserve_pergen:
+            recorded_cfg = recorded_cfg.with_overrides(miso_reserve_pergen=True)
+        if miso_commitment_posture:
+            recorded_cfg = recorded_cfg.with_overrides(miso_commitment_posture=True)
+        if miso_measured_reserve_requirements:
+            recorded_cfg = recorded_cfg.with_overrides(
+                miso_measured_reserve_requirements=True
+            )
+        if miso_south_seam_split:
+            recorded_cfg = recorded_cfg.with_overrides(miso_south_seam_split=True)
+        if miso_rdt_tcdc:
+            recorded_cfg = recorded_cfg.with_overrides(miso_rdt_tcdc=True)
+        if pjm_reserve_supply_cap:
+            recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
+        if pjm_reserve_pergen:
+            recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen=True)
+        if pjm_reserve_pergen_sync:
+            recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen_sync=True)
+        if pjm_reserve_pergen_size_split:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_reserve_pergen_size_split=True
+            )
+        if pjm_commitment_posture:
+            recorded_cfg = recorded_cfg.with_overrides(pjm_commitment_posture=True)
+        if measured_ramp_capability:
+            recorded_cfg = recorded_cfg.with_overrides(measured_ramp_capability=True)
+        if pjm_reserve_online_gated:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_reserve_online_gated=True,
+                pjm_reserve_online_rho=pjm_reserve_online_rho,
+            )
+        if pjm_reserve_commitment_scoped:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_reserve_commitment_scoped=True
+            )
+        if ercot_multiproduct_as_coopt:
+            recorded_cfg = recorded_cfg.with_overrides(ercot_multiproduct_as_coopt=True)
+        if ercot_ecrs_conservative_deployment:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_ecrs_conservative_deployment=True
+            )
+        if ercot_ordc_total_reserve:
+            recorded_cfg = recorded_cfg.with_overrides(ercot_ordc_total_reserve=True)
+        if ercot_storage_as_product_credit:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_storage_as_product_credit=True
+            )
+        if gas_hh_monthly_shape:
+            recorded_cfg = recorded_cfg.with_overrides(gas_hh_monthly_shape=True)
+        if ercot_as_aware_commitment:
+            recorded_cfg = recorded_cfg.with_overrides(ercot_as_aware_commitment=True)
+        if ercot_reserve_supply_cap:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_reserve_supply_cap=True,
+                ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
+            )
+        if ercot_reserve_supply_forward:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_reserve_supply_forward=True
+            )
+        if ercot_as_forward_requirement:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_as_forward_requirement=True
+            )
+        if ercot_load_resource_reserve:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_load_resource_reserve=True,
+                ercot_load_resource_reserve_from_year=int(
+                    ercot_load_resource_reserve_from_year
+                ),
+            )
+        if ercot_storage_as_reserve:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_storage_as_reserve=True,
+                ercot_storage_as_reserve_from_year=int(
+                    ercot_storage_as_reserve_from_year
+                ),
+            )
+        if ercot_ecrs_requirement:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_ecrs_requirement=True,
+                ercot_ecrs_requirement_from_year=int(ercot_ecrs_requirement_from_year),
+            )
+        if as_reserve_formula:
+            recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
+        if storage_as_commitment:
+            recorded_cfg = recorded_cfg.with_overrides(storage_as_commitment=True)
+        if ercot_storage_as_deployment:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_storage_as_deployment=True,
+                ercot_storage_as_deployment_from_year=int(
+                    ercot_storage_as_deployment_from_year
+                ),
+            )
+        if ercot_storage_as_endogenous:
+            recorded_cfg = recorded_cfg.with_overrides(ercot_storage_as_endogenous=True)
+        if ercot_storage_as_duration_gate:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_storage_as_duration_gate=True
+            )
+        if battery_dispatch_adder:
+            recorded_cfg = recorded_cfg.with_overrides(
+                battery_dispatch_adder=battery_dispatch_adder
+            )
+        if gas_offer_curve:
+            recorded_cfg = recorded_cfg.with_overrides(gas_offer_curve=True)
+        if gas_monthly_actuals:
+            recorded_cfg = recorded_cfg.with_overrides(gas_monthly_actuals=True)
+        if pjm_zonal_gas_basis:
+            recorded_cfg = recorded_cfg.with_overrides(pjm_zonal_gas_basis=True)
+        if miso_zonal_gas_basis:
+            recorded_cfg = recorded_cfg.with_overrides(miso_zonal_gas_basis=True)
+        if pjm_congestion:
+            recorded_cfg = recorded_cfg.with_overrides(pjm_congestion=True)
+        if curve_smoothing:
+            recorded_cfg = recorded_cfg.with_overrides(
+                **{k: v for k, v in curve_smoothing.items() if v is not None}
+            )
+        if cc_derate_from_top or iso.upper() == "CAISO":
+            # Meta-writer audit fix (Stage 7): run_year's condition also defaults
+            # this on for CAISO regardless of the flag (narrow per-plant peaking
+            # bands crush the committed floor without it) — recorded_cfg dropped
+            # the ISO branch, so a CAISO run's scenario_config under-reported
+            # cc_outage_derate_from_top as False when the LP actually solved True.
+            recorded_cfg = recorded_cfg.with_overrides(cc_outage_derate_from_top=True)
+        if cc_nameplate_summer_derate:
+            # Meta-writer audit fix (Stage 7): mirrors run_year; previously
+            # entirely absent from recorded_cfg.
+            recorded_cfg = recorded_cfg.with_overrides(cc_nameplate_summer_derate=True)
+        if coal_nameplate_summer_derate:
+            # Coal net-summer derate: mirror cc_nameplate_summer_derate so the
+            # recorded scenario_config reflects the LP that actually solved.
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_nameplate_summer_derate=True
+            )
+        if gt_ambient_derate:
+            # Mirror run_year so run_config.json records the GT ambient-derate knobs
+            # (rule 25: every solve-changing tunable appears in the recorded config).
+            _amb_rec = {"gt_ambient_derate": True}
+            if gt_ambient_derate_ref_c is not None:
+                _amb_rec["gt_ambient_derate_ref_c"] = float(gt_ambient_derate_ref_c)
+            if gt_ambient_derate_slope_cc is not None:
+                _amb_rec["gt_ambient_derate_slope_cc"] = float(
+                    gt_ambient_derate_slope_cc
+                )
+            if gt_ambient_derate_slope_ct is not None:
+                _amb_rec["gt_ambient_derate_slope_ct"] = float(
+                    gt_ambient_derate_slope_ct
+                )
+            recorded_cfg = recorded_cfg.with_overrides(**_amb_rec)
+        if temp_dependent_derate:
+            # Mirror run_year so run_config.json records the switch (rule 25). The
+            # per-class slopes/reference temps live in ScenarioConfig defaults, so
+            # recording the boolean captures the full solve-changing configuration.
+            recorded_cfg = recorded_cfg.with_overrides(temp_dependent_derate=True)
+        if coal_mustrun_online_pmin:
+            # Meta-writer audit fix (Stage 7): mirrors run_year; previously
+            # entirely absent from recorded_cfg.
+            recorded_cfg = recorded_cfg.with_overrides(coal_mustrun_online_pmin=True)
+        if coal_sync_srmc_tranche:
+            # Meta-writer audit fix (Stage 7): mirrors run_year; previously
+            # entirely absent from recorded_cfg.
+            recorded_cfg = recorded_cfg.with_overrides(coal_sync_srmc_tranche=True)
+        if gas_st_netload_drag:
+            # Meta-writer audit fix (Stage 7): mirrors run_year's
+            # config.with_overrides(gas_st_netload_drag=True, **(gas_st_drag_overrides
+            # or {})); both the flag and its coefficient-override companion were
+            # previously absent from recorded_cfg.
+            recorded_cfg = recorded_cfg.with_overrides(
+                gas_st_netload_drag=True, **(gas_st_drag_overrides or {})
+            )
+        if ordc_lolp_params_path:
+            # Meta-writer audit fix (Stage 7): mirrors run_year; previously
+            # entirely absent from recorded_cfg.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ordc_lolp_params_path=str(ordc_lolp_params_path)
+            )
+        if ct_netload_drag and ct_drag_overrides:
+            # Meta-writer audit fix (Stage 7): mirrors run_year's companion
+            # ct_drag_overrides application (dynamic field names, e.g.
+            # ct_drag_slope_per_gw) — previously absent from recorded_cfg, so a
+            # tuned drag curve solved with different coefficients than the
+            # defaults recorded_cfg showed.
+            recorded_cfg = recorded_cfg.with_overrides(**ct_drag_overrides)
+        if coal_lignite_mustrun is not None or coal_prb_mustrun is not None:
+            # Meta-writer audit fix (Stage 7): run_year passes these positionally
+            # into backcast_config (-> coal_lignite_mustrun_override /
+            # coal_prb_mustrun_override), but the recorded_cfg reconstruction's
+            # own backcast_config(...) call above never received them —
+            # previously entirely absent from recorded_cfg.
+            recorded_cfg = recorded_cfg.with_overrides(
+                coal_lignite_mustrun_override=coal_lignite_mustrun,
+                coal_prb_mustrun_override=coal_prb_mustrun,
+            )
+        if ercot_nuclear_unit_availability:
+            # Mirror run_year's with_overrides so run_config.json records the
+            # window-grain nuclear overlay the LP solved with.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_nuclear_unit_availability=True
+            )
+        if ercot_thermal_dam_availability:
+            # Mirror run_year's with_overrides so run_config.json records the
+            # measured thermal class-day availability the LP solved with.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_thermal_dam_availability=True
+            )
+        if ercot_online_capacity_envelope_measured:
+            # Mirror run_year so run_config.json records the measured-fleet-basis
+            # envelope the LP solved with (ercot57 joint round).
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_online_capacity_envelope_measured=True
+            )
+        if ercot_ordc_only_scarcity:
+            # Mirror run_year so run_config.json records the ORDC-only product-
+            # ladder design the LP solved with (ercot57 joint round).
+            recorded_cfg = recorded_cfg.with_overrides(ercot_ordc_only_scarcity=True)
+        if interchange_shaping:
+            recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
+        if interchange_shaping_export_only:
+            recorded_cfg = recorded_cfg.with_overrides(
+                interchange_shaping=True, interchange_shaping_export_only=True
+            )
+        if reference_price_interface:
+            recorded_cfg = recorded_cfg.with_overrides(reference_price_interface=True)
+        # Tri-state floor / negative-offer overrides — mirror run_year so
+        # run_config.json records what the LP solved with (None = the per-ISO base
+        # default baked in backcast_config: CAISO floor+negative ON at 0.80).
+        if negative_renewable_offers is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                negative_renewable_offers=negative_renewable_offers
+            )
+        if caiso_gas_commitment_floor is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_gas_commitment_floor=caiso_gas_commitment_floor
+            )
+        if caiso_gas_floor_frac is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_gas_floor_frac=caiso_gas_floor_frac
+            )
+        if caiso_ra_mustoffer is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_ra_mustoffer=caiso_ra_mustoffer
+            )
+        if caiso_ra_min_load_frac is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_ra_min_load_frac=caiso_ra_min_load_frac
+            )
+        if caiso_ra_startup_bridge is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_ra_startup_bridge=caiso_ra_startup_bridge
+            )
+        if caiso_ra_bridge_decommit is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_ra_bridge_decommit=caiso_ra_bridge_decommit
+            )
+        if ercot_gas_commitment_bridge is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_gas_commitment_bridge=ercot_gas_commitment_bridge
+            )
+        if ercot_gas_bridge_min_load_frac is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_gas_bridge_min_load_frac=ercot_gas_bridge_min_load_frac
+            )
+        if ercot_gas_bridge_startup is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_gas_bridge_startup=ercot_gas_bridge_startup
+            )
+        if ercot_gas_bridge_da_horizon is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon
+            )
+        if reliability_floor is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                reliability_floor=reliability_floor
+            )
+        if chp_export_floor_measured:
+            recorded_cfg = recorded_cfg.with_overrides(chp_export_floor_measured=True)
+        if ercot_gtc_limits_measured:
+            recorded_cfg = recorded_cfg.with_overrides(ercot_gtc_limits_measured=True)
+        if pjm_measured_interface_limits:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_measured_interface_limits=True
+            )
+        # WP-B curtailment driver — tri-state (ct_netload_drag pattern): None keeps
+        # the backcast_config per-ISO default (ERCOT keeper default-ON, owner GO
+        # 2026-07-07); explicit True/False force it, so ablation arms can scrub it.
+        _wtx_over: dict = {}
+        if ercot_wtx_curtailment_driver is not None:
+            _wtx_over["ercot_wtx_curtailment_driver"] = bool(
+                ercot_wtx_curtailment_driver
+            )
+        if ercot_wtx_curtail_depth_wind is not None:
+            _wtx_over["ercot_wtx_curtail_depth_wind"] = float(
+                ercot_wtx_curtail_depth_wind
+            )
+        if ercot_wtx_curtail_depth_solar is not None:
+            _wtx_over["ercot_wtx_curtail_depth_solar"] = float(
+                ercot_wtx_curtail_depth_solar
+            )
+        if _wtx_over:
+            recorded_cfg = recorded_cfg.with_overrides(**_wtx_over)
+        if mass_cap_enabled:
+            # G-29 wiring: mirrors run_calibration.py::run_year's own
+            # mass_cap_enabled block so a mass-cap-enabled backcast config is
+            # recorded identically regardless of which script drove the solve.
+            recorded_cfg = recorded_cfg.with_overrides(
+                mass_cap_enabled=True,
+                mass_cap_tons=mass_cap_tons,
+                mass_cap_program=mass_cap_program,
+            )
+        if scarcity_price_overlay is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                scarcity_pricing_enabled=scarcity_price_overlay,
+                scarcity_price_overlay=scarcity_price_overlay,
+            )
+        if caiso_scarcity_pricing is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                scarcity_pricing_enabled=True,
+                caiso_scarcity_pricing=caiso_scarcity_pricing,
+            )
+        if caiso_lcr_commitment_credit is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_lcr_commitment_credit=caiso_lcr_commitment_credit,
+            )
+        if caiso_solar_deliverability is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_solar_deliverability=caiso_solar_deliverability
+            )
+        if caiso_solar_deliverability_k is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_solar_deliverability_k=caiso_solar_deliverability_k
+            )
+        if caiso_solar_endogenous_spill is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_solar_endogenous_spill=caiso_solar_endogenous_spill
+            )
+        if caiso_solar_cap_at_delivered is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered
+            )
+        if neiso_gas_coldsnap_derate is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate
+            )
+        if neiso_oil_burn_budget is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                neiso_oil_burn_budget=neiso_oil_burn_budget
+            )
+        if neiso_winter_fuel_inventory is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                neiso_winter_fuel_inventory=neiso_winter_fuel_inventory
+            )
+        if neiso_winter_fuel_start_fill_bbl is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl
+            )
+        if neiso_winter_fuel_mustrun is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                neiso_winter_fuel_mustrun=neiso_winter_fuel_mustrun
+            )
+        if caiso_import_hub_prices is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_import_hub_prices=caiso_import_hub_prices
+            )
+        if caiso_import_gas_coupling is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_import_gas_coupling=caiso_import_gas_coupling
+            )
+        if caiso_import_solar_shape is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_import_solar_shape=caiso_import_solar_shape
+            )
+        if caiso_bidir_intertie is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_bidir_intertie=caiso_bidir_intertie
+            )
+        if caiso_per_hub_intertie is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_per_hub_intertie=caiso_per_hub_intertie
+            )
+        if caiso_perhub_firm_base is not None:
+            # Meta-writer audit fix (orchestrator-unification Stage 7, G-14
+            # residual): applied to the real solve (see the run_year call above)
+            # and recorded in meta.json, but never threaded into recorded_cfg —
+            # run_config.json's scenario_config silently showed the dataclass
+            # default instead of the flag the LP actually solved with.
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_perhub_firm_base=caiso_perhub_firm_base
+            )
+        if caiso_corridor_flow_limit is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_corridor_flow_limit=caiso_corridor_flow_limit
+            )
+        if caiso_intertie_reference_price is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_intertie_reference_price=caiso_intertie_reference_price
+            )
+        if caiso_corridor_atc_forward is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_corridor_atc_forward=caiso_corridor_atc_forward
+            )
+        if caiso_reference_price_seam is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                caiso_reference_price_seam=caiso_reference_price_seam
+            )
+        if nyiso_local_selfsupply is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_local_selfsupply=nyiso_local_selfsupply
+            )
+        if nyiso_firm_imports is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_firm_imports=nyiso_firm_imports
+            )
+        if nyiso_import_reconciliation is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_import_reconciliation=nyiso_import_reconciliation
+            )
+        if nyiso_import_hub_prices is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_import_hub_prices=nyiso_import_hub_prices
+            )
+        if nyiso_iroquois_winter_spread is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread
+            )
+        if nyiso_synchronised_reserve is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_synchronised_reserve=nyiso_synchronised_reserve
+            )
+        if nyiso_spin_headroom_frac is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_spin_headroom_frac=nyiso_spin_headroom_frac
+            )
+        if nyiso_dynamic_reserve_requirements is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements
+            )
+        if neiso_dynamic_reserve_requirements is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements
+            )
+        if miso_firm_imports is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                miso_firm_imports=miso_firm_imports
+            )
+        if miso_seam_flow_limit:
+            recorded_cfg = recorded_cfg.with_overrides(miso_seam_flow_limit=True)
+        if miso_seam_flow_percentile is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                miso_seam_flow_percentile=float(miso_seam_flow_percentile)
+            )
+        if miso_seam_export_limit:
+            recorded_cfg = recorded_cfg.with_overrides(miso_seam_export_limit=True)
+        if miso_pjm_border_anchor:
+            recorded_cfg = recorded_cfg.with_overrides(miso_pjm_border_anchor=True)
+        if miso_cc_coal_rebalance:
+            recorded_cfg = recorded_cfg.with_overrides(miso_cc_coal_rebalance=True)
+        if miso_firm_import_floor:
+            recorded_cfg = recorded_cfg.with_overrides(miso_firm_import_floor=True)
+        if miso_pjm_lmp_import_pricing:
+            recorded_cfg = recorded_cfg.with_overrides(miso_pjm_lmp_import_pricing=True)
+        if miso_seam_measured_ladder:
+            recorded_cfg = recorded_cfg.with_overrides(miso_seam_measured_ladder=True)
+        if pjm_seam_flow_limit:
+            recorded_cfg = recorded_cfg.with_overrides(pjm_seam_flow_limit=True)
+        if pjm_seam_flow_percentile is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                pjm_seam_flow_percentile=float(pjm_seam_flow_percentile)
+            )
+        if pjm_seam_export_limit:
+            recorded_cfg = recorded_cfg.with_overrides(pjm_seam_export_limit=True)
+        if pjm_seam_measured_ladder:
+            recorded_cfg = recorded_cfg.with_overrides(pjm_seam_measured_ladder=True)
+        if ct_intermediate_split:
+            recorded_cfg = recorded_cfg.with_overrides(ct_intermediate_split=True)
+        if ct_intermediate_cf_threshold is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
+            )
+        if cc_intermediate_split:
+            recorded_cfg = recorded_cfg.with_overrides(cc_intermediate_split=True)
+        if cc_intermediate_cf_threshold is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                cc_intermediate_cf_threshold=float(cc_intermediate_cf_threshold)
+            )
+        if tranche_startup_amortization:
+            recorded_cfg = recorded_cfg.with_overrides(
+                tranche_startup_amortization=True
+            )
+        if tranche_startup_measured_runs:
+            recorded_cfg = recorded_cfg.with_overrides(
+                tranche_startup_measured_runs=True
+            )
+        if tranche_startup_conditional_runs:
+            recorded_cfg = recorded_cfg.with_overrides(
+                tranche_startup_conditional_runs=True
+            )
+        if nysdec_peaker_rule_availability:
+            recorded_cfg = recorded_cfg.with_overrides(
+                nysdec_peaker_rule_availability=True
+            )
+        if oil_primary_bin_fuel:
+            recorded_cfg = recorded_cfg.with_overrides(oil_primary_bin_fuel=True)
+        if st_gas_intermediate:
+            recorded_cfg = recorded_cfg.with_overrides(
+                st_gas_intermediate_split=True,
+                gas_st_startup_cost=True,
+                gas_st_wefor_base_override=0.10,
+            )
+        if st_gas_intermediate_cf_threshold is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                st_gas_intermediate_cf_threshold=float(st_gas_intermediate_cf_threshold)
+            )
+        if gas_hub_basis_overlay is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                gas_hub_basis_overlay=gas_hub_basis_overlay
+            )
+        if capacity_deliverability_limits is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                capacity_deliverability_limits=capacity_deliverability_limits
+            )
+        if ramp_limits is not None:
+            recorded_cfg = recorded_cfg.with_overrides(ramp_limits=ramp_limits)
+        if local_capacity_constraints is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                local_capacity_constraints=local_capacity_constraints
+            )
+        # Tri-state mirror of run_year: None keeps the per-ISO base default
+        # (CAISO drag ON), True/False force — run_config.json must record what
+        # the LP actually solved with (rule 24).
+        if ct_netload_drag is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ct_netload_drag=bool(ct_netload_drag)
+            )
+        if zero_forcing_ablation:
+            # Record the ablated config so run_config.json's scenario_config matches
+            # what the LP actually solved (run_year applied the same transform). The
+            # off-list is derived from the D-2 mechanism registry (rule 20).
+            from market_sim.config.scenarios import ScenarioConfig
+
+            recorded_cfg = ScenarioConfig.as_zero_forcing_ablation(recorded_cfg)
+        return recorded_cfg
+
+    # OPT-IN --reuse-solved: decide up front which requested years may be
+    # copied from the prior bundle instead of re-solved. Absent the flag this
+    # is a no-op and the run is byte-identical to a plain fresh solve.
+    reuse_plan: dict[int, dict] = {}
+    reuse_record: dict | None = None
+    prior_tables: dict[str, pd.DataFrame | None] = {}
+    if reuse_solved is not None:
+        reuse_plan, reuse_record = plan_reuse_solved(
+            Path(reuse_solved),
+            iso=iso,
+            hours=hours,
+            years=years,
+            gas_prices=gas_prices,
+            current_kwargs=_solve_kwargs_snapshot,
+            recorded_config_for_year=_recorded_config,
+        )
+        logger.info(
+            "--reuse-solved %s: reusing years %s, solving fresh %s",
+            reuse_solved,
+            sorted(reuse_plan) or "none",
+            sorted(set(int(y) for y in years) - set(reuse_plan)) or "none",
+        )
+        if reuse_plan:
+            prior_tables = _load_prior_bundle_tables(Path(reuse_solved))
+
     for year in years:
         _t_year = time.perf_counter()
-        gas_price = _henry_hub_actual(reference, year)
-        gas_prices[year] = gas_price
+        gas_price = gas_prices[year]
+        if year in reuse_plan:
+            info = reuse_plan[year]
+            _copy_reused_year(
+                Path(reuse_solved),
+                run_dir,
+                year,
+                info["passes"],
+                persist_p2_state=persist_p2_state,
+            )
+            for name, frames in (
+                ("system", system_frames),
+                ("storage", storage_frames),
+                ("posture", posture_frames),
+                ("flows", flows_frames),
+                ("storage_as", storage_as_frames),
+                ("btm", btm_frames),
+                ("eia930", eia930_frames),
+                ("eia923", eia923_frames),
+                ("campd", campd_frames),
+            ):
+                tbl = prior_tables.get(name)
+                if tbl is not None:
+                    frames.append(tbl[tbl["year"] == year].copy())
+            passes_seen.update(info["passes"])
+            if first_year_cfg is None:
+                # Pristine per-year config, same construction as the fresh
+                # path's ``cfg`` below — only its year-invariant fields feed
+                # the meta block.
+                first_year_cfg = backcast_config(year, iso, hours, gas_price)
+            # No optimal basis crosses a reused year: the next fresh year
+            # starts cold instead of warm-starting from a stale earlier
+            # year's basis (warm-start is basis-neutral either way; see
+            # docs/cross-year-warmstart.md).
+            xyear_cache.clear()
+            logger.info(
+                "year %d REUSED from %s (config hash %s) in %.1fs — copied "
+                "artifacts, no solve; NOT fresh evidence",
+                year,
+                reuse_solved,
+                info["cache_key"] or info["scenario_config_sha256"],
+                time.perf_counter() - _t_year,
+            )
+            continue
         if not is_ercot:
             group_by_code = _fleet_group_by_code(iso, iso_config, year)
         cfg = backcast_config(year, iso, hours, gas_price)
@@ -3008,587 +4150,20 @@ def solve_and_persist(
         # bundle can be traced to a solver upgrade.
         "highspy_version": _highspy_version(),
     }
+    if reuse_record is not None:
+        # --reuse-solved labeling (only ever present when the flag was
+        # passed; a plain fresh run's meta.json is byte-identical to before
+        # the flag existed). replay_keeper._IGNORE carries "reuse" so a
+        # kwargs replay of a mixed bundle still reconstructs — the recipe is
+        # complete and a replay re-solves every year fresh.
+        meta["reuse"] = reuse_record
     (run_dir / "meta.json").write_text(
         json.dumps(meta, indent=2, default=_json_default)
     )
     # Rebuild the recorded config WITH the same overrides + deltas applied, so
     # run_config.json's scenario_config.offer_curve_by_group is the exact
     # merged curve the LP solved against (not the bare defaults).
-    recorded_cfg = backcast_config(
-        years[0],
-        iso,
-        hours,
-        gas_prices[years[0]],
-        commitment_screen_coal=screen_coal,
-        coal_prb_passthrough=coal_prb_passthrough,
-        outage_source=outage_source,
-        coal_mustrun_per_plant=coal_mustrun_per_plant,
-        retiree_cems_cap=retiree_cems_cap,
-        ct_mustrun_per_plant=ct_mustrun_per_plant,
-        ct_mustrun_floor_frac=ct_mustrun_floor_frac,
-        coal_drop_pof=coal_drop_pof,
-        offer_curve_overrides=offer_curve_overrides,
-        offer_curve_deltas=offer_curve_deltas,
-        ercot_offer_surface_conditional=ercot_offer_surface_conditional,
-        neiso_offer_surface_conditional=neiso_offer_surface_conditional,
-        pjm_offer_surface_conditional=pjm_offer_surface_conditional,
-        pjm_da_virtual_bids=pjm_da_virtual_bids,
-        pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
-    )
-    if pjm_offer_midcurve_segments is not None:
-        # Meta-writer mirror of run_year's with_overrides (rule 25): the
-        # segment scope must land in scenario_config exactly as solved.
-        recorded_cfg = recorded_cfg.with_overrides(
-            pjm_offer_midcurve_segments=tuple(pjm_offer_midcurve_segments)
-        )
-    if ercot_offer_surface_lowcurve:
-        # Meta-writer mirror of run_year's with_overrides (rule 25): the LOW-leg
-        # flag must land in scenario_config exactly as the LP solved with it.
-        recorded_cfg = recorded_cfg.with_overrides(ercot_offer_surface_lowcurve=True)
-    if ercot_offer_surface_lowcurve_floorscoped:
-        # Same rule-25 mirror for the ERCOT-64 floor-scoped LSL markdown.
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_offer_surface_lowcurve_floorscoped=True
-        )
-    # Coal sigmoid flags mirror run_year exactly — run_config.json must
-    # record the same enables/params the LP solved with (the prb sigmoid +
-    # tiered flags, outage_source, coal_drop_pof, the per-plant must-run and
-    # screen flags used to be skipped here, so scenario_config under-reported
-    # what the LP actually solved — e.g. coal_drop_pof dumped False while the
-    # run used True).
-    recorded_cfg = recorded_cfg.with_overrides(
-        coal_prb_passthrough_sigmoid=coal_prb_passthrough_sigmoid,
-        coal_prb_passthrough_tiered=coal_prb_passthrough_tiered,
-    )
-    if prb_overrides:
-        recorded_cfg = recorded_cfg.with_overrides(
-            **{k: v for k, v in prb_overrides.items() if v is not None}
-        )
-    if coal_bit_sigmoid:
-        recorded_cfg = recorded_cfg.with_overrides(coal_bit_passthrough_sigmoid=True)
-    if bit_overrides:
-        recorded_cfg = recorded_cfg.with_overrides(
-            **{k: v for k, v in bit_overrides.items() if v is not None}
-        )
-    if coal_econ_srmc_bound:
-        recorded_cfg = recorded_cfg.with_overrides(coal_econ_srmc_bound=True)
-    if plant_tranche_config:
-        recorded_cfg = recorded_cfg.with_overrides(
-            plant_tranche_config_path=plant_tranche_config
-        )
-    if storage_daily_cycling:
-        recorded_cfg = recorded_cfg.with_overrides(storage_daily_cycling=True)
-    if storage_vintage_ramp:
-        recorded_cfg = recorded_cfg.with_overrides(storage_vintage_ramp=True)
-    if strict_demand_profile:
-        recorded_cfg = recorded_cfg.with_overrides(strict_demand_profile=True)
-    if as_reserve_withholding:
-        recorded_cfg = recorded_cfg.with_overrides(as_reserve_withholding=True)
-    if energy_reserve_coopt:
-        recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
-    if miso_zonal_reserves:
-        recorded_cfg = recorded_cfg.with_overrides(miso_zonal_reserves=True)
-    if miso_reserve_pergen:
-        recorded_cfg = recorded_cfg.with_overrides(miso_reserve_pergen=True)
-    if miso_commitment_posture:
-        recorded_cfg = recorded_cfg.with_overrides(miso_commitment_posture=True)
-    if miso_measured_reserve_requirements:
-        recorded_cfg = recorded_cfg.with_overrides(
-            miso_measured_reserve_requirements=True
-        )
-    if miso_south_seam_split:
-        recorded_cfg = recorded_cfg.with_overrides(miso_south_seam_split=True)
-    if miso_rdt_tcdc:
-        recorded_cfg = recorded_cfg.with_overrides(miso_rdt_tcdc=True)
-    if pjm_reserve_supply_cap:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_supply_cap=True)
-    if pjm_reserve_pergen:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen=True)
-    if pjm_reserve_pergen_sync:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen_sync=True)
-    if pjm_reserve_pergen_size_split:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_pergen_size_split=True)
-    if pjm_commitment_posture:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_commitment_posture=True)
-    if measured_ramp_capability:
-        recorded_cfg = recorded_cfg.with_overrides(measured_ramp_capability=True)
-    if pjm_reserve_online_gated:
-        recorded_cfg = recorded_cfg.with_overrides(
-            pjm_reserve_online_gated=True,
-            pjm_reserve_online_rho=pjm_reserve_online_rho,
-        )
-    if pjm_reserve_commitment_scoped:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_reserve_commitment_scoped=True)
-    if ercot_multiproduct_as_coopt:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_multiproduct_as_coopt=True)
-    if ercot_ecrs_conservative_deployment:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_ecrs_conservative_deployment=True
-        )
-    if ercot_ordc_total_reserve:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_ordc_total_reserve=True)
-    if ercot_storage_as_product_credit:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_storage_as_product_credit=True)
-    if gas_hh_monthly_shape:
-        recorded_cfg = recorded_cfg.with_overrides(gas_hh_monthly_shape=True)
-    if ercot_as_aware_commitment:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_as_aware_commitment=True)
-    if ercot_reserve_supply_cap:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_reserve_supply_cap=True,
-            ercot_reserve_supply_cap_from_year=ercot_reserve_supply_cap_from_year,
-        )
-    if ercot_reserve_supply_forward:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_reserve_supply_forward=True)
-    if ercot_as_forward_requirement:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_as_forward_requirement=True)
-    if ercot_load_resource_reserve:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_load_resource_reserve=True,
-            ercot_load_resource_reserve_from_year=int(
-                ercot_load_resource_reserve_from_year
-            ),
-        )
-    if ercot_storage_as_reserve:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_storage_as_reserve=True,
-            ercot_storage_as_reserve_from_year=int(ercot_storage_as_reserve_from_year),
-        )
-    if ercot_ecrs_requirement:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_ecrs_requirement=True,
-            ercot_ecrs_requirement_from_year=int(ercot_ecrs_requirement_from_year),
-        )
-    if as_reserve_formula:
-        recorded_cfg = recorded_cfg.with_overrides(as_reserve_formula=True)
-    if storage_as_commitment:
-        recorded_cfg = recorded_cfg.with_overrides(storage_as_commitment=True)
-    if ercot_storage_as_deployment:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_storage_as_deployment=True,
-            ercot_storage_as_deployment_from_year=int(
-                ercot_storage_as_deployment_from_year
-            ),
-        )
-    if ercot_storage_as_endogenous:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_storage_as_endogenous=True)
-    if ercot_storage_as_duration_gate:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_storage_as_duration_gate=True)
-    if battery_dispatch_adder:
-        recorded_cfg = recorded_cfg.with_overrides(
-            battery_dispatch_adder=battery_dispatch_adder
-        )
-    if gas_offer_curve:
-        recorded_cfg = recorded_cfg.with_overrides(gas_offer_curve=True)
-    if gas_monthly_actuals:
-        recorded_cfg = recorded_cfg.with_overrides(gas_monthly_actuals=True)
-    if pjm_zonal_gas_basis:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_zonal_gas_basis=True)
-    if miso_zonal_gas_basis:
-        recorded_cfg = recorded_cfg.with_overrides(miso_zonal_gas_basis=True)
-    if pjm_congestion:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_congestion=True)
-    if curve_smoothing:
-        recorded_cfg = recorded_cfg.with_overrides(
-            **{k: v for k, v in curve_smoothing.items() if v is not None}
-        )
-    if cc_derate_from_top or iso.upper() == "CAISO":
-        # Meta-writer audit fix (Stage 7): run_year's condition also defaults
-        # this on for CAISO regardless of the flag (narrow per-plant peaking
-        # bands crush the committed floor without it) — recorded_cfg dropped
-        # the ISO branch, so a CAISO run's scenario_config under-reported
-        # cc_outage_derate_from_top as False when the LP actually solved True.
-        recorded_cfg = recorded_cfg.with_overrides(cc_outage_derate_from_top=True)
-    if cc_nameplate_summer_derate:
-        # Meta-writer audit fix (Stage 7): mirrors run_year; previously
-        # entirely absent from recorded_cfg.
-        recorded_cfg = recorded_cfg.with_overrides(cc_nameplate_summer_derate=True)
-    if coal_nameplate_summer_derate:
-        # Coal net-summer derate: mirror cc_nameplate_summer_derate so the
-        # recorded scenario_config reflects the LP that actually solved.
-        recorded_cfg = recorded_cfg.with_overrides(coal_nameplate_summer_derate=True)
-    if gt_ambient_derate:
-        # Mirror run_year so run_config.json records the GT ambient-derate knobs
-        # (rule 25: every solve-changing tunable appears in the recorded config).
-        _amb_rec = {"gt_ambient_derate": True}
-        if gt_ambient_derate_ref_c is not None:
-            _amb_rec["gt_ambient_derate_ref_c"] = float(gt_ambient_derate_ref_c)
-        if gt_ambient_derate_slope_cc is not None:
-            _amb_rec["gt_ambient_derate_slope_cc"] = float(gt_ambient_derate_slope_cc)
-        if gt_ambient_derate_slope_ct is not None:
-            _amb_rec["gt_ambient_derate_slope_ct"] = float(gt_ambient_derate_slope_ct)
-        recorded_cfg = recorded_cfg.with_overrides(**_amb_rec)
-    if temp_dependent_derate:
-        # Mirror run_year so run_config.json records the switch (rule 25). The
-        # per-class slopes/reference temps live in ScenarioConfig defaults, so
-        # recording the boolean captures the full solve-changing configuration.
-        recorded_cfg = recorded_cfg.with_overrides(temp_dependent_derate=True)
-    if coal_mustrun_online_pmin:
-        # Meta-writer audit fix (Stage 7): mirrors run_year; previously
-        # entirely absent from recorded_cfg.
-        recorded_cfg = recorded_cfg.with_overrides(coal_mustrun_online_pmin=True)
-    if coal_sync_srmc_tranche:
-        # Meta-writer audit fix (Stage 7): mirrors run_year; previously
-        # entirely absent from recorded_cfg.
-        recorded_cfg = recorded_cfg.with_overrides(coal_sync_srmc_tranche=True)
-    if gas_st_netload_drag:
-        # Meta-writer audit fix (Stage 7): mirrors run_year's
-        # config.with_overrides(gas_st_netload_drag=True, **(gas_st_drag_overrides
-        # or {})); both the flag and its coefficient-override companion were
-        # previously absent from recorded_cfg.
-        recorded_cfg = recorded_cfg.with_overrides(
-            gas_st_netload_drag=True, **(gas_st_drag_overrides or {})
-        )
-    if ordc_lolp_params_path:
-        # Meta-writer audit fix (Stage 7): mirrors run_year; previously
-        # entirely absent from recorded_cfg.
-        recorded_cfg = recorded_cfg.with_overrides(
-            ordc_lolp_params_path=str(ordc_lolp_params_path)
-        )
-    if ct_netload_drag and ct_drag_overrides:
-        # Meta-writer audit fix (Stage 7): mirrors run_year's companion
-        # ct_drag_overrides application (dynamic field names, e.g.
-        # ct_drag_slope_per_gw) — previously absent from recorded_cfg, so a
-        # tuned drag curve solved with different coefficients than the
-        # defaults recorded_cfg showed.
-        recorded_cfg = recorded_cfg.with_overrides(**ct_drag_overrides)
-    if coal_lignite_mustrun is not None or coal_prb_mustrun is not None:
-        # Meta-writer audit fix (Stage 7): run_year passes these positionally
-        # into backcast_config (-> coal_lignite_mustrun_override /
-        # coal_prb_mustrun_override), but the recorded_cfg reconstruction's
-        # own backcast_config(...) call above never received them —
-        # previously entirely absent from recorded_cfg.
-        recorded_cfg = recorded_cfg.with_overrides(
-            coal_lignite_mustrun_override=coal_lignite_mustrun,
-            coal_prb_mustrun_override=coal_prb_mustrun,
-        )
-    if ercot_nuclear_unit_availability:
-        # Mirror run_year's with_overrides so run_config.json records the
-        # window-grain nuclear overlay the LP solved with.
-        recorded_cfg = recorded_cfg.with_overrides(ercot_nuclear_unit_availability=True)
-    if ercot_thermal_dam_availability:
-        # Mirror run_year's with_overrides so run_config.json records the
-        # measured thermal class-day availability the LP solved with.
-        recorded_cfg = recorded_cfg.with_overrides(ercot_thermal_dam_availability=True)
-    if ercot_online_capacity_envelope_measured:
-        # Mirror run_year so run_config.json records the measured-fleet-basis
-        # envelope the LP solved with (ercot57 joint round).
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_online_capacity_envelope_measured=True
-        )
-    if ercot_ordc_only_scarcity:
-        # Mirror run_year so run_config.json records the ORDC-only product-
-        # ladder design the LP solved with (ercot57 joint round).
-        recorded_cfg = recorded_cfg.with_overrides(ercot_ordc_only_scarcity=True)
-    if interchange_shaping:
-        recorded_cfg = recorded_cfg.with_overrides(interchange_shaping=True)
-    if interchange_shaping_export_only:
-        recorded_cfg = recorded_cfg.with_overrides(
-            interchange_shaping=True, interchange_shaping_export_only=True
-        )
-    if reference_price_interface:
-        recorded_cfg = recorded_cfg.with_overrides(reference_price_interface=True)
-    # Tri-state floor / negative-offer overrides — mirror run_year so
-    # run_config.json records what the LP solved with (None = the per-ISO base
-    # default baked in backcast_config: CAISO floor+negative ON at 0.80).
-    if negative_renewable_offers is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            negative_renewable_offers=negative_renewable_offers
-        )
-    if caiso_gas_commitment_floor is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_gas_commitment_floor=caiso_gas_commitment_floor
-        )
-    if caiso_gas_floor_frac is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_gas_floor_frac=caiso_gas_floor_frac
-        )
-    if caiso_ra_mustoffer is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_ra_mustoffer=caiso_ra_mustoffer
-        )
-    if caiso_ra_min_load_frac is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_ra_min_load_frac=caiso_ra_min_load_frac
-        )
-    if caiso_ra_startup_bridge is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_ra_startup_bridge=caiso_ra_startup_bridge
-        )
-    if caiso_ra_bridge_decommit is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_ra_bridge_decommit=caiso_ra_bridge_decommit
-        )
-    if ercot_gas_commitment_bridge is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_gas_commitment_bridge=ercot_gas_commitment_bridge
-        )
-    if ercot_gas_bridge_min_load_frac is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_gas_bridge_min_load_frac=ercot_gas_bridge_min_load_frac
-        )
-    if ercot_gas_bridge_startup is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_gas_bridge_startup=ercot_gas_bridge_startup
-        )
-    if ercot_gas_bridge_da_horizon is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon
-        )
-    if reliability_floor is not None:
-        recorded_cfg = recorded_cfg.with_overrides(reliability_floor=reliability_floor)
-    if chp_export_floor_measured:
-        recorded_cfg = recorded_cfg.with_overrides(chp_export_floor_measured=True)
-    if ercot_gtc_limits_measured:
-        recorded_cfg = recorded_cfg.with_overrides(ercot_gtc_limits_measured=True)
-    if pjm_measured_interface_limits:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_measured_interface_limits=True)
-    # WP-B curtailment driver — tri-state (ct_netload_drag pattern): None keeps
-    # the backcast_config per-ISO default (ERCOT keeper default-ON, owner GO
-    # 2026-07-07); explicit True/False force it, so ablation arms can scrub it.
-    _wtx_over: dict = {}
-    if ercot_wtx_curtailment_driver is not None:
-        _wtx_over["ercot_wtx_curtailment_driver"] = bool(ercot_wtx_curtailment_driver)
-    if ercot_wtx_curtail_depth_wind is not None:
-        _wtx_over["ercot_wtx_curtail_depth_wind"] = float(ercot_wtx_curtail_depth_wind)
-    if ercot_wtx_curtail_depth_solar is not None:
-        _wtx_over["ercot_wtx_curtail_depth_solar"] = float(
-            ercot_wtx_curtail_depth_solar
-        )
-    if _wtx_over:
-        recorded_cfg = recorded_cfg.with_overrides(**_wtx_over)
-    if mass_cap_enabled:
-        # G-29 wiring: mirrors run_calibration.py::run_year's own
-        # mass_cap_enabled block so a mass-cap-enabled backcast config is
-        # recorded identically regardless of which script drove the solve.
-        recorded_cfg = recorded_cfg.with_overrides(
-            mass_cap_enabled=True,
-            mass_cap_tons=mass_cap_tons,
-            mass_cap_program=mass_cap_program,
-        )
-    if scarcity_price_overlay is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            scarcity_pricing_enabled=scarcity_price_overlay,
-            scarcity_price_overlay=scarcity_price_overlay,
-        )
-    if caiso_scarcity_pricing is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            scarcity_pricing_enabled=True,
-            caiso_scarcity_pricing=caiso_scarcity_pricing,
-        )
-    if caiso_lcr_commitment_credit is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_lcr_commitment_credit=caiso_lcr_commitment_credit,
-        )
-    if caiso_solar_deliverability is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_solar_deliverability=caiso_solar_deliverability
-        )
-    if caiso_solar_deliverability_k is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_solar_deliverability_k=caiso_solar_deliverability_k
-        )
-    if caiso_solar_endogenous_spill is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_solar_endogenous_spill=caiso_solar_endogenous_spill
-        )
-    if caiso_solar_cap_at_delivered is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_solar_cap_at_delivered=caiso_solar_cap_at_delivered
-        )
-    if neiso_gas_coldsnap_derate is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            neiso_gas_coldsnap_derate=neiso_gas_coldsnap_derate
-        )
-    if neiso_oil_burn_budget is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            neiso_oil_burn_budget=neiso_oil_burn_budget
-        )
-    if neiso_winter_fuel_inventory is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            neiso_winter_fuel_inventory=neiso_winter_fuel_inventory
-        )
-    if neiso_winter_fuel_start_fill_bbl is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            neiso_winter_fuel_start_fill_bbl=neiso_winter_fuel_start_fill_bbl
-        )
-    if neiso_winter_fuel_mustrun is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            neiso_winter_fuel_mustrun=neiso_winter_fuel_mustrun
-        )
-    if caiso_import_hub_prices is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_import_hub_prices=caiso_import_hub_prices
-        )
-    if caiso_import_gas_coupling is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_import_gas_coupling=caiso_import_gas_coupling
-        )
-    if caiso_import_solar_shape is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_import_solar_shape=caiso_import_solar_shape
-        )
-    if caiso_bidir_intertie is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_bidir_intertie=caiso_bidir_intertie
-        )
-    if caiso_per_hub_intertie is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_per_hub_intertie=caiso_per_hub_intertie
-        )
-    if caiso_perhub_firm_base is not None:
-        # Meta-writer audit fix (orchestrator-unification Stage 7, G-14
-        # residual): applied to the real solve (see the run_year call above)
-        # and recorded in meta.json, but never threaded into recorded_cfg —
-        # run_config.json's scenario_config silently showed the dataclass
-        # default instead of the flag the LP actually solved with.
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_perhub_firm_base=caiso_perhub_firm_base
-        )
-    if caiso_corridor_flow_limit is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_corridor_flow_limit=caiso_corridor_flow_limit
-        )
-    if caiso_intertie_reference_price is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_intertie_reference_price=caiso_intertie_reference_price
-        )
-    if caiso_corridor_atc_forward is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_corridor_atc_forward=caiso_corridor_atc_forward
-        )
-    if caiso_reference_price_seam is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            caiso_reference_price_seam=caiso_reference_price_seam
-        )
-    if nyiso_local_selfsupply is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_local_selfsupply=nyiso_local_selfsupply
-        )
-    if nyiso_firm_imports is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_firm_imports=nyiso_firm_imports
-        )
-    if nyiso_import_reconciliation is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_import_reconciliation=nyiso_import_reconciliation
-        )
-    if nyiso_import_hub_prices is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_import_hub_prices=nyiso_import_hub_prices
-        )
-    if nyiso_iroquois_winter_spread is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_iroquois_winter_spread=nyiso_iroquois_winter_spread
-        )
-    if nyiso_synchronised_reserve is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_synchronised_reserve=nyiso_synchronised_reserve
-        )
-    if nyiso_spin_headroom_frac is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_spin_headroom_frac=nyiso_spin_headroom_frac
-        )
-    if nyiso_dynamic_reserve_requirements is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            nyiso_dynamic_reserve_requirements=nyiso_dynamic_reserve_requirements
-        )
-    if neiso_dynamic_reserve_requirements is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            neiso_dynamic_reserve_requirements=neiso_dynamic_reserve_requirements
-        )
-    if miso_firm_imports is not None:
-        recorded_cfg = recorded_cfg.with_overrides(miso_firm_imports=miso_firm_imports)
-    if miso_seam_flow_limit:
-        recorded_cfg = recorded_cfg.with_overrides(miso_seam_flow_limit=True)
-    if miso_seam_flow_percentile is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            miso_seam_flow_percentile=float(miso_seam_flow_percentile)
-        )
-    if miso_seam_export_limit:
-        recorded_cfg = recorded_cfg.with_overrides(miso_seam_export_limit=True)
-    if miso_pjm_border_anchor:
-        recorded_cfg = recorded_cfg.with_overrides(miso_pjm_border_anchor=True)
-    if miso_cc_coal_rebalance:
-        recorded_cfg = recorded_cfg.with_overrides(miso_cc_coal_rebalance=True)
-    if miso_firm_import_floor:
-        recorded_cfg = recorded_cfg.with_overrides(miso_firm_import_floor=True)
-    if miso_pjm_lmp_import_pricing:
-        recorded_cfg = recorded_cfg.with_overrides(miso_pjm_lmp_import_pricing=True)
-    if miso_seam_measured_ladder:
-        recorded_cfg = recorded_cfg.with_overrides(miso_seam_measured_ladder=True)
-    if pjm_seam_flow_limit:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_seam_flow_limit=True)
-    if pjm_seam_flow_percentile is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            pjm_seam_flow_percentile=float(pjm_seam_flow_percentile)
-        )
-    if pjm_seam_export_limit:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_seam_export_limit=True)
-    if pjm_seam_measured_ladder:
-        recorded_cfg = recorded_cfg.with_overrides(pjm_seam_measured_ladder=True)
-    if ct_intermediate_split:
-        recorded_cfg = recorded_cfg.with_overrides(ct_intermediate_split=True)
-    if ct_intermediate_cf_threshold is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ct_intermediate_cf_threshold=float(ct_intermediate_cf_threshold)
-        )
-    if cc_intermediate_split:
-        recorded_cfg = recorded_cfg.with_overrides(cc_intermediate_split=True)
-    if cc_intermediate_cf_threshold is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            cc_intermediate_cf_threshold=float(cc_intermediate_cf_threshold)
-        )
-    if tranche_startup_amortization:
-        recorded_cfg = recorded_cfg.with_overrides(tranche_startup_amortization=True)
-    if tranche_startup_measured_runs:
-        recorded_cfg = recorded_cfg.with_overrides(tranche_startup_measured_runs=True)
-    if tranche_startup_conditional_runs:
-        recorded_cfg = recorded_cfg.with_overrides(
-            tranche_startup_conditional_runs=True
-        )
-    if nysdec_peaker_rule_availability:
-        recorded_cfg = recorded_cfg.with_overrides(nysdec_peaker_rule_availability=True)
-    if oil_primary_bin_fuel:
-        recorded_cfg = recorded_cfg.with_overrides(oil_primary_bin_fuel=True)
-    if st_gas_intermediate:
-        recorded_cfg = recorded_cfg.with_overrides(
-            st_gas_intermediate_split=True,
-            gas_st_startup_cost=True,
-            gas_st_wefor_base_override=0.10,
-        )
-    if st_gas_intermediate_cf_threshold is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            st_gas_intermediate_cf_threshold=float(st_gas_intermediate_cf_threshold)
-        )
-    if gas_hub_basis_overlay is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            gas_hub_basis_overlay=gas_hub_basis_overlay
-        )
-    if capacity_deliverability_limits is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            capacity_deliverability_limits=capacity_deliverability_limits
-        )
-    if ramp_limits is not None:
-        recorded_cfg = recorded_cfg.with_overrides(ramp_limits=ramp_limits)
-    if local_capacity_constraints is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            local_capacity_constraints=local_capacity_constraints
-        )
-    # Tri-state mirror of run_year: None keeps the per-ISO base default
-    # (CAISO drag ON), True/False force — run_config.json must record what
-    # the LP actually solved with (rule 24).
-    if ct_netload_drag is not None:
-        recorded_cfg = recorded_cfg.with_overrides(
-            ct_netload_drag=bool(ct_netload_drag)
-        )
-    if zero_forcing_ablation:
-        # Record the ablated config so run_config.json's scenario_config matches
-        # what the LP actually solved (run_year applied the same transform). The
-        # off-list is derived from the D-2 mechanism registry (rule 20).
-        from market_sim.config.scenarios import ScenarioConfig
-
-        recorded_cfg = ScenarioConfig.as_zero_forcing_ablation(recorded_cfg)
+    recorded_cfg = _recorded_config(years[0])
     write_run_config(run_dir, recorded_cfg, meta, note, ablation_of=ablation_of)
     logger.info("wrote calibration bundle to %s", run_dir)
     return run_dir
@@ -5128,6 +5703,14 @@ def report_run(run_dir: Path, band_width: float = _CF_BAND_WIDTH) -> None:
         f"git {meta.get('git_sha', '?')})"
     )
     print(f"  bundle: {run_dir}")
+    reused = (meta.get("reuse") or {}).get("reused_years") or {}
+    if reused:
+        print(
+            "  NOTE: mixed --reuse-solved bundle — years "
+            f"{sorted(int(y) for y in reused)} were byte-copied from "
+            f"{meta['reuse'].get('source_bundle')}; reused years are NOT "
+            "fresh evidence (keeper promotion requires a full fresh solve)."
+        )
     print(f"{'=' * 80}")
 
     if iso != "ERCOT":
@@ -5961,6 +6544,26 @@ def main() -> None:
         "--out-dir",
         default=None,
         help="Bundle root (default results/calibration/<iso>/<timestamp>).",
+    )
+    parser.add_argument(
+        "--reuse-solved",
+        default=None,
+        metavar="PRIOR_BUNDLE",
+        help="OPT-IN: copy per-year solve artifacts from PRIOR_BUNDLE (a "
+        "local bundle dir) instead of re-solving each --year whose effective "
+        "per-year ScenarioConfig (cache_key) and full solve recipe exactly "
+        "match this invocation's, with code + data pinned: refuses whenever "
+        "the working tree is dirty under src/scripts/data, src/scripts/data "
+        "changed since the prior bundle's commit, any untracked/derived file "
+        "under data/ is newer than the prior bundle, the highspy version "
+        "moved, or a year's Henry Hub actual / artifacts differ (see "
+        "plan_reuse_solved for what the key does and does NOT cover). Years "
+        "failing any check solve fresh; the mix is labeled in meta.json "
+        "under 'reuse'. REUSED YEARS ARE NOT FRESH EVIDENCE — they are "
+        "byte-copies of the prior solve; keeper promotion still requires a "
+        "full fresh solve of every year. Absent this flag, behavior is "
+        "byte-identical to today: a fresh timestamped bundle with every "
+        "year solved.",
     )
     parser.add_argument(
         "--zero-forcing-ablation",
@@ -8400,6 +9003,7 @@ def main() -> None:
         mass_cap_program=args.mass_cap_program,
         zero_forcing_ablation=args.zero_forcing_ablation,
         ablation_of=ablation_of,
+        reuse_solved=Path(args.reuse_solved) if args.reuse_solved else None,
         note=args.note,
     )
     report_run(run_dir, band_width=args.cf_band_width)
