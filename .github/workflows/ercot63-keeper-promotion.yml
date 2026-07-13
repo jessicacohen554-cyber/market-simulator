@@ -1,0 +1,98 @@
+# One-shot: execute the owner-approved (2026-07-13, interactive sign-off
+# "Ok promote") ERCOT keeper promotion: keepers.json ERCOT ->
+# 2026-07-12-ercot63-gas-bridge (supersedes ercot59-storage-deploy), the
+# attestation owner-approval stamp + freshly seeded DOF free_parameters
+# ledger (E8), the keeper-auditor-repaired sidecar text, and the
+# calibration-log promotion entry ride the sha-gated blob
+# scripts/probes/_ercot63_land/promote.patch.xz.b64.part1 (byte-verified
+# fetch-back before this workflow was pushed). The standing owner ERCOT
+# keeper-and-later registry prune (ERCOT-62 precedent) deregisters the
+# ercot59 pair by name here (payloads too large to ride a patch; bundle dirs
+# under results/calibration/ stay as the archival record). status.js is
+# rebuilt on the runner (committed, not deploy-generated — the C6 governance
+# verdict reads bundle attestations the Pages deploy does not check out).
+name: ercot63-keeper-promotion
+
+on:
+  push:
+    branches:
+      - claude/ercot-gas-commitment-bridge-qh61xh
+    paths:
+      - .github/workflows/ercot63-keeper-promotion.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ercot63-keeper-promotion
+  cancel-in-progress: false
+
+jobs:
+  promote:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Apply the promotion patch (sha-gated) + prune the ercot59 pair by name
+        run: |
+          set -euo pipefail
+          if python -c "import json,sys; sys.exit(0 if json.load(open('frontend/data/backcast/keepers.json'))['ERCOT']=='2026-07-12-ercot63-gas-bridge' else 1)"; then
+            echo "already applied — no-op"
+          else
+            echo "65b0784a4fd2885efd856064c93737b685383a05114ca0d968a903612e5f2b62  /tmp/_promote.patch" > /tmp/patch.sha
+            tr -d '\r\n ' < scripts/probes/_ercot63_land/promote.patch.xz.b64.part1 \
+              | base64 -d | xz -d > /tmp/_promote.patch
+            sha256sum -c /tmp/patch.sha
+            git apply --verbose /tmp/_promote.patch
+          fi
+          for f in frontend/data/backcast/registry/2026-07-12-ercot59-storage-deploy.json \
+                   frontend/data/backcast/registry/2026-07-12-ercot59-storage-deploy-ablation.json \
+                   frontend/data/backcast/runs/2026-07-12-ercot59-storage-deploy.js \
+                   frontend/data/backcast/runs/2026-07-12-ercot59-storage-deploy-ablation.js; do
+            [ -e "$f" ] && git rm -q "$f" || echo "already pruned: $f"
+          done
+
+      - name: Install package and rebuild status.js (committed, not deploy-generated)
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip
+          pip install -e .
+          python scripts/build_status.py
+          grep -q "2026-07-12-ercot63-gas-bridge" frontend/data/backcast/status.js
+
+      - name: Post-conditions (keeper flip coherent, audit PASS, log entry once)
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          k = json.load(open("frontend/data/backcast/keepers.json"))
+          assert k["ERCOT"] == "2026-07-12-ercot63-gas-bridge", k["ERCOT"]
+          assert "2026-07-12-ercot63-gas-bridge" in k["keepers"]
+          assert "2026-07-12-ercot59-storage-deploy" not in k["keepers"]
+          a = json.load(open("results/calibration/ercot63_gas_bridge/calibration_attestation.json"))
+          assert "APPROVED 2026-07-13" in a["governance"]["attested_by"]
+          assert a.get("free_parameters"), "DOF ledger missing (E8)"
+          PY
+          n=$(grep -c "ERCOT keeper PROMOTED: \`ercot63 gas bridge\`" docs/calibration-log.md)
+          if [ "$n" -ne 1 ]; then echo "FAIL: promotion log entry count=$n" >&2; exit 1; fi
+          python scripts/audit_keepers.py --iso ERCOT
+          python scripts/check_registry_payload_parity.py
+
+      - name: Commit and push
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "ERCOT keeper PROMOTED: ercot63-gas-bridge (owner approval 2026-07-13; CALIBRATED-WITH-CAVEATS, one ledgered caveat — supersedes ercot59-storage-deploy); ERCOT registry pruned to keeper-and-later (standing owner directive); attestation owner-stamped + DOF ledger seeded; status.js rebuilt; promotion log entry [skip ci]"
+          git push origin HEAD:claude/ercot-gas-commitment-bridge-qh61xh
