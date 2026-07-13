@@ -23,7 +23,7 @@ MISSING row carries materiality and a fix (or "accepted").
 | PJM | intaken 2026-07-04 (§1.1), **not yet equivalency-audited** | same | pending |
 | CAISO | zero intake — rows start MISSING | blocked + zero intake | pending |
 | MISO | zero intake — rows start MISSING | blocked + zero intake | pending |
-| NYISO | **THIS DOC §NYISO** — EQUIVALENT 24 / DEGRADED 4 / MISSING 5 (2026-07-12 intake) | not intaken (publication-blocked tail per G-19; only the 2018–H1-2026 Ask-B/C/D series span it) | **§NYISO below** |
+| NYISO | **§NYISO — 2022** EQUIVALENT 24 / DEGRADED 4 / MISSING 5 (2026-07-12); **§NYISO — 2018/2019/2020/2021** below (this session) | **§NYISO — H1-2026** below (this session) — partial, CAMPD/gas/LMP sources publication-lag to ~Q1-2026 | **§NYISO below** |
 | NEISO | intaken 2026-07-07 (§1.2) — register section pending; **landing residuals found 2026-07-12** (see §NEISO note) | blocked per G-19 | pending |
 
 ---
@@ -144,6 +144,118 @@ registry file).
 
 Data availability itself is otherwise no longer on the blocking list: drivers,
 overlays, and every bench series are landed and lineage-verified.
+
+---
+
+## NYISO — 2018/2019/2020/2021 (validation-ladder) + H1-2026 (locked-test edge) intake (2026-07-13, this session)
+
+Owner authorization (verbatim, logged in `calibration-complete.json` `intake_log`):
+"owner (2026-07-13): 'This data can literally be collected for all years — we're
+not running anything on it. Fetch it all at once for 2018-2022 and first half
+2026 if available.'" 2022 itself was already intaken 2026-07-12 (section
+above); this session's scope is 2018/2019/2020/2021 (extending the
+validation-ladder per rule 22's staged-backward wording) and H1-2026 (the
+locked-test edge window). **NYISO now carries a calibration-complete marker**
+(`complete.NYISO`, declared 2026-07-13) — the one-shot holdout validation is
+AUTHORIZED but NOT run this session (no LP solve/score/registration of any
+out-of-training year was performed; G-19 execution HOLD still governs when
+the one-shot itself may fire). This section is DATA READINESS only.
+
+Every write below MERGED into an existing file with the committed 2023-2025
+(and, where applicable, 2022) rows asserted byte-frozen before and after the
+write (programmatic `.equals()`/exact-line-set checks, not spot checks); every
+new script/derive run reused the exact producer/recipe of the committed
+in-sample rows. No dispatch solve was constructed for any year.
+
+### Model inputs
+
+| input | 2018–2021 | H1-2026 | note |
+|---|---|---|---|
+| CAMPD unit-level NY + NJ | **EQUIVALENT (pre-existing)** — `NY_2018..2021.parquet` / `NJ_2018..2021.parquet` already on disk, same EPA CAMPD hourly extract | **EQUIVALENT (pre-existing)** — `NY_2026.parquet`/`NJ_2026.parquet` on disk, but the extract itself only carries **Jan 1 – Mar 31, 2026** (CAMPD's own publication lag; no Q2 rows exist upstream yet) | H1-2026 is genuinely Q1-only; not a gap in our intake, a gap in EPA's own release cadence |
+| CAMPD facility-level NY + NJ | **EQUIVALENT-derived (this session)** — `derive_campd_facility_from_units.py --states NY NJ --year {2018,2019,2020,2021} --persefoni-sibling 2023`, same recipe re-proven cell-exact on all 6 committed 2023-2025 state-years before deriving; new files `campd-facility-level/{NY,NJ}_{2018,2019,2020,2021}.parquet` | **EQUIVALENT-derived (this session), Q1-only** — same recipe, `--year 2026`; inherits the Q1-only unit-level source coverage above | persefoni-organization attribute sparse in every year (same caveat as committed years) |
+| Plant emission rates v1 (`plant_emission_rates.parquet`) | **MISSING (pre-existing gap, not introduced here)** — v1 only ever carried `{0, 2023, 2024}`; 2018-2021 (and 2025) are absent regardless of ISO or holdout status | **MISSING** — same | not a holdout-specific gap; the pooled `year==0` fallback is what `egrid._campd_rate_map` actually consumes. Out of this session's scope to backfill (would touch the shared v1 tool's default behavior for in-sample years too) |
+| Plant emission rates v2 (`plant_emission_rates_v2.parquet`) | **EQUIVALENT (pre-existing)** — 2018-2021 NYISO rows were already present in the committed artifact (`derive_plant_emissions_v2.py` default in-sample path is not restricted to 2023-2025; 2018-2021 pre-date the rule-22 quarantine boundary and were never gated) | **EQUIVALENT-derived (this session), Q1-only** — now UNBLOCKED (NYISO calibration-complete marker exists): `curate_emissions_unit_annual.py --years 2026 --holdout-intake NYISO` then `derive_plant_emissions_v2.py --iso NYISO --years 2026 --holdout-intake NYISO`; merged with existing-row freeze assertion (script's own `frozen_ok` check passed) | H1-2026 rate is a Q1-only measured rate (heat/mass ratios over Jan-Mar operating hours only) — DEGRADED by partial-year coverage, not by recipe; flag to the calibration owner if a full-year v2 row is wanted before the locked-test one-shot (would need to re-run once Q2-Q4 CAMPD lands) |
+| Capacity-deliverability registry (`capacity-deliverability/nyiso/nyiso.csv`) | **DEGRADED — 2 of 4 delivery years landed.** 2018/2019 transcribed (NYC 80.5% / LI 103.5% / G-J 94.5% LCR, percentages only — no MW in the source snippet found) from NYSRC's "2018/2019 NYSRC Reliability Rule A.2 R1-R2-R3 Compliance Submittal"; 2022/2023 transcribed in full (NYC 81.2% / LI 99.5% / G-J 89.2% LCR; TSL import limits NYC 2,900 / LI 325 / G-J 3,425 MW; NYCA IRM 19.6%) from the NYISO "LCR2022-Report.pdf" (`nyiso.com/documents/20142/27428389/LCR2022-Report.pdf`). **2019/2020 and 2020/2021 delivery years remain MISSING** — not fetched this session (time-boxed; the same nyiso.com/documents + nysrc.org archive pattern that produced the two landed years covers them too, confirmed fetchable, just not completed) | **MISSING** — H1-2026 falls inside the already-committed 2025/2026 delivery year (requirement 8,673 MW / 0.785 NYC etc.), so no new row is needed for H1-2026 itself; not a gap | medium materiality (downstate locality caps feed `nyiso_{nyc,li}_lcr_tsl`). The 2022/2023 row's `requirement` metric intentionally carries `value_pu` only (blank `value_mw`) — the source report's approved-LCR table gives percentages only; the MW figures it also prints (8,451/4,871/12,238) are a *different* TSL-floor calculation at a *different* percentage (77.2%/94.4%/80.7%), not the approved-LCR MW, and pairing them would misrepresent the source (rule 14) |
+| `interchange_config.py` NYISO year-grounded import ladder (`IMPORT_TRANCHES_BY_YEAR["NYISO"]` — the actual per-year hand-derived constant the register's earlier "`firm_import_floor_by_year`" reference maps to; NYISO carries no field of that exact name, only MISO's `NeighborInterface.firm_import_floor_by_year`) | **MISSING, blocked cross-ISO** — `derive_nyiso_import_ladder.py` derives the ladder from `actual_lmp.json`'s **PJM** and **NEISO** hub blocks (p75/p95 by year), and those blocks only carry 2023-2025 in the committed file; extending them for 2018-2021 is a PJM/NEISO-lane task, out of scope for this NYISO-only session | **MISSING**, same blocker | not fixable from the NYISO side alone; flag to whichever session next owns PJM or NEISO LMP-bench extension — once `actual_lmp.json["PJM"]`/`["NEISO"]` carry a year, re-running `derive_nyiso_import_ladder.py` with that year added to its `YEARS` list produces the NYISO-side constant for free |
+| Reserve requirements hourly (`NYISO_reserve_requirements_<y>.csv`) | **MISSING — genuine source-coverage gap, not an intake failure.** `derive_nyiso_reserve_requirements_hourly.py --year 2018 2019 2020 2021` fails for every year: the published LRR-schedule clean source (`nyiso-reserve-requirements`) only carries three versions — `v2020` (evidence 2020-10-29 → 2021-12-04), `v2021` (2021-12-04 → 2026-02-14), `v2026` (2026-07-10 →, open). No single version fully covers 2018, 2019, 2020, or 2021 (the tool's own gate: "expected exactly one LRR version covering the full year, got []") | **MISSING**, same mechanism — `v2021` ends 2026-02-14 and `v2026` doesn't start until 2026-07-10, so H1-2026 (Jan-Jun) straddles a **published-schedule gap** with no covering version either | **high** materiality if the pre-2020 years or H1-2026 are ever solved (`nyiso_dynamic_reserve_requirements` hard-requires this file) — but per rule 14 the tool correctly refuses to fabricate a mid-year-transition treatment rather than force one. Fix: an explicit, adjudicated mid-year-version-splice extension to the derive script (a genuine methodology decision, not a data-fetch — out of this session's scope) |
+| Henry Hub daily/monthly | **EQUIVALENT (pre-existing)** — EIA series already spans 1997-2026 | **EQUIVALENT (pre-existing)** | — |
+| Transco Z6 NY daily (`transco_z6_ny_daily.csv`) | **MISSING** — not attempted this session; `fetch_transco_daily_spot.py` scrapes the EIA Natural Gas Weekly archive one publication-Thursday page at a time (confirmed live and reachable — a single 2018 page returned HTTP 200 in a smoke test — but a full year's ~50 page fetches did not complete inside this session's time budget) | **MISSING**, same | medium; the daily overlay refines the monthly mean's intra-month shape only — the monthly hub series (below) is the input that actually gates the offer curve. Fix: re-run `fetch_transco_daily_spot.py --start-year <Y> --end-year <Y>` per year in a follow-up session (network access to `eia.gov` confirmed working from this environment) |
+| Transco/Iroquois monthly (`transco_z6_iroquois_monthly.csv`) | **MISSING** — blocked on the daily series above (`monthly-hubs` step needs a complete 12-month daily series first) | **MISSING**, same | same fix as the daily row |
+| NYISO monthly basis rows (`gas_basis_by_iso_month.csv`) | **DEGRADED (pre-existing, unchanged this session)** — 2018-2021 rows already exist for all 12 months/year, but on the **old EIA-citygate-proxy construction** (`N3050NY3 − HH`), the same construction the 2022 rows carried *before* last session's re-base onto the in-sample `Iroquois Z2 (Transco + SOM spread) − HH` construction. Re-basing 2018-2021 needs the same monthly-hub series blocked above | **DEGRADED**, same — the pre-existing 2026 rows (file already spans through 2026) are on the old proxy construction too | same fix as the two rows above; once the daily/monthly Transco series lands for a year, `basis`-step re-basing is a same-day follow-on (the recipe is proven, see the 2022 precedent) |
+| Zonal gas hub annuals (`nyiso_zonal_gas_hub.csv`) | **EQUIVALENT — landed this session.** 2018-2021 all 5 zone rows added from the pre-existing `nyiso_som_hub_fuel_annual.csv` (which already carried 2018-2021 SOM Figure-A-6 annual transcriptions) — no new fetch needed, same transcription convention, zone-major insertion preserving the committed layout; in-sample (2022-2025) rows verified byte-frozen (git diff shows insertions only) | **MISSING** — no NYISO 2026 State-of-the-Market report exists yet (SOM reports are published the following spring for a completed year; H1-2026 is mid-year) | this row differs from the daily/monthly Transco rows above — it derives straight from the already-landed SOM annual table, so it was cheap to close for 2018-2021 |
+| Downstate CT citygate premium (`nyiso_downstate_ct_gas_basis_monthly.csv`) | **MISSING** — `fetch_nyiso_downstate_gas_basis.py` needs a per-year EIA N3050NY3 fetch; not attempted this session (same network-time-budget class as the Transco daily row) | **MISSING** | keeper flag for this file (`nyiso_downstate_ct_gas_basis`) is OFF anyway; low urgency |
+| Downstate LDC non-firm transport (`nyiso_downstate_ldc_transport_monthly.csv`) | **MISSING** — `fetch_nyiso_downstate_ldc_transport.py` needs 24 National-Grid statnfdr statements/year; not attempted this session | **MISSING** | same low-urgency note (feeds `nyiso_downstate_ct_gas_daily`, OFF in the keeper) |
+| Weather zone temp (`nyiso_zone_temp_daily.csv`) | **MISSING** — needs a NOAA GHCN per-zone daily fetch; not attempted this session | **MISSING** | consumed by floor/drag derives, not the keeper solve directly; medium-low urgency |
+| Downstate NYC-metro TMAX (`nyiso_downstate_tmax_daily.csv`) | **MISSING** — `fetch_nyc_tmax` (imported from `derive_nyiso_ct_reliability_floor.py`) needs a live NCEI fetch per year; not attempted this session | **MISSING** | loader `_downstate` sentinel input; keeper derate flags OFF; low urgency |
+| F923 delivered fuel + generation | **EQUIVALENT (pre-existing)** — EIA-923 Final Revision files for 2018-2021 already on disk | **MISSING** — EIA-923 for a given year is not published until the following autumn; H1-2026 has no F923 vintage to intake (a genuine publication-timing absence, not an intake gap) | — |
+| eGRID vintage | **EQUIVALENT (pre-existing)** for 2018-2021 (`egrid{2018..2021}_data.xlsx` on disk) | **MISSING** — eGRID publishes ~18 months after year-end; no eGRID2026 vintage exists yet anywhere | — |
+| Firm-import floors — see the `IMPORT_TRANCHES_BY_YEAR["NYISO"]` row above | (same row, listed once) | (same row) | — |
+| Interface flows (`NYISO/interface-flows/`) | **EQUIVALENT (pre-existing)** — MIS P-32 hourly already spans 2018-2026 | **EQUIVALENT (pre-existing)** | — |
+| Import hub prices / neighbor LMPs | **DEGRADED, blocked cross-ISO** — the NYISO-side hub means now exist for 2018-2021/2026 (this session's LMP-bench work, below), but the neighbor (PJM/NEISO)-side prices used by `nyiso_import_hub_prices` are the same PJM/NEISO `actual_lmp.json` blocks flagged MISSING above (2023-2025 only) | same | cross-ISO dependency, not fixable from the NYISO lane alone |
+| Fleet statics (EIA-860 vintage, registries) | **DEGRADED (accepted)** — same year-agnostic static snapshot as every other year, identical pre-existing caveat | same | accepted, no change |
+| NYISO-AS price CSVs (`NYISO-AS/NYISO_as_{da,rt}_<y>.csv`) | **EQUIVALENT (pre-existing)** — source CSVs already span 2018-2026 (validation-side only, rule 13) | **EQUIVALENT (pre-existing)** | — |
+
+### Bench / scoring series
+
+| series | 2018–2021 | H1-2026 | note |
+|---|---|---|---|
+| `actual_lmp_hourly_NYISO.parquet` + `actual_lmp.json` | **EQUIVALENT — landed this session.** Fetched all 12 DA (`damlbmp_zone`) + 12 RT (`realtime_zone`) monthly zips per year directly from `mis.nyiso.com` (network access confirmed live: HTTP 200, valid zip content), staged DA into the same transient `NYISO_zonal_hourly.zip` outer container the committed years' builder expects (deleted after the build — same as the committed years, per `derive_actual_lmp.build`'s own docstring: "the committed parquet is the durable record"), ran `derive_actual_lmp.build([2018,2019,2020,2021], isos=["NYISO"])`: **100% hourly coverage both markets, all four years.** Results: 2018 DA $34.87/RT $35.15; 2019 DA $25.36/RT $24.96; 2020 DA $19.23/RT $19.41; 2021 DA $37.07/RT $37.04. Merged with a programmatic frozen-row assertion (`.equals()` on the pre-existing 2022-2025 slice, pre- and post-write) | **EQUIVALENT-partial — landed this session.** Same fetch/build for `2026`, but `mis.nyiso.com` only publishes DA/RT zips through **June 2026** (6 of 12 months) — coverage densifies to the full non-leap 8760 calendar with the Jul-Dec hours **NaN** (49.6% coverage), exactly the same partial-year-densification convention the repo already uses elsewhere for in-progress years. 2026 (H1) DA $77.98 / RT $71.76 (means over the populated H1 hours only) | not independently SOM-anchored this session (SOM reports don't exist yet for 2018-2021 in a form re-checked here; the 2022 session's cross-check pattern is reusable in a follow-up) |
+| `actual_tail.json` NYISO 2018-2021/2026 | **READY, deliberately not emitted** — `derive_actual_tail.py` is marker-aware; now that `complete.NYISO` exists it may auto-emit on next run, but this session did not invoke it (out of scope — no scoring/tail derivation was run) | same | — |
+| `actual_as_reserve_NYISO.parquet` | **EQUIVALENT — rebuilt this session.** `process_nyiso_as.build_reference([2018..2021,2022..2026])` (source `NYISO_as_rt_<y>.csv` already spans every year); 2022-2025 rows verified value-identical to the committed file (column order differs — a Python `set()` iteration artifact of the producer's own column-alias loop — cell values match exactly under a matching column order) | **EQUIVALENT** — 2026 rows populated for every hour the source CSV carries (source itself may already be sparse past its own publication lag — not specifically checked) | — |
+| `calibration_reference.json` `isos.NYISO.<y>` | **MISSING** — the builder pins NYISO to a hardcoded `(2022, 2023, 2025)` year tuple (a pre-existing issue already flagged to the NYISO calibration owner in the 2022 section: `isos.NYISO.2024` is missing too, an in-sample year); extending it to 2018-2021 needs the same builder-logic change, out of scope here | **MISSING**, same | not a new gap — the same structural builder-pinning issue noted in the 2022 section, now observed to also affect this session's target years |
+| `NYISO_<y>_renewable_capacity.csv` | **MISSING** — same builder-pinning dependency as `calibration_reference.json` above (only 2022/2023/2025 exist) | **MISSING** | same |
+| EIA-930 fuel-mix bench (`NYIS_fueltype/region`) | **EQUIVALENT (pre-existing)** — 2015-2026 multi-year files | **EQUIVALENT (pre-existing)** | — |
+| CAMPD generation bench (NY/NJ unit-level) | **EQUIVALENT (pre-existing)**, see the model-inputs row above | **EQUIVALENT (pre-existing), Q1-only** | — |
+
+### What this session did NOT touch
+
+Unit-outage windows (`campd-unit-outages-NYISO.csv`) — explicitly out of scope
+per this session's instructions; a separate session owns the outage-window
+vintage adjudication (register's 2022 section, "MISSING 2022 + DEGRADED
+vintage"). No `campd-unit-outages-NYISO.csv` row was read, derived, or
+touched for 2018-2021 or H1-2026.
+
+### Session summary — what's landed vs still open
+
+**Landed EQUIVALENT (or EQUIVALENT-derived) this session:**
+- CAMPD facility-level NY+NJ 2018-2021 (full year) and 2026 (Q1-only)
+- Plant emission rates v2: 2026 (Q1-only, newly derived); 2018-2021 confirmed
+  already-EQUIVALENT (pre-existing, no action needed)
+- `nyiso_zonal_gas_hub.csv`: 2018-2021 (from the pre-existing SOM annual table)
+- `actual_lmp_hourly_NYISO.parquet` + `actual_lmp.json`: 2018-2021 (full),
+  2026 (H1, correctly NaN-padded past June)
+- `actual_as_reserve_NYISO.parquet`: 2018-2021 and 2026 (value-verified)
+- Capacity-deliverability registry: 2018/2019 (percentages only) and
+  2022/2023 (full) delivery years
+
+**Landed MISSING findings (genuine, not fixable by more fetching this
+session):**
+- Reserve requirements hourly: no LRR schedule version covers 2018-2021 or
+  H1-2026 in full — a real published-schedule coverage gap, needs a
+  methodology decision (mid-year version splice), not a data fetch
+- Plant emission rates v1: pre-existing gap unrelated to this session's years
+- `IMPORT_TRANCHES_BY_YEAR["NYISO"]`: blocked on PJM/NEISO `actual_lmp.json`
+  extension (cross-ISO, out of this session's lane)
+- `calibration_reference.json` / `NYISO_<y>_renewable_capacity.csv`: blocked
+  on the builder's hardcoded year-pinning (pre-existing issue, flagged not
+  fixed)
+- F923 / eGRID for H1-2026: genuinely not yet published anywhere (publication
+  lag, not an intake gap)
+
+**Not attempted this session (time-boxed, confirmed fetchable in a
+follow-up):**
+- Transco Z6 NY daily + Transco/Iroquois monthly (blocks the `gas_basis_by_iso_month.csv`
+  re-base for 2018-2021/2026 too)
+- Downstate CT gas basis monthly, downstate LDC transport monthly
+- NYISO weather (`nyiso_zone_temp_daily.csv`, `nyiso_downstate_tmax_daily.csv`)
+- Capacity-deliverability 2019/2020 and 2020/2021 delivery years (2018/2019
+  and 2022/2023 done; same fetch pattern applies)
+
+Every item above that touches `mis.nyiso.com`, `eia.gov`, or National Grid's
+archive was either fetched successfully in this session (LMP, AS reference)
+or spot-verified reachable (a single EIA archive page returned HTTP 200) —
+none were blocked by network access; the remainder is a time-budget
+carryover for a follow-up session, not a source-availability problem.
 
 ---
 
