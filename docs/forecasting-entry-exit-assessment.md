@@ -61,11 +61,14 @@ this one is written from runs.**
 
 P-3B found NEISO retires **exactly 0 thermal MW over all 25 forecast years**
 even at a 67.5 % reserve margin, and hypothesized the flat capacity payment
-alone covers going-forward cost (its §8.3 asked for the no-LP ratio check).
-Here it is, from the registry arithmetic the screens actually use —
-`net_cone_per_kw_yr × (1 − EFORd)` (`MARKET_DESIGN`, `constants.py:2558`;
-`EFORD`, `constants.py:760`) against the FOM-only going-forward cost
-(`scenarios.py:338-362`, coal ×1.3 per `retirement_fom_multiplier_coal`):
+alone covers going-forward cost. The no-LP ratio check its §8.3 requested has
+now been run and confirms it
+(`docs/handoffs/capacity-revenue-fom-ratio-2026-07-13.md`, PR #2160; this
+session's independent re-derivation agrees to rounding) — the registry
+arithmetic the screens actually use, `net_cone_per_kw_yr × (1 − EFORd)`
+(`MARKET_DESIGN`, `constants.py:2558`; `EFORD`, `constants.py:760`) against
+the FOM-only going-forward cost (`scenarios.py:338-362`, coal ×1.3 per
+`retirement_fom_multiplier_coal`):
 
 **Flat capacity payment ÷ going-forward cost (fixed mode, the active default):**
 
@@ -81,9 +84,12 @@ Here it is, from the registry arithmetic the screens actually use —
 Since the screen's test is `net_revenue = energy margin + reserve value +
 capacity payment ≥ GFC` (`apply_economic_retirements`), a ratio ≥ 1 means the
 unit **can never post a loss year, whatever the energy market does**. Every
-fossil class in every capacity-market ISO is ≥ 1.3×. Nuclear is the **only**
-class below 1.0 — the only class whose retirement the energy margin can
-decide. The consequences are not hypothetical; they are the measured record:
+fossil class in every capacity-market ISO is ≥ 1.3× (the ratio report's
+per-fuel range is 1.26–4.92 including CCS-CC; MISO coal at 1.26 is the
+closest any fossil class comes to the cliff). Nuclear is the **only** class
+below 1.0 — the only class whose retirement the other revenue terms (energy
+margin + §45U/ZEC attribute revenue) can actually decide. The consequences
+are not hypothetical; they are the measured record:
 
 - **T2.4c (P-3B):** zero NEISO thermal retirements, 25/25 years, including
   under a +10 GW overbuild shock.
@@ -170,7 +176,7 @@ blockers below clear.
 | **BLK-6** | ERCOT scarcity/AS revenue level: screens capture ~25 % of the SOM CT net-revenue anchor (17.2 vs ≈68 $/kW-yr); `as_revenue_enabled` default off | G-20/G-22 AS co-opt lane; corridor report §2 (T3.2) | rows 3, 5, 6 |
 | **BLK-7** | VRE new-entry screens earn no capacity revenue anywhere (even in ISOs that pay it), and PJM wind ELCC has no published declining axis yet | audit D7; P-2C follow-ups #1/#4 | rows 6, 10 |
 | **BLK-8** | Solar entry = 0 GW in BOTH hindcasts against 25.1 (ERCOT) / 13.1 (PJM) GW actual — the single largest additions miss; root cause in the entry-economics stack (cost/queue/negative-price interaction), not yet diagnosed | hindcast lane (G-30 adjacent); no dedicated gap row — **should get one** | rows 6, 10, 14 |
-| **BLK-9** | Fixed capacity payment ≥ 1.3× GFC for all fossil (§2): fossil exit impossible, nuclear-only retirement inversion | this report + P-3B §8.3; **new — needs a gap-register row**; resolution = BLK-3 + BLK-4 (the CR chain), not a payment haircut (rule 13) | rows 7, 8, 11, 14 |
+| **BLK-9** | Fixed capacity payment ≥ 1.3× GFC for all fossil (§2): fossil exit impossible, nuclear-only retirement inversion | confirmed in `capacity-revenue-fom-ratio-2026-07-13.md` (PR #2160, answering P-3B §8.3); **needs a gap-register row**; resolution = BLK-3 + BLK-4 (the CR chain), not a payment haircut (rule 13) | rows 7, 8, 11, 14 |
 | ~~BLK-10~~ | ~~#2063 IRA phaseout crash~~ — **CLOSED at HEAD** (P-1C fields + regression test; verified by P-2C) | #2063 | — |
 
 ## 6. What would flip the table (ordered, no new mechanisms invented)
