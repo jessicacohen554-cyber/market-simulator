@@ -3402,6 +3402,32 @@ class ScenarioConfig:
     # 2026-07.md Evidence 2). Default off (all existing keepers unchanged).
     coal_econ_srmc_bound: bool = False
 
+    # Bituminous committed-band take-or-pay bid discount. The `_committed`
+    # CAMPD coal tranche is the plant's baseload stay-online band; its fuel is
+    # covered by the same take-or-pay contract as the `_mustrun` band (MISO
+    # coal receipts are ~100% contracted — data/raw/_processed-legacy/
+    # coal_takeorpay_MISO.csv, EIA-923 Schedule-5 Purchase Type), so it is sunk,
+    # not bought at market. Yet with `coal_bit_passthrough_sigmoid` off the
+    # committed tranche passes FULL delivered cost (passthrough 1.0) and
+    # bituminous baseload is priced out by cheap gas (the miso-60 COAL_BIT
+    # −15.7 TWh 2023/2024 free-C1 residual: BIT synchronized ~all hours at
+    # LMP ≈ its delivered SRMC, its committed band backing down under
+    # $2.19 gas — refuted as a min-load/commitment problem by the 2026-07-13
+    # coal_sync throwaway probe, COAL_BIT moved only +1.6/+15.7). With this on,
+    # the committed tranche of a **bituminous** coal plant present in the
+    # measured take-or-pay map passes ``1 − contract_share`` of its fuel (the
+    # same sunk-contract rule already applied to `_mustrun`), so the contracted
+    # baseload bids down to hold against cheap gas while the econ*/peak tranches
+    # above still bid full delivered cost (`coal_econ_srmc_bound`) and BIT
+    # price-follows above the committed band. Grounded, not fitted: the discount
+    # is the plant's own MEASURED contract share (rule 1/11/13 — no residual
+    # tuning, no sigmoid), forward-reproducible from EIA-923 Schedule-5.
+    # Requires `coal_takeorpay_from_data` (the share map). Default off (all
+    # existing keepers unchanged); scoped to bituminous (PRB/lignite carry their
+    # own already-calibrated passthrough levers). See docs/handoffs/
+    # miso-coal-offpeak-hold-2026-07.md.
+    coal_bit_committed_takeorpay: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
@@ -6058,6 +6084,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_bit_passthrough_gas_mid": 3,
     "coal_bit_passthrough_gas_slope": 3,
     "coal_econ_srmc_bound": 3,
+    "coal_bit_committed_takeorpay": 3,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,
