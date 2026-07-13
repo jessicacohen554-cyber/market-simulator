@@ -4126,6 +4126,7 @@ def campd_tranche_fuel_frac(
     takeorpay_by_plant: "dict[int, float] | None" = None,
     econ_srmc_bound: bool = False,
     committed_takeorpay_bit: bool = False,
+    committed_takeorpay_all: bool = False,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
@@ -4195,11 +4196,12 @@ def campd_tranche_fuel_frac(
     # keep full delivered cost (coal_econ_srmc_bound) so BIT price-follows
     # above the committed band. Grounded by the plant's own EIA-923 Schedule-5
     # share (rule 1/13); bounded below by any supply curve already in force.
+    _bit = getattr(gen, "coal_supply", "") == "bituminous"
+    _scope = committed_takeorpay_all or (committed_takeorpay_bit and _bit)
     if (
-        committed_takeorpay_bit
+        _scope
         and gen.unit_id.endswith("_committed")
         and gen.fuel_type == "coal"
-        and getattr(gen, "coal_supply", "") == "bituminous"
         and takeorpay_by_plant is not None
     ):
         share = takeorpay_by_plant.get(int(gen.plant_code))
@@ -4207,7 +4209,7 @@ def campd_tranche_fuel_frac(
             disc = float(1.0 - share)
             base = 1.0
             if passthrough_by_supply:
-                base = passthrough_by_supply.get("bituminous", 1.0)
+                base = passthrough_by_supply.get(getattr(gen, "coal_supply", ""), 1.0)
             if isinstance(base, np.ndarray):
                 return np.minimum(base, disc)
             return min(float(base), disc)
@@ -8831,6 +8833,9 @@ def build_dispatch_fleet(
                 econ_srmc_bound=getattr(config, "coal_econ_srmc_bound", False),
                 committed_takeorpay_bit=getattr(
                     config, "coal_bit_committed_takeorpay", False
+                ),
+                committed_takeorpay_all=getattr(
+                    config, "coal_committed_takeorpay_all", False
                 ),
             )
             for g in dispatch_fleet
