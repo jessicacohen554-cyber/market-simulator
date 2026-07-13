@@ -40,6 +40,61 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-13 — PJM — G-22 lever C EXECUTED (pjm-103 CT fast-start amortization / pjm-104 + LONG_RUN measured mid-curve floor): 2023 C1 ALL-PASS + C3a/C3b PASS; the offer LEVEL is exhausted — the residual C1 miss is the net-virtual clamp's one-sided phantom (mechanism form, owner adjudication filed); keeper stays pjm-98
+
+Full analysis: `docs/FINDING-pjm-midmerit-level-2026-07.md`. Runs (both
+PROBE, rule 15): **`2026-07-13-pjm-103-ct-faststart`**
+(`results/calibration/pjm103_ct_faststart_level`) = pjm-98 recipe + net DA
+virtual depth + `tranche_startup_amortization`+`_measured_runs`+
+`_conditional_runs` on new PJM CAMPD artifacts
+(`campd_ct_run_lengths_PJM.csv` 7 h class median, `campd_ct_run_bands_PJM.csv`;
+`scripts/derive_campd_ct_run_lengths.py --iso PJM`), and
+**`2026-07-13-pjm-104-coal-top`** (`results/calibration/pjm104_coal_top`) =
+pjm-103 + the measured mid-curve floor re-derived with top shares
+0.975/0.995 and scoped `pjm_offer_midcurve_segments=("LONG_RUN",)` (new
+ScenarioConfig field — rule-19 scope: coal/steam rows floored, CT_FAST owned
+by the amortization, CC_LIKE by the keeper curve). Zero fitted scalars in
+either delta. Headlines:
+
+- **The CT half of the G-22 C1 overshoot was an offer-level defect and is
+  FIXED**: measured fast-start offers run ~18–38× the delivered-gas day vs
+  the model's 12.3–14.9× band; the missing piece is fuel-invariant
+  start/no-load recovery, and pricing it lands CT_PEAKER in-band in every
+  gated year (2023 +8.57 → +3.45; 2024 +5.0 → −1.44) with **no crush** (the
+  pjm-101/102 HR-multiplier surfaces put CT at −11/−12).
+- **The coal half was NOT an offer-level defect**: the measured LONG_RUN
+  offer surface brackets the model's bituminous offers at-or-below in every
+  year (implied flat passthrough ≈ 0.66–0.79 vs the keeper's fitted
+  0.65-floor sigmoid at 0.83–1.23), and the extended top shares show **no
+  coal wall** (s0.995 ≈ $36–37). The scoped floor's +$1–2 on the lower econ
+  belt still re-prices coal out of trough DEC service — 2023 C1 goes
+  ALL-PASS (BIT +10.85 → +1.85) and C3b returns to PASS.
+- **The residual is the mechanism form, not the level**: at actual DA
+  prices the committed net-DEC clamp (net-negative tail zeroed) clears
+  +10.3/+14.8/+17.2 TWh/yr of one-sided demand (the real annual net
+  position is ≈ 0), and with every class on a measured basis the 2024
+  15–16 TWh cannot fit inside every ±8 TWh C1 band — it re-routed
+  CT+coal → coal → CC (+9.07, the single remaining C1 fail) across the
+  three iterations. Cleared DEC is now within ~1 TWh of the actual-price
+  equilibrium, i.e. clearing is price-consistent; further offer raises
+  would push classes above their measured offers (rule 1). Owner
+  adjudication filed (finding §6.1): symmetric net form vs C1-basis
+  netting.
+- New misses, characterized not fitted: C7 2023 CT_PEAKER off-peak CV
+  ratio 0.495 (economic layer now correct → the flat reliability-floor
+  half is exposed); C2 2025 coal +10.2% (keeper +5.8%) — the 2025 clamp
+  mass (17.2 TWh) is the largest. C3c tail unchanged (separate layer).
+
+pjm-104 scorecard: 2023 C1 8/8 PASS, C3a +3.8% / −2.2% / −9.0% (DA diag),
+C3b PASS, C4 PASS, C5a PASS, C8 PASS; C1-2024 CC +9.07 FAIL, C7-2023 CT
+FAIL, C2-2025 coal FAIL. Determination NOT-YET (both probes); **keeper
+stays `2026-07-11-pjm-98-cc-mustrun`**; no ablation twins (probe-only, the
+charter's keeper condition unmet). Data intake: `pjm-da-virtuals` +
+`pjm-energy-offers` corpora refetched (gitignored); the committed
+`pjm_offer_midcurve_condbinned.json` re-derived with the extended share
+grid (s05–s95 medians byte-identical; extension documented in the derive
+docstring).
+
 ### 2026-07-12 — CAISO — caiso-79 STEP-0 (Greater Bay LCT bind test): the NP15 → GREATER_BAY split REFUTED ex-ante — the measured import cap cannot bind; lane redirected to a measured local-commitment driver (design filed, NO solve)
 
 The CT_PEAKER local-commitment granularity lane's STEP-0 gate (plan §3),
