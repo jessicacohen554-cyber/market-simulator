@@ -40,6 +40,42 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-13 — MISO — miso-62 (grounded bituminous committed take-or-pay bid discount): closes the COAL_BIT −15.7 TWh off-peak-hold residual; C1 best of any MISO run (14/16 all, 10/12 free); keeper CANDIDATE, keepers.json unchanged (owner promotes)
+
+Lane 1 of the miso-60 handoff (the dominant free-C1 residual). **Re-diagnosed on
+fresh evidence** (`docs/handoffs/miso-coal-offpeak-hold-2026-07.md`): the handoff's
+"min-run/min-down on U bridge" premise is REFUTED — CAMPD shows coal's physical
+min-down is short (p10 off-window ~5 h; bridgeable short-gap volume ~1 TWh ≪ 15.7),
+so gap-bridging cannot supply the deficit. A throwaway `coal_sync_srmc_tranche` A/B
+(the existing forced-min-load hold, never MISO-tried) was also REFUTED (COAL_BIT
++1.6 only). The signature is a committed band that **price-follows down** where
+reality holds it flat: D-1 off-peak CV 0.104 vs actual 0.041 (cv_ratio 2.50) — a
+bid-pricing problem (bituminous coal bidding full delivered cost on sunk contracted
+fuel), fixed at the offer, not with a floor.
+
+**Mechanism** (`coal_bit_committed_takeorpay`, zero fitted parameters): a bituminous
+plant's `_committed` tranche passes `1 − contract_share` of its fuel (sunk EIA-923
+Schedule-5 take-or-pay), so it holds its baseload against cheap gas while econ*/peak
+keep full delivered cost (`coal_econ_srmc_bound`). Result: COAL_BIT 41.4/37.7 →
+54.5/53.4 (actual 57.1/53.3), FAIL→PASS both years; the D-1 off-peak shape flattens
+to cv_ratio 0.62/0.66 (C7 PASS); CT_PEAKER-2024 30.5 → 26.4 (actual 19.2, FAIL→PASS);
+**C1 all 13/16 → 14/16, free 9/12 → 10/12** (best of any MISO run). C6/C7/C8 all PASS;
+the discount forces **zero** energy (a bid change, not a floor). DOF byte-identical
+to miso-60 (zero new tunables).
+
+**Documented tradeoff** (rule 1/11): cheap fuel-free BIT committed steals COAL_PRB's
+merit slot, flipping PRB PASS→FAIL (2023/24) — a redistribution that exposes the
+model's underlying total-coal deficit (an open root-cause item, NOT a mechanism
+flaw). The grounded-consistent generalization `coal_committed_takeorpay_all` (built +
+tested) closes 2024 PRB but OVERSHOOTS (PRB +7.79, total coal +6.3 over) and risks
+the already-high 2025 PRB, so the surgical BIT scope is kept. Small price/sysvol nudge
+(sysvol-2025 gas −5.5→−6.8%, C3a-2025 −15.8→−16.5%, C3b 0.206→0.212) — owned by the
+upstream South-gas / RDT / ELMP lanes, not stacked against here (rule 1). Determination
+NOT-YET (same load-bearing FAIL set as miso-61). Registered with a zero-forcing
+ablation twin; **keeper candidate with a qualified promotion recommendation** —
+`keepers.json` unchanged, promotion is the owner's call (miso-61 pattern). LOYO by
+construction (a zero-scalar boolean routing each plant's own measured contract share).
+
 ### 2026-07-13 — PJM — G-22 lever C EXECUTED (pjm-103 CT fast-start amortization / pjm-104 + LONG_RUN measured mid-curve floor): 2023 C1 ALL-PASS + C3a/C3b PASS; the offer LEVEL is exhausted — the residual C1 miss is the net-virtual clamp's one-sided phantom (mechanism form, owner adjudication filed); keeper stays pjm-98
 
 Full analysis: `docs/FINDING-pjm-midmerit-level-2026-07.md`. Runs (both
