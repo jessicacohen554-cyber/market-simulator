@@ -1,17 +1,17 @@
 # One-shot: land the ERCOT-65 negative-price-epoch session diff from the
-# runner. The modified files total ~3 MB — beyond the MCP relay's
-# single-call ceiling — so the 235 KB diff rides
+# runner. The changed files total ~4.4 MB — beyond the MCP relay's
+# single-call ceiling — so the 84 KB diff rides
 # scripts/probes/_ercot65_land/ercot65.patch.xz.b64.part1 (xz-9 + base64,
 # fetched back byte-verified before this workflow was pushed; the sha256
-# gate below is the authority). Covers: the wind_ptc_vintage_offers PTC
-# vintage-scoping mechanism (scenarios.py, constants.py, renewables.py,
-# ira.py, runner.py, both calibration orchestrators), its unit tests and
-# probe scripts, the wtx run_config recorder-fidelity fix + the ercot63
-# keeper/ablation record corrections + DOF-ledger entry, the parameter
-# registry regen, diagnosis §9, the ERCOT-65 calibration-log entry,
-# CLAUDE.md + model-methodology-spec.md + CHANGELOG.md sync-docs edits.
-# The landing-blob dir itself is excluded from the patch (pushed directly
-# via the API alongside this workflow).
+# gate below is the authority).
+#
+# RELAND (pinned): the first attempt merged *latest* origin/main at run
+# time, which had drifted past the patch base (run_calibration_full.py /
+# parameters.json moved) — git apply failed. This version merges a PINNED
+# main sha equal to the patch's base, so main advancing during the run
+# cannot break the apply. The branch base + this blob live on an old-main
+# ancestor; merging the pinned sha brings every non-blob file to that
+# exact tree, then the patch applies cleanly.
 name: ercot65-negepoch-land
 
 on:
@@ -29,6 +29,10 @@ concurrency:
   group: ercot65-negepoch-land
   cancel-in-progress: false
 
+env:
+  PINNED_MAIN: 80114cd20890126ebf5c720722bbdacc7c6d19f4
+  PATCH_SHA: 0b72f39be26ac027cb439310ad2323a1fa6ec2a684bc09384633e210e254793b
+
 jobs:
   land:
     runs-on: ubuntu-latest
@@ -39,17 +43,22 @@ jobs:
           ref: claude/ercot-negative-price-epoch-368q8q
           fetch-depth: 0
 
-      - name: Sync the branch base to main
+      - name: Merge the PINNED main sha (patch base)
         run: |
           set -euo pipefail
-          # The patch is generated against latest origin/main (rubric-v2.5
-          # tip); the branch ref may lag it. The branch carries only the
-          # landing blob + this workflow on top of an old-main ancestor, so
-          # the merge is conflict-free by construction.
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git fetch origin main
-          git merge --no-edit origin/main
+          # The pinned sha is an ancestor of origin/main (already fetched);
+          # merging it advances every non-blob file to the patch's exact base
+          # without racing whatever origin/main is now. `-X ours` resolves the
+          # ONE expected add/add conflict — scripts/probes/_ercot65_land/README.md
+          # exists on both sides (main gained it via the partial PR #2201; the
+          # branch carries the pinned reland copy) — in the branch's favour.
+          # Every other non-blob file is at the old base (an ancestor of the
+          # pinned sha), so it fast-forwards with no conflict; -X ours only
+          # touches genuinely-conflicting hunks, so no main change is masked.
+          git merge --no-edit -X ours "$PINNED_MAIN"
 
       - name: Apply the session patch (sha-gated)
         run: |
@@ -58,7 +67,7 @@ jobs:
             echo "already applied — no-op"
             exit 0
           fi
-          echo "57652cc64a473dd02ee1726f216e7e2142a30c47c6f96a1be980973b98f93864  /tmp/_ercot65.patch" > /tmp/patch.sha
+          echo "${PATCH_SHA}  /tmp/_ercot65.patch" > /tmp/patch.sha
           tr -d '\r\n ' < scripts/probes/_ercot65_land/ercot65.patch.xz.b64.part1 \
             | base64 -d | xz -d > /tmp/_ercot65.patch
           sha256sum -c /tmp/patch.sha
