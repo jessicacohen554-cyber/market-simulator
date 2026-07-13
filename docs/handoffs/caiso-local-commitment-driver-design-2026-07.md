@@ -1,5 +1,19 @@
 # CAISO local-commitment driver — design for owner review (2026-07-12)
 
+> **STATUS (2026-07-13, caiso-81): REFUTED AT THE ESTIMATION STAGE — never
+> implemented, no solve run.** The §2 response curve fails its own §4 LOYO
+> pre-commitment before any LP: every candidate driver (the filed evening
+> net-load ramp and two storage-conditioned variants) overpredicts held-out
+> 2025 pocket committed energy by +375 % to +3,600 % — commitment collapsed
+> ~80-97 % at *equal-or-steeper* ramps (a regime break coincident with the
+> pocket battery build and the 2025 slice-of-day RA reform), the same
+> not-year-stable signature that rejected the NYISO ST_GAS drag alternative.
+> Adjudication: `scripts/derive_caiso_local_commitment.py`; full record:
+> `results/calibration/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md`.
+> The CT_PEAKER deficit stays OPEN pending a measured per-year
+> local-commitment source (DMM ED/min-online volumes by area) or an
+> RA-regime field. Nothing below is enabled.
+
 The caiso-79 STEP-0 fork deliverable
 (`results/calibration/FINDING-caiso79-step0-greaterbay-bind-2026-07-12.md`
 §3): the Greater Bay import cap was measured non-binding, so the CT_PEAKER
