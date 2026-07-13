@@ -1,0 +1,86 @@
+# One-shot: publish the caiso-81 lane-C adjudication (local-commitment
+# response curve REFUTED at the estimation stage — no solve, no dashboard
+# registration; see the FINDING). Reproduces the committed adjudication
+# script on a clean checkout, splices the log entry into docs/
+# calibration-log.md AGAINST CURRENT origin/main on the runner (the log is
+# ~770 KB and other ISOs' sessions splice the same top-of-file region — the
+# caiso80-finalize v1-v3 postmortem), and publishes everything as ONE commit
+# parented on current main via scripts/ci_api_upload_onmain.py. Data-API-only:
+# no git commit/push from the runner at any step, so the bulk-merge-auto-runs
+# race cannot strand the publish (caiso80-solve-register-v2 pattern).
+#
+# SERVED 2026-07-13 (run 29266258864, success) — checked in afterwards for
+# the record; the on-main Data-API publish cannot carry workflow files
+# (runner token restriction), so the file did not reach main with its own
+# publish.
+name: caiso81-log-finding
+
+on:
+  push:
+    branches:
+      - claude/caiso-81-calibration-gvz68q--served
+    paths:
+      - .github/workflows/caiso81-log-finding.yml
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install openpyxl
+
+      - name: Reproduce the adjudication on a clean checkout
+        run: |
+          set -euo pipefail
+          python scripts/derive_caiso_local_commitment.py | tee /tmp/adjudication.out
+          grep -q 'VERDICT: REFUTED' /tmp/adjudication.out
+          echo 'clean-checkout reproduction confirms the REFUTED verdict'
+
+      - name: Splice the caiso-81 log entry against CURRENT origin/main
+        run: |
+          set -euo pipefail
+          test -f docs/_caiso81_log_entry.md
+          git fetch origin main
+          git checkout origin/main -- docs/calibration-log.md
+          python - <<'PY'
+          lp = 'docs/calibration-log.md'
+          log = open(lp).read()
+          entry = open('docs/_caiso81_log_entry.md').read().rstrip() + '\n'
+          if 'caiso-81 (local-commitment driver adjudication)' in log:
+              print('already spliced')
+          else:
+              marker = '## Runs\n'
+              assert marker in log, 'splice anchor missing'
+              head, tail = log.split(marker, 1)
+              open(lp, 'w').write(head + marker + '\n' + entry + tail)
+              print('spliced at top of ## Runs')
+          PY
+
+      - name: Publish via the GitHub Data API (one commit parented on main)
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_onmain.py \
+            --branch claude/caiso-81-calibration-gvz68q \
+            --message "caiso-81: local-commitment response curve REFUTED at estimation stage (LOYO on the curve itself; no solve) — adjudication script + FINDING + log entry [skip ci]" \
+            --file docs/calibration-log.md \
+            --file docs/_caiso81_log_entry.md \
+            --file scripts/derive_caiso_local_commitment.py \
+            --file results/calibration/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md \
+            --file docs/handoffs/caiso-local-commitment-driver-design-2026-07.md
