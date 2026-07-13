@@ -229,3 +229,71 @@ actual gate to a net-virtual keeper.
    fitted basis. A CC_LIKE-scoped floor is the same construction as
    pjm-104's LONG_RUN scope — but under the clamp it would only push the
    2024 phantom to the next class; sequence it AFTER §6.1.
+
+## 7. pjm-105 (`2026-07-13-pjm-105-symmetric-net`) — the symmetric net form EXECUTED: C1 ALL-PASS, C7 clears, keeper recommendation flagged
+
+**Date:** 2026-07-13 (the lever-B final-form session). **Owner decision:**
+the clamped form is NOT keeper-eligible — diagnostic scaffolding only; §6
+item 1 is the adjudicated resolution. **Build:** `data.virtual_bids`
+rebuilt so `pjm_da_virtual_bids` renders the WHOLE measured curve — the
+`net > 0` region as the byte-identical DEC withdrawal rungs, the `net < 0`
+region as INC-form net-supply rungs (`VIRTUAL_INC`, fuel_type `import`, no
+bench class; capacities = increments of `|net(λ)|` above the crossing λ0,
+prices = measured MW-weighted quantiles; 8 rungs/side, resolution only).
+Every DEC rung price ≤ λ0 ≤ every INC rung price, so the two sides can
+never clear against each other. NOT pjm-101 (§5-6 of the DA-depth finding):
+the supply side is bounded by the measured NET position, enters at measured
+submitted prices, and displaces off-peak generation exactly where the real
+DA market scheduled less physical generation than RT load. INC offers are
+floored at the dump-safe credit bound — a verified structural no-op (min
+measured rung −$1.31 vs ≈ −$27), the mirror of the DEC VOLL cap. Zero
+fitted scalars; zero flag changes vs pjm-104 (the form replacement IS the
+delta).
+
+**Pre-registered expectation, verified no-LP before the solve**
+(`scripts/probes/_pjm105_symmetric_equilibrium.py`): the rendered ladders
+cleared at actual DA prices give annual net **−0.68 / −0.95 / +1.32 TWh**
+(2023/24/25) — the §2 unclamped column to within rung discretization
+(clamped equivalent +10.12/+14.71/+17.18). INC clears overnight/evening
+(h19–02, up to 3.9 GW mean), DEC morning-ramp/afternoon — the symmetric
+curve is a time-of-day reshaper, not a volume adder.
+
+**Results** (deltas vs actual TWh; pjm-104 in parens):
+
+| year | CT_PEAKER | COAL_BIT | CC_REGULAR | ST_GAS | coal fam | DEC \| INC (TWh) |
+|---|---|---|---|---|---|---|
+| 2023 | +0.67 ✓ (+3.45) | −1.21 ✓ (+1.85) | −5.93 ✓ (+2.27) | −0.08 ✓ (+0.30) | −1.6% (+1.5%) | 12.5 \| 18.3 |
+| 2024 | −3.59 ✓ (−1.44) | −0.78 ✓ (+2.60) | **−1.78 ✓ (+9.07 ✗)** | −3.93 ✓ (−3.60) | −1.3% (+2.1%) | 16.1 \| 20.3 |
+| 2025 | (+7.97) (+10.59) | (+6.63) (+9.79) | (−5.23) (+3.10) | (−1.39) (−0.76) | +5.4% (+8.0%) | 20.0 \| 18.1 |
+
+**Verdict (rubric v2.5): C1 PASS — all 16/16 gated rows, free-class 12/12.**
+The 2024 CC_REGULAR blocker (+9.07) lands at −1.78: the phantom is gone,
+not re-routed. C2 PASS — 2025 coal family +5.4%, meeting the ≤ +5.8%
+(keeper) de-regression bar. C3a PASS (DA-diag 2023 +3.8% → **+0.8%**, 2024
+−2.2% → −5.3%, 2025 −9.0% → −11.4%): the INC side pulls trough prices
+toward/below actual — 2023 lands near-exact; 2024/25 now read LOW vs DA,
+the one soft spot (inside the band, flagged honestly). C3b PASS. **C7
+flips FAIL → PASS**: §6 item 4's 2023 CT_PEAKER off-peak flatness
+(cv-ratio 0.495) clears — with net supply carrying the overnight hours the
+CT economic layer regains its off-peak variability, so the "commitment/AS
+phenomenon" hypothesis is amended: the missing off-peak variance was the
+virtual layer's net-negative region. C8 PASS (2024 CT_PEAKER 16.1%
+grounded-above-budget — clean pass per v2.2). C4/C5a PASS. **C3c 2025 FAIL
+unchanged** (17h vs 51h > $200) — the untouched DA reserve/ORDC scarcity
+tail (§6 item 3), a model miss, not ledgerable. Determination **NOT-YET on
+C3c alone** — the same single open item the keeper line carries.
+
+LP cleared net: −5.8/−4.2/+1.9 TWh — INC-heavier than the actual-DA
+equilibrium in 2023/24 because the model's trough duals still sit above
+actual, so more net supply clears; endogenous on both sides, nothing
+pinned. Governance: `calibration_attestation.json` carries the DOF ledger
+(pjm-98's ten entries + four measured/cited G-22 entries, zero new
+residual-identified); zero-forcing ablation twin registered alongside.
+
+**Recommendation to owner: promote pjm-105.** It strictly dominates
+pjm-104 on every gated criterion, carries the two validated lever-C pieces
+on their measured bases, and replaces the adjudicated-out clamp with the
+whole measured curve. `keepers.json` is owner-only and untouched. Open
+follow-ups stay §6 items 2 (sigmoid re-derivation), 3 (scarcity tail — now
+the ONLY gated miss), and 5 (CC_LIKE top belt — no longer blocked by the
+clamp).
