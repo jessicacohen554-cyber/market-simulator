@@ -92,8 +92,16 @@ OUT_CSV = (
     REPO / "data" / "raw" / "_validation-source" / "pjm_offer_midcurve_summary.csv"
 )
 
-#: Within-unit capacity shares the curve is sampled at (share-grid midpoints).
-SHARES = np.arange(0.05, 1.0, 0.10)
+#: Within-unit capacity shares the curve is sampled at (share-grid midpoints),
+#: plus the top-of-curve belt (0.975 / 0.995 — the "last-5% wall" the decile
+#: grid cannot see; 2026-07-13 G-22 lever-C extension). The pjm-99/A' findings
+#: located the real $35-83+ price formation in exactly this belt, and the
+#: LONG_RUN (coal / gas-steam) segment had no measured top at all — its model
+#: peak tranche lives at within-plant shares ~0.85-1.0, so the segment-scoped
+#: mid-curve floor (ScenarioConfig.pjm_offer_midcurve_segments) reads these
+#: points. A sampling-grid extension only: the s05-s95 medians reproduce
+#: identically from the same corpus (same method, same histogram).
+SHARES = np.concatenate([np.arange(0.05, 1.0, 0.10), [0.975, 0.995]])
 
 #: Implied-HR histogram grid: 0.05-wide cells from -20 to 400 (under/overflow
 #: cells at the ends). Resolution only — not a tunable.

@@ -3904,6 +3904,15 @@ class ScenarioConfig:
     # Path to the measured mid-curve surface JSON (default: the frozen
     # data/raw/_validation-source/pjm_offer_midcurve_condbinned.json).
     pjm_offer_midcurve_path: str | None = None
+    # Optional measured-segment scope for the mid-curve floor. None (default)
+    # floors every mapped segment (the pjm-101/102 behaviour, byte-identical).
+    # A tuple of segment names (e.g. ("LONG_RUN",)) restricts the floor to
+    # those physics segments only — the rule-19 scoping that lets the
+    # LONG_RUN (coal / gas-steam) body+top floor coexist with the fast-start
+    # startup-amortization pricing of the CT stack (pjm-103): CT_FAST rows
+    # are then owned by tranche_startup_amortization, never double-priced by
+    # this floor (the pjm-101/102 combo's CT over-correction).
+    pjm_offer_midcurve_segments: tuple[str, ...] | None = None
 
     # Combined-cycle tranche heat-rate OVERRIDES (relative to the plant's base
     # HR). When set, every CC bin's committed / economic / peaking tranche heat
