@@ -53,6 +53,9 @@ on:
         required: false
         default: false
         type: boolean
+  push:
+    paths:
+      - ".github/neiso-holdout-queue/*.json"
 
 permissions:
   contents: write
@@ -161,10 +164,11 @@ jobs:
           EOF
 
       - name: Commit intake artifacts to the branch
-        if: ${{ !inputs.dry_run }}
+        if: ${{ github.event_name != 'workflow_dispatch' || !inputs.dry_run }}
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
+          rm -f .github/neiso-holdout-queue/*.json
           git add -A \
                   data/raw/lmp-data/NEISO/2020_smd_hourly.xlsx \
                   data/raw/lmp-data/NEISO/2021_smd_hourly.xlsx \
@@ -178,7 +182,8 @@ jobs:
                   data/raw/neiso-weather/neiso_zone_temp_daily.csv \
                   data/raw/neiso-weather/neiso_load_weighted_temp_daily.csv \
                   data/raw/campd-unit-outages-NEISO.csv \
-                  frontend/data/backcast/tail/actual_tail.json
+                  frontend/data/backcast/tail/actual_tail.json \
+                  .github/neiso-holdout-queue/
           git rm --cached data/raw/lmp-data/2020_smd_hourly.xlsx data/raw/lmp-data/2021_smd_hourly.xlsx 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "nothing to commit (artifacts already landed)"
