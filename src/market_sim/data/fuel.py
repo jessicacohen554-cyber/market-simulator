@@ -3770,7 +3770,10 @@ def apply_plant_monthly_fuel_prices(
     reported in that state-month), otherwise the plant's model zone. The
     averages are restricted to the current ISO's fleet, so a PJM backcast
     never inherits an ERCOT or MISO delivered cost. This is off by default,
-    so ERCOT — whose plants overwhelmingly report — is unchanged.
+    so ERCOT — whose plants overwhelmingly report — is unchanged. Under
+    ``config.class_aware_fuel_price_fallback`` the fallback consults a
+    same-class donor tier (the recipient's ``plant_group``) before the
+    class-blind fuel-group pools — see :class:`_NearbyFuelPrices`.
 
     A missing parquet (forward years or untracked ISO) is a no-op: every
     generator keeps the per-fuel default. The same is true for plants
@@ -3861,7 +3864,8 @@ def apply_plant_monthly_fuel_prices(
         # 2) Nearby-plant fallback fills the still-unreported months.
         if nearby is not None and not reported.all():
             st = str(states[g]) if states is not None else ""
-            fill = nearby.month_prices(fuel_group, st, int(fleet.zone_idx[g]))
+            klass = str(fleet.plant_group[g]) if fleet.plant_group is not None else None
+            fill = nearby.month_prices(fuel_group, st, int(fleet.zone_idx[g]), klass)
             applied = False
             for m in np.nonzero(~reported)[0]:
                 v = fill[m]
@@ -3896,6 +3900,16 @@ class _NearbyFuelPrices:
     missing its own cost in a month is filled from its state mean when the
     state cleared the sample floor, otherwise from its zone mean. Both are
     drawn only from the ISO's own fleet, so no cross-ISO price leaks in.
+
+    Under ``config.class_aware_fuel_price_fallback`` (and a fleet carrying
+    ``plant_group``), a same-class donor tier is consulted first: the
+    state/zone grids restricted to reporting plants whose capacity-dominant
+    model class (within the fuel group) matches the recipient generator's
+    class. The class-blind fuel-group-wide grids remain the fallback, so a
+    class with no reporting peers fills exactly as before. Rationale: the
+    fuel-group pool is quantity-weighted, so for gas it is CC-burn-dominated
+    and prices a non-filing CT ~$1.6/MMBtu below its measured class cost
+    (docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6).
     """
 
     def __init__(
@@ -3916,14 +3930,44 @@ class _NearbyFuelPrices:
         self._iso_costs = costs[
             (costs["year"] == year) & (costs["plant_id"].isin(iso_plants))
         ]
-        # Per fuel group: (state_price, state_count, zone_price) grids.
-        self._cache: dict[str, tuple[dict, dict, dict]] = {}
+        # Per (fuel_group, class-or-None): (state_price, state_count,
+        # zone_price) grids. The ``None`` key is the class-blind pool.
+        self._cache: dict[tuple[str, str | None], tuple[dict, dict, dict]] = {}
+        self.class_aware = (
+            bool(getattr(config, "class_aware_fuel_price_fallback", False))
+            and fleet.plant_group is not None
+        )
+        # Donor plants are classified by their capacity-dominant model class
+        # within each fuel group (F923 files at plant level, so a mixed CC+CT
+        # plant's gas receipts go to whichever class holds most of its MW).
+        self._plant_class: dict[str, dict[int, str]] = {}
+        if self.class_aware:
+            cap: dict[str, dict[int, dict[str, float]]] = {}
+            for g in range(fleet.n_gen):
+                p = int(fleet.plant_code[g])
+                if p <= 0:
+                    continue
+                fg = _F923_FUEL_GROUP_BY_FUEL.get(_fuel_name(fleet.fuel_type_idx[g]))
+                if fg is None:
+                    continue
+                klass = str(fleet.plant_group[g])
+                by = cap.setdefault(fg, {}).setdefault(p, {})
+                by[klass] = by.get(klass, 0.0) + float(fleet.pmax[g])
+            self._plant_class = {
+                fg: {p: max(by, key=by.get) for p, by in plants.items()}
+                for fg, plants in cap.items()
+            }
 
-    def _grids(self, fuel_group: str) -> tuple[dict, dict, dict]:
-        cached = self._cache.get(fuel_group)
+    def _grids(
+        self, fuel_group: str, klass: str | None = None
+    ) -> tuple[dict, dict, dict]:
+        cached = self._cache.get((fuel_group, klass))
         if cached is not None:
             return cached
         sub = self._iso_costs[self._iso_costs["fuel_group"] == fuel_group]
+        if klass is not None:
+            donor_class = self._plant_class.get(fuel_group, {})
+            sub = sub[sub["plant_id"].map(lambda p: donor_class.get(int(p))) == klass]
         state_price, state_count = state_month_price_grid(sub, self._year, fuel_group)
         zone_price: dict[int, np.ndarray] = {}
         if not sub.empty:
@@ -3942,26 +3986,42 @@ class _NearbyFuelPrices:
                 with np.errstate(invalid="ignore", divide="ignore"):
                     zone_price[int(zone)] = np.where(qsum > 0.0, wsum / qsum, np.nan)
         result = (state_price, state_count, zone_price)
-        self._cache[fuel_group] = result
+        self._cache[(fuel_group, klass)] = result
         return result
 
-    def month_prices(self, fuel_group: str, state: str, zone_idx: int) -> np.ndarray:
-        """Return a length-12 fill price array (NaN where no nearby data)."""
-        state_price, state_count, zone_price = self._grids(fuel_group)
+    def month_prices(
+        self,
+        fuel_group: str,
+        state: str,
+        zone_idx: int,
+        klass: str | None = None,
+    ) -> np.ndarray:
+        """Return a length-12 fill price array (NaN where no nearby data).
+
+        Each tier fills only the months still NaN after the tiers before it:
+        same-class state → same-class zone (class-aware mode only), then
+        fuel-group state → fuel-group zone.
+        """
+        tiers = []
+        if self.class_aware and klass:
+            tiers.append(self._grids(fuel_group, str(klass)))
+        tiers.append(self._grids(fuel_group))
         out = np.full(12, np.nan, dtype=float)
-        sp = state_price.get(state)
-        if sp is not None:
-            sc = state_count.get(state)
-            ok = (
-                (sc >= self._min_state) & ~np.isnan(sp)
-                if sc is not None
-                else ~np.isnan(sp)
-            )
-            out[ok] = sp[ok]
-        zp = zone_price.get(int(zone_idx))
-        if zp is not None:
-            need = np.isnan(out) & ~np.isnan(zp)
-            out[need] = zp[need]
+        for state_price, state_count, zone_price in tiers:
+            sp = state_price.get(state)
+            if sp is not None:
+                sc = state_count.get(state)
+                ok = (
+                    (sc >= self._min_state) & ~np.isnan(sp)
+                    if sc is not None
+                    else ~np.isnan(sp)
+                )
+                fill = np.isnan(out) & ok
+                out[fill] = sp[fill]
+            zp = zone_price.get(int(zone_idx))
+            if zp is not None:
+                need = np.isnan(out) & ~np.isnan(zp)
+                out[need] = zp[need]
         return out
 
 

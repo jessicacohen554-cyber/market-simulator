@@ -903,5 +903,121 @@ class RegionDependentCoalSigmoidTest(unittest.TestCase):
         self.assertIsNone(coal_sigmoid_params(cfg, "bituminous"))
 
 
+class TestClassAwareNearbyFallback(unittest.TestCase):
+    """``class_aware_fuel_price_fallback`` fills from same-class donors first.
+
+    Synthetic three-plant ISO: a CT reporter at $4.10/MMBtu, a CC reporter
+    at $2.60 with 10x the reported quantity (so the class-blind
+    quantity-weighted pool sits near the CC price), and a non-filing CT
+    recipient. Class-blind fallback hands the CT the CC-dominated mean;
+    class-aware hands it the CT donor's price. Fuel-group fallback still
+    applies when the recipient's class has no reporting peers.
+    """
+
+    _YEAR = 2024
+
+    def _fleet(self, with_groups: bool = True):
+        from market_sim.data.fleet import FleetArrays
+
+        n = 3
+        hours = 24
+        plant_codes = np.array([101, 202, 303])  # CT filer, CC filer, CT recipient
+        groups = np.array(["CT_PEAKER", "CC_REGULAR", "CT_PEAKER"], dtype=object)
+        fuel_idx = np.array(
+            [FUEL_TYPE_MAP["gas_ct"], FUEL_TYPE_MAP["gas_cc"], FUEL_TYPE_MAP["gas_ct"]]
+        )
+        return FleetArrays(
+            pmax=np.array([100.0, 400.0, 150.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.full(n, 8.0),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.zeros(n, dtype=int),
+            fuel_type_idx=fuel_idx,
+            availability=np.ones((n, hours)),
+            unit_ids=["CT_FILER", "CC_FILER", "CT_RECIPIENT"],
+            efficiency_bin=np.zeros(n, dtype=int),
+            plant_code=plant_codes,
+            state=np.array(["TX", "TX", "TX"], dtype=object),
+            plant_group=groups if with_groups else None,
+        )
+
+    def _costs(self):
+        import pandas as pd
+
+        rows = []
+        for month in range(1, 13):
+            rows.append(
+                {
+                    "year": self._YEAR,
+                    "month": month,
+                    "plant_id": 101,
+                    "fuel_group": "Natural Gas",
+                    "state": "TX",
+                    "price_per_mmbtu": 4.10,
+                    "quantity": 1_000.0,
+                }
+            )
+            rows.append(
+                {
+                    "year": self._YEAR,
+                    "month": month,
+                    "plant_id": 202,
+                    "fuel_group": "Natural Gas",
+                    "state": "TX",
+                    "price_per_mmbtu": 2.60,
+                    "quantity": 10_000.0,
+                }
+            )
+        return pd.DataFrame(rows)
+
+    def _nearby(self, class_aware: bool, with_groups: bool = True):
+        from market_sim.data.fuel import _NearbyFuelPrices
+
+        config = ScenarioConfig(
+            iso="ERCOT",
+            hours=24,
+            gas_plant_monthly_fuel_pricing=True,
+            nearby_fuel_price_fallback=True,
+            nearby_fuel_price_min_state_plants=1,
+            class_aware_fuel_price_fallback=class_aware,
+        )
+        return _NearbyFuelPrices(
+            self._costs(), self._YEAR, self._fleet(with_groups), config
+        )
+
+    def test_class_blind_pool_is_quantity_dominated(self):
+        nearby = self._nearby(class_aware=False)
+        fill = nearby.month_prices("Natural Gas", "TX", 0, "CT_PEAKER")
+        # 11:1 quantity weighting: (4.10*1000 + 2.60*10000) / 11000
+        expected = (4.10 * 1_000 + 2.60 * 10_000) / 11_000
+        self.assertAlmostEqual(float(fill[0]), expected, places=6)
+
+    def test_class_aware_uses_same_class_donor(self):
+        nearby = self._nearby(class_aware=True)
+        fill = nearby.month_prices("Natural Gas", "TX", 0, "CT_PEAKER")
+        np.testing.assert_allclose(fill, np.full(12, 4.10))
+        # And the CC recipient still sees its own class's price.
+        cc = nearby.month_prices("Natural Gas", "TX", 0, "CC_REGULAR")
+        np.testing.assert_allclose(cc, np.full(12, 2.60))
+
+    def test_class_with_no_donors_falls_back_to_fuel_group(self):
+        nearby = self._nearby(class_aware=True)
+        fill = nearby.month_prices("Natural Gas", "TX", 0, "ST_GAS")
+        expected = (4.10 * 1_000 + 2.60 * 10_000) / 11_000
+        self.assertAlmostEqual(float(fill[0]), expected, places=6)
+
+    def test_flag_inert_without_plant_groups(self):
+        # A fleet with no plant_group (the aggregated/legacy path) keeps the
+        # class-blind behavior even when the flag is on.
+        nearby = self._nearby(class_aware=True, with_groups=False)
+        self.assertFalse(nearby.class_aware)
+        fill = nearby.month_prices("Natural Gas", "TX", 0, "CT_PEAKER")
+        expected = (4.10 * 1_000 + 2.60 * 10_000) / 11_000
+        self.assertAlmostEqual(float(fill[0]), expected, places=6)
+
+
 if __name__ == "__main__":
     unittest.main()
