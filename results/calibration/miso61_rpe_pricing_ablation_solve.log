@@ -33,3 +33,4 @@ INFO: MISO 2023: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-9
 INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 2424 MW at h0 (measured hourly cleared reg+spin+supp), 11 ORDC steps ($200-$3500), 2556 reserve-eligible units
 INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 269 MW at h0 (measured hourly South reservation), published zonal curve steps ['206MW@$200', '722MW@$1100', '103MW@$3300']
 INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2543 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 38003 / min 33889 MW
+INFO: Matrix build: 57.811s, Solve: 4389.371s (cold)
