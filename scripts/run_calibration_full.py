@@ -2124,6 +2124,7 @@ def solve_and_persist(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
+    ercot_offer_surface_lowcurve_floorscoped: bool = False,
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
@@ -2461,6 +2462,9 @@ def solve_and_persist(
             temp_dependent_derate=temp_dependent_derate,
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
             ercot_offer_surface_lowcurve=ercot_offer_surface_lowcurve,
+            ercot_offer_surface_lowcurve_floorscoped=(
+                ercot_offer_surface_lowcurve_floorscoped
+            ),
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
             pjm_offer_surface_conditional=pjm_offer_surface_conditional,
             pjm_da_virtual_bids=pjm_da_virtual_bids,
@@ -2864,6 +2868,9 @@ def solve_and_persist(
         "temp_dependent_derate": temp_dependent_derate,
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
         "ercot_offer_surface_lowcurve": ercot_offer_surface_lowcurve,
+        "ercot_offer_surface_lowcurve_floorscoped": (
+            ercot_offer_surface_lowcurve_floorscoped
+        ),
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
         "pjm_offer_surface_conditional": pjm_offer_surface_conditional,
         "pjm_da_virtual_bids": pjm_da_virtual_bids,
@@ -3005,6 +3012,11 @@ def solve_and_persist(
         # Meta-writer mirror of run_year's with_overrides (rule 25): the LOW-leg
         # flag must land in scenario_config exactly as the LP solved with it.
         recorded_cfg = recorded_cfg.with_overrides(ercot_offer_surface_lowcurve=True)
+    if ercot_offer_surface_lowcurve_floorscoped:
+        # Same rule-25 mirror for the ERCOT-64 floor-scoped LSL markdown.
+        recorded_cfg = recorded_cfg.with_overrides(
+            ercot_offer_surface_lowcurve_floorscoped=True
+        )
     # Coal sigmoid flags mirror run_year exactly — run_config.json must
     # record the same enables/params the LP solved with (the prb sigmoid +
     # tiered flags, outage_source, coal_drop_pof, the per-plant must-run and

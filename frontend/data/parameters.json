@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-07-12",
+  "generated": "2026-07-13",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -16282,41 +16282,41 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "NJ",
-          "CT",
-          "MD",
-          "NY",
-          "MA",
+          "RI",
           "VT",
-          "NH",
-          "DE",
           "VA",
+          "MD",
+          "DE",
+          "NH",
+          "CT",
           "ME",
-          "RI"
+          "NY",
+          "NJ",
+          "MA"
         ],
         "2024": [
-          "NJ",
-          "CT",
-          "MD",
-          "NY",
-          "MA",
+          "RI",
           "VT",
-          "NH",
+          "MD",
           "DE",
+          "NH",
+          "CT",
           "ME",
-          "RI"
+          "NY",
+          "NJ",
+          "MA"
         ],
         "2025": [
-          "NJ",
-          "CT",
-          "MD",
-          "NY",
-          "MA",
+          "RI",
           "VT",
-          "NH",
+          "MD",
           "DE",
+          "NH",
+          "CT",
           "ME",
-          "RI"
+          "NY",
+          "NJ",
+          "MA"
         ]
       },
       "unit": "",
@@ -17383,6 +17383,25 @@
       "domain": "Storage",
       "tier": 2,
       "source": "Reserve the MEASURED hourly",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_supply_consistent_demand",
+      "display_name": "Caiso Supply Consistent Demand",
+      "value": false,
+      "unit": "",
+      "domain": "Demand",
+      "tier": 2,
+      "source": "Replace the CAISO backcast",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -20642,6 +20661,25 @@
       "last_verified": "",
       "flags": [
         "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_lowcurve_floorscoped",
+      "display_name": "Ercot Offer Surface Lowcurve Floorscoped",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "ERCOT FLOOR-SCOPED committed-LSL markdown (default off, ERCOT-gated — ERCOT-64, the enumerated price-side lever from the ERCOT-63 diagnosis §7): the measured committed-CC LSL (Min-Gen-Cost) bid from the SAME frozen ERCOT-62 artifact the v2 lowcurve reads (offer_curve_dam_lowcurve_condbinned.json, resolved via ercot_offer_surface_lowcurve_path), applied to the gas-CC committed tranche ONLY in the bridge's own floored plant-hours — the hours the tranche genuinely plays its LSL role. The tranche-wide v2 markdown (ercot_offer_surface_lowcurve above) was probe-REFUTED even in composition with the bridge because it repriced the tranche's ABOVE-floor mid-merit capacity at the LSL bid (spread compression, CT/CC overshoot past actuals — diagnosis §5/§7); scoping to the floored hours removes exactly that defect, so the two flags are MUTUALLY EXCLUSIVE (rule 19 — same rows, same phenomenon; enforced at the bridge-preps builder). REQUIRES ercot_gas_commitment_bridge: the scope IS the bridge's floor mask, so the flag fails loud without it. COMPOSITION NOTE (rule 19 bookkeeping): this is a BID change on already-floored hours — no new floor, no D-2 id; it composes with the bridge (the committed STATE) and is disjoint from the top-leg surface (peak rungs). Wiring: the bridge floor is computed ONCE and shared between the P1 fleet hook and this bid hook (pipeline.commitment.build_ercot_gas_bridge_p1_preps) — the mask is the bridge's, never re-detected, and never the v2 P0-online gate (P0-online is FALSE in bridged gap hours by construction — the floor exists because P0 cycled the plant off). Zero fitted scalars: trigger = the bridge's own floor mask + within-year net-load bin, levels = the frozen measured QSE quantiles (rules 13/20/21).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
       ]
     },
     {
