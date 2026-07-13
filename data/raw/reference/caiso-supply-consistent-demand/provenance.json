@@ -1,0 +1,30 @@
+{
+ "finding": "FINDING-caiso80-demand-basis-wedge-2026-07-13.md",
+ "construction": "demand(t) = 930 NetGen(t) - NG_cell(t) + CEMS bench-gas grid(t) + gas_cogen_grid/8760 + geo_biomass_foldin/8760 - TI(t)",
+ "years": {
+  "2023": {
+   "annual_twh": 207.404,
+   "eia930_demand_cell_twh": 218.134,
+   "gas_cems_grid_twh": 60.344,
+   "gas_cogen_grid_twh": 8.399,
+   "geo_biomass_foldin_twh": 13.786,
+   "flat_adders_mw": 2532.5
+  },
+  "2024": {
+   "annual_twh": 212.195,
+   "eia930_demand_cell_twh": 223.471,
+   "gas_cems_grid_twh": 53.428,
+   "gas_cogen_grid_twh": 7.609,
+   "geo_biomass_foldin_twh": 13.589,
+   "flat_adders_mw": 2419.9
+  },
+  "2025": {
+   "annual_twh": 205.586,
+   "eia930_demand_cell_twh": 223.804,
+   "gas_cems_grid_twh": 43.988,
+   "gas_cogen_grid_twh": 7.609,
+   "geo_biomass_foldin_twh": 10.499,
+   "flat_adders_mw": 2067.2
+  }
+ }
+}
