@@ -324,10 +324,54 @@ of the same date (`scripts/land_neiso_2022_readiness.py` + its own
 intake_log entry).
 
 **G-19 status:** the register file now exists
-(`docs/holdout-data-equivalency-register-2026-07.md`) with the NYISO section
-complete; ERCOT/PJM/CAISO/MISO/NEISO sections remain pending their lanes.
-NYISO 2022 remaining blockers are governance, not data: owner
+(`docs/holdout-data-equivalency-register-2026-07.md`) with the NYISO and
+NEISO sections complete; ERCOT/PJM/CAISO/MISO sections remain pending their
+lanes. NYISO 2022 remaining blockers are governance, not data: owner
 calibration-complete declaration + register sign-off.
+
+### 1.4 Intake 2026-07-13 — NEISO 2018-2022 holdout-year data readiness
+
+Executed under the owner's explicit, session-logged rule-22 Option-2
+authorization (verbatim in `calibration-complete.json` `intake_log`): *"This
+data can literally be collected for all years — we're not running anything on
+it. Fetch it all at once for 2018-2022 and first half 2026 if available."*
+**Intake + register only, NO solves.** NEISO already carries a
+calibration-complete marker (declared 2026-07-07), which authorizes that
+ISO's one-shot holdout validation separately — this lane does not re-trigger
+or re-run it; all validation here is no-LP (byte-identity / loader-
+resolvability / row counts / schema-match vs sibling years).
+
+Two things landed: (a) closed the NEISO landing residuals the 2026-07-12
+readiness session left open (§1.3 above: `actual_lmp*`/`actual_tail` had no
+NEISO 2022, `NEISO_2022_renewable_capacity.csv` was absent, this doc and the
+gap register carried placeholder notes) via `scripts/land_neiso_2022_readiness.py`;
+(b) extended readiness from 2022-only back to 2018-2022 via the new
+`scripts/land_neiso_holdout_multiyear.py`, landing per-year zone temp,
+load-weighted temp, unit-outage windows (append-only, detector-vintage
+caveat unchanged), and — where source data permits — `calibration_reference.json`
+(2021 newly added; `CALIBRATION_YEARS_BY_ISO`/`HENRY_HUB_ACTUAL` extended in
+`build_calibration_reference.py`) and the ISO-NE SMD LMP bench (2020-2021,
+from the SMD workbooks already on disk; load-weighted `_lw` fields backfilled
+via `derive_actual_lmp.lw_retrofit`). Also closed the plant-emission-rates v2
+"2022 is a gap year" issue (same class as the NYISO register's finding) via
+`curate_emissions_unit_annual.py --years 2022 --holdout-intake NEISO` +
+`derive_plant_emissions_v2.py --iso NEISO --years 2022 --holdout-intake NEISO`
+— NEISO's existing marker let both tools' gate pass.
+
+Full per-input grading: `docs/holdout-data-equivalency-register-2026-07.md`
+§NEISO. Verdict: **EQUIVALENT 12 / DEGRADED 8 / MISSING 6**, zero unresolved
+(every MISSING row carries an explicit fix or acceptance rationale). The
+single hard blocker discovered this session: `eia_demand_profiles.parquet`
+(the demand series `load_demand`/`load_demand_meta` actually reads) has no
+NEISO rows before 2021, so **2018-2020 cannot be dispatched at all**
+regardless of every other input's readiness — same class as this doc's F3
+("full-8760 contract... no builder script exists in-repo, hand-uploaded
+artifact"), not fixed in this data-only lane. H1-2026 remains blocked on the
+same publication-horizon grounds as every other ISO.
+
+**G-19 status after this lane:** register sections complete for NYISO and
+NEISO; ERCOT/PJM (2022 intake landed, equivalency audit pending) and
+CAISO/MISO (zero intake) remain open.
 
 ---
 
