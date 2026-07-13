@@ -11,5 +11,7 @@
   ],
   "iso": "MISO",
   "file": "frontend/data/backcast/runs/2026-07-12-miso-61-rpe-pricing.js",
-  "bundle": "results/calibration/miso61_rpe_pricing"
+  "bundle": "results/calibration/miso61_rpe_pricing",
+  "ablation_twin": "2026-07-12-miso-61-rpe-pricing-ablation",
+  "market_story": "ST_GAS +1.7/+1.8/+2.5 TWh (2023/24/25): the Entergy MISO-South steam fleet's SOM-documented VLR/out-of-market self-commitment (Nine Mile synchronized 98.2% of ALL hours, Sabine 85.6%, Lewis Creek 87.8% \u2014 CEMS-measured committed tranches forced in each plant's measured top-online_frac window), serving Amite South/DSG/WOTAB local reliability the LP's energy-only economics cannot see. OTHER_FOSSIL +1.3/+1.3/+2.5: the small residual classes' measured reliability deployments. Displaced: Plains COAL_PRB/CC_REGULAR/COAL_BIT/CT and imports that reality does not run for the South's local needs \u2014 the same N->S RDT wheel the seam split + TCDC price. The RPE violation pricing itself is market structure (armed in BOTH runs), not a floor."
 }
