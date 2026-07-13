@@ -31,6 +31,7 @@ from __future__ import annotations
 import argparse
 import json
 import logging
+import os
 import sys
 import time
 from pathlib import Path
@@ -3994,7 +3995,48 @@ def _build_parser() -> argparse.ArgumentParser:
         help="Label override for the mass-cap row's reported allowance "
         "price. Only meaningful with --mass-cap-enabled.",
     )
+    parser.add_argument(
+        "--no-xyear-warmstart",
+        action="store_true",
+        help="Disable cross-year LP warm-start (MARKET_SIM_WARMSTART_XYEAR). "
+        "It is ON by default on the calibration path — each year's optimal "
+        "basis warm-starts the next year's P0 solve (~2.3x faster on warm "
+        "years, basis-neutral; see docs/cross-year-warmstart.md). Pass this "
+        "to force the cold path (e.g. a basis-independent A/B baseline). An "
+        "explicit MARKET_SIM_WARMSTART_XYEAR env var is honored over the "
+        "default; this flag overrides both.",
+    )
     return parser
+
+
+def resolve_xyear_warmstart_default(disable: bool) -> bool:
+    """Resolve the cross-year LP warm-start default for the calibration path.
+
+    Cross-year warm-start (``MARKET_SIM_WARMSTART_XYEAR``) carries each backcast
+    year's optimal basis into the next year's cold P0 solve. It is validated
+    basis-neutral on the calibration/backcast path — objective, every zonal
+    price and total generation are bit-identical; the only movement is the
+    marginal-tie reshuffling the intra-year warm start already ships (see
+    ``docs/cross-year-warmstart.md``) — so it defaults **ON** here. Precedence,
+    highest first:
+
+    1. ``--no-xyear-warmstart`` (``disable=True``) → force OFF.
+    2. An explicitly-set ``MARKET_SIM_WARMSTART_XYEAR`` env var → honored as-is.
+    3. Otherwise → default ON.
+
+    Sets ``os.environ["MARKET_SIM_WARMSTART_XYEAR"]`` so the shared solve core
+    (``pipeline.solve.run_energy_solve``) reads the resolved value, and returns
+    the resolved boolean. **Calibration path only** — the forecast loop
+    (``runner.py``) passes ``xyear_cache=None`` and cannot consume the basis
+    regardless of the env var, so its capacity-evolution tie-flip rejection
+    stands untouched (rule: forecast stays cold-only).
+    """
+    if disable:
+        os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "0"
+    elif "MARKET_SIM_WARMSTART_XYEAR" not in os.environ:
+        os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "1"
+    # else: env var explicitly set by the caller -> honor it verbatim.
+    return os.environ.get("MARKET_SIM_WARMSTART_XYEAR", "0") != "0"
 
 
 def main(argv: list[str] | None = None) -> None:
@@ -4030,6 +4072,13 @@ def main(argv: list[str] | None = None) -> None:
         "ttc_wsc": args.ttc_wsc,
         "ttc_pn": args.ttc_pn,
     }
+
+    # Cross-year warm-start defaults ON for calibration (--no-xyear-warmstart to
+    # opt out, explicit env var honored). Resolved before the year loop so every
+    # run_year sees the same gate; sets MARKET_SIM_WARMSTART_XYEAR for the shared
+    # solve core. Forecast (runner.py) is unaffected (xyear_cache=None).
+    _xwarm = resolve_xyear_warmstart_default(args.no_xyear_warmstart)
+    logger.info("cross-year LP warm-start: %s", "ON" if _xwarm else "OFF")
 
     # Single-element holder carrying the prior year's optimal basis across
     # run_year calls for cross-year warm-start (MARKET_SIM_WARMSTART_XYEAR=1).

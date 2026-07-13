@@ -23,12 +23,25 @@ from __future__ import annotations
 import argparse
 import inspect
 import json
+import os
 import sys
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "scripts"))
 sys.path.insert(0, str(REPO / "src"))
+
+# Reproducibility pin: a byte-faithful keeper replay must be basis-independent,
+# so force the cross-year LP warm-start OFF regardless of the ambient
+# environment. Cross-year warm-start is basis-neutral on the calibration path
+# (objective/prices/total-gen bit-identical) but reshuffles marginal-tie
+# dispatch by ~0.003%, which would make a replay's per-plant parquet differ from
+# the cold-solved committed bundle and break the D-13 bench-repro byte-identity
+# gate. Set BEFORE importing run_calibration_full so the solve core
+# (pipeline.solve) reads the pinned value. Mirrors capture_keeper_goldens.py.
+# solve_and_persist is called directly here (not via the CLI main()), so it
+# never sees the calibration CLI's default-ON gate.
+os.environ["MARKET_SIM_WARMSTART_XYEAR"] = "0"
 
 import run_calibration_full as rcf  # noqa: E402
 
