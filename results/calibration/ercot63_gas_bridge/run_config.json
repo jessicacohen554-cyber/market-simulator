@@ -806,7 +806,7 @@
     "chp_export_floor_measured": true,
     "ercot_gtc_limits_measured": true,
     "pjm_measured_interface_limits": false,
-    "ercot_wtx_curtailment_driver": false,
+    "ercot_wtx_curtailment_driver": true,
     "ercot_wtx_curtail_depth_wind": 0.1004,
     "ercot_wtx_curtail_depth_solar": 0.1637,
     "coal_supply_repricing": true,
@@ -849,5 +849,15 @@
     "dual_fuel_switching": false,
     "outage_source": "historic",
     "gas_price_override": 2.54
-  }
+  },
+  "_record_corrections": [
+    {
+      "field": "scenario_config.ercot_wtx_curtailment_driver",
+      "recorded": false,
+      "corrected": true,
+      "date": "2026-07-13",
+      "session": "ERCOT-65",
+      "evidence": "run_config recorder ordering defect, fixed this session (scripts/run_calibration_full.py): run_year applies the generic prb_overrides channel LAST, and this bundle's coal_prb_sigmoid_overrides carries ercot_wtx_curtailment_driver=true (the owner's 2026-07-07 ERCOT backcast default-ON), so the LP solved with the WP-B West/Panhandle VRE ceiling ACTIVE (probe log line 'West/Panhandle VRE ceiling active', byte-exact keeper reconstruction ercot65_keeper_2023: C3a +3.1%, C3b 0.131, C3c 171h) while the recorder's late tri-state re-override wrote False. Solve untouched; record corrected to what actually ran. See the 2026-07-13 ERCOT-65 calibration-log entry and diagnosis SS9."
+    }
+  ]
 }

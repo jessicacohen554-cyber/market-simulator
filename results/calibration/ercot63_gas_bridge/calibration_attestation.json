@@ -19,7 +19,7 @@
   "free_parameters": {
     "schema": "dof-ledger/v1",
     "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20)",
-    "n_entries": 9,
+    "n_entries": 10,
     "n_residual": 8,
     "entries": [
       {
@@ -210,6 +210,19 @@
         "lineage_solves": ">=165 solves (audit \u00a75.1)",
         "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
         "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+      },
+      {
+        "name": "ercot_wtx_curtail_depth (wind, solar)",
+        "where": "run_config.scenario_config.ercot_wtx_curtail_depth_wind/_solar",
+        "identification": "outcome-anchored (owner-accepted assumption)",
+        "lineage_solves": "ercot42 WP-B derive + 2026-07-08 clock-unified re-derive",
+        "value": {
+          "wind": 0.1004,
+          "solar": 0.1637
+        },
+        "n_scalars": 2,
+        "source": "WP-B West/Panhandle curtailment-share driver LEVEL pair: centred on the measured ISO-reported curtailment MW quantity (RTOLCAP-`deliv` precedent), LOYO-stable 0.0993-0.1007; owner-accepted 2026-07-07 as a documented ASSUMPTION (ReEDS/Cambium/NEMS reduced-form curtailment precedent). SHAPE table is measured congestion frequency (zero fit).",
+        "root_cause": "ADDED 2026-07-13 (ERCOT-65 record correction): the driver has been LIVE in every solve of this lineage (prb_overrides channel; the recorder mis-wrote driver=False, fixed this session) but the ledger inherited the 'not in the recipe' belief and omitted its one outcome-anchored DOF pair. Solve untouched; ledger corrected to what actually ran."
       }
     ]
   }
