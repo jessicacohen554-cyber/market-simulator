@@ -11,5 +11,6 @@
   ],
   "iso": "NEISO",
   "file": "frontend/data/backcast/runs/2026-07-13-neiso-59-cc-hr.js",
-  "bundle": "results/calibration/neiso59_cc_hr_regate"
+  "bundle": "results/calibration/neiso59_cc_hr_regate",
+  "ablation_twin": "2026-07-13-neiso-59-cc-hr-ablation"
 }
