@@ -1300,25 +1300,28 @@ the model's implemented demand-curve mechanism, never pinned or fit to (rules
 ## capacity-market-elcc
 
 Published Effective Load Carrying Capability / capacity-accreditation ratings
-for wind/solar/storage resource classes, by study vintage and — where an ISO
-publishes a genuine marginal-ELCC study — installed-penetration level. The
-CR-3.1 input that will replace the flat `RENEWABLE_CAPACITY_CREDIT` wind/solar
-constants. Schema:
+for wind/solar/storage — and, since PJM's 2025/26 CIFP reform extended ELCC
+class ratings to thermal, thermal (nuclear, coal, gas CC/CT, diesel, steam) —
+resource classes, by study vintage and — where an ISO publishes a genuine
+marginal-ELCC study — installed-penetration level. The CR-3.1 input that will
+replace the flat `RENEWABLE_CAPACITY_CREDIT` wind/solar constants, and the
+supply-basis-extension input for the accreditation-basis adjudication (R3).
+Schema:
 [`schema/capacity-market-elcc.schema.yaml`](schema/capacity-market-elcc.schema.yaml).
 
 - **Keys:** `iso`, `resource_class`, `study_vintage`, `penetration_pct`
-- **Reconciles:** PJM ELCC Class Ratings (single current-fleet point per
-  class), MISO wind/solar marginal ELCC by penetration (Accreditation Reform —
-  the strongest public multi-point curve), NYISO ICAP/UCAP conversion factors
-  (CATF), ISO-NE seasonal-claimed-capability / ELCC-based accreditation,
-  CAISO/CPUC NQC + E3-authored incremental-ELCC studies — onto one canonical
-  frame keyed on `(iso, resource_class, study_vintage, penetration_pct)`. ERCOT
-  excluded.
+- **Reconciles:** PJM ELCC Class Ratings (single current-fleet point per class,
+  renewable/storage/DR + thermal), MISO wind/solar marginal ELCC by penetration
+  (Accreditation Reform — the strongest public multi-point curve), NYISO
+  ICAP/UCAP conversion factors (CATF), ISO-NE seasonal-claimed-capability /
+  ELCC-based accreditation, CAISO/CPUC NQC + E3-authored incremental-ELCC
+  studies — onto one canonical frame keyed on `(iso, resource_class,
+  study_vintage, penetration_pct)`. ERCOT excluded.
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
 | `iso` | `string` | `none` | no | ISO/RTO publishing the study (PJM, NYISO, ISONE, MISO, CAISO). |
-| `resource_class` | `string` | `none` | no | Canonical resource class: wind \| solar \| wind_offshore \| hybrid_solar_storage \| storage_2hr \| storage_4hr \| storage_6hr \| storage_8hr \| storage_10hr \| storage_ldes (long-duration storage where the ISO study does not state a discrete hour duration) \| other (ISO-native duration/class labels map onto the nearest storage_Nhr bucket; a class with no clean map uses "other" and documents the native label in source_page). |
+| `resource_class` | `string` | `none` | no | Canonical resource class: wind \| solar \| wind_offshore \| hybrid_solar_storage \| storage_2hr \| storage_4hr \| storage_6hr \| storage_8hr \| storage_10hr \| storage_ldes (long-duration storage where the ISO study does not state a discrete hour duration) \| nuclear \| coal \| gas_cc \| gas_ct \| gas_ct_dual_fuel \| diesel \| oil_ct \| steam \| waste_to_energy \| other (ISO-native duration/class labels map onto the nearest storage_Nhr bucket; a class with no clean map uses "other" and documents the native label in source_page). Thermal classes (nuclear through waste_to_energy) are kept distinct per the rating ISO's own published class split rather than collapsed — e.g. PJM's Gas Combustion Turbine vs. …Dual Fuel, or Diesel Utility vs. Oil-Fired Combustion Turbine, carry materially different ratings within the same study_vintage and would otherwise collide against key_columns. |
 | `study_vintage` | `string` | `none` | no | The study or filing year/label the rating applies to (e.g. "2026/2027" delivery year for an annual class-rating filing, or the ELCC study's own publication year for a standalone study). |
 | `penetration_pct` | `float64` | `pct` | yes | Installed-penetration level this point is measured at (per penetration_unit), for ISOs that publish a genuine multi-point ELCC-vs-penetration curve. Null when the ISO publishes only a single current-fleet-average rating (documented as such in the raw README) — never back-filled with a guessed penetration level. |
 | `penetration_unit` | `string` | `none` | yes | Basis of penetration_pct — pct_of_peak_load \| pct_of_installed_capacity \| installed_mw. Null when penetration_pct is null. |
