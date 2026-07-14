@@ -44,7 +44,7 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 **Lane:** lane 1 of the miso-64/65 sequencing — the conduct gap the miso-65
 availability truth *exposed* (rule 15). On the `2026-07-14-miso-65-outage-regen`
-keeper, C1-2024 FAILed on {COAL_PRB −10.41, CT_PEAKER +8.30 TWh}: at $2.19 gas
+keeper, C1-2024 FAILed on {COAL_PRB −10.53, CT_PEAKER +8.38 TWh}: at $2.19 gas
 the LP shut regulated PRB (its committed band priced at full delivered SRMC)
 and filled the gap with peaking CT where the real market self-committed coal.
 Full diagnosis + frozen design + probe evidence (Phase A):
@@ -72,7 +72,7 @@ ONE change: `coal_bit_committed_takeorpay=False` /
 price_mean, price_tail} — the same 3-count as the miso-65 keeper, but
 structurally strictly better: C1 improves 14/16→15/16 (all) / 10/12→11/12
 (free) and the 2024 coal/CT conduct block CLOSES.** 2024 exactly: COAL_PRB
-−10.41 FAIL → **+4.39 PASS** (model 120.86 vs 116.46 TWh), CT_PEAKER +8.30 FAIL
+−10.53 FAIL → **+4.39 PASS** (model 120.86 vs 116.46 TWh), CT_PEAKER +8.38 FAIL
 → **+3.30 PASS** (22.53 vs 19.23), COAL_BIT −2.61, COAL_LIGNITE −1.19, total
 2024 coal **+0.59 TWh of actual** (176.91 vs 176.32); 2023 all eight rows PASS
 (PRB +3.02, BIT −5.31). **The single remaining C1 fail is ST_GAS-2024** (−9.13
