@@ -1304,15 +1304,24 @@ def gas_daily_shape_factors(
     """Return ``(hours,)`` within-month daily gas-price shape factors.
 
     Each calendar day's factor is the measured Henry Hub daily spot divided by
-    that month's own daily mean, so the factors average to 1.0 within every
-    month — multiplying the (correctly-levelled) monthly gas series by them
-    adds the real intra-month commodity swing while leaving the monthly mean,
-    and hence the annual generation mix, unchanged. The daily spot has only
-    trading days; the (typically ~21) quotes are spread evenly across the
-    month's calendar days (a weekend inherits the bracketing trading values'
-    block), and a month with no quotes resolves to all-ones (no shape). This
-    is the same mechanism a forecast would use (a forward monthly level times
-    a representative daily shape), so it is not backcast-only.
+    that month's own daily mean, then the calendar-day factors are renormalized
+    so they average to EXACTLY 1.0 within every month — multiplying the
+    (correctly-levelled) monthly gas series by them adds the real intra-month
+    commodity swing while leaving the monthly mean, and hence the annual
+    generation mix, unchanged. The daily spot has only trading days; the
+    (typically ~21) quotes are spread evenly across the month's calendar days
+    (a weekend inherits the bracketing trading values' block), and a month with
+    no quotes resolves to all-ones (no shape). This is the same mechanism a
+    forecast would use (a forward monthly level times a representative daily
+    shape), so it is not backcast-only.
+
+    The explicit renormalization is REQUIRED, not cosmetic: bare ``np.interp``
+    resampling of the trading-day quotes onto the calendar-day grid does not
+    preserve the mean in a convex gas-spike month, so a cold-snap spike
+    overshot the month mean by ~2% pre-fix (worst Jan-2024, +$0.10/MMBtu
+    delivered — the G-A1 finding, docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md).
+    This mirrors the per-hub daily-basis mechanisms below, which already
+    renormalize their calendar-day factors to 1.0.
     """
     factors = np.ones(hours, dtype=float)
     by_year = _henry_hub_daily(path).get(year)
@@ -1327,12 +1336,18 @@ def gas_daily_shape_factors(
             mean = float(arr.mean())
             if mean > 0:
                 # Spread the month's trading-day quotes across its calendar
-                # days, then repeat each day's factor across its 24 hours.
+                # days, then RENORMALIZE so the calendar-day factors average to
+                # exactly 1.0 (np.interp resampling does not preserve the mean
+                # in a convex spike month — G-A1 fix), then repeat each day's
+                # factor across its 24 hours.
                 day_factor = np.interp(
                     np.linspace(0.0, 1.0, n_days),
                     np.linspace(0.0, 1.0, len(arr)),
                     arr / mean,
                 )
+                fbar = float(day_factor.mean())
+                if fbar > 0:
+                    day_factor = day_factor / fbar
                 shaped = np.repeat(day_factor, 24)[: max(0, hours - hour)]
                 factors[hour : hour + len(shaped)] = shaped
         hour += month_hours
