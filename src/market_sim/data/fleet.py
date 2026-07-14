@@ -4752,34 +4752,84 @@ def _assign_zones_proportional(
 _CC_NAMEPLATE_GUARD_TOL = 1.001
 
 
+@lru_cache(maxsize=None)
+def _cc_demonstrated_peaks(iso: str) -> dict[int, float]:
+    """Per-plant CAMPD demonstrated p999 peak (MW) from the ISO reconcile table.
+
+    Reads ``campd_p999_mw`` out of ``cc_capacity_reconcile_<ISO>.csv`` (the
+    measured artifact ``scripts/derive_cc_capacity_reconcile.py`` writes; rule
+    13 — re-derives only on CAMPD vintage change, rule 23). Keyed by plant code.
+    A missing table returns ``{}``. Every ISO reads only its own table (rule
+    24). CT-only / incomplete-CEMS plants are excluded from the table by the
+    derive, so a plant present here has a *complete* CEMS record and its peak is
+    a trustworthy capability bound. Cached: the guard runs on every fleet build.
+    """
+    from market_sim.config.paths import cc_capacity_reconcile_path
+
+    path = cc_capacity_reconcile_path(iso)
+    if not path.exists():
+        return {}
+    table = pd.read_csv(path)
+    if "campd_p999_mw" not in table.columns or "plant_code" not in table.columns:
+        return {}
+    peaks = pd.to_numeric(table["campd_p999_mw"], errors="coerce")
+    codes = pd.to_numeric(table["plant_code"], errors="coerce")
+    return {
+        int(c): float(p)
+        for c, p in zip(codes, peaks)
+        if pd.notna(c) and pd.notna(p) and p > 0.0
+    }
+
+
 def _reconcile_cc_pmax_to_nameplate(
     records: list[dict], cc_nameplate_sum: dict[int, float], iso: str
 ) -> None:
-    """Reconcile merchant-CC plants whose fleet pmax sum exceeds their nameplate.
+    """Clip merchant-CC plants whose fleet pmax sum exceeds their trusted bound.
 
     Enforces the EIA-860 schema invariant *summer capability <= nameplate* on
-    the **fleet-loaded** plant pmax sum. Where a CC_REGULAR plant's summed
-    ``pmax_mw`` (net-summer, or the loader's nameplate-fill of NaN component
-    rows) exceeds its summed EIA-860 nameplate by more than
-    :data:`_CC_NAMEPLATE_GUARD_TOL`, the corruption is component/total
-    double-filing; every one of the plant's CC_REGULAR ``pmax_mw`` values is
-    scaled by ``nameplate_sum / pmax_sum`` so the plant sum reconciles to
-    ``min(pmax_sum, nameplate_sum) = nameplate_sum``. Scaling is proportional,
-    so the intensive base heat rate (a capacity-weighted mean) is preserved.
+    the **fleet-loaded** plant pmax sum, but never below a plant's *measured*
+    capability. The trusted upper bound per CC_REGULAR plant is
+    ``max(nameplate_sum, demonstrated_peak)`` where ``demonstrated_peak`` is the
+    plant's CAMPD p999 from its ISO reconcile table (:func:`_cc_demonstrated_peaks`;
+    absent for CT-only / no-clean-CEMS plants, so those clip to nameplate). Where
+    a plant's summed ``pmax_mw`` (net-summer, or the loader's nameplate-fill of
+    NaN component rows) exceeds that bound by more than
+    :data:`_CC_NAMEPLATE_GUARD_TOL`, the excess is component/total double-filing;
+    every one of the plant's CC_REGULAR ``pmax_mw`` values is scaled by
+    ``bound / pmax_sum`` so the plant sum reconciles to the bound. Scaling is
+    proportional, so the intensive base heat rate (a capacity-weighted mean) is
+    preserved.
+
+    Using ``max(nameplate, demonstrated_peak)`` fixes the rule-13 inversion the
+    plain-nameplate clip caused: a plant whose real cold-weather CEMS peak sits
+    *above* nameplate (New Covert 55297: nameplate 1176 MW, demonstrated 1192.4
+    MW) was clipped to 1176, discarding 16 MW of measured capability that the
+    reconcile table already records. The guard now keeps it — the demonstrated
+    peak, where a *complete* CEMS record exists, is the authority; the nameplate
+    is the fallback where it is not. CT-only plants (demonstrated peak
+    understated, excluded from the table) still clip to nameplate: their peak is
+    absent, so the bound is nameplate.
 
     Acts on the FLEET-LOADED sum, not the raw EIA-860 summer sum: the
     plant-total-on-one-row pattern (Keys 60302, Camden 10751) hides behind NaN
     component rows the loader nameplate-fills, so a raw summer-sum audit misses
     it — only the fleet pmax sum exposes every instance (diagnosis
     ``docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md`` §3b, probe block 3 of
-    ``scripts/probes/_pjm_cc_netgross_bases.py``). ISO-agnostic (the corruption
-    lives in the shared EIA-860 loader). Mutates ``records`` in place; logs one
-    warning per reconciled plant naming it and the MW removed.
+    ``scripts/probes/_pjm_cc_netgross_bases.py``). ISO-agnostic in mechanism
+    (the corruption lives in the shared EIA-860 loader; each ISO reads only its
+    own peak table — rule 24). Mutates ``records`` in place; logs one warning per
+    reconciled plant naming it and the MW removed.
 
-    Rule-14/15 basis: the reconciled figure regenerates for any forward EIA-860
-    vintage and responds to re-rates — a reproducible physical bound, not a
-    residual-tuned value.
+    This is a data-integrity validator (an EIA-860 schema bound that never
+    discards measured capability), not a tunable market feature — deliberately
+    always-on and ISO-agnostic, so it is ungated. See A.4.3 of
+    ``docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md``.
+
+    Rule-14/15 basis: the clipped figure regenerates for any forward EIA-860
+    vintage and CAMPD peak and responds to re-rates — a reproducible physical
+    bound, not a residual-tuned value.
     """
+    demonstrated_peak = _cc_demonstrated_peaks(iso)
     cc_pmax: dict[int, float] = {}
     for rec in records:
         if rec["plant_group"] == "CC_REGULAR":
@@ -4787,26 +4837,39 @@ def _reconcile_cc_pmax_to_nameplate(
             cc_pmax[code] = cc_pmax.get(code, 0.0) + float(rec["pmax_mw"])
     for code, pmax_sum in cc_pmax.items():
         nameplate_sum = cc_nameplate_sum.get(code, 0.0)
-        if nameplate_sum <= 0.0 or pmax_sum <= nameplate_sum * _CC_NAMEPLATE_GUARD_TOL:
+        if nameplate_sum <= 0.0:
             continue
-        scale = nameplate_sum / pmax_sum
+        # Never clip below the plant's demonstrated CAMPD capability (rule 13):
+        # the trusted bound is max(nameplate, demonstrated_peak). Only plants
+        # over-rated beyond this — genuine double-file phantom — are clipped.
+        bound = max(nameplate_sum, demonstrated_peak.get(code, 0.0))
+        if pmax_sum <= bound * _CC_NAMEPLATE_GUARD_TOL:
+            continue
+        scale = bound / pmax_sum
         for rec in records:
             if rec["plant_group"] == "CC_REGULAR" and int(rec["plant_code"]) == code:
                 rec["pmax_mw"] = float(rec["pmax_mw"]) * scale
+        bound_kind = (
+            "demonstrated peak" if bound > nameplate_sum + 1e-6 else "nameplate"
+        )
         logger.warning(
-            "%s: CC plant %d fleet pmax sum %.1f MW exceeds EIA-860 nameplate "
-            "sum %.1f MW (corrupt summer-capacity rows) — reconciled to "
-            "nameplate (%.1f MW removed)",
+            "%s: CC plant %d fleet pmax sum %.1f MW exceeds trusted bound "
+            "%.1f MW (%s; corrupt summer-capacity rows) — reconciled "
+            "(%.1f MW removed)",
             iso,
             code,
             pmax_sum,
-            nameplate_sum,
-            pmax_sum - nameplate_sum,
+            bound,
+            bound_kind,
+            pmax_sum - bound,
         )
 
 
 def _rows_to_generators(
-    df: pd.DataFrame, iso: str, iso_config: ISOConfig | None
+    df: pd.DataFrame,
+    iso: str,
+    iso_config: ISOConfig | None,
+    apply_cc_summer_guard: bool = True,
 ) -> list[Generator]:
     """Convert a normalized generator DataFrame into :class:`Generator` objects.
 
@@ -4814,6 +4877,15 @@ def _rows_to_generators(
     (skipping wind/solar/hydro), assigned an efficiency bin by vintage, and
     given heat rate, emission, VOM and outage parameters from
     ``config/constants.py``.
+
+    ``apply_cc_summer_guard`` gates the always-on merchant-CC summer-capacity
+    guard (:func:`_reconcile_cc_pmax_to_nameplate`). It is True everywhere in
+    the model; the CC demonstrated-peak derive
+    (:func:`scripts.derive_cc_capacity_reconcile._model_cc_capacity`) passes
+    False so it measures the *raw* fleet capacity the guard clips — the guard
+    reads the derive's own table, so guarding the derive's input would make the
+    demonstrated-peak table self-referential (a plant restored to its peak would
+    then read as "at capacity" and drop from the next re-derive).
     """
     if "status" in df.columns:
         status = df["status"].astype(str).str.strip().str.upper()
@@ -4932,7 +5004,8 @@ def _rows_to_generators(
                 cc_nameplate_sum.get(plant_code, 0.0) + nameplate
             )
 
-    _reconcile_cc_pmax_to_nameplate(records, cc_nameplate_sum, iso)
+    if apply_cc_summer_guard:
+        _reconcile_cc_pmax_to_nameplate(records, cc_nameplate_sum, iso)
     zones = _assign_zones(records, iso, iso_config)
     return [
         Generator(
@@ -5043,12 +5116,14 @@ def _load_fleet_from_parquet(
     iso: str,
     iso_config: ISOConfig | None,
     year: int | None = None,
+    apply_cc_summer_guard: bool = True,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the committed EIA-860 generator parquet.
 
     The parquet holds real generators for all seven wholesale markets; rows
     are filtered to the ISO via their ``balancing_authority_code``. Returns
     ``None`` when the parquet is missing or yields no thermal generators.
+    ``apply_cc_summer_guard`` is forwarded to :func:`_rows_to_generators`.
     """
     if not parquet_path.exists():
         return None
@@ -5067,7 +5142,9 @@ def _load_fleet_from_parquet(
     df = df.copy()
     df["chp"] = df["plant_id"].map(_chp_by_plant(parquet_path.parent, year)).fillna("N")
 
-    generators = _rows_to_generators(df, iso, iso_config)
+    generators = _rows_to_generators(
+        df, iso, iso_config, apply_cc_summer_guard=apply_cc_summer_guard
+    )
     if not generators:
         logger.warning("EIA-860 parquet has no generators for %s", iso)
         return None
@@ -5143,6 +5220,7 @@ def _load_fleet_from_clean(
     iso_config: ISOConfig | None,
     data_dir: Path,
     year: int | None = None,
+    apply_cc_summer_guard: bool = True,
 ) -> list[Generator] | None:
     """Load an ISO's fleet from the curated clean ``fleet`` registry.
 
@@ -5164,7 +5242,9 @@ def _load_fleet_from_clean(
         return None
 
     normalized = _clean_fleet_to_normalized(df.copy(), data_dir, year)
-    generators = _rows_to_generators(normalized, iso, iso_config)
+    generators = _rows_to_generators(
+        normalized, iso, iso_config, apply_cc_summer_guard=apply_cc_summer_guard
+    )
     if not generators:
         logger.warning(
             "clean fleet (year %d) has no generators for %s", partition_year, iso
@@ -5276,6 +5356,7 @@ def load_fleet_from_csv(
     iso_config: ISOConfig | None = None,
     data_dir: Path | None = None,
     year: int | None = None,
+    apply_cc_summer_guard: bool = True,
 ) -> list[Generator]:
     """Load an ISO's thermal generation fleet.
 
@@ -5302,6 +5383,11 @@ def load_fleet_from_csv(
             present, gas cogens are bucketed with THAT year's EIA-860 CHP
             designation rather than the latest committed snapshot's (see
             :func:`_chp_by_plant`). ``None`` keeps the snapshot vintage.
+        apply_cc_summer_guard: When False, skip the merchant-CC summer-capacity
+            guard (:func:`_reconcile_cc_pmax_to_nameplate`). The model always
+            leaves this True; only the CC demonstrated-peak derive passes False
+            (it must see the raw, un-guarded fleet capacity — see
+            :func:`_rows_to_generators`).
 
     Returns:
         The ISO's thermal fleet as a list of :class:`Generator` objects.
@@ -5326,7 +5412,9 @@ def load_fleet_from_csv(
         # Per-ISO override CSV always wins (an explicit manual escape hatch),
         # regardless of the clean seam.
         df = _normalize_columns(pd.read_csv(csv_path))
-        generators = _rows_to_generators(df, iso, iso_config)
+        generators = _rows_to_generators(
+            df, iso, iso_config, apply_cc_summer_guard=apply_cc_summer_guard
+        )
         source = csv_path
         logger.info(
             "Loaded %s fleet from EIA-860 CSV (%d generators)",
@@ -5338,7 +5426,9 @@ def load_fleet_from_csv(
         # the raw generator parquet. ``source`` is left None so the
         # data/raw/_processed-legacy binned-fleet side cache is NOT written here
         # (the clean path must not mutate data/raw).
-        from_clean = _load_fleet_from_clean(iso, iso_config, data_dir, year)
+        from_clean = _load_fleet_from_clean(
+            iso, iso_config, data_dir, year, apply_cc_summer_guard=apply_cc_summer_guard
+        )
         if from_clean is None:
             raise FileNotFoundError(
                 f"No clean fleet generators for {iso} "
@@ -5348,7 +5438,13 @@ def load_fleet_from_csv(
         return from_clean
     else:
         parquet_path = data_dir / EIA_860_PARQUET_NAME
-        from_parquet = _load_fleet_from_parquet(parquet_path, iso, iso_config, year)
+        from_parquet = _load_fleet_from_parquet(
+            parquet_path,
+            iso,
+            iso_config,
+            year,
+            apply_cc_summer_guard=apply_cc_summer_guard,
+        )
         if from_parquet is None:
             raise FileNotFoundError(
                 f"No EIA-860 data for {iso}: expected a per-ISO override "
