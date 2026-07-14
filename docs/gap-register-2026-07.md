@@ -1,9 +1,12 @@
-# Gap register (2026-07) - G-19 (holdout data-equivalency gate)
+# Gap register (2026-07)
 
 The 2026-07 calibration cycle's gaps are tracked across the lane/prompt file
 (`docs/gap-register-2026-07-prompts.md`) and the per-gap handoffs under
-`docs/handoffs/`. This file is the owner-designated home for the **G-19** status
-- the cross-ISO holdout data-equivalency gate - recorded here as it lands.
+`docs/handoffs/`. This file carries two things: the **G-19** section below,
+the owner-designated home for the cross-ISO holdout data-equivalency gate
+status; and **§3**, newly-opened gap-register rows for structural/
+forecast-validation and capacity-accreditation findings whose own source
+docs flagged them as needing one.
 
 ## G-19 - Cross-ISO holdout data-equivalency gap register (GATE)
 
@@ -63,3 +66,29 @@ choice (reconstruct-committed vs pinned-vintage-re-derive). Separately, an
 in-sample keeper-repro drift on main (+0.22/+0.38/+0.68 $/MWh, dual-fuel tranche
 drift after `7f968f3`) stays in its own NEISO/main lane. Until owner sign-off,
 the one-shot stays HELD.
+
+## 3. Gap register — forecast entry/exit & accreditation-basis rows (2026-07-14)
+
+*Continues the "§3 Gap register" numbering from the 2026-07-05/07 comprehensive
+audit (subsections 3.1 Governance & CI, 3.2 Keeper integrity, 3.3 Holdout
+quarantine, 3.4 Structural/mechanism, 3.5 Forecast-side validation, 3.6
+External usability, 3.7 Docs-vs-code drift, 3.8 UNVERIFIED items). That content
+is preserved in git history (`02304be`) but is no longer carried in this file,
+which was narrowed to the G-19 gate above. The two subsections below are
+newly-opened rows for items their own source docs flagged as "needs a
+gap-register row" / "no dedicated gap row — should get one" — not a
+restoration of 3.1–3.8.*
+
+### 3.9 Forecast-side entry/exit structural gaps (goal B)
+
+| ID | Gap | Evidence / cross-refs | Severity | Effort | Owner / lane |
+|---|---|---|---|---|---|
+| BLK-8 | Solar new-entry = **0 GW** in BOTH the ERCOT and PJM realized hindcasts, against **25.1 GW** (ERCOT) / **13.1 GW** (PJM) actual — the single largest capacity-addition miss in either ISO's hindcast. Root cause is undiagnosed: the entry-economics stack's cost/queue/negative-price interaction has not been decomposed to isolate why the economic new-entry screen never clears a solar build, in either ISO, across all three hindcast years. | `docs/forecasting-entry-exit-assessment.md` §5 (BLK-8 row; verdict rows 6, 10, 14); `docs/hindcast-reports/ercot-2021-2025-realized-p2c-2026-07-12.md:32` (solar 25.08→0.0 GW, −100%); `docs/hindcast-reports/pjm-2021-2025-realized-2026-07-07.md:32` (solar 13.066→0.0 GW, −100%); adjacent to the G-30/G-31 ERCOT retirement-side diagnosis (same hindcast lane, `docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md`) | blocks-claim | SH — re-diagnosis needs the entry-economics stack decomposed (cost curve vs. interconnection-queue proxy vs. negative-price treatment), most likely via targeted hindcast re-solves | Forecast-validation lane (ERCOT + PJM hindcast harness); unowned — no session currently assigned |
+| BLK-9 | Fixed capacity payment clears **1.26×–4.92×** of FOM-only going-forward cost for every fossil/CCS class in every capacity-market ISO (PJM/NYISO/NEISO/MISO/CAISO) — MISO coal (1.26×) is closest to the 1.0× cliff; the assessment's headline rounds this "≥1.3× for all fossil classes." Consequence: fossil economic retirement is **arithmetically impossible** (the energy-margin term can never be the binding constraint), while nuclear is the *only* class below 1.0× (0.60×–0.82×) — inverting the retirement signal onto the one class the flat payment doesn't carry (PJM hindcast: model retires 4.1 GW nuclear, 100% false, vs. actual nuclear retirements of zero; real coal/gas_ct recall both 0%). | `docs/handoffs/capacity-revenue-fom-ratio-2026-07-13.md` (PR #2160, cross-ISO ratio table §3, answers P-3B §8.3 — pure arithmetic check, no LP solve); `docs/handoffs/equilibrium-battery-2026-07-12.md` §6 item 3 (origin hypothesis: NEISO 0 MW thermal retired / 25 yr); `docs/forecasting-entry-exit-assessment.md` §2 (verdict rows 7, 8, 11, 14). **Resolution is the CR (capacity-revenue) accreditation chain — BLK-3 + BLK-4 — never a payment haircut**: a tuned cut to `net_cone_per_kw_yr` or an ad hoc multiplier would force the ratio down with no published basis, which rule 13 forbids precisely because it has no forward analogue. | blocks-claim | S (arithmetic diagnosis — done, no LP) → SH (full closure rides BLK-3/BLK-4's accreditation-basis migration, then a `capacity_market_clearing=True` re-validation needing a full-horizon P-3A re-run per ISO) | Capacity-revenue / accreditation-basis lane (P-2B); resolution owned jointly with BLK-3/BLK-4, not a standalone fix |
+
+### 3.10 Capacity accreditation pairing audits (goal B)
+
+| ID | Gap | Evidence / cross-refs | Severity | Effort | Owner / lane |
+|---|---|---|---|---|---|
+| R5a | **NYISO ICAP/UCAP pairing audit.** NYISO's published IRM (24.4%) is stated on an **ICAP** basis, but the registry carries **no ICAP→UCAP ratio** for NYISO (unlike PJM's FPR/(1+IRM) or MISO's (1+PRM_UCAP)/(1+PRM_ICAP) conversions) — so today's pairing tests an ICAP-stated requirement against the model's UCAP-counted supply ledger ((1−EFORd), which otherwise already matches NYISO's own UCAP construction — the requirement is the broken half). Same basis-mismatch error class as the PJM #1532 flag, but in the **opposite direction**: position understated ~5–7%, over-pays. Blocks NYISO curve eligibility (anchor 50.55 $/kW-yr, published ARV) until the published IRM→UCAP translation is intaken — no touching the pairing without that citation (rule 13). | `docs/handoffs/accreditation-basis-memo-2026-07-12.md` §2(a) table (NYISO row), §4.3 item R5, §6 Option A (recommended); parent issue #1532; resolution shares BLK-3/BLK-4's chain | blocks-claim | M — published-parameter filing search + citation, no LP (same discipline as the PJM R1–R4 steps) | P-2B accreditation-basis lane; unassigned — P-2A separately already blocks NYISO on curve vintage |
+| R5b | **NEISO qualified-capacity pairing audit.** NEISO's requirement is stated on a **Net ICR** basis against **qualified capacity** (≈ seasonal claimed capability with **no EFORd derate** — ISO-NE prices outage/availability risk separately, through Pay-for-Performance) — a third accreditation convention distinct from PJM's ELCC-class and MISO/NYISO's EFORd-flavored bases. The model's B2 supply ledger ((1−EFORd) thermal) likely **under-counts** relative to ISO-NE's own qualified-capacity ledger, since it derates for an outage risk that FCA's PFP construct already prices elsewhere. Needs the FCA qualified-capacity definition intaken and reconciled against the model's ledger before NEISO's curve (anchor 108.94 $/kW-yr, published FCA18) is curve-eligible. | `docs/handoffs/accreditation-basis-memo-2026-07-12.md` §2(a) table (NEISO row), §4.3 item R5, §6 Option A (recommended); parent issue #1532; resolution shares BLK-3/BLK-4's chain | blocks-claim | M — FCA qualified-capacity filing search + citation, no LP | P-2B accreditation-basis lane; unassigned |
