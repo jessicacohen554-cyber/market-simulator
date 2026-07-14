@@ -704,6 +704,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 config,
                 iso,
                 peak_demand,
+                year,
             )
 
         if fleet is None:
