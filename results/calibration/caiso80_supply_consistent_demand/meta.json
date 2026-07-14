@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-13T04:20:45",
+  "timestamp": "2026-07-13T06:47:05",
   "iso": "CAISO",
   "years": [
     2023,
@@ -127,10 +127,13 @@
   "temp_dependent_derate": true,
   "ercot_offer_surface_conditional": false,
   "ercot_offer_surface_lowcurve": false,
+  "ercot_offer_surface_lowcurve_floorscoped": false,
+  "wind_ptc_vintage_offers": false,
   "neiso_offer_surface_conditional": false,
   "pjm_offer_surface_conditional": false,
   "pjm_da_virtual_bids": false,
   "pjm_offer_midcurve_conditional": false,
+  "pjm_offer_midcurve_segments": null,
   "ercot_nuclear_unit_availability": false,
   "ercot_thermal_dam_availability": false,
   "ercot_online_capacity_envelope_measured": false,
@@ -221,6 +224,6 @@
     "eia923": "../_shared/CAISO/eia923-cd564d46cbf9.parquet",
     "campd": "../_shared/CAISO/campd-cceb6c13d8f9.parquet"
   },
-  "git_sha": "6ea3e8c",
-  "highspy_version": "1.15.1"
+  "git_sha": "28d6112",
+  "highspy_version": "1.14.0"
 }

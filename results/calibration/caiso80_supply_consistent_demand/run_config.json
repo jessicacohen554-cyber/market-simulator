@@ -1,15 +1,13 @@
 {
-  "timestamp": "2026-07-13T04:20:45",
+  "timestamp": "2026-07-14T06:47:05",
   "git": {
-    "sha": "6ea3e8c",
-    "branch": "claude/caiso-80-c3a-decomposition-fm9460",
-    "dirty": true,
-    "changed_files": [
-      "cripts/run_calibration_full.py"
-    ],
-    "diffstat": "scripts/run_calibration_full.py | 50 ++++++++++++++++++++++++-----------------\n 1 file changed, 30 insertions(+), 20 deletions(-)"
+    "sha": "28d6112",
+    "branch": "claude/caiso-ga1-gasshape-resolve-99jni9",
+    "dirty": false,
+    "changed_files": [],
+    "diffstat": ""
   },
-  "model_changes_note": "caiso-80 supply-consistent honest demand main -- caiso-78 keeper recipe + caiso_supply_consistent_demand=True (owner-signed Option A, FINDING-caiso80-demand-basis-wedge-2026-07-13), 2023-2025",
+  "model_changes_note": "caiso-80 supply-consistent honest demand main -- caiso-78 keeper recipe + caiso_supply_consistent_demand=True (owner-signed Option A, FINDING-caiso80-demand-basis-wedge-2026-07-13), 2023-2025 -- re-solved 2026-07-14 on G-A1-fixed gas_daily_shape (calendar-day factors renormalized to mean 1.0; verdict unchanged, NOT-YET)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "CAISO",
@@ -64,7 +62,7 @@
     "ercot_dam_as_scarcity_threshold": 150.0,
     "temp_dependent_derate": true,
     "nyiso_dynamic_reserve_requirements": null,
-    "git_sha": "6ea3e8c"
+    "git_sha": "28d6112"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -179,19 +177,19 @@
     "ccs_retrofit_min_remaining_life": 15,
     "heat_rate_bin_count": null,
     "use_campd_bins": true,
-    "campd_bins_path": "/home/runner/work/market-simulator/market-simulator/data/raw/reference/custom-bin-assignments.csv",
-    "plant_registry_path": "/home/runner/work/market-simulator/market-simulator/data/raw/reference/master-plant-registry.csv",
+    "campd_bins_path": "/home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv",
+    "plant_registry_path": "/home/user/market-simulator/data/raw/reference/master-plant-registry.csv",
     "cod_ramp_enabled": true,
     "eia860_vintage_year": null,
     "historic_outage_overlay": false,
     "plant_tranche_config_path": null,
     "unknown_zone_default": "South_Central",
     "use_plant_emission_rates": true,
-    "plant_emission_rates_path": "/home/runner/work/market-simulator/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
+    "plant_emission_rates_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates.parquet",
     "use_plant_emission_rates_v2": true,
-    "plant_emission_rates_v2_path": "/home/runner/work/market-simulator/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
+    "plant_emission_rates_v2_path": "/home/user/market-simulator/data/raw/_processed-legacy/plant_emission_rates_v2.parquet",
     "control_retrofit_forward": false,
-    "control_retrofit_path": "/home/runner/work/market-simulator/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
+    "control_retrofit_path": "/home/user/market-simulator/data/raw/eia-860/eia860_enviro_assoc_emissions_control_equipment.parquet",
     "cc_peak_hr_penalty": 1.15,
     "ct_peak_hr_penalty": 1.1,
     "cc_committed_hr_mult": 1.23,
@@ -359,6 +357,7 @@
     "ercot_storage_as_duration_gate": false,
     "negative_renewable_offers": true,
     "renewable_keep_running_value": 20.0,
+    "wind_ptc_vintage_offers": false,
     "caiso_solar_deliverability": true,
     "caiso_solar_deliverability_k": 0.15,
     "caiso_solar_deliverability_floor": 0.5,
@@ -419,6 +418,8 @@
     "gas_st_wefor_base_override": null,
     "coal_sync_srmc_tranche": false,
     "coal_econ_srmc_bound": false,
+    "coal_bit_committed_takeorpay": false,
+    "coal_committed_takeorpay_all": false,
     "coal_lignite_passthrough_sigmoid": false,
     "coal_lignite_passthrough_floor": null,
     "coal_lignite_passthrough_ceil": null,
@@ -471,6 +472,7 @@
     "ercot_gas_bridge_min_load_frac": 0.574,
     "ercot_gas_bridge_startup": true,
     "ercot_gas_bridge_da_horizon": true,
+    "ercot_offer_surface_lowcurve_floorscoped": false,
     "ercot_nuclear_unit_availability": false,
     "ercot_thermal_dam_availability": false,
     "neiso_offer_surface_conditional": false,
@@ -495,6 +497,7 @@
     "pjm_da_virtual_surface_path": null,
     "pjm_offer_midcurve_conditional": false,
     "pjm_offer_midcurve_path": null,
+    "pjm_offer_midcurve_segments": null,
     "cc_committed_hr_override": null,
     "cc_econ_hr_override": null,
     "cc_peak_hr_override": null,
@@ -502,7 +505,7 @@
     "cc_mustrun_per_plant": false,
     "st_gas_mustrun_per_plant": false,
     "cc_capacity_reconcile": false,
-    "cc_capacity_reconcile_path": "/home/runner/work/market-simulator/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
+    "cc_capacity_reconcile_path": "/home/user/market-simulator/data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv",
     "cc_peaking_per_plant": true,
     "cc_duct_peaking": true,
     "cc_duct_peaking_cap_pct": null,
@@ -643,6 +646,7 @@
     "gas_plant_monthly_fuel_pricing": true,
     "nearby_fuel_price_fallback": true,
     "nearby_fuel_price_min_state_plants": 2,
+    "class_aware_fuel_price_fallback": false,
     "plant_level_fleet": true,
     "gas_offer_curve": false,
     "pumped_storage_dispatch_adder": null,
@@ -677,6 +681,7 @@
     "dual_fuel_oil_reattribution": false,
     "dual_fuel_switching": false,
     "outage_source": "historic",
+    "unit_outage_short_windows": false,
     "gas_price_override": 2.54
   }
 }
