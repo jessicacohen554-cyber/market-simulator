@@ -881,6 +881,45 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "artifact refresh)",
             )
         )
+    if sc.get("coal_committed_takeorpay_regulated"):
+        # Regulated/self-committed coal committed-band take-or-pay pricing,
+        # ZERO fitted scalars: the _committed tranche of a coal plant in the
+        # conduct scope (EIA-860 Regulatory Status RE UNION > 0.5 Schedule-4
+        # cost-of-service ownership x utility Entity Type) passes
+        # (1 - contract_share) of its own measured EIA-923 Schedule-5 fuel —
+        # the identical sunk-contract rule the _mustrun band already uses.
+        # Replaces the rank-scoped coal_bit_committed_takeorpay (rule 19
+        # reconcile); a pricing bid, not a floor (rule 17/18: no min-gen row).
+        out.append(
+            _entry(
+                "coal_committed_takeorpay_regulated (regulated/self-committed "
+                "coal committed-band take-or-pay pricing)",
+                "fleet.campd_tranche_fuel_frac committed_takeorpay_regulated "
+                "branch; scope = fleet.eia860_selfcommit_scope_plants "
+                "(EIA-860 Regulatory Status RE UNION > 0.5 Schedule-4 "
+                "cost-of-service ownership x utility Entity Type I/M/C/P/S/F); "
+                "committed tranche passes (1 - contract_share) of measured "
+                "EIA-923 Schedule-5 fuel, bounded below by any supply "
+                "passthrough",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="MISO SOM Table 7 regulated-utility coal conduct split "
+                "(regulated self-commit 56%/53% must-run 2023/2024 vs merchant "
+                "93%/74% offered economically; "
+                "som-competitive-conduct/som_competitive_conduct.csv) + EIA-860 "
+                "Regulatory Status RE set and Schedule-4 ownership x utility "
+                "Entity Type (eia860_plant.parquet) + EIA-923 Schedule-5 "
+                "take-or-pay shares (coal_takeorpay_MISO.csv) + CAMPD committed "
+                "tranches (docs/handoffs/miso-coal-conduct-design-2026-07.md)",
+                root_cause="replaces the rank-scoped coal_bit_committed_takeorpay "
+                "(rule 19 reconcile — RE-BIT covered identically, NR-BIT "
+                "merchants revert to the economic offers the SOM measures); "
+                "re-derives only on a new EIA-860 vintage (RE UNION COS set), a "
+                "new EIA-923 Schedule-5 vintage (shares), or a new SOM "
+                "publication (conduct citation) — never a residual (rule 23)",
+            )
+        )
     if sc.get("st_gas_mustrun_per_plant"):
         # ST_GAS local-reliability commitment floor, ZERO fitted scalars:
         # each plant's measured committed tranche (thermal_tranches_<ISO>.csv
