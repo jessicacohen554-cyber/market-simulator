@@ -1,6 +1,6 @@
 {
  "schema": "legitimacy-diagnostics/v1",
- "bundle": "/home/runner/work/market-simulator/market-simulator/results/calibration/nyiso62_cc_hr_regate",
+ "bundle": "/home/user/market-simulator/results/calibration/nyiso62_cc_hr_regate",
  "iso": "NYISO",
  "years": [
   2023,
@@ -354,7 +354,7 @@
      "class_total_twh": 33.439,
      "forced_share": 0.0002,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.4745,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -366,7 +366,7 @@
      "class_total_twh": 1.3547,
      "forced_share": 0.6566,
      "limit": 0.15,
-     "load_share": null,
+     "load_share": 0.0268,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -378,7 +378,7 @@
      "class_total_twh": 10.7133,
      "forced_share": 0.2856,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.169,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -390,7 +390,7 @@
      "class_total_twh": 27.4231,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.3891,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -402,7 +402,7 @@
      "class_total_twh": 35.1299,
      "forced_share": 0.0002,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.4469,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -414,7 +414,7 @@
      "class_total_twh": 1.0599,
      "forced_share": 0.8965,
      "limit": 0.15,
-     "load_share": null,
+     "load_share": 0.0224,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -426,7 +426,7 @@
      "class_total_twh": 11.5556,
      "forced_share": 0.3961,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.1753,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -438,7 +438,7 @@
      "class_total_twh": 27.8499,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.3543,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -450,7 +450,7 @@
      "class_total_twh": 34.583,
      "forced_share": 0.0002,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.3926,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -462,7 +462,7 @@
      "class_total_twh": 1.2824,
      "forced_share": 0.7071,
      "limit": 0.15,
-     "load_share": null,
+     "load_share": 0.0252,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -474,7 +474,7 @@
      "class_total_twh": 14.3767,
      "forced_share": 0.314,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.1965,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "FAIL"
@@ -486,7 +486,7 @@
      "class_total_twh": 21.0482,
      "forced_share": 0.0,
      "limit": 0.3,
-     "load_share": null,
+     "load_share": 0.2389,
      "immaterial": false,
      "lower_bound": true,
      "verdict": "pass"
@@ -500,9 +500,9 @@
     "2025 ST_GAS: forced share 31.4% > 30% (4.51 of 14.38 TWh at binding non-exempt floors)"
    ],
    "notes": [
-    "2023: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
-    "2024: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
-    "2025: floors reconstructed via run_year(fleet_only=True) \u2014 the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
+    "2023: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+    "2024: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds.",
+    "2025: floors reconstructed via run_year(fleet_only=True) — the P2 RA must-offer bridge floor (needs the P1 solution) is NOT included, so CC/CT forced shares are lower bounds."
    ]
   },
   "D4": {
@@ -511,7 +511,7 @@
    "rows": [
     {
      "year": 2023,
-     "floor": "reliability_floor \u00d7 CT_PEAKER",
+     "floor": "reliability_floor × CT_PEAKER",
      "window": "h14-21",
      "floored_twh": 0.8895,
      "offwindow_twh": 0.0,
@@ -520,7 +520,7 @@
     },
     {
      "year": 2023,
-     "floor": "reliability_floor \u00d7 ST_GAS",
+     "floor": "reliability_floor × ST_GAS",
      "window": "h0-23",
      "floored_twh": 3.0592,
      "offwindow_twh": 0.0,
@@ -529,7 +529,7 @@
     },
     {
      "year": 2024,
-     "floor": "reliability_floor \u00d7 CT_PEAKER",
+     "floor": "reliability_floor × CT_PEAKER",
      "window": "h14-21",
      "floored_twh": 0.9502,
      "offwindow_twh": 0.0,
@@ -538,7 +538,7 @@
     },
     {
      "year": 2024,
-     "floor": "reliability_floor \u00d7 ST_GAS",
+     "floor": "reliability_floor × ST_GAS",
      "window": "h0-23",
      "floored_twh": 4.5767,
      "offwindow_twh": 0.0,
@@ -547,7 +547,7 @@
     },
     {
      "year": 2025,
-     "floor": "reliability_floor \u00d7 CT_PEAKER",
+     "floor": "reliability_floor × CT_PEAKER",
      "window": "h14-21",
      "floored_twh": 0.9068,
      "offwindow_twh": 0.0,
@@ -556,7 +556,7 @@
     },
     {
      "year": 2025,
-     "floor": "reliability_floor \u00d7 ST_GAS",
+     "floor": "reliability_floor × ST_GAS",
      "window": "h0-23",
      "floored_twh": 4.5136,
      "offwindow_twh": 0.0,
@@ -597,7 +597,7 @@
      "mechanism": "planned_additions_pipeline",
      "difference": "forecast-only",
      "declared_overlay": true,
-     "note": "EIA-860 construction-committed pipeline \u2014 the declared forecast complement of the backcast fleet boundary",
+     "note": "EIA-860 construction-committed pipeline — the declared forecast complement of the backcast fleet boundary",
      "verdict": "declared"
     },
     {
@@ -653,7 +653,7 @@
      "mechanism": "nyiso_local_selfsupply",
      "difference": "backcast-only",
      "declared_overlay": false,
-     "note": "LMIC market-design rule \u2014 mode-independent by intent",
+     "note": "LMIC market-design rule — mode-independent by intent",
      "verdict": "FAIL"
     }
    ],

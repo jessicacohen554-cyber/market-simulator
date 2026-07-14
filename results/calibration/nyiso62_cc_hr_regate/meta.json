@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-13T16:53:28",
+  "timestamp": "2026-07-13T06:47:38",
   "iso": "NYISO",
   "years": [
     2023,
@@ -126,6 +126,7 @@
   "ercot_offer_surface_conditional": false,
   "ercot_offer_surface_lowcurve": false,
   "ercot_offer_surface_lowcurve_floorscoped": false,
+  "wind_ptc_vintage_offers": false,
   "neiso_offer_surface_conditional": false,
   "pjm_offer_surface_conditional": false,
   "pjm_da_virtual_bids": false,
@@ -221,6 +222,6 @@
     "eia923": "../_shared/NYISO/eia923-465c3e2cf4a5.parquet",
     "campd": "../_shared/NYISO/campd-bd2b1674776e.parquet"
   },
-  "git_sha": "1b87ef0",
-  "highspy_version": "1.15.1"
+  "git_sha": "28d6112",
+  "highspy_version": "1.14.0"
 }
