@@ -1,0 +1,8 @@
+plant_code,plant_name,current_mw,campd_p999_mw,eia860_winter_mw,reconciled_mw,delta_pct,source,mode
+260,Dynegy Moss Landing Power Plant Hybrid,1398.0,1017.9,1470.0,1017.9,-27.2,campd_demonstrated_peak,cap
+55345,Otay Mesa Generating Project,710.7,600.6,602.5,600.6,-15.5,campd_demonstrated_peak,cap
+55151,La Paloma Generating Plant,1156.0,985.7,1066.0,985.7,-14.7,campd_demonstrated_peak,cap
+55182,Sunrise Power LLC,685.2,587.9,608.0,587.9,-14.2,campd_demonstrated_peak,cap
+56532,Colusa Generating Station,712.4,633.8,668.0,633.8,-11.0,campd_demonstrated_peak,cap
+55518,High Desert Power Plant,960.0,854.1,942.5,854.1,-11.0,campd_demonstrated_peak,cap
+358,Mountainview Generating Station,1036.8,1107.6,1110.0,1107.6,6.8,campd_demonstrated_peak,raise
