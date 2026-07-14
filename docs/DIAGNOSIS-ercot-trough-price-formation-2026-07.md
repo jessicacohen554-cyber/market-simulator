@@ -406,3 +406,95 @@ recipe) — the epoch COUNT and its propagation to the load-weighted hubs is
 that lane's topology question. Chartered as ERCOT-65: probe (i) on the
 keeper, with (ii) as its enabling co-lane; no offer parameter may be tuned
 to the C3c scarcity tail (separately open, G-22 ledger).
+
+## 9. ERCOT-65: the negative-price epoch pair adjudicated — BOTH §8 premises measured wrong; the vintage scoping built and probe-inert; the wtx driver discovered ALREADY LIVE in the keeper (recorder defect, fixed); the trough/spread lane is AT FRONTIER pending the West topology split
+
+Probes (rule-16 2023-only throwaways vs the byte-faithful ercot63-gas-bridge
+reconstruction — C3a +3.1 %, C3b 0.131, C3c 171 h, spread $14.9, storage
+0.74 TWh reproduced exactly; `_ercot65_ladder_probe.py`, scored with
+`_ercot65_epoch_anatomy.py` + the h<$0 band added to
+`_ercot62_lowcurve_analyze.py`; bundles deleted).
+
+**Premise correction 1 — the model's wind offer was never $0.** §8 asserted
+"renewable MC = 0 … the deepest RT epochs are UNREPRESENTABLE". Measured
+false: every ERCOT backcast prices wind at the FLAT ``-ira_ptc_wind =
+-$26/MWh`` on every MW (`policy.ira.compute_dispatch_credits`;
+`negative_renewable_offers=False` only disables the separate CAISO REC-floor
+mechanism). The keeper's 2,651 "wind-marginal epochs (dual <= $0.01)" sit AT
+-$26.00, not $0 — and they are PANHANDLE-ONLY: 2,577 h < $0 in Panhandle,
+zero in every other zone (West included: min $0.00), epoch breadth mean 1.02
+zones. The LW price never goes negative because the epochs never leave the
+one bottled zone; in RT's 147 negative lw-hours the model prices median
+$13.99 (never < $0, never even wind-marginal outside Panhandle). Negative
+prices are fully REPRESENTABLE; what is missing is the SYSTEM-LONG /
+West-bottled state, not the bid.
+
+**Premise correction 2 — the WP-B curtailment driver is ALREADY LIVE in the
+keeper.** The "built but NOT in the keeper recipe" belief (§8, the ERCOT-65
+charter, and every entry since ercot-53) traces to a run_config recorder
+defect: `run_year` applies the generic ``prb_overrides`` channel LAST, and
+the keeper-lineage metas carry ``coal_prb_sigmoid_overrides.
+ercot_wtx_curtailment_driver: true`` (the owner's 2026-07-07 backcast
+default-ON), which stomps the meta-writer's coerced top-level ``False``
+kwarg — so every solve since ercot42's promotion has had the West/Panhandle
+VRE ceiling ACTIVE (probe logs print "West/Panhandle VRE ceiling active";
+keeper wind dispatch/potential mean 0.949 ≈ the ceiling mean 0.9488) while
+`run_calibration_full`'s recorder applied its late tri-state re-override in
+the OPPOSITE order and wrote ``driver: false`` into run_config.json. Five
+sibling keys in the same overrides dict (drag, zonal-gas, reserve-forward…)
+record truthfully; the wtx boolean was the single divergent key. FIXED this
+session (recorder now mirrors the live order and warns loudly on channel
+conflicts, live path warns symmetrically); the keeper + ablation-twin
+``run_config.json`` corrected to what actually ran (annotated
+``_record_corrections``), and the keeper DOF ledger gains the depth pair
+(wind 0.1004 / solar 0.1637) it had silently omitted — the one
+outcome-anchored DOF, owner-accepted 2026-07-07. Solves untouched. The
+"wtx composition" rung is accordingly BYTE-IDENTICAL to the keeper (price
+max |Δ| 0.0, wind/solar annual Δ 0.000 TWh): there is nothing to compose —
+the co-lane's driver leg is vacuous, and the [3e] under-curtailment /
+zero-negative-reach gap measured here is the gap WITH the driver on.
+
+**The build — `wind_ptc_vintage_offers` (the §8 lever (i), correctly
+scoped) — is real structure and probe-INERT.** The flat -$26 pays the PTC
+to vintages whose 10-year §45 window expired (27/32/40 % of TX wind
+nameplate in 2023/24/25 — EIA-860 vintages; in reality they bid ~$0). The
+mechanism replaces the flat offer with ``-PTC_statutory(year) x
+eligible_share[zone, month]`` (statutory $28/29/30 for 2023-25, IRS
+notices; measured EIA-860 share, month-precise aging, rule-13
+forward-native; solar stays $0 — ITC, and the CAISO $20 REC value is
+rule-25 CAISO-scoped). Probe verdict: per-unit dispatch max |Δ| = 0.0 MWh
+— the wind bid's LEVEL never changes dispatch while wind runs at/below its
+bound with every alternative supply more expensive — and the ONLY price
+movement is the Panhandle epoch dual -26.00 → -27.03 (its fleet is 96.5 %
+in-window; $1.03 deeper, load-weighted invisible). West's structurally
+distinct blend (-$14.8, 52.8 % eligible — the old CREZ fleet) never prices
+because West wind is NEVER marginal (the §8/step-2 relief valve). Every C3
+score, trough band, spread, arb-day, storage and slack/dump metric is
+identical to the keeper. Verdict: correct structure, kept in the codebase
+default-off as the recorded closure (zero fitted scalars, unit-tested,
+D-5 forecast parity); REFUTED as a trough-depth lever in the current
+topology — the marginal-bid depth is not the binding constraint.
+
+**Lane adjudication — AT FRONTIER (offer side closed; the remaining lever
+is structural and owner-gated).** The trough/spread family's admissible
+enumeration is now exhausted on record: the LSL/lower-tail price side
+closed at ERCOT-64 (§8); the negative-band offer side closes here (the
+PTC bid was already present at full depth; its honest vintage scoping is
+dispatch-inert and price-inert outside a $1 one-zone shift; a deeper
+uniform bid has no admissible basis, and the CAISO REC value is
+rule-25-barred). What separates the model's 9 lw-hours < $1 from RT's 147
+negative lw-hours is epoch FORMATION and REACH: reality's negative epochs
+are system-long or broadly-bottled states the 8-zone reduction cannot
+enter — its West→North 7,300 MW relief valve exports the West surplus
+(West wind is never curtailed-marginal) and its Panhandle epochs stay
+demand-weighted-invisible. The one named forward-admissible mechanism is
+the **West/Panhandle topology split** (step-2 handoff §"recommended next
+step" option 1: represent the chronically-binding nodal paths the
+reduction collapses), a structural `iso_configs`/`constants` change
+requiring owner sign-off — the WP-B ceiling (option 2, already live)
+fixes the curtailment VOLUME but, as a bound on the wind variable itself,
+can never price an epoch (a ceiling-clipped variable is not marginal; the
+ERCOT-64 pinned-variable anatomy, mirrored). Frontier block drafted in
+the 2026-07-13 calibration-log entry for owner sign-off; keeper
+`2026-07-12-ercot63-gas-bridge` unchanged. The C3c scarcity tail stays
+the separate open G-22 item (rule 13).

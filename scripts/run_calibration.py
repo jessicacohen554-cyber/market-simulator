@@ -481,6 +481,7 @@ def run_year(
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
+    wind_ptc_vintage_offers: bool = False,
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
@@ -730,6 +731,12 @@ def run_year(
         # note). Requires the bridge and excludes the tranche-wide v2 —
         # enforced loud at pipeline.commitment.build_ercot_gas_bridge_p1_preps.
         config = config.with_overrides(ercot_offer_surface_lowcurve_floorscoped=True)
+    if wind_ptc_vintage_offers:
+        # ERCOT-65 PTC vintage scoping: replace the flat -ira_ptc_wind wind
+        # dispatch offer with the per-zone-month measured-vintage blend
+        # (ScenarioConfig field docstring has the full provenance /
+        # adjudication note). ISO-agnostic; applied at the wind_mc seam.
+        config = config.with_overrides(wind_ptc_vintage_offers=True)
     if ercot_nuclear_unit_availability:
         # Window-grain nuclear refuel availability (measured 60-Day DAM
         # disclosure daily series; ScenarioConfig field docstring has the full
@@ -1140,6 +1147,31 @@ def run_year(
     # Per-run PRB passthrough sigmoid floor/ceiling tune (run_calibration_full
     # --prb-* flags); None entries leave the ScenarioConfig default in place.
     if prb_overrides:
+        # ERCOT-65 discovery: this generic channel is applied LAST, so a key
+        # it carries stomps any explicit tri-state kwarg handled above (the
+        # keeper-lineage metas carry ercot_wtx_curtailment_driver=true here
+        # while the meta-writer's coerced top-level ``False`` rode the
+        # kwarg — the live solve has ALWAYS taken the prb value). Surface the
+        # conflict loudly instead of silently double-governing (rule 24).
+        for _k in (
+            "ercot_wtx_curtailment_driver",
+            "ercot_wtx_curtail_depth_wind",
+            "ercot_wtx_curtail_depth_solar",
+        ):
+            _prb_v = prb_overrides.get(_k)
+            if (
+                _prb_v is not None
+                and _k in _wtx_overrides
+                and (_prb_v != _wtx_overrides[_k])
+            ):
+                logger.warning(
+                    "%s: explicit kwarg %r is stomped by prb_overrides %r "
+                    "(this channel applies last) — the LP solves with the "
+                    "prb value. Pass the driver through ONE channel.",
+                    _k,
+                    _wtx_overrides[_k],
+                    _prb_v,
+                )
         config = config.with_overrides(
             **{k: v for k, v in prb_overrides.items() if v is not None}
         )
@@ -2593,6 +2625,21 @@ def run_year(
         )
     carbon_price = resolve_carbon_price(config, year)
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
+    if getattr(config, "wind_ptc_vintage_offers", False):
+        # ERCOT-65 PTC vintage scoping: the flat -ira_ptc_wind offer becomes
+        # the per-zone-month measured EIA-860 vintage blend
+        # -PTC_statutory(year) x eligible_share[z, month] (policy.ira.
+        # wind_ptc_vintage_dispatch_offer; full adjudication at the
+        # ScenarioConfig field). Enters BOTH P0 and P1 — it is the unit's
+        # cost-basis bid, exactly like the flat credit it replaces. Falls
+        # back to the flat offer when the share data is unavailable.
+        from market_sim.policy.ira import wind_ptc_vintage_dispatch_offer
+
+        _vintage_wind_mc = wind_ptc_vintage_dispatch_offer(
+            iso, year, zone_names, config, hours
+        )
+        if _vintage_wind_mc is not None:
+            wind_mc = _vintage_wind_mc
     # Base marginal cost: fuel + VOM + carbon + NOx, then exogenous EACs,
     # then the coal take-or-pay tranche discount. No startup-cost markup.
     mc_base = assemble_mc(fleet_arrays, fuel_prices, carbon_price, config.nox_price)

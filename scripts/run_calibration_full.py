@@ -2539,6 +2539,7 @@ def solve_and_persist(
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
+    wind_ptc_vintage_offers: bool = False,
     neiso_offer_surface_conditional: bool = False,
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
@@ -2787,6 +2788,9 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_offer_surface_lowcurve_floorscoped=True
             )
+        if wind_ptc_vintage_offers:
+            # Same rule-25 mirror for the ERCOT-65 PTC vintage scoping.
+            recorded_cfg = recorded_cfg.with_overrides(wind_ptc_vintage_offers=True)
         # Coal sigmoid flags mirror run_year exactly — run_config.json must
         # record the same enables/params the LP solved with (the prb sigmoid +
         # tiered flags, outage_source, coal_drop_pof, the per-plant must-run and
@@ -3127,7 +3131,37 @@ def solve_and_persist(
                 ercot_wtx_curtail_depth_solar
             )
         if _wtx_over:
-            recorded_cfg = recorded_cfg.with_overrides(**_wtx_over)
+            # RECORD FIDELITY (ERCOT-65 discovery): run_year applies its
+            # tri-state _wtx_overrides BEFORE prb_overrides, so when the generic
+            # prb_overrides channel carries an ercot_wtx_* key (the keeper-lineage
+            # metas do — ``coal_prb_sigmoid_overrides.ercot_wtx_curtailment_driver:
+            # true``), the prb value is what the LP actually solves with. This
+            # recorder used to apply _wtx_over AFTER prb_overrides, so an explicit
+            # kwarg (e.g. the meta-writer's coerced ``False``) overwrote the
+            # recorded value while the live solve kept the prb one — run_config.json
+            # said driver-off while every solve in the ercot42+ lineage had it ON.
+            # Mirror the live order exactly: the prb channel wins the record too,
+            # and the conflict is surfaced loudly instead of silently mis-recorded.
+            _wtx_prb_conflicts = {
+                k: (prb_overrides or {}).get(k)
+                for k in _wtx_over
+                if (prb_overrides or {}).get(k) is not None
+                and (prb_overrides or {}).get(k) != _wtx_over[k]
+            }
+            if _wtx_prb_conflicts:
+                logger.warning(
+                    "ercot_wtx_* channel conflict: explicit kwargs %s are stomped "
+                    "by prb_overrides %s in the LIVE solve (run_year applies "
+                    "prb_overrides last); recording the prb values. Pass the "
+                    "driver through ONE channel.",
+                    _wtx_over,
+                    _wtx_prb_conflicts,
+                )
+                _wtx_over = {
+                    k: v for k, v in _wtx_over.items() if k not in _wtx_prb_conflicts
+                }
+            if _wtx_over:
+                recorded_cfg = recorded_cfg.with_overrides(**_wtx_over)
         if mass_cap_enabled:
             # G-29 wiring: mirrors run_calibration.py::run_year's own
             # mass_cap_enabled block so a mass-cap-enabled backcast config is
@@ -3627,6 +3661,7 @@ def solve_and_persist(
             ercot_offer_surface_lowcurve_floorscoped=(
                 ercot_offer_surface_lowcurve_floorscoped
             ),
+            wind_ptc_vintage_offers=wind_ptc_vintage_offers,
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
             pjm_offer_surface_conditional=pjm_offer_surface_conditional,
             pjm_da_virtual_bids=pjm_da_virtual_bids,
@@ -4035,6 +4070,7 @@ def solve_and_persist(
         "ercot_offer_surface_lowcurve_floorscoped": (
             ercot_offer_surface_lowcurve_floorscoped
         ),
+        "wind_ptc_vintage_offers": wind_ptc_vintage_offers,
         "neiso_offer_surface_conditional": neiso_offer_surface_conditional,
         "pjm_offer_surface_conditional": pjm_offer_surface_conditional,
         "pjm_da_virtual_bids": pjm_da_virtual_bids,
@@ -7676,6 +7712,18 @@ def main() -> None:
         "forces it off (e.g. a baseline probe).",
     )
     parser.add_argument(
+        "--wind-ptc-vintage-offers",
+        action="store_true",
+        help="ERCOT-65 PTC vintage scoping: replace the flat -ira_ptc_wind "
+        "wind dispatch offer with the per-zone-month measured EIA-860 "
+        "vintage blend -PTC_statutory(year) x eligible_share[z, month] "
+        "(only vintages inside their 10-year federal section-45 window "
+        "carry the credit; expired vintages bid ~$0). ISO-agnostic "
+        "mechanism, probed on ERCOT; default off (byte-identical). Full "
+        "adjudication at the ScenarioConfig.wind_ptc_vintage_offers "
+        "field docstring.",
+    )
+    parser.add_argument(
         "--caiso-gas-commitment-floor",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -8935,6 +8983,7 @@ def main() -> None:
         interchange_shaping_export_only=args.interchange_shaping_export_only,
         reference_price_interface=reference_price_interface,
         negative_renewable_offers=args.negative_renewable_offers,
+        wind_ptc_vintage_offers=args.wind_ptc_vintage_offers,
         caiso_gas_commitment_floor=args.caiso_gas_commitment_floor,
         caiso_gas_floor_frac=args.caiso_gas_floor_frac,
         caiso_ra_mustoffer=args.caiso_ra_mustoffer,
