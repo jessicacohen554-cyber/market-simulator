@@ -758,20 +758,23 @@ NARRATIVE: dict[str, dict[str, str]] = {
     "capacity-market-elcc": {
         "summary": (
             "Published Effective Load Carrying Capability / capacity-"
-            "accreditation ratings for wind/solar/storage resource classes, "
-            "by study vintage and — where an ISO publishes a genuine "
+            "accreditation ratings for wind/solar/storage — and, since PJM's "
+            "2025/26 CIFP reform extended ELCC class ratings to thermal, "
+            "thermal (nuclear, coal, gas CC/CT, diesel, steam) — resource "
+            "classes, by study vintage and — where an ISO publishes a genuine "
             "marginal-ELCC study — installed-penetration level. The CR-3.1 "
             "input that will replace the flat `RENEWABLE_CAPACITY_CREDIT` "
-            "wind/solar constants."
+            "wind/solar constants, and the supply-basis-extension input for "
+            "the accreditation-basis adjudication (R3)."
         ),
         "reconciles": (
-            "PJM ELCC Class Ratings (single current-fleet point per class), "
-            "MISO wind/solar marginal ELCC by penetration (Accreditation "
-            "Reform — the strongest public multi-point curve), NYISO ICAP/"
-            "UCAP conversion factors (CATF), ISO-NE seasonal-claimed-"
-            "capability / ELCC-based accreditation, CAISO/CPUC NQC + "
-            "E3-authored incremental-ELCC studies — onto one canonical "
-            "frame keyed on `(iso, resource_class, study_vintage, "
+            "PJM ELCC Class Ratings (single current-fleet point per class, "
+            "renewable/storage/DR + thermal), MISO wind/solar marginal ELCC "
+            "by penetration (Accreditation Reform — the strongest public "
+            "multi-point curve), NYISO ICAP/UCAP conversion factors (CATF), "
+            "ISO-NE seasonal-claimed-capability / ELCC-based accreditation, "
+            "CAISO/CPUC NQC + E3-authored incremental-ELCC studies — onto one "
+            "canonical frame keyed on `(iso, resource_class, study_vintage, "
             "penetration_pct)`. ERCOT excluded."
         ),
     },
