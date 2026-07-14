@@ -85,6 +85,7 @@ from market_sim.model.capacity import (  # noqa: E402
     _default_build_zone,
     _make_new_generator,
     capacity_revenue_per_mw_yr,
+    thermal_accreditation_fraction,
 )
 from market_sim.results import cache as cachemod  # noqa: E402
 
@@ -234,24 +235,27 @@ def t2_1_identity(summary: dict) -> dict:
     config = run.config
     design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
 
-    sample_efords = sorted(
-        {
-            0.0,
-            0.05,
-            *(EFORD.get(f, 0.05) for f in ("gas_cc", "gas_ct", "coal", "nuclear")),
-        }
-    )
+    # Sample the fixed-mode payment across representative fuels (each carries
+    # its own EFORd) and check it equals net_cone x 1000 x the unit's
+    # basis-resolved accreditation (R4: (1-EFORd) for UCAP ISOs, the published
+    # ELCC class rating for PJM — the SAME resolver the ledger uses).
+    sample_fuels = ("gas_cc", "gas_ct", "coal", "nuclear")
     mismatches = []
-    for ef in sample_efords:
-        actual = capacity_revenue_per_mw_yr(iso, ef, config, None)
+    for fuel in sample_fuels:
+        ef = EFORD.get(fuel, 0.05)
+        actual = capacity_revenue_per_mw_yr(iso, fuel, ef, config, None)
         expected = 0.0
         if design.capacity_market and design.net_cone_per_kw_yr > 0.0:
-            expected = design.net_cone_per_kw_yr * 1000.0 * max(0.0, 1.0 - ef)
+            frac = thermal_accreditation_fraction(fuel, ef, iso)
+            expected = design.net_cone_per_kw_yr * 1000.0 * max(0.0, frac)
         if abs(actual - expected) > 1e-6:
-            mismatches.append({"eford": ef, "actual": actual, "expected": expected})
+            mismatches.append({"fuel": fuel, "actual": actual, "expected": expected})
 
+    # Price flatness across years: a fixed representative unit (gas_cc) whose
+    # accreditation does not vary year to year, so any variation is the price.
     per_year_price = {
-        y: capacity_revenue_per_mw_yr(iso, 0.0, config, None) for y in run.solved_years
+        y: capacity_revenue_per_mw_yr(iso, "gas_cc", EFORD["gas_cc"], config, None)
+        for y in run.solved_years
     }
     prices = list(per_year_price.values())
     price_identical = len(set(round(p, 6) for p in prices)) <= 1
@@ -305,7 +309,8 @@ def t2_2_oscillation(summary: dict) -> dict:
     traj = sorted(summary["trajectory"], key=lambda r: r["year"])
 
     price_series = [
-        capacity_revenue_per_mw_yr(iso, 0.0, run.config, None) for _ in traj
+        capacity_revenue_per_mw_yr(iso, "gas_cc", EFORD["gas_cc"], run.config, None)
+        for _ in traj
     ]
     price_mean = statistics.mean(price_series) if price_series else 0.0
     price_cv = (
@@ -477,8 +482,12 @@ def t2_4_neiso_overbuild(
 
     run_base = C.load_run(Path(base_summary["run_dir"]))
     run_over = C.load_run(Path(over_summary["run_dir"]))
-    price_base = capacity_revenue_per_mw_yr(iso, 0.0, run_base.config, None)
-    price_over = capacity_revenue_per_mw_yr(iso, 0.0, run_over.config, None)
+    price_base = capacity_revenue_per_mw_yr(
+        iso, "gas_cc", EFORD["gas_cc"], run_base.config, None
+    )
+    price_over = capacity_revenue_per_mw_yr(
+        iso, "gas_cc", EFORD["gas_cc"], run_over.config, None
+    )
     price_collapses = price_over < price_base - 1e-6
 
     def _total(key_base, key_over):
@@ -566,8 +575,12 @@ def t2_5_ercot_overbuild(
 
     run_base = C.load_run(Path(base_summary["run_dir"]))
     run_over = C.load_run(Path(over_summary["run_dir"]))
-    price_base = capacity_revenue_per_mw_yr(iso, 0.0, run_base.config, None)
-    price_over = capacity_revenue_per_mw_yr(iso, 0.0, run_over.config, None)
+    price_base = capacity_revenue_per_mw_yr(
+        iso, "gas_cc", EFORD["gas_cc"], run_base.config, None
+    )
+    price_over = capacity_revenue_per_mw_yr(
+        iso, "gas_cc", EFORD["gas_cc"], run_over.config, None
+    )
     both_zero = price_base == 0.0 and price_over == 0.0
 
     hrs500_base = sum(r["hours_ge_500_base"] or 0 for r in rows)

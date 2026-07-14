@@ -29,6 +29,7 @@ from market_sim.model.capacity import (
     apply_economic_retirements,
     capacity_reserve_position,
     capacity_revenue_per_mw_yr,
+    thermal_accreditation_fraction,
 )
 from market_sim.model.storage import estimate_capacity_value
 
@@ -94,29 +95,37 @@ class TestCapacityPriceSeam(unittest.TestCase):
             self.assertEqual(
                 design.capacity_price_per_firm_mw_yr(_CFG_OFF, 0.85), expected
             )
-            # The public thermal helper: 2-arg call == pre-CR-1 formula.
+            # The public thermal helper: the pre-CR-1 fixed price times the
+            # unit's basis-resolved accreditation (R4) — (1-EFORd) for UCAP
+            # ISOs, the ELCC class rating for PJM.
             eford = 0.05
+            fuel = "gas_cc"
+            frac = thermal_accreditation_fraction(fuel, eford, iso)
             self.assertEqual(
-                capacity_revenue_per_mw_yr(iso, eford),
-                expected * (1.0 - eford),
+                capacity_revenue_per_mw_yr(iso, fuel, eford),
+                expected * frac,
             )
             # Gate off: reserve_position is inert (None vs a number identical).
             self.assertEqual(
-                capacity_revenue_per_mw_yr(iso, eford, _CFG_OFF, None),
-                capacity_revenue_per_mw_yr(iso, eford, _CFG_OFF, 0.85),
+                capacity_revenue_per_mw_yr(iso, fuel, eford, _CFG_OFF, None),
+                capacity_revenue_per_mw_yr(iso, fuel, eford, _CFG_OFF, 0.85),
             )
 
     def test_ercot_zero_both_modes(self):
         ercot = MARKET_DESIGN["ERCOT"]
         self.assertEqual(ercot.capacity_price_per_firm_mw_yr(), 0.0)
         self.assertEqual(ercot.capacity_price_per_firm_mw_yr(_CFG_ON, 0.80), 0.0)
-        self.assertEqual(capacity_revenue_per_mw_yr("ERCOT", 0.06), 0.0)
-        self.assertEqual(capacity_revenue_per_mw_yr("ERCOT", 0.06, _CFG_ON, 0.80), 0.0)
+        self.assertEqual(capacity_revenue_per_mw_yr("ERCOT", "gas_ct", 0.06), 0.0)
+        self.assertEqual(
+            capacity_revenue_per_mw_yr("ERCOT", "gas_ct", 0.06, _CFG_ON, 0.80), 0.0
+        )
 
     def test_unknown_iso_zero_both_modes(self):
         # An ISO absent from the registry falls back to the energy-only default.
-        self.assertEqual(capacity_revenue_per_mw_yr("MADEUP", 0.05), 0.0)
-        self.assertEqual(capacity_revenue_per_mw_yr("MADEUP", 0.05, _CFG_ON, 0.9), 0.0)
+        self.assertEqual(capacity_revenue_per_mw_yr("MADEUP", "gas_cc", 0.05), 0.0)
+        self.assertEqual(
+            capacity_revenue_per_mw_yr("MADEUP", "gas_cc", 0.05, _CFG_ON, 0.9), 0.0
+        )
 
     def test_caiso_keeps_fixed_proxy_even_with_curve_on(self):
         # CAISO has no published auction curve, so the gate being on must not
@@ -185,12 +194,21 @@ class TestCapacityPriceSeam(unittest.TestCase):
                     places=6,
                 )
 
-    def test_thermal_revenue_is_price_times_ucap(self):
-        # The thermal payment applies the unit's UCAP to the shared price.
+    def test_thermal_revenue_is_price_times_accreditation(self):
+        # The thermal payment applies the unit's basis-resolved accreditation
+        # to the shared price (R4). For PJM that is the published ELCC class
+        # rating (NOT (1-EFORd)), the SAME resolver the adequacy ledger uses,
+        # so ledger and payment can never diverge.
         eford = 0.06
         price = MARKET_DESIGN["PJM"].capacity_price_per_firm_mw_yr(_CFG_ON, 1.015)
+        for fuel, rating in (("gas_cc", 0.74), ("gas_ct", 0.60)):
+            self.assertAlmostEqual(
+                capacity_revenue_per_mw_yr("PJM", fuel, eford, _CFG_ON, 1.015),
+                price * rating,
+            )
+        # A class PJM does not publish falls back to UCAP (biomass).
         self.assertAlmostEqual(
-            capacity_revenue_per_mw_yr("PJM", eford, _CFG_ON, 1.015),
+            capacity_revenue_per_mw_yr("PJM", "biomass", eford, _CFG_ON, 1.015),
             price * (1.0 - eford),
         )
 

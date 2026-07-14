@@ -366,7 +366,7 @@ class TestCapacityRevenueRetirementScreen(unittest.TestCase):
     def test_ercot_capacity_revenue_is_zero(self):
         # Negative control precondition: an energy-only ISO pays nothing, at any
         # net-CONE the patch might carry.
-        self.assertEqual(capacity_revenue_per_mw_yr("ERCOT", 0.05), 0.0)
+        self.assertEqual(capacity_revenue_per_mw_yr("ERCOT", "gas_cc", 0.05), 0.0)
 
     def test_pjm_retirements_monotone_down_in_net_cone(self):
         counts = [self._retire_count("PJM", nc) for nc in A.net_cone_ladder]
