@@ -87,12 +87,16 @@ def test_neiso_shape_reproduced_exactly():
 
 
 def test_pjm_pass2_position_is_long_and_pays_zero():
-    # The regression this whole exercise surfaces: the model's own PJM accredited
-    # position sits well past the curve's zero-cross, so CR-1 ON would pay $0 there.
+    # Post-P-2B-migration (R1-R4): the PJM accredited position collapsed from
+    # 1.29-1.36 to ~1.06-1.15 as the supply ledger re-bases onto the published
+    # ELCC class ratings (R3) and the requirement onto the published FPR (R2),
+    # but it still sits PAST the curve's ~1.045 zero-cross, so CR-1 ON still
+    # pays $0 — the remaining excess is the retirement miss (G-30/G-31 lane),
+    # NOT the accreditation basis. The curve stays gated off.
     rows = run_pass2("PJM")
     assert rows, "expected a PJM hindcast"
     for r in rows:
-        assert r.reserve_position > 1.1  # deeply long vs the ~1.045 zero-cross
+        assert 1.045 < r.reserve_position < 1.2  # still long, but no longer 1.3+
         assert r.model_price_kw_yr == pytest.approx(0.0, abs=1e-6)
 
 

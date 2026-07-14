@@ -51,10 +51,13 @@ import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from market_sim.config.constants import MARKET_DESIGN, evaluate_demand_curve
+from market_sim.config.constants import EFORD, MARKET_DESIGN, evaluate_demand_curve
 from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.config.scenarios import ScenarioConfig
-from market_sim.model.capacity import resolve_adequacy_requirement_mw
+from market_sim.model.capacity import (
+    resolve_adequacy_requirement_mw,
+    thermal_accreditation_fraction,
+)
 
 CAPMKT_RAW = RAW_DATA_DIR / "capacity-market"
 HINDCAST_ROOT = Path("results/hindcast")
@@ -539,6 +542,35 @@ class Pass2Row:
     pct_error: float | None
 
 
+def _restate_firm_on_adopted_basis(iso: str, led: dict, firm_old: float) -> float:
+    """Restate a frozen ledger's accredited firm MW on the adopted basis.
+
+    P-2B Option A re-validation (no LP): the persisted ``reserve_margin`` was
+    solved on the OLD thermal accreditation basis (UCAP, ``1 - EFORd``). To
+    read the migration's effect without re-solving, restate ONLY the thermal
+    block on the adopted basis (:func:`thermal_accreditation_fraction` — PJM's
+    published ELCC class ratings, R3), keeping the non-thermal (VRE pools +
+    storage ELCC + firm ties) residual exactly as the ledger froze it (VRE
+    re-basing is P-2C, out of scope here). This is the memo's §3.1
+    decomposition automated through the SHIPPED resolver — a re-statement of a
+    fixed fleet's accreditation, never a re-tune (rules 1/13). When the ledger
+    carries no per-fuel breakdown, the frozen firm is returned unchanged.
+    """
+    fleet_by_fuel = led.get("fleet_by_fuel_after") or {}
+    if not fleet_by_fuel:
+        return firm_old
+    thermal_ucap_old = sum(
+        mw * (1.0 - EFORD[f]) for f, mw in fleet_by_fuel.items() if f in EFORD
+    )
+    thermal_new = sum(
+        mw * thermal_accreditation_fraction(f, EFORD[f], iso)
+        for f, mw in fleet_by_fuel.items()
+        if f in EFORD
+    )
+    non_thermal_firm = firm_old - thermal_ucap_old
+    return thermal_new + non_thermal_firm
+
+
 def run_pass2(iso: str) -> list[Pass2Row]:
     run = HINDCAST_RUNS.get(iso)
     if not run:
@@ -553,8 +585,14 @@ def run_pass2(iso: str) -> list[Pass2Row]:
             continue
         cal = int(led["year"])
         peak = float(led["peak_demand_mw"])
-        firm = peak * (1.0 + float(led["reserve_margin"]))
-        req = resolve_adequacy_requirement_mw(cfg, iso, peak)
+        # Firm: restate the frozen ledger's thermal block on the adopted ELCC
+        # class-rating basis (R3); requirement: devintage onto the published
+        # FPR of the matching delivery year (R2, via the threaded calendar
+        # year). Both pick up the migration without an LP re-solve.
+        firm = _restate_firm_on_adopted_basis(
+            iso, led, peak * (1.0 + float(led["reserve_margin"]))
+        )
+        req = resolve_adequacy_requirement_mw(cfg, iso, peak, cal)
         pos = firm / req if req > 0 else float("nan")
         mp = model_curve_price_kw_yr(iso, pos)
         dy = canon_year(f"{cal}/{cal + 1}")
