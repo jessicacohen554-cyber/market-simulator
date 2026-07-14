@@ -1,0 +1,17 @@
+{
+  "id": "2026-07-14-miso-66-coalconduct",
+  "label": "miso 66 coalconduct",
+  "date": "2026-07-14",
+  "shorthand": "miso-66-coalconduct",
+  "definition": "miso-66 candidate (main) -- MISO lane-1 regulated-coal conduct complement: the miso-65 keeper recipe (miso-62 meta.json + miso_rpe_pricing + unit_outage_short_windows + class_aware_fuel_price_fallback on the regenerated campd-unit-outages-MISO.csv) with the rank-scoped coal_bit_committed_takeorpay REPLACED by the conduct-scoped coal_committed_takeorpay_regulated (V1b scope = EIA-860 RegStatus RE UNION >0.5 Schedule-4 cost-of-service ownership x Entity Type). The _committed tranche of an in-scope coal plant passes (1-contract_share) of its measured EIA-923 Schedule-5 fuel; NR merchants bid full cost (SOM Table 7). Zero fitted scalars; closes the miso-65 C1-2024 conduct gap {COAL_PRB -10.41, CT_PEAKER +8.30} (rule 15). Pricing input -> ARMED in the zero-forcing twin (miso-62 precedent). Design: docs/handoffs/miso-coal-conduct-design-2026-07.md. Lane 1.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-14-miso-66-coalconduct.js",
+  "bundle": "results/calibration/miso66_coalconduct",
+  "ablation_twin": "2026-07-14-miso-66-coalconduct-ablation",
+  "market_story": "One real-market layer on the miso-65 keeper, zero fitted parameters: MISO's regulated utilities run their coal 'must-run', regardless of price (SOM Table 7: 56%/53% of regulated-coal starts self-committed in 2023/2024 vs 93%/74% of merchant coal offered economically). The miso-65 recipe priced every coal plant's committed band at full delivered SRMC, so at $2.19 gas the LP shut regulated PRB and filled the gap with peaking CT -- the miso-65 C1-2024 FAILs {COAL_PRB -10.41, CT_PEAKER +8.30 TWh}. This run replaces the rank-scoped committed-band take-or-pay discount (BIT-only) with a conduct-scoped one: the committed tranche of a coal plant in the measured regulated/self-commit scope (EIA-860 Regulatory Status RE UNION >0.5 Schedule-4 cost-of-service ownership x utility Entity Type -- Prairie State, Warrick, Monroe, Labadie IN; Baldwin, Newton, Plum Point, Big Cajun 2 OUT) passes only (1-contract_share) of its own measured EIA-923 Schedule-5 take-or-pay fuel; NR merchants bid full cost. Rule 19 reconcile, not a stack: RE-BIT plants are covered identically, NR-BIT merchants revert to the economic offers the SOM measures. Result: 2024 COAL_PRB -10.41 FAIL -> +4.39 PASS and CT_PEAKER +8.30 FAIL -> +3.30 PASS both flip, 2024 total coal lands +0.59 TWh of actual, C1 improves 14/16 -> 15/16; 2023 clears every coal row (PRB +3.02, BIT -5.31). C3b-2025 holds at NRMSE 0.187 (<= 0.20 guard); C3a and C5a all move toward actual (2024 CO2 -5.7% -> -2.6%). The disclosed cost: ST_GAS-2024 -9.13 TWh (model 8.43 vs 17.57) -- cheap held coal displaces the marginal slice of a class whose own deficit is the VLR-drag lane's open item (rule 15), the single remaining C1 fail. Zero fitted scalars: a boolean arming SOM Table 7 + EIA-860 RegStatus/Schedule-4 x Entity Type + EIA-923 Schedule-5 + CAMPD committed tranches."
+}
