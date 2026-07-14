@@ -94,9 +94,59 @@ for.
    the 56807/55710 nameplate values are unchanged unless their demonstrated peak
    is higher). Register as the next PJM run; owner promotes.
 
-**Guardrails.** No `ScenarioConfig` flag invented; the demonstrated peak is a
-measured CAMPD input (rule 13-admissible, re-derives only on CAMPD vintage
-change — rule 23); no value tuned to a residual. Grade: Opus (derive + solve).
+### A.4 Cross-ISO consistency — this is ONE model (do this first, it reframes A.3)
+
+The audit that motivated this charter turned up that the CC-capacity stack is
+ISO-agnostic in *mechanism* (no `if iso ==` branch in the guard,
+`cc_nameplate_summer_derate`, or `_reconcile_cc_capacity`; the reconcile path
+resolves per-ISO as `cc_capacity_reconcile_{iso}.csv`; the derive is
+ISO-parameterized) — but the *switches and data* have drifted into three
+inconsistencies that the unification must fix so it lands as one model, not a
+PJM patch:
+
+| ISO | `cc_nameplate_summer_derate` | `cc_capacity_reconcile` | reconcile table | guard |
+|---|---|---|---|---|
+| ERCOT | off (CAMPD bins) | off | ✓ | always-on |
+| CAISO | on | off | **none** | always-on |
+| PJM | on | on | ✓ | always-on |
+| MISO | off | on | ✓ | always-on |
+| NYISO | on | off | **none** | always-on |
+| NEISO | on | off | **none** | always-on |
+
+1. **Kill the cross-ISO default-path footgun (rules 24/25).** The ScenarioConfig
+   default `cc_capacity_reconcile_path` is hardcoded to **ERCOT's** table
+   (`scenarios.py:4179`). Every flag-OFF ISO (CAISO/ERCOT/NEISO/NYISO) carries
+   `…_ERCOT.csv` in its config; flip the flag on for CAISO without overriding the
+   path and it silently reads ERCOT's demonstrated peaks — a tuned curve crossing
+   an ISO boundary. Make the default neutral: resolve `cc_capacity_reconcile_{iso}
+   .csv` by the run's ISO (mirror the CLI at `run_calibration_full.py:8879`), or
+   `None` → the reconcile no-ops when no ISO table exists. Delete the ERCOT
+   literal (rule 25: a deprecated default that still parses is re-armable).
+2. **Even out reconcile coverage — derive all six, or document the exemption.**
+   Tables exist only for ERCOT/MISO/PJM; CAISO/NYISO/NEISO have none, so the
+   *measured* demonstrated-peak bound is unavailable there and the guard
+   (nameplate) is their only measured CC bound. Run `derive_cc_capacity_reconcile
+   .py --iso {CAISO,NYISO,NEISO}` (full cap+raise coverage, CT-only excluded per
+   item A.3.3) so every ISO's CC capacity is on the same measured stack — or, if
+   an ISO genuinely shouldn't reconcile (e.g. ERCOT's CAMPD-bin basis already
+   bounds it), state that exemption in the derive doc rather than leaving it
+   silent.
+3. **Decide the guard's gating and apply it uniformly.** The guard is
+   unconditional (always-on) while the other two are `ScenarioConfig` flags —
+   defensible (it is a schema-integrity fix, net_summer ≤ nameplate, not a
+   market feature) but asymmetric. Either (a) gate it `cc_summer_capacity_guard`
+   **default-on** for A/B reversibility and symmetry (the `confirmed_exits_enabled`
+   pattern), or (b) keep it ungated and document in the fleet loader that it is a
+   data validator, not a tunable feature. Make it a deliberate choice, not an
+   accident of which session wrote it.
+
+**Guardrails.** No `ScenarioConfig` flag invented for tuning (an on/off gate for
+the guard is fine — it is a validator switch, not a knob); the demonstrated peak
+is a measured CAMPD input (rule 13-admissible, re-derives only on CAMPD vintage
+change — rule 23); no value tuned to a residual; every table stays inside its
+own ISO (rule 24). Grade: Opus (cross-ISO derive + PJM re-solve). Other ISOs'
+keepers are static bundles — extending their reconcile tables changes only a
+forward re-solve, which is the owner's call; do not re-solve them in this charter.
 
 ---
 
