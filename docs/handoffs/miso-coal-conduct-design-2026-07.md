@@ -177,6 +177,31 @@ the majority threshold. Do NOT reach for it unless a band actually breaks —
 the simpler classifier is preferred while it scores clean (rule 1: structure
 first, and the simplest measured scope that carries the conduct).
 
+**V1b ENGAGED (2026-07-14, this session).** The RE-only (V1a) 2023 probe
+broke the COAL_BIT band exactly on the pre-identified reversion (−4.80 →
+−8.59, 0.59 past the ±8.0 edge; per-plant: Prairie State probe 8.99 vs
+actual 12.48, Warrick 2.24 vs 4.14 — both offtake/host-obligated
+self-committers, not price-responsive merchants). Because the fallback and
+its trigger were declared in this document (committed at `8bc5b67`) BEFORE
+the probe was read, engaging it is the pre-registered estimation path
+(caiso-81 discipline), not residual tuning. Implementation:
+`fleet.eia860_selfcommit_scope_plants()` = `eia860_regulated_plants()` (RE)
+∪ `eia860_costofservice_majority_plants()` — per plant, the summed
+Schedule-4 `Percent Owned` of owners whose EIA-860 utility `Entity Type` ∈
+{I, M, C, P, S, F} (cost-of-service entities), > 0.5; plants absent from
+Schedule 4 use the operator's entity type (ownership.py's sparse-schedule
+rule). Scope resolution on the decision plants (all measured, zero hand
+exceptions):
+
+| plant | RE | COS-majority | in scope | note |
+|---|---|---|---|---|
+| Prairie State | ✗ | ✓ (~95% muni/co-op JAAs) | ✓ | the band-breaker recovers |
+| Warrick | ✗ | ✓ (operator = Alcoa's 'I'-typed generating utility) | ✓ | host-obligated self-committer; EIA's own typing |
+| Baldwin / Newton (Vistra) | ✗ | ✗ (operator 'Q') | ✗ | the SOM's true merchants |
+| Plum Point | ✗ | ✗ (43% < 0.5) | ✗ | below majority |
+| Big Cajun 2 | ✗ | ✗ (42% Entergy < 0.5) | ✗ | below majority |
+| ADM / Filer City CHPs | ✗ | ✗ (IND / Q) | ✗ | probe shows exclusion is honest (ADM over-runs actual even unfloored) |
+
 ## 5. Probe evidence (rule 16 — throwaway, never registered)
 
 Probe driver: `scripts/probes/_miso_coalconduct_probe.py` (miso-65 recipe

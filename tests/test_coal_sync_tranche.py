@@ -280,6 +280,20 @@ class TestCommittedTakeorpayRegulated(unittest.TestCase):
             0.0,
         )
 
+    def test_scope_set_membership_freeze(self):
+        # Freeze the measured scope resolution on the design doc's decision
+        # plants (rule 23: re-derives only on a new EIA-860 vintage).
+        from market_sim.data.fleet import eia860_selfcommit_scope_plants
+
+        scope = eia860_selfcommit_scope_plants()
+        if not scope:
+            self.skipTest("no EIA-860 plant parquet on disk")
+        for pc in (55856, 6705, 1733, 2103):  # Prairie State, Warrick, Monroe, Labadie
+            self.assertIn(pc, scope)
+        for pc in (889, 6017, 56456, 6055, 10865, 50835):
+            # Baldwin, Newton, Plum Point, Big Cajun 2, ADM Decatur, Filer City
+            self.assertNotIn(pc, scope)
+
     def test_spares_econ_and_mustrun_semantics(self):
         # econ tranches keep full cost; _mustrun keeps its own (pre-existing)
         # contract-share rule independent of the regulated gate.
