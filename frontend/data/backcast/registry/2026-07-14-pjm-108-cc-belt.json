@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-14-pjm-108-cc-belt",
+  "label": "pjm 108 cc belt",
+  "date": "2026-07-14",
+  "shorthand": "pjm-108-cc-belt",
+  "definition": "PJM 108 probe (leg B): the pjm-105 symmetric-net keeper recipe with EXACTLY ONE override: pjm_offer_midcurve_segments ('LONG_RUN',) -> ('LONG_RUN','CC_LIKE') \u2014 the measured mid-curve floor extended to the CC_REGULAR econ rows (floor-only, P1-only, VOLL-capped, riding the measured HH-daily+basis gas-day normalizer). CT_FAST stays startup-amortization-owned, committed/must-run rows stay passthrough/commitment-owned, CC peak rungs stay fitted-curve-owned (rule 19; the pjm-99 top surface stays retired). Zero fitted scalars in the delta (rules 1/13/20/21: 36-month DataMiner2 submitted-offer corpus, frozen against residuals).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-14-pjm-108-cc-belt.js",
+  "bundle": "results/calibration/pjm108_cc_belt"
+}
