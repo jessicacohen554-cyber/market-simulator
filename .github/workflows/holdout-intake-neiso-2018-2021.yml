@@ -13,12 +13,13 @@ name: holdout-intake-neiso-2018-2021
 # cannot practically carry very large text artifacts either. Instead of
 # transporting bytes, this runner REPRODUCES each artifact from its
 # committed, deterministic producer - the identical approach
-# holdout-intake-neiso-2022.yml already uses. Two of the three SMD workbooks
-# needed (2020, 2021) are ALREADY committed blobs at the wrong path
-# (data/raw/lmp-data/{2020,2021}_smd_hourly.xlsx); step 1 just `git mv`s them
-# - zero new bytes. Everything else re-derives from already-committed inputs
-# (CAMPD unit-level, NOAA weather splits, EIA-860/-923/-930) with in-sample
-# rows asserted byte-frozen by each producer's own checks before writing.
+# holdout-intake-neiso-2022.yml already uses. All three SMD workbooks (2020,
+# 2021, 2022) are ALREADY committed blobs at the wrong path
+# (data/raw/lmp-data/{2020,2021,2022}_smd_hourly.xlsx); step 1 just `git mv`s
+# them - zero new bytes. Everything else re-derives from already-committed
+# inputs (CAMPD unit-level, NOAA weather splits, EIA-860/-923/-930) with
+# in-sample rows asserted byte-frozen by each producer's own checks before
+# writing.
 #
 # NOT a solve: no LP is constructed (rule 22's solve/score quarantine - the
 # G-19 one-shot execution HOLD - is untouched); everything here is
@@ -26,20 +27,19 @@ name: holdout-intake-neiso-2018-2021
 # (declared 2026-07-07) and the rule-22 Option-2 DATA-INTAKE channel.
 #
 # Artifacts landed:
-#   * data/raw/lmp-data/NEISO/{2020,2021}_smd_hourly.xlsx  (git mv, blob reuse;
-#     2022 already relocated by the prior 2022-only workflow)
+#   * data/raw/lmp-data/NEISO/{2020,2021,2022}_smd_hourly.xlsx  (git mv, blob reuse)
 #   * data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet  (rebuilt
 #     2020-2025; 2023-2025 byte-identical by construction)
-#   * data/raw/_validation-source/actual_lmp.json  (NEISO 2020/2021 blocks +
-#     load-weighted _lw fields on 2020/2021; 2022 already present)
+#   * data/raw/_validation-source/actual_lmp.json  (NEISO 2020/2021/2022 blocks +
+#     load-weighted _lw fields)
 #   * data/raw/_processed-legacy/plant_emission_rates_v2.{parquet,csv}
 #     (NEISO 2022 frozen-row merge, skipped if already landed)
-#   * data/raw/neiso-weather/neiso_zone_temp_daily.csv  (+2018-2021 per-zone
-#     NOAA splits; 2022 already landed by the prior workflow)
-#   * data/raw/neiso-weather/neiso_load_weighted_temp_daily.csv  (+2018-2021)
-#   * data/raw/_validation-source/calibration_reference.json  (isos.NEISO.2021
-#     splice) + NEISO_2021_renewable_capacity.csv
-#   * data/raw/campd-unit-outages-NEISO.csv  (+2018-2021-start windows,
+#   * data/raw/neiso-weather/neiso_zone_temp_daily.csv  (+2018-2022 per-zone
+#     NOAA splits)
+#   * data/raw/neiso-weather/neiso_load_weighted_temp_daily.csv  (+2018-2022)
+#   * data/raw/_validation-source/calibration_reference.json  (isos.NEISO.2021/2022
+#     splice) + NEISO_2021/2022_renewable_capacity.csv
+#   * data/raw/campd-unit-outages-NEISO.csv  (+2018-2022-start windows,
 #     HEAD-vintage detector - same DEGRADED vintage-asymmetry caveat as the
 #     committed 2023-2025 windows, not resolved here)
 #
@@ -87,9 +87,12 @@ jobs:
               the intake session's pinned pyarrow/pandas)
         run: uv sync --frozen
 
-      - name: Relocate the 2020/2021 SMD workbooks into NEISO/ (blob reuse via git mv)
+      - name: Relocate the 2020/2021/2022 SMD workbooks into NEISO/ (blob reuse via
+              git mv; 2022 was missing from this loop on prior runs, which silently
+              produced no NEISO 2022 row in the rebuilt actual-LMP parquet and broke
+              the later actual_tail step)
         run: |
-          for y in 2020 2021; do
+          for y in 2020 2021 2022; do
             if [ -f "data/raw/lmp-data/${y}_smd_hourly.xlsx" ]; then
               git mv "data/raw/lmp-data/${y}_smd_hourly.xlsx" "data/raw/lmp-data/NEISO/${y}_smd_hourly.xlsx"
             else
@@ -146,7 +149,8 @@ jobs:
             data/raw/_processed-legacy/plant_emission_rates_v2.parquet \
             data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet \
             data/raw/lmp-data/NEISO/2020_smd_hourly.xlsx \
-            data/raw/lmp-data/NEISO/2021_smd_hourly.xlsx
+            data/raw/lmp-data/NEISO/2021_smd_hourly.xlsx \
+            data/raw/lmp-data/NEISO/2022_smd_hourly.xlsx
           uv run python - <<'EOF'
           import json, pandas as pd
           def yr(df, c="date"):
@@ -176,6 +180,7 @@ jobs:
           git add -A \
                   data/raw/lmp-data/NEISO/2020_smd_hourly.xlsx \
                   data/raw/lmp-data/NEISO/2021_smd_hourly.xlsx \
+                  data/raw/lmp-data/NEISO/2022_smd_hourly.xlsx \
                   data/raw/_validation-source/actual_lmp_hourly_NEISO.parquet \
                   data/raw/_validation-source/actual_lmp.json \
                   data/raw/_processed-legacy/plant_emission_rates_v2.parquet \
@@ -188,7 +193,7 @@ jobs:
                   data/raw/campd-unit-outages-NEISO.csv \
                   frontend/data/backcast/tail/actual_tail.json \
                   .github/neiso-holdout-queue/
-          git rm --cached data/raw/lmp-data/2020_smd_hourly.xlsx data/raw/lmp-data/2021_smd_hourly.xlsx 2>/dev/null || true
+          git rm --cached data/raw/lmp-data/2020_smd_hourly.xlsx data/raw/lmp-data/2021_smd_hourly.xlsx data/raw/lmp-data/2022_smd_hourly.xlsx 2>/dev/null || true
           if git diff --cached --quiet; then
             echo "nothing to commit (artifacts already landed)"
             exit 0
