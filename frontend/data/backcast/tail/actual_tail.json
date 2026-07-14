@@ -79,6 +79,14 @@
    }
   },
   "NEISO": {
+   "2022": {
+    "threshold": 300.0,
+    "da_gt": 27,
+    "rt_gt": 117,
+    "da_coverage": 1.0,
+    "rt_coverage": 1.0,
+    "hours": 8760
+   },
    "2023": {
     "da_coverage": 1.0,
     "da_gt": 5,
