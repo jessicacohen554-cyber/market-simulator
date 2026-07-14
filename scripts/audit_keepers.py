@@ -135,9 +135,9 @@ def ablation_twin_finding(
     twin_side = _load_json(registry_dir / f"{twin_id}.json") if twin_id else None
     if twin_id and twin_side is not None:
         return "OK", f"ablation twin registered ({twin_id})"
-    # A DECLARED-but-broken link fails regardless of the grandfather grace: the
-    # grace excuses "no twin yet", not a sidecar that asserts a twin that does
-    # not resolve (catches a typo / an unregistered twin).
+    # A DECLARED-but-broken link fails purely as a data-integrity check: the twin
+    # is no longer required, but a sidecar that ASSERTS a twin which does not
+    # resolve is a typo / an unregistered twin, not an intentional "no twin".
     if twin_id and twin_side is None:
         return (
             "FAIL",
@@ -147,8 +147,8 @@ def ablation_twin_finding(
     # No twin declared: OK. Per CLAUDE.md rule 20 (owner amendment 2026-07-14)
     # the zero-forcing ablation twin is NO LONGER required — keepers no longer
     # build or register one; forcing-legitimacy rests on the DOF ledger plus the
-    # D-2 / legitimacy_diagnostics.json attribution alone. (The grandfather set
-    # is now dead — no keeper can FAIL E9 for a missing twin.)
+    # D-2 / legitimacy_diagnostics.json attribution alone. No keeper can FAIL E9
+    # for a missing twin.
     return (
         "OK",
         "no ablation twin (not required — CLAUDE.md rule 20, owner amendment "
