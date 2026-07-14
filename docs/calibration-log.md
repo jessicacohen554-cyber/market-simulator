@@ -12642,3 +12642,104 @@ already on), per-plant diurnal cycling metric (D-1p), and the C1
 **Holdouts / governance.** No solve, no scoring, no registration; 2023–2025
 data only (rule 22); no parameter, curve, floor or derive value changed
 (rules 13/21/23/26).
+
+## 2026-07-14 — PJM-110 bench-hygiene: EIA-860 CC summer-capacity consistency guard (fleet loader) + CT-only CEMS bench flag (scorer) — the guard's isolated dispatch effect is WITHIN NOISE (control-confirmed); registered `2026-07-14-pjm-110-bench-hygiene`
+
+**Grounding:** `docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md` §6 (the one
+mechanical fix the July-gas diagnosis confirmed). Two admissible hygiene legs,
+zero fitted scalars, no `ScenarioConfig` flag change; keeper untouched (owner
+promotes). Rules 1/11/13/14/15/16/22 reviewed.
+
+**Leg A — EIA-860 CC summer-capacity consistency guard (fleet loader, code).**
+`fleet._rows_to_generators` now reconciles any CC_REGULAR plant whose
+fleet-loaded pmax sum exceeds its EIA-860 nameplate sum (>1.001×) down to
+nameplate (proportional scale, base heat rate preserved), with a loader warning
+naming the plant; `fleet.cc_summer_capacity` clamps `ns ≤ np` for the same
+reason. EIA-860's schema defines summer capability ≤ nameplate, so a summed
+pmax above the summed nameplate is component/total double-filing (a 2×1 block
+total filed on one row, the loader nameplate-filling the NaN component rows).
+Acts on the FLEET-LOADED sum, which exposes the Keys/Camden nameplate-fill
+pattern a raw EIA-860 summer-sum audit misses (probe block 3). Rule-14/15: the
+reconciled figure regenerates for any forward vintage and responds to re-rates —
+a reproducible physical bound, not a residual-tuned value.
+
+- **Flag-off PJM effect (verified):** exactly six CC plants, **−972.2 MW**
+  (55297 −410, 60302 −406, 56807 −69, 10751 −50, 7153 −30, 55710 −7); nothing
+  else changes, no group changes (25 LP units rescaled across the six).
+- **Other-ISO guard trips (flag-off, REPORTED not solved):** ERCOT 55098 −6.0;
+  CAISO 55985 −22.4, 56041 −9.0 (per-row uprates, not block double-files);
+  MISO 55380 −1028.6, 55467 −353.3, 55620 −334.7, 55220 −260.6, 55218 −259.6,
+  1403 −246.5, 55418 −242.2, 991 −29.0, 4040 −6.9; NYISO 56196 −134.0,
+  7314 −29.5, 10190 −20.0; NEISO 60903 −358.2, 52026 −20.2, 55042 −18.0. These
+  correct the default/flag-off + forecast path for every ISO; the ISOs' solved
+  keepers are static bundles (unchanged) and are left for the owner to re-solve
+  if desired. The NEISO/NYISO/MISO `bin_assignments_*.csv` diagnostic artifacts
+  regenerate clean (Nameplate_MW-only diff, HR preserved); CAISO's is NOT
+  regenerated (pre-existing unrelated Zone drift — a wholesale regen would
+  conflate changes).
+
+**Leg A solve decision (SOLVE DECISION RULE) — NOT byte-identical → re-solved.**
+Under the pjm-107 keeper config the guard changes the keeper CC bins at **3
+plants, −92.2 MW**: 56807 628.2→559.0 (−69) and 55710 562.6→556.0 (−7) carried
+the phantom net-summer through the nameplate-rescale unchecked (ratio clamps at
+1.0, and neither is in the demonstrated-peak `cc_capacity_reconcile` table — the
+guard fixes a real latent keeper bug); 55297 1192.4→1176.0 (−16) is a minor
+over-clip below its CAMPD demonstrated peak. 60302/10751/7153 unchanged (the
+reconcile already caps them below nameplate). Per the rule, the full pjm-107
+recipe was re-solved as **pjm-110** (`_pjm107_gas_daily_probe.py`, 2023–2025,
+one bundle, years sequential).
+
+- **Gate A — WITHIN NOISE.** pjm-110 matches committed pjm-107 on **every**
+  load-bearing criterion (C1 fuel-mix 16/16, C2 sysvol, C3a mean, C3b shape,
+  C5a CO2) plus C4 dispatch, C7 diurnal shape, C8 forced-share — all statuses
+  identical (PASS). C3c price-tail stays FAIL (supporting) in both.
+  Determination NOT-YET in both (C3c). (C6 governance is UNATTESTED for
+  pjm-110 — no attestation was written for a hygiene run; it carries pjm-107's
+  zero-DOF ledger verbatim, and the attestation + rule-21 ablation twin are
+  owner-promotion-time.)
+- **The guard's ISOLATED effect is within noise (no-guard control).** Because
+  the code base evolved between pjm-107's solve (d62dc6a) and this branch's base
+  (cfd179f — the PJM accreditation R1–R6 + MISO lane-1 merges touch
+  `campd_tranche_fuel_frac`/`build_dispatch_fleet`), committed pjm-107 is a
+  confounded baseline: its C3c-2025 DA tail reads 6 h vs pjm-110's 17 h. A
+  **no-guard control** re-solved at the identical base (cfd179f, guard reverted,
+  same fetched DA feeds + ramp clean) isolates the guard: guard vs control LMP
+  differ by **maxabs $6.56/MWh, mean $0.06/MWh**, and the 2025 scarcity tail
+  (>$200) is **identical** (7 load-weighted / 17 any-zone hours, max $271 — both).
+  So the 6→17 h shift is the code-base evolution, **not** the guard; the guard
+  itself moves no scored metric. (Control bundle `pjm110_control_noguard` is a
+  throwaway diagnostic — not registered.)
+
+**Leg B — CT-only CEMS bench flag (scorer-side, no solve).** The bench assembly
+(`render_calibration_html.build_payload`) now flags plants whose EIA-923 annual
+net > 1.1× CAMPD annual gross — physically impossible for a complete CEMS record
+(gross ≥ net), the 2×1 signature where only the CC block's combustion turbines
+report. CAMPD gross is reconstructed from the committed net via the
+parasitic-load factor. Flagged plants are scored on their EIA-923 **monthly**
+row (12-point model-vs-923 capture/NRMSE) instead of the understated CAMPD
+hourly series, marked `ct_only`, and printed in the build provenance note; the
+dashboard suppresses their CAMPD heatmap and shows the basis note. Class gates
+untouched (volErr is already 923-based), so a bundle with no flagged plants
+re-renders byte-identical. **The three named CC instances reproduce** at the
+diagnosis ratios — 55337 Ironwood 1.49/1.47/1.47×, 55976 Hunterstown
+1.56/1.56/1.53×, 55710 Allegheny-3-4-5 1.47/1.46/1.48× (2023/24/25). The 1.1×
+physical criterion also flags the rest of PJM's incomplete-CEMS fleet
+(industrial cogens — Procter & Gamble, Shell Chemical, Hopewell — and
+sparse-CEMS peakers; 21/17/6 plants across the three years); this is the
+correct broader set (every plant whose CAMPD understates it is now scored on
+923), not just the three headline blocks.
+
+**Tests:** `tests/test_fleet.py::TestCcSummerCapacityGuard` (total-on-one-row +
+double-filed + clean + within-tolerance), `tests/test_ct_only_bench_flag.py`
+(detection + 923-monthly capture); the CAISO peaking test rebased on the
+reconciled bins. No new suite failures.
+
+**Out of scope (own charters):** July-2025 coal conduct (§7.1), CC zonal
+misallocation / Dominion under-run (§7.2), per-plant diurnal cycling metric
+(§7.3), C1 930-vs-923 anchoring boundary note (§7.4).
+
+**Holdouts / governance.** 2023–2025 training years only (rule 22);
+`keepers.json` untouched (owner promotes); zero fitted scalars, no
+`ScenarioConfig` flag changed, no parameter/curve/floor/derive value moved
+(rules 13/20/21/23/26). The guard traces to a measured EIA-860 nameplate bound
+and adds no free parameter.
