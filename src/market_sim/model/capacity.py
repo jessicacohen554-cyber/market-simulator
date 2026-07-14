@@ -92,6 +92,7 @@ from market_sim.config.constants import (
     STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO,
     STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO,
     THERMAL_ACCREDITATION_BASIS_BY_ISO,
+    THERMAL_ELCC_CLASS_RATING_BY_ISO,
     VOM,
     WRIGHT_REFERENCE_GW,
     evaluate_renewable_elcc_curve,
@@ -859,18 +860,47 @@ def resolve_adequacy_requirement_mw(
     )
 
 
+def thermal_accreditation_fraction(
+    fuel_type: str, eford: float, iso: str | None
+) -> float:
+    """Firm fraction of nameplate one dispatchable unit accredits, on the ISO's basis.
+
+    The ONE thermal-accreditation resolver (rule 19): the adequacy ledger
+    (:func:`_thermal_firm_mw`), the CR-1 reserve position, and the per-unit
+    capacity payment (:func:`capacity_revenue_per_mw_yr`) all price a unit's
+    firm fraction through this single function, so the ledger and the payment
+    can never diverge by construction. Three published bases
+    (:data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`):
+
+    * ``"seasonal_rating"`` (ERCOT CDR): nameplate, no forced-outage derate
+      — returns ``1.0`` (outage risk lives in the target margin).
+    * ``"elcc_class_rating"`` (PJM's 2025/26 CIFP reform): the unit's
+      published ELCC class rating
+      (:data:`THERMAL_ELCC_CLASS_RATING_BY_ISO`), falling back to UCAP for a
+      fuel class the ISO does not publish (rule 25 neutral fallback).
+    * default / absent (``"ucap"``): ``1 - EFORd``.
+
+    ``iso=None`` keeps the legacy UCAP basis byte-identically.
+    """
+    basis = THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso or "")
+    if basis == "seasonal_rating":
+        return 1.0
+    if basis == "elcc_class_rating":
+        rating = THERMAL_ELCC_CLASS_RATING_BY_ISO.get(iso or "", {}).get(fuel_type)
+        if rating is not None:
+            return float(rating)
+    return 1.0 - float(eford)
+
+
 def _thermal_firm_mw(g: Generator, iso: str | None) -> float:
     """Firm MW one dispatchable unit contributes to the adequacy ledger.
 
-    Default is UCAP (``pmax x (1 - EFORd)``). ISOs whose published
-    accreditation counts thermal at its seasonal rating with no forced-outage
-    derate (:data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`, ERCOT's CDR
-    convention — outage risk lives in the target margin, not the count)
-    contribute nameplate. ``iso=None`` keeps the legacy UCAP basis.
+    ``pmax`` times the unit's basis-resolved accreditation fraction
+    (:func:`thermal_accreditation_fraction` —
+    :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`). ``iso=None`` keeps the legacy
+    UCAP basis.
     """
-    if THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso or "") == "seasonal_rating":
-        return float(g.pmax_mw)
-    return float(g.pmax_mw) * (1.0 - float(g.eford))
+    return float(g.pmax_mw) * thermal_accreditation_fraction(g.fuel_type, g.eford, iso)
 
 
 def _renewable_credit(fuel_type: str, iso: str | None) -> float | None:
