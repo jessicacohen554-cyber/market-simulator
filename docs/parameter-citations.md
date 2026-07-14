@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1336 parameters registered** (745 flagged `needs-citation`).
+**1348 parameters registered** (750 flagged `needs-citation`).
 
 
 ## Calibration
@@ -417,6 +417,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_intertie_reference_price` | False | 1 | Price each CAISO per-hub WECC |  | auto-generated, needs-citation |
 | `scenario.caiso_reference_price_seam` | False | 1 | Price BOTH legs of CAISO's two WECC |  | auto-generated, needs-citation |
 | `scenario.caiso_zonal_gas_basis` | False | 2 | CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy fro… | 2023 | auto-generated |
+| `scenario.class_aware_fuel_price_fallback` | False | 3 | Tier 3 (calibration) — class-aware "nearby plant" donor pools. When… | 2024 | auto-generated |
 | `scenario.coal_bit_committed_takeorpay` | False | 3 | Bituminous committed-band take-or-pay bid discount. The `_committed… | 2023 | auto-generated |
 | `scenario.coal_bit_dispatchable` | False | 2 | Bituminous spot-coal marginal treatment (PJM): unlike PRB/lignite m… |  | auto-generated, needs-citation |
 | `scenario.coal_bit_passthrough_ceil` | None | 3 | dear-gas asymptote (>1 = markup) |  | auto-generated, needs-citation |
@@ -789,6 +790,7 @@ inline comment and still need a dated primary source — search the table for
 | `storage_deployment_ceiling_mw.NYISO` | 16000.0 | 2 | ~50% of ~32 GW peak. Source: NYISO Gold Book 2024 | 2024 | auto-generated |
 | `storage_deployment_ceiling_mw.PJM` | 75000.0 | 2 | ~50% of ~150 GW peak. Source: PJM Load Forecast Report 2024 | 2024 | auto-generated |
 | `storage_elcc_by_duration` | [[2.0, 0.4], [4.0, 0.6], [6.0, 0.75],… | 2 | Effective load-carrying capability (ELCC) of storage as a function … |  | auto-generated, needs-citation |
+| `storage_elcc_by_duration_by_iso.PJM` | [[4.0, 0.5], [6.0, 0.58], [8.0, 0.62]… | 2 | Per-ISO published storage ELCC class-rating tables, overriding the … | 2025 | auto-generated |
 | `storage_elcc_dilution_ceiling_ratio_by_iso.ERCOT` | 0.7641196013289037 | 2 | The CDR's own fleet-average BESS ELCC ratio at full deployment-ceil… | 2030 | auto-generated |
 | `storage_elcc_dilution_reference_mw_by_iso.ERCOT` | 20438.0 | 2 | Dec 2025 CDR: operational + CDR-eligible planned BESS | 2025 | auto-generated |
 | `storage_elcc_saturation_exponent` | 1.5 | 2 | Marginal ELCC saturation. As cumulative storage power approaches th… |  | auto-generated, needs-citation |
@@ -841,6 +843,12 @@ inline comment and still need a dated primary source — search the table for
 | `storage_techs.li_ion_8hr.fom_per_kw_yr` | 48.0 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
 | `storage_techs.li_ion_8hr.learning_rate` | 0.18 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 | modeled |
 | `storage_techs.li_ion_8hr.rte` | 0.86 | 2 | NREL Annual Technology Baseline 2024 | 2024-07 |  |
+| `thermal_elcc_class_rating_by_iso.PJM.coal` | 0.83 | 2 | Coal |  | auto-generated, needs-citation |
+| `thermal_elcc_class_rating_by_iso.PJM.gas_cc` | 0.74 | 2 | Gas Combined Cycle |  | auto-generated, needs-citation |
+| `thermal_elcc_class_rating_by_iso.PJM.gas_ct` | 0.6 | 2 | Gas Combustion Turbine |  | auto-generated, needs-citation |
+| `thermal_elcc_class_rating_by_iso.PJM.gas_st` | 0.73 | 2 | Steam (gas/oil steam) |  | auto-generated, needs-citation |
+| `thermal_elcc_class_rating_by_iso.PJM.nuclear` | 0.95 | 2 | Nuclear |  | auto-generated, needs-citation |
+| `thermal_elcc_class_rating_by_iso.PJM.oil` | 0.91 | 2 | Diesel Utility (the 2026/27 official oil/diesel class) | 2026 | auto-generated |
 
 ## Structural
 
@@ -1260,6 +1268,7 @@ inline comment and still need a dated primary source — search the table for
 | `pjm_rggi_zone_share.PJM_West_APS` | {"2023": 0.0108, "2024": 0.0, "2025":… | 2 | PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member… | 2023 | auto-generated |
 | `scenario.unknown_zone_default` | South_Central | 2 | zone for bins tagged "Unknown" |  | auto-generated, needs-citation |
 | `thermal_accreditation_basis_by_iso.ERCOT` | seasonal_rating | 2 | Thermal accreditation basis for the same adequacy ledger, per ISO. … | 2026 | auto-generated |
+| `thermal_accreditation_basis_by_iso.PJM` | elcc_class_rating | 2 | Thermal accreditation basis for the same adequacy ledger, per ISO. … | 2026 | auto-generated |
 
 ## Uncategorized
 
@@ -1336,6 +1345,9 @@ inline comment and still need a dated primary source — search the table for
 | `ercot_rtolcap_fwd_online_share.CT_PEAKER` | [[0.0136, 0.0147, 0.0196, 0.0232, 0.0… | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `ercot_rtolcap_fwd_online_share.ST_CHP` | [[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, … | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `ercot_sced_intervals_per_hour` | 12 | 2 | ERCOT SCED cadence: one SCED execution every ~5 minutes (ERCOT Noda… |  | auto-generated, needs-citation |
+| `forecast_pool_requirement_by_iso.PJM.2025/2026` | 0.938 | 2 | (1+0.178) x 0.7963; PPP posted 2024-04-08 | 2024-04 | auto-generated |
+| `forecast_pool_requirement_by_iso.PJM.2026/2027` | 0.917 | 2 | 146,105 MW UCAP / 159,329 MW peak; PPP 2025-05-09 | 2025-05 | auto-generated |
+| `forecast_pool_requirement_by_iso.PJM.2027/2028` | 0.926 | 2 | (1+0.200) x 0.7717; BRA report 2025-12-17 | 2025-12 | auto-generated |
 | `global_annual_deployment_gw.compressed_air` | 0.3 | 2 | GW/yr global CAES additions. Source: IEA 2024 pipeline. | 2024 | auto-generated |
 | `global_annual_deployment_gw.flow_battery` | 0.8 | 2 | GW/yr global VRFB additions. Source: BNEF LDES tracker 2024. | 2024 | auto-generated |
 | `global_annual_deployment_gw.iron_air` | 1.0 | 2 | was 0.5. |  | auto-generated, needs-citation |
@@ -1425,7 +1437,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_installed_mw.NYISO.wind` | 2400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.PJM.solar` | 14000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.PJM.wind` | 11000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
-| `rggi_member_states_by_year` | {"2023": ["ME", "RI", "MD", "VA", "VT… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
+| `rggi_member_states_by_year` | {"2023": ["DE", "VA", "MD", "NH", "NY… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
 | `short_ton_to_metric_tonne` | 0.90718474 | 2 | Short ton -> metric tonne. RGGI allowances are denominated in SHORT… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.CAISO` | 2026-07-03-caiso-statmode-d-7 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.ERCOT` | 2026-07-04-statmode-d7-probe-ercot32 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
