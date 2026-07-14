@@ -102,9 +102,14 @@ data/        → all on-disk inputs; every path resolves through config/paths.py
     class**, its mechanism needs a cited `D4_WINDOWS` entry in `scripts/legitimacy_diagnostics.py`
     and that bundle re-generated so the D-4 row exists; and any mechanism-change-driven verdict flip
     is scored leave-one-year-out within 2023–2025 before the keeper is promoted.
-1. **Every keeper carries a DOF ledger and an ablation twin.** The attestation lists each free
-    parameter with its identification source; a zero-forcing ablation run is registered alongside.
-    A residual that can only be closed by a tuned value is an open root-cause issue, not a parameter.
+1. **Every keeper carries a DOF ledger.** The attestation lists each free parameter with its
+    identification source. A residual that can only be closed by a tuned value is an open
+    root-cause issue, not a parameter. *Amended 2026-07-14 (owner): the zero-forcing ablation
+    twin is NO LONGER required — keepers no longer build or register a paired zero-forcing run.
+    Forcing-legitimacy now rests on the DOF ledger plus the D-2 / `legitimacy_diagnostics.json`
+    mechanism attribution (the C8 forced-share gate and D-4 off-window-binding check) alone.
+    Already-registered twins may remain on the dashboard as historical artifacts; no new twin is
+    produced (probe, candidate, or keeper).*
 1. **Hold out data across three tiers — train, validation, locked test — and never let a
     locked-test result re-enter tuning.** *Amended 2026-07-07 (owner) — supersedes the earlier
     two-window "holdouts are 2022 + H1-2026, score once" wording with an explicit
