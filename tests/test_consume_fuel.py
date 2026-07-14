@@ -108,3 +108,37 @@ def test_gas_daily_shape_factors_parity(clean_tree, monkeypatch):
     clean_factors = fuel.gas_daily_shape_factors(year, hours)
 
     np.testing.assert_array_equal(raw_factors, clean_factors)
+
+
+@requires_raw
+def test_gas_daily_shape_factors_mean_preserving(monkeypatch):
+    """Each month's daily-shape factors average to EXACTLY 1.0 (G-A1 fix).
+
+    Bare ``np.interp`` resampling of the trading-day quotes onto the calendar-day
+    grid does not preserve the mean in a convex gas-spike month; the explicit
+    per-month renormalization in ``gas_daily_shape_factors`` restores it.
+    Regression for the Jan-2024 +2% (+$0.10/MMBtu delivered) overshoot — the
+    G-A1 finding (docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md). Multiplying a
+    flat monthly gas level by these factors must leave the monthly mean unchanged,
+    or the daily shaping silently shifts the fuel-cost level (and the annual
+    burn / generation mix with it — CLAUDE.md rule 13).
+    """
+    monkeypatch.delenv(fuel._USE_CLEAN_ENV, raising=False)
+    fuel._HH_DAILY_CACHE.clear()
+    # 2024 carries the worst pre-fix month (Jan HH $2.15 -> $13.20 cold snap).
+    year, hours = 2024, fuel.HOURS_PER_YEAR
+    factors = fuel.gas_daily_shape_factors(year, hours)
+
+    hour = 0
+    for n_days in fuel._DAYS_IN_MONTH:
+        seg = factors[hour : hour + n_days * 24]
+        assert abs(float(seg.mean()) - 1.0) < 1e-9, (
+            f"month at hour {hour}: factor mean {seg.mean()!r} != 1.0 "
+            "(gas_daily_shape_factors is not mean-preserving)"
+        )
+        hour += n_days * 24
+
+    # The intra-month daily swing must still be present in the spike month —
+    # the fix rescales the factors, it does not flatten them.
+    jan = factors[: 31 * 24]
+    assert float(jan.max() - jan.min()) > 0.5
