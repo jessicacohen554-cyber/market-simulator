@@ -291,6 +291,12 @@ scored 2025 guards are C2/C3a/C3b/C3c):
 | ST_GAS | (raw 11.87 — payload basis carries the OTHER_FOSSIL relabel; see the 2024 note) | | ≈−1 to −2 true A/B | 14.86 | ungated 2025 |
 | total coal | 213.25 | 210.17 | +3.08 | 202.55 | +7.62 → +10.70 |
 
+V1b (`regb`) 2025 is near-identical — PSGC/Warrick sit in-merit at 2025 gas,
+so restoring their discount barely moves the year: PRB +3.98, BIT −0.35,
+CT −0.70, total coal +3.91 (over-read +7.62 → +11.5 on the prelim-923
+basis, confounded by the G-23 import starvation −5.8 TWh); scored-basis
+C3a −14.4% / C3b 0.201, matching V1a within solver noise.
+
 Scored-basis prices (demand-weighted zonal monthly vs bench `rt_lw_mon` —
 method validated by reproducing the keeper's scored 0.082/0.099/0.183
 exactly from its payload):
