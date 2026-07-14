@@ -41,15 +41,16 @@ for every newly pushed bundle.
 
 The shared dashboard data files — `frontend/data/backcast/manifest.js`,
 `benchmark.js`, `completeness.js` — are assembled from the committed per-run
-files by the stdlib-only `scripts/build_manifest.py`. They ARE committed (so a
-raw checkout's local preview works via the bc-data.js fallback), **but you
-must never hand-commit them.** The "Deploy site to GitHub Pages" workflow is
-their single writer: on every merge to main it regenerates them, commits them
-back (with `GITHUB_TOKEN`, which does not re-trigger the deploy), and copies
-the full data set into `docs/codebase-site/data/backcast/` (gitignored,
-deploy-staging only) via `scripts/build_codebase_site_backcast.py`. Run
-`scripts/build_manifest.py` locally only to *preview* — leave the resulting
-changes to those files uncommitted; the deploy reconciles them.
+files by the stdlib-only `scripts/build_manifest.py`. They ARE committed (the
+Run Explorer serves them via the bc-data.js fallback). **Amended 2026-07-14
+(owner): the "Deploy site to GitHub Pages" workflow that used to regenerate and
+commit them was removed (all GitHub Actions workflows were deleted). They are no
+longer auto-refreshed — you MUST run `scripts/build_manifest.py` and commit the
+regenerated `manifest.js`/`benchmark.js`/`completeness.js` yourself, in the same
+push as the sidecars/payloads. A stale committed manifest makes the run invisible
+in the Run Explorer.** Only `docs/codebase-site/data/backcast/` (gitignored, was
+deploy-staging) stays generated-not-committed; the bc-data.js fallback loads the
+committed `frontend/data/backcast/` files when it is absent.
 
 Each run commits ONLY files in its own namespace, so any number of parallel
 sessions — same ISO or different ISOs — merge to main without conflicts or
@@ -59,7 +60,8 @@ rebasing:
 * `frontend/data/backcast/registry/<id>.json` — the sidecar holding the run's
   complete manifest entry (id, label, date, shorthand, definition, years, iso,
   file, bundle). **To refine a run's label or definition, edit its sidecar**
-  (not manifest.js) and merge; the next deploy picks it up.
+  (not manifest.js), then re-run `build_manifest.py` and commit the refreshed
+  manifest.
 * `frontend/data/backcast/runs/<id>.js` — the run's payload.
 * `frontend/data/backcast/bench/<ISO>/<year>.json.gz` — per-(ISO, year)
   benchmark parts. Byte-deterministic: they only show up in `git status` when
@@ -147,26 +149,34 @@ keeps its `runNN` scheme.
    sidecar link that does not resolve. Already-registered twins may stay on the
    dashboard (keep their `ablation_twin` link); do not solve new ones.
 
-5. **Commit + push** the per-run files only (include the twin's files and the
-   updated keeper sidecar when a twin was registered):
+5. **Commit + push** the per-run files AND the refreshed generated data files.
+   Regenerate the manifest from the sidecars first, then stage everything:
    ```bash
+   python scripts/build_manifest.py   # refreshes manifest.js/benchmark.js/completeness.js
    git add results/calibration/<name> \
            frontend/data/backcast/registry/<id>.json \
            frontend/data/backcast/runs/<id>.js \
-           frontend/data/backcast/bench
+           frontend/data/backcast/bench \
+           frontend/data/backcast/manifest.js \
+           frontend/data/backcast/benchmark.js \
+           frontend/data/backcast/completeness.js
    git commit -m "results: <label> — <one-line what changed>"
    ```
+   The generated files MUST be committed (2026-07-14 owner amendment): the deploy
+   that used to refresh them was removed, so a stale committed manifest leaves the
+   run invisible in the Run Explorer.
    **Never push the sidecar without its `runs/<id>.js` payload in the same
    push** — even for a rejected/non-keeper probe, even to keep an API push
    call small. `build_manifest.py` skips a sidecar with no matching payload
    silently (no error, no warning surfaced anywhere), so a sidecar-only
    registration is a run that's on record but permanently invisible in the
    Run Explorer. This already happened to five probes (nyiso-54, nyiso-58,
-   pjm-84, pjm-85, caiso-66) and is now a CI gate
-   (`scripts/check_registry_payload_parity.py`, wired into `ci.yml`) — a PR
-   that adds a sidecar without its payload fails CI. Run it locally before
-   pushing if you're unsure: `python scripts/check_registry_payload_parity.py`.
-   Merging to main auto-deploys (single Pages workflow, <1 min). Report the
+   pjm-84, pjm-85, caiso-66). Run the parity check locally before every push
+   (the CI gate that enforced it was removed with the workflows 2026-07-14):
+   `python scripts/check_registry_payload_parity.py`. There is no deploy step —
+   the Run Explorer serves the committed `frontend/data/backcast/` files
+   directly, so the refreshed manifest from step 5 is what makes the run show.
+   Report the
    headline **led by the calibration determination** (CALIBRATED /
    CALIBRATED-WITH-CAVEATS / NOT-YET and, when not CALIBRATED, the deciding
    criterion), then the run scorecard: classes in tolerance per year, system
@@ -221,8 +231,8 @@ checkout does not fetch. So when a keeper changes:
    `python scripts/build_status.py --check` fails (exit 1) if status.js is stale
    vs the current verdicts — a cheap CI/pre-commit guard.
 
-`build_manifest.py` never regenerates status.js — the deploy just copies the
-committed file to the pages' data dir.
+`build_manifest.py` never regenerates status.js — it is committed on its own via
+`build_status.py` (above) and the Run Explorer reads the committed copy directly.
 
 ## Notes
 
