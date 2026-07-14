@@ -360,9 +360,14 @@ class TestP0BReconciliation(unittest.TestCase):
     def test_pjm_curve_matches_published(self):
         rows = self._rows("PJM", "2026/2027")
         design = MARKET_DESIGN["PJM"]
-        # Net-CONE anchor ($/MW-yr row -> $/kW-yr).
-        net_cone = self._scalar(rows, "net_cone", y_unit="usd_per_mw_yr")
-        self.assertAlmostEqual(design.net_cone_curve_per_kw_yr, net_cone / 1000.0, 3)
+        # Net-CONE anchor: the published UCAP net-CONE ($/MW-day row × 365/1000),
+        # the basis the VRR curve is drawn around and the auction clears in
+        # (P-2B Option A anchor re-derivation, R1). NOT the 60,396 $/MW-yr
+        # ICAP-annual row, which mis-scaled the UCAP curve by PJM's ~0.78 factor.
+        net_cone_day = self._scalar(rows, "net_cone", y_unit="usd_per_mw_day")
+        self.assertAlmostEqual(
+            design.net_cone_curve_per_kw_yr, net_cone_day * 365.0 / 1000.0, 3
+        )
         # Curve x-positions.
         cps = rows[rows.metric == "curve_point"].sort_values("point_index")
         self.assertEqual(
