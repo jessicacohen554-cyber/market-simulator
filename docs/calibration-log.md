@@ -12582,3 +12582,63 @@ calibration-complete marker); no offer curve, sigmoid, floor, derive value or
 ORDC parameter tuned (rules 13/21/23/26); the only code change is the G-A1
 correctness fix cited to the mechanism bug, not a residual. `audit_keepers.py`
 unaffected (keeper pointer unchanged).
+
+## 2026-07-14 — PJM July-gas diagnosis (no solve): temperature confirmation FAILS, parasitic haircut measured FLAT, and the "+3 TWh July gas over-run" reframed as an actuals-basis artifact + within-fleet misallocation; the surviving C3c-summer volume lead is July-2025 COAL (+1.9 TWh)
+
+**Grounding:** `docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md` (this session's
+deliverable); probes `scripts/probes/_pjm_july_cc_overrun_temp.py`,
+`scripts/probes/_pjm_cc_netgross_bases.py` (no-LP, measured only — model side
+decoded from the committed pjm-107 dashboard payload). **Keeper unchanged**
+(`2026-07-14-pjm-107-gas-daily`); no run solved, no dashboard change, no config
+flag touched.
+
+**Q1 — were the July over-run days hot at the plants? NO.** Exact keeper
+dispatch × CAMPD hourly × the model's own zone-TMAX series, 12 named
+CC_REGULAR plants: corr(TMAX, daily over-run) **−0.14/−0.09/−0.09**
+(2023/24/25); ≥33 °C days carry only 7–20 % of over-run MWh (≥35 °C: 0.3–5 %);
+30–50 % of the over-run accrues overnight (h0–6); on the ≥33 °C hours the same
+units demonstrate ~rating output (pjm-95 lower bound reproduced per-unit).
+Third refutation of the temp-derate line (ERCOT 2026-07-09, PJM fleet
+2026-07-10, PJM July-units here) — `temp_dependent_derate` and
+`gt_ambient_derate` stay OUT (both are also arithmetically inert for a July
+volume gap: the CC curve is Jun–Sep-mean-neutral by construction; the ambient
+increment touches only >35 °C hours, ~0.01–0.03 TWh).
+
+**Q2 — parasitic-load seasonality: NONE.** EIA-923-net / CAMPD-gross per
+plant-month, 65-plant CC panel, 2023–2025: 0.969–0.975 every calendar month,
+Jan−Jul **−0.05 pp**, DJF 0.9723 vs JJA 0.9720. Static `parasitic_load_pct`
+is correct; no seasonal correction exists to build.
+
+**Q3 + reframing — the headline dissolves into bases.** On the EIA-923
+plant-survey basis (volErr, matched-grid) the model's July gas error is
+**+0.76/+0.57/+0.16 TWh** — the "+3.1/+3.8/+2.9" was the model vs EIA-930,
+which runs 1.0–3.0 TWh below EIA-923 on PJM July gas (annually the two
+federal series *invert the sign* of the 2025 mix error: gas −6.8 vs +13.4,
+coal +7.7 vs −1.7). The named-12 "worst over-runners" net to
++0.16/+0.64/+0.49 TWh on the 923 basis — over-runs at AEP-Ohio/Central-PA/
+ComEd mid-cost cyclers (York +183 GWh 2025, flat where reality two-shifts)
+largely offset by **under-runs at the Dominion belt** (Greensville/Brunswick/
+Warren −58…−204 GWh) — a merit/congestion allocation signature D-1 hides by
+class-netting (profile_r 0.95–0.98 passes). Per-plant benchmark corruption
+found and measured: **CT-only CEMS** at Ironwood/Hunterstown/Allegheny-345
+(923-net = 1.45–1.59× CAMPD-gross; ~0.5–0.6 TWh/July of apparent over-run is
+benchmark artifact) and **EIA-860 summer-capacity corruption** at six plants
+(+972 MW phantom on the flag-off fleet basis; keeper-inert under
+`cc_nameplate_summer_derate=True`, live in default/forecast configs).
+**The surviving C3c-2025-summer volume lead is COAL: July 2025 +1.90 TWh**
+(BIT +1.63, West_APS/AEP_Ohio/SWMAAC; ~2.5 GW average phantom mid-merit
+supply in the scarcity month), part of the 2025 coal-vs-gas split error.
+
+**Disposition.** No temp-derate flip, no parasitic fix — the chartered levers
+are refused with cause (rules 1/11/13/24). pjm-110 `bench-hygiene` spec
+written (diagnosis §6): (A) EIA-860 CC summer-capacity consistency guard at
+the fleet loader (fleet pmax ≤ nameplate sum; no-regression gate, protects
+flag-off/forecast paths), (B) CT-only CEMS bench flag (scorer-side).
+Chartered follow-ups (§7): July-2025 coal conduct (the C3c lead), CC zonal
+misallocation / Dominion under-run (seam r = −0.16 with the measured ladder
+already on), per-plant diurnal cycling metric (D-1p), and the C1
+930-vs-923 anchoring boundary note (owner).
+
+**Holdouts / governance.** No solve, no scoring, no registration; 2023–2025
+data only (rule 22); no parameter, curve, floor or derive value changed
+(rules 13/21/23/26).
