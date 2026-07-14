@@ -224,12 +224,24 @@ Class TWh, probe vs the registered miso-65 payload vs actual (C1 band ±8.0):
 | COAL_BIT | 46.02 | 51.27 | −5.25 | 53.33 | −2.06 → −7.31 PASS (0.69 from edge — the NR reversion, see 2023) |
 | COAL_LIGNITE | 5.36 | 3.98 | +1.37 | 6.52 | −2.54 → −1.16 PASS |
 | CT_PEAKER | 23.79 | 27.53 | −3.74 | 19.23 | **+8.30 FAIL → +4.57 PASS** |
-| CC_REGULAR | 143.64 | 146.07 | −2.43 | 143.47 | +2.60 → +0.17 |
-| ST_GAS | 15.37 | 9.74 | **+5.63** | 17.57 | −7.83 → −2.20 (large free improvement) |
+| CC_REGULAR | 143.64 | 147.43* | −3.79 | 143.47 | scored ≈ +2.6 → ≈−1.2 |
+| ST_GAS | 15.37 | 16.88* | **−1.51** | 17.57 | scored ≈ −7.83 → **≈−9.3 (RISK: flips FAIL — was 0.17 from the edge)** |
 | total coal | 173.18 | 161.31 | +11.87 | 176.32 | −15.0 → −3.1 |
+
+\* CC_REGULAR/ST_GAS baselines are the same-machine `base` 2024 replica, NOT
+the payload gmModel — the payload applies the OTHER_FOSSIL raw-klass relabel
+(the miso-62 handoff's documented artifact), which the replica exposed: every
+coal/CT class reproduces the payload to ±0.01 TWh, while raw-klass ST_GAS
+reads +7.14 and CC_REGULAR +1.37 above their relabelled payload values. An
+earlier draft of this table showed ST_GAS "+5.63 improvement" — that was the
+relabel offset, not a real rise; the true A/B is **ST_GAS −1.51**.
 
 The displaced CT energy returns to coal through the energy balance exactly as
 designed — no CT-side mechanism needed (charter candidate (c) stays closed).
+The displacement also shaves CC (−3.8) and ST_GAS (−1.5); ST_GAS-2024 was
+already scored at −7.83 vs a ±8.0 band, so the shave likely flips it FAIL —
+the known secondary risk Phase B's exact scoring adjudicates (the ST_GAS
+deficit itself is the VLR-floor lane's open item, not this lane's).
 
 Price side (Indiana DA-monthly proxy; scored C3a is RT-basis, deltas
 transfer): C3a-2024 proxy −0.6% → −5.6% (scored −2.9% → ≈−7.9%, stays inside
@@ -249,7 +261,7 @@ scored 2025 guards are C2/C3a/C3b/C3c):
 | COAL_PRB | 148.61 | 144.38 | **+4.23** | 139.26 | +5.12 → +9.35 (ungated) |
 | COAL_BIT | 59.09 | 60.54 | −1.45 | 57.45 | +3.09 → +1.64 (better) |
 | CT_PEAKER | 20.13 | 20.74 | −0.62 | 18.42 | +2.33 → +1.71 (better) |
-| ST_GAS | 11.87 | 6.69 | **+5.18** | 14.86 | −8.17 → −2.99 (much better) |
+| ST_GAS | (raw 11.87 — payload basis carries the OTHER_FOSSIL relabel; see the 2024 note) | | ≈−1 to −2 true A/B | 14.86 | ungated 2025 |
 | total coal | 213.25 | 210.17 | +3.08 | 202.55 | +7.62 → +10.70 |
 
 Scored-basis prices (demand-weighted zonal monthly vs bench `rt_lw_mon` —
@@ -276,10 +288,13 @@ further rise, stays inside ±7%.
 
 ## 6. Expected scored deltas for miso-66 (to verify in Phase B)
 
-- **C1 (fuelmix): FAIL → PASS expected** — all eight gated 2024 classes land
-  within ±8.0 TWh under the probe (former FAILs at +5.34/+4.57; tightest row
-  COAL_BIT −7.31); 2023 rows per the 2023 probe below. Would be the first
-  MISO C1 clean sweep (16/16 all / 12/12 free).
+- **C1 (fuelmix): the two 2024 FAILs flip PASS** (PRB +5.34 / CT +4.57 under
+  V1a; V1b shifts both a little as PSGC/Warrick BIT competes back). 2023 PRB
+  improves (−7.26 → ≈+3.7). The open rows: COAL_BIT-2023 (V1a breaks it at
+  −8.59 → V1b recovers Prairie State/Warrick, expected ≈−5) and
+  **ST_GAS-2024** (−7.83 → ≈−9.3 on the −1.5 displacement shave — the
+  possible new FAIL). Best case 16/16 (first MISO C1 clean sweep); worst
+  case 15/16 with the fail row swapped {PRB, CT} → {ST_GAS}.
 - **C3a: PASS/PASS/FAIL retained** — 2024 degrades −2.9% → ≈−7% (in-band),
   2025 worsens ≈−13% → ≈−15% (already FAIL).
 - **C3b: 2024 PASS (≈0.12); 2025 ON the gate (≈0.20 ± solver noise)** — the
