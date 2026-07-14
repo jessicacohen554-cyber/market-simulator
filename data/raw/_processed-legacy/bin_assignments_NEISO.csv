@@ -13,12 +13,12 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 10307,Bellingham Cogeneration Facility,CC_REGULAR,Boston,264.0,8.826,0.0,32.6,56.8,10.6,none,campd,campd,
 10726,Masspower,CC_REGULAR,Central,245.0,8.616,0.0,13.5,79.2,7.3,none,campd,campd,
 51030,Ocean State Power,CC_REGULAR,Central,231.8,8.156,0.0,35.8,59.0,5.2,none,campd,campd,
-52026,Dartmouth Power Associates LP,CC_REGULAR,Central,94.3,9.308,0.0,14.8,82.9,2.3,none,campd,campd,CC+CT
+52026,Dartmouth Power Associates LP,CC_REGULAR,Central,74.1,9.308,0.0,14.8,82.9,2.3,none,campd,campd,CC+CT
 54324,Ocean State Power II,CC_REGULAR,Central,267.6,8.37,0.0,29.5,64.7,5.8,none,campd,campd,
 54805,Milford Power LP,CC_REGULAR,Central,204.8,8.607,0.0,50.8,47.3,1.9,none,campd,campd,
 55026,Dighton Power Plant,CC_REGULAR,Central,165.6,7.831,0.0,62.8,35.1,2.1,none,campd,campd,
 55041,Berkshire Power,CC_REGULAR,Central,229.2,7.51,0.0,67.2,30.1,2.7,none,campd,campd,
-55042,Bridgeport Energy Project,CC_REGULAR,Connecticut,538.0,7.297,0.0,58.0,40.0,2.0,none,campd,campd,
+55042,Bridgeport Energy Project,CC_REGULAR,Connecticut,520.0,7.297,0.0,58.0,40.0,2.0,none,campd,campd,
 55048,Tiverton Power Plant,CC_REGULAR,Central,273.0,7.068,0.0,54.6,42.7,2.7,none,campd,campd,
 55068,Maine Independence Station,CC_REGULAR,North,497.6,7.455,0.0,17.5,73.7,8.8,none,campd,campd,
 55079,Millennium Power,CC_REGULAR,Central,330.1,7.213,0.0,24.8,69.9,5.3,none,campd,campd,
@@ -34,7 +34,7 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 55661,Newington Energy Center,CC_REGULAR,North,560.5,7.572,0.0,25.4,70.6,4.0,none,campd,campd,
 56047,CPV Towantic Energy Center,CC_REGULAR,Connecticut,743.8,6.677,0.0,55.7,41.2,3.1,none,campd,campd,
 56798,Kleen Energy Systems,CC_REGULAR,Connecticut,622.0,7.112,0.0,63.8,35.7,0.5,none,campd,campd,
-60903,Salem Harbor Power Development LP,CC_REGULAR,Boston,1156.4,7.377,0.0,11.7,83.2,5.1,none,campd,campd,
+60903,Salem Harbor Power Development LP,CC_REGULAR,Boston,798.2,7.377,0.0,11.7,83.2,5.1,none,campd,campd,
 2364,Merrimack,COAL,North,108.0,11.337,0.0,70.0,28.0,2.0,campd,campd,class_default,
 10108,Hampton Facility,CT_CHP,North,3.8,6.07,70.0,30.0,0.0,0.0,chp_sector_default,class_default,class_default,
 10408,Clark University,CT_CHP,Central,2.0,5.861,65.0,30.0,0.0,5.0,chp_sector_default,class_default,class_default,

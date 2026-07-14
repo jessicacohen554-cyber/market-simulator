@@ -23,17 +23,17 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 59093,Holland Energy Park,CC_CHP,MISO-East,127.1,7.367,35.0,51.9,9.5,3.6,chp_sector_default,campd,campd,
 62289,Dearborn Energy Center,CC_CHP,MISO-East,26.9,10.388,35.0,45.0,12.0,8.0,chp_sector_default,class_default,class_default,
 65405,"Flint Hills Resources Pine Bend, LLC",CC_CHP,MISO-West,49.9,9.313,35.0,45.0,12.0,8.0,chp_sector_default,class_default,class_default,
-991,Eagle Valley (IN),CC_REGULAR,MISO-Indiana,673.0,6.51,0.0,70.0,27.5,2.5,none,campd,campd,
+991,Eagle Valley (IN),CC_REGULAR,MISO-Indiana,644.0,6.51,0.0,70.0,27.5,2.5,none,campd,campd,
 1004,Edwardsport,CC_REGULAR,MISO-Indiana,481.2,6.7,0.0,45.0,47.0,8.0,none,class_default,class_default,CC+COAL
 1007,Noblesville,CC_REGULAR,MISO-Indiana,264.0,7.475,0.0,39.3,56.7,4.0,none,campd,campd,
 1396,Coughlin Power Station,CC_REGULAR,MISO-South,727.0,7.889,0.0,50.6,40.6,8.8,none,campd,campd,
-1403,Nine Mile Point,CC_REGULAR,MISO-South,896.0,8.538,0.0,45.0,47.0,8.0,none,class_default,class_default,CC+ST
+1403,Nine Mile Point,CC_REGULAR,MISO-South,649.5,8.538,0.0,45.0,47.0,8.0,none,class_default,class_default,CC+ST
 1904,Black Dog,CC_REGULAR,MISO-West,282.0,8.517,0.0,34.4,59.1,6.5,none,campd,campd,CC+CT
 1912,High Bridge,CC_REGULAR,MISO-West,530.0,7.52,0.0,37.7,58.5,3.8,none,campd,campd,
 1927,Riverside (MN),CC_REGULAR,MISO-West,454.0,7.123,0.0,38.3,61.5,0.2,none,campd,campd,
 2059,L L Wilkins,CC_REGULAR,MISO-South,49.5,14.7,0.0,45.0,47.0,8.0,none,class_default,class_default,
 2070,Moselle,CC_REGULAR,MISO-South,268.0,8.891,0.0,52.2,32.9,14.9,none,campd,campd,CC+CT+ST
-4040,Port Washington Generating Station,CC_REGULAR,MISO-East,1236.5,6.898,0.0,37.3,58.8,3.9,none,campd,campd,
+4040,Port Washington Generating Station,CC_REGULAR,MISO-East,1229.6,6.898,0.0,37.3,58.8,3.9,none,campd,campd,
 6061,R D Morrow,CC_REGULAR,MISO-South,530.5,6.546,0.0,59.4,38.7,1.9,none,campd,campd,
 6358,Hutchinson Plant #2,CC_REGULAR,MISO-West,51.0,11.214,0.0,45.1,54.9,0.0,none,campd,campd,CC+CT
 7985,Greater Des Moines,CC_REGULAR,MISO-Plains,503.7,7.256,0.0,26.6,66.4,7.0,none,campd,campd,
@@ -41,18 +41,18 @@ Plant_Code,Plant_Name,Plant_Group,Zone,Nameplate_MW,Plant_Avg_HR_MMBtu_MWh,Pct_M
 55011,Whitewater Generating Station,CC_REGULAR,MISO-East,261.0,7.927,0.0,42.1,51.2,6.7,none,campd,campd,
 55087,Zeeland Generating Station,CC_REGULAR,MISO-East,524.5,8.587,0.0,70.0,24.1,5.9,none,campd,campd,CC+CT
 55173,Acadia Energy Center,CC_REGULAR,MISO-South,1072.7,7.58,0.0,42.0,51.1,6.9,none,campd,campd,
-55218,Hinds Energy Facility,CC_REGULAR,MISO-South,810.9,7.083,0.0,42.3,52.8,4.9,none,campd,campd,CC+CT
-55220,Attala,CC_REGULAR,MISO-South,811.9,7.037,0.0,41.3,56.8,1.9,none,campd,campd,
+55218,Hinds Energy Facility,CC_REGULAR,MISO-South,551.3,7.083,0.0,42.3,52.8,4.9,none,campd,campd,CC+CT
+55220,Attala,CC_REGULAR,MISO-South,551.3,7.037,0.0,41.3,56.8,1.9,none,campd,campd,
 55221,Harry L. Oswald,CC_REGULAR,MISO-South,548.0,7.626,0.0,10.8,82.5,6.7,none,campd,campd,
 55270,Jackson Generating Station,CC_REGULAR,MISO-East,534.4,8.55,0.0,22.1,75.6,2.3,none,campd,campd,
 55334,Holland Energy Facility,CC_REGULAR,MISO-Illinois,602.2,7.491,0.0,53.2,33.3,13.5,none,campd,campd,
 55357,Jack Fusco Energy Center,CC_REGULAR,MISO-South,602.0,7.376,0.0,41.2,56.0,2.8,none,campd,campd,
 55358,Cottonwood Energy Company LP,CC_REGULAR,MISO-South,580.4,7.491,0.0,70.0,25.3,4.7,none,campd,campd,
 55364,Sugar Creek Power,CC_REGULAR,MISO-Indiana,574.2,7.41,0.0,70.0,25.7,4.3,none,campd,campd,
-55380,Union Power Station,CC_REGULAR,MISO-South,3456.6,7.265,0.0,22.5,71.6,5.9,none,campd,campd,
-55418,Hot Spring Generating Facility,CC_REGULAR,MISO-South,957.0,7.362,0.0,31.1,62.9,6.0,none,campd,campd,
-55467,Ouachita,CC_REGULAR,MISO-South,1257.2,7.537,0.0,28.9,65.1,6.0,none,campd,campd,
-55620,Perryville Power Station,CC_REGULAR,MISO-South,972.6,6.89,0.0,41.6,52.1,6.3,none,campd,campd,CC+CT
+55380,Union Power Station,CC_REGULAR,MISO-South,2428.0,7.265,0.0,22.5,71.6,5.9,none,campd,campd,
+55418,Hot Spring Generating Facility,CC_REGULAR,MISO-South,714.8,7.362,0.0,31.1,62.9,6.0,none,campd,campd,
+55467,Ouachita,CC_REGULAR,MISO-South,903.9,7.537,0.0,28.9,65.1,6.0,none,campd,campd,
+55620,Perryville Power Station,CC_REGULAR,MISO-South,637.9,6.89,0.0,41.6,52.1,6.3,none,campd,campd,CC+CT
 55641,Riverside Energy Center,CC_REGULAR,MISO-East,534.8,14.964,0.0,70.0,26.8,3.2,none,campd,campd,
 55714,Magnet Cove,CC_REGULAR,MISO-South,641.5,6.935,0.0,56.1,39.4,4.5,none,campd,campd,
 56031,Fox Energy Center,CC_REGULAR,MISO-East,577.5,6.918,0.0,53.3,46.1,0.6,none,campd,campd,
