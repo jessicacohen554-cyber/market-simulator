@@ -2266,6 +2266,16 @@ STORAGE_TECHS: dict[str, dict[str, float]] = {
 # Subsequent years grow via economics-based new entry, not this constant.
 # Source: ERCOT Monthly Dec 2025 — battery capacity ~17 GW.
 # CAISO TPP 2024 — ~8 GW operational + under construction.
+# PJM/MISO/NYISO/NEISO — EIA-860 2025 Early Release energy-storage schedule
+# (data/raw/eia-860/eia860_energy_storage_operable.parquet +
+# ..._proposed.parquet), plants assigned to each ISO by balancing-authority
+# code (eia860_plant.parquet "Balancing Authority Code" joined on Plant Code —
+# the zone_assignment._ISO_TO_BA_CODE crosswalk, not a raw state filter, since
+# MISO/PJM member utilities split several states e.g. Illinois). mid = operable
+# Status="OP" nameplate MW; high = mid + proposed-schedule Status in
+# {U, V, TS} ("under construction" through "complete, not yet commercial"),
+# matching CAISO's "operational + under construction" definition above;
+# low = mid x 0.75 (CAISO's own low/mid ratio), rounded to the nearest 10 MW.
 STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
     "ERCOT": {
         "low": 12_000.0,
@@ -2277,23 +2287,25 @@ STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
         "mid": 8_000.0,
         "high": 12_000.0,
     },
-    # PJM/NYISO/NEISO base storage — approximate operational + queued
-    # battery capacity. TODO: verify (PJM Load Forecast Report 2024,
-    # NYISO Gold Book 2024, ISO-NE CELT Report 2024).
     "PJM": {
-        "low": 3_000.0,
-        "mid": 5_000.0,
-        "high": 9_000.0,
+        "low": 380.0,
+        "mid": 500.0,
+        "high": 870.0,
+    },
+    "MISO": {
+        "low": 600.0,
+        "mid": 800.0,
+        "high": 1_440.0,
     },
     "NYISO": {
-        "low": 1_000.0,
-        "mid": 1_500.0,
-        "high": 3_000.0,
+        "low": 190.0,
+        "mid": 250.0,
+        "high": 280.0,
     },
     "NEISO": {
-        "low": 500.0,
-        "mid": 1_000.0,
-        "high": 2_000.0,
+        "low": 580.0,
+        "mid": 770.0,
+        "high": 1_280.0,
     },
 }
 
