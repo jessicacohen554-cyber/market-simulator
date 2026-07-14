@@ -195,7 +195,7 @@
       "ident": "I1",
       "name": "energy balance",
       "status": "PASS",
-      "detail": "max |supply−demand| = 7.276e-11 MW (year 2025); tol 1.0"
+      "detail": "max |supply\u2212demand| = 7.276e-11 MW (year 2025); tol 1.0"
     },
     {
       "ident": "I2",
@@ -249,7 +249,7 @@
       "ident": "I10",
       "name": "RPS dual sign+stability",
       "status": "PASS",
-      "detail": "≥0, stable"
+      "detail": "\u22650, stable"
     },
     {
       "ident": "I11",
