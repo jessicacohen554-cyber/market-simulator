@@ -50,11 +50,17 @@ CANONICAL_COLUMNS: tuple[str, ...] = (
 # parameter -> canonical metric map. gross_cone is the pre-inframarginal-rent
 # Cost of New Entry (MISO publishes both a per-LRZ gross CONE and a
 # two-subregion Net CONE — genuinely different quantities, not a duplicate).
+# forecast_pool_requirement is PJM's published FPR — the reliability
+# requirement stated in UCAP terms as a fraction of forecast peak load
+# (post-CIFP FPR = (1+IRM) x Reference-Resource Accredited-UCAP factor);
+# it devintages the requirement onto the ISO's own published basis (R2,
+# accreditation-basis memo 2026-07-12 §4.2), carried in fraction_of_peak_ucap.
 METRIC_VOCAB: frozenset[str] = frozenset(
     {
         "net_cone",
         "gross_cone",
         "irm",
+        "forecast_pool_requirement",
         "price_cap",
         "price_floor",
         "curve_point",
@@ -73,6 +79,7 @@ Y_UNIT_VOCAB: frozenset[str] = frozenset(
         "usd_per_kw_yr",
         "pct",
         "multiple_of_net_cone",
+        "fraction_of_peak_ucap",
     }
 )
 SEASONS: frozenset[str] = frozenset({"summer", "fall", "winter", "spring"})

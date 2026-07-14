@@ -3066,6 +3066,32 @@ PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO: dict[str, float] = {
     "MISO": 1.079 / 1.157,
 }
 
+# Published Forecast Pool Requirement (FPR) per ISO and delivery year — the
+# reliability requirement stated on the ISO's OWN UCAP basis as a fraction of
+# forecast peak load (R2, accreditation-basis memo 2026-07-12 §4.2). PJM's
+# post-CIFP FPR = (1 + IRM) x Reference-Resource Accredited-UCAP factor, so it
+# already folds BOTH the reserve margin AND the ICAP->UCAP conversion into one
+# published number; the UCAP requirement is simply firm_peak x FPR.
+# :func:`market_sim.model.capacity.resolve_adequacy_requirement_mw` PREFERS a
+# published FPR for the matching delivery year and falls back to the
+# (1 + PRM) x icap_to_ucap_ratio construction otherwise (so an ISO/year absent
+# here is byte-identical to the pre-R2 behaviour). Devintaging the requirement
+# onto the published FPR replaces the mixed-vintage composite the fallback
+# builds (PJM 1.178 x 0.7699 = 0.907 vs the published 2026/2027 FPR 0.9170).
+# Values are digitized from the committed demand-curve rows
+# (data/raw/capacity-market/demand-curve/pjm/pjm.csv, metric
+# forecast_pool_requirement) and reconciled against them by
+# tests/test_capacity.py — a published market-design input, never a fit target
+# (rules 13/23). Only the post-CIFP reformed delivery years (2025/2026+) carry
+# a UCAP-basis FPR; pre-reform years fall through to the fallback.
+FORECAST_POOL_REQUIREMENT_BY_ISO: dict[str, dict[str, float]] = {
+    "PJM": {
+        "2025/2026": 0.9380,  # (1+0.178) x 0.7963; PPP posted 2024-04-08
+        "2026/2027": 0.9170,  # 146,105 MW UCAP / 159,329 MW peak; PPP 2025-05-09
+        "2027/2028": 0.9260,  # (1+0.200) x 0.7717; BRA report 2025-12-17
+    },
+}
+
 # AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
 # the AS-eligible (mostly storage) fleet grows past the calibration point.
 # Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **
