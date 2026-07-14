@@ -1,7 +1,7 @@
 {
-  "run_id": "2026-07-14-pjm-107-gas-daily",
+  "run_id": "2026-07-14-pjm-107-gas-daily-ablation",
   "iso": "PJM",
-  "label": "pjm 107 gas daily",
+  "label": "pjm 107 gas daily ablation",
   "target_years": [
     2023,
     2024,
@@ -16,16 +16,14 @@
   "rubric_version": 2.5,
   "determination": "NOT-YET",
   "reasons": [
-    "undocumented out-of-tolerance (FAIL) criteria: price_tail"
+    "governance gate UNATTESTED: no governance attestation in bundle"
   ],
-  "notes": [
-    "C8 2024 CT_PEAKER: grounded above budget \u2014 15.2% forced (3.2266 of 21.2387 TWh) \u2014 above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.957 (\u22650.8) & off-peak CV ratio 0.938 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
-  ],
+  "notes": [],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "sysvol": {
       "label": "C2 system volume (gas/coal families)",
@@ -35,12 +33,12 @@
     "price_mean": {
       "label": "C3a mean LMP",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_shape": {
       "label": "C3b price duration/shape",
       "tier": "load-bearing",
-      "status": "PASS"
+      "status": "FAIL"
     },
     "price_tail": {
       "label": "C3c price tail / scarcity (DA-expressible)",
@@ -70,17 +68,17 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "PASS"
+      "status": "UNATTESTED"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "PASS"
+      "status": "SKIPPED"
     }
   },
   "caveats": {
@@ -93,11 +91,11 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
-    "target_grade": 9,
+    "scored": 7,
+    "target_grade": 3,
     "commercial_grade": 0,
     "ledgered": 0,
-    "fails": 1
+    "fails": 4
   },
   "free_class_score": {
     "iso": "PJM",
@@ -115,13 +113,13 @@
       "ST_CHP"
     ],
     "all": {
-      "pass": 16,
+      "pass": 14,
       "total": 16
     },
     "free": {
-      "pass": 12,
+      "pass": 10,
       "total": 12
     },
-    "headline": "C1 all 16/16 \u00b7 free 12/12"
+    "headline": "C1 all 14/16 \u00b7 free 10/12"
   }
 }
