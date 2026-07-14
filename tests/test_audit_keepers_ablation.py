@@ -1,9 +1,11 @@
-"""Tests for audit_keepers E9 (ablation-twin gate, CLAUDE.md rule 20 / D-3).
+"""Tests for audit_keepers E9 (ablation-twin link integrity, CLAUDE.md rule 20).
 
-Exercises the pure ``ablation_twin_finding`` helper and the grandfather-list
-rollout invariants. The helper decides OK / WARN / FAIL for one keeper given its
-sidecar and a registry dir, so it is testable without the live registry, the
-verdict scorer, or the build_status subprocess the full audit runs.
+The zero-forcing ablation twin is OPTIONAL as of the 2026-07-14 owner amendment
+to rule 20 (keepers no longer build or register one). E9 now only checks that a
+DECLARED ``ablation_twin`` sidecar link resolves to a registered run — absence of
+a twin is OK. Exercises the pure ``ablation_twin_finding`` helper, which decides
+OK / FAIL for one keeper given its sidecar and a registry dir, so it is testable
+without the live registry.
 """
 
 import importlib.util
@@ -11,8 +13,6 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
-
-import pytest
 
 _REPO = Path(__file__).resolve().parent.parent
 _spec = importlib.util.spec_from_file_location(
@@ -34,59 +34,28 @@ class TestAblationTwinFinding(unittest.TestCase):
         (self.reg / f"{run_id}.json").write_text(json.dumps(obj or {}))
 
     def test_registered_twin_passes(self):
+        # A resolvable declared link is still OK (existing twins stay valid).
         self._write("k-ablation")
         level, _ = ak.ablation_twin_finding(
             "new-keeper", {"ablation_twin": "k-ablation"}, self.reg
         )
         self.assertEqual(level, "OK")
 
-    def test_grandfathered_without_twin_warns(self):
-        gf = next(iter(ak.E9_ABLATION_TWIN_GRANDFATHER))
-        level, msg = ak.ablation_twin_finding(gf, {}, self.reg)
-        self.assertEqual(level, "WARN")
-        self.assertIn("GRANDFATHERED", msg)
-
-    def test_new_keeper_without_twin_fails(self):
-        level, _ = ak.ablation_twin_finding("2099-brand-new-keeper", {}, self.reg)
-        self.assertEqual(level, "FAIL")
+    def test_missing_twin_is_ok(self):
+        # No ``ablation_twin`` link: OK — the twin is optional (rule 20 owner
+        # amendment 2026-07-14). Was a FAIL/WARN before the amendment.
+        level, msg = ak.ablation_twin_finding("2099-brand-new-keeper", {}, self.reg)
+        self.assertEqual(level, "OK")
+        self.assertIn("not required", msg.lower())
 
     def test_dangling_twin_link_fails(self):
-        # A DECLARED-but-broken link FAILs even for a grandfathered keeper — the
-        # grace excuses "no twin yet", not a sidecar asserting an unresolvable
-        # twin (a typo / an unregistered twin).
-        gf = next(iter(ak.E9_ABLATION_TWIN_GRANDFATHER))
-        level, msg = ak.ablation_twin_finding(
-            gf, {"ablation_twin": "does-not-exist"}, self.reg
-        )
-        self.assertEqual(level, "FAIL")
-        # A NON-grandfathered keeper with a dangling link also fails.
+        # A DECLARED-but-broken link still FAILs: the sidecar asserts a twin that
+        # does not resolve (a typo / an unregistered twin) — a data-integrity bug.
         level, msg = ak.ablation_twin_finding(
             "new-keeper", {"ablation_twin": "does-not-exist"}, self.reg
         )
         self.assertEqual(level, "FAIL")
-        self.assertIn("no", msg.lower())
-
-
-class TestGrandfatherRollout(unittest.TestCase):
-    @pytest.mark.xfail(
-        strict=True,
-        reason="pre-existing failure on main as of 2026-07-05 (found wiring PR CI "
-        "in W1-P1): the MISO keeper was re-registered as "
-        "2026-07-05-miso-41-ct-evening without a twin (audit_keepers.py --check "
-        "E9 also fails on this); needs run_calibration_full.py "
-        "--zero-forcing-ablation for that keeper, not a CI fix — tracked for "
-        "follow-up",
-    )
-    def test_grandfather_matches_current_keepers(self):
-        """The grace list is seeded with exactly the current keeper ids.
-
-        So every keeper live when D-3 landed WARNs (not FAILs) until it is
-        re-registered with a twin — and no OTHER run is grandfathered.
-        """
-        keepers = json.loads(
-            (_REPO / "frontend/data/backcast/keepers.json").read_text()
-        )["keepers"]
-        self.assertEqual(set(ak.E9_ABLATION_TWIN_GRANDFATHER), set(keepers))
+        self.assertIn("does-not-exist", msg)
 
 
 if __name__ == "__main__":
