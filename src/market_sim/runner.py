@@ -704,6 +704,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 config,
                 iso,
                 peak_demand,
+                year,
             )
 
         if fleet is None:
@@ -1971,7 +1972,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 sum(
                     u.power_cap_mw
                     * _elcc_for_duration(
-                        u.energy_cap_mwh / u.power_cap_mw if u.power_cap_mw > 0 else 0.0
+                        u.energy_cap_mwh / u.power_cap_mw
+                        if u.power_cap_mw > 0
+                        else 0.0,
+                        iso,
                     )
                     for u in storage_units
                 )

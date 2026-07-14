@@ -85,13 +85,20 @@ columns:
     unit: none
     nullable: false
     description: >-
-      Canonical metric: net_cone | gross_cone | irm | price_cap |
-      curve_point | soft_offer_cap | ra_report_price. net_cone is the Net
+      Canonical metric: net_cone | gross_cone | irm |
+      forecast_pool_requirement | price_cap | curve_point | soft_offer_cap |
+      ra_report_price. net_cone is the Net
       Cost of New Entry anchor (CONE minus inframarginal energy/AS rents);
       gross_cone is the pre-inframarginal-rent Cost of New Entry where an ISO
       publishes both as genuinely distinct quantities (e.g. MISO's per-LRZ
       gross CONE vs its two-subregion Net CONE); irm is the Installed Reserve
-      Margin target (as published — MW or pct per value_unit); price_cap /
+      Margin target (as published — MW or pct per value_unit);
+      forecast_pool_requirement is PJM's published Forecast Pool Requirement
+      (FPR) — the reliability requirement expressed in unforced-capacity
+      (UCAP) terms as a fraction of forecast peak load (post-CIFP FPR =
+      (1 + IRM) x Reference-Resource Accredited-UCAP factor), the ISO's own
+      UCAP-basis requirement so the model need not re-derive it from IRM x a
+      conversion ratio; price_cap /
       price_floor are the curve's price ceiling/floor (as a multiple of
       net_cone or an absolute price, e.g. PJM's ICAP-basis cap/floor before
       UCAP conversion); curve_point is one (x,y) point on the sloped demand
@@ -141,7 +148,8 @@ columns:
       Unit of y_value: usd_per_mw_day | usd_per_mw_day_icap (PJM's
       pre-UCAP-conversion ICAP-basis cap/floor) | usd_per_mw_yr |
       usd_per_kw_month |
-      usd_per_kw_yr | pct | multiple_of_net_cone.
+      usd_per_kw_yr | pct | multiple_of_net_cone | fraction_of_peak_ucap
+      (the forecast_pool_requirement's UCAP-MW / forecast-peak-MW ratio).
   - name: vintage
     dtype: string
     unit: none
