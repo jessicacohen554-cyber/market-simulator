@@ -87,6 +87,48 @@ EIA-923 filings — the miso-59..63 accepted argument). **Promotion
 recommended** (strictly-improved scored metrics, identical fail set);
 owner's call.
 
+### 2026-07-14 — PJM keeper PROMOTED: `pjm 105 symmetric-net` (owner sign-off, rule 1; supersedes pjm-98-cc-mustrun) — the symmetric net DA-virtual layer replaces the adjudicated-out clamp; C1 FAIL→PASS 16/16 + C7 FAIL→PASS; one open gated miss (C3c 2025 scarcity tail), chartered next
+
+**Owner decision (2026-07-14, this session's chat = the sign-off):** promote
+`2026-07-13-pjm-105-symmetric-net` to the PJM keeper, superseding
+`2026-07-11-pjm-98-cc-mustrun`. Executed: `keepers.json` PJM field + array
+updated; the `calibration-keeper-auditor` re-run PASS (linked the ablation
+twin `…-symmetric-net-ablation`, rewrote the sidecar `definition` to the
+keeper header, regenerated `status.js`); no re-solve.
+
+**Rule-1 basis (most structurally faithful, not lowest MAE).** pjm-105
+renders the WHOLE measured net(λ)=ΣDEC≥λ−ΣINC≤λ DA-virtual curve — the
+`net>0` region as byte-identical DEC withdrawal rungs, the `net<0` region as
+INC-form net-supply rungs (`VIRTUAL_INC`, DEC prices ≤ λ0 ≤ INC prices so
+the two sides never clear against each other). Zero fitted scalars; the form
+replacement IS the delta (zero flag changes vs pjm-104). The clamped form was
+adjudicated out 2026-07-13 as diagnostic scaffolding. It strictly dominates
+pjm-104 on every gated criterion:
+- **C1 FAIL→PASS** — 16/16 gated, 12/12 free; the 2024 CC_REGULAR blocker
+  +9.07 → −1.78 (phantom gone, not re-routed).
+- **C2 PASS** — 2025 coal family +5.4 % (≤ +5.8 % keeper de-regression bar).
+- **C3a/C3b PASS** — DA-diag +0.8 / −5.3 / −11.4 %; 2024/25 read LOW vs DA
+  (the one soft spot, inside band, flagged honestly).
+- **C7 FAIL→PASS** — the 2023 CT off-peak flatness (cv 0.495) was the clamp's
+  amputated net-negative region, not a commitment/AS phenomenon.
+- **C8 PASS** — 2024 CT 16.1 % grounded-above-budget clean pass. **C4/C5a PASS.**
+DOF ledger (pjm-98's ten + four measured/cited G-22 entries, zero new
+residual-identified) + zero-forcing ablation twin registered.
+
+**Live determination NOT-YET on C3c ALONE** — 2025 model 17 h vs DA actual
+51 h > $200 (the untouched DA reserve/ORDC + seam scarcity tail), a model
+miss, deliberately not ledgered. This is the sole remaining gated miss on the
+PJM keeper line and is chartered next as the **C3c scarcity-tail lane**
+(design memo + adjudication before any build — handoff issued this session).
+
+**Two open PJM threads (for the record):** (1) a separate `pjm-106`
+fleet_to_bins CC-HR re-gate leg (caiso-81 lane E) was in flight and OOM'd on
+the hosted runners — it is NOT registered (no bundle) and its number is
+reserved for that lane, so the C3c run should number pjm-107+ (or verify
+pjm-106 first). (2) midmerit-finding §6 follow-ups stay open: the bituminous
+sigmoid re-derivation (item 2) and the CC_LIKE top belt (item 5), both now
+unblocked by the clamp removal.
+
 ### 2026-07-13 — NYISO + NEISO — nyiso-62 / neiso-59 (fleet_to_bins CC-HR re-gate, caiso-78 blast radius): keeper recipes re-solved VERBATIM on the fixed base_hr — NYISO C3a+C3b CAVEAT→PASS (target grade 6→8), NEISO C2 CAVEAT→PASS (7→8), zero fails — **both PROMOTED to keeper** (caiso-78 precedent: same rule-14 code fix, LOYO-exempt); PJM leg (pjm-106) re-running on a swap-enabled runner after a 7 GB runner OOM
 
 The caiso-78 entry flagged the PJM/NYISO/NEISO keepers "must re-gate on the
