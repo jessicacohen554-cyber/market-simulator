@@ -36,6 +36,7 @@ _SRC = Path(__file__).resolve().parent.parent / "src"
 if _SRC.exists() and str(_SRC) not in sys.path:
     sys.path.insert(0, str(_SRC))
 
+from market_sim.data.fleet import BA_CODE_TO_ISO  # noqa: E402
 from market_sim.model.dispatch import DispatchResult  # noqa: E402
 from market_sim.results.evolution_ledger import load_ledgers_for_run  # noqa: E402
 
@@ -51,6 +52,17 @@ ISO_CAMPD_STATES = {
     "ERCOT": ["TX"],
     "PJM": ["PA", "NJ", "MD", "OH", "VA", "WV", "DE", "KY", "IN", "IL", "NC", "DC"],
 }
+
+# ISOs whose footprint crosses many states and overlaps another ISO get a
+# *facility-exact* CO2 reference instead of a state sum: CAMPD unit-level rows
+# filtered to the ORISPL/plant codes EIA-860 maps to that ISO's balancing
+# authority, summed over the states the ISO spans. A plain state sum would be
+# badly boundary-misaligned here (rule 11) — MISO shares IN/IL/KY/MI with PJM,
+# so a TX..WI state sum would double-count PJM and overstate MISO CO2 by a large
+# margin; NYISO ≈ NY but carries a few NJ/PJM-border plants. The crosswalk keeps
+# the reference on the model's own BA boundary. ERCOT/PJM stay on the state-sum
+# path above (unchanged, already registered).
+ISO_CAMPD_FACILITY = frozenset({"MISO", "NYISO"})
 
 THERMAL_FUELS = frozenset(
     {"coal", "gas_cc", "gas_ct", "gas_st", "oil", "nuclear", "biomass"}
@@ -355,12 +367,65 @@ def model_co2_by_year(bundle: Path) -> dict[int, float]:
     return out
 
 
+def _iso_plant_codes_and_states(iso: str) -> tuple[set[int], list[str]]:
+    """ORISPL/plant codes and the states EIA-860 maps to ``iso``'s BA.
+
+    Mirrors ``build_capacity_actuals._plant_ba``: the plant sheet's ``Balancing
+    Authority Code`` is the ISO boundary, and CAMPD ``facilityId`` is the same
+    ORISPL code as EIA ``Plant Code``. Returns the plant-code set (for the CAMPD
+    facility filter) and the distinct states those plants sit in (to bound which
+    CAMPD state files are read).
+    """
+    plant = pd.read_parquet(Path("data/raw/eia-860/eia860_plant.parquet"))
+    plant = plant[pd.to_numeric(plant["Plant Code"], errors="coerce").notna()].copy()
+    plant["Plant Code"] = plant["Plant Code"].astype(float).astype(int)
+    bas = {ba for ba, i in BA_CODE_TO_ISO.items() if i == iso}
+    sub = plant[plant["Balancing Authority Code"].isin(bas)]
+    codes = set(int(c) for c in sub["Plant Code"].tolist())
+    states = sorted({str(s).strip() for s in sub["State"].dropna() if str(s).strip()})
+    return codes, states
+
+
+def _actual_co2_facility(iso: str) -> dict[int, float]:
+    """Facility-exact actual CO2 (metric tonnes), scored years only (rule 11).
+
+    Filters CAMPD unit-level ``co2Mass`` (short → metric) to the plants EIA-860
+    maps to ``iso``'s balancing authority, summed over the states the ISO spans.
+    Used for footprint-crossing ISOs (``ISO_CAMPD_FACILITY``) where a state sum
+    would double-count a neighbouring ISO. NEVER reads 2022/2026 (rule 22).
+    """
+    codes, states = _iso_plant_codes_and_states(iso)
+    out: dict[int, float] = {}
+    base = Path("data/raw/campd-unit-level")
+    for year in SCORED_YEARS:
+        total_short = 0.0
+        found = False
+        for st in states:
+            p = base / f"{st}_{year}.parquet"
+            if not p.exists():
+                continue
+            found = True
+            df = pd.read_parquet(p, columns=["facilityId", "co2Mass"])
+            fid = pd.to_numeric(df["facilityId"], errors="coerce")
+            mask = fid.isin(codes)
+            total_short += float(
+                pd.to_numeric(df.loc[mask, "co2Mass"], errors="coerce").sum()
+            )
+        if found:
+            out[year] = total_short * SHORT_TON_TO_METRIC
+    return out
+
+
 def actual_co2_by_year(iso: str) -> dict[int, float]:
     """Derive actual CO2 (metric tonnes) from CAMPD unit-level, scored years only.
 
-    Sums ``co2Mass`` (short tons → metric) over the ISO's CAMPD state files.
-    ERCOT ≈ TX (slight overcount, flagged). NEVER reads 2022/2026 (rule 22).
+    Footprint-crossing ISOs (``ISO_CAMPD_FACILITY``: MISO, NYISO) use a
+    facility-exact BA crosswalk. Single-state-dominant ISOs (ERCOT, PJM) sum
+    ``co2Mass`` (short tons → metric) over their CAMPD state files; ERCOT ≈ TX
+    (slight overcount, flagged). NEVER reads 2022/2026 (rule 22).
     """
+    if iso in ISO_CAMPD_FACILITY:
+        return _actual_co2_facility(iso)
     states = ISO_CAMPD_STATES.get(iso, [])
     out: dict[int, float] = {}
     base = Path("data/raw/campd-unit-level")
