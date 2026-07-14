@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-14-pjm-107-gas-daily",
+  "label": "pjm 107 gas daily",
+  "date": "2026-07-14",
+  "shorthand": "pjm-107-gas-daily",
+  "definition": "PJM 107 probe (leg A): the pjm-105 symmetric-net keeper recipe (pjm-98 keeper recipe + net DA virtual depth [symmetric form] + CT fast-start startup amortization on CAMPD-measured run horizons + the measured LONG_RUN top-of-curve floor) with EXACTLY ONE override: gas_daily_shape False->True \u2014 the measured Henry Hub daily within-month shape injected onto the gas price series, mean-preserving per month (the F923 plant-month re-carry keeps the daily swing on every overwritten gas plant-month). Solved on the G-A1-fixed gas_daily_shape_factors: the calendar-day factors are renormalized to mean exactly 1.0, so the monthly delivered mean is preserved to <$0.001/MMBtu (bare np.interp overshot by +$0.10/MMBtu in Jan-2024 pre-fix). Zero fitted scalars in the delta (rules 1/13/20/21: ex-ante measured daily HH prints, frozen against residuals; forecast-native).",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-14-pjm-107-gas-daily.js",
+  "bundle": "results/calibration/pjm107_gas_daily"
+}
