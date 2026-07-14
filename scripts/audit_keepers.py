@@ -30,18 +30,12 @@ For every keeper id in ``frontend/data/backcast/keepers.json`` it verifies:
   E6  keepers.json names exactly one keeper per ISO.
   E8  the bundle attestation carries a ``free_parameters`` DOF ledger and every
       residual-sourced entry references an open root cause (CLAUDE.md rule 20).
-  E9  the keeper carries a registered zero-forcing ablation twin
-      (``registry/<id>-ablation.json``, linked from the sidecar
-      ``ablation_twin`` field) — CLAUDE.md rule 20 / audit D-3. Mirrors E8.
-      **Rollout:** E8 landed as an unconditional hard fail (every keeper already
-      had a DOF ledger). E9 cannot, because no current keeper has a twin yet: an
-      unconditional E9 would redden main before W2 solves the twins. So E9
-      hard-fails only keepers NOT on ``E9_ABLATION_TWIN_GRANDFATHER`` (the six
-      keepers current when D-3 landed), which WARN instead. The list is
-      self-emptying — a re-registered keeper gets a new dated id that carries its
-      twin, so the grandfathered id stops being a keeper — and once every ISO's
-      keeper has a twin the list is deleted and E9 is unconditional, with no
-      further edit to E9 itself.
+  E9  a DECLARED ``ablation_twin`` sidecar link resolves to a registered run.
+      The zero-forcing twin itself is OPTIONAL (CLAUDE.md rule 20, owner
+      amendment 2026-07-14: keepers no longer build or register a twin;
+      forcing-legitimacy rests on the DOF ledger + ``legitimacy_diagnostics``).
+      Absence of a twin is OK; only a dangling link — a sidecar naming a twin
+      with no registry payload — FAILs, as a data-integrity check.
   S1  ``status.js`` is in sync with the current verdicts
       (``build_status.py --check``).
   H1  holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04):
@@ -87,38 +81,12 @@ _DET_TOKENS = ("CALIBRATED-WITH-CAVEATS", "NOT-YET", "CALIBRATED")
 # ISOs that must always carry the full backcast year span (claude.md #16).
 _MULTI_YEAR_ISOS = {"CAISO", "PJM", "NEISO", "NYISO", "MISO"}
 
-# E9 ablation-twin grandfather list (CLAUDE.md rule 20 / audit D-3). E8 was
-# rolled out as an UNCONDITIONAL hard fail (every keeper already had a DOF
-# ledger when it landed). E9 cannot: none of the six keepers current when D-3
-# landed carries an ablation twin yet — an immediate unconditional E9 would turn
-# CI red on main before W2 can solve the twins. So E9 hard-fails only keepers
-# NOT on this list; the listed keepers WARN (grace) until re-registered.
-#
-# The list is self-emptying: a keeper is re-registered (W2+) under a NEW dated
-# run id that carries its twin, and keepers.json swaps to that new id — so the
-# grandfathered id stops being a keeper and E9's exemption no longer applies to
-# anything. Once every ISO's keeper has been re-registered with a twin, this set
-# is dead code: delete it and E9 is unconditional, with NO other edit to E9.
-# Do not ADD ids here — only remove them as each ISO's keeper gains a twin.
-E9_ABLATION_TWIN_GRANDFATHER = frozenset(
-    {
-        # 2026-07-03-ercot32-ordc-total-rtolcap: removed 2026-07-06 — superseded
-        # as ERCOT keeper by 2026-07-06-ercot34-stage4-overlay-off (registered
-        # with its zero-forcing twin).
-        "2026-07-03-caiso-51-firm-base",
-        # 2026-07-03-pjm-76-outage-fix: removed 2026-07-05 — superseded as PJM
-        # keeper by 2026-07-05-pjm-77-ct-relfloor (registered with its twin).
-        # 2026-07-03-nyiso-41-hub-prices: removed 2026-07-06 — superseded as
-        # NYISO keeper by 2026-07-06-nyiso-53-li-tsl (registered with its
-        # zero-forcing twin), taking the grandfathered E9 exemption with it.
-        # 2026-07-03-neiso-47-fast-start: removed 2026-07-05 — superseded as
-        # NEISO keeper by 2026-07-05-neiso-48-ct-floor (registered with twin).
-        # 2026-07-03-miso-39-reserve-pergen: removed 2026-07-06 — superseded as
-        # MISO keeper by 2026-07-05-miso-41-ct-evening (registered with its own
-        # zero-forcing twin, 2026-07-06-miso-41-ct-evening-ablation), taking the
-        # grandfathered E9 exemption with it.
-    }
-)
+# E9 no longer enforces a zero-forcing ablation twin (CLAUDE.md rule 20, owner
+# amendment 2026-07-14: keepers no longer build or register one; forcing-
+# legitimacy rests on the DOF ledger + legitimacy_diagnostics). The grandfather
+# rollout list is deleted with the requirement; the only E9 check that remains is
+# a data-integrity one — a DECLARED ``ablation_twin`` link must resolve —
+# handled inline in ablation_twin_finding().
 
 # H1 holdout quarantine (CLAUDE.md rule 22 / audit D-6, amended 2026-07-04).
 # Kept stdlib-inline (this module must run without numpy/model imports); a
@@ -155,14 +123,13 @@ def holdout_quarantine_failures() -> list[str]:
 def ablation_twin_finding(
     run_id: str, side: dict, registry_dir: Path
 ) -> tuple[str, str]:
-    """Return the E9 (ablation-twin) finding for one keeper: (level, message).
+    """Return the E9 (ablation-twin link) finding for one keeper: (level, message).
 
-    ``level`` is ``"OK"`` / ``"WARN"`` / ``"FAIL"``. A keeper passes E9 iff its
-    sidecar ``ablation_twin`` names a run with a registry sidecar in
-    ``registry_dir``. A keeper on :data:`E9_ABLATION_TWIN_GRANDFATHER` WARNs
-    (grace) instead of FAILing while it still lacks a twin; every other keeper
-    without a resolvable twin FAILs (CLAUDE.md rule 20 / audit D-3). Pure over
-    its inputs so it is unit-testable without the live registry.
+    ``level`` is ``"OK"`` / ``"FAIL"``. The zero-forcing ablation twin is
+    OPTIONAL (CLAUDE.md rule 20, owner amendment 2026-07-14): a keeper with NO
+    ``ablation_twin`` link is OK. Only a DECLARED-but-dangling link — a sidecar
+    naming a twin with no registry payload — FAILs, as a data-integrity check.
+    Pure over its inputs so it is unit-testable without the live registry.
     """
     twin_id = side.get("ablation_twin")
     twin_side = _load_json(registry_dir / f"{twin_id}.json") if twin_id else None
@@ -175,22 +142,17 @@ def ablation_twin_finding(
         return (
             "FAIL",
             f'sidecar "ablation_twin" points to {twin_id!r} but no '
-            f"registry/{twin_id}.json exists — register the twin "
-            "(run_calibration_full.py --zero-forcing-ablation).",
+            f"registry/{twin_id}.json exists — fix or remove the dangling link.",
         )
-    if run_id in E9_ABLATION_TWIN_GRANDFATHER:
-        return (
-            "WARN",
-            "no registered ablation twin — GRANDFATHERED (predates the D-3 "
-            "requirement); enforced when this keeper is next re-registered "
-            "(W2+). CLAUDE.md rule 20 / audit D-3.",
-        )
+    # No twin declared: OK. Per CLAUDE.md rule 20 (owner amendment 2026-07-14)
+    # the zero-forcing ablation twin is NO LONGER required — keepers no longer
+    # build or register one; forcing-legitimacy rests on the DOF ledger plus the
+    # D-2 / legitimacy_diagnostics.json attribution alone. (The grandfather set
+    # is now dead — no keeper can FAIL E9 for a missing twin.)
     return (
-        "FAIL",
-        "keeper has no registered ablation twin: solve it with "
-        "run_calibration_full.py --zero-forcing-ablation, register it as "
-        "registry/<id>-ablation.json, and set the keeper sidecar "
-        '"ablation_twin" field (CLAUDE.md rule 20 / audit D-3).',
+        "OK",
+        "no ablation twin (not required — CLAUDE.md rule 20, owner amendment "
+        "2026-07-14; forcing-legitimacy via DOF ledger + legitimacy_diagnostics).",
     )
 
 
@@ -399,13 +361,9 @@ def audit_keeper(run_id: str, rep: Report) -> None:
                     f"entries, {n_res} residual, all with root causes)",
                 )
 
-    # E9: ablation twin (CLAUDE.md rule 20 / audit D-3). A keeper must have a
-    # registered zero-forcing ablation twin — registry/<id>-ablation.json,
-    # linked from the keeper sidecar "ablation_twin" field — so the keeper-vs-
-    # twin per-class delta is on the dashboard. Mirrors E8. Keepers on the
-    # E9_ABLATION_TWIN_GRANDFATHER list (those predating D-3) WARN instead of
-    # FAIL until they are re-registered with a twin (W2+); see the list docstring
-    # for how the grace self-empties.
+    # E9: ablation-twin link integrity (CLAUDE.md rule 20, owner amendment
+    # 2026-07-14). The twin itself is optional — absence is OK; only a DECLARED
+    # "ablation_twin" sidecar link that does not resolve FAILs.
     level, msg = ablation_twin_finding(run_id, side, cv.REGISTRY_DIR)
     {"OK": rep.ok, "WARN": rep.warn, "FAIL": rep.fail}[level](run_id, iso, "E9", msg)
 
