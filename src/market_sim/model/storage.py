@@ -27,6 +27,7 @@ from market_sim.config.constants import (
     STORAGE_DEGRADATION_REPLACEMENT_FRACTION,
     STORAGE_DEPLOYMENT_CEILING_MW,
     STORAGE_ELCC_BY_DURATION,
+    STORAGE_ELCC_BY_DURATION_BY_ISO,
     STORAGE_ELCC_SATURATION_EXPONENT,
     STORAGE_TECH_BUILD_SHARE_CAP,
     STORAGE_TECH_POWER_SHARE,
@@ -810,14 +811,21 @@ def estimate_storage_revenue(
     return float(margin.sum() * d)
 
 
-def _elcc_for_duration(duration_hr: float) -> float:
+def _elcc_for_duration(duration_hr: float, iso: str | None = None) -> float:
     """Interpolate the storage capacity credit (ELCC) for a duration.
 
-    Linear interpolation over :data:`STORAGE_ELCC_BY_DURATION`, clamped at the
-    table's endpoints.
+    Linear interpolation over the ISO's published storage class-rating table
+    (:data:`STORAGE_ELCC_BY_DURATION_BY_ISO` — e.g. PJM's 2025/26 CIFP-reform
+    class ratings, R3) when the ISO publishes one, else the generic
+    :data:`STORAGE_ELCC_BY_DURATION`; clamped at the table's endpoints.
+    ``iso=None`` (or an ISO absent from the override registry) keeps the generic
+    table byte-identically. One storage-accreditation mechanism per ISO
+    (rule 19); the marginal-ELCC saturation derate applies on top of this in
+    :func:`estimate_capacity_value` for every ISO.
     """
-    durations = [d for d, _ in STORAGE_ELCC_BY_DURATION]
-    credits = [c for _, c in STORAGE_ELCC_BY_DURATION]
+    table = STORAGE_ELCC_BY_DURATION_BY_ISO.get(iso or "", STORAGE_ELCC_BY_DURATION)
+    durations = [d for d, _ in table]
+    credits = [c for _, c in table]
     return float(np.interp(duration_hr, durations, credits))
 
 
@@ -879,7 +887,7 @@ def estimate_capacity_value(
         return 0.0
 
     duration_hr = float(STORAGE_TECHS[tech_name]["duration_hr"])
-    elcc = _elcc_for_duration(duration_hr)
+    elcc = _elcc_for_duration(duration_hr, iso)
 
     ceiling = STORAGE_DEPLOYMENT_CEILING_MW.get(iso, 0.0)
     penetration = 0.0 if ceiling <= 0.0 else min(1.0, existing_mw / ceiling)
