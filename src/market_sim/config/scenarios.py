@@ -15,6 +15,7 @@ from market_sim.config.paths import (
     EIA_860_DIR,
     PLANT_REGISTRY_CSV,
     PROCESSED_DIR,
+    cc_capacity_reconcile_path,
 )
 
 # Config fields introduced after the results cache existed. ``cache_key`` omits
@@ -4167,18 +4168,20 @@ class ScenarioConfig:
     # backcast arms it. Ablated in the zero-forcing twin.
     st_gas_mustrun_per_plant: bool = False
 
-    # When True (ERCOT backcast), each CC_REGULAR plant's LP capacity is raised
-    # to its demonstrated CAMPD peak where that exceeds the curated bin
-    # nameplate — the cold-weather (winter) over-rating an F-class CC delivers
-    # that the standard nameplate omits. Raise-only: a plant that never
-    # dispatched to its rating keeps it. Without this, plants like Freestone
-    # (nameplate 1036 MW, observed peak 1119 MW) cannot reach the output the
-    # real plant did and log zero hours in their top CF band. Reconciliation
-    # table from scripts/derive_cc_capacity_reconcile.py. Off by default.
+    # When True, each CC_REGULAR plant's LP capacity is reconciled to its
+    # demonstrated CAMPD peak: raised where the peak exceeds the model bound
+    # (the cold-weather over-rating an F-class CC delivers that nameplate omits
+    # — e.g. Freestone nameplate 1036 MW, observed peak 1119 MW) and capped
+    # where the model bound exceeds anything the plant ever sustained. Measured
+    # capability (rule 13); table from scripts/derive_cc_capacity_reconcile.py.
+    # Off by default.
     cc_capacity_reconcile: bool = False
-    cc_capacity_reconcile_path: str = str(
-        PROCESSED_DIR / "cc_capacity_reconcile_ERCOT.csv"
-    )
+    # None resolves per-ISO in __post_init__ to cc_capacity_reconcile_<ISO>.csv
+    # (rules 24/25: no literal ISO table crosses an ISO boundary; a hardcoded
+    # ERCOT default silently fed ERCOT's demonstrated peaks to any ISO that
+    # flipped the flag without overriding the path). An explicit string still
+    # wins. A missing file no-ops the reconcile hook.
+    cc_capacity_reconcile_path: str | None = None
 
     # When True, CC_REGULAR / CC_CHP plants use the per-plant CAMPD-derived
     # duct-firing/scarcity share from fleet.thermal_tranche_peaking (the share
@@ -5231,6 +5234,12 @@ class ScenarioConfig:
                 "ScenarioConfig.neighbor_hr_forward_skill must be None, "
                 f"'elastic', or 'flat', got {self.neighbor_hr_forward_skill!r}"
             )
+
+        # CC demonstrated-peak reconcile table: resolve the default per the
+        # run's ISO so no ISO ever reads another ISO's measured peaks (rules
+        # 24/25). An explicit path (e.g. the CLI's per-ISO resolution) is kept.
+        if self.cc_capacity_reconcile_path is None:
+            self.cc_capacity_reconcile_path = str(cc_capacity_reconcile_path(self.iso))
 
         # gas_price_factor is a forecast-only uncertainty lever (PB-1 §2.1);
         # rule 13 forbids it ever becoming a backcast tuning channel that

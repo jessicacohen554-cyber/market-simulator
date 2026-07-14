@@ -1,0 +1,15 @@
+plant_code,plant_name,current_mw,campd_p999_mw,eia860_winter_mw,reconciled_mw,delta_pct,source,mode
+60903,Salem Harbor Power Development LP,1367.5,673.2,710.4,673.2,-50.8,campd_demonstrated_peak,cap
+10307,Bellingham Cogeneration Facility,386.1,233.7,336.0,233.7,-39.5,campd_demonstrated_peak,cap
+10726,Masspower,260.9,189.2,280.0,189.2,-27.5,campd_demonstrated_peak,cap
+51030,Ocean State Power,254.2,191.1,277.9,191.1,-24.8,campd_demonstrated_peak,cap
+54805,Milford Power LP,249.3,210.6,223.1,210.6,-15.5,campd_demonstrated_peak,cap
+55041,Berkshire Power,289.0,251.5,246.8,251.5,-13.0,campd_demonstrated_peak,cap
+568,Bridgeport Station,576.3,506.0,515.8,506.0,-12.2,campd_demonstrated_peak,cap
+1682,Cleary Flood Hybrid,118.0,104.3,111.4,104.3,-11.6,campd_demonstrated_peak,cap
+56798,Kleen Energy Systems,693.0,622.0,623.0,622.0,-10.2,campd_demonstrated_peak,cap
+55317,Fore River Generating Station,872.2,791.4,790.0,791.4,-9.3,campd_demonstrated_peak,cap
+55042,Bridgeport Energy Project,538.0,544.0,575.0,544.0,1.1,campd_demonstrated_peak,raise
+55107,Rhode Island State Energy Center,596.0,616.2,615.0,616.2,3.4,campd_demonstrated_peak,raise
+55048,Tiverton Power Plant,274.5,290.6,291.8,290.6,5.8,campd_demonstrated_peak,raise
+55294,Westbrook Energy Center Power Plant,563.9,597.7,574.0,597.7,6.0,campd_demonstrated_peak,raise
