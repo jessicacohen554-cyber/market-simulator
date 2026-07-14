@@ -40,6 +40,70 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-14 — MISO — miso-66 (lane-1 regulated-coal conduct complement): the miso-65 availability truth's exposed conduct gap closed at its measured root — **2024 COAL_PRB and CT_PEAKER both flip FAIL→PASS, C1 14/16→15/16**, the fail set unchanged in count but the 2024 coal/CT block resolved; keeper CANDIDATE with promotion recommendation, keepers.json unchanged (owner promotes)
+
+**Lane:** lane 1 of the miso-64/65 sequencing — the conduct gap the miso-65
+availability truth *exposed* (rule 15). On the `2026-07-14-miso-65-outage-regen`
+keeper, C1-2024 FAILed on {COAL_PRB −10.41, CT_PEAKER +8.30 TWh}: at $2.19 gas
+the LP shut regulated PRB (its committed band priced at full delivered SRMC)
+and filled the gap with peaking CT where the real market self-committed coal.
+Full diagnosis + frozen design + probe evidence (Phase A):
+`docs/handoffs/miso-coal-conduct-design-2026-07.md`.
+
+**Mechanism** (`coal_committed_takeorpay_regulated`, ScenarioConfig tier-3,
+default-off, zero fitted scalars): the `_committed` tranche of a coal plant in
+the measured conduct scope passes `1 − contract_share` of its own EIA-923
+Schedule-5 take-or-pay fuel (the identical sunk-contract rule `_mustrun` and the
+BIT flag already use); NR merchants bid full delivered cost. **Rule-19
+reconcile — it REPLACES the rank-scoped `coal_bit_committed_takeorpay`** in the
+recipe (RE-BIT plants covered identically; NR-BIT merchants revert to the
+economic offers the SOM measures). Scope is V1b — EIA-860 Regulatory Status RE
+∪ >0.5 Schedule-4 cost-of-service ownership × utility Entity Type (operator type
+for sparse-Schedule-4 plants): Prairie State / Warrick / Monroe / Labadie IN;
+Baldwin / Newton / Plum Point / Big Cajun 2 OUT. A pricing bid, not a floor
+(rule 17/18: no min-gen row; C8 adds zero forced energy).
+
+**Runs (registered + scored, rubric v2.5):** `2026-07-14-miso-66-coalconduct`
++ zero-forcing twin (bundle `results/calibration/miso66_coalconduct*`) — the
+miso-65 keeper recipe (miso-62 meta.json strict RENAME/SKIP + `miso_rpe_pricing`
++ `unit_outage_short_windows` + `class_aware_fuel_price_fallback`) with exactly
+ONE change: `coal_bit_committed_takeorpay=False` /
+`coal_committed_takeorpay_regulated=True`. **NOT-YET, FAIL {fuelmix,
+price_mean, price_tail} — the same 3-count as the miso-65 keeper, but
+structurally strictly better: C1 improves 14/16→15/16 (all) / 10/12→11/12
+(free) and the 2024 coal/CT conduct block CLOSES.** 2024 exactly: COAL_PRB
+−10.41 FAIL → **+4.39 PASS** (model 120.86 vs 116.46 TWh), CT_PEAKER +8.30 FAIL
+→ **+3.30 PASS** (22.53 vs 19.23), COAL_BIT −2.61, COAL_LIGNITE −1.19, total
+2024 coal **+0.59 TWh of actual** (176.91 vs 176.32); 2023 all eight rows PASS
+(PRB +3.02, BIT −5.31). **The single remaining C1 fail is ST_GAS-2024** (−9.13
+TWh, model 8.43 vs 17.57) — the **disclosed VLR-drag lane exposure** (rule 15:
+cheap held coal displaces the marginal slice of a class whose own deficit is
+that lane's open item, ST_GAS was already scored −7.83 BEFORE this mechanism);
+do NOT touch ST_GAS mechanisms in this lane. **C3b-2025 guard held: NRMSE 0.187
+(≤ 0.20)** — the mechanism-only footprint was measured +0.005 on a
+drift-controlled A/B in Phase A; the committed bands are largely inframarginal
+at 2025 gas. C3a −0.9%/−7.1%/−13.7% (2025 FAIL, mechanism-only −0.9pp); C3c
+unchanged FAIL (0h/4h/0h DA vs 1h/24h/38h — no tail hours added, scarcity-depth
+lane); C5a CO2 −4.0%/−2.6%/+1.8% all PASS (2024 improved from the keeper's
+−5.7% toward actual); C8 forced_share PASS. **Twin: NOT-YET, C1 also 15/16**
+(single ST_GAS-2024 fail) — better than the miso-65 twin's 13/16 because the
+regulated take-or-pay PRICING stays ARMED (a bid, not a floor; miso-62
+precedent), confirming the mechanism's effect is structural pricing, not
+forcing-dependent. DOF **19 measured-physical / 2 residual** (+1 vs miso-65:
+`coal_committed_takeorpay_regulated` — SOM Table 7 conduct split + EIA-860
+RegStatus/Schedule-4 × Entity Type + EIA-923 Schedule-5 shares + CAMPD committed
+tranches; zero fitted scalars). **LOYO: by construction** — a zero-scalar
+boolean arming three measured inputs (miso-59..64 lineage); all three years were
+probed A/B (exceeds the LOYO minimum); the single scope decision (V1a RE-only →
+V1b RE ∪ cost-of-service majority) followed a fallback **pre-declared in the
+design doc — committed `8bc5b67` BEFORE the deciding 2023 COAL_BIT probe was
+read** (caiso-81 discipline), not residual tuning. No derive script touched
+(rule 23; the scope set re-derives only on a new EIA-860 / EIA-923 vintage).
+**Promotion recommended** (rule 1: closes the 2024 coal/CT conduct block at its
+measured root, C1 +1 row, zero forced energy; the ST_GAS-2024 fail is a
+disclosed lane-exposure owned by the VLR-drag lane, not a defect of this
+mechanism); owner's call.
+
 ### 2026-07-14 — MISO keeper PROMOTED: `miso 65 outage regen` (owner decision, rule 1; supersedes miso-64-classdonor)
 
 **Owner promotion (interactive sign-off, 2026-07-14: "Promote").** miso-65 is
