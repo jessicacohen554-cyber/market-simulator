@@ -40,6 +40,24 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-14 — MISO keeper PROMOTED: `miso 65 outage regen` (owner decision, rule 1; supersedes miso-64-classdonor)
+
+**Owner promotion (interactive sign-off, 2026-07-14: "Promote").** miso-65 is
+the miso-64 keeper recipe VERBATIM on the corrected measured availability
+input (the regenerated ≥5-day unit-outage extract, commit `7b5c26fd`): zero
+parameters of any kind added, DOF ledger byte-identical (18 measured / 2
+legacy), and strictly more structurally faithful — the fail set sheds one
+(C3b price-shape FAIL→PASS, now {fuelmix, price_mean, price_tail}), C3a-2025
+−15.4% → −12.9%, 2023 COAL_PRB clears, C8 ST_GAS forcing collapses 35.5% →
+~12% (honest availability replaces commitment scaffolding). The disclosed
+2024 CT_PEAKER flip to FAIL (+8.30 TWh) is the lane-1 conduct gap EXPOSED by
+the availability truth (rule 15), recorded as lane-1's sharpened open root
+cause, not a defect of this input. keepers.json MISO key + array →
+`2026-07-14-miso-65-outage-regen`; status.js rebuilt (MISO NOT-YET, 3 FAILs);
+retention: the superseded miso-62 pair pruned (registry sidecars + runs
+payloads; bundles stay) — dashboard holds the miso-63/64/65 pairs;
+calibration-keeper-auditor run post-swap.
+
 ### 2026-07-14 — MISO — miso-65 (lane-3 diagnosis + the stale ≥5-day unit-outage extract regenerated): the July N–S miss measured to its roots (93% one-sided congestion; corridor exonerated; the committed extract did not reproduce from its own frozen deriver, +~1,550 GW-days/yr) — miso-64 recipe re-solved VERBATIM on the corrected input; **C3b price-shape FAIL→PASS, fail set sheds one**; keeper CANDIDATE with promotion recommendation, keepers.json unchanged (owner promotes)
 
 **Lane 3 diagnosis (no-LP, all measured; full doc
