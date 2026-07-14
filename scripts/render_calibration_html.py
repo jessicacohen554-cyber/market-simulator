@@ -654,6 +654,90 @@ def _capture(r: float, nrmse: float, dev: float) -> float:
     return round(100.0 * (rs * ns * ls) ** (1.0 / 3.0), 1)
 
 
+# Net/gross parasitic-load factor for reconstructing CAMPD annual GROSS from the
+# committed NET series (net = gross x factor). Absent-plant fallback is the
+# measured PJM-CC pooled mean (~2.7% parasitic, flat year-round; diagnosis
+# docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md §2).
+_DEFAULT_PARASITIC = 0.973
+# EIA-923-net / CAMPD-gross ratio above which a CEMS record is judged INCOMPLETE
+# (physically gross >= net, so a ratio > 1 already signals missing MWh; 1.1 adds
+# margin for survey noise). The CT-only 2x1 signature lands at ~1.45-1.59.
+_CT_ONLY_RATIO = 1.1
+
+
+@lru_cache(maxsize=1)
+def _parasitic_factors() -> dict[int, float]:
+    """Return ``{plant_id: net/gross}`` for reconstructing CAMPD gross.
+
+    The same derived artifact the bundle's CAMPD-net series was built from
+    (``run_calibration_full._parasitic_factor_map``); empty when the artifact
+    is missing, so absent plants fall back to :data:`_DEFAULT_PARASITIC`.
+    """
+    return rcf._parasitic_factor_map()
+
+
+def _flag_ct_only_reporters(bplants: dict[str, dict]) -> list[dict]:
+    """Flag CT-only CEMS reporters in ``bplants``; return their provenance rows.
+
+    A complete CEMS record's gross generation exceeds the plant's EIA-923 NET
+    generation (gross >= net). A plant whose EIA-923 annual net exceeds
+    :data:`_CT_ONLY_RATIO` x its CAMPD annual gross is therefore submitting an
+    INCOMPLETE record — the 2x1 combined-cycle signature where only the
+    combustion-turbine block reports to CEMS (steam-turbine MWh absent), so
+    923-net / CAMPD-gross ~ 1.5. Their CAMPD series understates the plant,
+    making any CAMPD-basis per-plant capture / Δ-vs-CEMS heatmap structurally
+    unfair, so each is marked ``ct_only`` and scored on its EIA-923 monthly row
+    instead (:func:`_capture_on_923`; diagnosis §3a). CAMPD gross is
+    reconstructed from the committed net as ``c_ann / parasitic_factor``.
+    Mutates ``bplants`` in place; returns one provenance row per flagged plant.
+    """
+    factors = _parasitic_factors()
+    flagged: list[dict] = []
+    for code_s, p in bplants.items():
+        c_ann = float(p.get("c_ann", 0.0))
+        e_ann = float(p.get("e_ann", 0.0))
+        # nodata plants (no usable CAMPD) are already excluded from CAMPD-basis
+        # scoring; ct_only targets plants WITH a CAMPD series that is too small.
+        if c_ann <= 0.0 or e_ann <= 0.0:
+            continue
+        factor = factors.get(int(code_s), _DEFAULT_PARASITIC)
+        campd_gross = c_ann / factor if factor > 0.0 else c_ann
+        if campd_gross > 0.0 and e_ann > _CT_ONLY_RATIO * campd_gross:
+            ratio = round(e_ann / campd_gross, 3)
+            p["ct_only"] = True
+            p["ct_ratio"] = ratio
+            flagged.append(
+                {
+                    "code": int(code_s),
+                    "name": p.get("name", str(code_s)),
+                    "group": p.get("group", "?"),
+                    "ratio": ratio,
+                }
+            )
+    return sorted(flagged, key=lambda r: r["ratio"], reverse=True)
+
+
+def _capture_on_923(
+    mw: np.ndarray, e_mon: np.ndarray, m_ann: float, e_ann: float
+) -> tuple[float | None, float | None, float | None]:
+    """Per-plant capture on the EIA-923 MONTHLY basis: ``(r, NRMSE, capture%)``.
+
+    The CT-only fallback for the default CAMPD-hourly capture: a plant whose
+    CEMS record is incomplete is scored on its EIA-923 monthly row instead — a
+    12-point model-vs-923 monthly correlation and NRMSE plus the annual 923
+    deviation. Returns ``(None, None, None)`` when the 923 row is empty or the
+    model series is flat.
+    """
+    m_mon = np.asarray(_monthly_gwh(mw), dtype=float)
+    e_mon = np.asarray(e_mon, dtype=float)
+    if e_mon.sum() <= 0.0 or m_mon.std() <= 0.0:
+        return None, None, None
+    r = round(_pearson(m_mon, e_mon), 3)
+    nr = round(_nrmse(m_mon, e_mon), 3)
+    dev = (m_ann - e_ann) / e_ann if e_ann > 0.0 else 0.0
+    return r, nr, _capture(r, nr, dev)
+
+
 def _btm_share(plant_id: int, group: str, iso: str = "ERCOT") -> float:
     """Behind-the-meter host self-supply share of net gen for a CHP plant.
 
@@ -945,6 +1029,21 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     ),
                     "e_mon": [round(x, 2) for x in e923_mon.get(code, np.zeros(12))],
                 }
+            # CT-only CEMS reporters: EIA-923 net > 1.1x CAMPD gross is a
+            # physically impossible complete record (the 2x1 CC block reports
+            # only its combustion turbines). Flag them so the per-plant capture
+            # scores on the EIA-923 monthly row (below), not the understated
+            # CAMPD series, and carry the provenance into the bench payload.
+            ct_only_rows = _flag_ct_only_reporters(bplants)
+            if ct_only_rows:
+                print(
+                    f"  {meta.get('iso', '?')} {year}: CT-only CEMS bench flag "
+                    f"(923 net > 1.1x CAMPD gross) — scored on EIA-923 monthly: "
+                    + ", ".join(
+                        f"{r['code']} {r['name']} ({r['ratio']:.2f}x)"
+                        for r in ct_only_rows
+                    )
+                )
             e = {
                 s: e930[e930["series"] == s].sort_values("hour")["mw"].to_numpy(float)
                 for s in e930["series"].unique()
@@ -1092,6 +1191,11 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     for g, v in e923_cls.items()
                 },
             }
+            # Bench provenance: the CT-only CEMS reporters scored on EIA-923
+            # (kept out of the payload when none, so unaffected bundles diff
+            # clean).
+            if ct_only_rows:
+                bench[int(year)]["ctOnly"] = ct_only_rows
             # Grid-delivered actual for the variable renewables (2026-06-25 user
             # directive). EIA-923 'classFull' counts every plant >= 1 MW including
             # the distribution-connected / net-metered behind-the-meter PV that
@@ -1269,7 +1373,18 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                 cn = cn_p.get(code)
                 r = nr = None
                 cap_pct = None
-                if cn is not None and cn.sum() > 0 and mw.std() > 0:
+                _bp = bench[int(year)]["plants"].get(str(code))
+                if _bp is not None and _bp.get("ct_only"):
+                    # CT-only CEMS reporter: the CAMPD series is incomplete, so
+                    # score this plant on its EIA-923 monthly row instead
+                    # (diagnosis §3a). The per-plant Δ table is already 923-based.
+                    r, nr, cap_pct = _capture_on_923(
+                        mw,
+                        e923_mon.get(code, np.zeros(12)),
+                        float(mw.sum()) / 1e6,
+                        float(e923_ann.get(code, 0.0)) / 1e6,
+                    )
+                elif cn is not None and cn.sum() > 0 and mw.std() > 0:
                     r = round(_pearson(mw, cn), 3)
                     nr = round(_nrmse(mw, cn), 3)
                     dev = (mw.sum() - cn.sum()) / cn.sum()
@@ -1282,6 +1397,8 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     "nrmse": nr,
                     "cap": cap_pct,
                 }
+                if _bp is not None and _bp.get("ct_only"):
+                    mplants[str(code)]["b923"] = True
                 if code in tr_bands:
                     mplants[str(code)]["tr"] = tr_bands[code]
             # Non-fossil model annual (nuclear / wind / solar) for fuel table.
