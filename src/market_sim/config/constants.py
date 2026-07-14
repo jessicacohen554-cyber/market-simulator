@@ -2514,7 +2514,13 @@ class MarketDesign:
 # y-fractions: cap = price_cap/net_cone = 329.17/212.14 = 1.5517 (both
 # $/MW-day, so the ratio is basis-independent), the middle point is Net CONE by
 # PJM Manual 18 §3.4 construction (1.0), the third point is the published
-# zero-cross (y=0). Net-CONE anchor 60.396 $/kW-yr (60,396 $/MW-yr row).
+# zero-cross (y=0). Net-CONE anchor 77.431 $/kW-yr — the published UCAP net-CONE
+# 212.14 $/MW-day × 365 / 1000 (the demand-curve reference the VRR curve is
+# drawn around, and the basis the auction clears in). P-2B Option A anchor
+# re-derivation (R1, accreditation-basis memo 2026-07-12 §4.2): supersedes the
+# legacy 60.396 $/kW-yr (60,396 $/MW-yr ICAP-annual row), which mis-scaled the
+# UCAP-cleared curve by PJM's ~0.78 ICAP↔UCAP factor (P-2A Pass-1B uniform
+# −22%). Both figures are on disk in the same 2026/27 net_cone rows.
 _PJM_VRR_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
     CapacityDemandCurvePoint(0.99, 1.5517),  # price cap (329.17/212.14)
     CapacityDemandCurvePoint(1.015, 1.0),  # Net CONE reference point
@@ -2582,14 +2588,18 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
     # Report; CAISO CPM soft-offer-cap tariff (P-0B caiso.csv).
     "CAISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=90.0),
     # Capacity markets. The legacy net_cone_per_kw_yr is the FIXED-mode anchor
-    # (unchanged — default byte-identity); net_cone_curve_per_kw_yr is the
-    # PUBLISHED net-CONE the CR-1 curve scales.
-    # Source: PJM 2025/26 BRA planning parameters (fixed anchor ~$100/kW-yr).
+    # (kept labeled legacy — the fixed-mode default is byte-identical, and its
+    # own re-derivation to the published UCAP basis is reserved for the P-2A
+    # default flip, R4/accreditation-basis memo §4.3); net_cone_curve_per_kw_yr
+    # is the PUBLISHED UCAP net-CONE the CR-1 curve scales, now on PJM's own
+    # UCAP basis (R1 above).
+    # Source: PJM 2026/2027 BRA planning parameters (fixed anchor ~$100/kW-yr
+    # legacy; curve anchor 77.431 $/kW-yr = 212.14 $/MW-day UCAP).
     "PJM": MarketDesign(
         capacity_market=True,
         net_cone_per_kw_yr=100.0,
         demand_curve=_PJM_VRR_CURVE,
-        net_cone_curve_per_kw_yr=60.396,
+        net_cone_curve_per_kw_yr=77.431,
         demand_curve_delivery_year="2026/2027",
         demand_curve_source=(
             "PJM 2026/2027 RPM BRA Planning Period Parameters (Net CONE, price "
