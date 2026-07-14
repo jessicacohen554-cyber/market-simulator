@@ -7,10 +7,12 @@ from unittest import mock
 import numpy as np
 
 from market_sim.config.constants import (
+    FORECAST_POOL_REQUIREMENT_BY_ISO,
     GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HOURS_PER_YEAR,
     NEW_ENTRY_COSTS,
     PLANNING_RESERVE_MARGIN_BY_ISO,
+    PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
     WRIGHT_REFERENCE_GW,
@@ -30,6 +32,8 @@ from market_sim.model.capacity import (
     compute_lcoe,
     estimate_expected_revenue,
     evolve_fleet,
+    resolve_adequacy_requirement_mw,
+    resolve_forecast_pool_requirement,
     wright_cost,
 )
 from market_sim.model.storage import STORAGE_TECHS, compute_storage_annual_cost
@@ -1242,6 +1246,166 @@ class TestStoragePortfolioElccDilution(unittest.TestCase):
         self.assertEqual(floor_log, [])
 
 
+class TestThermalElccClassRatings(unittest.TestCase):
+    """R3 — PJM thermal + storage accreditation on the published ELCC class
+    ratings (2025/26 CIFP reform; accreditation-basis memo §4.2)."""
+
+    def _pjm_official_elcc(self):
+        """resource_class -> elcc fraction, PJM 2026/2027 BRA official/final."""
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / "elcc" / "pjm" / "pjm.csv"
+        vintage = "2026/2027 BRA (official/final)"
+        with path.open(newline="") as fh:
+            return {
+                r["resource_class"]: float(r["elcc_pct"]) / 100.0
+                for r in csv.DictReader(fh)
+                if r["study_vintage"] == vintage and r["elcc_pct"]
+            }
+
+    def test_thermal_ratings_reconcile_with_published_csv(self):
+        from market_sim.config.constants import THERMAL_ELCC_CLASS_RATING_BY_ISO
+
+        official = self._pjm_official_elcc()
+        # Each model fuel class maps to exactly one published PJM thermal class.
+        expected = {
+            "nuclear": official["Nuclear"],
+            "coal": official["Coal"],
+            "gas_cc": official["Gas Combined Cycle"],
+            "gas_ct": official["Gas Combustion Turbine"],
+            "gas_st": official["Steam"],
+            "oil": official["Diesel Utility"],
+        }
+        self.assertEqual(THERMAL_ELCC_CLASS_RATING_BY_ISO["PJM"], expected)
+
+    def test_storage_ratings_reconcile_with_published_csv(self):
+        from market_sim.config.constants import STORAGE_ELCC_BY_DURATION_BY_ISO
+
+        official = self._pjm_official_elcc()
+        expected = [
+            (4.0, official["4-hr Storage"]),
+            (6.0, official["6-hr Storage"]),
+            (8.0, official["8-hr Storage"]),
+            (10.0, official["10-hr Storage"]),
+        ]
+        self.assertEqual(STORAGE_ELCC_BY_DURATION_BY_ISO["PJM"], expected)
+
+    def test_thermal_firm_mw_uses_class_rating_for_pjm(self):
+        from market_sim.model.capacity import _thermal_firm_mw
+
+        g = _gen("cc", "gas_cc", pmax=1000.0)  # eford default 0.05
+        # PJM: pmax x published class rating (0.74), NOT (1 - eford)=0.95.
+        self.assertAlmostEqual(_thermal_firm_mw(g, "PJM"), 740.0, places=3)
+        # UCAP ISO / iso=None keep (1 - eford).
+        self.assertAlmostEqual(_thermal_firm_mw(g, "MISO"), 950.0, places=3)
+        self.assertAlmostEqual(_thermal_firm_mw(g, None), 950.0, places=3)
+
+    def test_class_absent_falls_back_to_ucap(self):
+        from market_sim.config.constants import EFORD
+        from market_sim.model.capacity import thermal_accreditation_fraction
+
+        # 'biomass' has no PJM thermal ELCC class -> UCAP neutral fallback.
+        self.assertAlmostEqual(
+            thermal_accreditation_fraction("biomass", EFORD["biomass"], "PJM"),
+            1.0 - EFORD["biomass"],
+            places=6,
+        )
+
+    def test_pjm_storage_elcc_below_generic(self):
+        from market_sim.model.storage import _elcc_for_duration
+
+        # PJM's own reformed ratings are lower than the generic NREL/E3 curve
+        # (a published input, not a fit), and clamp outside 4-10h.
+        self.assertAlmostEqual(_elcc_for_duration(4.0, "PJM"), 0.50, places=3)
+        self.assertAlmostEqual(_elcc_for_duration(8.0, "PJM"), 0.62, places=3)
+        self.assertLess(_elcc_for_duration(8.0, "PJM"), _elcc_for_duration(8.0))
+        self.assertAlmostEqual(_elcc_for_duration(2.0, "PJM"), 0.50, places=3)
+        self.assertAlmostEqual(_elcc_for_duration(24.0, "PJM"), 0.72, places=3)
+        # A non-override ISO keeps the generic table byte-identically.
+        self.assertAlmostEqual(
+            _elcc_for_duration(8.0, "MISO"), _elcc_for_duration(8.0), places=6
+        )
+
+
+class TestForecastPoolRequirement(unittest.TestCase):
+    """R2 — PJM requirement devintaged onto the published Forecast Pool
+    Requirement of the matching delivery year (accreditation-basis memo §4.2)."""
+
+    def _csv_fpr_rows(self):
+        """The published forecast_pool_requirement rows from the P-0B CSV."""
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / "demand-curve" / "pjm" / "pjm.csv"
+        with path.open(newline="") as fh:
+            return [
+                r
+                for r in csv.DictReader(fh)
+                if r["metric"] == "forecast_pool_requirement"
+            ]
+
+    def test_registry_reconciles_with_published_csv(self):
+        # Every FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"] entry must match a
+        # published forecast_pool_requirement row byte-for-byte (rule 13 —
+        # digitized from the committed rows, never a fit target).
+        rows = self._csv_fpr_rows()
+        self.assertTrue(rows, "expected published FPR rows on disk")
+        by_year = {r["delivery_year"]: float(r["y_value"]) for r in rows}
+        self.assertEqual(
+            FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"],
+            {y: by_year[y] for y in FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"]},
+        )
+        # And every published unit is the UCAP fraction.
+        self.assertTrue(all(r["y_unit"] == "fraction_of_peak_ucap" for r in rows))
+
+    def test_published_fpr_used_for_matching_delivery_year(self):
+        cfg = ScenarioConfig(iso="PJM")
+        peak = 160_560.0
+        # Model year 2026 -> delivery 2026/2027 -> published FPR 0.9170.
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2026),
+            peak * 0.9170,
+            places=3,
+        )
+
+    def test_falls_back_when_no_published_fpr(self):
+        cfg = ScenarioConfig(iso="PJM")
+        peak = 160_560.0
+        # Model year 2030 -> delivery 2030/2031 -> no published FPR -> the
+        # (1 + PRM) x icap_to_ucap_ratio fallback (byte-identical to pre-R2).
+        ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["PJM"]
+        expected = peak * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["PJM"]) * ratio
+        self.assertIsNone(resolve_forecast_pool_requirement("PJM", 2030))
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2030),
+            expected,
+            places=3,
+        )
+
+    def test_year_none_is_fallback_byte_identical(self):
+        cfg = ScenarioConfig(iso="PJM")
+        peak = 160_560.0
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak),
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2030),
+            places=6,
+        )
+
+    def test_non_pjm_iso_unaffected(self):
+        # An ISO with no FPR table keeps the fallback in both year modes.
+        cfg = ScenarioConfig(iso="MISO")
+        peak = 120_000.0
+        self.assertIsNone(resolve_forecast_pool_requirement("MISO", 2026))
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "MISO", peak, 2026),
+            resolve_adequacy_requirement_mw(cfg, "MISO", peak),
+            places=6,
+        )
+
+
 class TestReserveMarginBuild(unittest.TestCase):
     """The adequacy backstop: force-build firm capacity to the reserve margin."""
 
@@ -1426,7 +1590,6 @@ class TestReserveMarginBuild(unittest.TestCase):
         """
         from market_sim.config.constants import (
             EFORD,
-            PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
         )
         from market_sim.model.capacity import apply_reserve_margin_build
 

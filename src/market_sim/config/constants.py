@@ -2514,7 +2514,13 @@ class MarketDesign:
 # y-fractions: cap = price_cap/net_cone = 329.17/212.14 = 1.5517 (both
 # $/MW-day, so the ratio is basis-independent), the middle point is Net CONE by
 # PJM Manual 18 §3.4 construction (1.0), the third point is the published
-# zero-cross (y=0). Net-CONE anchor 60.396 $/kW-yr (60,396 $/MW-yr row).
+# zero-cross (y=0). Net-CONE anchor 77.431 $/kW-yr — the published UCAP net-CONE
+# 212.14 $/MW-day × 365 / 1000 (the demand-curve reference the VRR curve is
+# drawn around, and the basis the auction clears in). P-2B Option A anchor
+# re-derivation (R1, accreditation-basis memo 2026-07-12 §4.2): supersedes the
+# legacy 60.396 $/kW-yr (60,396 $/MW-yr ICAP-annual row), which mis-scaled the
+# UCAP-cleared curve by PJM's ~0.78 ICAP↔UCAP factor (P-2A Pass-1B uniform
+# −22%). Both figures are on disk in the same 2026/27 net_cone rows.
 _PJM_VRR_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
     CapacityDemandCurvePoint(0.99, 1.5517),  # price cap (329.17/212.14)
     CapacityDemandCurvePoint(1.015, 1.0),  # Net CONE reference point
@@ -2582,14 +2588,18 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
     # Report; CAISO CPM soft-offer-cap tariff (P-0B caiso.csv).
     "CAISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=90.0),
     # Capacity markets. The legacy net_cone_per_kw_yr is the FIXED-mode anchor
-    # (unchanged — default byte-identity); net_cone_curve_per_kw_yr is the
-    # PUBLISHED net-CONE the CR-1 curve scales.
-    # Source: PJM 2025/26 BRA planning parameters (fixed anchor ~$100/kW-yr).
+    # (kept labeled legacy — the fixed-mode default is byte-identical, and its
+    # own re-derivation to the published UCAP basis is reserved for the P-2A
+    # default flip, R4/accreditation-basis memo §4.3); net_cone_curve_per_kw_yr
+    # is the PUBLISHED UCAP net-CONE the CR-1 curve scales, now on PJM's own
+    # UCAP basis (R1 above).
+    # Source: PJM 2026/2027 BRA planning parameters (fixed anchor ~$100/kW-yr
+    # legacy; curve anchor 77.431 $/kW-yr = 212.14 $/MW-day UCAP).
     "PJM": MarketDesign(
         capacity_market=True,
         net_cone_per_kw_yr=100.0,
         demand_curve=_PJM_VRR_CURVE,
-        net_cone_curve_per_kw_yr=60.396,
+        net_cone_curve_per_kw_yr=77.431,
         demand_curve_delivery_year="2026/2027",
         demand_curve_source=(
             "PJM 2026/2027 RPM BRA Planning Period Parameters (Net CONE, price "
@@ -2992,15 +3002,55 @@ RENEWABLE_ELCC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
 }
 
 # Thermal accreditation basis for the same adequacy ledger, per ISO. Default
-# (ISO absent): "ucap" = pmax x (1 - EFORd). "seasonal_rating" counts thermal
-# at its rating with NO forced-outage derate — ERCOT's CDR convention, where
-# forced-outage risk lives in the 13.75% Board target margin rather than in
-# the capacity count (the CDR's "Installed Seasonal-rated Thermal Capacity"
-# rows carry no EFORd derate). Mixing UCAP-derated supply with the
-# rating-basis 13.75% target double-counts forced-outage risk (~4.4 GW on
-# the 2026 ERCOT thermal fleet). Source: December 2025 CDR, Seasonal Summary.
+# (ISO absent): "ucap" = pmax x (1 - EFORd). Two published-basis alternatives:
+#
+# * "seasonal_rating" counts thermal at its rating with NO forced-outage
+#   derate — ERCOT's CDR convention, where forced-outage risk lives in the
+#   13.75% Board target margin rather than in the capacity count (the CDR's
+#   "Installed Seasonal-rated Thermal Capacity" rows carry no EFORd derate).
+#   Mixing UCAP-derated supply with the rating-basis 13.75% target
+#   double-counts forced-outage risk (~4.4 GW on the 2026 ERCOT thermal
+#   fleet). Source: December 2025 CDR, Seasonal Summary.
+# * "elcc_class_rating" counts thermal at its published ELCC CLASS rating —
+#   PJM's 2025/26 CIFP-reform convention, where EVERY resource class (thermal
+#   included) is accredited at an ELCC-based class rating, not (1 - EFORd).
+#   The per-fuel-class ratings are :data:`THERMAL_ELCC_CLASS_RATING_BY_ISO`;
+#   this pairs the supply ledger with the FPR requirement (R2), which is
+#   likewise stated on PJM's ELCC-reform UCAP basis (P-2B Option A per-ISO
+#   published-basis consistency — accreditation-basis memo 2026-07-12 §4.1,
+#   R3). Read exactly as "seasonal_rating" is by :func:`_thermal_firm_mw`.
 THERMAL_ACCREDITATION_BASIS_BY_ISO: dict[str, str] = {
     "ERCOT": "seasonal_rating",
+    "PJM": "elcc_class_rating",
+}
+
+# PJM thermal ELCC class ratings (2025/26 CIFP reform) — the firm fraction of
+# nameplate PJM accredits each dispatchable class at, the thermal analogue of
+# RENEWABLE_ELCC_CURVES_BY_ISO for the dispatchable fleet (R3, P-2B Option A
+# supply basis). Consumed only for ISOs whose
+# THERMAL_ACCREDITATION_BASIS_BY_ISO is "elcc_class_rating". Each value is the
+# 2026/2027 BRA official/final class-average rating — the delivery-year vintage
+# matching the demand-curve anchor (R1) and the requirement's near-term FPR
+# (R2) — mapped to the model's fuel_type. Digitized from and reconciled against
+# the committed rows (data/raw/capacity-market/elcc/pjm/pjm.csv,
+# resource_class ... "2026/2027 BRA (official/final)") by
+# tests/test_capacity.py — a published market-design input, never a fit target
+# (rules 13/23). Classes ABSENT here fall back to UCAP (1 - EFORd), a cited
+# neutral fallback (rule 25 spirit) — never a foreign rating: model 'biomass'
+# has NO PJM thermal ELCC class in the 2026/27 final ratings (Waste-to-Energy
+# Steam appears only in 2027/28), so it keeps UCAP. (The 2027/28 vintage moves
+# these ±1-2 points — coal 83, CC 74, nuclear 95 unchanged; CT 60->61; Steam
+# 73->72 — so the near-term vintage is a conservative published anchor, not an
+# invented value.)
+THERMAL_ELCC_CLASS_RATING_BY_ISO: dict[str, dict[str, float]] = {
+    "PJM": {
+        "nuclear": 0.95,  # Nuclear
+        "coal": 0.83,  # Coal
+        "gas_cc": 0.74,  # Gas Combined Cycle
+        "gas_ct": 0.60,  # Gas Combustion Turbine
+        "gas_st": 0.73,  # Steam (gas/oil steam)
+        "oil": 0.91,  # Diesel Utility (the 2026/27 official oil/diesel class)
+    },
 }
 
 # Load-side capacity products netted out of gross peak in the ISO's own
@@ -3056,6 +3106,32 @@ PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO: dict[str, float] = {
     "MISO": 1.079 / 1.157,
 }
 
+# Published Forecast Pool Requirement (FPR) per ISO and delivery year — the
+# reliability requirement stated on the ISO's OWN UCAP basis as a fraction of
+# forecast peak load (R2, accreditation-basis memo 2026-07-12 §4.2). PJM's
+# post-CIFP FPR = (1 + IRM) x Reference-Resource Accredited-UCAP factor, so it
+# already folds BOTH the reserve margin AND the ICAP->UCAP conversion into one
+# published number; the UCAP requirement is simply firm_peak x FPR.
+# :func:`market_sim.model.capacity.resolve_adequacy_requirement_mw` PREFERS a
+# published FPR for the matching delivery year and falls back to the
+# (1 + PRM) x icap_to_ucap_ratio construction otherwise (so an ISO/year absent
+# here is byte-identical to the pre-R2 behaviour). Devintaging the requirement
+# onto the published FPR replaces the mixed-vintage composite the fallback
+# builds (PJM 1.178 x 0.7699 = 0.907 vs the published 2026/2027 FPR 0.9170).
+# Values are digitized from the committed demand-curve rows
+# (data/raw/capacity-market/demand-curve/pjm/pjm.csv, metric
+# forecast_pool_requirement) and reconciled against them by
+# tests/test_capacity.py — a published market-design input, never a fit target
+# (rules 13/23). Only the post-CIFP reformed delivery years (2025/2026+) carry
+# a UCAP-basis FPR; pre-reform years fall through to the fallback.
+FORECAST_POOL_REQUIREMENT_BY_ISO: dict[str, dict[str, float]] = {
+    "PJM": {
+        "2025/2026": 0.9380,  # (1+0.178) x 0.7963; PPP posted 2024-04-08
+        "2026/2027": 0.9170,  # 146,105 MW UCAP / 159,329 MW peak; PPP 2025-05-09
+        "2027/2028": 0.9260,  # (1+0.200) x 0.7717; BRA report 2025-12-17
+    },
+}
+
 # AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
 # the AS-eligible (mostly storage) fleet grows past the calibration point.
 # Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **
@@ -3108,6 +3184,8 @@ HISTORIC_OUTAGE_OVERLAY_BY_ISO: dict[str, bool] = {
 # sharpest peak hours so its firm-capacity credit is well below 1; the credit
 # saturates toward 1.0 as duration lengthens enough to ride through a
 # multi-hour net-peak. Source: NREL/E3 ELCC studies, PJM ELCC class ratings.
+# Generic fallback for ISOs without a published storage class-rating table of
+# their own (STORAGE_ELCC_BY_DURATION_BY_ISO overrides it per ISO).
 STORAGE_ELCC_BY_DURATION: list[tuple[float, float]] = [
     (2.0, 0.40),
     (4.0, 0.60),
@@ -3117,6 +3195,31 @@ STORAGE_ELCC_BY_DURATION: list[tuple[float, float]] = [
     (12.0, 0.97),
     (24.0, 1.00),
 ]
+
+# Per-ISO published storage ELCC class-rating tables, overriding the generic
+# STORAGE_ELCC_BY_DURATION above for exactly the ISOs that publish their own
+# duration->credit ratings (R3, P-2B Option A supply basis). PJM accredits
+# storage at its published ELCC class ratings under the same 2025/26 CIFP
+# reform as the thermal fleet (THERMAL_ELCC_CLASS_RATING_BY_ISO) — this is the
+# ONE storage-accreditation mechanism for PJM, replacing (not stacking on) the
+# generic table (rule 19, no double-derate; the marginal-ELCC saturation derate
+# below still applies on top, as it does for every ISO). Values are the
+# 2026/2027 BRA official/final storage class ratings (matching the thermal
+# vintage), digitized from and reconciled against the committed rows
+# (data/raw/capacity-market/elcc/pjm/pjm.csv, "N-hr Storage" resource classes)
+# by tests/test_capacity.py. Notably LOWER than the generic NREL/E3 curve
+# (PJM 4h 0.50 vs 0.60, 8h 0.62 vs 0.87) — the reformed market's own numbers,
+# not a fit. Endpoints clamp: below 4h at the 4h rating, above 10h at the 10h
+# rating (PJM publishes 4/6/8/10-hr; no 2h or >10h class), consistent with the
+# generic table's flat-clamp behaviour.
+STORAGE_ELCC_BY_DURATION_BY_ISO: dict[str, list[tuple[float, float]]] = {
+    "PJM": [
+        (4.0, 0.50),
+        (6.0, 0.58),
+        (8.0, 0.62),
+        (10.0, 0.72),
+    ],
+}
 
 # Marginal ELCC saturation. As cumulative storage power approaches the
 # deployment ceiling (≈ half the system peak), each additional MW of storage

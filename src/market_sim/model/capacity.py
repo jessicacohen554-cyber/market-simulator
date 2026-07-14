@@ -70,6 +70,7 @@ from market_sim.config.constants import (
     CO2_RATES,
     DEFAULT_MARKET_DESIGN,
     EFORD,
+    FORECAST_POOL_REQUIREMENT_BY_ISO,
     GEOTHERMAL_PARAMS,
     GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HEAT_RATE_BINS,
@@ -91,6 +92,7 @@ from market_sim.config.constants import (
     STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO,
     STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO,
     THERMAL_ACCREDITATION_BASIS_BY_ISO,
+    THERMAL_ELCC_CLASS_RATING_BY_ISO,
     VOM,
     WRIGHT_REFERENCE_GW,
     evaluate_renewable_elcc_curve,
@@ -603,6 +605,7 @@ def _dispatch_rows(gen: Generator, idx_of: dict[str, int]) -> list[int]:
 
 def capacity_revenue_per_mw_yr(
     iso: str,
+    fuel_type: str,
     eford: float,
     config: ScenarioConfig | None = None,
     reserve_position: float | None = None,
@@ -610,13 +613,23 @@ def capacity_revenue_per_mw_yr(
     """Return the resource-adequacy capacity payment in $/MW-yr (Module M1).
 
     In a capacity-market ISO a thermal unit earns a payment on its
-    qualifying (UCAP) capacity *outside* the energy market, which can keep
-    it solvent even on a negative energy margin. The payment is the shared
+    accredited capacity *outside* the energy market, which can keep it
+    solvent even on a negative energy margin. The payment is the shared
     per-firm-MW capacity price (rule 19 — one seam for all three screens)
-    times the unit's UCAP, approximated as ``1 - EFORd`` (PJM/NYISO/ISO-NE
-    accredit roughly on unforced capacity)::
+    times the unit's **basis-resolved accreditation fraction** — the SAME
+    resolver the adequacy ledger prices the unit's firm MW through
+    (:func:`thermal_accreditation_fraction`), so the ledger and the payment
+    can never diverge (R4, accreditation-basis memo 2026-07-12 §4.2)::
 
-        $/MW-yr = capacity_price_per_firm_mw_yr(...) * (1 - eford)
+        $/MW-yr = capacity_price_per_firm_mw_yr(...) * accreditation_fraction
+
+    The accreditation fraction is the ISO's own published basis: ``1 - EFORd``
+    (UCAP, the default for NYISO/ISO-NE/MISO), the published ELCC class rating
+    (PJM's 2025/26 CIFP reform — replaces the hardcoded ``1 - EFORd`` this
+    call used before R4), or nameplate (ERCOT's seasonal-rating basis, though
+    ERCOT is energy-only so it never reaches the payment). Because it is the
+    ledger's own resolver, a class differential (e.g. PJM gas-CT 0.60 vs its
+    0.94 UCAP) is now paid on the same basis it is counted on.
 
     The price itself is :meth:`MarketDesign.capacity_price_per_firm_mw_yr`,
     which is the flat net-CONE (default) or — when
@@ -634,8 +647,8 @@ def capacity_revenue_per_mw_yr(
     price = design.capacity_price_per_firm_mw_yr(config, reserve_position)
     if price <= 0.0:
         return 0.0
-    ucap = max(0.0, 1.0 - float(eford))
-    return price * ucap
+    accredited = max(0.0, thermal_accreditation_fraction(fuel_type, eford, iso))
+    return price * accredited
 
 
 # A zone whose deliverable firm capacity exceeds its locational requirement by
@@ -787,32 +800,69 @@ def _storage_portfolio_elcc_dilution(existing_storage_mw: float, iso: str) -> fl
     return 1.0 - (1.0 - ceiling_ratio) * span_fraction
 
 
+def resolve_forecast_pool_requirement(iso: str, year: int | None) -> float | None:
+    """Return the ISO's published Forecast Pool Requirement for ``year``, or None.
+
+    PJM (post-CIFP) publishes a Forecast Pool Requirement (FPR) — the
+    reliability requirement stated on its OWN UCAP basis as a fraction of
+    forecast peak load, with the reserve margin AND the ICAP->UCAP conversion
+    already folded in (FPR = (1 + IRM) x Reference-Resource Accredited-UCAP
+    factor). Resolves ``year`` to the ISO's delivery-year label
+    (:func:`capdel.resolve_delivery_year`) and returns the published FPR from
+    :data:`FORECAST_POOL_REQUIREMENT_BY_ISO` for that exact delivery year, or
+    ``None`` when the ISO/year has no published FPR (caller falls back to the
+    ``(1 + PRM) x ratio`` construction). ``year=None`` returns ``None`` so a
+    caller that cannot resolve a delivery year keeps the fallback path
+    byte-identically (R2, accreditation-basis memo 2026-07-12 §4.2).
+    """
+    if year is None:
+        return None
+    table = FORECAST_POOL_REQUIREMENT_BY_ISO.get(iso)
+    if not table:
+        return None
+    return table.get(capdel.resolve_delivery_year(iso, year))
+
+
 def resolve_adequacy_requirement_mw(
-    config: ScenarioConfig, iso: str, peak_demand_mw: float
+    config: ScenarioConfig, iso: str, peak_demand_mw: float, year: int | None = None
 ) -> float:
     """Return the firm-capacity requirement shared by the floor and backstop.
 
-    ``firm peak x (1 + PRM_iso) x icap_to_ucap_ratio_iso``, where the firm
-    peak nets the ISO's load-side capacity products out of the gross peak
-    when the ISO's own adequacy construction does (ERCOT's CDR "Firm Peak
-    Load": Load Resources carrying AS, ERS, TDSP load management,
-    distribution voltage reduction —
-    :data:`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO`). ISOs absent from that
-    registry net nothing, so the requirement is the pre-existing
-    ``peak x (1 + PRM)`` byte-identically. One requirement, two verbs
-    (capacity-economics plan §3.2) — both adequacy mechanisms call this.
+    Two constructions, in preference order (R2, accreditation-basis memo
+    2026-07-12 §4.2 — "resolve the requirement from the published FPR of the
+    matching delivery year; fall back to ``(1 + PRM) x ratio`` otherwise"):
 
-    The ``icap_to_ucap_ratio`` factor (stage-5 §6 ICAP/UCAP pairing audit,
-    2026-07-06) corrects a basis mismatch for ISOs whose registered PRM is
-    stated on INSTALLED capacity (PJM's IRM, MISO's ICAP-basis PRM) while
-    :func:`accredited_firm_capacity_mw` counts their thermal fleet at UCAP —
-    the same double-count class the ERCOT accreditation audit fixed for CDR
-    seasonal rating. The factor is each ISO's own published ICAP<->UCAP
-    conversion (:data:`PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO`),
-    defaulting to 1.0 (byte-identical) for ISOs absent from that registry.
+    1. **Published Forecast Pool Requirement.** When ``year`` resolves to a
+       delivery year the ISO publishes an FPR for
+       (:func:`resolve_forecast_pool_requirement`), the requirement is
+       ``firm_peak x FPR`` — the ISO's own UCAP-basis requirement, with the
+       reserve margin and the ICAP->UCAP conversion already folded into the
+       one published number. This is literally the ISO's own construction
+       (devintages the mixed-vintage ``1.178 x 0.7699 = 0.907`` composite the
+       fallback builds onto the published 2026/2027 FPR ``0.9170``).
+    2. **Fallback ``firm peak x (1 + PRM_iso) x icap_to_ucap_ratio_iso``**
+       (byte-identical to the pre-R2 behaviour) for any ISO/year without a
+       published FPR. The ``icap_to_ucap_ratio`` factor (stage-5 §6 ICAP/UCAP
+       pairing audit, 2026-07-06) corrects a basis mismatch for ISOs whose
+       registered PRM is stated on INSTALLED capacity (PJM's IRM, MISO's
+       ICAP-basis PRM) while :func:`accredited_firm_capacity_mw` counts their
+       thermal fleet at UCAP; it is each ISO's own published ICAP<->UCAP
+       conversion (:data:`PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO`),
+       defaulting to 1.0 for ISOs absent from that registry.
+
+    In both constructions the firm peak nets the ISO's load-side capacity
+    products out of the gross peak when the ISO's own adequacy construction
+    does (ERCOT's CDR "Firm Peak Load" —
+    :data:`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO`; ISOs absent net nothing).
+    One requirement, two verbs (capacity-economics plan §3.2) — both adequacy
+    mechanisms call this. ``year=None`` keeps the fallback path, so a caller
+    that does not thread a year is byte-identical to the pre-R2 behaviour.
     """
     dr_fraction = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO.get(iso, 0.0)
     firm_peak_mw = peak_demand_mw * (1.0 - dr_fraction)
+    fpr = resolve_forecast_pool_requirement(iso, year)
+    if fpr is not None:
+        return firm_peak_mw * fpr
     icap_to_ucap_ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO.get(iso, 1.0)
     return (
         firm_peak_mw
@@ -821,18 +871,47 @@ def resolve_adequacy_requirement_mw(
     )
 
 
+def thermal_accreditation_fraction(
+    fuel_type: str, eford: float, iso: str | None
+) -> float:
+    """Firm fraction of nameplate one dispatchable unit accredits, on the ISO's basis.
+
+    The ONE thermal-accreditation resolver (rule 19): the adequacy ledger
+    (:func:`_thermal_firm_mw`), the CR-1 reserve position, and the per-unit
+    capacity payment (:func:`capacity_revenue_per_mw_yr`) all price a unit's
+    firm fraction through this single function, so the ledger and the payment
+    can never diverge by construction. Three published bases
+    (:data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`):
+
+    * ``"seasonal_rating"`` (ERCOT CDR): nameplate, no forced-outage derate
+      — returns ``1.0`` (outage risk lives in the target margin).
+    * ``"elcc_class_rating"`` (PJM's 2025/26 CIFP reform): the unit's
+      published ELCC class rating
+      (:data:`THERMAL_ELCC_CLASS_RATING_BY_ISO`), falling back to UCAP for a
+      fuel class the ISO does not publish (rule 25 neutral fallback).
+    * default / absent (``"ucap"``): ``1 - EFORd``.
+
+    ``iso=None`` keeps the legacy UCAP basis byte-identically.
+    """
+    basis = THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso or "")
+    if basis == "seasonal_rating":
+        return 1.0
+    if basis == "elcc_class_rating":
+        rating = THERMAL_ELCC_CLASS_RATING_BY_ISO.get(iso or "", {}).get(fuel_type)
+        if rating is not None:
+            return float(rating)
+    return 1.0 - float(eford)
+
+
 def _thermal_firm_mw(g: Generator, iso: str | None) -> float:
     """Firm MW one dispatchable unit contributes to the adequacy ledger.
 
-    Default is UCAP (``pmax x (1 - EFORd)``). ISOs whose published
-    accreditation counts thermal at its seasonal rating with no forced-outage
-    derate (:data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`, ERCOT's CDR
-    convention — outage risk lives in the target margin, not the count)
-    contribute nameplate. ``iso=None`` keeps the legacy UCAP basis.
+    ``pmax`` times the unit's basis-resolved accreditation fraction
+    (:func:`thermal_accreditation_fraction` —
+    :data:`THERMAL_ACCREDITATION_BASIS_BY_ISO`). ``iso=None`` keeps the legacy
+    UCAP basis.
     """
-    if THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso or "") == "seasonal_rating":
-        return float(g.pmax_mw)
-    return float(g.pmax_mw) * (1.0 - float(g.eford))
+    return float(g.pmax_mw) * thermal_accreditation_fraction(g.fuel_type, g.eford, iso)
 
 
 def _renewable_credit(fuel_type: str, iso: str | None) -> float | None:
@@ -972,7 +1051,9 @@ def _apply_reliability_floor(
         design = MARKET_DESIGN.get(config.iso)
         if design is not None and not design.capacity_market:
             return []
-    requirement_mw = resolve_adequacy_requirement_mw(config, config.iso, peak_demand)
+    requirement_mw = resolve_adequacy_requirement_mw(
+        config, config.iso, peak_demand, year
+    )
     survivors = [g for g in fleet if g.unit_id not in retired]
     accredited_mw = accredited_firm_capacity_mw(
         survivors,
@@ -1351,7 +1432,7 @@ def apply_economic_retirements(
         # retires as it should while short zones keep their units.
         if not _zone_is_long(deliverability_headroom, g.zone):
             net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(
-                config.iso, g.eford, config, reserve_position
+                config.iso, g.fuel_type, g.eford, config, reserve_position
             )
 
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin): a real
@@ -2180,7 +2261,7 @@ def apply_economic_new_entry(
                 0.0
                 if build_zone_long
                 else capacity_revenue_per_mw_yr(
-                    iso_config.name, EFORD[tech], config, reserve_position
+                    iso_config.name, tech, EFORD[tech], config, reserve_position
                 )
             )
             # AS credit — exactly one mechanism prices thermal AS (rule 19):
@@ -2425,6 +2506,7 @@ def capacity_reserve_position(
     config: ScenarioConfig,
     iso: str,
     peak_demand_mw: float,
+    year: int | None = None,
 ) -> float | None:
     """Return the system's accredited reserve position for the CR-1 curve.
 
@@ -2437,6 +2519,10 @@ def capacity_reserve_position(
     exactly at the requirement (curve pays net-CONE); ``> 1.0`` is long (price
     slides toward zero), ``< 1.0`` is short (price rises toward the cap).
 
+    ``year`` is threaded to the requirement resolver so a published Forecast
+    Pool Requirement of the matching delivery year devintages the position's
+    denominator (R2); ``None`` keeps the fallback ``(1 + PRM) x ratio``.
+
     Returns ``None`` when the peak or the requirement is non-positive, so the
     caller (and ``MarketDesign.capacity_price_per_firm_mw_yr``) cleanly falls
     back to the fixed price. Consumed only when
@@ -2445,7 +2531,7 @@ def capacity_reserve_position(
     """
     if peak_demand_mw <= 0.0:
         return None
-    requirement_mw = resolve_adequacy_requirement_mw(config, iso, peak_demand_mw)
+    requirement_mw = resolve_adequacy_requirement_mw(config, iso, peak_demand_mw, year)
     if requirement_mw <= 0.0:
         return None
     accredited_mw = accredited_firm_capacity_mw(
@@ -2528,7 +2614,7 @@ def apply_reserve_margin_build(
     # Shared requirement resolution (one requirement, two verbs — plan §3.2):
     # the same firm-peak x (1 + PRM) construction the retirement reliability
     # floor uses, on the ISO's own counting convention.
-    required = resolve_adequacy_requirement_mw(config, iso, peak_demand_mw)
+    required = resolve_adequacy_requirement_mw(config, iso, peak_demand_mw, year)
     firm_gap = required - firm_capacity_mw
     if firm_gap <= 0.0:
         return fleet, 0.0

@@ -9582,6 +9582,60 @@
       ]
     },
     {
+      "param_id": "forecast_pool_requirement_by_iso.PJM.2025/2026",
+      "display_name": "Forecast Pool Requirement By Iso / Pjm / 2025/2026",
+      "value": 0.938,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "(1+0.178) x 0.7963; PPP posted 2024-04-08",
+      "source_date": "2024-04",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "forecast_pool_requirement_by_iso.PJM.2026/2027",
+      "display_name": "Forecast Pool Requirement By Iso / Pjm / 2026/2027",
+      "value": 0.917,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "146,105 MW UCAP / 159,329 MW peak; PPP 2025-05-09",
+      "source_date": "2025-05",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "forecast_pool_requirement_by_iso.PJM.2027/2028",
+      "display_name": "Forecast Pool Requirement By Iso / Pjm / 2027/2028",
+      "value": 0.926,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "(1+0.200) x 0.7717; BRA report 2025-12-17",
+      "source_date": "2025-12",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "fuel_co2_factor_per_mmbtu.biomass",
       "display_name": "Fuel Co2 Factor Per Mmbtu / Biomass",
       "value": 0.0,
@@ -12118,7 +12172,7 @@
             "price_frac_net_cone": 0.0
           }
         ],
-        "net_cone_curve_per_kw_yr": 60.396,
+        "net_cone_curve_per_kw_yr": 77.431,
         "demand_curve_delivery_year": "2026/2027",
         "demand_curve_source": "PJM 2026/2027 RPM BRA Planning Period Parameters (Net CONE, price cap) + Manual 18 Rev.62 §3.4 VRR curve points"
       },
@@ -16282,41 +16336,41 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "ME",
-          "RI",
-          "MD",
+          "DE",
           "VA",
-          "VT",
-          "CT",
-          "NJ",
+          "MD",
+          "NH",
           "NY",
           "MA",
-          "DE",
-          "NH"
+          "ME",
+          "NJ",
+          "RI",
+          "VT",
+          "CT"
         ],
         "2024": [
-          "ME",
-          "RI",
+          "DE",
           "MD",
-          "VT",
-          "CT",
-          "NJ",
+          "NH",
           "NY",
           "MA",
-          "DE",
-          "NH"
+          "ME",
+          "NJ",
+          "RI",
+          "VT",
+          "CT"
         ],
         "2025": [
-          "ME",
-          "RI",
+          "DE",
           "MD",
-          "VT",
-          "CT",
-          "NJ",
+          "NH",
           "NY",
           "MA",
-          "DE",
-          "NH"
+          "ME",
+          "NJ",
+          "RI",
+          "VT",
+          "CT"
         ]
       },
       "unit": "",
@@ -18073,6 +18127,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.class_aware_fuel_price_fallback",
+      "display_name": "Class Aware Fuel Price Fallback",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — class-aware \"nearby plant\" donor pools. When True (with ``nearby_fuel_price_fallback`` on and a fleet that carries ``plant_group``), a generator's gap-fill months are priced from reporting plants of its OWN model class (CT_PEAKER, CC_REGULAR, …) first — same-class state mean, then same-class zone mean — before dropping to the class-blind fuel-group-wide pools. Measured basis (MISO 2024 F923, capacity-weighted): CT filers pay $4.13/MMBtu vs CC filers $2.57, but the fuel-group pool is quantity-weighted and hence CC-burn-dominated, so the ~33% of MISO CT capacity without its own filing inherits a ~$2.6 CC price — ~$16–20/MWh below its measured class cost (docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6). Off by default so every existing keeper replays byte-identical.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -26230,6 +26302,41 @@
       ]
     },
     {
+      "param_id": "storage_elcc_by_duration_by_iso.PJM",
+      "display_name": "Storage Elcc By Duration By Iso / Pjm",
+      "value": [
+        [
+          4.0,
+          0.5
+        ],
+        [
+          6.0,
+          0.58
+        ],
+        [
+          8.0,
+          0.62
+        ],
+        [
+          10.0,
+          0.72
+        ]
+      ],
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Per-ISO published storage ELCC class-rating tables, overriding the generic STORAGE_ELCC_BY_DURATION above for exactly the ISOs that publish their own duration->credit ratings (R3, P-2B Option A supply basis). PJM accredits storage at its published ELCC class ratings under the same 2025/26 CIFP reform as the thermal fleet (THERMAL_ELCC_CLASS_RATING_BY_ISO) — this is the ONE storage-accreditation mechanism for PJM, replacing (not stacking on) the generic table (rule 19, no double-derate; the marginal-ELCC saturation derate below still applies on top, as it does for every ISO). Values are the 2026/2027 BRA official/final storage class ratings (matching the thermal vintage), digitized from and reconciled against the committed rows (data/raw/capacity-market/elcc/pjm/pjm.csv, \"N-hr Storage\" resource classes) by tests/test_capacity.py. Notably LOWER than the generic NREL/E3 curve (PJM 4h 0.50 vs 0.60, 8h 0.62 vs 0.87) — the reformed market's own numbers, not a fit. Endpoints clamp: below 4h at the 4h rating, above 10h at the 10h rating (PJM publishes 4/6/8/10-hr; no 2h or >10h class), consistent with the generic table's flat-clamp behaviour.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "storage_elcc_dilution_ceiling_ratio_by_iso.ERCOT",
       "display_name": "Storage Elcc Dilution Ceiling Ratio By Iso / Ercot",
       "value": 0.7641196013289037,
@@ -27646,6 +27753,24 @@
       ]
     },
     {
+      "param_id": "thermal_accreditation_basis_by_iso.PJM",
+      "display_name": "Thermal Accreditation Basis By Iso / Pjm",
+      "value": "elcc_class_rating",
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "Thermal accreditation basis for the same adequacy ledger, per ISO. Default (ISO absent): \"ucap\" = pmax x (1 - EFORd). Two published-basis alternatives:  * \"seasonal_rating\" counts thermal at its rating with NO forced-outage derate — ERCOT's CDR convention, where forced-outage risk lives in the 13.75% Board target margin rather than in the capacity count (the CDR's \"Installed Seasonal-rated Thermal Capacity\" rows carry no EFORd derate). Mixing UCAP-derated supply with the rating-basis 13.75% target double-counts forced-outage risk (~4.4 GW on the 2026 ERCOT thermal fleet). Source: December 2025 CDR, Seasonal Summary. * \"elcc_class_rating\" counts thermal at its published ELCC CLASS rating — PJM's 2025/26 CIFP-reform convention, where EVERY resource class (thermal included) is accredited at an ELCC-based class rating, not (1 - EFORd). The per-fuel-class ratings are :data:`THERMAL_ELCC_CLASS_RATING_BY_ISO`; this pairs the supply ledger with the FPR requirement (R2), which is likewise stated on PJM's ELCC-reform UCAP basis (P-2B Option A per-ISO published-basis consistency — accreditation-basis memo 2026-07-12 §4.1, R3). Read exactly as \"seasonal_rating\" is by :func:`_thermal_firm_mw`.",
+      "source_date": "2026",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "thermal_availability.BIOMASS",
       "display_name": "Thermal Availability / Biomass",
       "value": [
@@ -27886,6 +28011,119 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "thermal_elcc_class_rating_by_iso.PJM.coal",
+      "display_name": "Thermal Elcc Class Rating By Iso / Pjm / Coal",
+      "value": 0.83,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Coal",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "thermal_elcc_class_rating_by_iso.PJM.gas_cc",
+      "display_name": "Thermal Elcc Class Rating By Iso / Pjm / Gas Cc",
+      "value": 0.74,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Gas Combined Cycle",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "thermal_elcc_class_rating_by_iso.PJM.gas_ct",
+      "display_name": "Thermal Elcc Class Rating By Iso / Pjm / Gas Ct",
+      "value": 0.6,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Gas Combustion Turbine",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "thermal_elcc_class_rating_by_iso.PJM.gas_st",
+      "display_name": "Thermal Elcc Class Rating By Iso / Pjm / Gas St",
+      "value": 0.73,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Steam (gas/oil steam)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "thermal_elcc_class_rating_by_iso.PJM.nuclear",
+      "display_name": "Thermal Elcc Class Rating By Iso / Pjm / Nuclear",
+      "value": 0.95,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Nuclear",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "thermal_elcc_class_rating_by_iso.PJM.oil",
+      "display_name": "Thermal Elcc Class Rating By Iso / Pjm / Oil",
+      "value": 0.91,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Diesel Utility (the 2026/27 official oil/diesel class)",
+      "source_date": "2026",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
