@@ -1,0 +1,93 @@
+name: Deploy site to GitHub Pages
+
+# Publishes the static site (landing page + learning hub + codebase site incl.
+# the backcast dashboard) to GitHub Pages. The dashboard data is assembled at
+# deploy time from the committed per-run registry sidecars + bench parts by
+# scripts/build_manifest.py, then copied into the codebase-site data dir by
+# scripts/build_codebase_site_backcast.py (seconds, stdlib only, no model deps).
+#
+# Why this workflow exists: the repo tracks ~6 GB of source data, far over the
+# 1 GB GitHub Pages limit, so it CANNOT be served by branch-source Pages. This
+# job stages only the ~tens of MB the site actually serves into `_site` (via a
+# sparse, blobless checkout — the multi-GB bundles/inputs are never downloaded)
+# and deploys that. Runs in well under a minute.
+
+on:
+  # Auto-deploy when anything the site serves changes — including a new
+  # calibration run (its sidecar/payload/bench parts live under frontend/).
+  push:
+    branches: [main]
+    paths:
+      - "*.html"
+      - "frontend/**"
+      - "learning-hub/**"
+      - "docs/codebase-site/**"
+      - "scripts/build_manifest.py"
+      - "scripts/build_codebase_site_backcast.py"
+      - ".github/workflows/deploy-pages.yml"
+  # Manual trigger (Actions tab → this workflow → "Run workflow").
+  workflow_dispatch: {}
+
+permissions:
+  pages: write
+  id-token: write
+
+# One publish at a time; never cancel an in-flight publish (an interrupted
+# Pages deploy can leave the live site partially broken).
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout (sparse + blobless — web assets only)
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          filter: blob:none
+          sparse-checkout: |
+            frontend
+            learning-hub
+            docs/codebase-site
+            scripts
+
+      - name: Stage the web assets
+        run: |
+          set -euo pipefail
+          mkdir -p _site
+          cp ./*.html _site/
+          cp -r frontend _site/
+          [ -d learning-hub ] && cp -r learning-hub _site/
+          mkdir -p _site/docs
+          cp -r docs/codebase-site _site/docs/codebase-site
+          # Serve files verbatim — no Jekyll processing of the data JS.
+          touch _site/.nojekyll
+
+      - name: Assemble the backcast dashboard data
+        run: |
+          set -euo pipefail
+          python3 scripts/build_manifest.py --site-dir _site
+          python3 scripts/build_codebase_site_backcast.py --site-dir _site
+          echo "Staged $(find _site -type f | wc -l) files, $(du -sh _site | cut -f1)"
+
+      - name: Configure Pages
+        # enablement:true turns Pages on with source = GitHub Actions if it
+        # isn't already, so the first run brings the site live with no manual
+        # repo-settings step.
+        uses: actions/configure-pages@v5
+        with:
+          enablement: true
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
