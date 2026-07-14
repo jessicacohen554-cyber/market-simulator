@@ -307,6 +307,7 @@
         const nodata = !!b.nodata || !b.campd || cc.every(v => v === 0);
         return {
           name: (b.name || plantCode) + ' · ' + (b.zone || '?'), agg: false, nodata,
+          ctOnly: !!b.ct_only, ctRatio: b.ct_ratio ?? null,
           mm, cc, m_ann: mp.m_ann || 0, c_ann: b.c_ann || 0, e_ann: b.e_ann || 0,
           r: mp.r ?? null, nr: mp.nrmse ?? null, cap: mp.cap ?? null
         };
@@ -1173,6 +1174,9 @@
       if (d.nodata && st.plant !== 'agg') {
         html += `<p style="color:#9a6700;font-size:0.82rem;margin-bottom:12px">No CAMPD hourly data for this plant — model shown without an hourly comparison.</p>`;
       }
+      if (d.ctOnly && st.plant !== 'agg') {
+        html += `<p style="color:#9a6700;font-size:0.82rem;margin-bottom:12px">CT-only CEMS record: EIA-923 net is ${d.ctRatio ? d.ctRatio.toFixed(2) + '×' : '>1.1×'} the CAMPD gross — the combined-cycle block reports only its combustion turbines, so CAMPD understates this plant. Capture and fit are scored on the EIA-923 <b>monthly</b> row (r/NRMSE are monthly), not the incomplete CAMPD hourly series.</p>`;
+      }
 
       html += `<div class="year-grid" style="margin-bottom:0">
         <div class="year-card">
@@ -1219,7 +1223,8 @@
           ps.map(c => {
             const b = B.plants?.[c] || {};
             const nodata = !b.campd;
-            return `<option value="${esc(c)}">${esc(b.name || c)} · ${esc(b.zone || '?')}${nodata ? ' · no CAMPD' : ''}</option>`;
+            const tag = nodata ? ' · no CAMPD' : (b.ct_only ? ' · CT-only CEMS (923)' : '');
+            return `<option value="${esc(c)}">${esc(b.name || c)} · ${esc(b.zone || '?')}${tag}</option>`;
           }).join('');
         psel.value = st.plant;
         psel.onchange = () => { st.plant = psel.value; clearAggCache(); renderCharts(el); };
@@ -1347,7 +1352,11 @@
       if (maxMW > 0) for (let i = 0; i < T; i++) cf[i] = d.mm[i] / maxMW * 100;
 
       let cfC = null;
-      const hasC = !d.nodata && d.cc && d.cc.length >= T;
+      // CT-only CEMS reporters submit an incomplete record (only the CC block's
+      // combustion turbines), so their CAMPD series understates the plant —
+      // suppress the misleading CAMPD heatmap and score on EIA-923 (see the
+      // per-plant panel note).
+      const hasC = !d.nodata && !d.ctOnly && d.cc && d.cc.length >= T;
 
       section.innerHTML = '';
 

@@ -1549,6 +1549,98 @@ class TestCcCapacityReconcile(unittest.TestCase):
         self.assertTrue(np.allclose(off, on))
 
 
+class TestCcSummerCapacityGuard(unittest.TestCase):
+    """``_reconcile_cc_pmax_to_nameplate`` clamps double-filed CC summer rows.
+
+    EIA-860 sometimes files a CC block's total summer capability on one
+    generator row (with the component rows left blank, so the loader
+    nameplate-fills them) or on both the component and total rows. Either way
+    the fleet-loaded merchant-CC pmax sum ends up above the plant's nameplate
+    sum — physically impossible per the EIA-860 schema. The guard reconciles
+    the plant to ``min(pmax_sum, nameplate_sum) = nameplate_sum``.
+    """
+
+    def _cc_row(self, gid, prime_mover, net_summer, nameplate):
+        """One normalized EIA-860 CC generator row (dict) for the loader."""
+        return {
+            "plant_id": 999001,
+            "generator_id": gid,
+            "plant_name": "Synthetic CC",
+            "technology": "Natural Gas Fired Combined Cycle",
+            "energy_source": "NG",
+            "prime_mover": prime_mover,
+            "chp": "N",
+            "status": "OP",
+            "state": "PA",
+            "net_summer_capacity_mw": net_summer,
+            "nameplate_capacity_mw": nameplate,
+            "operating_year": 2015,
+            "operating_month": 1,
+            "planned_retirement_year": None,
+            "planned_retirement_month": None,
+            "heat_rate": 7.0,
+        }
+
+    def _fleet(self, rows):
+        from market_sim.data.fleet import _rows_to_generators
+
+        return _rows_to_generators(pd.DataFrame(rows), "PJM", get_iso_config("PJM"))
+
+    def test_total_on_one_row_clamped_to_nameplate(self):
+        # 2x1 block: the two CTs carry no summer figure (loader nameplate-fills
+        # 150 each), the steam row carries the whole 450 MW block total. Fleet
+        # pmax sum = 150 + 150 + 450 = 750; nameplate sum = 400. The guard must
+        # clamp the plant's CC pmax sum to 400 (scaling each row by 400/750).
+        gens = self._fleet(
+            [
+                self._cc_row("CT1", "CT", float("nan"), 150.0),
+                self._cc_row("CT2", "CT", float("nan"), 150.0),
+                self._cc_row("STG", "CA", 450.0, 100.0),
+            ]
+        )
+        cc = [g for g in gens if g.plant_group == "CC_REGULAR"]
+        self.assertEqual(len(cc), 3)
+        self.assertAlmostEqual(sum(g.pmax_mw for g in cc), 400.0, places=3)
+        # Reconciliation is proportional (offer-curve shape preserved).
+        by_gid = {g.unit_id.split("_")[1]: g.pmax_mw for g in cc}
+        self.assertAlmostEqual(by_gid["STG"], 450.0 * 400.0 / 750.0, places=3)
+        self.assertAlmostEqual(by_gid["CT1"], 150.0 * 400.0 / 750.0, places=3)
+
+    def test_double_filed_component_and_total_clamped(self):
+        # Both the CT and its paired CA carry the block total (the New Covert
+        # 55297 pattern): pmax sum 360 + 360 = 720, nameplate sum 245 + 147.
+        gens = self._fleet(
+            [
+                self._cc_row("1", "CT", 360.0, 245.0),
+                self._cc_row("1A", "CA", 360.0, 147.0),
+            ]
+        )
+        cc = [g for g in gens if g.plant_group == "CC_REGULAR"]
+        self.assertAlmostEqual(sum(g.pmax_mw for g in cc), 392.0, places=3)
+
+    def test_clean_plant_untouched(self):
+        # A well-behaved block (each row's summer <= its nameplate) is a no-op.
+        gens = self._fleet(
+            [
+                self._cc_row("CT1", "CT", 180.0, 200.0),
+                self._cc_row("STG", "CA", 90.0, 100.0),
+            ]
+        )
+        cc = [g for g in gens if g.plant_group == "CC_REGULAR"]
+        self.assertAlmostEqual(sum(g.pmax_mw for g in cc), 270.0, places=3)
+
+    def test_within_tolerance_untouched(self):
+        # A 0.05% overage (rounding noise) stays below the 0.1% guard band.
+        gens = self._fleet(
+            [
+                self._cc_row("CT1", "CT", 200.1, 200.0),
+                self._cc_row("STG", "CA", 100.0, 100.0),
+            ]
+        )
+        cc = [g for g in gens if g.plant_group == "CC_REGULAR"]
+        self.assertAlmostEqual(sum(g.pmax_mw for g in cc), 300.1, places=3)
+
+
 class TestOtherFossilScoring(unittest.TestCase):
     """The OTHER_FOSSIL scoring bucket for genuinely-mixed gas-thermal plants."""
 
