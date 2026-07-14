@@ -18,7 +18,11 @@ iso,resource_class,study_vintage,penetration_pct,penetration_unit,elcc_pct,elcc_
 clean partition `data/clean/capacity-market-elcc/<ISO>/…parquet`.
 
 - `resource_class` ∈ {wind, solar, wind_offshore, hybrid_solar_storage,
-  storage_2hr, storage_4hr, storage_6hr, storage_8hr, other}.
+  storage_2hr, storage_4hr, storage_6hr, storage_8hr, storage_10hr,
+  storage_ldes, nuclear, coal, gas_cc, gas_ct, gas_ct_dual_fuel, diesel,
+  oil_ct, steam, waste_to_energy, other}. The thermal buckets (nuclear
+  through waste_to_energy) capture PJM's post-2025/26-CIFP-reform thermal
+  ELCC class ratings — see `pjm/README.md`.
 - `penetration_pct` / `penetration_unit` are populated only where the ISO
   publishes a genuine multi-point ELCC-vs-penetration curve (MISO is the
   strongest public example); left blank — never guessed — where the ISO
