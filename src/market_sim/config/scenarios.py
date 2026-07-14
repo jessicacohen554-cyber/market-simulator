@@ -2933,6 +2933,56 @@ class ScenarioConfig:
     # the PTC already on wind_mc (so the PTC, when active, dominates and there
     # is no double-count); for solar — which earns the ITC, not the PTC, so its
     # dispatch offer is $0 — this REC value is what carries it negative.
+    # RULE-25 SCOPE (ERCOT-65 adjudication): this $20 level is the CAISO
+    # RPS/REC keep-running value, adjudicated on the CAISO keeper. It must
+    # NOT be re-used to arm negative_renewable_offers on another ISO — on
+    # ERCOT there is no RPS-compliance REC of this magnitude (voluntary TX
+    # RECs clear ~$1-3/MWh) and the wind offer ALREADY carries the federal
+    # PTC via compute_dispatch_credits (wind_mc = -ira_ptc_wind), so the
+    # flag would only push SOLAR to -$20, a CAISO value on the wrong fleet.
+    # ERCOT's negative-price epoch lever is the PTC scoping below
+    # (wind_ptc_vintage_offers), not this flag.
+
+    wind_ptc_vintage_offers: bool = False  # Scope the wind dispatch offer's
+    # federal PTC to the vintages actually inside their 10-year §45 window
+    # (ERCOT-65). The model's wind offer is otherwise the FLAT
+    # -ira_ptc_wind on every MW (compute_dispatch_credits) — including the
+    # 27-40% of ERCOT wind capacity (2023-2025, growing) whose credit
+    # expired, which in reality bids ~$0 because curtailment costs it
+    # nothing. When on, the wind offer becomes per-zone/per-month
+    #   -PTC_statutory(year) x eligible_share[zone, month]
+    # (policy.ira.wind_ptc_vintage_dispatch_offer): the measured EIA-860
+    # vintage share (rule-13 admissible, forward-native — vintages age out,
+    # new CODs age in) times the IRS inflation-adjusted statutory credit
+    # for the production year (constants.WIND_PTC_STATUTORY_USD_PER_MWH:
+    # $28/29/30 per MWh for 2023/24/25; flat ira_ptc_wind outside the
+    # table). RECORDED ADJUDICATIONS (ERCOT-65 charter traps):
+    # * PASS SCOPE — the scoped offer enters BOTH P0 and P1: it is the
+    #   unit's actual cost-basis bid (the forgone statutory credit), not a
+    #   strategic markup, so the base-cost pass sees it too (same
+    #   convention as the flat PTC it replaces).
+    # * TWO-STEP LIMITATION — one LP wind column per zone cannot carry the
+    #   fleet's true two-step {-PTC, ~$0} stack, so the zone bids the
+    #   capacity-weighted mean keep-running value (the same first-moment
+    #   aggregation the zonal model applies to demand/CF). Deep epochs
+    #   where reality's marginal curtailed unit is a full-PTC machine
+    #   price SHALLOWER than -PTC here; shallow epochs price DEEPER than
+    #   the real ~$0 marginal bid. Splitting the wind column (or zone) is
+    #   the escalation path, not a tuning knob.
+    # * DUMP COUPLING — dump_cost = max(eps, -min(wind_mc, solar_mc)+eps)
+    #   follows the scoped array min automatically; scoping can only
+    #   SHRINK |min| vs the flat -ira_ptc_wind, so the guard stays above
+    #   every production credit and dump stays never-binding.
+    # * SOLAR — untouched at $0 (ITC, not production-linked; ERCOT
+    #   voluntary RECs ~$1-3/MWh are immaterial; the CAISO $20 REC value
+    #   is rule-25 CAISO-scoped).
+    # * COMPOSITION (rule 19) — a bid change on the curtailable-renewable
+    #   columns only; no floor, no D-2 id, disjoint from every thermal/gas
+    #   mechanism and from negative_renewable_offers (whose min() floor,
+    #   where armed, still applies after the scoping).
+    # ISO-agnostic mechanism (the flat-PTC overreach exists in every ISO's
+    # backcast), probed and adjudicated on ERCOT; default off
+    # (byte-identical baseline).
 
     caiso_solar_deliverability: bool = False  # CAISO Lever-D structural solar
     # local-deliverability derate. The reduced 3-zone CAISO topology collapses
@@ -6074,6 +6124,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_storage_as_duration_gate": 1,
     "negative_renewable_offers": 1,
     "renewable_keep_running_value": 2,
+    "wind_ptc_vintage_offers": 1,
     "as_revenue_multiplier": 2,
     "ercot_market_design": 1,
     "rtcb_reliability_deployment_mw": 2,

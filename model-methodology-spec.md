@@ -52,6 +52,8 @@ Where `mc[g,t] = heat_rate[g] × fuel_price[g,t] + vom[g] + emission_rate[g] × 
 
 `dump_cost = max(ε, -min(wind_mc, solar_mc) + ε)`. When renewables have zero MC, dump_cost = ε (negligible). When renewables have negative MC (e.g., wind with PTC = -$26/MWh), dump_cost = $26.001/MWh — just above the absolute value of the production credit. This ensures the LP never profits from overproducing credited renewables into the dump.
 
+The default wind dispatch offer is the FLAT `-ira_ptc_wind` on every MW while the credit is active (`policy.ira.compute_dispatch_credits`; solar's ITC is not production-linked, so its offer is $0). The optional `wind_ptc_vintage_offers` gate (ScenarioConfig, default off — ERCOT-65) scopes that credit to the vintages actually inside their 10-year §45 window: the offer becomes the per-zone-month `-PTC_statutory(year) × eligible_share[z, month]`, with the eligible share measured from EIA-860 vintages (`data.renewables.wind_ptc_eligible_monthly_share`) and the statutory per-year credit in `constants.WIND_PTC_STATUTORY_USD_PER_MWH`. `wind_mc`/`solar_mc` accept `(n_zones, T)` arrays, and the dump-cost guard follows the array minimum, so the scoping can only shrink the guard. Probe-adjudicated dispatch-inert on ERCOT 2023 (the wind bid's level never changes dispatch while every alternative supply is dearer); kept as recorded structure, not a keeper mechanism — diagnosis §9.
+
 The marginal cost vector is assembled from parameters. Every cost component is a named parameter (Tier 1 or Tier 2). No hardcoded values in the cost calculation.
 
 Storage tiebreaker `ε` = 0.001 $/MWh. Prevents degenerate solutions where the solver charges and discharges simultaneously. This is a standard trick — document it but don’t make it configurable.

@@ -6228,3 +6228,26 @@ ERCOT_ONLINE_CAP_DELIV_PROFILE_MEASURED: tuple[float, ...] = (
 # enough never to reach an energy dual, positive so plan-holding is preferred
 # over idle headroom.
 ERCOT_AS_PLAN_HOLD_EPS: float = 0.001
+
+# --- Federal §45 wind PTC, statutory inflation-adjusted credit ($/MWh) -------
+# The IRS-published renewable-electricity production credit for WIND, by
+# production (sale) calendar year, for facilities placed in service before
+# 2022 — the vintage class that dominates the in-window ERCOT fleet in the
+# backcast years. Sources (annual IRS inflation-adjustment notices):
+#   2023: 2.8 c/kWh — 88 FR 40406 (2023-13191), IAF 1.8909
+#   2024: 2.9 c/kWh — IRS 2024 §45 notice (Holland & Knight 2024-07 summary)
+#   2025: 3.0 c/kWh — 90 FR 22213 (2025-09366), IAF 1.9971
+# Facilities placed in service after 2021 (IRA §45 five-times rate with
+# wage/apprenticeship compliance) publish slightly lower amounts under the
+# finer 0.05-cent rounding (2.75 c/kWh in 2023) — a <= $1.5/MWh spread the
+# single per-year level deliberately ignores (the pre-2022 vintages carry
+# most in-window capacity). Years outside this table fall back to the
+# registry's flat ScenarioConfig.ira_ptc_wind. Used ONLY by the
+# wind_ptc_vintage_offers dispatch-offer scoping (policy.ira.
+# wind_ptc_vintage_dispatch_offer); the capacity-economics screens keep the
+# flat ira_ptc_wind convention.
+WIND_PTC_STATUTORY_USD_PER_MWH: dict[int, float] = {
+    2023: 28.0,
+    2024: 29.0,
+    2025: 30.0,
+}
