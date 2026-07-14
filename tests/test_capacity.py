@@ -7,10 +7,12 @@ from unittest import mock
 import numpy as np
 
 from market_sim.config.constants import (
+    FORECAST_POOL_REQUIREMENT_BY_ISO,
     GLOBAL_ANNUAL_DEPLOYMENT_GW,
     HOURS_PER_YEAR,
     NEW_ENTRY_COSTS,
     PLANNING_RESERVE_MARGIN_BY_ISO,
+    PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     QUEUE_CAP_GW,
     QUEUE_CAP_PER_TECH_GW,
     WRIGHT_REFERENCE_GW,
@@ -30,6 +32,8 @@ from market_sim.model.capacity import (
     compute_lcoe,
     estimate_expected_revenue,
     evolve_fleet,
+    resolve_adequacy_requirement_mw,
+    resolve_forecast_pool_requirement,
     wright_cost,
 )
 from market_sim.model.storage import STORAGE_TECHS, compute_storage_annual_cost
@@ -1242,6 +1246,83 @@ class TestStoragePortfolioElccDilution(unittest.TestCase):
         self.assertEqual(floor_log, [])
 
 
+class TestForecastPoolRequirement(unittest.TestCase):
+    """R2 — PJM requirement devintaged onto the published Forecast Pool
+    Requirement of the matching delivery year (accreditation-basis memo §4.2)."""
+
+    def _csv_fpr_rows(self):
+        """The published forecast_pool_requirement rows from the P-0B CSV."""
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / "demand-curve" / "pjm" / "pjm.csv"
+        with path.open(newline="") as fh:
+            return [
+                r
+                for r in csv.DictReader(fh)
+                if r["metric"] == "forecast_pool_requirement"
+            ]
+
+    def test_registry_reconciles_with_published_csv(self):
+        # Every FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"] entry must match a
+        # published forecast_pool_requirement row byte-for-byte (rule 13 —
+        # digitized from the committed rows, never a fit target).
+        rows = self._csv_fpr_rows()
+        self.assertTrue(rows, "expected published FPR rows on disk")
+        by_year = {r["delivery_year"]: float(r["y_value"]) for r in rows}
+        self.assertEqual(
+            FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"],
+            {y: by_year[y] for y in FORECAST_POOL_REQUIREMENT_BY_ISO["PJM"]},
+        )
+        # And every published unit is the UCAP fraction.
+        self.assertTrue(all(r["y_unit"] == "fraction_of_peak_ucap" for r in rows))
+
+    def test_published_fpr_used_for_matching_delivery_year(self):
+        cfg = ScenarioConfig(iso="PJM")
+        peak = 160_560.0
+        # Model year 2026 -> delivery 2026/2027 -> published FPR 0.9170.
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2026),
+            peak * 0.9170,
+            places=3,
+        )
+
+    def test_falls_back_when_no_published_fpr(self):
+        cfg = ScenarioConfig(iso="PJM")
+        peak = 160_560.0
+        # Model year 2030 -> delivery 2030/2031 -> no published FPR -> the
+        # (1 + PRM) x icap_to_ucap_ratio fallback (byte-identical to pre-R2).
+        ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["PJM"]
+        expected = peak * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["PJM"]) * ratio
+        self.assertIsNone(resolve_forecast_pool_requirement("PJM", 2030))
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2030),
+            expected,
+            places=3,
+        )
+
+    def test_year_none_is_fallback_byte_identical(self):
+        cfg = ScenarioConfig(iso="PJM")
+        peak = 160_560.0
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak),
+            resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2030),
+            places=6,
+        )
+
+    def test_non_pjm_iso_unaffected(self):
+        # An ISO with no FPR table keeps the fallback in both year modes.
+        cfg = ScenarioConfig(iso="MISO")
+        peak = 120_000.0
+        self.assertIsNone(resolve_forecast_pool_requirement("MISO", 2026))
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "MISO", peak, 2026),
+            resolve_adequacy_requirement_mw(cfg, "MISO", peak),
+            places=6,
+        )
+
+
 class TestReserveMarginBuild(unittest.TestCase):
     """The adequacy backstop: force-build firm capacity to the reserve margin."""
 
@@ -1426,7 +1507,6 @@ class TestReserveMarginBuild(unittest.TestCase):
         """
         from market_sim.config.constants import (
             EFORD,
-            PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
         )
         from market_sim.model.capacity import apply_reserve_margin_build
 
