@@ -12170,3 +12170,101 @@ hinge, ST_GAS deltas, `ercot_storage_as_deployment` and the bridge params
 untouched. Probe bundles (`ercot64_{keeper,fs_markdown}_2023`) are 2023-only
 throwaways — never registered, deleted. No dashboard change (no full-span
 run was produced; keeper `2026-07-12-ercot63-gas-bridge` + twin unchanged).
+
+## 2026-07-13 — ERCOT-65: the negative-price epoch pair adjudicated — both charter premises measured WRONG (wind already bids flat −$26; the WP-B wtx driver is ALREADY LIVE in the keeper behind a run_config recorder defect, fixed + records corrected); the PTC vintage scoping built and probe-INERT; trough/spread lane AT FRONTIER (draft block below, owner sign-off pending); keeper stays ercot63-gas-bridge unchanged
+
+**Task (the ERCOT-64 hand-back).** Probe the chartered pair: (i)
+`negative_renewable_offers` armed with an ERCOT-admissible PTC value, (ii)
+the West-corridor curtailment topology co-lane. Full workings: diagnosis §9
+(`docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md`).
+
+**Discovery 1 — the §8 "$0 floor" premise is false.** Every ERCOT backcast
+already prices wind at the FLAT `-ira_ptc_wind = -$26/MWh` on every MW
+(`compute_dispatch_credits`); `negative_renewable_offers` is only the CAISO
+REC-floor and on ERCOT would push SOLAR to the CAISO-adjudicated −$20 (rule
+25 — refused, adjudicated at the field docstring). The keeper's 2,651
+zonal epochs sit AT −$26, Panhandle-ONLY (2,577 h < $0 there; West and
+every load zone: zero; breadth 1.02 zones); the LW price never goes
+negative and prices median $13.99 in RT's 147 negative lw-hours. The
+negative band is representable; the missing thing is epoch formation/reach.
+
+**Discovery 2 — the wtx driver has been live in every keeper-lineage solve
+(recorder defect).** `run_year` applies the generic `prb_overrides` channel
+LAST; the lineage metas carry `ercot_wtx_curtailment_driver: true` inside
+`coal_prb_sigmoid_overrides` (the owner's 2026-07-07 default-ON), stomping
+the meta-writer's coerced top-level `False` — while the
+`run_calibration_full` recorder applied its tri-state re-override in the
+OPPOSITE order and wrote `driver: false` into `run_config.json` (the single
+divergent key of six in that dict). Evidence: probe logs "West/Panhandle
+VRE ceiling active" on the ZERO-delta keeper reconstruction that reproduces
+the registered keeper exactly (C3a +3.1 %, C3b 0.131, C3c 171 h); keeper
+West dispatch/potential mean 0.949 ≈ ceiling mean 0.9488; the explicit
+`wtx` rung is BYTE-IDENTICAL (price max |Δ| 0.0, wind/solar Δ 0.000 TWh).
+**Fixes (solves untouched):** recorder now mirrors the live channel order +
+loud conflict warnings in both orchestrator paths; keeper + ablation-twin
+`run_config.json` corrected to `driver: true` with `_record_corrections`
+annotations; keeper DOF ledger gains the omitted outcome-anchored depth
+pair (wind 0.1004 / solar 0.1637, owner-accepted 2026-07-07); sidecars
+carry no driver claims (checked); `audit_keepers.py --iso ERCOT` PASS. The
+zero-forcing twin's claim is unaffected (the ceiling is not a D-3 forcing
+floor). The "built but NOT in the keeper recipe" wording in the ERCOT-62/
+63/64 entries and diagnosis §8 is superseded by this entry.
+
+**Built (default-off, ISO-agnostic, zero fitted scalars — the charter's
+admissible scoping):** `wind_ptc_vintage_offers` — wind offer =
+`-PTC_statutory(year) × EIA-860 PTC-window-eligible capacity share[zone,
+month]` (10-yr §45 window, month-precise aging, unknown-vintage
+conservative, proposed-plant augmentation; statutory $28/29/30 for 2023/24/
+25, IRS FR notices, `WIND_PTC_STATUTORY_USD_PER_MWH`; solar stays $0).
+27→40 % of TX wind nameplate is past-window across 2023→2025; West (old
+CREZ) blends to −$14.8 vs Panhandle −$27.0. Both orchestrators + forecast
+runner (D-5), meta/recorded-cfg mirrors, CLI flag, registry regen, 13 unit
+tests (`test_wind_ptc_vintage_offers.py`); commitment/pipeline/ablation/
+recorded-cfg suites green.
+
+**2023 probe ladder** (rule-16 throwaways vs the byte-faithful ercot63
+reconstruction; `_ercot65_ladder_probe.py`, `_ercot65_epoch_anatomy.py`,
+h<$0 band added to `_ercot62_lowcurve_analyze.py`; bundles deleted):
+
+| 2023 | keeper | +vintage | +wtx | RT |
+|---|---|---|---|---|
+| C3a / C3b / C3c | +3.1 % / 0.131 / 171 h | identical | identical | — |
+| lw h<$0 (all-hours) | 0 | 0 | 0 | 147 |
+| trough h<$10 / <$15 | 107 / 228 | 107 / 228 | 107 / 228 | 681 / 1,493 |
+| median daily spread | $14.9 | $14.9 | $14.9 | $35.3 |
+| storage | 0.74 TWh | 0.74 | 0.74 | — |
+| Panhandle epoch dual | −26.00 | **−27.03** | −26.00 | — |
+| per-unit dispatch max Δ | — | **0.0 MWh** | 0.0 MWh | — |
+
+The vintage scoping is dispatch-byte-identical and moves ONE number: the
+Panhandle epoch dual deepens $1.03 (96.5 % in-window fleet). West's
+structurally distinct −$14.8 blend never prices — West wind is never
+marginal (the relief valve). Kept in the codebase default-off as the
+recorded closure (the ERCOT-64 pattern); REFUTED as a trough lever in the
+current topology. The `vintage_wtx` rung was skipped with cause: a
+byte-identical delta composed with a one-zone $1 price shift cannot differ
+from the vintage rung.
+
+**Lane adjudication — AT FRONTIER; draft block for owner sign-off** (the
+offer-side enumeration is closed: LSL family at ERCOT-64; the negative
+band here — the PTC bid was already present at full depth, its honest
+scoping is inert, deeper uniform bids have no admissible basis. Epoch
+formation/reach is a topology-representation gap; the WP-B ceiling is
+live and, as a bound on the wind variable itself, can never price an
+epoch — pinned-variable anatomy). Ready to paste into `keepers.json
+.frontier.ERCOT` on owner GO:
+
+```json
+"ERCOT": {
+  "declared": "<owner-date>",
+  "note": "Frontier achieved for the trough/spread (negative-price epoch) lane: every named admissible offer-side mechanism is tried on record — conditional offer surface top leg (adopted), econ lower-body (clamp-inert), tranche-wide + floor-scoped LSL markdowns (refuted/inert, ERCOT-64), the flat wind PTC bid (present since inception at -$26), its EIA-860 vintage scoping (built, dispatch-byte-identical, ERCOT-65), and the ERCOT arming of negative_renewable_offers (rule-25 refused — CAISO REC value). The WP-B West/Panhandle curtailment ceiling is LIVE in the keeper (ERCOT-65 record correction) and fixes curtailment volume but cannot price epochs (a ceiling-clipped variable is never marginal). The model forms negative epochs only in Panhandle (breadth ~1 zone) and prices ~$14 in RT's 147 negative lw-hours: the gap is epoch FORMATION/REACH — a topology-representation limit. Remaining lever: the West/Panhandle zone/corridor split (vre-undercurtailment step-2 §conclusion option 1), a structural iso_configs change needing its own charter. The C3c scarcity tail stays the separate open G-22 item. 2026-07-13 ERCOT-65 calibration-log entry; diagnosis §9."
+}
+```
+
+**Holdouts / governance.** 2023-only probes, no out-of-training year
+touched (rule 22); no offer curve, sigmoid, floor, derive value or ORDC
+parameter changed (rules 13/21/23/26); the record corrections change no
+solve (byte-evidence above). Probe bundles
+(`ercot65_{keeper,vintage,wtx}_2023`) deleted, never registered. No
+dashboard change (no full-span run; keeper + twin unchanged, sidecars
+clean; `audit_keepers.py` PASS).

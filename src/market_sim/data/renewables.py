@@ -812,6 +812,115 @@ def _add_proposed_capacity(
         monthly[z_idx, start - 1 :] += cap
 
 
+# Federal §45 wind PTC credit period: 10 years (120 months) from the
+# placed-in-service date (26 U.S.C. §45(a)(2)(A)(ii)).
+_PTC_WINDOW_MONTHS: int = 120
+
+
+def wind_ptc_eligible_monthly_share(
+    iso: str,
+    zone_names: list[str],
+    cal_year: int,
+    data_dir: Path | None = None,
+) -> np.ndarray | None:
+    """Return the ``(n_zones, 12)`` PTC-window-eligible share of online wind.
+
+    For each model zone and calendar month of ``cal_year``, the fraction of
+    online wind nameplate capacity still inside its federal §45 production
+    tax credit window — 10 years (120 months, :data:`_PTC_WINDOW_MONTHS`)
+    from the unit's placed-in-service month (26 U.S.C. §45(a)(2)(A)(ii)).
+    Same source, zone assignment (eGRID ORIS -> zone), status filter and
+    month-precise online conventions as :func:`_eia860_monthly_capacity`
+    (EIA-860 Generator_Operable, ``Operating Year``/``Month``), so the share
+    denominator is the exact fleet the capacity loader distributes.
+    Measured, rule-13 admissible and forward-native: for a forward year the
+    same registry ages vintages out of the window and the proposed-plant
+    augmentation (all post-snapshot CODs, in-window by construction) ages
+    new ones in — the share responds to fleet turnover, never to a residual.
+
+    Conventions:
+
+    * A unit with an unknown ``Operating Year`` stays online (the
+      :func:`monthly_online_mask` convention) but is treated as PAST its
+      window (not eligible) — eligibility cannot be established, and the
+      unknown-vintage tail of the file is old capacity.
+    * Repowered units requalify for a fresh 10-year window in reality (the
+      IRS 80/20 rule), but EIA-860 keeps the original ``Operating Year``
+      for most repowerings, so the share UNDERSTATES eligibility by the
+      repowered fleet — a documented conservatism, not a knob.
+
+    Returns ``None`` when the EIA-860 parquet or the ISO's zone rules are
+    missing (callers fall back to the flat unscoped offer).
+    """
+    file_name = _EIA860_OPERABLE_FILES.get("wind")
+    if file_name is None:
+        return None
+    if data_dir is None:
+        from market_sim.config.paths import active_eia860_dir
+
+        data_dir = active_eia860_dir()
+    path = Path(data_dir) / file_name
+    if not path.exists():
+        return None
+
+    from market_sim.data.zone_assignment import build_zone_lookup
+
+    try:
+        zone_lookup = build_zone_lookup(iso)
+    except Exception:
+        return None
+    if not zone_lookup:
+        return None
+
+    df = pd.read_parquet(path)
+    status = df["Status"].astype(str).str.strip().str.upper()
+    df = df[status == "OP"]
+
+    zone_to_idx = {name: i for i, name in enumerate(zone_names)}
+    total = np.zeros((len(zone_names), _MONTHS_PER_YEAR), dtype=float)
+    eligible = np.zeros((len(zone_names), _MONTHS_PER_YEAR), dtype=float)
+
+    plant_code = df["Plant Code"].to_numpy()
+    capacity = pd.to_numeric(df["Nameplate Capacity (MW)"], errors="coerce").to_numpy()
+    op_year = pd.to_numeric(df["Operating Year"], errors="coerce").to_numpy()
+    op_month = pd.to_numeric(df["Operating Month"], errors="coerce").to_numpy()
+    ret_year = _optional_numeric(df, "Planned Retirement Year")
+    ret_month = _optional_numeric(df, "Planned Retirement Month")
+
+    months = np.arange(1, _MONTHS_PER_YEAR + 1)
+    for code, cap, oy, om, ry, rm in zip(
+        plant_code, capacity, op_year, op_month, ret_year, ret_month
+    ):
+        oris = _as_int(code)
+        zone = zone_lookup.get(oris) if oris is not None else None
+        z_idx = zone_to_idx.get(zone) if zone is not None else None
+        if z_idx is None:
+            continue
+        if cap is None or cap != cap or cap <= 0.0:  # None / NaN / non-positive
+            continue
+        oy_i = _as_int(oy)
+        om_i = _as_int(om) or COD_FALLBACK_MONTH
+        mask = monthly_online_mask(oy_i, om_i, _as_int(ry), _as_int(rm), cal_year)
+        if not mask.any():
+            continue
+        total[z_idx] += cap * mask
+        if oy_i is None:
+            continue  # vintage unknown -> not eligible (see docstring)
+        months_since_cod = (cal_year - oy_i) * _MONTHS_PER_YEAR + (months - om_i)
+        in_window = (months_since_cod >= 0) & (months_since_cod < _PTC_WINDOW_MONTHS)
+        eligible[z_idx] += cap * (mask & in_window)
+
+    # Post-snapshot proposed plants: augment BOTH tallies — a new COD is
+    # inside its window for the whole backcast horizon by construction.
+    if cal_year > _EIA860_OPERABLE_VINTAGE:
+        _add_proposed_capacity(total, iso, "wind", zone_to_idx, cal_year, data_dir)
+        _add_proposed_capacity(eligible, iso, "wind", zone_to_idx, cal_year, data_dir)
+
+    if total.sum() <= 0.0:
+        return None
+    return np.divide(eligible, total, out=np.zeros_like(eligible), where=total > 0.0)
+
+
 def _eia860_zone_shares(
     iso: str, fuel_code: str, cal_year: int | None = None
 ) -> dict[str, float]:
