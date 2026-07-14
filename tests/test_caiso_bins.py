@@ -203,14 +203,20 @@ class TestCaisoFleetBuild(unittest.TestCase):
             },
         )
         fleet, _ = bins_to_fleet(self.synth, ZONES, config)
-        # Malburg (56041): measured peaking 25% of its 139 MW nameplate.
+        # Malburg (56041): the peaking tranche is its measured duct share of the
+        # plant's LP capacity. That capacity is the reconciled EIA-860 nameplate
+        # (130 MW): the raw net-summer rows sum to 139 MW, above the nameplate
+        # sum, so the summer-capacity consistency guard clamps the plant to
+        # nameplate. Derive the capacity from the built bins rather than pinning
+        # a literal, so the assertion tracks the reconciled figure.
+        cap = float(
+            self.synth[self.synth["Plant_Code"] == 56041]["capacity_mw"].iloc[0]
+        )
         peak = [
             g for g in fleet if g.plant_code == 56041 and g.unit_id.endswith("_peak")
         ]
         self.assertEqual(len(peak), 1)
-        expected = (
-            139.0 * thermal_tranche_peaking("CAISO")[(56041, "CC_REGULAR")] / 100.0
-        )
+        expected = cap * thermal_tranche_peaking("CAISO")[(56041, "CC_REGULAR")] / 100.0
         self.assertAlmostEqual(peak[0].pmax_mw, expected, delta=1.0)
 
 
