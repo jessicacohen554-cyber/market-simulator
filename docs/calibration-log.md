@@ -40,6 +40,73 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-14 — MISO — miso-65 (lane-3 diagnosis + the stale ≥5-day unit-outage extract regenerated): the July N–S miss measured to its roots (93% one-sided congestion; corridor exonerated; the committed extract did not reproduce from its own frozen deriver, +~1,550 GW-days/yr) — miso-64 recipe re-solved VERBATIM on the corrected input; **C3b price-shape FAIL→PASS, fail set sheds one**; keeper CANDIDATE with promotion recommendation, keepers.json unchanged (owner promotes)
+
+**Lane 3 diagnosis (no-LP, all measured; full doc
+`docs/FINDING-miso-lane3-north-supply-2026-07.md`):** the DA hub record's
+MCC/MLC components put the July-2025 N–S spread at **93% congestion / 7%
+losses**, one-sided — South hubs at MCC ≈ −$18…−$19 against a shared MEC ≈ $57,
+North at 0…+$4: the South was export-trapped below a system price set by the
+North's stack, while the model prices the whole footprint at the South's level.
+The corridor (RDT + TCDC + RPE) is **exonerated**: it under-binds (236 vs 919
+DA hours) only because the model's North margin lives on a ~25-GW coal shelf
+priced $23–38 — placing the *measured* July North fossil output on the keeper's
+own stack (fleet_only reconstruction, the LP's own offer prices) reads margin
+mean $39.80 / p95 $52.60 vs actual $58.35 / $118.57, with the model RIGHT
+overnight (h02–04 $31.7 vs $27–28) and the entire miss in h09–21. Ex-events
+(Jul 24/28/29) the actual July mean is still $52.1 — a ~$12 broad normal-day
+gap + ~$6 of events (lane 2). The SOM competitiveness anchors (3.0% system
+markup, de-minimis output gap) say reality's prices were cost-reflective — the
+wedge is physical inputs, not conduct markup. Measured dead ends closed:
+import shortage (under-imports), CC/CT summer capacity basis (on-basis vs
+measured p95), coal fuel-price level (F923 shelf matches delivered PRB/ILB),
+the STR product at current depth (cleared ~0.3–0.45 GW market-wide — inert
+until the stack is honest).
+
+**The defect + fix (measured to unit-days):** July-2025 North coal measured
+27.9 GW mean / 32.2 day-capability vs model availability 33.6 — and the
+uncovered daytime gap traces to the committed `campd-unit-outages-MISO.csv`
+being **stale against its own frozen deriver**: re-running
+`derive_campd_unit_outages.py --iso MISO` (zero guard/constant changes; the
+only deriver commit since the file's #1820 vintage is the purely-additive
+short-windows mode) emits 1,655 windows the committed file lacked (2,924 →
+4,418 rows; +~1,550 GW-days in EACH year), among them seven ≥5-day July-2025
+North coal sustained full stops at span-CF < 0.002 (Ottumwa-1 7.3 d, Gibson-3,
+Labadie-2, Baldwin-2, Cayuga-1/2, Sioux-1 — the full-stop override keeps them
+unconditionally). July North-coal coverage 2.75 → 4.00 GW mean (2023 5.32 →
+7.03, 2024 4.63 → 6.26); verified disjoint from the short-window companion
+(0 same-unit overlaps). Regenerated at commit `7b5c26fd` — a rule-14/15
+measured-input reproducibility fix (caiso-78/nyiso-62 re-gate family), NOT a
+rule-23 re-derivation (no guard, constant, or default moved). **Blast-radius
+flag:** the other ISOs' unit-outage extracts share the #1820 vintage and need
+their own re-gates (nyiso-62 pattern).
+
+**Runs (registered + scored, rubric v2.5):** `2026-07-14-miso-65-outage-regen`
++ zero-forcing twin (bundle `results/calibration/miso65_outage_regen*`) — the
+miso-64 keeper recipe VERBATIM (`_miso65_outage_regen.py`; zero flag changes,
+zero parameters of any kind; DOF ledger byte-identical 18 measured / 2 legacy).
+**NOT-YET, FAIL {fuelmix, price_mean, price_tail} — ONE FEWER than the miso-64
+keeper: C3b price-shape flips FAIL→PASS.** vs miso-64 exactly: C3a-2025 −15.4%
+→ **−12.9%**; C1 holds 14/16 all / 10/12 free with the fail rows changed —
+**2023 COAL_PRB CLEARS** (−8.47 → in-band), 2024 PRB narrows −12.41 → −10.41,
+while **2024 CT_PEAKER flips FAIL (+5.1 → +8.30 TWh)**: at $2.19 gas the LP
+fills the removed phantom coal with CT where the real market self-committed
+coal (SOM Table 7, 53–56%) — the corrected availability *exposes* the lane-1
+conduct gap the stale extract was silently compensating (rule 15: the accurate
+input stays; the deficit is lane-1's open root cause, now sharper). C8 ST_GAS
+forced share collapses 35.5% → ~12% (passes clean — honest availability
+replaces forcing; the v2.2 grounded escalation is no longer even needed);
+C2/C4/C5a PASS; C5b/C5c stay the ledgered storage-basis caveats. July-2025
+Indiana 40.26 → 40.67 (+0.4 of the −18.5 gap; N–S spread mean +0.37) — the
+July remainder is owned by the lane-2 max-gen event registry, lane-1 conduct,
+and C3c scarcity depth (FINDING §5). Twin: NOT-YET, C1 13/16 (adds ST_GAS-2024
+−9.29 FAIL — the VLR floor's isolated work). LOYO: exempt by the re-gate
+precedent (year-invariant input regeneration; coverage rises comparably in all
+three years, not selectively). **Promotion recommended** (rule 1: strictly more
+faithful measured availability, one fewer FAIL, forcing replaced by honest
+physics; the CT_PEAKER flip is a disclosed lane-1 exposure, not a mechanism
+defect); owner's call. Next number: miso-66.
+
 ### 2026-07-14 — MISO — miso-64 (class-aware F923 gap-fill donor, lane 1(b)): the diagnosed CT donor artifact fixed at its measured root — every scored price metric improves on the identical fail set, both COAL_PRB fail margins narrow, the 2024 CT_PEAKER over-run cut +7.1→+5.1 TWh; keeper CANDIDATE with promotion recommendation, keepers.json unchanged (owner promotes)
 
 **Lane:** the miso-63 handoff lane 1 (total-coal deficit root cause), measured
