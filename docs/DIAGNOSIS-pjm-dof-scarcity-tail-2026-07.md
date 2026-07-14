@@ -222,6 +222,42 @@ the #1302 diagnosis, **not** to tune the multipliers.
 
 ---
 
+## Part C — OUTCOME (2026-07-14 execution session): the winter hypothesis was inverted
+
+The cycle solved on a **corrected** `gas_daily_shape_factors` (the G-A1
+pre-check found the shared factor builder was NOT mean-preserving — bare
+`np.interp` calendar-day resampling overshot the monthly mean in spike months,
+worst Jan-2024 +$0.10/MMBtu; owner-authorized fix `9037c89` renormalizes the
+factors to mean exactly 1.0). On the corrected mechanism the §B.4/§B.5
+expectations did **not** hold — they were predicated on the flawed,
+mean-inflating behaviour:
+
+| pre-registered expectation (§B.4/§B.5) | outcome |
+|---|---|
+| Leg A moves 2025 tail 17 → ≥26 h via the Jan cold-snap | **2025 tail 17 → 6 h** — leg A REMOVES tail (all 6 remaining hours are Jun/Jul summer-load) |
+| Leg A additions concentrated Jan, on ≥p90 HH-daily-factor days | no additions; the tail SHRANK. 1/6 remaining hours on a ≥p90 gas-day → not a gas-driver tail |
+| Leg B lifts summer tail via the measured CC belt | **2025 tail → 6 h** (no lift) and **C1 −8.52 TWh** (CC displaced) → REJECT |
+| A+B lift 2024/2025 C3a toward zero, 2023 preserved | leg A C3a-2025 −11.4 % → −10.0 % (slightly better), 2023 held; leg B −9.1 % but C1-broken |
+
+**Root cause, revised.** The model's baseline (pjm-105) winter tail was
+substantially a **flat-monthly-gas over-pricing artifact**: pricing every
+January day at the elevated *monthly-mean* gas level pushed a spread of typical
+winter hours over $200. The correct mean-preserving daily shape concentrates
+the gas cost onto the few real cold-snap days and drops the rest below $200 —
+so the honest model tail is 6 h, not 17. This **confirms §B.4's core claim**
+that the residual 34+ h is a reserve opportunity-cost / LP-vs-MIP
+representation boundary (pjm-81/82), NOT an energy-stack input-fidelity gap —
+and it *strengthens* it: the energy-stack legs move the tail the *wrong* way,
+so no offer/gas-side mechanism reaches the actual 51 h. No adder was tuned
+(rules 1/11/13); the reserve-supply lane stays owner-closed.
+
+**Leg dispositions (2026-07-14):** leg A (pjm-107) passes all
+structure/no-regression gates and is more structurally faithful than the
+flat-monthly keeper (rule 1/11) — the pjm-109 candidate, keeper recommendation
+flagged to the owner (adopting it drops the headline tail 17→6, a
+correctness-vs-headline tradeoff that is the owner's call). Leg B (pjm-108) is a
+registered reject (C1). See the 2026-07-14 calibration-log entry.
+
 ## Pointers
 
 - Companion spec (the deliverable this note grounds):
