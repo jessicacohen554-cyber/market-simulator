@@ -4159,6 +4159,8 @@ def campd_tranche_fuel_frac(
     econ_srmc_bound: bool = False,
     committed_takeorpay_bit: bool = False,
     committed_takeorpay_all: bool = False,
+    committed_takeorpay_regulated: bool = False,
+    regulated_plants: "frozenset[int] | None" = None,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
@@ -4202,6 +4204,15 @@ def campd_tranche_fuel_frac(
     tranches above keep full delivered cost. Grounded by the plant's measured
     EIA-923 Schedule-5 share (rule 1/13), not a fitted sigmoid.
 
+    ``committed_takeorpay_regulated``
+    (``ScenarioConfig.coal_committed_takeorpay_regulated``): the same
+    committed-band sunk-contract rule scoped by the plant's EIA-860
+    ``Regulatory Status`` instead of coal supply — only plants in
+    ``regulated_plants`` (the ``RE`` set, :func:`eia860_regulated_plants`)
+    discount; merchant/IPP committed bands keep full delivered cost (SOM
+    Table 7: regulated utilities self-commit 53-56% of coal starts, merchants
+    offer economically 74-93%). Union scope with the other two flags.
+
     The ``_sync`` synchronization tranche (rebuild step 3a,
     ``ScenarioConfig.coal_sync_srmc_tranche``) bids its **full SRMC** — full
     delivered fuel + VOM + reagents — so it passes ``1.0`` (no discount). It is
@@ -4229,7 +4240,10 @@ def campd_tranche_fuel_frac(
     # above the committed band. Grounded by the plant's own EIA-923 Schedule-5
     # share (rule 1/13); bounded below by any supply curve already in force.
     _bit = getattr(gen, "coal_supply", "") == "bituminous"
-    _scope = committed_takeorpay_all or (committed_takeorpay_bit and _bit)
+    _reg = committed_takeorpay_regulated and (
+        regulated_plants is not None and int(gen.plant_code) in regulated_plants
+    )
+    _scope = committed_takeorpay_all or (committed_takeorpay_bit and _bit) or _reg
     if (
         _scope
         and gen.unit_id.endswith("_committed")
@@ -5960,6 +5974,30 @@ def _eia860_plant_sector() -> dict[int, int]:
     df = pd.read_parquet(path, columns=["Plant Code", "Sector"])
     df = df.dropna(subset=["Plant Code", "Sector"])
     return {int(c): int(s) for c, s in zip(df["Plant Code"], df["Sector"])}
+
+
+@lru_cache(maxsize=1)
+def eia860_regulated_plants() -> frozenset[int]:
+    """Return the plant codes whose EIA-860 ``Regulatory Status`` is ``RE``.
+
+    The EIA-860 plant table carries a two-value ``Regulatory Status`` flag —
+    ``RE`` (the operator's rates are regulated / cost-of-service recovered)
+    vs ``NR`` (non-regulated merchant/IPP). This is the measured
+    regulated-vs-merchant conduct split the MISO SOM Table 7 reports its
+    coal self-commitment statistics on (``coal_committed_takeorpay_regulated``);
+    plants absent from the table (or with a null flag) are conservatively
+    treated as non-regulated (no committed-band discount).
+    """
+    path = active_eia860_dir() / "eia860_plant.parquet"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_parquet(path, columns=["Plant Code", "Regulatory Status"])
+    df = df.dropna(subset=["Plant Code", "Regulatory Status"])
+    return frozenset(
+        int(c)
+        for c, s in zip(df["Plant Code"], df["Regulatory Status"])
+        if str(s).strip().upper() == "RE"
+    )
 
 
 # Per-bin forced availability derates by year, for confirmed unit losses
@@ -8857,6 +8895,7 @@ def build_dispatch_fleet(
             def _pt_for(g: Generator):
                 return pt_by_supply
 
+        _reg_gate = getattr(config, "coal_committed_takeorpay_regulated", False)
         fuel_fracs = [
             campd_tranche_fuel_frac(
                 g,
@@ -8869,6 +8908,8 @@ def build_dispatch_fleet(
                 committed_takeorpay_all=getattr(
                     config, "coal_committed_takeorpay_all", False
                 ),
+                committed_takeorpay_regulated=_reg_gate,
+                regulated_plants=eia860_regulated_plants() if _reg_gate else None,
             )
             for g in dispatch_fleet
         ]
