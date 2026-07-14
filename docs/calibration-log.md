@@ -40,6 +40,53 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-14 — MISO — miso-64 (class-aware F923 gap-fill donor, lane 1(b)): the diagnosed CT donor artifact fixed at its measured root — every scored price metric improves on the identical fail set, both COAL_PRB fail margins narrow, the 2024 CT_PEAKER over-run cut +7.1→+5.1 TWh; keeper CANDIDATE with promotion recommendation, keepers.json unchanged (owner promotes)
+
+**Lane:** the miso-63 handoff lane 1 (total-coal deficit root cause), measured
+anchor (b) — "the F923 gas gap-fill donor is CLASS-BLIND + quantity-weighted"
+(docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md §6). MISO 2024 CT filers pay
+$4.13/MMBtu capacity-weighted vs CC filers $2.57 (+$1.56 small-volume/
+retail-transport premium), but the `_NearbyFuelPrices` state/zone donor pools
+are fuel-group-wide and quantity-weighted — CC-burn-dominated (~$2.6) — so the
+~33% of CT_PEAKER capacity without its own filing was priced ~$16–20/MWh below
+its measured class cost, feeding the 2024 CT+7.1 economic over-run at PRB's
+expense AND July-2025's too-cheap North margin.
+
+**Mechanism built** (`class_aware_fuel_price_fallback`, gated default-off,
+zero fitted parameters): gap-filled months price from same-class reporting
+plants FIRST (same-class state mean, then same-class zone mean), the
+class-blind fuel-group pools remaining the fallback; donor plants classified
+by capacity-dominant model class within the fuel group. Off = byte-identical
+(unit-tested). No-LP wiring check on the 2024 fleet
+(`_miso_classdonor_wiring.py`): 12.0 GW of gap-filled CT_PEAKER repriced
+$3.62 → $4.48/MMBtu cap-wtd; CC_REGULAR −$0.06 (already dominates the blind
+pool); CT_CHP −$0.26 (industrial contracts genuinely cheaper — class fidelity
+cuts both ways); unmoved units byte-identical.
+
+**Runs (registered + scored, rubric v2.5):** `2026-07-13-miso-64-classdonor`
++ zero-forcing twin (bundle `results/calibration/miso64_classdonor*`) — the
+miso-63 keeper config replayed (`_miso64_classdonor.py`, the miso-62 meta.json
+strict RENAME/SKIP replay + `miso_rpe_pricing` + `unit_outage_short_windows`
+kept armed) with exactly ONE change: the donor gate. **NOT-YET, FAIL set
+IDENTICAL to the miso-63 keeper** {fuelmix, price_mean, price_shape,
+price_tail}, with every scored price metric improved: C3a-2025 −15.9% →
+−15.4%; C3b-2025 NRMSE 0.206 → 0.202; C3c-2024 4 h >$200 unchanged (DA actual
+24); C8 ST_GAS-2025 grounded 36.2% → 35.5%; C1 UNCHANGED at the MISO-best
+14/16 all / 10/12 free with both fail margins NARROWED: COAL_PRB 2023 −8.89 →
+−8.47 TWh (0.47 TWh from the ±8.0 band), 2024 −13.32 → −12.41; the 2024
+CT_PEAKER economic over-run (the diagnosed artifact) +7.1 → +5.1 TWh; 2025
+total coal-over +9.9 → +8.8 (classFull). Honest counters: the two ungated
+2025 C2 grid-basis diagnostics move slightly against (gas −6.1% → −6.5%,
+coal-over +3.1% → +3.4%) — the classFull-vs-grid basis gap (diagnosis §6)
+stays lane-1's open accounting item. Indiana July-2025 +0.19 (40.07 → 40.26
+vs DA 58.79); the July gap stays owned by lane 3 (S→N still binds at cap,
+spread +0.23) and the unmodeled CT/CC event unavailability (lane 3 registry
+intake). DOF 18 measured-physical / 2 legacy residuals (+1 entry, zero fitted
+scalars). LOYO by construction (a zero-scalar boolean arming the ISO's own
+EIA-923 filings — the miso-59..63 accepted argument). **Promotion
+recommended** (strictly-improved scored metrics, identical fail set);
+owner's call.
+
 ### 2026-07-13 — NYISO + NEISO — nyiso-62 / neiso-59 (fleet_to_bins CC-HR re-gate, caiso-78 blast radius): keeper recipes re-solved VERBATIM on the fixed base_hr — NYISO C3a+C3b CAVEAT→PASS (target grade 6→8), NEISO C2 CAVEAT→PASS (7→8), zero fails — **both PROMOTED to keeper** (caiso-78 precedent: same rule-14 code fix, LOYO-exempt); PJM leg (pjm-106) re-running on a swap-enabled runner after a 7 GB runner OOM
 
 The caiso-78 entry flagged the PJM/NYISO/NEISO keepers "must re-gate on the
