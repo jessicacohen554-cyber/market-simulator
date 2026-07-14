@@ -189,6 +189,114 @@ class TestCommittedTakeorpayBit(unittest.TestCase):
         )
 
 
+class TestCommittedTakeorpayRegulated(unittest.TestCase):
+    """coal_committed_takeorpay_regulated: the committed-band sunk-contract
+    discount scoped by EIA-860 Regulatory Status (RE set) instead of coal
+    rank — SOM Table 7's regulated/merchant conduct split
+    (docs/handoffs/miso-coal-conduct-design-2026-07.md)."""
+
+    def _committed(self, pc=2832, supply="prb"):
+        return Generator(
+            unit_id=f"COAL_X_p{pc}_committed",
+            name="c",
+            zone="X",
+            fuel_type="coal",
+            pmax_mw=100,
+            plant_group="COAL",
+            plant_code=pc,
+            coal_supply=supply,
+        )
+
+    def test_regulated_plant_discounts_any_supply(self):
+        g = self._committed(supply="prb")
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"prb": 1.0},
+                {2832: 1.0},
+                committed_takeorpay_regulated=True,
+                regulated_plants=frozenset({2832}),
+            ),
+            0.0,
+        )
+
+    def test_merchant_plant_keeps_full_cost(self):
+        # An NR plant (absent from the RE set) bids the full supply
+        # passthrough even when fully contracted — merchants offer
+        # economically (SOM Table 7: 74-93% of merchant starts).
+        g = self._committed(supply="bituminous")
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"bituminous": 1.0},
+                {2832: 1.0},
+                committed_takeorpay_regulated=True,
+                regulated_plants=frozenset({999}),
+            ),
+            1.0,
+        )
+
+    def test_partial_contract_passes_spot_share(self):
+        g = self._committed()
+        self.assertAlmostEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"prb": 1.0},
+                {2832: 0.85},
+                committed_takeorpay_regulated=True,
+                regulated_plants=frozenset({2832}),
+            ),
+            0.15,
+        )
+
+    def test_no_set_means_no_discount(self):
+        # Gate on but no RE set threaded (regulated_plants=None) -> inert.
+        g = self._committed()
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"prb": 1.0},
+                {2832: 1.0},
+                committed_takeorpay_regulated=True,
+                regulated_plants=None,
+            ),
+            1.0,
+        )
+
+    def test_union_with_bit_flag(self):
+        # Stacked flags act as a union: an NR bituminous plant still gets
+        # the BIT-scope discount when that flag is also armed (backward
+        # replay of miso-62/63/64/65 bundles).
+        g = self._committed(supply="bituminous")
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"bituminous": 1.0},
+                {2832: 1.0},
+                committed_takeorpay_bit=True,
+                committed_takeorpay_regulated=True,
+                regulated_plants=frozenset({999}),
+            ),
+            0.0,
+        )
+
+    def test_spares_econ_and_mustrun_semantics(self):
+        # econ tranches keep full cost; _mustrun keeps its own (pre-existing)
+        # contract-share rule independent of the regulated gate.
+        g = self._committed()
+        g.unit_id = "COAL_X_p2832_econ1"
+        self.assertEqual(
+            campd_tranche_fuel_frac(
+                g,
+                {"prb": 1.0},
+                {2832: 1.0},
+                committed_takeorpay_regulated=True,
+                regulated_plants=frozenset({2832}),
+            ),
+            1.0,
+        )
+
+
 class TestSyncSplit(unittest.TestCase):
     """The min-load band split + forcing under coal_sync_srmc_tranche."""
 
