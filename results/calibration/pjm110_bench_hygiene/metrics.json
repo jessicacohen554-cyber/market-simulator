@@ -16,7 +16,7 @@
   "rubric_version": 2.5,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: price_tail"
   ],
   "notes": [],
   "criteria": {
@@ -68,7 +68,7 @@
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
@@ -91,8 +91,8 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 8,
+    "scored": 10,
+    "target_grade": 9,
     "commercial_grade": 0,
     "ledgered": 0,
     "fails": 1

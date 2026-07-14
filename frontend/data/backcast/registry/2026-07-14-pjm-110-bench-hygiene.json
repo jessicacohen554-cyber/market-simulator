@@ -1,15 +1,15 @@
 {
-  "id": "2026-07-14-pjm-110-bench-hygiene",
-  "label": "pjm 110 bench hygiene",
-  "date": "2026-07-14",
-  "shorthand": "pjm-110-bench-hygiene",
-  "definition": "PJM 107 probe (leg A): the pjm-105 symmetric-net keeper recipe (pjm-98 keeper recipe + net DA virtual depth [symmetric form] + CT fast-start startup amortization on CAMPD-measured run horizons + the measured LONG_RUN top-of-curve floor) with EXACTLY ONE override: gas_daily_shape False->True \u2014 the measured Henry Hub daily within-month shape injected onto the gas price series, mean-preserving per month (the F923 plant-month re-carry keeps the daily swing on every overwritten gas plant-month). Solved on the G-A1-fixed gas_daily_shape_factors: the calendar-day factors are renormalized to mean exactly 1.0, so the monthly delivered mean is preserved to <$0.001/MMBtu (bare np.interp overshot by +$0.10/MMBtu in Jan-2024 pre-fix). Zero fitted scalars in the delta (rules 1/13/20/21: ex-ante measured daily HH prints, frozen against residuals; forecast-native).",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "PJM",
-  "file": "frontend/data/backcast/runs/2026-07-14-pjm-110-bench-hygiene.js",
-  "bundle": "results/calibration/pjm110_bench_hygiene"
+ "id": "2026-07-14-pjm-110-bench-hygiene",
+ "label": "pjm 110 bench hygiene",
+ "date": "2026-07-14",
+ "shorthand": "pjm-110-bench-hygiene",
+ "definition": "PJM keeper (owner-adopted 2026-07-14, superseding pjm-107-gas-daily): the pjm-107 gas-daily recipe (pjm-105 symmetric-net + CT fast-start startup amortization + measured LONG_RUN mid-curve floor + measured Henry Hub daily gas shape) re-solved with two zero-DOF hygiene legs. (A) EIA-860 CC summer-capacity consistency guard (fleet loader): reconciles any CC plant whose fleet-loaded pmax sum exceeds its EIA-860 nameplate sum down to nameplate \u2014 a measured schema bound (summer capability <= nameplate), no ScenarioConfig flag, no tunable; under the keeper it corrects -92 MW of latent phantom CC capacity across 3 plants (two real phantom fixes + one 16 MW clip). (B) CT-only CEMS bench flag (scorer-side): plants whose EIA-923 net exceeds 1.1x their CAMPD gross (physically impossible for a complete record) are scored on their EIA-923 monthly row; class gates untouched (volErr already 923-based). The guard is not byte-identical under the keeper (fixes a latent phantom-capacity bug), so the full pjm-107 recipe was re-solved; its isolated dispatch effect is within noise (no-guard control at the identical code base: maxabs $6.56/MWh, IDENTICAL C3c tail). Every scored criterion matches pjm-107 \u2014 C1 16/16, C2, C3a, C3b, C4, C5a, C6, C7, C8 PASS; C3c FAIL (the LP-vs-MIP scarcity representation boundary, unchanged). Determination NOT-YET on C3c. Keeper on structural fidelity (rule 1/11: a fleet carrying no phantom CC capacity). Zero fitted scalars; the ablation twin is not run (owner dropped the requirement 2026-07-14; the guard is zero-DOF). Bound: New Covert (55297) is clipped to nameplate 1176 MW, 16 MW below its CAMPD demonstrated peak \u2014 chartered proper-cc-capacity-reconcile follow-on.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "PJM",
+ "file": "frontend/data/backcast/runs/2026-07-14-pjm-110-bench-hygiene.js",
+ "bundle": "results/calibration/pjm110_bench_hygiene"
 }
