@@ -178,3 +178,41 @@ published for each probe) plus the G-C per-year no-regression bounds.
    FAIL-as-disclosed-boundary (LP-vs-MIP online posture, pjm-82) — the
    alternative (accepting C3c as a documented limitation on the keeper line)
    is the owner's call, not a modeling lever.
+
+## 6. Execution outcome (2026-07-14, execution session)
+
+**A G-A1 pre-check bug fix changed the premise.** The shared
+`gas_daily_shape_factors` was found NOT mean-preserving (bare `np.interp`
+calendar-day resampling overshot the monthly mean in spike months, worst
+Jan-2024 +$0.10/MMBtu). Owner-authorized correctness fix (`9037c89`)
+renormalizes the daily factors to mean exactly 1.0; four re-run prompts issued
+for the CAISO/MISO/NEISO/NYISO keepers built on the old behaviour.
+
+**Both legs solved on the fixed mechanism; neither closes C3c:**
+
+- **Leg A (pjm-107)** — G-A1 PASS (fixed), G-C PASS, G-A2 vacuous. On the
+  corrected shape, daily gas REMOVES the baseline's flat-monthly winter
+  over-pricing rather than adding tail: **2025 tail 17 → 6 h** (all summer). More
+  structurally faithful (rule 1/11). Per the "one leg passes" rule (§1), it is
+  the pjm-109 candidate; keeper recommendation flagged to the owner (correctness
+  vs a lower headline tail — owner's call).
+- **Leg B (pjm-108)** — G-B1 PASS (scope clean) but **G-C FAIL: C1 −8.52 TWh**
+  CC_REGULAR displaced. REJECT. Dominance measurement: the measured floor
+  exceeds the fitted CC bid on 254/415/306 rows (2023/24/25).
+
+**Composite pjm-109 NOT solved** (leg B failed its gate). **C3c confirmed a
+representation boundary** (Part C above): the energy-stack legs move the tail
+the wrong way, so no offer/gas-side mechanism reaches the actual 51 h.
+
+**§4 charter-table status updates:**
+- *pjm-110 bituminous sigmoid re-derive* — its "needs CC_LIKE evening-margin
+  structure landed first" premise is now **unblocked-but-reframed**: CC_LIKE did
+  NOT land (leg B C1-rejected), so pjm-110 no longer waits on it, but the CC
+  offer-level story is now "measured surface > fitted bids, breaks CC volume."
+- *CC-band dominance retirement* — **reframed**: the measured floor is not merely
+  dominating (retirable to 1.0) but higher than the fitted bids by enough to
+  break C1; the follow-on is a CC-volume re-calibration, not a byte-neutral band
+  retirement. Dominance measurement delivered (row counts above).
+- *PJM-hub daily gas basis intake* — the "only if leg A proves the winter lane"
+  condition is **not met** (leg A does not form winter tail on the corrected
+  mechanism); intake deferred.
