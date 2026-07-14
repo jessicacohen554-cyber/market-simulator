@@ -250,6 +250,33 @@ PASS); hours > $200 unchanged (4); P10 $21.61. The cheaper troughs are the
 honest price of holding sunk-fuel committed coal — the residual 2024 mean gap
 sits in the missing tail (C3c 4h vs 24h actual), not in this lane.
 
+### 2024 under V1b (`regb` — the Phase B configuration)
+
+True A/B vs the same-box base replica; scored estimates apply the A/B delta
+to the keeper's scored value:
+
+| class | regb | base | A/B | scored est. to-actual (m65 → regb) |
+|---|---|---|---|---|
+| COAL_PRB | 120.92 | 106.05 | **+14.87** | −10.41 FAIL → **+4.46 PASS** |
+| COAL_BIT | 50.77 | 51.27 | −0.50 | −2.06 → −2.56 PASS (PSGC/Warrick kept) |
+| COAL_LIGNITE | 5.33 | 3.98 | +1.35 | −2.54 → −1.19 PASS |
+| CT_PEAKER | 22.48 | 27.54 | **−5.06** | +8.30 FAIL → **+3.25 PASS** |
+| CC_REGULAR | 142.41 | 147.43 | −5.03 | +2.60 → ≈−2.4 PASS |
+| ST_GAS | 14.94 | 16.88 | −1.94 | −7.83 → **≈−9.8 (likely NEW FAIL — see below)** |
+| total coal | 177.02 | 161.31 | +15.71 | −15.0 → **+0.70 (essentially exact)** |
+
+Prices (scored basis, mechanism-only = regb minus same-box base): C3a-2024
+−4.0% → −8.3% (Δ −4.3pp → scored ≈ −7.2%, inside ±10); C3b-2024 0.105 →
+0.129 (Δ +0.024 → scored ≈ 0.123, PASS); tail unchanged (4 h).
+
+**The ST_GAS-2024 exposure is the same rule-15 pattern by which miso-65
+exposed this lane:** cheap held coal displaces the marginal slice of a class
+whose own economics are the VLR-drag lane's documented open miss (ST_GAS was
+scored −7.83, 0.17 inside the band, BEFORE this mechanism). The displacement
+is real physics given the conduct; the deficit it deepens belongs to the
+ST_GAS lane. Expected C1: 2023 all rows in band (V1b table below), 2024
+15/16-to-16/16 depending on the exact relabel split of the −1.94.
+
 ### 2025 (the guard year) — fuel-mix improves broadly, PRB and the price
 ### level pay; C3b-2025 lands ON the 0.20 gate
 
@@ -264,25 +291,37 @@ scored 2025 guards are C2/C3a/C3b/C3c):
 | ST_GAS | (raw 11.87 — payload basis carries the OTHER_FOSSIL relabel; see the 2024 note) | | ≈−1 to −2 true A/B | 14.86 | ungated 2025 |
 | total coal | 213.25 | 210.17 | +3.08 | 202.55 | +7.62 → +10.70 |
 
+V1b (`regb`) 2025 is near-identical — PSGC/Warrick sit in-merit at 2025 gas,
+so restoring their discount barely moves the year: PRB +3.98, BIT −0.35,
+CT −0.70, total coal +3.91 (over-read +7.62 → +11.5 on the prelim-923
+basis, confounded by the G-23 import starvation −5.8 TWh); scored-basis
+C3a −14.4% / C3b 0.201, matching V1a within solver noise.
+
 Scored-basis prices (demand-weighted zonal monthly vs bench `rt_lw_mon` —
 method validated by reproducing the keeper's scored 0.082/0.099/0.183
 exactly from its payload):
 
-| metric | miso-65 (scored) | probe (scored basis) | gate |
-|---|---|---|---|
-| C3a-2024 | −2.9% | **−7.2%** | ±10% → PASS retained |
-| C3b-2024 | 0.099 | **0.122** | ≤0.20 → PASS |
-| C3a-2025 | −12.9% | **≈−15%** | FAIL, worse by ~2pp |
-| C3b-2025 | 0.183 | **0.201** | ≤0.20 → AT/OVER the gate by ~0.001 |
-| C3c both years | unchanged (4h/0h > $200) | unchanged | — |
+**Mechanism-only price deltas (probe minus same-box base replica — the
+drift-clean numbers; scored estimate = keeper scored + delta):**
 
-The 2025 damage is a broad ~$0.5–1.6/month price drop — the level gap
-leaking into the (bias-inclusive) shape metric, not a new shape error. The
-2025 model-under is owned by the OTHER open lanes (lane-2 max-gen event
-registry ≈ $6 of July alone; C3c scarcity depth; the G-23 import starvation
-−5.8 TWh, which also confounds the 2025 coal-over reading). C5a direction:
-2024 CO₂ −5.7% under → coal-up moves it toward actual; 2025 +0.9% → small
-further rise, stays inside ±7%.
+| metric | keeper scored | same-box base | probe | mechanism-only Δ | scored miso-66 est. | gate |
+|---|---|---|---|---|---|---|
+| C3a-2024 | −2.9% | −4.0% | −8.3% | −4.3pp | **≈−7.2%** | ±10% PASS |
+| C3b-2024 | 0.099 | 0.105 | 0.129 | +0.024 | **≈0.123** | ≤0.20 PASS |
+| C3a-2025 | −12.9% | −13.5% | −14.4% | **−0.9pp** | **≈−13.8%** | FAIL (was FAIL; modest) |
+| C3b-2025 | 0.183 | 0.196 | 0.201 | **+0.005** | **≈0.188** | ≤0.20 **PASS — guard holds** |
+| C3c both | 4h/0h > $200 | — | unchanged | 0 | unchanged | — |
+
+The naive probe-vs-registered 2025 comparison (0.183 → 0.201) was ~70%
+solver-box drift — the base-2025 replica reads the UNCHANGED keeper config
+at 0.196 on this box. The mechanism's own 2025 footprint is +0.005 C3b /
+−0.9pp C3a: the committed bands are in-merit at 2025 gas, so the discount
+is largely inframarginal there (2025 ST_GAS A/B −0.12, CC −1.95). The 2025
+level gap stays owned by the OTHER open lanes (lane-2 max-gen event registry
+≈ $6 of July alone; C3c scarcity depth; the G-23 import starvation −5.8 TWh,
+which also confounds the 2025 coal-over reading). C5a direction: 2024 CO₂
+−5.7% under → coal-up moves it toward actual; 2025 +0.9% → small further
+rise, stays inside ±7%.
 
 ### 2023 — V1a broke COAL_BIT on the reversion; V1b clears every row
 
@@ -318,33 +357,64 @@ read all probe price deltas with that tolerance.
 
 ## 6. Expected scored deltas for miso-66 (to verify in Phase B)
 
-- **C1 (fuelmix): the two 2024 FAILs flip PASS** (PRB +5.34 / CT +4.57 under
-  V1a; V1b shifts both a little as PSGC/Warrick BIT competes back). 2023 PRB
-  improves (−7.26 → ≈+3.7). The open rows: COAL_BIT-2023 (V1a breaks it at
-  −8.59 → V1b recovers Prairie State/Warrick, expected ≈−5) and
-  **ST_GAS-2024** (−7.83 → ≈−9.3 on the −1.5 displacement shave — the
-  possible new FAIL). Best case 16/16 (first MISO C1 clean sweep); worst
-  case 15/16 with the fail row swapped {PRB, CT} → {ST_GAS}.
-- **C3a: PASS/PASS/FAIL retained** — 2024 degrades −2.9% → ≈−7% (in-band),
-  2025 worsens ≈−13% → ≈−15% (already FAIL).
-- **C3b: 2024 PASS (≈0.12); 2025 ON the gate (≈0.20 ± solver noise)** — the
-  promotion-deciding number; Phase B scores it exactly.
-- **C3c: unchanged** (this lane adds no tail hours; that is the scarcity-depth
-  lane).
+All estimates below are the V1b (`regb`) configuration — the Phase B build:
+
+- **C1 (fuelmix): both 2024 FAILs flip PASS** (PRB +4.46 / CT +3.25); 2023
+  all eight rows in band (PRB +3.01, BIT −5.31); COAL_BIT-2024 −2.56. The
+  one at-risk row is **ST_GAS-2024** (−7.83 → ≈−9.8 on the −1.94
+  displacement shave; the exact scored value depends on the OTHER_FOSSIL
+  relabel split). Best case 16/16 all / 12/12 free (the first MISO C1 clean
+  sweep); expected case 15/16 with the fail composition changed from
+  {PRB-2024, CT-2024} to {ST_GAS-2024} — a single row owned by the VLR-drag
+  lane's documented deficit.
+- **C3a: PASS/PASS/FAIL** — 2023 ≈−2%, 2024 ≈−7.2% (in-band), 2025 ≈−13.8%
+  (FAIL before and after; mechanism-only −0.9pp).
+- **C3b: PASS all three — ≈0.087 / ≈0.123 / ≈0.188.** The 2025 guard holds
+  (mechanism-only +0.005; the 0.201 raw probe reading was solver-box drift
+  on a box that reads the unchanged keeper at 0.196).
+- **C3c: unchanged FAIL** (this lane adds no tail hours; scarcity-depth lane).
 - **C5a: 2024 improves (−5.7% → ≈−3%), 2025 small rise (stays PASS).**
+- **C2: watch** — 2025 grid-basis coal-family over-read rises ~+1.5-2pp
+  (confounded by the import-starvation residual).
 - **C8: unchanged** (pricing input, no forced energy; twin keeps it armed).
+- **DOF: 18 measured / 2 legacy → 19 / 2** (one new measured-physical entry,
+  zero fitted scalars).
 - **Fail set: {fuelmix, price_mean, price_tail} → {price_mean, price_tail}
-  if C3b-2025 holds ≤0.20, else 3 FAILs with fuelmix swapped for
-  price_shape.** Either way C1 16/16 is a first; the C3b edge case is the
-  owner's promotion call, with the lane-2 event registry the named root
-  cause that relieves the 2025 price level.
+  best case (fail set sheds one), or unchanged-count with fuelmix's
+  composition reduced to the single ST_GAS-2024 row.** Either outcome is
+  structurally strictly better: the 2024 coal/CT conduct block is closed
+  with total-2024 coal landing +0.70 TWh of actual.
 
-## 7. Phase B execution checklist
+## 7. Estimation-stage governance (rules 16/22/23)
 
-See the Phase B prompt block in the 2026-07-14 calibration-log entry /
-session handoff. Summary: harden the mechanism (unit tests: off-path
-byte-identity, RE/NR scoping, union semantics, null-status conservatism;
-docstring cross-refs), full `--year 2023 2024 2025` bundle + zero-forcing
-twin (mechanism stays armed in the twin — pricing input), register as
-miso-66 with the standard artifact chain, recommendation only (owner
-promotes).
+- All probes are rule-16 throwaways (never registered); solved years
+  2023/2024/2025 only. Probe bundles are gitignored; the solve logs and this
+  document are the committed record.
+- **LOYO at estimation: by construction** — the mechanism is a boolean
+  arming three measured inputs (EIA-860 Regulatory Status + Schedule-4
+  ownership × Entity Type, EIA-923 Schedule-5 shares, CAMPD tranche
+  structure) with ZERO fitted scalars (the miso-59..64 accepted lineage
+  argument); additionally all three years were probed A/B, which exceeds
+  the LOYO-estimation minimum. The single scope decision made against probe
+  evidence (V1a → V1b) followed a fallback pre-declared in this document
+  (committed `8bc5b67`) before the deciding probe was read.
+- No derive script touched (rule 23). Re-derive triggers recorded in §4.
+
+## 8. Phase B execution checklist
+
+The full copy-paste Phase B prompt lives in the session handoff (chat).
+Summary: verify this branch's mechanism (already built, 23 tests green,
+wiring-checked), build `scripts/probes/_miso66_coalconduct.py` on the
+`_miso65_outage_regen.py` pattern (miso-62 meta + miso_rpe_pricing +
+unit_outage_short_windows + class_aware_fuel_price_fallback +
+`coal_bit_committed_takeorpay=False` + `coal_committed_takeorpay_regulated=
+True`), full `--year 2023 2024 2025` bundle + zero-forcing twin (mechanism
+stays ARMED in the twin — pricing input, miso-62 precedent; main and twin
+NEVER concurrent), register as miso-66 with the standard artifact chain
+(DOF ledger 19/2 → attestation with the C5b/C5c storage entries →
+legitimacy_diagnostics → dashboard_add_run BEFORE calibration_verdict
+--write-metrics → sidecar market_story/ablation links after payload refresh
+→ attestation patched from scored metrics → parity check → never commit
+deploy-owned manifest.js/benchmark.js/completeness.js → calibration-log
+entry → push). Registration with a recommendation; keepers.json swap ONLY
+on owner sign-off.
