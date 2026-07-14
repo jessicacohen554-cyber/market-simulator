@@ -4743,6 +4743,68 @@ def _assign_zones_proportional(
     return [zone for zone in zones if zone is not None]
 
 
+# Tolerance above which a plant's fleet-loaded merchant-CC pmax sum is treated
+# as an EIA-860 summer-capacity double-filing (component + block-total rows both
+# counted, or a plant-total filed on one row with the loader nameplate-filling
+# the NaN component rows). EIA-860's own schema defines summer capability <=
+# nameplate, so a summed pmax above the summed nameplate is impossible for a
+# clean record. 0.1% headroom absorbs benign rounding in the source sheet.
+_CC_NAMEPLATE_GUARD_TOL = 1.001
+
+
+def _reconcile_cc_pmax_to_nameplate(
+    records: list[dict], cc_nameplate_sum: dict[int, float], iso: str
+) -> None:
+    """Reconcile merchant-CC plants whose fleet pmax sum exceeds their nameplate.
+
+    Enforces the EIA-860 schema invariant *summer capability <= nameplate* on
+    the **fleet-loaded** plant pmax sum. Where a CC_REGULAR plant's summed
+    ``pmax_mw`` (net-summer, or the loader's nameplate-fill of NaN component
+    rows) exceeds its summed EIA-860 nameplate by more than
+    :data:`_CC_NAMEPLATE_GUARD_TOL`, the corruption is component/total
+    double-filing; every one of the plant's CC_REGULAR ``pmax_mw`` values is
+    scaled by ``nameplate_sum / pmax_sum`` so the plant sum reconciles to
+    ``min(pmax_sum, nameplate_sum) = nameplate_sum``. Scaling is proportional,
+    so the intensive base heat rate (a capacity-weighted mean) is preserved.
+
+    Acts on the FLEET-LOADED sum, not the raw EIA-860 summer sum: the
+    plant-total-on-one-row pattern (Keys 60302, Camden 10751) hides behind NaN
+    component rows the loader nameplate-fills, so a raw summer-sum audit misses
+    it — only the fleet pmax sum exposes every instance (diagnosis
+    ``docs/DIAGNOSIS-pjm-july-cc-overrun-2026-07.md`` §3b, probe block 3 of
+    ``scripts/probes/_pjm_cc_netgross_bases.py``). ISO-agnostic (the corruption
+    lives in the shared EIA-860 loader). Mutates ``records`` in place; logs one
+    warning per reconciled plant naming it and the MW removed.
+
+    Rule-14/15 basis: the reconciled figure regenerates for any forward EIA-860
+    vintage and responds to re-rates — a reproducible physical bound, not a
+    residual-tuned value.
+    """
+    cc_pmax: dict[int, float] = {}
+    for rec in records:
+        if rec["plant_group"] == "CC_REGULAR":
+            code = int(rec["plant_code"])
+            cc_pmax[code] = cc_pmax.get(code, 0.0) + float(rec["pmax_mw"])
+    for code, pmax_sum in cc_pmax.items():
+        nameplate_sum = cc_nameplate_sum.get(code, 0.0)
+        if nameplate_sum <= 0.0 or pmax_sum <= nameplate_sum * _CC_NAMEPLATE_GUARD_TOL:
+            continue
+        scale = nameplate_sum / pmax_sum
+        for rec in records:
+            if rec["plant_group"] == "CC_REGULAR" and int(rec["plant_code"]) == code:
+                rec["pmax_mw"] = float(rec["pmax_mw"]) * scale
+        logger.warning(
+            "%s: CC plant %d fleet pmax sum %.1f MW exceeds EIA-860 nameplate "
+            "sum %.1f MW (corrupt summer-capacity rows) — reconciled to "
+            "nameplate (%.1f MW removed)",
+            iso,
+            code,
+            pmax_sum,
+            nameplate_sum,
+            pmax_sum - nameplate_sum,
+        )
+
+
 def _rows_to_generators(
     df: pd.DataFrame, iso: str, iso_config: ISOConfig | None
 ) -> list[Generator]:
@@ -4758,6 +4820,9 @@ def _rows_to_generators(
         df = df[status == "OP"]
 
     records: list[dict] = []
+    # Per-plant EIA-860 nameplate sum over merchant-CC generators, for the
+    # summer-capacity consistency guard applied after the row loop.
+    cc_nameplate_sum: dict[int, float] = {}
     for row in df.itertuples(index=False):
         data = row._asdict()
         fuel_type = _map_fuel_type(
@@ -4835,31 +4900,39 @@ def _rows_to_generators(
         else:
             group = ""
 
-        records.append(
-            {
-                "plant_id": plant_id,
-                "plant_code": plant_code,
-                "unit_id": f"{plant_id}_{generator_id}",
-                "name": plant_name,
-                "fuel_type": fuel_type,
-                "plant_group": group,
-                "state": state,
-                "efficiency_bin": ebin,
-                "pmax_mw": pmax,
-                "pmin_mw": pmin,
-                "heat_rate": heat_rate,
-                "vom": VOM.get(fuel_type, 0.0),
-                "emission_rate_co2": CO2_RATES.get(fuel_type, {}).get(ebin, 0.0),
-                "nox_rate": NOX_RATES.get(fuel_type, 0.0),
-                "eford": EFORD.get(fuel_type, 0.05),
-                "online_year": operating_year,
-                "online_month": operating_month,
-                "retirement_year": _to_year(data.get("planned_retirement_year")),
-                "retirement_month": retirement_month,
-                "is_must_run": fuel_type == "nuclear",
-            }
-        )
+        record = {
+            "plant_id": plant_id,
+            "plant_code": plant_code,
+            "unit_id": f"{plant_id}_{generator_id}",
+            "name": plant_name,
+            "fuel_type": fuel_type,
+            "plant_group": group,
+            "state": state,
+            "efficiency_bin": ebin,
+            "pmax_mw": pmax,
+            "pmin_mw": pmin,
+            "heat_rate": heat_rate,
+            "vom": VOM.get(fuel_type, 0.0),
+            "emission_rate_co2": CO2_RATES.get(fuel_type, {}).get(ebin, 0.0),
+            "nox_rate": NOX_RATES.get(fuel_type, 0.0),
+            "eford": EFORD.get(fuel_type, 0.05),
+            "online_year": operating_year,
+            "online_month": operating_month,
+            "retirement_year": _to_year(data.get("planned_retirement_year")),
+            "retirement_month": retirement_month,
+            "is_must_run": fuel_type == "nuclear",
+        }
+        records.append(record)
+        # Accumulate the per-plant EIA-860 nameplate sum for the merchant-CC
+        # consistency guard below. Keyed on plant_code, summed over the same
+        # CC_REGULAR generators whose fleet-loaded pmax the guard reconciles.
+        if group == "CC_REGULAR":
+            nameplate = _to_float(data.get("nameplate_capacity_mw")) or 0.0
+            cc_nameplate_sum[plant_code] = (
+                cc_nameplate_sum.get(plant_code, 0.0) + nameplate
+            )
 
+    _reconcile_cc_pmax_to_nameplate(records, cc_nameplate_sum, iso)
     zones = _assign_zones(records, iso, iso_config)
     return [
         Generator(
@@ -7260,6 +7333,14 @@ def cc_summer_capacity() -> dict[int, tuple[float, float]]:
     for code, grp in cc.groupby("plant_code"):
         np_sum = float(grp["np"].sum())
         ns_sum = float(grp["ns"].sum())
+        # Consistency guard (EIA-860 schema: summer capability <= nameplate).
+        # A summed net-summer above the summed nameplate is component/total
+        # double-filing; clamp it to nameplate so the derived summer-derate
+        # ratio and any nameplate rescale never carry the phantom. The
+        # derate ratio min(1, ns/np) already clamped these plants to 1.0, so
+        # this is inert to that consumer but corrects the returned figure for
+        # every other reader (diagnosis §3b, probe block 3).
+        ns_sum = min(ns_sum, np_sum)
         if np_sum > 0.0 and ns_sum > 0.0:
             out[int(code)] = (np_sum, ns_sum)
     return out
