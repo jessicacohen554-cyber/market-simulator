@@ -1,0 +1,107 @@
+# Pull aged-out CAISO OASIS LMP from the Historical bulk archive (a Requester-
+# Pays S3 bucket) on a GitHub runner, keep only the three trading hubs, fold them
+# into the hourly aggregates, and commit — no manual upload, no per-hour clicking.
+#
+# The live OASIS API (scripts/fetch_caiso_oasis.py) only retains ~39 months, so
+# early-2023 is gone from it; this reads the bulk archive instead. Requester-Pays
+# means download costs hit YOUR AWS account (pennies for the 3 hubs).
+#
+# SECRETS REQUIRED (Settings -> Secrets and variables -> Actions):
+#   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY   (a read-only IAM user)
+#   AWS_REGION  (optional; defaults to us-west-2)
+#
+# Run the default small date range FIRST to validate access + see the bucket
+# layout in the "Verify AWS access" step, then widen start/end for the full gap.
+name: Fetch CAISO OASIS bulk LMP
+
+on:
+  workflow_dispatch:
+    inputs:
+      start:
+        description: "Start date YYYY-MM-DD"
+        default: "2023-01-06"
+        type: string
+      end:
+        description: "End date YYYY-MM-DD (inclusive)"
+        default: "2023-01-10"
+        type: string
+      markets:
+        description: "Markets (space-separated: DAM RTM)"
+        default: "DAM RTM"
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 330
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION || 'us-west-2' }}
+      BUCKET: s3://caiso-oasis-s3-prod-groupzips
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install pandas pyarrow
+
+      - name: Verify AWS access + show bucket layout
+        run: |
+          set -euo pipefail
+          aws sts get-caller-identity
+          echo "--- top-level of $BUCKET ---"
+          aws s3 ls "$BUCKET/" --request-payer requester | head -50
+
+      - name: Download group-zips + extract the 3 hubs (per day, low disk)
+        run: |
+          set -euo pipefail
+          OUT=data/raw/lmp-data/CAISO
+          TMP="$(mktemp -d)"
+          d="${{ github.event.inputs.start }}"
+          end="$(date -d '${{ github.event.inputs.end }}' +%Y%m%d)"
+          while [ "$(date -d "$d" +%Y%m%d)" -le "$end" ]; do
+            DAY="$(date -d "$d" +%Y%m%d)"
+            rm -rf "${TMP:?}/"*
+            for MKT in ${{ github.event.inputs.markets }}; do
+              # Include-filter matches the key regardless of any prefix nesting;
+              # HASP / Fifteen-Minute zips never match *_DAM_LMP_ / *_RTM_LMP_.
+              aws s3 sync "$BUCKET/" "$TMP/" --request-payer requester --no-progress \
+                --exclude "*" --include "*${DAY}_${DAY}_${MKT}_LMP_GRP_*.zip" || true
+            done
+            n="$(find "$TMP" -name '*.zip' | wc -l)"
+            echo "$DAY: $n zip(s)"
+            if [ "$n" -gt 0 ]; then
+              python scripts/extract_caiso_hubs.py --zip-dir "$TMP" --out-dir "$OUT"
+            fi
+            d="$(date -d "$d + 1 day" +%Y-%m-%d)"
+          done
+
+      - name: Fold hubs into the hourly aggregates
+        run: python scripts/postprocess_oasis_downloads.py --stage-dir "$(mktemp -d)"
+
+      - name: Commit + push aggregates
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/raw/lmp-data/CAISO/CAISO_dam_hourly_*.csv \
+                  data/raw/lmp-data/CAISO/CAISO_rtm_hourly_*.csv
+          if git diff --cached --quiet; then
+            echo "no aggregate changes to commit"
+            exit 0
+          fi
+          git commit -m "data(caiso): OASIS bulk hub LMP ${{ github.event.inputs.start }}..${{ github.event.inputs.end }} (run ${{ github.run_id }})"
+          for i in 1 2 3 4; do
+            git pull --rebase origin "${{ github.ref_name }}" && \
+            git push origin "HEAD:${{ github.ref_name }}" && exit 0
+            sleep $((i * 5))
+          done
+          echo "push failed after retries" >&2
+          exit 1
