@@ -1,0 +1,8 @@
+{
+  "requested_by": "owner (2026-07-13)",
+  "scope": "NEISO 2018-2021 holdout-intake + 2022 residual closure, requeue #5 -- second root cause fixed: the 2020/2021/2022 SMD workbook relocation loop only covered 2020/2021, so the 2022 workbook stayed at the wrong path (data/raw/lmp-data/2022_smd_hourly.xlsx) and derive_actual_lmp.py silently produced no NEISO 2022 row, which then broke the actual_tail step (RuntimeError: no NEISO 2022 rows). Added 2022 to the relocation loop and the commit-step file list.",
+  "prior_runs": [
+    "29259546224, 29265458840, 29267224161 (failed: external runner shutdown at curate_emissions_unit_annual -- root cause: unscoped nationwide 34-state rollup, fixed in v4)",
+    "29291421022 (v4, progressed past curation successfully -- fix confirmed -- but failed later at actual_tail: NEISO 2022 rows missing from actual_lmp_hourly_NEISO.parquet because the 2022 SMD workbook was never relocated)"
+  ]
+}
