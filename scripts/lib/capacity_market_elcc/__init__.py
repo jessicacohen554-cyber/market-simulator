@@ -6,7 +6,12 @@ declared in ``data/dictionary/schema/capacity-market-elcc.schema.yaml``. This
 is the CR-3.1 input (docs/handoffs/
 forecast-driver-capacity-revenue-audit-plan-2026-07.md §3.4.1) — the
 penetration-indexed curves that will eventually replace the model's flat
-``RENEWABLE_CAPACITY_CREDIT`` wind/solar constants.
+``RENEWABLE_CAPACITY_CREDIT`` wind/solar constants — and, since PJM's 2025/26
+CIFP accreditation reform extended ELCC class ratings to thermal, also the
+supply-basis-extension input for the accreditation-basis adjudication
+(docs/handoffs/accreditation-basis-memo-2026-07-12.md §4.3 R3): PJM thermal
+classes (nuclear, coal, gas CC/CT, diesel, steam, …) alongside the
+intermittent/storage/DR classes already here.
 
 The per-ISO logic lives in sibling modules (``pjm.py``, ``nyiso.py``, ...),
 each of which registers an :class:`IsoSpec` via :func:`register`. Shared code
@@ -48,6 +53,21 @@ RESOURCE_CLASSES: frozenset[str] = frozenset(
         "storage_8hr",
         "storage_10hr",
         "storage_ldes",
+        # Thermal ELCC-class-rating buckets (PJM 2025/26 CIFP reform extended
+        # ELCC class ratings to thermal; accreditation-basis-memo-2026-07-12
+        # §4.3 R3). Kept distinct per PJM's own published class split rather
+        # than collapsed, since e.g. Gas Combustion Turbine vs. …Dual Fuel and
+        # Diesel Utility vs. Oil-Fired Combustion Turbine carry materially
+        # different ratings within the same study_vintage.
+        "nuclear",
+        "coal",
+        "gas_cc",
+        "gas_ct",
+        "gas_ct_dual_fuel",
+        "diesel",
+        "oil_ct",
+        "steam",
+        "waste_to_energy",
         "other",
     }
 )

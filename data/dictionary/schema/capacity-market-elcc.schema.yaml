@@ -44,10 +44,16 @@ columns:
       Canonical resource class: wind | solar | wind_offshore |
       hybrid_solar_storage | storage_2hr | storage_4hr | storage_6hr |
       storage_8hr | storage_10hr | storage_ldes (long-duration storage where
-      the ISO study does not state a discrete hour duration) | other
-      (ISO-native duration/class labels map onto the nearest storage_Nhr bucket; a class
-      with no clean map uses "other" and
-      documents the native label in source_page).
+      the ISO study does not state a discrete hour duration) | nuclear | coal
+      | gas_cc | gas_ct | gas_ct_dual_fuel | diesel | oil_ct | steam |
+      waste_to_energy | other (ISO-native duration/class labels map onto the
+      nearest storage_Nhr bucket; a class with no clean map uses "other" and
+      documents the native label in source_page). Thermal classes (nuclear
+      through waste_to_energy) are kept distinct per the rating ISO's own
+      published class split rather than collapsed — e.g. PJM's Gas
+      Combustion Turbine vs. …Dual Fuel, or Diesel Utility vs. Oil-Fired
+      Combustion Turbine, carry materially different ratings within the same
+      study_vintage and would otherwise collide against key_columns.
   - name: study_vintage
     dtype: string
     unit: none
