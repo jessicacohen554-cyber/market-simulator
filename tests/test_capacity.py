@@ -1246,6 +1246,89 @@ class TestStoragePortfolioElccDilution(unittest.TestCase):
         self.assertEqual(floor_log, [])
 
 
+class TestThermalElccClassRatings(unittest.TestCase):
+    """R3 — PJM thermal + storage accreditation on the published ELCC class
+    ratings (2025/26 CIFP reform; accreditation-basis memo §4.2)."""
+
+    def _pjm_official_elcc(self):
+        """resource_class -> elcc fraction, PJM 2026/2027 BRA official/final."""
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / "elcc" / "pjm" / "pjm.csv"
+        vintage = "2026/2027 BRA (official/final)"
+        with path.open(newline="") as fh:
+            return {
+                r["resource_class"]: float(r["elcc_pct"]) / 100.0
+                for r in csv.DictReader(fh)
+                if r["study_vintage"] == vintage and r["elcc_pct"]
+            }
+
+    def test_thermal_ratings_reconcile_with_published_csv(self):
+        from market_sim.config.constants import THERMAL_ELCC_CLASS_RATING_BY_ISO
+
+        official = self._pjm_official_elcc()
+        # Each model fuel class maps to exactly one published PJM thermal class.
+        expected = {
+            "nuclear": official["Nuclear"],
+            "coal": official["Coal"],
+            "gas_cc": official["Gas Combined Cycle"],
+            "gas_ct": official["Gas Combustion Turbine"],
+            "gas_st": official["Steam"],
+            "oil": official["Diesel Utility"],
+        }
+        self.assertEqual(THERMAL_ELCC_CLASS_RATING_BY_ISO["PJM"], expected)
+
+    def test_storage_ratings_reconcile_with_published_csv(self):
+        from market_sim.config.constants import STORAGE_ELCC_BY_DURATION_BY_ISO
+
+        official = self._pjm_official_elcc()
+        expected = [
+            (4.0, official["4-hr Storage"]),
+            (6.0, official["6-hr Storage"]),
+            (8.0, official["8-hr Storage"]),
+            (10.0, official["10-hr Storage"]),
+        ]
+        self.assertEqual(STORAGE_ELCC_BY_DURATION_BY_ISO["PJM"], expected)
+
+    def test_thermal_firm_mw_uses_class_rating_for_pjm(self):
+        from market_sim.model.capacity import _thermal_firm_mw
+
+        g = _gen("cc", "gas_cc", pmax=1000.0)  # eford default 0.05
+        # PJM: pmax x published class rating (0.74), NOT (1 - eford)=0.95.
+        self.assertAlmostEqual(_thermal_firm_mw(g, "PJM"), 740.0, places=3)
+        # UCAP ISO / iso=None keep (1 - eford).
+        self.assertAlmostEqual(_thermal_firm_mw(g, "MISO"), 950.0, places=3)
+        self.assertAlmostEqual(_thermal_firm_mw(g, None), 950.0, places=3)
+
+    def test_class_absent_falls_back_to_ucap(self):
+        from market_sim.config.constants import EFORD
+        from market_sim.model.capacity import thermal_accreditation_fraction
+
+        # 'biomass' has no PJM thermal ELCC class -> UCAP neutral fallback.
+        self.assertAlmostEqual(
+            thermal_accreditation_fraction("biomass", EFORD["biomass"], "PJM"),
+            1.0 - EFORD["biomass"],
+            places=6,
+        )
+
+    def test_pjm_storage_elcc_below_generic(self):
+        from market_sim.model.storage import _elcc_for_duration
+
+        # PJM's own reformed ratings are lower than the generic NREL/E3 curve
+        # (a published input, not a fit), and clamp outside 4-10h.
+        self.assertAlmostEqual(_elcc_for_duration(4.0, "PJM"), 0.50, places=3)
+        self.assertAlmostEqual(_elcc_for_duration(8.0, "PJM"), 0.62, places=3)
+        self.assertLess(_elcc_for_duration(8.0, "PJM"), _elcc_for_duration(8.0))
+        self.assertAlmostEqual(_elcc_for_duration(2.0, "PJM"), 0.50, places=3)
+        self.assertAlmostEqual(_elcc_for_duration(24.0, "PJM"), 0.72, places=3)
+        # A non-override ISO keeps the generic table byte-identically.
+        self.assertAlmostEqual(
+            _elcc_for_duration(8.0, "MISO"), _elcc_for_duration(8.0), places=6
+        )
+
+
 class TestForecastPoolRequirement(unittest.TestCase):
     """R2 — PJM requirement devintaged onto the published Forecast Pool
     Requirement of the matching delivery year (accreditation-basis memo §4.2)."""
