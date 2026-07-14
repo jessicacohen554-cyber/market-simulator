@@ -12442,3 +12442,79 @@ solve (byte-evidence above). Probe bundles
 (`ercot65_{keeper,vintage,wtx}_2023`) deleted, never registered. No
 dashboard change (no full-span run; keeper + twin unchanged, sidecars
 clean; `audit_keepers.py` PASS).
+
+## 2026-07-14 — PJM-107/108/109: measured-tail cycle executed on a G-A1-fixed mechanism — the diagnosis winter hypothesis INVERTED (correct daily gas REMOVES spurious tail); leg A passes-but-reduces-tail, leg B C1-rejected; C3c confirmed a representation boundary; keeper recommendation pending owner
+
+**Grounding:** `docs/handoffs/pjm-107-measured-tail-config-spec-2026-07.md`,
+`docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md`. **Keeper (unchanged this
+session):** `2026-07-13-pjm-105-symmetric-net` (model tail 1/1/17 h, C3c-2025
+FAIL). Gate arithmetic: 2025 needs 26–102 h; 2023 ≤18; 2024 ≤12.
+
+**G-A1 pre-check caught a real mechanism bug — fixed, owner-authorized.** The
+shared Henry-Hub `gas_daily_shape_factors` resampled each month's daily quotes
+onto calendar days with `np.interp` but did NOT renormalize to mean 1.0, so in a
+convex gas-spike month the shaped monthly delivered mean overshot (worst
+Jan-2024 **+$0.10/MMBtu (+2.06 %)**; annual burn drift ≤0.16 %) — silently
+shifting the fuel-cost LEVEL, not just the intra-month swing. Not a leg-A wiring
+effect (leg A = exactly one config delta vs pjm-105); inherent to the shared
+factor builder, **live in the CAISO/MISO/NEISO/NYISO keepers**. Fixed
+(`9037c89`, `fuel.py`) to renormalize the calendar-day factors to mean exactly
+1.0 (mirroring the per-hub NYISO/NEISO daily variants) + regression test — a
+correctness fix, not a residual re-derive (rule 23). Verified <$0.001/MMBtu
+monthly-mean preservation 2023–2025; daily swing unchanged (2024 factor range
+[0.57, 4.07]). **Four owner re-run prompts issued** for the affected keepers
+(replay-in-place on the fixed mechanism; ERCOT/PJM keepers run
+`gas_daily_shape=False`, unaffected).
+
+**The fix INVERTED the diagnosis's central winter hypothesis.** Diagnosis §B.4
+predicted leg A (daily gas) would ADD the Jan cold-snap tail. That was written
+against the *flawed, mean-inflating* mechanism. On the *corrected*
+mean-preserving shape, daily gas does the OPPOSITE: it concentrates gas cost
+onto the few real spike days and removes the baseline's flat-monthly winter
+over-pricing — revealing the model's baseline winter tail was largely an
+artifact of pricing every Jan day at the elevated monthly mean.
+
+| run | delta vs pjm-105 | C1 mix | C3a mean 2025 | C3c tail 2023/24/25 | verdict |
+|---|---|---|---|---|---|
+| pjm-105 (keeper) | — | 16/16 | −11.4 % | 1 / 1 / **17** | baseline |
+| **pjm-107 leg A** | `gas_daily_shape=True` (fixed) | 16/16 PASS | −10.0 % | 0 / 0 / **6** | **all gates PASS; tail reduced** |
+| **pjm-108 leg B** | `midcurve_segments+=CC_LIKE` | **FAIL −8.52 TWh** | −9.1 % | 0 / 0 / 6 | **REJECT (C1)** |
+
+**Leg A (pjm-107) — passes every structure/no-regression gate, reduces the
+tail.** G-A1 PASS (fixed); G-C PASS (C1 16/16, C2, C3a with 2023 held, C7/C8,
+2023 tail 0≤18 / 2024 0≤12); G-A2 vacuous (no NEW >$200 hours — the tail SHRANK,
+17→6, all remaining hours Jun/Jul summer-load, only 1/6 on a ≥p90 HH-daily-factor
+day → not a gas-driver tail). More structurally faithful than the flat-monthly
+keeper (rule 1/11: measured daily gas > monthly estimate); C3a marginally best of
+the three. Per the spec's "one leg passes" rule it is the **pjm-109 candidate**.
+
+**Leg B (pjm-108) — REJECT on C1.** The measured CC offer surface sits ABOVE the
+model's fitted CC econ bids; flooring to it displaces **8.52 TWh of CC_REGULAR**
+out of merit (2023), out of band (rule 1: the mix must be right). **Dominance
+measurement (spec-required):** the measured floor exceeds the fitted bid on
+**254 / 415 / 306** CC_LIKE econ tranche rows (2023/24/25) — dominant enough to
+move 8.5 TWh, which is *why* C1 fails. The §4 CC-band-retirement follow-on is
+reframed: the fitted CC bands are not merely dominated (retirable to 1.0) — they
+are LOWER than the measured surface by enough to break the mix, so adopting the
+measured CC belt needs a CC-volume re-calibration, not a flags-only pass.
+
+**C3c is confirmed a representation boundary, not an energy-stack input gap
+(diagnosis §B.4).** Both legs REDUCE the model tail; neither adds the winter
+hours the actual 51-h tail carries. The real gap is the reserve
+opportunity-cost / LP-vs-MIP posture (pjm-81/82), an owner-closed lane. No
+adder/haircut tuned to the residual (rules 1/11/13); the reserve-supply lane
+stays closed (pjm-87/88).
+
+**Disposition.** No composite pjm-109 solved (leg B failed its gate). Leg A
+(pjm-107) is the pjm-109 candidate; because adopting it drops the headline 2025
+tail 17→6 (a correctness-vs-headline tradeoff the owner framed around C3c), the
+keeper recommendation + keeper-bar extras (zero-forcing ablation twin +
+attestation) are **FLAGGED to the owner, pending decision** — keepers.json is
+owner-only, keeper unchanged this session. Both probes registered
+(`2026-07-14-pjm-107-gas-daily`, `2026-07-14-pjm-108-cc-belt`).
+
+**Holdouts / governance.** `--year 2023 2024 2025` only (rule 22, PJM has no
+calibration-complete marker); no offer curve, sigmoid, floor, derive value or
+ORDC parameter tuned (rules 13/21/23/26); the only code change is the G-A1
+correctness fix cited to the mechanism bug, not a residual. `audit_keepers.py`
+unaffected (keeper pointer unchanged).
