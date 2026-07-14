@@ -605,6 +605,7 @@ def _dispatch_rows(gen: Generator, idx_of: dict[str, int]) -> list[int]:
 
 def capacity_revenue_per_mw_yr(
     iso: str,
+    fuel_type: str,
     eford: float,
     config: ScenarioConfig | None = None,
     reserve_position: float | None = None,
@@ -612,13 +613,23 @@ def capacity_revenue_per_mw_yr(
     """Return the resource-adequacy capacity payment in $/MW-yr (Module M1).
 
     In a capacity-market ISO a thermal unit earns a payment on its
-    qualifying (UCAP) capacity *outside* the energy market, which can keep
-    it solvent even on a negative energy margin. The payment is the shared
+    accredited capacity *outside* the energy market, which can keep it
+    solvent even on a negative energy margin. The payment is the shared
     per-firm-MW capacity price (rule 19 — one seam for all three screens)
-    times the unit's UCAP, approximated as ``1 - EFORd`` (PJM/NYISO/ISO-NE
-    accredit roughly on unforced capacity)::
+    times the unit's **basis-resolved accreditation fraction** — the SAME
+    resolver the adequacy ledger prices the unit's firm MW through
+    (:func:`thermal_accreditation_fraction`), so the ledger and the payment
+    can never diverge (R4, accreditation-basis memo 2026-07-12 §4.2)::
 
-        $/MW-yr = capacity_price_per_firm_mw_yr(...) * (1 - eford)
+        $/MW-yr = capacity_price_per_firm_mw_yr(...) * accreditation_fraction
+
+    The accreditation fraction is the ISO's own published basis: ``1 - EFORd``
+    (UCAP, the default for NYISO/ISO-NE/MISO), the published ELCC class rating
+    (PJM's 2025/26 CIFP reform — replaces the hardcoded ``1 - EFORd`` this
+    call used before R4), or nameplate (ERCOT's seasonal-rating basis, though
+    ERCOT is energy-only so it never reaches the payment). Because it is the
+    ledger's own resolver, a class differential (e.g. PJM gas-CT 0.60 vs its
+    0.94 UCAP) is now paid on the same basis it is counted on.
 
     The price itself is :meth:`MarketDesign.capacity_price_per_firm_mw_yr`,
     which is the flat net-CONE (default) or — when
@@ -636,8 +647,8 @@ def capacity_revenue_per_mw_yr(
     price = design.capacity_price_per_firm_mw_yr(config, reserve_position)
     if price <= 0.0:
         return 0.0
-    ucap = max(0.0, 1.0 - float(eford))
-    return price * ucap
+    accredited = max(0.0, thermal_accreditation_fraction(fuel_type, eford, iso))
+    return price * accredited
 
 
 # A zone whose deliverable firm capacity exceeds its locational requirement by
@@ -1421,7 +1432,7 @@ def apply_economic_retirements(
         # retires as it should while short zones keep their units.
         if not _zone_is_long(deliverability_headroom, g.zone):
             net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(
-                config.iso, g.eford, config, reserve_position
+                config.iso, g.fuel_type, g.eford, config, reserve_position
             )
 
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin): a real
@@ -2250,7 +2261,7 @@ def apply_economic_new_entry(
                 0.0
                 if build_zone_long
                 else capacity_revenue_per_mw_yr(
-                    iso_config.name, EFORD[tech], config, reserve_position
+                    iso_config.name, tech, EFORD[tech], config, reserve_position
                 )
             )
             # AS credit — exactly one mechanism prices thermal AS (rule 19):
