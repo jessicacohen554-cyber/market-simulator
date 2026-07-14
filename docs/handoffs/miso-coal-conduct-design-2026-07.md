@@ -250,6 +250,33 @@ PASS); hours > $200 unchanged (4); P10 $21.61. The cheaper troughs are the
 honest price of holding sunk-fuel committed coal — the residual 2024 mean gap
 sits in the missing tail (C3c 4h vs 24h actual), not in this lane.
 
+### 2024 under V1b (`regb` — the Phase B configuration)
+
+True A/B vs the same-box base replica; scored estimates apply the A/B delta
+to the keeper's scored value:
+
+| class | regb | base | A/B | scored est. to-actual (m65 → regb) |
+|---|---|---|---|---|
+| COAL_PRB | 120.92 | 106.05 | **+14.87** | −10.41 FAIL → **+4.46 PASS** |
+| COAL_BIT | 50.77 | 51.27 | −0.50 | −2.06 → −2.56 PASS (PSGC/Warrick kept) |
+| COAL_LIGNITE | 5.33 | 3.98 | +1.35 | −2.54 → −1.19 PASS |
+| CT_PEAKER | 22.48 | 27.54 | **−5.06** | +8.30 FAIL → **+3.25 PASS** |
+| CC_REGULAR | 142.41 | 147.43 | −5.03 | +2.60 → ≈−2.4 PASS |
+| ST_GAS | 14.94 | 16.88 | −1.94 | −7.83 → **≈−9.8 (likely NEW FAIL — see below)** |
+| total coal | 177.02 | 161.31 | +15.71 | −15.0 → **+0.70 (essentially exact)** |
+
+Prices (scored basis, mechanism-only = regb minus same-box base): C3a-2024
+−4.0% → −8.3% (Δ −4.3pp → scored ≈ −7.2%, inside ±10); C3b-2024 0.105 →
+0.129 (Δ +0.024 → scored ≈ 0.123, PASS); tail unchanged (4 h).
+
+**The ST_GAS-2024 exposure is the same rule-15 pattern by which miso-65
+exposed this lane:** cheap held coal displaces the marginal slice of a class
+whose own economics are the VLR-drag lane's documented open miss (ST_GAS was
+scored −7.83, 0.17 inside the band, BEFORE this mechanism). The displacement
+is real physics given the conduct; the deficit it deepens belongs to the
+ST_GAS lane. Expected C1: 2023 all rows in band (V1b table below), 2024
+15/16-to-16/16 depending on the exact relabel split of the −1.94.
+
 ### 2025 (the guard year) — fuel-mix improves broadly, PRB and the price
 ### level pay; C3b-2025 lands ON the 0.20 gate
 
