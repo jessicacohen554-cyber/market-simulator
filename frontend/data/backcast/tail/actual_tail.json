@@ -2,8 +2,8 @@
  "isos": {
   "CAISO": {
    "2023": {
-    "da_coverage": 0.819,
-    "da_gt": 41,
+    "da_coverage": 0.871,
+    "da_gt": 79,
     "hours": 8760,
     "rt_coverage": 0.836,
     "rt_gt": 21,
@@ -80,12 +80,12 @@
   },
   "NEISO": {
    "2022": {
-    "threshold": 300.0,
-    "da_gt": 27,
-    "rt_gt": 117,
     "da_coverage": 1.0,
+    "da_gt": 27,
+    "hours": 8760,
     "rt_coverage": 1.0,
-    "hours": 8760
+    "rt_gt": 117,
+    "threshold": 300.0
    },
    "2023": {
     "da_coverage": 1.0,
@@ -113,6 +113,14 @@
    }
   },
   "NYISO": {
+   "2022": {
+    "da_coverage": 1.0,
+    "da_gt": 10,
+    "hours": 8760,
+    "rt_coverage": 1.0,
+    "rt_gt": 97,
+    "threshold": 300.0
+   },
    "2023": {
     "da_coverage": 1.0,
     "da_gt": 1,
@@ -135,6 +143,14 @@
     "hours": 8760,
     "rt_coverage": 1.0,
     "rt_gt": 42,
+    "threshold": 300.0
+   },
+   "2026": {
+    "da_coverage": 0.496,
+    "da_gt": 151,
+    "hours": 8760,
+    "rt_coverage": 0.496,
+    "rt_gt": 86,
     "threshold": 300.0
    }
   },
