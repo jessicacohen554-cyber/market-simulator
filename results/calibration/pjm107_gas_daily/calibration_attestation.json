@@ -1,0 +1,240 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "pjm-107 gas-daily 2026-07-14: the pjm-105 symmetric-net keeper recipe (byte-faithful replay off its meta.json) + EXACTLY ONE measured override \u2014 the Henry Hub daily within-month gas shape (gas_daily_shape=True), solved on the G-A1-FIXED gas_daily_shape_factors: the calendar-day factors are renormalized to mean exactly 1.0 per month (fix 9037c89), so the monthly delivered gas level is byte-kept (verified <$0.001/MMBtu) and only the intra-month commodity swing rides on top. OWNER ADOPTED as the PJM keeper 2026-07-14 (superseding pjm-105-symmetric-net).",
+  "note": "The delta vs pjm-105 is ONE measured input flag (gas_daily_shape False->True) carried on the generic prb_overrides ScenarioConfig channel; zero fitted scalars. The mechanism was corrected this cycle (G-A1 pre-check): the shared gas_daily_shape_factors resampled the daily HH quotes onto calendar days with np.interp WITHOUT renormalizing to mean 1.0, so a convex gas-spike month overshot the monthly mean (worst Jan-2024 +$0.10/MMBtu) \u2014 a correctness bug inherent to the shared builder (live in the CAISO/MISO/NEISO/NYISO keepers), not a leg-A wiring effect; fixed (9037c89) + regression test. Rule 19: the daily shape moves only the gas commodity SRMC basis; no stacking on any existing mechanism. Rule-22 LOO is vacuous (zero free parameters). D-3 zero-forcing ablation twin registered alongside (pjm107_gas_daily-ablation). Bound (stated honestly): HH-ONLY \u2014 the Jan-2025 eastern-hub daily-BASIS blowout beyond the HH move is NOT carried; a TETCO-M3/Transco-Z5 daily-basis intake is a chartered follow-on.",
+  "residuals_note": "Honest fit record vs pjm-105 (same scorer): C1 16/16 PASS (grid-delivered mix unchanged in band), C2 PASS, C3a PASS (2025 DA-diag -11.4%->-10.0%, toward zero; 2023 held), C3b PASS, C4 PASS, C5a PASS, C7 holds, C8 PASS. C3c 2025 FAIL \u2014 and the model tail REDUCES 17h->6h (all Jun/Jul summer-load, zero winter). This is the CORRECT behaviour of mean-preserving daily gas: it concentrates the winter gas cost onto the few real cold-snap days and removes the baseline's flat-monthly over-pricing of typical January days, exposing that pjm-105's winter tail was substantially a flat-monthly-gas artifact. C3c is thereby CONFIRMED a reserve opportunity-cost / LP-vs-MIP representation boundary (diagnosis Part C), not an energy-stack input gap \u2014 no offer/gas lever reaches the actual 51h, and none is tuned to the residual (rules 1/11/13). Keeper on structural fidelity (rule 1/11: measured daily gas > flat-monthly estimate), not on lowest tail error."
+ },
+ "exceptions": [],
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20) \u2014 pjm-105 carries the pjm-98 ledger verbatim (recipe base) + the G-22 measured-stack entries (all measured/cited, zero residual-identified) ; pjm-107 appends the measured gas_daily_shape entry (leg A)",
+  "n_entries": 15,
+  "n_residual": 6,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ]
+    },
+    "n_scalars": 60,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_committed_below_floor[PJM]",
+    "where": "run_config.scenario_config.offer_curve_by_group[*].committed",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+    "value": {
+     "COAL_LIGNITE": 0.684,
+     "COAL_PRB": 0.684,
+     "COAL_BIT": 0.548,
+     "COAL_WC": 0.512,
+     "COAL": 0.648
+    },
+    "n_scalars": 5,
+    "source": "committed-tranche multiplier(s) below the audit \u00a72 0.85 physical-floor flag with no written rationale in the config \u2014 pulled out of the R6 bulk offer-curve population per plan \u00a72.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+    "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched \u2014 rules #1/#18/#19/#26 apply, no blanket fix)"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_mid": 0.35,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 3,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[PJM]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid, coal_bit_passthrough_sigmoid, coal_sub_passthrough_sigmoid)",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+    "n_scalars": 12,
+    "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_residual",
+    "where": "run_config.scenario_config.wefor_residual",
+    "identification": "residual",
+    "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+    "value": 0.015,
+    "source": "wind-EFOR residual relief term (audit C-15) \u2014 residual-identified by name",
+    "root_cause": "audit C-15 open item; statistical mode turns this off and the fit degrades (docs/statistical-mode-results-2026-07.md); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_PJM.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "PJM_SEAM_LADDER_BY_YEAR",
+    "where": "interchange_config.py PJM seam band-price ladders",
+    "identification": "measured-physical",
+    "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+    "source": "per-seam Q-Q duration coupling of the measured PJM DA system LMP with PJM's measured settlement-grade tie-line flows (act_sch_interchange, pooled by PJM_SEAM_TIE) on the fixed 8-band grid, frozen scripts/derive_pjm_seam_ladders.py (audit C-6 CLOSED for PJM 2026-07-10; pjm-95 C1 2023-interchange-duration fix); displaces the firm scheduled-export floor on ladder years (rule 19, alternatives never stacked)",
+    "note": "re-derive trigger is a source-data change only (rule 23), never a residual; representation bound: hourly placement of the scheduled seam base is duration-curve-level only (same bound as the MISO ladder)"
+   },
+   {
+    "name": "PJM_INTERFACE_LINK_MAP hourly TTC overlay",
+    "where": "constants.py crosswalk + data/transfer_interface_limits.py (iso_configs._pjm_config static seeds superseded on mapped links, forward direction)",
+    "identification": "measured-physical",
+    "lineage_solves": ">=76 solves (audit \u00a75.1 + pjm-76)",
+    "source": "published hourly interface transfer limits (PJM Data Miner 2 transfer_limits_and_flows, 2023-2025 raw drops; min(pre,post) where both publish), curated by frozen scripts/curate_transfer_interface_limits.py onto the model clock; supersedes PJM_MEASURED_INTERNAL_TTC's pooled medians on mapped links (same feed, hourly \u2014 rule 19). Unmapped links (AEP_Ohio->ATSI, SWMAAC->EMAAC, SWMAAC->Dominion, West_APS->Dominion) and every reverse direction keep the Tier-3 static estimates (boundary misalignments documented at the crosswalk).",
+    "note": "re-derive trigger is a source-data change only (rule 23); representation bound: AP-South maps to the seeded West_APS->SWMAAC link only (parallel-path split of the reduced mesh), and the Average envelopes are regional means, not per-flowgate boundaries"
+   },
+   {
+    "name": "cc_mustrun_per_plant inputs (committed_pct, online_frac)",
+    "where": "data/raw/_processed-legacy/thermal_tranches_PJM.csv (gas rows; consumed via fleet.thermal_tranche_online_frac + the committed tranche sizing)",
+    "identification": "measured-physical",
+    "lineage_solves": "1 probe + this bundle (G-20 follow-up build)",
+    "value": {
+     "committed_pct": "CEMS P5 of CF when online, pooled 2023-2025 (pre-existing column, frozen)",
+     "online_frac": "CEMS synchronization fraction (net MW > 1% nameplate), pooled 2023-2025 (new gas emission of the pre-existing coal estimator; no tunable \u2014 the floor level and window are both measured)"
+    }
+   },
+   {
+    "name": "CT_STARTUP_PARAMS (tranche_startup_amortization)",
+    "where": "constants.CT_STARTUP_PARAMS",
+    "identification": "cited-published",
+    "lineage_solves": "pjm-103/104/105 (G-22 lever C)",
+    "value": "NREL/SR-5500-55433 start-cost table; fuel-price-invariant start/no-load recovery amortized into P1 fast-start tranche bids"
+   },
+   {
+    "name": "campd_ct_run_lengths_PJM.csv + campd_ct_run_bands_PJM.csv",
+    "where": "data/raw/_processed-legacy/ (tranche_startup_measured_runs + _conditional_runs)",
+    "identification": "measured-market-behaviour",
+    "lineage_solves": "pjm-103/104/105; re-derives only on CAMPD updates (rule 23)",
+    "value": "CAMPD-measured median start-to-stop run horizons, condition-banded"
+   },
+   {
+    "name": "pjm_offer_midcurve_condbinned.json (LONG_RUN scope)",
+    "where": "pjm_offer_midcurve_conditional + pjm_offer_midcurve_segments=('LONG_RUN',)",
+    "identification": "measured-market-behaviour",
+    "lineage_solves": "pjm-104/105",
+    "value": "36-month DataMiner2 submitted-offer surface, shares grid + 0.975/0.995; floors coal/gas-steam econ+peak rows only (rule 19)"
+   },
+   {
+    "name": "pjm_da_virtual_bids symmetric net curves",
+    "where": "data.virtual_bids (hrl_da_incs_decs measured hourly submitted curves)",
+    "identification": "measured-market-behaviour",
+    "lineage_solves": "pjm-100/102/102b/103/104 (clamped) -> pjm-105 (symmetric)",
+    "value": "whole net(\u03bb)=\u03a3DEC\u2265\u03bb\u2212\u03a3INC\u2264\u03bb rendered both sides; N_RUNGS=8/side is resolution-only; DEC VOLL cap and INC dump-safe floor are verified structural no-ops on the measured corpus; zero tunable values"
+   },
+   {
+    "name": "gas_daily_shape (Henry Hub daily within-month gas shape)",
+    "where": "run_config.scenario_config.gas_daily_shape (prb_overrides channel); fuel.gas_daily_shape_factors + the F923 plant-month re-carry",
+    "identification": "measured-market-behaviour",
+    "lineage_solves": "pjm-107 (G-22 measured stack)",
+    "value": "measured EIA Henry Hub daily spot (data/raw/gas-prices/henry_hub_daily.csv), resampled onto calendar days and renormalized to mean exactly 1.0 per month (G-A1 fix 9037c89) so the monthly delivered level is byte-kept and only the intra-month swing rides on top; the same mean-preserving factors are re-carried onto every F923-overwritten gas plant-month. Zero tunable values; forecast-native (a forward monthly level times a representative daily shape). Bound: HH-ONLY \u2014 the eastern-hub daily-basis blowout beyond the HH move is not carried (chartered follow-on intake)."
+   }
+  ]
+ }
+}

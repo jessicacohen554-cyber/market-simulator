@@ -2,11 +2,11 @@
  "CAISO": "2026-07-13-caiso-80-supply-demand",
  "ERCOT": "2026-07-12-ercot63-gas-bridge",
  "NEISO": "2026-07-13-neiso-59-cc-hr",
- "PJM": "2026-07-13-pjm-105-symmetric-net",
+ "PJM": "2026-07-14-pjm-107-gas-daily",
  "keepers": [
   "2026-07-12-ercot63-gas-bridge",
   "2026-07-13-caiso-80-supply-demand",
-  "2026-07-13-pjm-105-symmetric-net",
+  "2026-07-14-pjm-107-gas-daily",
   "2026-07-13-nyiso-62-cc-hr",
   "2026-07-13-neiso-59-cc-hr",
   "2026-07-14-miso-65-outage-regen"
