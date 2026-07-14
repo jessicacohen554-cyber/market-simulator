@@ -228,7 +228,11 @@ def main() -> None:
         frame = fn(args.ba, args.year, args.cache_dir)
         out.parent.mkdir(parents=True, exist_ok=True)
         frame.to_parquet(out, index=False)
-        span = f"{frame['period'].min()}..{frame['period'].max()}" if len(frame) else "empty"
+        span = (
+            f"{frame['period'].min()}..{frame['period'].max()}"
+            if len(frame)
+            else "empty"
+        )
         print(f"wrote {out} — {len(frame):,} {name} rows ({span})")
 
 

@@ -132,7 +132,7 @@ class TestGateBehaviour(unittest.TestCase):
     def test_capacity_payment_positive_in_capacity_market(self) -> None:
         # Sanity: the payment being gated is non-zero for a capacity-market ISO,
         # so zeroing it in a long zone is a real effect.
-        self.assertGreater(capacity_revenue_per_mw_yr("PJM", 0.05), 0.0)
+        self.assertGreater(capacity_revenue_per_mw_yr("PJM", "gas_cc", 0.05), 0.0)
 
     def test_storage_factor_short_full_long_derated(self) -> None:
         iso_config = get_iso_config("PJM")
