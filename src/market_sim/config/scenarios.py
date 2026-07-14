@@ -3494,6 +3494,28 @@ class ScenarioConfig:
     # `coal_bit_committed_takeorpay` when both are set (the union scope).
     coal_committed_takeorpay_all: bool = False
 
+    # Regulated-utility-scoped committed-band take-or-pay discount: the same
+    # sunk-contract committed-tranche rule as ``coal_bit_committed_takeorpay``
+    # / ``coal_committed_takeorpay_all``, but scoped by the plant's EIA-860
+    # Regulatory Status (``RE`` — rate-regulated operator) instead of coal
+    # supply. Driver (MISO SOM Table 7, datatype ``som-competitive-conduct``):
+    # regulated utilities self-commit ("must-run") 53-56% of coal starts,
+    # "running them regardless of the price", while unregulated merchants
+    # offer economically 74-93% — the conduct split is OWNERSHIP/regulatory,
+    # not coal rank. A regulated plant's committed band (its CAMPD-observed
+    # stay-online band) bids its sunk contracted fuel (``1 − contract_share``
+    # passthrough, the plant's own measured EIA-923 Schedule-5 share); a
+    # merchant plant's committed band keeps full delivered cost (it really
+    # bids economically). Zero fitted parameters; forward-reproducible
+    # (EIA-860 Regulatory Status + EIA-923 Schedule-5 + CAMPD tranches all
+    # regenerate for a forward year). Reconciles rule 19: when armed for an
+    # ISO this is intended to REPLACE `coal_bit_committed_takeorpay` (its
+    # regulated-BIT plants are covered identically; merchant BIT reverts to
+    # full-cost committed bids); union scope when stacked, like `_all`.
+    # Requires `coal_takeorpay_from_data`. Default off (all existing keepers
+    # byte-identical). See docs/handoffs/miso-coal-conduct-design-2026-07.md.
+    coal_committed_takeorpay_regulated: bool = False
+
     # Lignite (mine-mouth): take-or-pay fixed costs are sunk, so in
     # cheap-gas months lignite discounts its BID (not its cost) to hold
     # baseload against cheap gas CC instead of being priced out.
@@ -6189,6 +6211,7 @@ TIER_TAGS: dict[str, int] = {
     "coal_econ_srmc_bound": 3,
     "coal_bit_committed_takeorpay": 3,
     "coal_committed_takeorpay_all": 3,
+    "coal_committed_takeorpay_regulated": 3,
     "coal_lignite_passthrough_sigmoid": 3,
     "coal_lignite_passthrough_floor": 3,
     "coal_lignite_passthrough_ceil": 3,

@@ -4159,6 +4159,8 @@ def campd_tranche_fuel_frac(
     econ_srmc_bound: bool = False,
     committed_takeorpay_bit: bool = False,
     committed_takeorpay_all: bool = False,
+    committed_takeorpay_regulated: bool = False,
+    regulated_plants: "frozenset[int] | None" = None,
 ) -> "float | np.ndarray":
     """Return the fuel-cost passthrough for one CAMPD tranche generator.
 
@@ -4202,6 +4204,15 @@ def campd_tranche_fuel_frac(
     tranches above keep full delivered cost. Grounded by the plant's measured
     EIA-923 Schedule-5 share (rule 1/13), not a fitted sigmoid.
 
+    ``committed_takeorpay_regulated``
+    (``ScenarioConfig.coal_committed_takeorpay_regulated``): the same
+    committed-band sunk-contract rule scoped by the plant's EIA-860
+    ``Regulatory Status`` instead of coal supply — only plants in
+    ``regulated_plants`` (the ``RE`` set, :func:`eia860_regulated_plants`)
+    discount; merchant/IPP committed bands keep full delivered cost (SOM
+    Table 7: regulated utilities self-commit 53-56% of coal starts, merchants
+    offer economically 74-93%). Union scope with the other two flags.
+
     The ``_sync`` synchronization tranche (rebuild step 3a,
     ``ScenarioConfig.coal_sync_srmc_tranche``) bids its **full SRMC** — full
     delivered fuel + VOM + reagents — so it passes ``1.0`` (no discount). It is
@@ -4229,7 +4240,10 @@ def campd_tranche_fuel_frac(
     # above the committed band. Grounded by the plant's own EIA-923 Schedule-5
     # share (rule 1/13); bounded below by any supply curve already in force.
     _bit = getattr(gen, "coal_supply", "") == "bituminous"
-    _scope = committed_takeorpay_all or (committed_takeorpay_bit and _bit)
+    _reg = committed_takeorpay_regulated and (
+        regulated_plants is not None and int(gen.plant_code) in regulated_plants
+    )
+    _scope = committed_takeorpay_all or (committed_takeorpay_bit and _bit) or _reg
     if (
         _scope
         and gen.unit_id.endswith("_committed")
@@ -5960,6 +5974,113 @@ def _eia860_plant_sector() -> dict[int, int]:
     df = pd.read_parquet(path, columns=["Plant Code", "Sector"])
     df = df.dropna(subset=["Plant Code", "Sector"])
     return {int(c): int(s) for c, s in zip(df["Plant Code"], df["Sector"])}
+
+
+@lru_cache(maxsize=1)
+def eia860_regulated_plants() -> frozenset[int]:
+    """Return the plant codes whose EIA-860 ``Regulatory Status`` is ``RE``.
+
+    The EIA-860 plant table carries a two-value ``Regulatory Status`` flag —
+    ``RE`` (the operator's rates are regulated / cost-of-service recovered)
+    vs ``NR`` (non-regulated merchant/IPP). This is the measured
+    regulated-vs-merchant conduct split the MISO SOM Table 7 reports its
+    coal self-commitment statistics on (``coal_committed_takeorpay_regulated``);
+    plants absent from the table (or with a null flag) are conservatively
+    treated as non-regulated (no committed-band discount).
+    """
+    path = active_eia860_dir() / "eia860_plant.parquet"
+    if not path.exists():
+        return frozenset()
+    df = pd.read_parquet(path, columns=["Plant Code", "Regulatory Status"])
+    df = df.dropna(subset=["Plant Code", "Regulatory Status"])
+    return frozenset(
+        int(c)
+        for c, s in zip(df["Plant Code"], df["Regulatory Status"])
+        if str(s).strip().upper() == "RE"
+    )
+
+
+# EIA-860 utility Entity Type codes whose generation ownership is recovered
+# at cost of service (rate base or member/public rates): Investor-owned,
+# Municipal, Cooperative, Political subdivision, State, Federal. Q (IPP) and
+# the IND/COM self-suppliers are excluded — their offtake is not
+# rate-recovered, so the SOM's merchant conduct (economic offers) applies.
+_COST_OF_SERVICE_ENTITY_TYPES: frozenset[str] = frozenset(
+    {"I", "M", "C", "P", "S", "F"}
+)
+
+
+@lru_cache(maxsize=1)
+def eia860_costofservice_majority_plants() -> frozenset[int]:
+    """Plant codes majority-owned by cost-of-service entities (Schedule 4).
+
+    The ``Regulatory Status`` flag classifies the OPERATOR, so a plant whose
+    output is take-or-pay committed to municipal/cooperative/IOU owners reads
+    ``NR`` when a project company operates it (Prairie State: ~95% owned by
+    eight municipal JAAs/co-ops, EIA-860 Schedule 4). Conduct-wise those
+    owners recover the plant at cost and self-commit it like regulated fleet
+    (the 2024 SOM Table 7 merchant rows themselves show 25% of "merchant"
+    starts flagged must-run). This helper measures that leg: per plant, the
+    summed ``Percent Owned`` of Schedule-4 owners whose EIA-860 utility
+    ``Entity Type`` is cost-of-service (I/M/C/P/S/F); plants absent from
+    Schedule 4 are 100% operator-owned and use the operator's entity type.
+    Returns plants whose cost-of-service share exceeds 0.5.
+    """
+    d = active_eia860_dir()
+    own_path = d / "eia860_owner.parquet"
+    util_path = d / "eia860_utility.parquet"
+    plant_path = d / "eia860_plant.parquet"
+    if not (own_path.exists() and util_path.exists() and plant_path.exists()):
+        return frozenset()
+    util = pd.read_parquet(util_path, columns=["Utility ID", "Entity Type"])
+    etype = {
+        int(u): str(e).strip().upper()
+        for u, e in zip(util["Utility ID"], util["Entity Type"])
+        if pd.notna(u) and pd.notna(e)
+    }
+
+    own = pd.read_parquet(
+        own_path,
+        columns=["Plant Code", "Generator ID", "Ownership ID", "Percent Owned"],
+    ).dropna(subset=["Plant Code", "Ownership ID"])
+    own["pct"] = pd.to_numeric(own["Percent Owned"], errors="coerce")
+    own = own.dropna(subset=["pct"])
+    # Per (plant, owner): mean across that plant's generators (joint-owned
+    # coal plants list identical shares per unit), then sum the
+    # cost-of-service owners' shares per plant.
+    per_owner = own.groupby(["Plant Code", "Ownership ID"])["pct"].mean().reset_index()
+    per_owner["cos"] = per_owner["Ownership ID"].map(
+        lambda u: etype.get(int(u), "") in _COST_OF_SERVICE_ENTITY_TYPES
+    )
+    cos_share = per_owner[per_owner["cos"]].groupby("Plant Code")["pct"].sum()
+    majority = {int(p) for p, s in cos_share.items() if float(s) > 0.5}
+
+    # Plants absent from Schedule 4: 100% operator-owned (ownership.py's
+    # sparse-schedule rule) — classify by the operator's entity type.
+    plants = pd.read_parquet(plant_path, columns=["Plant Code", "Utility ID"]).dropna()
+    sched4 = set(int(p) for p in own["Plant Code"].unique())
+    for p, u in zip(plants["Plant Code"], plants["Utility ID"]):
+        p = int(p)
+        if p in sched4:
+            continue
+        if etype.get(int(u), "") in _COST_OF_SERVICE_ENTITY_TYPES:
+            majority.add(p)
+    return frozenset(majority)
+
+
+@lru_cache(maxsize=1)
+def eia860_selfcommit_scope_plants() -> frozenset[int]:
+    """The ``coal_committed_takeorpay_regulated`` scope set.
+
+    Union of the two measured cost-of-service legs: EIA-860 ``Regulatory
+    Status`` RE operators (:func:`eia860_regulated_plants`) and plants
+    majority-owned by cost-of-service entities
+    (:func:`eia860_costofservice_majority_plants`). See
+    docs/handoffs/miso-coal-conduct-design-2026-07.md §4 (the pre-declared
+    V1b refinement, engaged when the RE-only probe broke the 2023 COAL_BIT
+    band on the Prairie State reversion).
+    """
+    return eia860_regulated_plants() | eia860_costofservice_majority_plants()
 
 
 # Per-bin forced availability derates by year, for confirmed unit losses
@@ -8857,6 +8978,7 @@ def build_dispatch_fleet(
             def _pt_for(g: Generator):
                 return pt_by_supply
 
+        _reg_gate = getattr(config, "coal_committed_takeorpay_regulated", False)
         fuel_fracs = [
             campd_tranche_fuel_frac(
                 g,
@@ -8868,6 +8990,10 @@ def build_dispatch_fleet(
                 ),
                 committed_takeorpay_all=getattr(
                     config, "coal_committed_takeorpay_all", False
+                ),
+                committed_takeorpay_regulated=_reg_gate,
+                regulated_plants=(
+                    eia860_selfcommit_scope_plants() if _reg_gate else None
                 ),
             )
             for g in dispatch_fleet
