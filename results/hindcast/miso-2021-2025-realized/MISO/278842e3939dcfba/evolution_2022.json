@@ -1,0 +1,67 @@
+{
+  "bridge": true,
+  "ccs_retrofits": [],
+  "firm_clean_mw": null,
+  "fleet_by_fuel_after": {
+    "biomass": 2006.2,
+    "coal": 55564.54,
+    "gas_cc": 36912.1,
+    "gas_ct": 24011.041,
+    "gas_st": 13942.225,
+    "nuclear": 11658.8,
+    "oil": 3511.5
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 2006.2,
+    "coal": 55564.54,
+    "gas_cc": 33912.1,
+    "gas_ct": 24011.041,
+    "gas_st": 13942.225,
+    "nuclear": 12427.3,
+    "oil": 3511.5
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "MISO",
+  "mode": "forecast",
+  "peak_demand_mw": null,
+  "renewable_additions": [
+    {
+      "mw": 4000.0,
+      "tech": "wind",
+      "zone": "MISO-West"
+    },
+    {
+      "mw": 3000.0,
+      "tech": "solar",
+      "zone": "MISO-South"
+    }
+  ],
+  "reserve_margin": null,
+  "retirements": [
+    {
+      "fuel": "nuclear",
+      "mw": 768.5,
+      "reason": "known",
+      "unit_id": "1715_1"
+    }
+  ],
+  "rps_dual": null,
+  "solve_counts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 3000.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2022_1",
+      "zone": "MISO-Illinois"
+    }
+  ],
+  "year": 2022
+}
