@@ -247,6 +247,27 @@ pack negotiation, so it never 413s regardless of payload size. Workflow:
    `benchmark.js`, `completeness.js`) or anything under the gitignored
    `docs/codebase-site/data/backcast/`; the Pages deploy regenerates them.
 
+## GitHub Actions — never offload work to CI (this is a PRIVATE repo; runner minutes are billed)
+
+**Do NOT create per-task GitHub Actions workflows, and do NOT run LP solves,
+data intakes, patch-applies, or other one-shot chores on GitHub-hosted
+runners.** This repo is private, so every runner-minute is billed to the owner;
+the historical pattern of pushing a `*-solve-register.yml` / `apply-*.yml`
+workflow per calibration run cost real money and is banned.
+
+- **Run solves in the Claude session.** `scripts/run_calibration_full.py` runs
+  in this environment — invoke it here (years sequential within a run; separate
+  invocations concurrent per rule 12). If the session lacks RAM/time for a
+  solve, say so and ask the owner how to proceed — do **not** silently spin up a
+  CI job to do it.
+- **No new `.github/workflows/*.yml` for a task.** A workflow is justified only
+  as durable, reusable infrastructure (CI/lint on PRs, the Pages deploy, a
+  parameterized data-fetch pipeline) — never as a one-off keyed to the branch
+  you happen to be on. When in doubt, do the work in-session and push the result
+  via `mcp__github__push_files` (the API-only path above) — not a CI job.
+- **Scheduled (`cron`) workflows spend money with nobody watching.** Do not add
+  one without explicit owner sign-off, and prefer `workflow_dispatch`-only.
+
 ## Testing Pattern
 
 Always test with trivial cases first: 1 gen, 1 zone, 24 hours. Then scale up.
