@@ -213,11 +213,61 @@ PASS); hours > $200 unchanged (4); P10 $21.61. The cheaper troughs are the
 honest price of holding sunk-fuel committed coal — the residual 2024 mean gap
 sits in the missing tail (C3c 4h vs 24h actual), not in this lane.
 
-<!-- 2025 GUARD + 2023 GUARD + BASE REPLICA FILLED AFTER SOLVES -->
+### 2025 (the guard year) — fuel-mix improves broadly, PRB and the price
+### level pay; C3b-2025 lands ON the 0.20 gate
+
+Class TWh (2025 C1 rows are prelim-923 SKIPPED — shown for direction; the
+scored 2025 guards are C2/C3a/C3b/C3c):
+
+| class | probe | miso-65 | Δ | actual (prelim) | to-actual: miso-65 → probe |
+|---|---|---|---|---|---|
+| COAL_PRB | 148.61 | 144.38 | **+4.23** | 139.26 | +5.12 → +9.35 (ungated) |
+| COAL_BIT | 59.09 | 60.54 | −1.45 | 57.45 | +3.09 → +1.64 (better) |
+| CT_PEAKER | 20.13 | 20.74 | −0.62 | 18.42 | +2.33 → +1.71 (better) |
+| ST_GAS | 11.87 | 6.69 | **+5.18** | 14.86 | −8.17 → −2.99 (much better) |
+| total coal | 213.25 | 210.17 | +3.08 | 202.55 | +7.62 → +10.70 |
+
+Scored-basis prices (demand-weighted zonal monthly vs bench `rt_lw_mon` —
+method validated by reproducing the keeper's scored 0.082/0.099/0.183
+exactly from its payload):
+
+| metric | miso-65 (scored) | probe (scored basis) | gate |
+|---|---|---|---|
+| C3a-2024 | −2.9% | **−7.2%** | ±10% → PASS retained |
+| C3b-2024 | 0.099 | **0.122** | ≤0.20 → PASS |
+| C3a-2025 | −12.9% | **≈−15%** | FAIL, worse by ~2pp |
+| C3b-2025 | 0.183 | **0.201** | ≤0.20 → AT/OVER the gate by ~0.001 |
+| C3c both years | unchanged (4h/0h > $200) | unchanged | — |
+
+The 2025 damage is a broad ~$0.5–1.6/month price drop — the level gap
+leaking into the (bias-inclusive) shape metric, not a new shape error. The
+2025 model-under is owned by the OTHER open lanes (lane-2 max-gen event
+registry ≈ $6 of July alone; C3c scarcity depth; the G-23 import starvation
+−5.8 TWh, which also confounds the 2025 coal-over reading). C5a direction:
+2024 CO₂ −5.7% under → coal-up moves it toward actual; 2025 +0.9% → small
+further rise, stays inside ±7%.
+
+<!-- 2023 GUARD + BASE REPLICA FILLED AFTER SOLVES -->
 
 ## 6. Expected scored deltas for miso-66 (to verify in Phase B)
 
-<!-- FILLED AFTER PROBES -->
+- **C1 (fuelmix): FAIL → PASS expected** — all eight gated 2024 classes land
+  within ±8.0 TWh under the probe (former FAILs at +5.34/+4.57; tightest row
+  COAL_BIT −7.31); 2023 rows per the 2023 probe below. Would be the first
+  MISO C1 clean sweep (16/16 all / 12/12 free).
+- **C3a: PASS/PASS/FAIL retained** — 2024 degrades −2.9% → ≈−7% (in-band),
+  2025 worsens ≈−13% → ≈−15% (already FAIL).
+- **C3b: 2024 PASS (≈0.12); 2025 ON the gate (≈0.20 ± solver noise)** — the
+  promotion-deciding number; Phase B scores it exactly.
+- **C3c: unchanged** (this lane adds no tail hours; that is the scarcity-depth
+  lane).
+- **C5a: 2024 improves (−5.7% → ≈−3%), 2025 small rise (stays PASS).**
+- **C8: unchanged** (pricing input, no forced energy; twin keeps it armed).
+- **Fail set: {fuelmix, price_mean, price_tail} → {price_mean, price_tail}
+  if C3b-2025 holds ≤0.20, else 3 FAILs with fuelmix swapped for
+  price_shape.** Either way C1 16/16 is a first; the C3b edge case is the
+  owner's promotion call, with the lane-2 event registry the named root
+  cause that relieves the 2025 price level.
 
 ## 7. Phase B execution checklist
 
