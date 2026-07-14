@@ -1,17 +1,15 @@
 {
- "id": "2026-07-14-miso-65-outage-regen",
- "label": "miso 65 outage regen",
- "date": "2026-07-14",
- "shorthand": "miso-65-outage-regen",
- "definition": "miso-65 candidate (main) -- the miso-64 keeper recipe VERBATIM (miso-62 meta.json + miso_rpe_pricing + unit_outage_short_windows + class_aware_fuel_price_fallback) on the REGENERATED campd-unit-outages-MISO.csv: the committed >=5-day extract was stale vs its own frozen deriver (missed sustained full stops incl. ~0.84 GW July-2025 North coal, span-CF<0.002). Zero flag/parameter changes; rule-14 measured-input staleness fix (caiso-78 re-gate precedent). Lane 3.",
- "years": [
-  2023,
-  2024,
-  2025
- ],
- "iso": "MISO",
- "file": "frontend/data/backcast/runs/2026-07-14-miso-65-outage-regen.js",
- "bundle": "results/calibration/miso65_outage_regen",
- "ablation_twin": "2026-07-14-miso-65-outage-regen-ablation",
- "market_story": "Zero mechanism changes: the miso-64 keeper recipe verbatim on the REGENERATED >=5-day unit-outage extract (campd-unit-outages-MISO.csv, commit 7b5c26fd). The committed extract did not reproduce from its own frozen deriver on the committed CAMPD parquets: re-running (guards/constants untouched) emits 1,655 windows it lacked (+~1,550 GW-days in EACH of 2023/2024/2025), among them seven >=5-day July-2025 North coal sustained full stops at span-CF<0.002 (Ottumwa, Gibson-3, Labadie-2, Baldwin-2, Cayuga-1/2, Sioux-1); July North-coal outage coverage rises 2.75->4.00 GW mean. Lane 3 (docs/FINDING-miso-lane3-north-supply-2026-07.md): the stale file left the model's July North coal shelf ~1.3-1.7 GW too deep every year. Scored effect vs the keeper: C3b price-shape FAIL->PASS (fail set sheds one: now {fuelmix, price_mean, price_tail}); C3a-2025 -15.4%->-12.9%; 2023 COAL_PRB clears (-8.47->in-band) and 2024 PRB narrows -12.41->-10.41; ST_GAS forced share collapses 35.5%->~12% (C8 passes clean, no grounded escalation needed \u2014 honest availability replaces forcing); C1 holds 14/16 all / 10/12 free. Honest cost: 2024 CT_PEAKER flips FAIL (+5.1->+8.30 TWh) \u2014 at $2.19 gas the LP fills the removed phantom coal with CT, where the real market self-committed coal (SOM Table 7: 53-56% of regulated-coal starts self-commit) \u2014 the availability truth EXPOSES the lane-1 conduct gap the stale extract was silently compensating (rule 15). July-2025 Indiana +0.4 only: the remaining July gap is owned by the lane-2 max-gen event registry, lane-1 conduct, and C3c scarcity depth (FINDING \u00a75)."
+  "id": "2026-07-14-miso-65-outage-regen",
+  "label": "miso 65 outage regen",
+  "date": "2026-07-14",
+  "shorthand": "miso-65-outage-regen",
+  "definition": "re-solve on G-A1-fixed gas_daily_shape (calendar-day factors renormalized to mean 1.0)",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-14-miso-65-outage-regen.js",
+  "bundle": "results/calibration/miso65_outage_regen"
 }
