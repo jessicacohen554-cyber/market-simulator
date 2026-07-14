@@ -11,6 +11,11 @@ mode:
              committed-band sunk-contract discount rescoped from coal rank to
              EIA-860 Regulatory Status — RE plants discount, NR merchants
              revert to full-cost committed bids; SOM Table 7 conduct split).
+- ``regb`` : identical flags to ``reg`` — a distinct out-dir tag for probes
+             solved AFTER the pre-declared V1b scope refinement landed in
+             fleet.py (eia860_selfcommit_scope_plants: RE ∪ cost-of-service
+             majority ownership; design doc §4). The flag is the same; the
+             scope-set derivation differs by commit.
 - ``base`` : no change (a same-machine miso-65 replica year, the
              environment-drift control for the A/B readout).
 
@@ -92,9 +97,9 @@ def main(mode: str, years: list[int]) -> None:
     kwargs["prb_overrides"]["miso_rpe_pricing"] = True
     kwargs["prb_overrides"]["unit_outage_short_windows"] = True
     kwargs["prb_overrides"]["class_aware_fuel_price_fallback"] = True
-    if mode == "reg":
+    if mode in ("reg", "regb"):
         # THE deliberate change: rescope the committed-band sunk-contract
-        # discount from coal rank (BIT) to EIA-860 Regulatory Status.
+        # discount from coal rank (BIT) to the measured cost-of-service set.
         kwargs["prb_overrides"]["coal_bit_committed_takeorpay"] = False
         kwargs["prb_overrides"]["coal_committed_takeorpay_regulated"] = True
 
@@ -117,6 +122,6 @@ def main(mode: str, years: list[int]) -> None:
 
 
 if __name__ == "__main__":
-    if len(sys.argv) < 3 or sys.argv[1] not in ("reg", "base"):
+    if len(sys.argv) < 3 or sys.argv[1] not in ("reg", "regb", "base"):
         raise SystemExit(__doc__.splitlines()[-5])
     main(sys.argv[1], [int(y) for y in sys.argv[2:]])
