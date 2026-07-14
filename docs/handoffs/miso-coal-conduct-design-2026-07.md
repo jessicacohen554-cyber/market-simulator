@@ -284,7 +284,37 @@ registry ≈ $6 of July alone; C3c scarcity depth; the G-23 import starvation
 2024 CO₂ −5.7% under → coal-up moves it toward actual; 2025 +0.9% → small
 further rise, stays inside ±7%.
 
-<!-- 2023 GUARD + BASE REPLICA FILLED AFTER SOLVES -->
+### 2023 — V1a broke COAL_BIT on the reversion; V1b clears every row
+
+V1a (RE-only): PRB −7.26 → +3.65, CT +3.59 → +1.95, C3a +1.8% → −1.6%, C3b
+0.082 → 0.085 — but **COAL_BIT −4.80 → −8.59 (FAIL by 0.59)**, decomposed
+per-plant to Prairie State (probe 8.99 vs actual 12.48) and Warrick (2.24 vs
+4.14). The pre-declared V1b scope (RE ∪ cost-of-service majority) engaged —
+`regb` probes:
+
+| class | regb-2023 | miso-65 | Δ | actual | to-actual: m65 → regb |
+|---|---|---|---|---|---|
+| COAL_PRB | 124.68 | 114.41 | +10.27 | 121.67 | −7.26 → **+3.01 PASS** |
+| COAL_BIT | 51.76 | 52.27 | −0.51 | 57.07 | −4.80 → **−5.31 PASS** |
+| COAL_LIGNITE | 6.27 | 5.86 | +0.42 | 7.05 | −1.19 → −0.78 |
+| CT_PEAKER | 18.46 | 20.63 | −2.17 | 17.04 | +3.59 → +1.42 |
+| total coal | 182.72 | 172.53 | +10.18 | 185.79 | −13.3 → −3.1 |
+
+Prairie State recovers 8.99 → 11.23 TWh, Warrick 2.24 → 3.38 — both toward
+actual: the ownership-refined set is empirically the conduct set. Prices:
+C3a +1.8% → −2.2% (magnitude ~unchanged), C3b 0.082 → 0.087 PASS. Watch row:
+CC_REGULAR-2023 shaves ~−4 (relabel-adjusted estimate ≈ −7.5 vs the −8.0
+edge) — Phase B's exact scoring adjudicates.
+
+### Same-machine base-2024 replica (environment control)
+
+Every coal/CT class reproduces the registered payload to ±0.01 TWh —
+probe-vs-payload deltas for those classes are clean A/B evidence. Raw-klass
+ST_GAS/CC_REGULAR sit +7.14/+1.37 above their payload values (the
+OTHER_FOSSIL relabel); their A/B baselines are the replica, not the payload.
+Scored-basis price reproduction: C3a −4.0% / C3b 0.105 vs the keeper's
+scored −2.9%/0.099 — solver-path noise of ~1pp/0.006 NRMSE on this box;
+read all probe price deltas with that tolerance.
 
 ## 6. Expected scored deltas for miso-66 (to verify in Phase B)
 
