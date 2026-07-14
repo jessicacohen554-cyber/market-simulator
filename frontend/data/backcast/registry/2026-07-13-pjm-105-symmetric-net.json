@@ -3,7 +3,7 @@
   "label": "pjm 105 symmetric net",
   "date": "2026-07-13",
   "shorthand": "pjm-105-symmetric-net",
-  "definition": "PJM 105 probe: the pjm-104 recipe (pjm-98 keeper recipe + net DA virtual depth + CT fast-start startup amortization v3/v4 on CAMPD-measured run horizons + the measured LONG_RUN top-of-curve floor) with the DA-virtual layer in its SYMMETRIC net form (pjm-105): the whole measured per-hour net(\u03bb) = \u03a3 DEC\u2265\u03bb \u2212 \u03a3 INC\u2264\u03bb curve rendered as DEC-form withdrawal rungs (net>0) plus INC-form net-supply rungs (net<0), endogenous clearing on both sides \u2014 replacing the one-sided clamp whose +10-17 TWh/yr phantom demand was the adjudicated C1 blocker (owner decision 2026-07-13: the clamp was diagnostic scaffolding, not keeper-eligible). The supply side is bounded by the measured NET position (\u22480 annual at actual DA prices), enters at measured submitted offer prices, and is not the condemned pjm-101 gross-INC construction. Zero fitted scalars in the delta (rules 1/13/20/21: submitted ex-ante measured curves, frozen against residuals).",
+  "definition": "PJM 105 \u2014 KEEPER (owner-approved promotion 2026-07-14, supersedes 2026-07-11-pjm-98-cc-mustrun). Recipe: the pjm-104 recipe (pjm-98 keeper recipe + net DA-virtual depth + CT fast-start startup amortization v3/v4 on CAMPD-measured run horizons + the measured LONG_RUN top-of-curve floor) with the DA-virtual layer rebuilt in its SYMMETRIC form: the whole measured per-hour net(\u03bb) = \u03a3 DEC\u2265\u03bb \u2212 \u03a3 INC\u2264\u03bb curve rendered as DEC-form withdrawal rungs (net>0) plus INC-form net-supply rungs (net<0), endogenous clearing on both sides \u2014 replacing the one-sided clamp whose +10.1/+14.7/+17.2 TWh/yr phantom demand the owner adjudicated non-keeper-eligible diagnostic scaffolding (2026-07-13). The INC side is bounded by the measured NET position (LP cleared net \u22125.8/\u22124.2/+1.9 TWh 2023-25, vs the \u22120.68/\u22120.95/+1.32 TWh actual-DA equilibrium pre-verified no-LP), enters at measured submitted offer prices, and is not the condemned pjm-101 gross-INC construction; zero fitted scalars in the delta (rules 1/13/20/21). WHY KEEPER: strictly dominates pjm-104 on every gated criterion \u2014 C1 flips to ALL-PASS (16/16 gated, free-class 12/12; 2024 CC_REGULAR +9.07\u2192\u22121.78 TWh), C2 2025 coal family +8.0%\u2192+5.4% (inside the pjm-98 keeper's +5.8% bar), C7 flips FAIL\u2192PASS (2023 CT_PEAKER off-peak flatness clears), C3a/C3b/C4/C5a/C8 hold PASS. Determination NOT-YET, on C3c alone (2025: 17h modeled vs 51h actual DA hours >$200 \u2014 the untouched scarcity-tail layer, a model miss, not a measured-input limitation) \u2014 the same open item the pjm-98 keeper line carried. Zero-forcing ablation twin registered alongside (rule 20/D-3). docs/calibration-log.md 2026-07-13 PJM entry; docs/FINDING-pjm-midmerit-level-2026-07.md \u00a77.",
   "years": [
     2023,
     2024,
@@ -11,5 +11,6 @@
   ],
   "iso": "PJM",
   "file": "frontend/data/backcast/runs/2026-07-13-pjm-105-symmetric-net.js",
-  "bundle": "results/calibration/pjm105_symmetric_net"
+  "bundle": "results/calibration/pjm105_symmetric_net",
+  "ablation_twin": "2026-07-13-pjm-105-symmetric-net-ablation"
 }
