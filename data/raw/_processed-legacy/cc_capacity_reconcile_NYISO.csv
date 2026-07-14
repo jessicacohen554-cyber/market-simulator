@@ -1,0 +1,15 @@
+plant_code,plant_name,current_mw,campd_p999_mw,eia860_winter_mw,reconciled_mw,delta_pct,source,mode
+7314,Richard M Flynn,243.1,108.2,160.0,108.2,-55.5,campd_demonstrated_peak,cap
+54592,Massena Energy Facility,102.1,53.6,93.0,53.6,-47.5,campd_demonstrated_peak,cap
+54593,Batavia Power Plant,66.2,42.9,60.1,42.9,-35.2,campd_demonstrated_peak,cap
+50744,Sterling Power Plant,64.2,43.9,65.2,43.9,-31.7,campd_demonstrated_peak,cap
+10190,Castleton Energy Center,98.9,71.2,77.3,71.2,-28.0,campd_demonstrated_peak,cap
+56196,Zeltmann,737.4,560.0,540.4,560.0,-24.1,campd_demonstrated_peak,cap
+57185,Cricket Valley Energy,1312.5,1086.9,1138.2,1086.9,-17.2,campd_demonstrated_peak,cap
+10620,Carthage Energy LLC,62.9,53.6,66.5,53.6,-14.7,campd_demonstrated_peak,cap
+55405,Athens Generating Plant,1221.6,1064.7,1213.2,1064.7,-12.8,campd_demonstrated_peak,cap
+54574,Saranac Facility,285.6,251.5,255.2,251.5,-11.9,campd_demonstrated_peak,cap
+54034,Rensselaer Cogen,88.2,78.0,84.0,78.0,-11.6,campd_demonstrated_peak,cap
+56940,CPV Valley Energy Center,770.5,696.1,740.8,696.1,-9.6,campd_demonstrated_peak,cap
+56234,Caithness Long Island Energy Center,348.9,361.7,365.2,361.7,3.7,campd_demonstrated_peak,raise
+50978,Carr Street Generating Station,76.5,80.0,105.0,80.0,4.6,campd_demonstrated_peak,raise
