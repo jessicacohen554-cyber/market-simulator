@@ -1,0 +1,168 @@
+# One-shot: solve the caiso-82 (hydro run-of-river/min-flow floor) A/B probe
+# pair (main + zero-forcing ablation twin) on CI and register both on the
+# backcast dashboard as PROBES — Data-API-ONLY publish (caiso-80-v2/caiso-81
+# pattern: no `git commit`/`git push` from the runner at any step). The
+# uploader targets a DEDICATED fresh pub branch, so its single commit parents
+# on CURRENT main (ci_api_upload_multi falls back to main when the branch
+# does not exist) and merges clean regardless of what bulk-merge does to the
+# session branch mid-run.
+#
+# Recipe: the caiso-80 keeper recipe verbatim + the SINGLE delta
+# hydro_dispatch_floor=True (scripts/probes/_caiso82_hydro_minflow_ab.py).
+# Pre-registration: results/calibration/
+# FINDING-caiso82-soft-month-margin-2026-07-14.md S4 (directions filed
+# BEFORE this workflow was pushed).
+name: caiso82-solve-register
+
+on:
+  push:
+    branches:
+      - claude/wizardly-gauss-wzmudk
+    paths:
+      - .github/workflows/caiso82-solve-register.yml
+
+permissions:
+  contents: write
+
+jobs:
+  solve-register:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Apply the caiso-82 core patch (sha-gated, in-workspace only)
+        run: |
+          set -euo pipefail
+          # The 7 modified sources (mechanism + registries + both solve
+          # seams) plus the new test exceed the MCP relay's push ceiling as
+          # full files, so the session ships them as one small compressed
+          # diff against main (caiso-80 v2 pattern). Applied in-workspace,
+          # never committed by git; the patched files ride the final
+          # Data-API commit as --extras so the pub branch stays the
+          # reproducible source.
+          base64 -d scripts/probes/_caiso82_core.patch.xz.b64 | xz -d > /tmp/caiso82_core.patch
+          echo "a5bb8550c75c3347dd507592be246a39514077bc8932ab1bc7b905562a524abe  /tmp/caiso82_core.patch" | sha256sum -c -
+          git apply /tmp/caiso82_core.patch
+          git status --short
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+          pip install openpyxl pytest
+
+      - name: Regression-test the floor mechanism
+        run: |
+          python -m pytest tests/test_hydro_floor.py \
+            tests/test_floor_mechanisms_ablation.py tests/test_hydro_envelope.py \
+            tests/test_config.py -q
+
+      - name: Curate clean partitions the recipe reads
+        run: |
+          set -euo pipefail
+          # data/clean is derived/gitignored — a fresh checkout has neither
+          # partition. Without capacity-deliverability the keeper's published
+          # MIC seam supersession silently skips (caiso-69 precedent).
+          PYTHONPATH="$PWD" python scripts/curate_capacity_deliverability.py --isos CAISO
+
+      - name: Solve caiso-82 main (2023-2025)
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: python scripts/probes/_caiso82_hydro_minflow_ab.py main
+
+      - name: Solve caiso-82 ablation twin
+        env:
+          MALLOC_ARENA_MAX: "2"
+          OMP_NUM_THREADS: "2"
+        run: python scripts/probes/_caiso82_hydro_minflow_ab.py ablation
+
+      - name: Tripwire — the floor must have engaged in the main run
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          # Fingerprint from the persisted P1 frames only: the MAIN run's
+          # fleet hydro trough (p10 hourly hydro) must ride the measured
+          # floor (its own p10 is 526-684 MW per year; the keeper replay
+          # without the floor prints 0.0-0.9 GW troughs with p10 near 0),
+          # and must clear the TWIN's trough by a wide margin — the pair
+          # must actually A/B the mechanism.
+          import pandas as pd
+
+          p10 = {}
+          for tag, bundle in (
+              ("main", "results/calibration/caiso82_hydro_minflow"),
+              ("twin", "results/calibration/caiso82_hydro_minflow-ablation"),
+          ):
+              for y in (2023, 2024, 2025):
+                  d = pd.read_parquet(
+                      f"{bundle}/dispatch/{y}_P1.parquet",
+                      columns=["fuel", "hour", "mw"],
+                  )
+                  hyd = d[d["fuel"] == "hydro"].groupby("hour")["mw"].sum()
+                  p10[tag, y] = float(hyd.quantile(0.10))
+                  print(f"{tag} {y}: hydro p10 {p10[tag, y]:.0f} MW")
+          for y in (2023, 2024, 2025):
+              m, t = p10["main", y], p10["twin", y]
+              assert m >= 400.0, f"{y}: floor did not engage (main p10 {m:.0f})"
+              assert m > t + 300.0, f"{y}: main/twin trough gap too small ({m:.0f} vs {t:.0f})"
+          PY
+
+      - name: Write probe attestations
+        run: python scripts/probes/_caiso82_attestation.py
+
+      - name: Score legitimacy diagnostics (both bundles)
+        env:
+          MALLOC_ARENA_MAX: "2"
+        run: |
+          set -uo pipefail
+          # legitimacy_diagnostics.py exits 1 when a gate fails; the artifact
+          # is written before the exit, so tolerate the exit code and only
+          # fail the job if an artifact is genuinely missing/empty
+          # (caiso67..81 solve-register precedent).
+          for b in caiso82_hydro_minflow caiso82_hydro_minflow-ablation; do
+            python scripts/legitimacy_diagnostics.py \
+              --bundle "results/calibration/$b" \
+              --iso CAISO --years 2023 2024 2025 \
+              --json-out "results/calibration/$b/legitimacy_diagnostics.json" || true
+            test -s "results/calibration/$b/legitimacy_diagnostics.json"
+          done
+
+      - name: Register both runs on the dashboard
+        run: |
+          set -euo pipefail
+          python scripts/dashboard_add_run.py \
+            --label "caiso 82 hydro minflow" \
+            --bundle results/calibration/caiso82_hydro_minflow | tee /tmp/r82m.out
+          python scripts/dashboard_add_run.py \
+            --label "caiso 82 hydro minflow ablation" \
+            --bundle results/calibration/caiso82_hydro_minflow-ablation | tee /tmp/r82a.out
+          echo "RID82M=$(grep '^RUN_ID=' /tmp/r82m.out | cut -d= -f2)" >> "$GITHUB_ENV"
+          echo "RID82A=$(grep '^RUN_ID=' /tmp/r82a.out | cut -d= -f2)" >> "$GITHUB_ENV"
+
+      - name: Upload per-run files via the GitHub Data API
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          python scripts/ci_api_upload_multi.py \
+            --rid "$RID82M" --bundle results/calibration/caiso82_hydro_minflow \
+            --rid "$RID82A" --bundle results/calibration/caiso82_hydro_minflow-ablation \
+            --branch claude/caiso82-hydro-minflow-pub \
+            --bench-iso CAISO \
+            --extra src/market_sim/config/constants.py \
+            --extra src/market_sim/config/scenarios.py \
+            --extra src/market_sim/data/floor_mechanisms.py \
+            --extra src/market_sim/data/hydro.py \
+            --extra src/market_sim/runner.py \
+            --extra scripts/run_calibration.py \
+            --extra scripts/legitimacy_diagnostics.py \
+            --extra tests/test_hydro_floor.py \
+            --message "caiso-82: hydro run-of-river/min-flow floor (hydro_dispatch_floor, MECH_HYDRO_MINFLOW) + register PROBE pair (main + zero-forcing twin) [skip ci]"
