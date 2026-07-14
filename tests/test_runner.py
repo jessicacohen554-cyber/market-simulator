@@ -140,6 +140,25 @@ class TestRunScenarioIso(RunnerTestBase):
         self.assertTrue((cache.CACHE_ROOT / "ERCOT" / key).is_dir())
         self.assertFalse((cache.CACHE_ROOT / "CAISO").exists())
 
+    def test_miso_forecast_reaches_first_solve(self):
+        # BLK-1 regression: build_default_storage(iso_config, config) is
+        # called unconditionally in run_scenario_iso, and used to raise
+        # ValueError for MISO (the one ISO missing from STORAGE_BASE_FLEET_MW)
+        # before any dispatch solve ran. mode="forecast" is the ScenarioConfig
+        # default, so this reproduces the exact reported crash path.
+        config = ScenarioConfig(iso="MISO", start_year=2026, end_year=2026)
+        self.assertEqual(config.mode, "forecast")
+        with (
+            patch.object(pipeline_solve, "DispatchModel", _FakeDispatchModel),
+            patch.object(pipeline_solve, "solve_dispatch", side_effect=_fake_solve),
+            patch.object(
+                pipeline_commitment, "solve_dispatch", side_effect=_fake_solve
+            ),
+        ):
+            key = runner.run_scenario_iso(config, "MISO")
+
+        self.assertTrue(cache.is_cached("MISO", key, 2026))
+
 
 class TestKnownYearPeakForesight(RunnerTestBase):
     """Capacity screens test the entering year's known peak (plan §2.3.1)."""

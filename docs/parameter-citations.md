@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-07-13. Every numeric input to the model traces to a primary source
+_Generated 2026-07-14. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1333 parameters registered** (745 flagged `needs-citation`).
+**1336 parameters registered** (745 flagged `needs-citation`).
 
 
 ## Calibration
@@ -770,15 +770,18 @@ inline comment and still need a dated primary source — search the table for
 | `storage_base_fleet_mw.ERCOT.high` | 25000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
 | `storage_base_fleet_mw.ERCOT.low` | 12000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
 | `storage_base_fleet_mw.ERCOT.mid` | 17000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.NEISO.high` | 2000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.NEISO.low` | 500.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.NEISO.mid` | 1000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.NYISO.high` | 3000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.NYISO.low` | 1000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.NYISO.mid` | 1500.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.PJM.high` | 9000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.PJM.low` | 3000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
-| `storage_base_fleet_mw.PJM.mid` | 5000.0 | 2 | Storage power capacity (MW) for the base year (2026). Subsequent ye… | 2026 | auto-generated |
+| `storage_base_fleet_mw.MISO.high` | 1440.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.MISO.low` | 600.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.MISO.mid` | 800.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.NEISO.high` | 1280.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.NEISO.low` | 580.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.NEISO.mid` | 770.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.NYISO.high` | 280.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.NYISO.low` | 190.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.NYISO.mid` | 250.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.PJM.high` | 870.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.PJM.low` | 380.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
+| `storage_base_fleet_mw.PJM.mid` | 500.0 | 2 | EIA-860 2025 Early Release energy-storage schedule (data/raw/eia-86… | 2025 | auto-generated |
 | `storage_degradation_replacement_fraction` | 0.25 | 2 | Cycling-degradation cost. Each MWh discharged consumes a slice of t… |  | auto-generated, needs-citation |
 | `storage_deployment_ceiling_mw.CAISO` | 25000.0 | 2 | ~52% of ~48 GW peak. Source: CAISO IEPR |  | auto-generated, needs-citation |
 | `storage_deployment_ceiling_mw.ERCOT` | 45000.0 | 2 | ~53% of ~85 GW peak. Source: ERCOT CDR |  | auto-generated, needs-citation |

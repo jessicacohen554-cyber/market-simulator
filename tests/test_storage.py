@@ -165,6 +165,56 @@ class TestBuildDefaultStorage(unittest.TestCase):
         with self.assertRaises(ValueError):
             build_default_storage(iso, ScenarioConfig(storage_deployment="huge"))
 
+    def test_all_six_isos_build_without_raising(self):
+        # BLK-1 regression: STORAGE_BASE_FLEET_MW must cover every registered
+        # ISO, or build_default_storage raises before the first solve (it used
+        # to be called unconditionally in runner.run_scenario_iso, and MISO was
+        # the one ISO missing from the pace dict).
+        for iso_name in ("ERCOT", "CAISO", "PJM", "MISO", "NYISO", "NEISO"):
+            self.assertIn(iso_name, STORAGE_BASE_FLEET_MW)
+            iso = get_iso_config(iso_name)
+            for pace in ("low", "mid", "high"):
+                units = build_default_storage(
+                    iso, ScenarioConfig(iso=iso_name, storage_deployment=pace)
+                )
+                self.assertGreater(len(units), 0, f"{iso_name}/{pace}")
+                for unit in units:
+                    self.assertGreater(unit.power_cap_mw, 0.0)
+
+    def test_miso_pace_ordering_and_totals_match_constant(self):
+        iso = get_iso_config("MISO")
+        low = build_default_storage(
+            iso, ScenarioConfig(iso="MISO", storage_deployment="low")
+        )
+        mid = build_default_storage(
+            iso, ScenarioConfig(iso="MISO", storage_deployment="mid")
+        )
+        high = build_default_storage(
+            iso, ScenarioConfig(iso="MISO", storage_deployment="high")
+        )
+        low_mw = sum(u.power_cap_mw for u in low)
+        mid_mw = sum(u.power_cap_mw for u in mid)
+        high_mw = sum(u.power_cap_mw for u in high)
+        self.assertLess(low_mw, mid_mw)
+        self.assertLess(mid_mw, high_mw)
+        # MISO has no zero-load zones, so the deployed total matches the
+        # configured pace exactly, like the ERCOT check above.
+        self.assertAlmostEqual(low_mw, STORAGE_BASE_FLEET_MW["MISO"]["low"])
+        self.assertAlmostEqual(mid_mw, STORAGE_BASE_FLEET_MW["MISO"]["mid"])
+        self.assertAlmostEqual(high_mw, STORAGE_BASE_FLEET_MW["MISO"]["high"])
+
+    def test_ercot_caiso_base_fleet_unchanged(self):
+        # The MISO fix (and the PJM/NYISO/NEISO EIA-860 re-derivation) must not
+        # touch the two already-cited entries.
+        self.assertEqual(
+            STORAGE_BASE_FLEET_MW["ERCOT"],
+            {"low": 12_000.0, "mid": 17_000.0, "high": 25_000.0},
+        )
+        self.assertEqual(
+            STORAGE_BASE_FLEET_MW["CAISO"],
+            {"low": 6_000.0, "mid": 8_000.0, "high": 12_000.0},
+        )
+
 
 class TestEstimateStorageRevenue(unittest.TestCase):
     """Tests for ``estimate_storage_revenue`` arbitrage estimation."""
