@@ -1,13 +1,13 @@
 {
-  "timestamp": "2026-07-14T02:27:40",
+  "timestamp": "2026-07-14T06:51:00",
   "git": {
-    "sha": "650592b4",
-    "branch": "claude/miso-lane3-north-supply-nfd8um",
+    "sha": "28d6112",
+    "branch": "claude/miso-ga1-gasshape-resolve-2ghdjz",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "miso-65 candidate (main) -- the miso-64 keeper recipe VERBATIM (miso-62 meta.json + miso_rpe_pricing + unit_outage_short_windows + class_aware_fuel_price_fallback) on the REGENERATED campd-unit-outages-MISO.csv: the committed >=5-day extract was stale vs its own frozen deriver (missed sustained full stops incl. ~0.84 GW July-2025 North coal, span-CF<0.002). Zero flag/parameter changes; rule-14 measured-input staleness fix (caiso-78 re-gate precedent). Lane 3.",
+  "model_changes_note": "re-solve on G-A1-fixed gas_daily_shape (calendar-day factors renormalized to mean 1.0)",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
@@ -61,7 +61,7 @@
     "ercot_dam_as_scarcity_threshold": 150.0,
     "temp_dependent_derate": false,
     "nyiso_dynamic_reserve_requirements": null,
-    "git_sha": "650592b4"
+    "git_sha": "28d6112"
   },
   "scenario_config": {
     "weather_year": 2023,
