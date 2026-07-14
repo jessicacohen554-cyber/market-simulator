@@ -3,7 +3,7 @@
   "label": "nyiso 62 cc hr",
   "date": "2026-07-13",
   "shorthand": "nyiso-62-cc-hr",
-  "definition": "fleet_to_bins CC HR-basis re-gate (caiso-78 blast radius): keeper recipe VERBATIM via replay_keeper.build_kwargs off nyiso61_downstate_import/meta.json, re-solved on the fixed base_hr-pre-rescale code (fleet.py, caiso-78 2026-07-12). Zero recipe changes, zero new parameters.",
+  "definition": "fleet_to_bins CC HR-basis re-gate keeper (recipe VERBATIM off nyiso61_downstate_import; zero recipe changes, zero new parameters), re-solved on the G-A1-fixed gas_daily_shape (generic Henry-Hub within-month calendar-day factors renormalized to mean exactly 1.0).",
   "years": [
     2023,
     2024,
