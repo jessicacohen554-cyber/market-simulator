@@ -1,0 +1,66 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "biomass": 450.3,
+    "gas_cc": 13182.7,
+    "gas_ct": 7494.99,
+    "gas_st": 9367.3,
+    "nuclear": 3203.0,
+    "oil": 3224.9
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 450.3,
+    "gas_cc": 12182.7,
+    "gas_ct": 7494.99,
+    "gas_st": 9367.3,
+    "nuclear": 3203.0,
+    "oil": 3224.9
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "NYISO",
+  "mode": "forecast",
+  "peak_demand_mw": 30206.0,
+  "renewable_additions": [
+    {
+      "mw": 1000.0,
+      "tech": "wind",
+      "zone": "Upstate_West"
+    },
+    {
+      "mw": 2000.0,
+      "tech": "solar",
+      "zone": "Upstate_West"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.1224,
+    "wind": 0.1684
+  },
+  "reserve_margin": 0.240922,
+  "retirements": [],
+  "rps_dual": 40.0,
+  "solar_cap_mw": 5500.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 1325.075,
+  "storage_power_mw": 1490.0,
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 1000.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2023_1",
+      "zone": "Upstate_West"
+    }
+  ],
+  "wind_cap_mw": 4400.0,
+  "year": 2023
+}

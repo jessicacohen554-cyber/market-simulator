@@ -74,6 +74,19 @@ def _fuel(technology: object, energy_source: object, prime_mover: object) -> str
     return _renewable_or_storage_fuel(technology, prime_mover) or "other"
 
 
+def _uid(plant_code: int, generator_id: object) -> str:
+    """``<plant>_<generator>`` id with the CSV comment char stripped.
+
+    Some EIA generator IDs contain ``#`` (e.g. NYISO plant 63625 unit ``HJD#1``).
+    Both this file's provenance header and the scorer's ``load_actuals`` read the
+    CSV with ``pandas comment="#"``, which truncates *any* line at the first
+    ``#`` — mangling such a row into an all-NaN entry. Replacing ``#`` with ``-``
+    keeps the id readable and the CSV parseable; no existing committed actuals
+    row carries ``#``, so ERCOT/PJM/MISO are byte-unchanged.
+    """
+    return f"{plant_code}_{str(generator_id).replace('#', '-')}"
+
+
 def _plant_ba() -> pd.Series:
     """Return a Plant Code → Balancing Authority Code map from the plant sheet."""
     plant = pd.read_parquet(EIA_860_DIR / "eia860_plant.parquet")
@@ -94,7 +107,7 @@ def build_additions(bas: set[str]) -> pd.DataFrame:
         rows.append(
             {
                 "kind": "addition",
-                "unit_id": f"{int(g['plant_id'])}_{g['generator_id']}",
+                "unit_id": _uid(int(g["plant_id"]), g["generator_id"]),
                 "plant_id": int(g["plant_id"]),
                 "fuel": _fuel(g["technology"], g["energy_source"], g["prime_mover"]),
                 "mw": float(g["nameplate_capacity_mw"] or 0.0),
@@ -120,7 +133,7 @@ def build_retirements(bas: set[str]) -> pd.DataFrame:
         rows.append(
             {
                 "kind": "retirement",
-                "unit_id": f"{int(g['Plant Code'])}_{g['Generator ID']}",
+                "unit_id": _uid(int(g["Plant Code"]), g["Generator ID"]),
                 "plant_id": int(g["Plant Code"]),
                 "fuel": _fuel(
                     g["Technology"], g.get("Energy Source 1"), g["Prime Mover"]
