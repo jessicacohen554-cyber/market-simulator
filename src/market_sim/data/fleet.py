@@ -6000,6 +6000,89 @@ def eia860_regulated_plants() -> frozenset[int]:
     )
 
 
+# EIA-860 utility Entity Type codes whose generation ownership is recovered
+# at cost of service (rate base or member/public rates): Investor-owned,
+# Municipal, Cooperative, Political subdivision, State, Federal. Q (IPP) and
+# the IND/COM self-suppliers are excluded — their offtake is not
+# rate-recovered, so the SOM's merchant conduct (economic offers) applies.
+_COST_OF_SERVICE_ENTITY_TYPES: frozenset[str] = frozenset(
+    {"I", "M", "C", "P", "S", "F"}
+)
+
+
+@lru_cache(maxsize=1)
+def eia860_costofservice_majority_plants() -> frozenset[int]:
+    """Plant codes majority-owned by cost-of-service entities (Schedule 4).
+
+    The ``Regulatory Status`` flag classifies the OPERATOR, so a plant whose
+    output is take-or-pay committed to municipal/cooperative/IOU owners reads
+    ``NR`` when a project company operates it (Prairie State: ~95% owned by
+    eight municipal JAAs/co-ops, EIA-860 Schedule 4). Conduct-wise those
+    owners recover the plant at cost and self-commit it like regulated fleet
+    (the 2024 SOM Table 7 merchant rows themselves show 25% of "merchant"
+    starts flagged must-run). This helper measures that leg: per plant, the
+    summed ``Percent Owned`` of Schedule-4 owners whose EIA-860 utility
+    ``Entity Type`` is cost-of-service (I/M/C/P/S/F); plants absent from
+    Schedule 4 are 100% operator-owned and use the operator's entity type.
+    Returns plants whose cost-of-service share exceeds 0.5.
+    """
+    d = active_eia860_dir()
+    own_path = d / "eia860_owner.parquet"
+    util_path = d / "eia860_utility.parquet"
+    plant_path = d / "eia860_plant.parquet"
+    if not (own_path.exists() and util_path.exists() and plant_path.exists()):
+        return frozenset()
+    util = pd.read_parquet(util_path, columns=["Utility ID", "Entity Type"])
+    etype = {
+        int(u): str(e).strip().upper()
+        for u, e in zip(util["Utility ID"], util["Entity Type"])
+        if pd.notna(u) and pd.notna(e)
+    }
+
+    own = pd.read_parquet(
+        own_path,
+        columns=["Plant Code", "Generator ID", "Ownership ID", "Percent Owned"],
+    ).dropna(subset=["Plant Code", "Ownership ID"])
+    own["pct"] = pd.to_numeric(own["Percent Owned"], errors="coerce")
+    own = own.dropna(subset=["pct"])
+    # Per (plant, owner): mean across that plant's generators (joint-owned
+    # coal plants list identical shares per unit), then sum the
+    # cost-of-service owners' shares per plant.
+    per_owner = own.groupby(["Plant Code", "Ownership ID"])["pct"].mean().reset_index()
+    per_owner["cos"] = per_owner["Ownership ID"].map(
+        lambda u: etype.get(int(u), "") in _COST_OF_SERVICE_ENTITY_TYPES
+    )
+    cos_share = per_owner[per_owner["cos"]].groupby("Plant Code")["pct"].sum()
+    majority = {int(p) for p, s in cos_share.items() if float(s) > 0.5}
+
+    # Plants absent from Schedule 4: 100% operator-owned (ownership.py's
+    # sparse-schedule rule) — classify by the operator's entity type.
+    plants = pd.read_parquet(plant_path, columns=["Plant Code", "Utility ID"]).dropna()
+    sched4 = set(int(p) for p in own["Plant Code"].unique())
+    for p, u in zip(plants["Plant Code"], plants["Utility ID"]):
+        p = int(p)
+        if p in sched4:
+            continue
+        if etype.get(int(u), "") in _COST_OF_SERVICE_ENTITY_TYPES:
+            majority.add(p)
+    return frozenset(majority)
+
+
+@lru_cache(maxsize=1)
+def eia860_selfcommit_scope_plants() -> frozenset[int]:
+    """The ``coal_committed_takeorpay_regulated`` scope set.
+
+    Union of the two measured cost-of-service legs: EIA-860 ``Regulatory
+    Status`` RE operators (:func:`eia860_regulated_plants`) and plants
+    majority-owned by cost-of-service entities
+    (:func:`eia860_costofservice_majority_plants`). See
+    docs/handoffs/miso-coal-conduct-design-2026-07.md §4 (the pre-declared
+    V1b refinement, engaged when the RE-only probe broke the 2023 COAL_BIT
+    band on the Prairie State reversion).
+    """
+    return eia860_regulated_plants() | eia860_costofservice_majority_plants()
+
+
 # Per-bin forced availability derates by year, for confirmed unit losses
 # that the age-based THERMAL_AVAILABILITY model cannot anticipate (turbine
 # fires, boiler explosions, etc.). Keyed by ``Bin_Label`` and run year, the
@@ -8909,7 +8992,9 @@ def build_dispatch_fleet(
                     config, "coal_committed_takeorpay_all", False
                 ),
                 committed_takeorpay_regulated=_reg_gate,
-                regulated_plants=eia860_regulated_plants() if _reg_gate else None,
+                regulated_plants=(
+                    eia860_selfcommit_scope_plants() if _reg_gate else None
+                ),
             )
             for g in dispatch_fleet
         ]
