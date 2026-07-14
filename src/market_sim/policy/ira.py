@@ -128,6 +128,60 @@ def compute_dispatch_credits(config: ScenarioConfig, year: int) -> tuple[float, 
     return wind_mc, solar_mc
 
 
+def wind_ptc_vintage_dispatch_offer(
+    iso: str,
+    year: int,
+    zone_names: list[str],
+    config: ScenarioConfig,
+    hours: int,
+):
+    """Return the vintage-scoped ``(n_zones, hours)`` wind dispatch offer.
+
+    The PTC-window-scoped replacement for the flat
+    ``-config.ira_ptc_wind`` wind offer from
+    :func:`compute_dispatch_credits`, gated by
+    ``config.wind_ptc_vintage_offers`` (the caller checks the gate; this
+    function only builds the array)::
+
+        offer[z, t] = -PTC_statutory(year) x eligible_share[z, month(t)]
+
+    * ``eligible_share`` is the measured per-zone-month share of online
+      wind nameplate capacity inside its 10-year federal §45 window
+      (EIA-860 vintages via
+      :func:`market_sim.data.renewables.wind_ptc_eligible_monthly_share`).
+      The capacity-weighted blend is the same first-moment zonal
+      aggregation the model applies to demand and CF: a single LP wind
+      column per zone cannot carry the fleet's true two-step {-PTC, ~$0}
+      bid stack, so the zone bids its fleet's mean keep-running value.
+      (The two-step limitation is recorded at the ScenarioConfig field.)
+    * ``PTC_statutory`` is the IRS-published inflation-adjusted §45 credit
+      for the production year
+      (:data:`market_sim.config.constants.WIND_PTC_STATUTORY_USD_PER_MWH`),
+      falling back to the flat ``config.ira_ptc_wind`` for years outside
+      the published table (forward years).
+    * Past the ``config.ira_wind_solar_last_year`` cliff the flat path
+      already zeroes the credit; this function mirrors that gate and
+      returns ``None`` (in-window vintages earning past the cliff is a
+      known conservatism inherited from the existing convention, not
+      re-adjudicated here).
+
+    Returns ``None`` when the share data is unavailable or the credit has
+    expired — callers keep the flat unscoped offer.
+    """
+    if year > config.ira_wind_solar_last_year:
+        return None
+    from market_sim.config.constants import WIND_PTC_STATUTORY_USD_PER_MWH
+    from market_sim.data.fleet import _hour_to_month_index
+    from market_sim.data.renewables import wind_ptc_eligible_monthly_share
+
+    share = wind_ptc_eligible_monthly_share(iso, zone_names, year)
+    if share is None:
+        return None
+    ptc = WIND_PTC_STATUTORY_USD_PER_MWH.get(year, config.ira_ptc_wind)
+    month_idx = _hour_to_month_index(hours)
+    return -ptc * share[:, month_idx]
+
+
 def ira_phaseout_fraction(year: int, config: ScenarioConfig) -> float:
     """Return the IRA §45Y/§48E credit fraction for non-wind/solar clean tech.
 

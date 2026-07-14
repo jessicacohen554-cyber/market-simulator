@@ -16282,41 +16282,41 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "NY",
-          "VT",
-          "RI",
-          "CT",
           "ME",
-          "NH",
+          "RI",
           "MD",
-          "NJ",
           "VA",
+          "VT",
+          "CT",
+          "NJ",
+          "NY",
           "MA",
-          "DE"
+          "DE",
+          "NH"
         ],
         "2024": [
-          "NY",
-          "VT",
-          "RI",
-          "CT",
           "ME",
-          "NH",
+          "RI",
           "MD",
+          "VT",
+          "CT",
           "NJ",
+          "NY",
           "MA",
-          "DE"
+          "DE",
+          "NH"
         ],
         "2025": [
-          "NY",
-          "VT",
-          "RI",
-          "CT",
           "ME",
-          "NH",
+          "RI",
           "MD",
+          "VT",
+          "CT",
           "NJ",
+          "NY",
           "MA",
-          "DE"
+          "DE",
+          "NH"
         ]
       },
       "unit": "",
@@ -25340,6 +25340,24 @@
       ]
     },
     {
+      "param_id": "scenario.wind_ptc_vintage_offers",
+      "display_name": "Wind Ptc Vintage Offers",
+      "value": false,
+      "unit": "",
+      "domain": "Policy",
+      "tier": 1,
+      "source": "ERCOT-65 PTC vintage scoping (structural flag, default off): wind dispatch offer = -PTC_statutory(year) x EIA-860 PTC-window-eligible capacity share per zone-month (26 U.S.C. §45(a)(2)(A)(ii) 10-year credit period; EIA-860 Generator_Operable vintages). See ScenarioConfig field docstring and docs/DIAGNOSIS-ercot-trough-price-formation-2026-07.md §9.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Curated 2026-07-13 (ERCOT-65): structural flag; statutory level lives in wind_ptc_statutory_usd_per_mwh; share is measured EIA-860.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-13",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "short_ton_to_metric_tonne",
       "display_name": "Short Ton To Metric Tonne",
       "value": 0.90718474,
@@ -28135,6 +28153,28 @@
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
       "old_repo_location": "",
       "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "wind_ptc_statutory_usd_per_mwh",
+      "display_name": "Wind Ptc Statutory Usd Per Mwh",
+      "value": {
+        "2023": 28.0,
+        "2024": 29.0,
+        "2025": 30.0
+      },
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "IRS §45 annual inflation-adjustment notices, wind, facilities placed in service before 2022: 2023 2.8 c/kWh (88 FR 40406, IAF 1.8909); 2024 2.9 c/kWh (IRS 2024 notice via Holland & Knight 2024-07); 2025 3.0 c/kWh (90 FR 22213, IAF 1.9971).",
+      "source_date": "2025-05",
+      "page_or_table": "",
+      "url": "https://www.federalregister.gov/documents/2025/05/27/2025-09366/",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-13",
       "flags": [
         "auto-generated"
       ]

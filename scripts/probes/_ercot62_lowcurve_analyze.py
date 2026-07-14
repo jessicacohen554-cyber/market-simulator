@@ -122,11 +122,18 @@ def main() -> None:
 
     trough = np.isin(hod, [0, 1, 2, 3, 4, 5, 23]) | ((hod >= 9) & (hod <= 15))
     print("\n-- trough (overnight+midday) hours below price bands --")
-    for thr in (10, 15, 20):
+    for thr in (0, 10, 15, 20):
+        # <$0 (ERCOT-65): the NEGATIVE band — RT 2023 spent 137 lw-hours
+        # below zero; the flat-PTC keeper never does at the lw hub.
         print(
             f"  <${thr}: A {int(((pa < thr) & trough).sum()):4d}  "
             f"B {int(((pb < thr) & trough).sum()):4d}  RT {int(((rt < thr) & trough).sum()):4d}"
         )
+    print(
+        "  <$0 all-hours: "
+        f"A {int((pa < 0).sum()):4d}  B {int((pb < 0).sum()):4d}  "
+        f"RT {int((rt < 0).sum()):4d}"
+    )
 
     # storage
     for name, bundle in (("A", A), ("B", B)):
