@@ -5,6 +5,13 @@ description: Register new backcast calibration runs on the deployable results da
 
 # Backcast results dashboard
 
+> **The bundle you register must come from an in-session solve.** Run
+> `scripts/run_calibration_full.py` in the Claude session — never spin up a
+> GitHub Actions workflow to produce or register a run. This repo is private and
+> runner-minutes are billed (see CLAUDE.md → "GitHub Actions — never offload
+> work to CI"). This skill only registers an already-produced bundle and pushes
+> the dashboard files; it does not run solves on CI.
+
 Register calibration runs on the JSON-driven backcast results dashboard. The
 dashboard is the pair of codebase-site pages served by GitHub Pages:
 
