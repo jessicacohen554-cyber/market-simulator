@@ -202,3 +202,180 @@ def test_addition_band_fails_on_large_miss():
     model = pd.DataFrame([{"fuel": "wind", "mw": 5000, "year": 2023}])  # -50%
     add = S.score_additions(model, actuals)
     assert add["by_tech"]["wind"]["band"] == "FAIL"
+
+
+# --------------------------------------------------------------------------- #
+# IS-2020 information-set scoring (RC-0B §c.5, T-R8) — hand-built 3-unit cases
+# --------------------------------------------------------------------------- #
+def test_channel_of_maps_legacy_known_to_announced():
+    """§c.5-4: legacy ``known`` → announced; new vocabulary passes through."""
+    assert S.channel_of("known") == "announced"
+    assert S.channel_of("confirmed") == "confirmed"
+    assert S.channel_of("announced") == "announced"
+    assert S.channel_of("economic") == "economic"
+    assert S.channel_of(None) == "economic"
+
+
+def test_model_plant_gen_raw_and_tranche_forms():
+    """Reversal membership needs raw ``<plant>_<gen>``; tranche forms are None."""
+    assert S.model_plant_gen("6023_1") == ("6023", "1")
+    assert S.model_plant_gen("869_2") == ("869", "2")
+    assert S.model_plant_gen("COAL_NE_p6146_committed") is None
+    assert S.model_plant_gen("coal_COAL_South_Central") is None
+
+
+def test_load_reversal_set_pjm_byron_dresden_only():
+    """§c.5-1 membership from the real registry: the four Byron/Dresden units
+    qualify (instrument ≤ V, superseded post-V); Eddystone (no
+    superseding_instrument_date) and non-superseded rows do not."""
+    rev = S.load_reversal_set("PJM")
+    assert set(rev) == {("6023", "1"), ("6023", "2"), ("869", "2"), ("869", "3")}
+    assert ("3161", "3") not in rev  # Eddystone: superseded, but no post-V date
+    assert ("6166", "1") not in rev  # Rockport: not superseded
+    # Other ISOs carry no post-V reversal row.
+    assert S.load_reversal_set("NYISO") == {}
+    assert S.load_reversal_set("MISO") == {}
+
+
+def test_reversal_exclusion_is2020_false_retire(monkeypatch):
+    """§c.5-1: a reversed nuclear retirement is excluded from IS-2020 false-retire
+    and reported as reversal_exposure_gw; raw keeps it (unit runs today)."""
+    reversal_set = {
+        ("6023", "1"): {
+            "instrument": "IL CEJA",
+            "unit_name": "Byron 1",
+            "capacity_mw": 1224.9,
+        }
+    }
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "6023_1",
+                "fuel": "nuclear",
+                "mw": 1200,
+                "year": 2022,
+                "reason": "known",
+            },
+            {
+                "unit_id": "9999_1",
+                "fuel": "coal",
+                "mw": 500,
+                "year": 2023,
+                "reason": "economic",
+            },
+        ]
+    )
+    actuals = _actuals(
+        [
+            {
+                "kind": "retirement",
+                "fuel": "coal",
+                "mw": 500,
+                "year": 2023,
+                "plant_id": 9999,
+            }
+        ]
+    )
+    raw = S.score_retirements(model, actuals)
+    ret_is = S.score_retirements_is2020(model, actuals, reversal_set)
+    # Raw: the 1.2 GW nuclear has no actual → false-retire.
+    assert abs(raw["false_retire"]["false_gw"] - 1.2) < 1e-6
+    # IS-2020: excluded → false-retire drops to 0, reported as exposure.
+    assert ret_is["false_retire"]["false_gw"] == 0.0
+    assert abs(ret_is["reversal_exposure_gw"] - 1.2) < 1e-6
+    assert ret_is["reversal_rows"][0]["unit_name"] == "Byron 1"
+
+
+def test_restart_addition_excluded_is2020(monkeypatch):
+    """§c.5-2 Palisades convention: a restart addition (a nuclear addition at a
+    plant the actuals also record retiring in-window) is excluded from IS-2020
+    additions; the physical exit stays."""
+    actuals = _actuals(
+        [
+            {
+                "kind": "retirement",
+                "fuel": "nuclear",
+                "mw": 800,
+                "year": 2022,
+                "plant_id": 1715,
+            },
+            {
+                "kind": "addition",
+                "fuel": "nuclear",
+                "mw": 800,
+                "year": 2025,
+                "plant_id": 1715,
+            },
+        ]
+    )
+    model_add = pd.DataFrame([], columns=["fuel", "mw", "year"])
+    add_is = S.additions_is2020(model_add, actuals)
+    assert abs(add_is["restart_excluded_gw"] - 0.8) < 1e-6
+    assert add_is["restart_rows"][0]["plant_id"] == "1715"
+
+
+def test_coverage_fix_recall_both_modes():
+    """§c.5-3 (Indian Point): once the nuclear unit is in the actuals, a model
+    nuclear retirement ≥ its MW is a correct recall (raw == IS, no reversal)."""
+    actuals = _actuals(
+        [
+            {
+                "kind": "retirement",
+                "fuel": "nuclear",
+                "mw": 1000,
+                "year": 2021,
+                "plant_id": 8907,
+            }
+        ]
+    )
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "8907_3",
+                "fuel": "nuclear",
+                "mw": 1030,
+                "year": 2022,
+                "reason": "known",
+            }
+        ]
+    )
+    raw = S.score_retirements(model, actuals)
+    ret_is = S.score_retirements_is2020(model, actuals, reversal_set={})
+    assert raw["unit_recall_gt300"]["recall"] == 1.0
+    assert raw["unit_recall_gt300"]["plant_recall_frac"] == 1.0
+    assert ret_is["reversal_exposure_gw"] == 0.0
+    assert ret_is["unit_recall_gt300"]["recall"] == 1.0
+
+
+def test_per_channel_separates_announced_from_economic():
+    """§c.5-4: per-channel table keeps an announced nuclear false-retire off the
+    economic screen's grade (and vice-versa). Legacy ``known`` → announced."""
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "6023_1",
+                "fuel": "nuclear",
+                "mw": 1000,
+                "year": 2022,
+                "reason": "known",
+            },
+            {
+                "unit_id": "COAL_z_p1_econ",
+                "fuel": "coal",
+                "mw": 4000,
+                "year": 2023,
+                "reason": "economic",
+            },
+        ]
+    )
+    actuals = _actuals(
+        [{"kind": "retirement", "fuel": "coal", "mw": 500, "year": 2023, "plant_id": 1}]
+    )
+    ch = S.score_channels(model, actuals)
+    # announced owns the phantom nuclear; economic owns the coal over-retire.
+    assert abs(ch["announced"]["false_retire_gw"] - 1.0) < 1e-6
+    assert ch["announced"]["recall_matched"] == 0
+    assert abs(ch["economic"]["false_retire_gw"] - 3.5) < 1e-6  # 4000-500
+    assert ch["economic"]["recall_matched"] == 1  # coal pool covers the 500 unit
+    assert ch["_n_big_actual"] == 1
+    assert ch["_legacy_known_mapped_to"] == "announced"
