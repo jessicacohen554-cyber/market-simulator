@@ -1,0 +1,45 @@
+diff --git a/scripts/build_dof_ledger.py b/scripts/build_dof_ledger.py
+index 3fe679a..f8c8f30 100644
+--- a/scripts/build_dof_ledger.py
++++ b/scripts/build_dof_ledger.py
+@@ -948,6 +948,40 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
+                 "(self-limiting by measurement, rule 18)",
+             )
+         )
++    if sc.get("st_gas_mustrun_p25_level"):
++        # miso-67 LEVEL SWAP for st_gas_mustrun_per_plant, ZERO fitted scalars:
++        # the floor level becomes each gate-armed ST_GAS plant's measured
++        # 25th-percentile-of-online available-CF (thermal_tranches_<ISO>.csv
++        # p25_cf) x nameplate, replacing the committed tranche (P5-of-online =
++        # LSL). Same frozen CEMS estimator (p25_cf is written by the SAME
++        # derive_thermal_tranches.py pass as committed_pct/online_frac — rule 23,
++        # no deriver touch), same window, same mechanism id — only the level
++        # source changes (rule 19). The boolean adds no tunable.
++        out.append(
++            _entry(
++                "st_gas_mustrun_p25_level (ST_GAS floor level = measured "
++                "p25-of-online available-CF x nameplate)",
++                "fleet.thermal_tranche_p25_level + generators_to_fleet_arrays "
++                "ST_GAS p25 block; window = top online_frac system-load hours "
++                "(thermal_tranches_<ISO>.csv, derive_thermal_tranches.py)",
++                "measured-physical",
++                iso,
++                n_scalars=0,
++                source="CAMPD/CEMS 2023-2025 p25-of-online available-CF per "
++                "plant (Sabine 32.9%, Harding Street 36.7%, Lewis Creek 28.4%, "
++                "Nine Mile 49.4%): the measured 25th-percentile dispatch level of "
++                "the Entergy MISO-South VLR steam fleet, which ran 30-67% CF "
++                "despite local LMP at/below SRMC (out-of-market VLR dispatch — "
++                "Amite South / DSG / WOTAB, MISO SOM). Replaces the committed "
++                "P5-of-online LSL (the correct min-stable-load but the wrong "
++                "dispatch level — miso-67 triage design)",
++                root_cause="p25_cf re-derives from multi-year CAMPD exactly like "
++                "committed_pct/online_frac when the record extends (rule 23); the "
++                "level stays BELOW available capacity so the floor never pins the "
++                "plant and dispatch above it is free (rule 13 — no outcome "
++                "pinning); a retired/deregulated plant exits the artifact",
++            )
++        )
+     if (
+         iso in ("NYISO", "CAISO")
+         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))
