@@ -2265,6 +2265,24 @@ class ScenarioConfig:
     # with RE penetration, MCL tracks the largest contingency). Mutually
     # exclusive with caiso_reserve_coopt under energy_reserve_coopt
     # (rule 19 — one mechanism per phenomenon). CAISO-only; default off.
+    caiso_scarcity_import_headroom: bool = False  # CAISO: count the hourly
+    # UNLOADED must-offer import capability in the scarcity overlay's reserve
+    # measure (caiso-85; FINDING-caiso-winter-gas-level-2026-07-15 §3). The
+    # overlay's LOLP reads reserve_headroom, which counts thermal + storage +
+    # curtailed VRE but ZERO import capability — import tranches are
+    # fuel_type="import" pseudo-generators (transmission.build_import_generators)
+    # excluded from RESERVE_FUEL_TYPES by construction. But CAISO's
+    # power-balance penalty prices fire only AFTER economic intertie bids
+    # exhaust (RA imports are must-offer, CPUC D.20-06-028), so an overlay that
+    # prices scarcity while the LP still holds unloaded sub-VOLL import supply
+    # is internally inconsistent. When on, the overlay reserve measure gains the
+    # hourly min( Σ import-tranche pmax·availability − import dispatch, the
+    # measured WECC corridor import cap − import dispatch ) — the unloaded
+    # import capability bounded by the same measured corridor envelope the LP
+    # dispatches under (eia_loader.measured_corridor_flow_envelope). Post-solve
+    # overlay only: dispatch, volumes, C1/C2/C4 are byte-identical to the
+    # keeper; only the scarcity adder (hence C3) moves. Zero new scalars.
+    # Requires caiso_scarcity_pricing; CAISO backcast only; default off.
     caiso_lcr_commitment_credit: bool = False  # CAISO: credit the LCR
     # constraint dual (local-commitment value, $/MWh) in the P2 commitment
     # margin, analogous to the AS-revenue credit (as_value). CAISO pays
