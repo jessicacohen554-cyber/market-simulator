@@ -53,12 +53,30 @@ produced for the price-duration-curve overlay (J3a):
     hub-mean hourly price (``p99`` is a high price, ``p1`` a low one).
   * ``data/raw/_validation-source/actual_lmp_hourly_{ISO}.parquet`` — the hub-mean
     hourly series itself (columns ``year``, ``hour``, ``rt``, ``da``), dense
-    on the model's fixed 8760-hour local calendar: Feb 29 is dropped, the
-    DST fall-back hour is averaged, and the spring-forward hour is NaN.
+    on the model's CHRONOLOGICAL 8760-hour calendar: row ``k`` is the k-th
+    real (UTC) hour after local standard-time midnight Jan 1, with the local
+    standard-time Feb 29 dropped. This is the clock every model series shares
+    (``eia_loader._eia_hourly_frame`` sorts by UTC — a fixed-offset clock with
+    no DST discontinuities), so the parquet pairs hour-for-hour with model
+    output. The market reports label hours on each ISO's DST *prevailing*
+    clock; every reader converts those labels to real instants (UTC) first,
+    so the DST fall-back's two instances each occupy their own real slot (no
+    averaging) and no spring-forward hour is NaN'd. (Until 2026-07-14 the
+    parquet was indexed on the prevailing clock directly, which paired every
+    hourly comparison one real hour off for the ~5,600 DST hours/year — the
+    scoring-clock artifact in
+    docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md §1.)
 
 Run after refreshing ``data/raw/lmp-data/``; commit the JSON and the
 hourly parquet. Missing source files for an ISO/year are skipped, so a
-partial data drop still produces a valid reference.
+partial data drop still produces a valid reference. ``--parquet-only``
+rebuilds the hourly parquets without rewriting the JSON: the JSON's legacy
+``da``/``rt``/``*_mon`` means weight raw report rows directly and are
+clock-invariant, but its ``*_pct`` fields are computed from the dense series,
+whose completeness improved with the chronological clock (the fall-back
+hour's two instances and the spring-forward hour are now real values) —
+those cent-level deltas land only at the next authorized JSON re-derivation,
+with citation (rule 23).
 
 Usage:
     python scripts/derive_actual_lmp.py [--years 2023 2024 2025]
@@ -67,11 +85,13 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import datetime as _dt
 import io
 import json
 import sys
 import zipfile
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import numpy as np
 import openpyxl
@@ -118,6 +138,22 @@ CAISO_HUB_WEIGHTS = {
 # CISO localizes to Pacific prevailing time, like the model's dispatch clock
 # (``scripts/convert_eia930.py`` BA_TIMEZONES["CISO"], ``eia_loader``).
 CAISO_TZ = "America/Los_Angeles"
+
+# Fixed STANDARD-time zone per ISO (Etc/GMT+N == UTC-N, POSIX sign), the
+# chronological clock the hourly parquets are indexed on. The model's 8760
+# calendar (``eia_loader._eia_hourly_frame``: rows sorted by UTC from local
+# standard midnight Jan 1) is exactly this fixed-offset clock, so the actuals
+# must be too — NOT the prevailing (DST) clock the reports label hours with.
+_STD_TZ = {
+    "ERCOT": "Etc/GMT+6",  # CST
+    "PJM": "Etc/GMT+5",  # EST
+    "CAISO": "Etc/GMT+8",  # PST
+    "NYISO": "Etc/GMT+5",  # EST
+    "NEISO": "Etc/GMT+5",  # EST
+}
+# Prevailing (DST-following) zone used to turn report wall-clock labels into
+# real instants before std-clock indexing.
+_EASTERN_TZ = "America/New_York"
 # Minimum valid system-hours to emit a CAISO year. OASIS's ~39-month retention
 # aged out CAISO DAM/RTM before ~2023-03-10 (probed 2026-06-22: ERR 1000 before
 # Mar 10, data from Mar 10 on), so the deepest 2023 reference we can fetch is
@@ -149,14 +185,25 @@ def _by_month(values, months) -> list:
     return out
 
 
-def _hour_index(ts: pd.Series) -> np.ndarray:
-    """Map local timestamps to the fixed non-leap hour-of-year, Feb 29 -> -1."""
+def _std_hour_index(ts: pd.DatetimeIndex, year: int, std_tz: str) -> np.ndarray:
+    """Chronological hour-of-year for tz-aware instants; out-of-scope -> -1.
+
+    Converts real instants to the ISO's fixed standard-time clock (``std_tz``)
+    and maps (month, day, hour) onto the non-leap 8760 calendar — row ``k`` is
+    the k-th UTC hour after local standard midnight Jan 1. Rows outside
+    ``year`` (a boundary spill from a prevailing-year source file) and the
+    local standard-time Feb 29 map to -1 for the caller to drop.
+    """
+    std = ts.tz_convert(std_tz)
+    month = np.asarray(std.month)
+    day = np.asarray(std.day)
     idx = (
-        np.asarray([_MONTH_START_HOUR[m - 1] for m in ts.dt.month])
-        + (ts.dt.day.to_numpy() - 1) * 24
-        + ts.dt.hour.to_numpy()
+        np.asarray([_MONTH_START_HOUR[m - 1] for m in month])
+        + (day - 1) * 24
+        + np.asarray(std.hour)
     )
-    return np.where((ts.dt.month == 2) & (ts.dt.day == 29), -1, idx)
+    ok = (np.asarray(std.year) == year) & ~((month == 2) & (day == 29))
+    return np.where(ok, idx, -1)
 
 
 def _pct(values: np.ndarray) -> dict:
@@ -169,18 +216,23 @@ def _pct(values: np.ndarray) -> dict:
 
 
 def _hub_mean_hourly(df: pd.DataFrame, year: int) -> pd.DataFrame:
-    """Hub-mean hourly RT/DA series on the dense fixed 8760-hour calendar.
+    """Hub-mean hourly RT/DA series on the dense chronological 8760 calendar.
 
-    The raw export is one row per hub per local (EPT) hour. The hub mean is
-    taken first, then wall-clock hours are placed on the model's non-leap
-    local calendar: Feb 29 is dropped, the duplicated DST fall-back hour
-    averages its two instances, and the missing spring-forward hour is NaN.
+    The raw export is one row per hub per hour and carries the real instant
+    (``datetime_beginning_utc``) alongside the prevailing EPT label; the UTC
+    column indexes the chronological calendar directly, so the DST fall-back
+    hour's two instances land in their own slots and no hour is missing.
     """
-    ts = pd.to_datetime(
-        df["datetime_beginning_ept"], format="%m/%d/%Y %I:%M:%S %p", errors="coerce"
+    utc = pd.DatetimeIndex(
+        pd.to_datetime(
+            df["datetime_beginning_utc"],
+            format="%m/%d/%Y %I:%M:%S %p",
+            errors="coerce",
+            utc=True,
+        )
     )
     g = (
-        df.assign(hour=_hour_index(ts))
+        df.assign(hour=_std_hour_index(utc, year, _STD_TZ["PJM"]))
         .query("hour >= 0")
         .groupby("hour")[["total_lmp_rt", "total_lmp_da"]]
         .mean()
@@ -206,7 +258,13 @@ def _pjm(year: int) -> tuple[dict, pd.DataFrame] | None:
     if not f.exists():
         return None
     df = pd.read_csv(
-        f, usecols=["datetime_beginning_ept", "total_lmp_rt", "total_lmp_da"]
+        f,
+        usecols=[
+            "datetime_beginning_utc",
+            "datetime_beginning_ept",
+            "total_lmp_rt",
+            "total_lmp_da",
+        ],
     )
     mon = pd.to_datetime(
         df["datetime_beginning_ept"], format="%m/%d/%Y %I:%M:%S %p", errors="coerce"
@@ -253,14 +311,15 @@ def _caiso_system_series(name: str, year: int) -> pd.Series | None:
     return pd.Series(price, index=ts, name="price")
 
 
-def _caiso_densify(ser: pd.Series) -> np.ndarray:
-    """Dense fixed-8760 array from a Pacific-time-indexed price series.
+def _densify_std(ser: pd.Series, year: int, std_tz: str) -> np.ndarray:
+    """Dense chronological-8760 array from a tz-aware-indexed price series.
 
-    Feb 29 is dropped, the DST fall-back hour averages its two instances and
-    the missing spring-forward hour is NaN — the same calendar as
-    :func:`_hub_mean_hourly`.
+    The index must carry real instants (any tz); each maps to its own
+    standard-clock slot via :func:`_std_hour_index` — the same calendar as
+    :func:`_hub_mean_hourly`. Sub-hourly rows and true duplicate instants
+    average within their slot; slots with no source hour stay NaN.
     """
-    hour = _hour_index(pd.Series(ser.index))
+    hour = _std_hour_index(pd.DatetimeIndex(ser.index), year, std_tz)
     g = pd.Series(ser.to_numpy()).groupby(hour).mean()
     g = g[g.index >= 0]
     return g.reindex(range(_HOURS_PER_YEAR)).to_numpy(float)
@@ -287,7 +346,7 @@ def _caiso(year: int) -> tuple[dict, pd.DataFrame] | None:
         if ser is None:
             dense[key] = np.full(_HOURS_PER_YEAR, np.nan)
             continue
-        d = _caiso_densify(ser)
+        d = _densify_std(ser, year, _STD_TZ["CAISO"])
         dense[key] = d
         parts[key] = round(float(ser.mean()), 2)
         parts[f"{key}_mon"] = _by_month(ser.to_numpy(), pd.Series(ser.index).dt.month)
@@ -334,19 +393,60 @@ def _month_day(v) -> tuple[int, int] | None:
         return None
 
 
+class _PrevailingShift:
+    """Memoized prevailing-label -> standard-clock hour shift for one year.
+
+    ERCOT reports label hours on the Central *prevailing* clock plus a
+    "Repeated Hour Flag" that marks the second (post-fall-back, CST) instance
+    of the duplicated hour. The chronological slot of a labelled hour is its
+    prevailing hour-of-year minus 1 while DST is in effect (CDT = CST + 1),
+    minus 0 otherwise; the flag resolves the one ambiguous wall hour per year
+    ("N" = first/CDT instance, "Y" = second/CST instance). Nonexistent wall
+    times (the spring-forward hour) never appear in the reports.
+    """
+
+    def __init__(self, year: int, tz_name: str):
+        self._year = year
+        self._zi = ZoneInfo(tz_name)
+        self._memo: dict[tuple[int, int, int, bool], int] = {}
+
+    def __call__(self, month: int, day: int, hod: int, repeated: bool) -> int:
+        key = (month, day, hod, repeated)
+        got = self._memo.get(key)
+        if got is None:
+            naive = _dt.datetime(self._year, month, day, hod)
+            first = naive.replace(tzinfo=self._zi)
+            ambiguous = (
+                first.utcoffset() != naive.replace(tzinfo=self._zi, fold=1).utcoffset()
+            )
+            dst = (not repeated) if ambiguous else bool(first.dst())
+            got = self._memo[key] = 1 if dst else 0
+        return got
+
+
 def _ercot_hubavg(
-    zip_glob: str, name_col: int, price_col: int, hod_col: int, hod_kind: str
+    zip_glob: str,
+    year: int,
+    name_col: int,
+    price_col: int,
+    hod_col: int,
+    flag_col: int,
+    hod_kind: str,
 ) -> dict | None:
     """``HB_HUBAVG`` annual/monthly means + dense hourly series for a workbook.
 
     Args:
         zip_glob: Glob (under ``LMP_DIR``) selecting the report zip.
+        year: Calendar year of the workbook (resolves the DST windows).
         name_col: Zero-based column index of the settlement-point name.
         price_col: Zero-based column index of the settlement-point price.
         hod_col: Zero-based column index of the hour-of-day field — the DAM
             "Hour Ending" (``HH:00``) string or the RTM "Delivery Hour" (1-24)
             integer; hour-of-day is the field minus one (hour-beginning, the
             PJM convention).
+        flag_col: Zero-based column index of the "Repeated Hour Flag" column
+            ("Y" marks the second, post-fall-back instance of the duplicated
+            prevailing hour).
         hod_kind: ``"he"`` for the DAM ``HH:00`` string, ``"int"`` for the RTM
             1-24 integer.
 
@@ -357,10 +457,10 @@ def _ercot_hubavg(
         matching zip is present. The annual/monthly means weight every raw row
         equally (15-minute intervals for RTM, including Feb 29 and the
         duplicated DST fall-back hour) — unchanged from the pre-hourly code.
-        The ``hourly`` series instead lands on the model's fixed non-leap local
-        calendar: Feb 29 is dropped, the RTM 15-minute intervals and the
-        duplicated DST fall-back hour average into their hour, and the missing
-        spring-forward hour stays NaN.
+        The ``hourly`` series lands on the chronological standard-clock
+        calendar (:class:`_PrevailingShift`): Feb 29 is dropped, the RTM
+        15-minute intervals average into their hour, and the fall-back hour's
+        two instances occupy their own real slots — every real hour present.
     """
     paths = sorted(LMP_DIR.glob(zip_glob))
     if not paths:
@@ -369,6 +469,7 @@ def _ercot_hubavg(
         inner = next(n for n in z.namelist() if n.endswith(".xlsx"))
         data = z.read(inner)
     wb = openpyxl.load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+    shift = _PrevailingShift(year, "America/Chicago")
     msum, mcnt = [0.0] * 12, [0] * 12
     hsum = np.zeros(_HOURS_PER_YEAR)
     hcnt = np.zeros(_HOURS_PER_YEAR, dtype=np.int64)
@@ -396,7 +497,12 @@ def _ercot_hubavg(
                     if hod_kind == "he"
                     else int(r[hod_col]) - 1
                 )
-                hoy = _MONTH_START_HOUR[m - 1] + (d - 1) * 24 + hod
+                hoy = (
+                    _MONTH_START_HOUR[m - 1]
+                    + (d - 1) * 24
+                    + hod
+                    - shift(m, d, hod, str(r[flag_col]).strip().upper() == "Y")
+                )
                 if 0 <= hoy < _HOURS_PER_YEAR:
                     hsum[hoy] += price
                     hcnt[hoy] += 1
@@ -415,13 +521,13 @@ def _ercot(year: int) -> tuple[dict, pd.DataFrame] | None:
     Mirrors :func:`_pjm`: the ``{da, rt, da_mon, rt_mon, da_pct, rt_pct, src}``
     record uses the ``HB_HUBAVG`` hub-average price (itself the comparable ERCOT
     system price), and ``hourly`` is the dense series for the parquet sidecar.
-    DA and RT are emitted independently, so 2025 — RT only, no DAM workbook —
-    still produces a record (its ``da`` column is all-NaN).
+    DA and RT are emitted independently, so a year with only one workbook
+    staged still produces a record (the other column is all-NaN).
     """
-    # DAM columns: Date, Hour Ending, Repeated, Settlement Point(3), Price(4).
-    da = _ercot_hubavg(f"*DAMLZHBSPP_{year}*.zip", 3, 4, 1, "he")
-    # RTM columns: Date, Hour, Interval, Repeated, Name(4), Type, Price(6).
-    rt = _ercot_hubavg(f"*RTMLZHBSPP_{year}*.zip", 4, 6, 1, "int")
+    # DAM columns: Date, Hour Ending(1), Repeated(2), Settlement Point(3), Price(4).
+    da = _ercot_hubavg(f"*DAMLZHBSPP_{year}*.zip", year, 3, 4, 1, 2, "he")
+    # RTM columns: Date, Hour(1), Interval, Repeated(3), Name(4), Type, Price(6).
+    rt = _ercot_hubavg(f"*RTMLZHBSPP_{year}*.zip", year, 4, 6, 1, 3, "int")
     if da is None and rt is None:
         return None
     out: dict = {"src": ERCOT_SRC}
@@ -473,8 +579,9 @@ NYISO_ZONE_MAP: dict[str, list[str]] = {
 # ISO-NE SMD per-zone sheets folded into the four model zones; the hub is the
 # system "ISO NE CA" sheet (.H.INTERNAL_HUB). In every SMD sheet DA_LMP is
 # column 4 and RT_LMP column 8 (0-based), and Hr_End ("01".."24") is
-# hour-ending, so hour-beginning is the field minus one. The workbook uses a
-# fixed 24-hour-per-day clock (no DST 23/25-hour days; leap years carry Feb 29).
+# hour-ending on the Eastern prevailing clock: the spring-forward day has 23
+# rows (Hr_End "02" absent), the fall-back day 25 ("02X" marks the repeated
+# hour). Leap years carry Feb 29.
 NEISO_HUB_SHEET = "ISO NE CA"
 NEISO_DA_COL, NEISO_RT_COL = 4, 8
 NEISO_ZONE_MAP: dict[str, list[str]] = {
@@ -492,6 +599,27 @@ def _read_nyiso_csv(data: bytes) -> pd.DataFrame:
     ).rename(columns={"LBMP ($/MWHr)": "lmp"})
 
 
+def _localize_ordered(ts: pd.Series, by: pd.Series, tz: str) -> pd.DatetimeIndex:
+    """Real instants from prevailing wall-clock stamps, by row order.
+
+    NYISO files carry no timezone column, so the duplicated fall-back hour is
+    two identical wall-clock stamps; within each ``by`` group (zone) and local
+    date the rows are chronological, so a stamp at or below the group's
+    running maximum is the second (post-fall-back, EST) instance. That flag
+    feeds ``tz_localize(ambiguous=...)`` (True = first/DST instance); the
+    spring-forward hour never appears in the files, so nonexistent stamps
+    raise rather than being silently repaired.
+    """
+    ns = ts.to_numpy("datetime64[ns]").astype("int64")
+    prev_max = (
+        pd.Series(ns)
+        .groupby([by.to_numpy(), ts.dt.normalize().to_numpy()], sort=False)
+        .transform(lambda x: x.cummax().shift(1))
+    )
+    second = ns <= prev_max.to_numpy()  # NaN compares False: first row stays first
+    return pd.DatetimeIndex(ts).tz_localize(tz, ambiguous=~second, nonexistent="raise")
+
+
 def _nyiso_wide(year: int, kind: str) -> pd.DataFrame | None:
     """Hourly per-internal-zone NYISO LBMP wide frame for ``year`` / ``kind``.
 
@@ -499,8 +627,9 @@ def _nyiso_wide(year: int, kind: str) -> pd.DataFrame | None:
     ``NYISO_zonal_hourly.zip``, already hourly — or ``"rt"`` — the flat monthly
     ``realtime_zone`` zips, 5-minute, averaged to the hour. Columns are the
     eleven internal zones (external-proxy buses dropped); the index is the
-    local (EPT) wall-clock hour, with the duplicated DST fall-back hour
-    averaged and the missing spring-forward hour absent. ``None`` if no source.
+    real (UTC) hour via :func:`_localize_ordered`, so the DST fall-back
+    hour's two instances stay distinct and no hour is missing. ``None`` if no
+    source.
     """
     frames: list[pd.DataFrame] = []
     if kind == "da":
@@ -533,9 +662,12 @@ def _nyiso_wide(year: int, kind: str) -> pd.DataFrame | None:
     df = pd.concat(frames, ignore_index=True)
     df = df[df["Name"].isin(NYISO_INTERNAL)]
     ts = pd.to_datetime(df["Time Stamp"], format=fmt, errors="coerce")
-    df = df.assign(ts=ts.dt.floor("h")).dropna(subset=["ts"])
-    # pivot_table mean folds the RT 5-minute intervals and the DST fall-back
-    # hour's two instances into one value per zone per wall-clock hour.
+    df = df[ts.notna()]
+    ts = ts[ts.notna()]
+    utc = _localize_ordered(ts, df["Name"], _EASTERN_TZ).tz_convert("UTC")
+    df = df.assign(ts=pd.DatetimeIndex(utc).floor("h"))
+    # pivot_table mean folds the RT 5-minute intervals into one value per zone
+    # per real hour; the fall-back hour's two instances are distinct UTC hours.
     return df.pivot_table(index="ts", columns="Name", values="lmp", aggfunc="mean")
 
 
@@ -544,7 +676,7 @@ def nyiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
 
     Columns are the five model zones (each the simple mean of its constituent
     NYISO internal zones) plus ``hub`` (the simple mean of all eleven internal
-    zones), indexed by the local hour. Shared by the JSON builder and the
+    zones), indexed by the real (UTC) hour. Shared by the JSON builder and the
     zonal-sufficiency test. ``None`` when the source files are absent.
     """
     wide = _nyiso_wide(year, kind)
@@ -562,22 +694,35 @@ def nyiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
 def _neiso_sheet_series(wb, sheet: str) -> dict[str, pd.Series]:
     """``{"da": series, "rt": series}`` of hourly LMP for one SMD sheet.
 
-    The timestamp is the row's Date plus (Hr_End − 1) hours. Leap-day Feb 29
-    rows stay in (dropped only when densified onto the 8760 calendar).
+    The SMD sheets label hours on the Eastern prevailing clock: 23 rows on the
+    spring-forward day, 25 on the fall-back day (``Hr_End`` "02X" marks the
+    repeated hour, which the old integer parse silently dropped). Within each
+    Date the rows are chronological, so the k-th row of a day begins exactly k
+    real hours after that day's (never-ambiguous) local midnight — the index
+    is those UTC instants. Leap-day Feb 29 rows stay in (dropped only when
+    densified onto the 8760 calendar).
     """
     rows = wb[sheet].iter_rows(values_only=True)
     next(rows, None)  # header
     idx: list = []
     da: list = []
     rt: list = []
+    day_start: pd.Timestamp | None = None
+    day_key = None
+    pos = 0
     for r in rows:
         if r is None or r[0] is None or r[1] is None:
             continue
-        try:
-            he = int(str(r[1]))
-        except ValueError:
+        he = str(r[1]).strip()
+        if not he[:2].isdigit():
             continue
-        idx.append(pd.Timestamp(r[0]) + pd.Timedelta(hours=he - 1))
+        date = pd.Timestamp(r[0]).normalize()
+        if date != day_key:
+            day_key = date
+            day_start = date.tz_localize(_EASTERN_TZ).tz_convert("UTC")
+            pos = 0
+        idx.append(day_start + pd.Timedelta(hours=pos))
+        pos += 1
         da.append(r[NEISO_DA_COL])
         rt.append(r[NEISO_RT_COL])
     index = pd.DatetimeIndex(idx)
@@ -592,7 +737,7 @@ def neiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
 
     Columns are the four model zones (each the simple mean of its constituent
     SMD load-zone sheets) plus ``hub`` (the .H.INTERNAL_HUB "ISO NE CA"
-    sheet), indexed by the local hour. Shared by the JSON builder and the
+    sheet), indexed by the real (UTC) hour. Shared by the JSON builder and the
     zonal-sufficiency test. ``None`` when the workbook is absent.
     """
     path = LMP_DIR / "NEISO" / f"{year}_smd_hourly.xlsx"
@@ -615,15 +760,18 @@ def neiso_zone_hourly(year: int, kind: str = "da") -> pd.DataFrame | None:
 
 
 def _assemble_zonal(
-    frames: dict[str, pd.DataFrame | None], year: int, src: str
+    frames: dict[str, pd.DataFrame | None], year: int, src: str, std_tz: str
 ) -> tuple[dict, pd.DataFrame]:
     """Build the JSON record + dense hourly frame from model-zone/hub frames.
 
     ``frames`` maps ``"da"`` / ``"rt"`` to a model-zone-plus-``hub`` frame (or
-    ``None``). The top-level ``da``/``rt``/``*_mon``/``*_pct`` mirror the
-    ERCOT/PJM/CAISO schema and carry the hub; a ``zones`` sub-dict adds each
-    model zone's ``da``/``rt``/``da_mon``/``rt_mon``. The dense 8760 hub series
-    feeds the parquet sidecar (same calendar as the other ISOs).
+    ``None``) indexed by tz-aware real instants. The top-level
+    ``da``/``rt``/``*_mon``/``*_pct`` mirror the ERCOT/PJM/CAISO schema and
+    carry the hub (monthly labels stay on the Eastern prevailing wall clock,
+    as the raw reports label them); a ``zones`` sub-dict adds each model
+    zone's ``da``/``rt``/``da_mon``/``rt_mon``. The dense 8760 hub series
+    feeds the parquet sidecar (chronological ``std_tz`` calendar, same as the
+    other ISOs).
     """
     parts: dict = {}
     zones_out: dict[str, dict] = {}
@@ -633,11 +781,11 @@ def _assemble_zonal(
         if fr is None or "hub" not in fr.columns or not fr["hub"].notna().any():
             dense[kind] = np.full(_HOURS_PER_YEAR, np.nan)
             continue
-        months = pd.Series(fr.index).dt.month
+        months = pd.Series(np.asarray(fr.index.tz_convert(_EASTERN_TZ).month))
         hub = fr["hub"]
         parts[kind] = round(float(hub.mean()), 2)
         parts[f"{kind}_mon"] = _by_month(hub.to_numpy(), months)
-        d = _caiso_densify(hub)
+        d = _densify_std(hub, year, std_tz)
         dense[kind] = d
         parts[f"{kind}_pct"] = _pct(d)
         for z in fr.columns:
@@ -671,7 +819,7 @@ def _nyiso(year: int) -> tuple[dict, pd.DataFrame] | None:
     frames = {k: nyiso_zone_hourly(year, k) for k in ("da", "rt")}
     if frames["da"] is None and frames["rt"] is None:
         return None
-    return _assemble_zonal(frames, year, NYISO_SRC)
+    return _assemble_zonal(frames, year, NYISO_SRC, _STD_TZ["NYISO"])
 
 
 def _neiso(year: int) -> tuple[dict, pd.DataFrame] | None:
@@ -679,7 +827,7 @@ def _neiso(year: int) -> tuple[dict, pd.DataFrame] | None:
     frames = {k: neiso_zone_hourly(year, k) for k in ("da", "rt")}
     if frames["da"] is None and frames["rt"] is None:
         return None
-    return _assemble_zonal(frames, year, NEISO_SRC)
+    return _assemble_zonal(frames, year, NEISO_SRC, _STD_TZ["NEISO"])
 
 
 BUILDERS = {
@@ -941,23 +1089,45 @@ def main() -> None:
         "actual_lmp.json with the load-weighted (*_lw) price fields from the "
         "committed hourly parquets × measured demand (rubric v2.4 C3 basis).",
     )
+    ap.add_argument(
+        "--parquet-only",
+        action="store_true",
+        help="Rebuild the hourly parquets without rewriting actual_lmp.json "
+        "(the JSON's raw-row means are clock-invariant; its *_pct dense-series "
+        "completeness deltas land only at an authorized JSON re-derivation).",
+    )
     args = ap.parse_args()
     if args.lw_retrofit:
         lw_retrofit(args.years, isos=args.isos)
         return
     table, hourly = build(args.years, isos=args.isos)
-    # Merge into the committed reference rather than overwriting: ISOs not built
-    # this run (or whose source raws are staged out) keep their durable entry.
-    merged: dict[str, dict] = {}
-    if OUT.exists():
-        merged = json.loads(OUT.read_text())
-    for iso, years in table.items():
-        merged.setdefault(iso, {}).update(years)
-    OUT.write_text(json.dumps(merged, indent=2) + "\n")
-    print(f"wrote {OUT} ({sum(len(v) for v in merged.values())} iso-years)")
-    # Only rewrite parquets for ISOs actually built this run.
+    if not args.parquet_only:
+        # Merge into the committed reference rather than overwriting: ISOs not
+        # built this run (or whose source raws are staged out) keep their entry.
+        merged: dict[str, dict] = {}
+        if OUT.exists():
+            merged = json.loads(OUT.read_text())
+        for iso, years in table.items():
+            merged.setdefault(iso, {}).update(years)
+        OUT.write_text(json.dumps(merged, indent=2) + "\n")
+        print(f"wrote {OUT} ({sum(len(v) for v in merged.values())} iso-years)")
+    # Only rewrite parquets for ISOs actually built this run, and only the
+    # years built: rows for other years (e.g. the quarantined out-of-training
+    # 2018-2022 / 2026 blocks landed by the holdout intakes, rule 22) are
+    # preserved byte-for-byte from the committed file — MERGE, never replace.
     for iso, frame in hourly.items():
         p = HOURLY_OUT / f"actual_lmp_hourly_{iso}.parquet"
+        if p.exists():
+            old = pd.read_parquet(p)
+            keep = old[~old["year"].isin(frame["year"].unique())]
+            if not keep.empty:
+                print(
+                    f"  {iso}: preserving committed rows for years "
+                    f"{sorted(keep['year'].unique().tolist())}"
+                )
+                frame = pd.concat([keep, frame], ignore_index=True).sort_values(
+                    ["year", "hour"], ignore_index=True
+                )
         frame.to_parquet(p, index=False)
         print(f"wrote {p} ({len(frame)} hours, {frame['year'].nunique()} years)")
 
