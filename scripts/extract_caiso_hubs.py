@@ -32,10 +32,23 @@ from __future__ import annotations
 
 import argparse
 import io
+import sys
 import zipfile
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from fetch_caiso_intertie_lmp import INTERTIE_NODES  # noqa: E402
+
 HUBS = ("TH_NP15_GEN-APND", "TH_SP15_GEN-APND", "TH_ZP26_GEN-APND")
+# The WECC intertie nodes ride along into the same window CSVs / hourly
+# aggregates (2026-07-14): the bulk zips are the ONLY source for the seam's
+# retention-aged Jan-Mar 2023 window (wecc_intertie_lmp_hourly_CAISO.parquet
+# 2023 starts at hour 2040 and the per-hub corridors fall back to the static
+# fitted ladder before it — the Lane-W miss month in
+# docs/DIAGNOSIS-caiso-lmp-jan2023-backfill-2026-07.md). Every aggregate
+# consumer selects its nodes explicitly (derive_actual_lmp keeps the three TH
+# hubs; curate_lmp is node-generic), so the extra nodes are additive.
+NODES = HUBS + tuple(n for ns in INTERTIE_NODES.values() for n in ns)
 
 
 def _hub_rows(zip_path: Path, inner_token: str) -> tuple[str | None, list[str]]:
@@ -55,7 +68,7 @@ def _hub_rows(zip_path: Path, inner_token: str) -> tuple[str | None, list[str]]:
                 head = text.readline().rstrip("\n")
                 header = header or head
                 rows.extend(
-                    ln.rstrip("\n") for ln in text if any(h in ln for h in HUBS)
+                    ln.rstrip("\n") for ln in text if any(h in ln for h in NODES)
                 )
     return header, rows
 
@@ -101,11 +114,18 @@ def main() -> None:
         ("dam", "*_DAM_LMP_GRP_*.zip", "PRC_LMP_DAM_", True),
         ("rtm", "*_RTM_LMP_GRP_*.zip", "PRC_INTVL_LMP_RTM_", False),
     )
+    matched_any = False
     for mkt, glob, token, synth in plans:
-        zips = list(args.zip_dir.glob(glob))
+        # rglob, not glob: `aws s3 sync` preserves the bulk bucket's nested
+        # key layout ({MKT}_LMP/YYYY/MM/DD/*.zip), so a flat glob sees ZERO
+        # zips while the workflow's recursive `find` counts them — the silent
+        # green no-op that discarded every download of workflow runs 9-17 on
+        # 2026-07-14 (run 29346042375).
+        zips = sorted(args.zip_dir.rglob(glob))
         if not zips:
             print(f"{mkt}: no zips matching {glob}")
             continue
+        matched_any = True
         header, rows = build_market(zips, token, synth)
         if not header or not rows:
             print(f"{mkt}: {len(zips)} zip(s) but no hub rows found")
@@ -114,6 +134,14 @@ def main() -> None:
         out = args.out_dir / f"{mkt}_hubs_{tag}.csv"
         out.write_text("\n".join([header] + rows) + "\n")
         print(f"{mkt}: {len(zips)} zip(s) -> {out.name} ({len(rows)} hub rows)")
+
+    # Fail LOUDLY when the dir holds zips none of the market globs matched —
+    # a layout/naming drift must stop the workflow, not exit green with the
+    # downloads silently discarded.
+    if not matched_any and any(args.zip_dir.rglob("*.zip")):
+        raise SystemExit(
+            f"zip-dir {args.zip_dir} contains zips but no market glob matched"
+        )
 
 
 if __name__ == "__main__":
