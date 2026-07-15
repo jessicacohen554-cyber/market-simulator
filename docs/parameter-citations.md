@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-07-14. Every numeric input to the model traces to a primary source
+_Generated 2026-07-15. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1348 parameters registered** (750 flagged `needs-citation`).
+**1350 parameters registered** (750 flagged `needs-citation`).
 
 
 ## Calibration
@@ -427,6 +427,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.coal_bit_passthrough_sigmoid` | False | 3 | Tier 3 (calibration) — gas-keyed BITUMINOUS passthrough sigmoid (PJ… | 2023 | auto-generated |
 | `scenario.coal_committed_hr_mult` | 1.22 | 3 | Coal part-load penalty ~22% |  | auto-generated, needs-citation |
 | `scenario.coal_committed_takeorpay_all` | False | 3 | Same grounded committed-band take-or-pay discount as ``coal_bit_com… |  | auto-generated, needs-citation |
+| `scenario.coal_committed_takeorpay_regulated` | False | 3 | Regulated-utility-scoped committed-band take-or-pay discount: the s… | 2026-07 | auto-generated |
 | `scenario.coal_drop_pof` | False | 3 | When True, drop the statistical planned-outage (POF) derate on coal… |  | auto-generated, needs-citation |
 | `scenario.coal_econ_hr_mult` | 0.97 | 3 | Coal incremental HR |  | auto-generated, needs-citation |
 | `scenario.coal_econ_srmc_bound` | False | 3 | Marginal-coal measured-SRMC offer bound. The gas-keyed passthrough … | 2026-07 | auto-generated |
@@ -752,6 +753,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ercot_storage_as_product_credit` | False | 1 | ERCOT multi-product co-opt, |  | auto-generated, needs-citation |
 | `scenario.ercot_storage_as_reserve` | False | 1 | ERCOT co-opt: credit the measured |  | auto-generated, needs-citation |
 | `scenario.ercot_storage_as_reserve_from_year` | 2025 | 1 | First weather year the |  | auto-generated, needs-citation |
+| `scenario.ercot_storage_capability_measured` | False | 2 | ERCOT measured hourly BATTERY-fleet capability re-basis (default of… | 2025-12 | auto-generated |
 | `scenario.pumped_storage_dispatch_adder` | None | 3 | Tier 3 — pumped-storage dispatch adder ($/MWh discharged). PSH pure… |  | auto-generated, needs-citation |
 | `scenario.renewable_elcc_curves` | True | 2 | CR-3.1 (plan §3.4.1; P-2B Option A |  | auto-generated, needs-citation |
 | `scenario.storage_capacity_value` | True | 2 | Storage new-entry value stack. ``storage_capacity_value`` globally … |  | auto-generated, needs-citation |
@@ -1437,7 +1439,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_installed_mw.NYISO.wind` | 2400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.PJM.solar` | 14000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.PJM.wind` | 11000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
-| `rggi_member_states_by_year` | {"2023": ["DE", "VA", "MD", "NH", "NY… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
+| `rggi_member_states_by_year` | {"2023": ["VT", "MA", "RI", "VA", "NY… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
 | `short_ton_to_metric_tonne` | 0.90718474 | 2 | Short ton -> metric tonne. RGGI allowances are denominated in SHORT… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.CAISO` | 2026-07-03-caiso-statmode-d-7 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.ERCOT` | 2026-07-04-statmode-d7-probe-ercot32 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |

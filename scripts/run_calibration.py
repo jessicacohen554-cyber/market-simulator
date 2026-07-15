@@ -489,6 +489,7 @@ def run_year(
     pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
+    ercot_storage_capability_measured: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
     ercot_ordc_only_scarcity: bool = False,
     must_run_mw: "np.ndarray | None" = None,
@@ -747,6 +748,12 @@ def run_year(
         # disclosure HSL/status; ScenarioConfig field docstring has the full
         # provenance/admissibility note). ERCOT-gated in the fleet application.
         config = config.with_overrides(ercot_thermal_dam_availability=True)
+    if ercot_storage_capability_measured:
+        # Measured hourly battery-fleet capability re-basis (60-Day DAM
+        # disclosure non-OUT PWRSTR/ESR HSL; ScenarioConfig field docstring
+        # has the full provenance/admissibility note). ERCOT-gated at the
+        # storage-cap seam below.
+        config = config.with_overrides(ercot_storage_capability_measured=True)
     if ercot_online_capacity_envelope_measured:
         # Measured-fleet-basis G-22 envelope (the ercot57 joint round;
         # ScenarioConfig field docstring has the provenance/identification
@@ -3073,6 +3080,39 @@ def run_year(
     storage_power_cap, storage_energy_cap = storage_cap_profiles(
         storage_units, storage, config.hours
     )
+    # Measured battery-fleet capability re-basis (ERCOT-66): replace the
+    # EIA-860 COD-ramped battery power basis with the 60-Day DAM disclosure's
+    # registered non-OUT storage HSL, keeping EIA-860 as the zone-split and
+    # duration basis (ScenarioConfig.ercot_storage_capability_measured has the
+    # full provenance note). Applied BEFORE the measured AS-award reservation
+    # below, so the award subtracts from the measured capability — the same
+    # ordering as reality's co-optimization.
+    if (
+        getattr(config, "ercot_storage_capability_measured", False)
+        and iso == "ERCOT"
+        and getattr(config, "mode", "forecast") == "backcast"
+    ):
+        from market_sim.model.storage import ercot_storage_capability_caps
+
+        _pre_mean = float(
+            np.asarray(storage_power_cap, dtype=float).sum(axis=0).mean()
+            if np.asarray(storage_power_cap).ndim == 2
+            else np.asarray(storage_power_cap, dtype=float).sum()
+        )
+        storage_power_cap, storage_energy_cap = ercot_storage_capability_caps(
+            storage_power_cap,
+            storage_energy_cap,
+            storage_units,
+            config.weather_year,
+            config.hours,
+        )
+        logger.info(
+            "ERCOT measured storage capability re-basis (%d): fleet power "
+            "mean %.0f -> %.0f MW",
+            config.weather_year,
+            _pre_mean,
+            float(np.asarray(storage_power_cap, dtype=float).sum(axis=0).mean()),
+        )
     # Reserve the measured storage up-AS MW from the dispatch power cap so AS-
     # committed battery capacity cannot also arbitrage energy (ERCOT only).
     # SKIPPED under ercot_storage_as_endogenous (G5): the endogenous co-opt hands
