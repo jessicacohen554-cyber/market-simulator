@@ -515,6 +515,92 @@ def reserve_storage_as_power(
     return np.clip(pc2 - weight * as_storage[np.newaxis, :], 0.0, None)
 
 
+# Measured ERCOT hourly battery-fleet capability (60-Day DAM disclosure
+# non-OUT PWRSTR/ESR HSL), derived by scripts/derive_ercot_storage_capability.py
+# (provenance, basis decision and the FROZEN-AGAINST-RESIDUALS contract live
+# in that script's docstring).
+_STORAGE_CAPABILITY_PATH = RAW_DATA_DIR / "ercot-storage-capability.csv"
+
+
+def ercot_storage_capability_caps(
+    power_cap: np.ndarray,
+    energy_cap: np.ndarray,
+    units: list["StorageUnit"],
+    year: int,
+    hours: int,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Re-base ERCOT battery caps on the measured disclosure capability.
+
+    Backcast overlay (``config.ercot_storage_capability_measured``): the
+    hourly ISO-wide battery power capability follows ERCOT's 60-Day DAM
+    disclosure registered non-OUT HSL (``data/raw/ercot-storage-capability.csv``)
+    instead of the EIA-860 COD-ramped schedule, which the summer-availability
+    audit measured ~2 GW low in both summers (5.8 vs 7.7 GW Aug-2024, 10.6 vs
+    12.5 GW Jul-2025 — docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md
+    §1c). The measured series embeds real COD energization timing, hybrid
+    halves, and real storage outages, so it replaces both the EIA-860 MW ramp
+    and the (absent) storage outage model.
+
+    EIA-860 stays the ZONE and DURATION basis: the ISO-wide measured MW is
+    allocated across battery units (one per zone) by their EIA-860 power
+    shares hour-by-hour, and each unit's energy cap is the re-based power
+    times its EIA-860 fleet duration (energy/power) — the disclosure is
+    resource-keyed with no plant crosswalk, and the audit found the EIA-860
+    energy envelope feasible (§1a), so only the power basis is measured.
+
+    Uncovered hours (NaN in the CSV — the Oct-2023 publication hole) keep the
+    EIA-860 caps unchanged. Pumped storage is untouched (not a PWRSTR/ESR).
+    A missing CSV or an empty battery fleet passes both caps through. Returns
+    ``(power_cap, energy_cap)`` broadcast to ``(n_storage, hours)``.
+    """
+    pc = np.asarray(power_cap, dtype=float)
+    ec = np.asarray(energy_cap, dtype=float)
+    if pc.size == 0 or not units or not _STORAGE_CAPABILITY_PATH.exists():
+        return power_cap, energy_cap
+    df = pd.read_csv(_STORAGE_CAPABILITY_PATH)
+    df = df[df["year"] == int(year)]
+    if df.empty:
+        return power_cap, energy_cap
+    sys_mw = (
+        df.set_index("hour")["capability_mw"]
+        .reindex(range(int(hours)))
+        .to_numpy(dtype=float)
+    )
+    batt = _battery_mask(units)
+    if not batt.any() or not np.isfinite(sys_mw).any():
+        return power_cap, energy_cap
+
+    pc2 = np.repeat(pc[:, np.newaxis], hours, axis=1) if pc.ndim == 1 else pc.copy()
+    ec2 = np.repeat(ec[:, np.newaxis], hours, axis=1) if ec.ndim == 1 else ec.copy()
+    bp = pc2[batt]  # (n_batt, hours) EIA-860 battery power
+    be = ec2[batt]
+    total = bp.sum(axis=0)  # (hours,)
+    # Zone shares / durations from EIA-860; hours where the ramped EIA-860
+    # fleet is zero fall back to the year-end (December) mix so early-year
+    # measured MW can still be placed.
+    total_end = float(bp[:, -1].sum())
+    if total_end <= 0.0:
+        return power_cap, energy_cap
+    share_end = bp[:, -1] / total_end
+    with np.errstate(divide="ignore", invalid="ignore"):
+        share = np.where(
+            total > 0.0,
+            bp / np.where(total > 0.0, total, 1.0),
+            share_end[:, np.newaxis],
+        )
+        duration = np.where(
+            bp > 0.0,
+            be / np.where(bp > 0.0, bp, 1.0),
+            (be[:, -1] / np.where(bp[:, -1] > 0.0, bp[:, -1], 1.0))[:, np.newaxis],
+        )
+    covered = np.isfinite(sys_mw)
+    new_p = np.where(covered[np.newaxis, :], share * np.nan_to_num(sys_mw), bp)
+    new_e = np.where(covered[np.newaxis, :], new_p * duration, be)
+    pc2[batt] = new_p
+    ec2[batt] = new_e
+    return pc2, ec2
+
+
 def _battery_mask(units: list["StorageUnit"]) -> np.ndarray:
     """Boolean (n_storage,) mask of battery units (pumped storage excluded).
 

@@ -78,6 +78,16 @@ the audit predicts the VOLL saturation largely disappears. Building the
 emergency ladder first would bury the storage-basis error under a new
 mechanism (rule 11/19 violation).
 
+> **Re-score (2026-07-15, ERCOT-66):** the storage basis landed and the
+> windows re-scored — the audit's prediction verified: Aug-2024 VOLL
+> saturation ELIMINATED (model max 2,859, no shed, vs actual 3,060) and the
+> Jul-2025 phantom collapses (1,944 → 251 vs actual 243). What remains in
+> Aug-2025 is 14 marginal $210-307 hours (actual max 175) sitting in the
+> EXPOSED 2024/25 scarcity-formation lane (see the ERCOT-66 calibration-log
+> entry), not an emergency-product window. Leg B stays parked until that
+> exposure lane resolves; nothing here suggests a DR mechanism owns the
+> residual.
+
 ## 4. Explicitly out of scope
 
 - Any backcast evening/peak "DR adder" or demand haircut (double-counts
