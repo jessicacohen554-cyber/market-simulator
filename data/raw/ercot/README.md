@@ -33,17 +33,14 @@ raw-data terms — see `docs/data-licensing.md` §3.
   extension covering deliveries 2025-11-02..2025-12-31, delivery rows >
   2025-12-31 dropped for holdout hygiene).
 
-**DATA NEEDED (owner upload):** the ERCOT-66 session produced
+The ERCOT-66 intake (2026-07-15) committed
 `60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2026_Jan-Mar.parquet`
 (18.2 MB, deliveries 2025-11-02..2025-12-31) and
 `60_DAY_DAM_DISCLOSURE_60d_DAM_ESR_Data_2026_Jan-Mar.parquet` (2.1 MB,
-deliveries 2025-12-06..2025-12-31, post-RTC+B) but binary parquets of this
-size cannot ride the MCP push path (text-only, ~4 MB relay ceiling) and
-per-task CI landing workflows are banned. Regenerate byte-equivalently with
-the two `fetch_ercot_60day_gen_resource.py` commands in that script's
-docstring, or upload the session copies. The DERIVED consumer artifact
-(`data/raw/ercot-storage-capability.csv`) IS committed, so backcast solves
-reproduce without these parquets; they are needed only to re-derive it.
+deliveries 2025-12-06..2025-12-31, post-RTC+B); both regenerate
+byte-equivalently with the two `fetch_ercot_60day_gen_resource.py` commands
+in that script's docstring while ERCOT's rolling MIS retention still lists
+the Jan-Mar 2026 publications.
 
 **Consumers:** `scripts/curate_ancillary_services.py` (cleared MW per AS
 product from the 2-Day AS Disclosure Cleared files), `scripts/parse_ercot_dam_offers.py`,
