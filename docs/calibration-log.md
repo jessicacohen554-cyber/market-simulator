@@ -13211,3 +13211,124 @@ whose leading term the ercot66 keeper has since fixed). Handed off as the
 ERCOT-68 joint-completion charter (owner-issued run prompt, this session).
 No flag flips; keeper unchanged (`2026-07-15-ercot66-storage-rebasis`);
 probes deleted.
+
+## 2026-07-15 — ERCOT-68: the ERCOT-58 joint completion re-run on the ercot66 base — the v3 realized-room RTORPA carried a ~4.4 GW CONSTRUCTION DEFECT (nuclear/oil in the P-sum, never in the envelope basis), FIXED; post-fix the v3 form is incidence-faithful (2023 phantom channel fully cured, adder fires on exactly the measured event days) but the broad moderate-tightness under-pricing is adjudicated NOT reserve-side — it is the G-22 DA-expressible offer/uncertainty formation family; keeper UNCHANGED
+
+**Task (owner-issued charter, this session — the ERCOT-67 hand-off).** STEP 0
+rule-23 re-identification on the restated availability CSV; STEP 1 the ST_GAS
+binding-hour mask on the ercot66 keeper; STEP 2 the probe ladder (the v3
+composition: measured thermal availability + measured-basis envelope +
+realized-room RTORPA, ORDC-only); STEP 3 enumerate-only.
+
+**STEP 0 (rule 23; data change = the 2026-07-15 availability re-derive,
+964a782).** `ERCOT_ONLINE_CAP_SHARE_MEASURED` / `..._DELIV_PROFILE_MEASURED`
+re-emitted on the current `ercot-thermal-dam-availability.csv`: winter+fall
+CC_REGULAR/CT_PEAKER cells and the deliv profile moved slightly (the
+Nov-Dec-2025 closure + 2025 restatement); identification gate PASSES (binding
++4/+2/−4% 2023/24/25, pooled top-2% +0.0%, coverage 2.13×). Landed on main via
+PR #2292 (618377e).
+
+**STEP 1 (the storage-cycling §7.3 mask, 2024, keeper reconstruction).**
+ERCOT-61's exoneration REPRODUCES on the new base: ST_GAS binding-hour
+(top-30% net-load) excess +1,279 MW (model 4,244 vs CAMPD 2,965), but only
+1,048 MW sits ON the drag floor — concentrated overnight, where the hinge
+(floor-frac 0.259) matches the measured CF (0.231); in the day/evening window
+where the excess lives (hod 11-21) the hinge (0.292) sits BELOW measured CF
+(0.349) and the excess is ECONOMIC dispatch above the floor. NO hinge
+windowing (rules 12/23 — frozen; a derivation-window scope would only touch
+overnight hours where the hinge is calibrated). Envelope-class binding excess
+total ≈ +1.76 GW (CC_REGULAR +1,110, ST_GAS +1,279, CT_PEAKER −935, COAL
++246) vs ERCOT-58's 2023 pre-storage-fix +2,411 — the ercot66 re-basis
+absorbed part, not all. Recorded as the realized-room bias budget.
+
+**The construction defect (leg J-, `_ercot68_room_decomp.py`).** The as-built
+leg J (2024) over-fired C3a +41.3% / C3c 215h with 151 tail hours in DECEMBER
+(55 overnight; adder mean $20.20, max $2,500) where measured 2024 RTORPA is
+near-nil (mean $0.20, >$10 in 26 h). Decomposition: `ercot_ordc_realized_adder`
+summed dispatch over the LP shared-headroom set (`RESERVE_FUEL_TYPES` —
+nuclear/oil included) while `ercot_online_capacity_envelope_mw` carries ZERO
+capability for classes without a share table (`share_tables.get(cls) is None
+→ continue`) — the pricing room ran ~4.4 GW phantom-tight everywhere and
+collapsed where true room approached the curve (December cold snap: high
+eligible dispatch, low winter envelope shares). The identification gate never
+sees this (it subtracts CAMPD gross over the envelope classes only — the
+CONSISTENT construction; the adder's own docstring already claimed that
+analogue). Fix: `ReserveDesign.online_capacity_pricing_elig` (set under
+`ercot_ordc_only_scarcity`) restricts the P-sum to the envelope share-table
+classes via the new single-source helper
+`ercot_online_capacity_envelope_classes`; nuclear/oil stay in
+`headroom_eligible` for the physical LP rows whose RHS carries their
+availability. Recomputed 2024 adder mean $60.50 → $1.52, >$10 hours 1,226 →
+63. Zero new parameters; 2 unit tests. NOTE: this wedge was LIVE in the
+ercot58 probes — part of that round's "+2.4 GW room tightness" over-fire was
+construction, not supply mix.
+
+**Probe ladder (rule-16 single-year throwaways off the keeper meta.json,
+`_ercot68_ladder_probe.py`; deleted, never registered; controls reproduce the
+keeper payload byte-for-byte).** 2024:
+
+| rung | C3a | C3b | C3c | anatomy / windows |
+|---|---|---|---|---|
+| keeper (leg 0) | −14.2% | 0.212 | 20h vs 68 | May −12.5, Nov −5.8, Apr −4.1, Aug −1.6; Aug 18-20 max 2,859 no shed |
+| legJ (v3 as-built) | +41.3% | 1.508 | 215h | Dec +163.9, Feb +32.9, Jan +11.5, Aug +17.8 — the phantom-room collapse |
+| legJfix (v3 + room fix) | −23.0% | 0.295 | 4h | adder mean $0.02 / >$10 8h / max $38 — quiet like measured ($0.20/26h/$253); Aug −9.9 (the ERCOT-67 summer exposure), May −13.4, May-8 −296.7, shoulders UNMOVED to the cent; Aug 18-20 max 192 |
+
+2023 legJfix: C3a −48.9%, C3b 0.874, C3c 36h vs 311 (≈ thermavail-alone
+−47.5/0.865/31 — the removed June/Sep phantom prints and the added real-event
+RTORPA cancel in aggregate). **Incidence: the phantom channel is FULLY CURED
+— 0 of 36 tail hours on measured-quiet days (keeper control: 44 of 171), and
+the adder day-maxima land on exactly the measured event days (Sep-6/7,
+Aug 24-25, Aug 17/20/26/30), amplitude ~2-3× over (the +1.2-1.8 GW residual
+supply-mix room bias on the ORDC's steep end).** 2023 adder mean $2.40 /
+>$10 67h / max $1,645 vs measured $0.95 / 108h / $651. 2025 (full-span):
+C3a −11.5%, C3b 0.137, C3c 5h vs 23; adder mean $0.23 vs measured $0.07; the
+keeper's Aug-18-25-2025 residual phantom tail (14 marginal h>$200 vs actual
+0) goes to ZERO — the same cure family.
+
+**Adjudication (rules 1/14/19).** The v3-fixed form is the structurally
+faithful RT scarcity-pricing design and now behaves like reality's own
+RTORPA. It is NOT the missing formation mechanism: with every non-market
+channel removed (product ladders → plan-hold eps; the keeper's additive-adder
+stack replaced), the exposed gap is C3a −48.9/−23.0/−11.5%, the May-2024
+DA-shoulder family moves ZERO to the cent, May-8 depth WORSENS (the actual
+$3,049 prints were λ/offer-driven at measured RTORPA ≤ $179), and the
+Aug-2024 window amplitude collapses (actual max $3,060 at measured RTORPA ≤
+$253 — offer-driven too). One conclusion, every symptom: the moderate-
+tightness formation reality expresses DAY-AHEAD (and in RT λ via offers) is
+what the model lacks; every prior keeper's summer/winter fit rode the
+statistical over-derate + ladder/adder prints as compensation for it.
+
+**STEP 3 — ENUMERATED, not built (rule-26 boundary: published formula /
+measured identification only — no evening adders, no fitted uplift):**
+1. **The DAM AS demand curves** — `ASPLANNP433_{2022..2024}.parquet` on disk;
+   ERCOT's DAM co-optimizes AS against published demand curves, pricing
+   AS-opportunity cost into the DA energy price at moderate reserve levels —
+   the channel the plan-hold eps deliberately does not price in RT, and the
+   DA-expressible family's natural owner.
+2. **The DAM offer surface at moderate reserve levels** — the 60-day
+   disclosure energy-only + Gen/Load-Resource AS offer families
+   (`data/raw/ercot-AS/60d_DAM_*.parquet`, `parse_ercot_dam_offers.py`): the
+   measured DA offer wall above SRMC that forms the May shoulder-day /
+   Nov-2024 / winter-morning prices reality printed at RTORPA ≈ 0.
+
+**Registered record:** `2026-07-15-ercot68-v3fix` (full-span 2023-2025, ONE
+bundle — rule 16; PROBE, rejected; NOT-YET: C3a/C3b/C3c + C5c-2024 MODEL
+MISS; C1/C2/C4/C5a/C6/C7/C8 PASS, C8 ST_GAS grounded-above-budget with D-4
+clear — the keeper's own profile). Keeper UNCHANGED
+(`2026-07-15-ercot66-storage-rebasis`); no exceptions ledgered (the misses
+are the chartered G-22 lane, not accepted limitations). DOF ledger inherited
+verbatim — zero new free parameters. Single-year ladder bundles deleted.
+
+**Gates vs the charter:** the summer-window floor is NOT met by this
+composition (it removes the keeper's formation channels without replacing
+them) and the May shoulders did NOT move — adjudicated as the G-22 successor
+lane's work; where the composition DOES fire, the composition is RIGHT
+(event days / winter mornings, zero phantom). ERCOT stays NOT-YET on the
+status page; the return-to-CALIBRATED bar now runs through the enumerated
+DA-expressible identifications.
+
+**Ops:** the session's git-push 413/"vanished branch" mystery resolved — PR
+#2292 was auto-merged mid-session and the branch deleted on merge; after
+`git fetch --prune` + rebase onto the new main, plain `git push` works from
+this container (the CLAUDE.md 413 rule did not re-manifest once the refs were
+consistent). All solves in-session, sequential, one at a time (~8 min/year).
