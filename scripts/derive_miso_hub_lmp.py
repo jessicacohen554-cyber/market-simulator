@@ -11,19 +11,28 @@ D6, docs/multi-iso/miso-zonal-refinement-scope.md §7):
     columns: year, hour, hub, zone, rt, da
 
 One row per (year, hour-of-year, hub) with the hub's RT-final and DA-ex-post
-LMP. Hours are the model's fixed non-leap 8760-hour calendar on **MISO's
-model clock, Central Prevailing Time**: the EIA-930 ``MISO hourly`` extract
-the model's demand/renewables live on stamps CPT (verified: 5,711 hours at
-UTC-5 / 3,049 at UTC-6 in 2023), and the committed system series
-``actual_lmp_hourly_MISO.parquet`` matches it. The market reports are
-hour-ending 1-24 Eastern Standard Time **year-round** (each daily file's
-header says so), i.e. UTC-5 fixed, so each hour-ending is converted
-EST -> UTC -> US/Central prevailing and then placed on the fixed calendar
-exactly as ``derive_actual_lmp`` does: Feb 29 dropped, the duplicated DST
-fall-back hour averages its two instances, the missing spring-forward hour
-is NaN. (In CDT months EST == CDT and the clocks coincide; in CST months the
-EST label shifts back one hour.) A year's last CPT hour comes from the NEXT
-calendar year's first EST file, so it is NaN for the newest staged year.
+LMP. Hours are the model's CHRONOLOGICAL non-leap 8760-hour calendar: row k =
+k-th real (UTC) hour after Central STANDARD-time midnight Jan 1, CST Feb 29
+dropped. The EIA-930 ``MISO hourly`` extract the model's demand/renewables
+live on *stamps* Central Prevailing Time (verified: 5,711 hours at UTC-5 /
+3,049 at UTC-6 in 2023), but the model's calendar position is chronological
+(``eia_loader._eia_hourly_frame`` sorts by UTC; the CPT stamps only select
+the year's rows) — so the scoring reference must be chronological too, NOT
+prevailing-indexed. (Until 2026-07-15 this script converted EST -> Central
+*prevailing* and indexed the wall label, pairing every CST-month comparison
+one real hour off — the all-ISO scoring-clock artifact,
+docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md §1.)
+The market reports are hour-ending 1-24 Eastern Standard Time **year-round**
+(each daily file's header says so), i.e. UTC-5 fixed, so each hour-ending
+maps to a unique CST slot by a constant -1 h — no fall-back averaging, no
+spring-forward NaN. A year's last CST hour comes from the NEXT calendar
+year's first EST file, so it is NaN for the newest staged year.
+
+The system scoring reference ``actual_lmp_hourly_MISO.parquet`` (columns
+``year, hour, rt, da`` — verified hour-for-hour identical to this staging's
+INDIANA.HUB series under the shared indexing) is re-emitted from the same
+frame, so both files always carry the same clock. Years not built are
+preserved from the committed file (MERGE, never replace — rule 22).
 
 Hub -> model-zone mapping (scope §7): MINN.HUB -> MISO-West, ILLINOIS.HUB ->
 MISO-Illinois, INDIANA.HUB -> MISO-Indiana, MICHIGAN.HUB -> MISO-East,
@@ -78,8 +87,11 @@ _HE_COLS = [f"he{h:02d}" for h in range(1, 25)]
 # The reports' clock: hour-ending 1-24, Eastern Standard Time year-round
 # (UTC-5 fixed; every daily file's header states it).
 _EST_UTC_OFFSET_H = 5
-# The model's MISO clock (EIA-930 "MISO hourly" Local time).
-_MODEL_TZ = "US/Central"
+# The model's MISO calendar clock: fixed Central STANDARD time (Etc/GMT+6 ==
+# UTC-6). The model's 8760 rows are chronological from the CST Jan-1 midnight
+# anchor (eia_loader._eia_hourly_frame sorts by UTC), so the validation series
+# indexes the same fixed-offset clock — never the DST prevailing wall label.
+_STD_TZ = "Etc/GMT+6"
 
 # Fixed non-leap calendar: hour-of-year at which each month starts (matches
 # derive_actual_lmp._MONTH_START_HOUR).
@@ -106,11 +118,11 @@ def _market_frame(year: int, market: str) -> pd.DataFrame:
     """Return one staged (year, market) as a long ``hub, year, hour, price`` frame.
 
     Melts the 24 hour-ending EST columns of the LMP rows, converts each
-    hour-beginning EST timestamp to the model's Central-prevailing clock, and
-    places it on the fixed non-leap calendar (Feb 29 dropped; the DST
-    fall-back duplicate is left as two rows for the caller to mean; blank
-    cells become NaN). Rows may land in ``year - 1`` (the first EST hours of
-    Jan 1 belong to the prior local year in CST).
+    hour-beginning EST timestamp to fixed Central standard time (a constant
+    -1 h), and places it on the chronological non-leap calendar (CST Feb 29
+    dropped; blank cells become NaN). Every EST hour maps to a unique slot —
+    no DST duplicates arise under fixed offsets. Rows may land in ``year - 1``
+    (the first EST hour of Jan 1 belongs to the prior CST year).
     """
     paths = _staged_paths(year, market)
     if not paths:
@@ -125,7 +137,7 @@ def _market_frame(year: int, market: str) -> pd.DataFrame:
         _EST_UTC_OFFSET_H, "h"
     )
     utc = (day_utc[:, None] + np.arange(24) * np.timedelta64(1, "h")).ravel()
-    local = pd.DatetimeIndex(utc, tz="UTC").tz_convert(_MODEL_TZ).tz_localize(None)
+    local = pd.DatetimeIndex(utc, tz="UTC").tz_convert(_STD_TZ).tz_localize(None)
     month = np.asarray(local.month)
     day = np.asarray(local.day)
     hour = _MONTH_START_HOUR[month - 1] + (day - 1) * 24 + np.asarray(local.hour)
@@ -164,7 +176,8 @@ def build(years) -> pd.DataFrame:
         frames = [
             _market_frame(y, market) for y in staged_years if _staged_paths(y, market)
         ]
-        # Mean over duplicates: the DST fall-back local hour occurs twice.
+        # Mean is a no-op on the fixed-offset clock (every EST hour maps to a
+        # unique slot); it only guards against a duplicated staged row.
         long[market] = (
             pd.concat(frames, ignore_index=True)
             .groupby(["year", "hub", "hour"])["price"]
@@ -190,8 +203,42 @@ def build(years) -> pd.DataFrame:
     return out[["year", "hour", "hub", "zone", "rt", "da"]]
 
 
+SYSTEM_OUT = CALIBRATION_DIR / "actual_lmp_hourly_MISO.parquet"
+# The committed system scoring reference's composition: the INDIANA.HUB series
+# (verified hour-for-hour identical to the staged INDIANA.HUB rows under the
+# shared indexing — see module docstring). Kept as the standing choice; this
+# script only fixes the clock, never the composition.
+SYSTEM_HUB = "INDIANA.HUB"
+
+
+def write_system_parquet(df: pd.DataFrame) -> None:
+    """Re-emit ``actual_lmp_hourly_MISO.parquet`` from the zonal frame.
+
+    Takes the :data:`SYSTEM_HUB` rows of the built years and merges them
+    into the committed system parquet, preserving rows for any other year
+    byte-for-byte (the out-of-training holdout blocks, rule 22).
+    """
+    sys_df = df[df["hub"] == SYSTEM_HUB][["year", "hour", "rt", "da"]].copy()
+    sys_df = sys_df.astype(
+        {"year": np.int16, "hour": np.int16, "rt": np.float32, "da": np.float32}
+    ).sort_values(["year", "hour"], ignore_index=True)
+    if SYSTEM_OUT.exists():
+        old = pd.read_parquet(SYSTEM_OUT)
+        keep = old[~old["year"].isin(sys_df["year"].unique())]
+        if not keep.empty:
+            log.info(
+                "system parquet: preserving committed rows for years %s",
+                sorted(keep["year"].unique().tolist()),
+            )
+            sys_df = pd.concat([keep, sys_df], ignore_index=True).sort_values(
+                ["year", "hour"], ignore_index=True
+            )
+    sys_df.to_parquet(SYSTEM_OUT, index=False)
+    log.info("wrote %s (%d rows)", SYSTEM_OUT, len(sys_df))
+
+
 def main() -> None:
-    """CLI: build and write the zonal validation parquet."""
+    """CLI: build and write the zonal + system validation parquets."""
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=list(DEFAULT_YEARS))
     args = ap.parse_args()
@@ -199,6 +246,7 @@ def main() -> None:
     OUT.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(OUT, index=False)
     log.info("wrote %s (%d rows)", OUT, len(df))
+    write_system_parquet(df)
     # Eyeball block: per-zone annual means (South = member-hub mean).
     zonal = df.groupby(["year", "zone"])[["rt", "da"]].mean().round(2)
     print(zonal.to_string())
