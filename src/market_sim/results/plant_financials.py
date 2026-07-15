@@ -29,6 +29,7 @@ from market_sim.config.constants import (
     HEAT_RATE_BINS,
     HOURS_PER_YEAR,
     MARKET_DESIGN,
+    resolve_capacity_market_clearing,
 )
 
 logger = logging.getLogger(__name__)
@@ -512,8 +513,12 @@ def compute_plant_annual_summary(
     annual["capacity_revenue_source"] = "none"
     if iso is not None:
         design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
+        # Pass ``iso`` so the per-ISO clearing gate (RC-1B item 1) resolves
+        # through the shared seam; no ``year`` (this report prices on the
+        # registry default curve, not a per-delivery-year vintage). Default
+        # (mapping unset) is byte-identical.
         price_per_firm_mw_yr = design.capacity_price_per_firm_mw_yr(
-            config, reserve_position
+            config, reserve_position, iso=iso
         )
         if design.capacity_market and price_per_firm_mw_yr > 0.0:
             ucap = (1.0 - annual["fuel_type"].map(EFORD).fillna(0.0)).clip(lower=0.0)
@@ -521,8 +526,7 @@ def compute_plant_annual_summary(
                 annual["nameplate_mw"] * ucap * price_per_firm_mw_yr
             )
             uses_curve = (
-                config is not None
-                and getattr(config, "capacity_market_clearing", False)
+                resolve_capacity_market_clearing(config, iso)
                 and bool(design.demand_curve)
                 and reserve_position is not None
             )
