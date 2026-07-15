@@ -101,3 +101,47 @@ this session:
 All of the above is byte-identity-verified against the pre-existing
 2019-2025 rows (0 mismatched cells) — no-LP intake per rule 22, not a solve
 or a score.
+
+## PJM per-family input-clock convention + M-1 repair (2026-07-15)
+
+The wide extract places each hour hour-ending: a row's `UTC time` labels the
+end of the hour `[T-1h, T)`, so `_eia_hourly_frame` sorting by `UTC time` puts
+that row on the model's fixed standard-time (EST) chronological slot for
+`T-1h`. This is the intended convention for **both** the region family (`Demand`
+/ `Demand forecast` / `Net generation` / `Total interchange`) and the fueltype
+family (`NG: <code>`). Two independent clock defects had crept into PJM's rows
+(diagnosed in `docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07
+.md` §1b, anchored against PJM `hrl_load_metered`, the PJM gen-by-fuel feed, the
+EIA-930 BALANCE archive's explicit hour-ending UTC, and the sun):
+
+- **2023 region family — was one position LATE** (an hour-beginning/hour-ending
+  label mix-up in that vintage's construction; verified value-identical to the
+  BALANCE archive placed hour-ending but shifted +1 slot). Its `Demand` peaked
+  +1 h vs `hrl_load_metered`.
+- **Fueltype family — was one hour EARLY at the EIA-930 source through 2024**
+  (fixed upstream ~Feb-2025). July solar generation-weighted centroid ~10.9 vs
+  the astronomically-fixed ~11.9.
+
+Because the two errors offset in 2023, its fueltype was already aligned; 2024's
+region was already correct. **M-1 repair** (`scripts/extend_eia930_hourly_from_
+balance.py --rebuild-pjm-input-clock`, value-preserving UTC-time re-placement —
+each cell keeps its measured value, only moves to the UTC hour it belongs to;
+rule 13/14, cites the diagnosis, rule 23):
+
+| year | region family | fueltype family |
+|---|---|---|
+| 2023 | shifted **-1 h** (→ hour-ending, aligns demand to meter) | kept (already aligned by the offsetting errors) |
+| 2024 | kept (already correct) | shifted **+1 h** (corrects the source's 1 h-early) |
+| 2025 | kept | kept (source fixed ~Feb; **Jan-2025 straddles** the upstream switch, centroid 11.15 — left as measured, no fabricated sub-month shift) |
+
+Post-repair gates (source-anchored, residual-blind — diagnosis §6): demand
+daily-peak mode-0 vs `hrl_load_metered` ≥95 %/yr (2023 96.4 % / 2024 96.7 % /
+2025 97.0 %); July solar centroid ∈ [11.5, 12.3] each year (11.90 / 11.93 /
+12.03); wind & gas diff-series best-lag 0 vs the PJM UTC feed each year. Every
+cell outside the two shifted (family, year) blocks is byte-identical to the
+pre-fix file (2022 and out-of-training rows untouched). The three PJM DataMiner
+loaders that indexed the prevailing `datetime_beginning_ept` stamp
+(`pjm_net_interchange`, `pjm_zonal_interchange` in `eia_loader.py`,
+`parse_pjm_shares` in `scripts/curate_zonal_shares.py`) were switched to the
+files' own `datetime_beginning_utc` on the same fixed-EST clock (byte-identical
+outside DST, exactly one hour earlier inside).

@@ -1,0 +1,41 @@
+{
+  "run_id": "2026-07-15-pjm-112-input-clock",
+  "iso": "PJM",
+  "label": "pjm 112 input clock",
+  "target_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "scorable_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "data_blocked_years": [],
+  "rubric_version": 2.5,
+  "determination": "NOT-YET",
+  "reasons": [
+    "undocumented out-of-tolerance (FAIL) criteria: price_tail"
+  ],
+  "notes": [
+    "C8 2024 CT_PEAKER: grounded above budget — 15.2% forced (3.2095 of 21.083 TWh) — above the 15% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.966 (≥0.8) & off-peak CV ratio 0.916 (≥0.5) (rebuilt floors exclude the P1-dependent RA bridge — share is a lower bound)"
+  ],
+  "criteria": {
+    "fuelmix": { "label": "C1 fuel-mix by class (grid-delivered)", "tier": "load-bearing", "status": "PASS" },
+    "sysvol": { "label": "C2 system volume (gas/coal families)", "tier": "load-bearing", "status": "PASS" },
+    "price_mean": { "label": "C3a mean LMP", "tier": "load-bearing", "status": "PASS" },
+    "price_shape": { "label": "C3b price duration/shape", "tier": "load-bearing", "status": "PASS" },
+    "price_tail": { "label": "C3c price tail / scarcity (DA-expressible)", "tier": "supporting", "status": "FAIL" },
+    "dispatch_corr": { "label": "C4 fleet hourly dispatch correlation", "tier": "supporting", "status": "PASS" },
+    "co2": { "label": "C5a CO2 vs eGRID", "tier": "load-bearing", "status": "PASS" },
+    "storage": { "label": "C5b storage throughput", "tier": "supporting", "status": "SKIPPED" },
+    "storage_shape": { "label": "C5c storage dispatch shape", "tier": "supporting", "status": "SKIPPED" },
+    "governance": { "label": "C6 governance gate", "tier": "protective", "status": "PASS" },
+    "shape": { "label": "C7 diurnal shape (D-1)", "tier": "protective", "status": "PASS" },
+    "forced_share": { "label": "C8 forced-energy share (D-2)", "tier": "protective", "status": "PASS" }
+  },
+  "grade_summary": { "scored": 10, "target_grade": 9, "commercial_grade": 0, "ledgered": 0, "fails": 1 },
+  "free_class_score": { "iso": "PJM", "all": { "pass": 16, "total": 16 }, "free": { "pass": 12, "total": 12 }, "headline": "C1 all 16/16 · free 12/12" },
+  "_note": "Sandbox verdict record. Full metrics.json (identical verdict) regenerates on the origin re-solve via dashboard_add_run; see patches/README-M1-APPLY.md."
+}
