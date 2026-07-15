@@ -984,6 +984,16 @@ class ScenarioConfig:
     # quantity; rule 13 admissible: regenerates from forward drivers in any
     # year). Feeds ONLY the capacity screens (retirement / new entry /
     # storage), never dispatch, results, or the backcast.
+    entry_screen_diagnostics: bool = False  # GATED, default-OFF diagnostic
+    # (RC-0C / BLK-8). When on, the economic new-entry screen appends a fully
+    # decomposed per-candidate ledger — revenue terms (energy/attribute/
+    # capacity $/MW-yr), cost terms (base/Wright/post-ITC capex, CRF, FOM,
+    # annualized fixed cost), CF, margin, and the queue-cap binding state / MW
+    # built — into each evolved year's ``evolution_<year>.json`` under
+    # ``entry_screen_diagnostics``. Pure observability: it has NO effect on any
+    # retire/build decision (nothing reads it back), so a run with it on is
+    # byte-identical in fleet outcome to one with it off. Used to attribute the
+    # solar-entry zero (which term starves the screen) without changing defaults.
     interchange_shaping: bool = False  # Priced-interchange node: shape the
     # import-tranche availability and export-sink floor by the measured EIA-930
     # month x hour-of-day net-interchange envelope (transmission.
