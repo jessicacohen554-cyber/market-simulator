@@ -1939,6 +1939,7 @@ def caiso_scarcity_overlay(
     storage_discharge: np.ndarray | None,
     renewable_headroom: np.ndarray | None,
     system_lambda: np.ndarray,
+    import_headroom: np.ndarray | None = None,
 ) -> np.ndarray:
     """CAISO post-solve scarcity price adder ($/MWh).
 
@@ -1947,6 +1948,16 @@ def caiso_scarcity_overlay(
     on the same online/offline reserve split as the ERCOT ORDC overlay
     (``reserve_headroom``), and the adder is ``LOLP × (VOLL - λ)`` with
     CAISO's $2,000 cap. Returns a ``(T,)`` array.
+
+    ``import_headroom`` (caiso-85, ``caiso_scarcity_import_headroom``): an
+    optional ``(T,)`` MW array of the hourly UNLOADED must-offer import
+    capability (the corridor-bounded intertie supply the LP holds below VOLL).
+    When supplied it is added to the reserve measure as OFFLINE reserve — it
+    enters the full-hour LOLP term (RA imports are must-offer and schedulable
+    for the operating hour) but not the stricter half-hour online term — so the
+    overlay stops pricing scarcity while unloaded sub-VOLL import supply
+    remains. ``None`` (the default) is byte-identical to the pre-caiso-85
+    overlay.
     """
     r_online, r_offline = reserve_headroom(
         fleet_arrays,
@@ -1957,8 +1968,11 @@ def caiso_scarcity_overlay(
         as_plan_mw=0.0,
         renewable_headroom=renewable_headroom,
     )
+    reserves_total = r_online + r_offline
+    if import_headroom is not None:
+        reserves_total = reserves_total + np.asarray(import_headroom, dtype=float)
     return ordc_adder(
-        r_online + r_offline,
+        reserves_total,
         system_lambda,
         voll=CAISO_SCARCITY_VOLL,
         mcl_mw=CAISO_SCARCITY_MCL_MW,
