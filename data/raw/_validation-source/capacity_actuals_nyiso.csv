@@ -1,7 +1,8 @@
 # capacity_actuals_nyiso.csv — capacity-hindcast scoring target (W2-P5, plan §1.2.3)
 # Source: latest committed EIA-860 (data/raw/eia-860/ operable + retired_and_canceled sheets); registry outcome facts, not bench.
-# Window 2021-2025 (rule 22: no 2026). Fuel in the model taxonomy (data.fleet._map_fuel_type + renewable/storage). Built 2026-07-14.
+# Window 2021-2025 (rule 22: no 2026). Fuel in the model taxonomy (data.fleet._map_fuel_type + renewable/storage). Built 2026-07-15.
 # Units >= 300 MW flagged (large_unit). BA(s): ['NYIS'].
+# RD-5 actuals-coverage fix applied: plant(s) [8907] unioned in from data/raw/_validation-source/retired_sheet_coverage_gaps.csv (missing from the current top-level retired sheet) -- see that file's header and data/raw/eia-860/README.md.
 kind,unit_id,plant_id,fuel,mw,year,state,large_unit
 addition,63661_SWM-1,63661,gas_ct,2.8,2021,NY,False
 addition,63661_SWM-2,63661,gas_ct,2.8,2021,NY,False
@@ -516,6 +517,7 @@ retirement,62424_2,62424,gas_ct,1.4,2021,NY,False
 retirement,62424_3,62424,gas_ct,1.4,2021,NY,False
 retirement,62423_777NG,62423,gas_ct,0.4,2021,NY,False
 retirement,62423_778NG,62423,gas_ct,0.2,2021,NY,False
+retirement,8907_3,8907,nuclear,1012.0,2021,NY,True
 retirement,2678_4,2678,oil,5.1,2021,NY,False
 retirement,61416_GP9,61416,oil,0.9,2021,NY,False
 retirement,62051_EG400,62051,oil,0.4,2021,NY,False
