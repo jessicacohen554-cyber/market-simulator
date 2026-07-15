@@ -1022,6 +1022,53 @@ class TestErcotOrdcOnlyScarcity(unittest.TestCase):
         kw = build_reserve_dispatch_kwargs(design)
         self.assertNotIn("reserve_online_capacity_cap", kw)
 
+    def test_pricing_elig_excludes_classes_outside_envelope_basis(self):
+        # ERCOT-68 fix: the realized-room P-sum mask covers exactly the
+        # envelope share-table classes — a responsive unit whose plant_group
+        # has no share table (nuclear) is excluded from the PRICING room
+        # while staying in headroom_eligible (the physical LP rows).
+        import unittest.mock as mock
+
+        def fake_req(_year, hours, code):
+            base = {"REGUP": 50.0, "RRS": 100.0, "ECRS": 150.0, "NSPIN": 120.0}
+            return np.full(hours, base[str(code)])
+
+        dummy_env = np.vstack([np.full(24, 1.0e9), np.full(24, 9_000.0)])
+        fleet = _fleet()
+        nuc_idx = FUEL_TYPE_NAMES.index("nuclear")
+        fleet.fuel_type_idx = np.array([FUEL_TYPE_NAMES.index("gas_cc"), nuc_idx])
+        fleet.plant_group = np.array(["CC_REGULAR", "NUCLEAR"])
+        cfg = _cfg(
+            ercot_multiproduct_as_coopt=True,
+            ercot_ordc_only_scarcity=True,
+            ercot_online_capacity_envelope_measured=True,
+        )
+        with (
+            mock.patch(
+                "market_sim.results.scarcity.ercot_as_plan_requirement_mw",
+                side_effect=fake_req,
+            ),
+            mock.patch(
+                "market_sim.results.scarcity.ercot_online_capacity_envelope_mw",
+                return_value=dummy_env,
+            ),
+        ):
+            design = get_reserve_design(
+                cfg,
+                fleet,
+                24,
+                ["Z0"],
+                system_load=np.full(24, 1_000.0),
+                wind_gen=np.zeros(24),
+                solar_gen=np.zeros(24),
+            )
+        # Both units are responsive (all-tier headroom_eligible), but only
+        # the envelope-class unit enters the pricing room.
+        np.testing.assert_array_equal(design.headroom_eligible[1], [True, True])
+        np.testing.assert_array_equal(
+            design.online_capacity_pricing_elig, [True, False]
+        )
+
     def test_realized_adder_prices_low_room_not_fat_room(self):
         from types import SimpleNamespace
 
@@ -1073,6 +1120,25 @@ class TestErcotOrdcOnlyScarcity(unittest.TestCase):
         )
         self.assertLess(float(fat.max()), 5.0)
         self.assertGreater(float(tight.min()), 2_000.0)
+        # ERCOT-68 fix: with online_capacity_pricing_elig set, the excluded
+        # unit's dispatch never tightens the pricing room — 8 GW of unit-1
+        # (out-of-basis) dispatch prices like the fat room, not the tight one.
+        masked_design = SimpleNamespace(
+            online_capacity_cap=design.online_capacity_cap,
+            headroom_products=design.headroom_products,
+            headroom_eligible=design.headroom_eligible,
+            supply_cap=design.supply_cap,
+            online_capacity_pricing_elig=np.array([True, False]),
+        )
+        masked = ercot_ordc_realized_adder(
+            cfg,
+            2024,
+            design=masked_design,
+            dispatch=np.vstack([np.full(T, 1_000.0), np.full(T, 8_000.0)]),
+            prices=prices,
+            demand=demand,
+        )
+        self.assertLess(float(masked.max()), 5.0)
         # No envelope in the design -> None (the caller must not price).
         none_design = SimpleNamespace(
             online_capacity_cap=None,
