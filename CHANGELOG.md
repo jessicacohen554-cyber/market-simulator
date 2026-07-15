@@ -1,5 +1,47 @@
 # Changelog
 
+## 2026-07-15 — All-ISO LMP scoring-clock fix (scorer-only): actual hourly parquets rebuilt on the model's chronological calendar; all 33 registered payloads re-paired in place; shift-invariant metrics verified unchanged
+
+- **Scorer/data:** `scripts/derive_actual_lmp.py` now indexes every
+  `actual_lmp_hourly_<ISO>.parquet` on the model's CHRONOLOGICAL calendar
+  (row k = k-th UTC hour after local standard-time midnight Jan 1, standard
+  Feb 29 dropped; `_STD_TZ` + `_std_hour_index`) instead of the reports'
+  DST-prevailing wall labels, which paired every hourly comparison
+  (`lmpDeltaHr` heatmap, scarcity-overlay monthly MAE, hour-of-day residuals)
+  one real hour off for ~5,600 DST hours/year in every ISO
+  (`docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md`
+  §1 — ERCOT 2024 JJA hourly r 0.55 → 0.94 on re-pairing, verified). The DST
+  fall-back hour's two instances now occupy their own real slots (no
+  averaging), no spring-forward hour is NaN'd. Per-ISO readers: PJM uses the
+  export's own UTC column; ERCOT resolves the ambiguous hour by the workbook
+  "Repeated Hour Flag"; NYISO disambiguates duplicated fall-back stamps by
+  row order; NEISO reconstructs positionally within each day (the `02X`
+  repeated-hour row, previously silently dropped, is kept); CAISO indexes
+  its OASIS UTC stamps directly. MISO (`scripts/derive_miso_hub_lmp.py`,
+  `fetch_neighbor_lmp._densify_central`) maps its fixed-EST hub reports by a
+  constant −1 h to fixed CST — no DST logic — and `derive_miso_hub_lmp.py`
+  now re-emits the system parquet (INDIANA.HUB, the verified committed
+  composition) alongside the zonal one. Parquet writes MERGE by year, so
+  out-of-training holdout blocks (NYISO 2018-2022/2026, NEISO 2020-2022)
+  stay byte-frozen (still old-clock; re-derive under authorization — noted
+  in the holdout equivalency register). New `--parquet-only` flag rebuilds
+  parquets without touching `actual_lmp.json` (byte-identical this change;
+  its raw-row means are clock-invariant).
+- **Dashboard:** all 33 registered run payloads re-paired in place
+  (`new_delta = old_delta + actual_old − actual_new`, exact to the render's
+  int16 rounding — the slim committed bundles cannot re-render off-machine;
+  includes the same-day `2026-07-15-pjm-111-cc-reconcile`, rendered against
+  the old actuals); C3c fallback `ordc.hoursGt200.actual` recomputed (only
+  CAISO-2023 moved, 21 → 59 — a stale-semantics catch-up, not a clock
+  effect; verdict-inert). `actual_tail.json` re-derived byte-identical;
+  `build_status.py` verdicts identical; `manifest.js`/`benchmark.js`
+  regenerate byte-identical. The re-pairing exposes model-side phase defects
+  previously masked — NYISO/CAISO DST-only, PJM/CAISO/MISO 2025-uniform —
+  filed as follow-up input-clock lanes (2026-07-15 calibration-log entry has
+  the full tables).
+- **Tests:** `tests/test_derive_miso_hub_lmp.py` updated to the
+  chronological convention.
+
 ## 2026-07-13 — ERCOT-65 negative-price epoch pair: both premises corrected, PTC vintage scoping built (probe-inert), wtx recorder defect fixed, trough/spread lane at frontier
 
 - **Model:** new default-off gate `wind_ptc_vintage_offers` (ISO-agnostic) —

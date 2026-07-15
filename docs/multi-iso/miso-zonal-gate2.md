@@ -9,7 +9,10 @@ faithful to $0.03).
 
 **Actuals:** `data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet`
 (scope decision D6, landed 2026-07-02): the eight named trading hubs,
-RT-final and DA-ex-post, on the model Central-prevailing clock. Hub→zone:
+RT-final and DA-ex-post, on the model's chronological fixed-CST calendar
+(re-indexed by the 2026-07-15 all-ISO scoring-clock fix; the gate numbers
+recorded in this doc were computed against the original Central-prevailing
+indexing, which paired CST-month hours one real hour off). Hub→zone:
 Minn→West, Ill→Illinois, Ind→Indiana, Mich→East, Ark/La/Tx/MS→South
 (member-hub mean); **Plains = MINN+ILLINOIS hub mean** (documented proxy —
 no LRZ 3/5 hub exists, so Plains' pairwise orderings vs West and Illinois

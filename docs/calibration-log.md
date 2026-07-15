@@ -12819,3 +12819,166 @@ no dashboard change.
 
 May-2024 confirmed as the filed G-22 lane (outage forensics stands); the
 trough/spread frontier is untouched.
+
+## 2026-07-15 — ALL-ISO scoring-clock fix (scorer-only, no solve): `actual_lmp_hourly_<ISO>.parquet` rebuilt on the model's CHRONOLOGICAL calendar; all 33 registered payloads re-paired in place; every shift-invariant scored metric verified unchanged (status.js verdict-identical); the re-pairing EXPOSES model-side phase defects in NYISO/CAISO (DST-only) and PJM/CAISO/MISO-2025 (uniform) — filed as follow-up lanes, not chased
+
+**Grounding:** `docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md`
+§1 (this entry executes its "fix first" recommendation; owner authorized the
+all-ISO re-render in the session charter). No LP was solved.
+
+**The defect.** Every model 8760 series is CHRONOLOGICAL — row k = k-th real
+(UTC) hour after local standard-time midnight Jan 1 (`eia_loader._eia_hourly_frame`
+sorts by UTC; demand, interchange, HSL renewables share the clock). But
+`scripts/derive_actual_lmp.py` indexed the actual-LMP parquets by the reports'
+DST *prevailing* wall labels (fall-back hour averaged, spring-forward hour
+NaN'd), and `scripts/derive_miso_hub_lmp.py` / `fetch_neighbor_lmp.py` did the
+same for MISO via an explicit EST→Central-prevailing conversion. Result: every
+hourly-paired diagnostic (`lmpDeltaHr` heatmap, scarcity-overlay demand-weighted
+monthly MAE via `_actual_rt_padded`, any hour-of-day residual analysis) paired
+hours one real hour apart for the ~5,600 DST hours/year, in every ISO.
+
+**The fix (at the source, no comparison-site shims, no legacy prevailing path
+left).** All readers now convert report labels to real instants first and index
+on the fixed standard-time zone (`_STD_TZ`: CST/EST/PST per ISO;
+`_std_hour_index`), so the fall-back hour's two instances occupy their own real
+slots (no averaging) and no spring-forward hour is NaN'd:
+
+- **PJM** — indexes the export's own `datetime_beginning_utc` column directly.
+- **ERCOT** — per-row prevailing→standard shift; the workbook's "Repeated Hour
+  Flag" resolves the one ambiguous wall hour (`_PrevailingShift`).
+- **CAISO** — OASIS `interval_start_gmt` (already UTC) → fixed PST slots; the
+  record path (annual/monthly means off the raw prevailing series) untouched.
+  Rebuilt on the post-#2260 staging (the extended 2023 DAM aggregate landed in
+  parallel this same day); the derived series verified value-identical to the
+  pre-extension rebuild, so the extension changed coverage bookkeeping only.
+- **NYISO** — no timezone column, so the duplicated fall-back stamps are
+  disambiguated by row order per zone-day (`_localize_ordered`, cummax
+  detection → `tz_localize(ambiguous=…)`); spring stamps `raise` (never occur).
+- **NEISO** — SMD rows are positionally chronological within each day
+  (`Hr_End` "02X" repeated hour now KEPT — the old integer parse silently
+  dropped it; spring day 23 rows / fall-back 25 verified in the 2024/2025
+  workbooks). The 2023 workbook is an older fixed-24-rows/day vintage: its two
+  DST transition days can't be fully recovered (03-12 h23 averages the vendor
+  pad with the next midnight; 11-05 h23 is NaN — 2 slots/8760, documented).
+- **MISO** — the hub reports are hour-ending EST year-round; mapping is now the
+  constant −1 h to fixed CST (no DST logic at all). `derive_miso_hub_lmp.py`
+  rebuilds BOTH `actual_lmp_hourly_zonal_MISO.parquet` and (new emission,
+  composition unchanged) the system reference `actual_lmp_hourly_MISO.parquet`
+  — verified the committed system series was exactly INDIANA.HUB under the old
+  piecewise-prevailing indexing (65.2%/34.8% exact-match split = the CDT/CST
+  hour fractions). `fetch_neighbor_lmp._densify_central` fixed to match.
+
+**Rebuild scope & quarantine.** 2023–2025 only, `--parquet-only` (new flag:
+parquets without the JSON — `actual_lmp.json` is byte-identical, md5-verified;
+its legacy `da/rt/*_mon` means weight raw report rows and are clock-invariant
+by construction). The parquet writer now MERGES by year: NYISO's
+2018–2022 + 2026 and NEISO's 2020–2022 out-of-training blocks are preserved
+byte-frozen — **still on the OLD prevailing clock** — and must be re-derived
+under holdout authorization before any validation-year scoring (noted in
+`docs/holdout-data-equivalency-register-2026-07.md`). NYISO 2023–2025 raws were
+re-fetched from `mis.nyiso.com` (36 DA + 27 RT monthly zips, staged locally,
+not committed — the standing staging policy); the re-fetch exposed that the old
+parquet's Jan-1-h00 was contaminated in every year (new value verified equal to
+the raw file's hub mean) and that the republished May-2025 archive lacks one
+hour the original had (honest NaN).
+
+**Structural verification (old vs new, per ISO-year, rt and da).** Outside the
+DST window new == old exactly; inside, new[k] == old[k+1] exactly; the only
+exceptions are the enumerated boundary slots (fall-back split hour; NEISO-2023
+vintage pads; NYISO year-first-hour data fix; MISO year-final-hour spill —
+2–4 slots/year, all inspected). Spring-forward NaNs are gone (ERCOT/PJM/CAISO/
+NEISO-24/25/NYISO/MISO now 0 NaN in full years).
+
+**Seasonal lag test (keeper payloads: model = actual_old + lmpDeltaHr,
+cross-correlated vs the new actual at lags −3..+3; sign convention of the
+diagnosis: +1 = the prevailing artifact, i.e. the actual's features land one
+slot later than the model's).** r@0 before → after (best lag after; DST seasons
+are the artifact-diagnostic cells):
+
+| ISO | year | DJF | MAM | JJA | SON |
+|---|---|---|---|---|---|
+| ERCOT | 2023 | .13→.13 (0) | .24→.34 (0) | .72→.80 (0) | .64→.82 (0) |
+| ERCOT | 2024 | .50→.50 (0) | .64→.86 (0) | **.55→.94 (0)** | .28→.28 (+1)¹ |
+| ERCOT | 2025 | .65→.65 (0) | .32→.29 (−1)² | .41→.44 (0) | .81→.80 (−1)³ |
+| NEISO | 2023–25 | 0 everywhere | 0 | 0 | 0 (2023 −1 by .003) |
+| CAISO | 2023 | .82→.82 (0) | .74→.74 (0) | .56→.56 (−1, by .005) | .56→.58 (0) |
+| CAISO | 2024 | .36→.36 (0) | .81→.79 (−1) | .53→.53 (−1, tie) | .76→.75 (0) |
+| CAISO | 2025 | .59→.59 (−1) | .73→.67 (−1) | .77→.72 (−2) | .74→.68 (−1) |
+| PJM | 2023 | .42→.42 (0) | .55→.55 (0) | .68→.70 (0) | .51→.52 (0) |
+| PJM | 2024 | .50→.50 (+1) | .54→.60 (0) | .60→.67 (0) | .45→.52 (+1) |
+| PJM | 2025 | .64→.64 (+1) | .37→.41 (+1) | .53→.66 (+1) | .34→.38 (+1) |
+| NYISO | 2023 | .31→.31 (+1, tie) | .45→.42 (−1) | .21→.20 (−1) | .72→.70 (−1) |
+| NYISO | 2024 | .50→.50 (0) | .27→.26 (−1) | .38→.36 (−1) | .44→.41 (−1) |
+| NYISO | 2025 | .49→.49 (0) | .64→.61 (−1) | .83→.77 (−1) | .57→.55 (−1) |
+| MISO | 2023 | .41→.41 (−1) | .34→.31 (−1) | .44→.44 (0) | .39→.37 (−1) |
+| MISO | 2024 | .37→.37 (−1) | .34→.33 (−1) | .40→.40 (0) | .37→.36 (−1) |
+| MISO | 2025 | .40→.40 (−2) | .31→.25 (−2) | .53→.46 (−2) | .26→.21 (−2) |
+
+¹ ERCOT 2024-SON: Nov-only (a non-DST month — cannot be a clock effect);
+tail-event-driven — with prices capped at $200 the month scores 0/+1-tie
+(Sep .66 / Oct .81 both best-0). ² May-2025 only (Mar .78 best-0); the
+ledgered G-22 May/shoulder shape family. ³ margin .005.
+
+**Reading the residual non-zeros (the point of the fix — they were masked
+before):** a *DST-seasons-only* best-lag −1 with DJF at 0 (NYISO all years;
+CAISO 2024, weakly) is the signature of a *model-side prevailing-phased input*
+— the old prevailing-indexed actual accidentally cancelled it, which is why
+these ISOs scored "aligned" before. A *uniform all-season* offset (PJM-2025 +1
+solid, CAISO-2025 −1/−2, MISO-2025 −2, MISO-23/24 −1-ish at weak margins) is a
+*year-specific input-content phase drift* — also invisible before. Both are
+model-input lanes (the CAISO demand-clock FINDING is the precedent), NOT
+scoring-reference issues: the new actuals are UTC-derived and verified against
+raw sources; rule 14 forbids re-shifting the reference to hide them. Filed as
+follow-ups: (a) NYISO input-clock audit (demand/renewables positioning), (b)
+CAISO input-clock audit (interaction with `_CAISO_DEMAND_CLOCK_LAG_H` /
+supply-consistent demand), (c) the 2025-vintage EIA-930 extract phase check
+(PJM/CAISO/MISO all drift in 2025 only, PJM opposite sign — smells like one
+upstream extract convention change), (d) MISO's weak-margin −1.
+
+**Payload re-render (the environment constraint).** The committed bundles are
+slim (system/input parquets gitignored, on origin machines only), so
+`render_backcast.py` cannot re-render here. Instead all 33 registered
+`runs/<id>.js` payloads were retrofitted in place — the post-#2261 registry:
+the pjm-98 pair was pruned in parallel, and `2026-07-15-pjm-111-cc-reconcile`
+(rendered the same day, against the old actuals) is retrofitted with the rest.
+Exact, because the model series cancels: `new_delta[k] = round(old_delta[k] +
+actual_old[k] − actual_new[k])` (preserves the render's own ±0.5 int16
+rounding; verified ≤1 everywhere). Hours whose old delta was the NaN sentinel
+stay sentinel (the spring-forward hour's model dual is not recoverable from
+the payload — 1 neutral heatmap hour/year until an origin-machine re-render).
+The C3c fallback `ordc.hoursGt200.actual` was recomputed from the new series:
+unchanged everywhere except CAISO-2023 (21 → 59 — NOT a clock effect: 21 was
+the stale rt-only count from before the reader's rt→da fallback existed; old
+and new parquets both give 59 under current semantics; verdict-inert, C3c
+gates on `tail/actual_tail.json` da_gt).
+
+**Invariants verified unchanged:** `actual_lmp.json` byte-identical (C3a/C3b
+references, incl. `*_lw`); `tail/actual_tail.json` re-derived → byte-identical
+(C3c reference); `build_status.py` re-run → status.js semantically identical
+(every keeper verdict and criterion unchanged; only its `generated` timestamp
+moved, so it is not re-committed); payload diff over all 33 runs: zero drift
+outside {lmpDeltaHr, ordc.hoursGt200.actual(CAISO-2023)};
+`manifest.js`/`benchmark.js`/`completeness.js` regenerated via
+`build_manifest.py` → byte-identical to the post-#2261 committed copies.
+
+**Deferred (each needs its own owned change):** (i) `--lw-retrofit` re-run —
+the committed `*_lw` C3a fields still pair the OLD prevailing actual with
+chronological demand weights; re-deriving moves every ISO's C3a reference
+(microscopically) and re-scores keepers — owner sign-off required. Same change
+should fix + regenerate `derive_ercot_zonal_lmp.py` /
+`actual_lmp_zonal_ERCOT.parquet` (left untouched; consumed only by the frozen
+lw fields). (ii) Neighbor-price products (`nyiso_proxy_lmp_hourly_NEISO`,
+`pjm_border_lmp_hourly_MISO`, `wecc_intertie_lmp_hourly_CAISO`, SPP) — still
+prevailing-indexed via their scripts' local `_hour_index` copies; these are
+SOLVE INPUTS (seam anchors), so their re-indexing + re-derived seam ladders
+belong to a solve-affecting charter. Note the rebuilt system parquets
+(PJM/NYISO/MISO) are themselves read by `neighbor_price` as realized seam
+anchors — future solves inherit the corrected series (±1 h in DST months);
+committed keeper bundles are static and unchanged. (iii) Out-of-training
+parquet rows re-derivation (above). (iv) The model-side phase lanes (above).
+
+**Tests:** `tests/test_derive_miso_hub_lmp.py` updated to the chronological
+convention (July now shifts like February — fixed CST year-round); suite green
+(`test_consume_lmp`, `test_tail_metric_payload`, `test_fetch_caiso_intertie_lmp`
+pass unchanged). **Holdouts/governance:** training years only touched; zero
+fitted values; no ScenarioConfig change; keepers.json untouched.

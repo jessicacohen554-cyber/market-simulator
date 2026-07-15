@@ -57,6 +57,16 @@ no ISO-year loses coverage and every reading names its basis. C3c is
 untouched (a count, not a mean). The legacy `rt`/`da` fields stay committed
 for display continuity and the DA-diagnostic history.
 
+> **Clock note (2026-07-15):** the committed `*_lw` fields were derived when
+> the hourly parquets were still prevailing-clock indexed, so their
+> price×demand pairing is one real hour off in DST months (the all-ISO
+> scoring-clock fix, 2026-07-15 calibration-log entry). The parquets are now
+> chronological; a `--lw-retrofit` re-run (plus the
+> `derive_ercot_zonal_lmp.py` / zonal-parquet re-index it depends on for
+> ERCOT) re-pairs them exactly, but it moves every ISO's C3a reference and
+> re-scores keepers — deferred to its own owner-signed change. The committed
+> values remain the standing C3a basis until then.
+
 Admissibility: measured prices × measured load, both committed raw/derived
 artifacts, forward-reproducible (a forecast year weights by forecast load);
 no model output enters the bench (rules 11/13/15/21). The lw retrofit is a
