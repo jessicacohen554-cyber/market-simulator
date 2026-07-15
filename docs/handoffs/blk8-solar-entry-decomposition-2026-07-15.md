@@ -25,11 +25,13 @@ offline and the two other revenue terms are bounded:
   2021→2025). Even pinning capex to **zero** leaves a FOM-only floor of **$16,000/MW-yr**
   (break-even solar-capture **$6.76/MWh**) — and the starved screen does not clear even that
   (§4). A cost input that is already optimistic cannot be the term that starves the screen.
-- **Term (c) VRE-earns-no-capacity-revenue is real but small.** VRE capacity revenue is a
-  **provable $0** in every ISO (code fact, `capacity.py::apply_economic_new_entry` — the VRE
-  branch has no `capacity_payment`, unlike the thermal branch). Sizing the missing payment at
-  PJM/MISO ELCC × net-CONE gives **~$8–11k/MW-yr** — a real omission, but a small fraction of
-  the ~$40–55k/MW-yr gap. A named small work item, not the dominant term.
+- **Term (c) VRE-earns-no-capacity-revenue is small in magnitude but pivotal at the margin.**
+  VRE capacity revenue is a **measured $0** in every ISO (code fact, the VRE branch of
+  `apply_economic_new_entry` has no `capacity_payment`, unlike the thermal branch). Sizing the
+  missing payment at PJM/MISO ELCC × net-CONE gives **~$8–11k/MW-yr** — small against the
+  widening 2024–25 gap, **but decisive in the near-miss year**: PJM 2023 solar misses by only
+  **−$2.4k/MW-yr** (§4), so the absent capacity payment alone would flip it profitable. A named
+  work item that is more than cosmetic where the energy signal is nearly sufficient.
 - **Term (a) is confirmed by a committed single-term isolation.** The G-30 `entry_lookahead_reprice`
   arm changes **only the price signal** (zero cost/capex/queue change) and unlocks ERCOT solar
   **0 → 4 GW** (`docs/hindcast-reports/ercot-g30-entry-lookahead-2026-07-08.md`). A pure
@@ -129,11 +131,32 @@ screen ledger's own fields (BEFORE legs); `capacity` is the provable VRE $0; `hu
 `gap = hurdle − energy − attribute − capacity` is what the term-(a) signal must still close.
 `would-be capacity` sizes term (c). `cap` is the term-(e) ceiling.
 
-<!-- INSTRUMENTED-NUMBERS: filled from the blk8diag runs' evolution ledgers -->
-_ERCOT / PJM / MISO instrumented energy+attribute rows are inserted here from
-`scripts/blk8_entry_decomposition.py` once the three BEFORE-leg runs complete; the verdict
-above is already fixed by (i) the offline hurdle + FOM floor (§3), (ii) the provable term-(c)
-zero, and (iii) the committed G-30 term-(a) isolation (§5)._
+**PJM BEFORE leg — measured (instrumented `screen_ledger`, solar candidate):**
+
+| year | energy | attribute | capacity | hurdle | margin | build | binding |
+|-----:|-------:|----------:|---------:|-------:|-------:|------:|---------|
+| 2023 | 61,544 | 0 | **0** | 63,979 | **−2,436** | 0 | unprofitable |
+| 2024 | 47,139 | 0 | **0** | 61,819 | −14,681 | 0 | unprofitable |
+| 2025 | 44,458 | 0 | **0** | 60,010 | −15,552 | 0 | unprofitable |
+
+Two measured facts jump out:
+
+1. **Term (a) is the moving part.** Solar's energy revenue **collapses 61.5k → 44.5k/MW-yr
+   (2023→2025)** as the over-supplied fleet drives the solar-capture price down, while the cost
+   hurdle barely moves (64.0k → 60.0k). The margin gap *widens* from −2.4k to −15.6k entirely on
+   the revenue side — the starved/declining price signal, not a rising cost.
+2. **Term (c) is pivotal in the near-miss year.** In 2023 solar clears **96 %** of its hurdle on
+   energy alone and misses by only **−$2,436/MW-yr**. Its measured capacity revenue is **$0** —
+   yet PJM *is* a capacity market, and an ELCC-accredited solar payment (~$8–11k/MW-yr, §7)
+   would flip 2023 profitable. So term (c) — small in magnitude — is the **marginal blocker in
+   the year solar is closest**, while term (a) governs the 2024–25 collapse. (Contrast: **wind**
+   clears every year with energy $70–101k ≫ its $27–29k hurdle and builds at the 1.5 GW/yr cap;
+   the solar/wind asymmetry is exactly solar's cannibalized midday capture + no capacity
+   payment.)
+
+_MISO and ERCOT instrumented rows insert here as those BEFORE-leg runs complete (sequential —
+15 GB can't hold two solves; MISO OOM'd when run concurrently and is being re-run alone).
+ERCOT's term-(a) isolation is additionally covered by the committed G-30 arm (§5)._
 
 Structural constants that hold every year, every ISO:
 
