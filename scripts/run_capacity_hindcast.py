@@ -171,13 +171,17 @@ def build_config(
         # the before/after diagnostic. Default (False) keeps the model
         # default renewable_elcc_curves=True -- the AFTER leg.
         renewable_elcc_curves=not legacy_renewable_credit,
-        # RC-1B / RC-1A probe flag (PROBE, default-off): arm the CR-1 sloped
-        # capacity demand curve for this hindcast invocation. Uses the global
-        # scalar (a per-ISO override surface is a follow-up item — this
-        # harness always runs one ISO per invocation anyway, so the scalar is
-        # equivalent in practice). Never the harness default — see plan §2.2
-        # (the position-calibration measurement this flag exists to run).
-        capacity_market_clearing=capacity_market_clearing,
+        # RC-1B probe flag (PROBE, default-off): arm the CR-1 sloped capacity
+        # demand curve for THIS hindcast's OWN ISO only, via the per-ISO
+        # override mapping (RC-1B item 1 -- resolve_capacity_market_clearing).
+        # The scalar capacity_market_clearing stays off, so the arm can never
+        # leak to another ISO even if a future harness runs more than one per
+        # invocation. Default (flag off) => None => byte-identical. Never the
+        # harness default -- see plan §2.2 (the position-calibration measurement
+        # this flag exists to run).
+        capacity_market_clearing_by_iso=(
+            {iso: True} if capacity_market_clearing else None
+        ),
     )
 
 
@@ -296,9 +300,10 @@ def main(argv: list[str] | None = None) -> int:
         "--capacity-market-clearing",
         action="store_true",
         help=(
-            "RC-1B/RC-1A PROBE: arm the CR-1 sloped capacity demand curve for "
-            "this hindcast run (ScenarioConfig.capacity_market_clearing). "
-            "Never the harness default."
+            "RC-1B PROBE: arm the CR-1 sloped capacity demand curve for THIS "
+            "hindcast's own ISO only, via ScenarioConfig."
+            "capacity_market_clearing_by_iso={iso: True} (the scalar stays "
+            "off). Never the harness default."
         ),
     )
     args = parser.parse_args(argv)
@@ -351,6 +356,7 @@ def main(argv: list[str] | None = None) -> int:
         "staged_thinning_max_gw_per_year": float(args.staged_thinning_max_gw_per_year),
         "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
         "capacity_market_clearing": bool(args.capacity_market_clearing),
+        "capacity_market_clearing_by_iso": config.capacity_market_clearing_by_iso,
         "renewable_elcc_curves": bool(config.renewable_elcc_curves),
         "gas_price_path": config.gas_price_path,
         "vintage_year": VINTAGE_YEAR,
