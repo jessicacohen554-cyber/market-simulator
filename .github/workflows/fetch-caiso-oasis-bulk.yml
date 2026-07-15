@@ -55,10 +55,6 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION || 'us-west-2' }}
       BUCKET: s3://caiso-oasis-s3-prod-groupzips
-      # Private per-run staging dir for this run's extracted window CSVs. Lives
-      # under RUNNER_TEMP so it survives the `git reset --hard` in the push step
-      # and never collides with a sibling run's files.
-      STAGE: ${{ runner.temp }}/oasis-hubs
     steps:
       - uses: actions/checkout@v4
 
@@ -79,8 +75,14 @@ jobs:
       - name: Download group-zips + extract the 3 hubs (per day, low disk)
         run: |
           set -euo pipefail
-          # Extract into this run's private STAGE, NOT the repo working tree —
-          # the working tree is only touched at push time (below).
+          # This run's private staging dir for its extracted window CSVs. Under
+          # RUNNER_TEMP so it survives the `git reset --hard` in the push step
+          # and never collides with a sibling run. NB: $RUNNER_TEMP is the
+          # runtime env var; the `runner.temp` context is NOT allowed in a
+          # job-level env: block, so STAGE is computed here in each step.
+          STAGE="$RUNNER_TEMP/oasis-hubs"
+          # Extract into STAGE, NOT the repo working tree — the working tree is
+          # only touched at push time (below).
           mkdir -p "$STAGE"
           TMP="$(mktemp -d)"
           d="${{ github.event.inputs.start }}"
@@ -116,6 +118,7 @@ jobs:
       - name: Fold into the FRESHEST main, then commit + push (parallel-safe)
         run: |
           set -euo pipefail
+          STAGE="$RUNNER_TEMP/oasis-hubs"
           BRANCH="${{ github.ref_name }}"
           shopt -s nullglob
           staged=("$STAGE"/*.csv)
