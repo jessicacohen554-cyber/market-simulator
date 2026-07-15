@@ -2547,6 +2547,7 @@ def solve_and_persist(
     pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
+    ercot_storage_capability_measured: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
     ercot_ordc_only_scarcity: bool = False,
     priced_interchange: bool = False,
@@ -3036,6 +3037,12 @@ def solve_and_persist(
             # measured thermal class-day availability the LP solved with.
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_thermal_dam_availability=True
+            )
+        if ercot_storage_capability_measured:
+            # Mirror run_year's with_overrides so run_config.json records the
+            # measured storage-capability re-basis the LP solved with (ERCOT-66).
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_storage_capability_measured=True
             )
         if ercot_online_capacity_envelope_measured:
             # Mirror run_year so run_config.json records the measured-fleet-basis
@@ -3669,6 +3676,7 @@ def solve_and_persist(
             pjm_offer_midcurve_segments=pjm_offer_midcurve_segments,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
+            ercot_storage_capability_measured=ercot_storage_capability_measured,
             ercot_online_capacity_envelope_measured=(
                 ercot_online_capacity_envelope_measured
             ),
@@ -4082,6 +4090,7 @@ def solve_and_persist(
         ),
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
+        "ercot_storage_capability_measured": ercot_storage_capability_measured,
         "ercot_online_capacity_envelope_measured": (
             ercot_online_capacity_envelope_measured
         ),
@@ -7016,6 +7025,20 @@ def main() -> None:
         "statistical model. Off (default, keeper-reproducing).",
     )
     parser.add_argument(
+        "--ercot-storage-capability-measured",
+        action="store_true",
+        help="ERCOT backcast: re-base the battery fleet's hourly power cap on "
+        "the measured 60-Day DAM disclosure registered non-OUT storage HSL "
+        "(PWRSTR rows; ESR rows post-RTC+B), replacing the EIA-860 COD-ramped "
+        "power basis (~2 GW low in both audited summers — "
+        "docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md). EIA-860 "
+        "stays the zone-split and duration basis; uncovered dates (Oct-2023 "
+        "hole) keep EIA-860 (rule 14; the storage analogue of "
+        "--ercot-thermal-dam-availability). data/raw/ercot-storage-capability.csv, "
+        "scripts/derive_ercot_storage_capability.py. Off (default, "
+        "keeper-reproducing).",
+    )
+    parser.add_argument(
         "--ercot-online-capacity-envelope-measured",
         action="store_true",
         help="ERCOT: MEASURED-FLEET-BASIS G-22 on-line-capacity envelope (the "
@@ -8927,6 +8950,7 @@ def main() -> None:
         ercot_storage_as_product_credit=args.ercot_storage_as_product_credit,
         ercot_nuclear_unit_availability=args.ercot_nuclear_unit_availability,
         ercot_thermal_dam_availability=args.ercot_thermal_dam_availability,
+        ercot_storage_capability_measured=args.ercot_storage_capability_measured,
         ercot_online_capacity_envelope_measured=(
             args.ercot_online_capacity_envelope_measured
         ),
