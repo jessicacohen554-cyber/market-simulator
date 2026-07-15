@@ -27,9 +27,11 @@
   3,060; Jul 30-31 2025 1,944 → 251 vs 243) and 2025 throughput moves toward
   measured (4.11 → 4.33/4.14 vs 5.46 TWh), but removing the phantom scarcity
   exposes pre-existing 2024 under-pricing (C3a-2024 −6.4 → ~−14%;
-  May/Nov/Apr) — the rule-14 root-cause lane, chartered. Keeper remains
-  `2026-07-12-ercot63-gas-bridge`. Full workings: the 2026-07-15 ERCOT-66
-  calibration-log entry.
+  May/Nov/Apr) — the rule-14 root-cause lane, chartered. **Keeper PROMOTED
+  same day (owner sign-off "Promote A-only"):** `2026-07-15-ercot66-storage-rebasis`
+  supersedes ercot63-gas-bridge on rule-1/14 structural faithfulness, honestly
+  NOT-YET; ERCOT dashboard pruned to keeper-and-later (standing directive).
+  Full workings: the two 2026-07-15 ERCOT-66 calibration-log entries.
 
 ## 2026-07-15 — All-ISO LMP scoring-clock fix (scorer-only): actual hourly parquets rebuilt on the model's chronological calendar; all 33 registered payloads re-paired in place; shift-invariant metrics verified unchanged
 
