@@ -1,0 +1,43 @@
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index 683771e..446eff9 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -4201,6 +4201,38 @@ class ScenarioConfig:
+     # backcast arms it. Ablated in the zero-forcing twin.
+     st_gas_mustrun_per_plant: bool = False
+ 
++    # LEVEL SWAP for the st_gas_mustrun_per_plant floor (miso-67). When True,
++    # the floor level for each gate-armed ST_GAS plant becomes the plant's own
++    # measured 25th-percentile-of-online available-CF (thermal_tranches_<ISO>.csv
++    # ``p25_cf``, the SAME frozen CEMS estimator that produces committed_pct/
++    # online_frac — no deriver touch, rule 23) times its nameplate, instead of
++    # the committed tranche (committed_pct = P5-of-online = the LSL). Same driver,
++    # same top-``online_frac`` system-load window, same mechanism id
++    # (MECH_ST_GAS_MUSTRUN_PER_PLANT) — ONLY the level source changes (rule 19:
++    # the level is replaced, no second floor is stacked). Where the p25 level
++    # exceeds the committed tranche it is distributed cheapest-first across the
++    # plant's tranches (committed -> econ), each clipped to pmax*availability as
++    # today, so an outage hour relaxes it. Rationale (miso-67 triage design):
++    # the committed P5 IS the correct min-stable-load but is the wrong DISPATCH
++    # level for the Entergy MISO-South VLR/self-commitment steamers, which ran
++    # 30-67% CF (p25/median) despite local LMP at/below their SRMC — measured
++    # out-of-market dispatch that offer prices definitionally cannot recover
++    # (Amite South / DSG / WOTAB; MISO SOM). Rule-12 triple: driver = MISO SOM
++    # out-of-market VLR commitments + the plants' CEMS synchronization traces
++    # (Nine Mile 98.2%, Harding Street 97.4%, Lewis Creek 87.5%, Sabine 85.3%
++    # of ALL hours); window = each plant's measured online_frac placed in the
++    # top system-load hours (self-limiting: Gerald Andrus, online 13.7%, floors
++    # only its top-load sliver); forward story = p25_cf re-derives from each new
++    # multi-year CAMPD vintage exactly like the P5 and online_frac (a measured
++    # input conditioned on operation, the rule-13 family; a retired/deregulated
++    # plant exits the artifact). Rule 13: no outcome pinning — dispatch above the
++    # floor stays free and the class lands BELOW actual even at the floor's
++    # ceiling. Off by default (every existing keeper byte-identical); MISO
++    # backcast arms it alongside st_gas_mustrun_per_plant. No ablation twin
++    # (rule 20 as amended 2026-07-14 — legitimacy rests on the DOF ledger +
++    # legitimacy_diagnostics.json D-1/D-2/D-4).
++    st_gas_mustrun_p25_level: bool = False
++
+     # When True, each CC_REGULAR plant's LP capacity is reconciled to its
+     # demonstrated CAMPD peak: raised where the peak exceeds the model bound
+     # (the cold-weather over-rating an F-class CC delivers that nameplate omits
