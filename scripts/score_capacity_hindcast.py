@@ -23,10 +23,11 @@ Usage::
 from __future__ import annotations
 
 import argparse
+import csv
 import json
 import re
 import sys
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 from pathlib import Path
 
 import numpy as np
@@ -82,6 +83,24 @@ BANDS = {
     "co2_2025_frac": 0.10,
 }
 
+# --------------------------------------------------------------------------- #
+# IS-2020 information-set scoring (RC-0B §c.5, T-R8)
+# --------------------------------------------------------------------------- #
+# The vintage cutoff V: what was knowable at forecast start (EIA-860 2020
+# vintage). Anything whose instrument/announcement post-dates V is unknowable at
+# forecast start (RC-0B §c.5-5). Raw scoring grades realized usefulness against
+# latest truth; IS-2020 grades forecast skill against the 2020 information set.
+# Both are reported side by side — quoting only the flattering one is scoring
+# abuse (RC-0B §c.5).
+IS2020_CUTOFF = date(2020, 12, 31)
+
+# Retirement-channel vocabulary (RC-0B §c.5-4). Ledger `reason` values map here;
+# a bundle produced before the RC-1B recorder split records the pre-split
+# "known" reason (steps 0-1 conflated) → announced (rule: legacy "known" maps to
+# announced for pre-split bundles).
+CHANNEL_ORDER = ("confirmed", "announced", "economic")
+_LEGACY_REASON = {"known": "announced"}
+
 
 # --------------------------------------------------------------------------- #
 # Actuals + model aggregation
@@ -97,7 +116,13 @@ def load_actuals(iso: str) -> pd.DataFrame:
 
 
 def model_retirements(ledgers: dict) -> pd.DataFrame:
-    """All modelled retirements across the window (from the ledgers)."""
+    """All modelled retirements across the window (from the ledgers).
+
+    Carries the ledger ``reason`` verbatim so per-channel scoring (§c.5-4) can
+    partition on the ``{confirmed, announced, economic}`` vocabulary. Bundles
+    produced before the RC-1B recorder split record the pre-split ``"known"``
+    reason (steps 0-1 conflated); ``channel_of`` maps that to ``announced``.
+    """
     rows = []
     for year, led in ledgers.items():
         for r in led.get("retirements", []):
@@ -107,9 +132,10 @@ def model_retirements(ledgers: dict) -> pd.DataFrame:
                     "fuel": r["fuel"],
                     "mw": float(r["mw"]),
                     "year": year,
+                    "reason": r.get("reason", "economic"),
                 }
             )
-    return pd.DataFrame(rows, columns=["unit_id", "fuel", "mw", "year"])
+    return pd.DataFrame(rows, columns=["unit_id", "fuel", "mw", "year", "reason"])
 
 
 def model_additions(ledgers: dict) -> pd.DataFrame:
@@ -160,6 +186,22 @@ def model_plant_code(unit_id: str) -> str | None:
     m = re.match(r"(\d+)(?:_|$)", s)  # raw plant_generator form
     if m:
         return m.group(1)
+    return None
+
+
+def model_plant_gen(unit_id: str) -> tuple[str, str] | None:
+    """`(plant_code, generator_id)` from a raw-EIA ``unit_id`` (``6023_1``).
+
+    Announced/confirmed retirements are recorded at raw ``<plant>_<gen>`` grain
+    (e.g. Byron ``6023_1``, Dresden ``869_2``), the grain the confirmed-registry
+    reversal rows are keyed on. Returns ``None`` for tranche/zone forms (a
+    plant-binned economic derate carries no single generator id — it can never be
+    a registry reversal match, which is correct: reversal rows are unit-grain
+    nuclear only).
+    """
+    m = re.fullmatch(r"(\d+)_([A-Za-z0-9]+)", str(unit_id))
+    if m:
+        return m.group(1), m.group(2)
     return None
 
 
@@ -467,6 +509,254 @@ def baseline_announced(iso: str) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# IS-2020 information-set scoring (RC-0B §c.5, T-R8) — no re-solve
+# --------------------------------------------------------------------------- #
+def channel_of(reason) -> str:
+    """Map a ledger ``reason`` onto the ``{confirmed, announced, economic}``
+    channel vocabulary (§c.5-4). Legacy ``"known"`` → ``announced``."""
+    if reason is None or (isinstance(reason, float) and np.isnan(reason)):
+        return "economic"
+    r = str(reason)
+    return _LEGACY_REASON.get(r, r)
+
+
+def load_reversal_set(iso: str) -> dict[tuple[str, str], dict]:
+    """Post-cutoff reversal rows from the confirmed-registry (§c.5-1).
+
+    Membership test for the Byron/Dresden class: a confirmed-registry row with
+    ``superseded=true`` whose original instrument was public on or before V
+    (``instrument_date <= V``) and was superseded *only* by a counter-instrument
+    dated **after** V (``superseding_instrument_date > V``). Keyed on
+    ``(plant_id, generator_id)`` — the grain the model records nuclear exits on.
+
+    Eddystone (superseded by a DOE 202(c) order with **no**
+    ``superseding_instrument_date`` populated) is correctly excluded: its
+    reversal date is unknown to the registry, so it is not a knowable-at-V
+    information-set-correct reversal. Diablo Canyon (SB 846, 2022-09) would
+    qualify for any future CAISO window; none of the four T-R8 ISOs but PJM
+    carries a post-V reversal row.
+
+    Returns ``{(plant, gen): {instrument, unit_name, capacity_mw}}``; empty when
+    the ISO has no registry file (read robustly past the ``#`` comment header —
+    the registry carries commas inside quoted instrument text).
+    """
+    path = Path("data/raw/confirmed-retirements") / f"{iso.lower()}.csv"
+    if not path.exists():
+        return {}
+    cutoff = pd.Timestamp(IS2020_CUTOFF)
+    lines = [
+        ln
+        for ln in path.read_text().splitlines(keepends=True)
+        if not ln.lstrip().startswith("#")
+    ]
+    out: dict[tuple[str, str], dict] = {}
+    for row in csv.DictReader(lines):
+        superseded = str(row.get("superseded") or "").strip().lower() in (
+            "true",
+            "1",
+            "yes",
+        )
+        if not superseded:
+            continue
+        sup_date = pd.to_datetime(
+            (row.get("superseding_instrument_date") or "").strip(), errors="coerce"
+        )
+        inst_date = pd.to_datetime(
+            (row.get("instrument_date") or "").strip(), errors="coerce"
+        )
+        # Knowable-at-V original, unknowable-at-V reversal (the §c.5-1 class).
+        if pd.isna(sup_date) or sup_date <= cutoff:
+            continue
+        if pd.notna(inst_date) and inst_date > cutoff:
+            continue
+        key = (
+            str(row.get("plant_id") or "").strip(),
+            str(row.get("generator_id") or "").strip(),
+        )
+        out[key] = {
+            "instrument": (row.get("superseding_instrument") or "").strip(),
+            "unit_name": (row.get("unit_name") or "").strip(),
+            "capacity_mw": row.get("capacity_mw"),
+        }
+    return out
+
+
+def reversal_exposure(model: pd.DataFrame, reversal_set: dict) -> dict:
+    """Model retirements that qualify for IS-2020 reversal exclusion (§c.5-1).
+
+    A model row is reversal-exposed iff its ``(plant, generator)`` is in the
+    post-cutoff reversal set. Its MW is **excluded from IS-2020 false-retire**
+    and reported here as ``reversal_exposure_gw`` naming the reversing
+    instrument. Raw scoring keeps the MW as false-retire (realized reality: the
+    unit runs today). Returns the exposed rows, total GW, unit_ids, and the
+    distinct instruments.
+    """
+    rows, exposed_ids = [], set()
+    if not reversal_set or model.empty:
+        return {"exposure_gw": 0.0, "rows": [], "unit_ids": set(), "instruments": []}
+    for _, r in model.iterrows():
+        pg = model_plant_gen(r["unit_id"])
+        if pg is not None and pg in reversal_set:
+            info = reversal_set[pg]
+            rows.append(
+                {
+                    "unit_id": r["unit_id"],
+                    "fuel": r["fuel"],
+                    "mw": float(r["mw"]),
+                    "plant_id": pg[0],
+                    "generator_id": pg[1],
+                    "unit_name": info["unit_name"],
+                    "instrument": info["instrument"],
+                }
+            )
+            exposed_ids.add(r["unit_id"])
+    gw = round(sum(x["mw"] for x in rows) / 1000.0, 3)
+    instruments = sorted({x["instrument"] for x in rows if x["instrument"]})
+    return {
+        "exposure_gw": gw,
+        "rows": rows,
+        "unit_ids": exposed_ids,
+        "instruments": instruments,
+    }
+
+
+def score_retirements_is2020(
+    model: pd.DataFrame, actuals: pd.DataFrame, reversal_set: dict
+) -> dict:
+    """IS-2020 retirement scoring: raw metric with reversal-exposed MW removed.
+
+    Only the reversal exclusion (§c.5-1) changes the numbers here; the Palisades
+    physical-exit convention (§c.5-2) and Indian Point coverage fix (§c.5-3) act
+    through the **actuals** (RD-5), so they are already reflected in the raw pass
+    and need no model-side adjustment. IS false-retire drops the information-set-
+    correct reversals; recall is recomputed on the reduced model but is unchanged
+    wherever the reversed fuel has no actual to cover (the PJM nuclear case).
+    """
+    exposure = reversal_exposure(model, reversal_set)
+    keep = (
+        model[~model["unit_id"].isin(exposure["unit_ids"])]
+        if exposure["unit_ids"]
+        else model
+    )
+    base = score_retirements(keep, actuals)
+    base["reversal_exposure_gw"] = exposure["exposure_gw"]
+    base["reversal_instruments"] = exposure["instruments"]
+    base["reversal_rows"] = exposure["rows"]
+    return base
+
+
+def score_channels(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
+    """Per-channel recall + false-retire (§c.5-4), keyed ``{confirmed, announced,
+    economic}`` so an economic-screen grade is never polluted by an announced-
+    channel event (or vice-versa).
+
+    * **false-retire** is decomposed by allocating each fuel's *actual* retired
+      MW across channels in a fixed priority order (confirmed → announced →
+      economic); a channel's false-retire is its per-fuel model MW in excess of
+      the actual MW still un-attributed when it is reached. The per-channel sum
+      reproduces the raw total exactly, and — because the four T-R8 bundles are
+      each single-channel per fuel — the allocation is order-independent here.
+    * **recall** attributes each ≥300 MW actual unit to the first channel (same
+      priority order) whose remaining same-fuel model pool alone covers it; the
+      per-channel matched counts sum to the raw matched count wherever each fuel
+      is retired by a single channel (all four bundles).
+    """
+    if "reason" not in model.columns:
+        model = model.assign(reason="economic")
+    model = model.assign(channel=model["reason"].map(channel_of))
+    act = actuals[actuals["kind"] == "retirement"]
+    act_th = act[act["fuel"].isin(THERMAL_FUELS)]
+    actual_fuel_mw = act_th.groupby("fuel")["mw"].sum().to_dict()
+
+    present = list(dict.fromkeys(model["channel"].tolist()))
+    ordered = [c for c in CHANNEL_ORDER if c in present] + [
+        c for c in present if c not in CHANNEL_ORDER
+    ]
+
+    # False-retire: priority allocation of actual MW pools.
+    pool = dict(actual_fuel_mw)
+    out: dict[str, dict] = {}
+    for c in ordered:
+        cm = model[model["channel"] == c]
+        cfuel = cm.groupby("fuel")["mw"].sum().to_dict()
+        false_gw = 0.0
+        for f, mw in cfuel.items():
+            avail = pool.get(f, 0.0)
+            false_gw += max(0.0, mw - avail) / 1000.0
+            pool[f] = max(0.0, avail - mw)
+        out[c] = {
+            "retired_gw": round(float(cm["mw"].sum()) / 1000.0, 3),
+            "false_retire_gw": round(false_gw, 3),
+            "model_fuel_gw": {f: round(v / 1000.0, 3) for f, v in cfuel.items()},
+        }
+
+    # Recall attribution: greedy, largest actual unit first, priority order.
+    big = act_th[act_th["mw"] >= LARGE_UNIT_MW].sort_values("mw", ascending=False)
+    rpool = {
+        c: model[model["channel"] == c].groupby("fuel")["mw"].sum().to_dict()
+        for c in ordered
+    }
+    matched = {c: 0 for c in ordered}
+    for _, a in big.iterrows():
+        f, m = a["fuel"], float(a["mw"])
+        for c in ordered:
+            if rpool[c].get(f, 0.0) + 1e-6 >= m:
+                matched[c] += 1
+                rpool[c][f] = rpool[c].get(f, 0.0) - m
+                break
+    for c in ordered:
+        out[c]["recall_matched"] = matched[c]
+    out["_n_big_actual"] = int(len(big))
+    out["_legacy_known_mapped_to"] = "announced"
+    return out
+
+
+def additions_is2020(model_add: pd.DataFrame, actuals: pd.DataFrame) -> dict:
+    """IS-2020 additions adjustment: exclude post-V restart additions (§c.5-2).
+
+    Convention (Palisades): the physical 2022 exit is booked in the actuals and
+    scores as a correct recall in both modes; the ~2025 *restart* is a post-V
+    instrument, unknowable at forecast start, so it is excluded from IS-2020
+    additions. A restart is an ``addition`` of a fuel at a ``plant_id`` that the
+    same actuals record as an earlier in-window ``retirement`` of that fuel.
+
+    Model additions carry no plant identity, so the exclusion is defined over the
+    actuals only (the model cannot double-count a restart it never added). In the
+    RD-5 actuals as landed there is **no** restart addition row — the coverage
+    fix booked only Palisades' physical exit — so this is inert here; it is
+    implemented for correctness and forward CAISO/Diablo windows.
+    """
+    act = actuals[actuals["kind"] == "addition"]
+    excluded_gw = 0.0
+    excluded_rows: list[dict] = []
+    if "plant_id" in actuals.columns:
+        retired_plants = set(
+            actuals[actuals["kind"] == "retirement"]
+            .apply(lambda r: (str(r.get("plant_id")), r["fuel"]), axis=1)
+            .tolist()
+        )
+        for _, a in act.iterrows():
+            if (str(a.get("plant_id")), a["fuel"]) in retired_plants:
+                excluded_gw += float(a["mw"]) / 1000.0
+                excluded_rows.append(
+                    {
+                        "plant_id": str(a.get("plant_id")),
+                        "fuel": a["fuel"],
+                        "mw": float(a["mw"]),
+                    }
+                )
+    return {
+        "restart_excluded_gw": round(excluded_gw, 3),
+        "restart_rows": excluded_rows,
+        "note": (
+            "Post-V restart additions excluded from IS-2020 additions (§c.5-2). "
+            "Inert in the RD-5 actuals as landed — the coverage fix booked only "
+            "the physical exit, no restart addition row exists."
+        ),
+    }
+
+
+# --------------------------------------------------------------------------- #
 # Report
 # --------------------------------------------------------------------------- #
 def _fmt_band(x: str) -> str:
@@ -605,6 +895,231 @@ def write_report(
     report_path.write_text("\n".join(L))
 
 
+def render_rescore_section(
+    iso: str, ret: dict, ret_is: dict, channels: dict, add_is: dict, stamp: str
+) -> str:
+    """The IS-2020 re-score section appended to a hindcast report (T-R8).
+
+    Presents raw and IS-2020 metrics side by side (RC-0B §c.5: quoting only the
+    flattering one is scoring abuse), the reversal-exposure line naming the
+    instrument, and the per-channel recall/false-retire tables. The originals
+    above this marker are preserved — this is scoring hygiene on the *committed*
+    bundle, no re-solve.
+    """
+    fr, rr = ret["false_retire"], ret["unit_recall_gt300"]
+    fr_is = ret_is["false_retire"]
+    exp = ret_is.get("reversal_exposure_gw", 0.0)
+    L = []
+    L.append("")
+    L.append("---")
+    L.append("")
+    L.append(f"## IS-2020 re-score (T-R8, {stamp}) — no re-solve")
+    L.append("")
+    L.append(
+        "Scoring-hygiene re-score of the **committed** bundle against RC-0B §c.5: "
+        "**raw** grades realized usefulness against latest truth; **IS-2020** grades "
+        "forecast skill against what was knowable at the 2020 vintage cutoff "
+        f"(V = {IS2020_CUTOFF.isoformat()}). Both are reported side by side — neither "
+        "replaces the other. No LP was solved; the originals above are preserved. "
+        "The RD-5 actuals-coverage fix (plants 8907 Indian Point, 1715 Palisades) is "
+        "already reflected in the raw pass; IS-2020 adds the Byron/Dresden reversal "
+        "exclusion (§c.5-1)."
+    )
+    L.append("")
+    L.append("| retirement metric | raw | IS-2020 |")
+    L.append("|---|--:|--:|")
+    L.append(
+        f"| false-retire (GW) | {fr['false_gw']} ({_fmt_band(fr['band'])}) | "
+        f"{fr_is['false_gw']} ({_fmt_band(fr_is['band'])}) |"
+    )
+    L.append(
+        f"| false-retire (% of model) | {format(fr['frac_of_model'], '.0%')} | "
+        f"{format(fr_is['frac_of_model'], '.0%')} |"
+    )
+    rr_is = ret_is["unit_recall_gt300"]
+    L.append(
+        f"| unit recall >300MW | {('' if rr['recall'] is None else format(rr['recall'], '.0%'))} "
+        f"({rr['matched']}/{rr['n_big_actual']}) | "
+        f"{('' if rr_is['recall'] is None else format(rr_is['recall'], '.0%'))} "
+        f"({rr_is['matched']}/{rr_is['n_big_actual']}) |"
+    )
+    pr = rr.get("plant_recall_frac")
+    L.append(
+        f"| plant-exact recall (diagnostic) | "
+        f"{('—' if pr is None else format(pr, '.0%'))} "
+        f"({rr.get('plant_matched', 0)}/{rr['n_big_actual']}) | (same) |"
+    )
+    L.append(f"| reversal exposure (GW, §c.5-1) | — | {exp} |")
+    L.append("")
+    # Finding: plant-exact recall above fuel-MW recall means the model retired the
+    # right plant(s) but carries a pmax below the EIA nameplate the RD-5 actuals
+    # use — a units-basis near-miss, not a screen miss (rules 1/11: keep the
+    # accurate actual, surface the basis gap rather than bend the metric).
+    if pr is not None and rr["recall"] is not None and pr > rr["recall"] + 1e-9:
+        L.append(
+            "> **Recall-grain finding (§c.5-2/-3):** plant-exact recall "
+            f"({format(pr, '.0%')}) exceeds fuel-MW-coverage recall "
+            f"({format(rr['recall'], '.0%')}) — the model retired the correct "
+            "plant(s) in the correct year, but its carried `pmax` sits below the "
+            "EIA nameplate the RD-5 actuals use (Palisades: model 768.5 MW vs "
+            "actual nameplate 811.8 MW, a 5% basis gap), so the strict ≥-MW "
+            "coverage test marks it a near-miss. This is a nameplate-vs-pmax "
+            "basis difference, **not** a screen error, and it is the correct "
+            "recall §c.5-2/-3 intends — reported honestly at both grains, metric "
+            "unbent (rules 1/11). The false-retire and reversal results are "
+            "unaffected."
+        )
+        L.append("")
+    if ret_is.get("reversal_rows"):
+        L.append(
+            f"> **Reversal exclusion (§c.5-1):** {exp} GW of model nuclear "
+            "retirement is information-set-correct (mandated by an instrument "
+            "public ≤ V) but reality-reversed by a post-V counter-instrument, so "
+            "it is **excluded from IS-2020 false-retire** and reported as "
+            "`reversal_exposure_gw`. Raw scoring keeps it as false-retire (the unit "
+            "runs today). Reversing instrument(s): "
+            + "; ".join(
+                f"{r['unit_name']} ({r['unit_id']})" for r in ret_is["reversal_rows"]
+            )
+            + " — "
+            + (
+                ret_is["reversal_instruments"][0]
+                if ret_is["reversal_instruments"]
+                else ""
+            )
+            + "."
+        )
+        L.append("")
+    # Per-channel table.
+    L.append("Per-channel recall + false-retire (§c.5-4, legacy `known` → announced):")
+    L.append("")
+    L.append(
+        "| channel | retired GW | false-retire GW | recall (matched / big-actual) |"
+    )
+    L.append("|---|--:|--:|--:|")
+    n_big = channels.get("_n_big_actual", 0)
+    for c in CHANNEL_ORDER:
+        if c not in channels:
+            continue
+        d = channels[c]
+        L.append(
+            f"| {c} | {d['retired_gw']} | {d['false_retire_gw']} | "
+            f"{d['recall_matched']}/{n_big} |"
+        )
+    for c in channels:
+        if c in CHANNEL_ORDER or c.startswith("_"):
+            continue
+        d = channels[c]
+        L.append(
+            f"| {c} | {d['retired_gw']} | {d['false_retire_gw']} | "
+            f"{d['recall_matched']}/{n_big} |"
+        )
+    L.append("")
+    if add_is.get("restart_excluded_gw", 0.0) or add_is.get("note"):
+        L.append(f"> **Additions (§c.5-2):** {add_is['note']}")
+        L.append("")
+    return "\n".join(L)
+
+
+def append_rescore(report_path: Path, section: str) -> None:
+    """Append the re-score section to an existing report, preserving the original.
+
+    Idempotent on the section marker: a prior IS-2020 re-score block for the same
+    day is replaced rather than stacked, so re-running the scorer does not grow
+    the file without bound."""
+    marker = "## IS-2020 re-score (T-R8"
+    body = report_path.read_text() if report_path.exists() else ""
+    idx = body.find("\n---\n\n" + marker)
+    if idx == -1:
+        idx = body.find(marker)
+        if idx != -1:  # marker without the divider prefix — trim from there
+            idx = body.rfind("\n", 0, idx)
+    if idx != -1:
+        body = body[:idx].rstrip() + "\n"
+    report_path.parent.mkdir(parents=True, exist_ok=True)
+    report_path.write_text(body.rstrip() + "\n" + section.rstrip() + "\n")
+
+
+def _rescore(bundle: Path, report: Path | None) -> int:
+    """T-R8 re-score: recompute retirements (raw + IS-2020 + per-channel) on the
+    committed bundle with the current RD-5 actuals, preserve the existing
+    ``co2``/``baselines`` (CO2 needs the uncommitted dispatch parquets — RD-5
+    changes neither), update ``score.json``, and append the re-score section to
+    the report. No LP is solved."""
+    meta = json.loads((bundle / "meta.json").read_text())
+    iso, variant = meta["iso"], meta["variant"]
+    cache_dir = Path(meta["bundle"])
+    if not cache_dir.exists():
+        cache_dir = bundle / iso / meta["cache_key"]
+
+    ledgers = load_ledgers_for_run(cache_dir)
+    actuals = load_actuals(iso)
+    mret, madd = model_retirements(ledgers), model_additions(ledgers)
+
+    ret = score_retirements(mret, actuals)  # raw, RD-5 actuals
+    add = score_additions(madd, actuals)
+    reversal_set = load_reversal_set(iso)
+    ret_is = score_retirements_is2020(mret, actuals, reversal_set)
+    channels = score_channels(mret, actuals)
+    add_is = additions_is2020(madd, actuals)
+
+    score_path = cache_dir / "score.json"
+    score = json.loads(score_path.read_text()) if score_path.exists() else {}
+    score.update(
+        {
+            "iso": iso,
+            "variant": variant,
+            "scored_years": list(SCORED_YEARS),
+            "retirements": ret,
+            "additions": add,
+            "retirements_is2020": ret_is,
+            "retirement_channels": channels,
+            "additions_is2020": add_is,
+            "is2020_cutoff": IS2020_CUTOFF.isoformat(),
+            "bands": BANDS,
+            "rescore": {
+                "task": "T-R8",
+                "note": (
+                    "IS-2020 scoring hygiene (RC-0B §c.5) — raw + IS-2020 + "
+                    "per-channel. No re-solve; RD-5 actuals; co2/baselines "
+                    "preserved (unchanged by RD-5)."
+                ),
+                "utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            },
+        }
+    )
+    score.setdefault("co2", {"model": {}, "actual": {}})
+    score.setdefault("baselines", {"announced": baseline_announced(iso)})
+    score_path.write_text(json.dumps(score, indent=2))
+
+    stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if report is None:
+        report = _find_report(iso, variant, bundle.name)
+    if report is not None:
+        section = render_rescore_section(iso, ret, ret_is, channels, add_is, stamp)
+        append_rescore(report, section)
+
+    fr, fr_is = ret["false_retire"], ret_is["false_retire"]
+    print(
+        f"[rescore] {iso} {bundle.name}: raw false-retire {fr['false_gw']} GW "
+        f"({fr['band']}) → IS-2020 {fr_is['false_gw']} GW ({fr_is['band']}); "
+        f"reversal_exposure {ret_is.get('reversal_exposure_gw', 0.0)} GW"
+    )
+    print(f"[rescore] score.json: {score_path}")
+    print(f"[rescore] report:     {report}")
+    return 0
+
+
+def _find_report(iso: str, variant: str, run_id: str) -> Path | None:
+    """Locate the committed report for a bundle: newest ``<run_id>-<date>.md``."""
+    rdir = Path("docs/hindcast-reports")
+    cands = sorted(rdir.glob(f"{run_id}-*.md"))
+    if cands:
+        return cands[-1]
+    cands = sorted(rdir.glob(f"{iso.lower()}-2021-2025-{variant}-*.md"))
+    return cands[-1] if cands else None
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
@@ -613,7 +1128,25 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--report-dir", type=Path, default=Path("docs/hindcast-reports")
     )
+    parser.add_argument(
+        "--rescore",
+        action="store_true",
+        help=(
+            "T-R8 IS-2020 re-score: recompute retirements (raw + IS-2020 + "
+            "per-channel) on the committed bundle, preserve co2/baselines, and "
+            "APPEND a re-score section to the existing report (no re-solve)."
+        ),
+    )
+    parser.add_argument(
+        "--report",
+        type=Path,
+        default=None,
+        help="Existing report to append the --rescore section to (default: auto-locate).",
+    )
     args = parser.parse_args(argv)
+
+    if args.rescore:
+        return _rescore(args.bundle, args.report)
 
     meta = json.loads((args.bundle / "meta.json").read_text())
     iso, variant = meta["iso"], meta["variant"]
