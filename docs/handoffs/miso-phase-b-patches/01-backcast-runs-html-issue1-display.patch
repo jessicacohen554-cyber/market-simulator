@@ -1,0 +1,65 @@
+diff --git a/docs/codebase-site/backcast-runs.html b/docs/codebase-site/backcast-runs.html
+index 462de65..6dfc576 100644
+--- a/docs/codebase-site/backcast-runs.html
++++ b/docs/codebase-site/backcast-runs.html
+@@ -1530,9 +1530,28 @@
+       const ix = (RUN(yr).fuelRows || []).find(x => x.fuel === 'interchange');
+       const mImp = ix ? -ix.m : null, aImp = (ix && ix.b != null) ? -ix.b : null;
+       const load = sysDemand(yr);
++      // Cross-survey wedge (triage Issue-1, 2026-07-15): the model supply is pinned
++      // to EIA-930 demand by LP construction (it balances load to +0.8/+0.9 TWh);
++      // the actual column is the EIA-923 plant survey, which over-covers the SAME
++      // 930 load by up to +24.6 TWh. wedge ≡ actual supply − load ≡ the header gap
++      // (aGen−mGen) up to the model's own load-balance residual + the import delta;
++      // it is a data-basis artifact, NOT under-generation, so a perfect model could
++      // never close it (matching aGen would over-supply the 930 load and force a
++      // dump). Surfaced in the header so the total is not misread as a model miss;
++      // the scored C1 test is the per-class Δ, which cancels the wedge.
++      const wedge = (aImp != null && load > 0) ? (aGen + aImp - load) : null;
+ 
+       // CHP → parent merge (grid-delivered values already BTM-subtracted).
+       const FG_disp = FG.filter(g => !(g in CHP_MERGE));
++      // Reverse of CHP_MERGE: parent class → its CHP child classes. The CHP classes
++      // are real scored C1 fuel-mix records (CC_CHP / ST_CHP gate the C1 test;
++      // CT_CHP is in FUELMIX_EXCLUDED) that live in BOTH the model gmModel and the
++      // actual classFull totals — folding them into the parent for the share math
++      // is correct, but hiding them made the header gap look like missing CHP
++      // (the owner's Issue-1 hypothesis). The "↳ of which CHP" sub-rows below
++      // restore table-row ↔ scored-C1-record 1:1 without changing any total.
++      const CHP_CHILD = {};
++      for (const [chp, par] of Object.entries(CHP_MERGE)) (CHP_CHILD[par] = CHP_CHILD[par] || []).push(chp);
+       const cf_d = Object.fromEntries(FG_disp.map(g => [g, cf[g] || 0]));
+       const gm_d = Object.fromEntries(FG_disp.map(g => [g, gm[g] || 0]));
+       for (const [chp, par] of Object.entries(CHP_MERGE)) {
+@@ -1541,7 +1560,7 @@
+       }
+ 
+       let h = `<div class="bc-panel"><h2>Generation mix <span class="panel-sub">(system-wide; share of total generation by class vs grid-delivered EIA-923 (923 &minus; BTM); CHP folded into parent class; BTM excluded — grid-delivered only)</span></h2>`;
+-      h += `<p class="panel-sub">${esc(RUN(yr).label || st.runId)} generation ${mGen.toFixed(1)} TWh &middot; actual ${aGen.toFixed(1)} TWh`
++      h += `<p class="panel-sub">${esc(RUN(yr).label || st.runId)} generation ${mGen.toFixed(1)} TWh (balances EIA-930 load) &middot; actual ${aGen.toFixed(1)} TWh (EIA-923 grid-delivered${wedge != null ? `; ${fmtTWh(wedge)} cross-survey wedge vs the 930 load basis &mdash; see reconciliation rows; scored C1 is the per-class &Delta;, not this total` : ''})`
+         + (mImp != null ? ` &middot; + net imports ${mImp.toFixed(1)} (actual ${aImp == null ? '—' : aImp.toFixed(1)}) &rarr; supply ${(mGen + mImp).toFixed(1)} TWh vs load ${load.toFixed(1)} TWh` : '') + `</p>`;
+       if (prelim) h += '<p class="panel-sub" style="color:#9a5b12"><b>Preliminary EIA-923 vintage:</b> only <span class="badge-923 ok">&#10003; 923</span> classes are verified-complete and gate the C1 fuel-mix test; <span class="badge-923 inc">&#9888; 923</span> (incomplete) and <span class="badge-923 imm">&mdash; 923</span> (immaterial) classes are shown for reference but not gated.</p>';
+       h += `<div class="bc-table-wrap"><table>
+@@ -1557,6 +1576,22 @@
+         h += `<tr${rowcls}><td>${esc(mixLabel(g))}${cmpBadge(ci)}</td><td class="num">${m.toFixed(2)}</td><td class="num">${a.toFixed(2)}</td>`
+           + `<td class="num">${m_g.toFixed(1)}</td><td class="num">${a_g.toFixed(1)}</td>`
+           + `<td class="num ${dppcls}">${fmtpp(dpp)}</td></tr>`;
++        // "↳ of which CHP" sub-rows — surface each CHP child folded into this
++        // parent (raw gmModel/classFull values, not the merged total) so the
++        // scored CC_CHP / ST_CHP records are visible 1:1. CT_CHP is shown too
++        // (it is in the actual total) but flagged ungated (FUELMIX_EXCLUDED).
++        for (const chp of (CHP_CHILD[g] || [])) {
++          if (!(chp in cf) && !(chp in gm)) continue;
++          const ac = cf[chp] || 0, mc = gm[chp] || 0;
++          const ac_g = aGen > 0 ? 100 * ac / aGen : 0, mc_g = mGen > 0 ? 100 * mc / mGen : 0, dppc = mc_g - ac_g;
++          const cic = prelim && (chp in ((getCompleteness()?.[yr] || {})[iso] || {})) ? cmpInfo(yr, iso, chp) : null;
++          const gated = !FUELMIX_EXCLUDED.has(chp);
++          const dppccls = (cic && !cic.gate) ? '' : (gated ? ppcls(dppc) : '');
++          h += `<tr class="chp-sub" style="opacity:.82"><td style="padding-left:1.7em">&#8627; of which ${esc(mixLabel(chp))}${gated ? '' : ' <span class="badge-923 imm" title="CT_CHP — BTM peaker, excluded from the C1 fuel-mix gate (FUELMIX_EXCLUDED)">&mdash; ungated</span>'}${cmpBadge(cic)}</td>`
++            + `<td class="num">${mc.toFixed(2)}</td><td class="num">${ac.toFixed(2)}</td>`
++            + `<td class="num">${mc_g.toFixed(1)}</td><td class="num">${ac_g.toFixed(1)}</td>`
++            + `<td class="num ${dppccls}">${fmtpp(dppc)}</td></tr>`;
++        }
+       }
+       h += `<tr class="sub"><td>Total generation</td><td class="num">${mGen.toFixed(2)}</td><td class="num">${aGen.toFixed(2)}</td>`
+         + `<td class="num">100.0</td><td class="num">100.0</td><td class="num"></td></tr>`;
