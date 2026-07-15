@@ -92,6 +92,17 @@ structures. Bucket means, Apr–Oct, ex-top-5 event days:
 
 ### 2a. Tight-week evening OVER-amplitude, growing 2024 → 2025 (NEW as a filed lane)
 
+> **Status 2026-07-14 (same day, follow-on audit executed):** the causal
+> checks below were run —
+> `docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md`. Outcome: the
+> storage power/energy ENVELOPE is feasible and the outage overlay is
+> ground-truth FAITHFUL (disclosure-verified; model thermal is ~+2 GW rich vs
+> telemetry) — the defect is the **storage capability basis** (EIA-860 fleet
+> power ~2 GW below ERCOT's registered PWRSTR capability in both summers, plus
+> the AS-award subtraction at the scarcity margin). The audit doc's §2
+> dispositions supersede this section's candidate ranking; the DR charter is
+> `docs/handoffs/ercot-demand-response-charter-2026-07.md`.
+
 Hour-level, aligned (model = energy-only dual; VOLL = $5,000):
 
 - **Aug 19 2024 (real event):** actual h19/h20 = $3,060/$1,674; model
