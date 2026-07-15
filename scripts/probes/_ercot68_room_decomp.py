@@ -56,15 +56,19 @@ from market_sim.results.scarcity import (  # noqa: E402
 
 PRODUCTS = ("REGUP", "RRS", "ECRS", "NSPIN")  # validate_ercot_online_capacity.py:81
 
-# klass values in dispatch/<year>_P1.parquet whose fuel types are
-# reserve-eligible (RESERVE_FUEL_TYPES: gas_cc/gas_ct/gas_st/coal/nuclear/oil).
+# klass values in dispatch/<year>_P1.parquet forming the realized-room P-sum.
+# Post-fix (ERCOT-68): the envelope-CLASS-consistent set — the share-table
+# classes only. Nuclear/oil are LP-headroom-eligible but carry no envelope
+# capability; including them fabricated the ~4.4 GW phantom wedge this script
+# diagnosed (design.online_capacity_pricing_elig now enforces this in the
+# live adder).
 ELIG_KLASS_PREFIX = (
     "CC_",
     "COAL",
     "CT_",
     "ST_",
 )
-ELIG_KLASS_EXACT = ("nuclear", "oil")
+ELIG_KLASS_EXACT: tuple[str, ...] = ()
 # CAMPD-comparable envelope classes (RTOLCAP_CLASSES; nuclear has no CAMPD).
 CAMPD_CLASSES = (
     "COAL",
