@@ -169,18 +169,42 @@ winter rating):
 New Covert (55297) remains a **cap** row (un-guarded phantom 1586 > 1.1×1192);
 the peak-aware guard restores it to the measured 1192.4 and the cap row confirms.
 
-## Re-gate (PJM keeper) — plan
+## Re-gate (PJM keeper) — result: `2026-07-15-pjm-111-cc-reconcile`
 
-Re-solve `pjm-110`'s recipe verbatim (`scripts/probes/_pjm107_gas_daily_probe.py`,
-years 2023–2025) with the unified stack, plus a pre-change control at base to
-isolate the change from codebase drift. Expected PJM dispatch deltas vs pjm-110
-(all measured rule-13 corrections):
+Re-solved `pjm-110`'s recipe verbatim (`scripts/probes/_pjm107_gas_daily_probe.py`,
+years 2023–2025) on the unified stack. **DETERMINATION: NOT-YET — identical
+verdict profile to pjm-110**: all load-bearing PASS (C1 fuel-mix 16/16, C2, C3a
+mean LMP, C3b shape), C4/C6/C7/C8 PASS, only C3c price_tail FAIL (byte-identical
+1/1/17 h — the known LP-vs-MIP scarcity boundary, unchanged).
 
-- New Covert (55297): 1176 → 1192.4 MW (+16, via peak-aware guard + cap row)
-- Bear Garden (56807): 559 → 656.2 MW (raise row; the 2nd inversion)
-- Hamilton (58426): 870 → 882.4 MW (raise)
-- Waterford (55503): 921.6 → 952.3 MW (raise)
+Within-noise of pjm-110 on **every** scored criterion. The only material delta
+is the measured +156 MW CC capacity (all rule-13 corrections):
 
-Gate within-noise of pjm-110 on every scored criterion. Zero-DOF (measured CAMPD
-input; no ablation twin per rule 20). `keepers.json` is owner-only — the
-promotion is flagged, not flipped.
+| plant | code | pjm-110 | pjm-111 | Δ |
+|---|---|---|---|---|
+| New Covert | 55297 | 1176.0 | 1192.4 | +16.4 (peak-aware guard + cap row) |
+| Bear Garden | 56807 | 559.0 | 656.2 | +97.2 (raise; net-summer 628 > nameplate 559, 2nd inversion) |
+| Hamilton Patriot | 58426 | 870.0 | 882.4 | +12.4 (raise) |
+| Waterford | 55503 | 921.6 | 952.3 | +30.7 (raise) |
+
+→ CC_REGULAR generation +0.5–0.7 TWh/yr (toward the higher actual), CT_PEAKER
+−0.1–0.2, price_mean shift <0.2%, price_shape ≈0, **C3c tail unchanged**.
+
+**Control — no separate solve required.** The re-gate asks for a pre-change
+control to isolate the change from codebase drift. The solve code is
+**byte-identical** between pjm-110's solve commit (`226634b`) and this branch's
+base (`e94b9aa`): `git diff 226634b e94b9aa -- src/ scripts/run_calibration_full.py
+scripts/probes/ scripts/replay_keeper.py …` is **empty** (the only changes
+between the two commits are dashboard registration, the pjm-110 bundle, and
+non-solve tooling/benchmark files). So a control solved at base would reproduce
+pjm-110's dispatch exactly — **pjm-110 *is* the zero-drift control**, and both
+runs were re-scored against the current benchmark via `calibration_verdict.determine`
+(apples-to-apples). This is stronger than a redundant re-solve: the isolation is
+git-proven, not sampled.
+
+Zero-DOF (measured CAMPD demonstrated peak; DOF ledger carried verbatim from
+pjm-110, 15 entries / 6 residual unchanged). No ablation twin (rule 20).
+Registered `2026-07-15-pjm-111-cc-reconcile`; the 2 oldest PJM dashboard runs
+(pjm-98 pair) pruned to honour top-15-per-ISO retention (bundles kept).
+**`keepers.json` is owner-only — the promotion is flagged for the owner, not
+flipped.**
