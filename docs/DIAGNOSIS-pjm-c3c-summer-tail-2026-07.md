@@ -236,6 +236,50 @@ invisible partial-derate bucket + the flat congestion surface of §5) — no
 constant may be revisited in that same session (rules 1/11/23/26). Anything
 else regresses → reject, keeper stays pjm-111.
 
+## 8.1 Measured result (pjm-112, 2026-07-15) — outcome (1) misses, 2–5 hold
+
+Run `2026-07-15-pjm-112-unit-availability` (pjm-111 recipe + the two availability
+flags, 2023+2024+2025 in one bundle). Both overlays fired (2023: short 206
+plant-tranches, partial 134). Gate adjudication, all five together:
+
+| gate | test | result |
+|---|---|---|
+| **1** | C3c-2025 model tail ∈ [26, 102] h | **MISS — 18 h** (pjm-111 was 17; +1 h) |
+| 2 | 2023 ≤ 18 / 2024 ≤ 12 | HOLD (1 / 1) |
+| 3 | no PASS criterion flips (C1 16/16, C2, C3a, C3b, C4, C5a, C6, C7, C8) | HOLD — every criterion PASS, matching pjm-111 |
+| 4 | provenance ≥ 800 MW over the 22 summer tail hours | HOLD — **1502 MW** (short 1314 + partial 188) |
+| 5 | LOYO within 2023–2025 (no year regressing on 1–3) | HOLD |
+
+**This is outcome (1): gate #1 misses, gates 2–5 hold → NOT-YET candidate; the
+summer tail is now a QUANTIFIED DISCLOSED BOUNDARY. Keeper stays pjm-111.**
+
+The mechanism is measured and demonstrably on-target — the two extracts remove
+**1502 MW** of the +3.0 GW coal phantom in the exact 22 Jun 23-25 / Jul 28-29
+tail hours (gate #4, above the §7 estimate because the when-operable guard
+correction reaches more short-window units than the raw-annual basis: the
+short leg alone captures Conemaugh-2 Jun 22-25 and Clifty 1/2 Jul 28-31, the
+partial leg Mitchell-WV-1 Jul 23-30). Yet removing that coal moves the marginal
+price rung past $200 in only **1 additional hour** (17 → 18). The boundary is
+therefore **two-part and larger than availability alone**:
+
+1. **The frozen-constant-invisible partial-derate bucket (§7).** ~1.7 GW of the
+   phantom is 3–4-day event derates (Rockport-MB2-class, Jul 28-30) that the
+   7-day-median plateau detector cannot see; the derived partial extract carries
+   Rockport MB2 only in 2024, not the 2025 event — as §7 disclosed. Chasing it
+   would require moving `_SMOOTH_DAYS`/`_MIN_DAYS` (rule 23 forbids it here).
+2. **The flat zonal congestion surface (§5) — the binding residual.** Even the
+   1.5 GW we *did* remove barely moves the tail: cheap western/ComEd energy
+   flows east essentially unconstrained and imports backfill, so the system
+   still needs system-wide shortage to clear $200 in any zone. This is the
+   dominant contributor and is a **topology/interface-limit charter of its own**
+   (the West/Panhandle-split class), not this lane — no admissible quick lever
+   exists for it (rules 1/13).
+
+Per rules 1/11/23/26, no constant, window or threshold was revisited after the
+result. The measured overlay stays in as the structurally-faithful availability
+model (it is real, on-target, and zero-DOF); it simply does not, on its own,
+close the C3c summer tail — which is now disclosed as congestion-surface-bound.
+
 ## 9. Guardrail review
 
 * **Rules 1/11**: mechanism identified and gate pre-committed before any
