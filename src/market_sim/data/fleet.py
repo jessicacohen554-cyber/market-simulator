@@ -92,6 +92,7 @@ from market_sim.data.outages import (
     retiree_availability_caps,
     unit_outage_derate_factors,
     unit_outage_short_derate_factors,
+    unit_partial_outage_derate_factors,
 )
 
 logger = logging.getLogger(__name__)
@@ -1687,6 +1688,41 @@ def generators_to_fleet_arrays(
                     _iso or "ERCOT",
                     config.weather_year,
                     applied_s,
+                )
+        # Unit-grain partial-derate plateaus (gated,
+        # config.unit_partial_outage_windows): the second window shape of the
+        # measured unit-availability family. A baseload coal unit that keeps
+        # running but at a depressed CF ceiling (half its capability out) never
+        # reaches zero, so no full-stop window (>= 5-day or short) can represent
+        # it. Detected on each unit's own CEMS with the plant-level partial
+        # detector's frozen plateau constants + the same when-operable baseload
+        # guard and in-merit filter as the short windows, then aggregated to the
+        # plant by unit-capacity share (concurrent units summed, clipped at full)
+        # exactly like the >= 5-day overlay — so it is keyed per (plant_code,
+        # plant_group), NOT per plant_code like the ERCOT-only plant-grain
+        # partial path below (which over-fires ~43 TWh/yr on PJM's cycling fleet
+        # and stays ERCOT-scoped). Reads the per-ISO unit-grain file; ISOs
+        # without it get an empty derate (no effect). Multiplies availability.
+        if getattr(config, "unit_partial_outage_windows", False):
+            ppfac = unit_partial_outage_derate_factors(
+                config.weather_year,
+                hours,
+                getattr(config, "campd_bins_path", str(CAMPD_BINS_CSV)),
+                iso=_iso or "ERCOT",
+            )
+            if ppfac:
+                applied_pp = 0
+                for g_idx, gen in enumerate(generators):
+                    f = ppfac.get((int(gen.plant_code), gen.plant_group))
+                    if f is not None:
+                        availability[g_idx, :] *= f
+                        applied_pp += 1
+                logger.info(
+                    "unit partial-outage derate (%s %d): %d plant-tranches "
+                    "derated (unit-grain CF-ceiling plateaus)",
+                    _iso or "ERCOT",
+                    config.weather_year,
+                    applied_pp,
                 )
         # Within-window retiree measured-availability cap (CAMPD unit-level):
         # a unit winding down to retirement is held at its coal must-run floor
