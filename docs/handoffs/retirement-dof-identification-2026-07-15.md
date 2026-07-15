@@ -342,9 +342,9 @@ forecast start):
   row has both instrument_date ≤ V and exit_year ≤ 2025 that is live *as of V*.
   (Byron/Dresden's original PJM deactivation notifications, dated 2020-08-27, WERE
   live-and-binding as of V — their CEJA supersession is post-V. Under strict IS
-  discipline they are as-of-2020 *confirmed* exits, which only strengthens the R5
-  ruling below.) Braunig 1/2 (instrument 2024-03-13) is unknowable at V and must
-  not fire in an as-of-2020 hindcast (§d D4).
+  discipline they are as-of-2020 *confirmed* exits, which only strengthens the
+  §c.5-1 reversal ruling below.) Braunig 1/2 (instrument 2024-03-13) is unknowable
+  at V and must not fire in an as-of-2020 hindcast (§d D4).
 
 ### c.5 Scoring definitions: raw vs information-set-adjusted (for `score_capacity_hindcast.py`)
 
