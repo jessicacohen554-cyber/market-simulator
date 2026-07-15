@@ -899,6 +899,15 @@ class ScenarioConfig:
     # exercised only end-to-end via the runner (which supplies the reserve
     # position). Flipping the default is gated on the P-2A auction-history
     # validation (CR-2); this session lands the mechanism default-off only.
+    capacity_market_clearing_by_iso: dict[str, bool] | None = None  # RC-1B
+    # per-ISO override for the CR-1 clearing gate (P-2A §7 prerequisite 5): a
+    # {iso: bool} mapping resolved through the one seam
+    # constants.resolve_capacity_market_clearing, letting a future flip be ON for
+    # one ISO while OFF elsewhere (the scalar capacity_market_clearing above
+    # cannot express that). None (the default) means every ISO falls through to
+    # the scalar, so the default path is byte-identical to the pre-RC-1B stub.
+    # A row present for an ISO wins over the scalar for that ISO only. No default
+    # flip lands here (rule 22 LOYO + P-2A gate govern any ON flip).
     renewable_elcc_curves: bool = True  # CR-3.1 (plan §3.4.1; P-2B Option A
     # basis): the adequacy ledger accredits wind/solar (and any published VRE
     # class) at the ISO's OWN published penetration-indexed ELCC curve
