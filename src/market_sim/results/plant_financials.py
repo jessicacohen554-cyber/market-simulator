@@ -29,7 +29,6 @@ from market_sim.config.constants import (
     HEAT_RATE_BINS,
     HOURS_PER_YEAR,
     MARKET_DESIGN,
-    resolve_capacity_market_clearing,
 )
 
 logger = logging.getLogger(__name__)
@@ -514,7 +513,7 @@ def compute_plant_annual_summary(
     if iso is not None:
         design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
         price_per_firm_mw_yr = design.capacity_price_per_firm_mw_yr(
-            config, reserve_position, iso=iso, year=year
+            config, reserve_position
         )
         if design.capacity_market and price_per_firm_mw_yr > 0.0:
             ucap = (1.0 - annual["fuel_type"].map(EFORD).fillna(0.0)).clip(lower=0.0)
@@ -523,7 +522,7 @@ def compute_plant_annual_summary(
             )
             uses_curve = (
                 config is not None
-                and resolve_capacity_market_clearing(config, iso)
+                and getattr(config, "capacity_market_clearing", False)
                 and bool(design.demand_curve)
                 and reserve_position is not None
             )
