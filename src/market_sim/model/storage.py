@@ -210,7 +210,7 @@ def build_default_storage(
 
 
 # Duration (hours) assumed for an EIA-860 storage unit whose energy
-# capacity is blank — a rare gap; ERCOT's 2023 fleet reports it in full.
+# capacity is blank -- a rare gap; ERCOT's 2023 fleet reports it in full.
 _EIA860_STORAGE_FALLBACK_DURATION_HR: float = 2.0
 
 
@@ -237,9 +237,9 @@ def _unit_monthly_mask(
     """Return a storage unit's ``(12,)`` float online mask (COD + retirement).
 
     Wraps :func:`market_sim.data.cod_ramp.monthly_online_mask` with the
-    loaders' shared month conventions — a missing online month falls back to
+    loaders' shared month conventions -- a missing online month falls back to
     :data:`market_sim.data.cod_ramp.COD_FALLBACK_MONTH` and a missing
-    retirement month to December — so the storage off-ramp matches the
+    retirement month to December -- so the storage off-ramp matches the
     thermal/renewable COD ramp exactly. Inputs may be NaN floats (EIA-860
     numeric columns); element ``m`` is ``1.0`` when the unit is online in
     calendar month ``m + 1`` of ``year`` and ``0.0`` otherwise.
@@ -284,7 +284,7 @@ def load_eia860_storage(
     power/energy here without double-counting its PV.
 
     When ``config.storage_vintage_ramp`` is on, each unit contributes only to
-    the months it actually operated — capacity commissioned *during* ``year``
+    the months it actually operated -- capacity commissioned *during* ``year``
     enters from its EIA-860 Operating Month, and a unit with a planned
     retirement in ``year`` drops out from its Planned Retirement Month (the
     OFF-ramp mirroring the COD ON-ramp; the energy-storage operable vintage does
@@ -347,7 +347,7 @@ def load_eia860_storage(
 
     # Capacity online per zone per month (12,); December is the year-end total.
     # Each unit contributes its nameplate only to the months it actually
-    # operated — the COD ON-ramp plus the planned-retirement OFF-ramp, via the
+    # operated -- the COD ON-ramp plus the planned-retirement OFF-ramp, via the
     # shared month-precise mask (month missing -> COD_FALLBACK_MONTH for online,
     # December for retirement).
     per_zone_power: dict[str, np.ndarray] = {}
@@ -377,7 +377,7 @@ def load_eia860_storage(
 
     eta = _storage_rte("li_ion_4hr", config) ** 0.5
     # Throughput/cycling cost per MWh discharged (degradation + ancillary-
-    # service opportunity cost) — the battery analogue of the pumped-storage
+    # service opportunity cost) -- the battery analogue of the pumped-storage
     # adder below; see ScenarioConfig.battery_dispatch_adder.
     adder = float(getattr(config, "battery_dispatch_adder", 0.0))
     units: list[StorageUnit] = []
@@ -387,7 +387,7 @@ def load_eia860_storage(
             continue
         monthly_e = per_zone_energy[zone]
         # A monthly profile is attached only when the ramp is enabled and the
-        # zone's capacity actually varies intra-year — a COD step up OR a
+        # zone's capacity actually varies intra-year -- a COD step up OR a
         # retirement step down; otherwise the unit stays static and the
         # dispatch bounds remain 1-D.
         ramped = config.storage_vintage_ramp and not np.allclose(
@@ -420,9 +420,9 @@ def resolve_pumped_storage_dispatch_adder(
     An explicit ``config.pumped_storage_dispatch_adder`` wins. ``None`` (the
     field default, or no config at all) falls back to the per-ISO calibrated
     default in :data:`PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO`. That map is
-    currently empty — PJM's former $10 adder was retired (it had been fitted to
+    currently empty -- PJM's former $10 adder was retired (it had been fitted to
     a mis-measured PS *net*-generation figure, not a real reserve cost; see the
-    constant's comment and docs/multi-iso/pjm-ps-cycling-diagnosis-2026-06.md) —
+    constant's comment and docs/multi-iso/pjm-ps-cycling-diagnosis-2026-06.md) --
     so every ISO without an explicit override resolves to 0.0, i.e. pumped
     storage arbitrages on its physical RTE like batteries.
     """
@@ -455,7 +455,7 @@ def storage_cap_profiles(
 
     Note: the LP's annual cyclic SOC constraint pins a ramped unit's
     year-end SOC back to its January level, which the January bound caps at
-    zero — the unit ends the year empty. That is a one-cycle artifact,
+    zero -- the unit ends the year empty. That is a one-cycle artifact,
     negligible against fleet-scale annual throughput.
     """
     if not any(u.monthly_power_mw is not None for u in units):
@@ -495,7 +495,7 @@ def reserve_storage_as_power(
     arbitrage-available power. Returns the (possibly broadcast) ``(n_storage,
     hours)`` cap; a missing file or empty fleet passes ``power_cap`` through.
 
-    Note: this reserves *power*, not state of charge — the first-order
+    Note: this reserves *power*, not state of charge -- the first-order
     constraint that binds in the scarcity hours where the LP over-discharges.
     """
     pc = np.asarray(power_cap, dtype=float)
@@ -536,7 +536,7 @@ def ercot_storage_capability_caps(
     disclosure registered non-OUT HSL (``data/raw/ercot-storage-capability.csv``)
     instead of the EIA-860 COD-ramped schedule, which the summer-availability
     audit measured ~2 GW low in both summers (5.8 vs 7.7 GW Aug-2024, 10.6 vs
-    12.5 GW Jul-2025 — docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md
+    12.5 GW Jul-2025 -- docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md
     §1c). The measured series embeds real COD energization timing, hybrid
     halves, and real storage outages, so it replaces both the EIA-860 MW ramp
     and the (absent) storage outage model.
@@ -544,11 +544,11 @@ def ercot_storage_capability_caps(
     EIA-860 stays the ZONE and DURATION basis: the ISO-wide measured MW is
     allocated across battery units (one per zone) by their EIA-860 power
     shares hour-by-hour, and each unit's energy cap is the re-based power
-    times its EIA-860 fleet duration (energy/power) — the disclosure is
+    times its EIA-860 fleet duration (energy/power) -- the disclosure is
     resource-keyed with no plant crosswalk, and the audit found the EIA-860
     energy envelope feasible (§1a), so only the power basis is measured.
 
-    Uncovered hours (NaN in the CSV — the Oct-2023 publication hole) keep the
+    Uncovered hours (NaN in the CSV -- the Oct-2023 publication hole) keep the
     EIA-860 caps unchanged. Pumped storage is untouched (not a PWRSTR/ESR).
     A missing CSV or an empty battery fleet passes both caps through. Returns
     ``(power_cap, energy_cap)`` broadcast to ``(n_storage, hours)``.
@@ -624,13 +624,13 @@ def reserve_caiso_storage_as_power(
     + non-spin, peaking 1.2-1.5 GW midday-to-afternoon in 2024/25) are power
     committed to reserve that cannot simultaneously arbitrage energy. This
     subtracts that measured hourly MW from the BATTERY units' dispatch power
-    cap, allocated pro-rata by available battery power — the exact ERCOT
+    cap, allocated pro-rata by available battery power -- the exact ERCOT
     :func:`reserve_storage_as_power` pattern (``storage_as_commitment``),
     scoped to batteries because pumped storage is not an LESR.
 
     Rule-13 admissibility: the AS requirement regenerates for a forward year
     from forward drivers (load/VRE growth) and the storage share responds to
-    fleet growth and AS saturation — forward runs price the energy-vs-AS split
+    fleet growth and AS saturation -- forward runs price the energy-vs-AS split
     endogenously (the ``ercot_storage_as_endogenous`` pattern); the measured
     award enters the backcast only as a capability input the LP dispatches
     beneath, never a pinned outcome. Zero fitted parameters (rule 23).
@@ -665,7 +665,7 @@ def caiso_storage_as_soc_min(
     CAISO AS certification requires spin/non-spin awards to be sustainable for
     30 minutes from available state of charge
     (:data:`market_sim.config.reserve_config.CAISO_AS_SUSTAIN_DURATION_H`,
-    CAISO Tariff §8.4 / App. K, ASSOC initiative — the reserve co-opt's own
+    CAISO Tariff §8.4 / App. K, ASSOC initiative -- the reserve co-opt's own
     sustain constant, no new number), so an awarded battery must hold
     ``0.5 h × (spin + nonspin)`` MWh it cannot arbitrage away. Allocated across
     battery units by the same pro-rata power weights as the power reservation
@@ -700,7 +700,7 @@ def load_eia860_pumped_storage(
 
     Pumped storage is reported on the EIA-860 *generator* schedule (prime
     mover ``PS``), not the battery energy-storage schedule, so the battery
-    loader alone misses it entirely — e.g. PJM's ~5 GW (Bath County, Muddy
+    loader alone misses it entirely -- e.g. PJM's ~5 GW (Bath County, Muddy
     Run, Yards Creek, Seneca, Smith Mountain) and CAISO's ~2.1 GW (Helms,
     W. R. Gianelli, Edward C Hyatt, J S Eastwood, Thermalito, O'Neill), the
     fleets' largest peak-shaving resources. Each operating PS unit online by
@@ -858,7 +858,7 @@ def estimate_storage_revenue(
     prices: (n_zones, T) or (T,). If multi-zone, uses the zone with the
     highest spread in each window. Returns $/MW-yr.
 
-    Fully vectorized — no Python loop over windows.
+    Fully vectorized -- no Python loop over windows.
     """
     price_arr = np.asarray(prices, dtype=float)
     if price_arr.ndim == 1:
@@ -901,7 +901,7 @@ def _elcc_for_duration(duration_hr: float, iso: str | None = None) -> float:
     """Interpolate the storage capacity credit (ELCC) for a duration.
 
     Linear interpolation over the ISO's published storage class-rating table
-    (:data:`STORAGE_ELCC_BY_DURATION_BY_ISO` — e.g. PJM's 2025/26 CIFP-reform
+    (:data:`STORAGE_ELCC_BY_DURATION_BY_ISO` -- e.g. PJM's 2025/26 CIFP-reform
     class ratings, R3) when the ISO publishes one, else the generic
     :data:`STORAGE_ELCC_BY_DURATION`; clamped at the table's endpoints.
     ``iso=None`` (or an ISO absent from the override registry) keeps the generic
@@ -940,6 +940,7 @@ def estimate_capacity_value(
     config: ScenarioConfig,
     iso: str,
     reserve_position: float | None = None,
+    year: int | None = None,
 ) -> float:
     """Resource-adequacy capacity value per MW-yr for the next unit built.
 
@@ -949,12 +950,12 @@ def estimate_capacity_value(
         capacity_price × ELCC(duration) × (1 - penetration)^exponent
 
     where ``capacity_price`` is the shared per-firm-MW capacity price
-    (:meth:`MarketDesign.capacity_price_per_firm_mw_yr` — rule 19, the SAME
+    (:meth:`MarketDesign.capacity_price_per_firm_mw_yr` -- rule 19, the SAME
     seam the thermal retirement and new-entry screens price through, so storage
     entry rides the ISO's one demand curve with no screen-specific curve). It
-    is the flat ``net_cone × 1000`` by default and — when
+    is the flat ``net_cone × 1000`` by default and -- when
     ``config.capacity_market_clearing`` is on, the ISO has a published curve,
-    and ``reserve_position`` is supplied — the CR-1 sloped-curve price
+    and ``reserve_position`` is supplied -- the CR-1 sloped-curve price
     ``VRR(reserve_position) × net_cone_curve × 1000``. Storage's own
     accreditation (ELCC × saturation derate) multiplies it afterwards, distinct
     from the thermal UCAP.
@@ -962,13 +963,15 @@ def estimate_capacity_value(
     The ELCC credit rises with duration; the saturation derate falls as
     existing storage approaches the deployment ceiling. Together they make
     short-duration capacity value collapse at high penetration while
-    long-duration storage retains its firm-capacity credit — the mechanism
+    long-duration storage retains its firm-capacity credit -- the mechanism
     that tilts new entry toward longer durations as storage saturates.
     """
     if not config.storage_capacity_value:
         return 0.0
     design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
-    base_price = design.capacity_price_per_firm_mw_yr(config, reserve_position)
+    base_price = design.capacity_price_per_firm_mw_yr(
+        config, reserve_position, iso=iso, year=year
+    )
     if base_price <= 0.0:
         return 0.0
 
@@ -1102,7 +1105,7 @@ def apply_storage_new_entry(
     Each tech in STORAGE_TECHS is screened on a value stack:
     - **Energy arbitrage** over duration-sized windows (so long-duration
       storage captures multi-day value), net of cycling degradation.
-    - **Capacity value** — resource-adequacy revenue, paid only in ISOs whose
+    - **Capacity value** -- resource-adequacy revenue, paid only in ISOs whose
       MARKET_DESIGN has a capacity market and when
       ``config.storage_capacity_value`` is on. Its duration-rising ELCC credit
       and penetration-falling saturation derate tilt entry toward longer
@@ -1129,7 +1132,7 @@ def apply_storage_new_entry(
     is supplied, each tech's capacity value is scaled by the load-share-weighted
     fraction of zones that are still *short* (headroom < 0). Storage builds
     distribute by load_share, so this credits capacity value only for the share
-    of the build landing where the RA requirement is not yet met — the same
+    of the build landing where the RA requirement is not yet met -- the same
     locational logic as the thermal screens. A no-op (factor 1.0) when the flag
     is off or no zone is long.
 
@@ -1143,9 +1146,9 @@ def apply_storage_new_entry(
       The AS credit is then the value **derived from that solved co-opt's own
       reserve duals**, passed as ``endogenous_as_revenue_per_mw_yr``
       (``ancillary.realized_storage_as_revenue_per_mw_yr``); the exogenous
-      saturation rate is **not** added — that would double-count.
+      saturation rate is **not** added -- that would double-count.
     * endogenous **off** → the legacy/backcast-validation path: the calibrated
-      exogenous ``ancillary.as_revenue_per_mw_yr("storage", …)`` is the sole AS
+      exogenous ``ancillary.as_revenue_per_mw_yr("storage", ...)`` is the sole AS
       credit.
     """
     iso = iso.upper()
@@ -1176,11 +1179,11 @@ def apply_storage_new_entry(
         )
         capacity_value = (
             estimate_capacity_value(
-                tech_name, existing_mw, config, iso, reserve_position
+                tech_name, existing_mw, config, iso, reserve_position, year=year
             )
             * deliverability_factor
         )
-        # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin) — ~85% of
+        # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin) -- ~85% of
         # 2023 battery revenue and absent from the energy-arbitrage + capacity
         # value stack above. Under the endogenous co-opt the AS duty is already
         # priced in dispatch, so the credit is DERIVED from that solve's reserve
