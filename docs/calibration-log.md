@@ -13332,3 +13332,70 @@ DA-expressible identifications.
 `git fetch --prune` + rebase onto the new main, plain `git push` works from
 this container (the CLAUDE.md 413 rule did not re-manifest once the refs were
 consistent). All solves in-session, sequential, one at a time (~8 min/year).
+
+---
+
+## 2026-07-15 — PJM-112 measured unit-availability completion (C3c summer-tail solve; NOT-YET candidate, keeper stays pjm-111)
+
+**Run:** `2026-07-15-pjm-112-unit-availability` (PJM, 2023+2024+2025, one bundle
+— rule 16). The pjm-111 CC-reconcile keeper recipe (full pjm-105/107/110/111 flag
+stack via `replay_keeper.build_kwargs`) + EXACTLY the two measured
+unit-availability flags on top (`prb_overrides`): `unit_outage_short_windows`
+(LEG A) and `unit_partial_outage_windows` (LEG B). One phenomenon (measured unit
+availability the ≥5-day zero-run extract cannot see), two window shapes, zero
+fitted scalars. Grounding: `docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md` §7-8.
+
+**Mechanism (pre-committed by the Fable design session; no constant touched):**
+* **LEG A** — the short (<5-day) baseload-coal deriver's `SHORT_BASELOAD_CF`
+  (0.55, unchanged) guard basis changed raw-annual CF → WHEN-OPERABLE CF (mean
+  gross over hours outside the unit's own ≥5-day standard windows). Cited to the
+  §7 measurement (event-unit when-operable CF 0.58-0.72 vs raw-annual 0.09-0.36),
+  not a price residual; applies to any ISO re-derive. Re-derived
+  `campd-unit-outages-short-PJM.csv` (290 windows) — captures Conemaugh-2
+  (Jun 22-25) and Clifty 1/2 (Jul 28-31), the summer tail events.
+* **LEG B** — new `--partial-windows` deriver mode + `unit_partial_outage_windows`
+  overlay: unit-grain CF-ceiling plateaus at the plant-level partial detector's
+  frozen constants (`_MIN_DAYS`=5, `_SMOOTH_DAYS`=7, `_CEILING_FRAC`=0.65,
+  `_RUN_FLOOR_CF`=0.06) + the same when-operable guard + in-merit filter,
+  aggregated to the plant like the unit-outage overlay. `campd-partial-outages-PJM.csv`
+  (76 windows) — Mitchell-WV-1 Jul 23-30 covers the Jul event. The plant-grain
+  partial path (over-fires ~43 TWh/yr on PJM) stays ERCOT-scoped.
+
+Both overlays fired (2023: short 206 plant-tranches, partial 134); `run_config`
+records both flags True (ERCOT-65 recorder check done).
+
+**Pre-committed gate (diagnosis §8, all five adjudicated together, no re-tuning):**
+| # | test | result |
+|---|---|---|
+| **1** | C3c-2025 model tail (`ordc.hoursGt200.model`) ∈ [26,102] h | **MISS — 18 h** (pjm-111 17; +1) |
+| 2 | 2023 ≤ 18 / 2024 ≤ 12 | HOLD (1 / 1) |
+| 3 | no PASS criterion flips (C1 16/16, C2, C3a, C3b, C4, C5a, C6, C7, C8) | HOLD |
+| 4 | provenance ≥ 800 MW / 22 summer tail hours | HOLD — **1502 MW** (short 1314 + partial 188) |
+| 5 | LOYO within 2023-2025 | HOLD |
+
+**Outcome (1): gate #1 misses, gates 2-5 hold → NOT-YET candidate; C3c summer
+tail is a QUANTIFIED DISCLOSED BOUNDARY.** The overlay is measured and on-target
+(removes 1502 MW of the +3.0 GW coal phantom in the tail hours) yet moves the
+marginal price rung past $200 in only +1 h. Binding residual: the **flat zonal
+congestion surface (§5)** — cheap western/ComEd energy flows east unconstrained +
+import backfill absorb the removed coal, so system-wide shortage is still needed
+to clear $200 — a topology/interface charter of its own, NOT this lane; plus the
+~1.7 GW of 3-4-day event partial derates invisible to the 7-day-median plateau
+detector (§7). Per rules 1/11/23/26, no constant/window/threshold revisited after
+the result. The measured overlay stays in as the structurally-faithful, zero-DOF
+availability model; it does not on its own close C3c.
+
+**Attestation:** pjm-111 DOF ledger carried VERBATIM (15 entries) + 2 zero-DOF
+measured entries (short + partial PJM extracts; CAMPD source, re-derive on vintage
+change only, rule 23). n_entries 15 → 17, n_residual unchanged (6). No ablation
+twin (rule 20). C6 governance PASS.
+
+**Owner sign-offs requested:** (i) the when-operable guard-basis change, (ii)
+leg-B unit-grain partial admissibility. Keeper promotion NOT requested (gate #1
+missed). Keeper stays `2026-07-15-pjm-111-cc-reconcile` (`keepers.json` owner-only,
+not flipped). Retention: dropped oldest PJM run (pjm-99) for top-15.
+
+**Ops:** all solves in-session, sequential (~6 min/year on 15 GB + 8 GB swap,
+`MALLOC_ARENA_MAX=2`); prereqs `fetch_pjm_da_virtuals --feeds hrl_da_incs_decs` +
+`regenerate_clean ramp-capability`. `git push` works from this container
+(source-sized pack).
