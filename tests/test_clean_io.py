@@ -55,6 +55,7 @@ ALL_DATATYPES = [
     "nyiso-renewable-curtailment",
     "coal-basin-price",
     "coal-mining-ppi",
+    "capacity-market-avoidable-cost-rate",
 ]
 
 
