@@ -370,9 +370,11 @@ RT-final/DA-ex-post rows from MISO's daily market reports (source reachable,
 no 403; compact stagings in `data/raw/lmp-data/MISO/`), and
 `scripts/derive_miso_hub_lmp.py` reduces them to
 `_validation-source/actual_lmp_hourly_zonal_MISO.parquet`
-(`year,hour,hub,zone,rt,da`, model Central-prevailing clock — verified
-hour-for-hour identical to the committed system series, which turns out to
-be the Indiana Hub). Hub→zone: Minn→West, Ill→Illinois, Ind→Indiana,
+(`year,hour,hub,zone,rt,da`, the model's chronological fixed-CST calendar
+since the 2026-07-15 all-ISO scoring-clock fix — originally Central-prevailing
+— and verified hour-for-hour identical to the committed system series, which
+turns out to be the Indiana Hub; the same script now re-emits that system
+parquet so the two never diverge). Hub→zone: Minn→West, Ill→Illinois, Ind→Indiana,
 Mich→East, Ark/La/Tx/MS→South; **Plains has no hub — documented proxy =
 MINN+ILLINOIS hub mean** (the two hubs bracketing the IA/MO wheel-through).
 `build_miso_lmp_reference.py` adds the per-zone `zones` block to
