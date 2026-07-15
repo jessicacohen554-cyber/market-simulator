@@ -998,3 +998,503 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
         2047: 4.83,
         2048: 4.83,
         2049: 4.81,
+        2050: 4.80,
+    },
+    # AEO Low Oil and Gas Supply case -> model "high" gas price path.
+    # Lower resource recovery + slower tech = higher prices.
+    "high": {
+        2023: 2.54,
+        2024: 2.19,  # EIA Henry Hub spot annual average (historical)
+        2025: 3.52,  # EIA Henry Hub spot annual average (2025 historical actual,
+        # matches calibration_reference.henry_hub_actual; was a stale 2.88
+        # forecast value). Consumed only by the backcast neighbor-price seam for
+        # 2025 (forecasts start at START_YEAR 2026), so this keeps each
+        # neighbor's gas consistent with the ISO's own 2025 delivered gas.
+        2026: 4.07,
+        2027: 4.12,
+        2028: 4.44,
+        2029: 4.94,
+        2030: 5.90,
+        2031: 6.58,
+        2032: 7.28,
+        2033: 7.63,
+        2034: 7.84,
+        2035: 8.02,
+        2036: 8.32,
+        2037: 8.40,
+        2038: 8.31,
+        2039: 8.47,
+        2040: 8.50,
+        2041: 8.55,
+        2042: 8.50,
+        2043: 8.36,
+        2044: 8.55,
+        2045: 8.59,
+        2046: 8.69,
+        2047: 8.97,
+        2048: 9.25,
+        2049: 9.50,
+        2050: 9.75,
+    },
+    # --- Capacity-hindcast gas paths (W2-P5, plan §1.2) --------------------
+    # "hindcast_realized": the year's ACTUAL Henry Hub spot annual average
+    # ($/MMBtu), the realized-fuel variant of the capacity hindcast. Values are
+    # the annual mean of data/raw/gas-prices/henry_hub_monthly.csv (EIA Henry
+    # Hub spot), matching the historical entries already carried in the low/mid/
+    # high paths above (2023: 2.54, 2024: 2.19, 2025: 3.53). 2022 is DELIBERATELY
+    # omitted (rule 22 quarantine bridge — the hindcast never solves or reads
+    # 2022, and its 2022 evolution step draws the 2021 value via driver_year).
+    "hindcast_realized": {
+        2021: 3.91,  # EIA Henry Hub spot annual mean (henry_hub_monthly.csv)
+        2023: 2.54,
+        2024: 2.19,
+        2025: 3.53,
+    },
+    # "hindcast_asknown_aeo2021": the AEO2021 Reference case Henry Hub
+    # trajectory (EIA, Annual Energy Outlook 2021, published Feb 2021 — the
+    # contemporaneous as-known-then forecast for a 2021-start hindcast). The
+    # realized−asknown gap isolates fuel-input (gas-forecast) error from
+    # capacity-path error (plan §1.4 baseline (c)). 2022 omitted per the bridge.
+    # Source: AEO2021 Reference, Table "Henry Hub spot price" (2020$ ≈ 2026$ at
+    # this precision; the level is only a sensitivity axis, not a keeper input).
+    "hindcast_asknown_aeo2021": {
+        2021: 3.07,
+        2023: 2.86,
+        2024: 2.88,
+        2025: 2.93,
+    },
+}
+
+# --- Regional Basis Differentials ($/MMBtu, relative to Henry Hub) ---
+# Source: EIA Natural Gas Weekly Update, 2024-2025 average basis
+# URL: https://www.eia.gov/naturalgas/weekly/
+# Waha (West Texas/ERCOT): historically trades at a discount to Henry Hub
+#   due to Permian associated gas oversupply and pipeline constraints.
+# SoCal Citygate (CAISO): historically trades at a premium to Henry Hub
+#   due to pipeline constraints into California and limited local production.
+#   Measured check (EIA-923 Schedule 5, quantity-weighted delivered gas to
+#   CAISO plants minus Henry Hub annual average): +$7.06 in 2023 (the
+#   Dec-22/Jan-23 western gas crisis — Jan-2023 delivered $38.7/MMBtu vs
+#   HH $3.27), +$2.26 in 2024, +$1.12 in 2025. The +1.20 seed is only
+#   right in a normal year; CAISO backcasts therefore default to
+#   gas_monthly_actuals (measured ISO-month delivered gas), which makes
+#   this scalar a forward-year/fallback value only.
+# PJM: no single hub. PJM gas burn spans the Appalachian supply basin
+#   (Dominion South / TETCO M2, a structural Marcellus *discount* to Henry
+#   Hub from takeaway-constrained oversupply) and the Mid-Atlantic load
+#   pocket (TETCO M3 and Transco Zone 6 non-NY, a modest annual *premium*
+#   with large winter spikes). Rather than blend hub quotes by hand, the
+#   +0.67 scalar is the empirical generation-weighted basis measured from
+#   EIA-923 itself: the quantity-weighted delivered gas cost to PJM gas
+#   plants (Schedule 5 fuel receipts) minus the Henry Hub annual average was
+#   +$0.67/MMBtu in BOTH 2023 ($3.21 vs $2.54) and 2024 ($2.86 vs $2.19).
+#   Source: scripts/derive_coal_supply.py-style EIA-923 receipt aggregation;
+#   same EIA family as the ERCOT/CAISO figures. Caveat: Schedule-5 gas
+#   reporting is sparse (~26 PJM plants), likely skewed toward the eastern
+#   premium hubs, so this may run slightly high for the western price-taking
+#   CCs — but it replaces the prior unvalidated +0.30 placeholder and lands
+#   PJM CC dispatch on EIA-923 actuals without distorting the offer curve.
+# NYISO: gas burn spans Transco Zone 6 NY / Iroquois (a steep winter premium
+#   when downstate pipeline capacity is scarce) and the upstate path-priced
+#   CCs. As with PJM, the +0.55 scalar is the generation-weighted basis
+#   measured directly from EIA-923: the quantity-weighted delivered gas cost
+#   to New York gas plants (Schedule 5 fuel receipts) minus the Henry Hub
+#   annual average was +$0.53 (2023: 3.07 vs 2.54), +$0.44 (2024: 2.63 vs
+#   2.19) and +$0.55 (2025: 4.08 vs 3.53) — a stable +0.54 quantity-weighted
+#   over 2023-2025. Source: EIA-923 Schedule 5 receipt aggregation, same EIA
+#   family as the ERCOT/CAISO/PJM figures. Caveat: a single annual scalar
+#   flattens NY's pronounced winter blowout (the same Schedule-5 receipts show
+#   monthly basis reaching +$3-7 in Jan/Dec) — enable
+#   gas_plant_monthly_fuel_pricing for the monthly shape when winter price
+#   fidelity matters.
+# NEISO: New England gas burn prices off Algonquin Citygate (AGT), the
+#   pipeline-constrained hub whose winter basis blows out to many multiples
+#   of Henry Hub (doc-08 design decision 1). The +1.10 scalar is the
+#   EIA-923 delivered-basis seed for *normal* (non-arctic-event) years:
+#   quantity-weighted delivered gas cost to New England plants (Schedule 5
+#   fuel receipts) minus the Henry Hub annual average was +$1.17 in 2024
+#   (3.37 vs 2.19) and +$1.07 in Apr-Sep 2025 (4.60 vs 3.53); 2023 measured
+#   +$3.17 (5.70 vs 2.54), inflated by the Jan/Feb-2023 arctic events
+#   (Jan-23 delivered $15.17/MMBtu). Source: EIA-923 Schedule 5 receipt
+#   aggregation, same EIA family as the other ISOs. STRONG caveat: only TWO
+#   New England plants report Schedule-5 gas receipts (EIA plant codes 1660,
+#   6081 — partly LNG-supplied), so the sample is far sparser than
+#   PJM/NYISO. NEISO backcasts therefore default to gas_monthly_actuals +
+#   the measured Algonquin hub-month basis overlay
+#   (gas_hub_basis_overlay; data/raw/gas_basis_by_iso_month.csv),
+#   which makes this scalar a forward-year/fallback value only — like the
+#   CAISO +1.20 seed.
+# MISO: a footprint-wide blend with no single hub. Northern MISO gas plants
+#   (IL/WI/MI/MN) price off Chicago Citygate / MichCon (a modest premium driven
+#   by interstate transport), while southern MISO (LA/MS/AR) prices essentially
+#   at Henry Hub (near-zero basis). The public proxy is the EIA Illinois
+#   natural-gas *citygate* series (n3050il3m): 2024 monthly avg = $3.495/Mcf
+#   = $3.37/MMBtu (1 Mcf ~ 1.037 MMBtu) vs Henry Hub $2.22/MMBtu -> a raw
+#   +$1.15/MMBtu. BUT that EIA "citygate" is the LDC-delivered price (it bakes
+#   in full distribution transport), an UPPER BOUND that overstates power-plant
+#   burn cost: the Chicago Citygate *trading hub* spot traded ~Henry Hub parity
+#   in 2024 (Midwest hubs were weak vs HH), and most MISO gas plants buy nearer
+#   the trading hub plus a small transport adder, not the LDC citygate. To keep
+#   MISO on the same plant-delivered footing as the PJM/NYISO EIA-923 basis
+#   (and not overstate the large southern-MISO Henry-Hub-priced fleet), we
+#   reconcile the LDC-citygate proxy down to a footprint blend of +0.30/MMBtu
+#   (≈ trading-hub parity + modest northern transport, net of ~$0 southern
+#   basis). Refine with EIA-923 MISO Schedule-5 plant receipts in M8.
+#   Source: EIA Illinois citygate (n3050il3m) + Henry Hub spot, 2024 avg.
+# These are annual average differentials, held constant across the
+# projection period for simplicity.
+#
+# Delivered price = Henry Hub + basis differential
+GAS_BASIS_DIFFERENTIAL: dict[str, float] = {
+    "ERCOT": -0.50,  # Waha discount; EIA NG Weekly, 2024 avg
+    "CAISO": 1.20,  # SoCal Citygate premium; EIA NG Weekly, 2024 avg
+    "PJM": 0.67,  # EIA-923 delivered-gas basis (see below)
+    "NYISO": 0.55,  # EIA-923 delivered-gas basis (see below)
+    "NEISO": 1.10,  # EIA-923 delivered-gas basis, normal-year (see below)
+    "MISO": 0.30,  # Chicago Citygate footprint blend, reconciled (see above)
+}
+
+# CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO gas-hub
+# overlay (gas_hub_basis_overlay) reprices each gas unit at the measured SoCal /
+# PG&E Citygate spot (EIA N3050CA3 - Henry Hub, data/raw/gas_basis_by_iso_month.csv).
+# That citygate is the price where the interstate pipe hands to the CA LDC; a
+# power plant deep in the SoCalGas / PG&E system pays the citygate PLUS the LDC
+# intrastate backbone + local transmission to its burner tip, so the plant's true
+# delivered fuel cost (the cost-based DEB bid in CAISO's mitigated market) is the
+# citygate + that transport. The adder is the MEASURED differential between the
+# two EIA series: CA delivered-to-electric-power (N3045CA3, 2024 annual $3.98/Mcf
+# = $3.84/MMBtu) minus the CA citygate (N3050CA3, 2024 $3.38/MMBtu) = +$0.46. It
+# is a slow-moving regulated intrastate tariff (held flat across years like the
+# basis differentials) and forward-reproducible (rule #11) — NOT tuned to the
+# price or interchange residual. Without it the pure citygate under-prices the
+# marginal CC to ~the import price and collapses the import knife-edge (the
+# discovered caiso-38 under-import); reconciling up to the measured census level
+# restores it. Source: EIA N3045CA3 - N3050CA3, 2024 annual.
+CAISO_CITYGATE_TRANSPORT_ADDER: float = 0.46
+
+# --- Monthly Gas Price Seasonality Factors ---
+# Source: EIA Henry Hub spot price monthly averages, 2019-2024 (excluding
+#   anomalous Feb 2021 Uri event and Jan 2026 spike).
+# Computed as avg monthly price / annual avg price for each year, then
+#   averaged across years. Captures the winter heating premium and
+#   shoulder-season discount. Applied as multiplicative factors to the
+#   annual trajectory price. Sum of factors / 12 = 1.0 (budget-neutral).
+GAS_MONTHLY_SEASONALITY: dict[int, float] = {
+    1: 1.15,  # January — winter heating demand peak
+    2: 1.10,  # February
+    3: 1.02,  # March — shoulder
+    4: 0.92,  # April — injection season begins
+    5: 0.90,  # May
+    6: 0.93,  # June — cooling demand starts
+    7: 0.95,  # July
+    8: 0.95,  # August
+    9: 0.90,  # September — low demand
+    10: 0.95,  # October — pre-winter
+    11: 1.05,  # November — heating season starts
+    12: 1.18,  # December — winter peak
+}
+
+# Base delivered coal prices ($/MMBtu) by ISO.
+# Source: EIA AEO 2024.
+COAL_PRICE_BASE: dict[str, float] = {
+    "ERCOT": 2.0,  # EIA AEO 2024 — delivered coal price
+    "CAISO": 2.5,  # EIA AEO 2024 — delivered coal price
+    "PJM": 2.3,  # Central/Northern Appalachian bituminous + PRB-by-rail
+    #   delivered blend. Source: EIA AEO 2024 delivered coal price; refined
+    #   per-plant by the EIA-923 monthly fuel-cost overlay where reported.
+    "NYISO": 2.3,  # NY's grid coal fleet is retired (Somerset/Cayuga, 2020),
+    #   so no unit prices off this in a 2023+ backcast; carried as a defensive
+    #   Appalachian-delivered fallback (≈ PJM) for any residual/legacy coal
+    #   unit. Source: EIA AEO 2024 delivered coal price.
+    "NEISO": 3.0,  # New England's only coal in the backcast window is
+    #   Merrimack Station (NH, ~440 MW bituminous-by-rail, ~5% CF,
+    #   deactivated Jun-2025). Its delivered cost is confidential (no
+    #   EIA-923 Schedule-5 receipts; EIA state tables suppress NH coal), so
+    #   this is the PJM bituminous blend (2.3) plus a rail-into-New-England
+    #   premium — a Tier-3 placeholder that only prices a near-idle peaking
+    #   coal unit. Refine in NEISO calibration (doc-08 P11/P12) if Merrimack
+    #   dispatch is visibly mis-leveled.
+    "MISO": 1.9,  # MISO's coal fleet burns a Powder River Basin sub-bituminous
+    #   (rail-delivered to the upper-Midwest North/Central) + Illinois Basin
+    #   bituminous blend, delivered cheaper than Appalachian (PRB minemouth is
+    #   low-cost; ILB is local to the footprint). EIA AEO 2024 delivered coal
+    #   price, PRB+ILB blend; refined per-plant by the EIA-923 monthly
+    #   fuel-cost overlay where reported (MISO has full CEMS/EIA-923 coverage).
+}
+
+# Annual real escalation rate for coal prices — retained as the DEFAULT
+# forward shape only where no AEO year is available (before START_YEAR, or a
+# horizon extension beyond COAL_PRICE_TRAJECTORIES' last year is handled by
+# the flat hold, not this rate). Reflects mine closures, rising rail transport
+# costs, and declining domestic demand reducing economies of scale.
+# Source: EIA AEO 2024 coal supply module — ~1% real escalation.
+COAL_PRICE_ESCALATION: float = 0.01
+
+# --- National delivered coal-price trajectories (real 2024$/MMBtu) ---
+# AEO2025 Table 15 ("Coal Supply, Disposition, and Prices"), delivered to the
+# electric power sector, national ("usa") — data/raw/eia-aeo/
+# eia_aeo2025_fuel_prices.part*.csv, derived via
+# scripts/derive_fuel_trajectories.py::derive_coal_trajectory (P-1D, CLAUDE.md
+# rule 23 — resolves the D2 gap: "coal flat 1%/yr escalation" with no AEO
+# grounding). Replaces the flat COAL_PRICE_ESCALATION forward SHAPE — each
+# ISO's own COAL_PRICE_BASE level anchor is unchanged (a single national
+# series can't resolve ERCOT lignite vs PJM Appalachian vs MISO PRB+ILB basin
+# economics, the CLAUDE.md rule-14 misalignment exception), but the year-over-
+# year real growth now tracks the AEO's modeled coal-supply dynamics instead
+# of a guessed constant rate. Scenario mapping matches
+# HENRY_HUB_TRAJECTORIES: highogs -> "low", ref2025 -> "mid", lowogs -> "high"
+# (AEO's High/Low Oil and Gas Supply cases also vary coal-sector fuel
+# competition and mining diesel costs, so the same axis is reused rather than
+# inventing an independent coal scenario lever). Selected via
+# ``ScenarioConfig.coal_price_path`` (default "mid").
+COAL_PRICE_TRAJECTORIES: dict[str, dict[int, float]] = {
+    "low": {
+        2024: 2.4892,
+        2025: 2.4487,
+        2026: 2.3346,
+        2027: 2.2747,
+        2028: 2.1624,
+        2029: 2.1008,
+        2030: 2.1363,
+        2031: 2.0803,
+        2032: 1.9438,
+        2033: 1.9227,
+        2034: 1.9102,
+        2035: 1.8753,
+        2036: 1.9415,
+        2037: 1.7727,
+        2038: 1.7835,
+        2039: 1.6129,
+        2040: 1.6268,
+        2041: 1.6452,
+        2042: 1.6734,
+        2043: 1.6889,
+        2044: 1.6997,
+        2045: 1.7125,
+        2046: 1.7257,
+        2047: 2.5028,
+        2048: 2.5050,
+        2049: 2.5103,
+        2050: 2.5186,
+    },
+    "mid": {
+        2024: 2.4894,
+        2025: 2.4296,
+        2026: 2.3760,
+        2027: 2.3295,
+        2028: 2.2352,
+        2029: 2.2066,
+        2030: 2.2390,
+        2031: 2.1980,
+        2032: 1.9780,
+        2033: 1.9591,
+        2034: 1.9663,
+        2035: 1.9590,
+        2036: 1.9698,
+        2037: 1.9409,
+        2038: 1.9523,
+        2039: 2.0667,
+        2040: 2.0647,
+        2041: 2.0645,
+        2042: 2.0657,
+        2043: 2.0720,
+        2044: 2.0491,
+        2045: 2.0574,
+        2046: 1.8790,
+        2047: 2.3516,
+        2048: 2.3543,
+        2049: 2.3533,
+        2050: 2.3608,
+    },
+    "high": {
+        2024: 2.4888,
+        2025: 2.4729,
+        2026: 2.5108,
+        2027: 2.4361,
+        2028: 2.3718,
+        2029: 2.3786,
+        2030: 2.4118,
+        2031: 2.3955,
+        2032: 2.2343,
+        2033: 2.2295,
+        2034: 2.2286,
+        2035: 2.2222,
+        2036: 2.2280,
+        2037: 2.2003,
+        2038: 2.1834,
+        2039: 2.1566,
+        2040: 2.1498,
+        2041: 2.1658,
+        2042: 2.1537,
+        2043: 2.1320,
+        2044: 2.0534,
+        2045: 2.0908,
+        2046: 2.0391,
+        2047: 2.1600,
+        2048: 2.1896,
+        2049: 2.1906,
+        2050: 2.1325,
+    },
+}
+
+# --- ERCOT lignite / PRB delivered coal cost, 2023-2025 -----------------------
+# ERCOT's two coal supply classes are genuinely different costs: mine-mouth
+# lignite (no transport, take-or-pay contract) vs PRB-by-rail (commodity +
+# rail freight). Both are measured delivered-fuel-cost inputs — a physical/
+# market input admissible under CLAUDE.md rule #13 (forward-reproducible,
+# responds to changed conditions), not a fitted/residual value, despite the
+# unhelpful "calibration" naming these constants used to carry.
+#
+# Mine-mouth lignite: held flat 2023-2025 (no transport cost to escalate),
+# then compounds at COAL_PRICE_ESCALATION from 2026. Source: operator/EIA cost
+# data.
+LIGNITE_PRICE_2023_25: float = 1.45
+# PRB-by-rail: measured delivered cost, 2023-2025 (EIA-923 Schedule-5 receipts
+# / operator cost data). From 2026 the forward curve decomposes the 2023-2025
+# average into commodity (42%), diesel-driven rail freight (12%, held flat —
+# the model carries no forward diesel price curve) and non-diesel rail
+# freight (46%, escalates at COAL_PRICE_ESCALATION); the commodity component
+# holds flat through 2030 then declines 1.5%/yr as coal demand falls.
+PRB_PRICE_BY_YEAR: dict[int, float] = {2023: 2.15, 2024: 2.00, 2025: 2.00}
+PRB_COMMODITY_SHARE: float = 0.42
+PRB_RAIL_DIESEL_SHARE: float = 0.12
+PRB_RAIL_NONDIESEL_SHARE: float = 0.46
+PRB_COMMODITY_DECLINE: float = 0.015  # annual, from 2031 as demand falls
+PRB_COMMODITY_FLAT_THROUGH: int = 2030
+
+# --- Coal-vs-gas passthrough sigmoid re-derivation inputs ---------------------
+# Physical/measured inputs that ``scripts/derive_coal_sigmoid.py`` reads to
+# re-derive the per-(ISO, supply) gas-keyed coal passthrough sigmoid
+# (``COAL_SIGMOID_DEFAULTS`` in scenarios.py) from the EIA Annual Coal Report
+# region f.o.b.-mine price + BLS PPI coal-mining series intaked in #1803
+# (data/raw/coal-prices/, docs/handoffs/coal-price-data-intake-2026-07.md).
+# These are grounded commodity/heat/transport facts — NOT tuned to any ISO's
+# price/volume residual (CLAUDE.md rules 10/11/23). See the derive script's
+# module docstring for how each feeds the floor/ceil/gas_mid/gas_slope fit.
+#
+# Approximate heat content of coal by rank (MMBtu per short ton). Converts the
+# ACR f.o.b. $/ton price to $/MMBtu so it is comparable to gas.
+# Source: EIA Monthly Energy Review, Appendix A5, "Approximate Heat Content of
+# Coal and Coal Coke" (production-basis average heat contents).
+COAL_HEAT_CONTENT_MMBTU_PER_TON: dict[str, float] = {
+    "BIT": 24.93,  # bituminous
+    "SUB": 17.46,  # subbituminous (PRB)
+    "LIG": 13.30,  # lignite
+    "ANT": 25.09,  # anthracite (not in any modeled fleet; completeness)
+}
+
+# Delivered-cost commodity share by delivery mode: the fraction of a coal
+# plant's DELIVERED $/MMBtu that is the mine-gate (f.o.b.) commodity, the
+# remainder being rail/transport. Used to lift the ACR f.o.b. price to a
+# delivered cost comparable to the model's ``COAL_PRICE_BASE`` (delivered =
+# f.o.b. / commodity_share). PRB-by-rail reuses the cited PRB decomposition
+# (:data:`PRB_COMMODITY_SHARE`, 0.42 — long-haul rail dominates delivered
+# cost). Mine-mouth lignite is ~all commodity (no rail). Interior/Appalachian
+# bituminous railed short-haul into the MISO/PJM footprint carries a much
+# smaller freight fraction than long-haul PRB.
+# Source: EIA Coal Transportation Rates to the Electric Power Sector (rail
+# freight as a share of delivered cost: ~55-60% for long-haul PRB, ~15% for
+# short-haul Interior/Appalachian bituminous); mine-mouth lignite ~0.
+COAL_DELIVERY_COMMODITY_SHARE: dict[str, float] = {
+    "prb": PRB_COMMODITY_SHARE,  # 0.42, long-haul rail
+    "subbituminous": PRB_COMMODITY_SHARE,  # same basin economics as prb
+    "bituminous": 0.85,  # short-haul Interior/Appalachian rail
+    "lignite": 1.00,  # mine-mouth, no transport
+    "waste": 1.00,  # reclamation fuel, near-mine
+}
+
+# Representative heat rates (MMBtu/MWh) for locating the coal-vs-gas-CC merit
+# crossover in gas-price space (``gas_mid``): the gas price at which a gas-CC's
+# fuel cost equals the coal plant's fuel cost is
+# ``gas_mid = coal_delivered$/MMBtu x COAL_HR / CC_HR``. Representative EIA
+# Table 8 tested heat rates (subcritical steam coal; F-class combined cycle) —
+# the class-typical values, not per-plant (the LP still prices each unit at its
+# own heat rate; these only place the crossover the sigmoid centers on).
+COAL_SIGMOID_REP_HR_COAL: float = 10.0  # HEAT_RATE_BINS["coal"]["subcritical"]
+COAL_SIGMOID_REP_HR_GAS_CC: float = 6.7  # HEAT_RATE_BINS["gas_cc"]["f_class"]
+
+# Minimum delivered gas price ($/MMBtu) observed over the backcast window
+# (2023-2025), per ISO — the cheapest-gas anchor for the sigmoid floor: coal's
+# deepest bid discount is the fraction that pulls it to merit-order parity with
+# the cheapest gas it competes against (``floor = gas_min / gas_mid``). A
+# market fact (the observed gas trough), not a residual.
+# Source: EIA-923 Schedule-5 delivered gas cost to each ISO's gas fleet, 2024
+# (the cheapest of 2023-2025); Henry Hub 2024 ~$2.19 + small regional basis.
+COAL_SIGMOID_BACKCAST_GAS_MIN_MMBTU: dict[str, float] = {
+    "ERCOT": 2.00,
+    "MISO": 2.19,
+    "PJM": 2.86,  # +0.67 EIA-923 delivered basis (GAS_BASIS_DIFFERENTIAL)
+    "CAISO": 3.40,
+    "NYISO": 2.74,
+    "NEISO": 3.29,
+}
+
+# Baseline logistic slope (per $/MMBtu) for a coal supply group whose plants
+# all draw one producing region, so the annual region f.o.b. resolves no
+# cross-plant crossover dispersion (e.g. MISO's all-PRB group). The physical
+# crossover-sharpness prior at the mechanism's established scale; a multi-region
+# group (e.g. MISO bituminous spanning IL/IN/KY/ENC) instead derives its slope
+# from the real across-region delivered-cost dispersion. Clipped to
+# [SLOPE_MIN, SLOPE_MAX]. PPI intra-year variability adds a (small, ~2% CV)
+# fuzzing term to the dispersion.
+COAL_SIGMOID_BASELINE_SLOPE: float = 2.5
+COAL_SIGMOID_SLOPE_MIN: float = 1.0
+COAL_SIGMOID_SLOPE_MAX: float = 4.0
+
+# Lowest the sigmoid floor may go: a coal plant never bids below this fraction
+# of full delivered fuel cost. Bounds the cheap-gas discount so the floor stays
+# a merit-order discount, not an unbounded giveaway (the sunk take-or-pay
+# tonnage is a SEPARATE mechanism, coal_takeorpay_from_data).
+COAL_SIGMOID_FLOOR_MIN: float = 0.50
+
+# Follower-tier (low-must-run PRB cyclers, mustrun <= coal_prb_follower_mustrun_max)
+# deepen their cheap-gas discount vs the baseload PRB tier: a cycler bids nearer
+# its avoidable cost. Applied as a multiplicative discount on the baseload
+# floor/ceil. Matches the established baseload->follower ordering (follower
+# floor/ceil below baseload).
+COAL_SIGMOID_FOLLOWER_DISCOUNT: float = 0.87
+
+# Delivered oil fuel price ($/MMBtu) for oil-fired peakers and steam units.
+# Distillate (No. 2) fuel oil dominates the NYISO/ISO-NE oil peaker fleet;
+# residual (No. 6) is the legacy oil-steam fuel. The blended delivered cost
+# sits far above gas, so oil clears only in scarcity (peaker behaviour) —
+# critical to Northeast winter price formation. Held flat (no commodity
+# trajectory) since oil rarely runs and is not a price-setting baseload fuel.
+# Source: EIA distillate (~$20/MMBtu) and residual (~$14/MMBtu) fuel oil
+# delivered to the electric power sector, 2023-2024 average.
+# Also the dual-fuel switching parity fallback: in backcast years the measured
+# EIA-923 Schedule 5 monthly Petroleum receipt series
+# (market_sim.data.fuel.iso_monthly_oil_prices; PJM ~$17-23/MMBtu, 2023-2025)
+# takes precedence, and this flat value fills unreported months and any
+# forecast year outside OIL_PRICE_TRAJECTORIES' range.
+OIL_PRICE_PER_MMBTU: float = 18.0
+
+# --- Forecast-year oil-price trajectories (real 2024$/MMBtu) ---
+# AEO2025 Table 12 ("Petroleum and Other Liquids Prices"), electric-power
+# distillate + residual fuel oil, averaged (same blend construction as
+# OIL_PRICE_PER_MMBTU above) — data/raw/eia-aeo/
+# eia_aeo2025_fuel_prices.part*.csv, derived via
+# scripts/derive_fuel_trajectories.py::derive_oil_trajectory (P-1D, CLAUDE.md
+# rule 23). AEO prices this series at $/gal; converted to $/MMBtu via EIA fuel
+# heat contents (0.1385 MMBtu/gal distillate, 0.1497 MMBtu/gal residual).
+# Replaces the flat OIL_PRICE_PER_MMBTU scalar for FORECAST years (backcast
+# months keep the measured EIA-923 receipt series; OIL_PRICE_PER_MMBTU stays
+# the fallback for unreported backcast months and any year outside this
+# table's range). Selected via ``ScenarioConfig.oil_price_path`` (default
+# "mid"); scenario mapping matches HENRY_HUB_TRAJECTORIES (highogs -> "low",
+# ref2025 -> "mid", lowogs -> "high").
+OIL_PRICE_TRAJECTORIES: dict[str, dict[int, float]] = {
+    "low": {
+        2024: 21.67,
+        2025: 20.49,
+        2026: 19.98,
+        2027: 19.48,
+        2028: 18.91,
+        2029: 18.42,
+        2030: 17.95,
+        2031: 17.91,
+        2032: 17.80,
+        2033: 17.93,
+        2034: 17.94,
+        2035: 17.95,
+        2036: 17.98,
