@@ -1,0 +1,24 @@
+diff --git a/src/market_sim/config/reserve_config.py b/src/market_sim/config/reserve_config.py
+index 190f666..3fbb565 100644
+--- a/src/market_sim/config/reserve_config.py
++++ b/src/market_sim/config/reserve_config.py
+@@ -141,6 +141,20 @@ PJM_MAD_ZONES: tuple[str, ...] = (
+ 
+ # --- MISO ------------------------------------------------------------------
+ MISO_REGULATING_RESERVE_MW: float = 400.0
++# VOLL / reserve-demand-curve ceiling: $3,500/MWh is the in-force MISO tariff
++# value (Schedule 28) for the ENTIRE calibration window. MISO's shortage-pricing
++# reform (FERC docket ER25-579, approved April 2025) raises VOLL $3,500 ->
++# $10,000/MWh and replaces the stepped ORDC with an LOLP-based curve, but with a
++# targeted effective date of 2025-09-30 (MISO MSC deck MSC-2019-1, Aug-2025).
++# 37 of the 38 scored 2025 DA tail hours precede 9/30/2025 (only Oct-6 follows),
++# and all 2023/2024 tail hours are under the $3,500 regime, so this constant is
++# correct for effectively the entire scored 2023-2025 backcast window — NO
++# backcast change. The post-9/30 $10,000-VOLL / LOLP-ORDC regime is a
++# FORECAST-lane charter (2026+ forecast runs currently inherit $3,500 — a
++# measured tariff update with this citation, its own small charter); it must NOT
++# be half-implemented (a VOLL step without the LOLP curve is a wrong mechanism).
++# See docs/parameter-citations.md and docs/handoffs/miso-price-formation-design-
++# 2026-07.md §2c (primary-document verification, 2026-07-15).
+ MISO_RESERVE_DEMAND_CURVE_MAX: float = 3500.0
+ MISO_RESERVE_DEMAND_CURVE_CRITICAL_MW: float = 0.0
