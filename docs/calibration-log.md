@@ -40,6 +40,34 @@ Workflow: establish input parity first, then compare dispatch, then prices.
 
 ## Runs
 
+### 2026-07-15 — PJM — pjm-111 (CC-capacity unification, cross-ISO): the three overlapping CC-capacity mechanisms collapsed into one measured-capability stack (measured > schema > net-summer); **verdict IDENTICAL to pjm-110 (NOT-YET on C3c), within-noise on every scored criterion**, the only delta the measured +156 MW CC capacity; keeper CANDIDATE, keepers.json unchanged (owner promotes)
+
+**Charter:** Part A of `docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md`
+(full writeup: `docs/cc-capacity-reconcile-unification-2026-07.md`). The
+EIA-860 summer-capacity guard is now **peak-aware** — it clips a corrupt CC
+plant to `max(nameplate, demonstrated CAMPD p999 peak)` from the plant's own
+ISO reconcile table (measured, rule 13), so a cold-weather peak above nameplate
+is no longer discarded. Resolves the pjm-110 BOUND: **New Covert (55297) pins to
+1192.4 MW** (was clipped to nameplate 1176). The PJM table is re-derived to full
+bidirectional coverage (17 caps byte-identical + 3 measured raises: Bear Garden
+56807 559→656, Hamilton 58426 870→882, Waterford 55503 922→952; CT-only and
+CAMPD-contamination / fleet-under-carry artifacts excluded via principled
+screens). Cross-ISO: the ScenarioConfig default reconcile path resolves per-ISO
+(ERCOT literal deleted, rules 24/25); CAISO/NYISO/NEISO tables derived so every
+ISO is on the same measured stack (forward-solve only, static keepers untouched);
+the guard stays ungated (data-integrity validator, A.4.3).
+
+**Re-gate:** re-solved pjm-110's recipe verbatim (`_pjm107_gas_daily_probe.py`,
+2023-2025). All load-bearing PASS (C1 16/16, C2, C3a, C3b), C4/C6/C7/C8 PASS,
+C3c price_tail FAIL **byte-identical 1/1/17 h** (the known LP-vs-MIP boundary).
+CC_REGULAR +0.5-0.7 TWh (toward the higher actual), price_mean shift <0.2%, tail
+unchanged. **Control:** none needed — solve code byte-identical between pjm-110's
+commit `226634b` and this branch's base (git diff empty on all solve paths), so
+pjm-110 IS the zero-drift control; both re-scored on the current benchmark agree.
+**Zero-DOF** (measured CAMPD; DOF ledger carried verbatim); no ablation twin
+(rule 20). Registered `2026-07-15-pjm-111-cc-reconcile`; pruned the 2 oldest PJM
+dashboard runs (pjm-98 pair) for top-15 retention.
+
 ### 2026-07-14 — MISO — miso-66 (lane-1 regulated-coal conduct complement): the miso-65 availability truth's exposed conduct gap closed at its measured root — **2024 COAL_PRB and CT_PEAKER both flip FAIL→PASS, C1 14/16→15/16**, the fail set unchanged in count but the 2024 coal/CT block resolved; keeper CANDIDATE with promotion recommendation, keepers.json unchanged (owner promotes)
 
 **Lane:** lane 1 of the miso-64/65 sequencing — the conduct gap the miso-65

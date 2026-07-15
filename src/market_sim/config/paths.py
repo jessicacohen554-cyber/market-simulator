@@ -65,6 +65,22 @@ RAW_DATA_DIR: Path = DATA_ROOT / "data" / "raw"
 PROCESSED_DIR: Path = RAW_DATA_DIR / "_processed-legacy"
 CALIBRATION_DIR: Path = RAW_DATA_DIR / "_validation-source"
 
+
+def cc_capacity_reconcile_path(iso: str) -> Path:
+    """Canonical on-disk path of an ISO's CC demonstrated-peak reconcile table.
+
+    ``PROCESSED_DIR/cc_capacity_reconcile_<ISO>.csv`` — the per-plant measured
+    CAMPD demonstrated-peak table (:func:`scripts.derive_cc_capacity_reconcile`)
+    consumed by the ``cc_capacity_reconcile`` hook and the ISO-agnostic CC
+    summer-capacity guard (:func:`market_sim.data.fleet._reconcile_cc_pmax_to_nameplate`).
+    Every table stays inside its own ISO (CLAUDE.md rule 24), so this is the
+    single resolver both the ``ScenarioConfig`` default and the guard use — no
+    literal ISO filename crosses an ISO boundary (rule 25). A missing file is a
+    no-op at both call sites.
+    """
+    return PROCESSED_DIR / f"cc_capacity_reconcile_{iso.upper()}.csv"
+
+
 # inputs/raw-data/ subdirectories -----------------------------------------
 EIA_860_DIR: Path = RAW_DATA_DIR / "eia-860"
 
