@@ -2057,6 +2057,7 @@ def apply_economic_new_entry(
     wind_cf: np.ndarray | None = None,
     solar_cf: np.ndarray | None = None,
     reserve_position: float | None = None,
+    screen_ledger: list[dict] | None = None,
 ) -> tuple[list[Generator], dict[str, dict[str, float]]]:
     """Build new capacity for technologies that clear their LCOE.
 
@@ -2140,12 +2141,29 @@ def apply_economic_new_entry(
             fixed net-CONE capacity payment thermal entry sees (byte-identical);
             when supplied and ``capacity_market_clearing`` is on, the capacity
             payment for a new thermal unit slides along the ISO's demand curve.
+        screen_ledger: Optional diagnostic sink (RC-0C / BLK-8). When a list is
+            supplied, one fully-decomposed row per *candidate* technology (every
+            candidate screened, not just the ones that clear) is appended:
+            the revenue terms (``energy``/``attribute``/``capacity`` $/MW-yr),
+            the cost terms (base/Wright/post-ITC capex, CRF, FOM, annualized
+            fixed cost), the capacity factor used, the profitability margin, and
+            the queue-cap binding state / MW actually built. **Diagnostic only —
+            it has no effect on the retire/build decision** (nothing reads it
+            back); ``None`` (the default) records nothing and is byte-identical
+            to the pre-instrumentation path. Wired from ``evolve_fleet`` under
+            ``ScenarioConfig.entry_screen_diagnostics`` (default off) so the
+            per-candidate entry economics land in ``evolution_<year>.json``.
 
     Returns:
         Tuple ``(fleet, renewable_additions)`` -- the fleet with entering
         thermal generators appended, and a ``{zone: {fuel: mw}}`` dict of
         wind/solar build MW to fold into the zonal renewable capacity.
     """
+    # RC-0C diagnostic accumulator: {tech: row}. Populated only when a
+    # ``screen_ledger`` sink is supplied; every read below is guarded by
+    # ``_diag`` so the decision path is untouched when diagnostics are off.
+    _diag = screen_ledger is not None
+    _rows: dict[str, dict] = {}
     iso_config = get_iso_config(iso)
     # Fail loudly when an ISO lacks queue-cap data: a silent default of
     # zero would suppress all new entry and quietly break every forecast.
@@ -2192,11 +2210,29 @@ def apply_economic_new_entry(
             effective_attribute_price = max(
                 get_eac_price_for_new_entry(tech, config), rps_for_tech
             )
+            attribute_rev = 0.0
             if effective_attribute_price > 0.0:
-                revenue += effective_attribute_price * cf * HOURS_PER_YEAR
-            margin = revenue - lcoe * HOURS_PER_YEAR * cf
+                attribute_rev = effective_attribute_price * cf * HOURS_PER_YEAR
+                revenue += attribute_rev
+            annual_cost_emerging = lcoe * HOURS_PER_YEAR * cf
+            margin = revenue - annual_cost_emerging
             if margin > 0.0:
                 margins.append((margin, tech))
+            if _diag:
+                _rows[tech] = {
+                    "tech": tech,
+                    "kind": "emerging",
+                    "cf_screen": float(cf),
+                    "energy_revenue_per_mw_yr": float(revenue - attribute_rev),
+                    "attribute_revenue_per_mw_yr": float(attribute_rev),
+                    "attribute_price": float(effective_attribute_price),
+                    "capacity_revenue_per_mw_yr": 0.0,
+                    "lcoe_per_mwh": float(lcoe),
+                    "annual_cost_per_mw_yr": float(annual_cost_emerging),
+                    "total_revenue_per_mw_yr": float(revenue),
+                    "margin_per_mw_yr": float(margin),
+                    "profitable": bool(margin > 0.0),
+                }
             continue
 
         base_cf = NEW_ENTRY_COSTS[tech]["base_cf"]
@@ -2279,6 +2315,26 @@ def apply_economic_new_entry(
             margin = effective_revenue - fixed_cost
             if margin > 0.0:
                 margins.append((margin, tech))
+            if _diag:
+                _rows[tech] = {
+                    "tech": tech,
+                    "kind": "thermal",
+                    "energy_revenue_per_mw_yr": float(energy_margin),
+                    "attribute_revenue_per_mw_yr": 0.0,
+                    "capacity_revenue_per_mw_yr": float(capacity_payment),
+                    "as_credit_per_mw_yr": float(as_credit),
+                    "var_cost_per_mwh": float(var_cost),
+                    "capex_base_per_kw": float(costs["capex_per_kw"]),
+                    "capex_wright_per_kw": float(capex_per_kw),
+                    "capex_after_credit_per_kw": float(capex_per_kw),
+                    "crf": float(crf),
+                    "fom_per_kw_yr": float(costs["fom_per_kw_yr"]),
+                    "cumulative_gw": (float(cum_gw) if cum_gw is not None else None),
+                    "annual_cost_per_mw_yr": float(fixed_cost),
+                    "total_revenue_per_mw_yr": float(effective_revenue),
+                    "margin_per_mw_yr": float(margin),
+                    "profitable": bool(margin > 0.0),
+                }
             continue
 
         # Non-dispatchable / must-run candidates (wind, solar, nuclear_smr):
@@ -2332,9 +2388,68 @@ def apply_economic_new_entry(
         # CF-independent annualized fixed cost in $/MW-yr — it stays on
         # base_cf even when the revenue side uses the zonal profile.
         annual_cost = lcoe * HOURS_PER_YEAR * base_cf
+        energy_only_rev = effective_revenue - (
+            effective_attribute_price * cf_expected * HOURS_PER_YEAR
+            if effective_attribute_price > 0.0
+            else 0.0
+        )
         margin = effective_revenue - annual_cost
         if margin > 0.0:
             margins.append((margin, tech))
+        if _diag:
+            # Re-derive the capex decomposition with the SAME helpers
+            # compute_lcoe uses (no drift): base -> Wright -> ITC. VRE earns
+            # no capacity payment here (BLK-7 / term c) — recorded as an
+            # explicit 0.0 so the zero is measured, not inferred.
+            _costs = resolve_new_entry_costs(config)[tech]
+            _capex_base = _costs["capex_per_kw"]
+            _capex_wright = _capex_base
+            _ref_gw = WRIGHT_REFERENCE_GW.get(tech)
+            if cum_gw is not None and _ref_gw is not None:
+                _capex_wright = wright_cost(
+                    _capex_base, cum_gw, _ref_gw, _costs["learning_rate"]
+                )
+            _capex_after_itc = _capex_wright
+            if tech == "solar" and year <= config.ira_wind_solar_last_year:
+                _capex_after_itc = _capex_wright * (1.0 - config.ira_itc_solar)
+            _crf = _capital_recovery_factor(
+                config.real_discount_rate, _costs["lifetime_yr"]
+            )
+            _rows[tech] = {
+                "tech": tech,
+                "kind": "vre" if tech in _RENEWABLE_NEW_FUELS else "must_run",
+                "cf_base": float(base_cf),
+                "cf_expected": float(cf_expected),
+                "cf_shape_aware": bool(cf_profile is not None),
+                "energy_revenue_per_mw_yr": float(energy_only_rev),
+                "attribute_revenue_per_mw_yr": float(
+                    effective_revenue - energy_only_rev
+                ),
+                "attribute_price": float(effective_attribute_price),
+                "rps_shadow_price": float(rps_shadow_price),
+                "capacity_revenue_per_mw_yr": 0.0,
+                "capex_base_per_kw": float(_capex_base),
+                "capex_wright_per_kw": float(_capex_wright),
+                "capex_after_credit_per_kw": float(_capex_after_itc),
+                "itc_solar": float(
+                    config.ira_itc_solar
+                    if tech == "solar" and year <= config.ira_wind_solar_last_year
+                    else 0.0
+                ),
+                "ptc_wind": float(
+                    config.ira_ptc_wind
+                    if tech == "wind" and year <= config.ira_wind_solar_last_year
+                    else 0.0
+                ),
+                "crf": float(_crf),
+                "fom_per_kw_yr": float(_costs["fom_per_kw_yr"]),
+                "cumulative_gw": (float(cum_gw) if cum_gw is not None else None),
+                "lcoe_per_mwh": float(lcoe),
+                "annual_cost_per_mw_yr": float(annual_cost),
+                "total_revenue_per_mw_yr": float(effective_revenue),
+                "margin_per_mw_yr": float(margin),
+                "profitable": bool(margin > 0.0),
+            }
 
     margins.sort(reverse=True)
 
@@ -2346,7 +2461,10 @@ def apply_economic_new_entry(
     group_remaining: dict[str, float] = {}
     for seq, (_, tech) in enumerate(margins):
         if remaining <= 0.0:
-            break
+            if _diag and tech in _rows:
+                _rows[tech]["build_mw"] = 0.0
+                _rows[tech]["binding_cap"] = "iso_budget_exhausted"
+            continue
         # Each tech is capped by its (possibly shared) per-tech queue limit
         # and by what is left of the shared ISO budget; both bind.
         group = _QUEUE_CAP_GROUP.get(tech, tech)
@@ -2354,9 +2472,19 @@ def apply_economic_new_entry(
             group_remaining[group] = per_tech_cap_gw.get(group, 0.0) * 1000.0
         build_mw = min(group_remaining[group], remaining)
         if build_mw <= 0.0:
+            if _diag and tech in _rows:
+                _rows[tech]["build_mw"] = 0.0
+                _rows[tech]["binding_cap"] = "per_tech_cap_zero"
             continue
         remaining -= build_mw
         group_remaining[group] -= build_mw
+        if _diag and tech in _rows:
+            _rows[tech]["build_mw"] = float(build_mw)
+            _rows[tech]["binding_cap"] = (
+                "per_tech_cap"
+                if build_mw >= per_tech_cap_gw.get(group, 0.0) * 1000.0 - 1e-6
+                else "iso_budget"
+            )
         if tech in _RENEWABLE_NEW_FUELS:
             target_zone = get_renewable_zone(iso_config.name, tech)
             zone_acc = renewable_additions.setdefault(target_zone, {})
@@ -2367,6 +2495,23 @@ def apply_economic_new_entry(
                     tech, build_mw, zone, year, seq, config, iso_config.name
                 )
             )
+
+    if _diag:
+        # Unprofitable candidates never enter the margins loop; record their
+        # zero build and the ISO-level caps once per row, then flush.
+        for tech, row in _rows.items():
+            row.setdefault("build_mw", 0.0)
+            row.setdefault(
+                "binding_cap", "unprofitable" if not row["profitable"] else "none"
+            )
+            row["queue_budget_gw"] = float(queue_budget_mw / 1000.0)
+            row["per_tech_cap_gw"] = float(
+                per_tech_cap_gw.get(_QUEUE_CAP_GROUP.get(tech, tech), 0.0)
+            )
+        screen_ledger.extend(_rows[t] for _, t in margins if t in _rows)
+        screen_ledger.extend(
+            row for tech, row in _rows.items() if not any(tech == t for _, t in margins)
+        )
 
     return new_fleet, renewable_additions
 
@@ -3203,6 +3348,12 @@ def evolve_fleet(
     # 5. Economic new entry (needs a price signal). Clean technologies see
     # the prior year's RPS shadow price as additional expected revenue.
     _pre_entry_ids = {g.unit_id for g in fleet} if _rec else None
+    # RC-0C entry-screen diagnostic sink (GATED entry_screen_diagnostics,
+    # default off): a per-candidate decomposition ledger with no decision
+    # effect, persisted into the year's evolution ledger by the runner.
+    _screen_ledger: list[dict] | None = (
+        [] if getattr(config, "entry_screen_diagnostics", False) else None
+    )
     if prices is not None:
         fleet, entry_additions = apply_economic_new_entry(
             fleet,
@@ -3223,8 +3374,11 @@ def evolve_fleet(
             wind_cf=screen_wind_cf,
             solar_cf=screen_solar_cf,
             reserve_position=reserve_position,
+            screen_ledger=_screen_ledger,
         )
         _merge_renewable_additions(renewable_additions, entry_additions)
+    if _rec and _screen_ledger is not None:
+        events["entry_screen_diagnostics"] = _screen_ledger
     if _rec:
         _new_ids = {g.unit_id for g in fleet} - _pre_entry_ids
         events["thermal_additions"].extend(
