@@ -215,6 +215,17 @@ vintage adjudication (register's 2022 section, "MISSING 2022 + DEGRADED
 vintage"). No `campd-unit-outages-NYISO.csv` row was read, derived, or
 touched for 2018-2021 or H1-2026.
 
+> **Clock caveat (added 2026-07-15, all-ISO scoring-clock fix):** the
+> out-of-training `actual_lmp_hourly_*.parquet` blocks registered here (NYISO
+> 2018–2022 + 2026-H1; NEISO 2020–2022) were built on the OLD prevailing-clock
+> indexing and were preserved byte-frozen when the 2023–2025 rows were rebuilt
+> chronologically (2026-07-15 calibration-log entry). Before any authorized
+> validation-year scoring, these blocks must be re-derived with the fixed
+> `derive_actual_lmp.py` (raws for NYISO 2022 RT and NEISO 2020–2022 workbooks
+> are committed; NYISO 2018–2021/2026 re-fetch from `mis.nyiso.com`) — an
+> hourly-paired score against the frozen blocks would re-import the ±1 h DST
+> pairing artifact.
+
 ### Session summary — what's landed vs still open
 
 **Landed EQUIVALENT (or EQUIVALENT-derived) this session:**

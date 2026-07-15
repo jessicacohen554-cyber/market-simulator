@@ -349,8 +349,10 @@ builder alongside ERCOT/PJM (ERCOT/PJM outputs regenerate byte-identically —
 regression-checked). CAISO has no single system hub, so the
 comparable-to-the-model system price is the three trading hubs **load-weighted
 by zone share** (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385, the
-`config.iso_configs` `load_share` values), reindexed onto the Pacific
-prevailing-time dispatch clock. Written:
+`config.iso_configs` `load_share` values), indexed onto the model's
+chronological fixed-PST calendar (since the 2026-07-15 all-ISO scoring-clock
+fix; the original landing indexed the Pacific prevailing wall clock, which
+paired DST hours one real hour off). Written:
 
 - `data/raw/_validation-source/actual_lmp.json` CAISO block — DA + RT **2024 & 2025**
   annual/monthly means + `da_pct`/`rt_pct` duration-curve percentiles
