@@ -119,10 +119,12 @@
     </div>
 
     <h2 id="manual-todo" style="font-size:.95rem;margin:0 0 6px;color:var(--text-primary)">Manual retrieval checklist — what you need to get by hand</h2>
-    <p class="bc-page-sub" style="margin-top:0">These three are the only remaining gaps that couldn't be closed by
-    an automated fetch during the 2026-07-10 holdout-intake session — each failed for a source-side reason
-    (login-gated portal, or the upstream archive has physically aged off), not a script bug. Checked state is
-    saved in this browser only (localStorage), so it won't survive a different machine/profile.</p>
+    <p class="bc-page-sub" style="margin-top:0">These are the remaining gaps that couldn't be closed by an
+    automated fetch, across the 2026-07-10 holdout-intake session and the 2026-07-15 RC-0A retirement-lane
+    intake — each failed for a source-side or access-side reason (login-gated portal, upstream archive
+    physically aged off, an unrenderable JS SPA, or an org-level egress block on a specific domain), not a
+    script bug. Checked state is saved in this browser only (localStorage), so it won't survive a different
+    machine/profile.</p>
 
     <div class="mc-summary">
       <div class="bar"><i id="mcBarFill"></i></div>
@@ -166,6 +168,58 @@
           <div class="mc-row"><b>Get it from:</b> <a href="https://www.iso-ne.com/isoexpress" target="_blank" rel="noopener">iso-ne.com &rarr; ISO Express &rarr; Historical Data</a> &mdash; search the reports tree for "SMD Hourly Data"; no stable direct-download URL was found for the 2018/2019 vintages this session (ISO-NE moves the link per report year)</div>
           <div class="mc-row"><b>What to grab:</b> the annual SMD Hourly workbook (.xlsx) for calendar 2018 and calendar 2019</div>
           <div class="mc-row"><b>Put it in:</b> <code>data/raw/lmp-data/NEISO/2018_smd_hourly.xlsx</code> and <code>2019_smd_hourly.xlsx</code> &mdash; same naming as the existing years</div>
+        </div>
+      </div>
+
+      <div class="mc-item" data-key="miso-tariff-403">
+        <label class="mc-check">
+          <input type="checkbox">
+          <span class="mc-title">MISO tariff / Attachment Y / PRA Results Posting — misoenergy.org<span class="mc-tag blocked-portal">egress-blocked (403)</span></span>
+        </label>
+        <div class="mc-body">
+          <div class="mc-row"><b>What's needed:</b> the PY2026-27 PRA Results Posting (RBDC curve-point chart, for <code>capacity-market-demand-curve</code>) and the Module C Attachment Y full text (generator-deactivation notice periods + System Support Resource provisions, for the deactivation-notice-periods citation table)</div>
+          <div class="mc-row"><b>Get it from:</b> <code>misoenergy.org</code>, <code>docs.misoenergy.org</code>, and <code>cdn.misoenergy.org</code> all returned HTTP 403 to every method tried across three independent agents this session (curl w/ browser UA, WebFetch, Wayback Machine) &mdash; reads as a standing org-level egress-policy block on this domain for this environment, not a site-side issue. Try: <a href="https://cdn.misoenergy.org/2026%20PRA%20Results%20Posting%2020260428754715.pdf" target="_blank" rel="noopener">cdn.misoenergy.org &rarr; 2026 PRA Results Posting</a>, <a href="https://www.misoenergy.org/legal/rules-manuals-and-agreements/tariff/" target="_blank" rel="noopener">misoenergy.org &rarr; Tariff (Module C, Attachment Y)</a></div>
+          <div class="mc-row"><b>What to grab:</b> the PRA Results Posting PDF; Attachment Y (generator deactivation, SSR agreement provisions)</div>
+          <div class="mc-row"><b>Put it in:</b> <code>data/raw/capacity-market/demand-curve/miso/</code> (PRA results) and as a corroborating source for the 3 secondary-only MISO rows in <code>data/raw/capacity-market/deactivation-notice-periods/notice_periods.csv</code> &mdash; see <code>docs/handoffs/retirement-lane-intake-2026-07-15.md</code> for full context</div>
+        </div>
+      </div>
+
+      <div class="mc-item" data-key="ferc-er23-630-403">
+        <label class="mc-check">
+          <input type="checkbox">
+          <span class="mc-title">FERC Docket ER23-630 order (MISO Attachment Y reform) — ferc.gov<span class="mc-tag blocked-portal">egress-blocked (403)</span></span>
+        </label>
+        <div class="mc-body">
+          <div class="mc-row"><b>What's needed:</b> the verbatim accepted Attachment Y tariff redline (currently only sourced from a commissioner-concurrence summary page + WebSearch syntheses, for the MISO deactivation-notice-period rows)</div>
+          <div class="mc-row"><b>Get it from:</b> <code>ferc.gov/news-events/news/...</code> and <code>ferc.gov/media/er23-630-000</code> both returned HTTP 403 via curl and WebFetch this session. <code>etariff.ferc.gov/TariffBrowser.aspx?tid=1162</code> (FERC's MISO eTariff browser) returns HTTP 200 but is a JS-shell with no server-rendered content at the entry URL &mdash; would need the specific record/section deep-link</div>
+          <div class="mc-row"><b>What to grab:</b> the FERC order PDF for Docket No. ER23-630-000 (order dated 2023-02-10)</div>
+          <div class="mc-row"><b>Put it in:</b> upgrades the 2 MISO Attachment Y rows in <code>data/raw/capacity-market/deactivation-notice-periods/notice_periods.csv</code> from secondary-sourced to primary</div>
+        </div>
+      </div>
+
+      <div class="mc-item" data-key="pjm-etariff-oatt-part-v">
+        <label class="mc-check">
+          <input type="checkbox">
+          <span class="mc-title">PJM eTariff OATT Part V §113 (Notice of Deactivation) — agreements.pjm.com<span class="mc-tag blocked-portal">JS SPA, no doc id</span></span>
+        </label>
+        <div class="mc-body">
+          <div class="mc-row"><b>What's needed:</b> the literal OATT Part V §113.1 clause text &mdash; the commonly-cited "~90 days" PJM deactivation-notice figure currently traces only to a 2019 PJM blog post, not a verbatim tariff quote</div>
+          <div class="mc-row"><b>Get it from:</b> <code>agreements.pjm.com/oatt/&lt;id&gt;</code> is a client-rendered Angular SPA (returns an empty ~844-byte shell for every section id tried); <code>.../eTariff/transformedTariffs/oatt/Sections/&lt;id&gt;.html</code> DOES serve static HTML (confirmed working for other sections, e.g. Attachment DD.6.8 at id 37226) but no id mapping to Part V/§113 was found &mdash; no sitemap/search endpoint worked</div>
+          <div class="mc-row"><b>What to grab:</b> rendered Section 113 (ideally 113&ndash;119) text, or just the numeric eTariff document id that maps to Part V so a script can fetch it directly next time</div>
+          <div class="mc-row"><b>Put it in:</b> resolves the "UNCONFIRMED" flag + the Manual-14D revision-history discrepancy on the PJM rows in <code>data/raw/capacity-market/deactivation-notice-periods/notice_periods.csv</code></div>
+        </div>
+      </div>
+
+      <div class="mc-item" data-key="nysrc-irm-appendices">
+        <label class="mc-check">
+          <input type="checkbox">
+          <span class="mc-title">NYSRC IRM Study "Appendices" PDFs (Table D.1.1) — nysrc.org<span class="mc-tag blocked-portal">URL not located</span></span>
+        </label>
+        <div class="mc-body">
+          <div class="mc-row"><b>What's needed:</b> Appendix D, Table D.1.1 &mdash; a year-by-year NYCA UCAP/ICAP translation-factor table (the R5a NYISO IRM&rarr;UCAP research found the formula and one worked example, 5.18% for NYC Summer 2025, but not a historical series)</div>
+          <div class="mc-row"><b>Get it from:</b> nysrc.org &mdash; each year's IRM Study Technical Report <i>Report Body</i> PDF is already on disk/cited (e.g. the 2024 study at <a href="https://www.nysrc.org/wp-content/uploads/2023/12/2024-IRM-Study-Technical-Report-11-28-23_ICS_284_clean_bp-approved-12-8-2023.pdf" target="_blank" rel="noopener">nysrc.org 2024 IRM Study Report Body</a>), and its own text references a separate "Appendices" PDF (title pattern seen: <code>2024-IRM-Study-Report-Appendices-12-8-2023.pdf</code>) that this session could not locate by URL</div>
+          <div class="mc-row"><b>What to grab:</b> the Appendices PDF for each of the 4 already-cited IRM Study vintages (2021, 2022, 2023, 2024/2025), specifically Table D.1.1</div>
+          <div class="mc-row"><b>Put it in:</b> <code>data/raw/capacity-market/accreditation-filings/nyiso/</code> as a supporting source for the R5a translation-factor history</div>
         </div>
       </div>
     </div>
