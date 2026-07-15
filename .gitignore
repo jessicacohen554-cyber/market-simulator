@@ -418,9 +418,14 @@ logs_g10/
 /results/calibration/ercot66_storagecap_2023/
 /results/calibration/ercot66_endog_2023/
 /results/calibration/ercot66_storagecap_endog_2023/
-# ERCOT-68 joint-completion lane: rule-16 single-year throwaway probe
+# ERCOT-68 joint-completion lane: rule-16 SINGLE-YEAR throwaway probe
 # bundles (never registered; regenerable from _ercot68_ladder_probe.py).
-/results/calibration/ercot68_*/
+# The full-span record bundle (ercot68_v3fix_fullspan) is NOT ignored — it
+# registers on the dashboard as the honest rejected-probe record (rule 15).
+/results/calibration/ercot68_keeper_2024/
+/results/calibration/ercot68_legJ_2024/
+/results/calibration/ercot68_legJfix_2024/
+/results/calibration/ercot68_legJfix_2023/
 
 # Capacity-hindcast probe bundles: dispatch-cache parquet and run logs are
 # disposable (the committed evolution_*.json / score.json / meta.json ledgers are
