@@ -1,5 +1,36 @@
 # Changelog
 
+## 2026-07-15 — ERCOT-66: measured storage-capability re-basis (60-Day disclosure non-OUT HSL) — phantom-evening defect fixed; candidates registered NOT-YET (exposed 2024 under-pricing); keeper unchanged
+
+- **Data intake:** new `scripts/fetch_ercot_60day_gen_resource.py` (NP3-966-ER
+  daily bundles over the free MIS API) lands deliveries 2025-11-02..12-31:
+  `60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2026_Jan-Mar.parquet` plus
+  the NEW `..._ESR_Data_2026_Jan-Mar.parquet` family — at the RTC+B go-live
+  (delivery 2025-12-06) storage leaves Gen_Resource_Data (no more PWRSTR rows)
+  and reappears as combined `ESR` resources in a new per-day CSV. 2025
+  deliveries now complete; the Oct-2023 hole is permanent on the free path
+  (documented; EIA-860 fallback window).
+- **Derive (rule-23 frozen):** `scripts/derive_ercot_storage_capability.py` →
+  `data/raw/ercot-storage-capability.csv` — hourly ISO-wide battery capability
+  (non-OUT PWRSTR/ESR HSL, model clock; 2,881/6,541/11,428 MW mean 2023/24/25);
+  reproduces the summer-availability audit's evening reference points exactly.
+- **Model:** `ScenarioConfig.ercot_storage_capability_measured` (default off,
+  ERCOT backcast-gated) — `model.storage.ercot_storage_capability_caps`
+  re-bases battery power caps on the measured series (EIA-860 stays the
+  zone-split + duration basis; uncovered hours keep EIA-860; forecast keeps
+  EIA-860 + planned pipeline). Applied before the M1 award subtraction at the
+  run_calibration storage seam. Parameter registry regenerated; 4 new tests.
+- **Runs:** `2026-07-15-ercot66-storage-rebasis` (A-only) and
+  `...-endog` (+ endogenous energy-vs-AS split) registered, both 2023-2025,
+  both NOT-YET: the design-target phantom windows collapse onto measured
+  capability (Aug-2024 VOLL/shed eliminated, model max 2,859/1,870 vs actual
+  3,060; Jul 30-31 2025 1,944 → 251 vs 243) and 2025 throughput moves toward
+  measured (4.11 → 4.33/4.14 vs 5.46 TWh), but removing the phantom scarcity
+  exposes pre-existing 2024 under-pricing (C3a-2024 −6.4 → ~−14%;
+  May/Nov/Apr) — the rule-14 root-cause lane, chartered. Keeper remains
+  `2026-07-12-ercot63-gas-bridge`. Full workings: the 2026-07-15 ERCOT-66
+  calibration-log entry.
+
 ## 2026-07-15 — All-ISO LMP scoring-clock fix (scorer-only): actual hourly parquets rebuilt on the model's chronological calendar; all 33 registered payloads re-paired in place; shift-invariant metrics verified unchanged
 
 - **Scorer/data:** `scripts/derive_actual_lmp.py` now indexes every

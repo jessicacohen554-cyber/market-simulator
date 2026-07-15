@@ -1,5 +1,18 @@
 # DIAGNOSIS — ERCOT summer availability audit: outage overlay EXONERATED, the phantom-evening defect is the storage capability basis (2026-07-14)
 
+> **STATUS (2026-07-15, ERCOT-66):** §2 items 2-3 EXECUTED. The disclosure
+> intake extends through Dec-2025 deliveries (incl. the new post-RTC+B
+> `ESR_Data` family), `scripts/derive_ercot_storage_capability.py` +
+> `ercot_storage_capability_measured` land the measured basis, and the
+> full-span candidates (`2026-07-15-ercot66-storage-rebasis[-endog]`) confirm
+> this diagnosis: the phantom-evening amplitude collapses onto the measured
+> capability (Aug-2024 VOLL/shed eliminated, model max 2,859 vs actual 3,060;
+> Jul 30-31 2025 1,944 → 251 vs 243). Both register NOT-YET — removing the
+> phantom scarcity exposes pre-existing 2024 under-pricing (May −12.5,
+> Nov −5.8 $/MWh vs actual) that the too-small EIA-860 fleet was compensating;
+> that exposure is the successor root-cause lane. Keeper unchanged. Full
+> workings: the 2026-07-15 ERCOT-66 calibration-log entry.
+
 **Task (owner ask, follow-on to
 `docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-summer-residuals-2026-07.md` §3
 items 2–3).** Execute the storage-energy audit chartered in §2a-1 and the

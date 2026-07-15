@@ -12982,3 +12982,140 @@ convention (July now shifts like February — fixed CST year-round); suite green
 (`test_consume_lmp`, `test_tail_metric_payload`, `test_fetch_caiso_intertie_lmp`
 pass unchanged). **Holdouts/governance:** training years only touched; zero
 fitted values; no ScenarioConfig change; keepers.json untouched.
+
+## 2026-07-15 — ERCOT-66: storage capability re-basis (60-Day disclosure MW) + endogenous storage AS/energy split — the phantom-evening defect FIXED at its measured root; both full-span candidates registered NOT-YET because removing the phantom scarcity EXPOSES the pre-existing 2024 under-pricing (rule-14); keeper stays ercot63-gas-bridge
+
+**Task (the summer-availability-audit charter,
+`docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md` §2 items 2-3 +
+`docs/storage-as-withholding-attribution-2026-07.md`).** Intake the disclosure
+through Dec-2025 deliveries, derive the measured storage capability basis, wire
+it as the backcast battery power basis, probe-ladder the re-basis and the
+endogenous split, and take the full-span candidate through the gates.
+
+**Intake (`scripts/fetch_ercot_60day_gen_resource.py`, new).** NP3-966-ER daily
+bundles, publications 2026-01-01..2026-03-01, fetched over the free MIS API →
+`60_DAY_DAM_DISCLOSURE_60d_DAM_Gen_Resource_Data_2026_Jan-Mar.parquet`
+(deliveries 2025-11-02..12-31) **plus the NEW `..._ESR_Data_2026_Jan-Mar.parquet`
+family**: ERCOT's RTC+B went live at delivery 2025-12-06 — storage leaves
+`Gen_Resource_Data` entirely (no PWRSTR rows from that day) and reappears in a
+new per-day `60d_DAM_ESR_Data` CSV as combined `ESR` resources (negative-LSL
+charge/discharge envelope, same 48-column layout). Continuity verified across
+the seam (13.2 → 12.1 GW HE19 non-OUT HSL). Delivery rows > 2025-12-31 dropped
+at intake (rule 22 hygiene). 2025 deliveries now complete; 2024 was already
+complete; the 30-day Oct-2023 hole (deliveries 2023-10-02..11-01, the Dec-2023
+publication) is PERMANENT on the free path (rolling MIS retention; credentialed
+archive owner-declined) — handled as an explicit EIA-860 fallback window, never
+zero-filled. Transport note: the intake parquets (18.2 + 2.1 MB binary) pushed
+over the git remote cleanly — the CLAUDE.md "git push 413s" era is over (the
+owner's 2026-07-15 binary-transport probe + the all-ISO clock-fix session's
+multi-MB parquet pushes re-validated the transport; this session pushed a 20 MB
+pack without incident). The banned-workflow/MCP-only guidance predates this.
+
+**Derive (`scripts/derive_ercot_storage_capability.py`, new, rule-23 FROZEN).**
+Hourly ISO-wide battery capability = Σ non-OUT HSL over PWRSTR rows (+ ESR rows
+post-RTC+B), prevailing→CST clock via the shared `prevailing_he_to_cst`, gaps
+≤24 h interpolated, the Oct-2023 hole left NaN →
+`data/raw/ercot-storage-capability.csv`. 2023: 8040/8760 h covered, mean
+2,881 MW; 2024 full, mean 6,541 MW; 2025 full, mean 11,428 MW. Reproduces the
+audit's evening reference points exactly (Aug-19-2024 HE20-21 = 7,655 MW;
+Jul-30-2025 = 12,524 MW).
+
+**Wiring (`ercot_storage_capability_measured`, default off, ERCOT+backcast
+gated).** Applied at the run_calibration storage seam BEFORE the M1 award
+subtraction (`model.storage.ercot_storage_capability_caps`): battery power caps
+re-based to the measured hourly series allocated across zones by the EIA-860
+power shares; energy cap = re-based MW × the zone's EIA-860 fleet duration;
+uncovered hours keep EIA-860; pumped storage untouched; forecast keeps EIA-860
++ the planned pipeline (the G4 mode-aware seam). Re-basis magnitude: fleet
+power mean 2,685→2,896 (2023), 5,489→6,541 (2024), 10,416→11,428 MW (2025).
+Registered in the parameter registry (rule 24); 4 unit tests; G-A/G-B from the
+attribution doc VERIFIED ALREADY BUILT (entry screen derives the storage AS
+credit from the co-opt's own duals under the endogenous flag; validators
+require the co-opt and, in forecast+multiproduct, the forward requirement) —
+18 existing tests green, nothing new needed.
+
+**run164 record read (charter step 1).** The June endogenous run's honesty gate
+(`storage_as.parquet`): the LP held ~2× the measured award (modeled mean
+2,427/4,036/5,680 MW vs measured 1,249/2,045/2,824, 2023/24/25) at near-zero
+hourly shape correlation (r 0.11/0.05/0.17) — with the forward-formula
+requirement. This session reproduces the same signature at the keeper's
+measured-plan requirement (below), so it is an M4 (requirement/demand-curve)
+finding, not a forward-formula artifact.
+
+**2023 probe ladder (rule-16 throwaways vs the byte-faithful ercot63
+reconstruction; `_ercot66_ladder_probe.py`; bundles deleted, never registered).**
+
+| rung | C3a | C3b | C3c | spread med | trough h<$15 | storage TWh | note |
+|---|---|---|---|---|---|---|---|
+| keeper (leg 0) | +3.1% | 0.131 | 171 | 14.9 | 228 | 0.74 | control reproduces ERCOT-63 exactly |
+| storagecap (leg A) | −2.0% | 0.065 | 150 | 14.7 | 229 | 0.78 | ALL price movement inside the Jun/Sep-2023 scarcity-formation window (Jun −13.4, Sep −8.3, Aug −2.3 $/MWh; other months ≤0.1); troughs byte-stable |
+| endog (leg B) | +2.2% | 0.133 | 171 | 14.4 | 228 | 0.68 | AS split 2,692 vs measured 1,249 MW (r 0.225); morning/midday discharge down (deployment floor off) |
+| storagecap_endog (A+B) | −2.8% | 0.074 | 150 | 14.3 | 228 | 0.72 | B composes ~additively on A |
+
+Leg-B trace (charter): `ercot_storage_as_deployment` cleared explicitly (hard
+validator forbids the pair); M1 cap-subtraction + M2 requirement netting
+auto-gate off; the post-solve additive ORDC adder gates off under the
+endogenous flag, so C3c is fed by the co-opt's internalized scarcity + the
+measured RTORDPA overlay the keeper carries.
+
+**Full-span candidates (2023-2025, one bundle each; registered per rule 15):**
+`2026-07-15-ercot66-storage-rebasis` (leg A only) and
+`2026-07-15-ercot66-storage-rebasis-endog` (A+B). Summer windows vs the keeper
+baseline (recomputed from its re-paired payload — clock fix landed 2026-07-15,
+raw hourly pairing valid):
+
+| window | keeper | A-only | A+B | actual |
+|---|---|---|---|---|
+| Aug 18-20 2024 | max 4,999 @VOLL + shed | max 2,859, no shed | max 1,870, no shed | max 3,060, no shed |
+| Jul 30-31 2025 | max 1,944 (8h >$200) | max 251 (4h) | max 251 (4h) | max 243 (2h) |
+| Aug 18-25 2025 | max 901 (14h >$200) | max 307 (14h marginal) | max 271 (14h marginal) | max 175 (0h) |
+
+**The design target is met** — the phantom-evening amplitude collapses onto the
+measured capability in both years and the Aug-2024 VOLL/shed artifact is
+eliminated — and 2025 battery throughput moves toward measured (4.11 → 4.33
+A-only / 4.14 A+B vs 5.46 TWh EIA-930). C5c monthly shape tracks the keeper
+(2024 r slips to 0.456, a borderline FAIL vs the keeper's pass — the March-2024
+low). **Both candidates are NOT-YET on C3a/C3b-2024** (A-only −14.2%/0.212, A+B
+−14.7%/0.215 vs keeper −6.4%/0.192): the monthly anatomy shows the removed
+phantom scarcity was propping up the keeper's 2024 annual mean — with the
+measured fleet, May sits −12.5, Nov −5.8, Apr −4.1 $/MWh under actual (keeper:
+−9.9/−0.2/−2.7) in BOTH recipes, i.e. the softening is the measured-input
+exposure, not the endogenous leg (B adds only −0.5pp). This is the rule-14
+signature verbatim: the accurate input reveals what the too-small EIA-860 fleet
+was silently compensating — the already-ledgered 2024 scarcity-formation
+under-pricing (G-22 / May-2024 lane, C3c-2024 27→20-22h vs 68). Dispositions:
+the measured input STAYS (rules 1/14); the exposed 2024 under-pricing
+(May/Nov/Apr) is the next root-cause lane; neither candidate promotes — keeper
+remains `2026-07-12-ercot63-gas-bridge`; attestations carry the unchanged DOF
+ledger + two measured/structural entries (zero new free parameters) and the
+honest NOT-YET (the C3a/C3b-2024 miss deliberately NOT ledgered as an
+accepted-limitation exception).
+
+**Endogenous split validation (gate 3).** Full-span honesty gate: the LP holds
+4,570/6,630 MW mean up-AS (2024/25) vs the measured award 2,148/2,515 MW at
+r 0.14-0.21 — the co-opt backs the whole requirement with storage room wherever
+feasible (storage is the cheapest fast-AS headroom), where the real market
+clears ~40% of the requirement from batteries. An M4 AS-demand-curve/
+requirement finding (the award is never re-pinned, rule 13). Also honoured:
+`ercot_storage_as_duration_gate` untouched; ERCOT-60 adjudications untouched
+(no morning/daytime floor, AS-release window as built).
+
+**Gates recap:** windows ✓ (amplitude; the Aug-2025 14 marginal >$200 h remain,
+$210-307 vs actual max 175); C5b direction ✓; C5c-2024 ✗ (0.456, borderline);
+C3a/C3b-2024 regression ✗ (the exposure — blocking); May-2024 moved −2.6
+(charter expected unmoved — it moved via the same exposure; recorded, not
+chased); D-2/D-4 rows byte-equivalent to the keeper's own (ST_GAS
+grounded-above-budget rows and the immaterial CT_PEAKER reliability-floor rows
+unchanged); LOYO: both deltas carry zero year-fitted parameters (a measured
+hourly series and a flag), so LOYO reduces to per-year gate stability — the
+re-basis fires condition-responsively every year with no gate flips.
+`docs/handoffs/ercot-demand-response-charter-2026-07.md` Leg B stays
+HARD-GATED: the windows re-scored — the storage basis, not load relief, was
+reality's cushion, and the remaining Aug-2025 tail sits in the exposed
+scarcity-formation lane.
+
+**Ops:** all solves in-session (rule: no CI offload). One container fits ONE
+ERCOT per-plant solve (~8-10 GB of 15 GB) — concurrent probes OOM-killed the
+first leg-A attempt; probes ran sequentially (rule 12's ~2-concurrent cap
+assumes more RAM). 2023 ladder bundles gitignored + deleted; the two full-span
+bundles committed slim (meta/run_config/metrics/attestation/diagnostics).
