@@ -1,0 +1,305 @@
+diff --git a/scripts/curate_zonal_shares.py b/scripts/curate_zonal_shares.py
+index ff7fc93..f7d0f15 100644
+--- a/scripts/curate_zonal_shares.py
++++ b/scripts/curate_zonal_shares.py
+@@ -97,14 +97,24 @@ def parse_pjm_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
+     if not path.exists():
+         logger.warning("PJM zonal metered-load file not found (%s); skipping", path)
+         return None
+-    df = pd.read_csv(path, usecols=["datetime_beginning_ept", "zone", "mw"])
++    df = pd.read_csv(path, usecols=["datetime_beginning_utc", "zone", "mw"])
+     df = df[df["zone"] != "RTO"].copy()
+     df["mzone"] = df["zone"].map(_PJM_LOAD_ZONE_GROUPS)
+     if df["mzone"].isna().any():
+         missing = sorted(df.loc[df["mzone"].isna(), "zone"].unique())
+         logger.warning("PJM load zones not mapped to a model zone: %s", missing)
+         df = df.dropna(subset=["mzone"])
+-    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
++    # Index on PJM's absolute UTC stamp converted to the model's fixed-EST 8760
++    # clock (Etc/GMT+5, no DST) — the prevailing datetime_beginning_ept stamp
++    # places the DST-months rows one hour late against demand and the EIA-930
++    # series. See docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07
++    # .md §1b/§6 (byte-identical outside DST, exactly one hour earlier inside).
++    ts = (
++        pd.to_datetime(df["datetime_beginning_utc"], format="mixed", errors="coerce")
++        .dt.tz_localize("UTC")
++        .dt.tz_convert("Etc/GMT+5")
++        .dt.tz_localize(None)
++    )
+     file_year = int(ts.dt.year.mode().iat[0])
+     if file_year != year:
+         logger.warning(
+@@ -114,7 +124,7 @@ def parse_pjm_shares(year: int, zone_names: list[str]) -> np.ndarray | None:
+             file_year,
+             year,
+         )
+-    keep = ~((ts.dt.month == 2) & (ts.dt.day == 29))
++    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
+     df, ts = df[keep], ts[keep]
+     return _hourly_shares_from_groups(
+         df["mzone"], _hours_of_year(ts), df["mw"], zone_names
+diff --git a/scripts/extend_eia930_hourly_from_balance.py b/scripts/extend_eia930_hourly_from_balance.py
+index 3c7378b..6c30094 100644
+--- a/scripts/extend_eia930_hourly_from_balance.py
++++ b/scripts/extend_eia930_hourly_from_balance.py
+@@ -252,9 +252,128 @@ def extend_ba(
+     return out_path
+ 
+ 
++# ---------------------------------------------------------------------------
++# PJM input-clock repair (M-1, docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-
++# structure-2026-07.md §1b/§6).  Two independent clock defects in the committed
++# ``PJM hourly.parquet`` are corrected by a *value-preserving* re-placement --
++# each affected cell keeps its measured value and only moves to the UTC hour it
++# actually belongs to (no re-pull, no interpolation, no tuning; rule 13/14):
++#
++#   * REGION family (Demand forecast / Demand / Net generation / Total
++#     interchange) in the **2023** vintage was built one position LATE (an
++#     hour-beginning/hour-ending label mix-up in that year's extract
++#     construction; verified: 2023 rows are value-identical to the EIA-930
++#     BALANCE archive placed hour-ending [T-1h,T) but shifted +1 slot).  Fix:
++#     shift the 2023 region family -1 h so it sits hour-ending [T-1h,T) like
++#     2024/2025 (which already match BALANCE at shift 0).  The 2023 demand then
++#     aligns with PJM's own ``hrl_load_metered`` (best-lag 0, was -1).
++#
++#   * FUELTYPE family (all ``NG:`` columns) ran one hour EARLY at the EIA-930
++#     source through 2024 (fixed upstream ~Feb-2025; July solar centroid ~10.9
++#     vs the astronomically-fixed ~11.9).  In **2024** the wide extract sits on
++#     the raw (early) source clock, so its fueltype is 1 h early.  Fix: shift
++#     the 2024 fueltype family +1 h.  In **2023** the source's 1 h-early and the
++#     extract's 1 h-late errors cancelled, so 2023 fueltype is already aligned
++#     (centroid 11.9) and is KEPT.  **2025** is aligned from ~Feb (source fixed)
++#     and is left untouched; January-2025 straddles the upstream switch
++#     (centroid 11.15) and is left as measured -- correcting a sub-month straddle
++#     would require fabricating a switch hour (rule 14), so it is documented, not
++#     shifted.
++#
++# Net per-family effect vs the pre-fix committed file: 2023 demand -1 h, 2023
++# fueltype 0, 2024 demand 0, 2024 fueltype +1 h, 2025 0.  Every other cell, row,
++# dtype and column is byte-identical.  This is a source-data placement action
++# (rule 23) citing the diagnosis, not a residual fit.
++_PJM_REGION_FAMILY: tuple[str, ...] = (
++    "Demand forecast",
++    "Demand",
++    "Net generation",
++    "Total interchange",
++)
++_PJM_INPUT_CLOCK_SHIFTS: tuple[tuple[int, str, int], ...] = (
++    # (local-date year, family, hours to move the CONTENT: -1 = earlier)
++    (2023, "region", -1),
++    (2024, "fueltype", +1),
++)
++
++
++def _replace_family_by_utc_shift(
++    df: pd.DataFrame, year: int, cols: list[str], content_shift_h: int
++) -> pd.DataFrame:
++    """Move ``cols`` for local-year ``year`` rows by ``content_shift_h`` hours.
++
++    Value-preserving: the new value at a row whose UTC hour is ``T`` is the
++    committed value currently at ``T - content_shift_h`` (so a ``-1`` shift
++    pulls each cell's content one hour EARLIER onto its row, and ``+1`` pulls it
++    one hour later).  Sourced from the same committed frame (which spans
++    2018-2026 contiguously), so a year-boundary row reads its immediate UTC
++    neighbour and no NaN is introduced inside ``year``.  The row grid, the time
++    columns, and every cell outside (``year``, ``cols``) are untouched.
++
++    Args:
++        df: The full multi-year wide extract (UTC-unique).
++        year: Local-date calendar year whose ``cols`` are re-placed.
++        cols: Value columns to move (a region- or fueltype-family list).
++        content_shift_h: Signed hours to move the content (-1 earlier / +1 later).
++
++    Returns:
++        A copy of ``df`` with only the (``year``, ``cols``) block re-placed.
++    """
++    out = df.sort_values("UTC time").reset_index(drop=True).copy()
++    utc = pd.DatetimeIndex(out["UTC time"])
++    by_utc = out.set_index("UTC time")
++    # Row T takes the committed value at UTC (T - content_shift_h).
++    src_utc = utc - pd.Timedelta(hours=content_shift_h)
++    src = by_utc[cols].reindex(src_utc).reset_index(drop=True)
++    mask = (out["Local date"].dt.year == year).to_numpy()
++    for col in cols:
++        arr = out[col].to_numpy().copy()
++        arr[mask] = src[col].to_numpy()[mask]
++        out[col] = arr.astype(df[col].dtype)
++    return out
++
++
++def rebuild_pjm_input_clock(force: bool) -> Path:
++    """Apply the M-1 per-family input-clock re-placement to ``PJM hourly.parquet``.
++
++    Reads the committed wide extract, applies :data:`_PJM_INPUT_CLOCK_SHIFTS`
++    (2023 region -1 h; 2024 fueltype +1 h) as value-preserving UTC-time
++    re-placements, and writes the corrected extract back in the identical
++    schema.  See the module-level notes above and
++    ``docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md`` §6.
++    """
++    out_path = OUT_DIR / "PJM hourly.parquet"
++    df = pd.read_parquet(out_path)
++    original_cols = list(df.columns)
++    fuel_cols = [c for c in df.columns if c.startswith("NG: ")]
++    region_cols = [c for c in _PJM_REGION_FAMILY if c in df.columns]
++    for year, family, shift in _PJM_INPUT_CLOCK_SHIFTS:
++        cols = region_cols if family == "region" else fuel_cols
++        df = _replace_family_by_utc_shift(df, year, cols, shift)
++        print(
++            f"  PJM {year} {family} family: content shifted {shift:+d} h ({len(cols)} cols)"
++        )
++    df = df[original_cols]
++    if not force:
++        tmp = out_path.with_suffix(".parquet.new")
++        df.to_parquet(tmp, index=False)
++        tmp.replace(out_path)
++    else:
++        df.to_parquet(out_path, index=False)
++    print(f"  -> wrote {out_path}")
++    return out_path
++
++
+ def main() -> None:
+     ap = argparse.ArgumentParser(description=__doc__)
+-    ap.add_argument("--ba", action="append", required=True, dest="bas")
++    ap.add_argument(
++        "--rebuild-pjm-input-clock",
++        action="store_true",
++        help="Apply the M-1 per-family clock re-placement to the committed "
++        "PJM hourly.parquet (2023 region -1h; 2024 fueltype +1h) and exit; "
++        "value-preserving, cites docs/DIAGNOSIS-pjm-2025-phase-drift-*.md.",
++    )
++    ap.add_argument("--ba", action="append", dest="bas")
+     ap.add_argument(
+         "--year",
+         action="append",
+@@ -275,6 +394,11 @@ def main() -> None:
+         help="unused placeholder for symmetry with sibling fetch scripts",
+     )
+     args = ap.parse_args()
++    if args.rebuild_pjm_input_clock:
++        rebuild_pjm_input_clock(args.force)
++        return
++    if not args.bas:
++        ap.error("--ba is required unless --rebuild-pjm-input-clock is given")
+     years = tuple(args.years) if args.years else _DEFAULT_EXTEND_YEARS
+     halves = tuple(args.halves) if args.halves else _DEFAULT_HALVES
+     for ba in args.bas:
+diff --git a/scripts/run_calibration_full.py b/scripts/run_calibration_full.py
+index aee6808..a5d1d9a 100644
+--- a/scripts/run_calibration_full.py
++++ b/scripts/run_calibration_full.py
+@@ -6098,6 +6098,7 @@ def run_replay_bundle(
+     note: str,
+     holdout_authorized: bool,
+     zero_forcing_ablation: bool = False,
++    reuse_solved: Path | None = None,
+ ) -> None:
+     """Re-solve a committed bundle's recipe (its ``meta.json``) end-to-end.
+ 
+@@ -6138,6 +6139,14 @@ def run_replay_bundle(
+         # D-3 linkage: the twin's run_config must name its base bundle
+         # (the dashboard and audit_keepers pair twins by ablation_of).
+         kwargs["ablation_of"] = bundle.name
++    # --reuse-solved composes with --replay-bundle: reuse a prior bundle's
++    # already-solved (identical-recipe) years and solve only the rest fresh.
++    # plan_reuse_solved enforces recipe/config identity, so a reused year's
++    # dispatch is byte-identical to a fresh solve — this is a memory/time
++    # resume, not a methodology change (used here to solve a 3-year PJM span
++    # one fresh year per process, staying under this box's RAM ceiling).
++    if reuse_solved is not None:
++        kwargs["reuse_solved"] = reuse_solved
+     run_dir = solve_and_persist(**kwargs)
+     report_run(run_dir)
+ 
+@@ -8737,6 +8746,7 @@ def main() -> None:
+             note=args.note,
+             holdout_authorized=args.holdout_authorized,
+             zero_forcing_ablation=args.zero_forcing_ablation,
++            reuse_solved=Path(args.reuse_solved) if args.reuse_solved else None,
+         )
+         return
+ 
+diff --git a/src/market_sim/data/eia_loader.py b/src/market_sim/data/eia_loader.py
+index 896b5ec..42881bd 100644
+--- a/src/market_sim/data/eia_loader.py
++++ b/src/market_sim/data/eia_loader.py
+@@ -2550,6 +2550,42 @@ def _miso_utc_to_local_hoy(period_utc: pd.Series, year: int) -> pd.Series | None
+     return period_utc.map(hoy_of_utc)
+ 
+ 
++def _pjm_utc_hoy(utc_col: pd.Series, year: int) -> np.ndarray:
++    """Hour-of-year on the model's fixed-EST clock from a PJM ``datetime_
++    beginning_utc`` column.
++
++    PJM's DataMiner exports carry both a prevailing (``datetime_beginning_ept``)
++    and an absolute (``datetime_beginning_utc``) stamp. The model's 8760 clock is
++    fixed standard time (EST, ``Etc/GMT+5``, no DST) — demand and the EIA-930
++    series all share it. Indexing a DataMiner export on its ``_ept`` wall clock
++    places the ~5,600 DST-months rows one hour late against that clock; taking
++    the ``_utc`` stamp, converting it to EST, and using its wall-clock
++    month/day/hour puts the row on the model clock — byte-identical to the old
++    ``_ept`` placement outside DST, exactly one hour earlier inside it. Feb 29
++    (standard-time, EST==EPT) is dropped; a row whose EST instant falls outside
++    ``year`` maps to ``-1`` for the caller to drop. See
++    ``docs/DIAGNOSIS-pjm-2025-phase-drift-and-zonal-structure-2026-07.md`` §1b/§6.
++    """
++    est = (
++        pd.to_datetime(utc_col, format="mixed", errors="coerce")
++        .dt.tz_localize("UTC")
++        .dt.tz_convert("Etc/GMT+5")
++        .dt.tz_localize(None)
++    )
++    month = est.dt.month.to_numpy()
++    day = est.dt.day.to_numpy()
++    hour = est.dt.hour.to_numpy()
++    yr = est.dt.year.to_numpy()
++    ok = est.notna().to_numpy() & (yr == year) & ~((month == 2) & (day == 29))
++    hoy = np.full(len(est), -1, dtype=np.int64)
++    hoy[ok] = (
++        np.array(_MONTH_START_HOUR)[month[ok].astype(int) - 1]
++        + (day[ok].astype(int) - 1) * 24
++        + hour[ok].astype(int)
++    )
++    return hoy
++
++
+ def pjm_net_interchange(year: int) -> np.ndarray | None:
+     """Return PJM's hourly net export (MW, export-positive), or ``None``.
+ 
+@@ -2569,15 +2605,8 @@ def pjm_net_interchange(year: int) -> np.ndarray | None:
+     path = _PJM_INTERCHANGE_DIR / f"PJM_{year}_import_export_act_sch_interchange.csv"
+     if not path.exists():
+         return None
+-    df = pd.read_csv(path, usecols=["datetime_beginning_ept", "actual_flow"])
+-    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
+-    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
+-    df, ts = df[keep], ts[keep]
+-    hoy = (
+-        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
+-        + (ts.dt.day.to_numpy() - 1) * 24
+-        + ts.dt.hour.to_numpy()
+-    )
++    df = pd.read_csv(path, usecols=["datetime_beginning_utc", "actual_flow"])
++    hoy = _pjm_utc_hoy(df["datetime_beginning_utc"], year)
+     # Sum actual flow across ties per hour-of-year; negate to export-positive.
+     net = np.zeros(HOURS_PER_YEAR, dtype=float)
+     counted = np.zeros(HOURS_PER_YEAR, dtype=bool)
+@@ -2643,16 +2672,9 @@ def pjm_zonal_interchange(year: int, zone_names: list[str]) -> np.ndarray | None
+     if not path.exists():
+         return None
+     df = pd.read_csv(
+-        path, usecols=["datetime_beginning_ept", "tie_line", "actual_flow"]
+-    )
+-    ts = pd.to_datetime(df["datetime_beginning_ept"], format="mixed", errors="coerce")
+-    keep = ts.notna() & ~((ts.dt.month == 2) & (ts.dt.day == 29))
+-    df, ts = df[keep], ts[keep]
+-    hoy = (
+-        np.array(_MONTH_START_HOUR)[ts.dt.month.to_numpy() - 1]
+-        + (ts.dt.day.to_numpy() - 1) * 24
+-        + ts.dt.hour.to_numpy()
++        path, usecols=["datetime_beginning_utc", "tie_line", "actual_flow"]
+     )
++    hoy = _pjm_utc_hoy(df["datetime_beginning_utc"], year)
+     zone_idx = {z: i for i, z in enumerate(zone_names)}
+     out = np.zeros((len(zone_names), HOURS_PER_YEAR), dtype=float)
+     flow = df["actual_flow"].to_numpy(dtype=float)
