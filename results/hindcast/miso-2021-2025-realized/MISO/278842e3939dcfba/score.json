@@ -8,9 +8,9 @@
   ],
   "retirements": {
     "total_gw": {
-      "actual": 14.416,
+      "actual": 15.227,
       "model": 0.784,
-      "err_frac": -0.946,
+      "err_frac": -0.948,
       "band": "FAIL"
     },
     "per_fuel": {
@@ -35,9 +35,9 @@
         "err_frac": -1.0
       },
       "nuclear": {
-        "actual_gw": 0.0,
+        "actual_gw": 0.812,
         "model_gw": 0.768,
-        "err_frac": null
+        "err_frac": -0.053
       },
       "oil": {
         "actual_gw": 0.502,
@@ -46,19 +46,19 @@
       }
     },
     "unit_recall_gt300": {
-      "n_big_actual": 16,
+      "n_big_actual": 17,
       "matched": 0,
       "recall": 0.0,
       "grain": "fuel-mw-coverage",
-      "plant_recall_frac": 0.0,
-      "plant_matched": 0,
+      "plant_recall_frac": 0.059,
+      "plant_matched": 1,
       "band": "FAIL"
     },
     "false_retire": {
-      "false_gw": 0.768,
-      "frac_of_model": 0.98,
+      "false_gw": 0.0,
+      "frac_of_model": 0.0,
       "grain": "per-fuel-excess",
-      "band": "FAIL"
+      "band": "PASS"
     }
   },
   "additions": {
@@ -159,5 +159,173 @@
     "techmix_share_pp_max": 0.05,
     "co2_2025_frac": 0.1
   },
-  "generated_utc": "2026-07-14T06:25:51Z"
+  "generated_utc": "2026-07-14T06:25:51Z",
+  "retirements_is2020": {
+    "total_gw": {
+      "actual": 15.227,
+      "model": 0.784,
+      "err_frac": -0.948,
+      "band": "FAIL"
+    },
+    "per_fuel": {
+      "biomass": {
+        "actual_gw": 0.023,
+        "model_gw": 0.016,
+        "err_frac": -0.304
+      },
+      "coal": {
+        "actual_gw": 10.934,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "gas_cc": {
+        "actual_gw": 0.521,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "gas_ct": {
+        "actual_gw": 2.435,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "nuclear": {
+        "actual_gw": 0.812,
+        "model_gw": 0.768,
+        "err_frac": -0.053
+      },
+      "oil": {
+        "actual_gw": 0.502,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      }
+    },
+    "unit_recall_gt300": {
+      "n_big_actual": 17,
+      "matched": 0,
+      "recall": 0.0,
+      "grain": "fuel-mw-coverage",
+      "plant_recall_frac": 0.059,
+      "plant_matched": 1,
+      "band": "FAIL"
+    },
+    "false_retire": {
+      "false_gw": 0.0,
+      "frac_of_model": 0.0,
+      "grain": "per-fuel-excess",
+      "band": "PASS"
+    },
+    "reversal_exposure_gw": 0.0,
+    "reversal_instruments": [],
+    "reversal_rows": []
+  },
+  "retirement_channels": {
+    "announced": {
+      "retired_gw": 0.784,
+      "false_retire_gw": 0.0,
+      "model_fuel_gw": {
+        "biomass": 0.016,
+        "nuclear": 0.768
+      },
+      "recall_matched": 0
+    },
+    "_n_big_actual": 17,
+    "_legacy_known_mapped_to": "announced"
+  },
+  "additions_is2020": {
+    "restart_excluded_gw": 0.075,
+    "restart_rows": [
+      {
+        "plant_id": "1868",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "1868",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "1868",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "1868",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "1191",
+        "fuel": "oil",
+        "mw": 1.8
+      },
+      {
+        "plant_id": "1191",
+        "fuel": "oil",
+        "mw": 1.8
+      },
+      {
+        "plant_id": "1191",
+        "fuel": "oil",
+        "mw": 1.8
+      },
+      {
+        "plant_id": "50935",
+        "fuel": "gas_ct",
+        "mw": 3.0
+      },
+      {
+        "plant_id": "50935",
+        "fuel": "gas_ct",
+        "mw": 1.8
+      },
+      {
+        "plant_id": "2023",
+        "fuel": "oil",
+        "mw": 3.1
+      },
+      {
+        "plant_id": "2023",
+        "fuel": "oil",
+        "mw": 3.1
+      },
+      {
+        "plant_id": "1177",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      },
+      {
+        "plant_id": "4014",
+        "fuel": "gas_ct",
+        "mw": 9.8
+      }
+    ],
+    "note": "Post-V restart additions excluded from IS-2020 additions (\u00a7c.5-2). Inert in the RD-5 actuals as landed \u2014 the coverage fix booked only the physical exit, no restart addition row exists."
+  },
+  "is2020_cutoff": "2020-12-31",
+  "rescore": {
+    "task": "T-R8",
+    "note": "IS-2020 scoring hygiene (RC-0B \u00a7c.5) \u2014 raw + IS-2020 + per-channel. No re-solve; RD-5 actuals; co2/baselines preserved (unchanged by RD-5).",
+    "utc": "2026-07-15T16:51:33Z"
+  }
 }
