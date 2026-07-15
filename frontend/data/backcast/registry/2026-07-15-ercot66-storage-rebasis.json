@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-15-ercot66-storage-rebasis",
+ "label": "ercot66 storage rebasis",
+ "date": "2026-07-15",
+ "shorthand": "ercot66-storage-rebasis",
+ "definition": "CANDIDATE (NOT-YET \u2014 keeper unchanged: ercot63-gas-bridge). The ercot63 recipe + ONE measured-input delta, ercot_storage_capability_measured (leg A): the battery power basis follows the 60-Day disclosure registered non-OUT PWRSTR/ESR HSL (EIA-860 stays zone/duration; rule 14; zero new free parameters). DESIGN TARGET MET: Aug 18-20 2024 VOLL saturation eliminated (model max 4,999+shed -> 2,859, no shed, vs actual 3,060); Jul 30-31 2025 phantom 1,944 -> 251 vs actual 243; Aug 18-25 2025 amplitude 901 -> 307 (14 marginal >$200 h remain vs actual 0). 2025 battery throughput 4.11 -> 4.33 TWh (measured 5.46). NOT-YET because the removed phantom scarcity EXPOSES pre-existing 2024 under-pricing (C3a-2024 -6.4% -> -14.2%, C3b-2024 0.212; May -12.5 / Nov -5.8 / Apr -4.1 vs actual) \u2014 the rule-14 root-cause lane, chartered, not a reason to revert the measured input; C5c-2024 slips to r=0.456; C3c-2024 20h vs 68 (inherited G-22 under-tail, deepened by removing wrong-hour prints).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-15-ercot66-storage-rebasis.js",
+ "bundle": "results/calibration/ercot66_storage_rebasis_measuredas"
+}
