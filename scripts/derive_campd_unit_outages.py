@@ -82,6 +82,8 @@ from market_sim.data import campd  # noqa: E402
 from market_sim.data.outages import (  # noqa: E402
     QUALIFYING_PLANT_GROUPS,
     ST_GAS_PEAKER_PLANTS,
+    UNIT_OUTAGE_MIN_DAYS,
+    unit_outage_csv_for_iso,
 )
 from scripts.derive_campd_outages import (  # noqa: E402
     FULL_STOP_OVERRIDE_CF,
@@ -95,6 +97,47 @@ from scripts.derive_campd_outages import (  # noqa: E402
     filter_revealed_outages,
     high_load_mask,
 )
+
+# --partial-windows mode reuses the plant-level partial-outage deriver's plateau
+# detector and its frozen constants VERBATIM (rule 23: measured-behaviour
+# parameters re-derive only on source-data change, never on a residual). The
+# only difference is the grain — this script feeds the detector each UNIT's own
+# CEMS gross instead of the plant sum, so PJM's cycling fleet (whose plant sum
+# over-fires the plant-grain detector by ~43 TWh/yr — the plant-grain path stays
+# ERCOT-scoped in fleet.py) is read at the grain the phenomenon actually lives
+# at. See docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7 (leg B).
+from scripts.derive_partial_outages import (  # noqa: E402
+    _detect as _detect_partial_plateaus,
+)
+
+
+def _partial_plateau_windows(
+    gross: np.ndarray, detect_cap: float
+) -> tuple[list[tuple[int, int]], dict[tuple[int, int], float]]:
+    """Detect unit-grain partial-derate plateaus on one unit's CEMS gross.
+
+    Wraps the plant-level partial-outage deriver's frozen plateau detector
+    (:func:`scripts.derive_partial_outages._detect`, constants ``_MIN_DAYS`` /
+    ``_SMOOTH_DAYS`` / ``_CEILING_FRAC`` / ``_RUN_FLOOR_CF`` VERBATIM) on the
+    unit's own capacity factor (``gross / detect_cap``). Returns the plateau
+    spans as ``[(start_hour, stop_hour_excl), ...]`` (day boundaries x 24, so
+    they slot straight into the same in-merit revealed-availability filter the
+    full-stop windows use) alongside ``{(start_hour, stop_hour): derate_factor}``
+    — the deriver's measured availability fraction during the plateau (median
+    daily-max ceiling / normal-ceiling). The removed capacity written to the
+    CSV is ``(1 - derate_factor) x unit_capacity`` over the span.
+    """
+    if detect_cap <= 0:
+        return [], {}
+    cf = gross / detect_cap
+    windows: list[tuple[int, int]] = []
+    factors: dict[tuple[int, int], float] = {}
+    for s_day, e_day, factor in _detect_partial_plateaus(cf):
+        win = (s_day * 24, e_day * 24)
+        windows.append(win)
+        factors[win] = factor
+    return windows, factors
+
 
 # CAMPD unit-level extracts live in their own subdirectory; the flat raw-data
 # files are facility-summed and carry no unitId.
@@ -328,6 +371,100 @@ def _load_unit_year(state: str, year: int) -> pd.DataFrame:
     return df.dropna(subset=["hour"])
 
 
+def _load_standard_windows(
+    path: Path,
+) -> dict[tuple[int, str, int], list[tuple[pd.Timestamp, pd.Timestamp]]]:
+    """Load the ISO's >= 5-day standard extract keyed for the when-operable guard.
+
+    Returns ``{(facility_id, unit_id, year): [(outage_start, outage_end), ...]}``
+    for every ``duration_days >= UNIT_OUTAGE_MIN_DAYS`` window in
+    ``campd-unit-outages[-<ISO>].csv`` — the authority on each unit's own long
+    outages. The short/partial baseload guard measures a unit's capacity factor
+    over the hours it is OPERABLE (outside these windows), so a unit with a
+    documented multi-month outage is still recognised as baseload by its running
+    capability. Keyed by the window's calendar year (the detector clips each
+    window to one calendar year), so the mask only ever removes hours from the
+    year being scanned. Empty when the file is absent — the guard then degrades
+    to the raw-annual basis (the pre-correction behaviour).
+    """
+    windows: dict[tuple[int, str, int], list[tuple[pd.Timestamp, pd.Timestamp]]] = {}
+    if not path.exists():
+        print(
+            f"  (no standard extract at {path.name}: when-operable guard falls "
+            "back to raw-annual CF)"
+        )
+        return windows
+    df = pd.read_csv(path, parse_dates=["outage_start", "outage_end"])
+    df = df[df["duration_days"] >= UNIT_OUTAGE_MIN_DAYS]
+    for r in df.itertuples(index=False):
+        key = (int(r.facility_id), str(r.unit_id), int(r.outage_start.year))
+        windows.setdefault(key, []).append((r.outage_start, r.outage_end))
+    return windows
+
+
+def _operable_mask(
+    standard_windows: dict[
+        tuple[int, str, int], list[tuple[pd.Timestamp, pd.Timestamp]]
+    ],
+    facility_id: int,
+    unit_id: object,
+    year: int,
+    n_hours: int,
+) -> np.ndarray:
+    """Boolean ``(n_hours,)`` mask of WHEN-OPERABLE hours on the year clock.
+
+    ``True`` everywhere except inside the unit's own >= 5-day standard outage
+    windows (from :func:`_load_standard_windows`), which are removed so the
+    baseload guard measures the unit's capacity factor while it is actually
+    operable. Windows are reconstructed day-granular (the CSV stores dates) —
+    from the start of ``outage_start`` through the end of ``outage_end`` — the
+    same reconstruction the standard loader and the C3c probe use. A unit with
+    no standard windows this year yields an all-``True`` mask (raw-annual CF).
+    """
+    mask = np.ones(n_hours, dtype=bool)
+    base = pd.Timestamp(f"{year}-01-01")
+    for start, end in standard_windows.get(
+        (int(facility_id), str(unit_id), int(year)), ()
+    ):
+        lo = max(0, int((start - base).total_seconds() // 3600))
+        hi = min(
+            n_hours,
+            int((end + pd.Timedelta(days=1) - base).total_seconds() // 3600),
+        )
+        if hi > lo:
+            mask[lo:hi] = False
+    return mask
+
+
+def _when_operable_cf(
+    gross: np.ndarray,
+    detect_cap: float,
+    standard_windows: dict[
+        tuple[int, str, int], list[tuple[pd.Timestamp, pd.Timestamp]]
+    ],
+    facility_id: int,
+    unit_id: object,
+    year: int,
+) -> float:
+    """Return a unit's capacity factor over the hours it is OPERABLE.
+
+    The mean gross output over the hours OUTSIDE the unit's own >= 5-day
+    standard outage windows, divided by ``detect_cap`` (the CF denominator the
+    baseload guard thresholds on). This is the identification basis for the
+    short/partial baseload guard (:data:`SHORT_BASELOAD_CF`): a unit with a
+    documented multi-month outage is baseload by its running capability even
+    though its raw-annual CF is dragged down by the outage (diagnosis §7). A
+    unit with no standard windows this year has an all-operable clock, so this
+    reduces to the raw-annual CF. Returns ``0.0`` when there are no operable
+    hours or ``detect_cap <= 0``.
+    """
+    operable = _operable_mask(standard_windows, facility_id, unit_id, year, len(gross))
+    oper_gross = gross[operable]
+    if not oper_gross.size or detect_cap <= 0:
+        return 0.0
+    return float(np.mean(oper_gross)) / detect_cap
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
@@ -345,6 +482,21 @@ def main() -> None:
         "always enforced (the full-stop override never engages below 5 days). "
         "min-outage-days defaults to 1.0 in this mode; output defaults to "
         "campd-unit-outages-short[-{ISO}].csv.",
+    )
+    ap.add_argument(
+        "--partial-windows",
+        action="store_true",
+        help="Derive the UNIT-GRAIN partial-derate plateau file "
+        "(campd-partial-outages-{ISO}.csv) instead of any full-stop extract: "
+        "coal units only, the same WHEN-OPERABLE baseload guard (CF >= 0.55 "
+        "outside the unit's own >= 5-day windows) and the same "
+        "revealed-availability in-merit filter, but the plateau detector "
+        "(scripts/derive_partial_outages._detect, constants VERBATIM: 5-day "
+        "plateau / 7-day median / ceiling < 0.65x normal / 0.06 run-floor) run "
+        "on each UNIT's own CEMS gross. Emits one row per (unit, plateau) with a "
+        "derate_factor; consumed by outages.unit_partial_outage_derate_factors "
+        "under ScenarioConfig.unit_partial_outage_windows. Mutually exclusive "
+        "with --short-windows.",
     )
     ap.add_argument(
         "--no-inmerit-filter",
@@ -412,6 +564,8 @@ def main() -> None:
         "(ERCOT) or campd-unit-outages-{ISO}.csv.",
     )
     args = ap.parse_args()
+    if args.short_windows and args.partial_windows:
+        raise SystemExit("--short-windows and --partial-windows are mutually exclusive")
     if args.no_fullstop_override:
         args.fullstop_override_days = 10**9
     if args.short_windows and args.min_outage_days == 5.0:
@@ -422,6 +576,8 @@ def main() -> None:
         # minimum span (24 h): 6 high-net-load hours. Explicit
         # --min-inmerit-hours still wins.
         args.min_inmerit_hours = 6
+    # Partial mode keeps the parent >= 5-day plateau length (the detector's own
+    # _MIN_DAYS = 5), so the default 24 h in-merit floor applies unchanged.
     min_outage_hours = int(round(args.min_outage_days * 24))
     # Short mode: windows must stay strictly below the standard overlay's
     # UNIT_OUTAGE_MIN_DAYS floor so the two extracts are disjoint by
@@ -434,7 +590,13 @@ def main() -> None:
         )
     iso = args.iso.upper()
     if args.out is None:
-        if args.short_windows:
+        if args.partial_windows:
+            # The unit-grain partial file is ALWAYS ISO-suffixed (ERCOT
+            # included) so it never collides with the plant-grain ERCOT
+            # campd-partial-outages.csv (a different datatype, ERCOT-scoped in
+            # fleet.py). Matches outages.unit_partial_outage_csv_for_iso.
+            fname = f"campd-partial-outages-{iso}.csv"
+        elif args.short_windows:
             fname = (
                 "campd-unit-outages-short.csv"
                 if iso == "ERCOT"
@@ -550,6 +712,20 @@ def main() -> None:
 
     exact, by_digits = build_capacity_index(Path(args.eia860))
     npl_by_plant = plant_nameplate_index(Path(args.eia860))
+
+    # When-operable baseload guard (short + partial modes): load the ISO's
+    # >= 5-day standard extract so a unit's CF is measured over the hours it is
+    # OPERABLE (outside its own long outages). A unit with a documented
+    # multi-month outage is baseload by its running capability, which the
+    # raw-annual CF hides (diagnosis §7: event-unit when-operable CF 0.58-0.72
+    # vs raw-annual 0.09-0.36). Identification correction cited to that
+    # measurement, not to a price residual; empty when the standard file is
+    # absent (guard degrades to raw-annual).
+    standard_windows = (
+        _load_standard_windows(unit_outage_csv_for_iso(iso))
+        if (args.short_windows or args.partial_windows)
+        else {}
+    )
 
     states = campd.states_for_iso(iso)
     rows: list[dict] = []
@@ -770,24 +946,47 @@ def main() -> None:
                     )
                     if ugroup not in QUALIFYING_PLANT_GROUPS:
                         continue
-                    # Short-windows mode: baseload coal only. A cycling unit's
-                    # brief stop can be economics; a baseload (annual CF >=
-                    # SHORT_BASELOAD_CF) coal unit's 1-5 day full stop cannot
-                    # (10+ h starts, take-or-pay fuel) — the same guard the
-                    # partial-outage detector uses (_BASELOAD_CF).
-                    if args.short_windows:
+                    # Short/partial modes: baseload coal only, WHEN-OPERABLE
+                    # basis. A cycling unit's brief stop can be economics; a
+                    # baseload coal unit's cannot (10+ h starts, take-or-pay
+                    # fuel) — the same 0.55 guard (SHORT_BASELOAD_CF) the
+                    # partial-outage detector uses (_BASELOAD_CF). The CF is
+                    # measured over the hours the unit is OPERABLE (excluding its
+                    # own >= 5-day standard windows), NOT over raw annual hours,
+                    # so a unit with a documented multi-month outage is still
+                    # recognised as baseload by its running capability. The
+                    # raw-annual basis contradicted the guard's own stated intent
+                    # ("units that normally run near their ceiling"): diagnosis §7
+                    # measured 9 of 11 event units spuriously failing on
+                    # raw-annual CF (0.09-0.36) that pass on when-operable CF
+                    # (0.58-0.72). Identification correction cited to that
+                    # measurement, not to a price residual (rule 23), applied
+                    # uniformly to any ISO's re-derive.
+                    if args.short_windows or args.partial_windows:
                         if not unit_is_coal[uid]:
                             continue
-                        if float(np.mean(gross)) < SHORT_BASELOAD_CF * detect_cap:
+                        oper_cf = _when_operable_cf(
+                            gross, detect_cap, standard_windows, int(fac_id), uid, year
+                        )
+                        if oper_cf < SHORT_BASELOAD_CF:
                             continue
-                    # Coal (baseload): a sustained low-output gap is an outage.
-                    # Everything else (load-following CC / gas-steam): only a
-                    # genuine dead span — no output at all — counts, via the
-                    # event-based rule, so economic idleness is not over-flagged.
-                    # The detector thresholds on the unit's own nameplate
+                    # Partial mode: unit-grain CF-ceiling plateaus (>= 5-day
+                    # sustained derates) from the plant-level detector's frozen
+                    # rule, run on THIS unit's own CEMS (the guard above has
+                    # already restricted to baseload coal). Full-stop modes:
+                    # coal (baseload) uses the sustained-low-output-gap rule;
+                    # everything else (load-following CC / gas-steam) only a
+                    # genuine dead span — no output at all — via the event-based
+                    # rule, so economic idleness is not over-flagged. The
+                    # detector thresholds on the unit's own nameplate
                     # (detect_cap), so the CC steam allocation — which lifts only
                     # the derate share — leaves every detected window unchanged.
-                    if unit_is_coal[uid]:
+                    plateau_factors: dict[tuple[int, int], float] = {}
+                    if args.partial_windows:
+                        windows, plateau_factors = _partial_plateau_windows(
+                            gross, detect_cap
+                        )
+                    elif unit_is_coal[uid]:
                         windows = detect_outages(gross, detect_cap, min_outage_hours)
                     else:
                         windows = detect_outages_eventbased(
@@ -850,27 +1049,33 @@ def main() -> None:
                         duration_days = round((e - s) / 24.0, 1)
                         out_days += duration_days
                         peers = sum(1 for o in ran if o != uid)
-                        rows.append(
-                            {
-                                "facility_name": fac_name,
-                                "facility_id": int(fac_id),
-                                "unit_id": uid,
-                                "unit_capacity_mw": round(derate_cap, 1),
-                                "plant_capacity_mw": round(fac_cap, 1),
-                                "unit_pct_of_plant": (
-                                    round(100.0 * derate_cap / fac_cap, 1)
-                                    if fac_cap
-                                    else None
-                                ),
-                                "plant_group": ugroup,
-                                "capacity_source": cap_src,
-                                "outage_start": start.strftime("%Y-%m-%d"),
-                                "outage_end": last.strftime("%Y-%m-%d"),
-                                "duration_days": duration_days,
-                                "peer_units_online": peers,
-                                "total_units_at_plant": len(units),
-                            }
-                        )
+                        row = {
+                            "facility_name": fac_name,
+                            "facility_id": int(fac_id),
+                            "unit_id": uid,
+                            "unit_capacity_mw": round(derate_cap, 1),
+                            "plant_capacity_mw": round(fac_cap, 1),
+                            "unit_pct_of_plant": (
+                                round(100.0 * derate_cap / fac_cap, 1)
+                                if fac_cap
+                                else None
+                            ),
+                            "plant_group": ugroup,
+                            "capacity_source": cap_src,
+                            "outage_start": start.strftime("%Y-%m-%d"),
+                            "outage_end": last.strftime("%Y-%m-%d"),
+                            "duration_days": duration_days,
+                            "peer_units_online": peers,
+                            "total_units_at_plant": len(units),
+                        }
+                        if args.partial_windows:
+                            # The measured availability fraction the unit ran at
+                            # during the plateau: the consumer removes
+                            # (1 - derate_factor) x unit_capacity from the plant
+                            # bin over the window (partial derate, not a full
+                            # stop).
+                            row["derate_factor"] = round(plateau_factors[(s, e)], 3)
+                        rows.append(row)
                     if out_days > 0:
                         summary.append(
                             (
@@ -894,9 +1099,10 @@ def main() -> None:
     # Plants that stopped filing F923 but still report CAMPD gross (Colver,
     # Cordova) are NOT flagged: the benchmark backfills them and they
     # genuinely serve the grid. One full-year window per plant-year.
-    if iso != "ERCOT" and not args.short_windows:
+    if iso != "ERCOT" and not args.short_windows and not args.partial_windows:
         # The net-zero full-year fallback belongs to the standard extract
-        # only — the short file carries nothing but sub-5-day windows.
+        # only — the short file carries nothing but sub-5-day windows, and the
+        # partial file carries nothing but detected CF-ceiling plateaus.
         e923 = pd.read_parquet(
             PROCESSED_DIR / "eia923_monthly_generation.parquet",
             columns=["plant_id", "netgen_annual_mwh", "year"],
@@ -969,12 +1175,18 @@ def main() -> None:
         "peer_units_online",
         "total_units_at_plant",
     ]
+    if args.partial_windows:
+        # Unit-grain partial file carries the measured availability fraction the
+        # unit ran at during each plateau (the extra column vs the full-stop
+        # extracts); the consumer removes (1 - derate_factor) x unit_capacity.
+        cols.append("derate_factor")
     out = pd.DataFrame(rows, columns=cols).sort_values(
         ["facility_id", "unit_id", "outage_start"]
     )
     out.to_csv(args.out, index=False)
 
-    print(f"\nwrote {len(out)} unit-outage windows to {args.out}\n")
+    label = "partial-derate plateau" if args.partial_windows else "unit-outage"
+    print(f"\nwrote {len(out)} {label} windows to {args.out}\n")
     print(
         f"{'code':>6} {'plant':<24}{'unit':<8}{'group':<11}{'yr':>5}"
         f"{'#win':>5}{'out d':>8}"
