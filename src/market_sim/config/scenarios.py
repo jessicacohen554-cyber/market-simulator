@@ -3964,6 +3964,29 @@ class ScenarioConfig:
     # and the application in data.fleet.generators_to_fleet_arrays.
     ercot_thermal_dam_availability: bool = False
 
+    # ERCOT measured hourly BATTERY-fleet capability re-basis (default off,
+    # ERCOT backcast-gated — ERCOT-66). Replaces the EIA-860 COD-ramped
+    # battery power basis with the 60-Day DAM disclosure's registered non-OUT
+    # storage HSL (PWRSTR rows; ESR rows from the RTC+B go-live delivery
+    # 2025-12-06), data/raw/ercot-storage-capability.csv, derived by
+    # scripts/derive_ercot_storage_capability.py (basis decision + frozen
+    # contract in its docstring). Motivation (summer-availability audit,
+    # docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md §1c-1d): the
+    # EIA-860 ramp runs ~2 GW below ERCOT's registered capability in BOTH
+    # summers (5.8 vs 7.7 GW Aug-2024; 10.6 vs 12.5 GW Jul-2025) — COD-month
+    # lag + hybrid-half coverage — so the model's evening scarcity margin sits
+    # ~3 GW below reality's and prices shortage where the real market had
+    # cushion (Aug-2024 VOLL saturation, Jul/Aug-2025 phantom plateaus). The
+    # measured registry embeds real COD timing, hybrid halves and real storage
+    # outages, replacing both the EIA-860 MW ramp and the (absent) storage
+    # outage assumption. EIA-860 stays the zone-split and duration (MWh)
+    # basis; uncovered hours (Oct-2023 hole) keep EIA-860. The HSL is a
+    # published MW capability, never a price and never the validated outcome
+    # (rule 13); forecast keeps EIA-860 + the planned pipeline (the
+    # forward-regenerating analogue — the G4 mode-aware seam). Applied at the
+    # run_calibration storage seam via model.storage.ercot_storage_capability_caps.
+    ercot_storage_capability_measured: bool = False
+
     # NEISO condition-responsive fast-start offer surface — the ISO-NE analogue
     # of ercot_offer_surface_conditional above (winter scarcity charter Limb B;
     # the G-22 §8 heterogeneity-preserving design, default off, NEISO-gated).
