@@ -50,10 +50,16 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
+from fetch_caiso_intertie_lmp import INTERTIE_NODES  # noqa: E402
 from fetch_caiso_oasis import HUBS  # noqa: E402  (single source for the hub set)
 from market_sim.config import paths  # noqa: E402
 
 LMP_DIR = paths.RAW_DATA_DIR / "lmp-data" / "CAISO"
+
+# Hub nodes + the WECC intertie nodes (MALIN/CAPTJACK/PALOVRDE) — the bulk
+# zips are the only source for the seam's retention-aged early-2023 window;
+# see the NODES note in scripts/extract_caiso_hubs.py.
+NODES = HUBS + tuple(n for ns in INTERTIE_NODES.values() for n in ns)
 
 # GRP zip name: {Ymd}_{Ymd}_{DAM|RTM|HASP}_LMP_GRP_{group}_{...}_csv.zip
 _GRP_NAME = re.compile(
@@ -81,7 +87,7 @@ def _window_frames(zip_path: Path) -> pd.DataFrame | None:
                 continue
             with zf.open(member) as fh:
                 df = pd.read_csv(fh, usecols=_KEEP)
-            frames.append(df[df["NODE"].isin(HUBS)])
+            frames.append(df[df["NODE"].isin(NODES)])
     if not frames:
         return None
     return pd.concat(frames, ignore_index=True)
