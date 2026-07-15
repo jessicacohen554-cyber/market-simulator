@@ -1959,6 +1959,32 @@ class ScenarioConfig:
     # reconstruction is built on the generation frame's clock, so the Demand
     # cell's clock defect never enters). Default off (byte-identical); CAISO
     # backcast only.
+    caiso_citygate_spot_level: bool = False  # Level the CAISO gas hub overlay
+    # on the MEASURED daily citygate SPOT series instead of the EIA N3050CA3
+    # monthly citygate SURVEY (caiso-84;
+    # FINDING-caiso-winter-gas-level-2026-07-15). The keeper's hub overlay
+    # (gas_hub_basis_overlay, default-on for CAISO) reprices every gas unit at
+    # HH-month + the N3050CA3 basis row (data/raw/gas_basis_by_iso_month.csv) —
+    # an LDC purchase-portfolio *average acquisition cost* (bidweek contracts,
+    # storage withdrawals, hedges), sitting >1.2x the daily spot in 24/33
+    # covered months (Jan-2023 $28.08 vs $16.1 spot). But CAISO's cost-based
+    # DEB prices the MARGINAL unit at the daily spot index the repo already
+    # carries (data/raw/gas-prices/caiso_citygate_daily.csv, the CA Composite
+    # Average daily spot from the same EIA NG Weekly compact table Transco Z6
+    # NY is read from). When on, apply_hub_basis_overlay routes through the
+    # CAISO daily leg (fuel._caiso_hub_daily_gas_prices, spot_level=True) with
+    # each month's LEVEL anchored to the calendar-interpolated monthly mean of
+    # the measured daily series itself (not renormalized back to the survey
+    # level); months with no daily quotes keep the survey monthly level; the
+    # +$0.46 CAISO_CITYGATE_TRANSPORT_ADDER still applies. Rule-15 swap of one
+    # measured EIA series for another whose boundary matches the marginal-offer
+    # representation; zero new fitted scalars (identification = the EIA Weekly
+    # compact spot table), re-derives only on source update (rule 23). Forward
+    # story unchanged: forecast years have no daily realization and keep the
+    # HH-forward + climatological-basis path (F923 admissibility class, rule
+    # 13). Requires gas_hub_basis_overlay; supersedes gas_hub_basis_daily for
+    # CAISO by construction (it sets both level and shape from the daily
+    # series). Default off (byte-identical); CAISO backcast only.
     caiso_storage_as_reservation: bool = False  # Reserve the MEASURED hourly
     # CAISO battery AS-award MW out of the battery fleet's dispatch headroom
     # (caiso-74; FINDING-caiso72 STEP-0 channel #1 / FINDING-caiso73 live lead
