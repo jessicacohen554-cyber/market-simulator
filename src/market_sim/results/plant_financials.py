@@ -7,7 +7,7 @@ plants, computes plant-specific hourly and annual financials using each
 plant's *own* heat rate, and rolls the result up to parent companies via
 the ownership mapping in :mod:`market_sim.data.ownership`.
 
-Per methodology spec §5.2, no capital costs enter the P&L — capital is a
+Per methodology spec §5.2, no capital costs enter the P&L -- capital is a
 sunk cost. Going-forward economics use only fixed O&M plus variable costs.
 
 All financial calculations are vectorized pandas/numpy operations: there
@@ -29,6 +29,7 @@ from market_sim.config.constants import (
     HEAT_RATE_BINS,
     HOURS_PER_YEAR,
     MARKET_DESIGN,
+    resolve_capacity_market_clearing,
 )
 
 logger = logging.getLogger(__name__)
@@ -56,18 +57,18 @@ class PlantBinAssignment:
     Attributes:
         plant_code: EIA plant code (ORIS code).
         generator_id: EIA generator/unit identifier within the plant.
-        unit_id: The market-sim internal generator label — the aggregated
+        unit_id: The market-sim internal generator label -- the aggregated
             bin's ``unit_id``, formatted ``{fuel}_{efficiency_bin}_{zone}``.
         bin_label: Heat-rate bin label, ``{fuel}_{efficiency_bin}``.
         nameplate_mw: Plant/unit nameplate capacity, in MW.
-        heat_rate_btu_kwh: Plant-specific heat rate, in BTU/kWh — *not* the
+        heat_rate_btu_kwh: Plant-specific heat rate, in BTU/kWh -- *not* the
             bin average. This is the whole point of disaggregation.
         zone: Dispatch zone the plant sits in.
         fuel_type: Model fuel type (``gas_cc``, ``gas_ct``, ``coal``, …).
         vom_per_mwh: Variable O&M, in $/MWh.
         fom_per_kw_yr: Fixed O&M, in $/kW-year.
         emission_rate_tco2_mwh: CO2 emission rate, in tCO2/MWh.
-        nox_rate_tonnes_mwh: NOx emission rate, in **tonnes/MWh** — the model's
+        nox_rate_tonnes_mwh: NOx emission rate, in **tonnes/MWh** -- the model's
             canonical unit (``Generator.nox_rate``). Converted to lb/MWh at the
             costing boundary via :data:`LB_PER_TONNE` (R7/EM-2 unit-contract fix).
     """
@@ -144,7 +145,7 @@ def build_plant_bin_map(
 
     assignments: list[PlantBinAssignment] = []
     # itertuples is a row iterator over a static fleet table, not a
-    # financial calculation — the vectorization rule applies to dispatch
+    # financial calculation -- the vectorization rule applies to dispatch
     # and money math, not to this one-off fleet ingest.
     for row in df.itertuples(index=False):
         data = row._asdict()
@@ -191,7 +192,7 @@ def disaggregate_dispatch(
     """Allocate multi-plant bin dispatch to individual plants (legacy path).
 
     NOTE: the ERCOT CAMPD fleet dispatches one LP generator *per plant*
-    (see ``fleet.bins_to_fleet`` — "one bin per plant"), so each
+    (see ``fleet.bins_to_fleet`` -- "one bin per plant"), so each
     ``(bin_label, zone)`` group already contains a single plant and this
     split is an identity (``cap_share == 1``). This disaggregation only does
     real work for the legacy multi-plant aggregation path
@@ -201,7 +202,7 @@ def disaggregate_dispatch(
 
     Methods:
 
-    * ``"pro_rata_capacity"`` (default) — within each ``(bin_label, zone)``
+    * ``"pro_rata_capacity"`` (default) -- within each ``(bin_label, zone)``
       the bin's hourly dispatch is split across plants in proportion to
       nameplate MW::
 
@@ -210,7 +211,7 @@ def disaggregate_dispatch(
 
       The most defensible choice for an LP without unit commitment.
 
-    * ``"merit_order_within_bin"`` — within each bin, plants are filled in
+    * ``"merit_order_within_bin"`` -- within each bin, plants are filled in
       ascending plant-specific heat rate (most efficient first). More
       realistic but introduces sub-bin ordering the LP never solved for.
 
@@ -222,7 +223,7 @@ def disaggregate_dispatch(
 
     Returns:
         Columns ``plant_code``, ``generator_id``, ``hour``, ``dispatch_mw``,
-        ``bin_label`` and ``zone`` — one row per plant-hour.
+        ``bin_label`` and ``zone`` -- one row per plant-hour.
 
     Raises:
         ValueError: When ``method`` is not a recognized disaggregation method.
@@ -336,7 +337,7 @@ def compute_plant_hourly_financials(
 ) -> pd.DataFrame:
     """Compute per-plant, per-hour financials from disaggregated dispatch.
 
-    Uses each plant's own heat rate — a less efficient plant in the same
+    Uses each plant's own heat rate -- a less efficient plant in the same
     bin burns more fuel and earns a lower margin at the same dispatch.
 
     Args:
@@ -385,7 +386,7 @@ def compute_plant_hourly_financials(
     df["vom_cost"] = df["generation_mwh"] * df["vom_per_mwh"]
     df["carbon_cost"] = df["generation_mwh"] * df["emission_rate_tco2_mwh"] * carbon
     # R7/EM-2: convert the canonical tonnes/MWh NOx rate to lb/MWh before
-    # applying the $/lb NOx price (previously multiplied tonnes/MWh by $/lb — a
+    # applying the $/lb NOx price (previously multiplied tonnes/MWh by $/lb -- a
     # ~2205× under-count).
     df["nox_rate_lb_mwh"] = df["nox_rate_tonnes_mwh"] * LB_PER_TONNE
     df["nox_cost"] = df["generation_mwh"] * df["nox_rate_lb_mwh"] * nox
@@ -434,12 +435,12 @@ def compute_plant_annual_summary(
         plant_map: The plant-to-bin assignment from :func:`build_plant_bin_map`.
         discount_rate: Discount rate from ``ScenarioConfig``.
         year: Calendar year of the dispatch.
-        base_year: NPV reference year — ``discount_factor`` is 1.0 here.
+        base_year: NPV reference year -- ``discount_factor`` is 1.0 here.
         iso: ISO whose :data:`MARKET_DESIGN` capacity payment to credit. When
             given (and the ISO has a capacity market), each plant earns a
             ``capacity_revenue`` on its UCAP (``nameplate × (1 − EFORd_fuel)``)
             at the shared per-firm-MW capacity price
-            (:meth:`MarketDesign.capacity_price_per_firm_mw_yr` — the SAME seam
+            (:meth:`MarketDesign.capacity_price_per_firm_mw_yr` -- the SAME seam
             the capacity screens price through). ``None`` (default) credits no
             capacity revenue, so every existing metric is byte-identical.
         config: Scenario config (duck-typed). Only its
@@ -504,7 +505,7 @@ def compute_plant_annual_summary(
     annual["avg_marginal_cost"] = annual["total_variable_cost"] / gen_nz
 
     # Resource-adequacy capacity revenue (labeled by source). Priced off the
-    # shared per-firm-MW seam (rule 19 — the same MarketDesign price the
+    # shared per-firm-MW seam (rule 19 -- the same MarketDesign price the
     # capacity screens use), credited on each plant's UCAP (nameplate ×
     # (1 − EFORd_fuel)). Zero and source "none" unless an ``iso`` with a
     # capacity market is supplied, so the default report is byte-identical.
@@ -513,7 +514,7 @@ def compute_plant_annual_summary(
     if iso is not None:
         design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
         price_per_firm_mw_yr = design.capacity_price_per_firm_mw_yr(
-            config, reserve_position
+            config, reserve_position, iso=iso, year=year
         )
         if design.capacity_market and price_per_firm_mw_yr > 0.0:
             ucap = (1.0 - annual["fuel_type"].map(EFORD).fillna(0.0)).clip(lower=0.0)
@@ -522,7 +523,7 @@ def compute_plant_annual_summary(
             )
             uses_curve = (
                 config is not None
-                and getattr(config, "capacity_market_clearing", False)
+                and resolve_capacity_market_clearing(config, iso)
                 and bool(design.demand_curve)
                 and reserve_position is not None
             )
@@ -626,9 +627,9 @@ def compute_company_summary(
     Returns:
         A ``(company_total, company_by_fuel)`` tuple:
 
-        * ``company_total`` — one row per ``parent_company`` with portfolio
+        * ``company_total`` -- one row per ``parent_company`` with portfolio
           metrics.
-        * ``company_by_fuel`` — one row per ``(parent_company, fuel_type)``.
+        * ``company_by_fuel`` -- one row per ``(parent_company, fuel_type)``.
     """
     owners = ownership_df[
         ["plant_code", "generator_id", "parent_company", "percent_owned"]
@@ -666,7 +667,7 @@ def _aggregate_company(merged: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
     gen_nz = gen.where(gen > 0.0)
     nameplate_nz = agg["owned_nameplate_mw"].where(agg["owned_nameplate_mw"] > 0.0)
 
-    # Portfolio metrics — computed only after aggregation.
+    # Portfolio metrics -- computed only after aggregation.
     agg["portfolio_avg_price_captured"] = agg["owned_revenue"] / gen_nz
     agg["portfolio_emissions_intensity"] = agg["owned_co2_emissions_tons"] / gen_nz
     agg["portfolio_capacity_factor"] = gen / (nameplate_nz * HOURS_PER_YEAR)
