@@ -170,6 +170,32 @@ data/        → all on-disk inputs; every path resolves through config/paths.py
 1. **Deleted means deleted.** Deprecated fitted knobs are removed, not zeroed — a deprecated
     parameter that still parses is a re-armable answer key (the ORDC offset was re-swept *after*
     deprecation).
+1. **Core files are never bulk-rewritten over the API, and Sonnet never edits infrastructure.**
+    *(Owner order 2026-07-15, after a Sonnet session truncated `constants.py` 6,368 → 33 lines
+    via a response-budget-clipped `push_files` full-file rewrite, and five follow-up "restore"
+    commits merged fragments — 0 / 500 / 1,020 / 1,000 lines — onto main.)* Two binding halves:
+    - **Push-integrity protocol (all models, every session).** Never rewrite an existing source
+      file ≥300 lines by pushing regenerated full content from the model's response — edit
+      locally (Edit tool) and push the exact on-disk bytes. After ANY `push_files` call touching
+      a file ≥300 lines, **verify the pushed blob before doing anything else** (fetch the file
+      back; compare line count + content hash to local); a mismatch is a stop-the-line event.
+      Never commit a placeholder, stub, or partial "stage N" version of an existing source file
+      — not even as a temporary restore step: incremental restores live on a branch and merge
+      only after byte-verification against the last-good blob. A session that finds a core file
+      truncated stops its own task and restores from the last good commit first. If a large file
+      genuinely must move in pieces, append chunks across multiple commits and verify the blob
+      after each — never overwrite with less than the full known-good content. Enforced by
+      `.github/workflows/file-integrity-guard.yml` (fails any PR — and flags any push to main —
+      that shrinks a core file >30 % or deletes it, unless the PR carries the
+      `intentional-shrink` label).
+    - **Model assignment.** Sessions whose scope writes core infrastructure — anything under
+      `src/market_sim/`, `scripts/run_*.py` / `scripts/score_*.py`, `CLAUDE.md`,
+      `model-methodology-spec.md`, or `.github/workflows/` — are assigned to **Opus or Fable,
+      never Sonnet**. Sonnet remains eligible only for purely additive data-intake/docs sessions
+      (new files under `data/raw/` + handoff docs). For the retirement-calibration lane
+      specifically (`docs/handoffs/forecast-retirement-calibration-plan-2026-07.md`), **ALL
+      remaining sessions are Opus/Fable regardless of scope** (owner order, this rule's
+      incident).
 
 Rules 17–26 are the protective rules from `docs/model-legitimacy-audit-2026-07.md` §8 (numbered
 **16–25 there** — this file gained rule 16, all-years-one-bundle, after the audit was written; a
@@ -203,7 +229,7 @@ dump_cost = max(ε, -min(wind_mc, solar_mc) + ε) — prevents gaming of negativ
 
 0. Confirmed exits (`apply_confirmed_exits`, GATED `confirmed_exits_enabled` default-on) → 1. Announced retirements (`apply_announced_retirements`) → 2. Economic retirements (fuel-type-aware thresholds + reliability floor) → 3. Known additions → 4. CCS retrofit screen (existing gas-CC) → 5. Economic new entry → 6. Reserve-margin adequacy backstop (GATED `reserve_margin_build_enabled`, default off) → 7. dispatch with RPS as an LP constraint (shadow price feeds next year's entry screen). Same step numbering as `model-methodology-spec.md` §5.1.
 
-**Confirmed vs announced retirements.** *Confirmed* exits — units bound by an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, regulatory order, RMR end) — are the ONLY exogenous fossil exit channel: step 0 force-retires (or derates a plant-binned tranche by the exiting unit's MW) at the instrument date, any fuel, bypassing the reliability floor. Read forecast-forward from the `confirmed-retirements` registry (`data/raw/confirmed-retirements`, `data.confirmed_retirements.load_confirmed_exits`); GATED `confirmed_exits_enabled` (default **on**, flipped 2026-07-05 — owner sign-off once the registry covered all six ISOs and its two open primary-document caveats were resolved; `docs/handoffs/confirmed-retirement-plan-2026-07.md` §7), forecast-mode only; superseded rows (a counter-instrument suspends the exit) revert to the economic screen. *Announced* retirements (`apply_announced_retirements`, RC-3 rename of the old `apply_known_retirements`) honor an EIA-860 planned date: **for fossil this step is a default no-op** (`forecast_fossil_retirement_economic=True` — an announced fossil date is not a certainty; the economic screen governs its phaseout and the confirmed registry is its exogenous channel); non-fossil dates are honored only within the EIA-860 data horizon (`EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS`, default 5), and beyond it only when the unit is in the confirmed registry — so speculative 2040-2072 EOL placeholders stop force-retiring (the horizon gate activates with the confirmed channel, which is now on by default; setting `confirmed_exits_enabled=False` reverts to honoring all non-fossil dates, byte-identical to the pre-flip behavior). See `docs/handoffs/confirmed-retirement-plan-2026-07.md`.
+**Confirmed vs announced retirements.** *Confirmed* exits — units bound by an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, regulatory order, RMR end) — are the ONLY exogenous fossil exit channel: step 0 force-retires (or derates a plant-binned tranche by the exiting unit's MW) at the instrument date, any fuel, bypassing the reliability floor. Read forecast-forward from the `confirmed-retirements` registry (`data/raw/confirmed-retirements`, `data.confirmed_retirements.load_confirmed_exits`); GATED `confirmed_exits_enabled` (default **on**, flipped 2026-07-05 — owner sign-off once the registry covered all six ISOs and its two open primary-document caveats were resolved; `docs/handoffs/confirmed-retirement-plan-2026-07.md` §7), forecast-mode only; superseded rows (a counter-instrument suspends the exit) revert to the economic screen. **Hindcast information gate (rule 27 lane, RC-1B 2026-07-15):** in hindcast mode confirmed rows and reversal suppressions apply only when `instrument_date` ≤ the vintage cutoff. *Announced* retirements (`apply_announced_retirements`, RC-3 rename of the old `apply_known_retirements`) honor an EIA-860 planned date: **for fossil this step is a default no-op** (`forecast_fossil_retirement_economic=True` — an announced fossil date is not a certainty; the economic screen governs its phaseout and the confirmed registry is its exogenous channel); non-fossil dates are honored only within the EIA-860 data horizon (`EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS`, default 5), and beyond it only when the unit is in the confirmed registry — so speculative 2040-2072 EOL placeholders stop force-retiring (the horizon gate activates with the confirmed channel, which is now on by default; setting `confirmed_exits_enabled=False` reverts to honoring all non-fossil dates, byte-identical to the pre-flip behavior). See `docs/handoffs/confirmed-retirement-plan-2026-07.md`.
 
 Economic retirement screens the **attainable (pro-forma) inframarginal margin** — `Σ_t max(0, price − full variable cost, reserve price) × pmax × availability`, the Potomac-SOM net-revenue construction (`mc_cost` threaded via `prior_results`; never gross revenue, never realized dispatch — realized dispatch structurally misses the post-solve ORDC adder's scarcity rent) — against FOM-only going-forward cost, with per-fuel thresholds, now `ScenarioConfig` fields (not hardcoded): coal=1yr, gas_ct=2yr, gas_cc=3yr; coal FOM multiplier 1.3× for regulatory/ESG risk. The hourly reserve-price signal (`screen_reserve_value_enabled`, default on) is the co-opt's own reserve duals under `ercot_thermal_as_endogenous`, else the ORDC scarcity adder (RTORPA/RTOFFPA pay reserves the same ORDC price — Nodal Protocols §6.5.7.5); when present it is the SOLE thermal AS pricing (rule 19). Accredited reliability floor: `accredited_firm_capacity_mw` (UCAP/ELCC, incl. wind/solar pools + storage ELCC) vs `peak × (1 + PLANNING_RESERVE_MARGIN_BY_ISO)` — one requirement shared with the build backstop; cheapest-firm-adequacy retention (CO₂ tie-break), `floor_retention_log` attribution. Announced dates reversed outright by a public counter-instrument (registry rows ALL superseded — Byron/Dresden vs IL CEJA) are ignored by the announced channel regardless of `confirmed_exits_enabled` (`load_announced_reversal_plants`). Known additions are the EIA-860 proposed pipeline (`load_planned_additions`, construction-committed statuses, forecast mode only). RPS is **not** a force-build step — it's an annual LP constraint whose dual is the REC price (see methodology spec §1.4, §5).
 
@@ -260,6 +286,11 @@ pack negotiation, so it never 413s regardless of payload size. Workflow:
    run `scripts/build_manifest.py` and commit them if you want that preview
    current — optional. Only the gitignored `docs/codebase-site/data/backcast/`
    stays generated-not-committed (built into the artifact at deploy).
+4. **Verify after push (rule 27).** Any `push_files` call that touches a source file ≥300
+   lines is followed immediately by a blob verification (fetch the pushed file, compare line
+   count + hash to local) before the next commit. Full-file rewrites of large existing files
+   from regenerated response content are forbidden — push the exact local on-disk bytes, and
+   for unavoidable piecewise moves append verified chunks, never placeholder overwrites.
 
 ## GitHub Actions — never offload work to CI (this is a PRIVATE repo; runner minutes are billed)
 
