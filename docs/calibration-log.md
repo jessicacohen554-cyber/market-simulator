@@ -12743,3 +12743,51 @@ misallocation / Dominion under-run (§7.2), per-plant diurnal cycling metric
 `ScenarioConfig` flag changed, no parameter/curve/floor/derive value moved
 (rules 13/20/21/23/26). The guard traces to a measured EIA-860 nameplate bound
 and adds no free parameter.
+
+## 2026-07-14 — ERCOT LMP-heatmap diagnosis + summer-availability audit (no solve): the evening-band residual is a +1h DST scoring-clock artifact (all ISOs); the outage overlay is disclosure-EXONERATED; the phantom-evening defect is the storage capability basis
+
+Owner ask: explain the 2024 Aug model spikes / May undershoot, the 2025
+Jul-Aug overruns, and the 2024-2025 heatmap "evening blue band" (suspected
+storage-related) before forecasting. Three docs carry the record; no solve,
+no dashboard change.
+
+1. **Scoring-clock artifact (`docs/DIAGNOSIS-ercot-lmp-clock-artifact-and-
+   summer-residuals-2026-07.md` §1).** The model calendar is chronological/
+   fixed-CST (`_eia_hourly_frame`; demand + HSL renewables share it, verified
+   empirically), while `derive_actual_lmp.py` builds actuals on the DST
+   prevailing clock — every hourly-paired comparison is one hour off for
+   ~5,600 h/yr. Lag test on the keeper payload: JJA best-lag +1h every year
+   (2024 JJA r 0.55→0.94), DJF 0h every year. Contaminates lmpDeltaHr heatmaps
+   and overlay monthly MAE for ALL SIX ISOs; C3a/C3b/C3c-counts/pMon and the
+   CEMS-based D-1/C4 (standard-time) are unaffected. Scorer-only fix chartered
+   (rebuild actuals on the chronological clock, re-render; owner authorized —
+   handoff prompt issued in-session).
+2. **Summer-availability audit (`docs/DIAGNOSIS-ercot-summer-availability-
+   audit-2026-07.md`).** After DST re-pairing the real residuals are the
+   tight-week evening over-amplitude (Aug 18-20 2024 VOLL saturation; Jul
+   30-31 / Aug 18-25 2025 phantom $250-1,944 plateaus vs spike-free actuals).
+   Audit executed with `run_year(fleet_only=True)` + the 60-Day disclosure:
+   (a) storage dispatch envelope FEASIBLE vs measured 2025 dispatch (2
+   violation hours/8760); (b) outage overlay GROUND-TRUTH FAITHFUL — its big
+   2025 dark windows are telemetered OUT (Sommers/Braunig/Cedar Bayou 2/Sandy
+   Creek/Limestone/Parish-8, ≥5.2 GW), model thermal availability ~+2 GW RICH
+   vs telemetry in both years; (c) the DEFECT is the storage capability
+   basis: EIA-860 fleet power ~2 GW below registered PWRSTR capability in
+   both summers (5.8 vs 7.7 GW Aug-2024; 10.6 vs 12.5 GW Jul-2025) + the
+   measured AS-award subtraction at the scarcity margin → model evening
+   margin ~3 GW below reality's (model +0.3 GW vs real +3.2 GW on Aug 19
+   2024 → VOLL vs $3,060; model +1.5 vs real +4.6 on Jul 30 2025 → $1,944 vs
+   $243). Chartered: disclosure-based storage fleet-power basis (rule-14
+   measured correction, needs the 2025 Oct-Dec disclosure intake) + AS
+   credit-vs-subtraction wiring audit. Outage overlay: no change (recorded so
+   the economic-idle hypothesis is not re-opened on the same evidence).
+3. **Demand-response charter (`docs/handoffs/ercot-demand-response-charter-
+   2026-07.md`).** Backcast DR is ruled OUT of the evening-residual scope
+   (metered demand already embodies realized response; rules 13/19). Leg A:
+   forecast-mode price-elastic demand (LFL/4CP/ERS offer steps, enrollment-
+   driven, crossover-window harness) — first-order for forward years. Leg B:
+   emergency-ladder products above realized price, HARD-GATED behind the
+   storage-basis fix landing first.
+
+May-2024 confirmed as the filed G-22 lane (outage forensics stands); the
+trough/spread frontier is untouched.
