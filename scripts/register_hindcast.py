@@ -35,20 +35,33 @@ SIDECAR_DIR = Path("frontend/data/hindcast")
 PAGE_PATH = Path("docs/codebase-site/forecast-validation.html")
 
 
-def build_sidecar(bundle_dir: Path) -> dict:
-    """Assemble the sidecar dict for one hindcast bundle."""
+def build_sidecar(bundle_dir: Path, preserve_invariants: bool = False) -> dict:
+    """Assemble the sidecar dict for one hindcast bundle.
+
+    ``preserve_invariants`` re-uses the invariant summary already stored in the
+    committed sidecar instead of recomputing it. Invariants depend on the
+    persisted dispatch parquets, which are intentionally NOT committed (too
+    large); recomputing them in a scoring-only session (e.g. the T-R8 IS-2020
+    re-score, which touches only score.json) would silently flip parquet-derived
+    invariants (I1/I9) to SKIP purely because the parquets are absent. Preserving
+    them keeps the sidecar diff to the intended score change.
+    """
     meta = json.loads((bundle_dir / "meta.json").read_text())
     cache_dir = Path(meta["bundle"])
     if not cache_dir.exists():
         cache_dir = bundle_dir / meta["iso"] / meta["cache_key"]
     score_path = cache_dir / "score.json"
     score = json.loads(score_path.read_text()) if score_path.exists() else None
-    # Forecast-invariant summary over the hindcast cache.
-    invariants = [
-        {"ident": r.ident, "name": r.name, "status": r.status, "detail": r.detail}
-        for r in CI.run_single(cache_dir)
-    ]
     run_id = bundle_dir.name
+    existing = SIDECAR_DIR / f"{run_id}.json"
+    if preserve_invariants and existing.exists():
+        invariants = json.loads(existing.read_text()).get("invariants", [])
+    else:
+        # Forecast-invariant summary over the hindcast cache.
+        invariants = [
+            {"ident": r.ident, "name": r.name, "status": r.status, "detail": r.detail}
+            for r in CI.run_single(cache_dir)
+        ]
     return {
         "run_id": run_id,
         "meta": meta,
@@ -124,6 +137,7 @@ def render_page(sidecars: list[dict]) -> str:
           metric((rr.recall==null?'—':(rr.recall*100).toFixed(0)+'%'),'unit recall &gt;300MW ('+cls2(rr.band)+')')+
           metric(sc.additions.model_total_gw+' GW','total additions')+
         '</div>';
+        body += is2020Block(sc);
         body += addTable(sc.additions);
         body += co2Table(sc.co2);
       }} else {{ body += '<p class="skip">score.json not found — run score_capacity_hindcast.py.</p>'; }}
@@ -153,6 +167,32 @@ def render_page(sidecars: list[dict]) -> str:
            '</td><td>'+cls2(d.band)+'</td><td>'+(s.delta_pp*100).toFixed(1)+'</td></tr>';}});
       return r+'</table>';
     }}
+    function is2020Block(sc){{
+      // RC-0B §c.5 / T-R8: raw vs IS-2020 retirement scoring, reversal exposure,
+      // and per-channel decomposition. Only rendered for re-scored bundles.
+      const ri=sc.retirements_is2020; if(!ri) return '';
+      const raw=sc.retirements, fr=raw.false_retire, frI=ri.false_retire;
+      const exp=(ri.reversal_exposure_gw!=null?ri.reversal_exposure_gw:0);
+      let r='<table class="fv"><tr><th>IS-2020 ('+(sc.is2020_cutoff||'')+')</th><th>raw</th><th>IS-2020</th></tr>';
+      r+='<tr><td>false-retire GW</td><td>'+fr.false_gw+' '+cls2(fr.band)+'</td><td>'+frI.false_gw+' '+cls2(frI.band)+'</td></tr>';
+      r+='<tr><td>reversal exposure GW</td><td>—</td><td>'+exp+'</td></tr>';
+      r+='</table>';
+      if(ri.reversal_rows&&ri.reversal_rows.length){{
+        const names=ri.reversal_rows.map(function(x){{return x.unit_name+' ('+x.unit_id+')';}}).join(', ');
+        r+='<p class="bc-page-sub">Reversal-excluded (§c.5-1, information-set-correct, reality-reversed): '+esc(names)+'.</p>';
+      }}
+      const ch=sc.retirement_channels;
+      if(ch){{
+        const nbig=ch._n_big_actual||0;
+        r+='<table class="fv"><tr><th>channel</th><th>retired GW</th><th>false-retire GW</th><th>recall</th></tr>';
+        ['confirmed','announced','economic'].forEach(function(c){{
+          const d=ch[c]; if(!d)return;
+          r+='<tr><td>'+c+'</td><td>'+d.retired_gw+'</td><td>'+d.false_retire_gw+'</td><td>'+d.recall_matched+'/'+nbig+'</td></tr>';
+        }});
+        r+='</table>';
+      }}
+      return r;
+    }}
     function co2Table(c){{
       if(!c)return'';let r='<table class="fv"><tr><th>year</th><th>model Mt</th><th>actual Mt</th><th>err</th></tr>';
       Object.keys(c.model||{{}}).sort().forEach(function(y){{
@@ -172,10 +212,19 @@ def render_page(sidecars: list[dict]) -> str:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--bundle", type=Path, required=True)
+    parser.add_argument(
+        "--preserve-invariants",
+        action="store_true",
+        help=(
+            "Re-use the committed sidecar's invariants instead of recomputing "
+            "them (scoring-only re-scores where the dispatch parquets are absent, "
+            "e.g. T-R8 — avoids flipping parquet-derived invariants to SKIP)."
+        ),
+    )
     args = parser.parse_args(argv)
 
     SIDECAR_DIR.mkdir(parents=True, exist_ok=True)
-    sidecar = build_sidecar(args.bundle)
+    sidecar = build_sidecar(args.bundle, preserve_invariants=args.preserve_invariants)
     sidecar_path = SIDECAR_DIR / f"{sidecar['run_id']}.json"
     sidecar_path.write_text(json.dumps(sidecar, indent=2))
     print(f"[register] wrote sidecar {sidecar_path}")
