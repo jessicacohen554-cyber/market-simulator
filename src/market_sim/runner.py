@@ -1774,6 +1774,38 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 / np.where(d_tot_caiso > 0, d_tot_caiso, 1.0),
                 result.prices.mean(axis=0),
             )
+            # caiso-85: the unloaded, must-offer import capability the LP holds
+            # below VOLL — the corridor-bounded intertie supply that must exhaust
+            # before CAISO's power-balance penalty prices fire (RA imports are
+            # must-offer, CPUC D.20-06-028). Post-solve only; None off (byte-id).
+            import_headroom_caiso = None
+            if getattr(config, "caiso_scarcity_import_headroom", False):
+                from market_sim.data.eia_loader import measured_corridor_flow_envelope
+                from market_sim.data.fleet import FUEL_TYPE_MAP
+
+                imp = fleet_arrays.fuel_type_idx == FUEL_TYPE_MAP["import"]
+                if imp.any():
+                    avail_cap = (
+                        fleet_arrays.pmax[imp][:, None] * fleet_arrays.availability[imp]
+                    )
+                    imp_disp_by_row = result.dispatch[imp]
+                    imp_disp = imp_disp_by_row.sum(axis=0)
+                    # Tranche-level unloaded capability (pmax·availability - dispatch).
+                    tranche_hr = np.maximum(avail_cap - imp_disp_by_row, 0.0).sum(
+                        axis=0
+                    )
+                    # Bound by the measured WECC corridor import cap the LP itself
+                    # dispatched under: unloaded import that could NOT be delivered
+                    # through the corridor is not reserve.
+                    env = measured_corridor_flow_envelope(
+                        iso, year, hours, direction="import"
+                    )
+                    if env:
+                        corridor_cap = np.sum(list(env.values()), axis=0)
+                        corridor_hr = np.maximum(corridor_cap - imp_disp, 0.0)
+                        import_headroom_caiso = np.minimum(tranche_hr, corridor_hr)
+                    else:
+                        import_headroom_caiso = tranche_hr
             caiso_adder = caiso_scarcity_overlay(
                 fleet_arrays,
                 result.dispatch,
@@ -1782,6 +1814,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 result.storage_discharge,
                 renewable_headroom=ren_headroom_caiso,
                 system_lambda=lam_caiso,
+                import_headroom=import_headroom_caiso,
             )
             result.prices = result.prices + caiso_adder[None, :]
             econ_prices = result.prices
