@@ -40,6 +40,16 @@ columns:
        withdrawal) suspends this row. Kept for audit; loader ignores.}
   - {name: superseding_instrument, dtype: string, unit: none, nullable: true,
      description: Citation of the counter-instrument when superseded.}
+  - {name: superseding_instrument_date, dtype: "datetime64[ns]", unit: none, nullable: true,
+     description: Date the counter-instrument (superseding_instrument) became
+       binding, when known (RC-1B, hindcast information gate). Distinct from
+       instrument_date (the ORIGINAL instrument's date) -- this is what a
+       hindcast's as-of-vintage-cutoff test gates a reversal suppression on
+       (e.g. Byron/Dresden's original instrument_date is 2020-08-27, pre-2020
+       cutoff, but the CEJA reversal that superseded it is dated 2021-09-15,
+       post-cutoff, so an as-of-2020 hindcast must NOT suppress their announced
+       exit). Null when superseded is false or the counter-instrument's date is
+       not separately documented.}
   - {name: source_url,        dtype: string,  unit: none, nullable: false,
      description: Authoritative URL of the instrument or the RTO posting row.}
   - {name: source_doc,        dtype: string,  unit: none, nullable: true,

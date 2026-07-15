@@ -24,6 +24,7 @@ EIA-860 vintage snapshot + within-window retiree build (plan §5.4).
 
 from __future__ import annotations
 
+import datetime as _dt  # noqa: F401 -- referenced only in string annotations
 import logging
 
 import pandas as pd
@@ -61,7 +62,9 @@ class ConfirmedExit(BaseModel):
     mw: float | None = None
 
 
-def load_confirmed_exits(iso: str) -> list[ConfirmedExit]:
+def load_confirmed_exits(
+    iso: str, as_of: "_dt.date | None" = None
+) -> list[ConfirmedExit]:
     """Return the confirmed (binding-instrument) exits for an ISO.
 
     Reads the clean ``confirmed-retirements`` partition, drops ``superseded``
@@ -73,6 +76,16 @@ def load_confirmed_exits(iso: str) -> list[ConfirmedExit]:
     Args:
         iso: Model ISO name (e.g. ``"PJM"``, ``"ERCOT"``). The registry is
             partitioned by this exact label (NEISO is stored as ``"NEISO"``).
+        as_of: RC-1B hindcast information gate. When given, only instruments
+            with ``instrument_date <= as_of`` are knowable — a row dated after
+            ``as_of`` (e.g. ERCOT's Braunig 1/2 NSO, instrument_date
+            2024-03-13) is dropped entirely, so an as-of-2020 hindcast cannot
+            leak a post-2020 confirmed exit into its 2021-2025 forecast.
+            ``None`` (default, the forecast-mode path) applies no cutoff —
+            byte-identical to the pre-RC-1B behavior. A row with a null
+            ``instrument_date`` is treated as unknown-dated and is DROPPED
+            when ``as_of`` is given (never assumed knowable) rather than
+            silently kept.
 
     Returns:
         One :class:`ConfirmedExit` per unit, sorted by ``(exit_year, plant_id,
@@ -82,17 +95,25 @@ def load_confirmed_exits(iso: str) -> list[ConfirmedExit]:
         from scripts.lib.clean_io import read_clean
     except ModuleNotFoundError:
         logger.warning(
-            "confirmed-retirements: scripts.lib.clean_io unavailable; "
-            "no confirmed exits for %s",
+            "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — "
+            "scripts.lib.clean_io unavailable; no confirmed exits for %s. "
+            "If this ISO's registry should be present, this run is silently "
+            "missing its confirmed-exit channel entirely (RC-1B D4).",
             iso,
         )
         return []
     try:
         df = read_clean(DATATYPE, iso=iso.upper())
     except FileNotFoundError:
-        logger.info(
-            "confirmed-retirements: clean partition for %s absent; run "
-            "scripts/curate_confirmed_retirements.py. No confirmed exits.",
+        logger.warning(
+            "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — clean "
+            "partition for %s absent; run scripts/curate_confirmed_retirements.py "
+            "(and scripts/regenerate_clean.py) before trusting any hindcast A/B "
+            "leg that expects this ISO's confirmed-exit/reversal channel — a "
+            "missing partition silently degrades to the economic screen and "
+            "must never be mistaken for information discipline (RC-1B D4). "
+            "No confirmed exits for %s this call.",
+            iso,
             iso,
         )
         return []
@@ -102,6 +123,12 @@ def load_confirmed_exits(iso: str) -> list[ConfirmedExit]:
     live = df[~df["superseded"].astype(bool)].copy()
     if live.empty:
         return []
+    if as_of is not None:
+        instrument_date = pd.to_datetime(live["instrument_date"], errors="coerce")
+        cutoff = pd.Timestamp(as_of)
+        live = live[instrument_date.notna() & (instrument_date <= cutoff)]
+        if live.empty:
+            return []
 
     # Earliest non-superseded instrument per unit (a unit may carry an old
     # superseded row plus a live one; the live earliest exit is the ceiling).
@@ -131,7 +158,9 @@ def load_confirmed_exits(iso: str) -> list[ConfirmedExit]:
     return exits
 
 
-def load_announced_reversal_plants(iso: str) -> frozenset[int]:
+def load_announced_reversal_plants(
+    iso: str, as_of: "_dt.date | None" = None
+) -> frozenset[int]:
     """Return plant codes whose announced retirement was REVERSED outright.
 
     The retirement-reversal supersession channel (confirmed-retirement plan
@@ -153,24 +182,64 @@ def load_announced_reversal_plants(iso: str) -> frozenset[int]:
     Data-driven and independent of ``confirmed_exits_enabled`` — honoring a
     documented reversal is an announced-channel data correction, not an
     exogenous exit injection. Returns ``frozenset()`` when the clean partition
-    is absent. Limitation (documented, not gated): reversal rows carry no
-    superseding-instrument date column, so the suppression is not date-gated
-    within a hindcast window — every seeded reversal predates the earliest
-    evolution step that could consume it (CEJA 2021-09 vs the 2022 bridge).
+    is absent.
+
+    Args:
+        iso: Model ISO name.
+        as_of: RC-1B hindcast information gate. A reversal is only knowable
+            once its OWN counter-instrument existed — gated on
+            ``superseding_instrument_date`` (distinct from ``instrument_date``,
+            the original — now-cancelled — instrument's date), not the
+            original instrument's date. A plant whose ``superseding_
+            instrument_date`` is null or postdates ``as_of`` is excluded from
+            the returned set (its reversal was not yet knowable, so the
+            original announced date should still fire) — the worked case:
+            Byron/Dresden's original instrument_date is 2020-08-27 but the
+            CEJA reversal's superseding_instrument_date is 2021-09-15, so an
+            as-of-2020 hindcast (``as_of=date(2020, 12, 31)``) must NOT
+            suppress their announced exit. ``None`` (default) applies no
+            cutoff — byte-identical to the pre-RC-1B behavior (every fully-
+            superseded plant is suppressed regardless of when its reversal
+            became known).
     """
     try:
         from scripts.lib.clean_io import read_clean
     except ModuleNotFoundError:
+        logger.warning(
+            "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — "
+            "scripts.lib.clean_io unavailable; no reversal suppression for %s.",
+            iso,
+        )
         return frozenset()
     try:
         df = read_clean(DATATYPE, iso=iso.upper())
     except FileNotFoundError:
+        logger.warning(
+            "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — clean "
+            "partition for %s absent; no reversal suppression applied. A "
+            "missing partition must never be mistaken for information "
+            "discipline (RC-1B D4) — run scripts/curate_confirmed_retirements.py "
+            "+ scripts/regenerate_clean.py first.",
+            iso,
+        )
         return frozenset()
     if df.empty:
         return frozenset()
     superseded = df["superseded"].astype(bool)
     all_superseded = superseded.groupby(df["plant_id"]).all()
     plants = frozenset(int(p) for p, flag in all_superseded.items() if flag)
+    if as_of is not None and plants:
+        cutoff = pd.Timestamp(as_of)
+        superseding_date = pd.to_datetime(
+            df["superseding_instrument_date"], errors="coerce"
+        )
+        # A plant's reversal is knowable-as-of `as_of` only if EVERY one of its
+        # superseded rows already carries a superseding_instrument_date <=
+        # cutoff (a plant with any row whose reversal postdates the cutoff, or
+        # is undated, was not yet known to be reversed).
+        known_by_cutoff = superseding_date.notna() & (superseding_date <= cutoff)
+        known_by_cutoff = known_by_cutoff.groupby(df["plant_id"]).all()
+        plants = frozenset(p for p in plants if known_by_cutoff.get(p, False))
     if plants:
         logger.info(
             "confirmed-retirements: %d plant(s) with fully-superseded "
