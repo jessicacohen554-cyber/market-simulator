@@ -1322,6 +1322,28 @@ def ercot_rtolcap_forward_supply_cap_mw(
     return cap.astype(float)
 
 
+def ercot_online_capacity_envelope_classes(config) -> tuple[str, ...]:
+    """Plant-group classes the active envelope variant's share tables cover.
+
+    The single source of truth for which classes contribute capability to
+    :func:`ercot_online_capacity_envelope_mw` (a class absent from the active
+    share table contributes ZERO — the ``share_tables.get(cls) is None``
+    branch). The post-solve realized-room RTORPA must sum dispatch over
+    EXACTLY this set (via ``ReserveDesign.online_capacity_pricing_elig``) so
+    the room it prices is the identified quantity's model analogue: the
+    identification gate (``validate_ercot_online_capacity.py``) subtracts
+    CAMPD on-line gross over these classes only. Summing the full
+    LP-shared-headroom set instead (RESERVE_FUEL_TYPES — nuclear/oil
+    included) subtracted ~4.4 GW of never-in-the-basis nuclear dispatch and
+    fabricated the leg-J phantom room collapse (ERCOT-68, 2026-07-15).
+    """
+    if getattr(config, "ercot_online_capacity_envelope_measured", False):
+        return tuple(ERCOT_ONLINE_CAP_SHARE_MEASURED)
+    if getattr(config, "ercot_online_capacity_envelope_extreme", False):
+        return tuple(ERCOT_ONLINE_CAP_SHARE_EXTREME)
+    return tuple(ERCOT_ONLINE_CAP_SHARE)
+
+
 def ercot_online_capacity_envelope_mw(
     config,
     fleet_arrays: FleetArrays,
@@ -1822,7 +1844,17 @@ def ercot_ordc_realized_adder(
         return None
     env = oc[h_all]
     T = env.size
-    P = np.asarray(dispatch, dtype=float)[he[h_all], :T].sum(axis=0)
+    # Envelope-CLASS-consistent P-sum (ERCOT-68 fix, 2026-07-15): the room is
+    # the identified quantity's model analogue only if dispatch is summed over
+    # the envelope's own share classes (design.online_capacity_pricing_elig,
+    # set alongside online_capacity_pricing_mw). he[h_all] is the LP
+    # shared-headroom set (RESERVE_FUEL_TYPES) — its nuclear/oil members carry
+    # NO envelope capability, so subtracting their dispatch fabricated ~4.4 GW
+    # of phantom tightness (the leg-J December over-fire). Fallback keeps the
+    # old behaviour for designs predating the field (diagnostics only).
+    pe = getattr(design, "online_capacity_pricing_elig", None)
+    p_mask = np.asarray(pe, dtype=bool) if pe is not None else he[h_all]
+    P = np.asarray(dispatch, dtype=float)[p_mask, :T].sum(axis=0)
     online = np.clip(env - P, 0.0, None)
 
     if (

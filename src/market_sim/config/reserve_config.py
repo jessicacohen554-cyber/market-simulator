@@ -348,6 +348,18 @@ class ReserveDesign:
     # into VOLL load-shed (833 GWh across 470 summer hours) — the ercot41/43
     # over-fire signature, now isolated from availability and span demand.
     online_capacity_pricing_mw: Optional[np.ndarray] = None
+    # Envelope-CLASS-consistent P-sum mask for the post-solve realized-room
+    # RTORPA, (n_gen,) bool (ERCOT-68 room decomposition, 2026-07-15). The
+    # identified room is env_all − CAMPD gross over the envelope's own share
+    # classes, so the model analogue must subtract dispatch over EXACTLY those
+    # classes. headroom_eligible[all-tier] is the LP shared-headroom set
+    # (RESERVE_FUEL_TYPES — nuclear/oil included, correctly, for the physical
+    # rows whose RHS carries their availability); the envelope's basis carries
+    # NO nuclear/oil capability (no share table), so summing their dispatch
+    # into the pricing room fabricated ~4.4 GW of phantom tightness (the
+    # leg-J December over-fire: recomputed 2024 adder mean $60 -> $1.5/MWh,
+    # >$10 h 1,226 -> 63, vs measured RTORPA mean $0.20, 26 h).
+    online_capacity_pricing_elig: Optional[np.ndarray] = None
     headroom_eligible: Optional[np.ndarray] = None  # (n_hr, n_gen) bool
     headroom_products: Optional[np.ndarray] = None  # (n_hr, n_families) bool
     headroom_extra_cap: Optional[np.ndarray] = None
@@ -1091,9 +1103,27 @@ def _ercot_multiproduct_design(
     # scarcity.ercot_ordc_realized_adder) and the LP row is NOT installed
     # (see the ReserveDesign field comment for the v2 hard-row failure).
     online_capacity_pricing_mw = None
+    online_capacity_pricing_elig = None
     if getattr(config, "ercot_ordc_only_scarcity", False):
         online_capacity_pricing_mw = online_capacity_cap
         online_capacity_cap = None
+        # Envelope-CLASS-consistent P-sum mask for the realized-room RTORPA
+        # (ERCOT-68 fix): dispatch is subtracted over exactly the classes whose
+        # capability the envelope's share tables carry — the identified
+        # construction's model analogue. Nuclear/oil stay in headroom_eligible
+        # (the physical LP rows carry their availability on the RHS) but are
+        # excluded here, where the basis carries no capability for them.
+        if online_capacity_pricing_mw is not None:
+            from market_sim.results.scarcity import (
+                ercot_online_capacity_envelope_classes,
+            )
+
+            env_classes = ercot_online_capacity_envelope_classes(config)
+            plant_group = getattr(fleet_arrays, "plant_group", None)
+            if plant_group is not None:
+                online_capacity_pricing_elig = responsive & np.isin(
+                    np.asarray(plant_group), sorted(env_classes)
+                )
 
     # Storage AS duration gate (config.ercot_storage_as_duration_gate): the
     # published per-product SOC durations (ERCOT_AS_PRODUCT_DURATION_H, index-
@@ -1196,6 +1226,7 @@ def _ercot_multiproduct_design(
         supply_cap=supply_cap,
         online_capacity_cap=online_capacity_cap,
         online_capacity_pricing_mw=online_capacity_pricing_mw,
+        online_capacity_pricing_elig=online_capacity_pricing_elig,
     )
 
 
