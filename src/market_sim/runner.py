@@ -24,7 +24,6 @@ from market_sim.config.constants import (
     END_YEAR,
     HISTORIC_OUTAGE_OVERLAY_BY_ISO,
     START_YEAR,
-    resolve_capacity_market_clearing,
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import (
@@ -707,7 +706,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # byte-identical to the pre-CR-1 path.
         curve_reserve_position: float | None = None
         if (
-            resolve_capacity_market_clearing(config, iso)
+            config.capacity_market_clearing
             and fleet is not None
             and prior_results is not None
         ):
