@@ -1557,7 +1557,10 @@ class TestCcSummerCapacityGuard(unittest.TestCase):
     nameplate-fills them) or on both the component and total rows. Either way
     the fleet-loaded merchant-CC pmax sum ends up above the plant's nameplate
     sum — physically impossible per the EIA-860 schema. The guard reconciles
-    the plant to ``min(pmax_sum, nameplate_sum) = nameplate_sum``.
+    the plant to its trusted bound ``max(nameplate_sum, demonstrated_peak)`` —
+    nameplate for a plant with no CAMPD peak in its reconcile table, but the
+    demonstrated CAMPD peak where that peak sits *above* nameplate (a real
+    cold-weather over-rating the guard must never discard — rule 13).
     """
 
     def _cc_row(self, gid, prime_mover, net_summer, nameplate):
@@ -1639,6 +1642,99 @@ class TestCcSummerCapacityGuard(unittest.TestCase):
         )
         cc = [g for g in gens if g.plant_group == "CC_REGULAR"]
         self.assertAlmostEqual(sum(g.pmax_mw for g in cc), 300.1, places=3)
+
+    def test_demonstrated_peak_above_nameplate_wins(self):
+        # A double-filed block whose measured CAMPD peak sits ABOVE nameplate:
+        # pmax sum 360 + 360 = 720, nameplate sum 245 + 147 = 392, demonstrated
+        # peak 410. The guard must clamp to max(nameplate, peak) = 410 — never
+        # to nameplate 392, which would discard 18 MW of measured capability
+        # (the New Covert 55297 rule-13 inversion). Peak from the reconcile
+        # table, so it is mocked here.
+        import unittest.mock as _m
+
+        from market_sim.data import fleet as _F
+
+        _F._cc_demonstrated_peaks.cache_clear()
+        with _m.patch.object(
+            _F, "_cc_demonstrated_peaks", return_value={999001: 410.0}
+        ):
+            gens = self._fleet(
+                [
+                    self._cc_row("1", "CT", 360.0, 245.0),
+                    self._cc_row("1A", "CA", 360.0, 147.0),
+                ]
+            )
+        cc = [g for g in gens if g.plant_group == "CC_REGULAR"]
+        self.assertAlmostEqual(sum(g.pmax_mw for g in cc), 410.0, places=3)
+
+    def test_demonstrated_peak_below_nameplate_ignored(self):
+        # When the demonstrated peak sits BELOW nameplate (the plant never ran
+        # to its rating, or is CT-only with an understated peak), the bound is
+        # nameplate — the peak does not lower the guard target (a cap row, not
+        # the guard, handles capping). pmax 720, nameplate 392, peak 300 ->
+        # clamp to 392.
+        import unittest.mock as _m
+
+        from market_sim.data import fleet as _F
+
+        _F._cc_demonstrated_peaks.cache_clear()
+        with _m.patch.object(
+            _F, "_cc_demonstrated_peaks", return_value={999001: 300.0}
+        ):
+            gens = self._fleet(
+                [
+                    self._cc_row("1", "CT", 360.0, 245.0),
+                    self._cc_row("1A", "CA", 360.0, 147.0),
+                ]
+            )
+        cc = [g for g in gens if g.plant_group == "CC_REGULAR"]
+        self.assertAlmostEqual(sum(g.pmax_mw for g in cc), 392.0, places=3)
+
+
+class TestNewCovertDemonstratedPeakPin(unittest.TestCase):
+    """New Covert (55297) pins to its demonstrated CAMPD peak under the keeper.
+
+    The rule-13 inversion the peak-aware guard fixes: New Covert's fleet-loaded
+    pmax double-files to ~1586 MW, its EIA-860 nameplate sums to 1176 MW, and
+    its measured CAMPD demonstrated peak is 1192.4 MW (recorded in the committed
+    PJM reconcile table). The old nameplate-only guard clipped it to 1176,
+    discarding 16 MW of measured capability; the peak-aware guard keeps it at
+    1192.4. Integration test on the real PJM fleet — skipped if EIA-860 is
+    absent.
+    """
+
+    def test_new_covert_pinned_to_demonstrated_peak(self):
+        from market_sim.config.paths import (
+            EIA_860_DIR,
+            cc_capacity_reconcile_path,
+        )
+        from market_sim.data import fleet as _F
+
+        if not (EIA_860_DIR / "eia860_generator_operable.parquet").exists():
+            self.skipTest("EIA-860 fleet parquet not present")
+        if not cc_capacity_reconcile_path("PJM").exists():
+            self.skipTest("PJM reconcile table not present")
+
+        _F._cc_demonstrated_peaks.cache_clear()
+        gens = _F.load_fleet_from_csv("PJM", get_iso_config("PJM"), year=2025)
+
+        cfg = ScenarioConfig(
+            iso="PJM",
+            mode="backcast",
+            cc_nameplate_summer_derate=True,
+            cc_capacity_reconcile=True,
+        )
+        bins = _F.fleet_to_bins(gens, "PJM", cfg)
+        cap = dict(
+            zip(
+                bins["Plant_Code"].astype(int),
+                bins["capacity_mw"].astype(float),
+            )
+        )
+        self.assertAlmostEqual(cap[55297], 1192.4, places=1)
+        # A CT-only plant (Allegheny 3-4-5, 55710) stays at its nameplate
+        # (excluded from the reconcile — its CAMPD peak is understated).
+        self.assertAlmostEqual(cap[55710], 556.0, places=1)
 
 
 class TestOtherFossilScoring(unittest.TestCase):
