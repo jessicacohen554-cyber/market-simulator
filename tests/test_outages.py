@@ -894,5 +894,108 @@ class ShortUnitOutageDerateTest(unittest.TestCase):
         self.assertEqual(factors, {})
 
 
+class UnitPartialOutageDerateTest(unittest.TestCase):
+    """The unit-grain partial-derate plateau overlay (LEG B).
+
+    Windows come from ``campd-partial-outages-<ISO>.csv`` (derive script
+    ``--partial-windows`` mode), each carrying a ``derate_factor`` = the
+    measured availability fraction the unit ran at during the plateau. The
+    consumer removes ``(1 - derate_factor) x unit_capacity`` from the plant's
+    ``(plant_code, plant_group)`` bin — the same unit-capacity-share /
+    concurrent-sum / clip-at-full aggregation as the >= 5-day overlay.
+    """
+
+    PLANT = 889  # Baldwin Energy Complex (MISO coal, in the model fleet)
+    UNIT_MW = 625.1
+
+    def _write_partial_csv(self, tmpdir: str, rows: list[dict]) -> Path:
+        path = Path(tmpdir) / "campd-partial-outages-MISO.csv"
+        cols = [
+            "facility_name",
+            "facility_id",
+            "unit_id",
+            "unit_capacity_mw",
+            "plant_capacity_mw",
+            "unit_pct_of_plant",
+            "plant_group",
+            "capacity_source",
+            "outage_start",
+            "outage_end",
+            "duration_days",
+            "peer_units_online",
+            "total_units_at_plant",
+            "derate_factor",
+        ]
+        pd.DataFrame(rows, columns=cols).to_csv(path, index=False)
+        return path
+
+    def _factors(self, csv_path: Path | None, year: int):
+        from unittest.mock import patch
+
+        from market_sim.data import outages
+
+        outages.unit_partial_outage_derate_factors.cache_clear()
+        target = csv_path if csv_path else Path("/nonexistent/partial.csv")
+        with patch.object(
+            outages, "unit_partial_outage_csv_for_iso", return_value=target
+        ):
+            return outages.unit_partial_outage_derate_factors(year, iso="MISO")
+
+    def _row(
+        self, start: str, end: str, derate_factor: float, unit_id: str = "1"
+    ) -> dict:
+        return {
+            "facility_name": "Baldwin Energy Complex",
+            "facility_id": self.PLANT,
+            "unit_id": unit_id,
+            "unit_capacity_mw": self.UNIT_MW,
+            "plant_capacity_mw": 1259.6,
+            "unit_pct_of_plant": 49.6,
+            "plant_group": "COAL",
+            "capacity_source": "eia_exact",
+            "outage_start": start,
+            "outage_end": end,
+            "duration_days": 20.0,
+            "peer_units_online": 1,
+            "total_units_at_plant": 2,
+            "derate_factor": derate_factor,
+        }
+
+    def test_missing_file_is_a_noop(self):
+        self.assertEqual(self._factors(None, 2025), {})
+
+    def test_partial_derate_removes_the_lost_fraction_only(self):
+        # A unit at half its capability (derate_factor 0.5) removes half of its
+        # capacity share from the plant bin inside the window, nothing outside.
+        from market_sim.data.outages import _iso_plant_capacity
+
+        with tempfile.TemporaryDirectory() as td:
+            csv = self._write_partial_csv(
+                td, [self._row("2025-07-10", "2025-07-29", 0.5)]
+            )
+            factors = self._factors(csv, 2025)
+        key = (self.PLANT, "COAL")
+        self.assertIn(key, factors)
+        arr = factors[key]
+        plant_cap = _iso_plant_capacity("MISO")[key]
+        expected = 1.0 - 0.5 * self.UNIT_MW / plant_cap
+        jul15 = _hour_of_year(7, 15, 0)
+        jan1 = 0
+        self.assertAlmostEqual(arr[jul15], expected, places=4)
+        self.assertEqual(arr[jan1], 1.0)  # outside the window: full availability
+
+    def test_full_derate_factor_is_a_noop(self):
+        # derate_factor 1.0 = ran at full ceiling = nothing removed.
+        with tempfile.TemporaryDirectory() as td:
+            csv = self._write_partial_csv(
+                td, [self._row("2025-07-10", "2025-07-29", 1.0)]
+            )
+            factors = self._factors(csv, 2025)
+        # No capacity removed -> the bin either absent or all-ones.
+        arr = factors.get((self.PLANT, "COAL"))
+        if arr is not None:
+            self.assertTrue((arr == 1.0).all())
+
+
 if __name__ == "__main__":
     unittest.main()

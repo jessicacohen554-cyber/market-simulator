@@ -632,11 +632,22 @@ def _unit_outage_factors_from_events(
 ) -> dict[tuple[int, str], np.ndarray]:
     """Accumulate unit-outage event rows into per-bin availability factors.
 
-    Shared core of :func:`unit_outage_derate_factors` (>= 5-day windows) and
-    :func:`unit_outage_short_derate_factors` (< 5-day baseload-coal windows):
-    each row derates its plant's ``(plant_code, plant_group)`` bin by
-    ``unit_capacity_mw / plant_capacity_mw`` over the window clipped to
-    ``year`` on the model clock; concurrent units sum, clipped at full derate.
+    Shared core of :func:`unit_outage_derate_factors` (>= 5-day full stops),
+    :func:`unit_outage_short_derate_factors` (< 5-day baseload-coal full stops)
+    and :func:`unit_partial_outage_derate_factors` (unit-grain partial-derate
+    plateaus): each row derates its plant's ``(plant_code, plant_group)`` bin by
+    its removed-capacity share ``removed_mw / plant_capacity_mw`` over the window
+    clipped to ``year`` on the model clock; concurrent units sum, clipped at
+    full derate.
+
+    A full-stop row removes the unit's whole ``unit_capacity_mw``. A partial
+    row carries a ``derate_factor`` column (the measured availability fraction
+    the unit ran at during the plateau) and removes only
+    ``(1 - derate_factor) x unit_capacity_mw`` — so a plant with two units each
+    at half capability derates to half, exactly like two full stops of half the
+    plant. The two paths share this accumulator so the partial derate uses the
+    identical unit-capacity-share / concurrent-sum / clip-at-full aggregation
+    as the >= 5-day overlay.
     """
     if iso == "ERCOT":
         from market_sim.data.fleet import load_campd_bins
@@ -653,6 +664,7 @@ def _unit_outage_factors_from_events(
     else:
         cap = _iso_plant_capacity(iso)
         target_fn = _generic_unit_outage_target
+    has_derate = "derate_factor" in df.columns
     sums: dict[tuple[int, str], np.ndarray] = {}
     for r in df.itertuples(index=False):
         tgt = target_fn(int(r.facility_id), r.unit_id, r.plant_group)
@@ -661,6 +673,16 @@ def _unit_outage_factors_from_events(
         ucap = r.unit_capacity_mw
         if pd.isna(ucap) or float(ucap) <= 0.0:
             continue
+        # Fraction of the unit's capacity removed over the window: a full stop
+        # removes all of it; a partial plateau removes (1 - derate_factor).
+        removed_frac = 1.0
+        if has_derate:
+            dfac = r.derate_factor
+            if pd.isna(dfac):
+                continue
+            removed_frac = min(max(1.0 - float(dfac), 0.0), 1.0)
+            if removed_frac <= 0.0:
+                continue
         mask = outage_hour_mask(
             r.outage_start,
             pd.Timestamp(r.outage_end) + pd.Timedelta(days=1),
@@ -670,7 +692,7 @@ def _unit_outage_factors_from_events(
         if not mask.any():
             continue
         arr = sums.setdefault(tgt, np.zeros(hours))
-        arr[mask] += float(ucap) / cap[tgt]
+        arr[mask] += removed_frac * float(ucap) / cap[tgt]
     return {k: np.clip(1.0 - v, 0.0, 1.0) for k, v in sums.items()}
 
 
@@ -702,6 +724,62 @@ def unit_outage_short_derate_factors(
     df = df[
         (df["duration_days"] < UNIT_OUTAGE_MIN_DAYS) & (df["plant_group"] == "COAL")
     ]
+    return _unit_outage_factors_from_events(df, year, hours, bins_path, iso)
+
+
+def unit_partial_outage_csv_for_iso(iso: str | None) -> Path:
+    """Return the UNIT-GRAIN partial-derate plateau CSV path for an ISO.
+
+    Distinct from the ERCOT PLANT-grain :data:`PARTIAL_OUTAGE_CSV`
+    (``campd-partial-outages.csv``): this is the unit-grain partial-plateau
+    extract (``campd-partial-outages-<ISO>.csv``, written by
+    ``scripts/derive_campd_unit_outages.py --partial-windows``), consumed by
+    :func:`unit_partial_outage_derate_factors` under
+    ``ScenarioConfig.unit_partial_outage_windows``. Always ISO-suffixed —
+    ERCOT keeps the plant-grain path and has no unit-grain partial file, so
+    ``ERCOT`` resolves to a name that does not collide with the plant-grain
+    file and simply does not exist (empty derate).
+    """
+    return UNIT_OUTAGE_CSV.with_name(
+        f"campd-partial-outages-{(iso or 'ERCOT').upper()}.csv"
+    )
+
+
+@lru_cache(maxsize=None)
+def unit_partial_outage_derate_factors(
+    year: int,
+    hours: int = HOURS_PER_YEAR,
+    bins_path: str | Path = BINS_CSV_DEFAULT,
+    iso: str = "ERCOT",
+) -> dict[tuple[int, str], np.ndarray]:
+    """Return unit-grain partial-derate plateau availability multipliers.
+
+    The partial-derate companion of :func:`unit_outage_short_derate_factors`,
+    gated by ``ScenarioConfig.unit_partial_outage_windows``: sustained
+    CF-ceiling plateaus (a unit running at a depressed ceiling — half its
+    capability out — which never reaches zero, so no full-stop window can
+    represent it) from ``campd-partial-outages-<ISO>.csv`` (built by
+    ``scripts/derive_campd_unit_outages.py --partial-windows``, which enforces
+    the same identification guards as the short windows — coal-only detector,
+    the when-operable baseload CF >= 0.55 screen, the revealed-availability
+    in-merit filter — plus the plant-level partial detector's frozen plateau
+    constants). Each row carries a ``derate_factor`` (the measured availability
+    fraction during the plateau); the shared accumulator removes
+    ``(1 - derate_factor) x unit_capacity`` from the plant bin, aggregated by
+    unit-capacity share with concurrent units summed and clipped at full derate
+    — identical to the >= 5-day overlay. Returns ``{(plant_code, plant_group):
+    (hours,) multiplier}``. ISOs without the file get an empty dict (no effect).
+
+    Keyed and applied per ``(plant_code, plant_group)`` like the unit-outage
+    derate, NOT per ``plant_code`` like the ERCOT-only plant-grain
+    :func:`partial_outage_derate_factors` — the plant-grain path over-fires on
+    a cycling fleet and stays ERCOT-scoped in ``fleet.py``.
+    """
+    iso = (iso or "ERCOT").upper()
+    csv_path = unit_partial_outage_csv_for_iso(iso)
+    if not csv_path.exists():
+        return {}
+    df = pd.read_csv(csv_path)
     return _unit_outage_factors_from_events(df, year, hours, bins_path, iso)
 
 
