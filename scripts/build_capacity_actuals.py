@@ -40,6 +40,11 @@ LARGE_UNIT_MW = 300.0  # flagged per plan §1.2.3
 
 EIA_860_DIR = Path("data/raw/eia-860")
 OUT_DIR = Path("data/raw/_validation-source")
+# Lives in OUT_DIR, not EIA_860_DIR: data/raw/eia-860/*.csv is gitignored
+# (override-CSV convention, source of truth there is parquet/json only), and
+# this file is a committed, citation-backed permanent fix, not a local
+# override -- see OUT_DIR/README.md's "RD-5 actuals-coverage fix" note.
+RETIRED_SHEET_GAP_FIX = OUT_DIR / "retired_sheet_coverage_gaps.csv"
 
 
 def _iso_to_ba(iso: str) -> set[str]:
@@ -118,8 +123,50 @@ def build_additions(bas: set[str]) -> pd.DataFrame:
     return pd.DataFrame(rows)
 
 
+def load_retired_sheet_gap_fix(bas: set[str]) -> pd.DataFrame:
+    """Retirement rows for plants the CURRENT top-level retired sheet omits.
+
+    RD-5 (forecast-retirement-calibration-plan-2026-07.md §5): the committed
+    ``eia860_generator_retired_and_canceled.parquet`` "2025 Early Release"
+    snapshot has fully dropped some plants that genuinely retired inside the
+    scoring window (Indian Point 3) or un-retired since (Palisades' 2025
+    restart moved it back to the operable sheet, erasing its 2022 retirement
+    row from the current snapshot). :data:`RETIRED_SHEET_GAP_FIX` carries
+    those rows verbatim from this repo's own earlier EIA-860 vintage
+    snapshots (still the authoritative EIA-860 survey, just read at the
+    vintage where the plant was still in that release's retired sheet) with
+    an explicit ``ba_code`` column, since the missing plant(s) may also be
+    absent from the current plant sheet and so cannot resolve a BA via
+    :func:`_plant_ba`. Returns an empty frame if the fix file is absent.
+    """
+    if not RETIRED_SHEET_GAP_FIX.is_file():
+        return pd.DataFrame()
+    gap = pd.read_csv(RETIRED_SHEET_GAP_FIX, comment="#")
+    gap = gap[gap["ba_code"].isin(bas)]
+    gap = gap[pd.to_numeric(gap["retirement_year"], errors="coerce").isin(list(WINDOW))]
+    rows = []
+    for _, g in gap.iterrows():
+        rows.append(
+            {
+                "kind": "retirement",
+                "unit_id": _uid(int(g["plant_code"]), g["generator_id"]),
+                "plant_id": int(g["plant_code"]),
+                "fuel": _fuel(g["technology"], g["energy_source_1"], g["prime_mover"]),
+                "mw": float(g["nameplate_capacity_mw"] or 0.0),
+                "year": int(g["retirement_year"]),
+                "state": g.get("state", ""),
+            }
+        )
+    return pd.DataFrame(rows)
+
+
 def build_retirements(bas: set[str]) -> pd.DataFrame:
-    """Retirements: retired-sheet units whose Retirement Year is in the window."""
+    """Retirements: retired-sheet units whose Retirement Year is in the window.
+
+    Unions in :func:`load_retired_sheet_gap_fix` so plants the current
+    top-level snapshot has dropped (RD-5) still score (see that function's
+    docstring); both sources flow through the same fuel/window logic.
+    """
     ret = pd.read_parquet(EIA_860_DIR / "eia860_generator_retired_and_canceled.parquet")
     ret = ret[pd.to_numeric(ret["Plant Code"], errors="coerce").notna()].copy()
     ret["Plant Code"] = ret["Plant Code"].astype(float).astype(int)
@@ -143,7 +190,15 @@ def build_retirements(bas: set[str]) -> pd.DataFrame:
                 "state": g.get("State", ""),
             }
         )
-    return pd.DataFrame(rows)
+    df = pd.DataFrame(rows)
+    gap_fix = load_retired_sheet_gap_fix(bas)
+    if not gap_fix.empty:
+        existing = set(zip(df["plant_id"], df["unit_id"])) if not df.empty else set()
+        gap_fix = gap_fix[
+            ~gap_fix.apply(lambda r: (r["plant_id"], r["unit_id"]) in existing, axis=1)
+        ]
+        df = pd.concat([df, gap_fix], ignore_index=True)
+    return df
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -166,6 +221,15 @@ def main(argv: list[str] | None = None) -> int:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     out = OUT_DIR / f"capacity_actuals_{iso.lower()}.csv"
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    gap_fix_note = ""
+    gap_fix_rows = load_retired_sheet_gap_fix(bas)
+    if not gap_fix_rows.empty:
+        plants = sorted(gap_fix_rows["plant_id"].unique().tolist())
+        gap_fix_note = (
+            f"# RD-5 actuals-coverage fix applied: plant(s) {plants} unioned in from "
+            f"{RETIRED_SHEET_GAP_FIX} (missing from the current top-level retired "
+            f"sheet) -- see that file's header and data/raw/eia-860/README.md.\n"
+        )
     header = (
         f"# capacity_actuals_{iso.lower()}.csv — capacity-hindcast scoring target "
         f"(W2-P5, plan §1.2.3)\n"
@@ -175,6 +239,7 @@ def main(argv: list[str] | None = None) -> int:
         f"(data.fleet._map_fuel_type + renewable/storage). Built {stamp}.\n"
         f"# Units >= {LARGE_UNIT_MW:.0f} MW flagged (large_unit). "
         f"BA(s): {sorted(bas)}.\n"
+        f"{gap_fix_note}"
     )
     with open(out, "w") as fh:
         fh.write(header)
