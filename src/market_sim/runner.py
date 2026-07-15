@@ -10,6 +10,7 @@ and runs them in parallel.
 from __future__ import annotations
 
 import argparse
+import datetime as _dt
 import json
 import logging
 import time
@@ -23,6 +24,7 @@ from market_sim.config.constants import (
     END_YEAR,
     HISTORIC_OUTAGE_OVERLAY_BY_ISO,
     START_YEAR,
+    resolve_capacity_market_clearing,
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import (
@@ -161,14 +163,14 @@ def _chp_measured_co2_inputs(
     (``fleet.apply_plant_emission_rates*``): the mode-aware v2 artifact when
     ``use_plant_emission_rates_v2`` is on, else the legacy pooled artifact when
     ``use_plant_emission_rates`` is on, else empty (caller keeps the fuel-class
-    default) — so BTM and grid CO2 intensity always agree. The class CF is drawn
+    default) -- so BTM and grid CO2 intensity always agree. The class CF is drawn
     from the v2 steam-load history independently of the rate source (empty until
     the v2 artifact carries ``steam_load_klbh_sum``), so the caller falls back to
     the flat ``must_run_cf`` when it is unavailable.
 
     ``btm_share_by_plant`` is the measured ``chp-btm-share`` artifact
     (:func:`market_sim.data.chp.measured_btm_share_by_plant`), resolved only
-    for **forecast** years — a backcast year keeps its existing
+    for **forecast** years -- a backcast year keeps its existing
     ``run_calibration_full.py::_btm_frame`` sizing (sector-keyed
     :func:`market_sim.data.chp.chp_btm_pct`), unchanged by this function.
     Empty when the mode is backcast, no clean partition exists for the ISO, or
@@ -300,7 +302,7 @@ def _blend_price_signal(
 
     ``signal_Y = alpha * econ_prices_{Y-1} + (1 - alpha) * signal_{Y-1}``.
     At ``alpha == 1.0`` (the default) or with no prior signal the input array
-    is returned unchanged (the SAME object — byte-identical behaviour).
+    is returned unchanged (the SAME object -- byte-identical behaviour).
     Anti-whipsaw smoothing only; consumed exclusively by the capacity
     screens, never by dispatch or results.
     """
@@ -328,13 +330,13 @@ def _lookahead_reprice_signal(
     cost, availability-derated capacity), and apply the same ORDC scarcity
     curve the runner's capacity-economics overlay uses where the stack
     thins/exhausts. O(T log G) numpy, no hour loop (rule 2). Feeds ONLY the
-    capacity screens via ``prior_results.price_signal`` — never dispatch,
+    capacity screens via ``prior_results.price_signal`` -- never dispatch,
     results, or the backcast (backcast mode has no capacity evolution).
 
     ``demand_next_total`` overrides the entering-year total demand ``(T,)``.
     A **capacity hindcast** (plan §1.3) dispatches the *realized* per-year
     demand with no growth scaling (``run_scenario_iso`` line ~872), so the
-    "known" entering-year net load must be that same realized next-year load —
+    "known" entering-year net load must be that same realized next-year load --
     not ``_scale_demand``'s growth-scaled weather year, which is the forecast
     path. The caller passes the realized ``load_demand(iso, next_year, ...)``
     total here; ``None`` (the plain-forecast path) falls back to
@@ -373,7 +375,7 @@ def _lookahead_reprice_signal(
 def _confirmed_exits_active(config: ScenarioConfig) -> bool:
     """Return True when the confirmed-exit channel should load/apply this run.
 
-    Forecast-mode only, regardless of ``confirmed_exits_enabled``'s default —
+    Forecast-mode only, regardless of ``confirmed_exits_enabled``'s default --
     a backcast run is a hard no-op even after the 2026-07-05 default flip
     (`docs/handoffs/confirmed-retirement-plan-2026-07.md` §7), since backcast's
     historical exits ride the vintage snapshot instead.
@@ -404,7 +406,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         config = config.with_overrides(iso=iso)
 
     # Simulation horizon: config.start_year/end_year override the module
-    # defaults (2026/2050) when set — a capacity hindcast runs 2021→2025. The
+    # defaults (2026/2050) when set -- a capacity hindcast runs 2021→2025. The
     # defaults keep every existing forecast and cache key unchanged.
     start_year = config.start_year if config.start_year is not None else START_YEAR
     end_year = config.end_year if config.end_year is not None else END_YEAR
@@ -454,7 +456,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     import_generators = build_interchange_fleet(interchange_spec, border_carbon)
     # Shared interchange topology (orchestrator-unification Stage 5): external
     # node extension, the capacity-deliverability Part-A seam import cap, and
-    # the CAISO per-hub corridor split — one sequence, both orchestrators.
+    # the CAISO per-hub corridor split -- one sequence, both orchestrators.
     iso_config = apply_interchange_topology(
         iso_config,
         interchange_spec,
@@ -481,7 +483,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
     # A capacity hindcast (plan §1.3) is forecast-mode but initialises from a
     # vintage snapshot (the 2020 Final release) so the modelled start-year fleet
-    # matches what actually existed — the vintage is honoured under
+    # matches what actually existed -- the vintage is honoured under
     # config.hindcast too. A plain forecast resets to the canonical snapshot.
     set_eia860_vintage(
         config.eia860_vintage_year
@@ -514,7 +516,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     )
     # FORWARD ATC corridor deliverability cap (CAISO per-hub corridors,
     # ``caiso_corridor_atc_forward``, default off): corridor TTC × posted-ATC
-    # base fraction × forward solar derate — a capability limit that
+    # base fraction × forward solar derate -- a capability limit that
     # regenerates from forward drivers, shared with the backcast orchestrator
     # (the measured-p95 variant is a backcast-only overlay there). No-op off
     # the flag or when no corridor resolves.
@@ -527,7 +529,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         if _corridor_groups:
             interface_groups = interface_groups + _corridor_groups
             logger.info(
-                "%s: WECC corridor deliverability cap on %d link(s) — "
+                "%s: WECC corridor deliverability cap on %d link(s) -- "
                 "FORWARD ATC (TTC × ATC-frac × solar derate)",
                 iso,
                 len(_corridor_groups),
@@ -561,7 +563,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # Within-window plant exits (the backcast mirror of planned additions):
     # whole plants that retired mid-window are absent from the single recent
     # operable snapshot, so they are injected into the base fleet and the COD
-    # ramp ages each out by its real retirement month. Backcast-mode only — a
+    # ramp ages each out by its real retirement month. Backcast-mode only -- a
     # forecast must not carry an already-retired unit. Loaded before the bins
     # are synthesized so the retirees are binned with the rest of the fleet.
     retired_within_window: list[Generator] = []
@@ -612,6 +614,17 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 max(g.online_year for g in planned_additions),
             )
 
+    # RC-1B hindcast information gate (RC-0B D4): in hindcast mode
+    # (config.hindcast, e.g. scripts/run_capacity_hindcast.py), a confirmed
+    # exit or an announced-reversal suppression may only apply if it was
+    # already knowable as of the vintage cutoff (Dec 31 of the EIA-860 vintage
+    # year the hindcast is seeded from) -- never the model's own solve/report
+    # date. Outside hindcast mode (the production forecast path) this is
+    # None, applying no cutoff (byte-identical to the pre-RC-1B behavior).
+    confirmed_registry_as_of: "_dt.date | None" = None
+    if getattr(config, "hindcast", False) and config.eia860_vintage_year is not None:
+        confirmed_registry_as_of = _dt.date(config.eia860_vintage_year, 12, 31)
+
     # Confirmed (binding-instrument) exits: the exogenous forecast retirement
     # channel, GATED on confirmed_exits_enabled (default on, flipped 2026-07-05)
     # and forecast-mode only (a backcast's historical exits ride the vintage
@@ -620,7 +633,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # once; applied at step 0 of evolve_fleet and the first-year base fleet.
     confirmed_exits: list[ConfirmedExit] = []
     if _confirmed_exits_active(config):
-        confirmed_exits = load_confirmed_exits(iso)
+        confirmed_exits = load_confirmed_exits(iso, as_of=confirmed_registry_as_of)
         if confirmed_exits:
             logger.info(
                 "loaded %d confirmed exits (%.0f MW, %d-%d)",
@@ -632,14 +645,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
     # Retirement-reversal supersession (announced channel): plants whose
     # announced exit was reversed outright by a public counter-instrument
-    # (every registry row superseded — e.g. Byron/Dresden's 2021 dates
+    # (every registry row superseded -- e.g. Byron/Dresden's 2021 dates
     # reversed by IL CEJA) keep running; their stale EIA-860 dates are
     # ignored by evolve_fleet step 1. Deliberately NOT gated on
     # confirmed_exits_enabled: honoring a documented reversal is an
     # announced-channel data correction, not an exogenous exit injection.
     announced_reversal_plants: frozenset[int] = frozenset()
     if config.mode == "forecast":
-        announced_reversal_plants = load_announced_reversal_plants(iso)
+        announced_reversal_plants = load_announced_reversal_plants(
+            iso, as_of=confirmed_registry_as_of
+        )
 
     # Global cumulative deployment drives the Wright's-Law learning curves.
     # It starts from the reference-year installed base and advances one year
@@ -666,8 +681,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
         # The entering year's demand is deterministically known before the
         # fleet evolves (_scale_demand is pure config arithmetic), so the
-        # capacity screens' peak-anchored mechanisms — the retirement
-        # reliability floor and the reserve-margin backstop — test the
+        # capacity screens' peak-anchored mechanisms -- the retirement
+        # reliability floor and the reserve-margin backstop -- test the
         # current year's known peak instead of lagging it by a full year
         # (capacity-economics plan 2026-07 §2.3 component 1: an off-by-one
         # deletion, not foresight). The price-driven screens still see only
@@ -685,14 +700,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # CR-1 sloped capacity demand-curve reserve position (default-off gate).
         # Accredited firm capacity ÷ the shared adequacy requirement on the
         # ENTERING fleet, computed ONCE per year and threaded verbatim into all
-        # three capacity screens — retirement + thermal entry (via evolve_fleet)
-        # and storage entry (below) — so every screen prices adequacy off one
+        # three capacity screens -- retirement + thermal entry (via evolve_fleet)
+        # and storage entry (below) -- so every screen prices adequacy off one
         # requirement and one basis (rule 19). None (gate off, base year with no
         # fleet, or no prior pools) keeps the fixed net-CONE price and is
         # byte-identical to the pre-CR-1 path.
         curve_reserve_position: float | None = None
         if (
-            config.capacity_market_clearing
+            resolve_capacity_market_clearing(config, iso)
             and fleet is not None
             and prior_results is not None
         ):
@@ -767,7 +782,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Persist the reliability floor's attribution log next to the
             # per-year results parquet (rule 20 analogue: floor-retained MW
             # must be measurable per run, not argued). Written every evolved
-            # year — an empty list is the affirmative "floor did not bind".
+            # year -- an empty list is the affirmative "floor did not bind".
             floor_log_path = (
                 get_cache_path(iso, cache_key, year).parent
                 / f"year_{year}_floor_retentions.json"
@@ -845,7 +860,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 storage.power_cap = power_cap_2d
                 storage.energy_cap = energy_cap_2d
                 logger.info(
-                    "%s %d: storage vintage ramp applied — %d units with mid-year COD",
+                    "%s %d: storage vintage ramp applied -- %d units with mid-year COD",
                     iso,
                     year,
                     int((power_cap_2d != power_cap_2d[:, :1]).any(axis=1).sum()),
@@ -903,7 +918,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _lp = ledger_path(get_cache_path(iso, cache_key, year))
             write_ledger(_lp, _ledger)
             logger.info(
-                "year %d: capacity-hindcast BRIDGE — evolved, not solved (ledger %s)",
+                "year %d: capacity-hindcast BRIDGE -- evolved, not solved (ledger %s)",
                 year,
                 _lp.name,
             )
@@ -988,11 +1003,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
         peak_demand = float(year_demand.sum(axis=0).max())
 
-        # Net-load-indexed ST_GAS + CT_PEAKER reliability-drag min-gen floors —
+        # Net-load-indexed ST_GAS + CT_PEAKER reliability-drag min-gen floors --
         # the single shared gate-and-log wrapper both orchestrators call
         # (fleet.apply_netload_drag_floors, orchestrator-unification Stage 6).
         # Gates internally on gas_st_netload_drag / ct_netload_drag (default
-        # off — byte-identical when unset); net-load uses the LP-served
+        # off -- byte-identical when unset); net-load uses the LP-served
         # convention shared with the backcast path.
         apply_netload_drag_floors(
             fleet_arrays,
@@ -1006,11 +1021,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             iso,
             year,
         )
-        # NEISO winter gas-availability cold-snap derate — the shared
+        # NEISO winter gas-availability cold-snap derate -- the shared
         # gate-and-log wrapper (fleet.apply_neiso_coldsnap_derate,
         # orchestrator-unification Stage 6: previously wired only in the
         # backcast orchestrator, the plan's §2.2 accidental-drift row).
-        # Gated on neiso_gas_coldsnap_derate (default off — byte-identical);
+        # Gated on neiso_gas_coldsnap_derate (default off -- byte-identical);
         # must run before the reserve-co-opt inputs are assembled so the
         # shared-headroom RHS sees the derated availability.
         apply_neiso_coldsnap_derate(fleet_arrays, config, iso, year)
@@ -1048,7 +1063,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         else:
             wind_mc, solar_mc = compute_dispatch_credits(config, year)
             if getattr(config, "wind_ptc_vintage_offers", False):
-                # ERCOT-65 PTC vintage scoping — D-5 forecast parity with the
+                # ERCOT-65 PTC vintage scoping -- D-5 forecast parity with the
                 # backcast orchestrator's wind_mc seam: the flat -ira_ptc_wind
                 # offer becomes the per-zone-month measured EIA-860 vintage
                 # blend (policy.ira.wind_ptc_vintage_dispatch_offer; full
@@ -1063,7 +1078,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     wind_mc = _vintage_wind_mc
             # Base marginal cost: the full variable cost above, then
             # exogenous EACs, then the coal take-or-pay tranche discount.
-            # This is the generators' bid basis — no startup-cost markup.
+            # This is the generators' bid basis -- no startup-cost markup.
             mc_base = mc_cost.copy()
             # Exogenous EACs shift the cost vector: per-generator EACs
             # lower per-generator MC, wind/solar EACs lower their dispatch
@@ -1093,8 +1108,8 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 )
             # Shared forward-native interchange injections (orchestrator-
             # unification Stage 5): the SAME post-assembly sequence the
-            # backcast runs — reference-price seams, firm import/export
-            # floors, and the CAISO offer couplings — every one gated by its
+            # backcast runs -- reference-price seams, firm import/export
+            # floors, and the CAISO offer couplings -- every one gated by its
             # existing ScenarioConfig field, all default off in forecast
             # configs. The backcast additionally passes its measured-price
             # overlay block; the forecast never does.
@@ -1149,7 +1164,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     node_idx, recon_lo, recon_hi = import_node_recon
                     logger.info(
                         "%s %d: priced import node reconciled to the neighbor's "
-                        "forecast net position — %d node rows, annual band "
+                        "forecast net position -- %d node rows, annual band "
                         "[%.2f, %.2f] TWh",
                         iso,
                         year,
@@ -1197,7 +1212,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     hod = np.arange(len(_sol_derate)) % 24
                     mid = (hod >= 9) & (hod <= 15)
                     logger.info(
-                        "CAISO %d: solar deliverability derate (Lever D) — "
+                        "CAISO %d: solar deliverability derate (Lever D) -- "
                         "midday mean %.3f (≈ %.1f%% curtailment headroom)",
                         year,
                         float(np.mean(_sol_derate[mid])),
@@ -1205,7 +1220,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     )
             elif iso == "CAISO" and _endogenous_spill:
                 logger.info(
-                    "CAISO %d: endogenous solar spill — full solar potential "
+                    "CAISO %d: endogenous solar spill -- full solar potential "
                     "passed to LP (no pre-LP CF derate); solar sets the midday "
                     "dual when curtailed",
                     year,
@@ -1217,7 +1232,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # wind/solar potential) so curtailment emerges endogenously and
             # the decile mapping regenerates as West VRE builds out. The
             # matching gross-up of the delivered-basis profile happens in
-            # load_renewable_profiles under the same gate — no
+            # load_renewable_profiles under the same gate -- no
             # double-curtailment. UNSET off the flag (byte-identical LP).
             _wtx_mult = forecast_wtx_curtail_multipliers(
                 config,
@@ -1239,7 +1254,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 else {}
             )
             # CAISO per-year SP15-pocket import caps (config.caiso_per_year_import_caps,
-            # default off — byte-identical no-op): swap links 4/5's TTC (baked
+            # default off -- byte-identical no-op): swap links 4/5's TTC (baked
             # in at the static 2023 tightest-year value) to this solve year's
             # measured LCT import_cap before the LP reads it. Only the TTC
             # array needs recomputing per year; incidence and
@@ -1252,7 +1267,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 if _caiso_year_iso_config is not iso_config:
                     year_ttc = get_ttc_array(_caiso_year_iso_config.links)
             # Base dispatch kwargs + priced import-node band: the shared
-            # pipeline assembly (orchestrator-unification Stage 2) — the same
+            # pipeline assembly (orchestrator-unification Stage 2) -- the same
             # key set the inline dict carried, byte-identical values.
             dispatch_spec = DispatchSpec(
                 wind_cf=wind_cf,
@@ -1323,7 +1338,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # m_zone[zone_idx] fallback otherwise (per_generator_membership,
             # plan §5). Default off → no specs → identical LP. The row dual is
             # surfaced as DispatchResult.co2_cap_price (a power-sector,
-            # no-bank scenario allowance price — plan §2/§8, not the
+            # no-bank scenario allowance price -- plan §2/§8, not the
             # RGGI/CARB market price).
             mass_caps = get_active_policy_constraints(
                 config, year, zone_names=zone_names
@@ -1398,7 +1413,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # Hydro hourly deliverability envelope
             # (config.hydro_dispatch_envelope, GATED default off): fleet-wide
             # hourly ceiling at the measured per-(month x hod) percentile of
-            # EIA-930 NG:WAT — bounds the budget LP's perfect-foresight
+            # EIA-930 NG:WAT -- bounds the budget LP's perfect-foresight
             # hoarding (caiso-72 STEP-2). Mirrored in run_calibration.py
             # (backcast parity). No-op when off, no hydro fleet, or no
             # measured/climatology series.
@@ -1423,7 +1438,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                     env = np.maximum(env, lo)
                     # CISO's NG:WAT includes pumped-storage net output (no
                     # separate PS series), so the capped model quantity
-                    # includes PS net discharge — like-for-like with the
+                    # includes PS net discharge -- like-for-like with the
                     # measured envelope.
                     ps_idx = np.flatnonzero(
                         np.char.startswith(
@@ -1462,7 +1477,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 sim_year=year,
             )
             # P0 → monthly startup markup → P1 via the shared pipeline solve
-            # core (orchestrator-unification Stage 3) — intra-year warm start
+            # core (orchestrator-unification Stage 3) -- intra-year warm start
             # included, statement-for-statement the former inline sequence.
             # Cross-year warm-start stays OFF on the forecast path
             # (xyear_cache=None): its marginal-tie reshuffle is read by
@@ -1470,13 +1485,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # retire/keep decision, changing the next year's fleet (plan §8,
             # docs/cross-year-warmstart.md). Wiring it forecast-side is
             # blocked on a basis-independent capacity screen (warm-start
-            # backlog #4) — do not thread a cache here before that lands.
+            # backlog #4) -- do not thread a cache here before that lands.
             # NOTE: the calibration CLIs now default MARKET_SIM_WARMSTART_XYEAR
-            # ON, but that gate is inert here — a None cache means the shared
+            # ON, but that gate is inert here -- a None cache means the shared
             # solve core never applies OR exports a basis, whatever the env var
             # says. Keep this literal None (tests/test_xyear_warmstart_default.py
             # statically asserts it) so the forecast stays cold-only.
-            # P1-native CAISO RA must-offer bridge (P2 archived — CLAUDE.md:
+            # P1-native CAISO RA must-offer bridge (P2 archived -- CLAUDE.md:
             # P0/P1 only): floor the merchant gas CC/CT fleet from the P0 run
             # pattern before P1, so the scored P1 carries the RA structure. None
             # for every non-CAISO / non-RA run (byte-identical).
@@ -1484,11 +1499,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 config, iso, dispatch_fleet, fleet_arrays, mc_base
             )
             # P1-native ERCOT gas commitment bridge (ERCOT-63): committed-state
-            # floor on merchant gas-CC from the P0 run pattern — forward-native
+            # floor on merchant gas-CC from the P0 run pattern -- forward-native
             # by construction, so the forecast path carries it identically.
             # (None, None) for every non-ERCOT / gate-off run (byte-identical).
             # ERCOT-64 floor-scoped committed-LSL markdown: the measured LSL
-            # bid on exactly the bridge's floored plant-hours — the bid hook
+            # bid on exactly the bridge's floored plant-hours -- the bid hook
             # shares the bridge's ONE floor computation (D-5 forecast parity
             # with the backcast orchestrator's wiring).
             _floorscoped_fn = None
@@ -1530,7 +1545,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # deliverable supply cap recomputed on the masked fleet. (None,
             # None) for every non-PJM / gate-off run (byte-identical);
             # ISO-exclusive with the CAISO hook. Forward-regenerating by
-            # construction — the commitment state is the model's own P0 solve.
+            # construction -- the commitment state is the model's own P0 solve.
             pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
                 config, iso, fleet_arrays
             )
@@ -1550,7 +1565,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             _t_post_solve = time.perf_counter()
             p1_result = energy_solve.p1
             mc_bid = energy_solve.mc_bid
-            # The fleet P1 solved on — RA-floored when the bridge fired, else the
+            # The fleet P1 solved on -- RA-floored when the bridge fired, else the
             # input fleet. Downstream save/floor-persistence sees the floors.
             fleet_arrays = energy_solve.p1_fleet_arrays
             context = FleetContext.from_arrays(
@@ -1564,13 +1579,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
             result = p1_result
 
-            # === LEGACY: P2 Commitment Screen (ARCHIVED — last resort) ===
+            # === LEGACY: P2 Commitment Screen (ARCHIVED -- last resort) ===
             # P2 (opt-in, CLAUDE.md "Dispatch & Commitment"): screen CC/CT
             # commitment on P1 clearing prices against base MC, pin coal to its P1
             # dispatch, and re-solve. P0/P1 are the only production passes and
             # every run is scored on P1; this branch runs only when a legacy
             # diagnostic gate is explicitly set (CLI --enable-legacy-p2). The
-            # CAISO RA must-offer bridge NO LONGER triggers P2 — it is applied
+            # CAISO RA must-offer bridge NO LONGER triggers P2 -- it is applied
             # P1-native above (build_caiso_ra_p1_prep). AS-aware commitment
             # (ERCOT, gated): value a unit's AS revenue when screening commitment
             # so the units a tight month keeps online FOR AS stay committed and
@@ -1594,7 +1609,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 # Shared P2 core (pipeline.commitment, orchestrator-unification
                 # Stage 4): CAISO RA must-offer bridge / NYISO path B / ERCOT
                 # AS-aware screen + AS-adequacy floor + WS1 headroom overrides /
-                # economic commitment screen + coal pin — the same body the
+                # economic commitment screen + coal pin -- the same body the
                 # backcast orchestrator runs, statement-for-statement.
                 result = run_commitment_pass(
                     {
@@ -1667,14 +1682,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # generalized to any ISO via scarcity_price_overlay): the published
         # reserve-scarcity adder is computed from this year's solved
         # headroom and added to the prices next year's capacity economics
-        # see — economic retirement, new entry and CCS retrofit screens
-        # (capacity.evolve_fleet) — so peakers and storage earn scarcity
+        # see -- economic retirement, new entry and CCS retrofit screens
+        # (capacity.evolve_fleet) -- so peakers and storage earn scarcity
         # revenue instead of bare LP duals. Raw duals structurally carry no
         # scarcity rent in a perfect-foresight LP with zero unserved energy,
         # which over-retires dispatchables and under-builds. Dispatch,
         # volumes, emissions and persisted results are untouched.
         # scarcity_price_overlay defaults True for ERCOT (energy-only; see
-        # ISOConfig.default_scenario_overrides) and False elsewhere —
+        # ISOConfig.default_scenario_overrides) and False elsewhere --
         # capacity-market ISOs recover fixed cost through capacity-market
         # revenue (capacity_revenue_per_mw_yr) instead, no adder there.
         # When co-optimization is on the energy LMP (result.prices) already
@@ -1694,11 +1709,11 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 - result.solar_dispatched
             ).sum(axis=0)
             # Online/offline reserve split (results.scarcity): only responsive
-            # capacity backs the ORDC curve — a cold slow-start unit the
+            # capacity backs the ORDC curve -- a cold slow-start unit the
             # perfect-foresight LP left idle is NOT real-time reserve. This is
             # the market-design-grounded replacement for the fitted flat RTORDPA
             # offset (the offset stays addable, default 0, as an explicit probe;
-            # NOT netting the AS plan — ERCOT's RTOLCAP already counts online
+            # NOT netting the AS plan -- ERCOT's RTOLCAP already counts online
             # AS-held capacity as reserve, so subtracting it double-counts).
             r_online, r_offline = reserve_headroom(
                 fleet_arrays,
@@ -1722,7 +1737,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             econ_prices = result.prices + adder[None, :]
             overlay_adder = adder
             logger.info(
-                "year %d: ORDC scarcity adder for capacity economics — "
+                "year %d: ORDC scarcity adder for capacity economics -- "
                 "mean $%.2f/MWh, >$10 in %d h, max $%.0f",
                 year,
                 float(adder.mean()),
@@ -1732,7 +1747,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
 
         # CAISO post-solve scarcity overlay (Tariff §27.4.3.2 / §39.6.1):
         # the probabilistic reserve-scarcity adder is added to SCORED prices
-        # (result.prices) because CAISO has no other scarcity mechanism — the
+        # (result.prices) because CAISO has no other scarcity mechanism -- the
         # reserve co-opt (caiso-59) is inert (12.9 GW headroom >> 2.2 GW
         # requirement), and no measured overlay series exists. The LOLP-based
         # adder uses CAISO's higher net-load uncertainty (σ = 2,500 MW from
@@ -1773,7 +1788,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             econ_prices = result.prices
             overlay_adder = caiso_adder
             logger.info(
-                "year %d: CAISO scarcity overlay — "
+                "year %d: CAISO scarcity overlay -- "
                 "mean $%.2f/MWh, >$10 in %d h, >$50 in %d h, max $%.0f",
                 year,
                 float(caiso_adder.mean()),
@@ -1786,13 +1801,13 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # the entering year's known net load against this year's supply
         # stack, then EWMA-blend across years. At the defaults (alpha=1.0,
         # lookahead off) this passes econ_prices through unchanged (the same
-        # array object — byte-identical). Screens-only: dispatch, results
+        # array object -- byte-identical). Screens-only: dispatch, results
         # and persisted prices never see it.
         price_signal = econ_prices
         # The entering year the lookahead re-prices for. A capacity hindcast
         # (rule 22) may NEVER read a quarantined bridge year's data, so the
         # look-ahead is suppressed whenever the next year is a bridge year
-        # (2022, 2026) or falls outside this run's own window — the last
+        # (2022, 2026) or falls outside this run's own window -- the last
         # solved hindcast year (2025) has no admissible next year to screen
         # for. A plain forecast is bounded only by the module horizon.
         next_year = year + 1
@@ -1835,7 +1850,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             )
             _ps_h = price_signal[0]  # system row; every zone identical
             logger.info(
-                "year %d: lookahead stack re-price for %d capacity screens — "
+                "year %d: lookahead stack re-price for %d capacity screens -- "
                 "mean $%.2f/MWh (raw duals+overlay mean $%.2f); "
                 "pro-forma scarcity >$200 in %d h, >$1000 in %d h, max $%.0f",
                 year,
@@ -1857,16 +1872,16 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # selling energy, so the retirement/new-entry screens can value each
         # unit's per-hour best use max(energy margin, reserve price). Exactly
         # one mechanism produces it (rule 19):
-        #  * co-opt duals — under ercot_thermal_as_endogenous the per-hour
+        #  * co-opt duals -- under ercot_thermal_as_endogenous the per-hour
         #    binding reserve price from the solve's own reserve_price_by_family
         #    (all-products tier for synchronized units; the non-fast/Non-Spin
         #    tier for offline-capable quick-starts, mirroring the co-opt's
         #    headroom cascade). Supersedes that flag's annual per-fuel rate.
-        #  * else the post-solve ORDC scarcity adder — ERCOT pays real-time
+        #  * else the post-solve ORDC scarcity adder -- ERCOT pays real-time
         #    on-line/off-line reserves the same ORDC price the energy adder
         #    carries (RTORPA/RTOFFPA, Nodal Protocols §6.5.7.5), so the
         #    published-curve adder is the reserve price both tiers see.
-        # None when the flag is off or neither mechanism ran — the screens
+        # None when the flag is off or neither mechanism ran -- the screens
         # then keep the legacy annual AS credits.
         reserve_price_signal = None
         reserve_price_signal_slow = None
@@ -1920,7 +1935,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             if storage.power_cap.ndim == 1
             else float(storage.power_cap.sum(axis=0).max()),
             # Storage AS revenue DERIVED from this year's co-opt reserve duals
-            # (the endogenous analogue of the exogenous as_revenue rate) — fed
+            # (the endogenous analogue of the exogenous as_revenue rate) -- fed
             # to next year's storage entry screen so exactly one mechanism
             # prices storage AS under ercot_storage_as_endogenous (rule 19).
             # 0.0 when the co-opt did not price reserve this year.
@@ -1937,7 +1952,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             else 0.0,
             # Per-fuel thermal AS revenue DERIVED from this year's co-opt reserve
             # duals (the endogenous analogue of the exogenous flat as_revenue rate)
-            # — fed to next year's retirement/new-entry screens so exactly one
+            # -- fed to next year's retirement/new-entry screens so exactly one
             # mechanism prices thermal AS under ercot_thermal_as_endogenous
             # (rule 19). Empty dict when the co-opt did not price reserve this year.
             thermal_as_revenue_per_mw_yr=(
@@ -1953,7 +1968,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 )
                 else None
             ),
-            # Reserve-price signal (plan §5 step 2) — the hourly reserve value
+            # Reserve-price signal (plan §5 step 2) -- the hourly reserve value
             # next year's retirement/new-entry screens max against the energy
             # margin (synchronized tier / offline quick-start tier).
             reserve_price_signal=reserve_price_signal,
@@ -2002,7 +2017,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         )
         # CR-3.1 observability: the credit each VRE class actually earned on
         # this year's own penetration (same resolver/basis as firm_mw above),
-        # plus the storage fleet's power and pre-dilution accredited MW — the
+        # plus the storage fleet's power and pre-dilution accredited MW -- the
         # per-year accreditation trail the capacity-hindcast before/after
         # diagnostic and the T1.9 storage-saturation ladder read.
         credits_applied = renewable_credits_applied(
@@ -2032,7 +2047,7 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             else None,
             # Accreditation trail (CR-3.1): pool nameplates, resolved VRE
             # credits, and the storage fleet's power / pre-dilution firm MW
-            # (dilution applies at the evolve consumer, capacity.py — see
+            # (dilution applies at the evolve consumer, capacity.py -- see
             # _storage_portfolio_elcc_dilution).
             wind_cap_mw=round(float(np.sum(wind_cap)), 3),
             solar_cap_mw=round(float(np.sum(solar_cap)), 3),
