@@ -1,0 +1,48 @@
+# retired_sheet_coverage_gaps.csv — RD-5 actuals-coverage fix (forecast-retirement
+# calibration plan 2026-07 §5; docs/handoffs/retirement-lane-intake-2026-07-15.md).
+#
+# The CURRENT top-level EIA-860 snapshot (data/raw/eia-860/eia860_generator_
+# retired_and_canceled.parquet, "2025 Early Release") omits two plants that
+# genuinely retired inside the 2021-2025 capacity-hindcast scoring window:
+#   - Plant 8907, Indian Point 3 (NY / NYISO): retired 2021-04. Absent from
+#     EVERY sheet (plant, operable, generators, retired_and_canceled) of the
+#     current top-level snapshot -- EIA appears to have fully dropped this
+#     plant code from later releases, not just moved it between sheets.
+#   - Plant 1715, Palisades (MI / MISO): retired 2022-06, then RESTARTED
+#     generation in 2025 (the first-ever US commercial restart of a retired
+#     nuclear plant, under a DOE loan + NRC-approved restart). The current
+#     top-level snapshot shows it back in the OPERABLE sheet (Status "OA"),
+#     which is why its 2022 retirement event does not appear in the current
+#     retired_and_canceled sheet -- not a data error, a real un-retirement.
+#     See this directory's README.md ("RD-5 actuals-coverage fix" note) for
+#     how this should be treated by a scoring/adjudication session (RC-0B) --
+#     this file only carries the fact of the 2022 retirement event, not an
+#     opinion on how a since-reversed retirement should score against a
+#     hindcast.
+#
+# Both rows below are transcribed VERBATIM (no fields altered) from this
+# repo's own already-committed EIA-860 vintage snapshots, which captured each
+# plant while it was still in the retired_and_canceled sheet of the release
+# current at that time -- i.e. this is the same EIA-860 survey data, read at
+# an earlier vintage than the one currently at the top level, not a new
+# external source:
+#   - Indian Point 3: data/raw/eia-860/vintage_2021/eia860_generator_retired_and_canceled.parquet
+#     (Plant Code 8907, Generator ID 3, Retirement Month/Year 4/2021,
+#     Nameplate Capacity (MW) 1012.0, Technology "Nuclear", Energy Source 1
+#     "NUC", Prime Mover "ST", State "NY").
+#   - Palisades: data/raw/eia-860/vintage_2022/eia860_generator_retired_and_canceled.parquet
+#     (Plant Code 1715, Generator ID 1, Retirement Month/Year 6/2022,
+#     Nameplate Capacity (MW) 811.8, Technology "Nuclear", Energy Source 1
+#     "NUC", Prime Mover "ST", State "MI").
+#
+# ba_code follows data.fleet.BA_CODE_TO_ISO (NYIS->NYISO, MISO->MISO) and is
+# supplied explicitly here because plant 8907 is absent from the current
+# eia860_plant.parquet, so the normal plant-code -> BA lookup
+# (build_capacity_actuals._plant_ba) cannot resolve it.
+#
+# Consumed by scripts/build_capacity_actuals.py::build_retirements (unioned
+# in before the BA + WINDOW filters, so it flows through the same downstream
+# logic as the main retired_and_canceled sheet).
+plant_code,plant_name,generator_id,technology,energy_source_1,prime_mover,nameplate_capacity_mw,retirement_month,retirement_year,state,ba_code,source_vintage
+8907,Indian Point 3,3,Nuclear,NUC,ST,1012.0,4,2021,NY,NYIS,data/raw/eia-860/vintage_2021/eia860_generator_retired_and_canceled.parquet
+1715,Palisades,1,Nuclear,NUC,ST,811.8,6,2022,MI,MISO,data/raw/eia-860/vintage_2022/eia860_generator_retired_and_canceled.parquet
