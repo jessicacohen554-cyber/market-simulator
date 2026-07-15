@@ -52,6 +52,7 @@ CANONICAL_COLUMNS: tuple[str, ...] = (
     "instrument_date",
     "superseded",
     "superseding_instrument",
+    "superseding_instrument_date",
     "source_url",
     "source_doc",
     "accessed",
@@ -85,7 +86,7 @@ _STRING_COLS = (
 )
 _INT_COLS = ("plant_id", "exit_year", "exit_month")
 _FLOAT_COLS = ("capacity_mw",)
-_DATETIME_COLS = ("instrument_date", "accessed")
+_DATETIME_COLS = ("instrument_date", "accessed", "superseding_instrument_date")
 _BOOL_COLS = ("superseded",)
 
 
