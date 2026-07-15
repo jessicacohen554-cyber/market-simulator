@@ -498,3 +498,523 @@ VOM: dict[str, float] = {
     "wind": 0.0,  # NREL ATB 2024 — onshore wind
     "solar": 0.0,  # NREL ATB 2024 — utility-scale solar PV
     "oil": 4.5,  # NREL ATB 2024 — oil steam/peaker O&M (≈ coal steam)
+    "biomass": 5.0,  # NREL ATB 2024 — biomass (fuel handling raises O&M)
+    "hydro": 1.4,  # NREL ATB 2024 — conventional hydropower
+    # The base-fuel-class VOM component is 0 for the CCS retrofit tech: the
+    # incremental solvent/amine-handling O&M is priced separately as
+    # CCUS_PARAMS["gas_cc_ccs_90"]["vom_adder"] in the tech's own cost build,
+    # so this entry only supplies the class lookup used by model/capacity.py's
+    # generic per-tech cost paths (was an inline ``.get(tech, 0.0)`` fallback).
+    "gas_cc_ccs": 0.0,
+}
+
+# Pumped-storage hydro fleet parameters (EIA-860 PS units enter the storage
+# block alongside batteries; EIA-860 reports power but not energy or RTE).
+# Duration: the US PSH fleet averages ~10 h of storage at nameplate (DOE
+# "Pumped Storage Hydropower" 2023 fact sheet; Bath County ≈ 10.5 h).
+PUMPED_STORAGE_DURATION_HOURS: float = 10.0
+# Round-trip efficiency: mid-range of the 70-85% PSH band (DOE/Sandia Energy
+# Storage Handbook; DOE PSH fact sheet cites ~80%).
+PUMPED_STORAGE_RTE: float = 0.80
+# Pumped-storage dispatch adder ($/MWh discharged) by ISO — the reduced-form
+# opportunity cost of the regulation/reserve duty the energy-only LP does not
+# see (PSH pure O&M is < $1/MWh).
+#
+# PJM: RETIRED (was $10). The $10 was calibrated 2026-06-10 ("pjm 3 ps-adder")
+# to pull model PS discharge from ~9-10 TWh down to a target read as "~3.5-4
+# TWh/yr of EIA-923 gross generation". That target was a MEASUREMENT ERROR: the
+# EIA-923 PS series for PJM is NET generation (~-2.6 TWh/yr — generation minus
+# pumping load, i.e. the round-trip LOSS), NOT gross discharge. The actual
+# discharge throughput implied by that measured net and the model's own RTE 0.80
+# is |net|*RTE/(1-RTE) ≈ 10 TWh; triangulated against PJM's own gen-by-fuel
+# (Hydro series minus EIA-923 conventional HY) it is ~6.5-7 TWh. So the model's
+# original ~9-10 TWh was approximately CORRECT and the $10 adder suppressed
+# legitimate arbitrage to land on the round-trip-loss figure. Per CLAUDE.md #12
+# (a lever may not be tuned to a mis-measured residual with no forward analogue)
+# the fitted knob is retired; PJM PS now arbitrages on its physical RTE like
+# every other storage resource. EIA-930 carries no PJM PS/BAT breakout at all,
+# so C5b has no clean scoreable actual — see
+# docs/multi-iso/pjm-ps-cycling-diagnosis-2026-06.md. A measured PJM
+# synchronized-reserve power reservation (the ERCOT reserve_storage_as_power
+# analogue) is the forward-valid replacement if PS later over-cycles; that is a
+# real reserve quantity, handed to the reserve workstream, not a throughput tune.
+#
+# ISOs absent from the map resolve to 0.0 — notably CAISO, whose adder stays
+# off until a CAISO calibration pass measures Helms' reserve duty.
+PUMPED_STORAGE_DISPATCH_ADDER_BY_ISO: dict[str, float] = {}
+
+# NYISO treaty-mandated minimum flows for the two large NYPA hydro plants.
+# EIA plant IDs are the EIA-860/923 ORIS codes used throughout the model.
+#
+# Niagara (plant 2693 — Robert Moses Niagara Power Plant, ~2,429 MW):
+#   The Treaty Between the United States and Canada Concerning Diversion of
+#   the Niagara River (27 UST 1957, signed 1950; effective 1954) requires
+#   maintaining scenic flows of 50,000 cfs (Nov–Mar) / 100,000 cfs (Apr–Oct)
+#   over Horseshoe Falls. This reduces divertible flow to 60–75% of the ~202,000
+#   cfs average natural flow, with a minimum power-generation obligation
+#   corresponding to ~25% of nameplate. Source: International Joint Commission,
+#   "Supplementary Order of Approval No. 2", 1953; FERC Project No. 2216 (NYPA).
+#
+# St-Lawrence (plant 2694 — Robert Moses Power Dam, ~912 MW):
+#   The IJC Order of Approval governing Lake Ontario / St. Lawrence outflows
+#   (original order 1952; superseded by "Plan 2014", effective 2017) requires
+#   minimum hydraulic flows for navigation, ecology, and power. The Moses-Saunders
+#   dam at Massena typically operates above 50% of nameplate continuously.
+#   Source: International Joint Commission, "Lake Ontario–St. Lawrence River
+#   Plan 2014", 2016; FERC Project No. 2000 (NYPA/OPG).
+NYISO_HYDRO_TREATY_MIN_FLOW: dict[int, float] = {
+    2693: 0.25,  # Robert Moses Niagara Power Plant — 1950 Niagara Treaty
+    2694: 0.50,  # Robert Moses Power Dam (St-Lawrence) — IJC Order / Plan 2014
+}
+
+# --- Forecast hydro monthly-energy budget (G9 forward analogue) -------------
+# The hydro monthly-energy-budget LP constraint (dispatch chooses *when* within
+# the month) is the forward mechanism; only its monthly *level* is a measured
+# input in a backcast. The forecast level is a normal-water-year climatology:
+# the mean of the measured EIA-930 NG:WAT (conventional hydro) monthly series
+# across the years below, so a forecast year inherits a normal water year rather
+# than any single year's wet/dry draw. The window is the full EIA-930 hydro
+# history available across the modeled ISOs (years a given ISO does not cover
+# are simply skipped, so a short extract still yields a climatology). Built by
+# data.eia_loader.climatological_monthly_hydro. Source: EIA-930 hourly NG:WAT,
+# 2021-2025.
+HYDRO_CLIMATOLOGY_YEARS: tuple[int, ...] = (2021, 2022, 2023, 2024, 2025)
+
+# --- Hydro hourly deliverability envelope (caiso-72 STEP-2) ------------------
+# Percentile of the measured EIA-930 NG:WAT hourly output, per (month x
+# hour-of-day) bucket, used as the hydro fleet's hourly dispatch ceiling when
+# ScenarioConfig.hydro_dispatch_envelope is on. Same construction and same
+# admissibility class as the CAISO corridor ATC envelope
+# (interchange_config.CAISO_CORRIDOR_FLOW_PERCENTILE, also 95): a measured
+# *capability* ceiling the LP clears below — head/flow/scheduling limits that
+# the nameplate pmax bound ignores — never a flow pinned to the residual.
+# Identification: measured (rule 23 — re-derive only when the EIA-930 source
+# extends). Source: EIA-930 hourly NG:WAT per BA extract.
+HYDRO_ENVELOPE_PERCENTILE: float = 95.0
+
+# Hydro-year scenario lever: a multiplier on the normal-water-year hydro budget
+# selected by ScenarioConfig.hydro_year, the forecast wet/dry-water-year knob.
+# A wet or dry water year shifts annual conventional-hydro energy by roughly
+# ±15% about the normal-year mean: the EIA-930 NG:WAT 2021-2025 annual totals
+# span ~0.73-1.30 of their mean across the modeled ISOs — widest in the small
+# run-of-river systems (NEISO, ERCOT) and ~±5-10% in the large reservoir
+# systems (CAISO, NYISO) — so ±15% brackets the central reservoir-system range.
+# A round, documented scenario assumption (not a value fitted to any residual);
+# "normal" = 1.0 leaves the climatology unscaled. Applied as a pure level scale
+# by data.hydro.forecast_monthly_hydro — the within-month dispatch mechanism is
+# untouched.
+HYDRO_YEAR_MULTIPLIER: dict[str, float] = {
+    "dry": 0.85,
+    "normal": 1.0,
+    "wet": 1.15,
+}
+
+# Nuclear monthly capacity factors (12 values, Jan–Dec) by ISO.
+# Spring and fall dips reflect scheduled refueling outages.
+# Source: NRC PRIS 2019-2023.
+NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
+    # Spring (Mar-May) and fall (Oct) dips reflect ERCOT refueling-outage
+    # windows; the deep April / October troughs match the observed EIA-930
+    # nuclear monthly shape for Comanche Peak and South Texas.
+    # Tier: 3 (calibration)
+    "ERCOT": [0.97, 0.99, 0.89, 0.78, 0.84, 0.93, 0.95, 0.96, 0.95, 0.72, 0.83, 0.99],
+    "CAISO": [1.00, 0.99, 0.96, 0.95, 0.97, 1.00, 1.00, 1.00, 0.98, 0.95, 0.97, 1.00],
+    "PJM": [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
+    "NYISO": [1.00, 1.00, 0.95, 0.94, 0.97, 1.00, 1.00, 1.00, 0.97, 0.95, 0.98, 1.00],
+    "NEISO": [1.00, 0.99, 0.95, 0.95, 0.98, 1.00, 1.00, 1.00, 0.97, 0.96, 0.98, 1.00],
+    # MISO = 10-plant / 13-unit nuclear fleet (Clinton, Fermi, Monticello,
+    # Prairie Island, Point Beach, Waterford 3, Grand Gulf, Callaway, River
+    # Bend, Arkansas Nuclear One), 11,519 MW. Forecast-fallback seasonal
+    # pattern = the 3-year mean of the EIA-923-derived per-year CF below;
+    # spring/fall dips are the staggered refueling cadence across the fleet.
+    "MISO": [0.93, 0.92, 0.85, 0.82, 0.78, 0.91, 0.98, 0.98, 0.93, 0.79, 0.84, 0.89],
+}
+
+# Dormant nuclear plants the EIA-860 operable schedule lists as OP that have
+# not yet returned to service: plant code -> first calendar year the unit is
+# expected to generate. Backcast years before that year zero the unit's
+# availability (it is physically offline, EIA-923 net generation = 0), and
+# scripts/derive_nuclear_monthly_cf.py excludes it from the fleet pmax for
+# those years so the derived CF is not diluted. Forecast runs are unaffected
+# (the unit stays in the fleet at its EIA-860 capacity).
+#   8011 — Crane Clean Energy Center (ex-TMI-1, 802.8 MW net summer): shut
+#   2019, restart announced Sep 2024 (Constellation/Microsoft PPA) with grid
+#   return targeted 2027 (EIA-860 2025ER carries it as OP with a planned 2028
+#   repower year). Zero EIA-923 net generation 2023-2025; without this entry
+#   the PJM backcast carried ~6.5 TWh/yr of phantom nuclear.
+# Tier: 3 (calibration)
+NUCLEAR_DORMANT_UNTIL: dict[int, int] = {
+    8011: 2027,
+}
+
+# Per-year nuclear monthly capacity factor derived from EIA-923 net generation
+# (the actual staggered refueling cadence each year, not a fixed seasonal
+# average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the
+# backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal
+# refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2).
+# Derivation: scripts/derive_nuclear_monthly_cf.py (CF = fleet EIA-923 monthly
+# net gen / fleet pmax x hours, capped at 1.0 — winter net capability slightly
+# exceeds EIA-860 nameplate, so the cap costs ~0.7%/yr vs measured energy);
+# re-run with --check after an EIA-923 refresh.
+# Tier: 3 (calibration)
+NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
+    "ERCOT": {
+        2023: [1.00, 1.00, 0.89, 0.75, 0.78, 0.95, 0.99, 0.99, 0.99, 0.87, 0.91, 1.00],
+        2024: [0.93, 1.00, 0.82, 0.74, 0.78, 0.98, 0.92, 0.97, 0.99, 0.68, 0.75, 1.00],
+        2025: [0.97, 1.00, 1.00, 0.92, 0.89, 1.00, 1.00, 0.99, 0.94, 0.76, 0.91, 1.00],
+    },
+    # CAISO = Diablo Canyon units 1+2 (EIA plant 6099, fleet nameplate
+    # 2,240 MW). Monthly EIA-923 net generation / (nameplate x hours in
+    # month), clipped at 1.0 — the ERCOT convention. The dips are the actual
+    # staggered ~18-month refueling cadence: U2 down Oct-Dec 2023, U1 down
+    # Apr-May 2024, U1 Apr-May 2025 and U2 Oct 2025.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
+    "CAISO": {
+        2023: [0.96, 1.00, 0.92, 1.00, 1.00, 1.00, 1.00, 0.99, 0.96, 0.47, 0.66, 0.83],
+        2024: [1.00, 1.00, 1.00, 0.60, 0.62, 1.00, 1.00, 0.99, 0.94, 0.98, 1.00, 1.00],
+        2025: [1.00, 1.00, 0.95, 0.71, 0.69, 1.00, 1.00, 0.90, 1.00, 0.57, 0.92, 0.97],
+    },
+    # PJM = the 18-plant EIA-860 operable nuclear fleet (Dresden, Quad Cities,
+    # Salem, Peach Bottom, Surry, Cook, Calvert Cliffs, Perry, Braidwood,
+    # Byron, LaSalle, Beaver Valley, Susquehanna, Limerick, Hope Creek, Davis
+    # Besse, North Anna) — 32,689 MW after excluding the dormant Crane/TMI-1
+    # restart (EIA 8011, 802.8 MW; NUCLEAR_DORMANT_UNTIL — zero EIA-923
+    # output 2023-2025). Monthly EIA-923 net generation / (fleet pmax x hours
+    # in month), clipped at 1.0 (ERCOT convention; the cap costs ~0.5-1.0
+    # TWh/yr vs measured energy). Before this entry PJM fell back to the
+    # static NUCLEAR_MONTHLY_CF seasonal pattern x (1 - EFORD), which (with
+    # the phantom Crane capacity) over-produced a flat ~278 TWh vs measured
+    # 272.6/272.4/270.0 — the systematic +4.5/+6.0/+8.0 TWh nuclear residual
+    # of calibration runs 1-19.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
+    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos PJM.
+    "PJM": {
+        2023: [1.00, 0.97, 0.90, 0.85, 0.91, 0.99, 0.99, 0.98, 0.96, 0.89, 0.96, 1.00],
+        2024: [1.00, 0.98, 0.90, 0.81, 0.91, 0.99, 0.97, 0.99, 0.96, 0.90, 0.93, 1.00],
+        2025: [1.00, 0.99, 0.88, 0.86, 0.91, 0.99, 0.98, 0.98, 0.94, 0.83, 0.93, 1.00],
+    },
+    # NYISO = FitzPatrick (EIA 6110, 844 MW), Nine Mile Point 1+2 (EIA 2589,
+    # 1,903 MW combined), R E Ginna (EIA 6122, 579 MW) — fleet nameplate
+    # 3,326 MW. Indian Point (EIA 8907) retired Apr 2021 and is absent from
+    # the EIA-860 operable fleet. Monthly EIA-923 net generation / (fleet
+    # nameplate x hours in month), clipped at 1.0 (ERCOT convention). The dips
+    # are the actual staggered ~2-year refueling cadence, each verified to a
+    # single reactor in the per-plant EIA-923 series:
+    #   2023 Apr 0.74  — Ginna refuel (plant CF 0.28) + a Nine Mile unit (0.76).
+    #   2024 Mar 0.69  — Nine Mile 2 refuel (plant CF 0.46).
+    #   2024 Aug-Sep   — FitzPatrick refuel (0.63 / 0.37); Oct Ginna (0.48).
+    #   2025           — only a mild Nine Mile dip (Mar 0.80); no deep refuel.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
+    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos NYISO.
+    "NYISO": {
+        2023: [1.00, 0.98, 0.86, 0.74, 0.99, 0.99, 0.96, 0.97, 0.88, 0.97, 0.99, 0.99],
+        2024: [0.99, 0.99, 0.69, 1.00, 0.99, 0.98, 0.97, 0.89, 0.75, 0.90, 0.98, 0.98],
+        2025: [0.98, 0.98, 0.89, 0.96, 1.00, 0.99, 0.97, 0.98, 0.98, 0.99, 0.97, 1.00],
+    },
+    # NEISO = Millstone units 2+3 (EIA 566, CT, 2,108 MW combined) + Seabrook
+    # (EIA 6115, NH, 1,247 MW) — fleet nameplate 3,355 MW. Pilgrim (EIA 6098,
+    # Plymouth MA) retired May 2019 and Vermont Yankee (EIA 7350) retired Dec
+    # 2014; both are absent from the EIA-860 operable fleet. Monthly EIA-923
+    # net generation / (fleet nameplate x hours in month), clipped at 1.0
+    # (ERCOT convention). The dips are the actual staggered refueling cadence,
+    # each verified to a single reactor going to ~0 in the per-plant EIA-923
+    # series:
+    #   2023 Apr 0.41 — Seabrook refuel (plant CF 0.00) + a Millstone unit (0.66).
+    #   2023 Jun 0.38 — deep Millstone outage (plant CF 0.02); Seabrook full.
+    #   2023 Nov 0.63 — a Millstone unit (plant CF 0.41).
+    #   2024 Oct 0.44 — Seabrook refuel (0.12; Nov 0.57) + a Millstone unit (Sep 0.71).
+    #   2025 Apr-May 0.75/0.77 — a Millstone unit refuel (0.59/0.64); Seabrook full year.
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
+    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos NEISO.
+    "NEISO": {
+        2023: [0.98, 0.98, 0.99, 0.41, 0.60, 0.38, 0.93, 0.93, 0.91, 0.84, 0.63, 0.87],
+        2024: [0.88, 1.00, 1.00, 1.00, 0.99, 1.00, 0.99, 0.98, 0.81, 0.44, 0.76, 0.97],
+        2025: [1.00, 1.00, 1.00, 0.75, 0.77, 1.00, 0.99, 0.93, 0.99, 0.86, 1.00, 1.00],
+    },
+    # MISO = the 10-plant / 13-unit EIA-860 operable nuclear fleet (Clinton,
+    # Fermi, Monticello, Prairie Island 1+2, Point Beach 1+2, Waterford 3,
+    # Grand Gulf, Callaway, River Bend, Arkansas Nuclear One 1+2) — fleet
+    # nameplate 11,519 MW. Monthly EIA-923 net generation / (fleet pmax x hours
+    # in month), clipped at 1.0 (ERCOT convention; the cap costs <1 TWh/yr vs
+    # measured energy). Before this entry MISO had NO nuclear availability
+    # overlay (the CAMPD/CEMS outage source is fossil-only — no nuclear), so
+    # nuclear ran flat at the static-pattern x (1 - EFORD) ceiling, ~97.9 TWh
+    # (~97% CF) EVERY year vs measured 87.2/90.4/90.7 — a systematic
+    # +10.7/+7.5/+7.2 TWh nuclear over-injection that filled the bottom of the
+    # stack and pushed coal and gas peakers out of merit (calibration runs
+    # miso1-9). The dips are the actual staggered ~18-24 month refueling
+    # cadence (spring/fall outage season; deep troughs verified to individual
+    # reactors going to ~0 in the per-plant EIA-923 series, e.g. Prairie Island
+    # / Callaway / River Bend Oct dips).
+    # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
+    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos MISO.
+    "MISO": {
+        2023: [1.00, 0.94, 0.87, 0.83, 0.76, 0.93, 1.00, 0.96, 0.90, 0.68, 0.75, 0.75],
+        2024: [0.78, 0.91, 0.80, 0.81, 0.83, 0.96, 1.00, 0.99, 0.97, 0.85, 0.90, 0.93],
+        2025: [1.00, 0.92, 0.89, 0.82, 0.75, 0.84, 0.95, 0.98, 0.91, 0.85, 0.86, 1.00],
+    },
+}
+
+# Equivalent forced outage rate (demand) by technology class.
+# Source: NERC GADS.
+EFORD: dict[str, float] = {
+    "gas_cc": 0.05,  # NERC GADS — combined-cycle gas
+    "gas_ct": 0.06,  # NERC GADS — combustion turbine gas
+    "gas_st": 0.07,  # NERC GADS — legacy gas steam (older, higher outage rate)
+    "coal": 0.08,  # NERC GADS — coal steam
+    "nuclear": 0.03,  # NERC GADS — nuclear
+    "oil": 0.10,  # NERC GADS — oil peakers (infrequent run, higher EFOR)
+    "biomass": 0.08,  # NERC GADS — biomass steam
+    # CCS retrofit reuses the underlying gas_cc unit's forced-outage rate (the
+    # amine/compression train adds parasitic load, not forced-outage risk, in
+    # this model); supplies the class lookup used by model/capacity.py's
+    # generic per-tech cost paths (was an inline ``.get(tech, 0.05)`` fallback).
+    "gas_cc_ccs": 0.05,
+}
+
+# Annual demand growth rates by ISO, scenario path, and era.
+# Near-term (2026-2030): elevated by data center and industrial load.
+# Long-term (2031-2050): decelerates as pipeline matures.
+# Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.
+DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
+    "ERCOT": {
+        "low": {"near": 0.03, "long": 0.015},
+        "mid": {"near": 0.05, "long": 0.025},
+        "high": {"near": 0.08, "long": 0.04},
+    },
+    "CAISO": {
+        "low": {"near": 0.005, "long": 0.005},
+        "mid": {"near": 0.015, "long": 0.010},
+        "high": {"near": 0.025, "long": 0.018},
+    },
+    # PJM Fleet Parameters — Source: PJM Load Forecast Report 2024, Table B-1.
+    # Tier: 2. TODO: verify
+    "PJM": {
+        "low": {"near": 0.020, "long": 0.010},
+        "mid": {"near": 0.035, "long": 0.018},
+        "high": {"near": 0.060, "long": 0.030},
+    },
+    # NYISO Fleet Parameters — Source: NYISO Gold Book 2024, Table I-3.
+    # Tier: 2. TODO: verify
+    "NYISO": {
+        "low": {"near": 0.005, "long": 0.005},
+        "mid": {"near": 0.015, "long": 0.010},
+        "high": {"near": 0.025, "long": 0.018},
+    },
+    # NEISO Fleet Parameters — Source: ISO-NE CELT Report 2024.
+    # Tier: 2. TODO: verify
+    "NEISO": {
+        "low": {"near": 0.005, "long": 0.005},
+        "mid": {"near": 0.015, "long": 0.010},
+        "high": {"near": 0.025, "long": 0.018},
+    },
+}
+
+# Year at which demand growth transitions from near-term to long-term rate.
+# Source: engineering judgment — data center pipeline matures ~2030.
+DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
+
+# --- Data-center load block (CX-4, gap G-34) ------------------------------
+# Cumulative data-center MW trajectories per ISO/path, consumed by
+# data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis;
+# default path "off" => unused, byte-identical to today). Piecewise-linear
+# between anchor years, flat after the last anchor. Anchors are ENVELOPE VALUES
+# derived from the published headline figures in the design memo
+# docs/handoffs/cx4-datacenter-load-design-2026-07.md §2.1 (each traced below to
+# its primary ISO forecast / interconnection-queue source with the arithmetic
+# shown); they are the low/mid/high support the PB sampler interpolates, refined
+# on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6).
+# parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob).
+# ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).
+DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
+    # ERCOT — large-load queue ~226 GW (Nov 2025) vs 63 GW (end-2024); ~70% is
+    # data center; ~77% of large load targets in-service by 2030; 2030 adjusted
+    # peak ~138 GW. Source: ERCOT 2025 Report on Existing & Potential Electric
+    # System Constraints and Needs; ERCOT Large Load Integration / LFL officer
+    # updates. low = no published signed-IA MW subset -> 0 (honest floor);
+    # mid = (138 GW 2030 adj. peak - 85.5 GW 2024 record peak) ~= 52.5 GW large
+    # load x 0.70 DC ~= 37 GW; high = total credible LFL: 0.70 x 226 GW = 158 GW
+    # DC ultimate, 0.77 in-service by 2030 ~= 122 GW.
+    "ERCOT": {
+        "low": {2024: 0.0, 2030: 0.0},
+        "mid": {2024: 0.0, 2030: 37000.0},
+        "high": {2024: 0.0, 2030: 122000.0, 2035: 158000.0},
+    },
+    # PJM — DC-driven peak growth ~30 GW of ~32 GW total 2025->2030; 15-yr summer
+    # peak +70 GW to ~220 GW (DC-dominant). Source: PJM 2025 Long-Term Load
+    # Forecast Report (published DC decomposition). low = signed-ISA subset MW
+    # not separately published -> 0; mid = 30 GW DC by 2030; high = DC-dominant
+    # share of the +70 GW 15-yr peak -> ~60 GW DC by 2040.
+    "PJM": {
+        "low": {2025: 0.0, 2030: 0.0},
+        "mid": {2025: 0.0, 2030: 30000.0},
+        "high": {2025: 0.0, 2030: 30000.0, 2040: 60000.0},
+    },
+    # CAISO — CEC 2024 IEPR Data Center Forecast (24-IEPR-03), adopted into
+    # California Energy Demand 2024-2040: DC load +1.8 GW by 2030, +4.9 GW by
+    # 2040. low = IEPR low/no-DC case = 0; mid = the adopted DC adder; high = IEPR
+    # high-DC MW table not yet read -> high := mid (documented limitation, memo
+    # §3.1/§10.2; conservative — never overstates the upside).
+    "CAISO": {
+        "low": {2024: 0.0, 2030: 0.0, 2040: 0.0},
+        "mid": {2024: 0.0, 2030: 1800.0, 2040: 4900.0},
+        "high": {2024: 0.0, 2030: 1800.0, 2040: 4900.0},
+    },
+    # NYISO — 2025 Load & Capacity Data Report ("Gold Book") large-load
+    # adjustments: 19 large-load projects > 3 GW combined seeking interconnection;
+    # > 10 GW targeted in-service by 2031. low = signed subset MW not separately
+    # published -> 0; mid = > 3 GW near-firm large-load adjustment; high = > 10 GW
+    # total large-load queue by 2031.
+    "NYISO": {
+        "low": {2025: 0.0, 2031: 0.0},
+        "mid": {2025: 0.0, 2031: 3000.0},
+        "high": {2025: 0.0, 2031: 10000.0},
+    },
+    # MISO / NEISO — no published DC decomposition located (memo §2.2); ship {}
+    # => 0 MW every path/year until a primary source is read (a pure data-intake
+    # follow-up, no fitted placeholder). The near-term DEMAND_GROWTH_RATES still
+    # carry their DC boom implicitly until then.
+    "MISO": {},
+    "NEISO": {},
+}
+
+# Per-ISO override of the data-center block's zonal allocation, {iso: {zone:
+# share}} summing to 1.0 per ISO (memo §3.3). DEFAULT (ISO absent here) = each
+# zone's iso_configs load_share, applied by data.datacenter.datacenter_zone_shares.
+# Override ONLY where published queue siting geography differs from the load
+# distribution (memo names ERCOT North/West and PJM Dominion skews). Ships EMPTY:
+# no published per-zone DC siting fractions are yet sourced, so every ISO uses its
+# load_share default; adding a documented siting split is a data-intake follow-up.
+DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {}
+
+# --- Henry Hub Natural Gas Price Trajectories ($/MMBtu, real 2024$) ---
+# Source: EIA Annual Energy Outlook 2025 (AEO2025), released April 15, 2025
+# Table 13: Natural Gas Supply, Disposition, and Prices
+# Reference case, High Oil and Gas Supply case, Low Oil and Gas Supply case
+# URL: https://www.eia.gov/outlooks/aeo/
+# Note: AEO2025 assumptions frozen as of December 2024.
+# All prices in real 2024 dollars per MMBtu.
+# The model runs 2026-2050. The 2025 entry is included for interpolation
+# context (it is the shared near-term anchor across all three cases).
+#
+# These trajectories replace the prior GAS_PRICE_BASE + GAS_PRICE_ESCALATION
+# approach, which used a flat 2%/yr exponential that diverged from EIA's
+# modeled supply/demand/LNG-export dynamics.
+#
+# AEO2025 Reference case: Henry Hub rises from $2.88 (2025) to $4.80 (2050),
+# driven by LNG export growth through mid-2030s and rising marginal
+# production costs as producers access less economical resources.
+# Source: https://www.eia.gov/todayinenergy/detail.php?id=65724
+#
+# The model's gas_price_path lever ("low"/"mid"/"high") maps to AEO cases:
+#   "low"  -> AEO High Oil and Gas Supply case (more supply -> lower prices)
+#   "mid"  -> AEO Reference case
+#   "high" -> AEO Low Oil and Gas Supply case (less supply -> higher prices)
+#
+# RE-DERIVED 2026-07 (P-1D, CLAUDE.md rule 23) from the actual AEO2025 Table
+# 13 data (data/raw/eia-aeo/eia_aeo2025_fuel_prices.part*.csv, API-fetched by
+# scripts/fetch_eia_aeo.py in the P-0C intake), replacing the prior
+# hand-typed "approximate interpolations from published AEO2025 charts and
+# text" this TODO used to flag. Re-derive with
+# scripts/derive_fuel_trajectories.py::derive_gas_trajectory and paste; see
+# docs/handoffs/aeo-verification-2026-07-11.md for the before/after diff.
+# AEO2026 was released April 8, 2026 and may carry updated trajectories —
+# re-run scripts/fetch_eia_aeo.py --aeo-year 2026 when that vintage is wanted.
+#
+# The 2023 and 2024 entries are historical actuals, not AEO projections:
+# they are the EIA Henry Hub spot price annual averages ($2.54 in 2023,
+# $2.19 in 2024) and are identical across all three paths because a
+# realized price has no scenario branching.
+# Source: EIA Henry Hub Natural Gas Spot Price, annual averages.
+# URL: https://www.eia.gov/dnav/ng/hist/rngwhhdA.htm
+
+HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
+    # AEO High Oil and Gas Supply case -> model "low" gas price path.
+    # Higher resource recovery + faster tech improvement = lower prices.
+    "low": {
+        2023: 2.54,
+        2024: 2.19,  # EIA Henry Hub spot annual average (historical)
+        2025: 3.52,  # EIA Henry Hub spot annual average (2025 historical actual,
+        # matches calibration_reference.henry_hub_actual; was a stale 2.88
+        # forecast value). Consumed only by the backcast neighbor-price seam for
+        # 2025 (forecasts start at START_YEAR 2026), so this keeps each
+        # neighbor's gas consistent with the ISO's own 2025 delivered gas.
+        2026: 2.11,
+        2027: 2.03,
+        2028: 2.14,
+        2029: 2.21,
+        2030: 2.32,
+        2031: 2.42,
+        2032: 2.68,
+        2033: 2.76,
+        2034: 2.79,
+        2035: 2.81,
+        2036: 2.82,
+        2037: 2.79,
+        2038: 2.78,
+        2039: 2.79,
+        2040: 2.84,
+        2041: 2.89,
+        2042: 2.92,
+        2043: 2.91,
+        2044: 2.88,
+        2045: 2.89,
+        2046: 2.92,
+        2047: 2.90,
+        2048: 2.89,
+        2049: 2.86,
+        2050: 2.83,
+    },
+    # AEO Reference case -> model "mid" gas price path.
+    "mid": {
+        2023: 2.54,
+        2024: 2.19,  # EIA Henry Hub spot annual average (historical)
+        2025: 3.52,  # EIA Henry Hub spot annual average (2025 historical actual,
+        # matches calibration_reference.henry_hub_actual; was a stale 2.88
+        # forecast value). Consumed only by the backcast neighbor-price seam for
+        # 2025 (forecasts start at START_YEAR 2026), so this keeps each
+        # neighbor's gas consistent with the ISO's own 2025 delivered gas.
+        2026: 2.74,
+        2027: 2.62,
+        2028: 2.73,
+        2029: 2.89,
+        2030: 3.08,
+        2031: 3.23,
+        2032: 3.70,
+        2033: 4.10,
+        2034: 4.34,
+        2035: 4.43,
+        2036: 4.42,
+        2037: 4.37,
+        2038: 4.31,
+        2039: 4.24,
+        2040: 4.27,
+        2041: 4.34,
+        2042: 4.42,
+        2043: 4.56,
+        2044: 4.64,
+        2045: 4.70,
+        2046: 4.78,
+        2047: 4.83,
+        2048: 4.83,
+        2049: 4.81,
+        2030: 3.08,
+        2031: 3.23,
+        2032: 3.70,
+        2033: 4.10,
+        2034: 4.34,
+        2035: 4.43,
+        2036: 4.42,
+        2037: 4.37,
+        2038: 4.31,
+        2039: 4.24,
+        2040: 4.27,
+        2041: 4.34,
+        2042: 4.42,
+        2043: 4.56,
+        2044: 4.64,
+        2045: 4.70,
+        2046: 4.78,
+        2047: 4.83,
+        2048: 4.83,
+        2049: 4.81,
