@@ -1,0 +1,257 @@
+{
+  "bridge": true,
+  "ccs_retrofits": [],
+  "entry_screen_diagnostics": [
+    {
+      "annual_cost_per_mw_yr": 30852.16842085241,
+      "attribute_price": 0.0,
+      "attribute_revenue_per_mw_yr": 0.0,
+      "binding_cap": "per_tech_cap",
+      "build_mw": 1500.0,
+      "capacity_revenue_per_mw_yr": 0.0,
+      "capex_after_credit_per_kw": 1274.5749324969015,
+      "capex_base_per_kw": 1300.0,
+      "capex_wright_per_kw": 1274.5749324969015,
+      "cf_base": 0.38,
+      "cf_expected": 0.30888338,
+      "cf_shape_aware": true,
+      "crf": 0.07014179091512122,
+      "cumulative_gw": 1280.0,
+      "energy_revenue_per_mw_yr": 101002.16588743978,
+      "fom_per_kw_yr": 28.0,
+      "itc_solar": 0.0,
+      "kind": "vre",
+      "lcoe_per_mwh": 9.268255353536532,
+      "margin_per_mw_yr": 70149.99746658737,
+      "per_tech_cap_gw": 1.5,
+      "profitable": true,
+      "ptc_wind": 26.0,
+      "queue_budget_gw": 10.0,
+      "rps_shadow_price": 0.0,
+      "tech": "wind",
+      "total_revenue_per_mw_yr": 101002.16588743978
+    },
+    {
+      "annual_cost_per_mw_yr": 114130.26738998122,
+      "as_credit_per_mw_yr": 0.0,
+      "attribute_revenue_per_mw_yr": 0.0,
+      "binding_cap": "per_tech_cap",
+      "build_mw": 4000.0,
+      "capacity_revenue_per_mw_yr": 74000.0,
+      "capex_after_credit_per_kw": 1199.4314130328878,
+      "capex_base_per_kw": 1200.0,
+      "capex_wright_per_kw": 1199.4314130328878,
+      "crf": 0.07014179091512122,
+      "cumulative_gw": 1240.0,
+      "energy_revenue_per_mw_yr": 57653.6918938138,
+      "fom_per_kw_yr": 30.0,
+      "kind": "thermal",
+      "margin_per_mw_yr": 17523.42450383256,
+      "per_tech_cap_gw": 4.0,
+      "profitable": true,
+      "queue_budget_gw": 10.0,
+      "tech": "gas_cc",
+      "total_revenue_per_mw_yr": 131653.69189381378,
+      "var_cost_per_mwh": 30.854
+    },
+    {
+      "annual_cost_per_mw_yr": 66630.41481404082,
+      "attribute_price": 0.0,
+      "attribute_revenue_per_mw_yr": 0.0,
+      "binding_cap": "unprofitable",
+      "build_mw": 0.0,
+      "capacity_revenue_per_mw_yr": 0.0,
+      "capex_after_credit_per_kw": 721.8295135250942,
+      "capex_base_per_kw": 1100.0,
+      "capex_wright_per_kw": 1031.1850193215632,
+      "cf_base": 0.27,
+      "cf_expected": 0.19000969,
+      "cf_shape_aware": true,
+      "crf": 0.07014179091512122,
+      "cumulative_gw": 2200.0,
+      "energy_revenue_per_mw_yr": 61543.68440465385,
+      "fom_per_kw_yr": 16.0,
+      "itc_solar": 0.3,
+      "kind": "vre",
+      "lcoe_per_mwh": 28.17115458060241,
+      "margin_per_mw_yr": -5086.730409386968,
+      "per_tech_cap_gw": 6.0,
+      "profitable": false,
+      "ptc_wind": 0.0,
+      "queue_budget_gw": 10.0,
+      "rps_shadow_price": 0.0,
+      "tech": "solar",
+      "total_revenue_per_mw_yr": 61543.68440465385
+    },
+    {
+      "annual_cost_per_mw_yr": 108677.23864390154,
+      "as_credit_per_mw_yr": 0.0,
+      "attribute_revenue_per_mw_yr": 0.0,
+      "binding_cap": "unprofitable",
+      "build_mw": 0.0,
+      "capacity_revenue_per_mw_yr": 60000.0,
+      "capex_after_credit_per_kw": 1250.0,
+      "capex_base_per_kw": 1250.0,
+      "capex_wright_per_kw": 1250.0,
+      "crf": 0.07014179091512122,
+      "cumulative_gw": null,
+      "energy_revenue_per_mw_yr": 6769.986700669726,
+      "fom_per_kw_yr": 21.0,
+      "kind": "thermal",
+      "margin_per_mw_yr": -41907.25194323181,
+      "per_tech_cap_gw": 2.0,
+      "profitable": false,
+      "queue_budget_gw": 10.0,
+      "tech": "gas_ct",
+      "total_revenue_per_mw_yr": 66769.98670066973,
+      "var_cost_per_mwh": 44.72
+    },
+    {
+      "annual_cost_per_mw_yr": 532986.4822579416,
+      "attribute_price": 0.0,
+      "attribute_revenue_per_mw_yr": 0.0,
+      "binding_cap": "unprofitable",
+      "build_mw": 0.0,
+      "capacity_revenue_per_mw_yr": 0.0,
+      "capex_after_credit_per_kw": 6790.866370847633,
+      "capex_base_per_kw": 6800.0,
+      "capex_wright_per_kw": 6790.866370847633,
+      "cf_base": 0.9,
+      "cf_expected": 0.9,
+      "cf_shape_aware": false,
+      "crf": 0.06376012405673304,
+      "cumulative_gw": 450.0,
+      "energy_revenue_per_mw_yr": 294574.1595924875,
+      "fom_per_kw_yr": 100.0,
+      "itc_solar": 0.0,
+      "kind": "must_run",
+      "lcoe_per_mwh": 67.60356193023105,
+      "margin_per_mw_yr": -238412.32266545412,
+      "per_tech_cap_gw": 1.0,
+      "profitable": false,
+      "ptc_wind": 0.0,
+      "queue_budget_gw": 10.0,
+      "rps_shadow_price": 0.0,
+      "tech": "nuclear_smr",
+      "total_revenue_per_mw_yr": 294574.1595924875
+    }
+  ],
+  "firm_clean_mw": null,
+  "fleet_by_fuel_after": {
+    "biomass": 1999.4,
+    "coal": 46398.796,
+    "gas_cc": 55315.636,
+    "gas_ct": 25789.97,
+    "gas_st": 10357.555,
+    "nuclear": 28575.1,
+    "oil": 4187.7
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 2007.8,
+    "coal": 46398.796,
+    "gas_cc": 51315.636,
+    "gas_ct": 25789.97,
+    "gas_st": 10357.555,
+    "nuclear": 32672.1,
+    "oil": 4187.7
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "PJM",
+  "mode": "forecast",
+  "peak_demand_mw": null,
+  "renewable_additions": [
+    {
+      "mw": 1500.0,
+      "tech": "wind",
+      "zone": "PJM_ComEd"
+    }
+  ],
+  "reserve_margin": null,
+  "retirements": [
+    {
+      "fuel": "nuclear",
+      "mw": 902.0,
+      "reason": "known",
+      "unit_id": "869_2"
+    },
+    {
+      "fuel": "nuclear",
+      "mw": 895.0,
+      "reason": "known",
+      "unit_id": "869_3"
+    },
+    {
+      "fuel": "nuclear",
+      "mw": 1164.0,
+      "reason": "known",
+      "unit_id": "6023_1"
+    },
+    {
+      "fuel": "nuclear",
+      "mw": 1136.0,
+      "reason": "known",
+      "unit_id": "6023_2"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.7,
+      "reason": "known",
+      "unit_id": "54781_SU1"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.7,
+      "reason": "known",
+      "unit_id": "54781_SU2"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.7,
+      "reason": "known",
+      "unit_id": "54781_SU3"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 0.7,
+      "reason": "known",
+      "unit_id": "54781_SU4"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 1.5,
+      "reason": "known",
+      "unit_id": "57845_UNIT1"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 1.8,
+      "reason": "known",
+      "unit_id": "57845_UNIT2"
+    },
+    {
+      "fuel": "biomass",
+      "mw": 2.3,
+      "reason": "known",
+      "unit_id": "59759_SOLAR"
+    }
+  ],
+  "rps_dual": null,
+  "solve_counts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 4000.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2022_1",
+      "zone": "PJM_AEP_Ohio"
+    }
+  ],
+  "year": 2022
+}
