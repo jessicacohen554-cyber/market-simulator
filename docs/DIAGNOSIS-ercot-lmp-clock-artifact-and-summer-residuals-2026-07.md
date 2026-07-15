@@ -26,7 +26,7 @@ duals minus actual RT, 1 $/MWh int16) decoded for 2023–2025; all pivots/lag
 tests reproducible from `frontend/data/backcast/runs/2026-07-12-ercot63-gas-bridge.js`
 + `actual_lmp_hourly_ERCOT.parquet`. No solve was run (scorer-side diagnosis).
 
-## 1. The scoring-clock artifact (NEW; fix first — it contaminates every hourly-paired diagnostic, all ISOs)
+## 1. The scoring-clock artifact (FIXED 2026-07-15 — see status note at end of section)
 
 **Mechanism.** The model's year is built by `eia_loader._eia_hourly_frame`:
 rows sorted by UTC, position k = k-th chronological hour from local midnight
@@ -78,6 +78,24 @@ MAE re-pair. Alternative (cheaper, uglier): convert at the comparison sites.
 Either way the fix changes published per-run heatmaps/MAE for every ISO, so it
 should land as its own owned change with before/after screenshots, not ride
 along in a calibration PR.
+
+**STATUS — FIXED at the source, 2026-07-15 (owner-authorized all-ISO
+re-render; calibration-log entry of the same date has the full before/after
+lag tables and verification).** `derive_actual_lmp.py`,
+`derive_miso_hub_lmp.py` and `fetch_neighbor_lmp._densify_central` now index
+chronologically (fixed standard-time zone per ISO); all six system parquets
+rebuilt for 2023–2025 (out-of-training rows preserved byte-frozen on the old
+clock pending authorized re-derivation); all 33 registered payloads re-paired
+in place (`new_delta = old_delta + actual_old − actual_new`, exact to the
+render's int16 rounding). ERCOT verifies exactly as predicted (2024 JJA r@0
+0.55 → 0.94, best lag 0 in every DST season). The re-pairing EXPOSED
+model-side phase defects previously masked by the artifact — NYISO (and
+weakly CAISO-2024): DST-seasons-only −1 with DJF at 0, the signature of a
+prevailing-phased model INPUT; PJM-2025 (+1), CAISO-2025 (−1/−2), MISO-2025
+(−2): uniform all-season year-specific drifts — filed as follow-up
+input-clock lanes in the log entry, NOT chased here (rule 14: the reference
+stays on the verified true chronology). §2's aligned-residual analysis is
+unaffected (it was computed re-paired).
 
 ## 2. What remains after alignment — the real residuals
 

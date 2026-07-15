@@ -61,12 +61,13 @@ from urllib3.util.retry import Retry
 REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 
-# Reuse the canonical 8760-hour local-calendar mapping (Feb 29 dropped, the DST
-# fall-back hour averaged, the spring-forward hour NaN) the other realized-LMP
-# parquets are built on, so the MISO/Carolinas outputs are byte-comparable.
+# Reuse the canonical chronological 8760-hour calendar mapping (row k = k-th
+# UTC hour after local standard midnight Jan 1, local-standard Feb 29 dropped)
+# the other realized-LMP parquets are built on, so the MISO/Carolinas outputs
+# are byte-comparable. (Until 2026-07-15 this was the prevailing-clock mapping
+# — the all-ISO scoring-clock artifact, DIAGNOSIS-ercot-lmp-clock-artifact §1.)
 from scripts.derive_actual_lmp import (  # noqa: E402
     _HOURS_PER_YEAR,
-    _hour_index,
 )
 
 # Write alongside the other realized-LMP parquets (actual_lmp_hourly_<ISO>.parquet),
@@ -188,17 +189,16 @@ def _fetch_miso_series(
 
 
 def _densify_central(utc: pd.DatetimeIndex, price: np.ndarray, year: int) -> np.ndarray:
-    """Map a UTC-stamped hourly price onto MISO's dense US/Central 8760 clock.
+    """Map a UTC-stamped hourly price onto MISO's chronological 8760 clock.
 
-    Converts to US/Central (DST-aware, the same clock the ``MISO`` EIA-930 load
-    extract uses), takes the year's rows, and averages onto the fixed non-leap
-    hour-of-year via :func:`_hour_index` so the result aligns row-for-row with
-    the load the convexity regresses on.
+    Indexes on fixed Central STANDARD time (``Etc/GMT+6``) — the model's MISO
+    calendar is chronological (``eia_loader._eia_hourly_frame`` sorts by UTC
+    from the CST Jan-1 midnight anchor), NOT the prevailing clock the EIA-930
+    extract stamps — so the result aligns row-for-row with the dispatch series
+    the convexity regresses on. Under fixed offsets every EST market hour maps
+    to a unique slot: no fall-back averaging, no spring-forward NaN.
     """
-    local = utc.tz_convert("US/Central").tz_localize(None)
-    keep = local.year == year
-    local, price = local[keep], price[keep]
-    hour = _hour_index(pd.Series(local))
+    hour = _std_hour_index(utc, year, "Etc/GMT+6")
     grouped = pd.Series(price).groupby(hour).mean()
     grouped = grouped[grouped.index >= 0]
     return grouped.reindex(range(_HOURS_PER_YEAR)).to_numpy(dtype=float)
