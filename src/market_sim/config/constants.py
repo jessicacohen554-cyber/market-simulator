@@ -1498,3 +1498,343 @@ OIL_PRICE_TRAJECTORIES: dict[str, dict[int, float]] = {
         2034: 17.94,
         2035: 17.95,
         2036: 17.98,
+        2037: 18.07,
+        2038: 18.18,
+        2039: 18.22,
+        2040: 18.26,
+        2041: 18.27,
+        2042: 18.30,
+        2043: 18.85,
+        2044: 18.62,
+        2045: 18.54,
+        2046: 18.59,
+        2047: 18.67,
+        2048: 18.75,
+        2049: 18.76,
+        2050: 18.72,
+    },
+    "mid": {
+        2024: 21.67,
+        2025: 19.07,
+        2026: 18.41,
+        2027: 18.51,
+        2028: 18.68,
+        2029: 18.91,
+        2030: 19.22,
+        2031: 19.25,
+        2032: 19.49,
+        2033: 19.78,
+        2034: 19.91,
+        2035: 20.09,
+        2036: 20.13,
+        2037: 20.23,
+        2038: 20.38,
+        2039: 20.45,
+        2040: 20.58,
+        2041: 20.73,
+        2042: 20.76,
+        2043: 20.91,
+        2044: 20.83,
+        2045: 20.64,
+        2046: 20.90,
+        2047: 21.41,
+        2048: 21.46,
+        2049: 21.52,
+        2050: 21.70,
+    },
+    "high": {
+        2024: 21.67,
+        2025: 22.30,
+        2026: 21.91,
+        2027: 21.45,
+        2028: 21.12,
+        2029: 20.84,
+        2030: 20.82,
+        2031: 20.90,
+        2032: 21.27,
+        2033: 21.64,
+        2034: 21.81,
+        2035: 21.99,
+        2036: 22.39,
+        2037: 22.59,
+        2038: 22.73,
+        2039: 22.97,
+        2040: 23.10,
+        2041: 23.21,
+        2042: 23.23,
+        2043: 23.21,
+        2044: 23.23,
+        2045: 23.26,
+        2046: 23.49,
+        2047: 23.84,
+        2048: 24.08,
+        2049: 24.22,
+        2050: 24.29,
+    },
+}
+
+# NOTE: AGT_DAILY_BASIS_CONVEXITY (the within-month NEISO daily-AGT-basis
+# demand-convexity exponent, formerly 7.0) was RETIRED 2026-06. It redistributed
+# the measured monthly AGT basis across a month's days proportional to NEISO
+# demand raised to the exponent, with the exponent *chosen so the resulting
+# gas->oil switching tracked the measured EIA-930 oil burn* — i.e. a within-month
+# shape fitted to the electricity/oil outcome, which violates the measured-input
+# rule (CLAUDE.md #12: never tune an input to the residual it is validated
+# against). It is replaced by a real-data construction in
+# market_sim.data.fuel.iso_hub_daily_gas_prices: the within-month AGT basis is
+# anchored to the real Algonquin Citygate daily spot prints EIA publishes in its
+# Weekly Update narrative (data/raw/gas-prices/algonquin_citygate_daily.csv,
+# scripts/fetch_algonquin_daily_spot.py), interpolated on their true calendar
+# days and mean-preserved to the measured monthly basis; sparse-print months
+# borrow the measured Transco Z6 NY daily-basis shape (AGT~=Transco basis, slope
+# ~0.95). Every driver is now free, EIA-sourced, forward-applicable gas-market
+# data with no electricity/oil tuning. See docs/multi-iso/neiso-data-audit.md §2c.
+
+# Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas units.
+# Biomass fuel is largely a low-cost waste/byproduct stream (mill residue,
+# refuse, landfill gas), so its delivered cost is well below oil and roughly
+# at parity with cheap coal on a $/MMBtu basis.
+# Source: EIA wood & waste biomass delivered fuel cost, AEO 2024 (~$2.5/MMBtu).
+BIOMASS_PRICE_PER_MMBTU: float = 2.5
+
+# --- Nuclear fuel price ($/MMBtu, real 2024$) ---
+# D2 fix (P-1D, CLAUDE.md rule 23): nuclear was priced at $0/MMBtu alongside
+# wind/solar/hydro (fuel.py's non-fuel-burning default), but nuclear plants do
+# burn a real, priced fuel. The EIA Uranium Marketing Annual Report publishes
+# no $/MMBtu series directly (data/raw/uranium-marketing/, P-0C intake) — only
+# front-end U3O8 purchase price ($/lb U3O8e) and SWU enrichment-services
+# price, both nominal. This series is derived
+# (scripts/derive_fuel_trajectories.py::derive_nuclear_fuel_trajectory) by
+# deflating both to real 2024$ (INFLATION_RATE) and building up a delivered
+# $/MMBtu cost from the standard LWR fuel-cycle physical constants (World
+# Nuclear Association "Nuclear Fuel Cycle": ~8.9 kg natural U3O8 and ~7.3 SWU
+# per kg of ~4.4% LEU at a 0.25-0.3% tails assay) plus WNA-cited conversion
+# (~$10/kgU) and fabrication (~$300/kgLEU) costs — neither published as a time
+# series by EIA, so held flat in real terms — divided by the heat content of
+# a representative 45,000 MWd/tHM US LWR burnup (NRC/EIA-cited current-fleet
+# average). 2006 is the first year with both a U3O8 and a SWU price (SWU
+# series starts there); years without both are not derived (no guessing).
+# Forecast years (2025-2050) hold the last derived value (2024: $0.576/MMBtu)
+# flat in real terms — neither EIA nor AEO publishes a forward SWU/U3O8
+# trajectory, so a hold-flat real anchor is the documented, non-speculative
+# default (same "no silent compounding tail" principle as the
+# fuel.resolve_annual_gas_price extrapolation fix). ScenarioConfig-overridable
+# via ``nuclear_fuel_price_override`` ($/MMBtu, e.g. for a sensitivity case).
+NUCLEAR_FUEL_PRICE_HISTORICAL: dict[int, float] = {
+    2006: 0.5608,
+    2007: 0.6831,
+    2008: 0.7884,
+    2009: 0.7994,
+    2010: 0.8235,
+    2011: 0.8528,
+    2012: 0.8456,
+    2013: 0.8115,
+    2014: 0.7540,
+    2015: 0.7175,
+    2016: 0.6796,
+    2017: 0.6318,
+    2018: 0.5979,
+    2019: 0.5551,
+    2020: 0.5102,
+    2021: 0.5051,
+    2022: 0.5283,
+    2023: 0.5568,
+    2024: 0.5760,
+}
+
+# Thermal-fleet availability model by plant-group category. Three additive
+# components (summed, not compounded):
+#  * POF   — planned outage factor; applied only in the shoulder months.
+#  * WEFOR — weighted equivalent forced outage rate; flat year-round, and
+#            escalates linearly with plant age past an onset year.
+#  * DERATE — weather + performance-decline capacity loss; flat year-round,
+#            and likewise escalates with age past an onset year.
+# A unit's availability is 1 - WEFOR(age) - DERATE(age) - POF(shoulder only),
+# where WEFOR(age) = base + max(0, age - onset) * rate (and likewise DERATE).
+# Each entry is (POF, WEFOR_base, WEFOR_rate, WEFOR_onset, DERATE_base,
+# DERATE_rate, DERATE_onset). Source: NERC GADS by unit type and age.
+THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
+    "CC_CHP": (0.05, 0.04, 0.002, 20, 0.02, 0.001, 25),
+    "CC_REGULAR": (0.05, 0.05, 0.002, 20, 0.02, 0.001, 25),
+    "CT_CHP": (0.03, 0.05, 0.002, 20, 0.03, 0.001, 20),
+    "CT_PEAKER": (0.03, 0.07, 0.003, 20, 0.05, 0.002, 20),
+    "ST_GAS": (0.06, 0.21, 0.003, 30, 0.04, 0.002, 30),
+    "ST_CHP": (0.05, 0.08, 0.002, 25, 0.03, 0.0015, 25),
+    "COAL": (0.07, 0.12, 0.005, 40, 0.03, 0.002, 35),
+    # Oil and biomass entries apply when a unit carries a matching plant-group
+    # tag; EIA-classified oil/biomass units (no plant_group) fall back to the
+    # flat 1 - EFORD derate. Source: NERC GADS by unit type and age.
+    "OIL": (0.06, 0.10, 0.003, 30, 0.04, 0.002, 30),
+    "BIOMASS": (0.07, 0.10, 0.002, 25, 0.04, 0.0015, 25),
+}
+
+# Per-plant ERCOT coal sustained-output ceilings (fraction of capacity_mw):
+# the demonstrated physical maximum a unit's CEMS record shows it can sustain
+# (boiler/turbine derates below nameplate), applied as an availability ceiling
+# year-round on top of the age-based THERMAL_AVAILABILITY model.
+#
+# Source: scripts/derive_coal_max_cf.py — the pooled 99th percentile of each
+# plant's daily-max capacity factor (gross_mw / capacity_mw) on days it ran
+# (daily-mean CF > 0.06), across all CAMPD hourly extract years on record
+# (2023-2025, data/raw/campd-facility-level/TX_*.parquet). A near-maximum
+# rather than the true max: robust to a single-hour telemetry spike, not
+# softened by economic part-load (which compresses the mean, not the top
+# tail). Re-run the script and update this table when a new CAMPD year lands;
+# never hand-tune an entry to a backcast residual (CLAUDE.md rule #22).
+#
+# Plants whose demonstrated ceiling reached or exceeded nameplate (Oak Grove
+# 6180 p99=1.02, Coleto Creek 6178 p99=1.10, San Miguel 6183 p99=1.07) carry no
+# entry: their own CEMS record shows no sub-nameplate physical limit, so the
+# generic age-based availability model governs them unconstrained.
+COAL_MAX_CF_BY_PLANT: dict[int, float] = {
+    298: 0.95,  # Limestone
+    6179: 0.99,  # Fayette (Sam Seymour)
+    7097: 0.95,  # J K Spruce
+}
+
+# Forecast-mode monthly planned-maintenance shape (12 weights, Jan..Dec) per
+# plant group. Replaces the flat shoulder-POF heuristic (POF smeared uniformly
+# across _CC_SHOULDER_MONTHS = {3,4,5,10,11}) with the historically-derived
+# *timing* of spring/autumn maintenance learned from the CAMPD unit-outage
+# extracts (all six ISOs, 2023-2025 pooled — a forecast shape, NOT pinned to any
+# one backcast year). Each weight is the planned-maintenance excess over the
+# annual-minimum (forced-outage-floor) month, normalized to a month-length-
+# weighted mean of 1 (Sum w[m]*hours[m] = 8760). At apply time
+# (data.fleet.generators_to_fleet_arrays, FORECAST mode only) the per-hour
+# planned-maintenance derate is B_group * w[group][month], where the group's
+# annual POF budget B_group = POF * shoulder_hours / 8760 comes from
+# THERMAL_AVAILABILITY. Because w has a month-weighted mean of 1, the annual
+# planned-outage budget is conserved EXACTLY (Sum maint[m]*hours[m] =
+# POF*shoulder_hours) — only its seasonal distribution is sharpened from the
+# rigid 5-month block to the measured curve (peaks Apr/Oct-Nov, ~0 in the
+# Jul/Aug summer peak, modest in winter). This is methodology spec section 1.7's
+# documented forecast roadmap item and is distinct from the backcast historic
+# outage overlay (data/outages.py), which is untouched.
+# Derivation/verify: scripts/derive_maintenance_shape.py (reads the committed
+# data/raw/campd-unit-outages*.csv). Groups with too few observations (e.g.
+# CT_PEAKER — combustion turbines are excluded from the unit-outage detector)
+# fall back to the pooled all-thermal shape "_POOLED".
+MAINTENANCE_MONTHLY_SHAPE: dict[str, tuple[float, ...]] = {
+    "COAL": (
+        0.239,
+        1.125,
+        1.757,
+        1.923,
+        1.559,
+        0.568,
+        0.000,
+        0.174,
+        1.003,
+        1.442,
+        1.481,
+        0.772,
+    ),
+    "CC_REGULAR": (
+        0.608,
+        0.961,
+        1.765,
+        2.175,
+        1.591,
+        0.473,
+        0.000,
+        0.007,
+        0.449,
+        1.524,
+        1.554,
+        0.910,
+    ),
+    "CC_CHP": (
+        0.574,
+        0.851,
+        1.658,
+        2.217,
+        1.775,
+        0.516,
+        0.000,
+        0.072,
+        0.505,
+        1.736,
+        1.481,
+        0.623,
+    ),
+    "CT_PEAKER": (
+        0.581,
+        1.131,
+        1.719,
+        1.926,
+        1.499,
+        0.514,
+        0.000,
+        0.132,
+        0.731,
+        1.394,
+        1.478,
+        0.929,
+    ),
+    "CT_CHP": (
+        1.261,
+        1.336,
+        1.692,
+        2.107,
+        1.582,
+        0.874,
+        0.010,
+        0.000,
+        0.223,
+        0.787,
+        1.270,
+        0.907,
+    ),
+    "ST_GAS": (
+        1.136,
+        1.553,
+        1.567,
+        1.346,
+        1.140,
+        0.488,
+        0.000,
+        0.328,
+        0.882,
+        0.971,
+        1.314,
+        1.330,
+    ),
+    "ST_CHP": (
+        0.867,
+        0.949,
+        1.495,
+        1.576,
+        1.174,
+        0.337,
+        0.000,
+        0.427,
+        0.753,
+        1.831,
+        1.620,
+        0.975,
+    ),
+    # Pooled all-thermal fallback for sparse/excluded groups (e.g. CT_PEAKER).
+    "_POOLED": (
+        0.581,
+        1.131,
+        1.719,
+        1.926,
+        1.499,
+        0.514,
+        0.000,
+        0.132,
+        0.731,
+        1.394,
+        1.478,
+        0.929,
+    ),
+}
+
+# Carbon price trajectories ($/tCO2) by scenario path and year.
+# Source: RFF / state programs.
+CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
+    "zero": {2026: 0, 2030: 0, 2040: 0, 2050: 0},  # RFF — no carbon price
+    "low": {2026: 0, 2030: 8, 2040: 18, 2050: 25},  # RFF — low carbon price path
+    "mid": {2026: 0, 2030: 15, 2040: 35, 2050: 50},  # RFF — mid carbon price path
+    "high": {2026: 0, 2030: 30, 2040: 70, 2050: 110},  # RFF — high carbon price path
+}
