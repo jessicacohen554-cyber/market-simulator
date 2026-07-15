@@ -406,7 +406,7 @@ WAVE 2 (after Wave 1):
   RC-2B [FABLE] ⛔ per-ISO flip-recommendation memo                    (needs RC-1A, RC-2A,
                                                                        RC-1D)
 WAVE 3 (owner sign-off on RC-2B):
-  RC-3A [SONNET] flip commits + R4 anchor re-derivation + T1.7/tornado
+  RC-3A [OPUS]   flip commits + R4 anchor re-derivation + T1.7/tornado
                  re-runs + P-3D re-scores + verdict-table update trigger
 ```
 
@@ -414,6 +414,15 @@ Model assignment convention (same as the audit plan): SONNET for intake and scri
 compute, OPUS for design-heavy implementation and probe campaigns, FABLE for
 adjudication/verdict memos. Compute sessions obey rule 12 internally (years
 sequential; ≤2 concurrent invocations; per-plant multi-zone cap).
+
+> **AMENDED 2026-07-15 (owner order — CLAUDE.md rule 27).** After a Sonnet session
+> truncated `constants.py` (6,368 → 33 lines) and merged fragment "restores" onto
+> main, **no further session in this lane is assigned to Sonnet**: every remaining
+> session (RC-1E, RC-2A, RC-2B, RC-3A, and any repair/follow-up) runs on OPUS or
+> FABLE regardless of scope. The [SONNET] labels on already-executed sessions
+> (RC-0A, RC-1B, RC-1D) are historical record only. Rule 27's push-integrity
+> protocol (verify every ≥300-line pushed blob; no placeholder/partial commits of
+> existing source files) binds every session in this pack.
 
 **Standing constraints for every prompt (copied into each):** fresh branch off latest
 `origin/main`; findings-only sessions never tune; forecast probes and hindcasts
@@ -724,10 +733,10 @@ are BOTH wrong; recommend ON only where the probe showed the coupled system trac
 reality. Push via mcp__github__push_files.
 ```
 
-#### RC-3A [SONNET] — Flip execution + gated re-runs
+#### RC-3A [OPUS] — Flip execution + gated re-runs (reassigned from SONNET, rule 27)
 
 ```
-[SONNET] RC-3A — Execute the approved flips + the gated re-runs
+[OPUS] RC-3A — Execute the approved flips + the gated re-runs
 
 Read CLAUDE.md, the RC-2B memo + the owner's sign-off (do NOT start without it),
 docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.3 F-9, and
