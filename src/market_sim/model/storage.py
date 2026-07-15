@@ -965,13 +965,18 @@ def estimate_capacity_value(
     short-duration capacity value collapse at high penetration while
     long-duration storage retains its firm-capacity credit -- the mechanism
     that tilts new entry toward longer durations as storage saturates.
+
+    Note: ``year`` is accepted for signature symmetry with the runner's call
+    site but is currently unused -- per-delivery-year vintage resolution of
+    ``capacity_price_per_firm_mw_yr`` is deferred to a follow-up (RC-1B items
+    1/2/4); this call keeps the 2-arg form byte-identical to the pre-RC-1B
+    behavior.
     """
+    del year  # unused pending the vintage-resolution follow-up
     if not config.storage_capacity_value:
         return 0.0
     design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
-    base_price = design.capacity_price_per_firm_mw_yr(
-        config, reserve_position, iso=iso, year=year
-    )
+    base_price = design.capacity_price_per_firm_mw_yr(config, reserve_position)
     if base_price <= 0.0:
         return 0.0
 
@@ -1148,7 +1153,7 @@ def apply_storage_new_entry(
       (``ancillary.realized_storage_as_revenue_per_mw_yr``); the exogenous
       saturation rate is **not** added -- that would double-count.
     * endogenous **off** → the legacy/backcast-validation path: the calibrated
-      exogenous ``ancillary.as_revenue_per_mw_yr("storage", ...)`` is the sole AS
+      exogenous ``ancillary.as_revenue_per_mw_yr("storage", …)`` is the sole AS
       credit.
     """
     iso = iso.upper()
