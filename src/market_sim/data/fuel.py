@@ -1495,6 +1495,8 @@ def _caiso_hub_daily_gas_prices(
     basis_path: Path | None = None,
     henry_hub_path: Path | None = None,
     citygate_path: Path | None = None,
+    *,
+    spot_level: bool = False,
 ) -> np.ndarray | None:
     """CAISO daily-resolved citygate gas price ($/MMBtu), ``(hours,)``, or ``None``.
 
@@ -1524,6 +1526,27 @@ def _caiso_hub_daily_gas_prices(
     Returns ``None`` when the monthly hub series is unavailable (forward years,
     no basis rows), so :func:`apply_hub_basis_overlay` falls back to the flat
     monthly overlay. Backcast-only by construction (2023-2025 basis rows only).
+
+    ``spot_level`` (caiso-84, ``caiso_citygate_spot_level``;
+    FINDING-caiso-winter-gas-level-2026-07-15): when set, each month's LEVEL is
+    anchored to the **calendar-interpolated monthly mean of the measured daily
+    citygate series itself** rather than renormalized back to the
+    HH+N3050CA3-survey monthly level. The daily prints are placed on their true
+    calendar days and interpolated across the gaps exactly as in the default
+    path, but the resulting absolute daily $/MMBtu are used directly (not scaled
+    to the survey mean), so BOTH the within-month shape and the monthly level
+    come from the daily spot the marginal cost-based DEB actually bids at
+    (Jan-2023 monthly mean $16.1 vs the survey's $28.08). Months with no daily
+    quotes keep the survey monthly level unchanged (the ``else`` branch), so a
+    coverage gap never re-levels a month. Coverage is the SAME month-set as the
+    default path — a month reprices only where the survey basis row exists — so
+    ``spot_level`` is a pure LEVEL swap on the keeper's covered months, never a
+    coverage expansion (months the survey leaves uncovered, e.g. CAISO 2025
+    Sep-Nov with no basis row, stay on the base EIA-923 series exactly as in the
+    keeper). The N3050CA3 survey and the daily spot are both measured EIA
+    series; the marginal-offer representation requires the latter (rule 15), and
+    the +$0.46 citygate->plant transport is still layered on by the caller
+    (:func:`apply_hub_basis_overlay`).
     """
     monthly = iso_hub_monthly_gas_prices(config, year, basis_path, henry_hub_path)
     if monthly is None:
@@ -1536,27 +1559,40 @@ def _caiso_hub_daily_gas_prices(
         n_days = _DAYS_IN_MONTH[m]
         month_hours = n_days * 24
         hub_m = monthly[m]
+        # Covered on the SAME months as the default path (survey basis row
+        # present); spot_level only changes the LEVEL within them.
         if not np.isnan(hub_m) and hour < T:
             dated = citygate_dated.get(m + 1, {})
             if dated:
                 days = np.array(sorted(dated), dtype=float)
                 vals = np.array([dated[int(d)] for d in days], dtype=float)
-                mean = float(vals.mean())
-                if mean > 0:
-                    # Place each trading-day quote on its true calendar day and
-                    # interpolate the gaps (weekends/holidays inherit the
-                    # bracketing trading values), then renormalize so the
-                    # calendar-day factors average to exactly 1.0 — scaling the
-                    # monthly hub level by them stays exactly mean-preserving.
-                    day_factor = np.interp(np.arange(n_days), days - 1.0, vals / mean)
-                    fbar = float(day_factor.mean())
-                    if fbar > 0:
-                        day_factor = day_factor / fbar
-                    day_hub = hub_m * day_factor
+                if spot_level:
+                    # LEVEL + shape straight from the measured daily spot: place
+                    # each quote on its true calendar day and interpolate the
+                    # gaps, then use the absolute daily prices directly (NOT
+                    # renormalized to the survey monthly level). The month's mean
+                    # becomes the calendar-interpolated daily-spot mean.
+                    day_hub = np.interp(np.arange(n_days), days - 1.0, vals)
                 else:
-                    day_hub = np.full(n_days, hub_m)
+                    mean = float(vals.mean())
+                    if mean > 0:
+                        # Place each trading-day quote on its true calendar day
+                        # and interpolate the gaps (weekends/holidays inherit the
+                        # bracketing trading values), then renormalize so the
+                        # calendar-day factors average to exactly 1.0 — scaling
+                        # the monthly hub level by them stays mean-preserving.
+                        day_factor = np.interp(
+                            np.arange(n_days), days - 1.0, vals / mean
+                        )
+                        fbar = float(day_factor.mean())
+                        if fbar > 0:
+                            day_factor = day_factor / fbar
+                        day_hub = hub_m * day_factor
+                    else:
+                        day_hub = np.full(n_days, hub_m)
             else:
-                # No daily citygate quotes this month: keep the flat monthly hub.
+                # No daily citygate quotes this month: keep the flat monthly hub
+                # (the survey level under spot_level, unchanged).
                 day_hub = np.full(n_days, hub_m)
             shaped = np.repeat(day_hub, 24)[: max(0, T - hour)]
             out[hour : hour + len(shaped)] = shaped
@@ -1749,7 +1785,16 @@ def apply_hub_basis_overlay(
         return
     hourly: np.ndarray | None = None
     daily = False
-    if getattr(config, "gas_hub_basis_daily", False):
+    if (
+        getattr(config, "caiso_citygate_spot_level", False)
+        and config.iso.upper() == "CAISO"
+    ):
+        # caiso-84: level the overlay on the measured daily citygate SPOT series
+        # itself (both level and shape), not the N3050CA3 survey (see
+        # _caiso_hub_daily_gas_prices spot_level / caiso_citygate_spot_level).
+        hourly = _caiso_hub_daily_gas_prices(config, year, basis_path, spot_level=True)
+        daily = hourly is not None
+    elif getattr(config, "gas_hub_basis_daily", False):
         hourly = iso_hub_daily_gas_prices(config, year, basis_path)
         daily = hourly is not None
     if hourly is None:
