@@ -5,7 +5,7 @@
   "no_fit_to_price_residuals": true,
   "no_pinning_to_actuals": true,
   "outage_filter_exogenous_net_load": true,
-  "attested_by": "ercot66 storage-capability re-basis candidate gate, session 2026-07-15 (the summer-availability-audit lane). Registered NOT-YET; keeper unchanged (ercot63-gas-bridge).",
+  "attested_by": "ercot66 storage-capability re-basis keeper gate, session 2026-07-15 (the summer-availability-audit lane). Owner promotion APPROVED 2026-07-15 (interactive sign-off: 'Promote A-only' \u2014 rule-1/14 structural-faithfulness promotion accepting the honest NOT-YET) \u2014 supersedes ercot63-gas-bridge.",
   "note": "ERCOT-66 storage-capability re-basis candidate on the ercot63-gas-bridge keeper recipe (docs/DIAGNOSIS-ercot-summer-availability-audit-2026-07.md \u00a72). DOF LEDGER delta vs keeper: ZERO new free parameters \u2014 every new input is measured (disclosure non-OUT HSL, EIA-860 shares/durations) or structural (the LP's own co-opt split). Design-target verification: Aug 18-20 2024 VOLL saturation ELIMINATED (model max 4,999+shed -> no shed, window tracks actual 3,060); Jul 30-31 2025 phantom 1,944 -> ~251 vs actual 243; Aug 18-25 2025 amplitude 901 -> ~271-307 (14 marginal >$200 hours remain vs actual 0). C5b battery throughput toward measured; C5c monthly shape tracks the keeper. The 2024 C3a/C3b regression (-6.4% -> ~-14%) is the rule-14 exposure of pre-existing under-pricing (May -12.5, Nov -5.8, Apr -4.1 vs actual) previously offset by phantom scarcity \u2014 kept honest as NOT-YET; root-cause lane chartered. THIS BUNDLE: leg A only \u2014 measured capability with the keeper's measured-award AS stack (M1/M2/deployment) unchanged."
  },
  "exceptions": [
