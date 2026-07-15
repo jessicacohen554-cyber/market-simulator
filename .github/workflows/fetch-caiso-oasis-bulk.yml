@@ -6,6 +6,19 @@
 # early-2023 is gone from it; this reads the bulk archive instead. Requester-Pays
 # means download costs hit YOUR AWS account (pennies for the 3 hubs).
 #
+# RUN MANY INSTANCES AT ONCE. Each run downloads its own window into a private
+# staging dir (RUNNER_TEMP) and only touches the shared aggregates at push time,
+# where it hard-resets to the freshest `main`, drops its window CSVs in, and
+# re-folds. The fold (postprocess_oasis_downloads.py) is idempotent + dedup +
+# sorted, so every commit is built ON TOP OF the latest aggregates and a push
+# race just re-folds onto the newer tip — never the textual rebase conflict that
+# killed the old commit-then-rebase loop. So there is deliberately NO
+# `concurrency:` guard: fire one run per gap window in parallel and each lands.
+#
+# The staged window CSVs are also uploaded as a build artifact, so a run that
+# somehow exhausts its push retries loses nothing — re-commit from the artifact
+# instead of re-downloading (and re-paying) from S3.
+#
 # SECRETS REQUIRED (Settings -> Secrets and variables -> Actions):
 #   AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY   (a read-only IAM user)
 #   AWS_REGION  (optional; defaults to us-west-2)
@@ -42,6 +55,10 @@ jobs:
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION || 'us-west-2' }}
       BUCKET: s3://caiso-oasis-s3-prod-groupzips
+      # Private per-run staging dir for this run's extracted window CSVs. Lives
+      # under RUNNER_TEMP so it survives the `git reset --hard` in the push step
+      # and never collides with a sibling run's files.
+      STAGE: ${{ runner.temp }}/oasis-hubs
     steps:
       - uses: actions/checkout@v4
 
@@ -62,7 +79,9 @@ jobs:
       - name: Download group-zips + extract the 3 hubs (per day, low disk)
         run: |
           set -euo pipefail
-          OUT=data/raw/lmp-data/CAISO
+          # Extract into this run's private STAGE, NOT the repo working tree —
+          # the working tree is only touched at push time (below).
+          mkdir -p "$STAGE"
           TMP="$(mktemp -d)"
           d="${{ github.event.inputs.start }}"
           end="$(date -d '${{ github.event.inputs.end }}' +%Y%m%d)"
@@ -78,30 +97,64 @@ jobs:
             n="$(find "$TMP" -name '*.zip' | wc -l)"
             echo "$DAY: $n zip(s)"
             if [ "$n" -gt 0 ]; then
-              python scripts/extract_caiso_hubs.py --zip-dir "$TMP" --out-dir "$OUT"
+              python scripts/extract_caiso_hubs.py --zip-dir "$TMP" --out-dir "$STAGE"
             fi
             d="$(date -d "$d + 1 day" +%Y-%m-%d)"
           done
+          echo "--- staged window CSVs ---"
+          ls -la "$STAGE" || true
 
-      - name: Fold hubs into the hourly aggregates
-        run: python scripts/postprocess_oasis_downloads.py --stage-dir "$(mktemp -d)"
+      - name: Upload staged raws (survives a failed push; no S3 re-download)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: oasis-hubs-${{ github.run_id }}
+          path: ${{ runner.temp }}/oasis-hubs
+          if-no-files-found: ignore
+          retention-days: 7
 
-      - name: Commit + push aggregates
+      - name: Fold into the FRESHEST main, then commit + push (parallel-safe)
         run: |
           set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add data/raw/lmp-data/CAISO/CAISO_dam_hourly_*.csv \
-                  data/raw/lmp-data/CAISO/CAISO_rtm_hourly_*.csv
-          if git diff --cached --quiet; then
-            echo "no aggregate changes to commit"
+          BRANCH="${{ github.ref_name }}"
+          shopt -s nullglob
+          staged=("$STAGE"/*.csv)
+          if [ "${#staged[@]}" -eq 0 ]; then
+            echo "no window CSVs extracted; nothing to commit"
             exit 0
           fi
-          git commit -m "data(caiso): OASIS bulk hub LMP ${{ github.event.inputs.start }}..${{ github.event.inputs.end }} (run ${{ github.run_id }})"
-          for i in 1 2 3 4; do
-            git pull --rebase origin "${{ github.ref_name }}" && \
-            git push origin "HEAD:${{ github.ref_name }}" && exit 0
-            sleep $((i * 5))
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          # Conflict-free concurrent append. On EVERY attempt: hard-reset to the
+          # freshest remote tip, drop THIS run's window CSVs into the working
+          # tree, and re-fold. Because the fold is idempotent + dedup + sorted,
+          # the commit is always built on top of the latest aggregates; a push
+          # race just loops and re-folds onto an even-newer tip. No rebase, so no
+          # textual merge conflict is ever possible.
+          for i in $(seq 1 12); do
+            git fetch origin "$BRANCH"
+            git reset --hard FETCH_HEAD
+            # Clear any untracked leftovers from a prior attempt; tracked
+            # aggregates were just restored by the reset above.
+            git clean -fdq data/raw/lmp-data/CAISO/
+            cp "$STAGE"/*.csv data/raw/lmp-data/CAISO/
+            # Folds the window CSVs into the fresh aggregates and moves the
+            # window files out of the working tree (into a throwaway stage dir),
+            # so only the two aggregates are ever staged.
+            python scripts/postprocess_oasis_downloads.py --stage-dir "$(mktemp -d)"
+            git add data/raw/lmp-data/CAISO/CAISO_dam_hourly_*.csv \
+                    data/raw/lmp-data/CAISO/CAISO_rtm_hourly_*.csv
+            if git diff --cached --quiet; then
+              echo "aggregates already contain this window; nothing to commit"
+              exit 0
+            fi
+            git commit -m "data(caiso): OASIS bulk hub LMP ${{ github.event.inputs.start }}..${{ github.event.inputs.end }} (run ${{ github.run_id }})"
+            if git push origin "HEAD:$BRANCH"; then
+              echo "pushed on attempt $i"
+              exit 0
+            fi
+            echo "push raced on attempt $i; re-folding onto newer $BRANCH"
+            sleep $(( (RANDOM % 5) + i ))
           done
           echo "push failed after retries" >&2
           exit 1
