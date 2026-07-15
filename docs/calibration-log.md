@@ -13151,3 +13151,63 @@ sign-off; ERCOT registry pruned to keeper-and-later per the standing 2026-07-13
 owner directive (the ercot63 pair's registration removed; bundles remain
 committed as the archival record); `build_status.py` rebuilt status.js
 (ERCOT: NOT-YET); keeper-text auditor run post-swap.
+
+## 2026-07-15 — ERCOT-67: the May-2024/2025 under-pricing lane opened (owner ask: "prob outages we're maybe not capturing") — the measured thermal availability re-probed on the ercot66 base: it owns the May EVENT-DAY depth and nothing else; the broad under-pricing is the G-22 formation family; wholesale adoption still trades May for summer — NOT adopted; joint-completion charter handed off (ERCOT-68)
+
+**Task (owner, interactive).** Diagnose the exposed May-2024/2025 (and
+Nov/Apr-2024) broad under-pricing the ercot66 promotion surfaced; test the
+owner's outage hypothesis.
+
+**Prior record consulted first.** ERCOT-57 already measured the hypothesis:
+the statistical availability stack ran +1.5-4.1 GW too LOOSE across May 2-16
+2024, and the measured rescale cured May-2024 (-33.2% -> -1.6%) ON THE ercot56
+BASE — but collapsed summer-2023 (C3a -45.4%), whose fit rode the stack's
+summer over-derate as compensation for the missing commitment-thinness/G-22
+structure. Since then two of the compensated structures gained real mechanisms
+(ERCOT-63 bridge; ERCOT-66 storage re-basis — the ERCOT-58 round's leading
++2.4 GW component), so the re-probe on the new base was structurally
+indicated. Data first: `ercot-thermal-dam-availability.csv` re-derived citing
+the ERCOT-66 disclosure intake (rule 23) — Nov-Dec-2025 coverage closed,
+2023/2024 rows byte-identical, 2025 ratings restated on the full year.
+
+**Rule-16 throwaways (`_ercot67_ladder_probe.py`, single-year, never
+registered, deleted).** ercot66-keeper reconstruction + ONE delta
+(`ercot_thermal_dam_availability=True`):
+
+| probe | C3a | C3b | C3c | verdict |
+|---|---|---|---|---|
+| 2024 keeper (control) | -14.2% | 0.214 | 20h vs 68 | — |
+| 2024 + thermavail | -20.6% | 0.253 | 6h vs 68 | REJECTED as sole delta |
+| 2023 keeper (control) | -2.0% | 0.065 | 150h vs 311 | — |
+| 2023 + thermavail | -47.5% | 0.865 | 31h vs 311 | REJECTED as sole delta (Jun -27.4 / Jul -11.8 / Aug -125.1 / Sep -48.9 $/MWh vs actual — the 2023 summer formation still rides the statistical over-derate; the bridge and the storage re-basis did NOT fill that compensation) |
+
+**The 2024 anatomy is the adjudication.** May-2024 improves +$4.9
+(-12.4 -> -7.5 vs actual) but EIGHT other months worsen — Aug-2024 collapses
+-1.7 -> -10.0, Jan -4.9, Mar -3.6, Nov -8.5: the measured fleet is RICHER than
+the statistical stack in summer/winter, so those months still ride the
+phantom over-derate as compensation even on the post-bridge post-storage
+base. Daily decomposition splits May cleanly:
+
+* **May-8 (the event day): $85 -> $232 vs actual $346** — the availability
+  input owns the event-day depth (the owner's hypothesis CONFIRMED for the
+  event component; ~40% of the monthly gap).
+* **The ~8 DA-shoulder days (May 9/13/21/27/29/30..., each -$15..-31): moved
+  ZERO to the cent** — the already-forensically-filed G-22 DA-expressible
+  offer-formation family (May-2024 forensics; clock-artifact §2b/2c). Same
+  family as Nov-2024 (-5.8), Apr-2024 (-4.2), May-2025 (-6.7), the C3c-2024
+  under-tail (20 vs 68) and the never-formed winter-morning tails.
+
+**Disposition (rules 1/14/19).** One root cause, many symptoms: the model
+lacks the mechanism that forms price at MODERATE reserve levels (reality's
+DA-expressible scarcity/offer formation), and each month borrows a different
+compensation for it — summer borrows the statistical over-derate, May borrows
+nothing (hence under), the tail borrows the storage-basis error until
+ERCOT-66 removed it. The measured availability is rule-14 accurate data and
+its adoption remains mandatory-directionally — but ONLY jointly with the
+formation mechanism it currently compensates for (the ERCOT-58 filed
+completion, whose v3 market-faithful form — plan-only withholding +
+post-solve realized-room RTORPA — was rejected on a +2.4 GW supply-mix excess
+whose leading term the ercot66 keeper has since fixed). Handed off as the
+ERCOT-68 joint-completion charter (owner-issued run prompt, this session).
+No flag flips; keeper unchanged (`2026-07-15-ercot66-storage-rebasis`);
+probes deleted.
