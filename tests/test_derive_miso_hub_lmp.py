@@ -1,9 +1,12 @@
 """Tests for the MISO per-hub LMP reduction (scope decision D6).
 
 Builds a tiny staged fixture (one hub, three days straddling Feb 29 of a leap
-year) and checks the hour-of-year mapping onto the model's fixed non-leap
-8760-hour EST calendar, plus the hub -> model-zone map against the real
-staged files' vocabulary.
+year) and checks the hour-of-year mapping onto the model's chronological
+non-leap 8760-hour calendar — fixed Central STANDARD time, a constant -1 h
+from the reports' fixed-EST labels in every season (the 2026-07-15
+scoring-clock fix; previously the mapping was Central *prevailing*, which
+paired CST-month hours one real hour off) — plus the hub -> model-zone map
+against the real staged files' vocabulary.
 """
 
 import gzip
@@ -59,14 +62,17 @@ class TestDeriveMisoHubLmp(unittest.TestCase):
         self.assertEqual(len(frame), 2 * 24)
         self.assertTrue((frame["year"] == 2024).all())
 
-    def test_summer_hours_align_without_shift(self) -> None:
-        # July is CDT (UTC-5) == EST, so HE 1 is local midnight directly.
+    def test_summer_hours_shift_to_cst_like_winter(self) -> None:
+        # The calendar is fixed CST year-round, so July shifts exactly like
+        # February: HE 2 (01:00 EST = 00:00 CST) is the date's slot midnight.
+        # HE 1 (00:00 EST = 23:00 CST of the prior day) lands one slot before.
         _stage_fixture(dml.STAGE_DIR, 2024, "rt", ["2024-07-01"])
         frame = dml._market_frame(2024, "rt")
         by_hour = frame.set_index("hour")["price"]
-        jul01_local_midnight = sum((31, 28, 31, 30, 31, 30)) * 24
-        self.assertEqual(by_hour[jul01_local_midnight], 1.0)  # HE 1
-        self.assertEqual(by_hour[jul01_local_midnight + 23], 24.0)  # HE 24
+        jul01_slot_midnight = sum((31, 28, 31, 30, 31, 30)) * 24
+        self.assertEqual(by_hour[jul01_slot_midnight], 2.0)  # HE 2
+        self.assertEqual(by_hour[jul01_slot_midnight - 1], 1.0)  # HE 1
+        self.assertEqual(by_hour[jul01_slot_midnight + 22], 24.0)  # HE 24
 
     def test_jan1_first_hour_spills_into_prior_year(self) -> None:
         # Jan 1 HE 1 EST = Dec 31 23:00 CST -> local year - 1, hour 8759.
