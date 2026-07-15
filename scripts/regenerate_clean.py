@@ -66,6 +66,7 @@ DATATYPES: tuple[str, ...] = (
     "capacity-market-demand-curve",
     "capacity-market-auction-price",
     "capacity-market-elcc",
+    "capacity-market-avoidable-cost-rate",
     "transfer-constraint-binding",
 )
 
