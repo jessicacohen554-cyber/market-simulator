@@ -1838,3 +1838,4531 @@ CARBON_PRICE_PATHS: dict[str, dict[int, float]] = {
     "mid": {2026: 0, 2030: 15, 2040: 35, 2050: 50},  # RFF — mid carbon price path
     "high": {2026: 0, 2030: 30, 2040: 70, 2050: 110},  # RFF — high carbon price path
 }
+
+# State carbon-program allowance prices ($/tCO2, metric) by ISO and
+# calendar year. Each year is the simple average of the four quarterly
+# auction clearing prices (both programs clear each auction at one uniform
+# price, and quarterly volumes are near-equal, so the simple mean is the
+# volume-weighted mean to within cents). Backcasts charge this allowance
+# cost on every in-state fossil unit's marginal cost via
+# resolve_carbon_price (default-on; see ScenarioConfig.state_carbon_pricing).
+#
+# CAISO — CA cap-and-trade (CARB), $/metric ton as published.
+# Source: CARB "Summary of Auction Settlement Prices and Results" /
+#   CA-Quebec joint auction summary results reports (ww2.arb.ca.gov),
+#   cross-checked against the WCI auction price history.
+#   2023: Feb $27.85, May $30.33, Aug $35.20, Nov $38.73 -> $33.03
+#   2024: Feb $41.76, May $37.02, Aug $30.24, Nov $31.91 -> $35.23
+#   2025: Feb $29.27, May $25.87 (floor), Aug $28.76, Nov $28.32 -> $28.06
+# NYISO is a RGGI state: every in-state fossil unit surrenders one RGGI CO2
+# allowance per (short) ton emitted, so the auction clearing price enters
+# marginal cost exactly as the CARB allowance does for CAISO. Each year is the
+# simple average of that calendar year's four quarterly RGGI auction current-
+# control-period clearing prices (the auctions clear at one uniform price and
+# quarterly volumes are near-equal, so the simple mean is the volume-weighted
+# mean to the cent). At a ~0.37 tCO2/MWh gas-CC rate this adds ~$5/MWh (2023) to
+# ~$8/MWh (2025) — material to the NYISO price level though smaller than CA
+# cap-and-trade (doc-07 design decision 4). Source: RGGI, Inc. auction results
+# ("CO2 Allowances Sold for $X in the Nth RGGI Auction" press releases,
+# rggi.org/auctions/auction-results):
+#   2023: A59 (Mar) $12.50, A60 (Jun) $12.73, A61 (Sep) $13.85,
+#         A62 (Dec) $14.88 -> $13.49
+#   2024: A63 (Mar) $16.00, A64 (Jun) $21.03, A65 (Sep) $25.75,
+#         A66 (Dec) $20.05 -> $20.71
+#   2025: A67 (Mar) $19.76, A68 (Jun) $19.63, A69 (Sep) $22.25,
+#         A70 (Dec) $26.73 -> $22.09
+# Caveat: RGGI allowances are denominated per *short* ton CO2 while the model's
+# emission_rate_co2 is per *metric* tonne, so charging these prices against the
+# metric-tonne rate understates the true allowance cost by ~10.2% (1 t = 1.1023
+# short tons). The understatement is small and keeps each stored value an exact,
+# citable match to the published RGGI clearing prices; a future refinement can
+# scale by 1.1023 if winter price fidelity demands it. Like CAISO, RGGI carries
+# no border carbon adjustment on imports (contrast CARB's unspecified-import EF),
+# so the NYISO import node is unaffected.
+#
+# NEISO — the same RGGI auctions (all six New England states are RGGI
+# members, so the allowance cost applies ISO-wide; doc-08 design decision
+# 3), but stored CONVERTED to the model's $/metric-tonne emission-rate
+# unit at 1 short ton = 0.907185 t (x 1.10231):
+#   2023: $13.49/short ton -> $14.87/t
+#   2024: $20.71/short ton -> $22.83/t
+#   2025: $22.09/short ton -> $24.35/t
+# (Auction-level prices and source as the NYISO block above; press-release
+# URLs rggi.org/sites/default/files/Uploads/Auction-Materials/
+# {59..70}/PR*_Auction{59..70}.pdf, retrieved 2026-06-11.)
+# HARMONIZATION NOTE: NYISO (above) deliberately stores the published
+# short-ton clearing prices (exact citable match, ~10.2% understatement);
+# NEISO stores the metric-converted values (unit-exact MC). The two RGGI
+# entries should be unified one way or the other in a joint NYISO/NEISO
+# calibration pass.
+STATE_CARBON_PRICE_BY_ISO: dict[str, dict[int, float]] = {
+    "CAISO": {2023: 33.03, 2024: 35.23, 2025: 28.06},
+    "NYISO": {2023: 13.49, 2024: 20.71, 2025: 22.09},
+    "NEISO": {2023: 14.87, 2024: 22.83, 2025: 24.35},
+}
+
+# CARB default emission factor for unspecified-source imported electricity
+# (tCO2e/MWh). CAISO levies a border carbon adjustment on unspecified WECC
+# imports at this factor x the allowance price; applied to the WECC import
+# tranche prices (model/transmission.py::build_wecc_import_generators).
+# Source: CARB Mandatory GHG Reporting Regulation (MRR), 17 CCR §95111(b) —
+#   default emission factor for unspecified power, 0.428 MT CO2e/MWh.
+CARB_UNSPECIFIED_IMPORT_EF: float = 0.428
+
+
+# ---------------------------------------------------------------------------
+# Cap-and-trade / mass-cap program registry
+# ---------------------------------------------------------------------------
+# The economy-wide, multi-sector, banked allowance markets (CARB, RGGI) enter
+# dispatch as an *exogenous allowance-price adder* — measured in backcast,
+# projected forward — not as an endogenous power-only cap, because their real
+# clearing price is set by a banked multi-sector market this power model does
+# not contain (docs/handoffs/emissions-mass-cap-plan-2026-07.md §2). The
+# optional endogenous mass-cap *row* (dual = allowance price) faithfully
+# represents a power-sector-specific budget (EPA 111(d)/CSAPR or a user
+# scenario), NOT the RGGI/CARB market price. Both route carbon through the same
+# emission_rate x membership channel; the resolver (policy/cap_and_trade.py)
+# picks exactly one source per (program, ISO, year, solve).
+
+# Forward-year allowance-price escalation rates (nominal, per year). The
+# projected forecast adder anchors on the last realized clearing price
+# (STATE_CARBON_PRICE_BY_ISO) and escalates at the program's published
+# price-containment-band rate. This is an explicitly-labelled scenario
+# trajectory (a floor-band escalator), NOT a market-price forecast, and it is
+# never tuned to a residual (plan §7, §8; CLAUDE.md rule 1).
+#
+# CARB Auction Reserve (floor) price rises 5% + CPI annually (CA Cap-and-Trade
+# Regulation, 17 CCR §95911(c)(1)); ~2%/yr CPI-U → ~7%/yr nominal. CA prices
+# have hugged the floor+premium band, so the floor escalator is the natural
+# forecast trajectory for CAISO.
+CARB_FLOOR_ESCALATION: float = 0.07
+# RGGI Cost Containment Reserve (CCR) trigger price rises 7%/yr nominal
+# (RGGI 2017 Model Rule §5.3(c)); used as the forward escalation of the last
+# realized RGGI clearing price for NYISO/NEISO.
+RGGI_RESERVE_ESCALATION: float = 0.07
+
+# --- Named carbon-program price paths (P-1D: wires the previously-dead
+# ``ScenarioConfig.carbon_program_price_path`` field, CLAUDE.md rule 23) ---
+# An explicit, scenario-matrix alternative to the single default floor-band
+# escalator (:func:`market_sim.policy.cap_and_trade.projected_price`), in the
+# same spirit as the exogenous RFF :data:`CARBON_PRICE_PATHS` low/mid/high
+# scenario paths (an explicitly-labelled sensitivity axis, not a fitted value,
+# CLAUDE.md rule 1):
+#   "low"  — anchors on the program's own published REGULATORY FLOOR
+#            (:data:`CARB_FLOOR_PRICE`, CAISO-only — no RGGI floor-price
+#            series is landed in-repo) and escalates at CPI only
+#            (:data:`INFLATION_RATE`) — a lower bound where the market never
+#            clears above its floor with no real risk premium. RGGI ISOs fall
+#            back to "mid" (undocumented floor series -> no guessing).
+#   "mid"  — IDENTICAL to the default (``carbon_program_price_path=None``):
+#            anchors on the last measured clearing price and escalates at the
+#            program's own published reserve/CCR rate
+#            (:data:`CARB_FLOOR_ESCALATION` / :data:`RGGI_RESERVE_ESCALATION`).
+#   "high" — the same anchor, escalated at DOUBLE the published reserve rate
+#            — an explicit upper-bound sensitivity multiplier (no separate
+#            primary-sourced "high" trajectory exists for either program;
+#            multiplier documented here rather than invented as a fake data
+#            point).
+CARBON_PROGRAM_PRICE_PATH_ESCALATION_MULTIPLIER: dict[str, float] = {
+    "mid": 1.0,
+    "high": 2.0,
+}
+
+
+@dataclass(frozen=True)
+class CapAndTradeProgram:
+    """One ISO's cap-and-trade program definition (registry value).
+
+    Attributes:
+        name: Program label ("CARB" or "RGGI").
+        member_states: Postal codes of every state the program has ever
+            covered within this ISO's footprint (historical union — e.g. PJM
+            includes Virginia even though it exited 1 Jan 2024). Actual
+            year-by-year membership is resolved from
+            :data:`RGGI_MEMBER_STATES_BY_YEAR`, not this tuple directly;
+            this is the documentary / crosswalk reference other code
+            intersects against.
+        price_key: Key into :data:`STATE_CARBON_PRICE_BY_ISO` for the
+            measured backcast allowance price, and the anchor for the
+            forecast projection. ``None`` for a program with no measured
+            series in-repo (PJM).
+        escalation_rate: Nominal per-year forward escalation applied to the
+            last measured price to build the projected forecast adder.
+        external_nodes: Zone names that are priced import/external nodes,
+            not in-region load — excluded from membership (m_zone = 0).
+        zone_share: Optional per-zone, per-year RGGI-member fraction (0..1)
+            overriding the uniform-membership default, for multi-state
+            roll-up zones (PJM) whose fossil fleet spans member and
+            non-member states. Keyed ``{zone: {year: share}}`` because a
+            zone's member share can move year to year (Virginia's exit).
+            ``None`` → uniform membership (1.0 on every load zone). This is
+            the *zone-level* fallback; a generator with a real, resolvable
+            ``plant_code`` is instead tested exactly against its own plant's
+            state (per-unit membership,
+            ``policy.cap_and_trade.per_generator_membership``) — the
+            fractional share only applies where the fleet representation
+            can't resolve individual units to a single state (legacy
+            equal-width heat-rate bins, whose ``plant_code`` is synthetic).
+    """
+
+    name: str
+    member_states: tuple[str, ...]
+    price_key: str | None
+    escalation_rate: float
+    external_nodes: tuple[str, ...] = ()
+    zone_share: "dict[str, dict[int, float]] | None" = None
+
+
+# PJM's footprint straddles RGGI members (MD, DE, NJ; VA was a member through
+# 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA),
+# and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible
+# (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil
+# nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from
+# the year-matched EIA-860 plant/generator tables (state + capacity), the same
+# PJM zone assignment the dispatch model uses
+# (`data.zone_assignment.build_zone_lookup("PJM")`), and
+# `RGGI_MEMBER_STATES_BY_YEAR` (Virginia's 2024 exit is directly visible below:
+# PJM_Dominion — VA+NC — drops from ~0.99 to 0.0). Keyed by zone then year;
+# 2024 and 2025 share the same underlying EIA-860-vintage fleet snapshot up to
+# small year-over-year additions/retirements, so only the legal membership
+# differs from 2023. This is the *zone-level* fallback consumed only by
+# generators whose `plant_code` cannot be resolved to a single physical plant
+# (legacy equal-width bins); a real plant_code is tested exactly against its
+# own state instead (`policy.cap_and_trade.per_generator_membership`). Still
+# ships inert by default: PJM has no measured price series (`price_key=None`
+# below) so the adder path stays $0 regardless of membership, and the
+# mass-cap row only activates when a user explicitly sets
+# `mass_cap_enabled=True` (default off, rule 24).
+PJM_RGGI_ZONE_SHARE: dict[str, dict[int, float]] = {
+    "PJM_ComEd": {2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_AEP_Ohio": {2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_ATSI": {2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_West_APS": {2023: 0.0108, 2024: 0.0, 2025: 0.0},
+    "PJM_Central_PA": {2023: 0.0, 2024: 0.0, 2025: 0.0},
+    "PJM_Dominion": {2023: 0.9881, 2024: 0.0, 2025: 0.0},
+    "PJM_EMAAC": {2023: 0.7327, 2024: 0.7252, 2025: 0.7221},
+    "PJM_SWMAAC": {2023: 0.9976, 2024: 0.9976, 2025: 0.9976},
+}
+
+# ISO → cap-and-trade program. ERCOT and MISO have no program (no entry).
+CAP_AND_TRADE_PROGRAMS: dict[str, CapAndTradeProgram] = {
+    # CAISO ≈ California: whole-ISO CARB membership; WECC_import is external.
+    "CAISO": CapAndTradeProgram(
+        name="CARB",
+        member_states=("CA",),
+        price_key="CAISO",
+        escalation_rate=CARB_FLOOR_ESCALATION,
+        external_nodes=("WECC_import",),
+    ),
+    # NYISO ≡ New York, a RGGI state: whole-ISO membership.
+    "NYISO": CapAndTradeProgram(
+        name="RGGI",
+        member_states=("NY",),
+        price_key="NYISO",
+        escalation_rate=RGGI_RESERVE_ESCALATION,
+    ),
+    # NEISO ≡ the six New England states, all RGGI members: whole-ISO
+    # membership; HQ_import (Hydro-Québec) is an external priced node.
+    "NEISO": CapAndTradeProgram(
+        name="RGGI",
+        member_states=("CT", "ME", "MA", "NH", "RI", "VT"),
+        price_key="NEISO",
+        escalation_rate=RGGI_RESERVE_ESCALATION,
+        external_nodes=("HQ_import",),
+    ),
+    # PJM: partial RGGI membership via fractional per-zone share
+    # (PJM_RGGI_ZONE_SHARE). member_states is the historical union (VA
+    # included even though it exited 1 Jan 2024) — actual year membership
+    # comes from RGGI_MEMBER_STATES_BY_YEAR. Still inert by default: no
+    # measured price series (price_key=None) keeps the adder at $0, and the
+    # mass-cap row is opt-in (mass_cap_enabled, default off).
+    "PJM": CapAndTradeProgram(
+        name="RGGI",
+        member_states=("MD", "DE", "NJ", "VA"),
+        price_key=None,
+        escalation_rate=RGGI_RESERVE_ESCALATION,
+        zone_share=PJM_RGGI_ZONE_SHARE,
+    ),
+}
+
+# Short ton -> metric tonne. RGGI allowances are denominated in SHORT tons of
+# CO2 (1 allowance = 1 short ton), but the model's internal emission-rate mass
+# unit is the metric tonne (data/fleet.py: "the model's internal emission-rate
+# mass unit"), so a RGGI budget must be converted before it becomes a mass-cap
+# row RHS. 1 short ton = 907.18474 kg (NIST HB 44).
+SHORT_TON_TO_METRIC_TONNE: float = 0.90718474
+
+# Power-sector CO2 mass-cap budgets for the OPTIONAL endogenous mass-cap row
+# (mass_cap_enabled, default OFF). These mirror the cited raw schedules under
+# data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/ (curated to
+# data/clean/ via scripts/curate_*.py; the clean tree is gitignored so the
+# authoritative in-repo value lives here, same intake discipline as
+# STATE_CARBON_PRICE_BY_ISO). A row built from a budget here is a power-sector,
+# no-bank SCENARIO instrument (plan §2, §8) — NOT the RGGI/CARB market price,
+# which is set by a banked, multi-sector market this power model does not
+# contain (that faithful representation is the measured/projected adder above).
+# Because these region-/economy-wide budgets vastly exceed any single modeled
+# ISO's power-sector emissions, the row is (correctly) slack and its dual ~0 for
+# a real ISO — the mechanism is validated on the trivial binding fixture
+# (tests/test_dispatch.py::TestMassCapConstraint), not by binding here. NO 2022
+# or H1-2026 rows (holdout quarantine, CLAUDE.md rule 22).
+
+# California GHG annual allowance budget (MMT CO2e/yr; 1 CA GHG allowance = 1
+# metric tonne CO2e). Declines per the Scoping Plan trajectory. This is the
+# whole-economy CARB cap (electricity + industry + fuels), so a CAISO
+# power-sector row against it is deeply slack.
+# Source: CARB Cap-and-Trade Regulation, 17 CCR §95841 Table 6-2 (annual
+# allowance budgets 2021-2031). 2022 and 2026 omitted (holdout quarantine).
+CARB_ALLOWANCE_BUDGET: dict[int, float] = {
+    2023: 294.1,
+    2024: 280.7,
+    2025: 267.4,
+    2027: 240.6,
+    2028: 227.3,
+    2029: 213.9,
+    2030: 200.5,
+    2031: 193.8,
+}
+# CARB Auction Reserve (floor) price by year ($/tonne), rising 5% + CPI per
+# §95911(c). Landed as the cited floor-band artifact; the CAISO forecast adder
+# escalator lives in CARB_FLOOR_ESCALATION above.
+# Source: CARB Annual Auction Reserve Price Notices, 2023-2025.
+CARB_FLOOR_PRICE: dict[int, float] = {
+    2023: 22.21,
+    2024: 24.04,
+    2025: 25.94,
+}
+# RGGI member states by year (postal codes). Virginia joined RGGI's CO2 Budget
+# Trading Program in 2021 (regulation 9 VAC 5-140) and exited effective 1 Jan
+# 2024 (2023 Va. Acts of Assembly ch. 2/3, repealing the program); Pennsylvania's
+# entry remains enjoined by the Commonwealth Court (Shirkey v. DEP, ongoing) and
+# was never an actual member, so PA is never included. Used to (a) resolve
+# per-generator RGGI membership exactly from a plant's own state (§5 per-unit
+# mask) and (b) sum each RGGI ISO's own member-state budgets (below) instead of
+# the regional over-bound. 2022 omitted (holdout quarantine, CLAUDE.md rule 22);
+# years beyond 2025 hold the 2025 (post-VA-exit) set — no further membership
+# changes are enacted as of this writing.
+# Source: RGGI, Inc. participating-states list (rggi.org/program-overview-and-
+# design/elements); Virginia Clean Economy and Equity Act repeal, effective
+# 2024-01-01.
+RGGI_MEMBER_STATES_BY_YEAR: dict[int, frozenset[str]] = {
+    2023: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ", "VA"}),
+    2024: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
+    2025: frozenset({"NY", "CT", "MA", "ME", "NH", "RI", "VT", "MD", "DE", "NJ"}),
+}
+
+# RGGI CO2 allowance budgets (short tons/yr), regional ("RGGI") and per
+# member-state (postal code). Per-state values are each state's "CO2 Allowance
+# Base Budget" — the gross annual issuance under its own CO2 Budget Trading
+# Program regulation, BEFORE the Third Adjustment for Banked Allowances (TABA,
+# a bank-clearing haircut) — because this model's row is an explicitly no-bank
+# instrument (plan §8); using the (smaller) bank-adjusted budget would smuggle
+# banked-market scarcity into a mechanism defined not to have one. A RGGI ISO's
+# power-sector row sums its own member states' base budgets
+# (policy/cap_and_trade.py::_published_power_sector_budget), which is a much
+# tighter, more faithful bound than the regional total (rule 12: prefer the
+# accurate figure). "RGGI" is kept as the regional fallback for years without a
+# per-state breakdown (2027-2030 projections) or an unmapped ISO.
+# 2023-2025: exact per-state and regional totals from RGGI, Inc.'s official
+# "Distribution of VYyyyy CO2 Allowances By State" spreadsheets ("CO2 Allowance
+# Base Budget" column), rggi.org/sites/default/files/Uploads/Allowance-Tracking/
+# {2023,2024,2025}_Allowance-Distribution.xlsx (release date 2026-06-23); this
+# replaces the prior ICAP-ETS-profile regional estimate (93.0M/69.0M/67.0M) with
+# the primary source's exact totals (112,457,784 / 84,162,784 / 81,347,784).
+# 2027-2030 regional-only: 2021 Model Rule ~2.9%/yr decline (a labelled forward
+# trajectory, not measured); no per-state breakdown is published for projected
+# years, so a RGGI ISO's forecast-year row falls back to this regional
+# over-bound (documented, still slack). 2022/2026 omitted (rule 22 quarantine).
+RGGI_STATE_CO2_BUDGET: dict[str, dict[int, float]] = {
+    "RGGI": {
+        2023: 112_457_784.0,
+        2024: 84_162_784.0,
+        2025: 81_347_784.0,
+        2027: 63_200_000.0,
+        2028: 61_400_000.0,
+        2029: 59_600_000.0,
+        2030: 57_900_000.0,
+    },
+    "CT": {2023: 4_566_218.0, 2024: 4_418_921.0, 2025: 4_271_624.0},
+    "DE": {2023: 3_178_264.0, 2024: 3_075_739.0, 2025: 2_973_215.0},
+    "ME": {2023: 2_569_587.0, 2024: 2_487_656.0, 2025: 2_405_725.0},
+    "MD": {2023: 15_772_679.0, 2024: 15_263_882.0, 2025: 14_755_086.0},
+    "MA": {2023: 11_220_454.0, 2024: 10_858_504.0, 2025: 10_496_554.0},
+    "NH": {2023: 3_723_549.0, 2024: 3_604_823.0, 2025: 3_486_098.0},
+    "NJ": {2023: 16_380_000.0, 2024: 15_840_000.0, 2025: 15_300_000.0},
+    "NY": {2023: 27_295_284.0, 2024: 26_414_791.0, 2025: 25_534_298.0},
+    "RI": {2023: 1_763_884.0, 2024: 1_706_986.0, 2025: 1_650_085.0},
+    "VT": {2023: 507_865.0, 2024: 491_482.0, 2025: 475_099.0},
+    # Virginia: 2023 only (exited 1 Jan 2024, RGGI_MEMBER_STATES_BY_YEAR above).
+    "VA": {2023: 25_480_000.0},
+}
+
+# Storage technology parameters.
+# Source: NREL ATB 2024 (li-ion), DOE LDES Liftoff (iron-air).
+STORAGE_TECHS: dict[str, dict[str, float]] = {
+    "li_ion_4hr": {  # NREL ATB 2024 — 4-hour lithium-ion battery
+        "duration_hr": 4,
+        "rte": 0.86,
+        "cycles": 5000,
+        "capex_per_kw": 1140.0,  # was 1380. ~$285/kWh × 4hr. NREL ATB 2024b, BNEF 2025.
+        "capex_per_kwh": 285.0,  # was 345. LFP pack costs ~$100/kWh + BOS.
+        "fom_per_kw_yr": 30.0,  # was 34.5.
+        "learning_rate": 0.18,
+    },
+    "li_ion_8hr": {  # NREL ATB 2024 — 8-hour lithium-ion battery
+        "duration_hr": 8,
+        "rte": 0.86,
+        "cycles": 5000,
+        "capex_per_kw": 2280.0,  # was 2760. $285/kWh × 8hr.
+        "capex_per_kwh": 285.0,  # was 345.
+        "fom_per_kw_yr": 48.0,  # was 55.2.
+        "learning_rate": 0.18,
+    },
+    "iron_air": {  # DOE LDES Liftoff — 100-hour iron-air battery
+        "duration_hr": 100,
+        "rte": 0.50,
+        "cycles": 3000,
+        "capex_per_kw": 2000.0,
+        "capex_per_kwh": 20.0,
+        "fom_per_kw_yr": 20.0,
+        "learning_rate": 0.10,
+    },
+    # Additional long-duration storage technologies. ``capex_per_kw`` is the
+    # total capital per kW of power (energy capex × duration + power capex),
+    # matching the convention of the li-ion / iron-air entries above.
+    "li_ion_12hr": {  # NREL ATB 2024 — 12-hour lithium-ion battery
+        "duration_hr": 12,
+        "rte": 0.78,  # lower RTE at longer duration. NREL ATB 2024
+        "cycles": 4000,
+        "capex_per_kw": 3100.0,  # was 3560. $240/kWh × 12hr + $220/kW.
+        "capex_per_kwh": 240.0,  # was 280.
+        "fom_per_kw_yr": 10.0,  # was 12.0.
+        "learning_rate": 0.15,  # BNEF lithium-ion learning curve 2024
+        "lifetime_yr": 20,
+    },
+    "flow_battery": {  # PNNL 2023 — vanadium redox flow battery
+        "duration_hr": 10,
+        "rte": 0.70,  # vanadium redox. PNNL 2023 flow battery review
+        "cycles": 15000,  # long cycle life — major advantage. PNNL 2023
+        "capex_per_kw": 4700.0,  # 350 $/kWh × 10 h + 1200 $/kW. PNNL 2023
+        "capex_per_kwh": 350.0,
+        "fom_per_kw_yr": 15.0,
+        "learning_rate": 0.10,
+        "lifetime_yr": 25,
+    },
+    "compressed_air": {  # NREL ATB 2024 — adiabatic compressed-air storage
+        "duration_hr": 8,
+        "rte": 0.55,  # adiabatic CAES. NREL ATB 2024
+        "cycles": 10000,
+        "capex_per_kw": 2700.0,  # 150 $/kWh × 8 h + 1500 $/kW. NREL ATB 2024
+        "capex_per_kwh": 150.0,
+        "fom_per_kw_yr": 10.0,
+        "learning_rate": 0.05,  # mature concept, limited recent deployment
+        "lifetime_yr": 40,  # Huntorf plant operating since 1978
+    },
+}
+
+# Storage power capacity (MW) for the base year (2026).
+# Subsequent years grow via economics-based new entry, not this constant.
+# Source: ERCOT Monthly Dec 2025 — battery capacity ~17 GW.
+# CAISO TPP 2024 — ~8 GW operational + under construction.
+# PJM/MISO/NYISO/NEISO — EIA-860 2025 Early Release energy-storage schedule
+# (data/raw/eia-860/eia860_energy_storage_operable.parquet +
+# ..._proposed.parquet), plants assigned to each ISO by balancing-authority
+# code (eia860_plant.parquet "Balancing Authority Code" joined on Plant Code —
+# the zone_assignment._ISO_TO_BA_CODE crosswalk, not a raw state filter, since
+# MISO/PJM member utilities split several states e.g. Illinois). mid = operable
+# Status="OP" nameplate MW; high = mid + proposed-schedule Status in
+# {U, V, TS} ("under construction" through "complete, not yet commercial"),
+# matching CAISO's "operational + under construction" definition above;
+# low = mid x 0.75 (CAISO's own low/mid ratio), rounded to the nearest 10 MW.
+STORAGE_BASE_FLEET_MW: dict[str, dict[str, float]] = {
+    "ERCOT": {
+        "low": 12_000.0,
+        "mid": 17_000.0,
+        "high": 25_000.0,
+    },
+    "CAISO": {
+        "low": 6_000.0,
+        "mid": 8_000.0,
+        "high": 12_000.0,
+    },
+    "PJM": {
+        "low": 380.0,
+        "mid": 500.0,
+        "high": 870.0,
+    },
+    "MISO": {
+        "low": 600.0,
+        "mid": 800.0,
+        "high": 1_440.0,
+    },
+    "NYISO": {
+        "low": 190.0,
+        "mid": 250.0,
+        "high": 280.0,
+    },
+    "NEISO": {
+        "low": 580.0,
+        "mid": 770.0,
+        "high": 1_280.0,
+    },
+}
+
+# Ceiling on total deployed storage power (MW) per ISO, capping cumulative
+# new entry at a realistic share of system peak demand. Each value is roughly
+# half of the ISO's coincident peak — the share studies put at the point where
+# incremental storage capacity value falls off sharply.
+STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
+    "ERCOT": 45_000.0,  # ~53% of ~85 GW peak. Source: ERCOT CDR
+    "CAISO": 25_000.0,  # ~52% of ~48 GW peak. Source: CAISO IEPR
+    "PJM": 75_000.0,  # ~50% of ~150 GW peak. Source: PJM Load Forecast Report 2024
+    "NYISO": 16_000.0,  # ~50% of ~32 GW peak. Source: NYISO Gold Book 2024
+    "NEISO": 13_000.0,  # ~50% of ~26 GW peak. Source: ISO-NE CELT Report 2024
+}
+
+# Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP queue data,
+# eastern-ISO interconnection-queue throughput.
+STORAGE_ANNUAL_BUILD_CAP_MW: dict[str, float] = {
+    "ERCOT": 5_000.0,
+    "CAISO": 3_000.0,
+    "PJM": 4_000.0,  # large queue but slower interconnection. Source: PJM queue 2024
+    "NYISO": 1_500.0,  # Source: NYISO interconnection queue 2024
+    "NEISO": 1_200.0,  # Source: ISO-NE interconnection queue 2024
+}
+
+# Cap on the share of one year's storage build budget that any single
+# technology may take. Below 1.0 the annual build diversifies across the
+# profitable technologies in merit order rather than the top-margin tech
+# monopolizing the whole budget (the "winner-take-all" failure mode).
+# Source: modeling assumption — interconnection queues and supply chains
+# spread build across durations even when one tech leads on margin.
+STORAGE_TECH_BUILD_SHARE_CAP: float = 0.6
+
+# Share of deployed storage power by technology type.
+# Source: NREL ATB 2024 technology mix assumptions.
+STORAGE_TECH_POWER_SHARE: dict[str, float] = {
+    "li_ion_4hr": 0.70,
+    "li_ion_8hr": 0.25,
+    "iron_air": 0.05,
+}
+
+
+# --- Storage capacity / resource-adequacy value, by market design ---------
+#
+# The storage new-entry screen stacks two value streams: energy arbitrage
+# (every market) and resource-adequacy capacity value (only markets that pay
+# for capacity). ERCOT is energy-only — scarcity value already flows through
+# the energy price via ORDC/VOLL — so its capacity stream is OFF. The capacity
+# markets (PJM/NYISO/ISO-NE) and CAISO's RA program pay a separate capacity
+# price, so theirs is ON. Toggling ``capacity_market`` per ISO keeps the screen
+# modular as market designs diverge.
+
+
+@dataclass(frozen=True)
+class CapacityDemandCurvePoint:
+    """One point on a normalized (dimensionless) capacity demand curve.
+
+    ``reserve_ratio`` is the accredited firm capacity as a fraction of the
+    published reliability requirement (``accredited_firm_capacity_mw /
+    requirement_mw``; 1.0 = exactly at the requirement).
+    ``price_frac_net_cone`` is the capacity price at that reserve position as
+    a *multiple of net-CONE* (1.0 = net-CONE, 0.0 = zero-cross, > 1.0 = the
+    price cap / shortage region). Points are ordered left-to-right by
+    ``reserve_ratio`` and the curve is monotone non-increasing in it.
+    """
+
+    reserve_ratio: float
+    price_frac_net_cone: float
+
+
+def evaluate_demand_curve(
+    points: "tuple[CapacityDemandCurvePoint, ...]", reserve_position: float
+) -> float:
+    """Piecewise-linear value of a normalized capacity demand curve.
+
+    ``points`` are ordered left-to-right by ``reserve_ratio`` (ascending). The
+    return is the capacity price as a *fraction of net-CONE* at
+    ``reserve_position``, linearly interpolated between the two bracketing
+    points and **flat-extrapolated** past both ends — so below the leftmost
+    point the price clamps to the cap (the highest fraction) and above the
+    rightmost point it clamps to the zero-cross value (0.0 for every published
+    curve). Returns ``0.0`` for an empty curve. Pure Python (no numpy) so the
+    config layer keeps its light import surface.
+    """
+    if not points:
+        return 0.0
+    x = float(reserve_position)
+    if x <= points[0].reserve_ratio:
+        return points[0].price_frac_net_cone
+    if x >= points[-1].reserve_ratio:
+        return points[-1].price_frac_net_cone
+    for lo, hi in zip(points, points[1:]):
+        if lo.reserve_ratio <= x <= hi.reserve_ratio:
+            span = hi.reserve_ratio - lo.reserve_ratio
+            if span <= 0.0:
+                return lo.price_frac_net_cone
+            frac = (x - lo.reserve_ratio) / span
+            return lo.price_frac_net_cone + frac * (
+                hi.price_frac_net_cone - lo.price_frac_net_cone
+            )
+    return points[-1].price_frac_net_cone  # unreachable; satisfies type checkers
+
+
+@dataclass(frozen=True)
+class MarketDesign:
+    """Storage revenue-stack switches and parameters for one ISO/market.
+
+    ``capacity_market`` gates the resource-adequacy value stream entirely.
+    ``net_cone_per_kw_yr`` is the marginal cost of new entry of the capacity
+    resource the market prices against (the FIXED clearing-price anchor), in
+    $/kW-yr. A storage unit earns ``net_cone × ELCC(duration) × derate`` of it,
+    where the ELCC (effective load-carrying capability) credit rises with
+    duration and the derate falls as storage saturates the peak.
+
+    **CR-1 sloped demand curve (default-off).** When
+    ``ScenarioConfig.capacity_market_clearing`` is on and this ISO carries a
+    published ``demand_curve``, the fixed price is replaced by the market's own
+    net-CONE-anchored sloped curve evaluated at the system's accredited reserve
+    position — ``VRR(reserve_position) × net_cone_curve_per_kw_yr`` (see
+    :meth:`capacity_price_per_firm_mw_yr`). The curve is the normalized,
+    dimensionless shape (:class:`CapacityDemandCurvePoint`); the $ level is
+    ``net_cone_curve_per_kw_yr`` (the PUBLISHED net-CONE, distinct from the
+    legacy ``net_cone_per_kw_yr`` fixed anchor so the default path stays
+    byte-identical until the P-2A default flip reconciles the two). Every curve
+    number traces to the P-0B ``capacity-market-demand-curve`` datatype
+    (``data/raw/capacity-market/demand-curve``); the reconciliation is asserted
+    in ``tests/test_capacity_demand_curve.py`` (rule 13 — published input, never
+    a fit target).
+    """
+
+    capacity_market: bool
+    net_cone_per_kw_yr: float = 0.0
+    # CR-1 sloped demand curve (normalized (reserve_ratio, price/net-CONE)
+    # points, ascending reserve_ratio); empty ⇒ no published curve, fixed
+    # fallback. ``net_cone_curve_per_kw_yr`` is the PUBLISHED net-CONE anchor
+    # the curve scales (kept separate from the legacy fixed anchor above for
+    # default byte-identity). ``demand_curve_delivery_year`` / ``_source`` are
+    # provenance for the reconciliation test + docs.
+    demand_curve: tuple[CapacityDemandCurvePoint, ...] = ()
+    net_cone_curve_per_kw_yr: float = 0.0
+    demand_curve_delivery_year: str = ""
+    demand_curve_source: str = ""
+
+    def capacity_price_per_firm_mw_yr(
+        self,
+        config: "object | None" = None,
+        reserve_position: "float | None" = None,
+    ) -> float:
+        """Capacity clearing price in $/firm-MW-yr — the shared seam (rule 19).
+
+        All three capacity screens (retirement, thermal entry, storage entry)
+        price adequacy through this one function, then apply their own
+        accreditation (thermal ``× (1 − EFORd)``; storage ``× ELCC × derate``),
+        so there is one curve per ISO and no screen-specific curves.
+
+        Two modes:
+
+        * **Fixed** (default, and whenever the curve gate is off, the ISO has
+          no published curve, or no ``reserve_position`` is supplied): the flat
+          ``net_cone_per_kw_yr × 1000``, byte-identical to the pre-CR-1 stub.
+        * **Curve** (CR-1): when ``config.capacity_market_clearing`` is on, this
+          ISO has a published ``demand_curve``, and a ``reserve_position``
+          (accredited firm capacity ÷ the shared adequacy requirement) is
+          supplied — ``VRR(reserve_position) × net_cone_curve_per_kw_yr × 1000``,
+          where ``VRR`` is the normalized sloped curve
+          (:func:`evaluate_demand_curve`).
+
+        Energy-only ISOs (``capacity_market`` False — ERCOT and any ISO absent
+        from :data:`MARKET_DESIGN`) return ``0.0`` in **both** modes.
+        ``config`` is duck-typed via ``getattr`` so the config layer needs no
+        import of :class:`ScenarioConfig`.
+        """
+        if not self.capacity_market:
+            return 0.0
+        if (
+            reserve_position is not None
+            and self.demand_curve
+            and config is not None
+            and getattr(config, "capacity_market_clearing", False)
+        ):
+            anchor = self.net_cone_curve_per_kw_yr or self.net_cone_per_kw_yr
+            frac = evaluate_demand_curve(self.demand_curve, float(reserve_position))
+            return frac * anchor * 1000.0
+        if self.net_cone_per_kw_yr <= 0.0:
+            return 0.0
+        return self.net_cone_per_kw_yr * 1000.0
+
+
+# --- CR-1 sloped capacity demand curves (normalized) ----------------------
+#
+# Each ISO's published capacity demand curve, reduced to the dimensionless
+# (reserve_ratio, price/net-CONE) shape the CR-1 mechanism evaluates at the
+# model's own accredited reserve position (accredited_firm_capacity_mw /
+# requirement_mw; 1.0 = at the requirement). Consumed only when
+# ScenarioConfig.capacity_market_clearing is on (default off). Every number
+# traces to the P-0B capacity-market-demand-curve datatype
+# (data/raw/capacity-market/demand-curve/<iso>/<iso>.csv); the reconciliation
+# is asserted in tests/test_capacity_demand_curve.py (rule 13 — published
+# market-design input, never a fit target). The $ level each curve scales is
+# MarketDesign.net_cone_curve_per_kw_yr (the PUBLISHED net-CONE), kept distinct
+# from the legacy fixed net_cone_per_kw_yr so the default path is byte-identical
+# until the P-2A default flip reconciles them.
+#
+# PJM 2026/2027 RPM BRA (the current published curve with a full cap/net-CONE/
+# zero triple). x = pct_of_requirement curve points (0.99, 1.015, 1.045);
+# y-fractions: cap = price_cap/net_cone = 329.17/212.14 = 1.5517 (both
+# $/MW-day, so the ratio is basis-independent), the middle point is Net CONE by
+# PJM Manual 18 §3.4 construction (1.0), the third point is the published
+# zero-cross (y=0). Net-CONE anchor 77.431 $/kW-yr — the published UCAP net-CONE
+# 212.14 $/MW-day × 365 / 1000 (the demand-curve reference the VRR curve is
+# drawn around, and the basis the auction clears in). P-2B Option A anchor
+# re-derivation (R1, accreditation-basis memo 2026-07-12 §4.2): supersedes the
+# legacy 60.396 $/kW-yr (60,396 $/MW-yr ICAP-annual row), which mis-scaled the
+# UCAP-cleared curve by PJM's ~0.78 ICAP↔UCAP factor (P-2A Pass-1B uniform
+# −22%). Both figures are on disk in the same 2026/27 net_cone rows.
+_PJM_VRR_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(0.99, 1.5517),  # price cap (329.17/212.14)
+    CapacityDemandCurvePoint(1.015, 1.0),  # Net CONE reference point
+    CapacityDemandCurvePoint(1.045, 0.0),  # zero-cross (published y=0)
+)
+# NYISO 2025-2026 ICAP demand curve, NYCA (system) locality, modeled ANNUALLY
+# (the ISO clears monthly; CR-3 adds the seasonal split). The curve is a single
+# straight line: net-CONE at the requirement, zero at the requirement + the
+# published 12% "Demand Curve Length" (zero-cross 1.12), extended left to the
+# maximum clearing price. Cap fraction = summer max/reference-point =
+# 21.69/5.72 = 3.792 (both $/kW-month, so basis-independent); its reserve
+# position (0.665) is where that fraction meets the reference→zero line. The
+# reference point is placed at net-CONE (frac 1.0) at the requirement — the
+# documented annual reduction of NYISO's seasonal reference-point prices.
+# Net-CONE anchor 50.55 $/kW-yr (NYCA Annual Reference Value).
+_NYISO_ICAP_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(0.665, 3.792),  # max clearing price (21.69/5.72)
+    CapacityDemandCurvePoint(1.0, 1.0),  # reference point = Net CONE
+    CapacityDemandCurvePoint(1.12, 0.0),  # zero (100% + 12% curve length)
+)
+# ISO-NE FCA/MRI curve, modeled ANNUALLY. Price levels from FCA 18 (2027/2028):
+# cap = starting price/net-CONE = 14.525/9.078 = 1.600 ($/kW-month, ratio
+# basis-independent); net-CONE at the requirement (1.0). The reserve-position
+# geometry is taken from the last FCA that published explicit curve points
+# (FCA 11, 2020/2021, in MW): its Net ICR (where price = that year's net-CONE
+# 11.64) ≈ 34,217 MW, so the cap plateau end (33,457 MW) is 0.978 and the
+# zero-cross (37,053 MW) is 1.083 of the requirement. A first-order linear
+# reduction of the MRI slope (skips FCA 11's interior kink); refined in CR-3.
+# Net-CONE anchor 108.94 $/kW-yr (9.078 $/kW-month × 12).
+_NEISO_FCA_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(0.978, 1.600),  # starting price (14.525/9.078)
+    CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
+    CapacityDemandCurvePoint(1.083, 0.0),  # zero-cross (FCA 11 geometry)
+)
+# MISO seasonal PRA reliability-based demand curve (RBDC), modeled ANNUALLY
+# (CR-3 adds the four-season split). The P-0B intake captured MISO's CONE
+# levels and PRA clearing OUTCOMES but not the RBDC's own shape parameters, so
+# only the price levels are data-derived: net-CONE at the requirement (1.0);
+# cap = North/Central gross CONE / net CONE ≈ 127,361 / 79,800 = 1.596 (annual
+# $/MW-yr; the RBDC caps at gross CONE). The cap (0.97) and zero-cross (1.05)
+# reserve positions are FIRST-ORDER representative values (documented, not
+# claimed as published — the seasonal RBDC parameters land in CR-3), so the
+# reconciliation test asserts only the net-CONE anchor and the cap fraction.
+# Net-CONE anchor 79.8 $/kW-yr (North/Central Net CONE, 79,800 $/MW-yr).
+_MISO_RBDC_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(0.97, 1.596),  # ≈ gross/net CONE (RBDC cap)
+    CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
+    CapacityDemandCurvePoint(1.05, 0.0),  # zero-cross (first-order, CR-3)
+)
+
+# Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARKET_DESIGN``
+# (energy-only) so a new ISO is conservative until its capacity rules are added.
+MARKET_DESIGN: dict[str, MarketDesign] = {
+    # Energy-only: scarcity is monetized through the energy price, not a
+    # separate capacity payment. Source: ERCOT market design (ORDC).
+    "ERCOT": MarketDesign(capacity_market=False),
+    # RA program with a soft capacity price — no centralized auction/demand
+    # curve, so CAISO keeps the FIXED proxy in BOTH modes (documented
+    # low-fidelity member of the registry, CR-1 §3.2). Re-cited: the 90 $/kW-yr
+    # anchor ≈ the CPM soft-offer cap ($7.34/kW-month × 12 = $88.08/kW-yr,
+    # FERC ER24-1225 effective 2024-06-01), between it and the CPUC 2023 RA
+    # report system price ($14.51/kW-month = $174/kW-yr for 2024). No
+    # demand_curve ⇒ capacity_price_per_firm_mw_yr returns the fixed anchor even
+    # when capacity_market_clearing is on. Source: CPUC 2023 Resource Adequacy
+    # Report; CAISO CPM soft-offer-cap tariff (P-0B caiso.csv).
+    "CAISO": MarketDesign(capacity_market=True, net_cone_per_kw_yr=90.0),
+    # Capacity markets. The legacy net_cone_per_kw_yr is the FIXED-mode anchor
+    # (kept labeled legacy — the fixed-mode default is byte-identical, and its
+    # own re-derivation to the published UCAP basis is reserved for the P-2A
+    # default flip, R4/accreditation-basis memo §4.3); net_cone_curve_per_kw_yr
+    # is the PUBLISHED UCAP net-CONE the CR-1 curve scales, now on PJM's own
+    # UCAP basis (R1 above).
+    # Source: PJM 2026/2027 BRA planning parameters (fixed anchor ~$100/kW-yr
+    # legacy; curve anchor 77.431 $/kW-yr = 212.14 $/MW-day UCAP).
+    "PJM": MarketDesign(
+        capacity_market=True,
+        net_cone_per_kw_yr=100.0,
+        demand_curve=_PJM_VRR_CURVE,
+        net_cone_curve_per_kw_yr=77.431,
+        demand_curve_delivery_year="2026/2027",
+        demand_curve_source=(
+            "PJM 2026/2027 RPM BRA Planning Period Parameters (Net CONE, price "
+            "cap) + Manual 18 Rev.62 §3.4 VRR curve points"
+        ),
+    ),
+    # Source: NYISO ICAP demand-curve reset net-CONE (fixed anchor ~$110/kW-yr).
+    "NYISO": MarketDesign(
+        capacity_market=True,
+        net_cone_per_kw_yr=110.0,
+        demand_curve=_NYISO_ICAP_CURVE,
+        net_cone_curve_per_kw_yr=50.55,
+        demand_curve_delivery_year="2025-2026",
+        demand_curve_source=(
+            "NYISO 'Demand Curve Parameters 2025-2026', NYCA locality (Annual "
+            "Reference Value, summer reference-point/max clearing price, 12% "
+            "Demand Curve Length)"
+        ),
+    ),
+    # Source: ISO-NE FCM net-CONE (fixed anchor ~$95/kW-yr).
+    "NEISO": MarketDesign(
+        capacity_market=True,
+        net_cone_per_kw_yr=95.0,
+        demand_curve=_NEISO_FCA_CURVE,
+        net_cone_curve_per_kw_yr=108.94,
+        demand_curve_delivery_year="2027-2028",
+        demand_curve_source=(
+            "ISO-NE FCA 18 (2027/2028) Net CONE + starting price; FCA 11 "
+            "(2020/2021) demand-curve points for the reserve-position geometry"
+        ),
+    ),
+    # MISO runs a SEASONAL Planning Resource Auction (PRA): 4 seasons, clearing
+    # in $/MW-day with a sloped demand curve anchored on Net-CONE. We anchor on
+    # MISO's published Net-CONE (the demand-curve reference), NOT the volatile
+    # PRA clearing price (PY24/25 annualized ~$21/MW-day vs PY25/26 ~$217/MW-day
+    # — the summer-only spike to $666.50/MW-day), consistent with how PJM/NYISO/
+    # NEISO anchor on net-CONE rather than a single auction print.
+    #   Reference resource: advanced combustion turbine. Gross CONE PY2024/25
+    #   ~$330/MW-day (= 330 x 365 / 1000 = $120.45/kW-yr). MISO's published
+    #   average Net-CONE for the North/Central region is ~$79,800/MW-yr
+    #   (= $79.8/kW-yr; equivalently $79,800/365 = $218.6/MW-day net-CONE
+    #   reference), i.e. gross CONE less the ~$40/kW-yr inframarginal E&AS
+    #   offset. We use 80.0 $/kW-yr.
+    #   PRA -> $/kW-yr conversion: $/MW-day x 365 / 1000 = $/kW-yr.
+    # Net-CONE varies by LRZ (PY25/26 gross CONE $321/MW-day LRZ10 to
+    # $373/MW-day LRZ5) and by season; the single North/Central anchor is a
+    # representative value pending the M8 seasonal/zonal RA-timing build.
+    # Source: MISO CONE & Net-CONE Update (RASC, 2024-09-23) and MISO PRA
+    # results postings (PY2024/25, PY2025/26). See parameter-citations.md.
+    # The CR-1 curve scales the published North/Central Net CONE (79.8 $/kW-yr);
+    # the fixed anchor keeps its 80.0 rounding for default byte-identity.
+    "MISO": MarketDesign(
+        capacity_market=True,
+        net_cone_per_kw_yr=80.0,
+        demand_curve=_MISO_RBDC_CURVE,
+        net_cone_curve_per_kw_yr=79.8,
+        demand_curve_delivery_year="2025-2026",
+        demand_curve_source=(
+            "MISO PY2025-26 PRA Results Posting (North/Central Net CONE + LRZ "
+            "gross CONE for the cap); RBDC shape reserve positions first-order "
+            "(seasonal parameters land in CR-3)"
+        ),
+    ),
+}
+
+DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
+
+# Target planning reserve margin per ISO for the reserve-margin adequacy
+# backstop (capacity.py::apply_reserve_margin_build). Each ISO sets its own
+# installed-reserve-margin / planning-reserve-margin target through its
+# resource-adequacy process; ERCOT's 13.75% is its Board target RM and is NOT
+# every ISO's target. The reserve-margin build resolves
+# ``PLANNING_RESERVE_MARGIN_BY_ISO.get(iso, config.planning_reserve_margin)``,
+# so an explicit ScenarioConfig.planning_reserve_margin still overrides this
+# registry and an ISO absent here falls back to that scalar. Each value is on
+# the counting basis of its OWN ISO's published construction: the requirement
+# and the accredited-capacity ledger must use the same convention (see
+# THERMAL_ACCREDITATION_BASIS_BY_ISO / RENEWABLE_CAPACITY_CREDIT_BY_ISO /
+# ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO below).
+PLANNING_RESERVE_MARGIN_BY_ISO: dict[str, float] = {
+    # ERCOT Board-established minimum target reserve margin (13.75% of peak),
+    # the benchmark the CDR's planning reserve margins are read against.
+    # NOT an economic optimum: the Brattle/Astrapé MERM/EORM studies for the
+    # PUCT ("Estimation of the Market Equilibrium and Economically Optimal
+    # Reserve Margins for the ERCOT Region", 2018) put the market-equilibrium
+    # RM near 10.25% and the economic optimum near 9%. The 13.75% target is
+    # defined on the CDR counting convention — seasonal-rated thermal (no
+    # EFORd derate), ELCC-accredited wind/solar/storage, firm peak load net
+    # of load-side products — which the per-ISO accreditation registries
+    # below put the floor/backstop ledger on (audit 2026-07-06, L-7c).
+    "ERCOT": 0.1375,
+    # CPUC Resource Adequacy program planning reserve margin (15%). Source:
+    # CPUC RA proceeding (R.21-10-002 / Decision adopting 15% PRM).
+    "CAISO": 0.15,
+    # PJM Installed Reserve Margin, raised to ~17.8% for the 2025/2026 delivery
+    # year. Source: PJM 2024 IRM/FPR study (PC, 2024-03-20), IRM ~17.8%.
+    "PJM": 0.178,
+    # MISO ICAP Planning Reserve Margin Requirement (PRMR). Source: MISO
+    # Planning Year 2024-25 LOLE Study Report (ICAP PRM ~17.9%).
+    "MISO": 0.179,
+    # NYCA Installed Reserve Margin set by NYSRC. Source: NYSRC 2025-2026 IRM
+    # Final Base Case (24.4%); NYISO's IRM is structurally high (locality +
+    # transmission-security constraints).
+    "NYISO": 0.244,
+    # ISO-NE: FCM sizes capacity to Net ICR rather than publishing a single RM,
+    # so this uses the NERC reference margin level for ISO-NE (~15.7%) as a
+    # stand-in until the ICR-implied margin is wired in. Source: NERC 2023 LTRA
+    # reference margin levels. needs-citation (firm ISO-NE RM filing).
+    "NEISO": 0.157,
+}
+
+# Data-horizon gate for honoring an ANNOUNCED (non-fossil) EIA-860 retirement
+# date deterministically. A self-reported planned-retirement year is credible
+# only at the same near-term grain the additions pipeline trusts its U/V/TS
+# statuses: within EIA860_OPERABLE_VINTAGE + this many years. Beyond the horizon
+# an announced non-fossil date is honored ONLY if the unit carries a binding
+# instrument in the confirmed-retirements registry; otherwise it is ignored, so
+# the 2040-2072 hydro-relicense / solar-EOL placeholders stop force-retiring and
+# far-dated nuclear announcements fall to the economic screen (+ registry). Set
+# to 5 per the methodology spec's "after the data horizon (~2030) the model is
+# fully economics-driven" line (§1.7 / §5); symmetric with the additions
+# pipeline's near-term-only firm-status window. Consumed by
+# model.capacity.apply_announced_retirements.
+NONFOSSIL_ANNOUNCED_HORIZON_YEARS: int = 5
+
+# ERCOT ancillary-service market revenue ($/kW-yr) credited in the capacity
+# economics when ScenarioConfig.as_revenue_enabled (ERCOT energy-only; the
+# capacity-market ISOs recover fixed cost through capacity_revenue_per_mw_yr).
+# This is an exogenous, calibrated revenue stream — the AS analogue of the
+# scarcity overlay — NOT an AS co-optimization (out of scope). Base rates are
+# the 2023 calibration point (IMM 2023 SOM / Modo Energy): batteries earned
+# ~$169/kW-yr from AS in 2023 (~85% of their ~$196/kW total), the AS-eligible
+# fleet then ~4 GW. Thermal AS is a smaller per-kW slice (peakers/steam carry
+# more Reg/RRS/Non-Spin per MW than baseload CC). Source: Potomac Economics
+# 2023/2024 ERCOT State of the Market; Modo Energy ERCOT BESS revenue index.
+ERCOT_AS_REVENUE_PER_KW_YR: dict[str, float] = {
+    "storage": 169.0,
+    "gas_ct": 22.0,
+    "gas_st": 15.0,
+    "gas_cc": 8.0,
+}
+
+# Capacity credit (ELCC) of variable resources for the planning-reserve-margin
+# adequacy accounting — the firm fraction of nameplate each contributes to the
+# system peak. Thermal is accredited at 1 - EFORd (UCAP) unless the ISO's
+# published basis says otherwise (THERMAL_ACCREDITATION_BASIS_BY_ISO); storage
+# uses STORAGE_ELCC_BY_DURATION; these are the GENERIC wind/solar/hydro
+# fallback values (NREL/E3 ELCC studies). ISOs with a published accreditation
+# of their own override them in RENEWABLE_CAPACITY_CREDIT_BY_ISO — a generic
+# value must never masquerade as an ISO's published basis (rule 25 analogue).
+RENEWABLE_CAPACITY_CREDIT: dict[str, float] = {
+    "wind": 0.16,
+    "solar": 0.18,
+    "offshore_wind": 0.30,
+    "hydro": 0.50,
+}
+
+# Per-ISO overrides of RENEWABLE_CAPACITY_CREDIT for the adequacy ledger (the
+# retirement reliability floor and the reserve-margin backstop, capacity.py).
+# ISOs absent here use the generic values above — byte-identical fallback.
+# ERCOT values are the ISO's OWN published accreditation: the December 2025
+# CDR counts wind/solar at probabilistic ELCCs. Implied percentages = the
+# CDR's summer ELCC MW (operational + CDR-eligible planned, peak-load-hour
+# column) over installed nameplate (ERCOT Fact Sheet, June 2026: wind
+# 40,739 MW, utility-scale solar 39,591 MW):
+#   wind : 8,210 / 40,739 = 20.2% for 2026, stable at 20.5-20.8% through
+#          2030 -> 0.20.
+#   solar: 11,097 / 39,591 = 28.0% for 2026, diluting to 20.5-21.1% by
+#          2028-2030 as penetration grows -> 0.21 (the CDR's own plateau;
+#          conservative for 2026-27, right for the forecast horizon where
+#          the floor decision matters).
+# Source: ERCOT, "Report on the Capacity, Demand and Reserves (CDR) in the
+# ERCOT Region", December 2025 (Seasonal Summary + ELCC tabs); ERCOT Fact
+# Sheet, July 2026. See docs/handoffs/ercot-accreditation-audit-2026-07-06.md.
+# (ERCOT deliberately stays HERE, not in RENEWABLE_ELCC_CURVES_BY_ISO below:
+# the CDR seasonal-rating accreditation basis stays per the CR-3 plan §3.4.1
+# and the P-2B adopted basis — "ERCOT/CAISO untouched".)
+RENEWABLE_CAPACITY_CREDIT_BY_ISO: dict[str, dict[str, float]] = {
+    "ERCOT": {"wind": 0.20, "solar": 0.21},
+}
+
+
+@dataclass(frozen=True)
+class RenewableElccCurve:
+    """One ISO's published ELCC/accreditation curve for a VRE resource class.
+
+    ``points`` are ``(penetration, credit)`` pairs ascending in penetration:
+    ``credit`` is the accredited firm fraction of nameplate (0.41 = 41 % of
+    nameplate counts toward the requirement) and ``penetration`` is measured
+    on ``penetration_basis`` —
+
+    * ``"pct_of_peak_load"`` — installed nameplate of the class as a percent
+      of the system peak (MISO's published axis; the classic ELCC-literature
+      basis). Evaluation needs the model's peak demand.
+    * ``"installed_mw"`` — absolute installed nameplate MW of the class
+      (PJM's ELCC/RRS axis). Evaluation needs only the model's installed MW.
+    * ``None`` — a single published point with no penetration axis (NYISO's
+      CAFs): the curve is a constant and ``points`` holds one pair whose
+      penetration value is ignored. Never fabricate an axis the ISO did not
+      publish (P-0B intake discipline / schema note).
+
+    Evaluated by :func:`evaluate_renewable_elcc_curve` — piecewise-linear,
+    flat-clamped at both ends (beyond the last published point the credit
+    holds its endpoint value; no extrapolated slope is invented). The
+    penetration argument is the MODEL'S OWN installed share, so the credit
+    regenerates forward and responds to modeled build (rule 13).
+    """
+
+    penetration_basis: str | None
+    points: tuple[tuple[float, float], ...]
+    source: str
+
+
+def evaluate_renewable_elcc_curve(
+    curve: "RenewableElccCurve",
+    installed_mw: float | None,
+    peak_demand_mw: float | None,
+) -> float | None:
+    """Credit fraction of ``curve`` at the model's own penetration.
+
+    Resolves the curve's penetration axis from the model quantities: the
+    class's installed nameplate for ``"installed_mw"``, ``100 × installed /
+    peak`` for ``"pct_of_peak_load"``, and nothing for a single-point curve
+    (constant). Linear interpolation between published points, flat-clamped
+    outside them (mirrors :func:`evaluate_demand_curve` — no slope beyond
+    the published domain). Returns ``None`` when the axis quantity the curve
+    needs is unavailable (caller falls back to the point-basis resolution),
+    so a missing peak can never silently misprice a pct-of-peak curve. Pure
+    Python — the config layer keeps its light import surface.
+    """
+    if not curve.points:
+        return None
+    if curve.penetration_basis is None:
+        return curve.points[0][1]
+    if installed_mw is None:
+        return None
+    if curve.penetration_basis == "pct_of_peak_load":
+        if peak_demand_mw is None or peak_demand_mw <= 0.0:
+            return None
+        x = 100.0 * float(installed_mw) / float(peak_demand_mw)
+    elif curve.penetration_basis == "installed_mw":
+        x = float(installed_mw)
+    else:  # unknown basis — never guess a conversion
+        return None
+    pts = curve.points
+    if x <= pts[0][0]:
+        return pts[0][1]
+    if x >= pts[-1][0]:
+        return pts[-1][1]
+    for (x_lo, c_lo), (x_hi, c_hi) in zip(pts, pts[1:]):
+        if x_lo <= x <= x_hi:
+            span = x_hi - x_lo
+            if span <= 0.0:
+                return c_lo
+            return c_lo + (x - x_lo) / span * (c_hi - c_lo)
+    return pts[-1][1]  # unreachable; satisfies type checkers
+
+
+# Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan
+# docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md §3.4.1;
+# adopted basis = P-2B Option A per-ISO published-basis consistency,
+# docs/handoffs/accreditation-basis-memo-2026-07-12.md §4.1). Replaces the
+# flat generic wind 0.16 / solar 0.18 for exactly the ISOs with a published
+# ELCC study on disk (data/raw/capacity-market/elcc/<iso>/<iso>.csv, the
+# P-0B/N6 intake); every point below is digitized from those committed rows
+# and reconciled against them by tests/test_renewable_elcc_curves.py — a
+# published market-design input, never a fit target (rules 13/23).
+#
+# Resolution ladder (model/capacity.py::resolve_renewable_capacity_credit):
+# curve here (when ScenarioConfig.renewable_elcc_curves is on) → per-ISO
+# point override (RENEWABLE_CAPACITY_CREDIT_BY_ISO) → generic fallback
+# (RENEWABLE_CAPACITY_CREDIT). ISOs / classes ABSENT here keep the flat
+# constants — a cited, neutral fallback (rule 25 spirit), never a foreign
+# study masquerading as the ISO's basis:
+#
+# * NEISO — NO ISO-published ELCC study: the on-disk rows are third-party
+#   (2022 GE/NRDC, 2024 E3/Mettetal — both explicitly "not ISO-NE-adopted");
+#   ISO-NE accredits intermittents via seasonal claimed capability today.
+#   Falls back to the generic constants until ISO-NE's RCA marginal-ELCC
+#   values are published/intaken.
+# * CAISO — the on-disk CPUC E3/Astrapé study publishes INCREMENTAL
+#   (marginal-tranche) ELCCs conditioned on the IRP portfolio (solar rises
+#   6.6→8.8 % with storage buildout), not fleet-average accreditation;
+#   using a marginal value as the whole-fleet ledger credit would misstate
+#   the supply block (rule 15's misalignment exception, documented). CAISO
+#   keeps the generic fallback ("CAISO untouched", P-2B §4.1) pending a
+#   class-average NQC/ELCC intake.
+# * ERCOT — CDR seasonal-rating basis stays in
+#   RENEWABLE_CAPACITY_CREDIT_BY_ISO above (plan §3.4.1).
+RENEWABLE_ELCC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
+    "PJM": {
+        # PJM accredits every class at its published ELCC class rating
+        # (2025/26 CIFP reform; P-2B Option A end-to-end basis). The official
+        # final ratings pair each class's rating with its installed MW
+        # (ELCC/RRS Table 5), giving a 2-point installed-MW axis. Onshore
+        # wind rates 41 % at both published fleet sizes — flat over the
+        # observed range, clamped at 0.41 beyond it. (PJM's preliminary
+        # ER24-99 indicative table shows the marginal rating declining
+        # 35 % → 19 % by 2032/33, but it is delivery-year-indexed with no
+        # published MW axis — never converted here; extend when PJM
+        # publishes the pairing. R3/Option-A step 3 covers thermal classes.)
+        "wind": RenewableElccCurve(
+            penetration_basis="installed_mw",
+            points=((3549.0, 0.41), (3956.0, 0.41)),
+            source=(
+                "PJM 2026/27 + 2027/28 BRA final ELCC class ratings, Onshore "
+                "Wind 41%/41% at 3,549/3,956 MW installed (2025 PJM ELCC/RRS "
+                "Table 24 ratings, Table 5 installed MW) — "
+                "data/raw/capacity-market/elcc/pjm/pjm.csv"
+            ),
+        ),
+        # Model 'solar' = the PJM solar fleet: MW-weighted blend of the two
+        # published solar classes per vintage (same-document arithmetic):
+        #   2026/27: (8,713×11% + 1,189×8%) / 9,902  = 10.64 %
+        #   2027/28: (11,612×8% + 1,494×7%) / 13,106 =  7.89 %
+        # Declining with penetration, clamped at 0.0789 beyond 13.1 GW —
+        # in line with (slightly above) the ER24-99 indicative tracking-solar
+        # trajectory (~5-8 % by the early 2030s), so the clamp is the
+        # conservative published anchor, not an invented slope.
+        "solar": RenewableElccCurve(
+            penetration_basis="installed_mw",
+            points=((9902.0, 0.1064), (13106.0, 0.0789)),
+            source=(
+                "PJM 2026/27 + 2027/28 BRA final ELCC class ratings, "
+                "Tracking Solar 11%/8% at 8,713/11,612 MW + Fixed-Tilt Solar "
+                "8%/7% at 1,189/1,494 MW, MW-weighted per vintage — "
+                "data/raw/capacity-market/elcc/pjm/pjm.csv"
+            ),
+        ),
+    },
+    "MISO": {
+        # MISO's 2019 Wind & Solar Capacity Credit Report publishes the
+        # genuine article: the adopted ("MISO Capacity Credit") class-average
+        # wind accreditation by penetration as % of coincident peak, PY2010-
+        # PY2020. All published points as-is (the PY2012/PY2015 pair is one
+        # deduplicated point — identical x and y), including the real
+        # year-to-year wiggle; sorted by penetration. Beyond 16.7 % of peak
+        # the credit clamps at 0.166 — conservative against the PY2023-24 /
+        # PY2025-26 seasonal marginal ELCCs (18.1-30.7 % at ~28.3 GW
+        # installed, a different axis+grain, recorded in the same CSV but
+        # not blended into this annual class-average curve).
+        # MISO SOLAR has no published probabilistic ELCC curve (only flat
+        # seasonal defaults for <30-day-metered resources) → generic
+        # fallback, per the registry-level note above.
+        "wind": RenewableElccCurve(
+            penetration_basis="pct_of_peak_load",
+            points=(
+                (7.6, 0.080),
+                (9.7, 0.129),
+                (11.8, 0.141),
+                (12.2, 0.147),
+                (13.0, 0.133),
+                (13.1, 0.156),
+                (13.7, 0.156),
+                (14.8, 0.152),
+                (16.7, 0.166),
+            ),
+            source=(
+                "MISO 2019 Wind & Solar Capacity Credit Report, Tables "
+                "2-1/2-2 'MISO Capacity Credit (%)' vs 'Historical "
+                "Penetration (%)' (PY2010-PY2020) — "
+                "data/raw/capacity-market/elcc/miso/miso.csv"
+            ),
+        ),
+    },
+    "NYISO": {
+        # NYISO publishes single current-point Capacity Accreditation
+        # Factors (CAFs) per Capacity Accreditation Resource Class and
+        # locality — a marginal-reliability-based rating applied to every MW
+        # of the class (NYISO's adopted design), with NO penetration axis.
+        # Single-point curves (constant), never a fabricated axis. Values
+        # are the Rest-of-State column — the locality where nearly all NYISO
+        # land-based wind and utility solar physically sits; offshore wind
+        # uses Long Island, the only locality with OSW resources.
+        "wind": RenewableElccCurve(
+            penetration_basis=None,
+            points=((0.0, 0.1684),),
+            source=(
+                "NYISO 2025-2026 Final CAFs (2.4.2025), land-based wind, ROS "
+                "column 16.84% — data/raw/capacity-market/elcc/nyiso/nyiso.csv"
+            ),
+        ),
+        "solar": RenewableElccCurve(
+            penetration_basis=None,
+            points=((0.0, 0.1224),),
+            source=(
+                "NYISO 2025-2026 Final CAFs (2.4.2025), solar, ROS column "
+                "12.24% — data/raw/capacity-market/elcc/nyiso/nyiso.csv"
+            ),
+        ),
+        "offshore_wind": RenewableElccCurve(
+            penetration_basis=None,
+            points=((0.0, 0.3579),),
+            source=(
+                "NYISO 2025-2026 Final CAFs (2.4.2025), offshore wind, LI "
+                "column 35.79% — data/raw/capacity-market/elcc/nyiso/nyiso.csv"
+            ),
+        ),
+    },
+}
+
+# Thermal accreditation basis for the same adequacy ledger, per ISO. Default
+# (ISO absent): "ucap" = pmax x (1 - EFORd). Two published-basis alternatives:
+#
+# * "seasonal_rating" counts thermal at its rating with NO forced-outage
+#   derate — ERCOT's CDR convention, where forced-outage risk lives in the
+#   13.75% Board target margin rather than in the capacity count (the CDR's
+#   "Installed Seasonal-rated Thermal Capacity" rows carry no EFORd derate).
+#   Mixing UCAP-derated supply with the rating-basis 13.75% target
+#   double-counts forced-outage risk (~4.4 GW on the 2026 ERCOT thermal
+#   fleet). Source: December 2025 CDR, Seasonal Summary.
+# * "elcc_class_rating" counts thermal at its published ELCC CLASS rating —
+#   PJM's 2025/26 CIFP-reform convention, where EVERY resource class (thermal
+#   included) is accredited at an ELCC-based class rating, not (1 - EFORd).
+#   The per-fuel-class ratings are :data:`THERMAL_ELCC_CLASS_RATING_BY_ISO`;
+#   this pairs the supply ledger with the FPR requirement (R2), which is
+#   likewise stated on PJM's ELCC-reform UCAP basis (P-2B Option A per-ISO
+#   published-basis consistency — accreditation-basis memo 2026-07-12 §4.1,
+#   R3). Read exactly as "seasonal_rating" is by :func:`_thermal_firm_mw`.
+THERMAL_ACCREDITATION_BASIS_BY_ISO: dict[str, str] = {
+    "ERCOT": "seasonal_rating",
+    "PJM": "elcc_class_rating",
+}
+
+# PJM thermal ELCC class ratings (2025/26 CIFP reform) — the firm fraction of
+# nameplate PJM accredits each dispatchable class at, the thermal analogue of
+# RENEWABLE_ELCC_CURVES_BY_ISO for the dispatchable fleet (R3, P-2B Option A
+# supply basis). Consumed only for ISOs whose
+# THERMAL_ACCREDITATION_BASIS_BY_ISO is "elcc_class_rating". Each value is the
+# 2026/2027 BRA official/final class-average rating — the delivery-year vintage
+# matching the demand-curve anchor (R1) and the requirement's near-term FPR
+# (R2) — mapped to the model's fuel_type. Digitized from and reconciled against
+# the committed rows (data/raw/capacity-market/elcc/pjm/pjm.csv,
+# resource_class ... "2026/2027 BRA (official/final)") by
+# tests/test_capacity.py — a published market-design input, never a fit target
+# (rules 13/23). Classes ABSENT here fall back to UCAP (1 - EFORd), a cited
+# neutral fallback (rule 25 spirit) — never a foreign rating: model 'biomass'
+# has NO PJM thermal ELCC class in the 2026/27 final ratings (Waste-to-Energy
+# Steam appears only in 2027/28), so it keeps UCAP. (The 2027/28 vintage moves
+# these ±1-2 points — coal 83, CC 74, nuclear 95 unchanged; CT 60->61; Steam
+# 73->72 — so the near-term vintage is a conservative published anchor, not an
+# invented value.)
+THERMAL_ELCC_CLASS_RATING_BY_ISO: dict[str, dict[str, float]] = {
+    "PJM": {
+        "nuclear": 0.95,  # Nuclear
+        "coal": 0.83,  # Coal
+        "gas_cc": 0.74,  # Gas Combined Cycle
+        "gas_ct": 0.60,  # Gas Combustion Turbine
+        "gas_st": 0.73,  # Steam (gas/oil steam)
+        "oil": 0.91,  # Diesel Utility (the 2026/27 official oil/diesel class)
+    },
+}
+
+# Load-side capacity products netted out of gross peak in the ISO's own
+# firm-peak-load construction, as a fraction of the gross seasonal peak.
+# ERCOT (Dec 2025 CDR Seasonal Summary, summer-2026 peak-load-hour column):
+# Load Resources providing RRS 935 + Non-Spin 50 + ECRS 300 + controllable
+# LRs 20 + Emergency Response Service 2,750 + TDSP standard-offer load
+# management 303 + distribution voltage reduction 1,162 = 5,520 MW on the
+# 95,419 MW gross seasonal peak = 5.8%. These are standing ERCOT
+# demand-response programs whose enrollment scales roughly with load, so a
+# fraction of peak regenerates for forward years (rule 13 admissible: a
+# market-design input, not an outcome). Rooftop-PV netting is EXCLUDED —
+# EIA-930 demand is already net of behind-the-meter PV. ISOs absent here
+# net nothing (neutral fallback).
+ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
+    "ERCOT": 0.058,
+}
+
+# Firm import contribution of asynchronous external ties counted by the
+# ISO's own adequacy ledger but absent from the model topology (the model's
+# ERCOT has no import node). ERCOT: 817 MW, "based on average net import
+# contribution during the EEA events: summer 2023 and winter 2020/2021 EEA
+# events" — December 2025 CDR, Seasonal Summary (non-synchronous ties row).
+ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
+    "ERCOT": 817.0,
+}
+
+# ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP
+# pairing audit, 2026-07-06). PJM's IRM and MISO's ICAP-basis PRM in
+# :data:`PLANNING_RESERVE_MARGIN_BY_ISO` are stated on INSTALLED capacity —
+# each ISO's own filing pairs it with a separate UNFORCED-capacity-basis
+# requirement, since the model's supply-side ledger
+# (:func:`market_sim.model.capacity.accredited_firm_capacity_mw`) counts
+# these ISOs' thermal fleet at UCAP (``1 - EFORd``, the registry default).
+# Testing an ICAP-basis requirement against UCAP-basis supply double-counts
+# forced-outage risk, the same error class the ERCOT accreditation audit
+# fixed for CDR seasonal-rating vs UCAP. Values are each ISO's OWN published
+# ICAP<->UCAP conversion ratio (not a model-derived pool EFORd, so nothing
+# here depends on the model's own fleet mix):
+#   PJM: FPR / (1 + IRM) = 0.9170 / 1.191 = 0.7699 (2026/2027 BRA planning
+#     parameters — "Public Installed Reserve Margin (IRM), Forecast Pool
+#     Requirement (FPR)"; FPR states the SAME required reserve level as the
+#     IRM but in UCAP terms, so this ratio is the ISO's own ICAP->UCAP
+#     conversion, stable year to year even as the target IRM itself moves).
+#   MISO: (1 + PRM_UCAP) / (1 + PRM_ICAP) = 1.079 / 1.157 = 0.9326 (PY
+#     2025-2026 LOLE Study Report, Module E-1 — Summer PRM stated both ways:
+#     ICAP 15.7%, UCAP 7.9%).
+# ISOs absent here are byte-identical (ratio 1.0, i.e. their registered PRM
+# is already on the model's own supply basis — ERCOT's is fixed at the CDR
+# seasonal-rating basis by the accreditation audit, not this registry).
+PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO: dict[str, float] = {
+    "PJM": 0.9170 / 1.191,
+    "MISO": 1.079 / 1.157,
+}
+
+# Published Forecast Pool Requirement (FPR) per ISO and delivery year — the
+# reliability requirement stated on the ISO's OWN UCAP basis as a fraction of
+# forecast peak load (R2, accreditation-basis memo 2026-07-12 §4.2). PJM's
+# post-CIFP FPR = (1 + IRM) x Reference-Resource Accredited-UCAP factor, so it
+# already folds BOTH the reserve margin AND the ICAP->UCAP conversion into one
+# published number; the UCAP requirement is simply firm_peak x FPR.
+# :func:`market_sim.model.capacity.resolve_adequacy_requirement_mw` PREFERS a
+# published FPR for the matching delivery year and falls back to the
+# (1 + PRM) x icap_to_ucap_ratio construction otherwise (so an ISO/year absent
+# here is byte-identical to the pre-R2 behaviour). Devintaging the requirement
+# onto the published FPR replaces the mixed-vintage composite the fallback
+# builds (PJM 1.178 x 0.7699 = 0.907 vs the published 2026/2027 FPR 0.9170).
+# Values are digitized from the committed demand-curve rows
+# (data/raw/capacity-market/demand-curve/pjm/pjm.csv, metric
+# forecast_pool_requirement) and reconciled against them by
+# tests/test_capacity.py — a published market-design input, never a fit target
+# (rules 13/23). Only the post-CIFP reformed delivery years (2025/2026+) carry
+# a UCAP-basis FPR; pre-reform years fall through to the fallback.
+FORECAST_POOL_REQUIREMENT_BY_ISO: dict[str, dict[str, float]] = {
+    "PJM": {
+        "2025/2026": 0.9380,  # (1+0.178) x 0.7963; PPP posted 2024-04-08
+        "2026/2027": 0.9170,  # 146,105 MW UCAP / 159,329 MW peak; PPP 2025-05-09
+        "2027/2028": 0.9260,  # (1+0.200) x 0.7717; BRA report 2025-12-17
+    },
+}
+
+# AS is a small, quickly-saturated market: per-kW AS revenue falls steeply as
+# the AS-eligible (mostly storage) fleet grows past the calibration point.
+# Modeled as revenue_per_kw = base * (ref_gw / max(storage_gw, ref_gw)) **
+# exponent. Calibrated so the observed crash is reproduced: storage AS ~$169/kW
+# at ~4 GW (2023) -> ~$40/kW at ~6.5 GW (2024) -> ~$15-20/kW at ~10 GW (2025);
+# Modo reports AS revenue down ~90% 2023->2025. The same saturation applies to
+# thermal AS (batteries displaced thermal from Reg/RRS/ECRS).
+ERCOT_AS_SATURATION_REF_GW: float = 4.0
+ERCOT_AS_SATURATION_EXPONENT: float = 2.5
+
+# ISOs that have a per-plant CAMPD bin artifact and therefore take the
+# offer-curve (per-plant tranche) binning path in the runner instead of the
+# legacy equal-width ``aggregate_fleet`` heat-rate binning. ERCOT is driven by
+# the curated ``data/raw/reference/custom-bin-assignments.csv``; CAISO/NEISO/NYISO/PJM/MISO
+# are covered by the CAMPD-derived ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
+# (and the committed ``data/raw/_processed-legacy/bin_assignments_<ISO>.csv`` review
+# artifacts). The runner gate keys
+# off this set so the per-plant path unlocks per ISO as its artifact lands.
+CAMPD_BINNING_ISOS: frozenset[str] = frozenset(
+    {"ERCOT", "CAISO", "NEISO", "NYISO", "PJM", "MISO"}
+)
+
+# Effective default for the historic (facility-summed) CAMPD outage overlay,
+# per ISO. The overlay hard-zeros coal/CC tranches when a plant's CEMS facility
+# sum drops out. It is the PRIMARY outage layer only where the unit-level
+# derate merely SUPPLEMENTS it, and is redundant (double-counting) where the
+# unit-level file is the COMPLETE CAMPD-derived source. The runner resolves the
+# effective flag as ``HISTORIC_OUTAGE_OVERLAY_BY_ISO.get(iso, <config flag>)``,
+# so an ISO absent from this map keeps the global ``ScenarioConfig`` default.
+# Reasoning per ISO:
+#   ERCOT  True  — facility-summed legacy extract is the primary layer; the
+#                  unit-level derate only catches single-unit losses it hides.
+#   CAISO  False — unit-level file derived fresh from ALL CAMPD units (complete).
+#   NEISO  False — same: complete CAMPD-derived unit-level source.
+#   NYISO  False — same: complete CAMPD-derived unit-level source.
+#   PJM    False — unit-level file built fresh by derive_campd_unit_outages.py
+#                  is the complete source; stacking the facility overlay on top
+#                  double-counts and over-derates (see scenarios.py).
+HISTORIC_OUTAGE_OVERLAY_BY_ISO: dict[str, bool] = {
+    "ERCOT": True,
+    "CAISO": False,
+    "NEISO": False,
+    "NYISO": False,
+    "PJM": False,
+}
+
+# Effective load-carrying capability (ELCC) of storage as a function of
+# duration (hours), as (duration_hr, credit) breakpoints; linearly
+# interpolated, clamped at the ends. Short-duration storage covers only the
+# sharpest peak hours so its firm-capacity credit is well below 1; the credit
+# saturates toward 1.0 as duration lengthens enough to ride through a
+# multi-hour net-peak. Source: NREL/E3 ELCC studies, PJM ELCC class ratings.
+# Generic fallback for ISOs without a published storage class-rating table of
+# their own (STORAGE_ELCC_BY_DURATION_BY_ISO overrides it per ISO).
+STORAGE_ELCC_BY_DURATION: list[tuple[float, float]] = [
+    (2.0, 0.40),
+    (4.0, 0.60),
+    (6.0, 0.75),
+    (8.0, 0.87),
+    (10.0, 0.93),
+    (12.0, 0.97),
+    (24.0, 1.00),
+]
+
+# Per-ISO published storage ELCC class-rating tables, overriding the generic
+# STORAGE_ELCC_BY_DURATION above for exactly the ISOs that publish their own
+# duration->credit ratings (R3, P-2B Option A supply basis). PJM accredits
+# storage at its published ELCC class ratings under the same 2025/26 CIFP
+# reform as the thermal fleet (THERMAL_ELCC_CLASS_RATING_BY_ISO) — this is the
+# ONE storage-accreditation mechanism for PJM, replacing (not stacking on) the
+# generic table (rule 19, no double-derate; the marginal-ELCC saturation derate
+# below still applies on top, as it does for every ISO). Values are the
+# 2026/2027 BRA official/final storage class ratings (matching the thermal
+# vintage), digitized from and reconciled against the committed rows
+# (data/raw/capacity-market/elcc/pjm/pjm.csv, "N-hr Storage" resource classes)
+# by tests/test_capacity.py. Notably LOWER than the generic NREL/E3 curve
+# (PJM 4h 0.50 vs 0.60, 8h 0.62 vs 0.87) — the reformed market's own numbers,
+# not a fit. Endpoints clamp: below 4h at the 4h rating, above 10h at the 10h
+# rating (PJM publishes 4/6/8/10-hr; no 2h or >10h class), consistent with the
+# generic table's flat-clamp behaviour.
+STORAGE_ELCC_BY_DURATION_BY_ISO: dict[str, list[tuple[float, float]]] = {
+    "PJM": [
+        (4.0, 0.50),
+        (6.0, 0.58),
+        (8.0, 0.62),
+        (10.0, 0.72),
+    ],
+}
+
+# Marginal ELCC saturation. As cumulative storage power approaches the
+# deployment ceiling (≈ half the system peak), each additional MW of storage
+# adds less firm capacity — the well-documented decline in marginal storage
+# ELCC at high penetration, which is what tilts the economics from short-
+# toward long-duration storage. The marginal credit is multiplied by
+# ``(1 - penetration)^STORAGE_ELCC_SATURATION_EXPONENT`` where ``penetration``
+# is existing storage power / ceiling. Source: NREL ELCC saturation studies.
+STORAGE_ELCC_SATURATION_EXPONENT: float = 1.5
+
+# Portfolio (aggregate accreditation) ELCC dilution — the CDR's own
+# fleet-average BESS ELCC compresses as storage penetration grows (ERCOT
+# accreditation audit, 2026-07-06, §3): "model 2026 storage firm 11.7 GW vs
+# the CDR-implied 12.3 GW (operational + planned, ELCC 60.2% on 20,438 MW
+# installed) — close at fleet level," with the flagged follow-up "the CDR's
+# own BESS ELCC dilutes 60% -> 46% by 2030 as penetration triples." Modeled
+# in ``capacity.py::_storage_portfolio_elcc_dilution`` as a LINEAR
+# interpolation between the two cited (penetration, ELCC) anchors — no
+# fitted exponent, no guessed intermediate MW: at the reference MW below
+# (today's validated point) the dilution factor is 1.0 (the audit's "close
+# at fleet level today" finding, unchanged); at full deployment-ceiling
+# penetration it is the CDR's own ratio, 46/60.2 (below); in between it is
+# a straight line between those two real data points. ISOs absent from
+# either registry get no dilution (byte-identical).
+STORAGE_ELCC_DILUTION_REFERENCE_MW_BY_ISO: dict[str, float] = {
+    "ERCOT": 20_438.0,  # Dec 2025 CDR: operational + CDR-eligible planned BESS
+    # nameplate MW, the installed base the audit's 60.2% portfolio ELCC is
+    # reported against.
+}
+
+# The CDR's own fleet-average BESS ELCC ratio at full deployment-ceiling
+# penetration relative to the reference-MW ELCC above: 46% / 60.2% (accred-
+# itation audit §3, "dilutes 60% -> 46% by 2030"). A floor, not a fitted
+# curve — the model has no CDR data point between the two cited years, so
+# the dilution factor is linear between them (see the reference-MW
+# registry's docstring); this is the value the line reaches at penetration
+# = 1.0, not a value asserted to land exactly in 2030.
+STORAGE_ELCC_DILUTION_CEILING_RATIO_BY_ISO: dict[str, float] = {
+    "ERCOT": 0.46 / 0.602,
+}
+
+# Cycling-degradation cost. Each MWh discharged consumes a slice of the
+# battery's cycle life; replacing it costs a fraction of the energy-capacity
+# capex (only the cell stack degrades, not the power electronics / BOS, and
+# warranties run to ~80% retention, so the full energy capex over rated cycles
+# overstates the true marginal cost). Degradation $/MWh discharged =
+# capex_per_kwh × 1000 / cycles × STORAGE_DEGRADATION_REPLACEMENT_FRACTION.
+# Source: modeling simplification grounded in NREL ATB augmentation costs and
+# LFP warranty cycle life; tunable.
+STORAGE_DEGRADATION_REPLACEMENT_FRACTION: float = 0.25
+
+# State renewable/clean energy standard floors (clean energy fraction) by ISO and year.
+# Source: CA SB 100.
+STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
+    "ERCOT": {2026: 0.0, 2030: 0.0, 2040: 0.0, 2045: 0.0},  # No binding state RPS floor
+    "CAISO": {  # CA SB 100 — clean energy trajectory
+        2026: 0.50,
+        2030: 0.60,
+        2040: 0.80,
+        2045: 1.00,
+    },
+    "NYISO": {  # NY CLCPA — 70% renewable by 2030, 100% zero-emission by 2040
+        2026: 0.40,
+        2030: 0.70,
+        2040: 1.00,
+        2045: 1.00,
+    },
+    "NEISO": {  # MA Clean Energy Standard + regional state CES blend
+        2026: 0.30,
+        2030: 0.45,
+        2040: 0.70,
+        2045: 0.80,
+    },
+    # PJM spans many states with differing RPS rules and no single
+    # ISO-wide clean-energy floor, so no PJM entry is defined here.
+}
+
+# RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.
+#
+# Every real RPS/CES carries an ACP (or an equivalent non-compliance penalty):
+# a load-serving entity short of physical RECs pays the ACP rate per deficient
+# MWh instead of the standard physically failing. The ACP is therefore the
+# price ceiling of the REC market — the marginal cost of the last unit of
+# compliance — so the model enters it as the cost of an RPS ACP escape column
+# (dispatch.build_cost_vector), which both keeps the annual RPS row feasible
+# when in-region wind+solar cannot reach the target and caps the row's dual
+# (the REC shadow price) at this ceiling. Rule 13 admissible: a published policy
+# parameter that regenerates for any forecast year and responds to conditions
+# (as the fleet builds VRE the escape goes unused and the dual falls below it).
+# Tier 3 (calibration) — verify against each state's current ACP schedule.
+# Sources:
+#   CAISO — CA RPS non-compliance penalty $50/MWh (Pub. Util. Code §399.15;
+#     CPUC RPS enforcement), the effective ACP ceiling for SB 100 compliance.
+#   NYISO — NY Clean Energy Standard Tier 1 ACP (NYSERDA/PSC Case 15-E-0302);
+#     ~$40/MWh order of magnitude for recent compliance years.
+#   NEISO — MA Class I RPS ACP ($67.62/MWh, 2024, 225 CMR 14.08) blended with
+#     CT Class I ($55/MWh, Conn. Gen. Stat. §16-245a) across the six-state
+#     region; ~$65/MWh regional Class I ACP.
+# ISOs without a STATE_RPS_FLOORS entry (ERCOT, PJM) need no ACP — their RPS row
+# is never built, so the escape column is absent and the LP is byte-identical.
+STATE_RPS_ACP: dict[str, float] = {
+    "CAISO": 50.0,
+    "NYISO": 40.0,
+    "NEISO": 65.0,
+}
+
+# Annual interconnection queue caps (GW/yr) by ISO.
+# Source: ERCOT CDR, CAISO TPP.
+QUEUE_CAP_GW: dict[str, float] = {
+    "ERCOT": 12,  # ERCOT CDR — annual queue throughput cap
+    "CAISO": 8,  # CAISO TPP — annual queue throughput cap
+    # Eastern-ISO caps are Tier 3 approximations of recent annual
+    # commercial-operation throughput (not queue *requests*, which run far
+    # higher). Source: LBNL "Queued Up" 2024 completion-rate analysis; ISO
+    # planning reports. needs-citation: verify against each ISO's latest
+    # planning report before quoting any eastern-ISO forecast.
+    "PJM": 10,
+    "MISO": 10,
+    "NYISO": 4,
+    "NEISO": 4,
+}
+
+# Per-technology annual interconnection queue caps (GW/yr) by ISO.
+# Source: ERCOT CDR, CAISO TPP — approximate historical queue throughput by tech
+# The sum of per-tech caps can exceed the ISO total cap (QUEUE_CAP_GW) — both bind independently.
+QUEUE_CAP_PER_TECH_GW: dict[str, dict[str, float]] = {
+    "ERCOT": {
+        "wind": 5.0,
+        "solar": 5.0,
+        "gas_cc": 3.0,
+        "gas_ct": 3.0,
+        "nuclear": 2.0,
+        "geothermal": 2.0,  # engineering judgment, EGS resource potential
+        "offshore_wind": 0.0,  # Gulf coast not yet leased. Source: BOEM
+    },
+    "CAISO": {
+        "wind": 3.0,
+        "solar": 4.0,
+        "gas_cc": 2.0,
+        "gas_ct": 1.0,
+        "nuclear": 1.0,
+        "geothermal": 3.0,  # CA geothermal resource assessment
+        "offshore_wind": 3.0,  # BOEM Pacific lease areas, CAISO TPP
+    },
+    # Eastern-ISO per-tech caps: Tier 3, sized from each ISO's recent build
+    # mix (LBNL "Queued Up" 2024; ISO planning reports). needs-citation.
+    "PJM": {
+        "wind": 1.5,
+        "solar": 6.0,
+        "gas_cc": 4.0,
+        "gas_ct": 2.0,
+        "nuclear": 1.0,
+        "geothermal": 0.0,  # no utility-scale resource in footprint
+        "offshore_wind": 2.0,  # NJ/MD/DE BOEM lease areas
+    },
+    "MISO": {
+        "wind": 4.0,
+        "solar": 6.0,
+        "gas_cc": 3.0,
+        "gas_ct": 2.0,
+        "nuclear": 1.0,
+        "geothermal": 0.0,
+        "offshore_wind": 0.0,  # Great Lakes not leased
+    },
+    "NYISO": {
+        "wind": 1.0,
+        "solar": 2.0,
+        "gas_cc": 1.0,
+        "gas_ct": 0.5,
+        "nuclear": 0.5,
+        "geothermal": 0.0,
+        "offshore_wind": 1.5,  # NY Bight BOEM lease areas
+    },
+    "NEISO": {
+        "wind": 1.0,
+        "solar": 2.0,
+        "gas_cc": 1.0,
+        "gas_ct": 0.5,
+        "nuclear": 0.5,
+        "geothermal": 0.0,
+        "offshore_wind": 2.0,  # MA/RI BOEM lease areas
+    },
+}
+# Hydrogen turbines (hydrogen_ct, hydrogen_ccgt) and CCUS (gas_cc_ccs) do not
+# get their own per-tech queue cap: they share the ``gas_cc`` interconnection
+# cap above, since they reuse the same gas-turbine supply chain and queue.
+
+# New entry technology cost and performance parameters.
+# Source: NREL ATB 2024.
+NEW_ENTRY_COSTS: dict[str, dict[str, float]] = {
+    "wind": {  # NREL ATB 2024 — onshore wind
+        "capex_per_kw": 1300.0,
+        "fom_per_kw_yr": 28.0,
+        "learning_rate": 0.12,
+        "base_cf": 0.38,
+        "lifetime_yr": 30,
+    },
+    "solar": {  # NREL ATB 2024 — utility-scale solar PV
+        "capex_per_kw": 1100.0,
+        "fom_per_kw_yr": 16.0,
+        "learning_rate": 0.20,
+        "base_cf": 0.27,
+        "lifetime_yr": 30,
+    },
+    "gas_cc": {  # NREL ATB 2024 — combined-cycle gas
+        "capex_per_kw": 1200.0,
+        "fom_per_kw_yr": 30.0,
+        "learning_rate": 0.02,
+        "base_cf": 0.55,
+        "lifetime_yr": 30,
+    },
+    "gas_ct": {  # NREL ATB 2024 frame combustion turbine / peaker. Annualized
+        # fixed cost (capex annuity + FOM) ~ the Brattle ERCOT CONE-for-2026
+        # frame-CT reference (~$162/kW-yr gross). base_cf is a nominal peaker
+        # duty cycle; the new-entry screen prices a gas_ct on its price-duration
+        # energy margin, not base_cf x mean price.
+        "capex_per_kw": 1250.0,
+        "fom_per_kw_yr": 21.0,
+        "learning_rate": 0.02,
+        "base_cf": 0.12,
+        "lifetime_yr": 30,
+    },
+    "nuclear_smr": {  # NREL ATB 2024, NuScale FOAK estimates
+        "capex_per_kw": 6800.0,
+        "fom_per_kw_yr": 100.0,
+        "learning_rate": 0.08,
+        "base_cf": 0.90,
+        "lifetime_yr": 40,
+    },
+    "nuclear_large": {  # NREL ATB 2024 mid-case, Lazard LCOE v17
+        "capex_per_kw": 8500.0,
+        "fom_per_kw_yr": 130.0,
+        "learning_rate": 0.03,
+        "base_cf": 0.92,
+        "lifetime_yr": 60,
+    },
+    "gas_cc_ccs": {
+        "capex_per_kw": 2300.0,  # $/kW total plant cost (host CCGT + capture island).
+        # Source: NETL Cost & Performance Baseline Rev 4, 2021.
+        # Reflects 90% capture, amine-based post-combustion.
+        "fom_per_kw_yr": 45.0,  # $/kW-yr. Source: NETL Rev 4.
+        "learning_rate": 0.10,  # 10% cost reduction per doubling of cumulative deployment.
+        # Source: Rubin et al. (2015) "The cost of CO2 capture
+        # and storage", Int J Greenhouse Gas Control.
+        # Range in literature: 0.08–0.12 for first-of-a-kind
+        # industrial process technologies.
+        # CCS is early on its deployment curve (~2 GW base),
+        # so each doubling comes quickly and has large effect.
+        "base_cf": 0.80,  # Lower than unabated CC (0.85) due to higher MC
+        # pushing it later in merit order at low carbon prices.
+        "lifetime_yr": 30,  # Same as gas CC host plant.
+    },
+}
+
+# Per-tech capex + learning-rate multipliers for the PB-1 tech-cost
+# uncertainty lever (ScenarioConfig.tech_cost_path / tech_cost_percentile,
+# docs/handoffs/probability-bounds-plan-2026-07.md §1.1/§2.1), applied to
+# NEW_ENTRY_COSTS by config.scenarios.resolve_new_entry_costs. Cases map to
+# NREL ATB 2024 technology innovation scenarios: "low"=Advanced (full
+# learning/cost-decline realized), "mid"=Moderate, "high"=Conservative
+# (costs stay closer to flat). "mid" is 1.0 on every tech BY CONSTRUCTION --
+# NEW_ENTRY_COSTS' base values are the model's existing reference case, not
+# a re-scraped ATB Moderate figure, so the neutral default must be an exact
+# no-op. The low/high spreads are engineering-judgment magnitudes anchored to
+# ATB's published case *definitions* and typical per-tech spread ordering
+# (solar/nuclear widest -- immature or FOAK cost curves; gas narrowest --
+# mature, well-characterized plant costs); this environment could not reach
+# atb.nrel.gov to pull the exact 2024 scraped case ratios, so a follow-up
+# should replace these with exact figures the next time ATB is re-pulled
+# (PP-3.2 item 2 tracks the next AEO/ATB refresh).
+TECH_COST_MULTIPLIERS: dict[str, dict[str, dict[str, float]]] = {
+    "wind": {
+        "low": {"capex_per_kw": 0.85, "learning_rate": 1.35},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
+        "high": {"capex_per_kw": 1.12, "learning_rate": 0.65},
+    },
+    "solar": {
+        "low": {"capex_per_kw": 0.65, "learning_rate": 1.25},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.00},
+        "high": {"capex_per_kw": 1.15, "learning_rate": 0.60},
+    },
+    "gas_cc": {
+        "low": {"capex_per_kw": 0.95, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.08, "learning_rate": 0.5},
+    },
+    "gas_ct": {
+        "low": {"capex_per_kw": 0.95, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.08, "learning_rate": 0.5},
+    },
+    "nuclear_smr": {
+        "low": {"capex_per_kw": 0.80, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.25, "learning_rate": 0.5},
+    },
+    "nuclear_large": {
+        "low": {"capex_per_kw": 0.90, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.15, "learning_rate": 0.5},
+    },
+    "gas_cc_ccs": {
+        "low": {"capex_per_kw": 0.85, "learning_rate": 1.5},
+        "mid": {"capex_per_kw": 1.00, "learning_rate": 1.0},
+        "high": {"capex_per_kw": 1.20, "learning_rate": 0.5},
+    },
+}
+
+# --- Emerging generation technologies -------------------------------------
+# Hydrogen turbines, post-combustion CCUS, enhanced geothermal and offshore
+# wind. Each enters the model as a Generator (thermal dispatch) reusing the
+# existing LP variable structure — no LP formulation change.
+
+# Hydrogen-fired turbine parameters. H2 turbines are thermal generators whose
+# fuel cost is DERIVED from renewable LCOE / electrolyzer efficiency (see
+# :mod:`market_sim.data.hydrogen`) rather than an exogenous price path.
+HYDROGEN_TURBINE_PARAMS: dict[str, dict[str, float]] = {
+    "h2_ct": {  # simple-cycle H2 turbine (peaker)
+        "heat_rate": 9.5,  # MMBtu/MWh. GE HA specs, DOE H2 Turbine Program 2023
+        "vom": 4.0,  # $/MWh. NREL ATB 2024 (gas CT analog + H2 premium)
+        "emission_rate_co2": 0.0,  # tCO2/MWh — zero direct CO2 (green H2)
+        "nox_rate": 0.00015,  # tons NOx/MWh — H2 burns hot. DOE/NETL 2023
+        "eford": 0.06,  # above gas CT — immature fleet. Engineering judgment
+        "capex_kw": 1400.0,  # $/kW. NREL ATB 2024, BloombergNEF H2 Outlook 2024
+        "fom_kw_yr": 12.0,  # $/kW-yr. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.10,  # analogy to gas CT maturation
+    },
+    "h2_ccgt": {  # combined-cycle H2 turbine (mid-merit/baseload)
+        "heat_rate": 6.9,  # MMBtu/MWh. DOE H2 Turbine Program 2023
+        "vom": 3.5,  # $/MWh. NREL ATB 2024
+        "emission_rate_co2": 0.0,
+        "nox_rate": 0.00012,  # DOE/NETL 2023
+        "eford": 0.06,
+        "capex_kw": 1800.0,  # $/kW — premium over gas CCGT. NREL ATB 2024
+        "fom_kw_yr": 15.0,  # $/kW-yr. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.10,
+    },
+}
+
+# Electrolyzer parameters used to derive the hydrogen fuel cost. Not an LP
+# variable. Efficiency is MWh_H2 / MWh_electricity (LHV basis) and improves
+# linearly between the 2026 base, 2035 and 2045 milestone years.
+ELECTROLYZER_PARAMS: dict[str, dict[str, float]] = {
+    "pem": {
+        "efficiency": 0.65,  # base year. Source: IRENA Green H2 2023
+        "efficiency_2035": 0.72,  # DOE Hydrogen Shot targets
+        "efficiency_2045": 0.76,  # DOE long-term targets
+        "capex_kw": 1200.0,  # $/kW — for LCOH if needed. BNEF 2024
+        "learning_rate": 0.18,  # aggressive — early on curve. IRENA 2023
+    },
+    "alkaline": {
+        "efficiency": 0.63,  # Source: IRENA Green H2 2023
+        "efficiency_2035": 0.68,
+        "efficiency_2045": 0.72,
+        "capex_kw": 800.0,
+        "learning_rate": 0.12,  # more mature technology. IRENA 2023
+    },
+}
+
+# MMBtu per MWh — thermodynamic identity, used to convert the derived
+# hydrogen electricity cost ($/MWh) into a fuel cost ($/MMBtu).
+MMBTU_PER_MWH: float = 3.412
+
+# Approximate heat content of fuel oil, MMBtu per barrel — the bbl<->MMBtu
+# conversion for the winter oil-inventory budget (component A of
+# docs/multi-iso/neiso-winter-fuel-inventory-plan-2026-07.md), where the
+# winter-fuel-inventory datatype records tank/inventory quantities in barrels
+# but the LP budget row is in MMBtu (then MWh via heat rate).
+# Source: EIA Monthly Energy Review, June 2026, Appendix A, Table A1
+# ("Approximate Heat Content of Petroleum and Biofuels"), p.228.
+MMBTU_PER_BBL_DISTILLATE: float = 5.825  # No. 2 distillate fuel oil
+MMBTU_PER_BBL_RESIDUAL: float = 6.287  # No. 6 residual fuel oil
+
+# Carbon capture, utilization and storage parameters. CCUS is a variant of
+# the base gas CC plant: higher heat rate (parasitic capture load), higher
+# VOM (solvent costs), reduced emission rate, plus a transport+storage cost
+# for the captured CO2.
+CCUS_PARAMS: dict[str, dict[str, float]] = {
+    "gas_cc_ccs_90": {  # gas CCGT with 90% post-combustion capture
+        "heat_rate_penalty": 1.16,  # ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B
+        "vom_adder": 8.0,  # $/MWh — amine solvent, maintenance. NETL 2022
+        "capture_rate": 0.90,  # fraction of CO2 captured. NETL 2022 Case B31B
+        "co2_transport_storage": 15.0,  # $/tCO2 — pipeline + saline injection. NETL 2022, Gulf Coast
+        "capex_kw": 2500.0,  # $/kW installed. NREL ATB 2024
+        "fom_kw_yr": 22.0,  # $/kW-yr. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.05,  # slow — limited deployment. Global CCS Institute 2024
+    },
+}
+
+# Enhanced geothermal (EGS) parameters. EGS enters as a thermal generator
+# with zero fuel cost and high capacity factor, dispatchable down to
+# ``pmin_fraction`` of rated capacity (flexible baseload). Not intermittent.
+GEOTHERMAL_PARAMS: dict[str, dict[str, float]] = {
+    "egs": {
+        "capacity_factor": 0.90,  # high availability. DOE GeoVision 2019
+        "vom": 1.0,  # $/MWh — minimal, no fuel. NREL ATB 2024
+        "emission_rate_co2": 0.0,  # zero direct emissions
+        "nox_rate": 0.0,
+        "eford": 0.05,  # comparable to nuclear. DOE GeoVision 2019
+        "pmin_fraction": 0.20,  # turn down to 20% for flexibility. Fervo 2024
+        "capex_kw": 5000.0,  # $/kW — high upfront, early-stage. NREL ATB 2024
+        "fom_kw_yr": 0.0,  # $/kW-yr — captured in VOM. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.15,  # steep — analogous to early solar. Fervo, ARPA-E
+        "heat_rate": 0.0,  # no fuel
+    },
+}
+
+# Offshore wind parameters. A separate renewable category from onshore wind:
+# higher and less variable capacity factors, higher costs, distinct zones.
+OFFSHORE_WIND_PARAMS: dict[str, dict[str, float]] = {
+    "fixed_bottom": {
+        "base_cf": 0.45,  # annual average. NREL ATB 2024
+        "capex_kw": 4200.0,  # $/kW. NREL ATB 2024
+        "fom_kw_yr": 80.0,  # $/kW-yr — marine access premium. NREL ATB 2024
+        "lifetime_yr": 30,
+        "learning_rate": 0.08,  # NREL ATB 2024, IRENA 2024
+    },
+    "floating": {
+        "base_cf": 0.48,  # deeper water, better resource. NREL ATB 2024
+        "capex_kw": 5500.0,  # $/kW — early stage. NREL ATB 2024
+        "fom_kw_yr": 95.0,
+        "lifetime_yr": 30,
+        "learning_rate": 0.12,  # steeper — less mature. NREL ATB 2024
+    },
+}
+
+# Offshore wind hourly-profile derivation parameters. The offshore CF profile
+# is derived from the onshore wind profile by a centered rolling-mean smoothing
+# window plus a minimum CF floor (see :mod:`market_sim.data.renewables`).
+# Source: NREL offshore wind variability studies, Musial et al. 2022.
+OFFSHORE_WIND_SMOOTHING_HOURS: int = (
+    6  # rolling-mean window — ocean fetch reduces gustiness
+)
+OFFSHORE_WIND_MIN_CF: float = 0.08  # minimum hourly CF — offshore rarely drops to zero
+
+# Wright's Law reference cumulative installed capacity (GW global).
+# Source: IRENA 2025, IEA WEO 2025, IAEA PRIS 2025, BNEF 2025, DOE LDES.
+WRIGHT_REFERENCE_GW: dict[str, float] = {
+    "wind": 1150.0,  # was 1020. IRENA 2025.
+    "solar": 1800.0,  # was 1420. IRENA 2025.
+    "li_ion": 130.0,  # was 90. BNEF 2025.
+    "gas_cc": 1220.0,  # was 1200. IEA WEO 2025.
+    "nuclear": 445.0,  # was 440. IAEA PRIS 2025.
+    "nuclear_smr": 445.0,  # shares global nuclear fleet
+    "nuclear_large": 445.0,
+    "iron_air": 1.0,  # was 0.5. DOE LDES.
+    "flow_battery": 3.0,  # GW global installed vanadium-redox flow. Source: PNNL 2023,
+    # BNEF LDES tracker 2024 (China VRFB buildout dominates).
+    "compressed_air": 1.5,  # GW global adiabatic/diabatic CAES — Huntorf, McIntosh,
+    # Zhangjiakou, Jintan. Source: NREL ATB 2024, IEA 2024.
+    "gas_cc_ccs": 2.0,  # GW global installed power-sector CCS as of 2024.
+    # Boundary Dam (0.12 GW), miscellaneous pilots/demos.
+    # Petra Nova mothballed 2020, excluded.
+    # Source: Global CCS Institute Global Status Report 2024.
+}
+
+# Annual global deployment (GW/yr) by technology, used to project cumulative
+# installed capacity for Wright's Law learning curves. These represent the
+# worldwide market, not just the modeled ISO.
+# Source: IRENA 2025, IEA WEO 2025, BNEF 2025, IAEA 2025.
+GLOBAL_ANNUAL_DEPLOYMENT_GW: dict[str, float] = {
+    "wind": 130.0,  # was 120. IRENA 2025.
+    "solar": 400.0,  # was 350. IRENA 2025.
+    "li_ion": 50.0,  # was 30. BNEF 2025.
+    "gas_cc": 20.0,  # was 25. IEA WEO 2025.
+    "nuclear": 10.0,  # was 8. IAEA 2025.
+    "nuclear_smr": 5.0,
+    "nuclear_large": 5.0,
+    "iron_air": 1.0,  # was 0.5.
+    "flow_battery": 0.8,  # GW/yr global VRFB additions. Source: BNEF LDES tracker 2024.
+    "compressed_air": 0.3,  # GW/yr global CAES additions. Source: IEA 2024 pipeline.
+    "gas_cc_ccs": 1.5,  # GW/yr global CCS additions on power plants.
+    # Based on announced project pipeline (DOE OCED awards,
+    # UK cluster sequencing, EU Innovation Fund).
+    # Optimistic but reflects policy momentum.
+    # Source: Global CCS Institute project database 2024.
+}
+
+# Annual-average renewable capacity factors (fraction) by ISO and technology.
+# Used to rescale the normalized EIA-930 generation distributions into hourly
+# capacity-factor profiles.
+# Source: EIA Electric Power Monthly 2024, ERCOT CDR, CAISO annual report.
+# PJM: wind 0.31 and solar 0.19 are grounded in the PJM 2023 EIA-930 hourly
+#   extract — mean wind/solar net generation over the EIA-860 average-online
+#   capacity (wind 0.309, solar 0.121 delivered). Wind is taken at the
+#   measured 0.31 (EIA-930 and EIA-923 both report ~28-29 TWh). Solar is set
+#   to the physical utility-PV value 0.19 (matching EIA-923's 14.3 TWh)
+#   rather than the EIA-930 hourly 0.12, because EIA-930 NG:SUN under-reports
+#   PJM utility solar; the EIA-930 distribution still supplies the hour-to-hour
+#   shape. Source: EIA-930 PJM hourly + EIA-923 2023 net generation.
+RENEWABLE_AVG_CF: dict[str, dict[str, float]] = {
+    "ERCOT": {"wind": 0.35, "solar": 0.27},
+    "CAISO": {"wind": 0.30, "solar": 0.28},
+    "PJM": {"wind": 0.31, "solar": 0.19},
+    # Tier 3 approximations for the remaining ISOs (forecast-mode inputs;
+    # backcasts use measured profiles). Wind from regional fleet averages
+    # (EIA EPM by-state utility-scale CFs); solar is the physical
+    # utility-PV value for the latitude band. needs-citation: verify
+    # against EIA-923 ISO totals before quoting a forecast.
+    "MISO": {"wind": 0.34, "solar": 0.22},
+    "NYISO": {"wind": 0.26, "solar": 0.15},
+    "NEISO": {"wind": 0.30, "solar": 0.15},
+}
+
+# Installed renewable nameplate capacity (MW) by ISO and technology.
+# Source: ERCOT CDR Dec 2024, CAISO annual report 2024.
+RENEWABLE_INSTALLED_MW: dict[str, dict[str, float]] = {
+    "ERCOT": {
+        "wind": 42000.0,  # was 40000. Source: ERCOT CDR Dec 2024.
+        "solar": 38000.0,  # was 25000. Source: EIA Hourly Grid Monitor Oct 2025.
+    },
+    "CAISO": {
+        "wind": 7000.0,  # unchanged. Source: CAISO annual report 2024.
+        "solar": 22000.0,  # was 20000. Source: CAISO annual report 2024.
+    },
+    # Tier 3, ~year-end-2024 utility-scale nameplate (BTM excluded).
+    # Source: EIA-860 2024 / ISO planning reports, rounded. needs-citation:
+    # refresh from the processed EIA-860 parquet before quoting a forecast.
+    "PJM": {"wind": 11000.0, "solar": 14000.0},
+    "MISO": {"wind": 32000.0, "solar": 7000.0},
+    "NYISO": {"wind": 2400.0, "solar": 1500.0},
+    "NEISO": {"wind": 1400.0, "solar": 2700.0},
+}
+
+# CAISO TAC-area actual hourly load (data.eia_loader) -> model zone weights.
+# PG&E's TAC straddles Path 15, so it is split between NP15 and ZP26 with
+# fixed weights that preserve the prior NP15:ZP26 = 0.43:0.07 ratio (no TAC
+# boundary exists at Path 15 to measure the split directly). SCE and SDG&E sit
+# entirely south of Path 26 (SP15), as does the tiny VEA TAC (~80 MW, CAISO's
+# southern-Nevada pocket). Estimated, not measured — the 0.86/0.14 PG&E split
+# has unverified provenance (Tier 3 — calibration; forecast-risk): refine when
+# a direct Path-15 sub-TAC load measurement becomes available. This IS the
+# rule-14/rule-12 misalignment exception (a single measured TAC-area load
+# spanning a boundary — Path 15 — that our zone model splits, with no direct
+# way to measure the sub-split): the estimate is legitimately kept, not an
+# answer key, per docs/handoffs/scalar-remediation-plan-2026-07.md C-16.
+# G-26/issue #1372 status (2026-07-05 B-CAI-1 attempt, per the DOF ledger):
+# FERC-714 unreachable (403/502 via proxy), CEC planning-area geography
+# boundary-mismatched to Path 15. RE-CHECKED 2026-07-07: CAISO OASIS
+# (oasis.caiso.com SingleZip, SLD_FCST/ACTUAL) IS now reachable from this
+# environment (a zipped-XML load-forecast file fetched successfully) —
+# contradicts the 2026-07-05 "OASIS unreachable" finding and re-opens this
+# item as actionable. Not completed here: finding the specific OASIS report
+# that publishes NP15/ZP26 sub-TAC zonal load (vs. TAC-area load, which is
+# already used), downloading/parsing it, and validating a re-derivation
+# against the CAISO keeper is a data-intake project (new frozen derive
+# script + re-solve + registration, rule 23), not a documentation edit — left
+# for that dedicated session with this reachability finding as the unblock.
+# SCE-TAC spans the LA_BASIN/SP15_rest split (SP15 was split into
+# LA_BASIN/SDGE/SP15_rest — docs/handoffs/caiso-sp15-split-implementation-scope-2026-07-09.md
+# FOUNDATION DECISIONS). w=0.835 is the LCT LA_Basin/(LA_Basin+SP15_rest)
+# peak-load ratio: LA_BASIN 0.374 / (LA_BASIN 0.374 + SP15_rest 0.0735) of full
+# ISO load (same LCT `peak_load` table used for the zones' static load_share,
+# 2023 Table 3.3-7 / 3.2-1) — LCT-sourced, not a tuned weight. SDGE-TAC and
+# VEA-TAC map 1:1 onto their own sub-zones (measured, clean).
+CAISO_TAC_ZONE_WEIGHTS: dict[str, dict[str, float]] = {
+    "PGE-TAC": {"NP15": 0.86, "ZP26": 0.14},
+    "SCE-TAC": {"LA_BASIN": 0.835, "SP15_rest": 0.165},
+    "SDGE-TAC": {"SDGE": 1.0},
+    "VEA-TAC": {"SP15_rest": 1.0},
+}
+
+# NYISO local self-supply floors (transmission.inject_nyiso_local_selfsupply,
+# gated on ScenarioConfig.nyiso_local_selfsupply). Per downstate load-pocket
+# zone, the fraction of that zone's hourly load that must be met by IN-ZONE
+# dispatchable thermal generation. Long Island (zone K) is cable-islanded and
+# carries NYISO locational-minimum-installed-capacity (LMIC) / local-reliability
+# rules that keep its own gas-steam + peaker fleet running rather than importing
+# the full cable rating of cheap NYC gas. The economic LP under-runs the LI
+# fleet (model 3.7 vs EIA-923 8.52 TWh, 2023).
+#
+# RULE-14 BOUNDARY MISMATCH (audit C-17, B-NYI-1, open root-cause issue #1345):
+# the published Zone-K requirement is now committed on disk
+# (data/raw/capacity-deliverability/nyiso/nyiso.csv, intake PR #1261): LI LCR%
+# (value_pu) 1.052 / 1.053 / 1.065 for 2023/24–2025/26 with a Bulk Power
+# Transmission (import) limit of only 325 / 275 / 275 MW. That LCR is a
+# PEAK-HOUR installed-capacity ratio (local ICAP >= ~105% of LI peak); THIS
+# parameter is an ALL-HOURS energy self-supply fraction (frac x hourly demand).
+# The two live on different boundaries: substituting the LCR% (~1.05) or the
+# TSL-implied peak local fraction ((peak-import)/peak ~= 0.94) into an all-hours
+# energy floor would force ~16 TWh/yr of LI generation vs the ~8.5 TWh that is
+# physically real (LI imports off-peak, self-supplies near peak) — LESS
+# reflective of reality, so a direct scalar re-ground is INADMISSIBLE (rule #14).
+# The only scalar that reproduces the realized annual share would need a
+# load-duration haircut tuned to the 2023 outcome — the very rule-12 pin C-17
+# means to remove. The faithful fix is a MECHANISM change (a peak-capacity / TSL
+# constraint from the committed LCR table), tracked in issue #1345. THAT
+# MECHANISM NOW EXISTS: ScenarioConfig.nyiso_li_lcr_tsl (default off) caps the
+# NYC->Long_Island link at the published locality import limit in the HB14-21
+# window (transmission.apply_nyiso_li_tsl_import_cap) and EXCLUDES Long_Island
+# from this floor (rule 19 — never stacked). Empirical reconciliation of the
+# boundary (CEMS LI hourly gross gen + measured zonal load, 2023-25): measured
+# implied LI inflow at the top-100 load hours is 1,493/1,440/1,598 MW vs the
+# mechanism's in-window import capability (TSL + 1,200 MW external ties) of
+# 1,525/1,475/1,475 MW — the published construction matches the measured
+# peak-hour boundary within ~5%. When the flag is OFF this 0.45 value remains
+# the legacy path (residual-identified, forecast-risk; DOF ledger S5). The 0.45
+# magnitude still approximates the 2023 realized LI self-supply share (~0.48) —
+# it is NOT a validated forward driver and MUST NOT be quoted as one.
+#
+# HOURS NARROWING (floor-rederive 2026-07-05, rule-17/18; NOT a re-level): the
+# floor is applied only in the afternoon-evening peak window
+# (transmission.NYISO_SELFSUPPLY_FLOOR_HOURS, HB14-21) — the summer
+# design-cooling condition the LCR locality requirements are defined at, where
+# the LI cable-import constraint physically binds. Applied all-hours it
+# force-committed in-pocket LM6000 peaker baseload overnight (D-2:
+# nyiso_local_selfsupply forced 1.84/2.87/1.86 TWh of CT_PEAKER, 43/65/42% of the
+# class in nyiso-48; C7 off-peak diurnal FAIL) where measured LI CT_PEAKER CF is
+# ~0.06 flat and LI net import runs well below its cable ceiling
+# (docs/handoffs/nyiso-downstate-reserve-incidence-2026-06.md Finding 4). The
+# 0.45 LEVEL is unchanged — only the hours it had no driver for are removed. NYC (zone J) is
+# deliberately ABSENT: the diagnostic shows NYC OVER-generates by +11 TWh (it
+# cannot import enough, so it self-supplies) — its idle peakers are a
+# reserve-scarcity gap (RCPF / mechanism B), not an energy must-run. Tier 3.
+# Source: NYISO Locational Minimum ICAP Requirements / LCR reports
+# (data/raw/capacity-deliverability/nyiso/nyiso.csv, intake PR #1261); EIA-923
+# zone-mapped net generation; docs/nyiso-dispatch-validation-2026-06.md.
+NYISO_LOCAL_SELFSUPPLY_FRAC: dict[str, float] = {
+    "Long_Island": 0.45,
+}
+
+
+def resolve_reference_price_interface(flag: bool, iso: str) -> bool:
+    """Resolve whether ``iso`` runs the reference-price interface.
+
+    ``True`` when the CLI ``--reference-price-interface`` flag is set OR the ISO
+    is in :data:`REFERENCE_PRICE_DEFAULT_ISOS` (the per-ISO default-on set). The
+    node itself is still gated on the ISO having an ``INTERFACE_NEIGHBORS`` entry
+    downstream, so an ISO without neighbors stays byte-identical either way.
+    """
+    from market_sim.config.interchange_config import REFERENCE_PRICE_DEFAULT_ISOS
+
+    return bool(flag) or iso in REFERENCE_PRICE_DEFAULT_ISOS
+
+
+# --- PJM transmission-congestion calibration (config.pjm_congestion) ----------
+#
+# PJM clears as a perfect copper-plate (0.000 zonal LMP spread in all 8760 hours)
+# because (1) the priced external star node (PJM_external, IMPORT_NODE_LINKS
+# above) wires ~30 GW of *uncongested* transfer to 5 border zones — so the
+# dear-east load pockets import directly from one price hub and never pull power
+# through the internal west→east lines — and (2) the internal interface TTCs in
+# iso_configs._pjm_config are loose Tier-3 order-of-magnitude estimates that
+# never bind. Both are fixed with MEASURED PJM data, never values tuned to the
+# price/export residual (rules #11/#12).
+#
+# (1) External-node deliverability envelope. Each PJM_external→border link's
+# signed flow is capped, per (month × hour-of-day), at the measured per-border
+# net-interchange percentile (import direction up, export direction down) from
+# eia_loader.pjm_zonal_interchange_envelope — the same measured tie-flow file the
+# IMPORT_NODE_LINKS ratings were read from (PJM import_export_act_sch_interchange,
+# data/raw/iso-specific-transmission/). The dominant direction (ComEd/AEP/EMAAC
+# export, Dominion import) keeps a generous p95 ceiling the LP clears below; the
+# minor direction collapses toward ~0, so the hub can no longer flood the east
+# with cheap imports — closing the copper-plate bypass and shrinking the
+# over-export toward the measured schedule. A capability envelope (high
+# percentile), not the hourly residual, so it stays a forward-reproducible input.
+PJM_EXTERNAL_FLOW_PERCENTILE: float = 95.0
+
+# (2) Internal interface TTCs read from the measured PJM transfer-limit postings
+# (data/raw/iso-specific-transmission/PJM_<year>_transfer_limits_and_flows.csv,
+# pooled 2023-25 median of the per-interface ``transfer_limit`` contingency
+# limit). Only interfaces with a confident named-interface mapping AND a value
+# materially looser than measured are overridden; the rest keep their config
+# estimate (already ≈ measured). Keyed by the model link's (from_zone, to_zone).
+#   - ComEd→AEP_Ohio    ← "50045005 Post-Contingency"  (median 2900; config 6000
+#                          was the loose one the diagnosis flagged)
+#   - AEP_Ohio→Dominion ← "AEP/DOM Post-Contingency"   (median 4054; ≈ config 4069)
+#   - West_APS→SWMAAC   ← "AP-South Pre-Contingency"   (median 3932; the dominant
+#                          west→east cut — config 4453)
+#   - West_APS→Central_PA ← "Bedington-BlackOak"       (median ~1850; config 1947)
+PJM_MEASURED_INTERNAL_TTC: dict[tuple[str, str], float] = {
+    ("PJM_ComEd", "PJM_AEP_Ohio"): 2900.0,
+    ("PJM_AEP_Ohio", "PJM_Dominion"): 4050.0,
+    ("PJM_West_APS", "PJM_SWMAAC"): 3900.0,
+    ("PJM_West_APS", "PJM_Central_PA"): 1850.0,
+}
+
+# (2b) HOURLY measured internal interface limits (ScenarioConfig.
+# pjm_measured_interface_limits — supersedes the static medians above on the
+# mapped links; same feed, hourly instead of pooled-median). Model link ->
+# the published transfer-limit series (transfer-interface-limits clean
+# datatype, names verbatim) whose elementwise MIN is the link's forward
+# (west->east) hourly cap; where an interface publishes pre- AND
+# post-contingency limits both are listed, since both are
+# simultaneously-enforced security limits and the operative capability each
+# hour is the tighter one.
+#
+# Crosswalk provenance and reconciliation (CLAUDE.md rule 14 exception
+# clause — each static seed's series maps back to it 1:1):
+#   - ComEd→AEP_Ohio      ← "50045005": iso_configs already names this link
+#     "the 5004/5005 interface"; the static 6000 was a loose estimate
+#     (measured mean ~2,750-3,100).
+#   - AEP_Ohio→Dominion   ← "AEP/DOM" (static 4069 = its 2024 mean).
+#   - West_APS→SWMAAC     ← "AP-South" (static 4453 = its 2024 post mean).
+#     MISALIGNMENT, documented: AP-South is the aggregate western→MAD 500 kV
+#     flowgate, one of several parallel paths this 8-zone mesh splits across
+#     West_APS→SWMAAC and West_APS→Dominion. It is applied ONLY to the
+#     seeded link (West_APS→SWMAAC); West_APS→Dominion keeps its static
+#     3,000 MW so the total west→MAD capability is the reconciled
+#     measured-plus-static sum, never the single flowgate double-applied.
+#   - West_APS→Central_PA ← "Bedington-BlackOak" (static 1947 = 2024 post
+#     mean). Published post-contingency limits touch ≤ 0 in 2024-25 outage
+#     windows; the consumer clamps the forward bound at 0 (no secure
+#     transfer), never a negative bound (which would FORCE counterflow).
+#   - AEP_Ohio→West_APS / ATSI→Central_PA / Central_PA→EMAAC ← the
+#     "Average Western/Central/Eastern" regional envelopes that seeded their
+#     statics (5029/3336/8168 = the 2024 means). MISALIGNMENT, documented:
+#     an envelope is a regional mean across several member interfaces, not
+#     one flowgate on the link's exact boundary (its measured ``transfers``
+#     sign is unreliable for direction checks — Average Central runs
+#     "negative" 80-97% of hours); the hourly envelope is still strictly
+#     closer to the real capability than the constant it seeded.
+# Cleveland is deliberately ABSENT (the N_TO_H pattern in
+# ERCOT_GTC_LINK_MAP): it limits imports into the ATSI-Cleveland sub-pocket,
+# a strict subset of the PJM_ATSI zone boundary, so applying it to
+# AEP_Ohio→ATSI would cap the whole zone at one pocket's limit. SWMAAC→
+# EMAAC, SWMAAC→Dominion, West_APS→Dominion and AEP_Ohio→ATSI have no
+# published series on their boundary and keep their static estimates.
+# Direction sanity (2023-25 measured ``transfers``): AP-South / Bedington-
+# BlackOak / AEP-DOM flows are ≥ 98.5% one-directional west→east, matching
+# the mapped links' forward orientation; binding (≥ 90% utilization) up to
+# 6.5% of hours (BB post, 2025).
+# Source: PJM Data Miner 2 transfer_limits_and_flows via
+# scripts/curate_transfer_interface_limits.py; consumed by
+# market_sim.data.transfer_interface_limits.pjm_interface_ttc_hourly.
+PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
+    ("PJM_ComEd", "PJM_AEP_Ohio"): ("50045005 Post-Contingency",),
+    ("PJM_AEP_Ohio", "PJM_Dominion"): ("AEP/DOM Post-Contingency",),
+    ("PJM_West_APS", "PJM_SWMAAC"): (
+        "AP-South Pre-Contingency",
+        "AP-South Post-Contingency",
+    ),
+    ("PJM_West_APS", "PJM_Central_PA"): (
+        "Bedington-BlackOak Pre-Contingency",
+        "Bedington-BlackOak Post-Contingency",
+    ),
+    ("PJM_AEP_Ohio", "PJM_West_APS"): ("Average Western",),
+    ("PJM_ATSI", "PJM_Central_PA"): ("Average Central",),
+    ("PJM_Central_PA", "PJM_EMAAC"): ("Average Eastern",),
+}
+
+# Year-varying NYISO interface transfer limits that change with the AC
+# Transmission build-out. The static limits in iso_configs._nyiso_config are
+# nominal; an (iso, year) entry here overrides the matching link's TTC for that
+# backcast year (run_calibration._apply_iso_year_ttc). Years/links absent here
+# keep the static config value.
+#
+# These are the MEASURED day-ahead TTC the market actually cleared against,
+# from NYISO's hour-by-hour ATC/TTC postings for the "CENT EAST" interface
+# (MIS ATC_TTC files, mirrored in data/raw/NYISO/ATC_TTC.zip), aggregated
+# by scripts/derive_nyiso_central_east_ttc.py. They supersede the earlier
+# operating-study / Wood Mackenzie estimates (~2,350 pre / ~3,850 post), which
+# overstated the operative DAM limit: the posted DAM TTC the dispatch must
+# respect runs ~1,750 MW through Nov 2023 and ~2,850 MW from Dec 2023 on — both
+# ~1,000 MW below the published "normal" ratings.
+#
+# NY Transco's "AC Transmission" Segment A (Central-East, Edic–New Scotland /
+# Princetown–Rotterdam 345 kV) energized in December 2023, which the postings
+# capture as a step from ~1,525-1,950 MW (Jan-Nov 2023) to ~2,725 MW (Dec 2023)
+# and ~2,500-3,175 MW across 2024-25, with a recurring late-summer/shoulder
+# derate. NYISO_INTERFACE_TTC_BY_MONTH carries that seasonal envelope (12
+# monthly means per year); _BY_YEAR carries the annual mean as the scalar
+# fallback for paths that do not apply the monthly profile (e.g. forecast).
+# UPNY-SENY stays at its static 5,150 MW (it does not bind in the backcast).
+NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
+    2023: {("Upstate_West", "Capital_Hudson"): 1750.0},
+    2024: {("Upstate_West", "Capital_Hudson"): 2850.0},
+    2025: {("Upstate_West", "Capital_Hudson"): 2850.0},
+}
+
+# Measured calendar-month mean DAM TTC (MW) for the Central-East interface, one
+# 12-element list (Jan..Dec) per backcast year. Applied per-hour over a single
+# backcast year by run_calibration._apply_iso_monthly_ttc, which expands the
+# scalar TTC array to (hours, n_links) so the dispatch runs on the seasonal
+# Central-East envelope instead of one annual value. Regenerate with
+# scripts/derive_nyiso_central_east_ttc.py after refreshing the postings.
+NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
+    2023: {
+        ("Upstate_West", "Capital_Hudson"): [
+            1950.0,
+            1875.0,
+            1550.0,
+            1450.0,
+            1600.0,
+            1900.0,
+            1775.0,
+            1650.0,
+            1550.0,
+            1575.0,
+            1525.0,
+            2725.0,
+        ]
+    },
+    2024: {
+        ("Upstate_West", "Capital_Hudson"): [
+            3050.0,
+            3075.0,
+            3000.0,
+            2875.0,
+            2825.0,
+            2750.0,
+            2800.0,
+            2700.0,
+            2525.0,
+            2825.0,
+            2750.0,
+            3075.0,
+        ]
+    },
+    2025: {
+        ("Upstate_West", "Capital_Hudson"): [
+            3175.0,
+            3075.0,
+            2725.0,
+            2500.0,
+            2525.0,
+            2925.0,
+            3025.0,
+            3000.0,
+            2850.0,
+            2850.0,
+            2725.0,
+            2900.0,
+        ]
+    },
+}
+
+# ERCOT SCED cadence: one SCED execution every ~5 minutes (ERCOT Nodal
+# Protocols §6.5.7.1), i.e. 12 intervals per clock hour. Used to time-average
+# the per-interval measured GTC limits (gtc-limits clean datatype) onto the
+# hourly LP clock: an hour's transfer-energy cap is the mean of its
+# per-interval caps, with intervals where the constraint was not in SCED's
+# active set standing in at the constraint's measured envelope.
+ERCOT_SCED_INTERVALS_PER_HOUR: int = 12
+
+# Crosswalk from ERCOT's published Generic Transmission Constraints (GTCs, the
+# stability-limited export interfaces reported in NP6-86 "SCED Shadow Prices
+# and Binding Transmission Constraints") onto the reduced 7-zone topology's
+# transfer links. Each GTC maps to one or more (from_zone, to_zone) links with
+# a share of the GTC limit. Shares follow iso_configs._ercot_config: the single
+# aggregate WESTEX (West Texas export) GTC is one boundary that the reduced
+# network splits into two parallel links, apportioned in the same ~8:3 ratio
+# as the static ttc_mw values (7,300 / 2,700 of the ~10,000 MW measured
+# limit-at-bind) — a rule-#14 misalignment reconciliation, documented there.
+# PNHNDL (Panhandle export) and NE_LOB (Northeast Texas export lobe) map 1:1.
+# N_TO_H is deliberately ABSENT: the single N_TO_H GTC is one of several
+# parallel 345 kV North->Houston paths this reduction collapses into one link,
+# so its limit alone would understate the interface (see iso_configs).
+# Intra-zone GTCs (VALEXP, EASTEX, TRDWEL, MCCAMY, ...) have no representable
+# link in this topology and are ignored by the crosswalk.
+# Source: ERCOT NP6-86-CD archives via scripts/derive_ttc_limits.py; ERCOT
+# "The Use of GTCs in ERCOT" (July 2020) for the GTC definitions.
+ERCOT_GTC_LINK_MAP: dict[str, list[tuple[tuple[str, str], float]]] = {
+    "PNHNDL": [(("Panhandle", "North"), 1.0)],
+    "WESTEX": [
+        (("West", "North"), 8.0 / 11.0),
+        (("West", "South_Central"), 3.0 / 11.0),
+    ],
+    "NE_LOB": [(("Northeast", "North"), 1.0)],
+}
+
+# Percentile of the per-(month × hour-of-day) measured net-import distribution
+# used as each seam's deliverability ceiling. 90 = the upper envelope minus the
+# top ~10% transient/loop-flow hours (matching measured_interchange_envelope's
+# default and the interface-limit duration-curve convention), keeping headroom
+# above the median so the modeled seam price still sets the typical hour. A
+# deliverability-headroom choice, NOT tuned to the net-MWh target.
+MISO_SEAM_FLOW_PERCENTILE: float = 90.0
+
+# PJM analogue: per-(month × hod) percentile of measured per-neighbor net
+# interchange from the PJM tie-line file (aggregated from border zones to
+# neighbor level via pjm_zonal_interchange_envelope). Same convention as MISO.
+PJM_SEAM_FLOW_PERCENTILE: float = 90.0
+
+# ---------------------------------------------------------------------------
+# MISO Regional Directional Transfer (RDT) — contract limits, default derate,
+# and the Transmission Constraint Demand Curve (TCDC) steps.
+# ---------------------------------------------------------------------------
+# The RDT is the contractual constraint on scheduled transfers between MISO
+# Midwest and MISO South over the contract path across SPP. Contract limits
+# are directional and asymmetric. Source: MISO/SPP Joint Operating Agreement
+# Attach. A (RDT limits); restated in 2024 MISO State of the Market Report
+# §III.B ("limiting physical flows to 3,000 MW Midwest-to-South and 2,500 MW
+# South-to-Midwest").
+MISO_RDT_CONTRACT_N_TO_S_MW: float = 3000.0
+MISO_RDT_CONTRACT_S_TO_N_MW: float = 2500.0
+
+# MISO's standing operating practice derates the modeled RDT limit below the
+# contract limit to account for unmodeled physical flows (e.g. regulation
+# deployments in the South): "MISO derates the RDT limit to 92 percent of the
+# contract limit by default and often by more" (2024 MISO SOM §III.B). The
+# default 92% is the published standing policy and the forward-regenerating
+# quantity; the deeper condition-driven operator derates (utilization averaged
+# 84% of contract when binding in 2024, i.e. ~390 MW below contract — SOM
+# §II.E/III.B) are real but hourly-varying with no published series, so this
+# constant deliberately UNDER-states binding-hour congestion rather than
+# fitting a deeper haircut (rules 5/13: published value, not a residual fit).
+MISO_RDT_DEFAULT_DERATE_FRAC: float = 0.92
+
+# RDT Transmission Constraint Demand Curve (TCDC): MISO prices RDT violation
+# rather than hard-capping it — "a two-step TCDC for the RDT with a lower step
+# at $40 per MWh at the limit and the second step at $500 per MWh starting at
+# 102 percent of the modeled limit" (2024 MISO SOM §III.B). Scheduled
+# transfers are hard-bounded at the JOA contract limit (the entitlement);
+# the TCDC governs pricing between the derated modeled limit and contract.
+MISO_RDT_TCDC_STEP1_PRICE: float = 40.0
+MISO_RDT_TCDC_STEP2_PRICE: float = 500.0
+MISO_RDT_TCDC_STEP2_START_FRAC: float = 1.02
+
+# Reserve Procurement Enhancement (RPE): MISO "models a Reserve Procurement
+# Enhancement (RPE) constraint that limits flows between subregions after a
+# supply-side contingency and has a single demand value of $200 per MWh"
+# (2024 MISO SOM §III.B). It is how MISO enforces the subregional Short-Term
+# Reserve requirements "over the Regional Directional Transfer (RDT)
+# constraint. The RPE binds when headroom on the RDT plus the available STR
+# in the importing subregion is limited" (2024 SOM §II.E). In the 2023-2025
+# design the RPE demand value applies ADDITIVELY with the RDT TCDC whenever
+# the RDT is in real violation: "when the transfer constraints are violated,
+# it often produces subregion-wide price spreads of $700 because the demand
+# curve values for the RDT ($500) and the RPE ($200) apply additively, which
+# was unintended", and even small violations (the $40 first TCDC step) are
+# "overpric[ed] ... by $200 per MWh" (2024 SOM §III.B pp.51-52). The IMM's
+# recommendation to cap the combined effect at $500 was NOT implemented in
+# the 2023-2025 window (restated in the IMM Summer-2025 quarterly, which
+# books $41M of RDT+RPE congestion); if MISO adopts it, date-gate the
+# re-anchor to the tariff change (rule 23: cite the data change).
+MISO_RPE_DEMAND_VALUE: float = 200.0
+
+# External zone hosting the MISO-South seam's reference-price bands when
+# ScenarioConfig.miso_south_seam_split is on: the southern neighbors
+# (SOCO/TVA/AECI — MISO_SEAM_DIBA["South"]) are electrically on the SOUTH
+# side of the RDT, while the shared MISO_external bus links to all five
+# border zones — so a single bus fabricates a free 3,000 MW
+# South→external→Midwest wheel that bypasses the RDT contract path (the
+# model's only binding internal boundary). Splitting the South seam onto its
+# own external zone removes the fabricated bypass. (Same hazard the PJM
+# import-node docstring flags; see transmission.extend_with_import_node.)
+MISO_SOUTH_EXTERNAL_ZONE: str = "MISO_external_South"
+
+# Exogenous EAC price reference ranges ($/MWh) by resource type, as
+# low/mid/high values. Documentation only — these are NOT used as defaults
+# (every ScenarioConfig.eac_price_* defaults to 0.0); they give plausible
+# ranges for scenario authors setting EAC prices by hand.
+EAC_PRICE_REFERENCE: dict[str, dict[str, float]] = {
+    "eac_nuclear_zec": {"low": 10.0, "mid": 17.0, "high": 25.0},
+    # Source: NY PSC Order, Case 15-E-0302; IL FEJA
+    "eac_wind": {"low": 2.0, "mid": 8.0, "high": 15.0},
+    # Source: PJM GATS, S&P Global Platts
+    "eac_solar": {"low": 2.0, "mid": 10.0, "high": 20.0},
+    # Source: PJM GATS, S&P Global Platts
+    "eac_offshore_wind": {"low": 20.0, "mid": 30.0, "high": 40.0},
+    # Source: NJ BPU OREC orders, NYSERDA
+    "eac_geothermal": {"low": 5.0, "mid": 10.0, "high": 15.0},
+    # Source: CA CES program, analogy to nuclear ZEC
+    "eac_gas_cc_ccs": {"low": 10.0, "mid": 15.0, "high": 25.0},
+    # Source: 45Q market + state CES analogy
+    "eac_storage": {"low": 0.0, "mid": 5.0, "high": 10.0},
+    # Source: limited precedent, modeling assumption
+}
+
+
+# Hour-of-day availability shape (relative, normalized to a mean of 1 at use so the
+# enrolled annual-mean level is conserved exactly). Load Resources are large
+# industrial facilities, most available to be tripped when they are consuming
+# (weekday daytime/evening operating hours) and modestly less so in the deep
+# overnight — a deterministic calendar shape, forward-reproducible and tied to no
+# measured outcome. HE 01:00 -> 24:00 (index 0 = HE 01:00).
+ERCOT_LR_RRS_AVAILABILITY_HOD: tuple[float, ...] = (
+    0.92,
+    0.92,
+    0.92,
+    0.92,
+    0.92,
+    0.95,  # HE 01-06 overnight (lower industrial use)
+    1.02,
+    1.05,
+    1.05,
+    1.05,
+    1.05,
+    1.05,  # HE 07-12 daytime operations
+    1.05,
+    1.05,
+    1.05,
+    1.05,
+    1.05,
+    1.05,  # HE 13-18 daytime/early-evening
+    1.05,
+    1.05,
+    1.02,
+    0.98,
+    0.95,
+    0.93,  # HE 19-24 evening wind-down
+)
+
+
+# Model-wide constants.
+STORAGE_TIEBREAKER_EPSILON: float = (
+    0.001  # $/MWh — prevents degenerate charge/discharge
+)
+HOURS_PER_YEAR: int = 8760
+START_YEAR: int = 2026
+END_YEAR: int = 2050
+
+# Historical weather years available as forecast load + VRE capacity-factor
+# shapes. A forecast pins one representative year (ScenarioConfig.weather_year);
+# the weather-year ensemble (market_sim.ensemble) draws over a pool and reports
+# the distribution. A weather draw is an admissible forecast *input*, not an
+# outcome (CLAUDE.md #10), so sampling over it is methodological robustness,
+# not a backcast pin.
+#
+# Cross-ISO default / fallback pool: the common 3-year window every ISO's
+# EIA-930 ``<BA> hourly`` extract covers today (data/raw/eia-930-hourly/).
+WEATHER_YEAR_POOL: tuple[int, ...] = (2023, 2024, 2025)
+
+# Per-ISO weather-year pool (2026-07 widening, docs/handoffs/probability-bounds-
+# plan-2026-07.md §2.1: "intaking more pre-2022 weather years is a cheap
+# widening"). Each entry is bounded by *verified* coverage on disk, checked
+# end-to-end (not just file presence): the EIA-930 BA hourly extract yields a
+# clean, gap-free 8760-hour local-calendar series for demand (data/eia_loader.py
+# load_demand), AND market_sim.data.renewables.load_renewable_profiles resolves
+# a full wind+solar profile for the year (an ISO whose BA under-reports one
+# fuel, e.g. NYISO solar, falls back to the EIA-930 generation-distribution
+# parquet, which only reaches back to 2021 -- a year is listed here only if
+# every fallback it needs actually covers it). Verified 2026-07-05; see
+# docs/weather-pool-coverage-2026-07.md for the full per-ISO/year log and the
+# skipped-ISO rationale.
+#
+# Holdout quarantine (CLAUDE.md rule 22): 2022 and H1-2026 are never added here,
+# for any ISO, until that ISO's calibration-complete marker exists.
+WEATHER_YEAR_POOL_BY_ISO: dict[str, tuple[int, ...]] = {
+    # ERCOT (EIA-930 BA "ERCO"): hourly extract spans 2015-07-01..2026-06-30
+    # (data/raw/eia-930-hourly/ERCO hourly.parquet). 2019-2021 verified: clean
+    # 8760-hour demand series, NG: WND / NG: SUN both present and nonzero, and
+    # load_renewable_profiles resolves end-to-end with no fallback needed.
+    "ERCOT": (2019, 2020, 2021, 2023, 2024, 2025),
+    # NEISO (BA "ISNE"): hourly extract spans 2015-07-01..2026-05-20. 2019-2021
+    # verified the same way as ERCOT (both fuels reported directly, no fallback
+    # to the generation-distribution parquet needed). 2020 carries the
+    # COVID-19 demand-shape anomaly (a documented multi-percent spring/summer
+    # load depression vs. pre-pandemic trend, EIA/FERC 2020 load-impact
+    # reporting) -- an admissible historical weather-year input, but flagged so
+    # ensemble consumers can weight or exclude it deliberately (see the
+    # coverage note).
+    "NEISO": (2019, 2020, 2021, 2023, 2024, 2025),
+    # NYISO (BA "NYIS"): hourly extract spans 2015-07-01..2026-06-13, but NYIS
+    # never separately reports solar generation (all-zero NG: SUN in every
+    # year, including the already-supported 2023-2025), so NYISO solar always
+    # falls back to the EIA-930 generation-*distribution* parquet
+    # (data/raw/eia-930/eia_generation_profiles.parquet), whose own coverage
+    # floor is 2021 -- 2019 and 2020 fail end-to-end
+    # (market_sim.data.renewables.load_renewable_profiles raises) even though
+    # the raw hourly demand extract covers them. Only 2021 is added; 2019/2020
+    # stay out until the distribution parquet is rebuilt further back.
+    "NYISO": (2021, 2023, 2024, 2025),
+    # CAISO (BA "CISO"): api.eia.gov (scripts/fetch_eia930_hourly.py) is
+    # blocked in this managed sandbox, but the six-month BALANCE bulk archive
+    # (www.eia.gov, unblocked) covers 2019-2021 for every BA and was fetched
+    # 2026-07-06 (scripts/fetch_eia930_balance.py) then folded into the wide
+    # hourly extract (scripts/extend_eia930_hourly_from_balance.py). 2019-2021
+    # verified end-to-end same as ERCOT. The bulk archive's legacy taxonomy
+    # doesn't break out geothermal separately (folded into NG: OTH for these
+    # three years only; harmless here since load_renewable_profiles reads only
+    # NG: WND / NG: SUN) -- see docs/weather-pool-coverage-2026-07.md.
+    "CAISO": (2019, 2020, 2021, 2023, 2024, 2025),
+    # PJM (BA "PJM"): same BALANCE-bulk backfill as CAISO for the hourly
+    # extract, 2026-07-06 (existing 2022+ rows untouched -- dedup keeps the
+    # already-committed rows for the handful of overlapping UTC hours at the
+    # 2021/2022 boundary). PJM demand now reads the hourly extract directly
+    # (eia_loader._load_pjm_hourly_demand, 2026-07-07 -- the legacy
+    # demand-profiles series carried a 1-2 h clock lag, zero-hour gaps, and a
+    # 2024 interpolation-shaved ~104 GW ridge), so 2019/2020 demand resolves
+    # end-to-end and those years are now pool CANDIDATES -- but a year enters
+    # this tuple only after the full end-to-end verification protocol
+    # (docs/weather-pool-coverage-2026-07.md), which 2019/2020 have not been
+    # run through post-rewire; only 2021 is verified.
+    "PJM": (2021, 2023, 2024, 2025),
+    # MISO (BA "MISO"): same BALANCE-bulk backfill as CAISO, 2026-07-06. MISO's
+    # existing extract separately reports NG: BAT (battery); the bulk archive
+    # can't split that out for 2019-2021, so those years' battery generation
+    # folds into NG: OTH (NaN, not zero, for a true NG: BAT read) -- immaterial
+    # to the wind/solar renewables check this pool exists for.
+    "MISO": (2019, 2020, 2021, 2023, 2024, 2025),
+}
+
+
+def weather_year_pool(iso: str) -> tuple[int, ...]:
+    """Return the verified weather-year pool for ``iso``.
+
+    Looks up :data:`WEATHER_YEAR_POOL_BY_ISO`, falling back to the common
+    :data:`WEATHER_YEAR_POOL` default for an ISO not yet registered there.
+    """
+    return WEATHER_YEAR_POOL_BY_ISO.get(iso, WEATHER_YEAR_POOL)
+
+
+# ---------------------------------------------------------------------------
+# Structural-error prior (PB-3, probability-bounds program)
+# ---------------------------------------------------------------------------
+# The published emissions band convolves the parametric input band (PB-2) with a
+# prior over the model's own dispatch-skill error, fit from the committed D-7
+# statistical-mode probes (docs/statistical-mode-results-2026-07.md;
+# docs/handoffs/probability-bounds-plan-2026-07.md §3). Statistical mode strips
+# every measured backcast overlay but keeps realized annual gas/load/weather, so
+# its emissions error is *model error given true inputs* -- exactly the term that
+# convolves with the input uncertainty without double-counting. These are
+# post-processing parameters (they touch no solve), fit only on the backcast
+# years below and echoed into ensemble_meta.json (rule 5, rule 24).
+
+# Backcast years the structural prior is fit on. 2022 and H1-2026 stay under full
+# quarantine (CLAUDE.md rule 22) -- the prior is re-fit against them exactly once,
+# at the sanctioned out-of-time scoring moment, never before.
+STRUCTURAL_PRIOR_FIT_YEARS: tuple[int, ...] = (2023, 2024, 2025)
+
+# Student-t degrees of freedom for the per-ISO structural-error distribution
+# (plan §3.2). nu=2 gives fat tails that, together with the small-sample scale
+# inflation below, keep the prior *wider* than the plug-in normal -- the honest
+# reading when each ISO's bias and noise are estimated from only three years.
+STRUCTURAL_PRIOR_STUDENT_T_NU: float = 2.0
+
+# Structural draws per parametric draw in the log-space Monte-Carlo product
+# (plan §3.3): each of the n parametric members is paired with K independent
+# epsilon draws to build the n*K published-quantile sample.
+STRUCTURAL_PRIOR_CONVOLUTION_K: int = 25
+
+# Horizon-widening variance multiplier lambda(h), growing with years-out to cover
+# fleet-evolution (capacity-path) error. UNMEASURED until the PP-0.3 capacity
+# hindcast supplies a number (plan §3.4 item 1); pinned to 0.0, which makes every
+# published band "dispatch-conditional -- excludes fleet-path structural error".
+# This is a placeholder awaiting measurement, never a tuned value (rule 1).
+STRUCTURAL_PRIOR_HORIZON_LAMBDA: float = 0.0
+
+# Version tag stamped into every fitted prior artifact / ensemble_meta.json so a
+# band's structural layer is traceable to the fit that produced it (rule 24).
+STRUCTURAL_PRIOR_VERSION: str = "pb3-statmode-d7-2026-07"
+
+# Provenance of the fit inputs: the committed D-7 statistical-mode probe run ids
+# (frontend/data/backcast/runs/<id>.js supply the per-year model CO2;
+# frontend/data/backcast/bench/<ISO>/<year>.json.gz supply the actual). Frozen
+# here so the measured, reproducible source of the prior is auditable and
+# re-derives only when those probes update (rule 23), never against a residual.
+STATMODE_PROBE_RUNS: dict[str, str] = {
+    "ERCOT": "2026-07-04-statmode-d7-probe-ercot32",
+    "CAISO": "2026-07-03-caiso-statmode-d-7",
+    "PJM": "2026-07-03-pjm-statmode-d-7",
+    "NYISO": "2026-07-03-nyiso-statmode-d-7",
+    "NEISO": "2026-07-03-neiso-statmode-d-7",
+    "MISO": "2026-07-03-miso-statmode-d-7",
+}
+
+# ISOs where the model prices carbon (CAISO: CA cap-and-trade; NYISO/NEISO:
+# RGGI). The R2 measured-rate CO2 basis (PR #1371, fff2c34) moves the merit
+# order ONLY where carbon price > 0 -- so the 2026-07-03 statmode probes above
+# are solve-stale for these three ISOs (the W3-P1 re-solves own the fix), while
+# the carbon-zero ISOs (ERCOT/PJM/MISO) need only a no-solve re-score of the
+# committed numbers. Source: docs/handoffs/forecast-validation-program-2026-07.md
+# §0/§3.2 (W0-P4 design).
+STRUCTURAL_PRIOR_CARBON_PRICED_ISOS: tuple[str, ...] = ("CAISO", "NEISO", "NYISO")
+
+
+# ---------------------------------------------------------------------------
+# ERCOT forward RTOLCAP/RTOFFCAP online-responsive reserve-supply shares (WS-A)
+# ---------------------------------------------------------------------------
+# Forward analogue of the measured ERCOT on-line responsive reserve-supply cap
+# (scarcity.ercot_rtolcap_supply_cap_mw, which returns None for years with no
+# measured ercot_<year>_ordc_reserves_hourly.parquet -> forecast years ran
+# UNCAPPED). Derived by scripts/derive_ercot_rtolcap_forward.py from the committed
+# CAMPD unit extracts + the measured RTOLCAP/RTOFFCAP MW QUANTITY series (never a
+# price; honesty gate). RE-DERIVE ONLY on a source-data update (rule #23), never a
+# residual. online_share_c = median over CAMPD of the class on-line headroom-
+# realization fraction Sigma_online(eff_cap-gross)/installed_cap, conditioned on
+# (season, net-load percentile decile); offline_share_c the OFF-line startable
+# quick-start analogue for RTOFFCAP. Season 0=winter(DJF) 1=spring(MAM)
+# 2=summer(JJA) 3=fall(SON); inner tuples are the 10 net-load deciles (low->high).
+ERCOT_RTOLCAP_FWD_N_SEASON: int = 4
+ERCOT_RTOLCAP_FWD_N_DECILE: int = 10
+# Season index by calendar month (Jan..Dec).
+ERCOT_RTOLCAP_FWD_SEASON_BY_MONTH: tuple[int, ...] = (
+    0,
+    0,
+    1,
+    1,
+    1,
+    2,
+    2,
+    2,
+    3,
+    3,
+    3,
+    0,
+)
+# Reserve-eligible thermal classes forming on-line RTOLCAP.
+ERCOT_RTOLCAP_FWD_ONLINE_CLASSES: tuple[str, ...] = (
+    "COAL",
+    "CC_REGULAR",
+    "CC_CHP",
+    "CT_PEAKER",
+    "CT_CHP",
+    "ST_GAS",
+    "ST_CHP",
+)
+# Quick-start classes forming off-line RTOFFCAP.
+ERCOT_RTOLCAP_FWD_OFFLINE_CLASSES: tuple[str, ...] = (
+    "CT_PEAKER",
+    "CT_CHP",
+)
+ERCOT_RTOLCAP_FWD_ONLINE_SHARE: dict[str, tuple[tuple[float, ...], ...]] = {
+    "COAL": (
+        (
+            0.6110,
+            0.5678,
+            0.5251,
+            0.4928,
+            0.4435,
+            0.3979,
+            0.3429,
+            0.2934,
+            0.2679,
+            0.1621,
+        ),
+        (
+            0.5876,
+            0.5444,
+            0.5153,
+            0.4647,
+            0.4135,
+            0.3837,
+            0.3597,
+            0.3364,
+            0.2798,
+            0.2338,
+        ),
+        (
+            0.5964,
+            0.5105,
+            0.5159,
+            0.5149,
+            0.5026,
+            0.4625,
+            0.4130,
+            0.3471,
+            0.2531,
+            0.1866,
+        ),
+        (
+            0.5844,
+            0.5158,
+            0.5115,
+            0.4651,
+            0.4190,
+            0.3804,
+            0.3382,
+            0.2851,
+            0.2255,
+            0.1562,
+        ),
+    ),
+    "CC_REGULAR": (
+        (
+            0.2387,
+            0.2454,
+            0.2403,
+            0.2314,
+            0.2145,
+            0.1876,
+            0.1626,
+            0.1443,
+            0.1349,
+            0.1079,
+        ),
+        (
+            0.2209,
+            0.2673,
+            0.2670,
+            0.2466,
+            0.2234,
+            0.2150,
+            0.2028,
+            0.1923,
+            0.1781,
+            0.1335,
+        ),
+        (
+            0.2800,
+            0.2888,
+            0.2789,
+            0.2254,
+            0.1995,
+            0.1732,
+            0.1415,
+            0.1167,
+            0.0941,
+            0.0718,
+        ),
+        (
+            0.2532,
+            0.2543,
+            0.2543,
+            0.2356,
+            0.2052,
+            0.1857,
+            0.1652,
+            0.1438,
+            0.1112,
+            0.0757,
+        ),
+    ),
+    "CC_CHP": (
+        (
+            0.3011,
+            0.2446,
+            0.2092,
+            0.1718,
+            0.1483,
+            0.1303,
+            0.1161,
+            0.0979,
+            0.0884,
+            0.0680,
+        ),
+        (
+            0.2813,
+            0.2435,
+            0.2188,
+            0.1988,
+            0.1822,
+            0.1728,
+            0.1594,
+            0.1565,
+            0.1353,
+            0.1069,
+        ),
+        (
+            0.1580,
+            0.1453,
+            0.1546,
+            0.1257,
+            0.1209,
+            0.1085,
+            0.0965,
+            0.0776,
+            0.0686,
+            0.0607,
+        ),
+        (
+            0.2829,
+            0.2541,
+            0.2360,
+            0.2094,
+            0.1770,
+            0.1582,
+            0.1382,
+            0.0972,
+            0.0724,
+            0.0620,
+        ),
+    ),
+    "CT_PEAKER": (
+        (
+            0.0136,
+            0.0147,
+            0.0196,
+            0.0232,
+            0.0290,
+            0.0414,
+            0.0714,
+            0.1155,
+            0.1349,
+            0.1467,
+        ),
+        (
+            0.0329,
+            0.0450,
+            0.0489,
+            0.0619,
+            0.0975,
+            0.0997,
+            0.1494,
+            0.1873,
+            0.2406,
+            0.2386,
+        ),
+        (
+            0.0274,
+            0.0312,
+            0.0295,
+            0.0108,
+            0.0146,
+            0.0144,
+            0.0223,
+            0.0333,
+            0.0884,
+            0.1085,
+        ),
+        (
+            0.0378,
+            0.0393,
+            0.0410,
+            0.0423,
+            0.0425,
+            0.0483,
+            0.0476,
+            0.0441,
+            0.1176,
+            0.1283,
+        ),
+    ),
+    "CT_CHP": (
+        (
+            0.0454,
+            0.0343,
+            0.0325,
+            0.0282,
+            0.0242,
+            0.0186,
+            0.0233,
+            0.0171,
+            0.0162,
+            0.0392,
+        ),
+        (
+            0.0498,
+            0.0559,
+            0.0696,
+            0.0747,
+            0.0727,
+            0.0797,
+            0.0832,
+            0.0819,
+            0.0812,
+            0.0612,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0108,
+        ),
+        (
+            0.0328,
+            0.0355,
+            0.0436,
+            0.0390,
+            0.0273,
+            0.0231,
+            0.0200,
+            0.0205,
+            0.0187,
+            0.0152,
+        ),
+    ),
+    "ST_GAS": (
+        (
+            0.0211,
+            0.0211,
+            0.0211,
+            0.0724,
+            0.1054,
+            0.1017,
+            0.1228,
+            0.1786,
+            0.3014,
+            0.3539,
+        ),
+        (
+            0.1314,
+            0.1703,
+            0.2491,
+            0.2929,
+            0.3013,
+            0.3309,
+            0.3332,
+            0.3595,
+            0.3663,
+            0.3060,
+        ),
+        (
+            0.1455,
+            0.1454,
+            0.3084,
+            0.3393,
+            0.4066,
+            0.4537,
+            0.5087,
+            0.5255,
+            0.4477,
+            0.3141,
+        ),
+        (
+            0.2501,
+            0.2631,
+            0.2866,
+            0.2989,
+            0.3610,
+            0.3833,
+            0.4191,
+            0.4472,
+            0.4350,
+            0.3384,
+        ),
+    ),
+    "ST_CHP": (
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+    ),
+}
+ERCOT_RTOLCAP_FWD_OFFLINE_SHARE: dict[str, tuple[tuple[float, ...], ...]] = {
+    "CT_PEAKER": (
+        (
+            0.9493,
+            0.9493,
+            0.9361,
+            0.9231,
+            0.9055,
+            0.8762,
+            0.8365,
+            0.7448,
+            0.6469,
+            0.5350,
+        ),
+        (
+            0.9257,
+            0.9031,
+            0.8851,
+            0.8502,
+            0.7932,
+            0.7540,
+            0.5987,
+            0.5718,
+            0.4462,
+            0.2842,
+        ),
+        (
+            0.8100,
+            0.7987,
+            0.7923,
+            0.8307,
+            0.8076,
+            0.7925,
+            0.7923,
+            0.7648,
+            0.6445,
+            0.3691,
+        ),
+        (
+            0.9212,
+            0.9031,
+            0.9031,
+            0.8570,
+            0.8307,
+            0.7903,
+            0.7713,
+            0.7688,
+            0.6208,
+            0.3615,
+        ),
+    ),
+    "CT_CHP": (
+        (
+            0.6759,
+            0.6578,
+            0.6578,
+            0.6578,
+            0.6578,
+            0.6578,
+            0.6578,
+            0.6578,
+            0.6302,
+            0.6302,
+        ),
+        (
+            0.6578,
+            0.6759,
+            0.6759,
+            0.6759,
+            0.6759,
+            0.6759,
+            0.6759,
+            0.6759,
+            0.6759,
+            0.6497,
+        ),
+        (
+            0.5685,
+            0.5685,
+            0.5685,
+            0.5756,
+            0.5756,
+            0.5756,
+            0.5756,
+            0.5756,
+            0.5756,
+            0.5514,
+        ),
+        (
+            0.6578,
+            0.6578,
+            0.6578,
+            0.6497,
+            0.6302,
+            0.6302,
+            0.6011,
+            0.5831,
+            0.5756,
+            0.5514,
+        ),
+    ),
+}
+# Deliverability coefficient: fit to the measured RTOLCAP MW quantity (pooled
+# 2023-2025 LS), centering the forward level (like G3 ASPLANNP433). Not a price.
+ERCOT_RTOLCAP_FWD_DELIV_COEF: float = 0.8959
+# Off-line deliverability coefficient: fit to the measured RTOFFCAP MW quantity
+# (off-line startable quick-start capacity clears a smaller reserve fraction than
+# the on-line fit). Not a price.
+ERCOT_RTOLCAP_FWD_OFFLINE_DELIV_COEF: float = 0.7756
+# Forward on-line storage responsive-reserve fraction of installed storage power
+# (ERCOT observed AS-award / installed-storage ~0.35 across 2023-2025). FORECAST
+# only; in backcast the storage term reads the measured storage-AS series
+# (mode-aware, like the G4 load-resource credit).
+ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC: float = 0.35
+
+# --- ERCOT on-line-CAPACITY envelope (G-22 commitment thinness) ---------------
+# The committed on-line HSL fraction per responsive class, conditioned on the
+# same net-load-decile x season axes as ERCOT_RTOLCAP_FWD_ONLINE_SHARE above.
+# Where the RTOLCAP share is the on-line *headroom* (HSL - gross), this is the
+# on-line *capacity* (HSL) fraction itself. The on-line-capacity envelope
+# (scarcity.ercot_online_capacity_envelope_mw, gated ercot_online_capacity_envelope)
+# caps the multi-product co-opt's shared-headroom ENERGY+RESERVE at
+#     online_cap_env(t) = ERCOT_ONLINE_CAP_DELIV_COEF
+#                         x Sum_c ERCOT_ONLINE_CAP_SHARE_c[season,decile] x cap_c(t)
+# so the LP cannot dispatch or reserve more thermal than the real system had
+# on-line -- removing the ~3.2 GW phantom sub-$200 spare P1 perfect commitment
+# manufactures beyond measured RTOLCAP (FINDING-ercot-priceshape-2026-07 §3,
+# structural conclusion #2). Derived by
+# scripts/derive_ercot_rtolcap_forward.py --emit online-cap-constant from the
+# committed CAMPD unit extracts (Sum_online eff_cap / installed_cap, pooled-year
+# median). Rule #23: re-derives only on a CAMPD / measured-RTOLCAP source-data
+# update, never a residual. Identification (envelope - gross reproduces measured
+# RTOLCAP level/band/coverage) gated by scripts/validate_ercot_online_capacity.py.
+
+# Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON);
+# each inner tuple is the 10 net-load-percentile deciles (low→high).
+ERCOT_ONLINE_CAP_SHARE: dict[str, tuple[tuple[float, ...], ...]] = {
+    "COAL": (
+        (
+            0.9525,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+        (
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9025,
+            0.9025,
+            0.9525,
+            0.9025,
+            0.8776,
+        ),
+        (
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+        (
+            0.9242,
+            0.9242,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+    ),
+    "CC_REGULAR": (
+        (
+            0.4194,
+            0.4974,
+            0.5762,
+            0.6525,
+            0.6991,
+            0.7315,
+            0.7453,
+            0.7777,
+            0.8339,
+            0.8900,
+        ),
+        (
+            0.3933,
+            0.5444,
+            0.6376,
+            0.6859,
+            0.7083,
+            0.7428,
+            0.7731,
+            0.8237,
+            0.8523,
+            0.8657,
+        ),
+        (
+            0.5756,
+            0.5925,
+            0.6462,
+            0.6657,
+            0.7004,
+            0.7300,
+            0.7449,
+            0.7628,
+            0.7809,
+            0.8097,
+        ),
+        (
+            0.4370,
+            0.5380,
+            0.6202,
+            0.6651,
+            0.6797,
+            0.7212,
+            0.7458,
+            0.7743,
+            0.7848,
+            0.8107,
+        ),
+    ),
+    "CC_CHP": (
+        (
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+        ),
+        (
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+        ),
+        (
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+        ),
+        (
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6480,
+            0.6383,
+            0.6249,
+            0.6249,
+            0.6249,
+        ),
+    ),
+    "CT_PEAKER": (
+        (
+            0.0507,
+            0.0507,
+            0.0639,
+            0.0769,
+            0.0945,
+            0.1230,
+            0.1641,
+            0.2533,
+            0.3536,
+            0.4567,
+        ),
+        (
+            0.0753,
+            0.0969,
+            0.1176,
+            0.1490,
+            0.2066,
+            0.2440,
+            0.3768,
+            0.4296,
+            0.5450,
+            0.7131,
+        ),
+        (
+            0.0650,
+            0.0763,
+            0.0443,
+            0.0443,
+            0.0827,
+            0.0827,
+            0.0847,
+            0.1148,
+            0.2158,
+            0.4981,
+        ),
+        (
+            0.0945,
+            0.0969,
+            0.0969,
+            0.1037,
+            0.1185,
+            0.1234,
+            0.1411,
+            0.1257,
+            0.2657,
+            0.5198,
+        ),
+    ),
+    "CT_CHP": (
+        (
+            0.3241,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3698,
+            0.3698,
+        ),
+        (
+            0.3331,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3503,
+        ),
+        (
+            0.3065,
+            0.3065,
+            0.3065,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.3236,
+        ),
+        (
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3236,
+            0.3236,
+            0.3503,
+        ),
+    ),
+    "ST_GAS": (
+        (
+            0.0228,
+            0.0228,
+            0.0228,
+            0.1153,
+            0.1153,
+            0.1429,
+            0.1734,
+            0.2880,
+            0.5149,
+            0.8842,
+        ),
+        (
+            0.1602,
+            0.2592,
+            0.3493,
+            0.4078,
+            0.4598,
+            0.5093,
+            0.5788,
+            0.6631,
+            0.7193,
+            0.8014,
+        ),
+        (
+            0.1734,
+            0.1734,
+            0.3117,
+            0.4077,
+            0.4818,
+            0.6042,
+            0.6791,
+            0.7454,
+            0.8204,
+            0.9105,
+        ),
+        (
+            0.2819,
+            0.3269,
+            0.3631,
+            0.3975,
+            0.5241,
+            0.5730,
+            0.6396,
+            0.6782,
+            0.7822,
+            0.8796,
+        ),
+    ),
+    "ST_CHP": (
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+    ),
+}
+# Envelope deliverability coefficient: fit to reproduce the measured on-line HSL
+# MW quantity (CAMPD on-line gross + measured thermal RTOLCAP) in the BINDING
+# REGIME (top-30% net-load hours), on the PRODUCTION cap basis (model
+# FleetArrays pmax by responsive plant_group + summer derate, matching
+# scarcity.ercot_online_capacity_envelope_mw exactly — the derive's own
+# CAMPD-nameplate class cap runs ~20-30% too tight in the LP). The binding regime
+# is where the envelope is not slack and its reproduction of the measured RTOLCAP
+# capability decides whether the co-opt tightens. A whole-year fit reproduces the
+# annual mean but lets the pooled-median share undershoot the *committable*
+# capacity in the tight tail (room collapses far below measured RTOLCAP ->
+# over-fire); the envelope is a CAP (upper bound on what can be on-line), so it
+# is fit where it binds. On this basis the binding regime reproduces measured
+# RTOLCAP within -1/+2/-1% (2023/24/25); the slack hours (over-reproduced) never
+# reach the LP because the ENERGY term keeps the envelope slack there. With the
+# model's unconstrained thermal dispatch ~= measured CAMPD gross in these hours
+# (verified on the control arm, within 0.2-1.4 GW), the resulting in-LP on-line
+# room reproduces measured RTOLCAP + ~1 GW. A measured-MW-quantity fit to the
+# RTOLCAP band, never a price (rule #13).
+ERCOT_ONLINE_CAP_DELIV_COEF: float = 1.0830
+
+# --- ERCOT EXTREME-PEAK-RESOLVED on-line-capacity envelope (G-22, §5 path) ----
+# The filed forward path after the ercot41 rejection (docs/handoffs/
+# ercot-online-capacity-envelope-2026-07.md §5): the base envelope reproduced
+# measured RTOLCAP in the binding regime (+-2%) but its pooled decile-9 share
+# median under-stated the committable capacity in the top-2% net-load hours, so
+# the in-LP room collapsed (4.4/6.7 GW vs measured 8.0/11.1 in 2023/24) and the
+# ORDC over-fired. Two refinements, both identified on measured MW quantities
+# (rules #13/#14/#23 -- never a price), derived by
+# scripts/derive_ercot_rtolcap_forward.py --emit online-cap-extreme-constant:
+#
+# 1. SHAPE -- ERCOT_ONLINE_CAP_SHARE_EXTREME resolves the committed on-line HSL
+#    fraction on 14 net-load bins (deciles 0-8 + five 2-percentile sub-bins of
+#    the top decile, scarcity.ercot_online_cap_extreme_bin). The measured CAMPD
+#    commitment saturation rises through the sub-bins (summer CT_PEAKER
+#    0.40->0.61, ST_GAS 0.83->0.97) where the single decile-9 median collapsed
+#    it. Sub-bin cells with < 24 pooled hours across the source years (one
+#    diurnal cycle; the spring top-decile is that thin) inherit the parent
+#    decile-9 same-season median -- a hierarchical coarsening, never a new
+#    number.
+# 2. LEVEL -- ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME replaces the scalar
+#    deliverability with a per-bin profile: deliv_b = pooled_mean_b(target) /
+#    pooled_mean_b(share-composite on the production cap basis), where
+#        target(t) = CAMPD on-line gross(t)
+#                    + (measured RTOLCAP(t) - storage AS(t) - LR credit(t)),
+#    the measured THERMAL on-line HSL identity. The same ratio-of-means
+#    identification as the base deliv fit, resolved on the same axis as the
+#    share, because a single scalar provably cannot carry the capability margin
+#    that GROWS toward the extreme peak: after netting the measured storage-AS
+#    and load-resource series (both already credited against the requirement in
+#    the keeper LP -- keeping them in a THERMAL cap would double-count),
+#    measured thermal RTOLCAP still exceeds the CAMPD share-reconstruction by
+#    ~2.3-3.4 GW in the top-2% (non-CEMS capability + telemetered HSL above the
+#    summer-derated nameplate, exactly where scarcity operations muster
+#    everything). The profile is monotone-rising through the binding bins
+#    (1.05 -> 1.10), the measured signature of that margin.
+#
+# Identification (validate_ercot_online_capacity.py --extreme): headroom
+# remainder reproduces measured RTOLCAP in the binding regime at -0/+3/-2%
+# (2023/24/25) AND in the top-2% extreme tail at -23/-2/+18% -- the pooled
+# top-bin mean is exact by construction; the per-year spread is the cross-year
+# capability difference at a fixed within-year rank (2023's scarcity summer
+# mustered more absolute capability than 2025's milder tail), which a
+# year-symmetric pooled coefficient cannot span without year-pinning
+# (forbidden). Recorded as the residual ledger, not tuned.
+# Rule #23: re-derives only on a CAMPD / measured-RTOLCAP / storage-AS /
+# LR-credit source-data update, never a residual.
+
+# Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON);
+# each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 +
+# five 2-pp sub-bins of the top decile, low->high).
+ERCOT_ONLINE_CAP_SHARE_EXTREME: dict[str, tuple[tuple[float, ...], ...]] = {
+    "COAL": (
+        (
+            0.9525,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+        (
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9025,
+            0.9025,
+            0.9525,
+            0.9025,
+            0.8776,
+            0.8776,
+            0.8776,
+            0.8776,
+            0.8776,
+        ),
+        (
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+        (
+            0.9242,
+            0.9242,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+    ),
+    "CC_REGULAR": (
+        (
+            0.4194,
+            0.4974,
+            0.5762,
+            0.6525,
+            0.6991,
+            0.7315,
+            0.7453,
+            0.7777,
+            0.8339,
+            0.8655,
+            0.8840,
+            0.8833,
+            0.8921,
+            0.9040,
+        ),
+        (
+            0.3933,
+            0.5444,
+            0.6376,
+            0.6859,
+            0.7083,
+            0.7428,
+            0.7731,
+            0.8237,
+            0.8523,
+            0.8657,
+            0.8657,
+            0.8657,
+            0.8657,
+            0.8657,
+        ),
+        (
+            0.5756,
+            0.5925,
+            0.6462,
+            0.6657,
+            0.7004,
+            0.7300,
+            0.7449,
+            0.7628,
+            0.7809,
+            0.7968,
+            0.7999,
+            0.7999,
+            0.8177,
+            0.8293,
+        ),
+        (
+            0.4370,
+            0.5380,
+            0.6202,
+            0.6651,
+            0.6797,
+            0.7212,
+            0.7458,
+            0.7743,
+            0.7848,
+            0.7955,
+            0.8106,
+            0.8051,
+            0.8212,
+            0.8293,
+        ),
+    ),
+    "CC_CHP": (
+        (
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+        ),
+        (
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+        ),
+        (
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+        ),
+        (
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6943,
+            0.6480,
+            0.6383,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+            0.6249,
+        ),
+    ),
+    "CT_PEAKER": (
+        (
+            0.0507,
+            0.0507,
+            0.0639,
+            0.0769,
+            0.0945,
+            0.1230,
+            0.1641,
+            0.2533,
+            0.3536,
+            0.3711,
+            0.4197,
+            0.4486,
+            0.4267,
+            0.5636,
+        ),
+        (
+            0.0753,
+            0.0969,
+            0.1176,
+            0.1490,
+            0.2066,
+            0.2440,
+            0.3768,
+            0.4296,
+            0.5450,
+            0.7131,
+            0.7131,
+            0.7131,
+            0.7131,
+            0.7131,
+        ),
+        (
+            0.0650,
+            0.0763,
+            0.0443,
+            0.0443,
+            0.0827,
+            0.0827,
+            0.0847,
+            0.1148,
+            0.2158,
+            0.3950,
+            0.4509,
+            0.4891,
+            0.5204,
+            0.6108,
+        ),
+        (
+            0.0945,
+            0.0969,
+            0.0969,
+            0.1037,
+            0.1185,
+            0.1234,
+            0.1411,
+            0.1257,
+            0.2657,
+            0.4120,
+            0.4845,
+            0.5022,
+            0.5680,
+            0.6151,
+        ),
+    ),
+    "CT_CHP": (
+        (
+            0.3241,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3698,
+            0.3503,
+            0.3503,
+            0.3698,
+            0.3503,
+            0.3698,
+        ),
+        (
+            0.3331,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3241,
+            0.3503,
+            0.3503,
+            0.3503,
+            0.3503,
+            0.3503,
+        ),
+        (
+            0.3065,
+            0.3065,
+            0.3065,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.2994,
+            0.3065,
+            0.3065,
+            0.3236,
+            0.3490,
+            0.3490,
+        ),
+        (
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3422,
+            0.3236,
+            0.3236,
+            0.3236,
+            0.3576,
+            0.3648,
+            0.3648,
+            0.3648,
+        ),
+    ),
+    "ST_GAS": (
+        (
+            0.0228,
+            0.0228,
+            0.0228,
+            0.1153,
+            0.1153,
+            0.1429,
+            0.1734,
+            0.2880,
+            0.5149,
+            0.7454,
+            0.8157,
+            0.8842,
+            0.7894,
+            0.9282,
+        ),
+        (
+            0.1602,
+            0.2592,
+            0.3493,
+            0.4078,
+            0.4598,
+            0.5093,
+            0.5788,
+            0.6631,
+            0.7193,
+            0.8014,
+            0.8014,
+            0.8014,
+            0.8014,
+            0.8014,
+        ),
+        (
+            0.1734,
+            0.1734,
+            0.3117,
+            0.4077,
+            0.4818,
+            0.6042,
+            0.6791,
+            0.7454,
+            0.8204,
+            0.8756,
+            0.8842,
+            0.9105,
+            0.9241,
+            0.9681,
+        ),
+        (
+            0.2819,
+            0.3269,
+            0.3631,
+            0.3975,
+            0.5241,
+            0.5730,
+            0.6396,
+            0.6782,
+            0.7822,
+            0.8092,
+            0.8842,
+            0.8780,
+            0.8842,
+            0.9418,
+        ),
+    ),
+    "ST_CHP": (
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+    ),
+}
+# Per-bin deliverability profile (14 extreme-resolved net-load bins, low->high;
+# construction/identification documented in the block comment above).
+ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME: tuple[float, ...] = (
+    1.0105,
+    0.9383,
+    0.9367,
+    0.9541,
+    0.9773,
+    1.0030,
+    1.0295,
+    1.0518,
+    1.0731,
+    1.0715,
+    1.0741,
+    1.0752,
+    1.0889,
+    1.1004,
+)
+
+# --- ERCOT MEASURED-FLEET-BASIS on-line-capacity envelope (ercot57 joint) -----
+# The joint-round re-identification of the G-22 envelope on the measured fleet
+# (owner-sanctioned 2026-07-11; ERCOT-57 calibration-log entry): the ercot41/43
+# A/Bs ran on the phantom-tight statistical availability stack, and their share
+# tables (committed on-line HSL / INSTALLED capacity) conflate the commitment
+# choice with the outage state — in the extreme tail reality musters near-max
+# availability, so a pooled share-of-installed under-states committable
+# capacity exactly there (the ercot43 top-2% room collapse, 2023 ledger −23%).
+# This basis decomposes them for the measured-availability classes
+# (ERCOT_ONLINE_CAP_MEASURED_AVAIL_CLASSES, the 60-Day-DAM disclosure deriver's
+# scope): share = committed on-line HSL ÷ MEASURED AVAILABLE capacity (the
+# class-day disclosure fraction × installed), and the LP basis is the fleet's
+# finished availability (measured under ercot_thermal_dam_availability in
+# backcast; the statistical stack forward — the G4 mode-aware seam). Uncovered
+# classes keep the extreme variant's installed × summer-derate basis. Derived
+# by scripts/derive_ercot_rtolcap_forward.py --emit online-cap-measured-constant;
+# identification gate scripts/validate_ercot_online_capacity.py --measured.
+# Rule #23: re-derives only on a disclosure / CAMPD / measured-RTOLCAP /
+# storage-AS / LR-credit source-data update, never a residual (this derivation
+# cites the data/raw/ercot-thermal-dam-availability.csv intake, ERCOT-57).
+ERCOT_ONLINE_CAP_MEASURED_AVAIL_CLASSES: tuple[str, ...] = (
+    "CC_REGULAR",
+    "CT_PEAKER",
+)
+# Seasons: 0=winter(DJF) 1=spring(MAM) 2=summer(JJA) 3=fall(SON);
+# each inner tuple is the 14 extreme-resolved net-load bins (deciles 0-8 + five 2-pp sub-bins of the top decile, low->high).
+ERCOT_ONLINE_CAP_SHARE_MEASURED: dict[str, tuple[tuple[float, ...], ...]] = {
+    "COAL": (
+        (
+            0.9525,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+        (
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9242,
+            0.9025,
+            0.9025,
+            0.9525,
+            0.9025,
+            0.8776,
+            0.8776,
+            0.8776,
+            0.8776,
+            0.8776,
+        ),
+        (
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+        (
+            0.9242,
+            0.9242,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            0.9717,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+            1.0000,
+        ),
+    ),
+    "CC_REGULAR": (
+        (
+            0.4737,
+            0.5700,
+            0.6493,
+            0.7323,
+            0.8063,
+            0.8379,
+            0.8588,
+            0.8964,
+            0.9292,
+            0.9450,
+            0.9451,
+            0.9459,
+            0.9449,
+            0.9451,
+        ),
+        (
+            0.6566,
+            0.8758,
+            0.9929,
+            1.0565,
+            1.0655,
+            1.0755,
+            1.0946,
+            1.1108,
+            1.1104,
+            1.1082,
+            1.1082,
+            1.1082,
+            1.1082,
+            1.1082,
+        ),
+        (
+            0.6882,
+            0.8102,
+            0.8305,
+            0.8329,
+            0.8566,
+            0.8741,
+            0.8874,
+            0.9031,
+            0.9210,
+            0.9422,
+            0.9422,
+            0.9449,
+            0.9428,
+            0.9469,
+        ),
+        (
+            0.6999,
+            0.8488,
+            0.9181,
+            0.9692,
+            0.9596,
+            0.9515,
+            0.9245,
+            0.9153,
+            0.9229,
+            0.9409,
+            0.9367,
+            0.9360,
+            0.9330,
+            0.9299,
+        ),
+    ),
+    "CC_CHP": (
+        (
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+        ),
+        (
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+        ),
+        (
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+        ),
+        (
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.8005,
+            0.7445,
+            0.7445,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+            0.7204,
+        ),
+    ),
+    "CT_PEAKER": (
+        (
+            0.0570,
+            0.0583,
+            0.0688,
+            0.0781,
+            0.1040,
+            0.1288,
+            0.1815,
+            0.2583,
+            0.3740,
+            0.4045,
+            0.4595,
+            0.4803,
+            0.4741,
+            0.6330,
+        ),
+        (
+            0.1014,
+            0.1330,
+            0.1542,
+            0.2060,
+            0.2805,
+            0.3246,
+            0.5339,
+            0.5416,
+            0.6927,
+            0.9233,
+            0.9233,
+            0.9233,
+            0.9233,
+            0.9233,
+        ),
+        (
+            0.0809,
+            0.0951,
+            0.1032,
+            0.0573,
+            0.0821,
+            0.0972,
+            0.1017,
+            0.1372,
+            0.2733,
+            0.4882,
+            0.5392,
+            0.5930,
+            0.6387,
+            0.7475,
+        ),
+        (
+            0.1249,
+            0.1268,
+            0.1325,
+            0.1344,
+            0.1438,
+            0.1590,
+            0.1451,
+            0.1356,
+            0.3024,
+            0.5194,
+            0.5845,
+            0.6307,
+            0.6937,
+            0.7466,
+        ),
+    ),
+    "CT_CHP": (
+        (
+            0.3843,
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4645,
+            0.4335,
+            0.4645,
+            0.4490,
+            0.4335,
+            0.4645,
+        ),
+        (
+            0.4117,
+            0.3843,
+            0.3843,
+            0.3843,
+            0.3843,
+            0.3843,
+            0.3843,
+            0.4117,
+            0.3843,
+            0.4089,
+            0.4089,
+            0.4089,
+            0.4089,
+            0.4089,
+        ),
+        (
+            0.3794,
+            0.3794,
+            0.3794,
+            0.3603,
+            0.3603,
+            0.3603,
+            0.3603,
+            0.3603,
+            0.3603,
+            0.3794,
+            0.3794,
+            0.4064,
+            0.4357,
+            0.4357,
+        ),
+        (
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4117,
+            0.4064,
+            0.4064,
+            0.4357,
+            0.4357,
+            0.4597,
+            0.4597,
+            0.4357,
+        ),
+    ),
+    "ST_GAS": (
+        (
+            0.0228,
+            0.0228,
+            0.0228,
+            0.1153,
+            0.1153,
+            0.1248,
+            0.1734,
+            0.2898,
+            0.5741,
+            0.7805,
+            0.8973,
+            0.8973,
+            0.8026,
+            0.9545,
+        ),
+        (
+            0.1602,
+            0.2592,
+            0.3400,
+            0.4153,
+            0.4490,
+            0.5154,
+            0.5610,
+            0.6631,
+            0.7184,
+            0.8014,
+            0.8014,
+            0.8014,
+            0.8014,
+            0.8014,
+        ),
+        (
+            0.1734,
+            0.1734,
+            0.3496,
+            0.4077,
+            0.4886,
+            0.5796,
+            0.6791,
+            0.7717,
+            0.8204,
+            0.8756,
+            0.9105,
+            0.9105,
+            0.9418,
+            0.9681,
+        ),
+        (
+            0.2865,
+            0.3269,
+            0.3631,
+            0.4073,
+            0.5097,
+            0.5904,
+            0.6426,
+            0.6704,
+            0.7822,
+            0.8357,
+            0.8780,
+            0.8780,
+            0.8780,
+            0.9418,
+        ),
+    ),
+    "ST_CHP": (
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+        (
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+            0.0000,
+        ),
+    ),
+}
+ERCOT_ONLINE_CAP_DELIV_PROFILE_MEASURED: tuple[float, ...] = (
+    0.9254,
+    0.8582,
+    0.8686,
+    0.8733,
+    0.8944,
+    0.9271,
+    0.9527,
+    0.9642,
+    0.9743,
+    0.9701,
+    0.9700,
+    0.9738,
+    0.9838,
+    0.9933,
+)
+
+# --- ERCOT ORDC-only reserve-scarcity pricing (pre-RTC+B design) -------------
+# AS-plan hold preference for the ercot_ordc_only_scarcity product families:
+# the single shortfall-step penalty ($/MWh) replacing the NYISO-imported
+# k×VOLL/n_ramp per-product ladders. NOT a scarcity price — an LP tie-break so
+# the measured DAM AS plan is HELD whenever free headroom exists (the award's
+# physical withholding) and RELEASES along the ORDC total-reserve curve when
+# energy is worth more, which is the ORDC design itself (Nodal Protocols
+# §6.5.7.5: RT reserve scarcity prices only via the ORDC; a product-vs-
+# capability squeeze triggers RUC commitment, not a price — docs/DIAGNOSIS-
+# ercot-june2023-scarcity-formation-2026-07.md §4.2). Same magnitude class as
+# the storage degeneracy tiebreaker ε = 0.001 $/MWh (CLAUDE.md rule 9): small
+# enough never to reach an energy dual, positive so plan-holding is preferred
+# over idle headroom.
+ERCOT_AS_PLAN_HOLD_EPS: float = 0.001
+
+# --- Federal §45 wind PTC, statutory inflation-adjusted credit ($/MWh) -------
+# The IRS-published renewable-electricity production credit for WIND, by
+# production (sale) calendar year, for facilities placed in service before
+# 2022 — the vintage class that dominates the in-window ERCOT fleet in the
+# backcast years. Sources (annual IRS inflation-adjustment notices):
+#   2023: 2.8 c/kWh — 88 FR 40406 (2023-13191), IAF 1.8909
+#   2024: 2.9 c/kWh — IRS 2024 §45 notice (Holland & Knight 2024-07 summary)
+#   2025: 3.0 c/kWh — 90 FR 22213 (2025-09366), IAF 1.9971
+# Facilities placed in service after 2021 (IRA §45 five-times rate with
+# wage/apprenticeship compliance) publish slightly lower amounts under the
+# finer 0.05-cent rounding (2.75 c/kWh in 2023) — a <= $1.5/MWh spread the
+# single per-year level deliberately ignores (the pre-2022 vintages carry
+# most in-window capacity). Years outside this table fall back to the
+# registry's flat ScenarioConfig.ira_ptc_wind. Used ONLY by the
+# wind_ptc_vintage_offers dispatch-offer scoping (policy.ira.
+# wind_ptc_vintage_dispatch_offer); the capacity-economics screens keep the
+# flat ira_ptc_wind convention.
+WIND_PTC_STATUTORY_USD_PER_MWH: dict[int, float] = {
+    2023: 28.0,
+    2024: 29.0,
+    2025: 30.0,
+}

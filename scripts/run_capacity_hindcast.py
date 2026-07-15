@@ -91,7 +91,6 @@ def build_config(
     staged_thinning_max_gw_per_year: float = 3.0,
     limited_foresight_dispatch: bool = False,
     legacy_renewable_credit: bool = False,
-    capacity_market_clearing: bool = False,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -171,17 +170,6 @@ def build_config(
         # the before/after diagnostic. Default (False) keeps the model
         # default renewable_elcc_curves=True -- the AFTER leg.
         renewable_elcc_curves=not legacy_renewable_credit,
-        # RC-1B / RC-1A probe flag (PROBE, default-off -- mirrors the G-30/G-31
-        # arms above): arm the CR-1 sloped capacity demand curve for THIS
-        # hindcast's ISO via the per-ISO gate (constants.
-        # resolve_capacity_market_clearing), so a curve-ON leg can run
-        # side-by-side with the fixed-mode BEFORE leg for the same ISO
-        # without flipping the global default. Never the harness default --
-        # see plan §2.2 (the position-calibration measurement this flag
-        # exists to run).
-        capacity_market_clearing_by_iso={iso: True}
-        if capacity_market_clearing
-        else None,
     )
 
 
@@ -296,17 +284,6 @@ def main(argv: list[str] | None = None) -> int:
             "in-year once the fleet has thinned. See build_config / scenarios.py."
         ),
     )
-    parser.add_argument(
-        "--capacity-market-clearing",
-        action="store_true",
-        help=(
-            "RC-1B/RC-1A PROBE: arm the CR-1 sloped capacity demand curve for "
-            "this hindcast's ISO only (via the per-ISO gate, "
-            "capacity_market_clearing_by_iso), so a curve-ON leg can run "
-            "side-by-side with a fixed-mode BEFORE leg for the same ISO "
-            "without touching the global default. Never the harness default."
-        ),
-    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -324,7 +301,6 @@ def main(argv: list[str] | None = None) -> int:
         staged_thinning_max_gw_per_year=args.staged_thinning_max_gw_per_year,
         limited_foresight_dispatch=args.limited_foresight_dispatch,
         legacy_renewable_credit=args.legacy_renewable_credit,
-        capacity_market_clearing=args.capacity_market_clearing,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) -- deliberately
@@ -356,7 +332,6 @@ def main(argv: list[str] | None = None) -> int:
         "staged_oversupply_thinning": bool(args.staged_oversupply_thinning),
         "staged_thinning_max_gw_per_year": float(args.staged_thinning_max_gw_per_year),
         "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
-        "capacity_market_clearing": bool(args.capacity_market_clearing),
         "renewable_elcc_curves": bool(config.renewable_elcc_curves),
         "gas_price_path": config.gas_price_path,
         "vintage_year": VINTAGE_YEAR,
