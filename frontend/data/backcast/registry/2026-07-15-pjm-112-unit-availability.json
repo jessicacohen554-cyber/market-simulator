@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-15-pjm-112-unit-availability",
+  "label": "pjm 112 unit availability",
+  "date": "2026-07-15",
+  "shorthand": "pjm-112-unit-availability",
+  "definition": "(NOT-YET CANDIDATE \u2014 not a keeper) PJM 112: the pjm-111 CC-reconcile keeper recipe (full pjm-105/107/110/111 flag stack via meta replay) with EXACTLY the two measured unit-availability overlays armed \u2014 unit_outage_short_windows (LEG A, short < 5-day baseload-coal full stops, re-derived on the WHEN-OPERABLE baseload guard) and unit_partial_outage_windows (LEG B, NEW unit-grain partial-derate plateaus at the plant-level partial detector's frozen constants). Completes the measured unit-availability family for PJM at unit grain to recover the C3c summer-tail phantom coal (+3.0 GW in the 22 Jun 23-25 / Jul 28-29 DA-tail hours the >= 5-day zero-run extract is blind to). Zero fitted scalars; build-time provenance 1502 MW >= 800 MW (gate #4 PASS). PRE-COMMITTED GATE (diagnosis \u00a78): gate #1 (C3c-2025 model tail in [26,102] h) MISSED \u2014 model moved 17 -> 18 h; gates #2-#5 (small-count caps 1/1, no PASS criterion flips, provenance, LOYO) ALL HOLD. The summer tail stands as a QUANTIFIED DISCLOSED BOUNDARY: ~1.7 GW of 3-4-day event partial derates invisible to the 7-day-median plateau detector (\u00a77) + the flat zonal congestion surface (\u00a75) absorb the removed coal. Keeper stays pjm-111. docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md \u00a77-8.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-15-pjm-112-unit-availability.js",
+  "bundle": "results/calibration/pjm112_unit_availability"
+}
