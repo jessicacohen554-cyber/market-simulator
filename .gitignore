@@ -44,6 +44,11 @@ data/raw/pjm-da-virtuals/*
 # scripts/build_nyiso_proxy_lmp_neiso.py (docstring has the curl loop).
 data/raw/lmp-data/NYISO/*damlbmp_zone_csv.zip
 data/raw/lmp-data/NYISO/*realtime_zone_csv.zip
+# Transient outer container the derive_actual_lmp NYISO DA reader consumes
+# (assembled locally from the monthly damlbmp zips above; same re-fetchable
+# lineage — the committed actual_lmp_hourly_NYISO.parquet is the durable
+# record, per the holdout-register staging precedent).
+data/raw/lmp-data/NYISO/NYISO_zonal_hourly.zip
 
 # Derived binned-fleet cache (side output of the fleet loader)
 data/raw/_processed-legacy/*.parquet
