@@ -61,15 +61,19 @@ negative, register it as a probe and move on)
 
 **W1 — measured January seam (data intake, then re-solve).** The 2023
 intertie series starts at hour 2040; before that the per-hub corridors ride
-the static fitted ladder, in exactly the +48% month. The committed GRP zips
-carry `MALIN_5_N101`, `CAPTJACK_5_N003`, `PALOVRDE_ASR-APND` (24 h/day, every
-DAM zip). Extend `scripts/fold_caiso_oasis_grp_zips.py` to extract them,
-build the Jan 1–25 hub series on `fetch_caiso_intertie_lmp.py`'s convention
-(sum LMP+MCC+MCL components; MGHG excluded; MALIN = mean of its two nodes),
-and extend `wecc_intertie_lmp_hourly_CAISO.parquet`. Then re-solve the keeper
-recipe unchanged (the parquet is the delta — note it in run_config note).
-Rule-14 framing: replaces a fitted ladder with measured prices in the miss
-month, whichever way the residual moves.
+the static fitted ladder, in exactly the +48% month. **The Jan 1–25 intertie
+DA prices are ALREADY in the committed hourly aggregate** (2026-07-14 session
+follow-up: `CAISO_dam_hourly_2023.csv` now carries `MALIN_5_N101`,
+`CAPTJACK_5_N003`, `PALOVRDE_ASR-APND` rows — Jan DA means Malin $147.8 /
+Palo Verde $143.0). Build the Jan window of
+`wecc_intertie_lmp_hourly_CAISO.parquet` from those rows on
+`fetch_caiso_intertie_lmp.py`'s convention (LMP column already = MCE+MCC+MCL
+[+MGHG≈0 at these nodes]; MALIN = mean of its two nodes). Then re-solve the
+keeper recipe unchanged (the parquet is the delta — note it in run_config
+note). Rule-14 framing: replaces a fitted ladder with measured prices in the
+miss month, whichever way the residual moves. Missing Jan days + Feb arrive
+via the fixed `fetch-caiso-oasis-bulk.yml` workflow (extractor rglob fix,
+same session) whenever the owner re-dispatches it.
 
 **T2 — per-hub midday negative tail.** First a no-LP check (step 0a/0c):
 does the keeper's Path-46 corridor price dip ≤$0 midday like the measured
