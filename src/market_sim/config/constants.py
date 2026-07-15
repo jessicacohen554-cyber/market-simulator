@@ -2453,6 +2453,7 @@ class MarketDesign:
         self,
         config: "object | None" = None,
         reserve_position: "float | None" = None,
+        iso: "str | None" = None,
     ) -> float:
         """Capacity clearing price in $/firm-MW-yr — the shared seam (rule 19).
 
@@ -2477,6 +2478,12 @@ class MarketDesign:
         from :data:`MARKET_DESIGN`) return ``0.0`` in **both** modes.
         ``config`` is duck-typed via ``getattr`` so the config layer needs no
         import of :class:`ScenarioConfig`.
+
+        The curve gate is resolved per ISO through
+        :func:`resolve_capacity_market_clearing` (RC-1B): when ``iso`` is given
+        the ``config.capacity_market_clearing_by_iso`` override governs, else the
+        scalar ``config.capacity_market_clearing``. Passing ``iso=None`` (every
+        pre-CR-1 call site) reproduces the scalar-gated behavior byte-identically.
         """
         if not self.capacity_market:
             return 0.0
@@ -2484,7 +2491,7 @@ class MarketDesign:
             reserve_position is not None
             and self.demand_curve
             and config is not None
-            and getattr(config, "capacity_market_clearing", False)
+            and resolve_capacity_market_clearing(config, iso)
         ):
             anchor = self.net_cone_curve_per_kw_yr or self.net_cone_per_kw_yr
             frac = evaluate_demand_curve(self.demand_curve, float(reserve_position))
@@ -2492,6 +2499,33 @@ class MarketDesign:
         if self.net_cone_per_kw_yr <= 0.0:
             return 0.0
         return self.net_cone_per_kw_yr * 1000.0
+
+
+def resolve_capacity_market_clearing(
+    config: "object | None", iso: "str | None" = None
+) -> bool:
+    """Return whether the CR-1 sloped capacity curve is active for ``iso``.
+
+    The one seam every capacity-price call site reads the clearing gate
+    through (RC-1B; P-2A §7 per-ISO flip). Resolution order:
+
+    * ``config.capacity_market_clearing_by_iso`` (a ``{iso: bool}`` mapping)
+      wins when it carries a row for ``iso`` — this is what lets a flip be ON
+      for one ISO while OFF elsewhere;
+    * otherwise the scalar ``config.capacity_market_clearing`` governs
+      (default off).
+
+    ``iso=None`` or a config without the mapping falls straight through to the
+    scalar, so every pre-existing (scalar-only) call path is byte-identical.
+    ``config`` is duck-typed via ``getattr`` so the config layer needs no
+    import of :class:`ScenarioConfig`.
+    """
+    if config is None:
+        return False
+    by_iso = getattr(config, "capacity_market_clearing_by_iso", None)
+    if by_iso and iso is not None and iso in by_iso:
+        return bool(by_iso[iso])
+    return bool(getattr(config, "capacity_market_clearing", False))
 
 
 # --- CR-1 sloped capacity demand curves (normalized) ----------------------
