@@ -1,0 +1,83 @@
+name: file-integrity-guard
+
+# CLAUDE.md rule 27 enforcement: fail any PR (and flag any push to main) that
+# shrinks a core source file by >30% or deletes it. Guards against
+# response-budget-truncated API pushes (incident 2026-07-15: constants.py
+# 6,368 -> 33 lines merged to main, five failed fragment restores).
+# Runtime is seconds and path-filtered — durable infrastructure, not a compute
+# job (repo CI cost policy). Escape hatch: the `intentional-shrink` PR label.
+
+on:
+  pull_request:
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "CLAUDE.md"
+      - "model-methodology-spec.md"
+      - ".github/workflows/**"
+  push:
+    branches: [main]
+    paths:
+      - "src/**"
+      - "scripts/**"
+      - "CLAUDE.md"
+      - "model-methodology-spec.md"
+      - ".github/workflows/**"
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  shrink-guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fail on >30% shrink or deletion of core files
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+        run: |
+          set -euo pipefail
+          if [[ ",${PR_LABELS}," == *",intentional-shrink,"* ]]; then
+            echo "PR carries the 'intentional-shrink' label — guard skipped."
+            exit 0
+          fi
+          # On force-push / first-push events the before-SHA may be unknown.
+          if ! git cat-file -e "${BASE_SHA}^{commit}" 2>/dev/null; then
+            echo "Base SHA ${BASE_SHA} unavailable; falling back to HEAD^."
+            BASE_SHA=$(git rev-parse "${HEAD_SHA}^")
+          fi
+          echo "Comparing ${BASE_SHA}..${HEAD_SHA}"
+          fail=0
+          while IFS=$'\t' read -r status path _renamed; do
+            [[ -z "${status:-}" ]] && continue
+            case "$path" in
+              src/*|scripts/*|CLAUDE.md|model-methodology-spec.md|.github/workflows/*) ;;
+              *) continue ;;
+            esac
+            base_lines=$(git show "${BASE_SHA}:${path}" 2>/dev/null | wc -l || echo 0)
+            # Only guard files that were substantial at base (>=300 lines).
+            if (( base_lines < 300 )); then continue; fi
+            if [[ "$status" == D* ]]; then
+              echo "::error file=${path}::core file DELETED (was ${base_lines} lines). Add the 'intentional-shrink' label if deliberate (CLAUDE.md rule 27)."
+              fail=1
+              continue
+            fi
+            head_lines=$(git show "${HEAD_SHA}:${path}" 2>/dev/null | wc -l || echo 0)
+            min_lines=$(( base_lines * 70 / 100 ))
+            if (( head_lines < min_lines )); then
+              echo "::error file=${path}::shrank ${base_lines} -> ${head_lines} lines (>30%). Likely a truncated API push (CLAUDE.md rule 27). Restore the full content or add the 'intentional-shrink' label if deliberate."
+              fail=1
+            fi
+          done < <(git diff --name-status "${BASE_SHA}" "${HEAD_SHA}")
+          if (( fail )); then
+            echo "file-integrity-guard FAILED — see errors above."
+            exit 1
+          fi
+          echo "file-integrity-guard passed."
