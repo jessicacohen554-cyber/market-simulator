@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-15-caiso-84-gas-spot",
+ "label": "caiso 84 gas spot level (PROBE)",
+ "date": "2026-07-15",
+ "shorthand": "caiso-84-gas-spot",
+ "definition": "PROBE (caiso-80 keeper recipe + the single delta caiso_citygate_spot_level=True): re-levels the CAISO gas hub overlay from the EIA N3050CA3 monthly citygate SURVEY (acquisition cost) onto the measured California Composite daily citygate SPOT the cost-based DEB prices the marginal unit at (rule-15 measured-series swap, zero new scalars; FINDING-caiso-winter-gas-level-2026-07-15). RESULT: the dominant WINTER over-pricing closes \u2014 2023 Jan $222.0->$136.6 vs actual $129.7 (+71%->+5.3%), Feb $95.7->$68.1 vs $66.4 (+44%->+2.5%); C3a-2023 +32.5%->+11.9%; C3b-2023 0.562->passing; C3c-2023 667h->16h (>$200, vs 80h actual \u2014 now under-shoots, the CT-rung/scarcity lane). The survey<spot shoulder months (Mar/Oct-2023) move UP toward actual \u2014 a fit-chasing knob could not do this. Residual over-price is now summer soft-months (May/Jun, the import-ladder M-regime lane). NOT-YET overall (C1 2024 CC +6.67TWh from cheaper gas, C3a summer, C3c under, C4 gas 0.323). Keeper promotion pending owner sign-off.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-15-caiso-84-gas-spot.js",
+ "bundle": "results/calibration/caiso84_gas_spot_level"
+}
