@@ -5267,6 +5267,31 @@ class ScenarioConfig:
     # and never double-count. Default off; GATED CHANGE (alters availability).
     unit_outage_short_windows: bool = False
 
+    # Tier 3 (calibration) — unit-grain partial-derate plateaus, the second
+    # window shape of the measured unit-availability family (the companion of
+    # unit_outage_short_windows). Driver (rule 12): sustained CF-ceiling
+    # plateaus in per-unit CEMS — a unit that keeps running but at a depressed
+    # ceiling (half its capability out) — which never reach zero, so no
+    # zero-run outage window can represent them (the >= 5-day and short
+    # full-stop extracts are structurally blind to a partial derate). Window:
+    # the measured plateau itself (>= 5 days, the partial-outage deriver's
+    # frozen _MIN_DAYS), detected on each unit's own gross with the plant-level
+    # partial detector's constants VERBATIM (_SMOOTH_DAYS=7, _CEILING_FRAC=0.65,
+    # _RUN_FLOOR_CF=0.06), kept only when it survives the SAME when-operable
+    # baseload guard (CF >= 0.55) and revealed-availability in-merit filter as
+    # the short windows. Forward story (rule 13): same as the parent overlay —
+    # a physical availability event (WEFOR/derate-rate forward analogue),
+    # backcast-mode calibration input, never a forecast methodology. Reads the
+    # per-ISO unit-grain campd-partial-outages-<ISO>.csv (built by
+    # scripts/derive_campd_unit_outages.py --partial-windows --iso <ISO>);
+    # aggregated to the plant exactly like the >= 5-day unit-outage overlay
+    # (unit-capacity share, concurrent units summed, clipped at full derate).
+    # DISTINCT from the ERCOT-only PLANT-grain partial-outage path, which the
+    # PJM cycling fleet over-fires (~43 TWh/yr — measured, refused as-is;
+    # docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7 leg B) and which stays
+    # ERCOT-scoped. Default off; GATED CHANGE (alters availability).
+    unit_partial_outage_windows: bool = False
+
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -6367,6 +6392,7 @@ TIER_TAGS: dict[str, int] = {
     "dual_fuel_oil_reattribution": 3,
     "outage_source": 3,
     "unit_outage_short_windows": 3,
+    "unit_partial_outage_windows": 3,
     "gas_price_override": 3,
 }
 
