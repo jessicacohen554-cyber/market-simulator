@@ -1,0 +1,125 @@
+# Canonical schema: capacity-market-avoidable-cost-rate (published default/
+# generic Avoidable Cost Rate benchmarks by technology class — the going-
+# forward-cost identification source for the retirement/entry screen's GFC
+# construction).
+#
+# PJM's Tariff/Manual 18 deactivation and capacity must-offer-exception
+# process lets a unit demonstrate its offer/retirement case against either its
+# own cost data or PJM's published DEFAULT (generic) gross Avoidable Cost
+# Rate by technology class (source_type=pjm_manual18_default). Monitoring
+# Analytics (the Independent Market Monitor) separately publishes its own
+# avoidable-cost benchmark tables in the State of the Market report
+# (source_type=monitoring_analytics_som) — an independent, arm's-length
+# estimate of the same going-forward-cost concept. Both are captured here so
+# the model's FOM-only going-forward-cost (GFC) construction
+# (`ScenarioConfig.fixed_om_*` / `retirement_fom_multiplier_*`) can be
+# reconciled against a published bar (docs/handoffs/
+# forecast-retirement-calibration-plan-2026-07.md §1.3 / RD-4) — an
+# identification question, never a fit target.
+#
+# ISO-agnostic shape (only PJM publishes this construct today; other ISOs run
+# analogous but structurally different retirement-exception processes — e.g.
+# MISO Module E-1 — out of scope for this intake pass). One row per (iso,
+# source_type, technology_class, capacity_bin, cost_component, vintage).
+# technology_class and capacity_bin carry the NATIVE label as published
+# (PJM's own class/size-bin breakdown is finer and differently-shaped than the
+# model's dispatch fuel taxonomy in config/plant_taxonomy.py — no fixed
+# controlled vocabulary is imposed here; the mapping onto model classes is
+# deliberately left to whichever future session wires this datatype into
+# ScenarioConfig, per the data-intake skill's consumption-seam step).
+datatype: capacity-market-avoidable-cost-rate
+schema_version: 1
+title: Capacity-market Avoidable Cost Rate (ACR) benchmarks
+description: >-
+  Published default/generic Avoidable Cost Rate (going-forward-cost)
+  benchmarks by technology class, from PJM's own Manual 18 / Tariff default
+  ACR tables and Monitoring Analytics' independent State of the Market
+  avoidable-cost tables. Rule-13-admissible published market-design input —
+  never a fit target; the identification source for the retirement screen's
+  GFC-vs-published-benchmark reconciliation (RC-0B).
+
+key_columns: [iso, source_type, technology_class, capacity_bin, cost_component, vintage]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      ISO/RTO the benchmark applies to (PJM today; shape is ISO-agnostic so a
+      future ISO's analogous published benchmark can be added additively).
+  - name: source_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Which publisher's benchmark this row carries: pjm_manual18_default (the
+      RTO's own default/generic gross ACR table used in the Tariff/Manual 18
+      deactivation and must-offer-exception process) | monitoring_analytics_som
+      (the Independent Market Monitor's own avoidable-cost benchmark, State of
+      the Market report — an independent, arm's-length estimate of the same
+      concept, published separately from PJM's own default table).
+  - name: technology_class
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Native published technology/unit-type label (e.g. "Combined Cycle",
+      "Combustion Turbine", "Steam Turbine - Coal", "Nuclear", "Diesel") —
+      recorded as the source states it; no fixed controlled vocabulary (PJM's
+      own class breakdown does not map 1:1 onto config/plant_taxonomy.py's
+      dispatch fuel classes; document the source's own label exactly and leave
+      the model-taxonomy mapping to a future wiring session).
+  - name: capacity_bin
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Native unit-size bucket the rate applies to (e.g. "under 50 MW", "50-150
+      MW", "over 150 MW"), as published — fixed costs don't scale linearly
+      with size so several PJM ACR tables bin by capacity. Null when the
+      source publishes one rate per technology_class regardless of size.
+  - name: cost_component
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical cost component: gross_acr (the total default Avoidable Cost
+      Rate, the headline figure most sources publish) | avoidable_capital_recovery
+      (the avoidable-capital-investment-recovery subcomponent, where published
+      separately) | avoidable_fixed_om (avoidable fixed O&M subcomponent,
+      where published separately) | avoidable_variable_om (avoidable variable
+      O&M subcomponent, where published separately) | net_acr (gross ACR net
+      of an assumed energy/AS margin offset, where a source publishes this
+      distinct net figure rather than leaving the netting to the screen).
+  - name: value
+    dtype: float64
+    unit: none
+    nullable: false
+    description: The published rate, in the units given by `unit`.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Unit of `value`: usd_per_mw_yr | usd_per_kw_month | usd_per_mw_day |
+      usd_per_kw_yr.
+  - name: vintage
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The publication's own filing/report label and effective date (e.g.
+      "PJM Manual 18, Revision 62, effective 2025-12-17" or "2025 State of the
+      Market Report for PJM, Volume 2, Section 9, published 2026-03-11").
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: true
+    description: Authoritative source document (URL or short citation) the value was read from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: Page / table / section locator within source_doc.
