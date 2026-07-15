@@ -217,9 +217,13 @@ class TestReservePosition(unittest.TestCase):
     """capacity_reserve_position — accredited firm / shared requirement."""
 
     def test_hand_computed_ratio(self):
-        # NEISO: DR fraction 0, ICAP->UCAP ratio 1.0, UCAP thermal basis, so the
-        # requirement and accredited sums are hand-computable.
-        iso = "NEISO"
+        # NYISO: DR fraction 0, ICAP->UCAP ratio 1.0, UCAP thermal basis (R5a
+        # left NYISO on the default pending owner sign-off), so the
+        # requirement and accredited sums are hand-computable. (Was NEISO
+        # until R5b moved it to the claimed-capability basis — see
+        # TestClaimedCapabilityBasis in tests/test_capacity.py for that
+        # basis's own dedicated coverage.)
+        iso = "NYISO"
         gen = Generator(
             unit_id="G0",
             name="G0",
