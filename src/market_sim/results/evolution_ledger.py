@@ -18,7 +18,8 @@ The schema (one object per scenario-year)::
 
     {
       "iso": "ERCOT", "year": 2027, "mode": "forecast", "hindcast": false,
-      "retirements":        [{"unit_id","fuel","mw","reason"}],   # known|economic
+      "retirements":        [{"unit_id","fuel","mw","reason"}],   # confirmed|announced|economic
+      "confirmed_derates":  [{"unit_id","fuel","mw_before","mw_after","derate_mw"}],
       "floor_retained":     [{"unit_id","fuel","mw"}],            # econ wanted out
       "thermal_additions":  [{"unit_id","fuel","mw","zone","source","eia860_id"}],
       "ccs_retrofits":      [{"unit_id","mw","from_fuel","to_fuel"}],
@@ -31,7 +32,14 @@ The schema (one object per scenario-year)::
     }
 
 ``thermal_additions`` sources are ``planned`` | ``economic`` |
-``reserve_backstop``; ``retirements`` reasons are ``known`` | ``economic``.
+``reserve_backstop``; ``retirements`` reasons are ``confirmed`` | ``announced``
+| ``economic`` (RC-1B — the channel-attributed split of the pre-RC-1B single
+``known`` reason, taken before step 0 and step 1 separately instead of once
+before both; ``confirmed_derates`` is new and records a confirmed-registry row
+that derates a plant-binned tranche without retiring its ``unit_id`` entirely,
+previously invisible). Additive: bundles committed before RC-1B still carry
+``known`` rows and no ``confirmed_derates`` key — both readers must treat an
+absent/legacy value as backward-compatible, not malformed.
 """
 
 from __future__ import annotations
