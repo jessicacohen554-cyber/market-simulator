@@ -13119,3 +13119,35 @@ ERCOT per-plant solve (~8-10 GB of 15 GB) — concurrent probes OOM-killed the
 first leg-A attempt; probes ran sequentially (rule 12's ~2-concurrent cap
 assumes more RAM). 2023 ladder bundles gitignored + deleted; the two full-span
 bundles committed slim (meta/run_config/metrics/attestation/diagnostics).
+
+## 2026-07-15 — ERCOT keeper PROMOTED: `ercot66 storage rebasis` (NOT-YET, honest) — owner sign-off; supersedes ercot63-gas-bridge; ERCOT dashboard pruned to keeper-and-later (standing directive)
+
+**Owner decision (interactive sign-off: "Promote A-only", 2026-07-15).** The
+question "doesn't the better data mean we promote?" adjudicated YES on the
+repo's own rules: rule 1 defines the keeper as the most structurally faithful
+run (explicitly not the lowest-MAE run) and rule 14 forbids retaining an
+estimate because it fits better — and the superseded keeper's storage fleet is
+now MEASURED ~2 GW low in both audited summers, with part of its 2024 price fit
+formed by phantom scarcity (the Aug-2024 VOLL/shed artifact). Keeping it would
+have made every future probe ladder reconstruct a known-wrong fleet and tuned
+the next lane against error cancellation. The A-only run promotes (ONE
+rule-14-mandatory measured delta, zero new free parameters); the A+B endogenous
+sibling stays a registered candidate — its own honesty gate (LP holds ~2.5× the
+measured award at r 0.14-0.21, the M4 demand-curve finding) is real structure
+not yet right, and the measured-award M1/M2 stack remains rule-13-admissible in
+backcast.
+
+**The keeper is honestly NOT-YET** (C3a-2024 −14.2%, C3b-2024 0.212, C3c-2024
+20h vs 68, C5c-2024 r 0.456): the misses are the EXPOSED pre-existing 2024
+under-pricing (May −12.5 / Nov −5.8 / Apr −4.1 $/MWh vs actual) that the
+phantom scarcity was masking — deliberately NOT ledgered as accepted-limitation
+exceptions; they are the chartered successor lane (2024/25 scarcity formation
+away from events, the G-22/May-2024 family plus the newly-visible Nov-2024).
+ERCOT joins PJM/CAISO/MISO at NOT-YET on the status page.
+
+**Bookkeeping.** `keepers.json` ERCOT → `2026-07-15-ercot66-storage-rebasis`;
+keeper sidecar definition + market_story written; attestation records the
+sign-off; ERCOT registry pruned to keeper-and-later per the standing 2026-07-13
+owner directive (the ercot63 pair's registration removed; bundles remain
+committed as the archival record); `build_status.py` rebuilt status.js
+(ERCOT: NOT-YET); keeper-text auditor run post-swap.
