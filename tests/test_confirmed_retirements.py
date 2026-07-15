@@ -8,6 +8,7 @@ canary, and the forecast-mode-only gate that keeps a backcast run a hard
 no-op regardless of the flag's default (``runner._confirmed_exits_active``).
 """
 
+import datetime as dt
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -21,7 +22,11 @@ from scripts.lib import confirmed_retirements as cr
 
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data import fleet as fleet_mod
-from market_sim.data.confirmed_retirements import ConfirmedExit, load_confirmed_exits
+from market_sim.data.confirmed_retirements import (
+    ConfirmedExit,
+    load_announced_reversal_plants,
+    load_confirmed_exits,
+)
 from market_sim.data.fleet import Generator, build_base_fleet
 from market_sim.runner import _confirmed_exits_active
 
@@ -143,6 +148,72 @@ class TestConfirmedExitsDefaultAndBackcastGate(unittest.TestCase):
     def test_flag_off_disables_even_in_forecast(self) -> None:
         config = ScenarioConfig(mode="forecast", confirmed_exits_enabled=False)
         self.assertFalse(_confirmed_exits_active(config))
+
+
+# A Byron/Dresden-analog reversal row (instrument_date pre-2020, superseding
+# instrument dated 2021-09-15) + a Braunig-analog confirmed exit whose OWN
+# instrument postdates 2020 -- the two RC-1B D4 regressions.
+_GATE_CSV = """iso,plant_id,generator_id,unit_name,capacity_mw,exit_year,exit_month,confirmation_class,instrument_id,instrument,instrument_date,superseded,superseding_instrument,superseding_instrument_date,source_url,source_doc,accessed,notes
+PJM,6023,1,Byron 1,1224.9,2021,9,rto_deactivation,pjm-deact-byron-1,Deactivation notice,2020-08-27,true,CEJA reversal,2021-09-15,https://e/1,doc,2026-07-05,
+ERCOT,3612,1,Braunig 1,225.0,2025,3,rto_deactivation,ercot-nso-braunig-1,NSO acceptance,2024-03-13,false,,,https://e/2,doc,2026-07-05,
+"""
+
+
+class TestHindcastInformationGate(unittest.TestCase):
+    """RC-1B / RC-0B D4: as-of-vintage-cutoff gating for both channels."""
+
+    def setUp(self) -> None:
+        self._tmp = TemporaryDirectory()
+        root = Path(self._tmp.name)
+        self.raw_root = root / "raw"
+        (self.raw_root / cr.DATATYPE).mkdir(parents=True)
+        (self.raw_root / cr.DATATYPE / "pjm.csv").write_text(_GATE_CSV)
+        (self.raw_root / cr.DATATYPE / "ercot.csv").write_text(_GATE_CSV)
+        self.spine_path = root / "spine.parquet"
+        pd.DataFrame(
+            {
+                "plant_id": [6023, 3612],
+                "generator_id": ["1", "1"],
+                "nameplate_capacity_mw": [1224.9, 225.0],
+            }
+        ).to_parquet(self.spine_path, index=False)
+        self._orig_clean = clean_io.paths.CLEAN_DIR
+        clean_io.paths.CLEAN_DIR = root / "clean"
+        curate_cr.curate(
+            raw_root=self.raw_root, isos=["PJM", "ERCOT"], spine_path=self.spine_path
+        )
+        self._cutoff_2020 = dt.date(2020, 12, 31)
+
+    def tearDown(self) -> None:
+        clean_io.paths.CLEAN_DIR = self._orig_clean
+        self._tmp.cleanup()
+
+    def test_byron_dresden_reversal_not_suppressed_as_of_2020(self) -> None:
+        # The CEJA reversal (2021-09-15) postdates the 2020 cutoff -> the
+        # plant must NOT appear as a suppressed reversal in an as-of-2020
+        # hindcast (its announced date should still fire).
+        self.assertEqual(
+            load_announced_reversal_plants("PJM", as_of=self._cutoff_2020),
+            frozenset(),
+        )
+
+    def test_byron_dresden_reversal_suppressed_once_ceja_knowable(self) -> None:
+        self.assertEqual(
+            load_announced_reversal_plants("PJM", as_of=dt.date(2022, 1, 1)),
+            frozenset({6023}),
+        )
+
+    def test_reversal_no_cutoff_is_byte_identical_to_pre_rc1b(self) -> None:
+        self.assertEqual(load_announced_reversal_plants("PJM"), frozenset({6023}))
+
+    def test_braunig_confirmed_exit_not_knowable_as_of_2020(self) -> None:
+        # instrument_date 2024-03-13 postdates the 2020 cutoff.
+        self.assertEqual(load_confirmed_exits("ERCOT", as_of=self._cutoff_2020), [])
+
+    def test_braunig_confirmed_exit_present_with_no_cutoff(self) -> None:
+        exits = load_confirmed_exits("ERCOT")
+        self.assertEqual(len(exits), 1)
+        self.assertEqual(exits[0].plant_id, 3612)
 
 
 if __name__ == "__main__":
