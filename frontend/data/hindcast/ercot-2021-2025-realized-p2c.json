@@ -183,7 +183,84 @@
       "techmix_share_pp_max": 0.05,
       "co2_2025_frac": 0.1
     },
-    "generated_utc": "2026-07-12T07:49:30Z"
+    "generated_utc": "2026-07-12T07:49:30Z",
+    "retirements_is2020": {
+      "total_gw": {
+        "actual": 1.534,
+        "model": 22.798,
+        "err_frac": 13.864,
+        "band": "FAIL"
+      },
+      "per_fuel": {
+        "biomass": {
+          "actual_gw": 0.019,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "coal": {
+          "actual_gw": 0.932,
+          "model_gw": 13.964,
+          "err_frac": 13.983
+        },
+        "gas_cc": {
+          "actual_gw": 0.08,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_ct": {
+          "actual_gw": 0.502,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_st": {
+          "actual_gw": 0.0,
+          "model_gw": 8.834,
+          "err_frac": null
+        }
+      },
+      "unit_recall_gt300": {
+        "n_big_actual": 3,
+        "matched": 2,
+        "recall": 0.667,
+        "grain": "fuel-mw-coverage",
+        "plant_recall_frac": 0.0,
+        "plant_matched": 0,
+        "band": "FAIL"
+      },
+      "false_retire": {
+        "false_gw": 21.866,
+        "frac_of_model": 0.959,
+        "grain": "per-fuel-excess",
+        "band": "FAIL"
+      },
+      "reversal_exposure_gw": 0.0,
+      "reversal_instruments": [],
+      "reversal_rows": []
+    },
+    "retirement_channels": {
+      "economic": {
+        "retired_gw": 22.798,
+        "false_retire_gw": 21.866,
+        "model_fuel_gw": {
+          "coal": 13.964,
+          "gas_st": 8.834
+        },
+        "recall_matched": 2
+      },
+      "_n_big_actual": 3,
+      "_legacy_known_mapped_to": "announced"
+    },
+    "additions_is2020": {
+      "restart_excluded_gw": 0.0,
+      "restart_rows": [],
+      "note": "Post-V restart additions excluded from IS-2020 additions (\u00a7c.5-2). Inert in the RD-5 actuals as landed \u2014 the coverage fix booked only the physical exit, no restart addition row exists."
+    },
+    "is2020_cutoff": "2020-12-31",
+    "rescore": {
+      "task": "T-R8",
+      "note": "IS-2020 scoring hygiene (RC-0B \u00a7c.5) \u2014 raw + IS-2020 + per-channel. No re-solve; RD-5 actuals; co2/baselines preserved (unchanged by RD-5).",
+      "utc": "2026-07-15T16:51:30Z"
+    }
   },
   "invariants": [
     {
@@ -271,5 +348,5 @@
       "detail": "in band"
     }
   ],
-  "registered_utc": "2026-07-12T07:50:14Z"
+  "registered_utc": "2026-07-15T16:53:56Z"
 }
