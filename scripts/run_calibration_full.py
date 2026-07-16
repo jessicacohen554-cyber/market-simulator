@@ -2569,6 +2569,7 @@ def solve_and_persist(
     caiso_ra_startup_bridge: bool | None = None,
     caiso_ra_bridge_decommit: bool | None = None,
     ercot_gas_commitment_bridge: bool | None = None,
+    carry_operating_mothballs: bool | None = None,
     ercot_gas_bridge_min_load_frac: float | None = None,
     ercot_gas_bridge_startup: bool | None = None,
     ercot_gas_bridge_da_horizon: bool | None = None,
@@ -3115,6 +3116,10 @@ def solve_and_persist(
         if ercot_gas_commitment_bridge is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_gas_commitment_bridge=ercot_gas_commitment_bridge
+            )
+        if carry_operating_mothballs is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                carry_operating_mothballs=carry_operating_mothballs
             )
         if ercot_gas_bridge_min_load_frac is not None:
             recorded_cfg = recorded_cfg.with_overrides(
@@ -3727,6 +3732,7 @@ def solve_and_persist(
             ercot_gas_bridge_min_load_frac=ercot_gas_bridge_min_load_frac,
             ercot_gas_bridge_startup=ercot_gas_bridge_startup,
             ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon,
+            carry_operating_mothballs=carry_operating_mothballs,
             reliability_floor=reliability_floor,
             scarcity_price_overlay=scarcity_price_overlay,
             caiso_scarcity_pricing=caiso_scarcity_pricing,
@@ -4143,6 +4149,7 @@ def solve_and_persist(
         "ercot_gas_bridge_min_load_frac": ercot_gas_bridge_min_load_frac,
         "ercot_gas_bridge_startup": ercot_gas_bridge_startup,
         "ercot_gas_bridge_da_horizon": ercot_gas_bridge_da_horizon,
+        "carry_operating_mothballs": carry_operating_mothballs,
         "reliability_floor": reliability_floor,
         # Net-load deployment drags — persisted so the legitimacy-diagnostics
         # floor reconstruction (run_year(fleet_only=True) from meta.json) applies
@@ -7893,6 +7900,21 @@ def main() -> None:
         "ERCOT-62b monkeypatch construction (any gap length).",
     )
     parser.add_argument(
+        "--carry-operating-mothballs",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="Mothballed-but-operating re-carry (the Cottonwood lane, "
+        "docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md): re-carry "
+        "each OA (mothballed) unit the canonical snapshot's OP filter drops "
+        "for backcast solve year Y iff it is OP in the year-matched EIA-860 "
+        "vintage_<Y> — EIA's own contemporaneous status, the zero-DOF "
+        "availability oracle (a unit truly idle in Y is OA in vintage_<Y> "
+        "too). Per-unit (a partial mothball leaves surviving OP units "
+        "untouched), ISO-agnostic, backcast-only; a solve year with no "
+        "committed vintage (2025) carries nothing. Default off "
+        "(byte-identical).",
+    )
+    parser.add_argument(
         "--reliability-floor",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -9044,6 +9066,7 @@ def main() -> None:
         caiso_ra_startup_bridge=args.caiso_ra_startup_bridge,
         caiso_ra_bridge_decommit=args.caiso_ra_bridge_decommit,
         ercot_gas_commitment_bridge=args.ercot_gas_commitment_bridge,
+        carry_operating_mothballs=args.carry_operating_mothballs,
         ercot_gas_bridge_min_load_frac=args.ercot_gas_bridge_min_load_frac,
         ercot_gas_bridge_startup=args.ercot_gas_bridge_startup,
         ercot_gas_bridge_da_horizon=args.ercot_gas_bridge_da_horizon,
