@@ -14388,6 +14388,170 @@ legitimacy diagnostics, and attestations; parity check PASS. The known
 `prb_overrides`/`ercot_wtx` recorder warning surfaced as documented. Transport:
 unshallow-then-push, blob-verified (rule 27).
 
+## 2026-07-16 — Rubric v2.6 (owner amendments, ERCOT-73 session): C3c gates per-ISO — ERCOT moves to the RT hourly tail (DA = diagnostic); the C5c bench scores only OBSERVED months (the ERCO 2024 FAIL was nine fabricated pre-breakout zeros); C5b + C5c RETIRED to report-only for EVERY ISO; the ERCOT-71 keeper re-determines NOT-YET -> CALIBRATED-WITH-CAVEATS
+
+**Owner decisions (this session, AskUserQuestion record).** (1) C5c: fix the
+bench data honesty. (2) C3c: RT basis for ERCOT only. (3) ERCOT-73 proceeds,
+adjudicated against RT-based C3c. (4, follow-up in-session) EIA-930 storage
+data is not reliable enough to be a calibration judgment for ANY ISO — retire
+BOTH C5b and C5c to report-only.
+
+**(a) C3c per-ISO gated basis (`TAIL_BASIS`).** ERCOT's DA tail runs ABOVE its
+RT tail (2023: 311 vs 181 h) — the excess is the day-ahead weather/load
+forecast-risk premium, out of representation for a realized-weather
+(perfect-foresight) backcast exactly as sub-hourly transients are out of
+representation for an hourly LP (the argument that keeps the other five ISOs
+DA-gated; MISO 2023's whole 30 h RT tail is single-interval 5-minute events).
+The displaced basis becomes the report-only diagnostic in both directions.
+Keeper evidence: ERCOT-71 reads 179 h vs RT 181 h (0.99x) in 2023 where the DA
+gate read 0.58x; 2024 stays short on either basis (0.49x RT vs 0.38x DA),
+ledger-covered; 2025 19 vs 31 (0.61x) PASSes.
+
+**(b) C5c bench scores only OBSERVED months.** EIA-930 breaks ERCO batteries
+out of `Other` only from mid-Oct-2024; the committed bench monthly vector was
+nine structural zeros + three real months, and the keeper's only undocumented
+FAIL (C5c 2024 r=0.451 — its recorded deciding criterion) was a correlation
+against that fabricated actual. The bench builder now emits null for months
+below 90% non-NaN hourly coverage (regenerated 2024 vector: ten nulls +
+Nov/Dec — mid-Oct is partial and correctly held out); the scorer's existing
+null-month rule holds the year out. C5b's accidental NaN-poisoning skip for
+partial years is documented in place, deliberately unchanged.
+
+**(c) C5b + C5c RETIRED to report-only, every ISO** (owner, following from
+(b)): EIA-930 storage-dispatch data is not yet reliable enough to be a
+calibration judgment for any ISO. At retirement neither criterion had ever
+functioned as a real gate — C5c: one FAIL (ERCOT 2024, the (b) artifact), one
+ledgered caveat (MISO), four SKIPPEDs; C5b: ledgered caveats in MISO/NEISO,
+SKIPPED elsewhere. New `TIER_RETIRED` (tag RETD): both stay computed and
+PRINTED on every keeper (visible, auditable) but never PASS/FAIL, never
+consume ledger budget, never cap the determination. MISO/NEISO's dormant
+ledger entries remain as attestation history. Re-arming is a future owner
+decision; pre-retirement definitions kept in rubric §C5.
+
+**Effect.** ERCOT-71 keeper: NOT-YET -> CALIBRATED-WITH-CAVEATS (basis: the
+ledgered C3c caveat only). NEISO sheds its C5b ledgered caveat (stays CWC);
+NYISO unchanged (CWC); CAISO/MISO/PJM stay NOT-YET on pre-existing
+price-criteria failures. Scorer + rubric doc at v2.6 (missing v2.4/v2.5
+history entries backfilled); status.js rebuilt; keeper sidecar text repaired
+by the keeper auditor. Scored entirely at the scorer/bench layer — no
+re-solve, no payload change.
+
+## 2026-07-16 — ERCOT-73: the commitment-STATE construction — the state that discriminates is MEASURED and it is commitment-LOADING, not commitment (online share, RUC-increment, and system RTOLCAP all refuted); the loading-state-weighted wall built and probe-adjudicated — 2024 C3a -7.1 -> -3.1% and 2025 -5.1 -> -1.8% with C3b improving both years, the ERCOT-72 composition hit HELD, the tight-regime damage gone; CANDIDATE (CALIBRATED-WITH-CAVEATS), keeper decision the owner's
+
+**Task (owner charter).** Build the state-conditional form of the ERCOT-72
+cleared-share wall: price the un-offered gas capacity by the regime that
+actually governs it (moderate: the DA participation-cliff wall — the proven
+composition lever; tight: RUC/self-commitment near cost).
+
+**Leg a — the measured state series (the lane's methodological yield).**
+Scouted sources: the 60-Day SCED disclosure (telemetered Resource Status) and
+COP snapshots are retention-walled on the free MIS path (earliest listed
+publication 2024-03 -> deliveries late-Jan-2024; 2023 permanently unreachable
+— same wall as the AS-report intake), so a 2023-covering series must come from
+data on disk. Candidate discriminators measured on the ERCOT-72 target/damage
+windows (CEMS class envelopes x DAM disclosure):
+
+* online-HSL share: REFUTED — ~0.8 in BOTH regimes (May-24 target 0.845,
+  Aug-23 damage 0.822). The un-offered capacity is largely ONLINE either way.
+* online-minus-cleared (the RUC/self-commit increment — the charter's named
+  thesis): REFUTED — May-24 target 0.269 = Jan-24 damage 0.269.
+* published system RTOLCAP: REFUTED — May-24 target 11.4 GW vs Jan-24 damage
+  16.3 GW (the system aggregate is dominated by non-gas headroom).
+* the class's UNLOADED online headroom (online_cap - gross): separates every
+  damage window from every target window AT HOUR GRAIN — Aug-23 0.02 /
+  Sep-23 0.09 / Jun-23 0.21 / Aug-24 0.16 / Jan-24 net-load>=p90 hours 0.25
+  vs May-24 shoulders 0.55 / Apr-24 0.79 / Nov-24 0.68 — with lag-1 autocorr
+  0.98 and net-load-bin correlation only 0.75: the commitment-persistence
+  information a static bin ladder cannot carry (the measured reason the
+  static form failed).
+
+Regime reading: in moderate regimes the belt-priced unloaded headroom IS the
+marginal supply (the wall governs); in tight regimes RUC/self-commitment loads
+the class to its envelope and the same capacity is inframarginal near cost.
+
+**The mechanism (built, admissible, default-off).**
+`ercot_offer_surface_cleared_share_state` (requires the wall flag; hard error
+alone): each walled row-hour's markup scales by w_c(t) = clip((online_cap -
+gross)/(online_cap - cleared), 0, 1) — floored bid = base + w x (wall - base).
+Frozen rule-23 artifact (`scripts/derive_ercot_commitment_loading_state.py`;
+CAMPD CEMS envelope + gross — the campd-unit-outages source family — x DAM
+awards rebased via the measured live-HSL share); zero fitted scalars;
+year-stable (CC mean w 0.60/0.61/0.65 across 2023-25). Backcast years read the
+year's measured hourly series (the outage-overlay G4 pattern); absent years
+fall back to the artifact's pooled climatology (net-load bin x 4-hour ORDC
+block — regenerates from the target year's own drivers, rule 13). P1-only,
+same rows/seam as the wall (rule 19 ownership unchanged); 5 trivial-case
+tests.
+
+**Full-span adjudication (`2026-07-16-ercot73-state-wall`, registered
+CANDIDATE — CALIBRATED-WITH-CAVEATS; C3c gated on the rubric v2.6 RT basis).**
+Monthly deltas below are the payload lw basis computed identically for keeper
+and candidate (prior entries' May/Nov quotes of -6.9/-4.2 were the
+report-header basis; like-for-like the keeper reads -11.7/-6.6).
+
+| leg | 2023 C3a/C3b | 2024 C3a/C3b/C3c(RT) | 2025 C3a/C3b | May-24 mon | Nov-24 mon | May-24 shoulders (88h) | Aug 18-20 guard |
+|---|---|---|---|---|---|---|---|
+| 0 = ercot71 keeper | +4.7% / 0.135 | -7.1% / 0.160 / 26 vs 53 | -5.1% / 0.102 | -11.7 | -6.6 | $28.6 vs $67.3; CC +675 | holds |
+| CS = static wall (ercot72, REJECTED) | +15.9% / 0.248 | +5.0% / 0.174 / 47 | +2.3% / 0.097 | — | — | $32.7; CC +15, CT +404, ST_GAS +640 | holds |
+| ST = state wall (this run) | +6.2% / 0.143 | **-3.1% / 0.141** / 26 vs 53 | **-1.8% / 0.088** | -10.3 | -5.6 | $30.8; CC **-311** corr (share 0.830), CT +215, ST_GAS -914 corr | holds (2h vs 4 actual, no shed) |
+
+* **The state carries both regimes.** 2024: every under-priced month moves
+  toward zero (May -11.7 -> -10.3, Aug -4.4 -> -2.7, Nov -6.6 -> -5.6); C3a
+  -7.1 -> -3.1 with C3b IMPROVING 0.160 -> 0.141 (the static form flipped the
+  sign, +5.0 with C3b worsening). 2025: -5.1 -> -1.8, C3b 0.088. The
+  composition hit HOLDS at half wall strength (May-shoulder CC corrected
+  excess +675 -> -311 MW, share of live 0.872 -> 0.830 vs measured ~0.81-0.84;
+  CT +215 vs the static form's +404) and the static form's +640 ST_GAS
+  overflow is GONE (now -914 corrected, the keeper-side under-dispatch).
+* **Cost, honestly stated:** 2023 C3a +4.7 -> +6.2% — broad ~$1 monthly lifts
+  (Jun +13.9 -> +14.8, Sep +16.9 -> +17.9, Aug -1.8 -> -0.9 i.e. TOWARD
+  actual; vs the static form's +4 to +11 inflations). The measured state says
+  those months' moderate hours carried real belt headroom (w 0.1-0.2), so a
+  small wall remains — rule 1: a measured-real mechanism stays in; the 2023
+  summer over-shoot remains lane 2's open root cause.
+* **Formation stays partially open:** the May-24 shoulder prices $30.8 of
+  $67.3. The remaining gap owners, named: the wall's own cheap mid-rungs (the
+  measured uncleared-offer MW-distribution is bottom-heavy) and the
+  drag-owned steam offers (leg c below). Not a tail mechanism: C3c 2024 stays
+  26h (0.49x RT, ledger-covered — the G-22 scarcity-formation limitation).
+* LOYO (rule 22): nothing year-specific is fitted (the w series is measured
+  per year; boundary/ladder frozen from ERCOT-72; zero fitted scalars); the
+  artifact's year tables are stable (CC mean w 0.60/0.61/0.65). Promotion is
+  the owner's; the mechanism-change LOYO clause applies at that decision.
+
+**Leg c — the ST_GAS overflow sink (measured; chartered to the drag lane).**
+May-24 shoulder family: measured steam (GSREH/GSNONR/GSSUP) live HSL 5.9 GW,
+DA-cleared 1.2 GW (share 0.20), ~half of live resource-hours declared OFF in
+the DAM; posted offers p50 $27 (16.5x on gas) with a steep cap tail. The
+drag's flat committed rungs (~$30) hand the LP several GW of cheap steam that
+reality priced $57-100 beyond its 1.2 GW DA position — the overflow sink is
+the STEAM version of the same no-must-offer participation cliff. No second
+wall here (rule 19); recorded as the drag lane's finding.
+
+**Disposition (rules 1/13/14/19/26).** The commitment-STATE thesis is
+confirmed in its measured form: the discriminating state is commitment-LOADING
+(the unloaded fraction of the above-DA online capability), not the
+online/RUC-increment state the charter sketched — those are measured-refuted.
+The state-weighted wall is structurally faithful (both regimes priced by the
+regime that governs them, from measured series end to end), keeps the proven
+composition lever, and removes the static form's rejected tight-regime arm.
+Registered CANDIDATE; keeper promotion is the owner's call (the 2023 +1.5pp
+cost vs the 2024/2025 gains and the C3b improvements is the trade to weigh).
+Successor levers, named: the shoulder formation gap (wall mid-rungs; the
+measured 60-Day SCED offer curves of ONLINE units would be the finer-grain
+identification once the 2024-25 window suffices), the drag-lane steam
+participation cliff (leg c), and the West/Panhandle topology split (its own
+charter).
+
+**Ops.** One full-span in-session solve (~25 min, years sequential; one
+container restart mid-first-attempt — resolved fresh). Registered with
+benchmark rebuild (the v2.6 observed-months fix regenerated the ERCOT 2024
+bench storage vector), legitimacy diagnostics, attestation (keeper DOF ledger
+verbatim — zero new parameters; price_tail 2024 ledger entry carried forward
+on the v2.6 RT basis), parity check PASS. Rubric v2.6 landed first (own entry
+above); keeper sidecar text repaired via the keeper auditor. The known
+`prb_overrides`/`ercot_wtx` recorder warning surfaced as documented.
+Transport: unshallow-then-push, blob-verified (rule 27).
 ## 2026-07-16 — CAISO-90 (Lane B, C3c tail undershoot): the winter half of the DA tail is a GAS-CALENDAR defect — flow-date placement built + registered (CANDIDATE); the summer half ADJUDICATED not reachable through the scarcity overlay (SOC refinement refuted no-LP); the C1 CC-over/CT-under cluster diagnosed to the same evening merit stack (owner directive)
 
 **Charter (handoff Lane B):** instrument the 80/52 actual DA >$200 hours of

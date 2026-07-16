@@ -96,7 +96,12 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # scores only OBSERVED months — the bench builder emits null (never 0.0)
 # for months with no EIA-930 storage observation (pre-breakout months, e.g.
 # ERCO battery before Oct-2024), and the existing null-month skip rule then
-# holds the year out instead of correlating against fabricated zeros.
+# holds the year out instead of correlating against fabricated zeros; (c)
+# C5b + C5c are RETIRED to report-only for EVERY ISO (TIER_RETIRED): the
+# storage numbers stay computed and printed on every keeper, but EIA-930
+# storage-dispatch data is not yet reliable enough to be a calibration
+# judgment — no PASS/FAIL, no ledger budget, no determination cap. Re-arming
+# is a future owner decision.
 RUBRIC_VERSION = 2.6
 
 # Statuses (per criterion-year and aggregated).
@@ -127,6 +132,14 @@ NOT_YET = "NOT-YET"
 #    shape, C8 forced share). UNCHANGED from rubric v1 in logic, thresholds
 #    and ledger behavior (CLAUDE.md rules 13/14/17-22).
 TIER_LOAD, TIER_SUPPORT, TIER_PROTECT = "load-bearing", "supporting", "protective"
+# v2.6(c) owner amendment 2026-07-16: a RETIRED criterion is computed and
+# printed (report-only — the numbers stay visible on every keeper) but is
+# never PASS/FAIL, never consumes ledger budget, and never caps the
+# determination. C5b/C5c sit here: EIA-930 storage-dispatch data is not yet
+# reliable enough to be a calibration judgment for ANY ISO (breakouts
+# missing or partial for most BA-years; the one scored ERCOT year was nine
+# fabricated pre-breakout zeros). Re-arming is a future owner decision.
+TIER_RETIRED = "report-only (retired)"
 
 # --- fuel-family class membership (plant_taxonomy.classes_for_fuel930 roll-up) --
 GAS_CLASSES = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
@@ -404,8 +417,13 @@ CRITERIA = {
     "price_tail": ("C3c price tail / scarcity (hourly-expressible)", TIER_SUPPORT),
     "dispatch_corr": ("C4 fleet hourly dispatch correlation", TIER_SUPPORT),
     "co2": ("C5a CO2 vs eGRID", TIER_LOAD),
-    "storage": ("C5b storage throughput", TIER_SUPPORT),
-    "storage_shape": ("C5c storage dispatch shape", TIER_SUPPORT),
+    # v2.6(c): retired to report-only — EIA-930 storage data is not yet a
+    # calibration judgment for any ISO (owner, 2026-07-16).
+    "storage": ("C5b storage throughput (report-only, retired v2.6)", TIER_RETIRED),
+    "storage_shape": (
+        "C5c storage dispatch shape (report-only, retired v2.6)",
+        TIER_RETIRED,
+    ),
     "governance": ("C6 governance gate", TIER_PROTECT),
     "shape": ("C7 diurnal shape (D-1)", TIER_PROTECT),
     "forced_share": ("C8 forced-energy share (D-2)", TIER_PROTECT),
@@ -1633,7 +1651,11 @@ def score_co2(year: int, ypay: dict, ybench: dict) -> dict:
 
 
 def score_storage(year: int, ypay: dict, ybench: dict) -> dict:
-    """C5b — storage throughput; SKIPPED when EIA-930 has no storage breakout."""
+    """C5b — storage throughput. RETIRED to report-only (v2.6(c), owner
+    2026-07-16): the % error is computed and printed but never gated —
+    EIA-930 storage data is not yet reliable enough to be a calibration
+    judgment for any ISO. SKIPPED with a reason when EIA-930 has no storage
+    breakout."""
     model = (ypay.get("storage") or {}).get("throughput_twh")
     actual = (ybench.get("storage") or {}).get("throughput_twh")
     if actual is None:
@@ -1651,23 +1673,32 @@ def score_storage(year: int, ypay: dict, ybench: dict) -> dict:
             + f" (actual {actual:.3f} TWh)",
         )
     err = _pct(model, actual)
-    ok = err is not None and abs(err) <= STORAGE_TOL
+    # v2.6(c) owner amendment 2026-07-16: RETIRED — computed and reported,
+    # never gated. EIA-930 storage data is not yet reliable enough to be a
+    # calibration judgment for any ISO.
     return {
         "criterion": "storage",
         "key": None,
         "year": year,
-        "status": PASS if ok else FAIL,
-        "classification": None if ok else MODEL_MISS,
-        "metric": "storage discharge throughput TWh",
+        "status": SKIPPED,
+        "classification": None,
+        "metric": "storage discharge throughput TWh (report-only, retired v2.6)",
         "model": model,
         "actual": actual,
-        "tol": f"±{STORAGE_TOL * 100:.0f}%",
-        "magnitude": f"{err * 100:+.1f}%" if err is not None else "n/a",
+        "tol": "not gated (was ±30%)",
+        "magnitude": (
+            (f"{err * 100:+.1f}%" if err is not None else "n/a")
+            + " — report-only (v2.6: EIA-930 storage not a calibration judgment)"
+        ),
     }
 
 
 def score_storage_shape(year: int, ypay: dict, ybench: dict) -> dict:
-    """C5c — monthly storage dispatch shape; SKIPPED when either side is absent."""
+    """C5c — monthly storage dispatch shape. RETIRED to report-only (v2.6(c),
+    owner 2026-07-16): the pearson r is computed and printed but never gated —
+    EIA-930 storage data is not yet reliable enough to be a calibration
+    judgment for any ISO. SKIPPED with a reason when either side is absent or
+    has unobserved (null) months."""
     model_mon = (ypay.get("storage") or {}).get("monthly_net_gwh")
     actual_mon = (ybench.get("storage") or {}).get("monthly_net_gwh")
     if actual_mon is None:
@@ -1716,18 +1747,23 @@ def score_storage_shape(year: int, ypay: dict, ybench: dict) -> dict:
             "is scored by C5b",
         )
     r = cov / (m_std * a_std) if m_std > 0 and a_std > 0 else 0.0
-    ok = r >= STORAGE_SHAPE_R_FLOOR
+    # v2.6(c) owner amendment 2026-07-16: RETIRED — computed and reported,
+    # never gated. EIA-930 storage data is not yet reliable enough to be a
+    # calibration judgment for any ISO.
     return {
         "criterion": "storage_shape",
         "key": None,
         "year": year,
-        "status": PASS if ok else FAIL,
-        "classification": None if ok else MODEL_MISS,
-        "metric": "monthly discharge pearson r",
+        "status": SKIPPED,
+        "classification": None,
+        "metric": "monthly discharge pearson r (report-only, retired v2.6)",
         "model": round(r, 3),
         "actual": None,
-        "tol": f"r ≥ {STORAGE_SHAPE_R_FLOOR}",
-        "magnitude": f"r={r:.3f}",
+        "tol": f"not gated (was r ≥ {STORAGE_SHAPE_R_FLOOR})",
+        "magnitude": (
+            f"r={r:.3f} — report-only (v2.6: EIA-930 storage not a "
+            "calibration judgment)"
+        ),
     }
 
 
@@ -2319,7 +2355,11 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
     skipped = [
         cid
         for cid, c in per_criterion.items()
-        if cid != "governance" and c["status"] == SKIPPED
+        if cid != "governance"
+        and c["status"] == SKIPPED
+        # v2.6(c): RETIRED criteria are report-only — they never cap the
+        # determination (they are not "unscored", they are not judgments).
+        and c["tier"] != TIER_RETIRED
     ]
     skipped_protective = [
         cid for cid in skipped if per_criterion[cid]["tier"] == TIER_PROTECT
@@ -2453,7 +2493,12 @@ def render_text(v: dict) -> str:
             "  data-blocked years: " + ", ".join(map(str, v["data_blocked_years"]))
         )
     lines.append("=" * 72)
-    _TIER_TAG = {TIER_LOAD: "LOAD", TIER_SUPPORT: "SUPP", TIER_PROTECT: "PROT"}
+    _TIER_TAG = {
+        TIER_LOAD: "LOAD",
+        TIER_SUPPORT: "SUPP",
+        TIER_PROTECT: "PROT",
+        TIER_RETIRED: "RETD",
+    }
     for cid, c in v["criteria"].items():
         gate = _TIER_TAG.get(c.get("tier"), "?")
         kind = f" [{c['caveat_kind']}]" if c.get("caveat_kind") else ""

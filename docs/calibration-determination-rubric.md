@@ -73,7 +73,8 @@ known use cases:
 | Bucket | What | Criteria |
 |---|---|---|
 | **LOAD-BEARING** — the test must certify these | Annual/monthly price level & seasonal shape (uses 1, 4, 5, 6); generation mix by class & family (2, 4, 5); system CO2 (3, 5) | C1, C2, C3a, C3b, C5a |
-| **SUPPORTING** — informative, not certification-critical | Hourly dispatch timing (r/NRMSE); storage cycling volume/season; scarcity-tail hour counts (the *level* contribution of scarcity is already in C3a/C3b; the count is a diagnostic of the scarcity mechanism, and no intended use consumes exact tail-hour counts) | C3c, C4, C5b, C5c |
+| **SUPPORTING** — informative, not certification-critical | Hourly dispatch timing (r/NRMSE); scarcity-tail hour counts (the *level* contribution of scarcity is already in C3a/C3b; the count is a diagnostic of the scarcity mechanism, and no intended use consumes exact tail-hour counts) | C3c, C4 |
+| **RETIRED** — report-only, not a calibration judgment (v2.6(c)) | Storage cycling volume/season: EIA-930 storage-dispatch data is not yet reliable enough to judge any ISO on (missing/partial breakouts; the one scored year was fabricated zeros). Numbers stay computed and printed; never PASS/FAIL, never a cap. Re-arming is an owner decision. | C5b, C5c |
 | **PROTECTIVE** — make the other rows believable | Governance (no residual fitting / pinning); diurnal-shape reality of the duty classes; forced-energy budget (floors are scaffolding, not dispatch) | C6, C7, C8 — **unchanged from v1** |
 | **OUT OF REPRESENTATION** — the test must not demand these | RT sub-hourly transients (5-minute ramp scarcity, forecast-error re-dispatch — `docs/multi-iso/miso-scarcity-tail-diagnosis.md` §1); the DA−RT risk premium (DART) an offer-cost LP cannot price without fitting; hourly-exact dispatch of individual units (NREL TP-581-42305’s explicit guidance) | scored as report-only diagnostics (C3a DA row; C3c’s non-gated basis row — RT for DA-gated ISOs, DA for ERCOT since v2.6), never gated |
 
@@ -507,7 +508,7 @@ way FAILs C6 regardless.
   timing). A low r driven by a documented measured-input gap (e.g. an outage
   series known incomplete for one state-year) may be ledgered.
 
-### C5 — CO2 and storage  *(C5a LOAD-BEARING two-band; C5b/C5c SUPPORTING)*
+### C5 — CO2 and storage  *(C5a LOAD-BEARING two-band; C5b/C5c RETIRED to report-only, v2.6(c))*
 
 - **C5a — CO2 vs eGRID.** *(LOAD-BEARING, two-band)*
   - *Metric:* annual system CO2, model vs the eGRID/CAMPD-rate actual, on the
@@ -541,7 +542,15 @@ way FAILs C6 regardless.
     note that with C1/C2 in tolerance a CO2 miss localises to the fuel *split*
     within a family or to emission-rate inputs). `SKIPPED` when no emissions
     actual is committed in the bundle.
-- **C5b — Storage throughput.**
+- **C5b — Storage throughput.** *(RETIRED to report-only, v2.6(c) owner
+  amendment 2026-07-16: EIA-930 storage-dispatch data is not yet reliable
+  enough to be a calibration judgment for ANY ISO — breakouts are missing
+  or partial for most BA-years, and the criterion had never functioned as
+  a real gate: at retirement it was SKIPPED in four ISOs and a ledgered
+  caveat in MISO/NEISO. The % error is still computed and printed on every
+  keeper — visible, never gated, no ledger budget, no determination cap.
+  Re-arming is a future owner decision. The pre-retirement definition
+  below is kept for that day.)*
   - *Metric:* annual storage (battery + PS) discharge throughput TWh, model vs
     observed (cycling realism, not arbitrage perfection).
   - *Actual:* EIA-923 / ISO battery-report throughput.
@@ -551,7 +560,13 @@ way FAILs C6 regardless.
   - *Classification:* over-cycling ⇒ `MODEL MISS` (needs a throughput adder);
     under-cycling against a *partial* observed series may be `ACCEPTED
     MEASURED-INPUT LIMITATION`. `SKIPPED` when no throughput series is committed.
-- **C5c — Storage dispatch shape.**
+- **C5c — Storage dispatch shape.** *(RETIRED to report-only, v2.6(c) —
+  same owner decision and visibility rules as C5b. At retirement it had
+  never scored a clean PASS anywhere: ERCOT's one scored year was a
+  correlation against nine fabricated pre-breakout zeros (the v2.6(b)
+  data-honesty finding), MISO was a ledgered caveat, the rest SKIPPED.
+  The pearson r is still computed and printed. The pre-retirement
+  definition below is kept for the re-arming day.)*
   - *Metric:* Pearson **r** of 12 monthly **discharge** GWh vectors (model vs
     EIA-930 battery + pumped-storage, positive half). Scores whether the model
     discharges storage in the right months, not just the right annual volume
@@ -809,11 +824,13 @@ out-of-tolerance criterion is `NOT-YET`.** The only way a beyond-commercial-band
 criterion is compatible with a passing determination is an explicit, ledgered
 `ACCEPTED MEASURED-INPUT LIMITATION` (and only within the caveat budget).
 
-Where an actual is not committed for an ISO-year (storage C5b/C5c for most
-BAs today; historically the tail and CO2, both now committed), the criterion is
-`SKIPPED`, which **caps the best attainable determination at
-`CALIBRATED-WITH-CAVEATS`** until a run surfaces it. This is intended: you may
-not claim a *fully* calibrated ISO while any criterion is unscored.
+Where an actual is not committed for an ISO-year (historically the tail and
+CO2, both now committed), the criterion is `SKIPPED`, which **caps the best
+attainable determination at `CALIBRATED-WITH-CAVEATS`** until a run surfaces
+it. This is intended: you may not claim a *fully* calibrated ISO while any
+criterion is unscored. **RETIRED criteria are the one exception (v2.6(c)):**
+C5b/C5c print as report-only rows and never cap the determination — they are
+not unscored judgments, they are not judgments at all until re-armed.
 
 ---
 
@@ -966,7 +983,7 @@ never a curve to grade down to.
 ## 9. Version history
 
 - **v2.6 (2026-07-16, owner amendments — session-logged, ERCOT-73 session)** —
-  two changes, both scorer/bench level (no re-solve, no payload change).
+  three changes, all scorer/bench level (no re-solve, no payload change).
   **(a) C3c per-ISO gated basis (`TAIL_BASIS`): ERCOT moves to the RT hourly
   tail; every other ISO stays DA-gated.** Both actuals are hourly hub averages
   from the same committed tail part; only which one gates flips. Rationale:
@@ -999,6 +1016,20 @@ never a curve to grade down to.
   partial years is documented in place and deliberately unchanged (an
   explicit rule would flip other ISOs' committed skips to scored rows —
   needs its own cross-ISO pass).
+  **(c) C5b + C5c RETIRED to report-only, every ISO.** Owner decision (same
+  session, following from (b)): EIA-930 storage-dispatch data is not yet
+  reliable enough to be a **calibration judgment** for any ISO. At retirement
+  the two criteria had never functioned as real gates — C5c: one FAIL
+  (ERCOT 2024, the fabricated-zeros artifact of (b)), one ledgered caveat
+  (MISO), four SKIPPED; C5b: ledgered caveats in MISO/NEISO, SKIPPED
+  everywhere else. Both stay computed and PRINTED on every keeper
+  (`TIER_RETIRED`, tag `RETD` — the numbers remain visible and auditable)
+  but are never PASS/FAIL, never consume ledger budget, and never cap the
+  determination (they are exempt from the unscored-criterion cap: a retired
+  criterion is not an unscored judgment, it is not a judgment). MISO/NEISO's
+  existing C5b/C5c ledger entries go dormant in place (attestation history,
+  matched by no FAIL). Re-arming when reliable storage data lands is a
+  future owner decision; the pre-retirement definitions stay in §C5.
 - **v2.5 (2026-07-13, owner amendment)** — C2 gates ONLY fully-reported
   EIA-923 families: a preliminary-vintage family (incomplete 923 booking,
   e.g. every ISO's 2025) is not gated against any fallback basis (the G-21b
