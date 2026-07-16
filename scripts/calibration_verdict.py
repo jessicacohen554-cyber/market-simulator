@@ -86,8 +86,18 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # family total or the CAISO CEMS anchor): those rows print as SKIPPED
 # diagnostics and re-gate when the final vintage lands. Mirrors C1's
 # incomplete-class skip — an incomplete benchmark can fabricate a miss in
-# either direction, so it is evidence, not a gate.
-RUBRIC_VERSION = 2.5
+# either direction, so it is evidence, not a gate;
+# v2.6 = the 2026-07-16 owner amendments (session-logged, ERCOT-73 session):
+# (a) C3c gates per-ISO on TAIL_BASIS — ERCOT moves to the RT hourly tail
+# (the DA count becomes its report-only diagnostic; every other ISO stays
+# DA-gated): ERCOT's DA tail runs ABOVE RT (2023: 311 vs 181 h) and the
+# excess is the day-ahead forecast-risk premium, out of representation for
+# a realized-weather backcast — see the TAIL_BASIS block comment; (b) C5c
+# scores only OBSERVED months — the bench builder emits null (never 0.0)
+# for months with no EIA-930 storage observation (pre-breakout months, e.g.
+# ERCO battery before Oct-2024), and the existing null-month skip rule then
+# holds the year out instead of correlating against fabricated zeros.
+RUBRIC_VERSION = 2.6
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -233,18 +243,35 @@ PRICE_MEAN_COMMERCIAL = 0.10  # coincident outer band (memo §2)
 #   demonstrated band (also the pre-2026-07-02 value, now externally anchored).
 PRICE_SHAPE_NRMSE_MAX = 0.20  # PASS: monthly NRMSE (v2.3 owner amendment)
 PRICE_SHAPE_NRMSE_COMMERCIAL = 0.20  # coincident outer band (memo §2)
-# C3c scarcity tail — v2 scores the DA-EXPRESSIBLE tail (rubric §1 C3c, §5):
-# the committed actual day-ahead tail count (frontend/data/backcast/tail/
-# actual_tail.json, scripts/derive_actual_tail.py), the same hourly resolution
-# as the model LP. The RT count is a reported diagnostic (sub-hourly transients
-# are out of representation — miso-scarcity-tail-diagnosis.md §1). Band
-# restored to [0.5x, 2x] on the scope-consistent benchmark: no commercial or
-# public model publishes tail-hour-count accuracy at all, so the band's job is
-# order-of-magnitude realism — a collapsed tail (0x) and an invented tail
+# C3c scarcity tail — v2 scores the hourly-expressible tail (rubric §1 C3c,
+# §5) from the committed actual-tail part (frontend/data/backcast/tail/
+# actual_tail.json, scripts/derive_actual_tail.py). The gated BASIS is per-ISO
+# (TAIL_BASIS below; rubric v2.6 owner amendment 2026-07-16):
+#   * default "da" — the DA-expressible tail, the same hourly commitment-aware
+#     resolution as the model LP; the RT count is a reported diagnostic
+#     (sub-hourly transients are out of representation —
+#     miso-scarcity-tail-diagnosis.md §1: MISO 2023's entire 30-hour RT tail
+#     is single-interval 5-minute events, DA tail 1 h).
+#   * ERCOT "rt" — the RT hourly tail; the DA count is the reported
+#     diagnostic. Both C3c actuals are hourly hub averages, but ERCOT's DA
+#     tail runs ABOVE its RT tail (2023: 311 vs 181 h) — the excess is the
+#     day-ahead weather/load forecast-risk premium, which a realized-weather
+#     (perfect-foresight) backcast is out of representation to price: the
+#     model cannot "worry" about weather it already knows, the mirror image
+#     of the transient argument that keeps RT out of the MISO/PJM gate. The
+#     keeper evidence is direct: the ERCOT-71 keeper reads 179 h vs RT 181 h
+#     (0.99x) while sitting at 0.58x of the DA count.
+# Band restored to [0.5x, 2x] on the scope-consistent benchmark: no commercial
+# or public model publishes tail-hour-count accuracy at all, so the band's job
+# is order-of-magnitude realism — a collapsed tail (0x) and an invented tail
 # (>2x) both still FAIL. Counts below TAIL_SMALL_COUNT hours are scored by
 # absolute difference (a ratio on a handful of hours is degenerate).
-TAIL_LO, TAIL_HI = 0.5, 2.0  # tail hours within [0.5x, 2x] of the DA actual
+TAIL_LO, TAIL_HI = 0.5, 2.0  # tail hours within [0.5x, 2x] of the gated actual
 TAIL_SMALL_COUNT = 10  # below this, |model-actual| <= TAIL_SMALL_COUNT passes
+# Per-ISO C3c gated basis (rubric §5, v2.6 owner amendment 2026-07-16 — see
+# the block comment above). Only ERCOT gates on the RT hourly tail; the other
+# basis is always emitted as the report-only diagnostic row.
+TAIL_BASIS = {"ERCOT": "rt"}  # default: "da"
 DISP_R_FLOOR = 0.70  # fleet hourly pearson r floor (gas, coal)
 DISP_NRMSE_MAX = 0.30  # fleet hourly NRMSE ceiling (gas, coal)
 CO2_TOL = 0.07  # target: +/-7% vs eGRID (mid of the playbook's 5-10%)
@@ -372,7 +399,9 @@ CRITERIA = {
     "sysvol": ("C2 system volume (gas/coal families)", TIER_LOAD),
     "price_mean": ("C3a mean LMP", TIER_LOAD),
     "price_shape": ("C3b price duration/shape", TIER_LOAD),
-    "price_tail": ("C3c price tail / scarcity (DA-expressible)", TIER_SUPPORT),
+    # v2.6: the gated basis is per-ISO (TAIL_BASIS — ERCOT RT, others DA), so
+    # the label is basis-neutral; each scored row's metric names its basis.
+    "price_tail": ("C3c price tail / scarcity (hourly-expressible)", TIER_SUPPORT),
     "dispatch_corr": ("C4 fleet hourly dispatch correlation", TIER_SUPPORT),
     "co2": ("C5a CO2 vs eGRID", TIER_LOAD),
     "storage": ("C5b storage throughput", TIER_SUPPORT),
@@ -1264,22 +1293,27 @@ def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
 
 
 def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
-    """C3c — scarcity tail hours vs the DA-EXPRESSIBLE actual (rubric v2).
+    """C3c — scarcity tail hours vs the per-ISO-basis hourly actual (rubric v2).
 
     The model tail (count of hours the LP's max zonal dual exceeds the per-ISO
     threshold, from the payload's ``ordc.hoursGt200.model``) is gated against
-    the committed **day-ahead** actual tail count (``tail/actual_tail.json``,
-    ``scripts/derive_actual_tail.py``) — the hourly, commitment-aware market's
-    own realization of scarcity, i.e. the same temporal resolution as the
-    model. The RT count (sub-hourly transients included) is emitted as a
-    report-only diagnostic row, mirroring C3a's DA diagnostic. Scope evidence:
-    ``docs/multi-iso/miso-scarcity-tail-diagnosis.md`` §1 (MISO 2023's entire
-    30-hour RT tail is single-hour 5-minute transients; DA tail 1 h) — and the
-    basis is not a leniency device: ERCOT's DA tail is LARGER than RT
-    (2023: 311 vs 181 h).
+    the committed actual tail count (``tail/actual_tail.json``,
+    ``scripts/derive_actual_tail.py``) on the ISO's ``TAIL_BASIS`` (rubric §5,
+    v2.6 owner amendment 2026-07-16):
 
-    Band: model within [TAIL_LO x, TAIL_HI x] of the DA actual. Small counts
-    (actual < TAIL_SMALL_COUNT) are scored by absolute difference
+    * default **DA** — the hourly, commitment-aware market's own realization
+      of scarcity, the model LP's temporal resolution; the RT count (sub-hourly
+      transients included) is the report-only diagnostic row. Scope evidence:
+      ``docs/multi-iso/miso-scarcity-tail-diagnosis.md`` §1 (MISO 2023's
+      entire 30-hour RT tail is single-hour 5-minute transients; DA tail 1 h).
+    * **ERCOT: RT** — the RT hourly hub tail; the DA count becomes the
+      diagnostic. ERCOT's DA tail runs ABOVE its RT tail (2023: 311 vs 181 h):
+      the excess is the day-ahead forecast-risk premium, out of representation
+      for a realized-weather backcast (the mirror image of the transient
+      argument — see the TAIL_BASIS block comment).
+
+    Band: model within [TAIL_LO x, TAIL_HI x] of the gated actual. Small
+    counts (actual < TAIL_SMALL_COUNT) are scored by absolute difference
     (|model − actual| ≤ TAIL_SMALL_COUNT) — a ratio on a handful of hours is
     degenerate, and it doubles as the invented-tail guard against a ~0 actual.
     """
@@ -1307,22 +1341,30 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
     model = float(h["overlay"]) if settled else float(h.get("model", 0))
     energy_only = float(h.get("model", 0))
     tail_rec = _tail_part().get(iso, {}).get(str(year))
+    # Gated basis per ISO (rubric §5, v2.5): the other basis is the diagnostic.
+    basis_kind = TAIL_BASIS.get(iso, "da")
+    gate_key, diag_key = (
+        ("rt_gt", "da_gt") if basis_kind == "rt" else ("da_gt", "rt_gt")
+    )
+    gate_lbl, diag_lbl = ("RT", "DA") if basis_kind == "rt" else ("DA", "RT")
     out: list[dict] = []
-    if tail_rec is None:
+    if tail_rec is None or tail_rec.get(gate_key) is None:
         out.append(
             _skip(
                 "price_tail",
                 year,
-                "no committed DA-expressible actual tail for this ISO-year "
+                f"no committed {gate_lbl} actual tail for this ISO-year "
                 "(frontend/data/backcast/tail/actual_tail.json — run "
                 "scripts/derive_actual_tail.py)",
             )
         )
     else:
-        actual = float(tail_rec["da_gt"])
-        cov = tail_rec.get("da_coverage", 1.0)
+        actual = float(tail_rec[gate_key])
+        cov = tail_rec.get(f"{gate_key[:2]}_coverage", 1.0)
         cov_note = (
-            f"; DA coverage {cov:.0%} — count is a lower bound" if cov < 0.999 else ""
+            f"; {gate_lbl} coverage {cov:.0%} — count is a lower bound"
+            if cov < 0.999
+            else ""
         )
         # ``model`` above is the settlement count when an overlay was derived;
         # note the basis and, when overlaid, the energy-only count it was lifted
@@ -1335,14 +1377,14 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
         if actual < TAIL_SMALL_COUNT:
             ok = abs(model - actual) <= TAIL_SMALL_COUNT
             mag = (
-                f"model {model:.0f}h [{basis}] vs DA actual {actual:.0f}h "
+                f"model {model:.0f}h [{basis}] vs {gate_lbl} actual {actual:.0f}h "
                 f"(small-count |Δ|≤{TAIL_SMALL_COUNT}h, >${thr:.0f}){settle_note}{cov_note}"
             )
         else:
             ratio = model / actual
             ok = TAIL_LO <= ratio <= TAIL_HI
             mag = (
-                f"model {model:.0f}h [{basis}] vs DA actual {actual:.0f}h "
+                f"model {model:.0f}h [{basis}] vs {gate_lbl} actual {actual:.0f}h "
                 f"({ratio:.2f}×, >${thr:.0f}){settle_note}{cov_note}"
             )
         out.append(
@@ -1353,43 +1395,53 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
                 "status": PASS if ok else FAIL,
                 "classification": None if ok else MODEL_MISS,
                 "metric": (
-                    f"hours DA-expressible {'settlement price' if settled else 'LMP'} "
-                    f"> ${thr:.0f}/MWh"
+                    f"hours {gate_lbl}-expressible "
+                    f"{'settlement price' if settled else 'LMP'} > ${thr:.0f}/MWh"
                 ),
                 "model": model,
                 "actual": actual,
                 "tol": (
-                    f"[{TAIL_LO:g}×, {TAIL_HI:g}×] of DA actual "
+                    f"[{TAIL_LO:g}×, {TAIL_HI:g}×] of {gate_lbl} actual "
                     f"(|Δ|≤{TAIL_SMALL_COUNT}h when actual <{TAIL_SMALL_COUNT}h)"
                 ),
                 "magnitude": mag,
             }
         )
-    # RT companion — reported, never gated: includes the sub-hourly ramp/
-    # re-dispatch transients an hourly deterministic LP is out of scope to
-    # reproduce (and, for ERCOT, the DA risk premium runs the other way).
-    rt_actual = (
-        float(tail_rec["rt_gt"])
-        if tail_rec is not None and tail_rec.get("rt_gt") is not None
-        else (float(h["actual"]) if h.get("actual") is not None else None)
+    # Companion basis — reported, never gated. On the default DA gate the RT
+    # count includes the sub-hourly ramp/re-dispatch transients an hourly
+    # deterministic LP is out of scope to reproduce; on the ERCOT RT gate the
+    # DA count embeds the day-ahead forecast-risk premium a realized-weather
+    # backcast is out of scope to price (v2.6).
+    diag_actual = (
+        float(tail_rec[diag_key])
+        if tail_rec is not None and tail_rec.get(diag_key) is not None
+        else (
+            float(h["actual"])
+            if diag_key == "rt_gt" and h.get("actual") is not None
+            else None
+        )
     )
-    if rt_actual is not None:
+    diag_why = (
+        "includes sub-hourly transients, not gated"
+        if diag_key == "rt_gt"
+        else "embeds the DA forecast-risk premium, not gated"
+    )
+    if diag_actual is not None:
         out.append(
             {
                 "criterion": "price_tail",
-                "key": "rt_diagnostic",
+                "key": f"{diag_key[:2]}_diagnostic",
                 "year": year,
                 "status": SKIPPED,
                 "classification": None,
                 "metric": (
-                    f"hours RT LMP > ${thr:.0f}/MWh (diagnostic — includes "
-                    "sub-hourly transients, not gated)"
+                    f"hours {diag_lbl} LMP > ${thr:.0f}/MWh (diagnostic — {diag_why})"
                 ),
                 "model": model,
-                "actual": rt_actual,
+                "actual": diag_actual,
                 "tol": "not gated",
                 "magnitude": (
-                    f"model {model:.0f}h vs RT actual {rt_actual:.0f}h "
+                    f"model {model:.0f}h vs {diag_lbl} actual {diag_actual:.0f}h "
                     "(out-of-representation companion)"
                 ),
             }
