@@ -1050,6 +1050,67 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "carried units freely (no outcome pinning)",
             )
         )
+    if sc.get("unit_outage_maxgen_events"):
+        # M-2 declared-event-window channel (miso-69 lane), ZERO fitted
+        # scalars, TWO measured inputs: (1) the maxgen-events registry — each
+        # row a declared MISO emergency-procedure instrument transcribed from
+        # a primary IMM/SOM document; (2) the CAMPD revealed derates inside
+        # those windows. The deriver's constants ($150 in-merit certificate,
+        # ±45-day capability window, 2-hour certificate floor) are published
+        # identification guards frozen in the design doc, not residual-tuned
+        # values (the certificate's [$120,$200] sensitivity is recomputed and
+        # printed at every derivation).
+        out.append(
+            _entry(
+                "maxgen-events registry (declared capacity-emergency windows)",
+                "data/raw/maxgen-events/{iso}/ via scripts/curate_maxgen_events "
+                "(clean_io seam; schema maxgen-events.schema.yaml)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="primary IMM/SOM documents, one row per (declaration, "
+                "region), every row cited (2023 SOM pp.11-12; 2024 SOM p.15; "
+                "2025 SOM pp.iii/14-15 Figs 9-11; IMM Quarterly Summer-2025 "
+                "pp.20-23): the pre-2026 Max Gen ladder — capacity advisories, "
+                "alerts, warnings, event steps — with declared start/end "
+                "(EST -> UTC) and declared region scope. A window with no "
+                "primary document is NOT in the registry (F4: never "
+                "reconstructed from prices)",
+                root_cause="regenerates from each new declaration vintage "
+                "(rule 23: re-derives only on source-data change); "
+                "backcast-only availability-event family (rule 13) — a "
+                "forecast year carries the class outage-rate machinery, no "
+                "forward window is fabricated",
+            )
+        )
+        out.append(
+            _entry(
+                "unit_outage_maxgen_events (declared-window revealed derates)",
+                "data/raw/campd-unit-outages-maxgen-{ISO}.csv via "
+                "outages.unit_outage_maxgen_derate_factors (applied next to "
+                "the std/short overlays; class-agnostic — the only channel "
+                "carrying the CT/CC event-window leg; disjointness vs "
+                "std/short asserted at derivation)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="per-unit EPA CAMPD hourly gross generation inside the "
+                "registry windows only (scripts/derive_campd_maxgen_outages."
+                "py); frozen guards: declared-window scope clipped to the "
+                "declared start/end, $150 DA in-merit certificate "
+                "(region-scoped hubs, >= 2 window hours; sensitivity across "
+                "[$120,$200] recomputed at derivation), capability = max "
+                "gross in a ±45-day window centered on the event with "
+                "best-event-hour credit (F3 dual-basis stability check), "
+                "no control-day screen",
+                root_cause="inside a declared, in-merit-certified window an "
+                "available unit runs, so absence/reduction below the unit's "
+                "own demonstrated capability is revealed unavailability — "
+                "dispatch above the derate stays free (no outcome pinning, "
+                "rules 1/11/13); re-derives only on a new CAMPD/declaration "
+                "vintage (rule 23)",
+            )
+        )
     if (
         iso in ("NYISO", "CAISO")
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))
