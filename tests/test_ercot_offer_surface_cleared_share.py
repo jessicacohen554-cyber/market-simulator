@@ -161,3 +161,103 @@ def test_nan_boundary_bin_is_sheltered(tmp_path):
     # bin 0 (NaN boundary): sheltered; bin 1 (boundary 0.5 < mid 0.675): floors
     assert m[1][: T // 2].max() == 0.0
     assert m[1][T // 2 :].min() > 0.0
+
+
+def _state(tmp_path, year_w=None, clim=None, edges=(0.5,)):
+    """Write a minimal ERCOT-73 commitment-loading state JSON."""
+    entry = {}
+    if year_w is not None:
+        entry["years"] = {"2024": list(year_w)}
+    else:
+        entry["years"] = {}
+    state = {
+        "_provenance": {
+            "netload_pct_edges": list(edges),
+            "hour_block_hours": 4,
+        },
+        "climatology": {"CC": clim} if clim is not None else {},
+        "CC": entry,
+    }
+    p = tmp_path / "state.json"
+    p.write_text(json.dumps(state))
+    return str(p)
+
+
+def test_state_without_wall_is_hard_error(tmp_path):
+    fa, gens, mc, nl = _fleet()
+    cfg = ScenarioConfig(
+        iso="ERCOT",
+        mode="backcast",
+        weather_year=2024,
+        ercot_offer_surface_cleared_share_state=True,
+    )
+    with pytest.raises(ValueError, match="nothing to scope"):
+        build_ercot_offer_surface_cleared_share_markup(fa, gens, mc, nl, cfg, 2024)
+
+
+def test_state_year_series_scales_markup(tmp_path):
+    """w=0 hours are un-walled; w=0.5 hours carry exactly half the markup."""
+    fa, gens, mc, nl = _fleet()
+    base = build_ercot_offer_surface_cleared_share_markup(
+        fa, gens, mc, nl, _cfg(_surface(tmp_path)), 2024
+    )
+    w = [0.0] * (T // 2) + [0.5] * (T // 2)
+    cfg = _cfg(
+        _surface(tmp_path),
+        ercot_offer_surface_cleared_share_state=True,
+        ercot_offer_surface_cleared_share_state_path=_state(tmp_path, year_w=w),
+    )
+    m = build_ercot_offer_surface_cleared_share_markup(fa, gens, mc, nl, cfg, 2024)
+    # base floors econ row in bin 0 (first half of hours); w=0 kills it there
+    assert base is not None and base[1][: T // 2].min() > 0.0
+    assert m is None or m[1][: T // 2].max() == 0.0
+    # second half: base has no floor there (bin-1 boundary 0.9 shelters the
+    # row), and the state weight can only scale DOWN — still no floor
+    if m is not None:
+        assert m[1][T // 2 :].max() == 0.0
+
+
+def test_state_half_weight_halves_markup(tmp_path):
+    fa, gens, mc, nl = _fleet()
+    base = build_ercot_offer_surface_cleared_share_markup(
+        fa, gens, mc, nl, _cfg(_surface(tmp_path)), 2024
+    )
+    cfg = _cfg(
+        _surface(tmp_path),
+        ercot_offer_surface_cleared_share_state=True,
+        ercot_offer_surface_cleared_share_state_path=_state(tmp_path, year_w=[0.5] * T),
+    )
+    m = build_ercot_offer_surface_cleared_share_markup(fa, gens, mc, nl, cfg, 2024)
+    assert m is not None
+    np.testing.assert_allclose(m[1], 0.5 * base[1])
+
+
+def test_state_missing_year_uses_climatology(tmp_path):
+    """A year absent from the artifact falls back to the bin x block table."""
+    fa, gens, mc, nl = _fleet()
+    base = build_ercot_offer_surface_cleared_share_markup(
+        fa, gens, mc, nl, _cfg(_surface(tmp_path)), 2024
+    )
+    # climatology: bin 0 -> w=0.25 in every block, bin 1 -> w=1.0
+    clim = [[0.25] * 6, [1.0] * 6]
+    cfg = _cfg(
+        _surface(tmp_path),
+        ercot_offer_surface_cleared_share_state=True,
+        ercot_offer_surface_cleared_share_state_path=_state(tmp_path, clim=clim),
+    )
+    m = build_ercot_offer_surface_cleared_share_markup(fa, gens, mc, nl, cfg, 2024)
+    assert m is not None
+    np.testing.assert_allclose(m[1][: T // 2], 0.25 * base[1][: T // 2])
+
+
+def test_state_edges_mismatch_is_hard_error(tmp_path):
+    fa, gens, mc, nl = _fleet()
+    cfg = _cfg(
+        _surface(tmp_path),
+        ercot_offer_surface_cleared_share_state=True,
+        ercot_offer_surface_cleared_share_state_path=_state(
+            tmp_path, year_w=[1.0] * T, edges=(0.25, 0.5)
+        ),
+    )
+    with pytest.raises(ValueError, match="bin edges"):
+        build_ercot_offer_surface_cleared_share_markup(fa, gens, mc, nl, cfg, 2024)

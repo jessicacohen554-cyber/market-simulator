@@ -3761,8 +3761,27 @@ def build_ercot_offer_surface_cleared_share_markup(
       VOLL; rows at/below the boundary and bins with no measured data are
       byte-identical. P1-only (the ``mc_bid_adjust`` seam): P0 run lengths and
       the startup-amortization coupling are untouched.
+    * ``ercot_offer_surface_cleared_share_state`` (ERCOT-73, default off)
+      multiplies each walled row-hour's markup by the MEASURED
+      commitment-loading state weight ``w_c(t)`` (the unloaded fraction of
+      the class's above-DA-position online capability —
+      ``scripts/derive_ercot_commitment_loading_state.py``, frozen rule 23):
+      the floored bid becomes ``base + w x (wall - base)``. Moderate regimes
+      (w ~ 1) keep the full wall; regimes where reality RUC/self-commits the
+      un-offered capacity online near cost stand it down (w -> 0). Backcast
+      years read the year's own measured hourly series (the CAMPD
+      outage-overlay pattern); years absent from the artifact fall back to
+      its pooled climatology (net-load-percentile bin x 4-hour block,
+      forward-native). Zero fitted scalars.
     """
+    state_flag = getattr(config, "ercot_offer_surface_cleared_share_state", False)
     if not getattr(config, "ercot_offer_surface_cleared_share", False):
+        if state_flag and config.iso == "ERCOT":
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_state scopes the "
+                "cleared-share wall — arm ercot_offer_surface_cleared_share "
+                "too (the state weight has nothing to scope on its own)."
+            )
         return None
     if config.iso != "ERCOT":
         return None
@@ -3792,6 +3811,45 @@ def build_ercot_offer_surface_cleared_share_markup(
     net_load = np.asarray(net_load_mw, dtype=float)[:hours]
     thresholds = np.quantile(net_load, edges)
     hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    # ERCOT-73 commitment-loading state weight per class-hour (1.0 = full
+    # wall). Year table = the measured backcast overlay; climatology = the
+    # forward/holdout fallback on the SAME bin edges (asserted) x hour block.
+    state_w: dict[str, np.ndarray] = {}
+    if state_flag:
+        spath = getattr(config, "ercot_offer_surface_cleared_share_state_path", None)
+        if not spath:
+            from market_sim.config import paths as _paths
+
+            spath = str(_paths.CALIBRATION_DIR / "ercot_commitment_loading_state.json")
+        state = json.loads(Path(spath).read_text())
+        sprov = state.get("_provenance", {})
+        sedges = tuple(float(x) for x in sprov.get("netload_pct_edges", ()))
+        if sedges != edges:
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_state: state artifact bin "
+                f"edges {sedges} != wall edges {edges} — re-derive "
+                "scripts/derive_ercot_commitment_loading_state.py"
+            )
+        block_h = int(sprov.get("hour_block_hours", 4))
+        hod_block = (np.arange(hours) % 24) // block_h  # (T,)
+        for cls_key in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values()):
+            entry = state.get(cls_key)
+            if not entry:
+                continue
+            yr_tbl = entry.get("years", {}).get(str(year))
+            if yr_tbl is not None and len(yr_tbl) >= hours:
+                state_w[cls_key] = np.clip(
+                    np.asarray(yr_tbl[:hours], dtype=float), 0.0, 1.0
+                )
+            else:
+                clim = np.asarray(
+                    state.get("climatology", {}).get(cls_key, ()), dtype=float
+                )
+                if clim.ndim != 2 or clim.shape[0] != n_bins:
+                    continue
+                w = clim[hour_bin, np.minimum(hod_block, clim.shape[1] - 1)]
+                state_w[cls_key] = np.clip(np.nan_to_num(w, nan=1.0), 0.0, 1.0)
 
     # Delivered-gas day series on the model clock (the derive's own price
     # normalizer: HH daily + ERCOT basis, forward-filled).
@@ -3879,6 +3937,13 @@ def build_ercot_offer_surface_cleared_share_markup(
             target = mult_b[hour_bin] * gas_day  # (T,); 0 where no floor
             target = np.minimum(target, voll_cap)
             row = np.maximum(0.0, target - mc_base[g, :])
+            if state_flag:
+                # ERCOT-73: floored bid = base + w x (wall - base) — the
+                # measured commitment-loading regime scales the markup.
+                w = state_w.get(cls_key)
+                if w is None:
+                    continue  # no measured state for the class: no wall
+                row = row * w
             if row.any():
                 markup[g, :] = row
                 n_priced += 1
@@ -3893,7 +3958,7 @@ def build_ercot_offer_surface_cleared_share_markup(
     logger.info(
         "ERCOT cleared-share offer boundary: floored %d gas econ tranche rows "
         "above the measured DAM cleared share (%d net-load bins, year table "
-        "%s); P1-only",
+        "%s)%s; P1-only",
         n_priced,
         n_bins,
         str(year)
@@ -3902,6 +3967,17 @@ def build_ercot_offer_surface_cleared_share_markup(
             for c in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values())
         )
         else "pooled",
+        (
+            "; commitment-loading state weight ON (measured "
+            + (
+                "year series"
+                if any(str(year) in state.get(c, {}).get("years", {}) for c in state_w)
+                else "climatology fallback"
+            )
+            + ")"
+        )
+        if state_flag
+        else "",
     )
     return markup
 
