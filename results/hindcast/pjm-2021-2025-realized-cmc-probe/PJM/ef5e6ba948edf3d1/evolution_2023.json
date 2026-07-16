@@ -1,0 +1,71 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "biomass": 1999.4,
+    "coal": 42917.728,
+    "gas_cc": 55315.636,
+    "gas_ct": 27789.97,
+    "gas_st": 10357.555,
+    "nuclear": 28575.1,
+    "oil": 4187.7
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1999.4,
+    "coal": 42917.728,
+    "gas_cc": 51315.636,
+    "gas_ct": 25789.97,
+    "gas_st": 10357.555,
+    "nuclear": 28575.1,
+    "oil": 4187.7
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "PJM",
+  "mode": "forecast",
+  "peak_demand_mw": 147605.0,
+  "renewable_additions": [
+    {
+      "mw": 1500.0,
+      "tech": "wind",
+      "zone": "PJM_ComEd"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.0789,
+    "wind": 0.41
+  },
+  "reserve_margin": -0.021874,
+  "retirements": [],
+  "rps_dual": 0.0,
+  "solar_cap_mw": 14000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 3944.876,
+  "storage_power_mw": 5603.3,
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 4000.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2023_0",
+      "zone": "PJM_AEP_Ohio"
+    },
+    {
+      "eia860_id": null,
+      "fuel": "gas_ct",
+      "mw": 2000.0,
+      "source": "economic",
+      "unit_id": "gas_ct_new_2023_2",
+      "zone": "PJM_AEP_Ohio"
+    }
+  ],
+  "wind_cap_mw": 14000.0,
+  "year": 2023
+}

@@ -24,6 +24,7 @@ from market_sim.config.constants import (
     END_YEAR,
     HISTORIC_OUTAGE_OVERLAY_BY_ISO,
     START_YEAR,
+    resolve_capacity_market_clearing,
 )
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.config.scenarios import (
@@ -703,10 +704,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # and storage entry (below) -- so every screen prices adequacy off one
         # requirement and one basis (rule 19). None (gate off, base year with no
         # fleet, or no prior pools) keeps the fixed net-CONE price and is
-        # byte-identical to the pre-CR-1 path.
+        # byte-identical to the pre-CR-1 path. The gate resolves PER ISO
+        # (RC-1B/RC-1A: capacity_market_clearing_by_iso row when present, else
+        # the scalar) so a probe arm — e.g. run_capacity_hindcast.py
+        # --capacity-market-clearing, which sets ONLY the by-ISO row — actually
+        # computes the position; the scalar-only check here made that arm a
+        # silent no-op.
         curve_reserve_position: float | None = None
         if (
-            config.capacity_market_clearing
+            resolve_capacity_market_clearing(config, iso)
             and fleet is not None
             and prior_results is not None
         ):
