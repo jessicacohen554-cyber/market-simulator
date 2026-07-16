@@ -68,6 +68,7 @@ DATATYPES: tuple[str, ...] = (
     "capacity-market-elcc",
     "capacity-market-avoidable-cost-rate",
     "transfer-constraint-binding",
+    "maxgen-events",
 )
 
 SCRIPTS_DIR = Path(__file__).resolve().parent
