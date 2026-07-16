@@ -1,0 +1,162 @@
+# Canonical schema: ISO day-ahead-market public bid data (long/tidy format)
+#
+# First (and so far only) registered ISO: CAISO — OASIS "Public Bid Data"
+#   GroupZip API: https://oasis.caiso.com/oasisapi/GroupZip
+#       ?groupid=PUB_DAM_GRP&startdatetime=<YYYYMMDD>T08:00-0000
+#       &version=3&resultformat=6
+#   One zip per DAM trade date, 90-day publication lag, indefinite retention.
+#   Fetched by scripts/fetch_caiso_public_bids.py into
+#   data/raw/caiso-public-bids/zips/ (gitignored; README committed).
+#
+# CAISO context
+# -------------
+# These are the as-submitted DAY-AHEAD market bids for every scheduling
+# resource (generators, participating loads, and interties), published with
+# a 90-day lag under CAISO tariff §6.5.2.2. Resource identity is MASKED:
+# ``sc_seq`` (scheduling coordinator) and ``resource_seq`` (resource) are
+# anonymised integer sequence ids. Unlike PJM's annually-rotated unit_code,
+# the CAISO ``resource_seq`` is PERSISTENT across days and years (verified
+# 2026-07-16: 1,160/1,278 Jan-10-2024 generator seqs recur on Jul-10-2024
+# with median max-MW drift 0.24 MW), so per-resource longitudinal statistics
+# are meaningful. Location, fuel, and unit identity are NOT provided.
+#
+# Raw (per-day CSV) -> clean (long) transform
+# -------------------------------------------
+# The raw daily CSV carries two row shapes that this schema unifies:
+#   * curve rows  — one MW/price breakpoint of a piecewise bid curve
+#     (SCH_BID_XAXISDATA / SCH_BID_Y1AXISDATA / SCH_BID_CURVETYPE, with the
+#     operating hour in SCH_BID_TIMEINTERVALSTART_GMT) -> row_kind="segment";
+#     ``step_idx`` is assigned 1-based in ascending segment_mw order within
+#     each (resource_seq, product, interval_start_utc) curve.
+#   * self-schedule rows — price-taker MW with no curve
+#     (SELFSCHEDMW, hour in TIMEINTERVALSTART_GMT) -> row_kind="self_sched";
+#     ``step_idx`` numbers multiple self-schedule rows for the same
+#     resource-product-hour 1-based in file order.
+#
+# Bid MW semantics: ``segment_mw`` is the CUMULATIVE MW level (x-axis) at
+# which ``segment_price_usd_per_mwh`` starts to apply — CAISO bid curves are
+# step functions over cumulative MW, and may start negative (pumped/storage
+# withdrawal range). Self-schedule MW is additional price-taker quantity
+# cleared ahead of the priced curve.
+datatype: dam-public-bids
+schema_version: 1
+title: ISO day-ahead market public bid data (long format)
+description: >-
+  As-submitted day-ahead market bids per masked resource, operating hour,
+  and market product, in long (normalized) format: one row per bid-curve
+  breakpoint or self-schedule quantity. Source (CAISO): OASIS PUB_DAM_GRP
+  GroupZip API, fetched by scripts/fetch_caiso_public_bids.py and curated by
+  scripts/curate_dam_public_bids.py. Published with a 90-day lag; masked
+  resource ids are persistent across days and years.
+
+key_columns: [iso, trade_date, resource_seq, product, interval_start_utc, row_kind, step_idx]
+allow_additional_columns: false
+
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: ISO whose DAM produced the bid ("CAISO").
+
+  - name: trade_date
+    dtype: datetime64[ns]
+    unit: local_date
+    nullable: false
+    description: >-
+      DAM trade date (= operating date) as a tz-naive local calendar day
+      (midnight-normalized). Maps to the OASIS STARTDATE field.
+
+  - name: interval_start_utc
+    dtype: datetime64[ns, UTC]
+    unit: utc_timestamp
+    nullable: false
+    description: >-
+      tz-aware UTC start of the operating hour the bid row applies to.
+      Curve rows: SCH_BID_TIMEINTERVALSTART_GMT; self-schedule rows:
+      TIMEINTERVALSTART_GMT.
+
+  - name: resource_type
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      OASIS RESOURCE_TYPE — GENERATOR, LOAD (participating load), or
+      INTERTIE (import/export bid at a scheduling point).
+
+  - name: sc_seq
+    dtype: int64
+    unit: none
+    nullable: true
+    description: >-
+      Masked scheduling-coordinator sequence id
+      (SCHEDULINGCOORDINATOR_SEQ). Informational; persistent.
+
+  - name: resource_seq
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      Masked resource sequence id (RESOURCEBID_SEQ). Persistent across days
+      and years — the longitudinal join key for per-resource statistics.
+
+  - name: product
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      OASIS MARKETPRODUCTTYPE — EN (energy), SR (spinning reserve),
+      NR (non-spinning reserve), RU/RD (regulation up/down), RMU/RMD
+      (regulation mileage up/down), RC (RUC availability), LFU/LFD
+      (load-following up/down).
+
+  - name: row_kind
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      "segment" for a priced bid-curve breakpoint; "self_sched" for a
+      price-taker self-schedule quantity.
+
+  - name: step_idx
+    dtype: int64
+    unit: none
+    nullable: false
+    description: >-
+      1-based breakpoint index within the (resource_seq, product,
+      interval_start_utc) bid curve, ordered by ascending segment_mw
+      (file order for ties and for self-schedule rows).
+
+  - name: self_sched_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Self-scheduled (price-taker) MW for row_kind="self_sched" rows
+      (OASIS SELFSCHEDMW); null on curve rows.
+
+  - name: segment_mw
+    dtype: float64
+    unit: mw
+    nullable: true
+    description: >-
+      Cumulative MW level (bid-curve x-axis, OASIS SCH_BID_XAXISDATA) at
+      which segment_price_usd_per_mwh starts to apply; may be negative for
+      withdrawal-capable resources. Null on self-schedule rows.
+
+  - name: segment_price_usd_per_mwh
+    dtype: float64
+    unit: usd_per_mwh
+    nullable: true
+    description: >-
+      Bid price for this breakpoint in $/MWh (OASIS SCH_BID_Y1AXISDATA).
+      CAISO energy bid caps apply (-$150 floor / +$1,000 soft cap /
+      +$2,000 hard cap). Null on self-schedule rows.
+
+  - name: curve_type
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      OASIS SCH_BID_CURVETYPE for curve rows (observed: BIDPRICE);
+      null on self-schedule rows.

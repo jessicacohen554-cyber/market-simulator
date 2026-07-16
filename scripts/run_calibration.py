@@ -492,6 +492,8 @@ def run_year(
     pjm_da_virtual_bids: bool = False,
     pjm_offer_midcurve_conditional: bool = False,
     pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
+    caiso_offer_surface_measured: bool = False,
+    caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_noncampd_plant_availability: bool = False,
@@ -722,6 +724,8 @@ def run_year(
         pjm_offer_surface_conditional=pjm_offer_surface_conditional,
         pjm_da_virtual_bids=pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
+        caiso_offer_surface_measured=caiso_offer_surface_measured,
+        caiso_offer_surface_conditional=caiso_offer_surface_conditional,
     )
     if pjm_offer_midcurve_segments is not None:
         # Rule-19 scope: floor only the named measured segments (e.g.
@@ -2905,6 +2909,17 @@ def run_year(
             - (wind_cap[:, None] * wind_cf).sum(axis=0)
         )
         offer_surface_mc_bid_adjust = build_pjm_offer_surface_conditional_markup(
+            fleet_arrays, fleet, fuel_prices, _surface_net_load, config
+        )
+    # CAISO measured offer surface (C1 lane WP-A): the identical P1-only
+    # seam, CAISO-gated (fleet.build_caiso_offer_surface_conditional_markup).
+    if getattr(config, "caiso_offer_surface_conditional", False) and iso == "CAISO":
+        _surface_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        offer_surface_mc_bid_adjust = build_caiso_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
     # PJM MID-CURVE offer surface (G-22 lever A'): floors the econ-tranche
