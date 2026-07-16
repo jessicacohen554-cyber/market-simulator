@@ -2,6 +2,7 @@
 
 import tempfile
 import unittest
+from dataclasses import asdict
 from pathlib import Path
 
 import numpy as np
@@ -88,6 +89,21 @@ class TestScenarioConfig(unittest.TestCase):
         config = ScenarioConfig(nominal_discount_rate=0.10)
         expected = (1.10 / 1.022) - 1.0
         assert abs(config.real_discount_rate - expected) < 1e-6
+
+    def test_retirement_years_coal_default_is_three(self):
+        # D1 Option B (owner-adopted 2026-07-16): the coal economic-retirement
+        # loss-year threshold defaults to 3, the measured EIA-860 announced-to-
+        # deactivation lag (cap-weighted / >=300 MW median; retirement-dof-
+        # identification-2026-07-15.md Sa.3/Sd). Rule 24: the field is a plain
+        # ScenarioConfig field, so asdict() — the exact serialization
+        # run_calibration_full.py and results.export use for run_config.json's
+        # scenario_config — records it.
+        config = ScenarioConfig()
+        self.assertEqual(config.retirement_years_coal, 3)
+        self.assertEqual(asdict(config)["retirement_years_coal"], 3)
+        # rule 19: the deactivation queue is carried by the threshold, so the
+        # staged-thinning rate cap stays default-off (no double count).
+        self.assertFalse(config.staged_oversupply_thinning)
 
 
 class TestRealToNominal(unittest.TestCase):

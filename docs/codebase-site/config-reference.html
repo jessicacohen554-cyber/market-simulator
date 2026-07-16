@@ -821,9 +821,9 @@ classify_plant(                  # Canonical classifier — used identically
       {
         "name": "retirement_years_coal",
         "type": "int",
-        "default": "1",
+        "default": "3",
         "tier": 2,
-        "description": "Grace period (years) before coal retires after becoming unprofitable."
+        "description": "Grace period (years) before coal retires after becoming unprofitable. Default 3 = the measured EIA-860 announced-to-deactivation lag (cap-weighted / >=300 MW median; RC-D1, 2026-07-16)."
       },
       {
         "name": "retirement_years_gas_cc",
