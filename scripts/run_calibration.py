@@ -555,6 +555,7 @@ def run_year(
     ercot_gas_bridge_min_load_frac: float | None = None,
     ercot_gas_bridge_startup: bool | None = None,
     ercot_gas_bridge_da_horizon: bool | None = None,
+    carry_operating_mothballs: bool | None = None,
     reliability_floor: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     scarcity_price_overlay: bool | None = None,
@@ -981,6 +982,10 @@ def run_year(
     if ercot_gas_bridge_da_horizon is not None:
         config = config.with_overrides(
             ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon
+        )
+    if carry_operating_mothballs is not None:
+        config = config.with_overrides(
+            carry_operating_mothballs=carry_operating_mothballs
         )
     if caiso_ra_bridge_decommit is not None:
         config = config.with_overrides(
@@ -1954,6 +1959,20 @@ def run_year(
         if config.mode == "backcast"
         else []
     )
+
+    # Mothballed-but-operating re-carry (the Cottonwood lane): OA units the
+    # snapshot's OP filter drops but the year-matched vintage marks OP — the
+    # partial-mothball blind spot between the OP filter and the whole-plant
+    # retiree channel. Gated default-off (carry_operating_mothballs),
+    # backcast-only, per-unit, zero fitted DOF (the vintage's own status is
+    # the availability oracle). Joins retired_units at both injection sites
+    # below so the carried units are binned/dispatched exactly like the rest
+    # of the fleet. See fleet.load_mothballed_but_operating and
+    # docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md.
+    if config.mode == "backcast" and config.carry_operating_mothballs:
+        retired_units = retired_units + load_mothballed_but_operating(
+            iso, iso_config, year=year
+        )
 
     # Resolve the per-plant bin frame, then build the base fleet and the
     # LP-ready dispatch fleet through the SHARED builders
