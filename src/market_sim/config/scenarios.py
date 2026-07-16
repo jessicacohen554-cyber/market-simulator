@@ -2426,6 +2426,39 @@ class ScenarioConfig:
     # reserve_config._caiso_design, so it requires energy_reserve_coopt +
     # caiso_reserve_coopt + CAISO; default off; GATED CHANGE (alters dispatch
     # volumes).
+    caiso_reserve_online_scoped: bool = False  # CAISO: online-quality scoping
+    # of the per-generator spin/non-spin co-opt — the issue-#1492 "correct
+    # build" increment (C1 CC-over/CT-under lane, docs/DIAGNOSIS-caiso-
+    # evening-merit-c1-c3c-2026-07.md §5.1). Splits each (zone, fuel-class)
+    # R pool into a SPIN product column (ONLINE 10-minute ramp only —
+    # spinning reserve is synchronized capacity, tariff §8.4/App. K; scoped
+    # at the P0→P1 seam from the model's own P0 run pattern,
+    # pipeline.commitment.caiso_pergen_sync_reserve_caps — the
+    # pjm_reserve_pergen_sync convention, min-down gaps bridged, rule-18
+    # physics fast-start flags) and a NONSPIN column (OFFLINE fast-start
+    # ramp — 10-minute-startable iron; offline slow iron backs nothing),
+    # sharing the pool's joint P+R headroom row. The two families become the
+    # tariff's NESTED procurement: spin (½ the BAL-002-WECC-3 requirement,
+    # §27.1.2.3.5 spin curve, SPIN columns + storage RS only) and
+    # contingency-total (the FULL requirement, non-spin curve, all columns —
+    # a spin MW substitutes down, BPM AS downward substitution), replacing
+    # the co-drawn half/half convention whose shared column pool made the
+    # effective procurement max(half, half). Storage RS backs both families
+    # (a battery is spin-quality; the ASSOC SOC gate is unchanged). This is
+    # what makes the requirement bite on CAISO: idle CC headroom can no
+    # longer back spin at zero opportunity cost — evening spin must come
+    # from online headroom (backing off loaded CC, displacing energy to CTs
+    # on merit), storage, or hydro — the RTPD/RUC-like award→energy channel
+    # (caiso-59 measured the unscoped pool inert: 12.9 GW deliverable ramp
+    # vs a ~2.2 GW requirement). Zero fitted parameters (tariff/NERC curves
+    # + requirement, physics ramp10/fast-start thresholds, the model's own
+    # P0 commitment state — rules 5/13/23). Requires energy_reserve_coopt +
+    # caiso_reserve_coopt; mutually exclusive with caiso_commitment_posture
+    # (rule 19 — the posture U re-anchor and the seam online scoping gate
+    # the same online-capacity phenomenon) and not composed with
+    # caiso_locational_as_families (the regional families would need
+    # zone∧product balance_col_mask rows). Default off; GATED CHANGE
+    # (alters dispatch volumes).
     caiso_locational_as_families: bool = False  # CAISO: add zone-masked
     # spin/non-spin reserve families whose hourly requirement is the MEASURED
     # CAISO OASIS AS_REQ regional MINIMUM south / north of Path 26 (AS_SP26 →
@@ -4868,9 +4901,11 @@ class ScenarioConfig:
     # backcast mode for PJM, the forward (west->east congestion) direction of
     # the internal links whose static ttc_mw was seeded from the PJM Data
     # Miner 2 transfer-limit postings (constants.PJM_INTERFACE_LINK_MAP:
-    # 50045005 -> ComEd->AEP, AEP/DOM -> AEP->Dominion, AP-South ->
-    # West_APS->SWMAAC, Bedington-BlackOak -> West_APS->Central_PA, and the
-    # Average Western/Central/Eastern envelopes on the links they seeded)
+    # AEP/DOM -> AEP->Dominion, AP-South -> West_APS->SWMAAC,
+    # Bedington-BlackOak -> West_APS->Central_PA, and the Average
+    # Western/Central/Eastern interfaces on the links they seeded; the
+    # 50045005 -> ComEd->AEP entry was removed 2026-07-16 as a Manual-03
+    # mis-attribution — pjm-cong-1, diagnosis §10.3)
     # follows the measured HOURLY published limit series
     # (transfer-interface-limits clean datatype) instead of the single static
     # ttc_mw. Where an interface publishes both pre- and post-contingency
@@ -4894,6 +4929,25 @@ class ScenarioConfig:
     # forecast has no realized outage/re-rating sequence to read.
     # Off by default.
     pjm_measured_interface_limits: bool = False
+
+    # PJM measured EAST interface cut (backcast/calibration overlay,
+    # pjm-cong-1 — docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §10). When
+    # True in backcast mode for PJM, ONE one-sided aggregate interface-group
+    # row per hour caps the JOINT EMAAC import flow
+    # Flow(Central_PA->EMAAC) + Flow(SWMAAC->EMAAC) at the hour's measured
+    # "Average Eastern" transfer limit — PJM's EASTERN reactive transfer
+    # interface (Manual 03 §3.8: the seven EHV circuits into the eastern
+    # Mid-Atlantic, i.e. the real EMAAC import cut, which spans BOTH model
+    # links; the per-link overlay above applies the same series to
+    # Central_PA->EMAAC alone, leaving the 5,000 MW SWMAAC->EMAAC static as
+    # an un-monitored parallel path the real interface does not have).
+    # Reverse (westward) flow keeps the per-link TTCs; the per-link statics
+    # stay as their own bounds. Zero fitted scalars: the cap is the published
+    # hourly series verbatim, from the same transfer-interface-limits clean
+    # partition. Same rule #13/#14 admissibility and two-track construction
+    # as pjm_measured_interface_limits (forecast years keep the static
+    # seeds). Off by default; byte-identical off.
+    pjm_east_interface_cut: bool = False
 
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
@@ -5770,6 +5824,27 @@ class ScenarioConfig:
                 "which is off. Enable energy_reserve_coopt or clear "
                 "caiso_reserve_coopt."
             )
+        if getattr(self, "caiso_reserve_online_scoped", False):
+            if not self.caiso_reserve_coopt:
+                raise ValueError(
+                    "caiso_reserve_online_scoped requires caiso_reserve_coopt: "
+                    "the online scoping rides the per-generator spin/non-spin "
+                    "co-opt layout (reserve_config._caiso_design)."
+                )
+            if getattr(self, "caiso_commitment_posture", False):
+                raise ValueError(
+                    "caiso_reserve_online_scoped and caiso_commitment_posture "
+                    "are mutually exclusive (rule 19 — one mechanism per "
+                    "phenomenon): the posture U re-anchor and the seam online "
+                    "scoping gate the same online-capacity phenomenon."
+                )
+            if getattr(self, "caiso_locational_as_families", False):
+                raise ValueError(
+                    "caiso_reserve_online_scoped is not composed with "
+                    "caiso_locational_as_families: the regional families need "
+                    "(zone AND product) balance_col_mask rows, which are not "
+                    "built."
+                )
         # The duration gate bounds the ENDOGENOUS storage split by SOC; it is
         # meaningless (and silently no-ops) without the endogenous split, and
         # must NEVER combine with the measured award reservation (docking the cap
@@ -6503,6 +6578,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_rdt_tcdc": 1,
     "miso_rpe_pricing": 1,
     "caiso_commitment_posture": 1,
+    "caiso_reserve_online_scoped": 1,
     "ercot_load_resource_reserve": 1,
     "ercot_load_resource_reserve_from_year": 1,
     "ercot_storage_as_reserve": 1,
@@ -6667,6 +6743,7 @@ TIER_TAGS: dict[str, int] = {
     "chp_steam_floor_p25": 3,
     "ercot_gtc_limits_measured": 3,
     "pjm_measured_interface_limits": 3,
+    "pjm_east_interface_cut": 3,
     "ercot_wtx_curtailment_driver": 3,
     "ercot_wtx_curtail_depth_wind": 3,
     "ercot_wtx_curtail_depth_solar": 3,
