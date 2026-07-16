@@ -4,31 +4,28 @@
  "NEISO": "2026-07-13-neiso-59-cc-hr",
  "PJM": "2026-07-16-pjm-114-east-interface",
  "keepers": [
-  "2026-07-15-ercot66-storage-rebasis",
-  "2026-07-16-caiso-87-surplus-clean",
-  "2026-07-16-pjm-114-east-interface",
-  "2026-07-16-ercot71-noncampd-availability",
+  "2026-07-16-ercot73-state-wall",
   "2026-07-16-caiso-90-citygate-flow",
-  "2026-07-16-pjm-113-short-only",
+  "2026-07-16-pjm-114-east-interface",
   "2026-07-13-nyiso-62-cc-hr",
   "2026-07-13-neiso-59-cc-hr",
   "2026-07-16-miso-67-stgas-p25"
  ],
- "note": "Current calibration keeper per ISO — the newest, most structurally faithful run for each market (claude.md #1/#11/#12: keeper = most faithful, not lowest error). This list drives the dashboard's all-ISO Calibration Status page. When a new keeper supersedes one here, replace the run id and re-run `python scripts/build_status.py` to refresh frontend/data/backcast/status.js (the verdicts need the bundles under results/calibration/, which the Pages deploy does not check out, so status.js is committed, not deploy-generated).",
+ "note": "Current calibration keeper per ISO \u2014 the newest, most structurally faithful run for each market (claude.md #1/#11/#12: keeper = most faithful, not lowest error). This list drives the dashboard's all-ISO Calibration Status page. When a new keeper supersedes one here, replace the run id and re-run `python scripts/build_status.py` to refresh frontend/data/backcast/status.js (the verdicts need the bundles under results/calibration/, which the Pages deploy does not check out, so status.js is committed, not deploy-generated).",
  "MISO": "2026-07-16-miso-67-stgas-p25",
  "NYISO": "2026-07-13-nyiso-62-cc-hr",
  "frontier": {
   "NEISO": {
    "declared": "2026-07-11",
-   "note": "Frontier achieved: every named admissible mechanism for the ledgered C3c/C5b winter/summer scarcity-price-formation family has been tried on record — winter fuel-security stack (adopted, dormant), in-LP reserve co-optimization (keeper, dormant at static requirements), measured dynamic reserve requirements (Limb A, engages 1 of 12 2025 tail hours), and the measured fast-start DA offer surface (Limb B, dormant — the real tail forms while the model still carries cheaper non-fast-start headroom). Further C3c work needs a NEW measured identification (oil-parity/import/DA-bid offer formation), its own charter; C2 waits on the final 2025 EIA-923 vintage. 2026-07-11 calibration-log entry; docs/handoffs/neiso-limb-b-offer-surface-2026-07.md §5."
+   "note": "Frontier achieved: every named admissible mechanism for the ledgered C3c/C5b winter/summer scarcity-price-formation family has been tried on record \u2014 winter fuel-security stack (adopted, dormant), in-LP reserve co-optimization (keeper, dormant at static requirements), measured dynamic reserve requirements (Limb A, engages 1 of 12 2025 tail hours), and the measured fast-start DA offer surface (Limb B, dormant \u2014 the real tail forms while the model still carries cheaper non-fast-start headroom). Further C3c work needs a NEW measured identification (oil-parity/import/DA-bid offer formation), its own charter; C2 waits on the final 2025 EIA-923 vintage. 2026-07-11 calibration-log entry; docs/handoffs/neiso-limb-b-offer-surface-2026-07.md \u00a75."
   },
   "NYISO": {
    "declared": "2026-07-11",
-   "note": "Frontier achieved: the deep >$300 tail's two candidate reserve levers are chased to ground — the largest-contingency requirement formula is already in the model as the measured NYCA families, and the ORDC/RCPF stack is verified complete and SOM-grounded (fires to VOLL in 2023). The sole remaining gap is the net-load forecast-uncertainty reserve increment — IMM Recommendation 2021-1, which NYISO has not implemented and which has no published formula; adding it in-model would be residual-fitting (rule 26). No admissible mechanism exists today. 2026-07-11 calibration-log entry (nyiso-61 follow-up research)."
+   "note": "Frontier achieved: the deep >$300 tail's two candidate reserve levers are chased to ground \u2014 the largest-contingency requirement formula is already in the model as the measured NYCA families, and the ORDC/RCPF stack is verified complete and SOM-grounded (fires to VOLL in 2023). The sole remaining gap is the net-load forecast-uncertainty reserve increment \u2014 IMM Recommendation 2021-1, which NYISO has not implemented and which has no published formula; adding it in-model would be residual-fitting (rule 26). No admissible mechanism exists today. 2026-07-11 calibration-log entry (nyiso-61 follow-up research)."
   },
   "ERCOT": {
    "declared": "2026-07-14",
-   "note": "Frontier achieved for the trough/spread (negative-price epoch) lane: every named admissible offer-side mechanism is tried on record — conditional offer surface top leg (adopted), econ lower-body (clamp-inert), tranche-wide + floor-scoped LSL markdowns (refuted/inert, ERCOT-64), the flat wind PTC bid (present since inception at -$26), its EIA-860 vintage scoping (built, dispatch-byte-identical, ERCOT-65), and the ERCOT arming of negative_renewable_offers (rule-25 refused — CAISO REC value). The WP-B West/Panhandle curtailment ceiling is LIVE in the keeper (ERCOT-65 record correction) and fixes curtailment volume but cannot price epochs (a ceiling-clipped variable is never marginal). The model forms negative epochs only in Panhandle (breadth ~1 zone) and prices ~$14 in RT's 147 negative lw-hours: the gap is epoch FORMATION/REACH — a topology-representation limit. Remaining lever: the West/Panhandle zone/corridor split (vre-undercurtailment step-2 §conclusion option 1), a structural iso_configs change needing its own charter. The C3c scarcity tail stays the separate open G-22 item. 2026-07-13 ERCOT-65 calibration-log entry; diagnosis §9."
+   "note": "Frontier achieved for the trough/spread (negative-price epoch) lane: every named admissible offer-side mechanism is tried on record \u2014 conditional offer surface top leg (adopted), econ lower-body (clamp-inert), tranche-wide + floor-scoped LSL markdowns (refuted/inert, ERCOT-64), the flat wind PTC bid (present since inception at -$26), its EIA-860 vintage scoping (built, dispatch-byte-identical, ERCOT-65), and the ERCOT arming of negative_renewable_offers (rule-25 refused \u2014 CAISO REC value). The WP-B West/Panhandle curtailment ceiling is LIVE in the keeper (ERCOT-65 record correction) and fixes curtailment volume but cannot price epochs (a ceiling-clipped variable is never marginal). The model forms negative epochs only in Panhandle (breadth ~1 zone) and prices ~$14 in RT's 147 negative lw-hours: the gap is epoch FORMATION/REACH \u2014 a topology-representation limit. Remaining lever: the West/Panhandle zone/corridor split (vre-undercurtailment step-2 \u00a7conclusion option 1), a structural iso_configs change needing its own charter. The C3c scarcity tail stays the separate open G-22 item. 2026-07-13 ERCOT-65 calibration-log entry; diagnosis \u00a79."
   }
  }
 }
