@@ -3710,6 +3710,202 @@ def build_ercot_offer_midcurve_conditional_markup(
     return markup
 
 
+#: Model plant_group -> measured class key of the ERCOT DAM cleared-share
+#: boundary artifact (scripts/derive_ercot_dam_cleared_share.py). Deliberately
+#: NARROWER than the mid-curve map: CC_CHP is excluded (steam-host cogens
+#: self-schedule — the ERCOT-70/71 decomposition measures the model's CC_CHP
+#: within +12 MW of actual on the target windows, so there is no composition
+#: error to price there), ST_GAS is owned by the drag structure (rule 19).
+_ERCOT_CLEARED_SHARE_CLASS_OF = {
+    "CC_REGULAR": "CC",
+    "CT_PEAKER": "CT",
+}
+
+
+def build_ercot_offer_surface_cleared_share_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+) -> "np.ndarray | None":
+    """Build the ERCOT P1-only DAM CLEARED-SHARE boundary markup ``(n_gen, T)``.
+
+    The ERCOT-72 covered-CC / CT composition mechanism
+    (``ScenarioConfig.ercot_offer_surface_cleared_share``). ERCOT has no DAM
+    must-offer; the 60-Day disclosure measures that on moderate days only
+    ~0.49-0.64 of CC live capability (CT: 0.03-0.47) clears the DAM for energy
+    — the remainder is not in the day-ahead supply at any price, while the
+    model's econ tranches span ~92% of every plant at the econ multipliers.
+    This floors each merchant gas ``econ*`` tranche row whose WITHIN-PLANT
+    cumulative-capacity midpoint ``share_g`` exceeds the hour's net-load bin's
+    MEASURED cleared share at the bin's MEASURED above-boundary offer wall::
+
+        rel          = (share_g - boundary(bin)) / (1 - boundary(bin))
+        target[g, t] = interp(rel, ladder_q, ladder_mult(bin)) x gas_day(t)
+        markup[g, t] = max(0, min(target, cap_frac x VOLL) - mc_base[g, t])
+
+    * ``boundary`` (cleared share of live capability) and the wall ladder
+      (MW-weighted quantiles of offered-but-uncleared curve-segment prices as
+      effective-HR multipliers) are both measured per net-load-percentile bin
+      (condition-responsive: measured CC boundary 0.33 loose -> 0.64 tight),
+      never day-pinned; zero fitted scalars (rules 13/14/26).
+    * Targeted rows: ``econ*`` tranches of CC_REGULAR / CT_PEAKER only. The
+      PEAK rungs stay owned by ``ercot_offer_surface_conditional``, the
+      committed/mustrun blocks by the bridge/floor structure, ST_GAS by the
+      drag, CC_CHP is measured composition-clean (rule 19). Mutually exclusive
+      with ``ercot_offer_surface_midcurve_conditional`` (same econ rows — one
+      owner per row): arming both is a hard error.
+    * The floor only ever RAISES a bid (``max(0, .)``) and is capped below
+      VOLL; rows at/below the boundary and bins with no measured data are
+      byte-identical. P1-only (the ``mc_bid_adjust`` seam): P0 run lengths and
+      the startup-amortization coupling are untouched.
+    """
+    if not getattr(config, "ercot_offer_surface_cleared_share", False):
+        return None
+    if config.iso != "ERCOT":
+        return None
+    if getattr(config, "ercot_offer_surface_midcurve_conditional", False):
+        raise ValueError(
+            "ercot_offer_surface_cleared_share and "
+            "ercot_offer_surface_midcurve_conditional both price the gas econ "
+            "rows — one mechanism per row (rule 19); arm exactly one."
+        )
+    path = getattr(config, "ercot_offer_surface_cleared_share_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        path = str(_paths.CALIBRATION_DIR / "ercot_dam_cleared_share_condbinned.json")
+    surface = json.loads(Path(path).read_text())
+    prov = surface.get("_provenance", {})
+    edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
+    ladder_q = np.asarray(prov.get("ladder_quantiles", ()), dtype=float)
+    if not edges or ladder_q.size == 0:
+        raise ValueError(
+            "ercot_offer_surface_cleared_share: surface JSON carries no "
+            "edges/quantiles — re-derive scripts/derive_ercot_dam_cleared_share.py"
+        )
+    n_bins = len(edges) + 1
+
+    hours = int(mc_base.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net_load, edges)
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    # Delivered-gas day series on the model clock (the derive's own price
+    # normalizer: HH daily + ERCOT basis, forward-filled).
+    from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
+    from market_sim.data.fuel import HENRY_HUB_DAILY_PATH
+
+    hh = pd.read_csv(HENRY_HUB_DAILY_PATH, parse_dates=["date"])
+    s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
+    full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
+    daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
+    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
+
+    # Per-class boundary (n_bins,) + wall table (n_bins, n_q) for this delivery
+    # year (pooled fallback for an unmapped/forward year).
+    boundaries: dict[str, np.ndarray] = {}
+    walls: dict[str, np.ndarray] = {}
+    for cls_key in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values()):
+        entry = surface.get(cls_key)
+        if not entry:
+            continue
+        tbl = entry.get("years", {}).get(str(year)) or entry.get("pooled")
+        if not tbl:
+            continue
+        share = np.asarray(tbl.get("cleared_share", ()), dtype=float)
+        lad = tbl.get("ladder", ())
+        if share.size != n_bins or len(lad) != n_bins:
+            continue
+        boundaries[cls_key] = share
+        walls[cls_key] = np.array(
+            [[float(pt[1]) for pt in lad_b] for lad_b in lad], dtype=float
+        )  # (n_bins, n_q)
+
+    # Target rows + within-plant share midpoints: every tranche of the plant
+    # ordered by its annual-mean base cost — the model's own rising CAMPD
+    # tranche curve defines each row's curve position (the mid-curve
+    # construction, scale-free against fleet-capacity mismatches).
+    prefixes: dict[str, list[int]] = {}
+    row_cls: dict[int, str] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None) or ""
+        if cls not in _ERCOT_CLEARED_SHARE_CLASS_OF:
+            continue
+        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+        row_cls[g] = cls
+
+    pmax = fleet_arrays.pmax
+    voll_cap = float(
+        getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
+    ) * float(getattr(config, "voll", 5000.0))
+    markup = np.zeros_like(mc_base)
+    n_priced = 0
+    mean_mc = mc_base.mean(axis=1)
+    for rows in prefixes.values():
+        rows_arr = np.asarray(rows, dtype=int)
+        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
+        caps = pmax[order]
+        total = caps.sum()
+        if total <= 0.0:
+            continue
+        cum = np.cumsum(caps)
+        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
+        for g, s_g in zip(order, mids):
+            gen = generators[g]
+            sfx = gen.unit_id.rpartition("_")[2]
+            if not sfx.startswith("econ"):
+                continue
+            cls_key = _ERCOT_CLEARED_SHARE_CLASS_OF[row_cls[g]]
+            if cls_key not in boundaries:
+                continue
+            bnd = boundaries[cls_key]  # (n_bins,)
+            wall = walls[cls_key]  # (n_bins, n_q)
+            # Per-bin target multiplier: 0 (no floor) at/below the boundary or
+            # where the bin carries no measured boundary/wall.
+            mult_b = np.zeros(n_bins)
+            for b in range(n_bins):
+                if not np.isfinite(bnd[b]) or bnd[b] >= 1.0 or s_g <= bnd[b]:
+                    continue
+                if not np.isfinite(wall[b]).all():
+                    continue
+                rel = (s_g - bnd[b]) / (1.0 - bnd[b])
+                mult_b[b] = float(np.interp(rel, ladder_q, wall[b]))
+            if not mult_b.any():
+                continue
+            target = mult_b[hour_bin] * gas_day  # (T,); 0 where no floor
+            target = np.minimum(target, voll_cap)
+            row = np.maximum(0.0, target - mc_base[g, :])
+            if row.any():
+                markup[g, :] = row
+                n_priced += 1
+
+    if n_priced == 0 or not np.any(markup > 0.0):
+        logger.info(
+            "ERCOT cleared-share offer boundary: no econ row floored (every "
+            "row at/below the measured cleared share, or measured walls <= "
+            "model econ bids) — byte-identical"
+        )
+        return None
+    logger.info(
+        "ERCOT cleared-share offer boundary: floored %d gas econ tranche rows "
+        "above the measured DAM cleared share (%d net-load bins, year table "
+        "%s); P1-only",
+        n_priced,
+        n_bins,
+        str(year)
+        if any(
+            str(year) in surface.get(c, {}).get("years", {})
+            for c in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values())
+        )
+        else "pooled",
+    )
+    return markup
+
+
 # Model tranche suffixes carrying the gas fleet's committed (LSL) block and the
 # economic ramp — the rows the low-curve markdown reprices. ``econc``-prefixed
 # suffixes are the N-slice smoothed econ ramp (``_econ_curve_steps``); ``econ``/
