@@ -479,6 +479,7 @@ def run_year(
     gt_ambient_derate_slope_ct: float | None = None,
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
+    ercot_offer_surface_midcurve_conditional: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
     wind_ptc_vintage_offers: bool = False,
@@ -489,6 +490,7 @@ def run_year(
     pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
+    ercot_noncampd_plant_availability: bool = False,
     ercot_storage_capability_measured: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
     ercot_ordc_only_scarcity: bool = False,
@@ -708,6 +710,9 @@ def run_year(
         offer_curve_overrides=offer_curve_overrides,
         offer_curve_deltas=offer_curve_deltas,
         ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+        ercot_offer_surface_midcurve_conditional=(
+            ercot_offer_surface_midcurve_conditional
+        ),
         neiso_offer_surface_conditional=neiso_offer_surface_conditional,
         pjm_offer_surface_conditional=pjm_offer_surface_conditional,
         pjm_da_virtual_bids=pjm_da_virtual_bids,
@@ -748,6 +753,12 @@ def run_year(
         # disclosure HSL/status; ScenarioConfig field docstring has the full
         # provenance/admissibility note). ERCOT-gated in the fleet application.
         config = config.with_overrides(ercot_thermal_dam_availability=True)
+    if ercot_noncampd_plant_availability:
+        # Measured CAMPD-blind per-plant availability (60-Day DAM disclosure
+        # live HSL + EIA-923 zero months; ScenarioConfig field docstring has the
+        # full provenance/admissibility note). ERCOT-gated in the fleet
+        # application.
+        config = config.with_overrides(ercot_noncampd_plant_availability=True)
     if ercot_storage_capability_measured:
         # Measured hourly battery-fleet capability re-basis (60-Day DAM
         # disclosure non-OUT PWRSTR/ESR HSL; ScenarioConfig field docstring
@@ -2682,6 +2693,35 @@ def run_year(
         offer_surface_mc_bid_adjust = build_ercot_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
+    # ERCOT MID-CURVE offer surface (G-22 lever A', the ERCOT analogue of the PJM
+    # mid-curve): floors the gas econ-tranche rows' P1 bids at the measured
+    # capacity-share offer level of the 60-Day DAM disclosure body
+    # (fleet.build_ercot_offer_midcurve_conditional_markup). Targets econ rows
+    # only — disjoint from the peak surface above (which owns the PEAK rungs), so
+    # the two markups SUM without overlap when both flags are armed (one
+    # mechanism per row, rule 19). P1-only; needs mc_base + year in scope.
+    if (
+        getattr(config, "ercot_offer_surface_midcurve_conditional", False)
+        and iso == "ERCOT"
+    ):
+        from market_sim.data.fleet import (
+            build_ercot_offer_midcurve_conditional_markup,
+        )
+
+        _mc_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        _ercot_midcurve = build_ercot_offer_midcurve_conditional_markup(
+            fleet_arrays, fleet, mc_base, _mc_net_load, config, year
+        )
+        if _ercot_midcurve is not None:
+            offer_surface_mc_bid_adjust = (
+                _ercot_midcurve
+                if offer_surface_mc_bid_adjust is None
+                else offer_surface_mc_bid_adjust + _ercot_midcurve
+            )
     # ERCOT G-22 conditional-offer-distribution LOW leg: the trough-side mirror
     # of the surface above at the P1-only seam, but P0-CONDITIONED — the
     # measured committed-unit LSL/lower-body markdown (ratio clamped <= 1) is
