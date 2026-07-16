@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-16-caiso-90-citygate-flow",
+ "label": "caiso 90 citygate flow",
+ "date": "2026-07-16",
+ "shorthand": "caiso-90-citygate-flow",
+ "definition": "CANDIDATE (caiso-89 keeper recipe + the single delta caiso_citygate_flow_date=True): the measured daily citygate prints placed on their gas FLOW days (trade+1; Friday prints carry the Sat-through-Monday weekend package on a forward-fill staircase) instead of their trade days \u2014 the CA Composite daily spot is a next-day-delivery index, so the keeper's trade-dated placement mis-days the winter C3c tail (its only 2023 >$200 day was Jan-12, the $24.29 print's TRADE day; the actual tail day Jan-13 is its FLOW day; the Fri Jan-12-2024 $17.34 print is the MLK-weekend package covering the actual Jan-15/16 storm tail, which linear interpolation decayed to $8-11/MMBtu). RESULT: the 2023 tail MOVES onto the right day (Jan-13, catches all 8 of that day's actual tail hours; count 16->18h vs 80 DA actual, still FAIL); the Jan-2024 WATCH under-price recovers -4.9 -> ~0 (storm days reprice $62-104 -> $141-175, now clipped at the CC econ_high stack top -- the remaining $25-80 to the actual $254/$226 peaks is the CT-marginal evening/peak merit-stack lane, DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07); C3a-2024 +10.5 -> +11.5% (the honest signed effect of removing an under-priced month); C4-2023 gas r .826->.828 / NRMSE .322->.319; C1/C2/C3b/C5a/C6/C7/C8 unchanged. Zero new scalars; flag-off byte-identical; DISCLOSED source gap: the EIA archive skipped its Dec-29-2022/Jan-5-2023 issues, so the actual Jan-3..6-2023 cluster (22h) is unreachable by any placement of this series. NOT-YET; keeper decision is the owner's.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-16-caiso-90-citygate-flow.js",
+ "bundle": "results/calibration/caiso90_citygate_flow_date"
+}

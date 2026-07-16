@@ -14294,3 +14294,83 @@ each; years sequential, one at a time). Both registered with benchmark rebuild,
 legitimacy diagnostics, and attestations; parity check PASS. The known
 `prb_overrides`/`ercot_wtx` recorder warning surfaced as documented. Transport:
 unshallow-then-push, blob-verified (rule 27).
+
+## 2026-07-16 — CAISO-90 (Lane B, C3c tail undershoot): the winter half of the DA tail is a GAS-CALENDAR defect — flow-date placement built + registered (CANDIDATE); the summer half ADJUDICATED not reachable through the scarcity overlay (SOC refinement refuted no-LP); the C1 CC-over/CT-under cluster diagnosed to the same evening merit stack (owner directive)
+
+**Charter (handoff Lane B):** instrument the 80/52 actual DA >$200 hours of
+2023/2024, then the two chartered candidates: (a) CT_PEAKER rungs vs cheaper
+headroom, (b) the CAISO scarcity-overlay calibration. Mid-session owner
+directive added the C1 CC_REGULAR-over / CT_PEAKER-under cluster.
+
+**Step 0 (no LP beyond the keeper re-solve).** The actual DA tail decomposes
+into WINTER GAS (2023: 39 h Jan 3-6/13/18/25; 2024: 28 h Jan 15-16 = Winter
+Storm Heather; RT companions elevated — real fuel-cost pricing) and
+SUMMER/FALL EVENING (2023: 41 h hod 14-20 incl. the Aug 15-16 heat event to
+$1,175; 2024: 24 h; DA clears $200-1175 while RT settles $52-172 in all but
+the Aug-16 EEA hours — a DA-expectation premium). Full evidence:
+`docs/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md`.
+
+**Winter root cause + fix (caiso-90, `2026-07-16-caiso-90-citygate-flow`,
+bundle `results/calibration/caiso90_citygate_flow_date`, CANDIDATE).** The
+daily citygate series is a next-day-delivery index placed on TRADE days: the
+keeper's ONLY 2023 >$200 day was Jan-12 (the $24.29 print's trade day, 16 h,
+not an actual tail day) while the actual tail day Jan-13 is its flow day; the
+Fri Jan-12-2024 $17.34 print (HH $13.08 — the national freeze) is the
+MLK-weekend package covering the actual Jan-15/16 storm days, which
+trade-dated linear interpolation decayed toward the $5.00 Jan-16 print
+($8-11/MMBtu on the storm days; keeper priced them $62-104).
+`caiso_citygate_flow_date` places prints on trade+1 with a forward-fill
+staircase (weekend packages); flag-off byte-identical; zero new scalars
+(rules 13/15 calendar-semantics correction). A/B vs the caiso-89 keeper:
+2023 tail 16→18 h and MOVES onto Jan-13 (catches ALL 8 of that day's actual
+tail hours — dates, not just count); Jan-2024 WATCH −4.9 → ~0 (storm days
+reprice $62-104 → $141-175, now clipped at the CC econ_high stack top);
+C3a-2024 +10.5 → +11.5 % (the honest signed effect of removing an
+under-priced month); C4-2023 gas r .826→.828 / NRMSE .322→.319; C1-2024
+CC_REGULAR +5.37 → +5.30 TWh; C2-2025 gas −1.6 %; C3b/C5a/C6/C7/C8 PASS
+unchanged; C3c-2025 0 vs 0 PASS. Feb-2023 deepens +2.1 → +4.3 $/MWh on the
+session's same-machine basis (placement, not level — monthly gas means move
+≤3 % except Jan-2024 +14 %, the measured storm package); Apr-2023 WATCH
+unchanged (−2.7 → −2.8). DETERMINATION NOT-YET (fuelmix, price_mean,
+price_tail, dispatch_corr — the keeper's own four). **DISCLOSED source gap:**
+the EIA NG Weekly archive skipped its Dec-29-2022/Jan-5-2023 issues, so
+trading days Dec-22-2022..Jan-4-2023 do not exist in the source — the actual
+Jan-3..6-2023 cluster (22 h) is unreachable by ANY placement of this series
+(candidate replacement: CAISO OASIS daily gas index, own charter). Keeper
+promotion is the owner's call.
+
+**Summer half CLOSED against both chartered candidates, with evidence.** In
+the 41 summer/fall 2023 tail hours the model clears $71-98 (2024: $52-68)
+with 1.9-4.7 GW thermal-online + 0.8-5.0 GW quick-start-offline + 2.4-7.6 GW
+storage-power headroom remaining; the in-price LOLP overlay adds $0-37 there
+— honest-inert (caiso-85's corridor-headroom-0 finding stands). The one
+physically-motivated reserve-measure refinement — SOC-aware storage credit —
+was REFUTED WITHOUT A SOLVE: the schedule-derived conservative form fires
+2,328 h >$200 in 2023 (29× the 80 actual, hourly MAE 15.4 → 122.9 — every
+day's discharge-end becomes phantom scarcity), and the true-SOC form is
+degeneracy-pinned. CT rungs are not the miss (the 4.0× peak rung ≈ $210-235
+at summer gas is simply never reached — cheaper in-model supply genuinely
+remains); storage sizing checked ≈ real installed. The admissible route is
+the MEASURED offer surface (CAISO OASIS Public Bids, 90-day-lag masked DAM
+bid curves — the CAISO analogue of the ERCOT/PJM/NEISO measured surfaces).
+Named-uncharted.
+
+**C1 cluster diagnosis (owner directive).** CT_PEAKER runs at 16-19 % of its
+real energy (−3.31/−3.65/−2.06 TWh); the real class runs round the clock
+(January its 2nd-biggest month) and is concentrated: top-15 plants = 91 %,
+Panoche Energy Center alone 736/1,425/852 GWh (CF 22/42/25 %, block-loaded
+79 % when online) vs model 30 GWh — a $5-10/MWh marginal-economics miss, not
+a missing floor. CC_REGULAR over-runs +0.55-0.69 TWh/hod OVERNIGHT (real CC
+cycles down; RA bridge explains ~a third) and +0.32-0.86 EVENING (model
+serves the ramp with CC where reality runs CTs); midday clean. Same defect
+as the summer C3c: the evening merit stack is too cheap. Charter directions
+(diagnosis §5): the deferred CAISO reserve co-optimization (#1492 — its
+caiso-57-era suppressor, the P2 UC decommit, is now ARCHIVED), a
+CAISO-evidence Panoche-class committed-tranche gate, overnight CC cycling,
+and the OASIS gas-index winter data completion.
+
+Rules compliance: solve years 2023-2025 only (rule 22); one bundle, years
+sequential (rules 12/16); no ablation twin (rule 21 as amended); registered
+with legitimacy_diagnostics before dashboard_add_run, attestation +
+--write-metrics, parity check green; zero new fitted scalars (rule 24 flag
+registered in ScenarioConfig); keeper untouched (owner decides).
