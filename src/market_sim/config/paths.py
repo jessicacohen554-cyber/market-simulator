@@ -135,6 +135,11 @@ ZONE_DEMAND_DIR: Path = RAW_DATA_DIR / "zone-specific-demand"
 # Monthly raw parquets: pjm_energy_offers_YYYY_MM.parquet.  Files are gitignored
 # because the 3-year corpus is ~4 GB; re-fetch with scripts/fetch_pjm_energy_offers.py.
 PJM_ENERGY_OFFERS_DIR: Path = RAW_DATA_DIR / "pjm-energy-offers"
+# CAISO OASIS DAM Public Bid Data (PUB_DAM_GRP GroupZip, 90-day-lag masked
+# bid curves).  Daily zips under zips/: <YYYYMMDD>_PUB_BID_DAM_v3_csv.zip.
+# Gitignored (pjm-energy-offers precedent); re-fetch with
+# scripts/fetch_caiso_public_bids.py.
+CAISO_PUBLIC_BIDS_DIR: Path = RAW_DATA_DIR / "caiso-public-bids"
 PJM_DA_VIRTUALS_DIR: Path = RAW_DATA_DIR / "pjm-da-virtuals"
 # PJM ancillary-services / reserve-market DataMiner2 exports (reserve_market_
 # results, da_reserve_market_results, ancillary_services, da_ancillary_services,
