@@ -213,5 +213,119 @@ class PjmInterfaceTtcHourlyTest(unittest.TestCase):
         self.assertIsNone(pjm_interface_ttc_hourly(ttc, cfg, 2023, 8760))
 
 
+class PjmEastInterfaceCutTest(unittest.TestCase):
+    """The measured joint EMAAC-import cut (pjm_east_interface_cut) seam."""
+
+    def setUp(self):
+        self._tmp = TemporaryDirectory()
+        root = Path(self._tmp.name)
+        self.raw_root = root / "raw"
+        (self.raw_root / "iso-specific-transmission").mkdir(parents=True)
+        self._orig_clean = clean_io.paths.CLEAN_DIR
+        clean_io.paths.CLEAN_DIR = root / "clean"
+
+    def tearDown(self):
+        clean_io.paths.CLEAN_DIR = self._orig_clean
+        self._tmp.cleanup()
+
+    def _curate_fixture(self, year: int, limit: float) -> None:
+        rows = _full_year_rows(year, "Average Eastern", limit)
+        path = (
+            self.raw_root
+            / "iso-specific-transmission"
+            / f"PJM_{year}_transfer_limits_and_flows.csv"
+        )
+        path.write_text(_csv(rows))
+        cur.curate(raw_root=self.raw_root, isos=["PJM"])
+
+    def test_eastern_series_hourly(self):
+        """The joint-cut cap is the published Average Eastern series."""
+        from market_sim.data.transfer_interface_limits import (
+            pjm_eastern_interface_hourly,
+        )
+
+        self._curate_fixture(2023, 8200.0)
+        lim = pjm_eastern_interface_hourly(2023, 8760)
+        self.assertIsNotNone(lim)
+        self.assertEqual(lim.shape, (8760,))
+        self.assertTrue(np.allclose(lim, 8200.0))
+
+    def test_negative_limit_clamps_to_zero(self):
+        from market_sim.data.transfer_interface_limits import (
+            pjm_eastern_interface_hourly,
+        )
+
+        self._curate_fixture(2023, -100.0)
+        lim = pjm_eastern_interface_hourly(2023, 8760)
+        self.assertIsNotNone(lim)
+        self.assertTrue(np.allclose(lim, 0.0))
+
+    def test_missing_series_returns_none(self):
+        """A partition without Average Eastern -> None (group skipped)."""
+        from market_sim.data.transfer_interface_limits import (
+            pjm_eastern_interface_hourly,
+        )
+
+        rows = _full_year_rows(2023, "AP-South Pre-Contingency", 4000.0)
+        path = (
+            self.raw_root
+            / "iso-specific-transmission"
+            / "PJM_2023_transfer_limits_and_flows.csv"
+        )
+        path.write_text(_csv(rows))
+        cur.curate(raw_root=self.raw_root, isos=["PJM"])
+        self.assertIsNone(pjm_eastern_interface_hourly(2023, 8760))
+        # No partition at all -> also None.
+        clean_io.paths.CLEAN_DIR = Path(self._tmp.name) / "empty-clean"
+        self.assertIsNone(pjm_eastern_interface_hourly(2023, 8760))
+
+    def test_group_builder_indices_signs_one_sided(self):
+        """One one-sided group over exactly the two EMAAC import links."""
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import (
+            PJM_EAST_CUT_LINKS,
+            build_pjm_east_interface_cut_groups,
+        )
+
+        cfg = get_iso_config("PJM")
+        lim = np.full(8760, 8200.0)
+        groups = build_pjm_east_interface_cut_groups(cfg.links, lim)
+        self.assertEqual(len(groups), 1)
+        idx, cap, two_way, lower, signs = groups[0]
+        pairs = {(cfg.links[i].from_zone, cfg.links[i].to_zone) for i in idx}
+        self.assertEqual(pairs, set(PJM_EAST_CUT_LINKS))
+        self.assertTrue(np.allclose(cap, 8200.0))
+        self.assertFalse(two_way)  # one-sided: never caps westward flow
+        self.assertIsNone(lower)
+        self.assertTrue(np.allclose(signs, 1.0))  # both links point into EMAAC
+
+    def test_group_builder_empty_without_cut_links(self):
+        """A topology without the cut links yields no group (byte-identical)."""
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.model.transmission import (
+            build_pjm_east_interface_cut_groups,
+        )
+
+        cfg = get_iso_config("ERCOT")
+        self.assertEqual(
+            build_pjm_east_interface_cut_groups(cfg.links, np.full(8760, 1.0)),
+            [],
+        )
+
+    def test_comed_5004_5005_mis_attribution_removed(self):
+        """Regression pin (pjm-cong-1): PJM Manual 03 §3.8 defines 5004/5005
+        as the Keystone/Conemaugh–Juniata 500 kV corridor (Pennsylvania) — it
+        must never again be applied to the ComEd boundary."""
+        from market_sim.config.constants import (
+            PJM_INTERFACE_LINK_MAP,
+            PJM_MEASURED_INTERNAL_TTC,
+        )
+
+        self.assertNotIn(("PJM_ComEd", "PJM_AEP_Ohio"), PJM_INTERFACE_LINK_MAP)
+        self.assertNotIn(("PJM_ComEd", "PJM_AEP_Ohio"), PJM_MEASURED_INTERNAL_TTC)
+        for series in {s for v in PJM_INTERFACE_LINK_MAP.values() for s in v}:
+            self.assertNotIn("50045005", series)
+
+
 if __name__ == "__main__":
     unittest.main()
