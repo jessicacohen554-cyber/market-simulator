@@ -89,6 +89,44 @@ def _series_hourly(frame: pd.DataFrame, name: str, hours: int) -> np.ndarray | N
     return out
 
 
+#: The Manual-03 EASTERN reactive transfer interface series (PJM Manual 03
+#: §3.8 Rev 71: Breinigsville–Alburtis ×2, Juniata–Alburtis,
+#: Lauschtown–Hosensack, Peach Bottom–Limerick, Rock Springs–Keeney,
+#: Lackawanna–Hopatcong — the EHV cut into the eastern Mid-Atlantic). The
+#: DataMiner2 feed posts its hourly-averaged TLC limit as "Average Eastern".
+PJM_EASTERN_INTERFACE_SERIES = "Average Eastern"
+
+
+def pjm_eastern_interface_hourly(year: int, hours: int) -> np.ndarray | None:
+    """The measured EMAAC-import-cut hourly limit (``pjm_east_interface_cut``).
+
+    Returns the ``(hours,)`` "Average Eastern" published limit — the joint
+    cap for the Central_PA→EMAAC + SWMAAC→EMAAC link pair (the reduced
+    network's EMAAC import cut; see the ScenarioConfig field docstring and
+    diagnosis §10.5). Uncovered hours (never the case for the committed dense
+    2023–25 partitions) ride ``+inf`` so the group row is simply non-binding
+    there rather than inventing a static joint rating. Returns ``None`` when
+    the year has no clean partition or the series is absent — callers skip
+    the group (byte-identical to the flag being off) and warn.
+    """
+    frame = load_interface_hourly("PJM", year)
+    if frame is None or frame.empty:
+        return None
+    measured = _series_hourly(frame, PJM_EASTERN_INTERFACE_SERIES, hours)
+    if measured is None:
+        logger.warning(
+            "pjm_east_interface_cut %d: series %r absent from the clean "
+            "partition — joint EMAAC cut skipped",
+            year,
+            PJM_EASTERN_INTERFACE_SERIES,
+        )
+        return None
+    out = np.where(np.isnan(measured), np.inf, measured)
+    # Non-positive published limits clamp to 0 (no secure transfer that
+    # hour), matching the per-link overlay's convention.
+    return np.maximum(out, 0.0)
+
+
 def pjm_interface_ttc_hourly(
     ttc: np.ndarray, iso_config, year: int, hours: int
 ) -> tuple[np.ndarray, np.ndarray] | None:
