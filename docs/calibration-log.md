@@ -13932,3 +13932,15 @@ acceptance that the residual 147 MW is closed as sub-grain basis noise — the
 only mechanism below it is an ambient nuclear net-capability derate charter
 (~0.1 GW stakes). Note: tests/test_outages.py NEISOUnitOutageSmokeTest fails
 on clean main too (pre-existing, unrelated).
+
+## 2026-07-16 — PJM-NUC-1b owner sign-offs recorded (session-logged authorization)
+
+Owner approved, same session as the pjm-nuc-1b build ("Yes to all"): (i) **NRC
+daily Power Reactor Status is the adopted nuclear-availability datatype**
+(public-domain raw annual files committed under `data/raw/nrc-reactor-status/`,
+re-derive only when a new NRC year lands — rule 23); (ii) **the residual
++147 MW tail-hour nuclear phantom is accepted as CLOSED at the admissible
+frontier** (sub-daily net-vs-thermal basis noise; the provenance-gate-failed
+overlay stays committed default-off, not re-armable). The ambient nuclear
+net-capability derate remains an available FUTURE charter (~0.1 GW stakes),
+not opened in this session. PR opened for the three pjm-nuc-1b commits.
