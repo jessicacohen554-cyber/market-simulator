@@ -1994,6 +1994,32 @@ class ScenarioConfig:
     # 13). Requires gas_hub_basis_overlay; supersedes gas_hub_basis_daily for
     # CAISO by construction (it sets both level and shape from the daily
     # series). Default off (byte-identical); CAISO backcast only.
+    caiso_citygate_flow_date: bool = False  # Place each measured daily
+    # citygate print on its gas FLOW day instead of its trade day (caiso-90;
+    # Lane B C3c winter tail, 2026-07-16). The CA Composite daily spot the
+    # spot-level overlay reads (caiso_citygate_spot_level above) is a
+    # NEXT-DAY-delivery index: NGI's Daily GPI compiles deals struck on trade
+    # day T for delivery on the next gas day, and Friday's trade covers the
+    # whole Sat-through-Monday (holiday-extended) weekend package — so a
+    # print's fuel cost reaches the burner tip, and the marginal DEB it sets,
+    # one day (or one weekend) AFTER the calendar day the CSV keys it to.
+    # When on, _caiso_hub_daily_gas_prices places the prints on trade+1 and
+    # carries non-trading flow days on a forward-fill staircase (the weekend
+    # package price) instead of interpolating trade-dated points; month
+    # coverage (survey-basis + own-print months only) and every fallback are
+    # unchanged. Evidence the trade-dated placement mis-days the winter tail:
+    # the model's ONLY 2023 >$200 day is Jan-12 (the $24.29 print's trade
+    # day) while the actual DA tail day is Jan-13 (its flow day); the Jan-17
+    # $21.82 print pairs with the actual Jan-18 tail; and the Fri Jan-12-2024
+    # $17.34 print (HH $13.08, the national freeze) is exactly the MLK
+    # weekend package covering the actual Jan-15/16-2024 storm tail, which
+    # the trade-dated linear interpolation instead decays toward the $5.00
+    # Jan-16 print. Pure calendar-semantics correction of a measured input
+    # (rules 13/15): zero new scalars, regenerates for any year from the same
+    # EIA series, forecast path untouched (no daily realization forward).
+    # Default off (byte-identical); CAISO backcast only; requires
+    # caiso_citygate_spot_level's daily leg to be active via
+    # gas_hub_basis_overlay.
     caiso_dsw_surplus_clean: bool = False  # Carry the MEASURED surplus-hour
     # WEIM clean import depth on the south (Palo Verde / Path-46) corridor
     # (caiso-87; FINDING-caiso82 §3 "measured clean DEPTH" lane;

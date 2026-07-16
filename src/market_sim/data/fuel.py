@@ -1539,6 +1539,38 @@ def _nyiso_hub_daily_gas_prices(
     return out
 
 
+def _flow_date_staircase(
+    dated_year: dict[int, dict[int, float]], year: int
+) -> np.ndarray | None:
+    """365-day flow-date staircase ($/MMBtu) from trade-day citygate prints.
+
+    The daily citygate spot is a next-day-delivery index (NGI Daily GPI via the
+    EIA NG Weekly compact table): a print keyed to trade day T prices gas that
+    FLOWS on T+1, and Friday's trade covers the whole Sat-through-Monday
+    (holiday-extended) weekend package. This helper places each of ``year``'s
+    prints on its real-calendar flow day (trade + 1) and forward-fills the
+    non-trading gaps — every flow day carries the most recent package that
+    priced it — then drops Feb-29 to land on the model's non-leap 365-day
+    clock. Days before the year's first flow print back-fill from it (the same
+    left-edge constant-extension the trade-dated interpolation applies); a
+    Dec-31 print flows into the NEXT year and is dropped (within-year
+    construction, the year-start edge is documented as back-filled). Returns
+    ``None`` when the year has no prints.
+    """
+    stamps = {
+        pd.Timestamp(year=year, month=m, day=d) + pd.Timedelta(days=1): v
+        for m, days in sorted(dated_year.items())
+        for d, v in sorted(days.items())
+    }
+    if not stamps:
+        return None
+    idx = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
+    s = pd.Series(stamps).sort_index()
+    s = s.reindex(idx.union(s.index)).sort_index().ffill().bfill().reindex(idx)
+    s = s[~((s.index.month == 2) & (s.index.day == 29))]
+    return s.to_numpy(dtype=float)
+
+
 def _caiso_hub_daily_gas_prices(
     config: ScenarioConfig,
     year: int,
@@ -1577,6 +1609,12 @@ def _caiso_hub_daily_gas_prices(
     no basis rows), so :func:`apply_hub_basis_overlay` falls back to the flat
     monthly overlay. Backcast-only by construction (2023-2025 basis rows only).
 
+    ``config.caiso_citygate_flow_date`` (caiso-90): when set, the prints are
+    placed on their gas FLOW days (trade + 1, weekend/holiday packages
+    forward-filled as a staircase — :func:`_flow_date_staircase`) instead of
+    their trade days, in both the shape-only and ``spot_level`` branches; the
+    month-coverage rules below are unchanged.
+
     ``spot_level`` (caiso-84, ``caiso_citygate_spot_level``;
     FINDING-caiso-winter-gas-level-2026-07-15): when set, each month's LEVEL is
     anchored to the **calendar-interpolated monthly mean of the measured daily
@@ -1602,9 +1640,21 @@ def _caiso_hub_daily_gas_prices(
     if monthly is None:
         return None
     citygate_dated = _caiso_citygate_daily_dated(citygate_path).get(year, {})
+    # caiso-90 (caiso_citygate_flow_date): the prints are a next-day-delivery
+    # index, so place them on their FLOW days (trade + 1, weekend packages
+    # forward-filled) instead of their trade days. Built once for the year so
+    # a month-end print correctly flows into the next covered month; month
+    # coverage below is unchanged (a month reprices only where the survey
+    # basis row AND its own prints exist).
+    flow_series = (
+        _flow_date_staircase(citygate_dated, year)
+        if getattr(config, "caiso_citygate_flow_date", False) and citygate_dated
+        else None
+    )
     T = config.hours
     out = np.full(T, np.nan, dtype=float)
     hour = 0
+    day0 = 0  # cumulative day-of-year offset of month m on the non-leap clock
     for m in range(12):
         n_days = _DAYS_IN_MONTH[m]
         month_hours = n_days * 24
@@ -1613,7 +1663,24 @@ def _caiso_hub_daily_gas_prices(
         # present); spot_level only changes the LEVEL within them.
         if not np.isnan(hub_m) and hour < T:
             dated = citygate_dated.get(m + 1, {})
-            if dated:
+            if dated and flow_series is not None:
+                # Flow-date placement: the month's slice of the year-level
+                # staircase. spot_level keeps the absolute $/MMBtu; the
+                # shape-only branch keeps its mean-preserving renormalization.
+                seg = flow_series[day0 : day0 + n_days]
+                if spot_level:
+                    day_hub = seg
+                else:
+                    mean = float(seg.mean())
+                    if mean > 0:
+                        day_factor = seg / mean
+                        fbar = float(day_factor.mean())
+                        if fbar > 0:
+                            day_factor = day_factor / fbar
+                        day_hub = hub_m * day_factor
+                    else:
+                        day_hub = np.full(n_days, hub_m)
+            elif dated:
                 days = np.array(sorted(dated), dtype=float)
                 vals = np.array([dated[int(d)] for d in days], dtype=float)
                 if spot_level:
@@ -1647,6 +1714,7 @@ def _caiso_hub_daily_gas_prices(
             shaped = np.repeat(day_hub, 24)[: max(0, T - hour)]
             out[hour : hour + len(shaped)] = shaped
         hour += month_hours
+        day0 += n_days
     if np.isnan(out).all():
         return None
     return out
