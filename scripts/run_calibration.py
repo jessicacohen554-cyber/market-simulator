@@ -482,6 +482,7 @@ def run_year(
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_midcurve_conditional: bool = False,
     ercot_offer_surface_cleared_share: bool = False,
+    ercot_offer_surface_cleared_share_state: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
     wind_ptc_vintage_offers: bool = False,
@@ -733,6 +734,11 @@ def run_year(
         # P1-only markup; ScenarioConfig field docstring has the full
         # provenance/admissibility note). ERCOT-gated in the builder.
         config = config.with_overrides(ercot_offer_surface_cleared_share=True)
+    if ercot_offer_surface_cleared_share_state:
+        # ERCOT-73 measured commitment-loading state weight on the wall
+        # (ScenarioConfig field docstring has the provenance/admissibility
+        # note). Requires the wall flag; the builder hard-errors otherwise.
+        config = config.with_overrides(ercot_offer_surface_cleared_share_state=True)
     if ercot_offer_surface_lowcurve:
         # G-22 conditional-offer-distribution LOW leg (measured trough-side
         # quantile ladders, P1-only markdown; ScenarioConfig field docstring has
