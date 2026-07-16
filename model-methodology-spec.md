@@ -933,12 +933,16 @@ per-unit payment all sit on **that ISO's own published accreditation basis**
 (`docs/handoffs/accreditation-basis-memo-2026-07-12.md` §4.1). Thermal
 accreditation is resolved once, for both the adequacy ledger and the payment, by
 `thermal_accreditation_fraction(fuel_type, eford, iso)`
-(`THERMAL_ACCREDITATION_BASIS_BY_ISO`): `1 − EFORd` (UCAP — NYISO/ISO-NE/MISO,
-the default), the published **ELCC class rating** (PJM's 2025/26 CIFP reform —
+(`THERMAL_ACCREDITATION_BASIS_BY_ISO`): `1 − EFORd` (UCAP — NYISO/MISO, the
+default), the published **ELCC class rating** (PJM's 2025/26 CIFP reform —
 `THERMAL_ELCC_CLASS_RATING_BY_ISO`, e.g. coal 0.83 / gas-CC 0.74 / gas-CT 0.60,
-with a UCAP fallback for any class the ISO does not publish), or the seasonal
-rating (ERCOT's CDR — nameplate, though ERCOT is energy-only so it never reaches
-the payment). Because the ledger and the payment price a unit through the **same**
+with a UCAP fallback for any class the ISO does not publish), **claimed
+capability** (ISO-NE's FCM — the 5-yr median Seasonal Claimed Capability with **no**
+forced-outage derate, since individual forced-outage risk is priced ex post through
+Pay-for-Performance rather than the accredited MW; R5b, pairing-adjudication
+2026-07-15 §1 — numerically `1.0` like ERCOT's basis but kept a distinct string
+because the *reason* differs), or the seasonal rating (ERCOT's CDR — nameplate,
+though ERCOT is energy-only so it never reaches the payment). Because the ledger and the payment price a unit through the **same**
 resolver, they cannot diverge (so a class differential like PJM's gas-CT 0.60 vs
 its 0.94 UCAP is paid on the basis it is counted on). Storage likewise reads its
 ISO's published duration→credit ratings where one exists
@@ -995,6 +999,29 @@ CR-3). CAISO has no centralized auction, so it keeps the fixed proxy in **both**
 modes (re-cited to the CPM soft-offer cap / CPUC RA report — the documented
 low-fidelity registry member). The encoded constants are reconciled against the
 datatype in `tests/test_capacity_demand_curve.py`.
+
+**Per-delivery-year vintages (RC-1B).** The curve above is each ISO's *reference*
+delivery year; a forecast pricing a specific `year` under the CR-1 gate reads that
+year's own published curve through `resolve_demand_curve_vintage(iso, year)`
+(`MARKET_DESIGN_VINTAGES`). The seam consults it **only** when both `iso` and `year`
+are supplied — every non-storage caller passes neither, so the price is
+byte-identical; storage new entry is the one wiring that threads a year. Resolution
+is a step function of the delivery-period start year: hold-first below the earliest
+vintage, hold-last above the latest (the forward-carry a forecast uses). Anchors and
+cap fractions come off the same `capacity-market-demand-curve` datatype on each ISO's
+own convention — PJM 2021/22-2027/28 (UCAP net-CONE × 365/1000), NYISO 2021/22-2025/26
+(NYCA Annual Reference Value for 2023/24-2025/26; 2021/22 & 2022/23 published neither
+an annual net-CONE nor a cap, so they are `()`-shape flat-anchor vintages priced on
+the NYCA reference point × 12), ISO-NE 2020/21-2027/28 (net-CONE × 12 on FCA 11's
+reserve-position geometry), MISO PY2025-26 (the only year with both a North/Central
+anchor and a normalizable RBDC shape — the pre-RBDC vertical years and the
+per-LRZ-only PY2026-27 are omitted, held to PY2025-26). A delivery year that
+publishes a net-CONE anchor but no normalizable shape (pre-CIFP PJM's absolute-MW
+points; PJM 2025/26's missing price cap) carries `demand_curve=()` and prices on its
+flat anchor (rule 13 — never fabricate an unpublished point). The vintage equal to
+the registry reference reuses its exact curve/anchor object, so pricing that year is
+byte-identical to the fixed registry curve. Every vintage number is reconciled
+against the datatype in `tests/test_capacity_demand_curve.py`.
 
 Capacity revenue (fixed or curve, labeled by source) is also reported per plant
 in `results/plant_financials.py` (`capacity_revenue` +
