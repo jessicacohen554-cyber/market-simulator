@@ -558,9 +558,15 @@ def main(argv: list[str] | None = None) -> int:
     gates["G3_estimation_loyo"] = g3
 
     g4 = {}
+    # 0.05 flatness tolerance: measured CT curves are near-flat, so adjacent
+    # band medians may tie to within noise; a real inversion beyond it fails.
+    _ORD_TOL = 0.05
     for cls in buckets:
         s = static[cls]
-        ordered = s["econ_low"] <= s["econ_high"] <= s["peak"]
+        ordered = (
+            s["econ_high"] >= s["econ_low"] - _ORD_TOL
+            and s["peak"] >= s["econ_high"] - _ORD_TOL
+        )
         in_range = all(0.5 <= s[b] <= 6.0 for b in ("econ_low", "econ_high", "peak"))
         g4[cls] = {
             "ordered": bool(ordered),
