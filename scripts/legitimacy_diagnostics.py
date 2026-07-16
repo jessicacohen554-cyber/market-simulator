@@ -312,6 +312,23 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     #   own P0 run pattern + physical constants; no measured series enters
     #   (the CAISO RA bridge convention, rules 13/18).
     (MECH_GAS_COMMITMENT_BRIDGE, "CC_REGULAR"): (0, 24),
+    # unit_outage_maxgen_events (M-2 declared-event-window revealed derates)
+    # carries NO row here BY CONSTRUCTION, and this note is its rule-12
+    # window declaration (the design's "D4_WINDOWS entry for the maxgen
+    # mechanism id" — docs/handoffs/miso-price-formation-design-2026-07.md
+    # §3/M-2): D-4 scores min_gen FLOOR mechanisms (this registry's keys are
+    # floor-mechanism ids from data/floor_mechanisms.py), while the maxgen
+    # channel is an AVAILABILITY DERATE that never raises min_gen and so can
+    # never bind at all, on- or off-window. Its declared window set is
+    # exactly the maxgen-events registry windows (data/raw/maxgen-events/,
+    # hour-granular, clipped to the declared start/end): the derate arrays
+    # are 1.0 outside those windows by construction — enforced by the
+    # deriver's window clipping + the loader's half-open hour masks and
+    # asserted by tests/test_maxgen_outages.py (off-window byte identity).
+    # An off-window derate is therefore structurally impossible, which is
+    # the property D-4 exists to check; the channel's admissibility
+    # declaration lives in the D-5 registry ("unit_outage_maxgen_events",
+    # backcast_only).
 }
 
 # D-9: overlay probes that must be OFF/zero in every keeper run_config.json
@@ -710,6 +727,21 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         "backcast_only",
         True,
         note="CAMPD outage windows (physical availability events)",
+    ),
+    MechanismSpec(
+        "unit_outage_maxgen_events",
+        "unit_outage_maxgen_events",
+        "backcast_only",
+        True,
+        note="declared capacity-emergency event-window revealed derates "
+        "(M-2): CAMPD per-unit derates inside the maxgen-events registry's "
+        "declared windows only, under the frozen guards of "
+        "scripts/derive_campd_maxgen_outages.py ($150 DA in-merit "
+        "certificate, ±45d capability basis, best-event-hour credit, "
+        "disjointness vs std/short) — same CAMPD outage-window "
+        "admissibility family as the parent overlay; the D-4 window "
+        "declaration for this channel is the registry window set itself "
+        "(see the D4_WINDOWS availability-overlay note)",
     ),
     MechanismSpec(
         "eia860_vintage_snapshot",

@@ -92,6 +92,7 @@ from market_sim.data.outages import (
     reliability_deployment_floor_for_year,
     retiree_availability_caps,
     unit_outage_derate_factors,
+    unit_outage_maxgen_derate_factors,
     unit_outage_short_derate_factors,
     unit_partial_outage_derate_factors,
 )
@@ -1764,6 +1765,41 @@ def generators_to_fleet_arrays(
                     _iso or "ERCOT",
                     config.weather_year,
                     applied_pp,
+                )
+        # Declared-event-window revealed derates (gated,
+        # config.unit_outage_maxgen_events): the third window shape of the
+        # measured unit-availability family (M-2, MISO price-formation lane).
+        # Per-unit MW reductions revealed by each unit's own CAMPD trace
+        # inside the ISO's DECLARED capacity-emergency windows (the
+        # maxgen-events registry) — the only channel that can carry the CT/CC
+        # event-window leg (the std extract's 5-day floor and the short
+        # channel's coal-only guard exclude it by design), so it is
+        # class-agnostic. Identification lives in the deriver's frozen guards
+        # (declared-window scope, $150 DA in-merit certificate, ±45-day
+        # capability basis with best-event-hour credit, disjointness vs the
+        # std/short extracts — scripts/derive_campd_maxgen_outages.py);
+        # windows are hour-granular and clipped to the declared start/end.
+        # Reads the per-ISO campd-unit-outages-maxgen-<ISO>.csv; ISOs without
+        # it get an empty derate (no effect). Multiplies availability.
+        if getattr(config, "unit_outage_maxgen_events", False):
+            mgfac = unit_outage_maxgen_derate_factors(
+                config.weather_year,
+                hours,
+                iso=_iso or "ERCOT",
+            )
+            if mgfac:
+                applied_mg = 0
+                for g_idx, gen in enumerate(generators):
+                    f = mgfac.get((int(gen.plant_code), gen.plant_group))
+                    if f is not None:
+                        availability[g_idx, :] *= f
+                        applied_mg += 1
+                logger.info(
+                    "maxgen event-window derate (%s %d): %d plant-tranches "
+                    "derated (declared-window revealed unit derates)",
+                    _iso or "ERCOT",
+                    config.weather_year,
+                    applied_mg,
                 )
         # Within-window retiree measured-availability cap (CAMPD unit-level):
         # a unit winding down to retirement is held at its coal must-run floor
