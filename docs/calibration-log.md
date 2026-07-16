@@ -14478,3 +14478,23 @@ legitimacy_diagnostics.json before dashboard_add_run, attestation +
 `calibration_verdict.py --write-metrics`, parity check green; zero new fitted
 scalars (rule 24 — flag registered in ScenarioConfig, DOF ledger identical to
 the keeper); keeper untouched.
+
+## 2026-07-16 — C1 candidate 2 (Panoche-class committed-tranche gate) CLOSED without a solve: the class's own measured conduct refutes committed scaffolding
+
+Rule-17 evidence adjudication from full-8760 CAMPD CEMS grids
+(`results/calibration/FINDING-caiso91b-ct-committed-conduct-refuted-2026-07-16.md`):
+no plant in the CT_PEAKER dominant set exhibits committed conduct — Panoche
+cycles ~daily (1,107 starts / 3 yr, median run 7 h, 42 % of hours online,
+0.79 median CF during runs, belly-off/evening-overnight blocks), the
+summer-evening trio (Sentinel/Walnut Creek/Marsh Landing) runs 5-14 % of
+hours in 4-8 h evening blocks. There is no committed window for D-4 to
+declare; any implementable gate would window on observed hours = a rule-14
+actuals-pin (the adjudicated `ct_mustrun_per_plant` family). The measured
+routing of the C1-CT under-run: the Panoche bid wedge is
+marginal-economics — Jan-2024 fuel-only SRMC ≈ $57 sits below the model's
+own January NP15 λ (mean $68) while its carbon+multiplier-loaded rung
+(~$73) prices it out — owned by the named measured DAM offer-surface intake
+charter (rule 25 forbids a multiplier re-tune); the trio is the evening-λ
+lane. With candidates 1 (caiso-91, inert) and 2 both closed, the C1
+cluster's remaining chartered candidate is 3 (overnight CC cycling) — owner
+checkpoint before further solves. No config touched; no run produced.
