@@ -13992,3 +13992,93 @@ Any future north-depth revival needs a construction whose depth conditions on
 the hydro state itself (e.g. a runoff-indexed depth with its own out-of-sample
 evidence), not more trigger variants — further gas-floor forms on this same
 3-year depth sample would be gate-shopping (the caiso-86b lesson).
+
+## 2026-07-16 — CAISO autumn-2025 over-price DIAGNOSED (Session 1a of the caiso-87 handoff): not a bench artifact, not a supply-basis error — the south-corridor unwedged-parity import regime OUTSIDE the caiso-87 trigger window, amplified by real measured autumn-2025 in-state tightness; midday sub-regime named (battery-charge marginal); no lever armed, no solve registered
+
+**Session:** claude/caiso-autumn-2025-diag (Fable), continuing the caiso-87
+keeper handoff. Step 0: the keeper recipe
+(`scripts/probes/_caiso87_dsw_surplus_clean_ab.py main`) re-solved 2023–2025
+in-session to instrument hourly outputs; `run_config.json` records
+`caiso_dsw_surplus_clean`/`caiso_citygate_spot_level` True (recorder check);
+the May-2023 A2 signature reproduces exactly (DSW_CCGT 93 MW, surplus_clean
+1,064 MW; monthly gap within the documented cross-machine HiGHS spread). The
+repro's incidental `meta.json`/`run_config.json` drift was reverted — the
+registered keeper bundle stays byte-stable. Attribution tool rebuilt as
+`scripts/probes/_caiso_autumn2025_attribution.py` (constructed rung offers +
+in-state CC floor + trigger state + hod tables + tranche dispatch).
+
+**Adjudication of the three chartered hypotheses (autumn-2025, Sep–Dec
+residuals +9.3/+13.2/+9.4/+8.6 on the unweighted-rt basis; the scored rt_lw
+map is +7.6/+12.9/+8.1/+8.2):**
+
+* **(iii) bench artifact — RULED OUT.** rt≈da in every autumn-2025 month
+  (largest monthly rt−da split $3.5), hub and actual LMP series dense
+  (8,759/8,760 h), and EIA-930 independently confirms the regime (record
+  autumn net imports). One trap documented for future sessions: the 930 CISO
+  **NG and Demand cells carry the known fabricated block** (the reason
+  `caiso_supply_consistent_demand` exists) — Oct-2025 930-gas reads 12–13 GW
+  midday where measured CEMS says 4.8–5.3 GW. Any autumn gas comparison must
+  use CEMS (annual 930-gas 79.0 vs CEMS-grid+cogen 51.6 TWh in 2025).
+* **(ii) 2025-specific supply shortfall — RULED OUT as an input error; the
+  tightness is real and already modeled.** Hourly model-vs-measured (model
+  clock): solar, hydro, wind, nuclear all track (the Diablo Oct-2025 refuel
+  IS carried — model nuclear 0.95 TWh = 930); model Oct gas 4.84 TWh vs CEMS
+  ~5.69 (duck shape matches; the −2.7 TWh "gap" vs 930 is the fabricated
+  block, not model error). The real 2025 amplifier: measured CAMPD gas
+  outages average **3.8/4.2/5.8 GW** out in Oct/Nov/Dec-2025 (vs 2.2/5.0/3.8
+  in 2024, 1.4/2.7/2.5 in 2023) plus the Diablo refuel — a legitimate
+  measured availability input that pushes the model's marginal deeper into
+  its expensive rungs. Demand basis moves the OTHER way (Oct-2025 −1.8 TWh vs
+  Oct-2024), reality replaced the outaged in-state energy with record south
+  imports.
+* **(i) hub-level / clean-attribution regime — CONFIRMED, with an hod
+  decomposition.** Measured facts: autumn-2025 south-corridor (Palo Verde /
+  Path-46) net imports run **4.4–5.6 GW mean in trigger-OFF hours** (p95
+  5.6–7.2 GW), and the measured CAISO−PV spread in those trigger-OFF hours is
+  **−2.6…+0.5 $/MWh** (medians −4.0…−0.5) — the market's own prices show the
+  marginal deep import clears at raw-hub parity, **no CARB wedge and no wheel
+  visible at the margin**, exactly the FINDING-caiso82 §1 signature but
+  outside the caiso-87 surplus window (trigger-ON is only 19–35% of autumn
+  hours: cheap gas pulls the remote-CCGT floor down while regional tightness
+  holds the hub above it). The model's cheap south stack truncates at ~3.6 GW
+  (shaped firm + DSW_solar_PV) plus the clean tranche only in trigger-ON
+  hours; every MW beyond pays wheel + border carbon (DSW_CCGT = PV + 4 +
+  0.37×$28.06 ≈ PV+14.4) or comes from the outage-tightened in-state CC
+  curve. Model hod signature (Oct-2025): overnight **+11–12** at
+  wedge/deep-CC prices (λ 52–54 vs actual 41–47 ≈ hub parity), evening
+  **+7–12** (λ 48–55 vs actual 40–49 ≈ at/below Malin), midday **+18–28**
+  with λ pinned FLAT at the efficient in-state CC floor ($38.3–38.5 =
+  7.0×citygate + 2.5 + 0.37×28.06) vs actual 15–26.
+* **Midday sub-regime (named, unprobed — its own candidate charter):** real
+  Oct-2025 midday runs 4.9 GW of CEMS gas BELOW its carbon-inclusive SRMC
+  (committed units floating through the trough) while the price clears
+  15–26 — the level of the battery-charge bid: CAISO's ~12+ GW battery fleet
+  is the marginal midday BUYER (charge willingness-to-pay = expected evening
+  value − losses) and sets the midday floor. The model instead needs ~2 GW of
+  *economic* CC midday (its λ = the CC tranche offer). The model's midday
+  marginal-resource CLASS is wrong even where its volumes are right. Check
+  the model's 2025 storage fleet sizing/charge elasticity before any
+  mechanism work.
+* Watch item (one line): Oct-2025 h16 flips NEGATIVE (−14: actual 54.2 vs
+  model 40.2) — the 4–5pm ramp-hour scarcity the model misses; connects to
+  the C3c tail lane (Session 3), not to this over-price.
+
+**Session-1b disposition (same session, FINDING-caiso88 above):** the north
+lane is CLOSED on its gates (CV 0.362, LOYO 55.3%) and was priced out of the
+autumn residual anyway (north trigger-ON 0–4% of Sep–Dec-2025 hours).
+**No lever was armed this session; nothing solved beyond the keeper repro;
+nothing registered; keeper unchanged** — the handoff WATCH items (Apr-2023
+−4.2, Jan-2024 −4.8) are untouched by construction.
+
+**Next-lane recommendation (for the owner):** the largest named residual —
+soft-month AND autumn, now unified — is the south corridor's unwedged-parity
+depth OUTSIDE the hub-below-gas-floor proxy window. The honest generalization
+of caiso-87 is to replace the proxy trigger with the market's own published
+attribution: CAISO/WEIM publish the EIM/EDAM **GHG attribution** of transfers
+into the CAISO BAA (the quantity CARB actually assesses). If an hourly (or
+even daily/monthly-shaped) 2023–2025 attribution series can be intaken, the
+EF-0 depth rides measured attribution directly — zero proxy, derive-first,
+CV/LOYO-gated like caiso-80/82/84/87. Data-availability scouting is the first
+step (OASIS/EIM quarterly reports); if no usable series exists, the fallback
+decomposition is the midday battery-marginal charter above plus Session 2
+(flat-CHP, orthogonal C4-shape lane).
