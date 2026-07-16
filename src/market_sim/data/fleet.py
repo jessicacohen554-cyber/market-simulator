@@ -7752,6 +7752,46 @@ def thermal_tranche_p25_level(iso: str) -> dict[tuple[int, str], float]:
     return out
 
 
+def thermal_tranche_chp_p25_allhr(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): p25_allhr_cf_pct}`` for an ISO's CHP cogens.
+
+    The measured multi-year ALL-HOURS 25th-percentile available-CF (percent of
+    nameplate) from ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv``
+    (``p25_allhr_cf``, written by the SAME frozen
+    ``scripts/derive_thermal_tranches.py`` estimator that produces the p2
+    ``chp_pmin_cf`` — identical sample and masks, only the percentile differs;
+    rule 23, no deriver touch). This is the steam-host OPERATING level: outage
+    hours drop out of the sample (available capacity 0), economic/host-driven
+    offline hours count as zeros, so a genuinely flat steam host keeps its
+    online level while a cycling cogen collapses to exactly 0 — the statistic
+    self-targets with no threshold parameter. Consumed by the CHP grid
+    steam-floor level swap when ``config.chp_steam_floor_p25`` is armed (the
+    same formula ``pmin_cf x (1 - btm_share)`` and the same MECH_CHP_STEAM
+    attribution as the p2 floor — a level source swap, rule 19). Rows with a
+    blank/NaN ``p25_allhr_cf`` are absent (plant not CAMPD-visible); explicit
+    0.0 rows are carried (measured-and-collapsed, still no floor). Empty when
+    the ISO has no artifact or it predates the column.
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "p25_allhr_cf" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        try:
+            p25a = float(getattr(r, "p25_allhr_cf", float("nan")))
+        except (TypeError, ValueError):
+            continue
+        if str(getattr(r, "status", "ok")) != "ok":
+            continue
+        if not (p25a == p25a):
+            continue  # NaN guard (blank cell — not CAMPD-visible)
+        out[(int(r.plant_code), str(r.plant_group))] = max(0.0, p25a)
+    return out
+
+
 from market_sim.data.coal import (  # noqa: E402
     _COAL_CHP_FLOOR_CAP_PCT,
     _COAL_CHP_FLOOR_FACTOR,
@@ -8790,6 +8830,21 @@ def bins_to_fleet(
         pmin_cf = None
         if chp_following:
             pmin_cf = chp_pmin_cf(plant_code, iso=getattr(config, "iso", "ERCOT"))
+            # Multi-year steam-host operating level (chp_steam_floor_p25):
+            # the artifact's all-hours p25 available-CF supersedes the p2
+            # never-below minimum wherever it is higher — the level the host's
+            # thermal demand sustains three-quarters of the plant's available
+            # hours (see the ScenarioConfig field for the rule-13/17
+            # grounding). The statistic self-targets: cycling cogens measure
+            # 0.0 and keep their p2/eia923_cf floor from above. Same grid
+            # formula and MECH_CHP_STEAM attribution — a level source swap
+            # (rule 19), not a second floor.
+            if getattr(config, "chp_steam_floor_p25", False):
+                _p25a = thermal_tranche_chp_p25_allhr(
+                    getattr(config, "iso", "ERCOT") or "ERCOT"
+                ).get((plant_code, group))
+                if _p25a is not None and _p25a > (pmin_cf or 0.0):
+                    pmin_cf = _p25a
             # Measured steam-following level (chp_export_floor_measured): the
             # plant's EIA-923 class CF for the solved year supersedes the
             # pooled CAMPD p2 minimum — the host-driven operating level the
