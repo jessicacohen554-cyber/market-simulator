@@ -14171,3 +14171,13 @@ conduct, self-targeting, all gates), the A/B strictly improves or holds
 every scored criterion, and the pre-registered FAIL conditions did not
 fire. If promoted: swap `keepers.json` to `2026-07-16-caiso-89-chp-steam`,
 run `build_status.py`, and launch the calibration-keeper-auditor.
+
+## 2026-07-16 — caiso-89 PROMOTED to CAISO keeper (owner sign-off, session-logged: "Promote 89")
+
+`keepers.json` CAISO → `2026-07-16-caiso-89-chp-steam`; sidecar definition
+re-prefixed KEEPER + `market_story` added (steam-host conduct, floor at the
+measured multi-year operating level, cyclers self-exempt);
+`build_status.py` rebuilt status.js (CAISO row NOT-YET, C3b now PASS);
+calibration-keeper-auditor ran clean (0 failures, 0 warnings, no repairs —
+every quoted number matches the live scorer). caiso-87 remains registered
+on the dashboard as the prior keeper (top-15 retention, 7 CAISO runs).
