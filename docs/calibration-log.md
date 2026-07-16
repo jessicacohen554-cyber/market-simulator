@@ -13662,3 +13662,89 @@ in measured outages; the exposed under-fit is real), not a fit-improver. Keeper
 decision (pjm-110 → pjm-111 / pjm-113, or hold) is owner-only; `keepers.json` not
 flipped. Attestation: pjm-111 ledger verbatim + one zero-DOF measured entry (short
 extract); n_entries 16, n_residual 6.
+
+## 2026-07-16 — CAISO-87: the soft-month M-regime over-price root-caused to the import CARBON-wedge composition; the measured-ladder-PRICE lane CLOSED on its gates (caiso-86b); the measured surplus-clean DEPTH mechanism built + probed — C3a improves ALL THREE years with every protective gate holding; keeper decision pending (candidate)
+
+**Session:** claude/caiso-summer-soft-months (Fable), continuing the caiso-84
+keeper handoff. Baseline reproduced first (Step 0): the caiso-84 recipe re-solved
+2023-2025 in-session, grade profile identical (C3a +11.9/+12.6/+19.3 %; the May
+$29.5-vs-$30.8 read is the documented cross-machine HiGHS degenerate-optimum
+spread).
+
+**Lane A1 (partial measured ladder) — CLOSED, no solve.** The four-rung subset
+(caiso-86 FINDING §4 fallback) passes CV (0.16-0.18) but FAILS LOYO: held-out
+2023 worst 30.5 % (broad-based — ALL four rungs 24-31 % high in the high-gas
+year), held-out 2025 worst 45.5 % (PNW_midC 90.5/89.1→62.0). The gas-indexed
+implied-heat-rate form fails harder (the 2023→24 CA gas halving over-corrects:
+rung prices fell ~30 %, not ~53 %; CV PNW_midC 0.34, LOYO worst 44-72 % on all
+three gas series). The WECC rung price level rides a gas × hydro regime mix a
+3-year sample cannot identify as a stable forward rule; enumerating further
+functional forms would be gate-shopping. `--partial` mode added to
+`derive_caiso_import_tranches.py`; FINDING-caiso86b-partial-ladder-gates-2026-07-16.
+
+**Lane A2 (attribution on the reproduced keeper) — the soft-month mechanism
+NAMED.** In May-2023 the model's λ matches the carbon-wedged DSW rungs in 43 %
+of hours (DSW_CCGT 30 %, DSW_CT 13 %; +20 % PNW_midC) with DSW_CCGT importing
+725 MW mean, while the ACTUAL clears BELOW every model offer in 69 % of hours at
+hub parity (caiso-82 §1's no-wedge finding, re-confirmed on the caiso-84 base);
+gaps are morning/midday-concentrated (+17..+22 $/MWh h06-14), evening h18-20
+already tight (−1.0). Same signature Apr-Jun 2024. The measured CEMS hod profile
+REFUTED the gas-commitment alternative: real CC_REGULAR ducks the May trough
+exactly like the model (0.15-0.26 GW midday — the model actually runs MORE CC
+midday than CEMS); the 930-vs-CEMS gas gap is non-CEMS small-CHP accounting, not
+committed CCs. (Side finding, unprobed: model CC_CHP ducks midday 0.06 GW where
+real CC_CHP is flat 0.65-0.76 GW — a ~0.6 GW flat-CHP structural gap, its own
+small charter; price-inert midday while imports are marginal.)
+
+**caiso-87 probe (`caiso_dsw_surplus_clean`, default off) — the caiso-82 §3
+"measured clean DEPTH" fix.** In surplus-West hours the marginal import is a
+WEIM/EDAM transfer attributed to CLEAN surplus resources (CARB EIM GHG
+attribution; the measured CAISO−hub spread carries NO +$12-18 unspecified
+wedge), but the model's zero-EF depth truncates at the firm blocks + PNW_midC
+(~4.1-5.2 GW). The probe arms a DSW_surplus_clean tranche (EF 0, Path-46 wheel,
+priced at the measured Palo Verde hub by the per-hub injector) carrying the
+MEASURED depth-in-surplus — p95 of measured WECC_DSW net import over trigger-ON
+hours: 5,312/4,792/5,472 MW (2023/24/25) — net of the shaped firm block, ONLY in
+hours whose measured PV hub sits below its own gas-coupled remote-CCGT floor
+(the existing 6.97 coupling HR × measured SoCal citygate weekly + $2.5 VOM, no
+carbon: AZ/NV are uncarbonized, so a hub below the gas floor is clean-marginal).
+Estimation-stage gates PASS (CV 0.056; LOYO mean-of-other-two worst 12.5 %) —
+matching the caiso-82 §3 banked depth stability. Trigger evaluates ONLY on
+measured hub hours (the 2023 Jan-Feb OASIS-gap reference fill never classifies
+as surplus, so the closed caiso-84 winter lane cannot reopen through the fill).
+A capability, not a floor (pmin 0, no D-2 row); fossil rungs unchanged beyond
+the clean depth (secondary dispatch); corridor ATC envelope still caps flow.
+Zero new fitted scalars. The NORTH corridor analogue was tested and NOT armed —
+its depth is not year-stable under this construction (1.2-2.5 GW).
+
+**Result (2026-07-16-caiso-87-surplus-clean, registered, NOT-YET):** C3a
+**+10.3/+11.1/+16.6 %** (keeper +11.9/+12.6/+19.3 — improves all three years;
+2023 DA diagnostic −3.1 %). The pre-registered soft months: May-2023 $29.5→$27.2
+(actual $15.5; midday gaps +17.8/+19.6 → +11.5/+13.1 — DSW_CCGT May dispatch
+725→93 MW, the clean tranche carries 1,064 MW, carbon-rung marginal share
+43→28 %); Jun-2023 +10.4→+9.7; 2024 Apr/May/Jun +7.1/+11.5/+8.6 →
++5.9/+10.1/+7.9; 2025 Apr/May/Jun +4.1/+6.3/+6.5 → +1.7/+4.5/+5.3, Oct
++13.2→+12.9, Dec +9.0→+8.2. Jan/Feb-2023 UNTOUCHED (winter lane protected, as
+pre-registered). C1-2024 CC_REGULAR +6.67→+6.01 TWh (still FAIL); C2 PASS with
+2025 gas −2.3 % (the disclosed cheaper-imports-push-gas-down tension did NOT
+materialize); C3b 2023/24 PASS, 2025 NRMSE 0.220→**0.200** (at the tolerance
+edge, still FAIL by a hair); C3c unchanged (16/0 h vs 80/52 — lane B, per
+caiso-85 the tail hours are corridor-capped); C4 2023 r 0.819→0.824 / NRMSE
+0.323→0.330, 2025 r 0.846→0.851 / NRMSE 0.306→0.302 (band-edge mixed); C5a/C6/
+C7/C8 PASS. Watch item: Apr-2023 flips −0.4→−4.2 (now under-priced); Jan-2024
+−4.4→−4.8.
+
+**Adjudication:** the mechanism is rule-1 structural (real WEIM GHG-attribution
+market design + measured year-stable depth + mechanical hub-side trigger, zero
+fitted scalars), moves EXACTLY the pre-registered hours, and no gate flips.
+Post-fix the soft-month marginal setter is PNW_midC in 34-35 % of hours (the
+north corridor's 1.8 GW zero-EF spot rung is now the binding truncation) — the
+remaining soft-month residual is the NORTH-corridor depth lane (needs a
+Malin-appropriate gas floor for its trigger; own charter), plus the flat-CHP
+gap above. **Keeper promotion is the owner's call** — caiso-87 strictly
+improves the keeper's failing magnitudes on C3a (all years), C1-2024, C3b-2025
+and C2, with everything else band-edge or unchanged; keepers.json NOT flipped
+this session. Attestation: caiso-84 ledger verbatim + the zero-DOF measured
+delta (no scalar added). Per-year LOYO note: each year rides its own measured
+depth/trigger series (caiso-80/82/84 construction class); the estimation-stage
+CV/LOYO gates are the cross-year transfer check.
