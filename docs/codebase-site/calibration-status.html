@@ -98,10 +98,12 @@
       return s;
     }
 
-    /** Canonical criterion display order. */
+    /** Canonical criterion display order. (C5b/C5c storage criteria were
+        removed from the rubric — v2.7 owner amendment 2026-07-16; verdicts
+        no longer carry them.) */
     const CRITERIA_ORDER = [
       'sysvol', 'fuelmix', 'price_mean', 'price_shape', 'price_tail',
-      'dispatch_corr', 'co2', 'storage', 'storage_shape',
+      'dispatch_corr', 'co2',
       'shape', 'forced_share', 'governance'
     ];
 

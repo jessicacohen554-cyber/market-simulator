@@ -1,0 +1,92 @@
+datatype: maxgen-events
+schema_version: 1
+title: Declared capacity-emergency event windows (ISO emergency-procedure ladder)
+description: >-
+  One row per (ISO, declaration, region): windows in which the ISO publicly
+  declared a capacity-emergency instrument at or above the lowest capacity
+  ladder rung (for MISO the pre-2026 ladder Capacity Advisory -> Maximum
+  Generation Alert -> Warning -> Event Steps 1-5). Rule-13 admissibility class:
+  declared physical/market availability events, the same overlay family as
+  CAMPD outage windows (backcast/calibration only; a forecast year carries the
+  class outage-rate machinery instead). Every row cites the primary document
+  that declares the window; a window with no primary document does NOT enter
+  the registry (never reconstructed from prices or from a residual) -- the F4
+  discipline of docs/handoffs/miso-price-formation-design-2026-07.md sec. M-1.
+  Conservative Operations days, transmission-instrument declarations
+  (transmission advisories / local transmission emergencies), and
+  severe-weather alerts sit outside the capacity ladder and are deliberately
+  NOT rows; they are documented in the raw README and the findings memo.
+key_columns: [iso, level, region, start_utc]
+allow_additional_columns: false
+columns:
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      ISO/RTO that issued the declaration (MISO today; the ladder vocabulary
+      is per-ISO via the intake registry).
+  - name: region
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Declared scope, canonical lowercase (footprint / midwest / south for
+      MISO) -- exactly as the primary document scopes it, never inferred.
+  - name: level
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Declared ladder level, closed vocabulary -- capacity_advisory |
+      maxgen_alert | maxgen_warning | maxgen_event_step1 .. step5 (pre-2026
+      MISO ladder; MISO's 3-step simplification effective 2026-06-01,
+      KA-01551, is a future vocabulary version).
+  - name: start_utc
+    dtype: "datetime64[ns, UTC]"
+    unit: none
+    nullable: false
+    description: >-
+      Window start (UTC). Converted from the ISO's operating time (MISO
+      market ops run on EST, UTC-5, year-round) by the curation parser.
+  - name: end_utc
+    dtype: "datetime64[ns, UTC]"
+    unit: none
+    nullable: false
+    description: >-
+      Window end (UTC) -- the last declared instant. Day-precision
+      declarations span the full declared day.
+  - name: declared_precision
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Coarsest endpoint precision the primary document states -- hour when
+      both endpoints are declared to the minute/hour, day when either
+      endpoint is only day-scoped (the row then spans the declared day(s);
+      notes carry the detail).
+  - name: source_url
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Authoritative URL of the primary document declaring the window.
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Document title + page reference within source_url.
+  - name: accessed
+    dtype: "datetime64[ns]"
+    unit: none
+    nullable: false
+    description: >-
+      Date the source was fetched/verified (intake vintage stamp).
+  - name: notes
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Free-text context -- declared-hour caveats, emergency-pricing tier
+      effects, related instruments outside the ladder.
