@@ -878,6 +878,57 @@ def ercot_nuclear_unit_availability_series(
     return out
 
 
+# Per-ISO per-reactor DAILY nuclear availability (NRC daily Power Reactor
+# Status, monthly energy reconciled to the same EIA-923 anchor the smear
+# uses) — the ISO-generic sibling of the ERCOT-specific series above, gated
+# by ScenarioConfig.nuclear_unit_availability (PJM first; ERCOT keeps its own
+# flag/file). Derived by scripts/derive_nuclear_availability.py (provenance,
+# admissibility and the winter thermal-vs-net wedge fallback in its
+# docstring); a refuel window / reactor power state is a physical
+# availability event, the same rule-13 class as the CAMPD fossil outage
+# windows.
+def _nuclear_availability_csv(iso: str) -> Path:
+    """Path of an ISO's derived per-reactor daily availability extract."""
+    return RAW_DATA_DIR / f"nuclear-availability-{iso.upper()}.csv"
+
+
+@lru_cache(maxsize=None)
+def nuclear_unit_availability_series(
+    iso: str, year: int, hours: int = HOURS_PER_YEAR
+) -> dict[tuple[int, int], np.ndarray]:
+    """Return ``{(plant_code, unit_no): (hours,) availability}`` for ``year``.
+
+    ISO-generic generalization of
+    :func:`ercot_nuclear_unit_availability_series` (identical semantics):
+    each covered date contributes a flat 24-hour block of its daily ``avail``
+    fraction on the model's fixed non-leap clock; uncovered dates are ``NaN``
+    — the caller keeps its existing (monthly-smear) availability there,
+    including the uprate-season months the deriver drops for the
+    thermal-vs-net wedge. Returns an empty dict when the ISO has no extract
+    or the year has no rows, so callers degrade to the smear unchanged.
+    """
+    path = _nuclear_availability_csv(iso)
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    df["date"] = pd.to_datetime(df["date"])
+    df = df[df["date"].dt.year == int(year)]
+    if df.empty:
+        return {}
+    out: dict[tuple[int, int], np.ndarray] = {}
+    for r in df.itertuples(index=False):
+        mo, dy = int(r.date.month), int(r.date.day)
+        if mo == 2 and dy == 29:
+            continue  # non-leap model clock (ERCOT-54 convention)
+        lo = _hour_of_year(mo, dy, 0)
+        hi = min(lo + 24, hours)
+        arr = out.setdefault(
+            (int(r.plant_code), int(r.unit_no)), np.full(hours, np.nan)
+        )
+        arr[lo:hi] = float(r.avail)
+    return out
+
+
 # ERCOT measured CLASS-day thermal availability (60-Day DAM disclosure
 # Gen_Resource HSL + Resource Status, config-collapsed to physical CC trains)
 # — the measured replacement for the statistical WEFOR/EFOR estimate of the

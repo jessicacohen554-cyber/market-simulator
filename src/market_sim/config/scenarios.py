@@ -4042,6 +4042,38 @@ class ScenarioConfig:
     # application in data.fleet.generators_to_fleet_arrays.
     ercot_nuclear_unit_availability: bool = False
 
+    # ISO-generic unit-level (window-grain) nuclear refuel/derate availability
+    # (default off, backcast-gated; tier 3). The per-ISO generalization of
+    # ercot_nuclear_unit_availability (which stays ERCOT's own flag/file):
+    # replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month smear with the
+    # measured per-reactor DAILY availability from the NRC Power Reactor
+    # Status reports (data/raw/nuclear-availability-<ISO>.csv,
+    # scripts/derive_nuclear_availability.py — PJM derived first,
+    # pjm-nuc-1b owner order 2026-07-16), monthly energy reconciled to the
+    # same EIA-923 anchor the smear uses; uprate-season months where the
+    # NRC thermal-% basis cannot express the measured net energy are absent
+    # from the extract, so the smear stands there (loader NaN semantics),
+    # as it does for any uncovered reactor/date. A reactor power state is a
+    # physical availability event (rule-13 admissible, the nuclear analogue
+    # of the CAMPD fossil outage windows; forward years regenerate via
+    # NUCLEAR_MONTHLY_CF / refuel-block scheduling). Zero fitted scalars.
+    # See data.outages.nuclear_unit_availability_series and the application
+    # in data.fleet.generators_to_fleet_arrays;
+    # docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §8.2.1.
+    # PROBE VERDICT (pjm-nuc-1b, 2026-07-16 — diagnosis §8.2.1): the
+    # pre-committed build-time provenance gate FAILED (-72 MW net recovery
+    # over the 22 summer-2025 tail hours vs the >= 75 MW pre-commitment;
+    # probe `windows` section): the level reconciliation necessarily
+    # redistributes the anchor's monthly energy from event days onto the
+    # near-full pool days — which is what scarcity hours are — so the
+    # +147 MW tail-hour smear phantom is NOT daily-availability-shaped (it
+    # is sub-daily net-vs-thermal basis wiggle below this overlay's grain).
+    # Never solved, never registered; stays default-off as the recorded
+    # closure of the PJM nuclear-availability lane. Not a re-armable fitted
+    # knob (zero scalars — rule 26 does not apply); arming it for another
+    # ISO requires that ISO's own derivation + gate.
+    nuclear_unit_availability: bool = False
+
     # ERCOT measured CLASS-day thermal availability (default off, ERCOT
     # backcast-gated). Rescales the covered gas classes' (CC_REGULAR,
     # CT_PEAKER) finished availability so each class-day MEAN equals the
