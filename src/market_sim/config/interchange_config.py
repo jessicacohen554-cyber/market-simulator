@@ -54,6 +54,10 @@ IMPORT_TRANCHE_EF: dict[str, dict[str, float]] = {
         "DSW_CCGT": 0.37,
         "DSW_CT": 0.55,
         "WECC_scarcity": CARB_UNSPECIFIED_IMPORT_EF,
+        # Surplus-hour WEIM clean transfer (caiso-87): CARB EIM GHG
+        # attribution assigns clean surplus resources to CAISO transfers, so
+        # the tranche pays no border carbon (see the depth block below).
+        "DSW_surplus_clean": 0.0,
     },
 }
 
@@ -66,7 +70,64 @@ CAISO_IMPORT_DELIVERY_BASIS: dict[str, tuple[float, float]] = {
     "DSW_CCGT": (0.03, 4.0),
     "DSW_CT": (0.03, 4.0),
     "WECC_scarcity": (0.03, 6.0),
+    # Surplus-hour WEIM clean transfer (caiso-87): same Path-46/WOR physical
+    # wheel as the other desert-SW rungs.
+    "DSW_surplus_clean": (0.03, 4.0),
 }
+
+# ---------------------------------------------------------------------------
+# CAISO south-corridor surplus-clean import depth (caiso-87,
+# ``ScenarioConfig.caiso_dsw_surplus_clean``, default off; FINDING-caiso86b /
+# FINDING-caiso82 §3 "measured clean DEPTH" lane).
+#
+# MECHANISM: in surplus-West hours the marginal import into CAISO is a
+# WEIM/EDAM transfer attributed to CLEAN surplus resources (CARB EIM GHG
+# attribution assigns clean resources to CAISO transfers; the West's surplus
+# IS hydro/solar/wind), so the marginal transfer carries NO unspecified border
+# carbon — the measured CAISO−hub spread in those hours shows parity with no
+# +$13–19 wedge (FINDING-caiso82 §1). The model's static clean depth (firm
+# blocks + PNW_midC) truncates at ~4.1–5.2 GW, after which every MW pays a
+# fossil/unspecified CARB rung; this tranche carries the measured clean depth
+# beyond the firm block in surplus hours. Fossil rungs are unchanged and
+# price the flow BEYOND the clean depth (secondary dispatch).
+#
+# TRIGGER (mechanical, forward-reproducible; hour t is "surplus" iff):
+#     PaloVerde_hub_LMP[t] < HR_DSW_CCGT × SoCal_citygate_gas[t] + remote VOM
+# i.e. the hub's own price is below the remote gas-CCGT floor (no carbon —
+# AZ/NV are uncarbonized), so gas is NOT the hub's marginal resource and the
+# surplus is clean. HR_DSW_CCGT = IMPORT_TRANCHE_EF ratio (0.37/0.0531 ≈ 6.97,
+# transmission._CAISO_IMPORT_COUPLE_HR); gas = the measured SoCal citygate
+# weekly print (data/raw/gas-prices/pge_socal_citygate_weekly.csv — an LDC
+# citygate proxy for the desert-SW border hubs, documented misalignment per
+# rule 14: reconciled real data over a guess). Trigger evaluates ONLY on
+# measured hub hours (the 2023 Jan–Feb OASIS gap's reference-formula fill is
+# pricing continuity, not surplus evidence — filled hours stay non-surplus).
+# In a forecast year the hub series and gas print regenerate from the
+# reference-price seam / gas forwards, so the state responds to changed
+# conditions (rule 13).
+#
+# DEPTH (measured, year-stable): p95 of the measured WECC_DSW corridor net
+# import (EIA-930 CISO DIBAs, model clock) over trigger-ON hours:
+#     2023: 5,312 MW · 2024: 4,792 MW · 2025: 5,472 MW
+# Estimation-stage honesty gates (caiso-81/86 precedent, run 2026-07-16,
+# scratch derivation in FINDING-caiso86b): CV 0.056 (≤0.20 PASS); LOYO
+# (mean-of-other-two) worst 12.5% (≤25% PASS). Matches the caiso-82 §3 banked
+# depth-in-surplus stability read (south p95 4.7/5.4/5.5 GW). The static
+# entry is the pooled mean (forward story — WEIM clean-surplus transfer
+# capability is persistent market structure); backcast years ride their own
+# measured depth (the caiso-80/82 construction class: per-year measured data,
+# no pooling, the derive gates are the cross-year transfer check).
+# ---------------------------------------------------------------------------
+CAISO_DSW_SURPLUS_CLEAN_NAME: str = "DSW_surplus_clean"
+CAISO_DSW_SURPLUS_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
+    2023: 5312.0,
+    2024: 4792.0,
+    2025: 5472.0,
+}
+CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC: float = 5192.0  # pooled 2023-2025 mean
+# Remote-CCGT VOM for the trigger floor ($/MWh) — the same representative
+# gas-CC VOM the soft-month floor decomposition used (FINDING-caiso82 §1).
+CAISO_DSW_SURPLUS_REMOTE_VOM: float = 2.5
 
 # IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).
 #
@@ -350,6 +411,7 @@ CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = {
     "DSW_CCGT": "PALOVRDE",
     "DSW_CT": "PALOVRDE",
     "WECC_scarcity": "PALOVRDE",
+    "DSW_surplus_clean": "PALOVRDE",  # caiso-87 surplus-clean depth tranche
 }
 
 # CISO DIBA → corridor, split geographically at Path-15.
@@ -1120,6 +1182,12 @@ class InterchangeSpec:
     # South→external→Midwest wheel around the RDT). Resolved from
     # ScenarioConfig.miso_south_seam_split.
     miso_south_split: bool = False
+    # CAISO per-hub only: build the south-corridor surplus-clean depth tranche
+    # (caiso-87; see the CAISO_DSW_SURPLUS_CLEAN_* block above). Resolved from
+    # ScenarioConfig.caiso_dsw_surplus_clean; the tranche is built with zero
+    # capacity and armed hourly by
+    # transmission.inject_caiso_dsw_surplus_clean at the injection seam.
+    caiso_surplus_clean: bool = False
 
 
 def get_interchange_spec(config, iso: str, year: int | None = None) -> InterchangeSpec:
@@ -1275,6 +1343,9 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
             and use_ref
             and getattr(config, "miso_south_seam_split", False)
         ),
+        caiso_surplus_clean=(
+            caiso_per_hub and getattr(config, "caiso_dsw_surplus_clean", False)
+        ),
     )
 
 
@@ -1322,7 +1393,11 @@ def build_interchange_fleet(
     elif spec.caiso_mode == "per_hub":
         from market_sim.model.transmission import build_caiso_per_hub_intertie
 
-        gens.extend(build_caiso_per_hub_intertie(border_carbon_per_mwh))
+        gens.extend(
+            build_caiso_per_hub_intertie(
+                border_carbon_per_mwh, surplus_clean=spec.caiso_surplus_clean
+            )
+        )
     elif spec.caiso_mode == "bidir":
         from market_sim.model.transmission import build_caiso_bidir_intertie
 

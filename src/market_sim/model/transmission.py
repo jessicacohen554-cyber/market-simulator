@@ -38,6 +38,10 @@ from market_sim.config.constants import (
 )
 from market_sim.config.interchange_config import (
     CAISO_CORRIDOR_ATC_SOLAR_K,
+    CAISO_DSW_SURPLUS_CLEAN_DEPTH_BY_YEAR,
+    CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC,
+    CAISO_DSW_SURPLUS_CLEAN_NAME,
+    CAISO_DSW_SURPLUS_REMOTE_VOM,
     CAISO_IMPORT_DELIVERY_BASIS,
     CAISO_IMPORT_TRANCHE_HUB,
     CAISO_PER_HUB_IMPORT_ZONES,
@@ -492,7 +496,9 @@ def _caiso_import_tranche_of(uid: str, default_zone: str | None) -> str | None:
     return None
 
 
-def build_caiso_per_hub_intertie(border_carbon_per_mwh: float = 0.0) -> list[Generator]:
+def build_caiso_per_hub_intertie(
+    border_carbon_per_mwh: float = 0.0, surplus_clean: bool = False
+) -> list[Generator]:
     """Return CAISO's WECC tie as TWO per-hub signed flows (Malin + Palo Verde).
 
     The structurally-faithful successor to :func:`build_caiso_bidir_intertie`
@@ -514,13 +520,28 @@ def build_caiso_per_hub_intertie(border_carbon_per_mwh: float = 0.0) -> list[Gen
     Args:
         border_carbon_per_mwh: Unspecified-import border carbon adjustment
             ($/MWh); scaled per import tranche by its emission factor. 0 disables.
+        surplus_clean: Append the south-corridor surplus-clean depth tranche
+            (caiso-87, ``ScenarioConfig.caiso_dsw_surplus_clean``). Built with
+            ZERO capacity — :func:`inject_caiso_dsw_surplus_clean` arms its
+            hourly capability (measured depth-in-surplus net of the shaped firm
+            block, surplus-trigger hours only) and
+            :func:`inject_caiso_per_hub_intertie_prices` prices it at the
+            measured Palo Verde hub + wheel with EF 0 (no border carbon —
+            WEIM/EDAM clean-surplus GHG attribution). Un-injected (e.g. no
+            measured hub/gas series) it stays 0 MW: inert by construction.
 
     Returns:
         The per-hub import tranches (cheapest first within each hub) followed by
         one export leg per hub zone.
     """
     iso = "CAISO"
-    base = IMPORT_TRANCHES.get(iso, [])
+    base = list(IMPORT_TRANCHES.get(iso, []))
+    if surplus_clean:
+        # Placeholder $/MWh only (never marginal at 0 MW; the per-hub injector
+        # reprices it hourly): the static DSW_CCGT rung minus its carbon share
+        # would be fiction — carry the scarcity rung's price so an unpriced
+        # row can never undercut a real rung.
+        base.append((CAISO_DSW_SURPLUS_CLEAN_NAME, 0.0, 180.0))
     ef_map = IMPORT_TRANCHE_EF.get(iso, {})
     eford = IMPORT_EFORD.get(iso, 0.0)
     gens: list[Generator] = []
@@ -944,6 +965,9 @@ def inject_caiso_per_hub_intertie_prices(
     border = wecc_border_carbon_adder(carbon_price)
     ef_map = IMPORT_TRANCHE_EF.get(iso, {})
     import_names = {name for name, _, _ in IMPORT_TRANCHES.get(iso, [])}
+    # The surplus-clean depth tranche (caiso-87) is not on the static ladder;
+    # it prices like any other spot rung (its EF of 0 zeroes the carbon term).
+    import_names.add(CAISO_DSW_SURPLUS_CLEAN_NAME)
     eps = CAISO_INTERTIE_TIEBREAK_EPS
     # Per-corridor export hub = mean of that corridor's import-tranche hub series.
     corridor_export_hub: dict[str, np.ndarray] = {}
@@ -1125,6 +1149,92 @@ def inject_caiso_firm_import_selfschedule(fleet_arrays, iso: str, year: int) -> 
     return applied
 
 
+def inject_caiso_dsw_surplus_clean(fleet_arrays, iso: str, year: int) -> bool:
+    """Arm the south-corridor surplus-clean import depth (caiso-87).
+
+    In surplus-West hours the marginal import into CAISO is a WEIM/EDAM
+    transfer attributed to CLEAN surplus resources — the measured CAISO−hub
+    spread carries NO unspecified-import carbon wedge in those hours
+    (FINDING-caiso82 §1/§3) — but the model's zero-EF depth truncates at the
+    firm blocks + PNW_midC, after which every MW pays a fossil CARB rung.
+    This sets the hourly CAPABILITY of the ``DSW_surplus_clean`` tranche
+    (built at 0 MW by :func:`build_caiso_per_hub_intertie`)::
+
+        cap[t] = surplus[t] × max(0, depth_year − firm_south_capability[t])
+
+    * ``surplus[t]`` — the corridor's own measured Palo Verde hub price
+      sits below the remote gas-CCGT floor ``HR_DSW_CCGT × SoCal_citygate
+      weekly + remote VOM`` (no carbon: AZ/NV are uncarbonized), i.e. gas is
+      not the hub's marginal resource, so the surplus is clean. Evaluated
+      ONLY on measured hub hours (the 2023 Jan–Feb reference-formula fill is
+      pricing continuity, not surplus evidence → non-surplus).
+    * ``depth_year`` — the measured year depth-in-surplus
+      (:data:`CAISO_DSW_SURPLUS_CLEAN_DEPTH_BY_YEAR`, p95 corridor net import
+      over trigger hours; CV 0.056 / LOYO ≤12.5% across 2023–2025 — gates in
+      the interchange_config block); an unmapped year carries the pooled
+      static entry (persistent WEIM market structure).
+    * ``firm_south_capability[t]`` — the shaped DSW firm block
+      (``pmax × availability`` after :func:`inject_caiso_firm_import_shape`),
+      so the clean depth is net of capacity already carried clean.
+
+    A capability, not a floor (``pmin`` stays 0); the corridor ATC envelope
+    (``caiso_corridor_flow_limit``) still caps the delivered flow; the fossil
+    rungs are UNCHANGED and price the flow beyond the clean depth (secondary
+    dispatch). Pricing (measured hub + Path-46 wheel + EF 0 × border + ε)
+    comes from :func:`inject_caiso_per_hub_intertie_prices` via the shared
+    tranche maps. Must run AFTER the firm-shape injector.
+
+    Modifies ``fleet_arrays`` in place (eford availability preserved
+    multiplicatively). Returns ``True`` when the tranche was armed, ``False``
+    (byte-identical: the row stays 0 MW) when the fleet has no clean row or a
+    measured hub/gas series is unavailable for ``year``.
+    """
+    from market_sim.data.eia_loader import measured_intertie_hub_price_raw
+    from market_sim.data.fuel import socal_citygate_weekly_hourly
+
+    hours = int(fleet_arrays.availability.shape[1])
+    zone = CAISO_PER_HUB_IMPORT_ZONES.get(
+        CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_SURPLUS_CLEAN_NAME]
+    )
+    uid = f"{zone}_{CAISO_DSW_SURPLUS_CLEAN_NAME}"
+    row = next(
+        (r for r, u in enumerate(fleet_arrays.unit_ids) if u == uid),
+        None,
+    )
+    if row is None:
+        return False
+    hub = measured_intertie_hub_price_raw(
+        iso, year, hours, CAISO_IMPORT_TRANCHE_HUB[CAISO_DSW_SURPLUS_CLEAN_NAME]
+    )
+    gas = socal_citygate_weekly_hourly(year, hours)
+    if hub is None or gas is None:
+        return False
+    hr = _CAISO_IMPORT_COUPLE_HR["DSW_CCGT"]  # 0.37/0.0531 ≈ 6.97, matches EF
+    floor = hr * gas + CAISO_DSW_SURPLUS_REMOTE_VOM
+    surplus = np.isfinite(hub) & np.isfinite(floor) & (hub < floor)
+    if not surplus.any():
+        return False
+    depth = CAISO_DSW_SURPLUS_CLEAN_DEPTH_BY_YEAR.get(
+        year, CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC
+    )
+    # Net of the shaped south firm block (post inject_caiso_firm_import_shape).
+    firm_cap = np.zeros(hours)
+    for r, u in enumerate(fleet_arrays.unit_ids):
+        if not u.startswith(f"{zone}_"):
+            continue
+        name = u[len(zone) + 1 :]
+        if name in CAISO_FIRM_IMPORT_TRANCHES:
+            firm_cap += fleet_arrays.pmax[r] * fleet_arrays.availability[r, :]
+    cap = np.where(surplus, np.clip(depth - firm_cap, 0.0, None), 0.0)
+    if cap.max() <= 0.0:
+        return False
+    # availability carries eford (set at build); scale it by cap/depth and
+    # let pmax carry the year depth, mirroring the firm-shape pattern.
+    fleet_arrays.availability[row, :] *= cap / depth
+    fleet_arrays.pmax[row] = depth
+    return True
+
+
 def inject_caiso_per_hub_reference_prices(
     fleet_arrays,
     mc: np.ndarray,
@@ -1179,6 +1289,9 @@ def inject_caiso_per_hub_reference_prices(
     border = wecc_border_carbon_adder(carbon_price)
     ef_map = IMPORT_TRANCHE_EF.get(iso, {})
     import_names = {name for name, _, _ in IMPORT_TRANCHES.get(iso, [])}
+    # The surplus-clean depth tranche (caiso-87) is not on the static ladder;
+    # it prices like any other spot rung (its EF of 0 zeroes the carbon term).
+    import_names.add(CAISO_DSW_SURPLUS_CLEAN_NAME)
     eps = CAISO_INTERTIE_TIEBREAK_EPS
     per_hub_zones = set(CAISO_PER_HUB_IMPORT_ZONES.values())
     applied = False
@@ -4679,6 +4792,23 @@ def apply_interchange_injections(
                     iso,
                     year,
                 )
+    # CAISO south-corridor surplus-clean depth (caiso_dsw_surplus_clean,
+    # caiso-87): the WEIM clean-transfer capability in surplus-West hours —
+    # measured depth-in-surplus net of the shaped firm block, EF 0 (no border
+    # carbon), priced at the measured Palo Verde hub by the per-hub injector.
+    # Must run AFTER the firm-shape block (its headroom is net-of-firm).
+    if per_hub_intertie and getattr(config, "caiso_dsw_surplus_clean", False):
+        if inject_caiso_dsw_surplus_clean(fleet_arrays, iso, year):
+            _logger.info(
+                "%s %d: south-corridor surplus-clean import depth armed "
+                "(WEIM clean transfer: measured depth-in-surplus %s MW net of "
+                "the shaped firm block, surplus-trigger hours only, EF 0)",
+                iso,
+                year,
+                CAISO_DSW_SURPLUS_CLEAN_DEPTH_BY_YEAR.get(
+                    year, CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC
+                ),
+            )
 
     # --- 4. Backcast measured-price overlays (caller-supplied; forecast
     #     passes None). Must land after the forward base prices and before
