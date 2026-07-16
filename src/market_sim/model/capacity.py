@@ -885,6 +885,11 @@ def thermal_accreditation_fraction(
 
     * ``"seasonal_rating"`` (ERCOT CDR): nameplate, no forced-outage derate
       — returns ``1.0`` (outage risk lives in the target margin).
+    * ``"claimed_capability"`` (ISO-NE FCM): the 5-yr median Seasonal Claimed
+      Capability (Qualified Capacity), no forced-outage derate — returns
+      ``1.0`` (outage risk is priced ex post through Pay-for-Performance, not
+      the accredited MW). Numerically identical to ``"seasonal_rating"`` but a
+      distinct basis by design — the *reason* differs (R5b).
     * ``"elcc_class_rating"`` (PJM's 2025/26 CIFP reform): the unit's
       published ELCC class rating
       (:data:`THERMAL_ELCC_CLASS_RATING_BY_ISO`), falling back to UCAP for a
@@ -895,6 +900,12 @@ def thermal_accreditation_fraction(
     """
     basis = THERMAL_ACCREDITATION_BASIS_BY_ISO.get(iso or "")
     if basis == "seasonal_rating":
+        return 1.0
+    if basis == "claimed_capability":
+        # ISO-NE Qualified Capacity is the SCC median with no (1-EFORd) derate;
+        # forced-outage risk is priced ex post via Pay-for-Performance, not the
+        # accredited MW (R5b, pairing-adjudication 2026-07-15 §1). Class-agnostic
+        # — QC is a per-unit SCC median, so there is no fuel-class ELCC table.
         return 1.0
     if basis == "elcc_class_rating":
         rating = THERMAL_ELCC_CLASS_RATING_BY_ISO.get(iso or "", {}).get(fuel_type)
