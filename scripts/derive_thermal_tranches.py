@@ -108,6 +108,20 @@ _CHP_GROUPS: frozenset[str] = frozenset({"CC_CHP", "CT_CHP", "ST_CHP"})
 # (p2 CAMPD gross CF, non-outage hours).
 _CHP_PMIN_PCTILE: int = 2
 
+# Percentile of the SAME all-hours available-CF distribution emitted as a CHP
+# cogen's steam-host OPERATING level (``p25_allhr_cf``): the output the host's
+# thermal demand sustains three-quarters of the plant's available hours. The
+# sample is the deriver's ``all_cat`` — outage hours are excluded (avail_cap =
+# 0 drops out of the mask), while economic/host-driven offline hours count as
+# zeros — so the statistic self-targets: a genuinely flat steam host (CAISO
+# Elk Hills 55217 / Midway-Sunset 55400: CEMS net flat 0.65-0.76 GW all 24 hod,
+# May-2023) keeps its online level, and a cycling cogen (online a minority of
+# available hours) collapses to exactly 0 with no threshold parameter. The p2
+# floor above only captures the never-below minimum (~0 for any plant with a
+# few non-outage offline hours), which is why the CAISO CC_CHP steam base was
+# invisible to ``chp_pmin_cf``. Consumed by ScenarioConfig.chp_steam_floor_p25.
+_CHP_P25_ALLHR_PCTILE: int = 25
+
 # EIA-923 Page 1 "EIA Sector Number" -> the BTM sector class the model's
 # chp_btm_pct uses. Cogen sectors map directly (3 = NAICS-22 / merchant cogen,
 # 5 = commercial cogen, 7 = industrial cogen); non-cogen sectors land on the
@@ -378,6 +392,7 @@ def _consume_chp_floors(rows: list[dict], prior: pd.DataFrame) -> list[dict]:
                 mustrun_pct=None,
                 p25_cf=None,
                 median_cf=None,
+                p25_allhr_cf=None,
                 online_hours=0,
             )
             print(
@@ -587,6 +602,11 @@ def main() -> None:
                 100.0 * float(np.percentile(all_cat, _CHP_PMIN_PCTILE)), 1
             )
             row["chp_sector"] = chp_sectors.get(code, "")
+            # Steam-host operating level (see _CHP_P25_ALLHR_PCTILE): the
+            # multi-year all-hours p25 of the same sample the p2 floor uses.
+            row["p25_allhr_cf"] = round(
+                100.0 * float(np.percentile(all_cat, _CHP_P25_ALLHR_PCTILE)), 1
+            )
         rows.append(row)
 
     # CHP plants the CAMPD extracts cannot see (no facility series, or too few
