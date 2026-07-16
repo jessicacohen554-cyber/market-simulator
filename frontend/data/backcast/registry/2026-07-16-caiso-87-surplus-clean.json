@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-16-caiso-87-surplus-clean",
+  "label": "caiso 87 surplus clean",
+  "date": "2026-07-16",
+  "shorthand": "caiso-87-surplus-clean",
+  "definition": "(PROBE, keeper-candidate — owner promotion pending) caiso-87 surplus-clean import depth: the caiso-84 keeper recipe + caiso_dsw_surplus_clean=True — the measured WEIM surplus-hour clean import depth on the Palo Verde/Path-46 corridor (p95 depth-in-surplus 5,312/4,792/5,472 MW, CV 0.056, LOYO <=12.5%; EF 0, priced at the measured hub + wheel; trigger = measured PV hub below its own gas-coupled remote-CCGT floor, measured hours only; FINDING-caiso82 par.3 clean-DEPTH lane, FINDING-caiso86b closed the ladder-PRICE alternative). C3a +11.9/+12.6/+19.3% -> +10.3/+11.1/+16.6%; May-2023 gap +14.0 -> +11.7 (carbon rungs collapse out of surplus hours, DSW_CCGT May dispatch 725->93 MW); C1-2024 CC +6.67 -> +6.01 TWh; C3b-2025 NRMSE 0.220 -> 0.200 (at tolerance edge); C2-2025 gas -2.3%; C3c/C7/C8 unchanged as pre-registered. Remaining soft-month residual is the NORTH corridor's 1.8 GW PNW_midC truncation (marginal 35% of May hours post-fix) — its own charter. 2023-2025.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-16-caiso-87-surplus-clean.js",
+  "bundle": "results/calibration/caiso87_dsw_surplus_clean"
+}
