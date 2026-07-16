@@ -14388,3 +14388,72 @@ placement (an accurate-input-exposes-something-else flag per rule 15, filed as
 a root-cause note, never a tuning target). The C1 CC-over/CT-under lane is
 chartered next (owner directive; handoff issued this session) —
 `docs/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md` §5.
+## 2026-07-16 — miso-68: the Cottonwood mothballed-but-operating re-carry BUILT, PROBED and REGISTERED — `carry_operating_mothballs` (gated default-off, ISO-agnostic, the vintage-status oracle); CC_REGULAR-2023 −9.79 → −8.28 (+1.51 TWh toward actual, 0.28 short of the ±8.00 band), fail set unchanged, zero flips, LOO clean; CANDIDATE, owner decision pending
+
+**Runs (registered + scored, rubric v2.5):** `2026-07-16-miso-68-mothballs`
+(main, keeper candidate) + `2026-07-16-miso-68-mothballs-base` (same-box
+drift control). Both MISO 2023+2024+2025, one bundle each, per-year +
+`--reuse-solved`, warm-start pinned off. Charter:
+`docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md` (owner defaults
+taken as chartered: scoped-(a) + vintage-status oracle,
+accept-2025-under-carry, forecast stays canonical, execution authorized by
+the task brief).
+
+**Mechanism (zero fitted DOF).** `ScenarioConfig.carry_operating_mothballs`
+(default OFF): in a backcast, re-carry each OA (mothballed) unit the
+canonical 2025ER snapshot's OP filter drops for solve year Y iff it is OP in
+the year-matched EIA-860 `vintage_<Y>` — EIA's own contemporaneous status,
+the rule-13 availability oracle (a unit truly idle in Y is OA in
+`vintage_<Y>` too, so OA status alone never re-carries capacity — the New
+Covert inversion is closed by construction). Per-UNIT injection from the
+vintage rows (year-matched capacity) via
+`fleet.load_mothballed_but_operating`, joining the within-window retiree
+injection at the run_calibration fleet-build seam; a partial mothball leaves
+its surviving OP units untouched; a solve year with no committed vintage
+(2025) carries nothing; the channel self-neutralizes under an active
+`eia860_vintage_year` switch. For MISO this re-carries Cottonwood 55358's
+four OA units (~572.6 / ~568.7 MW in vintage_2023/2024, CC_REGULAR,
+MISO-South — CAMPD shows the OA CTs running 88-91% of 2023 hours) plus
+~35 MW of ≤28 MW partial-mothball plants the general rule sweeps up. Unit
+tests: `tests/test_mothballed_but_operating.py` (10, trivial synthetic
+snapshot/vintage pairs first, then the committed-data Cottonwood case).
+
+**Mechanism-only read (main − base; the base reproduces the registered
+keeper's CC_REGULAR-2023 −9.79 EXACTLY — zero box drift):**
+CC_REGULAR-2023 132.03 → 133.53 vs actual 141.82 (−9.79 FAIL → −8.28 FAIL;
+tol ±min(2% load, 8 TWh) = ±8.00 — the mechanism closes 1.51 of the 1.79
+needed, 0.28 TWh short). CC_REGULAR-2024 −4.22 → −2.98 (PASS margin
+widens). 2025 byte-identical (no vintage — the accepted under-carry).
+Displacement is the expected mid-merit pattern (2023: COAL_PRB −0.41,
+CT_PEAKER −0.33, import −0.31, ST_GAS −0.20 TWh; worst adverse move
+−0.14 TWh ST_GAS-2023, deep in band); every displaced class stays PASS;
+zero C1 status flips (15/16 both arms, same sole fail). C3b veto holds
+(PASS both arms); C3a/C3c FAIL in both arms — the F4-blocked MISO
+price-formation lane, untouched (non-goal). C7/C8 PASS (C8 ST_GAS
+grounded-above-budget note carried, rubric v2.2 pass-path). Cottonwood
+dispatches ~4.0 TWh at ~40% CF from the LP's own economics — carried at
+availability bounds, never pinned to its CAMPD MWh (rules 1/11/13).
+
+**LOO within 2023–2025 (rule 22, structural change):** zero fitted
+parameters — nothing refit per fold, so each year is effectively held out;
+2023 improves (+1.51 toward actual), 2024 independently improves (+1.24),
+2025 untouched. No held-out degradation.
+
+**DOF ledger:** `build_dof_ledger.py` gains the
+`carry_operating_mothballs` measured-physical entry (n_scalars=0);
+miso-68 attestation = 21 entries / 2 residual (miso-67 was 20/2), the +1
+being the new boolean-arming-measured-data row
+(`scripts/gen_miso68_attestation.py`).
+
+**Determination:** NOT-YET both arms — identical fail set to the miso-67
+keeper {C1 CC_REGULAR-2023 (shrunk), C3a, C3c}. **Keeper decision: owner's
+call.** The candidate case is rule 1/11 structure-first: miso-68 matches
+the keeper's C1 count on a strictly more complete fleet (the ~570 MW of
+demonstrably-operating capability the bisect exposed as missing is now
+carried), shrinks the sole C1 fail, improves 2024, and degrades nothing.
+The residual −8.28 is a dispatch/price-formation question (the plant is
+carried; the LP under-dispatches it vs CAMPD's near-continuous operation),
+pointing at the F4-blocked price lane — not at more fleet work. If
+promoted: swap `keepers.json` to `2026-07-16-miso-68-mothballs`, run
+`build_status.py`, and launch the calibration-keeper-auditor. Next number:
+miso-69.
