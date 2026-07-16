@@ -10,6 +10,51 @@ year touched (rule 22). Every new tunable is in `ScenarioConfig`/`constants.py`
 with a citation and default byte-identical, per `scripts/generate_parameter_registry.py`
 (regenerated — 5 new entries, `docs/parameter-citations.md`).
 
+## RELAND note (2026-07-15, this reconciliation)
+
+Items 1, 2, and the RC-1D R5b basis below were **reverted** off `main` by the
+2026-07-15 corrective batch (commits 9ab995d/65f284c) because
+`constants.py`/`scenarios.py` were too large to push in the originating session
+— the call sites depending on the new symbols had already landed, so the branch
+was reverted to a self-consistent pre-RC-1B state to keep imports green. This
+doc was **not** reverted with the code, so between then and this reland it
+described code absent from `main`. The **RC-1B-RELAND** session (branch
+`claude/rc1b-plumbing-reland-lqrl7r`) re-lands items 1, 2, the probe-flag rewire,
+and R5b under the rule-27 push-integrity protocol (surgical `constants.py` Edits,
+blob-verify after every push). The hindcast information gate and the
+channel-attributed evolution ledger (doc items 3/4 below) were **never**
+reverted and remain on `main` — they are re-described here only for completeness.
+
+Two behaviors are sharper than this doc's original prose:
+
+- **Vintage consultation is gated.** `capacity_price_per_firm_mw_yr` consults
+  `MARKET_DESIGN_VINTAGES` only when the CR-1 gate is on AND both `iso` and
+  `year` are passed AND a `reserve_position` is supplied. The fixed/default path
+  never reads the vintage table — necessary for byte-identity, since a vintage's
+  net-CONE anchor differs from the legacy fixed anchor. Storage new entry is the
+  one wiring that passes `year`; the per-unit payment and plant-financials report
+  pass `iso` (for the per-ISO gate) but no `year`.
+- **Probe flag is per-ISO, not scalar.** `run_capacity_hindcast.py
+  --capacity-market-clearing` now sets `capacity_market_clearing_by_iso={iso:
+  True}` for the hindcast's own ISO (the scalar stays off), so the arm cannot
+  leak if a future harness runs more than one ISO per invocation. (The original
+  doc's "uses the global scalar" note is superseded.)
+
+**Parameter-registry regeneration deferred (unchanged precedent).** Running
+`scripts/generate_parameter_registry.py` adds 25 entries (22 `market_design_
+vintages.*`, `scenario.capacity_market_clearing_by_iso`,
+`thermal_accreditation_basis_by_iso.NEISO`, and a pre-existing gap it surfaced,
+`scenario.entry_screen_diagnostics`), and `validate_parameters.py` exits 0. But
+the regenerated `frontend/data/parameters.json` is ~1.39 MB — beyond what the
+`push_files` inline-content transport can carry — so **both** generated registry
+files (`parameters.json` + `docs/parameter-citations.md`) are deferred to a
+follow-up with a size-appropriate transport, exactly as the RC-1D memo §6
+records for the R5b row. This is a registry-completeness gap only:
+`constants.py`/`scenarios.py` carry the full inline citation for every new
+parameter (rule 5), which is the source of truth the registry renders from.
+(The charter line above's "regenerated — 5 new entries" is superseded by this
+count and this deferral.)
+
 ## What landed (items 1-4, 7, 8)
 
 1. **Per-ISO `capacity_market_clearing` gate.** `ScenarioConfig.
