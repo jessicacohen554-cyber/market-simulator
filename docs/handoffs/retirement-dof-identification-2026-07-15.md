@@ -412,6 +412,20 @@ are safe to adopt.
 ## (d) Owner-decision box
 
 **D1 — `retirement_years_coal` (the one mis-identified DOF).**
+
+> **OWNER DECISION (2026-07-16) — RESOLVED: Option B adopted, RC-1A re-probe
+> SKIPPED.** `retirement_years_coal` moved 1 → **3** in `scenarios.py`
+> (default), cited to the §a.3 lag table only (the measured cap-weighted /
+> ≥300 MW median, left-censored → conservative floor), never to a hindcast
+> metric (rules 1/14). Landed by session **RC-D1** on identification alone.
+> Per §a.6/rule 19 `staged_oversupply_thinning` stays default-off (the
+> threshold now carries the D+L deactivation total). The §d-required
+> LOYO-within-2023-2025 re-probe was **deferred by owner decision** (the owner
+> skipped the RC-1A curve-ON re-probe); no hindcast LOYO was run, and RC-2B
+> grades the gate analytically with this caveat. Byte-identity: the threshold
+> is forecast-side capacity-evolution only, so every backcast keeper is
+> byte-identical and no dashboard/keeper was touched.
+
 - *Option A (status quo):* keep 1; ledger it open. Honest but knowingly retains a
   value below its measured floor.
 - *Option B (recommended):* adopt the measured value on the capacity-weighted /
