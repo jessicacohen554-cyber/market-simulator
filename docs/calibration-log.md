@@ -13944,3 +13944,51 @@ frontier** (sub-daily net-vs-thermal basis noise; the provenance-gate-failed
 overlay stays committed default-off, not re-armable). The ambient nuclear
 net-capability derate remains an available FUTURE charter (~0.1 GW stakes),
 not opened in this session. PR opened for the three pjm-nuc-1b commits.
+
+## 2026-07-16 — FINDING-caiso88-pnw-surplus-depth-gates: the NORTH-corridor surplus-clean depth lane CLOSED on its estimation gates even with the aligned Malin-side (Sumas) trigger — no solve; the Sumas weekly gas series intaken
+
+**Charter:** caiso-87 handoff Session 1b (the north analogue of the promoted
+south-corridor surplus-clean depth) — derive-first: intake a Malin-side gas
+series, re-run the north depth derivation with the corridor's OWN gas floor,
+solve only if the caiso-81/86/87 estimation gates pass.
+
+**Intake (new, committed):** `data/raw/gas-prices/sumas_weekly.csv` — the
+measured **Northwest Sumas** weekly Wednesday spot print ($/MMBtu), scraped
+from the EIA Natural Gas Weekly Update archive narrative by
+`scripts/fetch_sumas_weekly.py` (clone of the `fetch_pge_socal_citygate_daily`
+pattern; 146 pages 2023→2026, 123 dated Wednesdays, 0 conflicts after the
+stale-republish guard). Malin itself has no row in the archive's compact spot
+table (Henry Hub / New York / Chicago / Cal. Comp. Avg. only — verified) and no
+narrative quote; Sumas is EIA's own "main pricing point for natural gas in the
+Pacific Northwest" — the gas the PNW CCGT fleet burns, i.e. the *aligned*
+series for the Malin-side remote-CCGT floor (rule 14; PG&E Citygate would be
+the misaligned fallback, priced south of Malin with CA LDC transport). Parser
+lesson worth keeping: the 2024-03-07 issue republished the 2024-02-29 West
+narrative **verbatim**, which would mis-date the prior week's prints one week
+forward (2024-03-06 would read $1.49 where the genuine 2024-03-14 overlap
+print says $1.87) — the fetcher now drops any page whose matched sentence is
+character-identical to the immediately preceding issue's.
+
+**Derivation (`scripts/derive_caiso_pnw_surplus_depth.py`, no LP):** trigger =
+MALIN nodal DA LMP < 6.97 × Sumas + $2.5 (the identical remote-CCGT-floor
+construction the south passed); depth = p95 of measured WECC_PNW net import
+(EIA-930 CISO DIBAs, model clock) over trigger-ON hours.
+
+**Result — FAIL both gates, decisively:** depths **2,378 / 1,149 / 1,191 MW**
+(2023/24/25); CV **0.362** (gate ≤0.20); LOYO (mean-of-other-two) worst
+**55.3%** (gate ≤25%) — every held-out year fails. Trigger-ON share is sane
+(7.8–10.0% of hours, spring-concentrated), so this is not a trigger artifact:
+the 2023 spring-runoff year genuinely carried ~2× the surplus-hour import
+depth of 2024/25. The PNW surplus depth rides the hydro regime, which a
+3-year sample cannot identify as a stable forward rule — the same conclusion
+the caiso-87 session reached under the misaligned SoCal trigger (1.2–2.5 GW),
+now confirmed with the corridor's own gas floor. **Lane CLOSED, no solve, no
+flag, nothing registered** (derive-first discipline; a per-year "measured"
+north depth would be a hydro-regime fit, rule 11/13). Autumn-2025 relevance
+check (the Session-1a residual): north trigger-ON is 0–4% of Sep–Dec-2025
+hours — this lever was priced-out of the autumn residual regardless of gates.
+
+Any future north-depth revival needs a construction whose depth conditions on
+the hydro state itself (e.g. a runoff-indexed depth with its own out-of-sample
+evidence), not more trigger variants — further gas-floor forms on this same
+3-year depth sample would be gate-shopping (the caiso-86b lesson).
