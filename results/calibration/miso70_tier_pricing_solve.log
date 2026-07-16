@@ -1,4 +1,4 @@
-=== miso-70 main y2023 START 2026-07-16T23:32:31Z ===
+=== miso-70 main y2023 START 2026-07-16T23:37:08Z ===
 miso-70 main: years=[2023] out=results/calibration/_miso70_acc/main/y2023 reuse=None composition=ON (maxgen+tier)
 WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
 WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
@@ -67,7 +67,7 @@ INFO: MISO zonal gas basis (2023): 1500 gas units; cap-weighted mean +0.16 remov
 INFO: MISO 2023: reference-price interface — 3 neighbor seams priced from gas x heat-rate x load-shape (hurdle in $/MWh); PJM seam re-anchored to its western (ComEd/AEP/ATSI) border hubs
 INFO: MISO 2023: Manitoba firm-hydro import baseload floored (must-flow)
 INFO: MISO 2023: seam bands repriced to the MEASURED per-seam Q-Q ladders (EIA-930 flow durations x MISO DA hub quantiles; PJM/SPP/South, import + export; no added hurdle)
-INFO: maxgen tier pricing (MISO 2023): maxgen_event_step2 footprint 2023-08-24 12:00:00 -> 2023-08-25 00:00:00, 12 hours x 8 zones at $1000 slack floor
+INFO: maxgen tier pricing (MISO 2023): maxgen_event_step2 footprint 2023-08-24 12:00:00 -> 2023-08-25 00:00:00, 12 hours x 6 zones at $1000 slack floor
 INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 2424 MW at h0 (measured hourly cleared reg+spin+supp), 11 ORDC steps ($200-$3500), 2560 reserve-eligible units
 INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 269 MW at h0 (measured hourly South reservation), published zonal curve steps ['206MW@$200', '722MW@$1100', '103MW@$3300']
 INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2547 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 37107 / min 32322 MW
