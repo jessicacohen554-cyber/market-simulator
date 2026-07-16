@@ -94,6 +94,7 @@ from market_sim.data.floor_mechanisms import (  # noqa: E402
     D2_EXEMPT_MECHS,
     MECH_CAISO_GAS_COMMITMENT_FLOOR,
     MECH_CC_MUSTRUN_PER_PLANT,
+    MECH_CHP_STEAM,
     MECH_CT_NETLOAD_DRAG,
     MECH_GAS_COMMITMENT_BRIDGE,
     MECH_NAMES,
@@ -202,6 +203,20 @@ D4_MAX_OFFWINDOW_SHARE: float = 0.05
 # starts at h14; MISO's is [15, 21], ERCOT/PJM are 24h hot-day) and can only
 # LOWER an off-window share (h14 moves in-window) — it never newly-fails an ISO.
 D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
+    # chp_steam (MECH_CHP_STEAM — fleet.py chp_grid_pmin_mw, the structural
+    # steam-host grid floor; level from the p2 artifact / eia923_cf columns,
+    # or the all-hours p25 operating level under chp_steam_floor_p25): the
+    # driver-justified window is ALL 24 hours BY MEASUREMENT — host thermal
+    # demand is around-the-clock (CAISO CC_CHP steam fleet: CEMS net flat
+    # 0.65-0.76 GW across every hour-of-day, May-2023, hod max/min 1.16;
+    # the ERCOT industrial-cogen conduct the original CHP_PMIN_CF_BY_PLANT
+    # p2 floors were derived from is the same shape). Under the p25 level
+    # swap the statistic additionally enforces the window per plant: a cogen
+    # offline >25% of its available hours measures p25_allhr_cf = 0 and
+    # carries no operating-level floor (cyclers keep only their p2/923-CF
+    # never-below base). D2-exempt structural must-run; row exists for the
+    # rule-12/17 declaration, not for a C8 escalation path.
+    (MECH_CHP_STEAM, None): (0, 24),
     (MECH_RELIABILITY_FLOOR, "CT_PEAKER"): (14, 22),
     (MECH_RELIABILITY_FLOOR, "CT_CHP"): (14, 22),
     (MECH_CT_NETLOAD_DRAG, None): (15, 22),
