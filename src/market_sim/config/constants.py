@@ -2454,6 +2454,7 @@ class MarketDesign:
         config: "object | None" = None,
         reserve_position: "float | None" = None,
         iso: "str | None" = None,
+        year: "int | None" = None,
     ) -> float:
         """Capacity clearing price in $/firm-MW-yr — the shared seam (rule 19).
 
@@ -2484,6 +2485,14 @@ class MarketDesign:
         the ``config.capacity_market_clearing_by_iso`` override governs, else the
         scalar ``config.capacity_market_clearing``. Passing ``iso=None`` (every
         pre-CR-1 call site) reproduces the scalar-gated behavior byte-identically.
+
+        ``year`` is accepted for the per-delivery-year vintage anchor (RC-1B
+        item 2) but is currently a no-op: the ``MARKET_DESIGN_VINTAGES`` table it
+        would consult is not yet landed, so the frozen single-vintage anchor
+        governs regardless of ``year``. It is a parameter, not a behavior, until
+        that table lands — the storage/entry call sites pass it forward now so no
+        signature change is needed when the vintage resolver arrives. Passing it
+        today does not change any price (default byte-identical).
         """
         if not self.capacity_market:
             return 0.0
