@@ -1,0 +1,236 @@
+{
+  "iso": "ERCOT",
+  "variant": "realized",
+  "scored_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "retirements": {
+    "total_gw": {
+      "actual": 1.534,
+      "model": 12.727,
+      "err_frac": 7.297,
+      "band": "FAIL"
+    },
+    "per_fuel": {
+      "biomass": {
+        "actual_gw": 0.019,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "coal": {
+        "actual_gw": 0.932,
+        "model_gw": 6.466,
+        "err_frac": 5.938
+      },
+      "gas_cc": {
+        "actual_gw": 0.08,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "gas_ct": {
+        "actual_gw": 0.502,
+        "model_gw": 3.023,
+        "err_frac": 5.017
+      },
+      "gas_st": {
+        "actual_gw": 0.0,
+        "model_gw": 3.237,
+        "err_frac": null
+      }
+    },
+    "unit_recall_gt300": {
+      "n_big_actual": 3,
+      "matched": 3,
+      "recall": 1.0,
+      "grain": "fuel-mw-coverage",
+      "plant_recall_frac": 0.333,
+      "plant_matched": 1,
+      "band": "PASS"
+    },
+    "false_retire": {
+      "false_gw": 11.292,
+      "frac_of_model": 0.887,
+      "grain": "per-fuel-excess",
+      "band": "FAIL"
+    }
+  },
+  "additions": {
+    "by_tech": {
+      "wind": {
+        "actual_gw": 12.663,
+        "model_gw": 15.0,
+        "err_frac": 0.185,
+        "band": "FAIL"
+      },
+      "solar": {
+        "actual_gw": 25.08,
+        "model_gw": 4.0,
+        "err_frac": -0.841,
+        "band": "FAIL"
+      },
+      "gas_cc": {
+        "actual_gw": 0.244,
+        "model_gw": 6.0,
+        "err_frac": 23.59,
+        "band": "FAIL"
+      },
+      "gas_ct": {
+        "actual_gw": 3.692,
+        "model_gw": 6.0,
+        "err_frac": 0.625,
+        "band": "FAIL"
+      },
+      "storage": {
+        "actual_gw": 13.691,
+        "model_gw": 16.0,
+        "err_frac": 0.169,
+        "band": "PASS"
+      }
+    },
+    "shares": {
+      "wind": {
+        "actual_share": 0.228,
+        "model_share": 0.306,
+        "delta_pp": 0.078,
+        "band": "FAIL"
+      },
+      "solar": {
+        "actual_share": 0.452,
+        "model_share": 0.082,
+        "delta_pp": -0.371,
+        "band": "FAIL"
+      },
+      "gas_cc": {
+        "actual_share": 0.004,
+        "model_share": 0.122,
+        "delta_pp": 0.118,
+        "band": "FAIL"
+      },
+      "gas_ct": {
+        "actual_share": 0.067,
+        "model_share": 0.122,
+        "delta_pp": 0.056,
+        "band": "FAIL"
+      },
+      "storage": {
+        "actual_share": 0.247,
+        "model_share": 0.327,
+        "delta_pp": 0.08,
+        "band": "FAIL"
+      }
+    },
+    "actual_total_gw": 55.436,
+    "model_total_gw": 49.0
+  },
+  "co2": {
+    "model": {
+      "2023": 102953288.83776172,
+      "2024": 92797351.36043012,
+      "2025": 115743032.09142466
+    },
+    "actual": {
+      "2023": 191435844.4022851,
+      "2024": 191324345.6416519,
+      "2025": 193564905.05488053
+    }
+  },
+  "baselines": {
+    "announced": {
+      "retire_gw": 65.381,
+      "add_gw": 147.445,
+      "note": "2020-vintage planned schedule"
+    }
+  },
+  "bands": {
+    "thermal_gw_retired_total_frac": 0.1,
+    "thermal_gw_retired_perfuel_frac": 0.2,
+    "retire_recall_min": 0.7,
+    "false_retire_frac_max": 0.15,
+    "retire_timing_years_max": 1.5,
+    "add_gw_frac_default": 0.15,
+    "add_gw_frac_storage": 0.25,
+    "techmix_share_pp_max": 0.05,
+    "co2_2025_frac": 0.1
+  },
+  "generated_utc": "2026-07-16T06:51:57Z",
+  "retirements_is2020": {
+    "total_gw": {
+      "actual": 1.534,
+      "model": 12.727,
+      "err_frac": 7.297,
+      "band": "FAIL"
+    },
+    "per_fuel": {
+      "biomass": {
+        "actual_gw": 0.019,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "coal": {
+        "actual_gw": 0.932,
+        "model_gw": 6.466,
+        "err_frac": 5.938
+      },
+      "gas_cc": {
+        "actual_gw": 0.08,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "gas_ct": {
+        "actual_gw": 0.502,
+        "model_gw": 3.023,
+        "err_frac": 5.017
+      },
+      "gas_st": {
+        "actual_gw": 0.0,
+        "model_gw": 3.237,
+        "err_frac": null
+      }
+    },
+    "unit_recall_gt300": {
+      "n_big_actual": 3,
+      "matched": 3,
+      "recall": 1.0,
+      "grain": "fuel-mw-coverage",
+      "plant_recall_frac": 0.333,
+      "plant_matched": 1,
+      "band": "PASS"
+    },
+    "false_retire": {
+      "false_gw": 11.292,
+      "frac_of_model": 0.887,
+      "grain": "per-fuel-excess",
+      "band": "FAIL"
+    },
+    "reversal_exposure_gw": 0.0,
+    "reversal_instruments": [],
+    "reversal_rows": []
+  },
+  "retirement_channels": {
+    "economic": {
+      "retired_gw": 12.727,
+      "false_retire_gw": 11.292,
+      "model_fuel_gw": {
+        "coal": 6.466,
+        "gas_ct": 3.023,
+        "gas_st": 3.237
+      },
+      "recall_matched": 3
+    },
+    "_n_big_actual": 3,
+    "_legacy_known_mapped_to": "announced"
+  },
+  "additions_is2020": {
+    "restart_excluded_gw": 0.0,
+    "restart_rows": [],
+    "note": "Post-V restart additions excluded from IS-2020 additions (§c.5-2). Inert in the RD-5 actuals as landed — the coverage fix booked only the physical exit, no restart addition row exists."
+  },
+  "is2020_cutoff": "2020-12-31",
+  "rescore": {
+    "task": "T-R8",
+    "note": "IS-2020 scoring hygiene (RC-0B §c.5) — raw + IS-2020 + per-channel. No re-solve; RD-5 actuals; co2/baselines preserved (unchanged by RD-5).",
+    "utc": "2026-07-16T06:53:03Z"
+  }
+}
