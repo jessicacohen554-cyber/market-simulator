@@ -14247,3 +14247,21 @@ residuals unchanged and disclosed: the winter tail (29 h, separate lane), the
 §7 rule-23-locked partial-derate bucket, the sub-interface Dominion premium
 (M-2 charter — the east cut deliberately does not touch Dominion/SWMAAC
 separation), and the D-1p overnight posture (M-3).
+
+## 2026-07-16 — PJM-CONG-1 owner sign-offs recorded + KEEPER PROMOTED: pjm-114 (east-interface cut) supersedes pjm-113 (session-logged authorization)
+
+Owner approved, same session as the pjm-cong-1 build ("Yes to both"): (i) **the
+DataMiner2 transfer-limit feed's "Average Eastern" series is the adopted
+measured east-cut limit source** — PJM Manual 03 §3.8 identity (the EASTERN
+reactive transfer interface = the EMAAC import cut), the §10.5 reduced-network
+boundary reconciliation, and the 5004/5005 ComEd mis-attribution removal are
+all signed off (rule 23: re-derives only when the feed's raw drops extend);
+(ii) **pjm-114 is PROMOTED to PJM keeper** — `keepers.json` PJM →
+`2026-07-16-pjm-114-east-interface`, sidecar rewritten as KEEPER with
+`market_story` (the east prices its own scarcity: finite EHV import capability
+into the eastern Mid-Atlantic, local peakers on the margin in heat events),
+`status.js` rebuilt — **PJM: CALIBRATED-WITH-CAVEATS** (first non-NOT-YET PJM
+determination; caveat = the pre-existing unscored storage benchmark C5b/C5c).
+`calibration-keeper-auditor` run post-flip per the standing instruction. Open
+lanes unchanged: winter tail, §7 partial-derate bucket (rule-23-locked),
+sub-interface Dominion premium (M-2), D-1p overnight posture (M-3).
