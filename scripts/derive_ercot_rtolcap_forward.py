@@ -132,6 +132,16 @@ def _net_load_decile(net_load: np.ndarray) -> np.ndarray:
     return np.minimum((order * N_DECILE) // len(net_load), N_DECILE - 1)
 
 
+#: ERCOT-71 derive-side reclassification of registry-OTHER gas STEAM plants to
+#: ST_GAS for the envelope/share accounting (see _fleet_class_maps; cited to the
+#: ERCOT-70 supply-mix decomposition). Both are NG/ST in master-plant-registry.csv
+#: but carry plant_group OTHER, which dropped them from every class envelope.
+_OTHER_GROUP_GAS_STEAM_RECLASS: dict[int, str] = {
+    3611: "ST_GAS",  # O W Sommers (892 MW, NG steam)
+    3612: "ST_GAS",  # V H Braunig (1138 MW, NG steam)
+}
+
+
 def _fleet_class_maps(year: int):
     """Return (plant_group, plant_cap, summer_derate) maps for ERCOT ``year``.
 
@@ -145,9 +155,21 @@ def _fleet_class_maps(year: int):
     plant_class_cap: dict[tuple[int, str], float] = {}
     for g in gens:
         grp = getattr(g, "plant_group", "") or ""
+        pc = int(g.plant_code)
+        # ERCOT-71 coverage correction (rule 23; cited to the ERCOT-70 supply-mix
+        # decomposition §finding-b). Two large gas STEAM plants carry registry
+        # plant_group OTHER -- O W Sommers (3611, 892 MW) and V H Braunig (3612,
+        # 1138 MW), both NG/ST -- so the RAMP10_FRAC_BY_GROUP filter below drops
+        # them from EVERY envelope/share accounting and the measured ST_GAS
+        # envelope under-counts by ~2 GW (Braunig's ~0.8 GW of real May steamer
+        # gross vanished from the ERCOT-58/68 class split). Reclassify them to
+        # ST_GAS for the DERIVE's envelope accounting ONLY -- the registry and the
+        # model's dispatch class are UNTOUCHED (keeper-safe); this corrects the
+        # measured-envelope basis the diagnostics read. Trigger: re-derive when the
+        # registry class of these plants is corrected (then delete this shim).
+        grp = _OTHER_GROUP_GAS_STEAM_RECLASS.get(pc, grp)
         if RAMP10_FRAC_BY_GROUP.get(grp) is None:
             continue  # non-responsive (nuclear/hydro/wind/solar/storage)
-        pc = int(g.plant_code)
         if pc <= 0:
             continue
         plant_cap[pc] = plant_cap.get(pc, 0.0) + float(g.pmax_mw)

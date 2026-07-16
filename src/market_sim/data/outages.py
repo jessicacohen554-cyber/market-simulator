@@ -928,6 +928,55 @@ def ercot_thermal_dam_availability_series(
     return out
 
 
+# ERCOT CAMPD-blind per-plant availability (EIA-923 zero-month outage windows;
+# scripts/derive_ercot_noncampd_availability.py). Restores measured
+# availability for the ERCOT gas plants ABSENT from the TX CAMPD extract
+# (Kiamichi 55501, Hidalgo 55545, Arthur Von Rosenberg 7512, EG178 56233 — the
+# ERCOT-70 phantom-CC blind spot: the model dispatches them on flat statistical
+# availability while EIA-923 shows a real full-plant outage month). The
+# CAMPD-derived outage overlay cannot see them (no CEMS rows -> no windows).
+# Backcast-only, gated by ScenarioConfig.ercot_noncampd_plant_availability;
+# forecast keeps the statistical stack (the mode-aware seam).
+ERCOT_NONCAMPD_AVAILABILITY_CSV: Path = RAW_DATA_DIR / "ercot-noncampd-availability.csv"
+
+
+@lru_cache(maxsize=None)
+def ercot_noncampd_availability_caps(
+    year: int, hours: int = HOURS_PER_YEAR
+) -> dict[int, np.ndarray]:
+    """Return ``{plant_code: (hours,) availability cap}`` for the CAMPD-blind
+    ERCOT gas plants, from the EIA-923 zero-month outage windows.
+
+    Each window ``[outage_start, outage_end)`` (a full-plant EIA-923 zero
+    month; ``outage_end`` is the exclusive return-to-service instant) zeroes
+    the plant's availability over its hours on the model's fixed non-leap clock
+    (:func:`outage_hour_mask`); every other hour stays at 1.0, so the cap only
+    ever REMOVES the plant in its measured-offline months and leaves the
+    statistical availability untouched elsewhere (a zero-month availability
+    event, never a monthly-level pin — rule 14). Plant-keyed so the fleet
+    builder applies each cap to every dispatch tranche of the (possibly binned)
+    plant, exactly like :func:`retiree_availability_caps`. Empty when the CSV is
+    absent or the year has no windows, so callers degrade to the statistical
+    model unchanged.
+    """
+    if not ERCOT_NONCAMPD_AVAILABILITY_CSV.exists():
+        return {}
+    df = pd.read_csv(ERCOT_NONCAMPD_AVAILABILITY_CSV)
+    df = df[df["year"] == int(year)]
+    if df.empty:
+        return {}
+    caps: dict[int, np.ndarray] = {}
+    for r in df.itertuples(index=False):
+        mask = outage_hour_mask(r.outage_start, r.outage_end, int(year), hours)
+        if not mask.any():
+            continue
+        cap = caps.setdefault(int(r.plant_code), np.ones(hours))
+        # MIN-combine so the most-conservative measured availability wins where
+        # windows overlap (a daily DAM row and an EIA-923 zero-month backstop).
+        cap[mask] = np.minimum(cap[mask], float(r.avail))
+    return caps
+
+
 # Within-window retiree measured-availability cap (CAMPD unit-level CEMS).
 # A within-window retiree (fleet.load_retired_within_window) is a whole-plant
 # exit the COD ramp ages out on its EIA-860 planned retirement date. But a unit
