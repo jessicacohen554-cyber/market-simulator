@@ -13625,3 +13625,40 @@ chased. The ERCOT-69 calibration-log entry (413-blocked last session) merged
 into `docs/calibration-log.md` from the handoff per its instruction.
 
 (Full decomposition detail + the ERCOT-71 charter sketch: `docs/handoffs/ercot70-supply-mix-decomp-2026-07.md`.)
+
+---
+
+## 2026-07-16 — PJM-113 leg-A-only isolation (owner-requested; LEG B is inert)
+
+**Run:** `2026-07-16-pjm-113-short-only` (PJM, 2023+2024+2025, one bundle). The
+pjm-111 recipe + `unit_outage_short_windows` **only** — the unit-grain partial
+overlay (`unit_partial_outage_windows`, LEG B) deliberately OFF. Owner asked to
+isolate the strong, unambiguous structural leg (short full stops) from the
+debatable partial-derate detection and see if leg A alone is the keeper worth
+promoting.
+
+**Finding — LEG B is inert on everything scored:**
+
+| C3c model tail (h > $200) | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| pjm-111 (no overlay) | 1 | 1 | 17 |
+| pjm-112 (legs A+B) | 1 | 1 | **18** |
+| pjm-113 (leg A only) | 1 | 1 | **18** |
+
+pjm-113 = pjm-112 on **every** scored criterion (C1 16/16, C2, C3a, C3b, C4,
+C5a, C7, C8 PASS; C3c 2025 FAIL 18 h). The entire +1 h tail move (17→18) came
+from LEG A; LEG B added zero. LEG B's only measurable effect is ~1 TWh/yr of
+extra coal removal (COAL_BIT 2023 99.9→98.3, 2024 101.2→100.3, 2025 129.8→129.1
+model), which pulls 2023/24 slightly *further below* actual (103/105) — a
+wash-to-mildly-harmful, within-tolerance change. So the debatable partial-derate
+leg can be dropped with no scored loss.
+
+**Implication:** pjm-113 (leg A only) is the **cleaner promotion candidate** than
+pjm-112 — same result, drops the inert/debatable leg. Determination NOT-YET
+(C3c), same lineage as pjm-111/112: the summer tail is availability-corrected but
+congestion-surface-bound (§5/§8.1). LEG A itself moves annual coal both ways
+(2023/24 slightly worse, 2025 toward actual) — a rule-11 signal (the units WERE
+in measured outages; the exposed under-fit is real), not a fit-improver. Keeper
+decision (pjm-110 → pjm-111 / pjm-113, or hold) is owner-only; `keepers.json` not
+flipped. Attestation: pjm-111 ledger verbatim + one zero-DOF measured entry (short
+extract); n_entries 16, n_residual 6.
