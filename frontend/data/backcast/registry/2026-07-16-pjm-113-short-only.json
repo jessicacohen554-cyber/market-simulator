@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-16-pjm-113-short-only",
+  "label": "pjm 113 short only",
+  "date": "2026-07-16",
+  "shorthand": "pjm-113-short-only",
+  "definition": "(KEEPER CANDIDATE \u2014 leg-A-only sibling of pjm-112) PJM 113: the pjm-111 CC-reconcile keeper recipe with EXACTLY the LEG A measured unit-availability overlay armed \u2014 unit_outage_short_windows (short < 5-day baseload-coal full stops, re-derived on the WHEN-OPERABLE baseload guard). The unit-grain partial-derate overlay (unit_partial_outage_windows, LEG B) is deliberately LEFT OFF to isolate the strong, unambiguous structural leg (1314 of pjm-112's 1502 MW recovered in the 22 summer tail hours) from the debatable partial-derate detection. RESULT: pjm-113 reproduces pjm-112 on EVERY scored criterion, including the C3c-2025 tail (18 h, identical) \u2014 LEG B is inert on the scorecard and adds only ~1 TWh/yr of extra coal removal (wash-to-mildly-harmful on 2023/24 fit). NOT-YET (C3c), same lineage as pjm-111/112. Zero fitted scalars; no constant touched. Cleaner promotion candidate than pjm-112 (drops the inert debatable leg). Keeper decision owner-only. docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md \u00a77-8.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-16-pjm-113-short-only.js",
+  "bundle": "results/calibration/pjm113_short_only"
+}
