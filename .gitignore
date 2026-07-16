@@ -438,3 +438,10 @@ logs_g10/
 # the deliverable, mirroring the existing hindcast bundle convention).
 /results/hindcast/*/*/*/*.parquet
 /results/hindcast/*/run.log
+
+# Per-year probe accumulator scaffolding (the <=16 GB per-year + --reuse-solved
+# orchestration, e.g. results/calibration/_miso70_acc/{main,base}/y2023): fully
+# disposable intermediates — the registered final bundles are the deliverable.
+# miso-69's accumulators were committed then dropped (20f31a2); ignore the
+# namespace outright instead.
+/results/calibration/_*_acc/

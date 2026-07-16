@@ -1111,6 +1111,40 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "vintage (rule 23)",
             )
         )
+    if sc.get("maxgen_emergency_tier_pricing"):
+        # F5 declared-window ELMP emergency-tier pricing (miso-70 lane),
+        # ZERO fitted scalars: the two $ floors are verbatim tariff/SOM
+        # values and the windows/levels/regions are the maxgen-events
+        # registry's rows (already ledgered above when M-2 is armed; this
+        # entry carries the tier-floor schedule itself).
+        out.append(
+            _entry(
+                "maxgen_emergency_tier_pricing (declared-window ELMP "
+                "emergency-tier offer floors)",
+                "reserve_config.MISO_EMERGENCY_TIER{1,2}_OFFER_FLOOR via "
+                "data.maxgen_events.emergency_tier_slack_cost (load-slack "
+                "repriced min(voll, floor) inside registry Warning+ windows, "
+                "physical zones only; RBDC/zonal-ORDC curves never edited)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="SOM-footnoted ELMP emergency pricing (2023 SOM fn.21 "
+                "= 2024/2025 SOM fn.17): $500/MWh Tier-1 offer floor at Max "
+                "Gen Warning, $1,000/MWh Tier-2 at Event Step 2; ladder "
+                "scoping (Warning/Step-1 -> Tier 1, Step 2+ -> Tier 2, "
+                "advisory/alert -> no pricing effect) from the 2023 SOM "
+                "p.10-11 emergency-declaration ladder. Depth unbounded "
+                "within the declared window — identified by the ladder's own "
+                "declaration discipline (2023 SOM p.11: each level declared "
+                "only when its MWs are needed), so the declared level is the "
+                "measured depth indicator and no per-window MW bound exists "
+                "to fit",
+                root_cause="backcast-only availability-event family "
+                "(rule 13): regenerates from each new declaration vintage; a "
+                "forecast year carries no declared windows (the post-9/30/"
+                "2025 ER25-579 regime is the forecast lane's charter)",
+            )
+        )
     if (
         iso in ("NYISO", "CAISO")
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))
