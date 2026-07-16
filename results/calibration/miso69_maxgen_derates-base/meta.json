@@ -1,8 +1,10 @@
 {
-  "timestamp": "2026-07-16T21:35:33",
+  "timestamp": "2026-07-16T22:15:35",
   "iso": "MISO",
   "years": [
-    2023
+    2023,
+    2024,
+    2025
   ],
   "hours": 8760,
   "passes": [
@@ -11,7 +13,9 @@
   "commitment": false,
   "commitment_screen_coal": true,
   "gas_prices": {
-    "2023": 2.54
+    "2023": 2.54,
+    "2024": 2.19,
+    "2025": 3.52
   },
   "coal_lignite_mustrun": null,
   "coal_prb_mustrun": null,
@@ -47,8 +51,7 @@
     "unit_outage_short_windows": true,
     "class_aware_fuel_price_fallback": true,
     "coal_committed_takeorpay_regulated": true,
-    "st_gas_mustrun_p25_level": true,
-    "unit_outage_maxgen_events": true
+    "st_gas_mustrun_p25_level": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -224,10 +227,43 @@
   "mass_cap_program": null,
   "btm_backfill_year": null,
   "shared_inputs": {
-    "eia930": "../_shared/MISO/eia930-1d847a6cf3c3.parquet",
-    "eia923": "../_shared/MISO/eia923-84900a023a27.parquet",
-    "campd": "../_shared/MISO/campd-d1cc621a4e29.parquet"
+    "eia930": "../_shared/MISO/eia930-2f4bfa01b1e4.parquet",
+    "eia923": "../_shared/MISO/eia923-96136b23f6a3.parquet",
+    "campd": "../_shared/MISO/campd-0c8c8860e930.parquet"
   },
-  "git_sha": "ecaabbc",
-  "highspy_version": "1.14.0"
+  "git_sha": "feedd99",
+  "highspy_version": "1.14.0",
+  "reuse": {
+    "source_bundle": "results/calibration/_miso69_acc_base/y2024",
+    "requested_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "reused_years": {
+      "2023": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "67da490f7775a552",
+        "scenario_config_sha256": "9989a528e748cfcc"
+      },
+      "2024": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "7e29efc84d3d972a",
+        "scenario_config_sha256": "a58663f236663f8a"
+      }
+    },
+    "fresh_years": [
+      2025
+    ],
+    "refusals": {
+      "2025": "year not solved in the prior bundle"
+    },
+    "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
+    "source_timestamp": "2026-07-16T22:07:24",
+    "source_git_sha": "a19f796"
+  }
 }

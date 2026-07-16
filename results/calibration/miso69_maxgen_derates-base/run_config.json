@@ -1,19 +1,20 @@
 {
-  "timestamp": "2026-07-16T21:43:20",
+  "timestamp": "2026-07-16T22:15:35",
   "git": {
-    "sha": "8ef4a5e",
+    "sha": "feedd99",
     "branch": "claude/miso-phase-b-m2-derates-8jv21c",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
   },
-  "model_changes_note": "miso-69 (main) -- declared-event-window revealed derates (M-2 of the MISO price-formation lane): the miso-68 keeper recipe plus the gated unit_outage_maxgen_events channel \u2014 CAMPD revealed unit derates inside the ISO's DECLARED capacity-emergency windows only (maxgen-events registry, 8 qualifying windows -> 5 event blocks: Aug-24-2023 Step-2A, Aug-26-2024 Warning, Jun-23/24-2025 EEA1+Warning (Midwest), Jul-24-2025 Capacity Advisory, Jul-28/29-2025 Advisory+Alert+Warning), under the frozen guards (declared-window scope; $150 DA in-merit certificate, region-scoped; \u00b145-day capability basis with best-event-hour credit; disjointness vs std/short extracts asserted; no control-day screen). Class-agnostic \u2014 the only channel that can carry the measured CT/CC event-window leg. Targets the phantom event-window headroom behind C3a-2025 Jun/Jul and the C3c-2025 in-window tail hours (26/38); C3c-2024 expectation retired (Jan-2024 carries no declaration \u2014 registry findings \u00a71). Zero fitted scalars; availability truth, never an outcome pin (rules 1/11/13). base = unchanged-recipe same-box drift control (mechanism-only = main - base). No ablation twin (rule 20 amended 2026-07-14). Design: docs/handoffs/miso-price-formation-design-2026-07.md \u00a73/M-2 + docs/handoffs/miso-maxgen-registry-findings-2026-07.md.",
+  "model_changes_note": "miso-69 (base) -- declared-event-window revealed derates (M-2 of the MISO price-formation lane): the miso-68 keeper recipe plus the gated unit_outage_maxgen_events channel \u2014 CAMPD revealed unit derates inside the ISO's DECLARED capacity-emergency windows only (maxgen-events registry, 8 qualifying windows -> 5 event blocks: Aug-24-2023 Step-2A, Aug-26-2024 Warning, Jun-23/24-2025 EEA1+Warning (Midwest), Jul-24-2025 Capacity Advisory, Jul-28/29-2025 Advisory+Alert+Warning), under the frozen guards (declared-window scope; $150 DA in-merit certificate, region-scoped; \u00b145-day capability basis with best-event-hour credit; disjointness vs std/short extracts asserted; no control-day screen). Class-agnostic \u2014 the only channel that can carry the measured CT/CC event-window leg. Targets the phantom event-window headroom behind C3a-2025 Jun/Jul and the C3c-2025 in-window tail hours (26/38); C3c-2024 expectation retired (Jan-2024 carries no declaration \u2014 registry findings \u00a71). Zero fitted scalars; availability truth, never an outcome pin (rules 1/11/13). base = unchanged-recipe same-box drift control (mechanism-only = main - base). No ablation twin (rule 20 amended 2026-07-14). Design: docs/handoffs/miso-price-formation-design-2026-07.md \u00a73/M-2 + docs/handoffs/miso-maxgen-registry-findings-2026-07.md.",
   "ablation_of": null,
   "calibration_flags": {
     "iso": "MISO",
     "years": [
       2023,
-      2024
+      2024,
+      2025
     ],
     "hours": 8760,
     "passes": [
@@ -23,7 +24,8 @@
     "commitment_screen_coal": true,
     "gas_prices": {
       "2023": 2.54,
-      "2024": 2.19
+      "2024": 2.19,
+      "2025": 3.52
     },
     "outage_source": "historic",
     "coal_lignite_mustrun": null,
@@ -46,8 +48,7 @@
       "unit_outage_short_windows": true,
       "class_aware_fuel_price_fallback": true,
       "coal_committed_takeorpay_regulated": true,
-      "st_gas_mustrun_p25_level": true,
-      "unit_outage_maxgen_events": true
+      "st_gas_mustrun_p25_level": true
     },
     "coal_bit_passthrough_sigmoid": false,
     "coal_bit_sigmoid_overrides": {},
@@ -62,7 +63,7 @@
     "ercot_dam_as_scarcity_threshold": 150.0,
     "temp_dependent_derate": false,
     "nyiso_dynamic_reserve_requirements": null,
-    "git_sha": "8ef4a5e"
+    "git_sha": "feedd99"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -704,32 +705,40 @@
     "outage_source": "historic",
     "unit_outage_short_windows": true,
     "unit_partial_outage_windows": false,
-    "unit_outage_maxgen_events": true,
+    "unit_outage_maxgen_events": false,
     "gas_price_override": 2.54
   },
   "reuse": {
-    "source_bundle": "results/calibration/_miso69_acc_main/y2023",
+    "source_bundle": "results/calibration/_miso69_acc_base/y2024",
     "requested_years": [
       2023,
-      2024
+      2024,
+      2025
     ],
     "reused_years": {
       "2023": {
         "passes": [
           "P1"
         ],
-        "cache_key": "6a5cdecc77e4baff",
-        "scenario_config_sha256": "f5b5c305e6981d16"
+        "cache_key": "67da490f7775a552",
+        "scenario_config_sha256": "9989a528e748cfcc"
+      },
+      "2024": {
+        "passes": [
+          "P1"
+        ],
+        "cache_key": "7e29efc84d3d972a",
+        "scenario_config_sha256": "a58663f236663f8a"
       }
     },
     "fresh_years": [
-      2024
+      2025
     ],
     "refusals": {
-      "2024": "year not solved in the prior bundle"
+      "2025": "year not solved in the prior bundle"
     },
     "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-16T21:35:33",
-    "source_git_sha": "ecaabbc"
+    "source_timestamp": "2026-07-16T22:07:24",
+    "source_git_sha": "a19f796"
   }
 }
