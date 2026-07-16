@@ -1,8 +1,8 @@
 {
-  "timestamp": "2026-07-15T21:17:12",
+  "timestamp": "2026-07-16T03:04:50",
   "git": {
-    "sha": "93db626",
-    "branch": "claude/miso-phase-b-execution-lm8wdp",
+    "sha": "e1d1c415",
+    "branch": "claude/miso-cc-regular-2023-bisect-pmyi2l",
     "dirty": false,
     "changed_files": [],
     "diffstat": ""
@@ -63,7 +63,7 @@
     "ercot_dam_as_scarcity_threshold": 150.0,
     "temp_dependent_derate": false,
     "nyiso_dynamic_reserve_requirements": null,
-    "git_sha": "93db626"
+    "git_sha": "e1d1c415"
   },
   "scenario_config": {
     "weather_year": 2023,
@@ -232,6 +232,7 @@
     "market_design_retirement_floor": false,
     "capacity_deliverability_limits": false,
     "capacity_market_clearing": false,
+    "capacity_market_clearing_by_iso": null,
     "renewable_elcc_curves": true,
     "local_capacity_constraints": false,
     "planning_reserve_margin": 0.1375,
@@ -300,6 +301,7 @@
     "caiso_firm_import_selfschedule": false,
     "caiso_demand_clock_realign": false,
     "caiso_supply_consistent_demand": false,
+    "caiso_citygate_spot_level": false,
     "caiso_storage_as_reservation": false,
     "caiso_intertie_reference_price": false,
     "caiso_corridor_atc_forward": false,
@@ -315,6 +317,7 @@
     "miso_rdt_tcdc": true,
     "miso_rpe_pricing": true,
     "caiso_scarcity_pricing": false,
+    "caiso_scarcity_import_headroom": false,
     "caiso_lcr_commitment_credit": false,
     "caiso_reserve_coopt": false,
     "caiso_commitment_posture": false,
@@ -687,10 +690,11 @@
     "dual_fuel_switching": false,
     "outage_source": "historic",
     "unit_outage_short_windows": true,
+    "unit_partial_outage_windows": false,
     "gas_price_override": 2.54
   },
   "reuse": {
-    "source_bundle": "results/calibration/miso67_main_acc/y2024",
+    "source_bundle": "/tmp/claude-0/-home-user-market-simulator/7aac5052-9048-5a5d-b7f6-51fe7f821e33/scratchpad/runs/main_y2024",
     "requested_years": [
       2023,
       2024,
@@ -701,15 +705,15 @@
         "passes": [
           "P1"
         ],
-        "cache_key": "1bb2e89e4c013035",
-        "scenario_config_sha256": "8f2e73a663c6cdce"
+        "cache_key": "7c1330cbe8591dfb",
+        "scenario_config_sha256": "04afce0fb393e4d4"
       },
       "2024": {
         "passes": [
           "P1"
         ],
-        "cache_key": "0aa83e38aa8036b4",
-        "scenario_config_sha256": "22707b389c28ee43"
+        "cache_key": "e8da0a3e94c7505b",
+        "scenario_config_sha256": "af974f3539dc7398"
       }
     },
     "fresh_years": [
@@ -719,7 +723,7 @@
       "2025": "year not solved in the prior bundle"
     },
     "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-15T21:09:35",
-    "source_git_sha": "93db626"
+    "source_timestamp": "2026-07-16T02:57:36",
+    "source_git_sha": "e1d1c415"
   }
 }

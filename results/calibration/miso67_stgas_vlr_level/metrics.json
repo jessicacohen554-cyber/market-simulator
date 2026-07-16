@@ -1,5 +1,5 @@
 {
-  "run_id": "2026-07-15-miso-67-stgas-p25",
+  "run_id": "2026-07-16-miso-67-stgas-p25",
   "iso": "MISO",
   "label": "miso 67 stgas p25",
   "target_years": [
@@ -16,9 +16,13 @@
   "rubric_version": 2.5,
   "determination": "NOT-YET",
   "reasons": [
-    "governance gate UNATTESTED: no governance attestation in bundle"
+    "undocumented out-of-tolerance (FAIL) criteria: fuelmix, price_mean, price_tail"
   ],
-  "notes": [],
+  "notes": [
+    "C8 2023 ST_GAS: grounded above budget \u2014 32.8% forced (7.4119 of 22.6 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.983 (\u22650.8) & off-peak CV ratio 1.348 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2024 ST_GAS: grounded above budget \u2014 34.5% forced (7.9357 of 22.9841 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.982 (\u22650.8) & off-peak CV ratio 1.162 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
+    "C8 2025 ST_GAS: grounded above budget \u2014 50.2% forced (10.1851 of 20.2995 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.986 (\u22650.8) & off-peak CV ratio 1.399 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)"
+  ],
   "criteria": {
     "fuelmix": {
       "label": "C1 fuel-mix by class (grid-delivered)",
@@ -58,32 +62,37 @@
     "storage": {
       "label": "C5b storage throughput",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "storage_shape": {
       "label": "C5c storage dispatch shape",
       "tier": "supporting",
-      "status": "FAIL"
+      "status": "CAVEAT",
+      "caveat_kind": "ledgered"
     },
     "governance": {
       "label": "C6 governance gate",
       "tier": "protective",
-      "status": "UNATTESTED"
+      "status": "PASS"
     },
     "shape": {
       "label": "C7 diurnal shape (D-1)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     },
     "forced_share": {
       "label": "C8 forced-energy share (D-2)",
       "tier": "protective",
-      "status": "SKIPPED"
+      "status": "PASS"
     }
   },
   "caveats": {
     "protective": [],
-    "ledgered": [],
+    "ledgered": [
+      "C5b storage throughput",
+      "C5c storage dispatch shape"
+    ],
     "commercial_band": [],
     "budget": {
       "protective_max": 1,
@@ -91,11 +100,11 @@
     }
   },
   "grade_summary": {
-    "scored": 9,
-    "target_grade": 4,
+    "scored": 12,
+    "target_grade": 7,
     "commercial_grade": 0,
-    "ledgered": 0,
-    "fails": 5
+    "ledgered": 2,
+    "fails": 3
   },
   "free_class_score": {
     "iso": "MISO",
