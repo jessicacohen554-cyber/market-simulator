@@ -1208,6 +1208,44 @@ def measured_import_hub_prices(
     return out or None
 
 
+def measured_intertie_hub_price_raw(
+    iso: str, year: int, hours: int, hub: str
+) -> np.ndarray | None:
+    """Return ONE WECC intertie hub's measured hourly LMP, gaps left NaN.
+
+    The raw-evidence companion to :func:`measured_import_hub_prices`: the same
+    ``wecc_intertie_lmp_hourly_<ISO>.parquet`` series with the isolated DST
+    spring-forward NaN interpolated (``limit=2``) but WITHOUT the bulk
+    reference-formula gap fill — a genuine retention gap (2023 Jan–Feb) stays
+    NaN. Used where the measured print is EVIDENCE of a market state rather
+    than a price to charge (e.g. the caiso-87 surplus-state trigger of
+    :func:`market_sim.model.transmission.inject_caiso_dsw_surplus_clean`):
+    the formula fill is pricing continuity, not surplus evidence, so filled
+    hours must not classify as surplus.
+
+    Returns ``(hours,)`` $/MWh with NaN where unmeasured, or ``None`` when the
+    ISO is not CAISO, the parquet is absent, or the year/hub is uncovered.
+    """
+    if iso.upper() != "CAISO":
+        return None
+    path = CALIBRATION_DIR / f"wecc_intertie_lmp_hourly_{iso.upper()}.parquet"
+    if not path.exists():
+        return None
+    frame = pd.read_parquet(path)
+    frame = frame[(frame["year"] == year) & (frame["hub"] == hub)]
+    if frame.empty:
+        return None
+    series = frame.sort_values("hour")
+    price = (
+        pd.to_numeric(series["price"], errors="coerce")
+        .interpolate(limit=2)
+        .to_numpy(dtype=float)
+    )
+    if price.shape[0] < hours:
+        return None
+    return price[:hours].copy()
+
+
 def measured_miso_pjm_border_prices(
     iso: str, year: int, hours: int
 ) -> np.ndarray | None:

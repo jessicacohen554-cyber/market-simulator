@@ -90,10 +90,20 @@ class TestBuildPerHubIntertie(unittest.TestCase):
     """Tranches land in their hub's corridor zone; one export leg per corridor."""
 
     def test_tranches_placed_in_hub_zone(self):
+        from market_sim.config.interchange_config import (
+            CAISO_DSW_SURPLUS_CLEAN_NAME,
+        )
+
         gens = build_caiso_per_hub_intertie()
         by_uid = {g.unit_id: g for g in gens}
         for tranche, hub in CAISO_IMPORT_TRANCHE_HUB.items():
             zone = CAISO_PER_HUB_IMPORT_ZONES[hub]
+            if tranche == CAISO_DSW_SURPLUS_CLEAN_NAME:
+                # caiso-87 surplus-clean depth tranche: on the hub map for
+                # pricing, but built only when armed (surplus_clean=True) —
+                # absent from the default builder output.
+                self.assertNotIn(f"{zone}_{tranche}", by_uid)
+                continue
             g = by_uid[f"{zone}_{tranche}"]
             self.assertEqual(g.zone, zone)
             self.assertGreater(g.pmax_mw, 0.0)
