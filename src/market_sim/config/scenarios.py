@@ -5720,6 +5720,39 @@ class ScenarioConfig:
     # GATED CHANGE (alters availability).
     unit_outage_maxgen_events: bool = False
 
+    # Declared-window ELMP emergency-tier pricing (the MISO F5 scarcity-depth
+    # lane; frozen design docs/handoffs/miso-f5-scarcity-depth-design-2026-07
+    # .md). DRIVER: MISO's declared capacity-emergency instruments (the same
+    # maxgen-events registry rows as unit_outage_maxgen_events, per-row
+    # primary provenance) plus the SOM-documented tier pricing they trigger —
+    # "Emergency supply is priced by applying a $500/MWh offer price floor
+    # (Tier 1) to this supply in ELMP when MISO declares a Max Gen Warning
+    # and a $1000/MWh floor (Tier 2) in a Max Gen Event Step 2" (2023 SOM
+    # fn.21 = 2024/2025 SOM fn.17; constants in config.reserve_config with
+    # the p.10-11 ladder scoping: Warning/Step-1 -> Tier 1, Step 2+ ->
+    # Tier 2, Advisory/Alert -> no pricing effect). MECHANISM: inside a
+    # registry window declared at Warning or higher, the declared region's
+    # zones reprice the energy-balance load slack — the LP's administrative
+    # last-resort supply — from the ISO bid cap to min(voll, tier floor)
+    # (data.maxgen_events.emergency_tier_slack_cost -> the DispatchModel
+    # slack_cost kwarg). The emergency ladder's supply is thereby priced at
+    # its documented offer floor instead of the model riding the slack cap
+    # (miso-69's $1,841-1,985 declared-window prints vs the actual $169 DA);
+    # the RBDC / zonal-ORDC families are never edited (rule 19) and the cost
+    # never RISES (min). WINDOW: exactly the registry Warning+ windows —
+    # off-window the slack cost equals voll by construction, so off-window
+    # binding is structurally impossible. FORWARD STORY: backcast/calibration
+    # overlay only (legitimacy D-5 backcast_only, same admissibility family
+    # as the CAMPD/maxgen outage windows); a forecast year carries no
+    # declared windows, and the post-9/30/2025 ER25-579 shortage-pricing
+    # regime is the forecast lane's own charter. Depth is unbounded within
+    # the window: the ladder's own declaration discipline (2023 SOM p.11 —
+    # each level is declared only when its MWs are needed) makes the declared
+    # level the measured depth indicator, so no per-window MW bound is
+    # fitted. Default off; MISO backcast arms it. GATED CHANGE (alters the
+    # LP objective inside declared windows).
+    maxgen_emergency_tier_pricing: bool = False
+
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -6851,6 +6884,7 @@ TIER_TAGS: dict[str, int] = {
     "unit_outage_short_windows": 3,
     "unit_partial_outage_windows": 3,
     "unit_outage_maxgen_events": 3,
+    "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
 }
 
