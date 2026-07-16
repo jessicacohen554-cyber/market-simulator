@@ -3710,6 +3710,278 @@ def build_ercot_offer_midcurve_conditional_markup(
     return markup
 
 
+#: Model plant_group -> measured class key of the ERCOT DAM cleared-share
+#: boundary artifact (scripts/derive_ercot_dam_cleared_share.py). Deliberately
+#: NARROWER than the mid-curve map: CC_CHP is excluded (steam-host cogens
+#: self-schedule — the ERCOT-70/71 decomposition measures the model's CC_CHP
+#: within +12 MW of actual on the target windows, so there is no composition
+#: error to price there), ST_GAS is owned by the drag structure (rule 19).
+_ERCOT_CLEARED_SHARE_CLASS_OF = {
+    "CC_REGULAR": "CC",
+    "CT_PEAKER": "CT",
+}
+
+
+def build_ercot_offer_surface_cleared_share_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+) -> "np.ndarray | None":
+    """Build the ERCOT P1-only DAM CLEARED-SHARE boundary markup ``(n_gen, T)``.
+
+    The ERCOT-72 covered-CC / CT composition mechanism
+    (``ScenarioConfig.ercot_offer_surface_cleared_share``). ERCOT has no DAM
+    must-offer; the 60-Day disclosure measures that on moderate days only
+    ~0.49-0.64 of CC live capability (CT: 0.03-0.47) clears the DAM for energy
+    — the remainder is not in the day-ahead supply at any price, while the
+    model's econ tranches span ~92% of every plant at the econ multipliers.
+    This floors each merchant gas ``econ*`` tranche row whose WITHIN-PLANT
+    cumulative-capacity midpoint ``share_g`` exceeds the hour's net-load bin's
+    MEASURED cleared share at the bin's MEASURED above-boundary offer wall::
+
+        rel          = (share_g - boundary(bin)) / (1 - boundary(bin))
+        target[g, t] = interp(rel, ladder_q, ladder_mult(bin)) x gas_day(t)
+        markup[g, t] = max(0, min(target, cap_frac x VOLL) - mc_base[g, t])
+
+    * ``boundary`` (cleared share of live capability) and the wall ladder
+      (MW-weighted quantiles of offered-but-uncleared curve-segment prices as
+      effective-HR multipliers) are both measured per net-load-percentile bin
+      (condition-responsive: measured CC boundary 0.33 loose -> 0.64 tight),
+      never day-pinned; zero fitted scalars (rules 13/14/26).
+    * Targeted rows: ``econ*`` tranches of CC_REGULAR / CT_PEAKER only. The
+      PEAK rungs stay owned by ``ercot_offer_surface_conditional``, the
+      committed/mustrun blocks by the bridge/floor structure, ST_GAS by the
+      drag, CC_CHP is measured composition-clean (rule 19). Mutually exclusive
+      with ``ercot_offer_surface_midcurve_conditional`` (same econ rows — one
+      owner per row): arming both is a hard error.
+    * The floor only ever RAISES a bid (``max(0, .)``) and is capped below
+      VOLL; rows at/below the boundary and bins with no measured data are
+      byte-identical. P1-only (the ``mc_bid_adjust`` seam): P0 run lengths and
+      the startup-amortization coupling are untouched.
+    * ``ercot_offer_surface_cleared_share_state`` (ERCOT-73, default off)
+      multiplies each walled row-hour's markup by the MEASURED
+      commitment-loading state weight ``w_c(t)`` (the unloaded fraction of
+      the class's above-DA-position online capability —
+      ``scripts/derive_ercot_commitment_loading_state.py``, frozen rule 23):
+      the floored bid becomes ``base + w x (wall - base)``. Moderate regimes
+      (w ~ 1) keep the full wall; regimes where reality RUC/self-commits the
+      un-offered capacity online near cost stand it down (w -> 0). Backcast
+      years read the year's own measured hourly series (the CAMPD
+      outage-overlay pattern); years absent from the artifact fall back to
+      its pooled climatology (net-load-percentile bin x 4-hour block,
+      forward-native). Zero fitted scalars.
+    """
+    state_flag = getattr(config, "ercot_offer_surface_cleared_share_state", False)
+    if not getattr(config, "ercot_offer_surface_cleared_share", False):
+        if state_flag and config.iso == "ERCOT":
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_state scopes the "
+                "cleared-share wall — arm ercot_offer_surface_cleared_share "
+                "too (the state weight has nothing to scope on its own)."
+            )
+        return None
+    if config.iso != "ERCOT":
+        return None
+    if getattr(config, "ercot_offer_surface_midcurve_conditional", False):
+        raise ValueError(
+            "ercot_offer_surface_cleared_share and "
+            "ercot_offer_surface_midcurve_conditional both price the gas econ "
+            "rows — one mechanism per row (rule 19); arm exactly one."
+        )
+    path = getattr(config, "ercot_offer_surface_cleared_share_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        path = str(_paths.CALIBRATION_DIR / "ercot_dam_cleared_share_condbinned.json")
+    surface = json.loads(Path(path).read_text())
+    prov = surface.get("_provenance", {})
+    edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
+    ladder_q = np.asarray(prov.get("ladder_quantiles", ()), dtype=float)
+    if not edges or ladder_q.size == 0:
+        raise ValueError(
+            "ercot_offer_surface_cleared_share: surface JSON carries no "
+            "edges/quantiles — re-derive scripts/derive_ercot_dam_cleared_share.py"
+        )
+    n_bins = len(edges) + 1
+
+    hours = int(mc_base.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net_load, edges)
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    # ERCOT-73 commitment-loading state weight per class-hour (1.0 = full
+    # wall). Year table = the measured backcast overlay; climatology = the
+    # forward/holdout fallback on the SAME bin edges (asserted) x hour block.
+    state_w: dict[str, np.ndarray] = {}
+    if state_flag:
+        spath = getattr(config, "ercot_offer_surface_cleared_share_state_path", None)
+        if not spath:
+            from market_sim.config import paths as _paths
+
+            spath = str(_paths.CALIBRATION_DIR / "ercot_commitment_loading_state.json")
+        state = json.loads(Path(spath).read_text())
+        sprov = state.get("_provenance", {})
+        sedges = tuple(float(x) for x in sprov.get("netload_pct_edges", ()))
+        if sedges != edges:
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_state: state artifact bin "
+                f"edges {sedges} != wall edges {edges} — re-derive "
+                "scripts/derive_ercot_commitment_loading_state.py"
+            )
+        block_h = int(sprov.get("hour_block_hours", 4))
+        hod_block = (np.arange(hours) % 24) // block_h  # (T,)
+        for cls_key in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values()):
+            entry = state.get(cls_key)
+            if not entry:
+                continue
+            yr_tbl = entry.get("years", {}).get(str(year))
+            if yr_tbl is not None and len(yr_tbl) >= hours:
+                state_w[cls_key] = np.clip(
+                    np.asarray(yr_tbl[:hours], dtype=float), 0.0, 1.0
+                )
+            else:
+                clim = np.asarray(
+                    state.get("climatology", {}).get(cls_key, ()), dtype=float
+                )
+                if clim.ndim != 2 or clim.shape[0] != n_bins:
+                    continue
+                w = clim[hour_bin, np.minimum(hod_block, clim.shape[1] - 1)]
+                state_w[cls_key] = np.clip(np.nan_to_num(w, nan=1.0), 0.0, 1.0)
+
+    # Delivered-gas day series on the model clock (the derive's own price
+    # normalizer: HH daily + ERCOT basis, forward-filled).
+    from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
+    from market_sim.data.fuel import HENRY_HUB_DAILY_PATH
+
+    hh = pd.read_csv(HENRY_HUB_DAILY_PATH, parse_dates=["date"])
+    s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
+    full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
+    daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
+    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
+
+    # Per-class boundary (n_bins,) + wall table (n_bins, n_q) for this delivery
+    # year (pooled fallback for an unmapped/forward year).
+    boundaries: dict[str, np.ndarray] = {}
+    walls: dict[str, np.ndarray] = {}
+    for cls_key in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values()):
+        entry = surface.get(cls_key)
+        if not entry:
+            continue
+        tbl = entry.get("years", {}).get(str(year)) or entry.get("pooled")
+        if not tbl:
+            continue
+        share = np.asarray(tbl.get("cleared_share", ()), dtype=float)
+        lad = tbl.get("ladder", ())
+        if share.size != n_bins or len(lad) != n_bins:
+            continue
+        boundaries[cls_key] = share
+        walls[cls_key] = np.array(
+            [[float(pt[1]) for pt in lad_b] for lad_b in lad], dtype=float
+        )  # (n_bins, n_q)
+
+    # Target rows + within-plant share midpoints: every tranche of the plant
+    # ordered by its annual-mean base cost — the model's own rising CAMPD
+    # tranche curve defines each row's curve position (the mid-curve
+    # construction, scale-free against fleet-capacity mismatches).
+    prefixes: dict[str, list[int]] = {}
+    row_cls: dict[int, str] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None) or ""
+        if cls not in _ERCOT_CLEARED_SHARE_CLASS_OF:
+            continue
+        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+        row_cls[g] = cls
+
+    pmax = fleet_arrays.pmax
+    voll_cap = float(
+        getattr(config, "ercot_offer_surface_price_cap_frac", 0.95)
+    ) * float(getattr(config, "voll", 5000.0))
+    markup = np.zeros_like(mc_base)
+    n_priced = 0
+    mean_mc = mc_base.mean(axis=1)
+    for rows in prefixes.values():
+        rows_arr = np.asarray(rows, dtype=int)
+        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
+        caps = pmax[order]
+        total = caps.sum()
+        if total <= 0.0:
+            continue
+        cum = np.cumsum(caps)
+        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
+        for g, s_g in zip(order, mids):
+            gen = generators[g]
+            sfx = gen.unit_id.rpartition("_")[2]
+            if not sfx.startswith("econ"):
+                continue
+            cls_key = _ERCOT_CLEARED_SHARE_CLASS_OF[row_cls[g]]
+            if cls_key not in boundaries:
+                continue
+            bnd = boundaries[cls_key]  # (n_bins,)
+            wall = walls[cls_key]  # (n_bins, n_q)
+            # Per-bin target multiplier: 0 (no floor) at/below the boundary or
+            # where the bin carries no measured boundary/wall.
+            mult_b = np.zeros(n_bins)
+            for b in range(n_bins):
+                if not np.isfinite(bnd[b]) or bnd[b] >= 1.0 or s_g <= bnd[b]:
+                    continue
+                if not np.isfinite(wall[b]).all():
+                    continue
+                rel = (s_g - bnd[b]) / (1.0 - bnd[b])
+                mult_b[b] = float(np.interp(rel, ladder_q, wall[b]))
+            if not mult_b.any():
+                continue
+            target = mult_b[hour_bin] * gas_day  # (T,); 0 where no floor
+            target = np.minimum(target, voll_cap)
+            row = np.maximum(0.0, target - mc_base[g, :])
+            if state_flag:
+                # ERCOT-73: floored bid = base + w x (wall - base) — the
+                # measured commitment-loading regime scales the markup.
+                w = state_w.get(cls_key)
+                if w is None:
+                    continue  # no measured state for the class: no wall
+                row = row * w
+            if row.any():
+                markup[g, :] = row
+                n_priced += 1
+
+    if n_priced == 0 or not np.any(markup > 0.0):
+        logger.info(
+            "ERCOT cleared-share offer boundary: no econ row floored (every "
+            "row at/below the measured cleared share, or measured walls <= "
+            "model econ bids) — byte-identical"
+        )
+        return None
+    logger.info(
+        "ERCOT cleared-share offer boundary: floored %d gas econ tranche rows "
+        "above the measured DAM cleared share (%d net-load bins, year table "
+        "%s)%s; P1-only",
+        n_priced,
+        n_bins,
+        str(year)
+        if any(
+            str(year) in surface.get(c, {}).get("years", {})
+            for c in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values())
+        )
+        else "pooled",
+        (
+            "; commitment-loading state weight ON (measured "
+            + (
+                "year series"
+                if any(str(year) in state.get(c, {}).get("years", {}) for c in state_w)
+                else "climatology fallback"
+            )
+            + ")"
+        )
+        if state_flag
+        else "",
+    )
+    return markup
+
+
 # Model tranche suffixes carrying the gas fleet's committed (LSL) block and the
 # economic ramp — the rows the low-curve markdown reprices. ``econc``-prefixed
 # suffixes are the N-slice smoothed econ ramp (``_econ_curve_steps``); ``econ``/
@@ -5923,6 +6195,124 @@ def load_retired_within_window(
             len(generators),
             iso,
             sum(g.pmax_mw for g in generators),
+            sorted({int(g.plant_code) for g in generators}),
+        )
+    return generators
+
+
+def load_mothballed_but_operating(
+    iso: str,
+    iso_config: ISOConfig | None = None,
+    data_dir: Path | None = None,
+    year: int | None = None,
+) -> list[Generator]:
+    """Re-carry OA (mothballed) units that were OP in the year-matched vintage.
+
+    The Cottonwood lane (``docs/handoffs/miso-cc-vintage-undercarry-plan-
+    2026-07.md`` §5/§7). The canonical operable snapshot is a single recent
+    vintage; :func:`_rows_to_generators` keeps ``status == "OP"`` only, so a
+    unit that snapshot marks OA (out of service — a mothball, not a
+    retirement) is absent from *every* modeled year, even years it
+    demonstrably ran. The within-window retiree channel
+    (:func:`load_retired_within_window`) cannot catch this either: an OA unit
+    never appears on the Retired-and-Canceled sheet, and that channel emits
+    whole-plant exits only, while a mothball can be partial (Cottonwood
+    55358: 4 of 8 units OA in the 2025ER snapshot, 576 MW, with CAMPD showing
+    the OA CTs running 88-91% of 2023 hours).
+
+    The re-carry trigger is the **vintage-status oracle** — the unit is
+    injected for backcast solve ``year`` iff it is OP in the year-matched
+    EIA-860 vintage (``vintage_<year>/``). That is EIA's own contemporaneous
+    status: a unit truly idle in the solve year is OA in its own vintage too
+    and stays dropped, so OA status alone never re-carries capacity (the
+    rule-13 admissibility hinge — charter §4). Zero fitted parameters. The
+    qualifying units are built **from the vintage rows** (year-matched
+    net-summer capacity and attributes — the same record the oracle reads),
+    per-unit, so a partial mothball leaves the surviving OP units (already
+    loaded from the snapshot) untouched and no unit is double-carried.
+
+    **Backcast-mode only**, gated on ``ScenarioConfig.carry_operating_
+    mothballs`` (default off) at the call site. Solve years with no committed
+    ``vintage_<year>/`` (2025 — the canonical snapshot IS the 2025 Early
+    Release) carry nothing: the accepted 2025 under-carry (charter §10 owner
+    default, 2026-07-16). Forward story (rule 12): a unit OP in its most
+    recent vintage is physically available and would be carried forward
+    until a real exit (economic screen / confirmed-retirement registry)
+    removes it; per the same owner default the forecast path is deliberately
+    NOT wired — a forecast keeps the canonical snapshot's contemporaneous OA
+    judgment.
+
+    Under an active ``eia860_vintage_year`` switch this channel self-
+    neutralizes: the snapshot read here IS the vintage file, whose OA units
+    are OA in the oracle file too, so nothing qualifies (no double-count —
+    the vintage fleet already carries its own OP units natively).
+
+    Returns an empty list when ``year`` is ``None``, either parquet is
+    absent, or nothing qualifies.
+    """
+    iso = iso.upper()
+    if year is None:
+        return []
+    data_dir = active_eia860_dir() if data_dir is None else Path(data_dir)
+    if iso_config is None:
+        try:
+            iso_config = get_iso_config(iso)
+        except ValueError:
+            iso_config = None
+
+    snap_path = data_dir / EIA_860_PARQUET_NAME
+    vintage_path = EIA_860_DIR / f"vintage_{int(year)}" / EIA_860_PARQUET_NAME
+    if not snap_path.exists() or not vintage_path.exists():
+        return []
+
+    snap = _normalize_columns(pd.read_parquet(snap_path))
+    if "status" not in snap.columns:
+        return []
+    ba_code = ISO_TO_BA_CODE.get(iso)
+    if ba_code is not None and "balancing_authority_code" in snap.columns:
+        ba = snap["balancing_authority_code"].astype(str).str.strip()
+        snap = snap[ba == ba_code]
+    status = snap["status"].astype(str).str.strip().str.upper()
+    # OA only (out of service, expected to return — the mothball status the
+    # charter scopes this channel to). OS/SB/retired statuses are deliberately
+    # out of scope: extending the channel needs its own probe.
+    oa = snap[status == "OA"]
+    if oa.empty:
+        return []
+
+    def _unit_keys(df: pd.DataFrame) -> list[tuple[int, str]]:
+        codes = pd.to_numeric(df["plant_id"], errors="coerce").fillna(0)
+        gids = df["generator_id"].astype(str).str.strip()
+        return [(int(c), g) for c, g in zip(codes, gids)]
+
+    vint = _normalize_columns(pd.read_parquet(vintage_path))
+    if "status" not in vint.columns:
+        return []
+    if ba_code is not None and "balancing_authority_code" in vint.columns:
+        ba = vint["balancing_authority_code"].astype(str).str.strip()
+        vint = vint[ba == ba_code]
+    vstatus = vint["status"].astype(str).str.strip().str.upper()
+    vint = vint[vstatus == "OP"]
+
+    oa_keys = set(_unit_keys(oa))
+    carried = vint[[k in oa_keys for k in _unit_keys(vint)]]
+    if carried.empty:
+        return []
+
+    carried = carried.copy()
+    # Plant-level CHP flag, exactly as the operable/retiree loaders join it
+    # (that year's EIA-860 designation when the per-year lookup exists).
+    carried["chp"] = carried["plant_id"].map(_chp_by_plant(data_dir, year)).fillna("N")
+    generators = _rows_to_generators(carried, iso, iso_config)
+    if generators:
+        logger.info(
+            "re-carried %d mothballed-but-operating units for %s %d "
+            "(%.0f MW; OA in the snapshot, OP in vintage_%d; plants %s)",
+            len(generators),
+            iso,
+            year,
+            sum(g.pmax_mw for g in generators),
+            year,
             sorted({int(g.plant_code) for g in generators}),
         )
     return generators

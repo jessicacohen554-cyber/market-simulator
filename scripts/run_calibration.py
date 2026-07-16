@@ -79,6 +79,7 @@ from market_sim.data.fleet import (  # noqa: E402
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
+    load_mothballed_but_operating,
     load_retired_within_window,
     thermal_tranche_overrides,
 )
@@ -111,6 +112,7 @@ from market_sim.pipeline import (  # noqa: E402
     backcast_config,
     build_base_dispatch_kwargs,
     build_caiso_ra_p1_prep,
+    build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
@@ -480,6 +482,8 @@ def run_year(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_midcurve_conditional: bool = False,
+    ercot_offer_surface_cleared_share: bool = False,
+    ercot_offer_surface_cleared_share_state: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
     wind_ptc_vintage_offers: bool = False,
@@ -555,6 +559,7 @@ def run_year(
     ercot_gas_bridge_min_load_frac: float | None = None,
     ercot_gas_bridge_startup: bool | None = None,
     ercot_gas_bridge_da_horizon: bool | None = None,
+    carry_operating_mothballs: bool | None = None,
     reliability_floor: bool | None = None,
     reliability_floor_overrides: dict | None = None,
     scarcity_price_overlay: bool | None = None,
@@ -725,6 +730,16 @@ def run_year(
         config = config.with_overrides(
             pjm_offer_midcurve_segments=tuple(pjm_offer_midcurve_segments)
         )
+    if ercot_offer_surface_cleared_share:
+        # ERCOT-72 DAM cleared-share offer boundary (measured boundary + wall,
+        # P1-only markup; ScenarioConfig field docstring has the full
+        # provenance/admissibility note). ERCOT-gated in the builder.
+        config = config.with_overrides(ercot_offer_surface_cleared_share=True)
+    if ercot_offer_surface_cleared_share_state:
+        # ERCOT-73 measured commitment-loading state weight on the wall
+        # (ScenarioConfig field docstring has the provenance/admissibility
+        # note). Requires the wall flag; the builder hard-errors otherwise.
+        config = config.with_overrides(ercot_offer_surface_cleared_share_state=True)
     if ercot_offer_surface_lowcurve:
         # G-22 conditional-offer-distribution LOW leg (measured trough-side
         # quantile ladders, P1-only markdown; ScenarioConfig field docstring has
@@ -981,6 +996,10 @@ def run_year(
     if ercot_gas_bridge_da_horizon is not None:
         config = config.with_overrides(
             ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon
+        )
+    if carry_operating_mothballs is not None:
+        config = config.with_overrides(
+            carry_operating_mothballs=carry_operating_mothballs
         )
     if caiso_ra_bridge_decommit is not None:
         config = config.with_overrides(
@@ -1999,6 +2018,20 @@ def run_year(
         else []
     )
 
+    # Mothballed-but-operating re-carry (the Cottonwood lane): OA units the
+    # snapshot's OP filter drops but the year-matched vintage marks OP — the
+    # partial-mothball blind spot between the OP filter and the whole-plant
+    # retiree channel. Gated default-off (carry_operating_mothballs),
+    # backcast-only, per-unit, zero fitted DOF (the vintage's own status is
+    # the availability oracle). Joins retired_units at both injection sites
+    # below so the carried units are binned/dispatched exactly like the rest
+    # of the fleet. See fleet.load_mothballed_but_operating and
+    # docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md.
+    if config.mode == "backcast" and config.carry_operating_mothballs:
+        retired_units = retired_units + load_mothballed_but_operating(
+            iso, iso_config, year=year
+        )
+
     # Resolve the per-plant bin frame, then build the base fleet and the
     # LP-ready dispatch fleet through the SHARED builders
     # (fleet.build_base_fleet / fleet.build_dispatch_fleet) — the same
@@ -2765,6 +2798,32 @@ def run_year(
                 _ercot_midcurve
                 if offer_surface_mc_bid_adjust is None
                 else offer_surface_mc_bid_adjust + _ercot_midcurve
+            )
+    # ERCOT-72 DAM CLEARED-SHARE offer boundary: floors the merchant gas econ*
+    # rows ABOVE the bin's measured DAM cleared share at the bin's measured
+    # above-boundary offer wall (fleet.build_ercot_offer_surface_cleared_share_
+    # markup — the covered-CC/CT composition mechanism). Econ rows only —
+    # disjoint from the peak surface (peak rungs) and mutually exclusive with
+    # the mid-curve belt (same econ rows; the builder hard-errors if both are
+    # armed, rule 19). P1-only; sums with the peak surface's markup.
+    if getattr(config, "ercot_offer_surface_cleared_share", False) and iso == "ERCOT":
+        from market_sim.data.fleet import (
+            build_ercot_offer_surface_cleared_share_markup,
+        )
+
+        _cs_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        _ercot_cleared_share = build_ercot_offer_surface_cleared_share_markup(
+            fleet_arrays, fleet, mc_base, _cs_net_load, config, year
+        )
+        if _ercot_cleared_share is not None:
+            offer_surface_mc_bid_adjust = (
+                _ercot_cleared_share
+                if offer_surface_mc_bid_adjust is None
+                else offer_surface_mc_bid_adjust + _ercot_cleared_share
             )
     # ERCOT G-22 conditional-offer-distribution LOW leg: the trough-side mirror
     # of the surface above at the P1-only seam, but P0-CONDITIONED — the
@@ -3636,6 +3695,13 @@ def run_year(
     pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
         config, iso, fleet_arrays
     )
+    # P1-native CAISO online-scoped reserve split (caiso_reserve_online_scoped):
+    # the kwargs hook recomputes the (2*n_r, T) spin/non-spin product-split
+    # ramp caps from the P0 run pattern — SPIN scoped to online iron, NONSPIN
+    # to offline fast-start (pipeline.commitment.caiso_pergen_sync_reserve_caps).
+    # None for every non-CAISO / gate-off run (byte-identical); ISO-exclusive
+    # with the PJM kwargs hook. Composes with the CAISO RA-bridge fleet hook.
+    caiso_reserve_kwargs_prep = build_caiso_reserve_p1_prep(config, iso, fleet_arrays)
     _t_solve_start = time.perf_counter()
     energy_solve = run_energy_solve(
         fleet,
@@ -3646,7 +3712,7 @@ def run_year(
         config,
         xyear_cache=xyear_cache,
         p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
-        p1_kwargs_prep=pjm_kwargs_prep,
+        p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
         mc_bid_adjust=offer_surface_mc_bid_adjust,
         # The v2 lowcurve and the ERCOT-64 floor-scoped bid hooks are mutually
         # exclusive (rule 19, enforced at build_ercot_gas_bridge_p1_preps), so
