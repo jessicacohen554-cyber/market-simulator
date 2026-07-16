@@ -1017,6 +1017,39 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "pinning); a retired/deregulated plant exits the artifact",
             )
         )
+    if sc.get("carry_operating_mothballs"):
+        # miso-68 Cottonwood lane, ZERO fitted scalars: re-carry each OA
+        # (mothballed) unit the canonical snapshot's OP filter drops for
+        # backcast solve year Y iff it is OP in the year-matched EIA-860
+        # vintage_<Y> — EIA's own contemporaneous status, the rule-13
+        # availability oracle (a unit truly idle in Y is OA in vintage_<Y>
+        # too, so OA status alone never re-carries capacity). Per-unit, from
+        # the vintage rows (year-matched capacity); a solve year with no
+        # committed vintage carries nothing. The boolean adds no tunable.
+        out.append(
+            _entry(
+                "carry_operating_mothballs (OA-but-operating re-carry, "
+                "vintage-status oracle)",
+                "fleet.load_mothballed_but_operating + the run_calibration "
+                "backcast fleet-build seam (joins the within-window retiree "
+                "injection)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="EIA-860 year-matched vintage status (vintage_<Y>/"
+                "eia860_generators.parquet): a unit OA in the 2025ER canonical "
+                "snapshot is re-carried for solve year Y iff OP in vintage_<Y> "
+                "(Cottonwood 55358: 4 of 8 units OA, ~572.6 MW vintage_2023 / "
+                "~568.7 MW vintage_2024, with CAMPD showing the OA CTs running "
+                "88-91% of 2023 hours). Real units at availability bounds — "
+                "never a CAMPD-MWh pin or a MW offset (rules 1/11/13). Design: "
+                "docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md",
+                root_cause="regenerates for any forward vintage (a unit OP in "
+                "its latest vintage is physically available until a real exit "
+                "removes it — rule 12 forward story); the LP dispatches the "
+                "carried units freely (no outcome pinning)",
+            )
+        )
     if (
         iso in ("NYISO", "CAISO")
         or (iso == "MISO" and not sc.get("miso_seam_measured_ladder"))
