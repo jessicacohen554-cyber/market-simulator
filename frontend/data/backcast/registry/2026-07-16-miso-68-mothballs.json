@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-16-miso-68-mothballs",
+ "label": "miso 68 mothballs",
+ "date": "2026-07-16",
+ "shorthand": "miso-68-mothballs",
+ "definition": "miso-68 (PROBE, keeper candidate) -- mothballed-but-operating re-carry (the Cottonwood lane): the miso-67 keeper recipe plus ONE single-delta override, carry_operating_mothballs=True \u2014 re-carry each OA (mothballed) unit the canonical 2025ER snapshot's OP filter drops for backcast solve year Y iff it is OP in the year-matched EIA-860 vintage_<Y> (the zero-DOF vintage-status availability oracle; a unit truly idle in Y is OA in vintage_<Y> too). Per-UNIT from the vintage rows: Cottonwood 55358's partial mothball (4 of 8 units OA, ~572.6/568.7 MW in vintage_2023/2024, CC_REGULAR MISO-South; CAMPD shows the OA CTs running 88-91% of 2023 hours) re-carries only its OA-but-operating units; 2025 has no committed vintage and carries nothing (accepted under-carry, charter owner default). MECHANISM-ONLY (main - same-box base, which reproduces the keeper's -9.79 exactly): CC_REGULAR-2023 -9.79 FAIL -> -8.28 FAIL (+1.51 TWh toward actual, tol \u00b18.00 \u2014 0.28 TWh short of the band), CC_REGULAR-2024 -4.22 -> -2.98 PASS (margin widens), 2025 byte-identical. Zero C1 status flips (15/16, fail set unchanged, sole fail magnitude shrunk); displaced classes (COAL_PRB/CT_PEAKER/import/ST_GAS, worst -0.44 TWh) all stay PASS; C3b veto holds; C3a/C3c FAIL in both arms (the F4-blocked price-formation lane, untouched). LOO 2023-2025: zero fitted DOF, 2023 improves, 2024 independently improves, 2025 untouched \u2014 no held-out degradation. Structure-first candidate (rules 1/11: the honest fleet carries the real units even though the class stays out of band); promotion owner-only. Design: docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-16-miso-68-mothballs.js",
+ "bundle": "results/calibration/miso68_cottonwood_mothballs"
+}
