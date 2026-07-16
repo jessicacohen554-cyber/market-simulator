@@ -812,6 +812,18 @@ IROQUOIS_Z2_DAILY_PATH: Path = GAS_PRICES_DIR / "iroquois_z2_daily.csv"
 # pricing every January hour at the monthly extreme.
 CAISO_CITYGATE_DAILY_PATH: Path = GAS_PRICES_DIR / "caiso_citygate_daily.csv"
 
+# Measured PG&E Citygate / SoCal Citygate weekly Wednesday prints (EIA NG
+# Weekly Update archive, NGI Daily GPI; scripts/fetch_pge_socal_citygate_daily
+# .py — the same free published print the CAISO zonal-hub annual rows in
+# ``caiso_zonal_gas_hub.csv`` are month-balanced from). The SoCal column is the
+# gas leg of the caiso-87 surplus-state trigger
+# (:func:`socal_citygate_weekly_hourly` →
+# :func:`market_sim.model.transmission.inject_caiso_dsw_surplus_clean`): an
+# LDC-citygate proxy for the desert-SW border hubs the remote CCGT buys at
+# (documented boundary misalignment, rule 14 — reconciled real data over a
+# guess).
+PGE_SOCAL_CITYGATE_WEEKLY_PATH: Path = GAS_PRICES_DIR / "pge_socal_citygate_weekly.csv"
+
 # Measured Transco Z6 NY monthly (mean of daily quotes) + the committed Iroquois
 # Z2 monthly reconstruction (Transco monthly + the NYISO SOM *annual*
 # Iroquois-Transco spread). Consumed by nyiso_reconciled_reference_monthly,
@@ -1296,6 +1308,44 @@ def _caiso_citygate_daily_dated(
             )
     _CAISO_CITYGATE_DAILY_CACHE[resolved] = out
     return out
+
+
+def socal_citygate_weekly_hourly(
+    year: int, hours: int, path: Path | None = None
+) -> np.ndarray | None:
+    """Return ``(hours,)`` SoCal citygate gas from the weekly prints ($/MMBtu).
+
+    Staircase expansion of the measured SoCal Citygate weekly Wednesday prints
+    (:data:`PGE_SOCAL_CITYGATE_WEEKLY_PATH`, EIA NG Weekly Update archive):
+    each hour carries the most recent weekly print (forward-fill on the
+    non-leap model calendar; the year's first hours before the first print
+    back-fill from it). The gas leg of the caiso-87 surplus-state trigger —
+    a weekly-granularity fuel INPUT to a state classifier, not an hourly
+    price, so the staircase is the honest representation of the print's own
+    cadence.
+
+    Returns ``None`` when the CSV is absent or carries no SoCal quotes for
+    ``year`` (the caller stays byte-identical / inert).
+    """
+    resolved = Path(path) if path else PGE_SOCAL_CITYGATE_WEEKLY_PATH
+    if not resolved.exists():
+        return None
+    frame = pd.read_csv(resolved, parse_dates=["date"])
+    frame = frame[frame["date"].dt.year == year].sort_values("date")
+    quotes = frame.dropna(subset=["socal_citygate_usd_mmbtu"])
+    if quotes.empty:
+        return None
+    idx = pd.date_range(f"{year}-01-01", periods=hours + 24, freq="h")
+    idx = idx[~((idx.month == 2) & (idx.day == 29))][:hours]
+    series = (
+        quotes.set_index("date")["socal_citygate_usd_mmbtu"]
+        .reindex(idx.union(pd.DatetimeIndex(quotes["date"])))
+        .sort_index()
+        .ffill()
+        .bfill()
+        .reindex(idx)
+    )
+    return series.to_numpy(dtype=float)
 
 
 def gas_daily_shape_factors(
