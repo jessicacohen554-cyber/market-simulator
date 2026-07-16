@@ -1,0 +1,1034 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "biomass": 1999.4,
+    "coal": 36485.691,
+    "gas_cc": 55315.636,
+    "gas_ct": 27789.97,
+    "gas_st": 10357.555,
+    "nuclear": 28575.1,
+    "oil": 4187.7
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1999.4,
+    "coal": 42917.728,
+    "gas_cc": 55315.636,
+    "gas_ct": 27789.97,
+    "gas_st": 10357.555,
+    "nuclear": 28575.1,
+    "oil": 4187.7
+  },
+  "floor_retained": [
+    {
+      "fuel": "coal",
+      "mw": 34.45,
+      "unit_id": "COAL_PJM_ComEd_p883_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 25.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 119.009,
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 15.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1554_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 33.5,
+      "unit_id": "COAL_PJM_SWMAAC_p1571_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 60.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1573_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 844.8800000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2828_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 74.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.7599999999999999,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2914_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 632.4000000000001,
+      "unit_id": "COAL_PJM_West_APS_p3136_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 75.2,
+      "unit_id": "COAL_PJM_Central_PA_p3149_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 50.3,
+      "unit_id": "COAL_PJM_Dominion_p3797_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 444.6899999999999,
+      "unit_id": "COAL_PJM_West_APS_p3943_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 814.8180000000001,
+      "unit_id": "COAL_PJM_West_APS_p3944_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 351.0,
+      "unit_id": "COAL_PJM_West_APS_p3948_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 319.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6018_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 518.301,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6264_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 28.25,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8226_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.15,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2935_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 94.415,
+      "unit_id": "COAL_PJM_West_APS_p3122_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 6.565,
+      "unit_id": "COAL_PJM_AEP_Ohio_p50481_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 982.7999999999998,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6166_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 226.59400000000002,
+      "unit_id": "COAL_PJM_SWMAAC_p602_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.65,
+      "unit_id": "COAL_PJM_ATSI_p2936_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.15,
+      "unit_id": "COAL_PJM_Dominion_p50900_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 570.7039999999998,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6041_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 65.25,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6019_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 264.854,
+      "unit_id": "COAL_PJM_Dominion_p7213_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 10.95,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10043_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.0,
+      "unit_id": "COAL_PJM_Central_PA_p10113_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 41.8,
+      "unit_id": "COAL_PJM_Central_PA_p10143_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.0,
+      "unit_id": "COAL_PJM_West_APS_p10151_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 19.393,
+      "unit_id": "COAL_PJM_Central_PA_p10343_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 12.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10566_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 35.0,
+      "unit_id": "COAL_PJM_Central_PA_p10603_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 9.0,
+      "unit_id": "COAL_PJM_West_APS_p10678_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.8050000000000002,
+      "unit_id": "COAL_PJM_Central_PA_p50397_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 21.0,
+      "unit_id": "COAL_PJM_Central_PA_p50611_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.15,
+      "unit_id": "COAL_PJM_Central_PA_p50776_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 73.472,
+      "unit_id": "COAL_PJM_Central_PA_p50888_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.23,
+      "unit_id": "COAL_PJM_West_APS_p50974_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 11.885,
+      "unit_id": "COAL_PJM_AEP_Ohio_p54304_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.1100000000000003,
+      "unit_id": "COAL_PJM_ComEd_p54556_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.3,
+      "unit_id": "COAL_PJM_Central_PA_p54634_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 10.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 6.82,
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 6.1,
+      "unit_id": "COAL_PJM_SWMAAC_p1554_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 13.4,
+      "unit_id": "COAL_PJM_SWMAAC_p1571_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 35.800000000000004,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2828_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 20.4,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2832_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 12.540000000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2836_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 29.8,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 34.0,
+      "unit_id": "COAL_PJM_West_APS_p3118_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 34.0,
+      "unit_id": "COAL_PJM_West_APS_p3136_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 30.080000000000002,
+      "unit_id": "COAL_PJM_Central_PA_p3149_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 20.119999999999997,
+      "unit_id": "COAL_PJM_Dominion_p3797_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 58.0,
+      "unit_id": "COAL_PJM_AEP_Ohio_p3935_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 21.959999999999997,
+      "unit_id": "COAL_PJM_West_APS_p3943_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 39.08,
+      "unit_id": "COAL_PJM_West_APS_p3944_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 31.200000000000003,
+      "unit_id": "COAL_PJM_West_APS_p3948_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 32.58,
+      "unit_id": "COAL_PJM_West_APS_p3954_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 12.0,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6018_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 25.98,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6264_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 53.6,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8102_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.86,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2935_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 37.766000000000005,
+      "unit_id": "COAL_PJM_West_APS_p3122_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.6260000000000003,
+      "unit_id": "COAL_PJM_AEP_Ohio_p50481_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 52.0,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6166_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 25.46,
+      "unit_id": "COAL_PJM_SWMAAC_p602_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.6599999999999999,
+      "unit_id": "COAL_PJM_ATSI_p2936_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 184.5,
+      "unit_id": "COAL_PJM_EMAAC_p594_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 859.8080000000001,
+      "unit_id": "COAL_PJM_ComEd_p876_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1165.804,
+      "unit_id": "COAL_PJM_ComEd_p879_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 310.05,
+      "unit_id": "COAL_PJM_ComEd_p883_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 330.72,
+      "unit_id": "COAL_PJM_ComEd_p883_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 229.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 215.171,
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 137.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1554_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 146.4,
+      "unit_id": "COAL_PJM_SWMAAC_p1554_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 301.5,
+      "unit_id": "COAL_PJM_SWMAAC_p1571_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 542.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1573_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 578.4,
+      "unit_id": "COAL_PJM_SWMAAC_p1573_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 807.29,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2828_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 102.02999999999992,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2828_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 597.72,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2832_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 282.15,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2836_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 670.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 6.84,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2914_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 404.5999999999999,
+      "unit_id": "COAL_PJM_West_APS_p3136_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 676.8,
+      "unit_id": "COAL_PJM_Central_PA_p3149_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 721.92,
+      "unit_id": "COAL_PJM_Central_PA_p3149_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 452.7,
+      "unit_id": "COAL_PJM_Dominion_p3797_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 482.87999999999994,
+      "unit_id": "COAL_PJM_Dominion_p3797_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 846.8,
+      "unit_id": "COAL_PJM_AEP_Ohio_p3935_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 991.7999999999997,
+      "unit_id": "COAL_PJM_AEP_Ohio_p3935_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 341.478,
+      "unit_id": "COAL_PJM_West_APS_p3943_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 289.87200000000007,
+      "unit_id": "COAL_PJM_West_APS_p3943_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 797.232,
+      "unit_id": "COAL_PJM_West_APS_p3944_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 302.86999999999995,
+      "unit_id": "COAL_PJM_West_APS_p3944_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 279.23999999999995,
+      "unit_id": "COAL_PJM_West_APS_p3948_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 898.56,
+      "unit_id": "COAL_PJM_West_APS_p3948_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1163.106,
+      "unit_id": "COAL_PJM_West_APS_p3954_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 853.944,
+      "unit_id": "COAL_PJM_West_APS_p6004_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 515.703,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6264_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 239.016,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6264_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1742.0,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8102_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 254.25,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8226_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 271.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8226_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 20.64,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2935_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 849.7350000000001,
+      "unit_id": "COAL_PJM_West_APS_p3122_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 906.3840000000001,
+      "unit_id": "COAL_PJM_West_APS_p3122_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.86,
+      "unit_id": "COAL_PJM_Dominion_p50900_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 59.08500000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p50481_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 63.02400000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p50481_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 26.919999999999998,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6041_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 17.54,
+      "unit_id": "COAL_PJM_Dominion_p7213_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.6,
+      "unit_id": "COAL_PJM_Central_PA_p10113_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.2,
+      "unit_id": "COAL_PJM_Central_PA_p10143_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.6,
+      "unit_id": "COAL_PJM_West_APS_p10151_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.86,
+      "unit_id": "COAL_PJM_Central_PA_p10343_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.88,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10566_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.0,
+      "unit_id": "COAL_PJM_Central_PA_p10603_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 3.6,
+      "unit_id": "COAL_PJM_West_APS_p10678_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.6,
+      "unit_id": "COAL_PJM_Central_PA_p50611_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.66,
+      "unit_id": "COAL_PJM_Central_PA_p50776_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.24,
+      "unit_id": "COAL_PJM_Central_PA_p50888_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.8440000000000001,
+      "unit_id": "COAL_PJM_ComEd_p54556_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.72,
+      "unit_id": "COAL_PJM_Central_PA_p54634_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1055.6000000000004,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6166_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1020.9459999999999,
+      "unit_id": "COAL_PJM_SWMAAC_p602_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 14.85,
+      "unit_id": "COAL_PJM_ATSI_p2936_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 15.84,
+      "unit_id": "COAL_PJM_ATSI_p2936_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 20.64,
+      "unit_id": "COAL_PJM_Dominion_p50900_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 26.05,
+      "unit_id": "COAL_PJM_West_APS_p3130_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 426.71,
+      "unit_id": "COAL_PJM_West_APS_p56671_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 30.5,
+      "unit_id": "COAL_PJM_Dominion_p56808_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 748.3760000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6041_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 587.25,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6019_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 594.606,
+      "unit_id": "COAL_PJM_Dominion_p7213_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 98.55,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10043_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 105.12,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10043_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 36.0,
+      "unit_id": "COAL_PJM_Central_PA_p10113_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 38.4,
+      "unit_id": "COAL_PJM_Central_PA_p10113_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 66.0,
+      "unit_id": "COAL_PJM_Central_PA_p10143_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 36.0,
+      "unit_id": "COAL_PJM_West_APS_p10151_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 38.4,
+      "unit_id": "COAL_PJM_West_APS_p10151_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 22.747,
+      "unit_id": "COAL_PJM_Central_PA_p10343_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 109.8,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10566_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 117.11999999999999,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10566_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 14.0,
+      "unit_id": "COAL_PJM_Central_PA_p10603_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 17.328,
+      "unit_id": "COAL_PJM_Central_PA_p50397_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 37.35,
+      "unit_id": "COAL_PJM_Central_PA_p50776_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 40.608,
+      "unit_id": "COAL_PJM_West_APS_p50974_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 106.965,
+      "unit_id": "COAL_PJM_AEP_Ohio_p54304_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 114.09599999999998,
+      "unit_id": "COAL_PJM_AEP_Ohio_p54304_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 20.256,
+      "unit_id": "COAL_PJM_ComEd_p54556_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 41.28,
+      "unit_id": "COAL_PJM_Central_PA_p54634_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 10.42,
+      "unit_id": "COAL_PJM_West_APS_p3130_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 14.2,
+      "unit_id": "COAL_PJM_West_APS_p56671_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 12.2,
+      "unit_id": "COAL_PJM_Dominion_p56808_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 274.5,
+      "unit_id": "COAL_PJM_Dominion_p56808_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 292.8,
+      "unit_id": "COAL_PJM_Dominion_p56808_econ"
+    }
+  ],
+  "hindcast": true,
+  "iso": "PJM",
+  "mode": "forecast",
+  "peak_demand_mw": 153121.0,
+  "renewable_additions": [
+    {
+      "mw": 1500.0,
+      "tech": "wind",
+      "zone": "PJM_ComEd"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.0789,
+    "wind": 0.41
+  },
+  "reserve_margin": -0.087958,
+  "retirements": [
+    {
+      "fuel": "coal",
+      "mw": 1003.4000000000001,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p3935_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 196.8,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_EMAAC_p594_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 244.8,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 321.6,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_SWMAAC_p1571_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 300.96,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p2836_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 715.2,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 7.295999999999999,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p2914_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1167.9,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_West_APS_p3118_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 629.0,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_West_APS_p3136_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 268.8,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p6018_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 19.35,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p2935_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 26.1,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p6019_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.38,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p10043_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.722,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_Central_PA_p50397_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.692,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_West_APS_p50974_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.754,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p54304_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 509.6000000000001,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p6166_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 19.35,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_Dominion_p50900_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 626.4,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_AEP_Ohio_p6019_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 81.0,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_West_APS_p10678_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 86.4,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_West_APS_p10678_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 16.245,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_Central_PA_p50397_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 8.4,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_Central_PA_p50611_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 39.84,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_Central_PA_p50776_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 36.288000000000004,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_Central_PA_p50888_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 38.06999999999999,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_West_APS_p50974_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 18.990000000000002,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_ComEd_p54556_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 38.7,
+      "reason": "economic",
+      "unit_id": "COAL_PJM_Central_PA_p54634_mustrun"
+    }
+  ],
+  "rps_dual": 0.0,
+  "solar_cap_mw": 14000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 3944.876,
+  "storage_power_mw": 5603.3,
+  "thermal_additions": [],
+  "wind_cap_mw": 15500.0,
+  "year": 2024
+}

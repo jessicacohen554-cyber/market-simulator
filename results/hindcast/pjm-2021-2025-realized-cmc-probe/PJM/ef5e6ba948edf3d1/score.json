@@ -1,0 +1,349 @@
+{
+  "iso": "PJM",
+  "variant": "realized",
+  "scored_years": [
+    2023,
+    2024,
+    2025
+  ],
+  "retirements": {
+    "total_gw": {
+      "actual": 11.121,
+      "model": 14.02,
+      "err_frac": 0.261,
+      "band": "FAIL"
+    },
+    "per_fuel": {
+      "biomass": {
+        "actual_gw": 0.189,
+        "model_gw": 0.009,
+        "err_frac": -0.95
+      },
+      "coal": {
+        "actual_gw": 6.885,
+        "model_gw": 9.913,
+        "err_frac": 0.44
+      },
+      "gas_ct": {
+        "actual_gw": 3.491,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "nuclear": {
+        "actual_gw": 0.0,
+        "model_gw": 4.097,
+        "err_frac": null
+      },
+      "oil": {
+        "actual_gw": 0.555,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      }
+    },
+    "unit_recall_gt300": {
+      "n_big_actual": 17,
+      "matched": 13,
+      "recall": 0.765,
+      "grain": "fuel-mw-coverage",
+      "plant_recall_frac": 0.353,
+      "plant_matched": 6,
+      "band": "PASS"
+    },
+    "false_retire": {
+      "false_gw": 7.125,
+      "frac_of_model": 0.508,
+      "grain": "per-fuel-excess",
+      "band": "FAIL"
+    }
+  },
+  "additions": {
+    "by_tech": {
+      "wind": {
+        "actual_gw": 1.619,
+        "model_gw": 6.0,
+        "err_frac": 2.706,
+        "band": "FAIL"
+      },
+      "solar": {
+        "actual_gw": 13.066,
+        "model_gw": 0.0,
+        "err_frac": -1.0,
+        "band": "FAIL"
+      },
+      "gas_cc": {
+        "actual_gw": 8.525,
+        "model_gw": 8.0,
+        "err_frac": -0.062,
+        "band": "PASS"
+      },
+      "gas_ct": {
+        "actual_gw": 0.447,
+        "model_gw": 8.428,
+        "err_frac": 17.843,
+        "band": "FAIL"
+      },
+      "storage": {
+        "actual_gw": 0.283,
+        "model_gw": 0.0,
+        "err_frac": -1.0,
+        "band": "FAIL"
+      }
+    },
+    "shares": {
+      "wind": {
+        "actual_share": 0.067,
+        "model_share": 0.268,
+        "delta_pp": 0.2,
+        "band": "FAIL"
+      },
+      "solar": {
+        "actual_share": 0.542,
+        "model_share": 0.0,
+        "delta_pp": -0.542,
+        "band": "FAIL"
+      },
+      "gas_cc": {
+        "actual_share": 0.354,
+        "model_share": 0.357,
+        "delta_pp": 0.003,
+        "band": "PASS"
+      },
+      "gas_ct": {
+        "actual_share": 0.019,
+        "model_share": 0.376,
+        "delta_pp": 0.357,
+        "band": "FAIL"
+      },
+      "storage": {
+        "actual_share": 0.012,
+        "model_share": 0.0,
+        "delta_pp": -0.012,
+        "band": "PASS"
+      }
+    },
+    "actual_total_gw": 24.092,
+    "model_total_gw": 22.428
+  },
+  "co2": {
+    "model": {
+      "2023": 287735531.40032196,
+      "2024": 285309877.9447965,
+      "2025": 327459440.3620502
+    },
+    "actual": {
+      "2023": 407135714.37786365,
+      "2024": 420607523.9953725,
+      "2025": 448666172.50825304
+    }
+  },
+  "baselines": {
+    "announced": {
+      "retire_gw": 65.381,
+      "add_gw": 147.445,
+      "note": "2020-vintage planned schedule"
+    }
+  },
+  "bands": {
+    "thermal_gw_retired_total_frac": 0.1,
+    "thermal_gw_retired_perfuel_frac": 0.2,
+    "retire_recall_min": 0.7,
+    "false_retire_frac_max": 0.15,
+    "retire_timing_years_max": 1.5,
+    "add_gw_frac_default": 0.15,
+    "add_gw_frac_storage": 0.25,
+    "techmix_share_pp_max": 0.05,
+    "co2_2025_frac": 0.1
+  },
+  "generated_utc": "2026-07-16T05:23:13Z",
+  "retirements_is2020": {
+    "total_gw": {
+      "actual": 11.121,
+      "model": 9.923,
+      "err_frac": -0.108,
+      "band": "FAIL"
+    },
+    "per_fuel": {
+      "biomass": {
+        "actual_gw": 0.189,
+        "model_gw": 0.009,
+        "err_frac": -0.95
+      },
+      "coal": {
+        "actual_gw": 6.885,
+        "model_gw": 9.913,
+        "err_frac": 0.44
+      },
+      "gas_ct": {
+        "actual_gw": 3.491,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      },
+      "oil": {
+        "actual_gw": 0.555,
+        "model_gw": 0.0,
+        "err_frac": -1.0
+      }
+    },
+    "unit_recall_gt300": {
+      "n_big_actual": 17,
+      "matched": 13,
+      "recall": 0.765,
+      "grain": "fuel-mw-coverage",
+      "plant_recall_frac": 0.353,
+      "plant_matched": 6,
+      "band": "PASS"
+    },
+    "false_retire": {
+      "false_gw": 3.028,
+      "frac_of_model": 0.305,
+      "grain": "per-fuel-excess",
+      "band": "FAIL"
+    },
+    "reversal_exposure_gw": 4.097,
+    "reversal_instruments": [
+      "Illinois Climate and Equitable Jobs Act (P.A. 102-0662, signed 2021-09-15) \u2014 CMC award; retirement reversed 2021-09-15",
+      "Illinois Climate and Equitable Jobs Act (P.A. 102-0662, signed 2021-09-15) \u2014 created the Carbon Mitigation Credit (CMC) program; Byron and Dresden awarded CMCs (ICC procurement, 2021-12), Exelon reversed both retirements on CEJA's passage (announcement 2021-09-15)"
+    ],
+    "reversal_rows": [
+      {
+        "unit_id": "869_2",
+        "fuel": "nuclear",
+        "mw": 902.0,
+        "plant_id": "869",
+        "generator_id": "2",
+        "unit_name": "Dresden 2",
+        "instrument": "Illinois Climate and Equitable Jobs Act (P.A. 102-0662, signed 2021-09-15) \u2014 CMC award; retirement reversed 2021-09-15"
+      },
+      {
+        "unit_id": "869_3",
+        "fuel": "nuclear",
+        "mw": 895.0,
+        "plant_id": "869",
+        "generator_id": "3",
+        "unit_name": "Dresden 3",
+        "instrument": "Illinois Climate and Equitable Jobs Act (P.A. 102-0662, signed 2021-09-15) \u2014 CMC award; retirement reversed 2021-09-15"
+      },
+      {
+        "unit_id": "6023_1",
+        "fuel": "nuclear",
+        "mw": 1164.0,
+        "plant_id": "6023",
+        "generator_id": "1",
+        "unit_name": "Byron 1",
+        "instrument": "Illinois Climate and Equitable Jobs Act (P.A. 102-0662, signed 2021-09-15) \u2014 created the Carbon Mitigation Credit (CMC) program; Byron and Dresden awarded CMCs (ICC procurement, 2021-12), Exelon reversed both retirements on CEJA's passage (announcement 2021-09-15)"
+      },
+      {
+        "unit_id": "6023_2",
+        "fuel": "nuclear",
+        "mw": 1136.0,
+        "plant_id": "6023",
+        "generator_id": "2",
+        "unit_name": "Byron 2",
+        "instrument": "Illinois Climate and Equitable Jobs Act (P.A. 102-0662, signed 2021-09-15) \u2014 CMC award; retirement reversed 2021-09-15"
+      }
+    ]
+  },
+  "retirement_channels": {
+    "announced": {
+      "retired_gw": 4.106,
+      "false_retire_gw": 4.097,
+      "model_fuel_gw": {
+        "biomass": 0.009,
+        "nuclear": 4.097
+      },
+      "recall_matched": 0
+    },
+    "economic": {
+      "retired_gw": 9.913,
+      "false_retire_gw": 3.028,
+      "model_fuel_gw": {
+        "coal": 9.913
+      },
+      "recall_matched": 13
+    },
+    "_n_big_actual": 17,
+    "_legacy_known_mapped_to": "announced"
+  },
+  "additions_is2020": {
+    "restart_excluded_gw": 0.092,
+    "restart_rows": [
+      {
+        "plant_id": "52148",
+        "fuel": "gas_ct",
+        "mw": 1.2
+      },
+      {
+        "plant_id": "52148",
+        "fuel": "gas_ct",
+        "mw": 1.2
+      },
+      {
+        "plant_id": "58051",
+        "fuel": "oil",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "6391",
+        "fuel": "oil",
+        "mw": 1.0
+      },
+      {
+        "plant_id": "52149",
+        "fuel": "gas_ct",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "10398",
+        "fuel": "other",
+        "mw": 70.0
+      },
+      {
+        "plant_id": "52149",
+        "fuel": "gas_ct",
+        "mw": 2.5
+      },
+      {
+        "plant_id": "52148",
+        "fuel": "gas_ct",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "52149",
+        "fuel": "gas_ct",
+        "mw": 2.0
+      },
+      {
+        "plant_id": "52149",
+        "fuel": "gas_ct",
+        "mw": 1.0
+      },
+      {
+        "plant_id": "54886",
+        "fuel": "oil",
+        "mw": 1.3
+      },
+      {
+        "plant_id": "54886",
+        "fuel": "oil",
+        "mw": 1.3
+      },
+      {
+        "plant_id": "62622",
+        "fuel": "gas_ct",
+        "mw": 2.6
+      },
+      {
+        "plant_id": "52148",
+        "fuel": "gas_ct",
+        "mw": 2.0
+      }
+    ],
+    "note": "Post-V restart additions excluded from IS-2020 additions (\u00a7c.5-2). Inert in the RD-5 actuals as landed \u2014 the coverage fix booked only the physical exit, no restart addition row exists."
+  },
+  "is2020_cutoff": "2020-12-31",
+  "rescore": {
+    "task": "T-R8",
+    "note": "IS-2020 scoring hygiene (RC-0B \u00a7c.5) \u2014 raw + IS-2020 + per-channel. No re-solve; RD-5 actuals; co2/baselines preserved (unchanged by RD-5).",
+    "utc": "2026-07-16T05:23:14Z"
+  }
+}

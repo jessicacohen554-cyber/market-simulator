@@ -87,7 +87,9 @@ columns:
     description: >-
       Canonical metric: net_cone | gross_cone | irm |
       forecast_pool_requirement | price_cap | curve_point | soft_offer_cap |
-      ra_report_price. net_cone is the Net
+      ra_report_price | reliability_requirement |
+      reliability_requirement_frr_adj | ee_addback | curve_point_ucap.
+      net_cone is the Net
       Cost of New Entry anchor (CONE minus inframarginal energy/AS rents);
       gross_cone is the pre-inframarginal-rent Cost of New Entry where an ISO
       publishes both as genuinely distinct quantities (e.g. MISO's per-LRZ
@@ -103,7 +105,20 @@ columns:
       net_cone or an absolute price, e.g. PJM's ICAP-basis cap/floor before
       UCAP conversion); curve_point is one (x,y) point on the sloped demand
       curve; soft_offer_cap and ra_report_price are CAISO's documented
-      fixed-proxy inputs (no centralized auction/curve).
+      fixed-proxy inputs (no centralized auction/curve);
+      reliability_requirement / reliability_requirement_frr_adj are PJM's
+      published RTO Reliability Requirement (UCAP MW) unadjusted and adjusted
+      for FRR (the RPM-market requirement the VRR curve is drawn against);
+      ee_addback is PJM's published EE Addback (UCAP MW) — the VRR point MW
+      levels divided by (reliability_requirement_frr_adj + ee_addback)
+      reproduce PJM's own Manual-18 pct_of_requirement fractions (verified
+      <=0.1% for every 2021/2022-2025/2026 vintage, RC-1A 2026-07-16), which is
+      how the pre-CIFP vintages' normalized curve shapes are derived;
+      curve_point_ucap is the same VRR point in PJM's published absolute form
+      (UCAP Level MW, UCAP Price $/MW-day) for a vintage whose curve_point rows
+      already carry the Manual-18 pct basis, keeping the datatype key unique
+      (2025/2026 — the workbook publishes the point prices the narrative PDF
+      leaves formula-defined).
   - name: point_index
     dtype: int64
     unit: none
