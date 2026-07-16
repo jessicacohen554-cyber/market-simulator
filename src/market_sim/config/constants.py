@@ -2448,6 +2448,11 @@ class MarketDesign:
     net_cone_curve_per_kw_yr: float = 0.0
     demand_curve_delivery_year: str = ""
     demand_curve_source: str = ""
+    # RC-1C: MISO alone clears a SEASONAL PRA (four seasons, $/MW-day). When
+    # present, the curve branch prices the market's own seasonal SUM
+    # (:func:`seasonal_rbdc_price_per_firm_mw_yr`) instead of the single annual
+    # ``demand_curve``; every other ISO leaves this ``None`` (annual grain).
+    seasonal_rbdc: "SeasonalRBDC | None" = None
 
     def capacity_price_per_firm_mw_yr(
         self,
@@ -2502,12 +2507,18 @@ class MarketDesign:
             return 0.0
         if (
             reserve_position is not None
-            and self.demand_curve
+            and (self.demand_curve or self.seasonal_rbdc)
             and config is not None
             and resolve_capacity_market_clearing(config, iso)
+            # RC-1C curve-eligibility governance gate (in addition to the
+            # clearing gate): NYISO is INELIGIBLE (R5a pairing not owner-signed)
+            # so it prices its FIXED anchor even with the gate on. iso=None (no
+            # ISO supplied) bypasses the gate → default path byte-identical.
+            and resolve_capacity_curve_eligible(iso)
         ):
             curve = self.demand_curve
             anchor = self.net_cone_curve_per_kw_yr or self.net_cone_per_kw_yr
+            seasonal = self.seasonal_rbdc
             # RC-1B item 2: per-delivery-year vintage override — consulted ONLY
             # when BOTH iso and year are supplied. Every pre-CR-1 call site
             # passes year=None (guarded here), so it never fires and the price
@@ -2517,6 +2528,16 @@ class MarketDesign:
                 if vintage is not None:
                     anchor = vintage.net_cone_curve_per_kw_yr or anchor
                     curve = vintage.demand_curve
+                    seasonal = vintage.seasonal_rbdc
+            # RC-1C: MISO seasonal grain — the market's own seasonal revenue SUM
+            # (four seasonal RBDC evaluations at the one annual reserve position),
+            # replacing the annual-curve approximation. Pre-RBDC MISO vintages
+            # carry ``seasonal_rbdc=None`` + a vertical ``demand_curve``, so they
+            # fall through to the scalar-curve branch below.
+            if seasonal is not None:
+                return seasonal_rbdc_price_per_firm_mw_yr(
+                    seasonal, float(reserve_position)
+                )
             if curve:
                 frac = evaluate_demand_curve(curve, float(reserve_position))
                 return frac * anchor * 1000.0
@@ -2553,6 +2574,48 @@ def resolve_capacity_market_clearing(
     if by_iso and iso is not None and iso in by_iso:
         return bool(by_iso[iso])
     return bool(getattr(config, "capacity_market_clearing", False))
+
+
+# --- CR-1C curve eligibility (governance gate) ----------------------------
+#
+# Whether an ISO may price adequacy on its SLOPED demand curve when
+# capacity_market_clearing is on. Eligibility is a GOVERNANCE gate layered on
+# top of the clearing gate: an ISO is curve-eligible only once its
+# accreditation-pairing basis (the flip-gate's item 1,
+# docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1) is
+# owner-signed. NYISO is INELIGIBLE — its ICAP->UCAP translation-factor pairing
+# (R5a) is adjudicated but the owner has NOT signed off
+# (docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md §3:
+# Option D stands) — so even with the gate on and a vintage resolved, NYISO
+# prices on its FIXED anchor, never the curve. PJM (R1-R4 landed), NEISO (R5b
+# landed), and MISO (EFORd pairing ~consistent, keep-and-verify) are eligible.
+# The global default clearing gate is off, so eligibility only bites under an
+# explicit per-ISO curve-ON probe arm; it is NOT a default-behavior change. An
+# ISO absent here defaults ELIGIBLE (a new curve-carrying ISO is not silently
+# blocked, and iso=None call sites stay byte-identical) — ineligibility is
+# opt-in and cited.
+CAPACITY_CURVE_ELIGIBLE_BY_ISO: dict[str, bool] = {
+    "PJM": True,
+    "NEISO": True,
+    "MISO": True,
+    "NYISO": False,  # R5a pairing adjudicated; owner sign-off pending
+    "CAISO": True,  # bilateral RA, no demand_curve — eligibility is moot
+}
+
+
+def resolve_capacity_curve_eligible(iso: "str | None") -> bool:
+    """Return whether ``iso`` may price adequacy on its sloped curve (RC-1C).
+
+    The governance gate the CR-1 curve branch of
+    :meth:`MarketDesign.capacity_price_per_firm_mw_yr` consults *in addition to*
+    the clearing gate. ``iso=None`` (pre-RC-1C call sites that pass no ISO) and
+    any ISO absent from :data:`CAPACITY_CURVE_ELIGIBLE_BY_ISO` return ``True`` so
+    the default path is byte-identical and a new curve ISO is not silently
+    blocked; NYISO is the one explicit ``False`` (R5a not owner-signed).
+    """
+    if iso is None:
+        return True
+    return CAPACITY_CURVE_ELIGIBLE_BY_ISO.get(iso, True)
 
 
 # --- CR-1 sloped capacity demand curves (normalized) ----------------------
@@ -2616,20 +2679,167 @@ _NEISO_FCA_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
     CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
     CapacityDemandCurvePoint(1.083, 0.0),  # zero-cross (FCA 11 geometry)
 )
-# MISO seasonal PRA reliability-based demand curve (RBDC), modeled ANNUALLY
-# (CR-3 adds the four-season split). The P-0B intake captured MISO's CONE
-# levels and PRA clearing OUTCOMES but not the RBDC's own shape parameters, so
-# only the price levels are data-derived: net-CONE at the requirement (1.0);
-# cap = North/Central gross CONE / net CONE ≈ 127,361 / 79,800 = 1.596 (annual
-# $/MW-yr; the RBDC caps at gross CONE). The cap (0.97) and zero-cross (1.05)
-# reserve positions are FIRST-ORDER representative values (documented, not
-# claimed as published — the seasonal RBDC parameters land in CR-3), so the
-# reconciliation test asserts only the net-CONE anchor and the cap fraction.
+# MISO PRA reliability-based demand curve (RBDC), ANNUAL (single-season)
+# reduction — RETAINED for the P-0B reconciliation test and as the registry
+# ``demand_curve``; the SEASONAL grain (:data:`MISO_SEASONAL_RBDC`, RC-1C below)
+# is what the pricing seam actually evaluates when the gate is on. The P-0B
+# intake captured MISO's CONE levels and PRA clearing OUTCOMES but not the RBDC's
+# own shape parameters, so only the price levels are data-derived: net-CONE at
+# the requirement (1.0); cap = North/Central gross CONE / net CONE ≈
+# 127,361 / 79,800 = 1.596 (annual $/MW-yr; the RBDC caps at gross CONE). The cap
+# (0.97) and zero-cross (1.05) reserve positions are FIRST-ORDER representative
+# values (documented, not claimed as published), so the reconciliation test
+# asserts only the net-CONE anchor and the cap fraction.
 # Net-CONE anchor 79.8 $/kW-yr (North/Central Net CONE, 79,800 $/MW-yr).
 _MISO_RBDC_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
     CapacityDemandCurvePoint(0.97, 1.596),  # ≈ gross/net CONE (RBDC cap)
     CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
-    CapacityDemandCurvePoint(1.05, 0.0),  # zero-cross (first-order, CR-3)
+    CapacityDemandCurvePoint(1.05, 0.0),  # zero-cross (first-order)
+)
+
+# --- MISO seasonal RBDC (RC-1C, prereq 4a) --------------------------------
+#
+# MISO is the ONLY capacity-market ISO whose PRA clears SEASONALLY (four seasons,
+# $/MW-day, under the Reliability-Based Demand Curve from PY2025-26). The market's
+# own settlement construction is a seasonal SUM: a resource earns
+# Σ_season (ACP_season [$/MW-day] × days_in_season) over the planning year. The
+# model reproduces THAT construction — :meth:`MarketDesign.
+# capacity_price_per_firm_mw_yr` evaluates a per-season RBDC at the system's
+# accredited reserve position and sums × days_in_season — replacing the annual
+# approximation above (which mis-annualized a summer $/MW-day print as if it ran
+# all 365 days).
+#
+# The four seasons and their day counts fall straight out of the data: each
+# season's published gross "CONE (Seasonal)" $/MW-day × days = the FULL annual
+# gross CONE (North/Central summer 1384.36 × 92 = 127,361 $/MW-yr = annual gross
+# CONE), so days = annual_gross_cone / seasonal_gross_cone_daily — Summer 92
+# (Jun-Aug), Fall 91 (Sep-Nov), Winter 90 (Dec-Feb, non-leap), Spring 92
+# (Mar-May); Σ = 365. Source: MISO PY2025-26 PRA Results Posting p.26 "CONE
+# (Seasonal)" table, North/Central column (miso.csv seasonal gross-CONE rows).
+#
+# ONE-POSITION LIMIT (documented, not a bug — do not "fix" by inventing seasonal
+# accreditation): the model holds ONE annual accredited reserve position and
+# evaluates all four seasonal curves at it. It has no seasonal accreditation
+# basis (seasonal firm MW), so it CANNOT reproduce the observed seasonal price
+# CONCENTRATION (PY2025-26 cleared summer $666.50 vs $33-92 the other seasons),
+# which comes from seasonal SUPPLY differences. Concretely: at a SHORT annual
+# position it prices ALL four seasons near their gross-CONE caps (OVER-stating —
+# reality had only the binding season short), and at a LONG annual position it
+# prices all four near zero (UNDER-stating — missing the binding season's real
+# contribution). Reality's "≈net-CONE, concentrated in summer" needs the four
+# seasonal positions to differ, which only a seasonal accreditation basis
+# supplies (a future item; the fleet-independent seasonal Pass 1 in
+# scripts/validate_capacity_prices.py DOES reproduce the concentration because it
+# uses each season's own published position). What the seasonal grain DOES add
+# over the annual approximation: (a) the annualization is the market's seasonal
+# SUM, so summer's high $/MW-day is weighted by its 92 days, not 365 (fixing the
+# old ~3x over-statement — Σ ACP×days ≈ annual net-CONE); (b) each season's price
+# ceiling is its OWN gross-CONE cap (summer's is ~6.3x the flat daily net-CONE,
+# because summer packs the full annual gross CONE into 92 days), so a SHORT
+# position can recover up to gross CONE from the binding season alone — the
+# RBDC's real scarcity behaviour.
+#
+# The net-CONE REFERENCE (the frac-1.0 requirement point) is the published ANNUAL
+# North/Central net-CONE spread FLAT across 365 days (218.63 $/MW-day) — MISO
+# publishes the seasonal GROSS-CONE caps and the ANNUAL net-CONE, not a separate
+# seasonal net-CONE — so the requirement-point price is flat while the per-season
+# CAP fraction (the published seasonal quantity) is seasonal_gross_daily ÷ daily
+# net-CONE. This keeps the annualization self-consistent: at the requirement
+# (position 1.0) the seasonal sum returns EXACTLY the annual net-CONE
+# (Σ_s 1.0 × daily_net × days_s = daily_net × 365 = 79,800), reducing to the
+# annual curve; short positions pick up the seasonal caps. The cap/zero reserve
+# POSITIONS stay first-order (0.97 / 1.05), identical to the annual curve — the
+# RBDC's own shape parameters were not published (P-0B).
+_MISO_NC_NET_CONE_PER_MW_YR: float = 79_800.0  # N/C net-CONE, PY2025-26 (miso.csv)
+_MISO_DAILY_NET_CONE_PER_MW_DAY: float = _MISO_NC_NET_CONE_PER_MW_YR / 365.0  # 218.63
+_MISO_RBDC_CAP_X: float = 0.97  # first-order (shared with the annual curve)
+_MISO_RBDC_ZERO_X: float = 1.05  # first-order
+
+
+@dataclass(frozen=True)
+class MISOSeasonRBDC:
+    """One MISO PRA season: its normalized RBDC + its day weight (RC-1C)."""
+
+    name: str
+    days: int
+    demand_curve: tuple[CapacityDemandCurvePoint, ...]
+
+
+@dataclass(frozen=True)
+class SeasonalRBDC:
+    """MISO's four-season RBDC, evaluated at ONE annual reserve position (RC-1C).
+
+    :func:`seasonal_rbdc_price_per_firm_mw_yr` sums, over the four seasons,
+    ``evaluate_demand_curve(season.demand_curve, position) ×
+    daily_net_cone_per_mw_day × season.days`` — the market's own seasonal
+    settlement (Σ ACP_season[$/MW-day] × days_in_season). At the requirement
+    (position 1.0) every season pays the flat daily net-CONE, so the sum is
+    exactly the annual net-CONE; a SHORT position lifts each season toward its
+    own gross-CONE cap. See the module comment above for the one-position limit.
+    """
+
+    seasons: tuple[MISOSeasonRBDC, ...]
+    daily_net_cone_per_mw_day: float
+
+
+def seasonal_rbdc_price_per_firm_mw_yr(
+    seasonal: "SeasonalRBDC", reserve_position: float
+) -> float:
+    """MISO annual capacity price ($/firm-MW-yr) — the seasonal RBDC sum (RC-1C).
+
+    ``Σ_season evaluate_demand_curve(season.demand_curve, reserve_position) ×
+    daily_net_cone_per_mw_day × season.days``. The ONE ``reserve_position`` feeds
+    all four seasons (the annual-position limit documented above).
+    """
+    x = float(reserve_position)
+    total = 0.0
+    for s in seasonal.seasons:
+        frac = evaluate_demand_curve(s.demand_curve, x)
+        total += frac * seasonal.daily_net_cone_per_mw_day * float(s.days)
+    return total
+
+
+def _miso_seasonal_curve(
+    gross_cone_per_mw_day: float,
+) -> tuple[CapacityDemandCurvePoint, ...]:
+    """One season's normalized RBDC: cap = seasonal gross CONE ÷ flat daily net-CONE.
+
+    ``gross_cone_per_mw_day`` is the published seasonal "CONE (Seasonal)" figure
+    (North/Central). The requirement point (1.0) is the flat daily net-CONE; the
+    cap/zero reserve positions are first-order (shared with the annual curve).
+    """
+    cap_frac = gross_cone_per_mw_day / _MISO_DAILY_NET_CONE_PER_MW_DAY
+    return (
+        CapacityDemandCurvePoint(_MISO_RBDC_CAP_X, cap_frac),  # season gross-CONE cap
+        CapacityDemandCurvePoint(1.0, 1.0),  # flat daily net-CONE at the requirement
+        CapacityDemandCurvePoint(_MISO_RBDC_ZERO_X, 0.0),  # zero-cross (first-order)
+    )
+
+
+# PY2025-26 seasonal gross CONE ($/MW-day), North/Central — miso.csv "CONE
+# (Seasonal)" rows (Summer 1384.36, Fall 1399.58, Winter 1415.13, Spring
+# 1384.36 = annual gross CONE 127,361 ÷ days_in_season).
+MISO_SEASONAL_RBDC: SeasonalRBDC = SeasonalRBDC(
+    seasons=(
+        MISOSeasonRBDC("summer", 92, _miso_seasonal_curve(1384.36)),
+        MISOSeasonRBDC("fall", 91, _miso_seasonal_curve(1399.58)),
+        MISOSeasonRBDC("winter", 90, _miso_seasonal_curve(1415.13)),
+        MISOSeasonRBDC("spring", 92, _miso_seasonal_curve(1384.36)),
+    ),
+    daily_net_cone_per_mw_day=_MISO_DAILY_NET_CONE_PER_MW_DAY,
+)
+
+# Pre-RBDC MISO PRA (PY2009-10 .. PY2024-25) used a VERTICAL demand curve capped
+# at CONE (FERC ER23-2977; data/raw/.../demand-curve/miso/README.md): price = CONE
+# when the zone is short, ≈0 when long, NO sloped interior. Represented as a
+# near-vertical step anchored on gross CONE (the ceiling): frac 1.0 (= the
+# gross-CONE anchor) at/below the requirement, dropping to 0 just above it. No
+# invented slope (rule 13). These vintages carry ``seasonal_rbdc=None`` so the
+# seam prices this step, not the seasonal RBDC.
+_MISO_VERTICAL_STEP: float = 1e-6
+_MISO_VERTICAL_CURVE: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(1.0, 1.0),  # at/short of requirement: CONE ceiling
+    CapacityDemandCurvePoint(1.0 + _MISO_VERTICAL_STEP, 0.0),  # just long: zero
 )
 
 # Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARKET_DESIGN``
@@ -2720,9 +2930,12 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
         demand_curve_delivery_year="2025-2026",
         demand_curve_source=(
             "MISO PY2025-26 PRA Results Posting (North/Central Net CONE + LRZ "
-            "gross CONE for the cap); RBDC shape reserve positions first-order "
-            "(seasonal parameters land in CR-3)"
+            "gross CONE for the cap); RBDC shape reserve positions first-order. "
+            "Seasonal grain: RC-1C (MISO_SEASONAL_RBDC)"
         ),
+        # RC-1C: MISO clears SEASONALLY — the seam sums the four seasonal RBDCs
+        # (× days) instead of the single annual demand_curve when the gate is on.
+        seasonal_rbdc=MISO_SEASONAL_RBDC,
     ),
 }
 
@@ -2756,6 +2969,10 @@ class MarketDesignVintage:
     delivery_year: str
     net_cone_curve_per_kw_yr: float
     demand_curve: tuple[CapacityDemandCurvePoint, ...] = ()
+    # RC-1C: MISO PY2025-26 carries the seasonal RBDC here so a per-delivery-year
+    # solve prices the seasonal grain; pre-RBDC MISO vintages leave this None and
+    # carry a vertical ``demand_curve`` instead. Every other ISO leaves it None.
+    seasonal_rbdc: "SeasonalRBDC | None" = None
 
 
 # --- Per-delivery-year vintage curves & anchors (RC-1B item 2) -------------
@@ -2905,15 +3122,33 @@ MARKET_DESIGN_VINTAGES: dict[str, tuple[MarketDesignVintage, ...]] = {
         MarketDesignVintage("2027-2028", 108.94, _NEISO_FCA_CURVE),  # registry ref
     ),
     "MISO": (
-        # Only PY2025-26 carries BOTH a regional (North/Central) Net-CONE anchor
-        # and a normalizable RBDC shape. PY2026-27 publishes Net CONE per-LRZ
-        # only (no North/Central aggregate — a zone-boundary mismatch, rule 5)
-        # and its RBDC curve chart was unretrievable (cdn.misoenergy.org 403), so
-        # it is omitted; hold-last serves PY2025-26 for later years. The pre-RBDC
-        # years (PY2021/22-2024/25) were a vertical curve with no published shape
-        # and are likewise absent — hold-first serves the PY2025-26 sloped RBDC
-        # for them (a documented stand-in, not the pre-RBDC vertical regime).
-        MarketDesignVintage("2025-2026", 79.8, _MISO_RBDC_CURVE),  # registry ref
+        # Pre-RBDC vintages (PY2021/22-2024/25): a VERTICAL demand curve capped at
+        # CONE (FERC ER23-2977) — no sloped shape ever published, so they carry
+        # the vertical step (_MISO_VERTICAL_CURVE) anchored on North/Central gross
+        # CONE (the LRZ 1-7 mean, the same North/Central aggregation the registry
+        # reconciliation test uses), NOT the PY2025-26 sloped RBDC (rule 13: "do
+        # not invent slope"). Anchors: 2021/22 & 2022/23 gross CONE in $/MW-day
+        # (× 365/1000); 2023/24 & 2024/25 in $/MW-yr (÷1000). ``seasonal_rbdc``
+        # stays None, so the seam prices the vertical step for these years.
+        MarketDesignVintage(
+            "2021-2022", 91.86, _MISO_VERTICAL_CURVE
+        ),  # 251.68 $/MW-day
+        MarketDesignVintage(
+            "2022-2023", 91.06, _MISO_VERTICAL_CURVE
+        ),  # 249.49 $/MW-day
+        MarketDesignVintage(
+            "2023-2024", 103.04, _MISO_VERTICAL_CURVE
+        ),  # 103,040 $/MW-yr
+        MarketDesignVintage(
+            "2024-2025", 123.50, _MISO_VERTICAL_CURVE
+        ),  # 123,501 $/MW-yr
+        # PY2025-26: the seasonal RBDC (RC-1C). demand_curve keeps the annual
+        # reduction for reconciliation; seasonal_rbdc is what the seam evaluates.
+        # PY2026-27 is omitted (per-LRZ Net CONE only, no N/C aggregate — rule 5;
+        # RBDC chart 403-blocked), so hold-last serves PY2025-26 forward.
+        MarketDesignVintage(
+            "2025-2026", 79.8, _MISO_RBDC_CURVE, seasonal_rbdc=MISO_SEASONAL_RBDC
+        ),  # registry ref
     ),
 }
 
