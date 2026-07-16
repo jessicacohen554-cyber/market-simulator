@@ -3849,6 +3849,45 @@ class ScenarioConfig:
     # data/raw/_validation-source/ercot_offer_midcurve_condbinned.json). None →
     # the builder falls back to that default path.
     ercot_offer_surface_midcurve_path: str | None = None
+    # ERCOT DAM CLEARED-SHARE offer boundary (ERCOT-72, default off, ERCOT-gated):
+    # the covered-CC / CT composition mechanism. ERCOT has no DAM must-offer, and
+    # the 60-Day disclosure measures the consequence: on moderate shoulder days
+    # only ~0.49-0.60 of CC live capability (and ~0.16-0.34 of CT) clears the DAM
+    # for energy — the remainder is NOT in the day-ahead supply at any price (the
+    # May-2024 shoulder family: 8.6 GW of CC live HSL carried no offer curve at
+    # all while holding just 63 MW of spinning AS — an un-offered fleet, not an
+    # AS-withheld or unavailable one). The model's econ tranches span ~92% of
+    # each plant at the econ multipliers, so it serves shoulder demand with
+    # capacity reality's market did not offer — the ERCOT-70 "+675 MW covered-CC
+    # excess at $24-29" and the flat mid-stack between econ_high and the peak
+    # rungs. This mechanism floors each merchant gas econ* tranche row whose
+    # WITHIN-PLANT cumulative-capacity midpoint exceeds the bin's MEASURED
+    # cleared share at the bin's MEASURED above-boundary offer wall (the
+    # MW-weighted quantile ladder of offered-but-uncleared curve segment prices,
+    # rel-position-mapped over the above-boundary span):
+    #
+    #     rel        = (share_g - boundary(bin)) / (1 - boundary(bin))
+    #     target     = interp(rel, ladder_q, ladder_mult) x gas_day(t)
+    #     markup[g,t]= max(0, min(target, cap_frac x VOLL) - mc_base[g, t])
+    #
+    # Both the boundary and the wall are condition-binned by net-load percentile
+    # (forward-native — a forecast year's bins regenerate from its own load+VRE
+    # and the boundary responds to tightness: measured CC 0.33 loose -> 0.64
+    # tight), never day-pinned; zero fitted scalars (rules 13/14/26). P1-only
+    # (the mc_bid_adjust seam): P0 run lengths and the startup-amortization
+    # coupling stay byte-identical. Scope: CC_REGULAR + CT_PEAKER econ* rows
+    # only — the PEAK rungs stay owned by ercot_offer_surface_conditional, the
+    # committed/mustrun blocks by the bridge/floor structure, ST_GAS by the drag
+    # (rule 19); mutually exclusive with ercot_offer_surface_midcurve_conditional
+    # (same econ rows — the builder hard-errors if both are armed). The floor
+    # only ever RAISES a bid (max(0, .)), so troughs and already-expensive rows
+    # are byte-identical. Artifact: scripts/derive_ercot_dam_cleared_share.py
+    # (frozen, rule 23). See data.fleet.build_ercot_offer_surface_cleared_share_markup.
+    ercot_offer_surface_cleared_share: bool = False
+    # Path to the frozen cleared-share boundary JSON (default:
+    # data/raw/_validation-source/ercot_dam_cleared_share_condbinned.json). None →
+    # the builder falls back to that default path.
+    ercot_offer_surface_cleared_share_path: str | None = None
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -6361,6 +6400,8 @@ TIER_TAGS: dict[str, int] = {
     "tranche_startup_amortization": 1,
     "tranche_startup_measured_runs": 1,
     "tranche_startup_conditional_runs": 1,
+    "ercot_offer_surface_cleared_share": 1,
+    "ercot_offer_surface_cleared_share_path": 3,
     "nysdec_peaker_rule_availability": 1,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
