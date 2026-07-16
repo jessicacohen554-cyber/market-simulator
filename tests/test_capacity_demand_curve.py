@@ -287,7 +287,11 @@ class TestScreenByteIdentity(unittest.TestCase):
     def _run(self, config, reserve_position):
         # Three coal units, deeply unprofitable on energy (price 10 < mc), so
         # the retire/keep decision turns entirely on the capacity payment. Floor
-        # disabled (peak_demand=0) so only the economic screen decides.
+        # disabled (peak_demand=0) so only the economic screen decides. coal=1
+        # pinned (D1 default 3) so this single-pass screen can express the
+        # capacity-payment retire/keep decision in one loss year — this suite
+        # isolates the demand-curve gate, not the loss-year threshold.
+        config = config.with_overrides(retirement_years_coal=1)
         fleet = [
             Generator(
                 unit_id=f"C{i}",

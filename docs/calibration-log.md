@@ -14265,3 +14265,351 @@ determination; caveat = the pre-existing unscored storage benchmark C5b/C5c).
 `calibration-keeper-auditor` run post-flip per the standing instruction. Open
 lanes unchanged: winter tail, §7 partial-derate bucket (rule-23-locked),
 sub-interface Dominion premium (M-2), D-1p overnight posture (M-3).
+## 2026-07-16 — caiso-89 PROMOTED to CAISO keeper (owner sign-off, session-logged: "Promote 89")
+
+`keepers.json` CAISO → `2026-07-16-caiso-89-chp-steam`; sidecar definition
+re-prefixed KEEPER + `market_story` added (steam-host conduct, floor at the
+measured multi-year operating level, cyclers self-exempt);
+`build_status.py` rebuilt status.js (CAISO row NOT-YET, C3b now PASS);
+calibration-keeper-auditor ran clean (0 failures, 0 warnings, no repairs —
+every quoted number matches the live scorer). caiso-87 remains registered
+on the dashboard as the prior keeper (top-15 retention, 7 CAISO runs).
+
+## 2026-07-16 — ERCOT-72: the covered-CC / CT composition on the moderate May shoulders — the no-must-offer DAM participation cliff MEASURED and NAMED (8.6 GW of CC live HSL not offered at any price; AS 63 MW and congestion refuted); the measured cleared-share offer boundary built and probe-adjudicated — composition target HIT EXACTLY, formation REFUTED in the static form (the tight regime is commitment-STATE-dependent); ERCOT-71 keeper registration RESTORED (transport root cause found: shallow-clone push)
+
+**Task (owner charter).** Close the residual ERCOT-71 leg A exposed: on the
+moderate May-2024 shoulder family (h10-20, 88h) the model prints $28.6 vs $67.3
+actual with the covered CC fleet +675 MW over measured at ~$30 while reality ran
+CT peakers and Braunig-class steamers at $57-100. Name the mechanism that makes
+reality run the CTs, test measurability, build leg-wise, full-span + LOYO.
+
+**Housekeeping first — the ERCOT-71 keeper registration RESTORED.** The ERCOT-71
+session's bundle, dashboard registration, and keeper promotion never reached the
+remote (only the PR #2313 mechanism build did). Root cause found this session:
+the container's SHALLOW git clone makes `git push` pack the entire 4.3 GiB object
+store (no provable common ancestry for thin-packing) and the remote hangs up —
+the same failure class CLAUDE.md's API-push rule documents. `git fetch
+--unshallow` restores thin-pack negotiation and pushes work normally (verify
+≥300-line blobs after push, rule 27 — done, 6/6 OK). The leg-A full-span bundle
+was re-solved in-session and score-verified against the ERCOT-71 record — 2024
+C3a -7.1% / C3b 0.160 / C3c 26h vs 68; 2023 +4.7% / 0.135; 2025 -5.1% / 0.102,
+exact match — and registered as `2026-07-16-ercot71-noncampd-availability`
+(bundle `results/calibration/ercot71_availability_fullspan`), keeper per the
+owner's recorded ERCOT-71 promotion (honest NOT-YET, deciding criterion
+storage_shape — the inherited C5c lane). `audit_keepers.py` PASS.
+
+**The measurement (the lane's real yield — 60-Day DAM disclosure Gen Resource
+Data, May-2024 shoulder family, config-collapsed site-hours).** ERCOT has no DAM
+must-offer, and the disclosure measures the consequence directly:
+
+* CC fleet: live HSL 23.4 GW, DA energy awards 15.4 GW; of the 8.0 GW unawarded
+  headroom only 0.28 GW was offered in-the-money, 1.1 GW offered-but-priced-out —
+  and **8.6 GW carried NO offer curve at any price**. CT: live 9.1 GW, awarded
+  2.9 GW (reality's CTs cleared in ordinary DAM merit — no missed RUC/AS
+  deployment signal), **4.9 GW not offered**.
+* AS withholding REFUTED as the owner: the whole CC fleet held 63 MW of spinning
+  AS on those hours (nonspin 0.6 GW); reality parked its NonSpin on OFF CTs
+  (2.3 GW). Congestion SECONDARY: DA SPP cross-resource p10-p90 spread $18 on a
+  $50 mean; the h18-19 climb to $106 is system-wide.
+* The measured aggregate CC supply curve on the live-capability basis is a
+  CLIFF, not a belt: 14.2 GW below $30, ~0.4 GW between $30-100, then nothing —
+  the ERCOT-69 belt's 0.95-0.99 within-OFFERED-unit shares translate to ~0.62-
+  0.65 of live capability, exactly where the model's 0.87 dispatch share sits
+  ABOVE. This is why leg B could never fire: its quantity axis was normalized on
+  the offered subset.
+* The cleared share is CONDITION-RESPONSIVE and year-stable: CC 0.33 (p0-25
+  net-load bin) -> 0.64 (p97+), CT 0.03 -> 0.47, within ±0.03 across 2023-2025
+  (`scripts/derive_ercot_dam_cleared_share.py`, frozen rule-23 artifact
+  `data/raw/_validation-source/ercot_dam_cleared_share_condbinned.json`).
+* BUT the DA stack is not the RT supply: on Aug-2024 afternoons (h14-19) the
+  real CC fleet ran 23.8 GW RT against 18.0 GW DA-offered / 20.3 GW DA-cleared —
+  RUC/self-commitment brings the un-offered capacity online near cost in tight
+  regimes; even the May shoulders RT-topped to 19.1 GW vs 15.4 DA-cleared. The
+  participation cliff is real but its price consequence is commitment-STATE
+  dependent.
+
+**The mechanism (built, admissible, default-off).**
+`ercot_offer_surface_cleared_share` (ERCOT-gated): each merchant gas econ*
+tranche row whose within-plant cumulative-capacity midpoint exceeds the hour's
+net-load bin's MEASURED cleared share is floored at the bin's MEASURED
+offered-but-uncleared wall (MW-weighted quantile ladder, rel-position-mapped
+over the above-boundary span; effective-HR multipliers on the daily gas price).
+Zero fitted scalars; boundary and wall both condition-binned (forward-native);
+P1-only via the mc_bid_adjust seam (P0/startup coupling byte-identical); peak
+rungs stay owned by `ercot_offer_surface_conditional`, committed/mustrun by the
+bridge/floors, ST_GAS by the drag, CC_CHP measured composition-clean (+12 MW);
+mutually exclusive with the midcurve belt (same econ rows — hard error, rule
+19). 6 trivial-case tests. Scope: CC_REGULAR + CT_PEAKER.
+
+**Full-span adjudication (`2026-07-16-ercot72-cleared-share-wall`, registered
+PROBE — REJECTED; keeper UNCHANGED).**
+
+| leg | 2023 C3a/C3b | 2024 C3a/C3b/C3c | 2025 C3a/C3b | May-24 | Nov-24 | May-24 shoulders (88h) |
+|---|---|---|---|---|---|---|
+| 0 = ercot71 keeper | +4.7% / 0.135 | -7.1% / 0.160 / 26h vs 68 | -5.1% / 0.102 | -6.9 | -4.2 | $28.6 vs $67.3; CC +675, CT 1,260 |
+| CS = 0 + cleared-share wall | **+15.9% / 0.248** | +5.0% / 0.174 / 47h | +2.3% / 0.097 | -5.0 | -3.0 | $32.7 vs $67.3; **CC +15**, CT 1,774 |
+
+* **The composition thesis is PROVEN on the dispatch side:** the May-shoulder
+  covered-CC excess collapses +675 -> **+15 MW** (share of live 0.872 -> 0.813),
+  CT dispatch rises 1,260 -> 1,774 (actual 1,370) — the model now serves the
+  shoulder with reality's mix, for reality's measured reason (the un-offered
+  capacity is priced out of the moderate-day stack).
+* **The formation half is REFUTED in the static form.** (a) The clearing stops
+  at $32.7, not $67: the walled CC gap overflows into the UNWALLED cheap
+  committed rungs of ST_GAS (+640 vs actual; drag-owned, rule 19 — no wall
+  there) and CT, capping the marginal price at the substitutes' committed
+  offers. (b) The tight-bin arm blankets over-lift exactly where the RT/RUC
+  measurement says the capacity comes online near cost: 2023 Aug +25.8 /
+  Sep +28.0 / Jun +18.1 (C3a +4.7% -> +15.9%), Jan-2024 +10.4, 2024 C3a flips
+  -7.1% -> +5.0% with C3b worsening 0.160 -> 0.174. August guard: the Aug 18-20
+  2024 window itself holds (max 2859 vs actual 3060; h>$200 4 = actual 4, no
+  shed) — the damage is the broad tight-month level, not the peak windows.
+  2025 improves (-5.1% -> +2.3%, C3b 0.097) — the mechanism's sign is right
+  where the regime is moderate.
+* LOYO: moot (no promotion talk for a rejected probe); the artifact's year
+  tables agree within ±0.03 anyway (nothing year-specific was fit).
+
+**Disposition (rules 1/11/13/14/19/26).** The DA participation cliff is a real,
+measured market structure and the composition lever works; what fails is
+pricing the un-offered capacity at the DA wall in ALL regimes when its RT
+engagement is commitment-state dependent. The static form is rejected and stays
+default-off; NO scoped/tuned variant was armed (a bins-below-p90 scope would be
+the residual-tuning move — the scope boundary needs its own measured driver).
+Successor lane (named, needs its own charter + data intake): the
+**commitment-state (DA/RT) construction** — a measured RUC/self-commit series
+(ERCOT RUC awards / COP snapshots) to carry WHICH regime prices the un-offered
+capacity at the wall vs near cost; composes with the ST_GAS participation
+question (the overflow sink is drag-owned, its own lane). The
+perfect-foresight ramp-premium ceiling stays the ledgered C3c caveat.
+
+**Ops.** Two full-span in-session solves (leg 0 reproduction + leg CS, ~24 min
+each; years sequential, one at a time). Both registered with benchmark rebuild,
+legitimacy diagnostics, and attestations; parity check PASS. The known
+`prb_overrides`/`ercot_wtx` recorder warning surfaced as documented. Transport:
+unshallow-then-push, blob-verified (rule 27).
+
+## 2026-07-16 — CAISO-90 (Lane B, C3c tail undershoot): the winter half of the DA tail is a GAS-CALENDAR defect — flow-date placement built + registered (CANDIDATE); the summer half ADJUDICATED not reachable through the scarcity overlay (SOC refinement refuted no-LP); the C1 CC-over/CT-under cluster diagnosed to the same evening merit stack (owner directive)
+
+**Charter (handoff Lane B):** instrument the 80/52 actual DA >$200 hours of
+2023/2024, then the two chartered candidates: (a) CT_PEAKER rungs vs cheaper
+headroom, (b) the CAISO scarcity-overlay calibration. Mid-session owner
+directive added the C1 CC_REGULAR-over / CT_PEAKER-under cluster.
+
+**Step 0 (no LP beyond the keeper re-solve).** The actual DA tail decomposes
+into WINTER GAS (2023: 39 h Jan 3-6/13/18/25; 2024: 28 h Jan 15-16 = Winter
+Storm Heather; RT companions elevated — real fuel-cost pricing) and
+SUMMER/FALL EVENING (2023: 41 h hod 14-20 incl. the Aug 15-16 heat event to
+$1,175; 2024: 24 h; DA clears $200-1175 while RT settles $52-172 in all but
+the Aug-16 EEA hours — a DA-expectation premium). Full evidence:
+`docs/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md`.
+
+**Winter root cause + fix (caiso-90, `2026-07-16-caiso-90-citygate-flow`,
+bundle `results/calibration/caiso90_citygate_flow_date`, CANDIDATE).** The
+daily citygate series is a next-day-delivery index placed on TRADE days: the
+keeper's ONLY 2023 >$200 day was Jan-12 (the $24.29 print's trade day, 16 h,
+not an actual tail day) while the actual tail day Jan-13 is its flow day; the
+Fri Jan-12-2024 $17.34 print (HH $13.08 — the national freeze) is the
+MLK-weekend package covering the actual Jan-15/16 storm days, which
+trade-dated linear interpolation decayed toward the $5.00 Jan-16 print
+($8-11/MMBtu on the storm days; keeper priced them $62-104).
+`caiso_citygate_flow_date` places prints on trade+1 with a forward-fill
+staircase (weekend packages); flag-off byte-identical; zero new scalars
+(rules 13/15 calendar-semantics correction). A/B vs the caiso-89 keeper:
+2023 tail 16→18 h and MOVES onto Jan-13 (catches ALL 8 of that day's actual
+tail hours — dates, not just count); Jan-2024 WATCH −4.9 → ~0 (storm days
+reprice $62-104 → $141-175, now clipped at the CC econ_high stack top);
+C3a-2024 +10.5 → +11.5 % (the honest signed effect of removing an
+under-priced month); C4-2023 gas r .826→.828 / NRMSE .322→.319; C1-2024
+CC_REGULAR +5.37 → +5.30 TWh; C2-2025 gas −1.6 %; C3b/C5a/C6/C7/C8 PASS
+unchanged; C3c-2025 0 vs 0 PASS. Feb-2023 deepens +2.1 → +4.3 $/MWh on the
+session's same-machine basis (placement, not level — monthly gas means move
+≤3 % except Jan-2024 +14 %, the measured storm package); Apr-2023 WATCH
+unchanged (−2.7 → −2.8). DETERMINATION NOT-YET (fuelmix, price_mean,
+price_tail, dispatch_corr — the keeper's own four). **DISCLOSED source gap:**
+the EIA NG Weekly archive skipped its Dec-29-2022/Jan-5-2023 issues, so
+trading days Dec-22-2022..Jan-4-2023 do not exist in the source — the actual
+Jan-3..6-2023 cluster (22 h) is unreachable by ANY placement of this series
+(candidate replacement: CAISO OASIS daily gas index, own charter). Keeper
+promotion is the owner's call.
+
+**Summer half CLOSED against both chartered candidates, with evidence.** In
+the 41 summer/fall 2023 tail hours the model clears $71-98 (2024: $52-68)
+with 1.9-4.7 GW thermal-online + 0.8-5.0 GW quick-start-offline + 2.4-7.6 GW
+storage-power headroom remaining; the in-price LOLP overlay adds $0-37 there
+— honest-inert (caiso-85's corridor-headroom-0 finding stands). The one
+physically-motivated reserve-measure refinement — SOC-aware storage credit —
+was REFUTED WITHOUT A SOLVE: the schedule-derived conservative form fires
+2,328 h >$200 in 2023 (29× the 80 actual, hourly MAE 15.4 → 122.9 — every
+day's discharge-end becomes phantom scarcity), and the true-SOC form is
+degeneracy-pinned. CT rungs are not the miss (the 4.0× peak rung ≈ $210-235
+at summer gas is simply never reached — cheaper in-model supply genuinely
+remains); storage sizing checked ≈ real installed. The admissible route is
+the MEASURED offer surface (CAISO OASIS Public Bids, 90-day-lag masked DAM
+bid curves — the CAISO analogue of the ERCOT/PJM/NEISO measured surfaces).
+Named-uncharted.
+
+**C1 cluster diagnosis (owner directive).** CT_PEAKER runs at 16-19 % of its
+real energy (−3.31/−3.65/−2.06 TWh); the real class runs round the clock
+(January its 2nd-biggest month) and is concentrated: top-15 plants = 91 %,
+Panoche Energy Center alone 736/1,425/852 GWh (CF 22/42/25 %, block-loaded
+79 % when online) vs model 30 GWh — a $5-10/MWh marginal-economics miss, not
+a missing floor. CC_REGULAR over-runs +0.55-0.69 TWh/hod OVERNIGHT (real CC
+cycles down; RA bridge explains ~a third) and +0.32-0.86 EVENING (model
+serves the ramp with CC where reality runs CTs); midday clean. Same defect
+as the summer C3c: the evening merit stack is too cheap. Charter directions
+(diagnosis §5): the deferred CAISO reserve co-optimization (#1492 — its
+caiso-57-era suppressor, the P2 UC decommit, is now ARCHIVED), a
+CAISO-evidence Panoche-class committed-tranche gate, overnight CC cycling,
+and the OASIS gas-index winter data completion.
+
+Rules compliance: solve years 2023-2025 only (rule 22); one bundle, years
+sequential (rules 12/16); no ablation twin (rule 21 as amended); registered
+with legitimacy_diagnostics before dashboard_add_run, attestation +
+--write-metrics, parity check green; zero new fitted scalars (rule 24 flag
+registered in ScenarioConfig); keeper untouched (owner decides).
+
+## 2026-07-16 — CAISO keeper PROMOTED: caiso-90 (citygate flow-date) supersedes caiso-89 (owner sign-off this session: "Promote")
+
+`frontend/data/backcast/keepers.json` CAISO → `2026-07-16-caiso-90-citygate-flow`;
+`build_status.py` rebuilt status.js (CAISO NOT-YET, C6/C7/C8 PASS);
+`audit_keepers.py --iso CAISO` PASS 0/0; calibration-keeper-auditor launched on
+the flip; keeper sidecar carries the market_story (flow-day gas is the DEB
+marginal cost — no class is forced, only the calendar day carrying the measured
+fuel price changes). Grade and A/B in the caiso-90 registration entry above.
+Open item carried on promotion: Feb-2023 +2.1 → +4.3 $/MWh under flow-date
+placement (an accurate-input-exposes-something-else flag per rule 15, filed as
+a root-cause note, never a tuning target). The C1 CC-over/CT-under lane is
+chartered next (owner directive; handoff issued this session) —
+`docs/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md` §5.
+
+## 2026-07-16 — CAISO C1 lane, candidate 1 CLOSED: the online-scoped reserve co-optimization is BUILT and measured INERT (probe `caiso-91`; keeper stays caiso-90)
+
+**Task (owner directive 2026-07-16, C1 CC-over/CT-under handoff, chartered
+candidate 1).** Build the issue-#1492 "correct build" — the CAISO reserve
+co-optimization with online-quality scoping (spin from ONLINE units only) —
+and A/B it against the caiso-90 keeper. Hypothesis under test: evening spin
+withholds loaded-CC headroom so CTs clear on merit, moving both C1 volume
+sides and the evening duals together.
+
+### 1. The build (`caiso_reserve_online_scoped`, GATED default off — kept, rule 1)
+
+The structurally-validated PJM `pjm_reserve_pergen_sync` product split ported
+onto the CAISO pergen spin/non-spin co-opt (`reserve_config._caiso_design` +
+the new shared `caiso_pergen_structure`/`caiso_pergen_pool_ramp10` helpers;
+flag-off byte-identical refactor):
+
+- Each (zone, fuel-class) R pool splits into a SPIN column — online 10-minute
+  ramp ONLY, the online pattern read from the model's own P0 run pattern at
+  the P0→P1 seam (`pipeline.commitment.caiso_pergen_sync_reserve_caps` +
+  `build_caiso_reserve_p1_prep`, the CAISO-RA-bridge/PJM-path-B
+  forward-regenerating convention; min-down gaps bridged, rule-18 physics
+  fast-start flags; hydro fast-start by physics) — and a NONSPIN column
+  (OFFLINE fast-start ramp; offline slow iron backs nothing), sharing the
+  pool's joint P+R headroom row.
+- Families become the NESTED tariff procurement: spin = ½ the BAL-002-WECC-3
+  requirement (§27.1.2.3.5 $100 flat curve, SPIN columns + storage RS);
+  contingency-total = the FULL requirement ($500/600/700 tiers, all columns —
+  BPM downward substitution). This also fixes the co-drawn form's effective
+  half-procurement (max(half, half) on a shared pool).
+- Rule-19 exclusivity enforced by validators: requires `caiso_reserve_coopt`;
+  mutually exclusive with `caiso_commitment_posture` (the MISO-posture family
+  — honesty-gate-rejected at miso-43 — gates the same phenomenon) and with
+  `caiso_locational_as_families` (zone∧product masks not composed).
+- Zero fitted parameters (tariff/NERC curves + requirement, physics
+  ramp10/fast-start thresholds, P0 commitment state — rules 5/11/13/23).
+  Year-invariant code-level structure (caiso-78/85/90 LOYO precedent).
+  Unit tests incl. an end-to-end LP proving the intended mechanism in
+  miniature (spin withholds loaded CC → CT clears displaced energy on merit →
+  $40 opportunity-cost spin dual; `tests/test_reserve_coopt.py`).
+
+### 2. The probe (`2026-07-16-caiso-91-reserve-coopt`, bundle `results/calibration/caiso91_reserve_online_scoped`) — INERT
+
+Full-span 2023-2025 single-delta-group A/B vs a same-machine caiso-90 keeper
+repro (`caiso_scarcity_pricing=False` in the probe per rule 19; both solved
+concurrently this session). **The reserve balance duals are zero in all
+26,280 solved hours** (`system.parquet` reserve_price max $0.0 in every
+year). Every scored surface is unchanged vs the repro:
+
+| report-back row | A (caiso-90 repro) | B (caiso-91) |
+|---|---|---|
+| C1 CC_REGULAR (TWh miss) | +1.90 / +5.30 / +2.56 | +1.90 / +5.30 / +2.55 |
+| C1 CT_PEAKER model TWh (actual 4.13/4.33/2.37) | 0.84 / 0.69 / 0.32 | 0.84 / 0.69 / 0.32 |
+| C1 CT_CHP · ST_GAS miss | −1.80/−1.74/−1.07 · −0.84/+0.51/+0.03 | identical |
+| Panoche 56803 GWh | 54 / 32 / 20 | 54 / 32 / 20 |
+| C3c model h >$200 (DA actual 80/52/0) | 18 (all Jan-13) / 0 / 0 | 18 (same day) / 0 / 0 |
+| hod signature (CC/CT, all buckets) | — | Δ ≤ ±2 GWh/bucket (LP tie noise) |
+| monthly residual map / mean LMP | — | identical to ±0.1 |
+| verdict grid | C1/C3a/C3c/C4 FAIL, C2/C3b/C5a/C6/C7/C8 PASS | identical (NOT-YET, same four) |
+
+WATCH months unmoved (Feb-2023, Apr-2023, Jan-2024, Sep-Dec-2025). C7/C8:
+CT_PEAKER stays sub-materiality at MODEL energy (2.0/—/1.2 % of load) with
+D-2 forced share 0.7/—/0.0 % — no floor was added and none armed.
+
+### 3. Adjudication — candidate 1 CLOSED; the mechanism stays (default-off)
+
+The ~1.1 GW mean spin requirement clears at zero opportunity cost from
+storage RS power headroom (8 GW fleet at the 30-min ASSOC sustain — the real
+market's dominant AS provider), online hydro headroom, and part-loaded online
+CC belly headroom. The caiso-59 inertness conclusion **survives the
+online-quality scoping that was chartered as its correct build**: the C1
+CC-over/CT-under cluster is NOT a reserve-withholding phenomenon, and the
+diagnosis §3 honest-inert finding extends from the post-solve overlay to the
+in-LP co-opt. The structure is kept default-off as the correct market
+mechanism (rule 1; the pjm-87 disposition). Chartered candidates remaining:
+(2) the Panoche-class committed-tranche gate (per-plant tolling/RA conduct —
+top-15 plants carry 91 % of actual CT energy) and (3) overnight CC cycling.
+**Disclosed next increment for the co-opt itself:** the hydro deliverability
+envelope caps only dispatched energy, not the joint P+R row, so hydro reserve
+headroom is overstated by (nameplate − envelope) per hour; even
+envelope-consistent, storage RS alone covers the requirement in the relevant
+hours, so this would not flip the verdict — filed as a note, not built.
+
+Rules compliance: solve years 2023-2025 only (rule 22); one bundle, years
+sequential, two invocations concurrent (rules 12/16); no ablation twin (rule
+21 as amended); registered as a labelled (PROBE) with
+legitimacy_diagnostics.json before dashboard_add_run, attestation +
+`calibration_verdict.py --write-metrics`, parity check green; zero new fitted
+scalars (rule 24 — flag registered in ScenarioConfig, DOF ledger identical to
+the keeper); keeper untouched.
+
+## 2026-07-16 — C1 candidate 2 (Panoche-class committed-tranche gate) CLOSED without a solve: the class's own measured conduct refutes committed scaffolding
+
+Rule-17 evidence adjudication from full-8760 CAMPD CEMS grids
+(`results/calibration/FINDING-caiso91b-ct-committed-conduct-refuted-2026-07-16.md`):
+no plant in the CT_PEAKER dominant set exhibits committed conduct — Panoche
+cycles ~daily (1,107 starts / 3 yr, median run 7 h, 42 % of hours online,
+0.79 median CF during runs, belly-off/evening-overnight blocks), the
+summer-evening trio (Sentinel/Walnut Creek/Marsh Landing) runs 5-14 % of
+hours in 4-8 h evening blocks. There is no committed window for D-4 to
+declare; any implementable gate would window on observed hours = a rule-14
+actuals-pin (the adjudicated `ct_mustrun_per_plant` family). The measured
+routing of the C1-CT under-run: the Panoche bid wedge is
+marginal-economics — Jan-2024 fuel-only SRMC ≈ $57 sits below the model's
+own January NP15 λ (mean $68) while its carbon+multiplier-loaded rung
+(~$73) prices it out — owned by the named measured DAM offer-surface intake
+charter (rule 25 forbids a multiplier re-tune); the trio is the evening-λ
+lane. With candidates 1 (caiso-91, inert) and 2 both closed, the C1
+cluster's remaining chartered candidate is 3 (overnight CC cycling) — owner
+checkpoint before further solves. No config touched; no run produced.
+
+## 2026-07-16 — C1 candidate 3 (overnight CC cycling): evidence measured, no build — and the hod price ladder that reframes the lane
+
+`results/calibration/FINDING-caiso91c-overnight-cc-evidence-2026-07-16.md`.
+Crosswalked overnight (hod 0-5) CC over-run +1.30/+2.07/+2.53 TWh (the
+LA-Basin repowering ORISPL crosswalk CEMS 315/335/330 ↔ EIA 62115/62116/
+57901 removes ~1.6 TWh/yr of phantom delta; Desert Star 55077 is NV,
+CEMS-uncoverable ~0.2-0.3), of which only 0.16 TWh sits at binding RA-bridge
+floors in 2024 — ≥92 % free economic dispatch. Real CCs two-shift
+(overnight-online 26-67 % per plant vs model 50-100 %). NEW: the hod price
+ladder (demand-weighted model λ − actual RT) decomposes the C3a body
+overprice into a BELLY overprice (+$9-14, hod 10-14 — the open midday/
+RUC-long lane) partly offset by an EVENING underprice (−$1-4, hod 17-21 —
+the price-side face of the C1 CT under-run and the C3c summer misses);
+overnight only +$2-4. Candidate-3 build direction identified (P1-native
+two-shift screen on the P0-dual startup-restart inequality, ERCOT-63
+template) with disclosed tensions: it raises an already-over overnight λ
+unless overnight imports take the displaced energy (undecomposed), and it
+must not become archived-P2-by-another-name. Owner checkpoint: candidates
+1 (caiso-91, inert) and 2 (no-LP conduct refutation) closed; remaining C1
+owners are candidate 3 + the measured DAM offer-surface intake charter +
+the evening-merit λ level. No config touched; no run produced.

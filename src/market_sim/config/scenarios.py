@@ -280,7 +280,16 @@ class ScenarioConfig:
     # horizon_years wiring in capacity.evolve_fleet). False reproduces the
     # pre-flip, injector-absent behavior exactly (backcast mode is unaffected
     # either way — the channel is forecast-mode only).
-    retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
+    retirement_years_coal: int = 3  # coal retires after 3 consecutive
+    # unprofitable years. Identification (rule 23 — re-derives only when the
+    # EIA-860 vintages update, never against a residual): the measured EIA-860
+    # announced-to-deactivation lag for coal is capacity-weighted / ≥300 MW
+    # median = 3 yr, left-censored (66 % of announced coal MW), so a conservative
+    # floor on the announcement→deactivation pipeline (D1 Option B,
+    # docs/handoffs/retirement-dof-identification-2026-07-15.md §a.3/§a.4/§d). The
+    # threshold now carries the full decision+lead-time (D+L) deactivation total,
+    # so staged_oversupply_thinning stays default-off (rule 19 — the same physical
+    # queue must not be counted twice; §a.6). Owner-adopted 2026-07-16.
     retirement_years_gas_ct: int = 2  # CTs get 2 years
     retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
     retirement_years_gas_st: int = 2  # legacy gas steam — same grace as a CT
@@ -471,6 +480,28 @@ class ScenarioConfig:
     # of retired-2023->25 units), a correctness/provenance refinement rather than
     # a scarcity driver; gated, recalibrate before a keeper. See
     # docs/cod-vintage-ramp.md. Engaged in backcast mode only.
+    # Mothballed-but-operating re-carry (the Cottonwood lane,
+    # docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md §5/§7). The
+    # canonical snapshot's OP filter drops OA (out-of-service / mothballed)
+    # units outright, and the within-window retiree channel cannot see a
+    # PARTIAL mothball (it reads the Retired-and-Canceled sheet and emits
+    # whole-plant exits only) — so a unit the snapshot vintage marks OA that
+    # demonstrably operated in the solved year is absent from every modeled
+    # year (Cottonwood 55358: 4 of 8 units OA in the 2025ER, 576 MW, with
+    # CAMPD showing the OA CTs running 88-91% of 2023 hours). With this on,
+    # an OA unit is re-carried for backcast solve year Y iff it is OP in the
+    # year-matched EIA-860 vintage (vintage_<Y>) — EIA's own contemporaneous
+    # status, the zero-DOF rule-13 availability oracle (a unit truly idle in
+    # Y is OA in vintage_<Y> too, so it stays dropped). Per-UNIT injection:
+    # a partial mothball carries only its mothballed-but-operating units and
+    # leaves the surviving OP units untouched. A solve year with no committed
+    # vintage_<Y>/ (2025) carries nothing — the accepted 2025 under-carry
+    # (owner default, 2026-07-16). ISO-agnostic, backcast-only (a forecast
+    # keeps the canonical snapshot; the forward story — carry a vintage-OP
+    # unit until a real exit — is documented in the loader, deliberately not
+    # wired). Consumed by the per-year backcast fleet build
+    # (scripts/run_calibration.py) via fleet.load_mothballed_but_operating.
+    carry_operating_mothballs: bool = False
     # Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC
     # tranches when a plant's CEMS facility sum drops out. For ERCOT this is the
     # primary outage layer and the unit-level derate only SUPPLEMENTS it
@@ -1994,6 +2025,32 @@ class ScenarioConfig:
     # 13). Requires gas_hub_basis_overlay; supersedes gas_hub_basis_daily for
     # CAISO by construction (it sets both level and shape from the daily
     # series). Default off (byte-identical); CAISO backcast only.
+    caiso_citygate_flow_date: bool = False  # Place each measured daily
+    # citygate print on its gas FLOW day instead of its trade day (caiso-90;
+    # Lane B C3c winter tail, 2026-07-16). The CA Composite daily spot the
+    # spot-level overlay reads (caiso_citygate_spot_level above) is a
+    # NEXT-DAY-delivery index: NGI's Daily GPI compiles deals struck on trade
+    # day T for delivery on the next gas day, and Friday's trade covers the
+    # whole Sat-through-Monday (holiday-extended) weekend package — so a
+    # print's fuel cost reaches the burner tip, and the marginal DEB it sets,
+    # one day (or one weekend) AFTER the calendar day the CSV keys it to.
+    # When on, _caiso_hub_daily_gas_prices places the prints on trade+1 and
+    # carries non-trading flow days on a forward-fill staircase (the weekend
+    # package price) instead of interpolating trade-dated points; month
+    # coverage (survey-basis + own-print months only) and every fallback are
+    # unchanged. Evidence the trade-dated placement mis-days the winter tail:
+    # the model's ONLY 2023 >$200 day is Jan-12 (the $24.29 print's trade
+    # day) while the actual DA tail day is Jan-13 (its flow day); the Jan-17
+    # $21.82 print pairs with the actual Jan-18 tail; and the Fri Jan-12-2024
+    # $17.34 print (HH $13.08, the national freeze) is exactly the MLK
+    # weekend package covering the actual Jan-15/16-2024 storm tail, which
+    # the trade-dated linear interpolation instead decays toward the $5.00
+    # Jan-16 print. Pure calendar-semantics correction of a measured input
+    # (rules 13/15): zero new scalars, regenerates for any year from the same
+    # EIA series, forecast path untouched (no daily realization forward).
+    # Default off (byte-identical); CAISO backcast only; requires
+    # caiso_citygate_spot_level's daily leg to be active via
+    # gas_hub_basis_overlay.
     caiso_dsw_surplus_clean: bool = False  # Carry the MEASURED surplus-hour
     # WEIM clean import depth on the south (Palo Verde / Path-46) corridor
     # (caiso-87; FINDING-caiso82 §3 "measured clean DEPTH" lane;
@@ -2369,6 +2426,39 @@ class ScenarioConfig:
     # reserve_config._caiso_design, so it requires energy_reserve_coopt +
     # caiso_reserve_coopt + CAISO; default off; GATED CHANGE (alters dispatch
     # volumes).
+    caiso_reserve_online_scoped: bool = False  # CAISO: online-quality scoping
+    # of the per-generator spin/non-spin co-opt — the issue-#1492 "correct
+    # build" increment (C1 CC-over/CT-under lane, docs/DIAGNOSIS-caiso-
+    # evening-merit-c1-c3c-2026-07.md §5.1). Splits each (zone, fuel-class)
+    # R pool into a SPIN product column (ONLINE 10-minute ramp only —
+    # spinning reserve is synchronized capacity, tariff §8.4/App. K; scoped
+    # at the P0→P1 seam from the model's own P0 run pattern,
+    # pipeline.commitment.caiso_pergen_sync_reserve_caps — the
+    # pjm_reserve_pergen_sync convention, min-down gaps bridged, rule-18
+    # physics fast-start flags) and a NONSPIN column (OFFLINE fast-start
+    # ramp — 10-minute-startable iron; offline slow iron backs nothing),
+    # sharing the pool's joint P+R headroom row. The two families become the
+    # tariff's NESTED procurement: spin (½ the BAL-002-WECC-3 requirement,
+    # §27.1.2.3.5 spin curve, SPIN columns + storage RS only) and
+    # contingency-total (the FULL requirement, non-spin curve, all columns —
+    # a spin MW substitutes down, BPM AS downward substitution), replacing
+    # the co-drawn half/half convention whose shared column pool made the
+    # effective procurement max(half, half). Storage RS backs both families
+    # (a battery is spin-quality; the ASSOC SOC gate is unchanged). This is
+    # what makes the requirement bite on CAISO: idle CC headroom can no
+    # longer back spin at zero opportunity cost — evening spin must come
+    # from online headroom (backing off loaded CC, displacing energy to CTs
+    # on merit), storage, or hydro — the RTPD/RUC-like award→energy channel
+    # (caiso-59 measured the unscoped pool inert: 12.9 GW deliverable ramp
+    # vs a ~2.2 GW requirement). Zero fitted parameters (tariff/NERC curves
+    # + requirement, physics ramp10/fast-start thresholds, the model's own
+    # P0 commitment state — rules 5/13/23). Requires energy_reserve_coopt +
+    # caiso_reserve_coopt; mutually exclusive with caiso_commitment_posture
+    # (rule 19 — the posture U re-anchor and the seam online scoping gate
+    # the same online-capacity phenomenon) and not composed with
+    # caiso_locational_as_families (the regional families would need
+    # zone∧product balance_col_mask rows). Default off; GATED CHANGE
+    # (alters dispatch volumes).
     caiso_locational_as_families: bool = False  # CAISO: add zone-masked
     # spin/non-spin reserve families whose hourly requirement is the MEASURED
     # CAISO OASIS AS_REQ regional MINIMUM south / north of Path 26 (AS_SP26 →
@@ -3849,6 +3939,73 @@ class ScenarioConfig:
     # data/raw/_validation-source/ercot_offer_midcurve_condbinned.json). None →
     # the builder falls back to that default path.
     ercot_offer_surface_midcurve_path: str | None = None
+    # ERCOT DAM CLEARED-SHARE offer boundary (ERCOT-72, default off, ERCOT-gated):
+    # the covered-CC / CT composition mechanism. ERCOT has no DAM must-offer, and
+    # the 60-Day disclosure measures the consequence: on moderate shoulder days
+    # only ~0.49-0.60 of CC live capability (and ~0.16-0.34 of CT) clears the DAM
+    # for energy — the remainder is NOT in the day-ahead supply at any price (the
+    # May-2024 shoulder family: 8.6 GW of CC live HSL carried no offer curve at
+    # all while holding just 63 MW of spinning AS — an un-offered fleet, not an
+    # AS-withheld or unavailable one). The model's econ tranches span ~92% of
+    # each plant at the econ multipliers, so it serves shoulder demand with
+    # capacity reality's market did not offer — the ERCOT-70 "+675 MW covered-CC
+    # excess at $24-29" and the flat mid-stack between econ_high and the peak
+    # rungs. This mechanism floors each merchant gas econ* tranche row whose
+    # WITHIN-PLANT cumulative-capacity midpoint exceeds the bin's MEASURED
+    # cleared share at the bin's MEASURED above-boundary offer wall (the
+    # MW-weighted quantile ladder of offered-but-uncleared curve segment prices,
+    # rel-position-mapped over the above-boundary span):
+    #
+    #     rel        = (share_g - boundary(bin)) / (1 - boundary(bin))
+    #     target     = interp(rel, ladder_q, ladder_mult) x gas_day(t)
+    #     markup[g,t]= max(0, min(target, cap_frac x VOLL) - mc_base[g, t])
+    #
+    # Both the boundary and the wall are condition-binned by net-load percentile
+    # (forward-native — a forecast year's bins regenerate from its own load+VRE
+    # and the boundary responds to tightness: measured CC 0.33 loose -> 0.64
+    # tight), never day-pinned; zero fitted scalars (rules 13/14/26). P1-only
+    # (the mc_bid_adjust seam): P0 run lengths and the startup-amortization
+    # coupling stay byte-identical. Scope: CC_REGULAR + CT_PEAKER econ* rows
+    # only — the PEAK rungs stay owned by ercot_offer_surface_conditional, the
+    # committed/mustrun blocks by the bridge/floor structure, ST_GAS by the drag
+    # (rule 19); mutually exclusive with ercot_offer_surface_midcurve_conditional
+    # (same econ rows — the builder hard-errors if both are armed). The floor
+    # only ever RAISES a bid (max(0, .)), so troughs and already-expensive rows
+    # are byte-identical. Artifact: scripts/derive_ercot_dam_cleared_share.py
+    # (frozen, rule 23). See data.fleet.build_ercot_offer_surface_cleared_share_markup.
+    ercot_offer_surface_cleared_share: bool = False
+    # Path to the frozen cleared-share boundary JSON (default:
+    # data/raw/_validation-source/ercot_dam_cleared_share_condbinned.json). None →
+    # the builder falls back to that default path.
+    ercot_offer_surface_cleared_share_path: str | None = None
+    # ERCOT-73 commitment-STATE conditioning of the cleared-share wall (default
+    # off; requires ercot_offer_surface_cleared_share — the builder hard-errors
+    # on state-without-wall). Multiplies each walled row-hour's markup by the
+    # MEASURED commitment-loading state weight
+    #
+    #   w_c(t) = clip((online_cap - gross) / (online_cap - cleared), 0, 1)
+    #
+    # — the unloaded fraction of the class's above-DA-position online
+    # capability (CAMPD CEMS envelope/gross x DAM awards;
+    # scripts/derive_ercot_commitment_loading_state.py, frozen rule 23). The
+    # floored bid becomes base + w x (wall - base): in moderate regimes
+    # (w ~ 1) the DA participation cliff prices the un-offered capacity at the
+    # measured wall (the proven ERCOT-72 composition lever); in tight regimes
+    # reality RUC/self-commits the same capacity online near cost and the
+    # measured state stands the wall down (w -> 0: Aug-23 0.02, Sep-23 0.09,
+    # Jan-24 net-load>=p90 hours 0.25 — exactly the static form's rejected
+    # over-lift windows, resolved at HOUR grain). Zero fitted scalars; the
+    # year's own hourly series is a backcast state-event overlay (the CAMPD
+    # outage-overlay pattern, G4 mode-aware seam); a year absent from the
+    # artifact (forecast, holdout) falls back to the artifact's pooled
+    # climatology (net-load-percentile bin x 4-hour block — regenerates from
+    # the target year's own drivers, rule 13). P1-only, same mc_bid_adjust
+    # seam and row scope as the wall itself (rule 19 ownership unchanged).
+    ercot_offer_surface_cleared_share_state: bool = False
+    # Path to the frozen commitment-loading state JSON (default:
+    # data/raw/_validation-source/ercot_commitment_loading_state.json). None →
+    # the builder falls back to that default path.
+    ercot_offer_surface_cleared_share_state_path: str | None = None
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -5667,6 +5824,27 @@ class ScenarioConfig:
                 "which is off. Enable energy_reserve_coopt or clear "
                 "caiso_reserve_coopt."
             )
+        if getattr(self, "caiso_reserve_online_scoped", False):
+            if not self.caiso_reserve_coopt:
+                raise ValueError(
+                    "caiso_reserve_online_scoped requires caiso_reserve_coopt: "
+                    "the online scoping rides the per-generator spin/non-spin "
+                    "co-opt layout (reserve_config._caiso_design)."
+                )
+            if getattr(self, "caiso_commitment_posture", False):
+                raise ValueError(
+                    "caiso_reserve_online_scoped and caiso_commitment_posture "
+                    "are mutually exclusive (rule 19 — one mechanism per "
+                    "phenomenon): the posture U re-anchor and the seam online "
+                    "scoping gate the same online-capacity phenomenon."
+                )
+            if getattr(self, "caiso_locational_as_families", False):
+                raise ValueError(
+                    "caiso_reserve_online_scoped is not composed with "
+                    "caiso_locational_as_families: the regional families need "
+                    "(zone AND product) balance_col_mask rows, which are not "
+                    "built."
+                )
         # The duration gate bounds the ENDOGENOUS storage split by SOC; it is
         # meaningless (and silently no-ops) without the endogenous split, and
         # must NEVER combine with the measured award reservation (docking the cap
@@ -6382,6 +6560,10 @@ TIER_TAGS: dict[str, int] = {
     "tranche_startup_amortization": 1,
     "tranche_startup_measured_runs": 1,
     "tranche_startup_conditional_runs": 1,
+    "ercot_offer_surface_cleared_share": 1,
+    "ercot_offer_surface_cleared_share_path": 3,
+    "ercot_offer_surface_cleared_share_state": 1,
+    "ercot_offer_surface_cleared_share_state_path": 3,
     "nysdec_peaker_rule_availability": 1,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
@@ -6396,6 +6578,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_rdt_tcdc": 1,
     "miso_rpe_pricing": 1,
     "caiso_commitment_posture": 1,
+    "caiso_reserve_online_scoped": 1,
     "ercot_load_resource_reserve": 1,
     "ercot_load_resource_reserve_from_year": 1,
     "ercot_storage_as_reserve": 1,
@@ -6431,6 +6614,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_storage_as_deployment": 1,
     "ercot_storage_as_deployment_from_year": 1,
     "ercot_gas_commitment_bridge": 1,
+    "carry_operating_mothballs": 1,
     "ercot_gas_bridge_min_load_frac": 2,
     "ercot_gas_bridge_startup": 1,
     "ercot_gas_bridge_da_horizon": 1,

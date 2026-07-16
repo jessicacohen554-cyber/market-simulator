@@ -185,6 +185,37 @@ class ActualMonthlyTests(unittest.TestCase):
         self.assertIsNotNone(result)
         self.assertEqual(len(result), 12)
 
+    def test_prebreakout_nan_months_are_null_not_zero(self):
+        # Rubric v2.6: a month with no real observation (all-NaN, the
+        # pre-breakout ERCO battery pattern) is None, never a fabricated 0.0;
+        # observed months keep their totals. Sep hours end at 6552, so months
+        # 1-9 are NaN and 10-12 (hours 6552+) are real.
+        mws = [float("nan")] * 6552 + [100.0] * (8760 - 6552)
+        e = _e930(2024, [("battery_discharge", mws)])
+        result = rch._actual_storage_monthly(e[e["year"] == 2024])
+        self.assertIsNotNone(result)
+        self.assertEqual(result[:9], [None] * 9)
+        self.assertTrue(all(v is not None and v > 0 for v in result[9:]))
+
+    def test_all_nan_year_is_none(self):
+        e = _e930(2023, [("battery_discharge", [float("nan")] * 8760)])
+        self.assertIsNone(rch._actual_storage_monthly(e[e["year"] == 2023]))
+
+    def test_null_month_year_skips_c5c(self):
+        # End-to-end with the scorer: the null-month vector produced above
+        # holds the YEAR out of C5c (skip), instead of correlating against
+        # nine invented zeros (the pre-v2.6 ERCO 2024 FAIL).
+        mws = [float("nan")] * 6552 + [100.0] * (8760 - 6552)
+        e = _e930(2024, [("battery_discharge", mws)])
+        actual_mon = rch._actual_storage_monthly(e[e["year"] == 2024])
+        r = cv.score_storage_shape(
+            2024,
+            {"storage": {"monthly_net_gwh": [1.0] * 12}},
+            {"storage": {"monthly_net_gwh": actual_mon}},
+        )
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIn("missing (null) months", r["magnitude"])
+
 
 class StorageShapeVerdictTests(unittest.TestCase):
     def test_c5c_passes_correlated_monthly(self):

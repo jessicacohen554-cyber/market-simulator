@@ -48,6 +48,9 @@ def main() -> None:
     tails = json.load(open(REPO / "frontend/data/backcast/tail/actual_tail.json"))
     tail_rec = (tails.get("isos") or {}).get("ERCOT", {}).get(str(args.year))
     da_tail = tail_rec.get("da_gt") if tail_rec else None
+    # Rubric v2.6 (2026-07-16): ERCOT's C3c gates on the RT hourly tail; the
+    # DA count stays printed as the diagnostic companion.
+    rt_tail = tail_rec.get("rt_gt") if tail_rec else None
 
     month_of_hour = pd.date_range(
         f"{args.year}-01-01", periods=8760, freq="h"
@@ -73,9 +76,14 @@ def main() -> None:
         nrmse = float(
             np.sqrt(np.mean((model_mon[mask] - act[mask]) ** 2)) / np.mean(act[mask])
         )
-        # C3c: hours max zonal settled > $200.
+        # C3c: hours max zonal settled > $200. Gated vs RT (v2.6); DA printed
+        # as the diagnostic companion.
         tail = int((df.groupby("hour")["settled"].max() > 200.0).sum())
-        tail_s = f"{tail}h vs DA {da_tail}" if da_tail is not None else f"{tail}h"
+        tail_s = f"{tail}h"
+        if rt_tail is not None:
+            tail_s += f" vs RT {rt_tail} (gated)"
+        if da_tail is not None:
+            tail_s += f" / DA {da_tail} (diag)"
         print(
             f"{name:32s} C3a {c3a * 100:+.1f}% (model {c3a_model:.2f} vs rt_lw "
             f"{rt_lw:.2f})  C3b {nrmse:.3f}  C3c {tail_s}"
