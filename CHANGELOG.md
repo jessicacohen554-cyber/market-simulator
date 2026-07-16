@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-07-16 — NYISO: the v2.7 C3c-2024 RT-tail miss addressed by documentation — 12-hour anatomy verifies the B1 frontier, under-tail ledgered on the nyiso-62 attestation; NYISO NOT-YET → CALIBRATED-WITH-CAVEATS (keeper unchanged, no solve)
+
+- **Investigation (no build):** all 12 actual 2024 RT>$300 hours carry
+  ORDINARY as-enforced reserve requirements in the measured #1344 series (no
+  condition-varying increment fires; the Jul-6/Jul-15 TSA zeroing windows do
+  not cover the event hours), 9/12 cleared DA < $215, and 8/12 are
+  weekend/holiday hours — RT-only forecast-miss/commitment-state transients,
+  the B1 data-blocked residual (formal NYISO Market Operations request) plus
+  the out-of-representation DA−RT wedge. The 2026-07-11 frontier designation
+  is re-verified hour-by-hour under the RT basis; building a mechanism would
+  be residual-fitting (rules 11/26).
+- **Ledger (scorer-only):** new `price_tail`/2024 exceptions entry on
+  `results/calibration/nyiso62_cc_hr_regate/calibration_attestation.json`
+  (same B1 measured-input limitation already ledgered on C3a/C3b-2024);
+  stale `_open_items` item (4) marked superseded by the v2.7 RT gate.
+  `metrics.json` refreshed (`--write-metrics`); `status.js` rebuilt — C3c
+  2024 FAIL → ledgered CAVEAT (1 of 3 budget), NYISO
+  **CALIBRATED-WITH-CAVEATS**; every other ISO determination holds.
+  Full anatomy: calibration-log 2026-07-16 NYISO entry.
+
 ## 2026-07-16 — Rubric v2.7 (owner amendments, second of the day): C3c gates on the actual RT hourly scarcity tail for EVERY ISO (DA = report-only diagnostic); C5b/C5c storage criteria REMOVED from the rubric outright
 
 - **Scorer (`scripts/calibration_verdict.py`, RUBRIC_VERSION 2.6 → 2.7):**
