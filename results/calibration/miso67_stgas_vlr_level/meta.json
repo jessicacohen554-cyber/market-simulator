@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-15T21:17:12",
+  "timestamp": "2026-07-16T03:04:50",
   "iso": "MISO",
   "years": [
     2023,
@@ -226,10 +226,10 @@
     "eia923": "../_shared/MISO/eia923-96136b23f6a3.parquet",
     "campd": "../_shared/MISO/campd-0c8c8860e930.parquet"
   },
-  "git_sha": "93db626",
+  "git_sha": "e1d1c415",
   "highspy_version": "1.14.0",
   "reuse": {
-    "source_bundle": "results/calibration/miso67_main_acc/y2024",
+    "source_bundle": "/tmp/claude-0/-home-user-market-simulator/7aac5052-9048-5a5d-b7f6-51fe7f821e33/scratchpad/runs/main_y2024",
     "requested_years": [
       2023,
       2024,
@@ -240,15 +240,15 @@
         "passes": [
           "P1"
         ],
-        "cache_key": "1bb2e89e4c013035",
-        "scenario_config_sha256": "8f2e73a663c6cdce"
+        "cache_key": "7c1330cbe8591dfb",
+        "scenario_config_sha256": "04afce0fb393e4d4"
       },
       "2024": {
         "passes": [
           "P1"
         ],
-        "cache_key": "0aa83e38aa8036b4",
-        "scenario_config_sha256": "22707b389c28ee43"
+        "cache_key": "e8da0a3e94c7505b",
+        "scenario_config_sha256": "af974f3539dc7398"
       }
     },
     "fresh_years": [
@@ -258,7 +258,7 @@
       "2025": "year not solved in the prior bundle"
     },
     "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-15T21:09:35",
-    "source_git_sha": "93db626"
+    "source_timestamp": "2026-07-16T02:57:36",
+    "source_git_sha": "e1d1c415"
   }
 }
