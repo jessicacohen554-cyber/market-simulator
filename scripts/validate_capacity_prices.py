@@ -51,7 +51,15 @@ import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
 
-from market_sim.config.constants import EFORD, MARKET_DESIGN, evaluate_demand_curve
+from market_sim.config.constants import (
+    EFORD,
+    MARKET_DESIGN,
+    MISO_SEASONAL_RBDC,
+    CapacityDemandCurvePoint,
+    evaluate_demand_curve,
+    resolve_capacity_curve_eligible,
+    resolve_demand_curve_vintage,
+)
 from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.model.capacity import (
@@ -262,23 +270,48 @@ def neiso_year_params(rows: list[dict]) -> dict[str, YearParams]:
     return out
 
 
+_NYISO_CURVE_LENGTH = 0.12  # NYCA Demand Curve Length, DCR-cycle-invariant
+
+
 def nyiso_year_params(rows: list[dict]) -> dict[str, YearParams]:
-    """NYISO NYCA annual anchors: the Annual Reference Value is net-CONE at the
-    requirement (frac 1.0), zero-cross at 100% + the 12% Demand Curve Length —
-    exactly the implemented _NYISO_ICAP_CURVE annualization."""
-    out: dict[str, YearParams] = {}
+    """NYISO NYCA PER-VINTAGE anchors (RC-1C): each delivery year on its OWN
+    published Annual Reference Value (net-CONE), max clearing price (cap), and
+    monthly reference-point price — no frozen single-vintage anchor held across
+    years. The zero-cross is 100% + the 12% Demand Curve Length (DCR-cycle-
+    invariant); the cap x-position is 1 − (cap_frac − 1)×12% (the implemented
+    ``_nyiso_icap_vintage_curve`` geometry). A season-split vintage (2025-2026)
+    uses its SUMMER cap/reference (the binding season, matching the registry).
+    2021-22/2022-23 publish NO Annual Reference Value and no cap (only a
+    reference point + IRM) → NO params, so Pass 1 reports them as non-scoreable
+    with no interpolation (explicit sparse handling)."""
+    by_year: dict[str, dict] = {}
     for r in rows:
-        if r["area"] == "NYCA" and r["metric"] == "net_cone":
-            nc = to_kw_yr(_f(r, "y_value"), r["y_unit"])
-            out[canon_year(r["delivery_year"])] = YearParams(
-                net_cone_kw_yr=nc,
-                net_cone_ucap_kw_yr=nc,
-                price_cap_kw_yr=3.792 * nc,  # published max clearing / reference
-                ref_x=1.0,
-                cap_x=0.665,
-                zero_x=1.12,
-                cap_frac_source="published",
-            )
+        if r["area"] != "NYCA":
+            continue
+        y = canon_year(r["delivery_year"])
+        d = by_year.setdefault(y, {})
+        m, season = r["metric"], (r.get("season") or "").strip()
+        if m == "net_cone":
+            d["nc"] = to_kw_yr(_f(r, "y_value"), r["y_unit"])
+        elif m == "price_cap" and ("cap_month" not in d or season == "summer"):
+            d["cap_month"] = _f(r, "y_value")  # $/kW-month
+        elif m == "curve_point" and int(float(r["point_index"])) == 0:
+            if "ref_month" not in d or season == "summer":
+                d["ref_month"] = _f(r, "y_value")  # $/kW-month reference point
+    out: dict[str, YearParams] = {}
+    for y, d in by_year.items():
+        if "nc" not in d or "cap_month" not in d or "ref_month" not in d:
+            continue  # 2021-22/2022-23: no ARV/cap → non-scoreable (sparse)
+        cap_frac = d["cap_month"] / d["ref_month"]
+        out[y] = YearParams(
+            net_cone_kw_yr=d["nc"],
+            net_cone_ucap_kw_yr=d["nc"],
+            price_cap_kw_yr=cap_frac * d["nc"],
+            ref_x=1.0,
+            cap_x=1.0 - (cap_frac - 1.0) * _NYISO_CURVE_LENGTH,
+            zero_x=1.0 + _NYISO_CURVE_LENGTH,
+            cap_frac_source="published",
+        )
     return out
 
 
@@ -315,19 +348,54 @@ def _model_cap_frac(iso: str) -> float:
     return MARKET_DESIGN[iso].demand_curve[0].price_frac_net_cone
 
 
-def model_curve_frac(iso: str, reserve_position: float) -> float:
-    """Implemented normalized curve's price fraction of net-CONE at a position."""
-    return evaluate_demand_curve(MARKET_DESIGN[iso].demand_curve, reserve_position)
+def model_vintage_curve_anchor(
+    iso: str, year: int | None
+) -> tuple[tuple[CapacityDemandCurvePoint, ...], float]:
+    """The model's (curve, net-CONE anchor $/kW-yr) for ``iso`` at ``year``.
 
-
-def model_curve_price_kw_yr(iso: str, reserve_position: float) -> float:
-    """Implemented CR-1 curve price at a reserve position, $/kW-yr (real seam)."""
-    return model_curve_frac(iso, reserve_position) * model_net_cone_kw_yr(iso)
-
-
-def model_net_cone_kw_yr(iso: str) -> float:
+    ``year=None`` uses the registry reference (byte-identical to the pre-RC-1C
+    tool). A given ``year`` consults the shipped per-delivery-year vintage table
+    (:func:`resolve_demand_curve_vintage`, RC-1B) so the model side is scored on
+    each delivery year's OWN published parameters — no frozen single-vintage
+    anchor held across years (rule 13). A ()-shape vintage (flat anchor, no
+    normalizable curve) returns an empty curve; the caller prices its flat anchor.
+    """
     d = MARKET_DESIGN[iso]
-    return d.net_cone_curve_per_kw_yr or d.net_cone_per_kw_yr
+    curve = d.demand_curve
+    anchor = d.net_cone_curve_per_kw_yr or d.net_cone_per_kw_yr
+    if year is not None:
+        v = resolve_demand_curve_vintage(iso, year)
+        if v is not None:
+            anchor = v.net_cone_curve_per_kw_yr or anchor
+            curve = v.demand_curve
+    return curve, anchor
+
+
+def model_curve_frac(
+    iso: str, reserve_position: float, year: int | None = None
+) -> float:
+    """Implemented normalized curve's price fraction of net-CONE at a position."""
+    curve, _ = model_vintage_curve_anchor(iso, year)
+    return evaluate_demand_curve(curve, reserve_position)
+
+
+def model_curve_price_kw_yr(
+    iso: str, reserve_position: float, year: int | None = None
+) -> float:
+    """Implemented CR-1 curve price at a reserve position, $/kW-yr (real seam).
+
+    A ()-shape vintage (no normalizable curve) prices its flat anchor,
+    position-independent — mirroring the seam's flat-anchor fallback.
+    """
+    curve, anchor = model_vintage_curve_anchor(iso, year)
+    if not curve:
+        return anchor
+    return evaluate_demand_curve(curve, reserve_position) * anchor
+
+
+def model_net_cone_kw_yr(iso: str, year: int | None = None) -> float:
+    _, anchor = model_vintage_curve_anchor(iso, year)
+    return anchor
 
 
 # --------------------------------------------------------------------------- #
@@ -418,6 +486,111 @@ def miso_seasonal_spread() -> dict[str, dict[str, float]]:
 
 
 # --------------------------------------------------------------------------- #
+# MISO seasonal RBDC Pass 1 (RC-1C prereq 4a — the seasonal grain)
+# --------------------------------------------------------------------------- #
+def invert_normalized_curve(
+    points: tuple[CapacityDemandCurvePoint, ...], target_frac: float
+) -> float:
+    """Reserve position where a normalized curve equals ``target_frac``.
+
+    ``points`` ascend in reserve_ratio (price fraction descends). Flat-
+    extrapolates past the cap (left) and the zero-cross (right) — the inverse of
+    :func:`market_sim.config.constants.evaluate_demand_curve`.
+    """
+    if target_frac >= points[0].price_frac_net_cone:
+        return points[0].reserve_ratio
+    if target_frac <= points[-1].price_frac_net_cone:
+        return points[-1].reserve_ratio
+    for lo, hi in zip(points, points[1:]):
+        if hi.price_frac_net_cone <= target_frac <= lo.price_frac_net_cone:
+            span = lo.price_frac_net_cone - hi.price_frac_net_cone
+            if span <= 0.0:
+                return lo.reserve_ratio
+            f = (lo.price_frac_net_cone - target_frac) / span
+            return lo.reserve_ratio + f * (hi.reserve_ratio - lo.reserve_ratio)
+    return points[-1].reserve_ratio
+
+
+def miso_nc_seasonal_cleared() -> dict[str, dict[str, float]]:
+    """MISO PY2025-26 North/Central cleared price ($/MW-day) + cleared MW per
+    season, from the demand-curve 'RBDC labeled clearing intersection' points."""
+    out: dict[str, dict[str, float]] = {}
+    for r in load_demand_curve("MISO"):
+        if (
+            r["delivery_year"] == "2025-2026"
+            and r["metric"] == "curve_point"
+            and r["area"] == "North/Central"
+            and (r.get("season") or "").strip()
+        ):
+            out[r["season"]] = {
+                "cleared_mw_day": _f(r, "y_value"),
+                "cleared_mw": _f(r, "x_value"),
+            }
+    return out
+
+
+def miso_seasonal_pass1() -> dict:
+    """MISO PY2025-26 seasonal RBDC Pass 1 (fleet-independent, RC-1C prereq 4a).
+
+    Evaluates the SHIPPED seasonal RBDC (:data:`MISO_SEASONAL_RBDC`) per season
+    and annualizes revenue as the market's own seasonal SUM
+    (Σ ACP_season × days_season), replacing the old annual approximation. Each
+    season's cleared $/MW-day is placed on that season's own model curve to
+    recover its implied reserve position — reproducing the observed
+    summer-short / other-seasons-long CONCENTRATION directionally. The annual sum
+    of the seasonal contributions is the scoreable number, compared to the
+    published North/Central net-CONE. ≥2026 delivery rows are locked (rule 22);
+    PY2025-26 is scored (in-train).
+    """
+    cleared = miso_nc_seasonal_cleared()
+    daily_net = MISO_SEASONAL_RBDC.daily_net_cone_per_mw_day
+    net_cone_mw_yr = daily_net * 365.0  # published N/C net-CONE (79,800)
+    seasons = []
+    annual_contrib = 0.0
+    for s in MISO_SEASONAL_RBDC.seasons:
+        c = cleared.get(s.name, {})
+        acp = c.get("cleared_mw_day")
+        cap_frac = s.demand_curve[0].price_frac_net_cone
+        gross_cap_day = cap_frac * daily_net
+        implied_pos = model_price_day = contrib = None
+        if acp is not None:
+            implied_pos = invert_normalized_curve(s.demand_curve, acp / daily_net)
+            model_price_day = (
+                evaluate_demand_curve(s.demand_curve, implied_pos) * daily_net
+            )
+            contrib = acp * s.days  # $/MW-yr contribution (market settlement)
+            annual_contrib += contrib
+        seasons.append(
+            {
+                "season": s.name,
+                "days": s.days,
+                "cleared_mw_day": acp,
+                "annualized_if_all_year_kw_yr": (
+                    acp * 365.0 / 1000.0 if acp is not None else None
+                ),
+                "gross_cone_cap_mw_day": gross_cap_day,
+                "model_cap_frac": cap_frac,
+                "implied_reserve_position": implied_pos,
+                "model_price_mw_day": model_price_day,
+                "contribution_mw_yr": contrib,
+            }
+        )
+    return {
+        "delivery_year": "2025/2026",
+        "locked": False,  # in-train delivery year (2025 < 2026)
+        "daily_net_cone_mw_day": daily_net,
+        "seasons": seasons,
+        "annual_capacity_revenue_mw_yr": annual_contrib,
+        "published_net_cone_mw_yr": net_cone_mw_yr,
+        "pct_error": (
+            100.0 * (annual_contrib - net_cone_mw_yr) / net_cone_mw_yr
+            if net_cone_mw_yr
+            else None
+        ),
+    }
+
+
+# --------------------------------------------------------------------------- #
 # Pass 1
 # --------------------------------------------------------------------------- #
 @dataclass
@@ -447,13 +620,16 @@ class Pass1Row:
 def run_pass1(iso: str) -> list[Pass1Row]:
     params = YEAR_PARAM_BUILDERS[iso](load_demand_curve(iso))
     prices = system_clearing_prices(iso)
-    m_nc = model_net_cone_kw_yr(iso)
-    m_cap_frac = _model_cap_frac(iso)
     rows: list[Pass1Row] = []
     for y in sorted(set(params) | set(prices), key=delivery_start_year):
         p = params.get(y)
         pr = prices.get(y)
         src = pr["source"] if pr else ""
+        # RC-1C: NYISO scores each delivery year on its OWN vintage (anchor +
+        # curve), removing the frozen single-vintage anchor. PJM/NEISO/MISO keep
+        # the registry reference (year=None) so their Pass-1 numbers are stable.
+        yr = delivery_start_year(y) if iso == "NYISO" else None
+        m_nc = model_net_cone_kw_yr(iso, yr)
         if p is None:  # clearing price but no published curve params that year
             rows.append(
                 Pass1Row(
@@ -482,16 +658,17 @@ def run_pass1(iso: str) -> list[Pass1Row]:
         # 1A shape reproduction (fraction of net-CONE at the cap x-position)
         pub_cap_frac = None
         shape_resid = None
+        model_at_cap = None
         if p.cap_frac_source == "published" and p.price_cap_kw_yr:
             pub_cap_frac = p.price_cap_kw_yr / p.net_cone_kw_yr
-            model_at_cap = model_curve_frac(iso, p.cap_x)
+            model_at_cap = model_curve_frac(iso, p.cap_x, yr)
             shape_resid = 100.0 * (model_at_cap - pub_cap_frac) / pub_cap_frac
         # 1B price reproduction at the published cleared position
         pos = mp = resid = pct = None
         note = ""
         if pr is not None:
             pos = invert_own_curve(p, pr["price_kw_yr"])
-            mp = model_curve_price_kw_yr(iso, pos)
+            mp = model_curve_price_kw_yr(iso, pos, yr)
             resid = mp - pr["price_kw_yr"]
             pct = 100.0 * resid / pr["price_kw_yr"] if pr["price_kw_yr"] else None
             if p.cap_frac_source != "published":
@@ -508,7 +685,7 @@ def run_pass1(iso: str) -> list[Pass1Row]:
                 p.net_cone_ucap_kw_yr,
                 m_nc,
                 pub_cap_frac,
-                m_cap_frac if pub_cap_frac is not None else None,
+                model_at_cap if pub_cap_frac is not None else None,
                 shape_resid,
                 pos,
                 mp,
@@ -753,9 +930,82 @@ def render_pass2(iso: str, rows: list[Pass2Row]) -> str:
     return "\n".join(out)
 
 
+_NYISO_INELIGIBLE_NOTE = (
+    "> **NYISO is curve-INELIGIBLE for the flip** (R5a ICAP→UCAP translation-"
+    "factor pairing adjudicated, owner sign-off PENDING — "
+    "nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md §3, Option D "
+    "stands). Pass 1 below validates the INSTRUMENT per vintage (a diagnostic, "
+    "unaffected by eligibility); the model's screens price NYISO on its FIXED "
+    "anchor regardless (`constants.resolve_capacity_curve_eligible` returns "
+    "False), so a flip cannot be executed for NYISO until that sign-off lands."
+)
+
+
+def render_miso_seasonal(mp: dict) -> str:
+    lk = mp["locked"]
+    out = [
+        "#### MISO — Pass 1 (SEASONAL RBDC grain, RC-1C prereq 4a)",
+        "",
+        "MISO clears a seasonal PRA; the market settles capacity as a seasonal "
+        "SUM (Σ ACP_season[$/MW-day] × days_season). The model's SHIPPED seasonal "
+        "RBDC is evaluated per season and each season's North/Central cleared "
+        "price is placed on that season's own curve to recover its implied "
+        f"reserve position. daily net-CONE = {mp['daily_net_cone_mw_day']:.2f} "
+        "$/MW-day (79,800 $/MW-yr ÷ 365, the flat requirement-point price).",
+        "",
+        "| Season | Days | Cleared $/MW-day | if-all-yr $/kW-yr | Gross-CONE cap "
+        "$/MW-day | Model cap frac | Implied reserve pos | Contribution $/MW-yr |",
+        "|---|--:|--:|--:|--:|--:|--:|--:|",
+    ]
+    for s in mp["seasons"]:
+        cells = [
+            s["season"],
+            str(s["days"]),
+            _fmt(s["cleared_mw_day"], "{:.2f}"),
+            _fmt(s["annualized_if_all_year_kw_yr"]),
+            _fmt(s["gross_cone_cap_mw_day"], "{:.1f}"),
+            _fmt(s["model_cap_frac"], "{:.3f}"),
+            _fmt(s["implied_reserve_position"], "{:.3f}"),
+            _fmt(s["contribution_mw_yr"], "{:.0f}"),
+        ]
+        out.append("| " + " | ".join(_g(lk, c) for c in cells) + " |")
+    out += [
+        "",
+        f"**Annualized (seasonal SUM) = {mp['annual_capacity_revenue_mw_yr']:.0f} "
+        f"$/MW-yr vs published North/Central net-CONE "
+        f"{mp['published_net_cone_mw_yr']:.0f} $/MW-yr "
+        f"({mp['pct_error']:+.1f}%).** Summer's implied reserve position is SHORT "
+        "(≤ 1.0, near the cap) while fall/winter/spring sit LONG (> 1.0, near the "
+        "zero-cross) — the observed summer-at-cap / other-seasons-near-zero "
+        "concentration reproduces directionally, and the seasonal sum lands on "
+        "net-CONE. The 'if-all-yr' column is what the OLD annual approximation "
+        "did — mis-annualizing summer's $/MW-day as if it ran all 365 days "
+        "(~3× net-CONE); the seasonal grain replaces that.",
+        "",
+        "_One-position limit (documented):_ the model holds ONE annual accredited "
+        "position and feeds it to all four seasons (no seasonal fleet "
+        "accreditation), so its own-fleet (Pass-2-style) price cannot reproduce "
+        "this concentration — it OVER-states at a short annual position (all four "
+        "seasons priced near their caps) and UNDER-states at a long one. Pre-RBDC "
+        "MISO years (PY2021/22-2024/25) are VERTICAL-at-CONE (no sloped shape, "
+        "priced as a step) and are not seasonally scoreable. MISO has no capacity "
+        "hindcast, so there is no Pass 2 today.",
+    ]
+    return "\n".join(out)
+
+
 def render_markdown(report: dict) -> str:
     out: list[str] = []
     for iso in CURVE_ISOS:
+        if iso == "MISO":
+            out.append(render_miso_seasonal(report["miso_seasonal_pass1"]))
+            out.append("")
+            out.append(render_pass2(iso, run_pass2(iso)))
+            out.append("")
+            continue
+        if iso == "NYISO":
+            out.append(_NYISO_INELIGIBLE_NOTE)
+            out.append("")
         out.append(render_pass1(iso, run_pass1(iso)))
         out.append("")
         out.append(render_pass2(iso, run_pass2(iso)))
@@ -780,24 +1030,6 @@ def render_markdown(report: dict) -> str:
             f"{s['cleared_mw_day']:.2f}",
         ]
         out.append("| " + " | ".join(_g(lk, c) for c in cells) + " |")
-    out += [
-        "",
-        "#### MISO seasonal spread (why an annual curve cannot score MISO)",
-        "",
-        "| Delivery yr | Summer | Fall | Winter | Spring | (all $/kW-yr) |",
-        "|---|--:|--:|--:|--:|---|",
-    ]
-    for y, seas in sorted(report["miso_seasonal_spread"].items(), key=lambda kv: kv[0]):
-        lk = delivery_start_year(y) >= 2026
-        cells = [
-            y,
-            _fmt(seas.get("summer")),
-            _fmt(seas.get("fall")),
-            _fmt(seas.get("winter")),
-            _fmt(seas.get("spring")),
-            "",
-        ]
-        out.append("| " + " | ".join(_g(lk, c) for c in cells) + " |")
     return "\n".join(out)
 
 
@@ -807,7 +1039,14 @@ def render_markdown(report: dict) -> str:
 def build_report() -> dict:
     report: dict = {
         "passes": {},
+        # RC-1C curve-eligibility (the governance gate the model screens read):
+        # NYISO is False (R5a pairing not owner-signed) — its Pass 1 below is a
+        # diagnostic only; the screens price it fixed.
+        "curve_eligibility": {
+            iso: resolve_capacity_curve_eligible(iso) for iso in CURVE_ISOS
+        },
         "pjm_regime": pjm_regime_series(),
+        "miso_seasonal_pass1": miso_seasonal_pass1(),
         "miso_seasonal_spread": miso_seasonal_spread(),
         "caiso": {
             "note": "Bilateral RA, no central auction/demand curve. MARKET_DESIGN "
