@@ -93,7 +93,7 @@ def _reset_completeness():
 
 
 def _tail(isos):
-    """Inject a synthetic actual-tail part (C3c DA-expressible benchmark).
+    """Inject a synthetic actual-tail part (the C3c RT-gated benchmark).
 
     ``isos`` is ``{iso: {year(str): {"da_gt": int, "rt_gt": int, ...}}}`` —
     the shape of ``frontend/data/backcast/tail/actual_tail.json``'s ``isos``
@@ -633,42 +633,40 @@ class PriceAndDispatchTests(unittest.TestCase):
         self.assertEqual(rows[0]["status"], cv.SKIPPED)
 
     def test_tail_skipped_without_committed_part(self):
-        # No committed DA-expressible actual for the ISO-year -> SKIPPED (the
-        # payload's RT count alone no longer gates), RT diagnostic still emitted.
+        # No committed RT actual for the ISO-year -> SKIPPED (the payload's
+        # own RT count never gates; the committed part is the actual).
         _tail({})
         try:
             ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 50}}}
             rows = cv.score_price_tail(2024, ypay, "PJM")
             self.assertEqual(rows[0]["status"], cv.SKIPPED)
-            rt = [r for r in rows if r["key"] == "rt_diagnostic"]
-            self.assertEqual(len(rt), 1)
-            self.assertEqual(rt[0]["status"], cv.SKIPPED)  # report-only
-            self.assertEqual(rt[0]["actual"], 100.0)  # payload RT fallback
+            self.assertEqual(len(rows), 1)  # no committed DA count -> no diag
         finally:
             _reset_tail()
 
-    def test_tail_gates_on_da_not_rt(self):
-        # v2 scope-consistency: the gate is the DA-expressible tail. Model 20h
-        # vs RT 100h would have failed v1's RT ratio; vs the committed DA 24h
-        # it is 0.83x, inside [0.5x, 2x] -> PASS. The RT count appears only in
-        # the non-gated diagnostic row.
-        _tail({"MISO": {"2024": {"da_gt": 24, "rt_gt": 100, "da_coverage": 1.0}}})
+    def test_tail_gates_on_rt_not_da(self):
+        # v2.7 owner amendment (2026-07-16): every ISO gates on the ACTUAL RT
+        # scarcity tail. Model 60h vs the committed RT 100h is 0.60x, inside
+        # [0.5x, 2x] -> PASS (vs the DA 24h it would read 2.5x, a FAIL). The
+        # DA count appears only in the non-gated diagnostic row.
+        _tail({"MISO": {"2024": {"da_gt": 24, "rt_gt": 100, "rt_coverage": 1.0}}})
         try:
-            ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 20}}}
+            ypay = {"ordc": {"hoursGt200": {"actual": 100, "model": 60}}}
             rows = cv.score_price_tail(2024, ypay, "MISO")
             main = rows[0]
             self.assertEqual(main["status"], cv.PASS)
-            self.assertEqual(main["actual"], 24.0)
-            rt = [r for r in rows if r["key"] == "rt_diagnostic"][0]
-            self.assertEqual(rt["actual"], 100.0)
-            self.assertEqual(rt["status"], cv.SKIPPED)
+            self.assertEqual(main["actual"], 100.0)
+            self.assertIn("RT", main["metric"])
+            da = [r for r in rows if r["key"] == "da_diagnostic"][0]
+            self.assertEqual(da["actual"], 24.0)
+            self.assertEqual(da["status"], cv.SKIPPED)
+            self.assertIn("forecast-risk premium", da["metric"])
         finally:
             _reset_tail()
 
     def test_tail_collapsed_fails(self):
         # A collapsed tail (0h) against a material actual FAILs — bounded
-        # below on purpose, unchanged in spirit from v1. (ERCOT gates on the
-        # RT count since v2.6; a collapsed tail fails on either basis.)
+        # below on purpose, unchanged in spirit from v1.
         _tail({"ERCOT": {"2024": {"da_gt": 68, "rt_gt": 53, "da_coverage": 1.0}}})
         try:
             ypay = {"ordc": {"hoursGt200": {"actual": 53, "model": 0}}}
@@ -679,12 +677,12 @@ class PriceAndDispatchTests(unittest.TestCase):
             _reset_tail()
 
     def test_ercot_tail_gates_on_rt_da_diagnostic(self):
-        # v2.6 owner amendment (2026-07-16): ERCOT gates on the RT hourly
-        # tail — its DA tail embeds the day-ahead forecast-risk premium a
-        # realized-weather backcast is out of representation to price (ERCOT
-        # DA > RT; 2023: 311 vs 181 h). Model 30h vs RT 53h is 0.57x -> PASS
-        # (vs DA 68h it would read 0.44x, a FAIL); the DA count moves to the
-        # non-gated da_diagnostic row.
+        # RT gating (ERCOT since v2.6(a), every ISO since v2.7): the DA tail
+        # embeds the day-ahead forecast-risk premium a realized-weather
+        # backcast is out of representation to price (ERCOT DA > RT; 2023:
+        # 311 vs 181 h). Model 30h vs RT 53h is 0.57x -> PASS (vs DA 68h it
+        # would read 0.44x, a FAIL); the DA count sits in the non-gated
+        # da_diagnostic row.
         _tail(
             {
                 "ERCOT": {
@@ -712,9 +710,9 @@ class PriceAndDispatchTests(unittest.TestCase):
             _reset_tail()
 
     def test_tail_band_and_overfire(self):
-        # [0.5x, 2x] on the DA actual: 1.8x PASSes, 2.5x (invented tail) FAILs,
+        # [0.5x, 2x] on the RT actual: 1.8x PASSes, 2.5x (invented tail) FAILs,
         # 0.4x FAILs. NEISO metric label carries the $300 winter proxy.
-        _tail({"NEISO": {"2024": {"da_gt": 100, "rt_gt": 60, "da_coverage": 1.0}}})
+        _tail({"NEISO": {"2024": {"da_gt": 60, "rt_gt": 100, "rt_coverage": 1.0}}})
         try:
             for model, want in ((180, cv.PASS), (250, cv.FAIL), (40, cv.FAIL)):
                 ypay = {"ordc": {"hoursGt200": {"actual": 60, "model": model}}}
@@ -725,19 +723,19 @@ class PriceAndDispatchTests(unittest.TestCase):
             _reset_tail()
 
     def test_tail_small_count_absolute_guard(self):
-        # DA actual below 10h: the ratio is degenerate, so |model-actual| <= 10h
-        # gates instead — model 0h vs DA 8h PASSes (an hourly model showing no
-        # tail against a handful of DA hours is within noise), model 30h vs DA
-        # 2h FAILs (invented tail; also the v1 quiet-actual token guard, now
+        # RT actual below 10h: the ratio is degenerate, so |model-actual| <= 10h
+        # gates instead — model 0h vs RT 6h PASSes (an hourly model showing no
+        # tail against a handful of RT hours is within noise), model 30h vs RT
+        # 6h FAILs (invented tail; also the v1 quiet-actual token guard, now
         # tighter at 10h instead of 50h).
-        _tail({"PJM": {"2023": {"da_gt": 8, "rt_gt": 6, "da_coverage": 1.0}}})
+        _tail({"PJM": {"2023": {"da_gt": 8, "rt_gt": 6, "rt_coverage": 1.0}}})
         try:
             ypay = {"ordc": {"hoursGt200": {"actual": 6, "model": 0}}}
             rows = cv.score_price_tail(2023, ypay, "PJM")
             self.assertEqual(rows[0]["status"], cv.PASS)
         finally:
             _reset_tail()
-        _tail({"PJM": {"2023": {"da_gt": 2, "rt_gt": 6, "da_coverage": 1.0}}})
+        _tail({"PJM": {"2023": {"da_gt": 2, "rt_gt": 6, "rt_coverage": 1.0}}})
         try:
             ypay = {"ordc": {"hoursGt200": {"actual": 6, "model": 30}}}
             rows = cv.score_price_tail(2023, ypay, "PJM")
@@ -746,9 +744,9 @@ class PriceAndDispatchTests(unittest.TestCase):
             _reset_tail()
 
     def test_tail_partial_coverage_noted(self):
-        # A DA series with partial coverage (CAISO 2023 Jan-Feb aged out of
+        # An RT series with partial coverage (CAISO 2023 Jan-Feb aged out of
         # OASIS retention) is a lower bound — surfaced in the magnitude.
-        _tail({"CAISO": {"2023": {"da_gt": 41, "rt_gt": 21, "da_coverage": 0.819}}})
+        _tail({"CAISO": {"2023": {"da_gt": 41, "rt_gt": 21, "rt_coverage": 0.819}}})
         try:
             ypay = {"ordc": {"hoursGt200": {"actual": 21, "model": 30}}}
             rows = cv.score_price_tail(2023, ypay, "CAISO")
@@ -757,51 +755,10 @@ class PriceAndDispatchTests(unittest.TestCase):
             _reset_tail()
 
 
-class StorageTests(unittest.TestCase):
-    def test_skipped_without_series(self):
-        # No model and no actual throughput committed -> SKIPPED, never a pass.
-        r = cv.score_storage(2024, {}, {})
-        self.assertEqual(r["status"], cv.SKIPPED)
-
-    def test_skipped_when_only_model_present(self):
-        # Model emitted but the BA reports no storage breakout (NEISO 2023):
-        # actual absent -> SKIPPED, not scored against a missing actual.
-        r = cv.score_storage(2023, {"storage": {"throughput_twh": 0.34}}, {})
-        self.assertEqual(r["status"], cv.SKIPPED)
-
-    def test_within_band_report_only(self):
-        # v2.6(c): RETIRED — the +15% error is computed and reported, never
-        # PASS/FAIL (EIA-930 storage is not a calibration judgment).
-        r = cv.score_storage(
-            2024,
-            {"storage": {"throughput_twh": 1.15}},
-            {"storage": {"throughput_twh": 1.0}},
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIn("+15.0%", r["magnitude"])
-        self.assertIn("report-only", r["magnitude"])
-
-    def test_over_cycling_report_only(self):
-        # v2.6(c): a +47% miss is REPORTED (visible magnitude) but not gated.
-        r = cv.score_storage(
-            2024,
-            {"storage": {"throughput_twh": 0.46}},
-            {"storage": {"throughput_twh": 0.31}},
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIsNone(r["classification"])
-        self.assertIn("report-only", r["magnitude"])
-
-    def test_under_cycling_report_only(self):
-        # v2.6(c): -73% under-cycling is reported, never a FAIL.
-        r = cv.score_storage(
-            2025,
-            {"storage": {"throughput_twh": 0.56}},
-            {"storage": {"throughput_twh": 2.08}},
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIn("-73", r["magnitude"])
-
+# (StorageTests — the C5b score_storage suite — was removed with the criterion
+# by the rubric v2.7 owner amendment 2026-07-16; the dispatch-correlation
+# tests it also carried live on below.)
+class DispatchCorrTests(unittest.TestCase):
     def test_dispatch_corr_floor(self):
         ypay = {
             "fuelRows": [{"fuel": "gas", "m": 380, "b": 360, "r": 0.55, "nrmse": 0.16}]
@@ -1113,7 +1070,7 @@ class DeterminationTests(unittest.TestCase):
             art["bench"][2024]["co2"] = {"egrid": 100.0}
             return art
 
-        _tail({"PJM": {"2024": {"da_gt": 100, "rt_gt": 80, "da_coverage": 1.0}}})
+        _tail({"PJM": {"2024": {"da_gt": 80, "rt_gt": 100, "rt_coverage": 1.0}}})
         try:
             v = cv.determine_from_artifacts("t", art_with(0.55))  # 4 ledgered
             self.assertEqual(v["determination"], cv.NOT_YET)
@@ -1621,70 +1578,8 @@ class Co2ScoreTests(unittest.TestCase):
         self.assertEqual(r["status"], cv.SKIPPED)
 
 
-class StorageShapeScoreTests(unittest.TestCase):
-    """score_storage_shape (:931) status tokens on the positive-discharge basis
-    (rubric §C5c 2026-07-03 alignment fix: both series are monthly discharge,
-    not net charge-minus-discharge)."""
-
-    # A ramp with a clear seasonal shape (CV well above STORAGE_SHAPE_MIN_CV)
-    # so the degeneracy guard never fires for the pass/fail cases below.
-    _ACTUAL = [float(x) for x in range(1, 13)]  # 1..12, positive discharge GWh
-
-    def _bench(self, actual=None):
-        return {"storage": {"monthly_net_gwh": actual or self._ACTUAL}}
-
-    def test_high_correlation_report_only(self):
-        # v2.6(c): RETIRED — r is computed and reported, never PASS/FAIL.
-        model = [2.0 * x for x in self._ACTUAL]  # perfectly correlated, scaled
-        r = cv.score_storage_shape(
-            2024, {"storage": {"monthly_net_gwh": model}}, self._bench()
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIn("r=1.000", r["magnitude"])
-        self.assertIn("report-only", r["magnitude"])
-
-    def test_anticorrelated_report_only(self):
-        # v2.6(c): r=-1 is REPORTED (visible) but never a FAIL/MODEL MISS.
-        model = list(reversed(self._ACTUAL))  # r = -1
-        r = cv.score_storage_shape(
-            2024, {"storage": {"monthly_net_gwh": model}}, self._bench()
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-        self.assertIsNone(r["classification"])
-        self.assertIn("r=-1.000", r["magnitude"])
-
-    def test_skipped_no_actual_monthly(self):
-        r = cv.score_storage_shape(2024, {"storage": {}}, {"storage": {}})
-        self.assertEqual(r["status"], cv.SKIPPED)
-
-    def test_skipped_no_model_monthly(self):
-        r = cv.score_storage_shape(2024, {"storage": {}}, self._bench())
-        self.assertEqual(r["status"], cv.SKIPPED)
-
-    def test_skipped_wrong_length(self):
-        r = cv.score_storage_shape(
-            2024, {"storage": {"monthly_net_gwh": [1.0] * 11}}, self._bench()
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-
-    def test_skipped_null_month(self):
-        model = [1.0] * 12
-        model[3] = None
-        r = cv.score_storage_shape(
-            2024, {"storage": {"monthly_net_gwh": model}}, self._bench()
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
-
-    def test_skipped_degenerate_actual_shape(self):
-        # Near-uniform actual monthly discharge (CV < STORAGE_SHAPE_MIN_CV): no
-        # seasonal shape to correlate, so even the TRUE model would score r=0.
-        flat_actual = self._bench([10.0] * 12)
-        model = [10.0] * 12
-        model[0] = 10.5  # some model variation, irrelevant — actual is degenerate
-        r = cv.score_storage_shape(
-            2024, {"storage": {"monthly_net_gwh": model}}, flat_actual
-        )
-        self.assertEqual(r["status"], cv.SKIPPED)
+# (StorageShapeScoreTests — the C5c score_storage_shape suite — was removed
+# with the criterion by the rubric v2.7 owner amendment 2026-07-16.)
 
 
 def _fm(klass, status="PASS"):
