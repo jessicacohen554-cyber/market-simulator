@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-16-caiso-91-reserve-coopt",
+ "label": "caiso 91 reserve-coopt-online (PROBE)",
+ "date": "2026-07-16",
+ "shorthand": "caiso-91-reserve-coopt",
+ "definition": "REJECTED PROBE (measured inert; kept as correct default-off structure, rule 1): the caiso-90 keeper recipe + the issue-#1492 'correct build' reserve co-optimization \u2014 energy_reserve_coopt + caiso_reserve_coopt + caiso_reserve_online_scoped (each (zone, fuel-class) pergen pool splits into a SPIN column scoped to ONLINE 10-min ramp at the P0\u2192P1 seam from the model's own P0 run pattern, and a NONSPIN column of offline fast-start ramp; nested tariff families: spin = \u00bd the BAL-002-WECC-3 requirement at the \u00a727.1.2.3.5 $100 spin curve, contingency-total = the FULL requirement at the $500/600/700 non-spin tiers; storage RS at the 30-min ASSOC sustain backs both), with caiso_scarcity_pricing=False per rule-19 exclusivity. RESULT vs the same-machine caiso-90 repro: INERT \u2014 reserve balance duals zero in all 26,280 hours (reserve_price max $0.0 every year); C1 grid deltas +0.00 TWh on every class-year (CC_REGULAR +1.90/+5.30/+2.55 and CT_PEAKER -3.29/-3.63/-2.05 unchanged); C3c 18/0/0 h on the same days (Jan-13-2023); monthly residual map identical. The ~1.1 GW spin requirement clears at zero opportunity cost from storage RS power headroom + online hydro headroom + part-loaded online CC belly headroom \u2014 the caiso-59 inertness conclusion SURVIVES its chartered online-quality scoping, and the C1 CC-over/CT-under cluster is adjudicated NOT a reserve-withholding phenomenon (handoff candidate 1 closed; candidates 2 \u2014 Panoche-class committed-tranche gate \u2014 and 3 \u2014 overnight CC cycling \u2014 remain). Zero new fitted parameters (tariff/NERC curves, physics ramp/fast-start gates, P0 commitment state); DOF ledger identical to the keeper. Disclosed next-increment note: the hydro deliverability envelope caps energy only, not the joint P+R row \u2014 envelope-consistent hydro reserve would shrink phantom headroom but storage RS alone still covers the requirement in the relevant hours.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-16-caiso-91-reserve-coopt.js",
+ "bundle": "results/calibration/caiso91_reserve_online_scoped"
+}
