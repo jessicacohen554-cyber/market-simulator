@@ -138,8 +138,10 @@ class TestScreensConsumeSignal(unittest.TestCase):
     def test_evolve_fleet_prefers_price_signal(self):
         # Raw prices say "deeply unprofitable"; the signal says "rich". The
         # retirement screen must follow the signal (plan §2.2: consumed by
-        # the screens in place of raw prices).
-        config = ScenarioConfig(iso="ERCOT")
+        # the screens in place of raw prices). coal=1 pinned (D1 default 3) so
+        # a single loss year retires the coal — this test isolates which price
+        # series the screen consumes, not the loss-year threshold.
+        config = ScenarioConfig(iso="ERCOT", retirement_years_coal=1)
         coal = [
             Generator(
                 unit_id="C0",

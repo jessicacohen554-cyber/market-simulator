@@ -343,7 +343,10 @@ class TestCapacityRevenueRetirementScreen(unittest.TestCase):
         mc = np.full((A.ret_n_units, A.hours), 25.0)
         prices = np.full((1, A.hours), 1.0)
         dispatch = mock.Mock(dispatch=np.zeros((A.ret_n_units, A.hours)))
-        config = ScenarioConfig(iso=iso)
+        # coal=1 pinned (D1 default 3): this screen runs a single pass, so the
+        # coal units must be eligible on one loss year to isolate the
+        # capacity-revenue monotonicity / ERCOT negative-control response.
+        config = ScenarioConfig(iso=iso, retirement_years_coal=1)
         # Preserve the real capacity_market flag for the ISO, vary only net-CONE.
         base = MARKET_DESIGN.get(iso)
         patched = MarketDesign(

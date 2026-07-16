@@ -4486,14 +4486,19 @@ PJM_EXTERNAL_FLOW_PERCENTILE: float = 95.0
 # limit). Only interfaces with a confident named-interface mapping AND a value
 # materially looser than measured are overridden; the rest keep their config
 # estimate (already ≈ measured). Keyed by the model link's (from_zone, to_zone).
-#   - ComEd→AEP_Ohio    ← "50045005 Post-Contingency"  (median 2900; config 6000
-#                          was the loose one the diagnosis flagged)
 #   - AEP_Ohio→Dominion ← "AEP/DOM Post-Contingency"   (median 4054; ≈ config 4069)
 #   - West_APS→SWMAAC   ← "AP-South Pre-Contingency"   (median 3932; the dominant
 #                          west→east cut — config 4453)
 #   - West_APS→Central_PA ← "Bedington-BlackOak"       (median ~1850; config 1947)
+#   - ComEd→AEP_Ohio: REMOVED 2026-07-16 (pjm-cong-1). The "50045005" series
+#     (median 2900) had been applied here, but PJM Manual 03 §3.8 (Rev 71)
+#     defines the 5004/5005 interface as the Keystone–Juniata + Conemaugh–
+#     Juniata 500 kV circuits — a western-PA→central-PA corridor cut with no
+#     relation to the ComEd boundary (the real ComEd interface, CE-East, is
+#     not published in this feed). The mis-mapped override was silently
+#     halving the link's 6,000 MW config estimate; the link keeps its config
+#     estimate (rule 14: no measured series exists on this boundary).
 PJM_MEASURED_INTERNAL_TTC: dict[tuple[str, str], float] = {
-    ("PJM_ComEd", "PJM_AEP_Ohio"): 2900.0,
     ("PJM_AEP_Ohio", "PJM_Dominion"): 4050.0,
     ("PJM_West_APS", "PJM_SWMAAC"): 3900.0,
     ("PJM_West_APS", "PJM_Central_PA"): 1850.0,
@@ -4509,11 +4514,25 @@ PJM_MEASURED_INTERNAL_TTC: dict[tuple[str, str], float] = {
 # simultaneously-enforced security limits and the operative capability each
 # hour is the tighter one.
 #
+# Series identity (PJM Manual 03 §3.8 Rev 71, verified 2026-07-16,
+# pjm-cong-1): these are PJM's named REACTIVE TRANSFER INTERFACES — each a
+# defined 500/345 kV line set whose TLC limit recomputes ~5-min; the feed's
+# "Average Western/Central/Eastern" series are the hourly-averaged posted
+# limits of the WESTERN/CENTRAL/EASTERN interfaces (NOT cross-interface
+# regional means), and "50045005" is the 5004/5005 interface
+# (Keystone–Juniata + Conemaugh–Juniata 500 kV, a western-PA→central-PA
+# corridor cut).
+#
 # Crosswalk provenance and reconciliation (CLAUDE.md rule 14 exception
 # clause — each static seed's series maps back to it 1:1):
-#   - ComEd→AEP_Ohio      ← "50045005": iso_configs already names this link
-#     "the 5004/5005 interface"; the static 6000 was a loose estimate
-#     (measured mean ~2,750-3,100).
+#   - ComEd→AEP_Ohio      ← "50045005": REMOVED 2026-07-16 (pjm-cong-1).
+#     Mis-attribution: the iso_configs "the 5004/5005 interface" naming of
+#     the ComEd link was wrong (Manual 03 puts both circuits in
+#     Pennsylvania); the real ComEd interface (CE-East) is not in the feed,
+#     so the link rides its static — no measured series exists on that
+#     boundary. Mapping 5004/5005 anywhere else would double-apply the
+#     through-PA corridor the Eastern/Central/Western interfaces already
+#     carry (rule 19); the series stays in the datatype unmapped.
 #   - AEP_Ohio→Dominion   ← "AEP/DOM" (static 4069 = its 2024 mean).
 #   - West_APS→SWMAAC     ← "AP-South" (static 4453 = its 2024 post mean).
 #     MISALIGNMENT, documented: AP-South is the aggregate western→MAD 500 kV
@@ -4548,7 +4567,6 @@ PJM_MEASURED_INTERNAL_TTC: dict[tuple[str, str], float] = {
 # scripts/curate_transfer_interface_limits.py; consumed by
 # market_sim.data.transfer_interface_limits.pjm_interface_ttc_hourly.
 PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
-    ("PJM_ComEd", "PJM_AEP_Ohio"): ("50045005 Post-Contingency",),
     ("PJM_AEP_Ohio", "PJM_Dominion"): ("AEP/DOM Post-Contingency",),
     ("PJM_West_APS", "PJM_SWMAAC"): (
         "AP-South Pre-Contingency",

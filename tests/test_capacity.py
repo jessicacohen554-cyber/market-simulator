@@ -405,22 +405,41 @@ class TestEconomicRetirements(unittest.TestCase):
         """A dispatch stand-in with every generator producing ``level`` MW."""
         return SimpleNamespace(dispatch=np.full((n_gen, self.T), level))
 
-    def test_coal_retires_after_one_unprofitable_year(self):
-        # retirement_years_coal = 1, retirement_fom_multiplier_coal = 1.3.
+    def test_coal_retires_after_three_unprofitable_years(self):
+        # retirement_years_coal = 3 (D1 Option B, owner-adopted 2026-07-16:
+        # the measured EIA-860 announced-to-deactivation lag, cap-weighted /
+        # >=300 MW median = 3 yr — retirement-dof-identification-2026-07-15.md
+        # Sa.3/Sd), retirement_fom_multiplier_coal = 1.3. A coal unit now needs
+        # THREE consecutive loss years to retire, not one.
         config = ScenarioConfig()
+        self.assertEqual(config.retirement_years_coal, 3)
         fleet = [_gen("C0", "coal", pmax=100.0)]
         arrays = generators_to_fleet_arrays(fleet, ["Z0"], hours=self.T)
-        # going_forward_cost = 40 * 1.3 * 100 * 1000 = 5_200_000.
+        # going_forward_cost = 45 * 1.3 * 100 * 1000 = 5_850_000.
         # net_revenue = 10 $/MWh * 10 MW * 10 h = 1_000 << cost.
         prices = np.full((1, self.T), 10.0)
         dispatch = self._dispatch_result(1, 10.0)
 
+        # First loss year: still online, counter at 1.
         fleet1, losses1, _ = apply_economic_retirements(
             fleet, arrays, dispatch, prices, config, {}, peak_demand=0.0
         )
-        # A single unprofitable year is enough for coal.
-        self.assertEqual(fleet1, [])
-        self.assertNotIn("C0", losses1)
+        self.assertEqual([g.unit_id for g in fleet1], ["C0"])
+        self.assertEqual(losses1["C0"], 1)
+
+        # Second consecutive loss year: still online, counter at 2.
+        fleet2, losses2, _ = apply_economic_retirements(
+            fleet1, arrays, dispatch, prices, config, losses1, peak_demand=0.0
+        )
+        self.assertEqual([g.unit_id for g in fleet2], ["C0"])
+        self.assertEqual(losses2["C0"], 2)
+
+        # Third consecutive loss year: retired.
+        fleet3, losses3, _ = apply_economic_retirements(
+            fleet2, arrays, dispatch, prices, config, losses2, peak_demand=0.0
+        )
+        self.assertEqual(fleet3, [])
+        self.assertNotIn("C0", losses3)
 
     def test_staged_thinning_caps_per_fuel_exits_and_defers_rest(self):
         # G-31 staged over-supply thinning: with the gate on, at most
@@ -430,6 +449,9 @@ class TestEconomicRetirements(unittest.TestCase):
         config = ScenarioConfig(
             staged_oversupply_thinning=True,
             staged_thinning_max_gw_per_year=3.0,  # 3000 MW budget
+            retirement_years_coal=1,  # pin to isolate the staged-thinning RATE
+            # cap from the D1 default (coal=3); this test screens on a single
+            # loss year so every coal unit is eligible in one pass.
         )
         # 5 coal units @ 1000 MW, distinct heat rates so ordering is
         # deterministic (higher heat rate == retired first). All deeply
@@ -464,7 +486,11 @@ class TestEconomicRetirements(unittest.TestCase):
     def test_staged_thinning_off_is_noop(self):
         # Gate off: the full unprofitable coal fleet exits in one year (the
         # pre-G-31 behaviour), byte-identical to a run without the flag.
-        config = ScenarioConfig(staged_oversupply_thinning=False)
+        # coal=1 pinned (D1 default is 3) so the single-pass exit isolates the
+        # staged-thinning no-op.
+        config = ScenarioConfig(
+            staged_oversupply_thinning=False, retirement_years_coal=1
+        )
         fleet = [
             _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=12.0 - i) for i in range(5)
         ]
@@ -665,9 +691,12 @@ class TestEconomicRetirements(unittest.TestCase):
 
     def test_coal_fom_multiplier_makes_marginal_coal_unprofitable(self):
         # net_revenue = 4500 $/MWh * 100 MW * 10 h = 4_500_000.
-        # Base coal FOM cost = 40 * 100 * 1000 = 4_000_000 (revenue clears).
-        # With the 1.3 multiplier = 5_200_000 (revenue falls short).
-        config = ScenarioConfig()
+        # Base coal FOM cost = 45 * 100 * 1000 = 4_500_000 (revenue clears at
+        # the boundary). With the 1.3 multiplier = 5_850_000 (revenue falls
+        # short). coal=1 pinned (D1 default is 3) so the single loss year the
+        # multiplier induces is enough to retire — this test isolates the FOM
+        # multiplier flip, not the loss-year threshold.
+        config = ScenarioConfig(retirement_years_coal=1)
         prices = np.full((1, self.T), 4500.0)
         dispatch = self._dispatch_result(1, 100.0)
 
@@ -701,8 +730,10 @@ class TestEconomicRetirements(unittest.TestCase):
         # survives the screen (loss year 1 < threshold 3) and contributes
         # 2000 MW at seasonal rating; the DC ties add 817 MW; each coal unit
         # contributes 1000 MW at rating, so 8 of 12 coal units must be
-        # retained (2000 + 817 + 8 x 1000 = 10817 >= 10715.25).
-        config = ScenarioConfig()
+        # retained (2000 + 817 + 8 x 1000 = 10817 >= 10715.25). coal=1 pinned
+        # (D1 default is 3) so all 12 coal units are screen-eligible in one
+        # pass — this test isolates the reliability floor, not the threshold.
+        config = ScenarioConfig(retirement_years_coal=1)
         nuclear = [_gen("N0", "nuclear", pmax=2000.0)]
         # 12 coal units of 1000 MW, strictly increasing heat rate.
         coal = [
@@ -733,7 +764,9 @@ class TestEconomicRetirements(unittest.TestCase):
         # units are the ones actually retired. ERCOT CDR basis: requirement =
         # 1650 x 0.942 x 1.1375 = 1768.0 MW; the DC ties (817) plus one coal
         # unit at rating (1000) clears it, so the two least efficient retire.
-        config = ScenarioConfig()
+        # coal=1 pinned (D1 default 3) so all three coal units screen-eligible
+        # in one pass — this test isolates heat-rate merit ordering.
+        config = ScenarioConfig(retirement_years_coal=1)
         coal = [
             _gen("C0", "coal", pmax=1000.0, heat_rate=9.0),
             _gen("C1", "coal", pmax=1000.0, heat_rate=10.0),
@@ -863,7 +896,9 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         # rescues it.
         from market_sim.config.constants import RENEWABLE_CAPACITY_CREDIT_BY_ISO
 
-        config = ScenarioConfig()
+        # coal=1 pinned (D1 default 3): this test isolates the accredited-basis
+        # requirement math on a single-loss-year screen.
+        config = ScenarioConfig(retirement_years_coal=1)
         coal = [_gen("C0", "coal", pmax=1000.0)]
         peak = 1000.0
         requirement = peak * (1.0 - 0.058) * 1.1375
@@ -901,6 +936,8 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
             fixed_om_coal=8.0,
             retirement_fom_multiplier_coal=1.0,
             fixed_om_gas_ct=8.0,
+            retirement_years_coal=1,  # pin (D1 default 3): the coal unit must
+            # be screen-eligible on its single loss year for the tie-break test.
         )
         fleet = [
             _gen("CO", "coal", pmax=1000.0, heat_rate=9.5, emission_rate_co2=0.95),
@@ -917,8 +954,8 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
     def test_retention_merit_cost_is_primary(self):
         # Cost stays the primary key: a cheap-adequacy CT (8 $/kW-yr) beats
         # coal (52 effective) regardless of CO2 — the floor is an adequacy
-        # purchase, not an emissions ranking.
-        config = ScenarioConfig()
+        # purchase, not an emissions ranking. coal=1 pinned (D1 default 3).
+        config = ScenarioConfig(retirement_years_coal=1)
         fleet = [
             _gen("CO", "coal", pmax=1000.0, emission_rate_co2=0.95),
             _gen("CT", "gas_ct", pmax=1000.0, emission_rate_co2=0.55),
@@ -957,7 +994,9 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         self.assertEqual(log, [])
 
     def test_retention_log_rows_complete(self):
-        config = ScenarioConfig()
+        # coal=1 pinned (D1 default 3): the unit is screen-eligible on its
+        # single loss year and then floor-retained (keeps loss_years == 1).
+        config = ScenarioConfig(retirement_years_coal=1)
         coal = [_gen("C0", "coal", pmax=1000.0, emission_rate_co2=0.9)]
         _, losses, log = self._screen(coal, config, peak=800.0, year=2031)
         self.assertEqual(len(log), 1)
@@ -1002,7 +1041,11 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
             THERMAL_ACCREDITATION_BASIS_BY_ISO,
         )
 
-        config = ScenarioConfig().with_overrides(planning_reserve_margin_override=0.0)
+        # coal=1 pinned (D1 default 3) so all four coal units screen-eligible
+        # in one pass — this test isolates the UCAP-vs-nameplate floor property.
+        config = ScenarioConfig().with_overrides(
+            planning_reserve_margin_override=0.0, retirement_years_coal=1
+        )
         coal = [
             _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=9.0 + 0.1 * i)
             for i in range(4)
@@ -1018,8 +1061,9 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
     def test_locational_exemption_skips_ra_saturated_zone(self):
         # Under capacity_deliverability_limits, a unit in a zone already
         # long on deliverable firm capacity is exempt from floor retention
-        # (mirror of the screens' _zone_is_long gate).
-        config = ScenarioConfig()
+        # (mirror of the screens' _zone_is_long gate). coal=1 pinned (D1
+        # default 3) so both coal units are screen-eligible in one pass.
+        config = ScenarioConfig(retirement_years_coal=1)
         fleet = [
             _gen("A", "coal", pmax=1000.0, zone="Z0"),
             _gen("B", "coal", pmax=1000.0, heat_rate=12.0, zone="ZLONG"),
@@ -1049,8 +1093,9 @@ class TestReliabilityFloorAccredited(unittest.TestCase):
         # on ERCOT's CDR basis (rating; 817 MW ties): against the stale
         # 1000 MW prior peak (requirement 1071.5) the ties plus one unit
         # suffice and the other retires; against the known 2000 MW peak
-        # (requirement 2143) both are retained (817 + 2000 >= 2143).
-        config = ScenarioConfig(iso="ERCOT")
+        # (requirement 2143) both are retained (817 + 2000 >= 2143). coal=1
+        # pinned (D1 default 3) so both coal units screen-eligible in one pass.
+        config = ScenarioConfig(iso="ERCOT", retirement_years_coal=1)
         coal = [
             _gen("C0", "coal", pmax=1000.0, heat_rate=9.0),
             _gen("C1", "coal", pmax=1000.0, heat_rate=10.0),
@@ -1118,7 +1163,8 @@ class TestMarketDesignRetirementFloor(unittest.TestCase):
     def _fleet(self):
         # The over-retirement fixture from the floor test above: nuclear
         # survives the screen (loss year 1 < threshold), 12 coal units all
-        # eligible after one loss year; flag-off ERCOT retains 8 of 12.
+        # eligible after one loss year (callers pin retirement_years_coal=1 —
+        # the D1 default is 3); flag-off ERCOT retains 8 of 12.
         nuclear = [_gen("N0", "nuclear", pmax=2000.0)]
         coal = [
             _gen(f"C{i}", "coal", pmax=1000.0, heat_rate=9.0 + 0.1 * i)
@@ -1131,7 +1177,9 @@ class TestMarketDesignRetirementFloor(unittest.TestCase):
         # retains nothing — every screen-eligible coal unit actually exits
         # and the retention log is empty (adequacy expresses as scarcity
         # revenue downstream, not administrative retention).
-        config = ScenarioConfig(market_design_retirement_floor=True)
+        config = ScenarioConfig(
+            market_design_retirement_floor=True, retirement_years_coal=1
+        )
         survivors, _, retention_log = self._screen(self._fleet(), config, 10000.0)
         self.assertEqual([g.unit_id for g in survivors], ["N0"])
         self.assertEqual(retention_log, [])
@@ -1139,7 +1187,9 @@ class TestMarketDesignRetirementFloor(unittest.TestCase):
     def test_flag_off_is_byte_identical(self):
         # Default-off reproduces the pre-gate behaviour exactly (the same
         # fixture as test_reliability_floor_prevents_over_retirement).
-        config = ScenarioConfig(market_design_retirement_floor=False)
+        config = ScenarioConfig(
+            market_design_retirement_floor=False, retirement_years_coal=1
+        )
         survivors, _, retention_log = self._screen(self._fleet(), config, 10000.0)
         self.assertEqual(len([g for g in survivors if g.fuel_type == "coal"]), 8)
         self.assertEqual(len(retention_log), 8)
@@ -1155,7 +1205,7 @@ class TestMarketDesignRetirementFloor(unittest.TestCase):
 
         design = {"PJM": MarketDesign(capacity_market=True, net_cone_per_kw_yr=0.0)}
         with mock.patch.dict(capacity_mod.MARKET_DESIGN, design):
-            base = ScenarioConfig(iso="PJM")
+            base = ScenarioConfig(iso="PJM", retirement_years_coal=1)
             gated = base.with_overrides(market_design_retirement_floor=True)
             surv_off, _, log_off = self._screen(self._fleet(), base, 10000.0)
             surv_on, _, log_on = self._screen(self._fleet(), gated, 10000.0)
@@ -1171,7 +1221,9 @@ class TestMarketDesignRetirementFloor(unittest.TestCase):
         # asserting they have no adequacy construct.
         from market_sim.model import capacity as capacity_mod
 
-        config = ScenarioConfig(market_design_retirement_floor=True)
+        config = ScenarioConfig(
+            market_design_retirement_floor=True, retirement_years_coal=1
+        )
         with mock.patch.dict(capacity_mod.MARKET_DESIGN, clear=True):
             survivors, _, retention_log = self._screen(self._fleet(), config, 10000.0)
         self.assertEqual(len([g for g in survivors if g.fuel_type == "coal"]), 8)
@@ -2637,7 +2689,9 @@ class TestEvolveFleet(unittest.TestCase):
         self.assertIsInstance(tracker, dict)
 
     def test_economic_retirement_runs_within_evolve(self):
-        config = ScenarioConfig(iso="ERCOT")
+        # coal=1 pinned (D1 default 3): this test isolates the evolve_fleet
+        # wiring of the economic screen, not the loss-year threshold.
+        config = ScenarioConfig(iso="ERCOT", retirement_years_coal=1)
         coal = _gen("C0", "coal", pmax=100.0, zone="North")
         arrays = generators_to_fleet_arrays([coal], ["North"], hours=24)
         dispatch = SimpleNamespace(dispatch=np.full((1, 24), 1.0))
@@ -2647,7 +2701,7 @@ class TestEvolveFleet(unittest.TestCase):
             prices=np.full((1, 24), 5.0),  # revenue far below fixed cost
             planned_additions=[],
         )
-        # Counter already at 1; a second loss year this step triggers retirement.
+        # A single loss year triggers retirement at the pinned coal=1 threshold.
         fleet, tracker, _, _, _ = evolve_fleet([coal], prior, 2031, config, {"C0": 1})
         self.assertEqual(fleet, [])
         self.assertNotIn("C0", tracker)
