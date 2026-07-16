@@ -115,6 +115,25 @@ class TierSlackCostCoreTest(unittest.TestCase):
             tier_slack_cost_from_registry(ev, "MISO", 2025, MISO_ZONES, VOLL, 8760)
         )
 
+    def test_external_seam_buses_are_never_repriced(self):
+        # The LP zone list carries the external seam buses; load slack there
+        # is phantom import supply through the border links, so the tier
+        # floor must never touch them (footprint or midwest alike) — else
+        # the mechanism fabricates unmeasured emergency imports around the
+        # measured seam ladders.
+        zones = MISO_ZONES + ["MISO_external", "MISO_external_South"]
+        ev = _registry(
+            [
+                ("maxgen_warning", "footprint", "2024-08-26 13:00", "2024-08-26 20:00"),
+            ]
+        )
+        cost = tier_slack_cost_from_registry(ev, "MISO", 2024, zones, VOLL, 8760)
+        self.assertTrue((cost[6:] == VOLL).all())  # externals untouched
+        lo = 237 * 24 + 13
+        np.testing.assert_allclose(
+            cost[:6, lo : lo + 7], MISO_EMERGENCY_TIER1_OFFER_FLOOR
+        )
+
     def test_midwest_region_excludes_south(self):
         ev = _registry(
             [("maxgen_warning", "midwest", "2025-06-24 00:00", "2025-06-25 00:00")]
