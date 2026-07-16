@@ -2538,6 +2538,7 @@ def solve_and_persist(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_midcurve_conditional: bool = False,
+    ercot_offer_surface_cleared_share: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
     wind_ptc_vintage_offers: bool = False,
@@ -2782,6 +2783,13 @@ def solve_and_persist(
             # segment scope must land in scenario_config exactly as solved.
             recorded_cfg = recorded_cfg.with_overrides(
                 pjm_offer_midcurve_segments=tuple(pjm_offer_midcurve_segments)
+            )
+        if ercot_offer_surface_cleared_share:
+            # Meta-writer mirror of run_year's with_overrides (rule 25): the
+            # ERCOT-72 cleared-share boundary flag must land in scenario_config
+            # exactly as the LP solved with it.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_offer_surface_cleared_share=True
             )
         if ercot_offer_surface_lowcurve:
             # Meta-writer mirror of run_year's with_overrides (rule 25): the LOW-leg
@@ -3678,6 +3686,7 @@ def solve_and_persist(
             ercot_offer_surface_midcurve_conditional=(
                 ercot_offer_surface_midcurve_conditional
             ),
+            ercot_offer_surface_cleared_share=ercot_offer_surface_cleared_share,
             ercot_offer_surface_lowcurve=ercot_offer_surface_lowcurve,
             ercot_offer_surface_lowcurve_floorscoped=(
                 ercot_offer_surface_lowcurve_floorscoped
@@ -4092,6 +4101,7 @@ def solve_and_persist(
         "ercot_offer_surface_midcurve_conditional": (
             ercot_offer_surface_midcurve_conditional
         ),
+        "ercot_offer_surface_cleared_share": ercot_offer_surface_cleared_share,
         "ercot_offer_surface_lowcurve": ercot_offer_surface_lowcurve,
         "ercot_offer_surface_lowcurve_floorscoped": (
             ercot_offer_surface_lowcurve_floorscoped
