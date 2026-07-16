@@ -296,11 +296,59 @@ def sec_plants923(pay: dict) -> None:
         )
 
 
+# ---------------------------------------------------------------- windows
+def sec_windows(pay: dict) -> None:
+    """Provenance gate for the derived overlay (§8.2.1 gate #1, pjm-nuc-1b):
+    the extract arithmetic itself — smear minus overlaid availability — must
+    recover >= 75 MW mean over the 22 summer-2025 tail hours (the Phase-1
+    measured phantom 147 MW minus the stated 72 MW reconciliation margin),
+    BEFORE any LP runs. Computed for all three years for the record."""
+    from market_sim.data.outages import nuclear_unit_availability_series
+
+    cfg = get_iso_config("PJM")
+    for year in YEARS:
+        tail = summer_tail(year)
+        if not tail.any():
+            continue
+        daily = nuclear_unit_availability_series("PJM", year, HOURS)
+        if not daily:
+            print(f"=== {year}: no extract rows — overlay not derived")
+            continue
+        cf = np.asarray(NUCLEAR_MONTHLY_CF_BY_YEAR["PJM"][year], dtype=float)
+        smear = cf[MONTH - 1]
+        recov = np.zeros(HOURS)
+        pmax_by_key: dict[tuple[int, int], float] = {}
+        for g in load_fleet_from_csv("PJM", cfg, year=year):
+            if g.fuel_type != "nuclear":
+                continue
+            t = str(g.unit_id).rsplit("_", 1)[-1]
+            if t.isdigit():
+                pmax_by_key[(int(g.plant_code), int(t))] = g.pmax_mw
+        for key, series in daily.items():
+            cap = pmax_by_key.get(key)
+            if cap is None:
+                continue
+            covered = np.isfinite(series)
+            recov[covered] += (smear[covered] - series[covered]) * cap
+        m = recov[tail].mean()
+        print(
+            f"=== {year}: overlay recovery in the {tail.sum()} tail hours: mean "
+            f"{m:+.0f} MW (min {recov[tail].min():+.0f} / max {recov[tail].max():+.0f})"
+        )
+        if year == 2025:
+            ok = m >= 75.0
+            print(
+                f"  PROVENANCE GATE (>= 75 MW pre-committed): "
+                f"{'PASS' if ok else 'FAIL — stop before solving'}"
+            )
+
+
 SECTIONS = {
     "tail": sec_tail,
     "phantom": sec_phantom,
     "clock": sec_clock,
     "plants923": sec_plants923,
+    "windows": sec_windows,
 }
 
 

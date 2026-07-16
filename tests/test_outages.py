@@ -665,6 +665,96 @@ class ErcotNuclearUnitAvailabilityTest(unittest.TestCase):
         )
 
 
+class NuclearUnitAvailabilityTest(unittest.TestCase):
+    """The ISO-generic per-reactor daily nuclear series (NRC status CSV)."""
+
+    def test_committed_pjm_series_shape_windows_and_wedge_months(self):
+        from market_sim.data.outages import nuclear_unit_availability_series
+
+        s = nuclear_unit_availability_series("PJM", 2024)
+        # All 31 active PJM reactors present (dormant Crane 8011 absent).
+        self.assertEqual(len(s), 31)
+        self.assertIn((6103, 1), s)
+        self.assertNotIn((8011, 1), s)
+        d3 = s[(869, 3)]
+        self.assertEqual(d3.shape, (HOURS_PER_YEAR,))
+        # Dresden 3 full-unit stop 2024-08-24..27 (NRC 0 % power) in a
+        # covered month -> 0.0; two days later it is back near rating.
+        self.assertEqual(d3[_hour_of_year(8, 25, 12)], 0.0)
+        self.assertGreater(d3[_hour_of_year(8, 31, 12)], 0.9)
+        # 2024-11 is a wedge-dropped month (NRC thermal-% cannot express the
+        # 923 net anchor) -> NaN, the monthly smear stands there.
+        self.assertTrue(np.isnan(d3[_hour_of_year(11, 15, 12)]))
+        # Covered values bounded in [0, 1].
+        finite = np.isfinite(d3)
+        self.assertTrue((d3[finite] >= 0.0).all())
+        self.assertTrue((d3[finite] <= 1.0).all())
+
+    def test_unknown_iso_degrades_to_empty(self):
+        from market_sim.data.outages import nuclear_unit_availability_series
+
+        self.assertEqual(nuclear_unit_availability_series("NEISO", 2024), {})
+
+    def test_fleet_application_gated_pjm_scoped_and_min_gen_tracks(self):
+        """Flag off -> smear untouched; flag on -> windows land, floor follows,
+        wedge-dropped months keep the smear."""
+        from market_sim.config.scenarios import ScenarioConfig
+        from market_sim.data.fleet import Generator, generators_to_fleet_arrays
+
+        def nuke(unit_no: int, code: int, mw: float) -> Generator:
+            return Generator(
+                unit_id=f"{code}_{unit_no}",
+                name=f"nuke {code}_{unit_no}",
+                zone="PJM_ComEd",
+                fuel_type="nuclear",
+                pmax_mw=mw,
+                pmin_mw=0.0,
+                heat_rate=10.4,
+                vom=2.0,
+                emission_rate_co2=0.0,
+                nox_rate=0.0,
+                eford=0.03,
+                online_year=1971,
+                plant_code=code,
+            )
+
+        gens = [nuke(2, 869, 902.0), nuke(3, 869, 895.0)]
+        zones = ["PJM_ComEd"]
+        base_cfg = dict(weather_year=2024, iso="PJM", mode="backcast")
+        cfg_off = ScenarioConfig(**base_cfg)
+        cfg_on = ScenarioConfig(**base_cfg, nuclear_unit_availability=True)
+        fa_off = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="PJM", config=cfg_off, year=2024
+        )
+        fa_on = generators_to_fleet_arrays(
+            gens, zones, hours=HOURS_PER_YEAR, iso="PJM", config=cfg_on, year=2024
+        )
+        h = _hour_of_year(8, 25, 12)  # Dresden 3 full stop, covered month
+        # Flag off: the 2024 Aug smear (0.99) for both units.
+        self.assertAlmostEqual(fa_off.availability[1, h], 0.99, places=2)
+        self.assertAlmostEqual(fa_off.availability[0, h], 0.99, places=2)
+        # Flag on: Dresden 3 (row 1) zeroed on the event day, Dresden 2 near 1.
+        self.assertEqual(fa_on.availability[1, h], 0.0)
+        self.assertGreater(fa_on.availability[0, h], 0.9)
+        # Wedge-dropped month (2024-11): both keep the smear (0.93).
+        hw = _hour_of_year(11, 15, 12)
+        self.assertAlmostEqual(fa_on.availability[1, hw], 0.93, places=2)
+        self.assertAlmostEqual(
+            fa_on.availability[1, hw], fa_off.availability[1, hw], places=6
+        )
+        # Nuclear flat must-run floor tracks the overlaid availability.
+        self.assertAlmostEqual(
+            float(fa_on.min_gen[1, h]),
+            float(fa_on.availability[1, h] * 895.0),
+            places=3,
+        )
+        self.assertAlmostEqual(
+            float(fa_on.min_gen[0, h]),
+            float(fa_on.availability[0, h] * 902.0),
+            places=3,
+        )
+
+
 class ErcotThermalDamAvailabilityTest(unittest.TestCase):
     """The measured class-day thermal availability series + fleet rescale."""
 
