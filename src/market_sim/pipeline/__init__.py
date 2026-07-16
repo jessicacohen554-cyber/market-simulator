@@ -49,6 +49,7 @@ from __future__ import annotations
 from market_sim.pipeline.backcast_config import backcast_config
 from market_sim.pipeline.commitment import (
     build_caiso_ra_p1_prep,
+    build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_prep,
     build_ercot_gas_bridge_p1_preps,
     build_pjm_reserve_p1_prep,
@@ -75,6 +76,7 @@ __all__ = [
     "run_energy_solve",
     "run_commitment_pass",
     "build_caiso_ra_p1_prep",
+    "build_caiso_reserve_p1_prep",
     "build_ercot_gas_bridge_p1_prep",
     "build_ercot_gas_bridge_p1_preps",
     "build_pjm_reserve_p1_prep",

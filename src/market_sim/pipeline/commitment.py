@@ -538,14 +538,18 @@ def _pjm_unit_commitment_physics(fleet_arrays) -> tuple[np.ndarray, np.ndarray]:
     return min_down, startup
 
 
-def _pjm_plant_online_pattern(fleet_arrays, p0_dispatch):
+def _pjm_plant_online_pattern(fleet_arrays, p0_dispatch, eligible=None):
     """Derive the plant-online commitment pattern from the P0 run pattern.
 
     The shared P0 commitment-state derivation of the PJM path-B mask
-    (:func:`pjm_commitment_scoped_reserve_fleet`) and the pergen-sync product
-    split (:func:`pjm_pergen_sync_reserve_caps`) — commitment state read from
-    the model's own base-cost **P0** solve (the CAISO RA bridge convention:
-    forward-derivable, condition-responsive, no measured series; rules 11/13):
+    (:func:`pjm_commitment_scoped_reserve_fleet`), the pergen-sync product
+    split (:func:`pjm_pergen_sync_reserve_caps`), and the CAISO online-scoped
+    spin split (:func:`caiso_pergen_sync_reserve_caps`, which passes its
+    ISO-local ``eligible`` mask — thermal + hydro; hydro has no commitment
+    table so it counts fast-start by physics and is never min-down-bridged) —
+    commitment state read from the model's own base-cost **P0** solve (the
+    CAISO RA bridge convention: forward-derivable, condition-responsive, no
+    measured series; rules 11/13):
 
     * A PLANT is online in hour ``t`` when any of its tranches dispatches in P0
       (``pjm-reserve-ordc.md`` honesty-gate measure: "a plant is synchronized
@@ -579,7 +583,11 @@ def _pjm_plant_online_pattern(fleet_arrays, p0_dispatch):
 
     p0 = np.asarray(p0_dispatch, dtype=float)
     n_gen, T = p0.shape
-    eligible = _reserve_eligible(fleet_arrays)
+    eligible = (
+        _reserve_eligible(fleet_arrays)
+        if eligible is None
+        else np.asarray(eligible, dtype=bool)
+    )
     min_down_u, startup_u = _pjm_unit_commitment_physics(fleet_arrays)
 
     # Plant grouping: tranches of one plant share (plant_code, plant_group);
@@ -827,6 +835,109 @@ def build_pjm_reserve_p1_prep(config, iso: str, fleet_arrays):
         return {"reserve_supply_cap": cap}
 
     return _fleet_prep, _kwargs_prep
+
+
+def caiso_pergen_sync_reserve_caps(config, fleet_arrays, p0_dispatch):
+    """P1 ramp caps ``(2*n_r, T)`` for the ``caiso_reserve_online_scoped`` split.
+
+    The CAISO port of :func:`pjm_pergen_sync_reserve_caps` — tariff products
+    Spinning / Non-Spinning instead of Synchronized / Non-Synchronized:
+
+    * **SPIN columns** ``[0, n_r)``: Σ ONLINE members' availability-scaled
+      10-minute deliverable ramp per (zone, fuel-class) pool — spinning
+      reserve is *synchronized* capacity (CAISO tariff §8.4 / Appendix K AS
+      certification: 10-minute full conversion FROM a synchronized state), so
+      only online iron backs it, fast-start and hydro included; an offline
+      10-minute CT is not synchronized, so its ramp moves to the non-spin
+      column.
+    * **NONSPIN columns** ``[n_r, 2*n_r)``: Σ OFFLINE FAST-START members'
+      ramp — non-spinning reserve is 10-minute-startable offline capacity;
+      its award still consumes the pool's ramp (this bound) and capacity
+      headroom (the shared joint P+R row). Offline non-fast-start capacity
+      (a cold CC/ST) backs nothing.
+
+    The online pattern is the shared P0 plant-online derivation
+    (:func:`_pjm_plant_online_pattern`: any-tranche-dispatching, min-down
+    gaps bridged, rule-18 physics fast-start flags), evaluated over the
+    CAISO-local eligibility (thermal + hydro — hydro has no commitment table,
+    so it counts fast-start by physics and cycles freely). Commitment state
+    comes from the model's own base-cost **P0** solve — forward-regenerating
+    and condition-responsive (rules 11/13); zero fitted parameters. Pooling
+    comes from ``reserve_config.caiso_pergen_structure``, the same helper
+    ``_caiso_design`` builds the layout from, so the column order is
+    identical by construction.
+    """
+    from market_sim.config.reserve_config import (
+        _caiso_reserve_eligible,
+        caiso_pergen_pool_ramp10,
+        caiso_pergen_structure,
+    )
+
+    gen_idx, col, n_r, ramp10 = caiso_pergen_structure(fleet_arrays)
+    online, group_of, grp_fast, _eligible = _pjm_plant_online_pattern(
+        fleet_arrays,
+        p0_dispatch,
+        eligible=_caiso_reserve_eligible(fleet_arrays),
+    )
+    online_member = online[group_of[gen_idx]]  # (n_members, T) bool
+    fast_member = grp_fast[group_of[gen_idx]]  # (n_members,) bool
+    spin = caiso_pergen_pool_ramp10(
+        fleet_arrays, gen_idx, col, n_r, ramp10, member_mask=online_member
+    )
+    nonspin = caiso_pergen_pool_ramp10(
+        fleet_arrays,
+        gen_idx,
+        col,
+        n_r,
+        ramp10,
+        member_mask=(~online_member) & fast_member[:, np.newaxis],
+    )
+    del online_member
+    caps = np.vstack([spin, nonspin])
+    del spin, nonspin
+    return caps
+
+
+def build_caiso_reserve_p1_prep(config, iso: str, fleet_arrays):
+    """Return a ``p1_kwargs_prep`` hook for the CAISO online-scoped reserve split.
+
+    ``caiso_reserve_online_scoped`` (GATED default off, the issue-#1492
+    "correct build" increment): recomputes the ``(2*n_r, T)`` spin/non-spin
+    product-split ramp caps from the P0 run pattern at the P0→P1 seam
+    (:func:`caiso_pergen_sync_reserve_caps`) — the PJM
+    ``pjm_reserve_pergen_sync`` seam convention, sharing the CAISO RA
+    bridge's P0-commitment-state basis. Bounds-only kwargs override: energy
+    availability is never masked (P1's free redispatch around the held
+    reserve is what prices the opportunity cost), and the caps are computed
+    on the fleet P1 actually solves (``p1_fleet_arrays`` — the RA-bridge
+    fleet hook may floor or decommit availability first; the pool structure
+    itself depends only on static fields, so it matches the design layout
+    either way). ``None`` when the mechanism is off / the ISO is not CAISO,
+    so every other path is byte-identical. Composes with the CAISO RA-bridge
+    ``p1_fleet_prep`` (both fire on CAISO; P1 is a cold solve under either).
+    The flag-composition errors (requires ``caiso_reserve_coopt``; exclusive
+    with ``caiso_commitment_posture`` / ``caiso_locational_as_families``)
+    are raised by ``ScenarioConfig`` and ``reserve_config._caiso_design``.
+    """
+    if not (
+        iso == "CAISO"
+        and getattr(config, "energy_reserve_coopt", False)
+        and getattr(config, "caiso_reserve_coopt", False)
+        and getattr(config, "caiso_reserve_online_scoped", False)
+    ):
+        return None
+
+    def _kwargs_prep(r0, p1_fleet_arrays):
+        # Recompute the product-split ramp caps on the P0 run pattern.
+        # Bounds-only override: same LP dimensions, cold P1 (the seam
+        # releases the P0 model first — the memory-friendly path).
+        return {
+            "reserve_pergen_ramp10": caiso_pergen_sync_reserve_caps(
+                config, p1_fleet_arrays, r0.dispatch
+            )
+        }
+
+    return _kwargs_prep
 
 
 def run_commitment_pass(state: dict, config=None):
