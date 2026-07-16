@@ -15,8 +15,8 @@
   "vintage_year": 2020,
   "start_year": 2021,
   "end_year": 2025,
-  "cache_key": "b2e6a6f9a3d2d931",
-  "bundle": "results/hindcast/miso-2021-2025-realized-cmc-probe/MISO/b2e6a6f9a3d2d931",
+  "cache_key": "fbf82e5c764d57ca",
+  "bundle": "results/hindcast/miso-2021-2025-realized-cmc-probe/MISO/fbf82e5c764d57ca",
   "solved_years": [
     2021,
     2023,
@@ -27,5 +27,5 @@
     2022
   ],
   "leakage_violations": [],
-  "started_utc": "2026-07-16T05:21:39Z"
+  "started_utc": "2026-07-16T05:57:51Z"
 }

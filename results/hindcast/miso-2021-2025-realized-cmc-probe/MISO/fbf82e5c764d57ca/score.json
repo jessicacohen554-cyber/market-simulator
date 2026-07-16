@@ -9,9 +9,9 @@
   "retirements": {
     "total_gw": {
       "actual": 15.227,
-      "model": 15.751,
-      "err_frac": 0.034,
-      "band": "PASS"
+      "model": 12.593,
+      "err_frac": -0.173,
+      "band": "FAIL"
     },
     "per_fuel": {
       "biomass": {
@@ -21,8 +21,8 @@
       },
       "coal": {
         "actual_gw": 10.934,
-        "model_gw": 14.966,
-        "err_frac": 0.369
+        "model_gw": 11.809,
+        "err_frac": 0.08
       },
       "gas_cc": {
         "actual_gw": 0.521,
@@ -55,10 +55,10 @@
       "band": "PASS"
     },
     "false_retire": {
-      "false_gw": 4.032,
-      "frac_of_model": 0.256,
+      "false_gw": 0.874,
+      "frac_of_model": 0.069,
       "grain": "per-fuel-excess",
-      "band": "FAIL"
+      "band": "PASS"
     }
   },
   "additions": {
@@ -71,20 +71,20 @@
       },
       "solar": {
         "actual_gw": 18.649,
-        "model_gw": 9.0,
-        "err_frac": -0.517,
+        "model_gw": 12.0,
+        "err_frac": -0.357,
         "band": "FAIL"
       },
       "gas_cc": {
         "actual_gw": 3.867,
-        "model_gw": 3.0,
-        "err_frac": -0.224,
+        "model_gw": 0.0,
+        "err_frac": -1.0,
         "band": "FAIL"
       },
       "gas_ct": {
         "actual_gw": 1.379,
-        "model_gw": 0.643,
-        "err_frac": -0.534,
+        "model_gw": 0.01,
+        "err_frac": -0.993,
         "band": "FAIL"
       },
       "storage": {
@@ -97,26 +97,26 @@
     "shares": {
       "wind": {
         "actual_share": 0.225,
-        "model_share": 0.487,
-        "delta_pp": 0.262,
+        "model_share": 0.5,
+        "delta_pp": 0.275,
         "band": "FAIL"
       },
       "solar": {
         "actual_share": 0.583,
-        "model_share": 0.365,
-        "delta_pp": -0.218,
+        "model_share": 0.5,
+        "delta_pp": -0.083,
         "band": "FAIL"
       },
       "gas_cc": {
         "actual_share": 0.121,
-        "model_share": 0.122,
-        "delta_pp": 0.001,
-        "band": "PASS"
+        "model_share": 0.0,
+        "delta_pp": -0.121,
+        "band": "FAIL"
       },
       "gas_ct": {
         "actual_share": 0.043,
-        "model_share": 0.026,
-        "delta_pp": -0.017,
+        "model_share": 0.0,
+        "delta_pp": -0.043,
         "band": "PASS"
       },
       "storage": {
@@ -127,13 +127,13 @@
       }
     },
     "actual_total_gw": 31.981,
-    "model_total_gw": 24.643
+    "model_total_gw": 24.01
   },
   "co2": {
     "model": {
-      "2023": 268426100.56706733,
-      "2024": 250751927.63535386,
-      "2025": 308128169.8746032
+      "2023": 274213619.214141,
+      "2024": 259317954.80935192,
+      "2025": 316746602.8667755
     },
     "actual": {
       "2023": 288908845.0266705,
@@ -159,13 +159,13 @@
     "techmix_share_pp_max": 0.05,
     "co2_2025_frac": 0.1
   },
-  "generated_utc": "2026-07-16T05:38:33Z",
+  "generated_utc": "2026-07-16T06:15:07Z",
   "retirements_is2020": {
     "total_gw": {
       "actual": 15.227,
-      "model": 15.751,
-      "err_frac": 0.034,
-      "band": "PASS"
+      "model": 12.593,
+      "err_frac": -0.173,
+      "band": "FAIL"
     },
     "per_fuel": {
       "biomass": {
@@ -175,8 +175,8 @@
       },
       "coal": {
         "actual_gw": 10.934,
-        "model_gw": 14.966,
-        "err_frac": 0.369
+        "model_gw": 11.809,
+        "err_frac": 0.08
       },
       "gas_cc": {
         "actual_gw": 0.521,
@@ -209,10 +209,10 @@
       "band": "PASS"
     },
     "false_retire": {
-      "false_gw": 4.032,
-      "frac_of_model": 0.256,
+      "false_gw": 0.874,
+      "frac_of_model": 0.069,
       "grain": "per-fuel-excess",
-      "band": "FAIL"
+      "band": "PASS"
     },
     "reversal_exposure_gw": 0.0,
     "reversal_instruments": [],
@@ -229,10 +229,10 @@
       "recall_matched": 0
     },
     "economic": {
-      "retired_gw": 14.966,
-      "false_retire_gw": 4.032,
+      "retired_gw": 11.809,
+      "false_retire_gw": 0.874,
       "model_fuel_gw": {
-        "coal": 14.966
+        "coal": 11.809
       },
       "recall_matched": 13
     },
@@ -334,6 +334,6 @@
   "rescore": {
     "task": "T-R8",
     "note": "IS-2020 scoring hygiene (RC-0B \u00a7c.5) \u2014 raw + IS-2020 + per-channel. No re-solve; RD-5 actuals; co2/baselines preserved (unchanged by RD-5).",
-    "utc": "2026-07-16T05:38:34Z"
+    "utc": "2026-07-16T06:15:07Z"
   }
 }

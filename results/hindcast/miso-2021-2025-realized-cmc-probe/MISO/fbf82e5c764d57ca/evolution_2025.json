@@ -4,17 +4,17 @@
   "firm_clean_mw": 0.0,
   "fleet_by_fuel_after": {
     "biomass": 1990.2,
-    "coal": 40598.185,
-    "gas_cc": 34239.3,
-    "gas_ct": 24653.858512,
+    "coal": 43755.8179,
+    "gas_cc": 31239.3,
+    "gas_ct": 24020.8561,
     "gas_st": 13942.225,
     "nuclear": 11658.8,
     "oil": 3511.5
   },
   "fleet_by_fuel_before": {
     "biomass": 1990.2,
-    "coal": 40598.185,
-    "gas_cc": 34239.3,
+    "coal": 43755.8179,
+    "gas_cc": 31239.3,
     "gas_ct": 24011.041,
     "gas_st": 13942.225,
     "nuclear": 11658.8,
@@ -30,10 +30,10 @@
     "solar": 0.18,
     "wind": 0.166
   },
-  "reserve_margin": 0.137697,
+  "reserve_margin": 0.137644,
   "retirements": [],
   "rps_dual": 0.0,
-  "solar_cap_mw": 16000.0,
+  "solar_cap_mw": 19000.0,
   "solve_counts": {
     "P0": 1,
     "P1": 1,
@@ -46,7 +46,7 @@
     {
       "eia860_id": null,
       "fuel": "gas_ct",
-      "mw": 642.8175124312824,
+      "mw": 9.815099665293213,
       "source": "reserve_backstop",
       "unit_id": "gas_ct_adequacy_2025",
       "zone": "MISO-Illinois"
