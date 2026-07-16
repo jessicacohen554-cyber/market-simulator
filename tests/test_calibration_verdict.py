@@ -769,33 +769,38 @@ class StorageTests(unittest.TestCase):
         r = cv.score_storage(2023, {"storage": {"throughput_twh": 0.34}}, {})
         self.assertEqual(r["status"], cv.SKIPPED)
 
-    def test_within_band_passes(self):
-        # model 1.15 vs actual 1.0 = +15%, inside +/-30% -> PASS.
+    def test_within_band_report_only(self):
+        # v2.6(c): RETIRED — the +15% error is computed and reported, never
+        # PASS/FAIL (EIA-930 storage is not a calibration judgment).
         r = cv.score_storage(
             2024,
             {"storage": {"throughput_twh": 1.15}},
             {"storage": {"throughput_twh": 1.0}},
         )
-        self.assertEqual(r["status"], cv.PASS)
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIn("+15.0%", r["magnitude"])
+        self.assertIn("report-only", r["magnitude"])
 
-    def test_over_cycling_fails(self):
-        # model 0.46 vs actual 0.31 = +47% -> FAIL (MODEL MISS, needs an adder).
+    def test_over_cycling_report_only(self):
+        # v2.6(c): a +47% miss is REPORTED (visible magnitude) but not gated.
         r = cv.score_storage(
             2024,
             {"storage": {"throughput_twh": 0.46}},
             {"storage": {"throughput_twh": 0.31}},
         )
-        self.assertEqual(r["status"], cv.FAIL)
-        self.assertEqual(r["classification"], cv.MODEL_MISS)
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIsNone(r["classification"])
+        self.assertIn("report-only", r["magnitude"])
 
-    def test_under_cycling_fails(self):
-        # model 0.56 vs actual 2.08 = -73% -> FAIL (model under-cycles PS).
+    def test_under_cycling_report_only(self):
+        # v2.6(c): -73% under-cycling is reported, never a FAIL.
         r = cv.score_storage(
             2025,
             {"storage": {"throughput_twh": 0.56}},
             {"storage": {"throughput_twh": 2.08}},
         )
-        self.assertEqual(r["status"], cv.FAIL)
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIn("-73", r["magnitude"])
 
     def test_dispatch_corr_floor(self):
         ypay = {
@@ -1079,21 +1084,23 @@ class DeterminationTests(unittest.TestCase):
         # Pins MAX_LEDGERED_CAVEATS = 3 (rubric v2, memo §3a): ledgered
         # (beyond-commercial-band, measured-input-documented) caveats are
         # budgeted at 3; four of them (price_mean -13.8%, price_tail 0.25x,
-        # storage +50%, dispatch_corr r=0.55) exceed the budget -> NOT-YET;
+        # co2 +15%, dispatch_corr r=0.55) exceed the budget -> NOT-YET;
         # with the gas fleet correlation back above the floor there are
-        # three -> CALIBRATED-WITH-CAVEATS.
+        # three -> CALIBRATED-WITH-CAVEATS. (The former 4th caveat, storage
+        # +50%, retired with C5b under v2.6(c) — storage can no longer form
+        # a caveat at all, so co2 carries the 4th slot.)
         def art_with(gas_r):
             ypay = self._clean_year_payload()
             ypay["lmp"]["Z"]["p"] = 25.0  # -13.8% vs rt 29.0: beyond ±10% comm.
             ypay["lmp"]["Z"]["pMon"] = [25] * 12  # NRMSE 0.138 <= 0.15 -> PASS
             ypay["ordc"] = {"hoursGt200": {"actual": 100, "model": 25}}  # 0.25x
-            ypay["storage"] = {"throughput_twh": 1.5}  # +50% -> beyond ±30%
+            ypay["co2"] = {"model": 115.0}  # +15% -> beyond ±10% commercial
             ypay["fuelRows"][0]["r"] = gas_r
             att = _clean_attestation(
                 exceptions=[
                     {"criterion": "price_mean", "year": 2024, "reason": "documented"},
                     {"criterion": "price_tail", "year": 2024, "reason": "documented"},
-                    {"criterion": "storage", "year": 2024, "reason": "documented"},
+                    {"criterion": "co2", "year": 2024, "reason": "documented"},
                     {
                         "criterion": "dispatch_corr",
                         "family": "gas",
@@ -1103,7 +1110,7 @@ class DeterminationTests(unittest.TestCase):
                 ]
             )
             art = _artifacts(ypay, attestation=att, **self._clean_bench_args())
-            art["bench"][2024]["storage"] = {"throughput_twh": 1.0}
+            art["bench"][2024]["co2"] = {"egrid": 100.0}
             return art
 
         _tail({"PJM": {"2024": {"da_gt": 100, "rt_gt": 80, "da_coverage": 1.0}}})
@@ -1626,20 +1633,25 @@ class StorageShapeScoreTests(unittest.TestCase):
     def _bench(self, actual=None):
         return {"storage": {"monthly_net_gwh": actual or self._ACTUAL}}
 
-    def test_pass_high_correlation(self):
+    def test_high_correlation_report_only(self):
+        # v2.6(c): RETIRED — r is computed and reported, never PASS/FAIL.
         model = [2.0 * x for x in self._ACTUAL]  # perfectly correlated, scaled
         r = cv.score_storage_shape(
             2024, {"storage": {"monthly_net_gwh": model}}, self._bench()
         )
-        self.assertEqual(r["status"], cv.PASS)
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIn("r=1.000", r["magnitude"])
+        self.assertIn("report-only", r["magnitude"])
 
-    def test_fail_anticorrelated(self):
+    def test_anticorrelated_report_only(self):
+        # v2.6(c): r=-1 is REPORTED (visible) but never a FAIL/MODEL MISS.
         model = list(reversed(self._ACTUAL))  # r = -1
         r = cv.score_storage_shape(
             2024, {"storage": {"monthly_net_gwh": model}}, self._bench()
         )
-        self.assertEqual(r["status"], cv.FAIL)
-        self.assertEqual(r["classification"], cv.MODEL_MISS)
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIsNone(r["classification"])
+        self.assertIn("r=-1.000", r["magnitude"])
 
     def test_skipped_no_actual_monthly(self):
         r = cv.score_storage_shape(2024, {"storage": {}}, {"storage": {}})
