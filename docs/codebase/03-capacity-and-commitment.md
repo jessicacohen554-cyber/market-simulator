@@ -65,7 +65,7 @@ For each thermal unit, computes a going-forward economic test:
 - **Going-forward cost** = `fixed_om_per_kw_yr · fom_multiplier · pmax · 1000`.
   Coal carries a 1.3× FOM multiplier for regulatory/ESG risk.
 - A **consecutive-loss counter** per unit; the unit retires once losses persist
-  past the per-fuel threshold (`retirement_years_coal=1`, `gas_ct=2`, `gas_cc=3`,
+  past the per-fuel threshold (`retirement_years_coal=3`, `gas_ct=2`, `gas_cc=3`,
   …). Within a fuel, the highest-heat-rate (least efficient) units retire first.
 - A **reliability floor** prevents stripping thermal below
   `(peak_demand − firm_clean) · (1 + retirement_reserve_margin)`; the most
