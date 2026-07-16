@@ -1,10 +1,13 @@
 # Calibration Determination Rubric (v2)
 
-Status: **canonical, machine-enforced. RUBRIC VERSION 2.4** (2026-07-06
+Status: **canonical, machine-enforced. RUBRIC VERSION 2.7** (2026-07-06
 fitness-for-purpose re-anchor + 2026-07-07 C8 grounded-above-budget escalation
-+ 2026-07-09 C3a/C3b single-band re-set and C5a full-plant CO2 re-base
-+ 2026-07-09 C3a/C3b like-for-like load-weighted actual basis —
-`docs/rubric-v24-price-basis-memo-2026-07.md`; v1 history in §9). This document is the single
++ 2026-07-09 C3a/C3b single-band re-set, C5a full-plant CO2 re-base and
+like-for-like load-weighted actual basis
+(`docs/rubric-v24-price-basis-memo-2026-07.md`) + 2026-07-13 C2
+complete-vintage-only gating + 2026-07-16 v2.6/v2.7 owner amendments: C3c
+gated on the actual RT hourly scarcity tail for every ISO, C5b/C5c storage
+criteria removed from the rubric; full history in §9). This document is the single
 auditable definition of when an ISO backcast may be declared *calibrated*. It
 replaces the ad-hoc, per-run sidecar judgement (“this looks good enough”) with a
 fixed rubric that a scorer reproduces byte-for-byte:
@@ -74,9 +77,9 @@ known use cases:
 |---|---|---|
 | **LOAD-BEARING** — the test must certify these | Annual/monthly price level & seasonal shape (uses 1, 4, 5, 6); generation mix by class & family (2, 4, 5); system CO2 (3, 5) | C1, C2, C3a, C3b, C5a |
 | **SUPPORTING** — informative, not certification-critical | Hourly dispatch timing (r/NRMSE); scarcity-tail hour counts (the *level* contribution of scarcity is already in C3a/C3b; the count is a diagnostic of the scarcity mechanism, and no intended use consumes exact tail-hour counts) | C3c, C4 |
-| **RETIRED** — report-only, not a calibration judgment (v2.6(c)) | Storage cycling volume/season: EIA-930 storage-dispatch data is not yet reliable enough to judge any ISO on (missing/partial breakouts; the one scored year was fabricated zeros). Numbers stay computed and printed; never PASS/FAIL, never a cap. Re-arming is an owner decision. | C5b, C5c |
+| **REMOVED** — no longer part of the rubric (v2.7) | Storage cycling volume/season (ex-C5b/C5c): EIA-930 storage-dispatch data is not reliable enough to participate in a calibration determination at any level (missing/partial breakouts; the one scored year was fabricated zeros). Removed outright by the 2026-07-16 owner amendment (v2.6(c) had briefly held them report-only). Storage numbers stay visible on the dashboard run pages as payload/bench diagnostics. | (ex-C5b, ex-C5c) |
 | **PROTECTIVE** — make the other rows believable | Governance (no residual fitting / pinning); diurnal-shape reality of the duty classes; forced-energy budget (floors are scaffolding, not dispatch) | C6, C7, C8 — **unchanged from v1** |
-| **OUT OF REPRESENTATION** — the test must not demand these | RT sub-hourly transients (5-minute ramp scarcity, forecast-error re-dispatch — `docs/multi-iso/miso-scarcity-tail-diagnosis.md` §1); the DA−RT risk premium (DART) an offer-cost LP cannot price without fitting; hourly-exact dispatch of individual units (NREL TP-581-42305’s explicit guidance) | scored as report-only diagnostics (C3a DA row; C3c’s non-gated basis row — RT for DA-gated ISOs, DA for ERCOT since v2.6), never gated |
+| **OUT OF REPRESENTATION** — the test must not demand these | The DA−RT risk premium (DART) an offer-cost, realized-weather LP cannot price without fitting; hourly-exact dispatch of individual units (NREL TP-581-42305’s explicit guidance) | scored as report-only diagnostics (C3a DA row; C3c’s non-gated DA companion row — every ISO gates on the actual RT hourly tail since v2.7), never gated |
 
 A criterion’s tier decides how its tolerance is set and budgeted (§1, §2) —
 it does NOT decide whether a `FAIL` matters: **an undocumented `FAIL` on any
@@ -96,7 +99,7 @@ never re-solves the LP and never reads the (gitignored) `dispatch/*.parquet` or
 | `frontend/data/backcast/registry/<id>.json` | sidecar | id, ISO, declared years, label, definition, bundle path |
 | `frontend/data/backcast/runs/<id>.js` | run payload (gzip+base64) | model side: `gmModel` (grid-LP TWh by class), `fuelRows` (per-fuel model TWh + hourly r + NRMSE), `lmp` (model load-weighted price + monthly), `ordc` (ERCOT tail hours) |
 | `frontend/data/backcast/bench/<ISO>/<year>.json.gz` | benchmark part | authoritative actuals: `classFull` (grid-delivered EIA-923−BTM TWh by class, vintage-reconciled), `e930` (EIA-930 grid totals by fuel), `avgLMP` (actual DA/RT mean + monthly) |
-| `frontend/data/backcast/tail/actual_tail.json` | committed part (`scripts/derive_actual_tail.py`) | the C3c actual: per-(ISO, year) DA-expressible and RT scarcity-tail hour counts at the §5 threshold, with coverage fractions (2023–2025 only — rule-22 holdout guard in the deriver) |
+| `frontend/data/backcast/tail/actual_tail.json` | committed part (`scripts/derive_actual_tail.py`) | the C3c actual: per-(ISO, year) RT (gated, v2.7) and DA (diagnostic) scarcity-tail hour counts at the §5 threshold, with coverage fractions (2023–2025 only — rule-22 holdout guard in the deriver) |
 | `results/calibration/<name>/run_config.json`, `meta.json` | bundle | governance config (outage source, lever flags), gas vintage |
 | `results/calibration/<name>/calibration_attestation.json` | bundle (this rubric) | governance attestation + the exceptions ledger |
 | `results/calibration/<name>/legitimacy_diagnostics.json` | bundle (S1 suite) | machine artifact of `scripts/legitimacy_diagnostics.py --json-out` — D-1 diurnal-shape rows and the D-2 per-class forced-share summary that C7/C8 score; the verdict never recomputes the diagnostics |
@@ -435,36 +438,35 @@ way FAILs C6 regardless.
     ceiling, externally anchored rather than asserted); the former 0.15
     target stays visible as a reported magnitude, not a gate.
   - *Classification:* `MODEL MISS` (seasonal merit-order / fuel-shape error).
-- **C3c — Tail / scarcity, hourly-expressible.** *(SUPPORTING, single wide band)*
+- **C3c — Tail / scarcity, actual RT hourly.** *(SUPPORTING, single wide band)*
   - *Metric:* count of hours with price above the per-ISO threshold (§5),
-    model vs the actual on the ISO’s **gated basis** (`TAIL_BASIS`, v2.6 —
-    ERCOT: RT hourly; every other ISO: DA). Default **DA, scope-consistent
-    (v2):** the DA market is an hourly, commitment-aware market, the same
-    temporal resolution as this model’s LP, so its tail count is the scarcity
-    an hourly model is in scope to reproduce. The RT count mixes that with
-    **sub-hourly transients** (5-minute ramp scarcity, forecast-miss
-    re-dispatch) that are out of representation:
-    `docs/multi-iso/miso-scarcity-tail-diagnosis.md` §1 decomposed MISO
-    2023’s entire 30-hour RT tail into single-hour 5-minute events (DA tail
-    that year: 1 h) and §4 records that matching them "would be reproducing
-    forecast error the model doesn’t represent."
-    **ERCOT gates on the RT hourly tail (v2.6, owner amendment 2026-07-16):**
-    ERCOT’s DA tail is *larger* than its RT tail (2023: 311 vs 181 h — DA
-    prices scarcity *expectations*), and that excess is the day-ahead
-    weather/load **forecast-risk premium**, which a realized-weather
-    (perfect-foresight) backcast is out of representation to price — the
-    mirror image of the transient argument. Its RT hourly hub tail is
-    ORDC-driven and hourly-expressible (keeper evidence: 179 h model vs
-    181 h RT in 2023). The displaced basis is always emitted as a
-    **report-only diagnostic row** next to the gate (RT for DA-gated ISOs,
-    DA for ERCOT), so neither count ever disappears from the verdict.
+    model vs the **actual RT scarcity tail** — hours the real-time market’s
+    hourly hub average cleared the threshold — for **every ISO** (v2.7,
+    owner amendment 2026-07-16). The RT hourly tail is the scarcity the
+    market actually realized; that is the judged quantity. The **DA count is
+    the report-only diagnostic row**: it prices scarcity *expectations*, and
+    its wedge over RT is the day-ahead weather/load **forecast-risk
+    premium**, which a realized-weather (perfect-foresight) backcast is out
+    of representation to price — the DA row stays visible next to the gate
+    so neither count ever disappears from the verdict.
+    *Basis history:* v2 gated the DA-expressible tail everywhere on the
+    sub-hourly-transient argument
+    (`docs/multi-iso/miso-scarcity-tail-diagnosis.md` §1 decomposed MISO
+    2023’s entire 30-hour RT tail into single-hour 5-minute events; DA tail
+    that year: 1 h); v2.6(a) moved ERCOT to RT (its DA tail runs *above* RT
+    — 2023: 311 vs 181 h — the forecast-risk-premium mirror image); v2.7
+    makes RT the uniform judged basis: the owner’s determination is that
+    the tail criterion judges realized scarcity, not the DA market’s
+    forecast of it. Both counts are hourly hub averages; sub-hourly
+    transients that push an hourly RT average over the threshold are part
+    of realized scarcity and now gate.
   - *Actual:* the committed `tail/actual_tail.json` part
     (`scripts/derive_actual_tail.py`, from the hub RT/DA hourly series;
     coverage-annotated, 2023–2025 only).
-  - *Tolerance:* model tail hours within **[0.5×, 2.0×]** of the DA actual —
-    a **collapsed tail (0 hours where the DA market had scarcity) FAILs**, and
+  - *Tolerance:* model tail hours within **[0.5×, 2.0×]** of the RT actual —
+    a **collapsed tail (0 hours where the RT market had scarcity) FAILs**, and
     an **invented tail (> 2× actual) FAILs**; bounded both ways on purpose.
-    When the DA actual is **< 10 h** the ratio is degenerate and
+    When the RT actual is **< 10 h** the ratio is degenerate and
     **|model − actual| ≤ 10 h** gates instead (this also replaces the v1
     token guard against inventing a tail over a ~0 actual, tightened from
     50 h to 10 h). Band width rationale: **no commercial or public model
@@ -472,7 +474,7 @@ way FAILs C6 regardless.
     *excludes* spike hours from scoring (ECA excluded ~50–100 h/month) or
     absorbs them into tuned hurdle rates (NYISO); this rubric keeps scoring
     the tail, with the band’s job being order-of-magnitude realism on the
-    scope-consistent benchmark, not count precision. Supporting tier: the
+    measured benchmark, not count precision. Supporting tier: the
     *level* contribution of scarcity is already load-bearing via C3a/C3b.
   - *Classification:* `MODEL MISS` (missing scarcity pricing / over-aggressive
     peaker offers). `SKIPPED` when the model scarcity series is not in the
@@ -508,7 +510,7 @@ way FAILs C6 regardless.
   timing). A low r driven by a documented measured-input gap (e.g. an outage
   series known incomplete for one state-year) may be ledgered.
 
-### C5 — CO2 and storage  *(C5a LOAD-BEARING two-band; C5b/C5c RETIRED to report-only, v2.6(c))*
+### C5 — CO2  *(C5a LOAD-BEARING two-band; C5b/C5c REMOVED from the rubric, v2.7)*
 
 - **C5a — CO2 vs eGRID.** *(LOAD-BEARING, two-band)*
   - *Metric:* annual system CO2, model vs the eGRID/CAMPD-rate actual, on the
@@ -542,65 +544,25 @@ way FAILs C6 regardless.
     note that with C1/C2 in tolerance a CO2 miss localises to the fuel *split*
     within a family or to emission-rate inputs). `SKIPPED` when no emissions
     actual is committed in the bundle.
-- **C5b — Storage throughput.** *(RETIRED to report-only, v2.6(c) owner
-  amendment 2026-07-16: EIA-930 storage-dispatch data is not yet reliable
-  enough to be a calibration judgment for ANY ISO — breakouts are missing
-  or partial for most BA-years, and the criterion had never functioned as
-  a real gate: at retirement it was SKIPPED in four ISOs and a ledgered
-  caveat in MISO/NEISO. The % error is still computed and printed on every
-  keeper — visible, never gated, no ledger budget, no determination cap.
-  Re-arming is a future owner decision. The pre-retirement definition
-  below is kept for that day.)*
-  - *Metric:* annual storage (battery + PS) discharge throughput TWh, model vs
-    observed (cycling realism, not arbitrage perfection).
-  - *Actual:* EIA-923 / ISO battery-report throughput.
-  - *Tolerance:* **±30%** (the playbook’s cycling-realism band — the LP will
-    over-cycle without a throughput cost; the band catches gross over/under-cycling
-    while accepting that exact dispatch timing is not observable).
-  - *Classification:* over-cycling ⇒ `MODEL MISS` (needs a throughput adder);
-    under-cycling against a *partial* observed series may be `ACCEPTED
-    MEASURED-INPUT LIMITATION`. `SKIPPED` when no throughput series is committed.
-- **C5c — Storage dispatch shape.** *(RETIRED to report-only, v2.6(c) —
-  same owner decision and visibility rules as C5b. At retirement it had
-  never scored a clean PASS anywhere: ERCOT's one scored year was a
-  correlation against nine fabricated pre-breakout zeros (the v2.6(b)
-  data-honesty finding), MISO was a ledgered caveat, the rest SKIPPED.
-  The pearson r is still computed and printed. The pre-retirement
-  definition below is kept for the re-arming day.)*
-  - *Metric:* Pearson **r** of 12 monthly **discharge** GWh vectors (model vs
-    EIA-930 battery + pumped-storage, positive half). Scores whether the model
-    discharges storage in the right months, not just the right annual volume
-    (C5b). **Discharge basis on both sides (2026-07-03 alignment fix):**
-    several BAs report a discharge-only storage series (NEISO `NG: PS` —
-    pumping appears as load, never as a negative value; ERCOT
-    `battery_discharge` is pre-split positive), so a signed "net" sum of the
-    actual is silently gross discharge, while a model-side net
-    (discharge − charge) is ≤ 0 over any month by round-trip losses — a
-    basis mismatch a perfectly-cycling model could never pass. Both sides now
-    use the positive (discharge) half, the same basis C5b already scores.
-  - *Actual:* EIA-930 monthly discharge for `battery` / `pumped_storage`
-    series. Same coverage gate as C5b. **Observed months only (v2.6, owner
-    amendment 2026-07-16):** a month with no real EIA-930 storage observation
-    (below 90 % non-NaN hourly coverage — e.g. every ERCO month before the
-    mid-Oct-2024 battery breakout) enters the bench vector as **null, never
-    0.0**, and the scorer's null-month rule then SKIPs the year. Booking
-    unreported months as zero fabricates an actual: the pre-v2.6 ERCOT 2024
-    C5c FAIL (r = 0.451) correlated the model against nine structural zeros
-    plus three real months — a benchmark-coverage artifact, not a model miss.
-  - *Tolerance:* **r ≥ 0.50.** The floor is looser than fleet dispatch (C4,
-    r ≥ 0.70) because monthly storage discharge is a 12-point vector with
-    lower degrees of freedom and substantial noise from AS commitment.
-  - *Degeneracy guard (2026-07-03, mirrors C4's <5 TWh rule):* when the
-    **actual** monthly-discharge coefficient of variation is **< 0.25** the
-    year is `SKIPPED` — a near-uniform actual (e.g. NEISO 2025 PS, CV ≈ 0.14:
-    Northfield cycles near-daily year-round on reserves/regulation) has no
-    seasonal shape to correlate, the 12-point Pearson is set by reporting
-    noise, and a perfectly **flat (true) model would score r = 0 and FAIL** —
-    a metric the truth itself cannot pass is degenerate. The under/over-cycling
-    volume stays fully scored by C5b (never a silent pass).
-  - *Classification:* `MODEL MISS` (storage dispatch timing — wrong charge/
-    discharge season). `SKIPPED` when no EIA-930 storage breakout or the model
-    bundle lacks `monthly_net_gwh`.
+- **C5b / C5c — Storage throughput and dispatch shape: REMOVED.** *(v2.7
+  owner amendment 2026-07-16.)* EIA-930 storage-dispatch data is not
+  reliable enough to participate in a calibration determination at any
+  level — breakouts are missing or partial for most BA-years, and the one
+  fully "scored" year (ERCOT 2024 C5c) turned out to be a correlation
+  against nine fabricated pre-breakout zeros (the v2.6(b) data-honesty
+  finding). v2.6(c) had retired both criteria to report-only the same
+  morning; the owner's follow-up decision removed them from the rubric
+  outright — not scored, not printed, no criterion ids in the verdict.
+  What remains: the storage payload/bench numbers (throughput TWh, monthly
+  discharge vectors) stay committed and rendered on the dashboard run pages
+  as diagnostics, and the bench builder keeps the v2.6(b) observed-months
+  honesty rule (null, never fabricated 0.0, for unobserved months). Old
+  keeper attestations carrying dormant C5b/C5c ledger entries keep them as
+  history (they match no criterion and are inert). The pre-removal
+  definitions — including the 2026-07-03 discharge-basis alignment fix and
+  the CV degeneracy guard — live in this doc's v2.6 history entry and git
+  history; re-introducing storage as a criterion is a future owner decision
+  and would re-enter as a new amendment.
 
 ### C6 — Governance gate  *(PROTECTIVE, pass/fail only — never graded, never caveatable; UNCHANGED in v2)*
 
@@ -828,9 +790,9 @@ Where an actual is not committed for an ISO-year (historically the tail and
 CO2, both now committed), the criterion is `SKIPPED`, which **caps the best
 attainable determination at `CALIBRATED-WITH-CAVEATS`** until a run surfaces
 it. This is intended: you may not claim a *fully* calibrated ISO while any
-criterion is unscored. **RETIRED criteria are the one exception (v2.6(c)):**
-C5b/C5c print as report-only rows and never cap the determination — they are
-not unscored judgments, they are not judgments at all until re-armed.
+criterion is unscored. (v2.6(c) briefly carried a report-only RETIRED
+exception for C5b/C5c; v2.7 removed those criteria outright, so every
+criterion in the rubric is again a judgment.)
 
 ---
 
@@ -905,20 +867,20 @@ criterion asymmetry): winter city-gate scarcity sets NYISO/NEISO higher.
 The v1 asymmetries are retired: ERCOT no longer gates on its own ORDC-adder
 proxy (the `ordc` block’s RT/adder counts and the > $500 deep-scarcity
 companion remain **report-only** diagnostics in the payload), so no ISO is
-scored on a criterion set another ISO isn’t. **v2.6 amends the basis half of
-this parity wording:** the criterion, band, and threshold family stay
-identical for every ISO, but the gated *actual’s basis* is per-ISO
-(`TAIL_BASIS`) on a measured, documented asymmetry — see §C3c. (The same
-parity rule applies to the reported D-7 statistical-mode gap: quote fail
-counts on the same criterion denominator for every ISO — the 2026-07-03
-measurements mixed C1–C8 and C1–C5c denominators and are flagged stale for
-re-measurement.)
+scored on a criterion set another ISO isn’t. **v2.7 restores full basis
+parity:** every ISO gates on the **actual RT hourly tail**, with the DA
+count as the report-only diagnostic — see §C3c (v2.6 had briefly split the
+basis per-ISO via `TAIL_BASIS`, ERCOT RT / others DA; that switch is gone).
+(The same parity rule applies to the reported D-7 statistical-mode gap:
+quote fail counts on the same criterion denominator for every ISO — the
+2026-07-03 measurements mixed C1–C8 and C1–C5c denominators and are flagged
+stale for re-measurement.)
 
-| ISO | Threshold (hub LMP) | Gated basis (v2.6) | Scarcity driver |
+| ISO | Threshold (hub LMP) | Gated basis (v2.7) | Scarcity driver |
 |---|---|---|---|
 | ERCOT | $200/MWh | **RT hourly** (DA = diagnostic) | summer/ramp scarcity; DA embeds the forecast-risk premium |
-| PJM, MISO, CAISO | $200/MWh | DA (RT = diagnostic) | summer/ramp scarcity |
-| NYISO, NEISO | $300/MWh | DA (RT = diagnostic) | winter city-gate scarcity sets the tail higher |
+| PJM, MISO, CAISO | $200/MWh | **RT hourly** (DA = diagnostic) | summer/ramp scarcity |
+| NYISO, NEISO | $300/MWh | **RT hourly** (DA = diagnostic) | winter city-gate scarcity sets the tail higher |
 
 `SKIPPED` for any ISO-year absent from the committed tail part or whose model
 scarcity series is not in the payload, recorded with that reason.
@@ -970,18 +932,53 @@ Calibration Status page renders this comparison next to the live keeper scores
 | C1 per-class mix | min(2% load, 8 TWh) & 3 pp | (single-band) | **none published** — external validations stop at family/zonal level; we score stricter deliberately |
 | C2 family volume (prelim fallback) | ±2.5% | ±5% | NYISO zonal energy ~0–4%; AEO 1–3-yr gas-gen SD 5.7–9.6% (forecast upper bound) |
 | C5a CO2 (full-plant basis, v2.3) | ±7% | ±10% | **no published PCM backcast CO2 error**; AEO 1–3-yr CO2 SD 3.2–4.9% (forecast) |
-| C3c tail hours (per-ISO basis, v2.6: ERCOT RT, others DA) | [0.5×, 2×] | (single wide band) | **none published** — practice excludes spike hours from scoring (ECA) or tunes hurdle rates (NYISO); we keep scoring it |
+| C3c tail hours (actual RT hourly basis, v2.7) | [0.5×, 2×] | (single wide band) | **none published** — practice excludes spike hours from scoring (ECA) or tunes hurdle rates (NYISO); we keep scoring it |
 | C4 hourly fleet r | r ≥ 0.70, NRMSE ≤ 0.30 | (single-band) | **none published**; NREL guidance: hourly comparison “not a valid test” — we score stricter deliberately |
-| C5b storage cycling | ±30% | (single-band) | none published (cycling-realism band, internal) |
 | C6/C7/C8 protective | pass/fail | — | **beyond commercial practice**: NYISO closed its residual with tuned hurdle rates; SEM tunes generator markups; our C6 forbids exactly that |
 
 Honesty in both directions: where the six keepers sit **below** commercial
-grade (CAISO mean price +20–42%; MISO CC_REGULAR +44 TWh; collapsed DA tails in
-PJM/MISO/CAISO 2024–25), the verdict says `NOT-YET` — the benchmark table is
-never a curve to grade down to.
+grade (CAISO mean price +20–42%; MISO CC_REGULAR +44 TWh; collapsed RT tails
+in MISO/CAISO and the NYISO 2024 tail miss surfaced by the v2.7 RT re-basis),
+the verdict says `NOT-YET` — the benchmark table is never a curve to grade
+down to.
 
 ## 9. Version history
 
+- **v2.7 (2026-07-16, owner amendments — session-logged, second of the day,
+  calibration-rubric-updates session)** — two changes, both scorer/doc level
+  (no re-solve, no payload or bench change; every keeper re-scores in place).
+  **(a) C3c gates on the ACTUAL RT scarcity tail for EVERY ISO.** Owner
+  directive: the tail criterion is judged on actual RT scarcity hours, not
+  DA. v2.6(a) had moved only ERCOT to the RT hourly basis; v2.7 extends it
+  to all six ISOs — the RT hourly hub tail is the scarcity the market
+  actually realized, and the DA count (scarcity *expectations*, carrying the
+  day-ahead forecast-risk premium a realized-weather backcast cannot price)
+  becomes the report-only diagnostic row everywhere. The per-ISO
+  `TAIL_BASIS` switch is deleted — the basis is uniform again (§5 parity
+  restored, now on RT). The v2 sub-hourly-transient argument for DA gating
+  (miso-scarcity-tail-diagnosis.md §1) is consciously superseded: both
+  counts are hourly hub averages, and transients that push an hourly RT
+  average over the threshold are part of realized scarcity. Both actuals
+  were already committed for every ISO-year (`tail/actual_tail.json`), so
+  the flip is scorer-only. Re-score impact at amendment: ERCOT unchanged
+  (already RT); PJM-114 stays CALIBRATED (2023 small-count, 2024 0.50×,
+  2025 0.68×); NEISO-59 keeps its ledgered-caveat determination; CAISO/MISO
+  stay NOT-YET (their tails were failing on either basis); **NYISO-62 flips
+  CALIBRATED-WITH-CAVEATS → NOT-YET** (2024: model 3 h vs RT 12 h, 0.25× —
+  the old DA actual was 0 h and passed on the small-count rule) — an honest
+  new open item, not a regression.
+  **(b) C5b + C5c REMOVED from the rubric.** Owner directive (same message):
+  storage-dispatch data is not reliable enough to be a calibration gate.
+  v2.6(c) had retired both to report-only hours earlier; the follow-up
+  removes them outright — no criterion ids in the verdict, no report rows,
+  scorer functions and tolerances (`STORAGE_TOL`,
+  `STORAGE_SHAPE_R_FLOOR/MIN_CV`) deleted, and the `TIER_RETIRED` tier
+  (which existed only for them) deleted with them. The storage
+  payload/bench diagnostics stay committed and rendered on the run pages,
+  and the bench builder keeps the v2.6(b) observed-months rule. Dormant
+  C5b/C5c ledger entries in old attestations remain as inert history. The
+  pre-removal definitions are preserved in the v2.6 entry below;
+  re-introduction is a future owner amendment.
 - **v2.6 (2026-07-16, owner amendments — session-logged, ERCOT-73 session)** —
   three changes, all scorer/bench level (no re-solve, no payload change).
   **(a) C3c per-ISO gated basis (`TAIL_BASIS`): ERCOT moves to the RT hourly

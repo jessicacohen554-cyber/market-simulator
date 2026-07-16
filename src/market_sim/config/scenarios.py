@@ -5650,6 +5650,36 @@ class ScenarioConfig:
     # ERCOT-scoped. Default off; GATED CHANGE (alters availability).
     unit_partial_outage_windows: bool = False
 
+    # Tier 3 (calibration) — declared-event-window revealed unit derates, the
+    # third window shape of the measured unit-availability family (M-2 of the
+    # MISO price-formation lane, docs/handoffs/miso-price-formation-design-
+    # 2026-07.md §3). Driver (rule 12): the ISO's OWN declared emergency-
+    # procedure instruments (Max Gen events / warnings / alerts / capacity
+    # advisories — public, per-event provenance in the ``maxgen-events``
+    # registry, data/raw/maxgen-events/) plus each unit's own CAMPD trace
+    # inside them. Window: EXACTLY the declared windows, clipped to the
+    # declared start/end and kept only where the measured DA hub record
+    # certifies deep in-merit prices (> $150/MWh for >= 2 window hours,
+    # region-scoped) — inside such a window an available unit runs, so
+    # absence/reduction below the unit's own +/-45-day demonstrated
+    # capability is revealed unavailability (derate = capability - best
+    # in-window hour, floored at 0; a unit that touched capability is not
+    # derated). CLASS-AGNOSTIC by design — this is the only channel that can
+    # carry the CT/CC leg (the std extract's 5-day floor and the short
+    # channel's coal-only guard exclude it by construction); unit-hours
+    # already covered by the std or short extracts are excluded at
+    # derivation (disjointness asserted). Forward story (rule 13): a
+    # declared physical/market availability event, the same admissibility
+    # family as the CAMPD outage windows — backcast/calibration overlay
+    # only; the registry + derates regenerate from each new
+    # CAMPD/declaration vintage, and a forecast year carries the class
+    # outage-rate machinery instead (no forward window is fabricated).
+    # Applies only when ``outage_source == "historic"`` and the ISO's
+    # ``campd-unit-outages-maxgen-<ISO>.csv`` exists (built by
+    # ``scripts/derive_campd_maxgen_outages.py --iso <ISO>``). Default off;
+    # GATED CHANGE (alters availability).
+    unit_outage_maxgen_events: bool = False
+
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -6780,6 +6810,7 @@ TIER_TAGS: dict[str, int] = {
     "outage_source": 3,
     "unit_outage_short_windows": 3,
     "unit_partial_outage_windows": 3,
+    "unit_outage_maxgen_events": 3,
     "gas_price_override": 3,
 }
 
