@@ -783,6 +783,87 @@ def unit_partial_outage_derate_factors(
     return _unit_outage_factors_from_events(df, year, hours, bins_path, iso)
 
 
+def unit_outage_maxgen_csv_for_iso(iso: str | None) -> Path:
+    """Return the declared-event-window (maxgen) unit-derate CSV path.
+
+    Written by ``scripts/derive_campd_maxgen_outages.py --iso <ISO>``: CAMPD
+    revealed unit derates inside the ISO's declared capacity-emergency windows
+    (the ``maxgen-events`` registry), consumed by
+    :func:`unit_outage_maxgen_derate_factors` under
+    ``ScenarioConfig.unit_outage_maxgen_events``. Always ISO-suffixed.
+    """
+    return UNIT_OUTAGE_CSV.with_name(
+        f"campd-unit-outages-maxgen-{(iso or 'ERCOT').upper()}.csv"
+    )
+
+
+@lru_cache(maxsize=None)
+def unit_outage_maxgen_derate_factors(
+    year: int,
+    hours: int = HOURS_PER_YEAR,
+    iso: str = "ERCOT",
+) -> dict[tuple[int, str], np.ndarray]:
+    """Return declared-event-window revealed-derate availability multipliers.
+
+    The third window shape of the measured unit-availability family, gated by
+    ``ScenarioConfig.unit_outage_maxgen_events``: per-unit MW derates revealed
+    by each unit's own CAMPD trace inside the ISO's *declared* capacity-
+    emergency windows (``campd-unit-outages-maxgen-<ISO>.csv``, built by
+    ``scripts/derive_campd_maxgen_outages.py``, which enforces the frozen
+    identification guards — registry-window scope clipped to the declared
+    start/end, the $150 DA in-merit certificate, the ±45-day capability
+    basis with best-event-hour credit, and disjointness vs the std/short
+    extracts).
+
+    Unlike the std/short/partial loaders this one is CLASS-AGNOSTIC — no
+    CT_PEAKER/CT_CHP exclusion — because the declared-window + in-merit
+    certificate is precisely the identification under which an idle peaker is
+    evidence of unavailability rather than economics (the deriver's guards, not
+    this loader, carry that logic), and the registry channel is the only one
+    that can represent the measured CT/CC event-window leg. Rows carry a
+    ``derate_mw`` (the removed MW — NOT a full-stop unit capacity) over an
+    hour-granular half-open ``[window_start, window_end)`` on the model clock;
+    each row derates its plant's ``(plant_code, plant_group)`` bin by
+    ``derate_mw / plant_capacity``; concurrent units sum, clipped at full
+    derate. ISOs without the file get an empty dict (no effect).
+    """
+    iso = (iso or "ERCOT").upper()
+    csv_path = unit_outage_maxgen_csv_for_iso(iso)
+    if not csv_path.exists():
+        return {}
+    df = pd.read_csv(csv_path)
+    cap = _iso_plant_capacity(iso)
+    sums: dict[tuple[int, str], np.ndarray] = {}
+    for r in df.itertuples(index=False):
+        code = int(r.facility_id)
+        g = (
+            ""
+            if r.plant_group is None
+            or (isinstance(r.plant_group, float) and np.isnan(r.plant_group))
+            else str(r.plant_group)
+        )
+        if code in _FLEET_GROUP_OVERRIDE:
+            tgt = (code, _FLEET_GROUP_OVERRIDE[code])
+        elif not g or g == "OTHER":
+            continue
+        else:
+            tgt = (code, g)
+        if tgt not in cap:
+            continue
+        removed = float(r.derate_mw)
+        if not removed > 0.0 or pd.isna(removed):
+            continue
+        # Hour-granular, half-open: window_end is the return-to-normal hour
+        # (the deriver ceils the declared end to the next hour boundary), so
+        # no +1-day inflation like the date-grain std extract.
+        mask = outage_hour_mask(r.window_start, r.window_end, year, hours)
+        if not mask.any():
+            continue
+        arr = sums.setdefault(tgt, np.zeros(hours))
+        arr[mask] += removed / cap[tgt]
+    return {k: np.clip(1.0 - v, 0.0, 1.0) for k, v in sums.items()}
+
+
 # Partial (unit-level) outage derates approximated from CAMPD CF-ceiling
 # plateaus (scripts/derive_partial_outages.py). A multiplicative availability
 # factor per plant: 1.0 outside detected windows, derate_factor within.
