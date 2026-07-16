@@ -44,7 +44,8 @@ def parse_day(path: Path) -> pd.DataFrame:
 
     is_segment = df["SCH_BID_XAXISDATA"].notna()
     is_selfsched = ~is_segment & df["SELFSCHEDMW"].notna()
-    df = df[is_segment | is_selfsched].copy()
+    # A row without a masked resource id cannot be keyed (rare raw artifact).
+    df = df[(is_segment | is_selfsched) & df["RESOURCEBID_SEQ"].notna()].copy()
     is_segment = df["SCH_BID_XAXISDATA"].notna()
 
     hour = np.where(
@@ -58,7 +59,7 @@ def parse_day(path: Path) -> pd.DataFrame:
             "trade_date": pd.to_datetime(df["STARTDATE"]).dt.normalize(),
             "interval_start_utc": pd.to_datetime(hour, utc=True),
             "resource_type": df["RESOURCE_TYPE"].astype("string"),
-            "sc_seq": df["SCHEDULINGCOORDINATOR_SEQ"].astype("int64"),
+            "sc_seq": df["SCHEDULINGCOORDINATOR_SEQ"].astype("Int64"),
             "resource_seq": df["RESOURCEBID_SEQ"].astype("int64"),
             "product": df["MARKETPRODUCTTYPE"].astype("string"),
             "row_kind": np.where(is_segment, "segment", "self_sched"),
