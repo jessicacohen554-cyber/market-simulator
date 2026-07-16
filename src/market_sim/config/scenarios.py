@@ -471,6 +471,28 @@ class ScenarioConfig:
     # of retired-2023->25 units), a correctness/provenance refinement rather than
     # a scarcity driver; gated, recalibrate before a keeper. See
     # docs/cod-vintage-ramp.md. Engaged in backcast mode only.
+    # Mothballed-but-operating re-carry (the Cottonwood lane,
+    # docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md §5/§7). The
+    # canonical snapshot's OP filter drops OA (out-of-service / mothballed)
+    # units outright, and the within-window retiree channel cannot see a
+    # PARTIAL mothball (it reads the Retired-and-Canceled sheet and emits
+    # whole-plant exits only) — so a unit the snapshot vintage marks OA that
+    # demonstrably operated in the solved year is absent from every modeled
+    # year (Cottonwood 55358: 4 of 8 units OA in the 2025ER, 576 MW, with
+    # CAMPD showing the OA CTs running 88-91% of 2023 hours). With this on,
+    # an OA unit is re-carried for backcast solve year Y iff it is OP in the
+    # year-matched EIA-860 vintage (vintage_<Y>) — EIA's own contemporaneous
+    # status, the zero-DOF rule-13 availability oracle (a unit truly idle in
+    # Y is OA in vintage_<Y> too, so it stays dropped). Per-UNIT injection:
+    # a partial mothball carries only its mothballed-but-operating units and
+    # leaves the surviving OP units untouched. A solve year with no committed
+    # vintage_<Y>/ (2025) carries nothing — the accepted 2025 under-carry
+    # (owner default, 2026-07-16). ISO-agnostic, backcast-only (a forecast
+    # keeps the canonical snapshot; the forward story — carry a vintage-OP
+    # unit until a real exit — is documented in the loader, deliberately not
+    # wired). Consumed by the per-year backcast fleet build
+    # (scripts/run_calibration.py) via fleet.load_mothballed_but_operating.
+    carry_operating_mothballs: bool = False
     # Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC
     # tranches when a plant's CEMS facility sum drops out. For ERCOT this is the
     # primary outage layer and the unit-level derate only SUPPLEMENTS it
@@ -6410,6 +6432,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_storage_as_deployment": 1,
     "ercot_storage_as_deployment_from_year": 1,
     "ercot_gas_commitment_bridge": 1,
+    "carry_operating_mothballs": 1,
     "ercot_gas_bridge_min_load_frac": 2,
     "ercot_gas_bridge_startup": 1,
     "ercot_gas_bridge_da_horizon": 1,
