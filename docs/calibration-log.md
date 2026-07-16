@@ -13881,3 +13881,7 @@ run, not the lowest-MAE one). Source changes this session: the p25 mechanism
 patches applied to main (scenarios/fleet/dof-ledger + the ER25-579 citation),
 its restored unit tests (4, in `tests/test_fleet.py`), and the re-derived
 MISO reconcile table.
+
+*Addendum (same day): owner authorized the promotion — `keepers.json` MISO →
+`2026-07-16-miso-67-stgas-p25`, status.js rebuilt, `audit_keepers.py` exit 0
+(keeper text verified, no repairs needed).*
