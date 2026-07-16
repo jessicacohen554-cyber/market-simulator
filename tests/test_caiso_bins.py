@@ -18,6 +18,7 @@ from market_sim.data.fleet import (
     bins_to_fleet,
     fleet_to_bins,
     load_fleet_from_csv,
+    thermal_tranche_chp_p25_allhr,
     thermal_tranche_overrides,
     thermal_tranche_peaking,
 )
@@ -218,6 +219,82 @@ class TestCaisoFleetBuild(unittest.TestCase):
         self.assertEqual(len(peak), 1)
         expected = cap * thermal_tranche_peaking("CAISO")[(56041, "CC_REGULAR")] / 100.0
         self.assertAlmostEqual(peak[0].pmax_mw, expected, delta=1.0)
+
+
+class TestCaisoChpSteamFloorP25(unittest.TestCase):
+    """The CHP steam-host operating-level floor (``chp_steam_floor_p25``).
+
+    Exercises the level swap against the committed CAISO artifact: the two
+    flat merchant steam hosts (Elk Hills 55400, Midway-Sunset 55217) gain the
+    all-hours-p25 grid floor; measured-and-collapsed cyclers (p25_allhr_cf =
+    0.0) and the default-off build stay byte-identical to the p2 floors.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        gens = load_fleet_from_csv("CAISO", get_iso_config("CAISO"))
+        cls.cfg_off = ScenarioConfig(iso="CAISO", chp_steam_following=True)
+        cls.cfg_on = ScenarioConfig(
+            iso="CAISO", chp_steam_following=True, chp_steam_floor_p25=True
+        )
+        cls.synth = fleet_to_bins(gens, "CAISO", cls.cfg_off)
+        cls.fleet_off, _ = bins_to_fleet(cls.synth, ZONES, cls.cfg_off)
+        cls.fleet_on, _ = bins_to_fleet(cls.synth, ZONES, cls.cfg_on)
+
+    def _plant_floor_mw(self, fleet, code: int) -> float:
+        return sum(g.chp_grid_pmin_mw for g in fleet if g.plant_code == code)
+
+    def test_loader_reads_artifact(self):
+        m = thermal_tranche_chp_p25_allhr("CAISO")
+        positive = {k: v for k, v in m.items() if v > 0.0}
+        self.assertEqual(
+            set(positive),
+            {(55217, "CC_CHP"), (55400, "CC_CHP"), (50865, "CT_CHP")},
+        )
+        # measured-and-collapsed cyclers carry explicit zeros, not absence
+        self.assertIn((10034, "CC_CHP"), m)
+        self.assertEqual(m[(10034, "CC_CHP")], 0.0)
+
+    def test_flat_hosts_gain_operating_level_floor(self):
+        """Floor = p25_allhr x (1 - BTM share) x nameplate for the flat hosts."""
+        m = thermal_tranche_chp_p25_allhr("CAISO")
+        for code, group in ((55217, "CC_CHP"), (55400, "CC_CHP")):
+            nameplate = float(
+                self.synth[
+                    (self.synth["Plant_Code"] == code)
+                    & (self.synth["Plant_Group"] == group)
+                ]["capacity_mw"].iloc[0]
+            )
+            btm = chp_btm_pct(code, group, iso="CAISO") / 100.0
+            expected = m[(code, group)] / 100.0 * (1.0 - btm) * nameplate
+            self.assertAlmostEqual(
+                self._plant_floor_mw(self.fleet_on, code),
+                expected,
+                delta=1.0,
+                msg=f"plant {code}",
+            )
+            # the p2 level for these plants is 0.0 — no floor when off
+            self.assertEqual(self._plant_floor_mw(self.fleet_off, code), 0.0)
+
+    def test_floor_never_exceeds_grid_capacity(self):
+        for code in (55217, 55400, 50865):
+            lp = sum(g.pmax_mw for g in self.fleet_on if g.plant_code == code)
+            self.assertLessEqual(self._plant_floor_mw(self.fleet_on, code), lp + 0.6)
+
+    def test_cyclers_keep_p2_floor(self):
+        """A measured-and-collapsed cogen (p25_allhr_cf = 0.0) is unchanged."""
+        for code in (10034, 10294):  # rarely-online CC_CHP, p25_allhr 0.0
+            self.assertEqual(
+                self._plant_floor_mw(self.fleet_on, code),
+                self._plant_floor_mw(self.fleet_off, code),
+            )
+
+    def test_default_off_identical(self):
+        """Flag off: every tranche's floor matches the p2 build exactly."""
+        off = {g.unit_id: g.chp_grid_pmin_mw for g in self.fleet_off}
+        on_default, _ = bins_to_fleet(self.synth, ZONES, self.cfg_off)
+        for g in on_default:
+            self.assertEqual(g.chp_grid_pmin_mw, off[g.unit_id])
 
 
 if __name__ == "__main__":
