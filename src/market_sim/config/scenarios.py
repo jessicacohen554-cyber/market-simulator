@@ -280,7 +280,16 @@ class ScenarioConfig:
     # horizon_years wiring in capacity.evolve_fleet). False reproduces the
     # pre-flip, injector-absent behavior exactly (backcast mode is unaffected
     # either way — the channel is forecast-mode only).
-    retirement_years_coal: int = 1  # coal retires after 1 unprofitable year
+    retirement_years_coal: int = 3  # coal retires after 3 consecutive
+    # unprofitable years. Identification (rule 23 — re-derives only when the
+    # EIA-860 vintages update, never against a residual): the measured EIA-860
+    # announced-to-deactivation lag for coal is capacity-weighted / ≥300 MW
+    # median = 3 yr, left-censored (66 % of announced coal MW), so a conservative
+    # floor on the announcement→deactivation pipeline (D1 Option B,
+    # docs/handoffs/retirement-dof-identification-2026-07-15.md §a.3/§a.4/§d). The
+    # threshold now carries the full decision+lead-time (D+L) deactivation total,
+    # so staged_oversupply_thinning stays default-off (rule 19 — the same physical
+    # queue must not be counted twice; §a.6). Owner-adopted 2026-07-16.
     retirement_years_gas_ct: int = 2  # CTs get 2 years
     retirement_years_gas_cc: int = 3  # modern CCs get 3 years (most flexible/valuable)
     retirement_years_gas_st: int = 2  # legacy gas steam — same grace as a CT
