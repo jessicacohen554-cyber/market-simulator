@@ -15437,3 +15437,23 @@ NOT-YET, NEISO CWC).
 Market Operations request (operational RTC/RTD reserve-requirement series).
 If it lands, re-solve 2023–2025 on the fuller series and re-gate; until
 then the NYISO tail frontier stands. Next shorthand: nyiso-63.
+
+## 2026-07-16 — ERCOT C3c-2024 ledger extension ADOPTED (owner)
+
+**Owner decision (this session, follow-up to the ERCOT-75 entry above):
+"Adopt the ledger extension yes."** The keeper's price_tail-2024 exceptions
+entry (`results/calibration/ercot73_state_wall_fullspan/
+calibration_attestation.json`) now carries the ERCOT-74 measured hour-set
+decomposition sharpened by the ERCOT-75 adjudication: of the 34 missed RT
+hours — 25 energy-side (6 offer-formed, adjudicated
+out-of-admissible-representation as measured fleet room exhaustion; ~6
+ramp-formed sub-hourly; ~8 congestion/stranding owned by the West/Panhandle
+topology charter; 5 January-unreachable), 8 sub-hourly transients, 1
+reserve-driven. The caveat stands as a measured representation limit; the
+sole remaining in-model lever on the count is the topology charter's ~8
+congestion hours. Determination unchanged (CALIBRATED-WITH-CAVEATS;
+`build_status.py` rebuilt status.js; `audit_keepers.py --iso ERCOT` PASS
+0/0). With this adoption every family of the 2024 missed tail is
+adjudicated; ERCOT's remaining open structural lanes are the West/Panhandle
+topology split, the drag-lane steam participation cliff, and the 2023
+summer over-shoot (handoff issued this session). Next number: ercot-76.
