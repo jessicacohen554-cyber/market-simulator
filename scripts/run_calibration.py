@@ -112,6 +112,7 @@ from market_sim.pipeline import (  # noqa: E402
     backcast_config,
     build_base_dispatch_kwargs,
     build_caiso_ra_p1_prep,
+    build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
@@ -1828,6 +1829,50 @@ def run_year(
                 "scripts/curate_capacity_deliverability.py",
                 year,
             )
+    # Measured PJM EAST interface cut (pjm_east_interface_cut, backcast
+    # overlay, default off — pjm-cong-1, diagnosis §10.5): one one-sided
+    # hourly aggregate group capping Flow(Central_PA→EMAAC) +
+    # Flow(SWMAAC→EMAAC) at the measured "Average Eastern" limit — PJM's
+    # EASTERN reactive transfer interface, whose monitored EHV set spans BOTH
+    # model links (Manual 03 §3.8), so the joint cap is the faithful
+    # reduced-network reading; the per-link pjm_measured_interface_limits
+    # overlay keeps its (now dominated) Central_PA→EMAAC bound. Zero fitted
+    # scalars; no-op off the flag, for non-PJM, or when the year has no
+    # clean partition (byte-identical).
+    if getattr(config, "pjm_east_interface_cut", False) and iso == "PJM":
+        from market_sim.data.transfer_interface_limits import (
+            pjm_eastern_interface_hourly,
+        )
+        from market_sim.model.transmission import (
+            build_pjm_east_interface_cut_groups,
+        )
+
+        east_lim = pjm_eastern_interface_hourly(year, demand.shape[1])
+        if east_lim is None:
+            logger.warning(
+                "pjm_east_interface_cut: no transfer-interface-limits clean "
+                "partition (or no Average Eastern series) for %d — joint "
+                "EMAAC cut skipped (run "
+                "scripts/curate_transfer_interface_limits.py)",
+                year,
+            )
+        else:
+            east_groups = build_pjm_east_interface_cut_groups(
+                iso_config.links, east_lim
+            )
+            if east_groups:
+                interface_groups = interface_groups + east_groups
+                logger.info(
+                    "PJM %d: measured EAST interface cut on %d link(s) — "
+                    "joint EMAAC import cap follows Average Eastern "
+                    "(hourly %0.0f-%0.0f MW, mean %0.0f)",
+                    year,
+                    len(east_groups[0][0]),
+                    float(np.min(east_lim[np.isfinite(east_lim)])),
+                    float(np.max(east_lim[np.isfinite(east_lim)])),
+                    float(np.mean(east_lim[np.isfinite(east_lim)])),
+                )
+
     # [measured: EIA-930 per-corridor (month × hour-of-day) p95 net-flow
     #  envelope → corridor import/export caps | forecast substitute:
     #  caiso_corridor_atc_forward — the shared
@@ -3650,6 +3695,13 @@ def run_year(
     pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
         config, iso, fleet_arrays
     )
+    # P1-native CAISO online-scoped reserve split (caiso_reserve_online_scoped):
+    # the kwargs hook recomputes the (2*n_r, T) spin/non-spin product-split
+    # ramp caps from the P0 run pattern — SPIN scoped to online iron, NONSPIN
+    # to offline fast-start (pipeline.commitment.caiso_pergen_sync_reserve_caps).
+    # None for every non-CAISO / gate-off run (byte-identical); ISO-exclusive
+    # with the PJM kwargs hook. Composes with the CAISO RA-bridge fleet hook.
+    caiso_reserve_kwargs_prep = build_caiso_reserve_p1_prep(config, iso, fleet_arrays)
     _t_solve_start = time.perf_counter()
     energy_solve = run_energy_solve(
         fleet,
@@ -3660,7 +3712,7 @@ def run_year(
         config,
         xyear_cache=xyear_cache,
         p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
-        p1_kwargs_prep=pjm_kwargs_prep,
+        p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
         mc_bid_adjust=offer_surface_mc_bid_adjust,
         # The v2 lowcurve and the ERCOT-64 floor-scoped bid hooks are mutually
         # exclusive (rule 19, enforced at build_ercot_gas_bridge_p1_preps), so

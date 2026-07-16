@@ -2265,6 +2265,77 @@ def _caiso_reserve_eligible(fleet_arrays: FleetArrays) -> np.ndarray:
     return _reserve_eligible(fleet_arrays) | (fuel_names == "hydro")
 
 
+def caiso_pergen_structure(
+    fleet_arrays: FleetArrays,
+) -> tuple[np.ndarray, np.ndarray, int, np.ndarray]:
+    """CAISO pergen reserve-pool structure ``(gen_idx, col, n_r, ramp10)``.
+
+    The (zone, fuel-class) pooling of every CAISO-reserve-eligible unit
+    (:func:`_caiso_reserve_eligible` — thermal + hydro) with a nonzero
+    10-minute deliverable ramp. Shared by ``_caiso_design`` (layout
+    construction) and ``pipeline.commitment.caiso_pergen_sync_reserve_caps``
+    (the P0→P1 online-scoping seam) so the column order is identical by
+    construction — the ``pjm_pergen_structure`` convention. ``ramp10`` is
+    returned with the CAISO-local hydro backfill applied
+    (:data:`CAISO_HYDRO_RAMP10_FRAC`: hydro has no CEMS so no measured
+    ramp-capability row exists, and the shared thermal ``RAMP10_FRAC``
+    tables stay hydro-free for every other ISO).
+    """
+    eligible = _caiso_reserve_eligible(fleet_arrays)
+    ramp10 = getattr(fleet_arrays, "ramp10", None)
+    if ramp10 is None:
+        raise ValueError(
+            "caiso_reserve_coopt requires FleetArrays.ramp10 (the 10-min "
+            "deliverable ramp, fleet._ramp10_capability)"
+        )
+    ramp10 = np.asarray(ramp10, dtype=float)
+    # Hydro 10-minute deliverable ramp, backfilled ISO-locally: full nameplate
+    # inside the 10-minute window is hydro governor class physics (the
+    # CAISO_HYDRO_RAMP10_FRAC citation block). Only rows the CAISO-local
+    # eligibility mask admits are touched; other ISOs never reach this.
+    fuel_names_all = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
+    is_hydro = fuel_names_all == "hydro"
+    ramp10 = np.where(
+        is_hydro & (ramp10 <= 0.0),
+        CAISO_HYDRO_RAMP10_FRAC * np.asarray(fleet_arrays.pmax, dtype=float),
+        ramp10,
+    )
+    pergen_gen_idx = np.flatnonzero(eligible & (ramp10 > 0.0))
+    fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)[pergen_gen_idx]
+    zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[pergen_gen_idx]
+    keys = np.stack([zone, fuel], axis=1)
+    _, pergen_col = np.unique(keys, axis=0, return_inverse=True)
+    n_r = int(pergen_col.max()) + 1 if pergen_col.size else 0
+    return pergen_gen_idx, pergen_col.astype(int), n_r, ramp10
+
+
+def caiso_pergen_pool_ramp10(
+    fleet_arrays: FleetArrays,
+    gen_idx: np.ndarray,
+    col: np.ndarray,
+    n_r: int,
+    ramp10: np.ndarray,
+    member_mask: np.ndarray | None = None,
+) -> np.ndarray:
+    """Availability-scaled per-pool 10-minute deliverable ramp ``(n_r, T)``.
+
+    A unit on outage (or derated) contributes proportionally less 10-minute
+    ramp, thinning the pool's cap in exactly the hours capacity is out —
+    physical, not fitted. ``member_mask`` (``(n_members, T)`` bool) restricts
+    the sum to a member subset per hour — the online / offline-fast-start
+    scoping of the ``caiso_reserve_online_scoped`` product split (the
+    ``pjm_pergen_pool_ramp10`` convention). ``None`` sums every member.
+    """
+    gidx = np.asarray(gen_idx, dtype=int)
+    avail = np.asarray(fleet_arrays.availability, dtype=float)[gidx]
+    member_ramp_t = np.asarray(ramp10, dtype=float)[gidx][:, np.newaxis] * avail
+    if member_mask is not None:
+        member_ramp_t = np.where(member_mask, member_ramp_t, 0.0)
+    col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
+    np.add.at(col_ramp10, np.asarray(col, dtype=int), member_ramp_t)
+    return col_ramp10
+
+
 def _caiso_locational_as_families(
     zone_names: list[str] | None,
     n_zones: int,
@@ -2388,6 +2459,21 @@ def _caiso_design(
     probe — the honest direction (the issue's ex-ante note: the thermal-only
     pool over-states scarcity).
 
+    Online-quality scoping (``caiso_reserve_online_scoped``, GATED default
+    off — the issue-#1492 "correct build" increment, C1 lane 2026-07-16):
+    splits each pool into a SPIN product column (online 10-minute ramp only —
+    spinning reserve is synchronized capacity, tariff §8.4 / Appendix K;
+    scoped at the P0→P1 seam from the model's own P0 run pattern,
+    ``pipeline.commitment.caiso_pergen_sync_reserve_caps`` — the
+    ``pjm_reserve_pergen_sync`` convention) and a NONSPIN column (offline
+    fast-start ramp; offline slow iron backs nothing), sharing the pool's
+    joint P+R headroom row. The families become the nested tariff
+    procurement: spin (½ requirement, spin curve, SPIN columns + storage RS)
+    and contingency-total (FULL requirement, non-spin curve, all columns —
+    downward substitution). Mutually exclusive with
+    ``caiso_commitment_posture`` (rule 19) and not composed with
+    ``caiso_locational_as_families``.
+
     Remaining gap: **Regulation Up/Down** (no forward-derivable requirement
     series; RegDown is a downward product the upward-headroom pergen row does
     not model).
@@ -2398,26 +2484,25 @@ def _caiso_design(
     )
 
     eligible = _caiso_reserve_eligible(fleet_arrays)
-    ramp10 = getattr(fleet_arrays, "ramp10", None)
-    if ramp10 is None:
+    # Pool structure + hydro-backfilled ramp10 from the shared helper — the
+    # same call pipeline.commitment.caiso_pergen_sync_reserve_caps makes at
+    # the P0→P1 seam, so the column order is identical by construction.
+    pergen_gen_idx, pergen_col, n_r, ramp10 = caiso_pergen_structure(fleet_arrays)
+
+    online_scoped = bool(getattr(config, "caiso_reserve_online_scoped", False))
+    if online_scoped and getattr(config, "caiso_commitment_posture", False):
         raise ValueError(
-            "caiso_reserve_coopt requires FleetArrays.ramp10 (the 10-min "
-            "deliverable ramp, fleet._ramp10_capability)"
+            "caiso_reserve_online_scoped and caiso_commitment_posture are "
+            "mutually exclusive (CLAUDE.md rule 19 — one mechanism per "
+            "phenomenon): the posture U re-anchor and the seam online scoping "
+            "gate the same online-capacity phenomenon"
         )
-    ramp10 = np.asarray(ramp10, dtype=float)
-    # Hydro 10-minute deliverable ramp, backfilled ISO-locally: the shared
-    # fleet tables are thermal-only (hydro rows carry 0), and hydro has no
-    # CEMS so the measured ramp-capability datatype cannot cover it. Full
-    # nameplate inside the 10-minute window is hydro governor class physics
-    # (CAISO_HYDRO_RAMP10_FRAC citation above). Only rows the CAISO-local
-    # eligibility mask admits are touched; other ISOs never reach this.
-    fuel_names_all = np.array([FUEL_TYPE_NAMES[i] for i in fleet_arrays.fuel_type_idx])
-    is_hydro = fuel_names_all == "hydro"
-    ramp10 = np.where(
-        is_hydro & (ramp10 <= 0.0),
-        CAISO_HYDRO_RAMP10_FRAC * np.asarray(fleet_arrays.pmax, dtype=float),
-        ramp10,
-    )
+    if online_scoped and getattr(config, "caiso_locational_as_families", False):
+        raise ValueError(
+            "caiso_reserve_online_scoped is not composed with "
+            "caiso_locational_as_families: the regional families need "
+            "(zone AND product) balance_col_mask rows, which are not built"
+        )
 
     T = int(hours)
     n_zones = int(np.max(fleet_arrays.zone_idx)) + 1
@@ -2460,24 +2545,61 @@ def _caiso_design(
     )
 
     all_zones = np.ones(n_zones, dtype=bool)
-    families = [
-        ReserveFamily(
-            name="caiso_spin",
-            requirement=spin_req.astype(float),
-            zone_mask=all_zones,
-            ordc_penalties=spin_pen,
-            ordc_step_widths=spin_wid,
-            reserve_class=0,
-        ),
-        ReserveFamily(
-            name="caiso_nonspin",
-            requirement=nonspin_req.astype(float),
-            zone_mask=all_zones,
-            ordc_penalties=nonspin_pen,
-            ordc_step_widths=nonspin_wid,
-            reserve_class=0,
-        ),
-    ]
+    if online_scoped:
+        # Nested procurement (the tariff/BPM structure, the PJM PR⊇SR /
+        # NYISO 30min⊇10min⊇spin convention): the SPIN family (½ the
+        # BAL-002-WECC-3 requirement, §27.1.2.3.5 spin curve) is servable
+        # only by the SPIN product columns + storage RS, and the
+        # CONTINGENCY-TOTAL family carries the FULL requirement over ALL
+        # columns with the non-spin curve — a spin MW substitutes down
+        # (BPM AS downward substitution), and a total shortage with spin
+        # met is by construction a non-spin shortage. This replaces the
+        # co-drawn half/half convention, whose shared column pool made the
+        # effective procurement max(half, half); when both families are
+        # short the two shortfall duals still SUM into the marginal online
+        # unit's LMP (§27.1.2.4), exactly as the co-drawn form priced it.
+        total_pen, total_wid = caiso_reserve_demand_steps(
+            float(contingency.max(initial=0.0)),
+            CAISO_NONSPIN_DEMAND_CURVE,
+            CAISO_ENERGY_BID_CAP_SOFT,
+        )
+        families = [
+            ReserveFamily(
+                name="caiso_spin",
+                requirement=spin_req.astype(float),
+                zone_mask=all_zones,
+                ordc_penalties=spin_pen,
+                ordc_step_widths=spin_wid,
+                reserve_class=0,
+            ),
+            ReserveFamily(
+                name="caiso_contingency_total",
+                requirement=contingency.astype(float),
+                zone_mask=all_zones,
+                ordc_penalties=total_pen,
+                ordc_step_widths=total_wid,
+                reserve_class=0,
+            ),
+        ]
+    else:
+        families = [
+            ReserveFamily(
+                name="caiso_spin",
+                requirement=spin_req.astype(float),
+                zone_mask=all_zones,
+                ordc_penalties=spin_pen,
+                ordc_step_widths=spin_wid,
+                reserve_class=0,
+            ),
+            ReserveFamily(
+                name="caiso_nonspin",
+                requirement=nonspin_req.astype(float),
+                zone_mask=all_zones,
+                ordc_penalties=nonspin_pen,
+                ordc_step_widths=nonspin_wid,
+                reserve_class=0,
+            ),
+        ]
 
     # Locational AS families (caiso_locational_as_families, default off): the
     # measured OASIS AS_REQ regional MINIMA south / north of Path 26 as
@@ -2503,19 +2625,40 @@ def _caiso_design(
 
     # PER-ASSET R columns (dispatch._build_reserve_rows_pergen), one per
     # (zone, fuel-class) pool of reserve-eligible units deliverable within
-    # 10 min. Availability-scaled hourly deliverable ramp per column, (n_r, T):
-    # a unit on outage contributes proportionally less 10-minute ramp, thinning
-    # the pool's cap in exactly the hours capacity is out — physical, not fitted.
-    pergen_gen_idx = np.flatnonzero(eligible & (ramp10 > 0.0))
-    fuel = np.asarray(fleet_arrays.fuel_type_idx, dtype=int)[pergen_gen_idx]
-    zone = np.asarray(fleet_arrays.zone_idx, dtype=int)[pergen_gen_idx]
-    keys = np.stack([zone, fuel], axis=1)
-    _, pergen_col = np.unique(keys, axis=0, return_inverse=True)
-    n_r = int(pergen_col.max()) + 1 if pergen_col.size else 0
-    avail = np.asarray(fleet_arrays.availability, dtype=float)[pergen_gen_idx]
-    member_ramp_t = ramp10[pergen_gen_idx][:, np.newaxis] * avail  # (m, T)
-    col_ramp10 = np.zeros((n_r, member_ramp_t.shape[1]), dtype=float)
-    np.add.at(col_ramp10, pergen_col, member_ramp_t)
+    # 10 min (structure from caiso_pergen_structure above). Availability-scaled
+    # hourly deliverable ramp per column, (n_r, T) — physical, not fitted.
+    col_ramp10 = caiso_pergen_pool_ramp10(
+        fleet_arrays, pergen_gen_idx, pergen_col, n_r, ramp10
+    )
+
+    if online_scoped:
+        # Product-split column layout (the pjm_reserve_pergen_sync structure):
+        # [0, n_r) = SPIN columns, [n_r, 2*n_r) = NONSPIN columns; both
+        # columns of pool p share joint P+R headroom row p. Family masks:
+        # spin is servable only by SPIN columns (+ storage RS — a battery is
+        # spin-quality, the ASSOC gate unchanged); the contingency-total
+        # family draws every column. P0 caps carry the all-online assumption
+        # (the base-cost discovery run has no commitment pattern yet): SPIN =
+        # the full availability-scaled pool deliverable ramp, NONSPIN = 0.
+        # The P0→P1 seam recomputes both from the P0 run pattern
+        # (pipeline.commitment.caiso_pergen_sync_reserve_caps).
+        col_pool = np.tile(np.arange(n_r, dtype=int), 2)
+        spin_sel = np.concatenate([np.ones(n_r, dtype=bool), np.zeros(n_r, dtype=bool)])
+        balance_col_mask = np.stack([spin_sel, np.ones(2 * n_r, dtype=bool)], axis=0)
+        return ReserveDesign(
+            families=families,
+            eligible=eligible.reshape(1, -1),
+            # Storage participation is unchanged from the unscoped design:
+            # RS[0,z] backs BOTH nested families (spin-quality) through the
+            # duration-gated columns at the published 30-minute ASSOC sustain.
+            storage_eligible=True,
+            storage_duration_h=np.array([CAISO_AS_SUSTAIN_DURATION_H], dtype=float),
+            pergen_gen_idx=pergen_gen_idx,
+            pergen_col=pergen_col,
+            pergen_ramp10=np.vstack([col_ramp10, np.zeros_like(col_ramp10)]),
+            pergen_col_pool=col_pool,
+            balance_col_mask=balance_col_mask,
+        )
 
     # Commitment-posture lever (design note §A): U/SU columns on the
     # non-fast-start pools, gated on caiso_commitment_posture — MISO's
