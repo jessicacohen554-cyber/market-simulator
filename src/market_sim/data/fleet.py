@@ -1986,6 +1986,37 @@ def generators_to_fleet_arrays(
     cc_mustrun_any = any(
         getattr(g, "cc_mustrun_pmin_mw", 0.0) > 0.0 for g in generators
     )
+    # ST_GAS p25-level floor (config.st_gas_mustrun_p25_level, the miso-67
+    # LEVEL SWAP for st_gas_mustrun_per_plant): gather the gate-armed ST_GAS
+    # plants with their measured p25 level (p25_cf x nameplate) and measured
+    # online window here, so (a) the min_gen allocation guard below includes
+    # them and (b) the cc_mustrun block hands ST_GAS off to the dedicated p25
+    # block (rule 19 — the level source is REPLACED, no second floor). Gated on
+    # BOTH flags: st_gas_mustrun_per_plant arms the phenomenon, p25_level swaps
+    # the level. Off => empty dicts => byte-identical to today.
+    st_gas_p25_tranches: dict[int, list[int]] = {}
+    st_gas_p25_levels_by_plant: dict[int, float] = {}
+    st_gas_p25_frac_by_plant: dict[int, float] = {}
+    st_gas_p25_level_on = (
+        config is not None
+        and getattr(config, "st_gas_mustrun_p25_level", False)
+        and getattr(config, "st_gas_mustrun_per_plant", False)
+    )
+    if st_gas_p25_level_on:
+        _p25_levels = thermal_tranche_p25_level(_iso or "ERCOT")
+        _p25_fracs = thermal_tranche_online_frac(_iso or "ERCOT")
+        for _g_idx, _gen in enumerate(generators):
+            if getattr(_gen, "plant_group", "") != "ST_GAS":
+                continue
+            _key = (int(_gen.plant_code), "ST_GAS")
+            _level = _p25_levels.get(_key, 0.0)
+            _frac = _p25_fracs.get(_key, 0.0)
+            if _level <= 0.0 or _frac <= 0.0:
+                continue
+            _pc = int(_gen.plant_code)
+            st_gas_p25_tranches.setdefault(_pc, []).append(_g_idx)
+            st_gas_p25_levels_by_plant[_pc] = _level
+            st_gas_p25_frac_by_plant[_pc] = _frac
     # Nuclear runs flat as must-run baseload — it physically cannot load-follow
     # on price, so it must not back down to a part-load pmin in CAISO's many
     # negative/near-zero midday hours (the ~1 TWh Diablo Canyon under-run). Pin
@@ -2006,6 +2037,7 @@ def generators_to_fleet_arrays(
         or nuclear_flat
         or coal_sync_any
         or cc_mustrun_any
+        or st_gas_p25_tranches
     ):
         min_gen = np.zeros((n_gen, hours), dtype=float)
         # Parallel mechanism-id array (D-2 forced-energy attribution): each
@@ -2106,6 +2138,11 @@ def generators_to_fleet_arrays(
                 frac = float(getattr(gen, "cc_mustrun_online_frac", 0.0))
                 if frac <= 0.0:
                     continue
+                # miso-67 level swap: ST_GAS plants are floored by the dedicated
+                # p25-level block below when st_gas_mustrun_p25_level is armed —
+                # the committed-tranche level is replaced, not stacked (rule 19).
+                if st_gas_p25_level_on and getattr(gen, "plant_group", "") == "ST_GAS":
+                    continue
                 mech_id = (
                     MECH_ST_GAS_MUSTRUN_PER_PLANT
                     if getattr(gen, "plant_group", "") == "ST_GAS"
@@ -2124,6 +2161,71 @@ def generators_to_fleet_arrays(
                     raised = hrs[min_gen[g_idx, hrs] < pmin_mw]
                     min_gen[g_idx, hrs] = np.maximum(min_gen[g_idx, hrs], pmin_mw)
                     min_gen_mech[g_idx, raised] = mech_id
+        # ST_GAS per-plant p25-LEVEL commitment floor
+        # (config.st_gas_mustrun_p25_level — the miso-67 level swap for
+        # st_gas_mustrun_per_plant). For each gate-armed ST_GAS plant the floor
+        # level is the plant's measured 25th-percentile-of-online available-CF
+        # times nameplate (thermal_tranche_p25_level) instead of the committed
+        # tranche (P5-of-online = LSL). The ST_GAS branch of the cc_mustrun
+        # block above is skipped for these plants, so this is the SOLE ST_GAS
+        # floor (rule 19 — the level is replaced, not stacked) and it stamps the
+        # SAME mechanism id (MECH_ST_GAS_MUSTRUN_PER_PLANT), so D-2/D-4
+        # attribution is unchanged. The level is held in the SAME top-
+        # ``online_frac`` system-load window as the committed floor and, where it
+        # exceeds the committed tranche, distributed cheapest-first across the
+        # plant's tranches (committed -> econ), each capped at pmax*availability
+        # that hour (the "clipped to pmax*availability as today" clause — an
+        # outage hour relaxes the floor). Because p25_cf is a fraction of
+        # AVAILABLE capacity, p25_cf*nameplate reconstructs the measured p25
+        # output; it stays below available capacity, so the floor never pins the
+        # plant. See the ScenarioConfig field for the rule-12/13 grounding.
+        if st_gas_p25_tranches:
+            sys_load = (
+                np.asarray(load_shape, dtype=float)
+                if load_shape is not None and len(load_shape) == hours
+                else None
+            )
+            load_rank = (
+                np.argsort(-sys_load, kind="stable") if sys_load is not None else None
+            )
+            p25_forced_mwh = 0.0
+            for pc, idxs in st_gas_p25_tranches.items():
+                level = st_gas_p25_levels_by_plant.get(pc, 0.0)
+                frac = st_gas_p25_frac_by_plant.get(pc, 0.0)
+                if level <= 0.0 or frac <= 0.0:
+                    continue
+                # Per-hour target: the p25 level in the plant's measured
+                # committed window (top-frac system-load hours), zero elsewhere.
+                target = np.zeros(hours, dtype=float)
+                if frac >= 1.0 or load_rank is None:
+                    target[:] = level
+                else:
+                    k = int(round(frac * hours))
+                    if k <= 0:
+                        continue
+                    target[load_rank[:k]] = level
+                # Distribute cheapest-first across the plant's tranches, each
+                # capped at its available MW that hour; np.maximum composes with
+                # any floor already placed (the CT-deployment precedent below).
+                for g_idx in sorted(idxs, key=lambda i: heat_rate[i]):
+                    if not target.any():
+                        break
+                    cap = pmax[g_idx] * availability[g_idx, :]
+                    take = np.minimum(target, cap)
+                    raised = min_gen[g_idx, :] < take
+                    np.maximum(min_gen[g_idx, :], take, out=min_gen[g_idx, :])
+                    min_gen_mech[g_idx, raised] = MECH_ST_GAS_MUSTRUN_PER_PLANT
+                    p25_forced_mwh += float(take[raised].sum())
+                    target = target - take
+            logger.info(
+                "ST_GAS p25-level floor (%s %s): floored %d plant(s), %.2f TWh "
+                "in measured online windows (level = p25_cf x nameplate, "
+                "cheapest-first, clipped to pmax*availability)",
+                _iso or "ERCOT",
+                _yr,
+                len(st_gas_p25_tranches),
+                p25_forced_mwh / 1e6,
+            )
         # Per-plant CT_PEAKER reliability must-run floor: spread each plant's
         # observed monthly net generation (frac-scaled) across that month's
         # hours, *shaped by system load* — the energy is placed in the
@@ -7563,6 +7665,50 @@ def thermal_tranche_online_frac(iso: str) -> dict[tuple[int, str], float]:
         if str(getattr(r, "status", "ok")) != "ok" or not frac == frac:
             continue
         out[(int(r.plant_code), str(r.plant_group))] = min(1.0, max(0.0, frac))
+    return out
+
+
+def thermal_tranche_p25_level(iso: str) -> dict[tuple[int, str], float]:
+    """Return ``{(plant_code, group): p25_level_mw}`` for an ISO's gas plants.
+
+    The measured 25th-percentile-of-online available-CF from
+    ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``p25_cf``, a
+    percent, written by the SAME frozen ``scripts/derive_thermal_tranches.py``
+    estimator that produces ``committed_pct`` = P5-of-online and ``online_frac``
+    — rule 23, no deriver touch) times the plant's ``nameplate_mw``, i.e. the
+    plant's 25th-percentile dispatch level when synchronized. Because ``p25_cf``
+    is a fraction of *available* capacity (``series / (nameplate x avail_mult)``
+    in the deriver), ``p25_cf x nameplate`` reconstructs the measured p25 output
+    level; the runtime ``availability`` derate then enters only through the
+    per-tranche ``pmax x availability`` clip in the application block, matching
+    the committed floor's "clipped to pmax*availability as today". Consumed by
+    the per-plant ST_GAS local-reliability commitment floor when
+    ``config.st_gas_mustrun_p25_level`` is armed (miso-67): the p25 level
+    REPLACES the committed-tranche level (P5-of-online = LSL) for gate-armed
+    ST_GAS plants, distributed cheapest-first across the plant's tranches. Empty
+    when the ISO has no artifact or it predates the ``p25_cf`` column. Rows with
+    a blank/NaN ``p25_cf`` or ``nameplate_mw`` are absent (no floor).
+    """
+    path = PROCESSED_DIR / f"thermal_tranches_{iso.upper()}.csv"
+    if not path.exists():
+        return {}
+    df = pd.read_csv(path)
+    if "p25_cf" not in df.columns or "nameplate_mw" not in df.columns:
+        return {}
+    out: dict[tuple[int, str], float] = {}
+    for r in df.itertuples(index=False):
+        try:
+            p25 = float(getattr(r, "p25_cf", float("nan")))
+            nameplate = float(getattr(r, "nameplate_mw", float("nan")))
+        except (TypeError, ValueError):
+            continue
+        if str(getattr(r, "status", "ok")) != "ok":
+            continue
+        if not (p25 == p25) or not (nameplate == nameplate):
+            continue  # NaN guard (blank cell)
+        level = max(0.0, p25 / 100.0) * max(0.0, nameplate)
+        if level > 0.0:
+            out[(int(r.plant_code), str(r.plant_group))] = level
     return out
 
 
