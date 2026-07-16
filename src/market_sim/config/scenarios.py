@@ -4901,9 +4901,11 @@ class ScenarioConfig:
     # backcast mode for PJM, the forward (west->east congestion) direction of
     # the internal links whose static ttc_mw was seeded from the PJM Data
     # Miner 2 transfer-limit postings (constants.PJM_INTERFACE_LINK_MAP:
-    # 50045005 -> ComEd->AEP, AEP/DOM -> AEP->Dominion, AP-South ->
-    # West_APS->SWMAAC, Bedington-BlackOak -> West_APS->Central_PA, and the
-    # Average Western/Central/Eastern envelopes on the links they seeded)
+    # AEP/DOM -> AEP->Dominion, AP-South -> West_APS->SWMAAC,
+    # Bedington-BlackOak -> West_APS->Central_PA, and the Average
+    # Western/Central/Eastern interfaces on the links they seeded; the
+    # 50045005 -> ComEd->AEP entry was removed 2026-07-16 as a Manual-03
+    # mis-attribution — pjm-cong-1, diagnosis §10.3)
     # follows the measured HOURLY published limit series
     # (transfer-interface-limits clean datatype) instead of the single static
     # ttc_mw. Where an interface publishes both pre- and post-contingency
@@ -4927,6 +4929,25 @@ class ScenarioConfig:
     # forecast has no realized outage/re-rating sequence to read.
     # Off by default.
     pjm_measured_interface_limits: bool = False
+
+    # PJM measured EAST interface cut (backcast/calibration overlay,
+    # pjm-cong-1 — docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §10). When
+    # True in backcast mode for PJM, ONE one-sided aggregate interface-group
+    # row per hour caps the JOINT EMAAC import flow
+    # Flow(Central_PA->EMAAC) + Flow(SWMAAC->EMAAC) at the hour's measured
+    # "Average Eastern" transfer limit — PJM's EASTERN reactive transfer
+    # interface (Manual 03 §3.8: the seven EHV circuits into the eastern
+    # Mid-Atlantic, i.e. the real EMAAC import cut, which spans BOTH model
+    # links; the per-link overlay above applies the same series to
+    # Central_PA->EMAAC alone, leaving the 5,000 MW SWMAAC->EMAAC static as
+    # an un-monitored parallel path the real interface does not have).
+    # Reverse (westward) flow keeps the per-link TTCs; the per-link statics
+    # stay as their own bounds. Zero fitted scalars: the cap is the published
+    # hourly series verbatim, from the same transfer-interface-limits clean
+    # partition. Same rule #13/#14 admissibility and two-track construction
+    # as pjm_measured_interface_limits (forecast years keep the static
+    # seeds). Off by default; byte-identical off.
+    pjm_east_interface_cut: bool = False
 
     # ERCOT West Texas Export corridor VRE curtailment-share driver
     # (backcast/calibration overlay; docs/handoffs/ercot-vre-curtailment-topology-
@@ -6722,6 +6743,7 @@ TIER_TAGS: dict[str, int] = {
     "chp_steam_floor_p25": 3,
     "ercot_gtc_limits_measured": 3,
     "pjm_measured_interface_limits": 3,
+    "pjm_east_interface_cut": 3,
     "ercot_wtx_curtailment_driver": 3,
     "ercot_wtx_curtail_depth_wind": 3,
     "ercot_wtx_curtail_depth_solar": 3,
