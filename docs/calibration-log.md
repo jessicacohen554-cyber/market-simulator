@@ -14498,3 +14498,25 @@ charter (rule 25 forbids a multiplier re-tune); the trio is the evening-λ
 lane. With candidates 1 (caiso-91, inert) and 2 both closed, the C1
 cluster's remaining chartered candidate is 3 (overnight CC cycling) — owner
 checkpoint before further solves. No config touched; no run produced.
+
+## 2026-07-16 — C1 candidate 3 (overnight CC cycling): evidence measured, no build — and the hod price ladder that reframes the lane
+
+`results/calibration/FINDING-caiso91c-overnight-cc-evidence-2026-07-16.md`.
+Crosswalked overnight (hod 0-5) CC over-run +1.30/+2.07/+2.53 TWh (the
+LA-Basin repowering ORISPL crosswalk CEMS 315/335/330 ↔ EIA 62115/62116/
+57901 removes ~1.6 TWh/yr of phantom delta; Desert Star 55077 is NV,
+CEMS-uncoverable ~0.2-0.3), of which only 0.16 TWh sits at binding RA-bridge
+floors in 2024 — ≥92 % free economic dispatch. Real CCs two-shift
+(overnight-online 26-67 % per plant vs model 50-100 %). NEW: the hod price
+ladder (demand-weighted model λ − actual RT) decomposes the C3a body
+overprice into a BELLY overprice (+$9-14, hod 10-14 — the open midday/
+RUC-long lane) partly offset by an EVENING underprice (−$1-4, hod 17-21 —
+the price-side face of the C1 CT under-run and the C3c summer misses);
+overnight only +$2-4. Candidate-3 build direction identified (P1-native
+two-shift screen on the P0-dual startup-restart inequality, ERCOT-63
+template) with disclosed tensions: it raises an already-over overnight λ
+unless overnight imports take the displaced energy (undecomposed), and it
+must not become archived-P2-by-another-name. Owner checkpoint: candidates
+1 (caiso-91, inert) and 2 (no-LP conduct refutation) closed; remaining C1
+owners are candidate 3 + the measured DAM offer-surface intake charter +
+the evening-merit λ level. No config touched; no run produced.
