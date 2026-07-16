@@ -1349,3 +1349,98 @@ class TestCaisoDesign(unittest.TestCase):
         cfg = _cfg(iso="CAISO", weather_year=1999)
         with self.assertRaises(ValueError):
             get_reserve_design(cfg, self._fleet(with_ramp10=False), 24, self._ZONES)
+
+
+class TestCaisoDesignOnlineScoped(TestCaisoDesign):
+    """caiso_reserve_online_scoped: the spin/non-spin product split (#1492).
+
+    Inherits the TestCaisoDesign fleet. The split turns the co-drawn
+    half/half families into the nested tariff procurement — spin (half the
+    requirement, SPIN columns only) + contingency-total (full requirement,
+    all columns) — with the pjm_reserve_pergen_sync column layout: SPIN
+    columns [0, n_r) at the full pool ramp (P0 all-online assumption),
+    NONSPIN columns [n_r, 2*n_r) at 0 until the P0->P1 seam rescopes both.
+    """
+
+    def _scoped_cfg(self, **kw):
+        return _cfg(
+            iso="CAISO", weather_year=1999, caiso_reserve_online_scoped=True, **kw
+        )
+
+    def test_nested_families_and_requirements(self):
+        # 6% of 20,000 MW load = 1,200 MW contingency: spin = 600 (half),
+        # contingency-total = the FULL 1,200 (spin substitutes down).
+        load = np.full(24, 20000.0)
+        design = get_reserve_design(
+            self._scoped_cfg(), self._fleet(), 24, self._ZONES, system_load=load
+        )
+        by_name = {f.name: f for f in design.families}
+        self.assertEqual(
+            [f.name for f in design.families],
+            ["caiso_spin", "caiso_contingency_total"],
+        )
+        self.assertAlmostEqual(float(by_name["caiso_spin"].requirement[0]), 600.0)
+        self.assertAlmostEqual(
+            float(by_name["caiso_contingency_total"].requirement[0]), 1200.0
+        )
+        # Published curves: spin flat $100 spanning its req; total carries the
+        # non-spin tiers ($500/$600/$700 at 70/210 MW) to the FULL requirement.
+        np.testing.assert_allclose(by_name["caiso_spin"].ordc_penalties, [100.0])
+        np.testing.assert_allclose(by_name["caiso_spin"].ordc_step_widths, [600.0])
+        np.testing.assert_allclose(
+            by_name["caiso_contingency_total"].ordc_penalties, [500.0, 600.0, 700.0]
+        )
+        np.testing.assert_allclose(
+            by_name["caiso_contingency_total"].ordc_step_widths, [70.0, 140.0, 990.0]
+        )
+
+    def test_product_split_columns_and_masks(self):
+        design = get_reserve_design(self._scoped_cfg(), self._fleet(), 24, self._ZONES)
+        # 4 (zone, fuel) pools -> 8 R columns: SPIN [0,4), NONSPIN [4,8).
+        np.testing.assert_array_equal(design.pergen_col_pool, [0, 1, 2, 3, 0, 1, 2, 3])
+        # Family masks: spin -> SPIN columns only; total -> every column.
+        np.testing.assert_array_equal(
+            design.balance_col_mask,
+            [
+                [True] * 4 + [False] * 4,
+                [True] * 8,
+            ],
+        )
+        # P0 caps (all-online assumption): SPIN = full pool deliverable ramp
+        # (400 + 320 + 500 + 600 hydro-backfilled = 1,820), NONSPIN = 0.
+        self.assertEqual(design.pergen_ramp10.shape, (8, 24))
+        self.assertAlmostEqual(float(design.pergen_ramp10[:4, 0].sum()), 1820.0)
+        np.testing.assert_allclose(design.pergen_ramp10[4:], 0.0)
+        # No posture columns on the split layout (mutually exclusive).
+        self.assertIsNone(design.posture_pools)
+
+    def test_kwargs_propagate_split_layout(self):
+        load = np.full(24, 20000.0)
+        design = get_reserve_design(
+            self._scoped_cfg(), self._fleet(), 24, self._ZONES, system_load=load
+        )
+        kw = build_reserve_dispatch_kwargs(design)
+        self.assertIn("reserve_pergen_col_pool", kw)
+        self.assertIn("reserve_balance_col_mask", kw)
+        np.testing.assert_array_equal(kw["reserve_balance_ordc_counts"], [1, 3])
+        # Storage participation unchanged: RS columns back both families.
+        self.assertTrue(kw.get("reserve_storage"))
+        np.testing.assert_allclose(kw["reserve_storage_duration_h"], [0.5])
+
+    def test_posture_composition_raises(self):
+        with self.assertRaises(ValueError):
+            get_reserve_design(
+                self._scoped_cfg(caiso_commitment_posture=True),
+                self._fleet(),
+                24,
+                self._ZONES,
+            )
+
+    def test_locational_composition_raises(self):
+        with self.assertRaises(ValueError):
+            get_reserve_design(
+                self._scoped_cfg(caiso_locational_as_families=True),
+                self._fleet(),
+                24,
+                self._ZONES,
+            )

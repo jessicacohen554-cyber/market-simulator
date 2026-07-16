@@ -1,0 +1,16 @@
+{
+ "id": "2026-07-16-caiso-90-citygate-flow",
+ "label": "caiso 90 citygate flow",
+ "date": "2026-07-16",
+ "shorthand": "caiso-90-citygate-flow",
+ "definition": "KEEPER (promoted 2026-07-16, owner sign-off; caiso-89 keeper recipe + the single delta caiso_citygate_flow_date=True): the measured daily citygate prints placed on their gas FLOW days (trade+1; Friday prints carry the Sat-through-Monday weekend package on a forward-fill staircase) instead of their trade days — the CA Composite daily spot is a next-day-delivery index, so the prior keeper's trade-dated placement mis-days the winter C3c tail (its only 2023 >$200 day was Jan-12, the $24.29 print's TRADE day; the actual tail day Jan-13 is its FLOW day; the Fri Jan-12-2024 $17.34 print is the MLK-weekend package covering the actual Jan-15/16 storm tail, which linear interpolation decayed to $8-11/MMBtu). RESULT vs caiso-89: the 2023 tail MOVES onto the right day (Jan-13, catches all 8 of that day's actual tail hours; count 16->18h vs 80 DA actual, still FAIL); the Jan-2024 WATCH under-price recovers -4.9 -> ~0 (storm days reprice $62-104 -> $141-175, now clipped at the CC econ_high stack top -- the remaining $25-80 to the actual $254/$226 peaks is the CT-marginal evening/peak merit-stack lane, DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07); C3a-2024 +10.5 -> +11.5% (the honest signed effect of removing an under-priced month); C4-2023 gas r .826->.828 / NRMSE .322->.319; C1/C2/C3b/C5a/C6/C7/C8 unchanged. Zero new scalars; flag-off byte-identical; DISCLOSED source gap: the EIA archive skipped its Dec-29-2022/Jan-5-2023 issues, so the actual Jan-3..6-2023 cluster (22h) is unreachable by any placement of this series. NOT-YET (fuelmix, price_mean, price_tail, dispatch_corr — the keeper's own four, per calibration_verdict.py); promoted as the most structurally faithful available run, per calibration-log.md 2026-07-16 CAISO-90.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-16-caiso-90-citygate-flow.js",
+ "bundle": "results/calibration/caiso90_citygate_flow_date",
+ "market_story": "Gas classes (CC_REGULAR/CC_CHP marginal cost, winter tail): a California gas plant's marginal-cost bid on delivery day D is set by the daily citygate index traded the day before (next-day delivery; Friday's trade prices the whole weekend package) — CAISO's cost-based DEB uses that flow-day gas. Placing each measured print on its flow day makes the committed/econ CC rungs cross $200 on the days the real DA market did (Jan-13-2023; the Jan-13..16-2024 MLK-weekend freeze package at $17.34) instead of one day early, and prices Winter Storm Heather's fuel cost correctly ($141-175 vs the interpolation's $62-104). No class is forced; the change is purely which calendar day carries the measured fuel price."
+}

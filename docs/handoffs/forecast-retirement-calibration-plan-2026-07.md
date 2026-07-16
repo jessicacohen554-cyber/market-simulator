@@ -150,10 +150,10 @@ calls stay unfit until BLK-6 closes, whatever this lane does about timing.
 ### 1.3 The retirement-threshold / GFC interaction — DOF hygiene (calibration-adjacent)
 
 The screen's free parameters are the per-fuel loss-year thresholds
-(`retirement_years_coal=1`, `gas_ct/gas_st/oil=2`, `gas_cc/nuclear=3` —
-`scenarios.py:283-289`) and the GFC construction (`fixed_om_*` ATB/Lazard-cited;
-`retirement_fom_multiplier_coal=1.3`, Lazard-cited). Two problems, neither of which
-is "tune them":
+(`retirement_years_coal=3` — see the RC-D1 status note below; `gas_ct/gas_st/oil=2`,
+`gas_cc/nuclear=3` — `scenarios.py:283-289`) and the GFC construction (`fixed_om_*`
+ATB/Lazard-cited; `retirement_fom_multiplier_coal=1.3`, Lazard-cited). Two problems,
+neither of which is "tune them":
 
 - **The loss-year thresholds carry no external identification source** — bare
   comments, no citation. Under an understated revenue signal, coal's 1-year trigger
@@ -162,6 +162,24 @@ is "tune them":
   measured behaviour** — announced-to-deactivation lag distributions derivable from
   on-disk EIA-860 vintage history, RTO deactivation-notice periods (RD-6) — and then
   frozen against residuals (rule 23). RC-0B owns the identification memo.
+
+  **RC-D1 status (landed 2026-07-16):** the coal row is now **identified and
+  adopted** — `retirement_years_coal` moved 1 → **3** (D1 Option B), the measured
+  EIA-860 announced-to-deactivation lag (cap-weighted / ≥300 MW median = 3 yr,
+  left-censored so a conservative floor; RC-0B §a.3/§a.4/§d,
+  `retirement-dof-identification-2026-07-15.md`). Cited to the lag table only, never
+  a residual (rules 1/14); re-derives only when the EIA-860 vintages update (rule
+  23). Per rule 19 the threshold now carries the full decision+lead-time (D+L)
+  deactivation total, so `staged_oversupply_thinning` stays default-off (the same
+  physical queue is not double-counted; §a.6). The remaining loss-year thresholds
+  (`gas_ct/gas_st/oil/gas_cc/nuclear`) stay **open DOF-ledger rows** — RC-0B §a.4
+  graded them consistent-but-unidentified, so they hold pending their own data. The
+  RC-0B §d LOYO-within-2023-2025 re-probe was **deferred by owner decision** (the
+  owner skipped the RC-1A curve-ON re-probe and elected to land the change on
+  identification alone); no hindcast LOYO was run, and RC-2B grades the gate
+  analytically with this caveat. Backcast-invariant: the threshold is forecast-side
+  capacity-evolution only, so every backcast keeper is byte-identical and no
+  dashboard is touched.
 - **GFC is FOM-only by construction** while the monitors' going-forward benchmark
   (PJM Avoidable Cost Rates, the SOM avoidable-cost tables) includes avoidable
   labor/maintenance/capex categories. Whether FOM-only is understating the bar (which
@@ -223,7 +241,7 @@ consequence, never a reason to re-touch the basis).
 | — same, timing component | first-wave on unpriceable bridge year | structural | this lane (G-30/G-31 arms — composition/default posture) |
 | — same, availability component | no correlated forced-outage model in forecast mode | structural | this lane scopes (RC-2A memo), implement on evidence |
 | Solar entry 0 GW (BLK-8) | §1.4 terms a–e | mixed | this lane diagnoses (RC-0C); split trigger on term b |
-| Threshold/GFC DOFs unidentified | rule-21 ledger gap | identification | this lane (RC-0B) |
+| Threshold/GFC DOFs unidentified | rule-21 ledger gap | identification | this lane (RC-0B); **coal threshold identified + adopted (coal=3, RC-D1 2026-07-16)** — GFC and the other loss-year thresholds stay open |
 
 ---
 
