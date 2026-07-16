@@ -13786,3 +13786,19 @@ partial derates (§7) — with the nuclear candidate now measured and excluded.
 Keeper stays `2026-07-16-pjm-113-short-only`. NOTE: the chartered pre-read
 `docs/handoffs/pjm-noncampd-availability-2026-07.md` does not exist on main
 (never committed); the session proceeded on the charter text itself.
+
+## 2026-07-16 — CAISO keeper PROMOTED: caiso-87 (surplus-clean import depth) supersedes caiso-84 (owner sign-off this session)
+
+`keepers.json` CAISO → `2026-07-16-caiso-87-surplus-clean`; sidecar rewritten as
+KEEPER with `market_story`; `status.js` rebuilt (CAISO stays NOT-YET — C1/C3a/
+C3b/C3c/C4 open, every magnitude improved or band-edge vs caiso-84).
+`calibration-keeper-auditor` ran post-flip: PASS, 0 failures, 0 warnings — all
+sidecar numbers cross-verified against the live verdicts of both bundles. The
+per-year LOYO clause is satisfied by the construction class (each year rides its
+own measured depth/trigger series; the estimation-stage CV/LOYO gates are the
+cross-year transfer check — caiso-80/82/84 precedent, no verdict flip between
+caiso-84 and caiso-87). Next lanes (handoff issued): north-corridor clean depth
+(Malin-side trigger needs a Malin gas intake), the 2025-autumn over-price
+diagnostic (Oct-2025 +12.9 $/MWh is now the largest monthly residual; model
+short/import-marginal all day while actual clears below hub parity 30 % of
+hours), the flat-CHP structural gap, and the C3c tail (lane B).
