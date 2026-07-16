@@ -79,6 +79,7 @@ from market_sim.data.fleet import (  # noqa: E402
     generators_to_fleet_arrays,
     load_campd_bins,
     load_fleet_from_csv,
+    load_mothballed_but_operating,
     load_retired_within_window,
     thermal_tranche_overrides,
 )
