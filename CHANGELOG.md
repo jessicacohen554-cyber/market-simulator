@@ -1,5 +1,25 @@
 # Changelog
 
+## 2026-07-16 — NEISO: v2.7 RT-basis ledger-accuracy re-check — no determination change (CWC holds), but the neiso-59 C3c ledger's winter-only framing is corrected to the measured RT hour-set (keeper unchanged, no solve)
+
+- **Issue:** the three `price_tail` entries on
+  `results/calibration/neiso59_cc_hr_regate/calibration_attestation.json`
+  (carried verbatim from the neiso-55/56 lineage) still read "DA-expressible"
+  and attributed the whole tail gap to WINTER oil-parity formation — the
+  2026-07-10 Limb A session's seasonal correction never reached the
+  attestation, and the v2.7 RT-judged hour-set contradicts it: 2024's RT tail
+  is 7/8 summer with zero DA/RT overlap; 2025's is 11 summer + 2 shoulder
+  transients vs 7 winter (6 hours DA-visible, Jun-24 wave); 2023's is 10
+  winter + 5 summer.
+- **Fix (documentation, scorer-only):** entries rewritten to the RT basis
+  with the per-year hour-set decomposition, preserving the still-true
+  model-side facts (oil-parity cap, dormant winter build, static-requirement
+  co-opt dual $0); the 2025 entry now surfaces the un-promoted Limb A
+  (neiso-57) engagement on the Jun-24-2025 DA-visible event and its pending
+  LOYO-gated owner promotion decision. `metrics.json` refreshed; `status.js`
+  rebuilt — determination unchanged (CALIBRATED-WITH-CAVEATS), all six ISOs
+  hold. Full anatomy: calibration-log 2026-07-16 NEISO entry.
+
 ## 2026-07-16 — NYISO: the v2.7 C3c-2024 RT-tail miss addressed by documentation — 12-hour anatomy verifies the B1 frontier, under-tail ledgered on the nyiso-62 attestation; NYISO NOT-YET → CALIBRATED-WITH-CAVEATS (keeper unchanged, no solve)
 
 - **Investigation (no build):** all 12 actual 2024 RT>$300 hours carry
