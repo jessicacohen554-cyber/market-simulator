@@ -15308,3 +15308,63 @@ NOT-YET, NEISO CWC).
 Market Operations request (operational RTC/RTD reserve-requirement series).
 If it lands, re-solve 2023–2025 on the fuller series and re-gate; until
 then the NYISO tail frontier stands. Next shorthand: nyiso-63.
+
+## 2026-07-16 — NEISO — v2.7 RT-basis ledger-accuracy re-check (the NYISO follow-on): NO determination change (CWC holds; 2024 passes small-count), but the keeper's C3c ledger still told the WINTER-ONLY story the 2026-07-10 Limb A session had already corrected — the RT hour-set anatomy is now folded into the neiso-59 attestation (2023: 10 winter + 5 summer; 2024: 7 of 8 SUMMER, zero DA/RT overlap; 2025: 7 winter + 11 summer + 2 shoulder, 6 DA-visible), and the un-promoted Limb A engagement on Jun-24-2025 is surfaced in the 2025 entry; keeper UNCHANGED, no solve
+
+**Task (owner, this session).** After the NYISO C3c-2024 fix, check NEISO for
+the same class of issue under the rubric-v2.7 RT basis.
+
+**Determination check — no flip.** neiso-59 stays CALIBRATED-WITH-CAVEATS
+under v2.7: 2024 gates PASS on the small-count rule (model 0h vs RT 8h,
+|Δ| ≤ 10), and the 2023/2025 collapsed-tail FAILs (0 vs 15h / 0 vs 20h) were
+already converted by the existing price_tail ledger entries. Unlike NYISO
+there is no undocumented FAIL.
+
+**The issue found — the converting ledger described the wrong driver.** All
+three price_tail entries (carried verbatim from the neiso-55/56 lineage
+through two re-gates) still read "DA-expressible" and attribute the whole
+gap to "NEISO WINTER scarcity-price formation / the cold-hour oil-parity
+cap". The 2026-07-10 Limb A entry had already corrected the seasonal
+attribution on the DA basis ("the ledgered gap is seasonal peak-load
+scarcity-price formation, not a winter-only phenomenon") — but the
+correction never propagated into the attestation. Under v2.7 the judged
+quantity is the RT hour-set, and the mismatch widens:
+
+| year | RT>$300 anatomy (hour-matched) | DA-visible |
+|---|---|---|
+| 2023 (15h) | 10 winter (Feb-3/4 blast ×9, Feb-26) + 5 SUMMER (Jul-5 $1,162 DA $129; Sep-5/6 ×4 DA $108–131) | 1 of 15 |
+| 2024 (8h) | 7 SUMMER (Jun-17 ×2, Jul-7 Sun ×2, Jul-31 ×3 peaking $2,113) + Dec-2 04:00; the year's 5-hour DA tail (Jun-19/Jul-14/15) has ZERO overlap with the RT set | 0 of 8 |
+| 2025 (20h) | 7 winter (Jan-17/20/22, Feb-10, Dec-10) + 11 SUMMER (Jun-23/24/25 wave ×8 peaking $1,110; Jul-28/29; Aug-10) + 2 SHOULDER RT-only transients (Nov-23 Sun 17–18h $529/$865 vs DA $117/$91) | 6 of 20 (Jun-24 ×5 DA $316–475; Jul-29 17:00 DA $400) |
+
+**Action (documentation, scorer-only — no solve, no bundle regen, keeper
+UNCHANGED `2026-07-13-neiso-59-cc-hr`).** The three price_tail entries on the
+neiso-59 attestation are rewritten to the v2.7 RT basis with the per-year
+hour-set decomposition above, preserving every still-true model-side fact
+(the ~$258 dual-fuel oil-parity cap on cold hours; the dormant winter
+fuel-security build; the temp-derate no-op; the static-requirement RCPF
+co-opt's $0.00 reserve dual in all 26,280 train hours). The 2025 entry now
+also states what the old text omitted: the measured dynamic-requirement
+**Limb A probe (neiso-57) ENGAGES on the Jun-24-2025 DA-visible event**
+(reserve-short at the measured 2,909 MW requirement, dual $125, model $397 —
+the first structurally-formed >$300 hour) but closes 1 of 20 and its keeper
+promotion remains the owner's LOYO-gated decision (2026-07-10 entry). The
+2024 entry is retained as documentation with its small-count PASS noted.
+Re-scored: determination unchanged (CWC, same caveat census); metrics.json
+refreshed (`--write-metrics`, v2.7 labels, C5b/C5c rows dropped); status.js
+rebuilt (all six determinations hold).
+
+**Adjudication (rules 11/26).** The RT-only majority of the tail (14/15,
+8/8, 14/20 hours by year) is the same out-of-representation DA−RT wedge
+ledgered for NYISO; the DA-visible Jun-24-2025 leg is in-representation and
+already has its named admissible mechanism (Limb A) awaiting the owner's
+promotion decision. The 2026-07-11 frontier designation (new measured
+identification needed; summer peak-load-margin offer formation charter)
+stands. NO build this session; never an offer adder tuned to the tail.
+
+**Open.** (1) The Limb A (neiso-57 dynamic-RR) promotion decision — owner,
+LOYO within 2023–2025 first; under the RT basis its case is strengthened
+(it engages on the largest RT event, exactly the nyiso-59 measured>static
+precedent). (2) The summer offer-formation charter named by the frontier
+designation. (3) The C5b storage entry stays downstream of the tail item
+(C5b/C5c now removed from the rubric — diagnostics only). Next shorthand:
+neiso-60.
