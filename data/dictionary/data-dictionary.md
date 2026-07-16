@@ -77,6 +77,9 @@ for the market split.
 | capacity-market-auction-price | — | — | — | — | — | — |
 | capacity-market-elcc | — | — | — | — | — | — |
 | transfer-constraint-binding | — | — | — | 2023–2025 | — | — |
+| maxgen-events | — | — | — | — | — | — |
+| storage-as-awards | — | — | — | — | — | — |
+| capacity-market-avoidable-cost-rate | — | — | — | — | — | — |
 
 ### National / ISO-agnostic datatypes
 
@@ -103,6 +106,11 @@ snapshot).
 | carb-cap-schedule | — | n/a |
 | coal-basin-price | national/regional (EIA Annual Coal Report, by producing region) | n/a |
 | coal-mining-ppi | national (BLS PPI, coal) | n/a |
+| carbon-auction-results | — | n/a |
+| eia-aeo-fuel-prices | — | n/a |
+| ira-credit-parameters | — | n/a |
+| nrel-atb | — | n/a |
+| uranium-marketing-price | — | n/a |
 
 ---
 
@@ -713,6 +721,7 @@ Schema:
 | `instrument_date` | `datetime64[ns]` | `none` | yes | Date the instrument became binding. |
 | `superseded` | `bool` | `none` | no | True when a counter-instrument (RMR |
 | `superseding_instrument` | `string` | `none` | yes | Citation of the counter-instrument when superseded. |
+| `superseding_instrument_date` | `datetime64[ns]` | `none` | yes | Date the counter-instrument (superseding_instrument) became binding |
 | `source_url` | `string` | `none` | no | Authoritative URL of the instrument or the RTO posting row. |
 | `source_doc` | `string` | `none` | yes | Document title / page reference within source_url. |
 | `accessed` | `datetime64[ns]` | `none` | no | Date the source was last re-queried (the intake vintage stamp). |
@@ -1256,12 +1265,12 @@ parameter). Schema:
 | `delivery_year` | `string` | `none` | no | Delivery/planning/capability year the parameter set governs, as a label (e.g. "2026/2027" for PJM/ISO-NE/MISO planning-year ISOs, "2025" for NYISO capability year or CAISO calendar year). Not a key on its own — see key_columns. |
 | `area` | `string` | `none` | yes | Capacity area/locality the row applies to, for ISOs that publish locality-specific curves (NYISO NYCA/NYC/LI/G-J; MISO LRZ). Null (system- wide) for ISOs that publish one curve per delivery year (PJM RTO, ISO-NE system). CAISO repurposes this column to tag the RA product/ segment a scalar ra_report_price row represents (e.g. "system", "local", "flexible") since it has no locality curves of its own. |
 | `season` | `string` | `none` | yes | Season the value applies to (MISO seasonal CONE/curve: summer \| fall \| winter \| spring). Null for ISOs/metrics that are annual-only. |
-| `metric` | `string` | `none` | no | Canonical metric: net_cone \| gross_cone \| irm \| price_cap \| curve_point \| soft_offer_cap \| ra_report_price. net_cone is the Net Cost of New Entry anchor (CONE minus inframarginal energy/AS rents); gross_cone is the pre-inframarginal-rent Cost of New Entry where an ISO publishes both as genuinely distinct quantities (e.g. MISO's per-LRZ gross CONE vs its two-subregion Net CONE); irm is the Installed Reserve Margin target (as published — MW or pct per value_unit); price_cap / price_floor are the curve's price ceiling/floor (as a multiple of net_cone or an absolute price, e.g. PJM's ICAP-basis cap/floor before UCAP conversion); curve_point is one (x,y) point on the sloped demand curve; soft_offer_cap and ra_report_price are CAISO's documented fixed-proxy inputs (no centralized auction/curve). |
+| `metric` | `string` | `none` | no | Canonical metric: net_cone \| gross_cone \| irm \| forecast_pool_requirement \| price_cap \| curve_point \| soft_offer_cap \| ra_report_price \| reliability_requirement \| reliability_requirement_frr_adj \| ee_addback \| curve_point_ucap. net_cone is the Net Cost of New Entry anchor (CONE minus inframarginal energy/AS rents); gross_cone is the pre-inframarginal-rent Cost of New Entry where an ISO publishes both as genuinely distinct quantities (e.g. MISO's per-LRZ gross CONE vs its two-subregion Net CONE); irm is the Installed Reserve Margin target (as published — MW or pct per value_unit); forecast_pool_requirement is PJM's published Forecast Pool Requirement (FPR) — the reliability requirement expressed in unforced-capacity (UCAP) terms as a fraction of forecast peak load (post-CIFP FPR = (1 + IRM) x Reference-Resource Accredited-UCAP factor), the ISO's own UCAP-basis requirement so the model need not re-derive it from IRM x a conversion ratio; price_cap / price_floor are the curve's price ceiling/floor (as a multiple of net_cone or an absolute price, e.g. PJM's ICAP-basis cap/floor before UCAP conversion); curve_point is one (x,y) point on the sloped demand curve; soft_offer_cap and ra_report_price are CAISO's documented fixed-proxy inputs (no centralized auction/curve); reliability_requirement / reliability_requirement_frr_adj are PJM's published RTO Reliability Requirement (UCAP MW) unadjusted and adjusted for FRR (the RPM-market requirement the VRR curve is drawn against); ee_addback is PJM's published EE Addback (UCAP MW) — the VRR point MW levels divided by (reliability_requirement_frr_adj + ee_addback) reproduce PJM's own Manual-18 pct_of_requirement fractions (verified <=0.1% for every 2021/2022-2025/2026 vintage, RC-1A 2026-07-16), which is how the pre-CIFP vintages' normalized curve shapes are derived; curve_point_ucap is the same VRR point in PJM's published absolute form (UCAP Level MW, UCAP Price $/MW-day) for a vintage whose curve_point rows already carry the Manual-18 pct basis, keeping the datatype key unique (2025/2026 — the workbook publishes the point prices the narrative PDF leaves formula-defined). |
 | `point_index` | `int64` | `none` | yes | 0-based order of this point along the sloped demand curve, left (lowest reserve position) to right. Populated only for metric=curve_point; null for scalar metrics. |
 | `x_value` | `float64` | `none` | yes | X-axis value for a curve_point row (reserve position, per x_unit). Null for scalar metrics. |
 | `x_unit` | `string` | `none` | yes | Unit of x_value: pct_of_requirement (reserve margin as a fraction of the published reliability requirement) \| mw (absolute reserve MW) \| pct_of_irm. Null for scalar metrics. |
 | `y_value` | `float64` | `none` | yes | For curve_point rows, the price at this point (per y_unit) — null when the ISO publishes the curve as a formula whose price at this x-position is not itself a standalone published number (e.g. PJM Manual 18's curve-point formula; the point's x_value still carries the shape). For scalar metrics, the metric's own value (per y_unit); null only when a source publishes a metric as a bound (e.g. ">X") that cannot be recorded as a clean number — such rows are omitted at intake rather than guessed. |
-| `y_unit` | `string` | `none` | yes | Unit of y_value: usd_per_mw_day \| usd_per_mw_day_icap (PJM's pre-UCAP-conversion ICAP-basis cap/floor) \| usd_per_mw_yr \| usd_per_kw_month \| usd_per_kw_yr \| pct \| multiple_of_net_cone. |
+| `y_unit` | `string` | `none` | yes | Unit of y_value: usd_per_mw_day \| usd_per_mw_day_icap (PJM's pre-UCAP-conversion ICAP-basis cap/floor) \| usd_per_mw_yr \| usd_per_kw_month \| usd_per_kw_yr \| pct \| multiple_of_net_cone \| fraction_of_peak_ucap (the forecast_pool_requirement's UCAP-MW / forecast-peak-MW ratio). |
 | `vintage` | `string` | `none` | yes | The parameter set's own filing/adoption label and date (e.g. "2026/2027 RPM BRA Planning Period Parameters, filed 2025-XX-XX"), distinct from delivery_year (the period it governs). |
 | `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
 | `source_page` | `string` | `none` | yes | Page / table / sheet locator within source_doc. |
@@ -1370,3 +1379,215 @@ for published inter-regional transfer constraints — MISO's RDT from the public
 | `pc4_usd_mwh` | `float64` | `usd_per_mwh` | yes | Demand-curve price at/above breakpoint 4 (often blank). |
 | `override` | `bool` | `none` | no | Operator override flag as posted (OVERRIDE column; 3 RT rows in 2023 carry it, coinciding with a $3,000 emergency curve variant). |
 | `override_reason` | `string` | `none` | yes | Posted override REASON text (blank in almost all rows). |
+
+## maxgen-events
+
+Declared capacity-emergency event windows (the ISO's public emergency-procedure
+ladder, MISO Max Gen family first) — the M-1 registry of the MISO
+price-formation lane. Schema:
+[`schema/maxgen-events.schema.yaml`](schema/maxgen-events.schema.yaml).
+
+- **Keys:** `iso`, `level`, `region`, `start_utc`
+- **Reconciles:** Hand-curated per-ISO rows transcribed from primary IMM/SOM
+  documents (`data/raw/maxgen-events/<iso>/<iso>.csv`, endpoints in the ISO's
+  operating time; MISO market time = EST year-round) converted to UTC via the
+  per-ISO spec in `scripts/lib/maxgen_events/`. Rule-13 class: declared
+  physical/market availability events (the CAMPD-outage-window overlay family;
+  backcast/calibration only — a forecast year carries the class outage-rate
+  machinery instead). F4 discipline: a window with no primary document is NOT a
+  row — never reconstructed from prices or a residual; adjudicated absences
+  (Jan-2024 Heather, Jan-2025 Enzo) live in the raw README. Scopes the M-2
+  `unit_outage_maxgen_events` revealed-derate channel
+  (docs/handoffs/miso-price-formation-design-2026-07.md).
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO that issued the declaration (MISO today; the ladder vocabulary is per-ISO via the intake registry). |
+| `region` | `string` | `none` | no | Declared scope, canonical lowercase (footprint / midwest / south for MISO) -- exactly as the primary document scopes it, never inferred. |
+| `level` | `string` | `none` | no | Declared ladder level, closed vocabulary -- capacity_advisory \| maxgen_alert \| maxgen_warning \| maxgen_event_step1 .. step5 (pre-2026 MISO ladder; MISO's 3-step simplification effective 2026-06-01, KA-01551, is a future vocabulary version). |
+| `start_utc` | `datetime64[ns, UTC]` | `none` | no | Window start (UTC). Converted from the ISO's operating time (MISO market ops run on EST, UTC-5, year-round) by the curation parser. |
+| `end_utc` | `datetime64[ns, UTC]` | `none` | no | Window end (UTC) -- the last declared instant. Day-precision declarations span the full declared day. |
+| `declared_precision` | `string` | `none` | no | Coarsest endpoint precision the primary document states -- hour when both endpoints are declared to the minute/hour, day when either endpoint is only day-scoped (the row then spans the declared day(s); notes carry the detail). |
+| `source_url` | `string` | `none` | no | Authoritative URL of the primary document declaring the window. |
+| `source_doc` | `string` | `none` | no | Document title + page reference within source_url. |
+| `accessed` | `datetime64[ns]` | `none` | no | Date the source was fetched/verified (intake vintage stamp). |
+| `notes` | `string` | `none` | yes | Free-text context -- declared-hour caveats, emergency-pricing tier effects, related instruments outside the ladder. |
+
+## carbon-auction-results
+
+RGGI and CARB/Quebec cap-and-trade auction clearing-price history (2023-2025) —
+a validation observable for model carbon-price trajectories, never fit to.
+Schema:
+[`schema/carbon-auction-results.schema.yaml`](schema/carbon-auction-results.schema.yaml).
+
+- **Keys:** `program`, `year`, `quarter`
+- **Reconciles:** Per-auction clearing prices (and allowance volumes where
+  known) for RGGI's quarterly CO2 allowance auctions and the CARB/Quebec
+  quarterly joint cap-and-trade auctions, transcribed from the programs'
+  published auction-results postings.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `program` | `string` | `none` | no | RGGI or CARB (the CARB rows are the joint California-Quebec auction). |
+| `year` | `int64` | `year` | no | Calendar year the auction was held. |
+| `quarter` | `int64` | `none` | no | Calendar quarter (1-4) the auction was held in. |
+| `auction_date` | `string` | `none` | yes | Exact auction date (ISO YYYY-MM-DD string), where confirmed by the source. Null when only the (year, quarter) is confirmed. |
+| `auction_number` | `string` | `none` | yes | The program's own sequential auction number (e.g. RGGI "70", CARB "44th joint auction"), where explicitly confirmed by a source -- never inferred by arithmetic from neighboring auctions (CLAUDE.md: no value guessing). |
+| `clearing_price` | `float64` | `mixed` | no | The settlement/clearing price, in the unit given by `price_unit`. |
+| `price_unit` | `string` | `none` | no | usd_per_short_ton (RGGI) \| usd_per_tonne (CARB, metric tonne CO2e). |
+| `allowances_sold` | `float64` | `none` | yes | Allowances sold at this auction, where known (populated for every RGGI row; not recovered for any CARB row during this intake). |
+| `allowances_offered` | `float64` | `none` | yes | Allowances offered at this auction, where known. |
+| `source_doc` | `string` | `none` | no | Authoritative document/page the value is drawn from. |
+| `source_page` | `string` | `none` | yes | URL or section reference within source_doc. |
+
+## eia-aeo-fuel-prices
+
+EIA Annual Energy Outlook gas/coal/oil price trajectories (AEO2025, 2024-2050)
+— the forecast-side fuel-price scenario anchor. Schema:
+[`schema/eia-aeo-fuel-prices.schema.yaml`](schema/eia-aeo-fuel-prices.schema.yaml).
+
+- **Keys:** `fuel`, `metric`, `region`, `scenario`, `year`
+- **Reconciles:** AEO2025 Henry Hub natural gas, delivered-to-electric-power
+  and minemouth coal (national + supply region), and oil (WTI crude,
+  electric-power delivered distillate/residual) trajectories across the
+  Reference / High and Low Oil-and-Gas-Supply cases, from the EIA AEO data
+  tables.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `fuel` | `string` | `none` | no | One of gas \| coal \| oil. |
+| `metric` | `string` | `none` | no | Which published AEO series within the fuel: henry_hub_spot (gas); wti_spot_crude \| electric_power_distillate \| electric_power_residual (oil); delivered_electric_power \| minemouth_average \| minemouth_by_region (coal). |
+| `region` | `string` | `none` | no | "usa" for every national series, or an EIA coal supply-region code (appalachia \| east_of_mississippi \| interior \| west \| west_of_mississippi) for the minemouth_by_region metric (AEO Table 65). |
+| `scenario` | `string` | `none` | no | AEO2025 scenario id: ref2025 (Reference -> model "mid" gas_price_path), highogs (High Oil and Gas Supply -> model "low", more supply/lower price), lowogs (Low Oil and Gas Supply -> model "high"). |
+| `scenario_name` | `string` | `none` | no | Human-readable AEO scenario description, as returned by the API. |
+| `year` | `int64` | `year` | no | Calendar year (AEO2025 covers 2024-2050). |
+| `value` | `float64` | `mixed` | no | The price, in the unit given by the `unit` column. |
+| `unit` | `string` | `none` | no | EIA's own unit string for this series, e.g. "2024 $/MMBtu", "2024 $/b", "2024 $/gal", "2024 $/st" — real (2024-dollar) terms throughout, never nominal. |
+| `series_id` | `string` | `none` | no | EIA AEO API series identifier (exact-cell traceability). |
+| `table_id` | `string` | `none` | no | EIA AEO table number the series belongs to (13, 12, 15, or 94). |
+| `table_name` | `string` | `none` | no | Human-readable AEO table title, as returned by the API. |
+
+## ira-credit-parameters
+
+Post-OBBBA IRA credit statute parameters (45U, 45Y, 48E) — the policy inputs to
+the IRA credit machinery in `policy/ira.py`. Schema:
+[`schema/ira-credit-parameters.schema.yaml`](schema/ira-credit-parameters.schema.yaml).
+
+- **Keys:** `statute_section`, `parameter`
+- **Reconciles:** Section 45U / 45Y / 48E statute parameters as enacted,
+  including the One Big Beautiful Bill Act (OBBBA, Pub. L. 119-21, 2025-07-04)
+  amendments (FEOC restrictions, phase-out schedules), transcribed from the
+  statute text with per-row citations.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `statute_section` | `string` | `none` | no | One of 45U \| 45Y \| 48E. |
+| `parameter` | `string` | `none` | no | Snake_case parameter name within the section (e.g. base_credit_rate, phase_down_boc_year_75pct, wind_solar_placed_in_service_cutoff). See README for the full per-section parameter list. |
+| `value` | `string` | `none` | no | The parameter's value as a string; parse per `value_type`. Kept as string (not split across typed columns) because this table deliberately mixes rates, dates, and booleans in one small hand-curated registry. |
+| `value_type` | `string` | `none` | no | How to parse `value` -- numeric \| date (ISO YYYY-MM-DD) \| boolean. |
+| `unit` | `string` | `none` | no | Unit for a numeric value (cents_per_kwh \| percent \| multiplier_x \| years \| year \| gCO2e_per_kwh), or the literal "date"/"boolean" for those value_types. |
+| `notes` | `string` | `none` | yes | Free-text clarification of the parameter's meaning or scope. |
+| `source_doc` | `string` | `none` | no | Authoritative statute citation or secondary-source document. |
+| `source_page` | `string` | `none` | yes | Subsection/citation pinpoint within source_doc. |
+
+## nrel-atb
+
+NREL Annual Technology Baseline CAPEX / Fixed-O&M trajectories (ATB 2024
+v3.0.0, 2022-2050) — the new-entry cost surface for the capacity-evolution
+screens. Schema: [`schema/nrel-atb.schema.yaml`](schema/nrel-atb.schema.yaml).
+
+- **Keys:** `atb_edition_year`, `technology`, `techdetail`, `parameter`,
+  `financial_case`, `tax_credit_case`, `cost_case`, `year`
+- **Reconciles:** ATB 2024 trajectories for the technologies the model builds
+  as new entry (wind, solar, gas CC/CT/CCS, nuclear SMR/large, utility battery
+  storage at 5 durations) plus cross-reference technologies, from the published
+  ATB workbook.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `atb_edition_year` | `int64` | `year` | no | ATB report edition/vintage (e.g. 2024 for this intake) -- NOT the projection year. Lets a future ATB 2025/2026 edition land as new rows without a schema change. |
+| `technology` | `string` | `none` | no | ATB's technology field (e.g. LandbasedWind, UtilityPV, Nuclear). |
+| `techdetail` | `string` | `none` | no | ATB's resource-class / configuration detail within technology (e.g. Class4, "Nuclear - Large", "NG 2-on-1 Combined Cycle (F-Frame)", "4Hr Battery Storage"). |
+| `display_name` | `string` | `none` | no | ATB's human-readable technology + techdetail label. |
+| `parameter` | `string` | `none` | no | One of CAPEX \| Fixed O&M (ATB's core_metric_parameter, filtered to this subset). |
+| `financial_case` | `string` | `none` | no | ATB's core_metric_case. Only "Market" is landed (the market-financed view a capacity-expansion screen wants); ATB's "R&D" (program-cost) case is out of scope and never appears here. |
+| `tax_credit_case` | `string` | `none` | yes | ATB's tax_credit_case tag (ITC \| PTC), where the technology carries one; null for technologies with neither (e.g. natural gas). Informational only -- verified during intake that CAPEX/Fixed O&M/etc. do not vary by this tag for a fixed (technology, techdetail, year, cost_case); it does not multiply row count. |
+| `cost_case` | `string` | `none` | no | ATB's scenario field, renamed to avoid clashing with this model's own "scenario" concept: Advanced \| Moderate \| Conservative. Maps to this model's tech_cost_path lever ("low"/"mid"/"high" -> Advanced/Moderate/ Conservative respectively, matching TECH_COST_MULTIPLIERS' existing documented mapping in constants.py). |
+| `is_default_class` | `bool` | `none` | no | Whether ATB flags this techdetail as the technology's own representative/ default resource class (its `default` column). Informational -- lets a consumer that only wants one row per technology filter on this. |
+| `year` | `int64` | `year` | no | Calendar (projection) year, ATB's core_metric_variable (2022-2050). |
+| `value` | `float64` | `mixed` | no | The metric's value, in the unit given by the `unit` column. |
+| `unit` | `string` | `none` | no | Unit for `value`, by parameter (the raw ATBe.csv's own `units` column ships empty for every row -- confirmed during intake, not a fetch bug -- so this is an annotation applied during curation from ATB's public documentation/glossary convention, not extracted verbatim from the source file): CAPEX = "2022 $/kW", Fixed O&M = "2022 $/kW-yr". ATB 2024's dollar year is 2022 (see README -- atb.nrel.gov's own documentation confirms this, but that domain is proxy-blocked in this environment, so the citation is via indexed/cached content, flagged for verification with browser access). |
+| `source_doc` | `string` | `none` | no | Fixed citation string for this intake ("NREL ATB 2024 v3.0.0 electricity, OEDI data lake"). |
+| `source_page` | `string` | `none` | yes | The originating S3 object key (full traceability to the source file). |
+
+## storage-as-awards
+
+Measured ancillary-service MW AWARDED to the storage fleet — the
+resource-type-resolved counterpart of `ancillary-services` and the measured
+input for storage AS power-reservation mechanisms (rule 13's own worked
+example). Schema:
+[`schema/storage-as-awards.schema.yaml`](schema/storage-as-awards.schema.yaml).
+
+- **Keys:** `iso`, `resource_class`, `market`, `product`, `interval_start_utc`
+- **Reconciles:** Per-ISO storage AS award layouts (CAISO Daily Energy Storage
+  Report, and siblings per the schema header) onto one tidy frame; awarded MW
+  is capacity committed to reserves that cannot simultaneously offer energy
+  arbitrage.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `interval_start_utc` | `datetime64[ns, UTC]` | `utc_timestamp` | no | tz-aware UTC start of the hour. |
+| `interval_start_local` | `datetime64[ns]` | `local_timestamp` | yes | Prevailing local wall-clock hour start (informational). |
+| `iso` | `string` | `none` | no | ISO/RTO code. |
+| `resource_class` | `string` | `none` | no | Storage resource class holding the award — "battery" or "hybrid". |
+| `market` | `string` | `none` | no | Market run — "DAM" (day-ahead; CAISO IFM) or "RTM" (real-time; CAISO RTPD, hourly-averaged). |
+| `product` | `string` | `none` | no | AS product on the reconciled taxonomy — "reg_up", "reg_down", "spin", "nonspin". |
+| `award_mw` | `float64` | `mw` | no | Hourly-mean awarded AS capacity held by the class, MW. |
+
+## capacity-market-avoidable-cost-rate
+
+Published default/generic Avoidable Cost Rate benchmarks by technology class —
+the going-forward-cost identification source for the retirement/entry screens'
+GFC construction. Schema:
+[`schema/capacity-market-avoidable-cost-rate.schema.yaml`](schema/capacity-market-avoidable-cost-rate.schema.yaml).
+
+- **Keys:** `iso`, `source_type`, `technology_class`, `capacity_bin`,
+  `cost_component`, `vintage`
+- **Reconciles:** PJM Tariff/Manual-18 default gross ACR tables
+  (source_type=pjm_manual18_default) and Monitoring Analytics' independent SOM
+  avoidable-cost benchmarks (source_type=monitoring_analytics_som) on one tidy
+  frame.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `iso` | `string` | `none` | no | ISO/RTO the benchmark applies to (PJM today; shape is ISO-agnostic so a future ISO's analogous published benchmark can be added additively). |
+| `source_type` | `string` | `none` | no | Which publisher's benchmark this row carries: pjm_manual18_default (the RTO's own default/generic gross ACR table used in the Tariff/Manual 18 deactivation and must-offer-exception process) \| monitoring_analytics_som (the Independent Market Monitor's own avoidable-cost benchmark, State of the Market report — an independent, arm's-length estimate of the same concept, published separately from PJM's own default table). |
+| `technology_class` | `string` | `none` | no | Native published technology/unit-type label (e.g. "Combined Cycle", "Combustion Turbine", "Steam Turbine - Coal", "Nuclear", "Diesel") — recorded as the source states it; no fixed controlled vocabulary (PJM's own class breakdown does not map 1:1 onto config/plant_taxonomy.py's dispatch fuel classes; document the source's own label exactly and leave the model-taxonomy mapping to a future wiring session). |
+| `capacity_bin` | `string` | `none` | yes | Native unit-size bucket the rate applies to (e.g. "under 50 MW", "50-150 MW", "over 150 MW"), as published — fixed costs don't scale linearly with size so several PJM ACR tables bin by capacity. Null when the source publishes one rate per technology_class regardless of size. |
+| `cost_component` | `string` | `none` | no | Canonical cost component: gross_acr (the total default Avoidable Cost Rate, the headline figure most sources publish) \| avoidable_capital_recovery (the avoidable-capital-investment-recovery subcomponent, where published separately) \| avoidable_fixed_om (avoidable fixed O&M subcomponent, where published separately) \| avoidable_variable_om (avoidable variable O&M subcomponent, where published separately) \| net_acr (gross ACR net of an assumed energy/AS margin offset, where a source publishes this distinct net figure rather than leaving the netting to the screen). |
+| `value` | `float64` | `none` | no | The published rate, in the units given by `unit`. |
+| `unit` | `string` | `none` | no | Unit of `value`: usd_per_mw_yr \| usd_per_kw_month \| usd_per_mw_day \| usd_per_kw_yr. |
+| `vintage` | `string` | `none` | no | The publication's own filing/report label and effective date (e.g. "PJM Manual 18, Revision 62, effective 2025-12-17" or "2025 State of the Market Report for PJM, Volume 2, Section 9, published 2026-03-11"). |
+| `source_doc` | `string` | `none` | yes | Authoritative source document (URL or short citation) the value was read from. |
+| `source_page` | `string` | `none` | yes | Page / table / section locator within source_doc. |
+
+## uranium-marketing-price
+
+EIA Uranium Marketing Annual Report weighted-average uranium (U3O8e) and
+enrichment-services (SWU) prices — the measured front-end-fuel-cycle basis for
+a nuclear fuel cost (D2 gap). Schema:
+[`schema/uranium-marketing-price.schema.yaml`](schema/uranium-marketing-price.schema.yaml).
+
+- **Keys:** `metric`, `delivery_year`
+- **Reconciles:** EIA UMAR price series as published; the $/MMBtu build-up
+  (burnup/thermal-efficiency + conversion cost) is left to the consuming
+  derivation (P-1D), cited to this data per rule 23.
+
+| column | dtype | unit | nullable | description |
+|---|---|---|---|---|
+| `metric` | `string` | `none` | no | One of total_purchased_quantity (Table S1a "Total purchased", million lb U3O8e) \| total_purchased_price (Table S1b "Total purchased (weighted-average price)", $/lb U3O8e) \| enrichment_services_price (Table S2 "Average price (US$ per SWU)"). |
+| `delivery_year` | `int64` | `year` | no | Calendar delivery year, 2002-2024. enrichment_services_price has no rows for 2002-2005 (the source report marks those years "not available", not zero -- omitted rather than a fabricated/null value). |
+| `value` | `float64` | `mixed` | no | The quantity or price, in the unit given by the `unit` column. |
+| `unit` | `string` | `none` | no | million_lb_u3o8e (quantity) \| usd_per_lb_u3o8e (uranium price, nominal $) \| usd_per_swu (enrichment price, nominal $). |
+| `source_doc` | `string` | `none` | no | Authoritative EIA document the value is drawn from. |
+| `source_page` | `string` | `none` | yes | Table reference within source_doc (e.g. "Table S1b"). |
