@@ -45,9 +45,11 @@ from __future__ import annotations
 
 import argparse
 import datetime as dt
+import io
 import sys
 import time
 import urllib.request
+import zipfile
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
@@ -81,10 +83,27 @@ def _out_path(day: dt.date) -> Path:
     return RAW_DIR / f"{day.strftime('%Y%m%d')}_PUB_BID_DAM_v3_csv.zip"
 
 
-def _fetch_day(day: dt.date, retries: int = 5, timeout: int = 180) -> bytes:
+def _is_no_data_report(body: bytes) -> bool:
+    """True when a small valid zip wraps the OASIS 'No data returned' XML.
+
+    Isolated trade dates are missing from the OASIS PUB_BID archive on every
+    report version (e.g. 2023-06-01; neighbours fine) — the API answers with
+    an ERR_CODE 1000 XML report inside a valid zip instead of the CSV.
+    """
+    try:
+        with zipfile.ZipFile(io.BytesIO(body)) as zf:
+            name = zf.namelist()[0]
+            payload = zf.read(name)
+    except (zipfile.BadZipFile, IndexError, KeyError):
+        return False
+    return b"No data returned for the specified selection" in payload
+
+
+def _fetch_day(day: dt.date, retries: int = 5, timeout: int = 180) -> bytes | None:
     """Download one trade date's zip, retrying through rate-limit HTML pages.
 
-    Returns the zip bytes; raises ``RuntimeError`` after ``retries`` failures.
+    Returns the zip bytes, or ``None`` for a genuine no-data archive hole;
+    raises ``RuntimeError`` after ``retries`` failures.
     """
     url = _day_url(day)
     delay = 30.0
@@ -98,6 +117,9 @@ def _fetch_day(day: dt.date, retries: int = 5, timeout: int = 180) -> bytes:
             body = b""
         if body[:2] == b"PK" and len(body) > 10_000:
             return body
+        if body[:2] == b"PK" and _is_no_data_report(body):
+            print(f"  {day}: NO DATA in the OASIS archive — skipped", flush=True)
+            return None
         snippet = body[:120].decode("utf-8", "replace")
         print(
             f"  {day} attempt {attempt}: non-zip body ({len(body)} B): {snippet!r}",
@@ -125,9 +147,10 @@ def fetch_range(
             day += dt.timedelta(days=1)
             continue
         body = _fetch_day(day)
-        out.write_bytes(body)
-        written.append(out)
-        print(f"  wrote {out.name} ({len(body):,} B)", flush=True)
+        if body is not None:
+            out.write_bytes(body)
+            written.append(out)
+            print(f"  wrote {out.name} ({len(body):,} B)", flush=True)
         day += dt.timedelta(days=1)
         time.sleep(sleep_s)
     return written

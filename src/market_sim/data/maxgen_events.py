@@ -72,14 +72,44 @@ TIER_FLOOR_BY_LEVEL: dict[str, float | None] = {
     "maxgen_event_step5": MISO_EMERGENCY_TIER2_OFFER_FLOOR,
 }
 
-# Model zones inside each declared region scope (the M-2 deriver's crosswalk
-# verbatim). MISO-South is LRZ 8-10; every other model zone is the Midwest
-# subregion.
+# Model zones inside each declared region scope. MISO-South is LRZ 8-10;
+# every other PHYSICAL model zone is the Midwest subregion. Unlike the M-2
+# deriver's crosswalk (which only ever sees CAMPD unit zones), the LP's
+# zone list also carries the external seam buses (MISO_external /
+# MISO_external_South, appended by the interchange topology) — those are
+# NOT MISO zones and are excluded from every declared region: load slack at
+# an external bus is phantom import supply through the border links, so
+# repricing it to a tier floor would fabricate unmeasured emergency imports
+# and bypass the measured seam ladders (in a backcast the Tier-1 "call
+# external capacity resources" leg is already inside the measured
+# interchange). The declared instruments act on MISO's own footprint; the
+# tier floor therefore reprices only the physical zones' slack.
 _SOUTH_ZONES: frozenset[str] = frozenset({"MISO-South"})
+_PHYSICAL_ZONES_BY_ISO: dict[str, frozenset[str]] = {
+    "MISO": frozenset(
+        {
+            "MISO-West",
+            "MISO-Plains",
+            "MISO-Illinois",
+            "MISO-Indiana",
+            "MISO-East",
+            "MISO-South",
+        }
+    ),
+}
 
 
-def _zone_in_region(zone: str, region: str) -> bool:
-    """Return whether a model zone is inside a declared region scope."""
+def _zone_in_region(zone: str, region: str, iso: str = "MISO") -> bool:
+    """Return whether a PHYSICAL model zone is inside a declared region scope.
+
+    External seam buses (any zone outside the ISO's physical zone set) are
+    outside every region by construction — see the module comment above.
+    """
+    physical = _PHYSICAL_ZONES_BY_ISO.get((iso or "").upper())
+    if physical is None:
+        raise ValueError(f"physical zone set not registered for ISO {iso!r}")
+    if zone not in physical:
+        return False
     if region == "footprint":
         return True
     if region == "south":
@@ -194,7 +224,9 @@ def tier_slack_cost_from_registry(
         if not mask.any():
             continue
         z_idx = [
-            i for i, z in enumerate(zone_names) if _zone_in_region(z, str(r.region))
+            i
+            for i, z in enumerate(zone_names)
+            if _zone_in_region(z, str(r.region), iso)
         ]
         if not z_idx:
             continue

@@ -121,12 +121,22 @@ Overlapping active Warning+ rows on the same zone-hour take the MINIMUM floor
 (the cheapest active emergency tier is the marginal one). No such overlap
 exists in the current registry — deterministic tie rule, not a live branch.
 
-Region scoping = the M-2 deriver's crosswalk verbatim (`_zone_in_region`):
-`footprint` → all 6 model zones; `midwest` → all except MISO-South; `south` →
-MISO-South. Hour masks = `outages.outage_hour_mask` — the SAME half-open,
-no-leap (8760) model-clock convention the M-2 derates use, EST (Etc/GMT+5)
-year-round per MISO Tariff Module A, so the tier windows and the M-2 derate
-windows are hour-exact aligned by construction.
+Region scoping = the M-2 deriver's crosswalk (`_zone_in_region`) restricted
+to the **physical** zones: `footprint` → all 6 MISO zones; `midwest` → all
+except MISO-South; `south` → MISO-South. *(Amended during implementation,
+2026-07-16, before any scored read: the LP's zone list also carries the
+external seam buses — `MISO_external` / `MISO_external_South` — which the
+first launch's footprint rows swept in, 8 zones repriced. Load slack at an
+external bus is phantom import supply through the border links, so a tier
+floor there would fabricate unmeasured emergency imports and bypass the
+measured seam ladders; in a backcast the Tier-1 "call external capacity
+resources" leg is already inside the measured interchange. External buses
+are therefore outside every declared region by construction — the partial
+first launch was killed and re-run with the fix; no probe verdict was read
+from the 8-zone arm.)* Hour masks = `outages.outage_hour_mask` — the SAME
+half-open, no-leap (8760) model-clock convention the M-2 derates use, EST
+(Etc/GMT+5) year-round per MISO Tariff Module A, so the tier windows and the
+M-2 derate windows are hour-exact aligned by construction.
 
 Active rows for the 2023-2025 window (from `data/raw/maxgen-events/miso/miso.csv`):
 
