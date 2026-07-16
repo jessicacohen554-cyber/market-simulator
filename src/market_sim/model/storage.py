@@ -966,17 +966,17 @@ def estimate_capacity_value(
     long-duration storage retains its firm-capacity credit -- the mechanism
     that tilts new entry toward longer durations as storage saturates.
 
-    Note: ``year`` is accepted for signature symmetry with the runner's call
-    site but is currently unused -- per-delivery-year vintage resolution of
-    ``capacity_price_per_firm_mw_yr`` is deferred to a follow-up (RC-1B items
-    1/2/4); this call keeps the 2-arg form byte-identical to the pre-RC-1B
-    behavior.
+    ``iso``/``year`` are threaded into the pricing seam (RC-1A completion of
+    RC-1B items 1/2): the per-ISO clearing gate and the per-delivery-year
+    vintage anchor are consulted ONLY inside the seam's curve branch, so every
+    gate-off path stays byte-identical to the pre-RC-1B behavior.
     """
-    del year  # unused pending the vintage-resolution follow-up
     if not config.storage_capacity_value:
         return 0.0
     design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
-    base_price = design.capacity_price_per_firm_mw_yr(config, reserve_position)
+    base_price = design.capacity_price_per_firm_mw_yr(
+        config, reserve_position, iso=iso, year=year
+    )
     if base_price <= 0.0:
         return 0.0
 

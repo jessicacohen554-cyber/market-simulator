@@ -55,6 +55,14 @@ CANONICAL_COLUMNS: tuple[str, ...] = (
 # (post-CIFP FPR = (1+IRM) x Reference-Resource Accredited-UCAP factor);
 # it devintages the requirement onto the ISO's own published basis (R2,
 # accreditation-basis memo 2026-07-12 §4.2), carried in fraction_of_peak_ucap.
+# reliability_requirement / reliability_requirement_frr_adj / ee_addback are
+# PJM's published UCAP-MW requirement rows (RTO, FRR-adjusted, EE Addback) —
+# the VRR point levels divided by (frr_adj + ee_addback) reproduce PJM's own
+# Manual-18 pct_of_requirement fractions (RC-1A 2026-07-16), which is how the
+# pre-CIFP vintage curve shapes normalize. curve_point_ucap is the same VRR
+# point in PJM's published absolute (UCAP Level MW, UCAP Price $/MW-day) form
+# for a vintage whose curve_point rows already carry the Manual-18 pct basis
+# (2025/2026), keeping the datatype key unique.
 METRIC_VOCAB: frozenset[str] = frozenset(
     {
         "net_cone",
@@ -64,8 +72,12 @@ METRIC_VOCAB: frozenset[str] = frozenset(
         "price_cap",
         "price_floor",
         "curve_point",
+        "curve_point_ucap",
         "soft_offer_cap",
         "ra_report_price",
+        "reliability_requirement",
+        "reliability_requirement_frr_adj",
+        "ee_addback",
     }
 )
 
@@ -80,6 +92,8 @@ Y_UNIT_VOCAB: frozenset[str] = frozenset(
         "pct",
         "multiple_of_net_cone",
         "fraction_of_peak_ucap",
+        # UCAP MW scalars (reliability_requirement / _frr_adj / ee_addback).
+        "mw",
     }
 )
 SEASONS: frozenset[str] = frozenset({"summer", "fall", "winter", "spring"})

@@ -3064,19 +3064,76 @@ def _neiso_fca_vintage_curve(
 # the MARKET_DESIGN reference REUSES that registry curve object + anchor.
 MARKET_DESIGN_VINTAGES: dict[str, tuple[MarketDesignVintage, ...]] = {
     "PJM": (
-        # Pre-CIFP vintages (2021/22-2024/25) published the VRR curve as
-        # absolute-MW (level, price) points with no requirement-MW row to
-        # normalize by → no pct_of_requirement shape (demand_curve=()); the
-        # published UCAP net-CONE is the flat anchor. 2025/2026 has
-        # pct_of_requirement points but no separately-published price cap (the
-        # first VRR curve "with both a defined maximum and minimum price" was
-        # 2026/2027 per Monitoring Analytics), so its cap fraction is not
-        # normalizable → also ().
-        MarketDesignVintage("2021/2022", 321.57 * 365.0 / 1000.0),
-        MarketDesignVintage("2022/2023", 260.5 * 365.0 / 1000.0),
-        MarketDesignVintage("2023/2024", 274.96 * 365.0 / 1000.0),
-        MarketDesignVintage("2024/2025", 293.19 * 365.0 / 1000.0),
-        MarketDesignVintage("2025/2026", 228.81 * 365.0 / 1000.0),
+        # Pre-CIFP vintages (2021/22-2024/25): normalized shapes derived
+        # ENTIRELY from each year's own published Planning Period Parameters
+        # workbook (RC-1A intake 2026-07-16, data/raw/capacity-market/
+        # demand-curve/pjm/pjm.csv + the committed pjm-<yr>-planning-
+        # parameters.xlsx copies): x = published VRR point UCAP Level MW ÷
+        # (published Reliability Requirement adjusted for FRR + published EE
+        # Addback) — PJM's own auction-demand denominator, verified to
+        # reproduce the Manual-18 pct_of_requirement fractions to <=0.1% on
+        # the 2025/2026 vintage where PJM publishes both forms; y = published
+        # VRR point UCAP Price ÷ published UCAP net-CONE (the filings'
+        # explicit 1.5x / 0.75x / 0 construction — published values, not a
+        # formula guess). Zero fitted parameters (rule 13); reconciliation
+        # asserted in tests/test_capacity_demand_curve.py. Anchors unchanged
+        # (published UCAP net-CONE $/MW-day, annualized). This replaces the
+        # earlier ()-flat-anchor representation, whose position-independent
+        # price silently reverted the curve mechanism to fixed-mode for any
+        # gate-ON run threading a pre-2026 delivery year (the RC-1A probe).
+        MarketDesignVintage(
+            "2021/2022",
+            321.57 * 365.0 / 1000.0,
+            (
+                CapacityDemandCurvePoint(156809.2 / 157073.7, 482.36 / 321.57),
+                CapacityDemandCurvePoint(160909.3 / 157073.7, 241.18 / 321.57),
+                CapacityDemandCurvePoint(168712.9 / 157073.7, 0.0),
+            ),
+        ),
+        MarketDesignVintage(
+            "2022/2023",
+            260.5 * 365.0 / 1000.0,
+            (
+                CapacityDemandCurvePoint(136075.5 / 137461.6, 390.75 / 260.5),
+                CapacityDemandCurvePoint(139656.3 / 137461.6, 195.38 / 260.5),
+                CapacityDemandCurvePoint(146471.2 / 137461.6, 0.0),
+            ),
+        ),
+        MarketDesignVintage(
+            "2023/2024",
+            274.96 * 365.0 / 1000.0,
+            (
+                CapacityDemandCurvePoint(135913.6 / 137291.5, 412.44 / 274.96),
+                CapacityDemandCurvePoint(139473.2 / 137291.5, 206.22 / 274.96),
+                CapacityDemandCurvePoint(146247.9 / 137291.5, 0.0),
+            ),
+        ),
+        MarketDesignVintage(
+            "2024/2025",
+            293.19 * 365.0 / 1000.0,
+            (
+                CapacityDemandCurvePoint(138341.3 / 139722.9, 439.79 / 293.19),
+                CapacityDemandCurvePoint(141910.4 / 139722.9, 219.89 / 293.19),
+                CapacityDemandCurvePoint(148703.1 / 139722.9, 0.0),
+            ),
+        ),
+        # 2025/2026: same construction from the workbook's published UCAP
+        # (Level, Price) points (curve_point_ucap rows — the workbook
+        # publishes the point prices the narrative PDF leaves formula-
+        # defined; point (a) 451.61 $/MW-day is that year's published curve
+        # maximum, distinct from the pre-CIFP 1.5x construction and from the
+        # ER25-1357 collar scoped to 2026/27-2027/28). x-fractions land on
+        # the committed Manual-18 pct curve_point rows (0.989/1.016/1.068)
+        # to <=0.1%.
+        MarketDesignVintage(
+            "2025/2026",
+            228.81 * 365.0 / 1000.0,
+            (
+                CapacityDemandCurvePoint(133554.2 / 135023.4, 451.61 / 228.81),
+                CapacityDemandCurvePoint(137160.4 / 135023.4, 171.61 / 228.81),
+                CapacityDemandCurvePoint(144105.7 / 135023.4, 0.0),
+            ),
+        ),
         MarketDesignVintage("2026/2027", 77.431, _PJM_VRR_CURVE),  # registry ref
         MarketDesignVintage(
             "2027/2028", 242.52 * 365.0 / 1000.0, _PJM_VRR_CURVE_2027_2028
