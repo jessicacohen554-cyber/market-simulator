@@ -610,13 +610,16 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
             )
         )
     if iso == "PJM" and sc.get("pjm_measured_interface_limits"):
-        # G-20 Phase-2 internal-interface overlay (pjm-97): the seven mapped
+        # G-20 Phase-2 internal-interface overlay (pjm-97): the mapped
         # internal links' forward TTC flips static-estimate ->
         # measured-physical — the hourly published Data Miner 2 transfer
         # limits (transfer-interface-limits clean datatype) replace the
         # Tier-3 constants their 2024 means seeded. Zero fitted scalars: the
         # crosswalk (PJM_INTERFACE_LINK_MAP) is a documented boundary
-        # reconciliation, not a tuned value.
+        # reconciliation, not a tuned value. (pjm-cong-1 2026-07-16: the
+        # mis-attributed 50045005 -> ComEd->AEP entry was removed — Manual 03
+        # §3.8 puts the 5004/5005 interface in Pennsylvania — so ComEd->AEP
+        # rides its static estimate again; six mapped links remain.)
         out.append(
             _entry(
                 "PJM_INTERFACE_LINK_MAP hourly TTC overlay",
@@ -638,8 +641,40 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 root_cause="re-derive trigger is a source-data change only "
                 "(rule 23); representation bound: AP-South maps to the "
                 "seeded West_APS->SWMAAC link only (parallel-path split of "
-                "the reduced mesh), and the Average envelopes are regional "
-                "means, not per-flowgate boundaries",
+                "the reduced mesh), and the Average Western/Central series "
+                "are Manual-03 PA-corridor interfaces applied to the links "
+                "their means seeded (boundary misalignment documented at "
+                "the crosswalk, pjm-cong-1 identity correction 2026-07-16)",
+            )
+        )
+    if iso == "PJM" and sc.get("pjm_east_interface_cut"):
+        # pjm-cong-1 (2026-07-16): the measured joint EMAAC-import cut — one
+        # one-sided hourly aggregate group capping Flow(Central_PA->EMAAC) +
+        # Flow(SWMAAC->EMAAC) at the published "Average Eastern" limit (PJM
+        # Manual 03 §3.8: the EASTERN reactive transfer interface's monitored
+        # EHV set spans both model links, so the joint cap is the faithful
+        # reduced-network reading). Zero fitted scalars: the cap is the
+        # measured series verbatim; the link set is the topology's existing
+        # EMAAC import pair.
+        out.append(
+            _entry(
+                "PJM EAST interface cut (joint EMAAC import cap)",
+                "model/transmission.py PJM_EAST_CUT_LINKS + "
+                "data/transfer_interface_limits.pjm_eastern_interface_hourly",
+                "measured-physical",
+                iso,
+                source="published hourly 'Average Eastern' interface "
+                "transfer limit (PJM Data Miner 2 transfer_limits_and_flows, "
+                "2023-2025 raw drops), curated by frozen "
+                "scripts/curate_transfer_interface_limits.py onto the model "
+                "clock; interface identity verified against PJM Manual 03 "
+                "§3.8 Rev 71 (diagnosis §10.3). One-sided (import "
+                "direction); reverse flow and per-link statics unchanged.",
+                root_cause="re-derive trigger is a source-data change only "
+                "(rule 23); representation bound: the interface's monitored "
+                "set sits slightly upstream of the exact EMAAC zone edge "
+                "(Alburtis/Hosensack are PPL-side buses), documented as the "
+                "rule-14 reduced-network reconciliation in diagnosis §10.5",
             )
         )
     if sc.get("tranche_startup_amortization") and sc.get(

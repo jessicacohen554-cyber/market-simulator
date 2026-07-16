@@ -24643,20 +24643,19 @@
     {
       "param_id": "scenario.retirement_years_coal",
       "display_name": "Retirement Years Coal",
-      "value": 1,
+      "value": 3,
       "unit": "",
       "domain": "Reliability",
       "tier": 2,
-      "source": "coal retires after 1 unprofitable year",
-      "source_date": "",
-      "page_or_table": "",
+      "source": "Measured EIA-860 announced-to-deactivation lag for coal (RE-status retirements 2019-2025, six model ISOs, RD-7 derivation over EIA-860 vintages 2018-2024): capacity-weighted median = 3 yr and the >=300 MW recall-population median = 3 yr, with 66% of announced coal MW left-censored so 3 is a conservative floor on the announcement->deactivation pipeline. The consecutive-loss threshold carries the full decision+lead-time (D+L) deactivation total. D1 Option B, owner-adopted 2026-07-16.",
+      "source_date": "2026-07-15",
+      "page_or_table": "docs/handoffs/retirement-dof-identification-2026-07-15.md SS a.3/a.4/d (RD-7 recipe in the appendix)",
       "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "notes": "Re-derives ONLY when the EIA-860 vintages update (rule 23), never against a hindcast residual (rules 1/14). Because the threshold now carries the measured D+L total, staged_oversupply_thinning stays default-off so the same physical deactivation queue is not counted twice (rule 19). Forecast-side capacity-evolution only (capacity.apply_economic_retirements via evolve_fleet); a backcast solve never reads it, so every backcast keeper is byte-identical. LOYO-within-2023-2025 re-probe deferred by owner decision (2026-07-16); landed on identification alone.",
       "old_repo_location": "",
-      "last_verified": "",
+      "last_verified": "2026-07-16",
       "flags": [
-        "auto-generated",
-        "needs-citation"
+        "curated"
       ]
     },
     {

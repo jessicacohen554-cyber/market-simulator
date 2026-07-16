@@ -1,0 +1,16 @@
+{
+ "id": "2026-07-16-pjm-114-east-interface",
+ "label": "pjm 114 east interface",
+ "date": "2026-07-16",
+ "shorthand": "pjm-114-east-interface",
+ "definition": "PJM KEEPER (owner-promoted 2026-07-16, superseding pjm-113). The pjm-113 keeper recipe + EXACTLY the measured EAST interface cut — pjm_east_interface_cut: one one-sided hourly aggregate group capping the joint Central_PA->EMAAC + SWMAAC->EMAAC flow at PJM's published 'Average Eastern' reactive-interface limit (Manual 03 §3.8: the EASTERN interface IS the EMAAC import cut, spanning both model links), on the corrected 5004/5005 crosswalk (the mis-attributed ComEd->AEP entries removed — primary-source data-integrity fix). Zero fitted scalars, one zero-DOF measured input; gate pre-committed in diagnosis §10.6 before any solve. Structural gain over pjm-113: the model no longer wheels the east's scarcity away (the +3.0-3.6 GW tail-hour west->east wheel phantom), so the tail is zonally structured like reality's — C3c-2025 40 h vs DA 51 (was 18), 2023/2024 = 7/9 h inside caps, July-2025 EMAAC dual premium +8.96 vs measured +11.5-15. Determination CALIBRATED-WITH-CAVEATS (first non-NOT-YET PJM determination; caveat = pre-existing unscored storage benchmark C5b/C5c). C1 16/16, C2, C3a, C3b, C3c, C4, C5a, C6, C7, C8 PASS. docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §10.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "PJM",
+ "file": "frontend/data/backcast/runs/2026-07-16-pjm-114-east-interface.js",
+ "bundle": "results/calibration/pjmcong1_east_cut",
+ "market_story": "CT_PEAKER/CC_REGULAR (east) vs the west fleet: imports into the eastern Mid-Atlantic ride seven EHV circuits whose simultaneous transfer is voltage-stability-limited (PJM's EASTERN reactive transfer interface, TLC-recomputed ~5-min and posted hourly). In heat events the east's load peaks against that finite import capability, so EMAAC decouples and clears at a local premium (+55 to +178 $/MWh in the 22 summer-2025 tail hours) with its own peakers on the margin — Linden, Kearny, the NJ/DE CT fleet — while cheap western coal/CC cannot reach it. Without the cut the LP wheels ~3 GW more west->east than reality in exactly those hours, runs the ComEd/AEP cyclers instead of the east peakers, and needs system-wide shortage to clear $200 anywhere; with the measured hourly limit the east prices its own scarcity (model 40 h vs DA 51 in 2025) and the west stays uniform."
+}

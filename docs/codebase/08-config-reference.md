@@ -77,7 +77,7 @@ phase-out cliffs `ira_wind_solar_last_year=2027`,
 
 ### Economic retirement & adequacy
 
-Per-fuel grace periods: `retirement_years_coal=1`, `gas_ct=2`, `gas_cc=3`,
+Per-fuel grace periods: `retirement_years_coal=3`, `gas_ct=2`, `gas_cc=3`,
 `gas_st=2`, `oil=2`, `gas_cc_ccs=3`, `nuclear=3`. `retirement_reserve_margin=0.15`
 (reliability floor). Per-fuel FOM multipliers (coal 1.3×). Going-forward FOM:
 `fixed_om_gas_cc=12.0`, `fixed_om_coal=40.0`, `fixed_om_nuclear=130.0` ($/kW-yr).
