@@ -1,0 +1,1622 @@
+[
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1554_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 6.1,
+  "ucap_mw": 5.063,
+  "going_forward_cost": 356849.9999999999,
+  "co2_rate": 0.8554178193019005,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p56671_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 14.2,
+  "ucap_mw": 11.786,
+  "going_forward_cost": 830699.9999999998,
+  "co2_rate": 0.8631791851160733,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p56808_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 12.2,
+  "ucap_mw": 10.126,
+  "going_forward_cost": 713699.9999999998,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2832_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 20.4,
+  "ucap_mw": 16.932,
+  "going_forward_cost": 1193399.9999999998,
+  "co2_rate": 0.9477392719047821,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p50974_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 40.608,
+  "ucap_mw": 33.70464,
+  "going_forward_cost": 2375567.9999999995,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p10043_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 10.95,
+  "ucap_mw": 9.0885,
+  "going_forward_cost": 640574.9999999999,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p10566_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 12.2,
+  "ucap_mw": 10.126,
+  "going_forward_cost": 713699.9999999998,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p50974_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 4.23,
+  "ucap_mw": 3.5109000000000004,
+  "going_forward_cost": 247454.99999999997,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ATSI_p2936_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 0.6599999999999999,
+  "ucap_mw": 0.5478,
+  "going_forward_cost": 38609.99999999999,
+  "co2_rate": 1.0375757575757576,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ATSI_p2936_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 1.65,
+  "ucap_mw": 1.3695,
+  "going_forward_cost": 96524.99999999997,
+  "co2_rate": 1.0375757575757576,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p1384_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 215.171,
+  "ucap_mw": 178.59193,
+  "going_forward_cost": 12587503.499999996,
+  "co2_rate": 1.0390253306404915,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ComEd_p876_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 859.8080000000001,
+  "ucap_mw": 713.6406400000001,
+  "going_forward_cost": 50298767.99999999,
+  "co2_rate": 1.0486976788882751,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p884_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 10.2,
+  "ucap_mw": 8.466,
+  "going_forward_cost": 596699.9999999999,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p6004_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 853.944,
+  "ucap_mw": 708.77352,
+  "going_forward_cost": 49955723.999999985,
+  "co2_rate": 1.2324254593807074,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p3149_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 676.8,
+  "ucap_mw": 561.7439999999999,
+  "going_forward_cost": 39592799.99999999,
+  "co2_rate": 0.6134149973859563,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p3149_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 721.92,
+  "ucap_mw": 599.1936,
+  "going_forward_cost": 42232320.0,
+  "co2_rate": 0.6134149973859563,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p3149_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 30.080000000000002,
+  "ucap_mw": 24.9664,
+  "going_forward_cost": 1759680.0,
+  "co2_rate": 0.6134149973859563,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p3149_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 75.2,
+  "ucap_mw": 62.416,
+  "going_forward_cost": 4399200.0,
+  "co2_rate": 0.6134149973859563,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1554_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 137.25,
+  "ucap_mw": 113.91749999999999,
+  "going_forward_cost": 8029124.999999999,
+  "co2_rate": 0.8554178193019005,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1554_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 146.4,
+  "ucap_mw": 121.512,
+  "going_forward_cost": 8564400.0,
+  "co2_rate": 0.8554178193019005,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1554_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 15.25,
+  "ucap_mw": 12.657499999999999,
+  "going_forward_cost": 892124.9999999999,
+  "co2_rate": 0.8554178193019005,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p56671_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 426.71,
+  "ucap_mw": 354.16929999999996,
+  "going_forward_cost": 24962534.999999996,
+  "co2_rate": 0.8631791851160733,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p56808_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 274.5,
+  "ucap_mw": 227.83499999999998,
+  "going_forward_cost": 16058249.999999998,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p56808_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 292.8,
+  "ucap_mw": 243.024,
+  "going_forward_cost": 17128800.0,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3130_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 10.42,
+  "ucap_mw": 8.6486,
+  "going_forward_cost": 609570.0,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3130_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 26.05,
+  "ucap_mw": 21.6215,
+  "going_forward_cost": 1523925.0,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p56808_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 30.5,
+  "ucap_mw": 25.314999999999998,
+  "going_forward_cost": 1784249.9999999998,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3943_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 341.478,
+  "ucap_mw": 283.42674,
+  "going_forward_cost": 19976463.0,
+  "co2_rate": 0.9408162313679199,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3943_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 289.87200000000007,
+  "ucap_mw": 240.59376000000006,
+  "going_forward_cost": 16957512.000000004,
+  "co2_rate": 0.9408162313679199,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3943_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 21.959999999999997,
+  "ucap_mw": 18.226799999999997,
+  "going_forward_cost": 1284659.9999999998,
+  "co2_rate": 0.9408162313679199,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3943_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 444.6899999999999,
+  "ucap_mw": 369.09269999999987,
+  "going_forward_cost": 26014364.999999993,
+  "co2_rate": 0.9408162313679199,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2828_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 102.02999999999992,
+  "ucap_mw": 84.68489999999993,
+  "going_forward_cost": 5968754.999999995,
+  "co2_rate": 0.9416042290984208,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2828_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 35.800000000000004,
+  "ucap_mw": 29.714000000000002,
+  "going_forward_cost": 2094300.0000000002,
+  "co2_rate": 0.9416042290984208,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2828_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 844.8800000000001,
+  "ucap_mw": 701.2504,
+  "going_forward_cost": 49425480.0,
+  "co2_rate": 0.9416042290984208,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2832_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 597.72,
+  "ucap_mw": 496.1076,
+  "going_forward_cost": 34966620.0,
+  "co2_rate": 0.9477392719047821,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3944_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 797.232,
+  "ucap_mw": 661.70256,
+  "going_forward_cost": 46638072.0,
+  "co2_rate": 0.9542054755639945,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3944_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 302.86999999999995,
+  "ucap_mw": 251.38209999999995,
+  "going_forward_cost": 17717894.999999996,
+  "co2_rate": 0.9542054755639945,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3944_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 39.08,
+  "ucap_mw": 32.4364,
+  "going_forward_cost": 2286180.0,
+  "co2_rate": 0.9542054755639945,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3944_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 814.8180000000001,
+  "ucap_mw": 676.29894,
+  "going_forward_cost": 47666853.0,
+  "co2_rate": 0.9542054755639945,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6264_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 515.703,
+  "ucap_mw": 428.03349,
+  "going_forward_cost": 30168625.5,
+  "co2_rate": 0.9631541664820535,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6264_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 239.016,
+  "ucap_mw": 198.38327999999998,
+  "going_forward_cost": 13982436.0,
+  "co2_rate": 0.9631541664820535,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6264_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 25.98,
+  "ucap_mw": 21.563399999999998,
+  "going_forward_cost": 1519829.9999999998,
+  "co2_rate": 0.9631541664820535,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6264_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 518.301,
+  "ucap_mw": 430.18983000000003,
+  "going_forward_cost": 30320608.500000004,
+  "co2_rate": 0.9631541664820535,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3118_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 34.0,
+  "ucap_mw": 28.22,
+  "going_forward_cost": 1989000.0,
+  "co2_rate": 0.9679211694486156,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p3935_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 846.8,
+  "ucap_mw": 702.8439999999999,
+  "going_forward_cost": 49537799.99999999,
+  "co2_rate": 0.9758112889139643,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p3935_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 991.7999999999997,
+  "ucap_mw": 823.1939999999997,
+  "going_forward_cost": 58020299.999999985,
+  "co2_rate": 0.9758112889139643,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p3935_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 58.0,
+  "ucap_mw": 48.14,
+  "going_forward_cost": 3393000.0,
+  "co2_rate": 0.9758112889139643,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3136_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 404.5999999999999,
+  "ucap_mw": 335.8179999999999,
+  "going_forward_cost": 23669099.999999996,
+  "co2_rate": 0.9807425972070665,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3136_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 34.0,
+  "ucap_mw": 28.22,
+  "going_forward_cost": 1989000.0,
+  "co2_rate": 0.9807425972070665,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3136_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 632.4000000000001,
+  "ucap_mw": 524.892,
+  "going_forward_cost": 36995400.00000001,
+  "co2_rate": 0.9807425972070665,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6041_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 748.3760000000001,
+  "ucap_mw": 621.1520800000001,
+  "going_forward_cost": 43779996.00000001,
+  "co2_rate": 0.9863413058970179,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6041_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 26.919999999999998,
+  "ucap_mw": 22.3436,
+  "going_forward_cost": 1574820.0,
+  "co2_rate": 0.9863413058970179,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6041_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 570.7039999999998,
+  "ucap_mw": 473.68431999999984,
+  "going_forward_cost": 33386183.99999999,
+  "co2_rate": 0.9863413058970179,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3954_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 1163.106,
+  "ucap_mw": 965.37798,
+  "going_forward_cost": 68041701.0,
+  "co2_rate": 0.9864959383469423,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3954_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 32.58,
+  "ucap_mw": 27.041399999999996,
+  "going_forward_cost": 1905929.9999999998,
+  "co2_rate": 0.9864959383469423,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p8102_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 1742.0,
+  "ucap_mw": 1445.86,
+  "going_forward_cost": 101907000.0,
+  "co2_rate": 0.992218193946801,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p8102_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 53.6,
+  "ucap_mw": 44.488,
+  "going_forward_cost": 3135600.0,
+  "co2_rate": 0.992218193946801,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6019_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 587.25,
+  "ucap_mw": 487.41749999999996,
+  "going_forward_cost": 34354125.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p10043_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 98.55,
+  "ucap_mw": 81.7965,
+  "going_forward_cost": 5765175.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p10043_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 105.12,
+  "ucap_mw": 87.2496,
+  "going_forward_cost": 6149520.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10113_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 36.0,
+  "ucap_mw": 29.88,
+  "going_forward_cost": 2106000.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10113_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 38.4,
+  "ucap_mw": 31.871999999999996,
+  "going_forward_cost": 2246400.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p10151_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 36.0,
+  "ucap_mw": 29.88,
+  "going_forward_cost": 2106000.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p10151_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 38.4,
+  "ucap_mw": 31.871999999999996,
+  "going_forward_cost": 2246400.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p10566_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 109.8,
+  "ucap_mw": 91.134,
+  "going_forward_cost": 6423300.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p10566_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 117.11999999999999,
+  "ucap_mw": 97.20959999999998,
+  "going_forward_cost": 6851519.999999999,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p50397_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 17.328,
+  "ucap_mw": 14.38224,
+  "going_forward_cost": 1013688.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p50776_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 37.35,
+  "ucap_mw": 31.0005,
+  "going_forward_cost": 2184975.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p54304_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 106.965,
+  "ucap_mw": 88.78095,
+  "going_forward_cost": 6257452.5,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p54304_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 114.09599999999998,
+  "ucap_mw": 94.69967999999997,
+  "going_forward_cost": 6674615.999999998,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ComEd_p54556_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 20.256,
+  "ucap_mw": 16.81248,
+  "going_forward_cost": 1184976.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p54634_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 41.28,
+  "ucap_mw": 34.2624,
+  "going_forward_cost": 2414880.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10113_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 1.6,
+  "ucap_mw": 1.328,
+  "going_forward_cost": 93600.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p10151_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 1.6,
+  "ucap_mw": 1.328,
+  "going_forward_cost": 93600.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p10566_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 4.88,
+  "ucap_mw": 4.0504,
+  "going_forward_cost": 285480.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p50776_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 1.66,
+  "ucap_mw": 1.3778,
+  "going_forward_cost": 97110.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ComEd_p54556_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 0.8440000000000001,
+  "ucap_mw": 0.70052,
+  "going_forward_cost": 49374.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p54634_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 1.72,
+  "ucap_mw": 1.4276,
+  "going_forward_cost": 100620.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6019_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 65.25,
+  "ucap_mw": 54.1575,
+  "going_forward_cost": 3817125.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10113_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 4.0,
+  "ucap_mw": 3.32,
+  "going_forward_cost": 234000.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p10151_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 4.0,
+  "ucap_mw": 3.32,
+  "going_forward_cost": 234000.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p50397_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 1.8050000000000002,
+  "ucap_mw": 1.49815,
+  "going_forward_cost": 105592.50000000001,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p50776_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 4.15,
+  "ucap_mw": 3.4445,
+  "going_forward_cost": 242775.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p54304_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 11.885,
+  "ucap_mw": 9.86455,
+  "going_forward_cost": 695272.5,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ComEd_p54556_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 2.1100000000000003,
+  "ucap_mw": 1.7513,
+  "going_forward_cost": 123435.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p54634_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 4.3,
+  "ucap_mw": 3.5689999999999995,
+  "going_forward_cost": 251549.99999999997,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3948_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 279.23999999999995,
+  "ucap_mw": 231.76919999999996,
+  "going_forward_cost": 16335539.999999996,
+  "co2_rate": 1.0127776046666679,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3948_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 898.56,
+  "ucap_mw": 745.8047999999999,
+  "going_forward_cost": 52565759.99999999,
+  "co2_rate": 1.0127776046666679,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3948_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 31.200000000000003,
+  "ucap_mw": 25.896,
+  "going_forward_cost": 1825200.0,
+  "co2_rate": 1.0127776046666679,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3948_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 351.0,
+  "ucap_mw": 291.33,
+  "going_forward_cost": 20533500.0,
+  "co2_rate": 1.0127776046666679,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p50900_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 20.64,
+  "ucap_mw": 17.1312,
+  "going_forward_cost": 1207440.0,
+  "co2_rate": 1.0195348837209302,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p50900_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 0.86,
+  "ucap_mw": 0.7138,
+  "going_forward_cost": 50310.0,
+  "co2_rate": 1.0195348837209302,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p50900_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 2.15,
+  "ucap_mw": 1.7844999999999998,
+  "going_forward_cost": 125774.99999999999,
+  "co2_rate": 1.0195348837209302,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6166_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 1055.6000000000004,
+  "ucap_mw": 876.1480000000003,
+  "going_forward_cost": 61752600.000000015,
+  "co2_rate": 1.0214988983363131,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6166_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 52.0,
+  "ucap_mw": 43.16,
+  "going_forward_cost": 3042000.0,
+  "co2_rate": 1.0214988983363131,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6166_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 982.7999999999998,
+  "ucap_mw": 815.7239999999998,
+  "going_forward_cost": 57493799.999999985,
+  "co2_rate": 1.0214988983363131,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ATSI_p2936_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 14.85,
+  "ucap_mw": 12.3255,
+  "going_forward_cost": 868725.0,
+  "co2_rate": 1.0375757575757576,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ATSI_p2936_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 15.84,
+  "ucap_mw": 13.1472,
+  "going_forward_cost": 926640.0,
+  "co2_rate": 1.0375757575757576,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p1384_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 6.82,
+  "ucap_mw": 5.6606,
+  "going_forward_cost": 398970.0,
+  "co2_rate": 1.0390253306404915,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p1384_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 119.009,
+  "ucap_mw": 98.77747,
+  "going_forward_cost": 6962026.5,
+  "co2_rate": 1.0390253306404915,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p50481_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 59.08500000000001,
+  "ucap_mw": 49.04055,
+  "going_forward_cost": 3456472.5000000005,
+  "co2_rate": 1.0589185072353389,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p50481_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 63.02400000000001,
+  "ucap_mw": 52.309920000000005,
+  "going_forward_cost": 3686904.0000000005,
+  "co2_rate": 1.0589185072353389,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p50481_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 2.6260000000000003,
+  "ucap_mw": 2.17958,
+  "going_forward_cost": 153621.0,
+  "co2_rate": 1.0589185072353389,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p50481_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 6.565,
+  "ucap_mw": 5.44895,
+  "going_forward_cost": 384052.5,
+  "co2_rate": 1.0589185072353389,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2935_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 20.64,
+  "ucap_mw": 17.1312,
+  "going_forward_cost": 1207440.0,
+  "co2_rate": 1.0799999999999998,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3122_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 849.7350000000001,
+  "ucap_mw": 705.2800500000001,
+  "going_forward_cost": 49709497.50000001,
+  "co2_rate": 1.0799999999999998,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3122_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 906.3840000000001,
+  "ucap_mw": 752.2987200000001,
+  "going_forward_cost": 53023464.00000001,
+  "co2_rate": 1.0799999999999998,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2935_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 0.86,
+  "ucap_mw": 0.7138,
+  "going_forward_cost": 50310.0,
+  "co2_rate": 1.0799999999999998,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3122_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 37.766000000000005,
+  "ucap_mw": 31.34578,
+  "going_forward_cost": 2209311.0,
+  "co2_rate": 1.0799999999999998,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2935_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 2.15,
+  "ucap_mw": 1.7844999999999998,
+  "going_forward_cost": 125774.99999999999,
+  "co2_rate": 1.0799999999999998,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p3122_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 94.415,
+  "ucap_mw": 78.36445,
+  "going_forward_cost": 5523277.5,
+  "co2_rate": 1.0799999999999998,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ComEd_p883_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 310.05,
+  "ucap_mw": 257.3415,
+  "going_forward_cost": 18137925.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ComEd_p883_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 330.72,
+  "ucap_mw": 274.49760000000003,
+  "going_forward_cost": 19347120.000000004,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p884_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 229.5,
+  "ucap_mw": 190.48499999999999,
+  "going_forward_cost": 13425750.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1571_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 301.5,
+  "ucap_mw": 250.24499999999998,
+  "going_forward_cost": 17637750.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1573_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 542.25,
+  "ucap_mw": 450.0675,
+  "going_forward_cost": 31721625.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1573_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 578.4,
+  "ucap_mw": 480.07199999999995,
+  "going_forward_cost": 33836400.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2836_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 282.15,
+  "ucap_mw": 234.18449999999996,
+  "going_forward_cost": 16505774.999999996,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2866_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 670.5,
+  "ucap_mw": 556.515,
+  "going_forward_cost": 39224250.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2914_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 6.84,
+  "ucap_mw": 5.6772,
+  "going_forward_cost": 400140.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p3797_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 452.7,
+  "ucap_mw": 375.741,
+  "going_forward_cost": 26482950.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p3797_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 482.87999999999994,
+  "ucap_mw": 400.7903999999999,
+  "going_forward_cost": 28248479.999999996,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p8226_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 254.25,
+  "ucap_mw": 211.0275,
+  "going_forward_cost": 14873625.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p8226_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 271.2,
+  "ucap_mw": 225.09599999999998,
+  "going_forward_cost": 15865199.999999998,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1571_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 13.4,
+  "ucap_mw": 11.122,
+  "going_forward_cost": 783900.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2836_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 12.540000000000001,
+  "ucap_mw": 10.4082,
+  "going_forward_cost": 733590.0000000001,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2866_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 29.8,
+  "ucap_mw": 24.733999999999998,
+  "going_forward_cost": 1743300.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p3797_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 20.119999999999997,
+  "ucap_mw": 16.699599999999997,
+  "going_forward_cost": 1177019.9999999998,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ComEd_p883_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 34.45,
+  "ucap_mw": 28.593500000000002,
+  "going_forward_cost": 2015325.0000000002,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p884_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 25.5,
+  "ucap_mw": 21.165,
+  "going_forward_cost": 1491750.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1571_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 33.5,
+  "ucap_mw": 27.805,
+  "going_forward_cost": 1959750.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p1573_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 60.25,
+  "ucap_mw": 50.0075,
+  "going_forward_cost": 3524625.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2866_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 74.5,
+  "ucap_mw": 61.834999999999994,
+  "going_forward_cost": 4358250.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2914_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 0.7599999999999999,
+  "ucap_mw": 0.6307999999999999,
+  "going_forward_cost": 44459.99999999999,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p3797_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 50.3,
+  "ucap_mw": 41.748999999999995,
+  "going_forward_cost": 2942549.9999999995,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p8226_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 28.25,
+  "ucap_mw": 23.447499999999998,
+  "going_forward_cost": 1652624.9999999998,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p7213_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 594.606,
+  "ucap_mw": 493.52297999999996,
+  "going_forward_cost": 34784451.0,
+  "co2_rate": 1.0820582411416229,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p7213_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 17.54,
+  "ucap_mw": 14.5582,
+  "going_forward_cost": 1026090.0,
+  "co2_rate": 1.0820582411416229,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Dominion_p7213_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 264.854,
+  "ucap_mw": 219.82881999999998,
+  "going_forward_cost": 15493958.999999998,
+  "co2_rate": 1.0820582411416229,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6018_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 12.0,
+  "ucap_mw": 9.959999999999999,
+  "going_forward_cost": 702000.0,
+  "co2_rate": 1.0844586566601881,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p6018_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 319.2,
+  "ucap_mw": 264.936,
+  "going_forward_cost": 18673200.0,
+  "co2_rate": 1.0844586566601881,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_EMAAC_p594_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 184.5,
+  "ucap_mw": 153.135,
+  "going_forward_cost": 10793250.0,
+  "co2_rate": 1.085764633522564,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p602_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 1020.9459999999999,
+  "ucap_mw": 847.3851799999999,
+  "going_forward_cost": 59725340.99999999,
+  "co2_rate": 1.1044852309679507,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p602_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 25.46,
+  "ucap_mw": 21.1318,
+  "going_forward_cost": 1489410.0,
+  "co2_rate": 1.1044852309679507,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_SWMAAC_p602_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 226.59400000000002,
+  "ucap_mw": 188.07302,
+  "going_forward_cost": 13255749.000000002,
+  "co2_rate": 1.1044852309679507,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p10678_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 3.6,
+  "ucap_mw": 2.988,
+  "going_forward_cost": 210600.0,
+  "co2_rate": 1.1788516647078775,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_West_APS_p10678_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 9.0,
+  "ucap_mw": 7.47,
+  "going_forward_cost": 526500.0,
+  "co2_rate": 1.1788516647078775,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p50888_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 2.24,
+  "ucap_mw": 1.8592000000000002,
+  "going_forward_cost": 131040.00000000001,
+  "co2_rate": 1.227149095752055,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p50888_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 73.472,
+  "ucap_mw": 60.981759999999994,
+  "going_forward_cost": 4298112.0,
+  "co2_rate": 1.227149095752055,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_ComEd_p879_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 1165.804,
+  "ucap_mw": 967.6173200000001,
+  "going_forward_cost": 68199534.0,
+  "co2_rate": 1.2273708907331344,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10143_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 66.0,
+  "ucap_mw": 54.779999999999994,
+  "going_forward_cost": 3860999.9999999995,
+  "co2_rate": 1.246860776348579,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10143_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 2.2,
+  "ucap_mw": 1.826,
+  "going_forward_cost": 128700.0,
+  "co2_rate": 1.246860776348579,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10143_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 41.8,
+  "ucap_mw": 34.693999999999996,
+  "going_forward_cost": 2445299.9999999995,
+  "co2_rate": 1.246860776348579,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10603_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 14.0,
+  "ucap_mw": 11.62,
+  "going_forward_cost": 819000.0,
+  "co2_rate": 1.3436655114186389,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10603_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 1.0,
+  "ucap_mw": 0.83,
+  "going_forward_cost": 58500.0,
+  "co2_rate": 1.3436655114186389,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10603_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 35.0,
+  "ucap_mw": 29.049999999999997,
+  "going_forward_cost": 2047499.9999999998,
+  "co2_rate": 1.3436655114186389,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p50611_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 0.6,
+  "ucap_mw": 0.49799999999999994,
+  "going_forward_cost": 35100.0,
+  "co2_rate": 2.0446312374621125,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p50611_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 21.0,
+  "ucap_mw": 17.43,
+  "going_forward_cost": 1228500.0,
+  "co2_rate": 2.0446312374621125,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10343_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 22.747,
+  "ucap_mw": 18.88001,
+  "going_forward_cost": 1330699.5,
+  "co2_rate": 5.2903499818813,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10343_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 0.86,
+  "ucap_mw": 0.7138,
+  "going_forward_cost": 50310.0,
+  "co2_rate": 5.2903499818813,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_Central_PA_p10343_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 19.393,
+  "ucap_mw": 16.09619,
+  "going_forward_cost": 1134490.5,
+  "co2_rate": 5.2903499818813,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_PJM_AEP_Ohio_p2828_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 807.29,
+  "ucap_mw": 670.0506999999999,
+  "going_forward_cost": 47226465.0,
+  "co2_rate": 0.9416042290984208,
+  "loss_years": 1
+ }
+]

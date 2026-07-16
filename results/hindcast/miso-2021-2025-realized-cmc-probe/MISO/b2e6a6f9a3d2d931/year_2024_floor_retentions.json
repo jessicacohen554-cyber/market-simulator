@@ -1,0 +1,2252 @@
+[
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p1915_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 143.08,
+  "ucap_mw": 131.63360000000003,
+  "going_forward_cost": 8370180.0,
+  "co2_rate": 0.9578897951404776,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4078_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 108.39699999999998,
+  "ucap_mw": 99.72523999999999,
+  "going_forward_cost": 6341224.499999998,
+  "co2_rate": 0.790853546080705,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4078_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 396.2709999999999,
+  "ucap_mw": 364.56931999999995,
+  "going_forward_cost": 23181853.499999993,
+  "co2_rate": 0.790853546080705,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p10860_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 81.0,
+  "ucap_mw": 74.52000000000001,
+  "going_forward_cost": 4738500.0,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p10860_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 9.0,
+  "ucap_mw": 8.280000000000001,
+  "going_forward_cost": 526500.0,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p56456_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 329.12000000000006,
+  "ucap_mw": 302.7904000000001,
+  "going_forward_cost": 19253520.000000004,
+  "co2_rate": 0.8826897869336926,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1091_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 163.87919999999997,
+  "ucap_mw": 150.76886399999998,
+  "going_forward_cost": 9586933.199999997,
+  "co2_rate": 0.8980386692682868,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1082_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 30.426,
+  "ucap_mw": 27.99192,
+  "going_forward_cost": 1779920.9999999998,
+  "co2_rate": 0.9048948491171476,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p2103_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 1159.4080000000001,
+  "ucap_mw": 1066.6553600000002,
+  "going_forward_cost": 67825368.0,
+  "co2_rate": 0.9184805704999403,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p1893_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 412.28000000000003,
+  "ucap_mw": 379.29760000000005,
+  "going_forward_cost": 24118380.0,
+  "co2_rate": 0.9245552114667619,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p1893_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 285.785,
+  "ucap_mw": 262.92220000000003,
+  "going_forward_cost": 16718422.5,
+  "co2_rate": 0.9245552114667619,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1710_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 834.6,
+  "ucap_mw": 767.8320000000001,
+  "going_forward_cost": 48824100.0,
+  "co2_rate": 0.9440040369394245,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6090_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 1049.622,
+  "ucap_mw": 965.6522400000001,
+  "going_forward_cost": 61402887.0,
+  "co2_rate": 0.9446101980911424,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p6664_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 14.884,
+  "ucap_mw": 13.693280000000001,
+  "going_forward_cost": 870714.0,
+  "co2_rate": 0.9512884217214286,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p6664_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 203.91080000000002,
+  "ucap_mw": 187.59793600000003,
+  "going_forward_cost": 11928781.8,
+  "co2_rate": 0.9512884217214286,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p10864_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 5.2,
+  "ucap_mw": 4.784000000000001,
+  "going_forward_cost": 304200.0,
+  "co2_rate": 0.9515384615384616,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p1915_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 10.22,
+  "ucap_mw": 9.402400000000002,
+  "going_forward_cost": 597870.0,
+  "co2_rate": 0.9578897951404776,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p889_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 779.8179999999999,
+  "ucap_mw": 717.43256,
+  "going_forward_cost": 45619352.99999999,
+  "co2_rate": 0.9609686637546416,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p10865_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 6.7,
+  "ucap_mw": 6.164000000000001,
+  "going_forward_cost": 391950.0,
+  "co2_rate": 0.9623880597014927,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6113_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 851.904,
+  "ucap_mw": 783.7516800000001,
+  "going_forward_cost": 49836384.0,
+  "co2_rate": 0.9673967061843299,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6113_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 62.64,
+  "ucap_mw": 57.628800000000005,
+  "going_forward_cost": 3664440.0,
+  "co2_rate": 0.9673967061843299,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6113_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 851.904,
+  "ucap_mw": 783.7516800000001,
+  "going_forward_cost": 49836384.0,
+  "co2_rate": 0.9673967061843299,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6030_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 22.924000000000003,
+  "ucap_mw": 21.090080000000004,
+  "going_forward_cost": 1341054.0,
+  "co2_rate": 0.9841733405581347,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4041_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 424.78400000000005,
+  "ucap_mw": 390.8012800000001,
+  "going_forward_cost": 24849864.0,
+  "co2_rate": 0.9904436302406738,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p2823_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 255.81599999999997,
+  "ucap_mw": 235.35072,
+  "going_forward_cost": 14965235.999999998,
+  "co2_rate": 0.9906996376173461,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p1001_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 19.9,
+  "ucap_mw": 18.308,
+  "going_forward_cost": 1164149.9999999998,
+  "co2_rate": 0.9941658292743871,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p1001_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 291.535,
+  "ucap_mw": 268.21220000000005,
+  "going_forward_cost": 17054797.5,
+  "co2_rate": 0.9941658292743871,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p8023_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 22.998000000000005,
+  "ucap_mw": 21.158160000000006,
+  "going_forward_cost": 1345383.0000000002,
+  "co2_rate": 0.9966612473742946,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p51_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 285.65999999999997,
+  "ucap_mw": 262.80719999999997,
+  "going_forward_cost": 16711109.999999996,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p51_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 304.70399999999995,
+  "ucap_mw": 280.32768,
+  "going_forward_cost": 17825183.999999996,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p10861_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 3.555,
+  "ucap_mw": 3.2706000000000004,
+  "going_forward_cost": 207967.5,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p10867_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 27.9,
+  "ucap_mw": 25.668,
+  "going_forward_cost": 1632149.9999999998,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54210_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 5.985,
+  "ucap_mw": 5.506200000000001,
+  "going_forward_cost": 350122.5,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p10867_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 3.1,
+  "ucap_mw": 2.8520000000000003,
+  "going_forward_cost": 181350.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p6055_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 310.8,
+  "ucap_mw": 285.93600000000004,
+  "going_forward_cost": 18181800.0,
+  "co2_rate": 1.0028100719023731,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p6254_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 218.9572,
+  "ucap_mw": 201.440624,
+  "going_forward_cost": 12808996.2,
+  "co2_rate": 1.0035949135170714,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p6190_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 297.12,
+  "ucap_mw": 273.35040000000004,
+  "going_forward_cost": 17381520.0,
+  "co2_rate": 1.0205559996991813,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p6190_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 188.176,
+  "ucap_mw": 173.12192,
+  "going_forward_cost": 11008295.999999998,
+  "co2_rate": 1.0205559996991813,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p997_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 157.42999999999998,
+  "ucap_mw": 144.8356,
+  "going_forward_cost": 9209654.999999998,
+  "co2_rate": 1.0231736154073503,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p10234_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 16.944,
+  "ucap_mw": 15.58848,
+  "going_forward_cost": 991223.9999999999,
+  "co2_rate": 1.034674220963173,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p10234_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 0.706,
+  "ucap_mw": 0.64952,
+  "going_forward_cost": 41300.99999999999,
+  "co2_rate": 1.034674220963173,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p6009_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 616.7904,
+  "ucap_mw": 567.447168,
+  "going_forward_cost": 36082238.4,
+  "co2_rate": 1.0395514246211752,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6137_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 24.5,
+  "ucap_mw": 22.540000000000003,
+  "going_forward_cost": 1433250.0,
+  "co2_rate": 1.04,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p6641_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 499.1100000000001,
+  "ucap_mw": 459.18120000000016,
+  "going_forward_cost": 29197935.000000007,
+  "co2_rate": 1.0564160053400602,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6213_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 394.41800000000006,
+  "ucap_mw": 362.8645600000001,
+  "going_forward_cost": 23073453.000000004,
+  "co2_rate": 1.060999224943751,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p6017_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 139.23,
+  "ucap_mw": 128.0916,
+  "going_forward_cost": 8144954.999999999,
+  "co2_rate": 1.0669561073399105,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1702_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 218.7,
+  "ucap_mw": 201.204,
+  "going_forward_cost": 12793949.999999998,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p2790_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 46.935,
+  "ucap_mw": 43.180200000000006,
+  "going_forward_cost": 2745697.5,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p856_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 11.2,
+  "ucap_mw": 10.304,
+  "going_forward_cost": 655199.9999999999,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1008_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 5.6,
+  "ucap_mw": 5.152,
+  "going_forward_cost": 327599.99999999994,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1702_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 9.72,
+  "ucap_mw": 8.942400000000001,
+  "going_forward_cost": 568620.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6089_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 1.062,
+  "ucap_mw": 0.9770400000000001,
+  "going_forward_cost": 62127.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1104_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 10.265,
+  "ucap_mw": 9.443800000000001,
+  "going_forward_cost": 600502.5,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1832_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 7.725,
+  "ucap_mw": 7.107,
+  "going_forward_cost": 451912.49999999994,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p2790_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 5.215,
+  "ucap_mw": 4.7978000000000005,
+  "going_forward_cost": 305077.5,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p4143_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 15.375,
+  "ucap_mw": 14.145000000000001,
+  "going_forward_cost": 899437.5,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54212_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 2.925,
+  "ucap_mw": 2.691,
+  "going_forward_cost": 171112.49999999997,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6823_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 229.767,
+  "ucap_mw": 211.38564,
+  "going_forward_cost": 13441369.499999998,
+  "co2_rate": 1.0853477879717541,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6085_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 760.5,
+  "ucap_mw": 699.6600000000001,
+  "going_forward_cost": 44489250.0,
+  "co2_rate": 1.0911739535764595,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p963_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 7.1,
+  "ucap_mw": 6.532,
+  "going_forward_cost": 415349.99999999994,
+  "co2_rate": 1.1449227000473736,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p963_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 135.25500000000002,
+  "ucap_mw": 124.43460000000003,
+  "going_forward_cost": 7912417.500000001,
+  "co2_rate": 1.1449227000473736,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p1012_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 227.16000000000003,
+  "ucap_mw": 208.98720000000003,
+  "going_forward_cost": 13288860.0,
+  "co2_rate": 1.2320047359826187,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p1004_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 580.992,
+  "ucap_mw": 534.51264,
+  "going_forward_cost": 33988032.0,
+  "co2_rate": 0.7880687948852152,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p1004_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 21.359999999999957,
+  "ucap_mw": 19.65119999999996,
+  "going_forward_cost": 1249559.9999999974,
+  "co2_rate": 0.7880687948852152,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p1004_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 465.6480000000001,
+  "ucap_mw": 428.39616000000007,
+  "going_forward_cost": 27240408.000000004,
+  "co2_rate": 0.7880687948852152,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4078_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 366.06200000000007,
+  "ucap_mw": 336.77704000000006,
+  "going_forward_cost": 21414627.000000004,
+  "co2_rate": 0.790853546080705,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4078_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 17.769999999999996,
+  "ucap_mw": 16.348399999999998,
+  "going_forward_cost": 1039544.9999999999,
+  "co2_rate": 0.790853546080705,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p56068_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 25.381999999999998,
+  "ucap_mw": 23.35144,
+  "going_forward_cost": 1484847.0,
+  "co2_rate": 0.799047797997932,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p56068_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 585.0551,
+  "ucap_mw": 538.2506920000001,
+  "going_forward_cost": 34225723.35,
+  "co2_rate": 0.799047797997932,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p7343_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 407.3173999999999,
+  "ucap_mw": 374.73200799999995,
+  "going_forward_cost": 23828067.899999995,
+  "co2_rate": 0.8726951688234516,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p7343_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 13.075999999999999,
+  "ucap_mw": 12.029919999999999,
+  "going_forward_cost": 764945.9999999999,
+  "co2_rate": 0.8726951688234516,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p7343_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 233.4066,
+  "ucap_mw": 214.734072,
+  "going_forward_cost": 13654286.1,
+  "co2_rate": 0.8726951688234516,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p55856_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 808.48,
+  "ucap_mw": 743.8016,
+  "going_forward_cost": 47296080.0,
+  "co2_rate": 0.87966906325143,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p10860_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 86.4,
+  "ucap_mw": 79.48800000000001,
+  "going_forward_cost": 5054400.000000001,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p10860_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 3.6,
+  "ucap_mw": 3.3120000000000003,
+  "going_forward_cost": 210600.0,
+  "co2_rate": 0.8800000000000001,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p56456_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 327.76,
+  "ucap_mw": 301.5392,
+  "going_forward_cost": 19173960.0,
+  "co2_rate": 0.8826897869336926,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p56456_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 13.600000000000001,
+  "ucap_mw": 12.512000000000002,
+  "going_forward_cost": 795600.0000000001,
+  "co2_rate": 0.8826897869336926,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1733_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 61.32,
+  "ucap_mw": 56.4144,
+  "going_forward_cost": 3587220.0,
+  "co2_rate": 0.8861720073308136,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p6034_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 25.400000000000002,
+  "ucap_mw": 23.368000000000002,
+  "going_forward_cost": 1485900.0,
+  "co2_rate": 0.8943222042029835,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p6034_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 661.6700000000001,
+  "ucap_mw": 608.7364000000001,
+  "going_forward_cost": 38707695.00000001,
+  "co2_rate": 0.8943222042029835,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1091_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 331.80480000000006,
+  "ucap_mw": 305.2604160000001,
+  "going_forward_cost": 19410580.800000004,
+  "co2_rate": 0.8980386692682868,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1091_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 10.116,
+  "ucap_mw": 9.30672,
+  "going_forward_cost": 591786.0,
+  "co2_rate": 0.8980386692682868,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1082_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 1148.5815,
+  "ucap_mw": 1056.69498,
+  "going_forward_cost": 67192017.75,
+  "co2_rate": 0.9048948491171476,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1082_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 342.2925,
+  "ucap_mw": 314.9091,
+  "going_forward_cost": 20024111.25,
+  "co2_rate": 0.9048948491171476,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p2103_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 116.93599999999992,
+  "ucap_mw": 107.58111999999993,
+  "going_forward_cost": 6840755.999999995,
+  "co2_rate": 0.9184805704999403,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p2103_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 49.76,
+  "ucap_mw": 45.7792,
+  "going_forward_cost": 2910960.0,
+  "co2_rate": 0.9184805704999403,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p2103_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 1161.896,
+  "ucap_mw": 1068.94432,
+  "going_forward_cost": 67970916.0,
+  "co2_rate": 0.9184805704999403,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p6155_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 559.8,
+  "ucap_mw": 515.016,
+  "going_forward_cost": 32748299.999999996,
+  "co2_rate": 0.9197338367419607,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p6155_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 597.12,
+  "ucap_mw": 549.3504,
+  "going_forward_cost": 34931520.0,
+  "co2_rate": 0.9197338367419607,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p6155_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 24.880000000000003,
+  "ucap_mw": 22.889600000000005,
+  "going_forward_cost": 1455480.0000000002,
+  "co2_rate": 0.9197338367419607,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p1893_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 18.740000000000002,
+  "ucap_mw": 17.240800000000004,
+  "going_forward_cost": 1096290.0000000002,
+  "co2_rate": 0.9245552114667619,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1710_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 27.819999999999936,
+  "ucap_mw": 25.594399999999943,
+  "going_forward_cost": 1627469.9999999963,
+  "co2_rate": 0.9440040369394245,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1710_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 528.58,
+  "ucap_mw": 486.2936000000001,
+  "going_forward_cost": 30921930.000000004,
+  "co2_rate": 0.9440040369394245,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6090_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 1045.146,
+  "ucap_mw": 961.53432,
+  "going_forward_cost": 61141041.0,
+  "co2_rate": 0.9446101980911424,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6090_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 98.47199999999997,
+  "ucap_mw": 90.59423999999997,
+  "going_forward_cost": 5760611.999999998,
+  "co2_rate": 0.9446101980911424,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6090_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 44.760000000000005,
+  "ucap_mw": 41.17920000000001,
+  "going_forward_cost": 2618460.0000000005,
+  "co2_rate": 0.9446101980911424,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p6664_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 525.4052,
+  "ucap_mw": 483.3727840000001,
+  "going_forward_cost": 30736204.200000003,
+  "co2_rate": 0.9512884217214286,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p10864_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 117.0,
+  "ucap_mw": 107.64,
+  "going_forward_cost": 6844500.0,
+  "co2_rate": 0.9515384615384616,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p10864_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 124.8,
+  "ucap_mw": 114.816,
+  "going_forward_cost": 7300800.0,
+  "co2_rate": 0.9515384615384616,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p10864_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 13.0,
+  "ucap_mw": 11.96,
+  "going_forward_cost": 760500.0,
+  "co2_rate": 0.9515384615384616,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p2107_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 349.74,
+  "ucap_mw": 321.7608,
+  "going_forward_cost": 20459790.0,
+  "co2_rate": 0.9515771043512372,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p1915_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 357.7,
+  "ucap_mw": 329.084,
+  "going_forward_cost": 20925450.0,
+  "co2_rate": 0.9578897951404776,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p889_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 16.198,
+  "ucap_mw": 14.90216,
+  "going_forward_cost": 947583.0,
+  "co2_rate": 0.9609686637546416,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p889_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 23.14,
+  "ucap_mw": 21.288800000000002,
+  "going_forward_cost": 1353690.0,
+  "co2_rate": 0.9609686637546416,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p889_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 337.844,
+  "ucap_mw": 310.81648,
+  "going_forward_cost": 19763874.0,
+  "co2_rate": 0.9609686637546416,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p10865_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 150.75,
+  "ucap_mw": 138.69,
+  "going_forward_cost": 8818875.0,
+  "co2_rate": 0.9623880597014927,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p10865_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 16.75,
+  "ucap_mw": 15.41,
+  "going_forward_cost": 979875.0,
+  "co2_rate": 0.9623880597014927,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6030_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 524.9596,
+  "ucap_mw": 482.96283200000005,
+  "going_forward_cost": 30710136.6,
+  "co2_rate": 0.9841733405581347,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4041_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 383.64,
+  "ucap_mw": 352.9488,
+  "going_forward_cost": 22442940.0,
+  "co2_rate": 0.9904436302406738,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4041_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 281.33599999999996,
+  "ucap_mw": 258.82912,
+  "going_forward_cost": 16458155.999999998,
+  "co2_rate": 0.9904436302406738,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p2823_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 119.70000000000005,
+  "ucap_mw": 110.12400000000005,
+  "going_forward_cost": 7002450.000000003,
+  "co2_rate": 0.9906996376173461,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p1001_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 273.625,
+  "ucap_mw": 251.735,
+  "going_forward_cost": 16007062.5,
+  "co2_rate": 0.9941658292743871,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p1001_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 409.94,
+  "ucap_mw": 377.14480000000003,
+  "going_forward_cost": 23981490.0,
+  "co2_rate": 0.9941658292743871,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p8023_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 341.52029999999996,
+  "ucap_mw": 314.198676,
+  "going_forward_cost": 19978937.549999997,
+  "co2_rate": 0.9966612473742946,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p8023_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 442.7115000000001,
+  "ucap_mw": 407.2945800000001,
+  "going_forward_cost": 25898622.750000007,
+  "co2_rate": 0.9966612473742946,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4050_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 209.23359999999997,
+  "ucap_mw": 192.49491199999997,
+  "going_forward_cost": 12240165.599999998,
+  "co2_rate": 0.9985408372274729,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4050_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 8.336,
+  "ucap_mw": 7.66912,
+  "going_forward_cost": 487656.0,
+  "co2_rate": 0.9985408372274729,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p10863_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 2.79,
+  "ucap_mw": 2.5668,
+  "going_forward_cost": 163215.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p10867_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 29.76,
+  "ucap_mw": 27.3792,
+  "going_forward_cost": 1740960.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p50835_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 27.0,
+  "ucap_mw": 24.84,
+  "going_forward_cost": 1579500.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p50835_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 28.8,
+  "ucap_mw": 26.496000000000002,
+  "going_forward_cost": 1684800.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54210_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 6.384,
+  "ucap_mw": 5.87328,
+  "going_forward_cost": 373464.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54214_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 3.375,
+  "ucap_mw": 3.105,
+  "going_forward_cost": 197437.5,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54214_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 3.6,
+  "ucap_mw": 3.3120000000000003,
+  "going_forward_cost": 210600.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p57928_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 1.3439999999999999,
+  "ucap_mw": 1.23648,
+  "going_forward_cost": 78624.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p57949_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 0.675,
+  "ucap_mw": 0.6210000000000001,
+  "going_forward_cost": 39487.50000000001,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p57949_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 0.72,
+  "ucap_mw": 0.6624,
+  "going_forward_cost": 42120.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p51_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 12.696,
+  "ucap_mw": 11.68032,
+  "going_forward_cost": 742716.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p10867_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 1.24,
+  "ucap_mw": 1.1408,
+  "going_forward_cost": 72540.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p50835_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 1.2,
+  "ucap_mw": 1.104,
+  "going_forward_cost": 70200.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p51_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 31.74,
+  "ucap_mw": 29.2008,
+  "going_forward_cost": 1856790.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p50835_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 3.0,
+  "ucap_mw": 2.7600000000000002,
+  "going_forward_cost": 175500.0,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54210_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 0.665,
+  "ucap_mw": 0.6118,
+  "going_forward_cost": 38902.5,
+  "co2_rate": 1.0,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p6055_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 777.0,
+  "ucap_mw": 714.84,
+  "going_forward_cost": 45454500.0,
+  "co2_rate": 1.0028100719023731,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p6254_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 477.72479999999996,
+  "ucap_mw": 439.50681599999996,
+  "going_forward_cost": 27946900.799999997,
+  "co2_rate": 1.0035949135170714,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p6254_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 14.218,
+  "ucap_mw": 13.08056,
+  "going_forward_cost": 831753.0,
+  "co2_rate": 1.0035949135170714,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p997_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 9.1,
+  "ucap_mw": 8.372,
+  "going_forward_cost": 532350.0,
+  "co2_rate": 1.0231736154073503,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p994_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 359.0165,
+  "ucap_mw": 330.29518,
+  "going_forward_cost": 21002465.25,
+  "co2_rate": 1.025582431220264,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p994_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 34.03,
+  "ucap_mw": 31.3076,
+  "going_forward_cost": 1990755.0,
+  "co2_rate": 1.025582431220264,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p10234_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 15.884999999999998,
+  "ucap_mw": 14.614199999999999,
+  "going_forward_cost": 929272.4999999999,
+  "co2_rate": 1.034674220963173,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p6009_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 32.808,
+  "ucap_mw": 30.18336,
+  "going_forward_cost": 1919268.0,
+  "co2_rate": 1.0395514246211752,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6137_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 220.5,
+  "ucap_mw": 202.86,
+  "going_forward_cost": 12899250.0,
+  "co2_rate": 1.04,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6137_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 235.2,
+  "ucap_mw": 216.384,
+  "going_forward_cost": 13759199.999999998,
+  "co2_rate": 1.04,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6137_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 9.8,
+  "ucap_mw": 9.016000000000002,
+  "going_forward_cost": 573300.0000000001,
+  "co2_rate": 1.04,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p6641_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 497.44629999999995,
+  "ucap_mw": 457.65059599999995,
+  "going_forward_cost": 29100608.549999997,
+  "co2_rate": 1.0564160053400602,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p6641_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 33.27400000000001,
+  "ucap_mw": 30.61208000000001,
+  "going_forward_cost": 1946529.0000000005,
+  "co2_rate": 1.0564160053400602,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6213_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 19.82,
+  "ucap_mw": 18.2344,
+  "going_forward_cost": 1159470.0,
+  "co2_rate": 1.060999224943751,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6213_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 340.904,
+  "ucap_mw": 313.63168,
+  "going_forward_cost": 19942884.0,
+  "co2_rate": 1.060999224943751,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p6017_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 443.87,
+  "ucap_mw": 408.3604,
+  "going_forward_cost": 25966395.0,
+  "co2_rate": 1.0669561073399105,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p6017_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 11.9,
+  "ucap_mw": 10.948,
+  "going_forward_cost": 696150.0,
+  "co2_rate": 1.0669561073399105,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1167_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 59.095,
+  "ucap_mw": 54.3674,
+  "going_forward_cost": 3457057.5,
+  "co2_rate": 1.0694345444655897,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1167_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 99.235,
+  "ucap_mw": 91.2962,
+  "going_forward_cost": 5805247.5,
+  "co2_rate": 1.0694345444655897,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1167_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 60.21000000000001,
+  "ucap_mw": 55.39320000000001,
+  "going_forward_cost": 3522285.0000000005,
+  "co2_rate": 1.0694345444655897,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6705_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 14.43,
+  "ucap_mw": 13.2756,
+  "going_forward_cost": 844155.0,
+  "co2_rate": 1.0707843200381069,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6705_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 328.28249999999997,
+  "ucap_mw": 302.0199,
+  "going_forward_cost": 19204526.25,
+  "co2_rate": 1.0707843200381069,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1073_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 14.591999999999999,
+  "ucap_mw": 13.42464,
+  "going_forward_cost": 853632.0,
+  "co2_rate": 1.0715789473684212,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1073_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 1.5199999999999998,
+  "ucap_mw": 1.3983999999999999,
+  "going_forward_cost": 88919.99999999999,
+  "co2_rate": 1.0715789473684212,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p856_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 252.0,
+  "ucap_mw": 231.84,
+  "going_forward_cost": 14742000.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1008_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 126.0,
+  "ucap_mw": 115.92,
+  "going_forward_cost": 7371000.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1047_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 108.63,
+  "ucap_mw": 99.9396,
+  "going_forward_cost": 6354855.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1047_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 115.87200000000001,
+  "ucap_mw": 106.60224000000002,
+  "going_forward_cost": 6778512.000000001,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1104_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 92.385,
+  "ucap_mw": 84.9942,
+  "going_forward_cost": 5404522.5,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1104_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 98.54400000000001,
+  "ucap_mw": 90.66048000000002,
+  "going_forward_cost": 5764824.000000001,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1702_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 233.28,
+  "ucap_mw": 214.6176,
+  "going_forward_cost": 13646880.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1740_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 130.56,
+  "ucap_mw": 120.1152,
+  "going_forward_cost": 7637760.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1743_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 479.25,
+  "ucap_mw": 440.91,
+  "going_forward_cost": 28036125.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1743_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 511.2,
+  "ucap_mw": 470.30400000000003,
+  "going_forward_cost": 29905200.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1745_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 222.75,
+  "ucap_mw": 204.93,
+  "going_forward_cost": 13030875.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1745_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 237.6,
+  "ucap_mw": 218.592,
+  "going_forward_cost": 13899600.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1831_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 28.8,
+  "ucap_mw": 26.496000000000002,
+  "going_forward_cost": 1684800.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1831_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 30.72,
+  "ucap_mw": 28.2624,
+  "going_forward_cost": 1797120.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1832_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 69.525,
+  "ucap_mw": 63.96300000000001,
+  "going_forward_cost": 4067212.5000000005,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p1943_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 62.1,
+  "ucap_mw": 57.132000000000005,
+  "going_forward_cost": 3632850.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p1943_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 66.24,
+  "ucap_mw": 60.940799999999996,
+  "going_forward_cost": 3875039.9999999995,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p2104_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 261.0,
+  "ucap_mw": 240.12,
+  "going_forward_cost": 15268500.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p2104_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 278.4,
+  "ucap_mw": 256.128,
+  "going_forward_cost": 16286399.999999998,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p2790_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 50.06399999999999,
+  "ucap_mw": 46.058879999999995,
+  "going_forward_cost": 2928743.9999999995,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p4143_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 138.375,
+  "ucap_mw": 127.305,
+  "going_forward_cost": 8094937.5,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p4143_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 147.6,
+  "ucap_mw": 135.792,
+  "going_forward_cost": 8634600.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6089_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 23.895,
+  "ucap_mw": 21.9834,
+  "going_forward_cost": 1397857.5,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6089_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 25.488,
+  "ucap_mw": 23.44896,
+  "going_forward_cost": 1491048.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p50933_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 2.835,
+  "ucap_mw": 2.6082,
+  "going_forward_cost": 165847.5,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p50933_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 3.024,
+  "ucap_mw": 2.78208,
+  "going_forward_cost": 176904.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54533_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 3.375,
+  "ucap_mw": 3.105,
+  "going_forward_cost": 197437.5,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54533_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 3.6,
+  "ucap_mw": 3.3120000000000003,
+  "going_forward_cost": 210600.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1104_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 4.106,
+  "ucap_mw": 3.77752,
+  "going_forward_cost": 240201.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1740_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 5.4399999999999995,
+  "ucap_mw": 5.0047999999999995,
+  "going_forward_cost": 318239.99999999994,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1743_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 21.3,
+  "ucap_mw": 19.596,
+  "going_forward_cost": 1246050.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1745_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 9.9,
+  "ucap_mw": 9.108,
+  "going_forward_cost": 579150.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1831_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 1.28,
+  "ucap_mw": 1.1776,
+  "going_forward_cost": 74880.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1832_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 3.09,
+  "ucap_mw": 2.8428,
+  "going_forward_cost": 180765.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p1943_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 2.7600000000000002,
+  "ucap_mw": 2.5392,
+  "going_forward_cost": 161460.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p2104_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 11.6,
+  "ucap_mw": 10.672,
+  "going_forward_cost": 678600.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p2790_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 2.086,
+  "ucap_mw": 1.91912,
+  "going_forward_cost": 122030.99999999999,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p856_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 28.0,
+  "ucap_mw": 25.76,
+  "going_forward_cost": 1638000.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1008_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 14.0,
+  "ucap_mw": 12.88,
+  "going_forward_cost": 819000.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Plains_p1047_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 12.07,
+  "ucap_mw": 11.1044,
+  "going_forward_cost": 706095.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1702_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 24.3,
+  "ucap_mw": 22.356,
+  "going_forward_cost": 1421550.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1740_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 13.6,
+  "ucap_mw": 12.512,
+  "going_forward_cost": 795600.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p1743_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 53.25,
+  "ucap_mw": 48.99,
+  "going_forward_cost": 3115125.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1745_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 24.75,
+  "ucap_mw": 22.77,
+  "going_forward_cost": 1447875.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p1831_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 3.2,
+  "ucap_mw": 2.9440000000000004,
+  "going_forward_cost": 187200.00000000003,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p2104_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 29.0,
+  "ucap_mw": 26.68,
+  "going_forward_cost": 1696500.0,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6089_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 2.6550000000000002,
+  "ucap_mw": 2.4426000000000005,
+  "going_forward_cost": 155317.50000000003,
+  "co2_rate": 1.08,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6639_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 217.92,
+  "ucap_mw": 200.4864,
+  "going_forward_cost": 12748320.0,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p54098_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 5.4,
+  "ucap_mw": 4.968000000000001,
+  "going_forward_cost": 315900.00000000006,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p54098_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 5.76,
+  "ucap_mw": 5.2992,
+  "going_forward_cost": 336960.0,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54212_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 3.12,
+  "ucap_mw": 2.8704,
+  "going_forward_cost": 182520.0,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54213_mustrun",
+  "fuel_type": "coal",
+  "pmax_mw": 2.7,
+  "ucap_mw": 2.4840000000000004,
+  "going_forward_cost": 157950.00000000003,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p54213_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 2.88,
+  "ucap_mw": 2.6496,
+  "going_forward_cost": 168480.0,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6639_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 9.08,
+  "ucap_mw": 8.3536,
+  "going_forward_cost": 531180.0,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6639_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 22.7,
+  "ucap_mw": 20.884,
+  "going_forward_cost": 1327950.0,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p54098_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 0.6,
+  "ucap_mw": 0.552,
+  "going_forward_cost": 35100.0,
+  "co2_rate": 1.0800000000000003,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6823_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 8.34,
+  "ucap_mw": 7.6728000000000005,
+  "going_forward_cost": 487890.0,
+  "co2_rate": 1.0853477879717541,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p8222_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 272.415,
+  "ucap_mw": 250.62180000000004,
+  "going_forward_cost": 15936277.500000002,
+  "co2_rate": 1.090724406756722,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p8222_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 8.58,
+  "ucap_mw": 7.8936,
+  "going_forward_cost": 501930.0,
+  "co2_rate": 1.090724406756722,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p8222_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 148.005,
+  "ucap_mw": 136.1646,
+  "going_forward_cost": 8658292.5,
+  "co2_rate": 1.090724406756722,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6085_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 832.0,
+  "ucap_mw": 765.44,
+  "going_forward_cost": 48672000.0,
+  "co2_rate": 1.0911739535764595,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Indiana_p6085_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 32.5,
+  "ucap_mw": 29.900000000000002,
+  "going_forward_cost": 1901250.0,
+  "co2_rate": 1.0911739535764595,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p1393_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 343.21999999999997,
+  "ucap_mw": 315.7624,
+  "going_forward_cost": 20078370.0,
+  "co2_rate": 1.0977576348044913,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-South_p1393_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 10.48,
+  "ucap_mw": 9.6416,
+  "going_forward_cost": 613080.0,
+  "co2_rate": 1.0977576348044913,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-Illinois_p963_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 78.80999999999997,
+  "ucap_mw": 72.50519999999997,
+  "going_forward_cost": 4610384.999999998,
+  "co2_rate": 1.1449227000473736,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6098_peak",
+  "fuel_type": "coal",
+  "pmax_mw": 9.48,
+  "ucap_mw": 8.7216,
+  "going_forward_cost": 554580.0,
+  "co2_rate": 1.163253344568795,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-West_p6098_committed",
+  "fuel_type": "coal",
+  "pmax_mw": 135.09,
+  "ucap_mw": 124.28280000000001,
+  "going_forward_cost": 7902765.0,
+  "co2_rate": 1.163253344568795,
+  "loss_years": 1
+ },
+ {
+  "year": 2024,
+  "unit_id": "COAL_MISO-East_p4271_econ",
+  "fuel_type": "coal",
+  "pmax_mw": 258.8272,
+  "ucap_mw": 238.121024,
+  "going_forward_cost": 15141391.2,
+  "co2_rate": 1.1976640536065675,
+  "loss_years": 1
+ }
+]

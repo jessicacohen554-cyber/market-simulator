@@ -1,0 +1,1150 @@
+{
+  "bridge": true,
+  "ccs_retrofits": [],
+  "firm_clean_mw": null,
+  "fleet_by_fuel_after": {
+    "biomass": 2006.2,
+    "coal": 47510.4933,
+    "gas_cc": 31239.3,
+    "gas_ct": 24011.041,
+    "gas_st": 13942.225,
+    "nuclear": 11658.8,
+    "oil": 3511.5
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 2006.2,
+    "coal": 55564.54,
+    "gas_cc": 31239.3,
+    "gas_ct": 24011.041,
+    "gas_st": 13942.225,
+    "nuclear": 12427.3,
+    "oil": 3511.5
+  },
+  "floor_retained": [
+    {
+      "fuel": "coal",
+      "mw": 424.78400000000005,
+      "unit_id": "COAL_MISO-East_p4041_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 22.7,
+      "unit_id": "COAL_MISO-Indiana_p6639_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 148.005,
+      "unit_id": "COAL_MISO-West_p8222_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.6,
+      "unit_id": "COAL_MISO-East_p54098_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 28.0,
+      "unit_id": "COAL_MISO-Illinois_p856_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 337.844,
+      "unit_id": "COAL_MISO-Illinois_p889_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 6.0,
+      "unit_id": "COAL_MISO-Illinois_p976_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 291.535,
+      "unit_id": "COAL_MISO-Indiana_p1001_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 14.0,
+      "unit_id": "COAL_MISO-Illinois_p1008_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 125.64,
+      "unit_id": "COAL_MISO-Indiana_p1012_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 12.07,
+      "unit_id": "COAL_MISO-Plains_p1047_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 163.87919999999997,
+      "unit_id": "COAL_MISO-Plains_p1091_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 10.265,
+      "unit_id": "COAL_MISO-Plains_p1104_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 24.3,
+      "unit_id": "COAL_MISO-East_p1702_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 528.58,
+      "unit_id": "COAL_MISO-East_p1710_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1407.2939999999999,
+      "unit_id": "COAL_MISO-East_p1733_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 13.6,
+      "unit_id": "COAL_MISO-East_p1740_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 53.25,
+      "unit_id": "COAL_MISO-East_p1743_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 24.75,
+      "unit_id": "COAL_MISO-Illinois_p1745_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 3.2,
+      "unit_id": "COAL_MISO-Illinois_p1831_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 7.725,
+      "unit_id": "COAL_MISO-Illinois_p1832_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 285.785,
+      "unit_id": "COAL_MISO-West_p1893_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 357.7,
+      "unit_id": "COAL_MISO-West_p1915_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 29.0,
+      "unit_id": "COAL_MISO-Illinois_p2104_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 349.74,
+      "unit_id": "COAL_MISO-Plains_p2107_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 5.215,
+      "unit_id": "COAL_MISO-West_p2790_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 15.375,
+      "unit_id": "COAL_MISO-Illinois_p4143_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 616.7904,
+      "unit_id": "COAL_MISO-South_p6009_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 139.23,
+      "unit_id": "COAL_MISO-Illinois_p6017_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 777.0,
+      "unit_id": "COAL_MISO-South_p6055_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.6550000000000002,
+      "unit_id": "COAL_MISO-West_p6089_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 135.09,
+      "unit_id": "COAL_MISO-West_p6098_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 188.176,
+      "unit_id": "COAL_MISO-South_p6190_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 340.904,
+      "unit_id": "COAL_MISO-Indiana_p6213_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 203.91080000000002,
+      "unit_id": "COAL_MISO-Plains_p6664_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 229.767,
+      "unit_id": "COAL_MISO-Indiana_p6823_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 233.4066,
+      "unit_id": "COAL_MISO-Plains_p7343_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 851.904,
+      "unit_id": "COAL_MISO-Indiana_p6113_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 499.1100000000001,
+      "unit_id": "COAL_MISO-South_p6641_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 328.28249999999997,
+      "unit_id": "COAL_MISO-Indiana_p6705_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.5199999999999998,
+      "unit_id": "COAL_MISO-Plains_p1073_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 60.21000000000001,
+      "unit_id": "COAL_MISO-Plains_p1167_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 760.5,
+      "unit_id": "COAL_MISO-Indiana_p6085_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1049.622,
+      "unit_id": "COAL_MISO-West_p6090_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 661.6700000000001,
+      "unit_id": "COAL_MISO-East_p6034_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 24.5,
+      "unit_id": "COAL_MISO-Indiana_p6137_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 31.74,
+      "unit_id": "COAL_MISO-South_p51_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 3.1,
+      "unit_id": "COAL_MISO-Illinois_p10867_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 3.0,
+      "unit_id": "COAL_MISO-East_p50835_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.665,
+      "unit_id": "COAL_MISO-West_p54210_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 22.924000000000003,
+      "unit_id": "COAL_MISO-West_p6030_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 9.08,
+      "unit_id": "COAL_MISO-Indiana_p6639_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 8.58,
+      "unit_id": "COAL_MISO-West_p8222_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 11.2,
+      "unit_id": "COAL_MISO-Illinois_p856_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 23.14,
+      "unit_id": "COAL_MISO-Illinois_p889_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.4,
+      "unit_id": "COAL_MISO-Illinois_p976_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 9.1,
+      "unit_id": "COAL_MISO-Indiana_p997_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 19.9,
+      "unit_id": "COAL_MISO-Indiana_p1001_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 5.6,
+      "unit_id": "COAL_MISO-Illinois_p1008_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 7.2,
+      "unit_id": "COAL_MISO-Indiana_p1012_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 10.116,
+      "unit_id": "COAL_MISO-Plains_p1091_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.106,
+      "unit_id": "COAL_MISO-Plains_p1104_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 10.48,
+      "unit_id": "COAL_MISO-South_p1393_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 9.72,
+      "unit_id": "COAL_MISO-East_p1702_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 27.819999999999936,
+      "unit_id": "COAL_MISO-East_p1710_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 61.32,
+      "unit_id": "COAL_MISO-East_p1733_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 5.4399999999999995,
+      "unit_id": "COAL_MISO-East_p1740_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 21.3,
+      "unit_id": "COAL_MISO-East_p1743_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 9.9,
+      "unit_id": "COAL_MISO-Illinois_p1745_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.28,
+      "unit_id": "COAL_MISO-Illinois_p1831_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 3.09,
+      "unit_id": "COAL_MISO-Illinois_p1832_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 18.740000000000002,
+      "unit_id": "COAL_MISO-West_p1893_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 10.22,
+      "unit_id": "COAL_MISO-West_p1915_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.7600000000000002,
+      "unit_id": "COAL_MISO-West_p1943_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 11.6,
+      "unit_id": "COAL_MISO-Illinois_p2104_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.086,
+      "unit_id": "COAL_MISO-West_p2790_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 7.796,
+      "unit_id": "COAL_MISO-East_p4271_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 32.808,
+      "unit_id": "COAL_MISO-South_p6009_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 11.9,
+      "unit_id": "COAL_MISO-Illinois_p6017_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.062,
+      "unit_id": "COAL_MISO-West_p6089_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 9.48,
+      "unit_id": "COAL_MISO-West_p6098_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 24.880000000000003,
+      "unit_id": "COAL_MISO-Plains_p6155_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 19.82,
+      "unit_id": "COAL_MISO-Indiana_p6213_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 14.884,
+      "unit_id": "COAL_MISO-Plains_p6664_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 8.34,
+      "unit_id": "COAL_MISO-Indiana_p6823_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 13.075999999999999,
+      "unit_id": "COAL_MISO-Plains_p7343_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 22.998000000000005,
+      "unit_id": "COAL_MISO-East_p8023_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 62.64,
+      "unit_id": "COAL_MISO-Indiana_p6113_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 33.27400000000001,
+      "unit_id": "COAL_MISO-South_p6641_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 14.43,
+      "unit_id": "COAL_MISO-Indiana_p6705_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 32.5,
+      "unit_id": "COAL_MISO-Indiana_p6085_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 34.03,
+      "unit_id": "COAL_MISO-Indiana_p994_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 16.75,
+      "unit_id": "COAL_MISO-Illinois_p10865_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 44.760000000000005,
+      "unit_id": "COAL_MISO-West_p6090_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 396.2709999999999,
+      "unit_id": "COAL_MISO-East_p4078_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 13.0,
+      "unit_id": "COAL_MISO-Plains_p10864_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 25.400000000000002,
+      "unit_id": "COAL_MISO-East_p6034_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 9.8,
+      "unit_id": "COAL_MISO-Indiana_p6137_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.706,
+      "unit_id": "COAL_MISO-East_p10234_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 383.64,
+      "unit_id": "COAL_MISO-East_p4041_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 281.33599999999996,
+      "unit_id": "COAL_MISO-East_p4041_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 217.92,
+      "unit_id": "COAL_MISO-Indiana_p6639_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 272.415,
+      "unit_id": "COAL_MISO-West_p8222_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 5.4,
+      "unit_id": "COAL_MISO-East_p54098_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 5.76,
+      "unit_id": "COAL_MISO-East_p54098_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.925,
+      "unit_id": "COAL_MISO-West_p54212_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 3.12,
+      "unit_id": "COAL_MISO-West_p54212_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.7,
+      "unit_id": "COAL_MISO-West_p54213_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.88,
+      "unit_id": "COAL_MISO-West_p54213_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 252.0,
+      "unit_id": "COAL_MISO-Illinois_p856_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 16.198,
+      "unit_id": "COAL_MISO-Illinois_p889_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 779.8179999999999,
+      "unit_id": "COAL_MISO-Illinois_p889_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 157.42999999999998,
+      "unit_id": "COAL_MISO-Indiana_p997_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 273.625,
+      "unit_id": "COAL_MISO-Indiana_p1001_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 409.94,
+      "unit_id": "COAL_MISO-Indiana_p1001_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 126.0,
+      "unit_id": "COAL_MISO-Illinois_p1008_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 227.16000000000003,
+      "unit_id": "COAL_MISO-Indiana_p1012_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 218.7,
+      "unit_id": "COAL_MISO-East_p1702_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 233.28,
+      "unit_id": "COAL_MISO-East_p1702_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 834.6,
+      "unit_id": "COAL_MISO-East_p1710_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1407.2939999999999,
+      "unit_id": "COAL_MISO-East_p1733_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 190.09200000000027,
+      "unit_id": "COAL_MISO-East_p1733_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 130.56,
+      "unit_id": "COAL_MISO-East_p1740_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 479.25,
+      "unit_id": "COAL_MISO-East_p1743_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 511.2,
+      "unit_id": "COAL_MISO-East_p1743_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 222.75,
+      "unit_id": "COAL_MISO-Illinois_p1745_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 237.6,
+      "unit_id": "COAL_MISO-Illinois_p1745_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 28.8,
+      "unit_id": "COAL_MISO-Illinois_p1831_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 30.72,
+      "unit_id": "COAL_MISO-Illinois_p1831_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 69.525,
+      "unit_id": "COAL_MISO-Illinois_p1832_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 412.28000000000003,
+      "unit_id": "COAL_MISO-West_p1893_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 143.08,
+      "unit_id": "COAL_MISO-West_p1915_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 62.1,
+      "unit_id": "COAL_MISO-West_p1943_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 66.24,
+      "unit_id": "COAL_MISO-West_p1943_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 46.935,
+      "unit_id": "COAL_MISO-West_p2790_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 50.06399999999999,
+      "unit_id": "COAL_MISO-West_p2790_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 138.375,
+      "unit_id": "COAL_MISO-Illinois_p4143_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 147.6,
+      "unit_id": "COAL_MISO-Illinois_p4143_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 258.8272,
+      "unit_id": "COAL_MISO-East_p4271_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 443.87,
+      "unit_id": "COAL_MISO-Illinois_p6017_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 23.895,
+      "unit_id": "COAL_MISO-West_p6089_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 25.488,
+      "unit_id": "COAL_MISO-West_p6089_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 297.12,
+      "unit_id": "COAL_MISO-South_p6190_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 394.41800000000006,
+      "unit_id": "COAL_MISO-Indiana_p6213_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 341.52029999999996,
+      "unit_id": "COAL_MISO-East_p8023_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 442.7115000000001,
+      "unit_id": "COAL_MISO-East_p8023_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 2.835,
+      "unit_id": "COAL_MISO-East_p50933_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 3.024,
+      "unit_id": "COAL_MISO-East_p50933_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 3.375,
+      "unit_id": "COAL_MISO-West_p54533_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 3.6,
+      "unit_id": "COAL_MISO-West_p54533_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 851.904,
+      "unit_id": "COAL_MISO-Indiana_p6113_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 497.44629999999995,
+      "unit_id": "COAL_MISO-South_p6641_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 14.591999999999999,
+      "unit_id": "COAL_MISO-Plains_p1073_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 832.0,
+      "unit_id": "COAL_MISO-Indiana_p6085_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 359.0165,
+      "unit_id": "COAL_MISO-Indiana_p994_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 12.696,
+      "unit_id": "COAL_MISO-South_p51_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 8.336,
+      "unit_id": "COAL_MISO-East_p4050_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.24,
+      "unit_id": "COAL_MISO-Illinois_p10867_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.2,
+      "unit_id": "COAL_MISO-East_p50835_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1045.146,
+      "unit_id": "COAL_MISO-West_p6090_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 98.47199999999997,
+      "unit_id": "COAL_MISO-West_p6090_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 220.5,
+      "unit_id": "COAL_MISO-Indiana_p6137_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 235.2,
+      "unit_id": "COAL_MISO-Indiana_p6137_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 465.6480000000001,
+      "unit_id": "COAL_MISO-Indiana_p1004_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 585.0551,
+      "unit_id": "COAL_MISO-East_p56068_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 6.7,
+      "unit_id": "COAL_MISO-Illinois_p10865_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 17.769999999999996,
+      "unit_id": "COAL_MISO-East_p4078_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 285.65999999999997,
+      "unit_id": "COAL_MISO-South_p51_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 304.70399999999995,
+      "unit_id": "COAL_MISO-South_p51_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 209.23359999999997,
+      "unit_id": "COAL_MISO-East_p4050_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 5.2,
+      "unit_id": "COAL_MISO-Plains_p10864_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 366.06200000000007,
+      "unit_id": "COAL_MISO-East_p4078_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 108.39699999999998,
+      "unit_id": "COAL_MISO-East_p4078_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 21.359999999999957,
+      "unit_id": "COAL_MISO-Indiana_p1004_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 25.381999999999998,
+      "unit_id": "COAL_MISO-East_p56068_peak"
+    }
+  ],
+  "hindcast": true,
+  "iso": "MISO",
+  "mode": "forecast",
+  "peak_demand_mw": null,
+  "renewable_additions": [
+    {
+      "mw": 4000.0,
+      "tech": "wind",
+      "zone": "MISO-West"
+    },
+    {
+      "mw": 6000.0,
+      "tech": "solar",
+      "zone": "MISO-South"
+    }
+  ],
+  "reserve_margin": null,
+  "retirements": [
+    {
+      "fuel": "nuclear",
+      "mw": 768.5,
+      "reason": "known",
+      "unit_id": "1715_1"
+    },
+    {
+      "fuel": "coal",
+      "mw": 288.47,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Indiana_p997_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 170.3,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-South_p1393_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 6.9,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-West_p1943_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 294.804,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-West_p2823_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 123.1768,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-East_p4271_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 62.2,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Plains_p6155_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 342.6702000000001,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-East_p8023_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 362.41949999999997,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Indiana_p994_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1.765,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-East_p10234_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 99.6152,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-East_p4050_committed"
+    },
+    {
+      "fuel": "coal",
+      "mw": 22.240000000000002,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-East_p4041_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.828,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Plains_p1047_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 20.88,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Plains_p2107_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 13.68,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-West_p2823_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 6.15,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Illinois_p4143_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 22.2,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-South_p6055_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 9.904,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-South_p6190_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 0.608,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Plains_p1073_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 4.46,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Plains_p1167_peak"
+    },
+    {
+      "fuel": "coal",
+      "mw": 204.3,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Indiana_p6639_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 268.8,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Illinois_p856_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 134.4,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Illinois_p1008_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 122.4,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-East_p1740_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 74.16,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Illinois_p1832_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 220.195,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-West_p1893_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 611.8692,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-South_p6009_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 378.93240000000003,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-South_p6009_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 329.42999999999995,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-West_p6098_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 235.858,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Indiana_p6213_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 178.893,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Indiana_p6823_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 1365.552,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Indiana_p6113_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 633.8697000000001,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-South_p6641_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 378.7875,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Indiana_p6705_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 13.68,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Plains_p1073_mustrun"
+    },
+    {
+      "fuel": "coal",
+      "mw": 946.0340000000001,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-Indiana_p994_econ"
+    },
+    {
+      "fuel": "coal",
+      "mw": 99.6152,
+      "reason": "economic",
+      "unit_id": "COAL_MISO-East_p4050_mustrun"
+    }
+  ],
+  "rps_dual": null,
+  "solve_counts": {
+    "P0": 0,
+    "P1": 0,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "thermal_additions": [],
+  "year": 2022
+}
