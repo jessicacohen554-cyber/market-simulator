@@ -14082,3 +14082,92 @@ CV/LOYO-gated like caiso-80/82/84/87. Data-availability scouting is the first
 step (OASIS/EIM quarterly reports); if no usable series exists, the fallback
 decomposition is the midday battery-marginal charter above plus Session 2
 (flat-CHP, orthogonal C4-shape lane).
+
+## 2026-07-16 — caiso-89: the flat-CHP steam-host OPERATING-level floor (Lane C / C4-shape) BUILT and REGISTERED — `chp_steam_floor_p25`, the MECH_CHP_STEAM level swap; C3b FLIPS PASS, C4-2025 FLIPS PASS, C3a improves all three years, zero degradations; CANDIDATE, owner decision pending
+
+**Session:** claude/caiso-chp-steam-floor (Fable), continuing the caiso-87
+keeper handoff (Lane C). Registered run
+`2026-07-16-caiso-89-chp-steam` (bundle
+`results/calibration/caiso89_chp_steam_floor`), the caiso-87 keeper recipe +
+the single delta `chp_steam_floor_p25=True`, 2023–2025 in one invocation;
+recorder check passed (`chp_steam_floor_p25` AND
+`caiso_dsw_surplus_clean`/`caiso_citygate_spot_level` all True in
+`run_config.json`); the concurrent keeper repro's incidental
+`meta.json`/`run_config.json` drift reverted (keeper bundle byte-stable).
+
+**Root cause (why the CC_CHP steam base was invisible).** The CHP grid steam
+floor's level source `chp_pmin_cf` is the CAMPD **p2 never-below** statistic —
+0.0 for every flat steam host that takes a few non-outage offline hours. So
+the keeper forced only ~0.02 GW avg of CAISO CC_CHP (D-2 share 2.3–3.3%)
+while measured CEMS runs the class FLAT 0.65–0.76 GW net across all 24 hod
+(May-2023, hod max/min 1.16), and the model's class ducked to 0.06 GW midday.
+
+**Mechanism (rule 19 level swap, zero new free parameters).** New artifact
+column `p25_allhr_cf` (frozen `derive_thermal_tranches` estimator, pooled
+2023–2025): the **all-hours** p25 of available-CF — outage hours drop from
+the sample (avail_cap 0), economic/host-driven offline hours count as zeros —
+so the statistic self-targets with NO threshold parameter: flat hosts keep
+their online level (Midway-Sunset 55217 → 75.0%, Elk Hills 55400 → 81.5%,
+THUMS 50865 CT_CHP → 90.9%), every cycler measures 0.0 and keeps its
+p2/eia923_cf floor. Same grid formula `pmin_cf × (1 − btm_share)`, same
+MECH_CHP_STEAM id; D-4 gains the `(MECH_CHP_STEAM, all-hours)` window
+declaration (all-hours BY MEASUREMENT). The online-p25 alternative for
+CT_CHP was audited and REJECTED before any solve (it would force 1.77 vs
+0.38–0.41 TWh actual — a rule-17 off-window bug by the class's own
+evidence). Estimation gates: class per-year CV 0.056, LOYO worst 9.1%
+(the FINDING-caiso88 gate levels); floor-implied class energy UNDER the
+CEMS actual every year (6.63/5.43/5.36 vs 7.49/5.96/6.10 TWh). The committed
+artifact was regenerated and diffed: existing columns drift only from
+post-derivation loader-code changes (55985/56041 nameplate reconciliation,
+`_ONLINE_FRAC_GROUPS` expansion), so the new column was **column-merged
+byte-preserving** (rule 23 — no source-data change, no re-derive of
+committed values).
+
+**A/B vs the caiso-87 keeper (same-machine repro; repro reproduces the
+registered keeper headline exactly, C3a +10.3/+11.1/+16.6%):**
+
+* **C3b FLIPS FAIL→PASS** (2025 NRMSE 0.200 → 0.188; 0.105/0.161 in
+  2023/24) — the knife-edge year clears.
+* **C4-2025 FLIPS FAIL→PASS** (gas r .851/NRMSE .302 → .855/.292);
+  C4-2024 r .896/.253 (stays PASS); C4-2023 improves .824/.330 → .826/.322
+  but stays FAIL on NRMSE (the remaining C4 target).
+* **C3a improves every year: +10.3/+11.1/+16.6 → +9.2/+10.5/+15.3%**
+  (2023 now inside the year band; criterion still FAIL on 2024/25).
+  Soft months May/Jun-2023 +12.2/+11.0 → +10.6/+9.1; autumn-2025
+  Oct +14.0 → +12.6; Jan-2023 +8.2 → +6.0 (the winter month NARROWS —
+  not a reopening; it was still over-priced in the keeper).
+* **C1-2024 CC_REGULAR +6.01 → +5.37 TWh** (still the deciding FAIL);
+  CC_CHP rows PASS every scored year (2023 +0.85, 2024 +0.56 TWh);
+  C2-2025 gas −2.3 → −1.7%. May-2023 CC_CHP midday duck 0.06 → 0.48 GW
+  grid (measured-grid ≈ 0.44) — the composition target.
+* **WATCH months hold:** Apr-2023 −2.1 → −2.2, Jan-2024 −4.7 → −4.9
+  (band-edge moves only). C3c inert (16/0h vs 80/52) as pre-registered —
+  Lane B unchanged. C5a/C6/C7/C8 PASS (attestation carries the caiso-89
+  delta note; D-2 chp_steam CC_CHP 30–35% of class, structural-exempt;
+  0.0% off-window).
+* **DETERMINATION: NOT-YET** (C1-2024 CC_REGULAR, C3a-2024/25, C3c,
+  C4-2023 remain). Grade-relevant flips vs keeper: C3b PASS. Disclosed
+  honestly: the CC_CHP annual rises +0.85/+0.71/+0.77 TWh grid (in C1 band;
+  the floor itself is under-actual — the rise is the pre-existing
+  price-driven econ layer now riding ABOVE the floor overnight, ~+0.2 GW
+  vs measured; an offer-level question, not a floor-level one).
+
+**Scouts (no-LP, handoff pre-step):** (1) midday battery-marginal regime is
+NOT a fleet-sizing gap — the model's CAISO backcast storage fleet is
+9.6/13.2/17.5 GW (2023/24/25) incl. the real ~12+ GW batteries; the gap is
+charge-bid price formation (named-uncharted). (2) WEIM/EDAM GHG-attribution
+data exists to generalize caiso-87's EF-0 depth: OASIS `ENE_EIM_TRANSFER`
+(transfer MWh by BAA, Oct-2014→present) + `PRC_EIM_GHG` (hourly marginal
+GHG adder — the market's own "wedge at the margin" trigger; ≈0 in
+unwedged-parity hours) + monthly GHG Emissions Tracking Reports (EIM
+transfer attribution into the ISO BAA, 2016–2026) for level
+cross-validation + CARB MRR annual for EF audit. Proposed charter (owner's
+call): trigger = measured `PRC_EIM_GHG` ≈ 0, depth = measured attributed
+transfer by corridor — the unified soft-month + autumn-2025 lane the
+autumn diagnosis pointed to.
+
+**Keeper decision:** owner's call. The mechanism is structural (measured
+conduct, self-targeting, all gates), the A/B strictly improves or holds
+every scored criterion, and the pre-registered FAIL conditions did not
+fire. If promoted: swap `keepers.json` to `2026-07-16-caiso-89-chp-steam`,
+run `build_status.py`, and launch the calibration-keeper-auditor.
