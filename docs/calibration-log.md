@@ -14172,6 +14172,99 @@ every scored criterion, and the pre-registered FAIL conditions did not
 fire. If promoted: swap `keepers.json` to `2026-07-16-caiso-89-chp-steam`,
 run `build_status.py`, and launch the calibration-keeper-auditor.
 
+## 2026-07-16 — PJM-CONG-1: the flat zonal surface closed by the MEASURED EAST interface cut — pjm-114 CALIBRATED-WITH-CAVEATS (C3c-2025 40 h, first non-NOT-YET PJM determination); all five pre-committed gates HOLD; keeper promotion RECOMMENDED (owner-only)
+
+**Charter:** pjm-cong-1 — the C3c congestion-surface charter (diagnosis §5/§8.1
+boundary): measured interface limits for the flat zonal surface, the ERCOT
+West/Panhandle-split precedent class. Diagnostic-first: Phase-1 probe committed
+with the stop condition PRE-DECLARED in its header before the adjudicating
+section ran; Phase-2 gate pre-committed in diagnosis §10.6 before any solve.
+
+**Phase 1 (no-LP, `scripts/probes/_pjm_c3c_congestion_surface_decomp.py`):**
+
+- **The scarcity tranche is ZONAL — the east carries ~3× the system tail.**
+  Hub DA >$200: 2025 EASTERN HUB 152 h vs system 51 (DOMINION 109, WESTERN 79,
+  N ILLINOIS 39); 2024 EASTERN 46 h vs system **2**; 2023 EASTERN 28 vs 8. In
+  the 22 summer-2025 tail hours the EASTERN premium runs **+55…+178 $/MWh**
+  (Jun event mean +135, Jul +71) vs the keeper's flat +3.3 EMAAC monthly dual.
+- **The dispatch phantom is an east-west wheel, stable across years:** the
+  model under-generates inside MAD in the tail hours (2025 Dominion −1,122 MW
+  — CT −1,243; SWMAAC −957; Linden −835, Doswell −783, Chalk Point −369 — the
+  peakers reality ran) and over-generates west of it: net **+3.0…+3.6 GW
+  excess west→east wheel in all three years' scarcity hours** (fossil basis).
+- **Interface identity corrected from PJM Manual 03 §3.8 (Rev 71):** the feed's
+  series are named REACTIVE TRANSFER INTERFACES, not "regional envelopes".
+  **Eastern** = the 7-line EHV cut into the eastern Mid-Atlantic — the real
+  EMAAC import cut spanning BOTH Central_PA→EMAAC and SWMAAC→EMAAC (the
+  committed map applied it to the first alone, leaving the 5,000 MW static as
+  an un-monitored parallel path). **5004/5005** = Keystone/Conemaugh–Juniata
+  500 kV (western-PA corridor) — the committed ComEd→AEP mapping was a
+  MIS-ATTRIBUTION silently halving that link's 6,000 MW capability (the real
+  ComEd interface, CE-East, is unpublished).
+- **Adjudication (stop condition pre-declared: ≥8/22 h AND median ≥300 MW):**
+  reality never binds the published interfaces in the tail hours (AvgEastern
+  util 81%, limits RISE in the events) — but the MODEL's reconstructed
+  internal EMAAC-cut requirement exceeds the measured limit in **13/22 h,
+  median +485 MW** (anti-material-biased central estimate; 22/22 with the
+  measured 1,650 MW NYISO firm-export floor), and the binding hours ARE the
+  missed evening shoulders. **MATERIAL** → Phase 2/3.
+
+**Mechanism (zero fitted scalars):** `ScenarioConfig.pjm_east_interface_cut`
+(tier 3, default off, byte-identical off) — ONE one-sided hourly aggregate
+interface-group row capping Flow(Central_PA→EMAAC) + Flow(SWMAAC→EMAAC) at the
+published hourly "Average Eastern" limit (the dispatch hourly-(T,) group-cap
+machinery, CAISO-corridor precedent); reverse direction and per-link statics
+unchanged. Plus the unconditional 5004/5005 crosswalk correction (rule 14
+primary-source data-integrity fix; regression test pins it). DOF ledger: one
+new measured-physical zero-DOF entry; attestation seeded from the pjm-113
+ledger verbatim.
+
+**Run `2026-07-16-pjm-114-east-interface`** (bundle
+`results/calibration/pjmcong1_east_cut`; pjm-113 recipe via replay + ONLY the
+new flag via prb_overrides — run_config records it in both channels, the
+ERCOT-65 stomp check). Gates (§10.6/§10.7), all five together: (1) provenance
+HOLD — post-solve July-2025 EMAAC dual premium **+8.96** ∈ (+3.3, +30];
+(2) **C3c-2025 = 40 h** ∈ [26,102] (0.78× the DA 51 — PASS; was 17/18/18 in
+pjm-111/112/113); (3) 2023 = **7** ≤ 18, 2024 = **9** ≤ 12 (both small-count
+PASS; the real east tranches are 28 h and 46 h); (4) NO PASS criterion flips —
+every scored criterion PASS, the only status change is price_tail FAIL→PASS;
+(5) LOYO per-year HOLD. **Determination: CALIBRATED-WITH-CAVEATS (rubric
+v2.5) — the first non-NOT-YET PJM determination**; the caveat is the
+pre-existing unscored storage benchmark (C5b/C5c), untouched here. The cut
+separates ONLY EMAAC (other seven zones stay uniform) and the model's tail is
+now zonally structured the way reality's is.
+
+**Actions:** registered (label `pjm 114 east-interface`; pjm-101 pair pruned
+per top-15 retention), `legitimacy_diagnostics.json` + attestation + metrics
+committed with the bundle slims, manifest/parity green. Diagnosis §10 carries
+the full lane record. **Keeper promotion RECOMMENDED — keepers.json untouched
+(owner-only).** OWNER SIGN-OFFS requested: (i) the DataMiner2
+transfer-limit feed's "Average Eastern" as the adopted measured east-cut
+limit source, with the §10.5 reduced-network boundary reconciliation
+(monitored set sits slightly upstream of the exact EMAAC edge) and the
+5004/5005 mis-attribution removal; (ii) pjm-114 keeper promotion. Open
+residuals unchanged and disclosed: the winter tail (29 h, separate lane), the
+§7 rule-23-locked partial-derate bucket, the sub-interface Dominion premium
+(M-2 charter — the east cut deliberately does not touch Dominion/SWMAAC
+separation), and the D-1p overnight posture (M-3).
+
+## 2026-07-16 — PJM-CONG-1 owner sign-offs recorded + KEEPER PROMOTED: pjm-114 (east-interface cut) supersedes pjm-113 (session-logged authorization)
+
+Owner approved, same session as the pjm-cong-1 build ("Yes to both"): (i) **the
+DataMiner2 transfer-limit feed's "Average Eastern" series is the adopted
+measured east-cut limit source** — PJM Manual 03 §3.8 identity (the EASTERN
+reactive transfer interface = the EMAAC import cut), the §10.5 reduced-network
+boundary reconciliation, and the 5004/5005 ComEd mis-attribution removal are
+all signed off (rule 23: re-derives only when the feed's raw drops extend);
+(ii) **pjm-114 is PROMOTED to PJM keeper** — `keepers.json` PJM →
+`2026-07-16-pjm-114-east-interface`, sidecar rewritten as KEEPER with
+`market_story` (the east prices its own scarcity: finite EHV import capability
+into the eastern Mid-Atlantic, local peakers on the margin in heat events),
+`status.js` rebuilt — **PJM: CALIBRATED-WITH-CAVEATS** (first non-NOT-YET PJM
+determination; caveat = the pre-existing unscored storage benchmark C5b/C5c).
+`calibration-keeper-auditor` run post-flip per the standing instruction. Open
+lanes unchanged: winter tail, §7 partial-derate bucket (rule-23-locked),
+sub-interface Dominion premium (M-2), D-1p overnight posture (M-3).
 ## 2026-07-16 — caiso-89 PROMOTED to CAISO keeper (owner sign-off, session-logged: "Promote 89")
 
 `keepers.json` CAISO → `2026-07-16-caiso-89-chp-steam`; sidecar definition
