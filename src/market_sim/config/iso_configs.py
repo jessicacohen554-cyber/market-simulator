@@ -707,7 +707,11 @@ def _pjm_config() -> ISOConfig:
     # reverse-direction/fallback rating, exactly as ERCOT's WESTEX/PNHNDL
     # statics pair with ercot_gtc_limits_measured.
     links = [
-        # West gradient: ComEd exports east into AEP; the 5004/5005 interface.
+        # West gradient: ComEd exports east into AEP. (The real ComEd
+        # boundary interface is Manual-03 CE-East, unpublished in the
+        # transfer-limit feed; the earlier "5004/5005" attribution here was
+        # wrong — that interface is the Keystone/Conemaugh–Juniata 500 kV
+        # corridor in Pennsylvania. pjm-cong-1, 2026-07-16.)
         TransferLink(from_zone="PJM_ComEd", to_zone="PJM_AEP_Ohio", ttc_mw=6000.0),
         # AEP coal belt out to ATSI (north), Dominion (south, AEP/DOM) and the
         # western-PA import area.
