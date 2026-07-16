@@ -1822,6 +1822,230 @@ class TestPjmPergenSyncCapsPrep(unittest.TestCase):
             build_pjm_reserve_p1_prep(cfg, "PJM", fa)
 
 
+class TestCaisoOnlineScopedCapsPrep(unittest.TestCase):
+    """P0→P1 online scoping of the CAISO spin/non-spin product split
+    (pipeline.commitment.caiso_pergen_sync_reserve_caps +
+    build_caiso_reserve_p1_prep gating)."""
+
+    def _fleet(self, T=6):
+        # Unit 0: gas_cc hr 7.0 (48.6 $/MW startup, 6 h min-down — NOT
+        # fast-start). Unit 1: gas_ct hr 9.5 (aero: $12.3, 1 h — fast-start).
+        # Unit 2: hydro (no commitment table — fast-start by physics; ramp10
+        # 0 in the fleet tables, backfilled to nameplate by
+        # caiso_pergen_structure). Different plants, one zone.
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        fa = FleetArrays(
+            pmax=np.array([1000.0, 400.0, 600.0]),
+            pmin=np.zeros(3),
+            heat_rate=np.array([7.0, 9.5, 0.0]),
+            vom=np.zeros(3),
+            emission_rate=np.zeros(3),
+            nox_rate=np.zeros(3),
+            so2_rate=np.zeros(3),
+            zone_idx=np.zeros(3, dtype=int),
+            fuel_type_idx=np.array(
+                [
+                    FUEL_TYPE_NAMES.index("gas_cc"),
+                    FUEL_TYPE_NAMES.index("gas_ct"),
+                    FUEL_TYPE_NAMES.index("hydro"),
+                ]
+            ),
+            availability=np.ones((3, T)),
+            unit_ids=["cc0", "ct0", "hyd0"],
+            efficiency_bin=np.zeros(3),
+            plant_code=np.array([101, 202, 303]),
+            ramp10=np.array([300.0, 400.0, 0.0]),
+        )
+        return fa, T
+
+    def _pools(self, fa):
+        from market_sim.config.reserve_config import caiso_pergen_structure
+
+        gen_idx, col, n_r, _ramp10 = caiso_pergen_structure(fa)
+        return {int(g): int(c) for g, c in zip(gen_idx, col)}, n_r
+
+    def test_caps_split_online_spin_and_offline_fast_nonspin(self):
+        from market_sim.pipeline.commitment import caiso_pergen_sync_reserve_caps
+
+        fa, T = self._fleet()
+        # P0 pattern: CC (slow) online hours 0-2 with the offline gap at the
+        # END (the 6 h min-down bridge cannot close it); CT and hydro (both
+        # fast-start) offline everywhere.
+        p0 = np.zeros((3, T))
+        p0[0, :3] = 500.0
+        caps = caiso_pergen_sync_reserve_caps(None, fa, p0)
+        gen_pool, n_r = self._pools(fa)
+        self.assertEqual(n_r, 3)
+        self.assertEqual(caps.shape, (6, T))
+        cc, ct, hyd = gen_pool[0], gen_pool[1], gen_pool[2]
+        # SPIN: CC's 300 MW online ramp only in its online hours.
+        np.testing.assert_allclose(caps[cc, :3], 300.0)
+        np.testing.assert_allclose(caps[cc, 3:], 0.0)
+        np.testing.assert_allclose(caps[ct, :], 0.0)
+        np.testing.assert_allclose(caps[hyd, :], 0.0)
+        # NONSPIN: offline FAST ramp — CT 400, hydro 600 (backfilled to
+        # nameplate); the offline slow CC never.
+        np.testing.assert_allclose(caps[3 + ct, :], 400.0)
+        np.testing.assert_allclose(caps[3 + hyd, :], 600.0)
+        np.testing.assert_allclose(caps[3 + cc, :], 0.0)
+
+    def test_online_fast_start_moves_to_spin(self):
+        from market_sim.pipeline.commitment import caiso_pergen_sync_reserve_caps
+
+        fa, T = self._fleet()
+        p0 = np.zeros((3, T))
+        p0[2, :] = 100.0  # hydro dispatching -> synchronized
+        caps = caiso_pergen_sync_reserve_caps(None, fa, p0)
+        gen_pool, n_r = self._pools(fa)
+        hyd = gen_pool[2]
+        np.testing.assert_allclose(caps[hyd, :], 600.0)  # spin
+        np.testing.assert_allclose(caps[n_r + hyd, :], 0.0)  # nonspin emptied
+
+    def test_prep_gating_and_hook(self):
+        from types import SimpleNamespace
+
+        from market_sim.pipeline.commitment import build_caiso_reserve_p1_prep
+
+        fa, T = self._fleet()
+        cfg = SimpleNamespace(
+            energy_reserve_coopt=True,
+            caiso_reserve_coopt=True,
+            caiso_reserve_online_scoped=True,
+        )
+        hook = build_caiso_reserve_p1_prep(cfg, "CAISO", fa)
+        self.assertIsNotNone(hook)
+        r0 = SimpleNamespace(dispatch=np.zeros((3, T)))
+        out = hook(r0, fa)
+        self.assertIn("reserve_pergen_ramp10", out)
+        self.assertEqual(out["reserve_pergen_ramp10"].shape, (6, T))
+
+    def test_prep_none_when_off(self):
+        from types import SimpleNamespace
+
+        from market_sim.pipeline.commitment import build_caiso_reserve_p1_prep
+
+        fa, _T = self._fleet()
+        for cfg, iso in [
+            (
+                SimpleNamespace(
+                    energy_reserve_coopt=True,
+                    caiso_reserve_coopt=True,
+                    caiso_reserve_online_scoped=False,
+                ),
+                "CAISO",
+            ),
+            (
+                SimpleNamespace(
+                    energy_reserve_coopt=True,
+                    caiso_reserve_coopt=True,
+                    caiso_reserve_online_scoped=True,
+                ),
+                "PJM",
+            ),
+            (
+                SimpleNamespace(
+                    energy_reserve_coopt=False,
+                    caiso_reserve_coopt=True,
+                    caiso_reserve_online_scoped=True,
+                ),
+                "CAISO",
+            ),
+        ]:
+            self.assertIsNone(build_caiso_reserve_p1_prep(cfg, iso, fa))
+
+
+class TestCaisoOnlineScopedLP(unittest.TestCase):
+    """End-to-end LP: the online-scoped spin split withholds loaded CC
+    headroom and displaces evening energy to the CT on merit — the C1
+    evening-merit mechanism in miniature (design → kwargs → P0 → seam caps →
+    P1, the full caiso_reserve_online_scoped pipeline)."""
+
+    def _fleet(self, T=4):
+        # One zone: two 500 MW CC plants at $10 (vom; fuel price 0 keeps the
+        # heat rate a pure commitment-physics key) + one 500 MW CT at $50.
+        # ramp10: CC 150 each (0.3x), CT 500 (1.0x).
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        fa = FleetArrays(
+            pmax=np.array([500.0, 500.0, 500.0]),
+            pmin=np.zeros(3),
+            heat_rate=np.array([7.0, 7.0, 9.5]),
+            vom=np.array([10.0, 10.0, 50.0]),
+            emission_rate=np.zeros(3),
+            nox_rate=np.zeros(3),
+            so2_rate=np.zeros(3),
+            zone_idx=np.zeros(3, dtype=int),
+            fuel_type_idx=np.array(
+                [
+                    FUEL_TYPE_NAMES.index("gas_cc"),
+                    FUEL_TYPE_NAMES.index("gas_cc"),
+                    FUEL_TYPE_NAMES.index("gas_ct"),
+                ]
+            ),
+            availability=np.ones((3, T)),
+            unit_ids=["cc_a", "cc_b", "ct0"],
+            efficiency_bin=np.zeros(3),
+            plant_code=np.array([101, 102, 202]),
+            ramp10=np.array([150.0, 150.0, 500.0]),
+        )
+        return fa, T
+
+    def test_spin_withholds_cc_and_ct_clears_on_merit(self):
+        from types import SimpleNamespace
+
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+        from market_sim.model.dispatch import solve_dispatch
+        from market_sim.pipeline.commitment import caiso_pergen_sync_reserve_caps
+
+        fa, T = self._fleet()
+        cfg = SimpleNamespace(
+            iso="CAISO",
+            caiso_reserve_online_scoped=True,
+            caiso_commitment_posture=False,
+            caiso_locational_as_families=False,
+        )
+        # MSSC = largest plant = 500 -> spin 250, contingency-total 500.
+        design = get_reserve_design(cfg, fa, T, ["Z0"])
+        kw = build_reserve_dispatch_kwargs(design)
+        base = dict(
+            demand=np.full((1, T), 950.0),
+            wind_cf=np.zeros((1, T)),
+            wind_cap=np.zeros(1),
+            solar_cf=np.zeros((1, T)),
+            solar_cap=np.zeros(1),
+            fuel_prices=np.zeros((3, T)),
+            voll=2000.0,
+        )
+        # P0 (all-online caps from the design): the CT never dispatches —
+        # spin rides its all-online SPIN column for free.
+        r0 = solve_dispatch(fa, **base, **kw)
+        self.assertEqual(r0.status, "Optimal")
+        np.testing.assert_allclose(r0.dispatch[2], 0.0, atol=1e-6)
+        np.testing.assert_allclose(r0.prices, 10.0, atol=1e-6)
+        # Seam: CT was offline in P0 -> its spin cap collapses to 0 and its
+        # 500 MW moves to NONSPIN; the online CC pool keeps 300 MW of spin.
+        kw_p1 = dict(kw)
+        kw_p1["reserve_pergen_ramp10"] = caiso_pergen_sync_reserve_caps(
+            cfg, fa, r0.dispatch
+        )
+        p1 = solve_dispatch(fa, **base, **kw_p1)
+        self.assertEqual(p1.status, "Optimal")
+        # Spin 250 must now come from ONLINE CC headroom: the CC pool caps at
+        # 750 energy (750 + 250 spin = its 1,000 MW joint row), the CT clears
+        # the displaced 200 MWh at $50 on merit, and the total family rides
+        # spin 250 + CT offline-fast non-spin.
+        np.testing.assert_allclose(p1.dispatch[:2].sum(axis=0), 750.0, atol=1e-5)
+        np.testing.assert_allclose(p1.dispatch[2], 200.0, atol=1e-5)
+        np.testing.assert_allclose(p1.prices, 50.0, atol=1e-5)
+        # Spin clearing price = the forgone CC->CT margin ($40 opportunity
+        # cost, far below the $100 shortage step); total family unpriced.
+        np.testing.assert_allclose(p1.reserve_price, 40.0, atol=1e-4)
+
+
 class TestPjmPergenSizeSplit(unittest.TestCase):
     """pjm_pergen_structure's size-split pooling tier (pjm_reserve_pergen_size_split)."""
 
