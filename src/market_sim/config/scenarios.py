@@ -1994,6 +1994,33 @@ class ScenarioConfig:
     # 13). Requires gas_hub_basis_overlay; supersedes gas_hub_basis_daily for
     # CAISO by construction (it sets both level and shape from the daily
     # series). Default off (byte-identical); CAISO backcast only.
+    caiso_dsw_surplus_clean: bool = False  # Carry the MEASURED surplus-hour
+    # WEIM clean import depth on the south (Palo Verde / Path-46) corridor
+    # (caiso-87; FINDING-caiso82 §3 "measured clean DEPTH" lane;
+    # FINDING-caiso86b closed the measured-ladder-PRICE alternative). Beyond
+    # the firm blocks + PNW_midC (~4.1-5.2 GW), every model import MW pays a
+    # fossil/unspecified CARB border rung (+$12-18), so the model's marginal
+    # soft-month import is a carbon-wedged DSW rung — but the measured
+    # CAISO−hub spread in surplus-West hours shows parity with NO carbon
+    # wedge (WEIM/EDAM GHG attribution assigns clean surplus resources to
+    # CAISO transfers). When on, a DSW_surplus_clean tranche (EF 0, the same
+    # Path-46 wheel, priced at the measured Palo Verde hub by the per-hub
+    # injector) carries the corridor's measured depth-in-surplus (p95 net
+    # import over surplus hours: 5,312/4,792/5,472 MW 2023/24/25 — CV 0.056,
+    # LOYO ≤12.5%, gates in interchange_config) net of the shaped firm block,
+    # ONLY in hours whose measured Palo Verde hub price sits below the remote
+    # gas-CCGT floor (HR 6.97 × measured SoCal citygate weekly + $2.5 VOM, no
+    # carbon — the hub's own price says gas is not marginal, so the surplus
+    # is clean). Fossil rungs are unchanged and price the flow beyond the
+    # clean depth (secondary dispatch). A capability, not a floor (pmin 0);
+    # the corridor ATC envelope still caps delivered flow. Forward story: the
+    # trigger regenerates from the reference-price seam hub + gas forwards,
+    # the depth is persistent WEIM market structure (static pooled entry).
+    # Carried by transmission.build_caiso_per_hub_intertie(surplus_clean=) +
+    # transmission.inject_caiso_dsw_surplus_clean via the shared
+    # apply_interchange_injections seam. Requires caiso_per_hub_intertie (+
+    # caiso_firm_import_shape for the net-of-firm headroom). Default off
+    # (byte-identical); CAISO-only.
     caiso_storage_as_reservation: bool = False  # Reserve the MEASURED hourly
     # CAISO battery AS-award MW out of the battery fleet's dispatch headroom
     # (caiso-74; FINDING-caiso72 STEP-0 channel #1 / FINDING-caiso73 live lead
