@@ -76,7 +76,7 @@ for the market split.
 | capacity-market-demand-curve | — | — | — | — | — | — |
 | capacity-market-auction-price | — | — | — | — | — | — |
 | capacity-market-elcc | — | — | — | — | — | — |
-| transfer-constraint-binding | — | — | — | 2023–2025 | — | — |
+| transfer-constraint-binding | — | — | — | — | — | — |
 | maxgen-events | — | — | — | — | — | — |
 | storage-as-awards | — | — | — | — | — | — |
 | capacity-market-avoidable-cost-rate | — | — | — | — | — | — |

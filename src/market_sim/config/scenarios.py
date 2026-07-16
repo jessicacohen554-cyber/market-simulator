@@ -4387,9 +4387,6 @@ class ScenarioConfig:
     # SHRINK: fitted values retire where measured rungs land; CAISO-only,
     # no generic fallback (rule 25).
     caiso_offer_surface_measured: bool = False
-    # Path to the measured static band JSON (default: the frozen
-    # data/raw/_validation-source/caiso_offer_curve_measured.json).
-    caiso_offer_surface_measured_path: str | None = None
     # CONDITIONAL half: the PJM/NEISO condition-binned peak-rung ladder
     # ported to CAISO — 5 equal-capacity peak rungs repriced P1-only to the
     # measured per-net-load-bin top-of-curve quantiles (fuel-component
