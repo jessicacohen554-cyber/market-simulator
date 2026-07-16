@@ -574,6 +574,35 @@ candidate, update §5/§8.1/§10 with the measured shortfall. Anything else
 regresses → reject, keeper stays pjm-113. No constant, window, series or
 threshold is revisited after results (rules 1/11/23/26).
 
+### 10.7 Measured result (pjm-114, 2026-07-16) — ALL FIVE GATES HOLD; keeper promotion RECOMMENDED
+
+Run `2026-07-16-pjm-114-east-interface` (bundle
+`results/calibration/pjmcong1_east_cut`): the pjm-113 keeper recipe verbatim
+via replay + ONLY `pjm_east_interface_cut=True` (recorded in run_config, both
+channels — the ERCOT-65 stomp check passed), on the corrected crosswalk, all
+three years in one bundle, sequential. Gate adjudication:
+
+| gate | test | result |
+|---|---|---|
+| 1 | provenance: binds ≥ 8/22; July-2025 EMAAC dual premium ∈ (+3.3, +30] | HOLD — 13/22 pre-solve; post-solve July **+8.96** (June +6.50; keeper was +3.3 flat) |
+| 2 | C3c-2025 ∈ [26, 102] h | **HOLD — 40 h** (0.78× the DA 51; scorer PASS; pjm-111/112/113 were 17/18/18) |
+| 3 | 2023 ≤ 18 / 2024 ≤ 12 | HOLD — **7 / 9** (both small-count PASS; actual east tranche 28 h / 46 h) |
+| 4 | no PASS criterion flips | HOLD — every scored criterion PASS; the ONLY status change is price_tail FAIL→PASS |
+| 5 | LOYO within 2023–2025 | HOLD — per-year scoring of the one bundle, zero fitted scalars, each year on its own measured series |
+
+**Determination: CALIBRATED-WITH-CAVEATS** (rubric v2.5) — the first
+non-NOT-YET PJM determination; the remaining caveat is the pre-existing
+unscored storage benchmark (C5b/C5c data-blocked), untouched by this lane.
+The mechanism behaves exactly as designed: the east cut separates ONLY
+EMAAC (annual dual premium +0.45/+0.69/+1.37 across 2023/24/25; every other
+zone stays uniform), and the model's tail becomes zonally structured the way
+reality's is (§10.1) — 2024's 9 model tail hours are east-only, mirroring
+the real 46-hour EASTERN-HUB tranche that the 2-hour system count hid.
+Keeper promotion RECOMMENDED to the owner (keepers.json untouched —
+owner-only), alongside sign-off request (i): the transfer-limit feed's
+"Average Eastern" as the adopted east-cut limit source with the §10.5
+boundary reconciliation.
+
 ## Pointers
 
 * Keeper: `2026-07-16-pjm-113-short-only` (leg-A-only, promoted 2026-07-16;
