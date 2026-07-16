@@ -1,12 +1,15 @@
 {
- "CAISO": "2026-07-16-caiso-87-surplus-clean",
- "ERCOT": "2026-07-15-ercot66-storage-rebasis",
+ "CAISO": "2026-07-16-caiso-90-citygate-flow",
+ "ERCOT": "2026-07-16-ercot71-noncampd-availability",
  "NEISO": "2026-07-13-neiso-59-cc-hr",
  "PJM": "2026-07-16-pjm-114-east-interface",
  "keepers": [
   "2026-07-15-ercot66-storage-rebasis",
   "2026-07-16-caiso-87-surplus-clean",
   "2026-07-16-pjm-114-east-interface",
+  "2026-07-16-ercot71-noncampd-availability",
+  "2026-07-16-caiso-90-citygate-flow",
+  "2026-07-16-pjm-113-short-only",
   "2026-07-13-nyiso-62-cc-hr",
   "2026-07-13-neiso-59-cc-hr",
   "2026-07-16-miso-67-stgas-p25"

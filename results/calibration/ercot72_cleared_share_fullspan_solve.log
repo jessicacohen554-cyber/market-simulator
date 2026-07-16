@@ -1,0 +1,134 @@
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: solving ERCOT 2023 (hours=8760, Henry Hub=$2.54/MMBtu, commitment=False)
+WARNING: ercot_wtx_curtailment_driver: explicit kwarg False is stomped by prb_overrides True (this channel applies last) — the LP solves with the prb value. Pass the driver through ONE channel.
+INFO: gtc-limits: no clean partition for ERCOT 2023 (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+WARNING: ercot_gtc_limits_measured: no gtc-limits clean partition for 2023 — static TTC kept (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+INFO: ercot_wtx_curtailment_driver: 2023 West/Panhandle VRE ceiling active (depth wind=0.1004 solar=0.1637)
+INFO: loaded 13 within-window retiree units for ERCOT (869 MW, plants [6181, 54338, 56864])
+INFO: EIA-923 2023: reclassified Powerlane Plant  CT_PEAKER -> ST_GAS (curated bin drifted)
+INFO: EIA-923 2023: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: EIA-923 2023: reclassified Dansby  ST_GAS -> CT_PEAKER (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: ERCOT nuclear unit-availability overlay (2023): 0 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: historic outage overlay (ERCOT 2023): zeroed 473 coal/CC bin-tranches across 48 plant(s)
+INFO: unit-outage derate (ERCOT 2023): 662 plant-tranches derated
+INFO: ERCOT CAMPD-blind availability (2023): 31 tranche(s) across 3 blind plant(s) capped to measured per-plant series
+INFO: partial-outage derate (2023): 162 bin-tranches derated
+INFO: COD ramp (ERCOT 2023): 362 unit-months masked offline (mid-year COD / retirement), 13 unit(s) fully not-yet-built/retired
+WARNING: ERCOT: CC plant 55098 fleet pmax sum 535.0 MW exceeds trusted bound 529.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.0 MW removed)
+INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
+INFO: Binned fleet cache for ERCOT is up to date — loaded from ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2023 hydro budget: 14 plants, 349.6 GWh annual, 552 MW nameplate
+INFO: ERCOT 2023: 14 hydro plants in LP (552 MW, 0.35 TWh monthly budget)
+INFO: ERCOT nuclear unit-availability overlay (2023): 4 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: historic outage overlay (ERCOT 2023): zeroed 473 coal/CC bin-tranches across 48 plant(s)
+INFO: unit-outage derate (ERCOT 2023): 662 plant-tranches derated
+INFO: ERCOT CAMPD-blind availability (2023): 31 tranche(s) across 3 blind plant(s) capped to measured per-plant series
+INFO: partial-outage derate (2023): 162 bin-tranches derated
+INFO: COD ramp (ERCOT 2023): 362 unit-months masked offline (mid-year COD / retirement), 13 unit(s) fully not-yet-built/retired
+INFO: ERCOT 2023: ST_GAS net-load reliability-drag floor applied (frac = clip(0.00906*netGW -0.1376, 0, 0.34); net-load mean 33856 / max 69528 MW)
+INFO: ERCOT 2023: reliability floor — dropped 8 drag-owned limb(s) (CLAUDE.md rule 19: net-load drag owns the class commitment)
+INFO: ERCOT 2023: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2023: 25 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
+INFO: ERCOT zonal gas basis (2023): 1289 gas units; level -0.50 -> measured EP +0.00 (corr +0.50), zonal spread -0.92..1.03 $/MMBtu
+INFO: ERCOT West net-load gas step (2023): 72 West/Panhandle gas units; collapse_freq 0.030 (measured-neg-day; endogenous-oversupply 0.017 vs measured neg-day 0.030); split nl 12329 MW; firm basis -0.50 -> firm $2.04, deep $0.40..$0.40 (deliv floor $0.40); annual gas $1.62 -> $1.99 (floor-lifted from the negative hub tail)
+INFO: ERCOT conditional offer surface: repriced 426 gas peak-rung rows across 4 net-load bins (tightest bin binds 263/8760 hours); P1-only, loose hours byte-identical
+INFO: ERCOT cleared-share offer boundary: floored 175 gas econ tranche rows above the measured DAM cleared share (7 net-load bins, year table 2023); P1-only
+INFO: ERCOT measured storage capability re-basis (2023): fleet power mean 2685 -> 2896 MW
+INFO: ERCOT storage AS->energy deployment (2023): mean 22 MW, max 986 MW forced as a battery discharge floor at the net-load ramp
+INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [240, 1263, 741, 3348] MW, 77 steps total, 2 headroom tiers
+INFO: ERCOT reserve-supply cap ON: 2 headroom row(s), mean cap MW [16147, 21526]
+INFO: Matrix build: 3.829s, Solve: 156.593s (cold)
+INFO: ERCOT gas commitment bridge: 36523 unit-hours floored (7.44 TWh floor volume), 5155 bridged gaps by length {'<4h': 1291, '4-8h': 1795, '8-16h': 1719, '16-24h': 350, '>24h': 0}
+INFO: Matrix build: 2.423s, Solve: 162.725s (cold)
+INFO: EIA-923 2023: CAMPD-backfilled 3 under-reported plant(s) across 3 class-row(s) (3 replaced, 0 added)
+INFO: EIA-923 2023 solar 28.04 TWh under-counts EIA-930 31.87 TWh; using EIA-930 grid total
+INFO: year 2023 phase timing: data_prep=35.6s solve_p0=156.6s markup=25.0s solve_p1=162.7s results_write=11.9s total=391.8s
+INFO: solving ERCOT 2024 (hours=8760, Henry Hub=$2.19/MMBtu, commitment=False)
+WARNING: ercot_wtx_curtailment_driver: explicit kwarg False is stomped by prb_overrides True (this channel applies last) — the LP solves with the prb value. Pass the driver through ONE channel.
+INFO: gtc-limits: no clean partition for ERCOT 2024 (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+WARNING: ercot_gtc_limits_measured: no gtc-limits clean partition for 2024 — static TTC kept (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+INFO: ercot_wtx_curtailment_driver: 2024 West/Panhandle VRE ceiling active (depth wind=0.1004 solar=0.1637)
+INFO: loaded 13 within-window retiree units for ERCOT (869 MW, plants [6181, 54338, 56864])
+INFO: EIA-923 2024: reclassified Silas Ray  CT_PEAKER -> CC_REGULAR (curated bin drifted)
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: ERCOT nuclear unit-availability overlay (2024): 0 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: historic outage overlay (ERCOT 2024): zeroed 516 coal/CC bin-tranches across 51 plant(s)
+INFO: unit-outage derate (ERCOT 2024): 674 plant-tranches derated
+INFO: ERCOT CAMPD-blind availability (2024): 31 tranche(s) across 3 blind plant(s) capped to measured per-plant series
+INFO: partial-outage derate (2024): 191 bin-tranches derated
+INFO: COD ramp (ERCOT 2024): 82 unit-months masked offline (mid-year COD / retirement), 0 unit(s) fully not-yet-built/retired
+WARNING: ERCOT: CC plant 55098 fleet pmax sum 535.0 MW exceeds trusted bound 529.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.0 MW removed)
+INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
+INFO: Binned fleet cache for ERCOT is up to date — loaded from ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2024 hydro budget: 12 plants, 463.4 GWh annual, 546 MW nameplate
+INFO: ERCOT 2024: 12 hydro plants in LP (546 MW, 0.46 TWh monthly budget)
+INFO: ERCOT nuclear unit-availability overlay (2024): 4 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: historic outage overlay (ERCOT 2024): zeroed 516 coal/CC bin-tranches across 51 plant(s)
+INFO: unit-outage derate (ERCOT 2024): 674 plant-tranches derated
+INFO: ERCOT CAMPD-blind availability (2024): 31 tranche(s) across 3 blind plant(s) capped to measured per-plant series
+INFO: partial-outage derate (2024): 191 bin-tranches derated
+INFO: COD ramp (ERCOT 2024): 82 unit-months masked offline (mid-year COD / retirement), 0 unit(s) fully not-yet-built/retired
+INFO: ERCOT 2024: ST_GAS net-load reliability-drag floor applied (frac = clip(0.00906*netGW -0.1376, 0, 0.34); net-load mean 33205 / max 68797 MW)
+INFO: ERCOT 2024: reliability floor — dropped 8 drag-owned limb(s) (CLAUDE.md rule 19: net-load drag owns the class commitment)
+INFO: ERCOT 2024: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2024: 25 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
+INFO: ERCOT zonal gas basis (2024): 1289 gas units; level -0.50 -> measured EP -0.09 (corr +0.41), zonal spread -2.27..0.55 $/MMBtu
+INFO: ERCOT West net-load gas step (2024): 72 West/Panhandle gas units; collapse_freq 0.420 (measured-neg-day; endogenous-oversupply 0.027 vs measured neg-day 0.420); split nl 30587 MW; firm basis -0.50 -> firm $1.69, deep $0.40..$0.40 (deliv floor $0.40); annual gas $0.17 -> $1.15 (floor-lifted from the negative hub tail)
+INFO: ERCOT conditional offer surface: repriced 426 gas peak-rung rows across 4 net-load bins (tightest bin binds 263/8760 hours); P1-only, loose hours byte-identical
+INFO: ERCOT cleared-share offer boundary: floored 388 gas econ tranche rows above the measured DAM cleared share (7 net-load bins, year table 2024); P1-only
+INFO: ERCOT measured storage capability re-basis (2024): fleet power mean 5489 -> 6541 MW
+INFO: ERCOT storage AS->energy deployment (2024): mean 48 MW, max 1499 MW forced as a battery discharge floor at the net-load ramp
+INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [176, 859, 505, 2683] MW, 89 steps total, 2 headroom tiers
+INFO: ERCOT reserve-supply cap ON: 2 headroom row(s), mean cap MW [17106, 22429]
+INFO: Matrix build: 3.172s, Solve: 174.271s (cold)
+INFO: ERCOT gas commitment bridge: 43546 unit-hours floored (8.61 TWh floor volume), 5587 bridged gaps by length {'<4h': 1176, '4-8h': 1966, '8-16h': 1809, '16-24h': 636, '>24h': 0}
+INFO: Matrix build: 2.656s, Solve: 172.866s (cold)
+INFO: EIA-923 2024: CAMPD-backfilled 2 under-reported plant(s) across 2 class-row(s) (2 replaced, 0 added)
+INFO: EIA-923 2024 solar 40.08 TWh under-counts EIA-930 47.68 TWh; using EIA-930 grid total
+INFO: year 2024 phase timing: data_prep=7.5s solve_p0=174.3s markup=22.9s solve_p1=172.9s results_write=12.0s total=389.6s
+INFO: solving ERCOT 2025 (hours=8760, Henry Hub=$3.52/MMBtu, commitment=False)
+WARNING: ercot_wtx_curtailment_driver: explicit kwarg False is stomped by prb_overrides True (this channel applies last) — the LP solves with the prb value. Pass the driver through ONE channel.
+INFO: gtc-limits: no clean partition for ERCOT 2025 (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+WARNING: ercot_gtc_limits_measured: no gtc-limits clean partition for 2025 — static TTC kept (supply the NP6-86 archives and run scripts/curate_gtc_limits.py)
+INFO: ercot_wtx_curtailment_driver: 2025 West/Panhandle VRE ceiling active (depth wind=0.1004 solar=0.1637)
+INFO: loaded 13 within-window retiree units for ERCOT (869 MW, plants [6181, 54338, 56864])
+INFO: Loaded 304 per-plant CAMPD bins from /home/user/market-simulator/data/raw/reference/custom-bin-assignments.csv (81.7 GW)
+INFO: ERCOT nuclear unit-availability overlay (2025): 0 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: historic outage overlay (ERCOT 2025): zeroed 459 coal/CC bin-tranches across 45 plant(s)
+INFO: unit-outage derate (ERCOT 2025): 663 plant-tranches derated
+INFO: ERCOT CAMPD-blind availability (2025): 31 tranche(s) across 3 blind plant(s) capped to measured per-plant series
+INFO: partial-outage derate (2025): 189 bin-tranches derated
+WARNING: ERCOT: CC plant 55098 fleet pmax sum 535.0 MW exceeds trusted bound 529.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (6.0 MW removed)
+INFO: Loaded ERCOT fleet from EIA-860 parquet (1450 generators)
+INFO: Binned fleet cache for ERCOT is up to date — loaded from ercot_fleet_binned.parquet
+INFO: Loaded ERCOT 2025 hydro budget: 1 plants, 16.9 GWh annual, 10 MW nameplate
+INFO: ERCOT 2025: 1 hydro plants in LP (10 MW, 0.02 TWh monthly budget)
+INFO: ERCOT nuclear unit-availability overlay (2025): 4 reactor(s) on measured daily windows (uncovered dates keep the monthly CF)
+INFO: historic outage overlay (ERCOT 2025): zeroed 459 coal/CC bin-tranches across 45 plant(s)
+INFO: unit-outage derate (ERCOT 2025): 663 plant-tranches derated
+INFO: ERCOT CAMPD-blind availability (2025): 31 tranche(s) across 3 blind plant(s) capped to measured per-plant series
+INFO: partial-outage derate (2025): 189 bin-tranches derated
+INFO: COD ramp (ERCOT 2025): 12 unit-months masked offline (mid-year COD / retirement), 1 unit(s) fully not-yet-built/retired
+INFO: ERCOT 2025: ST_GAS net-load reliability-drag floor applied (frac = clip(0.00906*netGW -0.1376, 0, 0.34); net-load mean 33182 / max 68369 MW)
+INFO: ERCOT 2025: reliability floor — dropped 8 drag-owned limb(s) (CLAUDE.md rule 19: net-load drag owns the class commitment)
+INFO: ERCOT 2025: reliability floor — 5 enabled limb spec(s) applied from RELIABILITY_FLOOR_REGISTRY
+INFO: F923 fuel costs for 2025: 25 generators priced from their own plant, 0 gap-filled from nearby (state/zone) plants
+INFO: ERCOT zonal gas basis (2025): 1289 gas units; level -0.50 -> measured EP -0.46 (corr +0.04), zonal spread -2.42..0.55 $/MMBtu
+INFO: ERCOT West net-load gas step (2025): 72 West/Panhandle gas units; collapse_freq 0.110 (measured-neg-day; endogenous-oversupply 0.036 vs measured neg-day 0.110); split nl 17410 MW; firm basis -0.50 -> firm $3.03, deep $0.40..$0.40 (deliv floor $0.40); annual gas $0.64 -> $2.74 (floor-lifted from the negative hub tail)
+INFO: ERCOT conditional offer surface: repriced 426 gas peak-rung rows across 4 net-load bins (tightest bin binds 263/8760 hours); P1-only, loose hours byte-identical
+INFO: ERCOT cleared-share offer boundary: floored 357 gas econ tranche rows above the measured DAM cleared share (7 net-load bins, year table 2025); P1-only
+INFO: ERCOT measured storage capability re-basis (2025): fleet power mean 10416 -> 11428 MW
+INFO: ERCOT storage AS->energy deployment (2025): mean 103 MW, max 2556 MW forced as a battery discharge floor at the net-load ramp
+INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [150, 727, 439, 2885] MW, 88 steps total, 2 headroom tiers
+INFO: ERCOT reserve-supply cap ON: 2 headroom row(s), mean cap MW [17517, 22913]
+INFO: Matrix build: 2.829s, Solve: 266.758s (cold)
+INFO: ERCOT gas commitment bridge: 41090 unit-hours floored (7.73 TWh floor volume), 6059 bridged gaps by length {'<4h': 1282, '4-8h': 2627, '8-16h': 1750, '16-24h': 400, '>24h': 0}
+INFO: Matrix build: 2.567s, Solve: 287.827s (cold)
+INFO: EIA-923 2025: CAMPD-backfilled 27 under-reported plant(s) across 27 class-row(s) (0 replaced, 27 added)
+INFO: EIA-923 2025 wind 91.31 TWh under-counts EIA-930 115.13 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 solar 55.79 TWh under-counts EIA-930 67.48 TWh; using EIA-930 grid total
+INFO: year 2025 phase timing: data_prep=9.8s solve_p0=266.8s markup=24.2s solve_p1=287.8s results_write=12.3s total=601.0s
+WARNING: ercot_wtx_* channel conflict: explicit kwargs {'ercot_wtx_curtailment_driver': False} are stomped by prb_overrides {'ercot_wtx_curtailment_driver': True} in the LIVE solve (run_year applies prb_overrides last); recording the prb values. Pass the driver through ONE channel.
+INFO: wrote calibration bundle to /home/user/market-simulator/results/calibration/ercot72_cleared_share_fullspan
+DONE -> /home/user/market-simulator/results/calibration/ercot72_cleared_share_fullspan (legs: ['ercot_noncampd_plant_availability', 'ercot_offer_surface_cleared_share'], years: [2023, 2024, 2025])
