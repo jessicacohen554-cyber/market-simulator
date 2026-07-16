@@ -465,6 +465,52 @@ def _when_operable_cf(
     return float(np.mean(oper_gross)) / detect_cap
 
 
+def _resolve_unit_group(
+    is_coal: bool,
+    unit_type: str,
+    fac_groups: set[str],
+    fac_group: str | None,
+) -> str:
+    """Route a CAMPD unit's outage row to the model bin matching the UNIT.
+
+    ``group_by_code`` keeps ONE group per plant code, so at a mixed
+    facility every unit's window landed on that single bin — Chesterfield
+    (3797): 1,036 MW of coal units 5/6, out Apr-Dec 2023 for their
+    retirement, were tagged CC_REGULAR and blocked the surviving 386 MW
+    gas-CC plant for most of 2023 (the pjm-75 2023 CC under-run
+    root-cause finding, ~2.35 TWh). Resolution: a solid-fuel unit is
+    always COAL; a non-coal unit at a facility whose primary group is
+    COAL (or non-qualifying) is routed by its CAMPD ``unitType`` to the
+    facility's matching gas bin; otherwise the facility group stands
+    (single-group gas facilities are byte-identical). A row routed to a
+    ``(plant_code, group)`` bin absent from the model fleet is skipped by
+    the overlay (outages.unit_outage_derate_factors) — correct: a retired
+    coal unit's window must not derate the surviving gas plant.
+
+    Module-level (not nested in :func:`main`) so the declared-event-window
+    sibling deriver (``scripts/derive_campd_maxgen_outages.py``) reuses the
+    SAME routing verbatim.
+    """
+    if is_coal:
+        return "COAL"
+    if fac_group in QUALIFYING_PLANT_GROUPS and fac_group != "COAL":
+        return str(fac_group)
+    ut = str(unit_type).strip().lower()
+    if "combined cycle" in ut:
+        for g in ("CC_REGULAR", "CC_CHP"):
+            if g in fac_groups:
+                return g
+        return "CC_REGULAR"
+    if "combustion turbine" in ut:
+        if "CT_CHP" in fac_groups:
+            return "CT_CHP"
+        return "CT_PEAKER"  # excluded downstream: peakers carry no overlay
+    for g in ("ST_GAS", "ST_CHP"):
+        if g in fac_groups:
+            return g
+    return str(fac_group or "")
+
+
 def main() -> None:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
@@ -631,47 +677,6 @@ def main() -> None:
     # Per-plant MODELED steam (ST_GAS / ST_CHP) nameplate — the capacity basis
     # for the orphaned gross-blank steam-host boiler fallback below (non-ERCOT).
     steam_np_by_code: dict[int, float] = {}
-
-    def _resolve_unit_group(
-        is_coal: bool,
-        unit_type: str,
-        fac_groups: set[str],
-        fac_group: str | None,
-    ) -> str:
-        """Route a CAMPD unit's outage row to the model bin matching the UNIT.
-
-        ``group_by_code`` keeps ONE group per plant code, so at a mixed
-        facility every unit's window landed on that single bin — Chesterfield
-        (3797): 1,036 MW of coal units 5/6, out Apr-Dec 2023 for their
-        retirement, were tagged CC_REGULAR and blocked the surviving 386 MW
-        gas-CC plant for most of 2023 (the pjm-75 2023 CC under-run
-        root-cause finding, ~2.35 TWh). Resolution: a solid-fuel unit is
-        always COAL; a non-coal unit at a facility whose primary group is
-        COAL (or non-qualifying) is routed by its CAMPD ``unitType`` to the
-        facility's matching gas bin; otherwise the facility group stands
-        (single-group gas facilities are byte-identical). A row routed to a
-        ``(plant_code, group)`` bin absent from the model fleet is skipped by
-        the overlay (outages.unit_outage_derate_factors) — correct: a retired
-        coal unit's window must not derate the surviving gas plant.
-        """
-        if is_coal:
-            return "COAL"
-        if fac_group in QUALIFYING_PLANT_GROUPS and fac_group != "COAL":
-            return str(fac_group)
-        ut = str(unit_type).strip().lower()
-        if "combined cycle" in ut:
-            for g in ("CC_REGULAR", "CC_CHP"):
-                if g in fac_groups:
-                    return g
-            return "CC_REGULAR"
-        if "combustion turbine" in ut:
-            if "CT_CHP" in fac_groups:
-                return "CT_CHP"
-            return "CT_PEAKER"  # excluded downstream: peakers carry no overlay
-        for g in ("ST_GAS", "ST_CHP"):
-            if g in fac_groups:
-                return g
-        return str(fac_group or "")
 
     if iso == "ERCOT":
         bins = pd.read_csv(args.bins)
