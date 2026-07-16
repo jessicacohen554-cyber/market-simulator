@@ -14388,3 +14388,93 @@ placement (an accurate-input-exposes-something-else flag per rule 15, filed as
 a root-cause note, never a tuning target). The C1 CC-over/CT-under lane is
 chartered next (owner directive; handoff issued this session) —
 `docs/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md` §5.
+
+## 2026-07-16 — CAISO C1 lane, candidate 1 CLOSED: the online-scoped reserve co-optimization is BUILT and measured INERT (probe `caiso-91`; keeper stays caiso-90)
+
+**Task (owner directive 2026-07-16, C1 CC-over/CT-under handoff, chartered
+candidate 1).** Build the issue-#1492 "correct build" — the CAISO reserve
+co-optimization with online-quality scoping (spin from ONLINE units only) —
+and A/B it against the caiso-90 keeper. Hypothesis under test: evening spin
+withholds loaded-CC headroom so CTs clear on merit, moving both C1 volume
+sides and the evening duals together.
+
+### 1. The build (`caiso_reserve_online_scoped`, GATED default off — kept, rule 1)
+
+The structurally-validated PJM `pjm_reserve_pergen_sync` product split ported
+onto the CAISO pergen spin/non-spin co-opt (`reserve_config._caiso_design` +
+the new shared `caiso_pergen_structure`/`caiso_pergen_pool_ramp10` helpers;
+flag-off byte-identical refactor):
+
+- Each (zone, fuel-class) R pool splits into a SPIN column — online 10-minute
+  ramp ONLY, the online pattern read from the model's own P0 run pattern at
+  the P0→P1 seam (`pipeline.commitment.caiso_pergen_sync_reserve_caps` +
+  `build_caiso_reserve_p1_prep`, the CAISO-RA-bridge/PJM-path-B
+  forward-regenerating convention; min-down gaps bridged, rule-18 physics
+  fast-start flags; hydro fast-start by physics) — and a NONSPIN column
+  (OFFLINE fast-start ramp; offline slow iron backs nothing), sharing the
+  pool's joint P+R headroom row.
+- Families become the NESTED tariff procurement: spin = ½ the BAL-002-WECC-3
+  requirement (§27.1.2.3.5 $100 flat curve, SPIN columns + storage RS);
+  contingency-total = the FULL requirement ($500/600/700 tiers, all columns —
+  BPM downward substitution). This also fixes the co-drawn form's effective
+  half-procurement (max(half, half) on a shared pool).
+- Rule-19 exclusivity enforced by validators: requires `caiso_reserve_coopt`;
+  mutually exclusive with `caiso_commitment_posture` (the MISO-posture family
+  — honesty-gate-rejected at miso-43 — gates the same phenomenon) and with
+  `caiso_locational_as_families` (zone∧product masks not composed).
+- Zero fitted parameters (tariff/NERC curves + requirement, physics
+  ramp10/fast-start thresholds, P0 commitment state — rules 5/11/13/23).
+  Year-invariant code-level structure (caiso-78/85/90 LOYO precedent).
+  Unit tests incl. an end-to-end LP proving the intended mechanism in
+  miniature (spin withholds loaded CC → CT clears displaced energy on merit →
+  $40 opportunity-cost spin dual; `tests/test_reserve_coopt.py`).
+
+### 2. The probe (`2026-07-16-caiso-91-reserve-coopt`, bundle `results/calibration/caiso91_reserve_online_scoped`) — INERT
+
+Full-span 2023-2025 single-delta-group A/B vs a same-machine caiso-90 keeper
+repro (`caiso_scarcity_pricing=False` in the probe per rule 19; both solved
+concurrently this session). **The reserve balance duals are zero in all
+26,280 solved hours** (`system.parquet` reserve_price max $0.0 in every
+year). Every scored surface is unchanged vs the repro:
+
+| report-back row | A (caiso-90 repro) | B (caiso-91) |
+|---|---|---|
+| C1 CC_REGULAR (TWh miss) | +1.90 / +5.30 / +2.56 | +1.90 / +5.30 / +2.55 |
+| C1 CT_PEAKER model TWh (actual 4.13/4.33/2.37) | 0.84 / 0.69 / 0.32 | 0.84 / 0.69 / 0.32 |
+| C1 CT_CHP · ST_GAS miss | −1.80/−1.74/−1.07 · −0.84/+0.51/+0.03 | identical |
+| Panoche 56803 GWh | 54 / 32 / 20 | 54 / 32 / 20 |
+| C3c model h >$200 (DA actual 80/52/0) | 18 (all Jan-13) / 0 / 0 | 18 (same day) / 0 / 0 |
+| hod signature (CC/CT, all buckets) | — | Δ ≤ ±2 GWh/bucket (LP tie noise) |
+| monthly residual map / mean LMP | — | identical to ±0.1 |
+| verdict grid | C1/C3a/C3c/C4 FAIL, C2/C3b/C5a/C6/C7/C8 PASS | identical (NOT-YET, same four) |
+
+WATCH months unmoved (Feb-2023, Apr-2023, Jan-2024, Sep-Dec-2025). C7/C8:
+CT_PEAKER stays sub-materiality at MODEL energy (2.0/—/1.2 % of load) with
+D-2 forced share 0.7/—/0.0 % — no floor was added and none armed.
+
+### 3. Adjudication — candidate 1 CLOSED; the mechanism stays (default-off)
+
+The ~1.1 GW mean spin requirement clears at zero opportunity cost from
+storage RS power headroom (8 GW fleet at the 30-min ASSOC sustain — the real
+market's dominant AS provider), online hydro headroom, and part-loaded online
+CC belly headroom. The caiso-59 inertness conclusion **survives the
+online-quality scoping that was chartered as its correct build**: the C1
+CC-over/CT-under cluster is NOT a reserve-withholding phenomenon, and the
+diagnosis §3 honest-inert finding extends from the post-solve overlay to the
+in-LP co-opt. The structure is kept default-off as the correct market
+mechanism (rule 1; the pjm-87 disposition). Chartered candidates remaining:
+(2) the Panoche-class committed-tranche gate (per-plant tolling/RA conduct —
+top-15 plants carry 91 % of actual CT energy) and (3) overnight CC cycling.
+**Disclosed next increment for the co-opt itself:** the hydro deliverability
+envelope caps only dispatched energy, not the joint P+R row, so hydro reserve
+headroom is overstated by (nameplate − envelope) per hour; even
+envelope-consistent, storage RS alone covers the requirement in the relevant
+hours, so this would not flip the verdict — filed as a note, not built.
+
+Rules compliance: solve years 2023-2025 only (rule 22); one bundle, years
+sequential, two invocations concurrent (rules 12/16); no ablation twin (rule
+21 as amended); registered as a labelled (PROBE) with
+legitimacy_diagnostics.json before dashboard_add_run, attestation +
+`calibration_verdict.py --write-metrics`, parity check green; zero new fitted
+scalars (rule 24 — flag registered in ScenarioConfig, DOF ledger identical to
+the keeper); keeper untouched.
