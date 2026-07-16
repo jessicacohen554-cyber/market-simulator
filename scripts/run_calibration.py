@@ -3522,6 +3522,24 @@ def run_year(
     # ISOs / no award file) leaves the key unset — identical LP.
     if storage_discharge_min is not None:
         dispatch_kwargs.update(storage_discharge_min=storage_discharge_min)
+    # Declared-window ELMP emergency-tier pricing (maxgen_emergency_tier_
+    # pricing, GATED default off — the MISO F5 scarcity-depth lane): inside a
+    # maxgen-events registry window declared at Max Gen Warning or higher,
+    # the declared region's zones reprice the load slack from the ISO bid cap
+    # to min(voll, tier floor) — $500 Tier 1 (Warning/Step 1), $1,000 Tier 2
+    # (Step 2+), SOM-footnoted (config.reserve_config citations; frozen
+    # design docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md).
+    # Backcast-only overlay (D-5): this orchestrator is the backcast path;
+    # the forecast runner never arms it. None (flag off / no Warning+ window
+    # overlapping the year) leaves the key unset — identical LP.
+    if getattr(config, "maxgen_emergency_tier_pricing", False):
+        from market_sim.data.maxgen_events import emergency_tier_slack_cost
+
+        _tier_slack = emergency_tier_slack_cost(
+            iso, year, list(zone_names), iso_config.voll, config.hours
+        )
+        if _tier_slack is not None:
+            dispatch_kwargs.update(slack_cost=_tier_slack)
     # Emissions mass-cap rows (policy constraint path, gated; G-29). Mirrors
     # runner.py's forecast-path `mass_caps` block so the backcast calibration
     # harness shares the identical seam — before this wire-through,
