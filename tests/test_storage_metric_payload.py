@@ -111,19 +111,26 @@ class ActualThroughputTests(unittest.TestCase):
 
 
 class StorageVerdictWiringTests(unittest.TestCase):
-    def test_c5b_activates_off_payload(self):
+    def test_c5b_reports_off_payload(self):
+        # v2.6(c): RETIRED — the error is computed off the payload keys and
+        # reported, never PASS/FAIL.
         ypay = {"storage": {"throughput_twh": 1.1}}
         ybench = {"storage": {"throughput_twh": 1.0}}
-        self.assertEqual(cv.score_storage(2024, ypay, ybench)["status"], cv.PASS)
+        r = cv.score_storage(2024, ypay, ybench)
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIn("+10.0%", r["magnitude"])
+        self.assertIn("report-only", r["magnitude"])
 
-    def test_c5b_fails_outside_band(self):
-        # +47% over-cycling, outside the +/-30% cycling-realism band.
+    def test_c5b_reports_outside_band(self):
+        # +47% over-cycling: reported with its magnitude, never gated (v2.6(c)).
         r = cv.score_storage(
             2024,
             {"storage": {"throughput_twh": 0.46}},
             {"storage": {"throughput_twh": 0.31}},
         )
-        self.assertEqual(r["status"], cv.FAIL)
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIsNone(r["classification"])
+        self.assertIn("report-only", r["magnitude"])
 
     def test_c5b_skips_without_actual(self):
         r = cv.score_storage(2024, {"storage": {"throughput_twh": 0.34}}, {})
@@ -218,14 +225,18 @@ class ActualMonthlyTests(unittest.TestCase):
 
 
 class StorageShapeVerdictTests(unittest.TestCase):
-    def test_c5c_passes_correlated_monthly(self):
+    def test_c5c_reports_correlated_monthly(self):
+        # v2.6(c): RETIRED — r is computed and reported, never PASS/FAIL.
         mon = [10.0, 8.0, 12.0, 15.0, 20.0, 25.0, 30.0, 28.0, 22.0, 18.0, 12.0, 9.0]
         ypay = {"storage": {"monthly_net_gwh": mon}}
         ybench = {"storage": {"monthly_net_gwh": mon}}
         r = cv.score_storage_shape(2024, ypay, ybench)
-        self.assertEqual(r["status"], cv.PASS)
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIn("r=1.000", r["magnitude"])
+        self.assertIn("report-only", r["magnitude"])
 
-    def test_c5c_fails_anticorrelated(self):
+    def test_c5c_reports_anticorrelated(self):
+        # v2.6(c): r=-1 is reported (visible) but never a FAIL (v2.6(c)).
         mon_m = [1.0, 2.0, 3.0, 4.0, 5.0, 6.0, 7.0, 8.0, 9.0, 10.0, 11.0, 12.0]
         mon_a = [12.0, 11.0, 10.0, 9.0, 8.0, 7.0, 6.0, 5.0, 4.0, 3.0, 2.0, 1.0]
         r = cv.score_storage_shape(
@@ -233,7 +244,9 @@ class StorageShapeVerdictTests(unittest.TestCase):
             {"storage": {"monthly_net_gwh": mon_m}},
             {"storage": {"monthly_net_gwh": mon_a}},
         )
-        self.assertEqual(r["status"], cv.FAIL)
+        self.assertEqual(r["status"], cv.SKIPPED)
+        self.assertIsNone(r["classification"])
+        self.assertIn("r=-1.000", r["magnitude"])
 
     def test_c5c_skips_without_actual(self):
         r = cv.score_storage_shape(
