@@ -14181,3 +14181,116 @@ measured multi-year operating level, cyclers self-exempt);
 calibration-keeper-auditor ran clean (0 failures, 0 warnings, no repairs —
 every quoted number matches the live scorer). caiso-87 remains registered
 on the dashboard as the prior keeper (top-15 retention, 7 CAISO runs).
+
+## 2026-07-16 — ERCOT-72: the covered-CC / CT composition on the moderate May shoulders — the no-must-offer DAM participation cliff MEASURED and NAMED (8.6 GW of CC live HSL not offered at any price; AS 63 MW and congestion refuted); the measured cleared-share offer boundary built and probe-adjudicated — composition target HIT EXACTLY, formation REFUTED in the static form (the tight regime is commitment-STATE-dependent); ERCOT-71 keeper registration RESTORED (transport root cause found: shallow-clone push)
+
+**Task (owner charter).** Close the residual ERCOT-71 leg A exposed: on the
+moderate May-2024 shoulder family (h10-20, 88h) the model prints $28.6 vs $67.3
+actual with the covered CC fleet +675 MW over measured at ~$30 while reality ran
+CT peakers and Braunig-class steamers at $57-100. Name the mechanism that makes
+reality run the CTs, test measurability, build leg-wise, full-span + LOYO.
+
+**Housekeeping first — the ERCOT-71 keeper registration RESTORED.** The ERCOT-71
+session's bundle, dashboard registration, and keeper promotion never reached the
+remote (only the PR #2313 mechanism build did). Root cause found this session:
+the container's SHALLOW git clone makes `git push` pack the entire 4.3 GiB object
+store (no provable common ancestry for thin-packing) and the remote hangs up —
+the same failure class CLAUDE.md's API-push rule documents. `git fetch
+--unshallow` restores thin-pack negotiation and pushes work normally (verify
+≥300-line blobs after push, rule 27 — done, 6/6 OK). The leg-A full-span bundle
+was re-solved in-session and score-verified against the ERCOT-71 record — 2024
+C3a -7.1% / C3b 0.160 / C3c 26h vs 68; 2023 +4.7% / 0.135; 2025 -5.1% / 0.102,
+exact match — and registered as `2026-07-16-ercot71-noncampd-availability`
+(bundle `results/calibration/ercot71_availability_fullspan`), keeper per the
+owner's recorded ERCOT-71 promotion (honest NOT-YET, deciding criterion
+storage_shape — the inherited C5c lane). `audit_keepers.py` PASS.
+
+**The measurement (the lane's real yield — 60-Day DAM disclosure Gen Resource
+Data, May-2024 shoulder family, config-collapsed site-hours).** ERCOT has no DAM
+must-offer, and the disclosure measures the consequence directly:
+
+* CC fleet: live HSL 23.4 GW, DA energy awards 15.4 GW; of the 8.0 GW unawarded
+  headroom only 0.28 GW was offered in-the-money, 1.1 GW offered-but-priced-out —
+  and **8.6 GW carried NO offer curve at any price**. CT: live 9.1 GW, awarded
+  2.9 GW (reality's CTs cleared in ordinary DAM merit — no missed RUC/AS
+  deployment signal), **4.9 GW not offered**.
+* AS withholding REFUTED as the owner: the whole CC fleet held 63 MW of spinning
+  AS on those hours (nonspin 0.6 GW); reality parked its NonSpin on OFF CTs
+  (2.3 GW). Congestion SECONDARY: DA SPP cross-resource p10-p90 spread $18 on a
+  $50 mean; the h18-19 climb to $106 is system-wide.
+* The measured aggregate CC supply curve on the live-capability basis is a
+  CLIFF, not a belt: 14.2 GW below $30, ~0.4 GW between $30-100, then nothing —
+  the ERCOT-69 belt's 0.95-0.99 within-OFFERED-unit shares translate to ~0.62-
+  0.65 of live capability, exactly where the model's 0.87 dispatch share sits
+  ABOVE. This is why leg B could never fire: its quantity axis was normalized on
+  the offered subset.
+* The cleared share is CONDITION-RESPONSIVE and year-stable: CC 0.33 (p0-25
+  net-load bin) -> 0.64 (p97+), CT 0.03 -> 0.47, within ±0.03 across 2023-2025
+  (`scripts/derive_ercot_dam_cleared_share.py`, frozen rule-23 artifact
+  `data/raw/_validation-source/ercot_dam_cleared_share_condbinned.json`).
+* BUT the DA stack is not the RT supply: on Aug-2024 afternoons (h14-19) the
+  real CC fleet ran 23.8 GW RT against 18.0 GW DA-offered / 20.3 GW DA-cleared —
+  RUC/self-commitment brings the un-offered capacity online near cost in tight
+  regimes; even the May shoulders RT-topped to 19.1 GW vs 15.4 DA-cleared. The
+  participation cliff is real but its price consequence is commitment-STATE
+  dependent.
+
+**The mechanism (built, admissible, default-off).**
+`ercot_offer_surface_cleared_share` (ERCOT-gated): each merchant gas econ*
+tranche row whose within-plant cumulative-capacity midpoint exceeds the hour's
+net-load bin's MEASURED cleared share is floored at the bin's MEASURED
+offered-but-uncleared wall (MW-weighted quantile ladder, rel-position-mapped
+over the above-boundary span; effective-HR multipliers on the daily gas price).
+Zero fitted scalars; boundary and wall both condition-binned (forward-native);
+P1-only via the mc_bid_adjust seam (P0/startup coupling byte-identical); peak
+rungs stay owned by `ercot_offer_surface_conditional`, committed/mustrun by the
+bridge/floors, ST_GAS by the drag, CC_CHP measured composition-clean (+12 MW);
+mutually exclusive with the midcurve belt (same econ rows — hard error, rule
+19). 6 trivial-case tests. Scope: CC_REGULAR + CT_PEAKER.
+
+**Full-span adjudication (`2026-07-16-ercot72-cleared-share-wall`, registered
+PROBE — REJECTED; keeper UNCHANGED).**
+
+| leg | 2023 C3a/C3b | 2024 C3a/C3b/C3c | 2025 C3a/C3b | May-24 | Nov-24 | May-24 shoulders (88h) |
+|---|---|---|---|---|---|---|
+| 0 = ercot71 keeper | +4.7% / 0.135 | -7.1% / 0.160 / 26h vs 68 | -5.1% / 0.102 | -6.9 | -4.2 | $28.6 vs $67.3; CC +675, CT 1,260 |
+| CS = 0 + cleared-share wall | **+15.9% / 0.248** | +5.0% / 0.174 / 47h | +2.3% / 0.097 | -5.0 | -3.0 | $32.7 vs $67.3; **CC +15**, CT 1,774 |
+
+* **The composition thesis is PROVEN on the dispatch side:** the May-shoulder
+  covered-CC excess collapses +675 -> **+15 MW** (share of live 0.872 -> 0.813),
+  CT dispatch rises 1,260 -> 1,774 (actual 1,370) — the model now serves the
+  shoulder with reality's mix, for reality's measured reason (the un-offered
+  capacity is priced out of the moderate-day stack).
+* **The formation half is REFUTED in the static form.** (a) The clearing stops
+  at $32.7, not $67: the walled CC gap overflows into the UNWALLED cheap
+  committed rungs of ST_GAS (+640 vs actual; drag-owned, rule 19 — no wall
+  there) and CT, capping the marginal price at the substitutes' committed
+  offers. (b) The tight-bin arm blankets over-lift exactly where the RT/RUC
+  measurement says the capacity comes online near cost: 2023 Aug +25.8 /
+  Sep +28.0 / Jun +18.1 (C3a +4.7% -> +15.9%), Jan-2024 +10.4, 2024 C3a flips
+  -7.1% -> +5.0% with C3b worsening 0.160 -> 0.174. August guard: the Aug 18-20
+  2024 window itself holds (max 2859 vs actual 3060; h>$200 4 = actual 4, no
+  shed) — the damage is the broad tight-month level, not the peak windows.
+  2025 improves (-5.1% -> +2.3%, C3b 0.097) — the mechanism's sign is right
+  where the regime is moderate.
+* LOYO: moot (no promotion talk for a rejected probe); the artifact's year
+  tables agree within ±0.03 anyway (nothing year-specific was fit).
+
+**Disposition (rules 1/11/13/14/19/26).** The DA participation cliff is a real,
+measured market structure and the composition lever works; what fails is
+pricing the un-offered capacity at the DA wall in ALL regimes when its RT
+engagement is commitment-state dependent. The static form is rejected and stays
+default-off; NO scoped/tuned variant was armed (a bins-below-p90 scope would be
+the residual-tuning move — the scope boundary needs its own measured driver).
+Successor lane (named, needs its own charter + data intake): the
+**commitment-state (DA/RT) construction** — a measured RUC/self-commit series
+(ERCOT RUC awards / COP snapshots) to carry WHICH regime prices the un-offered
+capacity at the wall vs near cost; composes with the ST_GAS participation
+question (the overflow sink is drag-owned, its own lane). The
+perfect-foresight ramp-premium ceiling stays the ledgered C3c caveat.
+
+**Ops.** Two full-span in-session solves (leg 0 reproduction + leg CS, ~24 min
+each; years sequential, one at a time). Both registered with benchmark rebuild,
+legitimacy diagnostics, and attestations; parity check PASS. The known
+`prb_overrides`/`ercot_wtx` recorder warning surfaced as documented. Transport:
+unshallow-then-push, blob-verified (rule 27).
