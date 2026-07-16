@@ -3015,6 +3015,70 @@ def build_pjm_external_flow_groups(
     return groups
 
 
+#: The model's EMAAC import cut: the two internal links crossing PJM's
+#: Manual-03 EASTERN reactive transfer interface boundary at the 8-zone
+#: grain (diagnosis §10.3/§10.5 — the interface's monitored EHV set spans
+#: both paths; external seam links are NOT part of the interface).
+PJM_EAST_CUT_LINKS: tuple[tuple[str, str], ...] = (
+    ("PJM_Central_PA", "PJM_EMAAC"),
+    ("PJM_SWMAAC", "PJM_EMAAC"),
+)
+
+
+def build_pjm_east_interface_cut_groups(
+    links: list[TransferLink],
+    limit_hourly: np.ndarray,
+) -> list[tuple]:
+    """The measured joint EMAAC-import cut (``pjm_east_interface_cut``).
+
+    One ONE-SIDED aggregate interface group capping the summed eastward flow
+    across :data:`PJM_EAST_CUT_LINKS` at the hour's measured "Average
+    Eastern" limit (PJM's EASTERN reactive transfer interface — the real
+    EMAAC import cut, which the per-link
+    ``pjm_measured_interface_limits`` overlay applies to Central_PA→EMAAC
+    alone while the 5,000 MW SWMAAC→EMAAC static rides in parallel; the real
+    interface monitors both paths, so the joint cap is the faithful
+    reduced-network reading — diagnosis §10.5, zero fitted scalars). A link
+    oriented opposite the cut (EMAAC→X) enters with sign −1 so the group
+    reads net eastward flow. One-sided (``bidirectional=False``): an import
+    security limit never caps the reverse (westward) direction, which keeps
+    the per-link TTCs.
+
+    Args:
+        links: The topology's transfer links (pre- or post- import-node
+            extension — matching is by zone pair).
+        limit_hourly: ``(T,)`` measured hourly cap from
+            :func:`market_sim.data.transfer_interface_limits.pjm_eastern_interface_hourly`.
+
+    Returns:
+        A single-element list of 5-tuples ``(link_idx, cap_hourly, False,
+        None, signs)`` for :func:`market_sim.model.dispatch._build_interface_rows`,
+        or an empty list when neither cut link exists in the topology (the LP
+        is then byte-identical).
+    """
+    idx: list[int] = []
+    signs: list[float] = []
+    for a, b in PJM_EAST_CUT_LINKS:
+        for li, link in enumerate(links):
+            if (link.from_zone, link.to_zone) == (a, b):
+                idx.append(li)
+                signs.append(1.0)
+            elif (link.from_zone, link.to_zone) == (b, a):
+                idx.append(li)
+                signs.append(-1.0)
+    if not idx:
+        return []
+    return [
+        (
+            np.array(idx, dtype=int),
+            np.asarray(limit_hourly, dtype=float),
+            False,
+            None,
+            np.array(signs, dtype=float),
+        )
+    ]
+
+
 def build_wecc_import_generators(
     border_carbon_per_mwh: float = 0.0,
 ) -> list[Generator]:
