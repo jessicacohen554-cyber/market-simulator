@@ -2486,13 +2486,17 @@ class MarketDesign:
         scalar ``config.capacity_market_clearing``. Passing ``iso=None`` (every
         pre-CR-1 call site) reproduces the scalar-gated behavior byte-identically.
 
-        ``year`` is accepted for the per-delivery-year vintage anchor (RC-1B
-        item 2) but is currently a no-op: the ``MARKET_DESIGN_VINTAGES`` table it
-        would consult is not yet landed, so the frozen single-vintage anchor
-        governs regardless of ``year``. It is a parameter, not a behavior, until
-        that table lands — the storage/entry call sites pass it forward now so no
-        signature change is needed when the vintage resolver arrives. Passing it
-        today does not change any price (default byte-identical).
+        ``year`` selects the per-delivery-year vintage (RC-1B item 2). It is
+        consulted through :func:`resolve_demand_curve_vintage` ONLY inside the
+        curve branch and ONLY when BOTH ``iso`` and ``year`` are supplied — the
+        matched vintage's own ``net_cone_curve_per_kw_yr`` anchor and
+        ``demand_curve`` shape then govern (a vintage whose shape is not
+        normalizable carries ``demand_curve=()`` and prices on its flat anchor).
+        Every pre-CR-1 call site passes ``year=None`` (only storage new entry
+        threads it), so the registry default curve/anchor governs and the price
+        is byte-identical; and at a delivery year whose vintage equals the
+        registry reference (e.g. PJM 2026), the vintage override reproduces the
+        registry price exactly.
         """
         if not self.capacity_market:
             return 0.0
@@ -2502,9 +2506,23 @@ class MarketDesign:
             and config is not None
             and resolve_capacity_market_clearing(config, iso)
         ):
+            curve = self.demand_curve
             anchor = self.net_cone_curve_per_kw_yr or self.net_cone_per_kw_yr
-            frac = evaluate_demand_curve(self.demand_curve, float(reserve_position))
-            return frac * anchor * 1000.0
+            # RC-1B item 2: per-delivery-year vintage override — consulted ONLY
+            # when BOTH iso and year are supplied. Every pre-CR-1 call site
+            # passes year=None (guarded here), so it never fires and the price
+            # stays byte-identical; only storage new entry threads a year.
+            if iso is not None and year is not None:
+                vintage = resolve_demand_curve_vintage(iso, year)
+                if vintage is not None:
+                    anchor = vintage.net_cone_curve_per_kw_yr or anchor
+                    curve = vintage.demand_curve
+            if curve:
+                frac = evaluate_demand_curve(curve, float(reserve_position))
+                return frac * anchor * 1000.0
+            # Vintage published a net-CONE anchor but no normalizable curve
+            # shape (demand_curve=()): fall back to its flat anchor.
+            return anchor * 1000.0
         if self.net_cone_per_kw_yr <= 0.0:
             return 0.0
         return self.net_cone_per_kw_yr * 1000.0
@@ -2709,6 +2727,233 @@ MARKET_DESIGN: dict[str, MarketDesign] = {
 }
 
 DEFAULT_MARKET_DESIGN: MarketDesign = MarketDesign(capacity_market=False)
+
+
+@dataclass(frozen=True)
+class MarketDesignVintage:
+    """One delivery-year vintage of an ISO's capacity demand curve (RC-1B item 2).
+
+    The per-delivery-year override :func:`resolve_demand_curve_vintage` returns,
+    consulted by :meth:`MarketDesign.capacity_price_per_firm_mw_yr` only when a
+    solve prices a specific ``year`` under the CR-1 clearing gate. Each field
+    overrides the same-named :class:`MarketDesign` field for that delivery year:
+
+    * ``net_cone_curve_per_kw_yr`` — the PUBLISHED net-CONE anchor (in $/kW-yr)
+      the curve scales, for THIS delivery year.
+    * ``demand_curve`` — the normalized (reserve_ratio, price/net-CONE) shape, or
+      ``()`` when the delivery year publishes a net-CONE anchor but not a
+      normalizable curve shape (rule 13: never fabricate an unpublished point) —
+      the price then falls back to the flat vintage anchor.
+
+    ``delivery_year`` is the ISO's own label ("2026/2027", "2025-2026"); its
+    leading four digits are the delivery period's start calendar year — the key
+    :func:`resolve_demand_curve_vintage` maps a model year onto. Every number
+    traces to the P-0B ``capacity-market-demand-curve`` datatype
+    (``data/raw/capacity-market/demand-curve/<iso>/<iso>.csv``); the
+    reconciliation is asserted in ``tests/test_capacity_demand_curve.py``.
+    """
+
+    delivery_year: str
+    net_cone_curve_per_kw_yr: float
+    demand_curve: tuple[CapacityDemandCurvePoint, ...] = ()
+
+
+# --- Per-delivery-year vintage curves & anchors (RC-1B item 2) -------------
+#
+# MARKET_DESIGN_VINTAGES below carries each capacity-market ISO's demand curve
+# for every published delivery year (not just the single MARKET_DESIGN
+# reference), so a forecast solve prices adequacy on the delivery year it is
+# actually simulating. Anchors and cap fractions are read off the SAME raw
+# datatype the registry reference is (data/raw/capacity-market/demand-curve),
+# on the SAME per-ISO conventions:
+#   PJM   anchor = published UCAP net-CONE ($/MW-day) × 365 / 1000;
+#         cap    = price_cap / net-CONE (both $/MW-day UCAP).
+#   NYISO anchor = NYCA Annual Reference Value ($/kW-yr); first-order straight
+#         line, net-CONE at the requirement, zero at 1 + 12% curve length,
+#         cap = max clearing / reference-point price (both $/kW-month).
+#   NEISO anchor = net-CONE ($/kW-month) × 12; FCA 11 reserve-position geometry,
+#         cap = starting price / net-CONE (both $/kW-month).
+#   MISO  anchor = North/Central Net CONE ($/MW-yr) / 1000; first-order RBDC.
+# A delivery year that publishes a net-CONE anchor but no normalizable shape
+# carries demand_curve=() and prices on the flat anchor (rule 13). The vintage
+# that equals the MARKET_DESIGN reference REUSES its exact curve/anchor object,
+# so pricing that delivery year is byte-identical to the registry default.
+
+# PJM 2027/2028 BRA — the same Manual 18 §3.4 post-CIFP VRR points as 2026/2027
+# (0.99, 1.015, 1.045); cap = price cap / net-CONE = 333.44 / 242.52 (both
+# $/MW-day UCAP). Source: 2027/2028 RPM BRA Planning Period Parameters
+# (posted 2025-08-26), Table 3 + VRR/Summary sections.
+_PJM_VRR_CURVE_2027_2028: tuple[CapacityDemandCurvePoint, ...] = (
+    CapacityDemandCurvePoint(0.99, 333.44 / 242.52),  # price cap
+    CapacityDemandCurvePoint(1.015, 1.0),  # Net CONE reference point
+    CapacityDemandCurvePoint(1.045, 0.0),  # zero-cross (published y=0)
+)
+
+# NYISO NYCA "Demand Curve Length" — the zero-crossing offset above the
+# requirement, fixed at 12% for the entire 2021-2025 DCR cycle (Analysis Group
+# DCR report Table 2, C-Central/NYCA), so it is not a per-vintage parameter.
+_NYISO_NYCA_CURVE_LENGTH: float = 0.12
+
+
+def _nyiso_icap_vintage_curve(
+    ref_point_month: float,
+    max_price_month: float,
+    length: float = _NYISO_NYCA_CURVE_LENGTH,
+) -> tuple[CapacityDemandCurvePoint, ...]:
+    """One NYISO NYCA ICAP demand-curve vintage (annualized, first-order).
+
+    The same straight-line construction as the registry ``_NYISO_ICAP_CURVE``:
+    net-CONE (fraction 1.0) at the requirement, zero at ``1 + length``, and the
+    max-clearing-price cap (fraction = ``max_price_month / ref_point_month``,
+    both $/kW-month so basis-independent) placed where that fraction meets the
+    reference→zero line.
+    """
+    cap_frac = max_price_month / ref_point_month
+    x_cap = 1.0 - (cap_frac - 1.0) * length
+    return (
+        CapacityDemandCurvePoint(x_cap, cap_frac),  # max clearing price
+        CapacityDemandCurvePoint(1.0, 1.0),  # reference point = Net CONE
+        CapacityDemandCurvePoint(1.0 + length, 0.0),  # zero-cross
+    )
+
+
+# ISO-NE FCA vintages share FCA 11's (2020/2021) reserve-position geometry —
+# its published MW curve normalized by the Net ICR gives cap-plateau end 0.978
+# and zero-cross 1.083 of the requirement (the same first-order construction the
+# registry ``_NEISO_FCA_CURVE`` uses; the interior MRI kink is skipped, refined
+# in CR-3). Each vintage varies only its cap fraction and anchor.
+_NEISO_FCA_CAP_X: float = 0.978
+_NEISO_FCA_ZERO_X: float = 1.083
+
+
+def _neiso_fca_vintage_curve(
+    net_cone_month: float, starting_price_month: float
+) -> tuple[CapacityDemandCurvePoint, ...]:
+    """One ISO-NE FCA delivery-year vintage curve on FCA 11's geometry.
+
+    Cap fraction = ``starting_price_month / net_cone_month`` (both $/kW-month,
+    ratio basis-independent); net-CONE at the requirement; zero at 1.083.
+    """
+    return (
+        CapacityDemandCurvePoint(
+            _NEISO_FCA_CAP_X, starting_price_month / net_cone_month
+        ),  # starting (max) price
+        CapacityDemandCurvePoint(1.0, 1.0),  # Net CONE at requirement
+        CapacityDemandCurvePoint(_NEISO_FCA_ZERO_X, 0.0),  # zero-cross
+    )
+
+
+# Per-ISO vintages, ascending by delivery-period start year. A vintage equal to
+# the MARKET_DESIGN reference REUSES that registry curve object + anchor.
+MARKET_DESIGN_VINTAGES: dict[str, tuple[MarketDesignVintage, ...]] = {
+    "PJM": (
+        # Pre-CIFP vintages (2021/22-2024/25) published the VRR curve as
+        # absolute-MW (level, price) points with no requirement-MW row to
+        # normalize by → no pct_of_requirement shape (demand_curve=()); the
+        # published UCAP net-CONE is the flat anchor. 2025/2026 has
+        # pct_of_requirement points but no separately-published price cap (the
+        # first VRR curve "with both a defined maximum and minimum price" was
+        # 2026/2027 per Monitoring Analytics), so its cap fraction is not
+        # normalizable → also ().
+        MarketDesignVintage("2021/2022", 321.57 * 365.0 / 1000.0),
+        MarketDesignVintage("2022/2023", 260.5 * 365.0 / 1000.0),
+        MarketDesignVintage("2023/2024", 274.96 * 365.0 / 1000.0),
+        MarketDesignVintage("2024/2025", 293.19 * 365.0 / 1000.0),
+        MarketDesignVintage("2025/2026", 228.81 * 365.0 / 1000.0),
+        MarketDesignVintage("2026/2027", 77.431, _PJM_VRR_CURVE),  # registry ref
+        MarketDesignVintage(
+            "2027/2028", 242.52 * 365.0 / 1000.0, _PJM_VRR_CURVE_2027_2028
+        ),
+    ),
+    "NYISO": (
+        # 2021-2022/2022-2023 published NO NYCA Annual Reference Value and no
+        # price cap — only a monthly reference-point price + IRM — so they carry
+        # a ()-shape and a FLAT anchor = the published NYCA reference-point price
+        # × 12 (a unit conversion of the monthly net-CONE-equivalent point; on a
+        # slightly higher basis than the later Annual Reference Value anchors,
+        # which net E&AS across all 12 months — used only as the flat fallback
+        # for these two past ()-vintages, never a curve). Reference points:
+        # 2021-2022 = 7.81, 2022-2023 = 8.87 $/kW-month (nyiso.csv NYCA row).
+        MarketDesignVintage("2021-2022", 7.81 * 12.0),
+        MarketDesignVintage("2022-2023", 8.87 * 12.0),
+        MarketDesignVintage("2023-2024", 74.13, _nyiso_icap_vintage_curve(7.55, 15.62)),
+        MarketDesignVintage("2024-2025", 72.35, _nyiso_icap_vintage_curve(7.41, 17.32)),
+        MarketDesignVintage("2025-2026", 50.55, _NYISO_ICAP_CURVE),  # registry ref
+    ),
+    "NEISO": (
+        MarketDesignVintage(
+            "2020-2021", 11.64 * 12.0, _neiso_fca_vintage_curve(11.64, 18.624)
+        ),
+        MarketDesignVintage(
+            "2021-2022", 8.04 * 12.0, _neiso_fca_vintage_curve(8.04, 12.864)
+        ),
+        MarketDesignVintage(
+            "2022-2023", 8.156 * 12.0, _neiso_fca_vintage_curve(8.156, 13.05)
+        ),
+        MarketDesignVintage(
+            "2023-2024", 8.187 * 12.0, _neiso_fca_vintage_curve(8.187, 13.099)
+        ),
+        MarketDesignVintage(
+            "2024-2025", 8.707 * 12.0, _neiso_fca_vintage_curve(8.707, 13.932)
+        ),
+        MarketDesignVintage(
+            "2025-2026", 7.468 * 12.0, _neiso_fca_vintage_curve(7.468, 12.4)
+        ),
+        MarketDesignVintage(
+            "2026-2027", 7.359 * 12.0, _neiso_fca_vintage_curve(7.359, 12.761)
+        ),
+        MarketDesignVintage("2027-2028", 108.94, _NEISO_FCA_CURVE),  # registry ref
+    ),
+    "MISO": (
+        # Only PY2025-26 carries BOTH a regional (North/Central) Net-CONE anchor
+        # and a normalizable RBDC shape. PY2026-27 publishes Net CONE per-LRZ
+        # only (no North/Central aggregate — a zone-boundary mismatch, rule 5)
+        # and its RBDC curve chart was unretrievable (cdn.misoenergy.org 403), so
+        # it is omitted; hold-last serves PY2025-26 for later years. The pre-RBDC
+        # years (PY2021/22-2024/25) were a vertical curve with no published shape
+        # and are likewise absent — hold-first serves the PY2025-26 sloped RBDC
+        # for them (a documented stand-in, not the pre-RBDC vertical regime).
+        MarketDesignVintage("2025-2026", 79.8, _MISO_RBDC_CURVE),  # registry ref
+    ),
+}
+
+
+def resolve_demand_curve_vintage(
+    iso: "str | None", year: "int | None"
+) -> "MarketDesignVintage | None":
+    """Return the capacity demand-curve vintage governing ``iso``'s ``year``.
+
+    The per-delivery-year selector behind :meth:`MarketDesign.
+    capacity_price_per_firm_mw_yr`'s ``year`` argument (RC-1B item 2). An ISO's
+    vintages (:data:`MARKET_DESIGN_VINTAGES`) are ordered ascending by
+    delivery-period start year (the leading four digits of
+    :attr:`MarketDesignVintage.delivery_year`); resolution is a step function:
+
+    * ``year`` at or after a vintage's start year selects that vintage (the
+      latest such — the ISO's most-recent published parameters for that year);
+    * ``year`` before the earliest vintage HOLDS-FIRST to it (e.g. a MISO year
+      before PY2025-26 gets the 2025-26 RBDC — a documented stand-in for the
+      unpublished pre-RBDC vertical curve);
+    * ``year`` after the latest vintage HOLDS-LAST to it (the forward-carry a
+      forecast uses — the most-recent published curve governs future years).
+
+    Returns ``None`` when ``iso``/``year`` is ``None`` or the ISO has no vintage
+    table (CAISO/ERCOT, or any ISO absent from :data:`MARKET_DESIGN_VINTAGES`) —
+    the caller then keeps the registry-default curve/anchor byte-identically.
+    """
+    if iso is None or year is None:
+        return None
+    vintages = MARKET_DESIGN_VINTAGES.get(iso)
+    if not vintages:
+        return None
+    chosen = vintages[0]
+    for v in vintages:
+        if year >= int(v.delivery_year[:4]):
+            chosen = v
+        else:
+            break
+    return chosen
+
 
 # Target planning reserve margin per ISO for the reserve-margin adequacy
 # backstop (capacity.py::apply_reserve_margin_build). Each ISO sets its own
@@ -3045,7 +3290,7 @@ RENEWABLE_ELCC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
 }
 
 # Thermal accreditation basis for the same adequacy ledger, per ISO. Default
-# (ISO absent): "ucap" = pmax x (1 - EFORd). Two published-basis alternatives:
+# (ISO absent): "ucap" = pmax x (1 - EFORd). Three published-basis alternatives:
 #
 # * "seasonal_rating" counts thermal at its rating with NO forced-outage
 #   derate — ERCOT's CDR convention, where forced-outage risk lives in the
@@ -3062,9 +3307,26 @@ RENEWABLE_ELCC_CURVES_BY_ISO: dict[str, dict[str, RenewableElccCurve]] = {
 #   likewise stated on PJM's ELCC-reform UCAP basis (P-2B Option A per-ISO
 #   published-basis consistency — accreditation-basis memo 2026-07-12 §4.1,
 #   R3). Read exactly as "seasonal_rating" is by :func:`_thermal_firm_mw`.
+# * "claimed_capability" counts thermal at its Qualified Capacity with NO
+#   forced-outage derate — ISO-NE's FCM convention. A resource's summer QC is
+#   the median of its last five years' Seasonal Claimed Capability (Market
+#   Rule 1 §III.13.1.2.2.1.1, eff. 2025-05-03); a full-text search of the
+#   235-page III.13/III.14 tariff for "EFORd" returns zero matches. EFORd
+#   enters only the system-wide GE MARS/ICR reliability sizing (ICR Reference
+#   Guide §5.6.1), never an individual resource's accredited MW; individual
+#   forced-outage/performance risk is instead priced ex post through
+#   Pay-for-Performance (§III.13.7.2), so applying (1-EFORd) here would
+#   double-derate a risk ISO-NE already prices separately. Numerically identical
+#   to "seasonal_rating" (returns 1.0) but kept a DISTINCT basis because the
+#   *reason* for no derate differs (ERCOT: target margin; ISO-NE: ex-post PFP) —
+#   a citation trail must trace to the actual mechanism, not a numerically-
+#   convenient neighbor (rule 5/13; R5b, pairing-adjudication 2026-07-15 §1).
+#   Dating caveat: current through the FCM's CCP2027-2028 sunset (final FCA held
+#   Feb 2024), not validated against the successor accreditation-reform process.
 THERMAL_ACCREDITATION_BASIS_BY_ISO: dict[str, str] = {
     "ERCOT": "seasonal_rating",
     "PJM": "elcc_class_rating",
+    "NEISO": "claimed_capability",
 }
 
 # PJM thermal ELCC class ratings (2025/26 CIFP reform) — the firm fraction of
