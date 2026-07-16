@@ -6124,6 +6124,124 @@ def load_retired_within_window(
     return generators
 
 
+def load_mothballed_but_operating(
+    iso: str,
+    iso_config: ISOConfig | None = None,
+    data_dir: Path | None = None,
+    year: int | None = None,
+) -> list[Generator]:
+    """Re-carry OA (mothballed) units that were OP in the year-matched vintage.
+
+    The Cottonwood lane (``docs/handoffs/miso-cc-vintage-undercarry-plan-
+    2026-07.md`` §5/§7). The canonical operable snapshot is a single recent
+    vintage; :func:`_rows_to_generators` keeps ``status == "OP"`` only, so a
+    unit that snapshot marks OA (out of service — a mothball, not a
+    retirement) is absent from *every* modeled year, even years it
+    demonstrably ran. The within-window retiree channel
+    (:func:`load_retired_within_window`) cannot catch this either: an OA unit
+    never appears on the Retired-and-Canceled sheet, and that channel emits
+    whole-plant exits only, while a mothball can be partial (Cottonwood
+    55358: 4 of 8 units OA in the 2025ER snapshot, 576 MW, with CAMPD showing
+    the OA CTs running 88-91% of 2023 hours).
+
+    The re-carry trigger is the **vintage-status oracle** — the unit is
+    injected for backcast solve ``year`` iff it is OP in the year-matched
+    EIA-860 vintage (``vintage_<year>/``). That is EIA's own contemporaneous
+    status: a unit truly idle in the solve year is OA in its own vintage too
+    and stays dropped, so OA status alone never re-carries capacity (the
+    rule-13 admissibility hinge — charter §4). Zero fitted parameters. The
+    qualifying units are built **from the vintage rows** (year-matched
+    net-summer capacity and attributes — the same record the oracle reads),
+    per-unit, so a partial mothball leaves the surviving OP units (already
+    loaded from the snapshot) untouched and no unit is double-carried.
+
+    **Backcast-mode only**, gated on ``ScenarioConfig.carry_operating_
+    mothballs`` (default off) at the call site. Solve years with no committed
+    ``vintage_<year>/`` (2025 — the canonical snapshot IS the 2025 Early
+    Release) carry nothing: the accepted 2025 under-carry (charter §10 owner
+    default, 2026-07-16). Forward story (rule 12): a unit OP in its most
+    recent vintage is physically available and would be carried forward
+    until a real exit (economic screen / confirmed-retirement registry)
+    removes it; per the same owner default the forecast path is deliberately
+    NOT wired — a forecast keeps the canonical snapshot's contemporaneous OA
+    judgment.
+
+    Under an active ``eia860_vintage_year`` switch this channel self-
+    neutralizes: the snapshot read here IS the vintage file, whose OA units
+    are OA in the oracle file too, so nothing qualifies (no double-count —
+    the vintage fleet already carries its own OP units natively).
+
+    Returns an empty list when ``year`` is ``None``, either parquet is
+    absent, or nothing qualifies.
+    """
+    iso = iso.upper()
+    if year is None:
+        return []
+    data_dir = active_eia860_dir() if data_dir is None else Path(data_dir)
+    if iso_config is None:
+        try:
+            iso_config = get_iso_config(iso)
+        except ValueError:
+            iso_config = None
+
+    snap_path = data_dir / EIA_860_PARQUET_NAME
+    vintage_path = EIA_860_DIR / f"vintage_{int(year)}" / EIA_860_PARQUET_NAME
+    if not snap_path.exists() or not vintage_path.exists():
+        return []
+
+    snap = _normalize_columns(pd.read_parquet(snap_path))
+    if "status" not in snap.columns:
+        return []
+    ba_code = ISO_TO_BA_CODE.get(iso)
+    if ba_code is not None and "balancing_authority_code" in snap.columns:
+        ba = snap["balancing_authority_code"].astype(str).str.strip()
+        snap = snap[ba == ba_code]
+    status = snap["status"].astype(str).str.strip().str.upper()
+    # OA only (out of service, expected to return — the mothball status the
+    # charter scopes this channel to). OS/SB/retired statuses are deliberately
+    # out of scope: extending the channel needs its own probe.
+    oa = snap[status == "OA"]
+    if oa.empty:
+        return []
+
+    def _unit_keys(df: pd.DataFrame) -> list[tuple[int, str]]:
+        codes = pd.to_numeric(df["plant_id"], errors="coerce").fillna(0)
+        gids = df["generator_id"].astype(str).str.strip()
+        return [(int(c), g) for c, g in zip(codes, gids)]
+
+    vint = _normalize_columns(pd.read_parquet(vintage_path))
+    if "status" not in vint.columns:
+        return []
+    if ba_code is not None and "balancing_authority_code" in vint.columns:
+        ba = vint["balancing_authority_code"].astype(str).str.strip()
+        vint = vint[ba == ba_code]
+    vstatus = vint["status"].astype(str).str.strip().str.upper()
+    vint = vint[vstatus == "OP"]
+
+    oa_keys = set(_unit_keys(oa))
+    carried = vint[[k in oa_keys for k in _unit_keys(vint)]]
+    if carried.empty:
+        return []
+
+    carried = carried.copy()
+    # Plant-level CHP flag, exactly as the operable/retiree loaders join it
+    # (that year's EIA-860 designation when the per-year lookup exists).
+    carried["chp"] = carried["plant_id"].map(_chp_by_plant(data_dir, year)).fillna("N")
+    generators = _rows_to_generators(carried, iso, iso_config)
+    if generators:
+        logger.info(
+            "re-carried %d mothballed-but-operating units for %s %d "
+            "(%.0f MW; OA in the snapshot, OP in vintage_%d; plants %s)",
+            len(generators),
+            iso,
+            year,
+            sum(g.pmax_mw for g in generators),
+            year,
+            sorted({int(g.plant_code) for g in generators}),
+        )
+    return generators
+
+
 # Vintage year of the operable EIA-860 snapshot behind the committed
 # generators parquet: units online through this year are in the operable
 # schedule. Proposed rows whose Effective Year is at or before it are
