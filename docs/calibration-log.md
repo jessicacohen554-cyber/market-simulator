@@ -13399,3 +13399,229 @@ not flipped). Retention: dropped oldest PJM run (pjm-99) for top-15.
 `MALLOC_ARENA_MAX=2`); prereqs `fetch_pjm_da_virtuals --feeds hrl_da_incs_decs` +
 `regenerate_clean ramp-capability`. `git push` works from this container
 (source-sized pack).
+
+---
+
+## 2026-07-15 — ERCOT-69: the G-22 DA-expressible formation build — mechanism 2 (DAM mid-curve offer surface) built + probed, mechanism 1 (DAM AS demand curve) shown already-resident; BOTH cannot form the defining target, which is adjudicated a SUPPLY-MIX residual, not DA-expressible offer/AS formation; keeper UNCHANGED
+
+**Task (owner-issued charter, the ERCOT-68 hand-off).** Return ERCOT to the
+CALIBRATED track by building the two ERCOT-68-STEP-3 DA-expressible
+identifications — (1) the DAM AS demand curves, (2) the DAM offer surface at
+moderate reserve levels — and probing whether they form the moderate-tightness
+family the keeper still misses (May-2024 DA shoulders, Nov-2024, winter
+mornings; C3a −14.2% / C3b 0.212 in 2024).
+
+**Leg 0 (keeper reproduction, 2024).** `2026-07-15-ercot66-storage-rebasis`
+reconstructed byte-for-byte: C3a −14.2%, C3b 0.212, C3c 20h vs 68; May −12.5,
+May-8 −261.5, shoulders May-9/10/12/13/21/27/29/30 = −30.8/−15.7/−20.4/−22.3/
+−26.7/−27.0/−15.9/−18.5. Controls verified against the charter.
+
+**Mechanism 2 — the DAM mid-curve offer surface (BUILT, default-off).** The
+existing `ercot_offer_surface_conditional` reprices only the gas PEAK rungs
+(top ~263 h/yr); this adds the ERCOT analogue of the PJM mid-curve surface
+(`ercot_offer_surface_midcurve_conditional`): a frozen derive
+(`scripts/derive_ercot_offer_midcurve.py`, rule 23) samples the 60-Day DAM
+disclosure offer curves within-unit by HSL share, capacity-weighted MEAN
+implied-HR mult per (gas class, year, net-load bin, share) at finer edges
+(0.50/0.70/0.85/0.95); `fleet.build_ercot_offer_midcurve_conditional_markup`
+floors the gas econ tranches (CC_REGULAR/CC_CHP/CT_PEAKER `econ*` rows) at the
+measured level (P1-only, disjoint from the peak surface, ST_GAS excluded —
+rule 19). Zero fitted parameters. Probe ladder (rule-16 single-year throwaways,
+deleted; controls reproduce the keeper):
+
+| rung | year | C3a | C3b | C3c | anatomy |
+|---|---|---|---|---|---|
+| keeper (leg 0) | 2024 | −14.2% | 0.212 | 20 vs 68 | May −12.5, Nov −5.8, Jan +0.2 |
+| leg B (+midcurve) | 2024 | −11.5% | 0.210 | 20 vs 68 | Jan +0.2→**+6.1** (over-lift); May −12.5→**−12.3** (shoulders UNMOVED); 576 econ rows floored, tightest bin 438h |
+| keeper (leg 0) | 2023 | −2.0% | 0.065 | 150 vs 311 | — |
+| leg B (+midcurve) | 2023 | −0.8% | 0.065 | 150 vs 311 | Jan **+8.0**, Sep **+9.0** (over-lifts) |
+
+**Verdict on mechanism 2: it lifts the annual LEVEL (C3a) via a mis-targeted
+winter/tight-hour over-price, NOT via the defining target.** The floor fires by
+net-load bin, so it engages winter/high-net-load hours (already priced by the
+ORDC/scarcity stack — a partial double-count) and over-prices them (Jan +6.1 in
+2024, Jan +8.0 / Sep +9.0 in 2023), while the May moderate shoulders — the
+defining target — move ≤ $0.2 to the cent. C3b/C3c are unchanged (no shape
+improvement), and 2024 still fails the promotion bar (C3a −11.5% > ±10%, C3b
+0.210 > 0.20). NOT a keeper; the code stays default-off durable infrastructure.
+
+**Why it cannot form the shoulders — direct offer measurement (the decisive
+finding).** The model's gas offer curve ALREADY EXCEEDS the measured 60-Day DAM
+offers at every within-plant tranche share and net-load bin: measured committed
+CC implied-HR is 6.7–11.6× at shares 0.5–0.90 (≈/below the model's econ_high
+11.26×) and 18–22× at the top belt (0.95–0.99), where the model's peak band
+already sits at 33.5×. So `max(0, measured − model)` floors almost nothing on
+the classes it can touch, and where it does bite the effect lands in the wrong
+(winter tight) hours. The model clears the May shoulder afternoons at CC
+econ_high ($24–35); reality clears $60–97 (RTORPA ≤ $38 those hours — NOT AS
+scarcity). The gap is which units clear, not what they offer.
+
+**Mechanism 1 — the DAM AS demand curves (ENUMERATED, already resident).** The
+ORDC reserve demand curve IS the published RTC+B AS-demand-curve construction
+(`scarcity.ercot_ordc_demand_steps` docstring: "matches the published RTC+B AS
+demand curves"), and the keeper already carries it in-LP
+(`ercot_ordc_total_reserve=True`). It does not form the moderate-tightness
+prices because the model's realized reserves are LOOSE at those hours (the
+storage-supply / M4 lane, off-limits). A scorer-only ceiling test confirms the
+AS channel is not the owner: adding the measured binding DAM AS MCPC to the
+leg-0 prices OVER-corrects (C3a −14.2%→+0.5% at the $150 threshold, dominated by
+the May-8 event; the Jan-15/16 winter mornings blow past actual — $776→$1,963
+model vs $201 actual), and **Nov-2024 stays −5.8 regardless (zero AS signal)**.
+The MCPC is the AS clearing price, not the (much smaller) energy opportunity
+cost the co-opt would form, and it has no reach on the offer-driven Nov/shoulder
+residual. Building a new per-product above-plan ASDC would only fire where the
+model is already tight — not the moderate shoulders — so it is enumerated, not
+built (one mechanism per phenomenon, rule 19).
+
+**Disposition (rules 1/14/19).** One conclusion, converging from four
+independent measurements (offer data, AS MCPC data, the resident ASDC, the
+leg-0 dispatch): the defining moderate-tightness under-pricing (May-2024 DA
+shoulders, Nov-2024, the broad C3a gap) is a **SUPPLY-MIX / dispatch residual**,
+not the DA-expressible offer/AS formation the ERCOT-68 hand-off hypothesised.
+The model climbs less far up its own (already-above-measured) offer stack than
+reality did because it has more cheap capacity available at those hours
+(storage discharge, West/Panhandle gas oversupply, CC availability) — all
+off-limits here (ERCOT-66 storage dead end; the West/Panhandle topology
+charter; ERCOT-67 availability). Neither DA-expressible mechanism can form it:
+the offers already exceed measured, the AS channel over-corrects and is silent
+on Nov, and the ASDC is already present. The event-day / winter-morning
+scarcity depth (where reserves ARE genuinely tight) remains the availability +
+resident-ORDC lane, not this one. **Keeper UNCHANGED**
+(`2026-07-15-ercot66-storage-rebasis`); the return-to-CALIBRATED lane is
+redirected to the supply-mix side. No full-span registered (the single-year
+probes settle the disposition; rule-16 throwaways deleted). Mechanism-2 code
+committed default-off; DOF ledger unchanged (zero new free parameters — the
+surface is measured/frozen).
+
+**Ops.** All solves in-session, sequential, one ERCOT solve at a time (~8
+min/year). git-push transport 413'd/hung this session even on a 9 KB pack
+(HTTP/1.1 + postBuffer retried); pushed via the fallback API path. The known
+`prb_overrides`/`ercot_wtx` recorder warning surfaced as documented — not
+chased.
+
+(Entry merged from `docs/handoffs/ercot69-da-formation-2026-07.md` §1 on 2026-07-16 — the ERCOT-69 session's git transport was 413-blocked; the handoff carried the entry verbatim.)
+
+---
+
+## 2026-07-16 — ERCOT-70: the supply-mix decomposition on the moderate-tightness under-priced hours — the over-dispatched class NAMED (+1.2–1.7 GW phantom CC_REGULAR in four CAMPD-invisible plants; storage and West gas REFUTED by measurement); the flat mid-stack makes it a composition lane with the ERCOT-69 midcurve belt; keeper UNCHANGED
+
+**Task (owner-issued charter, the ERCOT-69 hand-off).** Convert the ERCOT-69
+supply-mix adjudication into "THIS GW of THIS class in THESE hours": decompose
+model dispatch-by-class vs measured generation on the moderate-tightness
+under-priced hour sets (May-2024 shoulder-day daytimes, Nov-2024, Apr-2024),
+rank the three prime suspects (storage over-discharge, West/Panhandle gas,
+perfect-foresight ceiling), name the owner mechanism, adjudicate an admissible
+fix.
+
+**Leg 0 (keeper reproduction, 2024).** `2026-07-15-ercot66-storage-rebasis`
+reconstructed byte-for-byte: C3a −14.2% (26.38 vs 30.74), C3b 0.212, C3c 20h
+vs 68; May −12.5, Nov −5.8, Apr −4.1; shoulder family May-9/10/12/13/21/27/
+29/30 = −30.8/−15.7/−20.4/−22.3/−26.7/−27.0/−15.9/−18.5. All controls verified.
+
+**The decomposition** (`scripts/probes/_ercot70_mix_decomp.py`, scorer-only —
+model dispatch-by-class vs CAMPD on-line gross (chp-export basis) + EIA-930
+fuel-type net + EIA-923 monthly, all on the model's non-leap fixed-CST clock).
+Mean MW, model − actual, after the coverage corrections below; positive =
+model over-serves:
+
+| window | h | model $ | actual $ | CC_REG | CT_PEAK | COAL | ST_GAS | storage net (mod vs meas) | West gas Δ |
+|---|---|---|---|---|---|---|---|---|---|
+| May shoulders h10–20 | 88 | 27.4 | 67.3 | **+1,469** | −1,183 | −589 | −784 | +242 vs ~+300 | +10 |
+| May shoulders, δ<−5 | 62 | 29.5 | 87.7 | **+1,678** | −1,357 | −694 | −652 | +347 vs ~+380 | −53 |
+| Nov, δ<−5 | 138 | 31.3 | 80.6 | **+425** | −1,234 | −851 | −766 | +748 vs +734 (930 BAT) | +294 |
+| Apr, δ<−5 | 105 | 36.9 | 100.4 | **+913** | −477 | −2,418 | −243 | +568 vs n/a | −173 |
+
+Demand matches EIA-930 within ±0.4% on every window; total thermal within
+±0.9 GW. The residual is a pure **composition** shift: the model serves the
+same load with cheap CC tranches where reality ran CT peakers (2.2–2.8 GW),
+more coal, and Braunig-class steamers — the units that priced $57–100.
+
+**The coverage-correction finding (a measurement artifact that was hiding the
+owner).** The raw CAMPD class table showed CC_REGULAR +2,203 on the May
+window; ~55% of that was the ACTUAL side being under-counted, not model
+excess: (a) **four ERCOT CC plants have ZERO TX-CAMPD rows** — Kiamichi 55501
+(OK-sited switchable, outside the TX state extract), Hidalgo 55545, Arthur Von
+Rosenberg 7512, EG178 56233, ~2.65 GW — their real output (EIA-923) was being
+scored as zero; (b) **V H Braunig (3612)** carries registry `plant_group`
+OTHER, so `derive_ercot_rtolcap_forward._fleet_class_maps` drops it from every
+class (its ~0.8 GW of real May steamer output vanished); (c) **W A Parish
+gas-steam** (synthetic model id 34702) books its CAMPD gross entirely under
+COAL 3470. Corrected, the true CC excess is +1,469/+1,678 (May), +425 (Nov),
++913 (Apr) — and the **non-CAMPD four alone carry +1,226/+1,381 (May) and
++1,443 (Apr)**. The headline case: **Hidalgo generated 0.0 MWh in all of
+Apr+May 2024 (EIA-923) — a real two-month outage — while the model dispatches
+it 434–499 MW on every target window**: the CAMPD-derived unit-outage overlay
+is structurally blind to non-CEMS plants (no rows → no windows → flat
+statistical availability), and Kiamichi's SPP-side hours are equally
+invisible.
+
+**Suspects adjudicated.**
+* *Storage over-discharge (the strongest prior): REFUTED by measurement.* On
+  May shoulders the model's batteries net +242 MW vs ~+300 MW measured RT
+  battery output (EIA-930 pre-breakout OTH-proxy; ERCO folds batteries into
+  OTH until Nov-2024); on the Nov under-priced subset model +748 vs measured
+  BAT +734 — nearly exact; on Nov overall the model UNDER-discharges (−54 vs
+  +411). The keeper's measured-AS stack already contains the fleet (awards
+  2.9 GW on the May windows; measured DA energy award of the PWRSTR fleet on
+  those afternoons: 18 MW). Not the owner, in any window.
+* *West/Panhandle gas: REFUTED.* West-zone gas diff +10/−53/+294/−173 MW
+  across the windows — order-of-magnitude below the CC term, no systematic
+  sign. (The CC excess sits in North: +1.7 GW on May shoulders, of which
+  Kiamichi ~1.0.)
+* *Perfect-foresight ceiling: not the owner HERE.* The mix does not match, so
+  the residual on these windows is not the structural-premium family (that
+  stays the ledgered C3c winter-morning caveat, untouched).
+
+**The marginal cross-check (the formation statement).** Model marginal on the
+target hours = CC econ_high ($24–29 at 11.26× on $2.19 gas), at a CC dispatch
+share of the MEASURED 60-Day-disclosure live HSL of **0.906 (88h) / 0.958
+(62h subset)** — i.e. at reality's availability the model's CC demand nearly
+exhausts the real live pool, whose measured offers price the 0.95–0.99 belt
+at 18–22× ($39–48) and the top at 33.5× ($73): reality's $57–97 clearings sit
+exactly there and in the CTs it actually ran (measured live CT 9.2 GW, real
+dispatch 2.2–2.8 GW, model 1.0–1.8). The model never gets there for two
+reasons in series: (1) the phantom +1.2–1.7 GW effective CC keeps its own
+clearing share below the belt; (2) its offer stack is FLAT between econ_high
+and the peak rungs — the empirical climb test (May daytimes, 341 h) shows the
+model pricing $22–35 across 310/341 hours, $25.22 at exactly reality's gas
+dispatch level (26 matched hours; actual there $41.98), and no May-daytime
+hour at all in the $60–100 band. **Therefore the supply-mix fix ALONE cannot
+form $67 — it must compose with the measured midcurve belt
+(`ercot_offer_surface_midcurve_conditional`, built default-off in ERCOT-69),
+which was probe-inert on the phantom base precisely because the phantom keeps
+within-plant shares below its floors.** This closes the ERCOT-67 coupling
+clause quantitatively: availability honesty and the offer belt are two halves
+of one mechanism.
+
+**Disposition (rules 1/13/14/24/26).** The owner is NAMED: the availability /
+commitment basis of the CAMPD-invisible CC fleet (+1.2–1.7 GW effective on
+the target windows), with covered-CC intensive creep second-order (+0.2–0.5)
+and the coal/CT deficits endogenous to the too-low clearing. An admissible
+measured fix EXISTS: the 60-Day DAM disclosure carries per-resource
+`Resource Status` + HSL for EVERY ERCOT resource including the four blind
+plants and the switchable Kiamichi — an ex-ante physical/market availability
+declaration (same source family as the ERCOT-67 class-day series, finer
+grain), passing the rule-13 test (forward year regenerates from the
+statistical stack — the same G4 mode-aware seam as the CAMPD overlay);
+EIA-923 monthly-zero months (Hidalgo Apr–May) equally ground discrete outage
+windows. NOT admissible: any class haircut or monthly-level pin tuned to the
+residual (rules 14/24). Successor lane chartered (ERCOT-71, §2 of the
+handoff): per-plant measured availability for the blind plants (or the
+disclosure-grain variant of `ercot_thermal_dam_availability`), composed with
+the midcurve belt, adjudicated leg-wise on May/Nov/Apr + the ERCOT-67 summer
+trade, full-span 2023–2025 + LOYO (rule 22) before any promotion. Two
+derive-side coverage defects FILED (rule 23 — fixing them is a data-coverage
+change, citable): (a) `_fleet_class_maps` drops OTHER-group plants (Braunig)
+from every envelope/share derive, so the ERCOT-58/68 measured envelopes
+under-count ST_GAS; (b) non-CAMPD ERCOT plants are absent from
+`campd-unit-outages` and the envelope by construction. **Keeper UNCHANGED**
+(`2026-07-15-ercot66-storage-rebasis`); nothing registered (single-year leg-0
+reproduction is a rule-16 throwaway, deleted; no mechanism built, DOF ledger
+untouched — zero new parameters).
+
+**Ops.** One in-session solve (keeper leg 0 2024, ~8.7 min). The known
+`prb_overrides`/`ercot_wtx` recorder warning surfaced as documented — not
+chased. The ERCOT-69 calibration-log entry (413-blocked last session) merged
+into `docs/calibration-log.md` from the handoff per its instruction.
+
+(Full decomposition detail + the ERCOT-71 charter sketch: `docs/handoffs/ercot70-supply-mix-decomp-2026-07.md`.)
