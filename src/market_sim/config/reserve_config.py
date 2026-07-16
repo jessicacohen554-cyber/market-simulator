@@ -182,6 +182,26 @@ MISO_ZONAL_ORDC_STEPS: tuple[tuple[float, float], ...] = (
 # (Michigan pocket) is the optional second family.
 MISO_ZONAL_RESERVE_DEFAULT_ZONES: tuple[str, ...] = ("MISO-South",)
 
+# MISO ELMP emergency-pricing tier offer floors (config.maxgen_emergency_
+# tier_pricing, the F5 scarcity-depth lane): the price applied to emergency
+# supply in ELMP inside a DECLARED capacity-emergency window. Primary source,
+# footnoted identically in the 2023 SOM (Report Body fn.21) and the 2024/2025
+# SOMs (fn.17), all archived in data/raw/MISO/:
+#   "Emergency supply is priced by applying a $500/MWh offer price floor
+#    (Tier 1) to this supply in ELMP when MISO declares a Max Gen Warning and
+#    a $1000/MWh floor (Tier 2) in a Max Gen Event Step 2."
+# The 2023 SOM p.10-11 ladder scopes the tiers: Warning and Event Step 1 run
+# Tier-1 pricing (Step 1 commits emergency-only units / activates emergency
+# ranges — more Tier-1 MW, no new pricing tier); Step 2+ runs Tier 2. The
+# Alert rung ("allows 4-hour online resources to set price in ELMP") changes
+# price FORMATION only, not the margin — LP-native, no constant here. In-LP
+# these floors reprice the load-slack (the administrative last-resort supply)
+# inside declared Warning+ window zone-hours via min(iso voll, floor); the
+# RBDC/zonal-ORDC curves above are never edited (rule 19; the frozen design
+# is docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md §1).
+MISO_EMERGENCY_TIER1_OFFER_FLOOR: float = 500.0
+MISO_EMERGENCY_TIER2_OFFER_FLOOR: float = 1000.0
+
 # --- CAISO (config.caiso_reserve_coopt, _caiso_design, issue #1492) ---------
 # BAL-002-WECC-3 R1 Contingency Reserve requirement: max(most-severe single
 # contingency, 3% of hourly-integrated load + 3% of hourly-integrated

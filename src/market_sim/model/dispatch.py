@@ -268,6 +268,7 @@ def build_cost_vector(
     posture_startup_cost: np.ndarray | None = None,
     rps_acp_price: float = 0.0,
     link_flow_cost: np.ndarray | None = None,
+    slack_cost: np.ndarray | None = None,
 ) -> np.ndarray:
     """Assemble the flat LP objective cost vector.
 
@@ -312,6 +313,12 @@ def build_cost_vector(
             directed flow (MISO RDT TCDC priced tiers). ``None`` keeps the
             flow block zero-cost (byte-identical). Nonzero entries are only
             valid on one-way links — enforced by :class:`DispatchModel`.
+        slack_cost: Optional ``(n_zones, T)`` per-zone-hour load-slack cost
+            that replaces the flat ``voll`` broadcast (the declared-window
+            ELMP emergency-tier repricing,
+            ``data.maxgen_events.emergency_tier_slack_cost`` — never above
+            ``voll`` by construction there). ``None`` keeps the flat ``voll``
+            (byte-identical).
 
     Returns:
         Cost vector of length ``layout.total_columns``.
@@ -354,8 +361,15 @@ def build_cost_vector(
             link_flow_cost, dtype=float
         )[np.newaxis, :]
 
-    # Load slack: value of lost load.
-    block[:, layout._slack_off : layout._dump_off] = voll
+    # Load slack: value of lost load — flat, or the per-zone-hour override
+    # (declared-window ELMP emergency-tier repricing). The block wants
+    # (T, n_zones); slack_cost arrives (n_zones, T).
+    if slack_cost is None:
+        block[:, layout._slack_off : layout._dump_off] = voll
+    else:
+        block[:, layout._slack_off : layout._dump_off] = np.asarray(
+            slack_cost, dtype=float
+        ).T
 
     # Overgeneration dump: a tiny cost breaks degeneracy, but it must also
     # exceed the magnitude of any production credit (negative wind/solar
@@ -3347,6 +3361,7 @@ class DispatchModel:
         reserve_balance_col_mask: np.ndarray | None = None,
         link_bidirectional: np.ndarray | None = None,
         link_flow_cost: np.ndarray | None = None,
+        slack_cost: np.ndarray | None = None,
         T: int | None = None,
     ) -> None:
         build_start = time.perf_counter()
@@ -3696,6 +3711,19 @@ class DispatchModel:
         self.n_storage = n_storage
         self.n_links = n_links
         self.voll = voll
+        # Per-zone-hour load-slack cost override (declared-window ELMP
+        # emergency-tier repricing, data.maxgen_events). None -> the flat
+        # ``voll`` broadcast, byte-identical. Shape-checked here so a
+        # mis-oriented (T, n_zones) array fails loud, not as a silent
+        # mis-priced objective.
+        if slack_cost is not None:
+            slack_cost = np.asarray(slack_cost, dtype=float)
+            if slack_cost.shape != (n_zones, T):
+                raise ValueError(
+                    f"slack_cost shape {slack_cost.shape} != (n_zones, T) = "
+                    f"({n_zones}, {T})"
+                )
+        self.slack_cost = slack_cost
         self.wind_mc = wind_mc
         self.solar_mc = solar_mc
         self.storage_discharge_eac = storage_discharge_eac
@@ -3919,6 +3947,7 @@ class DispatchModel:
             posture_startup_cost=self._posture_startup,
             rps_acp_price=(self.rps_acp_price or 0.0),
             link_flow_cost=self.link_flow_cost,
+            slack_cost=self.slack_cost,
         )
 
         h = self._h
@@ -4293,6 +4322,7 @@ def solve_dispatch(
     nox_price: np.ndarray | float = 0,
     so2_price: np.ndarray | float = 0,
     voll: float = 5000,  # default matches ScenarioConfig.voll for ERCOT
+    slack_cost: np.ndarray | None = None,
     incidence: np.ndarray | sp.spmatrix | None = None,
     ttc: np.ndarray | None = None,
     ttc_import: np.ndarray | None = None,
@@ -4389,6 +4419,9 @@ def solve_dispatch(
         nox_price: NOx price used when ``mc`` is ``None``.
         so2_price: SO2 price used when ``mc`` is ``None``.
         voll: Value of lost load applied to load-slack variables.
+        slack_cost: Optional ``(n_zones, T)`` per-zone-hour load-slack cost
+            override (declared-window ELMP emergency-tier repricing). ``None``
+            keeps the flat ``voll`` broadcast (byte-identical).
         incidence: Node-link incidence of shape ``(n_zones, n_links)``.
         ttc: Total transfer capability per link, shape ``(n_links,)``
             (static) or ``(T, n_links)`` (per-hour seasonal limit).
@@ -4456,6 +4489,7 @@ def solve_dispatch(
         solar_cf=solar_cf,
         solar_cap=solar_cap,
         voll=voll,
+        slack_cost=slack_cost,
         incidence=incidence,
         ttc=ttc,
         ttc_import=ttc_import,
