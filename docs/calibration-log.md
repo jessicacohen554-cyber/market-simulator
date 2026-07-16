@@ -14863,6 +14863,158 @@ prior-keeper comparison. Open lanes carried forward unchanged: the 2023
 summer over-shoot (lane 2), the shoulder formation gap (wall mid-rungs +
 the drag-lane steam cliff), and the West/Panhandle topology split.
 
+## 2026-07-16 — ERCOT-74: the 2024 RT scarcity-tail HOUR-SET anatomy — the ledger claim VERIFIED and sharpened (33 of 34 missed hours form energy-side or sub-hourly; exactly 1 is reserve-driven); the measured decomposition names FOUR mechanism families and shows no single admissible mechanism owns "most of the 53"; count-vs-set honesty measured on all three years (2025's 0.61x count PASS is caught = 2 of 31); NO build this session — successor identifications named with evidence; keeper UNCHANGED
+
+**Task (owner charter).** Name the measured mechanism that forms the ~27
+missed real 2024 RT scarcity hours and kill the invented ones — HOUR-SET
+FIDELITY, never the band edge. Pre-register caught/missed/invented from the
+keeper bundle before building anything; verify the standing ledger claim
+(missed hours = moderate DA-shoulder days, measured RTORPA <= $3, energy-side
+formation) hour-by-hour against the full 53-hour set; transient-dominated
+misses extend the ledger instead of opening a mechanism lane.
+
+**Leg 0 — the pre-registered sets (keeper `2026-07-16-ercot73-state-wall`,
+byte-faithful full-span replay; C3 parity vs the registered run confirmed to
+the decimal on all three years).** Model tail = C3c's max-zonal-settled >
+$200; actual = the committed RT hub series; hour-matched on the non-leap
+clock. `scripts/probes/_ercot74_anatomy.py`:
+
+| year | count (C3c) | caught | missed | invented | set fidelity |
+|---|---|---|---|---|---|
+| 2023 | 179 vs 181 (0.99x PASS) | 119 | 62 | 60 | the count parity is right-count-WRONG-HOURS: 60 invented offset 62 missed (Jaccard 0.49) |
+| 2024 | 26 vs 53 (0.49x FAIL, the ledgered caveat) | 19 | 34 | 7 | the honest year: few invented, the misses are real misses |
+| 2025 | 19 vs 31 (0.61x PASS) | 2 | 29 | 17 | the PASS is almost entirely wrong-hour: 2 of 31 caught; 15 of 17 invented are the known Aug-18-20-2025 West phantom plateau ($246-306 rungs), several with DA > $200 but RT < $130 |
+
+The count criterion and the sets disagree in BOTH directions — the owner's
+"score the SETS" directive is the right gate for every future tail lane; the
+three baselines above are the pre-registered "before" columns.
+
+**Leg 0 — the 2024 missed-hour anatomy (34 h), each hour joined to measured
+NP6-905 (hourly + SCED-interval grain) and the DA tail.** Classification
+(pre-registered): `transient` = <= 1/3 of the hour's ~5-min intervals cross
+$200 (the hourly mean rides a spike an hourly LP cannot see); `reserve` =
+rt − (RTORPA+RTORDPA) < $200 (the crossing needed the reserve adders);
+`energy` = the print stands on the energy side alone.
+
+* **energy 25 / transient 8 / reserve 1** — the ledger's SUBSTANCE (energy-
+  side formation, not reserve scarcity) is verified for 33 of 34; its literal
+  "RTORPA <= $3" wording holds in only ~2/3 of the missed hours (RTORPA
+  ranges to $25) but is never decisive except once (01-22 h8, RTORDPA $90).
+* Cluster families: Jan winter mornings/evenings (Jan-15/16/22: 6 missed,
+  netload p87-p99, mostly IN the DA tail); event shoulders the model crosses
+  only at the peak (May-8 h15-17 missed with h18-19 caught, $965-996 actual
+  vs $49-74 model; Aug-6/7/19 evenings); moderate spring/fall evening ramps
+  NOT in the DA tail (Apr-03/08/11/24/26, May-09/21, Jun-04, Oct-22/23/25/26,
+  Nov-07/17, Dec-14 — RT-only prints at netload p39-p95, model zmax $28-85).
+* 17 of the 53 actual hours sit BELOW p80 netload (28 below p90) — outside
+  the conditional peak surface's trigger bins entirely.
+
+**Leg 1 — the named identification intake + the decisive measurement.** New
+`scripts/fetch_ercot_60day_sced_gen_resource.py` (NP3-965-ER, reportTypeId
+13052 — the 60-Day SCED disclosure Gen Resource Data: the telemetered SCED1/
+SCED2 RT energy offer curves, submitted TPOs, HASL/HDL/Base-Point/TNO
+telemetry at ~15-min disclosure grain). Retention wall re-measured live:
+earliest listed publication 2024-03-24 -> earliest delivery ~2024-01-24; the
+THREE January-2024 clusters are permanently unreachable on the free path
+(same wall as the AS intake; credentialed archive owner-declined). Scoped
+intake per the charter: the 25 reachable tail-cluster delivery days, hod
+11-22 CPT (`60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_2024_ercot74_
+tail_days.parquet`, 1.39M rows). The adjudication rule was PRE-REGISTERED
+before reading any curve: per missed hour, the ONLINE fleet's sub-$200
+offered headroom above its operating point, at HASL (hourly-representable)
+and HDL (ramp-feasible) bases; < 500 MW = exhausted. Two measurement
+corrections found live and applied: operating point = max(Base Point,
+Telemetered Net Output) (IRR base points read 0 while producing at HSL), and
+an IRR/thermal split (IRR "headroom" at −$250 offers with TNO = 0 is
+curtailment stranding, not dispatchable supply).
+
+The 20 reachable energy-class missed hours split THREE ways (thermal-basis
+sub-$200 headroom, median over the hour's disclosure intervals):
+
+* **offer-formed core (~6 h)** — May-8 h15/16/17 (thermal sub-$200 HASL 224/
+  93/82 MW), Apr-28 h20 (390), Aug-7 h18 (461), Aug-19 h19 (152): the online
+  stack itself priced the hour. The offer-vs-availability confound was then
+  split with the model's own dispatch: on May-8 the model's fossil tracks
+  reality within ~1 GW through the whole ramp (45.3 vs 45.8 GW at h16, incl.
+  the caught h18-19) and its wind/solar match — the same quantities, so the
+  gap IS offer-level: the model's marginal rows at $68-74 where reality's
+  measured stack priced $965+, and the model's own surface crosses $200 only
+  ~1.6 GW deeper. The cheap rows are NAMED (dispatch delta h16->h18): the
+  conditional surface's own LOWER peak rungs (CC peak p50 multiplier 4.326 ~
+  $70 at 2024 gas) plus drag-owned ST_GAS rungs — rule-19 owner =
+  `ercot_offer_surface_conditional`, whose DAM-derived rung levels are
+  measured too cheap against the RT (SCED1) offer tops exactly on loaded
+  event shoulders (the w->0 hours where the ERCOT-73 state wall correctly
+  stands down). Aug evenings are joint: composition drift (wind +1.5 GW,
+  storage +1.4-1.6 GW vs reality, fossil −1 to −3.4 GW) on top of offers.
+* **ramp-formed (~6 h)** — Apr-03/08/11, Aug-06, Aug-19 h18, Oct-25: 0.7-2.0
+  GW of sub-$200 thermal headroom existed at HASL basis but the HDL
+  (5-minute dispatch-limit) basis was exhausted (median 20-481 MW) — the
+  prints are sub-hourly ramp scarcity, OUT of hourly representation: ledger
+  evidence, not a mechanism lane (the fitted ramp-premium adder stays the
+  chartered dead end).
+* **congestion/stranding-formed (~8 h)** — May-09 h12, May-21 h19, Jun-04
+  h18/19, Oct-22/23 h17, Nov-17 h15/16: SCED itself left 0.4-1.9 GW of
+  cheap-offered renewables undispatched (e.g. Nov-17 h15: 1.7 GW of wind at
+  −$250..−$30 with TNO 0 while system lambda printed $1,232) — the real
+  constraint set the reduced 7-zone network does not carry. The model's
+  zmax at those hours is $28-75: it dispatches the wind reality stranded.
+
+**The invented set is the SAME zonal-topology family from the other side.**
+2024's 7: five West prints ($261-1,218; three are "right cluster, lagged
+hour" — 03-04 h20 / 04-16 h20 / 11-10 h21 adjacent to caught real hours) and
+the May-7 h19/20 Northeast pair at VOLL with 43/4.4 MW shed while every
+other zone sat at $34 and reality printed $37/$15 — the Northeast import
+link pinned at its 1,300 MW limit against 2,281 MW zonal demand: a
+zonal-constant artifact, quantified. 2025's 17 are all West ($246-307 rung
+plateaus, Aug-18-20-2025 + Jul-30 + May-20). The topology charter now has
+measured evidence on BOTH sides: the zonal reduction invents ~7-17 false
+tail hours (West/Northeast constants) and loses ~8 real congestion-formed
+ones (intra-zonal GTC/stranding it cannot bind).
+
+**Adjudication (rules 1/13/14/16/19/23/26): NO in-lane build this session.**
+What the measurement names, it names precisely — and none of it is a
+this-session build:
+
+* The offer-formed core is ~6 hours, owned by the EXISTING conditional
+  surface's rung levels (rule 19: reconcile, never stack). The admissible
+  successor is a state-conditioned RT-basis (SCED1 curve-top) correction to
+  that surface's loaded-shoulder bins — but its rule-23-clean derivation
+  needs a selection-UNBIASED intake (the 25 tail days alone would date-pin
+  the ladder; a stratified non-tail control sample is required), a 2023
+  fallback design (the retention wall leaves 2023 with climatology only),
+  and the 2023 guard managed (the model already reads 0.99x count / +6.2%
+  C3a there; new markup on loaded hours is exactly the re-inflation risk the
+  ERCOT-73 state weight just removed). That is a charter of its own, not an
+  afternoon bolt-on.
+* The ramp-formed and transient families (~14 h combined) are sub-hourly —
+  ledger extensions with measured per-hour evidence (this entry), not
+  mechanism lanes.
+* The congestion/stranding family (~8 h missed + the invented sets) is the
+  West/Panhandle topology split's evidence package — its own standing
+  charter, now quantified from the disclosure.
+* The Jan-2024 clusters (6 h) are energy-side by NP6-905 (RTORPA ~ 0, lambda
+  > $200 sustained) but curve-level identification is permanently
+  unreachable (retention wall) — ledger.
+
+**Proposed ledger sharpening (owner's to adopt — rule: keeper/ledger changes
+are the owner's).** The C3c-2024 exceptions entry's claim upgrades from
+"moderate DA-shoulder days, RTORPA <= $3, energy-side" to the measured
+decomposition: of the 34 missed hours, 25 energy-side (6 offer-formed on
+loaded event shoulders where the surface's DAM-derived rungs under-price the
+measured RT offer tops; ~6 ramp-formed sub-hourly; ~8 congestion/stranding
+outside the zonal reduction; 5 unreachable-Jan), 8 sub-hourly transients,
+1 reserve-driven. RTORPA is never decisive except 01-22 h8 (RTORDPA $90).
+
+**Ops.** One full-span byte-faithful keeper replay in-session (~30 min,
+years sequential; C3 parity to the decimal; bundle deleted at session end —
+rule-16 throwaway, never registered). NP6-905 2024 re-parsed at SCED-interval
+grain to the scratchpad for the transient classification (curated hourly
+parquet untouched). Intake fetcher hardened live: per-day dtype coercion (a
+25-day all-string concat OOM-killed the 15 GB container), retry-with-backoff
+on MIS connection resets, resumable zip cache. The known `prb_overrides`/
+`ercot_wtx` recorder warning surfaced as documented. No new run registered;
+keeper and dashboard unchanged.
 ## 2026-07-16 — MISO keeper promotion: 2026-07-16-miso-68-mothballs (owner)
 
 **Promotion (owner, follow-up session to the miso-68 entry above — the
