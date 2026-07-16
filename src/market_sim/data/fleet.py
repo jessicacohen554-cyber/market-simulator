@@ -86,6 +86,7 @@ from market_sim.data.outages import (
     ST_GAS_PEAKER_PLANTS,
     ct_deployment_floor_for_year,
     default_outages_path,
+    ercot_noncampd_availability_caps,
     outage_masks_for_year,
     partial_outage_derate_factors,
     reliability_deployment_floor_for_year,
@@ -1755,6 +1756,35 @@ def generators_to_fleet_arrays(
                     applied_r,
                     len(rcaps),
                 )
+        # ERCOT CAMPD-blind per-plant availability (ercot_noncampd_plant_availability,
+        # ERCOT-71): the ERCOT gas plants ABSENT from the TX CAMPD extract
+        # (Kiamichi/Hidalgo/AVR/EG178 — has_campd_data=False) are invisible to the
+        # CAMPD outage overlay above, so they ride flat statistical availability
+        # while reality ran a real outage (Hidalgo 0 MWh Apr+May 2024) or committed
+        # out of ERCOT (Kiamichi's switchable SPP share). Cap each blind plant's
+        # availability to its measured per-plant series (60-Day DAM disclosure live
+        # HSL + EIA-923 zero months; data.outages.ercot_noncampd_availability_caps).
+        # Plant-keyed (reaches every binned tranche), ERCOT+backcast gated; the
+        # covered fleet is untouched (surgical scope, rule 19). Applied before
+        # min_gen is built so any must-run floor scales down with it.
+        if getattr(config, "ercot_noncampd_plant_availability", False) and is_ercot:
+            nccaps = ercot_noncampd_availability_caps(config.weather_year, hours)
+            if nccaps:
+                applied_nc = 0
+                for g_idx, gen in enumerate(generators):
+                    cap = nccaps.get(int(gen.plant_code))
+                    if cap is not None:
+                        np.minimum(
+                            availability[g_idx, :], cap, out=availability[g_idx, :]
+                        )
+                        applied_nc += 1
+                logger.info(
+                    "ERCOT CAMPD-blind availability (%d): %d tranche(s) across "
+                    "%d blind plant(s) capped to measured per-plant series",
+                    config.weather_year,
+                    applied_nc,
+                    len(nccaps),
+                )
         if not masks and not ufac:
             # A backcast year with no measured windows in either layer (e.g.
             # CAISO 2023: no CA unit-level CEMS extract until upload U1 lands)
@@ -3361,6 +3391,178 @@ def build_pjm_offer_midcurve_conditional_markup(
         hours,
         str(year)
         if any(str(year) in (surface.get(s, {}).get("years", {})) for s in tables)
+        else "pooled",
+    )
+    return markup
+
+
+#: Model plant_group -> measured class key of the ERCOT mid-curve surface
+#: (scripts/derive_ercot_offer_midcurve.py). CC_CHP shares the CC measured
+#: offers (CHP is a plant attribute, not a DAM Resource Type). ST_GAS is
+#: absent — the drag-floor structure owns it (rule 19).
+_ERCOT_MIDCURVE_CLASS_OF = {
+    "CC_REGULAR": "CC",
+    "CC_CHP": "CC",
+    "CT_PEAKER": "CT_PEAKER",
+}
+
+
+def build_ercot_offer_midcurve_conditional_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    mc_base: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+    year: int,
+) -> "np.ndarray | None":
+    """Build the ERCOT P1-only MID-CURVE offer-floor markup ``(n_gen, T)``.
+
+    G-22 lever A' (``ScenarioConfig.ercot_offer_surface_midcurve_conditional``),
+    the ERCOT analogue of ``build_pjm_offer_midcurve_conditional_markup``. The
+    existing ``ercot_offer_surface_conditional`` reprices only the gas PEAK rungs
+    (top ~263 h/yr); this floors each targeted gas ``econ*`` tranche's P1 bid at
+    the MEASURED capacity-share-matched day-ahead offer level of its class
+    (``scripts/derive_ercot_offer_midcurve.py`` — the 60-Day DAM disclosure
+    body, 18-22x at within-unit shares 0.95-0.99):
+
+        target[g, t] = mult(class, year, bin(t), share_g) x gas_day(t)
+        markup[g, t] = max(0, min(target, 0.95 x VOLL) - mc_base[g, t])
+
+    * ``share_g`` is the row's WITHIN-PLANT cumulative-capacity midpoint
+      (scale-free — immune to the model-fleet vs measured-fleet capacity
+      mismatch), read off the model's own CAMPD tranche structure ordered by
+      base cost, exactly as the PJM mid-curve does.
+    * Targeted rows: the gas econ tranches (``econ*`` suffixes) of the mapped
+      classes (CC_REGULAR/CC_CHP -> CC, CT_PEAKER). The gas PEAK rungs stay
+      owned by ``ercot_offer_surface_conditional`` (one mechanism per row, rule
+      19); ST_GAS is excluded (the drag-floor owns it). The floor only ever
+      RAISES a bid to the measured level (max(0, .)) and is capped below VOLL.
+    * P1-only (the ``mc_bid_adjust`` seam): P0 run lengths and the startup
+      amortization coupling are byte-identical.
+
+    Measured OFFER prices are the input; clearing prices stay validation-only
+    (rule 13); the surface JSON is frozen against residuals (rule 23).
+    ERCOT-only, no cross-ISO fallback (rule 25).
+    """
+    if not getattr(config, "ercot_offer_surface_midcurve_conditional", False):
+        return None
+    if config.iso != "ERCOT":
+        return None
+    path = getattr(config, "ercot_offer_surface_midcurve_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        path = str(_paths.CALIBRATION_DIR / "ercot_offer_midcurve_condbinned.json")
+    surface = json.loads(Path(path).read_text())
+    prov = surface.get("_provenance", {})
+    edges = tuple(float(x) for x in prov.get("netload_pct_edges", ()))
+    shares = np.asarray(prov.get("shares", ()), dtype=float)
+    if not edges or shares.size == 0:
+        raise ValueError(
+            "ercot_offer_midcurve: surface JSON carries no edges/shares — "
+            "re-derive scripts/derive_ercot_offer_midcurve.py"
+        )
+    n_bins = len(edges) + 1
+
+    hours = int(mc_base.shape[1])
+    net_load = np.asarray(net_load_mw, dtype=float)[:hours]
+    thresholds = np.quantile(net_load, edges)
+    hour_bin = np.searchsorted(thresholds, net_load, side="right")  # (T,)
+
+    # Delivered-gas day series on the model clock (the derive's own price
+    # normalizer: HH daily + ERCOT basis, forward-filled).
+    from market_sim.config.constants import GAS_BASIS_DIFFERENTIAL
+    from market_sim.data.fuel import HENRY_HUB_DAILY_PATH
+
+    hh = pd.read_csv(HENRY_HUB_DAILY_PATH, parse_dates=["date"])
+    s = hh.set_index("date")["price_usd_mmbtu"].sort_index()
+    full = pd.date_range(s.index.min(), s.index.max() + pd.Timedelta(days=14), freq="D")
+    daily = s.reindex(full).ffill() + float(GAS_BASIS_DIFFERENTIAL["ERCOT"])
+    hour_days = pd.date_range(f"{year}-01-01", periods=hours, freq="h").normalize()
+    gas_day = daily.reindex(hour_days).ffill().bfill().to_numpy(dtype=float)  # (T,)
+
+    # Per-class (n_bins, n_shares) mult tables for this delivery year (pooled
+    # fallback for an unmapped/forward year).
+    tables: dict[str, np.ndarray] = {}
+    for cls_key in set(_ERCOT_MIDCURVE_CLASS_OF.values()):
+        entry = surface.get(cls_key)
+        if not entry:
+            continue
+        ladders = entry.get("years", {}).get(str(year)) or entry.get("pooled")
+        if not ladders or len(ladders) != n_bins:
+            continue
+        tables[cls_key] = np.array(
+            [[float(pt[1]) for pt in lad] for lad in ladders], dtype=float
+        )  # (n_bins, n_shares)
+
+    # Target rows + within-plant shares. A plant key is the unit_id prefix
+    # (everything before the tranche suffix); the share base is EVERY tranche
+    # of the plant ordered by its annual-mean base cost, so the model's own
+    # rising CAMPD tranche curve defines each row's curve position.
+    prefixes: dict[str, list[int]] = {}
+    row_cls: dict[int, str] = {}
+    for g, gen in enumerate(generators):
+        cls = getattr(gen, "plant_group", None) or ""
+        if cls not in _ERCOT_MIDCURVE_CLASS_OF:
+            continue
+        prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
+        row_cls[g] = cls
+
+    pmax = fleet_arrays.pmax
+    voll_cap = 0.95 * float(getattr(config, "voll", 5000.0))
+    markup = np.zeros_like(mc_base)
+    n_priced = 0
+    mean_mc = mc_base.mean(axis=1)
+    for rows in prefixes.values():
+        rows_arr = np.asarray(rows, dtype=int)
+        order = rows_arr[np.argsort(mean_mc[rows_arr], kind="stable")]
+        caps = pmax[order]
+        total = caps.sum()
+        if total <= 0.0:
+            continue
+        cum = np.cumsum(caps)
+        mids = (cum - 0.5 * caps) / total  # within-plant share midpoints
+        for g, s_g in zip(order, mids):
+            gen = generators[g]
+            sfx = gen.unit_id.rpartition("_")[2]
+            if not sfx.startswith("econ"):
+                continue
+            cls_key = _ERCOT_MIDCURVE_CLASS_OF[row_cls[g]]
+            if cls_key not in tables:
+                continue
+            table = tables[cls_key]  # (n_bins, n_shares)
+            mult_b = np.array(
+                [
+                    np.interp(s_g, shares, table[b])
+                    if np.isfinite(table[b]).all()
+                    else np.nan
+                    for b in range(n_bins)
+                ]
+            )
+            target = mult_b[hour_bin] * gas_day  # (T,)
+            target = np.minimum(target, voll_cap)
+            row = np.maximum(0.0, np.nan_to_num(target, nan=0.0) - mc_base[g, :])
+            if row.any():
+                markup[g, :] = row
+                n_priced += 1
+
+    if n_priced == 0 or not np.any(markup > 0.0):
+        logger.info(
+            "ERCOT mid-curve offer surface: no econ row floored (measured "
+            "offers <= model econ bids at every share/bin) — byte-identical"
+        )
+        return None
+    tight = int((hour_bin >= n_bins - 1).sum())
+    logger.info(
+        "ERCOT mid-curve offer surface: floored %d gas econ tranche rows at "
+        "the measured capacity-share offer level (%d net-load bins, tightest "
+        "bin %d/%d hours, year table %s); P1-only",
+        n_priced,
+        n_bins,
+        tight,
+        hours,
+        str(year)
+        if any(str(year) in (surface.get(c, {}).get("years", {})) for c in tables)
         else "pooled",
     )
     return markup
