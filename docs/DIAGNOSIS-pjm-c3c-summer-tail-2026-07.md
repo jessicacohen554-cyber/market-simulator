@@ -429,6 +429,151 @@ ambient nuclear net-capability derate (a new charter, ~0.1 GW stakes, and the
   plant-level partial path is left ERCOT-scoped (not deleted — it is ERCOT's
   live keeper input), and no new tunable scalar is introduced.
 
+## 10. pjm-cong-1 — the congestion-surface charter: the east cut measured, the lane is MATERIAL, gate pre-committed (2026-07-16)
+
+**Charter:** the §5/§8.1 "flat zonal congestion surface" boundary — this
+session measures whether MEASURED interface limits on a real boundary can
+close it (the ERCOT West/Panhandle-split precedent class). Probe (committed,
+no-LP, stop condition pre-declared in its header BEFORE the adjudicating
+section ran): `scripts/probes/_pjm_c3c_congestion_surface_decomp.py`
+(sections roster / events / zonalphantom / interfaces / eastcut, model side
+from the pjm-113 keeper payload).
+
+### 10.1 The scarcity-hour tranches are ZONAL — the east carries 3× the system tail
+
+Hub-level DA > $200 tranches (roster): **2025 EASTERN HUB 152 h** vs system
+51 h (DOMINION 109, WESTERN 79, NEW JERSEY 76, N ILLINOIS 39); **2024
+EASTERN 46 h vs system 2 h** — the 2024 tail was almost entirely an
+east-only zonal event; **2023 EASTERN 28 h vs system 8 h**. In the 22
+summer-2025 tail hours the EASTERN HUB premium over the hub mean runs
+**+55 to +178 $/MWh** (June event mean +135, July +71; 2023 events up to
++140; the single 2024 system hour +102) while the model's EMAAC monthly
+dual premium is **+3.3** — the flat surface is ~40× short in the scarcity
+hours themselves, and C3c's any-zone count has ~3× the system's hours
+available to a model that can price the east.
+
+### 10.2 The dispatch phantom is an east-west wheel, stable across years
+
+Zone × class model−CAMPD in each year's tail hours (zonalphantom): the model
+UNDER-generates inside the MAD zones (2025: Dominion −1,122 MW — CT −1,243;
+SWMAAC −957; the peakers reality ran: Linden −835, Doswell −783, Chalk Point
+−369) and over-generates west of them (ComEd +547…+2,143, AEP/West_APS
+positive every year) — a net **~+3.0 to +3.6 GW excess west→east wheel in
+scarcity hours in ALL THREE YEARS** (2023 +3,619, 2024 +2,950, 2025 +3,372
+MW, fossil basis). This is the §5 signature at event grain: the model
+imports the east's scarcity away.
+
+### 10.3 Interface identity corrected from the primary source (PJM Manual 03 §3.8, Rev 71 eff. 2026-05-20)
+
+The DataMiner2 `transfer_limits_and_flows` series are PJM's named REACTIVE
+TRANSFER INTERFACES (defined line sets, 5-min TLC limits posted hourly), NOT
+"regional envelope means" as the constants.py crosswalk comment reads:
+
+* **Eastern** = 7 EHV circuits into the eastern Mid-Atlantic (Breinigsville–
+  Alburtis ×2, Juniata–Alburtis, Lauschtown–Hosensack, Peach Bottom–Limerick,
+  Rock Springs–Keeney, Lackawanna–Hopatcong) — i.e. the **EMAAC import cut**,
+  spanning BOTH of our Central_PA→EMAAC and SWMAAC→EMAAC paths. The committed
+  map applies it to Central_PA→EMAAC alone, leaving the 5,000 MW
+  SWMAAC→EMAAC static as an un-monitored parallel path the real interface
+  does not have.
+* **5004/5005** = Keystone–Juniata + Conemaugh–Juniata 500 kV — a
+  western-PA→central-PA corridor interface. The committed map applies its
+  measured series (mean ~2.8–3.1 GW) to **ComEd→AEP_Ohio (Illinois!)** —
+  a mis-attribution inherited from the original iso_configs naming; the real
+  ComEd interface (CE-East) is not in the feed at all. The mis-mapped series
+  has been silently halving ComEd's 6,000 MW eastward capability.
+* BC/PEPCO (the SWMAAC import cut) and CE-East exist in Manual 03 but are
+  not published in this feed; Western/Central are PA-corridor cuts whose
+  "envelope" seeding of the AEP→West_APS / ATSI→Central_PA statics stays
+  as documented (out of this lane's scope).
+
+### 10.4 The measured adjudication — MATERIAL (pre-declared stop condition passed)
+
+In the 22 tail hours **no published interface binds in reality** (Average
+Eastern utilization 81 %, transfers 8,216 vs limit 10,134 MW mean; AP-South
+78–79 %; the TLC limits RISE during the events) — the real east premium
+forms below the interface aggregation, as it does for Dominion (phase-drift
+diagnosis §3). But the MODEL's east flow is the phantom: reconstructing the
+model's internal EMAAC-cut import requirement from committed artifacts
+(metered zonal load on the model's own 20→8 grouping × EIA-930 demand scale,
+minus payload fossil dispatch, the exact nuclear smear, 930-scaled
+renewables/oil, and PS at FULL discharge — every non-exact term biased
+against materiality; actual-side cross-validation vs the feed's measured
+transfers closes to +1,020 MW, inside the stated <1.5 GW unmonitored-path
+wedge):
+
+* **the requirement exceeds the measured Eastern limit in 13/22 tail hours,
+  median exceedance +485 MW** (central estimate, zero seam import — the 2025
+  NYISO import rungs price at $502.65, above every model tail price); with
+  the measured 1,650 MW NYISO firm-export floor the count is 22/22;
+* the binding hours ARE the missed shoulder hours (Jun 24 19h +656, Jul 29
+  18h +910, Jul 29 19h +1,003 MW — the §1 evening misses), while the
+  already-CAUGHT peak hours sit at negative margins;
+* the MAD super-cut (Eastern + AP-South + AEP/DOM + statics) is loose by
+  −11…−17 GW — the binding boundary is specifically EMAAC;
+* pre-declared stop condition (probe header, fixed before computation:
+  ≥ 8/22 h AND median ≥ 300 MW): **PASSED → the lane is MATERIAL.**
+* LOYO context: the same construction binds 74 h (2023) / 32 h (2024) /
+  46 h (2025, central) across the whole year — enough to separate the east
+  in the right hours, bounded enough not to obviously blow the 2023 ≤ 18 h /
+  2024 ≤ 12 h caps (the LP adjudicates; that is what the gate is for).
+
+### 10.5 The mechanism (zero fitted scalars, all measured)
+
+1. **`ScenarioConfig.pjm_east_interface_cut`** (tier 3, default off, PJM
+   backcast overlay, byte-identical off): one ONE-SIDED aggregate
+   interface-group row per hour capping `Flow(Central_PA→EMAAC) +
+   Flow(SWMAAC→EMAAC)` at the hour's measured **Average Eastern** limit
+   (the same `transfer-interface-limits` clean partition the per-link
+   overlay reads; the dispatch interface-group machinery already supports
+   hourly `(T,)` caps — the CAISO measured-corridor precedent). Reverse
+   (westward) flow keeps the per-link TTCs; the per-link statics stay as
+   their own bounds. Forward story: the interface regenerates from the same
+   feed every year; forecast mode keeps the static seeds (two-track, the
+   pjm-97 pattern).
+2. **Crosswalk correction (unconditional data-integrity fix, rule 14):**
+   delete the `("PJM_ComEd","PJM_AEP_Ohio") → 50045005` entry from
+   `constants.PJM_INTERFACE_LINK_MAP` (primary-source refuted, §10.3); the
+   link reverts to its static 6,000 MW. No measured series replaces it
+   (CE-East is unpublished). The 5004/5005 series stays in the datatype
+   (its Manual-03 boundary is internal to Central_PA at our grain — mapping
+   it anywhere would double-apply the corridor the Eastern/Central/Western
+   interfaces already carry, rule 19).
+
+Rule-13 admissibility: a published operating-security transfer limit on a
+real boundary, entering as a formulaic hourly bound that regenerates for
+any year and responds to changed grid conditions — the explicitly admissible
+class (measured TTC/GTC/interface limits), reconciled to the reduced network
+per rule 14 with the misalignment documented (§10.3). NOT done: no scalar on
+the series, no haircut, no link value tuned to spreads (§5 prohibition), no
+constraint hand-placed for a residual hour.
+
+### 10.6 Pre-committed gate (set NOW, before any solve — rules 1/11)
+
+The pjm-cong-1 solve (pjm-113 keeper recipe verbatim via replay + ONLY
+`pjm_east_interface_cut=True`, on the corrected crosswalk, 2023+2024+2025
+one bundle) is adjudicated on, all together:
+
+1. **Provenance (pre-solve, extract arithmetic):** the joint cut binds in
+   ≥ 8 of the 22 tail hours (measured: 13/22 central — §10.4) and the
+   implied east premium is positive, toward the measured +11.5–15 July
+   mean; post-solve the July-2025 EMAAC monthly dual premium must land in
+   **(+3.3, +30]** — moved from the flat surface, never past 2× the
+   measured July hub premium.
+2. **C3c-2025:** model any-zone tail ∈ **[26, 102] h**.
+3. **C3c small-count caps hold:** 2023 ≤ 18 h, 2024 ≤ 12 h.
+4. **No currently-PASS criterion flips in any year** (C1 16/16, C2, C3a,
+   C3b, C4, C5a, C6, C7, C8 — rubric v2.5; watch C5a/C4: a real east limit
+   re-prices the Dominion belt and the seam).
+5. **LOYO within 2023–2025:** zero-fitted-scalar measured overlay — per-year
+   scoring of the one bundle; any year regressing on 2–4 is a fail.
+
+Outcomes: all hold → register + RECOMMEND keeper (owner promotes;
+keepers.json owner-only). (2) misses but 1, 3–5 hold → register NOT-YET
+candidate, update §5/§8.1/§10 with the measured shortfall. Anything else
+regresses → reject, keeper stays pjm-113. No constant, window, series or
+threshold is revisited after results (rules 1/11/23/26).
+
 ## Pointers
 
 * Keeper: `2026-07-16-pjm-113-short-only` (leg-A-only, promoted 2026-07-16;
@@ -437,7 +582,9 @@ ambient nuclear net-capability derate (a new charter, ~0.1 GW stakes, and the
 * Charter: `docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md` Part B.
 * Probes: `scripts/probes/_pjm_c3c_summer_tail_decomp.py` (this session),
   `scripts/probes/_pjm_d1p_diurnal_cycling.py` (D-1p instrument),
-  `scripts/probes/_pjm_nuclear_phantom_decomp.py` (§8.2 null result).
+  `scripts/probes/_pjm_nuclear_phantom_decomp.py` (§8.2 null result),
+  `scripts/probes/_pjm_c3c_congestion_surface_decomp.py` (§10 east-cut
+  measurement + pre-declared adjudication, pjm-cong-1).
 * Winter half: `docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` Part C.
 * MISO precedent for leg A: calibration-log 2026-07-14 (miso-65) and the
   `unit_outage_short_windows` docstrings in `src/market_sim/data/outages.py` /
