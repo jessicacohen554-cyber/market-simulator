@@ -14172,6 +14172,99 @@ every scored criterion, and the pre-registered FAIL conditions did not
 fire. If promoted: swap `keepers.json` to `2026-07-16-caiso-89-chp-steam`,
 run `build_status.py`, and launch the calibration-keeper-auditor.
 
+## 2026-07-16 — PJM-CONG-1: the flat zonal surface closed by the MEASURED EAST interface cut — pjm-114 CALIBRATED-WITH-CAVEATS (C3c-2025 40 h, first non-NOT-YET PJM determination); all five pre-committed gates HOLD; keeper promotion RECOMMENDED (owner-only)
+
+**Charter:** pjm-cong-1 — the C3c congestion-surface charter (diagnosis §5/§8.1
+boundary): measured interface limits for the flat zonal surface, the ERCOT
+West/Panhandle-split precedent class. Diagnostic-first: Phase-1 probe committed
+with the stop condition PRE-DECLARED in its header before the adjudicating
+section ran; Phase-2 gate pre-committed in diagnosis §10.6 before any solve.
+
+**Phase 1 (no-LP, `scripts/probes/_pjm_c3c_congestion_surface_decomp.py`):**
+
+- **The scarcity tranche is ZONAL — the east carries ~3× the system tail.**
+  Hub DA >$200: 2025 EASTERN HUB 152 h vs system 51 (DOMINION 109, WESTERN 79,
+  N ILLINOIS 39); 2024 EASTERN 46 h vs system **2**; 2023 EASTERN 28 vs 8. In
+  the 22 summer-2025 tail hours the EASTERN premium runs **+55…+178 $/MWh**
+  (Jun event mean +135, Jul +71) vs the keeper's flat +3.3 EMAAC monthly dual.
+- **The dispatch phantom is an east-west wheel, stable across years:** the
+  model under-generates inside MAD in the tail hours (2025 Dominion −1,122 MW
+  — CT −1,243; SWMAAC −957; Linden −835, Doswell −783, Chalk Point −369 — the
+  peakers reality ran) and over-generates west of it: net **+3.0…+3.6 GW
+  excess west→east wheel in all three years' scarcity hours** (fossil basis).
+- **Interface identity corrected from PJM Manual 03 §3.8 (Rev 71):** the feed's
+  series are named REACTIVE TRANSFER INTERFACES, not "regional envelopes".
+  **Eastern** = the 7-line EHV cut into the eastern Mid-Atlantic — the real
+  EMAAC import cut spanning BOTH Central_PA→EMAAC and SWMAAC→EMAAC (the
+  committed map applied it to the first alone, leaving the 5,000 MW static as
+  an un-monitored parallel path). **5004/5005** = Keystone/Conemaugh–Juniata
+  500 kV (western-PA corridor) — the committed ComEd→AEP mapping was a
+  MIS-ATTRIBUTION silently halving that link's 6,000 MW capability (the real
+  ComEd interface, CE-East, is unpublished).
+- **Adjudication (stop condition pre-declared: ≥8/22 h AND median ≥300 MW):**
+  reality never binds the published interfaces in the tail hours (AvgEastern
+  util 81%, limits RISE in the events) — but the MODEL's reconstructed
+  internal EMAAC-cut requirement exceeds the measured limit in **13/22 h,
+  median +485 MW** (anti-material-biased central estimate; 22/22 with the
+  measured 1,650 MW NYISO firm-export floor), and the binding hours ARE the
+  missed evening shoulders. **MATERIAL** → Phase 2/3.
+
+**Mechanism (zero fitted scalars):** `ScenarioConfig.pjm_east_interface_cut`
+(tier 3, default off, byte-identical off) — ONE one-sided hourly aggregate
+interface-group row capping Flow(Central_PA→EMAAC) + Flow(SWMAAC→EMAAC) at the
+published hourly "Average Eastern" limit (the dispatch hourly-(T,) group-cap
+machinery, CAISO-corridor precedent); reverse direction and per-link statics
+unchanged. Plus the unconditional 5004/5005 crosswalk correction (rule 14
+primary-source data-integrity fix; regression test pins it). DOF ledger: one
+new measured-physical zero-DOF entry; attestation seeded from the pjm-113
+ledger verbatim.
+
+**Run `2026-07-16-pjm-114-east-interface`** (bundle
+`results/calibration/pjmcong1_east_cut`; pjm-113 recipe via replay + ONLY the
+new flag via prb_overrides — run_config records it in both channels, the
+ERCOT-65 stomp check). Gates (§10.6/§10.7), all five together: (1) provenance
+HOLD — post-solve July-2025 EMAAC dual premium **+8.96** ∈ (+3.3, +30];
+(2) **C3c-2025 = 40 h** ∈ [26,102] (0.78× the DA 51 — PASS; was 17/18/18 in
+pjm-111/112/113); (3) 2023 = **7** ≤ 18, 2024 = **9** ≤ 12 (both small-count
+PASS; the real east tranches are 28 h and 46 h); (4) NO PASS criterion flips —
+every scored criterion PASS, the only status change is price_tail FAIL→PASS;
+(5) LOYO per-year HOLD. **Determination: CALIBRATED-WITH-CAVEATS (rubric
+v2.5) — the first non-NOT-YET PJM determination**; the caveat is the
+pre-existing unscored storage benchmark (C5b/C5c), untouched here. The cut
+separates ONLY EMAAC (other seven zones stay uniform) and the model's tail is
+now zonally structured the way reality's is.
+
+**Actions:** registered (label `pjm 114 east-interface`; pjm-101 pair pruned
+per top-15 retention), `legitimacy_diagnostics.json` + attestation + metrics
+committed with the bundle slims, manifest/parity green. Diagnosis §10 carries
+the full lane record. **Keeper promotion RECOMMENDED — keepers.json untouched
+(owner-only).** OWNER SIGN-OFFS requested: (i) the DataMiner2
+transfer-limit feed's "Average Eastern" as the adopted measured east-cut
+limit source, with the §10.5 reduced-network boundary reconciliation
+(monitored set sits slightly upstream of the exact EMAAC edge) and the
+5004/5005 mis-attribution removal; (ii) pjm-114 keeper promotion. Open
+residuals unchanged and disclosed: the winter tail (29 h, separate lane), the
+§7 rule-23-locked partial-derate bucket, the sub-interface Dominion premium
+(M-2 charter — the east cut deliberately does not touch Dominion/SWMAAC
+separation), and the D-1p overnight posture (M-3).
+
+## 2026-07-16 — PJM-CONG-1 owner sign-offs recorded + KEEPER PROMOTED: pjm-114 (east-interface cut) supersedes pjm-113 (session-logged authorization)
+
+Owner approved, same session as the pjm-cong-1 build ("Yes to both"): (i) **the
+DataMiner2 transfer-limit feed's "Average Eastern" series is the adopted
+measured east-cut limit source** — PJM Manual 03 §3.8 identity (the EASTERN
+reactive transfer interface = the EMAAC import cut), the §10.5 reduced-network
+boundary reconciliation, and the 5004/5005 ComEd mis-attribution removal are
+all signed off (rule 23: re-derives only when the feed's raw drops extend);
+(ii) **pjm-114 is PROMOTED to PJM keeper** — `keepers.json` PJM →
+`2026-07-16-pjm-114-east-interface`, sidecar rewritten as KEEPER with
+`market_story` (the east prices its own scarcity: finite EHV import capability
+into the eastern Mid-Atlantic, local peakers on the margin in heat events),
+`status.js` rebuilt — **PJM: CALIBRATED-WITH-CAVEATS** (first non-NOT-YET PJM
+determination; caveat = the pre-existing unscored storage benchmark C5b/C5c).
+`calibration-keeper-auditor` run post-flip per the standing instruction. Open
+lanes unchanged: winter tail, §7 partial-derate bucket (rule-23-locked),
+sub-interface Dominion premium (M-2), D-1p overnight posture (M-3).
 ## 2026-07-16 — caiso-89 PROMOTED to CAISO keeper (owner sign-off, session-logged: "Promote 89")
 
 `keepers.json` CAISO → `2026-07-16-caiso-89-chp-steam`; sidecar definition
@@ -14295,6 +14388,170 @@ legitimacy diagnostics, and attestations; parity check PASS. The known
 `prb_overrides`/`ercot_wtx` recorder warning surfaced as documented. Transport:
 unshallow-then-push, blob-verified (rule 27).
 
+## 2026-07-16 — Rubric v2.6 (owner amendments, ERCOT-73 session): C3c gates per-ISO — ERCOT moves to the RT hourly tail (DA = diagnostic); the C5c bench scores only OBSERVED months (the ERCO 2024 FAIL was nine fabricated pre-breakout zeros); C5b + C5c RETIRED to report-only for EVERY ISO; the ERCOT-71 keeper re-determines NOT-YET -> CALIBRATED-WITH-CAVEATS
+
+**Owner decisions (this session, AskUserQuestion record).** (1) C5c: fix the
+bench data honesty. (2) C3c: RT basis for ERCOT only. (3) ERCOT-73 proceeds,
+adjudicated against RT-based C3c. (4, follow-up in-session) EIA-930 storage
+data is not reliable enough to be a calibration judgment for ANY ISO — retire
+BOTH C5b and C5c to report-only.
+
+**(a) C3c per-ISO gated basis (`TAIL_BASIS`).** ERCOT's DA tail runs ABOVE its
+RT tail (2023: 311 vs 181 h) — the excess is the day-ahead weather/load
+forecast-risk premium, out of representation for a realized-weather
+(perfect-foresight) backcast exactly as sub-hourly transients are out of
+representation for an hourly LP (the argument that keeps the other five ISOs
+DA-gated; MISO 2023's whole 30 h RT tail is single-interval 5-minute events).
+The displaced basis becomes the report-only diagnostic in both directions.
+Keeper evidence: ERCOT-71 reads 179 h vs RT 181 h (0.99x) in 2023 where the DA
+gate read 0.58x; 2024 stays short on either basis (0.49x RT vs 0.38x DA),
+ledger-covered; 2025 19 vs 31 (0.61x) PASSes.
+
+**(b) C5c bench scores only OBSERVED months.** EIA-930 breaks ERCO batteries
+out of `Other` only from mid-Oct-2024; the committed bench monthly vector was
+nine structural zeros + three real months, and the keeper's only undocumented
+FAIL (C5c 2024 r=0.451 — its recorded deciding criterion) was a correlation
+against that fabricated actual. The bench builder now emits null for months
+below 90% non-NaN hourly coverage (regenerated 2024 vector: ten nulls +
+Nov/Dec — mid-Oct is partial and correctly held out); the scorer's existing
+null-month rule holds the year out. C5b's accidental NaN-poisoning skip for
+partial years is documented in place, deliberately unchanged.
+
+**(c) C5b + C5c RETIRED to report-only, every ISO** (owner, following from
+(b)): EIA-930 storage-dispatch data is not yet reliable enough to be a
+calibration judgment for any ISO. At retirement neither criterion had ever
+functioned as a real gate — C5c: one FAIL (ERCOT 2024, the (b) artifact), one
+ledgered caveat (MISO), four SKIPPEDs; C5b: ledgered caveats in MISO/NEISO,
+SKIPPED elsewhere. New `TIER_RETIRED` (tag RETD): both stay computed and
+PRINTED on every keeper (visible, auditable) but never PASS/FAIL, never
+consume ledger budget, never cap the determination. MISO/NEISO's dormant
+ledger entries remain as attestation history. Re-arming is a future owner
+decision; pre-retirement definitions kept in rubric §C5.
+
+**Effect.** ERCOT-71 keeper: NOT-YET -> CALIBRATED-WITH-CAVEATS (basis: the
+ledgered C3c caveat only). NEISO sheds its C5b ledgered caveat (stays CWC);
+NYISO unchanged (CWC); CAISO/MISO/PJM stay NOT-YET on pre-existing
+price-criteria failures. Scorer + rubric doc at v2.6 (missing v2.4/v2.5
+history entries backfilled); status.js rebuilt; keeper sidecar text repaired
+by the keeper auditor. Scored entirely at the scorer/bench layer — no
+re-solve, no payload change.
+
+## 2026-07-16 — ERCOT-73: the commitment-STATE construction — the state that discriminates is MEASURED and it is commitment-LOADING, not commitment (online share, RUC-increment, and system RTOLCAP all refuted); the loading-state-weighted wall built and probe-adjudicated — 2024 C3a -7.1 -> -3.1% and 2025 -5.1 -> -1.8% with C3b improving both years, the ERCOT-72 composition hit HELD, the tight-regime damage gone; CANDIDATE (CALIBRATED-WITH-CAVEATS), keeper decision the owner's
+
+**Task (owner charter).** Build the state-conditional form of the ERCOT-72
+cleared-share wall: price the un-offered gas capacity by the regime that
+actually governs it (moderate: the DA participation-cliff wall — the proven
+composition lever; tight: RUC/self-commitment near cost).
+
+**Leg a — the measured state series (the lane's methodological yield).**
+Scouted sources: the 60-Day SCED disclosure (telemetered Resource Status) and
+COP snapshots are retention-walled on the free MIS path (earliest listed
+publication 2024-03 -> deliveries late-Jan-2024; 2023 permanently unreachable
+— same wall as the AS-report intake), so a 2023-covering series must come from
+data on disk. Candidate discriminators measured on the ERCOT-72 target/damage
+windows (CEMS class envelopes x DAM disclosure):
+
+* online-HSL share: REFUTED — ~0.8 in BOTH regimes (May-24 target 0.845,
+  Aug-23 damage 0.822). The un-offered capacity is largely ONLINE either way.
+* online-minus-cleared (the RUC/self-commit increment — the charter's named
+  thesis): REFUTED — May-24 target 0.269 = Jan-24 damage 0.269.
+* published system RTOLCAP: REFUTED — May-24 target 11.4 GW vs Jan-24 damage
+  16.3 GW (the system aggregate is dominated by non-gas headroom).
+* the class's UNLOADED online headroom (online_cap - gross): separates every
+  damage window from every target window AT HOUR GRAIN — Aug-23 0.02 /
+  Sep-23 0.09 / Jun-23 0.21 / Aug-24 0.16 / Jan-24 net-load>=p90 hours 0.25
+  vs May-24 shoulders 0.55 / Apr-24 0.79 / Nov-24 0.68 — with lag-1 autocorr
+  0.98 and net-load-bin correlation only 0.75: the commitment-persistence
+  information a static bin ladder cannot carry (the measured reason the
+  static form failed).
+
+Regime reading: in moderate regimes the belt-priced unloaded headroom IS the
+marginal supply (the wall governs); in tight regimes RUC/self-commitment loads
+the class to its envelope and the same capacity is inframarginal near cost.
+
+**The mechanism (built, admissible, default-off).**
+`ercot_offer_surface_cleared_share_state` (requires the wall flag; hard error
+alone): each walled row-hour's markup scales by w_c(t) = clip((online_cap -
+gross)/(online_cap - cleared), 0, 1) — floored bid = base + w x (wall - base).
+Frozen rule-23 artifact (`scripts/derive_ercot_commitment_loading_state.py`;
+CAMPD CEMS envelope + gross — the campd-unit-outages source family — x DAM
+awards rebased via the measured live-HSL share); zero fitted scalars;
+year-stable (CC mean w 0.60/0.61/0.65 across 2023-25). Backcast years read the
+year's measured hourly series (the outage-overlay G4 pattern); absent years
+fall back to the artifact's pooled climatology (net-load bin x 4-hour ORDC
+block — regenerates from the target year's own drivers, rule 13). P1-only,
+same rows/seam as the wall (rule 19 ownership unchanged); 5 trivial-case
+tests.
+
+**Full-span adjudication (`2026-07-16-ercot73-state-wall`, registered
+CANDIDATE — CALIBRATED-WITH-CAVEATS; C3c gated on the rubric v2.6 RT basis).**
+Monthly deltas below are the payload lw basis computed identically for keeper
+and candidate (prior entries' May/Nov quotes of -6.9/-4.2 were the
+report-header basis; like-for-like the keeper reads -11.7/-6.6).
+
+| leg | 2023 C3a/C3b | 2024 C3a/C3b/C3c(RT) | 2025 C3a/C3b | May-24 mon | Nov-24 mon | May-24 shoulders (88h) | Aug 18-20 guard |
+|---|---|---|---|---|---|---|---|
+| 0 = ercot71 keeper | +4.7% / 0.135 | -7.1% / 0.160 / 26 vs 53 | -5.1% / 0.102 | -11.7 | -6.6 | $28.6 vs $67.3; CC +675 | holds |
+| CS = static wall (ercot72, REJECTED) | +15.9% / 0.248 | +5.0% / 0.174 / 47 | +2.3% / 0.097 | — | — | $32.7; CC +15, CT +404, ST_GAS +640 | holds |
+| ST = state wall (this run) | +6.2% / 0.143 | **-3.1% / 0.141** / 26 vs 53 | **-1.8% / 0.088** | -10.3 | -5.6 | $30.8; CC **-311** corr (share 0.830), CT +215, ST_GAS -914 corr | holds (2h vs 4 actual, no shed) |
+
+* **The state carries both regimes.** 2024: every under-priced month moves
+  toward zero (May -11.7 -> -10.3, Aug -4.4 -> -2.7, Nov -6.6 -> -5.6); C3a
+  -7.1 -> -3.1 with C3b IMPROVING 0.160 -> 0.141 (the static form flipped the
+  sign, +5.0 with C3b worsening). 2025: -5.1 -> -1.8, C3b 0.088. The
+  composition hit HOLDS at half wall strength (May-shoulder CC corrected
+  excess +675 -> -311 MW, share of live 0.872 -> 0.830 vs measured ~0.81-0.84;
+  CT +215 vs the static form's +404) and the static form's +640 ST_GAS
+  overflow is GONE (now -914 corrected, the keeper-side under-dispatch).
+* **Cost, honestly stated:** 2023 C3a +4.7 -> +6.2% — broad ~$1 monthly lifts
+  (Jun +13.9 -> +14.8, Sep +16.9 -> +17.9, Aug -1.8 -> -0.9 i.e. TOWARD
+  actual; vs the static form's +4 to +11 inflations). The measured state says
+  those months' moderate hours carried real belt headroom (w 0.1-0.2), so a
+  small wall remains — rule 1: a measured-real mechanism stays in; the 2023
+  summer over-shoot remains lane 2's open root cause.
+* **Formation stays partially open:** the May-24 shoulder prices $30.8 of
+  $67.3. The remaining gap owners, named: the wall's own cheap mid-rungs (the
+  measured uncleared-offer MW-distribution is bottom-heavy) and the
+  drag-owned steam offers (leg c below). Not a tail mechanism: C3c 2024 stays
+  26h (0.49x RT, ledger-covered — the G-22 scarcity-formation limitation).
+* LOYO (rule 22): nothing year-specific is fitted (the w series is measured
+  per year; boundary/ladder frozen from ERCOT-72; zero fitted scalars); the
+  artifact's year tables are stable (CC mean w 0.60/0.61/0.65). Promotion is
+  the owner's; the mechanism-change LOYO clause applies at that decision.
+
+**Leg c — the ST_GAS overflow sink (measured; chartered to the drag lane).**
+May-24 shoulder family: measured steam (GSREH/GSNONR/GSSUP) live HSL 5.9 GW,
+DA-cleared 1.2 GW (share 0.20), ~half of live resource-hours declared OFF in
+the DAM; posted offers p50 $27 (16.5x on gas) with a steep cap tail. The
+drag's flat committed rungs (~$30) hand the LP several GW of cheap steam that
+reality priced $57-100 beyond its 1.2 GW DA position — the overflow sink is
+the STEAM version of the same no-must-offer participation cliff. No second
+wall here (rule 19); recorded as the drag lane's finding.
+
+**Disposition (rules 1/13/14/19/26).** The commitment-STATE thesis is
+confirmed in its measured form: the discriminating state is commitment-LOADING
+(the unloaded fraction of the above-DA online capability), not the
+online/RUC-increment state the charter sketched — those are measured-refuted.
+The state-weighted wall is structurally faithful (both regimes priced by the
+regime that governs them, from measured series end to end), keeps the proven
+composition lever, and removes the static form's rejected tight-regime arm.
+Registered CANDIDATE; keeper promotion is the owner's call (the 2023 +1.5pp
+cost vs the 2024/2025 gains and the C3b improvements is the trade to weigh).
+Successor levers, named: the shoulder formation gap (wall mid-rungs; the
+measured 60-Day SCED offer curves of ONLINE units would be the finer-grain
+identification once the 2024-25 window suffices), the drag-lane steam
+participation cliff (leg c), and the West/Panhandle topology split (its own
+charter).
+
+**Ops.** One full-span in-session solve (~25 min, years sequential; one
+container restart mid-first-attempt — resolved fresh). Registered with
+benchmark rebuild (the v2.6 observed-months fix regenerated the ERCOT 2024
+bench storage vector), legitimacy diagnostics, attestation (keeper DOF ledger
+verbatim — zero new parameters; price_tail 2024 ledger entry carried forward
+on the v2.6 RT basis), parity check PASS. Rubric v2.6 landed first (own entry
+above); keeper sidecar text repaired via the keeper auditor. The known
+`prb_overrides`/`ercot_wtx` recorder warning surfaced as documented.
+Transport: unshallow-then-push, blob-verified (rule 27).
 ## 2026-07-16 — CAISO-90 (Lane B, C3c tail undershoot): the winter half of the DA tail is a GAS-CALENDAR defect — flow-date placement built + registered (CANDIDATE); the summer half ADJUDICATED not reachable through the scarcity overlay (SOC refinement refuted no-LP); the C1 CC-over/CT-under cluster diagnosed to the same evening merit stack (owner directive)
 
 **Charter (handoff Lane B):** instrument the 80/52 actual DA >$200 hours of
@@ -14457,3 +14714,135 @@ pointing at the F4-blocked price lane — not at more fleet work. If
 promoted: swap `keepers.json` to `2026-07-16-miso-68-mothballs`, run
 `build_status.py`, and launch the calibration-keeper-auditor. Next number:
 miso-69.
+
+## 2026-07-16 — CAISO C1 lane, candidate 1 CLOSED: the online-scoped reserve co-optimization is BUILT and measured INERT (probe `caiso-91`; keeper stays caiso-90)
+
+**Task (owner directive 2026-07-16, C1 CC-over/CT-under handoff, chartered
+candidate 1).** Build the issue-#1492 "correct build" — the CAISO reserve
+co-optimization with online-quality scoping (spin from ONLINE units only) —
+and A/B it against the caiso-90 keeper. Hypothesis under test: evening spin
+withholds loaded-CC headroom so CTs clear on merit, moving both C1 volume
+sides and the evening duals together.
+
+### 1. The build (`caiso_reserve_online_scoped`, GATED default off — kept, rule 1)
+
+The structurally-validated PJM `pjm_reserve_pergen_sync` product split ported
+onto the CAISO pergen spin/non-spin co-opt (`reserve_config._caiso_design` +
+the new shared `caiso_pergen_structure`/`caiso_pergen_pool_ramp10` helpers;
+flag-off byte-identical refactor):
+
+- Each (zone, fuel-class) R pool splits into a SPIN column — online 10-minute
+  ramp ONLY, the online pattern read from the model's own P0 run pattern at
+  the P0→P1 seam (`pipeline.commitment.caiso_pergen_sync_reserve_caps` +
+  `build_caiso_reserve_p1_prep`, the CAISO-RA-bridge/PJM-path-B
+  forward-regenerating convention; min-down gaps bridged, rule-18 physics
+  fast-start flags; hydro fast-start by physics) — and a NONSPIN column
+  (OFFLINE fast-start ramp; offline slow iron backs nothing), sharing the
+  pool's joint P+R headroom row.
+- Families become the NESTED tariff procurement: spin = ½ the BAL-002-WECC-3
+  requirement (§27.1.2.3.5 $100 flat curve, SPIN columns + storage RS);
+  contingency-total = the FULL requirement ($500/600/700 tiers, all columns —
+  BPM downward substitution). This also fixes the co-drawn form's effective
+  half-procurement (max(half, half) on a shared pool).
+- Rule-19 exclusivity enforced by validators: requires `caiso_reserve_coopt`;
+  mutually exclusive with `caiso_commitment_posture` (the MISO-posture family
+  — honesty-gate-rejected at miso-43 — gates the same phenomenon) and with
+  `caiso_locational_as_families` (zone∧product masks not composed).
+- Zero fitted parameters (tariff/NERC curves + requirement, physics
+  ramp10/fast-start thresholds, P0 commitment state — rules 5/11/13/23).
+  Year-invariant code-level structure (caiso-78/85/90 LOYO precedent).
+  Unit tests incl. an end-to-end LP proving the intended mechanism in
+  miniature (spin withholds loaded CC → CT clears displaced energy on merit →
+  $40 opportunity-cost spin dual; `tests/test_reserve_coopt.py`).
+
+### 2. The probe (`2026-07-16-caiso-91-reserve-coopt`, bundle `results/calibration/caiso91_reserve_online_scoped`) — INERT
+
+Full-span 2023-2025 single-delta-group A/B vs a same-machine caiso-90 keeper
+repro (`caiso_scarcity_pricing=False` in the probe per rule 19; both solved
+concurrently this session). **The reserve balance duals are zero in all
+26,280 solved hours** (`system.parquet` reserve_price max $0.0 in every
+year). Every scored surface is unchanged vs the repro:
+
+| report-back row | A (caiso-90 repro) | B (caiso-91) |
+|---|---|---|
+| C1 CC_REGULAR (TWh miss) | +1.90 / +5.30 / +2.56 | +1.90 / +5.30 / +2.55 |
+| C1 CT_PEAKER model TWh (actual 4.13/4.33/2.37) | 0.84 / 0.69 / 0.32 | 0.84 / 0.69 / 0.32 |
+| C1 CT_CHP · ST_GAS miss | −1.80/−1.74/−1.07 · −0.84/+0.51/+0.03 | identical |
+| Panoche 56803 GWh | 54 / 32 / 20 | 54 / 32 / 20 |
+| C3c model h >$200 (DA actual 80/52/0) | 18 (all Jan-13) / 0 / 0 | 18 (same day) / 0 / 0 |
+| hod signature (CC/CT, all buckets) | — | Δ ≤ ±2 GWh/bucket (LP tie noise) |
+| monthly residual map / mean LMP | — | identical to ±0.1 |
+| verdict grid | C1/C3a/C3c/C4 FAIL, C2/C3b/C5a/C6/C7/C8 PASS | identical (NOT-YET, same four) |
+
+WATCH months unmoved (Feb-2023, Apr-2023, Jan-2024, Sep-Dec-2025). C7/C8:
+CT_PEAKER stays sub-materiality at MODEL energy (2.0/—/1.2 % of load) with
+D-2 forced share 0.7/—/0.0 % — no floor was added and none armed.
+
+### 3. Adjudication — candidate 1 CLOSED; the mechanism stays (default-off)
+
+The ~1.1 GW mean spin requirement clears at zero opportunity cost from
+storage RS power headroom (8 GW fleet at the 30-min ASSOC sustain — the real
+market's dominant AS provider), online hydro headroom, and part-loaded online
+CC belly headroom. The caiso-59 inertness conclusion **survives the
+online-quality scoping that was chartered as its correct build**: the C1
+CC-over/CT-under cluster is NOT a reserve-withholding phenomenon, and the
+diagnosis §3 honest-inert finding extends from the post-solve overlay to the
+in-LP co-opt. The structure is kept default-off as the correct market
+mechanism (rule 1; the pjm-87 disposition). Chartered candidates remaining:
+(2) the Panoche-class committed-tranche gate (per-plant tolling/RA conduct —
+top-15 plants carry 91 % of actual CT energy) and (3) overnight CC cycling.
+**Disclosed next increment for the co-opt itself:** the hydro deliverability
+envelope caps only dispatched energy, not the joint P+R row, so hydro reserve
+headroom is overstated by (nameplate − envelope) per hour; even
+envelope-consistent, storage RS alone covers the requirement in the relevant
+hours, so this would not flip the verdict — filed as a note, not built.
+
+Rules compliance: solve years 2023-2025 only (rule 22); one bundle, years
+sequential, two invocations concurrent (rules 12/16); no ablation twin (rule
+21 as amended); registered as a labelled (PROBE) with
+legitimacy_diagnostics.json before dashboard_add_run, attestation +
+`calibration_verdict.py --write-metrics`, parity check green; zero new fitted
+scalars (rule 24 — flag registered in ScenarioConfig, DOF ledger identical to
+the keeper); keeper untouched.
+
+## 2026-07-16 — C1 candidate 2 (Panoche-class committed-tranche gate) CLOSED without a solve: the class's own measured conduct refutes committed scaffolding
+
+Rule-17 evidence adjudication from full-8760 CAMPD CEMS grids
+(`results/calibration/FINDING-caiso91b-ct-committed-conduct-refuted-2026-07-16.md`):
+no plant in the CT_PEAKER dominant set exhibits committed conduct — Panoche
+cycles ~daily (1,107 starts / 3 yr, median run 7 h, 42 % of hours online,
+0.79 median CF during runs, belly-off/evening-overnight blocks), the
+summer-evening trio (Sentinel/Walnut Creek/Marsh Landing) runs 5-14 % of
+hours in 4-8 h evening blocks. There is no committed window for D-4 to
+declare; any implementable gate would window on observed hours = a rule-14
+actuals-pin (the adjudicated `ct_mustrun_per_plant` family). The measured
+routing of the C1-CT under-run: the Panoche bid wedge is
+marginal-economics — Jan-2024 fuel-only SRMC ≈ $57 sits below the model's
+own January NP15 λ (mean $68) while its carbon+multiplier-loaded rung
+(~$73) prices it out — owned by the named measured DAM offer-surface intake
+charter (rule 25 forbids a multiplier re-tune); the trio is the evening-λ
+lane. With candidates 1 (caiso-91, inert) and 2 both closed, the C1
+cluster's remaining chartered candidate is 3 (overnight CC cycling) — owner
+checkpoint before further solves. No config touched; no run produced.
+
+## 2026-07-16 — C1 candidate 3 (overnight CC cycling): evidence measured, no build — and the hod price ladder that reframes the lane
+
+`results/calibration/FINDING-caiso91c-overnight-cc-evidence-2026-07-16.md`.
+Crosswalked overnight (hod 0-5) CC over-run +1.30/+2.07/+2.53 TWh (the
+LA-Basin repowering ORISPL crosswalk CEMS 315/335/330 ↔ EIA 62115/62116/
+57901 removes ~1.6 TWh/yr of phantom delta; Desert Star 55077 is NV,
+CEMS-uncoverable ~0.2-0.3), of which only 0.16 TWh sits at binding RA-bridge
+floors in 2024 — ≥92 % free economic dispatch. Real CCs two-shift
+(overnight-online 26-67 % per plant vs model 50-100 %). NEW: the hod price
+ladder (demand-weighted model λ − actual RT) decomposes the C3a body
+overprice into a BELLY overprice (+$9-14, hod 10-14 — the open midday/
+RUC-long lane) partly offset by an EVENING underprice (−$1-4, hod 17-21 —
+the price-side face of the C1 CT under-run and the C3c summer misses);
+overnight only +$2-4. Candidate-3 build direction identified (P1-native
+two-shift screen on the P0-dual startup-restart inequality, ERCOT-63
+template) with disclosed tensions: it raises an already-over overnight λ
+unless overnight imports take the displaced energy (undecomposed), and it
+must not become archived-P2-by-another-name. Owner checkpoint: candidates
+1 (caiso-91, inert) and 2 (no-LP conduct refutation) closed; remaining C1
+owners are candidate 3 + the measured DAM offer-surface intake charter +
+the evening-merit λ level. No config touched; no run produced.

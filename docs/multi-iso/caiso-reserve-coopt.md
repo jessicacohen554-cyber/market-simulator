@@ -143,3 +143,42 @@ supply-scoping* result, not a reason to revert: the documented next increments
 (storage reserve first — the dominant CAISO AS provider, unbacked by the pergen
 builder today; then hydro; then regulation) each SHRINK the deliverable pool's
 dominance over the requirement and are where the mechanism would begin to bind.
+
+## Online-quality scoping (`caiso_reserve_online_scoped`, caiso-91, 2026-07-16) — built; still inert
+
+The chartered "correct build" increment (C1 CC-over/CT-under lane, owner
+directive 2026-07-16): the PJM `pjm_reserve_pergen_sync` product split ported
+onto the CAISO pool. Each (zone, fuel-class) pool splits into a **SPIN**
+column — online 10-minute ramp only, the online pattern read from the model's
+own P0 run pattern at the P0→P1 seam
+(`pipeline.commitment.caiso_pergen_sync_reserve_caps` /
+`build_caiso_reserve_p1_prep`; min-down gaps bridged, rule-18 physics
+fast-start flags, hydro fast-start by physics) — and a **NONSPIN** column
+(offline fast-start ramp; offline slow iron backs nothing), sharing the
+pool's joint P+R headroom row. The families become the **nested** tariff
+procurement: spin (½ the requirement, $100 flat curve, SPIN columns + storage
+RS) and contingency-total (the FULL requirement, $500/600/700 tiers, all
+columns — BPM downward substitution; this also fixes the co-drawn form's
+effective half-procurement). Zero fitted parameters. Mutually exclusive with
+`caiso_commitment_posture` and (un-composed) `caiso_locational_as_families`.
+Shared pooling helpers `caiso_pergen_structure` / `caiso_pergen_pool_ramp10`
+guarantee identical column order between the design layout and the seam caps.
+
+**A/B vs the caiso-90 keeper (probe `2026-07-16-caiso-91-reserve-coopt`,
+bundle `caiso91_reserve_online_scoped`, `caiso_scarcity_pricing=False` per
+rule 19): INERT.** The reserve balance duals are zero in all 26,280 solved
+hours (2023-2025); every scored surface — C1 class grid, C3c tail count and
+days, monthly residual map, verdict grid — is unchanged vs the same-machine
+keeper repro. The ~1.1 GW mean spin requirement clears at zero opportunity
+cost from storage RS power headroom, online hydro headroom, and part-loaded
+online CC belly headroom. So the caiso-59 conclusion survives its own
+chartered correction, and the C1 CC-over/CT-under cluster is adjudicated NOT
+a reserve-withholding phenomenon (see the 2026-07-16 calibration-log entry).
+
+**Documented next increment (not built):** the hydro deliverability envelope
+(`hydro_dispatch_envelope`) caps only dispatched energy `P`, not the joint
+`P+R` reserve row, so hydro reserve headroom is overstated by
+(nameplate − envelope) per hour. An envelope-consistent hydro reserve row
+would shrink that phantom headroom; measured storage-RS headroom alone still
+covers the requirement in the relevant hours, so the inertness verdict is not
+expected to flip.
