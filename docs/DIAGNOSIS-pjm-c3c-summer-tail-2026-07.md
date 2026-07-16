@@ -280,6 +280,61 @@ result. The measured overlay stays in as the structurally-faithful availability
 model (it is real, on-target, and zero-DOF); it simply does not, on its own,
 close the C3c summer tail — which is now disclosed as congestion-surface-bound.
 
+## 8.2 Nuclear (non-CAMPD) availability probe (pjm-nuc-1, 2026-07-16) — NULL result
+
+Follow-on session pjm-nuc-1 tested the one candidate the §2/§3 decomposition is
+blind to **by construction**: the phantom tables are model-minus-CAMPD, and PJM
+nuclear (32 units, 33.5 GW; 32,689 MW active after the dormant Crane exclusion)
+is not in CAMPD at all. The model runs nuclear on the fleet-month CF smear
+(`NUCLEAR_MONTHLY_CF_BY_YEAR`, EIA-923-derived, flat must-run at
+pmax × CF within each month), which cannot see a unit-specific refuel/trip
+inside a scarcity hour — the exact defect ERCOT fixed with its per-reactor
+daily overlay (`ercot_nuclear_unit_availability`). Diagnostic-first: probe
+committed, stop threshold (~400 MW ≈ one small reactor, over the 22 tail
+hours) pre-declared before measurement, no flag and no solve without a
+material phantom.
+
+Probe: `scripts/probes/_pjm_nuclear_phantom_decomp.py`. Model side is an
+**exact** reconstruction (nuclear is flat must-run, so dispatch ==
+pmax × monthly CF; validated per year against the committed pjm-113 payload's
+own fuelRows annual nuclear to < 0.05 TWh — nuclear plants are absent from the
+payload's per-plant dict, which is CAMPD fossil only). Actual side is EIA-930
+PJM nuclear hourly via the canonical `load_eia_hourly_benchmark` clock (the
+series the run's nuclear fuelRow is scored against; nuclear is a price-taker,
+so realized ≈ available, and CEMS cannot see nuclear).
+
+**Measured phantom (model − EIA-930 nuclear), the scarcity hours themselves:**
+
+| window | hours | phantom mean MW |
+|---|---|---|
+| 2025 summer tail (the 22 Jun 23-25 / Jul 28-29 hours) | 22 | **+147** (clock cross-check on `PJM_fueltype.parquet` UTC→EPT: +119) |
+| — Jun 23-25 event only | 13 | +241 |
+| — Jul 28-29 event only | 9 | +12 |
+| 2023 summer tail | 8 | +328 |
+| 2024 summer tail | 1 | +320 |
+
+Range over the 2025 tail hours: −36 … +407 MW; no single hour reaches 410 MW.
+The real fleet was effectively fully up through both heat events (actual
+32.0–32.1 GW vs model 32.0–32.4 GW). Whole-month phantom means are slightly
+NEGATIVE (Jun −202, Jul −81 MW): the CF cap-at-1.0 convention makes the smear
+under-credit the fleet on the month, not over-credit it. EIA-923 plant-month
+attribution finds no event-coincident refuel — the only 2025 sub-0.90 event-
+month plant is Susquehanna (Jun/Jul CF 0.87, a sustained partial state whose
+monthly energy the smear already embeds).
+
+**Verdict: NULL — the stop condition binds (147 < 400 MW).** A perfect
+per-reactor overlay could at most recover the phantom itself, ~0.15 GW mean —
+an order of magnitude below the +3.0 GW coal phantom (§2) and a tenth of the
+1.5 GW whose removal moved the tail only +1 h in pjm-112/113. No overlay was
+built, no flag added, no solve run, nothing registered (rules 1/11/13: the
+measurement does not justify the mechanism). The `avg_ecomax`-for-nuclear open
+question and the NRC daily-status intake are both moot for PJM and were not
+pursued; the non-CEMS GAS availability extension remains a separate,
+unchartered follow-on. The C3c summer boundary therefore stands **as §8.1
+disclosed, now with the third candidate measured and excluded**: the flat
+zonal congestion surface (§5, dominant) plus the ~1.7 GW frozen-constant-
+invisible partial-derate bucket (§7).
+
 ## 9. Guardrail review
 
 * **Rules 1/11**: mechanism identified and gate pre-committed before any
@@ -300,10 +355,13 @@ close the C3c summer tail — which is now disclosed as congestion-surface-bound
 
 ## Pointers
 
-* Keeper: `2026-07-15-pjm-111-cc-reconcile` (NOT-YET on C3c only).
+* Keeper: `2026-07-16-pjm-113-short-only` (leg-A-only, promoted 2026-07-16;
+  NOT-YET on C3c only — was `2026-07-15-pjm-111-cc-reconcile` when §1–8
+  were written).
 * Charter: `docs/handoffs/pjm-cc-capacity-reconcile-2026-07.md` Part B.
 * Probes: `scripts/probes/_pjm_c3c_summer_tail_decomp.py` (this session),
-  `scripts/probes/_pjm_d1p_diurnal_cycling.py` (D-1p instrument).
+  `scripts/probes/_pjm_d1p_diurnal_cycling.py` (D-1p instrument),
+  `scripts/probes/_pjm_nuclear_phantom_decomp.py` (§8.2 null result).
 * Winter half: `docs/DIAGNOSIS-pjm-dof-scarcity-tail-2026-07.md` Part C.
 * MISO precedent for leg A: calibration-log 2026-07-14 (miso-65) and the
   `unit_outage_short_windows` docstrings in `src/market_sim/data/outages.py` /
