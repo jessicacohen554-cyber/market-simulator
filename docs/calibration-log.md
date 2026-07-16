@@ -14374,3 +14374,17 @@ sequential (rules 12/16); no ablation twin (rule 21 as amended); registered
 with legitimacy_diagnostics before dashboard_add_run, attestation +
 --write-metrics, parity check green; zero new fitted scalars (rule 24 flag
 registered in ScenarioConfig); keeper untouched (owner decides).
+
+## 2026-07-16 — CAISO keeper PROMOTED: caiso-90 (citygate flow-date) supersedes caiso-89 (owner sign-off this session: "Promote")
+
+`frontend/data/backcast/keepers.json` CAISO → `2026-07-16-caiso-90-citygate-flow`;
+`build_status.py` rebuilt status.js (CAISO NOT-YET, C6/C7/C8 PASS);
+`audit_keepers.py --iso CAISO` PASS 0/0; calibration-keeper-auditor launched on
+the flip; keeper sidecar carries the market_story (flow-day gas is the DEB
+marginal cost — no class is forced, only the calendar day carrying the measured
+fuel price changes). Grade and A/B in the caiso-90 registration entry above.
+Open item carried on promotion: Feb-2023 +2.1 → +4.3 $/MWh under flow-date
+placement (an accurate-input-exposes-something-else flag per rule 15, filed as
+a root-cause note, never a tuning target). The C1 CC-over/CT-under lane is
+chartered next (owner directive; handoff issued this session) —
+`docs/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md` §5.
