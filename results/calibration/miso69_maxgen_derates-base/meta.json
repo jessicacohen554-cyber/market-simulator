@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-16T21:51:45",
+  "timestamp": "2026-07-16T22:15:35",
   "iso": "MISO",
   "years": [
     2023,
@@ -51,8 +51,7 @@
     "unit_outage_short_windows": true,
     "class_aware_fuel_price_fallback": true,
     "coal_committed_takeorpay_regulated": true,
-    "st_gas_mustrun_p25_level": true,
-    "unit_outage_maxgen_events": true
+    "st_gas_mustrun_p25_level": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -232,10 +231,10 @@
     "eia923": "../_shared/MISO/eia923-96136b23f6a3.parquet",
     "campd": "../_shared/MISO/campd-0c8c8860e930.parquet"
   },
-  "git_sha": "578fd2c",
+  "git_sha": "feedd99",
   "highspy_version": "1.14.0",
   "reuse": {
-    "source_bundle": "results/calibration/_miso69_acc_main/y2024",
+    "source_bundle": "results/calibration/_miso69_acc_base/y2024",
     "requested_years": [
       2023,
       2024,
@@ -246,15 +245,15 @@
         "passes": [
           "P1"
         ],
-        "cache_key": "6a5cdecc77e4baff",
-        "scenario_config_sha256": "f5b5c305e6981d16"
+        "cache_key": "67da490f7775a552",
+        "scenario_config_sha256": "9989a528e748cfcc"
       },
       "2024": {
         "passes": [
           "P1"
         ],
-        "cache_key": "9e21f91486541ff3",
-        "scenario_config_sha256": "0d6dc16e497e2862"
+        "cache_key": "7e29efc84d3d972a",
+        "scenario_config_sha256": "a58663f236663f8a"
       }
     },
     "fresh_years": [
@@ -264,7 +263,7 @@
       "2025": "year not solved in the prior bundle"
     },
     "warning": "Reused years are byte-copies of a prior bundle's solve, NOT fresh evidence \u2014 keeper promotion still requires a full fresh solve of every year.",
-    "source_timestamp": "2026-07-16T21:43:20",
-    "source_git_sha": "8ef4a5e"
+    "source_timestamp": "2026-07-16T22:07:24",
+    "source_git_sha": "a19f796"
   }
 }
