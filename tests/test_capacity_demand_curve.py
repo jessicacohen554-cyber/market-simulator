@@ -19,10 +19,13 @@ import numpy as np
 from market_sim.config.constants import (
     MARKET_DESIGN,
     MARKET_DESIGN_VINTAGES,
+    MISO_SEASONAL_RBDC,
     PLANNING_RESERVE_MARGIN_BY_ISO,
     CapacityDemandCurvePoint,
     evaluate_demand_curve,
+    resolve_capacity_curve_eligible,
     resolve_demand_curve_vintage,
+    seasonal_rbdc_price_per_firm_mw_yr,
 )
 from market_sim.config.paths import RAW_DIR
 from market_sim.config.scenarios import ScenarioConfig
@@ -45,6 +48,12 @@ _SYNTH = (
 )
 
 _CURVE_ISOS = ("PJM", "NYISO", "NEISO", "MISO")
+# MISO prices on the SEASONAL RBDC (RC-1C) — a four-season sum, NOT the single
+# annual ``demand_curve`` — so the tests that assert the annual-curve identity
+# (cap = demand_curve[0] × anchor; price == evaluate(demand_curve) × anchor) run
+# on the annual-grain ISOs only; MISO's seasonal behavior has its own class
+# (TestMISOSeasonalRBDC).
+_ANNUAL_CURVE_ISOS = ("PJM", "NYISO", "NEISO")
 _CFG_ON = SimpleNamespace(capacity_market_clearing=True)
 _CFG_OFF = SimpleNamespace(capacity_market_clearing=False)
 
@@ -160,8 +169,9 @@ class TestCapacityPriceSeam(unittest.TestCase):
 
     def test_curve_cap_when_short(self):
         # Deep shortage clamps to the published price cap (cap fraction x
-        # net_cone_curve), never higher.
-        for iso in _CURVE_ISOS:
+        # net_cone_curve), never higher. (Annual-grain ISOs; MISO's seasonal
+        # cap is asserted in TestMISOSeasonalRBDC.)
+        for iso in _ANNUAL_CURVE_ISOS:
             design = MARKET_DESIGN[iso]
             cap_frac = design.demand_curve[0].price_frac_net_cone
             price = design.capacity_price_per_firm_mw_yr(_CFG_ON, 0.3)
@@ -181,8 +191,9 @@ class TestCapacityPriceSeam(unittest.TestCase):
 
     def test_t2_1_arithmetic_identity(self):
         # T2.1: the clearing price IS the VRR curve evaluated at the reserve
-        # position, scaled by net-CONE — for every ISO-curve and position.
-        for iso in _CURVE_ISOS:
+        # position, scaled by net-CONE — for every annual-grain ISO-curve and
+        # position. (MISO is seasonal — TestMISOSeasonalRBDC covers it.)
+        for iso in _ANNUAL_CURVE_ISOS:
             design = MARKET_DESIGN[iso]
             for pos in (0.6, 0.85, 0.97, 1.0, 1.02, 1.08, 1.2):
                 identity = (
@@ -525,14 +536,25 @@ class TestMarketDesignVintages(unittest.TestCase):
             resolve_demand_curve_vintage("PJM", 2035).delivery_year, "2027/2028"
         )  # hold-last (after the latest)
 
-    def test_resolve_miso_pre_rbdc_hold_first_and_forward_hold_last(self):
-        # MISO's table holds only PY2025-26; every earlier (pre-RBDC) year
-        # holds-first to it and every later year holds-last to it.
+    def test_resolve_miso_pre_rbdc_vertical_and_forward_hold_last(self):
+        # MISO now carries the pre-RBDC (vertical-at-CONE) vintages 2021/22-2024/25
+        # plus the seasonal PY2025-26 (RC-1C). A pre-RBDC year resolves to its own
+        # vertical vintage (seasonal_rbdc is None, demand_curve is the vertical
+        # step); the RBDC year and every later year hold-last to PY2025-26 (which
+        # carries the seasonal RBDC).
+        v2021 = resolve_demand_curve_vintage("MISO", 2021)
+        self.assertEqual(v2021.delivery_year, "2021-2022")
+        self.assertIsNone(v2021.seasonal_rbdc)
+        self.assertNotEqual(v2021.demand_curve, ())  # vertical step, not ()
+        v2024 = resolve_demand_curve_vintage("MISO", 2024)
+        self.assertEqual(v2024.delivery_year, "2024-2025")
+        self.assertIsNone(v2024.seasonal_rbdc)
+        v2030 = resolve_demand_curve_vintage("MISO", 2030)
+        self.assertEqual(v2030.delivery_year, "2025-2026")  # hold-last
+        self.assertIsNotNone(v2030.seasonal_rbdc)  # seasonal grain
+        # A year before the earliest MISO vintage holds-first to 2021-2022.
         self.assertEqual(
-            resolve_demand_curve_vintage("MISO", 2021).delivery_year, "2025-2026"
-        )
-        self.assertEqual(
-            resolve_demand_curve_vintage("MISO", 2030).delivery_year, "2025-2026"
+            resolve_demand_curve_vintage("MISO", 2018).delivery_year, "2021-2022"
         )
 
     def test_resolve_nyiso_flat_anchor_years_present(self):
@@ -581,12 +603,24 @@ class TestMarketDesignVintages(unittest.TestCase):
         if iso == "NEISO":
             return self._scalar(r, "net_cone") * 12.0
         if iso == "MISO":
-            return (
-                self._scalar(
-                    r, "net_cone", area="North/Central", y_unit="usd_per_mw_yr"
-                )
-                / 1000.0
-            )
+            # PY2025-26 (RBDC): North/Central Net CONE ($/MW-yr -> $/kW-yr).
+            nc = r[
+                (r.metric == "net_cone")
+                & (r.area == "North/Central")
+                & (r.y_unit == "usd_per_mw_yr")
+            ]
+            if not nc.empty:
+                return float(nc.y_value.iloc[0]) / 1000.0
+            # Pre-RBDC (vertical-at-CONE): the North/Central gross-CONE anchor =
+            # the LRZ 1-7 mean (the same aggregation the registry test uses),
+            # converted to $/kW-yr from whichever unit that year publishes.
+            g = r[
+                (r.metric == "gross_cone")
+                & (r.area.isin([f"LRZ {i}" for i in range(1, 8)]))
+            ]
+            mean = float(g.y_value.mean())
+            unit = str(g.y_unit.iloc[0])
+            return mean * 365.0 / 1000.0 if unit == "usd_per_mw_day" else mean / 1000.0
         raise AssertionError(iso)
 
     def test_all_vintage_anchors_reconcile_with_published(self):
@@ -669,10 +703,11 @@ class TestMarketDesignVintages(unittest.TestCase):
     # ---- pricing-seam behavior ------------------------------------------
     def test_reference_year_equals_registry_default(self):
         # At each ISO's registry reference delivery year, the vintage override
-        # reproduces the no-year (registry) curve price exactly — byte-identity.
+        # reproduces the no-year (registry) price exactly — byte-identity. (NYISO
+        # is curve-INELIGIBLE — TestCurveEligibility covers it; MISO reproduces
+        # its seasonal price both ways.)
         for iso, ref_year in (
             ("PJM", 2026),
-            ("NYISO", 2025),
             ("NEISO", 2027),
             ("MISO", 2025),
         ):
@@ -727,6 +762,142 @@ class TestMarketDesignVintages(unittest.TestCase):
         self.assertEqual(
             caiso.capacity_price_per_firm_mw_yr(self.ON, 0.8, iso="CAISO", year=2021),
             caiso.capacity_price_per_firm_mw_yr(self.ON, 0.8, iso="CAISO", year=2035),
+        )
+
+
+class TestMISOSeasonalRBDC(unittest.TestCase):
+    """RC-1C — MISO seasonal RBDC grain (prereq 4a), hand-computed.
+
+    The seam sums four seasonal RBDC evaluations at ONE annual reserve position:
+    Σ_season frac(position) × daily_net_cone × days. daily_net_cone =
+    79,800/365 = 218.6301 $/MW-day; the four seasons weigh 92/91/90/92 = 365 days.
+    """
+
+    ON = SimpleNamespace(capacity_market_clearing=True)
+    DAILY_NET = 79_800.0 / 365.0
+    # PY2025-26 North/Central seasonal gross-CONE caps ($/MW-day) and day counts.
+    SEASONS = (
+        ("summer", 92, 1384.36),
+        ("fall", 91, 1399.58),
+        ("winter", 90, 1415.13),
+        ("spring", 92, 1384.36),
+    )
+
+    def _price(self, pos):
+        return MARKET_DESIGN["MISO"].capacity_price_per_firm_mw_yr(
+            self.ON, pos, iso="MISO"
+        )
+
+    def test_structure(self):
+        s = MISO_SEASONAL_RBDC
+        self.assertEqual(len(s.seasons), 4)
+        self.assertEqual(sum(x.days for x in s.seasons), 365)
+        self.assertAlmostEqual(s.daily_net_cone_per_mw_day, self.DAILY_NET, places=4)
+        # Summer's cap fraction ≈ gross 1384.36 / daily net 218.63 ≈ 6.33.
+        self.assertAlmostEqual(
+            s.seasons[0].demand_curve[0].price_frac_net_cone,
+            1384.36 / self.DAILY_NET,
+            places=4,
+        )
+
+    def test_at_requirement_reduces_to_annual_net_cone(self):
+        # position 1.0: every season pays the flat daily net-CONE, so the sum is
+        # EXACTLY the annual net-CONE (reduces to the annual curve).
+        self.assertAlmostEqual(self._price(1.0), 79_800.0, places=3)
+        # Byte-consistency with the shared seasonal function.
+        self.assertAlmostEqual(
+            self._price(1.0),
+            seasonal_rbdc_price_per_firm_mw_yr(MISO_SEASONAL_RBDC, 1.0),
+            places=6,
+        )
+
+    def test_long_pays_zero(self):
+        # At/beyond the zero-cross (1.05) every season is 0.
+        self.assertAlmostEqual(self._price(1.05), 0.0, places=6)
+        self.assertAlmostEqual(self._price(1.2), 0.0, places=6)
+
+    def test_deep_short_caps_at_seasonal_gross_sum(self):
+        # Below the cap-plateau start (0.97) every season clamps to its own
+        # gross-CONE cap, so the annual sum is Σ (gross_daily × days) — the
+        # ceiling of the seasonal construction (~4× annual gross; the documented
+        # one-position over-statement at a short position).
+        expected = sum(gross * days for _, days, gross in self.SEASONS)
+        self.assertAlmostEqual(self._price(0.3), expected, places=2)
+        self.assertAlmostEqual(self._price(0.90), expected, places=2)
+
+    def test_monotone_non_increasing(self):
+        xs = np.linspace(0.5, 1.4, 91)
+        ys = [self._price(x) for x in xs]
+        self.assertTrue(all(ys[i] >= ys[i + 1] - 1e-6 for i in range(len(ys) - 1)))
+
+    def test_short_exceeds_annual_curve(self):
+        # A short position lifts the seasonal price above the annual-curve price
+        # (each season reaches for its own, higher, seasonal cap).
+        seasonal = self._price(0.985)
+        annual = (
+            evaluate_demand_curve(MARKET_DESIGN["MISO"].demand_curve, 0.985)
+            * MARKET_DESIGN["MISO"].net_cone_curve_per_kw_yr
+            * 1000.0
+        )
+        self.assertGreater(seasonal, annual)
+
+    def test_pre_rbdc_year_is_vertical_at_cone(self):
+        # A pre-RBDC MISO year (2023) resolves to the vertical-at-CONE vintage:
+        # its gross-CONE anchor (103.04 $/kW-yr) when short, ~0 when long — no
+        # seasonal sum, no invented slope.
+        design = MARKET_DESIGN["MISO"]
+        short = design.capacity_price_per_firm_mw_yr(
+            self.ON, 0.95, iso="MISO", year=2023
+        )
+        self.assertAlmostEqual(short, 103.04 * 1000.0, places=1)
+        long = design.capacity_price_per_firm_mw_yr(self.ON, 1.2, iso="MISO", year=2023)
+        self.assertAlmostEqual(long, 0.0, places=3)
+
+
+class TestCurveEligibility(unittest.TestCase):
+    """RC-1C — curve-eligibility governance gate (NYISO ineligible)."""
+
+    ON = SimpleNamespace(capacity_market_clearing=True)
+
+    def test_resolver_defaults_and_nyiso_false(self):
+        self.assertFalse(resolve_capacity_curve_eligible("NYISO"))
+        for iso in ("PJM", "NEISO", "MISO"):
+            self.assertTrue(resolve_capacity_curve_eligible(iso))
+        # iso=None and an unknown ISO default ELIGIBLE (byte-identity / no
+        # silent block of a new curve ISO).
+        self.assertTrue(resolve_capacity_curve_eligible(None))
+        self.assertTrue(resolve_capacity_curve_eligible("MADEUP"))
+
+    def test_nyiso_prices_fixed_when_iso_supplied(self):
+        # Gate ON + iso="NYISO": ineligible, so it prices the FIXED anchor
+        # (110 $/kW-yr × 1000) at EVERY position and year — never the curve.
+        nyiso = MARKET_DESIGN["NYISO"]
+        fixed = nyiso.net_cone_per_kw_yr * 1000.0
+        for pos in (0.3, 0.85, 1.0, 1.2):
+            self.assertEqual(
+                nyiso.capacity_price_per_firm_mw_yr(self.ON, pos, iso="NYISO"), fixed
+            )
+            self.assertEqual(
+                nyiso.capacity_price_per_firm_mw_yr(
+                    self.ON, pos, iso="NYISO", year=2024
+                ),
+                fixed,
+            )
+
+    def test_nyiso_iso_none_still_curves(self):
+        # iso=None bypasses the eligibility gate (pre-RC-1C call sites), so the
+        # curve still evaluates — this is what keeps default paths byte-identical.
+        nyiso = MARKET_DESIGN["NYISO"]
+        curved = nyiso.capacity_price_per_firm_mw_yr(self.ON, 0.8)
+        self.assertNotEqual(curved, nyiso.net_cone_per_kw_yr * 1000.0)
+
+    def test_eligible_iso_unaffected(self):
+        # PJM is eligible → iso-supplied curve pricing matches iso=None.
+        pjm = MARKET_DESIGN["PJM"]
+        self.assertAlmostEqual(
+            pjm.capacity_price_per_firm_mw_yr(self.ON, 0.9, iso="PJM"),
+            pjm.capacity_price_per_firm_mw_yr(self.ON, 0.9),
+            places=6,
         )
 
 
