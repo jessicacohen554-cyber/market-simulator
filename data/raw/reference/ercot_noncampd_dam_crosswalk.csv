@@ -1,0 +1,4 @@
+plant_code,plant_name,dam_settlement_points,qse,substation,eia860_county,confidence,note
+55501,Kiamichi,KMCHI_CC1;KMCHI_CC2,QTENSK,KMCHI,Pittsburg Co OK,unambiguous,switchable ERCOT/SPP two parallel CC trains summed across settlement points; March-2024 100pct OUT switch signature matches EIA-923 zero
+55545,Hidalgo Energy Center,DUKE_CC1,QCALP,HEC,Hidalgo Co TX,unambiguous,Calpine ex-Duke Energy Hidalgo; substation HEC=Hidalgo Energy Center; Apr-May-2024 OUT matches EIA-923 zero
+7512,Arthur Von Rosenberg,BRAUNIG_CC1,QCPSE,BRAUNIG,Bexar Co TX,unambiguous,CPS Energy AVR1 units at BRAUNIG substation; p98 rating 520=model pmax; distinct from V H Braunig steam (BRAUNIG_VHB*)

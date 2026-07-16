@@ -3807,6 +3807,21 @@ class ScenarioConfig:
     # See scripts/derive_dam_offer_hrmults.py --condition-binned and
     # data.fleet.apply_ercot_offer_surface_conditional.
     ercot_offer_surface_conditional: bool = False
+    # ERCOT MID-CURVE offer surface (G-22 lever A', the ERCOT analogue of the PJM
+    # pjm_offer_midcurve_conditional): floors the gas econ tranches
+    # (CC_REGULAR/CC_CHP/CT_PEAKER econ* rows) at the MEASURED capacity-share
+    # offer level of the 60-Day DAM disclosure body (18-22× at shares 0.95-0.99),
+    # where ercot_offer_surface_conditional above reprices only the PEAK rungs.
+    # Disjoint rows (econ vs peak) → the two markups SUM without overlap when both
+    # flags are armed (one mechanism per row, rule 19). P1-only; ST_GAS excluded
+    # (drag owns it, rule 19). Zero fitted parameters — the surface is a frozen
+    # measured derive (scripts/derive_ercot_offer_midcurve.py, rule 23). See
+    # data.fleet.build_ercot_offer_midcurve_conditional_markup.
+    ercot_offer_surface_midcurve_conditional: bool = False
+    # Path to the frozen mid-curve surface JSON (default:
+    # data/raw/_validation-source/ercot_offer_midcurve_condbinned.json). None →
+    # the builder falls back to that default path.
+    ercot_offer_surface_midcurve_path: str | None = None
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -4026,6 +4041,23 @@ class ScenarioConfig:
     # statistical model. See data.outages.ercot_thermal_dam_availability_series
     # and the application in data.fleet.generators_to_fleet_arrays.
     ercot_thermal_dam_availability: bool = False
+
+    # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
+    # — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT
+    # from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von
+    # Rosenberg 7512, EG178 56233 — the ERCOT-70 phantom-CC blind spot, all
+    # has_campd_data=False), which the CAMPD-derived unit-outage overlay cannot
+    # see (no CEMS rows -> no windows -> flat statistical availability). Two
+    # composed measured identifications (scripts/derive_ercot_noncampd_availability
+    # .py, frozen — rule 23): (a) 60-Day DAM disclosure per-plant live HSL /
+    # Resource Status -> daily availability (measures Kiamichi's switchable
+    # ERCOT-share directly — OUT when serving SPP), (b) EIA-923 zero-generation
+    # months -> full-plant outage windows (backstop; a zero month is an
+    # availability event, never a monthly-level pin — rule 14). Backcast-only
+    # (the statistical stack is the forward analogue, the G4 mode-aware seam);
+    # ERCOT-gated in the fleet application. See
+    # data.outages.ercot_noncampd_availability_caps.
+    ercot_noncampd_plant_availability: bool = False
 
     # ERCOT measured hourly BATTERY-fleet capability re-basis (default off,
     # ERCOT backcast-gated — ERCOT-66). Replaces the EIA-860 COD-ramped
