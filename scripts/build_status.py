@@ -144,18 +144,18 @@ def rubric() -> list[dict]:
         ),
         row(
             "price_tail",
-            "Count of scarcity-tail hours — model vs the DA-EXPRESSIBLE actual "
-            "(the hourly, commitment-aware day-ahead market's own count above the "
-            "threshold: the same temporal resolution as the model LP). The RT "
-            "count — which folds in sub-hourly ramp/re-dispatch transients an "
-            "hourly deterministic LP cannot see — is reported as a non-gated "
-            "diagnostic row. The DA basis is not a leniency device: ERCOT's DA "
-            "tail is LARGER than its RT tail (2023: 311 vs 181 h).",
+            "Count of scarcity-tail hours — model vs the ACTUAL RT hourly tail "
+            "(hours the real-time market's hourly hub average cleared above the "
+            "threshold: the scarcity the market actually realized; rubric v2.7, "
+            "owner amendment 2026-07-16, every ISO). The DA count — which "
+            "prices scarcity expectations and embeds the day-ahead forecast-risk "
+            "premium a realized-weather backcast cannot price (ERCOT 2023: DA "
+            "311 vs RT 181 h) — is reported as a non-gated diagnostic row.",
             "Committed tail part frontend/data/backcast/tail/actual_tail.json "
             "(scripts/derive_actual_tail.py, from the measured hub RT/DA hourly "
             "series; 2023–2025 only). Thresholds: " + _tail_note() + ".",
-            f"model within [{cv.TAIL_LO:g}×, {cv.TAIL_HI:g}×] of the DA actual — a "
-            "collapsed tail and an invented tail both FAIL; a DA actual below "
+            f"model within [{cv.TAIL_LO:g}×, {cv.TAIL_HI:g}×] of the RT actual — a "
+            "collapsed tail and an invented tail both FAIL; an RT actual below "
             f"{cv.TAIL_SMALL_COUNT:g} h gates on |model−actual| ≤ "
             f"{cv.TAIL_SMALL_COUNT:g} h instead (ratio degenerate). No commercial "
             "or public model publishes tail-hour accuracy at all — practice "
@@ -183,13 +183,10 @@ def rubric() -> list[dict]:
             "the AEO retrospective's 1–3-year CO₂ error SD is 3.2–4.9% on full "
             "forecasts — the target is stricter than any published requirement).",
         ),
-        row(
-            "storage",
-            "Annual storage (battery + pumped-storage) discharge throughput (TWh) — "
-            "cycling realism, not arbitrage perfection.",
-            "EIA-923 / ISO battery-report throughput.",
-            f"±{cv.STORAGE_TOL * 100:.0f}%.",
-        ),
+        # (The C5b storage-throughput row was removed with the criterion —
+        # rubric v2.7 owner amendment 2026-07-16: EIA-930 storage-dispatch
+        # data is not reliable enough to participate in the determination.
+        # Storage numbers remain on the run pages as diagnostics.)
         row(
             "governance",
             "Every active lever traces to a measured input; no fit to price residuals; "
@@ -276,8 +273,8 @@ def benchmark() -> dict:
             ),
         },
         {
-            "criterion": "C3c scarcity tail (DA-expressible hours)",
-            "target": f"[{cv.TAIL_LO:g}×, {cv.TAIL_HI:g}×] of the DA actual",
+            "criterion": "C3c scarcity tail (RT hourly hours, v2.7)",
+            "target": f"[{cv.TAIL_LO:g}×, {cv.TAIL_HI:g}×] of the RT actual",
             "commercial": "no published comparable",
             "published": (
                 "NO commercial or public model publishes tail-hour or "
@@ -286,7 +283,8 @@ def benchmark() -> dict:
                 "price-spike events from its scoring; NYISO absorbed the residual "
                 "into tuned hurdle rates; PyPSA-Eur reports spikes 'not captured "
                 "well' in every configuration. This rubric keeps scoring the tail "
-                "— stricter than practice — on the scope-consistent DA basis."
+                "— stricter than practice — on the actual RT hourly basis (the "
+                "scarcity the market realized; DA is the reported diagnostic)."
             ),
         },
         {
@@ -407,13 +405,15 @@ def methodology() -> list[dict]:
             "(multi-ISO 2026–2050 price/dispatch/emissions forecasting, capacity "
             "evolution, policy analysis, probability bands): LOAD-BEARING "
             "(price level & seasonal shape, generation mix, CO₂) carry the "
-            "two-band commercial anchors; SUPPORTING (hourly correlation, storage "
-            "cycling, tail-hour counts) carry wide gross-defect bands; PROTECTIVE "
+            "two-band commercial anchors; SUPPORTING (hourly correlation, "
+            "tail-hour counts) carry wide gross-defect bands; PROTECTIVE "
             "(governance, diurnal shape, forced-energy share) are unchanged from "
-            "v1 — they are what make the accuracy rows believable. RT sub-hourly "
-            "transients and the DA−RT risk premium are out of representation for "
-            "an hourly DA-analogue LP and are reported as diagnostics, never "
-            "gated.",
+            "v1 — they are what make the accuracy rows believable. The DA−RT "
+            "risk premium is out of representation for a realized-weather LP: "
+            "DA price comparisons are reported as diagnostics, never gated "
+            "(the tail criterion judges the actual RT hourly tail since v2.7; "
+            "storage cycling left the rubric the same day — EIA-930 storage "
+            "data is not yet a calibration judgment).",
         },
         {
             "head": "Preliminary-vintage reconcile (0.97) + per-class completeness gate",

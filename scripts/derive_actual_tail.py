@@ -3,19 +3,17 @@
 Writes ``frontend/data/backcast/tail/actual_tail.json`` — per (ISO, year) counts
 of actual hours above the ISO's scarcity threshold (rubric §5) in BOTH markets:
 
-- ``da_gt``: hours the **day-ahead** hourly market cleared above the threshold —
-  the *DA-expressible tail*, the rubric-v2 C3c benchmark. The DA market is an
-  hourly, commitment-aware market: the same temporal resolution as this model's
-  hourly LP, so its tail count is the scarcity an hourly model is *in scope* to
-  reproduce (docs/multi-iso/miso-scarcity-tail-diagnosis.md §1: MISO 2023's
-  entire 30-hour RT tail is single-hour 5-minute-market transients; the DA tail
-  that year is 1 hour).
-- ``rt_gt``: hours the real-time market averaged above the threshold — reported
-  alongside as the out-of-representation companion (RT includes sub-hourly ramp
-  scarcity, forecast misses and re-dispatch transients an hourly deterministic
-  LP cannot see). Note the direction is not uniform: ERCOT's DA tail is LARGER
-  than its RT tail (2023: 311 vs 181 h — DA prices scarcity expectations), so
-  the DA basis is not a leniency device.
+- ``rt_gt``: hours the **real-time** market's hourly hub average cleared above
+  the threshold — the actual RT scarcity tail, the C3c benchmark for EVERY ISO
+  (rubric v2.7 owner amendment 2026-07-16: the tail criterion judges the
+  scarcity the market actually realized).
+- ``da_gt``: hours the day-ahead hourly market cleared above the threshold —
+  reported alongside as the non-gated diagnostic companion. The DA count
+  prices scarcity *expectations*: its wedge over RT is the day-ahead
+  weather/load forecast-risk premium a realized-weather (perfect-foresight)
+  backcast is out of representation to price. The direction is not uniform:
+  ERCOT's DA tail is LARGER than its RT tail (2023: 311 vs 181 h) while
+  MISO's is far smaller (2023: 1 vs 30 h).
 
 Source: ``data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet``
 (single hub series, columns ``year, hour, rt, da`` — the same files
@@ -112,11 +110,13 @@ def derive() -> dict:
     return {
         "note": (
             "Actual scarcity-tail hour counts per ISO-year at the rubric §5 "
-            "threshold. da_gt (day-ahead) is the DA-expressible tail the C3c "
-            "criterion gates on (same hourly resolution as the model LP); "
-            "rt_gt (real-time) is the reported out-of-representation companion "
-            "(includes sub-hourly transients). Counts over covered hours only — "
-            "a coverage < 1.0 makes the count a lower bound. Source: "
+            "threshold. rt_gt (real-time hourly hub average) is the actual RT "
+            "scarcity tail the C3c criterion gates on for every ISO (rubric "
+            "v2.7, owner amendment 2026-07-16); da_gt (day-ahead) is the "
+            "reported non-gated diagnostic companion (prices scarcity "
+            "expectations — embeds the DA forecast-risk premium). Counts over "
+            "covered hours only — a coverage < 1.0 makes the count a lower "
+            "bound. Source: "
             "data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet (hub "
             "series). Regenerate with scripts/derive_actual_tail.py when a "
             "source series updates (rule 23: re-derivation commits cite the "
