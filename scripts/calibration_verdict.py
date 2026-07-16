@@ -101,8 +101,23 @@ COMPLETENESS_DIR = DATA_DIR / "completeness"
 # storage numbers stay computed and printed on every keeper, but EIA-930
 # storage-dispatch data is not yet reliable enough to be a calibration
 # judgment — no PASS/FAIL, no ledger budget, no determination cap. Re-arming
-# is a future owner decision.
-RUBRIC_VERSION = 2.6
+# is a future owner decision;
+# v2.7 = the 2026-07-16 owner amendments (second of the day, this session):
+# (a) C3c gates on the ACTUAL RT scarcity tail for EVERY ISO — the RT hourly
+# hub tail is the scarcity the market actually realized, and it is now the
+# judged quantity everywhere (v2.6(a) had moved only ERCOT); the DA count
+# becomes the report-only diagnostic row for every ISO (it embeds the
+# day-ahead forecast-risk premium a realized-weather backcast is out of
+# representation to price). The TAIL_BASIS per-ISO switch is gone — the
+# basis is uniform again, now RT. (b) C5b + C5c are REMOVED from the rubric
+# outright (v2.6(c) had retired them to report-only): storage-dispatch data
+# is not reliable enough to participate in a calibration determination at
+# any level, so the criteria no longer exist — not scored, not printed.
+# The storage numbers remain visible on the dashboard run pages (payload/
+# bench diagnostics, untouched); the pre-removal definitions live in the
+# rubric doc's v2.6 history entry and git history. TIER_RETIRED leaves with
+# them (it existed only for C5b/C5c).
+RUBRIC_VERSION = 2.7
 
 # Statuses (per criterion-year and aggregated).
 PASS, CAVEAT, FAIL, SKIPPED = "PASS", "CAVEAT", "FAIL", "SKIPPED"
@@ -132,14 +147,8 @@ NOT_YET = "NOT-YET"
 #    shape, C8 forced share). UNCHANGED from rubric v1 in logic, thresholds
 #    and ledger behavior (CLAUDE.md rules 13/14/17-22).
 TIER_LOAD, TIER_SUPPORT, TIER_PROTECT = "load-bearing", "supporting", "protective"
-# v2.6(c) owner amendment 2026-07-16: a RETIRED criterion is computed and
-# printed (report-only — the numbers stay visible on every keeper) but is
-# never PASS/FAIL, never consumes ledger budget, and never caps the
-# determination. C5b/C5c sit here: EIA-930 storage-dispatch data is not yet
-# reliable enough to be a calibration judgment for ANY ISO (breakouts
-# missing or partial for most BA-years; the one scored ERCOT year was nine
-# fabricated pre-breakout zeros). Re-arming is a future owner decision.
-TIER_RETIRED = "report-only (retired)"
+# (v2.6(c) briefly held C5b/C5c in a TIER_RETIRED report-only tier; v2.7
+# removed the two criteria from the rubric outright, and the tier with them.)
 
 # --- fuel-family class membership (plant_taxonomy.classes_for_fuel930 roll-up) --
 GAS_CLASSES = ("CC_REGULAR", "CC_CHP", "CT_PEAKER", "CT_CHP", "ST_GAS", "ST_CHP")
@@ -256,35 +265,29 @@ PRICE_MEAN_COMMERCIAL = 0.10  # coincident outer band (memo §2)
 #   demonstrated band (also the pre-2026-07-02 value, now externally anchored).
 PRICE_SHAPE_NRMSE_MAX = 0.20  # PASS: monthly NRMSE (v2.3 owner amendment)
 PRICE_SHAPE_NRMSE_COMMERCIAL = 0.20  # coincident outer band (memo §2)
-# C3c scarcity tail — v2 scores the hourly-expressible tail (rubric §1 C3c,
-# §5) from the committed actual-tail part (frontend/data/backcast/tail/
-# actual_tail.json, scripts/derive_actual_tail.py). The gated BASIS is per-ISO
-# (TAIL_BASIS below; rubric v2.6 owner amendment 2026-07-16):
-#   * default "da" — the DA-expressible tail, the same hourly commitment-aware
-#     resolution as the model LP; the RT count is a reported diagnostic
-#     (sub-hourly transients are out of representation —
-#     miso-scarcity-tail-diagnosis.md §1: MISO 2023's entire 30-hour RT tail
-#     is single-interval 5-minute events, DA tail 1 h).
-#   * ERCOT "rt" — the RT hourly tail; the DA count is the reported
-#     diagnostic. Both C3c actuals are hourly hub averages, but ERCOT's DA
-#     tail runs ABOVE its RT tail (2023: 311 vs 181 h) — the excess is the
-#     day-ahead weather/load forecast-risk premium, which a realized-weather
-#     (perfect-foresight) backcast is out of representation to price: the
-#     model cannot "worry" about weather it already knows, the mirror image
-#     of the transient argument that keeps RT out of the MISO/PJM gate. The
-#     keeper evidence is direct: the ERCOT-71 keeper reads 179 h vs RT 181 h
-#     (0.99x) while sitting at 0.58x of the DA count.
-# Band restored to [0.5x, 2x] on the scope-consistent benchmark: no commercial
-# or public model publishes tail-hour-count accuracy at all, so the band's job
-# is order-of-magnitude realism — a collapsed tail (0x) and an invented tail
-# (>2x) both still FAIL. Counts below TAIL_SMALL_COUNT hours are scored by
-# absolute difference (a ratio on a handful of hours is degenerate).
-TAIL_LO, TAIL_HI = 0.5, 2.0  # tail hours within [0.5x, 2x] of the gated actual
+# C3c scarcity tail — scores the hourly tail (rubric §1 C3c, §5) from the
+# committed actual-tail part (frontend/data/backcast/tail/actual_tail.json,
+# scripts/derive_actual_tail.py). The gated basis is the ACTUAL RT scarcity
+# tail for EVERY ISO (rubric v2.7 owner amendment 2026-07-16): the RT hourly
+# hub tail is the scarcity the market actually realized — the judged
+# quantity. The DA count is always emitted as the report-only diagnostic
+# row: it prices scarcity *expectations*, and its wedge over RT is the
+# day-ahead weather/load forecast-risk premium a realized-weather
+# (perfect-foresight) backcast is out of representation to price (ERCOT
+# 2023: DA 311 h vs RT 181 h). History: v2 gated the DA-expressible tail on
+# the sub-hourly-transient argument (miso-scarcity-tail-diagnosis.md §1);
+# v2.6(a) moved ERCOT to RT; v2.7 makes RT the uniform judged basis — both
+# counts are hourly hub averages, and the owner's determination is that the
+# tail criterion judges realized scarcity, not the DA market's forecast of
+# it. Sub-hourly transients that push an hourly RT average over the
+# threshold are part of that realized scarcity and now gate.
+# Band [0.5x, 2x]: no commercial or public model publishes tail-hour-count
+# accuracy at all, so the band's job is order-of-magnitude realism — a
+# collapsed tail (0x) and an invented tail (>2x) both still FAIL. Counts
+# below TAIL_SMALL_COUNT hours are scored by absolute difference (a ratio on
+# a handful of hours is degenerate).
+TAIL_LO, TAIL_HI = 0.5, 2.0  # tail hours within [0.5x, 2x] of the RT actual
 TAIL_SMALL_COUNT = 10  # below this, |model-actual| <= TAIL_SMALL_COUNT passes
-# Per-ISO C3c gated basis (rubric §5, v2.6 owner amendment 2026-07-16 — see
-# the block comment above). Only ERCOT gates on the RT hourly tail; the other
-# basis is always emitted as the report-only diagnostic row.
-TAIL_BASIS = {"ERCOT": "rt"}  # default: "da"
 DISP_R_FLOOR = 0.70  # fleet hourly pearson r floor (gas, coal)
 DISP_NRMSE_MAX = 0.30  # fleet hourly NRMSE ceiling (gas, coal)
 CO2_TOL = 0.07  # target: +/-7% vs eGRID (mid of the playbook's 5-10%)
@@ -292,13 +295,7 @@ CO2_TOL = 0.07  # target: +/-7% vs eGRID (mid of the playbook's 5-10%)
 # public-model grade at short horizons (AEO retrospective energy-CO2 errors;
 # eGRID-vs-model comparisons in academic PCM validations — memo §2).
 CO2_COMMERCIAL = 0.10
-STORAGE_TOL = 0.30  # +/-30% storage throughput (cycling realism)
-STORAGE_SHAPE_R_FLOOR = 0.50  # monthly discharge pearson r floor (both sides
-# on the positive/discharge basis — see rubric §C5c 2026-07-03 alignment fix)
-STORAGE_SHAPE_MIN_CV = 0.25  # C5c degeneracy guard: actual monthly-discharge
-# coefficient of variation below this leaves no seasonal shape to correlate
-# (a flat TRUE model would score r=0 and fail); the year is SKIPPED and C5b
-# scores the volume. Mirrors C4's degenerate-correlation rule.
+# (C5b/C5c storage tolerances removed with the criteria — rubric v2.7.)
 VRE_TOL = 0.10  # +/-10% advisory band for solar/wind (report-only)
 
 # Per-ISO scarcity-tail definition (rubric §5): (threshold $/MWh).
@@ -412,18 +409,16 @@ CRITERIA = {
     "sysvol": ("C2 system volume (gas/coal families)", TIER_LOAD),
     "price_mean": ("C3a mean LMP", TIER_LOAD),
     "price_shape": ("C3b price duration/shape", TIER_LOAD),
-    # v2.6: the gated basis is per-ISO (TAIL_BASIS — ERCOT RT, others DA), so
-    # the label is basis-neutral; each scored row's metric names its basis.
-    "price_tail": ("C3c price tail / scarcity (hourly-expressible)", TIER_SUPPORT),
+    # v2.7: gated on the actual RT hourly scarcity tail for every ISO; the
+    # DA count is each row's report-only diagnostic companion.
+    "price_tail": ("C3c price tail / scarcity (RT hourly)", TIER_SUPPORT),
     "dispatch_corr": ("C4 fleet hourly dispatch correlation", TIER_SUPPORT),
     "co2": ("C5a CO2 vs eGRID", TIER_LOAD),
-    # v2.6(c): retired to report-only — EIA-930 storage data is not yet a
-    # calibration judgment for any ISO (owner, 2026-07-16).
-    "storage": ("C5b storage throughput (report-only, retired v2.6)", TIER_RETIRED),
-    "storage_shape": (
-        "C5c storage dispatch shape (report-only, retired v2.6)",
-        TIER_RETIRED,
-    ),
+    # (C5b storage throughput and C5c storage dispatch shape were REMOVED from
+    # the rubric by the v2.7 owner amendment 2026-07-16 — EIA-930
+    # storage-dispatch data is not reliable enough to participate in a
+    # calibration determination. The storage numbers stay visible on the
+    # dashboard run pages as payload/bench diagnostics.)
     "governance": ("C6 governance gate", TIER_PROTECT),
     "shape": ("C7 diurnal shape (D-1)", TIER_PROTECT),
     "forced_share": ("C8 forced-energy share (D-2)", TIER_PROTECT),
@@ -1311,26 +1306,20 @@ def score_price_shape(year: int, ypay: dict, ybench: dict) -> dict:
 
 
 def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
-    """C3c — scarcity tail hours vs the per-ISO-basis hourly actual (rubric v2).
+    """C3c — scarcity tail hours vs the actual RT hourly tail (rubric v2.7).
 
     The model tail (count of hours the LP's max zonal dual exceeds the per-ISO
     threshold, from the payload's ``ordc.hoursGt200.model``) is gated against
-    the committed actual tail count (``tail/actual_tail.json``,
-    ``scripts/derive_actual_tail.py``) on the ISO's ``TAIL_BASIS`` (rubric §5,
-    v2.6 owner amendment 2026-07-16):
+    the committed **RT hourly** actual tail count (``tail/actual_tail.json``,
+    ``scripts/derive_actual_tail.py``) for EVERY ISO (rubric §5, v2.7 owner
+    amendment 2026-07-16): the RT hourly hub tail is the scarcity the market
+    actually realized — the judged quantity. The DA count is the report-only
+    diagnostic row: it prices scarcity *expectations*, and its wedge over RT
+    is the day-ahead forecast-risk premium a realized-weather backcast is out
+    of representation to price (see the TAIL_LO block comment for the basis
+    history — v2 DA-everywhere, v2.6 ERCOT-RT, v2.7 RT-everywhere).
 
-    * default **DA** — the hourly, commitment-aware market's own realization
-      of scarcity, the model LP's temporal resolution; the RT count (sub-hourly
-      transients included) is the report-only diagnostic row. Scope evidence:
-      ``docs/multi-iso/miso-scarcity-tail-diagnosis.md`` §1 (MISO 2023's
-      entire 30-hour RT tail is single-hour 5-minute transients; DA tail 1 h).
-    * **ERCOT: RT** — the RT hourly hub tail; the DA count becomes the
-      diagnostic. ERCOT's DA tail runs ABOVE its RT tail (2023: 311 vs 181 h):
-      the excess is the day-ahead forecast-risk premium, out of representation
-      for a realized-weather backcast (the mirror image of the transient
-      argument — see the TAIL_BASIS block comment).
-
-    Band: model within [TAIL_LO x, TAIL_HI x] of the gated actual. Small
+    Band: model within [TAIL_LO x, TAIL_HI x] of the RT actual. Small
     counts (actual < TAIL_SMALL_COUNT) are scored by absolute difference
     (|model − actual| ≤ TAIL_SMALL_COUNT) — a ratio on a handful of hours is
     degenerate, and it doubles as the invented-tail guard against a ~0 actual.
@@ -1359,12 +1348,9 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
     model = float(h["overlay"]) if settled else float(h.get("model", 0))
     energy_only = float(h.get("model", 0))
     tail_rec = _tail_part().get(iso, {}).get(str(year))
-    # Gated basis per ISO (rubric §5, v2.5): the other basis is the diagnostic.
-    basis_kind = TAIL_BASIS.get(iso, "da")
-    gate_key, diag_key = (
-        ("rt_gt", "da_gt") if basis_kind == "rt" else ("da_gt", "rt_gt")
-    )
-    gate_lbl, diag_lbl = ("RT", "DA") if basis_kind == "rt" else ("DA", "RT")
+    # Gated basis (rubric §5, v2.7): RT for every ISO; DA is the diagnostic.
+    gate_key, diag_key = "rt_gt", "da_gt"
+    gate_lbl, diag_lbl = "RT", "DA"
     out: list[dict] = []
     if tail_rec is None or tail_rec.get(gate_key) is None:
         out.append(
@@ -1425,25 +1411,15 @@ def score_price_tail(year: int, ypay: dict, iso: str) -> list[dict]:
                 "magnitude": mag,
             }
         )
-    # Companion basis — reported, never gated. On the default DA gate the RT
-    # count includes the sub-hourly ramp/re-dispatch transients an hourly
-    # deterministic LP is out of scope to reproduce; on the ERCOT RT gate the
-    # DA count embeds the day-ahead forecast-risk premium a realized-weather
-    # backcast is out of scope to price (v2.6).
+    # Companion DA basis — reported, never gated (v2.7): the DA count embeds
+    # the day-ahead forecast-risk premium a realized-weather backcast is out
+    # of scope to price.
     diag_actual = (
         float(tail_rec[diag_key])
         if tail_rec is not None and tail_rec.get(diag_key) is not None
-        else (
-            float(h["actual"])
-            if diag_key == "rt_gt" and h.get("actual") is not None
-            else None
-        )
+        else None
     )
-    diag_why = (
-        "includes sub-hourly transients, not gated"
-        if diag_key == "rt_gt"
-        else "embeds the DA forecast-risk premium, not gated"
-    )
+    diag_why = "embeds the DA forecast-risk premium, not gated"
     if diag_actual is not None:
         out.append(
             {
@@ -1650,121 +1626,11 @@ def score_co2(year: int, ypay: dict, ybench: dict) -> dict:
     }
 
 
-def score_storage(year: int, ypay: dict, ybench: dict) -> dict:
-    """C5b — storage throughput. RETIRED to report-only (v2.6(c), owner
-    2026-07-16): the % error is computed and printed but never gated —
-    EIA-930 storage data is not yet reliable enough to be a calibration
-    judgment for any ISO. SKIPPED with a reason when EIA-930 has no storage
-    breakout."""
-    model = (ypay.get("storage") or {}).get("throughput_twh")
-    actual = (ybench.get("storage") or {}).get("throughput_twh")
-    if actual is None:
-        return _skip(
-            "storage",
-            year,
-            "EIA-930 has no battery/pumped-storage breakout for this BA-year"
-            + (f" (model discharged {model:.3f} TWh)" if model else ""),
-        )
-    if model is None:
-        return _skip(
-            "storage",
-            year,
-            "model storage throughput absent (legacy bundle without storage.parquet)"
-            + f" (actual {actual:.3f} TWh)",
-        )
-    err = _pct(model, actual)
-    # v2.6(c) owner amendment 2026-07-16: RETIRED — computed and reported,
-    # never gated. EIA-930 storage data is not yet reliable enough to be a
-    # calibration judgment for any ISO.
-    return {
-        "criterion": "storage",
-        "key": None,
-        "year": year,
-        "status": SKIPPED,
-        "classification": None,
-        "metric": "storage discharge throughput TWh (report-only, retired v2.6)",
-        "model": model,
-        "actual": actual,
-        "tol": "not gated (was ±30%)",
-        "magnitude": (
-            (f"{err * 100:+.1f}%" if err is not None else "n/a")
-            + " — report-only (v2.6: EIA-930 storage not a calibration judgment)"
-        ),
-    }
-
-
-def score_storage_shape(year: int, ypay: dict, ybench: dict) -> dict:
-    """C5c — monthly storage dispatch shape. RETIRED to report-only (v2.6(c),
-    owner 2026-07-16): the pearson r is computed and printed but never gated —
-    EIA-930 storage data is not yet reliable enough to be a calibration
-    judgment for any ISO. SKIPPED with a reason when either side is absent or
-    has unobserved (null) months."""
-    model_mon = (ypay.get("storage") or {}).get("monthly_net_gwh")
-    actual_mon = (ybench.get("storage") or {}).get("monthly_net_gwh")
-    if actual_mon is None:
-        return _skip(
-            "storage_shape",
-            year,
-            "EIA-930 has no monthly storage dispatch breakout for this BA-year",
-        )
-    if model_mon is None:
-        return _skip(
-            "storage_shape",
-            year,
-            "model storage monthly dispatch absent (legacy bundle)",
-        )
-    if len(model_mon) != 12 or len(actual_mon) != 12:
-        return _skip("storage_shape", year, "monthly vector length != 12")
-    if any(x is None for x in model_mon) or any(x is None for x in actual_mon):
-        return _skip(
-            "storage_shape",
-            year,
-            "monthly vector has one or more missing (null) months",
-        )
-    m = [float(x) for x in model_mon]
-    a = [float(x) for x in actual_mon]
-    n = len(m)
-    m_mean = sum(m) / n
-    a_mean = sum(a) / n
-    cov = sum((m[i] - m_mean) * (a[i] - a_mean) for i in range(n)) / n
-    m_std = (sum((x - m_mean) ** 2 for x in m) / n) ** 0.5
-    a_std = (sum((x - a_mean) ** 2 for x in a) / n) ** 0.5
-    # Degeneracy guard (mirrors C4's <5 TWh rule): when the ACTUAL monthly
-    # discharge is near-uniform (CV below the floor — e.g. NEISO 2025 PS,
-    # CV≈0.14: Northfield cycles near-daily year-round on reserves/regulation),
-    # there is no seasonal shape to correlate — the 12-point Pearson is set by
-    # reporting noise, and a perfectly flat (i.e. TRUE) model would score
-    # r = 0 and FAIL. A metric the truth itself cannot pass is degenerate, so
-    # the year is SKIPPED (never a silent pass); the under/over-cycling volume
-    # stays fully scored by C5b.
-    if a_mean != 0.0 and a_std / abs(a_mean) < STORAGE_SHAPE_MIN_CV:
-        return _skip(
-            "storage_shape",
-            year,
-            f"actual monthly storage shape degenerate (CV="
-            f"{a_std / abs(a_mean):.3f} < {STORAGE_SHAPE_MIN_CV}): near-uniform "
-            "year-round cycling leaves no seasonal shape to correlate; volume "
-            "is scored by C5b",
-        )
-    r = cov / (m_std * a_std) if m_std > 0 and a_std > 0 else 0.0
-    # v2.6(c) owner amendment 2026-07-16: RETIRED — computed and reported,
-    # never gated. EIA-930 storage data is not yet reliable enough to be a
-    # calibration judgment for any ISO.
-    return {
-        "criterion": "storage_shape",
-        "key": None,
-        "year": year,
-        "status": SKIPPED,
-        "classification": None,
-        "metric": "monthly discharge pearson r (report-only, retired v2.6)",
-        "model": round(r, 3),
-        "actual": None,
-        "tol": f"not gated (was r ≥ {STORAGE_SHAPE_R_FLOOR})",
-        "magnitude": (
-            f"r={r:.3f} — report-only (v2.6: EIA-930 storage not a "
-            "calibration judgment)"
-        ),
-    }
+# (score_storage / score_storage_shape — the C5b/C5c scorers — were removed
+# with the criteria by the v2.7 owner amendment 2026-07-16. The storage
+# payload/bench diagnostics they read stay committed and rendered on the
+# dashboard run pages; the pre-removal scoring definitions live in git
+# history and the rubric doc's v2.6 history entry.)
 
 
 _LEGIT_HOWTO = (
@@ -2279,8 +2145,6 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
         records += score_price_tail(year, ypay, iso)
         records += score_dispatch_corr(year, ypay, ybench, iso)
         records.append(score_co2(year, ypay, ybench))
-        records.append(score_storage(year, ypay, ybench))
-        records.append(score_storage_shape(year, ypay, ybench))
         records += score_shape(year, art.get("legitimacy"), ypay, ybench)
         records += score_forced_share(year, art.get("legitimacy"), ypay, ybench)
 
@@ -2355,11 +2219,7 @@ def determine_from_artifacts(run_id: str, art: dict) -> dict:
     skipped = [
         cid
         for cid, c in per_criterion.items()
-        if cid != "governance"
-        and c["status"] == SKIPPED
-        # v2.6(c): RETIRED criteria are report-only — they never cap the
-        # determination (they are not "unscored", they are not judgments).
-        and c["tier"] != TIER_RETIRED
+        if cid != "governance" and c["status"] == SKIPPED
     ]
     skipped_protective = [
         cid for cid in skipped if per_criterion[cid]["tier"] == TIER_PROTECT
@@ -2497,7 +2357,6 @@ def render_text(v: dict) -> str:
         TIER_LOAD: "LOAD",
         TIER_SUPPORT: "SUPP",
         TIER_PROTECT: "PROT",
-        TIER_RETIRED: "RETD",
     }
     for cid, c in v["criteria"].items():
         gate = _TIER_TAG.get(c.get("tier"), "?")
