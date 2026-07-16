@@ -375,6 +375,7 @@ neiso_winter_fuelsec_tmin_c: -7.0
 nominal_discount_rate: 0.08
 nox_price: 0.0
 nuclear_fuel_price_override: null
+nuclear_unit_availability: false
 nyiso_downstate_ct_gas_basis: false
 nyiso_downstate_ct_gas_daily: false
 nyiso_dynamic_reserve_requirements: false
