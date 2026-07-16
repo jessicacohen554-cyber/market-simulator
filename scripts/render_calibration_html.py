@@ -404,9 +404,10 @@ def _model_storage_monthly(
 
     Discharge basis to match ``_actual_storage_monthly`` (see its docstring):
     the EIA-930 actual is gross discharge for the BAs that report storage at
-    all, so C5c scores whether the model DISCHARGES in the right months. The
-    prior net basis (discharge − charge) is ≤ 0 over any month by round-trip
-    losses and could never correlate with a discharge-only actual.
+    all, so the run-page storage-shape diagnostic (ex-C5c — removed from the
+    rubric, v2.7) compares whether the model DISCHARGES in the right months.
+    The prior net basis (discharge − charge) is ≤ 0 over any month by
+    round-trip losses and could never correlate with a discharge-only actual.
     """
     if storage_all is None:
         return None
@@ -442,14 +443,15 @@ def _actual_storage_twh(e930_year: pd.DataFrame) -> float | None:
     present = e930_year[e930_year["series"].isin(_STORAGE_E930_SERIES)]
     if present.empty:
         return None
-    # NOTE (filed with rubric v2.6, deliberately unchanged): any NaN hour in a
-    # storage series poisons this sum to NaN, so `disch > 1e-6` is False and a
-    # partial-coverage year (pre-breakout NaNs — ERCO 2024) returns None. That
-    # accidental behavior is the CORRECT C5b outcome (a partial-year actual
-    # cannot benchmark a full-year model throughput) but it also nulls a
-    # complete year with a stray missing hour; an explicit per-month coverage
-    # rule (like `_actual_storage_monthly`'s) would flip other ISOs' committed
-    # C5b skips to scored rows, so it needs its own cross-ISO re-verdict pass.
+    # NOTE (filed with rubric v2.6, deliberately unchanged; the throughput
+    # number has been a run-page diagnostic only since v2.7 removed C5b): any
+    # NaN hour in a storage series poisons this sum to NaN, so `disch > 1e-6`
+    # is False and a partial-coverage year (pre-breakout NaNs — ERCO 2024)
+    # returns None. That accidental behavior is the CORRECT outcome (a
+    # partial-year actual cannot benchmark a full-year model throughput) but
+    # it also nulls a complete year with a stray missing hour; an explicit
+    # per-month coverage rule (like `_actual_storage_monthly`'s) would change
+    # other ISOs' committed bench values, so it needs its own cross-ISO pass.
     disch = np.clip(present["mw"].to_numpy(float), 0.0, None).sum() / 1e6
     return round(float(disch), 4) if disch > 1e-6 else None
 
@@ -467,22 +469,22 @@ _STORAGE_MONTH_COVERAGE_MIN = 0.9
 def _actual_storage_monthly(e930_year: pd.DataFrame) -> list[float | None] | None:
     """Return 12 monthly DISCHARGE GWh from EIA-930 storage series, or None.
 
-    Discharge basis (positive half only), matching C5b's throughput basis —
-    and the only basis the actual supports everywhere: several BAs report a
-    discharge-only storage series (NEISO ``NG: PS`` — pumping shows up as
-    load, never as a negative storage value; ERCOT's ``battery_discharge`` is
-    pre-split positive). Summing those series signed silently yields gross
-    discharge, while the model side used to report net (discharge − charge,
-    ≤ 0 over a month by round-trip losses) — an apples-to-oranges C5c that a
-    perfectly-cycling model could never pass. Both sides are now discharge.
+    Discharge basis (positive half only), matching the throughput
+    diagnostic's basis — and the only basis the actual supports everywhere:
+    several BAs report a discharge-only storage series (NEISO ``NG: PS`` —
+    pumping shows up as load, never as a negative storage value; ERCOT's
+    ``battery_discharge`` is pre-split positive). Summing those series signed
+    silently yields gross discharge, while the model side used to report net
+    (discharge − charge, ≤ 0 over a month by round-trip losses) — an
+    apples-to-oranges comparison a perfectly-cycling model could never pass.
+    Both sides are now discharge. (These monthly vectors have been run-page
+    diagnostics only since rubric v2.7 removed the C5b/C5c criteria.)
 
     Months without a real observation are ``None``, never 0.0 (rubric v2.6):
     the ERCOT battery series carries NaN over hours the BA had not yet begun
     reporting a storage breakout (ERCO: mid-Oct-2024), and booking those
-    months as zero discharge fabricates an actual the scorer then correlates
-    against. ``calibration_verdict.score_storage_shape`` already SKIPs a year
-    whose monthly vector has null months, so a partial-breakout year is held
-    out rather than scored on invented zeros.
+    months as zero discharge fabricates an actual — a partial-breakout year
+    is visibly partial rather than dressed in invented zeros.
     """
     present = e930_year[e930_year["series"].isin(_STORAGE_E930_SERIES)]
     if present.empty:
@@ -953,9 +955,10 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
         sys_all = pd.read_parquet(bdir / "system.parquet")
         # Per-storage-unit hourly charge/discharge (run_calibration_full
         # _storage_frame), present only when the bundle has a storage fleet.
-        # Drives the C5b throughput criterion; gitignored like dispatch/ +
-        # system.parquet, so it is read at render time and its annual scalar
-        # baked into the committed payload.
+        # Feeds the run-page storage-throughput diagnostic (ex-C5b, removed
+        # from the rubric v2.7); gitignored like dispatch/ + system.parquet,
+        # so it is read at render time and its annual scalar baked into the
+        # committed payload.
         storage_all = (
             pd.read_parquet(bdir / "storage.parquet")
             if (bdir / "storage.parquet").exists()
@@ -1290,11 +1293,12 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
             if actual_lmp:
                 bench[int(year)]["avgLMP"] = actual_lmp
 
-            # Observed storage discharge throughput (TWh), the C5b cycling-realism
-            # actual: the positive half of the EIA-930 battery + pumped-storage
-            # net-gen series. None when the BA doesn't report a storage breakout
-            # or coverage is below the threshold — the verdict's score_storage
-            # distinguishes "no EIA-930 data" from "data says zero".
+            # Observed storage discharge throughput (TWh), the cycling-realism
+            # diagnostic actual (ex-C5b — a run-page diagnostic since rubric
+            # v2.7): the positive half of the EIA-930 battery + pumped-storage
+            # net-gen series. None when the BA doesn't report a storage
+            # breakout or coverage is below the threshold, so consumers can
+            # distinguish "no EIA-930 data" from "data says zero".
             actual_storage = _actual_storage_twh(e930)
             actual_storage_monthly = _actual_storage_monthly(e930)
             bench[int(year)]["storage"] = {
@@ -1751,9 +1755,10 @@ def build_payload(runs: list[tuple[str, Path]], years: set[int] | None = None) -
                     "basis": "full-plant",
                 },
             }
-            # Model storage discharge throughput (TWh) for the C5b criterion —
-            # li-ion + pumped storage from this run's storage.parquet P1 frame.
-            # Always set: 0.0 when no storage fleet, so the verdict can
+            # Model storage discharge throughput (TWh) for the run-page
+            # storage diagnostic (ex-C5b, removed from the rubric v2.7) —
+            # li-ion + pumped storage from this run's storage.parquet P1
+            # frame. Always set: 0.0 when no storage fleet, so consumers can
             # distinguish "model has no storage" from "model has storage but
             # data is missing".
             model_storage = _model_storage_twh(storage_all, year)
