@@ -1,0 +1,24 @@
+plant_code,plant_name,current_mw,campd_p999_mw,eia860_winter_mw,reconciled_mw,delta_pct,source,mode
+55418,Hot Spring Generating Facility,957.0,582.1,633.9,582.1,-39.2,campd_demonstrated_peak,cap
+55220,Attala,811.9,516.8,513.8,516.8,-36.4,campd_demonstrated_peak,cap
+55218,Hinds Energy Facility,810.9,532.1,556.8,532.1,-34.4,campd_demonstrated_peak,cap
+55467,Ouachita,1257.2,841.4,835.9,841.4,-33.1,campd_demonstrated_peak,cap
+55380,Union Power Station,3456.6,2317.7,2354.3,2317.7,-32.9,campd_demonstrated_peak,cap
+55221,Harry L. Oswald,548.0,437.8,548.0,437.8,-20.1,campd_demonstrated_peak,cap
+7985,Greater Des Moines,503.7,403.6,590.5,403.6,-19.9,campd_demonstrated_peak,cap
+62192,Blue Water Energy Center,1146.0,1167.1,1169.0,1167.1,1.8,campd_demonstrated_peak,raise
+58478,LEPA Unit No. 1,64.0,65.3,67.0,65.3,2.1,campd_demonstrated_peak,raise
+1396,Coughlin Power Station,727.0,744.6,0.0,744.6,2.4,campd_demonstrated_peak,raise
+55334,Holland Energy Facility,602.2,617.2,647.9,617.2,2.5,campd_demonstrated_peak,raise
+60927,Lake Charles Power,1000.0,1036.4,1000.0,1036.4,3.6,campd_demonstrated_peak,raise
+60925,Montgomery County,1000.0,1042.3,1000.0,1042.3,4.2,campd_demonstrated_peak,raise
+55357,Jack Fusco Energy Center,602.0,627.9,604.0,627.9,4.3,campd_demonstrated_peak,raise
+58236,Marshalltown Generating Station,665.2,694.2,702.5,694.2,4.4,campd_demonstrated_peak,raise
+55270,Jackson Generating Station,534.4,559.6,578.8,559.6,4.7,campd_demonstrated_peak,raise
+4040,Port Washington Generating Station,1236.5,1309.2,1352.2,1309.2,5.9,campd_demonstrated_peak,raise
+55173,Acadia Energy Center,1072.7,1139.2,542.0,1139.2,6.2,campd_demonstrated_peak,raise
+55364,Sugar Creek Power,574.2,611.3,640.9,611.3,6.5,campd_demonstrated_peak,raise
+6061,R D Morrow,530.5,574.3,576.5,574.3,8.3,campd_demonstrated_peak,raise
+56104,Mankato Energy Center,654.0,709.8,720.0,709.8,8.5,campd_demonstrated_peak,raise
+991,Eagle Valley (IN),673.0,737.1,723.0,737.1,9.5,campd_demonstrated_peak,raise
+56164,Faribault Energy Park,261.0,286.4,290.0,286.4,9.7,campd_demonstrated_peak,raise
