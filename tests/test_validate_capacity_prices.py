@@ -15,8 +15,11 @@ from scripts.validate_capacity_prices import (
     YearParams,
     canon_year,
     delivery_start_year,
+    invert_normalized_curve,
     invert_own_curve,
     is_locked,
+    miso_seasonal_pass1,
+    model_curve_price_kw_yr,
     run_pass1,
     run_pass2,
     to_kw_yr,
@@ -106,3 +109,68 @@ def test_no_locked_row_is_ever_scored_without_flag():
         for r in run_pass1(iso):
             if delivery_start_year(r.delivery_year) >= 2026:
                 assert r.locked is True
+
+
+def test_invert_normalized_curve_round_trips():
+    # Inverting the MISO summer curve at a fraction recovers a position whose
+    # forward evaluation returns that fraction (clamped past both ends).
+    from market_sim.config.constants import (
+        MISO_SEASONAL_RBDC,
+        evaluate_demand_curve,
+    )
+
+    summer = MISO_SEASONAL_RBDC.seasons[0].demand_curve
+    for frac in (0.5, 1.0, 2.0, 4.0):
+        pos = invert_normalized_curve(summer, frac)
+        assert evaluate_demand_curve(summer, pos) == pytest.approx(frac, abs=1e-6)
+
+
+def test_miso_seasonal_pass1_reproduces_net_cone_and_concentration():
+    # RC-1C: the seasonal SUM (Σ cleared × days) lands on the published
+    # North/Central net-CONE (~79,800), and the per-season implied positions
+    # reproduce the summer-short / other-seasons-long concentration directionally.
+    mp = miso_seasonal_pass1()
+    assert not mp["locked"]  # PY2025-26 is in-train
+    assert mp["published_net_cone_mw_yr"] == pytest.approx(79_800.0, abs=1.0)
+    # Annual sum within a few percent of net-CONE (a real reproduction).
+    assert abs(mp["pct_error"]) < 3.0
+    by_season = {s["season"]: s for s in mp["seasons"]}
+    assert by_season["summer"]["implied_reserve_position"] < 1.0  # short
+    for season in ("fall", "winter", "spring"):
+        assert by_season[season]["implied_reserve_position"] > 1.0  # long
+    # Summer's gross-CONE cap fraction is ~6.3× the flat daily net-CONE.
+    assert by_season["summer"]["model_cap_frac"] == pytest.approx(6.33, abs=0.05)
+
+
+def test_nyiso_scored_per_vintage_and_sparse_years_excluded():
+    # NYISO Pass 1B (RC-1C): 2023/24 & 2024/25 score on their OWN vintage anchor
+    # (model net-CONE == published net-CONE per year, shape resid ~0); the sparse
+    # 2021-22/2022-23 (no ARV/cap) are non-scoreable with no interpolation;
+    # 2025/26 is locked.
+    rows = {r.delivery_year: r for r in run_pass1("NYISO")}
+    scored = ("2023/2024", "2024/2025")
+    for y in scored:
+        r = rows[y]
+        assert not r.locked
+        # per-vintage anchor: the model net-CONE tracks each year's published ARV
+        assert r.model_net_cone_kw_yr == pytest.approx(r.pub_net_cone_kw_yr, abs=0.01)
+        assert abs(r.shape_resid_pct) < 0.5  # instrument faithful per vintage
+        assert abs(r.pct_error) < 1.0  # price reproduced at its own position
+    # The 2024/25 and 2023/24 anchors DIFFER (no frozen single-vintage anchor).
+    assert rows["2023/2024"].model_net_cone_kw_yr != pytest.approx(
+        rows["2024/2025"].model_net_cone_kw_yr, abs=0.5
+    )
+    # Sparse pre-ARV years carry no curve params (explicit, not interpolated).
+    for y in ("2021/2022", "2022/2023"):
+        assert rows[y].pub_net_cone_kw_yr is None
+        assert rows[y].reserve_position is None
+    assert rows["2025/2026"].locked is True
+
+
+def test_nyiso_flat_anchor_vintage_prices_flat():
+    # A NYISO ()-shape flat-anchor vintage (2021-2022: reference price × 12, no
+    # curve) prices its flat anchor independent of position through the shipped
+    # vintage seam.
+    flat = model_curve_price_kw_yr("NYISO", 0.8, year=2021)
+    assert model_curve_price_kw_yr("NYISO", 1.3, year=2021) == pytest.approx(flat)
+    assert flat == pytest.approx(7.81 * 12.0, abs=0.01)
