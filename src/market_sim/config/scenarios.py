@@ -4370,6 +4370,46 @@ class ScenarioConfig:
     # slack).
     pjm_offer_surface_price_cap_frac: float = 0.95
 
+    # --- CAISO measured DAM offer surface (C1 CC-over/CT-under lane WP-A,
+    # default off, CAISO-gated) -------------------------------------------
+    # STATIC half: replace the FITTED _CAISO_OFFER_CURVE gas band
+    # multipliers (CC_REGULAR / CT_PEAKER econ_low, econ_high, peak) with
+    # the MEASURED cap-weighted medians of the fleet's own DAM energy bids
+    # (CAISO OASIS Public Bid Data, 90-day-lag masked curves —
+    # scripts/derive_caiso_offer_surface.py; the
+    # FINDING-caiso91b Panoche bid wedge's admissible owner). Multipliers
+    # are extracted net of VOM and the CARB cap-and-trade allowance cost at
+    # the band heat rate, so the model's tranche mc (mult x base_HR x gas +
+    # VOM + 0.057 x mult x base_HR x P_carbon) round-trips the measured bid
+    # exactly. The measured COMMITTED-band mult is deliberately NOT armed
+    # (min-load self-commitment conduct belongs to unit commitment, not the
+    # P1 offer — the Lever-A inversion lesson; rule 19). A rule-24/25
+    # SHRINK: fitted values retire where measured rungs land; CAISO-only,
+    # no generic fallback (rule 25).
+    caiso_offer_surface_measured: bool = False
+    # Path to the measured static band JSON (default: the frozen
+    # data/raw/_validation-source/caiso_offer_curve_measured.json).
+    caiso_offer_surface_measured_path: str | None = None
+    # CONDITIONAL half: the PJM/NEISO condition-binned peak-rung ladder
+    # ported to CAISO — 5 equal-capacity peak rungs repriced P1-only to the
+    # measured per-net-load-bin top-of-curve quantiles (fuel-component
+    # repricing at the resolved peak's carbon basis; loose hours
+    # byte-identical, ratio clamped >= 1). Same rule-13 admissibility as
+    # the PJM surface: measured OFFER prices in, clearing prices
+    # validation-only; frozen against residuals (rule 23).
+    caiso_offer_surface_conditional: bool = False
+    # Path to the measured CAISO condition-binned ladder JSON (default: the
+    # frozen data/raw/_validation-source/caiso_offer_surface_condbinned.json).
+    caiso_offer_surface_binned_path: str | None = None
+    # Net-load percentile bin EDGES (same contract as the PJM field above;
+    # the JSON records its edges and the mechanism asserts agreement).
+    caiso_offer_surface_netload_pcts: tuple[float, ...] = (0.80, 0.90, 0.97)
+    # Minimum net-load bin index at which the ladder engages (0 = every bin).
+    caiso_offer_surface_min_bin: int = 0
+    # Safety cap on the repriced offer as a fraction of VOLL (measured
+    # offers already carry CAISO's $1,000 soft / $2,000 hard bid cap).
+    caiso_offer_surface_price_cap_frac: float = 0.95
+
     # PJM Day-Ahead virtual-bid layer (G-22 lever B — DA procurement depth,
     # default off, PJM-gated). Posts the MEASURED hourly INC (virtual supply)
     # / DEC (virtual demand) bid curves from PJM's public DataMiner2
@@ -5680,6 +5720,39 @@ class ScenarioConfig:
     # GATED CHANGE (alters availability).
     unit_outage_maxgen_events: bool = False
 
+    # Declared-window ELMP emergency-tier pricing (the MISO F5 scarcity-depth
+    # lane; frozen design docs/handoffs/miso-f5-scarcity-depth-design-2026-07
+    # .md). DRIVER: MISO's declared capacity-emergency instruments (the same
+    # maxgen-events registry rows as unit_outage_maxgen_events, per-row
+    # primary provenance) plus the SOM-documented tier pricing they trigger —
+    # "Emergency supply is priced by applying a $500/MWh offer price floor
+    # (Tier 1) to this supply in ELMP when MISO declares a Max Gen Warning
+    # and a $1000/MWh floor (Tier 2) in a Max Gen Event Step 2" (2023 SOM
+    # fn.21 = 2024/2025 SOM fn.17; constants in config.reserve_config with
+    # the p.10-11 ladder scoping: Warning/Step-1 -> Tier 1, Step 2+ ->
+    # Tier 2, Advisory/Alert -> no pricing effect). MECHANISM: inside a
+    # registry window declared at Warning or higher, the declared region's
+    # zones reprice the energy-balance load slack — the LP's administrative
+    # last-resort supply — from the ISO bid cap to min(voll, tier floor)
+    # (data.maxgen_events.emergency_tier_slack_cost -> the DispatchModel
+    # slack_cost kwarg). The emergency ladder's supply is thereby priced at
+    # its documented offer floor instead of the model riding the slack cap
+    # (miso-69's $1,841-1,985 declared-window prints vs the actual $169 DA);
+    # the RBDC / zonal-ORDC families are never edited (rule 19) and the cost
+    # never RISES (min). WINDOW: exactly the registry Warning+ windows —
+    # off-window the slack cost equals voll by construction, so off-window
+    # binding is structurally impossible. FORWARD STORY: backcast/calibration
+    # overlay only (legitimacy D-5 backcast_only, same admissibility family
+    # as the CAMPD/maxgen outage windows); a forecast year carries no
+    # declared windows, and the post-9/30/2025 ER25-579 shortage-pricing
+    # regime is the forecast lane's own charter. Depth is unbounded within
+    # the window: the ladder's own declaration discipline (2023 SOM p.11 —
+    # each level is declared only when its MWs are needed) makes the declared
+    # level the measured depth indicator, so no per-window MW bound is
+    # fitted. Default off; MISO backcast arms it. GATED CHANGE (alters the
+    # LP objective inside declared windows).
+    maxgen_emergency_tier_pricing: bool = False
+
     gas_price_override: float | None = None  # When set, pins the annual
     # Henry Hub price ($/MMBtu) to a measured value instead of the AEO
     # trajectory — used to backcast a calibration year against EIA actuals.
@@ -6811,6 +6884,7 @@ TIER_TAGS: dict[str, int] = {
     "unit_outage_short_windows": 3,
     "unit_partial_outage_windows": 3,
     "unit_outage_maxgen_events": 3,
+    "maxgen_emergency_tier_pricing": 3,
     "gas_price_override": 3,
 }
 
