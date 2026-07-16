@@ -609,6 +609,7 @@ def capacity_revenue_per_mw_yr(
     eford: float,
     config: ScenarioConfig | None = None,
     reserve_position: float | None = None,
+    year: int | None = None,
 ) -> float:
     """Return the resource-adequacy capacity payment in $/MW-yr (Module M1).
 
@@ -632,19 +633,27 @@ def capacity_revenue_per_mw_yr(
     0.94 UCAP) is now paid on the same basis it is counted on.
 
     The price itself is :meth:`MarketDesign.capacity_price_per_firm_mw_yr`,
-    which is the flat net-CONE (default) or — when
-    ``config.capacity_market_clearing`` is on, the ISO has a published demand
-    curve, and ``reserve_position`` (accredited firm ÷ requirement) is supplied
-    — the CR-1 sloped-curve price ``VRR(reserve_position) × net_cone_curve``.
-    Passing neither ``config`` nor ``reserve_position`` reproduces the pre-CR-1
-    fixed price byte-identically.
+    which is the flat net-CONE (default) or — when the clearing gate resolves
+    ON for this ISO (:func:`resolve_capacity_market_clearing`: the per-ISO
+    ``capacity_market_clearing_by_iso`` row when present, else the scalar
+    ``capacity_market_clearing``), the ISO has a published demand curve, and
+    ``reserve_position`` (accredited firm ÷ requirement) is supplied — the
+    CR-1 sloped-curve price ``VRR(reserve_position) × net_cone_curve``.
+    ``iso`` and ``year`` are threaded into the seam so the per-ISO gate and
+    the per-delivery-year vintage anchor (RC-1B items 1/2,
+    :func:`resolve_demand_curve_vintage`) govern inside the curve branch; both
+    are consulted ONLY there, so every gate-off path — and passing neither
+    ``config`` nor ``reserve_position`` — reproduces the pre-CR-1 fixed price
+    byte-identically.
 
     Energy-only ISOs (ERCOT, and any ISO absent from the registry) have
     ``capacity_market = False`` and earn zero here in both modes, so their
     retirement and new-entry economics are unchanged.
     """
     design = MARKET_DESIGN.get(iso, DEFAULT_MARKET_DESIGN)
-    price = design.capacity_price_per_firm_mw_yr(config, reserve_position)
+    price = design.capacity_price_per_firm_mw_yr(
+        config, reserve_position, iso=iso, year=year
+    )
     if price <= 0.0:
         return 0.0
     accredited = max(0.0, thermal_accreditation_fraction(fuel_type, eford, iso))
@@ -1443,7 +1452,7 @@ def apply_economic_retirements(
         # retires as it should while short zones keep their units.
         if not _zone_is_long(deliverability_headroom, g.zone):
             net_revenue += g.pmax_mw * capacity_revenue_per_mw_yr(
-                config.iso, g.fuel_type, g.eford, config, reserve_position
+                config.iso, g.fuel_type, g.eford, config, reserve_position, year
             )
 
         # ERCOT ancillary-service revenue (Reg/RRS/ECRS/Non-Spin): a real
@@ -2308,7 +2317,7 @@ def apply_economic_new_entry(
                 0.0
                 if build_zone_long
                 else capacity_revenue_per_mw_yr(
-                    iso_config.name, tech, EFORD[tech], config, reserve_position
+                    iso_config.name, tech, EFORD[tech], config, reserve_position, year
                 )
             )
             # AS credit — exactly one mechanism prices thermal AS (rule 19):
