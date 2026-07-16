@@ -181,7 +181,7 @@
    }
   }
  },
- "note": "Actual scarcity-tail hour counts per ISO-year at the rubric \u00a75 threshold. da_gt (day-ahead) is the DA-expressible tail the C3c criterion gates on (same hourly resolution as the model LP); rt_gt (real-time) is the reported out-of-representation companion (includes sub-hourly transients). Counts over covered hours only \u2014 a coverage < 1.0 makes the count a lower bound. Source: data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet (hub series). Regenerate with scripts/derive_actual_tail.py when a source series updates (rule 23: re-derivation commits cite the data change). Years restricted to 2023-2025 (rule-22 holdout quarantine).",
+ "note": "Actual scarcity-tail hour counts per ISO-year at the rubric \u00a75 threshold. rt_gt (real-time hourly hub average) is the actual RT scarcity tail the C3c criterion gates on for every ISO (rubric v2.7, owner amendment 2026-07-16); da_gt (day-ahead) is the reported non-gated diagnostic companion (prices scarcity expectations \u2014 embeds the DA forecast-risk premium). Counts over covered hours only \u2014 a coverage < 1.0 makes the count a lower bound. Source: data/raw/_validation-source/actual_lmp_hourly_<ISO>.parquet (hub series). Regenerate with scripts/derive_actual_tail.py when a source series updates (rule 23: re-derivation commits cite the data change). Years restricted to 2023-2025 (rule-22 holdout quarantine).",
  "thresholds": {
   "CAISO": 200.0,
   "ERCOT": 200.0,
