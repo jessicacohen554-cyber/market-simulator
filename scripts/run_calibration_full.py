@@ -2537,6 +2537,7 @@ def solve_and_persist(
     gt_ambient_derate_slope_ct: float | None = None,
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
+    ercot_offer_surface_midcurve_conditional: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
     wind_ptc_vintage_offers: bool = False,
@@ -2547,6 +2548,7 @@ def solve_and_persist(
     pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
+    ercot_noncampd_plant_availability: bool = False,
     ercot_storage_capability_measured: bool = False,
     ercot_online_capacity_envelope_measured: bool = False,
     ercot_ordc_only_scarcity: bool = False,
@@ -2767,6 +2769,9 @@ def solve_and_persist(
             offer_curve_overrides=offer_curve_overrides,
             offer_curve_deltas=offer_curve_deltas,
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+            ercot_offer_surface_midcurve_conditional=(
+                ercot_offer_surface_midcurve_conditional
+            ),
             neiso_offer_surface_conditional=neiso_offer_surface_conditional,
             pjm_offer_surface_conditional=pjm_offer_surface_conditional,
             pjm_da_virtual_bids=pjm_da_virtual_bids,
@@ -3037,6 +3042,12 @@ def solve_and_persist(
             # measured thermal class-day availability the LP solved with.
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_thermal_dam_availability=True
+            )
+        if ercot_noncampd_plant_availability:
+            # Mirror run_year's with_overrides so run_config.json records the
+            # measured CAMPD-blind per-plant availability the LP solved with.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_noncampd_plant_availability=True
             )
         if ercot_storage_capability_measured:
             # Mirror run_year's with_overrides so run_config.json records the
@@ -3664,6 +3675,9 @@ def solve_and_persist(
             gt_ambient_derate_slope_ct=gt_ambient_derate_slope_ct,
             temp_dependent_derate=temp_dependent_derate,
             ercot_offer_surface_conditional=ercot_offer_surface_conditional,
+            ercot_offer_surface_midcurve_conditional=(
+                ercot_offer_surface_midcurve_conditional
+            ),
             ercot_offer_surface_lowcurve=ercot_offer_surface_lowcurve,
             ercot_offer_surface_lowcurve_floorscoped=(
                 ercot_offer_surface_lowcurve_floorscoped
@@ -3676,6 +3690,7 @@ def solve_and_persist(
             pjm_offer_midcurve_segments=pjm_offer_midcurve_segments,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
+            ercot_noncampd_plant_availability=ercot_noncampd_plant_availability,
             ercot_storage_capability_measured=ercot_storage_capability_measured,
             ercot_online_capacity_envelope_measured=(
                 ercot_online_capacity_envelope_measured
@@ -4074,6 +4089,9 @@ def solve_and_persist(
         "coal_nameplate_summer_derate": coal_nameplate_summer_derate,
         "temp_dependent_derate": temp_dependent_derate,
         "ercot_offer_surface_conditional": ercot_offer_surface_conditional,
+        "ercot_offer_surface_midcurve_conditional": (
+            ercot_offer_surface_midcurve_conditional
+        ),
         "ercot_offer_surface_lowcurve": ercot_offer_surface_lowcurve,
         "ercot_offer_surface_lowcurve_floorscoped": (
             ercot_offer_surface_lowcurve_floorscoped
@@ -4090,6 +4108,7 @@ def solve_and_persist(
         ),
         "ercot_nuclear_unit_availability": ercot_nuclear_unit_availability,
         "ercot_thermal_dam_availability": ercot_thermal_dam_availability,
+        "ercot_noncampd_plant_availability": ercot_noncampd_plant_availability,
         "ercot_storage_capability_measured": ercot_storage_capability_measured,
         "ercot_online_capacity_envelope_measured": (
             ercot_online_capacity_envelope_measured
