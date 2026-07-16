@@ -14862,3 +14862,26 @@ promotion; the deposed keeper's registration stays on the dashboard as the
 prior-keeper comparison. Open lanes carried forward unchanged: the 2023
 summer over-shoot (lane 2), the shoulder formation gap (wall mid-rungs +
 the drag-lane steam cliff), and the West/Panhandle topology split.
+
+## 2026-07-16 — MISO keeper promotion: 2026-07-16-miso-68-mothballs (owner)
+
+**Promotion (owner, follow-up session to the miso-68 entry above — the
+building session crashed after registration; this session executes the
+owner's promotion call).** `2026-07-16-miso-68-mothballs` promoted to MISO
+keeper over `2026-07-16-miso-67-stgas-p25` (NOT-YET both — identical fail
+set {C1 CC_REGULAR-2023, C3a, C3c}; the promotion is rule 1/11
+structure-first: the strictly more complete fleet — Cottonwood 55358's four
+OA-but-operating units re-carried from the year-matched EIA-860 vintages —
+matches the deposed keeper's C1 count, shrinks the sole C1 fail
+−9.79 → −8.28, independently improves 2024, and degrades nothing). LOO
+(rule 22, structural change) satisfied as recorded at registration: the
+mechanism carries zero fitted parameters — nothing refits per fold, 2023
+improves, 2024 improves, 2025 is byte-identical. `keepers.json` flipped
+from `2026-07-16-miso-67-stgas-p25`; sidecar re-worded PROBE → KEEPER with
+`market_story` added; `build_status.py` re-run (MISO stays NOT-YET);
+keeper-text audit launched at promotion. The deposed miso-67 registration
+stays on the dashboard as the prior-keeper comparison. Open lanes carried
+forward unchanged: the residual CC_REGULAR-2023 −8.28 (a dispatch/
+price-formation question — the plant is carried, the LP under-dispatches it
+vs near-continuous actual operation) and the F4-blocked C3a/C3c MISO
+price-formation lane. Next number: miso-69.
