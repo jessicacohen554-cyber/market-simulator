@@ -15235,6 +15235,135 @@ emergency-tier pricing, measured MISO parameters) is the price lane's named
 next step; the winter-2024 fuel-security lane and G-23 imports remain
 separately chartered. Next number: miso-70.
 
+## 2026-07-16 — ERCOT-75: the RT offer-top correction ADJUDICATED WITHOUT A BUILD — the chartered SCED1 curve-top rung swap is measured PROVABLY INERT (the RT per-hour top-quantile ladder sits BELOW the DAM mode-B ladder at every sub-threshold rung, both samples, both state cells), the level that priced the offer-formed core is the CT marginal-ROOM tail whose loaded-state support is event-only (the pre-registered bias gate's own reading), and the CC side is a room-QUANTITY (availability) phenomenon a price surface cannot carry — the ~6h offer-formed family moves to the ledger as out-of-admissible-representation; NO flag, NO artifact, NO solve; keeper UNCHANGED
+
+**Task (owner charter).** Re-price the conditional surface's loaded-shoulder
+rungs from the measured SCED1 curve tops, adjudicated on HOUR-SETS — the
+successor lane ERCOT-74 named as the only in-representation piece of the 2024
+missed tail. Pre-committed honesty test: fetch a stratified NON-TAIL control
+sample first, measure whether the online curve-top ladder differs tail-day vs
+control-day within the same (netload bin x w-state) cell, and STOP with a
+report if the identification is event-confounded.
+
+**Leg 0 — the pre-registered derivation-bias gate (control intake + verdicts).**
+Pre-registration written to the session scratchpad BEFORE any control curve
+was fetched or read (reproduced in `scripts/probes/_ercot75_control_gate.py`):
+deterministic 46-day control sample (2/month 2024-02..2025-12, days closest
+to the 10th/20th with zero actual RT hub hours > $200, not within +-1 day of
+a tail day, none of the 25 ERCOT-74 intake days; hod 11-22 CPT;
+`60_DAY_SCED_DISCLOSURE_60d_SCED_Gen_Resource_Data_{2024,2025}_ercot75_
+control_days.parquet`, 2.93M rows, all 46 reachable). Measurement: per
+(online CC/CT resource, CST hour) SCED1 curve-top multiplier on gas x class
+base_hr (the DAM artifact's normalizer), capacity-weighted, celled by the
+surface's own netload bins (0.80/0.90/0.97, measured EIA-930 percentile) x
+w-state thirds on the committed ERCOT-73 series; resource-hour grain so the
+tail/control comparison is sample-size-fair. GATE (pre-registered,
+one-sided): populated cell = >=5 resources AND >=40 resource-hours in BOTH
+samples; per class, rung ratios R = tail/control at p50/p70/p90 over
+populated LOADED cells; CONFOUNDED iff median R > 2.0. **Verdicts (identical
+on SCED1 and SCED2): CC CLEAN — median R = 1.32 over 12 comparisons (range
+1.06-1.74). CT NO POPULATED CELLS — the control sample has ZERO CT-loaded
+resource-hours in bins 1-3 (and the tail none in bin 0): the
+CT-loaded-in-tight-bins state occurs ONLY on event days, so conditioning on
+it IS conditioning on the event — CT's loaded ladder is unverifiable against
+selection bias by construction.**
+
+**Leg 1 — the inertness measurement (the would-be build ladder vs the DAM
+ladder; `--build-ladder`).** The pre-registered build shape (recorded before
+measuring): per rung r, bin b, hour t, `eff = dam(b,r) + (1 - w(t)) x
+max(0, rt(b,r) - dam(b,r))` — bids only ever RISE, threshold-free continuous
+state conditioning, the (1-w)-weighted curve-top quantile ladder as rt. The
+measured ladder (pooled tail+control, capacity x (1-w) weights, mult on gas
+x base_hr):
+
+| class | bin | RT p10/p30/p50/p70/p90 | DAM mode-B rungs |
+|---|---|---|---|
+| CC_REGULAR | 0 | 0.90 / 1.39 / 1.96 / 3.78 / 8.81 | 4.33 / 4.33 / 4.33 / 9.43 / 108.67 |
+| CC_REGULAR | 1 | 0.89 / 1.33 / 1.75 / 3.25 / 6.84 | 4.33 / 4.33 / 4.33 / 7.46 / 90.68 |
+| CC_REGULAR | 2 | 0.90 / 1.34 / 1.75 / 3.17 / 6.78 | 4.33 / 4.33 / 4.33 / 25.41 / 142.87 |
+| CC_REGULAR | 3 | 1.01 / 1.52 / 1.88 / 3.80 / 7.29 | 4.33 / 4.33 / 4.33 / 29.71 / 144.19 |
+| CT_PEAKER | 0-3 | ~0.9-1.2 / ~1.5-1.8 / ~1.9-2.6 / ~2.8-7.6 / 283-509 | 5.39 x3-4 / 9.16 (bin 0 r3) / 53.3-66.4 top |
+
+**Every rung that could cross the $200 tail threshold reads RT < DAM** — the
+DAM mode-B construction (per-resource max over three delivery years) already
+prices ABOVE the per-hour RT top distribution; the hard-thirds cells and
+tail-only/control-only variants read the same. The single rung where RT >
+DAM (CT p90: 283-509 vs 53-66) reprices a rung whose DAM height is already
+> $200 at any plausible gas (min ~$413 at the window's lowest gas), so it
+cannot convert a missed hour — it could only inflate zmax in hours already
+above the threshold. Under the only-ever-rise composition the mechanism is
+therefore **provably byte-inert on the missed set before any solve**: the
+charter's premise ("the surface's DAM-derived rung levels are measured too
+cheap against the RT offer tops exactly on loaded event shoulders") is
+REFUTED at the rung-ladder grain.
+
+**Leg 1b — what actually priced the core hours (the decisive room
+measurement; `scripts/probes/_ercot75_room_ladder.py`).** Per core hour, the
+online fleet's REMAINING ROOM (curve segments between max(Base Point, TNO)
+and HASL — the ERCOT-74 IRR-safe operating-point convention), MW-weighted:
+
+* **CC: room 0.01-0.26 GW priced $12-75** (May-8 h15-17: 41-102 MW at
+  p90 <= $42) — the measured CC evidence, tops AND room prices, is CHEAP on
+  tail and control alike (loaded-cell room ladders $14-91 p10-p90 tail vs
+  $15-263 control, ~identical); what distinguishes the core hours is the
+  room QUANTITY (0.04-0.26 GW vs the loaded-cell norm 0.5-1.2 GW), i.e.
+  availability, not price.
+* **CT: room 0.01-0.36 GW priced $881-5,000** — the measured carrier of the
+  $965+ prints (May-8 h16: 20 MW at $1,114+; Apr-28 h20: 0.36 GW at
+  p30-p90 $883-1,124; system lambda formed on this marginal-room tail).
+  Its (bin x loaded-state) support off event days is ZERO (the gate's
+  NO-POPULATED-CELLS finding from the other side).
+* **w_CT at May-8 h15/16/17 = 1.00/0.85/0.78** — the CT class was UNLOADED
+  by the measured state on the May shoulders (its headroom was AS-carved at
+  HASL, not energy room), so the chartered (1-w)-conditioned correction
+  would not even ENGAGE the CT rows at three of the six core hours.
+
+**Adjudication (rules 1/13/14/16/19/23/26): NO build — the lane ends with
+this report, per its own pre-committed exit.** The closure is two-sided and
+fully measured: every construction that passes the pre-registered selection
+gate is provably inert against the DAM ladder under the only-ever-rise
+composition; every construction strong enough to carry the measured $965+
+level (the CT marginal-room tail; any cumulative-room wall) is exactly what
+the gate rejects as event-confounded — the loaded-cheap-room state exists
+only on event days, so deriving from it would date-pin the ladder to the
+answer (the charter's named STOP condition). The residual CC phantom (the
+model's GWs of sub-$200 peak-band rungs vs reality's ~0.1 GW of cheap room)
+is a room-QUANTITY phenomenon: its price-side projection is inert (above)
+and its quantity-side projection — capping model availability at the
+measured online envelope in loaded states — is the rule-14 actuals-pin
+family (feeding the measured operating outcome back as the bound). ERCOT-74's
+finding sentence sharpens accordingly: "the telemetered SCED1 offer tops
+priced those hours $965+" is TRUE of the marginal-room sliver, and the
+extrapolation to "the conditional surface's rung LEVELS are measured too
+cheap" is what this session's full-distribution measurement refutes.
+Consequences:
+
+* **No ScenarioConfig flag introduced, no artifact derived, no solve run** —
+  a mechanism known byte-inert on its target set before any solve produces
+  no registrable run (the ERCOT-64 provably-inert and ERCOT-74 no-build
+  precedents); rule 26: nothing dead lands in the registry. Keeper and
+  dashboard unchanged (`2026-07-16-ercot73-state-wall`).
+* **Proposed ledger extension (owner's to adopt, with the ERCOT-74
+  sharpening).** The C3c-2024 offer-formed core (~6 h) re-classifies from
+  "in-representation successor lane" to **out-of-admissible-representation:
+  measured fleet room exhaustion** (AS-carved HASL + envelope loading; the
+  RT analogue of the participation cliff), joining the ramp-formed (~6h),
+  transient (8h), congestion/stranding (~8h, topology charter's), and
+  Jan-unreachable (6h) families. With this, every family of the 2024 missed
+  tail is adjudicated; the caveat's 26h vs 53 stands as a measured
+  representation limit, and the tail lane's remaining named lever stays the
+  West/Panhandle topology split (its own charter, both-sides evidence from
+  ERCOT-74).
+
+**Ops.** No LP solved (rule-22 window untouched). Intake: 46 control days
+fetched via the committed fetcher (retry + zip-cache path, per-day coercion;
+zips cached to the session scratchpad, deleted at session end), committed
+split per delivery year under the 100 MB blob line (38.5 + 55.4 MB, zstd).
+Probes committed: `_ercot75_control_gate.py` (pre-registration, gate,
+inertness table) and `_ercot75_room_ladder.py` (core-hour + cell room
+ladders); both reproduce end-to-end from the committed parquets. The
+mid-work ScenarioConfig flag scaffolding was reverted before commit
+(rule 26). Transport: unshallow-then-push, blob-verified (rule 27).
 ## 2026-07-16 — NYISO — the v2.7 RT-basis C3c 2024 miss ADDRESSED by documentation, not build: the 12-hour RT tail anatomy verifies the B1 frontier hour-by-hour (measured requirement series carries NO increment in ANY of the 12 hours; 9/12 cleared DA < $215; 8/12 are weekend/holiday transients); the under-tail is LEDGERED on the nyiso-62 attestation as the same B1 measured-input limitation already ledgered on C3a/C3b-2024; NYISO re-determines NOT-YET → CALIBRATED-WITH-CAVEATS; keeper UNCHANGED, no solve
 
 **Task (owner, this session).** Address the NYISO calibration miss on scarcity
