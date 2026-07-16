@@ -2548,6 +2548,8 @@ def solve_and_persist(
     pjm_da_virtual_bids: bool = False,
     pjm_offer_midcurve_conditional: bool = False,
     pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
+    caiso_offer_surface_measured: bool = False,
+    caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_noncampd_plant_availability: bool = False,
@@ -2779,6 +2781,8 @@ def solve_and_persist(
             pjm_offer_surface_conditional=pjm_offer_surface_conditional,
             pjm_da_virtual_bids=pjm_da_virtual_bids,
             pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
+            caiso_offer_surface_measured=caiso_offer_surface_measured,
+            caiso_offer_surface_conditional=caiso_offer_surface_conditional,
         )
         if pjm_offer_midcurve_segments is not None:
             # Meta-writer mirror of run_year's with_overrides (rule 25): the
@@ -3712,6 +3716,8 @@ def solve_and_persist(
             pjm_da_virtual_bids=pjm_da_virtual_bids,
             pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
             pjm_offer_midcurve_segments=pjm_offer_midcurve_segments,
+            caiso_offer_surface_measured=caiso_offer_surface_measured,
+            caiso_offer_surface_conditional=caiso_offer_surface_conditional,
             ercot_nuclear_unit_availability=ercot_nuclear_unit_availability,
             ercot_thermal_dam_availability=ercot_thermal_dam_availability,
             ercot_noncampd_plant_availability=ercot_noncampd_plant_availability,
@@ -4130,6 +4136,8 @@ def solve_and_persist(
         "pjm_offer_surface_conditional": pjm_offer_surface_conditional,
         "pjm_da_virtual_bids": pjm_da_virtual_bids,
         "pjm_offer_midcurve_conditional": pjm_offer_midcurve_conditional,
+        "caiso_offer_surface_measured": caiso_offer_surface_measured,
+        "caiso_offer_surface_conditional": caiso_offer_surface_conditional,
         "pjm_offer_midcurve_segments": (
             list(pjm_offer_midcurve_segments)
             if pjm_offer_midcurve_segments is not None
@@ -7585,6 +7593,28 @@ def main() -> None:
         "data/raw/_validation-source/pjm_offer_surface_condbinned.json.",
     )
     parser.add_argument(
+        "--caiso-offer-surface-measured",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="C1 lane WP-A (static half): REPLACE the fitted _CAISO_OFFER_CURVE "
+        "gas band multipliers (CC_REGULAR/CT_PEAKER econ_low, econ_high, peak) "
+        "with the MEASURED cap-weighted medians of CAISO's own DAM energy bids "
+        "(OASIS Public Bid Data, scripts/derive_caiso_offer_surface.py; "
+        "carbon/VOM-netted round-trip). CAISO-gated; reads the frozen "
+        "data/raw/_validation-source/caiso_offer_curve_measured.json.",
+    )
+    parser.add_argument(
+        "--caiso-offer-surface-conditional",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="C1 lane WP-A (conditional half): post the MEASURED condition-binned "
+        "top-of-curve bid surface onto the CAISO CC_REGULAR + CT_PEAKER "
+        "peak-band rungs in the P1 clearing solve only, keyed by within-year "
+        "net-load percentile (the PJM/NEISO mechanism ported; loose hours "
+        "byte-identical). CAISO-gated; reads the frozen "
+        "data/raw/_validation-source/caiso_offer_surface_condbinned.json.",
+    )
+    parser.add_argument(
         "--pjm-da-virtual-bids",
         action=argparse.BooleanOptionalAction,
         default=False,
@@ -9058,6 +9088,8 @@ def main() -> None:
         pjm_offer_surface_conditional=args.pjm_offer_surface_conditional,
         pjm_da_virtual_bids=args.pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=args.pjm_offer_midcurve_conditional,
+        caiso_offer_surface_measured=args.caiso_offer_surface_measured,
+        caiso_offer_surface_conditional=args.caiso_offer_surface_conditional,
         priced_interchange=(
             True
             if reference_price_interface and args.priced_interchange is not False

@@ -3283,6 +3283,70 @@ def build_pjm_offer_surface_conditional_markup(
     )
 
 
+def build_caiso_offer_surface_conditional_markup(
+    fleet_arrays: "FleetArrays",
+    generators: list[Generator],
+    fuel_prices: np.ndarray,
+    net_load_mw: np.ndarray,
+    config: ScenarioConfig,
+) -> "np.ndarray | None":
+    """Build the CAISO P1-only measured-offer-surface markup ``(n_gen, T)``.
+
+    The CAISO analogue of :func:`build_pjm_offer_surface_conditional_markup`
+    (``ScenarioConfig.caiso_offer_surface_conditional`` — the C1
+    CC-over/CT-under lane's measured route, WP-A 2026-07-16): the measured
+    top-of-curve bid distribution from CAISO's OASIS Public Bid Data
+    (``scripts/derive_caiso_offer_surface.py``), condition-binned by
+    within-year net-load percentile, posted onto the CC_REGULAR + CT_PEAKER
+    peak-band rungs in the P1 clearing objective only. The derive nets the
+    CARB allowance cost out of the measured tops at the resolved-peak heat
+    rate, so the fuel-only repricing here round-trips the measured bid.
+    Same mechanics, clamps and rule-13/23 discipline as the ERCOT/NEISO/PJM
+    surfaces (the shared :func:`_conditional_surface_markup` core);
+    CAISO-only, its own frozen surface JSON, no cross-ISO fallback
+    (rule 25).
+    """
+    if not getattr(config, "caiso_offer_surface_conditional", False):
+        return None
+    if config.iso != "CAISO":
+        return None
+    path = getattr(config, "caiso_offer_surface_binned_path", None)
+    if not path:
+        from market_sim.config import paths as _paths
+
+        default = _paths.CALIBRATION_DIR / "caiso_offer_surface_condbinned.json"
+        if not default.exists():
+            return None
+        path = str(default)
+    surface = _load_condbinned_surface(str(path))
+
+    edges = tuple(float(x) for x in config.caiso_offer_surface_netload_pcts)
+    json_edges = tuple(
+        float(x) for x in surface.get("_provenance", {}).get("netload_pct_edges", ())
+    )
+    if json_edges and json_edges != edges:
+        raise ValueError(
+            "caiso_offer_surface: config netload_pcts "
+            f"{edges} disagree with the derived surface's edges {json_edges} "
+            "(re-derive scripts/derive_caiso_offer_surface.py with matching "
+            "--edges, or fix the config)."
+        )
+    return _conditional_surface_markup(
+        fleet_arrays,
+        generators,
+        fuel_prices,
+        net_load_mw,
+        config,
+        surface=surface,
+        edges=edges,
+        groups=("CC_REGULAR", "CT_PEAKER"),
+        min_bin=int(getattr(config, "caiso_offer_surface_min_bin", 0) or 0),
+        price_cap=float(getattr(config, "caiso_offer_surface_price_cap_frac", 0.95))
+        * float(getattr(config, "voll", 5000.0)),
+        label="CAISO",
+    )
+
+
 def _conditional_surface_markup(
     fleet_arrays: "FleetArrays",
     generators: list[Generator],
