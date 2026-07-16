@@ -14989,3 +14989,96 @@ removed, tail tests re-based), `build_status.py`, calibration-status page,
 rubric doc (header, §0, §C3c, §C5, §2, §5, §8, §9 v2.7 entry), methodology
 doc, `derive_actual_tail.py` + committed tail-part note, renderer comments,
 CHANGELOG.
+
+## 2026-07-16 — miso-69: M-2 declared-event-window revealed derates BUILT, PROBED and REGISTERED as a REJECTED PROBE — the C3b-2024 shape veto breaks it (0.124 → 0.203: a shallow $169 declared window priced at ~$1,900), the deep 2025 events under-engage (C3c-2025 0h → 1h vs [19,76]), F5 TRIGGERED (scarcity-depth charter opens); keeper UNCHANGED (miso-68)
+
+**Runs (registered + scored, rubric v2.7):** `2026-07-16-miso-69-maxgen`
+(main, REJECTED PROBE) + `2026-07-16-miso-69-maxgen-base` (same-box drift
+control). Both MISO 2023+2024+2025, one bundle each, per-year +
+`--reuse-solved`, warm-start pinned off, variants back to back (15 GB box).
+Charter: `docs/handoffs/miso-price-formation-design-2026-07.md` §3/M-2
+(frozen guards) + `docs/handoffs/miso-maxgen-registry-findings-2026-07.md`
+(this-week registry adjudications). Model per rule 27: Fable.
+
+**Mechanism (zero fitted DOF).** `ScenarioConfig.unit_outage_maxgen_events`
+(tier 3, default OFF): CAMPD revealed unit derates INSIDE the ISO's declared
+capacity-emergency windows only. Deriver
+`scripts/derive_campd_maxgen_outages.py` → `campd-unit-outages-maxgen-
+MISO.csv` (2,158 rows), consumed hour-granularly by
+`outages.unit_outage_maxgen_derate_factors` beside the std/short overlays —
+CLASS-AGNOSTIC (the only channel that can carry the measured CT/CC
+event-window leg). Frozen guards executed verbatim: registry-window scope
+clipped to declared start/end (overlapping same-region windows merged → 5
+event blocks); $150 DA in-merit certificate, region-scoped hubs (8/9 windows
+qualify, reproducing the M-1 pre-read exactly; sensitivity across
+[$120,$200] recomputed and printed — the Aug-26-2024 Warning drops above
+$169 and the 2023 pre-event Alert would enter at $120, both recorded, not
+retuned); ±45-day capability basis with best-event-hour credit (F3
+dual-basis check stable on all 5 blocks — pm45d kept); disjointness vs
+std/short (151 unit-block pairs excluded, zero overlaps asserted); no
+control-day screen. Block sizes (pm45d): Aug-24-2023 Step-2A 10.13 GW ·
+Aug-26-2024 Warning 10.67 · Jun-23/24-2025 Midwest 2.99 · Jul-24-2025
+Advisory 10.59 · Jul-28/29-2025 7.41. Unit tests: `tests/test_maxgen_
+outages.py` (19 — capability basis on a trivial synthetic case first,
+window clipping/merging, certificate, disjointness assert, off-state byte
+identity, class-agnostic routing).
+
+**Mechanism-only read (main − base; the base reproduces the registered
+miso-68 keeper EXACTLY on every gated criterion — zero box drift):**
+
+- **THE BREACH — C3b-2024 NRMSE 0.124 → 0.203 (> 0.20 veto, NEW FAIL).**
+  The 7-hour Aug-26-2024 Warning window (10.67 GW derated — the largest
+  block precisely because its declared window is shortest, so
+  best-event-hour credit has the least chance to engage) drives the model
+  into the zonal-ORDC deep steps for 6 straight hours (~$1,841–1,985/MWh)
+  where the actual DA record peaked $169 (Tier-0/1 pricing ~+$60). The same
+  overshoot "improves" C3a-2024 −8.0% → −2.0% — a wrong-shaped gain the
+  shape veto correctly rejects (rule 1).
+- **The deep 2025 events under-engage:** Jun-23/24 peaks $196.7, Jul-28/29
+  prints ONE hour $248 (reserve dual $176), Jul-24 (10.59 GW removed!)
+  moves nothing. C3c-2025 0h → 1h vs the pre-registered [19,76] band (RT
+  actual 88h) — **F5 TRIGGERED**: the phantom-headroom hypothesis is
+  refuted at current depth. C3a-2025 −14.3% → −13.7% (band −6..−9 missed).
+  C3c-2023 0 → 1h (DA actual exactly 1); C3c-2024 4 → 6h (expectation was
+  retired — recorded, no force-close).
+- **Every protective read held:** C3b-2025 mechanism-only −0.009 (improved
+  — the F2 composition veto was NOT the breach; the F2 fallback's
+  re-read-one-mechanism-at-a-time step is moot since the probe IS
+  single-mechanism), C3b-2023 0.081 → 0.079, C1 CC_REGULAR-2023 −8.28 →
+  −8.29 (watch unchanged — not this lane's lever), max class energy move
+  0.12 TWh (≤ 0.5 watch), C2/C4/C5a PASS both arms, RDT S→N flows
+  byte-identical, C7/C8 PASS with the same ST_GAS grounded-above-budget
+  notes (no new floors — the channel is an availability derate carrying no
+  floor-mechanism id; its rule-12 window declaration is the registry window
+  set itself, recorded in the D4_WINDOWS registry note + the D-5
+  `unit_outage_maxgen_events` backcast-only declaration).
+
+**The structural finding (what the two-sided miss measures).** MISO's
+declared-window prices are formed by ELMP emergency-pricing TIERS (Alert =
+4-h online resources price-set; Warning = Tier 1 $500/MWh offer floor;
+Step 2 = Tier 2 + LMRs — 2023 SOM p.10, 2025 SOM fn.17), i.e. bounded tier
+pricing, not pure headroom exhaustion. So removing measured event-window
+headroom either does nothing (2025 — the model stack carries slack
+elsewhere) or explodes to the $1,100/$3,300 zonal-ORDC steps (2024 — a
+shallow $169 warning priced at ~$1,900). **That tier treatment is the F5
+scarcity-depth charter's measured basis** (registry-findings memo §5); it
+is NOT built in this lane (rule 19 one-mechanism-per-phenomenon; rule 25 —
+a MISO-parameter charter from MISO primary documents, never an ERCOT/NYISO
+analogue).
+
+**Determination:** main NOT-YET, fail set {C1 CC_REGULAR-2023 (−8.29), C3a
+-2025 (−13.7%), **C3b-2024 (0.203, NEW)**, C3c ×3 (1/30 · 6/37 · 1/88 RT)}
+— strictly worse than the keeper's set → **REJECTED PROBE, keeper stays
+`2026-07-16-miso-68-mothballs`**. The maxgen extract + gated default-off
+channel remain in the codebase as measured structure (rule 1); no keeper
+arms it. DOF: main 23/2 (the +2 pre-declared measured-physical entries:
+registry + derates), base 21/2. C6 PASS both (attestations
+`scripts/gen_miso69_attestation.py`). No ablation twin (rule 20 as amended
+2026-07-14). Registration chain: dashboard_add_run → attestation/ledger →
+legitimacy regen → calibration_verdict --write-metrics → parity OK (47
+runs) → build_manifest. MISO registry at 11 runs (< 15, no pruning).
+
+**Next:** the F5 scarcity-depth charter (declared-window ELMP
+emergency-tier pricing, measured MISO parameters) is the price lane's named
+next step; the winter-2024 fuel-security lane and G-23 imports remain
+separately chartered. Next number: miso-70.
