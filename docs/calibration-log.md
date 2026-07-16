@@ -14862,3 +14862,52 @@ promotion; the deposed keeper's registration stays on the dashboard as the
 prior-keeper comparison. Open lanes carried forward unchanged: the 2023
 summer over-shoot (lane 2), the shoulder formation gap (wall mid-rungs +
 the drag-lane steam cliff), and the West/Panhandle topology split.
+
+## 2026-07-16 — Rubric v2.7 (owner amendments, calibration-rubric-updates session): C3c judged on ACTUAL RT scarcity hours for EVERY ISO (DA becomes the report-only diagnostic; TAIL_BASIS deleted); C5b + C5c REMOVED from the rubric outright; NYISO-62 re-determines CWC -> NOT-YET (C3c 2024 0.25x vs RT), every other keeper determination holds
+
+**Owner directive (this session, verbatim intent).** (1) "Get rid of C5b and
+C5c — the data is not reliable enough on storage dispatch at this point to
+use it as a calibration gate." (2) "C3c is judged on actual RT scarcity
+hours, not DA." Both extend the same-day v2.6 amendments: v2.6(c) had
+retired C5b/C5c to report-only and v2.6(a) had moved only ERCOT to the RT
+basis; v2.7 completes both moves.
+
+**(a) C3c — actual RT hourly tail, all six ISOs.** The RT hourly hub tail is
+the scarcity the market actually realized; that is now the judged quantity
+everywhere. The DA count (scarcity *expectations* — it embeds the day-ahead
+weather/load forecast-risk premium a realized-weather backcast is out of
+representation to price) is emitted as the non-gated `da_diagnostic` row for
+every ISO, so neither count leaves the verdict. The per-ISO `TAIL_BASIS`
+switch is deleted — §5 basis parity is restored, now on RT. The v2
+sub-hourly-transient argument for DA gating (MISO 2023: RT tail 30 h, all
+single-interval 5-minute events, DA 1 h) is consciously superseded by owner
+determination: both counts are hourly hub averages, and transients that push
+an hourly RT average over the threshold are part of realized scarcity. Both
+actuals were already committed for every ISO-year (`tail/actual_tail.json`),
+so the flip is scorer-only — no re-solve, no payload or bench change.
+
+**(b) C5b + C5c — removed.** Not retired-but-printed (v2.6(c)) — gone: no
+criterion ids in the verdict, scorer functions and tolerances deleted,
+`TIER_RETIRED` deleted with them (it existed only for these two). The
+storage throughput/monthly-discharge numbers stay committed in every payload
+and bench part and rendered on the run pages as diagnostics; the v2.6(b)
+observed-months bench honesty rule is unchanged. Dormant C5b/C5c ledger
+entries in old attestations remain as inert history. Re-introduction is a
+future owner amendment; pre-removal definitions preserved in rubric §9 v2.6.
+
+**Effect (status.js rebuilt, scorer-only re-score).** ERCOT-73: unchanged
+CALIBRATED-WITH-CAVEATS (already RT-gated; 2023 0.99x, 2024 0.49x ledgered,
+2025 0.61x). PJM-114: stays CALIBRATED — 2023 7 vs 6 h small-count, 2024
+9 vs 18 h = exactly 0.50x (band edge), 2025 40 vs 59 h = 0.68x. NEISO-59:
+stays CWC (2023/2025 collapsed-tail rows remain ledger-covered, 2024
+small-count PASS). CAISO-90 / MISO-67: stay NOT-YET (tails were failing on
+either basis; MISO now reads 0/30, 4/37, 0/88 h). **NYISO-62: flips
+CWC -> NOT-YET** — C3c 2024 model 3 h vs RT 12 h (0.25x) is an undocumented
+FAIL where the old DA actual (0 h) passed on the small-count rule; 2023
+(2.80x vs RT 10 h) stays ledger-covered, 2025 (0.60x) passes. The flip is
+the honest consequence of judging realized scarcity — a new open NYISO tail
+item, not a scoring regression. Files: scorer + tests (12 storage tests
+removed, tail tests re-based), `build_status.py`, calibration-status page,
+rubric doc (header, §0, §C3c, §C5, §2, §5, §8, §9 v2.7 entry), methodology
+doc, `derive_actual_tail.py` + committed tail-part note, renderer comments,
+CHANGELOG.

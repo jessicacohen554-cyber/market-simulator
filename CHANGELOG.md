@@ -1,5 +1,30 @@
 # Changelog
 
+## 2026-07-16 — Rubric v2.7 (owner amendments, second of the day): C3c gates on the actual RT hourly scarcity tail for EVERY ISO (DA = report-only diagnostic); C5b/C5c storage criteria REMOVED from the rubric outright
+
+- **Scorer (`scripts/calibration_verdict.py`, RUBRIC_VERSION 2.6 → 2.7):**
+  (a) C3c gates every ISO on the committed RT hourly tail (`rt_gt`); the DA
+  count becomes the non-gated `da_diagnostic` row everywhere and the per-ISO
+  `TAIL_BASIS` switch (v2.6(a), ERCOT-only RT) is deleted — basis parity
+  restored, now on RT. (b) `score_storage`/`score_storage_shape` (C5b/C5c),
+  their tolerances (`STORAGE_TOL`, `STORAGE_SHAPE_R_FLOOR/MIN_CV`) and the
+  v2.6(c) `TIER_RETIRED` tier are removed: EIA-930 storage-dispatch data is
+  not reliable enough to be a calibration gate (owner). Storage numbers stay
+  committed payload/bench diagnostics on the run pages; the v2.6(b)
+  observed-months bench honesty rule is unchanged.
+- **Docs/UI:** rubric doc header+§0/§C3c/§C5/§2/§5/§8 + v2.7 history entry;
+  methodology doc criteria table + version table (v2.5/v2.6 backfilled);
+  `build_status.py` rubric/benchmark/methodology rows; calibration-status
+  page criterion order; `derive_actual_tail.py` + committed
+  `tail/actual_tail.json` note (counts untouched); renderer comments.
+- **Re-score (scorer-only, no re-solve; `status.js` rebuilt):** ERCOT-73
+  unchanged (CWC — already RT-gated); PJM-114 stays CALIBRATED (2024 tail
+  9 h vs RT 18 h = 0.50×, on the band edge); NEISO-59 stays CWC (ledgered);
+  CAISO-90/MISO-67 stay NOT-YET; **NYISO-62 flips CWC → NOT-YET** (C3c 2024:
+  model 3 h vs RT 12 h = 0.25×, undocumented — the old DA actual was 0 h and
+  passed small-count). An honest new open item surfaced by the re-basis, not
+  a regression.
+
 ## 2026-07-15 — ERCOT-66: measured storage-capability re-basis (60-Day disclosure non-OUT HSL) — phantom-evening defect fixed; candidates registered NOT-YET (exposed 2024 under-pricing); keeper unchanged
 
 - **Data intake:** new `scripts/fetch_ercot_60day_gen_resource.py` (NP3-966-ER
