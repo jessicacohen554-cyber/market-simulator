@@ -480,6 +480,7 @@ def run_year(
     temp_dependent_derate: bool = False,
     ercot_offer_surface_conditional: bool = False,
     ercot_offer_surface_midcurve_conditional: bool = False,
+    ercot_offer_surface_cleared_share: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
     wind_ptc_vintage_offers: bool = False,
@@ -725,6 +726,11 @@ def run_year(
         config = config.with_overrides(
             pjm_offer_midcurve_segments=tuple(pjm_offer_midcurve_segments)
         )
+    if ercot_offer_surface_cleared_share:
+        # ERCOT-72 DAM cleared-share offer boundary (measured boundary + wall,
+        # P1-only markup; ScenarioConfig field docstring has the full
+        # provenance/admissibility note). ERCOT-gated in the builder.
+        config = config.with_overrides(ercot_offer_surface_cleared_share=True)
     if ercot_offer_surface_lowcurve:
         # G-22 conditional-offer-distribution LOW leg (measured trough-side
         # quantile ladders, P1-only markdown; ScenarioConfig field docstring has
@@ -2721,6 +2727,32 @@ def run_year(
                 _ercot_midcurve
                 if offer_surface_mc_bid_adjust is None
                 else offer_surface_mc_bid_adjust + _ercot_midcurve
+            )
+    # ERCOT-72 DAM CLEARED-SHARE offer boundary: floors the merchant gas econ*
+    # rows ABOVE the bin's measured DAM cleared share at the bin's measured
+    # above-boundary offer wall (fleet.build_ercot_offer_surface_cleared_share_
+    # markup — the covered-CC/CT composition mechanism). Econ rows only —
+    # disjoint from the peak surface (peak rungs) and mutually exclusive with
+    # the mid-curve belt (same econ rows; the builder hard-errors if both are
+    # armed, rule 19). P1-only; sums with the peak surface's markup.
+    if getattr(config, "ercot_offer_surface_cleared_share", False) and iso == "ERCOT":
+        from market_sim.data.fleet import (
+            build_ercot_offer_surface_cleared_share_markup,
+        )
+
+        _cs_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        _ercot_cleared_share = build_ercot_offer_surface_cleared_share_markup(
+            fleet_arrays, fleet, mc_base, _cs_net_load, config, year
+        )
+        if _ercot_cleared_share is not None:
+            offer_surface_mc_bid_adjust = (
+                _ercot_cleared_share
+                if offer_surface_mc_bid_adjust is None
+                else offer_surface_mc_bid_adjust + _ercot_cleared_share
             )
     # ERCOT G-22 conditional-offer-distribution LOW leg: the trough-side mirror
     # of the surface above at the P1-only seam, but P0-CONDITIONED — the
