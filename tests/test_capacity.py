@@ -1329,6 +1329,56 @@ class TestThermalElccClassRatings(unittest.TestCase):
         )
 
 
+class TestClaimedCapabilityBasis(unittest.TestCase):
+    """R5b — ISO-NE thermal accredited at Qualified Capacity (claimed
+    capability), no forced-outage derate (pairing-adjudication 2026-07-15 §1)."""
+
+    def test_thermal_firm_mw_uses_claimed_capability_for_neiso(self):
+        from market_sim.model.capacity import _thermal_firm_mw
+
+        g = _gen("cc", "gas_cc", pmax=1000.0)  # eford default 0.05
+        # NEISO: full nameplate (QC has no (1-EFORd) derate), NOT 950 MW UCAP.
+        self.assertAlmostEqual(_thermal_firm_mw(g, "NEISO"), 1000.0, places=3)
+        # NYISO / iso=None keep the UCAP fallback as the contrast case.
+        self.assertAlmostEqual(_thermal_firm_mw(g, "NYISO"), 950.0, places=3)
+        self.assertAlmostEqual(_thermal_firm_mw(g, None), 950.0, places=3)
+
+    def test_claimed_capability_is_class_agnostic(self):
+        from market_sim.config.constants import EFORD
+        from market_sim.model.capacity import thermal_accreditation_fraction
+
+        # Unlike PJM's per-class ELCC table, QC is a per-unit SCC median with no
+        # fuel-class dependency — every dispatchable class accredits at 1.0.
+        for fuel, eford in EFORD.items():
+            self.assertAlmostEqual(
+                thermal_accreditation_fraction(fuel, eford, "NEISO"),
+                1.0,
+                places=6,
+                msg=f"{fuel} should accredit at 1.0 on NEISO",
+            )
+
+    def test_claimed_capability_matches_seasonal_rating_numerically(self):
+        from market_sim.config.constants import (
+            THERMAL_ACCREDITATION_BASIS_BY_ISO,
+        )
+        from market_sim.model.capacity import thermal_accreditation_fraction
+
+        # The two un-derated bases are arithmetically identical (both 1.0)...
+        self.assertEqual(
+            thermal_accreditation_fraction("gas_ct", 0.10, "NEISO"),
+            thermal_accreditation_fraction("gas_ct", 0.10, "ERCOT"),
+        )
+        # ...while remaining DISTINCT registry strings (provenance, R5b).
+        self.assertEqual(
+            THERMAL_ACCREDITATION_BASIS_BY_ISO["NEISO"], "claimed_capability"
+        )
+        self.assertEqual(THERMAL_ACCREDITATION_BASIS_BY_ISO["ERCOT"], "seasonal_rating")
+        self.assertNotEqual(
+            THERMAL_ACCREDITATION_BASIS_BY_ISO["NEISO"],
+            THERMAL_ACCREDITATION_BASIS_BY_ISO["ERCOT"],
+        )
+
+
 class TestForecastPoolRequirement(unittest.TestCase):
     """R2 — PJM requirement devintaged onto the published Forecast Pool
     Requirement of the matching delivery year (accreditation-basis memo §4.2)."""

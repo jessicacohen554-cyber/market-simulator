@@ -10,6 +10,74 @@ year touched (rule 22). Every new tunable is in `ScenarioConfig`/`constants.py`
 with a citation and default byte-identical, per `scripts/generate_parameter_registry.py`
 (regenerated — 5 new entries, `docs/parameter-citations.md`).
 
+## Landing status (2026-07-16 — the actual reland of items 2 + R5b)
+
+The 2026-07-15 RELAND note below is superseded on two points. **Only item 1
+(the per-ISO `capacity_market_clearing` gate + `resolve_capacity_market_clearing`)
+and item 7 (the per-ISO probe flag) actually reached `main`; item 2's vintage
+resolver and the RC-1D R5b NEISO basis did NOT** (`git grep` on 2026-07-16:
+`MARKET_DESIGN_VINTAGES` / `resolve_demand_curve_vintage` appear only in this
+doc, and `claimed_capability` in no source file). The `year` parameter on
+`MarketDesign.capacity_price_per_firm_mw_yr` landed but as a **documented no-op**.
+The **RC-1B-ITEM2+4** session (2026-07-16) lands both, verified against the repo:
+
+- **Item 2 (vintage resolver) — LANDED.** `constants.MarketDesignVintage` +
+  `MARKET_DESIGN_VINTAGES` + `resolve_demand_curve_vintage(iso, year)`, and the
+  `year` no-op rewired to consult the table (only when both `iso` and `year` are
+  passed, inside the curve branch — default byte-identical). Two corrections to
+  item 2's description below, both grounded in the on-disk datatype:
+  - **NYISO 2021-2022/2022-2023 publish NO NYCA Annual Reference Value
+    (net-CONE) and no price cap** — only a monthly reference-point price + IRM
+    (verified in `data/raw/capacity-market/demand-curve/nyiso/nyiso.csv`). They
+    are carried as `demand_curve=()` flat-anchor vintages (matching the prompt's
+    "NYISO 2021-22-2025-26" span), with the flat anchor = the NYCA
+    reference-point price × 12 (7.81→93.72 / 8.87→106.44 $/kW-yr) — a documented
+    unit conversion of the monthly net-CONE-equivalent point, on a slightly
+    higher basis than the later Annual Reference Value anchors (which net E&AS
+    over 12 months), used only as the flat fallback for these two past years.
+    (The note's "publish a net-CONE anchor but not a usable curve shape" is
+    inaccurate — they publish neither an annual net-CONE nor a cap.)
+  - **MISO PY2026-27 publishes Net CONE per-LRZ only** (no North/Central
+    aggregate — a zone-boundary mismatch, rule 5) **and** no retrievable RBDC
+    shape (cdn.misoenergy.org 403), so the MISO table holds **only PY2025-26**;
+    hold-last serves it forward and hold-first serves the pre-RBDC years —
+    exactly the prompt's "MISO 2025-26 + pre-RBDC vertical hold-first". (The
+    2026-07-15 note's "MISO 2025-2026-2026-2027" span and the PR #2314 patch's
+    2026-27 entry are both narrowed to PY2025-26 on this rule-5 ground.)
+  - PJM 2027/2028 IS normalizable (published cap + pct_of_requirement points), so
+    it carries a real curve; PJM 2025/2026 has points but **no** published price
+    cap, so it joins the pre-CIFP absolute-MW years as `demand_curve=()`.
+- **Item 4 / R5b (NEISO `claimed_capability`) — LANDED.**
+  `THERMAL_ACCREDITATION_BASIS_BY_ISO["NEISO"] = "claimed_capability"` + the
+  resolver branch in `thermal_accreditation_fraction` (returns `1.0`, no EFORd
+  derate), with `tests/test_capacity.py::TestClaimedCapabilityBasis` (the class
+  the pairing-adjudication memo §1.4 references, also reverted, now present).
+
+**PR #2314's patch is superseded.** That PR committed items 2 & 4 as an
+unapplied `git apply` patch under `docs/handoffs/rc1b-items2-4-patch/` (the
+source files were never modified — the transport-blocked delivery the prompt
+warns about). This session lands the same items directly in source (rule-27
+surgical Edits, blob-verified), so the patch is now a dead re-appliable
+duplicate and its directory is **removed** in this session. Two deliberate
+divergences from that patch: (a) it keyed the table on full `MarketDesign`
+objects; this session uses a lean `MarketDesignVintage` record (delivery_year,
+anchor, curve) — the three fields the seam actually reads. (b) It also bundled
+**item-1** work outside this session's items-2&4 mandate — wiring `iso=` into
+`capacity_revenue_per_mw_yr`'s price call, a reserve-margin-build nameplate
+check, and a `scenarios.py` `TIER_TAGS` row. The prompt states item 1 is "on
+main and working" and requires `capacity_revenue_per_mw_yr` (which passes
+neither `iso` nor `year`) to stay **byte-identical**, so those item-1 changes
+are **not** taken here; if the scalar-path call site is a genuine item-1 gap it
+belongs to an item-1 follow-up, flagged not fixed.
+
+Registry regeneration (`parameters.json` / `parameter-citations.md`) stays
+deferred for the same size reason recorded below (5 new pending rows:
+`market_design_vintages.{PJM,NYISO,NEISO,MISO}` +
+`thermal_accreditation_basis_by_iso.NEISO`; `scripts/validate_parameters.py` is
+not wired into CI, so this fails no gate); `constants.py` carries the full inline
+citation for every new parameter (the source of truth). No LP solved, no holdout
+year touched, nothing on any dashboard.
+
 ## RELAND note (2026-07-15, this reconciliation)
 
 Items 1, 2, and the RC-1D R5b basis below were **reverted** off `main` by the
