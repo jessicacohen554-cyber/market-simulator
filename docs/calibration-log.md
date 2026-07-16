@@ -15234,3 +15234,77 @@ runs) → build_manifest. MISO registry at 11 runs (< 15, no pruning).
 emergency-tier pricing, measured MISO parameters) is the price lane's named
 next step; the winter-2024 fuel-security lane and G-23 imports remain
 separately chartered. Next number: miso-70.
+
+## 2026-07-16 — NYISO — the v2.7 RT-basis C3c 2024 miss ADDRESSED by documentation, not build: the 12-hour RT tail anatomy verifies the B1 frontier hour-by-hour (measured requirement series carries NO increment in ANY of the 12 hours; 9/12 cleared DA < $215; 8/12 are weekend/holiday transients); the under-tail is LEDGERED on the nyiso-62 attestation as the same B1 measured-input limitation already ledgered on C3a/C3b-2024; NYISO re-determines NOT-YET → CALIBRATED-WITH-CAVEATS; keeper UNCHANGED, no solve
+
+**Task (owner, this session).** Address the NYISO calibration miss on scarcity
+hours opened by rubric v2.7 (2026-07-16): C3c now gates on the actual RT hourly
+tail, and the nyiso-62 keeper's 2024 count (3 h vs RT 12 h, 0.25×) became an
+undocumented FAIL → NOT-YET where the old DA basis (0 h actual) passed on the
+small-count rule. The v2.7 entry called it "a new open NYISO tail item"; this
+session is that item's investigation.
+
+**Leg 0 — the 2024 RT tail hour-set anatomy (the NYISO analog of the ERCOT-74
+hour-set discipline, requirement-side).** The 12 actual RT>$300 hours
+(committed `tail/actual_tail.json` basis, hub series
+`actual_lmp_hourly_NYISO.parquet`): Apr-28 HB18–19 (Sun, RT $997/$450, DA
+$44/$40), Jun-17 HB17 ($918, DA $131), Jul-6 HB17 (Sat, $673, DA $62), Jul-7
+HB14 (Sun, $511, DA $70), Jul-14 HB16–17 (Sun, $347/$382, DA $172/$161),
+Jul-15 HB16 ($508, DA $212), Jul-29 HB16 ($408, DA $63), Jul-31 HB16 ($528,
+DA $118), Dec-1 HB19 (Sun, $306, DA $119), Dec-26 HB7 (holiday week, $471,
+DA $99). Three measured findings, each checked hour-by-hour against the
+#1344 as-enforced requirement intake (`NYISO_reserve_requirements_2024.csv`):
+
+* **The requirement side never moves.** At ALL 12 hours every family sits at
+  its ordinary peak-step value (SENY 30-min 1,800; NYC 1,000/500; East 1,200;
+  NYCA flat 1,310/2,620/655). No condition-varying increment fires — the
+  in-LP co-opt, which runs on exactly these requirements with perfect
+  foresight and the measured CAMPD outage overlay, holds headroom above
+  requirement in these hours by construction and cannot produce shortage
+  duals there. (The TSA zeroing windows on Jul-6/Jul-15 do NOT cover the
+  event hours — no suppression either; the loophole is checked and closed.)
+* **The events are RT-only.** 9/12 hours cleared DA below $215 (7 below
+  $135) — the real day-ahead market did not foresee them either. This is the
+  DA−RT forecast-risk wedge the rubric itself holds out of representation
+  (§C3c's own DA-diagnostic rationale), realized as sub-hourly/RT transients.
+* **The commitment-state fingerprint.** 8/12 hours are weekend/holiday
+  (Apr-28 Sun, Jul-6 Sat, Jul-7 Sun, Jul-14 Sun ×2, Dec-1 Sun, Dec-26
+  holiday week): thin real-world commitment + a forecast miss → RT shortage
+  pricing, the exact phenomenon NYISO prices through the net-load
+  forecast-uncertainty requirement increments in RTC/RTD (IMM Rec 2021-1,
+  unimplemented, no published formula) and the 2024 SOM sizes at ~0.6% of
+  intervals in 30-min shortage — ~2× our frequency, exactly what the missing
+  increment predicts.
+
+**Adjudication (rules 11/26; frontier designation re-verified under the RT
+basis).** The 2026-07-11 formal frontier designation (keepers.json
+`frontier.NYISO`) already chased both reserve levers to ground; this anatomy
+extends it to the RT-gated 2024 hour set specifically: the miss lives in the
+B1 residual (the on-disk as-enforced series is a documented LOWER BOUND in
+non-TSA hours; the condition-varying increments are obtainable only via the
+formal NYISO Market Operations request) plus the out-of-representation
+DA−RT transient wedge. No admissible in-model mechanism exists — building
+one would be residual-fitting. **NO build.**
+
+**Action (documentation, scorer-only — no solve, no bundle regen, keeper
+UNCHANGED `2026-07-13-nyiso-62-cc-hr`).** The under-tail is ledgered on the
+keeper attestation as the SAME B1 measured-input limitation already ledgered
+on C3a-2024 (−12.8%) and C3b-2024 (0.222): new `price_tail`/2024 exceptions
+entry carrying the full 12-hour evidence above; the stale `_open_items` item
+(4) (written for the G-20a DA-expressible basis) is marked SUPERSEDED by the
+v2.7 RT gate with the old wording retained for provenance. Re-scored:
+**C3c 2024 FAIL → ledgered CAVEAT; determination NOT-YET →
+CALIBRATED-WITH-CAVEATS** (1 ledgered caveat C3c of budget 3 + 1
+commercial-band C5a-2025; C1 14/14, C2/C3a/C3b/C4/C6/C7/C8 unchanged).
+2023 (2.80× vs RT 10 h) stays covered by its existing entry; 2025 now
+PASSES on RT (25 vs 42 h, 0.60×) and its DA-era ledger entry is dormant
+history. Files: `calibration_attestation.json` + `metrics.json`
+(`--write-metrics`, picks up the v2.7 labels and drops the removed C5b/C5c
+rows) in `results/calibration/nyiso62_cc_hr_regate/`; `status.js` rebuilt
+(all other ISO determinations hold: ERCOT CWC, PJM CALIBRATED, CAISO/MISO
+NOT-YET, NEISO CWC).
+
+**Next.** The closing lever is unchanged and named: the B1 formal NYISO
+Market Operations request (operational RTC/RTD reserve-requirement series).
+If it lands, re-solve 2023–2025 on the fuller series and re-gate; until
+then the NYISO tail frontier stands. Next shorthand: nyiso-63.
