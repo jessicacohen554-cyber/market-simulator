@@ -636,9 +636,21 @@ class TestMarketDesignVintages(unittest.TestCase):
     def _expected_cap_frac(self, iso, dy):
         r = self._rows(iso, dy)
         if iso == "PJM":
-            return self._scalar(r, "price_cap", y_unit="usd_per_mw_day") / self._scalar(
-                r, "net_cone", y_unit="usd_per_mw_day"
+            nc = self._scalar(r, "net_cone", y_unit="usd_per_mw_day")
+            if not r[r.metric == "price_cap"].empty:
+                return self._scalar(r, "price_cap", y_unit="usd_per_mw_day") / nc
+            # Vintages without a published price-cap row (pre-2026/27): the
+            # curve maximum is point (a)'s own published UCAP price — from the
+            # MW-basis curve_point rows (pre-CIFP) or the curve_point_ucap
+            # rows (2025/26, whose curve_point rows are Manual-18 pct-basis
+            # with formula-defined y left null).
+            metric = (
+                "curve_point_ucap"
+                if not r[r.metric == "curve_point_ucap"].empty
+                else "curve_point"
             )
+            pts = r[r.metric == metric].sort_values("point_index")
+            return float(pts.y_value.iloc[0]) / nc
         if iso == "NEISO":
             return self._scalar(r, "price_cap") / self._scalar(r, "net_cone")
         if iso == "NYISO":
@@ -676,11 +688,13 @@ class TestMarketDesignVintages(unittest.TestCase):
                 )
 
     def test_empty_curve_vintages_are_pre_reform_or_uncapped(self):
-        # The ()-shape vintages are exactly PJM's pre-2026/27 years (absolute-MW
-        # points, or 2025/26's missing cap) and NYISO's 2021-22/2022-23 (no
-        # Annual Reference Value + no cap → flat anchor only). Assert exactly that
-        # set, so a future data update that adds a normalizable shape must update
-        # here.
+        # The ()-shape vintages are exactly NYISO's 2021-22/2022-23 (no Annual
+        # Reference Value + no cap → flat anchor only). PJM's 2021/22-2025/26
+        # gained published-derived normalized shapes in RC-1A (2026-07-16):
+        # x = published UCAP point level ÷ (published Reliability Requirement
+        # adjusted for FRR + published EE Addback), y = published point price ÷
+        # published UCAP net-CONE. Assert exactly the remaining set, so a
+        # future data update that adds a normalizable shape must update here.
         empties = {
             (iso, v.delivery_year)
             for iso, vints in MARKET_DESIGN_VINTAGES.items()
@@ -690,15 +704,58 @@ class TestMarketDesignVintages(unittest.TestCase):
         self.assertEqual(
             empties,
             {
-                ("PJM", "2021/2022"),
-                ("PJM", "2022/2023"),
-                ("PJM", "2023/2024"),
-                ("PJM", "2024/2025"),
-                ("PJM", "2025/2026"),
                 ("NYISO", "2021-2022"),
                 ("NYISO", "2022-2023"),
             },
         )
+
+    def test_pjm_vintage_shapes_reconcile_with_published(self):
+        # RC-1A: every PJM 2021/22-2025/26 vintage shape point reconciles to
+        # the datatype rows — x = level / (reliability_requirement_frr_adj +
+        # ee_addback), y = price / net_cone — and the 2025/26 x-fractions land
+        # on PJM's own committed Manual-18 pct_of_requirement curve_point rows
+        # (the two published forms of the same curve).
+        for dy in (
+            "2021/2022",
+            "2022/2023",
+            "2023/2024",
+            "2024/2025",
+            "2025/2026",
+        ):
+            r = self._rows("PJM", dy)
+            nc = self._scalar(r, "net_cone", y_unit="usd_per_mw_day")
+            denom = self._scalar(r, "reliability_requirement_frr_adj") + self._scalar(
+                r, "ee_addback"
+            )
+            metric = "curve_point_ucap" if dy == "2025/2026" else "curve_point"
+            pts = r[r.metric == metric].sort_values("point_index")
+            vintage = resolve_demand_curve_vintage("PJM", int(dy[:4]))
+            self.assertEqual(vintage.delivery_year, dy)
+            self.assertEqual(len(vintage.demand_curve), len(pts))
+            for cp, (_, row) in zip(vintage.demand_curve, pts.iterrows()):
+                self.assertAlmostEqual(
+                    cp.reserve_ratio,
+                    float(row.x_value) / denom,
+                    places=6,
+                    msg=f"PJM {dy} x point {row.point_index}",
+                )
+                self.assertAlmostEqual(
+                    cp.price_frac_net_cone,
+                    float(row.y_value) / nc,
+                    places=6,
+                    msg=f"PJM {dy} y point {row.point_index}",
+                )
+            if dy == "2025/2026":
+                m18 = r[r.metric == "curve_point"].sort_values("point_index")
+                for cp, (_, row) in zip(vintage.demand_curve, m18.iterrows()):
+                    # <=0.1% agreement between the two published forms (the
+                    # M18 pct rows are printed at 3 decimals).
+                    self.assertAlmostEqual(
+                        cp.reserve_ratio,
+                        float(row.x_value),
+                        delta=0.002,
+                        msg=f"PJM 2025/26 M18 pct point {row.point_index}",
+                    )
 
     # ---- pricing-seam behavior ------------------------------------------
     def test_reference_year_equals_registry_default(self):
@@ -722,18 +779,36 @@ class TestMarketDesignVintages(unittest.TestCase):
                 )
 
     def test_empty_curve_vintage_prices_flat_anchor(self):
-        # A ()-shape vintage (PJM 2022/2023) prices its flat anchor × 1000,
-        # independent of the reserve position (no sloped curve).
-        design = MARKET_DESIGN["PJM"]
-        flat = 260.5 * 365.0 / 1000.0 * 1000.0
+        # A ()-shape vintage (NYISO 2021-2022 — no published ARV/cap) prices
+        # its flat anchor × 1000, independent of the reserve position (no
+        # sloped curve). PJM's 2021/22-2025/26 vintages are no longer () —
+        # RC-1A derived their published shapes — so NYISO carries this case.
+        design = MARKET_DESIGN["NYISO"]
+        flat = 7.81 * 12.0 * 1000.0
         for pos in (0.3, 0.85, 1.0, 1.4):
             self.assertAlmostEqual(
                 design.capacity_price_per_firm_mw_yr(
-                    self.ON, pos, iso="PJM", year=2022
+                    self.ON, pos, iso="NYISO", year=2021
                 ),
                 flat,
                 places=3,
             )
+
+    def test_pjm_pre_cifp_vintage_prices_slope(self):
+        # RC-1A: a threaded pre-CIFP PJM year prices on its own published
+        # sloped shape — cap plateau below point (a), zero past its
+        # zero-cross (1.0741 for 2021/2022), monotone in between.
+        design = MARKET_DESIGN["PJM"]
+        anchor = 321.57 * 365.0 / 1000.0
+        cap = design.capacity_price_per_firm_mw_yr(self.ON, 0.90, iso="PJM", year=2021)
+        self.assertAlmostEqual(cap, 1.5 * anchor * 1000.0, delta=anchor)
+        mid = design.capacity_price_per_firm_mw_yr(self.ON, 1.05, iso="PJM", year=2021)
+        self.assertGreater(cap, mid)
+        self.assertGreater(mid, 0.0)
+        self.assertEqual(
+            design.capacity_price_per_firm_mw_yr(self.ON, 1.10, iso="PJM", year=2021),
+            0.0,
+        )
 
     def test_default_off_byte_identity_with_year(self):
         # Gate OFF: passing a year never changes the price (fixed path, no
@@ -899,6 +974,102 @@ class TestCurveEligibility(unittest.TestCase):
             pjm.capacity_price_per_firm_mw_yr(self.ON, 0.9),
             places=6,
         )
+
+class TestScreenSeamThreading(unittest.TestCase):
+    """RC-1A completion of RC-1B items 1/2: the screens' own call paths thread
+    ``iso``/``year`` into the pricing seam, so the by-ISO gate and the
+    per-delivery-year vintage anchor govern where the screens actually price
+    (capacity_revenue_per_mw_yr, estimate_capacity_value) — not just at the
+    MarketDesign method the earlier classes exercise directly.
+    """
+
+    BY_ISO_PJM = SimpleNamespace(
+        capacity_market_clearing=False,
+        capacity_market_clearing_by_iso={"PJM": True},
+    )
+
+    def test_by_iso_row_activates_thermal_payment_curve(self):
+        # Scalar off + a PJM by-ISO row: the thermal payment prices on the
+        # curve (position-dependent), not the fixed anchor — the probe arm's
+        # exact configuration (run_capacity_hindcast --capacity-market-clearing).
+        eford = 0.05
+        fixed = capacity_revenue_per_mw_yr("PJM", "gas_cc", eford)
+        long_pos = capacity_revenue_per_mw_yr(
+            "PJM", "gas_cc", eford, self.BY_ISO_PJM, 1.15
+        )
+        short_pos = capacity_revenue_per_mw_yr(
+            "PJM", "gas_cc", eford, self.BY_ISO_PJM, 0.99
+        )
+        self.assertEqual(long_pos, 0.0)  # past the VRR zero-cross (1.045)
+        self.assertGreater(short_pos, 0.0)
+        self.assertNotAlmostEqual(short_pos, fixed, places=1)
+
+    def test_by_iso_row_does_not_leak_to_other_isos(self):
+        # The PJM row must not arm MISO: with the scalar off, MISO stays on
+        # its fixed anchor even when a reserve position is supplied.
+        eford = 0.05
+        self.assertEqual(
+            capacity_revenue_per_mw_yr("MISO", "coal", eford, self.BY_ISO_PJM, 1.15),
+            capacity_revenue_per_mw_yr("MISO", "coal", eford),
+        )
+
+    def test_year_threads_vintage_anchor_through_thermal_payment(self):
+        # Gate on, PJM, position inside the priced region: the payment at
+        # year=2021 prices on the 2021/2022 vintage, year=None on the registry
+        # default — and the two must agree with the MarketDesign seam priced
+        # the same way (the threading adds no arithmetic of its own).
+        eford = 0.05
+        frac = thermal_accreditation_fraction("gas_cc", eford, "PJM")
+        design = MARKET_DESIGN["PJM"]
+        for year in (None, 2021, 2025):
+            self.assertAlmostEqual(
+                capacity_revenue_per_mw_yr("PJM", "gas_cc", eford, _CFG_ON, 1.0, year),
+                design.capacity_price_per_firm_mw_yr(_CFG_ON, 1.0, iso="PJM", year=year)
+                * frac,
+            )
+        # And the vintage is live: 2021 (pre-reform flat anchor) differs from
+        # the registry-default (2026/27 curve) price at the same position.
+        self.assertNotAlmostEqual(
+            capacity_revenue_per_mw_yr("PJM", "gas_cc", eford, _CFG_ON, 1.0, 2021),
+            capacity_revenue_per_mw_yr("PJM", "gas_cc", eford, _CFG_ON, 1.0, None),
+            places=1,
+        )
+
+    def test_year_none_and_gate_off_stay_byte_identical(self):
+        # Default paths: gate off (any year) == pre-RC-1B fixed price.
+        eford = 0.05
+        base = capacity_revenue_per_mw_yr("PJM", "gas_cc", eford)
+        for year in (None, 2021, 2026):
+            self.assertEqual(
+                capacity_revenue_per_mw_yr(
+                    "PJM", "gas_cc", eford, _CFG_OFF, 0.99, year
+                ),
+                base,
+            )
+
+    def test_storage_seam_threads_iso_and_year(self):
+        # estimate_capacity_value: by-ISO gate + vintage anchor reach storage.
+        config_by_iso = ScenarioConfig(
+            iso="PJM",
+            storage_capacity_value=True,
+            capacity_market_clearing_by_iso={"PJM": True},
+        )
+        long_v = estimate_capacity_value(
+            "li_ion_4hr", 0.0, config_by_iso, "PJM", reserve_position=1.15
+        )
+        short_v = estimate_capacity_value(
+            "li_ion_4hr", 0.0, config_by_iso, "PJM", reserve_position=0.99
+        )
+        self.assertEqual(long_v, 0.0)
+        self.assertGreater(short_v, 0.0)
+        # Vintage: 2021 (flat pre-reform anchor) vs registry default differ.
+        v_2021 = estimate_capacity_value(
+            "li_ion_4hr", 0.0, config_by_iso, "PJM", reserve_position=1.0, year=2021
+        )
+        v_default = estimate_capacity_value(
+            "li_ion_4hr", 0.0, config_by_iso, "PJM", reserve_position=1.0
+        )
+        self.assertNotAlmostEqual(v_2021, v_default, places=1)
 
 
 if __name__ == "__main__":
