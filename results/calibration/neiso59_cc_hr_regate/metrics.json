@@ -13,12 +13,11 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.5,
+  "rubric_version": 2.7,
   "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
-    "2 ledgered measured-input caveat(s): C3c price tail / scarcity (DA-expressible), C5b storage throughput",
-    "unscored PROTECTIVE criteria: shape",
-    "unscored criteria: storage_shape"
+    "1 ledgered measured-input caveat(s): C3c price tail / scarcity (RT hourly)",
+    "unscored PROTECTIVE criteria: shape"
   ],
   "notes": [],
   "criteria": {
@@ -43,7 +42,7 @@
       "status": "PASS"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity (DA-expressible)",
+      "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
       "status": "CAVEAT",
       "caveat_kind": "ledgered"
@@ -57,17 +56,6 @@
       "label": "C5a CO2 vs eGRID",
       "tier": "load-bearing",
       "status": "PASS"
-    },
-    "storage": {
-      "label": "C5b storage throughput",
-      "tier": "supporting",
-      "status": "CAVEAT",
-      "caveat_kind": "ledgered"
-    },
-    "storage_shape": {
-      "label": "C5c storage dispatch shape",
-      "tier": "supporting",
-      "status": "SKIPPED"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -88,8 +76,7 @@
   "caveats": {
     "protective": [],
     "ledgered": [
-      "C3c price tail / scarcity (DA-expressible)",
-      "C5b storage throughput"
+      "C3c price tail / scarcity (RT hourly)"
     ],
     "commercial_band": [],
     "budget": {
@@ -98,10 +85,10 @@
     }
   },
   "grade_summary": {
-    "scored": 10,
+    "scored": 9,
     "target_grade": 8,
     "commercial_grade": 0,
-    "ledgered": 2,
+    "ledgered": 1,
     "fails": 0
   },
   "free_class_score": {
