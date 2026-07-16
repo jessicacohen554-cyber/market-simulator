@@ -1,11 +1,11 @@
 {
- "CAISO": "2026-07-16-caiso-87-surplus-clean",
+ "CAISO": "2026-07-16-caiso-89-chp-steam",
  "ERCOT": "2026-07-15-ercot66-storage-rebasis",
  "NEISO": "2026-07-13-neiso-59-cc-hr",
  "PJM": "2026-07-16-pjm-113-short-only",
  "keepers": [
   "2026-07-15-ercot66-storage-rebasis",
-  "2026-07-16-caiso-87-surplus-clean",
+  "2026-07-16-caiso-89-chp-steam",
   "2026-07-16-pjm-113-short-only",
   "2026-07-13-nyiso-62-cc-hr",
   "2026-07-13-neiso-59-cc-hr",
