@@ -38,5 +38,5 @@ INFO: ERCOT measured storage capability re-basis (2023): fleet power mean 2685 -
 INFO: ERCOT storage AS->energy deployment (2023): mean 22 MW, max 986 MW forced as a battery discharge floor at the net-load ramp
 INFO: energy+reserve co-opt (ERCOT MULTI-PRODUCT): 4 AS products ['RegUp', 'RRS', 'ECRS', 'NonSpin'], per-product req means [240, 1263, 741, 3348] MW, 77 steps total, 2 headroom tiers
 INFO: ERCOT reserve-supply cap ON: 2 headroom row(s), mean cap MW [16147, 21526]
-INFO: Matrix build: 4.451s, Solve: 185.644s (cold)
+INFO: Matrix build: 23.071s, Solve: 290.244s (cold)
 INFO: ERCOT gas commitment bridge: 36523 unit-hours floored (7.44 TWh floor volume), 5155 bridged gaps by length {'<4h': 1291, '4-8h': 1795, '8-16h': 1719, '16-24h': 350, '>24h': 0}
