@@ -329,6 +329,23 @@ D4_WINDOWS: dict[tuple[int, str | None], tuple[int, int]] = {
     # the property D-4 exists to check; the channel's admissibility
     # declaration lives in the D-5 registry ("unit_outage_maxgen_events",
     # backcast_only).
+    #
+    # maxgen_emergency_tier_pricing (F5 declared-window ELMP emergency-tier
+    # pricing) likewise carries NO row here BY CONSTRUCTION, and this note is
+    # its rule-12 window declaration (frozen design docs/handoffs/
+    # miso-f5-scarcity-depth-design-2026-07.md §1d): it is a PRICE-SIDE
+    # load-slack repricing (min(voll, SOM-footnoted tier floor) inside
+    # registry windows declared at Max Gen Warning or higher) that never
+    # raises min_gen and so can never bind as a floor, on- or off-window.
+    # Its declared window set is exactly the maxgen-events registry's
+    # Warning+ rows on the same hour-granular model clock as the M-2
+    # derates; outside those windows the slack cost EQUALS the ISO voll by
+    # construction (data.maxgen_events.emergency_tier_slack_cost initializes
+    # at voll and only ever lowers via min), so an off-window pricing effect
+    # is structurally impossible — asserted by
+    # tests/test_maxgen_tier_pricing.py (off-window/off-state byte
+    # identity). Admissibility declaration: D-5 registry
+    # ("maxgen_emergency_tier_pricing", backcast_only).
 }
 
 # D-9: overlay probes that must be OFF/zero in every keeper run_config.json
@@ -742,6 +759,23 @@ D5_REGISTRY: tuple[MechanismSpec, ...] = (
         "admissibility family as the parent overlay; the D-4 window "
         "declaration for this channel is the registry window set itself "
         "(see the D4_WINDOWS availability-overlay note)",
+    ),
+    MechanismSpec(
+        "maxgen_emergency_tier_pricing",
+        "maxgen_emergency_tier_pricing",
+        "backcast_only",
+        True,
+        backcast_symbols=("emergency_tier_slack_cost",),
+        note="declared-window ELMP emergency-tier pricing (F5): load-slack "
+        "repriced to min(voll, SOM-footnoted tier offer floor — $500 Tier 1 "
+        "Warning/Step 1, $1,000 Tier 2 Step 2+) inside the maxgen-events "
+        "registry's declared Warning+ windows only; the RBDC/zonal-ORDC "
+        "curves are never edited (rule 19) and the cost never rises (min). "
+        "Same declared-instrument admissibility family as the maxgen "
+        "derates; the D-4 window declaration is the registry Warning+ "
+        "window set itself (see the D4_WINDOWS availability-overlay note); "
+        "frozen design docs/handoffs/miso-f5-scarcity-depth-design-"
+        "2026-07.md",
     ),
     MechanismSpec(
         "eia860_vintage_snapshot",
