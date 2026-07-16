@@ -994,11 +994,47 @@ fit target), sourced from the `capacity-market-demand-curve` datatype
 cap (2026/2027 BRA), NYISO's ICAP demand curve (2025-2026 NYCA reference point +
 12% curve length, modeled annually), ISO-NE's FCA Net CONE + starting price
 (FCA 18) with the reserve-position geometry from FCA 11's published curve, and
-MISO's PRA Net CONE + gross CONE (modeled annually; the seasonal RBDC lands in
-CR-3). CAISO has no centralized auction, so it keeps the fixed proxy in **both**
+MISO's PRA Net CONE + gross CONE (the **seasonal** RBDC — see below). CAISO has no
+centralized auction, so it keeps the fixed proxy in **both**
 modes (re-cited to the CPM soft-offer cap / CPUC RA report — the documented
 low-fidelity registry member). The encoded constants are reconciled against the
 datatype in `tests/test_capacity_demand_curve.py`.
+
+**MISO seasonal RBDC grain (RC-1C, prereq 4a).** MISO alone clears a *seasonal*
+PRA (four seasons, $/MW-day, under the Reliability-Based Demand Curve from
+PY2025-26), and the market settles capacity as a seasonal **SUM**:
+`Σ_season ACP_season[$/MW-day] × days_season`. The seam reproduces that
+construction — when a MISO curve carries a `seasonal_rbdc`
+(`SeasonalRBDC`/`seasonal_rbdc_price_per_firm_mw_yr`), the price is the sum over
+the four seasons (Summer 92 / Fall 91 / Winter 90 / Spring 92 = 365 days,
+recovered from the published seasonal gross-CONE ÷ annual gross CONE) of the
+season's RBDC evaluated at the reserve position × its days, replacing the annual
+approximation. Each season's requirement point is the **flat daily net-CONE**
+(annual N/C net-CONE 79,800 ÷ 365 = 218.63 $/MW-day — MISO publishes the seasonal
+gross-CONE caps and the annual net-CONE, not a separate seasonal net-CONE), and
+its cap fraction is `seasonal_gross_cone_daily ÷ daily_net` (Summer's is ≈6.3× —
+summer packs the full annual gross CONE into 92 days). At the requirement (1.0)
+the sum returns **exactly** the annual net-CONE (reducing to the annual curve); a
+short position lifts each season toward its own gross-CONE cap. **One-position
+limit (documented, not a bug):** the model holds ONE annual accredited position
+and feeds all four seasons — with no seasonal accreditation basis (seasonal firm
+MW) it cannot reproduce the observed seasonal price *concentration* (PY2025-26
+summer $666.50 vs $33-92 the other seasons), over-stating at a short annual
+position and under-stating at a long one; seasonal fleet accreditation is
+explicitly **not** invented (rule 13). Pre-RBDC MISO years (PY2009-10 .. PY2024-25)
+were a **vertical** curve capped at CONE (FERC ER23-2977) — represented as a
+near-vertical step anchored on gross CONE, not a sloped shape.
+
+**Curve eligibility (RC-1C).** A governance gate layered on the clearing gate:
+`resolve_capacity_curve_eligible(iso)` (`CAPACITY_CURVE_ELIGIBLE_BY_ISO`) blocks an
+ISO from pricing on its sloped curve until its accreditation-pairing basis is
+owner-signed. **NYISO is INELIGIBLE** — its ICAP→UCAP translation-factor pairing
+(R5a) is adjudicated but not owner-signed (`nyiso-neiso-capacity-pairing-
+adjudication-2026-07-15.md` §3) — so even with the gate on and a vintage resolved,
+NYISO prices on its **fixed** anchor; PJM/NEISO/MISO are eligible. `iso=None`
+(pre-RC-1C call sites) and any unlisted ISO default eligible, so default paths are
+byte-identical. The gate is default-off, so eligibility only bites under a per-ISO
+curve-ON probe.
 
 **Per-delivery-year vintages (RC-1B).** The curve above is each ISO's *reference*
 delivery year; a forecast pricing a specific `year` under the CR-1 gate reads that
@@ -1013,9 +1049,11 @@ own convention — PJM 2021/22-2027/28 (UCAP net-CONE × 365/1000), NYISO 2021/2
 (NYCA Annual Reference Value for 2023/24-2025/26; 2021/22 & 2022/23 published neither
 an annual net-CONE nor a cap, so they are `()`-shape flat-anchor vintages priced on
 the NYCA reference point × 12), ISO-NE 2020/21-2027/28 (net-CONE × 12 on FCA 11's
-reserve-position geometry), MISO PY2025-26 (the only year with both a North/Central
-anchor and a normalizable RBDC shape — the pre-RBDC vertical years and the
-per-LRZ-only PY2026-27 are omitted, held to PY2025-26). A delivery year that
+reserve-position geometry), MISO PY2021/22-2025/26 (the pre-RBDC years
+PY2021/22-2024/25 are **vertical-at-CONE** vintages anchored on North/Central gross
+CONE — the LRZ 1-7 mean — with `seasonal_rbdc=None`; PY2025-26 carries the seasonal
+RBDC and its North/Central anchor; the per-LRZ-only PY2026-27 is omitted, held to
+PY2025-26). A delivery year that
 publishes a net-CONE anchor but no normalizable shape (pre-CIFP PJM's absolute-MW
 points; PJM 2025/26's missing price cap) carries `demand_curve=()` and prices on its
 flat anchor (rule 13 — never fabricate an unpublished point). The vintage equal to
