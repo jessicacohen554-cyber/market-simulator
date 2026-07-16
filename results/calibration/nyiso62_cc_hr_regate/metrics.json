@@ -13,12 +13,11 @@
     2025
   ],
   "data_blocked_years": [],
-  "rubric_version": 2.5,
+  "rubric_version": 2.7,
   "determination": "CALIBRATED-WITH-CAVEATS",
   "reasons": [
     "1 criterion(s) within the commercial-grade band but outside target: C5a CO2 vs eGRID",
-    "1 ledgered measured-input caveat(s): C3c price tail / scarcity (DA-expressible)",
-    "unscored criteria: storage, storage_shape"
+    "1 ledgered measured-input caveat(s): C3c price tail / scarcity (RT hourly)"
   ],
   "notes": [
     "C8 2024 ST_GAS: grounded above budget \u2014 39.6% forced (4.5767 of 11.5556 TWh) \u2014 above the 30% cap but GROUNDED: all binding mechanisms clear D-4; profile r 0.954 (\u22650.8) & off-peak CV ratio 0.893 (\u22650.5) (rebuilt floors exclude the P1-dependent RA bridge \u2014 share is a lower bound)",
@@ -46,7 +45,7 @@
       "status": "PASS"
     },
     "price_tail": {
-      "label": "C3c price tail / scarcity (DA-expressible)",
+      "label": "C3c price tail / scarcity (RT hourly)",
       "tier": "supporting",
       "status": "CAVEAT",
       "caveat_kind": "ledgered"
@@ -61,16 +60,6 @@
       "tier": "load-bearing",
       "status": "CAVEAT",
       "caveat_kind": "commercial-band"
-    },
-    "storage": {
-      "label": "C5b storage throughput",
-      "tier": "supporting",
-      "status": "SKIPPED"
-    },
-    "storage_shape": {
-      "label": "C5c storage dispatch shape",
-      "tier": "supporting",
-      "status": "SKIPPED"
     },
     "governance": {
       "label": "C6 governance gate",
@@ -91,7 +80,7 @@
   "caveats": {
     "protective": [],
     "ledgered": [
-      "C3c price tail / scarcity (DA-expressible)"
+      "C3c price tail / scarcity (RT hourly)"
     ],
     "commercial_band": [
       "C5a CO2 vs eGRID"
