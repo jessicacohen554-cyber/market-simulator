@@ -1829,6 +1829,50 @@ def run_year(
                 "scripts/curate_capacity_deliverability.py",
                 year,
             )
+    # Measured PJM EAST interface cut (pjm_east_interface_cut, backcast
+    # overlay, default off — pjm-cong-1, diagnosis §10.5): one one-sided
+    # hourly aggregate group capping Flow(Central_PA→EMAAC) +
+    # Flow(SWMAAC→EMAAC) at the measured "Average Eastern" limit — PJM's
+    # EASTERN reactive transfer interface, whose monitored EHV set spans BOTH
+    # model links (Manual 03 §3.8), so the joint cap is the faithful
+    # reduced-network reading; the per-link pjm_measured_interface_limits
+    # overlay keeps its (now dominated) Central_PA→EMAAC bound. Zero fitted
+    # scalars; no-op off the flag, for non-PJM, or when the year has no
+    # clean partition (byte-identical).
+    if getattr(config, "pjm_east_interface_cut", False) and iso == "PJM":
+        from market_sim.data.transfer_interface_limits import (
+            pjm_eastern_interface_hourly,
+        )
+        from market_sim.model.transmission import (
+            build_pjm_east_interface_cut_groups,
+        )
+
+        east_lim = pjm_eastern_interface_hourly(year, demand.shape[1])
+        if east_lim is None:
+            logger.warning(
+                "pjm_east_interface_cut: no transfer-interface-limits clean "
+                "partition (or no Average Eastern series) for %d — joint "
+                "EMAAC cut skipped (run "
+                "scripts/curate_transfer_interface_limits.py)",
+                year,
+            )
+        else:
+            east_groups = build_pjm_east_interface_cut_groups(
+                iso_config.links, east_lim
+            )
+            if east_groups:
+                interface_groups = interface_groups + east_groups
+                logger.info(
+                    "PJM %d: measured EAST interface cut on %d link(s) — "
+                    "joint EMAAC import cap follows Average Eastern "
+                    "(hourly %0.0f-%0.0f MW, mean %0.0f)",
+                    year,
+                    len(east_groups[0][0]),
+                    float(np.min(east_lim[np.isfinite(east_lim)])),
+                    float(np.max(east_lim[np.isfinite(east_lim)])),
+                    float(np.mean(east_lim[np.isfinite(east_lim)])),
+                )
+
     # [measured: EIA-930 per-corridor (month × hour-of-day) p95 net-flow
     #  envelope → corridor import/export caps | forecast substitute:
     #  caiso_corridor_atc_forward — the shared
