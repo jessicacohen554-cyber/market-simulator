@@ -666,14 +666,48 @@ class PriceAndDispatchTests(unittest.TestCase):
             _reset_tail()
 
     def test_tail_collapsed_fails(self):
-        # A collapsed tail (0h) against a material DA actual FAILs — bounded
-        # below on purpose, unchanged in spirit from v1.
+        # A collapsed tail (0h) against a material actual FAILs — bounded
+        # below on purpose, unchanged in spirit from v1. (ERCOT gates on the
+        # RT count since v2.6; a collapsed tail fails on either basis.)
         _tail({"ERCOT": {"2024": {"da_gt": 68, "rt_gt": 53, "da_coverage": 1.0}}})
         try:
             ypay = {"ordc": {"hoursGt200": {"actual": 53, "model": 0}}}
             rows = cv.score_price_tail(2024, ypay, "ERCOT")
             self.assertEqual(rows[0]["status"], cv.FAIL)
             self.assertEqual(rows[0]["classification"], cv.MODEL_MISS)
+        finally:
+            _reset_tail()
+
+    def test_ercot_tail_gates_on_rt_da_diagnostic(self):
+        # v2.6 owner amendment (2026-07-16): ERCOT gates on the RT hourly
+        # tail — its DA tail embeds the day-ahead forecast-risk premium a
+        # realized-weather backcast is out of representation to price (ERCOT
+        # DA > RT; 2023: 311 vs 181 h). Model 30h vs RT 53h is 0.57x -> PASS
+        # (vs DA 68h it would read 0.44x, a FAIL); the DA count moves to the
+        # non-gated da_diagnostic row.
+        _tail(
+            {
+                "ERCOT": {
+                    "2024": {
+                        "da_gt": 68,
+                        "rt_gt": 53,
+                        "da_coverage": 1.0,
+                        "rt_coverage": 1.0,
+                    }
+                }
+            }
+        )
+        try:
+            ypay = {"ordc": {"hoursGt200": {"actual": 53, "model": 30}}}
+            rows = cv.score_price_tail(2024, ypay, "ERCOT")
+            main = rows[0]
+            self.assertEqual(main["actual"], 53.0)  # RT-gated
+            self.assertEqual(main["status"], cv.PASS)
+            self.assertIn("RT", main["metric"])
+            da = [r for r in rows if r["key"] == "da_diagnostic"][0]
+            self.assertEqual(da["actual"], 68.0)
+            self.assertEqual(da["status"], cv.SKIPPED)
+            self.assertIn("forecast-risk premium", da["metric"])
         finally:
             _reset_tail()
 
