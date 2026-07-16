@@ -59,7 +59,8 @@ constants), `docs/calibration-determination-rubric.md` §0a;
 
 ### 1.2 The criteria: C1–C8
 
-Twelve scored criterion ids grouped as C1–C8, each with a tier:
+Ten scored criterion ids grouped as C1–C8 (C5b/C5c storage criteria were
+removed by the v2.7 owner amendment 2026-07-16), each with a tier:
 **load-bearing** (certifies the intended uses directly; two-band where a
 published commercial comparable exists), **supporting** (sub-annual dynamics;
 single wide band), **protective** (the anti-self-deception gates). Any FAIL on
@@ -71,11 +72,10 @@ single wide band), **protective** (the anti-self-deception gates). Any FAIL on
 | C2 | System volume, gas/coal families (`sysvol`) | load-bearing | Complete-vintage years: **defers to the per-class C1 gate** (the old ±2.5 % family band is retired for this path). Preliminary-EIA-923 families only: family aggregate vs the EIA-930 grid total, target ±2.5 % (`SYSVOL_TOL`) / commercial ±5 % (`SYSVOL_COMMERCIAL`). Family < 10 TWh (`SYSVOL_MIN_TWH`) → immaterial skip, governed by C1. |
 | C3a | Mean LMP (`price_mean`) | load-bearing | ±10 % passes clean (`PRICE_MEAN_TOL = PRICE_MEAN_COMMERCIAL = 0.10`). Scored on the v2.4 load-weighted actual (`rt_lw`→`da_lw`, legacy equal-hour fallback labelled). |
 | C3b | Monthly price shape (`price_shape`) | load-bearing | Monthly NRMSE ≤ 0.20 passes clean (`PRICE_SHAPE_NRMSE_MAX = PRICE_SHAPE_NRMSE_COMMERCIAL = 0.20`). |
-| C3c | Scarcity tail, DA-expressible (`price_tail`) | supporting | Model tail hours within [0.5×, 2×] of the DA actual (`TAIL_LO`, `TAIL_HI`); if the count is < 10 h, |model−actual| ≤ 10 passes (`TAIL_SMALL_COUNT`). Tail thresholds: $200/MWh ERCOT/PJM/MISO/CAISO, $300/MWh NYISO/NEISO (`TAIL_THRESHOLD`). |
+| C3c | Scarcity tail, actual RT hourly (`price_tail`) | supporting | Model tail hours within [0.5×, 2×] of the **RT hourly** actual (`TAIL_LO`, `TAIL_HI`; v2.7 — every ISO gates on RT, the DA count is the report-only diagnostic); if the count is < 10 h, |model−actual| ≤ 10 passes (`TAIL_SMALL_COUNT`). Tail thresholds: $200/MWh ERCOT/PJM/MISO/CAISO, $300/MWh NYISO/NEISO (`TAIL_THRESHOLD`). |
 | C4 | Fleet hourly dispatch correlation (`dispatch_corr`) | supporting | Pearson r ≥ 0.70 and NRMSE ≤ 0.30 (gas, coal) (`DISP_R_FLOOR`, `DISP_NRMSE_MAX`); fleet < 5 TWh skipped (`DISP_MIN_TWH`). |
 | C5a | CO₂ vs eGRID, full-plant CHP-inclusive (`co2`) | load-bearing | Target ±7 % (`CO2_TOL`) / commercial ±10 % (`CO2_COMMERCIAL`). |
-| C5b | Storage throughput (`storage`) | supporting | ±30 % (`STORAGE_TOL`). |
-| C5c | Storage dispatch shape (`storage_shape`) | supporting | Monthly-discharge r ≥ 0.50 (`STORAGE_SHAPE_R_FLOOR`); skipped when the actual monthly-discharge CV < 0.25 (`STORAGE_SHAPE_MIN_CV`, degeneracy guard). |
+| ~~C5b/C5c~~ | Storage throughput / dispatch shape | **removed (v2.7)** | Removed from the rubric 2026-07-16 (owner): EIA-930 storage-dispatch data is not reliable enough to be a calibration gate. Storage numbers remain run-page diagnostics. |
 | C6 | Governance gate (`governance`) | **protective**, never caveatable | Pass/fail: machine-clean config (exogenous outage source, no forbidden fitted-mechanism flags) **and** an attestation with all four assertions true (`levers_trace_to_measured_input`, `no_fit_to_price_residuals`, `no_pinning_to_actuals`, `outage_filter_exogenous_net_load`). No attestation → `UNATTESTED` → `NOT-YET`. |
 | C7 | Diurnal shape, D-1 (`shape`) | protective | Hour-of-day profile r ≥ 0.8 and off-peak CV ratio ≥ 0.5 (`D1_MIN_PROFILE_R`, `D1_MIN_CV_RATIO` — recorded in the artifact's `gates` block); gated only for classes ≥ 2 % of ISO load (`PROTECTIVE_MIN_LOAD_FRAC`). |
 | C8 | Forced-energy share, D-2 (`forced_share`) | protective | < 15 % peaker / < 30 % merchant (`FORCED_SHARE_PEAKER_MAX`, `FORCED_SHARE_MERCHANT_MAX`), classes ≥ 2 % of load; above-cap → grounded-above-budget escalation (§1.4). |
@@ -173,13 +173,12 @@ surfacing); `scripts/legitimacy_diagnostics.py:202-262` (`D4_WINDOWS`).
 | v2.2 | 2026-07-07 | C8 grounded-above-budget escalation (§1.4): above-cap passes clean iff D-4 provenance + D-1 shape clear, surfaced as a note. |
 | v2.3 | 2026-07-09 | C3a/C3b target bands set to the commercial values (single-band in effect); C5a re-based to full-plant CHP-inclusive CO₂. |
 | v2.4 | 2026-07-09 | C3a/C3b score on the like-for-like **load-weighted** actual (`rt_lw`/`da_lw`), replacing the legacy equal-hour hub mean (legacy fallback explicitly labelled). |
+| v2.5 | 2026-07-13 | C2 gates only fully-reported EIA-923 families; preliminary-vintage families print as SKIPPED diagnostics and re-gate when the final vintage lands. |
+| v2.6 | 2026-07-16 | C3c gated basis per-ISO (`TAIL_BASIS`): ERCOT → RT hourly; C5c scores only observed months (null, never fabricated 0.0); C5b/C5c retired to report-only. |
+| v2.7 | 2026-07-16 | C3c gates on the **actual RT hourly tail for every ISO** (DA becomes the report-only diagnostic everywhere; `TAIL_BASIS` deleted); **C5b/C5c removed from the rubric outright** (storage numbers stay as run-page diagnostics). |
 
-Note: the rubric doc's §9 bullet list currently ends at v2.3; v2.4 is defined
-in that document's header, its §1 C3a entry, and
-`docs/rubric-v24-price-basis-memo-2026-07.md`.
-
-Source: `docs/calibration-determination-rubric.md:1-7` (header), §9;
-`scripts/calibration_verdict.py:61-82` (version comment + constant).
+Source: `docs/calibration-determination-rubric.md` (header + §9);
+`scripts/calibration_verdict.py` (version comment + constant).
 
 ---
 
