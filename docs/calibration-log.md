@@ -14863,6 +14863,84 @@ prior-keeper comparison. Open lanes carried forward unchanged: the 2023
 summer over-shoot (lane 2), the shoulder formation gap (wall mid-rungs +
 the drag-lane steam cliff), and the West/Panhandle topology split.
 
+## 2026-07-16 — MISO keeper promotion: 2026-07-16-miso-68-mothballs (owner)
+
+**Promotion (owner, follow-up session to the miso-68 entry above — the
+building session crashed after registration; this session executes the
+owner's promotion call).** `2026-07-16-miso-68-mothballs` promoted to MISO
+keeper over `2026-07-16-miso-67-stgas-p25` (NOT-YET both — identical fail
+set {C1 CC_REGULAR-2023, C3a, C3c}; the promotion is rule 1/11
+structure-first: the strictly more complete fleet — Cottonwood 55358's four
+OA-but-operating units re-carried from the year-matched EIA-860 vintages —
+matches the deposed keeper's C1 count, shrinks the sole C1 fail
+−9.79 → −8.28, independently improves 2024, and degrades nothing). LOO
+(rule 22, structural change) satisfied as recorded at registration: the
+mechanism carries zero fitted parameters — nothing refits per fold, 2023
+improves, 2024 improves, 2025 is byte-identical. `keepers.json` flipped
+from `2026-07-16-miso-67-stgas-p25`; sidecar re-worded PROBE → KEEPER with
+`market_story` added; `build_status.py` re-run (MISO stays NOT-YET);
+keeper-text audit launched at promotion. The deposed miso-67 registration
+stays on the dashboard as the prior-keeper comparison. Open lanes carried
+forward unchanged: the residual CC_REGULAR-2023 −8.28 (a dispatch/
+price-formation question — the plant is carried, the LP under-dispatches it
+vs near-continuous actual operation) and the F4-blocked C3a/C3c MISO
+price-formation lane. Next number: miso-69.
+
+## 2026-07-16 — MISO M-1 max-gen registry POPULATED (no solve): the F4 block lifted on newly published primary sources; Jan-2024 adjudicated declaration-ABSENT (2024 C3c expectation retired); 26/38 of 2025's tail hours land in qualifying windows
+
+**Task (owner: "continue exploring / diagnosing how to get MISO to
+calibrated status" — the miso-68 promotion session).** No solve, no
+registration; data intake + adjudication only, per the M-1 lane of
+`docs/handoffs/miso-price-formation-design-2026-07.md`.
+
+**The unblock.** The F4 engagement
+(`docs/handoffs/miso-phase-b-m1-maxgen-findings-2026-07.md`) was written
+2026-07-15, one day before the **2025 MISO SOM published** (July 2026,
+`potomaceconomics.com`). This session fetched it + the IMM Summer-2025
+quarterly (both archived to `data/raw/MISO/`), mined the on-disk 2023/2024
+SOMs, and populated the registry from primary IMM documents: **9 rows,
+2023-2025, every row cited** — Aug-2023 Alert + Step-2A Event (declared
+hours), the NEW Aug-26-2024 Max Gen Warning 13:00-20:00 EST (Tier 0/1
+pricing), Jun-23-2025 EEA1 Midwest + Jun-24 Warning, Jul-24-2025 Capacity
+Advisory, Jul-28-2025 Alert 14:00-22:00 + Jul-28/29 system Capacity
+Advisory (stated hours) + Jul-29 Warning. OASIS/`cdn.misoenergy.org` remain
+blocked (re-verified: CONNECT 502 / 403) — now only the endpoint-precision
+upgrade path, no longer the binding constraint.
+
+**New datatype `maxgen-events`** (data-intake contract): schema +
+`data/raw/maxgen-events/miso/miso.csv` + registry-pattern lib
+(`scripts/lib/maxgen_events/`) + `curate_maxgen_events.py` + tests (4, incl.
+committed-registry conformance + EST→UTC) + `regenerate_clean` registration
++ data-dictionary render (also backfilled 7 schema sections older sessions
+left unrendered — dictionary sync test green again). Rule-13 class: declared
+availability events (CAMPD-outage-window family, backcast-only).
+
+**Adjudications that move the lane:** (1) **Jan 14-17 2024 carries NO MISO
+declaration at any ladder level** (2024 SOM: "without recourse to Emergency
+operations"; Cons Ops Jan 14 only) — the design's 2024 C3c → [12,48]
+expectation is RETIRED; the 24 January tail hours are a winter
+fuel-supply/derate/congestion lane, and if C1+C3a reach PASS with C3c-2024
+the sole miss, the honest endgame is a ledgered measured-input caveat
+(NEISO/ERCOT precedent). (2) **In-merit certificate pre-read: 8 of 9
+windows qualify** (the 2023 pre-event Alert correctly fails at 0 h > $150);
+the new Aug-2024 window peaks $169 — the design's [$120,$200]
+threshold-insensitivity claim does NOT extend to it (recorded, not
+retuned). (3) **26/38 of 2025's DA tail hours sit inside qualifying
+windows** (Jun 11h, Jul 15h) — C3c-2025's [19,76] band is reachable from
+in-window hours; the 12 outside are Jan-Enzo (raised-STR channel — already
+the measured-reserve-requirements input), Feb (2h, nothing found), Sep 29
+(TLR-repricing era), Oct 6 (post-ER25-579). (4) Side finds: DOE emergency
+orders keep 1.6 GW retiring MISO coal online Jun+Dec 2025
+(confirmed-retirements counter-instrument lane); documented ELMP
+emergency-pricing tiers ($500 Tier-1 floor etc.) = the measured basis for
+the F5 scarcity-depth charter if it ever opens.
+
+**Next (Phase B from design §6.4):** M-2 deriver
+(`unit_outage_maxgen_events`, gated default-off, frozen guards, ±45d
+capability basis) → composed probe on the miso-68 keeper stack
+(2023+2024+2025 one bundle + same-box base; per-year+reuse — 15 GB box).
+Full detail: `docs/handoffs/miso-maxgen-registry-findings-2026-07.md`. Next
+number: miso-69.
 ## 2026-07-16 — Rubric v2.7 (owner amendments, calibration-rubric-updates session): C3c judged on ACTUAL RT scarcity hours for EVERY ISO (DA becomes the report-only diagnostic; TAIL_BASIS deleted); C5b + C5c REMOVED from the rubric outright; NYISO-62 re-determines CWC -> NOT-YET (C3c 2024 0.25x vs RT), every other keeper determination holds
 
 **Owner directive (this session, verbatim intent).** (1) "Get rid of C5b and

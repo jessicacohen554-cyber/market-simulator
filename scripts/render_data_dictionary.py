@@ -104,6 +104,14 @@ DATATYPE_ORDER: tuple[str, ...] = (
     "capacity-market-auction-price",
     "capacity-market-elcc",
     "transfer-constraint-binding",
+    "maxgen-events",
+    "carbon-auction-results",
+    "eia-aeo-fuel-prices",
+    "ira-credit-parameters",
+    "nrel-atb",
+    "storage-as-awards",
+    "capacity-market-avoidable-cost-rate",
+    "uranium-marketing-price",
 )
 
 # Per-datatype narrative scaffold. ``summary`` is the one-line purpose under the
@@ -205,6 +213,119 @@ NARRATIVE: dict[str, dict[str, str]] = {
             "(2024 MISO SOM §II.E/§III.B). Per-ISO specs in "
             "`scripts/lib/transfer_constraint_binding/` (MISO first); "
             "train-window years only (rule #22 guard in the fetch script)."
+        ),
+    },
+    "maxgen-events": {
+        "summary": (
+            "Declared capacity-emergency event windows (the ISO's public "
+            "emergency-procedure ladder, MISO Max Gen family first) — the M-1 "
+            "registry of the MISO price-formation lane."
+        ),
+        "reconciles": (
+            "Hand-curated per-ISO rows transcribed from primary IMM/SOM "
+            "documents (`data/raw/maxgen-events/<iso>/<iso>.csv`, endpoints "
+            "in the ISO's operating time; MISO market time = EST year-round) "
+            "converted to UTC via the per-ISO spec in "
+            "`scripts/lib/maxgen_events/`. Rule-13 class: declared "
+            "physical/market availability events (the CAMPD-outage-window "
+            "overlay family; backcast/calibration only — a forecast year "
+            "carries the class outage-rate machinery instead). F4 discipline: "
+            "a window with no primary document is NOT a row — never "
+            "reconstructed from prices or a residual; adjudicated absences "
+            "(Jan-2024 Heather, Jan-2025 Enzo) live in the raw README. "
+            "Scopes the M-2 `unit_outage_maxgen_events` revealed-derate "
+            "channel (docs/handoffs/miso-price-formation-design-2026-07.md)."
+        ),
+    },
+    "carbon-auction-results": {
+        "summary": (
+            "RGGI and CARB/Quebec cap-and-trade auction clearing-price history "
+            "(2023-2025) — a validation observable for model carbon-price "
+            "trajectories, never fit to."
+        ),
+        "reconciles": (
+            "Per-auction clearing prices (and allowance volumes where known) "
+            "for RGGI's quarterly CO2 allowance auctions and the CARB/Quebec "
+            "quarterly joint cap-and-trade auctions, transcribed from the "
+            "programs' published auction-results postings."
+        ),
+    },
+    "eia-aeo-fuel-prices": {
+        "summary": (
+            "EIA Annual Energy Outlook gas/coal/oil price trajectories "
+            "(AEO2025, 2024-2050) — the forecast-side fuel-price scenario "
+            "anchor."
+        ),
+        "reconciles": (
+            "AEO2025 Henry Hub natural gas, delivered-to-electric-power and "
+            "minemouth coal (national + supply region), and oil (WTI crude, "
+            "electric-power delivered distillate/residual) trajectories "
+            "across the Reference / High and Low Oil-and-Gas-Supply cases, "
+            "from the EIA AEO data tables."
+        ),
+    },
+    "ira-credit-parameters": {
+        "summary": (
+            "Post-OBBBA IRA credit statute parameters (45U, 45Y, 48E) — the "
+            "policy inputs to the IRA credit machinery in `policy/ira.py`."
+        ),
+        "reconciles": (
+            "Section 45U / 45Y / 48E statute parameters as enacted, including "
+            "the One Big Beautiful Bill Act (OBBBA, Pub. L. 119-21, "
+            "2025-07-04) amendments (FEOC restrictions, phase-out schedules), "
+            "transcribed from the statute text with per-row citations."
+        ),
+    },
+    "nrel-atb": {
+        "summary": (
+            "NREL Annual Technology Baseline CAPEX / Fixed-O&M trajectories "
+            "(ATB 2024 v3.0.0, 2022-2050) — the new-entry cost surface for "
+            "the capacity-evolution screens."
+        ),
+        "reconciles": (
+            "ATB 2024 trajectories for the technologies the model builds as "
+            "new entry (wind, solar, gas CC/CT/CCS, nuclear SMR/large, "
+            "utility battery storage at 5 durations) plus cross-reference "
+            "technologies, from the published ATB workbook."
+        ),
+    },
+    "storage-as-awards": {
+        "summary": (
+            "Measured ancillary-service MW AWARDED to the storage fleet — the "
+            "resource-type-resolved counterpart of `ancillary-services` and "
+            "the measured input for storage AS power-reservation mechanisms "
+            "(rule 13's own worked example)."
+        ),
+        "reconciles": (
+            "Per-ISO storage AS award layouts (CAISO Daily Energy Storage "
+            "Report, and siblings per the schema header) onto one tidy frame; "
+            "awarded MW is capacity committed to reserves that cannot "
+            "simultaneously offer energy arbitrage."
+        ),
+    },
+    "capacity-market-avoidable-cost-rate": {
+        "summary": (
+            "Published default/generic Avoidable Cost Rate benchmarks by "
+            "technology class — the going-forward-cost identification source "
+            "for the retirement/entry screens' GFC construction."
+        ),
+        "reconciles": (
+            "PJM Tariff/Manual-18 default gross ACR tables "
+            "(source_type=pjm_manual18_default) and Monitoring Analytics' "
+            "independent SOM avoidable-cost benchmarks "
+            "(source_type=monitoring_analytics_som) on one tidy frame."
+        ),
+    },
+    "uranium-marketing-price": {
+        "summary": (
+            "EIA Uranium Marketing Annual Report weighted-average uranium "
+            "(U3O8e) and enrichment-services (SWU) prices — the measured "
+            "front-end-fuel-cycle basis for a nuclear fuel cost (D2 gap)."
+        ),
+        "reconciles": (
+            "EIA UMAR price series as published; the $/MMBtu build-up "
+            "(burnup/thermal-efficiency + conversion cost) is left to the "
+            "consuming derivation (P-1D), cited to this data per rule 23."
         ),
     },
     "ercot-wtx-congestion": {
