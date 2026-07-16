@@ -778,19 +778,23 @@ class TestMarketDesignVintages(unittest.TestCase):
                     base, with_year, places=6, msg=f"{iso} {ref_year} @ {pos}"
                 )
 
-    def test_empty_curve_vintage_prices_flat_anchor(self):
-        # A ()-shape vintage (NYISO 2021-2022 — no published ARV/cap) prices
-        # its flat anchor × 1000, independent of the reserve position (no
-        # sloped curve). PJM's 2021/22-2025/26 vintages are no longer () —
-        # RC-1A derived their published shapes — so NYISO carries this case.
+    def test_ineligible_iso_never_reaches_its_vintage(self):
+        # The only remaining ()-shape vintages are NYISO's 2021-22/2022-23
+        # (PJM's 2021/22-2025/26 gained published shapes in RC-1A), and NYISO
+        # is curve-INELIGIBLE (RC-1C, R5a pairing pending owner sign-off) — so
+        # with the gate on and a year threaded, NYISO prices its FIXED anchor,
+        # never the vintage flat anchor, at any position. (The ()-vintage
+        # flat-anchor fall-through in capacity_price_per_firm_mw_yr is
+        # therefore currently unreachable on every eligible ISO; this test
+        # pins the eligibility interaction that makes it so.)
         design = MARKET_DESIGN["NYISO"]
-        flat = 7.81 * 12.0 * 1000.0
+        fixed = design.net_cone_per_kw_yr * 1000.0
         for pos in (0.3, 0.85, 1.0, 1.4):
             self.assertAlmostEqual(
                 design.capacity_price_per_firm_mw_yr(
                     self.ON, pos, iso="NYISO", year=2021
                 ),
-                flat,
+                fixed,
                 places=3,
             )
 
@@ -974,6 +978,7 @@ class TestCurveEligibility(unittest.TestCase):
             pjm.capacity_price_per_firm_mw_yr(self.ON, 0.9),
             places=6,
         )
+
 
 class TestScreenSeamThreading(unittest.TestCase):
     """RC-1A completion of RC-1B items 1/2: the screens' own call paths thread
