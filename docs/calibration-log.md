@@ -13802,3 +13802,86 @@ caiso-84 and caiso-87). Next lanes (handoff issued): north-corridor clean depth
 diagnostic (Oct-2025 +12.9 $/MWh is now the largest monthly residual; model
 short/import-marginal all day while actual clears below hub parity 30 % of
 hours), the flat-CHP structural gap, and the C3c tail (lane B).
+## 2026-07-16 — MISO: the CC_REGULAR-2023 current-main regression BISECTED to the always-on CC summer-capacity guard biting MISO without its raise-side measured protection — FIXED by completing the e3b575e measured stack for MISO (`--mode both` re-derive, 16 raise rows, caps byte-identical); miso-67 re-solved + re-registered on the fixed base — C1 all 15/16, ST_GAS-2024 FIXED by the p25 level, sole C1 fail CC_REGULAR-2023 root-caused to the pre-existing Cottonwood status under-carry; keeper swap recommended (owner-only)
+
+**Run:** `2026-07-16-miso-67-stgas-p25` (MISO, 2023+2024+2025, one bundle;
+bundle `results/calibration/miso67_stgas_vlr_level`). Supersedes the
+`2026-07-15-miso-67-stgas-p25` registration (pruned this session), which was
+the same candidate solved on a regressed main. Determination **NOT-YET**
+(fuelmix · price_mean · price_tail), **C1 all 15/16 · free 11/12** — the same
+counts as the miso-66 keeper on a strictly more honest fleet basis.
+
+**The regression (phase-B handoff lane 1), root-caused without assuming the
+suspect:** the miso-66 recipe re-solved on current main dispatched 3.7 TWh less
+2023 CC than the registered keeper (134.31 → 130.58 TWh; bench unchanged). A
+no-LP fleet reconstruction of the keeper recipe (`run_year(fleet_only=True)`,
+the lane-3 method) at `5c7ed9c` vs HEAD attributes it byte-level: MISO
+CC_REGULAR capability fell 27,933 → 27,316 MW pmax (avail-weighted 19,638 →
+18,903 MW) across `d7cc13a` (the always-on EIA-860 summer-capacity guard) +
+`e3b575e` (the cross-ISO measured-capability unification). Two legs: (a) the
+guard clipped every over-filed MISO CC plant to nameplate, and MISO — alone
+among the synthesized-bins ISOs — had no raise-side demonstrated-peak
+protection because e3b575e left its reconcile table cap-only ("left as-is"),
+so Eagle Valley (991) and Port Washington (4040) were clipped BELOW their
+measured CAMPD p999 peaks (the New Covert rule-13 inversion the same commit
+fixed everywhere else); (b) honest availability denominators on the 7
+cap-table plants (outage MW now divide by real capability, not phantom pmax).
+
+**The fix (rules 1/11/13 — no revert):** the guard's work is legitimate — the
+clips at Nine Mile (1403: the 6C CA row files the 560 MW block total on a
+260.1 MW nameplate) and Perryville (55620: ST-1 574.8 on 240.1) remove genuine
+EIA-860 component/total double-filing and STAY. The missing piece was the
+measured protection: `cc_capacity_reconcile_MISO.csv` re-derived `--mode both`
+(same frozen estimator, same CAMPD vintage; 7 cap rows byte-identical, 16 new
+measured raise rows +1.8..+9.7%) — completing the A.4.2 coverage e3b575e
+deferred. Fleet capability on the keeper recipe: 27,931 MW pmax (−2 MW vs the
+miso-66 code state), with phantom swapped for measured capability. Re-solved
+base (p25 OFF): CC_REGULAR-2023 back to 133.97 TWh raw (−7.85, in band).
+
+**miso-67 re-solve (p25 ON), mechanism-only = probe − same-box base (both
+fixed code), raw-klass TWh:**
+
+| class | 2023 | 2024 | 2025 |
+|---|---|---|---|
+| ST_GAS | **+3.60** | **+3.53** | **+5.04** |
+| CC_REGULAR | −1.15 | −1.17 | −1.89 |
+| COAL (BIT+PRB) | −0.99 | −0.84 | −1.22 |
+| CT_PEAKER | −0.58 | −0.78 | −1.03 |
+
+Scored: **ST_GAS-2024 −6.59 PASS** (the miso-66 sole C1 fail, was −9.13);
+ST_GAS-2023 −3.74 PASS; CC_REGULAR-2024 −4.22 PASS; C2 PASS; C3b holds the
+veto (NRMSE 0.081/0.122/**0.193** ≤ 0.20); C4/C5a PASS; C7 D-1 PASS (ST_GAS
+profile r 0.982–0.986); **C8 grounded-above-budget clean PASS** (forced share
+32.8/34.5/50.2%, all binding mechanisms clear D-4, zero off-window — the
+NYISO reliability-base precedent). DOF ledger **20 measured / 2 residual**
+(the p25 level adds one zero-scalar measured-physical entry). No ablation
+twin (rule 20 as amended).
+
+**The sole C1 fail — CC_REGULAR-2023 at −9.79 (volume; share −0.8pp fine) —
+is named, not open:** the honest fleet exposes what the phantom used to mask.
+Cottonwood Energy (55358) carries ~1,140 MW OP through the 2023/2024 EIA-860
+vintages but the current operable snapshot lists 4 of its 8 units OA, so the
+loader's OP filter drops ~570 MW that CAMPD shows running (plant p999
+1,187 MW vs 580 MW carried) — invisible to BOTH the OP filter and the
+`retired_within_window` channel (OP→OA mothball is neither OP nor retired).
+That is a fleet-vintage/status coverage gap, its own lane (per-year vintage or
+an OA-within-window extension of the existing channel; LOYO-scored, rule 22);
+the derive's SKIP flags record the remaining CAMPD-vs-model gaps (Riverside EC
+etc.) as facility contamination, correctly excluded. C3a-2025 (−14.3%) and
+C3c stay the parked price-formation lane (F4-blocked on OASIS max-gen access;
+`docs/handoffs/miso-phase-b-m1-maxgen-findings-2026-07.md`).
+
+**Keeper recommendation (owner-only, `keepers.json` not flipped):** promote
+miso-67. It matches the miso-66 keeper's C1 count (15/16) while carrying the
+measured VLR dispatch level (grounded C8), the completed measured CC
+capability stack, and honest availability — miso-66's CC_REGULAR-2023 PASS
+was funded by ~580 MW of double-filed phantom capacity compensating the
+Cottonwood under-carry (rule 1: the keeper is the most structurally faithful
+run, not the lowest-MAE one). Source changes this session: the p25 mechanism
+patches applied to main (scenarios/fleet/dof-ledger + the ER25-579 citation),
+its restored unit tests (4, in `tests/test_fleet.py`), and the re-derived
+MISO reconcile table.
+
+*Addendum (same day): owner authorized the promotion — `keepers.json` MISO →
+`2026-07-16-miso-67-stgas-p25`, status.js rebuilt, `audit_keepers.py` exit 0
+(keeper text verified, no repairs needed).*

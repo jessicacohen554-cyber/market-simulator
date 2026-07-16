@@ -35,6 +35,7 @@ from market_sim.data.fleet import (
     load_planned_additions,
     load_retired_within_window,
 )
+from market_sim.data.floor_mechanisms import MECH_ST_GAS_MUSTRUN_PER_PLANT
 from market_sim.data.offer_curves import split_coal_tranches
 
 
@@ -2134,6 +2135,117 @@ class TestCcNameplateRescaleHeatRate(unittest.TestCase):
         row = self._bins(flag=False).iloc[0]
         self.assertAlmostEqual(float(row["capacity_mw"]), 80.0, places=6)
         self.assertAlmostEqual(float(row["hr_weighted"]), 8.0, places=6)
+
+
+class TestStGasP25LevelFloor(unittest.TestCase):
+    """ST_GAS p25-LEVEL commitment floor (``st_gas_mustrun_p25_level``, miso-67).
+
+    Restores the phase-B unit coverage (the original tests were container-local
+    and lost): gate-on-both-flags, cheapest-first tranche distribution, the
+    pmax x availability clip (never pins), and the rule-19 level REPLACE of the
+    committed-tranche floor. The measured artifact lookups are monkeypatched so
+    the tests exercise the application block, not the CSV.
+    """
+
+    _HOURS = 48
+    _PLANT = 9901
+
+    def _gens(self, n_tranches=2, cc_pmin=0.0, cc_frac=0.0):
+        # Two tranches of one ST_GAS plant, heat rates 7 (cheap) and 9.
+        return [
+            Generator(
+                unit_id=f"stg_{i}",
+                name=f"Steamer T{i}",
+                zone="North",
+                fuel_type="gas_st",
+                pmax_mw=60.0,
+                heat_rate=7.0 + 2.0 * i,
+                plant_group="ST_GAS",
+                plant_code=self._PLANT,
+                cc_mustrun_pmin_mw=cc_pmin,
+                cc_mustrun_online_frac=cc_frac,
+            )
+            for i in range(n_tranches)
+        ]
+
+    def _fa(self, gens, p25_on=True, per_plant_on=True, level=100.0, frac=0.5):
+        cfg = ScenarioConfig(
+            weather_year=2024,
+            st_gas_mustrun_per_plant=per_plant_on,
+            st_gas_mustrun_p25_level=p25_on,
+        )
+        # Ascending load: the top-``frac`` window is the LAST k hours.
+        load = np.arange(self._HOURS, dtype=float) + 1.0
+        with (
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_p25_level",
+                return_value={(self._PLANT, "ST_GAS"): level},
+            ),
+            unittest.mock.patch(
+                "market_sim.data.fleet.thermal_tranche_online_frac",
+                return_value={(self._PLANT, "ST_GAS"): frac},
+            ),
+        ):
+            return generators_to_fleet_arrays(
+                gens,
+                ["North"],
+                hours=self._HOURS,
+                iso="MISO",
+                config=cfg,
+                load_shape=load,
+            )
+
+    def test_gate_requires_both_flags(self):
+        # p25 armed WITHOUT st_gas_mustrun_per_plant: no floor is placed (the
+        # level swap modifies the existing phenomenon, it never arms one).
+        fa = self._fa(self._gens(), p25_on=True, per_plant_on=False)
+        if fa.min_gen is not None:
+            self.assertEqual(float(fa.min_gen.sum()), 0.0)
+
+    def test_level_window_and_cheapest_first(self):
+        # Level 100 in the top-24 (of 48) load hours: the cheap tranche (hr 7)
+        # carries its full 60 MW, the expensive one (hr 9) the 40 MW remainder;
+        # off-window hours carry no floor; raised cells stamp the SAME
+        # mechanism id as the committed floor (rule 19 — no new mechanism).
+        fa = self._fa(self._gens())
+        window = np.arange(self._HOURS - 24, self._HOURS)  # top-load hours
+        off = np.arange(0, self._HOURS - 24)
+        cap0 = fa.pmax[0] * fa.availability[0, window]
+        cap1 = fa.pmax[1] * fa.availability[1, window]
+        # Cheap tranche carries its full available capacity, the expensive one
+        # the remainder of the 100 MW level (both below cap1 here).
+        np.testing.assert_allclose(fa.min_gen[0, window], cap0)
+        np.testing.assert_allclose(fa.min_gen[1, window], 100.0 - cap0)
+        self.assertTrue((100.0 - cap0 <= cap1 + 1e-9).all())
+        np.testing.assert_allclose(fa.min_gen[:, off], 0.0)
+        self.assertTrue(
+            (fa.min_gen_mechanism[0, window] == MECH_ST_GAS_MUSTRUN_PER_PLANT).all()
+        )
+
+    def test_clip_to_pmax_availability_never_pins(self):
+        # The per-tranche floor is capped at pmax x availability each hour, so
+        # an outage hour relaxes it and the floor can never pin a tranche.
+        fa = self._fa(self._gens())
+        cap = fa.pmax[:, None] * fa.availability
+        self.assertTrue((fa.min_gen <= cap + 1e-9).all())
+
+    def test_level_replaces_committed_floor(self):
+        # A gate-armed plant carrying the committed-tranche floor
+        # (cc_mustrun_pmin_mw) is handed off to the p25 block when the level
+        # swap is armed: the floor is the p25 distribution, NOT the committed
+        # pmin (rule 19 — replaced, never stacked).
+        gens = self._gens(cc_pmin=50.0, cc_frac=0.5)
+        fa_p25 = self._fa(gens, p25_on=True)
+        fa_lsl = self._fa(gens, p25_on=False)
+        window = np.arange(self._HOURS - 24, self._HOURS)
+        # p25 on: cheapest-first split of the 100 MW level (cheap tranche at
+        # its available cap, expensive at the remainder) — NOT the 50 MW pmin.
+        cap0 = fa_p25.pmax[0] * fa_p25.availability[0, window]
+        np.testing.assert_allclose(fa_p25.min_gen[0, window], cap0)
+        np.testing.assert_allclose(fa_p25.min_gen[1, window], 100.0 - cap0)
+        # p25 off: the committed floor (50 MW per tranche) is unchanged.
+        np.testing.assert_allclose(fa_lsl.min_gen[0, window], 50.0)
+        np.testing.assert_allclose(fa_lsl.min_gen[1, window], 50.0)
 
 
 if __name__ == "__main__":
