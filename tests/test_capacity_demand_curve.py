@@ -18,9 +18,11 @@ import numpy as np
 
 from market_sim.config.constants import (
     MARKET_DESIGN,
+    MARKET_DESIGN_VINTAGES,
     PLANNING_RESERVE_MARGIN_BY_ISO,
     CapacityDemandCurvePoint,
     evaluate_demand_curve,
+    resolve_demand_curve_vintage,
 )
 from market_sim.config.paths import RAW_DIR
 from market_sim.config.scenarios import ScenarioConfig
@@ -475,6 +477,256 @@ class TestP0BReconciliation(unittest.TestCase):
         self.assertEqual(design.demand_curve, ())
         self.assertLess(
             abs(design.net_cone_per_kw_yr - soft_cap_yr) / soft_cap_yr, 0.05
+        )
+
+
+class TestMarketDesignVintages(unittest.TestCase):
+    """RC-1B item 2 — per-delivery-year vintage table + resolver.
+
+    Trivial-first: resolution is checked against hand values; then every
+    encoded anchor/cap fraction is reconciled against the same P-0B datatype
+    (rule 13); then the pricing seam's byte-identity and vintage-override
+    behavior are exercised.
+    """
+
+    ON = SimpleNamespace(capacity_market_clearing=True)
+    OFF = SimpleNamespace(capacity_market_clearing=False)
+
+    @classmethod
+    def setUpClass(cls):
+        from scripts.lib import capacity_market_demand_curve as dc
+
+        cls.dc = dc
+
+    def _rows(self, iso, delivery_year):
+        df = self.dc.parse_iso(iso, RAW_DIR)
+        return df[df.delivery_year == delivery_year]
+
+    @staticmethod
+    def _scalar(rows, metric, **filt):
+        sub = rows[rows.metric == metric]
+        for col, val in filt.items():
+            sub = sub[sub[col] == val]
+        return float(sub.y_value.iloc[0])
+
+    # ---- resolution vs hand values --------------------------------------
+    def test_resolve_hold_first_exact_hold_last(self):
+        # PJM spans 2021/2022 .. 2027/2028 (start years 2021..2027).
+        self.assertEqual(
+            resolve_demand_curve_vintage("PJM", 2019).delivery_year, "2021/2022"
+        )  # hold-first (before the earliest)
+        self.assertEqual(
+            resolve_demand_curve_vintage("PJM", 2024).delivery_year, "2024/2025"
+        )  # exact
+        self.assertEqual(
+            resolve_demand_curve_vintage("PJM", 2026).delivery_year, "2026/2027"
+        )
+        self.assertEqual(
+            resolve_demand_curve_vintage("PJM", 2035).delivery_year, "2027/2028"
+        )  # hold-last (after the latest)
+
+    def test_resolve_miso_pre_rbdc_hold_first_and_forward_hold_last(self):
+        # MISO's table holds only PY2025-26; every earlier (pre-RBDC) year
+        # holds-first to it and every later year holds-last to it.
+        self.assertEqual(
+            resolve_demand_curve_vintage("MISO", 2021).delivery_year, "2025-2026"
+        )
+        self.assertEqual(
+            resolve_demand_curve_vintage("MISO", 2030).delivery_year, "2025-2026"
+        )
+
+    def test_resolve_nyiso_flat_anchor_years_present(self):
+        # 2021-2022/2022-2023 are present as ()-shape flat-anchor vintages, so a
+        # 2021 model year resolves to 2021-2022 exactly (not held-first past it),
+        # and a pre-span year holds-first to 2021-2022.
+        self.assertEqual(
+            resolve_demand_curve_vintage("NYISO", 2021).delivery_year, "2021-2022"
+        )
+        self.assertEqual(
+            resolve_demand_curve_vintage("NYISO", 2019).delivery_year, "2021-2022"
+        )
+        self.assertEqual(
+            resolve_demand_curve_vintage("NYISO", 2024).delivery_year, "2024-2025"
+        )
+
+    def test_resolve_none_cases(self):
+        self.assertIsNone(resolve_demand_curve_vintage("PJM", None))
+        self.assertIsNone(resolve_demand_curve_vintage(None, 2026))
+        self.assertIsNone(resolve_demand_curve_vintage("CAISO", 2026))  # no table
+        self.assertIsNone(resolve_demand_curve_vintage("ERCOT", 2026))
+
+    def test_vintages_sorted_ascending(self):
+        for iso, vints in MARKET_DESIGN_VINTAGES.items():
+            starts = [int(v.delivery_year[:4]) for v in vints]
+            self.assertEqual(starts, sorted(starts), f"{iso} not ascending")
+
+    # ---- reconciliation vs the published datatype (rule 13) -------------
+    def _expected_anchor(self, iso, dy):
+        r = self._rows(iso, dy)
+        if iso == "PJM":
+            return self._scalar(r, "net_cone", y_unit="usd_per_mw_day") * 365.0 / 1000.0
+        if iso == "NYISO":
+            nc = r[(r.metric == "net_cone") & (r.area == "NYCA")]
+            if not nc.empty:
+                return float(nc.y_value.iloc[0])
+            # 2021-22/22-23 published no Annual Reference Value — the flat anchor
+            # is the NYCA monthly reference-point price × 12.
+            nyca = r[r.area == "NYCA"]
+            ref = float(
+                nyca[nyca.metric == "curve_point"]
+                .sort_values("point_index")
+                .y_value.iloc[0]
+            )
+            return ref * 12.0
+        if iso == "NEISO":
+            return self._scalar(r, "net_cone") * 12.0
+        if iso == "MISO":
+            return (
+                self._scalar(
+                    r, "net_cone", area="North/Central", y_unit="usd_per_mw_yr"
+                )
+                / 1000.0
+            )
+        raise AssertionError(iso)
+
+    def test_all_vintage_anchors_reconcile_with_published(self):
+        for iso, vints in MARKET_DESIGN_VINTAGES.items():
+            for v in vints:
+                self.assertAlmostEqual(
+                    v.net_cone_curve_per_kw_yr,
+                    self._expected_anchor(iso, v.delivery_year),
+                    places=2,
+                    msg=f"{iso} {v.delivery_year} anchor",
+                )
+
+    def _expected_cap_frac(self, iso, dy):
+        r = self._rows(iso, dy)
+        if iso == "PJM":
+            return self._scalar(r, "price_cap", y_unit="usd_per_mw_day") / self._scalar(
+                r, "net_cone", y_unit="usd_per_mw_day"
+            )
+        if iso == "NEISO":
+            return self._scalar(r, "price_cap") / self._scalar(r, "net_cone")
+        if iso == "NYISO":
+            nyca = r[r.area == "NYCA"]
+            if "summer" in set(nyca.season.dropna()):
+                cap = self._scalar(r, "price_cap", area="NYCA", season="summer")
+                ref = float(
+                    nyca[(nyca.metric == "curve_point") & (nyca.season == "summer")]
+                    .sort_values("point_index")
+                    .y_value.iloc[0]
+                )
+            else:
+                cap = self._scalar(r, "price_cap", area="NYCA")
+                ref = float(
+                    nyca[nyca.metric == "curve_point"]
+                    .sort_values("point_index")
+                    .y_value.iloc[0]
+                )
+            return cap / ref
+        raise AssertionError(iso)
+
+    def test_curve_cap_fractions_reconcile_with_published(self):
+        # Every vintage that carries a shape reconciles its cap fraction to the
+        # raw published values. MISO's RBDC shape is first-order (a band, not a
+        # point — asserted by the registry test), so it is excluded here.
+        for iso in ("PJM", "NYISO", "NEISO"):
+            for v in MARKET_DESIGN_VINTAGES[iso]:
+                if not v.demand_curve:
+                    continue
+                self.assertAlmostEqual(
+                    v.demand_curve[0].price_frac_net_cone,
+                    self._expected_cap_frac(iso, v.delivery_year),
+                    places=3,
+                    msg=f"{iso} {v.delivery_year} cap fraction",
+                )
+
+    def test_empty_curve_vintages_are_pre_reform_or_uncapped(self):
+        # The ()-shape vintages are exactly PJM's pre-2026/27 years (absolute-MW
+        # points, or 2025/26's missing cap) and NYISO's 2021-22/2022-23 (no
+        # Annual Reference Value + no cap → flat anchor only). Assert exactly that
+        # set, so a future data update that adds a normalizable shape must update
+        # here.
+        empties = {
+            (iso, v.delivery_year)
+            for iso, vints in MARKET_DESIGN_VINTAGES.items()
+            for v in vints
+            if not v.demand_curve
+        }
+        self.assertEqual(
+            empties,
+            {
+                ("PJM", "2021/2022"),
+                ("PJM", "2022/2023"),
+                ("PJM", "2023/2024"),
+                ("PJM", "2024/2025"),
+                ("PJM", "2025/2026"),
+                ("NYISO", "2021-2022"),
+                ("NYISO", "2022-2023"),
+            },
+        )
+
+    # ---- pricing-seam behavior ------------------------------------------
+    def test_reference_year_equals_registry_default(self):
+        # At each ISO's registry reference delivery year, the vintage override
+        # reproduces the no-year (registry) curve price exactly — byte-identity.
+        for iso, ref_year in (
+            ("PJM", 2026),
+            ("NYISO", 2025),
+            ("NEISO", 2027),
+            ("MISO", 2025),
+        ):
+            design = MARKET_DESIGN[iso]
+            for pos in (0.6, 0.9, 1.0, 1.05, 1.2):
+                base = design.capacity_price_per_firm_mw_yr(self.ON, pos, iso=iso)
+                with_year = design.capacity_price_per_firm_mw_yr(
+                    self.ON, pos, iso=iso, year=ref_year
+                )
+                self.assertAlmostEqual(
+                    base, with_year, places=6, msg=f"{iso} {ref_year} @ {pos}"
+                )
+
+    def test_empty_curve_vintage_prices_flat_anchor(self):
+        # A ()-shape vintage (PJM 2022/2023) prices its flat anchor × 1000,
+        # independent of the reserve position (no sloped curve).
+        design = MARKET_DESIGN["PJM"]
+        flat = 260.5 * 365.0 / 1000.0 * 1000.0
+        for pos in (0.3, 0.85, 1.0, 1.4):
+            self.assertAlmostEqual(
+                design.capacity_price_per_firm_mw_yr(
+                    self.ON, pos, iso="PJM", year=2022
+                ),
+                flat,
+                places=3,
+            )
+
+    def test_default_off_byte_identity_with_year(self):
+        # Gate OFF: passing a year never changes the price (fixed path, no
+        # vintage consultation) for any ISO.
+        for iso, design in MARKET_DESIGN.items():
+            expected = design.capacity_price_per_firm_mw_yr()
+            self.assertEqual(
+                design.capacity_price_per_firm_mw_yr(
+                    self.OFF, 0.85, iso=iso, year=2022
+                ),
+                expected,
+                msg=iso,
+            )
+
+    def test_year_changes_anchor_only_where_a_vintage_differs(self):
+        # PJM: pricing 2022/2023 (flat 95.08) differs from 2026/2027 (curve
+        # anchor 77.43) — the year is live. CAISO has no vintage table, so year
+        # is inert (fixed proxy in both).
+        pjm = MARKET_DESIGN["PJM"]
+        self.assertNotAlmostEqual(
+            pjm.capacity_price_per_firm_mw_yr(self.ON, 1.015, iso="PJM", year=2022),
+            pjm.capacity_price_per_firm_mw_yr(self.ON, 1.015, iso="PJM", year=2026),
+            places=1,
+        )
+        caiso = MARKET_DESIGN["CAISO"]
+        self.assertEqual(
+            caiso.capacity_price_per_firm_mw_yr(self.ON, 0.8, iso="CAISO", year=2021),
+            caiso.capacity_price_per_firm_mw_yr(self.ON, 0.8, iso="CAISO", year=2035),
         )
 
 
