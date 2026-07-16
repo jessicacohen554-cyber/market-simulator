@@ -3945,6 +3945,34 @@ class ScenarioConfig:
     # data/raw/_validation-source/ercot_dam_cleared_share_condbinned.json). None →
     # the builder falls back to that default path.
     ercot_offer_surface_cleared_share_path: str | None = None
+    # ERCOT-73 commitment-STATE conditioning of the cleared-share wall (default
+    # off; requires ercot_offer_surface_cleared_share — the builder hard-errors
+    # on state-without-wall). Multiplies each walled row-hour's markup by the
+    # MEASURED commitment-loading state weight
+    #
+    #   w_c(t) = clip((online_cap - gross) / (online_cap - cleared), 0, 1)
+    #
+    # — the unloaded fraction of the class's above-DA-position online
+    # capability (CAMPD CEMS envelope/gross x DAM awards;
+    # scripts/derive_ercot_commitment_loading_state.py, frozen rule 23). The
+    # floored bid becomes base + w x (wall - base): in moderate regimes
+    # (w ~ 1) the DA participation cliff prices the un-offered capacity at the
+    # measured wall (the proven ERCOT-72 composition lever); in tight regimes
+    # reality RUC/self-commits the same capacity online near cost and the
+    # measured state stands the wall down (w -> 0: Aug-23 0.02, Sep-23 0.09,
+    # Jan-24 net-load>=p90 hours 0.25 — exactly the static form's rejected
+    # over-lift windows, resolved at HOUR grain). Zero fitted scalars; the
+    # year's own hourly series is a backcast state-event overlay (the CAMPD
+    # outage-overlay pattern, G4 mode-aware seam); a year absent from the
+    # artifact (forecast, holdout) falls back to the artifact's pooled
+    # climatology (net-load-percentile bin x 4-hour block — regenerates from
+    # the target year's own drivers, rule 13). P1-only, same mc_bid_adjust
+    # seam and row scope as the wall itself (rule 19 ownership unchanged).
+    ercot_offer_surface_cleared_share_state: bool = False
+    # Path to the frozen commitment-loading state JSON (default:
+    # data/raw/_validation-source/ercot_commitment_loading_state.json). None →
+    # the builder falls back to that default path.
+    ercot_offer_surface_cleared_share_state_path: str | None = None
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -6459,6 +6487,8 @@ TIER_TAGS: dict[str, int] = {
     "tranche_startup_conditional_runs": 1,
     "ercot_offer_surface_cleared_share": 1,
     "ercot_offer_surface_cleared_share_path": 3,
+    "ercot_offer_surface_cleared_share_state": 1,
+    "ercot_offer_surface_cleared_share_state_path": 3,
     "nysdec_peaker_rule_availability": 1,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
