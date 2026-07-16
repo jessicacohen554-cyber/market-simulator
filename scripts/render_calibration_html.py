@@ -442,11 +442,29 @@ def _actual_storage_twh(e930_year: pd.DataFrame) -> float | None:
     present = e930_year[e930_year["series"].isin(_STORAGE_E930_SERIES)]
     if present.empty:
         return None
+    # NOTE (filed with rubric v2.6, deliberately unchanged): any NaN hour in a
+    # storage series poisons this sum to NaN, so `disch > 1e-6` is False and a
+    # partial-coverage year (pre-breakout NaNs — ERCO 2024) returns None. That
+    # accidental behavior is the CORRECT C5b outcome (a partial-year actual
+    # cannot benchmark a full-year model throughput) but it also nulls a
+    # complete year with a stray missing hour; an explicit per-month coverage
+    # rule (like `_actual_storage_monthly`'s) would flip other ISOs' committed
+    # C5b skips to scored rows, so it needs its own cross-ISO re-verdict pass.
     disch = np.clip(present["mw"].to_numpy(float), 0.0, None).sum() / 1e6
     return round(float(disch), 4) if disch > 1e-6 else None
 
 
-def _actual_storage_monthly(e930_year: pd.DataFrame) -> list[float] | None:
+# A bench month is a real storage observation only when this fraction of its
+# hours carries a non-NaN value in at least one EIA-930 storage series. Months
+# below it (pre-breakout months are 0.0-covered by construction) are emitted as
+# null — MISSING, never zero. Robustness constant, not a tuned quantity: it
+# tolerates ordinary reporting gaps while refusing to book a month the BA had
+# not begun reporting (rubric v2.6, owner amendment 2026-07-16 — the ERCO 2024
+# C5c FAIL was a correlation against nine fabricated pre-breakout zeros).
+_STORAGE_MONTH_COVERAGE_MIN = 0.9
+
+
+def _actual_storage_monthly(e930_year: pd.DataFrame) -> list[float | None] | None:
     """Return 12 monthly DISCHARGE GWh from EIA-930 storage series, or None.
 
     Discharge basis (positive half only), matching C5b's throughput basis —
@@ -457,21 +475,35 @@ def _actual_storage_monthly(e930_year: pd.DataFrame) -> list[float] | None:
     discharge, while the model side used to report net (discharge − charge,
     ≤ 0 over a month by round-trip losses) — an apples-to-oranges C5c that a
     perfectly-cycling model could never pass. Both sides are now discharge.
+
+    Months without a real observation are ``None``, never 0.0 (rubric v2.6):
+    the ERCOT battery series carries NaN over hours the BA had not yet begun
+    reporting a storage breakout (ERCO: mid-Oct-2024), and booking those
+    months as zero discharge fabricates an actual the scorer then correlates
+    against. ``calibration_verdict.score_storage_shape`` already SKIPs a year
+    whose monthly vector has null months, so a partial-breakout year is held
+    out rather than scored on invented zeros.
     """
     present = e930_year[e930_year["series"].isin(_STORAGE_E930_SERIES)]
     if present.empty:
         return None
     net = np.zeros(_T, dtype=float)
+    covered = np.zeros(_T, dtype=bool)  # hour has >= 1 real (non-NaN) observation
     for _, row in present.iterrows():
         h = int(row["hour"])
         mw = float(row["mw"])
         if 0 <= h < _T and not np.isnan(mw):
             net[h] += max(mw, 0.0)
-    if abs(np.nansum(net)) < 1.0:
+            covered[h] = True
+    if not covered.any() or abs(float(net.sum())) < 1.0:
         return None
-    return [
-        round(float(np.nansum(net[_CUM[m] : _CUM[m + 1]])) / 1e3, 2) for m in range(12)
-    ]
+    out: list[float | None] = []
+    for m in range(12):
+        if float(covered[_CUM[m] : _CUM[m + 1]].mean()) < _STORAGE_MONTH_COVERAGE_MIN:
+            out.append(None)  # unobserved (e.g. pre-breakout) month: missing, not 0
+        else:
+            out.append(round(float(net[_CUM[m] : _CUM[m + 1]].sum()) / 1e3, 2))
+    return out
 
 
 def _tail_hours(price_by_zone_hourly: dict[str, np.ndarray], threshold: float) -> int:
