@@ -13748,3 +13748,41 @@ this session. Attestation: caiso-84 ledger verbatim + the zero-DOF measured
 delta (no scalar added). Per-year LOYO note: each year rides its own measured
 depth/trigger series (caiso-80/82/84 construction class); the estimation-stage
 CV/LOYO gates are the cross-year transfer check.
+## 2026-07-16 — PJM-NUC-1: the CAMPD-blind nuclear scarcity slice measured — NULL (+147 MW over the 22 tail hours, stop threshold 400 MW); no overlay, no solve, keeper UNCHANGED
+
+**Charter:** pjm-nuc-1 — test the THIRD candidate contributor to the C3c-2025
+summer tail residual, the one the §2/§3 phantom decomposition
+(`docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md`) is blind to by construction:
+PJM nuclear (32 units, 32,689 MW active) is not in CAMPD, and the model runs it
+on the fleet-month CF smear (`NUCLEAR_MONTHLY_CF_BY_YEAR`) that cannot see a
+unit refuel/trip inside a scarcity hour. Diagnostic-first (rule 1): probe
+committed, ~400 MW stop threshold pre-declared, no flag/no solve unless the
+measured phantom is material.
+
+**Probe:** `scripts/probes/_pjm_nuclear_phantom_decomp.py` (no-LP). Model side
+exact — nuclear is flat must-run at pmax × monthly CF, reconstruction validated
+against the pjm-113 payload's fuelRows annual nuclear (< 0.05 TWh all three
+years). Actual side EIA-930 nuclear on the canonical benchmark clock (nuclear
+is a price-taker; CEMS can't see it).
+
+**Result — NULL.** Phantom (model − EIA-930) over the 22 summer-2025 DA-tail
+hours: **+147 MW mean** (UTC→EPT clock cross-check +119; range −36…+407; Jun
+event +241, Jul event +12; 2023 +328 over 8 h, 2024 +320 over 1 h). The real
+nuclear fleet was effectively fully up through both heat events; month-mean
+phantoms are slightly NEGATIVE (the cap-at-1.0 smear under-credits the month).
+No event-coincident refuel at EIA-923 monthly grain (only Susquehanna's
+sustained Jun/Jul 0.87 partial state, already embedded in the smear's monthly
+energy). A perfect per-reactor overlay could recover at most ~0.15 GW — an
+order of magnitude below the +3.0 GW coal phantom and a tenth of the 1.5 GW
+that moved the tail +1 h in pjm-112/113.
+
+**Actions:** stop condition honoured — no `nuclear_unit_availability` flag, no
+derived CSV, no solve, nothing registered. The avg_ecomax-for-nuclear open
+question and NRC daily-status intake are moot for PJM (not pursued); the
+non-CEMS GAS extension stays an unchartered follow-on. Null result written into
+the diagnosis as §8.2; the C3c summer boundary stands as disclosed —
+congestion-surface-bound (§5, dominant) + ~1.7 GW frozen-constant-invisible
+partial derates (§7) — with the nuclear candidate now measured and excluded.
+Keeper stays `2026-07-16-pjm-113-short-only`. NOTE: the chartered pre-read
+`docs/handoffs/pjm-noncampd-availability-2026-07.md` does not exist on main
+(never committed); the session proceeded on the charter text itself.
