@@ -335,6 +335,82 @@ disclosed, now with the third candidate measured and excluded**: the flat
 zonal congestion surface (§5, dominant) plus the ~1.7 GW frozen-constant-
 invisible partial-derate bucket (§7).
 
+### 8.2.1 Owner order (2026-07-16, pjm-nuc-1b): build the measured overlay anyway — gate pre-committed BEFORE any solve
+
+The owner reviewed the §8.2 null and directed that the ~147 MW smear error be
+fixed with the real mechanism regardless ("147 MW is still more than it needs
+to be"). This proceeds under rule 1's structural-fidelity reading — a
+per-reactor measured availability is strictly more faithful than the
+fleet-month smear, and the ERCOT precedent is a live keeper input — NOT as a
+fit-chase: the expected C3c movement is ≈ nil and is not the success
+criterion. The mechanism carries **zero fitted scalars**; nothing may be
+tuned to the residual.
+
+**Source adjudication (charter order (a)→(b)→(c), measured head-on):**
+DataMiner2 `energy_market_offers` returns identity-MASKED `unit_code`s
+(base64-opaque, e.g. `AAAABg8LDwUG…`), so per-reactor attribution from
+`avg_ecomax` is impossible whatever its null-ness — (a) is unusable for a
+unit overlay and the charter's open question is answered "cannot be
+established per-unit; feed is anonymized". (b) EIA-923 is monthly and cannot
+see intra-month timing. **(c) NRC daily Power Reactor Status is selected**:
+`ReportDt|Unit|Power` per reactor-day, all 31 active PJM reactors present
+365/366 days for 2023–2025, a direct physical measurement with no
+withholding confound. Raw NRC availability energy sits 0.7–1.6 %/yr below
+the committed EIA-923 anchor (winter-uprate / thermal-vs-net basis wedge),
+so the deriver mirrors the ERCOT reconciliation verbatim: **the 923 anchor
+owns the LEVEL, NRC owns the TIMING** — event days (raw < `EVENT_RAW_MAX`
+0.90, frozen) kept exactly as measured, pool days scaled by one per-month
+fixed-point factor (per-day cap 1.0, scale clip 1.25, frozen) to reproduce
+`NUCLEAR_MONTHLY_CF_BY_YEAR["PJM"]` monthly energy exactly.
+
+**Pre-committed gate (set NOW, before the CSV is derived or any LP runs):**
+
+1. **Build-time provenance:** the derived windows must recover
+   **≥ 75 MW mean** over the 22 summer-2025 tail hours in extract arithmetic
+   (Phase-1 measured phantom 147 MW minus a stated 72 MW margin for the
+   level reconciliation) — probe section `windows`. Below that, the
+   mechanism demonstrably does not reach the events: stop before solving,
+   disclose here.
+2. **Solve gate (identical to §8 gates 1–3/5):** C3c-2025 model tail
+   ∈ [26, 102] h; 2023 ≤ 18 h, 2024 ≤ 12 h; NO currently-PASS criterion
+   flips in any year (C1 16/16, C2, C3a, C3b, C4, C5a, C6, C7, C8); LOYO
+   within 2023–2025 (zero-fitted-scalar measured overlay, per-year scoring
+   of the one bundle).
+3. **Outcomes:** all hold → register + recommend keeper. C3c misses but the
+   rest hold → register NOT-YET candidate (same lineage as pjm-112/113);
+   the realistic expectation given ≤ 0.15 GW recovered. Anything else
+   regresses → reject, keeper stays pjm-113. No constant revisited after
+   results (rules 1/11/23/26).
+
+**Measured result (2026-07-16): gate #1 FAILS at the build step — no solve.**
+The overlay was fully built (fetch `scripts/fetch_nrc_reactor_status.py` +
+committed raw NRC annual files, deriver `scripts/derive_nuclear_availability.py`
+→ `data/raw/nuclear-availability-PJM.csv`, 15,190 reactor-days / 31 reactors;
+loader `outages.nuclear_unit_availability_series`; PJM-scoped fleet wiring
+behind `ScenarioConfig.nuclear_unit_availability`, default off, byte-identical
+when off; tests) and its extract arithmetic measured by the probe `windows`
+section: net recovery over the 22 summer-2025 tail hours is **−72 MW**
+(min −327 / max +400; 2023: −1 MW, 2024: −105 MW) — the overlay *adds* nuclear
+in the tail hours. The mechanism is self-defeating for this target **by
+construction**: conserving the 923 monthly anchor forces the pool scale to
+redistribute event-day energy onto near-full days, and scarcity hours ARE
+near-full days (the June-2025 anchor at 0.99 lifts Susquehanna's real
+0.91–0.98 Jun-24/25 derates to 1.0). Equivalently: at daily grain with an
+honest level anchor, the +147 MW tail-hour phantom has ≈ zero unit-availability
+content — it is sub-daily net-vs-thermal basis wiggle (heat-day condenser
+backpressure reduces NET capability below nameplate while NRC thermal power
+reads 100 %) plus hourly output noise, below any daily overlay's grain.
+Chasing it further would require either dropping the level anchor (posts a
+winter-biased-low level, refused above) or pinning nuclear to its hourly
+EIA-930 output — rule-13-forbidden. **Stopped per the pre-commitment: no
+solve, no registration, keeper stays pjm-113.** The infrastructure stays
+committed default-off (the repo's standard posture for probe-refuted flags;
+usable by a future ISO charter with its own gate). The honest answer to the
+owner's "fix the 147 MW": at the admissible frontier it is not fixable by
+availability timing; the only physical mechanism below this grain is an
+ambient nuclear net-capability derate (a new charter, ~0.1 GW stakes, and the
+§4 temperature-derate refutation would need distinguishing for nuclear).
+
 ## 9. Guardrail review
 
 * **Rules 1/11**: mechanism identified and gate pre-committed before any

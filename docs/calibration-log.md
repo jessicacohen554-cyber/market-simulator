@@ -13885,3 +13885,50 @@ MISO reconcile table.
 *Addendum (same day): owner authorized the promotion — `keepers.json` MISO →
 `2026-07-16-miso-67-stgas-p25`, status.js rebuilt, `audit_keepers.py` exit 0
 (keeper text verified, no repairs needed).*
+## 2026-07-16 — PJM-NUC-1b (owner order): the per-reactor NRC availability overlay BUILT, its pre-committed provenance gate FAILED at the build step (−72 MW vs ≥ +75 MW) — no solve, no registration; the 147 MW is adjudicated NOT availability-shaped; keeper UNCHANGED
+
+**Owner order:** after the pjm-nuc-1 null (+147 MW over the 22 tail hours, below
+the 400 MW stop), the owner directed the smear error be fixed with the real
+mechanism anyway. Proceeded under rule 1 (structural fidelity, not fit-chase),
+gate pre-committed in diagnosis §8.2.1 BEFORE deriving: build-time provenance
+≥ 75 MW mean tail-hour recovery, else stop before solving.
+
+**Source adjudication:** (a) DataMiner2 avg_ecomax — unit_code is
+identity-MASKED (base64-opaque), per-reactor attribution impossible, charter
+open question answered; (b) EIA-923 — monthly, no intra-month timing; **(c)
+NRC daily Power Reactor Status selected** (31/31 active PJM reactors, 365/366
+days, direct physical measurement, no withholding confound; public domain, raw
+files committed).
+
+**Build (all committed, default-off, byte-identical off):**
+`scripts/fetch_nrc_reactor_status.py` + `data/raw/nrc-reactor-status/`;
+`scripts/derive_nuclear_availability.py` → `data/raw/nuclear-availability-PJM.csv`
+(ERCOT reconciliation ported verbatim — EVENT_RAW_MAX 0.90 / cap 1.0 / clip
+1.25 frozen; 923 anchor owns LEVEL, NRC owns TIMING; uprate-wedge months the
+capped fixed-point cannot bring within the existing 1 % tolerance are DROPPED
+to the smear — every 2023-2025 Jun-Sep month reconciles to ±0.00 %);
+`outages.nuclear_unit_availability_series` (ISO-generic, NaN semantics);
+`ScenarioConfig.nuclear_unit_availability` (tier 3, default off, PJM-scoped
+wiring in `fleet.generators_to_fleet_arrays` before the dormant block; ERCOT
+keeps its own flag/file); tests.
+
+**Gate result — FAIL, mechanism self-defeating by construction:** probe
+`windows` (committed `_pjm_nuclear_phantom_decomp.py`): net tail-hour recovery
+**−72 MW** (min −327/max +400; 2023 −1, 2024 −105). Conserving the monthly
+anchor redistributes event-day energy onto near-full pool days — and scarcity
+hours ARE near-full days (the Jun-2025 anchor 0.99 lifts Susquehanna's real
+0.91-0.98 Jun-24/25 derates to 1.0). At daily grain with an honest level, the
++147 MW phantom has ≈ zero unit-availability content: it is sub-daily
+net-vs-thermal basis wiggle (heat-day condenser backpressure) + hourly output
+noise. The two ways to force it — dropping the level anchor (winter-biased-low)
+or pinning to hourly EIA-930 output — are refused (rules 13/14).
+
+**Actions:** stopped per the pre-commitment — NO solve, NO dashboard
+registration, keeper stays `2026-07-16-pjm-113-short-only`. Flag verdict
+recorded in scenarios.py (not re-armable; another ISO needs its own derivation
++ gate). §8.2.1 outcome written. OWNER SIGN-OFFS requested: (i) NRC as the
+adopted nuclear-availability datatype (public-domain raw committed), (ii)
+acceptance that the residual 147 MW is closed as sub-grain basis noise — the
+only mechanism below it is an ambient nuclear net-capability derate charter
+(~0.1 GW stakes). Note: tests/test_outages.py NEISOUnitOutageSmokeTest fails
+on clean main too (pre-existing, unrelated).
