@@ -14846,3 +14846,19 @@ must not become archived-P2-by-another-name. Owner checkpoint: candidates
 1 (caiso-91, inert) and 2 (no-LP conduct refutation) closed; remaining C1
 owners are candidate 3 + the measured DAM offer-surface intake charter +
 the evening-merit λ level. No config touched; no run produced.
+
+## 2026-07-16 — ERCOT keeper promotion: 2026-07-16-ercot73-state-wall (owner)
+
+**Promotion (owner, same session as the ERCOT-73 entry above).** `2026-07-16-ercot73-state-wall` promoted
+to ERCOT keeper (CALIBRATED-WITH-CAVEATS; the single ledgered caveat is the
+inherited G-22 C3c tail, 26h vs RT 53h). LOYO (rule 22) satisfied
+structurally: no pooled or fitted quantity enters any backcast year — each
+year solves on its own measured state/boundary/ladder tables (the pooled
+climatology is a forward-only fallback, unused in these solves), so a
+leave-one-year-out re-solve is provably byte-identical to the registered
+full-span run. `keepers.json` flipped from
+`2026-07-16-ercot71-noncampd-availability`; keeper-text audit re-run at
+promotion; the deposed keeper's registration stays on the dashboard as the
+prior-keeper comparison. Open lanes carried forward unchanged: the 2023
+summer over-shoot (lane 2), the shoulder formation gap (wall mid-rungs +
+the drag-lane steam cliff), and the West/Panhandle topology split.
