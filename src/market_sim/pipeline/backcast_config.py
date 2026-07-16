@@ -15,6 +15,7 @@ keeper enables) — out of this stage's scope; see
 
 from __future__ import annotations
 
+import json
 import logging
 import os
 from dataclasses import fields
@@ -965,6 +966,8 @@ def backcast_config(
     pjm_offer_surface_conditional: bool = False,
     pjm_da_virtual_bids: bool = False,
     pjm_offer_midcurve_conditional: bool = False,
+    caiso_offer_surface_measured: bool = False,
+    caiso_offer_surface_conditional: bool = False,
 ):
     """Build the ScenarioConfig for one calibration year.
 
@@ -1816,6 +1819,33 @@ def backcast_config(
                 config.offer_curve_by_group, _CAISO_OFFER_CURVE
             )
         )
+    # CAISO MEASURED static offer bands (C1 lane WP-A, default off): replace
+    # the fitted _CAISO_OFFER_CURVE econ_low / econ_high / peak multipliers
+    # for CC_REGULAR + CT_PEAKER with the cap-weighted medians of the
+    # fleet's own DAM energy bids (OASIS Public Bid Data,
+    # scripts/derive_caiso_offer_surface.py — carbon/VOM-netted so the
+    # tranche mc round-trips the measured bid). A rule-24/25 SHRINK of the
+    # fitted surface: where a measured band lands, the fitted value
+    # retires. The measured committed band is deliberately NOT armed (the
+    # Lever-A inversion lesson — commitment conduct belongs to a UC layer,
+    # not the P1 offer). Operator --offer-curve overrides/deltas below
+    # still merge on top.
+    if caiso_offer_surface_measured and iso.upper() == "CAISO":
+        from market_sim.config import paths as _paths
+
+        _measured_path = _paths.CALIBRATION_DIR / "caiso_offer_curve_measured.json"
+        _measured = json.loads(_measured_path.read_text())
+        _measured_bands = {
+            cls: dict(doc["bands"])
+            for cls, doc in _measured.items()
+            if not cls.startswith("_") and isinstance(doc, dict) and "bands" in doc
+        }
+        config = config.with_overrides(
+            caiso_offer_surface_measured=True,
+            offer_curve_by_group=_deep_merge_offer_curve(
+                config.offer_curve_by_group, _measured_bands
+            ),
+        )
     # MISO gas + coal offer curves (CAMPD-/structure-/SOM-grounded; see
     # _MISO_OFFER_CURVE). Merged on top of the generic non-PJM/non-ERCOT branch
     # so only the named classes change (CC_REGULAR flattened to MISO's measured
@@ -1911,6 +1941,27 @@ def backcast_config(
     if pjm_offer_surface_conditional and iso == "PJM":
         config = config.with_overrides(pjm_offer_surface_conditional=True)
         n_rungs = 5  # == derive_pjm_offer_surface --rungs default
+        share = round(1.0 / n_rungs, 3)
+        merged = {c: dict(b) for c, b in config.offer_curve_by_group.items()}
+        changed = False
+        for cls in ("CC_REGULAR", "CT_PEAKER"):
+            bands = merged.get(cls)
+            if bands and "peak" in bands:
+                pk = float(bands["peak"])
+                bands["peak_ladder"] = [[share, pk] for _ in range(n_rungs)]
+                changed = True
+        if changed:
+            config = config.with_overrides(offer_curve_by_group=merged)
+    # CAISO condition-responsive measured offer surface (C1 lane WP-A): the
+    # identical structural no-op split for CC_REGULAR + CT_PEAKER — 5
+    # equal-capacity peak rungs at the SAME resolved height (the measured
+    # static peak when caiso_offer_surface_measured is also armed), so P0
+    # and loose hours are byte-identical until the P1-only markup
+    # (data.fleet.build_caiso_offer_surface_conditional_markup) reprices
+    # the upper rungs in anticipated-tight hours.
+    if caiso_offer_surface_conditional and iso == "CAISO":
+        config = config.with_overrides(caiso_offer_surface_conditional=True)
+        n_rungs = 5  # == derive_caiso_offer_surface --rungs default
         share = round(1.0 / n_rungs, 3)
         merged = {c: dict(b) for c, b in config.offer_curve_by_group.items()}
         changed = False

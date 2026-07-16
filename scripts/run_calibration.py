@@ -492,6 +492,8 @@ def run_year(
     pjm_da_virtual_bids: bool = False,
     pjm_offer_midcurve_conditional: bool = False,
     pjm_offer_midcurve_segments: "tuple[str, ...] | None" = None,
+    caiso_offer_surface_measured: bool = False,
+    caiso_offer_surface_conditional: bool = False,
     ercot_nuclear_unit_availability: bool = False,
     ercot_thermal_dam_availability: bool = False,
     ercot_noncampd_plant_availability: bool = False,
@@ -722,6 +724,8 @@ def run_year(
         pjm_offer_surface_conditional=pjm_offer_surface_conditional,
         pjm_da_virtual_bids=pjm_da_virtual_bids,
         pjm_offer_midcurve_conditional=pjm_offer_midcurve_conditional,
+        caiso_offer_surface_measured=caiso_offer_surface_measured,
+        caiso_offer_surface_conditional=caiso_offer_surface_conditional,
     )
     if pjm_offer_midcurve_segments is not None:
         # Rule-19 scope: floor only the named measured segments (e.g.
@@ -2907,6 +2911,17 @@ def run_year(
         offer_surface_mc_bid_adjust = build_pjm_offer_surface_conditional_markup(
             fleet_arrays, fleet, fuel_prices, _surface_net_load, config
         )
+    # CAISO measured offer surface (C1 lane WP-A): the identical P1-only
+    # seam, CAISO-gated (fleet.build_caiso_offer_surface_conditional_markup).
+    if getattr(config, "caiso_offer_surface_conditional", False) and iso == "CAISO":
+        _surface_net_load = (
+            demand.sum(axis=0)
+            - (solar_cap[:, None] * solar_cf).sum(axis=0)
+            - (wind_cap[:, None] * wind_cf).sum(axis=0)
+        )
+        offer_surface_mc_bid_adjust = build_caiso_offer_surface_conditional_markup(
+            fleet_arrays, fleet, fuel_prices, _surface_net_load, config
+        )
     # PJM MID-CURVE offer surface (G-22 lever A'): floors the econ-tranche
     # rows' P1 bids at the measured capacity-share offer level
     # (fleet.build_pjm_offer_midcurve_conditional_markup). Targets econ rows
@@ -3522,6 +3537,24 @@ def run_year(
     # ISOs / no award file) leaves the key unset — identical LP.
     if storage_discharge_min is not None:
         dispatch_kwargs.update(storage_discharge_min=storage_discharge_min)
+    # Declared-window ELMP emergency-tier pricing (maxgen_emergency_tier_
+    # pricing, GATED default off — the MISO F5 scarcity-depth lane): inside a
+    # maxgen-events registry window declared at Max Gen Warning or higher,
+    # the declared region's zones reprice the load slack from the ISO bid cap
+    # to min(voll, tier floor) — $500 Tier 1 (Warning/Step 1), $1,000 Tier 2
+    # (Step 2+), SOM-footnoted (config.reserve_config citations; frozen
+    # design docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md).
+    # Backcast-only overlay (D-5): this orchestrator is the backcast path;
+    # the forecast runner never arms it. None (flag off / no Warning+ window
+    # overlapping the year) leaves the key unset — identical LP.
+    if getattr(config, "maxgen_emergency_tier_pricing", False):
+        from market_sim.data.maxgen_events import emergency_tier_slack_cost
+
+        _tier_slack = emergency_tier_slack_cost(
+            iso, year, list(zone_names), iso_config.voll, config.hours
+        )
+        if _tier_slack is not None:
+            dispatch_kwargs.update(slack_cost=_tier_slack)
     # Emissions mass-cap rows (policy constraint path, gated; G-29). Mirrors
     # runner.py's forecast-path `mass_caps` block so the backcast calibration
     # harness shares the identical seam — before this wire-through,
