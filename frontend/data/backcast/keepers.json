@@ -1,11 +1,11 @@
 {
- "CAISO": "2026-07-13-caiso-80-supply-demand",
+ "CAISO": "2026-07-15-caiso-84-gas-spot",
  "ERCOT": "2026-07-15-ercot66-storage-rebasis",
  "NEISO": "2026-07-13-neiso-59-cc-hr",
  "PJM": "2026-07-16-pjm-113-short-only",
  "keepers": [
   "2026-07-15-ercot66-storage-rebasis",
-  "2026-07-13-caiso-80-supply-demand",
+  "2026-07-15-caiso-84-gas-spot",
   "2026-07-16-pjm-113-short-only",
   "2026-07-13-nyiso-62-cc-hr",
   "2026-07-13-neiso-59-cc-hr",

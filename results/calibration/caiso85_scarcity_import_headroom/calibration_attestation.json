@@ -1,0 +1,244 @@
+{
+ "schema": "calibration-attestation/v1",
+ "governance": {
+  "levers_trace_to_measured_input": true,
+  "no_fit_to_price_residuals": true,
+  "no_pinning_to_actuals": true,
+  "outage_filter_exogenous_net_load": true,
+  "attested_by": "caiso-85 scarcity import-headroom probe session 2026-07-15",
+  "note": "Levers: identical to caiso-72 (measured F923 monthly delivered gas + hub-basis overlay, CAMPD unit-outage overlay, measured EIA-930 per-hub corridor p95 envelopes, published MIC seam cap, LCT-measured pocket import caps, CEMS-measured RA bridge min-load 0.26, published class startup costs, startup-aware bridge, hydro deliverability envelope p95, ct_netload_drag OFF per-run) PLUS caiso_firm_import_shape=True (the caiso-73 delta, carried) PLUS the single caiso-75 delta: caiso_demand_clock_realign=True \u2014 the measured source-data clock correction to the 2023 CAISO demand input (FINDING-caiso75-demand-clock-2026-07-11): the EIA-930 CISO Demand column is +1h late vs the extract's own astronomy-verified generation frame for local dates before 2023-11-01 (monthly best-lag -1 at r 0.984-0.997 against the extract's balance identity net_gen - interchange; the OASIS SLD TAC actual corroborates at 0.9953), aligned thereafter. The realignment pulls that window forward 1h onto the wall-true frame; annual energy conserved to +0.1 MW on the mean \u2014 a rule-14 reconciled-real-data clock fix, never a level rescale, zero fitted parameters, window frozen against residuals (rule 23) and guarded by scripts/validate_caiso_demand_clock.py. caiso_storage_as_reservation is NOT carried (measured ex-ante inert in caiso-74; caiso-71 precedent). No residual-tuned adder is armed in this run. The rule-1-sanctioned offer-curve tuning surface remains as disclosed in the free_parameters DOF ledger; no new fit was performed in or for this run. PLUS the single caiso-76 delta: hydro_backfill_year=2024 + hydro_eia930_monthly=True \u2014 the measured conventional-hydro budget correction (FINDING-caiso76-hydro-budget-2026-07-11): the 2025 EIA-923 vintage is a monthly-survey-only early release carrying 26 of ~185 CAISO hydro plants (12.32 of the measured 21.32 TWh, EIA-930 NG: WAT); the missing 9.0 TWh of zero-carbon inflow was being served by gas (the C2 2025 +6.5% excess), imports and un-curtailed solar. The correction backfills non-reporting plants at their 2024 monthly generation (per-plant coverage + MW envelope) and repins each year's monthly budget to the measured EIA-930 NG: WAT total (2023 23.90->24.40, 2024 21.48->22.68, 2025 12.32->21.32 TWh) \u2014 the existing early-release machinery (NEISO-2025 precedent), first keeper-line use. Zero fitted parameters: both switches select a measured source series; level and shape are EIA-930; never pinned to a dispatch outcome (the LP still chooses when to release water within the measured hydro_dispatch_envelope). Forward story: forecast path keeps its climatology budget; the correction regenerates on the early-release cadence and dies when the final 923 lands. DISCLOSED: with backfill_year=2024, 2023 carries 5 plants (+0.42 TWh pre-repin) absent from its final vintage \u2014 the 930 repin rescales the total back to the measured 24.40 TWh; CISO NG: WAT includes PS net output (no separate PS series), the same like-for-like note as the envelope cap. No residual-tuned adder is armed in this run. The rule-1-sanctioned offer-curve tuning surface remains as disclosed in the free_parameters DOF ledger; no new fit was performed in or for this run. PLUS the single caiso-77 delta: caiso_firm_import_selfschedule=True \u2014 the firm/contracted import blocks become must-flow at their shaped capability (FINDING-caiso77-c1-cluster-firm-selfschedule-2026-07-11): in the real market the RA/LTC import blocks are self-scheduled or bid at/below $0/MWh (CPUC D.20-06-028 RA import must-offer; the DMM-documented revealed 4.3-5.9 GW self-scheduled base) and flow independent of the hourly spot spread, but the model priced them at two G-26 static-fitted Tier-3 contract-cost proxies ($28/$48) \u2014 a price gate that deleted the overnight/evening contracted base (model -0.6..-2.3 GW vs measured) and left CC_REGULAR running flat overnight (the C1 CC-over/CT-under cluster: same-fleet CAMPD +6.2/+11.2/+14.3 TWh over, 2023-25). The floor sets each firm tranche's hourly min_gen to pmax x availability \u2014 the published DMM RA-import x MIC-split level x the measured unit-mean revealed-base shape (the keeper's existing caiso-73 inputs, eford preserved) \u2014 the exact Manitoba/HQ firm must-flow pattern (MECH_FIRM_IMPORT: a contract, ablation-kept, D-2 exempt by construction). Zero fitted parameters: no tunable value is introduced; the two static-fitted firm prices can no longer set the margin (pmin = pmax), so the probe strictly REDUCES the fitted surface. Forward story: the DMM forward ladder level and the pooled climatology shape regenerate in any forecast year. DISCLOSED: the C2-2025 family metric may print further negative on the current bench basis, which is itself inconsistent with same-year CEMS (FINDING S2 cross-basis note; bench rework filed) \u2014 adjudicated against the CEMS same-fleet evidence, never tuned to. No residual-tuned adder is armed in this run. The rule-1-sanctioned offer-curve tuning surface remains as disclosed in the free_parameters DOF ledger; no new fit was performed in or for this run. PLUS the single caiso-78 delta, which is CODE-LEVEL, not a flag: the fleet_to_bins heat-rate/capacity-basis fix (FINDING-caiso78-cc-hr-basis-2026-07-12 S3). Under cc_nameplate_summer_derate (keeper-resolved True for CAISO) the plant base heat rate was divided by the nameplate-RESCALED capacity instead of the net-summer basis its capacity-weighted sum was accumulated on, deflating every CC plant's base heat rate \u2014 and every offer band built on it \u2014 by its own net-summer/nameplate ratio (Moss Landing -27%, Otay Mesa -17%, La Paloma -13%, the AES ECs -10/-11%; CAISO CC median -9%). The deflation was DIFFERENTIAL, scrambling the within-CC merit order: the C1 CC-over cluster is five deflated plants over-running (+1.9..+3.3 TWh each) with Pastoria, the least-deflated peer, under-running -1.7 TWh/yr in every year. Heat rate is an intensive measured property (the parquet value is the plant's real EIA/923 net heat rate, CEMS-consistent \u2014 Moss Landing 7.28 vs CEMS-gross 7.03); the deflation was an accounting error, not an estimate, so the fix is a rule-14 measured-input correction. Zero new free parameters, zero flags; the offer-curve multipliers are untouched (CAMPD-grounded RELATIVE bands, now multiplying the correct base). DISCLOSED counter-moves (pre-registered, FINDING S4): C3a/C3b print WORSE (the corrected marginal CC offer is ~10% higher \u2014 the deflated HR was silently compensating the body overprice, whose root cause stays an open lane), and the 930-family C2 rows may print further under while the CEMS same-fleet truth improves (adjudicated per the caiso-77 S5 posture). No residual-tuned adder is armed in this run. The rule-1-sanctioned offer-curve tuning surface remains as disclosed in the free_parameters DOF ledger; no new fit was performed in or for this run. PLUS the single caiso-80 delta: caiso_supply_consistent_demand=True (owner-signed Option A, FINDING-caiso80-demand-basis-wedge-2026-07-13 S6). The CISO EIA-930 Demand cell \u2014 the model's backcast demand input \u2014 carries the same fabricated solar-shaped block as the corrupt NG cell by the Demand = NetGen + TI identity (onset 2024-05), plus a ~6 TWh/yr flat CHP host-accounting wedge and the chronic 930 identity gap: +10.4/+11.6/+18.5 TWh/yr (2023/24/25) that the transmission-level grid fleet the model represents did not serve. The replacement series demand(t) = 930 NetGen(t) - NG_cell(t) + CEMS bench-gas grid(t) + cogen grid flat + geo/biomass fold-in flat - TI(t) (207.40/212.19/205.59 TWh) is a derived measured artifact (scripts/derive_caiso_supply_consistent_demand.py, guard-railed to the committed CEMS anchors and the FINDING S6 pre-registered windows) \u2014 every term measured, regenerates per year from source data, re-derives only on source updates (rule 23), never an output pinned back (rule 14). It makes the model's demand basis identical to the honest CEMS-anchored basis the run is scored against (the demand-side completion of the owner-signed bench rework). Zero new free parameters, zero fitted values; supersedes caiso_demand_clock_realign by construction (the series rides the generation frame's clock). Pre-registered directions and the disclosed 2023 soft-month risk are in the FINDING S6; LOYO is scored (the construction is year-specific measured data, so the caiso-78 code-fix LOYO exemption does NOT apply). No residual-tuned adder is armed in this run. PLUS the single caiso-85 delta: caiso_scarcity_import_headroom=True (FINDING-caiso-winter-gas-level-2026-07-15 S3). The CAISO post-solve scarcity overlay (caiso_scarcity_pricing, on in the recipe) gains the hourly UNLOADED must-offer import capability in its LOLP reserve measure \u2014 min( sum over import tranches of pmax*availability - import dispatch, the measured WECC corridor import cap - import dispatch (eia_loader.measured_corridor_flow_envelope, the same envelope the LP dispatches under) ). RA imports are must-offer and must exhaust before CAISO's power-balance penalty prices fire (CPUC D.20-06-028), so the overlay pricing scarcity while the LP holds unloaded sub-VOLL import supply is internally inconsistent \u2014 this closes that inconsistency. POST-SOLVE OVERLAY ONLY: the LP dispatch, volumes and C1/C2/C4 are byte-identical to the keeper (the bundle's tripwire); only the scarcity adder (hence C3a/C3c) moves. ZERO new free parameters, zero fitted values: the import capability is measured tranche pmax and the bound is the measured corridor envelope; nothing tuned to the price residual (rule 14). The DOF ledger is identical to the caiso-80 keeper (no scalar added). Year-invariant code-level change (caiso-78 precedent): no per-year LOYO needed."
+ },
+ "exceptions": [],
+ "free_parameters": {
+  "schema": "dof-ledger/v1",
+  "seeded": "2026-07-04 S5 governance session \u2014 audit \u00a73 class-C table + W1d residual-identified/forecast-risk markers (docs/model-legitimacy-audit-2026-07.md; CLAUDE.md rule 20) | carried to caiso-60 (P1-native RA bridge): identical config/DOF, P2 archived and the RA must-offer bridge moved to a P1-native min_gen floor (no new free parameters). | carried to caiso-65 (W3a envelope-clock fix, promoted 2026-07-07 owner decision): identical recipe/DOF; adds the two MEASURED clock-lag constants (entries below) - zero new free parameters (rule 23, drift-guarded). | carried to caiso-70 (G-61b de-crowding probe on the SP15 split, 2026-07-10): identical fitted surface with TWO subtractions and ZERO additions - (1) ct_netload_drag=False per-run override (the CAMPD-regressed hinge entry below is INERT in this run; the coefficients remain in code for ERCOT/PJM, scope doc Phase 2); (2) caiso_ra_bridge_startup_aware=True adds no free parameter (inputs are the model's own P0 solution + published class startup costs, rule 13/17 - caiso-63/66 precedent). The SP15-split pocket import links (LA_BASIN 12,008 MW / SDGE 1,436 MW) are measured LCT peak_load-LCR values (data/raw/capacity-deliverability/caiso/caiso.csv), zero fitted parameters, static tightest-year convention frozen per the scope doc. | carried to caiso-72 (hydro deliverability envelope probe, 2026-07-10): identical fitted surface with ZERO additions \u2014 hydro_dispatch_envelope=True adds no free parameter (inputs are the measured EIA-930 NG:WAT per-(month x hod) p95, percentile a cited constant HYDRO_ENVELOPE_PERCENTILE mirroring CAISO_CORRIDOR_FLOW_PERCENTILE; rule 13/14 measured capability envelope, FINDING-caiso72-step0-evening-displacement-2026-07-10). | carried to caiso-73 (shaped firm import base probe, 2026-07-10): identical fitted surface with ZERO additions \u2014 caiso_firm_import_shape=True adds no free parameter (level = the published DMM RA-import x MIC-split volumes already in IMPORT_TRANCHES_BY_YEAR; shape = measured EIA-930 per-(month x hod) median of total CISO corridor net imports, percentile a cited constant CAISO_FIRM_IMPORT_SHAPE_PERCENTILE=50 mirroring the corridor/hydro envelope precedent; unit-mean normalization conserves the DMM annual energy so the measured series contributes only the shape; rule 13/14 measured capability, FINDING-caiso72-hydro-envelope live lead #1, caiso-73 STEP-0 sizing in results/calibration/caiso73_step0_diag2024).",
+  "n_entries": 13,
+  "n_residual": 8,
+  "entries": [
+   {
+    "name": "offer_curve_by_group",
+    "where": "run_config.scenario_config.offer_curve_by_group",
+    "identification": "residual",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "value": {
+     "CC_REGULAR": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CC_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_CHP": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "CT_PEAKER": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "CT_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "ST_GAS_INTERMEDIATE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "pct_peaking",
+      "peak"
+     ],
+     "COAL_LIGNITE": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_PRB": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_BIT": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL_WC": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ],
+     "COAL": [
+      "committed",
+      "econ_high",
+      "econ_low",
+      "econ_low_share",
+      "peak"
+     ]
+    },
+    "n_scalars": 72,
+    "source": "per-group HR-band multipliers \u2014 the rule-#1-sanctioned offer-curve tuning surface (audit C-8/C-11/C-13)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "offer_curve_committed_below_floor[CAISO]",
+    "where": "run_config.scenario_config.offer_curve_by_group[*].committed",
+    "identification": "residual",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "value": {
+     "ST_GAS": 0.81
+    },
+    "n_scalars": 1,
+    "source": "committed-tranche multiplier(s) below the audit \u00a72 0.85 physical-floor flag with no written rationale in the config \u2014 pulled out of the R6 bulk offer-curve population per plan \u00a72.1 (docs/handoffs/scalar-remediation-plan-2026-07.md)",
+    "root_cause": "open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1302 (per-ISO evening-merit-style diagnosis before any value is touched \u2014 rules #1/#18/#19/#26 apply, no blanket fix)"
+   },
+   {
+    "name": "offer_curve_smoothing",
+    "where": "run_config.scenario_config.offer_curve_smoothing_*",
+    "identification": "residual",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "value": {
+     "offer_curve_smoothing_n": 6,
+     "offer_curve_smoothing_exp": 1.0
+    },
+    "n_scalars": 2,
+    "source": "econ-ramp shape of the offer curve (rule-#1 scope)",
+    "root_cause": "identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "COAL_SIGMOID_DEFAULTS[CAISO]",
+    "where": "scenarios.py COAL_SIGMOID_DEFAULTS (engaged via coal_prb_passthrough_sigmoid)",
+    "identification": "residual",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "n_scalars": 4,
+    "source": "gas-keyed coal passthrough sigmoids \u2014 the largest fitted surface (audit C-1); owner-sanctioned under rule #1",
+    "root_cause": "weakly identified: each asymptote is pinned by a single gas regime (floor by 2024, gas_mid/ceil by 2025 \u2014 docs/out-of-sample-results-2026-07.md \u00a72C); open: literature/physical anchoring of floor/ceil, plus identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "wefor_multiplier",
+    "where": "run_config.scenario_config.wefor_multiplier",
+    "identification": "residual",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "value": 0.7,
+    "source": "wind EFOR haircut (audit C-15) \u2014 the name admits residual identification; stated purpose is coal shoulder-month generation",
+    "root_cause": "audit C-15 open item: replace with a measured wind availability/curtailment input or delete; identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "CAISO_TAC_ZONE_WEIGHTS['PGE-TAC']",
+    "where": "constants.py CAISO_TAC_ZONE_WEIGHTS",
+    "identification": "residual",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "value": {
+     "NP15": 0.86,
+     "ZP26": 0.14
+    },
+    "source": "PG&E TAC load split across Path 15 \u2014 preserves a prior ratio of unverified provenance (audit C-16; W1d marker). B-CAI-1 intake attempt (2026-07-05): FERC-714 unreachable (403/502 via proxy); CEC reachable but planning-area geography (PG&E Bay Area / PG&E Valley) is boundary-mismatched to Path 15 (rule-14); the direct NP15/ZP26 zonal load lives in CAISO OASIS (unreachable at the time \u2014 needs fetch-caiso-oasis.yml). RE-CHECKED 2026-07-07 (G-26 scalar sweep): OASIS (oasis.caiso.com SingleZip) IS now reachable \u2014 a SLD_FCST/ACTUAL zipped-XML load file fetched successfully, contradicting the 2026-07-05 finding. Re-opened as actionable; still not done (finding the NP15/ZP26 sub-TAC report + parse + validate is a data-intake project, not this session's scope). No refit.",
+    "root_cause": "audit C-16: refine when NP15/ZP26 zonal load lands via the OASIS fetch workflow (rule-23 trigger; OASIS confirmed reachable 2026-07-07, unblocking that workflow); open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1372"
+   },
+   {
+    "name": "WECC_import_simultaneous.cap_mw",
+    "where": "iso_configs.py CAISO interface_limits (fallback; capacity_deliverability_limits OFF only)",
+    "identification": "residual",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "value": 7500.0,
+    "source": "fitted aggregate WECC import cap \u2014 SUPERSEDED in the caiso-51 keeper by the published branch-group MIC sum (16,055/16,452/16,148 MW 2023/24/25) + measured p95 corridor envelopes (docs/caiso-c5-wecc-cap-closeout-2026-07-03.md). Not in the keeper binding path; governs the forecast / non-deliverability path only.",
+    "root_cause": "O-1 forecast/backcast parity: the fitted 7,500 still caps forecast-mode imports \u2014 re-ground the default on the published MIC/SIL or enable deliverability part-A in forecast; open: https://github.com/jessicacohen554-cyber/market-simulator/issues/1373"
+   },
+   {
+    "name": "CAISO_BIDIR_EXPORT_CAP_MW",
+    "where": "transmission.py (fallback; caiso_bidir_intertie only)",
+    "identification": "measured-physical",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "value": 4361.0,
+    "source": "aggregate WECC export-direction capability ceiling, re-derived from EIA-930 CISO net-interchange (the realized ATC proxy; OASIS unreachable) at the corridor mechanism's own p95 peak-bucket convention, 2023-2025 (2026 holdout excluded, rule 22); frozen scripts/derive_caiso_export_cap.py. rule-23 source-data change: the caiso-51 keeper measured export envelopes.",
+    "note": "fallback-only (superseded by caiso_per_hub_intertie); refresh against a true OASIS export-ATC pull, or R5-delete the caiso_bidir_intertie mechanism (rule 26); tracked in https://github.com/jessicacohen554-cyber/market-simulator/issues/1373"
+   },
+   {
+    "name": "ct_netload_drag hinge coefficients",
+    "where": "ScenarioConfig drag defaults (CAMPD-regressed hinge)",
+    "identification": "measured-physical",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "source": "net-load->CT commitment hinge regressed from CAMPD (the template mechanism, audit \u00a72)",
+    "note": "D-8 flags weak identification for CAISO: slope drifts +18% leave-2025-out and the floor ~= measured CT energy (docs/out-of-sample-results-2026-07.md \u00a72A) \u2014 re-derive only on source-data updates (rule 23) | caiso-70: mechanism DISARMED in this run (ct_netload_drag=False per-run override); entry retained because the coefficients still exist in code for other ISOs (rule 25 cleanup deferred to keeper promotion, scope doc Phase 2)."
+   },
+   {
+    "name": "reliability_floor coefficients",
+    "where": "data/raw/reference/reliability_floor_coeffs_CAISO.csv",
+    "identification": "measured-physical",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "source": "temperature/net-load day-gated commitment floors, CAMPD-derived (frozen derive script); the three Spearman-rho sign-flip limbs are R1-disabled (r1_disabled=True, ships off)",
+    "note": "D-8 \u00a72B: the three sign-flip limbs (PJM ComEd/CC_REGULAR, CAISO SP15/ST_GAS + SP15/CC_REGULAR tmax) were UNIDENTIFIED out-of-training and are now permanently disabled under rule R1 (B-LIMB-1; derive R1_DISABLED_LIMBS). Remaining R6-keep drift limbs (drift >gate, no sign flip): ERCOT Houston CT +13.5%, PJM EMAAC ST_GAS +35.8%, SWMAAC CT -15.6%, ATSI rho-decay limbs \u2014 kept enabled with this caveat; re-derive trigger is the 2026 CAMPD publication (a source-data change), never a residual (rule 23)"
+   },
+   {
+    "name": "IMPORT_TRANCHES/EXPORT_TRANCHES[CAISO]",
+    "where": "interchange_config.py per-ISO seam supply-curve ladders",
+    "identification": "residual",
+    "lineage_solves": ">=52 solves (audit \u00a75.1 + caiso-51/52)",
+    "source": "fitted seam price/volume ladders (audit C-6/L7/L8); CAISO's keeper supersedes the fitted ladder with measured hub prices on the binding path but the static ladder remains the fallback; NEISO closed this item (see the NEISO-only entry, measured-physical) \u2014 remaining scope for this item is NYISO/PJM/MISO/CAISO's static ladder",
+    "root_cause": "audit C-6/#1350 open item: replace year-keyed rungs with measured hub prices / published wheeling costs per seam, following the NEISO precedent (scripts/derive_neiso_import_tranches.py); identified in-sample only (2023-2025); no held-out validation exists \u2014 open: the one-shot D-6 holdout score (CLAUDE.md rule 22) and the D-7 statistical-mode gap reported on the Calibration Status page"
+   },
+   {
+    "name": "_CAISO_INTERCHANGE_LAG_STD_H",
+    "where": "data/eia_loader.py (per-DIBA stamp -> model-clock correction, corridor envelope)",
+    "identification": "measured-physical",
+    "lineage_solves": "0 (lag-scan identified, never solve-tuned)",
+    "value": 1,
+    "source": "standard-time lag of the CISO per-DIBA interchange stamps vs the model hourly frame: best lag -1 h, corr 0.972 vs 0.930 runner-up (2023-2025); absolute frame anchored by January solar astronomy and the 2024-04-08 eclipse dip. FINDING-caiso-seam-tz-correction-2026-07-07 \u00a72.",
+    "note": "rule-23 frozen: re-derives only from the lag scan in scripts/validate_caiso_seam_hod_frame.py, which FAILS if the parquet's stamps change (an honest re-fetch retires this constant, rule 26)."
+   },
+   {
+    "name": "_CAISO_INTERCHANGE_LAG_DST_H",
+    "where": "data/eia_loader.py (per-DIBA stamp -> model-clock correction, corridor envelope)",
+    "identification": "measured-physical",
+    "lineage_solves": "0 (lag-scan identified, never solve-tuned)",
+    "value": 2,
+    "source": "daylight-time lag of the CISO per-DIBA interchange stamps vs the model hourly frame: best lag -2 h, corr 0.961 vs 0.919 runner-up (2023-2025); same anchors as the standard-time entry.",
+    "note": "rule-23 frozen: same guard as _CAISO_INTERCHANGE_LAG_STD_H; the pair is one measured correction, not two tunables."
+   }
+  ]
+ }
+}
