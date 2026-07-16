@@ -50,6 +50,7 @@ import json
 import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
+from types import SimpleNamespace
 
 from market_sim.config.constants import (
     EFORD,
@@ -75,7 +76,13 @@ HINDCAST_ROOT = Path("results/hindcast")
 CURVE_ISOS = ("PJM", "NYISO", "NEISO", "MISO")
 
 # Non-ERCOT capacity hindcasts that exist today (plan §1 D10). ERCOT is energy-only.
-HINDCAST_RUNS = {"PJM": "pjm-2021-2025-realized"}
+# Override or extend per invocation with --pass2-run ISO=<run dir name|path>
+# (the RC-1A probe-fleet restatements, plan §3 T-R4). MISO added 2026-07-16
+# (RC-1A) — its committed hindcast landed 2026-07-14.
+HINDCAST_RUNS = {
+    "PJM": "pjm-2021-2025-realized",
+    "MISO": "miso-2021-2025-realized",
+}
 
 
 # --------------------------------------------------------------------------- #
@@ -748,13 +755,37 @@ def _restate_firm_on_adopted_basis(iso: str, led: dict, firm_old: float) -> floa
     return thermal_new + non_thermal_firm
 
 
-def run_pass2(iso: str) -> list[Pass2Row]:
-    run = HINDCAST_RUNS.get(iso)
+def run_pass2(
+    iso: str, run: str | None = None, adopted_basis_ledger: bool = False
+) -> list[Pass2Row]:
+    """Pass 2 rows for ``iso``'s hindcast fleet.
+
+    ``run`` overrides the committed default in :data:`HINDCAST_RUNS` — a bare
+    name resolves under ``results/hindcast/``; a value containing a path
+    separator is used as a path directly (the RC-1A probe-leg restatements).
+
+    ``adopted_basis_ledger``: the committed pre-N-5 bundles froze their
+    ``reserve_margin`` on the legacy (1−EFORd)-UCAP supply basis, so Pass 2
+    devintages them through :func:`_restate_firm_on_adopted_basis`. A bundle
+    produced at HEAD (post-N-5 runner) already writes
+    ``accredited_firm_capacity_mw`` — the adopted ELCC/FPR basis — into
+    ``reserve_margin``, so restating it double-derates the thermal block
+    (~25 GW low on PJM). Pass ``True`` for HEAD-produced bundles (the RC-1A
+    legs): firm is read back as ``peak × (1 + reserve_margin)``, the
+    base-year placeholder row (``reserve_margin ≈ −1``) is skipped, and the
+    model price is taken from the REAL pricing seam
+    (:meth:`MarketDesign.capacity_price_per_firm_mw_yr` with ``iso``/``year``
+    threaded) so gate, eligibility, vintage, and the MISO seasonal RBDC grain
+    price exactly as the runner's screens do.
+    """
+    run = run or HINDCAST_RUNS.get(iso)
     if not run:
         return []
-    ledgers = sorted((HINDCAST_ROOT / run).glob(f"{iso}/*/evolution_*.json"))
+    run_root = Path(run) if "/" in str(run) else HINDCAST_ROOT / run
+    ledgers = sorted(run_root.glob(f"{iso}/*/evolution_*.json"))
     prices = system_clearing_prices(iso)
     cfg = ScenarioConfig(iso=iso)
+    gate_on = SimpleNamespace(capacity_market_clearing=True)
     out: list[Pass2Row] = []
     for lp in ledgers:
         led = json.loads(lp.read_text())
@@ -762,16 +793,31 @@ def run_pass2(iso: str) -> list[Pass2Row]:
             continue
         cal = int(led["year"])
         peak = float(led["peak_demand_mw"])
-        # Firm: restate the frozen ledger's thermal block on the adopted ELCC
-        # class-rating basis (R3); requirement: devintage onto the published
-        # FPR of the matching delivery year (R2, via the threaded calendar
-        # year). Both pick up the migration without an LP re-solve.
-        firm = _restate_firm_on_adopted_basis(
-            iso, led, peak * (1.0 + float(led["reserve_margin"]))
-        )
+        rm = float(led["reserve_margin"])
+        if adopted_basis_ledger:
+            if rm <= -0.9:  # base-year placeholder (no prior pools)
+                continue
+            firm = peak * (1.0 + rm)
+        else:
+            # Firm: restate the frozen (pre-N-5) ledger's thermal block on the
+            # adopted ELCC class-rating basis (R3); requirement: devintage
+            # onto the published FPR of the matching delivery year (R2, via
+            # the threaded calendar year). Both pick up the migration without
+            # an LP re-solve.
+            firm = _restate_firm_on_adopted_basis(iso, led, peak * (1.0 + rm))
         req = resolve_adequacy_requirement_mw(cfg, iso, peak, cal)
         pos = firm / req if req > 0 else float("nan")
-        mp = model_curve_price_kw_yr(iso, pos)
+        if adopted_basis_ledger:
+            # Price through the real seam (gate + eligibility + vintage +
+            # seasonal RBDC), $/firm-MW-yr → $/kW-yr.
+            mp = (
+                MARKET_DESIGN[iso].capacity_price_per_firm_mw_yr(
+                    gate_on, pos, iso=iso, year=cal
+                )
+                / 1000.0
+            )
+        else:
+            mp = model_curve_price_kw_yr(iso, pos)
         dy = canon_year(f"{cal}/{cal + 1}")
         pr = prices.get(dy)
         resid = (mp - pr["price_kw_yr"]) if pr else None
@@ -994,13 +1040,27 @@ def render_miso_seasonal(mp: dict) -> str:
     return "\n".join(out)
 
 
-def render_markdown(report: dict) -> str:
+def render_markdown(
+    report: dict,
+    pass2_runs: dict[str, str] | None = None,
+    pass2_adopted_basis: bool = False,
+) -> str:
+    pass2_runs = pass2_runs or {}
+
+    def _pass2(iso: str) -> list[Pass2Row]:
+        override = pass2_runs.get(iso)
+        return run_pass2(
+            iso,
+            override,
+            adopted_basis_ledger=pass2_adopted_basis and override is not None,
+        )
+
     out: list[str] = []
     for iso in CURVE_ISOS:
         if iso == "MISO":
             out.append(render_miso_seasonal(report["miso_seasonal_pass1"]))
             out.append("")
-            out.append(render_pass2(iso, run_pass2(iso)))
+            out.append(render_pass2(iso, _pass2(iso)))
             out.append("")
             continue
         if iso == "NYISO":
@@ -1008,7 +1068,7 @@ def render_markdown(report: dict) -> str:
             out.append("")
         out.append(render_pass1(iso, run_pass1(iso)))
         out.append("")
-        out.append(render_pass2(iso, run_pass2(iso)))
+        out.append(render_pass2(iso, _pass2(iso)))
         out.append("")
     reg = report["pjm_regime"]
     out += [
@@ -1036,7 +1096,9 @@ def render_markdown(report: dict) -> str:
 # --------------------------------------------------------------------------- #
 # Main
 # --------------------------------------------------------------------------- #
-def build_report() -> dict:
+def build_report(
+    pass2_runs: dict[str, str] | None = None, pass2_adopted_basis: bool = False
+) -> dict:
     report: dict = {
         "passes": {},
         # RC-1C curve-eligibility (the governance gate the model screens read):
@@ -1055,9 +1117,17 @@ def build_report() -> dict:
         },
     }
     for iso in CURVE_ISOS:
+        override = (pass2_runs or {}).get(iso)
         report["passes"][iso] = {
             "pass1": [asdict(r) for r in run_pass1(iso)],
-            "pass2": [asdict(r) for r in run_pass2(iso)],
+            "pass2": [
+                asdict(r)
+                for r in run_pass2(
+                    iso,
+                    override,
+                    adopted_basis_ledger=pass2_adopted_basis and override is not None,
+                )
+            ],
         }
     return report
 
@@ -1070,14 +1140,52 @@ def main(argv: list[str] | None = None) -> int:
         default=Path("results/capacity-price-validation/validation.json"),
     )
     ap.add_argument("--markdown", action="store_true")
+    ap.add_argument(
+        "--pass2-run",
+        action="append",
+        default=[],
+        metavar="ISO=RUN",
+        help=(
+            "Override the Pass-2 hindcast run for an ISO (repeatable), e.g. "
+            "--pass2-run PJM=results/hindcast/pjm-2021-2025-realized-cmc-probe. "
+            "A bare name resolves under results/hindcast/. Restates the named "
+            "fleet's ledger on the adopted basis (RC-1A probe legs, plan §3 "
+            "T-R4); never a re-tune."
+        ),
+    )
+    ap.add_argument(
+        "--pass2-adopted-basis",
+        action="store_true",
+        help=(
+            "Treat every --pass2-run override bundle as HEAD-produced: its "
+            "ledger reserve_margin already carries the adopted "
+            "(accredited_firm_capacity_mw, post-N-5) basis, so firm is read "
+            "back directly instead of re-restating (which double-derates the "
+            "thermal block), and the model price is taken from the real "
+            "pricing seam (gate + eligibility + vintage + seasonal RBDC). The "
+            "committed pre-N-5 defaults are unaffected."
+        ),
+    )
     args = ap.parse_args(argv)
 
-    report = build_report()
+    pass2_runs: dict[str, str] = {}
+    for spec in args.pass2_run:
+        iso, _, run = spec.partition("=")
+        if not run:
+            ap.error(f"--pass2-run expects ISO=RUN, got {spec!r}")
+        pass2_runs[iso.upper()] = run
+
+    report = build_report(pass2_runs, pass2_adopted_basis=args.pass2_adopted_basis)
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(report, indent=2, default=str))
     print(f"wrote {args.out}")
     if args.markdown:
-        print("\n" + render_markdown(report))
+        print(
+            "\n"
+            + render_markdown(
+                report, pass2_runs, pass2_adopted_basis=args.pass2_adopted_basis
+            )
+        )
     return 0
 
 
