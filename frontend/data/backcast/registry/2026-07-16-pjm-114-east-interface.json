@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-16-pjm-114-east-interface",
+  "label": "pjm 114 east interface",
+  "date": "2026-07-16",
+  "shorthand": "pjm-114-east-interface",
+  "definition": "PJM cong-1: the pjm-113 keeper recipe with EXACTLY the measured EAST interface cut armed \u2014 pjm_east_interface_cut (one one-sided hourly aggregate group capping the joint Central_PA->EMAAC + SWMAAC->EMAAC flow at PJM's published Average Eastern reactive-interface limit; Manual 03 \u00a73.8 identity verified, diagnosis \u00a710.3), on the corrected 5004/5005 crosswalk (the mis-attributed ComEd->AEP entries removed \u2014 primary-source data-integrity fix). Zero fitted scalars; no constant touched. Gate pre-committed in diagnosis \u00a710.6 before any solve.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "PJM",
+  "file": "frontend/data/backcast/runs/2026-07-16-pjm-114-east-interface.js",
+  "bundle": "results/calibration/pjmcong1_east_cut"
+}
