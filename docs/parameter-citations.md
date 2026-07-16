@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1350 parameters registered** (750 flagged `needs-citation`).
+**1350 parameters registered** (749 flagged `needs-citation`).
 
 
 ## Calibration
@@ -704,7 +704,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.retirement_fom_multiplier_gas_st` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_nuclear` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_oil` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
-| `scenario.retirement_years_coal` | 1 | 2 | coal retires after 1 unprofitable year |  | auto-generated, needs-citation |
+| `scenario.retirement_years_coal` | 3 | 2 | Measured EIA-860 announced-to-deactivation lag for coal (RE-status … | 2026-07-15 | curated |
 | `scenario.retirement_years_gas_cc` | 3 | 2 | modern CCs get 3 years (most flexible/valuable) |  | auto-generated, needs-citation |
 | `scenario.retirement_years_gas_ct` | 2 | 2 | CTs get 2 years |  | auto-generated, needs-citation |
 | `scenario.retirement_years_gas_st` | 2 | 2 | legacy gas steam — same grace as a CT |  | auto-generated, needs-citation |
