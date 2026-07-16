@@ -41,7 +41,17 @@ Estimation-stage honesty gates (caiso-81 precedent — run BEFORE any solve)
 If either gate fails the script prints FAIL and the caller files the FINDING and
 does NOT solve (the derive-first discipline). No LP is run here.
 
-Usage: python scripts/derive_caiso_import_tranches.py
+Partial-ladder mode (``--partial``, the caiso-86 FINDING §4 disposition): the
+full five-rung ladder FAILED the gates solely on DSW_solar_PV (CV 0.99 — the
+volatile low-tail solar-glut quantile; FINDING-caiso86-import-ladder-gates-
+2026-07-15 §3). ``--partial`` scores the gates on the four structurally-stable
+rungs only (PNW_hydro_base, PNW_midC, DSW_CCGT, DSW_CT); DSW_solar_PV is still
+derived and printed for the record but EXCLUDED from gating because in the
+partial design it keeps its existing static value as an explicitly-labelled
+price-taker floor rather than taking a derived price. A partial-mode PASS
+admits ONLY the four-rung measured swap, never the solar rung.
+
+Usage: python scripts/derive_caiso_import_tranches.py [--partial]
 """
 
 from __future__ import annotations
@@ -84,6 +94,11 @@ RUNGS = {
 # Honesty-gate thresholds.
 CV_MAX = 0.20  # per-rung price coefficient of variation across years
 LOYO_MAX = 0.25  # held-out relative price error
+
+# Rungs excluded from gating in --partial mode: they keep their static value as
+# an explicitly-labelled price-taker floor instead of a derived price (caiso-86
+# FINDING §4), so their derived-price stability is not load-bearing.
+PARTIAL_EXCLUDED = ("DSW_solar_PV",)
 
 
 def corridor_net_import() -> pd.DataFrame:
@@ -144,14 +159,18 @@ def derive_year(net: pd.DataFrame, hub: pd.DataFrame, years) -> dict[str, float]
 
 
 def main() -> None:
+    partial = "--partial" in sys.argv[1:]
     net = corridor_net_import()
     hub = hub_prices()
 
     # Per-year derived rungs.
     per_year = {y: derive_year(net, hub, [y]) for y in YEARS}
     names = list(next(iter(per_year.values())).keys())
+    gated = [nm for nm in names if not (partial and nm in PARTIAL_EXCLUDED)]
 
+    mode = "PARTIAL four-rung (caiso-86 FINDING §4)" if partial else "FULL ladder"
     print("=== per-year derived rung prices ($/MWh, Q-Q duration coupling) ===")
+    print(f"    gate mode: {mode}")
     hdr = "rung".ljust(16) + "".join(f"{y:>10}" for y in YEARS) + "     CV   gate"
     print(hdr)
     stability_ok = True
@@ -162,9 +181,12 @@ def main() -> None:
             if np.nanmean(vals)
             else float("nan")
         )
+        row = nm.ljust(16) + "".join(f"{v:>10.1f}" for v in vals)
+        if nm not in gated:
+            print(f"{row}   {cv:>5.2f}   excluded (static price-taker floor)")
+            continue
         ok = np.isfinite(cv) and cv <= CV_MAX
         stability_ok = stability_ok and ok
-        row = nm.ljust(16) + "".join(f"{v:>10.1f}" for v in vals)
         print(f"{row}   {cv:>5.2f}   {'ok' if ok else 'FAIL'}")
 
     # LOYO: derive on the other two years, predict the held-out year.
@@ -175,7 +197,7 @@ def main() -> None:
         pred = derive_year(net, hub, train)
         act = per_year[held]
         errs = []
-        for nm in names:
+        for nm in gated:
             a, p = act[nm], pred[nm]
             if np.isfinite(a) and np.isfinite(p) and a:
                 errs.append(abs(p - a) / abs(a))
@@ -187,6 +209,7 @@ def main() -> None:
         )
 
     print("\n=== GATE VERDICT ===")
+    print(f"  gate mode: {mode} ({len(gated)}/{len(names)} rungs gated)")
     print(f"  year-stability (CV<= {CV_MAX}): {'PASS' if stability_ok else 'FAIL'}")
     print(f"  LOYO (worst<= {LOYO_MAX:.0%}):     {'PASS' if loyo_ok else 'FAIL'}")
     passed = stability_ok and loyo_ok
