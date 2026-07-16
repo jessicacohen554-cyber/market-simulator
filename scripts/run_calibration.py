@@ -112,6 +112,7 @@ from market_sim.pipeline import (  # noqa: E402
     backcast_config,
     build_base_dispatch_kwargs,
     build_caiso_ra_p1_prep,
+    build_caiso_reserve_p1_prep,
     build_ercot_gas_bridge_p1_preps,
     build_pjm_reserve_p1_prep,
     run_commitment_pass,
@@ -3650,6 +3651,13 @@ def run_year(
     pjm_fleet_prep, pjm_kwargs_prep = build_pjm_reserve_p1_prep(
         config, iso, fleet_arrays
     )
+    # P1-native CAISO online-scoped reserve split (caiso_reserve_online_scoped):
+    # the kwargs hook recomputes the (2*n_r, T) spin/non-spin product-split
+    # ramp caps from the P0 run pattern — SPIN scoped to online iron, NONSPIN
+    # to offline fast-start (pipeline.commitment.caiso_pergen_sync_reserve_caps).
+    # None for every non-CAISO / gate-off run (byte-identical); ISO-exclusive
+    # with the PJM kwargs hook. Composes with the CAISO RA-bridge fleet hook.
+    caiso_reserve_kwargs_prep = build_caiso_reserve_p1_prep(config, iso, fleet_arrays)
     _t_solve_start = time.perf_counter()
     energy_solve = run_energy_solve(
         fleet,
@@ -3660,7 +3668,7 @@ def run_year(
         config,
         xyear_cache=xyear_cache,
         p1_fleet_prep=ra_p1_prep or ercot_bridge_prep or pjm_fleet_prep,
-        p1_kwargs_prep=pjm_kwargs_prep,
+        p1_kwargs_prep=pjm_kwargs_prep or caiso_reserve_kwargs_prep,
         mc_bid_adjust=offer_surface_mc_bid_adjust,
         # The v2 lowcurve and the ERCOT-64 floor-scoped bid hooks are mutually
         # exclusive (rule 19, enforced at build_ercot_gas_bridge_p1_preps), so
