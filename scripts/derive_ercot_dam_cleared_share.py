@@ -92,6 +92,16 @@ CLASS_OF_RESTYPE: dict[str, str] = {
     "CCLE90": "CC",
     "SCGT90": "CT",
     "SCLE90": "CT",
+    # ERCOT-77 (drag-lane steam participation cliff, 2026-07-17 charter):
+    # the legacy gas-STEAM class, added as a NEW derived class from the SAME
+    # frozen disclosure source (rule 23 — an extension deriving a new class,
+    # not a residual re-tune; the CC/CT tables above re-derive byte-identical).
+    # ERCOT-73 leg c measured the steam version of the no-must-offer cliff on
+    # the May-2024 shoulder family: live HSL 5.9 GW vs 1.2 GW DA-cleared
+    # (share 0.20), ~half of live resource-hours declared OFF in the DAM.
+    "GSREH": "ST",
+    "GSNONR": "ST",
+    "GSSUP": "ST",
 }
 
 # Net-load percentile bin edges. Finer than the peak surface's (0.80/0.90/0.97):
@@ -338,6 +348,7 @@ def main() -> None:
             "classes": {
                 "CC": ["CCGT90", "CCLE90"],
                 "CT": ["SCGT90", "SCLE90"],
+                "ST": ["GSREH", "GSNONR", "GSSUP"],
             },
             "frozen": (
                 "rule 23 — re-derive only on a disclosure source-data update, "
