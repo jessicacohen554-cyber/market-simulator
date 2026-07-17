@@ -577,28 +577,61 @@ def check_i11_one_pass(run: Run) -> Result:
 
 
 def check_i12_reserve_margin(run: Run) -> Result:
-    """I12: reserve margin within [floor, floor + band] each year."""
-    floor = run.config.planning_reserve_margin
-    hi = floor + T.reserve_margin_band_pp
+    """I12: reserve margin within [floor, floor + band] each year.
+
+    The floor is market-design-dependent, mirroring I7 (of which this check
+    is the over-build derivative — W1-B F4: the ledger ``reserve_margin`` is
+    stated on the model's own accreditation basis, ``accredited_firm / peak
+    − 1``, so measuring it against the generic ICAP-ish scalar band carries
+    no information for a capacity-market ISO whose UCAP-basis margin is
+    structurally negative):
+
+    * **Capacity-market ISOs** — per-year floor = the model's own
+      requirement-implied margin, ``resolve_adequacy_requirement_mw / peak −
+      1`` — the same quantity I7 floors on, stated as a margin. The band
+      then adds ``reserve_margin_band_pp`` of headroom on top, so I12's only
+      independent signal is sustained over-procurement (the BLK-10 backstop
+      over-build class), exactly as it is for energy-only ISOs.
+    * **Energy-only ISOs** (ERCOT) — the legacy scalar floor
+      (``config.planning_reserve_margin``), byte-identical to the pre-W2-D
+      behaviour.
+    """
+    design = MARKET_DESIGN.get(run.iso, DEFAULT_MARKET_DESIGN)
+    scalar_floor = run.config.planning_reserve_margin
     out_years: list[int] = []
     detail: list[str] = []
+    bands: list[str] = []
     for year in sorted(run.ledgers):
-        rm = run.ledgers[year].get("reserve_margin")
+        led = run.ledgers[year]
+        rm = led.get("reserve_margin")
         if rm is None:
             continue
+        if design.capacity_market:
+            peak = led.get("peak_demand_mw")
+            if peak is None or peak <= 0.0:
+                continue  # no firm-capacity accounting persisted this year
+            floor = (
+                resolve_adequacy_requirement_mw(run.config, run.iso, peak) / peak - 1.0
+            )
+        else:
+            floor = scalar_floor
+        hi = floor + T.reserve_margin_band_pp
+        if not bands:
+            bands.append(f"[{floor:.1%}, {hi:.1%}]")
         if rm < floor - 1e-6 or rm > hi + 1e-6:
             out_years.append(year)
-            detail.append(f"{year}:{rm:.1%}")
+            detail.append(f"{year}:{rm:.1%} (band [{floor:.1%}, {hi:.1%}])")
     # FAIL only on a sustained excursion.
     consec = _max_consecutive(out_years)
     status = PASS
     if out_years:
         status = FAIL if consec >= T.reserve_margin_consecutive_fail else WARN
+    basis = "requirement-implied floor" if design.capacity_market else "scalar floor"
     return Result(
         "I12",
         "reserve-margin band",
         status,
-        f"band [{floor:.1%}, {hi:.1%}]; "
+        f"{basis} {bands[0] if bands else '[n/a]'}; "
         + ("all in-band" if not detail else "out: " + ", ".join(detail)),
     )
 
