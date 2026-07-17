@@ -264,13 +264,17 @@ class ScenarioConfig:
     # gas CC whose CI clears the eligibility threshold below. Validated in
     # __post_init__. The v1 "unabated_fossil_eligible" boolean is subsumed by
     # this mode choice — it does not exist.
-    federal_ces_ccs_capture_fraction: float = 0.90  # Policy-assumed capture
-    # crediting for abated gas in clean_capture mode (owner simplification:
-    # "assume 90 or 95% capture for simplicity" — 0.90 default, 0.95 the
-    # sensitivity; plan §1). DISTINCT from the engineering ccs_capture_rate /
+    federal_ces_ccs_capture_fraction: float = 0.95  # Policy-assumed capture
+    # crediting for abated gas in clean_capture mode (owner Q4 decision
+    # 2026-07-17, plan §11: 0.95 = the target capture rate; 0.90 stays the
+    # labeled sensitivity — W1-A merged at 0.90 pre-Q4, flipped in W2-A
+    # task 0). DISTINCT from the engineering ccs_capture_rate /
     # ccs_retrofit_capture_rate fields, which set a unit's physical residual
     # CI — this field only sets how many certificates a credited abated-gas
-    # MWh earns. W1-C reconciles/documents the relationship (plan §11.4).
+    # MWh earns; at 0.95 the certificate credits more abatement than the
+    # 0.90 engineering fields produce (documented policy divergence,
+    # ces-ci-crediting-audit-2026-07.md §3), and it is INERT under cesa_ci
+    # (that mode reads the unit's residual CI directly).
     federal_ces_ci_benchmark_t_per_mwh: float = 0.82  # tCO2/MWh benchmark of
     # the cesa_ci crediting formula. Source: Clean Energy Standard Act,
     # S.1359 (116th Cong.); Bingaman CES Act S.2146 (112th Cong.). Used by

@@ -28,11 +28,16 @@ plan §1 of ``docs/handoffs/national-ces-eac-premium-plan-2026-07.md``):
 
 All premiums are real 2026$/MWh (model-wide convention,
 ``constants.REAL_DOLLAR_BASE_YEAR``); a constant real premium tracks
-inflation in nominal terms automatically. As of Wave 1-A this module has
-no consumers — the dispatch/capacity wiring is W2-A (plan §5.3) — so the
-whole block is solver-inert by construction; with
-``federal_ces_enabled=False`` every resolver below returns zeros or the
-legacy ``eac_price_*`` values unchanged.
+inflation in nominal terms automatically. Consumers (wired in W2-A, plan
+§5.3): the dispatch cost vector (``policy.eac.apply_eac_to_mc`` /
+``compute_eac_dispatch_credits``), the economic-retirement screen and
+both new-entry screens (``model.capacity``), and the state-RPS-row
+suppression counterfactual (``runner``). The CCS-retrofit screen is
+deliberately NOT a consumer yet — its whole economics are redesigned in
+W2-C (plan §11) and it keeps its legacy ``eac_price_gas_cc_ccs`` input
+until then. With ``federal_ces_enabled=False`` every resolver below
+returns zeros or the legacy ``eac_price_*`` values unchanged, keeping
+dispatch bytes and cache keys identical to the pre-CES model.
 """
 
 from __future__ import annotations
@@ -54,7 +59,7 @@ _TECH_FUEL_ALIASES: dict[str, str] = {
 }
 
 
-def premium_for_year(config: ScenarioConfig, year: int) -> float:
+def premium_for_year(config: ScenarioConfig, year: int | None) -> float:
     """Return the federal CES premium in real 2026$/MWh for a model year.
 
     Resolution order (plan §5.2 / D3):
@@ -74,13 +79,26 @@ def premium_for_year(config: ScenarioConfig, year: int) -> float:
 
     Args:
         config: Scenario config supplying the ``federal_ces_*`` fields.
-        year: Simulation year the premium applies to.
+        year: Simulation year the premium applies to. ``None`` is legal
+            only while the CES is disabled (legacy pre-W2-A callers that
+            never threaded a year): an enabled CES with no year raises
+            rather than silently mispricing the premium — a channel that
+            silently fails to deliver is the ERCOT-65 defect class.
 
     Returns:
         The premium in real 2026$/MWh; ``0.0`` when the CES is disabled.
+
+    Raises:
+        ValueError: If the CES is enabled and ``year`` is ``None``.
     """
     if not config.federal_ces_enabled:
         return 0.0
+    if year is None:
+        raise ValueError(
+            "federal_ces_enabled requires a simulation year to resolve the "
+            "premium path; this call site predates the W2-A year threading "
+            "(plan §5.3) — pass the solve year through"
+        )
 
     knots_raw = config.federal_ces_premium_by_year
     if knots_raw:
@@ -182,6 +200,63 @@ def unit_credit_fractions(config: ScenarioConfig, fleet: FleetArrays) -> np.ndar
     return np.where(eligible | unabated_cc_credited, cesa, 0.0)
 
 
+def unit_credit_fraction(
+    config: ScenarioConfig, fuel_type: str, emission_rate_t_per_mwh: float
+) -> float:
+    """Return one unit's CES credit fraction from its fuel and CO2 rate.
+
+    Scalar companion of :func:`unit_credit_fractions` for the capacity
+    screens, which loop existing ``Generator`` objects rather than
+    holding a ``FleetArrays`` (the retirement screen's per-unit
+    attribute-revenue seam, plan §5.3). Same crediting semantics, one
+    unit at a time:
+
+    * Disabled CES: ``0.0``.
+    * ``clean_capture``: eligible fuels 1.0, ``gas_cc_ccs`` at the
+      policy-assumed capture fraction, everything else 0.
+    * ``cesa_ci``: eligible fuels earn
+      ``clip(1 − emission_rate/benchmark, 0, 1)`` on the unit's own CI —
+      for an existing ``gas_cc_ccs`` unit that is its actual residual
+      rate, not the class construction — and unabated ``gas_cc`` at or
+      under the CI threshold earns the same benchmark formula.
+
+    Args:
+        config: Scenario config supplying the ``federal_ces_*`` fields.
+        fuel_type: The unit's fleet fuel type.
+        emission_rate_t_per_mwh: The unit's CO2 rate in tCO2/MWh at the
+            LP boundary (``Generator.emission_rate_co2``).
+
+    Returns:
+        Credit fraction in ``[0, 1]``.
+    """
+    if not config.federal_ces_enabled:
+        return 0.0
+
+    eligible = fuel_type in config.federal_ces_eligible_fuels
+    if config.federal_ces_crediting == "clean_capture":
+        if not eligible:
+            return 0.0
+        if fuel_type == "gas_cc_ccs":
+            return config.federal_ces_ccs_capture_fraction
+        return 1.0
+
+    # cesa_ci (the only other mode; __post_init__ validates the name).
+    credited = eligible or (
+        fuel_type == "gas_cc"
+        and emission_rate_t_per_mwh
+        <= config.federal_ces_unabated_ci_threshold_t_per_mwh
+    )
+    if not credited:
+        return 0.0
+    return float(
+        np.clip(
+            1.0 - emission_rate_t_per_mwh / config.federal_ces_ci_benchmark_t_per_mwh,
+            0.0,
+            1.0,
+        )
+    )
+
+
 def tech_credit_fraction(config: ScenarioConfig, tech: str) -> float:
     """Return the CES credit fraction for a candidate technology / fuel type.
 
@@ -243,7 +318,9 @@ def tech_credit_fraction(config: ScenarioConfig, tech: str) -> float:
     return 1.0
 
 
-def effective_eac_price_for_tech(config: ScenarioConfig, tech: str, year: int) -> float:
+def effective_eac_price_for_tech(
+    config: ScenarioConfig, tech: str, year: int | None
+) -> float:
     """Return the effective EAC price in real $/MWh for a tech in a year.
 
     ``max()`` of the legacy exogenous per-tech scalar
@@ -256,7 +333,9 @@ def effective_eac_price_for_tech(config: ScenarioConfig, tech: str, year: int) -
     Args:
         config: Scenario config supplying legacy and federal CES fields.
         tech: Candidate technology or fleet fuel-type name.
-        year: Simulation year (premium path resolution).
+        year: Simulation year (premium path resolution). ``None`` is
+            legal only while the CES is disabled (see
+            :func:`premium_for_year`).
 
     Returns:
         The effective EAC price in real 2026$/MWh.
@@ -266,8 +345,55 @@ def effective_eac_price_for_tech(config: ScenarioConfig, tech: str, year: int) -
     return max(legacy, federal)
 
 
+def effective_eac_price_for_unit(
+    config: ScenarioConfig,
+    fuel_type: str,
+    emission_rate_t_per_mwh: float,
+    year: int | None,
+) -> float:
+    """Return one existing unit's effective EAC price in real $/MWh.
+
+    The retirement-screen seam (plan §5.3): ``max()`` of the unit's
+    legacy per-fuel scalar and the federal CES premium × its
+    :func:`unit_credit_fraction` — unit-level rather than tech-level so
+    that under ``cesa_ci`` a credited unabated ``gas_cc`` (or an abated
+    unit's actual residual CI) earns its own fraction. The caller's
+    further ``max()`` folds (§45U, RPS dual) are unchanged. With the CES
+    disabled this is exactly the legacy value.
+
+    Args:
+        config: Scenario config supplying legacy and federal CES fields.
+        fuel_type: The unit's fleet fuel type.
+        emission_rate_t_per_mwh: The unit's CO2 rate in tCO2/MWh at the
+            LP boundary (``Generator.emission_rate_co2``).
+        year: Simulation year (premium path resolution). ``None`` is
+            legal only while the CES is disabled (see
+            :func:`premium_for_year`).
+
+    Returns:
+        The effective EAC price in real 2026$/MWh.
+    """
+    legacy = get_eac_price_for_new_entry(fuel_type, config)
+    federal = premium_for_year(config, year) * unit_credit_fraction(
+        config, fuel_type, emission_rate_t_per_mwh
+    )
+    return max(legacy, federal)
+
+
+def federal_ces_suppresses_state_rps(config: ScenarioConfig) -> bool:
+    """Return True when the federal CES replaces the state RPS rows.
+
+    The pure-federal counterfactual (plan §5.3, ``runner`` seam): with
+    ``federal_ces_enabled`` AND ``federal_ces_replaces_state_rps`` both
+    on, the state RPS LP row is not built (``rps_target`` stays ``None``),
+    so no RPS dual exists and the federal premium is the only attribute
+    mechanism. Moot for ERCOT/PJM, which carry no RPS row.
+    """
+    return bool(config.federal_ces_enabled and config.federal_ces_replaces_state_rps)
+
+
 def effective_unit_eac_prices(
-    config: ScenarioConfig, fleet: FleetArrays, year: int
+    config: ScenarioConfig, fleet: FleetArrays, year: int | None
 ) -> np.ndarray:
     """Return per-generator effective EAC prices in real $/MWh, ``(n_gen,)``.
 
@@ -282,7 +408,9 @@ def effective_unit_eac_prices(
         config: Scenario config supplying legacy and federal CES fields.
         fleet: Vectorized fleet arrays supplying ``fuel_type_idx`` and
             ``emission_rate``.
-        year: Simulation year (premium path resolution).
+        year: Simulation year (premium path resolution). ``None`` is
+            legal only while the CES is disabled (see
+            :func:`premium_for_year`).
 
     Returns:
         Float array of effective EAC prices, shape ``(n_gen,)``.
