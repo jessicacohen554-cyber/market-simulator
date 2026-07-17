@@ -32,6 +32,21 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "staged_oversupply_thinning",
     "staged_thinning_max_gw_per_year",
     "limited_foresight_dispatch",
+    # National CES federal EAC premium (W1-A, national-ces-eac-premium-plan
+    # §5.1): default-off block, dropped from the hash at defaults so
+    # cache_key(ScenarioConfig()) is byte-identical before/after the fields
+    # landed; any non-default value enters the key (a distinct scenario).
+    "federal_ces_enabled",
+    "federal_ces_premium_usd_per_mwh",
+    "federal_ces_premium_escalation_real",
+    "federal_ces_premium_by_year",
+    "federal_ces_crediting",
+    "federal_ces_ccs_capture_fraction",
+    "federal_ces_ci_benchmark_t_per_mwh",
+    "federal_ces_unabated_ci_threshold_t_per_mwh",
+    "federal_ces_eligible_fuels",
+    "federal_ces_storage_eligible",
+    "federal_ces_replaces_state_rps",
 )
 
 
@@ -217,6 +232,83 @@ class ScenarioConfig:
         0.0  # $/MWh, offshore-specific EAC (may differ from onshore)
     )
     eac_price_geothermal: float = 0.0  # $/MWh, clean firm generation credit
+    # --- National CES (federal EAC premium) ---------------------------------
+    # Exogenous federal clean-energy-standard premium: every credited MWh
+    # earns one EAC, priced by the scenario (an ensemble of premium levels),
+    # joining the legacy per-tech eac_price_* scalars and the RPS dual via
+    # max() — one certificate per MWh, sold once (house no-stack doctrine,
+    # policy/eac.py). Resolved by policy/federal_ces.py; consumer wiring is
+    # W2-A of docs/handoffs/national-ces-eac-premium-plan-2026-07.md (§5),
+    # so as of W1-A the block is solver-inert by construction. Default-off
+    # keeps behavior and cache keys byte-identical.
+    federal_ces_enabled: bool = False  # Master gate (owner ask 2026-07-17,
+    # plan §5.1). Forecast-only policy lever: __post_init__ raises if set in
+    # backcast mode (rule 13, mirrors the gas_price_factor guard).
+    federal_ces_premium_usd_per_mwh: float = 0.0  # Premium in real 2026$/MWh
+    # at 2026 (constants.REAL_DOLLAR_BASE_YEAR). A flat real premium already
+    # tracks inflation in nominal terms (plan §1 "Dollars"); first-run
+    # campaign ladder is {10, 20, 30} (owner D8).
+    federal_ces_premium_escalation_real: float = 0.0  # Real annual growth of
+    # the premium: premium(y) = base × (1+esc)^(y−2026). 0 = CPI-tracking
+    # nominal, the owner-confirmed default (plan D3).
+    federal_ces_premium_by_year: dict[int, float] | None = None  # Sparse
+    # {year: real 2026$/MWh} knots, linearly interpolated and edge-held
+    # (the STATE_RPS_FLOORS trajectory pattern, policy/rps.py); overrides
+    # base + escalation when set. YAML round-trips stringify int keys, so
+    # policy/federal_ces.py coerces str keys → int (plan §5.1).
+    federal_ces_crediting: str = "clean_capture"  # Crediting mode (owner D1,
+    # plan §1): "clean_capture" (DEFAULT) credits eligible zero-carbon fuels
+    # at 1.0, abated gas (gas_cc_ccs) at the policy-assumed capture fraction,
+    # unabated fossil at 0; "cesa_ci" (VARIANT) credits eligible fuels at the
+    # CESA-style fraction clip(1 − CI/benchmark, 0, 1), extended to unabated
+    # gas CC whose CI clears the eligibility threshold below. Validated in
+    # __post_init__. The v1 "unabated_fossil_eligible" boolean is subsumed by
+    # this mode choice — it does not exist.
+    federal_ces_ccs_capture_fraction: float = 0.90  # Policy-assumed capture
+    # crediting for abated gas in clean_capture mode (owner simplification:
+    # "assume 90 or 95% capture for simplicity" — 0.90 default, 0.95 the
+    # sensitivity; plan §1). DISTINCT from the engineering ccs_capture_rate /
+    # ccs_retrofit_capture_rate fields, which set a unit's physical residual
+    # CI — this field only sets how many certificates a credited abated-gas
+    # MWh earns. W1-C reconciles/documents the relationship (plan §11.4).
+    federal_ces_ci_benchmark_t_per_mwh: float = 0.82  # tCO2/MWh benchmark of
+    # the cesa_ci crediting formula. Source: Clean Energy Standard Act,
+    # S.1359 (116th Cong.); Bingaman CES Act S.2146 (112th Cong.). Used by
+    # cesa_ci mode only.
+    federal_ces_unabated_ci_threshold_t_per_mwh: float = 0.45  # cesa_ci-only
+    # eligibility line for UNABATED gas CC (owner-set, 450 kg/MWh; ≈ the EPA
+    # §111(b) new-CCGT NSPS of 1,000 lb CO2/MWh — W1-C finalizes the
+    # citation). Interpretation (plan §1 note): an eligibility CUTOFF only —
+    # a unit at or under the line earns clip(1 − CI/0.82, 0, 1) against the
+    # benchmark above, never 1 − CI/0.45; a unit above the line earns 0.
+    federal_ces_eligible_fuels: list[str] = field(
+        default_factory=lambda: [
+            "nuclear",
+            "wind",
+            "solar",
+            "hydro",
+            "geothermal",
+            "offshore_wind",
+            "gas_cc_ccs",
+            "hydrogen_ct",
+            "hydrogen_ccgt",
+        ]
+    )  # Owner-confirmed default eligibility (plan §1): fleet FUEL TYPES
+    # (data.fleet.FUEL_TYPE_MAP names) credited by the federal CES; existing
+    # clean units credit identically to new build (no vintage gate).
+    # Candidate-tech aliases (nuclear_smr → nuclear) are resolved by
+    # policy/federal_ces.py, not listed here. Excluded by design: biomass
+    # (biogenic CI accounting needs its own carve-in), storage (gated by
+    # federal_ces_storage_eligible instead), unabated fossil (enters only
+    # through the cesa_ci threshold pathway, never this list).
+    federal_ces_storage_eligible: bool = False  # Storage discharge earns no
+    # certificate (owner-confirmed D5: discharging stored energy creates no
+    # new attribute; storage adapts endogenously to VRE via arbitrage).
+    # Toggle retained for sensitivity.
+    federal_ces_replaces_state_rps: bool = False  # Pure-federal
+    # counterfactual: suppress state RPS rows where they exist (CAISO/NYISO/
+    # NEISO; W2-A wiring). Moot for ERCOT/PJM, which carry no RPS row
+    # (plan §1 "Interaction with existing policy").
     rps_enabled: bool = True  # whether to enforce RPS as LP constraint
     electrolyzer_type: str = "pem"  # "pem" or "alkaline" — sets H2 fuel cost
     h2_available_year: int = 2035  # was 2032.
@@ -5793,6 +5885,24 @@ class ScenarioConfig:
                 f"{self.gas_price_factor!r}"
             )
 
+        # The national-CES federal EAC premium is a forecast-only policy
+        # lever (national-ces-eac-premium-plan §5.1); rule 13 forbids it ever
+        # becoming a backcast tuning channel that lifts clean-resource
+        # revenue to chase a residual — same construction as the
+        # gas_price_factor guard above.
+        if self.mode == "backcast" and self.federal_ces_enabled:
+            raise ValueError(
+                "federal_ces_enabled is a forecast-only policy lever and "
+                "must be False in backcast mode (rule 13): a federal CES "
+                "premium never enters a scored backcast."
+            )
+        if self.federal_ces_crediting not in ("clean_capture", "cesa_ci"):
+            raise ValueError(
+                "ScenarioConfig.federal_ces_crediting must be one of "
+                "('clean_capture', 'cesa_ci'), got "
+                f"{self.federal_ces_crediting!r}"
+            )
+
         # Data-center load block (CX-4): forecast-mode-only scenario axis. A
         # non-"off" path in backcast mode is a hard error (rule 22 / memo §6):
         # a backcast pins measured load, so the DC block must never enter a
@@ -6511,6 +6621,17 @@ TIER_TAGS: dict[str, int] = {
     "eac_price_storage": 1,
     "eac_price_offshore_wind": 1,
     "eac_price_geothermal": 1,
+    "federal_ces_enabled": 1,
+    "federal_ces_premium_usd_per_mwh": 1,
+    "federal_ces_premium_escalation_real": 1,
+    "federal_ces_premium_by_year": 1,
+    "federal_ces_crediting": 1,
+    "federal_ces_ccs_capture_fraction": 1,
+    "federal_ces_ci_benchmark_t_per_mwh": 1,
+    "federal_ces_unabated_ci_threshold_t_per_mwh": 1,
+    "federal_ces_eligible_fuels": 1,
+    "federal_ces_storage_eligible": 1,
+    "federal_ces_replaces_state_rps": 1,
     "rps_enabled": 1,
     "electrolyzer_type": 1,
     "h2_available_year": 1,
