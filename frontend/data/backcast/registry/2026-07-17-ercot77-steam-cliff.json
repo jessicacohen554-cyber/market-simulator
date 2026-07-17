@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-17-ercot77-steam-cliff",
+ "label": "ercot77 steam cliff",
+ "date": "2026-07-17",
+ "shorthand": "ercot77-steam-cliff",
+ "definition": "(PROBE \u2014 REJECTED) ERCOT-77 steam participation cliff on the ercot73-state-wall keeper base (single delta ercot_offer_surface_cleared_share_steam=True). The ST_GAS extension of the measured DAM cleared-share wall: committed + econ* steam rows above the bin's MEASURED ST cleared share floor at the bin's MEASURED steam offer wall (GSREH/GSNONR/GSSUP, 60-Day DAM disclosure), scaled by the measured ST commitment-loading state weight (CAMPD CEMS envelope/gross x DAM awards). Rule-19 reconcile: the cliff owns above-DA-position ST offer levels; the drag keeps min-gen quantity scaffolding; peak rungs stay with the conditional surface. Zero fitted scalars (rules 13/14/23/26). Full-span 2023-2025 (rule 16). ADJUDICATION: the pre-registered 2023 guard breaks materially (C3a +6.2 -> +10.4%, C3b 0.143 -> 0.176; Aug-2023 -0.9 -> +11.3 \u2014 the ERCOT-72 tight-regime re-inflation at the steam class); the May-24 shoulder formation target barely moves ($30.8 -> $31.7 of $67.3) while the composition moves AWAY from measured (ST_GAS corrected -913 -> -1,263, CT +215 -> +372) \u2014 the repriced steam withdraws into the still-cheap CC/CT wall mid-rungs. 2024/2025 C3a gains (-3.2 -> -0.3%, -1.8 -> +0.7%) are broad tight-month lifts with C3b flat/worse. Keeper stays 2026-07-16-ercot73-state-wall; flag stays default-off.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-17-ercot77-steam-cliff.js",
+ "bundle": "results/calibration/ercot77_steam_cliff_fullspan"
+}
