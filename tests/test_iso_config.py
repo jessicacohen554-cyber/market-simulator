@@ -27,21 +27,31 @@ class TestISOConfig(unittest.TestCase):
             },
         )
 
-    def test_ercot_has_nine_links(self):
-        """ERCOT defines nine inter-zone congestion interfaces."""
+    def test_ercot_has_ten_links(self):
+        """ERCOT defines ten link rows (nine interfaces; NE is a one-way pair)."""
         ercot = get_iso_config("ERCOT")
-        self.assertEqual(ercot.n_links, 9)
+        self.assertEqual(ercot.n_links, 10)
 
     def test_ercot_ne_lob_link_present(self):
-        """The NE_LOB Northeast<->North export link is present at ~1,300 MW."""
+        """The NE boundary is an asymmetric one-way pair (ERCOT-76).
+
+        Export keeps the measured NE_LOB stability limit (~1,300 MW); import
+        carries the measured dark-hour carrying capability (1,788 MW pooled
+        2023-2025 maximum of EAST-zone load minus CAMPD local gross).
+        """
         ercot = get_iso_config("ERCOT")
-        ne = [
-            link
+        ne = {
+            (link.from_zone, link.to_zone): link
             for link in ercot.links
             if {link.from_zone, link.to_zone} == {"Northeast", "North"}
-        ]
-        self.assertEqual(len(ne), 1)
-        self.assertEqual(ne[0].ttc_mw, 1300.0)
+        }
+        self.assertEqual(len(ne), 2)
+        exp = ne[("Northeast", "North")]
+        imp = ne[("North", "Northeast")]
+        self.assertEqual(exp.ttc_mw, 1300.0)
+        self.assertFalse(exp.is_bidirectional)
+        self.assertEqual(imp.ttc_mw, 1788.0)
+        self.assertFalse(imp.is_bidirectional)
 
     def test_ercot_load_shares_sum_to_one(self):
         """ERCOT zone load shares sum to 1.0."""
