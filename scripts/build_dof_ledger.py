@@ -829,6 +829,43 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "(rule 23)",
             )
         )
+    if sc.get("miso_midwest_subregional_reserves"):
+        # Midwest sub-regional reserve-holding family, ZERO scalars: the
+        # MEASURED North+Central cleared OR reservation held IN the 5 physical
+        # Midwest zones, priced at the single published $200 RPE demand value,
+        # reserve_class 0 nested inside the market-wide RBDC. Closes the
+        # ledgered "RPE Only" STR-scarcity gap the congestion-blind market-wide
+        # family leaves open (a cost-min LP otherwise parks the market-wide
+        # requirement in the RDT-trapped South surplus and converts Midwest
+        # headroom to energy). Measured series + cited $200 + topology zone
+        # list — no tunable.
+        out.append(
+            _entry(
+                "miso_midwest_subregional_reserves (Midwest OR family, $200 RPE step)",
+                "data/raw/MISO-AS/asm_rt_cleared_mw_<year>.parquet (North+Central "
+                "leg) via data.miso_reserve_requirements + "
+                "constants.MISO_RPE_DEMAND_VALUE via reserve_config._miso_design",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="MISO ASM RT cleared-offers (reg+spin+supp summed over "
+                "regions {North, Central}); published RPE demand value $200/MWh "
+                "(2024 SOM §III.B — the demand value of the sub-regional "
+                "reserve-deliverability construct); 5 physical Midwest model "
+                "zones (topology). The per-Reserve-Zone §5.2.1.2 Zonal ORDC "
+                "ladder is NOT used — the per-zone Zonal ORDC never separated in "
+                "26,280 measured 2023-2025 hours (miso-71 design §1b/§2a)",
+                root_cause="LEDGERED LOWER BOUND (leg (b), the NYISO B1 "
+                "precedent): the cleared series understates the true requirement "
+                "in genuine-shortage intervals — the Midwest cleared DIPS to 957 "
+                "MW (Jun-23/24-2025) / 851 MW (Jul-28/29-2025) against a ~2,165 "
+                "MW mean — so holding it in the 2025 tail creates no shortfall "
+                "(family dual $0 there) and the engagement is a LOWER BOUND, NOT "
+                "'fixed' by any dip-undoing construction (rules 1/13); forecast "
+                "years fall back to the within-region MSSC (rule 13); refresh "
+                "rides the ASM fetch pipeline only (rule 23)",
+            )
+        )
     if sc.get("unit_outage_short_windows"):
         # Short (< 5-day) baseload-coal unit-outage windows, ZERO scalars:
         # each window is the unit's own CEMS record; the derive-script guards

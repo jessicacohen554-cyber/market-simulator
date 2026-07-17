@@ -16014,3 +16014,113 @@ open owner decision. This adoption also constitutes the pending ERCOT-65
 trough/spread sign-off (folded in). `build_status.py` rebuilt status.js;
 `audit_keepers.py --iso ERCOT` PASS 0/0. Next number: ercot-79 (the
 availability-envelope audit).
+
+## 2026-07-17 — miso-71: Midwest sub-regional reserve-holding family BUILT, PROBED and REGISTERED as a KEEPER CANDIDATE — every pre-registered band held (R1 C3b veto, R2 no-fabricated-scarcity, R3 no-Jan-driver); the family closes the ledgered phantom-South-parking gap (Midwest now holds the measured requirement, South de-parked) at ZERO fitted scalars; the C3c-2025 deep tail stays OPEN, honestly ledgered as a leg-(b) measured-requirement-dip lower bound; keeper swap awaits the owner
+
+**Runs (registered + scored, rubric v2.7):** `2026-07-17-miso-71-midwest`
+(main, KEEPER CANDIDATE) + `2026-07-17-miso-71-midwest-base` (same-box drift
+control). Both MISO 2023+2024+2025, one bundle each, per-year +
+`--reuse-solved`, warm-start pinned off, variants back to back (15 GB box —
+the dirty-tree reuse gate OOM'd the first base attempt; committed the code
+first, reuse then engaged, one fresh year per process). Charter: the
+engagement-depth lane pre-named by the F5 session; design FROZEN before the
+build in `docs/handoffs/miso-engagement-depth-design-2026-07.md` (mechanism,
+cited parameters, composition plan, expected-delta bands, R1-R6 refutation
+criteria all pre-registered). Model per rule 27: Opus.
+
+**Mechanism (`miso_midwest_subregional_reserves`, ScenarioConfig tier 3,
+default OFF — zero fitted scalars).** ONE new reserve family on the promoted
+miso-70 keeper recipe: the MEASURED Midwest (North+Central) cleared
+operating-reserve reservation (`data.miso_reserve_requirements` "MISO-Midwest"
+leg = reg+spin+supp summed over the two Midwest ASM regions — the same
+measured-cleared construction, clock and admissibility as the market-wide and
+South legs already in the keeper) held IN the 5 PHYSICAL Midwest model zones
+(`reserve_config.MISO_MIDWEST_ZONES`; external seam buses excluded, the F5
+precedent), priced at a SINGLE shortfall step = the published **$200/MWh RPE
+demand value** (`constants.MISO_RPE_DEMAND_VALUE`, 2024 SOM §III.B — the demand
+value of exactly the sub-regional reserve-deliverability construct),
+`reserve_class 0` NESTED inside the market-wide RBDC (a Midwest reserve MW
+counts toward both — the NYISO East ⊂ NYCA template). The per-Reserve-Zone
+§5.2.1.2 Zonal ORDC ladder is DELIBERATELY NOT used: the per-zone Zonal ORDC
+never separated in 26,280 measured 2023-2025 hours (design §1b), so pricing a
+region at its deep steps would be structure the measured record refutes
+(rule 1). ENERGY-SIDE: it closes the ledgered "RPE Only" STR-scarcity gap the
+congestion-blind market-wide family leaves open — a cost-min LP otherwise parks
+the market-wide requirement in the RDT-trapped South surplus and converts
+Midwest headroom to energy in a Midwest event. Implementation: loader
+"MISO-Midwest" key + `_miso_design` gated branch + CLI flag; env-gated
+diagnostic reserve-dual sidecar (`MARKET_SIM_RESERVE_DUAL_DUMP`, default off —
+per-family duals + per-zone reserve MW, never touches any scored output). Unit
+tests: `TestMisoMidwestDesign` (7), `TestMisoMidwestReserveLP` (2 — the toy LP
+prices the Midwest family at $200 while the market-wide family stays cleared,
+the nesting; off-state LP byte identity), `test_miso_reserve_requirements` (8).
+
+**§4.2 phantom-parking pre-read (R4 read from the base reserve allocation).**
+The base does NOT hold the measured Midwest requirement through the deep
+windows: Jun-23/24-2025 it parks **951 MW** in the RDT-trapped South (measured
+South ~477) and holds only **1,635 MW** in the Midwest (measured 1,862);
+Jul-28/29-2025 it parks 1,153 vs holds 1,416 (measured 1,941). The base holds
+≥ the measured Midwest requirement in 30/48 and 18/48 deep hours — so R4
+inertness does NOT trigger; the family DOES do work (removes the phantom
+South-parked peak supply). Main forces the measured Midwest holding
+(1,862/1,941/2,253 MW across the deep windows) and de-parks the South.
+
+**Mechanism-only read (main − same-box base; the base reproduces the
+registered miso-70 keeper EXACTLY on every gated criterion — zero box drift):**
+
+- **R1 (C3b veto) HELD:** C3b **0.079 / 0.124 / 0.184 IDENTICAL** to base
+  (mechanism-only Δ 0.000 all years; 2025 0.184 ≤ 0.20 veto, in the
+  [0.160,0.195] band). Load-weighted price is neutral to $0.001/$0.015/$0.000.
+- **R2 (fabricated scarcity) HELD:** the Midwest family dual is ≤ $25 in
+  **100.0 / 99.93 / 100.0 %** of hours and reaches the $200 RPE step in
+  **0 / 5 / 0 h/yr**, ALL 5 inside the declared Aug-26-2024 Warning window
+  (0 outside declared-window ∪ measured-RT-scarce). The reserve curves do not
+  fire — the miso-56 near-zero-scarcity adjudication honored verbatim.
+- **R3 (Jan-2024 wrong-driver) HELD:** Jan-14-17-2024 Midwest dual max $0,
+  0 h > $50 (the winter tail is measured NOT-a-reserve-event, reserve MCPs ~$3).
+- **In-window LMP ceiling clean:** Aug-26-2024 Midwest LMP max **$500.0** = the
+  tier floor, both arms (the $200 reserve dual does not lift LMP above it).
+- **C3c 1/7/1 vs base 1/6/1** (RT actual 30/37/88): the +1 in 2024 is
+  **Aug-26 HE20 lifted to $294** — the last declared-Warning-window hour,
+  R2-clean; 2023 and 2025 UNCHANGED. Bands [1,6]/[4,12]/[1,26] all held.
+- **THE DECISIVE READ — C3c-2025 stays 1 exactly as PRE-DECLARED** (honesty
+  band [1,26]; the PASS [44,176] band NEVER claimed, R5). The family HOLDS the
+  measured Midwest requirement through the 2025 deep windows (1,862/1,941 MW
+  held = the requirement) but its dual is **$0** there — because the measured
+  cleared series **DIPS to 957/851 MW** in the tightest hours (leg (b)), so
+  holding it creates no shortfall. The reserve-parking hypothesis is refuted
+  AT CURRENT DEPTH *for closing the 2025 tail*, but the family is not inert —
+  it reallocates reserve and prices the 2024 window. The remaining C3c-2025 gap
+  is LEDGERED as out-of-representation (the leg-(b) lower-bound understatement +
+  the sub-hourly Jul-28 40-min $3,100 transient + the rejected §A commitment
+  posture), NOT force-closed and NOT residual-fitted by undoing the dip
+  (rules 1/13; the NYISO B1 ledgered-lower-bound precedent).
+- C3a-2025 **−13.7% IDENTICAL** to base (price-neutral in 2025 as pre-declared);
+  C3a-2024 −6.9% PASS both; C1 CC_REGULAR-2023 **−8.29 IDENTICAL** (watch — not
+  this lane's lever); C2/C4/C5a PASS both arms (C5a Δ ≈ 0.003 Mt, within ±7);
+  C6/C7/C8 PASS with the same ST_GAS grounded-above-budget notes — NO new
+  floors (a reserve requirement carries no floor-mechanism id; D-2/D-4 regen
+  adds no row). DOF **main 25/2, base 24/2** (+1 measured-physical: the Midwest
+  family — measured N+C series + published $200, zero new scalars).
+
+**Disposition (rules 1/13/15/22/R6): rule-1 KEEPER CANDIDATE, swap owner-only.**
+The fail set is EXACTLY the keeper's {C1 CC_REGULAR-2023, C3a-2025, C3c×3} with
+no gated PASS→FAIL regression, and ONE additional real structure at zero fitted
+scalars — the measured Midwest sub-regional reserve holding that removes the
+phantom South-parked peak supply the congestion-blind market-wide family
+allowed. A more structurally faithful run with no criterion regression is the
+keeper definition (rule 1: keeper = most faithful, not lowest MAE); the
+recommendation goes to the owner, swap owner-only. The engagement-depth
+question is NOT force-closed: the C3c-2025 deep tail stays open on the honest
+leg-(b) measured-requirement-dip lower bound, and the remaining pre-named lanes
+(winter fuel security / `gas_daily_shape`, G-23 imports sequenced last) stay
+their own charters. Next number: miso-72.
+
+**Ops.** Base + main full-span solves in-session (per-year + reuse, years
+sequential, variants back to back — the co-opt peak sits at the 16 GB box
+limit, so a clean tree for reuse is mandatory: the first base attempt OOM'd
+with a dirty tree disabling reuse; committing the code fixed it). Registered
+per rule 15 with legitimacy diagnostics, attestation (DOF ledger +1
+measured-physical), parity check PASS, manifest rebuilt. Transport:
+`git push -u origin`, blob-verified (rule 27). No `keepers.json` edit
+(recommendation only).

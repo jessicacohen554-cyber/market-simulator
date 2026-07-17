@@ -5,8 +5,11 @@
 `2026-07-06-miso-43-commitment-posture` — the pooled LINEAR relaxation holds 3.7-4.2× the measured
 cleared reserve online (level FAIL; see the probe's `SUMMARY-posture-gate.md` and the 2026-07-06
 L-14-continuation calibration-log entry). The measured ASM gate data landed in `data/raw/MISO-AS`
-(`fetch_miso_asm.py`); §A's min-run/min-down window rows remain the deferred follow-up and §B stays
-DATA-BLOCKED on the zonal requirement series.** Companion to
+(`fetch_miso_asm.py`); §A's min-run/min-down window rows remain the deferred follow-up. **§B
+UN-BLOCKED and EXECUTED 2026-07-17 as miso-71** — the data-block was lifted by the miso-56
+measured-cleared intake that landed AFTER this note (the ASM RT cleared series' Midwest
+North+Central leg supplies the measured requirement; see §B below and the 2026-07-17 miso-71
+calibration-log entry). Companion to
 `docs/multi-iso/miso-scarcity-tail-diagnosis.md` (miso-39 gate 4
 CLOSED-NEGATIVE, kept per rule 1) and `results/calibration/FINDING-miso-cc-decomposition-2026-07.md`
 (the CC +44 TWh exemplar). The diagnosis proved that under deterministic perfect-foresight
@@ -79,6 +82,26 @@ CT_PEAKER/ST_GAS pick up the shoulder/evening energy real units serve while CC i
 LOYO-scored before promotion (rule 22's in-sample LOYO clause).
 
 ## B. Midwest locational reserve zone (data-gated)
+
+> **EXECUTED 2026-07-17 as miso-71 (`miso_midwest_subregional_reserves`) — the
+> data-block is LIFTED, but two of this note's original premises were revised by
+> the build (the original design below is kept as the point-in-time record).**
+> (1) *Requirement basis:* the measured Midwest (North+Central) cleared OR
+> series (the miso-56 ASM intake, which landed after this note), NOT a
+> hand-sized breakpoint — so the "DATA-BLOCKED" verdict was overtaken by data.
+> (2) *Demand curve:* a SINGLE published $200 RPE step
+> (`MISO_RPE_DEMAND_VALUE`), NOT the BPM-002 §5.2.1.2 zonal ORDC ladder proposed
+> below — the per-zone Zonal ORDC never separated in 26,280 measured 2023-2025
+> hours, so the ladder was measured-refuted. (3) *Phenomenon owned:* the
+> Jan-14-17-2024 Winter Storm Heather block is measured **NOT-a-reserve-event**
+> (reserve MCPs ~$3), so the Midwest family correctly does **not** price it
+> (miso-71 R3 held: 0 h > $50). The family's real effect is structural — it
+> forces the measured Midwest reserve holding to sit IN the Midwest, closing
+> the phantom-South-parking gap in the SUMMER Midwest events. Outcome: rule-1
+> KEEPER CANDIDATE; the C3c-2025 deep tail stays open on the leg-(b)
+> measured-requirement-dip lower bound. See `docs/handoffs/
+> miso-engagement-depth-design-2026-07.md` and the 2026-07-17 calibration-log
+> entry.
 
 **Phenomenon owned:** the 2024 Winter Storm Heather DA block (Jan 14–17, 24 h) — a Midwest
 event the South family correctly does not fire on; market-wide RBDC stays ≥11 GW deliverable
