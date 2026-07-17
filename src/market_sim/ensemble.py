@@ -62,12 +62,17 @@ logger = logging.getLogger(__name__)
 
 # Scalar per-year metrics from ``_summarize_year`` to build a distribution over.
 # ``emissions_mt`` leads: it is the headline the probability band wraps (§4.1).
+# ``clean_share`` / ``negative_price_hours`` are the W2-B CES-reporting
+# additions (national-ces-eac-premium plan §5.4) — strictly additive rows in
+# metrics.parquet / bands.parquet; every pre-existing metric is untouched.
 _SCALAR_METRICS: tuple[str, ...] = (
     "emissions_mt",
     "avg_price",
     "peak_price",
     "curtailment_twh",
     "storage_cycles",
+    "clean_share",
+    "negative_price_hours",
 )
 
 # Published band quantiles (§2.4). PB-2 emits the parametric layer only; the
@@ -257,6 +262,21 @@ def run_ensemble(
     return _run_configs(configs, iso, workers)
 
 
+def _member_config(iso: str, cache_key: str) -> "ScenarioConfig | None":
+    """Load one cached member's config, or ``None`` when it is absent.
+
+    The config feeds ``_summarize_year``'s CES crediting rule for the
+    ``clean_share`` metric (W2-B). Runner-written caches always carry a
+    ``config.yaml``; a hand-built fixture cache may not, and then the
+    summary falls back to the default crediting — the same metric values,
+    never an error.
+    """
+    config_path = cache.get_config_path(iso, cache_key, START_YEAR)
+    if not config_path.exists():
+        return None
+    return ScenarioConfig.from_yaml(config_path)
+
+
 def _distribution(values: list[float]) -> dict[str, float]:
     """Return summary distribution statistics for a list of member values.
 
@@ -344,11 +364,12 @@ def summarize_ensemble(members: dict[int, str], iso: str) -> dict:
     # Per-member, per-year summaries reusing the canonical export aggregation.
     per_member: dict[int, dict[str, dict]] = {}
     for wy, key in members.items():
+        config = _member_config(iso, key)
         years: dict[str, dict] = {}
         for year in range(START_YEAR, END_YEAR + 1):
             result = cache.load_result(iso, key, year)
             context = cache.load_fleet_context(iso, key, year)
-            years[str(year)] = _summarize_year(result, context)
+            years[str(year)] = _summarize_year(result, context, config)
         per_member[wy] = years
 
     distribution: dict[str, dict] = {}
@@ -431,11 +452,12 @@ def _member_metric_values(
     summaries: dict[str, dict[int, dict]] = {}
     fuels: set[str] = set()
     for draw_id, key in members.items():
+        config = _member_config(iso, key)
         by_year: dict[int, dict] = {}
         for year in range(START_YEAR, END_YEAR + 1):
             result = cache.load_result(iso, key, year)
             context = cache.load_fleet_context(iso, key, year)
-            summary = _summarize_year(result, context)
+            summary = _summarize_year(result, context, config)
             by_year[year] = summary
             fuels.update(summary.get("generation_twh", {}))
         summaries[draw_id] = by_year
