@@ -82,12 +82,9 @@ from market_sim.data.cod_ramp import (
     monthly_online_mask,
 )
 from market_sim.data.outages import (
-    QUALIFYING_PLANT_GROUPS,
     ST_GAS_PEAKER_PLANTS,
     ct_deployment_floor_for_year,
-    default_outages_path,
     ercot_noncampd_availability_caps,
-    outage_masks_for_year,
     partial_outage_derate_factors,
     reliability_deployment_floor_for_year,
     retiree_availability_caps,
@@ -1584,70 +1581,33 @@ def generators_to_fleet_arrays(
             np.clip(availability, 0.0, 1.0, out=availability)
 
     # Historic-outage overlay (backcast only). When config.outage_source is
-    # "historic", zero availability for coal/CC plants during their actual
-    # sustained (> 10-day) outage windows, a hard override of the statistical
-    # WEFOR/POF model in those hours. Forward/forecast runs leave outages
-    # statistical (outage_source == "statistical", the default). The per-bin
-    # group filter restricts zeroing to the plant's coal/CC bins, so a plant
-    # carrying both a CC and a non-CC bin only has its CC bin outaged.
+    # "historic", derate coal/CC/gas-steam availability during measured CAMPD
+    # unit-outage windows, a hard override of the statistical WEFOR/POF model in
+    # those hours. Forward/forecast runs leave outages statistical
+    # (outage_source == "statistical", the default). The unit-level derate below
+    # is the SOLE CAMPD outage layer for every ISO — the old facility-summed
+    # overlay (scripts/derive_campd_outages.py -> campd-outages*.csv, a hard
+    # availability=0 per plant) was removed 2026-07-17 because summing a plant's
+    # units hid single-unit outages and folded daily-cycling combined cycles
+    # into phantom summer outages
+    # (results/calibration/FINDING-ercot79-phantom-outage-2026-07.md).
     if (
         config is not None
         and getattr(config, "outage_source", "statistical") == "historic"
     ):
-        # ERCOT reads the legacy campd-outages.csv intersected with its bin
-        # CSV; every other ISO reads its own campd-outages-{ISO}.csv (already
-        # coal/CC only, so no bin intersection). The per-bin gen.plant_group
-        # filter below still restricts zeroing to coal/CC tranches.
+        # ERCOT-only overlays further down in this block (noncampd availability
+        # caps, retiree CEMS cap) gate on this; other ISOs skip them.
         is_ercot = _iso == "ERCOT" or _iso is None
-        # The facility-summed overlay is the primary outage layer only where the
-        # unit-level derate is supplemental (ERCOT). ISOs whose unit-level file
-        # is the complete CAMPD-derived source disable it (config flag) so the
-        # two layers don't double-count.
-        masks = (
-            outage_masks_for_year(
-                config.weather_year,
-                hours,
-                outages_path=default_outages_path(_iso),
-                bins_path=(
-                    getattr(
-                        config,
-                        "campd_bins_path",
-                        str(CAMPD_BINS_CSV),
-                    )
-                    if is_ercot
-                    else None
-                ),
-            )
-            if getattr(config, "historic_outage_overlay", True)
-            else {}
-        )
-        if masks:
-            applied = 0
-            for g_idx, gen in enumerate(generators):
-                if gen.plant_group not in QUALIFYING_PLANT_GROUPS:
-                    continue
-                mask = masks.get(int(gen.plant_code))
-                if mask is None:
-                    continue
-                availability[g_idx, mask] = 0.0
-                applied += 1
-            logger.info(
-                "historic outage overlay (%s %d): zeroed %d coal/CC "
-                "bin-tranches across %d plant(s)",
-                _iso or "ERCOT",
-                config.weather_year,
-                applied,
-                len(masks),
-            )
         # Unit-level outage derate (backcast): partial availability cut per
         # unit outage >= 5 days, sized by the unit's share of its plant's
         # capacity (CTs excluded; ERCOT split plants routed to the right asset
-        # class). Catches single-unit outages the facility-summed overlay above
-        # hides — e.g. the W A Parish coal units, masked in CEMS by the gas
-        # units that keep running. Built per ISO by
-        # scripts/derive_campd_unit_outages.py --iso <ISO>; ISOs with no
-        # unit-outage file get an empty derate (no effect). Multiplies the
-        # availability already set above.
+        # class). Catches single-unit outages a facility-summed CEMS series
+        # hides — e.g. the W A Parish coal units, masked by the gas units that
+        # keep running — and fully zeros a genuinely single-unit plant (the
+        # unit's capacity == its plant-bin capacity, so the derate share is 1.0).
+        # Built per ISO by scripts/derive_campd_unit_outages.py --iso <ISO>;
+        # ISOs with no unit-outage file get an empty derate (no effect).
+        # Multiplies the statistical availability already set above.
         ufac = unit_outage_derate_factors(
             config.weather_year,
             hours,
@@ -1861,8 +1821,8 @@ def generators_to_fleet_arrays(
                     applied_nc,
                     len(nccaps),
                 )
-        if not masks and not ufac:
-            # A backcast year with no measured windows in either layer (e.g.
+        if not ufac:
+            # A backcast year with no measured unit-outage windows (e.g.
             # CAISO 2023: no CA unit-level CEMS extract until upload U1 lands)
             # silently degrades to the statistical WEFOR/POF model; say so,
             # and record it in the run's model_changes_note.

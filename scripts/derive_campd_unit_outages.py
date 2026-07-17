@@ -1,13 +1,18 @@
 """Derive *unit-level* outage windows from EPA CAMPD hourly gross generation.
 
-The facility-level detector (``scripts/derive_campd_outages.py``) sums every
-unit at a plant into one CEMS series, so a single-unit outage at a multi-unit
-plant — and, critically, a *coal*-unit outage at a mixed coal/gas facility
-(W A Parish, Barney M Davis) — is masked by the units that keep running and is
-never detected. This script reads the per-unit CAMPD extracts in
+This per-unit detector is the SOLE CAMPD outage source for every ISO. The old
+facility-summed detector (``scripts/derive_campd_outages.py``, deleted
+2026-07-17) summed every unit at a plant into one CEMS series, so a single-unit
+outage at a multi-unit plant — and, critically, a *coal*-unit outage at a mixed
+coal/gas facility (W A Parish, Barney M Davis) — was masked by the units that
+keep running and never detected, and a daily-cycling combined cycle's
+overnight-down gaps folded into phantom summer outages
+(``results/calibration/FINDING-ercot79-phantom-outage-2026-07.md``). This script
+reads the per-unit CAMPD extracts in
 ``data/raw/campd-unit-level/{STATE}_{YEAR}.parquet`` (one row per
 ``unit``-hour, carrying ``unitId``) and detects an outage for each *unit*
-independently, on the unit's own gross output.
+independently, on the unit's own gross output. The detection primitives live in
+``scripts/lib/outage_detect.py``.
 
 For every sustained unit outage (>= ``--min-outage-days``) it writes one row to
 ``data/raw/campd-unit-outages.csv`` in the schema the unit-level derate
@@ -21,19 +26,19 @@ The detector is chosen by the *unit's own fuel*, because what a per-unit output
 gap means depends on how the unit is run:
 
 * **Coal** units are baseload — they run continuously when available, so a
-  sustained CF below :data:`~scripts.derive_campd_outages.REAL_RUN_CF` genuinely
-  marks an outage. They use the averaged real-run rule (same as the facility
-  detector for coal). This is the layer's core job: catch coal-unit outages the
-  facility detector hides behind a mixed facility's running gas units (W A
-  Parish 5-8) or behind other coal units at a multi-unit plant.
+  sustained CF below :data:`~scripts.lib.outage_detect.REAL_RUN_CF` genuinely
+  marks an outage. They use the averaged real-run rule. This is the layer's core
+  job: catch coal-unit outages a facility-summed series would hide behind a
+  mixed facility's running gas units (W A Parish 5-8) or behind other coal units
+  at a multi-unit plant.
 * **Everything else** (combined cycle, gas-steam) is load-following: an idle
   hour is usually economics, not a forced outage, so the averaged rule would
   badly over-flag a merchant CC turbine that simply isn't dispatched. These use
   the **event-based** rule — a window is broken by *any* single hour above
-  :data:`~scripts.derive_campd_outages.ST_GAS_CF_PEAK` — so a unit is flagged
+  :data:`~scripts.lib.outage_detect.ST_GAS_CF_PEAK` — so a unit is flagged
   only when it produced essentially nothing for the whole span (a genuine dead
   period), while an economically-idle-but-occasionally-firing unit is left to
-  the economic dispatch and the facility-level overlay.
+  the economic dispatch.
 
 Detection is per calendar year, matching the facility detector; a window
 straddling Dec 31 is clipped at the year boundary and each side must
@@ -85,7 +90,11 @@ from market_sim.data.outages import (  # noqa: E402
     UNIT_OUTAGE_MIN_DAYS,
     unit_outage_csv_for_iso,
 )
-from scripts.derive_campd_outages import (  # noqa: E402
+
+# Shared CAMPD outage detectors + ERCOT-79-tightened params (the facility-summed
+# detector scripts/derive_campd_outages.py was deleted 2026-07-17; this per-unit
+# detector is now the sole CAMPD outage source for every ISO).
+from scripts.lib.outage_detect import (  # noqa: E402
     FULL_STOP_OVERRIDE_CF,
     FULL_STOP_OVERRIDE_DAYS,
     HIGH_LOAD_PCTL,
@@ -98,15 +107,15 @@ from scripts.derive_campd_outages import (  # noqa: E402
     high_load_mask,
 )
 
-# --partial-windows mode reuses the plant-level partial-outage deriver's plateau
-# detector and its frozen constants VERBATIM (rule 23: measured-behaviour
-# parameters re-derive only on source-data change, never on a residual). The
-# only difference is the grain — this script feeds the detector each UNIT's own
-# CEMS gross instead of the plant sum, so PJM's cycling fleet (whose plant sum
-# over-fires the plant-grain detector by ~43 TWh/yr — the plant-grain path stays
-# ERCOT-scoped in fleet.py) is read at the grain the phenomenon actually lives
-# at. See docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7 (leg B).
-from scripts.derive_partial_outages import (  # noqa: E402
+# --partial-windows mode reuses the shared partial-plateau detector and its
+# frozen constants VERBATIM (rule 23: measured-behaviour parameters re-derive
+# only on source-data change, never on a residual). The only difference is the
+# grain — this script feeds the detector each UNIT's own CEMS gross instead of
+# the plant sum, so PJM's cycling fleet (whose plant sum over-fires the
+# plant-grain detector by ~43 TWh/yr — the plant-grain path stays ERCOT-scoped
+# in fleet.py) is read at the grain the phenomenon actually lives at. See
+# docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7 (leg B).
+from scripts.lib.outage_detect import (  # noqa: E402
     _detect as _detect_partial_plateaus,
 )
 
@@ -155,8 +164,8 @@ SHORT_WINDOW_MAX_DAYS: int = 5
 SHORT_BASELOAD_CF: float = 0.55
 
 # The revealed-availability (high-load) filter and its constants
-# (HIGH_LOAD_PCTL, MIN_INMERIT_HOURS, high_load_mask) are shared with the
-# facility-level detector — imported above from scripts.derive_campd_outages.
+# (HIGH_LOAD_PCTL, MIN_INMERIT_HOURS, high_load_mask) are the shared detector
+# primitives — imported above from scripts.lib.outage_detect.
 
 
 def _norm_unit_id(uid: object) -> str:
