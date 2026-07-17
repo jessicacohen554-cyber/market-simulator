@@ -1,0 +1,13 @@
+# PJM CES BAU 2026-only smoke (CES plan W1-B).
+#
+# Identical to configs/scenarios/pjm_ces_base_2026_2050.yaml except end_year:
+# a single-year readiness smoke — the first PJM forecast-mode run ever
+# attempted (plan §0 gap 4) — for the W1-B BAU validation
+# (docs/handoffs/national-ces-eac-premium-plan-2026-07.md §8 W1-B), gated by
+# scripts/check_forecast_invariants.py. Not a campaign horizon — never used
+# for CES-vs-BAU deltas.
+mode: forecast
+iso: PJM
+start_year: 2026
+end_year: 2026
+entry_screen_diagnostics: true
