@@ -469,6 +469,7 @@ def run_year(
     gas_monthly_actuals: bool = False,
     pjm_zonal_gas_basis: bool = False,
     miso_zonal_gas_basis: bool = False,
+    miso_winter_citygate_daily: bool = False,
     pjm_congestion: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
@@ -1469,6 +1470,12 @@ def run_year(
     # non-MISO ISOs — the apply gates on iso == "MISO".
     if miso_zonal_gas_basis:
         config = config.with_overrides(miso_zonal_gas_basis=True)
+    # MISO winter fuel-security citygate daily overlay (miso-72): in Dec/Jan/Feb,
+    # reprice the Chicago-hub zones' gas units at the measured Chicago Citygate
+    # daily shape, superseding the national HH gas_daily_shape there. No-op for
+    # non-MISO ISOs — the apply gates on iso == "MISO".
+    if miso_winter_citygate_daily:
+        config = config.with_overrides(miso_winter_citygate_daily=True)
     # PJM transmission-congestion lever (break the copper-plate): cap the priced
     # external star node to the measured per-border interchange envelope + tighten
     # the internal interfaces to their measured transfer limits. Wired below at
