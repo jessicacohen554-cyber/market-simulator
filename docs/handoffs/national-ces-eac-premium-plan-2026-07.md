@@ -1,5 +1,12 @@
 # National Clean Energy Standard (CES) EAC-Premium Forecast — Plan (2026-07)
 
+> **ℹ️ COORDINATION MOVED (2026-07-17).** Campaign scheduling now lives in
+> `docs/forecast-development-plan-2026-07.md` (FF-3B runs W3-R → W4 → W5). Status
+> correction vs the v2.4 note below: **Wave 2 is COMPLETE and merged to main**
+> (W2-A #2383/#2384, W2-B #2390, W2-C #2393, W2-D #2387, W2-E #2399). The §7 R1–R4
+> readiness criteria and the §8 W3-R/W4/W5 prompts remain binding and are invoked
+> by FF-3B; do not launch W1/W2 sessions from §8 — they are done.
+
 **Status:** PLANNING ONLY — no model code changed, no LP solved. This document is the
 single source for the build; every wave-session prompt in §8 points back here.
 **v2 (2026-07-17):** owner resolved the decision register (§4/§10) — crediting redesigned
