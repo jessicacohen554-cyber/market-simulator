@@ -452,10 +452,25 @@ def reserve_headroom(
 def resolve_lolp_params(
     config, hours: int
 ) -> tuple[np.ndarray | float, np.ndarray | float]:
-    """Return (mu, sigma) for the config: seasonal CSV when set, else flat."""
+    """Return (mu, sigma) for the config: seasonal CSV when set, else flat.
+
+    ``correlated_outage_sigma_scale`` (FF-1B charter D.6, GATED with
+    ``correlated_forced_outage`` by ``ScenarioConfig.__post_init__``) rescales
+    sigma: the published NP6-576-ER reserve-error distribution blends net-load
+    forecast error AND forced-outage uncertainty, so if a re-derived
+    decomposition ever removes the forced-outage variance component this is
+    where it lands. The correlated derate itself shifts only the MEAN
+    availability feeding the point reserve, so the default 1.0 is not a
+    double count by construction.
+    """
+    scale = float(getattr(config, "correlated_outage_sigma_scale", 1.0))
     if getattr(config, "ordc_lolp_params_path", None):
-        return load_lolp_params(config.ordc_lolp_params_path, hours)
-    return config.ordc_lolp_mu_mw, config.ordc_lolp_sigma_mw
+        mu, sigma = load_lolp_params(config.ordc_lolp_params_path, hours)
+    else:
+        mu, sigma = config.ordc_lolp_mu_mw, config.ordc_lolp_sigma_mw
+    if scale != 1.0:
+        sigma = sigma * scale
+    return mu, sigma
 
 
 # RTC+B (Real-Time Co-optimization + Batteries) replaced ERCOT's ORDC reserve
