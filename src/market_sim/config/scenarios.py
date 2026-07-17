@@ -2204,6 +2204,40 @@ class ScenarioConfig:
     # apply_interchange_injections seam. Requires caiso_per_hub_intertie (+
     # caiso_firm_import_shape for the net-of-firm headroom). Default off
     # (byte-identical); CAISO-only.
+    caiso_dsw_overnight_clean: bool = False  # Carry the MEASURED unconditional
+    # OVERNIGHT (hod 0-5) WEIM clean import depth on the south (Palo Verde /
+    # Path-46) corridor (caiso-93; FINDING-caiso93-overnight-no-wedge-2026-07-17,
+    # the FINDING-caiso92b §6 import-side redirect; owner-authorized build
+    # 2026-07-17). The measured overnight CAISO−PaloVerde spread carries NO
+    # unspecified-import carbon wedge in 93-99 % of ALL overnight hours
+    # (median DA spread −4.5…−5.1 vs delivered parity, three years, both
+    # bases): the marginal overnight import is a WEIM/EDAM transfer
+    # attributed to the West's overnight non-emitting surplus (NW hydro +
+    # wind), paying no border carbon even while gas sets the HUB price. The
+    # model instead prices every incremental overnight DSW MW at hub + the
+    # +$12-15 wedge — parity with domestic CC — and serves the overnight
+    # residual with CC where reality imports (FINDING-caiso92b). The caiso-87
+    # surplus tranche cannot cover this: its hub-below-gas-floor trigger
+    # fires in only 1.2-3.6 % of 2024/25 overnight hours — the overnight
+    # no-wedge state is UNCONDITIONAL, not hub-state-gated. When on, a
+    # DSW_overnight_clean tranche (EF 0, NO wheel — WEIM transfers pay no
+    # OATT point-to-point charge, corroborated by the measured spread ≈ raw
+    # hub; priced at the RAW measured Palo Verde hub by the per-hub injector)
+    # carries the measured unconditional overnight depth (p95 net import over
+    # ALL overnight hours: 5,870/6,205/6,487 MW 2023/24/25 — CV 0.041, LOYO
+    # ≤8.1 %, gates in interchange_config) net of the shaped firm block AND
+    # the caiso-87 surplus tranche (overlap hours never double-carry), in
+    # hod 0-5 measured-hub hours only (the 2023 Jan-Feb OASIS-gap fill never
+    # arms — the closed winter lane is protected by construction). Fossil
+    # rungs unchanged beyond the clean depth; a capability, not a floor
+    # (pmin 0); the corridor ATC envelope still caps delivered flow. Forward
+    # story: the hod window is persistent WEIM market structure (static
+    # pooled depth), regenerating from a future year's measured corridor
+    # flows. Carried by transmission.build_caiso_per_hub_intertie(
+    # overnight_clean=) + transmission.inject_caiso_dsw_overnight_clean via
+    # the shared apply_interchange_injections seam. Requires
+    # caiso_per_hub_intertie (+ caiso_firm_import_shape). Default off
+    # (byte-identical); CAISO-only.
     caiso_storage_as_reservation: bool = False  # Reserve the MEASURED hourly
     # CAISO battery AS-award MW out of the battery fleet's dispatch headroom
     # (caiso-74; FINDING-caiso72 STEP-0 channel #1 / FINDING-caiso73 live lead
