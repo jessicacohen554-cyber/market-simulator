@@ -2525,6 +2525,7 @@ def solve_and_persist(
     gas_monthly_actuals: bool = False,
     pjm_zonal_gas_basis: bool = False,
     miso_zonal_gas_basis: bool = False,
+    miso_winter_citygate_daily: bool = False,
     pjm_congestion: bool = False,
     offer_curve_overrides: dict | None = None,
     offer_curve_deltas: dict | None = None,
@@ -2981,6 +2982,8 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(pjm_zonal_gas_basis=True)
         if miso_zonal_gas_basis:
             recorded_cfg = recorded_cfg.with_overrides(miso_zonal_gas_basis=True)
+        if miso_winter_citygate_daily:
+            recorded_cfg = recorded_cfg.with_overrides(miso_winter_citygate_daily=True)
         if pjm_congestion:
             recorded_cfg = recorded_cfg.with_overrides(pjm_congestion=True)
         if curve_smoothing:
@@ -3699,6 +3702,7 @@ def solve_and_persist(
             gas_monthly_actuals=gas_monthly_actuals,
             pjm_zonal_gas_basis=pjm_zonal_gas_basis,
             miso_zonal_gas_basis=miso_zonal_gas_basis,
+            miso_winter_citygate_daily=miso_winter_citygate_daily,
             pjm_congestion=pjm_congestion,
             offer_curve_overrides=offer_curve_overrides,
             offer_curve_deltas=offer_curve_deltas,
@@ -4159,6 +4163,7 @@ def solve_and_persist(
         "gas_monthly_actuals": gas_monthly_actuals,
         "pjm_zonal_gas_basis": pjm_zonal_gas_basis,
         "miso_zonal_gas_basis": miso_zonal_gas_basis,
+        "miso_winter_citygate_daily": miso_winter_citygate_daily,
         "pjm_congestion": pjm_congestion,
         "offer_curve_overrides": offer_curve_overrides or {},
         "offer_curve_deltas": offer_curve_deltas or {},
@@ -8779,6 +8784,17 @@ def main() -> None:
         "mean-zero (fleet-aggregate gas level preserved). MISO-only.",
     )
     parser.add_argument(
+        "--miso-winter-citygate-daily",
+        action=argparse.BooleanOptionalAction,
+        default=False,
+        help="MISO winter fuel security (miso-72): in Dec/Jan/Feb, reprice the "
+        "Chicago-hub zones' gas units (MISO-Illinois/Indiana/East) at the "
+        "measured Chicago Citygate daily shape (data/raw/gas-prices/"
+        "miso_citygate_daily.csv), flow-date-placed and mean-preserving, "
+        "superseding the national HH gas_daily_shape in those cells. Closes "
+        "the Jan-14-17-2024 Winter Storm Heather gas tail. MISO-only.",
+    )
+    parser.add_argument(
         "--gas-hub-basis-overlay",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -9230,6 +9246,7 @@ def main() -> None:
         miso_pjm_lmp_import_pricing=args.miso_pjm_lmp_import_pricing,
         miso_seam_measured_ladder=args.miso_seam_measured_ladder,
         miso_zonal_gas_basis=args.miso_zonal_gas_basis,
+        miso_winter_citygate_daily=args.miso_winter_citygate_daily,
         pjm_seam_flow_limit=args.pjm_seam_flow_limit,
         pjm_seam_flow_percentile=args.pjm_seam_flow_percentile,
         pjm_seam_export_limit=args.pjm_seam_export_limit,

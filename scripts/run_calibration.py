@@ -91,6 +91,7 @@ from market_sim.data.fuel import (  # noqa: E402
     apply_ercot_west_netload_gas_shape,
     apply_ercot_zonal_gas_basis,
     apply_hub_basis_overlay,
+    apply_miso_winter_citygate_daily,
     apply_miso_zonal_gas_basis,
     apply_nyiso_downstate_ct_gas_basis,
     apply_nyiso_downstate_ct_gas_daily,
@@ -469,6 +470,7 @@ def run_year(
     gas_monthly_actuals: bool = False,
     pjm_zonal_gas_basis: bool = False,
     miso_zonal_gas_basis: bool = False,
+    miso_winter_citygate_daily: bool = False,
     pjm_congestion: bool = False,
     offer_curve_overrides: dict[str, dict[str, float]] | None = None,
     offer_curve_deltas: dict[str, dict[str, float]] | None = None,
@@ -1469,6 +1471,12 @@ def run_year(
     # non-MISO ISOs — the apply gates on iso == "MISO".
     if miso_zonal_gas_basis:
         config = config.with_overrides(miso_zonal_gas_basis=True)
+    # MISO winter fuel-security citygate daily overlay (miso-72): in Dec/Jan/Feb,
+    # reprice the Chicago-hub zones' gas units at the measured Chicago Citygate
+    # daily shape, superseding the national HH gas_daily_shape there. No-op for
+    # non-MISO ISOs — the apply gates on iso == "MISO".
+    if miso_winter_citygate_daily:
+        config = config.with_overrides(miso_winter_citygate_daily=True)
     # PJM transmission-congestion lever (break the copper-plate): cap the priced
     # external star node to the measured per-border interchange envelope + tighten
     # the internal interfaces to their measured transfer limits. Wired below at
@@ -2644,6 +2652,14 @@ def run_year(
     # apply_monthly=True branch: after the plant-monthly / hub overlay, before the
     # dual-fuel min. No-op unless pjm_zonal_gas_basis is set (PJM only).
     apply_pjm_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
+    # MISO winter fuel security (miso-72): in Dec/Jan/Feb, swap the national HH
+    # gas_daily_shape for the measured Chicago Citygate daily shape on the
+    # Chicago-hub zones' gas units. BEFORE the zonal basis (acts on
+    # level x national_shape; the additive zonal spread lands un-shaped) and
+    # before dual-fuel (oil parity still caps). Mirrors the resolve_fuel_prices
+    # apply_monthly=True order. No-op unless miso_winter_citygate_daily is set
+    # (MISO only). See fuel.apply_miso_winter_citygate_daily.
+    apply_miso_winter_citygate_daily(fuel_prices, fleet_arrays, config, year)
     # MISO per-zone gas basis (north/south gas gradient). Same mean-zero core as
     # PJM. No-op unless miso_zonal_gas_basis is set (MISO only).
     apply_miso_zonal_gas_basis(fuel_prices, fleet_arrays, config, year)
