@@ -862,10 +862,14 @@ def resolve_adequacy_requirement_mw(
        conversion (:data:`PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO`),
        defaulting to 1.0 for ISOs absent from that registry.
 
-    In both constructions the firm peak nets the ISO's load-side capacity
-    products out of the gross peak when the ISO's own adequacy construction
-    does (ERCOT's CDR "Firm Peak Load" —
-    :data:`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO`; ISOs absent net nothing).
+    In both constructions the firm peak nets the ISO's demand-response
+    capacity products out of the gross peak
+    (:data:`ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO`; ISOs absent net
+    nothing). For ERCOT the netting IS the ISO's own construction (the CDR's
+    "Firm Peak Load"); for PJM — whose own construct counts DR as supply-side
+    UCAP — the registry value is reconciled so the netting reproduces PJM's
+    supply-side counting exactly under the published-FPR path (rule 14; see
+    the registry's citation comment).
     One requirement, two verbs (capacity-economics plan §3.2) — both adequacy
     mechanisms call this. ``year=None`` keeps the fallback path, so a caller
     that does not thread a year is byte-identical to the pre-R2 behaviour.
@@ -2638,8 +2642,9 @@ def accredited_firm_capacity_mw(
     override, generic :data:`RENEWABLE_CAPACITY_CREDIT` fallback), storage
     at its duration-dependent ELCC (passed in pre-accredited as
     ``storage_firm_mw``, since the ELCC helper lives in the storage module),
-    plus any asynchronous-tie firm import the ISO's ledger counts but the
-    model topology lacks (:data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW`). Wind/solar
+    plus any external-tie firm import the ISO's ledger counts but the model
+    topology lacks (:data:`ADEQUACY_EXTERNAL_TIE_FIRM_MW` — ERCOT's DC ties,
+    PJM's CIL-governed cleared BRA capacity imports). Wind/solar
     held in the zonal pools (not Generators) are passed as ``wind_pool_mw``
     / ``solar_pool_mw``.
 

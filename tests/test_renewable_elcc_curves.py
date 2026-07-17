@@ -276,7 +276,8 @@ class TestAccreditedLedger(unittest.TestCase):
         # 1 x 1000 MW gas-CC accredited at PJM's published ELCC class rating
         # 0.74 (740 MW — R3 elcc_class_rating basis, NOT the (1-EFORd)=950 UCAP)
         # + 1000 MW wind pool at the published 0.41 clamp + 1000 MW solar pool
-        # at the published 0.1064 clamp (both pools below the first curve point).
+        # at the published 0.1064 clamp (both pools below the first curve point)
+        # + PJM's 1,281.7 MW cleared BRA import UCAP (W2-D external-tie term).
         firm = accredited_firm_capacity_mw(
             [_gas_unit()],
             wind_pool_mw=1000.0,
@@ -286,12 +287,13 @@ class TestAccreditedLedger(unittest.TestCase):
             peak_demand_mw=100_000.0,
             elcc_curves_enabled=True,
         )
-        self.assertAlmostEqual(firm, 740.0 + 410.0 + 106.4)
+        self.assertAlmostEqual(firm, 740.0 + 410.0 + 106.4 + 1_281.7)
 
     def test_hand_computed_pjm_ledger_frozen_mode(self):
         # Same fleet, frozen-penetration VRE mode: the pre-CR-3.1 flat VRE
         # credits. Thermal is still on PJM's ELCC class rating (740, R3) — the
         # elcc_curves gate is a VRE-only switch and never re-derates thermal.
+        # The W2-D external-tie term (1,281.7 MW) is VRE-mode-independent.
         firm = accredited_firm_capacity_mw(
             [_gas_unit()],
             wind_pool_mw=1000.0,
@@ -301,7 +303,7 @@ class TestAccreditedLedger(unittest.TestCase):
             peak_demand_mw=100_000.0,
             elcc_curves_enabled=False,
         )
-        self.assertAlmostEqual(firm, 740.0 + 160.0 + 180.0)
+        self.assertAlmostEqual(firm, 740.0 + 160.0 + 180.0 + 1_281.7)
 
     def test_default_args_reproduce_legacy_signature(self):
         # Callers that never pass the new kwargs get the pre-CR-3.1 result.
