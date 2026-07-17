@@ -1,5 +1,9 @@
 # Forecast-methodology gap — prompt pack
 
+> **⚠️ STALE (2026-07-17) — do not execute.** This June prompt pack is superseded:
+> its parent gap sweep handed tracking to `docs/gap-register-2026-07.md`, and all
+> forecast session planning now lives in `docs/forecast-development-plan-2026-07.md`.
+
 Ready-to-paste handoff prompts, one per build-order workstream from
 `docs/forecast-methodology-gaps-2026-06.md`. Each is self-contained: drop it into
 a fresh Claude Code session on this repo and it has the anchors, forward design,
