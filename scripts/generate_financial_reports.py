@@ -280,11 +280,15 @@ def _write_csv_reports(
     """Write the three human-readable CSV report summaries."""
     all_company = pd.concat(company_summaries, ignore_index=True)
 
+    # W2-B: the attribute (certificate) line — effective EAC/CES premium ×
+    # generation, PTC/45Q excluded — resolved by compute_plant_annual_summary
+    # from the cached config + year threaded through main() above.
     top = (
         all_company.groupby("parent_company", as_index=False)
         .agg(
             total_generation_mwh=("owned_generation_mwh", "sum"),
             total_revenue=("owned_revenue", "sum"),
+            total_attribute_revenue=("owned_attribute_revenue", "sum"),
             total_co2_tons=("owned_co2_emissions_tons", "sum"),
         )
         .sort_values("total_generation_mwh", ascending=False)
