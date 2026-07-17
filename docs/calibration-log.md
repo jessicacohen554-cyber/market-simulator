@@ -15802,3 +15802,194 @@ inert on its target set before any solve — the ERCOT-64/75 precedent).
 Registered per rule 15 with legitimacy diagnostics, attestation (keeper DOF
 ledger regenerated — zero new parameters), parity check PASS. Transport:
 unshallow-then-push, blob-verified (rule 27).
+
+## 2026-07-17 — ERCOT-77: the steam (ST_GAS) participation cliff BUILT as the measured cleared-share wall's third class and probe-adjudicated — the measurement STANDS (ST cleared share 0.02-0.33 of live; wall p50 16-39x; w 0.56-0.61 year-stable) but the pricing form is probe-REJECTED — the pre-registered 2023 guard breaks (C3a +6.2 -> +10.4%, Aug-2023 -0.9 -> +11.3, the ERCOT-72 tight-regime re-inflation at the steam class), the shoulder formation target barely moves ($30.8 -> $31.7 of $67.3), and the composition moves AWAY from measured — the repriced steam withdraws into the still-cheap CC/CT wall mid-rungs, naming the WHOLE-STACK mid-rung level as the formation gap's owner; flag stays default-off; keeper UNCHANGED (ercot73-state-wall)
+
+**Task (owner charter, ercot-77 — lane B of the frontier close-out).** Close
+the ERCOT-73 leg-c finding: on the May-2024 shoulder family measured steam
+(GSREH/GSNONR/GSSUP) live HSL is 5.9 GW with only 1.2 GW DA-cleared (share
+0.20) and ~half of live resource-hours declared OFF in the DAM, while the
+model's flat committed rungs (~$30) hand the LP several GW of cheap steam
+that reality priced $57-100 beyond its DA position — the steam version of
+the ERCOT-72 no-must-offer participation cliff and the second owner of the
+still-open May-24 shoulder formation gap ($30.8 modeled of $67.3 actual).
+
+**Rule-19 enumeration FIRST (what prices/floors ST_GAS rows in the keeper).**
+(1) The netload drag (`gas_st_netload_drag`, D-2 id ST_NETLOAD_DRAG) — a
+min-gen QUANTITY floor on non-peaker committed/econ tranches (slope/intercept/
+cap frozen, ERCOT-61); (2) the committed-tranche OFFER level — the generic
+offer-curve construction (`gas_st_committed_hr_mult` 1.32, delta 0.0: the
+flat ~$30 rungs leg c named); (3) econ tranche offers (econ deltas -0.13/
+-0.35); (4) the conditional peak surface (`ercot_offer_surface_conditional`,
+CONDITIONAL_SURFACE_GROUPS includes ST_GAS) — peak rungs only; (5)
+`gas_st_startup_cost` amortization on P1 bids; (6) wefor_residual 0.06
+(availability, not pricing). No commitment bridge (CC-only) and no wall
+touched ST_GAS. RECONCILE (recorded in the ScenarioConfig field comment and
+this entry): the cliff owns the ABOVE-DA-POSITION offer levels — committed
+AND econ* rows above the measured boundary (the flat committed offer level
+is exactly the measured defect; row-level granularity keeps below-boundary
+committed capacity at its old level); the drag keeps the min-gen quantity
+scaffolding unchanged (floors compose independently of bids — forced MW
+dispatch regardless of the repriced bid); the peak rungs stay with the
+conditional surface. One pricing owner per row-hour.
+
+**The mechanism (built, admissible, default-off).**
+`ercot_offer_surface_cleared_share_steam` (requires the wall flag; hard error
+alone): extends `_ERCOT_CLEARED_SHARE_CLASS_OF` with ST_GAS -> "ST". Both
+frozen artifacts gain an ST block derived from the SAME frozen sources by the
+charter-cited extension commits (rule 23; the CC/CT tables re-derive
+BYTE-IDENTICAL, verified):
+
+* `derive_ercot_dam_cleared_share.py` + GSREH/GSNONR/GSSUP -> "ST": measured
+  ST boundary by netload bin 2023 0.022-0.333 / 2024 0.038-0.237 / 2025
+  0.035-0.161 (the cliff is far deeper than CC's 0.33-0.65 — most of the
+  steam fleet is not in the DA supply at ANY price) with the
+  offered-but-uncleared wall ladder p50 16-39x / p90 79-594x on gas.
+* `derive_ercot_commitment_loading_state.py` + ST_GAS -> "ST" (the CEMS
+  envelope basis already carried ST_GAS incl. the Sommers/Braunig
+  OTHER-group reclass shim): mean w 0.564/0.560/0.608 (year-stable); on the
+  May-24 shoulder family w mean 0.536 (p10 0.291 / p90 0.774).
+
+Scope note: ST_GAS-classed rows cover Braunig/Sommers (dispatch-fleet class,
+verified) — the derive-side OTHER-group shim is envelope-accounting only.
+Zero fitted scalars; P1-only (same mc_bid_adjust seam); 5 new trivial-case
+tests (16 total pass).
+
+**Full-span adjudication (`2026-07-17-ercot77-steam-cliff` on the ercot76
+base — the NE import pair is in code; the steam flag is the single delta).**
+
+| year | C3a/C3b (76 base -> 77) | C3c (RT) | caught/missed/invented |
+|---|---|---|---|
+| 2023 | +6.2%/0.143 -> +10.4%/0.176 (GUARD BREACH) | 179 -> 179 | 119/62/60 -> 119/62/60 (parity) |
+| 2024 | -3.2%/0.144 -> -0.3%/0.147 | 24 -> 27 | 19/34/5 -> 21/32/6 |
+| 2025 | -1.8%/0.088 -> +0.7%/0.091 | 19 -> 19 | 2/29/17 -> 2/29/17 (parity) |
+
+* May-24 shoulder family (88h): price $31.68 of $67.3 (was $30.8); CC
+  -178 / CT +372 / ST_GAS -1,263 (corrected excess vs measured; baseline
+  -311/+215/-914; actual CT 1,370).
+* Monthly deltas 2024: May -10.3, Nov -5.4 (baseline -10.8/-5.6 on the 76
+  base).
+* Guards: 2023 C3a +10.4% — BREACHED (Jun +16.9 / Sep +22.8 / Aug +11.3 / Jul +2.9) (must not worsen materially — the ERCOT-72
+  tight-regime re-inflation is the named failure mode; the ST state weight
+  is the protection); Aug 18-20-2024 window HOLDS (max 2,859, 2h > $200, no shed); C8 forced-share holds (offer-side mechanism; drag floors unchanged).
+
+**Disposition (rules 1/13/14/16/19/22/23/26).** REJECTED PROBE, registered as the honest record (rule 15). The steam participation cliff is real, measured market structure — but pricing the above-DA-position steam at the measured wall in every w>0 regime reproduces the ERCOT-72 static-wall failure AT THE STEAM CLASS: in loaded event weeks (Aug-2023) measured steam retains unloaded envelope headroom, so the ST w series does NOT stand the wall down, and the walled committed rows (drag-forced on, marginal above min-gen) set the margin high exactly where the model was already calibrated. On the target shoulders the LP simply substitutes AROUND the repriced steam into the CC/CT walls' cheap mid-rungs — formation +$0.9 of the $36.5 gap, composition worse — which adjudicates the May-24 shoulder formation gap's owner as the WHOLE-STACK mid-rung level, not the steam class alone. That enumeration is now effectively closed on record: conditional surface (peak rungs, adopted), midcurve belt (ERCOT-69: cannot form the target), cleared-share wall (adopted, partial), steam cliff (this probe: re-inflation), RT-basis rung re-price (ERCOT-75: provably inert vs the DAM ladder). The residual shoulder formation gap stands as a measured representation limit of the DAM-derived offer basis — frontier-grade closure, recorded in the close-out block draft. No scoped/tuned variant armed (a committed-row exclusion would leave the measured defect untouched by construction; a w-threshold would be a residual-tuned scope boundary — rules 23/26).
+
+**Ops.** One full-span in-session solve (years sequential; single delta on
+the registered ercot76 candidate base). Artifact extensions committed with
+byte-identity verification of the CC/CT tables (rule 23). Registered per
+rule 15 with legitimacy diagnostics + attestation; keeper decision the
+owner's. Transport: API create_branch + git push onto the existing ref
+(the relay 502s creating NEW refs from a full clone — the session's
+transport finding), blob-verified (rule 27).
+
+## 2026-07-17 — ERCOT-78: the 2023 summer over-shoot root cause NAMED from the pre-registered decomposition (no build) — the co-opt ORDC reserve scarcity fires on the model's EXHAUSTED event-afternoon room while measured reality carried 6-9 GW of online reserve capability (RTORPA p50 $1.4); one mechanism owns BOTH the +14.8/+17.9 monthly residuals and the 30 invented Jun/Sep system prints; successor lane chartered at the availability/capability envelope (rule-14 input side), a room-pin to RTOLCAP explicitly forbidden; keeper UNCHANGED
+
+**Task (owner charter, ercot-78 — lane C of the frontier close-out,
+diagnosis-first).** Decompose the Jun/Sep-2023 over-priced hours by marginal
+row on the standing keeper; name the mechanism or ledger the over-shoot
+out-of-representation. Pre-registration committed BEFORE measurement in
+`scripts/probes/_ercot78_summer_anatomy.py` (targets Jun +14.8 / Sep +17.9 on
+the payload lw basis; set = Jun/Sep hours with model_lw − rt > $25; guards:
+the Aug-2023 caught set and 2023 C3c count parity; exit = named measured
+mechanism chartered OR ledger).
+
+**Leg 0/1 — the decomposition (run on `ercot76_ne_import_fullspan`, whose
+2023 is set-and-C3 byte-parity with the keeper; the ercot73 keeper replay
+verified that parity to the decimal this session).** The set: **58 hours
+(29 Jun + 29 Sep), hod 12-20, netload bins 5-6 (p90+)** — the real Jun/Sep
+heat-event afternoons, $-mass ~37.5k $/MWh-h, carrying the entire monthly
+residual pair. Per-hour price formation (demand-weighted lw):
+
+* model lw mean **$1,068** vs actual RT mean **$421** (actual DA $492 — the
+  real DA also priced these afternoons high); energy dual mean $1,064 —
+  overlays ~0 (RTORDPA overlay $4.7, ordc post-adder $0), shed in exactly 1
+  hour. The overshoot is the LP's own price formation, not an overlay.
+* **the model's co-opt reserve dual is enormous exactly here: p10/p50/p90 =
+  $1,667 / $2,504 / $7,091** — the multi-product co-opt sits deep in its
+  ORDC demand-curve steps, and in a co-opt LP the energy dual carries the
+  reserve-substitution term, so the energy prints ride to $471-2,388
+  (p10-p90).
+* **measured reality was NOT reserve-scarce in those hours**: NP6-905
+  RTOLCAP p10/p50/p90 = **6,104 / 7,541 / 8,853 MW** of real-time online
+  capability (comfortably above the ~3 GW MCL), RTORPA p10/p50/p90 =
+  $0.03 / $1.4 / $42, system lambda p50 $158. Reality's ORDC read LOOSE.
+* the measured commitment-loading state on the set: CC w mean 0.05 (the
+  real CC fleet ran at its envelope — the ERCOT-73 wall correctly stands
+  down; the cleared-share family is NOT the owner), ST 0.21, CT 0.61.
+* the 30 invented Jun/Sep hours (of 2023's 60 — ERCOT-76 measured them all
+  as system-wide prints) are a SUBSET of this 58h set: every set hour is
+  reserve-coupled (reserve dual ≥ $1,667 at p10). ONE mechanism owns both
+  the caught-hour depth overshoot and the invented moderate-hour prints.
+
+**The named mechanism.** The model's Jun/Sep-2023 event-afternoon ROOM
+(available thermal + storage capability net of energy dispatch) is exhausted
+— several GW short of the measured 6-9 GW RTOLCAP — so the co-opt prices its
+measured AS requirements (RegUp/RRS/ECRS/NonSpin means 240/1,263/741/3,348 MW)
+deep into the ORDC steps. Reality served the same load, with the same
+measured VRE, holding 6-9 GW of online headroom. The gap is therefore on the
+model's AVAILABILITY/CAPABILITY side in exactly these afternoons (candidate
+inputs, each measured and rule-14-auditable: the summer capability/derate
+stack, wefor haircuts, CAMPD outage-window edges in the June/September
+shoulder-outage seasons, the 2023 storage capability basis — 2.9 GW mean vs
+2025's 11.4 GW), NOT on the ORDC/co-opt construction (which prices correctly
+GIVEN the room) and NOT on the offer surfaces (w_CC = 0.05: the wall family
+stands down as designed). This is the ERCOT-75 room-exhaustion finding
+MIRRORED: in the 2024 missed tails the REAL room was exhausted while the
+model held cheap room; in the 2023 Jun/Sep events the MODEL's room is
+exhausted while reality held 6-9 GW. Both directions are one representation
+seam: the event-time online-capability envelope.
+
+**Adjudication (exit condition (a): successor lane chartered; no build, no
+flag, no scalar).** The admissible successor — its own numbered lane — is an
+INPUT-side reconcile: compare the model's per-class hourly available
+capability against the measured CAMPD online envelope (the same measured
+source family as the outage overlay, rule 13/14-admissible as an INPUT
+basis) on the 58h set; find which availability input under-supplies the
+~5-8 GW; fix it at the input for ALL hours (not a window), full-span + LOYO.
+HARD LINE (pre-registered in the probe): capping or pinning the model's room
+to measured RTOLCAP — feeding the measured reserve OUTCOME back — is the
+rule-14 actuals-pin family and is forbidden; so is any Jun/Sep-scoped damper
+on the ORDC steps or a residual-tuned reserve-requirement haircut (rules
+1/13/14/23/26). If the input audit finds every availability input already
+faithful, the residual adjudicates out-of-admissible-representation (the
+crossover of measured-envelope granularity vs zonal hourly LP) and joins the
+ledger with this entry's per-hour evidence — either outcome closes the 2023
+summer lane for frontier purposes.
+
+**Context (lane B interaction, reported not chased):** the rejected ERCOT-77
+steam wall inflated exactly this family further (Jun +16.9 / Sep +22.8 /
+Aug +11.3) — consistent: adding markup on semi-loaded steam deepens an
+already reserve-tight co-opt. Guards untouched: no solve was run for this
+lane (scorer-only on the registered ercot76 bundle); Aug-2023 caught set and
+the 179h count are unmodified by construction.
+
+**Ops.** No LP solve (rule-22 window untouched; the diagnosis reads the
+registered ercot76 bundle + committed NP6-905/state artifacts). The
+pre-registered probe is committed (`_ercot78_summer_anatomy.py`, merged
+before the measurement ran — the ERCOT-74/75 pattern). Keeper and dashboard
+unchanged. Transport: API create_branch + git push onto the existing ref,
+blob-verified (rule 27).
+
+## 2026-07-17 — ERCOT keeper promotion: 2026-07-17-ercot76-ne-import (owner)
+
+**Promotion (owner, this session — the ercot-76/77/78 close-out).**
+`2026-07-17-ercot76-ne-import` promoted to ERCOT keeper
+(CALIBRATED-WITH-CAVEATS; the single ledgered caveat is the fully-adjudicated
+C3c-2024 tail, 24h vs RT 53 — every family measured and closed, ERCOT-74/75/76).
+Same recipe as the deposed ercot73-state-wall keeper; the delta is the
+ERCOT-76 topology correction (the NE-boundary one-way pair), which is
+code-level and already on main — so this keeper is the configuration current
+code reproduces byte-faithfully, while the deposed keeper's registered
+numbers were solved on the old symmetric topology. LOYO (rule 22) satisfied
+structurally: zero fitted scalars; the import rating's leave-one-year-out
+values (1,756-1,788 MW) are verdict-identical. `keepers.json` flipped from
+`2026-07-16-ercot73-state-wall`; keeper sidecar carries the market_story (the
+import rating becomes physical — no class forced, no offer changed);
+`build_status.py` rebuilt status.js (ERCOT CALIBRATED-WITH-CAVEATS);
+`audit_keepers.py --iso ERCOT` PASS 0/0. The deposed keeper's registration
+stays on the dashboard as the prior-keeper comparison. Open items carried
+forward: the ercot-78 availability-envelope successor lane (the one open
+chartered lane), the frontier.ERCOT block draft + the ERCOT-65 trough/spread
+draft (both awaiting owner sign-off), and the ercot_gtc_limits_measured
+data-starvation provenance item.
