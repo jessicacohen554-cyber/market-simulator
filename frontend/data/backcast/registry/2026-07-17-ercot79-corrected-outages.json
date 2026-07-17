@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-17-ercot79-corrected-outages",
+  "label": "ercot79 corrected outages",
+  "date": "2026-07-17",
+  "shorthand": "ercot79-corrected-outages",
+  "definition": "ERCOT-79 availability audit v2: keeper config + corrected CAMPD facility-outage detector (event-based detection for daily-cycling CC/CT classes + revealed-availability filter; genuine embedded outages preserved). Single-delta vs keeper.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-17-ercot79-corrected-outages.js",
+  "bundle": "results/calibration/ercot79_corrected_outages_fullspan"
+}
