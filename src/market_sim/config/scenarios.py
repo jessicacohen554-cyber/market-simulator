@@ -5465,6 +5465,23 @@ class ScenarioConfig:
     # enables it for MISO. See market_sim.data.fuel.apply_miso_zonal_gas_basis.
     miso_zonal_gas_basis: bool = False
 
+    # MISO winter fuel-security daily citygate overlay (miso-72). In the winter
+    # months (Dec/Jan/Feb) only, for the MISO gas units in the Chicago-hub zones
+    # only (MISO-Illinois/Indiana/East, read from miso_zonal_gas_hub.csv), replace
+    # the national Henry-Hub gas_daily_shape within-month daily shape with the
+    # MEASURED Chicago Citygate daily shape (miso_citygate_daily.csv, EIA NG Weekly
+    # "Chicago" row), placed on gas FLOW days (Friday prices the Sat-Mon-holiday
+    # weekend package) and mean-preserving within month so the (already-correct)
+    # monthly level is unchanged. Supersedes — never stacks on — the national daily
+    # shape; the mean-zero miso_zonal_gas_basis spread is orthogonal and unperturbed
+    # (rule 19). Closes the Jan-14-17-2024 Winter Storm Heather gas tail the flat
+    # national HH shape mislocates/understates. Zero fitted scalars (the measured
+    # daily series + the published Chicago-zone assignment). Backcast-only (no
+    # forward Chicago daily rows). Off by default. See
+    # docs/handoffs/miso-winter-fuel-security-design-2026-07.md and
+    # market_sim.data.fuel.apply_miso_winter_citygate_daily.
+    miso_winter_citygate_daily: bool = False
+
     # CAISO per-zone citygate-hub gas basis spread. CAISO's zones buy from two
     # separately traded LDC citygate hubs — NP15/ZP26 on PG&E Citygate, SP15 on
     # SoCal Citygate — but the model prices every zone off the single blended
@@ -7119,6 +7136,7 @@ TIER_TAGS: dict[str, int] = {
     "nyiso_downstate_ct_gas_daily": 3,
     "pjm_zonal_gas_basis": 3,
     "miso_zonal_gas_basis": 3,
+    "miso_winter_citygate_daily": 3,
     "pjm_congestion": 3,
     "ercot_zonal_gas_basis": 3,
     "ercot_gas_delivered_floor_basis": 3,
