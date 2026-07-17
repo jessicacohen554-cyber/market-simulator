@@ -234,6 +234,7 @@ data/raw/_processed-legacy/.offer_curve_jacobian_cache.json
 # CLAUDE.md rule 15/16; regenerate from config). Covers the run dirs and their
 # loose top-level run logs (e.g. results/probe-pjm-rps.log).
 /results/full-horizon/
+/results/ff-t1f-baseline/
 /results/probe-*/
 /results/verify-*/
 /results/*.log
