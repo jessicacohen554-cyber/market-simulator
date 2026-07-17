@@ -489,6 +489,137 @@ class TestMisoZonalDesign(unittest.TestCase):
         np.testing.assert_array_equal(kw["reserve_balance_class"], [0, 0])
 
 
+class TestMisoMidwestDesign(unittest.TestCase):
+    """MISO Midwest sub-regional reserve-holding family
+    (miso_midwest_subregional_reserves, the miso-71 engagement-depth lane)."""
+
+    # Full 6-zone MISO topology: the 5 physical Midwest zones + MISO-South.
+    _ZONES = [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South",
+    ]
+    _FAM = "miso_subregional_or_midwest"
+
+    def _fleet(self, T=24):
+        """6-zone fleet, one reserve-eligible CC per zone with descending
+        capacity so the within-region Midwest MSSC is the 1,000 MW West unit."""
+        cc = FUEL_TYPE_NAMES.index("gas_cc")
+        n = 6
+        return FleetArrays(
+            pmax=np.array([1000.0, 900.0, 800.0, 700.0, 600.0, 500.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.full(n, 7.0),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.arange(6),
+            fuel_type_idx=np.full(n, cc),
+            availability=np.ones((n, T)),
+            unit_ids=[f"cc{z}" for z in range(6)],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([10, 20, 30, 40, 50, 60]),
+        )
+
+    def _midwest_family(self, design):
+        return next(f for f in design.families if f.name == self._FAM)
+
+    @staticmethod
+    def _fake_measured(series):
+        """A measured-req dict whose Midwest leg is ``series`` and whose
+        Midwest + South == market (the loader's nesting identity)."""
+        south = np.full(len(series), 400.0)
+        return {"market": series + south, "MISO-South": south, "MISO-Midwest": series}
+
+    def test_default_off_no_family(self):
+        cfg = _cfg(iso="MISO")
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        self.assertNotIn(self._FAM, [f.name for f in design.families])
+        self.assertEqual(len(design.families), 1)  # market-wide RBDC only
+
+    def test_family_added_iff_flag_on(self):
+        cfg = _cfg(iso="MISO", miso_midwest_subregional_reserves=True)
+        design = get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        self.assertIn(self._FAM, [f.name for f in design.families])
+
+    def test_mask_is_exactly_five_midwest_zones(self):
+        cfg = _cfg(iso="MISO", miso_midwest_subregional_reserves=True)
+        fam = self._midwest_family(
+            get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        )
+        # True for the 5 physical Midwest zones, False for MISO-South (idx 5).
+        np.testing.assert_array_equal(
+            fam.zone_mask, [True, True, True, True, True, False]
+        )
+        self.assertEqual(int(fam.zone_mask.sum()), 5)
+
+    def test_fallback_within_region_mssc_when_measured_off(self):
+        cfg = _cfg(iso="MISO", miso_midwest_subregional_reserves=True)
+        fam = self._midwest_family(
+            get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+        )
+        # Largest single Midwest contingency = the 1,000 MW West CC (South's
+        # 500 MW is excluded — the family is the 5 Midwest zones only).
+        self.assertTrue(np.allclose(fam.requirement, 1000.0))
+
+    def test_measured_basis_consumes_loader_key(self):
+        from unittest.mock import patch
+
+        series = np.linspace(1800.0, 2500.0, 24)
+        cfg = _cfg(
+            iso="MISO",
+            weather_year=2025,
+            miso_midwest_subregional_reserves=True,
+            miso_measured_reserve_requirements=True,
+        )
+        with patch(
+            "market_sim.data.miso_reserve_requirements.load_miso_reserve_requirements",
+            return_value=self._fake_measured(series),
+        ):
+            fam = self._midwest_family(
+                get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+            )
+        # The measured "MISO-Midwest" leg is the requirement verbatim (NOT the
+        # within-region MSSC static, NOT the "market" leg).
+        np.testing.assert_allclose(fam.requirement, series)
+
+    def test_single_rpe_step_width_is_series_max_class_zero(self):
+        from unittest.mock import patch
+
+        from market_sim.config.reserve_config import MISO_RPE_DEMAND_VALUE
+
+        series = np.linspace(1800.0, 2500.0, 24)
+        cfg = _cfg(
+            iso="MISO",
+            weather_year=2025,
+            miso_midwest_subregional_reserves=True,
+            miso_measured_reserve_requirements=True,
+        )
+        with patch(
+            "market_sim.data.miso_reserve_requirements.load_miso_reserve_requirements",
+            return_value=self._fake_measured(series),
+        ):
+            fam = self._midwest_family(
+                get_reserve_design(cfg, self._fleet(), 24, self._ZONES)
+            )
+        # Single shortfall step [(1.0, $200)] width-anchored at the series max.
+        np.testing.assert_allclose(fam.ordc_penalties, [MISO_RPE_DEMAND_VALUE])
+        np.testing.assert_allclose(fam.ordc_step_widths, [float(series.max())])
+        self.assertEqual(fam.reserve_class, 0)  # nested inside market-wide
+
+    def test_missing_midwest_zone_raises(self):
+        # zone_names lacking MISO-East → the fixed MISO_MIDWEST_ZONES tuple
+        # cannot map; hard error, never a silent partial mask.
+        cfg = _cfg(iso="MISO", miso_midwest_subregional_reserves=True)
+        zones = [z for z in self._ZONES if z != "MISO-East"]
+        with self.assertRaises(ValueError):
+            get_reserve_design(cfg, self._fleet(), 24, zones)
+
+
 class TestMisoPergenDesign(unittest.TestCase):
     """MISO per-asset reserve columns (miso_reserve_pergen): (zone, fuel-class)
     pooled R columns bounded by the summed 10-min deliverable ramp."""
