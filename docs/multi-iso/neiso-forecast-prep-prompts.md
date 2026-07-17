@@ -1,5 +1,10 @@
 # NEISO forecast-prep prompts (2026-06-19 handoff)
 
+> **⚠️ STALE (2026-07-17) — do not execute.** Overtaken by events: the NEISO forecast
+> infeasibility was separately fixed (`docs/forecast-invariant-findings.md` F0) and
+> NEISO has since completed 25/25 forecast years (full-horizon P-3A). Forecast
+> planning now lives in `docs/forecast-development-plan-2026-07.md`.
+
 Two self-contained prompts for fresh sessions, written off the backcast
 sign-off in `results/calibration/DIAGNOSIS-neiso-ccsteam-2026-06-19.md`. NEISO is
 **backcast-calibrated**; these are the only two items between it and a forecast
