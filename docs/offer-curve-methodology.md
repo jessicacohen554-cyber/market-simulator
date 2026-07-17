@@ -233,28 +233,39 @@ span — for at least **120 hours (5 days)**. **Any single hour at or above
 2% CF breaks the window**, so an economically-idle-but-occasionally-firing
 unit is left to the economic dispatch instead of being called out.
 
-### Facility-level vs. unit-level detection
+### Unit-level detection (the sole CAMPD outage source)
 
-- **Facility-level** (`scripts/derive_campd_outages.py`) detects outages on
-  the summed CEMS series for each plant. Its limitation is that at a mixed
-  coal/gas facility (W A Parish, Barney M Davis) the running gas units mask
-  a coal-unit outage, which is never seen in the combined series.
-- **Unit-level** (`scripts/derive_campd_unit_outages.py`) reads the
-  per-unit CAMPD extracts and runs the *same two rules per unit* (coal →
-  real-run, everything else → event-based), so it catches a single-unit
-  outage at a multi-unit plant and, critically, a **coal-unit outage hidden
-  behind running gas units** at a mixed facility. Each detected unit outage
-  derates that unit's capacity share of its model bin over the window.
+The per-unit detector (`scripts/derive_campd_unit_outages.py`) reads the
+per-unit CAMPD extracts and runs the *same two rules per unit* (coal →
+real-run, everything else → event-based), so it catches a single-unit outage at
+a multi-unit plant and, critically, a **coal-unit outage hidden behind running
+gas units** at a mixed facility (W A Parish, Barney M Davis). Each detected unit
+outage derates that unit's capacity share of its model bin over the window; a
+genuinely single-unit plant (unit capacity = plant-bin capacity) is fully
+zeroed. The shared detection primitives live in
+`scripts/lib/outage_detect.py`.
+
+> The old **facility-level** detector (`scripts/derive_campd_outages.py` →
+> `campd-outages*.csv`, a hard `availability=0` per plant) was **removed
+> 2026-07-17**: summing a plant's units hid single-unit outages, and it folded a
+> daily-cycling combined cycle's overnight-down gaps into phantom summer outages
+> (`results/calibration/FINDING-ercot79-phantom-outage-2026-07.md`). The
+> per-unit detector — event-based for load-following classes — never had that
+> bug, so it is now the sole CAMPD outage layer for every ISO.
 
 ### Scope and overlay rules
 
 - Only **coal and combined-cycle** plants (`QUALIFYING_PLANT_GROUPS`) are
   overlaid; at a mixed-bin plant only the qualifying coal/CC bin is zeroed.
-- **Combustion-turbine peakers** carry no outage overlay — they dispatch
-  purely economically — and the spiky-running `ST_GAS_PEAKER_PLANTS` are
-  likewise excluded.
-- The overlay applies every window the detector emits, guarded by a minimum
-  span of **48 hours (≥ 2 days)** (`MIN_OUTAGE_SPAN_HOURS`); detection is
+- **Combustion turbines** (`CT_PEAKER` *and* `CT_CHP`) carry no outage
+  overlay — they dispatch purely economically, and the revealed-availability
+  filter cannot certify a CT down-window as a forced outage vs out-of-merit at
+  peak (unlike baseload coal/CC, where down-at-peak reliably implies an outage);
+  the spiky-running `ST_GAS_PEAKER_PLANTS` are likewise excluded. (The detector
+  still writes CT_CHP windows to the extract for audit, but the derate skips
+  them.)
+- The overlay applies every unit window the detector emits, guarded by a minimum
+  span of **5 days** (`UNIT_OUTAGE_MIN_DAYS`); detection is
   per calendar year, and a window straddling Dec 31 is clipped at the year
   boundary with each side independently clearing the duration floor.
 
@@ -429,6 +440,6 @@ generators and are not part of the gas offer-curve tranche fleet.
 | Committed % / coal must-run % / CC peaking % derivation | `scripts/derive_thermal_tranches.py` |
 | Per-ISO bin-assignment export (source-tagged) | `scripts/export_iso_bin_assignments.py` |
 | CEMS→EIA split-plant remap (AES Alamitos / Huntington Beach) | `src/market_sim/data/campd.py` (`CAMPD_UNIT_PLANT_REMAP`) |
-| Facility-level outage detection + thresholds | `scripts/derive_campd_outages.py` |
-| Unit-level outage detection | `scripts/derive_campd_unit_outages.py` |
+| Shared outage detectors + thresholds (ERCOT-79-tightened) | `scripts/lib/outage_detect.py` |
+| Unit-level outage detection (sole CAMPD outage source) | `scripts/derive_campd_unit_outages.py` |
 | Historic-outage overlay | `src/market_sim/data/outages.py` |

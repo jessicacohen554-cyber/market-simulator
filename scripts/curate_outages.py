@@ -8,16 +8,17 @@ availability rows that conform to
 
 Sources (all under ``data/raw``)
 --------------------------------
-1. ``campd-outages.csv`` — facility-grain downtime windows, the committed
-   output of ``scripts/derive_campd_outages.py`` (zero-gross-load hours read as
-   downtime). One window = the *whole facility* offline, so it lands as a
-   plant-grain row with ``unit_id="ALL"`` and ``outage_mw`` = the plant
-   nameplate.
-2. ``campd-unit-outages.csv`` — unit-grain windows, the committed output of
+1. ``campd-unit-outages.csv`` — unit-grain windows, the committed output of
    ``scripts/derive_campd_unit_outages.py``. ``outage_mw`` is the unit's own
    offline capacity (``unit_capacity_mw``).
-3. ``reference/tx-jan-aug23-unit-outages.csv`` — ERCOT's curated unit-outage
-   list (the same window layout as #2).
+2. ``reference/tx-jan-aug23-unit-outages.csv`` — ERCOT's curated unit-outage
+   list (the same window layout as #1).
+
+The facility-summed source (``campd-outages.csv``, output of the deleted
+``scripts/derive_campd_outages.py``) was removed 2026-07-17: the per-unit
+detector is now the sole CAMPD outage source for every ISO, so this datatype is
+unit-grain only and carries no ``unit_id="ALL"`` rows
+(``results/calibration/FINDING-ercot79-phantom-outage-2026-07.md``).
 
 We deliberately do NOT re-run the zero-gross-load detection here: those CSVs
 *are* the derive scripts' output (the existing logic over
@@ -112,15 +113,6 @@ def _expand_daily(start: pd.Timestamp, end: pd.Timestamp) -> pd.DatetimeIndex:
     return pd.date_range(lo, hi, freq="h")
 
 
-def _expand_hourly(start: pd.Timestamp, stop: pd.Timestamp) -> pd.DatetimeIndex:
-    """Hourly naive local stamps for an [start, stop) window (stop exclusive)."""
-    lo = pd.Timestamp(start)
-    hi = pd.Timestamp(stop) - pd.Timedelta(hours=1)
-    if hi < lo:
-        return pd.DatetimeIndex([], dtype="datetime64[ns]")
-    return pd.date_range(lo, hi, freq="h")
-
-
 def load_unit_windows(csv_path: Path) -> list[pd.DataFrame]:
     """Expand a unit-grain window CSV to per-hour ``(plant, unit, offline)`` frames.
 
@@ -155,40 +147,6 @@ def load_unit_windows(csv_path: Path) -> list[pd.DataFrame]:
                 {
                     "plant_id": int(r.facility_id),
                     "unit_id": str(r.unit_id),
-                    "local": hours,
-                    "outage_mw": float(cap),
-                }
-            )
-        )
-    return parts
-
-
-def load_facility_windows(
-    csv_path: Path, nameplate: dict[int, float]
-) -> list[pd.DataFrame]:
-    """Expand the facility-grain window CSV to per-hour ``"ALL"`` frames.
-
-    The facility detector marks the *whole plant* offline, so ``outage_mw`` is
-    the plant's registry nameplate. A plant with no registry nameplate cannot be
-    sized and is skipped (its facility windows are dropped).
-    """
-    df = pd.read_csv(csv_path)
-    parts: list[pd.DataFrame] = []
-    for r in df.itertuples(index=False):
-        plant_id = int(r.oris_code)
-        cap = nameplate.get(plant_id)
-        if cap is None:
-            continue
-        hours = _expand_hourly(
-            pd.Timestamp(r.outage_start), pd.Timestamp(r.outage_stop)
-        )
-        if len(hours) == 0:
-            continue
-        parts.append(
-            pd.DataFrame(
-                {
-                    "plant_id": plant_id,
-                    "unit_id": "ALL",
                     "local": hours,
                     "outage_mw": float(cap),
                 }
@@ -292,11 +250,6 @@ def curate(
     parts: list[pd.DataFrame] = []
     sources: list[Path] = []
 
-    facility_csv = raw_dir / "campd-outages.csv"
-    if facility_csv.is_file():
-        parts += load_facility_windows(facility_csv, nameplate)
-        sources.append(facility_csv)
-
     unit_csv = raw_dir / "campd-unit-outages.csv"
     if unit_csv.is_file():
         parts += load_unit_windows(unit_csv)
@@ -312,8 +265,7 @@ def curate(
     source = "; ".join(
         [_rel(p) for p in sources]
         + [
-            "data/raw/campd-unit-level/* via scripts/derive_campd_outages.py"
-            " + scripts/derive_campd_unit_outages.py",
+            "data/raw/campd-unit-level/* via scripts/derive_campd_unit_outages.py",
             f"nameplate from {_rel(registry_csv)}",
         ]
     )

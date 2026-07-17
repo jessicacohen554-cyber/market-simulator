@@ -10,7 +10,7 @@ import pandas as pd
 
 from market_sim.config.constants import HEAT_RATE_BINS
 from market_sim.config.iso_configs import get_iso_config
-from market_sim.config.paths import CAMPD_BINS_CSV, PROCESSED_DIR
+from market_sim.config.paths import PROCESSED_DIR
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.data.fleet import (
     _CC_SHOULDER_MONTHS,
@@ -1246,112 +1246,6 @@ class TestCoalTranches(unittest.TestCase):
         fleet, _ = split_coal_tranches(self._coal_and_cc(), config)
         coal = [g for g in fleet if g.fuel_type == "coal"]
         np.testing.assert_allclose([g.pmax_mw for g in coal], [500.0, 200.0, 300.0])
-
-
-class HistoricOutageOverlayTest(unittest.TestCase):
-    """The backcast-only historic-outage availability overlay."""
-
-    # Repo root (tests/ lives at the repo root); the overlay reads the
-    # committed bin assignments and outage extract.
-    _REPO = Path(__file__).parents[1]
-    _BINS = str(CAMPD_BINS_CSV)
-
-    def _fleet(self):
-        # Coleto Creek (6178) is a coal plant with a real >2-day 2023
-        # outage. Here it appears once as a COAL bin and once (synthetically)
-        # as a CT_PEAKER bin to verify the per-bin group filter: CT_PEAKER is
-        # not a qualifying overlay group, so its bin must be spared even though
-        # the plant code is outaged. Plant 99999 is a coal plant with no outage.
-        return [
-            Generator(
-                unit_id="coleto_coal",
-                name="Coleto coal",
-                zone="z",
-                fuel_type="coal",
-                pmax_mw=600.0,
-                online_year=1980,
-                plant_group="COAL",
-                plant_code=6178,
-            ),
-            Generator(
-                unit_id="coleto_ctpeaker",
-                name="Coleto peaker",
-                zone="z",
-                fuel_type="gas_ct",
-                pmax_mw=100.0,
-                online_year=1980,
-                plant_group="CT_PEAKER",
-                plant_code=6178,
-            ),
-            Generator(
-                unit_id="other_coal",
-                name="Other coal",
-                zone="z",
-                fuel_type="coal",
-                pmax_mw=500.0,
-                online_year=1990,
-                plant_group="COAL",
-                plant_code=99999,
-            ),
-        ]
-
-    def _outage_hour(self):
-        from market_sim.data.outages import outage_masks_for_year
-
-        masks = outage_masks_for_year(2023, 8760, bins_path=self._BINS)
-        return int(np.argmax(masks[6178]))  # first outaged hour for Coleto
-
-    def _config(self, source):
-        return ScenarioConfig(
-            weather_year=2023,
-            outage_source=source,
-            campd_bins_path=self._BINS,
-        )
-
-    def _august_hour(self):
-        from market_sim.data.outages import _hour_of_year
-
-        return _hour_of_year(8, 1, 0)  # summer peak, outside every window
-
-    def test_historic_zeros_outaged_coal_bin(self):
-        arrays = generators_to_fleet_arrays(
-            self._fleet(),
-            ["z"],
-            hours=8760,
-            iso="ERCOT",
-            config=self._config("historic"),
-        )
-        out_h = self._outage_hour()
-        # Coleto's COAL bin is fully zeroed during the outage hour...
-        self.assertEqual(arrays.availability[0, out_h], 0.0)
-        # ...but available outside the window (a summer-peak hour).
-        self.assertGreater(arrays.availability[0, self._august_hour()], 0.0)
-
-    def test_group_filter_spares_non_coal_cc_bin(self):
-        arrays = generators_to_fleet_arrays(
-            self._fleet(),
-            ["z"],
-            hours=8760,
-            iso="ERCOT",
-            config=self._config("historic"),
-        )
-        out_h = self._outage_hour()
-        # Same plant_code (6178) but a CT_PEAKER bin (non-qualifying) -> spared.
-        self.assertGreater(arrays.availability[1, out_h], 0.0)
-        # A coal plant with no historic outage is untouched.
-        self.assertGreater(arrays.availability[2, out_h], 0.0)
-
-    def test_statistical_source_does_not_apply_outages(self):
-        arrays = generators_to_fleet_arrays(
-            self._fleet(),
-            ["z"],
-            hours=8760,
-            iso="ERCOT",
-            config=self._config("statistical"),
-        )
-        out_h = self._outage_hour()
-        # The default statistical model leaves WEFOR/POF availability (>0).
-        self.assertGreater(arrays.availability[0, out_h], 0.0)
 
 
 class TestOilBiomassFuelTypes(unittest.TestCase):

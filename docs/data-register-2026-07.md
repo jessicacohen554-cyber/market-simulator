@@ -23,8 +23,8 @@ from the year grid.
 | 3 | PJM DataMiner2 "Generation by Fuel Type" | PJM (owner-exported, no API key) | PJM class-volume bench, cross-checks EIA-930 | `data/raw/ISO-specific-gen-data/PJM_<year>_gen_by_fuel.csv` | Backcast (bench) |
 | 4 | EPA CAMPD hourly CEMS — unit-level | EPA Clean Air Markets Program Data | Per-plant/unit fleet binning, same-year emission rates, parasitic (net/gross) factors, per-plant CEMS generation bench, source for outage/tranche/ramp derivations below | `data/raw/campd-unit-level/<STATE>_<YEAR>.parquet` | Backcast-only |
 | 5 | EPA CAMPD hourly CEMS — facility-level | EPA CAMPD | Facility-grain cross-check / derivation input for outages | `data/raw/campd-facility-level/<STATE>_<year>.parquet` | Backcast-only |
-| 6 | CAMPD-derived facility outage windows | Derived from #4/#5 (`scripts/derive_campd_outages.py`) | Per-plant hourly availability mask (sustained CF<5% ≥2 days) | `data/raw/campd-outages.csv`, `campd-outages-<ISO>.csv`, `ercot-outages.csv` | Backcast-only |
-| 7 | CAMPD-derived unit-level outage events | Derived from #4 (`scripts/derive_campd_unit_outages.py`) | Unit-level derate on top of #6 | `data/raw/campd-unit-outages.csv`, `campd-unit-outages-<ISO>.csv` | Backcast-only |
+| 6 | CAMPD-derived facility outage windows | **REMOVED 2026-07-17** — the facility-summed detector (`scripts/derive_campd_outages.py`) and its outputs (`campd-outages.csv`, `campd-outages-<ISO>.csv`) were deleted; summing a plant's units hid single-unit outages and folded daily-cycling CCs into phantom summer outages (see #7) | — | — | — |
+| 7 | CAMPD-derived unit-level outage events | Derived from #4 (`scripts/derive_campd_unit_outages.py`); detectors live in `scripts/lib/outage_detect.py` | **Sole CAMPD outage layer** for every ISO — per-unit derate sized by the unit's capacity share of its plant bin | `data/raw/campd-unit-outages.csv`, `campd-unit-outages-<ISO>.csv` (+ `-short-` / `campd-partial-outages-<ISO>` siblings) | Backcast-only |
 | 8 | CAMPD-derived partial-outage (CF-ceiling) windows | Derived from #4 (`scripts/derive_partial_outages.py`) | Plateau-CF derate windows | `data/raw/campd-partial-outages.csv` | Backcast-only |
 | 9 | CAMPD-derived plant tranches / ramp envelopes / CT run-lengths | Derived from #4 | Offer-curve tranche shares, ramp physics, CT startup amortization | `data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`, `campd_ramp_envelopes_<ISO>.csv`, `campd_ct_run_lengths_<ISO>.csv` | Both (physics reused forward) |
 | 10 | CAMPD-derived forward emission-rate estimator input (`plant_emission_rates_v2`) | Derived from #4, pooled 2023-2025 | Forecast-year per-plant CO2/NOx/SO2 rate estimator (rule #0's forward-derivation exception) | `data/raw/_processed-legacy/plant_emission_rates.parquet` | Forecast-only (derived from backcast-year CEMS) |
@@ -142,8 +142,8 @@ has been separately authorized — currently ERCOT, PJM, and (as of 2026-07-07) 
 | Source | 2018-2021 | 2022 | 2023 | 2024 | 2025 | H1 2026 |
 |---|---|---|---|---|---|---|
 | ERCOT (`ercot-outages.csv`) | — | — | ✓ | ✓ | ✓ | — |
-| ERCOT/PJM facility outages (`campd-outages.csv`, spans outage_start) | — | ✓ (from 2022-01-01) | ✓ | ✓ | ✓ | Q1 (thru ~Mar 24) |
-| PJM (`campd-outages-PJM.csv`) | — | — | ✓ | ✓ | ✓ (thru ~Dec 17) | — |
+| ERCOT/PJM facility outages (`campd-outages.csv`) | REMOVED 2026-07-17 (facility layer deleted) | | | | | |
+| Unit outages (`campd-unit-outages[-PJM].csv`, spans outage_start) | — | ✓ (from 2022-01-01) | ✓ | ✓ | ✓ | Q1 (thru ~Mar 24) |
 | Partial outages (`campd-partial-outages.csv`, by `year` column) | — | ✓ | ✓ | ✓ | ✓ | partial |
 | Legacy hand-maintained (`reference/tx-jan-aug23-unit-outages.csv`) | — | — | Jan–Aug only | — | — | — |
 
