@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0",
-  "generated": "2026-07-15",
+  "generated": "2026-07-17",
   "stale_review_cutoff": "2023-05",
   "field_order": [
     "param_id",
@@ -2790,7 +2790,84 @@
         ],
         "net_cone_curve_per_kw_yr": 79.8,
         "demand_curve_delivery_year": "2025-2026",
-        "demand_curve_source": "MISO PY2025-26 PRA Results Posting (North/Central Net CONE + LRZ gross CONE for the cap); RBDC shape reserve positions first-order (seasonal parameters land in CR-3)"
+        "demand_curve_source": "MISO PY2025-26 PRA Results Posting (North/Central Net CONE + LRZ gross CONE for the cap); RBDC shape reserve positions first-order. Seasonal grain: RC-1C (MISO_SEASONAL_RBDC)",
+        "seasonal_rbdc": {
+          "seasons": [
+            {
+              "name": "summer",
+              "days": 92,
+              "demand_curve": [
+                {
+                  "reserve_ratio": 0.97,
+                  "price_frac_net_cone": 6.331972431077693
+                },
+                {
+                  "reserve_ratio": 1.0,
+                  "price_frac_net_cone": 1.0
+                },
+                {
+                  "reserve_ratio": 1.05,
+                  "price_frac_net_cone": 0.0
+                }
+              ]
+            },
+            {
+              "name": "fall",
+              "days": 91,
+              "demand_curve": [
+                {
+                  "reserve_ratio": 0.97,
+                  "price_frac_net_cone": 6.401587719298245
+                },
+                {
+                  "reserve_ratio": 1.0,
+                  "price_frac_net_cone": 1.0
+                },
+                {
+                  "reserve_ratio": 1.05,
+                  "price_frac_net_cone": 0.0
+                }
+              ]
+            },
+            {
+              "name": "winter",
+              "days": 90,
+              "demand_curve": [
+                {
+                  "reserve_ratio": 0.97,
+                  "price_frac_net_cone": 6.472712406015038
+                },
+                {
+                  "reserve_ratio": 1.0,
+                  "price_frac_net_cone": 1.0
+                },
+                {
+                  "reserve_ratio": 1.05,
+                  "price_frac_net_cone": 0.0
+                }
+              ]
+            },
+            {
+              "name": "spring",
+              "days": 92,
+              "demand_curve": [
+                {
+                  "reserve_ratio": 0.97,
+                  "price_frac_net_cone": 6.331972431077693
+                },
+                {
+                  "reserve_ratio": 1.0,
+                  "price_frac_net_cone": 1.0
+                },
+                {
+                  "reserve_ratio": 1.05,
+                  "price_frac_net_cone": 0.0
+                }
+              ]
+            }
+          ],
+          "daily_net_cone_per_mw_day": 218.63013698630138
+        }
       },
       "unit": "",
       "domain": "Market Design",
@@ -3311,6 +3388,24 @@
       ]
     },
     {
+      "param_id": "scenario.retirement_years_coal",
+      "display_name": "Retirement Years Coal",
+      "value": 3,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Measured EIA-860 announced-to-deactivation lag for coal (RE-status retirements 2019-2025, six model ISOs, RD-7 derivation over EIA-860 vintages 2018-2024): capacity-weighted median = 3 yr and the >=300 MW recall-population median = 3 yr, with 66% of announced coal MW left-censored so 3 is a conservative floor on the announcement->deactivation pipeline. The consecutive-loss threshold carries the full decision+lead-time (D+L) deactivation total. D1 Option B, owner-adopted 2026-07-16.",
+      "source_date": "2026-07-15",
+      "page_or_table": "docs/handoffs/retirement-dof-identification-2026-07-15.md SS a.3/a.4/d (RD-7 recipe in the appendix)",
+      "url": "",
+      "notes": "Re-derives ONLY when the EIA-860 vintages update (rule 23), never against a hindcast residual (rules 1/14). Because the threshold now carries the measured D+L total, staged_oversupply_thinning stays default-off so the same physical deactivation queue is not counted twice (rule 19). Forecast-side capacity-evolution only (capacity.apply_economic_retirements via evolve_fleet); a backcast solve never reads it, so every backcast keeper is byte-identical. LOYO-within-2023-2025 re-probe deferred by owner decision (2026-07-16); landed on identification alone.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-16",
+      "flags": [
+        "curated"
+      ]
+    },
+    {
       "param_id": "adequacy_demand_response_fraction_by_iso.ERCOT",
       "display_name": "Adequacy Demand Response Fraction By Iso / Ercot",
       "value": 0.058,
@@ -3753,6 +3848,98 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "capacity_curve_eligible_by_iso.CAISO",
+      "display_name": "Capacity Curve Eligible By Iso / Caiso",
+      "value": true,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "bilateral RA, no demand_curve — eligibility is moot",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "capacity_curve_eligible_by_iso.MISO",
+      "display_name": "Capacity Curve Eligible By Iso / Miso",
+      "value": true,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- CR-1C curve eligibility (governance gate) ----------------------------  Whether an ISO may price adequacy on its SLOPED demand curve when capacity_market_clearing is on. Eligibility is a GOVERNANCE gate layered on top of the clearing gate: an ISO is curve-eligible only once its accreditation-pairing basis (the flip-gate's item 1, docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1) is owner-signed. NYISO is INELIGIBLE — its ICAP->UCAP translation-factor pairing (R5a) is adjudicated but the owner has NOT signed off (docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md §3: Option D stands) — so even with the gate on and a vintage resolved, NYISO prices on its FIXED anchor, never the curve. PJM (R1-R4 landed), NEISO (R5b landed), and MISO (EFORd pairing ~consistent, keep-and-verify) are eligible. The global default clearing gate is off, so eligibility only bites under an explicit per-ISO curve-ON probe arm; it is NOT a default-behavior change. An ISO absent here defaults ELIGIBLE (a new curve-carrying ISO is not silently blocked, and iso=None call sites stay byte-identical) — ineligibility is opt-in and cited.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "capacity_curve_eligible_by_iso.NEISO",
+      "display_name": "Capacity Curve Eligible By Iso / Neiso",
+      "value": true,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- CR-1C curve eligibility (governance gate) ----------------------------  Whether an ISO may price adequacy on its SLOPED demand curve when capacity_market_clearing is on. Eligibility is a GOVERNANCE gate layered on top of the clearing gate: an ISO is curve-eligible only once its accreditation-pairing basis (the flip-gate's item 1, docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1) is owner-signed. NYISO is INELIGIBLE — its ICAP->UCAP translation-factor pairing (R5a) is adjudicated but the owner has NOT signed off (docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md §3: Option D stands) — so even with the gate on and a vintage resolved, NYISO prices on its FIXED anchor, never the curve. PJM (R1-R4 landed), NEISO (R5b landed), and MISO (EFORd pairing ~consistent, keep-and-verify) are eligible. The global default clearing gate is off, so eligibility only bites under an explicit per-ISO curve-ON probe arm; it is NOT a default-behavior change. An ISO absent here defaults ELIGIBLE (a new curve-carrying ISO is not silently blocked, and iso=None call sites stay byte-identical) — ineligibility is opt-in and cited.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "capacity_curve_eligible_by_iso.NYISO",
+      "display_name": "Capacity Curve Eligible By Iso / Nyiso",
+      "value": false,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "R5a pairing adjudicated; owner sign-off pending",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "capacity_curve_eligible_by_iso.PJM",
+      "display_name": "Capacity Curve Eligible By Iso / Pjm",
+      "value": true,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "--- CR-1C curve eligibility (governance gate) ----------------------------  Whether an ISO may price adequacy on its SLOPED demand curve when capacity_market_clearing is on. Eligibility is a GOVERNANCE gate layered on top of the clearing gate: an ISO is curve-eligible only once its accreditation-pairing basis (the flip-gate's item 1, docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1) is owner-signed. NYISO is INELIGIBLE — its ICAP->UCAP translation-factor pairing (R5a) is adjudicated but the owner has NOT signed off (docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md §3: Option D stands) — so even with the gate on and a vintage resolved, NYISO prices on its FIXED anchor, never the curve. PJM (R1-R4 landed), NEISO (R5b landed), and MISO (EFORd pairing ~consistent, keep-and-verify) are eligible. The global default clearing gate is off, so eligibility only bites under an explicit per-ISO curve-ON probe arm; it is NOT a default-behavior change. An ISO absent here defaults ELIGIBLE (a new curve-carrying ISO is not silently blocked, and iso=None call sites stay byte-identical) — ineligibility is opt-in and cited.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -8223,31 +8410,31 @@
       "display_name": "Ercot Online Cap Share Measured / Cc Regular",
       "value": [
         [
-          0.4737,
-          0.57,
-          0.6493,
-          0.7323,
-          0.8063,
-          0.8379,
-          0.8588,
-          0.8964,
-          0.9292,
-          0.945,
-          0.9451,
-          0.9459,
-          0.9449,
-          0.9451
+          0.4859,
+          0.5753,
+          0.661,
+          0.7463,
+          0.815,
+          0.8477,
+          0.876,
+          0.9099,
+          0.9421,
+          0.946,
+          0.9529,
+          0.9546,
+          0.9461,
+          0.9453
         ],
         [
-          0.6566,
+          0.6578,
           0.8758,
-          0.9929,
-          1.0565,
-          1.0655,
-          1.0755,
-          1.0946,
+          0.9953,
+          1.0584,
+          1.0663,
+          1.0762,
+          1.0948,
           1.1108,
-          1.1104,
+          1.1106,
           1.1082,
           1.1082,
           1.1082,
@@ -8255,34 +8442,34 @@
           1.1082
         ],
         [
-          0.6882,
+          0.6903,
           0.8102,
-          0.8305,
-          0.8329,
+          0.8331,
+          0.833,
           0.8566,
-          0.8741,
-          0.8874,
-          0.9031,
-          0.921,
+          0.8757,
+          0.8876,
+          0.9034,
+          0.9215,
           0.9422,
-          0.9422,
-          0.9449,
-          0.9428,
+          0.9432,
+          0.9455,
+          0.9442,
           0.9469
         ],
         [
-          0.6999,
-          0.8488,
-          0.9181,
-          0.9692,
-          0.9596,
-          0.9515,
-          0.9245,
-          0.9153,
-          0.9229,
-          0.9409,
-          0.9367,
-          0.936,
+          0.7402,
+          0.8735,
+          0.9388,
+          0.9824,
+          0.9788,
+          0.9955,
+          0.9458,
+          0.9206,
+          0.9253,
+          0.9442,
+          0.9386,
+          0.9372,
           0.933,
           0.9299
         ]
@@ -8476,22 +8663,22 @@
       "value": [
         [
           0.057,
-          0.0583,
-          0.0688,
-          0.0781,
-          0.104,
-          0.1288,
-          0.1815,
-          0.2583,
-          0.374,
-          0.4045,
-          0.4595,
-          0.4803,
-          0.4741,
-          0.633
+          0.0604,
+          0.0739,
+          0.0901,
+          0.1061,
+          0.1351,
+          0.1808,
+          0.2752,
+          0.3939,
+          0.4469,
+          0.4717,
+          0.4829,
+          0.4743,
+          0.6334
         ],
         [
-          0.1014,
+          0.1015,
           0.133,
           0.1542,
           0.206,
@@ -8499,7 +8686,7 @@
           0.3246,
           0.5339,
           0.5416,
-          0.6927,
+          0.6928,
           0.9233,
           0.9233,
           0.9233,
@@ -8519,24 +8706,24 @@
           0.4882,
           0.5392,
           0.593,
-          0.6387,
+          0.6392,
           0.7475
         ],
         [
-          0.1249,
-          0.1268,
-          0.1325,
+          0.1183,
+          0.1272,
           0.1344,
-          0.1438,
-          0.159,
-          0.1451,
-          0.1356,
-          0.3024,
-          0.5194,
-          0.5845,
-          0.6307,
+          0.145,
+          0.158,
+          0.1773,
+          0.1613,
+          0.1546,
+          0.3228,
+          0.5224,
+          0.5875,
+          0.6346,
           0.6937,
-          0.7466
+          0.7499
         ]
       ],
       "unit": "",
@@ -12031,7 +12218,8 @@
         "demand_curve": [],
         "net_cone_curve_per_kw_yr": 0.0,
         "demand_curve_delivery_year": "",
-        "demand_curve_source": ""
+        "demand_curve_source": "",
+        "seasonal_rbdc": null
       },
       "unit": "",
       "domain": "Market Design",
@@ -12057,7 +12245,8 @@
         "demand_curve": [],
         "net_cone_curve_per_kw_yr": 0.0,
         "demand_curve_delivery_year": "",
-        "demand_curve_source": ""
+        "demand_curve_source": "",
+        "seasonal_rbdc": null
       },
       "unit": "",
       "domain": "Market Design",
@@ -12096,7 +12285,8 @@
         ],
         "net_cone_curve_per_kw_yr": 108.94,
         "demand_curve_delivery_year": "2027-2028",
-        "demand_curve_source": "ISO-NE FCA 18 (2027/2028) Net CONE + starting price; FCA 11 (2020/2021) demand-curve points for the reserve-position geometry"
+        "demand_curve_source": "ISO-NE FCA 18 (2027/2028) Net CONE + starting price; FCA 11 (2020/2021) demand-curve points for the reserve-position geometry",
+        "seasonal_rbdc": null
       },
       "unit": "",
       "domain": "Market Design",
@@ -12135,7 +12325,8 @@
         ],
         "net_cone_curve_per_kw_yr": 50.55,
         "demand_curve_delivery_year": "2025-2026",
-        "demand_curve_source": "NYISO 'Demand Curve Parameters 2025-2026', NYCA locality (Annual Reference Value, summer reference-point/max clearing price, 12% Demand Curve Length)"
+        "demand_curve_source": "NYISO 'Demand Curve Parameters 2025-2026', NYCA locality (Annual Reference Value, summer reference-point/max clearing price, 12% Demand Curve Length)",
+        "seasonal_rbdc": null
       },
       "unit": "",
       "domain": "Market Design",
@@ -12174,12 +12365,602 @@
         ],
         "net_cone_curve_per_kw_yr": 77.431,
         "demand_curve_delivery_year": "2026/2027",
-        "demand_curve_source": "PJM 2026/2027 RPM BRA Planning Period Parameters (Net CONE, price cap) + Manual 18 Rev.62 §3.4 VRR curve points"
+        "demand_curve_source": "PJM 2026/2027 RPM BRA Planning Period Parameters (Net CONE, price cap) + Manual 18 Rev.62 §3.4 VRR curve points",
+        "seasonal_rbdc": null
       },
       "unit": "",
       "domain": "Market Design",
       "tier": 2,
       "source": "Per-ISO market design. ISOs absent here fall back to ``DEFAULT_MARKET_DESIGN`` (energy-only) so a new ISO is conservative until its capacity rules are added.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "market_design_vintages.MISO",
+      "display_name": "Market Design Vintages / Miso",
+      "value": [
+        {
+          "delivery_year": "2021-2022",
+          "net_cone_curve_per_kw_yr": 91.86,
+          "demand_curve": [
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.000001,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2022-2023",
+          "net_cone_curve_per_kw_yr": 91.06,
+          "demand_curve": [
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.000001,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2023-2024",
+          "net_cone_curve_per_kw_yr": 103.04,
+          "demand_curve": [
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.000001,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2024-2025",
+          "net_cone_curve_per_kw_yr": 123.5,
+          "demand_curve": [
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.000001,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2025-2026",
+          "net_cone_curve_per_kw_yr": 79.8,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.97,
+              "price_frac_net_cone": 1.596
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.05,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": {
+            "seasons": [
+              {
+                "name": "summer",
+                "days": 92,
+                "demand_curve": [
+                  {
+                    "reserve_ratio": 0.97,
+                    "price_frac_net_cone": 6.331972431077693
+                  },
+                  {
+                    "reserve_ratio": 1.0,
+                    "price_frac_net_cone": 1.0
+                  },
+                  {
+                    "reserve_ratio": 1.05,
+                    "price_frac_net_cone": 0.0
+                  }
+                ]
+              },
+              {
+                "name": "fall",
+                "days": 91,
+                "demand_curve": [
+                  {
+                    "reserve_ratio": 0.97,
+                    "price_frac_net_cone": 6.401587719298245
+                  },
+                  {
+                    "reserve_ratio": 1.0,
+                    "price_frac_net_cone": 1.0
+                  },
+                  {
+                    "reserve_ratio": 1.05,
+                    "price_frac_net_cone": 0.0
+                  }
+                ]
+              },
+              {
+                "name": "winter",
+                "days": 90,
+                "demand_curve": [
+                  {
+                    "reserve_ratio": 0.97,
+                    "price_frac_net_cone": 6.472712406015038
+                  },
+                  {
+                    "reserve_ratio": 1.0,
+                    "price_frac_net_cone": 1.0
+                  },
+                  {
+                    "reserve_ratio": 1.05,
+                    "price_frac_net_cone": 0.0
+                  }
+                ]
+              },
+              {
+                "name": "spring",
+                "days": 92,
+                "demand_curve": [
+                  {
+                    "reserve_ratio": 0.97,
+                    "price_frac_net_cone": 6.331972431077693
+                  },
+                  {
+                    "reserve_ratio": 1.0,
+                    "price_frac_net_cone": 1.0
+                  },
+                  {
+                    "reserve_ratio": 1.05,
+                    "price_frac_net_cone": 0.0
+                  }
+                ]
+              }
+            ],
+            "daily_net_cone_per_mw_day": 218.63013698630138
+          }
+        }
+      ],
+      "unit": "",
+      "domain": "Market Design",
+      "tier": 2,
+      "source": "Per-ISO vintages, ascending by delivery-period start year. A vintage equal to the MARKET_DESIGN reference REUSES that registry curve object + anchor.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "market_design_vintages.NEISO",
+      "display_name": "Market Design Vintages / Neiso",
+      "value": [
+        {
+          "delivery_year": "2020-2021",
+          "net_cone_curve_per_kw_yr": 139.68,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.978,
+              "price_frac_net_cone": 1.5999999999999999
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.083,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2021-2022",
+          "net_cone_curve_per_kw_yr": 96.47999999999999,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.978,
+              "price_frac_net_cone": 1.6000000000000003
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.083,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2022-2023",
+          "net_cone_curve_per_kw_yr": 97.87200000000001,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.978,
+              "price_frac_net_cone": 1.6000490436488475
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.083,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2023-2024",
+          "net_cone_curve_per_kw_yr": 98.244,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.978,
+              "price_frac_net_cone": 1.5999755710272385
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.083,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2024-2025",
+          "net_cone_curve_per_kw_yr": 104.48400000000001,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.978,
+              "price_frac_net_cone": 1.600091880096474
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.083,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2025-2026",
+          "net_cone_curve_per_kw_yr": 89.616,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.978,
+              "price_frac_net_cone": 1.6604177825388324
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.083,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2026-2027",
+          "net_cone_curve_per_kw_yr": 88.30799999999999,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.978,
+              "price_frac_net_cone": 1.7340671286859626
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.083,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2027-2028",
+          "net_cone_curve_per_kw_yr": 108.94,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.978,
+              "price_frac_net_cone": 1.6
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.083,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        }
+      ],
+      "unit": "",
+      "domain": "Market Design",
+      "tier": 2,
+      "source": "Per-ISO vintages, ascending by delivery-period start year. A vintage equal to the MARKET_DESIGN reference REUSES that registry curve object + anchor.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "market_design_vintages.NYISO",
+      "display_name": "Market Design Vintages / Nyiso",
+      "value": [
+        {
+          "delivery_year": "2021-2022",
+          "net_cone_curve_per_kw_yr": 93.72,
+          "demand_curve": [],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2022-2023",
+          "net_cone_curve_per_kw_yr": 106.44,
+          "demand_curve": [],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2023-2024",
+          "net_cone_curve_per_kw_yr": 74.13,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.8717350993377484,
+              "price_frac_net_cone": 2.0688741721854305
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.12,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2024-2025",
+          "net_cone_curve_per_kw_yr": 72.35,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.8395141700404858,
+              "price_frac_net_cone": 2.3373819163292846
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.12,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2025-2026",
+          "net_cone_curve_per_kw_yr": 50.55,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.665,
+              "price_frac_net_cone": 3.792
+            },
+            {
+              "reserve_ratio": 1.0,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.12,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        }
+      ],
+      "unit": "",
+      "domain": "Market Design",
+      "tier": 2,
+      "source": "Per-ISO vintages, ascending by delivery-period start year. A vintage equal to the MARKET_DESIGN reference REUSES that registry curve object + anchor.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "market_design_vintages.PJM",
+      "display_name": "Market Design Vintages / Pjm",
+      "value": [
+        {
+          "delivery_year": "2021/2022",
+          "net_cone_curve_per_kw_yr": 117.37305,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.9983160771026595,
+              "price_frac_net_cone": 1.5000155487141213
+            },
+            {
+              "reserve_ratio": 1.024419110264799,
+              "price_frac_net_cone": 0.7500077743570607
+            },
+            {
+              "reserve_ratio": 1.0741002472087942,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2022/2023",
+          "net_cone_curve_per_kw_yr": 95.0825,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.9899164566686259,
+              "price_frac_net_cone": 1.5
+            },
+            {
+              "reserve_ratio": 1.0159659133896302,
+              "price_frac_net_cone": 0.7500191938579654
+            },
+            {
+              "reserve_ratio": 1.0655426679159854,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2023/2024",
+          "net_cone_curve_per_kw_yr": 100.3604,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.9899636903959823,
+              "price_frac_net_cone": 1.5
+            },
+            {
+              "reserve_ratio": 1.0158910056339978,
+              "price_frac_net_cone": 0.75
+            },
+            {
+              "reserve_ratio": 1.0652363766147213,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2024/2025",
+          "net_cone_curve_per_kw_yr": 107.01435000000001,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.9901118571114684,
+              "price_frac_net_cone": 1.5000170537876463
+            },
+            {
+              "reserve_ratio": 1.0156559876727438,
+              "price_frac_net_cone": 0.7499914731061769
+            },
+            {
+              "reserve_ratio": 1.0642714973708678,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2025/2026",
+          "net_cone_curve_per_kw_yr": 83.51565,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.9891189230903682,
+              "price_frac_net_cone": 1.9737336654866484
+            },
+            {
+              "reserve_ratio": 1.0158268863026705,
+              "price_frac_net_cone": 0.7500109260958875
+            },
+            {
+              "reserve_ratio": 1.0672646370925338,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2026/2027",
+          "net_cone_curve_per_kw_yr": 77.431,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.99,
+              "price_frac_net_cone": 1.5517
+            },
+            {
+              "reserve_ratio": 1.015,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.045,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        },
+        {
+          "delivery_year": "2027/2028",
+          "net_cone_curve_per_kw_yr": 88.5198,
+          "demand_curve": [
+            {
+              "reserve_ratio": 0.99,
+              "price_frac_net_cone": 1.3748969157182913
+            },
+            {
+              "reserve_ratio": 1.015,
+              "price_frac_net_cone": 1.0
+            },
+            {
+              "reserve_ratio": 1.045,
+              "price_frac_net_cone": 0.0
+            }
+          ],
+          "seasonal_rbdc": null
+        }
+      ],
+      "unit": "",
+      "domain": "Market Design",
+      "tier": 2,
+      "source": "Per-ISO vintages, ascending by delivery-period start year. A vintage equal to the MARKET_DESIGN reference REUSES that registry curve object + anchor.",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -14077,9 +14858,6 @@
       "param_id": "pjm_interface_link_map",
       "display_name": "Pjm Interface Link Map",
       "value": {
-        "('PJM_ComEd', 'PJM_AEP_Ohio')": [
-          "50045005 Post-Contingency"
-        ],
         "('PJM_AEP_Ohio', 'PJM_Dominion')": [
           "AEP/DOM Post-Contingency"
         ],
@@ -14119,7 +14897,6 @@
       "param_id": "pjm_measured_internal_ttc",
       "display_name": "Pjm Measured Internal Ttc",
       "value": {
-        "('PJM_ComEd', 'PJM_AEP_Ohio')": 2900.0,
         "('PJM_AEP_Ohio', 'PJM_Dominion')": 4050.0,
         "('PJM_West_APS', 'PJM_SWMAAC')": 3900.0,
         "('PJM_West_APS', 'PJM_Central_PA')": 1850.0
@@ -16336,41 +17113,41 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "VT",
-          "MA",
-          "RI",
-          "VA",
-          "NY",
-          "NH",
-          "ME",
-          "DE",
           "NJ",
+          "VA",
+          "DE",
+          "NH",
+          "NY",
           "CT",
-          "MD"
+          "VT",
+          "MD",
+          "ME",
+          "MA",
+          "RI"
         ],
         "2024": [
-          "VT",
-          "MA",
-          "RI",
-          "NY",
-          "NH",
-          "ME",
-          "DE",
           "NJ",
+          "DE",
+          "NH",
+          "NY",
           "CT",
-          "MD"
+          "VT",
+          "MD",
+          "ME",
+          "MA",
+          "RI"
         ],
         "2025": [
-          "VT",
-          "MA",
-          "RI",
-          "NY",
-          "NH",
-          "ME",
-          "DE",
           "NJ",
+          "DE",
+          "NH",
+          "NY",
           "CT",
-          "MD"
+          "VT",
+          "MD",
+          "ME",
+          "MA",
+          "RI"
         ]
       },
       "unit": "",
@@ -16785,6 +17562,44 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_citygate_flow_date",
+      "display_name": "Caiso Citygate Flow Date",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Place each measured daily",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_citygate_spot_level",
+      "display_name": "Caiso Citygate Spot Level",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Level the CAISO gas hub overlay",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_commitment_posture",
       "display_name": "Caiso Commitment Posture",
       "value": false,
@@ -16849,6 +17664,25 @@
       "domain": "Demand",
       "tier": 2,
       "source": "Apply the MEASURED source-data",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_dsw_surplus_clean",
+      "display_name": "Caiso Dsw Surplus Clean",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Carry the MEASURED surplus-hour",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -17278,6 +18112,44 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_reserve_online_scoped",
+      "display_name": "Caiso Reserve Online Scoped",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 1,
+      "source": "CAISO: online-quality scoping",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.caiso_scarcity_import_headroom",
+      "display_name": "Caiso Scarcity Import Headroom",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "CAISO: count the hourly",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_scarcity_pricing",
       "display_name": "Caiso Scarcity Pricing",
       "value": false,
@@ -17524,6 +18396,25 @@
       ]
     },
     {
+      "param_id": "scenario.capacity_market_clearing_by_iso",
+      "display_name": "Capacity Market Clearing By Iso",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "RC-1B",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.carbon_price_path",
       "display_name": "Carbon Price Path",
       "value": "zero",
@@ -17559,6 +18450,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.carry_operating_mothballs",
+      "display_name": "Carry Operating Mothballs",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "backcast. None (default) uses the canonical 2025-Early-Release snapshot in data/raw/eia-860/ filtered to the solved year by the COD ramp. Set to a year with a committed data/raw/eia-860/vintage_<year>/ (2023, 2024) to read the native annual release instead — removing the COD ramp's capacity-weighted-mean COD smear and the absence of units that retired between the solved year and the 2025 snapshot. Measured effect is small (~0.4% of ERCOT installed capacity vs the COD-ramped 2025ER fleet, ~240 MW of retired-2023->25 units), a correctness/provenance refinement rather than a scarcity driver; gated, recalibrate before a keeper. See docs/cod-vintage-ramp.md. Engaged in backcast mode only. Mothballed-but-operating re-carry (the Cottonwood lane, docs/handoffs/miso-cc-vintage-undercarry-plan-2026-07.md §5/§7). The canonical snapshot's OP filter drops OA (out-of-service / mothballed) units outright, and the within-window retiree channel cannot see a PARTIAL mothball (it reads the Retired-and-Canceled sheet and emits whole-plant exits only) — so a unit the snapshot vintage marks OA that demonstrably operated in the solved year is absent from every modeled year (Cottonwood 55358: 4 of 8 units OA in the 2025ER, 576 MW, with CAMPD showing the OA CTs running 88-91% of 2023 hours). With this on, an OA unit is re-carried for backcast solve year Y iff it is OP in the year-matched EIA-860 vintage (vintage_<Y>) — EIA's own contemporaneous status, the zero-DOF rule-13 availability oracle (a unit truly idle in Y is OA in vintage_<Y> too, so it stays dropped). Per-UNIT injection: a partial mothball carries only its mothballed-but-operating units and leaves the surviving OP units untouched. A solve year with no committed vintage_<Y>/ (2025) carries nothing — the accepted 2025 under-carry (owner default, 2026-07-16). ISO-agnostic, backcast-only (a forecast keeps the canonical snapshot; the forward story — carry a vintage-OP unit until a real exit — is documented in the loader, deliberately not wired). Consumed by the per-year backcast fleet build (scripts/run_calibration.py) via fleet.load_mothballed_but_operating.",
+      "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -18108,6 +19017,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.chp_steam_floor_p25",
+      "display_name": "Chp Steam Floor P25",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Measured multi-year steam-host operating-level floor (composes with chp_steam_following; caiso-89 lane, 2026-07-16). When True, a CHP bin whose ISO tranche artifact carries a positive ``p25_allhr_cf`` (the all-hours p25 of CAMPD available-CF, pooled across the artifact's multi-year window by the frozen derive_thermal_tranches estimator) uses it as the ``pmin_cf`` feeding the grid steam floor ``pmin_cf x (1 - btm_share)`` wherever it exceeds the p2/eia923_cf level — the host-driven operating level the steam contract sustains, not just the never-below minimum. Rule-17 grounding: (a) driver = host thermal demand (EIA-860 CHP designation; CEMS conduct is the measurement); (b) window = ALL 24 hours BY MEASUREMENT — the CAISO CC_CHP steam fleet runs flat 0.65-0.76 GW net across every hour-of-day (May-2023 CEMS signature, hod max/min 1.16), and the statistic itself enforces the window (a plant offline >25% of its available hours scores p25 = 0, so cycling cogens carry NO floor — no threshold parameter); (c) forward story = CHP host steam contracts persist, the level regenerates from any multi-year CAMPD window and responds to changed host conditions (a shrinking host shrinks the measured level; a retired host exits the fleet). Rule-13 admissibility: multi-year-pooled conduct conditioned on availability — never the solved year's own outcome (contrast chp_export_floor_measured, which pins the same-year 923 CF and stays a separate, default-off overlay). Estimation-stage cross-year stability (CAISO, 2023-2025): class-level per-year CV 0.056, LOYO worst-case 9.1% — inside the CV<=0.20 / LOYO<=25% gates that closed FINDING-caiso88. Same mechanism id as the p2 floor (MECH_CHP_STEAM — a level source swap, one mechanism per phenomenon, rule 19); outage windows still relax it (min_gen clipped to pmax x availability), and the LP keeps upward freedom above the floor. Off by default; byte-identical when off.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -20361,6 +21288,25 @@
       ]
     },
     {
+      "param_id": "scenario.entry_screen_diagnostics",
+      "display_name": "Entry Screen Diagnostics",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "GATED, default-OFF diagnostic",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_as_adequacy_frac",
       "display_name": "Ercot As Adequacy Frac",
       "value": 1.0,
@@ -20718,6 +21664,25 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_noncampd_plant_availability",
+      "display_name": "Ercot Noncampd Plant Availability",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von Rosenberg 7512, EG178 56233 — the ERCOT-70 phantom-CC blind spot, all has_campd_data=False), which the CAMPD-derived unit-outage overlay cannot see (no CEMS rows -> no windows -> flat statistical availability). Two composed measured identifications (scripts/derive_ercot_noncampd_availability .py, frozen — rule 23): (a) 60-Day DAM disclosure per-plant live HSL / Resource Status -> daily availability (measures Kiamichi's switchable ERCOT-share directly — OUT when serving SPP), (b) EIA-923 zero-generation months -> full-plant outage windows (backstop; a zero month is an availability event, never a monthly-level pin — rule 14). Backcast-only (the statistical stack is the forward analogue, the G4 mode-aware seam); ERCOT-gated in the fleet application. See data.outages.ercot_noncampd_availability_caps.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_nuclear_unit_availability",
       "display_name": "Ercot Nuclear Unit Availability",
       "value": false,
@@ -20743,6 +21708,81 @@
       "domain": "Structural",
       "tier": 2,
       "source": "Path to the measured condition-binned ladder JSON (default: the frozen data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None → the mechanism is a no-op even when the flag is on.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_cleared_share",
+      "display_name": "Ercot Offer Surface Cleared Share",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "ERCOT DAM CLEARED-SHARE offer boundary (ERCOT-72, default off, ERCOT-gated): the covered-CC / CT composition mechanism. ERCOT has no DAM must-offer, and the 60-Day disclosure measures the consequence: on moderate shoulder days only ~0.49-0.60 of CC live capability (and ~0.16-0.34 of CT) clears the DAM for energy — the remainder is NOT in the day-ahead supply at any price (the May-2024 shoulder family: 8.6 GW of CC live HSL carried no offer curve at all while holding just 63 MW of spinning AS — an un-offered fleet, not an AS-withheld or unavailable one). The model's econ tranches span ~92% of each plant at the econ multipliers, so it serves shoulder demand with capacity reality's market did not offer — the ERCOT-70 \"+675 MW covered-CC excess at $24-29\" and the flat mid-stack between econ_high and the peak rungs. This mechanism floors each merchant gas econ* tranche row whose WITHIN-PLANT cumulative-capacity midpoint exceeds the bin's MEASURED cleared share at the bin's MEASURED above-boundary offer wall (the MW-weighted quantile ladder of offered-but-uncleared curve segment prices, rel-position-mapped over the above-boundary span):  rel        = (share_g - boundary(bin)) / (1 - boundary(bin)) target     = interp(rel, ladder_q, ladder_mult) x gas_day(t) markup[g,t]= max(0, min(target, cap_frac x VOLL) - mc_base[g, t])  Both the boundary and the wall are condition-binned by net-load percentile (forward-native — a forecast year's bins regenerate from its own load+VRE and the boundary responds to tightness: measured CC 0.33 loose -> 0.64 tight), never day-pinned; zero fitted scalars (rules 13/14/26). P1-only (the mc_bid_adjust seam): P0 run lengths and the startup-amortization coupling stay byte-identical. Scope: CC_REGULAR + CT_PEAKER econ* rows only — the PEAK rungs stay owned by ercot_offer_surface_conditional, the committed/mustrun blocks by the bridge/floor structure, ST_GAS by the drag (rule 19); mutually exclusive with ercot_offer_surface_midcurve_conditional (same econ rows — the builder hard-errors if both are armed). The floor only ever RAISES a bid (max(0, .)), so troughs and already-expensive rows are byte-identical. Artifact: scripts/derive_ercot_dam_cleared_share.py (frozen, rule 23). See data.fleet.build_ercot_offer_surface_cleared_share_markup.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_cleared_share_path",
+      "display_name": "Ercot Offer Surface Cleared Share Path",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Path to the frozen cleared-share boundary JSON (default: data/raw/_validation-source/ercot_dam_cleared_share_condbinned.json). None → the builder falls back to that default path.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_cleared_share_state",
+      "display_name": "Ercot Offer Surface Cleared Share State",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "ERCOT-73 commitment-STATE conditioning of the cleared-share wall (default off; requires ercot_offer_surface_cleared_share — the builder hard-errors on state-without-wall). Multiplies each walled row-hour's markup by the MEASURED commitment-loading state weight  w_c(t) = clip((online_cap - gross) / (online_cap - cleared), 0, 1)  — the unloaded fraction of the class's above-DA-position online capability (CAMPD CEMS envelope/gross x DAM awards; scripts/derive_ercot_commitment_loading_state.py, frozen rule 23). The floored bid becomes base + w x (wall - base): in moderate regimes (w ~ 1) the DA participation cliff prices the un-offered capacity at the measured wall (the proven ERCOT-72 composition lever); in tight regimes reality RUC/self-commits the same capacity online near cost and the measured state stands the wall down (w -> 0: Aug-23 0.02, Sep-23 0.09, Jan-24 net-load>=p90 hours 0.25 — exactly the static form's rejected over-lift windows, resolved at HOUR grain). Zero fitted scalars; the year's own hourly series is a backcast state-event overlay (the CAMPD outage-overlay pattern, G4 mode-aware seam); a year absent from the artifact (forecast, holdout) falls back to the artifact's pooled climatology (net-load-percentile bin x 4-hour block — regenerates from the target year's own drivers, rule 13). P1-only, same mc_bid_adjust seam and row scope as the wall itself (rule 19 ownership unchanged).",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_cleared_share_state_path",
+      "display_name": "Ercot Offer Surface Cleared Share State Path",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Path to the frozen commitment-loading state JSON (default: data/raw/_validation-source/ercot_commitment_loading_state.json). None → the builder falls back to that default path.",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -20817,6 +21857,44 @@
       "domain": "Structural",
       "tier": 2,
       "source": "Path to the measured low-curve condition-binned JSON (default: the frozen data/raw/_validation-source/offer_curve_dam_lowcurve_condbinned.json). None → the mechanism is a no-op even when the flag is on.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_midcurve_conditional",
+      "display_name": "Ercot Offer Surface Midcurve Conditional",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "ERCOT MID-CURVE offer surface (G-22 lever A', the ERCOT analogue of the PJM pjm_offer_midcurve_conditional): floors the gas econ tranches (CC_REGULAR/CC_CHP/CT_PEAKER econ* rows) at the MEASURED capacity-share offer level of the 60-Day DAM disclosure body (18-22× at shares 0.95-0.99), where ercot_offer_surface_conditional above reprices only the PEAK rungs. Disjoint rows (econ vs peak) → the two markups SUM without overlap when both flags are armed (one mechanism per row, rule 19). P1-only; ST_GAS excluded (drag owns it, rule 19). Zero fitted parameters — the surface is a frozen measured derive (scripts/derive_ercot_offer_midcurve.py, rule 23). See data.fleet.build_ercot_offer_midcurve_conditional_markup.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_midcurve_path",
+      "display_name": "Ercot Offer Surface Midcurve Path",
+      "value": null,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 2,
+      "source": "Path to the frozen mid-curve surface JSON (default: data/raw/_validation-source/ercot_offer_midcurve_condbinned.json). None → the builder falls back to that default path.",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -22358,6 +23436,24 @@
       ]
     },
     {
+      "param_id": "scenario.maxgen_emergency_tier_pricing",
+      "display_name": "Maxgen Emergency Tier Pricing",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "Declared-window ELMP emergency-tier pricing (the MISO F5 scarcity-depth lane; frozen design docs/handoffs/miso-f5-scarcity-depth-design-2026-07 .md). DRIVER: MISO's declared capacity-emergency instruments (the same maxgen-events registry rows as unit_outage_maxgen_events, per-row primary provenance) plus the SOM-documented tier pricing they trigger — \"Emergency supply is priced by applying a $500/MWh offer price floor (Tier 1) to this supply in ELMP when MISO declares a Max Gen Warning and a $1000/MWh floor (Tier 2) in a Max Gen Event Step 2\" (2023 SOM fn.21 = 2024/2025 SOM fn.17; constants in config.reserve_config with the p.10-11 ladder scoping: Warning/Step-1 -> Tier 1, Step 2+ -> Tier 2, Advisory/Alert -> no pricing effect). MECHANISM: inside a registry window declared at Warning or higher, the declared region's zones reprice the energy-balance load slack — the LP's administrative last-resort supply — from the ISO bid cap to min(voll, tier floor) (data.maxgen_events.emergency_tier_slack_cost -> the DispatchModel slack_cost kwarg). The emergency ladder's supply is thereby priced at its documented offer floor instead of the model riding the slack cap (miso-69's $1,841-1,985 declared-window prints vs the actual $169 DA); the RBDC / zonal-ORDC families are never edited (rule 19) and the cost never RISES (min). WINDOW: exactly the registry Warning+ windows — off-window the slack cost equals voll by construction, so off-window binding is structurally impossible. FORWARD STORY: backcast/calibration overlay only (legitimacy D-5 backcast_only, same admissibility family as the CAMPD/maxgen outage windows); a forecast year carries no declared windows, and the post-9/30/2025 ER25-579 shortage-pricing regime is the forecast lane's own charter. Depth is unbounded within the window: the ladder's own declaration discipline (2023 SOM p.11 — each level is declared only when its MWs are needed) makes the declared level the measured depth indicator, so no per-window MW bound is fitted. Default off; MISO backcast arms it. GATED CHANGE (alters the LP objective inside declared windows).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.measured_ramp_capability",
       "display_name": "Measured Ramp Capability",
       "value": false,
@@ -23198,6 +24294,24 @@
       ]
     },
     {
+      "param_id": "scenario.nuclear_unit_availability",
+      "display_name": "Nuclear Unit Availability",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ISO-generic unit-level (window-grain) nuclear refuel/derate availability (default off, backcast-gated; tier 3). The per-ISO generalization of ercot_nuclear_unit_availability (which stays ERCOT's own flag/file): replaces the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month smear with the measured per-reactor DAILY availability from the NRC Power Reactor Status reports (data/raw/nuclear-availability-<ISO>.csv, scripts/derive_nuclear_availability.py — PJM derived first, pjm-nuc-1b owner order 2026-07-16), monthly energy reconciled to the same EIA-923 anchor the smear uses; uprate-season months where the NRC thermal-% basis cannot express the measured net energy are absent from the extract, so the smear stands there (loader NaN semantics), as it does for any uncovered reactor/date. A reactor power state is a physical availability event (rule-13 admissible, the nuclear analogue of the CAMPD fossil outage windows; forward years regenerate via NUCLEAR_MONTHLY_CF / refuel-block scheduling). Zero fitted scalars. See data.outages.nuclear_unit_availability_series and the application in data.fleet.generators_to_fleet_arrays; docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §8.2.1. PROBE VERDICT (pjm-nuc-1b, 2026-07-16 — diagnosis §8.2.1): the pre-committed build-time provenance gate FAILED (-72 MW net recovery over the 22 summer-2025 tail hours vs the >= 75 MW pre-commitment; probe `windows` section): the level reconciliation necessarily redistributes the anchor's monthly energy from event days onto the near-full pool days — which is what scarcity hours are — so the +147 MW tail-hour smear phantom is NOT daily-availability-shaped (it is sub-daily net-vs-thermal basis wiggle below this overlay's grain). Never solved, never registered; stays default-off as the recorded closure of the PJM nuclear-availability lane. Not a re-armable fitted knob (zero scalars — rule 26 does not apply); arming it for another ISO requires that ISO's own derivation + gate.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.nyiso_downstate_ct_gas_basis",
       "display_name": "Nyiso Downstate Ct Gas Basis",
       "value": false,
@@ -23744,6 +24858,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.pjm_east_interface_cut",
+      "display_name": "Pjm East Interface Cut",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 3,
+      "source": "PJM measured EAST interface cut (backcast/calibration overlay, pjm-cong-1 — docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §10). When True in backcast mode for PJM, ONE one-sided aggregate interface-group row per hour caps the JOINT EMAAC import flow Flow(Central_PA->EMAAC) + Flow(SWMAAC->EMAAC) at the hour's measured \"Average Eastern\" transfer limit — PJM's EASTERN reactive transfer interface (Manual 03 §3.8: the seven EHV circuits into the eastern Mid-Atlantic, i.e. the real EMAAC import cut, which spans BOTH model links; the per-link overlay above applies the same series to Central_PA->EMAAC alone, leaving the 5,000 MW SWMAAC->EMAAC static as an un-monitored parallel path the real interface does not have). Reverse (westward) flow keeps the per-link TTCs; the per-link statics stay as their own bounds. Zero fitted scalars: the cap is the published hourly series verbatim, from the same transfer-interface-limits clean partition. Same rule #13/#14 admissibility and two-track construction as pjm_measured_interface_limits (forecast years keep the static seeds). Off by default; byte-identical off.",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -24641,24 +25773,6 @@
       ]
     },
     {
-      "param_id": "scenario.retirement_years_coal",
-      "display_name": "Retirement Years Coal",
-      "value": 3,
-      "unit": "",
-      "domain": "Reliability",
-      "tier": 2,
-      "source": "Measured EIA-860 announced-to-deactivation lag for coal (RE-status retirements 2019-2025, six model ISOs, RD-7 derivation over EIA-860 vintages 2018-2024): capacity-weighted median = 3 yr and the >=300 MW recall-population median = 3 yr, with 66% of announced coal MW left-censored so 3 is a conservative floor on the announcement->deactivation pipeline. The consecutive-loss threshold carries the full decision+lead-time (D+L) deactivation total. D1 Option B, owner-adopted 2026-07-16.",
-      "source_date": "2026-07-15",
-      "page_or_table": "docs/handoffs/retirement-dof-identification-2026-07-15.md SS a.3/a.4/d (RD-7 recipe in the appendix)",
-      "url": "",
-      "notes": "Re-derives ONLY when the EIA-860 vintages update (rule 23), never against a hindcast residual (rules 1/14). Because the threshold now carries the measured D+L total, staged_oversupply_thinning stays default-off so the same physical deactivation queue is not counted twice (rule 19). Forecast-side capacity-evolution only (capacity.apply_economic_retirements via evolve_fleet); a backcast solve never reads it, so every backcast keeper is byte-identical. LOYO-within-2023-2025 re-probe deferred by owner decision (2026-07-16); landed on identification alone.",
-      "old_repo_location": "",
-      "last_verified": "2026-07-16",
-      "flags": [
-        "curated"
-      ]
-    },
-    {
       "param_id": "scenario.retirement_years_gas_cc",
       "display_name": "Retirement Years Gas Cc",
       "value": 3,
@@ -24884,6 +25998,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.st_gas_mustrun_p25_level",
+      "display_name": "St Gas Mustrun P25 Level",
+      "value": false,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "LEVEL SWAP for the st_gas_mustrun_per_plant floor (miso-67). When True, the floor level for each gate-armed ST_GAS plant becomes the plant's own measured 25th-percentile-of-online available-CF (thermal_tranches_<ISO>.csv ``p25_cf``, the SAME frozen CEMS estimator that produces committed_pct/ online_frac — no deriver touch, rule 23) times its nameplate, instead of the committed tranche (committed_pct = P5-of-online = the LSL). Same driver, same top-``online_frac`` system-load window, same mechanism id (MECH_ST_GAS_MUSTRUN_PER_PLANT) — ONLY the level source changes (rule 19: the level is replaced, no second floor is stacked). Where the p25 level exceeds the committed tranche it is distributed cheapest-first across the plant's tranches (committed -> econ), each clipped to pmax*availability as today, so an outage hour relaxes it. Rationale (miso-67 triage design): the committed P5 IS the correct min-stable-load but is the wrong DISPATCH level for the Entergy MISO-South VLR/self-commitment steamers, which ran 30-67% CF (p25/median) despite local LMP at/below their SRMC — measured out-of-market dispatch that offer prices definitionally cannot recover (Amite South / DSG / WOTAB; MISO SOM). Rule-12 triple: driver = MISO SOM out-of-market VLR commitments + the plants' CEMS synchronization traces (Nine Mile 98.2%, Harding Street 97.4%, Lewis Creek 87.5%, Sabine 85.3% of ALL hours); window = each plant's measured online_frac placed in the top system-load hours (self-limiting: Gerald Andrus, online 13.7%, floors only its top-load sliver); forward story = p25_cf re-derives from each new multi-year CAMPD vintage exactly like the P5 and online_frac (a measured input conditioned on operation, the rule-13 family; a retired/deregulated plant exits the artifact). Rule 13: no outcome pinning — dispatch above the floor stays free and the class lands BELOW actual even at the floor's ceiling. Off by default (every existing keeper byte-identical); MISO backcast arms it alongside st_gas_mustrun_per_plant. No ablation twin (rule 20 as amended 2026-07-14 — legitimacy rests on the DOF ledger + legitimacy_diagnostics.json D-1/D-2/D-4).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
@@ -25298,6 +26430,24 @@
       ]
     },
     {
+      "param_id": "scenario.unit_outage_maxgen_events",
+      "display_name": "Unit Outage Maxgen Events",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — declared-event-window revealed unit derates, the third window shape of the measured unit-availability family (M-2 of the MISO price-formation lane, docs/handoffs/miso-price-formation-design- 2026-07.md §3). Driver (rule 12): the ISO's OWN declared emergency- procedure instruments (Max Gen events / warnings / alerts / capacity advisories — public, per-event provenance in the ``maxgen-events`` registry, data/raw/maxgen-events/) plus each unit's own CAMPD trace inside them. Window: EXACTLY the declared windows, clipped to the declared start/end and kept only where the measured DA hub record certifies deep in-merit prices (> $150/MWh for >= 2 window hours, region-scoped) — inside such a window an available unit runs, so absence/reduction below the unit's own +/-45-day demonstrated capability is revealed unavailability (derate = capability - best in-window hour, floored at 0; a unit that touched capability is not derated). CLASS-AGNOSTIC by design — this is the only channel that can carry the CT/CC leg (the std extract's 5-day floor and the short channel's coal-only guard exclude it by construction); unit-hours already covered by the std or short extracts are excluded at derivation (disjointness asserted). Forward story (rule 13): a declared physical/market availability event, the same admissibility family as the CAMPD outage windows — backcast/calibration overlay only; the registry + derates regenerate from each new CAMPD/declaration vintage, and a forecast year carries the class outage-rate machinery instead (no forward window is fabricated). Applies only when ``outage_source == \"historic\"`` and the ISO's ``campd-unit-outages-maxgen-<ISO>.csv`` exists (built by ``scripts/derive_campd_maxgen_outages.py --iso <ISO>``). Default off; GATED CHANGE (alters availability).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.unit_outage_short_windows",
       "display_name": "Unit Outage Short Windows",
       "value": false,
@@ -25306,6 +26456,24 @@
       "tier": 3,
       "source": "Tier 3 (calibration) — short (1-5 day) unit-outage windows for baseload coal, the sub-floor companion of the >= 5-day unit-outage overlay. Driver (rule 12): discrete forced-outage events measured in per-unit CEMS — the MISO 2025 heat events showed ~2.8 GW of coal capability that ran elsewhere in July but was offline at the Jul 28-29 peak block and is invisible to the >= 5-day detector (the own-fleet temp-capability envelope is FLAT, so the fleet loses discrete units under stress rather than derating smoothly; docs/DIAGNOSIS-miso-july2025-lmp-2026-07.md). Window: the measured off-window itself, kept only when it survives the derive script's triple identification guard (coal-only detector + unit annual CF >= 0.55 baseload screen + the revealed-availability in-merit filter, so economic idling is never classified as an outage). Forward story (rule 13): same as the parent overlay — a physical availability event whose forecast analogue is the statistical WEFOR/POF draw; backcast-mode calibration input, never a forecast methodology. Applies only when ``outage_source == \"historic\"`` and the ISO's ``campd-unit-outages-short-<ISO>.csv`` exists (built by ``scripts/derive_campd_unit_outages.py --short-windows --iso <ISO>``). Windows are < 5 days by construction, so the two overlays are disjoint and never double-count. Default off; GATED CHANGE (alters availability).",
       "source_date": "2025",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.unit_partial_outage_windows",
+      "display_name": "Unit Partial Outage Windows",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "Tier 3 (calibration) — unit-grain partial-derate plateaus, the second window shape of the measured unit-availability family (the companion of unit_outage_short_windows). Driver (rule 12): sustained CF-ceiling plateaus in per-unit CEMS — a unit that keeps running but at a depressed ceiling (half its capability out) — which never reach zero, so no zero-run outage window can represent them (the >= 5-day and short full-stop extracts are structurally blind to a partial derate). Window: the measured plateau itself (>= 5 days, the partial-outage deriver's frozen _MIN_DAYS), detected on each unit's own gross with the plant-level partial detector's constants VERBATIM (_SMOOTH_DAYS=7, _CEILING_FRAC=0.65, _RUN_FLOOR_CF=0.06), kept only when it survives the SAME when-operable baseload guard (CF >= 0.55) and revealed-availability in-merit filter as the short windows. Forward story (rule 13): same as the parent overlay — a physical availability event (WEFOR/derate-rate forward analogue), backcast-mode calibration input, never a forecast methodology. Reads the per-ISO unit-grain campd-partial-outages-<ISO>.csv (built by scripts/derive_campd_unit_outages.py --partial-windows --iso <ISO>); aggregated to the plant exactly like the >= 5-day unit-outage overlay (unit-capacity share, concurrent units summed, clipped at full derate). DISTINCT from the ERCOT-only PLANT-grain partial-outage path, which the PJM cycling fleet over-fires (~43 TWh/yr — measured, refused as-is; docs/DIAGNOSIS-pjm-c3c-summer-tail-2026-07.md §7 leg B) and which stays ERCOT-scoped. Default off; GATED CHANGE (alters availability).",
+      "source_date": "2026-07",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
@@ -27777,6 +28945,24 @@
       "domain": "Transmission",
       "tier": 2,
       "source": "Thermal accreditation basis for the same adequacy ledger, per ISO. Default (ISO absent): \"ucap\" = pmax x (1 - EFORd). \"seasonal_rating\" counts thermal at its rating with NO forced-outage derate — ERCOT's CDR convention, where forced-outage risk lives in the 13.75% Board target margin rather than in the capacity count (the CDR's \"Installed Seasonal-rated Thermal Capacity\" rows carry no EFORd derate). Mixing UCAP-derated supply with the rating-basis 13.75% target double-counts forced-outage risk (~4.4 GW on the 2026 ERCOT thermal fleet). Source: December 2025 CDR, Seasonal Summary.",
+      "source_date": "2026",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "thermal_accreditation_basis_by_iso.NEISO",
+      "display_name": "Thermal Accreditation Basis By Iso / Neiso",
+      "value": "claimed_capability",
+      "unit": "",
+      "domain": "Transmission",
+      "tier": 2,
+      "source": "Thermal accreditation basis for the same adequacy ledger, per ISO. Default (ISO absent): \"ucap\" = pmax x (1 - EFORd). Three published-basis alternatives:  * \"seasonal_rating\" counts thermal at its rating with NO forced-outage derate — ERCOT's CDR convention, where forced-outage risk lives in the 13.75% Board target margin rather than in the capacity count (the CDR's \"Installed Seasonal-rated Thermal Capacity\" rows carry no EFORd derate). Mixing UCAP-derated supply with the rating-basis 13.75% target double-counts forced-outage risk (~4.4 GW on the 2026 ERCOT thermal fleet). Source: December 2025 CDR, Seasonal Summary. * \"elcc_class_rating\" counts thermal at its published ELCC CLASS rating — PJM's 2025/26 CIFP-reform convention, where EVERY resource class (thermal included) is accredited at an ELCC-based class rating, not (1 - EFORd). The per-fuel-class ratings are :data:`THERMAL_ELCC_CLASS_RATING_BY_ISO`; this pairs the supply ledger with the FPR requirement (R2), which is likewise stated on PJM's ELCC-reform UCAP basis (P-2B Option A per-ISO published-basis consistency — accreditation-basis memo 2026-07-12 §4.1, R3). Read exactly as \"seasonal_rating\" is by :func:`_thermal_firm_mw`. * \"claimed_capability\" counts thermal at its Qualified Capacity with NO forced-outage derate — ISO-NE's FCM convention. A resource's summer QC is the median of its last five years' Seasonal Claimed Capability (Market Rule 1 §III.13.1.2.2.1.1, eff. 2025-05-03); a full-text search of the 235-page III.13/III.14 tariff for \"EFORd\" returns zero matches. EFORd enters only the system-wide GE MARS/ICR reliability sizing (ICR Reference Guide §5.6.1), never an individual resource's accredited MW; individual forced-outage/performance risk is instead priced ex post through Pay-for-Performance (§III.13.7.2), so applying (1-EFORd) here would double-derate a risk ISO-NE already prices separately. Numerically identical to \"seasonal_rating\" (returns 1.0) but kept a DISTINCT basis because the *reason* for no derate differs (ERCOT: target margin; ISO-NE: ex-post PFP) — a citation trail must trace to the actual mechanism, not a numerically- convenient neighbor (rule 5/13; R5b, pairing-adjudication 2026-07-15 §1). Dating caveat: current through the FCM's CCP2027-2028 sunset (final FCA held Feb 2024), not validated against the successor accreditation-reform process.",
       "source_date": "2026",
       "page_or_table": "",
       "url": "",
