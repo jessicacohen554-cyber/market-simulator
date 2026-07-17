@@ -3889,6 +3889,37 @@ def solve_and_persist(
                     ),
                 )
             )
+            # Reserve-dual diagnostic sidecar (MARKET_SIM_RESERVE_DUAL_DUMP,
+            # default OFF): the per-family reserve balance-row duals
+            # (reserve_price_by_family, (T, n_fam)) and the per-zone reserve MW
+            # held (reserve_dispatch, (n_zones, T)) are NOT otherwise persisted
+            # — system.parquet carries only the summed reserve_price. A
+            # reserve-family probe needs an INDIVIDUAL family's dual (e.g. the
+            # miso-71 Midwest family's R2/R3 fidelity reads) and its locational
+            # reserve allocation (the phantom-parking read). Pure diagnostic:
+            # gated default-off, writes only a SEPARATE sidecar, never touches
+            # system.parquet or any scored output — the solve and every metric
+            # are byte-identical whether it is on or off.
+            if os.environ.get("MARKET_SIM_RESERVE_DUAL_DUMP"):
+                rpf = getattr(res, "reserve_price_by_family", None)
+                rd = getattr(res, "reserve_dispatch", None)
+                if rpf is not None or rd is not None:
+                    diag_dir = run_dir / "reserve_diag"
+                    diag_dir.mkdir(parents=True, exist_ok=True)
+                    np.savez(
+                        diag_dir / f"{year}_{label}.npz",
+                        reserve_price_by_family=(
+                            np.asarray(rpf, dtype=float)
+                            if rpf is not None
+                            else np.zeros((0, 0))
+                        ),
+                        reserve_dispatch=(
+                            np.asarray(rd, dtype=float)
+                            if rd is not None
+                            else np.zeros((0, 0))
+                        ),
+                        zone_names=np.array(list(zone_names), dtype=object),
+                    )
             storage_frame = _storage_frame(year, label, res, p2_state["storage_units"])
             if storage_frame is not None:
                 storage_frames.append(storage_frame)
