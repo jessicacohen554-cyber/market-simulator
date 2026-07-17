@@ -102,6 +102,26 @@ Deliverability…", the MISO STR design paper; BPM-002 §3.3.2).
   curve (`MISO_ZONAL_ORDC_STEPS`: 20% @ $200, 70% @ $1,100, 10% @ $3,300).
   The zonal family shares the market-wide reserve class, so a South reserve
   MW counts toward both constraints (nested, like NYISO East ⊂ NYCA).
+- **Midwest sub-regional family** (`config.miso_midwest_subregional_reserves`,
+  GATED default off; CLI `--miso-midwest-subregional-reserves`; the miso-71
+  engagement-depth lane): ONE family over the **5 physical Midwest zones**
+  (`MISO_MIDWEST_ZONES` = MISO-West/Plains/Illinois/Indiana/East — external
+  seam buses excluded by construction, the F5 precedent), `reserve_class 0`
+  nested inside the market-wide RBDC. Requirement = the **measured** hourly
+  Midwest (North+Central) cleared OR reservation
+  (`data.miso_reserve_requirements` `"MISO-Midwest"` leg = reg+spin+supp summed
+  over the two Midwest ASM regions) when `miso_measured_reserve_requirements`
+  is on, else the within-region MSSC (the forward generator). A **SINGLE**
+  shortfall step prices at the published **$200/MWh RPE demand value**
+  (`MISO_RPE_DEMAND_VALUE`, 2024 SOM §III.B — the demand value of the
+  sub-regional reserve-deliverability construct), width-anchored at the series
+  max. The per-Reserve-Zone §5.2.1.2 Zonal ORDC ladder is DELIBERATELY NOT
+  used — the per-zone Zonal ORDC never separated in 26,280 measured 2023-2025
+  hours, so pricing a region at its deep steps would be structure the measured
+  record refutes (rule 1). It closes the congestion-blind market-wide family's
+  phantom-**South**-parking gap: it forces the measured Midwest reserve holding
+  to sit IN the Midwest, removing the phantom peak supply a cost-min LP
+  otherwise parks in the RDT-trapped South surplus during a Midwest event.
 - **Reserves** = per-zone aggregate reserve-eligible thermal headroom
   (`RESERVE_FUEL_TYPES`); the reserve-balance-row dual is persisted as
   `reserve_price` in `system.parquet`.
@@ -135,8 +155,29 @@ reliability quantities and both curves are the cited market design.
   Tail 0 h, volumes/fit byte-comparable to miso-38. **Empirical closure:**
   no admissible supply-side reserve structure can price MISO's curve steps
   under deterministic perfect-foresight hourly dispatch; the residual is
-  commitment posture + RT sub-hourly transients + the missing Midwest
-  locational family (`docs/multi-iso/miso-scarcity-tail-diagnosis.md`).
+  commitment posture + RT sub-hourly transients + the (then-missing) Midwest
+  locational family (`docs/multi-iso/miso-scarcity-tail-diagnosis.md`) — the
+  last of which is BUILT and adjudicated in miso-71 below.
+- **miso-71 (+ Midwest sub-regional reserve-holding family; KEEPER
+  CANDIDATE):** the measured Midwest (North+Central) OR reservation held IN
+  the 5 Midwest zones, priced at the published $200 RPE step, `reserve_class 0`
+  nested. Closes the phantom-South-parking gap structurally: the base parks
+  reserve in the RDT-trapped South (Jun-23/24-2025 South held 951 MW vs
+  measured ~477, Midwest held 1,635 vs measured 1,862) and the main forces the
+  measured Midwest holding (1,862/1,941/2,253 MW across the deep windows),
+  de-parking the South. Mechanism-only (main − same-box base): C3b IDENTICAL
+  (0.079/0.124/0.184, R1 veto held), C3c 1/7/1 vs 1/6/1 (the +1 is the
+  Aug-26-2024 Warning window's HE20 at $294), reserve fidelity clean (dual
+  ≤ $25 in ≥ 99.93% of hours, ≥ $200 in 0/5/0 h/yr all in the declared
+  Aug-26-2024 window — R2), no Jan-2024 engagement (R3). **The C3c-2025 deep
+  tail stays 0-gain:** the family holds the measured requirement through the
+  2025 deep windows but its dual is $0 there — because the measured cleared
+  series DIPS to 957/851 MW in the tightest hours (leg (b)), so holding it
+  creates no shortfall. That gap is ledgered as an out-of-representation
+  lower bound (the NYISO B1 precedent), NOT residual-fitted by undoing the
+  dip. Fail set = the keeper's {C1, C3a-2025, C3c} with no gated regression;
+  one additional measured structure at zero fitted scalars (rule 1); keeper
+  swap owner-only.
 
 ## Memory note
 
