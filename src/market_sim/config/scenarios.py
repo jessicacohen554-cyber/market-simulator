@@ -1440,6 +1440,62 @@ class ScenarioConfig:
     # outages/derates and gas was the largest forced-out category (Eastern
     # Interconnection 13% of all capacity forced out at the peak) — a published
     # physical magnitude, not tuned to land a target number of >$300 hours.
+    correlated_forced_outage: bool = False  # Correlated cold-event forced-outage
+    # availability derate (FF-1B; design charter ercot-retirement-composition-
+    # 2026-07-16.md Part D). The forecast/hindcast statistical WEFOR forced-
+    # outage model is per-unit INDEPENDENT and weather-blind, so it never
+    # concentrates outages into a correlated deep-cold event — the in-year LP
+    # clears every hour with ample reserve and the ORDC overlay prints $0 even
+    # through a Uri-scale event (the G-31 finding). This subtracts, per plant
+    # class, a measured temperature-keyed excess forced-outage fraction
+    #   excess(T) = clip(slope * (t0 - TMIN_sys), 0, cap)
+    # from availability on deep-cold days (constants.CORRELATED_OUTAGE_CURVE,
+    # derived by scripts/derive_correlated_outage_curve.py from CAMPD unit-level
+    # gross load on net-load-certified scarcity days: Uri / Elliott / Heather;
+    # NERC-GADS EFORd baseline; FERC/NERC Feb-2021 report as external anchor),
+    # CORRELATED across the fleet because every unit reads the same system
+    # daily-min-temperature series (the neiso_gas_coldsnap_derate pattern,
+    # generalized). The era's climatological Dec-Feb winter_event_share is
+    # ADDED BACK to winter availability first, so the mechanism RELOCATES the
+    # cold-event share embedded in the flat GADS-based WEFOR rather than
+    # stacking on it (one mechanism per phenomenon, rule 19; charter D.3/D.6).
+    # Rule-13 admissible: regenerates for a forward year from the pinned
+    # weather-year TMIN + GADS EFORd + fleet winterization era, and responds to
+    # changed conditions (colder sample -> deeper derate; weatherized era ->
+    # shallower curve). Forecast/hindcast only — in backcast the measured CAMPD
+    # outage overlays already carry the actual events (charter D.5: suppressed
+    # there so the same event is never counted twice). ORDC seam (charter D.6):
+    # the derate enters ONLY as a deterministic reduction of the MEAN
+    # availability feeding the point reserve R; the ORDC sigma keeps carrying
+    # the stochastic reserve-error spread (see correlated_outage_sigma_scale).
+    # Applied at the runner availability seam (data/outages.
+    # apply_correlated_outage_derate). Default off (byte-identical); ISOs
+    # without a CORRELATED_OUTAGE_CURVE entry are a no-op (ERCOT-first).
+    correlated_outage_t0_c: float = -7.0  # Hinge onset (deg C, ~20 degF): above
+    # this system daily MIN temperature no correlated excess applies. NERC
+    # cold-weather analyses place the onset of sharply-rising generator forced
+    # outages near 20 degF — the same published anchor as
+    # neiso_gas_derate_t0_c, shared with the derive script's fit.
+    correlated_outage_winterized_year: int = 2022  # First weather-driver year
+    # whose events exercise the WEATHERIZED fleet curve ("post" era in
+    # CORRELATED_OUTAGE_CURVE): PUCT weatherization rule 16 TAC 25.55 (adopted
+    # Oct-2021, phase-1 compliance winter 2021-22). A weather-driver year
+    # before this uses the pre-Uri ("pre") curve — the fleet-hardening state is
+    # the forward-responsiveness lever the charter requires (a hindcast of 2021
+    # sees the unweatherized fleet; every forecast year sees the weatherized
+    # one).
+    correlated_outage_sigma_scale: float = 1.0  # ORDC reserve-error sigma
+    # rescale, GATED with correlated_forced_outage (charter D.6 double-count
+    # guard — __post_init__ rejects any non-1.0 value while the derate is off,
+    # so the two can never fire inconsistently). The published NP6-576-ER
+    # LOLP distribution's sigma already blends net-load forecast error AND
+    # forced-outage/unit-trip uncertainty; the correlated derate injects ONLY a
+    # deterministic shift of the MEAN availability (feeding the point reserve
+    # R), NOT an outage-variance term, so the default 1.0 is not a double
+    # count by construction. If a future re-decomposition of the reserve-error
+    # distribution explicitly removes the forced-outage variance component
+    # this scale (or a re-derived table via ordc_lolp_params_path) carries it;
+    # identified only by such a re-derivation, never by a residual (rule 21).
     neiso_oil_burn_budget: bool = False  # NEISO oil-burn inventory budget.
     # ISO-NE's dual-fuel and oil-primary peaker fleet rations a LIMITED
     # on-site distillate stock over multi-day cold snaps. The energy-only LP
@@ -6067,6 +6123,25 @@ class ScenarioConfig:
                 "ScenarioConfig.federal_ces_crediting must be one of "
                 "('clean_capture', 'cesa_ci'), got "
                 f"{self.federal_ces_crediting!r}"
+            )
+
+        # ORDC sigma re-decomposition is GATED with the correlated forced-
+        # outage derate (FF-1B charter D.6): sigma may only be rescaled when
+        # the mechanism whose variance it would remove is actually armed, so
+        # the two can never fire inconsistently (and the scale can never be
+        # re-armed as a free-standing ORDC tuning channel — rule 26 spirit).
+        if self.correlated_outage_sigma_scale != 1.0 and not (
+            self.correlated_forced_outage
+        ):
+            raise ValueError(
+                "correlated_outage_sigma_scale is gated with "
+                "correlated_forced_outage (ORDC double-count guard): got "
+                f"{self.correlated_outage_sigma_scale!r} with the derate off."
+            )
+        if self.correlated_outage_sigma_scale <= 0.0:
+            raise ValueError(
+                "correlated_outage_sigma_scale must be positive, got "
+                f"{self.correlated_outage_sigma_scale!r}"
             )
 
         # §45Q credit window (W2-C): a set window must be a positive year

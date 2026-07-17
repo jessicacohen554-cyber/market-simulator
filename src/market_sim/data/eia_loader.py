@@ -967,11 +967,24 @@ def _load_weather_from_raw(
         df["tmin_c"] = np.nan
         return df[["date", "zone", "tmax_c", "tmin_c"]].reset_index(drop=True)
 
-    # Standard per-zone file: {iso}_zone_temp_daily.csv
+    # Standard per-zone file: {iso}_zone_temp_daily.csv, plus any
+    # year-partitioned supplements alongside it (<stem>_<year|yearQn>.csv,
+    # e.g. ercot_zone_temp_daily_2021q1.csv) — the same supplement convention
+    # scripts/curate_weather.py folds into the clean Parquet, so the raw
+    # fallback covers the same calendar range as the curated tree (before
+    # this, a year present only in a supplement silently returned None when
+    # the clean tree was absent — e.g. ERCOT 2021, the Uri weather year the
+    # correlated forced-outage derate reads).
     path = RAW_DIR / f"{iso_l}-weather" / f"{iso_l}_zone_temp_daily.csv"
-    if not path.exists():
+    supplements = sorted(path.parent.glob(f"{path.stem}_*.csv"))
+    parts = [p for p in [path, *supplements] if p.exists()]
+    if not parts:
         return None
-    df = pd.read_csv(path, parse_dates=["date"])
+    df = pd.concat(
+        (pd.read_csv(p, parse_dates=["date"]) for p in parts), ignore_index=True
+    )
+    if "zone" in df.columns:
+        df = df.drop_duplicates(subset=["date", "zone"])
     df = df[df["date"].dt.year == year].copy()
     if zone is not None and "zone" in df.columns:
         df = df[df["zone"] == zone]
