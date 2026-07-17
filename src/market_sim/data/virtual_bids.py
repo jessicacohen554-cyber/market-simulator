@@ -147,7 +147,7 @@ def _inc_offer_floor(config, year: int) -> float:
     from market_sim.policy.ira import compute_dispatch_credits
 
     wind_mc, solar_mc = compute_dispatch_credits(config, year)
-    wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
+    wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config, year)
     min_credit = min(0.0, wind_mc - wind_eac, solar_mc - solar_eac, -float(storage_eac))
     return min_credit + INC_FLOOR_EPSILON
 

@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1399 parameters registered** (774 flagged `needs-citation`).
+**1400 parameters registered** (774 flagged `needs-citation`).
 
 
 ## Calibration
@@ -981,6 +981,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ercot_offer_surface_cleared_share_path` | None | 3 | Path to the frozen cleared-share boundary JSON (default: data/raw/_… |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_cleared_share_state` | False | 1 | ERCOT-73 commitment-STATE conditioning of the cleared-share wall (d… |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_cleared_share_state_path` | None | 3 | Path to the frozen commitment-loading state JSON (default: data/raw… |  | auto-generated, needs-citation |
+| `scenario.ercot_offer_surface_cleared_share_steam` | False | 1 | ERCOT-77 STEAM extension of the cleared-share wall (default off; re… | 2024 | auto-generated |
 | `scenario.ercot_offer_surface_conditional` | False | 2 | ERCOT G-22 §8 / ercot37-filed HETEROGENEITY-PRESERVING condition-re… | 2026-07 | auto-generated |
 | `scenario.ercot_offer_surface_lowcurve` | False | 2 | ERCOT G-22 conditional-offer-distribution LOW leg (default off, ERC… | 2023 | auto-generated |
 | `scenario.ercot_offer_surface_lowcurve_floorscoped` | False | 1 | ERCOT FLOOR-SCOPED committed-LSL markdown (default off, ERCOT-gated… |  | auto-generated, needs-citation |
@@ -1231,7 +1232,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ercot_as_aware_commitment` | False | 1 | ERCOT: run a P2 commitment screen |  | auto-generated, needs-citation |
 | `scenario.ercot_gas_bridge_startup` | True | 1 | Economic (≥ min-down) bridging on the startup-restart inequality — … |  | auto-generated, needs-citation |
 | `scenario.ercot_gas_commitment_bridge` | False | 1 | ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the comm… | 2026-07 | auto-generated |
-| `scenario.federal_ces_ccs_capture_fraction` | 0.9 | 1 | Owner simplification (docs/handoffs/national-ces-eac-premium-plan-2… | 2026-07 |  |
+| `scenario.federal_ces_ccs_capture_fraction` | 0.95 | 1 | Owner decision Q4 (docs/handoffs/national-ces-eac-premium-plan-2026… | 2026-07 |  |
 | `scenario.fixed_om_coal` | 45.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
 | `scenario.fixed_om_gas_cc` | 30.0 | 2 | Legacy avoidable-cost estimate (uncited); NREL ATB 2024 is the targ… | 2024-07 |  |
 | `scenario.fixed_om_gas_cc_ccs` | 25.0 | 2 | CC + capture island going-forward fixed |  | auto-generated, needs-citation |
@@ -1488,7 +1489,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_installed_mw.NYISO.wind` | 2400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.PJM.solar` | 14000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.PJM.wind` | 11000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
-| `rggi_member_states_by_year` | {"2023": ["NJ", "DE", "CT", "ME", "VT… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
+| `rggi_member_states_by_year` | {"2023": ["ME", "NJ", "VT", "NY", "CT… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
 | `short_ton_to_metric_tonne` | 0.90718474 | 2 | Short ton -> metric tonne. RGGI allowances are denominated in SHORT… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.CAISO` | 2026-07-03-caiso-statmode-d-7 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.ERCOT` | 2026-07-04-statmode-d7-probe-ercot32 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
