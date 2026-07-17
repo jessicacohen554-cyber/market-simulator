@@ -100,7 +100,12 @@ DEFAULT_OUT = (
 )
 
 #: Model class -> artifact class key (the cleared-share wall's own scope).
-CLASS_OF_MODEL = {"CC_REGULAR": "CC", "CT_PEAKER": "CT"}
+#: ST_GAS added by the ERCOT-77 steam-cliff extension (2026-07-17 charter):
+#: a NEW class derived from the SAME frozen sources (rule 23 — the CC/CT
+#: tables re-derive byte-identical; the CEMS envelope basis already carries
+#: ST_GAS incl. the Sommers/Braunig OTHER-group reclass shim in
+#: derive_ercot_rtolcap_forward._fleet_class_maps).
+CLASS_OF_MODEL = {"CC_REGULAR": "CC", "CT_PEAKER": "CT", "ST_GAS": "ST"}
 
 #: Hour-of-day blocks for the climatology: the ORDC LOLP's six 4-hour blocks
 #: (an existing ERCOT market-design partition, results/scarcity.py) — not a
@@ -207,7 +212,11 @@ def main() -> None:
             "netload_pct_edges": list(NETLOAD_PCT_EDGES),
             "hour_block_hours": BLOCK_HOURS,
             "iso": "ERCOT",
-            "classes": {"CC": ["CC_REGULAR"], "CT": ["CT_PEAKER"]},
+            "classes": {
+                "CC": ["CC_REGULAR"],
+                "CT": ["CT_PEAKER"],
+                "ST": ["ST_GAS"],
+            },
             "frozen": (
                 "rule 23 — re-derive only on a CAMPD / DAM-disclosure "
                 "source-data update, never because a residual moved"
