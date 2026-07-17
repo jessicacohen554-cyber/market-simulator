@@ -1,5 +1,13 @@
 # Forecast Validation Program — 2026-07 (W0-P4 design)
 
+> **⚠️ ARCHIVED (2026-07-17) — machinery delivered.** The invariant suite (I1–I14 +
+> P1–P3), evolution ledger, capacity-hindcast harness/scorer, golden bands, and the
+> forecast-validation dashboard page this doc designed are all landed (§6).
+> Coordination of forecast validation now lives in
+> `docs/forecast-development-plan-2026-07.md` (tier ladder §2, rubric charter §3).
+> The §1.4 band tables and §3.4 calibration-complete checklist remain citable; do not
+> launch sessions from §4.
+
 **Produced by:** W0-P4 (Fable planning session, `docs/fable-prompt-pack-2026-07.md`), 2026-07-05.
 **Consumes:** `docs/fable-repo-audit-2026-07.md` §F (TC-3) / §J-T1, `docs/forecast-validation-plan.md`,
 `docs/model-audit-prompt-pack-2026-06.md` (PP-0.1/0.2/0.3), `docs/out-of-sample-results-2026-07.md`,

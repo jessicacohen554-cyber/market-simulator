@@ -1,5 +1,12 @@
 # Capacity-Economics Recalibration Plan — 2026-07 (W0-P5)
 
+> **⚠️ ARCHIVED (2026-07-17).** Executed through the W2-P3 stages recorded below; the
+> data-center block (§4 / CX-4) has since **landed in src** (`datacenter_load_path` +
+> `DATACENTER_ADDITIONS_MW`). Open remainders — the FOM default flip (gated on
+> screen-revenue work) and the foresight posture — are tracked in
+> `docs/forecast-development-plan-2026-07.md` (§1.2, FF-1B/FF-2A). Do not launch
+> sessions from this doc.
+
 **Status:** design complete. **W2-P3 Stage 1 (FOM + joint protocol) EXECUTED 2026-07-05 —
 see the Stage-1 status note below; Stage 2 (revenue-side fix) and Stage 3 (hindcast
 scarcity footing, foresight A/B, backstop-off diagnostic) follow it.** Foresight (§2),
