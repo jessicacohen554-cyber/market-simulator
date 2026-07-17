@@ -21,6 +21,17 @@ gas-CCs — today's step order retires units (step 2) before the retrofit screen
 ever sees them, and the screen must value the retrofit as the INCREMENTAL uplift over
 the unit's best unabated continuation. §11 discussion fully resolved; W2-C is
 design-complete and blocked only on W1-A merging.
+**v2.4 (2026-07-17):** WAVE 1 COMPLETE and merged to main — W1-A (config surface +
+`policy/federal_ces.py`, PR #2378), W1-B (BAU smokes: ERCOT 14/14 PASS; PJM 12/14 with
+the I7 adequacy-accounting FAIL diagnosed as B1, PR #2379 + report
+`ces-w1b-bau-smoke-2026-07.md`), W1-C (crediting audit
+`ces-ci-crediting-audit-2026-07.md`, PR #2375). New gaps from W1-B: **G10** (PJM
+adequacy side-registries omit DR/firm ties — blocks §7 R4 for PJM), **G11** (F923
+measured H1-2026 fuel costs leak into forecast mode — rule-22 hygiene), **G12**
+(confirmed-exits clean-partition/`sys.path` silent-degradation hardening). One W1-A
+deviation: `federal_ces_ccs_capture_fraction` merged at 0.90 (session launched before
+the owner's Q4 → 0.95 call) — flip queued as W2-A task 0. Wave 2 adds **W2-D** (PJM
+adequacy intake) and **W2-E** (F923 forecast mode-gate, owner-approved approach).
 **Owner ask (2026-07-17):** model a *national* CES that credits every clean/low-carbon
 resource (including CCS retrofits and new build) with an EAC premium, as a federal
 alternative to state RPS/CES. Plug in an ensemble of premium levels and compare
@@ -196,6 +207,26 @@ linear interpolation, `rps.py:8-39`) and the `eac_price_*` scalars.
   `prb_overrides`; recorder must mirror live order — the ERCOT-65 lesson).
 - **G9 — Capacity-screen fitness.** The retirement/entry screens are not yet fit for a
   meaningful capacity-expansion comparison (§7). Owner: fix before running.
+- **G10 — PJM adequacy side-registries (W1-B B1).** `ADEQUACY_DEMAND_RESPONSE_FRACTION_
+  BY_ISO` and `ADEQUACY_EXTERNAL_TIE_FIRM_MW` are ERCOT-only, so PJM's accredited firm
+  capacity (143,332 MW) sits 5,439 MW below its requirement (148,771 MW) in 2026 and
+  **every PJM forecast fails I7** until cited PJM BRA parameters (DR/load-management
+  UCAP, CIL firm-import treatment) are intaken. Blocks §7 R4 for PJM. → W2-D. Published
+  parameters only — never a number tuned to clear I7 (rules 5/13).
+- **G11 — F923 H1-2026 leak into forecast mode (W1-B B2).** `apply_plant_monthly_fuel_
+  prices` gates only on year availability (fuel.py:3973-77); with measured 2026 rows now
+  intaken, forecast-mode smokes priced ERCOT 12 / PJM 51 generators from measured
+  H1-2026 delivered costs — contradicting the overlays-are-backcast-only convention
+  (rule 22, spec §1.7) and contaminating the crossover window's forecast side. → W2-E
+  (owner-approved approach; also perturbs any 2026+ forecast bytes incl. a golden
+  regen — flag in the fix PR).
+- **G12 — Silent-degradation hardening (W1-B B3/B4).** `load_confirmed_exits` degrades
+  to a warn-only no-op when `data/clean/` is missing or the repo root is off `sys.path`
+  (ERCOT 2026 fleet silently gains 477 MW — V H Braunig backlog). Operational rule for
+  every runner session: `PYTHONPATH=. python scripts/curate_confirmed_retirements.py`
+  before forecasting on a fresh checkout, and caches predating a data fix must be
+  deleted (cache_key hashes config only). Code hardening (fail loudly when
+  `confirmed_exits_enabled` + forecast + registry unreadable) folds into W2-E.
 
 ## 4. Design decisions — RESOLVED (owner, 2026-07-17)
 
@@ -246,6 +277,8 @@ federal_ces_ccs_capture_fraction: float = 0.95   # policy-assumed capture credit
                                                  # Distinct from the engineering
                                                  # ccs_capture_rate / ccs_retrofit_capture_rate
                                                  # fields; W1-C reconciles/documents.
+                                                 # NOTE: W1-A merged at 0.90 (pre-Q4);
+                                                 # the 0.95 flip is W2-A task 0.
 federal_ces_ci_benchmark_t_per_mwh: float = 0.82 # cesa_ci benchmark; CESA S.1359/S.2146
 federal_ces_unabated_ci_threshold_t_per_mwh: float = 0.45  # cesa_ci-only unabated-CCGT
                                                  # eligibility line (owner-set, 450 kg/MWh;
@@ -366,6 +399,9 @@ owner-ordered Opus/Fable-only) — this plan does NOT fork that work; it defines
   designs.
 - **R4 (regression):** `tests/golden/ercot_2026_2040.json` (or its successor) green;
   `check_forecast_invariants.py` I1-I14 pass on fresh ERCOT+PJM BAU forecasts.
+  *W1-B finding: R4 is structurally unachievable for PJM until G10 (W2-D) lands — the
+  I7 FAIL is adequacy-accounting, not fleet economics. W3-R treats W2-D as an R4
+  prerequisite. ERCOT already passes 14/14 on the 2026 smoke.*
 
 **W3-R verification session** (§8) independently re-runs both BAU forecasts, checks
 R1-R4, and issues the go/no-go for W4. Until then, W1/W2 build work proceeds — none of
@@ -381,7 +417,12 @@ NO new GitHub Actions workflows; NO solves on CI runners. Core-infrastructure se
 (rule 27); W1-C is the only Sonnet-eligible prompt. Each prompt is self-contained and
 cites this plan (§ references).
 
-### Wave 1 (parallel: W1-A, W1-B, W1-C)
+### Wave 1 (parallel: W1-A, W1-B, W1-C) — ✅ COMPLETE, merged to main 2026-07-17
+(W1-A PR #2378: config surface + resolver + tests. W1-B PRs #2371/#2379: four YAMLs +
+smoke report — ERCOT 14/14 PASS, 172.7 s / 3.63 GB; PJM first-ever forecast run,
+12 PASS / I7 FAIL (→ G10) / I12 WARN (derivative), 380.4 s / 8.73 GB. W1-C PR #2375:
+crediting audit. Findings promoted to G10-G12; capture-fraction 0.95 flip → W2-A
+task 0.)
 
 **W1-A — Core config surface + `policy/federal_ces.py` resolver (Opus/Fable)**
 Implements §5.1 + §5.2 ONLY (no consumer wiring — solver-inert by construction), with
@@ -410,11 +451,20 @@ S.1359/S.2146 for 0.82; EPA §111(b) 1,000 lb CO2/MWh correspondence for 0.45) +
 `EAC_PRICE_REFERENCE` + scope2 breakevens. Deliverable:
 `docs/handoffs/ces-ci-crediting-audit-2026-07.md`.
 
-### Wave 2 (parallel: W2-A, W2-B; W2-C after §11 resolution; requires W1-A merged)
+### Wave 2 (W1 complete. Launch W2-A ∥ W2-B ∥ W2-D in parallel — disjoint files;
+W2-E in parallel once the owner approves its approach; **W2-C AFTER W2-A merges** —
+both touch scenarios.py/capacity.py/spec, and W2-C reuses W2-A's wired resolver)
 
 **W2-A — Consumer wiring EXCLUDING the retrofit seam (Opus/Fable)**
-Implements §5.3 (retrofit row deferred), incl. the `nuclear_smr`/`hydrogen` candidate
+**Task 0 (owner Q4 catch-up):** flip `federal_ces_ccs_capture_fraction` default
+0.90 → 0.95 (scenarios.py:267 + comment; tests/test_federal_ces.py:252-260 default
+assertion and :370 tech-fraction assertion; `frontend/data/parameters.json`
+`scenario.federal_ces_ccs_capture_fraction` entry + regenerated citations page) — W1-A
+merged before the Q4 decision. Then:
+implements §5.3 (retrofit row deferred), incl. the `nuclear_smr`/`hydrogen` candidate
 mapping and cesa_ci unabated-CCGT crediting through dispatch + retirement + entry.
+Read `docs/handoffs/ces-ci-crediting-audit-2026-07.md` first (production-path and
+provenance findings shape the wiring).
 Neutrality golden: CES-off run byte-identical vs main. Integration tests: premium moves
 entry margins/retirement retention in trivial fixtures; year-escalation visible across
 two solved years; cesa_ci credits an efficient CCGT and zeroes an inefficient one.
@@ -429,7 +479,7 @@ all `clean_capture`) plus a PARKED `configs/ces_premium_matrix_ci.yaml`
 (`CI-10/20/30`, `cesa_ci`) so the efficient-CCGT option is turnkey when the owner calls
 it. Tests on synthetic cached fixtures.
 
-**W2-C — CCS-retrofit redesign (Opus/Fable; §11 FULLY RESOLVED 2026-07-17 — blocked only on W1-A merging)**
+**W2-C — CCS-retrofit redesign (Opus/Fable; §11 FULLY RESOLVED 2026-07-17 — launch AFTER W2-A merges)**
 Implements the §11 resolution: 45Q revenue term in the retrofit screen, annualized over
 `min(ira_45q_credit_window_years, remaining_life)` and expiry-gated, with
 `ira_45q_credit_window_years: int | None = 12` (None ⇒ indefinite — owner-requested
@@ -447,6 +497,25 @@ unabated state (which under cesa_ci includes the unit's unabated partial credit)
 counter, annual re-screen from `ccs_available_year`, still one pass (rule 10) — the
 evolve_fleet step order/spec §5.1 documentation updated accordingly; refreshed
 parameter citations. Includes retrofit-specific tests + spec §5.6 rewrite.
+
+**W2-D — PJM adequacy side-registry intake (Opus/Fable; closes G10, prereq for §7 R4)**
+Data/constants intake with primary citations: PJM BRA planning parameters — DR /
+load-management UCAP contribution (→ `ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]`
+or an absolute-MW analog if the fraction form misfits, documented per rule 14) and CIL
+firm-import treatment (→ `ADEQUACY_EXTERNAL_TIE_FIRM_MW["PJM"]`), consumed at
+capacity.py:870 / :2656. Values must be published PJM parameters (cited in
+`parameters.json`) — NEVER tuned to clear I7 (rules 5/13; W1-B B1 quantifies the 5,439
+MW gap the published DR fleet more than covers). Acceptance: PJM 2026 smoke re-run
+passes I7/I12; ERCOT bytes untouched.
+
+**W2-E — Forecast-mode hygiene fixes (Opus/Fable; owner-approved approach; closes
+G11 + G12 hardening)**
+(a) Mode-gate the F923 plant-monthly fuel overlay to backcast (recommended; the
+alternative clamp `available_years < resolved start_year` in forecast mode is the
+fallback if the owner prefers year-based semantics) — flag in the PR that any 2026+
+forecast bytes change (golden regen note). (b) Fail loudly when
+`confirmed_exits_enabled` is on in forecast mode and the clean registry cannot be
+read/imported (W1-B B4) instead of the silent 477 MW warn-only no-op. Tests for both.
 
 ### Wave 3 — capacity-screen readiness (external lane + verification)
 
@@ -506,8 +575,10 @@ analog) as a cross-check of the exogenous ladder; premium as a PB-2 sampler dime
 1. Crediting → two modes (D1): `clean_capture` default; `cesa_ci` variant with 0.45
    t/MWh unabated-CCGT line; assumed capture 0.95 (owner: target rate; 0.90
    sensitivity). **First campaign runs `clean_capture` only; `cesa_ci` is a built
-   option** (owner 2026-07-17).
-   *Pending micro-check: 0.45 as eligibility cutoff (assumed) vs as formula denominator.*
+   option** (owner 2026-07-17). *Implementation note: W1-A merged with 0.90 (launched
+   pre-Q4); the 0.95 flip is W2-A task 0.*
+   *Pending micro-check: 0.45 as eligibility cutoff (assumed) vs as formula denominator
+   — W1-A implemented the cutoff reading; W1-C audit §2.5 restates the flag.*
 2. Existing clean credits identically — confirmed (no vintage gate).
 3. Horizon 2026–2050; first-run ladder {10, 20, 30} — confirmed.
 4. Escalation 0%/yr real — confirmed.
