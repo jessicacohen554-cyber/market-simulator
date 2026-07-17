@@ -219,7 +219,7 @@ linear interpolation, `rps.py:8-39`) and the `eac_price_*` scalars.
   H1-2026 delivered costs — contradicting the overlays-are-backcast-only convention
   (rule 22, spec §1.7) and contaminating the crossover window's forecast side. → W2-E
   (owner-approved approach; also perturbs any 2026+ forecast bytes incl. a golden
-  regen — flag in the fix PR).
+  regen — flag in the fix PR). APPROVED: mode-gate (Option 1), owner 2026-07-17.
 - **G12 — Silent-degradation hardening (W1-B B3/B4).** `load_confirmed_exits` degrades
   to a warn-only no-op when `data/clean/` is missing or the repo root is off `sys.path`
   (ERCOT 2026 fleet silently gains 477 MW — V H Braunig backlog). Operational rule for
@@ -510,6 +510,7 @@ passes I7/I12; ERCOT bytes untouched.
 
 **W2-E — Forecast-mode hygiene fixes (Opus/Fable; owner-approved approach; closes
 G11 + G12 hardening)**
+APPROVED: mode-gate (Option 1), owner 2026-07-17.
 (a) Mode-gate the F923 plant-monthly fuel overlay to backcast (recommended; the
 alternative clamp `available_years < resolved start_year` in forecast mode is the
 fallback if the owner prefers year-based semantics) — flag in the PR that any 2026+
