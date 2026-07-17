@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1407 parameters registered** (775 flagged `needs-citation`).
+**1407 parameters registered** (773 flagged `needs-citation`).
 
 
 ## Calibration
@@ -763,7 +763,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_elcc_curves_by_iso.PJM.solar` | {"penetration_basis": "installed_mw",… | 2 | Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan… | 2026-07 | auto-generated |
 | `renewable_elcc_curves_by_iso.PJM.wind` | {"penetration_basis": "installed_mw",… | 2 | Penetration-indexed ELCC accreditation curves per ISO (CR-3.1, plan… | 2026-07 | auto-generated |
 | `scenario.caiso_storage_as_reservation` | False | 2 | Reserve the MEASURED hourly |  | auto-generated, needs-citation |
-| `scenario.co2_transport_storage_cost` | 15.0 | 2 | $/tCO2 for captured CO2 |  | auto-generated, needs-citation |
+| `scenario.co2_transport_storage_cost` | 15.0 | 2 | NETL 2022 (Rev 4) transport + saline storage, Gulf Coast basis — pi… | 2022 |  |
 | `scenario.eac_price_storage` | 0.0 | 1 | $/MWh on discharge |  | auto-generated, needs-citation |
 | `scenario.ercot_storage_as_deployment` | False | 1 | ERCOT: measured-award energy |  | auto-generated, needs-citation |
 | `scenario.ercot_storage_as_deployment_from_year` | 2023 | 1 | First weather year the |  | auto-generated, needs-citation |
@@ -1122,7 +1122,6 @@ inline comment and still need a dated primary source — search the table for
 | `ccs_retrofit_hr_penalty_reference.netl_ngcc_range` | [0.1, 0.16] | 2 | CCS retrofit heat rate penalty: parasitic load from amine scrubbing… | 2021 | auto-generated |
 | `ccs_retrofit_hr_penalty_reference.source` | NETL Cost & Performance Baseline for … | 2 | CCS retrofit heat rate penalty: parasitic load from amine scrubbing… | 2021 | auto-generated |
 | `ccus_params.gas_cc_ccs_90.capex_kw` | 2500.0 | 2 | $/kW installed. NREL ATB 2024 | 2024 | auto-generated |
-| `ccus_params.gas_cc_ccs_90.capture_rate` | 0.9 | 2 | fraction of CO2 captured. NETL 2022 Case B31B | 2022 | auto-generated |
 | `ccus_params.gas_cc_ccs_90.co2_transport_storage` | 15.0 | 2 | $/tCO2 — pipeline + saline injection. NETL 2022, Gulf Coast | 2022 | auto-generated |
 | `ccus_params.gas_cc_ccs_90.fom_kw_yr` | 22.0 | 2 | $/kW-yr. NREL ATB 2024 | 2024 | auto-generated |
 | `ccus_params.gas_cc_ccs_90.heat_rate_penalty` | 1.16 | 2 | ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B | 2022 | auto-generated |
@@ -1213,7 +1212,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_ra_bridge_startup_aware` | False | 1 | CAISO RA bridge STARTUP-AWARE |  | auto-generated, needs-citation |
 | `scenario.caiso_ra_startup_bridge` | False | 1 | CAISO RA must-offer STARTUP-COST-AWARE |  | auto-generated, needs-citation |
 | `scenario.ccs_available_year` | 2030 | 1 | year CCUS enters the candidate pool |  | auto-generated, needs-citation |
-| `scenario.ccs_capture_rate` | 0.9 | 2 | fraction of CO2 captured by CCUS |  | auto-generated, needs-citation |
+| `scenario.ccs_capture_rate` | 0.9 | 2 | NETL Cost & Performance Baseline for Fossil Energy Plants Rev 4 (20… | 2022 |  |
 | `scenario.ccs_retrofit_available_year` | 2028 | 2 | Earliest year retrofits can occur. |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_capex_kw` | 900.0 | 2 | $/kW for post-combustion capture retrofit. |  | auto-generated, needs-citation |
 | `scenario.ccs_retrofit_capture_rate` | 0.9 | 2 | Fraction of CO2 captured. 0.90 = 90%. |  | auto-generated, needs-citation |
@@ -1249,7 +1248,8 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.gas_st_startup_cost` | False | 3 | ISO-gated gas-steam startup amortization. The ST_GAS startup cost +… |  | auto-generated, needs-citation |
 | `scenario.gas_st_startup_spread` | False | 3 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.heat_rate_bin_count` | None | 2 | Override default bin count per fuel type. |  | auto-generated, needs-citation |
-| `scenario.ira_ccus_45q_last_year` | 2032 | 2 | §45Q CCUS credit: extended but phasing out post-2032. | 2032 | auto-generated |
+| `scenario.ira_45q_credit_window_years` | 12 | 2 | 26 U.S.C. §45Q(a)(3)-(4) as amended by IRA 2022 (Pub. L. 117-169 §1… | 2022-08 |  |
+| `scenario.ira_ccus_45q_last_year` | 2032 | 2 | §45Q eligibility deadline proxy: qualified facilities must begin co… | 2022-08 |  |
 | `scenario.miso_commitment_posture` | False | 1 | MISO: pooled linear commitment- |  | auto-generated, needs-citation |
 | `scenario.offer_curve_by_group` | {} | 2 | Unified thermal offer-curve parameterization (supersedes the legacy… |  | auto-generated, needs-citation |
 | `scenario.offer_curve_smoothing_exp` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
@@ -1496,7 +1496,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_installed_mw.NYISO.wind` | 2400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.PJM.solar` | 14000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.PJM.wind` | 11000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
-| `rggi_member_states_by_year` | {"2023": ["DE", "RI", "VT", "NJ", "CT… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
+| `rggi_member_states_by_year` | {"2023": ["CT", "DE", "MA", "MD", "ME… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
 | `short_ton_to_metric_tonne` | 0.90718474 | 2 | Short ton -> metric tonne. RGGI allowances are denominated in SHORT… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.CAISO` | 2026-07-03-caiso-statmode-d-7 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.ERCOT` | 2026-07-04-statmode-d7-probe-ercot32 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
