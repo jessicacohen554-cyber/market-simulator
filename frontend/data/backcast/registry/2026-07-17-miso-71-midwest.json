@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-17-miso-71-midwest",
+  "label": "miso 71 midwest",
+  "date": "2026-07-17",
+  "shorthand": "miso-71-midwest",
+  "definition": "miso-71 (main) -- Midwest sub-regional reserve-holding family (the engagement-depth lane), the miso-70 keeper recipe plus miso_midwest_subregional_reserves (NEW: the MEASURED Midwest (North+Central) cleared OR reservation held IN the 5 physical Midwest zones (MISO-West/Plains/Illinois/Indiana/East), priced at a single shortfall step = the published $200/MWh RPE demand value (constants.MISO_RPE_DEMAND_VALUE, 2024 SOM III.B), reserve_class 0 nested inside the market-wide RBDC \u2014 a Midwest reserve MW counts toward both). Closes the congestion-blind market-wide family's phantom-South-parking gap (the ledgered 'RPE Only' under-shoot): a cost-min LP otherwise parks the market-wide requirement in the RDT-trapped South surplus and converts Midwest headroom to energy in a Midwest event, removing ~2 GW of phantom Midwest supply. ENERGY-SIDE \u2014 does NOT make the reserve curves fire (the per-zone ORDC ladder is measured-refuted; the family dual sits at re-dispatch opportunity cost in ~every hour and reaches $200 only where the M-2-thinned fleet cannot hold the measured feasible requirement). Zero fitted scalars (measured series + cited $200 + topology zone list). Pre-registered bands (design \u00a75): C3b-2025 <=0.20 ABS veto (expect [0.160,0.195]); C3c RT 2025 [1,26] (the [44,176] PASS NOT claimed \u2014 R5 honesty band); C3a-2025 [-14.5,-10.0] up. Reserve fidelity (R2): dual <=$25 in >=99% of hours, >=$200 in <=20 h/yr all in declared/measured-scarce hours; R3: Jan-14-17-2024 dual >$50 is wrong-driver. base = unchanged-recipe same-box drift control (mechanism-only = main - base). No ablation twin (rule 20 amended 2026-07-14). Design: docs/handoffs/miso-engagement-depth-design-2026-07.md; parents miso-f5-scarcity-depth / miso-price-formation.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "MISO",
+  "file": "frontend/data/backcast/runs/2026-07-17-miso-71-midwest.js",
+  "bundle": "results/calibration/miso71_midwest"
+}

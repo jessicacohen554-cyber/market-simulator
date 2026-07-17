@@ -246,7 +246,11 @@ def _log_reserve_coopt(
                 fam.name,
                 float(fam.requirement[0]),
                 (
-                    "measured hourly South reservation"
+                    (
+                        "measured hourly Midwest reservation"
+                        if "midwest" in fam.name
+                        else "measured hourly South reservation"
+                    )
                     if _measured
                     else "within-zone MSSC, flat"
                 ),
