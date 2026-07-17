@@ -1,11 +1,11 @@
 {
- "CAISO": "2026-07-16-caiso-90-citygate-flow",
+ "CAISO": "2026-07-17-caiso-92-measured-offer",
  "ERCOT": "2026-07-16-ercot73-state-wall",
  "NEISO": "2026-07-13-neiso-59-cc-hr",
  "PJM": "2026-07-16-pjm-114-east-interface",
  "keepers": [
   "2026-07-16-ercot73-state-wall",
-  "2026-07-16-caiso-90-citygate-flow",
+  "2026-07-17-caiso-92-measured-offer",
   "2026-07-16-pjm-114-east-interface",
   "2026-07-13-nyiso-62-cc-hr",
   "2026-07-13-neiso-59-cc-hr",
