@@ -15970,3 +15970,26 @@ pre-registered probe is committed (`_ercot78_summer_anatomy.py`, merged
 before the measurement ran — the ERCOT-74/75 pattern). Keeper and dashboard
 unchanged. Transport: API create_branch + git push onto the existing ref,
 blob-verified (rule 27).
+
+## 2026-07-17 — ERCOT keeper promotion: 2026-07-17-ercot76-ne-import (owner)
+
+**Promotion (owner, this session — the ercot-76/77/78 close-out).**
+`2026-07-17-ercot76-ne-import` promoted to ERCOT keeper
+(CALIBRATED-WITH-CAVEATS; the single ledgered caveat is the fully-adjudicated
+C3c-2024 tail, 24h vs RT 53 — every family measured and closed, ERCOT-74/75/76).
+Same recipe as the deposed ercot73-state-wall keeper; the delta is the
+ERCOT-76 topology correction (the NE-boundary one-way pair), which is
+code-level and already on main — so this keeper is the configuration current
+code reproduces byte-faithfully, while the deposed keeper's registered
+numbers were solved on the old symmetric topology. LOYO (rule 22) satisfied
+structurally: zero fitted scalars; the import rating's leave-one-year-out
+values (1,756-1,788 MW) are verdict-identical. `keepers.json` flipped from
+`2026-07-16-ercot73-state-wall`; keeper sidecar carries the market_story (the
+import rating becomes physical — no class forced, no offer changed);
+`build_status.py` rebuilt status.js (ERCOT CALIBRATED-WITH-CAVEATS);
+`audit_keepers.py --iso ERCOT` PASS 0/0. The deposed keeper's registration
+stays on the dashboard as the prior-keeper comparison. Open items carried
+forward: the ercot-78 availability-envelope successor lane (the one open
+chartered lane), the frontier.ERCOT block draft + the ERCOT-65 trough/spread
+draft (both awaiting owner sign-off), and the ercot_gtc_limits_measured
+data-starvation provenance item.
