@@ -16375,3 +16375,21 @@ diagnostics before dashboard_add_run, attestation clone + delta,
 `calibration_verdict.py --write-metrics`, parity check). Transport: API
 create_branch + git push onto the existing ref, blob-verified (rule 27).
 keepers.json NOT flipped (recommendation only).
+
+## 2026-07-17 — CAISO keeper PROMOTED: caiso-93 (overnight clean import depth) supersedes caiso-92 (owner sign-off this session: "Yes promote to keeper")
+
+Owner authorization session-logged (same session as the build authorization
+and the registered candidate above). `frontend/data/backcast/keepers.json`
+CAISO pointer + keepers list flipped to `2026-07-17-caiso-93-overnight-clean`;
+the sidecar definition rewritten to the KEEPER header (fail-set shrink, the
+two gated flips, the disclosed ~3 pp overnight-share over-rotation) and a
+`market_story` added (the WEIM/EDAM overnight clean-attribution story: the
+West's overnight non-emitting surplus is assigned to CAISO transfers, so the
+marginal overnight import pays no unspecified-import carbon and no wheel —
+CC backs down overnight on merit, not by a floor). Keeper-text auditor run on
+the flip; `status.js` rebuilt via `build_status.py` (CAISO determination
+NOT-YET, deciding criteria C3a-2025/C3c/C4, consistent with the registered
+verdict). The CAISO C1 lane (CC-overnight cluster) is CLOSED with this
+promotion; the open lanes hand off to the next charter (C3a-2025 daytime
+unwedged-parity family + the named battery-charge-marginal autumn sub-regime;
+C3c lane B; C4 band-edge).
