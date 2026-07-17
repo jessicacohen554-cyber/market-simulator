@@ -2241,6 +2241,35 @@ class ScenarioConfig:
     # the shared apply_interchange_injections seam. Requires
     # caiso_per_hub_intertie (+ caiso_firm_import_shape). Default off
     # (byte-identical); CAISO-only.
+    caiso_dsw_daytime_clean: bool = False  # Carry the MEASURED DAYTIME
+    # trigger-OFF (hod 6-21) WEIM clean import depth on the south (Palo Verde /
+    # Path-46) corridor (caiso-94; FINDING-caiso94-daytime-wedge-2026-07-17,
+    # the C3a-2025 daytime lane; owner-authorized diagnostic build 2026-07-17).
+    # The measured no-wedge structure that admitted the caiso-93 OVERNIGHT leg
+    # extends to the DAYTIME hours the caiso-87 surplus trigger does not cover:
+    # the daytime trigger-OFF CAISO−PaloVerde spread carries NO
+    # unspecified-import carbon wedge in every daytime cell (G1 no-wedge PASSES
+    # all cells, FINDING-caiso94 §2), and the autumn daytime cells clear at
+    # raw-hub parity. The model instead prices every incremental daytime DSW MW
+    # at hub + the +$12-15 wedge and over-prices the daytime (C3a-2025 +13.3 %,
+    # mass in autumn Sep-Dec + the belly). When on, a DSW_daytime_clean tranche
+    # (EF 0, NO wheel — WEIM transfer basis, priced at the RAW measured Palo
+    # Verde hub by the per-hub injector) carries the measured daytime
+    # trigger-OFF depth (p95 net import over the daytime trigger-OFF window:
+    # 5,441/5,762/5,998 MW 2023/24/25 — CV 0.040, LOYO ≤8.1 %, gates in
+    # interchange_config) net of the shaped firm block AND the caiso-87 surplus
+    # tranche AND the caiso-93 overnight tranche (overlap hours never
+    # double-carry), in hod 6-21 measured-hub hours whose caiso-87 surplus
+    # trigger is OFF. The trigger-OFF scoping is load-bearing: daytime caiso-87
+    # is coverage-rich (66-90 % trigger-ON in the belly), so this leg is scoped
+    # to the COMPLEMENT to stay disjoint from caiso-87 (unlike caiso-93
+    # overnight, unconditional because caiso-87 is coverage-starved overnight).
+    # Fossil rungs unchanged beyond the clean depth; a capability, not a floor
+    # (pmin 0); the corridor ATC envelope still caps delivered flow. Carried by
+    # transmission.build_caiso_per_hub_intertie(daytime_clean=) +
+    # transmission.inject_caiso_dsw_daytime_clean via the shared
+    # apply_interchange_injections seam. Requires caiso_per_hub_intertie (+
+    # caiso_firm_import_shape). Default off (byte-identical); CAISO-only.
     caiso_storage_as_reservation: bool = False  # Reserve the MEASURED hourly
     # CAISO battery AS-award MW out of the battery fleet's dispatch headroom
     # (caiso-74; FINDING-caiso72 STEP-0 channel #1 / FINDING-caiso73 live lead

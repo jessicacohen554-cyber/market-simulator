@@ -91,6 +91,7 @@ class TestBuildPerHubIntertie(unittest.TestCase):
 
     def test_tranches_placed_in_hub_zone(self):
         from market_sim.config.interchange_config import (
+            CAISO_DSW_DAYTIME_CLEAN_NAME,
             CAISO_DSW_OVERNIGHT_CLEAN_NAME,
             CAISO_DSW_SURPLUS_CLEAN_NAME,
         )
@@ -102,11 +103,12 @@ class TestBuildPerHubIntertie(unittest.TestCase):
             if tranche in (
                 CAISO_DSW_SURPLUS_CLEAN_NAME,
                 CAISO_DSW_OVERNIGHT_CLEAN_NAME,
+                CAISO_DSW_DAYTIME_CLEAN_NAME,
             ):
-                # caiso-87 surplus-clean / caiso-93 overnight-clean depth
-                # tranches: on the hub map for pricing, but built only when
-                # armed (surplus_clean= / overnight_clean=True) — absent from
-                # the default builder output.
+                # caiso-87 surplus / caiso-93 overnight / caiso-94 daytime clean
+                # depth tranches: on the hub map for pricing, but built only when
+                # armed (surplus_clean= / overnight_clean= / daytime_clean=True)
+                # — absent from the default builder output.
                 self.assertNotIn(f"{zone}_{tranche}", by_uid)
                 continue
             g = by_uid[f"{zone}_{tranche}"]
