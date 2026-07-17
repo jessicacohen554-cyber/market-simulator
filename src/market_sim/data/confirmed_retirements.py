@@ -19,10 +19,14 @@ registry has not landed, or ERCOT before its rows are seeded) yields an empty
 list with a log line rather than an error — callers gate on
 ``ScenarioConfig.confirmed_exits_enabled`` and degrade to the economic screen.
 **Exception (W2-E / G12):** when the caller passes ``required=True`` — the
-runner does so whenever ``confirmed_exits_enabled`` is on in forecast mode — a
-missing or unimportable registry RAISES instead of silently degrading: the
-W1-B smoke showed the warn-only no-op handing ERCOT 477 MW of phantom 2026
-fleet (V H Braunig backlog) on a fresh checkout. Remediation:
+runner does so whenever ``confirmed_exits_enabled`` is on in forecast mode — an
+unimportable ``scripts.lib.clean_io`` seam or a never-curated checkout (the
+``confirmed-retirements`` datatype root absent from ``data/clean``) RAISES
+instead of silently degrading: the W1-B smoke showed the warn-only no-op
+handing ERCOT 477 MW of phantom 2026 fleet (V H Braunig backlog) on a fresh
+checkout. A curated root with no partition for the requested ISO still
+degrades quietly — that is a legitimately zero-row registry (NYISO), not a
+setup failure. Remediation:
 ``PYTHONPATH=. python scripts/curate_confirmed_retirements.py``.
 Forecast-forward only: a backcast's historical exits are already carried by the
 EIA-860 vintage snapshot + within-window retiree build (plan §5.4).
@@ -50,6 +54,25 @@ _REMEDIATION = (
     "delete any results/<ISO>/<key>/ caches solved before it existed "
     "(cache_key hashes config only, never data-file state)"
 )
+
+
+def _registry_curated() -> bool:
+    """Whether the clean confirmed-retirements datatype root exists at all.
+
+    Distinguishes the two FileNotFoundError shapes behind ``required=True``
+    (W2-E / G12): an absent datatype ROOT means the checkout was never
+    curated — the silent-477-MW failure mode, which must raise — while a
+    present root with no partition for THIS ISO means curation ran and the
+    ISO legitimately has zero qualifying rows (NYISO's registry is
+    documented DATA-NEEDED/zero-row, so curation writes it no partition),
+    which keeps the warn-only degrade.
+    """
+    try:
+        from market_sim.config import paths
+
+        return (paths.CLEAN_DIR / DATATYPE).is_dir()
+    except Exception:
+        return False
 
 
 class ConfirmedExit(BaseModel):
@@ -105,12 +128,14 @@ def load_confirmed_exits(
             silently kept.
         required: W2-E / G12 fail-loud switch. When True — the runner passes
             it whenever ``confirmed_exits_enabled`` is on in forecast mode —
-            a missing clean partition or an unimportable
-            ``scripts.lib.clean_io`` seam raises :class:`RuntimeError` with
-            the regeneration command instead of degrading to a warn-only
-            empty list (the W1-B B3/B4 silent-477-MW failure). Default False
-            preserves the degrade-to-economic-screen behavior for optional
-            callers.
+            an unimportable ``scripts.lib.clean_io`` seam or a never-curated
+            checkout (datatype root absent, see :func:`_registry_curated`)
+            raises :class:`RuntimeError` with the regeneration command
+            instead of degrading to a warn-only empty list (the W1-B B3/B4
+            silent-477-MW failure). A curated root missing only this ISO's
+            partition still degrades (zero-row registry, e.g. NYISO).
+            Default False preserves the degrade-to-economic-screen behavior
+            for optional callers.
 
     Returns:
         One :class:`ConfirmedExit` per unit, sorted by ``(exit_year, plant_id,
@@ -139,7 +164,7 @@ def load_confirmed_exits(
     try:
         df = read_clean(DATATYPE, iso=iso.upper())
     except FileNotFoundError as exc:
-        if required:
+        if required and not _registry_curated():
             raise RuntimeError(
                 f"confirmed-retirements: clean partition for {iso} is absent "
                 f"while confirmed_exits_enabled is on in forecast mode. "
@@ -244,13 +269,15 @@ def load_announced_reversal_plants(
             cutoff — byte-identical to the pre-RC-1B behavior (every fully-
             superseded plant is suppressed regardless of when its reversal
             became known).
-        required: W2-E / G12 fail-loud switch (same clean partition as
+        required: W2-E / G12 fail-loud switch (same clean partition and
+            never-curated/zero-row distinction as
             :func:`load_confirmed_exits`). The runner passes it whenever
-            ``confirmed_exits_enabled`` is on in forecast mode; a missing or
-            unimportable registry then raises :class:`RuntimeError` instead
-            of silently skipping reversal suppression. Default False keeps
-            the warn-only degradation — the reversal channel is a data
-            correction, deliberately usable without the confirmed channel.
+            ``confirmed_exits_enabled`` is on in forecast mode; an
+            unimportable seam or never-curated checkout then raises
+            :class:`RuntimeError` instead of silently skipping reversal
+            suppression. Default False keeps the warn-only degradation — the
+            reversal channel is a data correction, deliberately usable
+            without the confirmed channel.
     """
     try:
         from scripts.lib.clean_io import read_clean
@@ -272,7 +299,7 @@ def load_announced_reversal_plants(
     try:
         df = read_clean(DATATYPE, iso=iso.upper())
     except FileNotFoundError as exc:
-        if required:
+        if required and not _registry_curated():
             raise RuntimeError(
                 f"confirmed-retirements: clean partition for {iso} is absent "
                 f"while confirmed_exits_enabled is on in forecast mode; "
