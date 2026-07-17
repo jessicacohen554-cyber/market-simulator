@@ -206,8 +206,25 @@ These track Henry Hub closely with a modest positive basis and a winter bump
 (IL Jan-2024 5.18, Jan-2025 4.40) — consistent with the doc-01 §4
 "Chicago Citygate, MichCon, Henry — small +/–" expectation. **Caveat:** these
 are EIA utility-citygate **state averages**, not the **ICE Chicago-Citygate /
-MichCon daily trading-hub spot** indices (paywalled / off-allowlist). The daily
-hub indices remain a manual-download item.
+MichCon daily trading-hub spot** indices (paywalled / off-allowlist).
+
+**DAILY Chicago Citygate gap — CLOSED via the EIA-weekly proxy (2026-07-17,
+miso-72).** `data/raw/gas-prices/miso_citygate_daily.csv` — 680 daily Chicago
+Citygate delivered-gas prints 2023-2025 (`date, chicago_citygate_usd_mmbtu,
+henry_hub_usd_mmbtu, source`), scraped by `scripts/fetch_miso_citygate_daily.py`
+from the **"Chicago"** row of the EIA Natural Gas Weekly Update compact spot
+table (the same free EIA-displayed NGI Daily GPI table the CAISO/NYISO daily
+scripts read; `archivenew_ngwu/YYYY/MM_DD/`). This is genuine **weekday-daily**
+granularity (not weekly-broadcast), so the single-Friday cold-snap print lands
+on its true calendar day — e.g. the Winter Storm Heather Friday 2024-01-12
+Chicago Citygate **$25.82/MMBtu** (+$12.74 over Henry Hub), the regional blowout
+the monthly proxy (+$1.82 basis) and national HH both miss. Consumed by the
+`miso_winter_citygate_daily` winter fuel-security overlay (`fuel.py`;
+`SOURCES_miso_citygate.md`). **MichCon daily still OPEN:** the EIA compact table
+carries no MichCon/Michigan row and the narrative never quotes a MichCon daily
+print, so lower-Michigan's citygate daily remains the paywalled ICE
+manual-download item below; Chicago Citygate is the representative MISO
+North/Central winter gas hub for the overlay.
 
 ---
 
@@ -236,10 +253,14 @@ curl -L -o data/raw/miso-pra/2025-26_PRA_Results.pdf \
 #   https://www.misoenergy.org/planning/resource-adequacy2/
 # Save under data/raw/zone-specific-demand/MISO/
 
-# --- Item 4: ICE Chicago Citygate & MichCon daily hub spot (paywalled) ---
-# ICE end-of-day natural-gas indices (subscription) — Chicago Citygate, MichCon:
-#   https://www.ice.com/products/  (Henry/Chicago/MichCon physical gas)
-# Or NGI / Platts daily index archives (subscription).
+# --- Item 4: ICE MichCon daily hub spot (paywalled) ---
+# Chicago Citygate DAILY is now proxied from the free EIA NG Weekly table
+#   (data/raw/gas-prices/miso_citygate_daily.csv via
+#    scripts/fetch_miso_citygate_daily.py) — only MichCon daily remains paywalled.
+# ICE end-of-day natural-gas indices (subscription) — MichCon (lower Michigan):
+#   https://www.ice.com/products/  (MichCon physical gas)
+# Or NGI / Platts daily index archives (subscription). Prefer ICE MichCon daily if
+# available; the overlay uses Chicago Citygate as the MISO North/Central hub today.
 # Save under data/raw/gas-prices/
 
 # --- Item 7: MISO wind & solar curtailment (HSL) reports (allowlist-blocked) ---
