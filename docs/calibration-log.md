@@ -16236,3 +16236,55 @@ repro reproduces the existing keeper, not a new run). Rigor caveat
 (FINDING §7): the designed adversarial 4-lens verification was not run (owner
 redirected the session); the four load-bearing facts are each directly
 measured or documented — the build/no-build call is grounded judgment.
+
+## 2026-07-17 — CAISO-93 (the caiso-92b import-side redirect precondition, derive-first, NO LP): the overnight no-wedge admissibility gate PASSES on every pre-registered leg — and SHARPENS the lane: the measured overnight no-wedge state is UNCONDITIONAL (parity in 93–99 % of ALL overnight hours, three years, both bases), the caiso-87 hub-state trigger is coverage-starved overnight (1–4 % ON in 2024/25), and the admissible construction is an hod-scoped clean depth whose frozen gates PASS (CV 0.041, LOYO ≤ 8.1 %); NO build (owner authorization required); keeper UNCHANGED (caiso-92)
+
+**Full record: `results/calibration/FINDING-caiso93-overnight-no-wedge-2026-07-17.md`.**
+The FINDING-caiso92b §6 gate, executed derive-first from committed data only
+(`derive_caiso_overnight_wedge.py`, gates frozen in the docstring before
+results; every leg inherited from a committed construction — the caiso-87
+trigger, the caiso-82 §1 parity spread, the caiso-88 depth/gate template —
+sliced to hod 0-5).
+
+**Pre-registered gate results (ALL PASS):** overnight trigger-ON median DA
+spread −4.8/−4.5/−4.8 $/MWh vs the ≤ +$4 parity-band gate (wedge reference
++14.1/+15.1/+12.0); ON hours 90–100 % parity-consistent, 0–3.7 %
+wedge-consistent; depth CV 0.093, LOYO worst 17.3 %. **The redirect is
+admissible: reality prices the marginal overnight south-corridor import at
+hub parity, not hub + the unspecified-import CARB wedge.**
+
+**The sharpening (the load-bearing refinement):** the trigger-OFF rows show
+the same parity (−4.5…−5.2 DA medians) in the 96–99 % of overnight hours
+where the caiso-87 hub-below-gas-floor trigger never fires, with 4.6–4.9 GW
+of measured DSW flow. The handoff's dichotomy was false: the overnight DSW
+hub IS fossil-marginal AND the CAISO transfer is un-wedged anyway (WEIM/EDAM
+GHG attribution assigns the West's overnight non-emitting surplus — NW
+hydro + wind, the PNW negative prints — to CAISO transfers; what is marginal
+AT the hub and what the transfer is ATTRIBUTED to are different axes). A
+trigger-conditioned overnight extension is therefore coverage-starved by
+construction (27/78 ON hours in 2024/25 against a 2,190-hour, +2.1/+2.6 TWh
+over-run window) — the trigger, not the wedge, is what fails overnight; the
+2023 26.4 % ON share is the documented SoCal-citygate misalignment inflating
+the floor in the high-gas year. The admissible form is hod-scoped:
+unconditional overnight depth p95 5,870/6,205/6,487 MW, CV 0.041 / LOYO
+≤ 8.1 % (`derive_caiso_overnight_clean_depth.py`; sequencing DISCLOSED —
+identified after the ON/OFF contrast, thresholds/statistic/series/window all
+frozen, nothing iterated against the gates). Tighter than the promoted
+caiso-87 midday depth's own gates (0.056/12.5 %).
+
+**Disclosed for the build decision (FINDING §5):** the overnight-leg pricing
+basis (measured overnight clear ≈ RAW hub — WEIM transfers pay no Path-46
+wheel — vs the existing tranche's ×1.03+$4 delivered basis, a ~$4–5 level
+choice); the C2 gas-sign risk at full magnitude (the caiso-87 disclosed
+tension that did not materialize at ⅓ scale; C2-2025 already −2.3 %); the
+2024 overshoot watch (+1.8 overnight leg); scope guards (hod 0-5 only,
+caiso-87 midday trigger/depth untouched, belly/evening untouched, the CLOSED
+autumn lane not reopened, WATCH months standing). An implementation bug in
+the first gate execution (parity mis-coded as ×0.03+4, printing +$40
+spreads) was corrected TO the pre-registered construction and disclosed —
+no gate or threshold moved.
+
+**Ops.** No LP, no registration, dashboard untouched, keeper caiso-92.
+Committed: the two derive scripts + the FINDING + this entry. NO build —
+lever authorization is the owner's call; the probe recipe, A-leg and
+report-back grid are pre-specified in FINDING §6.
