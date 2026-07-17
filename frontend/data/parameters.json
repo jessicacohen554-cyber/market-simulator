@@ -17299,40 +17299,40 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "NJ",
-          "DE",
-          "CT",
           "ME",
           "VT",
+          "VA",
           "NH",
-          "MA",
-          "MD",
           "RI",
-          "NY",
-          "VA"
+          "MD",
+          "DE",
+          "MA",
+          "NJ",
+          "CT",
+          "NY"
         ],
         "2024": [
-          "NJ",
-          "DE",
-          "CT",
           "ME",
           "VT",
           "NH",
-          "MA",
-          "MD",
           "RI",
+          "MD",
+          "DE",
+          "MA",
+          "NJ",
+          "CT",
           "NY"
         ],
         "2025": [
-          "NJ",
-          "DE",
-          "CT",
           "ME",
           "VT",
           "NH",
-          "MA",
-          "MD",
           "RI",
+          "MD",
+          "DE",
+          "MA",
+          "NJ",
+          "CT",
           "NY"
         ]
       },
@@ -23890,6 +23890,25 @@
       ]
     },
     {
+      "param_id": "scenario.miso_midwest_subregional_reserves",
+      "display_name": "Miso Midwest Subregional Reserves",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 3,
+      "source": "MISO: the Midwest",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.miso_pjm_border_anchor",
       "display_name": "Miso Pjm Border Anchor",
       "value": false,
@@ -27091,6 +27110,24 @@
       ]
     },
     {
+      "param_id": "state_rps_acp.PJM",
+      "display_name": "State Rps Acp / Pjm",
+      "value": 45.0,
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "PJM-load-weighted blend of member-state Tier-I non-solar ACPs: PA $45, DC/NJ $50, VA ~$47, MD ~$25, DE $25, OH $45; IL/NC cost-capped (no ACP). Blended ~$45/MWh.",
+      "source_date": "2025-04",
+      "page_or_table": "PJM-EIS Comparison of RPS Programs in PJM States, ACP rows",
+      "url": "https://www.pjm-eis.com/-/media/DotCom/pjm-eis/documents/rps-comparison.ashx",
+      "notes": "Rule-13 admissible (REC-price ceiling; relaxes as VRE builds). Forecast-path only.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "state_rps_floors.NEISO",
       "display_name": "State Rps Floors / Neiso",
       "value": {
@@ -27131,6 +27168,29 @@
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "state_rps_floors.PJM",
+      "display_name": "State Rps Floors / Pjm",
+      "value": {
+        "2026": 0.185,
+        "2030": 0.23,
+        "2040": 0.3,
+        "2045": 0.33
+      },
+      "unit": "",
+      "domain": "Policy",
+      "tier": 2,
+      "source": "PJM-load-weighted blend of member-state RPS renewable-tier obligations (Class I / Tier I incl. solar; NOT clean-energy tiers). NJ/MD 50% by 2030, IL 40%, DC 87%, VA ~37%, MI 40%; PA/OH ~8% flat; WV/KY/TN/IN none. Blended ~18.5% (2026) -> 33% (2045).",
+      "source_date": "2025-04",
+      "page_or_table": "PJM-EIS Comparison of RPS Programs in PJM States, RPS Percentages table",
+      "url": "https://www.pjm-eis.com/-/media/DotCom/pjm-eis/documents/rps-comparison.ashx",
+      "notes": "Load weights approximate (PA~20/VA~14/OH~14/IL~12/NJ~11/MD~7...) from Monitoring Analytics 'Percentage of PJM Load by State'. Tier-3 calibration: verify vs exact load-share file. Rule-13 admissible; forecast-path only.",
       "old_repo_location": "",
       "last_verified": "",
       "flags": [
