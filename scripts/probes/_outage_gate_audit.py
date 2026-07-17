@@ -44,7 +44,7 @@ from market_sim.data.outages import (  # noqa: E402
     QUALIFYING_PLANT_GROUPS,
     ST_GAS_PEAKER_PLANTS,
 )
-from scripts.derive_campd_outages import (  # noqa: E402
+from scripts.lib.outage_detect import (  # noqa: E402
     HIGH_LOAD_PCTL,
     MIN_INMERIT_HOURS,
     ST_GAS_CF_PEAK,
