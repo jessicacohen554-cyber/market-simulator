@@ -15646,3 +15646,159 @@ lane closes ADOPTED; the price lane's remaining opens are the pre-named
 engagement-depth lanes (Midwest zonal reserve family, measured-cleared
 requirement basis, winter-2024 fuel security) and G-23 imports (last).
 Keeper-auditor run follows this entry (CLAUDE.md keeper-swap protocol).
+
+
+## 2026-07-17 — ERCOT-76: the West/Panhandle tail-hour topology family adjudicated — the invented sets are measured NOT-topology (22 of 24 hours are SYSTEM-wide prints argmax-labeled "West"; all 60 of 2023's too); the ONE real zonal defect is the NE-boundary import rating (an export stability limit applied symmetrically), fixed by a measured one-way pair — the 2024 Northeast VOLL pair dies for the measured reason; the ~8 missed congestion hours measured onto named 33-640 MW sub-zonal constraints and LEDGERED; the measured-GTC overlay is provably inert on the invented set BY CONSTRUCTION (and the keeper's armed flag is data-starved in every fresh container — provenance defect surfaced); keeper decision the owner's
+
+**Task (owner charter, ercot-76 — lane A of the frontier close-out).** Reconcile
+the two evidence bases (the 2026-07-07 topology-scope doc vs the ERCOT-74
+invented/missed sets), instrument the 24 invented hours, test the already-built
+measured-GTC overlay on the decisive hours first, and adjudicate the ~8 missed
+congestion hours in/out of representation.
+
+**Leg 0 — the pre-registered baseline replay + the instrumentation (the lane's
+decisive yield).** Byte-faithful keeper replay (`2026-07-16-ercot73-state-wall`,
+zero deltas): C3 parity to the decimal on all three years (C3a +6.2/-3.1/-1.8%,
+C3b 0.143/0.141/0.088, C3c 179/26/19) and set parity to the hour
+(caught/missed/invented 119/62/60, 19/34/7, 2/29/17 — the ERCOT-74 before
+columns). Each invented hour joined to the full zonal price vector, per-link
+flows vs ratings, measured zonal RT prints (HB_WEST/HB_PAN/HB_NORTH/LZ_*),
+measured EIA-930 net-load percentile, and the NP6-86 corridor state:
+
+* **2025's 17 "West $246-307 rung plateaus" are NOT West prints.** All 17 are
+  SYSTEM-WIDE plateaus — all seven zones print the same number (zonal
+  separation $0.00) — at measured net-load percentile 0.969-1.000, formed on
+  the ENERGY dual (overlay columns 0, reserve_price ~0). The "West" in the
+  ERCOT-74 table was the set-scorer's `idxmax` tiebreak (West is first in the
+  zone ordering); no link into any zone binds in most of these hours. The
+  recurring exact levels ($246.005157 across 07-30/08-18/08-19 at three
+  different gas prices; $302.0, $306.7, $511.8) are GAS-INDEPENDENT bids —
+  measured to the marginal row: per-plant COAL PEAK rungs (annual delivered
+  coal price x plant HR x the bin-sheet peaking HR-mult; COAL_North_p7030_peak
+  interior in every $246 hour, p3470/p298/p6146/p6178/p6183 peak rungs in the
+  deeper prints). The model's top-of-stack coal peaking band goes marginal in
+  top-bin evenings where reality's RT stayed $63-185 — and ERCOT's own DA
+  printed > $200 in 8 of the 17 (05-20 DA $528 vs model $512): the DA
+  expectation the model's DAM-derived construction shares, relaxed in RT.
+  This is the G-22 formation family seen from the INVENTED side — the exact
+  mirror of the ledgered offer-formed/room-exhaustion missed family — NOT a
+  topology artifact. A zonal split cannot move a system-wide print.
+* **2024's five West prints ($261-1,218) are the same system-print family**
+  (all-zone-equal, netload p79-p99, energy-dual; three of the five are the
+  "right cluster, lagged hour" prints adjacent to caught real hours). On
+  03-04 h20 reality's LZ_WEST printed $257 (real West-LOCAL congestion) while
+  the model printed $515 SYSTEM-wide — the reduction has no West-local
+  formation to be wrong about; its error is system formation.
+* **2023's 60 invented are ALL system prints too** (0 of 60 zonally
+  separated; Jun 20 / Sep 10 / Aug 12 — the lane-2/ercot-78 summer over-shoot
+  months). The charter's "invented-60 set is partly West-family" premise is
+  measured-refuted; the 2023 invented set belongs to the summer-formation
+  lane, not topology.
+* **The 2024-05-07 h19/20 Northeast VOLL pair is the ONE genuinely zonal
+  invention** — and it is an IMPORT-direction artifact: Northeast at $5,000
+  with 43/4.4 MW shed, every other zone $33-35 (Panhandle at its -$26 wind
+  floor), the North->Northeast flow pinned at the symmetric static 1,300 MW
+  while the measured lobe state was unstressed (NE_LOB NOT in SCED's active
+  set either hour; actual HB_NORTH $50/$35). The model's NE fleet was
+  measured-out (CAMPD May outages: Martin Lake ~280 MW of 2,380, Tenaska CC
+  0) — the outages are real; the import wall is not.
+
+**Leg 1 — the measured-GTC overlay (`ercot_gtc_limits_measured`): inert on the
+invented set BY CONSTRUCTION; no full-span probe (the charter's decisive-hour
+test).** The no-solve read of the NP6-86 archive at the decisive hours: NO
+wind-corridor GTC (WESTEX/PNHNDL/NE_LOB) is in SCED's active set at 21 of the
+24 invented hours — and `data/gtc.py` fills non-active hours with the STATIC
+rating by design, so the overlay cannot change those hours. The three
+active-hour exceptions are looser-than-static (PNHNDL 3,239 vs 2,680 on
+05-07 h18-19; NE_LOB 1,637 vs 1,300 on 08-19-2025 h16-20) and export-side —
+the overlay keeps the static IMPORT bound by design ("a GTC is an export
+stability limit"), so it cannot touch the NE pair either. **Provenance defect
+surfaced (the ercot39/ERCOT-65 recorder class):** the keeper recipe records
+`ercot_gtc_limits_measured=true`, but the flag reads `data/clean/gtc-limits`
+— gitignored, absent in every fresh container — and falls back to "static TTC
+kept" with a warning (confirmed live in this session's replay for all three
+years; the C3/set parity above proves the registered keeper solved the same
+way). The keeper's effective network is the static ratings; the armed flag is
+a silently-starved no-op unless a session runs `curate_gtc_limits.py` first.
+Owner options (not taken here): regenerate the partitions at solve time so
+the armed flag is real, or record the effective state.
+
+**Leg 2 — the West conditioning question: DISSOLVED (measured empty target).**
+No invented hour is a system-bin trigger firing against a loose West-local
+state — there are no West-local prints at all. No West conditioning defect
+exists to charter; no West-only scalar was built (rule 25).
+
+**Leg 3 — the ~8 missed congestion/stranding hours: LEDGERED on named
+measurement.** Per-hour NP6-86 binding-constraint reads (2024): May-09 h12
+(I_KALO 548 MW / I_PASP 510 MW pocket GTCs + BIGTRE_V_DUPS1 156 MW), May-21
+h19 (BURNS_RIOHONDO 184 MW, shadow $1,813), Jun-04 h18/19 (HUTTO 331 /
+TURNER 224-230 / BURNS_RIOHONDO 177-179 / LARDVN_LASCRU 265), Oct-22/23 h17
+(TMPSW 343-345 / VICTORIA 208-210 / DILLEYSW 33 MW), Nov-17 h15/16 (E_PATA
+587 MW pocket GTC shadow $12,893 + GIDEON 232 / LARDVN_LASCRU 269 / LOYOLA
+39 MW). Every formative constraint is a single-element 138 kV line or an
+intra-zone pocket GTC of 33-640 MW; WESTEX/PNHNDL/NE_LOB bind in NONE of the
+eight. A 7-zone reduction structurally cannot carry them (evidence base 1
+confirmed hour-by-hour) — out-of-representation, family CLOSED. The
+C3c-2024 ledger's ~8 congestion hours are now adjudicated with per-hour
+constraint names; no in-model lever remains on that count.
+
+**The mechanism (built): the NE-boundary asymmetric import rating
+(`config/iso_configs.py`, topology structure — no flag, like the NE_LOB
+carve-out itself).** The Northeast<->North link becomes a one-way pair (the
+Far_West aad79c1 asymmetric-rating recipe): export keeps the measured NE_LOB
+limit-at-bind (1,300 MW, unchanged — the trapped-lobe congestion structure);
+import carries the boundary's measured carrying capability — 1,788 MW, the
+pooled 2023-2025 DARK-HOUR (hod 20-06, so unmetered zonal solar cannot
+inflate the proxy) maximum of measured EAST-zone load minus CAMPD NE-plant
+net gross (1,511/1,788/1,756 by year; LOYO 1,756-1,788, verdict-identical).
+The direct refutation of the old symmetric bound: on 2024-05-07 h20 reality
+imported >= 1,317 MW into the lobe (load 2,232 - CAMPD gross 915) while RT
+printed $15. Same admissibility class as the measured limit-at-bind statics
+(a measured deliverability envelope — the MISO/PJM seam-envelope convention);
+zero fitted scalars; re-derives only on source updates (rule 23).
+
+**Full-span adjudication (`2026-07-17-ercot76-ne-import`, registered
+CANDIDATE — CALIBRATED-WITH-CAVEATS, same single ledgered caveat).**
+
+| year | C3a/C3b (keeper -> 76) | C3c (RT basis) | caught/missed/invented |
+|---|---|---|---|
+| 2023 | +6.2%/0.143 -> +6.2%/0.143 (parity) | 179 -> 179 | 119/62/60 -> 119/62/60 (parity) |
+| 2024 | -3.1%/0.141 -> -3.2%/0.144 | 26 -> 24 vs RT 53 | 19/34/7 -> **19/34/5** |
+| 2025 | -1.8%/0.088 -> -1.8%/0.088 (parity) | 19 -> 19 | 2/29/17 -> 2/29/17 (parity) |
+
+Guards: Aug 18-20-2024 window HOLDS (max 2,859 vs actual 3,060; 2h > $200;
+no shed — identical to keeper); Nov-24 monthly -5.6 unchanged; every 2024
+month unchanged to +-$0.1 EXCEPT May -10.3 -> -10.8 — the killed VOLL pair
+was itself propping May's mean: the whole C3a/C3b movement is the removed
+phantom EXPOSING the standing May under-pricing (the ERCOT-66 rule-14
+pattern; the ledgered G-22 family, explicitly not this lane's target). The
+model's NE import now binds without phantom separation (the pair prints with
+the system at ~$35-100).
+
+**Disposition (rules 1/13/14/16/19/22/23/26).** The topology family is
+adjudicated three ways, all measured: (a) the ONE real zonal defect — the
+symmetric NE import bound — is fixed by honest structure (measured rating,
+zero fitted scalars, LOYO verdict-identical) and its two invented hours die
+for the measured reason; registered CANDIDATE, keeper promotion the owner's
+(structure gained; the -0.1pp/-0.003 C3a/C3b cost is a phantom's removal —
+rule 1 keeps real structure regardless). (b) The West/Panhandle ZONE-SPLIT
+family is REFUTED WITH CAUSE at the set grain: 99 of 101 invented tail hours
+across 2023-2025 are system-wide prints a zonal change cannot touch (and the
+2026-07-07 scope doc's interface argument already showed the split introduces
+no interface not present — the two evidence bases RECONCILE: base 1 was right
+about the mechanism, base 2's set attribution was an argmax labeling
+artifact). The zone-split lever leaves the ERCOT frontier list. (c) The ~8
+missed congestion hours are LEDGERED out-of-representation on per-hour named
+constraints (33-640 MW single elements / intra-zone pockets; the corridor
+GTCs bind in none of them) — the C3c-2024 caveat is now FULLY adjudicated
+with no in-model lever remaining on the missed side; the sole set lever this
+lane leaves behind is the (adopted) NE pair on the invented side.
+
+**Ops.** Two full-span in-session solves (the byte-faithful baseline replay,
+C3+set parity to the hour, deleted at session end; + the NE-pair candidate,
+registered). No new ScenarioConfig field (topology structure); tests updated
+(`test_iso_config` NE pair). The measured-GTC leg ran no solve (provably
+inert on its target set before any solve — the ERCOT-64/75 precedent).
+Registered per rule 15 with legitimacy diagnostics, attestation (keeper DOF
+ledger regenerated — zero new parameters), parity check PASS. Transport:
+unshallow-then-push, blob-verified (rule 27).
