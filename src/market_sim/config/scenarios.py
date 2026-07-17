@@ -2302,6 +2302,36 @@ class ScenarioConfig:
     # zonal reserve family zone set (model zone names). None -> the default
     # (MISO-South,) per scope §6; e.g. ("MISO-South", "MISO-East") adds the
     # Michigan-pocket family.
+    miso_midwest_subregional_reserves: bool = False  # MISO: the Midwest
+    # sub-regional reserve-holding family (the engagement-depth lane, miso-71;
+    # docs/handoffs/miso-engagement-depth-design-2026-07.md). Appends ONE
+    # locational operating-reserve family over the 5 PHYSICAL Midwest zones
+    # (reserve_config.MISO_MIDWEST_ZONES), reserve_class 0 nested inside the
+    # market-wide RBDC (a Midwest reserve MW counts toward both — the NYISO
+    # East ⊂ NYCA template). DRIVER: MISO's published sub-regional
+    # reserve-deliverability construct — the Short-Term-Reserve subregional
+    # requirement enforced through Reserve Procurement Enhancement (RPE)
+    # constraints over the Regional Directional Transfer (2025 SOM p.8, 2024
+    # SOM §II.E/III.B) — plus the MEASURED revealed Midwest OR holding (the
+    # miso-56 intake's North+Central cleared leg,
+    # data.miso_reserve_requirements "MISO-Midwest"). Requirement = that
+    # measured hourly series when miso_measured_reserve_requirements is on,
+    # else the within-region MSSC (fleet-derived); a single shortfall step
+    # prices at constants.MISO_RPE_DEMAND_VALUE ($200/MWh, published) — the
+    # per-Reserve-Zone §5.2.1.2 ORDC ladder is NOT used (measured-refuted, the
+    # per-zone Zonal ORDC never separated in 26,280 hours; design §1b/§2a).
+    # WINDOW: none — a standing market construct, not a declared-window
+    # overlay; the off-driver guards are the fabricated-scarcity (R2) and
+    # Jan-2024 wrong-driver (R3) refutation reads, not a window mask. FORWARD
+    # STORY: the within-region MSSC basis regenerates for any forecast fleet,
+    # and the measured series regenerates from each new ASM vintage (rule 23) —
+    # the mechanism is NOT backcast-only. This closes the congestion-blind
+    # market-wide family's phantom-South-parking gap (the ledgered "RPE Only"
+    # under-shoot, miso_rpe_pricing DOF entry): it is ENERGY-SIDE and does not
+    # make the reserve curves fire (design §2c). Zero fitted scalars (measured
+    # series + cited $200 + topology zone list). Requires energy_reserve_coopt
+    # + MISO; default off; GATED CHANGE (alters reserve locality, hence
+    # dispatch volumes).
     miso_reserve_pergen: bool = False  # MISO: PER-ASSET reserve co-optimization
     # (dispatch._build_reserve_rows_pergen), the MISO analogue of
     # pjm_reserve_pergen — one R[r,t] column per (zone, fuel-class) pool of
@@ -6812,6 +6842,7 @@ TIER_TAGS: dict[str, int] = {
     "energy_reserve_coopt": 1,
     "miso_zonal_reserves": 1,
     "miso_zonal_reserve_zones": 1,
+    "miso_midwest_subregional_reserves": 3,
     "miso_reserve_pergen": 1,
     "miso_commitment_posture": 1,
     "miso_measured_reserve_requirements": 1,
