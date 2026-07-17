@@ -147,6 +147,39 @@ def _eligible_fuel_codes(config: ScenarioConfig) -> list[int]:
     return codes
 
 
+def _credit_fractions_from_codes(
+    config: ScenarioConfig, fuel_idx: np.ndarray, emission_rate: np.ndarray
+) -> np.ndarray:
+    """Vectorized crediting core, shared and UNGATED by the master switch.
+
+    Applies the config's crediting mode to per-generator fuel codes and
+    CO2 rates without consulting ``federal_ces_enabled`` — the gate
+    belongs to the callers: :func:`unit_credit_fractions` (payment path)
+    zeroes everything when the CES is off, while
+    :func:`reporting_credit_fractions` (diagnostics) deliberately does
+    not. Semantics per mode are documented on
+    :func:`unit_credit_fractions`.
+    """
+    eligible = np.isin(fuel_idx, _eligible_fuel_codes(config))
+
+    if config.federal_ces_crediting == "clean_capture":
+        fractions = np.zeros(fuel_idx.shape[0], dtype=float)
+        fractions[eligible] = 1.0
+        ccs_mask = eligible & (fuel_idx == FUEL_TYPE_MAP["gas_cc_ccs"])
+        fractions[ccs_mask] = config.federal_ces_ccs_capture_fraction
+        return fractions
+
+    # cesa_ci (the only other mode; __post_init__ validates the name).
+    emission_rate = np.asarray(emission_rate, dtype=float)
+    cesa = np.clip(
+        1.0 - emission_rate / config.federal_ces_ci_benchmark_t_per_mwh, 0.0, 1.0
+    )
+    unabated_cc_credited = (fuel_idx == FUEL_TYPE_MAP["gas_cc"]) & (
+        emission_rate <= config.federal_ces_unabated_ci_threshold_t_per_mwh
+    )
+    return np.where(eligible | unabated_cc_credited, cesa, 0.0)
+
+
 def unit_credit_fractions(config: ScenarioConfig, fleet: FleetArrays) -> np.ndarray:
     """Return the per-generator CES credit fraction, shape ``(n_gen,)``.
 
@@ -177,27 +210,69 @@ def unit_credit_fractions(config: ScenarioConfig, fleet: FleetArrays) -> np.ndar
         Float array of credit fractions in ``[0, 1]``, shape ``(n_gen,)``.
     """
     fuel_idx = np.asarray(fleet.fuel_type_idx)
-    fractions = np.zeros(fuel_idx.shape[0], dtype=float)
     if not config.federal_ces_enabled:
-        return fractions
-
-    eligible = np.isin(fuel_idx, _eligible_fuel_codes(config))
-
-    if config.federal_ces_crediting == "clean_capture":
-        fractions[eligible] = 1.0
-        ccs_mask = eligible & (fuel_idx == FUEL_TYPE_MAP["gas_cc_ccs"])
-        fractions[ccs_mask] = config.federal_ces_ccs_capture_fraction
-        return fractions
-
-    # cesa_ci (the only other mode; __post_init__ validates the name).
-    emission_rate = np.asarray(fleet.emission_rate, dtype=float)
-    cesa = np.clip(
-        1.0 - emission_rate / config.federal_ces_ci_benchmark_t_per_mwh, 0.0, 1.0
+        return np.zeros(fuel_idx.shape[0], dtype=float)
+    return _credit_fractions_from_codes(
+        config, fuel_idx, np.asarray(fleet.emission_rate)
     )
-    unabated_cc_credited = (fuel_idx == FUEL_TYPE_MAP["gas_cc"]) & (
-        emission_rate <= config.federal_ces_unabated_ci_threshold_t_per_mwh
+
+
+# Lazily-built default config for reporting-side crediting when a caller
+# has no ScenarioConfig at hand (see reporting_credit_fractions).
+_DEFAULT_REPORTING_CONFIG: ScenarioConfig | None = None
+
+
+def reporting_credit_fractions(
+    config: ScenarioConfig | None,
+    fuel_types: "list[str] | tuple[str, ...]",
+    emission_rates,
+) -> np.ndarray:
+    """Return REPORTING-side credit fractions from fuel names + CO2 rates.
+
+    The diagnostics companion of :func:`unit_credit_fractions`, for the
+    ``clean_share`` / premium-capture metrics (plan §5.4). Two deliberate
+    differences from the payment-path resolver:
+
+    * **Not gated by ``federal_ces_enabled``.** A clean-share metric must
+      be comparable across a premium ladder that includes the CES-off BAU
+      case — the gated resolver would report BAU as 0% clean by
+      construction, breaking the clean-share-vs-premium curve. This
+      function therefore applies the config's crediting RULE (mode,
+      eligibility list, capture fraction) unconditionally. It is a
+      reporting quantity only: nothing in the LP, the offers, or the
+      capacity screens may consume it (those go through the gated
+      resolvers above).
+    * **Keyed by fuel-type NAME** (the :class:`FleetContext` /
+      plant-financials representation), not ``FleetArrays`` codes. A name
+      unknown to ``FUEL_TYPE_MAP`` credits 0 rather than raising — cached
+      contexts are data, not config, so a stray label is not a config
+      error.
+
+    Args:
+        config: Scenario config supplying the crediting fields. ``None``
+            falls back to a default :class:`ScenarioConfig` (i.e. the
+            owner-default ``clean_capture`` crediting) so config-less
+            summary callers still get a well-defined physical clean
+            share.
+        fuel_types: Per-generator fleet fuel-type names.
+        emission_rates: Per-generator CO2 rates in tCO2/MWh at the LP
+            boundary (the ``cesa_ci`` crediting input), aligned with
+            ``fuel_types``.
+
+    Returns:
+        Float array of credit fractions in ``[0, 1]``, one per entry of
+        ``fuel_types``.
+    """
+    if config is None:
+        global _DEFAULT_REPORTING_CONFIG
+        if _DEFAULT_REPORTING_CONFIG is None:
+            _DEFAULT_REPORTING_CONFIG = ScenarioConfig()
+        config = _DEFAULT_REPORTING_CONFIG
+    # Unknown names map to -1, a code no fuel carries -> credit 0.
+    fuel_idx = np.array([FUEL_TYPE_MAP.get(f, -1) for f in fuel_types], dtype=int)
+    return _credit_fractions_from_codes(
+        config, fuel_idx, np.asarray(emission_rates, dtype=float)
     )
-    return np.where(eligible | unabated_cc_credited, cesa, 0.0)
 
 
 def unit_credit_fraction(

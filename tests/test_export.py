@@ -151,6 +151,101 @@ class TestSummarizeYearNoxSo2(unittest.TestCase):
         self.assertEqual(summary["so2_tonnes"], 0.0)
 
 
+class TestSummarizeYearCesMetrics(unittest.TestCase):
+    """W2-B additive metrics: ``clean_share`` and ``negative_price_hours``.
+
+    Both keys are strictly additive — every pre-W2-B key keeps its exact
+    value — and ``clean_share`` uses the reporting-side crediting rule so a
+    CES-off config (or no config at all) still reports the physical clean
+    share.
+    """
+
+    def _result(self, hours=24):
+        n_zones = 2
+        prices = np.full((n_zones, hours), 30.0)
+        prices[0, :6] = -5.0  # 6 negative hours in zone 0 only
+        return DispatchResult(
+            dispatch=np.vstack(
+                [np.full(hours, 10.0), np.full(hours, 40.0)]
+            ),  # nuclear, gas_cc
+            wind_dispatched=np.full((n_zones, hours), 5.0),
+            solar_dispatched=np.zeros((n_zones, hours)),
+            slack=np.zeros((n_zones, hours)),
+            dump=np.zeros((n_zones, hours)),
+            prices=prices,
+            storage_charge=None,
+            storage_discharge=None,
+            storage_soc=None,
+            flows=None,
+            objective_value=0.0,
+            status="Optimal",
+            build_time=0.0,
+            solve_time=0.0,
+        )
+
+    def _context(self):
+        return FleetContext(
+            fuel_types=["nuclear", "gas_cc"],
+            pmax_mw=[100.0, 100.0],
+            emission_rate=[0.0, 0.37],
+            efficiency_bins=["default", "h_class"],
+            heat_rates=[10.0, 6.4],
+            zones=["A", "B"],
+            unit_ids=["G1", "G2"],
+            wind_cap_mw=50.0,
+            solar_cap_mw=0.0,
+            wind_potential_mwh=300.0,
+            solar_potential_mwh=0.0,
+            storage_energy_cap_mwh=0.0,
+        )
+
+    def test_negative_price_hours_zone_averaged(self):
+        summary = export._summarize_year(self._result(), self._context())
+        # 6 negative zone-hours over 2 zones -> 3.0 hours per zone.
+        self.assertEqual(summary["negative_price_hours"], 3.0)
+
+    def test_clean_share_without_config_uses_default_crediting(self):
+        summary = export._summarize_year(self._result(), self._context())
+        # nuclear 240 MWh + wind 240 MWh credited; total 240 + 960 + 240.
+        self.assertAlmostEqual(summary["clean_share"], 480.0 / 1440.0, places=4)
+
+    def test_clean_share_reports_bau_physical_share_when_ces_disabled(self):
+        config = ScenarioConfig()  # federal_ces_enabled=False
+        summary = export._summarize_year(self._result(), self._context(), config)
+        self.assertGreater(summary["clean_share"], 0.0)
+        self.assertAlmostEqual(summary["clean_share"], 480.0 / 1440.0, places=4)
+
+    def test_clean_share_follows_config_crediting_mode(self):
+        config = ScenarioConfig(federal_ces_crediting="cesa_ci")
+        summary = export._summarize_year(self._result(), self._context(), config)
+        # cesa_ci also credits the efficient unabated CCGT (0.37 t/MWh):
+        # + 960 MWh x (1 - 0.37/0.82).
+        expected = (480.0 + 960.0 * (1.0 - 0.37 / 0.82)) / 1440.0
+        self.assertAlmostEqual(summary["clean_share"], expected, places=4)
+
+    def test_existing_keys_unchanged_and_json_serializable(self):
+        summary = export._summarize_year(self._result(), self._context())
+        for field in (
+            "generation_twh",
+            "emissions_mt",
+            "avg_price",
+            "peak_price",
+            "curtailment_twh",
+            "capacity_gw",
+            "storage_cycles",
+        ):
+            self.assertIn(field, summary)
+        # The export path json.dumps the summary; numpy scalars would break it.
+        json.dumps(summary)
+
+    def test_zero_generation_clean_share_is_zero(self):
+        result = self._result()
+        result.dispatch = np.zeros_like(result.dispatch)
+        result.wind_dispatched = np.zeros_like(result.wind_dispatched)
+        summary = export._summarize_year(result, self._context())
+        self.assertEqual(summary["clean_share"], 0.0)
+
+
 @pytest.mark.slow  # runs a real 3-year run_scenario_iso (fleet load dominates, ~4-5min/test)
 class TestExportScenarioJson(unittest.TestCase):
     """A cached scenario exports to one valid, compact JSON file."""
