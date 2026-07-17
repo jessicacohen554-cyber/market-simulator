@@ -78,16 +78,23 @@ def compute_curtailment(potential, dispatched):
     return np.asarray(potential, dtype=float) - np.asarray(dispatched, dtype=float)
 
 
-def _summarize_year(result, context) -> dict:
+def _summarize_year(result, context, config=None) -> dict:
     """Aggregate one year's hourly dispatch into an annual summary dict.
 
     Args:
         result: The year's :class:`~market_sim.model.dispatch.DispatchResult`.
         context: The :class:`~market_sim.results.outputs.FleetContext`
             describing the fleet that produced ``result``.
+        config: Optional :class:`ScenarioConfig` of the run, supplying the
+            federal-CES crediting rule for the ``clean_share`` metric
+            (W2-B, plan §5.4). ``None`` (every pre-W2-B caller) applies
+            the owner-default ``clean_capture`` crediting — see
+            :func:`market_sim.policy.federal_ces.reporting_credit_fractions`.
 
     Returns:
-        A dict of annual headline numbers for the year.
+        A dict of annual headline numbers for the year. All pre-W2-B keys
+        are byte-identical to their historical values; ``clean_share``
+        and ``negative_price_hours`` are strictly additive.
     """
     dispatch = result.dispatch
     gen_per_unit = dispatch.sum(axis=1)  # MWh per generator over the year
@@ -146,6 +153,40 @@ def _summarize_year(result, context) -> dict:
             float(result.storage_discharge.sum()) / context.storage_energy_cap_mwh
         )
 
+    # Negative-price incidence (W2-B, plan §5.4/§6): the zone-averaged count
+    # of hours clearing below $0/MWh — the credited-resource offer floor a
+    # CES premium deepens. Zone-averaged (total negative zone-hours / zones)
+    # so the number is comparable across ISOs with different zone counts;
+    # fractional values are expected on multi-zone ISOs.
+    prices = np.asarray(result.prices, dtype=float)
+    n_price_zones = prices.shape[0] if prices.ndim == 2 else 1
+    negative_price_hours = float((prices < 0.0).sum()) / n_price_zones
+
+    # Clean share (W2-B, plan §5.4): credit-weighted generation / total
+    # generation, using the run config's federal-CES crediting RULE via the
+    # ungated reporting resolver — so the CES-off BAU case reports its real
+    # physical clean share and the clean-share-vs-premium curve is anchored.
+    # Wind/solar are zonal pools outside the thermal fleet; storage discharge
+    # is excluded from both sides (owner D5: no new attribute; not primary
+    # generation). Reporting-only — never a payment quantity.
+    from market_sim.policy.federal_ces import reporting_credit_fractions
+
+    fractions = reporting_credit_fractions(
+        config, context.fuel_types, context.emission_rate
+    )
+    wind_fraction, solar_fraction = reporting_credit_fractions(
+        config, ["wind", "solar"], [0.0, 0.0]
+    )
+    wind_mwh = float(result.wind_dispatched.sum())
+    solar_mwh = float(result.solar_dispatched.sum())
+    credited_mwh = (
+        float((np.asarray(gen_per_unit, dtype=float) * fractions).sum())
+        + wind_fraction * wind_mwh
+        + solar_fraction * solar_mwh
+    )
+    total_mwh = float(gen_per_unit.sum()) + wind_mwh + solar_mwh
+    clean_share = float(credited_mwh / total_mwh) if total_mwh > 0.0 else 0.0
+
     return {
         "generation_twh": {k: round(v, 4) for k, v in generation_twh.items()},
         "emissions_mt": round(emissions_t / 1e6, 4),
@@ -156,6 +197,8 @@ def _summarize_year(result, context) -> dict:
         "curtailment_twh": round(max(curtailed_mwh, 0.0) / _MWH_PER_TWH, 4),
         "capacity_gw": {k: round(v, 3) for k, v in capacity_gw.items()},
         "storage_cycles": round(storage_cycles, 2),
+        "clean_share": round(clean_share, 4),
+        "negative_price_hours": round(negative_price_hours, 2),
     }
 
 
@@ -188,7 +231,7 @@ def export_scenario_json(cache_key: str, iso: str, output_dir) -> Path:
     for year in range(START_YEAR, END_YEAR + 1):
         result = cache.load_result(iso, cache_key, year)
         context = cache.load_fleet_context(iso, cache_key, year)
-        years[str(year)] = _summarize_year(result, context)
+        years[str(year)] = _summarize_year(result, context, config)
 
     payload = {
         "cache_key": cache_key,
