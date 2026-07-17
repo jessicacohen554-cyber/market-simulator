@@ -344,7 +344,8 @@ def test_i7_capacity_market_passes_when_accredited_meets_requirement():
 
 def test_i7_capacity_market_fails_when_accredited_below_requirement():
     # reserve_margin=-0.30 -> accredited firm 3500 MW, below PJM's UCAP-basis
-    # requirement (~4534 MW at peak 5000): absolute floor FAIL.
+    # requirement (~4355 MW at peak 5000 after the W2-D DR netting): absolute
+    # floor FAIL.
     led = _ledger(
         2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=-0.30
     )
@@ -491,6 +492,48 @@ def test_i11_bridge_year_must_not_solve():
 def test_i12_warns_single_excursion():
     led = _ledger(2026, {"gas_cc": 100}, {"gas_cc": 100}, reserve_margin=0.60)
     assert C.check_i12_reserve_margin(_mk_run([led])).status == C.WARN
+
+
+# Capacity-market ISOs (PJM): the floor is the requirement-implied margin
+# (resolve_adequacy_requirement_mw / peak - 1), the same basis as the ledger's
+# accreditation-convention reserve_margin — I7's floor stated as a margin,
+# plus the over-build band on top (W1-B F4 derivative fix, W2-D).
+def test_i12_capacity_market_passes_above_requirement_implied_floor():
+    # PJM requirement-implied floor at peak 5000 is ~-12.9% (UCAP basis, DR
+    # netted); a UCAP-basis rm of -10% is above the floor and inside the band.
+    led = _ledger(
+        2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=-0.10
+    )
+    run = _mk_run([led], iso="PJM")
+    res = C.check_i12_reserve_margin(run)
+    assert res.status == C.PASS, res.detail
+
+
+def test_i12_capacity_market_warns_below_requirement_implied_floor():
+    led = _ledger(
+        2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=-0.30
+    )
+    run = _mk_run([led], iso="PJM")
+    assert C.check_i12_reserve_margin(run).status == C.WARN
+
+
+def test_i12_capacity_market_warns_on_overbuild_above_band():
+    # Over-procurement is I12's independent signal: a margin far above the
+    # requirement-implied floor + band (BLK-10 class) is an excursion.
+    led = _ledger(
+        2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=5000, reserve_margin=0.15
+    )
+    run = _mk_run([led], iso="PJM")
+    assert C.check_i12_reserve_margin(run).status == C.WARN
+
+
+def test_i12_capacity_market_skips_year_without_peak():
+    # No persisted peak -> no requirement to imply a floor from -> skip.
+    led = _ledger(
+        2026, {"gas_cc": 10000}, {"gas_cc": 10000}, peak=None, reserve_margin=-0.30
+    )
+    run = _mk_run([led], iso="PJM")
+    assert C.check_i12_reserve_margin(run).status == C.PASS
 
 
 def test_i12_fails_sustained_excursion():

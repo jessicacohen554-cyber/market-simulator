@@ -3650,29 +3650,77 @@ THERMAL_ELCC_CLASS_RATING_BY_ISO: dict[str, dict[str, float]] = {
     },
 }
 
-# Load-side capacity products netted out of gross peak in the ISO's own
-# firm-peak-load construction, as a fraction of the gross seasonal peak.
-# ERCOT (Dec 2025 CDR Seasonal Summary, summer-2026 peak-load-hour column):
-# Load Resources providing RRS 935 + Non-Spin 50 + ECRS 300 + controllable
-# LRs 20 + Emergency Response Service 2,750 + TDSP standard-offer load
-# management 303 + distribution voltage reduction 1,162 = 5,520 MW on the
-# 95,419 MW gross seasonal peak = 5.8%. These are standing ERCOT
-# demand-response programs whose enrollment scales roughly with load, so a
-# fraction of peak regenerates for forward years (rule 13 admissible: a
-# market-design input, not an outcome). Rooftop-PV netting is EXCLUDED —
-# EIA-930 demand is already net of behind-the-meter PV. ISOs absent here
-# net nothing (neutral fallback).
+# Demand-response / load-management capacity products counted in the ISO's
+# own adequacy construction, expressed as the netting fraction applied to the
+# model's gross peak in :func:`market_sim.model.capacity.
+# resolve_adequacy_requirement_mw` (``firm_peak = peak × (1 − fraction)``,
+# netted BEFORE the FPR / (1+PRM)×ratio multiplication). These are standing
+# DR programs whose enrollment/participation scales roughly with load, so a
+# fraction regenerates for forward years and responds to changed conditions
+# (rule 13 admissible: a market-design input, not an outcome). ISOs absent
+# here net nothing (neutral fallback).
+# * ERCOT (Dec 2025 CDR Seasonal Summary, summer-2026 peak-load-hour column):
+#   Load Resources providing RRS 935 + Non-Spin 50 + ECRS 300 + controllable
+#   LRs 20 + Emergency Response Service 2,750 + TDSP standard-offer load
+#   management 303 + distribution voltage reduction 1,162 = 5,520 MW on the
+#   95,419 MW gross seasonal peak = 5.8%. Netting from the peak IS ERCOT's
+#   own construction (the CDR's "Firm Peak Load"). Rooftop-PV netting is
+#   EXCLUDED — EIA-930 demand is already net of behind-the-meter PV.
+# * PJM (W2-D, closes gap G10 / W1-B B1): PJM does NOT net DR from its load
+#   forecast — DR clears the BRA as a SUPPLY-side capacity resource, so the
+#   published construct misaligns with this registry's netting form and the
+#   value is a documented reconciliation (rule 14), never a raw fraction of
+#   peak. Published anchors (2026/2027 BRA Report, posted 2025-07-22): DR
+#   cleared 5,795 MW UCAP (Table 6, RPM cleared + FRR-committed — offered
+#   equals cleared; includes the DR Accredited-UCAP factor) against the RTO
+#   Reliability Requirement of 146,105 MW UCAP (p.3). Because this registry
+#   nets the gross peak BEFORE the FPR multiplication, dividing DR by the
+#   published UCAP requirement (= peak × FPR) — not by the ICAP peak — makes
+#   the netted credit reproduce PJM's supply-side counting exactly under the
+#   published-FPR path: requirement = peak×FPR − f×peak×FPR = peak×FPR −
+#   DR×(peak/peak_PJM). Dividing by the ICAP forecast peak (159,329 MW →
+#   3.64%) would silently scale DR by FPR ≈ 0.917, an 8% distortion with no
+#   basis in PJM's construct. Price Responsive Demand (105.5 MW UCAP
+#   2026/27) is EXCLUDED — PJM nets PRD from the Reliability Requirement
+#   through a separate construct, and omitting it is conservative. Vintage
+#   anchored to the 2026/2027 BRA to match the model's other PJM adequacy
+#   anchors (THERMAL_ELCC_CLASS_RATING_BY_ISO, the 2026/27 FPR); the
+#   2027/2028 BRA (posted 2025-12-17) has DR 7,641 MW UCAP on a 152,400 MW
+#   requirement (5.0%) after PJM moved DR to all-hours availability — refresh
+#   on a vintage re-anchor (a source-data change, rule 23), never a residual.
 ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO: dict[str, float] = {
     "ERCOT": 0.058,
+    # 5,795 MW UCAP DR ÷ 146,105 MW UCAP RTO Reliability Requirement = 3.97%
+    # (2026/2027 BRA Report Table 6 / p.3 — reconciliation documented above).
+    "PJM": 5_795.0 / 146_105.0,
 }
 
-# Firm import contribution of asynchronous external ties counted by the
-# ISO's own adequacy ledger but absent from the model topology (the model's
-# ERCOT has no import node). ERCOT: 817 MW, "based on average net import
-# contribution during the EEA events: summer 2023 and winter 2020/2021 EEA
-# events" — December 2025 CDR, Seasonal Summary (non-synchronous ties row).
+# Firm import contribution of external ties counted by the ISO's own
+# adequacy ledger but absent from the model topology (neither the model's
+# ERCOT nor its PJM has an import node — unlike CAISO's WECC_import and
+# NEISO's HQ node). Added on the supply side of
+# :func:`market_sim.model.capacity.accredited_firm_capacity_mw`, exactly
+# where each ISO's own ledger counts it. ISOs absent here add nothing.
+# * ERCOT: 817 MW asynchronous (DC) ties, "based on average net import
+#   contribution during the EEA events: summer 2023 and winter 2020/2021 EEA
+#   events" — December 2025 CDR, Seasonal Summary (non-synchronous ties row).
+# * PJM (W2-D, closes gap G10 / W1-B B1): 1,281.7 MW UCAP of capacity
+#   imports cleared in the 2026/2027 BRA (BRA Report, posted 2025-07-22,
+#   Table 7 "Capacity Imports (UCAP) Offered and Cleared by Region": NORTH
+#   250.8 + WEST 1 0.0 + WEST 2 568.0 + SOUTH 1 226.2 + SOUTH 2 236.7).
+#   This is the CIL firm-import treatment: external generation may count
+#   toward PJM's requirement only inside the Capacity Import Limit framework
+#   (firm transmission + the enhanced pseudo-tie requirements of FERC Order
+#   ER17-1138 / prior-CIL-exception rows) — the CLEARED import UCAP is what
+#   PJM's ledger actually counted for the delivery year, whereas the CIL
+#   itself is a study limit and would overstate. Rule 13: BRA import
+#   participation is a recurring market product that regenerates each
+#   delivery year and responds to conditions (2027/2028 BRA: 1,005.9 MW
+#   UCAP), not an outcome pin. Vintage anchored to the 2026/2027 BRA
+#   alongside the DR fraction above.
 ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
     "ERCOT": 817.0,
+    "PJM": 1_281.7,  # 2026/2027 BRA Report Table 7 (cleared import UCAP)
 }
 
 # ICAP-basis planning-reserve-margin correction (stage-5 §6 ICAP/UCAP
