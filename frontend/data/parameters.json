@@ -3724,6 +3724,96 @@
       ]
     },
     {
+      "param_id": "as_revenue_per_kw_yr_by_iso.ERCOT.gas_cc",
+      "display_name": "As Revenue Per Kw Yr By Iso / Ercot / Gas Cc",
+      "value": 8.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-ISO exogenous AS-revenue registry — the modular generalization of the ERCOT-only rates above. ``model.ancillary.as_revenue_per_mw_yr`` resolves the credit from here by the run's ISO, so ANY ISO slots in by adding its ``{fuel: $/kW-yr}`` rate here plus its saturation reference fleet in AS_SATURATION_REF_GW_BY_ISO — no code change. ERCOT is the existing 2023 calibration (referenced, so byte-identical). Every OTHER ISO is deliberately UNPOPULATED: an ISO absent here earns no exogenous AS credit (0), so the default (``as_revenue_enabled`` off) and every non-ERCOT run stay byte-identical until a rate is intaken. To populate an ISO, add its measured AS-market revenue (regulation + reserves, at the reference-fleet year, from that ISO's market-monitor SOM/DMM report — e.g. CAISO DMM Special Report on Battery Storage; PJM/NYISO/ISO-NE/MISO IMM State-of-the-Market ancillary sections) AND its reference-fleet GW below (the code fails loud if a rate is added without a matching ref). Rule 13: each rate is a measured AS-market outcome that regenerates forward via the saturation decline and responds to the fleet — the same admissibility as the ERCOT calibration. Capacity evolution is forecast-only, so nothing here touches a backcast keeper.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "as_revenue_per_kw_yr_by_iso.ERCOT.gas_ct",
+      "display_name": "As Revenue Per Kw Yr By Iso / Ercot / Gas Ct",
+      "value": 22.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-ISO exogenous AS-revenue registry — the modular generalization of the ERCOT-only rates above. ``model.ancillary.as_revenue_per_mw_yr`` resolves the credit from here by the run's ISO, so ANY ISO slots in by adding its ``{fuel: $/kW-yr}`` rate here plus its saturation reference fleet in AS_SATURATION_REF_GW_BY_ISO — no code change. ERCOT is the existing 2023 calibration (referenced, so byte-identical). Every OTHER ISO is deliberately UNPOPULATED: an ISO absent here earns no exogenous AS credit (0), so the default (``as_revenue_enabled`` off) and every non-ERCOT run stay byte-identical until a rate is intaken. To populate an ISO, add its measured AS-market revenue (regulation + reserves, at the reference-fleet year, from that ISO's market-monitor SOM/DMM report — e.g. CAISO DMM Special Report on Battery Storage; PJM/NYISO/ISO-NE/MISO IMM State-of-the-Market ancillary sections) AND its reference-fleet GW below (the code fails loud if a rate is added without a matching ref). Rule 13: each rate is a measured AS-market outcome that regenerates forward via the saturation decline and responds to the fleet — the same admissibility as the ERCOT calibration. Capacity evolution is forecast-only, so nothing here touches a backcast keeper.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "as_revenue_per_kw_yr_by_iso.ERCOT.gas_st",
+      "display_name": "As Revenue Per Kw Yr By Iso / Ercot / Gas St",
+      "value": 15.0,
+      "unit": "",
+      "domain": "Fuel Prices",
+      "tier": 2,
+      "source": "Per-ISO exogenous AS-revenue registry — the modular generalization of the ERCOT-only rates above. ``model.ancillary.as_revenue_per_mw_yr`` resolves the credit from here by the run's ISO, so ANY ISO slots in by adding its ``{fuel: $/kW-yr}`` rate here plus its saturation reference fleet in AS_SATURATION_REF_GW_BY_ISO — no code change. ERCOT is the existing 2023 calibration (referenced, so byte-identical). Every OTHER ISO is deliberately UNPOPULATED: an ISO absent here earns no exogenous AS credit (0), so the default (``as_revenue_enabled`` off) and every non-ERCOT run stay byte-identical until a rate is intaken. To populate an ISO, add its measured AS-market revenue (regulation + reserves, at the reference-fleet year, from that ISO's market-monitor SOM/DMM report — e.g. CAISO DMM Special Report on Battery Storage; PJM/NYISO/ISO-NE/MISO IMM State-of-the-Market ancillary sections) AND its reference-fleet GW below (the code fails loud if a rate is added without a matching ref). Rule 13: each rate is a measured AS-market outcome that regenerates forward via the saturation decline and responds to the fleet — the same admissibility as the ERCOT calibration. Capacity evolution is forecast-only, so nothing here touches a backcast keeper.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "as_revenue_per_kw_yr_by_iso.ERCOT.storage",
+      "display_name": "As Revenue Per Kw Yr By Iso / Ercot / Storage",
+      "value": 169.0,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "Per-ISO exogenous AS-revenue registry — the modular generalization of the ERCOT-only rates above. ``model.ancillary.as_revenue_per_mw_yr`` resolves the credit from here by the run's ISO, so ANY ISO slots in by adding its ``{fuel: $/kW-yr}`` rate here plus its saturation reference fleet in AS_SATURATION_REF_GW_BY_ISO — no code change. ERCOT is the existing 2023 calibration (referenced, so byte-identical). Every OTHER ISO is deliberately UNPOPULATED: an ISO absent here earns no exogenous AS credit (0), so the default (``as_revenue_enabled`` off) and every non-ERCOT run stay byte-identical until a rate is intaken. To populate an ISO, add its measured AS-market revenue (regulation + reserves, at the reference-fleet year, from that ISO's market-monitor SOM/DMM report — e.g. CAISO DMM Special Report on Battery Storage; PJM/NYISO/ISO-NE/MISO IMM State-of-the-Market ancillary sections) AND its reference-fleet GW below (the code fails loud if a rate is added without a matching ref). Rule 13: each rate is a measured AS-market outcome that regenerates forward via the saturation decline and responds to the fleet — the same admissibility as the ERCOT calibration. Capacity evolution is forecast-only, so nothing here touches a backcast keeper.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "as_saturation_ref_gw_by_iso.ERCOT",
+      "display_name": "As Saturation Ref Gw By Iso / Ercot",
+      "value": 4.0,
+      "unit": "",
+      "domain": "Uncategorized",
+      "tier": 2,
+      "source": "ERCOT AS-eligible (storage) fleet at the 2023 AS-revenue calibration point (~4 GW), the saturation reference for the $169/kW-yr base rate. Source: Potomac Economics 2023 ERCOT State of the Market; Modo Energy ERCOT BESS index.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "biomass_price_per_mmbtu",
       "display_name": "Biomass Price Per Mmbtu",
       "value": 2.5,
