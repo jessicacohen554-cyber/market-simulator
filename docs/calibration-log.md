@@ -16469,3 +16469,65 @@ all-ISO regeneration in flight). See
 FINDING committed early (blob-verified); corrected csv + keeper bundle + sidecar +
 attestation + legitimacy + keepers.json + status.js this commit. Transport: API
 create_branch + git push onto the recreated ref.
+
+## 2026-07-17 — CAISO-94 (the C3a-2025 daytime lane precondition, derive-first, NO LP): the DAYTIME no-wedge admissibility gate PASSES on every cell — the measured no-wedge structure that admitted caiso-93 OVERNIGHT extends to the daytime trigger-OFF hours — and RESOLVES the charter's three-way fork: an admissible caiso-93-style clean-import extension exists on the AUTUMN daytime trigger-OFF hours (morning ramp + evening peak the load-bearing cells), the belly-midday over-price mass is caiso-87/battery territory (off-limits / separate storage charter), the tight afternoon carries a REAL wedge (leave alone, rule 1); the gate proves ADMISSIBILITY ONLY (inertness/overshoot need a solve); NO build (owner authorization required); keeper UNCHANGED (caiso-93)
+
+**Full record: `results/calibration/FINDING-caiso94-daytime-wedge-2026-07-17.md`.**
+The caiso-93 promotion handoff's next charter (deciding criterion C3a-2025
++13.3%), executed derive-first from committed data only
+(`scripts/derive_caiso_daytime_wedge.py`, cloned from the frozen
+`derive_caiso_overnight_wedge.py`; gates frozen in the docstring before
+results; every leg inherited from a committed construction — the caiso-87
+trigger, the caiso-82 §1 parity spread, the caiso-88/93 depth/gate template —
+sliced to the daytime hod blocks × season). Companion
+`scripts/derive_caiso_daytime_finegrain.py` (post-hoc fine-grain, sequencing
+disclosed).
+
+**Gate results (frozen G1/G2/G3):** G1 no-wedge (per-year OFF median
+delivered-DA ≤ +$4) **PASSES every daytime cell, every year**; wedge-consistent
+share ≈ 0–6% (the tight afternoon 15-17 aside). The three AUTUMN cells clear at
+raw-hub parity (raw-hub median +0.4…+3.0) with year-stable depths (CV
+0.028/0.061/0.074, LOYO ≤ 17.6%). The model's +$12–15 south-corridor carbon
+wedge on incremental daytime imports is measured-inconsistent well beyond
+overnight — the caiso-93 discovery is not overnight-specific.
+
+**The sharpening (§3-4):** G1 is one-sided (fails only ABOVE hub+wheel); the
+RAW-HUB discriminator (`actual − PALOVRDE`, the caiso-93 §3 axis) does the
+separating work. The daytime is heterogeneous: (a) AUTUMN morning ramp +
+evening peak 18-21 clear at raw hub, 0% wedge, model over-prices → **IMPORT-LEVER
+admissible** (the load-bearing cells targeting the C3a-2025 autumn mass); (b)
+the tight **afternoon 15-17** carries a real wedge (13–19% wedge-consistent,
+actual ABOVE raw hub) → **leave alone** (rule 1); (c) the **belly-midday** mass
+is 66–90% caiso-87 trigger-ON where the HUB ITSELF is cheap (solar glut, p50
+$0.7–20) and actual clears just above it → the battery-charge/low-hub sub-regime
+lives there, off-limits to imports → **separate storage charter** (only the thin
+trigger-OFF belly slice, 20–33%, is import-relevant, so belly does NOT carry the
+C3a-2025 story); (d) the **non-autumn evening peak** is measured-clean but the
+model UNDER-prices it → a lever there would overshoot → **exclude**.
+
+**Adversarial verification (5-lens workflow, ALL CONFIRMED, no defects):**
+construction/basis (the ×0.03-vs-×1.03 caiso-93 bug definitively ABSENT),
+masking/slicing, independent from-scratch re-derivation of all 18 cells
+(byte-for-digit match), interpretation/doctrine (IMPORT-LEVER mirrors the
+caiso-93 three-legged admit; trigger-OFF correctly excludes the battery
+sub-regime; hard constraints respected — disjoint from caiso-87, north corridor
+untouched, read-only NO-LP so C1/overnight-λ untouched, no holdout leakage), and
+devil's advocate (attacks defused — belly-autumn is NOT a battery false-positive
+at +3 above hub; depths are physically-realized flows below the measured
+corridor max; the three clean tranches partition disjoint hour-sets, no
+within-hour double-count). **Two load-bearing caveats (advisory):** the gate
+proves ADMISSIBILITY ONLY (it never touches the model residual → inertness, à la
+the caiso-86 partial-ladder, is a live risk only a solve settles); depth is
+TOTAL not incremental (a build must net vs firm/surplus/overnight per caiso-93
+§5 or risk overshoot).
+
+**Disposition (rules 1/13/22): precondition PASSED — a daytime clean-import
+extension is admissible; NO build/solve this session; keeper UNCHANGED
+(caiso-93).** Lever build authorization is the owner's call; the FINDING §7-8
+carry the recommended DIAGNOSTIC solve (a `_caiso93_overnight_clean_ab.py` clone
++ the daytime-depth delta, UNCONDITIONAL daytime trigger-OFF to avoid a
+residual-fitting calendar gate, netted vs all sibling tranches, raw-hub-priced
+EF 0, 2023+2024+2025 one invocation, sequential per the 15 GB memory limit) —
+authorize the solve as a DIAGNOSTIC, not the mechanism as a keeper. Ops: no LP,
+no registration, dashboard untouched. Committed: the two derive scripts + the
+FINDING + this entry.
