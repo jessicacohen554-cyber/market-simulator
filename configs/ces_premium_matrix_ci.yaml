@@ -1,0 +1,33 @@
+# PARKED — national CES cesa_ci variant ladder (W2-B, plan §5.4/§8;
+# docs/handoffs/national-ces-eac-premium-plan-2026-07.md §1 crediting).
+#
+# NOT part of the first campaign (owner, v2.1: the first campaign runs
+# `clean_capture` only). This file exists so the efficient-CCGT option is
+# turnkey when the owner calls it: cesa_ci credits every eligible fuel at
+# clip(1 − CI/0.82, 0, 1) (CESA S.1359/S.2146 benchmark) and extends
+# crediting to UNABATED gas CC at or under the 0.45 tCO2/MWh eligibility
+# line — an efficient CCGT at ~0.37 t/MWh earns ~0.55 of the premium.
+#
+# Same ladder and BAU reference as configs/ces_premium_matrix.yaml; only the
+# crediting mode differs. Run exactly like the first-campaign matrix
+# (adds 3 legs/ISO, plan §8 W4-A).
+mode: cases
+
+cases:
+  # Shared business-as-usual reference leg (no federal CES).
+  BAU: {}
+
+  CI-10:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 10.0
+    federal_ces_crediting: cesa_ci
+
+  CI-20:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 20.0
+    federal_ces_crediting: cesa_ci
+
+  CI-30:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 30.0
+    federal_ces_crediting: cesa_ci
