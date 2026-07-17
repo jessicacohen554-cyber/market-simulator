@@ -3821,6 +3821,11 @@ _ERCOT_CLEARED_SHARE_CLASS_OF = {
     "CT_PEAKER": "CT",
 }
 
+# ERCOT-77 steam extension (ercot_offer_surface_cleared_share_steam): the
+# legacy gas-steam class joins the wall's scope, priced from the artifact's
+# "ST" block (GSREH/GSNONR/GSSUP — the ERCOT-73 leg-c participation cliff).
+_ERCOT_CLEARED_SHARE_STEAM_CLASS_OF = {"ST_GAS": "ST"}
+
 
 def build_ercot_offer_surface_cleared_share_markup(
     fleet_arrays: "FleetArrays",
@@ -3875,6 +3880,7 @@ def build_ercot_offer_surface_cleared_share_markup(
       forward-native). Zero fitted scalars.
     """
     state_flag = getattr(config, "ercot_offer_surface_cleared_share_state", False)
+    steam_flag = getattr(config, "ercot_offer_surface_cleared_share_steam", False)
     if not getattr(config, "ercot_offer_surface_cleared_share", False):
         if state_flag and config.iso == "ERCOT":
             raise ValueError(
@@ -3882,9 +3888,20 @@ def build_ercot_offer_surface_cleared_share_markup(
                 "cleared-share wall — arm ercot_offer_surface_cleared_share "
                 "too (the state weight has nothing to scope on its own)."
             )
+        if steam_flag and config.iso == "ERCOT":
+            raise ValueError(
+                "ercot_offer_surface_cleared_share_steam extends the "
+                "cleared-share wall — arm ercot_offer_surface_cleared_share "
+                "too (the steam scope has no wall to extend on its own)."
+            )
         return None
     if config.iso != "ERCOT":
         return None
+    # Effective class scope: the base merchant CC/CT map, plus the ST_GAS ->
+    # "ST" extension when the ERCOT-77 steam flag is armed.
+    class_of = dict(_ERCOT_CLEARED_SHARE_CLASS_OF)
+    if steam_flag:
+        class_of.update(_ERCOT_CLEARED_SHARE_STEAM_CLASS_OF)
     if getattr(config, "ercot_offer_surface_midcurve_conditional", False):
         raise ValueError(
             "ercot_offer_surface_cleared_share and "
@@ -3933,7 +3950,7 @@ def build_ercot_offer_surface_cleared_share_markup(
             )
         block_h = int(sprov.get("hour_block_hours", 4))
         hod_block = (np.arange(hours) % 24) // block_h  # (T,)
-        for cls_key in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values()):
+        for cls_key in set(class_of.values()):
             entry = state.get(cls_key)
             if not entry:
                 continue
@@ -3967,7 +3984,7 @@ def build_ercot_offer_surface_cleared_share_markup(
     # year (pooled fallback for an unmapped/forward year).
     boundaries: dict[str, np.ndarray] = {}
     walls: dict[str, np.ndarray] = {}
-    for cls_key in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values()):
+    for cls_key in set(class_of.values()):
         entry = surface.get(cls_key)
         if not entry:
             continue
@@ -3991,7 +4008,7 @@ def build_ercot_offer_surface_cleared_share_markup(
     row_cls: dict[int, str] = {}
     for g, gen in enumerate(generators):
         cls = getattr(gen, "plant_group", None) or ""
-        if cls not in _ERCOT_CLEARED_SHARE_CLASS_OF:
+        if cls not in class_of:
             continue
         prefixes.setdefault(gen.unit_id.rpartition("_")[0], []).append(g)
         row_cls[g] = cls
@@ -4015,9 +4032,20 @@ def build_ercot_offer_surface_cleared_share_markup(
         for g, s_g in zip(order, mids):
             gen = generators[g]
             sfx = gen.unit_id.rpartition("_")[2]
-            if not sfx.startswith("econ"):
+            # Row-family scope (rule 19, recorded in the steam flag's config
+            # comment): CC/CT wall econ* rows only (committed stays owned by
+            # the bridge/floor structure); the ERCOT-77 steam extension prices
+            # BOTH the committed and econ* ST_GAS tranches — the flat
+            # committed offer level is exactly the measured leg-c defect, and
+            # the drag keeps only the min-gen QUANTITY scaffolding (floors
+            # compose independently of bids). Peak rungs are never touched
+            # (ercot_offer_surface_conditional's rows).
+            if row_cls[g] == "ST_GAS":
+                if not (sfx.startswith("econ") or sfx == "committed"):
+                    continue
+            elif not sfx.startswith("econ"):
                 continue
-            cls_key = _ERCOT_CLEARED_SHARE_CLASS_OF[row_cls[g]]
+            cls_key = class_of[row_cls[g]]
             if cls_key not in boundaries:
                 continue
             bnd = boundaries[cls_key]  # (n_bins,)
@@ -4064,7 +4092,7 @@ def build_ercot_offer_surface_cleared_share_markup(
         str(year)
         if any(
             str(year) in surface.get(c, {}).get("years", {})
-            for c in set(_ERCOT_CLEARED_SHARE_CLASS_OF.values())
+            for c in set(class_of.values())
         )
         else "pooled",
         (

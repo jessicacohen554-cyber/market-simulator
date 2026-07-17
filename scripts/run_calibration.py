@@ -485,6 +485,7 @@ def run_year(
     ercot_offer_surface_midcurve_conditional: bool = False,
     ercot_offer_surface_cleared_share: bool = False,
     ercot_offer_surface_cleared_share_state: bool = False,
+    ercot_offer_surface_cleared_share_steam: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
     wind_ptc_vintage_offers: bool = False,
@@ -745,6 +746,11 @@ def run_year(
         # (ScenarioConfig field docstring has the provenance/admissibility
         # note). Requires the wall flag; the builder hard-errors otherwise.
         config = config.with_overrides(ercot_offer_surface_cleared_share_state=True)
+    if ercot_offer_surface_cleared_share_steam:
+        # ERCOT-77 steam-cliff extension of the wall (ScenarioConfig field
+        # docstring has the provenance/admissibility + rule-19 row-scope
+        # note). Requires the wall flag; the builder hard-errors otherwise.
+        config = config.with_overrides(ercot_offer_surface_cleared_share_steam=True)
     if ercot_offer_surface_lowcurve:
         # G-22 conditional-offer-distribution LOW leg (measured trough-side
         # quantile ladders, P1-only markdown; ScenarioConfig field docstring has

@@ -4006,6 +4006,25 @@ class ScenarioConfig:
     # data/raw/_validation-source/ercot_commitment_loading_state.json). None →
     # the builder falls back to that default path.
     ercot_offer_surface_cleared_share_state_path: str | None = None
+    # ERCOT-77 STEAM extension of the cleared-share wall (default off; requires
+    # ercot_offer_surface_cleared_share — the builder hard-errors on
+    # steam-without-wall). Extends the wall's scope with the legacy gas-steam
+    # class: ST_GAS rows whose within-plant cumulative-capacity midpoint
+    # exceeds the hour's bin's MEASURED steam cleared share (the "ST" block of
+    # the same frozen artifact — GSREH/GSNONR/GSSUP, 60-Day DAM disclosure)
+    # are floored at the bin's MEASURED steam offer wall, state-scoped by the
+    # steam commitment-loading series when the state flag is armed. The steam
+    # participation cliff is the ERCOT-73 leg-c measurement: live HSL 5.9 GW
+    # vs 1.2 GW DA-cleared (share 0.20) on the May-2024 shoulder family, ~half
+    # of live resource-hours declared OFF in the DAM, while the model's flat
+    # committed rungs (~$30) hand the LP several GW of steam reality priced
+    # $57-100 beyond its DA position. Row-scope reconcile (rule 19, recorded):
+    # the cliff prices the ABOVE-DA-position offer levels of BOTH the
+    # committed and econ* tranches (the flat committed offer level is exactly
+    # the measured defect); the drag keeps the min-gen QUANTITY scaffolding it
+    # owns (unchanged — floors compose independently of bids); the PEAK rungs
+    # stay owned by ercot_offer_surface_conditional. Zero fitted scalars.
+    ercot_offer_surface_cleared_share_steam: bool = False
     # Path to the measured condition-binned ladder JSON (default: the frozen
     # data/raw/_validation-source/offer_curve_dam_hrmults_condbinned.json). None →
     # the mechanism is a no-op even when the flag is on.
@@ -6664,6 +6683,7 @@ TIER_TAGS: dict[str, int] = {
     "ercot_offer_surface_cleared_share_path": 3,
     "ercot_offer_surface_cleared_share_state": 1,
     "ercot_offer_surface_cleared_share_state_path": 3,
+    "ercot_offer_surface_cleared_share_steam": 1,
     "nysdec_peaker_rule_availability": 1,
     "gas_st_wefor_base_override": 3,
     "as_reserve_withholding": 1,
