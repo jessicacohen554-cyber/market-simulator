@@ -61,7 +61,6 @@ Cardinal,2828,2,615.2,1880.4,32.7,COAL,eia_exact,2024-07-04,2024-07-07,3.1,2,5
 Cardinal,2828,2,615.2,1880.4,32.7,COAL,eia_exact,2024-07-10,2024-07-14,4.5,2,5
 Cardinal,2828,2,615.2,1880.4,32.7,COAL,eia_exact,2024-09-15,2024-09-19,4.3,2,5
 Cardinal,2828,2,615.2,1880.4,32.7,COAL,eia_exact,2025-03-23,2025-03-27,3.6,2,5
-Cardinal,2828,3,650.0,1880.4,34.6,COAL,eia_exact,2024-01-15,2024-01-17,1.4,2,5
 Cardinal,2828,3,650.0,1880.4,34.6,COAL,eia_exact,2024-09-21,2024-09-26,4.4,2,5
 Cardinal,2828,3,650.0,1880.4,34.6,COAL,eia_exact,2025-02-19,2025-02-23,4.3,2,5
 Cardinal,2828,3,650.0,1880.4,34.6,COAL,eia_exact,2025-04-09,2025-04-14,4.3,2,5
@@ -198,7 +197,6 @@ Gen J M Gavin,8102,2,1300.0,2600.0,50.0,COAL,eia_exact,2025-04-23,2025-04-27,3.8
 Gen J M Gavin,8102,2,1300.0,2600.0,50.0,COAL,eia_exact,2025-05-16,2025-05-20,3.9,1,4
 Gilberton Power Company,10113,031,44.2,88.4,50.0,COAL,optime_proxy,2024-02-13,2024-02-14,1.2,1,2
 Gilberton Power Company,10113,031,44.2,88.4,50.0,COAL,optime_proxy,2024-05-01,2024-05-02,1.2,1,2
-Gilberton Power Company,10113,031,44.2,88.4,50.0,COAL,optime_proxy,2024-09-18,2024-09-20,2.5,1,2
 Gilberton Power Company,10113,031,44.2,88.4,50.0,COAL,optime_proxy,2025-07-12,2025-07-16,4.2,1,2
 Gilberton Power Company,10113,031,44.2,88.4,50.0,COAL,optime_proxy,2025-07-17,2025-07-19,2.2,1,2
 Gilberton Power Company,10113,031,44.2,88.4,50.0,COAL,optime_proxy,2025-12-11,2025-12-12,1.1,1,2
@@ -219,7 +217,6 @@ Grant Town Power Plant,10151,1A,47.9,95.7,50.0,COAL,optime_proxy,2023-05-08,2023
 Grant Town Power Plant,10151,1A,47.9,95.7,50.0,COAL,optime_proxy,2024-04-30,2024-05-01,1.9,1,2
 Grant Town Power Plant,10151,1A,47.9,95.7,50.0,COAL,optime_proxy,2024-07-27,2024-07-31,3.8,1,2
 Grant Town Power Plant,10151,1A,47.9,95.7,50.0,COAL,optime_proxy,2025-01-07,2025-01-10,3.3,1,2
-Grant Town Power Plant,10151,1A,47.9,95.7,50.0,COAL,optime_proxy,2025-01-20,2025-01-22,1.4,1,2
 Grant Town Power Plant,10151,1A,47.9,95.7,50.0,COAL,optime_proxy,2025-05-04,2025-05-07,2.1,1,2
 Grant Town Power Plant,10151,1A,47.9,95.7,50.0,COAL,optime_proxy,2025-05-14,2025-05-16,2.5,1,2
 Grant Town Power Plant,10151,1B,47.9,95.7,50.0,COAL,optime_proxy,2023-07-13,2023-07-14,1.3,1,2
@@ -237,7 +234,6 @@ AES Warrior Run,10678,001,182.0,182.0,100.0,COAL,observed_peak,2024-05-22,2024-0
 Pixelle Specialty Solutions,50397,036,34.5,103.6,33.3,COAL,optime_proxy,2024-06-03,2024-06-08,4.9,2,3
 Pixelle Specialty Solutions,50397,036,34.5,103.6,33.3,COAL,optime_proxy,2024-12-03,2024-12-06,3.2,2,3
 Eastman Chemical Company,50481,83-24,21.6,194.3,11.1,COAL,optime_proxy,2025-08-12,2025-08-16,4.4,8,9
-Axiall Corporation Natrium Plant,50491,003,57.8,115.5,50.0,COAL,optime_proxy,2024-07-29,2024-07-31,1.9,1,2
 Axiall Corporation Natrium Plant,50491,003,57.8,115.5,50.0,COAL,optime_proxy,2025-07-27,2025-07-29,1.6,1,2
 Axiall Corporation Natrium Plant,50491,003,57.8,115.5,50.0,COAL,optime_proxy,2025-09-15,2025-09-19,4.2,1,2
 "Rausch Creek Generation, LLC",50611,031,31.0,31.0,100.0,COAL,observed_peak,2023-02-02,2023-02-04,1.9,0,1
@@ -275,7 +271,6 @@ Scrubgrass Generating Plant,50974,1,47.4,94.7,50.0,COAL,optime_proxy,2025-11-17,
 Scrubgrass Generating Plant,50974,1,47.4,94.7,50.0,COAL,optime_proxy,2025-12-13,2025-12-16,2.8,1,2
 Scrubgrass Generating Plant,50974,2,47.4,94.7,50.0,COAL,optime_proxy,2023-07-24,2023-07-26,1.6,1,2
 Scrubgrass Generating Plant,50974,2,47.4,94.7,50.0,COAL,optime_proxy,2023-11-28,2023-11-29,1.2,1,2
-Scrubgrass Generating Plant,50974,2,47.4,94.7,50.0,COAL,optime_proxy,2024-01-15,2024-01-17,1.9,1,2
 Scrubgrass Generating Plant,50974,2,47.4,94.7,50.0,COAL,optime_proxy,2025-01-23,2025-01-26,3.0,1,2
 Scrubgrass Generating Plant,50974,2,47.4,94.7,50.0,COAL,optime_proxy,2025-11-17,2025-11-21,4.1,1,2
 Scrubgrass Generating Plant,50974,2,47.4,94.7,50.0,COAL,optime_proxy,2025-12-14,2025-12-18,4.5,1,2
