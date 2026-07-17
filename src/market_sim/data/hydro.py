@@ -572,10 +572,15 @@ def build_hydro_fleet(
     of pinning the budget to a measured year, it sets the monthly *level* to a
     normal-water-year climatology (the multi-year mean of measured EIA-930
     ``NG: WAT``) scaled by the wet/dry ``hydro_year`` lever — see
-    :func:`forecast_monthly_hydro`. The per-plant within-month shares still
-    come from ``year``'s EIA-923 (the budget shape); only the level is the
-    forecast climatology, so the same when-to-generate dispatch mechanism runs
-    against a forward-reproducible level rather than a realized one. Mutually
+    :func:`forecast_monthly_hydro`. The per-plant within-month shares (the
+    budget shape) come from EIA-923 at ``min(year,
+    EIA923_LATEST_FINAL_VINTAGE)`` — the requested year, clamped to the
+    newest vintage with a complete (final-release) plant census, so a
+    forecast year past the data horizon reuses the newest real census
+    instead of silently degrading to an early-release partial or emptying
+    the fleet outright. Only the level is the forecast climatology, so the
+    same when-to-generate dispatch mechanism runs against a
+    forward-reproducible level rather than a realized one. Mutually
     exclusive with ``eia930_monthly`` (a run is either a backcast realization
     or a forecast). No-op when no climatology exists for the ISO. ``False``
     (default) changes no existing run. This is the forecast-path entry point.
@@ -613,19 +618,41 @@ def build_hydro_fleet(
             "eia930_monthly (measured backcast level) and forecast_budget "
             "(normal-water-year forecast level) are mutually exclusive"
         )
+    shape_year = year
     if eia930_monthly:
         from market_sim.data.eia_loader import measured_monthly_hydro
 
         target = measured_monthly_hydro(iso, year)
     elif forecast_budget:
         target = forecast_monthly_hydro(iso, hydro_year)
+        # Forecast branch only: the budget *shape* (per-plant within-month
+        # shares) must come from a complete plant census. EIA-923 vintages
+        # after the latest final release are monthly early releases carrying
+        # only the monthly-survey (large) reporters, and years past the
+        # newest vintage have no rows at all — an unclamped forecast year
+        # silently emptied the hydro fleet in every year past the last
+        # vintage (nyiso-forecast-2035-2026-07-13.md finding 1). The *level*
+        # is already the climatology `target`, so clamping only the shape
+        # year keeps the forward methodology intact while restoring the real
+        # plant set. Backcast paths (eia930_monthly / bare) are untouched.
+        from market_sim.data.eia923 import EIA923_LATEST_FINAL_VINTAGE
+
+        shape_year = min(year, EIA923_LATEST_FINAL_VINTAGE)
     else:
         target = None
     try:
         budget = load_hydro_budget(
-            iso, year, backfill_year=backfill_year, monthly_target_mwh=target
+            iso, shape_year, backfill_year=backfill_year, monthly_target_mwh=target
         )
     except (FileNotFoundError, ValueError):
+        if forecast_budget:
+            logger.warning(
+                "%s %d: no EIA-923 hydro budget shape available "
+                "(shape year %d) — hydro fleet is empty for this year",
+                iso,
+                year,
+                shape_year,
+            )
         return [], None
     units: list[Generator] = []
     monthly: list[np.ndarray] = []
