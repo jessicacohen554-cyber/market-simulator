@@ -3408,15 +3408,15 @@
     {
       "param_id": "scenario.federal_ces_ccs_capture_fraction",
       "display_name": "Federal Ces Ccs Capture Fraction",
-      "value": 0.9,
+      "value": 0.95,
       "unit": "fraction",
       "domain": "Supply Stack",
       "tier": 1,
-      "source": "Owner simplification (docs/handoffs/national-ces-eac-premium-plan-2026-07.md §1): policy-assumed capture crediting for abated gas in clean_capture mode — 'assume 90 or 95% capture for simplicity'; 0.90 default, 0.95 sensitivity. Distinct from the engineering ccs_capture_rate / ccs_retrofit_capture_rate fields (physical residual CI); W1-C reconciles/documents.",
+      "source": "Owner decision Q4 (docs/handoffs/national-ces-eac-premium-plan-2026-07.md §11, 2026-07-17): policy-assumed capture crediting for abated gas in clean_capture mode — 0.95 = the target capture rate; 0.90 the labeled sensitivity. Numerically anchored to NETL Cost & Performance Baseline Rev 4 (2022) Case B31B 90% amine capture — same engineering basis as scenario.ccs_capture_rate / scenario.ccs_retrofit_capture_rate; at 0.95 the certificate credits more abatement than the engineering capture fields produce (documented policy divergence, ces-ci-crediting-audit-2026-07.md §3).",
       "source_date": "2026-07",
-      "page_or_table": "",
+      "page_or_table": "ces-ci-crediting-audit-2026-07.md §3",
       "url": "",
-      "notes": "National CES EAC premium, Wave 1-A (config surface + policy/federal_ces.py resolver; solver-inert until W2-A wiring). Registered per plan G8 checklist.",
+      "notes": "National CES EAC premium. Crediting-only: consumed by clean_capture mode; INERT under cesa_ci (that mode reads the unit's residual CI, f≈0.947-0.956 at 90% engineering capture). W1-A merged at 0.90 (pre-Q4); flipped to 0.95 in W2-A task 0. Registered per plan G8 checklist.",
       "old_repo_location": "",
       "last_verified": "2026-07-17",
       "flags": []
@@ -22096,6 +22096,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_offer_surface_cleared_share_steam",
+      "display_name": "Ercot Offer Surface Cleared Share Steam",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "ERCOT-77 STEAM extension of the cleared-share wall (default off; requires ercot_offer_surface_cleared_share — the builder hard-errors on steam-without-wall). Extends the wall's scope with the legacy gas-steam class: ST_GAS rows whose within-plant cumulative-capacity midpoint exceeds the hour's bin's MEASURED steam cleared share (the \"ST\" block of the same frozen artifact — GSREH/GSNONR/GSSUP, 60-Day DAM disclosure) are floored at the bin's MEASURED steam offer wall, state-scoped by the steam commitment-loading series when the state flag is armed. The steam participation cliff is the ERCOT-73 leg-c measurement: live HSL 5.9 GW vs 1.2 GW DA-cleared (share 0.20) on the May-2024 shoulder family, ~half of live resource-hours declared OFF in the DAM, while the model's flat committed rungs (~$30) hand the LP several GW of steam reality priced $57-100 beyond its DA position. Row-scope reconcile (rule 19, recorded): the cliff prices the ABOVE-DA-position offer levels of BOTH the committed and econ* tranches (the flat committed offer level is exactly the measured defect); the drag keeps the min-gen QUANTITY scaffolding it owns (unchanged — floors compose independently of bids); the PEAK rungs stay owned by ercot_offer_surface_conditional. Zero fitted scalars.",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
