@@ -15802,3 +15802,83 @@ inert on its target set before any solve — the ERCOT-64/75 precedent).
 Registered per rule 15 with legitimacy diagnostics, attestation (keeper DOF
 ledger regenerated — zero new parameters), parity check PASS. Transport:
 unshallow-then-push, blob-verified (rule 27).
+
+## 2026-07-17 — ERCOT-77: the steam (ST_GAS) participation cliff BUILT as the measured cleared-share wall's third class and probe-adjudicated — the measurement STANDS (ST cleared share 0.02-0.33 of live; wall p50 16-39x; w 0.56-0.61 year-stable) but the pricing form is probe-REJECTED — the pre-registered 2023 guard breaks (C3a +6.2 -> +10.4%, Aug-2023 -0.9 -> +11.3, the ERCOT-72 tight-regime re-inflation at the steam class), the shoulder formation target barely moves ($30.8 -> $31.7 of $67.3), and the composition moves AWAY from measured — the repriced steam withdraws into the still-cheap CC/CT wall mid-rungs, naming the WHOLE-STACK mid-rung level as the formation gap's owner; flag stays default-off; keeper UNCHANGED (ercot73-state-wall)
+
+**Task (owner charter, ercot-77 — lane B of the frontier close-out).** Close
+the ERCOT-73 leg-c finding: on the May-2024 shoulder family measured steam
+(GSREH/GSNONR/GSSUP) live HSL is 5.9 GW with only 1.2 GW DA-cleared (share
+0.20) and ~half of live resource-hours declared OFF in the DAM, while the
+model's flat committed rungs (~$30) hand the LP several GW of cheap steam
+that reality priced $57-100 beyond its DA position — the steam version of
+the ERCOT-72 no-must-offer participation cliff and the second owner of the
+still-open May-24 shoulder formation gap ($30.8 modeled of $67.3 actual).
+
+**Rule-19 enumeration FIRST (what prices/floors ST_GAS rows in the keeper).**
+(1) The netload drag (`gas_st_netload_drag`, D-2 id ST_NETLOAD_DRAG) — a
+min-gen QUANTITY floor on non-peaker committed/econ tranches (slope/intercept/
+cap frozen, ERCOT-61); (2) the committed-tranche OFFER level — the generic
+offer-curve construction (`gas_st_committed_hr_mult` 1.32, delta 0.0: the
+flat ~$30 rungs leg c named); (3) econ tranche offers (econ deltas -0.13/
+-0.35); (4) the conditional peak surface (`ercot_offer_surface_conditional`,
+CONDITIONAL_SURFACE_GROUPS includes ST_GAS) — peak rungs only; (5)
+`gas_st_startup_cost` amortization on P1 bids; (6) wefor_residual 0.06
+(availability, not pricing). No commitment bridge (CC-only) and no wall
+touched ST_GAS. RECONCILE (recorded in the ScenarioConfig field comment and
+this entry): the cliff owns the ABOVE-DA-POSITION offer levels — committed
+AND econ* rows above the measured boundary (the flat committed offer level
+is exactly the measured defect; row-level granularity keeps below-boundary
+committed capacity at its old level); the drag keeps the min-gen quantity
+scaffolding unchanged (floors compose independently of bids — forced MW
+dispatch regardless of the repriced bid); the peak rungs stay with the
+conditional surface. One pricing owner per row-hour.
+
+**The mechanism (built, admissible, default-off).**
+`ercot_offer_surface_cleared_share_steam` (requires the wall flag; hard error
+alone): extends `_ERCOT_CLEARED_SHARE_CLASS_OF` with ST_GAS -> "ST". Both
+frozen artifacts gain an ST block derived from the SAME frozen sources by the
+charter-cited extension commits (rule 23; the CC/CT tables re-derive
+BYTE-IDENTICAL, verified):
+
+* `derive_ercot_dam_cleared_share.py` + GSREH/GSNONR/GSSUP -> "ST": measured
+  ST boundary by netload bin 2023 0.022-0.333 / 2024 0.038-0.237 / 2025
+  0.035-0.161 (the cliff is far deeper than CC's 0.33-0.65 — most of the
+  steam fleet is not in the DA supply at ANY price) with the
+  offered-but-uncleared wall ladder p50 16-39x / p90 79-594x on gas.
+* `derive_ercot_commitment_loading_state.py` + ST_GAS -> "ST" (the CEMS
+  envelope basis already carried ST_GAS incl. the Sommers/Braunig
+  OTHER-group reclass shim): mean w 0.564/0.560/0.608 (year-stable); on the
+  May-24 shoulder family w mean 0.536 (p10 0.291 / p90 0.774).
+
+Scope note: ST_GAS-classed rows cover Braunig/Sommers (dispatch-fleet class,
+verified) — the derive-side OTHER-group shim is envelope-accounting only.
+Zero fitted scalars; P1-only (same mc_bid_adjust seam); 5 new trivial-case
+tests (16 total pass).
+
+**Full-span adjudication (`2026-07-17-ercot77-steam-cliff` on the ercot76
+base — the NE import pair is in code; the steam flag is the single delta).**
+
+| year | C3a/C3b (76 base -> 77) | C3c (RT) | caught/missed/invented |
+|---|---|---|---|
+| 2023 | +6.2%/0.143 -> +10.4%/0.176 (GUARD BREACH) | 179 -> 179 | 119/62/60 -> 119/62/60 (parity) |
+| 2024 | -3.2%/0.144 -> -0.3%/0.147 | 24 -> 27 | 19/34/5 -> 21/32/6 |
+| 2025 | -1.8%/0.088 -> +0.7%/0.091 | 19 -> 19 | 2/29/17 -> 2/29/17 (parity) |
+
+* May-24 shoulder family (88h): price $31.68 of $67.3 (was $30.8); CC
+  -178 / CT +372 / ST_GAS -1,263 (corrected excess vs measured; baseline
+  -311/+215/-914; actual CT 1,370).
+* Monthly deltas 2024: May -10.3, Nov -5.4 (baseline -10.8/-5.6 on the 76
+  base).
+* Guards: 2023 C3a +10.4% — BREACHED (Jun +16.9 / Sep +22.8 / Aug +11.3 / Jul +2.9) (must not worsen materially — the ERCOT-72
+  tight-regime re-inflation is the named failure mode; the ST state weight
+  is the protection); Aug 18-20-2024 window HOLDS (max 2,859, 2h > $200, no shed); C8 forced-share holds (offer-side mechanism; drag floors unchanged).
+
+**Disposition (rules 1/13/14/16/19/22/23/26).** REJECTED PROBE, registered as the honest record (rule 15). The steam participation cliff is real, measured market structure — but pricing the above-DA-position steam at the measured wall in every w>0 regime reproduces the ERCOT-72 static-wall failure AT THE STEAM CLASS: in loaded event weeks (Aug-2023) measured steam retains unloaded envelope headroom, so the ST w series does NOT stand the wall down, and the walled committed rows (drag-forced on, marginal above min-gen) set the margin high exactly where the model was already calibrated. On the target shoulders the LP simply substitutes AROUND the repriced steam into the CC/CT walls' cheap mid-rungs — formation +$0.9 of the $36.5 gap, composition worse — which adjudicates the May-24 shoulder formation gap's owner as the WHOLE-STACK mid-rung level, not the steam class alone. That enumeration is now effectively closed on record: conditional surface (peak rungs, adopted), midcurve belt (ERCOT-69: cannot form the target), cleared-share wall (adopted, partial), steam cliff (this probe: re-inflation), RT-basis rung re-price (ERCOT-75: provably inert vs the DAM ladder). The residual shoulder formation gap stands as a measured representation limit of the DAM-derived offer basis — frontier-grade closure, recorded in the close-out block draft. No scoped/tuned variant armed (a committed-row exclusion would leave the measured defect untouched by construction; a w-threshold would be a residual-tuned scope boundary — rules 23/26).
+
+**Ops.** One full-span in-session solve (years sequential; single delta on
+the registered ercot76 candidate base). Artifact extensions committed with
+byte-identity verification of the CC/CT tables (rule 23). Registered per
+rule 15 with legitimacy diagnostics + attestation; keeper decision the
+owner's. Transport: API create_branch + git push onto the existing ref
+(the relay 502s creating NEW refs from a full clone — the session's
+transport finding), blob-verified (rule 27).
