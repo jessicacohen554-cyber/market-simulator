@@ -3890,8 +3890,29 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
         2040: 0.70,
         2045: 0.80,
     },
-    # PJM spans many states with differing RPS rules and no single
-    # ISO-wide clean-energy floor, so no PJM entry is defined here.
+    "PJM": {
+        # PJM has no single ISO-wide standard: this is the PJM-load-weighted
+        # blend of its member states' RPS *renewable-tier* obligations (the
+        # wind+solar analogue — Class I / Tier I incl. solar, NOT the
+        # clean-energy tiers that count nuclear), so a share of PJM load in
+        # low/no-RPS states (PA/OH flat ~8%, WV/KY/TN/IN none) dilutes the
+        # aggressive states (NJ/MD 50% by 2030, IL 40%, DC 87%, VA ~37%,
+        # MI 40%). Blended ~18.5% (2026) → 23% (2030) → 30% (2040) → 33%
+        # (2045). Consistent with the other ISOs' convention (the full
+        # renewable target is applied as the wind+solar floor; the tiers'
+        # small biomass/landfill/hydro share is folded in). Rule 13 admissible
+        # (policy parameter, forward-reproducible, relaxes as VRE builds).
+        # Tier 3 (calibration) — load weights are approximate; verify against
+        # the exact Monitoring Analytics PJM-load-by-state file. Sources:
+        # per-state renewable-tier schedules from PJM-EIS "Comparison of RPS
+        # Programs in PJM States" (4/15/2025); PJM load shares from Monitoring
+        # Analytics "Percentage of PJM Load by State" (PA~20/VA~14/OH~14/
+        # IL~12/NJ~11/MD~7/WV~4/IN~3/DE~2/DC~1.5/MI~1/NC~1%).
+        2026: 0.185,
+        2030: 0.23,
+        2040: 0.30,
+        2045: 0.33,
+    },
 }
 
 # RPS Alternative Compliance Payment (ACP) ceiling, $/MWh, by ISO.
@@ -3915,12 +3936,18 @@ STATE_RPS_FLOORS: dict[str, dict[int, float]] = {
 #   NEISO — MA Class I RPS ACP ($67.62/MWh, 2024, 225 CMR 14.08) blended with
 #     CT Class I ($55/MWh, Conn. Gen. Stat. §16-245a) across the six-state
 #     region; ~$65/MWh regional Class I ACP.
-# ISOs without a STATE_RPS_FLOORS entry (ERCOT, PJM) need no ACP — their RPS row
-# is never built, so the escape column is absent and the LP is byte-identical.
+#   PJM — PJM-load-weighted blend of member-state Tier-I (non-solar) ACPs:
+#     PA $45 (Tier I, 73 Pa. Code §75), DC $50 & NJ $50 (Class I), VA ~$47
+#     (2021 $45 +1%/yr, Code §56-585.5), MD ~$25 (declining to $22.35 by 2030),
+#     DE $25, OH $45; IL/NC are cost-capped with no ACP. Load-weighted ≈ $45.
+#     Source: PJM-EIS "Comparison of RPS Programs in PJM States" (4/15/2025).
+# ISOs without a STATE_RPS_FLOORS entry (ERCOT) need no ACP — their RPS row is
+# never built, so the escape column is absent and the LP is byte-identical.
 STATE_RPS_ACP: dict[str, float] = {
     "CAISO": 50.0,
     "NYISO": 40.0,
     "NEISO": 65.0,
+    "PJM": 45.0,
 }
 
 # Annual interconnection queue caps (GW/yr) by ISO.
