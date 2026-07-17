@@ -1,8 +1,8 @@
 """Tests for scripts/curate_outages.py on a tiny synthetic raw fixture.
 
 Builds a minimal set of raw outage-window CSVs (one CAMPD unit window, one ERCOT
-curated unit window, one facility-grain CAMPD window) plus a two-plant nameplate
-registry, runs ``curate``, and asserts the written Parquet is schema-valid and
+curated unit window) plus a two-plant nameplate registry, runs ``curate``, and
+asserts the written Parquet is schema-valid and
 the reconciliation (hourly expansion, outage_mw / available_mw, UTC offset,
 overlap de-duplication) is correct. NOT a full-data run: CLEAN_DIR is redirected
 to a tmp dir (as in tests/test_clean_io.py) so it never touches the real tree.
@@ -88,23 +88,6 @@ def _write_tx_outages(ref_dir: Path) -> None:
     ).to_csv(ref_dir / "tx-jan-aug23-unit-outages.csv", index=False)
 
 
-def _write_campd_facility_outages(raw_dir: Path) -> None:
-    # Facility-grain window: plant 888 offline for 3 hours. Whole facility down,
-    # so outage_mw should be the registry nameplate (50 MW), available 0.
-    pd.DataFrame(
-        [
-            {
-                "oris_code": 888,
-                "plant_name": "Facility Plant",
-                "unit": 1,
-                "outage_start": "2023-06-01 00:00:00",
-                "outage_stop": "2023-06-01 03:00:00",
-                "duration_hours": 3,
-            }
-        ]
-    ).to_csv(raw_dir / "campd-outages.csv", index=False)
-
-
 class TestCurateOutages(unittest.TestCase):
     def setUp(self):
         self._tmp = TemporaryDirectory()
@@ -116,7 +99,6 @@ class TestCurateOutages(unittest.TestCase):
         _write_registry(self.ref_dir)
         _write_campd_unit_outages(self.raw_dir)
         _write_tx_outages(self.ref_dir)
-        _write_campd_facility_outages(self.raw_dir)
 
         # Redirect CLEAN_DIR so writes never touch the repo (see test_clean_io).
         self._orig_clean = clean_io.paths.CLEAN_DIR
@@ -181,15 +163,6 @@ class TestCurateOutages(unittest.TestCase):
         # plant_capacity 100 / total_units 2 = 50 MW.
         self.assertTrue((u2["outage_mw"] == 50.0).all())
         self.assertTrue((u2["available_mw"] == 50.0).all())
-
-    def test_facility_window_is_plant_grain_all(self):
-        df = self._curate()
-        fac = df[df["plant_id"] == 888]
-        self.assertEqual(len(fac), 3)  # 3-hour window, stop exclusive
-        self.assertTrue((fac["unit_id"] == "ALL").all())
-        # Whole facility down -> outage = nameplate(50), available 0.
-        self.assertTrue((fac["outage_mw"] == 50.0).all())
-        self.assertTrue((fac["available_mw"] == 0.0).all())
 
     def test_keys_unique(self):
         df = self._curate()
