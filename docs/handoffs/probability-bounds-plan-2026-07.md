@@ -1,5 +1,11 @@
 # Probability-Bounds Program Plan — 2026-07
 
+> **ℹ️ SCHEDULING MOVED (2026-07-17).** PB-0…PB-4 machinery is landed (see Status
+> below); the deferred PB-5 production band run is now chartered as **FF-4C**
+> (owner-gated, post-golden) in `docs/forecast-development-plan-2026-07.md`. This doc
+> remains the PB-5 spec; `probability-bounds-prompts-2026-07.md` is superseded for
+> scheduling the same way.
+
 **What this is.** The design for giving the emissions forecast a defensible probability
 band. Produced by the F-1 planning session of `docs/fable-prompt-pack-2026-07.md`;
 companion prompts in `docs/handoffs/probability-bounds-prompts-2026-07.md`. **Status:**
