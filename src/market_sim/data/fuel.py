@@ -19,12 +19,15 @@ Algonquin Citygate), the measured hub-month basis overlay
 gas price with measured Henry Hub monthly + measured hub basis in covered
 months.
 
-**Coal** generators in historical years still pay their own measured
-EIA-923 Schedule 5 monthly delivered cost where reported (lignite
-mine-mouth vs railed PRB are genuinely different costs), falling back to
-the per-year coal supply-class trajectories otherwise. The same resolver
-path serves both backcast and forward, so calibration and projection share
-one model.
+**Coal** generators in backcast runs (and the capacity hindcast) still pay
+their own measured EIA-923 Schedule 5 monthly delivered cost where
+reported (lignite mine-mouth vs railed PRB are genuinely different costs),
+falling back to the per-year coal supply-class trajectories otherwise. The
+same resolver path serves both backcast and forward, so calibration and
+projection share one model — but the F923 plant-monthly overlay itself is
+MODE-GATED to backcast (:func:`apply_plant_monthly_fuel_prices`): a
+forecast run never prices a plant from measured receipts, even for a year
+the parquet covers (rule 22 / spec §1.7; G11 / W2-E).
 """
 
 from __future__ import annotations
@@ -3512,9 +3515,13 @@ def resolve_fuel_prices(
     the delivered oil price per hour (:func:`apply_dual_fuel_pricing`), so
     their marginal cost is ``min(gas_mc, oil_mc)``.
 
-    The same code path runs both backcasts and forward projections — the
-    F923 lookup simply finds nothing in a forward year and every plant
-    falls through to the trajectory-based default.
+    The same code path runs both backcasts and forward projections. The
+    F923 plant-monthly overlay (:func:`apply_plant_monthly_fuel_prices`)
+    is mode-gated to backcast (plus the capacity hindcast — see the
+    overlay's docstring): a forecast-mode run keeps the trajectory-based
+    default for every plant even when the F923 parquet carries measured
+    rows for the solve year, which it does now that H1-2026 receipts are
+    intaken (rule 22 / spec §1.7; G11 / W2-E).
 
     Args:
         config: Scenario configuration supplying ``iso``, ``gas_price_path``,
@@ -3953,10 +3960,23 @@ def apply_plant_monthly_fuel_prices(
     same-class donor tier (the recipient's ``plant_group``) before the
     class-blind fuel-group pools — see :class:`_NearbyFuelPrices`.
 
-    A missing parquet (forward years or untracked ISO) is a no-op: every
-    generator keeps the per-fuel default. The same is true for plants
-    outside the F923 sample when the fallback is off, per the project's
-    "forward = plant-class/zone average" requirement.
+    **Backcast-only (mode gate).** Measured F923 delivered costs are a
+    historic overlay (CLAUDE.md rule 22, methodology spec §1.7), so this
+    function is a no-op unless ``config.mode == "backcast"`` — year
+    availability alone is NOT the forecast gate: the parquet may carry
+    measured rows for a forecast year (the H1-2026 intake does) and a
+    forecast run must still ignore them (G11 / W2-E; the W1-B smoke found
+    forecast-mode 2026 pricing ERCOT 12 / PJM 51 generators from measured
+    actuals). Documented exception: the capacity hindcast
+    (``config.hindcast``) runs forecast-mode machinery over historical
+    years and is *designed* to consume realized historical inputs
+    (``hindcast_fuel_variant``, scenarios.py), so it keeps the overlay —
+    see the gate comment below.
+
+    A missing parquet or a year outside the F923 window is likewise a
+    no-op: every generator keeps the per-fuel default. The same is true
+    for plants outside the F923 sample when the fallback is off, per the
+    project's "forward = plant-class/zone average" requirement.
 
     Mutates ``fuel_prices`` in place.
 
@@ -3970,6 +3990,20 @@ def apply_plant_monthly_fuel_prices(
         year: Calendar year keying the F923 monthly lookup.
         monthly_costs_path: Optional override for the F923 parquet path.
     """
+    # G11 / W2-E mode gate (rule 22, spec §1.7): measured plant-monthly
+    # delivered costs are a backcast-only overlay. The year-availability
+    # check below stopped being a forecast gate the moment measured H1-2026
+    # receipts were intaken (the parquet now carries the forecast start
+    # year). Carve-out: the capacity hindcast (config.hindcast) is
+    # forecast-mode by construction and DESIGNED to consume realized
+    # historical inputs; its harness bounds the window to <= 2025
+    # (scripts/run_capacity_hindcast.py), so no quarantined H1-2026 row can
+    # reach it. Both hindcast fuel variants keep the overlay: the
+    # realized/asknown pair isolates the GAS trajectory error and shares
+    # the delivered-coal channel, so gating one variant would conflate the
+    # comparison (owner-approved Option 1, 2026-07-17).
+    if config.mode != "backcast" and not getattr(config, "hindcast", False):
+        return
     costs = _load_monthly_cache(
         Path(monthly_costs_path) if monthly_costs_path else None
     )
