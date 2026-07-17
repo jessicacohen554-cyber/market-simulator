@@ -6,6 +6,9 @@ single source for the build; every wave-session prompt in §8 points back here.
 to two owner-specified modes, horizon 2050 with ladder {10,20,30}, CCS-retrofit treatment
 pulled into a dedicated design discussion (§11), and the campaign wave **gated on fixing
 the capacity screens first** (§7, "build the code & architecture to do it right").
+**v2.1 (2026-07-17):** first campaign scoped to `clean_capture` crediting only —
+`cesa_ci` (efficient-CCGT) ships as a built, tested option but does not run in the
+initial campaign (owner).
 **Owner ask (2026-07-17):** model a *national* CES that credits every clean/low-carbon
 resource (including CCS retrofits and new build) with an EAC premium, as a federal
 alternative to state RPS/CES. Plug in an ensemble of premium levels and compare
@@ -49,8 +52,8 @@ What's missing, in order of importance:
 Build waves (§8): W1 foundations (config+resolver / BAU smoke / crediting audit) →
 W2 integration (consumer wiring minus retrofit seam / reporting / CCS-retrofit design
 resolution) → W3 capacity-screen readiness gate (external lane + verification) →
-W4 campaign (2026-2050, BAU + {10,20,30} × two crediting modes) → W5 optional
-(endogenous CES constraint, sampler dimension).
+W4 campaign (2026-2050, BAU + {10,20,30}, `clean_capture` mode; the `cesa_ci` ladder is
+parked as a turnkey option) → W5 optional (endogenous CES constraint, sampler dimension).
 
 ---
 
@@ -90,6 +93,8 @@ endogenously. Rationale:
   *Interpretation note (flagged for owner):* 0.45 is read as an **eligibility cutoff**
   with the credit fraction still computed against the 0.82 benchmark — not as the
   denominator. Correct in review if the intent was `1 − CI/0.45`.
+  *Scope (owner 2026-07-17):* `cesa_ci` ships as a selectable option; the **first
+  campaign runs `clean_capture` only**.
 
 **Interaction with existing policy:**
 - **State RPS/EAC:** house doctrine is one certificate per MWh, sold once —
@@ -186,7 +191,8 @@ linear interpolation, `rps.py:8-39`) and the `eac_price_*` scalars.
 - **D1 Crediting = two owner-specified modes** (§1): `clean_capture` default (clean 1.0,
   CCS = assumed capture fraction 0.90/0.95, unabated 0) and `cesa_ci` variant (CESA
   formula vs 0.82, unabated CCGT eligible under the 0.45 t/MWh line). Both modes ship in
-  W1-A and both run in the campaign. The v1 `binary` mode and
+  W1-A; the **first campaign runs `clean_capture` only** — `cesa_ci` is a built, tested
+  option for later runs (owner 2026-07-17). The v1 `binary` mode and
   `federal_ces_unabated_fossil_eligible` boolean are dropped — subsumed by the mode
   choice. *(One interpretation flag on 0.45 — see §1 crediting note.)*
 - **D2 Attribute stacking = `max()`** across federal premium / legacy `eac_price_*` /
@@ -204,7 +210,8 @@ linear interpolation, `rps.py:8-39`) and the `eac_price_*` scalars.
 - **D7 Premium applies to BOTH dispatch offers and capacity economics** (existing EAC
   architecture; the offer side is what makes saturation/cannibalization real, §6).
 - **D8 Campaign horizon = 2026–2050; first-run ladder = {10, 20, 30}** real $/MWh + BAU,
-  both crediting modes, both ISOs (§8 W4).
+  **`clean_capture` mode only** (the `cesa_ci` ladder is parked as a ready-to-run
+  option), both ISOs (§8 W4).
 - **D9 (was OPEN-7) Screens first.** The campaign is **blocked** until the §7 readiness
   criteria are met. "Focus here is building the code & architecture to do it right."
 
@@ -405,8 +412,10 @@ layer — closes G7).
 **W2-B — Reporting & comparison harness (Opus/Fable)**
 Implements §5.4: `plant_financials.py` attribute line, `_summarize_year` +
 `_SCALAR_METRICS` additive metrics, `scripts/report_ces_campaign.py`,
-`configs/ces_premium_matrix.yaml` (cases: `BAU: {}` + `CC-10/20/30` [clean_capture] +
-`CI-10/20/30` [cesa_ci]). Tests on synthetic cached fixtures.
+`configs/ces_premium_matrix.yaml` (first-campaign cases: `BAU: {}` + `CES-10/20/30`,
+all `clean_capture`) plus a PARKED `configs/ces_premium_matrix_ci.yaml`
+(`CI-10/20/30`, `cesa_ci`) so the efficient-CCGT option is turnkey when the owner calls
+it. Tests on synthetic cached fixtures.
 
 **W2-C — CCS-retrofit redesign (Opus/Fable; BLOCKED on §11 owner resolution)**
 Implements whatever §11 resolves: candidate package is 45Q term (credit-window-aware,
@@ -433,8 +442,9 @@ if NO-GO, the blocking item list). W4 may not launch without a GO.
 --matrix configs/ces_premium_matrix.yaml` in-session (background bash; per-year caching
 makes interrupts resumable; years always sequential; ≤2 solves in flight TOTAL across
 both sessions — rule 12: run the two ISOs' matrices with `--workers 1` each in parallel,
-or sequentially with `--workers 2`). 7 legs/ISO (BAU + 3 premiums × 2 modes) × 25 years;
-recorded timing implies ~4-5 h/leg — plan ~1.5-2 days wall per ISO at 2-concurrent.
+or sequentially with `--workers 2`). 4 legs/ISO (BAU + {10,20,30}, `clean_capture`) ×
+25 years; recorded timing implies ~4-5 h/leg — plan ~8-10 h wall per ISO at
+2-concurrent. (The parked `cesa_ci` ladder adds 3 legs/ISO whenever the owner calls it.)
 Gate every case with `check_forecast_invariants.py` (+ paired CES-vs-BAU direction
 check); `generate_financial_reports.py` per case; `report_ces_campaign.py`; commit the
 matrix bundle + report doc (§7 caveat context included).
@@ -469,7 +479,8 @@ analog) as a cross-check of the exogenous ladder; premium as a PB-2 sampler dime
 ## 10. Owner decision register — RESOLVED 2026-07-17
 
 1. Crediting → two modes (D1): `clean_capture` default; `cesa_ci` variant with 0.45
-   t/MWh unabated-CCGT line; assumed capture 0.90 (0.95 sensitivity).
+   t/MWh unabated-CCGT line; assumed capture 0.90 (0.95 sensitivity). **First campaign
+   runs `clean_capture` only; `cesa_ci` is a built option** (owner 2026-07-17).
    *Pending micro-check: 0.45 as eligibility cutoff (assumed) vs as formula denominator.*
 2. Existing clean credits identically — confirmed (no vintage gate).
 3. Horizon 2026–2050; first-run ladder {10, 20, 30} — confirmed.
