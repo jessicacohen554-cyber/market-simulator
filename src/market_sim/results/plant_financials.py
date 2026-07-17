@@ -19,6 +19,7 @@ from __future__ import annotations
 
 import logging
 from dataclasses import dataclass, fields
+from types import SimpleNamespace
 
 import numpy as np
 import pandas as pd
@@ -31,6 +32,8 @@ from market_sim.config.constants import (
     MARKET_DESIGN,
     resolve_capacity_market_clearing,
 )
+from market_sim.data.fleet import FUEL_TYPE_MAP
+from market_sim.policy.federal_ces import effective_unit_eac_prices
 
 logger = logging.getLogger(__name__)
 
@@ -443,9 +446,14 @@ def compute_plant_annual_summary(
             (:meth:`MarketDesign.capacity_price_per_firm_mw_yr` -- the SAME seam
             the capacity screens price through). ``None`` (default) credits no
             capacity revenue, so every existing metric is byte-identical.
-        config: Scenario config (duck-typed). Only its
-            ``capacity_market_clearing`` flag is read, to pick fixed vs the CR-1
-            sloped-curve price.
+        config: Scenario config. The capacity-revenue path reads only its
+            ``capacity_market_clearing`` flag (duck-typed); the
+            attribute-revenue line additionally resolves the run's
+            ``eac_price_*`` / ``federal_ces_*`` fields through
+            :func:`market_sim.policy.federal_ces.effective_unit_eac_prices`,
+            so pass the run's real
+            :class:`~market_sim.config.scenarios.ScenarioConfig` (or ``None``
+            to leave both revenue lines at zero).
         reserve_position: System accredited reserve position for the CR-1 curve
             (see :func:`market_sim.model.capacity.capacity_reserve_position`).
             ``None`` keeps the fixed net-CONE capacity price.
@@ -459,7 +467,13 @@ def compute_plant_annual_summary(
         ``capacity_revenue_source`` (``"curve"`` | ``"fixed"`` | ``"none"``)
         and ``net_operating_income_with_capacity`` (energy NOI + capacity
         revenue) are always present; the energy-only ``net_operating_income``
-        and its NPV are unchanged.
+        and its NPV are unchanged. ``attribute_price_usd_per_mwh`` (the
+        plant's effective EAC/CES certificate price in real 2026$/MWh —
+        ``max(legacy eac_price_*, federal premium × credit fraction)``) and
+        ``attribute_revenue`` (that price × generation, $/yr) are always
+        present, 0.0 unless ``config`` is given; PTC/ITC/45U/45Q are
+        deliberately excluded from this line (tax credits, not certificates),
+        and it is NOT folded into any net-operating-income column.
     """
     sum_cols = [
         "generation_mwh",
@@ -490,6 +504,9 @@ def compute_plant_annual_summary(
             "nameplate_mw",
             "heat_rate_btu_kwh",
             "fom_per_kw_yr",
+            # Plant CO2 rate (tCO2/MWh): the cesa_ci crediting input for the
+            # attribute-revenue line; internal only, not an output column.
+            "emission_rate_tco2_mwh",
         ]
     ]
     annual = annual.merge(attrs, on=["plant_code", "generator_id"], how="left")
@@ -535,6 +552,43 @@ def compute_plant_annual_summary(
         annual["net_operating_income"] + annual["capacity_revenue"]
     )
 
+    # Attribute (certificate) revenue (W2-B, national-ces-eac-premium plan
+    # §5.4): each plant's delivered MWh × its effective EAC price — the
+    # element-wise max of the legacy per-fuel ``eac_price_*`` scalar and the
+    # federal CES premium × credit fraction, resolved through the SAME
+    # resolver the dispatch offers and capacity screens use
+    # (policy/federal_ces.py::effective_unit_eac_prices; one certificate per
+    # MWh, sold once). Real 2026$/MWh. Tax credits (PTC/ITC/45U/45Q) are
+    # deliberately NOT in this line — they are tax instruments, not
+    # certificates, and keep their existing conventions elsewhere.
+    # ``attribute_revenue`` is reported as its own line item and is NOT
+    # folded into net_operating_income (existing metrics stay byte-identical
+    # for every pre-W2-B caller). Zero (price and revenue) when ``config``
+    # is None — resolution needs the run's real ScenarioConfig.
+    annual["attribute_price_usd_per_mwh"] = 0.0
+    annual["attribute_revenue"] = 0.0
+    if config is not None:
+        # Adapt the plant frame to the resolver's FleetArrays seam: fuel
+        # names -> FUEL_TYPE_MAP codes (a name outside the map gets -1, a
+        # code no fuel carries -> legacy 0 and credit 0), CO2 rates in
+        # tCO2/MWh at the LP boundary.
+        plant_fleet = SimpleNamespace(
+            fuel_type_idx=annual["fuel_type"]
+            .map(FUEL_TYPE_MAP)
+            .fillna(-1)
+            .astype(int)
+            .to_numpy(),
+            emission_rate=annual["emission_rate_tco2_mwh"]
+            .fillna(0.0)
+            .to_numpy(dtype=float),
+        )
+        annual["attribute_price_usd_per_mwh"] = effective_unit_eac_prices(
+            config, plant_fleet, year
+        )
+        annual["attribute_revenue"] = (
+            annual["attribute_price_usd_per_mwh"] * annual["generation_mwh"]
+        )
+
     avg_fuel_price = annual["fuel_cost"] / annual["fuel_mmbtu"].where(
         annual["fuel_mmbtu"] > 0.0
     )
@@ -575,6 +629,8 @@ def compute_plant_annual_summary(
             "capacity_revenue",
             "capacity_revenue_source",
             "net_operating_income_with_capacity",
+            "attribute_price_usd_per_mwh",
+            "attribute_revenue",
             "avg_price_captured",
             "avg_marginal_cost",
             "spark_spread",
@@ -607,6 +663,12 @@ _OWNED_SCALE_COLUMNS: tuple[str, ...] = (
     "nox_emissions_lbs",
     "npv_net_operating_income",
 )
+
+# Ownership-scaled columns that may be absent from a plant summary: the W2-B
+# attribute-revenue line exists only in frames written after it landed, and
+# company rollups must keep reading pre-W2-B parquets unchanged. Scaled and
+# aggregated exactly like _OWNED_SCALE_COLUMNS when present, skipped when not.
+_OWNED_OPTIONAL_SCALE_COLUMNS: tuple[str, ...] = ("attribute_revenue",)
 
 
 def compute_company_summary(
@@ -650,7 +712,10 @@ def compute_company_summary(
     merged["parent_company"] = merged["parent_company"].fillna("Other/Unknown")
     merged["percent_owned"] = merged["percent_owned"].fillna(1.0)
 
-    for col in _OWNED_SCALE_COLUMNS:
+    scale_cols = _OWNED_SCALE_COLUMNS + tuple(
+        c for c in _OWNED_OPTIONAL_SCALE_COLUMNS if c in merged.columns
+    )
+    for col in scale_cols:
         merged[f"owned_{col}"] = merged[col] * merged["percent_owned"]
 
     company_total = _aggregate_company(merged, ["parent_company"])
@@ -660,9 +725,12 @@ def compute_company_summary(
 
 def _aggregate_company(merged: pd.DataFrame, keys: list[str]) -> pd.DataFrame:
     """Aggregate ownership-scaled plant rows and derive portfolio metrics."""
+    agg_cols = _OWNED_SCALE_COLUMNS + tuple(
+        c for c in _OWNED_OPTIONAL_SCALE_COLUMNS if f"owned_{c}" in merged.columns
+    )
     agg = (
         merged.groupby(keys, dropna=False)
-        .agg(**{f"owned_{c}": (f"owned_{c}", "sum") for c in _OWNED_SCALE_COLUMNS})
+        .agg(**{f"owned_{c}": (f"owned_{c}", "sum") for c in agg_cols})
         .reset_index()
     )
 
