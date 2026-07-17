@@ -779,7 +779,6 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 cumulative=cumulative,
                 gas_price_per_mmbtu=gas_price_year,
                 carbon_price=carbon_price_year,
-                eac_price_ccs=config.eac_price_gas_cc_ccs,
                 events=evo_events,
                 confirmed_exits=confirmed_exits,
                 peak_demand_next=peak_demand,
