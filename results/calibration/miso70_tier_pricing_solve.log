@@ -482,3 +482,11 @@ INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 412 MW a
 INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2546 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 36505 / min 32933 MW
 INFO: Matrix build: 8.427s, Solve: 329.243s (cold)
 INFO: Matrix build: 8.427s, Solve: 110.244s (warm)
+INFO: EIA-923 2025: CAMPD-backfilled 57 under-reported plant(s) across 59 class-row(s) (1 replaced, 58 added)
+INFO: EIA-923 2025 wind 70.36 TWh under-counts EIA-930 98.90 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro 0.28 TWh under-counts EIA-930 9.88 TWh; using EIA-930 grid total
+INFO: year 2025 phase timing: data_prep=57.8s solve_p0=329.2s markup=49.6s solve_p1=110.2s results_write=36.5s total=583.4s
+INFO: wrote calibration bundle to results/calibration/miso70_tier_pricing-base
+solved into results/calibration/miso70_tier_pricing-base
+=== miso-70 base DONE 2026-07-17T00:36:36Z ===
+=== miso-70 ALL DONE 2026-07-17T00:36:36Z ===
