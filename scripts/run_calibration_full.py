@@ -2478,6 +2478,7 @@ def solve_and_persist(
     as_reserve_withholding: bool = False,
     energy_reserve_coopt: bool = False,
     miso_zonal_reserves: bool = False,
+    miso_midwest_subregional_reserves: bool = False,
     miso_reserve_pergen: bool = False,
     miso_commitment_posture: bool = False,
     miso_measured_reserve_requirements: bool = False,
@@ -2864,6 +2865,10 @@ def solve_and_persist(
             recorded_cfg = recorded_cfg.with_overrides(energy_reserve_coopt=True)
         if miso_zonal_reserves:
             recorded_cfg = recorded_cfg.with_overrides(miso_zonal_reserves=True)
+        if miso_midwest_subregional_reserves:
+            recorded_cfg = recorded_cfg.with_overrides(
+                miso_midwest_subregional_reserves=True
+            )
         if miso_reserve_pergen:
             recorded_cfg = recorded_cfg.with_overrides(miso_reserve_pergen=True)
         if miso_commitment_posture:
@@ -3652,6 +3657,7 @@ def solve_and_persist(
             as_reserve_withholding=as_reserve_withholding,
             energy_reserve_coopt=energy_reserve_coopt,
             miso_zonal_reserves=miso_zonal_reserves,
+            miso_midwest_subregional_reserves=miso_midwest_subregional_reserves,
             miso_reserve_pergen=miso_reserve_pergen,
             miso_commitment_posture=miso_commitment_posture,
             miso_measured_reserve_requirements=miso_measured_reserve_requirements,
@@ -4069,6 +4075,7 @@ def solve_and_persist(
         "as_reserve_withholding": as_reserve_withholding,
         "energy_reserve_coopt": energy_reserve_coopt,
         "miso_zonal_reserves": miso_zonal_reserves,
+        "miso_midwest_subregional_reserves": miso_midwest_subregional_reserves,
         "miso_reserve_pergen": miso_reserve_pergen,
         "miso_commitment_posture": miso_commitment_posture,
         "miso_measured_reserve_requirements": miso_measured_reserve_requirements,
@@ -7015,6 +7022,23 @@ def main() -> None:
         "Requires --energy-reserve-coopt. MISO-only; default off.",
     )
     parser.add_argument(
+        "--miso-midwest-subregional-reserves",
+        action="store_true",
+        help="MISO Midwest sub-regional reserve-holding family on top of the "
+        "market-wide RBDC co-opt: the measured North+Central operating-reserve "
+        "reservation held IN the 5 physical Midwest zones "
+        "(reserve_config.MISO_MIDWEST_ZONES), reserve_class 0 nested inside the "
+        "market-wide requirement. Requirement = the measured hourly Midwest "
+        "cleared series when --miso-measured-reserve-requirements is on, else "
+        "the within-region MSSC; a single shortfall step prices at the "
+        "published Reserve Procurement Enhancement demand value ($200/MWh, 2024 "
+        "SOM III.B — the per-Reserve-Zone ORDC ladder is NOT used, it is "
+        "measured-refuted). Closes the congestion-blind market-wide family's "
+        "phantom-South-parking gap; energy-side, does not make the reserve "
+        "curves fire. Zero fitted scalars. Requires --energy-reserve-coopt. "
+        "MISO-only; default off (miso-71 engagement-depth lane).",
+    )
+    parser.add_argument(
         "--ercot-ecrs-conservative-deployment",
         action="store_true",
         help="ERCOT: represent the PUBLISHED pre-reform ECRS deployment design "
@@ -9041,6 +9065,7 @@ def main() -> None:
         as_reserve_withholding=args.as_reserve_withholding,
         energy_reserve_coopt=args.energy_reserve_coopt,
         miso_zonal_reserves=args.miso_zonal_reserves,
+        miso_midwest_subregional_reserves=args.miso_midwest_subregional_reserves,
         miso_reserve_pergen=args.miso_reserve_pergen,
         miso_commitment_posture=args.miso_commitment_posture,
         miso_measured_reserve_requirements=args.miso_measured_reserve_requirements,

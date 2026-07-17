@@ -510,6 +510,7 @@ def run_year(
     as_reserve_formula: bool = False,
     energy_reserve_coopt: bool = False,
     miso_zonal_reserves: bool = False,
+    miso_midwest_subregional_reserves: bool = False,
     miso_reserve_pergen: bool = False,
     miso_commitment_posture: bool = False,
     miso_measured_reserve_requirements: bool = False,
@@ -1278,6 +1279,13 @@ def run_year(
     # minimum requirements priced at the published §5.2.1.2 zonal curve.
     if miso_zonal_reserves:
         config = config.with_overrides(miso_zonal_reserves=True)
+    # MISO Midwest sub-regional reserve-holding family on top of the
+    # market-wide RBDC (run_calibration_full --miso-midwest-subregional-
+    # reserves): the measured North+Central OR reservation held IN the 5
+    # physical Midwest zones, priced at the published $200 RPE demand value,
+    # reserve_class 0 nested (miso-71 engagement-depth lane).
+    if miso_midwest_subregional_reserves:
+        config = config.with_overrides(miso_midwest_subregional_reserves=True)
     # MISO per-asset (zone x fuel-class pooled) 10-min-ramp-bounded reserve
     # columns (run_calibration_full --miso-reserve-pergen): reserve competes
     # with energy on the marginal pool and cleared reserve is capped at the

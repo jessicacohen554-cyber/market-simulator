@@ -1062,6 +1062,181 @@ class TestMisoZonalReserveLP(unittest.TestCase):
         self.assertGreater(south_zonal, west_zonal + 1.0)
 
 
+class TestMisoMidwestReserveLP(unittest.TestCase):
+    """MISO Midwest sub-regional reserve family in the LP
+    (miso_midwest_subregional_reserves, miso-71): a Midwest zone whose local
+    headroom is trapped behind a limited RDT-analogue link cannot hold the
+    measured Midwest reserve requirement locally, so the family prices the
+    shortfall at the published $200 RPE step and lifts the Midwest LMP — while
+    the market-wide family stays CLEARED off the deep South surplus (nesting:
+    a Midwest reserve MW counts toward both). Trivial: 6 zones, 2 gens, 24 h,
+    one link."""
+
+    _T = 24
+    # Full 6-zone MISO topology (the branch errors unless all 5 Midwest names
+    # resolve); only MISO-West and MISO-South carry a unit here.
+    _ZONES = [
+        "MISO-West",
+        "MISO-Plains",
+        "MISO-Illinois",
+        "MISO-Indiana",
+        "MISO-East",
+        "MISO-South",
+    ]
+
+    def _fleet(self):
+        from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
+
+        cc = FUEL_TYPE_NAMES.index("gas_cc")
+        n = 2
+        # MISO-West (zone 0): a 1,000 MW CC serving 900 MW of local load — only
+        # ~300 MW can ever be freed for reserve behind the 200 MW link. MISO-
+        # South (zone 5): a 5,000 MW CC with deep surplus.
+        return FleetArrays(
+            pmax=np.array([1000.0, 5000.0]),
+            pmin=np.zeros(n),
+            heat_rate=np.array([7.0, 7.0]),
+            vom=np.zeros(n),
+            emission_rate=np.zeros(n),
+            nox_rate=np.zeros(n),
+            so2_rate=np.zeros(n),
+            zone_idx=np.array([0, 5]),
+            fuel_type_idx=np.array([cc, cc]),
+            availability=np.ones((n, self._T)),
+            unit_ids=["cc_west", "cc_south"],
+            efficiency_bin=np.zeros(n),
+            plant_code=np.array([1, 2]),
+        )
+
+    @staticmethod
+    def _fake_measured(T):
+        # market 1,000 = Midwest 600 + South 400 (the loader nesting identity).
+        return {
+            "market": np.full(T, 1000.0),
+            "MISO-South": np.full(T, 400.0),
+            "MISO-Midwest": np.full(T, 600.0),
+        }
+
+    def _solve(self, midwest: bool):
+        from unittest.mock import patch
+
+        import scipy.sparse as sp
+
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+        from market_sim.model.dispatch import solve_dispatch
+
+        fleet = self._fleet()
+        cfg = type(
+            "C",
+            (),
+            {
+                "iso": "MISO",
+                "weather_year": 2025,
+                "miso_measured_reserve_requirements": True,
+                "miso_midwest_subregional_reserves": midwest,
+            },
+        )()
+        with patch(
+            "market_sim.data.miso_reserve_requirements.load_miso_reserve_requirements",
+            return_value=self._fake_measured(self._T),
+        ):
+            design = get_reserve_design(cfg, fleet, self._T, self._ZONES)
+        kw = build_reserve_dispatch_kwargs(design)
+        demand = np.zeros((6, self._T))
+        demand[0, :] = 900.0  # MISO-West local load
+        # One South->West link, 200 MW (the RDT analogue): imports serve West
+        # energy but traps most West headroom behind the limit.
+        inc = np.zeros((6, 1))
+        inc[0, 0] = 1.0  # inject into West
+        inc[5, 0] = -1.0  # withdraw from South
+        incidence = sp.csr_matrix(inc)
+        extra = {}
+        for k in (
+            "reserve_balance_zone_mask",
+            "reserve_balance_ordc_counts",
+            "reserve_balance_class",
+        ):
+            if k in kw:
+                extra[k] = kw[k]
+        return solve_dispatch(
+            fleet,
+            demand,
+            wind_cf=np.zeros((6, self._T)),
+            wind_cap=np.zeros(6),
+            solar_cf=np.zeros((6, self._T)),
+            solar_cap=np.zeros(6),
+            fuel_prices=np.ones((2, self._T)),
+            voll=2000.0,
+            incidence=incidence,
+            ttc=np.array([200.0]),
+            reserve_requirement=kw["reserve_requirement"],
+            reserve_eligible=kw["reserve_eligible"],
+            ordc_penalties=kw["ordc_penalties"],
+            ordc_step_widths=kw["ordc_step_widths"],
+            **extra,
+        )
+
+    def test_midwest_family_prices_local_scarcity_nested(self):
+        from market_sim.config.reserve_config import MISO_RPE_DEMAND_VALUE
+
+        base = self._solve(midwest=False)
+        mid = self._solve(midwest=True)
+        self.assertEqual(base.status, "Optimal")
+        self.assertEqual(mid.status, "Optimal")
+        west_base = float(np.asarray(base.prices)[0].mean())
+        west_mid = float(np.asarray(mid.prices)[0].mean())
+        south_mid = float(np.asarray(mid.prices)[5].mean())
+        # The Midwest family (req 600, trapped local headroom ~300) is short:
+        # it lifts the Midwest LMP well above both the no-family case and the
+        # South LMP (the scarcity is LOCATIONAL — South is not in the family).
+        self.assertGreater(west_mid, west_base + 50.0)
+        self.assertGreater(west_mid, south_mid + 50.0)
+        # Per-family duals: the Midwest family (index 1) prices at the $200 RPE
+        # step; the market-wide family (index 0) stays CLEARED off the South
+        # surplus (the nesting — a Midwest MW counts toward both, but South's
+        # surplus can only satisfy the market-wide leg).
+        fam_duals = np.asarray(mid.reserve_price_by_family)
+        self.assertEqual(fam_duals.shape[1], 2)
+        self.assertAlmostEqual(
+            float(fam_duals[:, 1].mean()), MISO_RPE_DEMAND_VALUE, delta=1.0
+        )
+        self.assertLess(float(fam_duals[:, 0].mean()), 1.0)
+
+    def test_off_state_byte_identical(self):
+        """Flag OFF adds nothing: the reserve dispatch kwargs are byte-identical
+        to a config that never carried the field."""
+        from market_sim.config.reserve_config import (
+            build_reserve_dispatch_kwargs,
+            get_reserve_design,
+        )
+
+        fleet = self._fleet()
+        cfg_off = type(
+            "C",
+            (),
+            {
+                "iso": "MISO",
+                "weather_year": 2025,
+                "miso_midwest_subregional_reserves": False,
+            },
+        )()
+        cfg_bare = type("C", (), {"iso": "MISO", "weather_year": 2025})()
+        kw_off = build_reserve_dispatch_kwargs(
+            get_reserve_design(cfg_off, fleet, self._T, self._ZONES)
+        )
+        kw_bare = build_reserve_dispatch_kwargs(
+            get_reserve_design(cfg_bare, fleet, self._T, self._ZONES)
+        )
+        self.assertEqual(set(kw_off), set(kw_bare))
+        for k in kw_off:
+            np.testing.assert_array_equal(
+                np.asarray(kw_off[k]), np.asarray(kw_bare[k]), err_msg=k
+            )
+
+
 class TestMisoPergenReserveLP(unittest.TestCase):
     """MISO per-asset reserve columns end-to-end (miso_reserve_pergen):
     the 10-min deliverable ramp caps cleared reserve, so a fleet whose
