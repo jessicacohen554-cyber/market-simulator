@@ -2319,6 +2319,7 @@ STORAGE_DEPLOYMENT_CEILING_MW: dict[str, float] = {
     "PJM": 75_000.0,  # ~50% of ~150 GW peak. Source: PJM Load Forecast Report 2024
     "NYISO": 16_000.0,  # ~50% of ~32 GW peak. Source: NYISO Gold Book 2024
     "NEISO": 13_000.0,  # ~50% of ~26 GW peak. Source: ISO-NE CELT Report 2024
+    "MISO": 62_000.0,  # ~50% of ~124 GW coincident peak. Source: MISO OMS Survey / Planning Resource Auction 2024
 }
 
 # Max new storage power per year (MW). Source: ERCOT CDR, CAISO TPP queue data,
@@ -2329,6 +2330,7 @@ STORAGE_ANNUAL_BUILD_CAP_MW: dict[str, float] = {
     "PJM": 4_000.0,  # large queue but slower interconnection. Source: PJM queue 2024
     "NYISO": 1_500.0,  # Source: NYISO interconnection queue 2024
     "NEISO": 1_200.0,  # Source: ISO-NE interconnection queue 2024
+    "MISO": 4_000.0,  # very large storage queue but slow interconnection (PJM-like). Source: MISO Generator Interconnection Queue 2024
 }
 
 # Cap on the share of one year's storage build budget that any single
