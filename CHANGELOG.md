@@ -1,5 +1,80 @@
 # Changelog
 
+## 2026-07-17 — Consolidate CAMPD outage detection: delete the facility-summed layer, per-unit detector is the sole source (all ISOs)
+
+Core-infra refactor + data-derive; **no LP solve**. Enables the two ERCOT/PJM
+keeper reruns that follow.
+
+- **Shared detector library.** The CAMPD outage-detection primitives
+  (`detect_outages`, `detect_outages_eventbased`, `filter_revealed_outages`,
+  `high_load_mask`, `_runs`, the partial-plateau `_detect`, and the
+  ERCOT-79-tightened constants — `REAL_RUN_CF`, `ST_GAS_CF_PEAK/MIN_OUTAGE_HOURS`,
+  `EVENTBASED_CYCLING_GROUPS`, `FULL_STOP_OVERRIDE_*`, `HIGH_LOAD_PCTL`,
+  `MIN_INMERIT_HOURS`, `WINDOW_DAYS`) moved from the deleted
+  `scripts/derive_campd_outages.py` into a new `scripts/lib/outage_detect.py`,
+  imported by `derive_campd_unit_outages.py`, `derive_partial_outages.py`, and
+  `probes/_outage_gate_audit.py` (byte-parity verified against the old detector).
+- **Facility layer deleted.** `git rm scripts/derive_campd_outages.py`,
+  `data/raw/campd-outages.csv`, `data/raw/campd-outages-PJM.csv`. `fleet.py`:
+  removed the facility-overlay block (the hard `availability=0` per plant);
+  `unit_outage_derate_factors` is now the SOLE CAMPD outage layer for every ISO.
+  `outages.py`: removed the `outage_masks_for_year` / `_build_outage_masks` /
+  `_clean_outage_masks_for_year` / `_qualifying_plant_codes` / `OUTAGES_CSV` /
+  `default_outages_path` / `MIN_OUTAGE_SPAN_HOURS` path. `curate_outages.py`:
+  dropped the facility source, so the `outages` clean datatype is unit-grain (no
+  `unit_id="ALL"` rows). `ScenarioConfig.historic_outage_overlay` is now INERT
+  (retained for run_config / legitimacy-diagnostics back-compat; it no longer
+  changes a solve — PJM was already unit-only, ERCOT loses the facility layer).
+- **Rationale (ERCOT-79).** The facility detector summed a plant's units,
+  hiding single-unit outages, and folded a daily-cycling combined cycle's
+  overnight-down gaps into phantom summer outages
+  (`results/calibration/FINDING-ercot79-phantom-outage-2026-07.md`). The per-unit
+  detector is event-based for load-following classes and never had that bug.
+  Only ERCOT + PJM used the facility layer; the other four ISOs already ran
+  unit-only.
+- **Coverage preserved (rule 23/26 — justified from data, not residual).** The 6
+  ERCOT ST_GAS plants in the old facility file but absent from the unit extract
+  (Graham 3490, Spencer 4266, Stryker Creek 3504, Trinidad 3507, Ray Olinger
+  3576, Mountain Creek 3453) are exactly `ST_GAS_PEAKER_PLANTS` — economic
+  dispatch, no overlay, no coverage lost. The one PJM facility-only plant (50279
+  Archbald) is a ~44 MW peaker-dominated cogen whose facility "outages" are
+  economic weekly cycling (phantom); its only qualifying component is a 20 MW
+  ST_GAS unit — immaterial, correctly dropped. `CT_CHP` stays excluded from the
+  derate (like `CT_PEAKER`): a CT down-window cannot be certified a forced outage
+  vs out-of-merit-at-peak on CEMS alone (unlike baseload coal/CC), so the
+  event-based+revealed-availability filter does not cleanly separate the two; the
+  detector still writes CT_CHP windows for audit but the derate skips them.
+- **Data re-derived (measured CEMS + EIA-930, no solve).** ERCOT
+  `campd-unit-outages.csv` (2,702 → 4,910 rows), PJM `campd-unit-outages-PJM.csv`
+  (6,275 → 7,033 rows), and PJM `campd-unit-outages-short-PJM.csv` (290 → 286
+  rows) on the consolidated detector. The standard extracts grow because the
+  committed CSVs predated the ERCOT-79 detector fix (`258bfa0`, which changed the
+  shared filter but never re-derived the CSVs): the corrected
+  revealed-availability filter + 5-day full-stop override now keep the
+  shoulder-season dead-stops the old overlap filter dropped. All backcast +
+  holdout years regenerated (allowed data-derive). The ERCOT plant-grain partial
+  (`campd-partial-outages.csv`) re-derives byte-identical (its `_detect` moved to
+  the lib unchanged and it applies no revealed-availability filter).
+- **Known follow-up — `--partial-windows` × ERCOT-79 filter (flagged, not
+  fixed).** Re-deriving the PJM unit-grain partial extract
+  (`campd-partial-outages-PJM.csv`) with the current detector EMPTIES it: a
+  partial plateau is a unit running at a *depressed ceiling* (committed windows
+  p50 derate 0.56, i.e. ~56% — cf ≫ `REAL_RUN_CF`), so the ERCOT-79
+  `filter_revealed_outages` "ran during high-load ⇒ available ⇒ drop" clause
+  (correct for full stops) wrongly discards every partial plateau. This is a
+  pre-existing latent bug the re-derivation surfaced, not introduced here. Rather
+  than ship an empty file and lose 76 real partial windows (rule 11/26), the
+  committed `campd-partial-outages-PJM.csv` is **left unchanged**; the
+  `unit_partial_outage_windows` overlay is default-OFF and used by no keeper, so
+  nothing scored is affected. Follow-up: give the `--partial-windows` path a
+  partial-appropriate revealed-availability test (keep a plateau where the unit
+  stayed *below its normal ceiling* through high-load, rather than dropping it
+  for running at all).
+- **Tests.** Deleted the facility-clean parity test (`test_consume_outages.py`)
+  and the facility-overlay tests (`BuildMasksFilterTest` etc.); added a
+  single-unit-plant-fully-zeroed test for the unit derate. Outage suite green
+  (the one pre-existing NEISO data/test mismatch is byte-identical to `main`).
+
 ## 2026-07-17 — MISO: Midwest sub-regional reserve-holding family (miso-71) — new gated reserve mechanism, registered as a rule-1 KEEPER CANDIDATE (keeper swap owner-only)
 
 - **Model:** new `ScenarioConfig.miso_midwest_subregional_reserves` (GATED,

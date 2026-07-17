@@ -6,6 +6,22 @@ un-catches the real scarcity tail, because the model's ERCOT scarcity
 calibration is co-dependent on the phantom fleet tightness. Disposition pending
 owner decision (keeper standing / re-calibration successor lane).
 
+> **Successor update (2026-07-17) — facility layer deleted, detector
+> consolidated.** The facility-summed CAMPD outage layer
+> (`scripts/derive_campd_outages.py` → `campd-outages*.csv`, the source of the
+> phantom outages this finding traced) has since been **deleted entirely**; the
+> per-unit detector is now the sole CAMPD outage source for every ISO, with the
+> shared detection primitives (this finding's tightened
+> `filter_revealed_outages` + event-based cycling + 5-day full-stop override)
+> relocated to `scripts/lib/outage_detect.py`. The ERCOT + PJM unit extracts
+> were re-derived on the corrected detector (ERCOT `campd-unit-outages.csv`
+> 2,702 → 4,910 rows: the committed extracts predated the detector fix and now
+> pick up the shoulder-season dead-stops the old overlap filter dropped). See
+> the CHANGELOG entry of the same date. This adopts the corrected availability
+> envelope repo-wide; the **ERCOT scarcity re-calibration on the corrected
+> fleet remains the open successor lane** (the two keeper reruns that follow
+> this consolidation).
+
 ## The charter (ERCOT-78 successor)
 
 The 2023 summer over-shoot is 58 event-afternoon hours (29 Jun + 29 Sep 2023,
