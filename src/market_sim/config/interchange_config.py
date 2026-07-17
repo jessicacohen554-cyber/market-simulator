@@ -62,6 +62,11 @@ IMPORT_TRANCHE_EF: dict[str, dict[str, float]] = {
         # measured overnight CAISO−PaloVerde spread carries no wedge in
         # 93-99 % of ALL overnight hours (FINDING-caiso93 §3).
         "DSW_overnight_clean": 0.0,
+        # Daytime trigger-OFF WEIM clean transfer (caiso-94): same attribution
+        # extends to the daytime hours the caiso-87 surplus trigger does not
+        # cover — the measured daytime trigger-OFF CAISO−PaloVerde spread
+        # carries no wedge in every daytime cell (FINDING-caiso94 §2).
+        "DSW_daytime_clean": 0.0,
     },
 }
 
@@ -85,6 +90,11 @@ CAISO_IMPORT_DELIVERY_BASIS: dict[str, tuple[float, float]] = {
     # median spread vs the delivered ×1.03+$4 parity ≈ exactly the wheel;
     # FINDING-caiso93 §3/§5). The scheduled-import rungs above keep theirs.
     "DSW_overnight_clean": (0.0, 0.0),
+    # Daytime trigger-OFF WEIM clean transfer (caiso-94): NO wheel, same as
+    # the overnight leg. The measured daytime trigger-OFF CAISO clears at ≈ the
+    # RAW Palo Verde hub (autumn daytime raw-hub spread ≈ 0, FINDING-caiso94
+    # §2-3); WEIM transfers pay no OATT point-to-point charge.
+    "DSW_daytime_clean": (0.0, 0.0),
 }
 
 # ---------------------------------------------------------------------------
@@ -193,6 +203,65 @@ CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_STATIC: float = 6187.0  # pooled 2023-2025 mean
 # Overnight window upper hod (inclusive) — hod 0-5, the FINDING-caiso91c/92b
 # overnight definition (fixed upstream of the spread measurement).
 CAISO_OVERNIGHT_CLEAN_HOD_MAX: int = 5
+
+# ---------------------------------------------------------------------------
+# CAISO south-corridor DAYTIME trigger-OFF clean import depth (caiso-94,
+# ``ScenarioConfig.caiso_dsw_daytime_clean``, default off;
+# FINDING-caiso94-daytime-wedge-2026-07-17 — the C3a-2025 daytime lane, the
+# caiso-93 promotion handoff's next charter; owner-authorized diagnostic build
+# 2026-07-17, session-logged).
+#
+# MECHANISM: the measured no-wedge structure that admitted the caiso-93
+# OVERNIGHT leg extends to the DAYTIME hours the caiso-87 surplus trigger does
+# not cover. The daytime trigger-OFF CAISO−PaloVerde spread carries NO
+# unspecified-import carbon wedge in every daytime cell (G1 no-wedge PASSES all
+# cells; wedge-consistent share ≈ 0-6 % — FINDING-caiso94 §2), and the autumn
+# daytime cells clear at raw-hub parity (raw-hub median +0.4…+3.0): the
+# marginal daytime import is the same WEIM/EDAM clean-attributed transfer, so
+# it pays no border carbon even while gas may set the HUB price. The model
+# instead prices every incremental daytime DSW MW at hub + the +$12-15 wedge
+# and over-prices the daytime (C3a-2025 +13.3 %, mass in autumn Sep-Dec + the
+# belly). This tranche carries the measured daytime trigger-OFF clean depth.
+#
+# STATE (mechanical, forward-reproducible): hour t is armed iff
+# CAISO_DAYTIME_CLEAN_HOD_MIN ≤ hod(t) ≤ CAISO_DAYTIME_CLEAN_HOD_MAX AND the
+# raw measured Palo Verde hub is finite AND the caiso-87 surplus trigger is
+# OFF (PaloVerde ≥ HR_CCGT × SoCal_citygate weekly + remote VOM). The
+# trigger-OFF scoping is LOAD-BEARING: daytime caiso-87 is coverage-RICH
+# (66-90 % trigger-ON in the belly), so this leg is scoped to the COMPLEMENT
+# to stay DISJOINT from caiso-87 (unlike caiso-93 overnight, which was
+# unconditional because caiso-87 is coverage-starved overnight —
+# FINDING-caiso94 §1). Armed only on measured-hub hours (the 2023 Jan-Feb
+# OASIS gap fill never arms). In a forecast year the hub series + gas print
+# regenerate from the reference-price seam / gas forwards, so the state
+# responds to changed conditions (rule 13).
+#
+# DEPTH (measured, year-stable): p95 of the measured WECC_DSW corridor net
+# import (EIA-930 CISO DIBAs, model clock) over the daytime trigger-OFF window:
+#     2023: 5,441 MW · 2024: 5,762 MW · 2025: 5,998 MW
+# Estimation-stage honesty gates (caiso-81/86/87/88/93 precedent, run
+# 2026-07-17 in scripts/derive_caiso_daytime_clean_depth.py): CV 0.040
+# (≤0.20 PASS); LOYO (mean-of-other-two) worst 8.1 % (≤25 % PASS) — as tight
+# as the caiso-93 overnight depth (0.041 / 8.1 %). The static entry is the
+# pooled mean (persistent WEIM market structure); backcast years ride their
+# own measured depth (the caiso-80/82 construction class). Zero fitted
+# scalars. Pricing: RAW measured Palo Verde hub, EF 0, no wheel (WEIM transfer
+# basis — see CAISO_IMPORT_DELIVERY_BASIS above). The injector nets the depth
+# per hour against the shaped firm block + the caiso-87 surplus tranche + the
+# caiso-93 overnight tranche, so no hour double-carries clean depth.
+# ---------------------------------------------------------------------------
+CAISO_DSW_DAYTIME_CLEAN_NAME: str = "DSW_daytime_clean"
+CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
+    2023: 5441.0,
+    2024: 5762.0,
+    2025: 5998.0,
+}
+CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC: float = 5733.0  # pooled 2023-2025 mean
+# Daytime window hod bounds (inclusive) — hod 6-21, the FINDING-caiso94
+# daytime band (morning ramp through evening peak; set before the depth was
+# measured). Complements the caiso-93 overnight window (hod 0-5).
+CAISO_DAYTIME_CLEAN_HOD_MIN: int = 6
+CAISO_DAYTIME_CLEAN_HOD_MAX: int = 21
 
 # IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).
 #
@@ -478,6 +547,7 @@ CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = {
     "WECC_scarcity": "PALOVRDE",
     "DSW_surplus_clean": "PALOVRDE",  # caiso-87 surplus-clean depth tranche
     "DSW_overnight_clean": "PALOVRDE",  # caiso-93 overnight clean depth tranche
+    "DSW_daytime_clean": "PALOVRDE",  # caiso-94 daytime trigger-OFF clean depth
 }
 
 # CISO DIBA → corridor, split geographically at Path-15.
@@ -1259,6 +1329,11 @@ class InterchangeSpec:
     # Resolved from ScenarioConfig.caiso_dsw_overnight_clean; zero capacity at
     # build, armed hourly by transmission.inject_caiso_dsw_overnight_clean.
     caiso_overnight_clean: bool = False
+    # CAISO per-hub only: build the south-corridor DAYTIME trigger-OFF clean
+    # depth tranche (caiso-94; see the CAISO_DSW_DAYTIME_CLEAN_* block above).
+    # Resolved from ScenarioConfig.caiso_dsw_daytime_clean; zero capacity at
+    # build, armed hourly by transmission.inject_caiso_dsw_daytime_clean.
+    caiso_daytime_clean: bool = False
 
 
 def get_interchange_spec(config, iso: str, year: int | None = None) -> InterchangeSpec:
@@ -1420,6 +1495,9 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
         caiso_overnight_clean=(
             caiso_per_hub and getattr(config, "caiso_dsw_overnight_clean", False)
         ),
+        caiso_daytime_clean=(
+            caiso_per_hub and getattr(config, "caiso_dsw_daytime_clean", False)
+        ),
     )
 
 
@@ -1472,6 +1550,7 @@ def build_interchange_fleet(
                 border_carbon_per_mwh,
                 surplus_clean=spec.caiso_surplus_clean,
                 overnight_clean=spec.caiso_overnight_clean,
+                daytime_clean=spec.caiso_daytime_clean,
             )
         )
     elif spec.caiso_mode == "bidir":
