@@ -9,6 +9,7 @@ Natural gas spot/citygate price series used for fuel-cost passthrough.
 | `algonquin_citygate_daily.csv` | NGI's Daily Gas Price Index, displayed on EIA's Natural Gas Weekly Update page | `scripts/fetch_algonquin_daily_spot.py` — scrapes `https://www.eia.gov/naturalgas/weekly/archivenew_ngwu/<year>/<mm_dd>/` |
 | `transco_z6_ny_daily.csv` | NGI's Daily Gas Price Index (same page, "New York" row) | `scripts/fetch_transco_daily_spot.py` |
 | `caiso_citygate_daily.csv` | NGI's Daily Gas Price Index (same page, "Cal. Comp. Avg" row) | `scripts/fetch_caiso_citygate_daily.py` |
+| `miso_citygate_daily.csv` | NGI's Daily Gas Price Index (same page, "Chicago" row) — MISO North/Central Chicago Citygate daily; see `SOURCES_miso_citygate.md` | `scripts/fetch_miso_citygate_daily.py` — scrapes the same EIA NG Weekly archive |
 | `transco_z6_iroquois_monthly.csv` | NGI-adjacent monthly hub series (merged by the NYISO narrative fetcher) | `scripts/fetch_nyiso_gas_narrative.py` |
 | `nyiso_downstate_ct_gas_basis_monthly.csv` | derived: EIA `N3050NY3` (NY citygate) minus `transco_z6_iroquois_monthly.csv` | `scripts/fetch_nyiso_downstate_gas_basis.py` |
 | `SOURCES_miso_citygate.md` | provenance note for the MISO citygate pull (pulled 2026-06-22) | — |
@@ -17,7 +18,8 @@ Natural gas spot/citygate price series used for fuel-cost passthrough.
 **⚠️ Licensing note — read before treating this directory as uniformly
 public domain.** Henry Hub and the EIA-native citygate series are EIA's own
 public-domain data. **`algonquin_citygate_daily.csv`, `caiso_citygate_daily.csv`,
-`transco_z6_ny_daily.csv`, and `transco_z6_iroquois_monthly.csv` are a
+`miso_citygate_daily.csv`, `transco_z6_ny_daily.csv`, and
+`transco_z6_iroquois_monthly.csv` are a
 proprietary third-party index (NGI's Daily Gas Price Index, Natural Gas
 Intelligence / Hart Energy) that EIA merely displays** — not released into
 the public domain by its actual owner. See `docs/data-licensing.md` §5 for
