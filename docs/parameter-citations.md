@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1407 parameters registered** (773 flagged `needs-citation`).
+**1412 parameters registered** (773 flagged `needs-citation`).
 
 
 ## Calibration
@@ -306,6 +306,9 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
+| `as_revenue_per_kw_yr_by_iso.ERCOT.gas_cc` | 8.0 | 2 | Per-ISO exogenous AS-revenue registry — the modular generalization … | 2023 | auto-generated |
+| `as_revenue_per_kw_yr_by_iso.ERCOT.gas_ct` | 22.0 | 2 | Per-ISO exogenous AS-revenue registry — the modular generalization … | 2023 | auto-generated |
+| `as_revenue_per_kw_yr_by_iso.ERCOT.gas_st` | 15.0 | 2 | Per-ISO exogenous AS-revenue registry — the modular generalization … | 2023 | auto-generated |
 | `biomass_price_per_mmbtu` | 2.5 | 2 | Delivered biomass fuel price ($/MMBtu) for wood/MSW/landfill-gas un… | 2024 | auto-generated |
 | `caiso_ra_mustoffer_gas_mw` | {"2023": 19130.0, "2024": 15566.0, "2… | 2 | CAISO gas-fired MUST-OFFER Resource-Adequacy capacity (MW), by comp… | 2023 | auto-generated |
 | `carb_floor_price` | {"2023": 22.21, "2024": 24.04, "2025"… | 2 | CARB Auction Reserve (floor) price by year ($/tonne), rising 5% + C… | 2023 | auto-generated |
@@ -749,6 +752,7 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
+| `as_revenue_per_kw_yr_by_iso.ERCOT.storage` | 169.0 | 2 | Per-ISO exogenous AS-revenue registry — the modular generalization … | 2023 | auto-generated |
 | `eac_price_reference.eac_storage.high` | 10.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_storage.low` | 0.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
 | `eac_price_reference.eac_storage.mid` | 5.0 | 2 | Exogenous EAC price reference ranges ($/MWh) by resource type, as l… |  | auto-generated, needs-citation |
@@ -1329,6 +1333,7 @@ inline comment and still need a dated primary source — search the table for
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
 | `adequacy_external_tie_firm_mw.ERCOT` | 817.0 | 2 | Firm import contribution of asynchronous external ties counted by t… | 2023 | auto-generated |
+| `as_saturation_ref_gw_by_iso.ERCOT` | 4.0 | 2 | ERCOT AS-eligible (storage) fleet at the 2023 AS-revenue calibratio… | 2023 | auto-generated |
 | `caiso_citygate_transport_adder` | 0.46 | 2 | CAISO citygate -> burner-tip transport adder ($/MMBtu). The CAISO g… | 2024 | auto-generated |
 | `caiso_curtail_release_eps_mw` | 1.0 | 2 | Float-noise guard on the RA bridge's curtailed-VRE release (gap G-6… |  | auto-generated, needs-citation |
 | `cap_and_trade_programs.CAISO` | {"name": "CARB", "member_states": ["C… | 2 | ISO → cap-and-trade program. ERCOT and MISO have no program (no ent… |  | auto-generated, needs-citation |
