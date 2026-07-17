@@ -35,6 +35,7 @@ from market_sim.policy.federal_ces import (
     effective_unit_eac_prices,
     federal_ces_suppresses_state_rps,
     premium_for_year,
+    reporting_credit_fractions,
     tech_credit_fraction,
     unit_credit_fraction,
     unit_credit_fractions,
@@ -850,6 +851,69 @@ class TestStateRpsSuppression(unittest.TestCase):
                 )
             )
         )
+
+
+class TestReportingCreditFractions(unittest.TestCase):
+    """W2-B reporting fractions: the crediting RULE, ungated by the switch.
+
+    ``reporting_credit_fractions`` feeds the ``clean_share`` /
+    premium-capture diagnostics (plan §5.4), so a CES-off BAU case must
+    report its real physical clean share — never the gated resolver's
+    all-zeros.
+    """
+
+    def test_bau_disabled_config_still_credits(self):
+        # 1 gen first (repo pattern), then multi-fuel.
+        config = ScenarioConfig()  # federal_ces_enabled=False
+        self.assertTrue(
+            np.array_equal(
+                reporting_credit_fractions(config, ["nuclear"], [0.0]), [1.0]
+            )
+        )
+        fractions = reporting_credit_fractions(
+            config,
+            ["nuclear", "wind", "gas_cc_ccs", "gas_cc", "coal"],
+            [0.0, 0.0, 0.04, 0.37, 0.95],
+        )
+        np.testing.assert_allclose(
+            fractions, [1.0, 1.0, config.federal_ces_ccs_capture_fraction, 0.0, 0.0]
+        )
+
+    def test_none_config_uses_default_crediting(self):
+        fractions = reporting_credit_fractions(None, ["wind", "coal"], [0.0, 0.95])
+        np.testing.assert_allclose(fractions, [1.0, 0.0])
+
+    def test_cesa_ci_rule_applies_when_disabled(self):
+        config = ScenarioConfig(federal_ces_crediting="cesa_ci")
+        fractions = reporting_credit_fractions(
+            config,
+            # Efficient CCGT under the 0.45 line; inefficient above it.
+            ["nuclear", "gas_cc", "gas_cc"],
+            [0.0, 0.37, 0.50],
+        )
+        np.testing.assert_allclose(fractions, [1.0, 1.0 - 0.37 / 0.82, 0.0])
+
+    def test_unknown_fuel_name_credits_zero(self):
+        # Cached contexts are data, not config: a stray label is 0, not an error.
+        fractions = reporting_credit_fractions(
+            ScenarioConfig(), ["nuclear", "not_a_fuel"], [0.0, 0.0]
+        )
+        np.testing.assert_allclose(fractions, [1.0, 0.0])
+
+    def test_matches_gated_resolver_when_enabled(self):
+        fuels = ["nuclear", "wind", "gas_cc_ccs", "gas_cc", "coal"]
+        rates = [0.0, 0.0, 0.04, 0.37, 0.95]
+        for mode in ("clean_capture", "cesa_ci"):
+            config = ScenarioConfig(
+                federal_ces_enabled=True,
+                federal_ces_premium_usd_per_mwh=10.0,
+                federal_ces_crediting=mode,
+            )
+            fleet = _fleet(fuels, rates)
+            np.testing.assert_allclose(
+                reporting_credit_fractions(config, fuels, rates),
+                unit_credit_fractions(config, fleet),
+            )
 
 
 if __name__ == "__main__":

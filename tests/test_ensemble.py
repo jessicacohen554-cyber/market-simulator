@@ -15,6 +15,7 @@ from market_sim.config.constants import (
 )
 from market_sim.config.scenarios import ScenarioConfig
 from market_sim.ensemble import (
+    _SCALAR_METRICS,
     _aggregate_year,
     _distribution,
     export_ensemble_json,
@@ -241,6 +242,37 @@ class TestSummarizeEnsemble(_CacheBacked):
     def test_missing_member_raises(self):
         with self.assertRaises(FileNotFoundError):
             summarize_ensemble({2025: "deadbeefdeadbeef"}, self.iso)
+
+
+class TestCesScalarMetrics(_CacheBacked):
+    """W2-B: ``clean_share`` / ``negative_price_hours`` join the metric set.
+
+    Strictly additive — every pre-W2-B metric stays in ``_SCALAR_METRICS``
+    (the frozen §4.1 surface only gains rows) and the summary payload gains
+    a distribution for each new metric.
+    """
+
+    def test_scalar_metrics_additive(self):
+        for metric in (
+            "emissions_mt",
+            "avg_price",
+            "peak_price",
+            "curtailment_twh",
+            "storage_cycles",
+        ):
+            self.assertIn(metric, _SCALAR_METRICS)
+        self.assertIn("clean_share", _SCALAR_METRICS)
+        self.assertIn("negative_price_hours", _SCALAR_METRICS)
+
+    def test_distribution_carries_new_metrics(self):
+        payload = summarize_ensemble(self.members, self.iso)
+        year0 = payload["distribution"][str(START_YEAR)]
+        self.assertIn("clean_share", year0)
+        self.assertIn("negative_price_hours", year0)
+        # The seeded fleet is all-fossil with credited wind/solar pools, so
+        # the physical clean share sits strictly inside (0, 1).
+        self.assertGreater(year0["clean_share"]["mean"], 0.0)
+        self.assertLess(year0["clean_share"]["mean"], 1.0)
 
 
 if __name__ == "__main__":

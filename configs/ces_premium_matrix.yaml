@@ -1,0 +1,34 @@
+# National CES EAC-premium first-campaign ladder (W2-B, plan §5.4/§8 W4;
+# docs/handoffs/national-ces-eac-premium-plan-2026-07.md).
+#
+# Owner decision D8: horizon 2026-2050, first-run ladder {10, 20, 30} real
+# 2026$/MWh + BAU, `clean_capture` crediting ONLY (the ScenarioConfig default
+# mode — deliberately not set here; the parked cesa_ci variant ladder lives in
+# configs/ces_premium_matrix_ci.yaml). A constant real premium tracks
+# inflation in nominal terms automatically (escalation_real default 0 = the
+# owner-confirmed CPI-tracking path, D3); nominal display is post-processing
+# (results/export.py::real_to_nominal via scripts/report_ces_campaign.py
+# --nominal).
+#
+# Run (W4-A/W4-B, BLOCKED on the §7 screen-readiness gate / W3-R GO):
+#   market-sim matrix --config configs/scenarios/<iso>_ces_base_2026_2050.yaml \
+#       --matrix configs/ces_premium_matrix.yaml
+# then scripts/report_ces_campaign.py on the matrix out-dir.
+mode: cases
+
+cases:
+  # Business-as-usual reference leg: no federal CES. Every delta the campaign
+  # report emits is measured against this case.
+  BAU: {}
+
+  CES-10:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 10.0
+
+  CES-20:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 20.0
+
+  CES-30:
+    federal_ces_enabled: true
+    federal_ces_premium_usd_per_mwh: 30.0
