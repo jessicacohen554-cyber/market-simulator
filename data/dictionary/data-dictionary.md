@@ -343,8 +343,11 @@ Generator outages / available capacity. Schema:
 [`schema/outages.schema.yaml`](schema/outages.schema.yaml).
 
 - **Keys:** `plant_id`, `unit_id`, `interval_start_utc`
-- **Reconciles:** CAMPD-derived downtime, ERCOT curated unit-outage lists —
-  into `outage_mw` / `available_mw`.
+- **Reconciles:** CAMPD-derived per-unit downtime (`campd-unit-outages.csv`) and
+  ERCOT curated unit-outage lists into `outage_mw` / `available_mw`. **Unit-grain
+  only** since 2026-07-17 — the facility-summed source (`campd-outages.csv`, from
+  the deleted `scripts/derive_campd_outages.py`) was removed, so no `unit_id="ALL"`
+  rows are produced (the per-unit detector is the sole CAMPD outage source).
 
 | column | dtype | unit | nullable | description |
 |---|---|---|---|---|
