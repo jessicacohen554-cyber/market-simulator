@@ -16288,3 +16288,90 @@ no gate or threshold moved.
 Committed: the two derive scripts + the FINDING + this entry. NO build —
 lever authorization is the owner's call; the probe recipe, A-leg and
 report-back grid are pre-specified in FINDING §6.
+
+## 2026-07-17 — caiso-93: the overnight clean import depth BUILT, PROBED and REGISTERED as a KEEPER CANDIDATE (owner-authorized build, same session) — **C1 fuel-mix FLIPS FAIL→PASS (12/12, free 8/8) and C3a-2024 FLIPS PASS**, the overnight λ leg closes +3.4/+1.8/+3.6 → +1.9/+0.4/+1.9 with every pre-registered guard holding (belly/evening/C3c/WATCH flat-or-better, C2 held); fail set shrinks to {C3a-2025, C3c, C4}; keeper swap awaits the owner
+
+**Runs:** `2026-07-17-caiso-93-overnight-clean` (registered, KEEPER CANDIDATE,
+bundle `results/calibration/caiso93_overnight_clean`) vs the same-machine
+caiso-92 keeper repro (`caiso92_repro_A`, un-registered A-leg per the
+FINDING-caiso92b protocol). Both CAISO 2023+2024+2025, one invocation each
+(rule 16). Owner authorization for the build session-logged this session
+("yes I authorize", after the FINDING-caiso93 precondition evidence).
+
+**Mechanism (`caiso_dsw_overnight_clean`, default off — zero fitted
+scalars).** The caiso-92 keeper recipe + ONE delta: a `DSW_overnight_clean`
+tranche carrying the measured UNCONDITIONAL overnight (hod 0-5) WEIM
+clean-transfer depth on the south corridor — p95 measured WECC_DSW net import
+over ALL overnight hours (5,870/6,205/6,487 MW 2023/24/25; estimation gates
+CV 0.041 / LOYO ≤ 8.1 %, frozen thresholds,
+`derive_caiso_overnight_clean_depth.py`) — net of the shaped firm block AND
+the caiso-87 surplus tranche (overlap hours never double-carry), armed only
+on measured-hub hours (the 2023 Jan-Feb OASIS gap never arms — the closed
+winter lane protected by construction), EF 0, priced at the RAW measured
+Palo Verde hub with NO wheel (WEIM transfers pay no OATT point-to-point
+charge; the measured overnight spread ≈ raw hub corroborates —
+FINDING-caiso93 §3/§5). A capability, not a floor (pmin 0, no D-2 row);
+fossil rungs unchanged beyond the clean depth; corridor ATC envelope still
+caps delivered flow. Unit tests mirror the caiso-87 suite + the
+overlap-netting case (`tests/test_caiso_overnight_clean.py`, 231-test sweep
+green).
+
+**A/B (same machine, mechanism-only):**
+
+- **WHO SERVES THE NIGHT re-runs toward measured (the charter target):**
+  overnight CC_REGULAR +1.39/+2.11/+2.61 TWh over CEMS → **−0.54/−0.29/+0.58**;
+  overnight imports −1.36/−1.70/−3.03 under measured → +1.11/+1.51/+0.18 over.
+  Share basis (model CC/(CC+imports) vs measured 55/52/46 %): 60/60/57 % →
+  **51/49/47 %** — 2025 exact, 2023/24 now ~3 pp UNDER (a modest
+  over-rotation, the one blemish; the model overnight demand basis is
+  ~4.4 TWh below EIA-930's, so both legs cannot match levels simultaneously).
+- **The hod λ ladder:** overnight +3.4/+1.8/+3.6 → **+1.9/+0.4/+1.9** — closes
+  every year, NO undershoot (the disclosed 2024 raw-hub overshoot fear did
+  not materialize). Belly 11.6/10.1/8.6 → 11.6/10.2/8.9 and evening
+  −5.8/−4.0/−1.0 → −5.8/−4.1/−1.2: FLAT (scope guard held — the mechanism
+  touched only its own window).
+- **C1 grid:** CC_REGULAR +2.06/+5.24/+2.54 → **−0.30/+2.30/−0.47** TWh;
+  CT_PEAKER −2.95/−3.38/−1.90 → −3.03/−3.45/−2.01 (its under-run is the
+  separate lane, as pre-registered); CT_CHP/ST_GAS byte-flat.
+- **C3c:** IDENTICAL (2023 19 h all on Jan-13, the right day; 2024/25 0 h) —
+  no new tail on wrong days.
+- **WATCH months:** Feb-2023 +5.1 → +5.1 (the hub-gap guard is exact by
+  construction); Apr-2023 −3.0 → −3.2 and Jan-2024 −0.2 → −0.5 (drift ≤ 0.3);
+  May/Jun-2023/24 all improve; **Sep-Dec-2025 +8.4/+11.3/+8.8/+8.0 →
+  +7.5/+10.6/+7.2/+7.9 — the closed autumn lane IMPROVES without being
+  reopened** (overnight hours only).
+
+**Verdict (rubric v2.7, registered artifacts):** determination NOT-YET with
+the fail set **shrunk from the keeper's {C1, C3a(2024+2025), C3c, C4} to
+{C3a-2025, C3c, C4}**: **C1 PASS 12/12 (D-10 free 8/8)** — the C1
+CC-overnight cluster that chartered this whole lane (caiso-90 owner
+directive → caiso-91/91b/92b/93) is CLOSED; **C3a-2024 PASS** (keeper
++10.4 %), C3a-2025 +13.3 % (keeper +14.3 %, still FAIL); C2 PASS — the
+pre-registered principal risk did NOT flip (2025 gas reads −7.9 % on the
+preliminary-vintage diagnostic line, un-gated; disclosed); C3b PASS; C4 FAIL
+band-edge mixed (2023 r .839/NRMSE .327 vs .828/.319-class baseline, 2025
+r .850/.308); C5a CAVEAT commercial-band (−9.4/−9.2 — less CC → slightly
+lower CO2); C6/C7/C8 PASS, D-2 forced share 0.0-0.3 % (the tranche is a
+capability, no floor). Attestation: caiso-92 ledger verbatim + the zero-DOF
+measured delta appended; legitimacy diagnostics committed; parity check PASS
+(55 runs).
+
+**Disposition (rules 1/13/15): KEEPER CANDIDATE, swap owner-only.** Two gated
+criteria flip PASS with zero regressions, on a structural mechanism (real
+WEIM/EDAM GHG-attribution market design + a measured year-stable depth +
+frozen estimation gates + zero fitted scalars) whose every pre-registered
+guard held. Remaining fail set: C3a-2025 (+13.3 — the belly/autumn family,
+its own lanes), C3c (lane B, corridor-capped per caiso-85), C4 (band-edge).
+The 2023/24 ~3 pp overnight share over-rotation is disclosed as the
+candidate's one blemish. Keeper promotion is the owner's call.
+
+**Ops.** Solves in-session; the two invocations were launched concurrently
+(rule 12) but the box OOM-killed the A-leg at the 2025 tail (exit 137, both
+legs in-year simultaneously) — the B-leg survived and the A-leg was re-run
+alone cleanly. Lesson: this 15 GB box cannot carry TWO concurrent CAISO
+3-zone solves through a year tail; sequence them (the rule-12 ~2-run cap
+does not fit this box for CAISO). Registered per rule 15 (legitimacy
+diagnostics before dashboard_add_run, attestation clone + delta,
+`calibration_verdict.py --write-metrics`, parity check). Transport: API
+create_branch + git push onto the existing ref, blob-verified (rule 27).
+keepers.json NOT flipped (recommendation only).
