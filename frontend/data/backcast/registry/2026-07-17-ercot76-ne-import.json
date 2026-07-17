@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-17-ercot76-ne-import",
+ "label": "ercot76 ne import",
+ "date": "2026-07-17",
+ "shorthand": "ercot76-ne-import",
+ "definition": "ERCOT-76 NE-boundary asymmetric import rating on the ercot73-state-wall keeper recipe (zero ScenarioConfig deltas \u2014 the change is the iso_configs one-way link pair: NE_LOB export 1,300 MW measured limit-at-bind unchanged; import 1,788 MW = pooled 2023-2025 dark-hour maximum of measured EAST-zone load minus CAMPD NE local gross, the boundary's demonstrated carrying capability). Kills the 2024-05-07 h19/20 invented Northeast VOLL pair for the measured reason (reality imported >= 1,317 MW that evening; a GTC is an export stability limit, never an import rating). Zero fitted scalars (rules 13/14/23/26). Full-span 2023-2025 (rule 16). CANDIDATE (keeper decision the owner's; keeper at registration 2026-07-16-ercot73-state-wall): 2024 invented tail hours 7 -> 5 \u2014 the 2024-05-07 h19/20 Northeast VOLL pair dies for the measured reason (caught/missed unchanged); 2023 and 2025 sets and C3 byte-parity; 2024 C3a -3.1 -> -3.2%, C3b 0.141 -> 0.144, C3c 26 -> 24h vs RT 53 \u2014 entirely May-2024 -10.3 -> -10.8, the removed phantom exposing the standing May under-pricing (rule-14, the ERCOT-66 pattern); Aug 18-20-2024 guard holds (max 2,859, no shed).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-17-ercot76-ne-import.js",
+ "bundle": "results/calibration/ercot76_ne_import_fullspan"
+}
