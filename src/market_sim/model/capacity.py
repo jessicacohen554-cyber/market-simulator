@@ -210,14 +210,6 @@ def _default_build_zone(iso_config) -> str:
     return max(iso_config.zones, key=lambda z: z.load_share).name
 
 
-# Placeholder capacity factor for screening CCS retrofit economics -- a
-# representative mid-merit combined-cycle duty cycle.
-# TODO: use each unit's actual prior-year capacity factor once per-generator
-# dispatch is threaded through (it is available in the prior-year result).
-# Source: engineering judgment -- mid-merit gas CC.
-_RETROFIT_SCREEN_CF: float = 0.55
-
-
 def compute_attribute_revenue(
     fuel_type: str,
     generation_mwh: float,
@@ -1209,6 +1201,7 @@ def apply_economic_retirements(
     reserve_price_signal: np.ndarray | None = None,
     reserve_price_signal_slow: np.ndarray | None = None,
     reserve_position: float | None = None,
+    exempt_unit_ids: frozenset[str] = frozenset(),
 ) -> tuple[list[Generator], dict[str, int], list[dict]]:
     """Retire thermal units that persistently fail to cover fixed cost.
 
@@ -1332,6 +1325,14 @@ def apply_economic_retirements(
             net-CONE capacity payment (byte-identical); when supplied and the
             gate is on, the capacity payment slides along the ISO's published
             demand curve.
+        exempt_unit_ids: Unit ids excluded from this year's screen entirely
+            (no margin evaluation, no counter change). Used by
+            :func:`evolve_fleet` for units CCS-retrofitted THIS year (W2-C
+            joint choice): the just-converted unit's prior-year ``mc`` rows
+            price its old unabated cost basis, so screening it in the same
+            instant it spent the retrofit capex would be incoherent — it
+            re-enters the screen as ``gas_cc_ccs`` next year on its own
+            post-retrofit dispatch. Default empty ⇒ byte-identical.
 
     Returns:
         Tuple ``(survivors, loss_years, floor_retention_log)`` -- the fleet
@@ -1370,6 +1371,10 @@ def apply_economic_retirements(
 
     eligible: list[Generator] = []
     for g in fleet:
+        if g.unit_id in exempt_unit_ids:
+            # CCS-retrofitted this year (W2-C): decision already made; the
+            # unit re-enters the screen as gas_cc_ccs next year.
+            continue
         fom_field = _THERMAL_FOM.get(g.fuel_type)
         if fom_field is None:
             continue
@@ -1747,13 +1752,28 @@ def _emerging_lcoe(
         base_co2 = min(CO2_RATES["gas_cc"].values())
         captured = base_co2 * config.ccs_capture_rate
         residual = base_co2 * (1.0 - config.ccs_capture_rate)
+        # §45Q levelization over the credit window (W2-C, plan §11 Q2): the
+        # credit runs min(config.ira_45q_credit_window_years, book life)
+        # years from placed-in-service, so its $/MWh value is levelized over
+        # the full life at the screen's own discount rate —
+        # PV(window annuity)/PV(life annuity) = CRF(life)/CRF(window). None
+        # (indefinite extension) and an expired credit both leave the rate
+        # unscaled. This REPLACES the former un-windowed treatment, raising
+        # the effective new-build CCS LCOE (a deliberate behavior change:
+        # crediting 12 statutory years over a 30-year life, not 30).
+        q45 = ccus_45q_credit_per_mwh(captured, year, config)
+        if q45 > 0.0:
+            window_years = _ccs_45q_window_years(config, float(ccs["lifetime_yr"]))
+            q45 *= crf / _capital_recovery_factor(
+                config.real_discount_rate, window_years
+            )
         variable = (
             base_hr * ccs["heat_rate_penalty"] * gas_price_per_mmbtu
             + VOM["gas_cc"]
             + ccs["vom_adder"]
             + captured * config.co2_transport_storage_cost
             + residual * carbon_price
-            - ccus_45q_credit_per_mwh(captured, year, config)
+            - q45
         )
         return fixed / annual_mwh_per_kw + variable
 
@@ -2857,18 +2877,82 @@ def _adjust_retrofit_capex(base_capex_kw: float, cumulative_gw: float | None) ->
     return wright_cost(base_capex_kw, cumulative_gw, ref_gw, lr)
 
 
+def _ccs_45q_window_years(config: ScenarioConfig, horizon_years: float) -> float:
+    """Return the §45Q credit-earning span within a project horizon, in years.
+
+    ``min(config.ira_45q_credit_window_years, horizon_years)`` — the
+    statutory 12-year window from placed-in-service (26 U.S.C.
+    §45Q(a)(3)-(4)) clipped to the asset's own horizon (remaining life for
+    a retrofit, book life for a new build). ``None`` models the
+    owner-requested indefinite legislative extension: the credit runs for
+    the full horizon.
+    """
+    window = config.ira_45q_credit_window_years
+    if window is None:
+        return float(horizon_years)
+    return min(float(window), float(horizon_years))
+
+
+def _ccs_retrofit_payback_years(
+    capex_per_mw: float,
+    uplift_window: float,
+    uplift_post_window: float,
+    window_years: float,
+) -> float:
+    """Return the retrofit's cumulative-uplift payback in years.
+
+    Two-segment simple payback (plan §11 Q2 — the §45Q stream is truncated
+    at its credit window rather than credited undiminished forever): the
+    annual incremental uplift is ``uplift_window`` while §45Q pays
+    (years ``0..window_years``) and ``uplift_post_window`` afterwards.
+    Payback is the point where the cumulative uplift recovers the capex;
+    ``inf`` when it never does (in-window uplift non-positive, or the
+    credit expires before recovery and the post-window uplift cannot
+    finish the job). With no 45Q (expired / zero capture) the two uplifts
+    coincide and this degenerates to the classic ``capex / uplift``.
+    """
+    if uplift_window <= 0.0:
+        return float("inf")
+    if capex_per_mw <= uplift_window * window_years:
+        return capex_per_mw / uplift_window
+    if uplift_post_window <= 0.0:
+        return float("inf")
+    remaining_capex = capex_per_mw - uplift_window * window_years
+    return window_years + remaining_capex / uplift_post_window
+
+
+def _retrofit_price_row(
+    prices: np.ndarray, zone_names: list[str] | None, zone: str
+) -> np.ndarray | None:
+    """Return the hourly price row for ``zone``, or ``None`` if unmappable.
+
+    Single-row price arrays (one-zone systems and trivial fixtures) map
+    every unit to row 0; otherwise the unit's zone must resolve through
+    ``zone_names`` (the LP's zone ordering, threaded from the prior-year
+    results). An unmappable zone skips the candidate loudly-in-debug
+    rather than silently pricing it at the wrong bus.
+    """
+    if prices.shape[0] == 1:
+        return prices[0]
+    if zone_names and zone in zone_names:
+        idx = zone_names.index(zone)
+        if idx < prices.shape[0]:
+            return prices[idx]
+    return None
+
+
 def apply_ccs_retrofit(
     fleet: list[Generator],
-    prices: np.ndarray,
+    prices: np.ndarray | None,
     year: int,
     config: ScenarioConfig,
     iso: str,
     gas_price_per_mmbtu: float,
     carbon_price: float,
-    eac_price_ccs: float = 0.0,
+    zone_names: list[str] | None = None,
     cumulative: CumulativeDeployment | None = None,
 ) -> tuple[list[Generator], list[dict]]:
-    """Screen existing gas CC units for CCS retrofit economics.
+    """Screen existing gas CC units for CCS retrofit economics (W2-C).
 
     A retrofit converts a ``gas_cc`` generator to ``gas_cc_ccs`` in place.
     The unit keeps its zone, capacity and ``unit_id`` but gets:
@@ -2880,32 +2964,76 @@ def apply_ccs_retrofit(
     * ``emission_rate_co2 *= (1 - config.ccs_retrofit_capture_rate)``,
     * ``fuel_type`` changes to ``"gas_cc_ccs"``.
 
-    A unit retrofits when the simple payback of the retrofit capex is shorter
-    than its remaining useful life. Annual net savings per MW are::
+    **Decision basis (plan §11 resolution, owner 2026-07-17).** The screen
+    values the retrofit as the INCREMENTAL uplift of the post-retrofit
+    continuation over the unit's best unabated continuation, both as
+    attainable (pro-forma) inframarginal margins over the prior year's
+    hourly price signal — the same construction as the retirement screen
+    (rule 1), so anticipated utilization is endogenous instead of the
+    former fixed 0.55 screen CF. Per MW-yr::
 
-        carbon_avoided = (old_er - new_er) * carbon_price * cf * 8760
-        eac_revenue    = eac_price_ccs * cf * 8760
-        margin_loss    = (new_hr - old_hr) * gas_price * cf * 8760
-        vom_increase   = vom_adder * cf * 8760
-        annual_net_savings = carbon_avoided + eac_revenue
-                             - margin_loss - vom_increase
+        mc_unabated = hr·gas + vom + er·carbon
+        mc_post     = hr·(1+pen)·gas + vom + vom_adder
+                      + er_residual·carbon + captured·transport
+        m_unabated  = Σ_t max(0, p[t] − (mc_unabated − attr_unabated)) × avail
+        m_window    = Σ_t max(0, p[t] − (mc_post − attr_post − q45)) × avail
+        m_post      = Σ_t max(0, p[t] − (mc_post − attr_post)) × avail
+        uplift_window = m_window − m_unabated − ΔFOM
+        uplift_post   = m_post   − m_unabated − ΔFOM
 
-    Units younger than ``config.ccs_retrofit_min_remaining_life`` years from
-    end of life are skipped, candidates are ranked shortest-payback first
-    (efficient hosts win), and retrofits are applied up to the annual
-    throughput cap ``config.ccs_retrofit_max_gw_per_year``.
+    where ``attr_*`` is each state's attribute (certificate) price —
+    ``max(legacy eac_price_*, federal CES premium × the state's credit
+    fraction)`` via :func:`policy.federal_ces.effective_eac_price_for_unit`
+    (under ``cesa_ci`` the unabated state's own partial credit is netted
+    out by construction; under ``clean_capture`` it is 0) — and ``q45`` is
+    the §45Q credit on captured tonnes
+    (:func:`policy.ira.ccus_45q_credit_per_mwh`), a SEPARATE statutory
+    instrument that stacks on top of the certificate (plan §11 Q1),
+    eligibility-gated on ``config.ira_ccus_45q_last_year`` at the retrofit
+    year. The certificate and 45Q enter as *bid offsets* inside the
+    ``max(0, ·)`` so the screen anticipates the near-baseload utilization
+    a 45Q-driven CCS unit actually runs at. ``ΔFOM`` is the going-forward
+    fixed-cost delta between the two states (same FOM × multiplier fields
+    the retirement screen prices each state at). ``avail`` is the unit's
+    flat ``1 − EFORd`` availability — the same derate the LP's
+    availability arrays carry. Capacity/AS revenue is state-invariant for
+    the same MW and nets out of the incremental comparison.
+
+    **Hurdle.** A unit retrofits when it beats staying unabated
+    (``uplift_window > 0``) AND the two-segment windowed payback
+    (:func:`_ccs_retrofit_payback_years` — the §45Q stream truncated at
+    ``min(config.ira_45q_credit_window_years, remaining life)``, plan §11
+    Q2; ``None`` ⇒ indefinite extension) clears the unit's remaining life.
+    Retrofit can therefore fire on a healthy unit well before distress
+    ("retrofit sooner if it's more profitable than staying unabated") —
+    and inside :func:`evolve_fleet` this screen runs BEFORE the economic
+    retirement screen, so a distressed CCGT whose retrofit continuation
+    clears converts instead of exiting (the joint three-way choice,
+    plan §11 final block).
+
+    Units younger than ``config.ccs_retrofit_min_remaining_life`` years
+    from end of life are skipped, candidates are ranked shortest-payback
+    first (efficient hosts win), and retrofits are applied up to the
+    annual throughput cap ``config.ccs_retrofit_max_gw_per_year``;
+    cap-displaced candidates stay unabated on the normal loss-year
+    counter and are re-screened every year.
 
     Args:
         fleet: Current generator fleet.
-        prices: ``(n_zones, T)`` zonal price array from the prior year.
-            Reserved for a future per-unit capacity-factor estimate; the
-            current screen uses a representative capacity factor.
+        prices: ``(n_zones, T)`` zonal price signal from the prior year
+            (the capacity-screen ``price_signal``). ``None`` — no prior
+            dispatch — skips the screen entirely, the same rule as the
+            other price-driven capacity screens. Margins computed over a
+            shorter-than-8760 series are annualized by ``8760 / T``.
         year: Current simulation year.
         config: Scenario configuration.
         iso: ISO identifier (reserved for future per-ISO calibration).
         gas_price_per_mmbtu: Resolved gas price for this year.
         carbon_price: Resolved carbon price for this year ($/ton CO2).
-        eac_price_ccs: EAC price for CCS resources ($/MWh).
+        zone_names: LP zone ordering aligned with ``prices`` rows, from the
+            prior-year results. ``None`` is legal only for single-row price
+            arrays (trivial fixtures); multi-zone units that cannot be
+            mapped are skipped.
         cumulative: Global cumulative deployment tracker. When supplied,
             the retrofit capex follows the shared CCS Wright's-Law learning
             curve, and the retrofitted GW is added back to the tracker --
@@ -2913,13 +3041,24 @@ def apply_ccs_retrofit(
 
     Returns:
         Tuple ``(updated_fleet, retrofit_log)`` where ``retrofit_log`` is a
-        list of dicts recording each retrofit decision for diagnostics.
+        list of dicts recording each APPLIED retrofit for diagnostics
+        (``annual_net_savings_per_mw`` is the in-window incremental
+        uplift; the margin decomposition rides along).
     """
     if year < config.ccs_retrofit_available_year:
         return fleet, []
+    if prices is None:
+        # The economics-based screen values both continuations against the
+        # prior year's hourly price signal; with no prior dispatch there is
+        # no signal (e.g. the first simulated year).
+        return fleet, []
 
-    hours = float(HOURS_PER_YEAR)
-    cf = _RETROFIT_SCREEN_CF
+    prices = np.asarray(prices, dtype=float)
+    if prices.ndim == 1:
+        prices = prices[np.newaxis, :]
+    # Trivial fixtures screen over short series; production passes 8760.
+    annualize = float(HOURS_PER_YEAR) / prices.shape[1]
+
     # The capture island is the same equipment whether bolted onto an
     # existing plant or built new, so retrofit capex shares the new-build
     # CCS learning curve.
@@ -2928,6 +3067,15 @@ def apply_ccs_retrofit(
         cumulative.get("gas_cc_ccs") if cumulative else None,
     )
     retrofit_capex_per_mw = adjusted_capex_kw * 1000.0
+
+    # Going-forward fixed-cost delta between the two states, $/MW-yr — the
+    # same FOM × multiplier construction the retirement screen prices each
+    # state at, so the uplift stays consistent with the model's own
+    # per-state accounting.
+    delta_fom_per_mw_yr = (
+        config.fixed_om_gas_cc_ccs * config.retirement_fom_multiplier_gas_cc_ccs
+        - config.fixed_om_gas_cc * config.retirement_fom_multiplier_gas_cc
+    ) * 1000.0
 
     candidates: list[tuple[float, Generator, dict]] = []
     for gen in fleet:
@@ -2939,22 +3087,76 @@ def apply_ccs_retrofit(
         remaining_life = max(0, _THERMAL_PLANT_LIFE_YEARS - age)
         if remaining_life < config.ccs_retrofit_min_remaining_life:
             continue
+        price_row = _retrofit_price_row(prices, zone_names, gen.zone)
+        if price_row is None:
+            logger.debug(
+                "ccs retrofit screen: zone %r of unit %s not mappable onto "
+                "the %d-row price signal; skipping candidate",
+                gen.zone,
+                gen.unit_id,
+                prices.shape[0],
+            )
+            continue
 
         old_hr = gen.heat_rate
         new_hr = old_hr * (1.0 + config.ccs_retrofit_hr_penalty)
         old_er = gen.emission_rate_co2
         new_er = old_er * (1.0 - config.ccs_retrofit_capture_rate)
+        captured = old_er - new_er
 
-        # Annual economics per MW of capacity.
-        carbon_avoided = (old_er - new_er) * carbon_price * cf * hours
-        eac_revenue = eac_price_ccs * cf * hours
-        margin_loss = (new_hr - old_hr) * gas_price_per_mmbtu * cf * hours
-        vom_increase = config.ccs_retrofit_vom_adder * cf * hours
-        annual_net_savings = carbon_avoided + eac_revenue - margin_loss - vom_increase
-        if annual_net_savings <= 0.0:
+        # Full variable cost per state. Post-retrofit pays fuel at the
+        # penalized heat rate, the capture VOM adder, carbon on the residual
+        # rate only, and transport/storage on every captured tonne (the same
+        # per-tonne cost the new-build CCS LCOE carries — a stored tonne
+        # earning §45Q pays its way to the reservoir on either path).
+        mc_unabated = old_hr * gas_price_per_mmbtu + gen.vom + old_er * carbon_price
+        mc_post = (
+            new_hr * gas_price_per_mmbtu
+            + gen.vom
+            + config.ccs_retrofit_vom_adder
+            + new_er * carbon_price
+            + captured * config.co2_transport_storage_cost
+        )
+
+        # Per-state attribute (certificate) prices — max(legacy eac_price_*,
+        # premium × state credit fraction); the unabated state's cesa_ci
+        # partial credit is what makes the uplift INCREMENTAL, never gross.
+        attr_unabated = effective_eac_price_for_unit(config, "gas_cc", old_er, year)
+        attr_post = effective_eac_price_for_unit(config, "gas_cc_ccs", new_er, year)
+        # §45Q stacks on top of the certificate (separate instrument),
+        # eligibility-gated at the retrofit year.
+        q45_per_mwh = ccus_45q_credit_per_mwh(captured, year, config)
+
+        avail = max(0.0, 1.0 - gen.eford)
+        margin_unabated = (
+            float(np.maximum(price_row - (mc_unabated - attr_unabated), 0.0).sum())
+            * avail
+            * annualize
+        )
+        margin_window = (
+            float(
+                np.maximum(price_row - (mc_post - attr_post - q45_per_mwh), 0.0).sum()
+            )
+            * avail
+            * annualize
+        )
+        margin_post = (
+            float(np.maximum(price_row - (mc_post - attr_post), 0.0).sum())
+            * avail
+            * annualize
+        )
+
+        uplift_window = margin_window - margin_unabated - delta_fom_per_mw_yr
+        uplift_post = margin_post - margin_unabated - delta_fom_per_mw_yr
+        # Beats-staying-unabated gate: a retrofit whose in-window uplift is
+        # non-positive is never worth the capex.
+        if uplift_window <= 0.0:
             continue
 
-        payback_years = retrofit_capex_per_mw / annual_net_savings
+        window_years = _ccs_45q_window_years(config, float(remaining_life))
+        payback_years = _ccs_retrofit_payback_years(
+            retrofit_capex_per_mw, uplift_window, uplift_post, window_years
+        )
         if payback_years >= remaining_life:
             continue
 
@@ -2969,9 +3171,24 @@ def apply_ccs_retrofit(
                     "new_hr": new_hr,
                     "old_emission_rate": old_er,
                     "new_emission_rate": new_er,
-                    "annual_net_savings_per_mw": annual_net_savings,
+                    # In-window incremental uplift — the quantity the payback
+                    # recovers capex from (key name kept for the runner's
+                    # per-year retrofit logging).
+                    "annual_net_savings_per_mw": uplift_window,
                     "payback_years": payback_years,
                     "carbon_price": carbon_price,
+                    # Decision decomposition (W2-C): the three attainable
+                    # margins and the per-MWh credit stack behind them.
+                    "margin_unabated_per_mw_yr": margin_unabated,
+                    "margin_window_per_mw_yr": margin_window,
+                    "margin_post_window_per_mw_yr": margin_post,
+                    "uplift_post_window_per_mw_yr": uplift_post,
+                    "q45_usd_per_mwh": q45_per_mwh,
+                    "attr_post_usd_per_mwh": attr_post,
+                    "attr_unabated_usd_per_mwh": attr_unabated,
+                    "window_years": window_years,
+                    "delta_fom_per_mw_yr": delta_fom_per_mw_yr,
+                    "remaining_life_years": remaining_life,
                 },
             )
         )
@@ -3022,7 +3239,6 @@ def evolve_fleet(
     cumulative: CumulativeDeployment | None = None,
     gas_price_per_mmbtu: float = 0.0,
     carbon_price: float = 0.0,
-    eac_price_ccs: float = 0.0,
     events: dict | None = None,
     confirmed_exits: list[ConfirmedExit] | None = None,
     peak_demand_next: float | None = None,
@@ -3043,13 +3259,31 @@ def evolve_fleet(
        ``config.confirmed_exits_enabled``, default on),
     1. announced retirements (non-fossil within the data horizon only; announced
        fossil dates are a default no-op — the exogenous fossil channel is step 0),
-    2. economic retirements,
-    3. known additions (planned units with ``online_year == year``),
-    4. CCS retrofits (convert existing gas CC units to ``gas_cc_ccs``),
+    2. CCS retrofits (convert existing gas CC units to ``gas_cc_ccs``),
+    3. economic retirements,
+    4. known additions (planned units with ``online_year == year``),
     5. economic new entry (generation).
 
-    Retrofits run before new entry so a retrofitted CC displaces some of the
-    need for new-build CCS: the new-entry screen then sees the updated fleet.
+    Steps 2 and 3 are the JOINT retrofit-or-retire evaluation for
+    retrofit-eligible gas-CCs (W2-C, national-ces plan §11 final block),
+    still one pass (rule 10 — ordering, not iteration): the retrofit screen
+    runs FIRST, so a unit whose retrofit continuation beats staying
+    unabated and clears its windowed payback converts BEFORE the
+    retirement screen can exit it — a distressed CCGT is offered the
+    retrofit instead of the door, and a healthy one may convert early when
+    the §45Q + premium economics say so. A unit retires only when both
+    continuations fail: not-retrofitted units (uplift or payback failed,
+    or displaced by the 3 GW/yr cap) stay on the normal unabated
+    loss-year counter — a cap-displaced unit may still exit in a later
+    year if unabated keeps failing and the cap keeps binding. Units
+    retrofitted this year have their loss counters cleared and are exempt
+    from this year's retirement screen (the fresh capex decision IS the
+    year's decision); they re-enter it as ``gas_cc_ccs`` next year on
+    their own post-retrofit dispatch.
+
+    Retrofits also run before new entry so a retrofitted CC displaces some
+    of the need for new-build CCS: the new-entry screen sees the updated
+    fleet.
 
     The reshaped fleet is then re-aggregated into efficiency-bin
     representative units, keeping the next LP solve at ~36 thermal columns.
@@ -3062,9 +3296,10 @@ def evolve_fleet(
     screens so clean builds are economics-driven. Storage new entry is
     handled separately in the runner.
 
-    Steps that depend on a price signal -- economic retirements and
-    economic new entry -- are skipped when ``prior_results`` carries no
-    dispatch outcome (e.g. the first simulated year).
+    Steps that depend on a price signal -- CCS retrofits, economic
+    retirements and economic new entry -- are skipped when
+    ``prior_results`` carries no dispatch outcome (e.g. the first
+    simulated year).
 
     Args:
         fleet: The fleet at the start of the year.
@@ -3085,9 +3320,10 @@ def evolve_fleet(
             the new-entry screen to cost gas CC variable fuel.
         carbon_price: Carbon price in $/tCO2 for the year, passed to the
             new-entry screen to cost thermal carbon emissions and to the
-            CCS retrofit screen.
-        eac_price_ccs: EAC price for CCS resources in $/MWh, passed to the
-            CCS retrofit screen as additional per-MWh revenue.
+            CCS retrofit screen. (The retrofit screen's attribute revenue
+            is no longer a caller-passed price: it resolves internally via
+            ``policy.federal_ces.effective_eac_price_for_unit`` — one
+            delivery channel, W2-C.)
         events: Optional dict (see
             :func:`market_sim.results.evolution_ledger.new_events`) populated
             in place with the per-year capacity events — retirements
@@ -3299,7 +3535,52 @@ def evolve_fleet(
             storage_firm_by_zone=storage_by_zone,
         )
 
-    # 2. Economic retirements (needs the prior-year dispatch).
+    # 2. CCS retrofits: convert existing gas CC units to gas_cc_ccs. Runs
+    # BEFORE the economic retirement screen — the joint retrofit-or-retire
+    # choice (W2-C, plan §11 final block): a gas-CC whose retrofit
+    # continuation beats staying unabated and clears its windowed payback
+    # converts here, so the retirement screen never sees it as a distressed
+    # unabated unit; everything not converted (uplift/payback failed, or
+    # displaced by the 3 GW/yr cap) falls through to step 3 on the normal
+    # loss-year counter. Also runs before new entry so retrofits displace
+    # some new-build CCS demand. Same skip rule as the other price-driven
+    # screens: no prior-year price signal, no screen.
+    _pre_ccs = {g.unit_id: g.fuel_type for g in fleet} if _rec else None
+    fleet, retrofit_log = apply_ccs_retrofit(
+        fleet,
+        prices,
+        year,
+        config,
+        config.iso,
+        gas_price_per_mmbtu=gas_price_per_mmbtu,
+        carbon_price=carbon_price,
+        zone_names=screen_zone_names,
+        cumulative=cumulative,
+    )
+    # A retrofit is this year's capital decision for the unit: clear its
+    # unabated loss history (it re-enters the retirement screen as
+    # gas_cc_ccs next year on its own post-retrofit dispatch) and exempt it
+    # from this year's screen below.
+    _retrofitted_ids = frozenset(entry["unit_id"] for entry in retrofit_log)
+    for _uid in _retrofitted_ids:
+        loss_tracker.pop(_uid, None)
+    if _rec:
+        # A CCS retrofit is a fuel shift (gas_cc → gas_cc_ccs) on the same
+        # unit_id, not a new column. Detect by comparing fuel_type before/after.
+        _post_ccs = {g.unit_id: g for g in fleet}
+        events["ccs_retrofits"].extend(
+            {
+                "unit_id": uid,
+                "mw": float(_post_ccs[uid].pmax_mw),
+                "from_fuel": _pre_ccs[uid],
+                "to_fuel": _post_ccs[uid].fuel_type,
+            }
+            for uid in _pre_ccs
+            if uid in _post_ccs and _post_ccs[uid].fuel_type != _pre_ccs[uid]
+        )
+
+    # 3. Economic retirements (needs the prior-year dispatch). Units
+    # retrofitted in step 2 are exempt this year (see above).
     if fleet_arrays is not None and dispatch_result is not None and prices is not None:
         _econ_sink: dict = {} if _rec else None
         fleet, loss_tracker, floor_retention_log = apply_economic_retirements(
@@ -3323,6 +3604,7 @@ def evolve_fleet(
             reserve_price_signal=reserve_price_signal,
             reserve_price_signal_slow=reserve_price_signal_slow,
             reserve_position=reserve_position,
+            exempt_unit_ids=_retrofitted_ids,
         )
         if _rec:
             events["retirements"].extend(
@@ -3339,7 +3621,7 @@ def evolve_fleet(
                 sum(r["ucap_mw"] for r in floor_retention_log),
             )
 
-    # 3. Known additions: planned units coming online this year.
+    # 4. Known additions: planned units coming online this year.
     _planned_now = [g for g in planned if g.online_year == year]
     fleet = fleet + _planned_now
     if _rec:
@@ -3356,35 +3638,6 @@ def evolve_fleet(
                 "eia860_id": getattr(g, "plant_id", None) or g.unit_id,
             }
             for g in _planned_now
-        )
-
-    # 4. CCS retrofits: convert existing gas CC units to gas_cc_ccs. Runs
-    # before new entry so retrofits displace some new-build CCS demand.
-    _pre_ccs = {g.unit_id: g.fuel_type for g in fleet} if _rec else None
-    fleet, retrofit_log = apply_ccs_retrofit(
-        fleet,
-        prices,
-        year,
-        config,
-        config.iso,
-        gas_price_per_mmbtu=gas_price_per_mmbtu,
-        carbon_price=carbon_price,
-        eac_price_ccs=eac_price_ccs,
-        cumulative=cumulative,
-    )
-    if _rec:
-        # A CCS retrofit is a fuel shift (gas_cc → gas_cc_ccs) on the same
-        # unit_id, not a new column. Detect by comparing fuel_type before/after.
-        _post_ccs = {g.unit_id: g for g in fleet}
-        events["ccs_retrofits"].extend(
-            {
-                "unit_id": uid,
-                "mw": float(_post_ccs[uid].pmax_mw),
-                "from_fuel": _pre_ccs[uid],
-                "to_fuel": _post_ccs[uid].fuel_type,
-            }
-            for uid in _pre_ccs
-            if uid in _post_ccs and _post_ccs[uid].fuel_type != _pre_ccs[uid]
         )
 
     # 5. Economic new entry (needs a price signal). Clean technologies see
