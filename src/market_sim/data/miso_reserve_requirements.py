@@ -10,6 +10,14 @@ reserve MW MISO actually cleared, from the masked real-time cleared-offers
 market report (``data/raw/MISO-AS/asm_rt_cleared_mw_<year>.parquet``,
 ``scripts/fetch_miso_asm.py``).
 
+The loader also emits a ``"MISO-Midwest"`` leg (cleared sum over the two
+Midwest ASM regions {North, Central}) — the measured basis of the Midwest
+sub-regional reserve-holding family (``ScenarioConfig.
+miso_midwest_subregional_reserves``, the engagement-depth lane, miso-71). It is
+the same measured-cleared construction, clock, and admissibility as the
+market-wide and South legs; measured Midwest + measured South = measured
+market by construction (the sum over regions IS the market leg).
+
 Admissibility (CLAUDE.md rule #13): the cleared reserve MW is a measured
 ancillary-service power reservation — a procurement *quantity*, never a
 price — with a forward analogue: forecast years keep the existing
@@ -28,9 +36,20 @@ Known basis caveats (documented, not hidden):
   shortage interval cleared < requirement, so the requirement is understated
   in exactly those (rare — the IMM counts a handful of intervals per year)
   hours. MISO does not publish the historical hourly requirement series; the
-  cleared series is the closest measured quantity.
-* The report is real-time; the day-ahead scheduled-reserve series is not
-  published at hourly grain.
+  cleared series is the closest measured quantity. Quantified on the Midwest
+  leg (miso-71 design §3): the cleared series dips to 957 MW (Jun-23/24-2025)
+  and 851 MW (Jul-28/29-2025) against a ~2,165 MW 2025 mean — the deep-window
+  event hours where cleared understates the true requirement. Any construction
+  that undoes the dip (trailing-max smoothing, window-scoped floors) would be
+  residual-fitting around a shortage and is refused (rules 1/13); the
+  understatement is a ledgered lower-bound caveat, not "fixed" here.
+* The report is real-time (the adopted basis). MISO DOES publish a day-ahead
+  cleared-offers report at hourly grain (``YYYYMMDD_asm_da_co.zip``, per-unit
+  RegMW/SpinMW/SuppMW/STRMW + MCPs by region, EST) — correcting the stale
+  miso-56 caveat that claimed no hourly DA series exists. A DA-basis intake is
+  a possible future refinement of the SAME cleared-basis family; the RT basis
+  is retained as adopted (switching it is out of the miso-71 lane's scope — it
+  would re-litigate miso-56 and change all three legs at once).
 * Products summed are ``reg + spin + supp`` — the Market-wide Operating
   Reserve construct (regulating + contingency, BPM-002). Short-Term Reserve
   (``str``) is a separate 30-minute product outside the OR requirement and is
@@ -67,6 +86,13 @@ OR_PRODUCTS: tuple[str, ...] = ("reg", "spin", "supp")
 #: label in the cleared-offers report.
 SOUTH_ZONE: str = "MISO-South"
 SOUTH_REGION: str = "South"
+
+#: The two ASM cleared-offers regions that make up the Midwest sub-region
+#: (reserve_config.MISO_MIDWEST_ZONES): North + Central. The Midwest leg's
+#: measured OR reservation is their cleared reg+spin+supp sum — the basis of
+#: the miso_midwest_subregional_reserves family (miso-71 design §2a).
+MIDWEST_REGIONS: tuple[str, ...] = ("North", "Central")
+MIDWEST_ZONE: str = "MISO-Midwest"
 
 #: Hard error above this many missing hours per series (posting gaps in the
 #: source are 1-2 hours/year; anything larger is a data problem, not a gap).
@@ -112,9 +138,11 @@ def load_miso_reserve_requirements(
             :func:`cleared_mw_path`.
 
     Returns:
-        ``{"market": (hours,) array, "MISO-South": (hours,) array}`` — the
-        measured market-wide (all regions summed) and South-region OR
-        reservation MW (``reg + spin + supp``).
+        ``{"market": (hours,) array, "MISO-South": (hours,) array,
+        "MISO-Midwest": (hours,) array}`` — the measured market-wide (all
+        regions summed), South-region, and Midwest (North+Central summed) OR
+        reservation MW (``reg + spin + supp``). By construction
+        ``MISO-Midwest + MISO-South == market`` in every fully-covered hour.
 
     Raises:
         FileNotFoundError: The intake parquet is absent — the
@@ -151,6 +179,7 @@ def load_miso_reserve_requirements(
     for key, sub in (
         ("market", df),
         (SOUTH_ZONE, df[df["region"] == SOUTH_REGION]),
+        (MIDWEST_ZONE, df[df["region"].isin(MIDWEST_REGIONS)]),
     ):
         series = np.full(int(hours), np.nan)
         hourly = sub.groupby("_hour")["cleared_mw"].sum()
