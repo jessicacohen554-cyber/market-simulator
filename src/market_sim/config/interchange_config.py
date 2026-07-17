@@ -58,6 +58,10 @@ IMPORT_TRANCHE_EF: dict[str, dict[str, float]] = {
         # attribution assigns clean surplus resources to CAISO transfers, so
         # the tranche pays no border carbon (see the depth block below).
         "DSW_surplus_clean": 0.0,
+        # Overnight WEIM clean transfer (caiso-93): same attribution — the
+        # measured overnight CAISO−PaloVerde spread carries no wedge in
+        # 93-99 % of ALL overnight hours (FINDING-caiso93 §3).
+        "DSW_overnight_clean": 0.0,
     },
 }
 
@@ -73,6 +77,14 @@ CAISO_IMPORT_DELIVERY_BASIS: dict[str, tuple[float, float]] = {
     # Surplus-hour WEIM clean transfer (caiso-87): same Path-46/WOR physical
     # wheel as the other desert-SW rungs.
     "DSW_surplus_clean": (0.03, 4.0),
+    # Overnight WEIM clean transfer (caiso-93): NO wheel. WEIM/EDAM transfers
+    # use available transmission without an OATT point-to-point wheeling
+    # charge (CAISO EIM design — transfers are financially settled dispatch,
+    # not scheduled wheels), and the measured overnight record corroborates
+    # it: actual CAISO clears at ≈ the RAW Palo Verde hub (the −$4.5…−5.1
+    # median spread vs the delivered ×1.03+$4 parity ≈ exactly the wheel;
+    # FINDING-caiso93 §3/§5). The scheduled-import rungs above keep theirs.
+    "DSW_overnight_clean": (0.0, 0.0),
 }
 
 # ---------------------------------------------------------------------------
@@ -128,6 +140,59 @@ CAISO_DSW_SURPLUS_CLEAN_DEPTH_STATIC: float = 5192.0  # pooled 2023-2025 mean
 # Remote-CCGT VOM for the trigger floor ($/MWh) — the same representative
 # gas-CC VOM the soft-month floor decomposition used (FINDING-caiso82 §1).
 CAISO_DSW_SURPLUS_REMOTE_VOM: float = 2.5
+
+# ---------------------------------------------------------------------------
+# CAISO south-corridor OVERNIGHT clean import depth (caiso-93,
+# ``ScenarioConfig.caiso_dsw_overnight_clean``, default off;
+# FINDING-caiso93-overnight-no-wedge-2026-07-17 — the FINDING-caiso92b §6
+# import-side redirect, owner-authorized build 2026-07-17).
+#
+# MECHANISM: overnight (hod 0-5) the measured CAISO−PaloVerde spread carries
+# NO unspecified-import carbon wedge in 93-99 % of ALL overnight hours
+# (median DA spread −4.5…−5.1 $/MWh vs delivered parity, three years, both
+# bases — FINDING-caiso93 §2-3): the marginal overnight import is a WEIM/EDAM
+# transfer attributed to the West's overnight non-emitting surplus (NW
+# hydro + wind — the PNW hub's negative overnight prints), so it pays no
+# border carbon even while gas sets the HUB price. The model instead prices
+# every incremental overnight DSW MW at hub + the +$12-15 wedge — parity with
+# domestic CC — and serves the overnight residual with CC where reality
+# imports (FINDING-caiso92b: CC over-run +1.4/+2.1/+2.6 TWh ≈ import
+# under-run). The caiso-87 surplus tranche cannot cover this: its
+# hub-below-gas-floor trigger fires in only 1.2-3.6 % of 2024/25 overnight
+# hours (the no-wedge state overnight is UNCONDITIONAL, not
+# hub-state-gated — FINDING-caiso93 §3).
+#
+# STATE (mechanical, forward-reproducible): hour t is overnight iff
+# hod(t) ≤ CAISO_OVERNIGHT_CLEAN_HOD_MAX — the persistent WEIM overnight
+# clean-transfer regime, an hod window fixed upstream by the phenomenon's
+# charter (FINDING-caiso91c/92b, set before any spread was measured), not a
+# fitted window. Armed only on measured-hub hours (the 2023 Jan-Feb OASIS
+# gap's reference fill is pricing continuity, not clean-attribution
+# evidence — gap hours stay 0 MW, preserving the closed winter lane).
+#
+# DEPTH (measured, year-stable): p95 of the measured WECC_DSW corridor net
+# import (EIA-930 CISO DIBAs, model clock) over ALL overnight hours:
+#     2023: 5,870 MW · 2024: 6,205 MW · 2025: 6,487 MW
+# Estimation-stage honesty gates (caiso-81/86/87/88 precedent, run
+# 2026-07-17 in scripts/derive_caiso_overnight_clean_depth.py): CV 0.041
+# (≤0.20 PASS); LOYO (mean-of-other-two) worst 8.1 % (≤25 % PASS) — tighter
+# than the caiso-87 midday depth's own gates (0.056 / 12.5 %). The static
+# entry is the pooled mean (persistent WEIM market structure); backcast
+# years ride their own measured depth (the caiso-80/82 construction class).
+# Zero fitted scalars. Pricing: RAW measured Palo Verde hub, EF 0, no wheel
+# (see CAISO_IMPORT_DELIVERY_BASIS above — WEIM transfers pay no OATT
+# point-to-point charge, corroborated by the measured overnight spread).
+# ---------------------------------------------------------------------------
+CAISO_DSW_OVERNIGHT_CLEAN_NAME: str = "DSW_overnight_clean"
+CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_BY_YEAR: dict[int, float] = {
+    2023: 5870.0,
+    2024: 6205.0,
+    2025: 6487.0,
+}
+CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_STATIC: float = 6187.0  # pooled 2023-2025 mean
+# Overnight window upper hod (inclusive) — hod 0-5, the FINDING-caiso91c/92b
+# overnight definition (fixed upstream of the spread measurement).
+CAISO_OVERNIGHT_CLEAN_HOD_MAX: int = 5
 
 # IMPORT_TRANCHES / EXPORT_TRANCHES entries: (name, capacity MW, $/MWh).
 #
@@ -412,6 +477,7 @@ CAISO_IMPORT_TRANCHE_HUB: dict[str, str] = {
     "DSW_CT": "PALOVRDE",
     "WECC_scarcity": "PALOVRDE",
     "DSW_surplus_clean": "PALOVRDE",  # caiso-87 surplus-clean depth tranche
+    "DSW_overnight_clean": "PALOVRDE",  # caiso-93 overnight clean depth tranche
 }
 
 # CISO DIBA → corridor, split geographically at Path-15.
@@ -1188,6 +1254,11 @@ class InterchangeSpec:
     # capacity and armed hourly by
     # transmission.inject_caiso_dsw_surplus_clean at the injection seam.
     caiso_surplus_clean: bool = False
+    # CAISO per-hub only: build the south-corridor OVERNIGHT clean depth
+    # tranche (caiso-93; see the CAISO_DSW_OVERNIGHT_CLEAN_* block above).
+    # Resolved from ScenarioConfig.caiso_dsw_overnight_clean; zero capacity at
+    # build, armed hourly by transmission.inject_caiso_dsw_overnight_clean.
+    caiso_overnight_clean: bool = False
 
 
 def get_interchange_spec(config, iso: str, year: int | None = None) -> InterchangeSpec:
@@ -1346,6 +1417,9 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
         caiso_surplus_clean=(
             caiso_per_hub and getattr(config, "caiso_dsw_surplus_clean", False)
         ),
+        caiso_overnight_clean=(
+            caiso_per_hub and getattr(config, "caiso_dsw_overnight_clean", False)
+        ),
     )
 
 
@@ -1395,7 +1469,9 @@ def build_interchange_fleet(
 
         gens.extend(
             build_caiso_per_hub_intertie(
-                border_carbon_per_mwh, surplus_clean=spec.caiso_surplus_clean
+                border_carbon_per_mwh,
+                surplus_clean=spec.caiso_surplus_clean,
+                overnight_clean=spec.caiso_overnight_clean,
             )
         )
     elif spec.caiso_mode == "bidir":
