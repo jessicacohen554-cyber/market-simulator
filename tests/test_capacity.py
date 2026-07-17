@@ -1464,22 +1464,36 @@ class TestForecastPoolRequirement(unittest.TestCase):
         self.assertTrue(all(r["y_unit"] == "fraction_of_peak_ucap" for r in rows))
 
     def test_published_fpr_used_for_matching_delivery_year(self):
+        from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+        )
+
         cfg = ScenarioConfig(iso="PJM")
         peak = 160_560.0
-        # Model year 2026 -> delivery 2026/2027 -> published FPR 0.9170.
+        # Model year 2026 -> delivery 2026/2027 -> published FPR 0.9170, on
+        # the DR-netted firm peak (W2-D: PJM adequacy side-registries).
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
         self.assertAlmostEqual(
             resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2026),
-            peak * 0.9170,
+            peak * (1.0 - dr) * 0.9170,
             places=3,
         )
 
     def test_falls_back_when_no_published_fpr(self):
+        from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+        )
+
         cfg = ScenarioConfig(iso="PJM")
         peak = 160_560.0
         # Model year 2030 -> delivery 2030/2031 -> no published FPR -> the
-        # (1 + PRM) x icap_to_ucap_ratio fallback (byte-identical to pre-R2).
+        # (1 + PRM) x icap_to_ucap_ratio fallback (byte-identical to pre-R2),
+        # on the DR-netted firm peak.
+        dr = ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"]
         ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["PJM"]
-        expected = peak * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["PJM"]) * ratio
+        expected = (
+            peak * (1.0 - dr) * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO["PJM"]) * ratio
+        )
         self.assertIsNone(resolve_forecast_pool_requirement("PJM", 2030))
         self.assertAlmostEqual(
             resolve_adequacy_requirement_mw(cfg, "PJM", peak, 2030),
@@ -1505,6 +1519,56 @@ class TestForecastPoolRequirement(unittest.TestCase):
             resolve_adequacy_requirement_mw(cfg, "MISO", peak, 2026),
             resolve_adequacy_requirement_mw(cfg, "MISO", peak),
             places=6,
+        )
+
+
+class TestPJMAdequacySideRegistries(unittest.TestCase):
+    """W2-D (gap G10 / W1-B B1): PJM DR + CIL firm-import intake.
+
+    Both values are PJM's published 2026/2027 BRA parameters (BRA Report,
+    posted 2025-07-22) — never a number tuned to clear I7 (rules 5/13). The
+    DR entry is a documented rule-14 reconciliation: PJM counts DR as
+    supply-side UCAP, so the registry's peak-netting fraction is DR UCAP
+    divided by the UCAP-basis RTO Reliability Requirement (= peak x FPR),
+    which makes the netted credit reproduce PJM's own supply-side counting
+    exactly under the published-FPR path.
+    """
+
+    def test_dr_fraction_reconstructs_published_bra_numbers(self):
+        from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
+            ADEQUACY_EXTERNAL_TIE_FIRM_MW,
+        )
+
+        # DR cleared 5,795 MW UCAP (Table 6, RPM + FRR-committed) on the
+        # 146,105 MW UCAP RTO Reliability Requirement (p.3).
+        self.assertAlmostEqual(
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO["PJM"] * 146_105.0,
+            5_795.0,
+            places=6,
+        )
+        # Capacity imports cleared 1,281.7 MW UCAP (Table 7, CIL framework).
+        self.assertEqual(ADEQUACY_EXTERNAL_TIE_FIRM_MW["PJM"], 1_281.7)
+
+    def test_requirement_netting_reproduces_pjm_supply_side_dr(self):
+        # The rule-14 reconciliation identity: at PJM's own forecast peak
+        # (146,105 / 0.9170 = 159,329 MW) under the published-FPR path, the
+        # DR-netted requirement equals PJM's own construction — Reliability
+        # Requirement minus supply-side DR UCAP.
+        cfg = ScenarioConfig(iso="PJM")
+        pjm_peak = 146_105.0 / 0.9170
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "PJM", pjm_peak, 2026),
+            146_105.0 - 5_795.0,
+            places=3,
+        )
+
+    def test_accredited_firm_includes_pjm_tie_imports(self):
+        from market_sim.model.capacity import accredited_firm_capacity_mw
+
+        # An empty fleet accredits exactly the cleared BRA import UCAP.
+        self.assertAlmostEqual(
+            accredited_firm_capacity_mw([], iso="PJM"), 1_281.7, places=6
         )
 
 
@@ -1686,11 +1750,12 @@ class TestReserveMarginBuild(unittest.TestCase):
         the analytic value below. (ERCOT itself is no longer at parity with
         the bare scalar: its CDR basis nets load-side products and counts
         the new CT at rating — accreditation audit 2026-07-06.) PJM is
-        cleared from BOTH the PRM registry and the ICAP/UCAP ratio registry
-        (stage-5 §6) so this isolates the true full-fallback case — an ISO
-        absent from every adequacy registry.
+        cleared from the PRM registry, the ICAP/UCAP ratio registry
+        (stage-5 §6) AND the DR-netting registry (W2-D) so this isolates the
+        true full-fallback case — an ISO absent from every adequacy registry.
         """
         from market_sim.config.constants import (
+            ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO,
             EFORD,
         )
         from market_sim.model.capacity import apply_reserve_margin_build
@@ -1702,9 +1767,13 @@ class TestReserveMarginBuild(unittest.TestCase):
             mock.patch.dict(
                 PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO, clear=False
             ) as ratio_registry,
+            mock.patch.dict(
+                ADEQUACY_DEMAND_RESPONSE_FRACTION_BY_ISO, clear=False
+            ) as dr_registry,
         ):
             del registry["PJM"]
             del ratio_registry["PJM"]
+            del dr_registry["PJM"]
             _, built_fallback = apply_reserve_margin_build(
                 [],
                 firm_capacity_mw=5000.0,
