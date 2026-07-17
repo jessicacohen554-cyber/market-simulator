@@ -3624,6 +3624,70 @@
       "flags": []
     },
     {
+      "param_id": "scenario.ccs_capture_rate",
+      "display_name": "Ccs Capture Rate",
+      "value": 0.9,
+      "unit": "fraction",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "NETL Cost & Performance Baseline for Fossil Energy Plants Rev 4 (2022), Case B31B — 90% amine post-combustion capture on a gas CCGT. Citation moved from the deleted dead CCUS_PARAMS[\"gas_cc_ccs_90\"][\"capture_rate\"] key (ces-ci-crediting-audit-2026-07.md §3.3; rule 26).",
+      "source_date": "2022",
+      "page_or_table": "NETL Rev 4 Case B31B",
+      "url": "",
+      "notes": "Engineering capture fraction for NEW-BUILD CCS (sets the entrant's residual CI and the 45Q captured-tonnes basis in the new-entry LCOE). Distinct from ccs_retrofit_capture_rate (retrofit engineering) and federal_ces_ccs_capture_fraction (policy crediting). B31B's 1.16 HR penalty is physically coupled to 90% capture — sweeps of this field alone stretch that design point.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-17",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.co2_transport_storage_cost",
+      "display_name": "Co2 Transport Storage Cost",
+      "value": 15.0,
+      "unit": "$/tCO2",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "NETL 2022 (Rev 4) transport + saline storage, Gulf Coast basis — pipeline plus injection cost per stored tonne (same basis as ccus_params.gas_cc_ccs_90.co2_transport_storage).",
+      "source_date": "2022",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Charged per captured tonne by BOTH the new-build CCS LCOE and, since W2-C, the CCS retrofit screen's post-retrofit cost basis (a stored tonne earning §45Q pays its transport/storage on either path).",
+      "old_repo_location": "",
+      "last_verified": "2026-07-17",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.ira_ccus_45q_last_year",
+      "display_name": "Ira Ccus 45Q Last Year",
+      "value": 2032,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "§45Q eligibility deadline proxy: qualified facilities must begin construction before 2033-01-01 (26 U.S.C. §45Q(d)(1); IRA 2022 Pub. L. 117-169 §13104; OBBBA 2025 preserved 45Q — ces-ci-crediting-audit-2026-07.md §4.4). Evaluated at a project's COMMIT year; never truncates an earned credit stream (the window is scenario.ira_45q_credit_window_years).",
+      "source_date": "2022-08",
+      "page_or_table": "ces-ci-crediting-audit-2026-07.md §3.3, §4.4",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-17",
+      "flags": []
+    },
+    {
+      "param_id": "scenario.ira_45q_credit_window_years",
+      "display_name": "Ira 45Q Credit Window Years",
+      "value": 12,
+      "unit": "years",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "26 U.S.C. §45Q(a)(3)-(4) as amended by IRA 2022 (Pub. L. 117-169 §13104): the credit is paid for the 12-year period beginning on the date the carbon capture equipment is originally placed in service. OBBBA 2025 (Pub. L. 119-21 §70522) left the window unchanged (ces-ci-crediting-audit-2026-07.md §4.4).",
+      "source_date": "2022-08",
+      "page_or_table": "ces-ci-crediting-audit-2026-07.md §4.4",
+      "url": "https://uscode.house.gov/view.xhtml?req=granuleid:USC-prelim-title26-section45Q",
+      "notes": "W2-C (national-ces-eac-premium-plan §11 Q2). None models an indefinite legislative extension (owner-requested scenario). Consumed by the CCS retrofit screen (two-segment windowed payback) and the new-build CCS LCOE (credit levelized over min(window, life) at the screen discount rate). Cache-key-neutral at the default 12. Registered per plan G8 checklist.",
+      "old_repo_location": "",
+      "last_verified": "2026-07-17",
+      "flags": []
+    },
+    {
       "param_id": "adequacy_demand_response_fraction_by_iso.ERCOT",
       "display_name": "Adequacy Demand Response Fraction By Iso / Ercot",
       "value": 0.058,
@@ -4469,24 +4533,6 @@
       "tier": 2,
       "source": "$/kW installed. NREL ATB 2024",
       "source_date": "2024",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
-      ]
-    },
-    {
-      "param_id": "ccus_params.gas_cc_ccs_90.capture_rate",
-      "display_name": "Ccus Params / Gas Cc Ccs 90 / Capture Rate",
-      "value": 0.9,
-      "unit": "",
-      "domain": "Supply Stack",
-      "tier": 2,
-      "source": "fraction of CO2 captured. NETL 2022 Case B31B",
-      "source_date": "2022",
       "page_or_table": "",
       "url": "",
       "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
@@ -17331,41 +17377,41 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "DE",
-          "RI",
-          "VT",
-          "NJ",
           "CT",
-          "VA",
-          "ME",
-          "NY",
-          "NH",
+          "DE",
+          "MA",
           "MD",
-          "MA"
+          "ME",
+          "NH",
+          "NJ",
+          "NY",
+          "RI",
+          "VA",
+          "VT"
         ],
         "2024": [
-          "DE",
-          "RI",
-          "VT",
-          "NJ",
           "CT",
-          "ME",
-          "NY",
-          "NH",
+          "DE",
+          "MA",
           "MD",
-          "MA"
+          "ME",
+          "NH",
+          "NJ",
+          "NY",
+          "RI",
+          "VT"
         ],
         "2025": [
-          "DE",
-          "RI",
-          "VT",
-          "NJ",
           "CT",
-          "ME",
-          "NY",
-          "NH",
+          "DE",
+          "MA",
           "MD",
-          "MA"
+          "ME",
+          "NH",
+          "NJ",
+          "NY",
+          "RI",
+          "VT"
         ]
       },
       "unit": "",
@@ -19147,25 +19193,6 @@
       ]
     },
     {
-      "param_id": "scenario.ccs_capture_rate",
-      "display_name": "Ccs Capture Rate",
-      "value": 0.9,
-      "unit": "",
-      "domain": "Supply Stack",
-      "tier": 2,
-      "source": "fraction of CO2 captured by CCUS",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
-    },
-    {
       "param_id": "scenario.ccs_retrofit_available_year",
       "display_name": "Ccs Retrofit Available Year",
       "value": 2028,
@@ -19418,25 +19445,6 @@
       "domain": "Supply Stack",
       "tier": 2,
       "source": "Per-limb run-config overrides for the generic floor, keyed \"<ZONE>:<CLASS>:<driver>\" -> {\"enabled\"?: bool, \"floor_pct\"?: float, \"threshold\"?: float}. Applied to the registry specs at run time via iso_configs.apply_reliability_floor_overrides before the engine runs, so a single limb can be toggled or re-tuned (e.g. --floor-disable ZONE:CLASS) without editing the registry. Empty = registry defaults verbatim.",
-      "source_date": "",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated",
-        "needs-citation"
-      ]
-    },
-    {
-      "param_id": "scenario.co2_transport_storage_cost",
-      "display_name": "Co2 Transport Storage Cost",
-      "value": 15.0,
-      "unit": "",
-      "domain": "Storage",
-      "tier": 2,
-      "source": "$/tCO2 for captured CO2",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -23601,24 +23609,6 @@
       "flags": [
         "auto-generated",
         "needs-citation"
-      ]
-    },
-    {
-      "param_id": "scenario.ira_ccus_45q_last_year",
-      "display_name": "Ira Ccus 45Q Last Year",
-      "value": 2032,
-      "unit": "",
-      "domain": "Supply Stack",
-      "tier": 2,
-      "source": "§45Q CCUS credit: extended but phasing out post-2032.",
-      "source_date": "2032",
-      "page_or_table": "",
-      "url": "",
-      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
-      "old_repo_location": "",
-      "last_verified": "",
-      "flags": [
-        "auto-generated"
       ]
     },
     {
