@@ -373,6 +373,40 @@ class TestApplyStorageNewEntry(unittest.TestCase):
         )
         self.assertGreater(self._total_mw(result), self._total_mw(existing))
 
+    def test_miso_builds_storage_registry_gap_closed(self):
+        # MISO is a registered ISO that previously had no ceiling/annual-cap
+        # entry, so its storage silently built zero. With both registries
+        # populated, a high-spread signal now clears entry like any other ISO.
+        cfg = ScenarioConfig(iso="MISO")
+        iso = get_iso_config("MISO")
+        existing = build_default_storage(iso, cfg)
+        result = apply_storage_new_entry(
+            existing, self._high_spread_prices(), 2027, cfg, "MISO"
+        )
+        self.assertGreater(self._total_mw(result), self._total_mw(existing))
+
+    def test_missing_registry_iso_fails_loud(self):
+        # A registered ISO absent from the storage registries must raise, not
+        # silently build zero (mirrors the thermal QUEUE_CAP_GW guard) — so a
+        # newly added ISO cannot slip through with no storage entry.
+        from unittest import mock
+
+        from market_sim.model import storage as storage_mod
+
+        iso = get_iso_config("MISO")
+        existing = build_default_storage(iso, ScenarioConfig(iso="MISO"))
+        patched = dict(storage_mod.STORAGE_DEPLOYMENT_CEILING_MW)
+        patched.pop("MISO")
+        with mock.patch.object(storage_mod, "STORAGE_DEPLOYMENT_CEILING_MW", patched):
+            with self.assertRaises(KeyError):
+                apply_storage_new_entry(
+                    existing,
+                    self._high_spread_prices(),
+                    2027,
+                    ScenarioConfig(iso="MISO"),
+                    "MISO",
+                )
+
     def test_annual_cap_binds(self):
         # Even with huge arbitrage margins, a single year cannot build more
         # than the per-ISO annual cap.
