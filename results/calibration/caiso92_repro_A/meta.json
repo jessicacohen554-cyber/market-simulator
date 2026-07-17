@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-07-17T15:23:43",
+  "timestamp": "2026-07-17T15:51:01",
   "iso": "CAISO",
   "years": [
     2023,
@@ -54,8 +54,7 @@
     "caiso_citygate_spot_level": true,
     "caiso_dsw_surplus_clean": true,
     "chp_steam_floor_p25": true,
-    "caiso_citygate_flow_date": true,
-    "caiso_dsw_overnight_clean": true
+    "caiso_citygate_flow_date": true
   },
   "coal_bit_passthrough_sigmoid": false,
   "coal_bit_sigmoid_overrides": {},
@@ -239,6 +238,6 @@
     "eia923": "../_shared/CAISO/eia923-cd564d46cbf9.parquet",
     "campd": "../_shared/CAISO/campd-cceb6c13d8f9.parquet"
   },
-  "git_sha": "de8d1fd",
+  "git_sha": "775c303",
   "highspy_version": "1.14.0"
 }
