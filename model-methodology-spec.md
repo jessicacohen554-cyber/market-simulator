@@ -694,14 +694,19 @@ For year in 2026..2050:
        (default on, flipped 2026-07-05 — docs/handoffs/confirmed-retirement-plan-2026-07.md
        §7), forecast-mode only. The ONLY exogenous fossil exit channel.
     1. Apply ANNOUNCED retirements (EIA-860 planned date) — fossil is a default
-       no-op (deferred to the economic screen, step 2); NON-FOSSIL
+       no-op (deferred to the economic screen, step 3); NON-FOSSIL
        (nuclear/hydro/renewables/storage) honored only within the EIA-860 data
        horizon, beyond it only if the unit is in the confirmed registry
        (`forecast_fossil_retirement_economic`, `NONFOSSIL_ANNOUNCED_HORIZON_YEARS`)
-    2. Apply economic retirement screen (fuel-type-aware, uses Year N-1 results;
-       includes the accredited reliability floor)
-    3. Apply known additions (EIA-860 under construction, signed PPAs)
-    4. Apply CCS retrofit screen to existing gas-CC units (§5.6)
+    2. Apply CCS retrofit screen to existing gas-CC units (§5.6) — BEFORE the
+       economic retirement screen, forming the joint retrofit-or-retire choice
+       with step 3 (W2-C, national-ces plan §11): a gas-CC whose retrofit
+       continuation beats staying unabated and clears its §45Q-windowed payback
+       converts here instead of being offered only the exit
+    3. Apply economic retirement screen (fuel-type-aware, uses Year N-1 results;
+       includes the accredited reliability floor; units retrofitted in step 2
+       are exempt this year — their loss counters restart as gas_cc_ccs)
+    4. Apply known additions (EIA-860 under construction, signed PPAs)
     5. Apply economic new entry screen (LCOE vs expected revenue, including
        the prior year's REC price as clean-energy revenue)
     6. Apply reserve-margin adequacy backstop: force-build firm capacity if the
@@ -712,7 +717,9 @@ For year in 2026..2050:
 
 The capacity-evolution mechanisms are steps 0–6. The RPS is no longer a force-build step: it is enforced as an LP constraint in the dispatch (step 7), and its shadow price feeds back into the economic new-entry screen the following year.
 
-**Confirmed vs announced retirements.** Only *confirmed* exits — units bound by an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, PUC/regulatory order, RMR end date) — are exogenous. They come from the hand-curated `confirmed-retirements` registry (one row per binding instrument, forward-reproducible per rule 13; superseded rows carry a cited counter-instrument and revert to the economic screen), read forecast-forward by `data.confirmed_retirements.load_confirmed_exits` and applied at step 0 (`apply_confirmed_exits`), which force-retires a unit-grain unit or derates a plant-binned tranche by the exiting unit's MW, bypassing the reliability floor. This is the ONLY exogenous fossil exit channel. *Announced* retirements (`apply_announced_retirements`, step 1) honor an EIA-860 self-reported planned date — but a coal/gas/oil unit's announced date is treated as an announcement, not a certainty, so **for the whole fossil fleet step 1 is a default no-op** and the economic screen (step 2) governs the phaseout, keeping the forecast condition-responsive (a fossil unit may exit early on losses or run past its announced date if it stays in-merit). Non-fossil announced dates (nuclear/hydro/renewables/storage — policy/contract/end-of-life exits) stay deterministic only within the EIA-860 data horizon (`EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS`, default 5); beyond the horizon a non-fossil date is honored only if the unit is in the confirmed registry, so speculative 2040-2072 relicense/EOL placeholders stop force-retiring (the horizon gate activates with the confirmed channel; off = honor all non-fossil dates). The splits are the `forecast_fossil_retirement_economic` and `confirmed_exits_enabled` flags. After the data horizon (~2030), the model is fully economics-driven.
+**Step order note (W2-C, 2026-07-17).** The CCS retrofit screen moved from after known additions to BEFORE the economic retirement screen — steps 2 and 3 are now the joint three-way evaluation (stay unabated / retrofit / retire) for retrofit-eligible gas-CCs, still one pass (rule 10 — ordering, not iteration). Under the old order a loss-making CCGT exited at the retirement step without ever being offered the retrofit; now the retrofit screen values both continuations first, so a unit retires only when both fail. Cap-displaced retrofit candidates (the 3 GW/yr/ISO throughput cap) fall back to the unabated path and the normal loss-year counter — they are re-screened every year and may exit later if unabated keeps failing while the cap keeps binding. Retrofits still precede economic new entry, so a retrofitted CC displaces new-build CCS demand.
+
+**Confirmed vs announced retirements.** Only *confirmed* exits — units bound by an enforceable public instrument (RTO deactivation acceptance, consent decree, statute, PUC/regulatory order, RMR end date) — are exogenous. They come from the hand-curated `confirmed-retirements` registry (one row per binding instrument, forward-reproducible per rule 13; superseded rows carry a cited counter-instrument and revert to the economic screen), read forecast-forward by `data.confirmed_retirements.load_confirmed_exits` and applied at step 0 (`apply_confirmed_exits`), which force-retires a unit-grain unit or derates a plant-binned tranche by the exiting unit's MW, bypassing the reliability floor. This is the ONLY exogenous fossil exit channel. *Announced* retirements (`apply_announced_retirements`, step 1) honor an EIA-860 self-reported planned date — but a coal/gas/oil unit's announced date is treated as an announcement, not a certainty, so **for the whole fossil fleet step 1 is a default no-op** and the economic screen (step 3, jointly with the step-2 retrofit option for gas-CC) governs the phaseout, keeping the forecast condition-responsive (a fossil unit may exit early on losses or run past its announced date if it stays in-merit). Non-fossil announced dates (nuclear/hydro/renewables/storage — policy/contract/end-of-life exits) stay deterministic only within the EIA-860 data horizon (`EIA860_OPERABLE_VINTAGE + NONFOSSIL_ANNOUNCED_HORIZON_YEARS`, default 5); beyond the horizon a non-fossil date is honored only if the unit is in the confirmed registry, so speculative 2040-2072 relicense/EOL placeholders stop force-retiring (the horizon gate activates with the confirmed channel; off = honor all non-fossil dates). The splits are the `forecast_fossil_retirement_economic` and `confirmed_exits_enabled` flags. After the data horizon (~2030), the model is fully economics-driven.
 
 ### 5.2 Economic Retirement
 
@@ -864,7 +871,31 @@ growth is endogenous.
 
 ### 5.6 CCS Retrofit Screen
 
-Beyond *new* `gas_cc_ccs` entry (§1.5.2), existing gas-CC units can be **retrofitted** with post-combustion capture (`model/capacity.py`, gated on `ccs_retrofit_available_year`, default 2028). Each year, every gas-CC unit with at least `ccs_retrofit_min_remaining_life` (15) years of useful life left is screened on **simple payback**: annual savings = carbon avoided + EAC/45Q revenue − margin loss from the higher heat rate (`ccs_retrofit_hr_penalty` = 12%) − the capture VOM adder (`ccs_retrofit_vom_adder` = $8/MWh). A unit retrofits when payback is shorter than its remaining life. Retrofit capex (`ccs_retrofit_capex_kw` ≈ $900/kW) follows the same Wright's-Law learning curve as new CCS, the emission rate drops by `ccs_retrofit_capture_rate` (90%), and total retrofits are capped at `ccs_retrofit_max_gw_per_year` (3 GW/yr) per ISO. This is a distinct capacity-evolution mechanism from retirement and new entry — an existing asset changes its characteristics in place.
+Beyond *new* `gas_cc_ccs` entry (§1.5.2), existing gas-CC units can be **retrofitted** with post-combustion capture (`model/capacity.py::apply_ccs_retrofit`, gated on `ccs_retrofit_available_year`, default 2028). Redesigned in W2-C (national-ces-eac-premium-plan §11, owner-resolved 2026-07-17); the former fixed-0.55-CF payback screen is superseded.
+
+**The joint retrofit-or-retire choice.** The screen runs at evolve-fleet step 2, BEFORE the economic retirement screen (§5.1 step order note): each year, every gas-CC unit with at least `ccs_retrofit_min_remaining_life` (15) years of useful life left is offered the retrofit continuation before the exit. A unit retrofits when the retrofit **beats staying unabated** and its **windowed payback clears the remaining life**; it retires only when both continuations fail (the loss-year counter semantics of §5.2 are unchanged for everything that does not convert). A profitable retrofit fires on a healthy unit too — under §45Q plus a CES premium a unit may convert well before distress.
+
+**Economics — attainable margin at the post-retrofit cost basis.** Both continuations are valued as attainable (pro-forma) inframarginal margins over the prior year's hourly capacity-screen price signal — the same construction as the retirement screen (§5.2), so anticipated utilization is **endogenous** (no fixed screen CF: with the credits as bid offsets the post-retrofit effective cost clears the price-duration curve near-baseload-deep exactly when the economics say so). Per MW-yr, with `avail = 1 − EFORd`:
+
+```
+mc_unabated  = hr·gas + vom + er·carbon
+mc_post      = hr·(1+hr_penalty)·gas + vom + vom_adder
+               + er·(1−capture_rate)·carbon + captured·co2_transport_storage_cost
+m_unabated   = Σ_t max(0, p[t] − (mc_unabated − attr_unabated)) × avail
+m_window     = Σ_t max(0, p[t] − (mc_post − attr_post − q45)) × avail
+m_post       = Σ_t max(0, p[t] − (mc_post − attr_post)) × avail
+uplift_window = m_window − m_unabated − ΔFOM
+uplift_post   = m_post   − m_unabated − ΔFOM
+```
+
+- **Attribute term** `attr_*` (one per state): `max(legacy eac_price_gas_cc_ccs, federal CES premium × credit fraction)` via `policy/federal_ces.effective_eac_price_for_unit` — the certificate is sold once (§1.4 max() rule). The valuation is **incremental over the best unabated state**: under `cesa_ci` the unabated CCGT's own partial credit (`attr_unabated`) is netted out; under `clean_capture` it is 0 and the full post-retrofit credit is the uplift.
+- **§45Q** (`q45`, `policy/ira.ccus_45q_credit_per_mwh`: $85/t × captured t/MWh) **stacks on top of the certificate** — a tax credit is a separate instrument from an EAC (plan §11 Q1); no tonne is double-counted within either instrument. Eligibility is gated on `ira_ccus_45q_last_year` at the retrofit (commit) year — a begin-construction-deadline proxy that never truncates an earned stream.
+- **Credit window** (`ira_45q_credit_window_years`, statutory 12 — 26 U.S.C. §45Q(a)(3)-(4); `None` = owner's indefinite-extension scenario): the payback is **two-segment** — the cumulative uplift runs at `uplift_window` for `min(window, remaining_life)` years and `uplift_post` afterwards; if the credit expires before recovery and `uplift_post ≤ 0`, the retrofit never pays back. The **same window levelizes the §45Q term in the new-build CCS LCOE** (`_emerging_lcoe`): the credit is scaled by `CRF(life)/CRF(window)` — PV-consistent at the screen's discount rate — a deliberate behavior change from the former un-windowed new-build treatment.
+- `ΔFOM` is the going-forward fixed-cost delta between the states (`fixed_om_gas_cc_ccs` vs `fixed_om_gas_cc`, each × its retirement FOM multiplier — the same fields §5.2 prices each state at). Capacity/AS revenue is state-invariant for the same MW and nets out of the incremental comparison.
+
+**Mechanics (unchanged).** A converting unit's `heat_rate` gains `ccs_retrofit_hr_penalty` (12%), `vom` gains `ccs_retrofit_vom_adder` ($8/MWh), the emission rate drops by `ccs_retrofit_capture_rate` (90%), and `fuel_type` flips to `gas_cc_ccs` in place (same unit_id, zone, MW). Retrofit capex (`ccs_retrofit_capex_kw` ≈ $900/kW) follows the same Wright's-Law learning curve as new CCS and retrofitted GW feeds the shared experience base. Candidates rank shortest-payback first up to `ccs_retrofit_max_gw_per_year` (3 GW/yr) per ISO; **cap-displaced candidates stay unabated on the normal loss counter and re-screen next year**. Converted units clear their loss counters and skip that year's retirement screen. The screen requires the prior-year price signal (first simulated year skips, like every price-driven screen).
+
+**Known simplifications.** Post-retrofit *dispatch* offers do not carry the §45Q offset (dispatch bids are `mc − attribute credit` only, §1.4), so realized CF can run below the screen's anticipated CF; and the §5.2 retirement screen does not credit §45Q revenue to already-retrofitted units in later years (no per-unit credit-window vintage tracking). Both understate CCS economics conservatively; revisit if retrofit retention misbehaves in campaign runs. With §45Q in the screen, **retrofits are now possible in BAU** — that is the point of the redesign: a premium-case retrofit is attributable to the premium, not to a missing statutory credit.
 
 ### 5.7 Hydro Energy Budgets
 
