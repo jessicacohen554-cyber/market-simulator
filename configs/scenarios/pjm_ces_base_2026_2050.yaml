@@ -1,0 +1,16 @@
+# PJM national-CES BAU base, 2026-2050 (CES plan W1-B).
+#
+# The BAU leg of the national CES EAC-premium campaign for PJM
+# (docs/handoffs/national-ces-eac-premium-plan-2026-07.md §8 W1-B, v2 horizon
+# D8: 2026-2050). First committed PJM forecast config (plan §0 gap 4): the
+# ScenarioConfig defaults ARE the keeper-calibrated BAU, so like
+# configs/scenarios/ercot_base.yaml this sets only mode/iso/horizon, plus
+# entry_screen_diagnostics — the default-off, pure-observability per-candidate
+# entry-screen ledger (scenarios.py `entry_screen_diagnostics`; RC-0C/BLK-8)
+# required for later premium attribution (plan §6.4). Smoke-validation status
+# lives in docs/handoffs/ces-w1b-bau-smoke-2026-07.md.
+mode: forecast
+iso: PJM
+start_year: 2026
+end_year: 2050
+entry_screen_diagnostics: true
