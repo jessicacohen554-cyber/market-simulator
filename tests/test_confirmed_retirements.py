@@ -9,6 +9,7 @@ no-op regardless of the flag's default (``runner._confirmed_exits_active``).
 """
 
 import datetime as dt
+import sys
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -214,6 +215,62 @@ class TestHindcastInformationGate(unittest.TestCase):
         exits = load_confirmed_exits("ERCOT")
         self.assertEqual(len(exits), 1)
         self.assertEqual(exits[0].plant_id, 3612)
+
+
+class TestRequiredFailLoud(unittest.TestCase):
+    """W2-E / G12: ``required=True`` raises instead of silently degrading.
+
+    The runner passes ``required=True`` exactly when ``confirmed_exits_
+    enabled`` is on in forecast mode (``_confirmed_exits_active``); the
+    W1-B smoke showed the warn-only no-op silently handing ERCOT 477 MW of
+    phantom 2026 fleet when ``data/clean`` was absent (B3) or the
+    ``scripts.lib.clean_io`` seam unimportable (B4). Default ``required=
+    False`` keeps the degrade-to-economic-screen behavior byte-identical,
+    and a backcast run never reaches the loaders at all (the forecast-only
+    call-site gates, covered above).
+    """
+
+    def setUp(self) -> None:
+        # An empty CLEAN_DIR: no partition for any ISO (fresh checkout).
+        self._tmp = TemporaryDirectory()
+        self._orig_clean = clean_io.paths.CLEAN_DIR
+        clean_io.paths.CLEAN_DIR = Path(self._tmp.name) / "clean"
+
+    def tearDown(self) -> None:
+        clean_io.paths.CLEAN_DIR = self._orig_clean
+        self._tmp.cleanup()
+
+    def test_missing_partition_required_raises_with_remediation(self) -> None:
+        with self.assertRaises(RuntimeError) as ctx:
+            load_confirmed_exits("ERCOT", required=True)
+        msg = str(ctx.exception)
+        self.assertIn("curate_confirmed_retirements.py", msg)
+        self.assertIn("PYTHONPATH=.", msg)
+
+    def test_missing_partition_reversal_required_raises(self) -> None:
+        with self.assertRaises(RuntimeError) as ctx:
+            load_announced_reversal_plants("ERCOT", required=True)
+        self.assertIn("curate_confirmed_retirements.py", str(ctx.exception))
+
+    def test_missing_partition_default_still_degrades(self) -> None:
+        # required defaults to False: warn-only empty results, unchanged.
+        self.assertEqual(load_confirmed_exits("ERCOT"), [])
+        self.assertEqual(load_announced_reversal_plants("ERCOT"), frozenset())
+
+    def test_unimportable_seam_required_raises(self) -> None:
+        # sys.modules[name] = None makes the in-function import raise
+        # ModuleNotFoundError -- the B4 off-sys.path invocation shape.
+        with mock.patch.dict(sys.modules, {"scripts.lib.clean_io": None}):
+            with self.assertRaises(RuntimeError) as ctx:
+                load_confirmed_exits("ERCOT", required=True)
+            self.assertIn("curate_confirmed_retirements.py", str(ctx.exception))
+            with self.assertRaises(RuntimeError):
+                load_announced_reversal_plants("ERCOT", required=True)
+
+    def test_unimportable_seam_default_still_degrades(self) -> None:
+        with mock.patch.dict(sys.modules, {"scripts.lib.clean_io": None}):
+            self.assertEqual(load_confirmed_exits("ERCOT"), [])
+            self.assertEqual(load_announced_reversal_plants("ERCOT"), frozenset())
 
 
 if __name__ == "__main__":

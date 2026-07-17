@@ -1,10 +1,13 @@
 """Tests for the EIA-923 monthly per-plant fuel-cost integration.
 
 The fuel resolver applies plant-specific monthly delivered fuel costs
-from EIA-923 Schedule 5 during historical calibration years (2023-2025
-in the shipped data window) and falls back to the AEO Henry Hub
-trajectory + ISO basis differential for forward years and for plants
-outside the F923 sample. See :mod:`market_sim.data.eia923` and
+from EIA-923 Schedule 5 in BACKCAST mode (and the capacity hindcast) and
+falls back to the AEO Henry Hub trajectory + ISO basis differential
+otherwise. The overlay is mode-gated (G11 / W2-E, rule 22 / spec §1.7):
+year availability alone is not the forecast gate, because the parquet
+carries measured rows for the forecast start year since the H1-2026
+intake. Plants outside the F923 sample keep the trajectory in every mode.
+See :mod:`market_sim.data.eia923` and
 :func:`market_sim.data.fuel.apply_plant_monthly_fuel_prices`.
 """
 
@@ -117,12 +120,16 @@ class TestApplyPlantMonthlyFuelPrices(unittest.TestCase):
     """The resolver overwrites the per-fuel default with plant F923 cost.
 
     Per-plant monthly *gas* pricing is opt-in (off by default), so these
-    tests of the gas overwrite mechanism enable it explicitly.
+    tests of the gas overwrite mechanism enable it explicitly. The overlay
+    is backcast-only since the W2-E mode gate, so the class config runs
+    ``mode="backcast"`` — the mode the overlay has always served (the
+    pre-gate tests ran in the then-mode-blind default forecast config).
     """
 
     def setUp(self):
         self.config = ScenarioConfig(
             iso="ERCOT",
+            mode="backcast",
             hours=8760,
             gas_plant_monthly_fuel_pricing=True,
         )
@@ -242,6 +249,111 @@ class TestApplyPlantMonthlyFuelPrices(unittest.TestCase):
         np.testing.assert_array_equal(fuel_prices, before)
 
 
+# Plant 6139 (TX coal) reports delivered coal cost in every intaken H1-2026
+# month (Jan-Apr), so it is the leak subject: pre-gate, a forecast-mode 2026
+# run priced it from measured actuals (W1-B B2).
+_COAL_2026_REPORTING_PLANT: int = 6139
+
+
+class TestForecastModeGate(unittest.TestCase):
+    """G11 / W2-E: the F923 overlay is backcast-only (hindcast excepted).
+
+    ``apply_plant_monthly_fuel_prices`` used to gate on year availability
+    alone; once measured H1-2026 receipts were intaken the parquet carries
+    the forecast start year, and the W1-B forecast smokes priced ERCOT 12 /
+    PJM 51 generators from 2026 actuals. These tests reproduce that leak's
+    precondition and prove the mode gate closes it, and pin the documented
+    capacity-hindcast carve-out (realized historical inputs by design).
+    No LP is built anywhere here — loader/array checks only.
+    """
+
+    HOURS = 8760
+
+    def _coal_fleet(self):
+        gen = Generator(
+            unit_id="COAL_2026_REPORTER",
+            name="Coal 2026 Reporter",
+            zone="Houston",
+            fuel_type="coal",
+            pmax_mw=600.0,
+            heat_rate=10.0,
+            plant_code=_COAL_2026_REPORTING_PLANT,
+        )
+        return generators_to_fleet_arrays([gen], ZONE_NAMES, hours=self.HOURS)
+
+    def test_leak_precondition_2026_rows_are_intaken(self):
+        # The exact precondition of the W1-B leak: the old year-availability
+        # gate PASSES for 2026 (rows exist) and the subject plant reports.
+        costs = load_monthly_fuel_costs()
+        self.assertIn(2026, available_years(costs))
+        grid = plant_month_price_grid(costs, 2026, "Coal")
+        self.assertIn(_COAL_2026_REPORTING_PLANT, grid)
+        self.assertTrue(np.isfinite(grid[_COAL_2026_REPORTING_PLANT]).any())
+
+    def test_forecast_mode_ignores_2026_f923_rows(self):
+        # The leak, closed: with 2026 rows present (test above), a
+        # forecast-mode overlay call must leave the price array untouched,
+        # while the identical backcast-mode call mutates it — isolating the
+        # mode gate as the only difference.
+        arrays = self._coal_fleet()
+        base = np.full((arrays.n_gen, self.HOURS), 2.5)
+
+        forecast = ScenarioConfig(iso="ERCOT", mode="forecast", hours=self.HOURS)
+        fp_forecast = base.copy()
+        apply_plant_monthly_fuel_prices(fp_forecast, arrays, forecast, year=2026)
+        np.testing.assert_array_equal(fp_forecast, base)
+
+        backcast = ScenarioConfig(iso="ERCOT", mode="backcast", hours=self.HOURS)
+        fp_backcast = base.copy()
+        apply_plant_monthly_fuel_prices(fp_backcast, arrays, backcast, year=2026)
+        self.assertTrue(
+            (fp_backcast != base).any(),
+            "backcast overlay should apply the measured 2026 plant-months "
+            "(the data the forecast gate must ignore)",
+        )
+
+    def test_forecast_resolver_prices_2026_coal_from_trajectory(self):
+        # End-to-end through resolve_fuel_prices: forecast 2026 coal pays
+        # the AEO-anchored trajectory in every hour, not measured receipts.
+        from market_sim.data.fuel import resolve_annual_coal_price
+
+        arrays = self._coal_fleet()
+        config = ScenarioConfig(iso="ERCOT", mode="forecast", hours=self.HOURS)
+        fuel_prices = resolve_fuel_prices(config, arrays, year=2026)
+        expected = resolve_annual_coal_price(config, 2026)
+        np.testing.assert_allclose(fuel_prices[0], expected, rtol=1e-9)
+
+    def test_hindcast_carveout_keeps_overlay_byte_identical_to_backcast(self):
+        # The capacity hindcast (mode=="forecast", hindcast=True) is DESIGNED
+        # to consume realized historical inputs, so the carve-out keeps its
+        # overlay mutation byte-identical to backcast — for both fuel
+        # variants, which isolate the GAS trajectory and share the
+        # delivered-coal channel.
+        arrays = self._coal_fleet()
+        base = np.full((arrays.n_gen, self.HOURS), 2.5)
+
+        backcast = ScenarioConfig(iso="ERCOT", mode="backcast", hours=self.HOURS)
+        fp_backcast = base.copy()
+        apply_plant_monthly_fuel_prices(fp_backcast, arrays, backcast, year=2024)
+        self.assertTrue((fp_backcast != base).any())
+
+        for variant in ("realized", "asknown"):
+            hindcast = ScenarioConfig(
+                iso="ERCOT",
+                mode="forecast",
+                hindcast=True,
+                hindcast_fuel_variant=variant,
+                hours=self.HOURS,
+            )
+            fp_hindcast = base.copy()
+            apply_plant_monthly_fuel_prices(fp_hindcast, arrays, hindcast, year=2024)
+            np.testing.assert_array_equal(
+                fp_hindcast,
+                fp_backcast,
+                err_msg=f"hindcast variant {variant!r} overlay diverged from backcast",
+            )
+
+
 class TestPerPlantBinning(unittest.TestCase):
     """Every plant in the CAMPD CSV becomes its own LP bin."""
 
@@ -295,7 +407,8 @@ class TestRunnerEndToEndFor2024(unittest.TestCase):
     """End-to-end gas pricing for a 2024 calibration year.
 
     Builds the production fleet from the shipped CAMPD CSV and resolves
-    2024 fuel prices. By default every gas generator pays the *same*
+    2024 fuel prices in backcast mode (the mode the F923 overlay serves
+    since the W2-E gate). By default every gas generator pays the *same*
     uniform Henry Hub + basis price (per-plant gas pricing is off, so
     patchy EIA-923 reporting cannot split same-zone units); turning
     ``gas_plant_monthly_fuel_pricing`` on restores the per-plant spread.
@@ -312,7 +425,9 @@ class TestRunnerEndToEndFor2024(unittest.TestCase):
         return fuel_prices[gas_mask].mean(axis=1)
 
     def test_gas_is_uniform_by_default(self):
-        gas_means = self._gas_means(ScenarioConfig(iso="ERCOT", hours=8760))
+        gas_means = self._gas_means(
+            ScenarioConfig(iso="ERCOT", mode="backcast", hours=8760)
+        )
         # Every gas plant pays a positive price, and they are all identical
         # — the F923 per-plant overwrite is off, so nothing splits them.
         self.assertTrue((gas_means > 0).all())
@@ -322,6 +437,7 @@ class TestRunnerEndToEndFor2024(unittest.TestCase):
         gas_means = self._gas_means(
             ScenarioConfig(
                 iso="ERCOT",
+                mode="backcast",
                 hours=8760,
                 gas_plant_monthly_fuel_pricing=True,
             )
@@ -341,10 +457,14 @@ class TestRunnerEndToEndFor2024(unittest.TestCase):
         from market_sim.data.fuel import _month_index
 
         flat = ScenarioConfig(
-            iso="ERCOT", hours=8760, gas_plant_monthly_fuel_pricing=True
+            iso="ERCOT",
+            mode="backcast",
+            hours=8760,
+            gas_plant_monthly_fuel_pricing=True,
         )
         shaped = ScenarioConfig(
             iso="ERCOT",
+            mode="backcast",
             hours=8760,
             gas_plant_monthly_fuel_pricing=True,
             gas_daily_shape=True,
