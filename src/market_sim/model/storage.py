@@ -1160,9 +1160,27 @@ def apply_storage_new_entry(
     iso_config = get_iso_config(iso)
     fleet = list(existing_storage)
 
+    # Fail loudly when a registered ISO lacks storage-entry registry data: a
+    # silent default of zero would suppress ALL storage entry and quietly break
+    # that ISO's forecast (the trap MISO fell into). Mirrors the thermal
+    # screen's QUEUE_CAP_GW guard (capacity.apply_economic_new_entry) so any new
+    # ISO must be registered in both dicts before its forecast can build storage.
+    if iso not in STORAGE_DEPLOYMENT_CEILING_MW:
+        raise KeyError(
+            f"STORAGE_DEPLOYMENT_CEILING_MW has no entry for {iso!r}; storage "
+            "new entry cannot run. Add the ISO's deployment ceiling (~50% of "
+            "coincident peak) to config/constants.py."
+        )
+    if iso not in STORAGE_ANNUAL_BUILD_CAP_MW:
+        raise KeyError(
+            f"STORAGE_ANNUAL_BUILD_CAP_MW has no entry for {iso!r}; storage "
+            "new entry cannot run. Add the ISO's annual build cap "
+            "(interconnection-queue throughput) to config/constants.py."
+        )
+
     existing_mw = sum(u.power_cap_mw for u in existing_storage)
-    ceiling = STORAGE_DEPLOYMENT_CEILING_MW.get(iso, 0.0)
-    annual_cap = STORAGE_ANNUAL_BUILD_CAP_MW.get(iso, 0.0)
+    ceiling = STORAGE_DEPLOYMENT_CEILING_MW[iso]
+    annual_cap = STORAGE_ANNUAL_BUILD_CAP_MW[iso]
     budget = min(annual_cap, max(0.0, ceiling - existing_mw))
     if budget <= 0.0:
         return fleet
