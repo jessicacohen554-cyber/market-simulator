@@ -59,16 +59,27 @@ def ccus_45q_credit_per_mwh(
 
     The credit pays :data:`CCUS_45Q_CREDIT_PER_TON` per tonne of CO2
     captured and stored; multiplying by the per-MWh captured CO2 rate
-    gives a $/MWh offset. The credit phases out after
-    ``config.ira_ccus_45q_last_year``.
+    gives a $/MWh offset. ``config.ira_ccus_45q_last_year`` is an
+    ELIGIBILITY deadline evaluated at the project's commit year (the
+    begin-construction-before-2033 proxy, 26 U.S.C. §45Q(d)(1)): pass the
+    build/retrofit year, and a project committed in an eligible year earns
+    the full rate. The statutory **12-year credit window from
+    placed-in-service** (§45Q(a)(3)-(4)) is NOT applied here — callers
+    annualize this per-MWh rate over
+    ``min(config.ira_45q_credit_window_years, asset life)`` themselves
+    (the CCS retrofit screen's windowed payback and the new-build CCS
+    LCOE levelization, ``model/capacity.py``), so the deadline never
+    truncates an already-earned credit stream.
 
     Args:
         co2_captured_per_mwh: Tonnes of CO2 captured per MWh generated.
-        year: Simulation year, compared against the §45Q cutoff.
+        year: The project's commit (build/retrofit) year, compared against
+            the §45Q eligibility deadline.
         config: Scenario config supplying the §45Q last eligible year.
 
     Returns:
-        The §45Q credit in $/MWh, or ``0.0`` once it has expired.
+        The §45Q credit in $/MWh, or ``0.0`` for projects committed past
+        the eligibility deadline.
     """
     if year > config.ira_ccus_45q_last_year:
         return 0.0

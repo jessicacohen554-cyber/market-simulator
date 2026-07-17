@@ -47,6 +47,11 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "federal_ces_eligible_fuels",
     "federal_ces_storage_eligible",
     "federal_ces_replaces_state_rps",
+    # §45Q credit window (W2-C, national-ces-eac-premium-plan §11 Q2):
+    # statutory default 12 dropped from the hash so pre-existing cache keys
+    # are byte-stable; a non-default window (None = indefinite extension, or
+    # a sensitivity value) enters the key as a distinct scenario.
+    "ira_45q_credit_window_years",
 )
 
 
@@ -226,7 +231,10 @@ class ScenarioConfig:
     eac_price_nuclear: float = 0.0  # $/MWh, e.g. NY/IL Zero Emission Credit ~$17
     eac_price_wind: float = 0.0  # $/MWh, onshore wind REC
     eac_price_solar: float = 0.0  # $/MWh
-    eac_price_gas_cc_ccs: float = 0.0  # $/MWh, CCS-equipped gas CC only (45Q-linked)
+    eac_price_gas_cc_ccs: float = 0.0  # $/MWh, CCS-equipped gas CC only — a
+    # clean-attribute CERTIFICATE price. NOT §45Q: the tax credit is a
+    # separate statutory instrument that STACKS with this certificate in the
+    # capacity screens (W2-C, national-ces plan §11 Q1; policy/ira.py).
     eac_price_storage: float = 0.0  # $/MWh on discharge
     eac_price_offshore_wind: float = (
         0.0  # $/MWh, offshore-specific EAC (may differ from onshore)
@@ -501,11 +509,33 @@ class ScenarioConfig:
     ira_other_clean_phaseout_end: int = 2036  # 0% from this year on
     # §45V hydrogen production credit: construction start by Dec 31, 2027.
     ira_h2_45v_last_year: int = 2027
-    # §45Q CCUS credit: extended but phasing out post-2032.
+    # §45Q CCUS eligibility deadline: last year a NEW capture project (build or
+    # retrofit) can commit and still earn the credit — a begin-construction-
+    # before-2033 proxy (26 U.S.C. §45Q(d)(1); OBBBA 2025, Pub. L. 119-21
+    # §70522, preserved 45Q — ces-ci-crediting-audit-2026-07.md §4.4). The
+    # capacity screens gate ON THIS YEAR AT COMMIT: a project committed in an
+    # eligible year keeps its full credit window below — the deadline never
+    # truncates an already-earned credit stream (audit §3.3 item 4).
     ira_ccus_45q_last_year: int = 2032
+    # §45Q credit window: years of credit from placed-in-service. 12 is
+    # statutory (26 U.S.C. §45Q(a)(3)-(4)); None models an indefinite
+    # legislative extension (owner-requested scenario, national-ces plan §11
+    # Q2). Consumed by the CCS retrofit screen (windowed payback) and the
+    # new-build CCS LCOE (credit levelized over min(window, life) at the
+    # screen discount rate) — model/capacity.py.
+    ira_45q_credit_window_years: int | None = 12
     electrolyzer_efficiency_override: float | None = None  # overrides lookup
-    ccs_capture_rate: float = 0.90  # fraction of CO2 captured by CCUS
+    ccs_capture_rate: float = 0.90  # fraction of CO2 captured by new-build
+    # CCUS. Source: NETL Cost & Performance Baseline Rev 4 (2022), Case B31B
+    # 90% amine capture (citation formerly stranded on the deleted
+    # CCUS_PARAMS["gas_cc_ccs_90"]["capture_rate"] dead key — audit §3.3
+    # item 2; note B31B's 1.16 HR penalty is physically coupled to 90%
+    # capture, so sweeps of this field alone stretch that design point).
     co2_transport_storage_cost: float = 15.0  # $/tCO2 for captured CO2
+    # (pipeline + saline injection, NETL 2022 Gulf Coast basis). Charged per
+    # captured tonne by BOTH the new-build CCS LCOE and, since W2-C, the
+    # retrofit screen's post-retrofit cost basis — a stored tonne earning
+    # §45Q pays its transport/storage on either path.
     egs_pmin_fraction: float = 0.20  # EGS turn-down floor (fraction of rated)
     offshore_wind_cf_override: float | None = None  # overrides OFFSHORE_WIND_PARAMS
 
@@ -5956,6 +5986,20 @@ class ScenarioConfig:
                 f"{self.federal_ces_crediting!r}"
             )
 
+        # §45Q credit window (W2-C): a set window must be a positive year
+        # count; None is the owner's indefinite-extension scenario. A zero or
+        # negative window would silently zero the credit through the payback
+        # arithmetic — fail loudly instead.
+        if (
+            self.ira_45q_credit_window_years is not None
+            and self.ira_45q_credit_window_years < 1
+        ):
+            raise ValueError(
+                "ScenarioConfig.ira_45q_credit_window_years must be a positive "
+                "number of years or None (indefinite extension scenario); got "
+                f"{self.ira_45q_credit_window_years!r}"
+            )
+
         # Data-center load block (CX-4): forecast-mode-only scenario axis. A
         # non-"off" path in backcast mode is a hard error (rule 22 / memo §6):
         # a backcast pins measured load, so the DC block must never enter a
@@ -6732,6 +6776,7 @@ TIER_TAGS: dict[str, int] = {
     "ira_other_clean_phaseout_end": 2,
     "ira_h2_45v_last_year": 2,
     "ira_ccus_45q_last_year": 2,
+    "ira_45q_credit_window_years": 2,
     "electrolyzer_efficiency_override": 2,
     "ccs_capture_rate": 2,
     "co2_transport_storage_cost": 2,
