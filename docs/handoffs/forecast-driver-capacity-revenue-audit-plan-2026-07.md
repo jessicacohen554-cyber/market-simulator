@@ -1,5 +1,11 @@
 # Forecast Driver & Capacity-Revenue Validation Plan — 2026-07
 
+> **⚠️ ARCHIVED (2026-07-17) — historical program record.** All waves (P-0A…P-3D)
+> executed; successor coordination lives in `docs/forecast-development-plan-2026-07.md`
+> (the Forecast Finalization Program). The §1 driver scorecard, §2 test battery, and
+> §3 CR chain remain citable evidence/definitions; do **not** launch sessions from the
+> §5–§6 prompt pack.
+
 **Purpose.** (1) Audit how well-equipped the model is to *forecast* — are the
 variables/parameters we feed it (carbon price, fuel paths, load growth, tech
 costs, IRA, RPS) wired end-to-end and do they respond the way production-cost
