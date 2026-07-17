@@ -116,13 +116,16 @@ from market_sim.data.fleet import (
 from market_sim.data.hydrogen import compute_h2_fuel_cost
 from market_sim.data.renewables import get_renewable_zone
 from market_sim.model.dispatch import DispatchResult
+from market_sim.policy.federal_ces import (
+    effective_eac_price_for_tech,
+    effective_eac_price_for_unit,
+)
 from market_sim.policy.ira import (
     apply_ira_credits_to_lcoe,
     ccus_45q_credit_per_mwh,
     h2_45v_credit_per_mmbtu,
     section_45u_credit_per_mwh,
 )
-from market_sim.policy.eac import get_eac_price_for_new_entry
 
 logger = logging.getLogger(__name__)
 
@@ -1415,7 +1418,14 @@ def apply_economic_retirements(
         # are clean but not renewable (CX-6a, plan §6.5(a)). Nuclear retention
         # support instead flows through eac_price (ZEC/CES).
         annual_gen_mwh = float(sum(np.sum(dispatch[i]) for i in rows))
-        eac_price = get_eac_price_for_new_entry(g.fuel_type, config)
+        # Effective attribute price (W2-A plan §5.3): max(legacy per-fuel
+        # eac_price_*, federal CES premium × the UNIT's credit fraction) —
+        # unit-level so that under cesa_ci a credited unabated gas_cc (or an
+        # abated unit's actual residual CI) earns its own fraction on its
+        # own CO2 rate. Exactly the legacy value when the CES is disabled.
+        eac_price = effective_eac_price_for_unit(
+            config, g.fuel_type, g.emission_rate_co2, year
+        )
         # IRA §45U existing-nuclear PTC: a per-MWh production credit on the
         # unit's realized output that supports nuclear retention exactly like
         # eac_price_nuclear (ZEC/CES) — so it enters the SAME attribute-revenue
@@ -2225,10 +2235,13 @@ def apply_economic_new_entry(
             )
             revenue = estimate_expected_revenue(prices, cf)
             # Emerging clean resources also earn an attribute payment: the
-            # higher of their exogenous EAC and the RPS shadow price.
+            # highest single buyer among the legacy exogenous EAC, the
+            # federal CES premium × tech credit fraction (W2-A plan §5.3 —
+            # this is what lets hydrogen_ct/hydrogen_ccgt and gas_cc_ccs
+            # candidates earn the premium), and the RPS shadow price.
             rps_for_tech = rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
             effective_attribute_price = max(
-                get_eac_price_for_new_entry(tech, config), rps_for_tech
+                effective_eac_price_for_tech(config, tech, year), rps_for_tech
             )
             attribute_rev = 0.0
             if effective_attribute_price > 0.0:
@@ -2396,9 +2409,13 @@ def apply_economic_new_entry(
         else:
             effective_revenue = estimate_expected_revenue(prices, base_cf)
             cf_expected = base_cf
+        # Attribute payment: the highest single buyer among the legacy
+        # exogenous EAC, the federal CES premium × tech credit fraction
+        # (W2-A plan §5.3 — this is what lets a nuclear_smr candidate earn
+        # the premium), and the RPS shadow price — never a sum.
         rps_for_tech = rps_shadow_price if tech in _RENEWABLE_NEW_FUELS else 0.0
         effective_attribute_price = max(
-            get_eac_price_for_new_entry(tech, config), rps_for_tech
+            effective_eac_price_for_tech(config, tech, year), rps_for_tech
         )
         if effective_attribute_price > 0.0:
             effective_revenue += (
