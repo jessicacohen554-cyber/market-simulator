@@ -15631,3 +15631,18 @@ lane closes with the composed recipe as the keeper; the price lane's
 remaining opens are the pre-named engagement-depth lanes (Midwest zonal
 reserve family charter, measured-cleared requirement basis, winter-2024
 fuel security) and G-23 imports (sequenced last). Next number: miso-71.
+
+## 2026-07-17 — miso-70 PROMOTED to MISO keeper (owner authorization, this session)
+
+Owner ruling received in-session ("Ok promote"): `keepers.json` MISO →
+`2026-07-17-miso-70-tier-pricing` (supersedes `2026-07-16-miso-68-mothballs`,
+which stays registered), `status.js` rebuilt via `scripts/build_status.py`
+(MISO determination NOT-YET, fail set {C1 CC_REGULAR-2023, C3a-2025 −13.7%,
+C3c 1/30 · 6/37 · 1/88 RT} — carried openly; the promotion is the rule-1
+structural-faithfulness call recorded in the miso-70 entry above). The MISO
+keeper recipe now arms `unit_outage_maxgen_events` +
+`maxgen_emergency_tier_pricing` on the miso-68 stack. The F5 scarcity-depth
+lane closes ADOPTED; the price lane's remaining opens are the pre-named
+engagement-depth lanes (Midwest zonal reserve family, measured-cleared
+requirement basis, winter-2024 fuel security) and G-23 imports (last).
+Keeper-auditor run follows this entry (CLAUDE.md keeper-swap protocol).
