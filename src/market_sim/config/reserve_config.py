@@ -16,7 +16,7 @@ from typing import Optional
 
 import numpy as np
 
-from market_sim.config.constants import ERCOT_AS_PLAN_HOLD_EPS
+from market_sim.config.constants import ERCOT_AS_PLAN_HOLD_EPS, MISO_RPE_DEMAND_VALUE
 from market_sim.data.fleet import FUEL_TYPE_NAMES, FleetArrays
 
 # ---------------------------------------------------------------------------
@@ -181,6 +181,31 @@ MISO_ZONAL_ORDC_STEPS: tuple[tuple[float, float], ...] = (
 # Midwest pool by the RDT contract-path limit (scope doc §6). MISO-East
 # (Michigan pocket) is the optional second family.
 MISO_ZONAL_RESERVE_DEFAULT_ZONES: tuple[str, ...] = ("MISO-South",)
+
+# MISO Midwest sub-region (config.miso_midwest_subregional_reserves, the
+# engagement-depth lane, miso-71). The 5 PHYSICAL Midwest model zones — the
+# North + Central ASM cleared-offers regions (the report's own grain), which
+# together form the importing subregion on the North side of the Regional
+# Directional Transfer (RDT). External seam buses are excluded by construction
+# (the F5 external-bus precedent: only the RDT is a represented and
+# measured-binding internal reserve-deliverability boundary). The family holds
+# the MEASURED Midwest revealed OR reservation (data.miso_reserve_requirements
+# "MISO-Midwest" leg = cleared reg+spin+supp over {North, Central}) IN these
+# zones and prices a shortfall at the PUBLISHED Reserve Procurement Enhancement
+# demand value (constants.MISO_RPE_DEMAND_VALUE = $200/MWh, 2024 SOM §III.B —
+# the demand value of exactly this sub-regional reserve-deliverability
+# construct). The per-Reserve-Zone §5.2.1.2 Zonal ORDC steps are DELIBERATELY
+# NOT used: the per-zone Zonal ORDC never separated in 26,280 measured
+# 2023-2025 hours (design §1b/§2a) — pricing a region at those deep steps would
+# be structure the measured record refutes (rule 1). Zero fitted scalars (the
+# series is measured, the $200 is a cited constant, the zone list is topology).
+MISO_MIDWEST_ZONES: tuple[str, ...] = (
+    "MISO-West",
+    "MISO-Plains",
+    "MISO-Illinois",
+    "MISO-Indiana",
+    "MISO-East",
+)
 
 # MISO ELMP emergency-pricing tier offer floors (config.maxgen_emergency_
 # tier_pricing, the F5 scarcity-depth lane): the price applied to emergency
@@ -1933,6 +1958,77 @@ def _miso_design(
                     zone_mask=zmask,
                     ordc_penalties=zonal_pen,
                     ordc_step_widths=zonal_wid,
+                    reserve_class=0,
+                )
+            )
+
+    if getattr(config, "miso_midwest_subregional_reserves", False):
+        # Midwest sub-regional reserve-holding family (miso-71 engagement-depth
+        # lane; the MISO_MIDWEST_ZONES citation block above carries the basis).
+        # The measured Midwest OR reservation is forced to sit IN the 5
+        # physical Midwest zones, closing the ledgered "RPE Only" STR-scarcity
+        # gap (miso_rpe_pricing DOF ledger) the congestion-blind market-wide
+        # RBDC family leaves open: a cost-minimizing LP otherwise satisfies the
+        # market-wide requirement with reserve parked in the RDT-trapped South
+        # surplus and converts every Midwest MW of headroom to energy in a
+        # Midwest event (2025 SOM p.8/pp.8-9; design §1c). ENERGY-SIDE — it does
+        # NOT make the reserve curves fire (design §2c): the family dual sits at
+        # the re-dispatch opportunity cost in almost every hour and reaches the
+        # $200 RPE step only where the M-2-thinned fleet cannot hold the
+        # measured (feasible) requirement. reserve_class 0 nests a Midwest
+        # reserve MW into BOTH the Midwest and market-wide requirements (the
+        # NYISO East ⊂ NYCA template; measured Midwest + measured South =
+        # measured market, so the market family becomes implied-slack — recorded
+        # in the DOF ledger, not a defect).
+        if not zone_names:
+            raise ValueError(
+                "miso_midwest_subregional_reserves requires zone_names to map "
+                "the Midwest sub-region onto model zones"
+            )
+        mw_zone_index = {name: i for i, name in enumerate(zone_names)}
+        mw_mask = np.zeros(n_zones, dtype=bool)
+        for zname in MISO_MIDWEST_ZONES:
+            if zname not in mw_zone_index:
+                raise ValueError(
+                    f"MISO_MIDWEST_ZONES entry {zname!r} is not a model zone "
+                    f"(zones: {list(zone_names)})"
+                )
+            mw_mask[mw_zone_index[zname]] = True
+        if "MISO-Midwest" in measured_req:
+            # Measured hourly Midwest revealed OR holding (the miso-56 intake's
+            # North+Central leg) — rule-14 measured basis, the adopted input.
+            midwest_requirement = np.asarray(measured_req["MISO-Midwest"], dtype=float)
+        else:
+            # Fallback / forward generator (flag on but the measured series off,
+            # or a forecast year): the within-region MSSC over reserve-eligible
+            # Midwest units — fleet-derived, forward-responsive (rule 13), the
+            # same static basis the South family falls back to.
+            mw_region = np.isin(
+                np.asarray(fleet_arrays.zone_idx, dtype=int),
+                np.array([mw_zone_index[z] for z in MISO_MIDWEST_ZONES], dtype=int),
+            )
+            midwest_mssc = float(
+                largest_single_contingency_mw(
+                    fleet_arrays.pmax,
+                    availability=fleet_arrays.availability,
+                    reserve_mask=eligible & mw_region,
+                    plant_code=fleet_arrays.plant_code,
+                )
+            )
+            midwest_requirement = np.full(T, midwest_mssc, dtype=float)
+        # Single shortfall step [(1.0, RPE $200)] width-anchored at the series
+        # max (South-family feasibility convention: a static width must span
+        # the requirement in every hour). The published RPE demand value is the
+        # SOLE step — the per-zone ORDC ladder is measured-refuted (§2a).
+        mw_anchor = float(np.max(midwest_requirement))
+        if mw_anchor > 0.0:
+            families.append(
+                ReserveFamily(
+                    name="miso_subregional_or_midwest",
+                    requirement=midwest_requirement,
+                    zone_mask=mw_mask,
+                    ordc_penalties=np.array([MISO_RPE_DEMAND_VALUE], dtype=float),
+                    ordc_step_widths=np.array([1.0 * mw_anchor], dtype=float),
                     reserve_class=0,
                 )
             )
