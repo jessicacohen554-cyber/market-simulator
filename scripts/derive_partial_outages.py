@@ -22,64 +22,28 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-import numpy as np
 import pandas as pd
 
 REPO = Path(__file__).resolve().parent.parent
 import sys
 
 sys.path.insert(0, str(REPO / "src"))
+sys.path.insert(0, str(REPO))
 
 from market_sim.data import campd  # noqa: E402
 from market_sim.data.fleet import load_campd_bins  # noqa: E402
+
+# The plateau detector and its frozen plateau constants live in the shared
+# outage-detection lib (formerly defined here); the unit-level deriver
+# (scripts/derive_campd_unit_outages.py --partial-windows) reuses the same
+# _detect verbatim from there.
+from scripts.lib.outage_detect import _detect  # noqa: E402
 
 # Plant groups eligible for partial-outage detection: baseload COAL (all-or-
 # nothing) and CC_REGULAR. The baseload-CF filter below excludes cyclic units
 # where a depressed CF ceiling is economic part-load rather than an outage.
 _DETECT_GROUPS: frozenset[str] = frozenset({"COAL", "CC_REGULAR"})
 _BASELOAD_CF = 0.55  # only plants that normally run near their ceiling
-_MIN_DAYS = 5  # sustained plateau length
-_SMOOTH_DAYS = 7  # rolling-median window to ride through recovery blips
-_CEILING_FRAC = 0.65  # daily max below this fraction of the normal ceiling
-_RUN_FLOOR_CF = 0.06  # daily mean above this = running (not a full outage)
-
-
-def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
-    """Return ``[(start_day, end_day_excl, derate_factor), ...]`` plateaus."""
-    nd = cf.shape[0] // 24
-    if nd == 0:
-        return []
-    day = cf[: nd * 24].reshape(nd, 24)
-    dmax, dmean = day.max(1), day.mean(1)
-    running = dmean > _RUN_FLOOR_CF
-    ref = float(np.percentile(dmax[running], 90)) if running.any() else 0.0
-    if ref <= 0.0:
-        return []
-    # Smooth the daily-max ceiling with a centered rolling median so brief
-    # recovery blips (a unit cycling back for a day or two) don't break an
-    # otherwise sustained partial outage.
-    sm = (
-        pd.Series(dmax)
-        .rolling(_SMOOTH_DAYS, center=True, min_periods=4)
-        .median()
-        .to_numpy()
-    )
-    partial = running & (sm < _CEILING_FRAC * ref)
-    out, i = [], 0
-    while i < nd:
-        if partial[i]:
-            j = i
-            while j < nd and partial[j]:
-                j += 1
-            if j - i >= _MIN_DAYS:
-                # Typical depressed ceiling over the window (median ignores the
-                # blips, so the derate reflects the sustained reduced capacity).
-                ceiling = float(np.median(dmax[i:j]))
-                out.append((i, j, round(min(1.0, ceiling / ref), 3)))
-            i = j
-        else:
-            i += 1
-    return out
 
 
 def main() -> None:

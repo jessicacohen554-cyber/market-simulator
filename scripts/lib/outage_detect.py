@@ -1,38 +1,38 @@
-"""Derive coal/CC outage windows from EPA CAMPD hourly gross generation.
+"""Shared CAMPD outage-window detectors (single home for every ISO).
 
-A plant is "really running" only when it sustains a capacity factor above
-:data:`REAL_RUN_CF` for at least :data:`MIN_REAL_RUN_HOURS` consecutive hours.
-Everything else — fully off, and brief or low-output blips (a few hours, or
-2-10% CF "testing" that never sustains) — counts as outage. Outage windows are
-the maximal not-really-running spans of at least ``--min-outage-days``.
+This module is the one home for the CAMPD outage-detection primitives. They were
+formerly defined in ``scripts/derive_campd_outages.py`` (the facility-summed
+detector, deleted 2026-07-17 — it summed a plant's units and so hid single-unit
+outages and folded daily-cycling combined-cycle operation into phantom summer
+outages) and, for the partial-plateau detector, in
+``scripts/derive_partial_outages.py``. The per-unit detector
+(:mod:`scripts.derive_campd_unit_outages`) is now the sole CAMPD outage source
+for every ISO; it and :mod:`scripts.derive_partial_outages` both import their
+detection primitives from here.
 
-This replaces the sparse, hand-maintained ``ercot-outages.csv`` (which only
-covered a handful of plants) with CAMPD-measured windows for every coal/CC
-plant the CEMS extract covers. Writes a schema-compatible CSV
-(oris_code, plant_name, unit, outage_start, outage_stop, duration_hours) the
-historic-outage overlay consumes.
-
-Note: mixed coal/gas facilities (W A Parish, Barney M Davis) report one
-combined CEMS facility series, so a coal-unit outage is masked by the gas
-units and will not be detected — same limitation noted in the manual analysis.
+All parameters carry the ERCOT-79 availability-envelope audit tightening
+(``results/calibration/FINDING-ercot79-phantom-outage-2026-07.md``): daily-cycling
+combined-cycle / cogen classes are detected EVENT-based (a single running hour
+breaks a window), and a detected down span is kept as a real outage only where
+the unit was actually DOWN through the system's high-net-load hours (the
+revealed-availability filter). Every detector is keyed only on measured CAMPD
+operation (capacity factor) + EIA-930 net load — no LMP / price / MWh residual
+(CLAUDE.md #11/#26); the parameters are frozen against residuals (CLAUDE.md #23)
+and re-derive only on a source-data change.
 """
 
 from __future__ import annotations
 
-import argparse
-import sys
 from pathlib import Path
 
 import numpy as np
 import pandas as pd
 
-REPO = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(REPO / "src"))
-sys.path.insert(0, str(REPO))
-
-from market_sim.config.paths import RAW_DATA_DIR  # noqa: E402
-from market_sim.data import campd  # noqa: E402
-from market_sim.data.fleet import load_campd_bins  # noqa: E402
+# Repository root: this module lives at scripts/lib/outage_detect.py, so the
+# repo is two directories up. Used only to resolve the EIA-930 net-load file for
+# the revealed-availability mask (no market_sim import, so the lib stays usable
+# regardless of the importing script's sys.path setup).
+_REPO = Path(__file__).resolve().parents[2]
 
 # A sustained CF above this is a "real run"; below it (off, or low-output
 # idling) is treated as not running. Set to 5%: a plant idling at 5-10% CF is
@@ -60,11 +60,6 @@ ST_GAS_MIN_OUTAGE_HOURS: int = 120
 EVENTBASED_CYCLING_GROUPS: frozenset[str] = frozenset(
     {"CC_REGULAR", "CC_CHP", "CT_CHP", "CT_PEAKER"}
 )
-
-# Plant groups whose outages we derive (coal + combined cycle + gas steam).
-# Peaker-class ST_GAS plants are emitted here but excluded at overlay time
-# (outages.ST_GAS_PEAKER_PLANTS), since they run economically without outages.
-GROUPS = frozenset({"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"})
 
 # Revealed-availability filter (shared by the unit-level detector) -----------
 # A sustained CF<threshold span is detected as an "outage", but for a
@@ -135,6 +130,16 @@ WINDOW_DAYS: int = 30
 FULL_STOP_OVERRIDE_DAYS: int = 5
 FULL_STOP_OVERRIDE_CF: float = 0.02
 
+# EIA-930 balancing-authority code per model ISO (the eia-930-hourly file stem).
+_ISO_TO_BA: dict[str, str] = {
+    "ERCOT": "ERCO",
+    "CAISO": "CISO",
+    "PJM": "PJM",
+    "NYISO": "NYIS",
+    "NEISO": "ISNE",
+    "MISO": "MISO",
+}
+
 
 def filter_revealed_outages(
     windows: list[tuple[int, int]],
@@ -146,8 +151,8 @@ def filter_revealed_outages(
 ) -> list[tuple[int, int]]:
     """Apply the revealed-availability filter with the full-stop duration override.
 
-    Shared by the facility- and unit-level detectors so the gate is one filter
-    for every ISO. A detected down span ``(s, e)`` is kept when EITHER
+    Shared by every ISO's outage detector so the gate is one filter. A detected
+    down span ``(s, e)`` is kept when EITHER
 
     * it overlaps at least ``min_inmerit_hours`` high-NET-LOAD hours (the
       local-band revealed-availability test — ``mask`` is :func:`high_load_mask`),
@@ -198,17 +203,6 @@ def filter_revealed_outages(
     return kept
 
 
-# EIA-930 balancing-authority code per model ISO (the eia-930-hourly file stem).
-_ISO_TO_BA: dict[str, str] = {
-    "ERCOT": "ERCO",
-    "CAISO": "CISO",
-    "PJM": "PJM",
-    "NYISO": "NYIS",
-    "NEISO": "ISNE",
-    "MISO": "MISO",
-}
-
-
 def high_load_mask(
     iso: str,
     year: int,
@@ -243,7 +237,7 @@ def high_load_mask(
     ba = _ISO_TO_BA.get(iso.upper())
     if ba is None:
         return None
-    path = REPO / "data" / "raw" / "eia-930-hourly" / f"{ba} hourly.parquet"
+    path = _REPO / "data" / "raw" / "eia-930-hourly" / f"{ba} hourly.parquet"
     if not path.exists():
         return None
     df = pd.read_parquet(path)
@@ -347,263 +341,50 @@ def detect_outages_eventbased(
     return [(s, e) for s, e in _runs(below) if e - s >= min_outage_hours]
 
 
-def _nameplate_groups(
-    iso: str, bins_path: str
-) -> tuple[dict[int, float], dict[int, str], dict[int, str]]:
-    """Return ``(nameplate, name, group)`` per coal/CC/gas-steam plant code.
-
-    ERCOT reads the curated ``custom-bin-assignments.csv`` (one row per
-    plant, with a measured bin nameplate). Every other ISO is built from the
-    EIA-860 fleet: generators are summed per plant code over the GROUPS
-    classes, the plant's dominant class (by capacity) is its group, and the
-    summed capacity is its nameplate — the denominator for the capacity
-    factor the outage detector thresholds on.
-    """
-    if iso.upper() == "ERCOT":
-        bins = load_campd_bins(bins_path)
-        coalcc = bins[bins["Plant_Group"].isin(GROUPS)]
-        nameplate = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["capacity_mw"]))
-        name = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["Plant_Name"]))
-        group = dict(zip(coalcc["Plant_Code"].astype(int), coalcc["Plant_Group"]))
-        return nameplate, name, group
-
-    from collections import defaultdict
-
-    from market_sim.data.fleet import load_fleet_from_csv
-
-    cap_by_group: dict[int, dict[str, float]] = defaultdict(lambda: defaultdict(float))
-    names: dict[int, str] = {}
-    for g in load_fleet_from_csv(iso):
-        if g.plant_group not in GROUPS:
-            continue
-        code = int(g.plant_code)
-        if code <= 0:
-            continue
-        cap_by_group[code][g.plant_group] += float(g.pmax_mw)
-        names.setdefault(code, g.name)
-
-    nameplate, name, group = {}, {}, {}
-    for code, groups in cap_by_group.items():
-        nameplate[code] = sum(groups.values())
-        group[code] = max(groups, key=groups.get)
-        name[code] = names[code]
-    return nameplate, name, group
+# Partial-plateau detector (formerly scripts/derive_partial_outages._detect) --
+# Frozen against residuals (CLAUDE.md #23): these constants re-derive only on a
+# source-data change. A partial outage shows up as a sustained *ceiling plateau*
+# — the plant keeps running but its daily-max CF drops well below its normal
+# capability, then recovers.
+_MIN_DAYS = 5  # sustained plateau length
+_SMOOTH_DAYS = 7  # rolling-median window to ride through recovery blips
+_CEILING_FRAC = 0.65  # daily max below this fraction of the normal ceiling
+_RUN_FLOOR_CF = 0.06  # daily mean above this = running (not a full outage)
 
 
-def main() -> None:
-    ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--years", nargs="+", type=int, default=[2023, 2024, 2025])
-    ap.add_argument("--iso", default="ERCOT")
-    ap.add_argument("--min-outage-days", type=float, default=2.0)
-    ap.add_argument(
-        "--bins",
-        default=str(REPO / "data" / "raw" / "reference" / "custom-bin-assignments.csv"),
+def _detect(cf: np.ndarray) -> list[tuple[int, int, float]]:
+    """Return ``[(start_day, end_day_excl, derate_factor), ...]`` plateaus."""
+    nd = cf.shape[0] // 24
+    if nd == 0:
+        return []
+    day = cf[: nd * 24].reshape(nd, 24)
+    dmax, dmean = day.max(1), day.mean(1)
+    running = dmean > _RUN_FLOOR_CF
+    ref = float(np.percentile(dmax[running], 90)) if running.any() else 0.0
+    if ref <= 0.0:
+        return []
+    # Smooth the daily-max ceiling with a centered rolling median so brief
+    # recovery blips (a unit cycling back for a day or two) don't break an
+    # otherwise sustained partial outage.
+    sm = (
+        pd.Series(dmax)
+        .rolling(_SMOOTH_DAYS, center=True, min_periods=4)
+        .median()
+        .to_numpy()
     )
-    ap.add_argument(
-        "--out",
-        default=None,
-        help="Output CSV. Defaults to data/raw/campd-outages.csv for "
-        "ERCOT and campd-outages-{ISO}.csv for other ISOs.",
-    )
-    ap.add_argument(
-        "--no-inmerit-filter",
-        action="store_true",
-        help="Disable the revealed-availability (high-load) filter — keep every "
-        "detected down span (pre-fix behaviour).",
-    )
-    ap.add_argument(
-        "--high-load-pctl",
-        type=float,
-        default=HIGH_LOAD_PCTL,
-        help=f"System-load percentile above which an hour is 'high load' "
-        f"(default {HIGH_LOAD_PCTL}).",
-    )
-    ap.add_argument(
-        "--min-inmerit-hours",
-        type=int,
-        default=MIN_INMERIT_HOURS,
-        help=f"High-load hours a span must overlap to be a real outage "
-        f"(default {MIN_INMERIT_HOURS}).",
-    )
-    ap.add_argument(
-        "--high-load-window-days",
-        type=int,
-        default=WINDOW_DAYS,
-        help=f"Centered window (days) the high-load percentile is measured over "
-        f"— the LOCAL/seasonal band that keeps real shoulder outages. 0 = legacy "
-        f"single-annual percentile (default {WINDOW_DAYS}).",
-    )
-    ap.add_argument(
-        "--fullstop-override-days",
-        type=int,
-        default=FULL_STOP_OVERRIDE_DAYS,
-        help=f"A sustained full-stop (CF<override-cf) lasting >= this many days is "
-        f"kept as a mechanical outage regardless of net-load overlap "
-        f"(default {FULL_STOP_OVERRIDE_DAYS}).",
-    )
-    ap.add_argument(
-        "--fullstop-override-cf",
-        type=float,
-        default=FULL_STOP_OVERRIDE_CF,
-        help=f"Span mean-CF below which the full-stop override treats a long down "
-        f"span as a mechanical outage (default {FULL_STOP_OVERRIDE_CF}).",
-    )
-    ap.add_argument(
-        "--no-fullstop-override",
-        action="store_true",
-        help="Disable the full-stop duration override (keep only the net-load "
-        "revealed-availability test).",
-    )
-    args = ap.parse_args()
-    if args.no_fullstop_override:
-        args.fullstop_override_days = 10**9
-    min_outage_hours = int(round(args.min_outage_days * 24))
-    inmerit_cache: dict[int, np.ndarray | None] = {}
-    iso = args.iso.upper()
-    if args.out is None:
-        fname = "campd-outages.csv" if iso == "ERCOT" else f"campd-outages-{iso}.csv"
-        args.out = str(RAW_DATA_DIR / fname)
-
-    nameplate, pname, grp = _nameplate_groups(iso, args.bins)
-
-    states = campd.states_for_iso(iso)
-    df = campd.load_campd_hourly(states, args.years)
-
-    # Publication horizon per year: the last date the year's CAMPD extracts
-    # cover. An in-progress year (CAMPD posts quarterly; e.g. 2026 with only
-    # Q1 published) must have its clock clipped here — zero-filling the
-    # unpublished remainder would grow a phantom outage from the horizon to
-    # Dec 31 on every plant (same fix as derive_campd_unit_outages.py).
-    horizon_end: dict[int, pd.Timestamp] = {
-        int(yr): sub["date"].max() + pd.Timedelta(hours=23)
-        for yr, sub in df.groupby("year")
-    }
-
-    rows = []
-    summary = []
-    for code in sorted(nameplate):
-        npl = float(nameplate[code])
-        for yr in args.years:
-            grid = campd.plant_hourly_grid(df, code, yr)
-            if grid.empty:
-                continue
-            # Full calendar-year clock: CAMPD only zero-fills within a plant's
-            # reported span, so a unit that stops reporting when it goes offline
-            # (e.g. San Miguel Sep-Dec 2025) leaves those months missing rather
-            # than zero. Reindex to the whole year and zero-fill — missing = no
-            # activity = offline — so the shutdown is caught for every group.
-            full = pd.date_range(
-                f"{yr}-01-01",
-                min(pd.Timestamp(f"{yr}-12-31 23:00:00"), horizon_end[yr]),
-                freq="h",
-                tz=grid.index.tz,
-            )
-            gross = grid["gross_mw"].reindex(full).fillna(0.0).to_numpy(dtype=float)
-            ts = full
-            if grp[code] == "ST_GAS":
-                windows = detect_outages_eventbased(
-                    gross,
-                    npl,
-                    ST_GAS_MIN_OUTAGE_HOURS,
-                    ST_GAS_CF_PEAK,
-                )
-            elif grp[code] in EVENTBASED_CYCLING_GROUPS:
-                # ERCOT-79 availability-envelope audit: daily-cycling combined-
-                # cycle / cogen units (run the afternoon peak, shut overnight)
-                # never accumulate the MIN_REAL_RUN_HOURS (24 h) CONSECUTIVE
-                # above-CF run the run-based ``detect_outages`` needs to mark a
-                # span "available", so their whole operating season folds into
-                # one giant "outage" — a phantom hard-zero across the summer for
-                # a plant its own CEMS shows generating (T H Wharton, ORIS 3469).
-                # Event-based detection (the same rule ST_GAS uses) breaks the
-                # window on ANY hour the unit runs (cf >= REAL_RUN_CF), so a
-                # genuine multi-day dead stop stays a window while daily cycling
-                # produces none — and a genuine outage EMBEDDED in a cycling
-                # season is no longer merged away with the cycling. cf threshold
-                # is the module's own "running" boundary REAL_RUN_CF; min-span is
-                # the same ``min_outage_hours`` as the run-based path. Keyed only
-                # on measured CAMPD cf — no price/MWh residual (claude.md #11/#26).
-                windows = detect_outages_eventbased(
-                    gross,
-                    npl,
-                    min_outage_hours,
-                    REAL_RUN_CF,
-                )
-            else:
-                windows = detect_outages(gross, npl, min_outage_hours)
-            # Revealed-availability filter: drop down spans that never overlap a
-            # high-load (system-needed) hour — economic idling, not outage — so
-            # the unit stays available and the co-opt keeps it as reserve. The
-            # full-stop duration override (filter_revealed_outages) re-keeps a
-            # sustained weeks-long CF≈0 dead stop even below the high-load band.
-            if windows and not args.no_inmerit_filter:
-                if yr not in inmerit_cache:
-                    inmerit_cache[yr] = high_load_mask(
-                        iso,
-                        yr,
-                        len(ts),
-                        args.high_load_pctl,
-                        args.high_load_window_days,
-                    )
-                mask = inmerit_cache[yr]
-                cf = gross / npl if npl > 0 else np.zeros_like(gross)
-                windows = filter_revealed_outages(
-                    windows,
-                    mask,
-                    cf,
-                    args.min_inmerit_hours,
-                    args.fullstop_override_days,
-                    args.fullstop_override_cf,
-                )
-            tot_days = sum(e - s for s, e in windows) / 24.0
-            if windows:
-                summary.append(
-                    (
-                        code,
-                        pname[code],
-                        grp[code],
-                        yr,
-                        len(windows),
-                        tot_days,
-                        max(e - s for s, e in windows) / 24.0,
-                    )
-                )
-            for s, e in windows:
-                start = ts[s]
-                stop = ts[e - 1] + pd.Timedelta(hours=1)
-                rows.append(
-                    {
-                        "oris_code": code,
-                        "plant_name": pname[code],
-                        "unit": 1,
-                        "outage_start": start.strftime("%Y-%m-%d %H:00:00"),
-                        "outage_stop": stop.strftime("%Y-%m-%d %H:00:00"),
-                        "duration_hours": int((stop - start).total_seconds() // 3600),
-                    }
-                )
-
-    out = pd.DataFrame(
-        rows,
-        columns=[
-            "oris_code",
-            "plant_name",
-            "unit",
-            "outage_start",
-            "outage_stop",
-            "duration_hours",
-        ],
-    ).sort_values(["oris_code", "outage_start"])
-    out.to_parquet  # noqa: B018  (silence linters; we write CSV)
-    out.to_csv(args.out, index=False)
-
-    print(f"wrote {len(out)} outage windows to {args.out}\n")
-    print(
-        f"{'code':>6} {'plant':<26}{'group':<12}{'yr':>5}{'#win':>5}"
-        f"{'out d':>8}{'maxwin d':>9}"
-    )
-    for code, nm, g, yr, n, td, mx in sorted(summary, key=lambda r: (r[0], r[3])):
-        print(f"{code:>6} {nm[:25]:<26}{g:<12}{yr:>5}{n:>5}{td:>8.0f}{mx:>9.0f}")
-
-
-if __name__ == "__main__":
-    main()
+    partial = running & (sm < _CEILING_FRAC * ref)
+    out, i = [], 0
+    while i < nd:
+        if partial[i]:
+            j = i
+            while j < nd and partial[j]:
+                j += 1
+            if j - i >= _MIN_DAYS:
+                # Typical depressed ceiling over the window (median ignores the
+                # blips, so the derate reflects the sustained reduced capacity).
+                ceiling = float(np.median(dmax[i:j]))
+                out.append((i, j, round(min(1.0, ceiling / ref), 3)))
+            i = j
+        else:
+            i += 1
+    return out
