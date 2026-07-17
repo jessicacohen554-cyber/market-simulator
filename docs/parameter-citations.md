@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1403 parameters registered** (775 flagged `needs-citation`).
+**1405 parameters registered** (775 flagged `needs-citation`).
 
 
 ## Calibration
@@ -113,6 +113,7 @@ inline comment and still need a dated primary source — search the table for
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
 | `adequacy_demand_response_fraction_by_iso.ERCOT` | 0.058 | 2 | Load-side capacity products netted out of gross peak in the ISO's o… | 2025 | auto-generated |
+| `adequacy_demand_response_fraction_by_iso.PJM` | 0.03966325587762226 | 2 | PJM demand-response capacity counted in PJM's own adequacy construc… | 2025-07-22 |  |
 | `demand_growth_rates.CAISO.high` | 0.022 | 1 | California Energy Commission Integrated Energy Policy Report (IEPR)… | 2024-02 | modeled |
 | `demand_growth_rates.CAISO.high.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.CAISO.high.near` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
@@ -637,6 +638,7 @@ inline comment and still need a dated primary source — search the table for
 
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
+| `adequacy_external_tie_firm_mw.PJM` | 1281.7 | 2 | Firm import contribution counted by PJM's own adequacy ledger but a… | 2025-07-22 |  |
 | `eford.biomass` | 0.08 | 2 | NERC GADS — biomass steam |  | auto-generated, needs-citation |
 | `eford.coal` | 0.08 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
 | `eford.gas_cc` | 0.05 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
@@ -1492,7 +1494,7 @@ inline comment and still need a dated primary source — search the table for
 | `renewable_installed_mw.NYISO.wind` | 2400.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
 | `renewable_installed_mw.PJM.solar` | 14000.0 | 2 | was 25000. Source: EIA Hourly Grid Monitor Oct 2025. | 2025 | auto-generated |
 | `renewable_installed_mw.PJM.wind` | 11000.0 | 2 | was 40000. Source: ERCOT CDR Dec 2024. | 2024 | auto-generated |
-| `rggi_member_states_by_year` | {"2023": ["ME", "VT", "VA", "NH", "RI… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
+| `rggi_member_states_by_year` | {"2023": ["NH", "VT", "ME", "VA", "CT… | 2 | RGGI member states by year (postal codes). Virginia joined RGGI's C… | 2021 | auto-generated |
 | `short_ton_to_metric_tonne` | 0.90718474 | 2 | Short ton -> metric tonne. RGGI allowances are denominated in SHORT… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.CAISO` | 2026-07-03-caiso-statmode-d-7 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
 | `statmode_probe_runs.ERCOT` | 2026-07-04-statmode-d7-probe-ercot32 | 2 | Provenance of the fit inputs: the committed D-7 statistical-mode pr… |  | auto-generated, needs-citation |
