@@ -19,6 +19,13 @@ behavior unchanged.
 
 EACs only shift the dispatch cost vector and the capacity-economics
 revenue terms; they add no LP constraint rows.
+
+The national CES federal EAC premium (``policy/federal_ces.py``, W2-A)
+layers onto the same channels: when ``federal_ces_enabled`` the two
+dispatch entry points below become year-aware and consume the effective
+price ``max(legacy eac_price_*, premium × credit fraction)`` per unit /
+per tech — still one certificate per MWh, sold once, and still no LP
+rows. Disabled (the default), every path here is byte-identical legacy.
 """
 
 from __future__ import annotations
@@ -41,7 +48,10 @@ _EAC_PRICE_FIELDS: dict[str, str] = {
 
 
 def apply_eac_to_mc(
-    mc: np.ndarray, fleet: FleetArrays, config: ScenarioConfig
+    mc: np.ndarray,
+    fleet: FleetArrays,
+    config: ScenarioConfig,
+    year: int | None = None,
 ) -> np.ndarray:
     """Subtract per-generator EACs from the dispatch marginal cost.
 
@@ -56,14 +66,39 @@ def apply_eac_to_mc(
     ``compute_eac_dispatch_credits`` because they ride the per-zone
     ``wind_mc`` / ``solar_mc`` adders, not the per-generator ``mc``.
 
+    Under the federal CES (``config.federal_ces_enabled``, W2-A plan
+    §5.3) the subtraction becomes the year-aware effective price
+    ``max(legacy eac_price_*, premium × credit fraction)`` per unit
+    (:func:`market_sim.policy.federal_ces.effective_unit_eac_prices`) —
+    one certificate per MWh, sold once, never a sum — which extends the
+    credited set to every eligible fleet fuel (hydro, hydrogen turbines,
+    and under ``cesa_ci`` the unabated gas CCs at or under the CI
+    eligibility line). Hydro is monthly-budget constrained, so its lower
+    bid is dispatch-inert (plan §5.3); the CES-disabled path below is
+    byte-identical to the legacy behavior.
+
     Args:
         mc: Marginal cost array of shape ``(n_gen, T)``.
-        fleet: Vectorized fleet arrays supplying ``fuel_type_idx``.
+        fleet: Vectorized fleet arrays supplying ``fuel_type_idx`` (and,
+            for cesa_ci crediting, ``emission_rate``).
         config: Scenario config supplying the exogenous EAC prices.
+        year: Simulation year for the federal CES premium path. Required
+            when ``federal_ces_enabled``; legacy (CES-off) callers may
+            omit it.
 
     Returns:
         The same ``mc`` array, modified in place.
     """
+    if config.federal_ces_enabled:
+        # Local import: policy.federal_ces imports from this module, so
+        # the reverse edge must stay function-local (same pattern as the
+        # runner's negative-offer-floor import).
+        from market_sim.policy.federal_ces import effective_unit_eac_prices
+
+        effective = effective_unit_eac_prices(config, fleet, year)
+        mc -= effective[:, None]
+        return mc
+
     fuel_idx = np.asarray(fleet.fuel_type_idx)
     if config.eac_price_nuclear > 0.0:
         nuclear = fuel_idx == FUEL_TYPE_MAP["nuclear"]
@@ -82,6 +117,7 @@ def apply_eac_to_mc(
 
 def compute_eac_dispatch_credits(
     config: ScenarioConfig,
+    year: int | None = None,
 ) -> tuple[float, float, float]:
     """Return the ``(wind, solar, storage)`` exogenous EAC prices in $/MWh.
 
@@ -89,7 +125,39 @@ def compute_eac_dispatch_credits(
     the storage discharge credit, separate from the per-generator ``mc``.
     Offshore wind and geothermal are not in this tuple -- they enter the
     fleet as generators and take their EAC via ``apply_eac_to_mc``.
+
+    Under the federal CES (``config.federal_ces_enabled``, W2-A plan
+    §5.3) each element becomes ``max(legacy eac_price_*, premium × credit
+    fraction)`` for the year — wind/solar credit at 1.0 (when eligible)
+    and storage only under ``federal_ces_storage_eligible`` (owner D5
+    default: off — discharge creates no new attribute). The CES-disabled
+    path is byte-identical to the legacy behavior.
+
+    Args:
+        config: Scenario config supplying the exogenous EAC prices.
+        year: Simulation year for the federal CES premium path. Required
+            when ``federal_ces_enabled``; legacy (CES-off) callers may
+            omit it.
     """
+    if config.federal_ces_enabled:
+        # Local import: policy.federal_ces imports from this module (see
+        # apply_eac_to_mc).
+        from market_sim.policy.federal_ces import (
+            premium_for_year,
+            tech_credit_fraction,
+        )
+
+        premium = premium_for_year(config, year)
+        return (
+            max(config.eac_price_wind, premium * tech_credit_fraction(config, "wind")),
+            max(
+                config.eac_price_solar, premium * tech_credit_fraction(config, "solar")
+            ),
+            max(
+                config.eac_price_storage,
+                premium * tech_credit_fraction(config, "storage"),
+            ),
+        )
     return (
         config.eac_price_wind,
         config.eac_price_solar,
