@@ -15516,3 +15516,118 @@ precedent). (2) The summer offer-formation charter named by the frontier
 designation. (3) The C5b storage entry stays downstream of the tail item
 (C5b/C5c now removed from the rubric — diagnostics only). Next shorthand:
 neiso-60.
+## 2026-07-17 — miso-70: F5 declared-window ELMP emergency-tier pricing BUILT, PROBED (composed with M-2) and REGISTERED as a KEEPER CANDIDATE — every pre-registered band held; the miso-69 C3b-2024 breach is closed at the keeper's own 0.124 (the Warning window prints EXACTLY the $500 Tier-1 floor); fail set unchanged from the keeper with C3c strictly closer; keeper swap awaits the owner
+
+**Runs (registered + scored, rubric v2.7):** `2026-07-17-miso-70-tier-pricing`
+(main, KEEPER CANDIDATE) + `2026-07-17-miso-70-tier-base` (same-box drift
+control). Both MISO 2023+2024+2025, one bundle each, per-year +
+`--reuse-solved`, warm-start pinned off, variants back to back (15 GB box).
+Charter: the F5 lane opened by miso-69; design FROZEN before the build in
+`docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md` (mechanism, cited
+parameters, composition plan, expected-delta bands, refutation criteria all
+pre-registered). Model per rule 27: Fable.
+
+**Mechanism (`maxgen_emergency_tier_pricing`, ScenarioConfig tier 3, default
+OFF — zero fitted scalars).** Inside a maxgen-events registry window declared
+at Maximum Generation Warning or higher, the declared region's PHYSICAL
+zones reprice the energy-balance load slack — the LP's administrative
+last-resort supply — from the ISO's $2,000 bid cap to min(voll, tier floor):
+**$500 Tier 1** at Warning/Step 1, **$1,000 Tier 2** at Step 2+, the
+SOM-footnoted ELMP emergency-supply offer floors ("Emergency supply is
+priced by applying a $500/MWh offer price floor (Tier 1) to this supply in
+ELMP when MISO declares a Max Gen Warning and a $1000/MWh floor (Tier 2) in
+a Max Gen Event Step 2" — 2023 SOM fn.21 = 2024/2025 SOM fn.17; ladder
+scoping 2023 SOM p.10-11: advisory/alert = no margin change, hence no
+pricing effect; Step 1 activates emergency ranges under Tier-1 pricing).
+The RBDC / zonal-ORDC families are never edited (rule 19 — the tier supply
+serves energy and relieves reserves by displacement, so nested reserve duals
+cannot stack into the LMP); the slack cost never RISES (min); off-window it
+EQUALS voll by construction, so off-window pricing effects are structurally
+impossible. Within-window depth is unbounded, identified by the ladder's own
+declaration discipline (2023 SOM p.11 — each level is declared only when its
+MWs are needed, so the declared level is the measured depth indicator; no
+per-window MW bound exists to fit). External seam buses are EXCLUDED (found
+and fixed before any scored read: slack there is phantom import supply
+through the border links, and the Tier-1 "call external capacity" leg is
+already inside the measured seam interchange). Implementation:
+`data/maxgen_events.py` loader (same EST no-leap `outage_hour_mask` clock as
+the M-2 derates — hour-exact window alignment), `slack_cost` (n_zones, T)
+override through `build_cost_vector`/`DispatchModel`, backcast-orchestrator
+wiring only; D-5 `backcast_only` entry with wiring-proof symbol; DOF +1
+measured-physical (tier-floor schedule). Unit tests
+`tests/test_maxgen_tier_pricing.py` (15 — trivial 1-gen/1-zone/24-h LP
+first, level/region/window/min semantics, external-bus exclusion, off-state
+byte identity). Tier-alone was pre-adjudicated analytically dispatch-inert
+on the keeper stack (design §2: the keeper prints ZERO >$200 max-zonal-dual
+hours in all of 2023 and 2025, and its 2024 Warning-window hours clear
+$44-50 ISO-weighted — an unbounded $500 supply is dominated everywhere it
+exists), so the deciding probe is the COMPOSITION with the already-
+adjudicated M-2 derates (miso-69, rejected): measured availability truth +
+documented tier price formation = declared-window prices.
+
+**Mechanism-only read (main − base; the base reproduces the registered
+miso-68 keeper EXACTLY on every gated criterion — zero box drift, which
+also certifies cross-run comparability to the miso-69 pair):**
+
+- **THE DECISIVE READ — C3b-2024 = 0.124, IDENTICAL to the keeper** (band
+  [0.124, 0.16], projection 0.127-0.138, veto ≤ 0.20; miso-69's uncapped
+  window broke it at 0.203). The six Aug-26-2024 Warning hours that printed
+  $1,841-1,985 under M-2 alone now print **EXACTLY the $500.0 Tier-1
+  floor** (in-window ceiling clean; ~28.5 GWh of Tier-1-priced emergency
+  supply serves the six hours across West/Plains/Illinois; MISO-South
+  prints $284-314 in five of them — below the floor, correctly untouched,
+  RDT separation intact). Because the model's August-2024 mean UNDER-shoots
+  the actual, the tier-priced hours land on the correct side: C3a-2024
+  −8.0% → −6.9% (right-shaped, PASS both arms; 0.4pp beyond the design's
+  approximate −4.5..−6.5 projection edge — recorded, non-gated read; DA
+  diagnostic −10.3% → −9.3%) where miso-69's overshoot had "improved" it
+  wrong-shaped to −2.0%.
+- **C3b mechanism-only elsewhere: improved, not just held** — 2023 0.081 →
+  0.079 (−0.002), 2025 0.193 → 0.184 (−0.009; the M-2 improvement carries;
+  the ≤ +0.005 gate is met with margin).
+- **C3c 1/6/1 vs pre-registered bands [0,3]/[4,10]/[1,8]** (RT actual
+  30/37/88, still FAIL ×3 — the bands were honesty bands, not pass claims).
+  The 2025 deep windows under-engage EXACTLY as pre-declared (design
+  §1e/§4.5): the tier treatment caps declared-window formation, it never
+  engages — zero tier slack dispatched in all of 2025 (Jun-23 peaks $196.7,
+  Jul-29 $142.3, all below the floor), and the one 2025 tail hour is the
+  alert-only Jul-28 19:00 $248 hour, correctly untouched (Alert carries no
+  pricing effect per the ladder). The engagement-depth question — the
+  Midwest carries no zonal reserve family; the market-wide requirement is
+  the measured *cleared* series; winter fuel security — stays open in its
+  own pre-named lanes, NOT force-closed here.
+- **Everything else held:** C3a-2025 −14.3% → −13.7% (miso-69's move,
+  carried); C1 CC_REGULAR-2023 −8.28 → −8.29 (watch unchanged — not this
+  lane's lever); max class energy move 0.121 TWh (≤ 0.5 watch: CT_PEAKER
+  +0.121/2025); C2/C4/C5a PASS both arms; C6/C7/C8 PASS with the same
+  ST_GAS grounded-above-budget notes (no new floors — the channel carries
+  no floor-mechanism id; its rule-12 window declaration is the registry
+  Warning+ window set, recorded in the D4_WINDOWS note + the D-5
+  `maxgen_emergency_tier_pricing` backcast-only entry). 2023's Step-2A
+  window is clamp-inert as expected ($207.2 peak < the $1,000 Tier-2
+  floor).
+
+**Determination & keeper case:** main NOT-YET, fail set {C1
+CC_REGULAR-2023 (−8.29), C3a-2025 (−13.7%), C3c ×3 (1/30 · 6/37 · 1/88
+RT)} — EXACTLY the keeper's set, with no gated regression, C3c strictly
+closer on every year, and TWO additional real structures at zero fitted
+scalars (measured event-window availability truth + the documented ELMP
+tier price formation miso-69 proved missing). By rule 1 — a keeper is the
+most structurally faithful run, not the lowest-MAE run — **miso-70-main is
+recommended as the new MISO keeper; the swap is owner-only and awaits the
+owner.** DOF: main 24/2 (+1 tier-floor schedule on miso-69's 23/2), base
+21/2. C6 PASS both (attestations `scripts/gen_miso70_attestation.py`). No
+ablation twin (rule 20 as amended 2026-07-14). Registration chain:
+dashboard_add_run → attestation/ledger → legitimacy regen (D-5 entry live)
+→ calibration_verdict --write-metrics → parity OK (49 runs) →
+build_manifest. MISO registry at 13 runs (< 15, no pruning). Note for
+future registrations: `dashboard_add_run` id slugs keep only the FIRST
+FOUR non-stopword label words — the base's initial 5-word label collided
+with the main's id (caught and re-registered as `miso 70 tier base`
+before anything else in the chain ran).
+
+**Next:** owner ruling on the keeper recommendation. If promoted, the F5
+lane closes with the composed recipe as the keeper; the price lane's
+remaining opens are the pre-named engagement-depth lanes (Midwest zonal
+reserve family charter, measured-cleared requirement basis, winter-2024
+fuel security) and G-23 imports (sequenced last). Next number: miso-71.
