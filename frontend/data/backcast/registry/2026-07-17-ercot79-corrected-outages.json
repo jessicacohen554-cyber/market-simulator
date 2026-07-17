@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-17-ercot79-corrected-outages",
+  "label": "ercot79 corrected outages",
+  "date": "2026-07-17",
+  "shorthand": "ercot79-corrected-outages",
+  "definition": "ERCOT-79 availability audit v2: the deposed ercot76-ne-import keeper recipe re-solved on a corrected CAMPD facility-outage detector (event-based detection for daily-cycling CC/CT classes + a revealed-availability filter; genuine embedded outages preserved, validated 58h false-outage 1,904->0 MW/h, 0% genuine-outage over-correction) — zero ScenarioConfig deltas, single-delta vs keeper. Restoring the phantom-zeroed daily-cycling CC capability resolves the 2023 summer over-shoot ($1,068->$242, confirming ERCOT-78) but un-catches the real scarcity tail (2023 C3c 179->53h vs RT 181, Aug caught 71->25, 2025 tail 19->0h) — the offer/scarcity calibration was tuned against the phantom-tightened fleet. DETERMINATION: NOT-YET (C3a mean LMP, C3b price shape, and C3c scarcity tail all fail on the corrected data). OPEN LANE: a full ERCOT offer-curve + ORDC/co-opt re-calibration against the corrected availability envelope.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-17-ercot79-corrected-outages.js",
+  "bundle": "results/calibration/ercot79_corrected_outages_fullspan"
+}
