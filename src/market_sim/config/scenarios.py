@@ -628,17 +628,20 @@ class ScenarioConfig:
     # wired). Consumed by the per-year backcast fleet build
     # (scripts/run_calibration.py) via fleet.load_mothballed_but_operating.
     carry_operating_mothballs: bool = False
-    # Historic (facility-summed) CAMPD outage overlay: hard-zeros coal/CC
-    # tranches when a plant's CEMS facility sum drops out. For ERCOT this is the
-    # primary outage layer and the unit-level derate only SUPPLEMENTS it
-    # (catching single-unit outages the facility sum hides). For an ISO whose
-    # unit-level outage file is derived fresh from ALL CAMPD unit data
-    # (e.g. PJM via derive_campd_unit_outages.py), the unit-level layer is the
-    # COMPLETE outage source and this facility overlay is redundant — stacking
-    # both double-counts and over-derates. The per-ISO registry
-    # constants.HISTORIC_OUTAGE_OVERLAY_BY_ISO now sets the effective default;
-    # the runner resolves it as ``registry.get(iso, this_flag)``, so this flag
-    # is the global default and overrides for ISOs absent from that registry.
+    # INERT since 2026-07-17: the facility-summed CAMPD outage overlay this flag
+    # gated was removed (scripts/derive_campd_outages.py -> campd-outages*.csv,
+    # deleted — it summed a plant's units, hiding single-unit outages and folding
+    # daily-cycling combined cycles into phantom summer outages;
+    # results/calibration/FINDING-ercot79-phantom-outage-2026-07.md). The
+    # per-unit derate (fleet.unit_outage_derate_factors) is now the SOLE CAMPD
+    # outage layer for every ISO and always applies under
+    # outage_source=="historic", so this flag no longer changes a solve. It is
+    # retained (default True) only for run_config / legitimacy-diagnostics
+    # back-compat and is still resolved per-ISO by
+    # constants.HISTORIC_OUTAGE_OVERLAY_BY_ISO in the runner; that resolution is
+    # now a no-op on the dispatch. (Formerly: ERCOT's primary outage layer, which
+    # the unit-level derate merely supplemented; disabled per-ISO where the
+    # unit-level file was the complete source, e.g. PJM.)
     historic_outage_overlay: bool = True
     # Optional per-plant tranche-config override CSV (one row per plant with its
     # five tranche shares of nameplate — must-run / committed / econ-low /

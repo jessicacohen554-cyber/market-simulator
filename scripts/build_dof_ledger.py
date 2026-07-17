@@ -885,7 +885,7 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "identification guards: coal-only detector + unit annual "
                 "CF >= 0.55 (the partial-outage detector's baseload "
                 "constant) + the revealed-availability in-merit filter "
-                "(derive_campd_outages.filter_revealed_outages; the "
+                "(outage_detect.filter_revealed_outages; the "
                 "full-stop override cannot engage below the 5-day cap)",
                 root_cause="the >= 5-day duration floor makes "
                 "event-coincident short forced outages invisible (MISO "

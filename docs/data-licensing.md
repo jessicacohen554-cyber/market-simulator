@@ -20,7 +20,7 @@ publisher's terms page changes.
 
 **Applies to:** `data/raw/eia-860/`, `eia-930/`, `eia-930-hourly/`,
 `eia-930-interchange/`, `campd-unit-level/`, `campd-facility-level/`,
-`campd-outages*.csv`, `campd-unit-outages*.csv`, `fleet-egrid/`, the
+`campd-unit-outages*.csv`, `campd-partial-outages*.csv`, `fleet-egrid/`, the
 EIA-sourced files in `gas-prices/` (`henry_hub_daily.csv`,
 `henry_hub_monthly.csv`, `eia_citygate_IL_MI_monthly_2023-2025.csv`), the
 EIA-derived rows of `gas_basis_by_iso_month.csv` / `nyiso_zonal_gas_hub.csv`

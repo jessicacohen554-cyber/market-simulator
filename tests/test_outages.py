@@ -8,23 +8,18 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.constants import HOURS_PER_YEAR
-from market_sim.config.paths import CAMPD_BINS_CSV, RAW_DATA_DIR
+from market_sim.config.paths import RAW_DATA_DIR
 from market_sim.data.outages import (
-    MIN_OUTAGE_SPAN_HOURS,
     QUALIFYING_PLANT_GROUPS,
     _hour_of_year,
     _MONTH_OF_HOUR,
     _plant_cems_envelope,
-    _qualifying_plant_codes,
     outage_hour_mask,
-    outage_masks_for_year,
     unit_outage_derate_factors,
 )
 
 # Repository root (tests/ lives at the repo root).
 REPO = Path(__file__).parents[1]
-BINS_CSV = str(CAMPD_BINS_CSV)
-OUTAGES_CSV = str(RAW_DATA_DIR / "ercot-outages.csv")
 
 
 class HourOfYearTest(unittest.TestCase):
@@ -86,152 +81,72 @@ class OutageHourMaskTest(unittest.TestCase):
         self.assertFalse(mask[hi])
 
 
-class BuildMasksFilterTest(unittest.TestCase):
-    """The coal/CC group + span>10-day filter, on synthetic inputs."""
-
-    def _write_inputs(self, tmp: Path) -> tuple[str, str]:
-        bins = tmp / "bins.csv"
-        bins.write_text(
-            "Plant_Group,Plant_Code\n"
-            "COAL,111\n"
-            "CC_REGULAR,222\n"
-            "CT_PEAKER,333\n"
-            "ST_GAS,444\n"
-            "CC_REGULAR,444\n"  # 444 has both ST_GAS and CC -> qualifies
-        )
-        outages = tmp / "outages.csv"
-        outages.write_text(
-            "oris_code,plant_name,unit,outage_start,outage_stop,duration_hours\n"
-            # 111 (coal): 14-day span -> qualifies.
-            "111,Coaly,1,2023-01-01 00:00:00,2023-01-15 00:00:00,42\n"
-            # 111 (coal): 1-day span (24h) -> below the 48h threshold, excluded.
-            "111,Coaly,1,2023-03-01 00:00:00,2023-03-02 00:00:00,90\n"
-            # 222 (CC): 19-day span but tiny duration_hours -> qualifies
-            # (span, not duration_hours, decides).
-            "222,Ccy,1,2023-06-01 00:00:00,2023-06-20 00:00:00,50\n"
-            # 333 (peaker): 19-day span but not coal/CC -> excluded.
-            "333,Peaky,1,2023-02-01 00:00:00,2023-02-20 00:00:00,300\n"
-            # 444 (has a CC bin): 12-day span -> qualifies.
-            "444,Dualy,1,2023-08-01 00:00:00,2023-08-13 00:00:00,200\n"
-            # 555 not in the bin file at all -> excluded.
-            "555,Ghost,1,2023-09-01 00:00:00,2023-09-20 00:00:00,400\n"
-        )
-        return str(outages), str(bins)
-
-    def test_filter_keeps_only_coal_cc_long_spans(self):
-        with tempfile.TemporaryDirectory() as d:
-            out_path, bins_path = self._write_inputs(Path(d))
-            masks = outage_masks_for_year(
-                2023, HOURS_PER_YEAR, outages_path=out_path, bins_path=bins_path
-            )
-        self.assertEqual(set(masks), {111, 222, 444})
-        self.assertNotIn(333, masks)  # peaker excluded
-        self.assertNotIn(555, masks)  # absent from bin file excluded
-
-    def test_short_span_not_masked(self):
-        with tempfile.TemporaryDirectory() as d:
-            out_path, bins_path = self._write_inputs(Path(d))
-            masks = outage_masks_for_year(
-                2023, HOURS_PER_YEAR, outages_path=out_path, bins_path=bins_path
-            )
-        # 111's only masked hours are the 14-day January window; the 1-day
-        # March window (below the 48h threshold) must not appear.
-        coal = masks[111]
-        self.assertEqual(int(coal.sum()), 14 * 24)
-        self.assertFalse(coal[_hour_of_year(3, 2, 0)])
-
-    def test_span_threshold_is_strict(self):
-        # 47 h (just under the 48h threshold) is excluded; 48 h (= threshold)
-        # is included (the filter drops spans strictly shorter than the
-        # threshold).
-        with tempfile.TemporaryDirectory() as d:
-            bins = Path(d) / "bins.csv"
-            bins.write_text("Plant_Group,Plant_Code\nCOAL,10\nCOAL,11\n")
-            outages = Path(d) / "outages.csv"
-            outages.write_text(
-                "oris_code,plant_name,unit,outage_start,outage_stop,"
-                "duration_hours\n"
-                "10,Edge,1,2023-01-01 00:00:00,2023-01-02 23:00:00,1\n"  # 47h
-                "11,Over,1,2023-01-01 00:00:00,2023-01-03 00:00:00,1\n"  # 48h
-            )
-            masks = outage_masks_for_year(
-                2023,
-                HOURS_PER_YEAR,
-                outages_path=str(outages),
-                bins_path=str(bins),
-            )
-        self.assertNotIn(10, masks)
-        self.assertIn(11, masks)
-        self.assertEqual(MIN_OUTAGE_SPAN_HOURS, 48)
-
-    def test_missing_extract_returns_empty(self):
-        masks = outage_masks_for_year(
-            2023,
-            HOURS_PER_YEAR,
-            outages_path="/no/such/outages.csv",
-            bins_path=BINS_CSV,
-        )
-        self.assertEqual(masks, {})
-
-
-class RealDataIntegrationTest(unittest.TestCase):
-    """Sanity checks against the committed ERCOT extracts."""
-
-    def test_qualifying_codes_cover_known_coal_cc_plants(self):
-        codes = _qualifying_plant_codes(BINS_CSV)
-        # Coleto Creek (coal), Frontera (CC), Barney M Davis (has a CC bin).
-        for code in (6178, 298, 7097, 55098, 4939):
-            self.assertIn(code, codes)
-
-    def test_san_miguel_qualifies_and_has_outage(self):
-        # San Miguel (6183) is a coal plant (qualifying code) with a >= 2-day
-        # window in the legacy ERCOT extract for 2023 and 2024, so it is masked
-        # those years. (The sparse legacy extract has no qualifying 2025 entry.)
-        self.assertIn(6183, _qualifying_plant_codes(BINS_CSV))
-        for year in (2023, 2024):
-            masks = outage_masks_for_year(
-                year,
-                HOURS_PER_YEAR,
-                outages_path=OUTAGES_CSV,
-                bins_path=BINS_CSV,
-            )
-            self.assertIn(6183, masks)
-            self.assertGreaterEqual(int(masks[6183].sum()), MIN_OUTAGE_SPAN_HOURS)
-
-    def test_coleto_2023_outage_lands_in_winter_spring(self):
-        masks = outage_masks_for_year(
-            2023,
-            HOURS_PER_YEAR,
-            outages_path=OUTAGES_CSV,
-            bins_path=BINS_CSV,
-        )
-        self.assertIn(6178, masks)
-        coleto = masks[6178]
-        # Outaged hours fall in Jan + Feb-Apr, none in the summer peak.
-        self.assertTrue(coleto[_hour_of_year(1, 10, 0)])
-        jun_to_sep = slice(_hour_of_year(6, 1, 0), _hour_of_year(10, 1, 0))
-        self.assertFalse(coleto[jun_to_sep].any())
-
-    def test_peaker_plant_not_in_masks(self):
-        # Bacliff (60264) is a peaker present in the outage CSV but not
-        # coal/CC, so it never appears in the masks.
-        masks = outage_masks_for_year(
-            2023,
-            HOURS_PER_YEAR,
-            outages_path=OUTAGES_CSV,
-            bins_path=BINS_CSV,
-        )
-        self.assertNotIn(60264, masks)
-        self.assertNotIn(60264, _qualifying_plant_codes(BINS_CSV))
+class QualifyingPlantGroupsTest(unittest.TestCase):
+    """The set of plant groups whose CAMPD outages are derived."""
 
     def test_qualifying_groups_are_coal_cc_and_steam(self):
-        # Coal, combined cycle (regular + CHP), gas steam (+ CHP) and CT_CHP
-        # carry the historic overlay; CT_PEAKER does not (no overlay coverage).
+        # Coal, combined cycle (regular + CHP), gas steam (+ CHP) and CT_CHP are
+        # the groups the unit-outage detector derives; CT_PEAKER is not (CTs
+        # dispatch economically and carry no derate).
         self.assertEqual(
             QUALIFYING_PLANT_GROUPS,
             frozenset({"COAL", "CC_REGULAR", "CC_CHP", "CT_CHP", "ST_GAS", "ST_CHP"}),
         )
         self.assertNotIn("CT_PEAKER", QUALIFYING_PLANT_GROUPS)
+
+
+class SingleUnitPlantFullyZeroedTest(unittest.TestCase):
+    """The per-unit derate — now the SOLE CAMPD outage layer — fully zeros a
+    genuinely single-unit plant (the unit's capacity equals its plant-bin
+    capacity, so the removed share is 1.0), replacing what the removed
+    facility-summed overlay used to do for a whole-plant CEMS dropout.
+    """
+
+    def _factors(self, unit_csv: Path, cap: dict, year: int):
+        from unittest.mock import patch
+
+        from market_sim.data import outages
+
+        outages.unit_outage_derate_factors.cache_clear()
+        with (
+            patch.object(outages, "unit_outage_csv_for_iso", return_value=unit_csv),
+            patch.object(outages, "_iso_plant_capacity", return_value=cap),
+        ):
+            return outages.unit_outage_derate_factors(year, HOURS_PER_YEAR, iso="MISO")
+
+    def test_single_unit_plant_fully_zeroed_in_window(self):
+        with tempfile.TemporaryDirectory() as td:
+            unit = Path(td) / "campd-unit-outages-MISO.csv"
+            pd.DataFrame(
+                [
+                    {
+                        "facility_name": "Solo Coal",
+                        "facility_id": 70001,
+                        "unit_id": "1",
+                        # unit capacity == the plant-bin capacity -> pct 100%.
+                        "unit_capacity_mw": 500.0,
+                        "plant_capacity_mw": 500.0,
+                        "unit_pct_of_plant": 100.0,
+                        "plant_group": "COAL",
+                        "capacity_source": "eia_exact",
+                        "outage_start": "2023-06-01",
+                        "outage_end": "2023-06-20",  # 20 days >= 5-day floor
+                        "duration_days": 20.0,
+                        "peer_units_online": 0,
+                        "total_units_at_plant": 1,
+                    }
+                ]
+            ).to_csv(unit, index=False)
+            factors = self._factors(unit, {(70001, "COAL"): 500.0}, 2023)
+        key = (70001, "COAL")
+        self.assertIn(key, factors)
+        arr = factors[key]
+        self.assertEqual(arr.shape, (HOURS_PER_YEAR,))
+        # Availability is zeroed for every hour inside the outage window...
+        self.assertEqual(arr[_hour_of_year(6, 10, 0)], 0.0)
+        # ...and full outside it.
+        self.assertEqual(arr[0], 1.0)
+        self.assertEqual(arr[_hour_of_year(12, 31, 23)], 1.0)
 
 
 class NEISOUnitOutageSmokeTest(unittest.TestCase):
