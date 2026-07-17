@@ -2540,6 +2540,7 @@ def solve_and_persist(
     ercot_offer_surface_midcurve_conditional: bool = False,
     ercot_offer_surface_cleared_share: bool = False,
     ercot_offer_surface_cleared_share_state: bool = False,
+    ercot_offer_surface_cleared_share_steam: bool = False,
     ercot_offer_surface_lowcurve: bool = False,
     ercot_offer_surface_lowcurve_floorscoped: bool = False,
     wind_ptc_vintage_offers: bool = False,
@@ -2802,6 +2803,12 @@ def solve_and_persist(
             # state flag must land in scenario_config exactly as solved.
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_offer_surface_cleared_share_state=True
+            )
+        if ercot_offer_surface_cleared_share_steam:
+            # Meta-writer mirror (rule 25): the ERCOT-77 steam-cliff extension
+            # flag must land in scenario_config exactly as solved.
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_offer_surface_cleared_share_steam=True
             )
         if ercot_offer_surface_lowcurve:
             # Meta-writer mirror of run_year's with_overrides (rule 25): the LOW-leg
@@ -3706,6 +3713,9 @@ def solve_and_persist(
             ercot_offer_surface_cleared_share_state=(
                 ercot_offer_surface_cleared_share_state
             ),
+            ercot_offer_surface_cleared_share_steam=(
+                ercot_offer_surface_cleared_share_steam
+            ),
             ercot_offer_surface_lowcurve=ercot_offer_surface_lowcurve,
             ercot_offer_surface_lowcurve_floorscoped=(
                 ercot_offer_surface_lowcurve_floorscoped
@@ -4126,6 +4136,9 @@ def solve_and_persist(
         "ercot_offer_surface_cleared_share": ercot_offer_surface_cleared_share,
         "ercot_offer_surface_cleared_share_state": (
             ercot_offer_surface_cleared_share_state
+        ),
+        "ercot_offer_surface_cleared_share_steam": (
+            ercot_offer_surface_cleared_share_steam
         ),
         "ercot_offer_surface_lowcurve": ercot_offer_surface_lowcurve,
         "ercot_offer_surface_lowcurve_floorscoped": (
