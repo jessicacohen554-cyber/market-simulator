@@ -16124,3 +16124,115 @@ per rule 15 with legitimacy diagnostics, attestation (DOF ledger +1
 measured-physical), parity check PASS, manifest rebuilt. Transport:
 `git push -u origin`, blob-verified (rule 27). No `keepers.json` edit
 (recommendation only).
+
+## 2026-07-17 — CAISO-92 (WP-A, measured DAM offer surface): BUILT, REGISTERED and PROMOTED to keeper (owner sign-off) — the fitted CC/CT offer multipliers replaced by the fleet's own published DAM bids at ZERO new free parameters; C3a improves 2024/2025, scored grid otherwise identical (NOT-YET)
+
+*(Retroactive same-day entry: the producing session registered and promoted
+the run but ended before logging it. Facts below are from the committed
+artifacts — registration commit `04d2ce9`, promotion commit `f9ab33c`, sidecar
+`2026-07-17-caiso-92-measured-offer`, bundle
+`results/calibration/caiso92_measured_offer_surface`.)*
+
+**Run:** `2026-07-17-caiso-92-measured-offer` — CAISO 2023+2024+2025, one
+bundle (rule 16), P1-only. Recipe: the caiso-90 keeper verbatim + the measured
+DAM offer surface (`caiso_offer_surface_measured` +
+`caiso_offer_surface_conditional`) — WP-A of
+`docs/DIAGNOSIS-caiso-evening-merit-c1-c3c-2026-07.md`.
+
+**Mechanism.** The fitted `_CAISO_OFFER_CURVE` CC_REGULAR/CT_PEAKER econ/peak
+multipliers are REPLACED by the cap-weighted medians of the fleet's own
+published DAM energy bids (OASIS Public Bid Data, 90-day-lag masked curves;
+`dam-public-bids` intake + `derive_caiso_offer_surface.py`, all estimation
+gates PASS) plus the condition-binned measured peak-rung ladder. A rule-24/25
+SHRINK of the fitted offer surface — zero new free parameters; measured bid
+statistics normalized by the model's own gas-flow-day + CARB inputs; the
+committed band unarmed per rule 19. Market story: the DMM Default Energy Bid
+holds the CAISO gas fleet near cost-based SRMC, so the fleet bids fuel × heat
+rate + a thin adder — the model now reads that measured reality straight off
+the published curves instead of a fitted multiplier.
+
+**Result:** scored grid IDENTICAL to the superseded keeper (NOT-YET;
+C1/C3a/C3c/C4 FAIL, C2/C3b/C5a/C6/C7/C8 PASS) with the failing C3a mean-LMP
+improved: 2024 +11.5→+10.4 %, 2025 +15.2→+14.3 % (belly over-price down).
+C1 effect: CT_PEAKER rises via MERIT (the Panoche bid wedge releasing) but
+only ~+0.15–0.34 TWh/yr — the CT under-run is confirmed a VOLUME/commitment
+phenomenon (→ WP-B), not an offer-price one; the evening-λ leg deepens,
+disclosed.
+
+**Promotion (owner sign-off 2026-07-17):** caiso-92 supersedes caiso-90 —
+structurally sound (measured bids replace fitted multipliers, a DOF shrink)
+AND the failing C3a gate improved, the rule-1 keeper definition. keepers.json
+CAISO pointer + status.js flipped; attestation cloned from the keeper with the
+zero-DOF delta appended.
+
+## 2026-07-17 — CAISO C1 candidate 3 (WP-B overnight CC two-shift) REFUTED by the who-serves-the-night precondition: the overnight CC over-run is an IMPORT-PRICING phenomenon (the carbon wedge at parity), not a commitment one — the lane REDIRECTS to the import side; keeper UNCHANGED (caiso-92), nothing registered
+
+*(Retroactive same-day entry — the producing session committed the FINDING and
+tooling but ended before logging.
+`results/calibration/FINDING-caiso92b-overnight-cc-is-import-pricing-2026-07-17.md`
+is the full record.)*
+
+**The precondition (FINDING-caiso91c §3) executed before any WP-B build:**
+decompose WHO SERVES THE NIGHT (hod 0-5), model vs measured, on the
+same-machine caiso-92 keeper repro (`caiso92_repro_A`) vs full-8760 CAMPD CEMS
+(model-klass_map basis, LA-Basin repowering crosswalk, non-CAISO CA plants
+excluded) and EIA-930 CISO wide-hourly.
+
+**The decomposition (TWh, 2023/2024/2025):** CC_REGULAR model
+15.16/14.76/13.78 vs CEMS 13.77/12.65/11.17 → **+1.39/+2.11/+2.61 OVER**;
+imports model 10.03/9.87/10.30 vs measured (−interchange) 11.39/11.57/13.33 →
+**−1.36/−1.70/−3.03 UNDER**. The CC over-run ≈ the import under-run, all three
+years. CC_CHP is slightly over (+0.4–0.5, not the gap), CT_PEAKER is tiny
+overnight, hydro/nuclear/wind match within noise. Basis-invariant share
+(robust to the known demand-basis diff): model CC/(CC+imports) 60/60/57 % vs
+measured 55/52/46 %.
+
+**Root cause — the caiso-86b carbon wedge at parity:** the model's DSW
+corridor has overnight HEADROOM (~2.6–3.0 of ~5.2 GW used) but incremental DSW
+imports price AT PARITY with domestic CC (2023 overnight medians: CA zonal
+$54.4, WECC_DSW $55.1 — ~$40 hub + ~$13–19 unspecified-import CARB wedge ≈
+$55), so the LP has no economic reason to import more. Reality's marginal
+surplus-West import carries NO wedge (WEIM/EDAM GHG attribution assigns clean
+resources to CAISO transfers). caiso-87's `caiso_dsw_surplus_clean` (in the
+keeper) triggers only in midday CAISO-surplus hours — OVERNIGHT is uncovered.
+The PNW corridor is already maxed at its ~1.3 GW median cap (negative hub,
+−$26 p10–25).
+
+**Price direction resolves AGAINST WP-B:** overnight λ is +3.4/+1.8/+3.6 OVER
+actual RT; de-committing CC forces imports in at the SAME $55 wedge parity —
+fixing the volume by force but NOT the over-price. An import-side fix
+(overnight clean attribution) makes imports marginal at a LOWER price →
+overnight λ falls toward actual AND the CC over-run closes economically: one
+structural fix, both symptoms (rule 19). Doctrine: ≥92 % of the overnight CC
+is FREE in-merit economic dispatch (only 0.16 TWh at binding RA floors, 2024,
+FINDING-caiso91c) — there is no commitment scaffolding to remove, and an
+honest reduction collapses to a fitted cap/adder (rule 11/25) or the
+archived-P2 (CLI-locked). **Candidate 3 CLOSED — with candidates 1 (caiso-91,
+probe-inert) and 2 (FINDING-caiso91b, no-LP conduct refutation), the
+commitment-mechanism family for the C1 CC-overnight lane is exhausted.**
+
+**Redirect + its gate:** extend the caiso-86b/87 clean-import attribution to
+the OVERNIGHT surplus-West regime — a NEW admissible sub-lane (caiso-86b
+closed the measured-ladder-PRICE form on its LOYO gate, NOT the
+clean-attribution/wedge composition; caiso-87's midday trigger leaves
+overnight genuinely uncovered). Precondition before any build (derive-first,
+NO LP — the load-bearing admissibility gate): the MEASURED overnight (hod 0-5)
+CAISO−hub spread must show NO carbon wedge in overnight surplus-West hours for
+the DSW/Palo Verde SOUTH corridor specifically (the PNW negatives already
+answer for the north); if it passes, derive the overnight clean-depth/no-wedge
+trigger under the caiso-86b estimation gates (CV ≤ 0.20 year-stability + LOYO
+≤ 25 % held-out). If the overnight DSW is fossil-marginal, the wedge is
+CORRECT overnight and the lane becomes an owner checkpoint. Scope guard: the
+new trigger must stay distinct from the midday CAISO-surplus trigger — the
+caiso-87 CLOSED autumn lane must not reopen and the belly over-price
+(hod 10-14, already +9–14) must not inflate.
+
+**Tooling committed:** `scripts/probes/_caiso_who_serves_night.py` (the
+reusable overnight decomposition harness) +
+`scripts/probes/_caiso92_repro_A.py` (same-machine keeper repro — the correct
+A-leg for any future import-side A/B; cross-machine HiGHS spread is
+0.5–1.2 TWh gas/yr). Keeper UNCHANGED (caiso-92); nothing registered (the
+repro reproduces the existing keeper, not a new run). Rigor caveat
+(FINDING §7): the designed adversarial 4-lens verification was not run (owner
+redirected the session); the four load-bearing facts are each directly
+measured or documented — the build/no-build call is grounded judgment.
