@@ -9,6 +9,11 @@ the capacity screens first** (§7, "build the code & architecture to do it right
 **v2.1 (2026-07-17):** first campaign scoped to `clean_capture` crediting only —
 `cesa_ci` (efficient-CCGT) ships as a built, tested option but does not run in the
 initial campaign (owner).
+**v2.2 (2026-07-17):** §11 Q1–Q4 resolved by owner — 45Q stacks with the premium;
+12-year 45Q credit window modeled with an indefinite-extension option; the fixed 55%
+screen CF is REMOVED in favor of economics-based utilization (attainable margin at
+post-retrofit costs); assumed capture fraction default 0.95 (target rate; 0.90
+sensitivity). Q5 (interim retrofit behavior) still open.
 **Owner ask (2026-07-17):** model a *national* CES that credits every clean/low-carbon
 resource (including CCS retrofits and new build) with an EAC premium, as a federal
 alternative to state RPS/CES. Plug in an ensemble of premium levels and compare
@@ -77,8 +82,8 @@ endogenously. Rationale:
 **Crediting (owner decision 2026-07-17 — two modes, both shipped):**
 - **`clean_capture` (DEFAULT).** Zero-carbon eligible fuels credit at **1.0**; abated gas
   (gas_cc_ccs, retrofit or new-build) credits at the **assumed capture fraction**
-  `federal_ces_ccs_capture_fraction` (default **0.90**; 0.95 the sensitivity — owner:
-  "assume 90 or 95% capture for simplicity"); unabated fossil credits **0**. Simple,
+  `federal_ces_ccs_capture_fraction` (default **0.95** — owner 2026-07-17: the target
+  capture rate; 0.90 the sensitivity); unabated fossil credits **0**. Simple,
   certificate-like, no per-unit CI dependence.
 - **`cesa_ci` (VARIANT).** CESA-style fractional crediting
   `f = clip(1 − CI/0.82, 0, 1)` (benchmark `federal_ces_ci_benchmark_t_per_mwh = 0.82`
@@ -189,7 +194,7 @@ linear interpolation, `rps.py:8-39`) and the `eac_price_*` scalars.
 ## 4. Design decisions — RESOLVED (owner, 2026-07-17)
 
 - **D1 Crediting = two owner-specified modes** (§1): `clean_capture` default (clean 1.0,
-  CCS = assumed capture fraction 0.90/0.95, unabated 0) and `cesa_ci` variant (CESA
+  CCS = assumed capture fraction 0.95 [0.90 sensitivity], unabated 0) and `cesa_ci` variant (CESA
   formula vs 0.82, unabated CCGT eligible under the 0.45 t/MWh line). Both modes ship in
   W1-A; the **first campaign runs `clean_capture` only** — `cesa_ci` is a built, tested
   option for later runs (owner 2026-07-17). The v1 `binary` mode and
@@ -228,9 +233,10 @@ federal_ces_premium_by_year: dict[int, float] | None = None  # sparse knots, lin
                                                  # edge-held; overrides base+escalation.
                                                  # YAML round-trip: coerce str keys → int.
 federal_ces_crediting: str = "clean_capture"     # "clean_capture" | "cesa_ci" (§1)
-federal_ces_ccs_capture_fraction: float = 0.90   # policy-assumed capture crediting for
+federal_ces_ccs_capture_fraction: float = 0.95   # policy-assumed capture crediting for
                                                  # abated gas in clean_capture mode
-                                                 # (owner: 0.90 default, 0.95 sensitivity).
+                                                 # (owner 2026-07-17: 0.95 = target
+                                                 # capture rate; 0.90 sensitivity).
                                                  # Distinct from the engineering
                                                  # ccs_capture_rate / ccs_retrofit_capture_rate
                                                  # fields; W1-C reconciles/documents.
@@ -374,7 +380,7 @@ cites this plan (§ references).
 **W1-A — Core config surface + `policy/federal_ces.py` resolver (Opus/Fable)**
 Implements §5.1 + §5.2 ONLY (no consumer wiring — solver-inert by construction), with
 the v2 crediting modes (`clean_capture` default / `cesa_ci` variant, capture fraction
-0.90, 0.45 eligibility line). Acceptance: full G8 registration checklist; unit tests
+0.95, 0.45 eligibility line). Acceptance: full G8 registration checklist; unit tests
 incl. neutrality (`federal_ces_enabled=False` ⇒ zeros/legacy pass-through, cache_key
 unchanged at defaults via `_CACHE_KEY_OPTIONAL_FIELDS`); backcast guard raises;
 `pytest tests/` green; `python scripts/validate_parameters.py` green.
@@ -417,11 +423,18 @@ all `clean_capture`) plus a PARKED `configs/ces_premium_matrix_ci.yaml`
 (`CI-10/20/30`, `cesa_ci`) so the efficient-CCGT option is turnkey when the owner calls
 it. Tests on synthetic cached fixtures.
 
-**W2-C — CCS-retrofit redesign (Opus/Fable; BLOCKED on §11 owner resolution)**
-Implements whatever §11 resolves: candidate package is 45Q term (credit-window-aware,
-expiry-gated), screen revenue basis moved from fixed 0.55 CF to prior-year attainable
-margin, premium × capture-fraction crediting, documented stacking, refreshed parameter
-citations. Includes retrofit-specific tests + spec §5.6 rewrite.
+**W2-C — CCS-retrofit redesign (Opus/Fable; Q1–Q4 RESOLVED 2026-07-17, blocked only on Q5)**
+Implements the §11 resolution: 45Q revenue term in the retrofit screen, annualized over
+`min(ira_45q_credit_window_years, remaining_life)` and expiry-gated, with
+`ira_45q_credit_window_years: int | None = 12` (None ⇒ indefinite — owner-requested
+option; default 12 per statute) applied consistently to the NEW-BUILD CCS LCOE too
+(flag: a behavior change to new-build CCS economics); screen revenue basis moved from
+the fixed 0.55 CF to prior-year attainable margin **at the post-retrofit cost basis**
+(HR penalty + VOM adder in, 45Q and premium×fraction as bid offsets) so anticipated
+utilization is endogenous; premium enters as `max(eac_price_gas_cc_ccs,
+premium × capture-fraction credit)` with 45Q stacking on top; capture crediting at
+0.95; refreshed parameter citations. Includes retrofit-specific tests + spec §5.6
+rewrite.
 
 ### Wave 3 — capacity-screen readiness (external lane + verification)
 
@@ -467,9 +480,9 @@ analog) as a cross-check of the exogenous ladder; premium as a PB-2 sampler dime
 - Rule 24 (no off-registry knobs): every parameter is a ScenarioConfig field in
   `TIER_TAGS` + `parameters.json`; one delivery channel (ERCOT-65 lesson).
 - Rule 5 / citations: benchmark 0.82 (CESA S.1359/S.2146), threshold 0.45 (EPA §111(b)
-  correspondence, W1-C finalizes), capture fraction 0.90/0.95 (owner simplification,
-  documented as such), plus the NY ZEC / PJM GATS ranges already in
-  `EAC_PRICE_REFERENCE`.
+  correspondence, W1-C finalizes), capture fraction 0.95 (owner simplification — target
+  capture rate; 0.90 sensitivity), 45Q window 12 yr (26 U.S.C. §45Q(a)(3)-(4)), plus the
+  NY ZEC / PJM GATS ranges already in `EAC_PRICE_REFERENCE`.
 - Rules 2/6: credit fractions vectorized over the fleet arrays; no hour loops.
 - Rule 27: core sessions Opus/Fable; push_files with ≥300-line verification.
 - Rules 15/16 (backcast dashboard) do not govern forecast campaigns; W4 deliverables are
@@ -479,15 +492,18 @@ analog) as a cross-check of the exogenous ladder; premium as a PB-2 sampler dime
 ## 10. Owner decision register — RESOLVED 2026-07-17
 
 1. Crediting → two modes (D1): `clean_capture` default; `cesa_ci` variant with 0.45
-   t/MWh unabated-CCGT line; assumed capture 0.90 (0.95 sensitivity). **First campaign
-   runs `clean_capture` only; `cesa_ci` is a built option** (owner 2026-07-17).
+   t/MWh unabated-CCGT line; assumed capture 0.95 (owner: target rate; 0.90
+   sensitivity). **First campaign runs `clean_capture` only; `cesa_ci` is a built
+   option** (owner 2026-07-17).
    *Pending micro-check: 0.45 as eligibility cutoff (assumed) vs as formula denominator.*
 2. Existing clean credits identically — confirmed (no vintage gate).
 3. Horizon 2026–2050; first-run ladder {10, 20, 30} — confirmed.
 4. Escalation 0%/yr real — confirmed.
 5. Storage discharge not credited — confirmed.
 6. CCS retrofit → deeper design discussion required (§11); W2-C implements the
-   resolution. v1's "45Q parity in W2-A" superseded.
+   resolution. v1's "45Q parity in W2-A" superseded. **Q1–Q4 resolved 2026-07-17**
+   (45Q stacks; 12-yr window w/ indefinite option; no fixed CF — economics-based
+   utilization; capture 0.95); **Q5 open**.
 7. Screens fixed before meaningful runs — confirmed (D9; §7 gate; W3-R go/no-go).
 
 ## 11. CCS-retrofit treatment — design discussion (for owner resolution)
@@ -527,23 +543,31 @@ screen** (new-build CCS LCOE has it, :2742).
    (Gulf-Coast ERCOT favorable vs heterogeneous PJM), FEED/outage time, the 3 GW/yr/ISO
    cap's provenance.
 
-**Proposed resolution (recommendation):**
-- (a) Add 45Q to the retrofit screen mirroring new-build treatment, annualized over
-  `min(12, remaining_life)` and gated on `ira_ccus_45q_last_year` at retrofit year;
-- (b) replace the fixed-CF revenue basis with the unit's prior-year attainable margin
-  uplift (consistent with the retirement screen's construction);
-- (c) premium enters as `max(eac_price_gas_cc_ccs, premium × capture-fraction credit)`
-  — same `max()` family as everywhere else; 45Q stacks (separate instrument);
-- (d) keep payback-vs-remaining-life as the criterion (simplicity) but document the
-  asymmetry vs new entry; revisit only if results are retrofit-sensitive;
-- (e) keep the 3 GW/yr cap + availability year; cite or flag the cap.
+**RESOLUTION (owner, 2026-07-17 — Q1–Q4 answered; Q5 pending):**
+- **Q1 — RESOLVED: 45Q stacks with the premium** (certificate ≠ tax credit). Retrofit
+  attribute term = `max(eac_price_gas_cc_ccs, premium × capture-fraction credit)`,
+  45Q added on top as its own statutory revenue term.
+- **Q2 — RESOLVED: model the 12-year credit window, with an indefinite option.** New
+  field `ira_45q_credit_window_years: int | None = 12` (statutory default; `None` ⇒
+  credit runs for remaining life — owner-requested extension scenario). Annualize over
+  `min(window, remaining_life)`, gated on `ira_ccus_45q_last_year` at the retrofit
+  year. Apply the same window to the NEW-BUILD CCS LCOE for consistency (flagged: a
+  behavior change to new-build CCS economics — today it credits 45Q un-windowed).
+- **Q3 — RESOLVED: no fixed CF anywhere.** The 0.55 was a legacy screening shortcut for
+  expected utilization inside the payback formula (post-retrofit DISPATCH was always
+  endogenous). Owner: "let them run how it makes sense economically." The screen's
+  revenue basis becomes the unit's attainable inframarginal margin over the prior
+  year's hourly prices AT THE POST-RETROFIT COST BASIS (heat-rate penalty + VOM adder
+  in; 45Q $/MWh and premium×fraction as bid offsets) — so the screen anticipates the
+  near-baseload 45Q-driven utilization the owner describes (80-90 % CF emerges when
+  post-retrofit effective cost clears the price duration curve that deep), consistent
+  with the retirement screen's construction (rule 1).
+- **Q4 — RESOLVED: 0.95** assumed capture for crediting (the target capture rate);
+  0.90 kept as a labeled sensitivity. `federal_ces_ccs_capture_fraction = 0.95`.
+- **Q5 — OPEN (owner answering):** while W2-C is pending, freeze retrofits out of
+  interim diagnostics (`ccs_available_year` bump) or leave legacy behavior (rec: leave —
+  the campaign is gated on §7 anyway)?
 
-**Questions for owner (block W2-C only):**
-- Q1: 45Q stacks with the premium for retrofits (rec: yes — statute; certificate ≠ tax
-  credit)?
-- Q2: 45Q credit window: annualize over 12 years (rec) or ignore the window?
-- Q3: Screen revenue basis: prior-year attainable margin (rec) or keep fixed 0.55 CF?
-- Q4: Single assumed capture for crediting: 0.90 (rec) or 0.95?
-- Q5: If W2-C outlasts the rest of W2, freeze retrofits out of early diagnostics
-  (`ccs_available_year` bump) or leave legacy behavior until W2-C lands (rec: leave —
-  campaign is gated anyway)?
+Superseded design notes kept for the record: (d) payback-vs-remaining-life stays the
+criterion (simplicity; documented asymmetry vs new entry), (e) the 3 GW/yr cap +
+availability year stay (cite or flag the cap).
