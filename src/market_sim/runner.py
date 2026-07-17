@@ -106,6 +106,7 @@ from market_sim.policy.carbon import resolve_carbon_price
 from market_sim.policy.constraints import get_active_policy_constraints
 from market_sim.policy.ira import compute_dispatch_credits
 from market_sim.policy.eac import apply_eac_to_mc, compute_eac_dispatch_credits
+from market_sim.policy.federal_ces import federal_ces_suppresses_state_rps
 from market_sim.policy.rps import get_rps_acp, get_rps_target
 from market_sim.results.cache import (
     get_cache_path,
@@ -1091,7 +1092,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # adders, and the storage EAC credits discharge. The EAC is real
             # bidding behavior; it does not stack with the RPS shadow price
             # in capacity economics (each MWh sells one attribute, once).
-            apply_eac_to_mc(mc_base, fleet_arrays, config)
+            # Year-aware since W2-A: under federal_ces_enabled the per-unit
+            # subtraction is max(legacy eac_price_*, premium × credit
+            # fraction) for THIS year (policy/federal_ces.py) — applied here
+            # once, pre-P0, and carried through P1 (one delivery channel;
+            # no LP rows added).
+            apply_eac_to_mc(mc_base, fleet_arrays, config, year)
             # Coal tranche 1 bids at VOM only (its fuel is sunk under the
             # take-or-pay contract); higher tranches pass through more fuel.
             apply_coal_tranches(
@@ -1138,7 +1144,9 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
                 gas_scenario=config.gas_price_path,
                 net_load=_interchange_net_load,
             )
-            wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(config)
+            wind_eac, solar_eac, storage_eac = compute_eac_dispatch_credits(
+                config, year
+            )
             wind_mc -= wind_eac
             solar_mc -= solar_eac
             if getattr(config, "negative_renewable_offers", False):
@@ -1186,7 +1194,12 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # in-region wind+solar cannot reach the target and its dual (REC
             # price) is capped at the ACP (policy/rps.get_rps_acp; rule 13).
             rps_acp_price = None
-            if config.rps_enabled:
+            # Pure-federal counterfactual (W2-A plan §5.3): with the federal
+            # CES enabled AND federal_ces_replaces_state_rps, the state RPS
+            # row is not built (rps_target stays None), so no RPS dual exists
+            # and the premium is the only attribute mechanism. Moot for
+            # ERCOT/PJM (no RPS row either way).
+            if config.rps_enabled and not federal_ces_suppresses_state_rps(config):
                 rps_target = get_rps_target(iso, year)
                 rps_acp_price = get_rps_acp(iso)
             # CAISO solar deliverability derate (Lever D): reduce the solar CF
