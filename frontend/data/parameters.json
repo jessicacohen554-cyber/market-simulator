@@ -17331,40 +17331,40 @@
       "display_name": "Rggi Member States By Year",
       "value": {
         "2023": [
-          "NH",
-          "VT",
-          "ME",
-          "VA",
-          "CT",
-          "NJ",
-          "NY",
-          "RI",
-          "MD",
           "DE",
+          "RI",
+          "VT",
+          "NJ",
+          "CT",
+          "VA",
+          "ME",
+          "NY",
+          "NH",
+          "MD",
           "MA"
         ],
         "2024": [
-          "NH",
-          "VT",
-          "ME",
-          "CT",
-          "NJ",
-          "NY",
-          "RI",
-          "MD",
           "DE",
+          "RI",
+          "VT",
+          "NJ",
+          "CT",
+          "ME",
+          "NY",
+          "NH",
+          "MD",
           "MA"
         ],
         "2025": [
-          "NH",
-          "VT",
-          "ME",
-          "CT",
-          "NJ",
-          "NY",
-          "RI",
-          "MD",
           "DE",
+          "RI",
+          "VT",
+          "NJ",
+          "CT",
+          "ME",
+          "NY",
+          "NH",
+          "MD",
           "MA"
         ]
       },
@@ -27382,6 +27382,24 @@
       ]
     },
     {
+      "param_id": "storage_annual_build_cap_mw.MISO",
+      "display_name": "Storage Annual Build Cap Mw / Miso",
+      "value": 4000.0,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "very large storage queue but slow interconnection (PJM-like). Source: MISO Generator Interconnection Queue 2024",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "storage_annual_build_cap_mw.NEISO",
       "display_name": "Storage Annual Build Cap Mw / Neiso",
       "value": 1200.0,
@@ -27814,6 +27832,24 @@
       "flags": [
         "auto-generated",
         "needs-citation"
+      ]
+    },
+    {
+      "param_id": "storage_deployment_ceiling_mw.MISO",
+      "display_name": "Storage Deployment Ceiling Mw / Miso",
+      "value": 62000.0,
+      "unit": "",
+      "domain": "Storage",
+      "tier": 2,
+      "source": "~50% of ~124 GW coincident peak. Source: MISO OMS Survey / Planning Resource Auction 2024",
+      "source_date": "2024",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
       ]
     },
     {
