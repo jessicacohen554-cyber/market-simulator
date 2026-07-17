@@ -18,6 +18,12 @@ The clean tree is derived/gitignored, so a missing partition (an ISO whose
 registry has not landed, or ERCOT before its rows are seeded) yields an empty
 list with a log line rather than an error — callers gate on
 ``ScenarioConfig.confirmed_exits_enabled`` and degrade to the economic screen.
+**Exception (W2-E / G12):** when the caller passes ``required=True`` — the
+runner does so whenever ``confirmed_exits_enabled`` is on in forecast mode — a
+missing or unimportable registry RAISES instead of silently degrading: the
+W1-B smoke showed the warn-only no-op handing ERCOT 477 MW of phantom 2026
+fleet (V H Braunig backlog) on a fresh checkout. Remediation:
+``PYTHONPATH=. python scripts/curate_confirmed_retirements.py``.
 Forecast-forward only: a backcast's historical exits are already carried by the
 EIA-860 vintage snapshot + within-window retiree build (plan §5.4).
 """
@@ -33,6 +39,17 @@ from pydantic import BaseModel
 logger = logging.getLogger(__name__)
 
 DATATYPE = "confirmed-retirements"
+
+# W2-E / G12 fail-loud remediation, quoted verbatim in every required-mode
+# raise below. data/clean is derived and gitignored, so a fresh checkout has
+# no registry until it is regenerated; and cache_key hashes config only,
+# never data-file state, so caches solved before the regeneration must go.
+_REMEDIATION = (
+    "run `PYTHONPATH=. python scripts/curate_confirmed_retirements.py` from "
+    "the repo root to regenerate data/clean/confirmed-retirements, then "
+    "delete any results/<ISO>/<key>/ caches solved before it existed "
+    "(cache_key hashes config only, never data-file state)"
+)
 
 
 class ConfirmedExit(BaseModel):
@@ -63,7 +80,7 @@ class ConfirmedExit(BaseModel):
 
 
 def load_confirmed_exits(
-    iso: str, as_of: "_dt.date | None" = None
+    iso: str, as_of: "_dt.date | None" = None, required: bool = False
 ) -> list[ConfirmedExit]:
     """Return the confirmed (binding-instrument) exits for an ISO.
 
@@ -86,6 +103,14 @@ def load_confirmed_exits(
             ``instrument_date`` is treated as unknown-dated and is DROPPED
             when ``as_of`` is given (never assumed knowable) rather than
             silently kept.
+        required: W2-E / G12 fail-loud switch. When True — the runner passes
+            it whenever ``confirmed_exits_enabled`` is on in forecast mode —
+            a missing clean partition or an unimportable
+            ``scripts.lib.clean_io`` seam raises :class:`RuntimeError` with
+            the regeneration command instead of degrading to a warn-only
+            empty list (the W1-B B3/B4 silent-477-MW failure). Default False
+            preserves the degrade-to-economic-screen behavior for optional
+            callers.
 
     Returns:
         One :class:`ConfirmedExit` per unit, sorted by ``(exit_year, plant_id,
@@ -93,7 +118,16 @@ def load_confirmed_exits(
     """
     try:
         from scripts.lib.clean_io import read_clean
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as exc:
+        if required:
+            raise RuntimeError(
+                f"confirmed-retirements: scripts.lib.clean_io is unimportable "
+                f"(repo root not on sys.path? — invoke with PYTHONPATH=. from "
+                f"the repo root) while confirmed_exits_enabled is on in "
+                f"forecast mode. Refusing to run with a silently degraded "
+                f"confirmed-exit channel for {iso} (W1-B B4: ERCOT gains "
+                f"477 MW of phantom fleet); {_REMEDIATION}."
+            ) from exc
         logger.warning(
             "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — "
             "scripts.lib.clean_io unavailable; no confirmed exits for %s. "
@@ -104,7 +138,16 @@ def load_confirmed_exits(
         return []
     try:
         df = read_clean(DATATYPE, iso=iso.upper())
-    except FileNotFoundError:
+    except FileNotFoundError as exc:
+        if required:
+            raise RuntimeError(
+                f"confirmed-retirements: clean partition for {iso} is absent "
+                f"while confirmed_exits_enabled is on in forecast mode. "
+                f"data/clean is derived and gitignored, so a fresh checkout "
+                f"has no registry; refusing to silently degrade to the "
+                f"economic screen (W1-B B3: ERCOT's 2026 fleet gains 477 MW "
+                f"— V H Braunig backlog); {_REMEDIATION}."
+            ) from exc
         logger.warning(
             "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — clean "
             "partition for %s absent; run scripts/curate_confirmed_retirements.py "
@@ -159,7 +202,7 @@ def load_confirmed_exits(
 
 
 def load_announced_reversal_plants(
-    iso: str, as_of: "_dt.date | None" = None
+    iso: str, as_of: "_dt.date | None" = None, required: bool = False
 ) -> frozenset[int]:
     """Return plant codes whose announced retirement was REVERSED outright.
 
@@ -201,10 +244,25 @@ def load_announced_reversal_plants(
             cutoff — byte-identical to the pre-RC-1B behavior (every fully-
             superseded plant is suppressed regardless of when its reversal
             became known).
+        required: W2-E / G12 fail-loud switch (same clean partition as
+            :func:`load_confirmed_exits`). The runner passes it whenever
+            ``confirmed_exits_enabled`` is on in forecast mode; a missing or
+            unimportable registry then raises :class:`RuntimeError` instead
+            of silently skipping reversal suppression. Default False keeps
+            the warn-only degradation — the reversal channel is a data
+            correction, deliberately usable without the confirmed channel.
     """
     try:
         from scripts.lib.clean_io import read_clean
-    except ModuleNotFoundError:
+    except ModuleNotFoundError as exc:
+        if required:
+            raise RuntimeError(
+                f"confirmed-retirements: scripts.lib.clean_io is unimportable "
+                f"(repo root not on sys.path? — invoke with PYTHONPATH=. from "
+                f"the repo root) while confirmed_exits_enabled is on in "
+                f"forecast mode; refusing to silently skip announced-reversal "
+                f"suppression for {iso} (W1-B B4); {_REMEDIATION}."
+            ) from exc
         logger.warning(
             "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — "
             "scripts.lib.clean_io unavailable; no reversal suppression for %s.",
@@ -213,7 +271,14 @@ def load_announced_reversal_plants(
         return frozenset()
     try:
         df = read_clean(DATATYPE, iso=iso.upper())
-    except FileNotFoundError:
+    except FileNotFoundError as exc:
+        if required:
+            raise RuntimeError(
+                f"confirmed-retirements: clean partition for {iso} is absent "
+                f"while confirmed_exits_enabled is on in forecast mode; "
+                f"refusing to silently skip announced-reversal suppression "
+                f"(W1-B B3); {_REMEDIATION}."
+            ) from exc
         logger.warning(
             "confirmed-retirements: HINDCAST INFORMATION-GATE WARNING — clean "
             "partition for %s absent; no reversal suppression applied. A "
