@@ -224,8 +224,35 @@ def _ercot_config() -> ISOConfig:
         TransferLink(from_zone="West", to_zone="South_Central", ttc_mw=2700.0),
         TransferLink(from_zone="Panhandle", to_zone="North", ttc_mw=2680.0),
         # NE_LOB: the NE-Texas export limit (~1,300 MW, binds 17.4% of 2023-24
-        # SCED intervals) capping the trapped Martin Lake / NE-CC lobe.
-        TransferLink(from_zone="Northeast", to_zone="North", ttc_mw=1300.0),
+        # SCED intervals) capping the trapped Martin Lake / NE-CC lobe. A GTC
+        # is an EXPORT stability limit, not an import rating (data/gtc.py), so
+        # the boundary is a one-way pair (the Far_West aad79c1 asymmetric-
+        # rating recipe): export keeps the measured NE_LOB limit-at-bind;
+        # import carries the boundary's measured carrying capability. The old
+        # symmetric 1,300 MW import bound was directly measured-refuted
+        # (ERCOT-76): on 2024-05-07 h20 the real lobe imported >= 1,317 MW
+        # (EAST-zone load 2,232 minus CAMPD local gross 915) while RT printed
+        # $15 — the model shed load against the phantom import wall and
+        # printed VOLL. Import rating = the pooled 2023-2025 DARK-HOUR
+        # (hod 20-06, so unmetered zonal solar cannot inflate the proxy)
+        # maximum of measured EAST-zone load minus CAMPD NE-plant net gross
+        # (1,511 / 1,788 / 1,756 MW by year; leave-one-year-out 1,756-1,788 —
+        # verdict-identical). Same admissibility class as the measured
+        # limit-at-bind statics above (a measured deliverability envelope, the
+        # MISO/PJM seam-envelope convention); re-derive only on source-data
+        # updates (rule 23).
+        TransferLink(
+            from_zone="Northeast",
+            to_zone="North",
+            ttc_mw=1300.0,
+            is_bidirectional=False,
+        ),
+        TransferLink(
+            from_zone="North",
+            to_zone="Northeast",
+            ttc_mw=1788.0,
+            is_bidirectional=False,
+        ),
         TransferLink(from_zone="North", to_zone="Houston", ttc_mw=8000.0),
         TransferLink(from_zone="North", to_zone="South_Central", ttc_mw=5000.0),
         TransferLink(from_zone="South_Central", to_zone="South", ttc_mw=3000.0),
