@@ -92,6 +92,7 @@ def build_config(
     limited_foresight_dispatch: bool = False,
     legacy_renewable_credit: bool = False,
     capacity_market_clearing: bool = False,
+    correlated_forced_outage: bool = False,
 ) -> ScenarioConfig:
     """Assemble the hindcast ScenarioConfig (forecast machinery, vintage init).
 
@@ -182,6 +183,13 @@ def build_config(
         capacity_market_clearing_by_iso=(
             {iso: True} if capacity_market_clearing else None
         ),
+        # FF-1B probe arm (default-off): the correlated cold-event forced-
+        # outage derate (data/outages.apply_correlated_outage_derate), so a
+        # hindcast leg's realized deep-cold days (Uri 2021, Heather 2024)
+        # physically thin the fleet and the in-year ORDC can form scarcity
+        # (the G-31 question). Measured frozen curves, zero fitted parameters
+        # -- see scenarios.py:correlated_forced_outage.
+        correlated_forced_outage=correlated_forced_outage,
     )
 
 
@@ -306,6 +314,17 @@ def main(argv: list[str] | None = None) -> int:
             "off). Never the harness default."
         ),
     )
+    parser.add_argument(
+        "--correlated-forced-outage",
+        action="store_true",
+        help=(
+            "FF-1B PROBE: arm the correlated cold-event forced-outage "
+            "availability derate (correlated_forced_outage=True) so realized "
+            "deep-cold days physically thin the fleet and in-year ORDC "
+            "scarcity can form (the G-31 question). Measured frozen curves "
+            "(constants.CORRELATED_OUTAGE_CURVE); see build_config."
+        ),
+    )
     args = parser.parse_args(argv)
 
     iso = args.iso.upper()
@@ -324,6 +343,7 @@ def main(argv: list[str] | None = None) -> int:
         limited_foresight_dispatch=args.limited_foresight_dispatch,
         legacy_renewable_credit=args.legacy_renewable_credit,
         capacity_market_clearing=args.capacity_market_clearing,
+        correlated_forced_outage=args.correlated_forced_outage,
     )
 
     # Bundle lives under results/hindcast/<run>/ (plan §1.5) -- deliberately
@@ -357,6 +377,7 @@ def main(argv: list[str] | None = None) -> int:
         "limited_foresight_dispatch": bool(args.limited_foresight_dispatch),
         "capacity_market_clearing": bool(args.capacity_market_clearing),
         "capacity_market_clearing_by_iso": config.capacity_market_clearing_by_iso,
+        "correlated_forced_outage": bool(args.correlated_forced_outage),
         "renewable_elcc_curves": bool(config.renewable_elcc_curves),
         "gas_price_path": config.gas_price_path,
         "vintage_year": VINTAGE_YEAR,
