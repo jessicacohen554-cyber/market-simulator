@@ -18,9 +18,12 @@ the AS-eligible (mostly storage) fleet grows. Modo reports ERCOT battery AS
 revenue fell ~90% from 2023 to 2025 as the fleet scaled — without the
 saturation a forecast would over-build storage forever on a static AS rate.
 
-Gated on ``ScenarioConfig.as_revenue_enabled`` and ERCOT only; returns 0
-otherwise, so the default (off) is byte-identical and capacity-market ISOs
-are untouched.
+Gated on ``ScenarioConfig.as_revenue_enabled``; the rate is resolved per-ISO
+from ``constants.AS_REVENUE_PER_KW_YR_BY_ISO`` (ERCOT is the only populated ISO
+today — every other ISO earns 0 until its measured AS rate is intaken), so the
+default (off) is byte-identical and any ISO slots in by adding its rate +
+saturation reference, no code change. Capacity evolution is forecast-only, so a
+newly-populated ISO changes no backcast keeper.
 
 **Endogenous alternative (one mechanism per phenomenon, CLAUDE.md rule 19).**
 This exogenous credit and the endogenous reserve co-optimization
@@ -51,23 +54,27 @@ from __future__ import annotations
 import numpy as np
 
 from market_sim.config.constants import (
-    ERCOT_AS_REVENUE_PER_KW_YR,
+    AS_REVENUE_PER_KW_YR_BY_ISO,
+    AS_SATURATION_REF_GW_BY_ISO,
     ERCOT_AS_SATURATION_EXPONENT,
-    ERCOT_AS_SATURATION_REF_GW,
 )
 from market_sim.config.scenarios import ScenarioConfig
 
 
-def as_saturation_factor(storage_power_mw: float) -> float:
-    """Return the AS-revenue saturation multiplier in (0, 1].
+def as_saturation_factor(storage_power_mw: float, iso: str) -> float:
+    """Return the AS-revenue saturation multiplier in (0, 1] for ``iso``.
 
     ``(ref_gw / max(storage_gw, ref_gw)) ** exponent`` — 1.0 at or below the
-    calibration-point fleet, falling steeply as the AS-eligible (mostly
-    storage) fleet grows past it.
+    ISO's calibration-point fleet, falling steeply as the AS-eligible (mostly
+    storage) fleet grows past it. ``ref_gw`` is the ISO's
+    :data:`AS_SATURATION_REF_GW_BY_ISO` reference fleet (AS-market depth differs
+    per ISO); the decline exponent is shared. Returns 1.0 (no saturation) when
+    the ISO has no reference — only reached for an unpriced ISO, since a priced
+    ISO is required to carry a reference (see :func:`as_revenue_per_mw_yr`).
     """
     storage_gw = max(0.0, float(storage_power_mw)) / 1000.0
-    ref = ERCOT_AS_SATURATION_REF_GW
-    if ref <= 0.0:
+    ref = AS_SATURATION_REF_GW_BY_ISO.get(iso.upper())
+    if ref is None or ref <= 0.0:
         return 1.0
     return (ref / max(storage_gw, ref)) ** ERCOT_AS_SATURATION_EXPONENT
 
@@ -79,11 +86,14 @@ def as_revenue_per_mw_yr(
 ) -> float:
     """Return ancillary-service revenue in $/MW-yr for a technology.
 
-    The calibrated per-kW base rate for ``fuel_type`` (storage / gas_ct /
-    gas_st / gas_cc) scaled by ``config.as_revenue_multiplier`` and the
-    saturation factor for the current AS-eligible fleet, converted to
-    $/MW-yr. Returns 0 when AS revenue is disabled, the ISO is not ERCOT, or
-    the technology earns no AS.
+    The ISO's calibrated per-kW base rate for ``fuel_type`` (storage / gas_ct /
+    gas_st / gas_cc), resolved per-ISO from
+    :data:`AS_REVENUE_PER_KW_YR_BY_ISO`, scaled by ``config.as_revenue_multiplier``
+    and the ISO's saturation factor for the current AS-eligible fleet, converted
+    to $/MW-yr. Returns 0 when AS revenue is disabled, the ISO has no AS rate
+    registered (every ISO except ERCOT until its rate is intaken), or the
+    technology earns no AS. Any ISO slots in by adding its rate +
+    saturation reference to the two registries — no code change here.
 
     Args:
         fuel_type: Generator fuel type or ``"storage"``.
@@ -93,16 +103,31 @@ def as_revenue_per_mw_yr(
 
     Returns:
         AS revenue in $/MW-yr.
+
+    Raises:
+        KeyError: When the ISO has a registered AS rate for ``fuel_type`` but no
+            matching :data:`AS_SATURATION_REF_GW_BY_ISO` reference — a
+            half-configured ISO that would otherwise silently skip saturation.
     """
-    if not config.as_revenue_enabled or config.iso != "ERCOT":
+    if not config.as_revenue_enabled:
         return 0.0
-    base_per_kw = ERCOT_AS_REVENUE_PER_KW_YR.get(fuel_type, 0.0)
+    iso = config.iso.upper()
+    base_per_kw = AS_REVENUE_PER_KW_YR_BY_ISO.get(iso, {}).get(fuel_type, 0.0)
     if base_per_kw <= 0.0:
         return 0.0
+    # A priced ISO must carry its saturation reference (mirrors the storage
+    # registry guard) so an ISO can't be half-configured — a rate with no ref
+    # would silently run unsaturated forever as the fleet grows.
+    if iso not in AS_SATURATION_REF_GW_BY_ISO:
+        raise KeyError(
+            f"AS_REVENUE_PER_KW_YR_BY_ISO has a rate for {iso!r} but "
+            f"AS_SATURATION_REF_GW_BY_ISO has no reference-fleet entry; add "
+            "the ISO's AS-eligible reference fleet (GW) to config/constants.py."
+        )
     per_kw = (
         base_per_kw
         * config.as_revenue_multiplier
-        * as_saturation_factor(storage_power_mw)
+        * as_saturation_factor(storage_power_mw, iso)
     )
     return per_kw * 1000.0
 

@@ -3789,6 +3789,39 @@ FORECAST_POOL_REQUIREMENT_BY_ISO: dict[str, dict[str, float]] = {
 ERCOT_AS_SATURATION_REF_GW: float = 4.0
 ERCOT_AS_SATURATION_EXPONENT: float = 2.5
 
+# Per-ISO exogenous AS-revenue registry — the modular generalization of the
+# ERCOT-only rates above. ``model.ancillary.as_revenue_per_mw_yr`` resolves the
+# credit from here by the run's ISO, so ANY ISO slots in by adding its
+# ``{fuel: $/kW-yr}`` rate here plus its saturation reference fleet in
+# AS_SATURATION_REF_GW_BY_ISO — no code change. ERCOT is the existing 2023
+# calibration (referenced, so byte-identical). Every OTHER ISO is deliberately
+# UNPOPULATED: an ISO absent here earns no exogenous AS credit (0), so the
+# default (``as_revenue_enabled`` off) and every non-ERCOT run stay
+# byte-identical until a rate is intaken. To populate an ISO, add its measured
+# AS-market revenue (regulation + reserves, at the reference-fleet year, from
+# that ISO's market-monitor SOM/DMM report — e.g. CAISO DMM Special Report on
+# Battery Storage; PJM/NYISO/ISO-NE/MISO IMM State-of-the-Market ancillary
+# sections) AND its reference-fleet GW below (the code fails loud if a rate is
+# added without a matching ref). Rule 13: each rate is a measured AS-market
+# outcome that regenerates forward via the saturation decline and responds to
+# the fleet — the same admissibility as the ERCOT calibration. Capacity
+# evolution is forecast-only, so nothing here touches a backcast keeper.
+AS_REVENUE_PER_KW_YR_BY_ISO: dict[str, dict[str, float]] = {
+    "ERCOT": ERCOT_AS_REVENUE_PER_KW_YR,
+    # "CAISO": {"storage": ...},   # pending cited SOM/DMM AS-revenue intake
+    # "PJM": {...}, "NYISO": {...}, "NEISO": {...}, "MISO": {...}
+}
+
+# Per-ISO AS-market saturation reference fleet (GW): the AS-eligible (mostly
+# storage) fleet size at which the ISO's AS_REVENUE_PER_KW_YR_BY_ISO base rate
+# was measured. Per-ISO because AS-market DEPTH differs — ERCOT's small AS
+# market saturates far faster than PJM's/MISO's larger footprints. The decline
+# SHAPE (ERCOT_AS_SATURATION_EXPONENT) is shared. Must carry an entry for every
+# ISO that has a rate above (enforced in as_revenue_per_mw_yr).
+AS_SATURATION_REF_GW_BY_ISO: dict[str, float] = {
+    "ERCOT": ERCOT_AS_SATURATION_REF_GW,
+}
+
 # ISOs that have a per-plant CAMPD bin artifact and therefore take the
 # offer-curve (per-plant tranche) binning path in the runner instead of the
 # legacy equal-width ``aggregate_fleet`` heat-rate binning. ERCOT is driven by
