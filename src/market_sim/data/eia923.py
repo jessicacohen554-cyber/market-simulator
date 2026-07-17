@@ -227,3 +227,19 @@ def load_monthly_generation(
 def monthly_netgen_columns() -> list[str]:
     """Return the twelve monthly netgen column names, in calendar order."""
     return [f"netgen_{m}_mwh" for m in _MONTHS_SHORT]
+
+
+# Newest EIA-923 vintage whose monthly-generation table carries the COMPLETE
+# (final-release) plant census. Vintages after it on disk are monthly early
+# releases covering only the monthly-survey (large) reporters — PJM carries
+# 10/8 hydro plants in 2025/2026 vs 72 in the 2024 final; NEISO 5 vs 166 —
+# and years past the newest vintage have no rows at all. The forecast hydro
+# path clamps its budget *shape* year (per-plant within-month shares) to this
+# vintage so the fleet never silently degrades to a partial census or empties
+# (docs/handoffs/nyiso-forecast-2035-2026-07-13.md finding 1); the budget
+# *level* stays the EIA-930 climatology (constants.HYDRO_CLIMATOLOGY_YEARS).
+# Identification: measured data vintage (rule 23 — bump only when a newer
+# FINAL EIA-923 annual file lands on disk, never against a residual). Source:
+# EIA Form 923 release schedule; on-disk per-year plant-census counts of the
+# F923 monthly-generation extract.
+EIA923_LATEST_FINAL_VINTAGE: int = 2024
