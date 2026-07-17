@@ -52,6 +52,15 @@ MIN_REAL_RUN_HOURS: int = 24
 ST_GAS_CF_PEAK: float = 0.02
 ST_GAS_MIN_OUTAGE_HOURS: int = 120
 
+# ERCOT-79 availability-envelope audit: daily-cycling combined-cycle / cogen
+# classes are detected EVENT-based (like ST_GAS) rather than with the run-based
+# 24 h-consecutive rule — otherwise a unit that runs the afternoon peak and shuts
+# overnight (never 24 h continuous) has its whole operating season folded into
+# one phantom "outage". Coal stays run-based (baseload; no daily-cycling phantom).
+EVENTBASED_CYCLING_GROUPS: frozenset[str] = frozenset(
+    {"CC_REGULAR", "CC_CHP", "CT_CHP", "CT_PEAKER"}
+)
+
 # Plant groups whose outages we derive (coal + combined cycle + gas steam).
 # Peaker-class ST_GAS plants are emitted here but excluded at overlay time
 # (outages.ST_GAS_PEAKER_PLANTS), since they run economically without outages.
@@ -158,11 +167,32 @@ def filter_revealed_outages(
         return list(windows)
     kept: list[tuple[int, int]] = []
     for s, e in windows:
-        if mask[s:e].sum() >= min_inmerit_hours:
+        high = mask[s:e]
+        cf_span = cf[s:e]
+        # Revealed-availability (ERCOT-79 availability-envelope audit fix). A
+        # down span is NOT an outage if, during its high-net-load hours, the unit
+        # REVEALED it was available by RUNNING (cf >= REAL_RUN_CF) for at least
+        # ``min_inmerit_hours`` of them. The old test kept a span whenever it
+        # merely OVERLAPPED >= min_inmerit_hours high-load hours, never checking
+        # whether the unit was actually down then — so the run-based detector's
+        # habit of folding a daily-cycling CC's overnight-down gaps into one
+        # summer-long "outage" produced a hard availability=0 across the whole
+        # summer for a plant its own CEMS shows generating on the peak afternoons
+        # (T H Wharton, ORIS 3469: it ran during 392 of its 480 summer high-load
+        # hours yet was zeroed all 3,404 h — ~800 MW deleted from the June/Sept
+        # 2023 event afternoons). Running through the tight hours is the
+        # market's own revealed-availability signal; overlap alone is not.
+        # Keyed only on measured CAMPD cf + EIA-930 net load — no LMP / price /
+        # MWh-residual (claude.md #11/#26).
+        ran_high = int((high & (cf_span >= REAL_RUN_CF)).sum())
+        if ran_high >= min_inmerit_hours:
+            continue  # revealed available when the system was tight — not an outage
+        # A genuine outage is DOWN through the tight hours it spans.
+        if int((high & (cf_span < REAL_RUN_CF)).sum()) >= min_inmerit_hours:
             kept.append((s, e))
             continue
         dur_days = (e - s) / 24.0
-        span_cf = float(cf[s:e].mean()) if e > s else 1.0
+        span_cf = float(cf_span.mean()) if e > s else 1.0
         if dur_days >= override_days and span_cf < override_cf:
             kept.append((s, e))
     return kept
@@ -476,6 +506,28 @@ def main() -> None:
                     npl,
                     ST_GAS_MIN_OUTAGE_HOURS,
                     ST_GAS_CF_PEAK,
+                )
+            elif grp[code] in EVENTBASED_CYCLING_GROUPS:
+                # ERCOT-79 availability-envelope audit: daily-cycling combined-
+                # cycle / cogen units (run the afternoon peak, shut overnight)
+                # never accumulate the MIN_REAL_RUN_HOURS (24 h) CONSECUTIVE
+                # above-CF run the run-based ``detect_outages`` needs to mark a
+                # span "available", so their whole operating season folds into
+                # one giant "outage" — a phantom hard-zero across the summer for
+                # a plant its own CEMS shows generating (T H Wharton, ORIS 3469).
+                # Event-based detection (the same rule ST_GAS uses) breaks the
+                # window on ANY hour the unit runs (cf >= REAL_RUN_CF), so a
+                # genuine multi-day dead stop stays a window while daily cycling
+                # produces none — and a genuine outage EMBEDDED in a cycling
+                # season is no longer merged away with the cycling. cf threshold
+                # is the module's own "running" boundary REAL_RUN_CF; min-span is
+                # the same ``min_outage_hours`` as the run-based path. Keyed only
+                # on measured CAMPD cf — no price/MWh residual (claude.md #11/#26).
+                windows = detect_outages_eventbased(
+                    gross,
+                    npl,
+                    min_outage_hours,
+                    REAL_RUN_CF,
                 )
             else:
                 windows = detect_outages(gross, npl, min_outage_hours)
