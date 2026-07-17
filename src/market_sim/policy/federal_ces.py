@@ -29,15 +29,16 @@ plan §1 of ``docs/handoffs/national-ces-eac-premium-plan-2026-07.md``):
 All premiums are real 2026$/MWh (model-wide convention,
 ``constants.REAL_DOLLAR_BASE_YEAR``); a constant real premium tracks
 inflation in nominal terms automatically. Consumers (wired in W2-A, plan
-§5.3): the dispatch cost vector (``policy.eac.apply_eac_to_mc`` /
-``compute_eac_dispatch_credits``), the economic-retirement screen and
-both new-entry screens (``model.capacity``), and the state-RPS-row
-suppression counterfactual (``runner``). The CCS-retrofit screen is
-deliberately NOT a consumer yet — its whole economics are redesigned in
-W2-C (plan §11) and it keeps its legacy ``eac_price_gas_cc_ccs`` input
-until then. With ``federal_ces_enabled=False`` every resolver below
-returns zeros or the legacy ``eac_price_*`` values unchanged, keeping
-dispatch bytes and cache keys identical to the pre-CES model.
+§5.3; retrofit seam in W2-C, plan §11): the dispatch cost vector
+(``policy.eac.apply_eac_to_mc`` / ``compute_eac_dispatch_credits``), the
+economic-retirement screen, both new-entry screens AND the CCS-retrofit
+screen (``model.capacity`` — the retrofit screen prices each
+continuation's certificate via :func:`effective_eac_price_for_unit`,
+with the §45Q tax credit stacking on top as a separate instrument), and
+the state-RPS-row suppression counterfactual (``runner``). With
+``federal_ces_enabled=False`` every resolver below returns zeros or the
+legacy ``eac_price_*`` values unchanged, keeping dispatch bytes and
+cache keys identical to the pre-CES model.
 """
 
 from __future__ import annotations

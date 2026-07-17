@@ -4272,12 +4272,14 @@ MMBTU_PER_BBL_RESIDUAL: float = 6.287  # No. 6 residual fuel oil
 # Carbon capture, utilization and storage parameters. CCUS is a variant of
 # the base gas CC plant: higher heat rate (parasitic capture load), higher
 # VOM (solvent costs), reduced emission rate, plus a transport+storage cost
-# for the captured CO2.
+# for the captured CO2. The capture fraction itself is ScenarioConfig.
+# ccs_capture_rate (NETL 2022 Case B31B) — a former "capture_rate" key here
+# was dead code that silently contradicted any swept ccs_capture_rate, so it
+# was deleted per rule 26 (W2-C; ces-ci-crediting-audit-2026-07.md §3.3).
 CCUS_PARAMS: dict[str, dict[str, float]] = {
     "gas_cc_ccs_90": {  # gas CCGT with 90% post-combustion capture
         "heat_rate_penalty": 1.16,  # ×base CC heat rate — 16% parasitic. NETL 2022 Rev 4, Case B31B
         "vom_adder": 8.0,  # $/MWh — amine solvent, maintenance. NETL 2022
-        "capture_rate": 0.90,  # fraction of CO2 captured. NETL 2022 Case B31B
         "co2_transport_storage": 15.0,  # $/tCO2 — pipeline + saline injection. NETL 2022, Gulf Coast
         "capex_kw": 2500.0,  # $/kW installed. NREL ATB 2024
         "fom_kw_yr": 22.0,  # $/kW-yr. NREL ATB 2024
