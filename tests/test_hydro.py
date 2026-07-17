@@ -791,6 +791,40 @@ class TestForecastHydroBudget(unittest.TestCase):
                 "CAISO", 2024, zones, eia930_monthly=True, forecast_budget=True
             )
 
+    def test_build_hydro_fleet_forecast_shape_year_clamped(self):
+        # Forecast years past (or inside the early-release tail of) the
+        # EIA-923 data horizon clamp the budget SHAPE year to the newest
+        # final-census vintage instead of silently emptying the fleet
+        # (nyiso-forecast-2035 finding 1). The clamped fleet is unit-for-unit
+        # identical to the final-vintage fleet: same plants, same budgets
+        # (the level is the climatology either way).
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.data.eia923 import EIA923_LATEST_FINAL_VINTAGE
+        from market_sim.data.hydro import build_hydro_fleet
+
+        zones = get_iso_config("PJM").zone_names
+        base_units, base_energy = build_hydro_fleet(
+            "PJM", EIA923_LATEST_FINAL_VINTAGE, zones, forecast_budget=True
+        )
+        self.assertGreater(len(base_units), 50)  # complete census, not partial
+        for fyear in (EIA923_LATEST_FINAL_VINTAGE + 1, 2030):
+            units, energy = build_hydro_fleet("PJM", fyear, zones, forecast_budget=True)
+            self.assertEqual(
+                [u.unit_id for u in units], [u.unit_id for u in base_units]
+            )
+            np.testing.assert_allclose(energy, base_energy)
+
+    def test_build_hydro_fleet_backcast_paths_not_clamped(self):
+        # The clamp is forecast-branch-only: a bare (no-flag) load of a year
+        # with no EIA-923 rows still yields an empty fleet, exactly as before.
+        from market_sim.config.iso_configs import get_iso_config
+        from market_sim.data.hydro import build_hydro_fleet
+
+        zones = get_iso_config("PJM").zone_names
+        units, energy = build_hydro_fleet("PJM", 2030, zones)
+        self.assertEqual(units, [])
+        self.assertIsNone(energy)
+
 
 class TestOtherISOBudgetsUnchanged(unittest.TestCase):
     """PJM / ERCOT / CAISO hydro budgets are untouched by the NYISO/NEISO P4 stage."""
