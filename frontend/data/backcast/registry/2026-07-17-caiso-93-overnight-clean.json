@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-17-caiso-93-overnight-clean",
+  "label": "caiso 93 overnight clean",
+  "date": "2026-07-17",
+  "shorthand": "caiso-93-overnight-clean",
+  "definition": "caiso-93 overnight clean depth main -- caiso-92 keeper recipe (caiso-90 + measured DAM offer surface) + caiso_dsw_overnight_clean (measured unconditional overnight WEIM clean-transfer depth, hod 0-5, raw-hub no-wheel pricing, EF 0; FINDING-caiso93-overnight-no-wedge-2026-07-17, owner-authorized), 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-17-caiso-93-overnight-clean.js",
+  "bundle": "results/calibration/caiso93_overnight_clean"
+}
