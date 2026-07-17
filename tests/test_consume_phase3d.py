@@ -1,7 +1,7 @@
 """Parity tests for the Phase 3D clean-backed read paths.
 
 Exercises the ``MARKET_SIM_USE_CLEAN`` migration seam added to
-``outages.py`` (``_qualifying_plant_codes``, ``unit_outage_derate_factors``,
+``outages.py`` (``unit_outage_derate_factors``,
 ``partial_outage_derate_factors``), ``zone_assignment.py`` (``_plnt23`` /
 ``build_zone_lookup``), ``egrid.py`` (``load_egrid_plant_co2``) and
 ``cod_ramp.py`` (the registry-only ``year_built`` back-fill). For each, the
@@ -25,7 +25,7 @@ sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
 from market_sim.config import paths  # noqa: E402
-from market_sim.config.paths import CAMPD_BINS_CSV, PLANT_REGISTRY_CSV  # noqa: E402
+from market_sim.config.paths import PLANT_REGISTRY_CSV  # noqa: E402
 from market_sim.data import cod_ramp  # noqa: E402
 from market_sim.data import egrid as E  # noqa: E402
 from market_sim.data import outages as O  # noqa: E402
@@ -54,26 +54,6 @@ class _UseCleanEnvMixin:
         else:
             os.environ[_USE_CLEAN_ENV] = self._orig_env
         super().tearDown()
-
-
-@unittest.skipUnless(CAMPD_BINS_CSV.is_file(), "ERCOT bin-assignments CSV absent")
-class QualifyingPlantCodesParity(_UseCleanEnvMixin, unittest.TestCase):
-    @classmethod
-    def setUpClass(cls) -> None:
-        from scripts import curate_reference
-
-        curate_reference.curate()
-
-    def test_clean_matches_raw(self) -> None:
-        O._qualifying_plant_codes.cache_clear()
-        raw = O._qualifying_plant_codes(str(CAMPD_BINS_CSV))
-
-        os.environ[_USE_CLEAN_ENV] = "1"
-        O._qualifying_plant_codes.cache_clear()
-        clean = O._qualifying_plant_codes(str(CAMPD_BINS_CSV))
-
-        self.assertTrue(raw, "raw path produced no qualifying plant codes")
-        self.assertEqual(raw, clean)
 
 
 @unittest.skipUnless(O.UNIT_OUTAGE_CSV.is_file(), "ERCOT unit-outage CSV absent")
