@@ -73,6 +73,7 @@ from market_sim.data.fleet import (  # noqa: E402
     build_dispatch_fleet,
     build_ercot_offer_surface_conditional_markup,
     build_ercot_offer_surface_lowcurve_markdown,
+    build_caiso_offer_surface_conditional_markup,
     build_neiso_offer_surface_conditional_markup,
     build_pjm_offer_surface_conditional_markup,
     fleet_to_bins,
