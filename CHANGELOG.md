@@ -1,5 +1,34 @@
 # Changelog
 
+## 2026-07-17 — MISO: Midwest sub-regional reserve-holding family (miso-71) — new gated reserve mechanism, registered as a rule-1 KEEPER CANDIDATE (keeper swap owner-only)
+
+- **Model:** new `ScenarioConfig.miso_midwest_subregional_reserves` (GATED,
+  default off; CLI `--miso-midwest-subregional-reserves`). Appends ONE
+  operating-reserve family over the 5 physical Midwest zones
+  (`reserve_config.MISO_MIDWEST_ZONES`), `reserve_class 0` nested inside the
+  market-wide RBDC. Requirement = the measured hourly Midwest (North+Central)
+  cleared OR reservation (`data.miso_reserve_requirements` new `"MISO-Midwest"`
+  leg) when `miso_measured_reserve_requirements` is on, else the within-region
+  MSSC; a single shortfall step prices at the published `MISO_RPE_DEMAND_VALUE`
+  ($200/MWh, 2024 SOM §III.B). Closes the congestion-blind market-wide family's
+  phantom-South-parking gap. Zero fitted scalars. Also: an env-gated
+  (`MARKET_SIM_RESERVE_DUAL_DUMP`, default off) reserve-dual diagnostic sidecar
+  in the per-year persist (per-family duals + per-zone reserve MW; never touches
+  any scored output); `build_dof_ledger` enumerates the family as a
+  measured-physical DOF entry (main 25/2, base 24/2); `pipeline/kwargs.py`
+  co-opt log labels the Midwest family correctly.
+- **Result:** mechanism-only (main − same-box base) — C3b IDENTICAL
+  (0.079/0.124/0.184, R1 veto held), C3c 1/7/1 vs 1/6/1 (in-window +1),
+  reserve fidelity clean (R2), no Jan-2024 engagement (R3); fail set = the
+  keeper's {C1, C3a-2025, C3c} with no gated regression. The C3c-2025 deep tail
+  stays open on the honest leg-(b) measured-requirement-dip lower bound.
+- **Docs realigned:** `docs/multi-iso/miso-reserve-coopt.md` (Midwest family in
+  Model mapping + miso-71 Results bullet), `docs/multi-iso/
+  miso-scarcity-posture-design-2026-07.md` §B (marked UN-BLOCKED/EXECUTED with
+  the two revised premises), `docs/calibration-log.md` (2026-07-17 miso-71
+  entry). New tests: `TestMisoMidwestDesign`, `TestMisoMidwestReserveLP`,
+  `tests/test_miso_reserve_requirements.py`.
+
 ## 2026-07-16 — NEISO: v2.7 RT-basis ledger-accuracy re-check — no determination change (CWC holds), but the neiso-59 C3c ledger's winter-only framing is corrected to the measured RT hour-set (keeper unchanged, no solve)
 
 - **Issue:** the three `price_tail` entries on
