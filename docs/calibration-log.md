@@ -16393,3 +16393,79 @@ verdict). The CAISO C1 lane (CC-overnight cluster) is CLOSED with this
 promotion; the open lanes hand off to the next charter (C3a-2025 daytime
 unwedged-parity family + the named battery-charge-marginal autumn sub-regime;
 C3c lane B; C4 band-edge).
+
+## 2026-07-17 — ERCOT-79: the availability-envelope audit — a CONFIRMED phantom-outage detector bug (daily-cycling CC folded into summer-long false outages) fixed; the fix resolves the 2023 summer over-shoot but UN-CATCHES the real scarcity tail (the keeper's tail rested on the phantom tightness); owner adopts the accurate data, promotes the corrected-outages run, ERCOT reverts to NOT-YET
+
+**Task (owner charter, ercot-79 — the ONE open chartered lane before ERCOT's
+frontier is final).** ERCOT-78 named the 2023 summer over-shoot (58 event
+afternoons, 29 Jun + 29 Sep, hod 12-20, netload p90+: keeper lw $1,068 vs RT
+$421) as an event-time availability/capability-envelope input problem and
+chartered this input audit (rule-14 input side; a room-pin to measured RTOLCAP
+pre-registered forbidden).
+
+**Leg 0.** `replay_keeper.py` on `ercot76_ne_import_fullspan` →
+`_ercot79_keeper_replay`; the pre-registered `_ercot78_summer_anatomy.py`
+reproduces the exact 58h set to the decimal (lw $1,068.2, $-mass 37,541). Baseline
+byte-faithful.
+
+**Leg 1 — the input audit found a CONFIRMED bug.** The per-class availability
+ledger (`_ercot79_availability_ledger.py`) showed the model event-time room
+(3.9 GW) exhausted vs measured RTOLCAP-thermal (6.6 GW), a DISPATCH gap. Root
+cause: **the CAMPD facility-outage detector manufactures phantom outages for
+daily-cycling combined-cycle plants.** `scripts/derive_campd_outages.py`'s
+run-based `detect_outages` marks a generation run "available" only when it
+sustains CF>5% for **≥24 CONSECUTIVE hours**; a CC unit that runs the afternoon
+peak and shuts overnight never qualifies, so its whole operating season folds
+into one hard `availability=0` window, which the shared `filter_revealed_outages`
+then keeps (it overlapped high-load hours — never checking the unit was actually
+down). **T H Wharton (ORIS 3469, 1,190 MW):** window 2023-06-21→11-10 (3,404 h)
+zeros it all summer while its own CEMS shows it generating 1,105 h at up to 813
+MW. Independently verified on the 58h set: **1,904 MW/h mean (peak 4,299) of
+proven-online capability deleted** from plants demonstrably generating. It is a
+detector logic bug, not stale data (re-running the detector on current CEMS
+reproduces the phantoms).
+
+**The fix (source-faithful, rule-13/14/23 admissible; measured CAMPD cf +
+EIA-930 net load only, no residual).** (1) Event-based detection for the
+daily-cycling classes (`EVENTBASED_CYCLING_GROUPS` = CC_REGULAR/CC_CHP/CT_CHP/
+CT_PEAKER), the same rule ST_GAS uses — any run breaks the window, so cycling
+produces none and a genuine embedded dead-stop stays separate; (2)
+`filter_revealed_outages` keeps a span only where the unit was actually DOWN
+during its high-net-load hours. Validated on source data: 58h false-outage
+**1,904 → 0 MW/h**; **0% genuine-outage over-correction** (Petra Nova mothball /
+Sandy Creek / Victoria / Frontera dead-stops all preserved). Outage tests pass
+(the one NEISO failure is pre-existing, unrelated).
+
+**Re-solve (single delta vs the keeper; `ercot79_corrected_outages_fullspan`).**
+The corrected data **resolves the over-shoot**: 58h lw $1,068 → **$242** (RT
+$421), invented Jun/Sep prints collapse — confirming the ERCOT-78 diagnosis. **But
+it un-catches the real scarcity tail:** 2023 C3c 179 → **53h** vs RT 181 (Aug
+caught 71 → 25, 2025 tail 19 → 0); on 46 real-scarcity Aug hours (actual RT
+$1,131) the model fell $767 → **$78**. A clean fix (0% over-correction) collapses
+the tail identically to a first-pass over-aggressive one, so this is a **genuine
+structural finding, not an artifact**: the model's ERCOT offer/scarcity
+calibration (offer curves, ORDC/co-opt) was tuned against the phantom-tightened
+fleet and rests on that phantom room exhaustion — one availability mechanism owned
+BOTH the shoulder over-shoot and the caught August tail. Per rule 11 the accurate
+input is kept and the compensating miscalibration is exposed, not buried.
+
+**Disposition (owner directive, this session): adopt the accurate data; ERCOT →
+NOT-YET.** "We can't have a keeper on inaccurate data." The corrected
+`data/raw/campd-outages.csv` is installed; the keeper-recipe-on-corrected-data run
+is **PROMOTED as the ERCOT keeper** (`2026-07-17-ercot79-corrected-outages`,
+DETERMINATION **NOT-YET** — C3a/C3b/C3c fail on accurate data). `keepers.json`
+ERCOT + array flipped; `frontier.ERCOT` **WITHDRAWN** (the prior 2026-07-17
+"frontier final" declaration rested on the phantom); `build_status.py` →
+status.js ERCOT NOT-YET. **Open lane (successor):** a full ERCOT offer-curve +
+ORDC/co-opt re-calibration against the corrected availability envelope, so the
+real scarcity re-forms on real fleet tightness. **CROSS-ISO:** the detector is
+shared — PJM's committed facility csv shows a stronger phantom signature (164
+windows >1,500 h, an 8,784 h full-year window) and all six ISOs' unit-level
+extracts use it; each ISO is its own regenerate-and-re-audit lane (owner-directed
+all-ISO regeneration in flight). See
+`results/calibration/FINDING-ercot79-phantom-outage-2026-07.md`.
+
+**Ops.** Full-span 2023-2025, single ERCOT solve at a time. Detector fix +
+FINDING committed early (blob-verified); corrected csv + keeper bundle + sidecar +
+attestation + legitimacy + keepers.json + status.js this commit. Transport: API
+create_branch + git push onto the recreated ref.
