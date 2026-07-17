@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-17-caiso-92-measured-offer",
+  "label": "caiso 92 measured offer",
+  "date": "2026-07-17",
+  "shorthand": "caiso-92-measured-offer",
+  "definition": "CANDIDATE (owner decision pending). caiso-90 keeper recipe + the MEASURED CAISO DAM offer surface (WP-A): the fitted _CAISO_OFFER_CURVE CC_REGULAR/CT_PEAKER econ/peak multipliers are REPLACED by the cap-weighted medians of the fleet's own published DAM energy bids (OASIS Public Bid Data, 90-day-lag masked curves; dam-public-bids intake + derive_caiso_offer_surface.py, all estimation gates PASS) + the condition-binned measured peak-rung ladder, P1-only. A rule-24/25 SHRINK of the fitted offer surface (zero new free parameters; measured bid statistics normalized by the model's own gas-flow-day + CARB inputs; committed band unarmed per rule 19). Scored grid IDENTICAL to the caiso-90 keeper (NOT-YET; C1/C3a/C3c/C4 FAIL, C2/C3b/C5a/C6/C7/C8 PASS) with C3a mean-LMP slightly improved (belly overprice down). C1 effect: CT_PEAKER rises via MERIT (Panoche bid wedge releasing) but only ~+0.15-0.34 TWh/yr — the class under-run is confirmed a VOLUME/commitment phenomenon (WP-B), not an offer-price one; the evening-λ leg deepens, disclosed. 2023-2025.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-17-caiso-92-measured-offer.js",
+  "bundle": "results/calibration/caiso92_measured_offer_surface"
+}
