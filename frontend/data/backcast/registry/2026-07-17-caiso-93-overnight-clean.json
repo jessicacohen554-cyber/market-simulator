@@ -1,15 +1,16 @@
 {
-  "id": "2026-07-17-caiso-93-overnight-clean",
-  "label": "caiso 93 overnight clean",
-  "date": "2026-07-17",
-  "shorthand": "caiso-93-overnight-clean",
-  "definition": "caiso-93 overnight clean depth main -- caiso-92 keeper recipe (caiso-90 + measured DAM offer surface) + caiso_dsw_overnight_clean (measured unconditional overnight WEIM clean-transfer depth, hod 0-5, raw-hub no-wheel pricing, EF 0; FINDING-caiso93-overnight-no-wedge-2026-07-17, owner-authorized), 2023-2025",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "CAISO",
-  "file": "frontend/data/backcast/runs/2026-07-17-caiso-93-overnight-clean.js",
-  "bundle": "results/calibration/caiso93_overnight_clean"
+ "id": "2026-07-17-caiso-93-overnight-clean",
+ "label": "caiso 93 overnight clean",
+ "date": "2026-07-17",
+ "shorthand": "caiso-93-overnight-clean",
+ "definition": "CAISO KEEPER (promoted 2026-07-17, owner sign-off: two gated criteria flip PASS at zero regressions on a structural zero-DOF mechanism). caiso-92 keeper recipe + the measured UNCONDITIONAL overnight (hod 0-5) WEIM clean-transfer depth (caiso_dsw_overnight_clean): a DSW_overnight_clean tranche carrying the p95 measured WECC_DSW net import over ALL overnight hours (5,870/6,205/6,487 MW 2023/24/25; estimation gates CV 0.041 / LOYO <=8.1%), net of the shaped firm block AND the caiso-87 surplus tranche, measured-hub hours only (the 2023 Jan-Feb OASIS gap never arms), EF 0, priced at the RAW measured Palo Verde hub with NO wheel (WEIM transfers pay no OATT point-to-point charge; the measured overnight CAISO-hub spread ~ raw hub, 93-99% of overnight hours parity-consistent \u2014 FINDING-caiso93-overnight-no-wedge-2026-07-17, the FINDING-caiso92b import-side redirect). Fail set SHRINKS from the superseded caiso-92's {C1, C3a(2024+2025), C3c, C4} to {C3a-2025, C3c, C4}: C1 fuel-mix FLIPS PASS 12/12 (free 8/8; CC_REGULAR +2.06/+5.24/+2.54 -> -0.30/+2.30/-0.47 TWh), C3a-2024 FLIPS PASS (+10.4% -> passing), C3a-2025 +14.3 -> +13.3% (still FAIL), C2 held PASS. The overnight lambda leg closes +3.4/+1.8/+3.6 -> +1.9/+0.4/+1.9 with belly/evening/C3c/WATCH flat-or-better (the closed autumn lane improves without reopening; Feb-2023 untouched by construction). Disclosed blemish: overnight CC/(CC+imports) share lands ~3pp UNDER measured in 2023/24 (51/49/47% vs 55/52/46%). 2023-2025.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-17-caiso-93-overnight-clean.js",
+ "bundle": "results/calibration/caiso93_overnight_clean",
+ "market_story": "Overnight the West runs a structural non-emitting surplus \u2014 Northwest hydro spinning through the night and plains/desert wind \u2014 and the WEIM/EDAM greenhouse-gas attribution assigns those surplus resources to the transfers CAISO leans on, so the marginal overnight import into California pays NO unspecified-import carbon adder and no point-to-point wheel: it clears at essentially the raw Palo Verde hub price (the measured CAISO-hub spread is parity-consistent in 93-99% of overnight hours, all three years). CC_REGULAR: California's own combined-cycle fleet therefore backs down overnight to the residual the interties cannot serve \u2014 it does not run at import parity, because the real marginal import is cheaper than the carbon-wedged rung the model used to charge; the keeper's CC over-run closes economically, not by a floor. imports: the south corridor carries 4.5-6.5 GW through the night at clean attribution, matching the measured share of the overnight supply split."
 }
