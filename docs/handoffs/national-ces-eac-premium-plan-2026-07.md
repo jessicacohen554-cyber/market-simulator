@@ -14,6 +14,13 @@ initial campaign (owner).
 screen CF is REMOVED in favor of economics-based utilization (attainable margin at
 post-retrofit costs); assumed capture fraction default 0.95 (target rate; 0.90
 sensitivity). Q5 (interim retrofit behavior) still open.
+**v2.3 (2026-07-17):** Q5 closed (interim = leave legacy behavior; campaign is gated
+anyway). Owner's retrofit-or-retire framing added as a hard W2-C requirement: the
+**joint three-way choice** (stay unabated / retrofit / retire) for retrofit-eligible
+gas-CCs — today's step order retires units (step 2) before the retrofit screen (step 4)
+ever sees them, and the screen must value the retrofit as the INCREMENTAL uplift over
+the unit's best unabated continuation. §11 discussion fully resolved; W2-C is
+design-complete and blocked only on W1-A merging.
 **Owner ask (2026-07-17):** model a *national* CES that credits every clean/low-carbon
 resource (including CCS retrofits and new build) with an EAC premium, as a federal
 alternative to state RPS/CES. Plug in an ensemble of premium levels and compare
@@ -42,10 +49,10 @@ What's missing, in order of importance:
    candidate techs `nuclear_smr` / `hydrogen_ct` / `hydrogen_ccgt` earn **zero** attribute
    revenue (absent from `_EAC_PRICE_FIELDS`), so a CES premium today cannot pull new
    nuclear or hydrogen.
-3. **CCS-retrofit economics need their own redesign** (§11): the retrofit screen has no
-   45Q term (new-build has it), a fixed 0.55 screen CF, and an undiscounted
-   payback-vs-remaining-life criterion — owner has ordered a deeper design discussion
-   before this seam is wired (supersedes the v1 "45Q parity ships in W2-A" call).
+3. **CCS-retrofit economics need their own redesign** (§11 — discussion now RESOLVED,
+   v2.2/v2.3): no 45Q term (new-build has it), a fixed 0.55 screen CF, an undiscounted
+   payback criterion, and no joint retrofit-vs-retire choice (retirement step 2 runs
+   before the retrofit screen step 4). W2-C implements the full resolution.
 4. **No PJM forecast config** (ERCOT-only YAMLs); PJM BAU must be assembled and smoked.
 5. **No attribute-revenue line in `plant_financials.py`** and no captured-price /
    negative-price-hours / clean-share diagnostics in the committed output surface.
@@ -170,9 +177,8 @@ linear interpolation, `rps.py:8-39`) and the `eac_price_*` scalars.
   monthly-budget constrained — but matters for revenue reporting).
 - **G3 — CCS retrofit economics.** Multiple defects/simplifications (no 45Q vs
   new-build's `:2742`; fixed `_RETROFIT_SCREEN_CF = 0.55`; undiscounted
-  payback-vs-remaining-life; capture-rate field duplication). Owner ordered a design
-  discussion before wiring — full treatment in **§11**; implementation lands as W2-C
-  after resolution.
+  payback-vs-remaining-life; capture-rate field duplication; no joint
+  retrofit-vs-retire choice). Resolved in **§11**; implementation lands as W2-C.
 - **G4 — PJM forecast BAU.** No committed PJM forecast YAML or validated PJM forecast
   run; ERCOT has base YAMLs + a 2026-2040 golden.
 - **G5 — Reporting.** No attribute-revenue line item; no captured-price-by-tech,
@@ -423,7 +429,7 @@ all `clean_capture`) plus a PARKED `configs/ces_premium_matrix_ci.yaml`
 (`CI-10/20/30`, `cesa_ci`) so the efficient-CCGT option is turnkey when the owner calls
 it. Tests on synthetic cached fixtures.
 
-**W2-C — CCS-retrofit redesign (Opus/Fable; Q1–Q4 RESOLVED 2026-07-17, blocked only on Q5)**
+**W2-C — CCS-retrofit redesign (Opus/Fable; §11 FULLY RESOLVED 2026-07-17 — blocked only on W1-A merging)**
 Implements the §11 resolution: 45Q revenue term in the retrofit screen, annualized over
 `min(ira_45q_credit_window_years, remaining_life)` and expiry-gated, with
 `ira_45q_credit_window_years: int | None = 12` (None ⇒ indefinite — owner-requested
@@ -433,8 +439,14 @@ the fixed 0.55 CF to prior-year attainable margin **at the post-retrofit cost ba
 (HR penalty + VOM adder in, 45Q and premium×fraction as bid offsets) so anticipated
 utilization is endogenous; premium enters as `max(eac_price_gas_cc_ccs,
 premium × capture-fraction credit)` with 45Q stacking on top; capture crediting at
-0.95; refreshed parameter citations. Includes retrofit-specific tests + spec §5.6
-rewrite.
+0.95; **the joint three-way choice** (§11 final block): retirement and retrofit
+evaluated together for retrofit-eligible gas-CCs — retire only if unabated AND retrofit
+continuations both fail, retrofit valued as the INCREMENTAL uplift over the best
+unabated state (which under cesa_ci includes the unit's unabated partial credit),
+3 GW/yr cap honored with cap-displaced units falling back to the unabated path/loss
+counter, annual re-screen from `ccs_available_year`, still one pass (rule 10) — the
+evolve_fleet step order/spec §5.1 documentation updated accordingly; refreshed
+parameter citations. Includes retrofit-specific tests + spec §5.6 rewrite.
 
 ### Wave 3 — capacity-screen readiness (external lane + verification)
 
@@ -500,10 +512,11 @@ analog) as a cross-check of the exogenous ladder; premium as a PB-2 sampler dime
 3. Horizon 2026–2050; first-run ladder {10, 20, 30} — confirmed.
 4. Escalation 0%/yr real — confirmed.
 5. Storage discharge not credited — confirmed.
-6. CCS retrofit → deeper design discussion required (§11); W2-C implements the
-   resolution. v1's "45Q parity in W2-A" superseded. **Q1–Q4 resolved 2026-07-17**
-   (45Q stacks; 12-yr window w/ indefinite option; no fixed CF — economics-based
-   utilization; capture 0.95); **Q5 open**.
+6. CCS retrofit → design discussion FULLY RESOLVED 2026-07-17 (§11); W2-C implements.
+   45Q stacks; 12-yr window w/ indefinite option; no fixed CF — economics-based
+   utilization; capture 0.95; Q5 closed (interim = leave legacy; campaign gated);
+   PLUS the joint retrofit-vs-retire three-way choice with incremental economics
+   (owner's framing — see §11 final block).
 7. Screens fixed before meaningful runs — confirmed (D9; §7 gate; W3-R go/no-go).
 
 ## 11. CCS-retrofit treatment — design discussion (for owner resolution)
@@ -564,9 +577,36 @@ screen** (new-build CCS LCOE has it, :2742).
   with the retirement screen's construction (rule 1).
 - **Q4 — RESOLVED: 0.95** assumed capture for crediting (the target capture rate);
   0.90 kept as a labeled sensitivity. `federal_ces_ccs_capture_fraction = 0.95`.
-- **Q5 — OPEN (owner answering):** while W2-C is pending, freeze retrofits out of
-  interim diagnostics (`ccs_available_year` bump) or leave legacy behavior (rec: leave —
-  the campaign is gated on §7 anyway)?
+- **Q5 — RESOLVED (closed 2026-07-17): leave legacy behavior in the interim.** The
+  question was only about throwaway diagnostic runs while W2-C is being built; the
+  campaign is gated on §7 regardless, so nothing meaningful runs on the legacy screen.
+  No freeze, no `ccs_available_year` bump.
+
+**Joint retrofit-vs-retire choice (owner 2026-07-17 — surfaced by the Q5 exchange; a
+hard W2-C requirement):** "CCGT plants will have a choice between retrofit or retire
+they will need to make when faced with it under these economic conditions with a CES,
+or they may go retrofit sooner if it's more profitable than staying unabated."
+Today's `evolve_fleet` order cannot express this: economic retirement (step 2) runs
+BEFORE the retrofit screen (step 4), so a loss-making CCGT exits without ever being
+offered the retrofit. W2-C makes the decision joint for retrofit-eligible gas-CCs,
+inside the existing single pass (rule 10 — ordering/joint evaluation, no iteration):
+- Value three continuations per unit-year: **stay unabated** (going-forward margin,
+  incl. any `cesa_ci` partial credit the unit earns unabated), **retrofit** (post-
+  retrofit attainable margin + 45Q + premium×capture-credit − annualized retrofit
+  capex/costs), **retire** (zero).
+- **Retire only if BOTH continuations fail** the unit's threshold (loss-year counter
+  semantics preserved); **retrofit when it beats staying unabated AND clears the
+  payback-vs-remaining-life hurdle** — which, with 45Q + premium at near-baseload
+  post-retrofit utilization, can trigger well before distress ("retrofit sooner if
+  more profitable than staying unabated").
+- Retrofit value is the **incremental uplift over the best unabated state** — under
+  `cesa_ci` that nets out the unabated partial credit (uplift ≈ premium×(0.95−f_unabated)
+  + 45Q − costs); under `clean_capture` the unabated credit is 0 and the full
+  premium×0.95 + 45Q is the uplift. No gross-vs-incremental double count.
+- The **3 GW/yr/ISO cap** stays: cap-displaced would-be retrofits fall back to the
+  unabated path and the normal loss-year counter (they may retire in a later year if
+  unabated keeps failing and the cap keeps binding).
+- Spec §5.1 step-order documentation updated to reflect the joint evaluation.
 
 Superseded design notes kept for the record: (d) payback-vs-remaining-life stays the
 criterion (simplicity; documented asymmetry vs new entry), (e) the 3 GW/yr cap +
