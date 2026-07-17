@@ -29,6 +29,7 @@ from market_sim.data.fuel import (
     apply_caiso_zonal_gas_basis,
     apply_coal_supply_pricing,
     apply_hub_basis_overlay,
+    apply_miso_winter_citygate_daily,
     apply_miso_zonal_gas_basis,
     apply_nyiso_downstate_ct_gas_basis,
     apply_nyiso_zonal_gas_basis,
@@ -49,6 +50,7 @@ from market_sim.data.fuel import (
     resolve_nox_price,
     resolve_nuclear_fuel_price,
 )
+from market_sim.data import fuel
 from market_sim.model.dispatch import solve_dispatch
 from market_sim.policy.carbon import resolve_carbon_price
 
@@ -1930,6 +1932,164 @@ def test_miso_zonal_gas_basis_skips_other_isos():
     prices = base.copy()
     apply_miso_zonal_gas_basis(prices, fleet, config, 2024)
     np.testing.assert_array_equal(prices, base)
+
+
+# --- miso-72 winter fuel-security citygate daily overlay ---------------------
+
+_MISO_WINTER_HOURS = 8760
+
+
+def _miso_winter_base(fleet, level: float = 4.5):
+    """Base gas price = flat level × national HH daily shape (what line 3564 sets)."""
+    national = fuel.gas_daily_shape_factors(2024, _MISO_WINTER_HOURS)
+    return np.full((fleet.n_gen, _MISO_WINTER_HOURS), level) * national[np.newaxis, :]
+
+
+def _jan_hour(day: int) -> int:
+    return (day - 1) * 24
+
+
+def test_miso_chicago_daily_shape_is_mean_preserving():
+    """The Chicago daily shape factors average to exactly 1.0 within each month."""
+    chi = fuel.miso_chicago_daily_shape_factors(2024, _MISO_WINTER_HOURS)
+    # January (the Heather month) mean is exactly 1.0 -> level unchanged.
+    np.testing.assert_allclose(chi[:744].mean(), 1.0, atol=1e-9)
+    # Every month averages ~1.0 (mean-preserving construction).
+    hour = 0
+    for n_days in fuel._DAYS_IN_MONTH:
+        seg = chi[hour : hour + n_days * 24]
+        np.testing.assert_allclose(seg.mean(), 1.0, atol=1e-9)
+        hour += n_days * 24
+
+
+def test_miso_chicago_daily_shape_flow_date_placement():
+    """The Jan-12 Friday spike prices the weekend+MLK flow days Jan-13..16, not Jan-12."""
+    chi = fuel.miso_chicago_daily_shape_factors(2024, _MISO_WINTER_HOURS)
+    # Flow-date: gas bought Friday Jan-12 ($25.82) flows Jan-13/14/15/16 (MLK Mon
+    # is a no-trade holiday; the record-peak Tuesday burns Friday's gas). Jan-12
+    # itself carries the low Thursday-trade flow.
+    for d in (13, 14, 15, 16):
+        assert chi[_jan_hour(d)] > 3.0, f"Jan-{d} should carry the broadcast spike"
+    assert chi[_jan_hour(12)] < 1.0, "Jan-12 (pre-storm) should be below average"
+    assert chi[_jan_hour(17)] < 1.0, "Jan-17 (thaw) should be below average"
+
+
+def test_miso_winter_citygate_daily_off_is_byte_identical():
+    """Flag off -> exact no-op (off-state byte identity)."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    base = _miso_winter_base(fleet)
+    prices = base.copy()
+    config = ScenarioConfig(iso="MISO", hours=_MISO_WINTER_HOURS, gas_daily_shape=True)
+    apply_miso_winter_citygate_daily(prices, fleet, config, 2024)
+    np.testing.assert_array_equal(prices, base)
+
+
+def test_miso_winter_citygate_daily_lifts_coldsnap_mean_preserving():
+    """Chicago-hub gas: cold-snap flow days lifted, monthly level unchanged."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    base = _miso_winter_base(fleet)
+    on = base.copy()
+    config = ScenarioConfig(
+        iso="MISO",
+        hours=_MISO_WINTER_HOURS,
+        gas_daily_shape=True,
+        miso_winter_citygate_daily=True,
+    )
+    apply_miso_winter_citygate_daily(on, fleet, config, 2024)
+    il = list(fleet.unit_ids).index("GAS_ILLINOIS")
+    # The true tail days Jan-15/16 (record-peak Tuesday) — which the national HH
+    # shape mislocates and drops to below-average (~0.9×) — are lifted well above
+    # base by the Chicago flow-date shape (the whole point of the mechanism).
+    for d in (15, 16):
+        assert on[il, _jan_hour(d)] > 3.0 * base[il, _jan_hour(d)]
+        assert on[il, _jan_hour(d)] > 15.0  # ~$21 gas -> prices the winter tail
+    # January monthly mean unchanged (mean-preserving: the level does not move).
+    np.testing.assert_allclose(on[il, :744].mean(), base[il, :744].mean(), atol=1e-9)
+
+
+def test_miso_winter_citygate_daily_supersedes_national_shape():
+    """On a lifted cell the price is level×chicago, NOT level×national×chicago (rule 19)."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    level = 4.5
+    base = _miso_winter_base(fleet, level=level)
+    on = base.copy()
+    config = ScenarioConfig(
+        iso="MISO",
+        hours=_MISO_WINTER_HOURS,
+        gas_daily_shape=True,
+        miso_winter_citygate_daily=True,
+    )
+    apply_miso_winter_citygate_daily(on, fleet, config, 2024)
+    il = list(fleet.unit_ids).index("GAS_ILLINOIS")
+    chi = fuel.miso_chicago_daily_shape_factors(2024, _MISO_WINTER_HOURS)
+    h = _jan_hour(16)
+    np.testing.assert_allclose(on[il, h], level * chi[h], atol=1e-9)
+
+
+def test_miso_winter_citygate_daily_zone_and_season_scoped():
+    """Only Chicago-hub zones in winter months move; West/South and summer untouched."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    base = _miso_winter_base(fleet)
+    on = base.copy()
+    config = ScenarioConfig(
+        iso="MISO",
+        hours=_MISO_WINTER_HOURS,
+        gas_daily_shape=True,
+        miso_winter_citygate_daily=True,
+    )
+    apply_miso_winter_citygate_daily(on, fleet, config, 2024)
+    west = list(fleet.unit_ids).index("GAS_WEST")
+    south = list(fleet.unit_ids).index("GAS_SOUTH")
+    il = list(fleet.unit_ids).index("GAS_ILLINOIS")
+    # West (MidCon) and South (Gulf) are not Chicago-hub -> untouched everywhere.
+    np.testing.assert_array_equal(on[west], base[west])
+    np.testing.assert_array_equal(on[south], base[south])
+    # July (a non-winter month) is untouched even for the Chicago-hub Illinois unit.
+    jul0 = sum(fuel._DAYS_IN_MONTH[:6]) * 24
+    jul1 = sum(fuel._DAYS_IN_MONTH[:7]) * 24
+    np.testing.assert_array_equal(on[il, jul0:jul1], base[il, jul0:jul1])
+
+
+def test_miso_winter_citygate_daily_skips_other_isos():
+    """A non-MISO ISO is untouched even with the flag set."""
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    base = _miso_winter_base(fleet)
+    prices = base.copy()
+    config = ScenarioConfig(
+        iso="PJM",
+        hours=_MISO_WINTER_HOURS,
+        gas_daily_shape=True,
+        miso_winter_citygate_daily=True,
+    )
+    apply_miso_winter_citygate_daily(prices, fleet, config, 2024)
+    np.testing.assert_array_equal(prices, base)
+
+
+def test_miso_winter_citygate_daily_synthetic_coldsnap(monkeypatch):
+    """Controlled synthetic cold snap: a single mid-Jan spike lifts its flow days only."""
+    # One elevated Jan-15 print among mild days; mild elsewhere. Trade day 15 ->
+    # flow day 16 (forward-filled). Everything else ~ $3.
+    jan = {d: 3.0 for d in range(2, 28, 2)}
+    jan[15] = 30.0
+    monkeypatch.setattr(
+        "market_sim.data.fuel._miso_citygate_daily_dated",
+        lambda path=None: {2024: {1: jan}},
+    )
+    fleet = _miso_gas_fleet(_MISO_WINTER_HOURS)
+    base = np.full((fleet.n_gen, _MISO_WINTER_HOURS), 5.0)  # flat, gas_daily_shape off
+    on = base.copy()
+    config = ScenarioConfig(
+        iso="MISO",
+        hours=_MISO_WINTER_HOURS,
+        gas_daily_shape=False,
+        miso_winter_citygate_daily=True,
+    )
+    apply_miso_winter_citygate_daily(on, fleet, config, 2024)
+    il = list(fleet.unit_ids).index("GAS_ILLINOIS")
+    # Flow day (Jan-16, trade+1 of the Jan-15 spike) is lifted above the $5 base.
+    assert on[il, _jan_hour(16)] > 5.0
+    # Mean-preserving: January average unchanged at the $5 flat level.
+    np.testing.assert_allclose(on[il, :744].mean(), 5.0, atol=1e-9)
 
 
 # Must mirror the real CAISO config zone order: _apply_meanzero_zonal_gas_basis
