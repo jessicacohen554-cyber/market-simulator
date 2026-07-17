@@ -1,0 +1,68 @@
+diff --git a/src/market_sim/config/reserve_config.py b/src/market_sim/config/reserve_config.py
+index afe3ce7..30d999e 100644
+--- a/src/market_sim/config/reserve_config.py
++++ b/src/market_sim/config/reserve_config.py
+@@ -2217,7 +2217,24 @@ def _nyiso_design(
+             requirement_arr = dynamic_req[name]
+         else:
+             requirement_arr = np.full(T, req, dtype=float)
+-        p, w = nyiso_rcpf_product_shortfall_steps(req, crit, pen, n_ramp=n_ramp)
++        # ORDC shortfall-step demand curve. The published RCPF penalties are
++        # requirement-INDEPENDENT (penalties[k] = max_pen*(k+1)/n_ramp for
++        # critical=0), so the WIDTHS alone carry the requirement level. By
++        # default they use the static published `req`, but when the measured
++        # dynamic requirement exceeds it the balance RHS enforces the larger
++        # measured MW while the curve saturates at reserve = req_static — an
++        # over-steepened downstate curve (SENY measured ~1600 vs static 1300).
++        # nyiso_ordc_measured_step_span rebuilds the widths from the measured
++        # span (per-hour max) so the demand-curve slope and its max-penalty-at-
++        # zero-reserve point match the requirement actually enforced (rule 1,
++        # construction-consistency; the docstring above's "translate with the
++        # requirement" made literal). No-op where measured == static.
++        step_req = req
++        if name in dynamic_req and getattr(
++            config, "nyiso_ordc_measured_step_span", False
++        ):
++            step_req = max(float(np.max(dynamic_req[name])), float(req))
++        p, w = nyiso_rcpf_product_shortfall_steps(step_req, crit, pen, n_ramp=n_ramp)
+         families.append(
+             ReserveFamily(
+                 name=name,
+diff --git a/src/market_sim/config/scenarios.py b/src/market_sim/config/scenarios.py
+index 326bc85..edff161 100644
+--- a/src/market_sim/config/scenarios.py
++++ b/src/market_sim/config/scenarios.py
+@@ -897,6 +897,25 @@ class ScenarioConfig:
+     # scoring within 2023-2025 (CLAUDE.md rule 22). Default off
+     # (byte-identical); NYISO-only. Mutually exclusive with nyiso_rcpf_enabled
+     # under energy_reserve_coopt (rule 19 — see reserve_config._nyiso_design).
++    nyiso_ordc_measured_step_span: bool = False  # GATED, default-OFF
++    # Construction-consistency refinement of nyiso_dynamic_reserve_requirements:
++    # when on (NYISO + energy_reserve_coopt + dynamic requirements), each dynamic
++    # family's ORDC shortfall-step WIDTHS are built from the MEASURED requirement
++    # span (its per-hour max) instead of the static published MW, so the demand-
++    # curve slope (max_penalty / span) and its saturation point (max penalty at
++    # zero reserve) match the requirement the balance row actually enforces. The
++    # published RCPF penalties are requirement-INDEPENDENT (penalties[k] =
++    # max_pen*(k+1)/n_ramp for critical=0), so ONLY the widths carry the
++    # requirement level; anchoring them to the static value while the balance RHS
++    # uses the larger measured series over-steepens the curve wherever measured >
++    # static (SENY: measured ~1600, max 1800 vs static 1300; East/NYC/NYCA:
++    # measured == static, so no-op), over-pricing downstate summer reserve
++    # shortfalls (the Aug/Sep afternoon LMP over-fire). This makes the code do
++    # what the dynamic-requirement docstring already claims — the steps
++    # "translate with the hourly requirement" (rule 1, correct-mechanism, not a
++    # tuned value; the measured span is a market-design input, not a residual
++    # fit). Promotion gate: leave-one-year-out within 2023-2025 (rule 22).
++    # Default off (byte-identical); NYISO-only.
+ 
+     # NEISO (ISO-NE) RCPF scarcity overlay — the ISO-NE analogue of the NYISO
+     # lever above (post-solve; never an LP input). ISO-NE prices real-time
+@@ -6809,6 +6828,7 @@ TIER_TAGS: dict[str, int] = {
+     "nyiso_import_hub_prices": 1,
+     "nyiso_iroquois_winter_spread": 1,
+     "nyiso_synchronised_reserve": 1,
++    "nyiso_ordc_measured_step_span": 1,
+     "nyiso_forward_net_import_twh": 2,
+     "nyiso_spin_headroom_frac": 2,
+     "miso_firm_imports": 1,
