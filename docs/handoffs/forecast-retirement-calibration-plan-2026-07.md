@@ -1,5 +1,15 @@
 # Forecast retirement/entry screen calibration plan — 2026-07 (the flip-gate lane)
 
+> **ℹ️ COORDINATION MOVED (2026-07-17).** This lane is now coordinated by
+> `docs/forecast-development-plan-2026-07.md` (the Forecast Finalization Program):
+> session sequencing, model assignment, and gating live there (Lane L-CAP —
+> FF-0C/FF-1A/FF-2A/FF-2C/FF-3D). Note the RC-1A-D1 re-probe (2026-07-16) REFUTED
+> the D1=3 unblock and surfaced the per-fuel threshold-inversion blocker
+> (`position-calibration-d1-findings-2026-07-16.md`), which FF-0C/FF-1A now own.
+> This document remains the lane's detailed technical spec (§2.1 flip gate, §3 T-R
+> battery, §5 data needs) and stays citable; its §4 prompt pack is **superseded —
+> do not launch sessions from it.**
+
 **Purpose.** The forecast-driver capacity-revenue audit program
 (`docs/handoffs/forecast-driver-capacity-revenue-audit-plan-2026-07.md`, Waves 0–3 +
 follow-ups through N-5 complete; the N-6 full-horizon re-run was dropped by the owner

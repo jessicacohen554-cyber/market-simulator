@@ -325,4 +325,5 @@ Always test with trivial cases first: 1 gen, 1 zone, 24 hours. Then scale up.
 - `docs/parameter-citations.md` — every numeric input traced to a primary source
 - `docs/multi-iso/` — protocol & status for adding ISOs beyond ERCOT
 - `docs/calibration-log.md`, `docs/calibration-session-log.md` — calibration history
+- `docs/forecast-development-plan-2026-07.md` — THE forecast program (Forecast Finalization Program): tier ladder, lanes/waves, prompt pack, rubric charter. All prior forecast plans are superseded as coordination docs by it (its §9 migration ledger).
 - **Code is the source of truth.** When docs and code disagree, fix the docs (run `/sync-docs`). When the methodology is genuinely ambiguous, the spec wins.
