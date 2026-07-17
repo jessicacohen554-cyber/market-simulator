@@ -240,3 +240,21 @@ INFO: maxgen tier pricing (MISO 2025): maxgen_warning footprint 2025-07-29 00:00
 INFO: energy+reserve co-opt (MISO): RBDC market-wide requirement 2665 MW at h0 (measured hourly cleared reg+spin+supp), 11 ORDC steps ($200-$3500), 2559 reserve-eligible units
 INFO:   MISO zonal reserve family miso_zonal_or_miso_south: requirement 412 MW at h0 (measured hourly South reservation), published zonal curve steps ['343MW@$200', '1201MW@$1100', '172MW@$3300']
 INFO:   MISO PER-ASSET reserve columns (miso_reserve_pergen): 2546 members pooled into 30 (zone, fuel-class) R columns, availability-scaled 10-min deliverable ramp cap mean 36472 / min 32933 MW
+INFO: Matrix build: 7.609s, Solve: 347.900s (cold)
+INFO: Matrix build: 7.609s, Solve: 114.629s (warm)
+INFO: EIA-923 2025: CAMPD-backfilled 57 under-reported plant(s) across 59 class-row(s) (1 replaced, 58 added)
+INFO: EIA-923 2025 wind 70.36 TWh under-counts EIA-930 98.90 TWh; using EIA-930 grid total
+INFO: EIA-923 2025 hydro 0.28 TWh under-counts EIA-930 9.88 TWh; using EIA-930 grid total
+INFO: year 2025 phase timing: data_prep=54.5s solve_p0=347.9s markup=57.3s solve_p1=114.6s results_write=36.2s total=610.5s
+INFO: wrote calibration bundle to results/calibration/miso70_tier_pricing
+solved into results/calibration/miso70_tier_pricing
+=== miso-70 main DONE 2026-07-17T00:07:41Z ===
+=== miso-70 base y2023 START 2026-07-17T00:07:41Z ===
+miso-70 base: years=[2023] out=results/calibration/_miso70_acc/base/y2023 reuse=None composition=off
+WARNING: MISO: CC plant 1403 fleet pmax sum 896.0 MW exceeds trusted bound 649.5 MW (nameplate; corrupt summer-capacity rows) — reconciled (246.5 MW removed)
+WARNING: MISO: CC plant 55218 fleet pmax sum 810.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (259.6 MW removed)
+WARNING: MISO: CC plant 55220 fleet pmax sum 811.9 MW exceeds trusted bound 551.3 MW (nameplate; corrupt summer-capacity rows) — reconciled (260.6 MW removed)
+WARNING: MISO: CC plant 55380 fleet pmax sum 3456.6 MW exceeds trusted bound 2428.0 MW (nameplate; corrupt summer-capacity rows) — reconciled (1028.6 MW removed)
+WARNING: MISO: CC plant 55418 fleet pmax sum 957.0 MW exceeds trusted bound 714.8 MW (nameplate; corrupt summer-capacity rows) — reconciled (242.2 MW removed)
+WARNING: MISO: CC plant 55467 fleet pmax sum 1257.2 MW exceeds trusted bound 903.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (353.3 MW removed)
+WARNING: MISO: CC plant 55620 fleet pmax sum 972.6 MW exceeds trusted bound 637.9 MW (nameplate; corrupt summer-capacity rows) — reconciled (334.7 MW removed)
