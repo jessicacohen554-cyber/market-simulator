@@ -1,5 +1,13 @@
 # CX-4 — Data-Center Load Block + Electrification Adder: Design Memo (2026-07, G-34)
 
+> **ℹ️ MECHANISM LANDED (2026-07-17).** Since this memo was written, the DC block has
+> been implemented (`ScenarioConfig.datacenter_load_path` off/low/mid/high +
+> `constants.DATACENTER_ADDITIONS_MW`; `DATACENTER_ZONE_SHARE` still empty ⇒
+> load-share siting). Remaining work — trajectory currency, published siting shares,
+> BAU posture decision — is chartered as **FF-1C** in
+> `docs/forecast-development-plan-2026-07.md`. The design below stays citable as the
+> spec; the "zero DC symbols" verification note reflects the 2026-07-06 tree, not HEAD.
+
 **Status:** design only. No `src/` changes in this deliverable. This memo expands
 `docs/handoffs/capacity-economics-plan-2026-07.md` §4 (CX-4) into an implementation-ready
 specification and reconciles it with the probability-bounds program's data-center axis
