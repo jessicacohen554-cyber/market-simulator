@@ -5,6 +5,7 @@ import unittest
 import numpy as np
 import pandas as pd
 
+from market_sim.config.scenarios import ScenarioConfig
 from market_sim.results.plant_financials import (
     PlantBinAssignment,
     compute_company_summary,
@@ -303,6 +304,160 @@ class TestAnnualSummary(unittest.TestCase):
         annual = self._annual(np.full(24, 50.0))
         # 100 MW × 1000 kW/MW × 12 $/kW-yr = 1.2e6.
         self.assertAlmostEqual(annual.iloc[0]["fom_cost"], 1_200_000.0)
+
+
+class TestAttributeRevenue(unittest.TestCase):
+    """W2-B attribute (certificate) line: effective EAC price × generation.
+
+    Resolved through ``policy/federal_ces.py::effective_unit_eac_prices``
+    (max of legacy ``eac_price_*`` and federal premium × credit fraction);
+    PTC/45Q tax credits are deliberately excluded from this line, and no
+    pre-existing column changes.
+    """
+
+    def _annual(self, plants, dispatch_mw=50.0, hours=24, year=2026, config=None):
+        """Run hourly + annual for ``plants`` at a flat dispatch level."""
+        hour_arr = np.arange(hours)
+        plant_dispatch = pd.concat(
+            [
+                pd.DataFrame(
+                    {
+                        "plant_code": p.plant_code,
+                        "generator_id": p.generator_id,
+                        "hour": hour_arr,
+                        "dispatch_mw": float(dispatch_mw),
+                        "bin_label": p.bin_label,
+                        "zone": p.zone,
+                    }
+                )
+                for p in plants
+            ],
+            ignore_index=True,
+        )
+        zonal_prices = pd.DataFrame(
+            {"zone": "North", "hour": hour_arr, "price_per_mwh": 50.0}
+        )
+        fuel_prices = pd.DataFrame(
+            {"fuel_type": "gas_cc", "hour": hour_arr, "price_per_mmbtu": 3.0}
+        )
+        hourly = compute_plant_hourly_financials(
+            plant_dispatch,
+            zonal_prices,
+            fuel_prices,
+            carbon_price=0.0,
+            nox_price=0.0,
+            plant_map=plants,
+            year=year,
+        )
+        return compute_plant_annual_summary(hourly, plants, year=year, config=config)
+
+    def test_columns_exist_and_zero_without_config(self):
+        annual = self._annual([_plant(1)])
+        self.assertIn("attribute_price_usd_per_mwh", annual.columns)
+        self.assertIn("attribute_revenue", annual.columns)
+        self.assertTrue((annual["attribute_price_usd_per_mwh"] == 0.0).all())
+        self.assertTrue((annual["attribute_revenue"] == 0.0).all())
+
+    def test_premium_times_generation_for_credited_fuel_only(self):
+        config = ScenarioConfig(
+            federal_ces_enabled=True, federal_ces_premium_usd_per_mwh=10.0
+        )
+        plants = [
+            _plant(1, fuel_type="nuclear", emission_rate_tco2_mwh=0.0),
+            _plant(2, fuel_type="gas_cc", emission_rate_tco2_mwh=0.37),
+        ]
+        annual = self._annual(plants, dispatch_mw=50.0, hours=24, config=config)
+        by_fuel = annual.set_index("fuel_type")
+        self.assertAlmostEqual(
+            by_fuel.loc["nuclear", "attribute_price_usd_per_mwh"], 10.0
+        )
+        # 50 MW × 24 h × $10/MWh certificate value.
+        self.assertAlmostEqual(by_fuel.loc["nuclear", "attribute_revenue"], 12_000.0)
+        # Unabated gas earns nothing under clean_capture (PTC/45Q are tax
+        # credits and never enter this line either).
+        self.assertEqual(by_fuel.loc["gas_cc", "attribute_price_usd_per_mwh"], 0.0)
+        self.assertEqual(by_fuel.loc["gas_cc", "attribute_revenue"], 0.0)
+
+    def test_legacy_eac_price_wins_the_max(self):
+        config = ScenarioConfig(
+            federal_ces_enabled=True,
+            federal_ces_premium_usd_per_mwh=10.0,
+            eac_price_nuclear=15.0,
+        )
+        annual = self._annual([_plant(1, fuel_type="nuclear")], config=config)
+        self.assertAlmostEqual(annual.iloc[0]["attribute_price_usd_per_mwh"], 15.0)
+
+    def test_premium_path_follows_the_year(self):
+        config = ScenarioConfig(
+            federal_ces_enabled=True,
+            federal_ces_premium_usd_per_mwh=10.0,
+            federal_ces_premium_escalation_real=0.05,
+        )
+        plant = _plant(1, fuel_type="nuclear")
+        annual_2026 = self._annual([plant], config=config, year=2026)
+        annual_2036 = self._annual([plant], config=config, year=2036)
+        self.assertAlmostEqual(annual_2026.iloc[0]["attribute_price_usd_per_mwh"], 10.0)
+        self.assertAlmostEqual(
+            annual_2036.iloc[0]["attribute_price_usd_per_mwh"],
+            10.0 * 1.05**10,
+            places=6,
+        )
+
+    def test_existing_metrics_untouched_by_attribute_line(self):
+        # The attribute line is its own line item: NOI and revenue must be
+        # identical with and without an enabled CES config.
+        plant = _plant(1, fuel_type="nuclear")
+        base = self._annual([plant])
+        ces = self._annual(
+            [plant],
+            config=ScenarioConfig(
+                federal_ces_enabled=True, federal_ces_premium_usd_per_mwh=30.0
+            ),
+        )
+        for col in ("revenue", "net_operating_income", "gross_margin"):
+            self.assertAlmostEqual(base.iloc[0][col], ces.iloc[0][col])
+
+    def test_company_rollup_scales_owned_attribute_revenue(self):
+        config = ScenarioConfig(
+            federal_ces_enabled=True, federal_ces_premium_usd_per_mwh=10.0
+        )
+        annual = self._annual(
+            [_plant(1, fuel_type="nuclear", emission_rate_tco2_mwh=0.0)],
+            dispatch_mw=50.0,
+            config=config,
+        )
+        ownership = pd.DataFrame(
+            {
+                "plant_code": [1],
+                "generator_id": ["1"],
+                "parent_company": ["A"],
+                "percent_owned": [0.5],
+            }
+        )
+        company_total, _ = compute_company_summary(annual, ownership)
+        # $12,000 attribute revenue at 50% ownership.
+        self.assertAlmostEqual(
+            company_total.iloc[0]["owned_attribute_revenue"], 6_000.0
+        )
+
+    def test_company_rollup_accepts_pre_w2b_frames(self):
+        # Parquets written before the attribute line have no such column;
+        # the rollup must keep reading them unchanged.
+        annual = self._annual([_plant(1)])
+        legacy = annual.drop(
+            columns=["attribute_revenue", "attribute_price_usd_per_mwh"]
+        )
+        ownership = pd.DataFrame(
+            {
+                "plant_code": [1],
+                "generator_id": ["1"],
+                "parent_company": ["A"],
+                "percent_owned": [1.0],
+            }
+        )
+        company_total, _ = compute_company_summary(legacy, ownership)
+        self.assertNotIn("owned_attribute_revenue", company_total.columns)
+        self.assertIn("owned_revenue", company_total.columns)
 
 
 class TestCompanySummary(unittest.TestCase):
