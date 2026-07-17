@@ -635,7 +635,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # once; applied at step 0 of evolve_fleet and the first-year base fleet.
     confirmed_exits: list[ConfirmedExit] = []
     if _confirmed_exits_active(config):
-        confirmed_exits = load_confirmed_exits(iso, as_of=confirmed_registry_as_of)
+        # required=True (W2-E / G12): this branch IS the fail-loud condition
+        # (confirmed_exits_enabled on, forecast mode), so a missing or
+        # unimportable registry raises with the regeneration command instead
+        # of the warn-only no-op that silently handed ERCOT 477 MW of
+        # phantom 2026 fleet (W1-B B3/B4).
+        confirmed_exits = load_confirmed_exits(
+            iso, as_of=confirmed_registry_as_of, required=True
+        )
         if confirmed_exits:
             logger.info(
                 "loaded %d confirmed exits (%.0f MW, %d-%d)",
@@ -654,8 +661,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
     # announced-channel data correction, not an exogenous exit injection.
     announced_reversal_plants: frozenset[int] = frozenset()
     if config.mode == "forecast":
+        # Fail-loud shares the confirmed channel's condition (same clean
+        # partition, W2-E / G12): when confirmed_exits_enabled is off the
+        # reversal channel keeps its warn-only degradation, preserving its
+        # deliberate independence from the gate.
         announced_reversal_plants = load_announced_reversal_plants(
-            iso, as_of=confirmed_registry_as_of
+            iso,
+            as_of=confirmed_registry_as_of,
+            required=_confirmed_exits_active(config),
         )
 
     # Global cumulative deployment drives the Wright's-Law learning curves.
