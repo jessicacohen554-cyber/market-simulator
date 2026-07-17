@@ -262,7 +262,11 @@ def _json_safe(value: object) -> object:
     if isinstance(value, tuple):
         return [_json_safe(v) for v in value]
     if isinstance(value, (set, frozenset)):
-        return [_json_safe(v) for v in value]
+        # Sets iterate in per-process-random order (randomized string
+        # hashing), so an unsorted conversion churns the registry value on
+        # every regeneration (seen with RGGI_MEMBER_STATES_BY_YEAR's
+        # frozensets). Sort for a deterministic representation.
+        return sorted((_json_safe(v) for v in value), key=str)
     if isinstance(value, dict):
         return {str(k): _json_safe(v) for k, v in value.items()}
     if isinstance(value, list):
