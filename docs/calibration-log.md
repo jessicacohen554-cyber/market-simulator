@@ -15993,3 +15993,24 @@ forward: the ercot-78 availability-envelope successor lane (the one open
 chartered lane), the frontier.ERCOT block draft + the ERCOT-65 trough/spread
 draft (both awaiting owner sign-off), and the ercot_gtc_limits_measured
 data-starvation provenance item.
+
+## 2026-07-17 — ERCOT frontier.ERCOT block ADOPTED (owner) — frontier declared with ONE open chartered lane
+
+**Owner decision (this session): "adopt your documentation."** The
+`keepers.json` `frontier.ERCOT` block is replaced (superseding the 2026-07-14
+trough/spread-only note, whose content is folded in) with the full-ISO
+frontier statement from the ercot-76/77/78 close-out: trough/spread at
+frontier (ERCOT-65, zone-split lever now refuted by ERCOT-76); the C3c-2024
+scarcity-tail ledger fully adjudicated with the NE-boundary import fix
+PROMOTED (keeper 2026-07-17-ercot76-ne-import); the May-24 shoulder formation
+enumeration closed on record (five mechanisms tried; residual = a
+representation limit of the DAM-derived offer basis); the 2023 summer
+over-shoot root-caused (ERCOT-78) with its successor — the event-time
+availability/capability-envelope input audit — declared as THE ONE OPEN
+CHARTERED LANE (frontier final for that lane once the audit lands a fix or a
+ledger; room-pin to RTOLCAP pre-registered forbidden). The
+ercot_gtc_limits_measured data-starvation provenance item is recorded as an
+open owner decision. This adoption also constitutes the pending ERCOT-65
+trough/spread sign-off (folded in). `build_status.py` rebuilt status.js;
+`audit_keepers.py --iso ERCOT` PASS 0/0. Next number: ercot-79 (the
+availability-envelope audit).
