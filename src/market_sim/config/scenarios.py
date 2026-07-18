@@ -44,6 +44,13 @@ _CACHE_KEY_OPTIONAL_FIELDS = (
     "retirement_execution_lag_gas_cc_ccs",
     "retirement_execution_lag_oil",
     "retirement_execution_lag_nuclear",
+    # FF-2A entry-stack gates (default-off): dropped from the hash at defaults
+    # so every pre-existing cache key is byte-stable; any armed gate enters the
+    # key (a distinct scenario). See the field docstrings (BLK-7/BLK-10/term e
+    # and the clearance→COD lag).
+    "entry_vre_capacity_revenue",
+    "entry_rate_limits",
+    "entry_commissioning_lag",
     # National CES federal EAC premium (W1-A, national-ces-eac-premium-plan
     # §5.1): default-off block, dropped from the hash at defaults so
     # cache_key(ScenarioConfig()) is byte-identical before/after the fields
@@ -1199,6 +1206,51 @@ class ScenarioConfig:
     # retire/build decision (nothing reads it back), so a run with it on is
     # byte-identical in fleet outcome to one with it off. Used to attribute the
     # solar-entry zero (which term starves the screen) without changing defaults.
+    entry_vre_capacity_revenue: bool = False  # GATED, default-OFF (FF-2A item 1
+    # / BLK-7 term c). When on, wind/solar candidates in the economic new-entry
+    # screen earn an ELCC-accredited resource-adequacy capacity payment:
+    # the SAME per-firm-MW capacity price seam thermal entry uses
+    # (MarketDesign.capacity_price_per_firm_mw_yr — fixed net-CONE, or the CR-1
+    # sloped curve when the clearing gate is armed) times the class's credit
+    # from the ONE adequacy resolver (resolve_renewable_capacity_credit,
+    # penetration-indexed published ELCC curve under renewable_elcc_curves —
+    # rule 19: the ledger and the payment can never diverge). Energy-only ISOs
+    # (ERCOT) price capacity at zero, so this is a no-op there by construction.
+    # Default off is byte-identical (VRE capacity revenue stays the measured $0
+    # the BLK-8 decomposition attributed — blk8-solar-entry-decomposition
+    # 2026-07-15 §4: ~$8-11k/MW-yr would-be payment, pivotal in PJM 2023).
+    entry_rate_limits: bool = False  # GATED, default-OFF (FF-2A item 2 / BLK-10
+    # + term e). When on, annual economic-entry builds and the reserve-margin
+    # backstop are rate-limited by a measured interconnection-throughput
+    # ladder: each tech's annual build is capped at
+    # ENTRY_GROWTH_LIMIT_MULTIPLE (2.0 — the ReEDS growth-constraint hard
+    # bound: annual installs may not exceed 200% of the prior maximum annual
+    # install; NREL ReEDS documentation) times the tech's PRIOR MAXIMUM annual
+    # build in the ISO — seeded from the measured EIA-860 record at the run's
+    # vintage over a trailing ENTRY_THROUGHPUT_WINDOW_YEARS window
+    # (data.build_throughput.max_annual_build_gw_by_tech) and rising endogenously as the
+    # model itself builds (the prior max includes model-year builds). Replaces
+    # the full-cap / full-deficit-in-one-step patterns with an externally
+    # identified throughput constraint; the static per-tech queue caps and the
+    # ISO budget still bind on top (both real, independent ceilings). A tech
+    # with no measured build history carries NO ladder cap (neutral fallback,
+    # rule 25 — a missing measurement must not invent a zero that forbids
+    # entry). Default off is byte-identical.
+    entry_commissioning_lag: bool = False  # GATED, default-OFF (FF-2A item 3).
+    # When on, economic-entry builds DECIDE in year Y but commission (enter the
+    # fleet / renewable pools) at Y + ENTRY_COD_LAG_YEARS[tech] — the measured
+    # clearance→COD lag (LBNL "Queued Up" 2024: median IA→COD ≈ 25 months for
+    # projects built 2016-2023). Pending (decided, not yet online) MW are
+    # netted against the per-tech queue caps in later decision years — the
+    # real developer's view of the queue, which is what prevents
+    # pipeline-stuffing cobwebs once decisions and CODs are separated. The
+    # evolution ledger records decision_year and cod_year per entry
+    # (entry_pipeline events). Forecast-machinery only (the backcast has no
+    # capacity evolution). NOTE: a vintage-start run (hindcast) has no seed of
+    # the real in-flight queue at the vintage cutoff — planned VRE rows are
+    # deliberately not wired (load_planned_additions skips them) — so arming
+    # the lag there shifts the whole entry path late by construction; see
+    # ff-entry-stack-completion-2026-07.md before arming in a hindcast leg.
     interchange_shaping: bool = False  # Priced-interchange node: shape the
     # import-tranche availability and export-sink floor by the measured EIA-930
     # month x hour-of-day net-interchange envelope (transmission.
@@ -7348,6 +7400,9 @@ TIER_TAGS: dict[str, int] = {
     "planning_reserve_margin_override": 2,
     "entry_price_signal_alpha": 2,
     "entry_lookahead_reprice": 1,
+    "entry_vre_capacity_revenue": 1,
+    "entry_rate_limits": 1,
+    "entry_commissioning_lag": 1,
     "cc_peak_hr_penalty": 3,
     "ct_peak_hr_penalty": 3,
     "cc_committed_hr_mult": 3,
