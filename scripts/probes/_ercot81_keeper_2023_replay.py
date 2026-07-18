@@ -52,6 +52,16 @@ def main() -> None:
         "(single-delta B probe), e.g. --set ercot_rrs_conservative_withholding=true",
     )
     ap.add_argument("--years", nargs="+", type=int, default=[2023])
+    ap.add_argument(
+        "--kwarg-true",
+        dest="kwarg_true",
+        action="append",
+        default=[],
+        metavar="KWARG",
+        help="set a solve_and_persist boolean kwarg to True directly (the real "
+        "kwarg channel, recorded top-level in meta.json — NOT prb_overrides), "
+        "e.g. --kwarg-true ercot_nonreleasable_as_withholding",
+    )
     args = ap.parse_args()
 
     meta = json.loads((KEEPER / "meta.json").read_text())
@@ -67,11 +77,26 @@ def main() -> None:
             raise SystemExit(f"--set expects KEY=JSON, got {spec!r}")
         kwargs.setdefault("prb_overrides", {})
         kwargs["prb_overrides"][key] = json.loads(raw)
-    kwargs["note"] = (
-        "ERCOT-81 rule-16 single-year throwaway probe: keeper recipe replay "
-        f"(years {kwargs['years']}, overrides {args.overrides or 'none'}) for "
-        "the Aug-2023 under-formation anatomy. NEVER registered."
-    )
+    for key in args.kwarg_true:
+        kwargs[key] = True
+    if args.kwarg_true and len(args.years) > 1:
+        deltas = ", ".join(args.kwarg_true)
+        kwargs["note"] = (
+            f"ercot81 nonreleasable-AS: the ercot80 keeper recipe + {deltas} — "
+            "the published pre-RTC+B RRS/Reg-Up HASL carve-out (no price-based "
+            "SCED release until RTC+B go-live 2025-12-05; the 2024-08-01 "
+            "release reform was ECRS-only) priced as rigid at-cap reserve "
+            "demand, so tight-hour energy duals climb the offer surface "
+            "instead of shedding withheld reserve down an RTC+B-era ramp the "
+            "2023-2025 market did not have. Zero fitted parameters; published "
+            "design dates only."
+        )
+    else:
+        kwargs["note"] = (
+            "ERCOT-81 rule-16 single-year throwaway probe: keeper recipe replay "
+            f"(years {kwargs['years']}, overrides {args.overrides or 'none'}) "
+            "for the Aug-2023 under-formation anatomy. NEVER registered."
+        )
     print(f"solving {kwargs['iso']} {kwargs['years']} -> {kwargs['run_dir']}")
     run_dir = rcf.solve_and_persist(**kwargs)
     print(f"solved into {run_dir}")
