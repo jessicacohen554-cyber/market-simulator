@@ -824,6 +824,18 @@ MISO_SEAM_DIBA: dict[str, tuple[str, ...]] = {
     "PJM": ("PJM", "IESO"),
     "SPP": ("SWPP", "SPA"),
     "South": ("SOCO", "TVA", "AECI", "LGEE", "SIKE"),
+    # Manitoba (MHEB) — the two-way seasonal hydro seam. Present unconditionally
+    # so measured_seam_import_envelope builds its (month × hour-of-day) two-way
+    # deliverability envelope from the measured MHEB flow; the envelope is
+    # applied only to Manitoba's seam BANDS, which exist only when
+    # ScenarioConfig.miso_manitoba_seam builds them (miso-74, replacing the
+    # import-only firm block). With the flag off there are no Manitoba bands, so
+    # the envelope/ladder Manitoba entries are inert (inject_miso_seam_flow_limit
+    # / _inject_seam_ladder are row-driven — "if not rows: continue") and every
+    # existing bundle replays byte-identically. Adding MHEB→Manitoba leaves the
+    # PJM/SPP/South DIBA pools (and their envelopes) unchanged (MHEB was
+    # previously in no seam and dropped).
+    "Manitoba": ("MHEB",),
 }
 
 # PJM tie line (DataMiner act_sch_interchange ``tie_line``) → priced seam.
@@ -932,6 +944,11 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
             "import": (50.99, 63.58, 85.76, 112.47, 204.68, 204.68, 204.68, 204.68),
             "export": (43.04, 36.49, 31.69, 27.69, 24.74, 22.09, 19.70, 17.34),
         },
+        # Manitoba (MHEB) two-way seam — miso-74; P9 +5.35 vs measured +5.39 TWh.
+        "Manitoba": {
+            "import": (27.11, 29.83, 33.38, 37.44, 44.61, 60.76, 94.92, 175.93),
+            "export": (23.67, 21.05, 17.51, 12.60, 11.72, 11.72, 11.72, 11.72),
+        },
     },
     2024: {
         "PJM": {
@@ -946,6 +963,11 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
             "import": (57.86, 82.81, 163.02, 241.36, 260.66, 284.59, 284.59, 284.59),
             "export": (46.72, 38.67, 32.32, 27.61, 23.77, 20.81, 18.47, 16.00),
         },
+        # Manitoba (MHEB) two-way seam — miso-74; P9 +2.99 vs measured +3.01 TWh.
+        "Manitoba": {
+            "import": (26.50, 29.47, 33.14, 37.56, 49.71, 140.89, 284.59, 284.59),
+            "export": (22.93, 20.01, 16.58, 12.40, 8.43, 8.43, 8.43, 8.43),
+        },
     },
     2025: {
         "PJM": {
@@ -959,6 +981,12 @@ MISO_SEAM_LADDER_BY_YEAR: dict[int, dict[str, dict[str, tuple[float, ...]]]] = {
         "South": {
             "import": (68.46, 87.90, 121.12, 155.42, 258.05, 327.25, 433.12, 433.12),
             "export": (53.00, 44.14, 37.04, 32.38, 29.43, 26.61, 24.29, 22.35),
+        },
+        # Manitoba (MHEB) two-way seam — miso-74; P9 -0.99 vs measured -0.99 TWh
+        # (the drought-2025 net export the import-only firm block cannot carry).
+        "Manitoba": {
+            "import": (44.82, 55.36, 73.92, 113.71, 202.95, 284.12, 327.25, 433.12),
+            "export": (36.78, 31.27, 24.35, 19.40, 16.40, 16.40, 16.40, 16.40),
         },
     },
 }
@@ -1155,6 +1183,41 @@ MISO_MANITOBA_FIRM_IMPORT_MW_BY_YEAR: dict[int, float] = {
     2025: 224.0,
 }
 
+# --- MISO Manitoba two-way priced seam (miso-74) ---
+# Replaces the import-only annual-flat firm block above with a fourth MEASURED
+# two-way priced seam under ScenarioConfig.miso_manitoba_seam (default off).
+# Built by transmission.build_reference_price_node (extra_neighbors) and priced
+# by the frozen Q-Q ladder MISO_SEAM_LADDER_BY_YEAR["Manitoba"]; the two-way
+# (month × hour-of-day) deliverability envelope comes for free from
+# MISO_SEAM_DIBA["Manitoba"]. Every field is a physically-pinned structural
+# constant (rule 23) — none tuned to a residual:
+#   * interface_limit_mw 2900: the physical MHEB→MISO (Minnesota, LRZ 1)
+#     transfer capability, pinned to the measured +2,827 MW import extreme
+#     (EIA-930 "MISO interchange hourly.parquet"); the Q-Q fit is insensitive to
+#     it in [2400, 3000] and the export bands self-limit at the ~1,400 MW
+#     measured export capability via the export envelope.
+#   * import_emission_factor 0.0: Manitoba Hydro is ~hydro — a clean import,
+#     identical CO2 accounting to the fuel-free firm block it replaces (the EF
+#     is a CARB-only price adder, inert for MISO which has no carbon program).
+#   * border_zones ("MISO-West",): the Manitoba↔US HVDC/AC ties land in
+#     Minnesota (LRZ 1) = MISO-West, the firm block's own zone.
+# hurdle / gas_basis / marginal_heat_rate / load_shape are seam-family
+# conventions, inert under miso_seam_measured_ladder (the ladder prices every
+# band directly). No firm_import_floor_by_year — a firm import floor would force
+# imports in the winter export hours the measured seam net-exports over. See
+# docs/handoffs/miso-manitoba-seam-design-2026-07.md.
+MISO_MANITOBA_SEAM_SPEC: NeighborInterface = NeighborInterface(
+    name="Manitoba",
+    ba_code="MHEB",
+    gas_basis=0.0,
+    marginal_heat_rate=10.0,
+    hurdle=2.0,
+    interface_limit_mw=2900.0,
+    border_zones=("MISO-West",),
+    load_shape_exponent=1.0,
+    import_emission_factor=0.0,
+)
+
 MISO_FIRM_IMPORT_DEFAULT_ISOS: frozenset[str] = frozenset({"MISO"})
 
 
@@ -1347,6 +1410,12 @@ class InterchangeSpec:
     # South→external→Midwest wheel around the RDT). Resolved from
     # ScenarioConfig.miso_south_seam_split.
     miso_south_split: bool = False
+    # MISO only: replace the import-only Manitoba firm block with the fourth
+    # two-way priced seam (MISO_MANITOBA_SEAM_SPEC bands + the "Manitoba" Q-Q
+    # ladder + the measured MHEB two-way envelope). Resolved from
+    # ScenarioConfig.miso_manitoba_seam; when set, get_interchange_spec also
+    # drops the Manitoba entry from firm_imports (miso-74).
+    miso_manitoba_seam: bool = False
     # CAISO per-hub only: build the south-corridor surplus-clean depth tranche
     # (caiso-87; see the CAISO_DSW_SURPLUS_CLEAN_* block above). Resolved from
     # ScenarioConfig.caiso_dsw_surplus_clean; the tranche is built with zero
@@ -1474,7 +1543,14 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
             )
 
     firm_imports: list[FirmImport] = []
-    if getattr(config, "miso_firm_imports", False) and iso == "MISO":
+    # miso_manitoba_seam supersedes the import-only firm block with the two-way
+    # priced seam (miso-74): drop the firm block here so inject_miso_firm_imports
+    # finds no target uid and no-ops.
+    if (
+        getattr(config, "miso_firm_imports", False)
+        and iso == "MISO"
+        and not getattr(config, "miso_manitoba_seam", False)
+    ):
         pmax = resolve_miso_manitoba_firm_import_mw(
             year,
             getattr(config, "mode", "forecast"),
@@ -1517,6 +1593,9 @@ def get_interchange_spec(config, iso: str, year: int | None = None) -> Interchan
             iso == "MISO"
             and use_ref
             and getattr(config, "miso_south_seam_split", False)
+        ),
+        miso_manitoba_seam=(
+            iso == "MISO" and use_ref and getattr(config, "miso_manitoba_seam", False)
         ),
         caiso_surplus_clean=(
             caiso_per_hub and getattr(config, "caiso_dsw_surplus_clean", False)
@@ -1570,7 +1649,14 @@ def build_interchange_fleet(
             # (transmission.split_miso_south_external_node) so they clear in
             # the zone actually linked to MISO-South.
             overrides = {"South": MISO_SOUTH_EXTERNAL_ZONE}
-        gens.extend(build_reference_price_node(spec.iso, zone_overrides=overrides))
+        # miso-74: append the two-way Manitoba seam's bands (replacing the
+        # dropped firm block) so the ladder + measured MHEB envelope price them.
+        extra = [MISO_MANITOBA_SEAM_SPEC] if spec.miso_manitoba_seam else None
+        gens.extend(
+            build_reference_price_node(
+                spec.iso, zone_overrides=overrides, extra_neighbors=extra
+            )
+        )
     elif spec.caiso_mode == "per_hub":
         from market_sim.model.transmission import build_caiso_per_hub_intertie
 
