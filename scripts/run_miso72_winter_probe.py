@@ -38,6 +38,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -45,6 +46,12 @@ _REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(_REPO / "src"))
 sys.path.insert(0, str(_REPO))
 sys.path.insert(0, str(_REPO / "scripts"))
+
+# Reproducibility pin (mirrors replay_keeper.py / _miso71_midwest_reserves.py):
+# force cross-year LP warm-start OFF so each per-year process is basis-independent
+# and the main/base pair is a clean same-box comparison. Set BEFORE importing the
+# solve core.
+os.environ.setdefault("MARKET_SIM_WARMSTART_XYEAR", "0")
 
 import run_calibration_full as rcf  # noqa: E402
 from scripts.replay_keeper import build_kwargs  # noqa: E402
@@ -69,8 +76,19 @@ _NOTE_BASE = (
 )
 
 
-def _solve(out_dir: Path, winter: bool, years: list[int]) -> Path:
-    """Replay the miso-71 keeper recipe into ``out_dir``; ``winter`` adds the overlay."""
+def _solve(
+    out_dir: Path,
+    winter: bool,
+    years: list[int],
+    reuse_solved: Path | None = None,
+) -> Path:
+    """Replay the miso-71 keeper recipe into ``out_dir``; ``winter`` adds the overlay.
+
+    ``reuse_solved`` (the per-year+reuse pattern, RAM ≤16 GB — the _miso71
+    precedent): a prior accumulating bundle whose already-solved years are loaded
+    and skipped, so each invocation solves exactly ONE new LP in a fresh process.
+    The one-process all-three-years path OOMs on the year-3 co-opt peak at HEAD.
+    """
     meta = json.loads((_KEEPER_BUNDLE / "meta.json").read_text())
     kwargs = build_kwargs(meta)
     kwargs["years"] = years
@@ -78,6 +96,7 @@ def _solve(out_dir: Path, winter: bool, years: list[int]) -> Path:
     kwargs["hours"] = int(meta.get("hours", 8760))
     kwargs["reference"] = rcf._load_reference()
     kwargs["run_dir"] = out_dir
+    kwargs["reuse_solved"] = Path(reuse_solved) if reuse_solved else None
     kwargs["note"] = _NOTE_MAIN if winter else _NOTE_BASE
     if winter:
         # Compose the winter overlay on the keeper structure via the generic
@@ -90,7 +109,7 @@ def _solve(out_dir: Path, winter: bool, years: list[int]) -> Path:
         kwargs["prb_overrides"] = prb
     print(
         f"replaying {_KEEPER_BUNDLE.name} recipe -> {out_dir} "
-        f"(years {years}, winter={winter})"
+        f"(years {years}, winter={winter}, reuse={reuse_solved})"
     )
     return rcf.solve_and_persist(**kwargs)
 
@@ -109,19 +128,36 @@ def main() -> int:
         type=int,
         nargs="+",
         default=[2023, 2024, 2025],
-        help="Solve span (default all three). Narrow ONLY for a throwaway "
-        "memory/correctness smoke — never register a single-year bundle (rule 16).",
+        help="Solve span. In the per-year+reuse pattern this is the CUMULATIVE "
+        "span (e.g. 2023 2024 with --reuse-solved <y2023>); reuse skips the "
+        "already-solved years so exactly one new LP solves. A lone year is a "
+        "throwaway smoke — never register a single-year bundle (rule 16).",
+    )
+    ap.add_argument(
+        "--reuse-solved",
+        type=Path,
+        default=None,
+        help="Prior accumulating bundle to reuse solved years from (RAM ≤16 GB: "
+        "one fresh year per process). Configs must match (main→main, base→base).",
     )
     ap.add_argument(
         "--report-only",
         action="store_true",
-        help="Skip solving; just score the existing bundle.",
+        help="Skip solving; just score the existing (complete) bundle. Scoring is "
+        "decoupled from solving so each solve process stays lean — run this as a "
+        "SEPARATE pass on the final 3-year bundle.",
     )
     args = ap.parse_args()
 
-    if not args.report_only:
-        _solve(args.out_dir, winter=args.winter, years=args.years)
-    report_run(args.out_dir, band_width=0.10)
+    if args.report_only:
+        report_run(args.out_dir, band_width=0.10)
+    else:
+        _solve(
+            args.out_dir,
+            winter=args.winter,
+            years=args.years,
+            reuse_solved=args.reuse_solved,
+        )
     print(f"DONE: {args.out_dir}")
     return 0
 
