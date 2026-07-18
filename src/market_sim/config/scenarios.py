@@ -1445,6 +1445,36 @@ class ScenarioConfig:
     # orchestrator does not yet pass the potential series, where the flag is
     # inert by construction. Default off (byte-identical); requires
     # caiso_ra_mustoffer; CAISO-only. GATED CHANGE (alters dispatch volumes).
+    caiso_ra_startup_trajectory: bool = False  # CAISO RA bridge STARTUP-
+    # TRAJECTORY extension (caiso-96 WP-1 — the caiso-95 who-serves-the-day
+    # lane's CC afternoon re-commitment fix, FINDING-caiso95 §3/§7). The
+    # metered CAISO CC fleet brings its evening capacity back online through
+    # the EARLY afternoon (measured run-starts peak hod 13-15); the
+    # continuous-variable LP pays no startup and materializes capacity exactly
+    # at the ramp hour, so its starts land ~3 h late (model peak hod 17-18)
+    # and the afternoon re-commitment window hod 13-17 carries the whole
+    # CC online-capacity deficit (the belly core 10-14 has NONE). With this
+    # on, every detected (and startup-aware-screened, when armed) run-start of
+    # a bridge-eligible merchant CC is preceded by its measured START-TO-LOAD
+    # ramp: the L hours before the start are floored at the linear ramp-in
+    # trajectory toward minimum stable load (model.commitment.
+    # caiso_ra_mustoffer_min_gen startup_lead_hours; floor level capped at
+    # min-load — above it is dispatch's choice). L = the plant's CAMPD p50
+    # off→on-to-full-load duration (scripts/derive_campd_cc_start_trajectory
+    # .py: 8,986 CA CC start events 2023-25, per-plant p50 1-6 h under frozen
+    # CV/LOYO gates, pooled class p50 3 h LOYO-stable to 0.0 h; no artifact →
+    # the extension is inert, a measured lead or nothing — rule 23) — a
+    # measured physical parameter, rule-13 admissible: regenerates from the
+    # CAMPD pipeline for any vintage and responds to fleet/run-pattern change. Driver: hot
+    # start-to-load physics + DAM operating-day positioning; window: the L
+    # hours before the detector's own P0 run-starts; forward story: the P0
+    # run pattern + the measured lead regenerate in any forecast year (rule
+    # 12). Same mechanism as the RA bridge, wider physics (rule 19 — never a
+    # new stacked floor); D-2 attribution stays ra_mustoffer_bridge. CT is
+    # excluded by physics (start-to-load sub-hourly at LP resolution, rule
+    # 18), CHP by its steam-host ownership. Default off (byte-identical);
+    # requires caiso_ra_mustoffer; CAISO-only. GATED CHANGE (alters dispatch
+    # volumes; owner-authorized solve required — caiso-93/94 protocol).
     neiso_gas_coldsnap_derate: bool = False  # NEISO winter gas-fired availability
     # derate (temperature-dependent forced outage, TDFOR). On deep-winter cold
     # snaps the gas-electric constraint physically curtails NON-dual-fuel gas
@@ -7102,6 +7132,7 @@ TIER_TAGS: dict[str, int] = {
     "caiso_ra_mustoffer_quantity_gate": 1,
     "caiso_ra_bridge_startup_aware": 1,
     "caiso_ra_bridge_curtailment_release": 1,
+    "caiso_ra_startup_trajectory": 1,
     "reliability_floor": 1,
     "caiso_solar_deliverability": 1,
     "caiso_solar_deliverability_k": 3,
