@@ -35,8 +35,13 @@ the end of every manager turn.
   `end_year<=2025` guard current, 21 config passthroughs incl. FF-2A's). **Fable-scarcity is a
   non-issue for the launchable set — all four are already [OPUS].** The only FABLE prompts left
   in the program are FF-3C (trigger-gated, inactive) and the closed FF-2A lane; FF-1A is done.
-  Sequencing given: FF-0B-redo ∥ FF-0E first (independent L-VAL); FF-1E and FF-2B staggered
-  (both touch capacity.py 4230). **AWAITING owner:** entry-lookahead posture (FF-2A item 4 /
+  Sequencing corrected mid-turn (owner: "only give me what can run in parallel at once"):
+  **parallel batch = FF-0B-redo + FF-0E + ONE of {FF-1E, FF-2B}** (1E and 2B both edit
+  capacity.py 4230 → not parallel-safe together). Owner asked which unlocks more near-term
+  Opus work → **recommended FF-2B** (last technical prereq for FF-2C's owner-approved flips +
+  produces the first NEISO cap-hindcast pair, unblocking evidence-free NEISO across FF-2C/FF-2D;
+  FF-1E is a leaf feeding only the FF-2D gate). FF-1E held for the next capacity.py slot.
+  **AWAITING owner:** entry-lookahead posture (FF-2A item 4 /
   gas_cc lag), golden freeze (FF-4A), PB-5 (FF-4C).
 - **turn 15 (manager `mhtoa0`). MAIN IS GREEN — FF-2A integration MERGED (#2486 `e9f9d60`) +
   sidecars (#2491/#2492); FF-0F verified-pass; FF-1F defaults live (#2493). Wave-2 gates FIRE.**
@@ -136,10 +141,10 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 |---|---|---|---|---|---|---|
 | FF-0A | FABLE | 0 | L-VAL | ⛔ rubric | **verified-pass** | rubric #2414 + scorer #2419 |
 | FF-0A-fix | OPUS | 0 | L-VAL | — | **verified-pass** | #2419: 73 tests pass |
-| FF-0B-redo | OPUS | 0 | L-VAL | — | **sent (turn 17, re-emitted on owner request, drift-clean at 9b9b0d4)** | T1-F 6-ISO baseline at HEAD defaults (FF-1F posture live: DC=mid, derate=ON); must COMMIT findings doc + hindcast sidecars (#2412 failure mode = gitignore-only non-delivery, named in prompt). |
+| FF-0B-redo | OPUS | 0 | L-VAL | — | **sent (turn 17, in parallel batch)** | T1-F 6-ISO baseline at HEAD defaults (FF-1F posture live: DC=mid, derate=ON); must COMMIT findings doc + hindcast sidecars (#2412 failure mode = gitignore-only non-delivery, named in prompt). Parallel-safe (no source edits). |
 | FF-0C | FABLE | 0 | L-CAP | — | **verified-pass** | #2418: R-NEW memo + owner box |
 | FF-0D | OPUS | 0 | L-INP | — | **verified-pass** | #2413: audit, no source changes |
-| FF-0E | OPUS | 0 | L-VAL | — | **sent (turn 17, re-emitted on owner request, drift-clean at 9b9b0d4)** | crossover harness build; prompt carries preserve-the-21-config-passthroughs warning + current harness state (VINTAGE_YEAR=2020, ALLOWED_SOLVE_YEARS={2021,2023,24,25}, end_year<=2025 guard). |
+| FF-0E | OPUS | 0 | L-VAL | — | **sent (turn 17, in parallel batch)** | crossover harness build; edits run_capacity_hindcast.py (not capacity.py — parallel-safe with 2B). Prompt carries preserve-the-21-config-passthroughs warning + current harness state (VINTAGE_YEAR=2020, ALLOWED_SOLVE_YEARS={2021,2023,24,25}, end_year<=2025 guard). |
 | FF-0F | OPUS | 0 | L-VAL/L-INP | — | **verified-pass, CLOSED (turn 17)** | #2488 + #2490 + #2505: benchmark-corridor datatype + loader + 13 tests + FC-5 context-only wiring; 73 scorer tests pass; additive; M9–M15 gaps filed. #2505 registered it in `render_data_dictionary.py` — snapshot deferral closed, no open items. |
 | FF-1A | FABLE | 1 | L-CAP | — | **verified-pass (complete)** | #2438 + #2448/#2451 + #2454. Inversion CLOSED; flip-gate scorecard complete. |
 | FF-1A-restore | FABLE | 1 | L-CAP | — | **verified-pass** | #2438: capacity.py byte-exact restore. |
@@ -148,11 +153,11 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-1B | FABLE | 1 | L-SCAR | — | **verified-pass** | #2423: correlated cold-event derate. |
 | FF-1C | OPUS | 1 | L-INP | — | **verified-pass** | #2422: demand/DC currency + hydro. |
 | FF-1D | OPUS | 1 | L-VAL | — | **issued (turn 14), gated** | prompt issued; fires after FF-0E merges + green main. |
-| FF-1E | OPUS | 1 | L-INP | — | **sent (turn 17, re-emitted on owner request, drift-clean at 9b9b0d4)** | prerequisites satisfied (#2413/#2422/#2486); rule-27 line counts stated (capacity.py 4230, constants.py 7281); ATB curate/fetch now at scripts/data/ (loader path unchanged); stagger vs FF-2B on capacity.py. |
+| FF-1E | OPUS | 1 | L-INP | — | **HELD (turn 17) — next after FF-2B's capacity.py merges** | Drift-clean, prereqs met (#2413/#2422/#2486). Leaf lane (unblocks nothing but the FF-2D gate) → sequenced AFTER FF-2B, which is on the FF-2C critical path. Both edit capacity.py; only one per parallel batch. Fire when a capacity.py slot frees. |
 | FF-1F | OPUS | 1 | L-INP | — | **landed + defaults LIVE** (#2468/#2476/#2480 + #2493) | #2493 flips `datacenter_load_path`→"mid", `correlated_forced_outage`→True with backcast byte-identity guards; plan §2.1 recorded. Closed. |
 | FF-2A | FABLE | 2 | L-CAP | — | **RESOLVED via FF-2A-integrate (turn 15)** | #2453 breach history: unapplied patch + broke all-ISO harness. Mechanism now merged (#2486 `e9f9d60`) + sidecars #2491/#2492. Stale patch deleted #2503 (t17). Lane closed. |
 | FF-2A-integrate | FABLE | 2 | L-CAP | — | **verified-pass (turn 15, via #2486 `e9f9d60` + #2491/#2492)** | Mechanism merged + manager-verified (0 fn loss, signature matches runner, fields on-registry, 14 harness refs, compiles). PJM/MISO/ERCOT r2 sidecars governance-clean. FF-2A lane CLOSED. Housekeeping done (t17): chunk branch gone + stale patch deleted #2503. |
-| FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 17, re-emitted on owner request, drift-clean at 9b9b0d4)** | CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; NEISO bands pre-registered BEFORE the run; FF-2A merged (prereq met); stagger vs FF-1E on capacity.py. |
+| FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 17) — in the parallel batch (recommended over FF-1E)** | Prereq FF-2A met, drift-clean. On the FF-2C critical path (last technical prereq for the owner-approved flips) + produces the first NEISO cap-hindcast pair (NEISO currently evidence-free) → unblocks more near-term work than FF-1E. Parallel batch = FF-0B-redo + FF-0E + FF-2B (1E and 2B collide on capacity.py). CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; bands pre-registered BEFORE the run. |
 | FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated** | prompt issued; owner-approved flip all-but-ERCOT, staged by readiness. After FF-2A(done) + FF-2B. Rule 1: worsened fit = root-cause. |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated** | prompt issued; runs after W1/W2 merges. Rubric verdicts + promotion table. |
 | FF-3A | OPUS | 3 | L-VAL | ⛔ T2 | not-sent | blocked: FF-2D + owner |
@@ -277,5 +282,8 @@ attestation), #2489 (ercot83 posture backcast), #2494 (ercot apr/may scarcity to
   core line counts unchanged). **Housekeeping RESOLVED:** chunk branch `…6zd9zv` gone from
   origin + stale patch deleted. **Owner asked for the prompt waves (Fable scarce) → re-emitted
   all four launchable prompts, all already [OPUS]** (FF-0B-redo, FF-0E, FF-1E, FF-2B),
-  drift-verified at 9b9b0d4. No new unblocks; nothing to correct. Watch next: those four land →
-  then FF-1D (post-0E), FF-2C (owner+post-2B), FF-2D (post-W1/W2).
+  drift-verified at 9b9b0d4. Owner then constrained to a parallel-safe batch: **FF-0B-redo +
+  FF-0E + ONE of {FF-1E, FF-2B}** (1E/2B collide on capacity.py). Recommended **FF-2B** in the
+  batch (FF-2C critical path + first NEISO cap-hindcast pair) over the leaf FF-1E; FF-1E held
+  for the next capacity.py slot. No new unblocks; nothing to correct. Watch next: the batch
+  lands → fire FF-1E + FF-1D (post-0E); FF-2C (owner+post-2B); FF-2D (post-W1/W2).
