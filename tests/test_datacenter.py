@@ -28,9 +28,15 @@ from market_sim.data.datacenter import (
 # --------------------------------------------------------------------------
 # 1. Off-path byte-identity — the zero-blast-radius guarantee.
 # --------------------------------------------------------------------------
-def test_default_path_is_off():
-    """The block ships default-off so every current run is unchanged."""
-    assert ScenarioConfig().datacenter_load_path == "off"
+def test_default_path_is_mid_forecast_posture():
+    """FF-1F (owner, 2026-07-18): the forecast-posture default is 'mid'.
+
+    A bare forecast config models the published DC boom as a flat block; the
+    axis is coerced back to 'off' in any non-forward run (see the backcast /
+    hindcast coercion tests below), so keepers stay byte-identical.
+    """
+    assert ScenarioConfig().datacenter_load_path == "mid"
+    assert ScenarioConfig().mode == "forecast"
     assert ScenarioConfig().datacenter_load_factor == 0.85
 
 
@@ -275,9 +281,33 @@ def test_unknown_iso_ships_zero():
 # --------------------------------------------------------------------------
 # 6. Backcast guard — the block must never enter a scored backcast (rule 22).
 # --------------------------------------------------------------------------
-def test_backcast_with_nonoff_path_raises_at_construction():
-    with pytest.raises(ValueError, match="forecast-only"):
-        ScenarioConfig(iso="ERCOT", mode="backcast", datacenter_load_path="mid")
+def test_backcast_coerces_nonoff_path_to_off():
+    # FF-1F: the field default is now the forecast posture "mid", so a backcast
+    # that inherits it (or is handed any non-off path) is COERCED to "off" at
+    # construction — a non-forward run pins measured load, so the DC block is
+    # inert. This keeps every backcast byte-identical to the legacy "off"
+    # default instead of raising on the new default.
+    assert ScenarioConfig(iso="ERCOT", mode="backcast").datacenter_load_path == "off"
+    assert (
+        ScenarioConfig(
+            iso="ERCOT", mode="backcast", datacenter_load_path="mid"
+        ).datacenter_load_path
+        == "off"
+    )
+    assert (
+        ScenarioConfig(
+            iso="ERCOT", mode="backcast", datacenter_load_path="high"
+        ).datacenter_load_path
+        == "off"
+    )
+
+
+def test_hindcast_coerces_path_to_off():
+    # A capacity-hindcast (mode="forecast", hindcast=True) solves measured/pinned
+    # load (runner.py uses year_base_demand), so the forecast-only DC axis must
+    # stay inert there too — coerced to "off" and byte-identical to legacy.
+    cfg = ScenarioConfig(iso="ERCOT", mode="forecast", hindcast=True)
+    assert cfg.datacenter_load_path == "off"
 
 
 def test_backcast_with_off_path_is_fine():
