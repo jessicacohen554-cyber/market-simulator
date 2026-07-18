@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-18-miso-73-seam-base",
+ "label": "miso 73 seam base",
+ "date": "2026-07-18",
+ "shorthand": "miso-73-seam-base",
+ "definition": "miso-73 base (PROBE drift control) -- unchanged miso-72 keeper recipe (miso72_winter_citygate meta.json strict replay via replay_keeper.build_kwargs, no override), solved same-box so the paired merit-cap read is main - base, never main - the registered bundle. Reproduces the registered miso-72 keeper EXACTLY on every gated criterion (C1 CC_REGULAR-2023 -8.33, C3a-2025 -13.7%, C3b 0.080/0.129/0.183 PASS, C3c 1/7/1 vs RT 30/37/88) -- zero box drift. Not a keeper candidate.",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "MISO",
+ "file": "frontend/data/backcast/runs/2026-07-18-miso-73-seam-base.js",
+ "bundle": "results/calibration/miso73_seam_meritcap-base"
+}

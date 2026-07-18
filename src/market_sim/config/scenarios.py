@@ -1943,6 +1943,27 @@ class ScenarioConfig:
     # (rules #1/#12). Shares the miso_seam_flow_percentile knob with the import cap
     # (one p90 envelope, both directions). Requires --reference-price-interface;
     # MISO-only (no seam-DIBA map → no-op, byte-identical). Default off; opt-in.
+    miso_seam_envelope_merit_cap: bool = False  # MISO seam deliverability
+    # envelope COMPOSITION fix (G-23 residual root cause, miso-73): apply the
+    # measured (month × hour-of-day) envelope with MERIT-ORDER (waterfall)
+    # semantics — band k's bound is clip(cap − (k−1)·step, 0, step), so cheap
+    # base rungs keep full width, the envelope's residual falls on the
+    # expensive rungs, and the seam total is capped at min(cap, limit) exactly
+    # — instead of the uniform per-band derate (availability × cap/limit),
+    # under which the seam reaches its cap only when the price clears the
+    # MOST EXPENSIVE Q-Q rung. The uniform derate breaks the measured ladder's
+    # price-to-depth pairing (pi_k derived at depth L_k on the FULL-width
+    # grid) and suppressed PJM imports −5.6/−8.3/−8.9 TWh and South exports
+    # +2.8/+2.6/+3.1 TWh (2023/24/25) vs ceiling semantics — the offline
+    # uniform-derate replay reproduces the miso-72 keeper's solved priced-seam
+    # net ±0.12 TWh in all three years. Pure composition semantics: zero new
+    # parameters, the envelope values, percentile, ladder rungs and band grid
+    # are byte-unchanged; equivalent to a shared per-seam-hour Σ bands ≤ cap
+    # row given monotone rungs, implemented availability-only (no new LP
+    # rows). Affects both directions of inject_miso_seam_flow_limit; only
+    # bites with miso_seam_flow_limit / miso_seam_export_limit. Default off
+    # (replay fidelity for pre-miso-73 bundles); see
+    # docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md.
     miso_firm_import_floor: bool = False  # Firm (must-flow) import floor on the
     # reference-price seam — the import-direction mirror of the PJM firm-export
     # floor and the Manitoba/HQ firm-import blocks. MISO net-imports from the PJM
@@ -7200,6 +7221,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_flow_limit": 1,
     "miso_seam_flow_percentile": 3,
     "miso_seam_export_limit": 1,
+    "miso_seam_envelope_merit_cap": 1,
     "pjm_seam_flow_limit": 1,
     "pjm_seam_flow_percentile": 3,
     "pjm_seam_export_limit": 1,
