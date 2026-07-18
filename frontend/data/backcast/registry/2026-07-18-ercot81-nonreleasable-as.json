@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-18-ercot81-nonreleasable-as",
+  "label": "ercot81 nonreleasable as",
+  "date": "2026-07-18",
+  "shorthand": "ercot81-nonreleasable-as",
+  "definition": "ercot81 nonreleasable-AS: the ercot80 keeper recipe + ercot_nonreleasable_as_withholding \u2014 the published pre-RTC+B RRS/Reg-Up HASL carve-out (no price-based SCED release until RTC+B go-live 2025-12-05; the 2024-08-01 release reform was ECRS-only) priced as rigid at-cap reserve demand, so tight-hour energy duals climb the offer surface instead of shedding withheld reserve down an RTC+B-era ramp the 2023-2025 market did not have. Zero fitted parameters; published design dates only.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-18-ercot81-nonreleasable-as.js",
+  "bundle": "results/calibration/ercot81_nonreleasable_withholding_fullspan"
+}

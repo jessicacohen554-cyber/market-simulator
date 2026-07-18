@@ -16838,3 +16838,105 @@ emits; displaces import volume at hub-set λ so the belly clearing is untouched
 — the lane's predicted availability lever, ≈ +0.4–0.65 Mt/yr); WP-2 evening
 stack evidence handed to the caiso-94 watch + storage charter (no build here);
 WP-3 the CT_CHP level re-derivation. Do-NOT-redo list in the finding §8.
+## 2026-07-18 — ercot81: the 2023 market-design gap CLOSED AT THE RESERVE-RELEASE SEAM — the pre-RTC+B RRS/Reg-Up HASL carve-out BUILT as rigid at-cap reserve demand (`ercot_nonreleasable_as_withholding`, zero fitted scalars, published design dates only) and REGISTERED as a KEEPER CANDIDATE: Aug-2023 −99.1 → −64.9 $/MWh (model 92.6 → 126.8 vs RT 191.7), C3a-2023 −33.4 → −22.1 %, C3b-2023 0.675 → 0.456, deep tail 32 → 38 h >$1000 with the Jun/Sep shoulder IMPROVING (−21.1/−31.5 → −12.1/−22.1, no ERCOT-78 re-inflation) and false-positive count UNCHANGED (8 h); honest cost C3b-2024 0.263 → 0.303 (the pre-existing April-2024 over-formation deepens); the remaining Aug mid-band ($200–1,000 at measured RTOLCAP ~7.9 GW) adjudicates to the ledgered offer-formation family; keeper swap owner-only — ALSO SURFACED: the keeper's prb_overrides STOMPS `ercot_reserve_supply_forward=true` (meta kwarg false), so every keeper since has solved on the FORWARD-formula reserve cap, not the measured RTOLCAP parquet
+
+**Task (owner steer, this session): "Work on calibrating ERCOT 2023 for backcast.
+Market design is underpricing August significantly when ERCOT had a different
+market design in 2023 from 2024 and 2025."** The ERCOT-79/80 successor lane
+(offer/scarcity re-calibration on the corrected availability envelope), entered
+at the market-design seam the owner named.
+
+**Runs:** `2026-07-18-ercot81-nonreleasable-as` (registered, KEEPER CANDIDATE,
+bundle `results/calibration/ercot81_nonreleasable_withholding_fullspan`, full
+2023+2024+2025 one invocation, rule 16). Rule-16 single-year 2023 A/B throwaway
+probes (keeper replay A-leg + single-delta B-leg) solved and DELETED — never
+registered. Keeper stays `2026-07-17-ercot80-unit-only-outages`.
+
+**Diagnosis (measured, before any build).** The keeper's Aug-2023 miss is NOT a
+reserve-adder gap: in the 181 actual >$200 RT hours (100 in August) measured
+NP6-905 RTOLCAP sat at p10/p50 5.4/7.25 GW — comfortably above the ~3 GW MCL —
+and measured RTORPA was p50 $4.5, while measured SystemLambda cleared p50 $620.
+Reality's August price lived in SCED's ENERGY price, formed by the ~5 GW AS
+carve-out (ECRS 2.13 GW + RRS 2.57 GW + RegUp 0.39 GW, Aug plan means) that
+SCED could not dispatch at ANY price under the pre-RTC+B design. The keeper
+model in those same hours: p50 $75, ordc_adder $0 — not even in its shed
+region. Its representation gives RRS/RegUp $0-anchored linear VOLL ramps
+(`ercot_as_critical_frac=0`, an RTC+B-era ASDC construction), so wherever the
+LP DOES tighten it monetizes withheld reserve at shadow prices the 2023-2025
+SCED could never see — suppressing exactly the $200–1,000 band that carries
+August. Only ECRS had the rigid no-release step, and the year ladder the owner
+pointed at is real: 2023 = ECRS+RRS+RegUp all non-releasable; from 2024-08-01 =
+ECRS released at own offers (the reform was ECRS-ONLY), RRS/RegUp still rigid;
+from RTC+B go-live (2025-12-05) = co-optimized ASDCs (the ramp representation
+becomes correct).
+
+**Mechanism (`ercot_nonreleasable_as_withholding`, default off — zero fitted
+scalars, built @a50685e).** Generalizes the `ercot_ecrs_conservative_deployment`
+rigid/released window split to RRS + Reg-Up with the RTC+B go-live date gate:
+each family prices as a single step AT THE OFFER CAP (`ordc_voll`) for its full
+credited requirement through 2025-12-04, reverting to the standing VOLL ramp
+after (and in forecast years). Requirements stay the measured ASPLANNP433 plan
+net of the standing LR-UFR and storage-award credits (the LR credit made
+window-mask-aware, byte-identical when unsplit); NonSpin keeps its releasable
+ramp (offline Non-Spin IS SCED-dispatchable at own offers). Provenance: Nodal
+Protocols §6.5.7.6.2.3 / §3.17 (HASL − AS Responsibility carve-out), ERCOT AS
+Study white paper Sept-2024 (release triggers), market notice M-A101623-01 /
+RTC+B go-live 2025-12-05. Tests: 7 new in `tests/test_reserve_config.py`
+(windows, composition with ECRS, LR-credit masking, 2026 inertness); full
+reserve suites 190 green.
+
+**A/B (rule-16 single-year 2023, same machine, dw anatomy basis) — every
+pre-registered guard HELD:**
+- **Aug-2023 (target):** monthly −99.1 → **−64.9** (model 92.6 → 126.8, RT
+  191.7) — ~35 % of the miss closed. By actual band: ($3000,6000] model p50
+  $2,728 → **$5,000** (the real Aug 10/17/20/25 near-cap prints); ($1000,3000]
+  mean $525 → **$1,000**; ($200,1000] UNMOVED (model p50 $59-71) — the
+  mechanism deepens hours the model already forms and cannot manufacture
+  tightness (by construction: a rigid step only reprices an hour whose room
+  the LP was already spending).
+- **Jun/Sep guard (the ERCOT-78/79 over-shoot must not re-inflate):** Jun
+  −21.1 → −12.1, Sep −31.5 → −22.1 — both move TOWARD actual; the 8
+  false-positive >$200 hours stay EXACTLY 8 (they deepen, median ~$0.5-1.2k →
+  ~$0.9-1.6k, the pre-existing Feb/Mar/Apr formation).
+- **2023 annual dw:** 37.11 → 41.93 (RT 48.36); tails 57/54/38 vs actual
+  181/104/61 (>$200/>$500/>$1000; A-leg 57/52/32).
+**Full-span verdict (rubric v2.7, registered artifacts):** determination
+**NOT-YET**, same three fail criteria as the keeper with the chartered year
+moving: C3a-2023 lw −33.4 % → **−22.1 %** (2024/2025 PASS), C3b-2023 0.675 →
+**0.456**, C3b-2024 0.263 → **0.303** (honest cost: April-2024's pre-existing
+over-formation — keeper April model 49.7 vs actual 24.3 — deepens +$1.9/mo;
+surfaced NOT tuned, rule 11), C3b-2025 PASS, C3c counts unchanged
+(57/22/0 vs RT 181/53/31; 2023 rides the ercot80 availability-envelope ledger
+exception as CAVEAT, 2024/2025 MODEL MISS). C1 16/16 (free 12/12), C2, C4,
+C5a, C6, C7, C8 all PASS. LOYO (rule 22) satisfied structurally: zero fitted
+scalars — the only inputs are published dates and the measured plan the keeper
+already carries.
+
+**Adjudication of the remainder.** The un-moved Aug mid-band ($200–1,000, 60 of
+the 100 hours, measured RTOLCAP p50 7.9 GW, model $59–104) is ENERGY-OFFER
+formation at loose measured reserves — reality's marginal offers cleared
+$200–800 where the model's marginal cost-based/DAM-derived offers sit sub-$100.
+That is the ledgered ERCOT-75/77 whole-stack mid-rung offer-formation family
+(and its 2023-H2 scarcity-anticipating bidding regime), NOT a reserve-design
+gap; it stays with its filed owner. No reserve-side mechanism can price those
+hours without fabricating tightness reality did not have (rule 13).
+
+**SURFACED DEFECT (rule-14 lane named, not chased this session):** the keeper
+recipe's `coal_prb_sigmoid_overrides` carries `ercot_reserve_supply_forward:
+true`, which run_year applies LAST — stomping the explicit kwarg `false` that
+meta.json records top-level (the ERCOT-65 wtx defect class; the live-solve
+WARNING now prints the conflict). Every ercot76→81 solve has therefore used the
+WS-A FORWARD-FORMULA reserve-supply cap (mean 16.1 GW), not the measured
+RTOLCAP parquet the recipe documentation claims. A measured-cap A/B
+(`--set ercot_reserve_supply_forward=false`) is the named follow-up probe;
+per rule 14 the measured series should carry the backcast unless adjudicated
+misaligned.
+
+**Ops.** Full-span 2023-2025 in ONE invocation, years sequential (rules 12/16),
+~10 min/yr quiet. derive_ordc_overlay + legitimacy_diagnostics --json-out +
+build_dof_ledger + governance/exceptions attestation (ercot80 ledger carried,
+magnitudes re-quoted) + dashboard_add_run + build_manifest this session;
+throwaway A/B bundles deleted; retention 11/15, no pruning. Transport:
+create_branch + git push onto `claude/ercot-2023-backcast-calibration-wojkw0`
+(incremental packs; the branch-create 413 resolved by API create_branch first).
+Next number: ercot-82 (measured-RTOLCAP cap A/B).
