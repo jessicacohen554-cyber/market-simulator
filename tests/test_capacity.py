@@ -1584,6 +1584,121 @@ class TestClaimedCapabilityBasis(unittest.TestCase):
         )
 
 
+class TestNyisoIcapUcapTranslation(unittest.TestCase):
+    """R5a — NYISO's ICAP-stated IRM paired onto the model's UCAP supply basis
+    via the published NYCA translation factor (Option B, FF-3D 2026-07-18;
+    pairing-adjudication 2026-07-15 §3). Mirrors the R2/R3 basis-consistency
+    pattern: the registry ratio reconciles with the committed CSV, the ONE
+    requirement resolver applies it (rule 19), and the supply side stays UCAP.
+    """
+
+    def _csv_translation_rows(self):
+        """Published icap_ucap_translation_factor rows from the NYISO CSV."""
+        import csv
+
+        from market_sim.config.paths import RAW_DATA_DIR
+
+        path = RAW_DATA_DIR / "capacity-market" / "demand-curve" / "nyiso" / "nyiso.csv"
+        with path.open(newline="") as fh:
+            return [
+                r
+                for r in csv.DictReader(fh)
+                if r["metric"] == "icap_ucap_translation_factor"
+            ]
+
+    def test_registry_reconciles_with_published_csv(self):
+        # The registry ratio must equal 1 - the most-recently-realized NYCA
+        # translation factor on disk (2024-2025), digitized from NYSRC IRM Study
+        # Appendix D Table D.2 (Derate Factor) — never a fit target (rules
+        # 13/23). Every published factor is a fraction in the rising wind-driven
+        # band (0.083 -> 0.132), never a Locational number (NYC 5.18% is out).
+        rows = self._csv_translation_rows()
+        self.assertTrue(rows, "expected published translation-factor rows on disk")
+        by_year = {r["delivery_year"]: float(r["y_value"]) for r in rows}
+        latest = max(by_year)  # "2024-2025" sorts last among the CY labels
+        self.assertEqual(latest, "2024-2025")
+        self.assertAlmostEqual(
+            PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"],
+            1.0 - by_year[latest],
+            places=6,
+        )
+        self.assertTrue(all(r["y_unit"] == "fraction" for r in rows))
+        self.assertTrue(all(0.05 < v < 0.20 for v in by_year.values()))
+
+    def test_translation_factor_reconciles_ucap_margin(self):
+        # Table D.1 cross-check: (1 + EC-approved IRM 22.0%) x (1 - 0.1321) - 1
+        # = the published 2024-2025 NYCA Equivalent UCAP Requirement, 5.9%. The
+        # derate is the ICAP<->UCAP margin bridge, not an invented number.
+        ucap_margin = (1.0 + 0.220) * PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO[
+            "NYISO"
+        ] - 1.0
+        self.assertAlmostEqual(ucap_margin, 0.059, places=3)
+
+    def test_requirement_uses_translation_ratio(self):
+        # resolve_adequacy_requirement_mw applies (1 + IRM) x ratio on the firm
+        # peak (NYISO nets no DR, so firm_peak == peak) — the one requirement
+        # resolver, rule 19. NYISO publishes no FPR -> the fallback ratio path.
+        cfg = ScenarioConfig(iso="NYISO")
+        peak = 32_000.0
+        ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"]
+        irm = PLANNING_RESERVE_MARGIN_BY_ISO["NYISO"]
+        self.assertIsNone(resolve_forecast_pool_requirement("NYISO", 2025))
+        self.assertAlmostEqual(
+            resolve_adequacy_requirement_mw(cfg, "NYISO", peak, 2025),
+            peak * (1.0 + irm) * ratio,
+            places=3,
+        )
+
+    def test_pairing_lowers_requirement_vs_ratio_one_fallback(self):
+        # The correction is real and directional: pairing the ICAP IRM onto UCAP
+        # LOWERS the requirement vs the pre-R5a ratio-1.0 fallback (the ~13%
+        # overstatement the adjudication named), so the reserve position rises
+        # and a curve-ON NYISO stops systematically over-paying.
+        cfg = ScenarioConfig(iso="NYISO")
+        peak = 32_000.0
+        paired = resolve_adequacy_requirement_mw(cfg, "NYISO", peak, 2025)
+        with mock.patch.dict(
+            PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO, clear=False
+        ) as reg:
+            del reg["NYISO"]
+            unpaired = resolve_adequacy_requirement_mw(cfg, "NYISO", peak, 2025)
+        self.assertLess(paired, unpaired)
+        self.assertAlmostEqual(
+            paired / unpaired,
+            PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"],
+            places=6,
+        )
+
+    def test_supply_side_stays_ucap(self):
+        # Rule-19 pairing: only the requirement side moved. NYISO thermal still
+        # accredits at UCAP (1 - EFORd) — the basis NYISO's own ICAP Manual §4.5
+        # unit UCAP uses — so requirement and supply are both on the UCAP basis
+        # (NYISO is intentionally absent from THERMAL_ACCREDITATION_BASIS_BY_ISO).
+        from market_sim.config.constants import THERMAL_ACCREDITATION_BASIS_BY_ISO
+        from market_sim.model.capacity import (
+            _thermal_firm_mw,
+            thermal_accreditation_fraction,
+        )
+
+        self.assertNotIn("NYISO", THERMAL_ACCREDITATION_BASIS_BY_ISO)
+        g = _gen("cc", "gas_cc", pmax=1000.0)  # eford default 0.05
+        self.assertAlmostEqual(_thermal_firm_mw(g, "NYISO"), 950.0, places=3)
+        self.assertAlmostEqual(
+            thermal_accreditation_fraction("gas_ct", 0.10, "NYISO"), 0.90, places=6
+        )
+
+    def test_curve_now_eligible(self):
+        from market_sim.config.constants import (
+            CAPACITY_CURVE_ELIGIBLE_BY_ISO,
+            resolve_capacity_curve_eligible,
+        )
+
+        # The pairing landed, so NYISO's curve-eligibility block is lifted (the
+        # governance gate for a curve-ON position on the corrected basis).
+        self.assertTrue(CAPACITY_CURVE_ELIGIBLE_BY_ISO["NYISO"])
+        self.assertTrue(resolve_capacity_curve_eligible("NYISO"))
+
+
 class TestForecastPoolRequirement(unittest.TestCase):
     """R2 — PJM requirement devintaged onto the published Forecast Pool
     Requirement of the matching delivery year (accreditation-basis memo §4.2)."""
