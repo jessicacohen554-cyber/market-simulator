@@ -17173,3 +17173,114 @@ amended here.
 B armed per ruling (2)'s composition choice) awaits ruling (1); WP-3 (CT_CHP
 steam-floor LEVEL re-derivation per FINDING-caiso95 §5) awaits its own
 rule-23 gate; evening STORAGE timing stays its own charter (do not fold in).
+
+
+## 2026-07-18 — miso-73: the G-23 imports lane ROOT-CAUSED derive-only (the seam-envelope uniform-derate composition defect — the offline replay reproduces the keeper's solved priced-seam net ±0.12 TWh in all three years), the merit-cap composition fix BUILT + SOLVED + REGISTERED — the ENTIRE structural deliverable holds (net-interchange error −2.31/−4.54/−5.11 → +0.79/+0.56/+0.68 TWh; PJM and South move toward measured every year) but the restored supply flattens C3b-2025 0.183 → 0.200 FAIL — the pre-registered R1 veto fires exactly as chartered: REJECTED PROBE, keeper stays miso-72, the fix stays in code default-off, and the price-shape ledger gains a MEASURED bound
+
+**Runs (registered + scored, rubric v2.7):** `2026-07-18-miso-73-seam-meritcap`
+(main, REJECTED PROBE per pre-registered R1) +
+`2026-07-18-miso-73-seam-base` (same-box drift control — reproduces the
+registered miso-72 keeper EXACTLY on every gated criterion, zero box drift).
+Both MISO 2023+2024+2025, one bundle each, per-year + `--reuse-solved`
+(`scripts/probes/_miso73_chain.sh`, one fresh LP per process on the 15 GB
+box; base 25 min, main 22 min), warm-start pinned off, years sequential
+(rule 12). Charter FROZEN before any build (Phase A, derive-only — NO LP):
+`docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md`
+(diagnosis §1, mechanism §3, bands B1-B6 §4, refutations R1-R5 §5, out-of-
+scope ledger §8). Model per rule 27: Fable.
+
+**The Phase-A root cause (derive-only, the lane's decisive yield).** The
+miso-72 keeper's net-interchange residual (−2.31/−4.54/−5.12 TWh) decomposes
+exactly: the Manitoba firm block over-imports +0.97/+1.65/+2.95 (deterministic
+arithmetic — import-only annual-flat 726/531/224 MW vs a measured two-way
+seasonal hydro seam that flipped to net EXPORT −0.99 TWh in drought-2025), and
+the priced seams under-import −3.28/−6.23/−8.07. Offline band-clearing
+replays of the registered Q-Q ladders driven by the keeper's own
+reconstructed hourly price (payload `lmpDeltaHr` + measured RT) refute the
+two standing attributions: the C3a price LEVEL moves the clearing ≤ ±2 TWh
+(the rungs are widely spaced), and the envelope-as-ceiling trims only 1-2 TWh
+(SIL 8,700 MW: 0 binding hours). The CONFIRMED cause is the composition:
+`inject_miso_seam_flow_limit` applies the measured (month × hod) envelope as
+a UNIFORM per-band derate (`availability × cap/limit`), so the seam reaches
+its measured cap only when the internal price clears the MOST EXPENSIVE rung
+— the uniform-derate replay lands on the solved priced-seam net at
++29.35/+13.91/+11.76 vs the solve's +29.24/+13.85/+11.88 (±0.12 TWh, all
+three years). Severity: the PJM envelope frac averages 0.84/0.69/0.64 (the
+derate is live in essentially every hour); ceiling semantics would bind in
+16/27/16 % of hours but the price clears all eight rungs in only
+1.4/0.2/0.1 %. Both directions distort: PJM imports suppressed
+−5.6/−8.3/−8.9 TWh, South exports pushed toward zero +2.8/+2.6/+3.1 (they
+partially cancel in the net — the headline gap understates the per-seam
+distortion). The defect became load-bearing when the miso-46 measured ladder
+widened the rung range; the derive script's P9 validation is uncapped by
+documented scope, which is why it could never see it.
+
+**Mechanism (`miso_seam_envelope_merit_cap`, default OFF — zero new
+parameters).** Waterfall band bounds: band k keeps
+`clip(cap − (k−1)·step, 0, step)` (export mirrored on `min_gen`, cap only
+ever reduces export), so cheap base rungs stay full-width, the seam total is
+capped at `min(cap, limit)` exactly, and the LP fills cheapest-first below
+the ceiling — the semantics the injector's own docstring and the miso-46
+ladder design always declared. Equivalent to a shared per-seam-hour
+Σ bands ≤ cap row given monotone rungs; implemented availability-only (no
+new LP rows). Envelope values, p90 percentile, ladder rungs, band grid all
+byte-unchanged. Unit tests: per-band waterfall bounds, exact ceiling total,
+export mirror, flag-off byte-identity, merit-vs-uniform total equality.
+
+**Mechanism-only read (main − same-box base):**
+
+- **THE STRUCTURAL DELIVERABLE HELD IN FULL** (per-seam validation
+  `scripts/miso73_perseam_validate.py` vs measured EIA-930): net
+  interchange error **−2.31/−4.54/−5.11 → +0.79/+0.56/+0.68 TWh** (B1 ≤2.5
+  held, strictly better every year; totals +38.70/+23.60/+19.63 vs actual
+  +37.91/+23.04/+18.95). Per-seam: PJM **−5.84/−9.86/−11.31 →
+  −0.68/−2.06/−3.44 TWh**, South-export **+3.29/+3.30/+4.01 →
+  +0.52/+0.56/+1.41**, duration RMSE improving on both in every year (PJM
+  921/1343/1577 → 704/776/970 MW; South 612/566/793 → 438/407/626).
+  Disclosed sub-metric exceptions: SPP-2024 |err| 0.38→0.43 (0.05 TWh,
+  sub-noise; its duration RMSE improves 634→456) and South-2025 monthly MAE
+  368→399 GWh (annual + duration improve). The remaining net wedge is the
+  pre-declared out-of-scope Manitoba firm block (+0.97/+1.64/+2.96
+  model-over) — the next import charter (charter §8: measured two-way
+  MHEB anatomy recorded there).
+- R2 held (2025 moved +5.8 TWh — not inert); R3 held (below the offline
+  fixed-price bound +39.6/+24.6/+20.9 in every year — equilibrium damping as
+  pre-read); R4 held (max LMP $198.53 — no fabricated scarcity); R5 held (no
+  price criterion quoted as validation).
+- B3 held: C3a −1.4/−7.3/−13.7 → **−2.5/−9.1/−15.8 %** (Δ ≤2.5 pp/yr as
+  pre-registered — the rule-14 compensating-error signature: the suppressed
+  seam was masking the domestic price-level miss, now re-exposed and
+  re-attributed to the #1347 / trough-shape ledger).
+- **R1 TRIPPED (the pre-named riskiest gate): C3b 0.081/0.139/0.200 with
+  2025 scored FAIL** (base 0.080/0.129/0.183 — the charter named the 0.017
+  headroom): the restored ~5-8 TWh/yr of mid-price seam supply flattens the
+  2025 duration curve past the ≤0.20 veto. Companions: C3c 1/7/1 → **1/7/0**
+  (the single 2025 >$200 hour shaved — disclosed watch, no tail closure was
+  claimed); C1 CC_REGULAR-2023 −8.33 → **−8.73 TWh** (restored imports
+  displace CC; the standing watch deepens). C2/C4/C5a/C6/C7/C8 PASS both
+  arms (same ST_GAS grounded-above-budget notes; NO new floors). DOF main
+  **27/2**, base 26/2 (+1 composition-gate entry, zero new scalars, zero new
+  measured series).
+
+**Disposition (charter §5 R1, pre-declared — executed verbatim):** both runs
+registered (rule 15), main NOT recommended as keeper — **keeper stays
+`2026-07-18-miso-72-winter`**; `miso_seam_envelope_merit_cap` stays in the
+codebase default-off as the measured-correct composition (rules 11/14: never
+reverted, never offset by seam-side tuning — no percentile sweep, no ladder
+edit). The price-shape ledger gains a MEASURED bound: any root-cause fix of
+the trough/level family (#1347 coal-offer level, trough shape) must steepen
+the domestic stack enough to absorb the real measured seam supply inside the
+C3b veto — re-arming the merit cap is the ready-made A/B for that lane. The
+G-23 imports lane CLOSES as chartered: root cause found, fixed in code,
+adjudicated, residual re-attributed. Remaining pre-named MISO opens: the
+Manitoba two-way seam charter (§8), the North/Central zonal topology split,
+the all-ISO `gas_daily_shape_factors` interp fix, and the PJM-ISO twin of
+this same uniform-derate defect (`inject_pjm_seam_flow_limit`, "mechanism
+identical" — its own correctness lane). Next number: miso-74.
+
+**Ops.** Chain idempotent (`_miso73_chain.sh`); benchmark parquets rebuilt in
+place; registered per rule 15 with legitimacy diagnostics, attestation
+(`scripts/gen_miso73_attestation.py`, DOF ledger +1 composition-gate entry),
+verdict --write-metrics both, parity OK (61 runs), manifest rebuilt; top-15
+retention pruned the 2026-07-14 miso-65 pair (oldest). Transport: session git
+gateway push, fetch-back SHA-verified (rule 27).
