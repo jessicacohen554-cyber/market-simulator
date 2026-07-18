@@ -71,6 +71,7 @@ from market_sim.config.interchange_config import (
     MISO_MANITOBA_FIRM_IMPORT_NAME,
     MISO_MANITOBA_FIRM_IMPORT_OFFER,
     MISO_MANITOBA_FIRM_IMPORT_ZONE,
+    NeighborInterface,
     NYISO_FIRM_IMPORT_FLOOR_FRAC,
     NYISO_IMPORT_RECON_BAND_FRAC,
     resolve_miso_manitoba_firm_import_mw,
@@ -1713,7 +1714,9 @@ _REF_EXPORT_MARK = "_refexp_"
 
 
 def build_reference_price_node(
-    iso: str, zone_overrides: dict[str, str] | None = None
+    iso: str,
+    zone_overrides: dict[str, str] | None = None,
+    extra_neighbors: list[NeighborInterface] | None = None,
 ) -> list[Generator]:
     """Return the reference-price seam as import/export pseudo-generators.
 
@@ -1747,6 +1750,11 @@ def build_reference_price_node(
             bands into a different external zone (MISO's South seam under
             ``miso_south_seam_split``). Non-CAISO only; ``None`` keeps every
             band in the shared external node (byte-identical).
+        extra_neighbors: Optional additional seams appended to the registry
+            list for this build only (MISO's Manitoba two-way seam under
+            ``miso_manitoba_seam``; miso-74). ``None`` keeps the registry
+            unchanged (byte-identical), so the extra seam's ladder/envelope
+            entries stay inert until its bands are built here.
 
     Returns:
         Import + export pseudo-generators; empty for an ISO with no neighbor
@@ -1757,7 +1765,7 @@ def build_reference_price_node(
 
     import_zone = IMPORT_ZONE.get(iso)
     gens: list[Generator] = []
-    for neighbor in INTERFACE_NEIGHBORS.get(iso, []):
+    for neighbor in [*INTERFACE_NEIGHBORS.get(iso, []), *(extra_neighbors or [])]:
         # CAISO lands each corridor's tranches in its OWN external corridor zone
         # (the neighbor name IS the per-hub zone WECC_DSW / WECC_PNW, created by
         # split_caiso_import_node_per_hub), so the corridor link and its ATC
