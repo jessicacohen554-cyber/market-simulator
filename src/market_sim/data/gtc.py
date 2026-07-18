@@ -1,7 +1,7 @@
 """Read the curated ``gtc-limits`` clean datatype and build hourly link caps.
 
 The model's consumption seam for ERCOT's measured Generic Transmission
-Constraint limits (NP6-86 SCED archive → ``scripts/curate_gtc_limits.py`` →
+Constraint limits (NP6-86 SCED archive → ``scripts/data/curate_gtc_limits.py`` →
 ``data/clean/gtc-limits``). The one public builder,
 :func:`ercot_gtc_ttc_hourly`, expands the static per-link TTC array to a
 ``(hours, n_links)`` export-direction cap matrix on the links that carry a
@@ -59,7 +59,7 @@ def load_gtc_hourly(iso: str, year: int) -> pd.DataFrame | None:
     except FileNotFoundError:
         logger.info(
             "gtc-limits: no clean partition for %s %d (supply the NP6-86 "
-            "archives and run scripts/curate_gtc_limits.py)",
+            "archives and run scripts/data/curate_gtc_limits.py)",
             iso,
             year,
         )

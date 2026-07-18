@@ -18,7 +18,7 @@ floor-shape artifact. Detail below.
 PJM plant is in it, so the `config.coal_mustrun_per_plant` branch in
 `bins_to_fleet` / `split_coal_tranches` never fires for PJM. PJM coal `pct_mr`
 comes from `thermal_tranches_PJM.csv` (`mustrun_pct`), written by
-`scripts/derive_thermal_tranches.py`:
+`scripts/data/derive_thermal_tranches.py`:
 
 > `mustrun = min(P5(available-CF over ALL hours), 0.60)`  (line ~449)
 

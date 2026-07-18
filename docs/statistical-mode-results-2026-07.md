@@ -31,7 +31,7 @@ skill prior from the backcast-only measured overlays.
 > information (error bars, the crossover window), not a legitimacy signal.
 
 **Method.** Each probe is a byte-faithful replay of the keeper's own
-`meta.json` (`scripts/run_statmode_probe.py`, built on the existing
+`meta.json` (`scripts/archive/run_statmode_probe.py`, built on the existing
 `replay_keeper.py` kwarg-mapping) with only the statistical-mode delta
 applied — no other flag changed. One invocation per ISO, all of that ISO's
 keeper years solved sequentially within it.
@@ -208,7 +208,7 @@ fleet. Dispatch correlation and the price level both fall out of tolerance.
 > against the current keeper. Per the program rule this section is flagged
 > stale, not silently carried; it also still reflects the original 9-criterion
 > (C1–C5c) scoring. Re-running is a separate authorized solve session
-> (`scripts/run_statmode_probe.py` against the current NYISO keeper bundle) —
+> (`scripts/archive/run_statmode_probe.py` against the current NYISO keeper bundle) —
 > see the re-solve queue note at the end of this document.
 
 | criterion | keeper | statmode | note |

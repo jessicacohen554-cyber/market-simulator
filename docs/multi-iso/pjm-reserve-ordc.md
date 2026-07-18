@@ -5,12 +5,12 @@ off. PJM. Measured & real for the backcast (measured requirement + plant-level
 online reserve + published step curve), a published rule for the forecast.
 **Zero parameters fitted to the price residual.**
 **Code:** `src/market_sim/results/scarcity.py` (PJM section),
-`scripts/derive_pjm_ordc_overlay.py`.
+`scripts/data/derive_pjm_ordc_overlay.py`.
 **Curve (cited):** `data/raw/_validation-source/pjm_ordc_curve.csv` +
 `docs/multi-iso/pjm-reserve-curve-source.md`.
 **Data:** `data/raw/PJM-AS/` (rules PDFs + measured RT/DA reserve markets
 2023–2025 + `pjm_<yr>_as_up_mw.parquet`, the withholding series from
-`scripts/build_pjm_as_withholding.py`). **Bundles:** `results/calibration/pjm_26`
+`scripts/data/build_pjm_as_withholding.py`). **Bundles:** `results/calibration/pjm_26`
 (keeper), `results/calibration/pjm_27_aswh` (reserve-withholding probe — see
 "Reserve-withholding recalibration" below).
 
@@ -194,7 +194,7 @@ top-of-merit headroom before the energy supply curve clears. PJM's withheld
 series is the **measured RT Primary Reserve requirement** (`as_req_mw`, service
 `PR`, locale `PJM_RTO`, the binding upward 10-min product that nests
 Synchronized — Manual 11 sec 4.4.1), 5-min→hourly on the non-leap 8760 clock,
-~3 GW/yr, written by `scripts/build_pjm_as_withholding.py` to
+~3 GW/yr, written by `scripts/data/build_pjm_as_withholding.py` to
 `data/raw/PJM-AS/pjm_<yr>_as_up_mw.parquet`. Provenance: the same
 Data Miner reserve-market parquets cited in `pjm-reserve-curve-source.md`. DA
 (`da_reserve_market_results`) was considered as the basis for our single-clearing
@@ -463,7 +463,7 @@ Phase-2 flags):
 2. **Ramp data (blocker b): measured intake replaces the class estimate.**
    New `ramp-capability` clean datatype (schema
    `data/dictionary/schema/ramp-capability.schema.yaml`, curation
-   `scripts/curate_ramp_capability.py`, PJM/MISO registered): **EIA-860
+   `scripts/data/curate_ramp_capability.py`, PJM/MISO registered): **EIA-860
    Schedule 3.1 "Time from Cold Shutdown to Full Load" = "10M"** fast-start
    thermal capacity per plant (the measured 10-minute-deliverable flag;
    ~3.0 GW in the PJM BA) and the **CAMPD CEMS maximum observed 1-hour
@@ -540,21 +540,21 @@ CSV edit (a new dated block), never a code change.
 
 ```bash
 # PRIMARY measured validation (curve vs measured MCP — no model, fast):
-python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_26 --validate-mcp
+python scripts/data/derive_pjm_ordc_overlay.py results/calibration/pjm_26 --validate-mcp
 
 # Honesty gate (model online vs total reserve vs measured requirement):
-python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_26 --diagnostic
+python scripts/data/derive_pjm_ordc_overlay.py results/calibration/pjm_26 --diagnostic
 
 # Build the overlay (writes scarcity.parquet; no LP re-solve):
-python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_26
+python scripts/data/derive_pjm_ordc_overlay.py results/calibration/pjm_26
 
 # Localize the residual with the overlay applied:
-python scripts/analyze_lmp_residual.py results/calibration/pjm_26 \
+python scripts/archive/analyze_lmp_residual.py results/calibration/pjm_26 \
     --with-scarcity --months 7 8
 
 # --- Reserve-withholding recalibration (the re-solve) ---
 # 1. Build the measured withholding series (RT Primary Reserve requirement):
-python scripts/build_pjm_as_withholding.py            # 2023 2024 2025
+python scripts/data/build_pjm_as_withholding.py            # 2023 2024 2025
 # 2. Re-solve the keeper config + withholding, one year per parallel job
 #    (claude.md #45; cap ~2 concurrent — 2 PJM plant-level solves peak >15 GB):
 python scripts/probes/_pjm_aswh_run.py 2023 results/calibration/pjm_27_aswh_2023
@@ -563,6 +563,6 @@ python scripts/probes/_pjm_aswh_run.py 2025 results/calibration/pjm_27_aswh_2025
 python scripts/probes/_pjm_aswh_merge.py results/calibration/pjm_27_aswh \
     results/calibration/pjm_27_aswh_202{3,4,5}
 # 3. Re-derive + re-check the residual (result: ~inert — see section above):
-python scripts/derive_pjm_ordc_overlay.py results/calibration/pjm_27_aswh --diagnostic
-python scripts/analyze_lmp_residual.py results/calibration/pjm_27_aswh --months 7 8
+python scripts/data/derive_pjm_ordc_overlay.py results/calibration/pjm_27_aswh --diagnostic
+python scripts/archive/analyze_lmp_residual.py results/calibration/pjm_27_aswh --months 7 8
 ```

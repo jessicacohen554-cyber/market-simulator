@@ -1,7 +1,7 @@
 """Tests for the ERCOT ancillary-service reserve-withholding probe.
 
 The feature removes the hourly cleared DAM up-AS MW (built by
-``scripts/build_ercot_as_withholding.py``) from thermal headroom before the
+``scripts/data/build_ercot_as_withholding.py``) from thermal headroom before the
 energy supply curve clears, an ERCOT-only upper bound that books all AS to
 thermal. See ``ScenarioConfig.as_reserve_withholding`` and
 ``fleet.generators_to_fleet_arrays``.

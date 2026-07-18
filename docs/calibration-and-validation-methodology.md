@@ -375,13 +375,13 @@ Source: `scripts/run_calibration_full.py:5210-5267`;
 - **D-7 statistical-mode gap + D-8 frozen-coefficient stability** — the
   overlay-vs-statistical fail-count gap per keeper (reported next to each
   keeper on the status page, never gating; `statmode_d7.json`) and the
-  coefficient-stability probe (`scripts/d8_coefficient_stability.py`). Both
+  coefficient-stability probe (`scripts/archive/d8_coefficient_stability.py`). Both
   are computed only on 2023–2025, never on a holdout year.
 
 Source: `scripts/run_capacity_hindcast.py:1-78` (`ALLOWED_SOLVE_YEARS`,
 bridge); `frontend/data/hindcast/` (ERCOT + PJM run set);
 `scripts/check_forecast_invariants.py:20-23, 228, 668`;
-`scripts/build_status.py:43-46, 474-483`; `scripts/d8_coefficient_stability.py:1-12`.
+`scripts/build_status.py:43-46, 474-483`; `scripts/archive/d8_coefficient_stability.py:1-12`.
 
 ---
 

@@ -33,7 +33,7 @@ capacity, and a heat-event trip is a canonical scarcity driver. Two compounding
 problems:
 
 1. **PJM nuclear runs on a fleet-wide MONTHLY CF smear** (`constants.NUCLEAR_MONTHLY_CF_BY_YEAR`,
-   derived by `scripts/derive_nuclear_monthly_cf.py` as *fleet* net-gen ÷ *fleet*
+   derived by `scripts/data/derive_nuclear_monthly_cf.py` as *fleet* net-gen ÷ *fleet*
    pmax ÷ hours-in-month). A month-average, fleet-average number **cannot see** a
    unit-specific refuel/trip landing in a specific scarcity hour — it spreads the
    outage evenly across every hour and every reactor, so in a Jun 24 17:00 tail
@@ -61,8 +61,8 @@ plants?** Yes — four sources, ranked by fitness for the scarcity-hour question
    availability signal for every dispatchable unit that offers into the DAM —
    including nuclear and non-CEMS gas** — at **unit-hourly** grain, which CEMS
    fundamentally cannot provide for non-emitters. Infrastructure exists:
-   `scripts/fetch_pjm_energy_offers.py` (2023-2025, ~4 months in arrears, public
-   Ocp-Apim key) → `scripts/curate_energy_offers.py` → `data/clean/energy-offers/PJM/`.
+   `scripts/data/fetch_pjm_energy_offers.py` (2023-2025, ~4 months in arrears, public
+   Ocp-Apim key) → `scripts/data/curate_energy_offers.py` → `data/clean/energy-offers/PJM/`.
    Currently consumed **only for the offer PRICE surface**
    (`derive_pjm_offer_midcurve.py`, `derive_pjm_offer_surface.py`); the
    **quantity/ecomax (availability) side is untouched.**

@@ -709,7 +709,7 @@ MISO_ZONAL_GAS_HUB_PATH: Path = RAW_DATA_DIR / "miso_zonal_gas_hub.csv"
 # Joaquin Valley between Paths 15 and 26) and SP15 on **SoCal Citygate**
 # (SoCalGas/SDG&E). The committed rows are month-balanced annual means of the
 # EIA NG Weekly Update archive's weekly Wednesday prints (NGI Daily GPI;
-# scripts/fetch_pge_socal_citygate_daily.py + derive_caiso_zonal_gas_hub.py),
+# scripts/data/fetch_pge_socal_citygate_daily.py + derive_caiso_zonal_gas_hub.py),
 # the same free published print the ERCOT Waha rows cite. Measured N-S spread
 # (PG&E − SoCal): −0.49 (2023) / +0.54 (2024) / −0.18 (2025) $/MMBtu — real but
 # year-varying, so it enters as data, never as a fitted north-premium knob.
@@ -731,7 +731,7 @@ ERCOT_ELECTRIC_POWER_GAS_PATH: Path = (
 )
 
 # Per-plant natural-gas contract/spot share from EIA-923 Schedule-5 Purchase Type
-# (written by scripts/derive_gas_takeorpay.py). Used by
+# (written by scripts/data/derive_gas_takeorpay.py). Used by
 # :func:`ercot_gas_spot_share_by_zone` to re-ground the West/Waha delivered-gas
 # floor depth on a MEASURED spot fraction (the firm-contracted gas is insulated
 # from the Waha hub collapse) instead of the cited -0.50 scalar floor.
@@ -765,7 +765,7 @@ HENRY_HUB_MONTHLY_PATH: Path = GAS_PRICES_DIR / "henry_hub_monthly.csv"
 HENRY_HUB_DAILY_PATH: Path = GAS_PRICES_DIR / "henry_hub_daily.csv"
 
 # Measured Transco Zone 6 NY *daily* spot (EIA Natural Gas Weekly Update archive
-# "New York" row, scraped by scripts/fetch_transco_daily_spot.py). The NYISO
+# "New York" row, scraped by scripts/data/fetch_transco_daily_spot.py). The NYISO
 # analogue of HENRY_HUB_DAILY_PATH: used only for its within-month *shape* so the
 # daily hub-basis overlay (:func:`iso_hub_daily_gas_prices`) resolves the real
 # cold-day spike that a monthly mean smears flat, without moving the monthly hub
@@ -776,7 +776,7 @@ TRANSCO_Z6_NY_DAILY_PATH: Path = GAS_PRICES_DIR / "transco_z6_ny_daily.csv"
 
 # Measured Algonquin Citygate (AGT) *daily* spot, harvested free from the prose of
 # every EIA Natural Gas Weekly Update ("...the price went up $9.31 from $4.04/MMBtu
-# last Wednesday to $13.35/MMBtu yesterday...") by scripts/fetch_algonquin_daily_spot.py.
+# last Wednesday to $13.35/MMBtu yesterday...") by scripts/data/fetch_algonquin_daily_spot.py.
 # These are real, EIA-published AGT spot prints — two hard-dated Wednesdays per
 # weekly page plus winter high/low days, ~123 prints 2023-2025, densest in the cold
 # weeks that set the ISO-NE price tail. The NEISO leg of the daily hub-basis overlay
@@ -803,7 +803,7 @@ IROQUOIS_Z2_DAILY_PATH: Path = GAS_PRICES_DIR / "iroquois_z2_daily.csv"
 # Measured California Composite Average citygate (PG&E Citygate / SoCal
 # Citygate / SoCal Border blend, NGI Daily GPI) *daily* spot, scraped from the
 # same EIA Natural Gas Weekly Update archive compact "Spot Prices" table the
-# Transco daily series reads (scripts/fetch_caiso_citygate_daily.py), true-date
+# Transco daily series reads (scripts/data/fetch_caiso_citygate_daily.py), true-date
 # keyed like TRANSCO_Z6_NY_DAILY_PATH's dated view (dense trading-day quotes,
 # not sparse narrative prints). The CAISO leg of the daily hub-basis overlay
 # (:func:`iso_hub_daily_gas_prices`) uses these real prints for the within-month
@@ -817,7 +817,7 @@ CAISO_CITYGATE_DAILY_PATH: Path = GAS_PRICES_DIR / "caiso_citygate_daily.csv"
 
 # Measured Chicago Citygate daily delivered-gas spot (EIA NG Weekly Update
 # compact "Spot Prices" table, the "Chicago" row — NGI Daily GPI; scraped by
-# scripts/fetch_miso_citygate_daily.py). The MISO analogue of the CAISO/NYISO
+# scripts/data/fetch_miso_citygate_daily.py). The MISO analogue of the CAISO/NYISO
 # daily hub series: the North/Central marginal winter gas unit prices off Chicago
 # Citygate, whose spot blows out far above Henry Hub on the coldest days (Winter
 # Storm Heather Friday 2024-01-12 = $25.82/MMBtu). Consumed by the winter
@@ -829,7 +829,7 @@ CAISO_CITYGATE_DAILY_PATH: Path = GAS_PRICES_DIR / "caiso_citygate_daily.csv"
 MISO_CITYGATE_DAILY_PATH: Path = GAS_PRICES_DIR / "miso_citygate_daily.csv"
 
 # Measured PG&E Citygate / SoCal Citygate weekly Wednesday prints (EIA NG
-# Weekly Update archive, NGI Daily GPI; scripts/fetch_pge_socal_citygate_daily
+# Weekly Update archive, NGI Daily GPI; scripts/data/fetch_pge_socal_citygate_daily
 # .py — the same free published print the CAISO zonal-hub annual rows in
 # ``caiso_zonal_gas_hub.csv`` are month-balanced from). The SoCal column is the
 # gas leg of the caiso-87 surplus-state trigger
@@ -849,7 +849,7 @@ TRANSCO_IROQUOIS_MONTHLY_PATH: Path = GAS_PRICES_DIR / "transco_z6_iroquois_mont
 
 # NYISO downstate (NYC / Long Island) interruptible-gas premium: the measured
 # monthly excess of the NY LDC city-gate price over the NY fleet-average
-# delivered-to-electric-power gas cost (scripts/fetch_nyiso_downstate_gas_basis.py;
+# delivered-to-electric-power gas cost (scripts/data/fetch_nyiso_downstate_gas_basis.py;
 # EIA NG N3050NY3 − N3045NY3, $/MMBtu, floored 0). Consumed by
 # :func:`apply_nyiso_downstate_ct_gas_basis`.
 NYISO_DOWNSTATE_CT_GAS_BASIS_PATH: Path = (
@@ -868,7 +868,7 @@ _MISO_CITYGATE_DAILY_CACHE: dict[Path, dict[int, dict[int, dict[int, float]]]] =
 
 # Clean-data consumption. Curated Parquet for each fuel-price datatype is read
 # via the frozen ``clean_io.read_clean`` seam when the opt-in flag is set and the
-# clean tree has been populated (``python scripts/curate_fuel_prices.py``). The
+# clean tree has been populated (``python scripts/data/curate_fuel_prices.py``). The
 # raw CSV path is always the fallback so existing runs are byte-identical unless
 # the caller explicitly opts in via the MARKET_SIM_USE_CLEAN env flag.
 _FUEL_PRICES_DATATYPE: str = "fuel-prices"
@@ -1203,7 +1203,7 @@ def _algonquin_daily(path: Path | None) -> dict[int, dict[int, dict[int, float]]
 
     The ISO-NE analogue of :func:`_transco_z6_daily`, reading the real Algonquin
     Citygate daily prints harvested from the EIA NG Weekly Update narrative
-    (:data:`ALGONQUIN_DAILY_PATH`, by ``scripts/fetch_algonquin_daily_spot.py``).
+    (:data:`ALGONQUIN_DAILY_PATH`, by ``scripts/data/fetch_algonquin_daily_spot.py``).
     Unlike the Transco series these prints are *sparse and irregular* (two dated
     Wednesdays per weekly page plus winter high/low days), so they are keyed by
     day-of-month — the daily overlay places each real print on its true calendar
@@ -1293,7 +1293,7 @@ def _caiso_citygate_daily_dated(
 
     The CAISO analogue of :func:`_transco_z6_daily_dated`: reads the measured
     California Composite Average citygate daily spot (:data:`CAISO_CITYGATE_DAILY_PATH`,
-    scraped by ``scripts/fetch_caiso_citygate_daily.py`` from the same EIA
+    scraped by ``scripts/data/fetch_caiso_citygate_daily.py`` from the same EIA
     Natural Gas Weekly Update compact spot table Transco Z6 NY is read from),
     keyed by true calendar day so the daily overlay places each trading-day
     print where it actually occurred and interpolates the non-trading gaps.
@@ -1334,7 +1334,7 @@ def _miso_citygate_daily_dated(
 
     The MISO analogue of :func:`_caiso_citygate_daily_dated`: reads the measured
     Chicago Citygate daily delivered-gas spot (:data:`MISO_CITYGATE_DAILY_PATH`,
-    scraped by ``scripts/fetch_miso_citygate_daily.py`` from the "Chicago" row of
+    scraped by ``scripts/data/fetch_miso_citygate_daily.py`` from the "Chicago" row of
     the same EIA Natural Gas Weekly Update compact spot table), keyed by true
     calendar (trade) day so the winter fuel-security overlay
     (:func:`apply_miso_winter_citygate_daily`) can place each print on its gas
@@ -1786,7 +1786,7 @@ def iso_hub_daily_gas_prices(
     re-centred to the measured monthly mean, and ``basis_daily`` is the
     **measured Algonquin Citygate daily basis** — anchored to the real AGT spot
     prints EIA publishes in its Weekly Update narrative
-    (:func:`_algonquin_daily`, ``scripts/fetch_algonquin_daily_spot.py``):
+    (:func:`_algonquin_daily`, ``scripts/data/fetch_algonquin_daily_spot.py``):
 
       * In a positive-basis (winter-blowout) month with ≥2 real AGT prints, the
         prints are converted to a same-day basis (``agt_print − hh_daily``) and
@@ -2346,7 +2346,7 @@ def nyiso_downstate_ct_gas_premium(
     gas. Positive year-round; floors to 0 only in months the pipeline hub itself
     spikes above the city gate (arctic events). Read from
     :data:`NYISO_DOWNSTATE_CT_GAS_BASIS_PATH` (built by
-    ``scripts/fetch_nyiso_downstate_gas_basis.py`` from EIA NG series N3050NY3
+    ``scripts/data/fetch_nyiso_downstate_gas_basis.py`` from EIA NG series N3050NY3
     minus the measured Transco Z6 NY monthly). Returns ``None`` when the table is
     missing or has no rows for ``year`` (e.g. a forward year without the series
     extended).
@@ -2792,7 +2792,7 @@ def ercot_gas_spot_share_by_zone(
     """Return ``{model_zone: gas spot share}`` for ERCOT, or ``None`` if absent.
 
     Aggregates the per-plant EIA-923 gas spot share
-    (:data:`ERCOT_GAS_TAKEORPAY_PATH`, written by ``scripts/derive_gas_takeorpay``)
+    (:data:`ERCOT_GAS_TAKEORPAY_PATH`, written by ``scripts/data/derive_gas_takeorpay``)
     to model zones using the CAMPD bin sheet's hard-coded ``ERCOT_Zone`` column
     (:data:`ERCOT_BIN_ASSIGNMENTS_PATH`), MMBtu-weighted across each zone's
     reporting gas plants. Zones with no reporting plant are omitted, so the caller

@@ -13,7 +13,7 @@ at any time, but **solving or scoring** them is blocked per-ISO until that
 ISO carries a `declared` entry in
 `frontend/data/backcast/calibration-complete.json` — today only **NEISO**
 (2026-07-07). **2021 is not a rule-22 holdout at all** — `CALIBRATION_YEARS`
-in `scripts/build_calibration_reference.py` already spans 2021–2025 as a
+in `scripts/data/build_calibration_reference.py` already spans 2021–2025 as a
 default, and ERCOT/PJM's reference-year builder already resolves 2021 today.
 Treating 2021 as a third holdout is a new policy choice this doc doesn't make
 for you — flagged explicitly in §4.

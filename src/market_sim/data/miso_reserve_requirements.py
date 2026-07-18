@@ -8,7 +8,7 @@ RBDC family's flat fleet-MSSC + regulating estimate and the South zonal
 family's static within-zone-MSSC estimate are replaced by the MEASURED hourly
 reserve MW MISO actually cleared, from the masked real-time cleared-offers
 market report (``data/raw/MISO-AS/asm_rt_cleared_mw_<year>.parquet``,
-``scripts/fetch_miso_asm.py``).
+``scripts/data/fetch_miso_asm.py``).
 
 The loader also emits a ``"MISO-Midwest"`` leg (cleared sum over the two
 Midwest ASM regions {North, Central}) — the measured basis of the Midwest
@@ -156,7 +156,7 @@ def load_miso_reserve_requirements(
         raise FileNotFoundError(
             f"miso_measured_reserve_requirements=True but the measured cleared-"
             f"reserve series is absent: {src}. Regenerate with "
-            f"scripts/fetch_miso_asm.py --years {year}; the flag must not solve "
+            f"scripts/data/fetch_miso_asm.py --years {year}; the flag must not solve "
             f"on the static estimates it claims to replace."
         )
 

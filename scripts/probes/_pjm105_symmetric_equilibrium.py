@@ -56,7 +56,7 @@ def clear_year(year: int) -> dict:
     if curve is None:
         raise FileNotFoundError(
             f"no hrl_da_incs_decs_{year}_* parquets — run "
-            "scripts/fetch_pjm_da_virtuals.py"
+            "scripts/data/fetch_pjm_da_virtuals.py"
         )
     dec_mw, dec_price, inc_mw, inc_price = curve
     lam = _actual_da(year, HOURS)

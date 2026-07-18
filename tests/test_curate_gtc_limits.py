@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_gtc_limits.py and the market_sim.data.gtc seam.
+"""Tests for scripts/data/curate_gtc_limits.py and the market_sim.data.gtc seam.
 
 Builds a tiny synthetic NP6-86 monthly archive (outer zip -> daily zip ->
 per-interval CSVs, the Data Portal bundle layout), runs ``curate`` against a
@@ -21,7 +21,7 @@ import numpy as np
 import pandas as pd
 
 from market_sim.config.iso_configs import get_iso_config
-from scripts import curate_gtc_limits
+from scripts.data import curate_gtc_limits
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

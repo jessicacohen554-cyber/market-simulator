@@ -516,7 +516,7 @@ def reserve_storage_as_power(
 
 
 # Measured ERCOT hourly battery-fleet capability (60-Day DAM disclosure
-# non-OUT PWRSTR/ESR HSL), derived by scripts/derive_ercot_storage_capability.py
+# non-OUT PWRSTR/ESR HSL), derived by scripts/data/derive_ercot_storage_capability.py
 # (provenance, basis decision and the FROZEN-AGAINST-RESIDUALS contract live
 # in that script's docstring).
 _STORAGE_CAPABILITY_PATH = RAW_DATA_DIR / "ercot-storage-capability.csv"

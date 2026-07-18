@@ -9,7 +9,7 @@ EVENING-STORAGE-TIMING charter, separate deliverable) and files this ask.
 
 ## 1. What WP-3 would change (one derive statistic)
 
-`scripts/derive_thermal_tranches.py` emits each CHP cogen's steam-host
+`scripts/data/derive_thermal_tranches.py` emits each CHP cogen's steam-host
 operating floor as `p25_allhr_cf` — the **25th percentile of the plant's
 all-hours available-CF distribution** (`_CHP_P25_ALLHR_PCTILE = 25`, lines
 105-123), consumed by `ScenarioConfig.chp_steam_floor_p25` and surfaced as the

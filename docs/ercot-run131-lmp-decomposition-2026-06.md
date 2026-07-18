@@ -19,7 +19,7 @@ without a markup.
 These numbers were produced during the input-recovery window, before
 `data/raw/eia-930-hourly/ERCO hourly.parquet` was committed to `main`. At the
 time the loader's extract was unavailable and `api.eia.gov` (the canonical
-`scripts/fetch_eia930_hourly.py` source) is egress-blocked here, so the extract
+`scripts/data/fetch_eia930_hourly.py` source) is egress-blocked here, so the extract
 was rebuilt offline by reshaping the already-committed region (D/NG/TI) and
 fuel-type series (`data/raw/ERCO_region.parquet` / `data/raw/ERCO_fueltype.parquet`)
 with the fetcher's exact pivot + local-time transform — a pure reshape, no
@@ -357,7 +357,7 @@ scarcity-price mechanism exists* to pair with it.
 coupling. **Data unlock:** commit `93b879a` replaced the 2023 storage-AS column
 (the `storage` column of `ercot_2023_as_by_restype_hourly.parquet`) with a
 **measured** series rebuilt from the in-repo 60-Day DAM Gen Resource Data
-(`scripts/build_ercot_as_by_restype_from_60day.py`): **1249 MW mean vs the prior
+(`scripts/data/build_ercot_as_by_restype_from_60day.py`): **1249 MW mean vs the prior
 832 MW intensity-transfer estimate** (the estimate undercounted real 2023 battery
 AS by ~50%). The committed keeper bundle was solved at sha `8d4a852`, which
 **predates** the data unlock, so its recorded 2023 numbers (avg 49.8, tail 171/94)
@@ -514,7 +514,7 @@ python scripts/probes/_ercot_2023_decomp.py _decomp_2023_base _decomp_2023_credi
 * ~~60-Day DAM Load Resource Data (AWARDS) blocks a measured 2023 load credit~~ —
   **RESOLVED by the parallel session:** the 2023 load-resource RRS-UFR was instead
   derived from the in-repo 60-Day DAM Gen Resource Data + ASPLANNP433 (NP3-911 Dec
-  tail) via `scripts/build_ercot_as_2023.py` (884 MW), and adopted in the run139
+  tail) via `scripts/data/build_ercot_as_2023.py` (884 MW), and adopted in the run139
   keeper. The dedicated Load Resource AWARDS file would still let a future build
   cross-check it directly.
 * **Oct-2023 (10-02..11-01) Gen Resource Data disclosure file** — absent, so 2023
@@ -565,7 +565,7 @@ cheap)."
 
 Regenerated the ERCOT outages at `--high-load-pctl 0.80` vs the keeper's `0.85`
 and compared capacity-weighted unit-level outage GW-hrs/1000 by month (no solve —
-`scripts/derive_campd_unit_outages.py --iso ERCOT --high-load-pctl {0.80,0.85}`):
+`scripts/data/derive_campd_unit_outages.py --iso ERCOT --high-load-pctl {0.80,0.85}`):
 
 | band | months (Δ at p80) | Σ Δ GW-hrs/1000 |
 |---|---|---|
@@ -601,7 +601,7 @@ the 2023 administrative slice as a known, bounded, out-of-market residual outsid
 an ORDC/LOLP model's reach — not a knob to chase. Reproduce the sweep:
 
 ```bash
-uv run python scripts/derive_campd_unit_outages.py --iso ERCOT \
+uv run python scripts/data/derive_campd_unit_outages.py --iso ERCOT \
   --high-load-pctl 0.80 --out /tmp/ercot-unit-p80.csv   # vs the committed 0.85 file
 # then bucket unit_capacity_mw × duration over each window's calendar months.
 ```

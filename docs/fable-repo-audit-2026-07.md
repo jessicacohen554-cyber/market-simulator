@@ -52,7 +52,7 @@ parameterized constraints. Findings are ranked by threat to those two objectives
    distinction the owner specified.** Fossil units ignore all EIA-860 announced dates by default
    (`capacity.py:196-235`, correct in spirit — announced retirements stay economic), but there is
    **no channel to force a genuinely confirmed fossil closure**, and the EIA-860
-   retirement-status field is dropped at intake (`scripts/process_eia860.py:64,239-243,310-313`).
+   retirement-status field is dropped at intake (`scripts/data/process_eia860.py:64,239-243,310-313`).
    COD/new-build handling is clean (construction-committed statuses only; month-precise COD ramp).
 5. **TC-1: The CI-enforcement claims in CLAUDE.md rule 22 are aspirational.** No workflow runs
    pytest on PR (only `lint.yml`/ruff gates merges); `audit_keepers.py` and
@@ -148,7 +148,7 @@ consistency, gross/net reconciliation, derate-vs-outage convexity) is embedded i
 | ID | Sev | Finding | Evidence |
 |---|---|---|---|
 | RC-1 | HIGH | Exogenous-retirement gate keys on fuel type, not confirmation status; no channel to force a confirmed fossil closure (settlement/RMR/deactivation notice) | `capacity.py:196-235`, `scenarios.py:119` |
-| RC-2 | HIGH | EIA-860 retirement-status/confirmation signal dropped at intake — the distinction is unrepresentable downstream | `scripts/process_eia860.py:64,239-243,310-313` |
+| RC-2 | HIGH | EIA-860 retirement-status/confirmation signal dropped at intake — the distinction is unrepresentable downstream | `scripts/data/process_eia860.py:64,239-243,310-313` |
 | RC-3 | MED | "Known retirements" label is a misnomer: for the entire fossil fleet it is a default no-op | CLAUDE.md capacity-evolution step 1, `capacity.py:6-12` |
 | RC-4 | MED | Forecast mode has no exogenous channel for confirmed future retirements at all (within-window retiree injection and COD ramp are backcast-gated); near-term confirmed exits rely entirely on the economic screen firing on time | `runner.py:293-295`, `fleet.py:1990` |
 | RC-5 | LOW | Non-fossil announced dates are always honored, including speculative 2040-2072 60-yr-EOL placeholders (558 units carry planned years, 2026→2072) | `capacity.py:231-234` |

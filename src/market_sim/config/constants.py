@@ -634,7 +634,7 @@ NUCLEAR_MONTHLY_CF: dict[str, list[float]] = {
 # not yet returned to service: plant code -> first calendar year the unit is
 # expected to generate. Backcast years before that year zero the unit's
 # availability (it is physically offline, EIA-923 net generation = 0), and
-# scripts/derive_nuclear_monthly_cf.py excludes it from the fleet pmax for
+# scripts/data/derive_nuclear_monthly_cf.py excludes it from the fleet pmax for
 # those years so the derived CF is not diluted. Forecast runs are unaffected
 # (the unit stays in the fleet at its EIA-860 capacity).
 #   8011 — Crane Clean Energy Center (ex-TMI-1, 802.8 MW net summer): shut
@@ -652,7 +652,7 @@ NUCLEAR_DORMANT_UNTIL: dict[int, int] = {
 # average). When a (ISO, year) is present it overrides NUCLEAR_MONTHLY_CF in the
 # backcast; forecast years fall back to NUCLEAR_MONTHLY_CF or the universal
 # refueling-block forecaster. ERCOT = Comanche Peak (2) + South Texas (2).
-# Derivation: scripts/derive_nuclear_monthly_cf.py (CF = fleet EIA-923 monthly
+# Derivation: scripts/data/derive_nuclear_monthly_cf.py (CF = fleet EIA-923 monthly
 # net gen / fleet pmax x hours, capped at 1.0 — winter net capability slightly
 # exceeds EIA-860 nameplate, so the cap costs ~0.7%/yr vs measured energy);
 # re-run with --check after an EIA-923 refresh.
@@ -687,7 +687,7 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # 272.6/272.4/270.0 — the systematic +4.5/+6.0/+8.0 TWh nuclear residual
     # of calibration runs 1-19.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
-    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos PJM.
+    # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos PJM.
     "PJM": {
         2023: [1.00, 0.97, 0.90, 0.85, 0.91, 0.99, 0.99, 0.98, 0.96, 0.89, 0.96, 1.00],
         2024: [1.00, 0.98, 0.90, 0.81, 0.91, 0.99, 0.97, 0.99, 0.96, 0.90, 0.93, 1.00],
@@ -705,7 +705,7 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     #   2024 Aug-Sep   — FitzPatrick refuel (0.63 / 0.37); Oct Ginna (0.48).
     #   2025           — only a mild Nine Mile dip (Mar 0.80); no deep refuel.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
-    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos NYISO.
+    # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos NYISO.
     "NYISO": {
         2023: [1.00, 0.98, 0.86, 0.74, 0.99, 0.99, 0.96, 0.97, 0.88, 0.97, 0.99, 0.99],
         2024: [0.99, 0.99, 0.69, 1.00, 0.99, 0.98, 0.97, 0.89, 0.75, 0.90, 0.98, 0.98],
@@ -725,7 +725,7 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     #   2024 Oct 0.44 — Seabrook refuel (0.12; Nov 0.57) + a Millstone unit (Sep 0.71).
     #   2025 Apr-May 0.75/0.77 — a Millstone unit refuel (0.59/0.64); Seabrook full year.
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025 final.
-    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos NEISO.
+    # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos NEISO.
     "NEISO": {
         2023: [0.98, 0.98, 0.99, 0.41, 0.60, 0.38, 0.93, 0.93, 0.91, 0.84, 0.63, 0.87],
         2024: [0.88, 1.00, 1.00, 1.00, 0.99, 1.00, 0.99, 0.98, 0.81, 0.44, 0.76, 0.97],
@@ -747,7 +747,7 @@ NUCLEAR_MONTHLY_CF_BY_YEAR: dict[str, dict[int, list[float]]] = {
     # reactors going to ~0 in the per-plant EIA-923 series, e.g. Prairie Island
     # / Callaway / River Bend Oct dips).
     # Source: EIA-923 Page 1 monthly net generation, 2023-2025.
-    # Derivation/verify: scripts/derive_nuclear_monthly_cf.py --isos MISO.
+    # Derivation/verify: scripts/data/derive_nuclear_monthly_cf.py --isos MISO.
     "MISO": {
         2023: [1.00, 0.94, 0.87, 0.83, 0.76, 0.93, 1.00, 0.96, 0.90, 0.68, 0.75, 0.75],
         2024: [0.78, 0.91, 0.80, 0.81, 0.83, 0.96, 1.00, 0.99, 0.97, 0.85, 0.90, 0.93],
@@ -783,7 +783,7 @@ EFORD: dict[str, float] = {
 # back so the correlated model RELOCATES the cold-event share embedded in the
 # flat GADS-based WEFOR instead of stacking on it.
 #
-# Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 --
+# Source: scripts/data/derive_correlated_outage_curve.py (frozen derive, rule 23 --
 # re-run only when the CAMPD / weather / EIA-930 source data updates; never
 # hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly
 # gross load on net-load-certified scarcity event days (in-merit certificate),
@@ -1062,13 +1062,13 @@ DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {}
 #
 # RE-DERIVED 2026-07 (P-1D, CLAUDE.md rule 23) from the actual AEO2025 Table
 # 13 data (data/raw/eia-aeo/eia_aeo2025_fuel_prices.part*.csv, API-fetched by
-# scripts/fetch_eia_aeo.py in the P-0C intake), replacing the prior
+# scripts/data/fetch_eia_aeo.py in the P-0C intake), replacing the prior
 # hand-typed "approximate interpolations from published AEO2025 charts and
 # text" this TODO used to flag. Re-derive with
-# scripts/derive_fuel_trajectories.py::derive_gas_trajectory and paste; see
+# scripts/data/derive_fuel_trajectories.py::derive_gas_trajectory and paste; see
 # docs/handoffs/aeo-verification-2026-07-11.md for the before/after diff.
 # AEO2026 was released April 8, 2026 and may carry updated trajectories —
-# re-run scripts/fetch_eia_aeo.py --aeo-year 2026 when that vintage is wanted.
+# re-run scripts/data/fetch_eia_aeo.py --aeo-year 2026 when that vintage is wanted.
 #
 # The 2023 and 2024 entries are historical actuals, not AEO projections:
 # they are the EIA Henry Hub spot price annual averages ($2.54 in 2023,
@@ -1237,7 +1237,7 @@ HENRY_HUB_TRAJECTORIES: dict[str, dict[int, float]] = {
 #   EIA-923 itself: the quantity-weighted delivered gas cost to PJM gas
 #   plants (Schedule 5 fuel receipts) minus the Henry Hub annual average was
 #   +$0.67/MMBtu in BOTH 2023 ($3.21 vs $2.54) and 2024 ($2.86 vs $2.19).
-#   Source: scripts/derive_coal_supply.py-style EIA-923 receipt aggregation;
+#   Source: scripts/data/derive_coal_supply.py-style EIA-923 receipt aggregation;
 #   same EIA family as the ERCOT/CAISO figures. Caveat: Schedule-5 gas
 #   reporting is sparse (~26 PJM plants), likely skewed toward the eastern
 #   premium hubs, so this may run slightly high for the western price-taking
@@ -1383,7 +1383,7 @@ COAL_PRICE_ESCALATION: float = 0.01
 # AEO2025 Table 15 ("Coal Supply, Disposition, and Prices"), delivered to the
 # electric power sector, national ("usa") — data/raw/eia-aeo/
 # eia_aeo2025_fuel_prices.part*.csv, derived via
-# scripts/derive_fuel_trajectories.py::derive_coal_trajectory (P-1D, CLAUDE.md
+# scripts/data/derive_fuel_trajectories.py::derive_coal_trajectory (P-1D, CLAUDE.md
 # rule 23 — resolves the D2 gap: "coal flat 1%/yr escalation" with no AEO
 # grounding). Replaces the flat COAL_PRICE_ESCALATION forward SHAPE — each
 # ISO's own COAL_PRICE_BASE level anchor is unchanged (a single national
@@ -1512,7 +1512,7 @@ PRB_COMMODITY_DECLINE: float = 0.015  # annual, from 2031 as demand falls
 PRB_COMMODITY_FLAT_THROUGH: int = 2030
 
 # --- Coal-vs-gas passthrough sigmoid re-derivation inputs ---------------------
-# Physical/measured inputs that ``scripts/derive_coal_sigmoid.py`` reads to
+# Physical/measured inputs that ``scripts/data/derive_coal_sigmoid.py`` reads to
 # re-derive the per-(ISO, supply) gas-keyed coal passthrough sigmoid
 # (``COAL_SIGMOID_DEFAULTS`` in scenarios.py) from the EIA Annual Coal Report
 # region f.o.b.-mine price + BLS PPI coal-mining series intaked in #1803
@@ -1623,7 +1623,7 @@ OIL_PRICE_PER_MMBTU: float = 18.0
 # distillate + residual fuel oil, averaged (same blend construction as
 # OIL_PRICE_PER_MMBTU above) — data/raw/eia-aeo/
 # eia_aeo2025_fuel_prices.part*.csv, derived via
-# scripts/derive_fuel_trajectories.py::derive_oil_trajectory (P-1D, CLAUDE.md
+# scripts/data/derive_fuel_trajectories.py::derive_oil_trajectory (P-1D, CLAUDE.md
 # rule 23). AEO prices this series at $/gal; converted to $/MMBtu via EIA fuel
 # heat contents (0.1385 MMBtu/gal distillate, 0.1497 MMBtu/gal residual).
 # Replaces the flat OIL_PRICE_PER_MMBTU scalar for FORECAST years (backcast
@@ -1733,7 +1733,7 @@ OIL_PRICE_TRAJECTORIES: dict[str, dict[int, float]] = {
 # market_sim.data.fuel.iso_hub_daily_gas_prices: the within-month AGT basis is
 # anchored to the real Algonquin Citygate daily spot prints EIA publishes in its
 # Weekly Update narrative (data/raw/gas-prices/algonquin_citygate_daily.csv,
-# scripts/fetch_algonquin_daily_spot.py), interpolated on their true calendar
+# scripts/data/fetch_algonquin_daily_spot.py), interpolated on their true calendar
 # days and mean-preserved to the measured monthly basis; sparse-print months
 # borrow the measured Transco Z6 NY daily-basis shape (AGT~=Transco basis, slope
 # ~0.95). Every driver is now free, EIA-sourced, forward-applicable gas-market
@@ -1753,7 +1753,7 @@ BIOMASS_PRICE_PER_MMBTU: float = 2.5
 # no $/MMBtu series directly (data/raw/uranium-marketing/, P-0C intake) — only
 # front-end U3O8 purchase price ($/lb U3O8e) and SWU enrichment-services
 # price, both nominal. This series is derived
-# (scripts/derive_fuel_trajectories.py::derive_nuclear_fuel_trajectory) by
+# (scripts/data/derive_fuel_trajectories.py::derive_nuclear_fuel_trajectory) by
 # deflating both to real 2024$ (INFLATION_RATE) and building up a delivered
 # $/MMBtu cost from the standard LWR fuel-cycle physical constants (World
 # Nuclear Association "Nuclear Fuel Cycle": ~8.9 kg natural U3O8 and ~7.3 SWU
@@ -1822,7 +1822,7 @@ THERMAL_AVAILABILITY: dict[str, tuple[float, ...]] = {
 # (boiler/turbine derates below nameplate), applied as an availability ceiling
 # year-round on top of the age-based THERMAL_AVAILABILITY model.
 #
-# Source: scripts/derive_coal_max_cf.py — the pooled 99th percentile of each
+# Source: scripts/data/derive_coal_max_cf.py — the pooled 99th percentile of each
 # plant's daily-max capacity factor (gross_mw / capacity_mw) on days it ran
 # (daily-mean CF > 0.06), across all CAMPD hourly extract years on record
 # (2023-2025, data/raw/campd-facility-level/TX_*.parquet). A near-maximum
@@ -1859,7 +1859,7 @@ COAL_MAX_CF_BY_PLANT: dict[int, float] = {
 # Jul/Aug summer peak, modest in winter). This is methodology spec section 1.7's
 # documented forecast roadmap item and is distinct from the backcast historic
 # outage overlay (data/outages.py), which is untouched.
-# Derivation/verify: scripts/derive_maintenance_shape.py (reads the committed
+# Derivation/verify: scripts/data/derive_maintenance_shape.py (reads the committed
 # data/raw/campd-unit-outages*.csv). Groups with too few observations (e.g.
 # CT_PEAKER — combustion turbines are excluded from the unit-outage detector)
 # fall back to the pooled all-thermal shape "_POOLED".
@@ -2166,7 +2166,7 @@ class CapAndTradeProgram:
 # 2023 and exited 1 Jan 2024) and non-members (OH, IN, KY, WV, IL, most of PA),
 # and its zones are multi-state roll-ups, so a clean 0/1 zone map is impossible
 # (plan §5). `m_zone[z]` is the RGGI-member share of zone z's operating fossil
-# nameplate capacity, computed by `scripts/derive_pjm_rggi_zone_share.py` from
+# nameplate capacity, computed by `scripts/data/derive_pjm_rggi_zone_share.py` from
 # the year-matched EIA-860 plant/generator tables (state + capacity), the same
 # PJM zone assignment the dispatch model uses
 # (`data.zone_assignment.build_zone_lookup("PJM")`), and
@@ -2244,7 +2244,7 @@ SHORT_TON_TO_METRIC_TONNE: float = 0.90718474
 # Power-sector CO2 mass-cap budgets for the OPTIONAL endogenous mass-cap row
 # (mass_cap_enabled, default OFF). These mirror the cited raw schedules under
 # data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/ (curated to
-# data/clean/ via scripts/curate_*.py; the clean tree is gitignored so the
+# data/clean/ via scripts/data/curate_*.py; the clean tree is gitignored so the
 # authoritative in-repo value lives here, same intake discipline as
 # STATE_CARBON_PRICE_BY_ISO). A row built from a budget here is a power-sector,
 # no-bank SCENARIO instrument (plan §2, §8) — NOT the RGGI/CARB market price,
@@ -4860,7 +4860,7 @@ PJM_MEASURED_INTERNAL_TTC: dict[tuple[str, str], float] = {
 # the mapped links' forward orientation; binding (≥ 90% utilization) up to
 # 6.5% of hours (BB post, 2025).
 # Source: PJM Data Miner 2 transfer_limits_and_flows via
-# scripts/curate_transfer_interface_limits.py; consumed by
+# scripts/data/curate_transfer_interface_limits.py; consumed by
 # market_sim.data.transfer_interface_limits.pjm_interface_ttc_hourly.
 PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
     ("PJM_AEP_Ohio", "PJM_Dominion"): ("AEP/DOM Post-Contingency",),
@@ -4886,7 +4886,7 @@ PJM_INTERFACE_LINK_MAP: dict[tuple[str, str], tuple[str, ...]] = {
 # These are the MEASURED day-ahead TTC the market actually cleared against,
 # from NYISO's hour-by-hour ATC/TTC postings for the "CENT EAST" interface
 # (MIS ATC_TTC files, mirrored in data/raw/NYISO/ATC_TTC.zip), aggregated
-# by scripts/derive_nyiso_central_east_ttc.py. They supersede the earlier
+# by scripts/data/derive_nyiso_central_east_ttc.py. They supersede the earlier
 # operating-study / Wood Mackenzie estimates (~2,350 pre / ~3,850 post), which
 # overstated the operative DAM limit: the posted DAM TTC the dispatch must
 # respect runs ~1,750 MW through Nov 2023 and ~2,850 MW from Dec 2023 on — both
@@ -4911,7 +4911,7 @@ NYISO_INTERFACE_TTC_BY_YEAR: dict[int, dict[tuple[str, str], float]] = {
 # backcast year by run_calibration._apply_iso_monthly_ttc, which expands the
 # scalar TTC array to (hours, n_links) so the dispatch runs on the seasonal
 # Central-East envelope instead of one annual value. Regenerate with
-# scripts/derive_nyiso_central_east_ttc.py after refreshing the postings.
+# scripts/data/derive_nyiso_central_east_ttc.py after refreshing the postings.
 NYISO_INTERFACE_TTC_BY_MONTH: dict[int, dict[tuple[str, str], list[float]]] = {
     2023: {
         ("Upstate_West", "Capital_Hudson"): [
@@ -4986,7 +4986,7 @@ ERCOT_SCED_INTERVALS_PER_HOUR: int = 12
 # so its limit alone would understate the interface (see iso_configs).
 # Intra-zone GTCs (VALEXP, EASTEX, TRDWEL, MCCAMY, ...) have no representable
 # link in this topology and are ignored by the crosswalk.
-# Source: ERCOT NP6-86-CD archives via scripts/derive_ttc_limits.py; ERCOT
+# Source: ERCOT NP6-86-CD archives via scripts/data/derive_ttc_limits.py; ERCOT
 # "The Use of GTCs in ERCOT" (July 2020) for the GTC definitions.
 ERCOT_GTC_LINK_MAP: dict[str, list[tuple[tuple[str, str], float]]] = {
     "PNHNDL": [(("Panhandle", "North"), 1.0)],
@@ -5190,11 +5190,11 @@ WEATHER_YEAR_POOL_BY_ISO: dict[str, tuple[int, ...]] = {
     # the raw hourly demand extract covers them. Only 2021 is added; 2019/2020
     # stay out until the distribution parquet is rebuilt further back.
     "NYISO": (2021, 2023, 2024, 2025),
-    # CAISO (BA "CISO"): api.eia.gov (scripts/fetch_eia930_hourly.py) is
+    # CAISO (BA "CISO"): api.eia.gov (scripts/data/fetch_eia930_hourly.py) is
     # blocked in this managed sandbox, but the six-month BALANCE bulk archive
     # (www.eia.gov, unblocked) covers 2019-2021 for every BA and was fetched
-    # 2026-07-06 (scripts/fetch_eia930_balance.py) then folded into the wide
-    # hourly extract (scripts/extend_eia930_hourly_from_balance.py). 2019-2021
+    # 2026-07-06 (scripts/data/fetch_eia930_balance.py) then folded into the wide
+    # hourly extract (scripts/data/extend_eia930_hourly_from_balance.py). 2019-2021
     # verified end-to-end same as ERCOT. The bulk archive's legacy taxonomy
     # doesn't break out geothermal separately (folded into NG: OTH for these
     # three years only; harmless here since load_renewable_profiles reads only
@@ -5300,7 +5300,7 @@ STRUCTURAL_PRIOR_CARBON_PRICED_ISOS: tuple[str, ...] = ("CAISO", "NEISO", "NYISO
 # Forward analogue of the measured ERCOT on-line responsive reserve-supply cap
 # (scarcity.ercot_rtolcap_supply_cap_mw, which returns None for years with no
 # measured ercot_<year>_ordc_reserves_hourly.parquet -> forecast years ran
-# UNCAPPED). Derived by scripts/derive_ercot_rtolcap_forward.py from the committed
+# UNCAPPED). Derived by scripts/data/derive_ercot_rtolcap_forward.py from the committed
 # CAMPD unit extracts + the measured RTOLCAP/RTOFFCAP MW QUANTITY series (never a
 # price; honesty gate). RE-DERIVE ONLY on a source-data update (rule #23), never a
 # residual. online_share_c = median over CAMPD of the class on-line headroom-
@@ -5820,7 +5820,7 @@ ERCOT_RTOLCAP_FWD_STORAGE_RESERVE_FRAC: float = 0.35
 # on-line -- removing the ~3.2 GW phantom sub-$200 spare P1 perfect commitment
 # manufactures beyond measured RTOLCAP (FINDING-ercot-priceshape-2026-07 §3,
 # structural conclusion #2). Derived by
-# scripts/derive_ercot_rtolcap_forward.py --emit online-cap-constant from the
+# scripts/data/derive_ercot_rtolcap_forward.py --emit online-cap-constant from the
 # committed CAMPD unit extracts (Sum_online eff_cap / installed_cap, pooled-year
 # median). Rule #23: re-derives only on a CAMPD / measured-RTOLCAP source-data
 # update, never a residual. Identification (envelope - gross reproduces measured
@@ -6208,7 +6208,7 @@ ERCOT_ONLINE_CAP_DELIV_COEF: float = 1.0830
 # the in-LP room collapsed (4.4/6.7 GW vs measured 8.0/11.1 in 2023/24) and the
 # ORDC over-fired. Two refinements, both identified on measured MW quantities
 # (rules #13/#14/#23 -- never a price), derived by
-# scripts/derive_ercot_rtolcap_forward.py --emit online-cap-extreme-constant:
+# scripts/data/derive_ercot_rtolcap_forward.py --emit online-cap-extreme-constant:
 #
 # 1. SHAPE -- ERCOT_ONLINE_CAP_SHARE_EXTREME resolves the committed on-line HSL
 #    fraction on 14 net-load bins (deciles 0-8 + five 2-percentile sub-bins of
@@ -6748,7 +6748,7 @@ ERCOT_ONLINE_CAP_DELIV_PROFILE_EXTREME: tuple[float, ...] = (
 # finished availability (measured under ercot_thermal_dam_availability in
 # backcast; the statistical stack forward — the G4 mode-aware seam). Uncovered
 # classes keep the extreme variant's installed × summer-derate basis. Derived
-# by scripts/derive_ercot_rtolcap_forward.py --emit online-cap-measured-constant;
+# by scripts/data/derive_ercot_rtolcap_forward.py --emit online-cap-measured-constant;
 # identification gate scripts/validate_ercot_online_capacity.py --measured.
 # Rule #23: re-derives only on a disclosure / CAMPD / measured-RTOLCAP /
 # storage-AS / LR-credit source-data update, never a residual (this derivation

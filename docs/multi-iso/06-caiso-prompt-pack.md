@@ -23,7 +23,7 @@ Already in repo — do not re-acquire:
   `model/transmission.py::build_import_generators("CAISO")` /
   `build_export_sinks("CAISO")` off `constants.IMPORT_TRANCHES` /
   `EXPORT_TRANCHES` (tranche supply curve + export sink), with
-  `scripts/derive_import_tranches.py` to fit them — needs calibration,
+  `scripts/data/derive_import_tranches.py` to fit them — needs calibration,
   not construction. The runner now also wires the CAISO export sink in.
 - `data/eia_hourly/CISO hourly.parquet` (EIA-930 demand/fuel/interchange).
 - `data/raw/CISO_fueltype.parquet`, `CISO_region.parquet`.
@@ -125,7 +125,7 @@ at the pack boundary; log derived-parameter sources in
 ```
 CAISO backcast Stage E: extend the calibration reference and audit data
 readiness. Read claude.md, docs/multi-iso/05-backcast-playbook.md (§1–2),
-and scripts/build_calibration_reference.py.
+and scripts/data/build_calibration_reference.py.
 
 1. Add CAISO to build_calibration_reference.py for 2023–2025: EIA-930
    demand stats from data/eia_hourly/CISO hourly.parquet; EIA-923 by-fuel
@@ -153,7 +153,7 @@ blocks; tests pass; audit doc committed.
 
 ```
 CAISO backcast: regenerate measured unit-outage windows. Read
-docs/offer-curve-methodology.md §3 and scripts/derive_campd_unit_outages.py.
+docs/offer-curve-methodology.md §3 and scripts/data/derive_campd_unit_outages.py.
 
 1. If data/raw/campd-unit-level/CA_2023.parquet exists (upload U1),
    include 2023; otherwise run 2024–2025 and note 2023 as statistical-
@@ -180,7 +180,7 @@ landed); overlay loads in a CAISO smoke config; ERCOT/PJM CSVs untouched.
 CAISO backcast: derive per-plant offer-curve tranches (committed %,
 must-run, peaking ranges) and build the CAISO bin assignments. Read
 docs/offer-curve-methodology.md, docs/binning-methodology.md,
-scripts/derive_cc_committed_pct.py, scripts/derive_thermal_tranches.py,
+scripts/data/derive_cc_committed_pct.py, scripts/data/derive_thermal_tranches.py,
 and the CHP tags from the P3 session (CC_CHP/CT_CHP assignments).
 
 1. Run committed-% derivation per CC plant from CAMPD unit-level CA
@@ -282,7 +282,7 @@ benchmark columns wired if present.
 
 ```
 CAISO backcast: uncurtailed renewable potential (the HSL analogue). Read
-data/renewables.py, scripts/build_ercot_hsl.py, playbook §8.3.
+data/renewables.py, scripts/data/build_ercot_hsl.py, playbook §8.3.
 
 1. If data/raw/caiso-curtailment/ exists (upload U3): build hourly
    uncurtailed wind/solar = EIA-930 delivered + reported curtailment,
@@ -334,7 +334,7 @@ config with citations in parameter-citations.md.
 ```
 CAISO backcast: demand series and zonal disaggregation. Read
 data/eia_loader.py (ERCOT native-load and PJM metered-load patterns),
-scripts/derive_load_shares.py, playbook §8.1.
+scripts/data/derive_load_shares.py, playbook §8.1.
 
 1. System demand: EIA-930 CISO hourly (generation-side; td_loss_factor
    convention per ERCOT). Document in the data dictionary that CAISO
@@ -360,7 +360,7 @@ convention; zonal shapes measured if U4 landed.
 CAISO backcast: calibrate the WECC import node. Read
 model/transmission.py::build_import_generators / build_export_sinks (the
 J1-generalized machinery — constants.IMPORT_TRANCHES / EXPORT_TRANCHES),
-scripts/derive_import_tranches.py (the PJM fitting workflow to reuse),
+scripts/data/derive_import_tranches.py (the PJM fitting workflow to reuse),
 playbook §8.2, and the PJM writeup (docs/sessions/multi-iso/pjm-backcast-2023.md
 §4, archived). The machinery is built AND on by default for CAISO
 (constants.PRICED_INTERCHANGE_DEFAULT_ISOS — CAISO backcasts serve the
@@ -404,7 +404,7 @@ a CAISO bundle with the priced node on.
 
 ```
 CAISO backcast: price benchmarks and the 3-zone adequacy test. Read
-scripts/derive_actual_lmp.py and data/raw/_validation-source/actual_lmp.json.
+scripts/data/derive_actual_lmp.py and data/raw/_validation-source/actual_lmp.json.
 
 1. From data/raw/lmp-data/CAISO/ (upload U2): build CAISO
    2023–2025 entries in actual_lmp.json (DA + RT annual/monthly hub
@@ -536,7 +536,7 @@ same knob via `load_eia860_storage`), calibrated against the new
 EIA-930 BAT/UES bundle benchmark (`storage.parquet` + report §3d).
 Nuclear: the per-year EIA-923 monthly-CF overlay
 (`NUCLEAR_MONTHLY_CF_BY_YEAR`) had already landed (PR #252) and holds
-all three years at −0.7%; `scripts/derive_nuclear_monthly_cf.py` now
+all three years at −0.7%; `scripts/data/derive_nuclear_monthly_cf.py` now
 derives/validates the table (`--check`) as the backcast analogue of
 `forecast_nuclear_refuel.py`. See docs/calibration-log.md (E2 entry)
 for the keeper run and the residual coal/CT items handed to E1.
@@ -568,7 +568,7 @@ This pack delivered the remaining piece: the **generalized priced node**
 (P9's design, built here first since P9 hasn't run). `PJM_external` zone +
 import tranches + export sinks in `IMPORT_TRANCHES` / `EXPORT_TRANCHES`,
 fitted to the measured 2023 net-interchange duration curve by
-`scripts/derive_import_tranches.py` (2023: 100% of actual, duration RMSE
+`scripts/data/derive_import_tranches.py` (2023: 100% of actual, duration RMSE
 ~570 MW; 2024 drifts +37% — re-fit per vintage). Forward PJM scenarios
 (previously **zero** interchange) now carry price-responsive interchange;
 backcasts keep the measured schedule. Validation runs:

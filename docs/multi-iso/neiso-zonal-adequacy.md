@@ -9,7 +9,7 @@ and the hub is the `.H.INTERNAL_HUB` ("ISO NE CA" sheet), so the actual
 day-ahead zone-vs-hub spreads answer it directly.
 
 Reproduce with `python scripts/neiso_zonal_sufficiency.py --md` (reads the
-committed `NEISO/*_smd_hourly.xlsx` via `scripts/derive_actual_lmp.py`).
+committed `NEISO/*_smd_hourly.xlsx` via `scripts/data/derive_actual_lmp.py`).
 
 ## Zone-vs-hub spread duration curves — day-ahead, $/MWh
 

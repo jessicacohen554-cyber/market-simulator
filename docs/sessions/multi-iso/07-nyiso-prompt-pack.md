@@ -157,7 +157,7 @@ commit at the pack boundary; log derived-parameter sources in
 NYISO backcast Stage E: extend the calibration reference and audit data
 readiness. Read claude.md, docs/multi-iso/05-backcast-playbook.md (§1–2),
 docs/multi-iso/07-nyiso-prompt-pack.md, and
-scripts/build_calibration_reference.py.
+scripts/data/build_calibration_reference.py.
 
 1. Add "NYISO" to CALIBRATION_ISOS and the year override (2023, 2025; add
    2024 when NY_2024 CEMS lands) with ba_code NYIS. Emit, per year: EIA-930
@@ -186,7 +186,7 @@ pass; audit doc committed.
 
 ```
 NYISO backcast: verify/refresh measured unit-outage windows. Read
-docs/offer-curve-methodology.md §3 and scripts/derive_campd_unit_outages.py.
+docs/offer-curve-methodology.md §3 and scripts/data/derive_campd_unit_outages.py.
 NOTE: data/raw/campd-unit-outages-NYISO.csv already exists for 2023 +
 2025 — this pack VERIFIES it and adds 2024 only if NY_2024 landed.
 
@@ -212,7 +212,7 @@ config; ERCOT/PJM/CAISO CSVs untouched.
 ```
 NYISO backcast: derive per-plant offer-curve tranches and bin assignments.
 Read docs/offer-curve-methodology.md, docs/binning-methodology.md,
-scripts/derive_cc_committed_pct.py, scripts/derive_thermal_tranches.py, and
+scripts/data/derive_cc_committed_pct.py, scripts/data/derive_thermal_tranches.py, and
 the CHP/dual-fuel tags from the P3/P13 sessions.
 
 1. Run committed-% derivation per CC plant from CAMPD NY extracts (2023,
@@ -354,7 +354,7 @@ basis applied if U4 landed; citations in parameter-citations.md.
 
 ```
 NYISO backcast: demand series and zonal disaggregation. Read data/eia_loader.py
-(ERCOT/PJM load patterns), scripts/derive_load_shares.py, playbook §8.1.
+(ERCOT/PJM load patterns), scripts/data/derive_load_shares.py, playbook §8.1.
 
 1. System demand: EIA-930 NYIS hourly (td_loss_factor convention per ERCOT).
    Document that NYISO demand is net of BTM PV (front-of-meter only).
@@ -378,7 +378,7 @@ documented; zonal shapes measured if U3 landed.
 NYISO backcast: the priced import/export node. Read
 model/transmission.py::build_import_generators / build_export_sinks (the
 generalized J1 machinery — constants.IMPORT_TRANCHES / EXPORT_TRANCHES),
-scripts/derive_import_tranches.py, playbook §8.2, and the PJM writeup
+scripts/data/derive_import_tranches.py, playbook §8.2, and the PJM writeup
 (pjm-backcast-2023.md §4). The machinery is built; this pack adds NYISO's
 CONSTANTS and calibrates them.
 
@@ -404,7 +404,7 @@ cited Tier 3; ERCOT/PJM/CAISO unchanged.
 
 ```
 NYISO backcast: price benchmarks and the 5-zone adequacy test. Read
-scripts/derive_actual_lmp.py and data/raw/_validation-source/actual_lmp.json.
+scripts/data/derive_actual_lmp.py and data/raw/_validation-source/actual_lmp.json.
 
 1. From data/raw/lmp-data/NYISO/ (upload U2): build NYISO 2023–2025
    entries in actual_lmp.json (DA + RT annual/monthly zonal LBMP averages,

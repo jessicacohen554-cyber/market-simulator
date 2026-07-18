@@ -8,11 +8,11 @@ there (U1–U7). Each section is owned by the pack that filled it.
 > (Stage E, 2026-06-11)** filled §1 (calibration reference), §2 (fleet sanity),
 > and §5 (upload-manifest status). Done together with the NEISO audit
 > (`neiso-data-audit.md`) in one pass — both ISOs share
-> `scripts/build_calibration_reference.py` + `calibration_reference.json`.
+> `scripts/data/build_calibration_reference.py` + `calibration_reference.json`.
 
 ## 1. Calibration reference — extended for NYISO 2023 + 2025 (P0)
 
-`scripts/build_calibration_reference.py` now derives NYISO (and NEISO)
+`scripts/data/build_calibration_reference.py` now derives NYISO (and NEISO)
 alongside ERCOT/PJM/CAISO. NYISO uses a per-ISO year override
 (`CALIBRATION_YEARS_BY_ISO["NYISO"] = (2023, 2025)`) with BA code `NYIS`.
 **2024 is deliberately deferred** — the 2024 EIA-930/923/860 reference data all
@@ -191,7 +191,7 @@ rerun would fold them in (P1 follow-up candidate).
 `campd-unit-outages-NYISO.csv` (**1,621 windows: 857 in 2023, 764 in 2025,
 44 facilities**) regenerates **byte-identically** from the committed
 `NY_2023`/`NY_2025` extracts via
-`python scripts/derive_campd_unit_outages.py --iso NYISO --years 2023 2024 2025`
+`python scripts/data/derive_campd_unit_outages.py --iso NYISO --years 2023 2024 2025`
 (2024 emits zero windows — "no unit-level extract for NY 2024"). The committed
 file is current.
 

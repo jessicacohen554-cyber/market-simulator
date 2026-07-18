@@ -52,7 +52,7 @@ class TestConsumeReferenceParity(unittest.TestCase):
             clean_io.clean_exists("reference", market="bin-assignments")
             and clean_io.clean_exists("reference", market="plant-registry")
         ):
-            from scripts import curate_reference
+            from scripts.data import curate_reference
 
             curate_reference.curate()
 

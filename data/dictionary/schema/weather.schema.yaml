@@ -9,7 +9,7 @@
 #
 # Source: per-ISO raw CSV files under data/raw/{iso}-weather/ (NOAA GHCN-Daily
 # TMAX/TMIN, load-weighted over each ISO's load-center stations). Curated by
-# scripts/curate_weather.py.
+# scripts/data/curate_weather.py.
 #
 # Validation: for every ISO-year file,
 #   tmax_c is non-null (gap-filled via ffill/bfill per zone in curate step)

@@ -39,6 +39,7 @@ REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "src"))
 sys.path.insert(0, str(REPO / "scripts"))
 
+sys.path.insert(0, str(REPO / "scripts" / "data"))
 from market_sim.config.interchange_config import IMPORT_ZONE  # noqa: E402
 
 CAL_DIR = REPO / "data" / "raw" / "_validation-source"

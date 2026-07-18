@@ -14,7 +14,7 @@
 #   data/clean/fuel-zonal-hub/PJM/fuel-zonal-hub.parquet
 #   data/clean/fuel-zonal-hub/MISO/fuel-zonal-hub.parquet
 #
-# Curated by scripts/curate_fuel_prices.py from
+# Curated by scripts/data/curate_fuel_prices.py from
 #   data/raw/ercot_zonal_gas_hub.csv
 #   data/raw/nyiso_zonal_gas_hub.csv
 #   data/raw/pjm_zonal_gas_hub.csv

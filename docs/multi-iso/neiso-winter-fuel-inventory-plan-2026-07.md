@@ -140,7 +140,7 @@ limbs' slope/cap are untouched.
   the three moved — see Status above.
 - Data intake **done**: `data/raw/winter-fuel-inventory/isone/isone.csv` (OFSA
   + Winter Reliability Program figures, hand-curated/cited) plus EIA-860
-  derived fields, curated via `scripts/curate_winter_fuel_inventory.py` into
+  derived fields, curated via `scripts/data/curate_winter_fuel_inventory.py` into
   the `winter-fuel-inventory` clean datatype
   (`data/dictionary/schema/winter-fuel-inventory.schema.yaml`). No measured
   burn/receipt outcome was intaken (the F923-receipts approach stayed

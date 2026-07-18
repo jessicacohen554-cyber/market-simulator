@@ -37,7 +37,7 @@ idle 2025-10-03 → 12-31 (90 days)** — and that outage *is* correctly present
 
 ### Root cause — basis mismatch the derivation can't see
 
-`scripts/derive_campd_unit_outages.py::unit_capacity_mw` **prefers the EIA-860
+`scripts/data/derive_campd_unit_outages.py::unit_capacity_mw` **prefers the EIA-860
 generator nameplate** (`eia_exact`) for the numerator, "so the derate denominator
 is on the same nameplate basis as the model bin." But:
 
@@ -115,7 +115,7 @@ hand-edit — it is a derived artifact) and re-run the calibration.
 
 ## Key files
 
-- `scripts/derive_campd_unit_outages.py` — the derivation (`unit_capacity_mw`,
+- `scripts/data/derive_campd_unit_outages.py` — the derivation (`unit_capacity_mw`,
   `build_capacity_index`, the per-unit detector). **Regenerate the CSV here.**
 - `src/market_sim/data/outages.py` — `unit_outage_derate_factors` (applies the
   derate), `_unit_outage_target` / `_generic_unit_outage_target` (routing),

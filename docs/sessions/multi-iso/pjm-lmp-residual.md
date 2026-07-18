@@ -3,7 +3,7 @@
 **Date:** 2026-06-11.
 **Data:** `data/raw/_validation-source/actual_lmp_hourly_PJM.parquet` (hub-mean hourly
 RT/DA LMP across the 12 PJM trading hubs, 2023–2025, fixed 8760-hour local
-calendar), built by `scripts/derive_actual_lmp.py` from the hourly Data Miner
+calendar), built by `scripts/data/derive_actual_lmp.py` from the hourly Data Miner
 exports in `data/raw/lmp-data/PJM_{year}_rt_da_monthly_lmps.csv`
 (hourly despite the filename — 12 hubs × 8,760 local hours per file).
 **Runs:** `pjm_9_chp_solar` (2023+2024) and `pjm_10d_chp` (2024 re-solve);
@@ -11,8 +11,8 @@ the two agree to ~$0.01 on every 2024 statistic below.
 **Regenerate:**
 
 ```bash
-python scripts/derive_actual_lmp.py
-python scripts/analyze_lmp_residual.py results/calibration/pjm_10d_chp \
+python scripts/data/derive_actual_lmp.py
+python scripts/archive/analyze_lmp_residual.py results/calibration/pjm_10d_chp \
     results/calibration/pjm_9_chp_solar          # add --out FILE.md to save
 ```
 
@@ -69,7 +69,7 @@ months are on or slightly above actuals (Jan +2.8, Dec +1.2).
   ~+$1.5/MWh of the monthly-mean offset.
 - `actual_lmp.json` now carries `da_pct`/`rt_pct` duration-curve percentiles
   per PJM year, and any future run can be scored against the hourly series
-  with `scripts/analyze_lmp_residual.py` (or
+  with `scripts/archive/analyze_lmp_residual.py` (or
   `market_sim.results.calibration.check_price_duration_curve`, which the
   hourly parquet can now feed as `benchmarks["prices"]`).
 
@@ -81,5 +81,5 @@ MD/DE/NC/TN extracts and only MI 2024**. TN is now in
 regenerate with:
 
 ```bash
-python scripts/derive_campd_unit_outages.py --iso PJM --years 2023 2024 2025
+python scripts/data/derive_campd_unit_outages.py --iso PJM --years 2023 2024 2025
 ```

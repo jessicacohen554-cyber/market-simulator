@@ -26,7 +26,7 @@ ERCOT-gated) fixes both failure modes structurally:
    band). At solve time the upper rungs (p70/p90) are repriced to the measured wall
    while the lower rungs stay at the resolved peak. The measured wall is the 60-Day
    DAM disclosure per-resource top-of-curve quantile ladder
-   (`scripts/derive_dam_offer_hrmults.py --condition-binned` →
+   (`scripts/data/derive_dam_offer_hrmults.py --condition-binned` →
    `offer_curve_dam_hrmults_condbinned.json`).
 2. **Condition.** The ladder is derived and applied **per net-load-percentile bin**
    (edges 0.80/0.90/0.97 → 4 bins on the year's own net-load distribution, forward-

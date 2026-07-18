@@ -25,7 +25,7 @@ from the gas-steam boiler, both driven by the measured signature:
    afternoon-evening CF rises cleanly with net-load. So the floor is **gated to
    the ramp window** `[ct_drag_ramp_start, ct_drag_ramp_end)` = **15–22h
    local-standard**; it is zero outside it. (CAISO's CT reliability floor uses
-   the same evening window — `scripts/derive_caiso_ct_reliability_floor.py`.)
+   the same evening window — `scripts/data/derive_caiso_ct_reliability_floor.py`.)
 2. The curve is fit to the **evening** CF-vs-net-load relationship, not the
    overnight one.
 

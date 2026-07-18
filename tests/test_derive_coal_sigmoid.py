@@ -1,4 +1,4 @@
-"""Freeze + provenance tests for scripts/derive_coal_sigmoid.py.
+"""Freeze + provenance tests for scripts/data/derive_coal_sigmoid.py.
 
 Two guarantees (CLAUDE.md rules 23/24 — the sigmoid re-derives only when its
 SOURCE DATA updates, and its numbers are registry-resident, reproducible from
@@ -26,7 +26,7 @@ from market_sim.config.constants import (
     COAL_SIGMOID_REP_HR_GAS_CC,
 )
 from market_sim.config.scenarios import COAL_SIGMOID_DEFAULTS
-from scripts import derive_coal_sigmoid as d
+from scripts.data import derive_coal_sigmoid as d
 
 
 class TestFormulaFreeze(unittest.TestCase):
@@ -94,7 +94,7 @@ class TestProvenanceFreeze(unittest.TestCase):
                     want[p],
                     places=3,
                     msg=f"MISO {supply} {p}: literal {got[p]} != derived {want[p]} "
-                    "— re-run scripts/derive_coal_sigmoid.py; do NOT hand-edit "
+                    "— re-run scripts/data/derive_coal_sigmoid.py; do NOT hand-edit "
                     "the literal (rule 23).",
                 )
 

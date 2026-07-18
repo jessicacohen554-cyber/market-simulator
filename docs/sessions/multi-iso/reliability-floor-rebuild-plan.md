@@ -87,9 +87,9 @@ within the zone). Representative station map (exact GHCN IDs finalized in the ta
 
 ### A.4 Generic fetch/derive script
 
-New `scripts/fetch_zone_temperature.py` (replaces the per-ISO `fetch_*` halves):
+New `scripts/data/fetch_zone_temperature.py` (replaces the per-ISO `fetch_*` halves):
 ```
-python scripts/fetch_zone_temperature.py --iso ALL          # or --iso ERCOT PJM …
+python scripts/data/fetch_zone_temperature.py --iso ALL          # or --iso ERCOT PJM …
         [--start 2023 --end 2025] [--no-fetch]
 ```
 - Reads `iso_zone_weather_stations.csv`.
@@ -175,7 +175,7 @@ weather.
 
 ### B.4 Coefficient derivation script + table
 
-New `scripts/derive_reliability_coeffs.py --iso ALL`:
+New `scripts/data/derive_reliability_coeffs.py --iso ALL`:
 - Emits a full per-(zone, class) coefficient table to
   `data/raw/reference/reliability_floor_coeffs.csv`
   (`iso,zone,plant_class,limb,hot_tmax_c,cold_tmin_c,floor_pct,enabled,slope,rho,n,baseline`)

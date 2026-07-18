@@ -3,7 +3,7 @@
 ``inject_pjm_seam_ladder_prices`` overwrites every reference-price seam band
 (MISO / NYISO / Carolinas / TVA / LGEE, import + export) with its per-year
 measured band price from ``interchange_config.PJM_SEAM_LADDER_BY_YEAR`` (the
-revealed seam supply curve, ``scripts/derive_pjm_seam_ladders.py``). Bands
+revealed seam supply curve, ``scripts/data/derive_pjm_seam_ladders.py``). Bands
 keep clearing economically on the model's own hourly price; availability (the
 measured seam envelopes) is untouched, and the firm scheduled-export floor is
 displaced on ladder years (rule 19 — alternatives, never stacked). Mirrors

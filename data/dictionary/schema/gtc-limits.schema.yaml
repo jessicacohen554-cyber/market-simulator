@@ -9,7 +9,7 @@
 # NE_LOB, VALEXP, ...) — are the rows with an empty FromStation (a GTC caps a
 # weighted flow sum, not a single monitored element).
 #
-# Curation (scripts/curate_gtc_limits.py) keeps only the GTC rows and
+# Curation (scripts/data/curate_gtc_limits.py) keeps only the GTC rows and
 # aggregates the ~5-minute intervals to the fixed non-leap 8760-hour
 # ERCOT-local clock (Feb 29 dropped, DST fall-back merged by the clock-hour
 # group-by — the convention shared with data/raw/ercot HSL and ORDC series).

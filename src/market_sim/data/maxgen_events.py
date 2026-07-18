@@ -2,7 +2,7 @@
 
 Reads the curated ``maxgen-events`` registry (one row per declared
 (ISO, level, region) window; ``data/dictionary/schema/maxgen-events.schema.yaml``,
-curated by ``scripts.curate_maxgen_events``) for the mechanisms that key on a
+curated by ``scripts.data.curate_maxgen_events``) for the mechanisms that key on a
 DECLARED window at solve time. Today that is the ELMP emergency-tier pricing
 channel (``ScenarioConfig.maxgen_emergency_tier_pricing``, the MISO F5
 scarcity-depth lane): inside a registry window declared at Maximum Generation
@@ -14,7 +14,7 @@ ISO's bid cap to the declared tier's emergency offer floor —
 ``docs/handoffs/miso-f5-scarcity-depth-design-2026-07.md`` §1.
 
 Clock and scoping conventions are IDENTICAL to the M-2 revealed-derate
-deriver (``scripts/derive_campd_maxgen_outages.py``), so the tier windows and
+deriver (``scripts/data/derive_campd_maxgen_outages.py``), so the tier windows and
 the derate windows are hour-exact aligned by construction: MISO market
 operations run on EST (UTC-5) year-round (Tariff Module A; ``Etc/GMT+5``),
 window starts floor / ends ceil to the hour (a declared ``23:59`` end-of-day
@@ -156,7 +156,7 @@ def load_maxgen_registry_model_clock(iso: str) -> pd.DataFrame:
         )
     clean_io = _import_clean_io()
     if not clean_io.clean_exists("maxgen-events", iso=iso):
-        from scripts.curate_maxgen_events import curate
+        from scripts.data.curate_maxgen_events import curate
 
         curate(isos=[iso])
     ev = clean_io.read_clean("maxgen-events", iso=iso)

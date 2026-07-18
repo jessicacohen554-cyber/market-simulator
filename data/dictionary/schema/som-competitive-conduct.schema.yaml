@@ -25,7 +25,7 @@
 # (H1-2026 locked-test window) — those rows are deliberately NOT
 # transcribed pending owner authorization.
 #
-# Curated by scripts/curate_som_competitive_conduct.py from
+# Curated by scripts/data/curate_som_competitive_conduct.py from
 #   data/raw/som-competitive-conduct/som_competitive_conduct.csv
 datatype: som-competitive-conduct
 schema_version: 1

@@ -8,7 +8,7 @@
 # candidate series ids; see the intake memo), so both series here are
 # national.
 #
-# Curated by scripts/curate_coal_mining_ppi.py from
+# Curated by scripts/data/curate_coal_mining_ppi.py from
 #   data/raw/coal-prices/bls_coal_ppi.csv
 datatype: coal-mining-ppi
 schema_version: 1

@@ -97,7 +97,7 @@ to the per-plant residual.
    South). If the **North/Northeast zone demand share is too high** (or West/SC too
    low), the LP fills the excess North demand by running North CCs up the merit
    order — including inefficient Midlothian/Wolf Hollow I — while West/SC CCs idle.
-   Check the zonal demand shares (`scripts/derive_load_shares.py` /
+   Check the zonal demand shares (`scripts/data/derive_load_shares.py` /
    `data/raw/zone-specific-demand/`) against the actual zonal load (ERCOT
    ACTUALSYSLOADWZNP6345, the WZ load files already in `data/raw/reference/`).
    This is the single most likely cause and costs no solve.
@@ -106,7 +106,7 @@ to the per-plant residual.
    tight (or the West/SC import limits too loose), the LP cannot move cheap
    West/SC/coastal generation into the North, so North CCs serve North load
    locally. Inspect the ERCOT interface/transfer limits the model uses
-   (`scripts/derive_interface_limits.py` / `derive_ttc_limits.py`,
+   (`scripts/data/derive_interface_limits.py` / `derive_ttc_limits.py`,
    `data/raw/iso-specific-transmission/`). The 2026-06-17 nodal session ruled out
    an *aggregate GTC* isolating the North — so look at the **directional CSC/SCED
    interface limits between the 7 model zones**, not a single aggregate GTC.
@@ -114,7 +114,7 @@ to the per-plant residual.
    `HR × gas_delivered + offer`. If North/DFW plants are priced on **too-cheap
    delivered gas** vs West/Permian plants, the merit order inverts. Check the F923
    per-plant monthly delivered gas (`coal_plant_monthly_pricing` analogue for gas;
-   `scripts/process_f923_fuel_costs.py`) for Midlothian/Ennis/Wise vs
+   `scripts/data/process_f923_fuel_costs.py`) for Midlothian/Ennis/Wise vs
    Guadalupe/Rio Nogales/Quail Run. Permian gas (Waha) is often **cheaper** than
    DFW — if the model has that backwards or flattened to a single hub, West would
    under-run and North over-run exactly as seen.
@@ -166,7 +166,7 @@ PY
 
 # Zonal demand shares (hypothesis 1) vs actual WZ load:
 #   data/raw/reference/*ACTUALSYSLOADWZNP6345* (ERCOT weather-zone load)
-#   scripts/derive_load_shares.py ; src/.../iso_configs.py ERCOT zone_names
+#   scripts/data/derive_load_shares.py ; src/.../iso_configs.py ERCOT zone_names
 
 # Re-solve + score after a measured lever:
 python scripts/probes/_keeper_2023as_run.py <out> 2025 2023 '{"ST_GAS":{"committed":0.0}}'   # add KEEPER_RTORDPA=1 to keep the keeper's overlay

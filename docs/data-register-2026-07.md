@@ -24,8 +24,8 @@ from the year grid.
 | 4 | EPA CAMPD hourly CEMS — unit-level | EPA Clean Air Markets Program Data | Per-plant/unit fleet binning, same-year emission rates, parasitic (net/gross) factors, per-plant CEMS generation bench, source for outage/tranche/ramp derivations below | `data/raw/campd-unit-level/<STATE>_<YEAR>.parquet` | Backcast-only |
 | 5 | EPA CAMPD hourly CEMS — facility-level | EPA CAMPD | Facility-grain cross-check / derivation input for outages | `data/raw/campd-facility-level/<STATE>_<year>.parquet` | Backcast-only |
 | 6 | CAMPD-derived facility outage windows | **REMOVED 2026-07-17** — the facility-summed detector (`scripts/derive_campd_outages.py`) and its outputs (`campd-outages.csv`, `campd-outages-<ISO>.csv`) were deleted; summing a plant's units hid single-unit outages and folded daily-cycling CCs into phantom summer outages (see #7) | — | — | — |
-| 7 | CAMPD-derived unit-level outage events | Derived from #4 (`scripts/derive_campd_unit_outages.py`); detectors live in `scripts/lib/outage_detect.py` | **Sole CAMPD outage layer** for every ISO — per-unit derate sized by the unit's capacity share of its plant bin | `data/raw/campd-unit-outages.csv`, `campd-unit-outages-<ISO>.csv` (+ `-short-` / `campd-partial-outages-<ISO>` siblings) | Backcast-only |
-| 8 | CAMPD-derived partial-outage (CF-ceiling) windows | Derived from #4 (`scripts/derive_partial_outages.py`) | Plateau-CF derate windows | `data/raw/campd-partial-outages.csv` | Backcast-only |
+| 7 | CAMPD-derived unit-level outage events | Derived from #4 (`scripts/data/derive_campd_unit_outages.py`); detectors live in `scripts/lib/outage_detect.py` | **Sole CAMPD outage layer** for every ISO — per-unit derate sized by the unit's capacity share of its plant bin | `data/raw/campd-unit-outages.csv`, `campd-unit-outages-<ISO>.csv` (+ `-short-` / `campd-partial-outages-<ISO>` siblings) | Backcast-only |
+| 8 | CAMPD-derived partial-outage (CF-ceiling) windows | Derived from #4 (`scripts/data/derive_partial_outages.py`) | Plateau-CF derate windows | `data/raw/campd-partial-outages.csv` | Backcast-only |
 | 9 | CAMPD-derived plant tranches / ramp envelopes / CT run-lengths | Derived from #4 | Offer-curve tranche shares, ramp physics, CT startup amortization | `data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`, `campd_ramp_envelopes_<ISO>.csv`, `campd_ct_run_lengths_<ISO>.csv` | Both (physics reused forward) |
 | 10 | CAMPD-derived forward emission-rate estimator input (`plant_emission_rates_v2`) | Derived from #4, pooled 2023-2025 | Forecast-year per-plant CO2/NOx/SO2 rate estimator (rule #0's forward-derivation exception) | `data/raw/_processed-legacy/plant_emission_rates.parquet` | Forecast-only (derived from backcast-year CEMS) |
 | 11 | EIA-860 generator/plant fleet (Sch. 2/3/4) | U.S. EIA | Thermal/nuclear/hydro/storage/renewable fleet inventory, capacity, prime mover, CHP flag, COD/retirement dates, ownership | `data/raw/eia-860/eia860_*.parquet`, `vintage_<year>/` | Both |
@@ -181,7 +181,7 @@ curtailment reports are blocked by this environment's network allowlist).
   Jan1-Dec31 workbooks at the same stable URL already used for 2023-2025 (also corrected the
   register's stale source URL — `library/managing-oversupply` now 404s; the live page is
   `library/production-curtailments-data`). Building the derived HSL series
-  (`scripts/build_caiso_hsl.py`) against them: **2019-2021 built clean** and delivered to the user
+  (`scripts/data/build_caiso_hsl.py`) against them: **2019-2021 built clean** and delivered to the user
   as file attachments (rounded 2-decimal CSV, ~280KB/year) rather than committed — this session's
   only available push mechanism cannot transport binary content without corruption, and even the
   text-safe CSV form hits a hard ~25,000-token read ceiling well before one year's ~8760-row file
@@ -211,7 +211,7 @@ curtailment reports are blocked by this environment's network allowlist).
 | NYISO measured hourly reserve requirements (Ask B) | — | not independently confirmed present — flagged unresolved in source docs | | | |
 
 **MISO-AS 2022 — confirmed ungettable, not just unattempted (2026-07-09).** All three per-day
-report endpoints `scripts/fetch_miso_asm.py` reads (`asm_exante_damcp`, `asm_rtmcp_final`,
+report endpoints `scripts/data/fetch_miso_asm.py` reads (`asm_exante_damcp`, `asm_rtmcp_final`,
 `asm_rt_co`) return genuine `BlobNotFound` from `docs.misoenergy.org` for every day of 2022
 (1,095/1,095 requests), while the identical URL pattern is HTTP 200 starting exactly 2023-01-01 —
 this is a **rolling retention purge**, not a naming/format change: a 2021-08-14 `asm_rt_co.zip`

@@ -3,7 +3,7 @@
 Raw source: ISO Express "Hourly Reserve Requirements" report
 (ancillary-hourly-rr), archived as fixed 15-day window CSVs under
 ``data/raw/NEISO-AS/requirements/requirements_<start>_<end>.csv`` by
-``scripts/fetch_neiso_reserve_requirements.py`` (which documents the endpoint
+``scripts/data/fetch_neiso_reserve_requirements.py`` (which documents the endpoint
 and the rule-13 admissibility argument).
 
 Raw row format (report ``D`` rows)::

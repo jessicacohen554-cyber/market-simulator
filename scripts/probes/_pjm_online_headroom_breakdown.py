@@ -15,6 +15,7 @@ import numpy as np
 import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "data"))
 import json
 
 from derive_pjm_ordc_overlay import _run_year_kwargs  # noqa: E402

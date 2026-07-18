@@ -224,7 +224,7 @@ New backcast overlay (ADMISSIBLE, rule #14's explicit case): the export
 capability of the transfer links that carry ERCOT's published Generic
 Transmission Constraints follows the **measured hourly GTC limit series**
 (NP6-86 "SCED Shadow Prices and Binding Transmission Constraints" →
-`scripts/curate_gtc_limits.py` → `gtc-limits` clean datatype →
+`scripts/data/curate_gtc_limits.py` → `gtc-limits` clean datatype →
 `market_sim.data.gtc.ercot_gtc_ttc_hourly`) instead of the single static
 `ttc_mw`. Test: a GTC limit is ERCOT's published voltage/WSCR **stability
 transfer limit** — a physical/market input that regenerates for any year

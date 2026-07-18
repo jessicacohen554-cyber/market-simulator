@@ -101,7 +101,7 @@ with **two measured structures**, NOT commitment (ERCOT keepers run
      **ERCOT-specific** input builders the runner calls.
    - `src/market_sim/runner.py:596` — gated `if energy_reserve_coopt and iso == "ERCOT"`.
 2. **Price BODY → measured DAM offer-curve heat-rate multipliers**
-   (`docs/ercot-dam-offer-hrmults-2026-06.md`, `scripts/derive_dam_offer_hrmults.py`,
+   (`docs/ercot-dam-offer-hrmults-2026-06.md`, `scripts/data/derive_dam_offer_hrmults.py`,
    `data/raw/_validation-source/offer_curve_dam_hrmults.json`). Each thermal band's
    `mult` is **measured from QSE-submitted 60-Day DAM energy offers** (`price /
    fuel / base_HR`), pooled 2023-25, capacity-weighted — *not* fit to the LMP.
@@ -121,7 +121,7 @@ with **two measured structures**, NOT commitment (ERCOT keepers run
   `data/raw/_validation-source/pjm_ordc_curve.csv`, `docs/multi-iso/pjm-reserve-curve-source.md`.
   Vertical two-step `$850 (R<REQ) / $300 (REQ≤R<REQ+190) / $0`, three nested
   products (Synchronized⊆Primary⊆30-min), stable across 2023–26 (no regime switch).
-- **Post-solve overlay** (`scripts/derive_pjm_ordc_overlay.py`, `scarcity.py`
+- **Post-solve overlay** (`scripts/data/derive_pjm_ordc_overlay.py`, `scarcity.py`
   PJM section: `:830 pjm_reserve_cascade_mcp`, `:1048 pjm_online_reserve`). The
   **honesty gate is already run and is NEGATIVE**: the model holds 12–15 GW
   online reserve in PJM's real RT shortage hours (~5× the ~3.3 GW breakpoint), so
@@ -242,11 +242,11 @@ with **two measured structures**, NOT commitment (ERCOT keepers run
 - `src/market_sim/runner.py:596` co-opt wiring (ERCOT-gated — add the PJM branch).
 - `src/market_sim/config/scenarios.py`: `energy_reserve_coopt`,
   `as_reserve_withholding`, `commitment_enabled`, `commitment_screen_coal`.
-- `scripts/derive_pjm_ordc_overlay.py` (post-solve overlay + `--validate-mcp` /
-  `--diagnostic` honesty gate), `scripts/build_pjm_as_withholding.py` (measured
+- `scripts/data/derive_pjm_ordc_overlay.py` (post-solve overlay + `--validate-mcp` /
+  `--diagnostic` honesty gate), `scripts/data/build_pjm_as_withholding.py` (measured
   `as_req_mw` loader — reuse for the co-opt requirement).
 - `scripts/probes/_pjm_{retiree_run,aswh_run,aswh_merge,score}.py`.
-- `scripts/derive_dam_offer_hrmults.py` + `docs/ercot-dam-offer-hrmults-2026-06.md`
+- `scripts/data/derive_dam_offer_hrmults.py` + `docs/ercot-dam-offer-hrmults-2026-06.md`
   (the measured-offer template, if PJM DAM offer data exists).
 - DOCS: `docs/multi-iso/pjm-reserve-ordc.md` (the campaign + honesty gate — READ
   FIRST), `docs/multi-iso/pjm-lmp-residual.md` (the residual localization),
