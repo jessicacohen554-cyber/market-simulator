@@ -194,11 +194,23 @@ class ScenarioConfig:
     # --- Data-center load block (CX-4, gap G-34). Forecast-mode-only; "off" =
     # today, byte-identical. See docs/handoffs/cx4-datacenter-load-design-2026-
     # 07.md and data/datacenter.py. ---
-    datacenter_load_path: str = "off"  # "off" | "low" | "mid" | "high" —
+    datacenter_load_path: str = "mid"  # "off" | "low" | "mid" | "high" —
     # deterministic scenario-matrix axis (PB-1 §1.1) selecting the per-ISO
     # cumulative-MW trajectory from constants.DATACENTER_ADDITIONS_MW via
-    # data.datacenter.resolve_datacenter_mw. "off" leaves demand byte-identical
-    # to today (add_datacenter_block is a no-op).
+    # data.datacenter.resolve_datacenter_mw. DEFAULT "mid" is the owner-decided
+    # forecast posture (FF-1F, 2026-07-18; plan §2.1) — a forecast models the
+    # published data-center boom as a FLAT block (its physical trait). "mid" is
+    # ENERGY-EQUIVALENT to the legacy "off" (the near-era DEMAND_GROWTH_RATES are
+    # already DC-inclusive) but relocates that energy flat, so it flattens the
+    # peak (ERCOT 2030 ~120 GW vs ~139 GW), cutting peaker over-build and phantom
+    # scarcity rent — the structurally faithful DC shape (FF-1C §7). Admissible
+    # because FF-1C §5 resolved the growth×DC double-count via energy-invariant
+    # relocation (add_datacenter_block scales the grown DC-inclusive demand down
+    # by the block's energy fraction and adds it back flat). FORECAST-ONLY axis:
+    # __post_init__ coerces it to "off" in backcast/hindcast (a non-forward run
+    # pins measured/served load, so the block is inert), keeping every backcast
+    # keeper and capacity-hindcast BYTE-IDENTICAL to the legacy "off" default.
+    # "off" reproduces the pre-FF-1F behavior (add_datacenter_block is a no-op).
     datacenter_percentile: float = 0.5  # Continuous PB-2 sampler lever
     # (0.0=low, 0.5=mid, 1.0=high), mirroring demand_growth_percentile /
     # tech_cost_percentile. Neutral 0.5 => datacenter_load_path governs; only
@@ -1558,7 +1570,7 @@ class ScenarioConfig:
     # outages/derates and gas was the largest forced-out category (Eastern
     # Interconnection 13% of all capacity forced out at the peak) — a published
     # physical magnitude, not tuned to land a target number of >$300 hours.
-    correlated_forced_outage: bool = False  # Correlated cold-event forced-outage
+    correlated_forced_outage: bool = True  # Correlated cold-event forced-outage
     # availability derate (FF-1B; design charter ercot-retirement-composition-
     # 2026-07-16.md Part D). The forecast/hindcast statistical WEFOR forced-
     # outage model is per-unit INDEPENDENT and weather-blind, so it never
@@ -1587,8 +1599,21 @@ class ScenarioConfig:
     # availability feeding the point reserve R; the ORDC sigma keeps carrying
     # the stochastic reserve-error spread (see correlated_outage_sigma_scale).
     # Applied at the runner availability seam (data/outages.
-    # apply_correlated_outage_derate). Default off (byte-identical); ISOs
-    # without a CORRELATED_OUTAGE_CURVE entry are a no-op (ERCOT-first).
+    # apply_correlated_outage_derate). DEFAULT ON (FF-1F, 2026-07-18; plan §2.1;
+    # FF-1B §3 recommendation) — the owner-decided forecast posture: it is the
+    # only mechanism that has formed in-year ORDC scarcity in a deep-cold event
+    # (Heather 2024, max $4,968/MWh, validated against the real event's $3-5k RT
+    # prints), and default-off it is dead code in exactly the forecast/hindcast
+    # runs whose scarcity formation it exists to fix. HARD NO-OP in backcast
+    # (the mode != "forecast" and outage_source == "historic" guards in
+    # apply_correlated_outage_derate), so backcast KEEPERS — which already carry
+    # the actual events through the measured CAMPD outage overlays (rule 13) —
+    # stay BYTE-IDENTICAL; ISOs without a CORRELATED_OUTAGE_CURVE entry are a
+    # no-op (ERCOT-first). ORDC double-count seam (FF-1B §3 / charter D.6) HOLDS
+    # with the flag ON: the derate shifts ONLY the deterministic MEAN
+    # availability the ORDC point reserve reads, while correlated_outage_sigma_
+    # scale stays 1.0 (the __post_init__ gate still rejects a non-1.0 sigma), so
+    # no forced-outage variance term is ever double-counted.
     correlated_outage_t0_c: float = -7.0  # Hinge onset (deg C, ~20 degF): above
     # this system daily MIN temperature no correlated excess applies. NERC
     # cold-weather analyses place the onset of sharply-rising generator forced
@@ -6420,24 +6445,28 @@ class ScenarioConfig:
                 f"{self.ira_45q_credit_window_years!r}"
             )
 
-        # Data-center load block (CX-4): forecast-mode-only scenario axis. A
-        # non-"off" path in backcast mode is a hard error (rule 22 / memo §6):
-        # a backcast pins measured load, so the DC block must never enter a
-        # scored backcast. Also validates the path label.
+        # Data-center load block (CX-4): forecast-only scenario axis. Validate
+        # the label, then COERCE it inert in any non-forward run. Since FF-1F
+        # (2026-07-18) the field default is the forecast posture "mid", so a
+        # backcast (mode="backcast") or capacity-hindcast (mode="forecast",
+        # hindcast=True) that does not override it would otherwise inherit "mid";
+        # but a non-forward run pins measured/served load and never applies the
+        # block (runner.py uses year_base_demand for a hindcast, and a backcast
+        # is scored on measured actuals — rule 22), so the axis is meaningless
+        # there. Forcing it to "off" keeps every backcast keeper and hindcast
+        # BYTE-IDENTICAL to the legacy "off" default and honors the runner's
+        # "datacenter_load_path is off in any hindcast" assumption. The
+        # standalone data.datacenter.validate_datacenter_config still hard-errors
+        # on a non-off path reaching a scored backcast (defense in depth against
+        # a post-construction mutation/bypass).
         if self.datacenter_load_path not in ("off", "low", "mid", "high"):
             raise ValueError(
                 "ScenarioConfig.datacenter_load_path must be one of "
                 "('off', 'low', 'mid', 'high'), got "
                 f"{self.datacenter_load_path!r}"
             )
-        if self.mode == "backcast" and self.datacenter_load_path != "off":
-            raise ValueError(
-                "datacenter_load_path is a forecast-only scenario axis and must "
-                "be 'off' in backcast mode (rule 22 holdout discipline): a "
-                "backcast pins measured load, so the data-center block must "
-                "never enter a scored backcast; got "
-                f"{self.datacenter_load_path!r}."
-            )
+        if self.mode == "backcast" or self.hindcast:
+            self.datacenter_load_path = "off"
 
         # The two on-line-capacity envelope variants resolve the SAME LP row
         # from different derived tables (base decile vs extreme-peak-resolved);
