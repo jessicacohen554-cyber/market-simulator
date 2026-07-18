@@ -7,9 +7,9 @@ bundle meta.json and arms the single ERCOT-77 delta:
   of the measured DAM cleared-share wall: ST_GAS committed + econ* tranche
   rows whose within-plant midpoint exceeds the hour's bin's MEASURED steam
   cleared share (the "ST" block of the frozen artifact — GSREH/GSNONR/GSSUP,
-  scripts/derive_ercot_dam_cleared_share.py) are floored at the bin's MEASURED
+  scripts/data/derive_ercot_dam_cleared_share.py) are floored at the bin's MEASURED
   steam offer wall, scaled by the measured steam commitment-loading state
-  weight (the "ST" block of scripts/derive_ercot_commitment_loading_state.py;
+  weight (the "ST" block of scripts/data/derive_ercot_commitment_loading_state.py;
   the keeper's state flag is already armed). The ERCOT-73 leg-c finding: live
   steam HSL 5.9 GW vs 1.2 GW DA-cleared on the May-2024 shoulder family while
   the model's flat committed rungs (~$30) hand the LP several GW of steam

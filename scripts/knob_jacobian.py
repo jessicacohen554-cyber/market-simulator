@@ -74,7 +74,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
-import scripts.derive_offer_curve_jacobian as docj  # noqa: E402
+import scripts.data.derive_offer_curve_jacobian as docj  # noqa: E402
 from scripts.build_dof_ledger import build_ledger  # noqa: E402
 from scripts.calibration_verdict import COAL_CLASSES, GAS_CLASSES  # noqa: E402
 from scripts.calibration_verdict import _nrmse as _cv_nrmse  # noqa: E402
@@ -92,7 +92,7 @@ _SCALAR_KNOB_FIELDS: dict[str, float] = {
     "pumped_storage_dispatch_adder": 0.0,
 }
 
-# The committed actual-LMP reference (scripts/derive_actual_lmp.py's product);
+# The committed actual-LMP reference (scripts/data/derive_actual_lmp.py's product);
 # used for the C3b monthly price-NRMSE proxy. NOT scripts/derive_offer_curve_
 # jacobian.py's (stale, pre-W1-reorg) ACTUAL_LMP_JSON constant.
 ACTUAL_LMP_JSON = REPO / "data" / "raw" / "_validation-source" / "actual_lmp.json"

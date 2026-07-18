@@ -926,7 +926,7 @@ Branch `claude/orchestrator-unification-stage-4-1ruvr8`, fresh off `origin/main`
   (`test_hydro.py::test_climatology_skips_uncovered_years`, fails identically
   at the unmodified base — the 2026-07-06 weather-year-pool widening, not
   Stage 4).
-- `scripts/capture_p2_probe_goldens.py` (harness add-on, Stage-0 spirit): the
+- `scripts/archive/capture_p2_probe_goldens.py` (harness add-on, Stage-0 spirit): the
   keeper canaries alone exercise P2 only via the CAISO RA branch (every other
   keeper is P1-only), so the Stage-4 gate adds two P2-ENABLED probe legs —
   the ERCOT keeper's frozen 140-flag set re-solved for the single throwaway

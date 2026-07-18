@@ -6,7 +6,7 @@ delta GROUP is the measured CAISO DAM offer surface (C1 CC-over/CT-under
 lane WP-A, 2026-07-16 handoff; the admissible route named by
 FINDING-caiso91b and diagnosis §3-4), derived from CAISO's OWN published
 DAM bids (OASIS Public Bid Data, 90-day-lag masked curves — the
-dam-public-bids intake + scripts/derive_caiso_offer_surface.py):
+dam-public-bids intake + scripts/data/derive_caiso_offer_surface.py):
 
 * ``caiso_offer_surface_measured=True`` — the STATIC half: the fitted
   ``_CAISO_OFFER_CURVE`` econ_low / econ_high / peak multipliers for

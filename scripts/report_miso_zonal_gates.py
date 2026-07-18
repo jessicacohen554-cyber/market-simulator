@@ -10,7 +10,7 @@ on congestion EXISTING, not on the price residual (CLAUDE.md rule #1):
      mean LMP; the model's zone-mean sign pattern. When
      the measured per-hub actuals are present
      (``data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet``,
-     scope decision D6 — scripts/derive_miso_hub_lmp.py), the same statistics
+     scope decision D6 — scripts/data/derive_miso_hub_lmp.py), the same statistics
      are printed for the ACTUAL hub prices (zone = member-hub mean;
      MISO-Plains = MINN+ILLINOIS hub-mean proxy, no LRZ 3/5 hub exists), so
      spread sign AND magnitude are scored against the market, not eyeballed.
@@ -53,7 +53,7 @@ _SCARCITY_TOP_N = 50
 
 # Measured per-hub actuals (D6). Zone actual = simple mean of member hubs;
 # MISO-Plains has no hub -> MINN+ILLINOIS hub-mean proxy (documented in
-# scripts/derive_miso_hub_lmp.py).
+# scripts/data/derive_miso_hub_lmp.py).
 _ZONAL_ACTUALS = (
     REPO_ROOT / "data/raw/_validation-source/actual_lmp_hourly_zonal_MISO.parquet"
 )

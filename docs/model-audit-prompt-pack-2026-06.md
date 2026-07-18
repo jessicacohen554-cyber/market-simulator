@@ -194,7 +194,7 @@ Close the citation gap: 436 of 814 registered parameters are flagged needs-citat
       (gas ≈0.0531, bituminous coal ≈0.0933 tCO2/MMBtu) instead of the current back-solved 0.057/
       0.100; document any intentional deviation. This is a regulatory-product red flag.
   (2) Replace the chart-eyeballed AEO gas trajectories (constants.py:528, "approximate
-      interpolations from charts") with API-pulled values via scripts/fetch_eia_aeo.py; upgrade to
+      interpolations from charts") with API-pulled values via scripts/data/fetch_eia_aeo.py; upgrade to
       AEO2026.
   (3) Verify the Tier-3 needs-citation block for non-ERCOT/CAISO RENEWABLE_AVG_CF,
       RENEWABLE_INSTALLED_MW, demand growth, and gas availability (constants.py:478-492, 1795-1825)

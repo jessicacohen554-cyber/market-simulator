@@ -18,7 +18,7 @@ gas-elastic, so they now price on an **affine-in-gas effective HR**,
 OLS-fit to documented Into-Southern/SERC hub price levels — a measured neighbor
 price-formation series, **blind to PJM's interchange** (rule #11), all years
 (no organized LMP to anchor a per-year HR to, so the fuel-stack affine form *is*
-the anchor; `scripts/derive_southeast_inelastic_hr.py --check`). It holds the
+the anchor; `scripts/data/derive_southeast_inelastic_hr.py --check`). It holds the
 Southeast at ~$33.9 in 2025 (~$9 below PJM), so the net-import direction holds
 across the gas cycle. This run also **merges the pjm-50 seam patch** (firm
 scheduled-export floor + TVA/LGEE seams + losses-only hurdle), previously

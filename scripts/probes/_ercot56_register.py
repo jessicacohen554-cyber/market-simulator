@@ -97,7 +97,7 @@ back — a smear artifact). C3c-2024 therefore STAYS LEDGERED as the filed
 G-22 offer-formation residual (rules 1/13; no retune; ORDC frozen, rule 26).
 
 **Fix landed as measured data (rules 14/15).**
-`scripts/derive_ercot_nuclear_availability.py` →
+`scripts/data/derive_ercot_nuclear_availability.py` →
 `data/raw/ercot-nuclear-availability.csv`: per-reactor DAILY availability
 from the 60-Day DAM disclosure NUC Resource Status (2023-2025 delivery
 dates), monthly energy reconciled to the standing EIA-923 anchor — event
@@ -180,7 +180,7 @@ def write_attestations() -> None:
         "month by up to ±1.4 GW) to the measured per-reactor DAILY series "
         "from the 60-Day DAM disclosure NUC Resource Status "
         "(data/raw/ercot-nuclear-availability.csv, "
-        "scripts/derive_ercot_nuclear_availability.py), monthly energy "
+        "scripts/data/derive_ercot_nuclear_availability.py), monthly energy "
         "reconciled to the SAME EIA-923 anchor (event days raw<0.90 kept as "
         "measured, cross-validated vs the EIA-930 nuclear hourly; the >=0.90 "
         "pool anchored per month, on-anchor to <0.01% except two winter "

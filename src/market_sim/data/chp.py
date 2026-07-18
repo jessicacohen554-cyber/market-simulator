@@ -132,7 +132,7 @@ def measured_btm_share_by_plant(iso: str) -> dict[int, float]:
     """Return ``{plant_code: measured BTM host-share}`` from the ``chp-btm-share`` artifact.
 
     The per-plant measured replacement for the sector-keyed
-    :func:`chp_btm_pct` default (:mod:`scripts.curate_chp_btm_share`): the
+    :func:`chp_btm_pct` default (:mod:`scripts.data.curate_chp_btm_share`): the
     fraction of the plant's EIA-923 net class generation that never reaches
     CAMPD's CEMS-metered grid-net total, pooled across every available
     non-quarantined year. Both sides are measured and independent of the
@@ -166,7 +166,7 @@ def chp_overrides(iso: str) -> dict[int, tuple[float | None, str | None, float |
 
     The per-ISO CHP steam-following data from
     ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (written by
-    ``scripts/derive_thermal_tranches.py``): the plant's total must-run floor
+    ``scripts/data/derive_thermal_tranches.py``): the plant's total must-run floor
     (CAMPD p2 available-CF where CEMS covers the plant, EIA-923 class CF
     otherwise — see the row's ``status``), its EIA-923 sector class
     (merchant / industrial / commercial) sizing the behind-the-meter share,

@@ -54,7 +54,7 @@ def _derived_coal_supply() -> dict[int, str]:
     """Return ``{plant_code: supply_class}`` from derived per-ISO CSVs.
 
     Loads every ``data/raw/_processed-legacy/coal_supply_<ISO>.csv`` written by
-    ``scripts/derive_coal_supply.py`` (EIA-923 fuel-receipt coal ranks:
+    ``scripts/data/derive_coal_supply.py`` (EIA-923 fuel-receipt coal ranks:
     ``bituminous`` / ``subbituminous`` / ``waste`` / ``lignite``). EIA plant
     codes are national so the per-ISO files never collide. This generalises the
     ERCOT-only :data:`COAL_PLANT_SUPPLY` to any ISO whose coal ranks have been
@@ -142,7 +142,7 @@ def _derived_coal_takeorpay() -> dict[int, float]:
     """Return ``{plant_code: contract_share}`` from derived per-ISO CSVs.
 
     Loads every ``data/raw/_processed-legacy/coal_takeorpay_<ISO>.csv`` written
-    by ``scripts/derive_coal_takeorpay.py`` (EIA-923 Schedule-5 Purchase Type:
+    by ``scripts/data/derive_coal_takeorpay.py`` (EIA-923 Schedule-5 Purchase Type:
     the contracted / take-or-pay share of each coal plant's delivered tonnage).
     EIA plant codes are national so the per-ISO files never collide.
     """
@@ -330,7 +330,7 @@ def coal_sync_online_frac(iso: str) -> dict[int, float]:
 
     The CAMPD-derived plant-level synchronization fraction from
     ``data/raw/_processed-legacy/thermal_tranches_<ISO>.csv`` (``online_frac``,
-    written by ``scripts/derive_thermal_tranches.py`` for COAL): the measured
+    written by ``scripts/data/derive_thermal_tranches.py`` for COAL): the measured
     share of the year the plant has any unit synchronized. Empty when the ISO
     has no artifact or it predates the column. Consumed by :func:`bins_to_fleet`
     under ``config.coal_sync_srmc_tranche`` to scale the step-3a min-load

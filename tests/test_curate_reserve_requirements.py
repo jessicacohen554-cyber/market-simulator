@@ -17,7 +17,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_reserve_requirements as curate_rr
+from scripts.data import curate_reserve_requirements as curate_rr
 from scripts.lib import clean_io
 from scripts.lib import reserve_requirements as rr
 from scripts.lib.clean_io import validate_clean

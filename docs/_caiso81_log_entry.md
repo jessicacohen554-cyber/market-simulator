@@ -8,7 +8,7 @@ the caiso-80 payload's GROWN CT deficit — model 0.71/0.56/0.27 vs actual
 checkable at the ESTIMATION stage, before any solve — the NYISO ST_GAS
 netload-drag precedent (2026-07-09, rejected on its own honesty gates from
 the derive script). It fails decisively
-(`scripts/derive_caiso_local_commitment.py`, committed + reproducible;
+(`scripts/data/derive_caiso_local_commitment.py`, committed + reproducible;
 `results/calibration/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md`):
 
 - **Panel:** per-(pocket, day) measured committed MW (CAMPD CT_PEAKER via the

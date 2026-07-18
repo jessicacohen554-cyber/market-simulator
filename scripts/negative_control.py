@@ -72,7 +72,7 @@ REPO = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "src"))
 
-import scripts.derive_offer_curve_jacobian as docj  # noqa: E402
+import scripts.data.derive_offer_curve_jacobian as docj  # noqa: E402
 import scripts.knob_jacobian as kj  # noqa: E402
 from scripts.calibration_verdict import COAL_CLASSES, GAS_CLASSES  # noqa: E402
 

@@ -19,7 +19,7 @@ applied as a multiplier on the CF upper bound. Two pieces, derived separately:
 * ``congestion_share`` — the **SHAPE**: the measured fraction of SCED executions
   with the West Texas Export corridor congested, binned by within-year net-load
   percentile decile x hour-of-day x season. Read from the derived reference table
-  (scripts/derive_ercot_wtx_curtailment_share.py -> data/raw/reference/
+  (scripts/data/derive_ercot_wtx_curtailment_share.py -> data/raw/reference/
   ercot_wtx_curtailment_share.csv), itself built ONLY from measured NP6-86 SCED
   congestion incidence (data/clean/ercot-wtx-congestion) geo-attributed via the
   ERCOT SP/bus mapping — never the reported curtailment volume or a price
@@ -106,7 +106,7 @@ def load_share_table(reference_dir) -> pd.DataFrame | None:
     if not path.is_file():
         logger.info(
             "ercot-wtx-curtailment: no share table at %s "
-            "(run scripts/derive_ercot_wtx_curtailment_share.py) — driver inert",
+            "(run scripts/data/derive_ercot_wtx_curtailment_share.py) — driver inert",
             path,
         )
         return None

@@ -11,7 +11,7 @@
 # docs/handoffs/nyiso-data-asks-2026-07.md); it is a rule-13-admissible
 # published market input, never an outcome.
 #
-# Curated by scripts/curate_nyiso_reserve_requirements.py from
+# Curated by scripts/data/curate_nyiso_reserve_requirements.py from
 #   data/raw/NYISO-AS/requirements/nyiso_locational_reserve_requirements.csv
 datatype: nyiso-reserve-requirements
 schema_version: 1

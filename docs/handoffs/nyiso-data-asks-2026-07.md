@@ -35,7 +35,7 @@ is a market *outcome* to be pinned (rule 13's forbidden half); the measured rese
 > publish monthly in their *Statement of Non-Firm Demand Response Sales and
 > Transportation Rates* (`statnfdr` PDFs). Intaken as
 > `data/raw/gas-prices/nyiso_downstate_ldc_transport_monthly.csv`
-> (`scripts/fetch_nyiso_downstate_ldc_transport.py`) and wired per-zone through
+> (`scripts/data/fetch_nyiso_downstate_ldc_transport.py`) and wired per-zone through
 > the `nyiso-downstate-gas` datatype v2 (KEDNY SC-22 → NYC, KEDLI SC-19 → Long
 > Island). This is the *correct rate class* the ask below was reaching for, and
 > supersedes the statewide-N3050NY3 stand-in. It resolves the G-13 offer-grounding
@@ -59,7 +59,7 @@ delivered index.
 
 **What we already have (the stand-in to be superseded).**
 `data/raw/gas-prices/nyiso_downstate_ct_gas_basis_monthly.csv`
-(`scripts/fetch_nyiso_downstate_gas_basis.py`): EIA N3050NY3 **statewide-NY** monthly
+(`scripts/data/fetch_nyiso_downstate_gas_basis.py`): EIA N3050NY3 **statewide-NY** monthly
 citygate minus Transco Z6 NY, floored at 0. It is measured and admissible but
 (a) statewide — one number blends upstate LDCs with the Con Ed / National Grid
 downstate systems the peakers actually sit on; (b) monthly — misses the cold-snap
@@ -100,7 +100,7 @@ fetch-script docstring.
 >   are intaken 2018-01–2026-06 (owner-authorized expanded window, see
 >   `docs/out-of-sample-results-2026-07.md` §1.2) as
 >   `data/raw/NYISO-AS/requirements/{realtime-events,oper-messages}/`
->   (`scripts/fetch_nyiso_operating_events.py`) and parsed into the
+>   (`scripts/data/fetch_nyiso_operating_events.py`) and parsed into the
 >   `nyiso-operating-events` clean datatype: 444 Thunderstorm-Alert
 >   transitions, 1,100 reserve pick-ups, 4,170 out-of-merit reliability
 >   commitments (incl. explicit "FOR TSA" commits), 28 emergency
@@ -130,7 +130,7 @@ fetch-script docstring.
 > forecast-uncertainty adders) waiting on the B1 request.
 >
 > **ADDENDUM 2026-07-10 (same session): the B2+B3 reconstruction is BUILT and
-> committed.** `scripts/derive_nyiso_reserve_requirements_hourly.py` derives
+> committed.** `scripts/data/derive_nyiso_reserve_requirements_hourly.py` derives
 > `data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_{2023,2024,2025}.csv`
 > — the exact loader contract of `data/nyiso_reserve_requirements.py`
 > (`nyiso_dynamic_reserve_requirements`) — as published LRR base (SENY hourly
@@ -229,7 +229,7 @@ to Ask A (the Z2-served CTs price off Z2, not Transco).
 > "ExternalLimitsFlows" (5-minute per-interface flow + positive/negative
 > limits, internal interfaces AND all external ties) intaken 2018-01–2026-06,
 > hourly-aggregated (documented reconciliation) →
-> `data/raw/NYISO/interface-flows/` (`scripts/fetch_nyiso_interface_flows.py`)
+> `data/raw/NYISO/interface-flows/` (`scripts/data/fetch_nyiso_interface_flows.py`)
 > and the `nyiso-interface-flows` clean datatype (~157.7k rows/year, 18
 > interfaces; 19 from 2026 when CHPE appears). Covers Central-East, Total
 > East, UPNY CONED, Moses South, Dysinger East, West Central, SPR/DUN-SOUTH

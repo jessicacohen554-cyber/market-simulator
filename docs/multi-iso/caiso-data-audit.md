@@ -10,7 +10,7 @@ items mapped to the doc-06 upload manifest (U1–U7).
 
 ## 1. Calibration reference — extended for CAISO 2023–2025
 
-`scripts/build_calibration_reference.py` now derives CAISO alongside
+`scripts/data/build_calibration_reference.py` now derives CAISO alongside
 ERCOT/PJM. CAISO uses a per-ISO year override (`CALIBRATION_YEARS_BY_ISO`,
 2023–2025 only — the doc-06 target years); ERCOT/PJM keep 2021–2025.
 
@@ -301,9 +301,9 @@ measured unit-outage availability rather than statistical-only.
 | # | Item | Destination | Status |
 |---|---|---|---|
 | U1 | CAMPD unit-level `CA_2023.parquet` | `data/raw/campd-unit-level/` | **missing** — the only blocker for 2023 measured outages; facility-level CA_2023 exists as fallback |
-| U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `data/raw/lmp-data/CAISO/` | **done (as available)** — see §4a. DA 2024+2025 and RT 2024+2025 are full years × 3 hubs; the `actual_lmp.json` CAISO block + `actual_lmp_hourly_CAISO.parquet` and the zonal-sufficiency test are built. **Gaps:** DA 2023 is a ~3-trade-date stub (OASIS ~39-month retention aged it out before the mid-2026 pull) and RT 2023 was never fetched, so there is no usable 2023 price year. OASIS gotcha (2026-06-11): multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) and `scripts/postprocess_oasis_downloads.py` folds the raw windows into the committed hourly aggregates |
+| U2 | DA+RT hourly LMPs TH_NP15/TH_SP15/TH_ZP26, 2023–2025 | `data/raw/lmp-data/CAISO/` | **done (as available)** — see §4a. DA 2024+2025 and RT 2024+2025 are full years × 3 hubs; the `actual_lmp.json` CAISO block + `actual_lmp_hourly_CAISO.parquet` and the zonal-sufficiency test are built. **Gaps:** DA 2023 is a ~3-trade-date stub (OASIS ~39-month retention aged it out before the mid-2026 pull) and RT 2023 was never fetched, so there is no usable 2023 price year. OASIS gotcha (2026-06-11): multi-node `PRC_LMP` queries are silently truncated to the last ~2 trade dates (and a 31-day multi-node window errors), so pulls must be single-node; `scripts/data/fetch_caiso_oasis.py` automates the full download (resumable, adaptive windows, run from an unrestricted machine) and `scripts/data/postprocess_oasis_downloads.py` folds the raw windows into the committed hourly aggregates |
 | U3 | Wind & solar production-and-curtailment, 2023–2025 | `data/raw/caiso-curtailment/` | **done (as available)** — official 5-min Production+Curtailments workbooks; 2023 (2.66 TWh curtailed) and 2024 (3.42 TWh, matches EIA's published 3.4) are full years; the 2025 workbook is internally inconsistent as published: its Production sheet is the full year (105,120 five-min intervals through Dec 31 — usable for P6/P9 benchmarks), but its Curtailments sheet physically ends 2025-05-31 (verified at the raw sheet-dimension level; re-download byte-identical 2026-06-11). Jun–Dec 2025 curtailment would have to come from the daily curtailment PDFs if ever needed |
-| U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `data/raw/zone-specific-demand/CAISO/` | **partial, wired** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending. Already consumed: static `load_share` is now measured from this sample (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385 via `scripts/derive_load_shares.py caiso`; PGE-TAC split 0.86/0.14 onto NP15/ZP26, SCE+SDGE+VEA→SP15) and `eia_loader.caiso_zonal_load_shares` serves measured hourly zonal shapes for covered hours (sample-average shares elsewhere). Refresh = drop the remaining monthly pulls into `CAISO_tac_load_hourly_<year>.csv`; shapes upgrade automatically |
+| U4 | TAC-area actual hourly load (PGE/SCE/SDGE) | `data/raw/zone-specific-demand/CAISO/` | **partial, wired** — 2023-01 landed (OASIS `SLD_FCST` ACTUAL, verified: 24 h/day for PGE-TAC/SCE-TAC/SDGE-TAC + CA ISO-TAC); remaining months 2023-02 … 2025-12 pending. Already consumed: static `load_share` is now measured from this sample (NP15 0.3969 / ZP26 0.0646 / SP15 0.5385 via `scripts/data/derive_load_shares.py caiso`; PGE-TAC split 0.86/0.14 onto NP15/ZP26, SCE+SDGE+VEA→SP15) and `eia_loader.caiso_zonal_load_shares` serves measured hourly zonal shapes for covered hours (sample-average shares elsewhere). Refresh = drop the remaining monthly pulls into `CAISO_tac_load_hourly_<year>.csv`; shapes upgrade automatically |
 | U5 | Path 15/26 hourly flows + limits (optional) | `data/raw/iso-specific-transmission/CAISO/` | **missing** — TTCs stay on WECC-catalog Tier-3 seeds |
 | U6 | CARB cap-and-trade auction prices 2023–2025 (optional) | cite into `constants.py` | **not yet in repo** — public auction results are web-searchable from this environment, so P7 can self-serve; no upload strictly required |
 | U7 | CA BTM PV + storage trajectory (optional, forecast P13) | `data/raw/caiso-btm/` | **missing** — backcast unaffected (net-load convention) |
@@ -328,7 +328,7 @@ Additional gap found (not in the original manifest):
 
 ### 4a. LMP benchmark + zonal-sufficiency (U2 / P10, 2026-06-11)
 
-**Aggregates.** `scripts/postprocess_oasis_downloads.py` folds the OASIS raw
+**Aggregates.** `scripts/data/postprocess_oasis_downloads.py` folds the OASIS raw
 window CSVs into the committed hourly aggregates and is idempotent/rerun-safe
 (one command re-ingests any future drop; overlapping fetch windows dedupe on
 the `(timestamp, node|tac_area)` key). Current coverage:
@@ -344,7 +344,7 @@ aggregates are the repo's record. The 2023 DAM/RTM gap is OASIS retention
 (~39 months — by mid-2026 only late-Feb-2023 survives) and an unfetched RT
 2023; not recoverable from OASIS now.
 
-**Calibration reference.** `scripts/derive_actual_lmp.py` grew a CAISO
+**Calibration reference.** `scripts/data/derive_actual_lmp.py` grew a CAISO
 builder alongside ERCOT/PJM (ERCOT/PJM outputs regenerate byte-identically —
 regression-checked). CAISO has no single system hub, so the
 comparable-to-the-model system price is the three trading hubs **load-weighted
@@ -361,7 +361,7 @@ paired DST hours one real hour off). Written:
   absent.
 - `data/raw/_validation-source/actual_lmp_hourly_CAISO.parquet` — the dense
   fixed-8760 system DA/RT series (2 years) for the duration-curve overlay
-  (`scripts/analyze_lmp_residual.py`).
+  (`scripts/archive/analyze_lmp_residual.py`).
 
 **Zonal-sufficiency test (design decision 3).** Full write-up in
 `caiso-zonal-adequacy.md`; reproduce with

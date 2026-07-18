@@ -34,7 +34,7 @@
 # customers, and the LDC transport rate is their correct delivered-fuel boundary
 # (CLAUDE.md rule #12 — prefer accurate/measured data over an estimate; G-13).
 #
-# Curated by scripts/curate_nyiso_downstate_gas.py from
+# Curated by scripts/data/curate_nyiso_downstate_gas.py from
 #   data/raw/gas-prices/transco_z6_ny_daily.csv                     (daily pipeline hub)
 #   data/raw/gas-prices/henry_hub_daily.csv                         (daily HH, provenance)
 #   data/raw/gas-prices/nyiso_downstate_ldc_transport_monthly.csv   (monthly per-LDC transport rate)

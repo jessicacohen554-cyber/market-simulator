@@ -1,7 +1,7 @@
 """CAISO parser for the ``dam-public-bids`` datatype.
 
 Parses one OASIS ``PUB_DAM_GRP`` daily zip (CSV result format, fetched by
-``scripts/fetch_caiso_public_bids.py``) into the canonical tidy frame.
+``scripts/data/fetch_caiso_public_bids.py``) into the canonical tidy frame.
 
 Raw row shapes (see the schema header): curve rows carry the operating hour
 in ``SCH_BID_TIMEINTERVALSTART_GMT`` and one (MW, price) breakpoint; self-

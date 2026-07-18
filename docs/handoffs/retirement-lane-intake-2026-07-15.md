@@ -198,14 +198,14 @@ already-committed EIA-860 vintage snapshots (`vintage_2021` for Indian Point
 3, `vintage_2022` for Palisades) — the same EIA-860 survey data, read at the
 vintage where each plant was still in that release's retired sheet, not a new
 external source. New file: `data/raw/_validation-source/retired_sheet_coverage_gaps.csv`,
-unioned into `scripts/build_capacity_actuals.py::build_retirements` (before
+unioned into `scripts/data/build_capacity_actuals.py::build_retirements` (before
 the BA + WINDOW filters, deduplicated against the main sheet's own rows).
 Note this file lives under `_validation-source/`, not `eia-860/`, because
 `data/raw/eia-860/*.csv` is `.gitignore`d as a local-override convention (see
 the file's own header for the full explanation).
 
 `capacity_actuals_nyiso.csv` and `capacity_actuals_miso.csv` were regenerated
-via `scripts/build_capacity_actuals.py --iso {NYISO,MISO}`; each now carries
+via `scripts/data/build_capacity_actuals.py --iso {NYISO,MISO}`; each now carries
 exactly one new retirement row (`8907_3`/nuclear/1012.0/2021 and
 `1715_1`/nuclear/811.8/2022 respectively). `capacity_actuals_{ercot,pjm}.csv`
 were regenerated too as a verification step and confirmed **byte-identical**

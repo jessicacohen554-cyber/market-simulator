@@ -1,13 +1,13 @@
 # Canonical schema: ERCOT gas take-or-pay (contract vs spot share)
 #
 # Per-plant EIA-923 Schedule-5 natural-gas purchase-type breakdown for ERCOT
-# plants, derived by scripts/derive_gas_takeorpay.py.  spot_share is the
+# plants, derived by scripts/data/derive_gas_takeorpay.py.  spot_share is the
 # fraction of annual gas volume purchased at spot prices (avoidable Waha hub
 # exposure); the complement (1 - spot_share) is firm-contracted and insulated
 # from the hub collapse.  total_mmbtu is used as the MMBtu-weighting factor
 # when aggregating per-plant shares to model zones.
 #
-# Curated by scripts/curate_fuel_prices.py from
+# Curated by scripts/data/curate_fuel_prices.py from
 #   data/raw/_processed-legacy/gas_takeorpay_ERCOT.csv
 datatype: fuel-takeorpay
 schema_version: 1

@@ -11,7 +11,7 @@
 # fossil or not, zero-generation or not) so both consumers can read one
 # curated table and apply their own filtering downstream.
 #
-# Curated by scripts/curate_egrid.py.
+# Curated by scripts/data/curate_egrid.py.
 datatype: egrid
 schema_version: 1
 title: eGRID plant-level extract

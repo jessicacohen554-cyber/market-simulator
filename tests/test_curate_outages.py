@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_outages.py on a tiny synthetic raw fixture.
+"""Tests for scripts/data/curate_outages.py on a tiny synthetic raw fixture.
 
 Builds a minimal set of raw outage-window CSVs (one CAMPD unit window, one ERCOT
 curated unit window) plus a two-plant nameplate registry, runs ``curate``, and
@@ -14,7 +14,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_outages
+from scripts.data import curate_outages
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

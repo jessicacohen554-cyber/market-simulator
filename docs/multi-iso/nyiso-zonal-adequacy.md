@@ -9,7 +9,7 @@ actual day-ahead zonal LBMP spreads against Upstate_West (zone A's aggregate)
 answer it directly.
 
 Reproduce with `python scripts/nyiso_zonal_sufficiency.py --md` (reads the
-committed `NYISO/` LBMP zips via `scripts/derive_actual_lmp.py`).
+committed `NYISO/` LBMP zips via `scripts/data/derive_actual_lmp.py`).
 
 ## Zone-spread duration curves — day-ahead, $/MWh
 

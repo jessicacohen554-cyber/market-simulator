@@ -117,12 +117,12 @@ wall above — it only makes the gap legible.)
   resolution of the `[7b]` panel and `plant_cf_bands.parquet`. Default stays
   0.10; pass **0.05** for twenty 5 % bands. The `cf_emd` metric reads the width
   back from the parquet, so it stays comparable across band widths.
-* `scripts/plot_cf_histogram.py` — standalone, dependency-free (inline-SVG)
+* `scripts/archive/plot_cf_histogram.py` — standalone, dependency-free (inline-SVG)
   per-plant model-vs-CAMPD CF histogram at a configurable band width, the
   visual companion to the `[7b]` table. Example:
 
   ```
-  uv run python scripts/plot_cf_histogram.py \
+  uv run python scripts/archive/plot_cf_histogram.py \
       results/calibration/run118_reldeploy_spatial \
       --plants 60122,59812,55226,55153,56350 \
       --years 2023,2024,2025 --band-width 0.05 --out /tmp/cc_cf_hist.html
@@ -131,7 +131,7 @@ wall above — it only makes the gap legible.)
 ## Experimental sweep — the peak band IS the lever, but a blanket cut isn't a keeper
 
 Replaying the run115b keeper with the CC_REGULAR peak multiplier lowered from
-2.57× toward a physical duct-firing increment (`scripts/cc_peak_band_probe.py`,
+2.57× toward a physical duct-firing increment (`scripts/archive/cc_peak_band_probe.py`,
 which reproduces every other knob from the bundle's `run_config.json`) confirms
 the diagnosis and bounds the lever. Hours ≥90% CF, base (peak 2.57×) →
 **peak 2.0×** → CAMPD, all three years:
@@ -194,7 +194,7 @@ The sweep above showed Freestone never reaches 90% at any peak price because
 its model nameplate (1036 MW) is below its real CAMPD peak (1119 MW): an F-class
 CC's **cold-weather over-rating** that the standard nameplate omits. EIA-860
 winter capacity corroborates it (Freestone 1095, Hays 1048, Lamar 1149, Forney
-1966 MW — all above their bin nameplate). `scripts/derive_cc_capacity_reconcile.py`
+1966 MW — all above their bin nameplate). `scripts/data/derive_cc_capacity_reconcile.py`
 writes a **raise-only** reconciliation —
 `cap = max(nameplate, demonstrated CAMPD p99.9 peak)` — committed as
 `data/raw/_processed-legacy/cc_capacity_reconcile_ERCOT.csv` and applied in
@@ -371,7 +371,7 @@ further (rule #12). The NYISO CC offer-level lever is **DONE**. See
 > **Update (2026-06-25, `nyiso 28 native-hr` — rejected probe):** the `1.21×`
 > reach above is **borrowed from ERCOT's** CAMPD-CC fit, not NYISO's own. Run 28
 > derived NYISO's native CC/ST incremental-HR curve from NY+NJ CEMS (new tool
-> `scripts/derive_campd_marginal_hr.py`) and found NYISO's own CC reach is
+> `scripts/data/derive_campd_marginal_hr.py`) and found NYISO's own CC reach is
 > **0.925×** (CC_CHP 1.103×), well *below* 1.21 — so re-grounding to it craters
 > `C3a` to −24/−26.5/−23.5 %. The lesson sharpens rule #1: CEMS gives the marginal
 > **cost**, not the **offer**; the `1.21` reach was proxying the competitive

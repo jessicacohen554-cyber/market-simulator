@@ -8,7 +8,7 @@ B-GOV-1.
 ## 1. C-2 closure — confirmed
 
 `COAL_MAX_CF_BY_PLANT` lives in `constants.py:1089-1092` as a plant-only dict (298/6179/7097),
-derived by `scripts/derive_coal_max_cf.py` (pooled 99th-percentile daily-max CF from CAMPD
+derived by `scripts/data/derive_coal_max_cf.py` (pooled 99th-percentile daily-max CF from CAMPD
 hourly extracts, 2023-2025). The former `(6179, 2025)` per-year override is gone — `fleet.py:538`
 documents the deletion explicitly ("a single confirmed-unit-outage year has no forward
 analogue"). **Closed.**

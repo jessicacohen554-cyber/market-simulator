@@ -149,5 +149,5 @@ These are CAMPD-to-EIA mapping issues, not model capacity errors. The model corr
 
 ## Script
 
-Audit script: `scripts/audit_capacity_vs_campd.py`  
-Usage: `python scripts/audit_capacity_vs_campd.py --year 2023 [--iso CAISO]`
+Audit script: `scripts/archive/audit_capacity_vs_campd.py`  
+Usage: `python scripts/archive/audit_capacity_vs_campd.py --year 2023 [--iso CAISO]`

@@ -152,7 +152,7 @@ def rubric() -> list[dict]:
             "premium a realized-weather backcast cannot price (ERCOT 2023: DA "
             "311 vs RT 181 h) — is reported as a non-gated diagnostic row.",
             "Committed tail part frontend/data/backcast/tail/actual_tail.json "
-            "(scripts/derive_actual_tail.py, from the measured hub RT/DA hourly "
+            "(scripts/data/derive_actual_tail.py, from the measured hub RT/DA hourly "
             "series; 2023–2025 only). Thresholds: " + _tail_note() + ".",
             f"model within [{cv.TAIL_LO:g}×, {cv.TAIL_HI:g}×] of the RT actual — a "
             "collapsed tail and an invented tail both FAIL; an RT actual below "

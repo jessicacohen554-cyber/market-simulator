@@ -23,7 +23,7 @@
 # and citation. ATB's cost-recovery-period (`crpyears`) axis is DROPPED: the
 # source file's own values are verified byte-identical across every crpyears
 # option for a fixed (technology, techdetail, parameter, case, year) — see
-# scripts/fetch_nrel_atb.py's dedup step — so carrying it would triple row
+# scripts/data/fetch_nrel_atb.py's dedup step — so carrying it would triple row
 # count for zero information.
 datatype: nrel-atb
 schema_version: 1

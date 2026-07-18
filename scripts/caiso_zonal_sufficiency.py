@@ -8,7 +8,7 @@ if they part by tens of $/MWh for a meaningful share of hours, the zonal
 topology is carrying real information and a single-zone model would miss it.
 
 This reads the committed DAM hourly aggregates
-(``scripts/postprocess_oasis_downloads.py`` -> ``CAISO_dam_hourly_{year}.csv``)
+(``scripts/data/postprocess_oasis_downloads.py`` -> ``CAISO_dam_hourly_{year}.csv``)
 and, per year, builds the duration curve of each pairwise hub spread
 (TH_NP15 - TH_SP15, TH_NP15 - TH_ZP26, and TH_SP15 - TH_ZP26 for reference).
 For each it reports the signed mean (which hub is dear), the |spread|

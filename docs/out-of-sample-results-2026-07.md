@@ -79,17 +79,17 @@ Per-ISO / per-datatype / per-year — landed vs unpublished (retrieval date
 
 | Datatype | Year | ERCOT | PJM | Provenance |
 |---|---|---|---|---|
-| EIA-930 fuel-mix + demand (tidy long) | 2022 | ✅ 61,320 fuel + 35,040 region rows | ✅ 70,065 fuel + 34,994 region rows | `api.eia.gov/v2/electricity/rto/{fuel-type,region}-data` via `scripts/fetch_eia930_long.py` → `data/raw/eia-930/{BA}_{fueltype,region}_2022.parquet` |
+| EIA-930 fuel-mix + demand (tidy long) | 2022 | ✅ 61,320 fuel + 35,040 region rows | ✅ 70,065 fuel + 34,994 region rows | `api.eia.gov/v2/electricity/rto/{fuel-type,region}-data` via `scripts/data/fetch_eia930_long.py` → `data/raw/eia-930/{BA}_{fueltype,region}_2022.parquet` |
 | | H1-2026 | ✅ 34,800 + 17,400 rows (Jan 1–Jun 30) | ✅ 34,792 + 17,351 rows | same, `…_2026.parquet`; pull closed on the local Jun-30 boundary |
-| EIA-930 wide extracts (loader/bench path) | 2022 | ✅ already present (2015–2026 file) | ✅ 8,760 h rebuilt in | `scripts/build_eia930_hourly_from_raw.py` (PJM rebuilt from long union; ERCO extended **append-only**, all 95,376 pre-existing rows byte-identical) |
+| EIA-930 wide extracts (loader/bench path) | 2022 | ✅ already present (2015–2026 file) | ✅ 8,760 h rebuilt in | `scripts/data/build_eia930_hourly_from_raw.py` (PJM rebuilt from long union; ERCO extended **append-only**, all 95,376 pre-existing rows byte-identical) |
 | | H1-2026 | ✅ 4,343 h through Jun 30 hr 24 | ✅ 4,343 h | same |
-| EIA-930 BALANCE six-month bulk | 2022 | ✅ 273,621 + 275,330 rows (63 BAs, both halves) | (all-BA files) | `www.eia.gov/electricity/gridmonitor/sixMonthFiles/` via `scripts/fetch_eia930_balance.py`; 2022 in EIA's legacy 44-col taxonomy, 2026 in the 65-col taxonomy — matching how EIA serves each archived half-year |
+| EIA-930 BALANCE six-month bulk | 2022 | ✅ 273,621 + 275,330 rows (63 BAs, both halves) | (all-BA files) | `www.eia.gov/electricity/gridmonitor/sixMonthFiles/` via `scripts/data/fetch_eia930_balance.py`; 2022 in EIA's legacy 44-col taxonomy, 2026 in the 65-col taxonomy — matching how EIA serves each archived half-year |
 | | H1-2026 | ✅ 260,590 rows (62 BAs, Jan_Jun) | (same file) | same |
-| CAMPD unit-level hourly | 2022 | ✅ TX: 3,502,152 rows (130 fac / 408 units) | ✅ 14 states: 12,081,216 rows | `api.epa.gov/easey/bulk-files/emissions/hourly/state/…` via `scripts/fetch_campd_unit_level.py`; arrow schema verified == sibling per file |
+| CAMPD unit-level hourly | 2022 | ✅ TX: 3,502,152 rows (130 fac / 408 units) | ✅ 14 states: 12,081,216 rows | `api.epa.gov/easey/bulk-files/emissions/hourly/state/…` via `scripts/data/fetch_campd_unit_level.py`; arrow schema verified == sibling per file |
 | | 2026 | ⚠️ **Q1 only** — TX: 913,680 rows (Jan 1–Mar 31) | ⚠️ **Q1 only** — 2,680,560 rows | `…/emissions/hourly/quarter/emissions-hourly-2026-q1.csv` (posted 2026-07-03); **Q2-2026 not yet published by EPA** |
-| Unit-outage overlay (derived) | 2022 | ✅ 569 windows | ✅ 1,103 windows | `scripts/derive_campd_unit_outages.py --years 2022 2023 2024 2025 2026`; see re-derivation note below |
+| Unit-outage overlay (derived) | 2022 | ✅ 569 windows | ✅ 1,103 windows | `scripts/data/derive_campd_unit_outages.py --years 2022 2023 2024 2025 2026`; see re-derivation note below |
 | | 2026 | ⚠️ 220 windows, clipped at 2026-03-31 | ⚠️ 261 windows, clipped | publication-horizon clipping added to the derive script (see note) |
-| Delivered gas (EIA N3045 monthly) | 2022 | ✅ 12 months (`N3045TX3`) | ✅ 8 zones (annual basis) | `scripts/fetch_eia_delivered_gas.py`; `--validate` reproduces every committed 2023–2025 PJM zonal value to ±0.001 |
+| Delivered gas (EIA N3045 monthly) | 2022 | ✅ 12 months (`N3045TX3`) | ✅ 8 zones (annual basis) | `scripts/data/fetch_eia_delivered_gas.py`; `--validate` reproduces every committed 2023–2025 PJM zonal value to ±0.001 |
 | | 2026 | ⚠️ Jan–Apr only (EIA ~3-month lag) | ⚠️ Jan–Apr, rows flagged `PARTIAL YEAR … winter-weighted` (WV: 1 month, proxied to OH+PA per the committed WV-2025 convention) | May-2026+ unpublished; re-extend when EIA posts them |
 | Citygate basis (pre-existing) | 2022 / 2026 | ✅ 12 mo / ⚠️ Jan–Feb | ✅ 12 mo / ⚠️ Jan + Mar | `gas_basis_by_iso_month.csv` already extended by the fetch workflow; 2026 gaps are EIA-withheld months |
 
@@ -174,7 +174,7 @@ fails identically on a clean pre-intake tree — pre-existing, unrelated.)
   (`load_demand` asserts 8760); a partial year is unbuildable by design. Build
   at one-shot validation time once the H1-2026 scoring window handling is
   decided. No builder script exists in-repo (hand-uploaded artifact).
-- **F4 — scoring-path year registration.** `scripts/build_calibration_reference.py`
+- **F4 — scoring-path year registration.** `scripts/data/build_calibration_reference.py`
   `CALIBRATION_YEARS` has no 2026 and `HENRY_HUB_ACTUAL` lacks 2026 (KeyError
   if asked); extend at validation time, not before.
 - **F5 — per-plant monthly coal pricing and fossil CO2 rates for 2022/2026:
@@ -182,7 +182,7 @@ fails identically on a clean pre-intake tree — pre-existing, unrelated.)
   validate-first rebuild and 2023–2025 rows asserted frozen (holdout-year
   data must not shift the in-sample overlays):
   - `eia923_monthly_fuel_costs.parquet` + `eia923_monthly_generation.parquet`
-    (`scripts/process_f923_fuel_costs.py`): the 2023-only rebuild from
+    (`scripts/data/process_f923_fuel_costs.py`): the 2023-only rebuild from
     `f923_2023.zip` reproduced every committed 2023 row **exactly** (8,203
     cost rows; deep-compare on the generation table too). Added **2022**
     (8,472 cost / 16,453 generation rows, 1,869 coal plant-months; F923 2022
@@ -263,9 +263,9 @@ Per-datatype / per-window (retrieval date 2026-07-10; H2-2026 does not exist):
 
 | Datatype | Window | Coverage | Provenance |
 |---|---|---|---|
-| `nyiso-operating-events` raw logs (P-25 OperMessages, P-35 RealTimeEvents) | 2018–H1-2026 | ✅ complete (20,419 OM + 9,747 RTE source rows → 9,960 typed events) | `mis.nyiso.com/public/csv/{OperMessages,RealTimeEvents}/` monthly zips via `scripts/fetch_nyiso_operating_events.py` → `data/raw/NYISO-AS/requirements/{oper-messages,realtime-events}/` |
+| `nyiso-operating-events` raw logs (P-25 OperMessages, P-35 RealTimeEvents) | 2018–H1-2026 | ✅ complete (20,419 OM + 9,747 RTE source rows → 9,960 typed events) | `mis.nyiso.com/public/csv/{OperMessages,RealTimeEvents}/` monthly zips via `scripts/data/fetch_nyiso_operating_events.py` → `data/raw/NYISO-AS/requirements/{oper-messages,realtime-events}/` |
 | `nyiso-reserve-requirements` (published LRR schedule, dated versions) | v2020 / v2021 / v2026 regimes | ✅ 3 dated document versions (Wayback-bounded) | nyiso.com Locational Reserve Requirements PDF + Wayback snapshots 2020-10-29 / 2021-12-04 → `data/raw/NYISO-AS/requirements/` |
-| `nyiso-interface-flows` (P-32 ExternalLimitsFlows, hourly-aggregated) | 2018–H1-2026 | ✅ complete, 18 interfaces (19 in 2026 — CHPE) | `mis.nyiso.com/public/csv/ExternalLimitsFlows/` monthly zips via `scripts/fetch_nyiso_interface_flows.py` → `data/raw/NYISO/interface-flows/` |
+| `nyiso-interface-flows` (P-32 ExternalLimitsFlows, hourly-aggregated) | 2018–H1-2026 | ✅ complete, 18 interfaces (19 in 2026 — CHPE) | `mis.nyiso.com/public/csv/ExternalLimitsFlows/` monthly zips via `scripts/data/fetch_nyiso_interface_flows.py` → `data/raw/NYISO/interface-flows/` |
 | `nyiso-som-hub-fuel-annual` (SOM Figure A-6 annual per-hub fuel prices incl. Iroquois Z2) | 2018–2025 | ✅ annual grain (monthly exists only as vector charts) | NYISO SOM reports 2020/2022/2023/2024/2025 (2020 SOM fetched this session) → `data/raw/gas-prices/nyiso_som_hub_fuel_annual.csv` |
 
 **Quarantine discipline notes.** (a) H1-2026 rows end 2026-06-30 by
@@ -320,7 +320,7 @@ drift above; and the NEISO §1.2 landing residuals observed at this branch's
 base (no NEISO 2022 in `actual_lmp*`/tail, no
 `NEISO_2022_renewable_capacity.csv`, `docs/gap-register-2026-07.md` still a
 placeholder stub) — being closed in parallel by the NEISO readiness session
-of the same date (`scripts/land_neiso_2022_readiness.py` + its own
+of the same date (`scripts/archive/land_neiso_2022_readiness.py` + its own
 intake_log entry).
 
 **G-19 status:** the register file now exists
@@ -344,9 +344,9 @@ resolvability / row counts / schema-match vs sibling years).
 Two things landed: (a) closed the NEISO landing residuals the 2026-07-12
 readiness session left open (§1.3 above: `actual_lmp*`/`actual_tail` had no
 NEISO 2022, `NEISO_2022_renewable_capacity.csv` was absent, this doc and the
-gap register carried placeholder notes) via `scripts/land_neiso_2022_readiness.py`;
+gap register carried placeholder notes) via `scripts/archive/land_neiso_2022_readiness.py`;
 (b) extended readiness from 2022-only back to 2018-2022 via the new
-`scripts/land_neiso_holdout_multiyear.py`, landing per-year zone temp,
+`scripts/archive/land_neiso_holdout_multiyear.py`, landing per-year zone temp,
 load-weighted temp, unit-outage windows (append-only, detector-vintage
 caveat unchanged), and — where source data permits — `calibration_reference.json`
 (2021 newly added; `CALIBRATION_YEARS_BY_ISO`/`HENRY_HUB_ACTUAL` extended in
@@ -382,7 +382,7 @@ CAISO/MISO (zero intake) remain open.
 coefficients move vs the all-years fit the keeper ships, and (b) how well the
 training fit predicts the held-out calibration year. This exercises the audit's
 "regression floors absorbing residual" concern using **only 2023–2025** data —
-no holdout year. Harness: `scripts/d8_coefficient_stability.py`
+no holdout year. Harness: `scripts/archive/d8_coefficient_stability.py`
 (bundle: `results/calibration/d8-coefficient-stability/`); it imports and reuses
 each mechanism's **own frozen derive/probe fit code**, so the numbers are on the
 identical estimand the keeper uses. Validation of faithfulness: the ERCOT

@@ -32,7 +32,7 @@ an exogenous channel, consent-decree-bound units like Rockport run to 2050.
 |---|---|---|
 | Date-based retirement step | `capacity.apply_known_retirements` (`capacity.py:201-235`), step 1 of `evolve_fleet` (`capacity.py:1674-1681`) | Drops any unit with `retirement_year <= year` — **except** fossil (`_FOSSIL_FUELS`, `capacity.py:196-198`) when `forecast_fossil_retirement_economic=True` (default, `scenarios.py:168`). For the entire fossil fleet, step 1 is a default no-op (RC-3). |
 | First simulated year | `fleet.build_base_fleet` (`fleet.py:6623-6690`) | Applies **no** retirement dates at all — even a non-fossil unit whose announced date ≤ START_YEAR stays in the first year's fleet; dates only bite from year 2 via `evolve_fleet`. |
-| EIA-860 intake | `scripts/process_eia860.py:53-66` (`_GENERATOR_COLUMN_MAP`) | Carries `Status` and `Planned Retirement Year` into `eia860_generators.parquet`, but **drops `Planned Retirement Month`** for operable units; the retired-sheet statuses (RE/CN/IP) surface only in the backcast within-window retiree build (`:246-347`). |
+| EIA-860 intake | `scripts/data/process_eia860.py:53-66` (`_GENERATOR_COLUMN_MAP`) | Carries `Status` and `Planned Retirement Year` into `eia860_generators.parquet`, but **drops `Planned Retirement Month`** for operable units; the retired-sheet statuses (RE/CN/IP) surface only in the backcast within-window retiree build (`:246-347`). |
 | Fleet loader | `fleet.py:3104-3106` | Hard-filters `status == "OP"` — SB (standby/mothball, 1,501 units), OS (out of service, not expected to return, 538) and OA (220) never reach the model; downstream `Generator` has no status field, so the distinction is unrepresentable (RC-2). |
 | Exogenous-exit channels | `runner.py:372-374` (within-window retirees), `fleet.py:1987-1992` (COD ramp) | Both **backcast-gated**. Forecast mode has no exogenous exit channel of any kind beyond the non-fossil date honor above (RC-4). |
 | Known additions (the philosophy to mirror) | `fleet.load_planned_additions` (`fleet.py:3750+`), `_PLANNED_FIRM_STATUSES = {U, V, TS}` (`fleet.py:3747`) | Only construction-committed statuses enter; announced-but-uncommitted (`P`) is excluded. Forecast-only. |
@@ -268,7 +268,7 @@ retirement row for the plant — only the coal-unit identity exits; note it in
   spec (source URLs, any native→canonical column aliases, expected
   confirmation-class vocabulary). No shared-code ISO branching; a new ISO is a new
   module.
-* `scripts/curate_confirmed_retirements.py` — reads only `data/raw`, validates each
+* `scripts/data/curate_confirmed_retirements.py` — reads only `data/raw`, validates each
   row against the EIA-860 spine (plant/generator exists; MW within 5%;
   `exit_year >= RETIREMENT_WINDOW_START`), writes via
   `clean_io.write_clean(df, "confirmed-retirements", iso=…, source=…)` +
@@ -360,7 +360,7 @@ the flip.
 
 ### 4.4 EIA-860 intake extension (RC-2 fix, same commit)
 
-`scripts/process_eia860.py`: add `"Planned Retirement Month"` to
+`scripts/data/process_eia860.py`: add `"Planned Retirement Month"` to
 `_GENERATOR_COLUMN_MAP` and `planned_retirement_month` to `EIA_860_CSV_COLUMNS`
 (the loader already consumes it when present — `fleet.py:3127` — and `Generator`
 already has `retirement_month`). `status` already flows; **do not** widen the
@@ -596,11 +596,11 @@ wins. Design decisions are settled — do not relitigate them.
       DATA NEEDED with empty CSVs.
    c. scripts/lib/confirmed_retirements/ registry package (IsoSpec + register +
       generic parser, one module per ISO — copy the capacity_deliverability
-      pattern; no if-iso ladders) and scripts/curate_confirmed_retirements.py
+      pattern; no if-iso ladders) and scripts/data/curate_confirmed_retirements.py
       (EIA-860 spine validation: plant/generator exists, MW within 5%; writes via
       clean_io.write_clean/validate_clean; curate() + argparse main). Register in
       regenerate_clean.py DATATYPES.
-   d. Extend scripts/process_eia860.py per plan §4.4: carry Planned Retirement
+   d. Extend scripts/data/process_eia860.py per plan §4.4: carry Planned Retirement
       Month into eia860_generators.parquet (_GENERATOR_COLUMN_MAP +
       EIA_860_CSV_COLUMNS); regenerate the parquet; do NOT touch the loader's OP
       status filter.

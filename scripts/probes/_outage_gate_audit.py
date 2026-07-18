@@ -54,7 +54,7 @@ from scripts.lib.outage_detect import (  # noqa: E402
     detect_outages_eventbased,
     high_load_mask,
 )
-from scripts.derive_campd_unit_outages import (  # noqa: E402
+from scripts.data.derive_campd_unit_outages import (  # noqa: E402
     _load_unit_year,
     _unit_year_grid,
     build_capacity_index,

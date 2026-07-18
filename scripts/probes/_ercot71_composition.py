@@ -64,7 +64,7 @@ def main() -> None:
         "rebasis keeper. Legs: " + ", ".join(legs) + ". LEG A = measured "
         "per-plant availability for the CAMPD-blind gas fleet (Kiamichi/Hidalgo/"
         "AVR; 60-Day DAM disclosure live HSL + EIA-923 zero months, "
-        "scripts/derive_ercot_noncampd_availability.py) -- removes the ERCOT-70 "
+        "scripts/data/derive_ercot_noncampd_availability.py) -- removes the ERCOT-70 "
         "+1.2-1.7 GW phantom CC. LEG B = ERCOT-69 measured DAM mid-curve offer "
         "belt (ercot_offer_midcurve_condbinned.json). Both zero-DOF measured "
         "(rules 13/14/23). Full-span 2023-2025 (rule 16)."

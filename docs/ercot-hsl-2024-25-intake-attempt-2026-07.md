@@ -23,7 +23,7 @@ every report vintage that covers those hours (e.g. `ACTUAL_LZ_WEST` wind =
 nowhere near that) — a defect in ERCOT's own published file, not a parsing
 artifact (confirmed present identically across every later repost of the
 rolling window). It inflated the committed 2024 file's wind peak to an
-impossible 161.5 GW. `_KNOWN_BAD_NP6_WINDOWS` in `scripts/build_ercot_hsl.py`
+impossible 161.5 GW. `_KNOWN_BAD_NP6_WINDOWS` in `scripts/data/build_ercot_hsl.py`
 now excludes exactly this cited window (nulled, then linearly interpolated
 from the clean Aug 19/24 endpoints) as a narrow, documented exception that
 does not weaken the general `_MAX_GAP_HOURS` incomplete-upload guard for any
@@ -58,14 +58,14 @@ a second upload (2024: all except 05/09; all of 2025).
 
 The uploaded archives also turned out to be a zip-of-zips (one outer
 monthly zip of ~700+ per-posting zips, each with one CSV) that
-`scripts/build_ercot_hsl.py`'s single-level `_read_csvs` couldn't parse at
+`scripts/data/build_ercot_hsl.py`'s single-level `_read_csvs` couldn't parse at
 all; fixed to recurse to arbitrary depth. Files were relocated from the
 top-level `data/raw/ercot-hsl/` into the `np6/<year>/` drop-zone the
 builder scans (one redundant solar-geo file, NP4-745 Nov-2024 — already
 fully covered by NP4-737 — was set aside under `np6/unused-redundant/`
 rather than blended in).
 
-**`python scripts/build_ercot_hsl.py --year 2024 2025` now builds both
+**`python scripts/data/build_ercot_hsl.py --year 2024 2025` now builds both
 years cleanly** (8,760/8,760 hours, no gaps). Validation vs the EIA-923
 calibration reference (`data/raw/_validation-source/calibration_reference.json`):
 
@@ -113,7 +113,7 @@ fetch. That upload is **partial**: solar (NP4-737) is complete for both
 2024 and 2025 (24/24 months); wind (NP4-732/742) covers only 2 of 24
 months (2024-05, 2024-09). The uploaded archives also turned out to be a
 zip-of-zips (one outer monthly zip of ~700+ per-posting zips, each with one
-CSV) that `scripts/build_ercot_hsl.py`'s single-level `_read_csvs` couldn't
+CSV) that `scripts/data/build_ercot_hsl.py`'s single-level `_read_csvs` couldn't
 parse at all; fixed to recurse to arbitrary depth. Files were relocated
 from the top-level `data/raw/ercot-hsl/` into the `np6/<year>/` drop-zone
 the builder scans. Running `build_ercot_hsl.py --year 2024 2025` now
@@ -176,7 +176,7 @@ the ERCOT 2024/25 default; no code or data changed.
    finer-grained reconstruction either.
 
 4. **UMass `nodal-curtailment-analysis` GitHub dataset** (the existing 2023
-   fallback source in `scripts/build_ercot_hsl.py`) — shallow-cloned `main`
+   fallback source in `scripts/data/build_ercot_hsl.py`) — shallow-cloned `main`
    and listed `data/`: every file is suffixed `-2023`; there is no 2024 or
    2025 extension upstream. The repository's README point of contact
    (`dmaji@cs.umass.edu`) is a candidate for a future manual ask, not
@@ -202,7 +202,7 @@ gross-up rather than a measured per-year HSL series. No driver-delta
 comparison was run here since no new 2024/25 HSL data landed to compare
 against — see "Carried consequence" below.
 
-**No code or data changed.** `scripts/build_ercot_hsl.py` already handles a
+**No code or data changed.** `scripts/data/build_ercot_hsl.py` already handles a
 2024/2025 NP6 upload transparently (`aggregate_np6_hourly` + the `np6/<year>/`
 drop-zone convention) — the builder needs no changes once files land. A
 placeholder `data/raw/ercot-hsl/np6/README.md` documents the drop zone and
@@ -213,7 +213,7 @@ either downloads the NP4-732/737 CSV/ZIP files manually and drops them under
 `data/raw/ercot-hsl/np6/`, or hands this session a subscription key +
 bearer-token credential pair to script the API pull, or (b) the UMass team
 publishes a 2024/2025 extension of their nodal-curtailment dataset. Either
-unblocks `python scripts/build_ercot_hsl.py --year 2024 2025` with no further
+unblocks `python scripts/data/build_ercot_hsl.py --year 2024 2025` with no further
 code changes.
 
 ## Carried consequence (stage 4 note)

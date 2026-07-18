@@ -27,7 +27,7 @@ This session VERIFIES and DOCUMENTS closed items and completes the DOF ledger â€
 dispatch-affecting value.
 
 1. Confirm C-2 closed: COAL_MAX_CF_BY_PLANT lives in constants.py, is derived by
-   scripts/derive_coal_max_cf.py, and the (6179,2025) override is gone. Grep to prove it.
+   scripts/data/derive_coal_max_cf.py, and the (6179,2025) override is gone. Grep to prove it.
 2. Confirm C-11 closed: run `python scripts/legitimacy_diagnostics.py --keepers` and attach the
    D-9 output. It must show non-ERCOT keepers resolve NO ERCOT-fitted band via the generic
    fallback. If any keeper fails D-9, STOP and file it as the top C-13/B-NYI-1 input â€” do not fix

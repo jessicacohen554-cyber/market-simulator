@@ -7,7 +7,7 @@ $/MWh for a meaningful share of hours the topology carries real information a
 single zone cannot reproduce. This module holds the per-spread duration-curve
 statistics, the seasonal / hour-of-day concentration of the wide hours, and
 the table renderer; each per-ISO script supplies the model-zone hourly frames
-(from ``scripts/derive_actual_lmp.py``) and the zone pairs to report.
+(from ``scripts/data/derive_actual_lmp.py``) and the zone pairs to report.
 
 Usage (per-ISO scripts):
     python scripts/nyiso_zonal_sufficiency.py [--years ...] [--kind da|rt] [--md]

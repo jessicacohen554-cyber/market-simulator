@@ -14,7 +14,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from scripts import derive_miso_hub_lmp as dml
+from scripts.data import derive_miso_hub_lmp as dml
 
 
 def _stage_fixture(stage_dir: Path, year: int, market: str, days: list[str]) -> None:
@@ -86,7 +86,7 @@ class TestDeriveMisoHubLmp(unittest.TestCase):
     def test_hub_zone_map_covers_all_hubs(self) -> None:
         # Every fetched hub maps to a model zone, South carries the four
         # southern hubs, and Plains (no hub) is only ever a documented proxy.
-        from scripts.fetch_miso_hub_lmp import HUBS
+        from scripts.data.fetch_miso_hub_lmp import HUBS
 
         self.assertEqual(set(dml.HUB_TO_ZONE), set(HUBS))
         south = {h for h, z in dml.HUB_TO_ZONE.items() if z == "MISO-South"}

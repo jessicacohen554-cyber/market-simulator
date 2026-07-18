@@ -18,7 +18,7 @@
 # side depends on the model's own dispatch, so the derived share regenerates
 # identically for a forward year and responds to changed unit composition.
 #
-# Source: scripts/curate_chp_btm_share.py, from the committed
+# Source: scripts/data/curate_chp_btm_share.py, from the committed
 # ``plant_emission_rates_v2`` (CAMPD, per-unit annual net_mwh) and
 # ``eia923_monthly_generation`` (EIA-923 Page 1, per-plant-class annual netgen)
 # processed-legacy artifacts.

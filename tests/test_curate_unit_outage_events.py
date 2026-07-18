@@ -1,5 +1,5 @@
 """Round-trip tests for unit-outage-events curation
-(scripts/curate_unit_outage_events.py).
+(scripts/data/curate_unit_outage_events.py).
 
 Builds tiny synthetic ``campd-unit-outages*.csv`` fixtures for two ISOs
 (ERCOT's canonical filename and PJM's per-ISO filename), runs ``curate``, and
@@ -13,7 +13,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_unit_outage_events as cuoe
+from scripts.data import curate_unit_outage_events as cuoe
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

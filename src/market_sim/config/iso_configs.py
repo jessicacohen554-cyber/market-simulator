@@ -148,7 +148,7 @@ def _ercot_config() -> ISOConfig:
     shares are derived from ERCOT NP6-345-CD actual load by weather zone
     by aggregating the 8 weather zones onto the 7 transmission zones (the
     EAST weather zone forms its own Northeast zone behind the NE_LOB export
-    limit; see below); see scripts/derive_load_shares.py. Panhandle
+    limit; see below); see scripts/data/derive_load_shares.py. Panhandle
     carries no modeled load: ERCOT has no Panhandle weather zone, and the
     small Lubbock load it would hold is reported inside the West weather
     zone and therefore currently lands in the West transmission zone.
@@ -167,7 +167,7 @@ def _ercot_config() -> ISOConfig:
     # South_Central <- SOUTH_C; South <- SOUTHERN.
     #
     # North/Northeast re-derived 2026-06 from a clean one-pass EAST->Northeast
-    # aggregation in scripts/derive_load_shares.py (North 0.3081->0.3064,
+    # aggregation in scripts/data/derive_load_shares.py (North 0.3081->0.3064,
     # Northeast 0.0335->0.0351). The prior values predated the consistent
     # EAST-carve-out; every other zone already matched the script exactly. The
     # unrounded vector sums to 1.0; rounding to 4 dp leaves a 0.0001 residual
@@ -194,7 +194,7 @@ def _ercot_config() -> ISOConfig:
     # ERCOT zonal transfer capabilities at the major congestion interfaces.
     # Data-first (see claude.md): use the measured GTC limits from the full
     # 2023-2024 NP6-86 SCED binding-constraint archive (202,512 intervals;
-    # scripts/derive_ttc_limits.py) wherever the GTC maps cleanly to a model
+    # scripts/data/derive_ttc_limits.py) wherever the GTC maps cleanly to a model
     # interface.
     #   WESTEX ~10,000 MW (binds 9.3%) -> West export, split West->North +
     #          West->South_Central in the ~8:3 ratio (7,300 / 2,700).
@@ -306,7 +306,7 @@ def _caiso_config() -> ISOConfig:
     and Path 26; the three SP15 sub-zones together are SCE + SDG&E (+ the tiny
     VEA TAC) south of Path 26, summing to the old SP15 0.5385. The whole-SP15
     share is measured from CAISO OASIS ``SLD_FCST`` ACTUAL TAC-area hourly load
-    (upload U4, Jan-2023 sample; ``scripts/derive_load_shares.py caiso``):
+    (upload U4, Jan-2023 sample; ``scripts/data/derive_load_shares.py caiso``):
     PGE-TAC 46.1%, SCE-TAC 44.3%, SDGE-TAC 9.2%, VEA-TAC 0.4% of component-TAC
     load. PGE-TAC straddles Path 15 and is split 0.86/0.14 between NP15 and
     ZP26, preserving the prior 0.43:0.07 ratio (no TAC boundary exists at Path
@@ -322,7 +322,7 @@ def _caiso_config() -> ISOConfig:
     Hourly *shapes* come from the same OASIS file via
     ``eia_loader.load_zonal_shares``; these static shares are its fallback.
     Source: CAISO Final LCT reports 2023–2025 (``data/raw/capacity-
-    deliverability/caiso/caiso.csv``); ``scripts/derive_load_shares.py caiso``.
+    deliverability/caiso/caiso.csv``); ``scripts/data/derive_load_shares.py caiso``.
     """
     zones = [
         Zone(name="NP15", iso="CAISO", load_share=0.3969),
@@ -858,7 +858,7 @@ def _neiso_config() -> ISOConfig:
     load zone. Tier 3 (calibration). **Refresh path (U3):** upload the ISO-NE
     hourly load-zone NEL SMD CSV for 2023–2025 to
     ``data/raw/zone-specific-demand/NEISO/`` and run
-    ``scripts/derive_load_shares.py neiso`` to derive measured shares and hourly
+    ``scripts/data/derive_load_shares.py neiso`` to derive measured shares and hourly
     zonal shapes. These static shares are then the fallback for years without a
     zonal file.
 
@@ -1088,7 +1088,7 @@ def _load_reliability_floor_registry() -> dict[str, list[ReliabilityFloorSpec]]:
     (zone, class, driver) limb) for every registered ISO and maps each row to a
     :class:`ReliabilityFloorSpec`. Missing or header-only files yield an empty
     limb list for that ISO — the single source of truth is the CSV, so the
-    registry is empty until ``scripts/derive_reliability_coeffs.py`` populates
+    registry is empty until ``scripts/data/derive_reliability_coeffs.py`` populates
     the coefficients (Phase 2). Required columns: ``zone, plant_class, driver,
     threshold, floor_pct, enabled``; optional: ``min_event_hours``,
     ``distribution``, ``start_hour``, ``end_hour``, ``ramp_group``, ``r1_disabled``.

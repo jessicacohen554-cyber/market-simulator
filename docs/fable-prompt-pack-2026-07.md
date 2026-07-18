@@ -69,7 +69,7 @@ Your tasks:
 1. DATA: inventory what data/raw/campd-unit-level and campd-facility-level already cover
    (years, columns — emissions, heat input, gross gen, op hours, start counts). Design the
    intake extension to annual unit-level CAMPD emissions + operations back to 2018
-   (scripts/fetch_campd_unit_level.py is the existing fetcher; follow the data-intake skill
+   (scripts/data/fetch_campd_unit_level.py is the existing fetcher; follow the data-intake skill
    conventions). HARD CONSTRAINT (rule 22): 2022 and H1-2026 are under FULL quarantine
    including data intake — the history is 2018-2021 + 2023-2025.
 2. RATE MODEL: design and empirically compare, per unit, two forward-rate estimators:
@@ -117,7 +117,7 @@ scheduled for retirement keep staying online. Today the code approximates this w
 type proxy: fossil units ignore ALL EIA-860 announced dates (capacity.py:196-235, default
 forecast_fossil_retirement_economic=True) — right spirit, but there is no channel to force
 a genuinely confirmed fossil closure, the EIA-860 retirement-status field is dropped at
-intake (scripts/process_eia860.py:64,239-243,310-313), forecast mode has no exogenous
+intake (scripts/data/process_eia860.py:64,239-243,310-313), forecast mode has no exogenous
 confirmed-exit injector at all (runner.py:293-295, fleet.py:1990 are backcast-gated), and
 non-fossil units force-retire even on speculative 2040-2072 EOL placeholder dates.
 
@@ -455,7 +455,7 @@ bundles, rule 16) is required downstream.
 ```
 Prerequisite: docs/handoffs/confirmed-retirement-plan-2026-07.md (from W0-P2) — read it,
 then CLAUDE.md rules 13/14 and audit §B. Implement per the plan: extend
-scripts/process_eia860.py (and the schema) to carry the retirement-status/confirmation
+scripts/data/process_eia860.py (and the schema) to carry the retirement-status/confirmation
 columns; add the forecast-mode confirmed-exit injector gated on confirmation status
 (mirroring load_planned_additions' philosophy — construction-committed analog: only
 binding/confirmed exits force-retire); add the confirmation gate for non-fossil placeholder
@@ -536,7 +536,7 @@ then CLAUDE.md rules 16/22 and audit §F/§J-T1. Implement per the plan:
 Prerequisite: W2-P1 (emissions fixes) landed, and the W0-P4 plan's statmode prompt — read
 docs/handoffs/forecast-validation-program-2026-07.md first, plus CLAUDE.md rules 15/16/22.
 Run the statistical-mode backcast (the D-7 protocol used for ERCOT — see
-scripts/run_statmode_probe.py lineage and apply_statistical_mode in
+scripts/archive/run_statmode_probe.py lineage and apply_statistical_mode in
 run_calibration_full.py) for CAISO, PJM, MISO, NYISO, NEISO: all available years
 (2023-2025) in one bundle per ISO. Launch separate-invocation runs as concurrent
 background jobs capped at 2 simultaneous for per-plant multi-zone LPs (rule 12); years

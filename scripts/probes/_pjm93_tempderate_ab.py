@@ -1,7 +1,7 @@
 """Full-keeper A/B probe: PJM temperature-dependent derate (pjm-93).
 
 Reproduces the pjm90_cchp_srmc keeper's exact configuration -- by calling its
-own driver's ``_solve`` helper (``scripts/run_pjm90_cchp_srmc.py``) directly,
+own driver's ``_solve`` helper (``scripts/archive/run_pjm90_cchp_srmc.py``) directly,
 not by re-typing its kwargs from the curated ``calibration_flags`` subset --
 across all three train years (2023-2025, rule 16) and adds only
 ``temp_dependent_derate=True``. Reusing the keeper's own ``_solve`` guarantees
@@ -25,7 +25,7 @@ _REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(_REPO))
 sys.path.insert(0, str(_REPO / "scripts"))
 
-from scripts.run_pjm90_cchp_srmc import _solve  # noqa: E402
+from scripts.archive.run_pjm90_cchp_srmc import _solve  # noqa: E402
 
 ROOT = _REPO / "results" / "calibration"
 

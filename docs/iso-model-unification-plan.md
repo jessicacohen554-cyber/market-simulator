@@ -145,7 +145,7 @@ The market simulator (44,895 LOC in `src/market_sim/`) models hourly electricity
 
 #### Phase 3A: Zonal Load Shares (eia_loader.py)
 - Replace 6 separate `*_zonal_load_shares()` functions (~450L) with a single `load_zonal_shares(iso, year, zone_names)` that reads from `data/clean/load/{iso}/zonal_shares_{year}.parquet`
-- Create curation script `scripts/curate_zonal_shares.py` that converts each ISO's raw format (PJM CSV, ERCOT XLSX, CAISO TAC, NYISO zonal, NEISO SMD, MISO sub-BA) into the common Parquet schema: columns = zone names, index = hour (0-8759)
+- Create curation script `scripts/data/curate_zonal_shares.py` that converts each ISO's raw format (PJM CSV, ERCOT XLSX, CAISO TAC, NYISO zonal, NEISO SMD, MISO sub-BA) into the common Parquet schema: columns = zone names, index = hour (0-8759)
 - Add schema to `data/dictionary/schema/zonal_shares.schema.yaml`
 
 **LOC change:** -300L in eia_loader.py, +200L in curation script = net -100L in model code
@@ -480,7 +480,7 @@ Every data load goes through clean Parquet via read_clean(). This is split into
 CONTEXT: Currently 52 pd.read_csv/pd.read_excel calls load raw data directly.
 A clean seam (scripts/lib/clean_io.py, read_clean/write_clean) exists but is
 opt-in via MARKET_SIM_USE_CLEAN env var. After this phase, the model code
-ALWAYS reads from clean Parquet. The curation scripts (scripts/curate_*.py)
+ALWAYS reads from clean Parquet. The curation scripts (scripts/data/curate_*.py)
 become the mandatory ETL step.
 
 SUB-PHASES:
@@ -488,19 +488,19 @@ SUB-PHASES:
 3A: Zonal Load Shares (eia_loader.py)
 - Replace 6 *_zonal_load_shares() functions with a single
   load_zonal_shares(iso, year, zone_names) -> np.ndarray
-- Create scripts/curate_zonal_shares.py that reads each ISO's raw format
+- Create scripts/data/curate_zonal_shares.py that reads each ISO's raw format
   and writes data/clean/load/{iso}/zonal_shares_{year}.parquet
 - Schema: columns = zone names (str), index = hour 0..8759, values = float share
 - Add data/dictionary/schema/zonal_shares.schema.yaml
 
 3B: Weather Data
 - Replace 6 ISO weather CSV loaders with load_weather(iso, year) -> pd.DataFrame
-- Create scripts/curate_weather.py
+- Create scripts/data/curate_weather.py
 - Schema: columns = (zone, tmax_c, tmin_c, load_weighted_temp_c), index = date
 
 3C: Fuel Prices
 - Replace gas/coal CSV loading in fuel.py with clean reads
-- Create scripts/curate_fuel_prices.py
+- Create scripts/data/curate_fuel_prices.py
 - Schema: per-ISO monthly hub basis + per-plant delivered cost
 
 3D: Outages, Fleet Reference, Zone Assignment

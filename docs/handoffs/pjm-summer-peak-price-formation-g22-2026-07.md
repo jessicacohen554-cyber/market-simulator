@@ -80,7 +80,7 @@ offer-curve parameters; clearing prices stay validation-only (rule 13).**
 ## 3. Levers re-scoped by the evidence
 
 **Lever A — measured PJM energy-offer surface (THE lever).** Build the
-neiso-58 analogue for PJM: `scripts/derive_pjm_offer_surface.py` (mirror
+neiso-58 analogue for PJM: `scripts/data/derive_pjm_offer_surface.py` (mirror
 `derive_neiso_offer_surface.py`) → a condition-binned top-of-curve
 heat-rate-multiplier surface for **CC_REGULAR + CT_PEAKER** (the two classes
 whose idle is offered above the model price but below the actual), keyed by
@@ -124,12 +124,12 @@ primary lever** — do not chase it before A.
 
 ## 5. Next-session build plan (single delta)
 
-1. `scripts/fetch_pjm_energy_offers.py` — all 2023/2024/2025 months (July-2024 +
+1. `scripts/data/fetch_pjm_energy_offers.py` — all 2023/2024/2025 months (July-2024 +
    May/Jun/Aug/Sep-2024 already fetched this session; the rest were fetching in
    background at handoff — re-run to be safe, raw is gitignored, ~1–2 GB).
-2. `scripts/curate_energy_offers.py` → clean long tree (optional; the derive can
+2. `scripts/data/curate_energy_offers.py` → clean long tree (optional; the derive can
    read raw directly like the NEISO one).
-3. `scripts/derive_pjm_offer_surface.py` (NEW, mirror the NEISO derive) →
+3. `scripts/data/derive_pjm_offer_surface.py` (NEW, mirror the NEISO derive) →
    `data/raw/_validation-source/pjm_offer_surface_condbinned.json`
    (CC_REGULAR + CT_PEAKER entries; edges 0.80/0.90/0.97).
 4. `ScenarioConfig.pjm_offer_surface_conditional` (+ path/pcts/min_bin/cap

@@ -37,7 +37,7 @@ zone erases.
 
 1. **Topology (`config/iso_configs._ercot_config`).**
    - Add `Zone(name="Far_West", load_share=0.125)`; cut `West` to ~0.025
-     (re-derive both from `scripts/derive_load_shares.py` so all 8 sum to 1.0).
+     (re-derive both from `scripts/data/derive_load_shares.py` so all 8 sum to 1.0).
    - Wire `Far_West` behind `West`: `TransferLink(from_zone="Far_West",
      to_zone="West", ttc_mw=<measured Permian export limit>)`. Keep WESTEX on
      `West->North` (7300) + `West->South_Central` (2700) as the outer boundary
@@ -51,7 +51,7 @@ zone erases.
    gets its own measured hourly shape for free via `ercot_zonal_load_shares`.
 
 3. **The measured internal limit — THE open data task (do not tune to the CT residual).**
-   - Re-run `scripts/derive_ttc_limits.py` over the NP6-86 SCED binding-constraint
+   - Re-run `scripts/data/derive_ttc_limits.py` over the NP6-86 SCED binding-constraint
      archive and look for Permian/Far-West-internal GTCs (`TRDWEL` "single line",
      and any constraint whose FromStation/ToStation sits in the Permian) — the
      same FromStation-empty GTC method that produced WESTEX/PNHNDL/NE_LOB.

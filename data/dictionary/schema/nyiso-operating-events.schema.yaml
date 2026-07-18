@@ -11,7 +11,7 @@
 # the raw per-year CSVs. The curation is parse-only — no window inference or
 # interpretation happens here.
 #
-# Curated by scripts/curate_nyiso_reserve_requirements.py (shared with the
+# Curated by scripts/data/curate_nyiso_reserve_requirements.py (shared with the
 # nyiso-reserve-requirements datatype; same raw home, same ask).
 datatype: nyiso-operating-events
 schema_version: 1

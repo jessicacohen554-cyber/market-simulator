@@ -67,7 +67,7 @@ def _registry_year_built() -> pd.DataFrame:
 
     Reads the curated ``reference/plant-registry`` clean table when
     :func:`_use_clean` is set and the partition exists (written by
-    ``scripts/curate_reference.py``); otherwise reads ``_REGISTRY`` (the raw
+    ``scripts/data/curate_reference.py``); otherwise reads ``_REGISTRY`` (the raw
     ``master-plant-registry.csv``) directly. Returns an empty frame when
     neither source is available.
     """
@@ -93,7 +93,7 @@ def _registry_year_built() -> pd.DataFrame:
 #
 # Alongside the operable schedule, the same directory's within-window retiree
 # parquet (eia860_generator_retired_within_window.parquet, built by
-# ``scripts/process_eia860.py --retired-window-from`` from the final EIA-860
+# ``scripts/data/process_eia860.py --retired-window-from`` from the final EIA-860
 # vintages' "Retired and Canceled" sheets) is unioned into the COD map so the
 # ramp can age out whole plants that retired mid-window and so are absent from
 # the default recent operable vintage (e.g. Mystic, plant 1588, retired

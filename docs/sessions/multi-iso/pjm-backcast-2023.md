@@ -34,7 +34,7 @@ python scripts/run_calibration.py --iso PJM --year 2023
 ```
 
 Reference data (`data/raw/_validation-source/calibration_reference.json`, PJM block) was
-built by `scripts/build_calibration_reference.py` (now PJM-aware):
+built by `scripts/data/build_calibration_reference.py` (now PJM-aware):
 EIA-860 year-end renewable capacity by zone, EIA-923 by-fuel net generation,
 measured Henry Hub, and the eGRID 2023 PJM generation/emissions benchmark.
 
@@ -107,7 +107,7 @@ actually exported — at the time, the single biggest structural gap.
 file) are served by the **priced import/export node** (J1, 2026-06-11): a
 `PJM_external` zone holding two scarcity import tranches (4 GW @ $46/$60) and
 six export sinks (9.8 GW @ $18–42), fitted to the measured 2023
-net-interchange duration curve (`scripts/derive_import_tranches.py`;
+net-interchange duration curve (`scripts/data/derive_import_tranches.py`;
 validation run `results/calibration/pjm_j1_priced` via
 `run_calibration_full.py --priced-interchange`).
 
@@ -167,7 +167,7 @@ the top two.
 
 ## What changed to enable this run
 
-- `scripts/build_calibration_reference.py` — PJM added to `CALIBRATION_ISOS`
+- `scripts/data/build_calibration_reference.py` — PJM added to `CALIBRATION_ISOS`
   and the BA-code maps (PJM→PJM for eGRID and EIA-923). All per-ISO-year
   derivation (EIA-860 zonal capacity, EIA-923 by-fuel, eGRID benchmark) was
   already generic on zone topology. ERCOT outputs are byte-identical.

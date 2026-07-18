@@ -75,6 +75,7 @@ from market_sim.results.scarcity import (  # noqa: E402
 # Reuse the derive script's CAMPD on-line gross + net-load helpers (same source
 # data, so the gate reads the envelope's own anchor).
 sys.path.insert(0, str(REPO / "scripts"))
+sys.path.insert(0, str(REPO / "scripts" / "data"))
 from derive_ercot_rtolcap_forward import _class_hourly, _net_load  # noqa: E402
 
 YEARS = (2023, 2024, 2025)

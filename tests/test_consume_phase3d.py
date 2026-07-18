@@ -60,7 +60,7 @@ class _UseCleanEnvMixin:
 class UnitOutageDerateParity(_UseCleanEnvMixin, unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        from scripts import curate_unit_outage_events
+        from scripts.data import curate_unit_outage_events
 
         written = curate_unit_outage_events.curate()
         if not written:
@@ -89,7 +89,7 @@ class UnitOutageDerateParity(_UseCleanEnvMixin, unittest.TestCase):
 class PartialOutageDerateParity(_UseCleanEnvMixin, unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        from scripts import curate_partial_outages
+        from scripts.data import curate_partial_outages
 
         written = curate_partial_outages.curate()
         if not written:
@@ -118,7 +118,7 @@ class PartialOutageDerateParity(_UseCleanEnvMixin, unittest.TestCase):
 class EgridZoneAssignmentParity(_UseCleanEnvMixin, unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        from scripts import curate_egrid
+        from scripts.data import curate_egrid
 
         written = curate_egrid.curate(vintages=[2023])
         if not written:
@@ -164,7 +164,7 @@ class EgridZoneAssignmentParity(_UseCleanEnvMixin, unittest.TestCase):
 class CodRampRegistryParity(_UseCleanEnvMixin, unittest.TestCase):
     @classmethod
     def setUpClass(cls) -> None:
-        from scripts import curate_reference
+        from scripts.data import curate_reference
 
         curate_reference.curate()
 

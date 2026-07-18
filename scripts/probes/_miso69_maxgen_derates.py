@@ -17,7 +17,7 @@ windows -> 5 event blocks 2023-2025), under the frozen identification guards
 certificate, region-scoped hubs; ±45-day capability basis with
 best-event-hour credit; disjointness vs the std/short extracts; NO
 control-day screen). Extract: ``data/raw/campd-unit-outages-maxgen-MISO.csv``
-(``scripts/derive_campd_maxgen_outages.py``). Zero fitted scalars — every
+(``scripts/data/derive_campd_maxgen_outages.py``). Zero fitted scalars — every
 number is a declared instrument, a measured price certificate, or a measured
 CAMPD capability. Never an outcome pin: dispatch inside windows stays free
 above the derate; prices are never touched directly (rules 1/11/13).

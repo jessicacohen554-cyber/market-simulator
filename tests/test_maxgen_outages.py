@@ -1,7 +1,7 @@
 """Tests for the declared-event-window (maxgen) revealed-derate channel (M-2).
 
 Covers the frozen identification guards of
-``scripts/derive_campd_maxgen_outages.py`` (window clipping/merging, the
+``scripts/data/derive_campd_maxgen_outages.py`` (window clipping/merging, the
 in-merit certificate, the ±45-day capability basis with best-hour credit,
 disjointness vs the std/short extracts) and the consumer
 (:func:`market_sim.data.outages.unit_outage_maxgen_derate_factors` +
@@ -25,7 +25,7 @@ import pandas as pd
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.data import outages
 from market_sim.data.outages import _hour_of_year
-from scripts.derive_campd_maxgen_outages import (
+from scripts.data.derive_campd_maxgen_outages import (
     _overlaps,
     _zone_in_region,
     assert_disjoint,

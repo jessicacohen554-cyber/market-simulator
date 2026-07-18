@@ -170,7 +170,7 @@ Branch: claude/data-schema-contract. Do NOT curate real data yet. Commit + push.
 ### WAVE 3 — Per-datatype curation (run ALL 8 IN PARALLEL after W2 is merged)
 
 > Shared preamble for every W3 prompt — paste it at the top of each:
-> *"Depends on branches claude/data-paths-registry, claude/data-relocate-raw, claude/data-schema-contract (branch off the merge). RULES: data/raw is READ-ONLY — never modify it. Write ONLY to data/clean/<datatype>/<ISO>/ using scripts/lib/clean_io.write_clean(). Conform exactly to data/dictionary/schema/<datatype>.schema.yaml. Do NOT touch any loader in src/market_sim/data/ (cutover is a later wave). Deduplicate inputs where the same data appears twice. Each curation script lives in scripts/curate_<datatype>.py, is idempotent and re-runnable, and writes a coverage report. Commit + push to the named branch."*
+> *"Depends on branches claude/data-paths-registry, claude/data-relocate-raw, claude/data-schema-contract (branch off the merge). RULES: data/raw is READ-ONLY — never modify it. Write ONLY to data/clean/<datatype>/<ISO>/ using scripts/lib/clean_io.write_clean(). Conform exactly to data/dictionary/schema/<datatype>.schema.yaml. Do NOT touch any loader in src/market_sim/data/ (cutover is a later wave). Deduplicate inputs where the same data appears twice. Each curation script lives in scripts/data/curate_<datatype>.py, is idempotent and re-runnable, and writes a coverage report. Commit + push to the named branch."*
 
 ```text
 [W3a · branch claude/curate-lmp]
@@ -273,7 +273,7 @@ Do this:
    schema/*.yaml + actual delivered parquet metadata (column, dtype, unit, source, coverage).
    Fill the ISO x datatype x year coverage matrix from what W3 actually produced.
 3. Update data/README.md with the final tree + a "how to regenerate data/clean from data/raw"
-   runbook listing each scripts/curate_*.py.
+   runbook listing each scripts/data/curate_*.py.
 4. Final full pytest + ERCOT 2024 backcast vs golden baseline. Report the before/after repo
    tree and confirm single-root, schema-validated, deduplicated state.
 

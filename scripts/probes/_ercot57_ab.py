@@ -9,7 +9,7 @@ measured 60-Day DAM disclosure class-day thermal availability rescale
 (CC_REGULAR + CT_PEAKER), the June/Sep-2023 scarcity-formation root-cause fix
 (docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md). Zero new free
 parameters: the class-day series is measured disclosure data
-(scripts/derive_ercot_thermal_dam_availability.py, frozen deriver).
+(scripts/data/derive_ercot_thermal_dam_availability.py, frozen deriver).
 
 Usage::
 
