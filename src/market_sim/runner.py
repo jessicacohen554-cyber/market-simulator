@@ -703,11 +703,14 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # deletion, not foresight). The price-driven screens still see only
         # prior-year outcomes (one-pass, rule 10).
         #
-        # The data-center flat load block (G-34) is added immediately after
+        # The data-center flat load block (G-34) is folded in immediately after
         # _scale_demand and before peak is taken, so every peak-anchored
         # capacity screen (retirement floor, reserve-margin backstop) sees the
-        # DC load for free. Forecast-mode-only and default-off
-        # (datacenter_load_path == "off") => same array object, byte-identical.
+        # reshaped DC load for free. When on, add_datacenter_block RELOCATES the
+        # block (energy-invariant, flattens peak) rather than double-counting the
+        # DC already in the total growth rate (FF-1C). Forecast-mode-only and
+        # default-off (datacenter_load_path == "off") => same array object,
+        # byte-identical.
         year_demand = _scale_demand(base_demand, config, year)
         year_demand = add_datacenter_block(year_demand, config, iso, year, zone_names)
         peak_demand = float(year_demand.sum(axis=0).max())
@@ -1013,9 +1016,10 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
             # (and datacenter_load_path is "off" in any hindcast anyway).
             year_demand = year_base_demand
         else:
-            # Same DC block as the capacity-screen seam above (G-34), applied on
-            # the forecast branch so the LP and results path see the identical
-            # demand the screens saw. Default-off => same array, byte-identical.
+            # Same DC block relocation as the capacity-screen seam above (G-34),
+            # applied on the forecast branch so the LP and results path see the
+            # identical demand the screens saw. Default-off => same array,
+            # byte-identical.
             year_demand = _scale_demand(base_demand, config, year)
             year_demand = add_datacenter_block(
                 year_demand, config, iso, year, zone_names
