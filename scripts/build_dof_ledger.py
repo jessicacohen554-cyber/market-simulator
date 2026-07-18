@@ -866,6 +866,49 @@ def curated_entries(sc: dict, iso: str) -> list[dict]:
                 "rides the ASM fetch pipeline only (rule 23)",
             )
         )
+    if sc.get("miso_winter_citygate_daily"):
+        # Winter fuel-security Chicago Citygate daily gas shape, ZERO scalars:
+        # in Dec/Jan/Feb the Chicago-hub zones' gas rows carry the MEASURED
+        # Chicago Citygate daily shape (flow-date placed, mean-preserving
+        # within month) in place of the national-HH gas_daily_shape — the
+        # regional delivered-gas signal (Jan-12-2024 $25.82 vs HH $13.08)
+        # that prices the Winter Storm Heather tail. Measured daily series +
+        # published zone-hub assignment + market-structure conventions — no
+        # tunable.
+        out.append(
+            _entry(
+                "miso_winter_citygate_daily (Chicago Citygate winter daily gas shape)",
+                "data/raw/gas-prices/miso_citygate_daily.csv via "
+                "data.fuel.miso_chicago_daily_shape_factors / "
+                "apply_miso_winter_citygate_daily (before "
+                "apply_miso_zonal_gas_basis; supersedes the national "
+                "gas_daily_shape in covered cells only)",
+                "measured-physical",
+                iso,
+                n_scalars=0,
+                source="EIA Natural Gas Weekly Update spot-price table "
+                "('Chicago' row = NGI Daily GPI), 680 weekday prints "
+                "2023-2025 (scripts/fetch_miso_citygate_daily.py); Chicago-hub "
+                "zone set {Illinois, Indiana, East} READ from "
+                "miso_zonal_gas_hub.csv (hub == 'Chicago Citygate (IL)' — the "
+                "same file apply_miso_zonal_gas_basis reads); winter months "
+                "{12, 1, 2} (meteorological-winter pipeline-scarcity season); "
+                "flow-date placement trade+1, weekend/holiday forward-fill "
+                "(NG gas-day market structure; the caiso-90 "
+                "_flow_date_staircase precedent)",
+                root_cause="shape-only and mean-preserving WITHIN month by "
+                "construction (rule 11: the keeper's monthly MISO gas level "
+                "is measured EIA-923 and already correct — only the "
+                "within-month daily placement changes); Chicago-only "
+                "coverage: West/Plains/South keep the national-HH shape (HH "
+                "is a conservative under-proxy for MidCon/Gulf, rule 14; "
+                "Lower-Michigan/MichCon daily stays a paywalled-ICE open "
+                "item, miso-data-audit Item 4); forecast years take the "
+                "forward curve's regional Chicago basis and its own daily "
+                "shape (rule 13 forward-native); refresh rides the EIA NGWU "
+                "fetch only (rule 23)",
+            )
+        )
     if sc.get("unit_outage_short_windows"):
         # Short (< 5-day) baseload-coal unit-outage windows, ZERO scalars:
         # each window is the unit's own CEMS record; the derive-script guards
