@@ -611,6 +611,7 @@ def run_year(
     miso_seam_flow_limit: bool = False,
     miso_seam_flow_percentile: float | None = None,
     miso_seam_export_limit: bool = False,
+    miso_seam_envelope_merit_cap: bool = False,
     miso_pjm_border_anchor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -1172,6 +1173,8 @@ def run_year(
         )
     if miso_seam_export_limit:
         config = config.with_overrides(miso_seam_export_limit=True)
+    if miso_seam_envelope_merit_cap:
+        config = config.with_overrides(miso_seam_envelope_merit_cap=True)
     if pjm_seam_flow_limit:
         config = config.with_overrides(pjm_seam_flow_limit=True)
     if pjm_seam_flow_percentile is not None:
@@ -2302,7 +2305,12 @@ def run_year(
         # priced seam clears more import in tight hours (None keeps the p90
         # default). Still a measured-duration-curve ceiling, not a residual pin.
         _seam_pct = getattr(config, "miso_seam_flow_percentile", None)
-        if inject_miso_seam_flow_limit(fleet_arrays, iso, year, percentile=_seam_pct):
+        # miso-73: envelope composition semantics — merit-order (waterfall)
+        # ceiling instead of the uniform per-band derate when armed.
+        _seam_merit = getattr(config, "miso_seam_envelope_merit_cap", False)
+        if inject_miso_seam_flow_limit(
+            fleet_arrays, iso, year, percentile=_seam_pct, merit_cap=_seam_merit
+        ):
             from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
 
             logger.info(
@@ -2325,8 +2333,14 @@ def run_year(
         from market_sim.model.transmission import inject_miso_seam_flow_limit
 
         _seam_pct = getattr(config, "miso_seam_flow_percentile", None)
+        _seam_merit = getattr(config, "miso_seam_envelope_merit_cap", False)
         if inject_miso_seam_flow_limit(
-            fleet_arrays, iso, year, percentile=_seam_pct, direction="export"
+            fleet_arrays,
+            iso,
+            year,
+            percentile=_seam_pct,
+            direction="export",
+            merit_cap=_seam_merit,
         ):
             from market_sim.config.constants import MISO_SEAM_FLOW_PERCENTILE
 
