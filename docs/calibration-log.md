@@ -16838,3 +16838,54 @@ emits; displaces import volume at hub-set λ so the belly clearing is untouched
 — the lane's predicted availability lever, ≈ +0.4–0.65 Mt/yr); WP-2 evening
 stack evidence handed to the caiso-94 watch + storage charter (no build here);
 WP-3 the CT_CHP level re-derivation. Do-NOT-redo list in the finding §8.
+
+## 2026-07-18 — caiso-96 WP-1: the CC startup-trajectory extension BUILT + SOLVED (charter-ordered A/B) and REGISTERED — the afternoon re-commitment deficit CLOSES (day commitment part −1.50→−0.68 / −0.49→+0.36 / −1.26→−0.18 TWh; hod 13–16 online-cap +0.6–1.2 GW toward CEMS; starts shift onto the measured 13–15 peak) with every pre-registered hold intact, but the CC ENERGY recovery is only ~+0.15 TWh/yr (charter expected +1.0–1.5) because the dispatch half deepens symmetrically — the import-volume competition (WP-2, owner-gated) now owns the whole remaining C5a mass
+
+**Runs:** `2026-07-18-caiso-96-startup-trajectory` (registered, DIAGNOSTIC —
+NOT a keeper swap; determination NOT-YET, same fail set as the caiso-94 keeper),
+plus the unregistered same-machine A-leg `caiso95_repro_A` re-solve (the
+FINDING-caiso92b baseline protocol; both legs this machine, this session).
+
+**Mechanism (rule 19 — same mechanism, wider physics; never a new stacked
+floor):** `caiso_ra_startup_trajectory` (ScenarioConfig, GATED default off)
+extends the P1-native RA must-offer bridge: every detected
+(startup-aware-screened) run-start of a bridge-eligible merchant CC is preceded
+by its measured start-to-load ramp — the L pre-start OFF-hours floor at the
+linear ramp-in toward min-load, maximum-composed with the gap bridges, D-2
+attribution unchanged (`ra_mustoffer_bridge`). L = per-plant CAMPD p50
+off→on-to-full-load duration (`scripts/derive_campd_cc_start_trajectory.py`,
+gates FROZEN pre-solve: ≥100 events/IQR≤4h/LOYO≤1h; 8,986 CA CC start events
+2023–25; 25 accepted plants, leads 1–6 h; class p50 3 h LOYO-stable to 0.0 h —
+matching the caiso-95 "model starts ~3 h late" measurement exactly). Zero new
+free parameters; artifact-or-nothing fallback (rule 23).
+
+**A/B result (same-machine, scorer frame):** the pre-registered STRUCTURAL
+targets all land — day-window commitment deficit 2023 −1.50→−0.68, 2024
+−0.49→+0.36, 2025 −1.26→−0.18 TWh; hod 13–16 online capacity +0.6–1.2 GW
+toward CEMS (2025: 4.7/4.7/4.5/4.6 → 5.2/5.6/5.7/5.8 vs CEMS 4.9/5.7/6.9/7.7);
+CC start histogram shifts onto the measured 13–15 afternoon peak (2025 hod-18
+starts 3.5→2.77/day, hod 12–15 roughly doubles). Every hold holds: C1 grid
+PASS; belly hod 10–14 λ does NOT fall (11.1→11.0 / 9.3→8.9 / 8.3→8.1 pp —
+volume-displacing, mildly helping C3a: 2025 +11.0→+10.7 %); overnight λ ladder
+identical (+1.3/+0.2/+1.6 pp); C3c winter tail IDENTICAL (20 h Jan-13-2023 /
+0 / 0); C7/C8 PASS (CC_REGULAR forced share 6.4/6.4/7.5 % ≪ 30 %; D-4 clean).
+
+**The honest shortfall (surfaced, not tuned — rules 1/11):** floor volume
++0.21/+0.21/+0.26 TWh/yr becomes only +0.12/+0.11/+0.21 TWh/yr of net CC
+energy (C5a −13.3/−11.2/−16.5 → −13.1/−11.0/−16.2 %, ~+0.05–0.08 Mt/yr vs the
+charter's +0.4–0.65): the dispatch half of the caiso-95 decomposition deepens
+symmetrically (2023 −0.59→−1.27 TWh) — the now-online afternoon capacity sits
+at ramp/min-load and is out-competed at the margin by the evening import
+volume (the caiso-95 §4 +1.9–2.2 TWh/yr excess). Start churn does not fall
+(16.2→17.0/day 2023). The evening hod 17–21 λ WATCH deepens marginally
+(−6.6→−6.7 / −5.0→−5.0 / −2.4→−2.6 pp). **Verdict: the commitment lever is
+structurally right and lands its window; the ENERGY/CO2 mass it was expected
+to recover is owned by the evening supply-stack composition — WP-2's
+owner-gated lane (the caiso-94 evening-window watch + the storage charter),
+not by any further commitment forcing.** Keeper unchanged (caiso-94);
+owner adjudication asks: (a) is the trajectory extension worth carrying into
+the next keeper recipe on structural grounds (it closes a real measured
+conduct gap at zero parameter cost and mildly helps C3a-2025), and (b) does
+the WP-2 evening evidence (+2 TWh/yr excess import, CT_PEAKER −1.1..−2.0 Mt,
+evening λ −6.6/−5.0/−2.4 pp, now plus this run's demonstration that the
+commitment fix alone cannot recover the mass) trip the caiso-94 watch?
