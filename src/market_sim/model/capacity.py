@@ -1143,3 +1143,206 @@ def _apply_reliability_floor(
             }
         )
     return retention_log
+
+
+def _apply_pipeline_retirements(
+    fleet: list[Generator],
+    margins: list[tuple["Generator", float, float]],
+    pipeline_state: dict[str, int],
+    config: ScenarioConfig,
+    peak_demand: float,
+    wind_pool_mw: float,
+    solar_pool_mw: float,
+    storage_firm_mw: float,
+    deliverability_headroom: dict[str, float] | None,
+    year: int,
+    event_sink: dict | None,
+) -> tuple[list[Generator], dict[str, int], list[dict]]:
+    """R-NEW decision/execution retirement pipeline (``retirement_rule="pipeline"``).
+
+    The FF-0C §3.6 composite rule (owner D1 = Option B, 2026-07-17;
+    ``docs/handoffs/ff-retirement-rule-redesign-2026-07.md``), replacing the
+    legacy per-fuel consecutive-loss counters whose threshold inversion
+    RC-1A-D1 measured. Six components, zero newly tuned parameters:
+
+    1. **Uniform decision.** A unit whose attainable margin fails the
+       identical ``net_revenue < going_forward_cost`` bar at ONE annual
+       screen becomes DECIDED (decision persistence D = 0, an open DOF held
+       by parsimony — the flat-expectation degenerate NPV form, §3.1). No
+       per-fuel decision threshold exists.
+    2. **Joint pipeline-entry competition.** All newly failing units across
+       ALL fuels compete in the same year, considered worst-first by margin
+       depth ($/kW-yr shortfall, §3.3). Admission is capped by the EXISTING
+       accredited-adequacy requirement evaluated on the schedule of pending
+       exits: :func:`_apply_reliability_floor` (the floor's own machinery
+       and cheapest-firm-adequacy metric) retains candidates until the
+       scheduled post-pipeline firm capacity clears the shared PRM
+       requirement. Removes the D1 defects 2 and 3 (the cross-fuel race and
+       the fuel-partitioned eligible set).
+    3. **Soft latch.** A pipelined unit is re-screened annually and leaves
+       the pipeline ONLY by re-clearing the same bar (economic recovery; the
+       policy-rescue reversal channel stays the confirmed registry's). No
+       band, no new parameter — one good year no longer erases the distress
+       history unless it actually restores viability.
+    4. **Execution after the identified lag.** A unit still pipelined at
+       ``decided_year + L_f`` deactivates then (``L_f`` = the RC-0B §a.3
+       measured per-fuel announcement→deactivation medians,
+       ``retirement_execution_lag_*``). It dispatches normally until then,
+       as real announced-but-operating units do. ``decided_year`` is the
+       LOSS year (the year whose dispatch failed = ``year - 1`` at screen
+       time), so a persistent-loss coal cohort (L=3) is decided end of loss
+       year ``y`` and gone at the start of ``y + 3`` — byte-equivalent
+       timing to the adopted legacy D1=3 counter.
+    5. **Reliability floor at execution, unchanged.** The realized-year
+       backstop: a floor-retained due unit stays online AND stays pipelined
+       (execution deferred, re-latched next year).
+    6. **Ledger attribution.** ``event_sink["pipeline_events"]`` records
+       decided / re_confirmed / reversed / entry_capped / executed rows with
+       years, so recall/false-retire scoring sees the decision and the
+       execution separately.
+
+    ``pipeline_state`` maps ``unit_id -> decided_year`` and is threaded
+    through the same cross-year seam as the legacy loss counters (the
+    ``consecutive_loss_years`` dict); it is not mutated in place. Stale ids
+    (units that left the fleet through another channel) are inert and are
+    pruned when the unit is gone.
+
+    Returns ``(survivors, pipeline_state, floor_retention_log)`` with the
+    same contract as the legacy branch of
+    :func:`apply_economic_retirements`.
+    """
+    state = dict(pipeline_state)
+    events: list[dict] = []
+    fleet_ids = {g.unit_id for g in fleet}
+    # Prune ids that left the fleet via another channel (confirmed exit,
+    # retrofit rename, re-aggregation): nothing to execute or reverse.
+    for uid in [u for u in state if u not in fleet_ids]:
+        state.pop(uid)
+
+    def _event(kind: str, g: Generator, decided: int | None) -> dict:
+        row = {
+            "event": kind,
+            "unit_id": g.unit_id,
+            "fuel": g.fuel_type,
+            "mw": float(g.pmax_mw),
+            "year": int(year),
+        }
+        if decided is not None:
+            row["decided_year"] = int(decided)
+            row["execute_year"] = int(decided) + _execution_lag_years(
+                config, g.fuel_type
+            )
+        return row
+
+    # --- Soft latch (component 3): re-screen every pipelined unit at the
+    # same bar; a unit that re-clears it leaves the pipeline (reversed).
+    candidates: list[tuple[Generator, float]] = []  # (unit, depth $/kW-yr)
+    for g, net_revenue, going_forward_cost in margins:
+        failing = net_revenue < going_forward_cost
+        if g.unit_id in state:
+            if failing:
+                events.append(_event("re_confirmed", g, state[g.unit_id]))
+            else:
+                events.append(_event("reversed", g, state.pop(g.unit_id)))
+        elif failing:
+            depth = (
+                (going_forward_cost - net_revenue) / (g.pmax_mw * 1000.0)
+                if g.pmax_mw > 0.0
+                else 0.0
+            )
+            candidates.append((g, depth))
+
+    # --- Joint entry competition (components 1-2): worst-first margin depth,
+    # deterministic tie-break on unit_id. The uniform decision bar has already
+    # fired above; admission is capped by the scheduled-adequacy requirement.
+    candidates.sort(key=lambda item: (-item[1], item[0].unit_id))
+    new_units = [g for g, _depth in candidates]
+    depth_of = {g.unit_id: d for g, d in candidates}
+    # Scheduled-exit set: everything pending plus every new candidate; the
+    # floor machinery (cheapest-firm-adequacy retention, the EXISTING metric)
+    # un-admits new candidates until the scheduled post-pipeline accredited
+    # firm capacity clears the shared PRM requirement. Pending units admitted
+    # in prior years are not re-litigated here — the realized-year floor
+    # below remains their backstop.
+    scheduled: set[str] = set(state) | {g.unit_id for g in new_units}
+    _apply_reliability_floor(
+        fleet,
+        new_units,
+        scheduled,
+        state,
+        config,
+        peak_demand,
+        wind_pool_mw,
+        solar_pool_mw,
+        storage_firm_mw,
+        deliverability_headroom,
+        year,
+    )
+    decided_year = year - 1  # the loss year whose dispatch failed this screen
+    for g in new_units:
+        if g.unit_id in scheduled:
+            state[g.unit_id] = decided_year
+            events.append(_event("decided", g, decided_year))
+        else:
+            row = _event("entry_capped", g, None)
+            row["depth_usd_per_kw_yr"] = float(depth_of[g.unit_id])
+            events.append(row)
+
+    # --- Execution (component 4): every unit still pipelined at
+    # decided_year + L_f deactivates now, then the realized-year reliability
+    # floor (component 5, unchanged machinery) retains cheapest-firm-adequacy
+    # first. Floor-retained units stay pipelined (execution deferred).
+    unit_of = {g.unit_id: g for g in fleet}
+    due = [
+        unit_of[uid]
+        for uid in state
+        if year >= state[uid] + _execution_lag_years(config, unit_of[uid].fuel_type)
+    ]
+    # Deterministic order for the floor's eligible iteration and the ledger.
+    due.sort(key=lambda g: (g.fuel_type, -g.heat_rate))
+    retired = {g.unit_id for g in due}
+    floor_retention_log = _apply_reliability_floor(
+        fleet,
+        due,
+        retired,
+        state,
+        config,
+        peak_demand,
+        wind_pool_mw,
+        solar_pool_mw,
+        storage_firm_mw,
+        deliverability_headroom,
+        year,
+    )
+    for g in due:
+        if g.unit_id in retired:
+            events.append(_event("executed", g, state[g.unit_id]))
+
+    survivors = [g for g in fleet if g.unit_id not in retired]
+    for uid in retired:
+        state.pop(uid, None)
+
+    if retired:
+        logger.info(
+            "year %d: R-NEW pipeline executed %d exit(s), %.0f MW "
+            "(%d pending, %d entry-capped, %d reversed)",
+            year,
+            len(retired),
+            sum(float(g.pmax_mw) for g in due if g.unit_id in retired),
+            len(state),
+            sum(1 for e in events if e["event"] == "entry_capped"),
+            sum(1 for e in events if e["event"] == "reversed"),
+        )
+    if event_sink is not None:
+        event_sink["pipeline_events"] = events
+        event_sink["retired"] = [
+            {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
+            for g in due
+            if g.unit_id in retired
+        ]
+        event_sink["floor_retained"] = [
+            {"unit_id": g.unit_id, "fuel": g.fuel_type, "mw": float(g.pmax_mw)}
+            for g in due
+            if g.unit_id not in retired
+        ]
+    return survivors, state, floor_retention_log
