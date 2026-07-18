@@ -34,9 +34,9 @@ residual, and re-derive only when the CAMPD source updates — CLAUDE.md rule 23
   (informational; the loader ignores them → class fallback).
 - The CLASS row (``plant_code == 0``, ``basis == "class"``) pools every event
   and requires ≥ ``MIN_EVENTS_CLASS`` events and the same LOYO gate; if it
-  fails, no class row is written and the loader falls back to
-  ``constants.CC_START_TO_LOAD_HOURS_DEFAULT`` (NREL/SR-5500-55433 hot/warm
-  CC start-to-full-load).
+  fails, no class row is written and un-rowed plants carry no lead — a
+  measured lead or nothing, never a hand number (rule 23; the measured p50
+  sits inside the NREL/SR-5500-55433 hot/warm CC start-to-full-load band).
 - ``lead_hours`` = round(p50) clipped to [``LEAD_MIN_HOURS``,
   ``LEAD_MAX_HOURS``]: a lead below 1 h is sub-resolution, and a lead beyond
   6 h exceeds any credible same-operating-day DAM positioning window.
@@ -51,7 +51,7 @@ hourly LP resolution its lead is 0 by physics, and gas steamers are owned by
 their own drag/startup mechanisms (one mechanism per phenomenon, rule 19).
 
 Output: ``data/raw/_processed-legacy/campd_cc_start_trajectory_{ISO}.csv``,
-consumed by :func:`market_sim.data.fleet.load_cc_start_trajectory`.
+consumed by :func:`market_sim.pipeline.commitment.load_cc_start_trajectory`.
 
 Usage::
 
