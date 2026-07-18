@@ -7,8 +7,29 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `e5d6f29` (2026-07-18, turn 18 — manager session `yjegie`).
+- **Last reviewed `origin/main` HEAD:** `37b9136` (2026-07-18, turn 19 — manager session `yjegie`).
 - **Plan base SHA:** `c95176e`.
+- **turn 19 (manager `yjegie`, refresh). `e5d6f29→37b9136` (3 merges). FF-0E LANDED &
+  verified-pass → FF-1D RELEASED.** Rule-27 clean (capacity.py 4230, constants.py 7281; scenarios.py
+  7717→7794 and runner.py 2442→2457 both GREW = additive, attributed below — no shrink). **FF-0E =
+  #2514 (`37b9136`), verified-pass:** crossover harness on `run_capacity_hindcast.py --crossover
+  --vintage 2023` + `score_crossover.py` (788 lines) + `test_crossover_harness.py` +
+  `test_score_crossover.py`. Verified: (a) two NEW scenarios.py fields `crossover_forward_year`
+  (None) / `crossover_forward_gas_path` ("mid") with cache-neutral defaults added to
+  `_CACHE_KEY_OPTIONAL_FIELDS` → non-crossover runs byte-identical, NO existing default changed;
+  (b) fuel.py + runner.py threading is crossover-gated (`is_crossover_forward_year(year)` → forward
+  years only; None ⇒ byte-identical backcast); (c) **21 config passthroughs preserved** (FF-2A
+  breach concern cleared); (d) governance exemplary — hindcast ≤2025 guard intact, crossover allows
+  {2023,2024,2025,2026,2027}, 2026/2027 un-bridged & SOLVED as forecast-mode (rule-22-legal: no
+  measured H1-2026 read), and `score_crossover.py` STRUCTURALLY refuses any bench/actual read
+  ≥2026 (`QUARANTINE_FROM=2026`, `_assert_scoreable_year` on every loader); (e) vintage-2023
+  leakage test present (`test_absent_unit_flags_violation`). No production default changed.
+  **→ FF-1D released** (OPUS, findings-only run+score+doc, parallel-safe with the whole batch).
+  Out-of-program: #2512 (ercot-lmp-scarcity backcast — scenarios.py +58 but grep shows NO default
+  flip / new forecast field; pruned 8 ercot66-77 backcast runs, top-15 retention), #2513 = my t18
+  ledger. **entry_lookahead_reprice still False** (FF-2A-posture not yet landed — correct). Active
+  front: FF-1D (released) + FF-0B-redo + FF-2B + FF-2A-posture (awaiting worker launch); FF-1E
+  after FF-2B. Nothing to correct.
 - **turn 18 (manager `yjegie`, status refresh). `9b9b0d4→e5d6f29` (6 merges). Rule-27 CLEAN**
   (capacity.py still 4230, all evolution fns present — checked because the FF-2A branch merged
   again). **FF-2A COMPLETION LANDED (measurement half), docs/data-only** — #2506 (`f10ee3b`,
@@ -166,10 +187,10 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 |---|---|---|---|---|---|---|
 | FF-0A | FABLE | 0 | L-VAL | ⛔ rubric | **verified-pass** | rubric #2414 + scorer #2419 |
 | FF-0A-fix | OPUS | 0 | L-VAL | — | **verified-pass** | #2419: 73 tests pass |
-| FF-0B-redo | OPUS | 0 | L-VAL | — | **sent (turn 17, in parallel batch) — not yet pushed (t18)** | T1-F 6-ISO baseline at HEAD defaults (FF-1F posture live: DC=mid, derate=ON); must COMMIT findings doc + hindcast sidecars (#2412 failure mode = gitignore-only non-delivery, named in prompt). Parallel-safe (no source edits). Let FF-2A-posture merge first so the baseline bakes in lookahead=ON. |
+| FF-0B-redo | OPUS | 0 | L-VAL | — | **sent (turn 17, in parallel batch) — not yet pushed (t19)** | T1-F 6-ISO baseline at HEAD defaults (FF-1F posture live: DC=mid, derate=ON); must COMMIT findings doc + hindcast sidecars (#2412 failure mode = gitignore-only non-delivery, named in prompt). Parallel-safe (no source edits). Let FF-2A-posture merge first so the baseline bakes in lookahead=ON. |
 | FF-0C | FABLE | 0 | L-CAP | — | **verified-pass** | #2418: R-NEW memo + owner box |
 | FF-0D | OPUS | 0 | L-INP | — | **verified-pass** | #2413: audit, no source changes |
-| FF-0E | OPUS | 0 | L-VAL | — | **LAUNCHED, in flight (turn 18)** — branch `t1x-crossover-hindcast-mj8rom` on origin, no merge yet | crossover harness build; edits run_capacity_hindcast.py (not capacity.py — parallel-safe). Verify on merge: 21 config passthroughs survive, ≥2026 scorer-refuse test, vintage-2023 leakage test, no default change. |
+| FF-0E | OPUS | 0 | L-VAL | — | **verified-pass (turn 19)** — #2514 | Crossover harness + score_crossover.py + 2 tests. Verified: new scenarios.py fields cache-neutral (byte-identical non-crossover), fuel/runner threading crossover-gated, 21 passthroughs preserved, ≥2026 bench/actual reads structurally refused (rule 22), vintage-2023 leakage test present, no default changed. |
 | FF-0F | OPUS | 0 | L-VAL/L-INP | — | **verified-pass, CLOSED (turn 17)** | #2488 + #2490 + #2505: benchmark-corridor datatype + loader + 13 tests + FC-5 context-only wiring; 73 scorer tests pass; additive; M9–M15 gaps filed. #2505 registered it in `render_data_dictionary.py` — snapshot deferral closed, no open items. |
 | FF-1A | FABLE | 1 | L-CAP | — | **verified-pass (complete)** | #2438 + #2448/#2451 + #2454. Inversion CLOSED; flip-gate scorecard complete. |
 | FF-1A-restore | FABLE | 1 | L-CAP | — | **verified-pass** | #2438: capacity.py byte-exact restore. |
@@ -177,13 +198,13 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-1A-C2 | OPUS | 1 | L-CAP | — | **verified-pass** — #2454 | doc synced, 0 PENDING. FF-1A complete. |
 | FF-1B | FABLE | 1 | L-SCAR | — | **verified-pass** | #2423: correlated cold-event derate. |
 | FF-1C | OPUS | 1 | L-INP | — | **verified-pass** | #2422: demand/DC currency + hydro. |
-| FF-1D | OPUS | 1 | L-VAL | — | **issued (turn 14), gated** | prompt issued; fires after FF-0E merges + green main. |
+| FF-1D | OPUS | 1 | L-VAL | — | **RELEASED (turn 19)** — FF-0E merged+verified | Run crossover 2023→2027 ERCOT+PJM (vintage 2023), score with score_crossover.py, publish input-gap doc. Findings-only, parallel-safe. Prompt re-emitted turn 19 with FF-0E-merged confirmation + exact invocation. |
 | FF-1E | OPUS | 1 | L-INP | — | **HELD (turn 17) — next after FF-2B's capacity.py merges** | Drift-clean, prereqs met (#2413/#2422/#2486). Leaf lane (unblocks nothing but the FF-2D gate) → sequenced AFTER FF-2B, which is on the FF-2C critical path. Both edit capacity.py; only one per parallel batch. Fire when a capacity.py slot frees. |
 | FF-1F | OPUS | 1 | L-INP | — | **landed + defaults LIVE** (#2468/#2476/#2480 + #2493) | #2493 flips `datacenter_load_path`→"mid", `correlated_forced_outage`→True with backcast byte-identity guards; plan §2.1 recorded. Closed. |
 | FF-2A | FABLE | 2 | L-CAP | — | **COMPLETE (turn 18) — mechanism + measurement both landed** | Mechanism merged #2486 (t15); measurement half landed #2506/#2509 (t18, docs/data-only): findings doc + ERCOT/MISO/PJM `*-ff2a-r2` legs. Results: VRE cap-rev near-pivotal, BLK-10 2.5→1.103 GW, PJM solar +84%→+48%, ERCOT solar zero → G-20/G-22. Full manager-verify of the completion pending next refresh (prima facie clean). Stale patch deleted #2503. |
 | FF-2A-integrate | FABLE | 2 | L-CAP | — | **verified-pass (turn 15, via #2486 `e9f9d60` + #2491/#2492)** | Mechanism merged + manager-verified (0 fn loss, signature matches runner, fields on-registry, 14 harness refs, compiles). PJM/MISO/ERCOT r2 sidecars governance-clean. FF-2A lane CLOSED. Housekeeping done (t17): chunk branch gone + stale patch deleted #2503. |
 | FF-2A-posture | OPUS | 2 | L-CAP | — | **sent (turn 18, owner-approved)** | Flip `entry_lookahead_reprice` default False→True (scenarios.py:1201), backcast byte-identity guard, plan §2.1 record + short findings note. Zero-DOF, G-30-validated; FF-1F pattern. Parallel-safe (scenarios.py — disjoint from 0B/0E/2B). Let it merge before FF-0B-redo starts so the baseline bakes in the posture. |
-| FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 17) — in the parallel batch (recommended over FF-1E); not yet pushed (t18)** | Prereq FF-2A met, drift-clean. On the FF-2C critical path (last technical prereq for the owner-approved flips) + produces the first NEISO cap-hindcast pair (NEISO currently evidence-free) → unblocks more near-term work than FF-1E. Parallel batch = FF-0B-redo + FF-0E + FF-2B (1E and 2B collide on capacity.py). CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; bands pre-registered BEFORE the run. |
+| FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 17) — in the parallel batch (recommended over FF-1E); not yet pushed (t19)** | Prereq FF-2A met, drift-clean. On the FF-2C critical path (last technical prereq for the owner-approved flips) + produces the first NEISO cap-hindcast pair (NEISO currently evidence-free) → unblocks more near-term work than FF-1E. Parallel batch = FF-0B-redo + FF-0E + FF-2B (1E and 2B collide on capacity.py). CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; bands pre-registered BEFORE the run. |
 | FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated** | prompt issued; owner-approved flip all-but-ERCOT, staged by readiness. After FF-2A(done) + FF-2B. Rule 1: worsened fit = root-cause. |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated** | prompt issued; runs after W1/W2 merges. Rubric verdicts + promotion table. |
 | FF-3A | OPUS | 3 | L-VAL | ⛔ T2 | not-sent | blocked: FF-2D + owner |
@@ -196,7 +217,8 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-4C | OPUS | 4 | L-VAL | owner-gated | not-sent | blocked: FF-4A + owner |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
 
-Out-of-program / trivial: #2508 (miso-74), #2511 (miso-75 Manitoba merit cap) MISO backcast,
+Out-of-program / trivial: #2512 (ercot-lmp-scarcity backcast calibration + ercot66-77 prune),
+#2513 (ledger t18), #2508 (miso-74), #2511 (miso-75 Manitoba merit cap) MISO backcast,
 #2507/#2510 (ledger t17), #2501 (ercot-84 offer-surface re-adjudication + probes),
 #2504 (caiso-99 attestation), #2483/#2487 (caiso-98 probe/charter), #2484/#2495 (miso-74 seam +
 attestation), #2489 (ercot83 posture backcast), #2494 (ercot apr/may scarcity tooling),
@@ -332,3 +354,12 @@ attestation), #2489 (ercot83 posture backcast), #2494 (ercot apr/may scarcity to
   owner per-ISO sign-off). Active parallel front: FF-0B-redo + FF-0E(in flight) + FF-2B +
   FF-2A-posture; FF-1E after FF-2B. Watch next: FF-0E merges → verify + fire FF-1D; batch lands;
   verify FF-2A completion + FF-2A-posture.
+- **turn 19 (manager `yjegie`, refresh).** `e5d6f29→37b9136` (3 merges). **FF-0E LANDED
+  verified-pass** (#2514): crossover harness + score_crossover.py + 2 tests; new scenarios.py
+  fields cache-neutral, fuel/runner threading crossover-gated, 21 passthroughs preserved, ≥2026
+  reads structurally refused, vintage-2023 leakage test present, no default changed. Rule-27 clean
+  (scenarios.py 7717→7794 / runner.py 2442→2457 additive). **→ FF-1D RELEASED** (findings-only,
+  parallel-safe) with FF-0E-merged confirmation. Out-of-program: #2512 (ercot-lmp-scarcity
+  backcast — no forecast default flip; pruned 8 old ercot runs), #2513 = my t18 ledger. FF-2A-posture
+  / FF-0B-redo / FF-2B still awaiting worker launch. Nothing to correct. Watch next: FF-1D +
+  batch land; verify FF-2A completion + FF-2A-posture on their merges.
