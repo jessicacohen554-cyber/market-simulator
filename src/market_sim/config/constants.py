@@ -772,41 +772,93 @@ EFORD: dict[str, float] = {
     "gas_cc_ccs": 0.05,
 }
 
-# Annual demand growth rates by ISO, scenario path, and era.
-# Near-term (2026-2030): elevated by data center and industrial load.
-# Long-term (2031-2050): decelerates as pipeline matures.
-# Source: EIA STEO July 2025, ERCOT CDR Dec 2024, CAISO IEPR 2024.
+# Annual demand growth rates by ISO, scenario path, and era. These are TOTAL
+# (data-center-INCLUSIVE) rates: the near era still carries the DC boom, so at
+# the default datacenter_load_path="off" they reproduce each ISO's published
+# total-load forecast directly (byte-identical mechanism to before this refresh).
+# When the DC block is ON, data.datacenter.add_datacenter_block RELOCATES the DC
+# energy out of this rate into the explicit flat block under a 2030
+# energy-continuity constraint (energy invariant, only the peak shape flattens),
+# so there is NO growth x DC double-count (CX-4 §3.5 / FF-0D audit §1.6). The
+# implied organic-ex-DC near rate each ISO leaves after the mid DC block
+# relocates is noted per block below (transparency only — it is not a live
+# constant; the relocation is computed from the block MW, decoupling-safe).
+#
+# Near-term era = year <= DEMAND_GROWTH_TRANSITION_YEAR (2030); long-term
+# (2031-2050) decelerates as the pipeline matures. The model applies a flat
+# hourly scalar, so peak CAGR == energy CAGR: a near rate r reproduces
+# base_peak x (1+r)^(year-weather_year). mid = each ISO's published central
+# forecast; low/high bracket it on the prior-vintage band ratios re-centred on
+# the new mid (the exact published low/high scenario MW-by-year tables are the
+# FF-0D audit §7.3 manual downloads — headline central figures are web-confirmed).
+# RE-DERIVED 2026-07 (FF-1C, rule 23) from the FF-0D-audit-cited 2025/2026 ISO
+# forecast vintages, replacing the stale 2024-vintage values (and the PJM/NYISO/
+# NEISO literal "TODO: verify"); see docs/handoffs/ff-inputs-currency-audit-2026-07.md
+# §1.1-1.2 and docs/parameter-citations.md.
 DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
+    # ERCOT — 2025 LTLF3 adjusted 2030 peak ~139 GW from the 85.0 GW model 2024
+    # base => (139/85)^(1/6)-1 = 8.5%/yr near. A 2026 preliminary LTLF (released
+    # 2026-04-15) is the next vintage (FF-0D §7.3 M5). Long 2.5%/yr (decel; no
+    # newer long-era figure cited). Implied organic-ex-DC near (mid, after the
+    # 37 GW DC block relocates) ~0.6%/yr — ERCOT growth is DC-dominated.
+    # Source: ERCOT 2025 Long-Term Load Forecast (LTLF3); FF-0D audit §1.1.
     "ERCOT": {
-        "low": {"near": 0.03, "long": 0.015},
-        "mid": {"near": 0.05, "long": 0.025},
-        "high": {"near": 0.08, "long": 0.04},
+        "low": {"near": 0.05, "long": 0.015},
+        "mid": {"near": 0.085, "long": 0.025},
+        "high": {"near": 0.115, "long": 0.04},
     },
+    # CAISO — CEC California Energy Demand 2025-2045 (2025 IEPR): 1-in-2 peak
+    # 46.1 (2025) -> 52.9 GW (2030) = +2.8%/yr near; 52.9 -> ~68 GW (2040) =
+    # +2.5%/yr long. Implied organic-ex-DC near ~1.9%/yr (CAISO growth is mostly
+    # electrification; the +1.8 GW DC adder is small). Source: CEC CED 2025-2045
+    # / 2025 IEPR; FF-0D audit §1.1.
     "CAISO": {
-        "low": {"near": 0.005, "long": 0.005},
-        "mid": {"near": 0.015, "long": 0.010},
-        "high": {"near": 0.025, "long": 0.018},
+        "low": {"near": 0.015, "long": 0.015},
+        "mid": {"near": 0.028, "long": 0.025},
+        "high": {"near": 0.042, "long": 0.035},
     },
-    # PJM Fleet Parameters — Source: PJM Load Forecast Report 2024, Table B-1.
-    # Tier: 2. TODO: verify
+    # PJM — 2026 Long-Term Load Forecast Report (posted 2026-01-14): 10-yr summer
+    # peak +3.6%/yr (160 -> 222 GW by 2036) near; 20-yr +2.4%/yr (253 GW by 2046)
+    # long. Near-term was trimmed on stricter DC vetting. Implied organic-ex-DC
+    # near ~-0.5%/yr (PJM's non-DC load is flat-to-declining; essentially all
+    # growth is the ~30 GW DC block). Source: PJM 2026 Load Forecast Report;
+    # FF-0D audit §1.1.
     "PJM": {
-        "low": {"near": 0.020, "long": 0.010},
-        "mid": {"near": 0.035, "long": 0.018},
-        "high": {"near": 0.060, "long": 0.030},
+        "low": {"near": 0.020, "long": 0.014},
+        "mid": {"near": 0.036, "long": 0.024},
+        "high": {"near": 0.060, "long": 0.040},
     },
-    # NYISO Fleet Parameters — Source: NYISO Gold Book 2024, Table I-3.
-    # Tier: 2. TODO: verify
+    # NYISO — 2025 Load & Capacity Data Report ("Gold Book") vintage bump (exact
+    # per-zone MW-by-year is FF-0D §7.3 M4). Central ~1.8%/yr near / 1.2%/yr long
+    # (electrification + the >3 GW large-load adjustment carried as the DC block).
+    # Implied organic-ex-DC near ~-1.0%/yr (organic NY load is efficiency-flat).
+    # Source: NYISO 2025 Gold Book; FF-0D audit §1.1.
     "NYISO": {
-        "low": {"near": 0.005, "long": 0.005},
-        "mid": {"near": 0.015, "long": 0.010},
-        "high": {"near": 0.025, "long": 0.018},
+        "low": {"near": 0.008, "long": 0.006},
+        "mid": {"near": 0.018, "long": 0.012},
+        "high": {"near": 0.030, "long": 0.020},
     },
-    # NEISO Fleet Parameters — Source: ISO-NE CELT Report 2024.
-    # Tier: 2. TODO: verify
+    # NEISO — ISO-NE 2026 CELT (May 2026): net energy 116,679 (2025) -> 127,660
+    # GWh (2035) ~1.0%/yr, winter net peak 20,483 (2026/27) -> 26,411 MW (2035/36)
+    # ~2.6%/yr. The single flat scalar cannot carry both (energy vs peak diverge
+    # under electrification — a documented limitation, CX-4 §4); mid 1.3%/yr near
+    # blends them, long 1.2%/yr. NEISO ships no material DC block (~110 MW, memo
+    # deferred), so organic == total. Source: ISO-NE 2026 CELT; FF-0D audit §1.1.
     "NEISO": {
-        "low": {"near": 0.005, "long": 0.005},
-        "mid": {"near": 0.015, "long": 0.010},
-        "high": {"near": 0.025, "long": 0.018},
+        "low": {"near": 0.007, "long": 0.007},
+        "mid": {"near": 0.013, "long": 0.012},
+        "high": {"near": 0.022, "long": 0.020},
+    },
+    # MISO — Sept-2025 Long-Term Load Forecast: peak 121 (2025) -> ~163 GW (2035)
+    # = +3.0%/yr; ~3.1%/yr to the 2030 near boundary from the 121.6 GW model 2024
+    # base. Long 2.0%/yr (decel post-2035). Replaces the FF-0D-flagged 1%/yr
+    # scalar fallback (the single largest demand gap). Implied organic-ex-DC near
+    # ~-0.5%/yr (MISO growth is DC-driven; DC ~20% of energy by 2030). Source:
+    # MISO 2025 Long-Term Load Forecast; FF-0D audit §1.2.
+    "MISO": {
+        "low": {"near": 0.018, "long": 0.012},
+        "mid": {"near": 0.031, "long": 0.020},
+        "high": {"near": 0.045, "long": 0.030},
     },
 }
 
@@ -814,7 +866,7 @@ DEMAND_GROWTH_RATES: dict[str, dict[str, dict[str, float]]] = {
 # Source: engineering judgment — data center pipeline matures ~2030.
 DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 
-# --- Data-center load block (CX-4, gap G-34) ------------------------------
+# --- Data-center load block (CX-4, gap G-34; FF-1C currency refresh) -------
 # Cumulative data-center MW trajectories per ISO/path, consumed by
 # data.datacenter.resolve_datacenter_mw (forecast-mode-only scenario axis;
 # default path "off" => unused, byte-identical to today). Piecewise-linear
@@ -826,6 +878,16 @@ DEMAND_GROWTH_TRANSITION_YEAR: int = 2030
 # on each forecast vintage from the ISO's MW-by-year table (memo §3.3, §10.6).
 # parameters.json tier 2, modeled flag OFF (a forward input, not a fitted knob).
 # ISOs with no published DC decomposition ship {} => 0 MW (memo §2.2).
+#
+# DOUBLE-COUNT SAFETY (FF-0D audit §1.6): because the near-era DEMAND_GROWTH_RATES
+# are TOTAL (DC-inclusive), add_datacenter_block does NOT add this block on top of
+# that growth — it RELOCATES the block's energy out of the (peaky) grown demand
+# and back as a flat block (energy invariant, 2030-continuity; CX-4 §3.5). So the
+# block corrects DC's hourly SHAPE without double-counting its energy. At the MID
+# path the DC block sits inside each ISO's total forecast (relocate regime); a
+# high/full-queue path can exceed it and then adds as genuinely incremental load.
+# FF-1C (2026-07, rule 23) refreshed the MISO block (was {}) and re-confirmed the
+# ERCOT/PJM/CAISO/NYISO anchors against the FF-0D-cited vintages.
 DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
     # ERCOT — large-load queue ~226 GW (Nov 2025) vs 63 GW (end-2024); ~70% is
     # data center; ~77% of large load targets in-service by 2030; 2030 adjusted
@@ -870,11 +932,25 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
         "mid": {2025: 0.0, 2031: 3000.0},
         "high": {2025: 0.0, 2031: 10000.0},
     },
-    # MISO / NEISO — no published DC decomposition located (memo §2.2); ship {}
-    # => 0 MW every path/year until a primary source is read (a pure data-intake
-    # follow-up, no fitted placeholder). The near-term DEMAND_GROWTH_RATES still
-    # carry their DC boom implicitly until then.
-    "MISO": {},
+    # MISO — Sept-2025 Long-Term Load Forecast now publishes an explicit DC
+    # decomposition (FF-0D audit §1.4, closing the memo §2.2 "no source" gap):
+    # 8-14 GW of data centers in 2026-2027, DC reaching ~20% of MISO energy by
+    # 2030. low = signed-subset MW not separately published -> 0; mid = 11 GW by
+    # 2027 (mid of the 8-14 GW band) growing to ~20 GW by 2030 (0.20 x ~774 TWh
+    # 2030 energy / 0.85 LF / 8760 h ~= 20.4 GW); high = 14 GW (top of the band)
+    # by 2027 -> ~27 GW by 2030 (upper-DC). Source: MISO 2025 Long-Term Load
+    # Forecast; FF-0D audit §1.2/§1.4.
+    "MISO": {
+        "low": {2027: 0.0, 2030: 0.0},
+        "mid": {2027: 11000.0, 2030: 20000.0},
+        "high": {2027: 14000.0, 2030: 27000.0},
+    },
+    # NEISO — ISO-NE 2026 CELT added a large-load (DC/crypto/large-industrial)
+    # forecast framework, but its DC quantum is immaterial (~110 MW to peak in the
+    # 2030s per the CELT summary, <0.6% of NEISO peak). Per the "no MATERIAL
+    # source => ship {}" rule this stays {} (=> 0 MW; DC stays implicit in the
+    # DEMAND_GROWTH_RATES near era) until a material decomposition lands — a
+    # documented deferral, not an omission (FF-0D audit §1.4, P2 low-materiality).
     "NEISO": {},
 }
 
@@ -883,8 +959,14 @@ DATACENTER_ADDITIONS_MW: dict[str, dict[str, dict[int, float]]] = {
 # zone's iso_configs load_share, applied by data.datacenter.datacenter_zone_shares.
 # Override ONLY where published queue siting geography differs from the load
 # distribution (memo names ERCOT North/West and PJM Dominion skews). Ships EMPTY:
-# no published per-zone DC siting fractions are yet sourced, so every ISO uses its
-# load_share default; adding a documented siting split is a data-intake follow-up.
+# FF-1C (2026-07) confirmed the skew DIRECTIONS are published (ERCOT LFL queue
+# concentrates in North/Oncor + West; PJM DC concentrates in Dominion/DOM) but
+# no published per-zone MW FRACTION split was sourceable in-session (the exact
+# queue-geography tables are FF-0D audit §7.3-adjacent manual pulls). Per the
+# memo's "never invent a split" rule and FF-1C's charter ("no published
+# decomposition => ships as load-share default, documented — never invented"),
+# every ISO keeps its load_share default; populating ERCOT/PJM from the published
+# queue-geography fractions is the remaining P2 data-intake follow-up.
 DATACENTER_ZONE_SHARE: dict[str, dict[str, float]] = {}
 
 # --- Henry Hub Natural Gas Price Trajectories ($/MMBtu, real 2024$) ---
