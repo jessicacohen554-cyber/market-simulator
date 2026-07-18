@@ -85,7 +85,8 @@ config freezes, never inside this program's iterations (§2.3).
    at HEAD; `NEW_ENTRY_COSTS` hardcoded (ATB-cited) rather than reading the curated ATB
    datatype; hydro fleet silently drops ~3.3 GW (NYISO) past the last EIA-923 vintage.
    → FF-0D audit, FF-1C/FF-1E fixes.
-7. **NYISO R5a** adjudicated-unimplemented (owner Option A/B pending) — curve-ineligible;
+7. **NYISO R5a** adjudicated-unimplemented (**owner decided Option B — NYCA-wide static
+   proxy — FF-1F 2026-07-18, §2.1a**; implementation still pending) — curve-ineligible;
    **NEISO evidence-free** (no capacity hindcast at all). → FF-3D / FF-2B.
 8. **Numerics**: storage ε-tiebreak degeneracy at high penetration (I9, CAISO →5.8% of
    throughput); RPS dual cobweb (I10 WARN). → FF-3C (with T2 evidence).
@@ -125,6 +126,28 @@ feature probe. T1→T2 = FC-1 PASS, FC-2 no-FAIL, FC-3/FC-4 within pre-registere
 FC-6 driver battery green. T2→T3 = adds FC-5 corridor conformance + stability through
 2035 (no I12 breach trend, no I13). A feature that fails a gate goes back to its lane;
 it does NOT ride along into longer solves "to see what happens."
+
+### 2.1a Owner-decided forecast posture (FF-1F, 2026-07-18)
+
+The owner fixed the default forecast posture for T1+/golden runs (§0 "produced at
+HEAD defaults plus the owner-decided DC-load posture"). Recorded here per the
+standing instruction (the Wave-1 FF-1C prompt, §6: "record the decision in this
+plan §2.1 when made"); §7 binds. Two are `ScenarioConfig` default flips executed
+in FF-1F; two are execution/design decisions carried by later, owner-gated lanes.
+
+| # | Decision | Value | Execution |
+|---|---|---|---|
+| a | Capacity-market clearing (CR-1 sloped demand curve) | **ON for every ISO with a real capacity market** — PJM, MISO, NYISO, NEISO, CAISO (all but energy-only ERCOT) | **NOT flipped in FF-1F.** Executed per-ISO by readiness in **FF-2C** (owner-gated) via `capacity_market_clearing_by_iso`; the scalar `capacity_market_clearing` default stays OFF so no ISO clears before its lane is ready. |
+| b | NYISO R5a reserve-requirement construction | **Option B** (NYCA-wide static proxy — not the lagged model-derived factor of Option A) | **FF-3D** (owner-gated) implements it and runs the first curve-ON probe. |
+| c | `datacenter_load_path` default | **`mid`** (was `off`) — model the published DC boom as a flat, energy-invariant block (FF-1C §7) | **FF-1F** (`scenarios.py`). Forecast-only axis; `__post_init__` coerces it to `off` in backcast/hindcast, so keepers stay byte-identical. |
+| d | `correlated_forced_outage` default | **ON** (was `False`) — the measured Uri/Elliott/Heather cold-event derate (FF-1B §3 recommendation) | **FF-1F** (`scenarios.py`). ERCOT-only curve; hard no-op in backcast (keepers byte-identical); hindcast legs inherit it on re-solve (a validation-lane consequence, not a keeper change). |
+
+**FF-1F byte-identity attestation (c, d).** Backcast `cache_key` is **unchanged**
+by the flip (DC coerces to `off`, and `backcast_config` pins
+`correlated_forced_outage=False` so the derate flag keeps its old value); the
+derate is additionally a mechanism-level no-op in backcast. The forecast default
+`cache_key` shifts **as intended** — the golden posture is now a distinct
+scenario. T0 evidence + citations: `docs/handoffs/ff-1f-posture-defaults-2026-07-18.md`.
 
 ### 2.2 The crossover instrument, precisely
 
