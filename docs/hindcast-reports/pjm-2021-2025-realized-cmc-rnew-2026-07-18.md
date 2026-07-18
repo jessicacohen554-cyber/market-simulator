@@ -1,6 +1,6 @@
 # Capacity hindcast — PJM 2021→2025 (realized fuel)
 
-_Generated 2026-07-18 · W2-P5 · plan §1.4 · bundle `results/hindcast/pjm-2021-2025-realized-cmc-rnew/PJM/cb5e2ecf49e7cfa3`_
+_Generated 2026-07-18 · W2-P5 · plan §1.4 · bundle `results/hindcast/pjm-2021-2025-realized-cmc-rnew/PJM/784e354a7b8b7317`_
 
 Forecast machinery run from the **EIA-860 2020 vintage**, evolved 2021→2025. 2021 seeds the price signal (not scored); **2022 is the quarantine bridge — evolved, never solved (rule 22)**; 2023-2025 scored. A missed band is a root-cause investigation (rules 1/11/14), never widened, and nothing here is tuned.
 
@@ -29,9 +29,9 @@ Per-fuel retired GW:
 | tech | actual GW | model GW | err | band | Δ-share (pp) |
 |---|--:|--:|--:|:--|--:|
 | wind | 1.619 | 6.0 | +271% | ❌ FAIL | +9.3 |
-| solar | 13.066 | 24.0 | +84% | ❌ FAIL | +10.0 |
-| gas_cc | 8.525 | 5.0 | -41% | ❌ FAIL | -22.0 |
-| gas_ct | 0.447 | 2.353 | +426% | ❌ FAIL | +4.4 |
+| solar | 13.066 | 24.0 | +84% | ❌ FAIL | +9.8 |
+| gas_cc | 8.525 | 5.0 | -41% | ❌ FAIL | -22.1 |
+| gas_ct | 0.447 | 2.5 | +459% | ❌ FAIL | +4.8 |
 | storage | 0.283 | 0.0 | -100% | ❌ FAIL | -1.2 |
 
 ## System CO2 (headline: 2025, ±10%)
@@ -40,7 +40,7 @@ Per-fuel retired GW:
 |---|--:|--:|--:|:--|
 | 2023 | 278.8 | 407.1 | -32% | (report-only) |
 | 2024 | 268.8 | 420.6 | -36% | (report-only) |
-| 2025 | 301.9 | 448.7 | -33% | ❌ FAIL |
+| 2025 | 301.8 | 448.7 | -33% | ❌ FAIL |
 
 > CO2 decomposition (plan §1.4): hindcast CO2 error ≈ **dispatch error** (the keeper/D-7 gap on the *true* fleet) + **fleet error** (the new capacity-path information). Supply the keeper CO2 gap to attribute the split; absent it, the table reports the *total* hindcast error only. Actual CO2 is CAMPD unit-level (short→metric tons); ERCOT≈TX slightly overcounts (El Paso/SPP-side TX plants).
 
