@@ -128,12 +128,27 @@ class TestApplyDerate:
         apply_correlated_outage_derate(fa, cfg, "ERCOT", 2021)
         assert np.all(fa.availability >= 0.0)
 
-    def test_default_off_is_noop(self, monkeypatch):
+    def test_flag_off_is_noop(self, monkeypatch):
+        # Explicit flag-off is a byte-identical no-op even on a deep-cold day.
+        _patch_tmin(monkeypatch, [-30.0])
+        fa = _fleet(["CC_REGULAR"], 24)
+        cfg = ScenarioConfig(mode="forecast", correlated_forced_outage=False)
+        assert not apply_correlated_outage_derate(fa, cfg, "ERCOT", 2024)
+        assert np.all(fa.availability == 0.9)
+
+    def test_default_on_forecast_forms_derate(self, monkeypatch):
+        # FF-1F (owner, 2026-07-18): the flag defaults ON, so a bare forecast
+        # config derates a covered class on a deep-cold day (ERCOT has a
+        # CORRELATED_OUTAGE_CURVE entry). This is the whole point of the flip —
+        # default-off it was dead code in the forecast runs it exists to fix.
         _patch_tmin(monkeypatch, [-30.0])
         fa = _fleet(["CC_REGULAR"], 24)
         cfg = ScenarioConfig(mode="forecast")
-        assert not apply_correlated_outage_derate(fa, cfg, "ERCOT", 2024)
-        assert np.all(fa.availability == 0.9)
+        assert cfg.correlated_forced_outage is True
+        assert apply_correlated_outage_derate(fa, cfg, "ERCOT", 2024)
+        share = POST["CC_REGULAR"]["winter_event_share"]
+        cap = POST["CC_REGULAR"]["cap"]
+        assert np.all(fa.availability == pytest.approx(0.9 + share - cap))
 
     def test_backcast_is_noop(self, monkeypatch):
         # Backcast carries the measured CAMPD overlays (charter D.5): the
@@ -154,8 +169,13 @@ class TestApplyDerate:
 
 class TestSigmaGuard:
     def test_scale_rejected_without_derate(self):
+        # The sigma re-scale is gated on the derate being armed. Since FF-1F the
+        # derate defaults ON, so the OFF state must be set explicitly to exercise
+        # the guard (a bare config would now accept the scale).
         with pytest.raises(ValueError, match="gated with"):
-            ScenarioConfig(correlated_outage_sigma_scale=0.8)
+            ScenarioConfig(
+                correlated_forced_outage=False, correlated_outage_sigma_scale=0.8
+            )
 
     def test_scale_accepted_with_derate_and_applied(self):
         cfg = ScenarioConfig(
