@@ -1,0 +1,155 @@
+# Canonical schema: benchmark-corridor (external forecast-corridor anchors —
+# 2030/2035/2040 capacity mix, energy mix, and CO2 by ISO/region, per source).
+#
+# The FC-5 external-corridor evidence base (forecast determination rubric
+# `docs/forecast-determination-rubric.md` §2 FC-5 / §6 inventory). Every row is
+# ONE external projection value read verbatim from a primary source
+# (EIA AEO2025 regional electricity tables, NREL Standard Scenarios, or an ISO
+# planning document — ERCOT CDR, PJM Load Forecast/RTEP, NYISO Gold Book,
+# ISO-NE CELT, CAISO/CPUC IEPR/PSP, MISO futures). It is a tidy (long) frame so
+# heterogeneous per-source granularity (AEO's EMM-subregion grain vs an ISO
+# document's system total) reconciles onto one contract.
+#
+# CONTEXT, NEVER A FIT TARGET (CLAUDE.md rule 13). These values anchor the
+# divergence-explanation discipline of `docs/handoffs/cross-model-corridor-
+# 2026-07-13.md` ("divergence is not failure; unexplained divergence is") — the
+# scorer reports a model-vs-benchmark divergence WITH an explanation and never
+# scores proximity as a miss. Nothing in the model is ever tuned toward a value
+# in this table.
+#
+# One row per (source, iso, region, scenario, target_year, quantity, tech).
+#   * source     — controlled benchmark-source id (AEO2025, StdScen2024,
+#                  ERCOT_CDR_2025, PJM_LOAD_2026, NYISO_GOLDBOOK_2026,
+#                  ISONE_CELT_2026, CAISO_IEPR_2025, MISO_FUTURES, …).
+#   * iso        — the ISO/RTO the row maps onto, or "national" for a
+#                  system/national anchor. AEO's EMM regions approximate but do
+#                  NOT exactly equal the ISO footprints; the boundary caveat
+#                  rides in `note` (rule 11 — real data, misalignment documented).
+#   * region     — the source's native geography label (an AEO EMM region name,
+#                  an ISO's own zone/area label, or "system"/"national"). An ISO
+#                  total is the sum of that ISO's `region` rows (capacity /
+#                  generation / CO2 are all extensive, so region rows sum).
+#   * scenario   — the source's case label (reference / mid / protocol / …).
+#   * quantity   — capacity | generation | co2 (the "metric" axis).
+#   * tech       — canonical technology/fuel, or "total" (a capacity/generation
+#                  grand total, or the system CO2 total).
+#   * value      — the projected value in `unit`; ALWAYS a real primary-source
+#                  number (rule 5). Gaps are NOT null rows — a source not yet on
+#                  disk is a `DATA NEEDED` row in the raw README and a
+#                  missing-source entry the loader derives, never a placeholder
+#                  value here.
+# Provenance (`source_doc` + `source_page`) carries the exact URL / table /
+# API series id so every value traces to its authoritative filing.
+datatype: benchmark-corridor
+schema_version: 1
+title: External forecast-corridor benchmarks (capacity / energy mix + CO2 by ISO)
+description: >-
+  Per-source external projections of 2030/2035/2040 capacity mix, generation
+  (energy) mix, and power-sector CO2 by ISO/region, reconciled onto one tidy
+  frame for the FC-5 external-corridor context check. AEO2025 regional
+  electricity tables, NREL Standard Scenarios, and ISO planning documents map
+  onto one canonical quantity/technology vocabulary. Context only, never a fit
+  target (rule 13).
+
+key_columns: [source, iso, region, scenario, target_year, quantity, tech]
+allow_additional_columns: false
+
+columns:
+  - name: source
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Controlled benchmark-source id — one per external outlook/vintage, e.g.
+      AEO2025 | StdScen2024 | ERCOT_CDR_2025 | PJM_LOAD_2026 | PJM_RTEP_2024 |
+      NYISO_GOLDBOOK_2026 | ISONE_CELT_2026 | CAISO_IEPR_2025 | CPUC_PSP_2024 |
+      MISO_FUTURES. A non-reference scenario of the same outlook takes its own
+      source id (so `scenario` describes the case; `source` identifies the run).
+  - name: iso
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      ISO/RTO the row maps onto: ERCOT | PJM | MISO | NYISO | NEISO | CAISO, or
+      "national" for a US/system anchor. For AEO2025 this is the ISO an EMM
+      region crosswalks to (the footprints are approximate — see `note`).
+  - name: region
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The source's native geography label the value applies to: an AEO EMM
+      region name (e.g. "Texas Reliability Entity", "PJM/East"), an ISO's own
+      zone/area/system label, or "national". An ISO total for a multi-region
+      source is the sum over that ISO's region rows.
+  - name: vintage
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Publication vintage of the source, YYYY or YYYY-MM (e.g. "2025-04" for
+      AEO2025, "2024" for StdScen 2024, "2025-12" for the Dec-2025 ERCOT CDR).
+  - name: scenario
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      The source's case/scenario label as a lower_snake token: reference | mid |
+      protocol | sb6 | high | low | … . AEO2025's Reference case is "reference".
+  - name: target_year
+    dtype: int64
+    unit: year
+    nullable: false
+    description: Projection target year the value governs (e.g. 2030, 2035, 2040).
+  - name: quantity
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical quantity (the FC-5 "metric" axis): capacity | generation | co2.
+  - name: tech
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Canonical technology/fuel the value applies to, or an aggregate:
+      coal | gas | gas_cc | gas_ct | gas_st | oil | nuclear | hydro | wind |
+      offshore_wind | solar | solar_thermal | geothermal | biomass |
+      municipal_waste | storage | pumped_storage | hydrogen | fuel_cells |
+      distributed_gen | renewables | other | total. `renewables` is a source's
+      renewable aggregate; `total` is a capacity/generation grand total or the
+      system CO2 total.
+  - name: value
+    dtype: float64
+    unit: mixed
+    nullable: false
+    description: >-
+      The projected value, in the units named by `unit`. Always a real
+      primary-source number (rule 5); the table carries no placeholder rows.
+  - name: unit
+    dtype: string
+    unit: none
+    nullable: false
+    description: >-
+      Unit of `value`: GW (capacity) | TWh (generation; AEO BkWh billion-kWh is
+      numerically identical to TWh) | MMst_co2 (million short tons CO2) — or the
+      source's own unit where it differs (recorded verbatim, no conversion).
+  - name: source_doc
+    dtype: string
+    unit: none
+    nullable: true
+    description: Authoritative source document (URL or short citation) the value was read from.
+  - name: source_page
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Locator within source_doc — an AEO API series id, a table+page reference,
+      or a figure number.
+  - name: note
+    dtype: string
+    unit: none
+    nullable: true
+    description: >-
+      Boundary caveat or context note (e.g. the EMM-region-vs-ISO-footprint
+      approximation, a case description, or a unit/aggregation reconciliation).
