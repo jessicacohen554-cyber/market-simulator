@@ -407,6 +407,7 @@ scratch_hindcast/
 results/hindcast/*/*/*/year_*.parquet
 # Capacity-hindcast harness stdout logs are scratch (bundles carry the record).
 results/hindcast/*.log
+results/hindcast/*/run.log
 scratch_logs/
 docs/handoffs/_fom_grid_cache/
 docs/handoffs/_foresight_ab_cache/
