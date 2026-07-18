@@ -772,6 +772,73 @@ EFORD: dict[str, float] = {
     "gas_cc_ccs": 0.05,
 }
 
+# Correlated cold-event excess forced-outage curves by ISO, winterization era
+# and plant group (FF-1B Stage 1; design charter
+# docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by
+# data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on
+# ScenarioConfig.correlated_forced_outage): per class,
+#   excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap)
+# on the system daily MIN temperature, subtracted from availability, with
+# winter_event_share (the era's climatological Dec-Feb mean of the curve) added
+# back so the correlated model RELOCATES the cold-event share embedded in the
+# flat GADS-based WEFOR instead of stacking on it.
+#
+# Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 --
+# re-run only when the CAMPD / weather / EIA-930 source data updates; never
+# hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly
+# gross load on net-load-certified scarcity event days (in-merit certificate),
+# excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm
+# Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%,
+# consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet
+# peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and
+# Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55
+# (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet
+# demonstrates roughly half the pre-era saturation depth. CHP classes and
+# nuclear are deliberately absent (host-loaded gross output / no CAMPD trace
+# cannot certify availability -- the STP-1 Uri trip is a known under-coverage).
+# ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve
+# fitted on one ISO's events never crosses an ISO boundary).
+CORRELATED_OUTAGE_CURVE: dict[str, dict[str, dict[str, dict[str, float]]]] = {
+    "ERCOT": {
+        "pre": {
+            "COAL": {"slope_per_c": 0.0381, "cap": 0.270, "winter_event_share": 0.0018},
+            "CC_REGULAR": {
+                "slope_per_c": 0.0618,
+                "cap": 0.438,
+                "winter_event_share": 0.0029,
+            },
+            "CT_PEAKER": {
+                "slope_per_c": 0.0784,
+                "cap": 0.556,
+                "winter_event_share": 0.0037,
+            },
+            "ST_GAS": {
+                "slope_per_c": 0.0779,
+                "cap": 0.552,
+                "winter_event_share": 0.0037,
+            },
+        },
+        "post": {
+            "COAL": {"slope_per_c": 0.0204, "cap": 0.077, "winter_event_share": 0.0004},
+            "CC_REGULAR": {
+                "slope_per_c": 0.0605,
+                "cap": 0.157,
+                "winter_event_share": 0.0011,
+            },
+            "CT_PEAKER": {
+                "slope_per_c": 0.1878,
+                "cap": 0.466,
+                "winter_event_share": 0.0033,
+            },
+            "ST_GAS": {
+                "slope_per_c": 0.1304,
+                "cap": 0.306,
+                "winter_event_share": 0.0023,
+            },
+        },
+    },
+}
+
 # Annual demand growth rates by ISO, scenario path, and era. These are TOTAL
 # (data-center-INCLUSIVE) rates: the near era still carries the DC boom, so at
 # the default datacenter_load_path="off" they reproduce each ISO's published
