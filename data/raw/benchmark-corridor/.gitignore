@@ -1,0 +1,6 @@
+# AEO2025 electricity-corridor raw is FETCHED verbatim from the EIA API v2 aeo
+# route (scripts/fetch_aeo_electricity.py) — the deterministic fetcher, not a
+# hand-reproduced copy that could fat-finger a value (rule 5), is the reproducible
+# committed source. Gitignored like other large fetched corpora (pjm-energy-offers);
+# README/template/manual-source CSVs stay tracked.
+aeo2025/

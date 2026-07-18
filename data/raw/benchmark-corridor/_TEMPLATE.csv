@@ -1,0 +1,3 @@
+source,iso,region,vintage,scenario,target_year,quantity,tech,value,unit,source_doc,source_page,note
+"# TEMPLATE — copy to <source-subdir>/<source-subdir>.csv and fill from the primary-source table. Delete this example row. One row per (source,iso,region,scenario,target_year,quantity,tech). Never guess a value (rule 5).",,,,,,,,,,,,
+ERCOT_CDR_2025,ERCOT,ERCOT,2025-12,protocol,2030,capacity,solar,29.4,GW,"ERCOT Capacity, Demand and Reserves Report, December 2025","planned-resources table","EXAMPLE ROW — replace; CDR-eligible planned solar to summer 2030"
