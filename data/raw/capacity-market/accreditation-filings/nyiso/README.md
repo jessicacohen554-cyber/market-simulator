@@ -7,6 +7,21 @@ conversion? **No CSV, no schema, no model wiring in this pass** — this
 directory holds only the raw-document research trail and extracted
 formula/parameters, per the task that produced it (2026-07-15 session).
 
+> **UPDATE 2026-07-18 (FF-3D — Option B landed).** The owner selected R5a
+> Option B (NYCA-wide static proxy — pairing-adjudication 2026-07-15 §3), and
+> this session located and downloaded the "MANUAL DOWNLOADS NEEDED" Appendix D
+> table (see the note at the end of that section). The NYCA-wide realized
+> translation factor is published in **NYSRC IRM Study Technical Appendices,
+> Appendix D §D.1.1, Table D.2 "NYCA ICAP to UCAP Translation"** as the
+> **"Derate Factor"** column (the §2.5 NYCA translation factor). The
+> most-recently-realized value (2024-2025 capability year) is **0.1321**. It is
+> now intaken as `metric=icap_ucap_translation_factor` rows in the sibling
+> `../../demand-curve/nyiso/nyiso.csv` (2020-2021 … 2024-2025) and wired as
+> `PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"] = 1 - 0.1321 =
+> 0.8679` (constants.py). The NYCA-wide factor (13.21%) is **~2.5× the NYC
+> Locational 5.18%** below — confirming the adjudication's rejection of Option C
+> (NYC-as-NYCA proxy) on boundary-mismatch grounds.
+
 ## Short answer
 
 **NYISO does not publish a single forward-looking ICAP→UCAP ratio the way
@@ -224,17 +239,23 @@ because:
 
 ## MANUAL DOWNLOADS NEEDED (blocked or not located this pass)
 
-- **NYSRC IRM Study "Appendices" PDF** (separate from the Report Body
-  fetched here) for each capability year — referenced by the Report
-  Body's own text as containing "Appendix D, Table D.1.1" (a numeric
-  "UCAP reserve margin trends" table that would give exact historical
-  NYCA translation-factor values year-by-year, not just the Figure 8-1
-  chart). Not fetched this session; e.g. for the 2024-2025 study the
-  Report Body is at
-  https://www.nysrc.org/wp-content/uploads/2023/12/2024-IRM-Study-Technical-Report-11-28-23_ICS_284_clean_bp-approved-12-8-2023.pdf
-  and its Appendices companion (title seen in search results:
-  "2024-IRM-Study-Report-Appendices-12-8-2023.pdf") was not located by
-  exact URL.
+- **NYSRC IRM Study "Appendices" PDF** — **✅ LOCATED & LANDED 2026-07-18
+  (FF-3D).** The 2025-2026 study's Appendices companion is at
+  https://www.nysrc.org/wp-content/uploads/2024/12/IRM-Report-Appendices-Final-December-6-2024.pdf
+  ("NYSRC: NYCA Installed Capacity Requirement for the Period May 2025 through
+  April 2026 — Technical Appendices, December 6, 2024"). The section the Report
+  Body calls "Appendix D, Table D.1.1" is **Appendix D §D.1.1 "New York Control
+  Area ICAP to UCAP Translation," Table D.2 "NYCA ICAP to UCAP Translation"**
+  (PDF p.73) — the "Derate Factor" column IS the §2.5 NYCA translation factor.
+  The companion **Table D.1 "Historical NYCA Capacity Parameters"** (PDF p.71)
+  carries Base-Case/EC-Approved IRM and the "NYCA Equivalent UCAP Requirement
+  (%)" (the UCAP-basis reserve margin), which reconciles the Table D.2 derate:
+  `(1 + EC_IRM) × (1 − derate) − 1 = UCAP margin` to ≤0.1pp every year. Landed
+  as `icap_ucap_translation_factor` rows in `../../demand-curve/nyiso/nyiso.csv`
+  (the recent capability-year window 2020-2021 … 2024-2025, keyed to each row's
+  own published ICR% → EC-approved IRM). The Table D.2 "Year" label is a summer
+  forecast year with a documented off-by-one/duplicate quirk (two rows labelled
+  "2022"), so rows are keyed to capability year via ICR%, not the "Year" cell.
 - **A NYCA-wide (not just NYC-locational) worked UCAP-translation
   numeric example** — only the NYC Summer 2025 example (5.18% Locational
   translation factor) was found; no equivalent NYCA-wide, G-J, LI, or
