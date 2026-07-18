@@ -757,15 +757,235 @@ def additions_is2020(model_add: pd.DataFrame, actuals: pd.DataFrame) -> dict:
 
 
 # --------------------------------------------------------------------------- #
+# Flip-gate extras (FF-1A): T-R10 no-inversion guard, LOYO folds, BLK-10
+# backstop-fired MW — all scorer-side, computed from the committed evolution
+# ledgers + RD-5 actuals. NO LP is solved here.
+# --------------------------------------------------------------------------- #
+# T-R10b zero-real-fuel accumulation threshold (GW). Pre-registered in the
+# retirement-rule redesign memo §4 (ff-retirement-rule-redesign-2026-07.md):
+# a fuel that retired ZERO in reality accumulating > 1 GW of model economic
+# exits is a cross-fuel inversion, whatever the totals do.
+TR10B_ZERO_REAL_GW_MAX = 1.0
+
+
+def score_tr10(model: pd.DataFrame, actuals: pd.DataFrame) -> dict:
+    """T-R10 no-inversion guard (redesign memo §4, pre-registered).
+
+    Evaluated on the **economic channel only** (announced/confirmed events are
+    instrument-driven, not decision-rule output — the PJM Byron/Dresden nuclear
+    reversal must never trip this guard):
+
+    * ``first_mover`` — fuel(s) of the earliest model economic-channel exit.
+      **T-R10a** FAILs iff any first-mover fuel has actual retired MW = 0
+      (the model's first economic wave hits a fuel reality never retired).
+    * **T-R10b** FAILs iff any fuel with zero actual retirements accumulates
+      more than ``TR10B_ZERO_REAL_GW_MAX`` GW of model economic exits.
+
+    Vacuously PASS when the model has no economic thermal exits (no wave, no
+    inversion). Bands are pre-registered and never widened (rules 1/14).
+    """
+    act = actuals[actuals["kind"] == "retirement"]
+    act_th = act[act["fuel"].isin(THERMAL_FUELS)]
+    actual_fuel_mw = act_th.groupby("fuel")["mw"].sum().to_dict()
+
+    if "reason" not in model.columns:
+        model = model.assign(reason="economic")
+    econ = model[model["reason"].map(channel_of) == "economic"]
+    econ_th = econ[econ["fuel"].isin(THERMAL_FUELS)]
+
+    econ_fuel_gw = {
+        f: round(mw / 1000.0, 3)
+        for f, mw in econ_th.groupby("fuel")["mw"].sum().to_dict().items()
+    }
+    if econ_th.empty:
+        return {
+            "first_mover_fuels": [],
+            "first_mover_year": None,
+            "econ_exit_gw_by_fuel": {},
+            "zero_real_fuels_over_1gw": [],
+            "tr10a": "PASS",
+            "tr10b": "PASS",
+            "note": "no economic thermal exits — vacuous PASS",
+        }
+    first_year = int(econ_th["year"].min())
+    first_movers = sorted(econ_th[econ_th["year"] == first_year]["fuel"].unique())
+    tr10a_fail = any(actual_fuel_mw.get(f, 0.0) <= 0.0 for f in first_movers)
+    zero_real_over = sorted(
+        f
+        for f, gw in econ_fuel_gw.items()
+        if actual_fuel_mw.get(f, 0.0) <= 0.0 and gw > TR10B_ZERO_REAL_GW_MAX
+    )
+    return {
+        "first_mover_fuels": first_movers,
+        "first_mover_year": first_year,
+        "econ_exit_gw_by_fuel": econ_fuel_gw,
+        "actual_gw_by_fuel": {
+            f: round(mw / 1000.0, 3) for f, mw in sorted(actual_fuel_mw.items())
+        },
+        "zero_real_fuels_over_1gw": zero_real_over,
+        "tr10a": "FAIL" if tr10a_fail else "PASS",
+        "tr10b": "FAIL" if zero_real_over else "PASS",
+    }
+
+
+def blk10_backstop_fired(ledgers: dict) -> dict:
+    """BLK-10: precise reserve-margin-backstop fired MW (gap-register §3.9).
+
+    Sums ``thermal_additions`` rows whose ``source == "reserve_backstop"`` —
+    the adequacy backstop's own ledger channel (``gas_ct_adequacy_<year>``
+    units) — per year and in total, alongside the economic/planned additions
+    split, so the backstop's share of the build is separable from economic
+    entry. Pure ledger arithmetic; no LP.
+    """
+    fired_rows: list[dict] = []
+    by_source: dict[str, float] = {}
+    for year, led in ledgers.items():
+        for a in led.get("thermal_additions", []):
+            src = a.get("source", "economic")
+            by_source[src] = by_source.get(src, 0.0) + float(a["mw"])
+            if src == "reserve_backstop":
+                fired_rows.append(
+                    {
+                        "year": int(year),
+                        "unit_id": a.get("unit_id"),
+                        "fuel": a.get("fuel"),
+                        "mw": round(float(a["mw"]), 3),
+                    }
+                )
+    fired_mw = sum(r["mw"] for r in fired_rows)
+    return {
+        "fired_rows": fired_rows,
+        "fired_mw_total": round(fired_mw, 3),
+        "fired_gw_total": round(fired_mw / 1000.0, 3),
+        "thermal_additions_mw_by_source": {
+            k: round(v, 3) for k, v in sorted(by_source.items())
+        },
+    }
+
+
+def loyo_folds(model: pd.DataFrame, actuals: pd.DataFrame, reversal_set: dict) -> dict:
+    """Leave-one-year-out folds within the scored years (rule 22 LOYO clause).
+
+    Fold ``y`` re-scores the cumulative window with year ``y``'s events removed
+    from BOTH the model ledger and the actuals (2021 seed-year and 2022-bridge
+    events always stay — only scored years are held out). Scorer-side only: the
+    fold is a re-score of the committed bundle, never a re-solve. Per fold:
+    grain-corrected recall, false-retire (raw + IS-2020), and the T-R10a/b
+    guard. The promotion criterion (plan §2.1 item 4 / rule 22) is that a
+    verdict holds in >= 2 of 3 folds; ``holds_2of3`` grades exactly that for
+    recall-PASS, T-R10a-PASS and T-R10b-PASS.
+    """
+    folds: dict[str, dict] = {}
+    for y in SCORED_YEARS:
+        m = model[model["year"] != y]
+        a = actuals[actuals["year"] != y]
+        ret = score_retirements(m, a)
+        ret_is = score_retirements_is2020(m, a, reversal_set)
+        tr10 = score_tr10(m, a)
+        rr = ret["unit_recall_gt300"]
+        folds[str(y)] = {
+            "held_out_year": y,
+            "recall": rr["recall"],
+            "recall_band": rr["band"],
+            "matched": rr["matched"],
+            "n_big_actual": rr["n_big_actual"],
+            "false_retire_gw_raw": ret["false_retire"]["false_gw"],
+            "false_retire_band_raw": ret["false_retire"]["band"],
+            "false_retire_gw_is2020": ret_is["false_retire"]["false_gw"],
+            "tr10a": tr10["tr10a"],
+            "tr10b": tr10["tr10b"],
+            "tr10_first_mover_fuels": tr10["first_mover_fuels"],
+        }
+
+    def _holds(key: str, ok: str) -> bool:
+        return sum(1 for f in folds.values() if f[key] == ok) >= 2
+
+    return {
+        "folds": folds,
+        "holds_2of3": {
+            "recall_pass": _holds("recall_band", "PASS"),
+            "tr10a_pass": _holds("tr10a", "PASS"),
+            "tr10b_pass": _holds("tr10b", "PASS"),
+        },
+        "note": (
+            "Scorer-side LOYO: fold y drops year-y events from model AND "
+            "actuals; no re-solve. >=2/3 folds is the rule-22 promotion bar."
+        ),
+    }
+
+
+def _flip_gate_extras(bundle: Path) -> int:
+    """Compute T-R10 + LOYO + BLK-10 on a committed bundle and update its
+    score.json (keys ``tr10``, ``tr10_is2020``, ``loyo``, ``blk10_backstop``).
+    No LP is solved; the existing score keys are preserved."""
+    meta = json.loads((bundle / "meta.json").read_text())
+    iso = meta["iso"]
+    cache_dir = Path(meta["bundle"])
+    if not cache_dir.exists():
+        cache_dir = bundle / iso / meta["cache_key"]
+
+    ledgers = load_ledgers_for_run(cache_dir)
+    actuals = load_actuals(iso)
+    mret = model_retirements(ledgers)
+    reversal_set = load_reversal_set(iso)
+
+    tr10 = score_tr10(mret, actuals)
+    exposure = reversal_exposure(mret, reversal_set)
+    mret_is = (
+        mret[~mret["unit_id"].isin(exposure["unit_ids"])]
+        if exposure["unit_ids"]
+        else mret
+    )
+    tr10_is = score_tr10(mret_is, actuals)
+    loyo = loyo_folds(mret, actuals, reversal_set)
+    blk10 = blk10_backstop_fired(ledgers)
+
+    score_path = cache_dir / "score.json"
+    score = json.loads(score_path.read_text()) if score_path.exists() else {}
+    score.update(
+        {
+            "tr10": tr10,
+            "tr10_is2020": tr10_is,
+            "loyo": loyo,
+            "blk10_backstop": blk10,
+            "flip_gate_extras": {
+                "task": "FF-1A",
+                "note": (
+                    "T-R10 no-inversion guard + LOYO folds (2023-2025) + "
+                    "BLK-10 backstop-fired MW — scorer-side, no re-solve."
+                ),
+                "utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+            },
+        }
+    )
+    score_path.write_text(json.dumps(score, indent=2))
+
+    h = loyo["holds_2of3"]
+    print(
+        f"[flip-gate] {iso} {bundle.name}: T-R10a {tr10['tr10a']} / "
+        f"T-R10b {tr10['tr10b']} (first mover {tr10['first_mover_fuels']}); "
+        f"LOYO holds>=2/3: recall={h['recall_pass']} tr10a={h['tr10a_pass']} "
+        f"tr10b={h['tr10b_pass']}; BLK-10 fired {blk10['fired_gw_total']} GW"
+    )
+    for fy, f in loyo["folds"].items():
+        print(
+            f"[flip-gate]   fold -{fy}: recall "
+            f"{f['matched']}/{f['n_big_actual']} ({f['recall_band']}), "
+            f"false raw {f['false_retire_gw_raw']} GW, "
+            f"tr10a {f['tr10a']} tr10b {f['tr10b']}"
+        )
+    print(f"[flip-gate] score.json: {score_path}")
+    return 0
+
+
+# --------------------------------------------------------------------------- #
 # Report
 # --------------------------------------------------------------------------- #
 def _fmt_band(x: str) -> str:
     return {"PASS": "✅ PASS", "FAIL": "❌ FAIL", "SKIP": "—"}.get(x, x)
 
 
-def write_report(
-    iso, variant, meta, ret, add, co2, baselines, report_path: Path
-) -> None:
+def write_report(iso, variant, meta, ret, add, co2, baselines, report_path: Path) -> None:
     """Render the markdown hindcast report."""
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     L = []
@@ -1125,9 +1345,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--bundle", type=Path, required=True, help="run_capacity_hindcast out-dir."
     )
-    parser.add_argument(
-        "--report-dir", type=Path, default=Path("docs/hindcast-reports")
-    )
+    parser.add_argument("--report-dir", type=Path, default=Path("docs/hindcast-reports"))
     parser.add_argument(
         "--rescore",
         action="store_true",
@@ -1143,7 +1361,20 @@ def main(argv: list[str] | None = None) -> int:
         default=None,
         help="Existing report to append the --rescore section to (default: auto-locate).",
     )
+    parser.add_argument(
+        "--flip-gate-extras",
+        action="store_true",
+        help=(
+            "FF-1A scorer-side extras (no re-solve): T-R10 no-inversion guard "
+            "(raw + IS-2020), LOYO folds within 2023-2025, and BLK-10 "
+            "reserve-backstop fired MW — computed from the committed evolution "
+            "ledgers + RD-5 actuals, merged into score.json."
+        ),
+    )
     args = parser.parse_args(argv)
+
+    if args.flip_gate_extras:
+        return _flip_gate_extras(args.bundle)
 
     if args.rescore:
         return _rescore(args.bundle, args.report)
