@@ -15,8 +15,8 @@ scorer uses) over the Winter Storm Heather window, and checks:
 
 Usage:
     .venv/bin/python scripts/miso72_perzone_validate.py \
-        --base results/calibration/miso72_probe_base \
-        --main results/calibration/miso72_probe_main
+        --base results/calibration/miso72_probe_acc/base_final \
+        --main results/calibration/miso72_probe_acc/main_final
 """
 
 from __future__ import annotations
