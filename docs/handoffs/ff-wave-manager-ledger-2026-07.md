@@ -7,8 +7,16 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `4bfb618` (2026-07-18, turn 8).
+- **Last reviewed `origin/main` HEAD:** `ab69df3` (2026-07-18, turn 9).
 - **Plan base SHA:** `c95176e`.
+- **turn 9 refresh:** no new FF work landed since turn 8. Only new merge is **#2442
+  caiso-94 daytime clean-import diagnostic** (out-of-program CAISO backcast diagnostic).
+  Bottleneck unchanged: everything downstream waits on **FF-1A-C** producing a PR (still
+  none). **Graph re-check finding:** the ONLY additional lane unlockable now is **FF-3D
+  (NYISO R5a)** — gated on an OWNER DECISION alone (R5a Option A vs B), independent of
+  FF-1A-C and all of Wave 2; NYISO hindcast data + calibration-complete marker already in
+  place. Option A ready immediately; Option B needs one NYSRC Appendix D Table D.1.1 manual
+  download. FF-3B would trivially NO-GO (its R1 = FF-2A's headline); FF-3C trigger inactive.
 - **turn 8 refresh:** capacity.py re-confirmed FIXED — 3967 lines, all symbols, parses
   clean, **byte-identical to the #2438 restore** (untouched). Only new merge since turn 7
   is PR **#2441** = the FF-1A scorecard doc fill (#2440's content; docs-only, did NOT touch
@@ -56,17 +64,17 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-2C | OPUS | 2 | L-CAP | owner-gated | not-sent | blocked: FF-2B + owner; FF-1A scorecard (§6 flip-gate) is its input — needs FF-1A-C |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | not-sent | blocked: W1/W2 |
 | FF-3A | OPUS | 3 | L-VAL | ⛔ T2 | not-sent | blocked: FF-2D + owner |
-| FF-3B | OPUS | 3 | L-CES | — | not-sent | blocked: W2 |
-| FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated |
-| FF-3D | OPUS | 3 | L-CAP | owner-gated | not-sent | blocked: owner |
+| FF-3B | OPUS | 3 | L-CES | — | not-sent | blocked: W2 (readiness R1 = FF-2A headline; would NO-GO now) |
+| FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated (T2 budget breach / I9-I10 FAIL) — inactive |
+| FF-3D | OPUS | 3 | L-CAP | owner-gated | not-sent | **UNLOCKABLE NOW on owner R5a pick (A/B)** — independent of FF-1A-C + Wave 2; NYISO data+marker ready. Opt A immediate; Opt B needs 1 NYSRC manual DL. |
 | FF-4A | OPUS | 4 | L-VAL | ⛔ owner-gated | not-sent | blocked: FF-3A + owner |
 | FF-4B | FABLE | 4 | L-VAL | — | not-sent | blocked: FF-4A |
 | FF-4C | OPUS | 4 | L-VAL | owner-gated | not-sent | blocked: FF-4A + owner |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
 
-Out-of-program / trivial this window: #2438 (restore, turn 7), #2441 (FF-1A scorecard doc
-fill = #2440's content, turn 8), #2437 (this ledger, turn 6). One OPEN PR pending owner
-action — see below.
+Out-of-program / trivial: #2438 (restore, turn 7), #2441 (FF-1A scorecard doc fill, turn
+8), #2442 (caiso-94 daytime diagnostic, turn 9), #2437/#2443 (this ledger). One OPEN PR
+pending owner action — see below.
 
 ---
 
@@ -90,12 +98,18 @@ action — see below.
   staged-thinning removal ⇒ D1=B, D2=delete, D3=gas_cc-lag=1. Implemented & restored;
   measured inversion-closure confirmed. Owner: correct me if D1≠B.
 
-**AWAITING:**
+**AWAITING (each changes what I dispatch next):**
+- **FF-3D NYISO R5a pick** (Option A lagged model-derived vs Option B NYCA-wide static
+  proxy). Unlocks FF-3D immediately (parallel to FF-1A-C). Opt B needs the NYSRC Appendix D
+  Table D.1.1 manual download first.
+- **Wave-2 timing:** hold FF-2A for FF-1A-C (rec) vs release a scoped FF-2A now (its
+  FF-1A-C-independent items — VRE ELCC entry revenue, interconnection lag, lookahead,
+  state-RPS = the BLK-8 solar-recall headline), deferring item-2 BLK-10 sizing.
 - **PR triage:** close #2439 (#2440 already merged as #2441).
 - **BAU DC posture** (`datacenter_load_path` `off` vs `mid`; FF-1C rec: mid). Gates FF-4A.
 - Availability derate default (FF-1B — evidence in: 6.4→11.9 $/kW-yr, scarcity forms;
   owner may set ON-for-forecast), entry-lookahead posture (FF-2A), per-ISO flips (FF-2C),
-  NYISO R5a (FF-3D), golden freeze (FF-4A), PB-5 (FF-4C).
+  golden freeze (FF-4A), PB-5 (FF-4C).
 
 ---
 
@@ -105,9 +119,9 @@ action — see below.
 2. **FF-0B-redo [OPUS]** (turn 2) — open, in flight.
 3. **FF-1A-restore [FABLE]** (turn 5) — **RESOLVED turn 7 (#2438).** capacity.py
    byte-exact restored + R-NEW re-applied + D2 deleted; manager-verified faithful.
-4. **FF-1A-C [FABLE]** (turn 7) — complete the FF-1A scorecard: ERCOT composition leg,
-   LOYO folds, precise BLK-10 fired-MW, dashboard registration; fill §5/§7/§9. Prelude
-   (#2440 merged, turn 8) **now satisfied** — runs against latest origin/main. Unblocks
+4. **FF-1A-C [FABLE]** (turn 7; re-sent turn 9) — complete the FF-1A scorecard: ERCOT
+   composition leg, LOYO folds, precise BLK-10 fired-MW, dashboard registration; fill
+   §5/§7/§9. Prelude (#2440 merged) satisfied — runs against latest origin/main. Unblocks
    FF-2A + FF-2C. Open (no PR yet).
 
 ---
@@ -129,15 +143,20 @@ action — see below.
   verified-pass; #1 blocker cleared.** FF-1A downgraded to verified-issues (scorecard
   partial): open PR #2440 fills PJM+MISO measured (inversion CLOSED, gas_st 8.6→0 GW,
   recall→76%) but ERCOT leg / LOYO / BLK-10 / dashboard PENDING → issued FF-1A-C [FABLE]
-  (solve-bearing). #2439 flagged redundant → close. FF-2A HELD (BLK-10/findings inputs
-  incomplete until FF-1A-C). Frontier §1.2-1 rewrite **deferred to FF-1A-C** (inversion is
-  measured-closed but the row can't fully close until the scorecard/flip-gate completes;
-  avoids a full-file plan push mid-measurement — rule-27 caution). No downstream wave
-  released (FF-1D still on FF-0E; Wave 2+ on FF-1A-C). In-flight unchanged: FF-0B-redo,
-  FF-0E, FF-1E (no PRs).
+  (solve-bearing). #2439 flagged redundant → close. FF-2A HELD. Frontier §1.2-1 rewrite
+  **deferred to FF-1A-C**. No downstream wave released.
 - **turn 8 (refresh — owner asked "is calibration py fixed").** `→4bfb618`. **Confirmed:
   capacity.py FIXED** (3967 lines, all symbols, parses clean, byte-identical to the #2438
   restore — untouched). Only new merge: PR #2441 = FF-1A scorecard doc fill (#2440's
   content; docs-only). #2440 now on main ⇒ FF-1A-C prelude satisfied. PR #2439 still open
   but `dirty`/conflicting (51 files, +82k lines) — reconfirmed CLOSE. No new dispatches;
   FF-1A-C already issued (turn 7), everything downstream still held on it.
+- **turn 9 (refresh — owner: "send next wave" / "anything else unlocked").** `→ab69df3`.
+  No new FF work; #2442 caiso-94 out-of-program. Re-sent FF-1A-C (the gate-opener, unchanged
+  at HEAD). Established Wave 2 is SUBSTANTIVELY gated: gap-register §3.9 requires the
+  post-R-NEW BLK-10 re-measure (FF-1A-C §7) before FF-2A's backstop-sizing rework. Surfaced
+  two owner-decision unlocks: (1) **FF-3D NYISO R5a** — parallel lane, gated on the R5a A/B
+  pick alone; (2) **scoped FF-2A** — release its FF-1A-C-independent items (VRE ELCC entry
+  revenue, interconnection lag, lookahead, state-RPS = the BLK-8 solar-recall headline) now,
+  defer item-2 BLK-10 sizing (Wave-2-timing question, owner rejected the AskUserQuestion
+  prompt — awaiting a direct call). No new work dispatched beyond the FF-1A-C re-send.
