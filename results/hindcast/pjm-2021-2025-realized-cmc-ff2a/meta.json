@@ -1,0 +1,35 @@
+{
+  "iso": "PJM",
+  "variant": "realized",
+  "energy_only_floor": false,
+  "entry_lookahead_reprice": false,
+  "retirement_rule": "pipeline",
+  "limited_foresight_dispatch": false,
+  "capacity_market_clearing": true,
+  "capacity_market_clearing_by_iso": {
+    "PJM": true
+  },
+  "correlated_forced_outage": false,
+  "entry_vre_capacity_revenue": true,
+  "entry_rate_limits": true,
+  "entry_commissioning_lag": false,
+  "entry_screen_diagnostics": true,
+  "renewable_elcc_curves": true,
+  "gas_price_path": "hindcast_realized",
+  "vintage_year": 2020,
+  "start_year": 2021,
+  "end_year": 2025,
+  "cache_key": "e90c659b9764b6d2",
+  "bundle": "results/hindcast/pjm-2021-2025-realized-cmc-ff2a/PJM/e90c659b9764b6d2",
+  "solved_years": [
+    2021,
+    2023,
+    2024,
+    2025
+  ],
+  "bridged_years": [
+    2022
+  ],
+  "leakage_violations": [],
+  "started_utc": "2026-07-18T08:14:53Z"
+}
