@@ -19,6 +19,9 @@ build/
 /results/calibration/*/*.parquet
 /results/calibration/*probe*/
 /results/calibration/miso_probe_*/
+# Same-machine A/B baselines (repro mode, FINDING-caiso92b protocol): un-registered
+# diagnostic reruns of a keeper recipe, disposable like probe dirs.
+/results/calibration/*_repro_A/
 
 # Per-ISO EIA-860 override CSVs — raw source files (parquet/json) are committed
 data/raw/eia-860/*.csv
