@@ -22,7 +22,6 @@ Usage::
 from __future__ import annotations
 
 import json
-import re
 import shutil
 import sys
 from pathlib import Path
@@ -31,13 +30,33 @@ REPO = Path(__file__).resolve().parent.parent
 
 
 def _parse_manifest_js(path: Path) -> tuple[dict, list[dict]]:
-    """Extract meta and manifest array from a manifest.js file."""
+    """Extract meta and manifest array from a manifest.js file.
+
+    Anchors ``json.JSONDecoder.raw_decode`` at each assignment's opening bracket
+    rather than a non-greedy ``\\{.*?\\};`` / ``\\[.*?\\];`` regex. A run's
+    ``definition``/``market_story`` string may legitimately contain ``];`` or
+    ``};`` (e.g. the C3c ``[7,9]`` band notation), which the non-greedy match
+    truncated at — breaking the whole deploy with a JSONDecodeError and freezing
+    the LIVE dashboard at the last successful build. ``raw_decode`` consumes
+    exactly one well-formed JSON value from the bracket and ignores the trailing
+    ``;`` and everything after, so any string content is safe.
+    """
     text = path.read_text()
-    m_meta = re.search(r"window\.BC\.meta\s*=\s*(\{.*?\});", text, re.DOTALL)
-    m_manifest = re.search(r"window\.BC\.manifest\s*=\s*(\[.*?\]);", text, re.DOTALL)
-    if not m_meta or not m_manifest:
-        sys.exit(f"Cannot parse manifest from {path}")
-    return json.loads(m_meta.group(1)), json.loads(m_manifest.group(1))
+    dec = json.JSONDecoder()
+
+    def _decode_after(marker: str):
+        i = text.find(marker)
+        if i < 0:
+            sys.exit(f"Cannot parse manifest from {path}: missing {marker!r}")
+        j = i + len(marker)
+        while j < len(text) and text[j] not in "{[":
+            j += 1
+        if j >= len(text):
+            sys.exit(f"Cannot parse manifest from {path}: no value after {marker!r}")
+        obj, _ = dec.raw_decode(text, j)
+        return obj
+
+    return _decode_after("window.BC.meta="), _decode_after("window.BC.manifest=")
 
 
 def main() -> None:
