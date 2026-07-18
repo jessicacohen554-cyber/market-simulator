@@ -147,6 +147,7 @@ def render_page(sidecars: list[dict]) -> str:
       const arms=[];
       if(m.entry_lookahead_reprice) arms.push('lookahead');
       if(m.staged_oversupply_thinning) arms.push('staged-thin '+(m.staged_thinning_max_gw_per_year||'')+'GW/yr');
+      if(m.retirement_rule && m.retirement_rule!=='legacy') arms.push('r-new '+m.retirement_rule);
       if(m.limited_foresight_dispatch) arms.push('ltd-foresight');
       if(m.energy_only_floor) arms.push('energy-only-floor');
       const armStr = arms.length ? ' &middot; '+arms.join(' + ') : '';
