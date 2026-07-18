@@ -2318,6 +2318,129 @@ def _vstack_csr_free(
     return sp.csr_matrix((data, indices, indptr), shape=(total_rows, total_cols))
 
 
+def _build_posture_energy_rows(
+    layout: VariableLayout,
+    posture_gen_idx: np.ndarray,
+    posture_col: np.ndarray,
+    posture_mlf: np.ndarray,
+) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
+    """Build the STANDALONE energy-only commitment-posture rows (ERCOT).
+
+    The reserve-decoupled half of the pooled-linear commitment-posture lever
+    (design note ``docs/multi-iso/miso-scarcity-posture-design-2026-07.md`` §A;
+    ERCOT port ``docs/handoffs/ercot-commitment-thinness-2026-07.md``). The
+    MISO/CAISO/PJM posture re-anchors a pergen RESERVE pool
+    (:func:`_build_reserve_rows_pergen`), but ERCOT runs a fleet-wide ORDC
+    co-opt with no pergen substrate, so this builds only the energy-side rows on
+    the posture ``U``/``SU`` columns and leaves ERCOT's reserve design untouched
+    (rule 19 — one mechanism, energy-side commitment friction).
+
+    Per postured pool ``p`` (``0..q-1``; members mapped by ``posture_col``),
+    three row families over the ``P`` and ``U``/``SU`` columns, all vectorized
+    (no hour loop):
+
+    * **Energy headroom** ``sum_{members j of p} P[g_j,t] − U[p,t] <= 0`` — a
+      pool cannot dispatch more than the capacity it keeps online (``q*T`` rows).
+    * **Min-load coupling** ``sum_{members} P − mlf_p·U[p,t] >= 0`` for pools
+      with measured ``mlf_p > 0`` — being online costs min-load energy at the
+      committed band (``q_mlf*T`` rows). Binds only capacity the LP itself keeps
+      online; NOT a floor (forces no exogenous energy, design note §A window).
+    * **Startup counting**, cyclic ``U[p,t] − U[p,t−1] − SU[p,t] <= 0`` — re-timing
+      energy pays a real start (``q*T`` rows; SU cost enters build_cost_vector).
+
+    Returns one CSR block ``[headroom | min-load | startup]`` with its lower/upper
+    bound vectors, inserted before the mass_cap/RPS/reserve tail so the front
+    energy-balance and the end-anchored reserve/RPS duals keep their row indices.
+    """
+    gidx = np.asarray(posture_gen_idx, dtype=int)
+    col = np.asarray(posture_col, dtype=int)
+    mlf = np.asarray(posture_mlf, dtype=float)
+    q = int(mlf.size)
+    T = layout.T
+    vph = layout.vars_per_hour
+    u_arange = layout._posture_u_off + np.arange(q)
+
+    blocks: list[sp.csr_matrix] = []
+    lowers: list[np.ndarray] = []
+    uppers: list[np.ndarray] = []
+
+    # (a) Energy headroom: sum_members P[g] − U[p] <= 0, one row per pool-hour.
+    hr_per_hour = sp.coo_matrix(
+        (
+            np.concatenate([np.ones(gidx.size), -np.ones(q)]),
+            (
+                np.concatenate([col, np.arange(q)]),
+                np.concatenate([layout._p_off + gidx, u_arange]),
+            ),
+        ),
+        shape=(q, vph),
+    ).tocsr()
+    blocks.append(sp.kron(sp.eye(T, format="csr"), hr_per_hour, format="csr"))
+    lowers.append(np.full(q * T, -np.inf))
+    uppers.append(np.zeros(q * T))
+
+    # (b) Min-load coupling on pools with measured mlf > 0: sum_members P − mlf·U
+    #     >= 0. Mirrors the (a) block of :func:`_build_reserve_rows_pergen`.
+    m_sel = np.flatnonzero(mlf > 0.0)
+    if m_sel.size:
+        pool_to_row = np.full(q, -1, dtype=int)
+        pool_to_row[m_sel] = np.arange(m_sel.size)
+        mem_row = pool_to_row[col]
+        mem_ok = mem_row >= 0
+        ml_per_hour = sp.coo_matrix(
+            (
+                np.concatenate([np.ones(int(mem_ok.sum())), -mlf[m_sel]]),
+                (
+                    np.concatenate([mem_row[mem_ok], np.arange(m_sel.size)]),
+                    np.concatenate(
+                        [
+                            layout._p_off + gidx[mem_ok],
+                            layout._posture_u_off + m_sel,
+                        ]
+                    ),
+                ),
+            ),
+            shape=(m_sel.size, vph),
+        ).tocsr()
+        blocks.append(sp.kron(sp.eye(T, format="csr"), ml_per_hour, format="csr"))
+        lowers.append(np.zeros(m_sel.size * T))
+        uppers.append(np.full(m_sel.size * T, np.inf))
+
+    # (c) Startup counting, cyclic: U[p,t] − U[p,t−1] − SU[p,t] <= 0 (same wrap
+    #     convention as the storage SOC boundary — hour 0 links to hour T−1, so a
+    #     year-crossing posture carries no free start). Mirrors block (b) there.
+    d0 = sp.coo_matrix(
+        (
+            np.concatenate([np.ones(q), -np.ones(q)]),
+            (
+                np.concatenate([np.arange(q), np.arange(q)]),
+                np.concatenate([u_arange, layout._posture_su_off + np.arange(q)]),
+            ),
+        ),
+        shape=(q, vph),
+    ).tocsr()
+    d_prev = sp.coo_matrix(
+        (-np.ones(q), (np.arange(q), u_arange)),
+        shape=(q, vph),
+    ).tocsr()
+    shift_prev = sp.csr_matrix(
+        (np.ones(T), (np.arange(T), (np.arange(T) - 1) % T)),
+        shape=(T, T),
+    )
+    blocks.append(
+        sp.kron(sp.eye(T, format="csr"), d0, format="csr")
+        + sp.kron(shift_prev, d_prev, format="csr")
+    )
+    lowers.append(np.full(q * T, -np.inf))
+    uppers.append(np.zeros(q * T))
+
+    return (
+        sp.vstack(blocks, format="csr"),
+        np.concatenate(lowers),
+        np.concatenate(uppers),
+    )
+
+
 def build_constraints(
     layout: VariableLayout,
     fleet: FleetArrays,
@@ -2375,6 +2498,9 @@ def build_constraints(
     reserve_pergen_ramp10: np.ndarray | None = None,
     reserve_pergen_col_pool: np.ndarray | None = None,
     reserve_balance_col_mask: np.ndarray | None = None,
+    posture_gen_idx: np.ndarray | None = None,
+    posture_col: np.ndarray | None = None,
+    posture_mlf: np.ndarray | None = None,
 ) -> tuple[sp.csr_matrix, np.ndarray, np.ndarray]:
     """Assemble the LP constraint matrix and its row bound vectors.
 
@@ -2757,6 +2883,26 @@ def build_constraints(
             del node_block
             row_lower = np.concatenate([row_lower, node_lower])
             row_upper = np.concatenate([row_upper, node_upper])
+
+    # Optional STANDALONE energy-only commitment-posture rows (ERCOT
+    # ercot_commitment_posture): headroom + min-load + startup on the posture
+    # U/SU columns, decoupled from any reserve spec (ERCOT has no pergen
+    # substrate — the pergen posture rides _build_reserve_rows_pergen instead).
+    # Inserted BEFORE the mass_cap/RPS/reserve tail so the front energy-balance
+    # duals and the end-anchored reserve/RPS/mass_cap duals keep their row
+    # indices (the posture rows carry no extracted dual). No rows (identical LP)
+    # when absent.
+    if posture_gen_idx is not None and layout.n_posture > 0:
+        pos_block, pos_lower, pos_upper = _build_posture_energy_rows(
+            layout,
+            posture_gen_idx,
+            posture_col,
+            posture_mlf,
+        )
+        blocks.append(pos_block)
+        del pos_block
+        row_lower = np.concatenate([row_lower, pos_lower])
+        row_upper = np.concatenate([row_upper, pos_upper])
 
     # Optional emissions mass-cap rows: one inequality per active power-sector
     # cap, bounding in-region fossil emissions. Appended after the import-node
@@ -3359,6 +3505,10 @@ class DispatchModel:
         reserve_posture_startup: np.ndarray | None = None,
         reserve_pergen_col_pool: np.ndarray | None = None,
         reserve_balance_col_mask: np.ndarray | None = None,
+        posture_gen_idx: np.ndarray | None = None,
+        posture_col: np.ndarray | None = None,
+        posture_mlf: np.ndarray | None = None,
+        posture_startup: np.ndarray | None = None,
         link_bidirectional: np.ndarray | None = None,
         link_flow_cost: np.ndarray | None = None,
         slack_cost: np.ndarray | None = None,
@@ -3475,19 +3625,38 @@ class DispatchModel:
         )
         n_storage_reserve = n_reserve_classes * n_zones if storage_gate else 0
 
-        # Commitment-posture pools (design note §A): pergen-only. n_posture
-        # postured pools each get a U and an SU column per hour.
+        # Commitment-posture pools. Two disjoint constructions share the U/SU
+        # columns and the SU cost/bound machinery but differ in the rows built:
+        #  * PERGEN posture (reserve_posture_pools, MISO/CAISO/PJM): re-anchors a
+        #    pergen RESERVE pool — requires reserve_pergen_gen_idx; the joint-
+        #    headroom / min-load / startup / ramp-gate rows ride
+        #    _build_reserve_rows_pergen.
+        #  * STANDALONE energy-only posture (posture_gen_idx, ERCOT
+        #    ercot_commitment_posture): ERCOT runs a fleet-wide ORDC co-opt with
+        #    no pergen substrate, so only the energy-side rows (headroom + min-
+        #    load + startup) are built (_build_posture_energy_rows), leaving the
+        #    reserve design untouched (rule 19). The two are mutually exclusive.
+        standalone_posture = posture_gen_idx is not None
         if reserve_posture_pools is not None and not pergen:
             raise ValueError(
                 "reserve_posture_pools requires the per-generator reserve "
                 "spec (reserve_pergen_gen_idx) — the posture U columns gate "
                 "the pergen pool joint-headroom and ramp rows"
             )
-        n_posture = (
-            0
-            if reserve_posture_pools is None
-            else int(np.asarray(reserve_posture_pools).size)
-        )
+        if standalone_posture and reserve_posture_pools is not None:
+            raise ValueError(
+                "posture_gen_idx (standalone energy-only posture) is mutually "
+                "exclusive with reserve_posture_pools (pergen posture) — one "
+                "commitment-posture construction per solve (rule 19)"
+            )
+        if standalone_posture:
+            n_posture = int(np.asarray(posture_mlf).size)
+        else:
+            n_posture = (
+                0
+                if reserve_posture_pools is None
+                else int(np.asarray(reserve_posture_pools).size)
+            )
         # RPS ACP escape column: present only when an ACP price accompanies an
         # active RPS target. Absent (default) leaves the layout byte-identical.
         n_rec_acp = (
@@ -3518,7 +3687,14 @@ class DispatchModel:
         # (Σ member pmax·availability) — the RHS the joint-headroom row gives
         # up when it re-anchors to U.
         posture_ucap = None
-        if n_posture:
+        if standalone_posture:
+            gidx_s = np.asarray(posture_gen_idx, dtype=int)
+            col_s = np.asarray(posture_col, dtype=int)
+            cap_s = fleet.pmax[gidx_s, np.newaxis] * fleet.availability[gidx_s]
+            pool_cap_s = np.zeros((n_posture, T), dtype=float)
+            np.add.at(pool_cap_s, col_s, cap_s)
+            posture_ucap = pool_cap_s
+        elif n_posture:
             if reserve_pergen_col_pool is not None:
                 raise ValueError(
                     "reserve_posture_pools is not composable with "
@@ -3591,9 +3767,16 @@ class DispatchModel:
             reserve_pergen_col=reserve_pergen_col,
             reserve_posture_pools=reserve_posture_pools,
             reserve_posture_mlf=reserve_posture_mlf,
-            reserve_pergen_ramp10=(reserve_pergen_ramp10 if n_posture else None),
+            reserve_pergen_ramp10=(
+                reserve_pergen_ramp10
+                if (n_posture and not standalone_posture)
+                else None
+            ),
             reserve_pergen_col_pool=reserve_pergen_col_pool,
             reserve_balance_col_mask=reserve_balance_col_mask,
+            posture_gen_idx=(posture_gen_idx if standalone_posture else None),
+            posture_col=(posture_col if standalone_posture else None),
+            posture_mlf=(posture_mlf if standalone_posture else None),
         )
         col_lower, col_upper = build_variable_bounds(
             layout,
@@ -3868,20 +4051,33 @@ class DispatchModel:
         # Commitment-posture state: startup costs for the per-solve cost
         # vector, and the postured pools' (zone, fuel) identity so the
         # posture frame can label its rows without re-deriving the pooling.
-        self._posture_startup = (
-            None if not n_posture else np.asarray(reserve_posture_startup, dtype=float)
-        )
-        self._posture_pools = (
-            None if not n_posture else np.asarray(reserve_posture_pools, dtype=int)
-        )
-        if n_posture:
+        self._standalone_posture = standalone_posture
+        if not n_posture:
+            self._posture_startup = None
+            self._posture_pools = None
+            self.posture_zone_idx = None
+            self.posture_fuel_idx = None
+        elif standalone_posture:
+            # Standalone (ERCOT) posture: pools are 0..q-1, labelled directly
+            # from the member (zone, fuel) via the capacity-weighted plurality
+            # (a pool is a single (zone, fuel-class) group by construction).
+            self._posture_startup = np.asarray(posture_startup, dtype=float)
+            self._posture_pools = np.arange(n_posture, dtype=int)
+            gidx_l = np.asarray(posture_gen_idx, dtype=int)
+            col_l = np.asarray(posture_col, dtype=int)
+            pzone = np.zeros(n_posture, dtype=int)
+            pfuel = np.zeros(n_posture, dtype=int)
+            pzone[col_l] = np.asarray(fleet.zone_idx, dtype=int)[gidx_l]
+            pfuel[col_l] = np.asarray(fleet.fuel_type_idx, dtype=int)[gidx_l]
+            self.posture_zone_idx = pzone
+            self.posture_fuel_idx = pfuel
+        else:
+            self._posture_startup = np.asarray(reserve_posture_startup, dtype=float)
+            self._posture_pools = np.asarray(reserve_posture_pools, dtype=int)
             r_fuel = np.zeros(n_reserve, dtype=int)
             r_fuel[col] = np.asarray(fleet.fuel_type_idx, dtype=int)[gidx]
             self.posture_zone_idx = r_zone[self._posture_pools]
             self.posture_fuel_idx = r_fuel[self._posture_pools]
-        else:
-            self.posture_zone_idx = None
-            self.posture_fuel_idx = None
         self._all_cols = np.arange(layout.total_columns, dtype=np.int32)
         # Row-layout metadata for cross-year basis transfer (export/apply_cross_
         # year_basis). Generator add/retire changes only columns -- capacity is a
@@ -4092,8 +4288,12 @@ class DispatchModel:
             posture_online = block[:, u0 : u0 + layout.n_posture].T
             su0 = layout._posture_su_off
             posture_startup = block[:, su0 : su0 + layout.n_posture].T
-            r_all = block[:, layout._reserve_off : layout._ordc_off].T
-            posture_reserve = r_all[self._posture_pools]
+            if not self._standalone_posture:
+                # Pergen posture: the postured pools' own cleared reserve
+                # (pre-zone-aggregation R columns). The standalone (ERCOT)
+                # posture carries no reserve coupling, so there is none.
+                r_all = block[:, layout._reserve_off : layout._ordc_off].T
+                posture_reserve = r_all[self._posture_pools]
 
         # LCR-area duals: the >= row dual is non-negative (HiGHS min, >= row);
         # it represents the per-MWh uplift value of local committed generation
@@ -4393,6 +4593,10 @@ def solve_dispatch(
     reserve_posture_startup: np.ndarray | None = None,
     reserve_pergen_col_pool: np.ndarray | None = None,
     reserve_balance_col_mask: np.ndarray | None = None,
+    posture_gen_idx: np.ndarray | None = None,
+    posture_col: np.ndarray | None = None,
+    posture_mlf: np.ndarray | None = None,
+    posture_startup: np.ndarray | None = None,
     link_bidirectional: np.ndarray | None = None,
     link_flow_cost: np.ndarray | None = None,
     T: int | None = None,
@@ -4558,6 +4762,10 @@ def solve_dispatch(
         reserve_posture_startup=reserve_posture_startup,
         reserve_pergen_col_pool=reserve_pergen_col_pool,
         reserve_balance_col_mask=reserve_balance_col_mask,
+        posture_gen_idx=posture_gen_idx,
+        posture_col=posture_col,
+        posture_mlf=posture_mlf,
+        posture_startup=posture_startup,
         link_bidirectional=link_bidirectional,
         link_flow_cost=link_flow_cost,
         T=T,
