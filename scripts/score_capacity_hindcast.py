@@ -985,7 +985,9 @@ def _fmt_band(x: str) -> str:
     return {"PASS": "✅ PASS", "FAIL": "❌ FAIL", "SKIP": "—"}.get(x, x)
 
 
-def write_report(iso, variant, meta, ret, add, co2, baselines, report_path: Path) -> None:
+def write_report(
+    iso, variant, meta, ret, add, co2, baselines, report_path: Path
+) -> None:
     """Render the markdown hindcast report."""
     stamp = datetime.now(timezone.utc).strftime("%Y-%m-%d")
     L = []
@@ -1345,7 +1347,9 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "--bundle", type=Path, required=True, help="run_capacity_hindcast out-dir."
     )
-    parser.add_argument("--report-dir", type=Path, default=Path("docs/hindcast-reports"))
+    parser.add_argument(
+        "--report-dir", type=Path, default=Path("docs/hindcast-reports")
+    )
     parser.add_argument(
         "--rescore",
         action="store_true",
