@@ -40,9 +40,12 @@ from market_sim.config.interchange_config import (
     CAISO_CORRIDOR_ATC_SOLAR_K,
     CAISO_DAYTIME_CLEAN_HOD_MAX,
     CAISO_DAYTIME_CLEAN_HOD_MIN,
+    CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX,
     CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR,
     CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC,
     CAISO_DSW_DAYTIME_CLEAN_NAME,
+    CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR,
+    CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_STATIC,
     CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_BY_YEAR,
     CAISO_DSW_OVERNIGHT_CLEAN_DEPTH_STATIC,
     CAISO_DSW_OVERNIGHT_CLEAN_NAME,
@@ -1370,7 +1373,9 @@ def inject_caiso_dsw_overnight_clean(fleet_arrays, iso: str, year: int) -> bool:
     return True
 
 
-def inject_caiso_dsw_daytime_clean(fleet_arrays, iso: str, year: int) -> bool:
+def inject_caiso_dsw_daytime_clean(
+    fleet_arrays, iso: str, year: int, evening_trim: bool = False
+) -> bool:
     """Arm the south-corridor DAYTIME trigger-OFF clean import depth (caiso-94).
 
     The measured no-wedge structure that admitted the caiso-93 OVERNIGHT leg
@@ -1406,6 +1411,14 @@ def inject_caiso_dsw_daytime_clean(fleet_arrays, iso: str, year: int) -> bool:
       constructions (their hod/state windows are mostly disjoint, but the
       per-hour netting guarantees it in any overlap).
 
+    With ``evening_trim`` (caiso-97, ``ScenarioConfig.
+    caiso_dsw_daytime_evening_trim`` — FINDING-caiso94 §7's pre-registered
+    overshoot fix, owner evening-watch TRIPPED ruling 2026-07-18) the window's
+    upper bound drops to :data:`CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX` (hod 6-17 —
+    the evening peak 18-21 was the §4A EXCLUDE cell) and the depth switches to
+    :data:`CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR`, re-derived over the
+    trimmed window so the depth always prices the same population it caps.
+
     A capability, not a floor (``pmin`` stays 0); the corridor ATC envelope
     still caps delivered flow; the fossil rungs are unchanged and price the
     flow beyond the clean depth. Pricing (RAW measured hub + EF 0 × border + ε,
@@ -1440,10 +1453,15 @@ def inject_caiso_dsw_daytime_clean(fleet_arrays, iso: str, year: int) -> bool:
     if hub is None or gas is None:
         return False
     # t = hour index on the model clock; hod = t mod 24 (local calendar).
-    hod = np.arange(hours) % 24
-    daytime_hod = (hod >= CAISO_DAYTIME_CLEAN_HOD_MIN) & (
-        hod <= CAISO_DAYTIME_CLEAN_HOD_MAX
+    # Window and depth MOVE TOGETHER under the trim (caiso-97): the depth is
+    # the p95 over exactly the window hours the capability arms.
+    hod_max = (
+        CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX
+        if evening_trim
+        else CAISO_DAYTIME_CLEAN_HOD_MAX
     )
+    hod = np.arange(hours) % 24
+    daytime_hod = (hod >= CAISO_DAYTIME_CLEAN_HOD_MIN) & (hod <= hod_max)
     # Trigger-OFF = measured hub, NOT the caiso-87 surplus trigger. Identical
     # trigger construction to inject_caiso_dsw_surplus_clean (read-only reuse —
     # the daytime leg never re-evaluates or widens caiso-87's own trigger).
@@ -1453,9 +1471,14 @@ def inject_caiso_dsw_daytime_clean(fleet_arrays, iso: str, year: int) -> bool:
     daytime = daytime_hod & np.isfinite(hub) & ~surplus
     if not daytime.any():
         return False
-    depth = CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR.get(
-        year, CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC
-    )
+    if evening_trim:
+        depth = CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR.get(
+            year, CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_STATIC
+        )
+    else:
+        depth = CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR.get(
+            year, CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC
+        )
     # Net of the shaped south firm block AND the caiso-87 surplus tranche AND
     # the caiso-93 overnight tranche (all post-injection: this runs last).
     firm_cap = np.zeros(hours)
@@ -5144,19 +5167,34 @@ def apply_interchange_injections(
     # measured daytime trigger-OFF depth net of the shaped firm block AND the
     # caiso-87 surplus tranche AND the caiso-93 overnight tranche, hod 6-21
     # measured-hub trigger-OFF hours only, EF 0, raw-hub pricing (no wheel).
+    # Under the caiso-97 evening trim the window is hod 6-17 with the depth
+    # re-derived over that window (FINDING-caiso94 §7 pre-registered fix).
     # Must run LAST of the clean-depth injectors (its headroom nets all three).
     if per_hub_intertie and getattr(config, "caiso_dsw_daytime_clean", False):
-        if inject_caiso_dsw_daytime_clean(fleet_arrays, iso, year):
+        _day_trim = bool(getattr(config, "caiso_dsw_daytime_evening_trim", False))
+        if inject_caiso_dsw_daytime_clean(
+            fleet_arrays, iso, year, evening_trim=_day_trim
+        ):
             _logger.info(
                 "%s %d: south-corridor DAYTIME trigger-OFF clean import depth "
                 "armed (WEIM clean transfer: measured daytime trigger-OFF depth "
                 "%s MW net of the shaped firm block + surplus + overnight "
-                "tranches, hod 6-21 measured-hub trigger-OFF hours, EF 0, raw hub)",
+                "tranches, hod %d-%d measured-hub trigger-OFF hours, EF 0, raw hub)",
                 iso,
                 year,
-                CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR.get(
-                    year, CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC
+                (
+                    CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_BY_YEAR.get(
+                        year, CAISO_DSW_DAYTIME_CLEAN_TRIM_DEPTH_STATIC
+                    )
+                    if _day_trim
+                    else CAISO_DSW_DAYTIME_CLEAN_DEPTH_BY_YEAR.get(
+                        year, CAISO_DSW_DAYTIME_CLEAN_DEPTH_STATIC
+                    )
                 ),
+                CAISO_DAYTIME_CLEAN_HOD_MIN,
+                CAISO_DAYTIME_CLEAN_TRIM_HOD_MAX
+                if _day_trim
+                else CAISO_DAYTIME_CLEAN_HOD_MAX,
             )
 
     # --- 4. Backcast measured-price overlays (caller-supplied; forecast
