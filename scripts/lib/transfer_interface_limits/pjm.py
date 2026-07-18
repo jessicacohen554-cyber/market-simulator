@@ -5,7 +5,7 @@ Source: PJM Data Miner 2 ``transfer_limits_and_flows``
 published ``transfer_limit_area`` with the enforced ``transfer_limit`` (MW)
 and measured ``transfers`` (MW). The committed raw drops are
 ``data/raw/iso-specific-transmission/PJM_<year>_transfer_limits_and_flows.csv``
-(2023-2025; extendable via ``scripts/fetch_pjm_transmission.py`` — rule 22:
+(2023-2025; extendable via ``scripts/data/fetch_pjm_transmission.py`` — rule 22:
 do not fetch outside authorized windows). Ten series in the drops: AP-South
 and Bedington-BlackOak pre-/post-contingency, AEP/DOM, 50045005, Cleveland,
 and the Average Western/Central/Eastern regional envelopes.

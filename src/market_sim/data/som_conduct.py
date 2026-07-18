@@ -4,7 +4,7 @@ Market-monitor (Potomac Economics SOM / IMM quarterly) competitive-conduct
 statistics — price-cost mark-up, output-gap economic-withholding levels, and
 the coal economic-offer vs must-run (self-commitment) start decomposition —
 hand-transcribed with per-row source_doc/source_page provenance
-(``scripts/curate_som_competitive_conduct.py``).
+(``scripts/data/curate_som_competitive_conduct.py``).
 
 These are grounding/citation inputs, not solve-time series: the MISO coal
 offer level (near-cost, mark-up ~ 0; ``_MISO_OFFER_CURVE`` COAL entries in
@@ -26,6 +26,6 @@ def read_som_conduct(iso: str) -> pd.DataFrame:
     One row per ``(iso, year, period, fleet_segment, metric)`` — see the
     schema for the metric vocabulary. Raises ``FileNotFoundError`` when the
     ISO has no curated partition (run
-    ``python scripts/curate_som_competitive_conduct.py`` first).
+    ``python scripts/data/curate_som_competitive_conduct.py`` first).
     """
     return clean_io.read_clean("som-competitive-conduct", iso=iso.upper())

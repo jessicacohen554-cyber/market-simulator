@@ -1,4 +1,4 @@
-"""Tests for the fleet curation script (scripts/curate_fleet.py).
+"""Tests for the fleet curation script (scripts/data/curate_fleet.py).
 
 A tiny synthetic EIA-860 raw fixture (the spaced/parenthesized headers) is run
 through the curator and the result is asserted to be schema-valid and correctly
@@ -13,7 +13,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_fleet
+from scripts.data import curate_fleet
 from scripts.lib import clean_io
 
 

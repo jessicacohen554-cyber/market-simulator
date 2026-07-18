@@ -10,7 +10,7 @@ ercot42), and the drag's derive doc (``docs/ercot-st-gas-netload-drag-2026-06
 .md``) states the mechanism "removes the need for ST_GAS offer markdowns
 fitted to the residual" — they were never reconciled when the floor landed
 (rule 19: replace or reconcile, never stack). The measured 60-Day DAM
-evidence (``scripts/derive_ct_offer_surface.py`` design note) shows ST_GAS
+evidence (``scripts/data/derive_ct_offer_surface.py`` design note) shows ST_GAS
 offers ≈ marginal cost, flat in net-load — i.e. no markdown below the
 physical rising HR curve.
 

@@ -21,7 +21,7 @@ FAR_WEST weather zone) out of the old `West` zone:
 1. **Topology** (`config/iso_configs._ercot_config`): added
    `Zone(Far_West, load_share=0.1211)`, cut `West` to `0.0283`, and re-derived
    all eight ERCOT load shares together from NP6-345 (one pass,
-   `scripts/derive_load_shares.py ercot`) so they sum to 1.0. Wired the Permian
+   `scripts/data/derive_load_shares.py ercot`) so they sum to 1.0. Wired the Permian
    tie as a **pair of one-way links** (`is_bidirectional=False`) for an
    asymmetric rating: a loose `West->Far_West` *import* leg (the basin must pull
    in the bulk of its load) and a separate `Far_West->West` *export* leg. Both
@@ -112,7 +112,7 @@ cannot bottle these CTs with transmission because they are not export-bound.
   West Texas stability limit by 13%") rather than a clean present-day
   intra-Permian limit. This is moot, though: probe C proves a tight export cap
   would not move the CT over-run regardless of its value.
-- **Two orthogonal bugs were found in `scripts/derive_load_shares.py` (also
+- **Two orthogonal bugs were found in `scripts/data/derive_load_shares.py` (also
   reverted with the node, so still open):** its `REF` path predates the W1 data
   collapse (`data/reference` → `data/raw/reference`), and its ERCOT weather-zone
   map still sends `EAST → North` although the live model carved EAST into the

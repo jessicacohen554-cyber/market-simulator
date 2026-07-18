@@ -302,7 +302,7 @@ _PJM_OFFER_CURVE: dict[str, dict[str, float]] = {
 #
 # RUN-28 PROBE (rejected, 2026-06-25): re-grounding ALL of CC_REGULAR / CC_CHP /
 # ST_GAS committed/econ_low/econ_high to NYISO's OWN CAMPD incremental-HR medians
-# (scripts/derive_campd_marginal_hr.py: CC_REGULAR 0.632/0.784/0.925, CC_CHP
+# (scripts/data/derive_campd_marginal_hr.py: CC_REGULAR 0.632/0.784/0.925, CC_CHP
 # 0.809/0.989/1.103, ST_GAS 0.818/0.825/0.830) was tried to remove the borrowed
 # ERCOT reach. It CRATERED C3a mean LMP to -24/-26.5/-23.5% across 2023-25: the
 # bare CEMS marginal heat rate is the marginal COST, not the OFFER — it omits the
@@ -656,7 +656,7 @@ _MISO_OFFER_CURVE: dict[str, dict[str, float]] = {
     "CT_PEAKER": {
         # MISO-measured bands (closes the open root cause the 2026-07 de-leak
         # left: "a MISO-grounded CT committed hurdle + econ ramp"). Rule-23
-        # derive `scripts/derive_campd_marginal_hr.py --iso MISO` (provenance
+        # derive `scripts/data/derive_campd_marginal_hr.py --iso MISO` (provenance
         # data/raw/reference/miso_campd_marginal_hr_summary.csv; 2023-2025
         # pooled, n=249 CT units, cap-weighted):
         #  - committed 1.025 [p25 0.94, p75 1.14] — the measured average-HR
@@ -843,7 +843,7 @@ _NEISO_OFFER_CURVE: dict[str, dict[str, float]] = {
         "pct_peaking": 8.0,
     },
     # CC_CHP / ST_GAS: grounded 2026-07-06 on NEISO's OWN measured CAMPD
-    # marginal heat rates (scripts/derive_campd_marginal_hr.py --iso NEISO ->
+    # marginal heat rates (scripts/data/derive_campd_marginal_hr.py --iso NEISO ->
     # data/raw/reference/neiso_campd_marginal_hr_summary.csv), closing the
     # "later disciplined-calibration item" the 0c6c833 de-leak ledgered. The
     # NYISO run-32 convention: the bare measured MARGINAL heat rate is the
@@ -1071,7 +1071,7 @@ def backcast_config(
         # sees the hub collapse; firm-contracted gas is insulated), so the West
         # delivered discount is a measured haircut, not the cited -0.50 scalar.
         # ERCOT_GAS_HAIRCUT=1 enables it; no-op unless the receipt-derived share
-        # (scripts/derive_gas_takeorpay.py) is on disk. ERCOT only. See
+        # (scripts/data/derive_gas_takeorpay.py) is on disk. ERCOT only. See
         # market_sim.data.fuel.apply_ercot_zonal_gas_basis.
         ercot_gas_contract_haircut=(
             iso.upper() == "ERCOT"
@@ -1261,7 +1261,7 @@ def backcast_config(
         caiso_ra_min_load_frac=0.26,  # min stable load of a committed gas unit
         #   (fraction of available capacity) for the RA bridge above. Grounded in
         #   the CAMPD/CEMS-measured CAISO combined-cycle minimum stable load
-        #   (P5 of net CF over online hours, scripts/derive_thermal_tranches.py;
+        #   (P5 of net CF over online hours, scripts/data/derive_thermal_tranches.py;
         #   data/raw/_processed-legacy/thermal_tranches_CAISO.csv committed_pct):
         #   capacity-weighted 0.259 over the 23-plant, 12.7 GW CA CC fleet
         #   (range 0.10-0.63, median 0.25). Supersedes the generic 0.40 NREL/
@@ -1316,7 +1316,7 @@ def backcast_config(
         #   CAISO-specific curve coefficients (do NOT reuse ERCOT's 0.00703 /
         #   -0.1427 / 0.47): regressed from measured CAMPD CT_PEAKER evening
         #   (h15-22 local-std) capacity factor on EIA-930 CISO net-load, 2023-2025
-        #   (scripts/derive_caiso_ct_reliability_floor.py). Non-CAISO ISOs fall
+        #   (scripts/data/derive_caiso_ct_reliability_floor.py). Non-CAISO ISOs fall
         #   back to the ScenarioConfig ERCOT defaults (byte-identical).
         ct_drag_slope_per_gw=(0.00901 if iso.upper() == "CAISO" else 0.00703),
         ct_drag_intercept=(-0.1124 if iso.upper() == "CAISO" else -0.1427),
@@ -1685,7 +1685,7 @@ def backcast_config(
                 "peak": 1.48,
                 "econ_low_share": 0.556,
             },
-            # Non-ERCOT coal by EIA-923 fuel rank (scripts/derive_coal_supply.py;
+            # Non-ERCOT coal by EIA-923 fuel rank (scripts/data/derive_coal_supply.py;
             # routes via fleet._COAL_SUPPLY_TO_CURVE). PJM 2024: 25 bituminous,
             # 8 waste, 2 sub-bituminous plants. Per-plant delivered fuel cost
             # already comes from EIA-923, so these shape the dispatch curve:
@@ -1823,7 +1823,7 @@ def backcast_config(
     # the fitted _CAISO_OFFER_CURVE econ_low / econ_high / peak multipliers
     # for CC_REGULAR + CT_PEAKER with the cap-weighted medians of the
     # fleet's own DAM energy bids (OASIS Public Bid Data,
-    # scripts/derive_caiso_offer_surface.py — carbon/VOM-netted so the
+    # scripts/data/derive_caiso_offer_surface.py — carbon/VOM-netted so the
     # tranche mc round-trips the measured bid). A rule-24/25 SHRINK of the
     # fitted surface: where a measured band lands, the fitted value
     # retires. The measured committed band is deliberately NOT armed (the
@@ -1906,7 +1906,9 @@ def backcast_config(
         config = config.with_overrides(ercot_offer_surface_conditional=True)
         from market_sim.data.offer_curves import CONDITIONAL_SURFACE_GROUPS
 
-        n_rungs = 5  # == len(scripts.derive_dam_offer_hrmults.PEAK_LADDER_QUANTILES)
+        n_rungs = (
+            5  # == len(scripts.data.derive_dam_offer_hrmults.PEAK_LADDER_QUANTILES)
+        )
         share = round(1.0 / n_rungs, 3)
         merged = {c: dict(b) for c, b in config.offer_curve_by_group.items()}
         for cls in CONDITIONAL_SURFACE_GROUPS:

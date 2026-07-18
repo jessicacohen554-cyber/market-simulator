@@ -230,7 +230,7 @@ linear interpolation, `rps.py:8-39`) and the `eac_price_*` scalars.
 - **G12 — Silent-degradation hardening (W1-B B3/B4).** `load_confirmed_exits` degrades
   to a warn-only no-op when `data/clean/` is missing or the repo root is off `sys.path`
   (ERCOT 2026 fleet silently gains 477 MW — V H Braunig backlog). Operational rule for
-  every runner session: `PYTHONPATH=. python scripts/curate_confirmed_retirements.py`
+  every runner session: `PYTHONPATH=. python scripts/data/curate_confirmed_retirements.py`
   before forecasting on a fresh checkout, and caches predating a data fix must be
   deleted (cache_key hashes config only). Code hardening (fail loudly when
   `confirmed_exits_enabled` + forecast + registry unreadable) folds into W2-E.

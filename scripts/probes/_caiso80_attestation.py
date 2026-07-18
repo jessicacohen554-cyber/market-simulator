@@ -29,7 +29,7 @@ DELTA80 = (
     "model represents did not serve. The replacement series demand(t) = 930 NetGen(t) - "
     "NG_cell(t) + CEMS bench-gas grid(t) + cogen grid flat + geo/biomass fold-in flat - "
     "TI(t) (207.40/212.19/205.59 TWh) is a derived measured artifact "
-    "(scripts/derive_caiso_supply_consistent_demand.py, guard-railed to the committed "
+    "(scripts/data/derive_caiso_supply_consistent_demand.py, guard-railed to the committed "
     "CEMS anchors and the FINDING S6 pre-registered windows) — every term measured, "
     "regenerates per year from source data, re-derives only on source updates (rule 23), "
     "never an output pinned back (rule 14). It makes the model's demand basis identical "

@@ -332,7 +332,7 @@ the cheap-gas-year asymmetry ($2.19 vs $2.54/$3.52) — a gas-keyed band (a la t
 PRB sigmoid) is the structural fix; (2) CT_CHP 2025 +31% is 2025 EIA-923 incompleteness
 (ST_CHP shows +4,900% on the same benchmark) — mask 2025 CHP targets before trusting any
 solver move against them; (3) next step: run the Jacobian joint-move solver
-(`scripts/derive_offer_curve_jacobian.py --validate-run Run-76`) instead of further manual
+(`scripts/data/derive_offer_curve_jacobian.py --validate-run Run-76`) instead of further manual
 seesaw steps; consider its CC_REGULAR econ_high-down/peak-up band reshape for the 2023 CC
 under-run.
 

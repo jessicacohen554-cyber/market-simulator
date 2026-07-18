@@ -34,7 +34,7 @@ post-event, ≈ 66 in event-free years**) is handed to G-20/G-22 as a number
 
 ## 1. What landed (Stages 1–3 of the charter, D.7)
 
-### 1.1 Stage 1 — the frozen derive (`scripts/derive_correlated_outage_curve.py`)
+### 1.1 Stage 1 — the frozen derive (`scripts/data/derive_correlated_outage_curve.py`)
 
 Per-class temperature → excess-forced-outage hinge curves, era-split on the PUCT
 weatherization rule (16 TAC §25.55, adopted Oct-2021, phase-1 compliance winter
@@ -311,7 +311,7 @@ would be LOYO-scored per rule 22 in whichever lane adopts it).
 
 ## 5. Session notes
 
-- Files touched: `scripts/derive_correlated_outage_curve.py` (new),
+- Files touched: `scripts/data/derive_correlated_outage_curve.py` (new),
   `constants.py` (+`CORRELATED_OUTAGE_CURVE`), `scenarios.py` (4 fields +
   sigma-scale gate), `data/outages.py` (mechanism + wrapper), `runner.py`
   (availability-seam call), `results/scarcity.py` (`resolve_lolp_params` sigma
@@ -339,4 +339,4 @@ would be LOYO-scored per rule 22 in whichever lane adopts it).
   parameter per the charter's explicit derivation-target list — no 2022
   solve/score occurs anywhere.
 - `data/clean` regeneration needed on a fresh checkout before hindcast runs:
-  `scripts/curate_confirmed_retirements.py` (fail-loud registry guard).
+  `scripts/data/curate_confirmed_retirements.py` (fail-loud registry guard).

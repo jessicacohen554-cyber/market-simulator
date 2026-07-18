@@ -55,7 +55,7 @@ jobs:
           fi
           echo "Comparing ${BASE_SHA}..${HEAD_SHA}"
           fail=0
-          while IFS=$'\t' read -r status path _renamed; do
+          while IFS=$'\t' read -r status path renamed; do
             [[ -z "${status:-}" ]] && continue
             case "$path" in
               src/*|scripts/*|CLAUDE.md|model-methodology-spec.md|.github/workflows/*) ;;
@@ -69,13 +69,19 @@ jobs:
               fail=1
               continue
             fi
-            head_lines=$(git show "${HEAD_SHA}:${path}" 2>/dev/null | wc -l || echo 0)
+            # A rename (R<score>) is guarded at its destination: the content
+            # must survive the move intact, wherever it lands.
+            head_path="$path"
+            if [[ "$status" == R* ]]; then
+              head_path="$renamed"
+            fi
+            head_lines=$(git show "${HEAD_SHA}:${head_path}" 2>/dev/null | wc -l || echo 0)
             min_lines=$(( base_lines * 70 / 100 ))
             if (( head_lines < min_lines )); then
-              echo "::error file=${path}::shrank ${base_lines} -> ${head_lines} lines (>30%). Likely a truncated API push (CLAUDE.md rule 27). Restore the full content or add the 'intentional-shrink' label if deliberate."
+              echo "::error file=${head_path}::shrank ${base_lines} -> ${head_lines} lines (>30%). Likely a truncated API push (CLAUDE.md rule 27). Restore the full content or add the 'intentional-shrink' label if deliberate."
               fail=1
             fi
-          done < <(git diff --name-status "${BASE_SHA}" "${HEAD_SHA}")
+          done < <(git diff --name-status -M "${BASE_SHA}" "${HEAD_SHA}")
           if (( fail )); then
             echo "file-integrity-guard FAILED — see errors above."
             exit 1

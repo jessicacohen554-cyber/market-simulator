@@ -63,7 +63,7 @@ multi-zone LPs, fewer when co-opt is involved).
 ## P-4 — HiGHS cold-first-solve experiments (bench-first)
 
 Three bounded solver experiments on the cold P0 (the dominant phase above), run with
-`scripts/bench_cold_solve.py` on **real captured** ISO-year LPs (the pipeline
+`scripts/archive/bench_cold_solve.py` on **real captured** ISO-year LPs (the pipeline
 `solve_dispatch` seam, captured under `MARKET_SIM_WARMSTART=0`, then re-solved directly).
 **Host:** 4 vCPU, 15 GB RAM, HiGHS presolve off (as in production). Captures:
 **ERCOT 2023** (plant-level, 7 zones, n_gen 1458, 13.23 M LP columns, model peak ≈5.9 GB) and

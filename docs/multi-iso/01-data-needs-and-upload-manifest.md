@@ -88,7 +88,7 @@ convert to parquet (mirror the ERCO file's columns).
 > `data/raw/<ST>_<year>.parquet` layout and a large MISO/PJM gap that no longer
 > exists. The authoritative **unit-level** CEMS extracts (one row per
 > *unit*-hour, carrying `unitId` — the input the per-unit outage detector
-> `scripts/derive_campd_unit_outages.py` consumes) now live in
+> `scripts/data/derive_campd_unit_outages.py` consumes) now live in
 > **`data/raw/campd-unit-level/<ST>_<year>.parquet`**. See
 > `docs/multi-iso/miso-data-audit.md` for the MISO acquisition record.
 
@@ -165,7 +165,7 @@ directly. Multi-zone ISOs need demand split to zones via `load_share`
 | NYISO | NYISO zonal load (11 zones A–K) | source if/when NYISO goes multi-zone |
 | ISO-NE | ISO-NE load-zone metered load (8 zones) | source if/when NEISO goes multi-zone |
 
-`scripts/derive_load_shares.py` is the ERCOT template; generalize it to take
+`scripts/data/derive_load_shares.py` is the ERCOT template; generalize it to take
 an ISO + zonal-load file and emit the `load_share` set + a topology check.
 
 ---
@@ -177,7 +177,7 @@ wind/solar capacity by zone from **EIA-860** (national, present) — so capacity
 *amounts* need no new upload, only the zone-assignment logic (Stage B). What is
 ISO-specific is the **uncurtailed potential profile (HSL)**:
 
-- ERCOT uses the NP6 HSL dataset (`scripts/build_ercot_hsl.py`) to feed the
+- ERCOT uses the NP6 HSL dataset (`scripts/data/build_ercot_hsl.py`) to feed the
   dispatch *uncurtailed* wind/solar so it re-curtails under modeled limits,
   one parquet per backcast year. 2023 builds from the UMass 60-Day-SCED
   dataset (auto-downloaded); **2024+ needs an upload**: ERCOT MIS wind/solar

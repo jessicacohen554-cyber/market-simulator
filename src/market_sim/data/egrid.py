@@ -38,7 +38,7 @@ logger = logging.getLogger(__name__)
 
 # Opt-in clean-data read path. When the ``MARKET_SIM_USE_CLEAN`` environment
 # flag is truthy, the eGRID plant sheet is sourced from the curated
-# ``data/clean/egrid`` tree (written by ``scripts/curate_egrid.py``) instead of
+# ``data/clean/egrid`` tree (written by ``scripts/data/curate_egrid.py``) instead of
 # parsing the 21 MB workbook. OFF by default; falls back to raw when the clean
 # partition for the vintage is absent.
 _USE_CLEAN_ENV = "MARKET_SIM_USE_CLEAN"
@@ -78,7 +78,7 @@ FOSSIL_FUEL_CATEGORIES: frozenset[str] = frozenset({"COAL", "GAS", "OIL", "OFSL"
 
 # Pooled CAMPD-measured per-plant CO2 rates (kg / net MWh), the override layer.
 _CAMPD_RATES_PATH: Path = PROCESSED_DIR / "plant_emission_rates.parquet"
-# Pre-derived fleet-wide fossil rate artifact (scripts/derive_fossil_co2_rates.py).
+# Pre-derived fleet-wide fossil rate artifact (scripts/data/derive_fossil_co2_rates.py).
 # Read in preference to parsing the 21 MB eGRID workbook when present.
 FOSSIL_CO2_RATES_PATH: Path = PROCESSED_DIR / "fossil_co2_rates.parquet"
 
@@ -132,7 +132,7 @@ def load_egrid_plant_co2(vintage: int) -> pd.DataFrame:
 
     When ``MARKET_SIM_USE_CLEAN`` is set (default OFF) and the curated
     ``data/clean/egrid`` partition for this vintage exists (written by
-    ``scripts/curate_egrid.py``), the plant sheet is read from there instead
+    ``scripts/data/curate_egrid.py``), the plant sheet is read from there instead
     of the 21 MB workbook; otherwise it falls back to the raw parse.
     """
     if _use_clean():
@@ -228,7 +228,7 @@ def build_fossil_co2_rates(years: list[int] | tuple[int, ...]) -> pd.DataFrame:
     where available, else eGRID-derived), ``source`` (``"campd"`` /
     ``"egrid"``), the ``net_mwh`` and ``fuel_cat`` that anchored the eGRID rate,
     and the eGRID ``vintage`` used. This is what
-    ``scripts/derive_fossil_co2_rates.py`` writes to
+    ``scripts/data/derive_fossil_co2_rates.py`` writes to
     :data:`FOSSIL_CO2_RATES_PATH`.
 
     Args:

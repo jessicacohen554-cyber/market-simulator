@@ -6,7 +6,7 @@ one bundle (rule 16) and flips only ``nyiso_dynamic_reserve_requirements`` on
 — the measured hourly requirement series derived from the published LRR
 schedule + logged Thunderstorm-Alert windows
 (``data/raw/NYISO-AS/requirements/NYISO_reserve_requirements_{year}.csv``,
-``scripts/derive_nyiso_reserve_requirements_hourly.py``, Ask B of
+``scripts/data/derive_nyiso_reserve_requirements_hourly.py``, Ask B of
 ``docs/handoffs/nyiso-data-asks-2026-07.md``) replacing the static published
 requirements in the keeper's in-LP energy+reserve co-optimization
 (``reserve_config._nyiso_design``).

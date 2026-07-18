@@ -7,7 +7,7 @@
 # Source: per-ISO raw load files under data/raw/zone-specific-demand/ (PJM
 # metered-load CSV, ERCOT native-load XLSX, CAISO TAC-area CSV, NYISO pal CSV,
 # ISO-NE SMD CSV, MISO EIA-930 sub-BA CSV).  Curated by
-# scripts/curate_zonal_shares.py.
+# scripts/data/curate_zonal_shares.py.
 #
 # Validation: for every ISO-year file,
 #   df.groupby('hour')['share'].sum() ≈ 1.0  (within ±1e-9 per hour)

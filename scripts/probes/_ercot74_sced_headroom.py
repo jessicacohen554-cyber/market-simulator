@@ -45,6 +45,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(REPO / "scripts"))
 
+sys.path.insert(0, str(REPO / "scripts" / "data"))
 # Statuses counting as synchronized/online supply in SCED (Gen + ESR).
 # OFF/OFFNS/OUT/EMR etc. are excluded: their curves are not online supply.
 _ONLINE_PREFIXES = ("ON",)

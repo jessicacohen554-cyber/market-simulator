@@ -89,7 +89,7 @@ defect PRE-DATES ercot56; the honest nuclear input moved more days over the
 same cliff.
 
 **Fix landed as measured data (rules 13/14/15).**
-`scripts/derive_ercot_thermal_dam_availability.py` →
+`scripts/data/derive_ercot_thermal_dam_availability.py` →
 `data/raw/ercot-thermal-dam-availability.csv`: measured CLASS-day thermal
 availability from the 60-Day DAM disclosure (config-collapsed live Gen_Resource
 HSL / site p98 ratings; OUT counts zero, OFF counts its reported HSL —
@@ -207,7 +207,7 @@ def write_attestations() -> None:
         "Gen_Resource HSL / site ratings; OUT counts zero, OFF counts its "
         "reported HSL — commitment state is not an availability event; "
         "data/raw/ercot-thermal-dam-availability.csv, "
-        "scripts/derive_ercot_thermal_dam_availability.py). Replaces the "
+        "scripts/data/derive_ercot_thermal_dam_availability.py). Replaces the "
         "statistical WEFOR/EFOR ESTIMATE of the same quantity with its "
         "measured realization — the model's own discrete outage windows stay "
         "as the within-class distribution (rescale, not stacking); uncovered "

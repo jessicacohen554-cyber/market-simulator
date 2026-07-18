@@ -17,7 +17,7 @@ from unittest import mock
 
 import pandas as pd
 
-from scripts import curate_confirmed_retirements as curate_cr
+from scripts.data import curate_confirmed_retirements as curate_cr
 from scripts.lib import clean_io
 from scripts.lib import confirmed_retirements as cr
 

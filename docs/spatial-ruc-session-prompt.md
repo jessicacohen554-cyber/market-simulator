@@ -9,14 +9,14 @@ out the merit, load-allocation, and inter-zonal-TTC explanations, processed the
 ERCOT zonal prices, and validated the correct scoping (see EVIDENCE). Build a
 **spatial reliability-deployment overlay**: a per-plant hourly min-gen floor for
 the load-pocket thermal fleet, scoped on the **load-zone congestion subset** — the
-generalization of the CT deployment overlay (`scripts/derive_ct_deployment.py`,
+generalization of the CT deployment overlay (`scripts/data/derive_ct_deployment.py`,
 `outages.ct_deployment_floor_for_year`, `ScenarioConfig.ct_deployment_overlay`).
 Read docs/calibration-best-so-far.md + docs/calibration-log.md first.
 
 DATA (already processed — artifact committed; do NOT reprocess)
 - `data/raw/_validation-source/actual_lmp_zonal_ERCOT.parquet` is committed
   (`year, hour, settlement_point, rt, da`, 8760-hour clock, 15 hub/load-zone points,
-  2023-2025). It was built by `scripts/derive_ercot_zonal_lmp.py` from the committed
+  2023-2025). It was built by `scripts/data/derive_ercot_zonal_lmp.py` from the committed
   ERCOT SPP archives in `data/raw/lmp-data/` (`*RTMLZHBSPP_<year>.zip` RTM
   15-min averaged to hourly, `*DAMLZHBSPP_<year>.zip` DAM hourly; each zip = one
   .xlsx with 12 monthly sheets). The deriver is there only to regenerate if needed —
@@ -38,7 +38,7 @@ EVIDENCE (verify briefly, then build — do NOT re-derive)
   **Inter-zonal TTC is ruled out**: North→Houston 8000→4810 and halving SC imports
   were both exact no-ops (the meshed 7-zone bidirectional network delivers cheap
   power regardless; TTCs already match the NP6-86 SCED archive,
-  `scripts/derive_ttc_limits.py`). The binding ERCOT constraints are intra-zonal
+  `scripts/data/derive_ttc_limits.py`). The binding ERCOT constraints are intra-zonal
   pockets the 7-zone model can't form (NE_LOB 15%, Rio Grande Valley
   VALEXP+NELRIO+ZAPSTR+BEARKT ≈21%, HMLTN 7.7%, WHARTN).
 - **CRITICAL scoping finding (the prior session's key result):** ERCOT *hubs*
@@ -57,7 +57,7 @@ EVIDENCE (verify briefly, then build — do NOT re-derive)
   CT non-CEMS gap — a separate top-down floor or finer zones, NOT price-recoverable).
 
 MECHANISM TO BUILD (generalize CT deployment, scoped on the congestion subset)
-1. `scripts/derive_reliability_deployment.py` (or `--class`/`--zone`/`--use-zonal`
+1. `scripts/data/derive_reliability_deployment.py` (or `--class`/`--zone`/`--use-zonal`
    flags on `derive_ct_deployment.py`). For each CEMS-covered thermal plant
    (CC_REGULAR, COAL, ST_GAS, CC_CHP) in the under-running zones (South_Central,
    West, Northeast) and each hour: a **deployment hour** ⇔

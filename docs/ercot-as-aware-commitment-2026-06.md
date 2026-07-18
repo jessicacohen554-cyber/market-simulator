@@ -60,7 +60,7 @@ measured MCPC. The honesty gate holds.
 
 ## Greenlight gate — NOT met (broad May over-fires to VOLL)
 
-2024, overlay OFF, AS-aware commitment ON (`scripts/run_160.py`; evaluated with
+2024, overlay OFF, AS-aware commitment ON (`scripts/archive/run_160.py`; evaluated with
 `scripts/probes/_eval_may_gate.py`, demand-weighted vs actual RTSPP):
 
 | configuration | 2024 annual | May month | May acute (8/24/26) | Aug month |
@@ -153,5 +153,5 @@ definition**, not the commitment. The AS-aware screen built here remains availab
   P2 trigger.
 - `src/market_sim/runner.py` — forecast-path wiring (mirror of the calibration
   path).
-- `scripts/run_160.py` — the 3-year overlay-off AS-aware run driver.
+- `scripts/archive/run_160.py` — the 3-year overlay-off AS-aware run driver.
 - tests: `tests/test_commitment.py`, `tests/test_ercot_multiproduct_coopt.py`.

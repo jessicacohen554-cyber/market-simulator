@@ -741,7 +741,7 @@ real federal instrument already priced in the model.
 - Fleets: production builders at `e1fcb02`, `ScenarioConfig` defaults (the
   keeper-calibrated BAU), year 2026, forecast mode. ERCOT: 633 units / 78.5 GW after
   477 MW confirmed exits (the clean `confirmed-retirements` partition had to be
-  regenerated in-session via `scripts/curate_confirmed_retirements.py` — it is
+  regenerated in-session via `scripts/data/curate_confirmed_retirements.py` — it is
   derived/gitignored and absent in a fresh container; W1-B should expect the same).
   PJM: 1,858 units / 170.7 GW (its 8 confirmed exits are all post-2026).
 - Energy shares: measured trailing net-MWh for covered plants; class-CF × pmax

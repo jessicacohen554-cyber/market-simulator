@@ -11,10 +11,10 @@ show the CAISO sub-SRMC-CC-flood pattern; (c) does any class show a
 flat-floor/drag signature, and is the pjm-75 CT drag D-8-stable.
 
 **Method.** Reproduced the pjm-76 recipe for **2024 only**
-(`scripts/diag_pjm_burndown_2024.py`, rule-15 throwaway — NOT registered),
+(`scripts/archive/diag_pjm_burndown_2024.py`, rule-15 throwaway — NOT registered),
 extracted P1 per-class hourly dispatch, and cross-read the reliability-floor CSV
 + engine, the offer-band overrides, and measured CAMPD pure-play CT_PEAKER
-hour-of-day CF (`scripts/diag_pjm_ct_hotday_hod.py`). **This burndown also
+hour-of-day CF (`scripts/archive/diag_pjm_ct_hotday_hod.py`). **This burndown also
 uncovered a legitimacy-scoring integrity bug (the meta-gap, §5) that had been
 masking the true D-2 picture for every drag keeper — the most consequential
 finding here.**
@@ -171,10 +171,10 @@ root-cause threads; re-score the drag-keeper family (pjm-76, caiso-51) on the no
 accurate diagnostics before any keeper-status claims.
 
 ## Files
-- `scripts/diag_pjm_burndown_2024.py`, `scripts/diag_pjm_ct_hotday_hod.py` — throwaway diagnostics (rule 15).
+- `scripts/archive/diag_pjm_burndown_2024.py`, `scripts/archive/diag_pjm_ct_hotday_hod.py` — throwaway diagnostics (rule 15).
 - `src/market_sim/config/iso_configs.py` (`drop_drag_owned_reliability_specs`) + `scripts/run_calibration.py` wiring — the §1 fix.
 - `scripts/run_calibration_full.py` — the §5 meta-gap fix (persist drag flags).
-- `scripts/run_pjm77_ct_relfloor_reconcile.py` — keeper candidate.
+- `scripts/archive/run_pjm77_ct_relfloor_reconcile.py` — keeper candidate.
 
 ---
 
@@ -183,7 +183,7 @@ accurate diagnostics before any keeper-status claims.
 §6 offered two fixes: window the EMAAC CT_CHP tmax limb to the cooling peak, or
 disable it. Measuring the driver decided it: CAMPD EMAAC pure-play CT_CHP
 (18 plants, 0.32 GW) hot-day hour-of-day CF, 2023–2025
-(`scripts/diag_pjm_ctchp_hotday_hod.py`), shows the hot-day lift is an
+(`scripts/archive/diag_pjm_ctchp_hotday_hod.py`), shows the hot-day lift is an
 **all-hours steam-host intensification, not an afternoon cooling window** —
 in-window [15,22) share of the CF increment 31.3 / 32.0 / 34.6 % vs 29.2 % for
 a perfectly uniform lift, with overnight hot-day CF ~0.12 vs mild-day ~0.098

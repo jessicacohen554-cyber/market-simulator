@@ -252,7 +252,7 @@ ERCOT all-years re-solve on the dashboard.
 
 ```
 The MISO PJM-seam neighbor HR (hr_by_year, constants.py:2562; resolved in
-data/neighbor_price.py:62; derived by scripts/derive_neighbor_hr_by_year.py from
+data/neighbor_price.py:62; derived by scripts/data/derive_neighbor_hr_by_year.py from
 measured PJM RT LMP) has a forward fallback (flat structural marginal_heat_rate),
 but the flat mean under-prices dear-gas years — the effect that motivated the
 measured anchor. Read: docs/forecast-methodology-gaps-2026-06.md G11.

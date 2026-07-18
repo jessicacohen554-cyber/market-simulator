@@ -302,7 +302,7 @@ reports EIA-923 monthly receipts pays its own measured monthly delivered
 cost (`coal_plant_monthly_pricing`, on by default), broadcast to the hourly
 horizon; months with no reported cost, and plants outside the sample, fall
 back to the per-year coal supply-class trajectory.
-`scripts/process_f923_fuel_costs.py` builds
+`scripts/data/process_f923_fuel_costs.py` builds
 `data/raw/_processed-legacy/eia923_monthly_fuel_costs.parquet`.
 
 The same resolver runs both backcasts and forward projections; in a forward

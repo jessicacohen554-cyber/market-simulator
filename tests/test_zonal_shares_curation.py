@@ -1,4 +1,4 @@
-"""Round-trip tests for scripts/curate_zonal_shares.py.
+"""Round-trip tests for scripts/data/curate_zonal_shares.py.
 
 Verifies that the per-ISO parse functions produce output that:
 - Matches the (n_zones, HOURS_PER_YEAR) shape contract.
@@ -28,7 +28,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from market_sim.config.constants import HOURS_PER_YEAR
 from market_sim.config.iso_configs import get_iso_config
 from market_sim.data.eia_loader import load_zonal_shares
-from scripts.curate_zonal_shares import (
+from scripts.data.curate_zonal_shares import (
     _shares_to_long,
     parse_ercot_shares,
     parse_pjm_shares,
@@ -46,7 +46,7 @@ _PJM_YEAR = 2023
 
 def _parse_is_available(iso: str, year: int) -> bool:
     """Return True when the raw source file for iso/year exists on disk."""
-    from scripts.curate_zonal_shares import _PARSE_FUNCS
+    from scripts.data.curate_zonal_shares import _PARSE_FUNCS
 
     zone_names = get_iso_config(iso).zone_names
     try:
@@ -202,7 +202,7 @@ def test_load_zonal_shares_raw_fallback_when_clean_absent_nyiso():
     diurnal shape. The fallback must return the measured shares (not ``None``)
     and match the canonical curate parser byte-for-byte.
     """
-    from scripts.curate_zonal_shares import parse_nyiso_shares
+    from scripts.data.curate_zonal_shares import parse_nyiso_shares
 
     zone_names = get_iso_config("NYISO").zone_names
     shares_direct = parse_nyiso_shares(2023, zone_names)

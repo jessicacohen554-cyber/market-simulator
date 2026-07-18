@@ -179,7 +179,7 @@ program's **published** schedule for the year — the cited CARB / RGGI budgets 
 landed in `constants.py` (`CARB_ALLOWANCE_BUDGET`, MMT CO2e × 1e6; the regional
 `RGGI_STATE_CO2_BUDGET["RGGI"]`, short tons × `SHORT_TON_TO_METRIC_TONNE`), mirrored
 by the cited raw schedules under `data/raw/policy/{carb-cap-schedule,rggi-co2-budgets}/`
-(curated to the gitignored `data/clean/` via `scripts/curate_*.py`). Because those
+(curated to the gitignored `data/clean/` via `scripts/data/curate_*.py`). Because those
 region-/economy-wide budgets vastly exceed any single modeled ISO's power-sector
 emissions, the row is (correctly) **slack** and its dual ≈ 0 for a real ISO — the
 mechanism is validated on the trivial binding fixture

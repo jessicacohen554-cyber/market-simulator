@@ -1,6 +1,6 @@
 """Tests for the ERCOT West Texas Export corridor curtailment-share driver.
 
-Covers scripts/curate_ercot_wtx_congestion.py (NP6-86 SCED congestion geo-
+Covers scripts/data/curate_ercot_wtx_congestion.py (NP6-86 SCED congestion geo-
 attributed via a synthetic ERCOT SP/bus load-zone mapping) and the solve-time
 reader market_sim.data.curtailment_share. Builds a tiny synthetic NP6-86 parquet
 plus a synthetic Settlement Points zip against a tmp raw root with CLEAN_DIR
@@ -22,7 +22,7 @@ from tempfile import TemporaryDirectory
 import numpy as np
 import pandas as pd
 
-from scripts import curate_ercot_wtx_congestion as curate_mod
+from scripts.data import curate_ercot_wtx_congestion as curate_mod
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

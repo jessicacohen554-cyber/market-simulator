@@ -24,7 +24,7 @@
 # separation compares against |shadow| + any RPE contribution, never against
 # this column alone (2024 MISO SOM §III.B).
 #
-# Curated by scripts/curate_transfer_constraint_binding.py from
+# Curated by scripts/data/curate_transfer_constraint_binding.py from
 #   data/raw/transfer-constraint-binding/MISO/miso_pbc_<market>_<year>.csv.gz
 datatype: transfer-constraint-binding
 schema_version: 1

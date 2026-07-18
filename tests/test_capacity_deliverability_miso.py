@@ -15,7 +15,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_capacity_deliverability as curate_cd
+from scripts.data import curate_capacity_deliverability as curate_cd
 from scripts.lib import capacity_deliverability as cd
 from scripts.lib.clean_io import paths, validate_clean
 

@@ -18,7 +18,7 @@ PJM/SPP/South, composing with ``miso_seam_envelope_merit_cap`` through the share
 block's structural error: measured MHEB is a two-way seasonal hydro seam that
 net-EXPORTS -0.99 TWh in drought-2025 (the firm block imports +1.96 TWh), a
 +2.95 TWh over-import the block cannot represent. Zero new parameters — the
-ladder is Q-Q-derived (scripts/derive_miso_seam_ladders.py), the interface limit
+ladder is Q-Q-derived (scripts/data/derive_miso_seam_ladders.py), the interface limit
 physically pinned, the emission factor 0.0 (hydro); it retires the 3 firm-block
 MW scalars. Frozen charter:
 ``docs/handoffs/miso-manitoba-seam-design-2026-07.md``.

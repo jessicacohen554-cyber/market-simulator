@@ -102,7 +102,7 @@ the committed net DA-virtual form +:
 - `tranche_startup_measured_runs=True` — amortization horizon = the plant's
   CAMPD-measured median start-to-stop run
   (`campd_ct_run_lengths_PJM.csv`, derived this session by
-  `scripts/derive_campd_ct_run_lengths.py --iso PJM`; rule-13 measured
+  `scripts/data/derive_campd_ct_run_lengths.py --iso PJM`; rule-13 measured
   market-behaviour parameter, re-derives only on CAMPD updates).
 - `tranche_startup_conditional_runs=True` — the v4 condition-keyed horizon
   (`campd_ct_run_bands_PJM.csv`, same derive `--condition-bands`): tight-hour

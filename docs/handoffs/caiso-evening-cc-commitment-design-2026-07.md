@@ -3,7 +3,7 @@
 > **DEAD — DO NOT BUILD (2026-07-11, caiso-77 session,
 > `results/calibration/FINDING-caiso77-c1-cluster-firm-selfschedule-2026-07-11.md`
 > §1).** The motivating measurement was an artifact:
-> `scripts/caiso_belly_commitment_probe.py`'s actual side counted the whole
+> `scripts/archive/caiso_belly_commitment_probe.py`'s actual side counted the whole
 > CAMPD **CA state** extract (16.6–18.5 TWh/yr of non-CAISO CC — LADWP
 > Haynes/Scattergood/Valley, SMUD Cosumnes, TID Walnut, IID El Centro, …), so
 > the "+1.9/+1.2/+0.3 GW evening CC gap" this design was written against never
@@ -29,7 +29,7 @@ battery AS reservation (caiso-74, measured inert) and the 2023 demand-clock
 realignment (caiso-75). Each of those moves evening supply or evening load.
 The 2023 demand fix in particular moves ~1.4 GW of 2023 ramp-hour load one
 hour earlier. **Gate: re-run
-`scripts/caiso_belly_commitment_probe.py --run-id <caiso-75 main>` and
+`scripts/archive/caiso_belly_commitment_probe.py --run-id <caiso-75 main>` and
 re-measure the evening Δ before building.** If the residual evening CC gap
 falls under ~0.5 GW in 2024/25, this mechanism is not worth its complexity
 (the 2023 gap alone may be the demand clock, not commitment posture).

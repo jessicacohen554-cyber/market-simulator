@@ -2,7 +2,7 @@
 
 **Status:** implemented (post-solve overlay + forecast revenue wiring), default off
 (`ScenarioConfig.scarcity_pricing_enabled`). ERCOT only.
-**Code:** `src/market_sim/results/scarcity.py`, `scripts/derive_ordc_overlay.py`,
+**Code:** `src/market_sim/results/scarcity.py`, `scripts/data/derive_ordc_overlay.py`,
 runner wiring in `src/market_sim/runner.py` (capacity-economics prices).
 **Validated against:** `results/calibration/run92_kiamichi` vs
 `data/raw/_validation-source/actual_lmp_hourly_ERCOT.parquet`.
@@ -551,14 +551,14 @@ fleet's penetration; the thermal screens take the storage fleet through
 
 ```bash
 # Overlay + report on a solved bundle (post-solve only, no LP):
-python scripts/derive_ordc_overlay.py results/calibration/run92_kiamichi --revenue-report
+python scripts/data/derive_ordc_overlay.py results/calibration/run92_kiamichi --revenue-report
 
 # Pre-adder honesty diagnostic:
-python scripts/derive_ordc_overlay.py results/calibration/run92_kiamichi --diagnostic
+python scripts/data/derive_ordc_overlay.py results/calibration/run92_kiamichi --diagnostic
 
 # Scenario: pre-Uri cap
-python scripts/derive_ordc_overlay.py results/calibration/run92_kiamichi --voll 9000 --mcl 2000 --shift 0 --tag preuri
+python scripts/data/derive_ordc_overlay.py results/calibration/run92_kiamichi --voll 9000 --mcl 2000 --shift 0 --tag preuri
 
 # Tail localization with the overlay applied:
-python scripts/analyze_lmp_residual.py results/calibration/run92_kiamichi --months 6 7 8 9 --with-scarcity
+python scripts/archive/analyze_lmp_residual.py results/calibration/run92_kiamichi --months 6 7 8 9 --with-scarcity
 ```

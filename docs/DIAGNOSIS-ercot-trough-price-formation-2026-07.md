@@ -124,7 +124,7 @@ thermal suppression, no fitted scalar.
 
 Mechanics mirror the adopted top leg exactly, with the clamp reversed:
 
-* **Derive** `scripts/derive_dam_offer_hrmults.py --low-curve-binned` →
+* **Derive** `scripts/data/derive_dam_offer_hrmults.py --low-curve-binned` →
   frozen `data/raw/_validation-source/offer_curve_dam_lowcurve_condbinned.json`
   (its own artifact; the adopted top-surface JSON stays byte-stable, rule 23).
   Per gas class × net-load bin, capacity-weighted quantile ladders of

@@ -11,7 +11,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_eia_aeo_fuel_prices as curate_mod
+from scripts.data import curate_eia_aeo_fuel_prices as curate_mod
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

@@ -54,7 +54,7 @@ capacity (2,354 MW) and the CAMPD demonstrated peak (p99.9 = 2,318 MW)
 corroborate the true value. The model dispatched 23.3 TWh from this plant in
 2023 vs 13.7 actual — +9.7 TWh at one plant.
 
-Plants capped (from `scripts/derive_cc_capacity_reconcile.py --iso MISO
+Plants capped (from `scripts/data/derive_cc_capacity_reconcile.py --iso MISO
 --mode cap` — CAMPD p99.9 sustained peak, ×1.10 cap-margin guard, EIA-923
 CF-feasibility guard, pure-play-CC gate):
 
@@ -173,7 +173,7 @@ data-intake refinement, not a CC-overrun lever.
 ### 6. Box 6 — take-or-pay / mine-mouth coal economics: **CLEAN**
 
 `coal_takeorpay_MISO.csv` (EIA-923 Schedule-5 purchase-type shares,
-`scripts/derive_coal_takeorpay.py`) exists and the keeper runs
+`scripts/data/derive_coal_takeorpay.py`) exists and the keeper runs
 `coal_takeorpay_from_data: true` — the contracted-fuel share anchors the
 cheap committed band per plant from measured data; the marginal tranche pays
 full delivered SRMC (box 4 above). Mine-mouth economics enter through the

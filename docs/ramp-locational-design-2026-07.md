@@ -287,7 +287,7 @@ the residual is opened as a root-cause issue — **not** closed by re-arming the
 ## 6. Phased build plan
 
 **Phase 0 — data + derive (no LP change):**
-`scripts/derive_campd_ramp_envelopes.py` (+ CAISO CSV artifact, governance header per the
+`scripts/data/derive_campd_ramp_envelopes.py` (+ CAISO CSV artifact, governance header per the
 run-lengths precedent); `peak_load` metric rows added to
 `data/raw/capacity-deliverability/caiso/caiso.csv` from the already-cited LCR reports;
 `lcr_area_membership_CAISO.csv` county crosswalk; `LOCAL_CAPACITY_AREAS` registry. Unit

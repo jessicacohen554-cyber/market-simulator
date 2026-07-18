@@ -4,7 +4,7 @@ The model can source delivered fuel prices from the curated ``data/clean`` tree
 (:func:`scripts.lib.clean_io.read_clean`) instead of the raw
 ``data/raw/gas-prices`` CSVs, gated behind the ``MARKET_SIM_USE_CLEAN``
 environment flag (OFF by default). This asserts the two paths agree on the real
-Henry Hub series — the only curated hub today (scripts/curate_fuel_prices.py):
+Henry Hub series — the only curated hub today (scripts/data/curate_fuel_prices.py):
 
   * the clean-backed daily loader reproduces the existing raw loader exactly;
   * the env-gated dispatch in :func:`market_sim.data.fuel._henry_hub_daily`
@@ -25,7 +25,7 @@ import pytest
 
 from market_sim.config import paths
 from market_sim.data import fuel
-from scripts import curate_fuel_prices
+from scripts.data import curate_fuel_prices
 
 pytestmark = [pytest.mark.slow, pytest.mark.integration]
 

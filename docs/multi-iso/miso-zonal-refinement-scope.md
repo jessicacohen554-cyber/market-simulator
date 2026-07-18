@@ -249,7 +249,7 @@ LRR / value_pu). Implied summer peaks: West ≈ 18.1-18.9 GW, Plains ≈ 17.6-18
 Illinois ≈ 8.8-9.3, Indiana ≈ 17.3-17.8, East ≈ 33.5-34.1, South ≈ 32.9-35.3.
 A zone whose installed capacity < LCR or > 2× LRR flags a mis-assignment.
 
-**Load** (`eia_loader.py` + `scripts/curate_zonal_shares.py`): update
+**Load** (`eia_loader.py` + `scripts/data/curate_zonal_shares.py`): update
 `_MISO_SUBBA_ZONE_GROUPS` (:1804-1811) to the 1:1 mapping (each sub-BA its own
 zone, `8910`→South), re-run `curate_zonal_shares.py` to regenerate the clean
 `zonal-shares` parquet. **Hazard:** `load_zonal_shares`
@@ -268,7 +268,7 @@ on disk. (New data is needed only for validation LMPs and the deferred splits �
   **silently reverts to a single ISO-wide shape unless the parquet has a
   column for every model zone name** (renewables.py:1411-1412). The W→E
   congestion story *is* the wind-shape story, so this fallback would defeat
-  the whole refinement. `scripts/build_miso_wind_shape.py` must be re-run with
+  the whole refinement. `scripts/data/build_miso_wind_shape.py` must be re-run with
   6 zone columns (NASA POWER WS50M at the largest EIA-860 wind plants per new
   zone; wind concentrates in West/Plains; South stays a placeholder mean).
 - **Wind/solar capacity split**: automatic — `_eia860_zone_shares`
@@ -289,9 +289,9 @@ on disk. (New data is needed only for validation LMPs and the deferred splits �
   detail); `data/raw/reference/reliability_floor_coeffs_MISO.csv` (39 rows —
   the 2 enabled rows, `MISO-North,ST_GAS,tmax` and `MISO-South,COAL,tmax`,
   must be **re-derived** at the new granularity via
-  `scripts/derive_miso_temp_reliability_floor.py`, not just re-keyed);
+  `scripts/data/derive_miso_temp_reliability_floor.py`, not just re-keyed);
   `data/raw/miso-weather/miso_zone_temp_daily.csv` (re-fetch via
-  `scripts/fetch_zone_temperature.py`); `_validation-source/MISO_*_renewable_capacity.csv`
+  `scripts/data/fetch_zone_temperature.py`); `_validation-source/MISO_*_renewable_capacity.csv`
   and `calibration_reference.json` (rebuild via `build_calibration_reference.py`).
 - **Interchange config** (`config/interchange_config.py`): `IMPORT_NODE_LINKS["MISO"]`
   (:199-203; external border links Central 7300 / North 4000 / South 3000 MW)
@@ -307,10 +307,10 @@ on disk. (New data is needed only for validation LMPs and the deferred splits �
 | 2 | `model/transmission.py` + `data/capacity_deliverability.py` | new builder `build_miso_deliverability_groups` expanding seasonal CIL/CEL → hourly interface caps (pattern: `build_caiso_corridor_flow_groups`, transmission.py:518-572); un-gate or generalize the NYISO-only seasonal-TTC shim in `scripts/run_calibration.py:1698-1772` |
 | 3 | `data/zone_assignment.py:212-241, 76-87, 650-668, 783-785` | 6-zone state map; lat-fallback rework; MISO into `_EIA860_SUPPLEMENT_ISOS`; fallback-zone logic |
 | 4 | `data/eia_loader.py:1804-1811, 1758-1791` | 1:1 sub-BA map; all-zero-share guard |
-| 5 | `scripts/curate_zonal_shares.py` | regenerate zonal-shares parquet (derived, gitignored) |
+| 5 | `scripts/data/curate_zonal_shares.py` | regenerate zonal-shares parquet (derived, gitignored) |
 | 6 | `config/capacity_area_crosswalk.py:145-187` | `_MISO_LRZ_TO_ZONE` 1:1 |
 | 7 | `config/interchange_config.py:199-203, 320-343, 447, 513` | border zones, Manitoba import zone |
-| 8 | `data/renewables.py:180` + `scripts/build_miso_wind_shape.py` | allocation constants; **rebuild 6-column wind-shape parquets** |
+| 8 | `data/renewables.py:180` + `scripts/data/build_miso_wind_shape.py` | allocation constants; **rebuild 6-column wind-shape parquets** |
 | 9 | `config/reserve_config.py` | **no change for phase 1** (zone-agnostic); phase 2 locational families per §6 |
 | 10 | `data/fuel.py:546-548` + `miso_zonal_gas_hub.csv` | re-key zonal gas basis |
 | 11 | sidecar CSVs per §4 | re-key / re-derive / re-fetch |
@@ -365,10 +365,10 @@ Gate on congestion existing, not on the residual (rule #1). In order:
    #14/#15 — including rejected probes.
 
 **Validation data gap — CLOSED (D6 landed 2026-07-02):** the per-hub actuals
-are in: `scripts/fetch_miso_hub_lmp.py` stages the eight named trading hubs'
+are in: `scripts/data/fetch_miso_hub_lmp.py` stages the eight named trading hubs'
 RT-final/DA-ex-post rows from MISO's daily market reports (source reachable,
 no 403; compact stagings in `data/raw/lmp-data/MISO/`), and
-`scripts/derive_miso_hub_lmp.py` reduces them to
+`scripts/data/derive_miso_hub_lmp.py` reduces them to
 `_validation-source/actual_lmp_hourly_zonal_MISO.parquet`
 (`year,hour,hub,zone,rt,da`, the model's chronological fixed-CST calendar
 since the 2026-07-15 all-ISO scoring-clock fix — originally Central-prevailing

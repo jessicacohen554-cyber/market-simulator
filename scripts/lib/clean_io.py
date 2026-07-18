@@ -412,7 +412,7 @@ def clean_exists(
 
     The clean tree is gitignored (derived/disposable), so consumers should
     check this and regenerate from raw — via ``scripts/regenerate_clean.py`` or
-    the datatype's ``scripts/curate_<datatype>.py`` — when it is absent.
+    the datatype's ``scripts/data/curate_<datatype>.py`` — when it is absent.
     """
     return paths.clean_path(datatype, iso=iso, year=year, market=market).is_file()
 
@@ -441,7 +441,7 @@ def read_clean(
     if not path.is_file():
         raise FileNotFoundError(
             f"no clean {datatype} at {path} — regenerate from raw with "
-            f"`python scripts/curate_{datatype.replace('-', '_')}.py` "
+            f"`python scripts/data/curate_{datatype.replace('-', '_')}.py` "
             f"(or scripts/regenerate_clean.py)"
         )
     if validate:

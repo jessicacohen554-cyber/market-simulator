@@ -78,7 +78,7 @@ rest of the gap (rules 1/14/26).
 
 ## 2. The 2×3 grid re-run against the accredited floor (plan §5 step 3)
 
-`scripts/run_fom_scarcity_grid.py`, ERCOT 2026-2031 mid-growth, legacy equal-width
+`scripts/archive/run_fom_scarcity_grid.py`, ERCOT 2026-2031 mid-growth, legacy equal-width
 fleet, `reserve_margin_build_enabled=True` in every cell (the backstop is default-off in
 a normal forecast; the harness enables it so adequacy pressure is *observable* as forced
 MW), 2 workers, 33 min wall-clock. Grid JSON:

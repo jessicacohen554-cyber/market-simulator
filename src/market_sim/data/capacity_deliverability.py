@@ -107,7 +107,7 @@ def _read(iso: str) -> pd.DataFrame | None:
     except FileNotFoundError:
         logger.warning(
             "capacity-deliverability: clean partition for %s absent; run "
-            "scripts/curate_capacity_deliverability.py. Returning no limits.",
+            "scripts/data/curate_capacity_deliverability.py. Returning no limits.",
             clean_iso,
         )
         return None

@@ -16,7 +16,7 @@
 # top South-Texas binder (RIOHONDO, LAREDO, CATARINA, DILLEY, ...) to LZ_SOUTH and
 # is correctly excluded.
 #
-# Curation (scripts/curate_ercot_wtx_congestion.py) aggregates the ~5-minute
+# Curation (scripts/data/curate_ercot_wtx_congestion.py) aggregates the ~5-minute
 # intervals to the fixed non-leap 8760-hour ERCOT-local clock (Feb 29 dropped,
 # DST fall-back merged by the clock-hour group-by — the convention shared with the
 # ercot-hsl / gtc-limits / ORDC raw series). One dense row per local clock hour.

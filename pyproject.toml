@@ -23,7 +23,7 @@ dependencies = [
 dev = [
     "pytest>=8.0",
     "ruff>=0.5",
-    # scripts/convert_eia930.py converts EIA-930 timestamps to each BA's local
+    # scripts/data/convert_eia930.py converts EIA-930 timestamps to each BA's local
     # clock; tzdata supplies the IANA zone database on minimal containers.
     "tzdata>=2024.1",
 ]

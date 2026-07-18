@@ -36,7 +36,7 @@ percentile (EIA-930 ISNE Demand − WND − SUN), bins (0.80, 0.90, 0.97) — th
 forward-native construction the mechanism recomputes from the model's own
 load/VRE at solve time. Ladder: per bin, per-asset medians, capacity-weighted
 into 5 equal-capacity quantile rungs, clamped ≥ the all-hours p50 (a loose
-bin never lowers an offer). Derive: `scripts/derive_neiso_offer_surface.py`
+bin never lowers an offer). Derive: `scripts/data/derive_neiso_offer_surface.py`
 → `data/raw/_validation-source/neiso_offer_surface_condbinned.json`.
 
 ## 3. Mechanism (heterogeneity-preserving by construction)
@@ -64,7 +64,7 @@ retro-justify a parameter:
 
 1. **Parameters are the measured fast-start offer quantile ladder per
    net-load bin**, pooled 2023–2025, produced once by
-   `scripts/derive_neiso_offer_surface.py` on the full download. Every number
+   `scripts/data/derive_neiso_offer_surface.py` on the full download. Every number
    traces to the offer data; none is fitted to a price or volume residual.
 2. **Frozen against residuals (rule 20).** The ladder re-derives only when
    the source data updates; a re-derive commit must cite the data change.

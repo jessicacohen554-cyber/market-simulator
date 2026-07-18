@@ -14,7 +14,7 @@ it is missing several keys this keeper actually uses non-default (e.g.
 ``solve_and_persist`` kwarg (mostly 1:1 by name; a few renamed -- see
 ``_RENAME`` below), so this probe builds its kwargs from meta.json rather
 than hand-translating the keeper's CLI recipe
-(``scripts/run_neiso54_steamgas_ct_drag.py``).
+(``scripts/archive/run_neiso54_steamgas_ct_drag.py``).
 
 Also runs the rule-20 zero-forcing ablation twin (mode "ablation").
 

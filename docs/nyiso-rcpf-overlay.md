@@ -13,7 +13,7 @@ requirement channel (issue #1344, `nyiso_dynamic_reserve_requirements`,
 `docs/handoffs/nyiso-data-asks-2026-07.md`) extends the in-LP families, not
 this overlay.
 **Code:** `src/market_sim/results/rcpf.py`,
-`scripts/derive_nyiso_rcpf_overlay.py`,
+`scripts/data/derive_nyiso_rcpf_overlay.py`,
 constants `NYISO_RCPF_PRODUCTS` (`src/market_sim/config/constants.py`).
 **Validated against:** `results/calibration/nyiso_cal_{2023,2024,2025}` vs
 `data/raw/_validation-source/actual_lmp_hourly_NYISO.parquet` (NYCA-hub RT).
@@ -240,7 +240,7 @@ the overlay's region set.
 
 The published `NYISO_RCPF_PRODUCTS` curve values are not taken on faith. NYISO
 OASIS real-time ancillary-service prices (`rtasp`, processed by
-`scripts/process_nyiso_as.py` into `data/raw/_validation-source/actual_as_reserve_NYISO.parquet`)
+`scripts/data/process_nyiso_as.py` into `data/raw/_validation-source/actual_as_reserve_NYISO.parquet`)
 give the **measured** per-zone reserve clearing prices — the empirical RCPF
 realization — and the overlay report compares the model adder against them.
 
@@ -258,7 +258,7 @@ measured version of the gating finding above.
 ## Usage
 
 ```
-python scripts/derive_nyiso_rcpf_overlay.py results/calibration/nyiso_cal_2023 \
+python scripts/data/derive_nyiso_rcpf_overlay.py results/calibration/nyiso_cal_2023 \
     [--years 2023 2024 2025] [--tag scenarioX] [--rebuild-availability] \
     [--diagnostic] [--locational]
 ```

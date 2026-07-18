@@ -120,7 +120,7 @@ to change.
 
 ### 2.2 The one substantive divergence — floor MAGNITUDE source
 
-`scripts/derive_reliability_coeffs.py` computes (lines ~346, 360):
+`scripts/data/derive_reliability_coeffs.py` computes (lines ~346, 360):
 
 ```
 min_stable_pct = grp["must_run_pct"].mean() / 100.0      # = bin Pct_Must_Run
@@ -247,12 +247,12 @@ Add a citation comment in house style (see HEAT_RATE_BINS). Do not tune these.
 ### Prompt B — Re-point the derivation at the physical floor
 
 ```
-In scripts/derive_reliability_coeffs.py replace the min_stable_pct source:
+In scripts/data/derive_reliability_coeffs.py replace the min_stable_pct source:
   - was: min_stable_pct = grp["must_run_pct"].mean()/100   # offer-curve must-run share
   - now: min_stable_pct = MIN_STABLE_PCT_PHYSICAL[plant_class]  # physical Pmin/Pmax
 Keep commit_frac exactly as is (CAMPD online-share on flagged days — structural).
 Keep floor_pct = commit_frac * min_stable_pct.
-Re-run `python scripts/derive_reliability_coeffs.py --iso ALL`; regenerate
+Re-run `python scripts/data/derive_reliability_coeffs.py --iso ALL`; regenerate
 reliability_floor_coeffs_<ISO>.csv and docs/multi-iso/reliability-floor-coefficients.md.
 Confirm ST_GAS / CT_PEAKER limbs now carry non-zero floor_pct where commit_frac is high.
 ```

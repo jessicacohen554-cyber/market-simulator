@@ -186,9 +186,9 @@ consistent (`low`→High-OGS, `mid`→Reference, `high`→Low-OGS). The stalenes
 purely vintage:
 
 - **AEO2026 exists.** The `HENRY_HUB_TRAJECTORIES` header itself notes *"AEO2026
-  was released April 8, 2026 … re-run `scripts/fetch_eia_aeo.py --aeo-year 2026`
+  was released April 8, 2026 … re-run `scripts/data/fetch_eia_aeo.py --aeo-year 2026`
   when that vintage is wanted"* (constants.py:921-922). The fetch script defaults
-  to 2025 and accepts `--aeo-year 2026` (scripts/fetch_eia_aeo.py:294) against the
+  to 2025 and accepts `--aeo-year 2026` (scripts/data/fetch_eia_aeo.py:294) against the
   EIA API v2 — **auto-fetchable in-session** (unlike ATB, §3).
 - **Near-term reference gas already reads low.** Model AEO2025 `mid` = **2.74
   (2026) / 2.62 (2027)** $/MMBtu vs **STEO July-2026 ≈ $3.60–3.70 (2026) / <$3.50
@@ -438,7 +438,7 @@ a miss. Status of each rubric §6 source:
 - **On disk (fetched, reproducible) — AEO2025.** `benchmark-corridor` source
   `AEO2025` = EIA AEO2025 regional electricity **Table 54** (capacity/generation
   by fuel + power-sector CO2) + **Table 56** (renewable capacity split), pulled
-  from the EIA Open Data API v2 `aeo` route (`scripts/fetch_aeo_electricity.py`)
+  from the EIA Open Data API v2 `aeo` route (`scripts/data/fetch_aeo_electricity.py`)
   for the 14 EMM regions crosswalked to the six ISOs, Reference case,
   2030/2035/2040 — 1,008 curated rows. This supersedes §7.3's old **M8**
   ("AEO2026, pull once FF-0A defines FC-5"): FC-5's corridor anchor is the

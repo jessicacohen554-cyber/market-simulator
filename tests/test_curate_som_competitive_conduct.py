@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_som_competitive_conduct.py.
+"""Tests for scripts/data/curate_som_competitive_conduct.py.
 
 Trivial fixture first (one ISO, two rows) with a redirected ``CLEAN_DIR``,
 then the committed transcription itself: schema validation plus a
@@ -23,7 +23,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(_REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(_REPO_ROOT))
 
-from scripts import curate_som_competitive_conduct as mod  # noqa: E402
+from scripts.data import curate_som_competitive_conduct as mod  # noqa: E402
 from scripts.lib import clean_io  # noqa: E402
 
 

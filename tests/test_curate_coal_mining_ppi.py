@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_coal_mining_ppi.py.
+"""Tests for scripts/data/curate_coal_mining_ppi.py.
 
 Drives the curation on a tiny synthetic raw fixture (not the real BLS pull):
 two rows across the two series ids -> curate -> assert the written clean file
@@ -14,7 +14,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_coal_mining_ppi
+from scripts.data import curate_coal_mining_ppi
 from scripts.lib import clean_io
 from scripts.lib.clean_io import read_clean_metadata, validate_clean
 

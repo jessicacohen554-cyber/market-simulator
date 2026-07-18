@@ -491,7 +491,7 @@ per-ISO registry modules — same contract as P-0B; do NOT create parallel datat
 5. Actuals-coverage fix (RD-5): the committed EIA-860 retired sheet omits plants 8907
    (Indian Point) and 1715 (Palisades). Intake the authoritative retired/canceled
    rows (EIA-860/860M), regenerate capacity_actuals_{nyiso,miso}.csv via
-   scripts/build_capacity_actuals.py, and document Palisades' restart ambiguity in
+   scripts/data/build_capacity_actuals.py, and document Palisades' restart ambiguity in
    the README (adjudication itself is RC-0B's, not yours).
 6. Deactivation-notice/lead-time citations (RD-6): PJM Part V deactivation process,
    ERCOT NPRR/Protocol §3.14 NSO, MISO Attachment Y — as citation rows for
