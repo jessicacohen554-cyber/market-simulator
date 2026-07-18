@@ -285,3 +285,30 @@ against `caiso98_repro_A`:
 anchor for the 2025 residual) is unchanged (novel, owner-gated). Neither is a
 keeper this session; the keeper stays caiso-97. See the handoff prompt
 (`docs/handoffs/caiso-98-storage-charter-handoff-2026-07-18.md`).
+
+---
+
+## CORRECTION (caiso-99, 2026-07-18) — §11's root cause is falsified; §2-§6 stand
+
+The CAISO-99 session code-traced the §11 diagnosis before executing the wiring
+and falsified it (`FINDING-caiso99-storage-shape-2026-07-18.md` §1, the
+authoritative version):
+
+- The backcast solve path NEVER enters `runner.py` — it is `solve_and_persist`
+  → `run_calibration.run_year:3297` → `load_eia860_storage(iso, year, config)`,
+  unconditionally. `runner.py:587` is the forecast orchestrator only, and
+  `load_eia860_storage` was never orphaned in the backcast.
+- `storage_vintage_ramp` was ALREADY True in the keeper's solve config
+  (`backcast_config.py:1350` sets it for CAISO/ERCOT/NEISO); the B-leg's
+  "delta" was True→True — hence the byte-identity. The keeper meta's `False`
+  is the `solve_and_persist` kwarg echo, not the solve config (the ercot-65
+  recorder-defect pattern, reversed).
+- The "flat 8 GW `STORAGE_BASE_FLEET_MW`" fleet reading was a numeric
+  coincidence: 8 GW is the EIA-860 year-end-2023 CA battery total. The keeper
+  dispatches the measured COD-ramped fleet (8.1 → 11.7 → 15.4 GW year-end),
+  monthly profiles attached, all three years.
+
+The measured decomposition (§2-§6) is unaffected and remains the lane's
+evidence base; the §6 "2025 residual dispatch-SHAPE defect" in fact owns all
+three years. Mechanism A is closed as ALREADY-LIVE (no wiring, no headroom);
+Mechanism B proceeds under its authorization in caiso-99.
