@@ -12,6 +12,7 @@ caiso_commitment_posture: false
 caiso_corridor_atc_forward: false
 caiso_corridor_flow_limit: false
 caiso_demand_clock_realign: false
+caiso_dsw_daytime_clean: false
 caiso_dsw_overnight_clean: false
 caiso_dsw_surplus_clean: false
 caiso_firm_import_selfschedule: false
