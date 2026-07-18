@@ -611,6 +611,7 @@ def run_year(
     miso_seam_flow_limit: bool = False,
     miso_seam_flow_percentile: float | None = None,
     miso_seam_export_limit: bool = False,
+    miso_seam_envelope_merit_cap: bool = False,
     miso_pjm_border_anchor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -1172,6 +1173,8 @@ def run_year(
         )
     if miso_seam_export_limit:
         config = config.with_overrides(miso_seam_export_limit=True)
+    if miso_seam_envelope_merit_cap:
+        config = config.with_overrides(miso_seam_envelope_merit_cap=True)
     if pjm_seam_flow_limit:
         config = config.with_overrides(pjm_seam_flow_limit=True)
     if pjm_seam_flow_percentile is not None:
