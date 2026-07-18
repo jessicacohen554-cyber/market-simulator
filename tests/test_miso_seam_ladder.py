@@ -14,6 +14,7 @@ import numpy as np
 
 from market_sim.config.interchange_config import (
     INTERFACE_NEIGHBORS,
+    MISO_MANITOBA_SEAM_SPEC,
     MISO_SEAM_LADDER_BY_YEAR,
 )
 from market_sim.data.fleet import generators_to_fleet_arrays
@@ -32,7 +33,12 @@ class TestLadderRegistry(unittest.TestCase):
     """The measured ladder registry is complete, ordered, and wash-free."""
 
     def test_every_backcast_year_covers_every_seam_and_band(self):
-        seams = {n.name for n in INTERFACE_NEIGHBORS["MISO"]}
+        # The three registry seams plus the Manitoba two-way seam (miso-74),
+        # whose spec lives outside INTERFACE_NEIGHBORS (built only under
+        # ScenarioConfig.miso_manitoba_seam) but whose ladder is always present.
+        seams = {n.name for n in INTERFACE_NEIGHBORS["MISO"]} | {
+            MISO_MANITOBA_SEAM_SPEC.name
+        }
         for year in (2023, 2024, 2025):
             self.assertIn(year, MISO_SEAM_LADDER_BY_YEAR)
             ladder = MISO_SEAM_LADDER_BY_YEAR[year]
