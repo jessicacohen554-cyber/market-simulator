@@ -7,8 +7,37 @@ the end of every manager turn.
 
 - **Plan:** `docs/forecast-development-plan-2026-07.md` (THE PLAN; §6 prompt pack, §7
   standing constraints, §1.2 frontier, §2 tier ladder).
-- **Last reviewed `origin/main` HEAD:** `acccd25` (2026-07-18, turn 16 — manager session `mhtoa0`).
+- **Last reviewed `origin/main` HEAD:** `9b9b0d4` (2026-07-18, turn 17 — manager session `yjegie`).
 - **Plan base SHA:** `c95176e`.
+- **turn 17 (manager `yjegie`, refresh). MAIN GREEN, quiet window — no FF worker landed; two
+  cleanup/closeout items landed.** Refresh `acccd25→9b9b0d4` (5 merges). **All clean/additive:**
+  #2503 (`b3b0d34`) deleted the stale 635-line `ff2a-core.patch` (the FF-2A breach artifact,
+  fully applied to source per turn-15 — removing the re-armable stale patch closes that rule-27
+  hazard); #2505 (`0fe71ef`) closed the FF-0F data-dictionary snapshot deferral — registered
+  `benchmark-corridor` in `scripts/render_data_dictionary.py` (+18, additive, no solve/defaults)
+  → **FF-0F fully closed, no open deferrals**; #2502 (`e7938c0`) = my own turn-16 ledger merge;
+  out-of-program: #2501 (ERCOT-84 mid-band offer-surface re-adjudication — docs/calibration-log
+  + 4 probe scripts only, no core source, no registry/bundle, governance-clean) and #2504
+  (caiso-99 attestation probe, storage charter). **Rule-27 clean:** NO `src/market_sim` file
+  touched this window; core line counts unchanged (capacity.py 4230, constants.py 7281,
+  runner.py 2442, scenarios.py 7717) — the FF-1E/2B prompts' stated counts are still current, no
+  drift-patch needed. **Housekeeping RESOLVED:** chunk branch `…6zd9zv` is GONE from origin
+  (ls-remote empty) AND the stale patch is deleted — both turn-15 hazards cleared. **The four
+  gate-open prompts remain in flight** (FF-0B-redo, FF-0E, FF-1E, FF-2B — no worker branches on
+  origin, no PRs); launchable AS ISSUED at turn 16 (scripts/paths/line-counts all unmoved this
+  window — re-verified, no re-emission needed). No new unblocks: FF-1D still waits on FF-0E,
+  FF-2C on FF-2B (+owner), FF-2D on W1/W2, FF-3B on W3-R. Nothing to correct.
+  **Owner mid-turn: "send me prompt waves; may only be able to use Opus, very little Fable
+  left."** RE-EMITTED all four launchable prompts to the owner (FF-0B-redo, FF-0E, FF-1E,
+  FF-2B) — drift-verified at `9b9b0d4` (all referenced scripts stayed at `scripts/` root,
+  ATB curate/fetch moved to `scripts/data/` but no prompt references those paths; FF-0D audit
+  + FF-1C constants present; harness `VINTAGE_YEAR=2020`/`ALLOWED_SOLVE_YEARS={2021,2023,24,25}`/
+  `end_year<=2025` guard current, 21 config passthroughs incl. FF-2A's). **Fable-scarcity is a
+  non-issue for the launchable set — all four are already [OPUS].** The only FABLE prompts left
+  in the program are FF-3C (trigger-gated, inactive) and the closed FF-2A lane; FF-1A is done.
+  Sequencing given: FF-0B-redo ∥ FF-0E first (independent L-VAL); FF-1E and FF-2B staggered
+  (both touch capacity.py 4230). **AWAITING owner:** entry-lookahead posture (FF-2A item 4 /
+  gas_cc lag), golden freeze (FF-4A), PB-5 (FF-4C).
 - **turn 15 (manager `mhtoa0`). MAIN IS GREEN — FF-2A integration MERGED (#2486 `e9f9d60`) +
   sidecars (#2491/#2492); FF-0F verified-pass; FF-1F defaults live (#2493). Wave-2 gates FIRE.**
   Refresh `0a11d48→0c2e84e→4e9d63c` (13 merges; #2486/#2492/#2493 landed mid-turn). **FF-0F =
@@ -107,11 +136,11 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 |---|---|---|---|---|---|---|
 | FF-0A | FABLE | 0 | L-VAL | ⛔ rubric | **verified-pass** | rubric #2414 + scorer #2419 |
 | FF-0A-fix | OPUS | 0 | L-VAL | — | **verified-pass** | #2419: 73 tests pass |
-| FF-0B-redo | OPUS | 0 | L-VAL | — | **sent (turn 16, re-emitted drift-patched)** | T1-F 6-ISO baseline at HEAD defaults (FF-1F posture live); must COMMIT findings doc + sidecars (#2412 failure mode named in prompt). |
+| FF-0B-redo | OPUS | 0 | L-VAL | — | **sent (turn 17, re-emitted on owner request, drift-clean at 9b9b0d4)** | T1-F 6-ISO baseline at HEAD defaults (FF-1F posture live: DC=mid, derate=ON); must COMMIT findings doc + hindcast sidecars (#2412 failure mode = gitignore-only non-delivery, named in prompt). |
 | FF-0C | FABLE | 0 | L-CAP | — | **verified-pass** | #2418: R-NEW memo + owner box |
 | FF-0D | OPUS | 0 | L-INP | — | **verified-pass** | #2413: audit, no source changes |
-| FF-0E | OPUS | 0 | L-VAL | — | **sent (turn 16, re-emitted drift-patched)** | crossover harness build; prompt carries preserve-the-FF-2A-passthroughs warning + current harness state (VINTAGE_YEAR=2020 hardcoded, guard ≤2025). |
-| FF-0F | OPUS | 0 | L-VAL/L-INP | — | **verified-pass (turn 15)** | #2488 + #2490: benchmark-corridor datatype + loader + 13 tests + FC-5 context-only wiring; 73 scorer tests pass; additive; M9–M15 gaps filed. |
+| FF-0E | OPUS | 0 | L-VAL | — | **sent (turn 17, re-emitted on owner request, drift-clean at 9b9b0d4)** | crossover harness build; prompt carries preserve-the-21-config-passthroughs warning + current harness state (VINTAGE_YEAR=2020, ALLOWED_SOLVE_YEARS={2021,2023,24,25}, end_year<=2025 guard). |
+| FF-0F | OPUS | 0 | L-VAL/L-INP | — | **verified-pass, CLOSED (turn 17)** | #2488 + #2490 + #2505: benchmark-corridor datatype + loader + 13 tests + FC-5 context-only wiring; 73 scorer tests pass; additive; M9–M15 gaps filed. #2505 registered it in `render_data_dictionary.py` — snapshot deferral closed, no open items. |
 | FF-1A | FABLE | 1 | L-CAP | — | **verified-pass (complete)** | #2438 + #2448/#2451 + #2454. Inversion CLOSED; flip-gate scorecard complete. |
 | FF-1A-restore | FABLE | 1 | L-CAP | — | **verified-pass** | #2438: capacity.py byte-exact restore. |
 | FF-1A-C | FABLE | 1 | L-CAP | — | **verified-pass (via FF-1A-C2)** | #2448/#2451: 3 R-NEW legs scored. |
@@ -119,26 +148,27 @@ Status vocabulary: `not-sent` · `sent` · `landed` · `verified-pass` ·
 | FF-1B | FABLE | 1 | L-SCAR | — | **verified-pass** | #2423: correlated cold-event derate. |
 | FF-1C | OPUS | 1 | L-INP | — | **verified-pass** | #2422: demand/DC currency + hydro. |
 | FF-1D | OPUS | 1 | L-VAL | — | **issued (turn 14), gated** | prompt issued; fires after FF-0E merges + green main. |
-| FF-1E | OPUS | 1 | L-INP | — | **sent (turn 16, re-emitted drift-patched)** | prerequisites satisfied (#2413/#2422/#2486); rule-27 line counts stated (capacity.py 4230, constants.py 7281); stagger vs FF-2B on capacity.py. |
+| FF-1E | OPUS | 1 | L-INP | — | **sent (turn 17, re-emitted on owner request, drift-clean at 9b9b0d4)** | prerequisites satisfied (#2413/#2422/#2486); rule-27 line counts stated (capacity.py 4230, constants.py 7281); ATB curate/fetch now at scripts/data/ (loader path unchanged); stagger vs FF-2B on capacity.py. |
 | FF-1F | OPUS | 1 | L-INP | — | **landed + defaults LIVE** (#2468/#2476/#2480 + #2493) | #2493 flips `datacenter_load_path`→"mid", `correlated_forced_outage`→True with backcast byte-identity guards; plan §2.1 recorded. Closed. |
-| FF-2A | FABLE | 2 | L-CAP | — | **RESOLVED via FF-2A-integrate (turn 15)** | #2453 breach history: unapplied patch + broke all-ISO harness. Mechanism now merged (#2486 `e9f9d60`) + sidecars #2491/#2492. Lane closed. |
-| FF-2A-integrate | FABLE | 2 | L-CAP | — | **verified-pass (turn 15, via #2486 `e9f9d60` + #2491/#2492)** | Mechanism merged + manager-verified (0 fn loss, signature matches runner, fields on-registry, 14 harness refs, compiles). PJM/MISO/ERCOT r2 sidecars governance-clean. FF-2A lane CLOSED. Housekeeping: delete chunk branch `…6zd9zv` (partial capacity.py — re-truncation hazard). |
-| FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 16, re-emitted drift-patched)** | CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; NEISO bands pre-registered BEFORE the run; stagger vs FF-1E on capacity.py. |
-| FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated** | prompt issued; owner-approved flip all-but-ERCOT, staged by readiness. After round-3 + FF-2B. Rule 1: worsened fit = root-cause. |
+| FF-2A | FABLE | 2 | L-CAP | — | **RESOLVED via FF-2A-integrate (turn 15)** | #2453 breach history: unapplied patch + broke all-ISO harness. Mechanism now merged (#2486 `e9f9d60`) + sidecars #2491/#2492. Stale patch deleted #2503 (t17). Lane closed. |
+| FF-2A-integrate | FABLE | 2 | L-CAP | — | **verified-pass (turn 15, via #2486 `e9f9d60` + #2491/#2492)** | Mechanism merged + manager-verified (0 fn loss, signature matches runner, fields on-registry, 14 harness refs, compiles). PJM/MISO/ERCOT r2 sidecars governance-clean. FF-2A lane CLOSED. Housekeeping done (t17): chunk branch gone + stale patch deleted #2503. |
+| FF-2B | OPUS | 2 | L-CAP | — | **sent (turn 17, re-emitted on owner request, drift-clean at 9b9b0d4)** | CAISO/NEISO/NYISO I7 + NEISO Net ICR + first NEISO pair; NEISO bands pre-registered BEFORE the run; FF-2A merged (prereq met); stagger vs FF-1E on capacity.py. |
+| FF-2C | OPUS | 2 | L-CAP | — | **issued (turn 14), owner-gated** | prompt issued; owner-approved flip all-but-ERCOT, staged by readiness. After FF-2A(done) + FF-2B. Rule 1: worsened fit = root-cause. |
 | FF-2D | OPUS | 2 | L-VAL | ⛔ T1 gate | **issued (turn 14), gated** | prompt issued; runs after W1/W2 merges. Rubric verdicts + promotion table. |
 | FF-3A | OPUS | 3 | L-VAL | ⛔ T2 | not-sent | blocked: FF-2D + owner |
 | FF-3B | OPUS | 3 | L-CES | — | **issued (turn 14), gated** | prompt issued; W3-R readiness → GO/NO-GO → W4. R1 = FF-2A headline (solar recall). |
-| FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive |
-| FF-3D | OPUS | 3 | L-CAP | — | **verified-issues (incomplete)** — LANDED #2463 | Intake (NYSRC ICAP→UCAP factors, cited) + Option-B pairing + pre-registered bands + curve-eligibility landed clean; flip-gate Basis PASSES. Also FIXED the FF-2A-broken capacity-hindcast harness (all-ISO). **Hindcast pair NOT run** (blocked on clean-data regen) → FF-3D-run. |
+| FF-3C | FABLE | 3 | L-PERF | conditional | not-sent | trigger-gated — inactive (only remaining FABLE prompt) |
+| FF-3D | OPUS | 3 | L-CAP | — | **verified-issues (incomplete)** — LANDED #2463 | Intake (NYSRC ICAP→UCAP factors, cited) + Option-B pairing + pre-registered bands + curve-eligibility landed clean; flip-gate Basis PASSES. Also FIXED the FF-2A-broken capacity-hindcast harness (all-ISO). Hindcast pair run via FF-3D-run. |
 | FF-3D-run | OPUS | 3 | L-CAP | — | **landed** (#2471/#2473/#2478 + `5bb0c9b`) | NYISO fixed/curve/realized pair registered (`nyiso-2021-2025-*.json`). Closed. |
 | FF-4A | OPUS | 4 | L-VAL | ⛔ owner-gated | not-sent | blocked: FF-3A + owner |
 | FF-4B | FABLE | 4 | L-VAL | — | not-sent | blocked: FF-4A |
 | FF-4C | OPUS | 4 | L-VAL | owner-gated | not-sent | blocked: FF-4A + owner |
 | FF-5A | OPUS | 5 | L-DASH | — | not-sent | blocked: Wave 4 |
 
-Out-of-program / trivial: #2483/#2487 (caiso-98 probe/charter), #2484/#2495 (miso-74 seam +
+Out-of-program / trivial: #2501 (ercot-84 offer-surface re-adjudication + probes),
+#2504 (caiso-99 attestation), #2483/#2487 (caiso-98 probe/charter), #2484/#2495 (miso-74 seam +
 attestation), #2489 (ercot83 posture backcast), #2494 (ercot apr/may scarcity tooling),
-#2485 (ledger t14),
+#2485 (ledger t14), #2502 (ledger t16), #2503 (delete stale ff2a-core.patch),
 #2438 (restore), #2441 (FF-1A doc fill), #2442/#2444 (caiso-94),
 #2445/#2449 (caiso-95), #2447 (miso-72), #2450 (ercot commitment-posture lever),
 #2456 (caiso-96), #2459 (miso), #2461 (ercot81 keeper), #2462/#2465 (caiso-97),
@@ -160,25 +190,27 @@ attestation), #2489 (ercot83 posture backcast), #2494 (ercot apr/may scarcity to
 - **#2439** — owner handled → resolved.
 
 **AWAITING (each changes what I dispatch next):**
-- **Housekeeping (turn 15):** delete/stand down chunk branch
-  `claude/ff2a-entry-stack-integration-6zd9zv` — it holds a PARTIAL capacity.py (2295 lines);
-  a later merge would re-truncate (rule-27 hazard). The turn-14 `git revert 1341e2c` ask is
-  RETRACTED (moot — #2486 forward-fixed the orphan).
 - Entry-lookahead posture (FF-2A item 4 — round-3 merged; owner call still open), golden freeze
   (FF-4A), PB-5 (FF-4C).
+
+**RESOLVED (turn 17):** the turn-15 housekeeping ask — chunk branch
+`claude/ff2a-entry-stack-integration-6zd9zv` is GONE from origin (ls-remote empty) and the stale
+`ff2a-core.patch` is deleted (#2503). Both rule-27 re-truncation hazards cleared. The turn-14
+`git revert 1341e2c` ask was already RETRACTED (moot — #2486 forward-fixed the orphan).
 
 ---
 
 ## Corrections issued
 
 1. **FF-0A-fix [OPUS]** (turn 2) — RESOLVED turn 3 (#2419).
-2. **FF-0B-redo [OPUS]** (turn 2) — re-issued turn 14 (runs on green main).
+2. **FF-0B-redo [OPUS]** (turn 2) — re-issued turn 14 (runs on green main); re-emitted turn 17 on owner request.
 3. **FF-1A-restore [FABLE]** (turn 5) — **RESOLVED turn 7 (#2438).**
 4. **FF-1A-C [FABLE]** (turn 7) — **LANDED turn 10 (#2448/#2451).** Doc-sync gap → FF-1A-C2.
 5. **FF-1A-C2 [OPUS]** (turn 10) — **RESOLVED turn 11 (#2454), verified-pass.**
 6. **FF-2A-integrate [FABLE]** (turn 11) — integrity breach fix. Re-truncated capacity.py again
    (#2474/#2477) → owner-reverted (#2481). Superseded by **round-3 [FABLE]** (turn 14) —
-   **RESOLVED turn 15** (#2486 `e9f9d60` + sidecars #2491/#2492, manager-verified).
+   **RESOLVED turn 15** (#2486 `e9f9d60` + sidecars #2491/#2492, manager-verified). Stale patch
+   deleted #2503 (t17); chunk branch gone.
 7. **FF-3D-run [OPUS]** (turn 13) — **LANDED** (#2471/#2473/#2478 + `5bb0c9b`).
 8. **runner.py orphan revert** (turn 14) — **RETRACTED turn 15.** Superseded by merging #2486
    (whose `e9f9d60` gives evolve_fleet the kwargs runner.py passes). Landing the revert now
@@ -236,3 +268,14 @@ attestation), #2489 (ercot83 posture backcast), #2494 (ercot apr/may scarcity to
   Sequencing guidance: 0B-redo ∥ 0E first; 1E and 2B staggered (both touch capacity.py).
   Still gated: FF-1D (after FF-0E), FF-2C (owner-gated, after FF-2B), FF-2D (after W1/W2).
   Housekeeping ask stands: delete chunk branch `…6zd9zv`.
+- **turn 17 (manager `yjegie`, refresh + owner prompt-wave request).** `acccd25→9b9b0d4` (5
+  merges). Quiet window — no FF worker landed. Cleanup/closeout: #2503 deleted stale
+  `ff2a-core.patch` (breach artifact); #2505 registered benchmark-corridor in
+  `render_data_dictionary.py` → **FF-0F CLOSED** (deferral cleared). Out-of-program: #2501
+  (ERCOT-84 offer-surface re-adjudication — probes + log, no source, governance-clean), #2504
+  (caiso-99 attestation), #2502 (my t16 ledger). Rule-27 clean (no `src/market_sim` touched;
+  core line counts unchanged). **Housekeeping RESOLVED:** chunk branch `…6zd9zv` gone from
+  origin + stale patch deleted. **Owner asked for the prompt waves (Fable scarce) → re-emitted
+  all four launchable prompts, all already [OPUS]** (FF-0B-redo, FF-0E, FF-1E, FF-2B),
+  drift-verified at 9b9b0d4. No new unblocks; nothing to correct. Watch next: those four land →
+  then FF-1D (post-0E), FF-2C (owner+post-2B), FF-2D (post-W1/W2).
