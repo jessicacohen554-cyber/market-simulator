@@ -1,8 +1,8 @@
 """Derive ERCOT measured class-day thermal availability from the 60-Day DAM disclosure.
 
 The thermal-fleet analogue of ``derive_ercot_nuclear_availability.py`` (ERCOT-56),
-at CLASS-day grain: for each covered model class (CC_REGULAR, CT_PEAKER) and each
-delivery day, the DAM-registered fleet's measured availability fraction
+at CLASS-day grain: for each covered model class (CC_REGULAR, CT_PEAKER, ST_GAS)
+and each delivery day, the DAM-registered fleet's measured availability fraction
 
     avail(class, day) = sum_sites live_HSL(day) / sum_sites rating
 
@@ -28,9 +28,25 @@ same quantity; the model's own discrete outage windows stay as the within-class
 distribution. Forecast years keep the statistical stack — the expected-value
 analogue that regenerates from forward drivers (the G4 mode-aware seam).
 
+**Class scope (rule 14 alignment).** The covered classes are the grid-registered
+gas fleet DAM resolves cleanly by ``Resource Type``: CC (CCGT90/CCLE90),
+CT_PEAKER (SCGT90/SCLE90) and — added 2026-07-18, the measured-availability
+backcast re-architecture — ST_GAS (the gas-steam types GSREH/GSSUP/GSNONR). The
+DAM disclosure carries no CHP flag, and the private-use-network cogens are
+partly behind-the-meter / absent from the disclosure, so a DAM class fraction
+would MISSTATE the CHP classes (CC_CHP/CT_CHP/ST_CHP) — those keep the measured
+CAMPD unit-outage windows + the ``wefor_residual`` short-outage residual instead
+(the mode-aware measured stack, no statistical WEFOR, but not a DAM smear).
+COAL is likewise excluded: its few large lignite units are already carried at
+unit grain by the CAMPD windows, where a class-day smear would misplace which
+unit is out. So this file covers exactly {CC_REGULAR, CT_PEAKER, ST_GAS}.
+
 FROZEN AGAINST RESIDUALS (rule 23): re-derive only when the disclosure source
 files update; never because a residual moved. Re-derivation commits must cite
-the data change.
+the data change. (The 2026-07-18 ST_GAS addition is a CLASS-SCOPE change, not a
+residual re-fit — the source files are unchanged; it widens coverage to the
+gas-steam class the measured-availability backcast re-architecture now sources
+from DAM.)
 
 Usage::
 
@@ -50,18 +66,28 @@ REPO = Path(__file__).resolve().parents[2]
 DAM_DIR = REPO / "data" / "raw" / "ercot"
 DEFAULT_OUT = REPO / "data" / "raw" / "ercot-thermal-dam-availability.csv"
 
-# DAM Resource Type -> covered model class. Scope deliberately excludes the
-# CHP classes (private-use-network cogens are absent from the disclosure so a
-# DAM fraction would misstate them), coal (its sustained outages are already
-# carried at unit grain by the CAMPD windows and its fleet is few large units a
-# class smear would misplace), ST_GAS (mothball/idle identity is governed by
-# the drag-floor structure, its own lane), oil/DSL (trivial MW), and nuclear
+# DAM Resource Type -> covered model class. Scope covers the grid-registered gas
+# fleet DAM resolves cleanly by Resource Type: CC (CCGT90/CCLE90), CT_PEAKER
+# (SCGT90/SCLE90) and ST_GAS (the gas-steam types GSREH/GSSUP/GSNONR — added
+# 2026-07-18 with the measured-availability backcast re-architecture, replacing
+# the ST_GAS statistical WEFOR with its measured DAM class-day availability;
+# ST_GAS's drag-floor structure governs its DISPATCH shape, not its top-line
+# availability, so the measured availability and the drag mask are orthogonal —
+# rule 19 one-mechanism-per-phenomenon is preserved). Deliberately excludes the
+# CHP classes (the disclosure carries no CHP flag and its private-use-network
+# cogens are partly behind-the-meter, so a DAM class fraction would misstate
+# them — they keep CAMPD windows + wefor_residual; rule 14), coal (its few large
+# lignite units are carried at unit grain by the CAMPD windows, where a class
+# smear would misplace which unit is out), oil/DSL (trivial MW), and nuclear
 # (its own measured overlay, ercot_nuclear_unit_availability).
 RESTYPE_TO_CLASS: dict[str, str] = {
     "CCGT90": "CC_REGULAR",
     "CCLE90": "CC_REGULAR",
     "SCGT90": "CT_PEAKER",
     "SCLE90": "CT_PEAKER",
+    "GSREH": "ST_GAS",
+    "GSSUP": "ST_GAS",
+    "GSNONR": "ST_GAS",
 }
 
 # CC configuration suffixes: a resource name up to the config tag names the
