@@ -2034,6 +2034,24 @@ class ScenarioConfig:
     # rows it prices (alternatives, never stacked; this overwrite runs last).
     # Requires --reference-price-interface; MISO-only; no-op for years outside
     # the registry (byte-identical). Default off; opt-in per run.
+    miso_manitoba_seam: bool = False  # MISO: replace the import-only annual-flat
+    # Manitoba (MHEB) firm-hydro block (miso_firm_imports) with a fourth MEASURED
+    # two-way priced seam (miso-74). Adds MISO_MANITOBA_SEAM_SPEC's import+export
+    # bands, priced by the frozen Q-Q ladder MISO_SEAM_LADDER_BY_YEAR["Manitoba"]
+    # and capped by the measured (month x hod) two-way MHEB deliverability
+    # envelope (MISO_SEAM_DIBA["Manitoba"]) — the same NEISO/audit-C-6 machinery
+    # as PJM/SPP/South, composing with miso_seam_envelope_merit_cap through the
+    # shared inject_miso_seam_flow_limit path (no fork). Fixes the import-only
+    # firm block's structural error: measured MHEB is a two-way seasonal hydro
+    # seam that net-EXPORTS -0.99 TWh in drought-2025 (firm block imports +1.96),
+    # a +2.95 TWh over-import the block cannot represent. When set,
+    # get_interchange_spec drops the MHEB firm block (inject_miso_firm_imports
+    # then no-ops). Measured-behaviour, frozen formula, zero fitted parameters
+    # (rule 23); retires the 3 firm-block MW scalars. Requires
+    # --reference-price-interface + --miso-seam-measured-ladder; MISO-only.
+    # Default off; byte-identical when off (no Manitoba bands -> the ladder /
+    # envelope Manitoba entries are inert, row-driven). See
+    # docs/handoffs/miso-manitoba-seam-design-2026-07.md.
     caiso_import_hub_prices: bool = False  # Price the CAISO priced-import node's
     # tranches at the MEASURED hourly WECC neighbor-hub LMP each proxies, instead
     # of the static fitted ladder in IMPORT_TRANCHES["CAISO"]. The PNW blocks
@@ -7222,6 +7240,7 @@ TIER_TAGS: dict[str, int] = {
     "miso_seam_flow_percentile": 3,
     "miso_seam_export_limit": 1,
     "miso_seam_envelope_merit_cap": 1,
+    "miso_manitoba_seam": 1,
     "pjm_seam_flow_limit": 1,
     "pjm_seam_flow_percentile": 3,
     "pjm_seam_export_limit": 1,
