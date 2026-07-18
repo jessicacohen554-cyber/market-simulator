@@ -17349,3 +17349,32 @@ composition (trim + trajectory) as the next keeper recipe on structural
 grounds (three pre-registered directions land, zero fitted parameters, all
 holds held, honest mean-level cost disclosed), or hold for the storage-timing
 charter to take the belly/evening remainder first?
+## 2026-07-18 — CAISO keeper promotion: 2026-07-18-caiso-97-evening-trim (owner)
+
+**Promotion (owner directive, this session: "If so promote … upon land").**
+`2026-07-18-caiso-97-evening-trim` promoted to CAISO keeper (determination
+**NOT-YET** — rule 1: keeper = most structurally faithful, not lowest error).
+Supersedes `2026-07-18-caiso-94-daytime-clean`; same recipe + the two
+owner-ruled deltas: `caiso_dsw_daytime_evening_trim` (the FINDING-caiso94 §7
+pre-registered fix — the daytime tranche window aligned with its own measured
+admissibility table, depth re-derived over the trimmed window, zero fitted
+scalars) and `caiso_ra_startup_trajectory` (the caiso-96 measured-conduct CC
+start-to-load extension, zero parameters). Every pre-registered direction
+landed with all holds held (C1 12/12, overnight λ + C3c identical, C7/C8
+PASS); honest costs on the record: the recovery lands on CC_REGULAR (the
+CT_PEAKER C5a leg stays open), and same-machine C3a-2025 +9.1→+9.6 % — the
+structurally-correct evening fix unmasks the belly over-price, so the annual
+C3a-2025 residual is now belly-owned (the evening-STORAGE-timing charter,
+FINDING-caiso94 §5). LOYO (rule 22) satisfied structurally: zero fitted
+scalars (ercot81 precedent), and the trimmed depth passed its own frozen
+LOYO gates (worst 13.5 %). `keepers.json` CAISO + array flipped; sidecar +
+attestation marked owner-promoted; `build_status.py` → status.js (CAISO
+stays NOT-YET); `audit_keepers.py --iso CAISO` PASS 0/0; parity OK (62);
+`calibration-keeper-auditor` run post-flip. Not touched (owner-reserved):
+the calibration-complete marker (holdouts stay quarantined, rule 22 —
+solved 2023-2025 only). Open lanes carried forward: WP-3 CT_CHP steam-floor
+LEVEL re-derivation (awaits its own rule-23 gate), the evening-storage-timing
+charter (belly + CT_PEAKER evening ramp — the C3a-2025/C5a remainder's named
+owner), and the residual +1.55/+1.79/+0.81 TWh evening import excess
+(firm-block/fossil-rung composition — not re-openable via the trimmed
+tranche without violating the measured admissibility table).
