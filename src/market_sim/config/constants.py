@@ -2662,9 +2662,12 @@ class MarketDesign:
             and config is not None
             and resolve_capacity_market_clearing(config, iso)
             # RC-1C curve-eligibility governance gate (in addition to the
-            # clearing gate): NYISO is INELIGIBLE (R5a pairing not owner-signed)
-            # so it prices its FIXED anchor even with the gate on. iso=None (no
-            # ISO supplied) bypasses the gate → default path byte-identical.
+            # clearing gate): an ISO prices on its sloped curve only once its
+            # accreditation-pairing basis is signed off; an INELIGIBLE ISO
+            # prices its FIXED anchor even with the gate on. iso=None (no ISO
+            # supplied) bypasses the gate → default path byte-identical. (NYISO
+            # became eligible when its R5a ICAP->UCAP pairing landed — FF-3D
+            # 2026-07-18; every registry ISO is now eligible.)
             and resolve_capacity_curve_eligible(iso)
         ):
             curve = self.demand_curve
@@ -2734,22 +2737,29 @@ def resolve_capacity_market_clearing(
 # top of the clearing gate: an ISO is curve-eligible only once its
 # accreditation-pairing basis (the flip-gate's item 1,
 # docs/handoffs/forecast-retirement-calibration-plan-2026-07.md §2.1) is
-# owner-signed. NYISO is INELIGIBLE — its ICAP->UCAP translation-factor pairing
-# (R5a) is adjudicated but the owner has NOT signed off
-# (docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md §3:
-# Option D stands) — so even with the gate on and a vintage resolved, NYISO
-# prices on its FIXED anchor, never the curve. PJM (R1-R4 landed), NEISO (R5b
-# landed), and MISO (EFORd pairing ~consistent, keep-and-verify) are eligible.
-# The global default clearing gate is off, so eligibility only bites under an
-# explicit per-ISO curve-ON probe arm; it is NOT a default-behavior change. An
-# ISO absent here defaults ELIGIBLE (a new curve-carrying ISO is not silently
-# blocked, and iso=None call sites stay byte-identical) — ineligibility is
-# opt-in and cited.
+# owner-signed. Every registry ISO is now eligible: PJM (R1-R4 landed), NEISO
+# (R5b landed), MISO (EFORd pairing ~consistent, keep-and-verify), and NYISO —
+# whose ICAP->UCAP translation-factor pairing (R5a) landed 2026-07-18 as the
+# owner-selected Option B (NYCA-wide static proxy;
+# docs/handoffs/nyiso-neiso-capacity-pairing-adjudication-2026-07-15.md §3,
+# PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"]), so a curve-ON
+# NYISO position is now measured on the correct basis. The global default
+# clearing gate is off, so eligibility only bites under an explicit per-ISO
+# curve-ON probe arm; it is NOT a default-behavior change (the production flip
+# is FF-2C, owner-gated). An ISO absent here defaults ELIGIBLE (a new
+# curve-carrying ISO is not silently blocked, and iso=None call sites stay
+# byte-identical) — ineligibility is opt-in and cited.
 CAPACITY_CURVE_ELIGIBLE_BY_ISO: dict[str, bool] = {
     "PJM": True,
     "NEISO": True,
     "MISO": True,
-    "NYISO": False,  # R5a pairing adjudicated; owner sign-off pending
+    # R5a pairing landed (FF-3D 2026-07-18): NYISO's ICAP-stated IRM is now
+    # paired onto the model's UCAP supply basis via the NYCA translation factor
+    # (PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO["NYISO"], Option B), so
+    # a curve-ON position is measured on the correct basis. Eligibility only
+    # ALLOWS the curve when capacity_market_clearing is explicitly enabled; the
+    # production clearing default stays OFF (that flip is FF-2C, owner-gated).
+    "NYISO": True,
     "CAISO": True,  # bilateral RA, no demand_curve — eligibility is moot
 }
 
@@ -2762,7 +2772,9 @@ def resolve_capacity_curve_eligible(iso: "str | None") -> bool:
     the clearing gate. ``iso=None`` (pre-RC-1C call sites that pass no ISO) and
     any ISO absent from :data:`CAPACITY_CURVE_ELIGIBLE_BY_ISO` return ``True`` so
     the default path is byte-identical and a new curve ISO is not silently
-    blocked; NYISO is the one explicit ``False`` (R5a not owner-signed).
+    blocked. Every registry ISO is currently eligible (NYISO's ``False`` was
+    lifted when its R5a pairing landed — FF-3D 2026-07-18); the registry stays
+    so a future ISO can be gated ineligible by an explicit, cited ``False``.
     """
     if iso is None:
         return True
@@ -3894,12 +3906,35 @@ ADEQUACY_EXTERNAL_TIE_FIRM_MW: dict[str, float] = {
 #   MISO: (1 + PRM_UCAP) / (1 + PRM_ICAP) = 1.079 / 1.157 = 0.9326 (PY
 #     2025-2026 LOLE Study Report, Module E-1 — Summer PRM stated both ways:
 #     ICAP 15.7%, UCAP 7.9%).
+#   NYISO: 1 - NYCA translation factor = 1 - 0.1321 = 0.8679. NYISO states its
+#     NYCA Minimum UCAP Requirement as ICAP requirement x (1 - translation
+#     factor), where the translation factor ("Derate Factor") is the qualified
+#     fleet's capacity-weighted forced-outage (EFORd) derate, Sigma(UCAP)/
+#     Sigma(ICAP) (NYISO ICAP Manual Manual-04 §2.5). The model counts NYISO
+#     thermal at UCAP (1 - EFORd, the default supply basis; NYISO is absent from
+#     THERMAL_ACCREDITATION_BASIS_BY_ISO), so this ratio pairs the ICAP-stated
+#     IRM (24.4%) onto that same UCAP basis — the direct MISO analogue. Value is
+#     the most-recently-realized NYCA-wide factor, 2024-2025 capability year,
+#     from NYSRC 2025-2026 IRM Study Technical Appendices (Dec 6 2024), Appendix
+#     D §D.1.1 Table D.2 "NYCA ICAP to UCAP Translation" (Derate Factor col).
+#     Reconciled against the same study's Table D.1: (1 + EC-approved IRM 22.0%)
+#     x (1 - 0.1321) - 1 = 5.9% = the published 2024-2025 "NYCA Equivalent UCAP
+#     Requirement". Static-proxy (Option B, owner-selected FF-3D 2026-07-18,
+#     pairing-adjudication 2026-07-15 §3): NYISO recomputes this factor twice
+#     per Capability Year from the then-qualified fleet, so it is intentionally
+#     time-varying (rising with wind penetration: 0.083 in 2020-2021 -> 0.132 in
+#     2024-2025) — carrying the realized value forward is a lagged snapshot, the
+#     weaker rule-13 forward story the adjudication flagged for B vs the
+#     recommended lagged-model-derived Option A. Cited to
+#     demand-curve/nyiso/nyiso.csv (metric=icap_ucap_translation_factor);
+#     reconciled to that CSV by tests/test_capacity.py (R5a basis-consistency).
 # ISOs absent here are byte-identical (ratio 1.0, i.e. their registered PRM
 # is already on the model's own supply basis — ERCOT's is fixed at the CDR
 # seasonal-rating basis by the accreditation audit, not this registry).
 PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO: dict[str, float] = {
     "PJM": 0.9170 / 1.191,
     "MISO": 1.079 / 1.157,
+    "NYISO": 1.0 - 0.1321,  # 1 - NYCA translation (Derate) factor, CY 2024-2025
 }
 
 # Published Forecast Pool Requirement (FPR) per ISO and delivery year — the
