@@ -2629,6 +2629,7 @@ def solve_and_persist(
     miso_seam_flow_limit: bool = False,
     miso_seam_flow_percentile: float | None = None,
     miso_seam_export_limit: bool = False,
+    miso_seam_envelope_merit_cap: bool = False,
     miso_pjm_border_anchor: bool = False,
     miso_cc_coal_rebalance: bool = False,
     miso_firm_import_floor: bool = False,
@@ -3396,6 +3397,10 @@ def solve_and_persist(
             )
         if miso_seam_export_limit:
             recorded_cfg = recorded_cfg.with_overrides(miso_seam_export_limit=True)
+        if miso_seam_envelope_merit_cap:
+            recorded_cfg = recorded_cfg.with_overrides(
+                miso_seam_envelope_merit_cap=True
+            )
         if miso_pjm_border_anchor:
             recorded_cfg = recorded_cfg.with_overrides(miso_pjm_border_anchor=True)
         if miso_cc_coal_rebalance:
@@ -3838,6 +3843,7 @@ def solve_and_persist(
             miso_seam_flow_limit=miso_seam_flow_limit,
             miso_seam_flow_percentile=miso_seam_flow_percentile,
             miso_seam_export_limit=miso_seam_export_limit,
+            miso_seam_envelope_merit_cap=miso_seam_envelope_merit_cap,
             miso_pjm_border_anchor=miso_pjm_border_anchor,
             miso_cc_coal_rebalance=miso_cc_coal_rebalance,
             miso_firm_import_floor=miso_firm_import_floor,
@@ -4314,6 +4320,7 @@ def solve_and_persist(
         "miso_seam_flow_limit": miso_seam_flow_limit,
         "miso_seam_flow_percentile": miso_seam_flow_percentile,
         "miso_seam_export_limit": miso_seam_export_limit,
+        "miso_seam_envelope_merit_cap": miso_seam_envelope_merit_cap,
         "miso_pjm_border_anchor": miso_pjm_border_anchor,
         "miso_cc_coal_rebalance": miso_cc_coal_rebalance,
         "miso_firm_import_floor": miso_firm_import_floor,
@@ -8694,6 +8701,22 @@ def main() -> None:
         "--reference-price-interface; MISO-only.",
     )
     parser.add_argument(
+        "--miso-seam-envelope-merit-cap",
+        action="store_true",
+        help="MISO seam envelope COMPOSITION fix (miso-73, G-23 residual root "
+        "cause): apply the measured (month x hour-of-day) deliverability "
+        "envelope with MERIT-ORDER (waterfall) band bounds — band k keeps "
+        "clip(cap - (k-1)*step, 0, step), cheap base rungs full-width, seam "
+        "total capped at min(cap, limit) exactly — instead of the uniform "
+        "per-band derate under which the seam reaches its cap only when the "
+        "price clears the MOST EXPENSIVE Q-Q rung (measured suppression: PJM "
+        "imports -5.6/-8.3/-8.9 TWh, South exports +2.8/+2.6/+3.1 TWh vs "
+        "ceiling semantics, 2023/24/25). Zero new parameters; envelope values, "
+        "percentile, ladder rungs and band grid byte-unchanged. Only bites "
+        "with --miso-seam-flow-limit / --miso-seam-export-limit. See "
+        "docs/handoffs/miso-g23-seam-envelope-composition-design-2026-07.md.",
+    )
+    parser.add_argument(
         "--pjm-seam-flow-limit",
         action="store_true",
         help="PJM reference-price seam deliverability cap: bound each of PJM's "
@@ -9321,6 +9344,7 @@ def main() -> None:
         miso_seam_flow_limit=args.miso_seam_flow_limit,
         miso_seam_flow_percentile=args.miso_seam_flow_percentile,
         miso_seam_export_limit=args.miso_seam_export_limit,
+        miso_seam_envelope_merit_cap=args.miso_seam_envelope_merit_cap,
         miso_pjm_border_anchor=args.miso_pjm_border_anchor,
         miso_cc_coal_rebalance=args.miso_cc_coal_rebalance,
         miso_firm_import_floor=args.miso_firm_import_floor,
