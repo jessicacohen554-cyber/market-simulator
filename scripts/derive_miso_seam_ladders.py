@@ -180,6 +180,30 @@ def qq_export(price: np.ndarray, flow: np.ndarray, level: float) -> float:
     return float(np.quantile(price, depth))
 
 
+def _derive_one(da: np.ndarray, flow: np.ndarray, spec, notes: list[str]) -> dict:
+    """Derive one seam's ``{"import": [...], "export": [...]}`` ladder."""
+    from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
+
+    step = spec.interface_limit_mw / SEAM_FLOW_TRANCHES
+    mids = (np.arange(SEAM_FLOW_TRANCHES) + 0.5) * step
+    imp = [qq_import(da, flow, m) for m in mids]
+    exp = [qq_export(da, flow, m) for m in mids]
+    # Same-seam no-wash: every export band strictly below the cheapest import
+    # band (rule 14 single-seam reconciliation).
+    lim = min(imp) - NO_WASH_EPS
+    for k, s in enumerate(exp):
+        if s > lim:
+            notes.append(
+                f"{spec.name} export band {k + 1}: sink ${s:.2f} clamped "
+                f"to ${lim:.2f} (same-seam no-wash vs cheapest import band)"
+            )
+            exp[k] = lim
+    return {
+        "import": [round(p, 2) for p in imp],
+        "export": [round(p, 2) for p in exp],
+    }
+
+
 def derive(g: pd.DataFrame) -> tuple[dict, list[str]]:
     """Derive ``{seam: {"import": [...], "export": [...]}}`` from sample ``g``.
 
@@ -188,34 +212,32 @@ def derive(g: pd.DataFrame) -> tuple[dict, list[str]]:
     at the midpoint-depth grid of each seam's interface limit. ``notes``
     carries no-wash clamp diagnostics (expected empty — the measured record
     orders every seam naturally).
-    """
-    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
-    from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
 
-    g = g.dropna(subset=["da"] + [n.name for n in INTERFACE_NEIGHBORS["MISO"]])
-    da = g["da"].to_numpy(dtype=float)
+    The three registry seams (PJM/SPP/South) derive on their SHARED non-NaN row
+    set; the Manitoba (MHEB) two-way seam (miso-74) derives INDEPENDENTLY on its
+    own ``da``+MHEB row set, so the three registry ladders are byte-identical to
+    the pre-Manitoba derivation (rule 23 — no unrelated ladder moves).
+    """
+    from market_sim.config.interchange_config import (
+        INTERFACE_NEIGHBORS,
+        MISO_MANITOBA_SEAM_SPEC,
+    )
+
     out: dict[str, dict[str, list[float]]] = {}
     notes: list[str] = []
+    g3 = g.dropna(subset=["da"] + [n.name for n in INTERFACE_NEIGHBORS["MISO"]])
+    da3 = g3["da"].to_numpy(dtype=float)
     for spec in INTERFACE_NEIGHBORS["MISO"]:
-        flow = g[spec.name].to_numpy(dtype=float)
-        step = spec.interface_limit_mw / SEAM_FLOW_TRANCHES
-        mids = (np.arange(SEAM_FLOW_TRANCHES) + 0.5) * step
-        imp = [qq_import(da, flow, m) for m in mids]
-        exp = [qq_export(da, flow, m) for m in mids]
-        # Same-seam no-wash: every export band strictly below the cheapest
-        # import band (rule 14 single-seam reconciliation).
-        lim = min(imp) - NO_WASH_EPS
-        for k, s in enumerate(exp):
-            if s > lim:
-                notes.append(
-                    f"{spec.name} export band {k + 1}: sink ${s:.2f} clamped "
-                    f"to ${lim:.2f} (same-seam no-wash vs cheapest import band)"
-                )
-                exp[k] = lim
-        out[spec.name] = {
-            "import": [round(p, 2) for p in imp],
-            "export": [round(p, 2) for p in exp],
-        }
+        out[spec.name] = _derive_one(
+            da3, g3[spec.name].to_numpy(dtype=float), spec, notes
+        )
+    gm = g.dropna(subset=["da", MISO_MANITOBA_SEAM_SPEC.name])
+    out[MISO_MANITOBA_SEAM_SPEC.name] = _derive_one(
+        gm["da"].to_numpy(dtype=float),
+        gm[MISO_MANITOBA_SEAM_SPEC.name].to_numpy(dtype=float),
+        MISO_MANITOBA_SEAM_SPEC,
+        notes,
+    )
     return out, notes
 
 
@@ -230,20 +252,17 @@ def offline_score(g: pd.DataFrame, ladders: dict) -> dict[str, dict[str, float]]
     its own internal price, so this is the derivation sanity check, not the
     calibration score.
     """
-    from market_sim.config.interchange_config import INTERFACE_NEIGHBORS
+    from market_sim.config.interchange_config import (
+        INTERFACE_NEIGHBORS,
+        MISO_MANITOBA_SEAM_SPEC,
+    )
     from market_sim.data.neighbor_price import SEAM_FLOW_TRANCHES
 
-    g = g.dropna(subset=["da"] + list(ladders))
-    da = g["da"].to_numpy(dtype=float)
-    scores: dict[str, dict[str, float]] = {}
-    for spec in INTERFACE_NEIGHBORS["MISO"]:
-        lad = ladders[spec.name]
-        step = spec.interface_limit_mw / SEAM_FLOW_TRANCHES
-        act = g[spec.name].to_numpy(dtype=float)
+    def _score_one(da: np.ndarray, act: np.ndarray, lad: dict, step: float) -> dict:
         sim = sum(step * (da > p) for p in lad["import"]) - sum(
             step * (da < p) for p in lad["export"]
         )
-        scores[spec.name] = {
+        return {
             "sim_twh": sim.sum() / 1e6,
             "act_twh": act.sum() / 1e6,
             "dur_rmse": float(np.sqrt(np.mean((np.sort(sim) - np.sort(act)) ** 2))),
@@ -251,6 +270,26 @@ def offline_score(g: pd.DataFrame, ladders: dict) -> dict[str, dict[str, float]]
             "imp_hrs_act": 100.0 * float((act > 0).mean()),
             "hourly_corr": float(np.corrcoef(sim, act)[0, 1]),
         }
+
+    scores: dict[str, dict[str, float]] = {}
+    g3 = g.dropna(subset=["da"] + [n.name for n in INTERFACE_NEIGHBORS["MISO"]])
+    da3 = g3["da"].to_numpy(dtype=float)
+    for spec in INTERFACE_NEIGHBORS["MISO"]:
+        scores[spec.name] = _score_one(
+            da3,
+            g3[spec.name].to_numpy(dtype=float),
+            ladders[spec.name],
+            spec.interface_limit_mw / SEAM_FLOW_TRANCHES,
+        )
+    # Manitoba scored on its own da+MHEB row set (miso-74).
+    if MISO_MANITOBA_SEAM_SPEC.name in ladders:
+        gm = g.dropna(subset=["da", MISO_MANITOBA_SEAM_SPEC.name])
+        scores[MISO_MANITOBA_SEAM_SPEC.name] = _score_one(
+            gm["da"].to_numpy(dtype=float),
+            gm[MISO_MANITOBA_SEAM_SPEC.name].to_numpy(dtype=float),
+            ladders[MISO_MANITOBA_SEAM_SPEC.name],
+            MISO_MANITOBA_SEAM_SPEC.interface_limit_mw / SEAM_FLOW_TRANCHES,
+        )
     return scores
 
 
