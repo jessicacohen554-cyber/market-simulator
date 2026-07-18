@@ -1,0 +1,6916 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "biomass": 1999.4,
+    "coal": 46398.796,
+    "gas_cc": 53815.636,
+    "gas_ct": 25789.97,
+    "gas_st": 10357.555,
+    "nuclear": 28575.1,
+    "oil": 4187.7
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1999.4,
+    "coal": 46398.796,
+    "gas_cc": 51315.636,
+    "gas_ct": 25789.97,
+    "gas_st": 10357.555,
+    "nuclear": 28575.1,
+    "oil": 4187.7
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "PJM",
+  "mode": "forecast",
+  "peak_demand_mw": 147605.0,
+  "pipeline_events": [
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 184.5,
+      "unit_id": "COAL_PJM_EMAAC_p594_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 20.5,
+      "unit_id": "COAL_PJM_EMAAC_p594_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 196.8,
+      "unit_id": "COAL_PJM_EMAAC_p594_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 8.2,
+      "unit_id": "COAL_PJM_EMAAC_p594_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 226.59400000000002,
+      "unit_id": "COAL_PJM_SWMAAC_p602_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 25.46,
+      "unit_id": "COAL_PJM_SWMAAC_p602_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 226.03199999999998,
+      "unit_id": "COAL_PJM_ComEd_p876_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 22.16,
+      "unit_id": "COAL_PJM_ComEd_p876_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 341.436,
+      "unit_id": "COAL_PJM_ComEd_p879_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 1165.804,
+      "unit_id": "COAL_PJM_ComEd_p879_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 30.76,
+      "unit_id": "COAL_PJM_ComEd_p879_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 13.78,
+      "unit_id": "COAL_PJM_ComEd_p883_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 244.8,
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 31.006700000000002,
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 66.6993,
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 1.994,
+      "unit_id": "COAL_PJM_AEP_Ohio_p1040_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 321.6,
+      "unit_id": "COAL_PJM_SWMAAC_p1571_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 24.1,
+      "unit_id": "COAL_PJM_SWMAAC_p1573_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 807.29,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2828_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 401.88,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2832_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 31.35,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2836_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 300.96,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2836_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 715.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 7.295999999999999,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2914_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 19.35,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2935_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 498.1,
+      "unit_id": "COAL_PJM_West_APS_p3118_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 1167.9,
+      "unit_id": "COAL_PJM_West_APS_p3118_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 629.0,
+      "unit_id": "COAL_PJM_West_APS_p3136_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 1003.4000000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p3935_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 433.314,
+      "unit_id": "COAL_PJM_West_APS_p3954_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 408.296,
+      "unit_id": "COAL_PJM_West_APS_p6004_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 25.76,
+      "unit_id": "COAL_PJM_West_APS_p6004_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 26.1,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6019_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 509.6000000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6166_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 264.854,
+      "unit_id": "COAL_PJM_Dominion_p7213_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 17.54,
+      "unit_id": "COAL_PJM_Dominion_p7213_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 884.4,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8102_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 11.3,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8226_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 4.38,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10043_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 41.8,
+      "unit_id": "COAL_PJM_Central_PA_p10143_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 2.2,
+      "unit_id": "COAL_PJM_Central_PA_p10143_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 19.393,
+      "unit_id": "COAL_PJM_Central_PA_p10343_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 0.86,
+      "unit_id": "COAL_PJM_Central_PA_p10343_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 35.0,
+      "unit_id": "COAL_PJM_Central_PA_p10603_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 1.0,
+      "unit_id": "COAL_PJM_Central_PA_p10603_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 9.0,
+      "unit_id": "COAL_PJM_West_APS_p10678_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 3.6,
+      "unit_id": "COAL_PJM_West_APS_p10678_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 0.722,
+      "unit_id": "COAL_PJM_Central_PA_p50397_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 21.0,
+      "unit_id": "COAL_PJM_Central_PA_p50611_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 0.6,
+      "unit_id": "COAL_PJM_Central_PA_p50611_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 73.472,
+      "unit_id": "COAL_PJM_Central_PA_p50888_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 2.24,
+      "unit_id": "COAL_PJM_Central_PA_p50888_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 1.692,
+      "unit_id": "COAL_PJM_West_APS_p50974_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 4.754,
+      "unit_id": "COAL_PJM_AEP_Ohio_p54304_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 52.951498778410745,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.65,
+      "unit_id": "COAL_PJM_ATSI_p2936_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 52.19699025459288,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 0.6599999999999999,
+      "unit_id": "COAL_PJM_ATSI_p2936_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 46.10730277712039,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 15.84,
+      "unit_id": "COAL_PJM_ATSI_p2936_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 46.10730277712039,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 14.85,
+      "unit_id": "COAL_PJM_ATSI_p2936_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 45.31464676503639,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 119.009,
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 44.43650506599026,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 6.82,
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.96120528384305,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 32.58,
+      "unit_id": "COAL_PJM_West_APS_p3954_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.292562853717776,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 215.171,
+      "unit_id": "COAL_PJM_AEP_Ohio_p1384_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420845,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 143.1309,
+      "unit_id": "ST_GAS_PJM_SWMAAC_p1571_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420842,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 303.365,
+      "unit_id": "ST_GAS_PJM_Central_PA_p3140_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420842,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 190.4,
+      "unit_id": "ST_GAS_PJM_Central_PA_p3148_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420842,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 94.2,
+      "unit_id": "ST_GAS_PJM_ComEd_p874_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420842,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 5.039999999999999,
+      "unit_id": "ST_GAS_PJM_Dominion_p52072_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420842,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 76.0,
+      "unit_id": "ST_GAS_PJM_EMAAC_p3161_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420842,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 72.41999999999999,
+      "unit_id": "ST_GAS_PJM_EMAAC_p593_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420842,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 37.8,
+      "unit_id": "ST_GAS_PJM_SWMAAC_p1554_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.46214158942084,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 63.96,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.46214158942084,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 6.9,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.46214158942084,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 30.93,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p599_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.46214158942084,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 310.8,
+      "unit_id": "ST_GAS_PJM_ComEd_p384_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.46214158942084,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 8.46,
+      "unit_id": "ST_GAS_PJM_ComEd_p972_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.46214158942084,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 237.0,
+      "unit_id": "ST_GAS_PJM_Dominion_p3809_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.46214158942084,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 43.615,
+      "unit_id": "ST_GAS_PJM_West_APS_p3138_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420835,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 97.89020000000002,
+      "unit_id": "ST_GAS_PJM_Central_PA_p3131_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.462141589420835,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 70.38,
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 39.0,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 211.65,
+      "unit_id": "ST_GAS_PJM_Central_PA_p3140_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 255.0,
+      "unit_id": "ST_GAS_PJM_Central_PA_p3148_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 155.4,
+      "unit_id": "ST_GAS_PJM_ComEd_p384_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 47.1,
+      "unit_id": "ST_GAS_PJM_ComEd_p874_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 114.0,
+      "unit_id": "ST_GAS_PJM_EMAAC_p3161_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 106.5,
+      "unit_id": "ST_GAS_PJM_EMAAC_p593_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 18.9,
+      "unit_id": "ST_GAS_PJM_SWMAAC_p1554_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 177.435,
+      "unit_id": "ST_GAS_PJM_SWMAAC_p1571_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135438,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 45.75,
+      "unit_id": "ST_GAS_PJM_West_APS_p3138_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135434,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 3.45,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135434,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 15.465,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p599_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135434,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 88.455,
+      "unit_id": "ST_GAS_PJM_Central_PA_p3131_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135434,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 4.23,
+      "unit_id": "ST_GAS_PJM_ComEd_p972_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135434,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 69.0,
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135434,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 118.5,
+      "unit_id": "ST_GAS_PJM_Dominion_p3809_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.461225714135434,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 2.5199999999999996,
+      "unit_id": "ST_GAS_PJM_Dominion_p52072_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.44844342958881,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 895.985,
+      "unit_id": "ST_GAS_PJM_Central_PA_p3140_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.44844342958881,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 531.08,
+      "unit_id": "ST_GAS_PJM_EMAAC_p593_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588806,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 56.704999999999984,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p599_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588806,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1254.6,
+      "unit_id": "ST_GAS_PJM_Central_PA_p3148_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588803,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 157.04,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p1353_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588803,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 12.650000000000002,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p2935_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588803,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 403.3548,
+      "unit_id": "ST_GAS_PJM_Central_PA_p3131_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588803,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 569.8000000000001,
+      "unit_id": "ST_GAS_PJM_ComEd_p384_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588803,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 172.70000000000002,
+      "unit_id": "ST_GAS_PJM_ComEd_p874_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588803,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 320.62,
+      "unit_id": "ST_GAS_PJM_Dominion_p3775_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588803,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 434.5,
+      "unit_id": "ST_GAS_PJM_Dominion_p3809_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588803,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 9.239999999999998,
+      "unit_id": "ST_GAS_PJM_Dominion_p52072_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.448443429588803,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 69.30000000000001,
+      "unit_id": "ST_GAS_PJM_SWMAAC_p1554_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.4484434295888,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 15.509999999999998,
+      "unit_id": "ST_GAS_PJM_ComEd_p972_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.4484434295888,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 570.0,
+      "unit_id": "ST_GAS_PJM_EMAAC_p3161_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.4484434295888,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 862.3341,
+      "unit_id": "ST_GAS_PJM_SWMAAC_p1571_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.4484434295888,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 215.635,
+      "unit_id": "ST_GAS_PJM_West_APS_p3138_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.432568119509863,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 12.0,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p59073_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 31.427493122457236,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 24.0,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p59073_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.370698242872397,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 44.0,
+      "unit_id": "ST_GAS_PJM_AEP_Ohio_p59073_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.305948918070566,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 8.49,
+      "unit_id": "ST_CHP_PJM_EMAAC_p54785_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.30594891807056,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 9.45,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.30594891807056,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 2.655,
+      "unit_id": "ST_CHP_PJM_Central_PA_p50397_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.305948918070555,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.5,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.305948918070555,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.755,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.305948918070555,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.575,
+      "unit_id": "ST_CHP_PJM_Dominion_p50275_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.305948918070555,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 4.08,
+      "unit_id": "ST_CHP_PJM_Dominion_p52089_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.305948918070555,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.96,
+      "unit_id": "ST_CHP_PJM_Dominion_p52148_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.305948918070555,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 8.25,
+      "unit_id": "ST_CHP_PJM_Dominion_p54081_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.305948918070555,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 17.325,
+      "unit_id": "ST_CHP_PJM_West_APS_p50491_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.30110709415974,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 16.98,
+      "unit_id": "ST_CHP_PJM_EMAAC_p54785_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.301107094159736,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 5.31,
+      "unit_id": "ST_CHP_PJM_Central_PA_p50397_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.301107094159736,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.54,
+      "unit_id": "ST_CHP_PJM_EMAAC_p54250_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.301107094159732,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 3.0,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.301107094159732,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 3.51,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.301107094159732,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 3.15,
+      "unit_id": "ST_CHP_PJM_Dominion_p50275_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.301107094159732,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 16.5,
+      "unit_id": "ST_CHP_PJM_Dominion_p54081_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.301107094159732,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 34.65,
+      "unit_id": "ST_CHP_PJM_West_APS_p50491_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.30110709415973,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.66,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.30110709415973,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 18.9,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.30110709415973,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 8.16,
+      "unit_id": "ST_CHP_PJM_Dominion_p52089_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.30110709415973,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.92,
+      "unit_id": "ST_CHP_PJM_Dominion_p52148_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.300787058778038,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 3.165,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.299327931379246,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 2.625,
+      "unit_id": "ST_CHP_PJM_SWMAAC_p54795_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.295945234867215,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 6.33,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.294486107468416,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 5.25,
+      "unit_id": "ST_CHP_PJM_SWMAAC_p54795_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.294362191360765,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.54,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.28952036744994,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.08,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.28952036744993,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.6,
+      "unit_id": "ST_CHP_PJM_SWMAAC_p56038_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.28899369805404,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 14.959999999999999,
+      "unit_id": "ST_CHP_PJM_Dominion_p52089_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054036,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.21,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50316_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054036,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 34.650000000000006,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50481_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054036,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 31.130000000000003,
+      "unit_id": "ST_CHP_PJM_EMAAC_p54785_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054032,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 5.5,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p10244_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054032,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 6.435,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50456_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054032,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 5.7749999999999995,
+      "unit_id": "ST_CHP_PJM_Dominion_p50275_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054032,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 3.5200000000000005,
+      "unit_id": "ST_CHP_PJM_Dominion_p52148_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054032,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 30.25,
+      "unit_id": "ST_CHP_PJM_Dominion_p54081_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054032,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.99,
+      "unit_id": "ST_CHP_PJM_EMAAC_p54250_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.28899369805403,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 63.52499999999999,
+      "unit_id": "ST_CHP_PJM_West_APS_p50491_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.288993698054025,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 9.735000000000001,
+      "unit_id": "ST_CHP_PJM_Central_PA_p50397_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.28878744549095,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 2.385,
+      "unit_id": "ST_CHP_PJM_EMAAC_p10224_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.284301098697195,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 11.605,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p50366_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.283945621580127,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 4.77,
+      "unit_id": "ST_CHP_PJM_EMAAC_p10224_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.28297461924375,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 9.625,
+      "unit_id": "ST_CHP_PJM_SWMAAC_p54795_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.278460310136037,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.0999999999999999,
+      "unit_id": "ST_CHP_PJM_SWMAAC_p56038_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.278460310136033,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.98,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p63924_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.269781406141245,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.525,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.269781406141245,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.525,
+      "unit_id": "ST_CHP_PJM_ATSI_p63920_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.269781406141245,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.525,
+      "unit_id": "ST_CHP_PJM_ATSI_p63927_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.269781406141238,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.17,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.114983135712375,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 8.745000000000001,
+      "unit_id": "ST_CHP_PJM_EMAAC_p10224_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.051378004576737,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.54,
+      "unit_id": "ST_CHP_PJM_ComEd_p58136_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.05137800457673,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.05,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.05137800457673,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.75,
+      "unit_id": "ST_CHP_PJM_ATSI_p54335_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.05137800457673,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.05,
+      "unit_id": "ST_CHP_PJM_ATSI_p63920_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.05137800457673,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.05,
+      "unit_id": "ST_CHP_PJM_ATSI_p63927_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.05137800457673,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.9,
+      "unit_id": "ST_CHP_PJM_Central_PA_p58194_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.051378004576723,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 2.34,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.138755124962735,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.9250000000000003,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p63922_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.138755124962735,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.9250000000000003,
+      "unit_id": "ST_CHP_PJM_ATSI_p63920_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.138755124962735,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.9250000000000003,
+      "unit_id": "ST_CHP_PJM_ATSI_p63927_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.13875512496273,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 4.29,
+      "unit_id": "ST_CHP_PJM_AEP_Ohio_p63829_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.13875512496273,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.375,
+      "unit_id": "ST_CHP_PJM_ATSI_p54335_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.13875512496273,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.5499999999999999,
+      "unit_id": "ST_CHP_PJM_ATSI_p61838_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.13875512496273,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 0.99,
+      "unit_id": "ST_CHP_PJM_ComEd_p58136_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.138755124962728,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1.6500000000000001,
+      "unit_id": "ST_CHP_PJM_Central_PA_p58194_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 27.40676230551102,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 52.0,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6166_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 27.315529789425085,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 982.7999999999998,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6166_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596757,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 33.5,
+      "unit_id": "COAL_PJM_SWMAAC_p1571_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596753,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 15.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1554_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596746,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 0.7599999999999999,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2914_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596746,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 632.4000000000001,
+      "unit_id": "COAL_PJM_West_APS_p3136_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596742,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 74.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596742,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 28.25,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8226_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.15893294759674,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 844.8800000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2828_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596735,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 25.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596732,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 34.45,
+      "unit_id": "COAL_PJM_ComEd_p883_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596732,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 60.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1573_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596725,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 75.2,
+      "unit_id": "COAL_PJM_Central_PA_p3149_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.158932947596693,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.15,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2935_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.15893294759668,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 94.415,
+      "unit_id": "COAL_PJM_West_APS_p3122_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932656,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 12.16,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p50385_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932656,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 17.186,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55397_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932656,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 8.937999999999999,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p54844_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932656,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 15.582,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p2393_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932656,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 17.390700000000002,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p55516_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 7.160000000000001,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p50852_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 4.176,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p54693_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 43.391999999999996,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55297_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 48.79,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55502_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 24.247999999999998,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55503_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 30.030000000000005,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55736_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 9.4724,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55193_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 27.8538,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55337_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 57.833999999999996,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55690_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 20.628,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3804_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 38.158699999999996,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p55439_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 12.364,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p55231_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 32.0,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p55298_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932653,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 140.864,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p7153_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 11.216,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p10099_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 15.6416,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55667_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 27.54,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55976_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 91.2,
+      "unit_id": "CC_REGULAR_PJM_ComEd_p55131_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 28.144800000000004,
+      "unit_id": "CC_REGULAR_PJM_ComEd_p55188_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 98.0,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3797_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 61.82640000000001,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p52019_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 176.79,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p2398_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 28.708300000000005,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p55239_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 43.431999999999995,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p3096_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91896811093265,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 12.216,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p55710_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932646,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 12.556,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p10308_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932646,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 9.509500000000001,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p10751_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.918968110932646,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 9.168,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p50799_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.91663039675274,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 5.856,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p50561_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.908059242838128,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 1.9872,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p3176_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.845300447170803,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 3.72,
+      "unit_id": "CC_CHP_PJM_AEP_Ohio_p57908_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.845300447170803,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 12.138899999999996,
+      "unit_id": "CC_CHP_PJM_Dominion_p10633_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.845300447170803,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 4.071000000000001,
+      "unit_id": "CC_CHP_PJM_EMAAC_p10030_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.845300447170803,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 23.506999999999998,
+      "unit_id": "CC_CHP_PJM_SWMAAC_p54832_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.8453004471708,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 1.8719999999999999,
+      "unit_id": "CC_CHP_PJM_ATSI_p55990_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.8453004471708,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 48.5,
+      "unit_id": "CC_CHP_PJM_ComEd_p55216_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.8453004471708,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 17.675700000000003,
+      "unit_id": "CC_CHP_PJM_EMAAC_p55801_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.845300447170796,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 0.7040000000000001,
+      "unit_id": "CC_CHP_PJM_EMAAC_p10061_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.82034797619711,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 32.8848,
+      "unit_id": "CC_REGULAR_PJM_ATSI_p55701_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.82034797619711,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 30.857400000000002,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p56963_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.820347976197105,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 36.805,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p55939_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.820347976197105,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 20.526,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p56807_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.820347976197105,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 274.3,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p2406_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.8203479761971,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 15.12,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55350_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.633782909250897,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 37.0629,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55524_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.48538738698701,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 11.742,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p57349_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987007,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 6.977600000000001,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p59326_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987007,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 17.976000000000003,
+      "unit_id": "CC_REGULAR_PJM_ATSI_p60376_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987007,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 22.95,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p58420_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987007,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 14.535,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p58426_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987007,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 22.5603,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p60589_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987007,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 44.942,
+      "unit_id": "CC_REGULAR_PJM_SWMAAC_p59220_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 9.8,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p59906_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 20.925,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p60357_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 4.85,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p61035_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 21.682000000000002,
+      "unit_id": "CC_REGULAR_PJM_ComEd_p55183_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 24.6798,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p58260_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 33.704,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p59004_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 28.197,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p57839_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 24.0372,
+      "unit_id": "CC_REGULAR_PJM_SWMAAC_p56846_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 37.88,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p60464_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 18.448999999999998,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p61028_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 6.435,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p57794_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 19.494799999999998,
+      "unit_id": "CC_REGULAR_PJM_ATSI_p59764_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 38.3775,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p60368_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 17.435000000000002,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p59913_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 5.918000000000001,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p2411_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 25.3836,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p58079_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386987,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 12.937000000000001,
+      "unit_id": "CC_REGULAR_PJM_SWMAAC_p60302_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.485387386986996,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 9.2898,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p59773_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.38199656750889,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 1.96,
+      "unit_id": "CC_CHP_PJM_SWMAAC_p58207_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.806831301411492,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 20.4,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2832_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.806831301411492,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 10.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.806831301411478,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 34.0,
+      "unit_id": "COAL_PJM_West_APS_p3118_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.806831301411478,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 34.0,
+      "unit_id": "COAL_PJM_West_APS_p3136_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.80683130141145,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 6.1,
+      "unit_id": "COAL_PJM_SWMAAC_p1554_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.806831301411428,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 29.8,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.806831301411425,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 35.800000000000004,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2828_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.80683130141142,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 53.6,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8102_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.80683130141142,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 30.080000000000002,
+      "unit_id": "COAL_PJM_Central_PA_p3149_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.80683130141142,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 13.4,
+      "unit_id": "COAL_PJM_SWMAAC_p1571_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.806831301411417,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 12.540000000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2836_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.806831301411414,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 0.86,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2935_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.806831301411403,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 37.766000000000005,
+      "unit_id": "COAL_PJM_West_APS_p3122_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.634161924676185,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 50.3,
+      "unit_id": "COAL_PJM_Dominion_p3797_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.602013407138447,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 4.512,
+      "unit_id": "CC_CHP_PJM_EMAAC_p50410_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 22.333950318012867,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 20.119999999999997,
+      "unit_id": "COAL_PJM_Dominion_p3797_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.804518054492856,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 6.565,
+      "unit_id": "COAL_PJM_AEP_Ohio_p50481_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.65250992480635,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.6260000000000003,
+      "unit_id": "COAL_PJM_AEP_Ohio_p50481_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.268250000000002,
+      "event": "entry_capped",
+      "fuel": "oil",
+      "mw": 12.3,
+      "unit_id": "3144_CTG2",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.26825,
+      "event": "entry_capped",
+      "fuel": "oil",
+      "mw": 13.0,
+      "unit_id": "1573_GT1",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.26825,
+      "event": "entry_capped",
+      "fuel": "oil",
+      "mw": 13.0,
+      "unit_id": "1573_GT2",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.26825,
+      "event": "entry_capped",
+      "fuel": "oil",
+      "mw": 12.9,
+      "unit_id": "3144_CTG1",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.94340954146847,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 223.44,
+      "unit_id": "CC_REGULAR_PJM_ComEd_p55131_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.94340954146847,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 79.42399999999999,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p10308_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 40.275000000000006,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p50852_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 462.7,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55397_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 955.5,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55736_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 411.642,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55690_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 299.106,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3804_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 152.6,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p54844_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 419.74570000000006,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p55439_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 29.105999999999998,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p2393_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 51.57,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p50799_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 611.84,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p55298_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 155.63199999999998,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p7153_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468466,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 37.576,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p3096_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 68.4,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p50385_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 328.69440000000003,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55297_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 571.2,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55502_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 541.25,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55503_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 389.2352,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55667_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 374.22,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55976_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 291.8472,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p52019_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 148.155,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p2398_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 322.026,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p55231_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468462,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 280.968,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p55710_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.94340954146846,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 23.49,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p54693_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.94340954146846,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 217.952,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3797_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468455,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 339.89200000000005,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55193_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468455,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 214.97420000000002,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55337_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468455,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 131.86360000000002,
+      "unit_id": "CC_REGULAR_PJM_ComEd_p55188_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468455,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 251.39160000000004,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p55239_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.94340954146845,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 63.08999999999999,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p10099_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468448,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 21.0938,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p10751_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943409541468448,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 450.87000000000006,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p55516_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.254403829278512,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 444.6899999999999,
+      "unit_id": "COAL_PJM_West_APS_p3943_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.969123918824227,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 61.97599999999999,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p50561_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.647626963683102,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 21.959999999999997,
+      "unit_id": "COAL_PJM_West_APS_p3943_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.244668260327906,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 10.53,
+      "unit_id": "CC_CHP_PJM_ATSI_p55990_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.244668260327906,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 69.44579999999999,
+      "unit_id": "CC_CHP_PJM_Dominion_p10633_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.244668260327895,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 1.35,
+      "unit_id": "CC_CHP_PJM_ComEd_p50326_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.244668260327895,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 18.526,
+      "unit_id": "CC_CHP_PJM_EMAAC_p10030_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.244668260327895,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 62.4004,
+      "unit_id": "CC_CHP_PJM_SWMAAC_p54832_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.24466826032789,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 20.925,
+      "unit_id": "CC_CHP_PJM_AEP_Ohio_p57908_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.24466826032789,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 2.385,
+      "unit_id": "CC_CHP_PJM_Central_PA_p54333_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.24466826032789,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 55.29,
+      "unit_id": "CC_CHP_PJM_ComEd_p55216_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.24466826032789,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 13.573,
+      "unit_id": "CC_CHP_PJM_EMAAC_p10805_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.24466826032789,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 530.2710000000001,
+      "unit_id": "CC_CHP_PJM_EMAAC_p55801_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.244668260327884,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 3.9600000000000004,
+      "unit_id": "CC_CHP_PJM_EMAAC_p10061_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.455831499874943,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1163.106,
+      "unit_id": "COAL_PJM_West_APS_p3954_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680888,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.24,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2909_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680888,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.083000000000001,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7288_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680888,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.16,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55196_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.67,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2401_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 9.533999999999999,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2831_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 8.113000000000001,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2854_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.84,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2917_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 33.32,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7158_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.2,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p3110_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.33,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p3120_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.941999999999999,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p3148_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.5039999999999999,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p54523_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.875,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p960_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.8,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7032_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.52,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7212_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.376000000000001,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2379_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 10.5,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2393_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.1199999999999999,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p58897_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.55,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7138_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.108,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7318_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.208539917680884,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 20.58,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p1572_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20853991768088,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.771,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2848_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20853991768088,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.0710000000000002,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2914_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20853991768088,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.76,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7335_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20853991768088,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.03,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2903_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20853991768088,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 28.147000000000002,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p1571_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20853991768088,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.901,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p61890_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20853991768088,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.5069999999999997,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p3132_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249027,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 35.02,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7032_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 8.7168,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2831_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 17.71,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2848_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 28.084,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7158_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 27.131999999999998,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7335_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 38.304,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7212_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 15.535,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7138_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 31.1971,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7288_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.9708,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7318_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 39.396,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p1572_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.9659,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p3132_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.206689075249024,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 33.528,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55196_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.204877463868026,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.681000000000004,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55109_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.204327268313556,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.2179999999999997,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2933_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20296003136684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 34.84490000000001,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55109_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20249147444119,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.534000000000002,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2406_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.202459725137803,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 9.8,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7336_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.202319194818205,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 12.838,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p5083_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20197180845225,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 94.5,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55199_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.201952954809986,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 40.480999999999995,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2847_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.200498333750613,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 33.04,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7336_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.20040284935289,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.726000000000002,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p59073_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.2003552483343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 45.666599999999995,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p5083_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.200001545852594,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 280.8,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55199_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.199982349416835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 42.21589999999999,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2847_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.198177482403832,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 52.71,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p54_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.197443849352734,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 25.06,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2880_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 33.6,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55247_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.66,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55263_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 31.5,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55276_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 58.66,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55401_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.66,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p55262_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.66,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p55264_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.059,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p50279_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.16,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p55654_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 43.60300000000001,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55222_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 21.329000000000004,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55238_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 68.845,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55279_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 11.291000000000002,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55936_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.89,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p56462_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.6,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p55738_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 33.691,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7836_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 42.56,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7838_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 54.81,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7839_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 11.76,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2399_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 22.792,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p55938_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.56,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p56701_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069343,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.16,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55377_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 39.62,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55110_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 57.75,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55198_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 13.72,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55228_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 21.0,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55284_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.03,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7782_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 27.972,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2869_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.03,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p7783_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.624,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p55997_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.178,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p56397_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 47.376,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55236_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 21.0,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55250_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 21.0,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55253_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 22.827,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55296_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 31.92,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55392_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 34.223,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55438_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 37.8,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55640_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 17.5,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p55285_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 32.62,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7837_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 46.96300000000001,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p7835_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 18.725,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55233_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 46.949000000000005,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55347_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19671732106934,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.772000000000002,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55349_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069336,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 47.803000000000004,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p55348_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196717321069336,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 30.45,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p7872_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.196138232057848,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 58.733999999999995,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p54_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19549609625858,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 17.416,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p1556_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.195391260223992,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 54.058,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2880_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.194651522335455,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.886,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p7783_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.194651522335455,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 45.47170000000001,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55222_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.194651522335455,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 137.4935,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55347_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.194651522335455,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 159.2724,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55349_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 73.01400000000001,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55110_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 32.732,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55228_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 69.6,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55247_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.864000000000001,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55263_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 81.9,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55276_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 33.6,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55284_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 131.56599999999997,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55401_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.9870000000000005,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7782_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.864000000000001,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p55262_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.864000000000001,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p55264_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 71.33999999999999,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p7872_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 19.4028,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p50279_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 34.848,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p55654_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 31.78,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p56397_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 55.49759999999999,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55236_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 50.88490000000001,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55238_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 43.5,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55253_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 85.5645,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55279_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 68.1549,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55296_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 87.096,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55392_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 69.9127,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55438_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 39.96,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55640_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 38.75,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p55285_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 37.84,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p55738_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 70.26979999999999,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7836_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 52.192,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7837_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 83.296,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7838_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 91.61099999999999,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7839_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 18.984,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2399_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 89.21440000000001,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p55938_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 108.01490000000001,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p7835_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 21.4,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55233_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19465152233545,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 33.263999999999996,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55377_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.194651522335448,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 106.425,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55198_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.194651522335448,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 70.7292,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2869_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.194651522335448,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 127.0194,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p55348_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.194651522335448,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 28.2,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55250_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.194651522335448,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 45.002700000000004,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55936_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.193408093437228,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 31.597599999999996,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p1556_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19185709040909,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 17.67,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p3120_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19185709040909,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 71.424,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2379_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.58,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p1855_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 75.33,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2401_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.819,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2848_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 11.16,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2917_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 414.596,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7158_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 26.97,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2903_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 55.8,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p3110_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 65.658,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p3148_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.696,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p54523_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.3019999999999998,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55004_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.976,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p60797_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 281.18,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7032_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 139.5,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2393_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 49.61990000000001,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7288_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 234.024,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p1572_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 78.399,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p61890_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409087,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 38.627100000000006,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p3132_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 117.94919999999999,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2831_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 107.787,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2854_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 14.229000000000001,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2914_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 29.759999999999998,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2909_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.022,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p54540_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9299999999999999,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55005_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 11.625,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p960_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 274.17600000000004,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7212_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 14.879999999999999,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p58897_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.7199999999999998,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p58947_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 44.915000000000006,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7138_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 34.321200000000005,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7318_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 373.95300000000003,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p1571_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.191857090409083,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 48.312,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55196_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.19185709040908,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 36.108000000000004,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7335_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18852758694285,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 279.7741000000001,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55109_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.188027409166054,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 16.182,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2933_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18766941549928,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.86,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7962_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18746713776203,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.603,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p7397_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.186358505645725,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 312.666,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2406_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18632964264265,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 97.16000000000001,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7336_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18620188780666,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 124.89540000000002,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p5083_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18588608201942,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 974.7,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55199_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.185868942344634,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 495.6030999999999,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p2847_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18578323248535,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 31.947999999999997,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2404_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.185439109391393,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 22.344,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7962_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18501295042391,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 35.0,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p52019_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.184459755565456,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 76.07400000000001,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p59073_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.183518632140842,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 31.0352,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2404_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.182436694702677,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 641.5559999999999,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p54_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18176975556531,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 278.882,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2880_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307687,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 245.39999999999998,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55284_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307687,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 533.8253,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55222_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307687,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 482.14399999999995,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7838_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307687,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 515.9221000000001,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p7835_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 453.366,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55110_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 149.548,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55228_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 376.79999999999995,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55247_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 30.475999999999996,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55263_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 336.6,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55276_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 647.774,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55401_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.488,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p56513_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.79,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7770_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.982999999999997,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p7782_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 300.89880000000005,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p2869_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 30.475999999999996,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p55262_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 30.475999999999996,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p55264_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 46.992000000000004,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p55654_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 21.576,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p55997_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 573.9264,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55236_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 232.48610000000002,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55238_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 250.8,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55250_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 235.5,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55253_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 829.0905,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55279_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 235.11810000000003,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55296_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 336.984,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55392_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 462.24,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55640_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 25.11,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p56462_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 193.75,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p55285_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 36.559999999999995,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p55738_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 377.3392,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7836_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 636.579,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7839_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 137.256,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2399_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 213.5936,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p55938_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.79,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p59055_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 227.375,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55233_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 486.2575,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55347_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.181109275307684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 156.55560000000003,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55349_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 660.825,
+      "unit_id": "CT_PEAKER_PJM_AEP_Ohio_p55198_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 508.07759999999996,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p55348_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.084,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p7783_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 333.21000000000004,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p7872_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 21.238200000000003,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p50279_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 10.441999999999997,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p56397_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 384.7643,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55438_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 105.00630000000001,
+      "unit_id": "CT_PEAKER_PJM_ComEd_p55936_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 381.188,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p7837_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.4399999999999995,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p56701_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.18110927530768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 48.57600000000001,
+      "unit_id": "CT_PEAKER_PJM_West_APS_p55377_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.14623631203702,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 199.78640000000001,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p1556_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.11413253243384,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.6579999999999999,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p64157_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.11413253243384,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.85,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2434_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.11413253243384,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.85,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p58235_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.114132532433835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.47,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58714_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.114132532433835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.47,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58715_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.114132532433835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.47,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58811_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.114132532433835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.428,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58813_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.114132532433835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.428,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58818_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.114132532433835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.54,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p61263_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.114132532433835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.75,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p58433_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.114132532433835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.56,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p61737_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.114132532433832,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.9320000000000002,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p56668_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.014219190159068,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 32.835,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2434_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.014219190159068,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 36.85,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p58235_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.014219190159068,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 19.32,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p56668_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.873015991805849,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.89,
+      "unit_id": "CT_CHP_PJM_EMAAC_p50628_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.873015991805847,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.66,
+      "unit_id": "CT_CHP_PJM_Dominion_p52152_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.873015991805847,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.98,
+      "unit_id": "CT_CHP_PJM_EMAAC_p54785_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.873015991805847,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.6160000000000001,
+      "unit_id": "CT_CHP_PJM_EMAAC_p54829_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.873015991805847,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.085,
+      "unit_id": "CT_CHP_PJM_EMAAC_p58584_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.873015991805847,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.68,
+      "unit_id": "CT_CHP_PJM_West_APS_p10129_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.86449405027137,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.486999999999999,
+      "unit_id": "CT_CHP_PJM_EMAAC_p52149_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.863227997402559,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.3810000000000002,
+      "unit_id": "CT_CHP_PJM_ComEd_p54044_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253291,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.64,
+      "unit_id": "CT_CHP_PJM_EMAAC_p54829_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253291,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.2,
+      "unit_id": "CT_CHP_PJM_West_APS_p10129_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253288,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.5,
+      "unit_id": "CT_CHP_PJM_ComEd_p54933_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253288,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.74,
+      "unit_id": "CT_CHP_PJM_EMAAC_p50094_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253288,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 8.1,
+      "unit_id": "CT_CHP_PJM_EMAAC_p50628_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253288,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.26,
+      "unit_id": "CT_CHP_PJM_EMAAC_p58165_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253288,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.65,
+      "unit_id": "CT_CHP_PJM_EMAAC_p58584_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253286,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.1,
+      "unit_id": "CT_CHP_PJM_ComEd_p50722_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253286,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 11.4,
+      "unit_id": "CT_CHP_PJM_Dominion_p52152_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253286,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 79.8,
+      "unit_id": "CT_CHP_PJM_EMAAC_p54785_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253286,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.29,
+      "unit_id": "CT_CHP_PJM_West_APS_p63485_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253284,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.14,
+      "unit_id": "CT_CHP_PJM_ComEd_p54790_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.861763179253284,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.08,
+      "unit_id": "CT_CHP_PJM_ComEd_p59847_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.859773411142577,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.08,
+      "unit_id": "CT_CHP_PJM_EMAAC_p10030_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.859773411142577,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.63,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p57788_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.859773411142575,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.546,
+      "unit_id": "CT_CHP_PJM_ComEd_p58181_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.859773411142575,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 9.1,
+      "unit_id": "CT_CHP_PJM_EMAAC_p52193_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.859773411142575,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.3159999999999998,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p56038_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.859773411142573,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.8610000000000001,
+      "unit_id": "CT_CHP_PJM_ComEd_p58328_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.859773411142573,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.574,
+      "unit_id": "CT_CHP_PJM_EMAAC_p10123_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.859773411142571,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.8260000000000001,
+      "unit_id": "CT_CHP_PJM_ATSI_p58140_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.85602715477073,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.5959999999999999,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p58207_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.853611756915964,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 24.6785,
+      "unit_id": "CT_CHP_PJM_EMAAC_p52149_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.852642790785426,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.28,
+      "unit_id": "CT_CHP_PJM_Central_PA_p50463_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.852614923046291,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.08,
+      "unit_id": "CT_CHP_PJM_ComEd_p58375_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.852400749824053,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 14.490000000000002,
+      "unit_id": "CT_CHP_PJM_ComEd_p54044_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966682,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.8,
+      "unit_id": "CT_CHP_PJM_EMAAC_p63540_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.84909636296668,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.05,
+      "unit_id": "CT_CHP_PJM_ComEd_p59794_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.84909636296668,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 39.0,
+      "unit_id": "CT_CHP_PJM_EMAAC_p52193_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966678,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.4099999999999997,
+      "unit_id": "CT_CHP_PJM_AEP_Ohio_p59373_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966678,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.54,
+      "unit_id": "CT_CHP_PJM_ATSI_p58140_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966678,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.2,
+      "unit_id": "CT_CHP_PJM_ComEd_p58136_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966678,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.34,
+      "unit_id": "CT_CHP_PJM_ComEd_p58181_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966678,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.69,
+      "unit_id": "CT_CHP_PJM_ComEd_p58328_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966678,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.51,
+      "unit_id": "CT_CHP_PJM_ComEd_p58635_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966678,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 13.2,
+      "unit_id": "CT_CHP_PJM_EMAAC_p10030_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966678,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.64,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p56038_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966677,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.2299999999999998,
+      "unit_id": "CT_CHP_PJM_EMAAC_p10122_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966677,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.4599999999999995,
+      "unit_id": "CT_CHP_PJM_EMAAC_p10123_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.849096362966677,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.7,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p57788_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590017,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6539999999999995,
+      "unit_id": "CT_CHP_PJM_EMAAC_p50094_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590017,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 17.009999999999998,
+      "unit_id": "CT_CHP_PJM_EMAAC_p50628_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590015,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.394,
+      "unit_id": "CT_CHP_PJM_ComEd_p54790_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590015,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.6460000000000004,
+      "unit_id": "CT_CHP_PJM_EMAAC_p58165_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590015,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 15.120000000000001,
+      "unit_id": "CT_CHP_PJM_West_APS_p10129_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590015,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.7089999999999996,
+      "unit_id": "CT_CHP_PJM_West_APS_p63485_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590014,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.756,
+      "unit_id": "CT_CHP_PJM_ComEd_p58825_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590014,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.268,
+      "unit_id": "CT_CHP_PJM_ComEd_p59847_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590014,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.94,
+      "unit_id": "CT_CHP_PJM_Dominion_p52152_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590012,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.41,
+      "unit_id": "CT_CHP_PJM_ComEd_p50722_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590012,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 9.765,
+      "unit_id": "CT_CHP_PJM_EMAAC_p58584_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.84852059859001,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 26.220000000000002,
+      "unit_id": "CT_CHP_PJM_EMAAC_p54785_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.84852059859001,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.5440000000000005,
+      "unit_id": "CT_CHP_PJM_EMAAC_p54829_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.848520598590008,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.15,
+      "unit_id": "CT_CHP_PJM_ComEd_p54933_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.845512987306652,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.84,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p58207_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.842275769581581,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 41.70400000000001,
+      "unit_id": "CT_CHP_PJM_Central_PA_p50463_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.841110214646994,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 34.93449999999999,
+      "unit_id": "CT_CHP_PJM_EMAAC_p52149_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.840204002038197,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.268,
+      "unit_id": "CT_CHP_PJM_ComEd_p58375_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.84000929910889,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 30.429000000000002,
+      "unit_id": "CT_CHP_PJM_ComEd_p54044_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.83990954014767,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.7839999999999999,
+      "unit_id": "CT_CHP_PJM_AEP_Ohio_p50366_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.83990954014767,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.7560000000000001,
+      "unit_id": "CT_CHP_PJM_EMAAC_p63501_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.839909540147666,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.518,
+      "unit_id": "CT_CHP_PJM_Central_PA_p58195_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.839909540147664,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.05,
+      "unit_id": "CT_CHP_PJM_Dominion_p59860_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.839909540147664,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.525,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p63347_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.838956596044936,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 68.796,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p7962_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056735,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.961,
+      "unit_id": "CT_CHP_PJM_AEP_Ohio_p59373_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056735,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 27.72,
+      "unit_id": "CT_CHP_PJM_EMAAC_p10030_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056735,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 81.9,
+      "unit_id": "CT_CHP_PJM_EMAAC_p52193_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056735,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.7800000000000002,
+      "unit_id": "CT_CHP_PJM_EMAAC_p63540_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056735,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 11.844000000000001,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p56038_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056735,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.67,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p57788_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056734,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.434000000000001,
+      "unit_id": "CT_CHP_PJM_ATSI_p58140_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056734,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.5199999999999996,
+      "unit_id": "CT_CHP_PJM_ComEd_p58136_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056734,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.749000000000001,
+      "unit_id": "CT_CHP_PJM_ComEd_p58328_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056734,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.071,
+      "unit_id": "CT_CHP_PJM_ComEd_p58635_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056734,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.205,
+      "unit_id": "CT_CHP_PJM_ComEd_p59794_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056734,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.583,
+      "unit_id": "CT_CHP_PJM_EMAAC_p10122_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.837005311056734,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.166,
+      "unit_id": "CT_CHP_PJM_EMAAC_p10123_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.83700531105673,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.914,
+      "unit_id": "CT_CHP_PJM_ComEd_p58181_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.734416694712921,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 393.4168,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2404_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.72984543462921,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 14.364,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p58207_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.685518103588057,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 465.0,
+      "unit_id": "CT_PEAKER_PJM_Dominion_p52019_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.607174962409582,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 55.01599999999999,
+      "unit_id": "CT_CHP_PJM_Central_PA_p50463_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.57548224461421,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.22,
+      "unit_id": "CT_CHP_PJM_Central_PA_p58195_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614207,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.2,
+      "unit_id": "CT_CHP_PJM_EMAAC_p60933_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614207,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.6,
+      "unit_id": "CT_CHP_PJM_EMAAC_p62622_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614205,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.41,
+      "unit_id": "CT_CHP_PJM_ComEd_p60742_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614205,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_CHP_PJM_Dominion_p59860_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614205,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.32,
+      "unit_id": "CT_CHP_PJM_EMAAC_p61822_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614205,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.81,
+      "unit_id": "CT_CHP_PJM_EMAAC_p63492_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614205,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.24,
+      "unit_id": "CT_CHP_PJM_EMAAC_p63501_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614205,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.86,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p61282_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614205,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.25,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p63347_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614205,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.2299999999999998,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p63478_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614204,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.36,
+      "unit_id": "CT_CHP_PJM_AEP_Ohio_p50366_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.575482244614204,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.56,
+      "unit_id": "CT_CHP_PJM_EMAAC_p63483_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.255880664393088,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.15,
+      "unit_id": "COAL_PJM_Dominion_p50900_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223454,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 18.971999999999998,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58813_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223454,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 18.971999999999998,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58818_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223453,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 8.742,
+      "unit_id": "CT_PEAKER_PJM_ATSI_p64157_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223453,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 19.53,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58714_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223453,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 19.53,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58715_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223453,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 19.53,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p58811_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223453,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.348000000000001,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p56668_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223451,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.395,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p10302_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223451,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 18.314999999999998,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p2434_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223451,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.418,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p58110_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223451,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.534,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p59056_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223451,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.209,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p63700_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223451,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.395,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p63702_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223451,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.325,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p63706_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223451,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.418,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p63713_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.98628457922345,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 20.46,
+      "unit_id": "CT_PEAKER_PJM_Central_PA_p61263_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.98628457922345,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 14.299999999999999,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p58235_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.98628457922345,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.4399999999999995,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p61737_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.98628457922345,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.8599999999999999,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p63703_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.98628457922345,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.976,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p64142_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.98628457922345,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.8599999999999999,
+      "unit_id": "CT_PEAKER_PJM_SWMAAC_p6565_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223447,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.25,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p58433_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.986284579223444,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.603,
+      "unit_id": "CT_PEAKER_PJM_EMAAC_p62492_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.643423200630263,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 0.86,
+      "unit_id": "COAL_PJM_Dominion_p50900_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973835,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.9059999999999997,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p61282_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973833,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.662,
+      "unit_id": "CT_CHP_PJM_Central_PA_p58195_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.056,
+      "unit_id": "CT_CHP_PJM_AEP_Ohio_p50366_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.6299999999999999,
+      "unit_id": "CT_CHP_PJM_Central_PA_p62901_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.9610000000000003,
+      "unit_id": "CT_CHP_PJM_ComEd_p60742_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 9.45,
+      "unit_id": "CT_CHP_PJM_Dominion_p59860_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.5199999999999996,
+      "unit_id": "CT_CHP_PJM_EMAAC_p60933_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.2599999999999998,
+      "unit_id": "CT_CHP_PJM_EMAAC_p62622_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.701,
+      "unit_id": "CT_CHP_PJM_EMAAC_p63492_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.804,
+      "unit_id": "CT_CHP_PJM_EMAAC_p63501_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.725,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p63347_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973831,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.583,
+      "unit_id": "CT_CHP_PJM_SWMAAC_p63478_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.60613781897383,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.8190000000000001,
+      "unit_id": "CT_CHP_PJM_Dominion_p52148_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.60613781897383,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.2760000000000002,
+      "unit_id": "CT_CHP_PJM_EMAAC_p63483_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973828,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.6930000000000001,
+      "unit_id": "CT_CHP_PJM_Central_PA_p62741_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.606137818973828,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.7720000000000002,
+      "unit_id": "CT_CHP_PJM_EMAAC_p61822_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607078,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 311.1264,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p52019_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607077,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 24.534000000000006,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p54693_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607075,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 249.312,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p2393_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607075,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 53.861999999999995,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p50799_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607073,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 253.26600000000002,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3804_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607073,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 56.462,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p54844_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607071,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 712.7135999999998,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55297_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607071,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 570.01,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55502_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607071,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 196.7232,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55667_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607071,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 664.524,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55690_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607071,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 636.16,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p55298_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607071,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 215.81599999999997,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p55710_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.15941245060707,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 300.502,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55503_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.15941245060707,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 408.23999999999995,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55976_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.15941245060707,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 76.048,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p3797_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.15941245060707,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 839.504,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p7153_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607068,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 71.44,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p50385_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607068,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 181.114,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55397_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607068,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 472.7956,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p55439_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607068,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 920.0550000000001,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p2398_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607068,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 227.60999999999999,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p55231_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607068,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 162.99200000000002,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p3096_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607066,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 825.3599999999999,
+      "unit_id": "CC_REGULAR_PJM_ComEd_p55131_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607066,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 200.02,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p10308_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607064,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 379.46999999999997,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55736_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607062,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 42.065000000000005,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p50852_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607052,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 361.1916,
+      "unit_id": "CC_REGULAR_PJM_ComEd_p55188_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.15941245060705,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 65.894,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p10099_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607048,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 207.8356,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55193_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607048,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 471.37200000000007,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55337_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607046,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 495.80010000000004,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p55239_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607045,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 142.29670000000004,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p10751_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.159412450607036,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 175.83930000000007,
+      "unit_id": "CC_REGULAR_PJM_West_APS_p55516_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.015003666775682,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 10.998,
+      "unit_id": "CC_CHP_PJM_ATSI_p55990_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.015003666775682,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 200.71529999999996,
+      "unit_id": "CC_CHP_PJM_Dominion_p10633_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.01500366677568,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 36.403000000000006,
+      "unit_id": "CC_CHP_PJM_EMAAC_p10030_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.01500366677568,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 10.927,
+      "unit_id": "CC_CHP_PJM_EMAAC_p10805_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.015003666775678,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 341.4926,
+      "unit_id": "CC_CHP_PJM_SWMAAC_p54832_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.015003666775677,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 2.491,
+      "unit_id": "CC_CHP_PJM_Central_PA_p54333_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.015003666775677,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 1.41,
+      "unit_id": "CC_CHP_PJM_ComEd_p50326_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.015003666775675,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 21.855,
+      "unit_id": "CC_CHP_PJM_AEP_Ohio_p57908_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.015003666775675,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 90.21000000000001,
+      "unit_id": "CC_CHP_PJM_ComEd_p55216_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.015003666775671,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 293.75329999999997,
+      "unit_id": "CC_CHP_PJM_EMAAC_p55801_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.015003666775655,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 4.136,
+      "unit_id": "CC_CHP_PJM_EMAAC_p10061_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 12.538761013187951,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 37.508399999999995,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p3176_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746638,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 4.15,
+      "unit_id": "COAL_PJM_Central_PA_p50776_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.88073650774663,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 65.25,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6019_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746619,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.1100000000000003,
+      "unit_id": "COAL_PJM_ComEd_p54556_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746613,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 10.95,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10043_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746613,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.8050000000000002,
+      "unit_id": "COAL_PJM_Central_PA_p50397_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746603,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 4.0,
+      "unit_id": "COAL_PJM_Central_PA_p10113_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746603,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 4.0,
+      "unit_id": "COAL_PJM_West_APS_p10151_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746574,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 11.885,
+      "unit_id": "COAL_PJM_AEP_Ohio_p54304_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746557,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 12.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10566_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746551,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 4.23,
+      "unit_id": "COAL_PJM_West_APS_p50974_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.880736507746535,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 4.3,
+      "unit_id": "COAL_PJM_Central_PA_p54634_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.54979452547186,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.72,
+      "unit_id": "COAL_PJM_Central_PA_p54634_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.549794525471794,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.66,
+      "unit_id": "COAL_PJM_Central_PA_p50776_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.54979452547179,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 4.88,
+      "unit_id": "COAL_PJM_AEP_Ohio_p10566_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.549794525471787,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 0.8440000000000001,
+      "unit_id": "COAL_PJM_ComEd_p54556_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.549794525471752,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.6,
+      "unit_id": "COAL_PJM_Central_PA_p10113_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.549794525471752,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.6,
+      "unit_id": "COAL_PJM_West_APS_p10151_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.03744807694583,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 176.168,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p50561_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 10.999310386490261,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 58.0,
+      "unit_id": "COAL_PJM_AEP_Ohio_p3935_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 10.623329184540722,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 594.606,
+      "unit_id": "COAL_PJM_Dominion_p7213_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 10.18673027858667,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1055.6000000000004,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6166_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 7.806192527572048,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 378.0,
+      "unit_id": "CC_REGULAR_PJM_AEP_Ohio_p55350_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 7.806192527572035,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 230.1936,
+      "unit_id": "CC_REGULAR_PJM_ATSI_p55701_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 7.806192527572032,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 110.93970000000002,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p56963_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 7.806192527572024,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 902.4586,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p55939_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 7.806192527572019,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 205.4,
+      "unit_id": "CC_REGULAR_PJM_EMAAC_p2406_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 7.806192527572001,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 337.746,
+      "unit_id": "CC_REGULAR_PJM_Dominion_p56807_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 6.149172397784049,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 31.200000000000003,
+      "unit_id": "COAL_PJM_West_APS_p3948_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 5.912874572725579,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 351.0,
+      "unit_id": "COAL_PJM_West_APS_p3948_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 2.267673823435246,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 11.025,
+      "unit_id": "CC_CHP_PJM_SWMAAC_p58207_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.9308167032825149,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 787.9297999999998,
+      "unit_id": "CC_REGULAR_PJM_Central_PA_p55524_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505812,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 542.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1573_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505667,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 301.5,
+      "unit_id": "COAL_PJM_SWMAAC_p1571_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.865388084450559,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 254.25,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8226_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505406,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 6.84,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2914_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505257,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 282.15,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2836_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505208,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 676.8,
+      "unit_id": "COAL_PJM_Central_PA_p3149_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505145,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 859.8080000000001,
+      "unit_id": "COAL_PJM_ComEd_p876_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505099,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 597.72,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2832_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505025,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 137.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1554_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.865388084450501,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 721.92,
+      "unit_id": "COAL_PJM_Central_PA_p3149_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505009,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 578.4,
+      "unit_id": "COAL_PJM_SWMAAC_p1573_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844505002,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 20.64,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2935_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504908,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 670.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504908,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1742.0,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8102_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504797,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 146.4,
+      "unit_id": "COAL_PJM_SWMAAC_p1554_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504789,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 330.72,
+      "unit_id": "COAL_PJM_ComEd_p883_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504784,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 271.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8226_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504729,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 102.02999999999992,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2828_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504708,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 404.5999999999999,
+      "unit_id": "COAL_PJM_West_APS_p3136_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504693,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 853.944,
+      "unit_id": "COAL_PJM_West_APS_p6004_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504456,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 849.7350000000001,
+      "unit_id": "COAL_PJM_West_APS_p3122_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504404,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 229.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504324,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 310.05,
+      "unit_id": "COAL_PJM_ComEd_p883_mustrun",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.8653880844504137,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 906.3840000000001,
+      "unit_id": "COAL_PJM_West_APS_p3122_econ",
+      "year": 2023
+    }
+  ],
+  "renewable_additions": [
+    {
+      "mw": 1500.0,
+      "tech": "wind",
+      "zone": "PJM_ComEd"
+    },
+    {
+      "mw": 6000.0,
+      "tech": "solar",
+      "zone": "PJM_Dominion"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.0789,
+    "wind": 0.41
+  },
+  "reserve_margin": -0.002851,
+  "retirements": [],
+  "rps_dual": 45.0,
+  "solar_cap_mw": 26000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 3944.876,
+  "storage_power_mw": 5603.3,
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 2500.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2023_2",
+      "zone": "PJM_AEP_Ohio"
+    }
+  ],
+  "wind_cap_mw": 14000.0,
+  "year": 2023
+}

@@ -1,0 +1,1636 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "biomass": 1990.2,
+    "coal": 47510.4933,
+    "gas_cc": 31239.3,
+    "gas_ct": 24011.041,
+    "gas_st": 13942.225,
+    "nuclear": 11658.8,
+    "oil": 3511.5
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1990.2,
+    "coal": 47510.4933,
+    "gas_cc": 31239.3,
+    "gas_ct": 24011.041,
+    "gas_st": 13942.225,
+    "nuclear": 11658.8,
+    "oil": 3511.5
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "MISO",
+  "mode": "forecast",
+  "peak_demand_mw": 118661.0,
+  "pipeline_events": [
+    {
+      "decided_year": 2023,
+      "event": "re_confirmed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 133.835,
+      "unit_id": "COAL_MISO-Illinois_p963_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "re_confirmed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 1407.2939999999999,
+      "unit_id": "COAL_MISO-East_p1733_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 673.38,
+      "unit_id": "COAL_MISO-Plains_p2107_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "re_confirmed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 598.3164,
+      "unit_id": "COAL_MISO-West_p6030_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 565.15,
+      "unit_id": "COAL_MISO-East_p6034_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 17.779999999999948,
+      "unit_id": "COAL_MISO-East_p6034_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 3.7920000000000007,
+      "unit_id": "COAL_MISO-Plains_p10861_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "re_confirmed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 2.976,
+      "unit_id": "COAL_MISO-West_p10863_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 160.8,
+      "unit_id": "COAL_MISO-Illinois_p10865_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 1.2599999999999998,
+      "unit_id": "COAL_MISO-Illinois_p57928_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 6.0,
+      "unit_id": "COAL_MISO-Illinois_p976_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 2.4,
+      "unit_id": "COAL_MISO-Illinois_p976_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 22.395541023047986,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 32.5,
+      "unit_id": "COAL_MISO-Indiana_p6085_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 22.391220854546717,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 760.5,
+      "unit_id": "COAL_MISO-Indiana_p6085_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 57.6,
+      "unit_id": "COAL_MISO-Illinois_p976_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 54.0,
+      "unit_id": "COAL_MISO-Illinois_p976_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 22.361191021498723,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 851.904,
+      "unit_id": "COAL_MISO-Indiana_p6113_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 22.35591381289721,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 62.64,
+      "unit_id": "COAL_MISO-Indiana_p6113_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 22.32349384955052,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 19.9,
+      "unit_id": "COAL_MISO-Indiana_p1001_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 22.32046221278062,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 291.535,
+      "unit_id": "COAL_MISO-Indiana_p1001_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 22.223178105449957,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 851.904,
+      "unit_id": "COAL_MISO-Indiana_p6113_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 22.142039216862905,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 340.904,
+      "unit_id": "COAL_MISO-Indiana_p6213_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 22.076468162283312,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 19.82,
+      "unit_id": "COAL_MISO-Indiana_p6213_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 21.718888548565218,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 409.94,
+      "unit_id": "COAL_MISO-Indiana_p1001_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 21.718888548565214,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 273.625,
+      "unit_id": "COAL_MISO-Indiana_p1001_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 21.278048630410154,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 34.03,
+      "unit_id": "COAL_MISO-Indiana_p994_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 21.253739496999305,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 832.0,
+      "unit_id": "COAL_MISO-Indiana_p6085_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 125.64,
+      "unit_id": "COAL_MISO-Indiana_p1012_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 7.2,
+      "unit_id": "COAL_MISO-Indiana_p1012_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 20.560985013865526,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 394.41800000000006,
+      "unit_id": "COAL_MISO-Indiana_p6213_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 20.31444822453129,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 229.767,
+      "unit_id": "COAL_MISO-Indiana_p6823_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 20.27277663197724,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 8.34,
+      "unit_id": "COAL_MISO-Indiana_p6823_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 18.35153717801183,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 359.0165,
+      "unit_id": "COAL_MISO-Indiana_p994_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 18.094535854939014,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 227.16000000000003,
+      "unit_id": "COAL_MISO-Indiana_p1012_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 17.667198604858502,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 21.359999999999957,
+      "unit_id": "COAL_MISO-Indiana_p1004_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 17.61736889941202,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.062,
+      "unit_id": "COAL_MISO-West_p6089_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 17.617368899412018,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.7600000000000002,
+      "unit_id": "COAL_MISO-West_p1943_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 17.617368899412018,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.086,
+      "unit_id": "COAL_MISO-West_p2790_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 17.283234473670692,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 465.6480000000001,
+      "unit_id": "COAL_MISO-Indiana_p1004_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 17.258563397383313,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 5.215,
+      "unit_id": "COAL_MISO-West_p2790_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 17.258563397383305,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.6550000000000002,
+      "unit_id": "COAL_MISO-West_p6089_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.51981411234605,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 9.9,
+      "unit_id": "COAL_MISO-Illinois_p1745_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.519814112346047,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.28,
+      "unit_id": "COAL_MISO-Illinois_p1831_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.519814112346047,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 3.09,
+      "unit_id": "COAL_MISO-Illinois_p1832_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.519814112346047,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 11.6,
+      "unit_id": "COAL_MISO-Illinois_p2104_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.519814112346037,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 5.6,
+      "unit_id": "COAL_MISO-Illinois_p1008_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.519814112346037,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 11.2,
+      "unit_id": "COAL_MISO-Illinois_p856_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.49570980997084,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 9.08,
+      "unit_id": "COAL_MISO-Indiana_p6639_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.49570980997083,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 14.43,
+      "unit_id": "COAL_MISO-Indiana_p6705_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.49570980997083,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 4.106,
+      "unit_id": "COAL_MISO-Plains_p1104_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.495709809970826,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 9.72,
+      "unit_id": "COAL_MISO-East_p1702_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.495709809970826,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 5.4399999999999995,
+      "unit_id": "COAL_MISO-East_p1740_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.495709809970826,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 21.3,
+      "unit_id": "COAL_MISO-East_p1743_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.073615044389452,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 3.2,
+      "unit_id": "COAL_MISO-Illinois_p1831_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.073615044389445,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 14.0,
+      "unit_id": "COAL_MISO-Illinois_p1008_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.073615044389445,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 24.75,
+      "unit_id": "COAL_MISO-Illinois_p1745_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.073615044389445,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 28.0,
+      "unit_id": "COAL_MISO-Illinois_p856_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.07361504438944,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 7.725,
+      "unit_id": "COAL_MISO-Illinois_p1832_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.07361504438944,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 29.0,
+      "unit_id": "COAL_MISO-Illinois_p2104_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.07361504438944,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 15.375,
+      "unit_id": "COAL_MISO-Illinois_p4143_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.050630051734977,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 22.924000000000003,
+      "unit_id": "COAL_MISO-West_p6030_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.049551525328187,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 10.265,
+      "unit_id": "COAL_MISO-Plains_p1104_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.04951074201423,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 0.6,
+      "unit_id": "COAL_MISO-East_p54098_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.049510742014228,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 22.7,
+      "unit_id": "COAL_MISO-Indiana_p6639_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.049510742014224,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 328.28249999999997,
+      "unit_id": "COAL_MISO-Indiana_p6705_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.04951074201422,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 24.3,
+      "unit_id": "COAL_MISO-East_p1702_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.04951074201422,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 13.6,
+      "unit_id": "COAL_MISO-East_p1740_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 16.04951074201422,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 53.25,
+      "unit_id": "COAL_MISO-East_p1743_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 15.542548112362658,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 524.9596,
+      "unit_id": "COAL_MISO-West_p6030_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 15.472742270355837,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 12.696,
+      "unit_id": "COAL_MISO-South_p51_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 15.363232210049237,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 32.808,
+      "unit_id": "COAL_MISO-South_p6009_peak",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 10.48,
+      "unit_id": "COAL_MISO-South_p1393_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 15.363232210049224,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 33.27400000000001,
+      "unit_id": "COAL_MISO-South_p6641_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 15.315696537111833,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 7.1,
+      "unit_id": "COAL_MISO-Illinois_p963_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.737349536265555,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 135.25500000000002,
+      "unit_id": "COAL_MISO-Illinois_p963_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.667629325171681,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 31.74,
+      "unit_id": "COAL_MISO-South_p51_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.586557767810989,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 9.8,
+      "unit_id": "COAL_MISO-Indiana_p6137_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.539825875203707,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 777.0,
+      "unit_id": "COAL_MISO-South_p6055_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.539825875203702,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 616.7904,
+      "unit_id": "COAL_MISO-South_p6009_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.539825875203697,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 188.176,
+      "unit_id": "COAL_MISO-South_p6190_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.539825875203697,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 499.1100000000001,
+      "unit_id": "COAL_MISO-South_p6641_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.316424695881507,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 0.706,
+      "unit_id": "COAL_MISO-East_p10234_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.17071663744642,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 18.740000000000002,
+      "unit_id": "COAL_MISO-West_p1893_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 14.170716637446407,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 10.22,
+      "unit_id": "COAL_MISO-West_p1915_peak",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 9.48,
+      "unit_id": "COAL_MISO-West_p6098_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 13.88418423167715,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 24.5,
+      "unit_id": "COAL_MISO-Indiana_p6137_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 13.317386260219408,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 357.7,
+      "unit_id": "COAL_MISO-West_p1915_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 13.317386260219406,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 285.785,
+      "unit_id": "COAL_MISO-West_p1893_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 135.09,
+      "unit_id": "COAL_MISO-West_p6098_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.794532886979455,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 44.760000000000005,
+      "unit_id": "COAL_MISO-West_p6090_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.400551548059381,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.24,
+      "unit_id": "COAL_MISO-Illinois_p10867_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.376447245684158,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.2,
+      "unit_id": "COAL_MISO-East_p50835_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.164246637110331,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 23.14,
+      "unit_id": "COAL_MISO-Illinois_p889_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.16424663711032,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 11.9,
+      "unit_id": "COAL_MISO-Illinois_p6017_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.144382665357531,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 14.218,
+      "unit_id": "COAL_MISO-Plains_p6254_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.144382665357531,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 14.884,
+      "unit_id": "COAL_MISO-Plains_p6664_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.144382665357531,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 13.075999999999999,
+      "unit_id": "COAL_MISO-Plains_p7343_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.144382665357528,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 10.116,
+      "unit_id": "COAL_MISO-Plains_p1091_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.144382665357528,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 49.76,
+      "unit_id": "COAL_MISO-Plains_p2103_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.144382665357526,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 24.880000000000003,
+      "unit_id": "COAL_MISO-Plains_p6155_peak",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 7.796,
+      "unit_id": "COAL_MISO-East_p4271_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.14014233473511,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 22.998000000000005,
+      "unit_id": "COAL_MISO-East_p8023_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.140142334735108,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 27.819999999999936,
+      "unit_id": "COAL_MISO-East_p1710_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.140142334735108,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 61.32,
+      "unit_id": "COAL_MISO-East_p1733_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 12.140142334735106,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 9.1,
+      "unit_id": "COAL_MISO-Indiana_p997_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.758468470560752,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1049.622,
+      "unit_id": "COAL_MISO-West_p6090_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.305260360481418,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 3.1,
+      "unit_id": "COAL_MISO-Illinois_p10867_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.281156058106204,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 3.0,
+      "unit_id": "COAL_MISO-East_p50835_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.033456073281139,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 139.23,
+      "unit_id": "COAL_MISO-Illinois_p6017_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.033456073281139,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 337.844,
+      "unit_id": "COAL_MISO-Illinois_p889_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.017449777125854,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 233.4066,
+      "unit_id": "COAL_MISO-Plains_p7343_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.01744977712585,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 203.91080000000002,
+      "unit_id": "COAL_MISO-Plains_p6664_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.017449777125849,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1161.896,
+      "unit_id": "COAL_MISO-Plains_p2103_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.017449777125847,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 349.74,
+      "unit_id": "COAL_MISO-Plains_p2107_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.017449777125842,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 163.87919999999997,
+      "unit_id": "COAL_MISO-Plains_p1091_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.017449777125842,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 218.9572,
+      "unit_id": "COAL_MISO-Plains_p6254_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.017449777125838,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 12.07,
+      "unit_id": "COAL_MISO-Plains_p1047_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.009351770905921,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 528.58,
+      "unit_id": "COAL_MISO-East_p1710_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 11.00935177090592,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 424.78400000000005,
+      "unit_id": "COAL_MISO-East_p4041_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 10.476002457263379,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1.5199999999999998,
+      "unit_id": "COAL_MISO-Plains_p1073_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 10.209509084215695,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 46.935,
+      "unit_id": "COAL_MISO-West_p2790_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 10.20950908421569,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 25.488,
+      "unit_id": "COAL_MISO-West_p6089_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 10.209509084215687,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 66.24,
+      "unit_id": "COAL_MISO-West_p1943_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 10.209509084215687,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 62.1,
+      "unit_id": "COAL_MISO-West_p1943_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 10.209509084215686,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 23.895,
+      "unit_id": "COAL_MISO-West_p6089_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 10.209509084215682,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 50.06399999999999,
+      "unit_id": "COAL_MISO-West_p2790_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 9.998397512634131,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 6.7,
+      "unit_id": "COAL_MISO-Illinois_p10865_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 9.920679899080703,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 60.21000000000001,
+      "unit_id": "COAL_MISO-Plains_p1167_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 9.779012096725737,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 25.400000000000002,
+      "unit_id": "COAL_MISO-East_p6034_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 9.021827270299362,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 0.665,
+      "unit_id": "COAL_MISO-West_p54210_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 8.585106964758396,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 16.75,
+      "unit_id": "COAL_MISO-Illinois_p10865_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 8.32492566304708,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 661.6700000000001,
+      "unit_id": "COAL_MISO-East_p6034_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 78.80999999999997,
+      "unit_id": "COAL_MISO-Illinois_p963_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 7.667332250239076,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 580.992,
+      "unit_id": "COAL_MISO-Indiana_p1004_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 7.212861702039711,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 8.336,
+      "unit_id": "COAL_MISO-East_p4050_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.8404222941551645,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 98.54400000000001,
+      "unit_id": "COAL_MISO-Plains_p1104_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.840422294155161,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 92.385,
+      "unit_id": "COAL_MISO-Plains_p1104_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.83393536650651,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 237.6,
+      "unit_id": "COAL_MISO-Illinois_p1745_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.833935366506502,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 147.6,
+      "unit_id": "COAL_MISO-Illinois_p4143_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.833935366506501,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 28.8,
+      "unit_id": "COAL_MISO-Illinois_p1831_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.833935366506499,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 138.375,
+      "unit_id": "COAL_MISO-Illinois_p4143_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.8339353665064975,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 69.525,
+      "unit_id": "COAL_MISO-Illinois_p1832_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.833935366506492,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 261.0,
+      "unit_id": "COAL_MISO-Illinois_p2104_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.833935366506487,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 222.75,
+      "unit_id": "COAL_MISO-Illinois_p1745_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.833935366506486,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 278.4,
+      "unit_id": "COAL_MISO-Illinois_p2104_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.8339353665064815,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 126.0,
+      "unit_id": "COAL_MISO-Illinois_p1008_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.8339353665064815,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 30.72,
+      "unit_id": "COAL_MISO-Illinois_p1831_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.8339353665064815,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 252.0,
+      "unit_id": "COAL_MISO-Illinois_p856_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.809831064131291,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 5.76,
+      "unit_id": "COAL_MISO-East_p54098_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.809831064131285,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 5.4,
+      "unit_id": "COAL_MISO-East_p54098_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.8098310641312825,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 233.28,
+      "unit_id": "COAL_MISO-East_p1702_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.809831064131276,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 479.25,
+      "unit_id": "COAL_MISO-East_p1743_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.809831064131275,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 217.92,
+      "unit_id": "COAL_MISO-Indiana_p6639_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.8098310641312745,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 511.2,
+      "unit_id": "COAL_MISO-East_p1743_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.8098310641312745,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.835,
+      "unit_id": "COAL_MISO-East_p50933_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.809831064131271,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 218.7,
+      "unit_id": "COAL_MISO-East_p1702_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.809831064131268,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 130.56,
+      "unit_id": "COAL_MISO-East_p1740_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 6.809831064131267,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 3.024,
+      "unit_id": "COAL_MISO-East_p50933_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.483396023909364,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 285.65999999999997,
+      "unit_id": "COAL_MISO-South_p51_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.483396023909353,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 304.70399999999995,
+      "unit_id": "COAL_MISO-South_p51_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.314545340946591,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.79,
+      "unit_id": "COAL_MISO-West_p10863_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.203809181461248,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 30.426,
+      "unit_id": "COAL_MISO-Plains_p1082_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.19911807915325,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 297.12,
+      "unit_id": "COAL_MISO-South_p6190_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.199118079153241,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 310.8,
+      "unit_id": "COAL_MISO-South_p6055_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.1991180791532345,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 343.21999999999997,
+      "unit_id": "COAL_MISO-South_p1393_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.199118079153225,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 497.44629999999995,
+      "unit_id": "COAL_MISO-South_p6641_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.05463354564495,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.7,
+      "unit_id": "COAL_MISO-West_p54213_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.054633545644929,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 3.12,
+      "unit_id": "COAL_MISO-West_p54212_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.0546335456449265,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 3.375,
+      "unit_id": "COAL_MISO-West_p54533_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.054633545644922,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.88,
+      "unit_id": "COAL_MISO-West_p54213_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.0546335456449185,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 143.08,
+      "unit_id": "COAL_MISO-West_p1915_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.054633545644918,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 2.925,
+      "unit_id": "COAL_MISO-West_p54212_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.054633545644918,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 3.6,
+      "unit_id": "COAL_MISO-West_p54533_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 5.054633545644909,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 412.28000000000003,
+      "unit_id": "COAL_MISO-West_p1893_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 4.143494105646926,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 8.58,
+      "unit_id": "COAL_MISO-West_p8222_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 3.849313555354359,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 17.769999999999996,
+      "unit_id": "COAL_MISO-East_p4078_peak",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 32.6,
+      "unit_id": "COAL_MISO-Illinois_p55856_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 3.544079862380244,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 220.5,
+      "unit_id": "COAL_MISO-Indiana_p6137_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 3.5440798623802388,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 235.2,
+      "unit_id": "COAL_MISO-Indiana_p6137_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 3.4979125509873286,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 5.2,
+      "unit_id": "COAL_MISO-Plains_p10864_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 3.0821758564389388,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 15.884999999999998,
+      "unit_id": "COAL_MISO-East_p10234_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 3.082175856438936,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 16.944,
+      "unit_id": "COAL_MISO-East_p10234_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 2.814587525029498,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 1045.146,
+      "unit_id": "COAL_MISO-West_p6090_mustrun",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 2.8145875250294843,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 98.47199999999997,
+      "unit_id": "COAL_MISO-West_p6090_econ",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 2.7227435155778563,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 342.2925,
+      "unit_id": "COAL_MISO-Plains_p1082_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 2.604081195548411,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 13.600000000000001,
+      "unit_id": "COAL_MISO-South_p56456_peak",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 1.3579502017048566,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 148.005,
+      "unit_id": "COAL_MISO-West_p8222_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 1.1325866647721452,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 396.2709999999999,
+      "unit_id": "COAL_MISO-East_p4078_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2024,
+      "event": "decided",
+      "execute_year": 2027,
+      "fuel": "coal",
+      "mw": 788.92,
+      "unit_id": "COAL_MISO-Illinois_p55856_committed",
+      "year": 2025
+    },
+    {
+      "depth_usd_per_kw_yr": 0.7432889150158466,
+      "event": "entry_capped",
+      "fuel": "coal",
+      "mw": 13.0,
+      "unit_id": "COAL_MISO-Plains_p10864_committed",
+      "year": 2025
+    }
+  ],
+  "renewable_additions": [],
+  "renewable_credit_applied": {
+    "solar": 0.18,
+    "wind": 0.166
+  },
+  "reserve_margin": 0.186901,
+  "retirements": [],
+  "rps_dual": 0.0,
+  "solar_cap_mw": 19000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [
+    {
+      "duration_h": 100.0,
+      "mw": 351.84000000000003,
+      "tech": "iron_air",
+      "unit_id": "MISO-West_iron_air_new_2025_0",
+      "zone": "MISO-West"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 332.40000000000003,
+      "tech": "iron_air",
+      "unit_id": "MISO-Plains_iron_air_new_2025_0",
+      "zone": "MISO-Plains"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 162.23999999999998,
+      "tech": "iron_air",
+      "unit_id": "MISO-Illinois_iron_air_new_2025_0",
+      "zone": "MISO-Illinois"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 321.6,
+      "tech": "iron_air",
+      "unit_id": "MISO-Indiana_iron_air_new_2025_0",
+      "zone": "MISO-Indiana"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 581.28,
+      "tech": "iron_air",
+      "unit_id": "MISO-East_iron_air_new_2025_0",
+      "zone": "MISO-East"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 650.64,
+      "tech": "iron_air",
+      "unit_id": "MISO-South_iron_air_new_2025_0",
+      "zone": "MISO-South"
+    }
+  ],
+  "storage_firm_mw": 4890.91,
+  "storage_power_mw": 5287.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 44000.0,
+  "year": 2025
+}

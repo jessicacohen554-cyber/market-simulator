@@ -1,0 +1,409 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "biomass": 1998.4,
+    "coal": 34861.967,
+    "gas_cc": 56315.636,
+    "gas_ct": 28143.463754,
+    "gas_st": 10357.555,
+    "nuclear": 28575.1,
+    "oil": 4187.7
+  },
+  "fleet_by_fuel_before": {
+    "biomass": 1999.4,
+    "coal": 34861.967,
+    "gas_cc": 53815.636,
+    "gas_ct": 25789.97,
+    "gas_st": 10357.555,
+    "nuclear": 28575.1,
+    "oil": 4187.7
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "PJM",
+  "mode": "forecast",
+  "peak_demand_mw": 160560.0,
+  "pipeline_events": [
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 1020.9459999999999,
+      "unit_id": "COAL_PJM_SWMAAC_p602_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 34.45,
+      "unit_id": "COAL_PJM_ComEd_p883_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 229.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 25.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p884_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 33.5,
+      "unit_id": "COAL_PJM_SWMAAC_p1571_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 13.4,
+      "unit_id": "COAL_PJM_SWMAAC_p1571_peak",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 542.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1573_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 60.25,
+      "unit_id": "COAL_PJM_SWMAAC_p1573_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 282.15,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2836_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 12.540000000000001,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2836_peak",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 74.5,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 29.8,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2866_peak",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 6.84,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2914_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 0.7599999999999999,
+      "unit_id": "COAL_PJM_AEP_Ohio_p2914_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 50.3,
+      "unit_id": "COAL_PJM_Dominion_p3797_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 20.119999999999997,
+      "unit_id": "COAL_PJM_Dominion_p3797_peak",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 319.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6018_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 268.8,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6018_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 12.0,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6018_peak",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 626.4,
+      "unit_id": "COAL_PJM_AEP_Ohio_p6019_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 594.606,
+      "unit_id": "COAL_PJM_Dominion_p7213_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 28.25,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8226_committed",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 271.2,
+      "unit_id": "COAL_PJM_AEP_Ohio_p8226_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 66.0,
+      "unit_id": "COAL_PJM_Central_PA_p10143_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 22.747,
+      "unit_id": "COAL_PJM_Central_PA_p10343_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 14.0,
+      "unit_id": "COAL_PJM_Central_PA_p10603_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 81.0,
+      "unit_id": "COAL_PJM_West_APS_p10678_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 86.4,
+      "unit_id": "COAL_PJM_West_APS_p10678_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 16.245,
+      "unit_id": "COAL_PJM_Central_PA_p50397_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 8.4,
+      "unit_id": "COAL_PJM_Central_PA_p50611_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 39.84,
+      "unit_id": "COAL_PJM_Central_PA_p50776_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 36.288000000000004,
+      "unit_id": "COAL_PJM_Central_PA_p50888_econ",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 19.35,
+      "unit_id": "COAL_PJM_Dominion_p50900_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 38.06999999999999,
+      "unit_id": "COAL_PJM_West_APS_p50974_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 18.990000000000002,
+      "unit_id": "COAL_PJM_ComEd_p54556_mustrun",
+      "year": 2025
+    },
+    {
+      "decided_year": 2023,
+      "event": "reversed",
+      "execute_year": 2026,
+      "fuel": "coal",
+      "mw": 38.7,
+      "unit_id": "COAL_PJM_Central_PA_p54634_mustrun",
+      "year": 2025
+    }
+  ],
+  "renewable_additions": [
+    {
+      "mw": 1500.0,
+      "tech": "wind",
+      "zone": "PJM_ComEd"
+    },
+    {
+      "mw": 6000.0,
+      "tech": "solar",
+      "zone": "PJM_Dominion"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.0789,
+    "wind": 0.41
+  },
+  "reserve_margin": -0.109077,
+  "retirements": [
+    {
+      "fuel": "biomass",
+      "mw": 1.0,
+      "reason": "known",
+      "unit_id": "58439_CBE01"
+    }
+  ],
+  "rps_dual": 45.0,
+  "solar_cap_mw": 38000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [],
+  "storage_firm_mw": 3944.876,
+  "storage_power_mw": 5603.3,
+  "thermal_additions": [
+    {
+      "eia860_id": null,
+      "fuel": "gas_cc",
+      "mw": 2500.0,
+      "source": "economic",
+      "unit_id": "gas_cc_new_2025_2",
+      "zone": "PJM_AEP_Ohio"
+    },
+    {
+      "eia860_id": null,
+      "fuel": "gas_ct",
+      "mw": 2353.4937538456747,
+      "source": "reserve_backstop",
+      "unit_id": "gas_ct_adequacy_2025",
+      "zone": "PJM_AEP_Ohio"
+    }
+  ],
+  "wind_cap_mw": 17000.0,
+  "year": 2025
+}
