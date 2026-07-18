@@ -2579,6 +2579,8 @@ def solve_and_persist(
     ercot_gas_bridge_min_load_frac: float | None = None,
     ercot_gas_bridge_startup: bool | None = None,
     ercot_gas_bridge_da_horizon: bool | None = None,
+    ercot_commitment_posture: bool | None = None,
+    ercot_commitment_posture_min_load_frac: float | None = None,
     reliability_floor: bool | None = None,
     scarcity_price_overlay: bool | None = None,
     caiso_scarcity_pricing: bool | None = None,
@@ -3142,6 +3144,16 @@ def solve_and_persist(
         if ercot_gas_commitment_bridge is not None:
             recorded_cfg = recorded_cfg.with_overrides(
                 ercot_gas_commitment_bridge=ercot_gas_commitment_bridge
+            )
+        if ercot_commitment_posture is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_commitment_posture=ercot_commitment_posture
+            )
+        if ercot_commitment_posture_min_load_frac is not None:
+            recorded_cfg = recorded_cfg.with_overrides(
+                ercot_commitment_posture_min_load_frac=(
+                    ercot_commitment_posture_min_load_frac
+                )
             )
         if carry_operating_mothballs is not None:
             recorded_cfg = recorded_cfg.with_overrides(
@@ -3768,6 +3780,10 @@ def solve_and_persist(
             ercot_gas_bridge_min_load_frac=ercot_gas_bridge_min_load_frac,
             ercot_gas_bridge_startup=ercot_gas_bridge_startup,
             ercot_gas_bridge_da_horizon=ercot_gas_bridge_da_horizon,
+            ercot_commitment_posture=ercot_commitment_posture,
+            ercot_commitment_posture_min_load_frac=(
+                ercot_commitment_posture_min_load_frac
+            ),
             carry_operating_mothballs=carry_operating_mothballs,
             reliability_floor=reliability_floor,
             scarcity_price_overlay=scarcity_price_overlay,
@@ -4226,6 +4242,10 @@ def solve_and_persist(
         "ercot_gas_bridge_min_load_frac": ercot_gas_bridge_min_load_frac,
         "ercot_gas_bridge_startup": ercot_gas_bridge_startup,
         "ercot_gas_bridge_da_horizon": ercot_gas_bridge_da_horizon,
+        "ercot_commitment_posture": ercot_commitment_posture,
+        "ercot_commitment_posture_min_load_frac": (
+            ercot_commitment_posture_min_load_frac
+        ),
         "carry_operating_mothballs": carry_operating_mothballs,
         "reliability_floor": reliability_floor,
         # Net-load deployment drags — persisted so the legitimacy-diagnostics
@@ -8016,6 +8036,31 @@ def main() -> None:
         "ERCOT-62b monkeypatch construction (any gap length).",
     )
     parser.add_argument(
+        "--ercot-commitment-posture",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help="ERCOT COMMITMENT POSTURE (the commitment-thinness lane, "
+        "docs/handoffs/ercot-commitment-thinness-2026-07.md): the STANDALONE "
+        "energy-only port of the pooled-linear posture lever (design note §A). "
+        "Per (zone x gas-class) merchant-gas pool, an online-capacity variable "
+        "U with energy headroom (sum P <= U), CEMS-measured min-load coupling "
+        "(sum P >= mlf*U), and an NREL-table cyclic startup charge on dU+ — "
+        "reserve-decoupled (ERCOT's ORDC co-opt has no pergen substrate), so "
+        "it thins the online cheap CC and shifts peaks to fast-start CT "
+        "without touching the reserve design. Fast-start CT exempt by physics "
+        "(rule 18); coal/gas_st/CHP excluded by rule 19. ERCOT-only; default "
+        "off (byte-identical).",
+    )
+    parser.add_argument(
+        "--ercot-commitment-posture-min-load-frac",
+        type=float,
+        default=None,
+        help="Min-load fraction for the postured gas-CC pools "
+        "(--ercot-commitment-posture; default 0.574 — the measured ERCOT "
+        "committed-CC LSL/HSL capacity-weighted p50, 60-Day DAM disclosure "
+        "2023-2025; frozen, rule 23, never swept to move the residual).",
+    )
+    parser.add_argument(
         "--carry-operating-mothballs",
         action=argparse.BooleanOptionalAction,
         default=None,
@@ -9200,6 +9245,10 @@ def main() -> None:
         ercot_gas_bridge_min_load_frac=args.ercot_gas_bridge_min_load_frac,
         ercot_gas_bridge_startup=args.ercot_gas_bridge_startup,
         ercot_gas_bridge_da_horizon=args.ercot_gas_bridge_da_horizon,
+        ercot_commitment_posture=args.ercot_commitment_posture,
+        ercot_commitment_posture_min_load_frac=(
+            args.ercot_commitment_posture_min_load_frac
+        ),
         reliability_floor=args.reliability_floor,
         scarcity_price_overlay=args.scarcity_price_overlay,
         caiso_scarcity_pricing=args.caiso_scarcity_pricing,

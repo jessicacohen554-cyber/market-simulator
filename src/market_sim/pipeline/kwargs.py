@@ -361,4 +361,60 @@ def _log_reserve_coopt(
         )
 
 
-__all__ = ["build_base_dispatch_kwargs", "apply_reserve_coopt"]
+def apply_ercot_commitment_posture(
+    dispatch_kwargs: dict,
+    config,
+    fleet_arrays: "FleetArrays",
+) -> bool:
+    """Merge the ERCOT standalone energy-only commitment-posture kwargs.
+
+    Gated on ``config.ercot_commitment_posture`` (ERCOT-only). Unlike the
+    MISO/CAISO/PJM posture — which rides the pergen RESERVE pool and enters via
+    :func:`apply_reserve_coopt` — the ERCOT posture is reserve-decoupled (ERCOT
+    has no pergen substrate), so its ``posture_gen_idx``/``posture_col``/
+    ``posture_mlf``/``posture_startup`` are threaded as their own dispatch
+    kwargs (design note §A; ``docs/handoffs/ercot-commitment-thinness-2026-07.md``).
+    Returns True when the posture was merged (a no-op otherwise, byte-identical).
+    """
+    if str(getattr(config, "iso", "")) != "ERCOT":
+        return False
+    if not getattr(config, "ercot_commitment_posture", False):
+        return False
+    from market_sim.config.reserve_config import ercot_commitment_posture_spec
+
+    spec = ercot_commitment_posture_spec(config, fleet_arrays)
+    if spec is None:
+        logger.info(
+            "ERCOT COMMITMENT POSTURE (ercot_commitment_posture): ON but no "
+            "postured pools (all merchant-gas pools fast-start-exempt) — no-op"
+        )
+        return False
+    gen_idx, col, mlf, startup = spec
+    dispatch_kwargs.update(
+        posture_gen_idx=gen_idx,
+        posture_col=col,
+        posture_mlf=mlf,
+        posture_startup=startup,
+    )
+    q = int(mlf.size)
+    logger.info(
+        "ERCOT COMMITMENT POSTURE (ercot_commitment_posture): %d postured "
+        "(zone, gas-class) pool(s) over %d merchant-gas members (fast-start CT "
+        "exempt by physics, rule 18), mlf %.3f-%.3f (measured LSL/HSL p50), "
+        "startup $%.0f-$%.0f/MW (NREL class tables) — energy-only, reserve "
+        "design untouched (rule 19)",
+        q,
+        int(gen_idx.size),
+        float(mlf.min()),
+        float(mlf.max()),
+        float(startup.min()),
+        float(startup.max()),
+    )
+    return True
+
+
+__all__ = [
+    "build_base_dispatch_kwargs",
+    "apply_reserve_coopt",
+    "apply_ercot_commitment_posture",
+]
