@@ -54,6 +54,7 @@ from market_sim.data.confirmed_retirements import (
     load_announced_reversal_plants,
     load_confirmed_exits,
 )
+from market_sim.data.outages import apply_correlated_outage_derate
 from market_sim.data.fuel import (
     apply_coal_supply_pricing,
     resolve_annual_gas_price,
@@ -1052,6 +1053,15 @@ def run_scenario_iso(config: ScenarioConfig, iso: str) -> str:
         # must run before the reserve-co-opt inputs are assembled so the
         # shared-headroom RHS sees the derated availability.
         apply_neiso_coldsnap_derate(fleet_arrays, config, iso, year)
+        # Correlated cold-event forced-outage derate (FF-1B; gate-and-log
+        # wrapper data/outages.apply_correlated_outage_derate). Gated on
+        # correlated_forced_outage (default off -- byte-identical) and
+        # forecast/hindcast mode only (backcast carries the measured CAMPD
+        # outage overlays instead -- charter D.5). Must run here, before the
+        # LP bounds and the post-solve ORDC reserve read availability, so a
+        # deep-cold event thins both the dispatchable stack and the ORDC
+        # point reserve (charter D.6: the mean-availability channel).
+        apply_correlated_outage_derate(fleet_arrays, config, iso, year)
 
         fuel_prices = resolve_fuel_prices(config, fleet_arrays, year)
         # Reprice CAMPD coal bins by plant fuel supply (mine-mouth
