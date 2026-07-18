@@ -762,7 +762,15 @@ def _posture_frame(
     zone_lab = np.array([zone_names[z] for z in zone_idx], dtype=object)
     fuel_lab = np.array([FUEL_TYPE_NAMES[f] for f in fuel_idx], dtype=object)
     su = np.asarray(result.posture_startup_mw, dtype=np.float32)
-    r = np.asarray(result.posture_reserve_mw, dtype=np.float32)
+    # Cleared reserve is present only for the pergen posture (MISO/CAISO/PJM);
+    # the standalone ERCOT energy-only posture (ercot_commitment_posture) has no
+    # reserve coupling, so posture_reserve_mw is None -> report 0.
+    r_raw = getattr(result, "posture_reserve_mw", None)
+    r = (
+        np.zeros(q * T, dtype=np.float32)
+        if r_raw is None
+        else np.asarray(r_raw, dtype=np.float32).reshape(-1)
+    )
     df = pd.DataFrame(
         {
             "zone": np.repeat(zone_lab, T),
@@ -770,7 +778,7 @@ def _posture_frame(
             "hour": np.tile(np.arange(T, dtype=np.int32), q),
             "online_mw": np.asarray(u, dtype=np.float32).reshape(-1),
             "startup_mw": su.reshape(-1),
-            "reserve_mw": r.reshape(-1),
+            "reserve_mw": r,
         }
     )
     df.insert(0, "pass", pass_label)
