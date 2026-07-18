@@ -4821,30 +4821,40 @@ class ScenarioConfig:
     nuclear_unit_availability: bool = False
 
     # ERCOT measured CLASS-day thermal availability (default off, ERCOT
-    # backcast-gated). Rescales the covered gas classes' (CC_REGULAR,
-    # CT_PEAKER) finished availability so each class-day MEAN equals the
-    # measured 60-Day DAM disclosure fraction — config-collapsed live
-    # Gen_Resource HSL over site ratings (an OUT resource counts zero; an OFF
-    # resource counts its reported HSL: commitment state is not an
-    # availability event). data/raw/ercot-thermal-dam-availability.csv,
-    # scripts/data/derive_ercot_thermal_dam_availability.py. A RESCALE, not a
-    # stacked multiplier: the measured fraction and the statistical WEFOR/EFOR
-    # + outage-window stack estimate the SAME quantity, so the class total is
-    # set to the measured value while the model's own windows remain the
-    # within-class distribution. Motivation (June/Sep-2023 scarcity-formation
-    # forensics, docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md):
-    # the statistical stack ran the gas fleet 13-22 % derated at the
-    # summer-evening reserve margin where the disclosure shows ~97 % of
-    # ratings live — a 2.6-4.1 GW phantom headroom deficit vs measured
-    # RTOLCAP+RTOFFCAP that forced the co-opt's per-product shortfall ladders
-    # to print $417-1,250 into the June/Sep-2023 energy duals on days measured
-    # RTORPA was <= $15 (June-2023 +22 %, Sep-2023 +19 % overshoots). The
-    # measured HSL is a published MW capability quantity, never a price (rule
-    # 13); forecast years keep the statistical stack (the expected-value
-    # forward analogue — the G4 mode-aware seam). Uncovered dates (Oct-2023
-    # publication hole; Nov-Dec 2025 until the 2026 files land) keep the
-    # statistical model. See data.outages.ercot_thermal_dam_availability_series
-    # and the application in data.fleet.generators_to_fleet_arrays.
+    # backcast-gated). Sets the covered gas classes' (CC_REGULAR, CT_PEAKER,
+    # ST_GAS) class-day MEAN availability to the measured 60-Day DAM disclosure
+    # fraction — config-collapsed live Gen_Resource HSL over site ratings (an
+    # OUT resource counts zero; an OFF resource counts its reported HSL:
+    # commitment state is not an availability event).
+    # data/raw/ercot-thermal-dam-availability.csv,
+    # scripts/data/derive_ercot_thermal_dam_availability.py.
+    #
+    # SEMANTICS (measured-availability backcast re-architecture, 2026-07-18): the
+    # DAM class-day fraction is the AUTHORITY — it REPLACES the statistical
+    # WEFOR/EFOR for the covered classes (pair with wefor_residual so the
+    # pre-overlay availability is the sub-detector residual, not the full
+    # statistical stack). Applied by a BIDIRECTIONAL cap-1.0 water-fill
+    # (data.fleet): where the measured target exceeds the CAMPD-derived class
+    # total it RESTORES capacity to derated units — reviving units the CAMPD
+    # full-stop override zeroed as phantom idles (the prior multiplicative
+    # rescale could not: 0 x r stays 0, so a class-day mean rescale left the
+    # ercot82 April-CC over-removal in place when the rest of the class had no
+    # 1.0-headroom); where the target is below it, it REMOVES more (the summer
+    # under-removal case, DAM carries more outage than the >=5-day windows
+    # found). The model's own windows remain the within-class shape below the
+    # measured level. Motivation (June/Sep-2023 scarcity-formation forensics,
+    # docs/DIAGNOSIS-ercot-june2023-scarcity-formation-2026-07.md): the
+    # statistical stack ran the gas fleet 13-22 % derated at the summer-evening
+    # reserve margin vs the disclosure's measured live ratings. The measured HSL
+    # is a published MW capability quantity, never a price (rule 13); forecast
+    # years keep the statistical stack (the expected-value forward analogue — the
+    # G4 mode-aware seam). Uncovered dates (Oct-2023 publication hole; Nov-Dec
+    # 2025 until the 2026 files land) keep the pre-overlay availability. CHP and
+    # coal are deliberately NOT DAM-covered (rule 14: no CHP flag / partly
+    # behind-the-meter; coal is better at CAMPD unit grain) — they rely on the
+    # CAMPD windows + wefor_residual instead. See
+    # data.outages.ercot_thermal_dam_availability_series and the application in
+    # data.fleet.generators_to_fleet_arrays.
     ercot_thermal_dam_availability: bool = False
 
     # ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated
