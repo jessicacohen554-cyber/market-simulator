@@ -5775,6 +5775,438 @@
       ]
     },
     {
+      "param_id": "correlated_outage_curve.ERCOT.post.CC_REGULAR.cap",
+      "display_name": "Correlated Outage Curve / Ercot / Post / Cc Regular / Cap",
+      "value": 0.157,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.CC_REGULAR.slope_per_c",
+      "display_name": "Correlated Outage Curve / Ercot / Post / Cc Regular / Slope Per C",
+      "value": 0.0605,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.CC_REGULAR.winter_event_share",
+      "display_name": "Correlated Outage Curve / Ercot / Post / Cc Regular / Winter Event Share",
+      "value": 0.0011,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.COAL.cap",
+      "display_name": "Correlated Outage Curve / Ercot / Post / Coal / Cap",
+      "value": 0.077,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.COAL.slope_per_c",
+      "display_name": "Correlated Outage Curve / Ercot / Post / Coal / Slope Per C",
+      "value": 0.0204,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.COAL.winter_event_share",
+      "display_name": "Correlated Outage Curve / Ercot / Post / Coal / Winter Event Share",
+      "value": 0.0004,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.CT_PEAKER.cap",
+      "display_name": "Correlated Outage Curve / Ercot / Post / Ct Peaker / Cap",
+      "value": 0.466,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.CT_PEAKER.slope_per_c",
+      "display_name": "Correlated Outage Curve / Ercot / Post / Ct Peaker / Slope Per C",
+      "value": 0.1878,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.CT_PEAKER.winter_event_share",
+      "display_name": "Correlated Outage Curve / Ercot / Post / Ct Peaker / Winter Event Share",
+      "value": 0.0033,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.ST_GAS.cap",
+      "display_name": "Correlated Outage Curve / Ercot / Post / St Gas / Cap",
+      "value": 0.306,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.ST_GAS.slope_per_c",
+      "display_name": "Correlated Outage Curve / Ercot / Post / St Gas / Slope Per C",
+      "value": 0.1304,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.post.ST_GAS.winter_event_share",
+      "display_name": "Correlated Outage Curve / Ercot / Post / St Gas / Winter Event Share",
+      "value": 0.0023,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.CC_REGULAR.cap",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / Cc Regular / Cap",
+      "value": 0.438,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.CC_REGULAR.slope_per_c",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / Cc Regular / Slope Per C",
+      "value": 0.0618,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.CC_REGULAR.winter_event_share",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / Cc Regular / Winter Event Share",
+      "value": 0.0029,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.COAL.cap",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / Coal / Cap",
+      "value": 0.27,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.COAL.slope_per_c",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / Coal / Slope Per C",
+      "value": 0.0381,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.COAL.winter_event_share",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / Coal / Winter Event Share",
+      "value": 0.0018,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.CT_PEAKER.cap",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / Ct Peaker / Cap",
+      "value": 0.556,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.CT_PEAKER.slope_per_c",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / Ct Peaker / Slope Per C",
+      "value": 0.0784,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.CT_PEAKER.winter_event_share",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / Ct Peaker / Winter Event Share",
+      "value": 0.0037,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.ST_GAS.cap",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / St Gas / Cap",
+      "value": 0.552,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.ST_GAS.slope_per_c",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / St Gas / Slope Per C",
+      "value": 0.0779,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "correlated_outage_curve.ERCOT.pre.ST_GAS.winter_event_share",
+      "display_name": "Correlated Outage Curve / Ercot / Pre / St Gas / Winter Event Share",
+      "value": 0.0037,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event excess forced-outage curves by ISO, winterization era and plant group (FF-1B Stage 1; design charter docs/handoffs/ercot-retirement-composition-2026-07-16.md Part D). Consumed by data/outages.apply_correlated_outage_derate (forecast/hindcast only, gated on ScenarioConfig.correlated_forced_outage): per class, excess(T) = clip(slope_per_c * (t0 - TMIN_sys), 0, cap) on the system daily MIN temperature, subtracted from availability, with winter_event_share (the era's climatological Dec-Feb mean of the curve) added back so the correlated model RELOCATES the cold-event share embedded in the flat GADS-based WEFOR instead of stacking on it.  Source: scripts/derive_correlated_outage_curve.py (frozen derive, rule 23 -- re-run only when the CAMPD / weather / EIA-930 source data updates; never hand-tune an entry to a residual). Measured from CAMPD TX unit-level hourly gross load on net-load-certified scarcity event days (in-merit certificate), excess over the NERC-GADS EFORD baseline: pre era anchored at Winter Storm Uri (2021-02-16, system TMIN -14.1 C; capacity-weighted thermal excess ~44%, consistent with the FERC/NERC Feb-2021 Cold Weather Report's ~half-the-fleet peak loss), post era fitted on Winter Storms Elliott (2022-12-23) and Heather (2024-01-16). Era boundary = PUCT weatherization rule 16 TAC 25.55 (adopted Oct-2021, phase-1 compliance winter 2021-22): the weatherized fleet demonstrates roughly half the pre-era saturation depth. CHP classes and nuclear are deliberately absent (host-loaded gross output / no CAMPD trace cannot certify availability -- the STP-1 Uri trip is a known under-coverage). ERCOT-fitted; the table carries no generic fallback (rule 25 -- a curve fitted on one ISO's events never crosses an ISO boundary).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "ct_commitment_params",
       "display_name": "Ct Commitment Params",
       "value": [
@@ -18755,6 +19187,25 @@
       ]
     },
     {
+      "param_id": "scenario.caiso_ra_startup_trajectory",
+      "display_name": "Caiso Ra Startup Trajectory",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "CAISO RA bridge STARTUP-",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.caiso_reference_price_seam",
       "display_name": "Caiso Reference Price Seam",
       "value": false,
@@ -21134,6 +21585,82 @@
       ]
     },
     {
+      "param_id": "scenario.correlated_forced_outage",
+      "display_name": "Correlated Forced Outage",
+      "value": false,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Correlated cold-event forced-outage",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.correlated_outage_sigma_scale",
+      "display_name": "Correlated Outage Sigma Scale",
+      "value": 1.0,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "ORDC reserve-error sigma",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.correlated_outage_t0_c",
+      "display_name": "Correlated Outage T0 C",
+      "value": -7.0,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "Hinge onset (deg C, ~20 degF): above",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.correlated_outage_winterized_year",
+      "display_name": "Correlated Outage Winterized Year",
+      "value": 2022,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "First weather-driver year",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.ct_committed_hr_mult",
       "display_name": "Ct Committed Hr Mult",
       "value": 1.28,
@@ -22045,6 +22572,42 @@
       ]
     },
     {
+      "param_id": "scenario.ercot_commitment_posture",
+      "display_name": "Ercot Commitment Posture",
+      "value": false,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 1,
+      "source": "ERCOT COMMITMENT POSTURE (default off, ERCOT-gated — the commitment- thinness lane, docs/handoffs/ercot-commitment-thinness-2026-07.md): the STANDALONE energy-only port of the pooled-linear commitment-posture lever (design note docs/multi-iso/miso-scarcity-posture-design-2026-07.md §A). MISO/CAISO/PJM ride the pergen RESERVE pool; ERCOT runs a fleet-wide ORDC co-opt with no pergen substrate, so the posture is built reserve-decoupled (pipeline.kwargs.apply_ercot_commitment_posture -> reserve_config.ercot_commitment_posture_spec -> dispatch posture_* kwargs). Per (zone x gas-class) merchant-gas pool p, a continuous online-capacity variable U[p,t] in [0, Σ pmax·availability] with (i) energy headroom Σ P <= U (a pool cannot dispatch more than the capacity it keeps online), (ii) the CEMS-measured min-load coupling Σ P >= mlf·U (being online costs min-load energy at the committed band; NOT a floor — forces no exogenous energy, design §A window clause), and (iii) a cyclic startup charge on ΔU⁺ (SU >= U[t] − U[t−1], $/MW from the NREL/SR-5500-55433 class tables) so re-timing CC energy pays a real start instead of the P1 zero-commitment- cost relief. The pergen reserve ramp gate (design §A point 4) is OMITTED — that is the pergen-only half; ERCOT's ORDC scarcity is already fleet-wide. Thins the effective online cheap CC so peaks shift to fast-start CT (the measured ERCOT-70 CC-over/CT-under wedge). Eligibility gates on POOL PHYSICS (rule 18): candidates are gas_cc + gas_ct (CHP groups excluded by rule 19 — owned by the CHP steam floors; coal/gas_st excluded by fuel — take-or-pay / netload drag own them), and the fast-start gate exempts gas_ct so only gas_cc pools carry U. Zero fitted parameters: startup published (NREL), mlf measured (LSL/HSL p50, frozen rule 23). Requires ERCOT; default off; GATED CHANGE (alters commitment, hence dispatch volumes). Composes with the peak/midcurve offer surface; rule-19-disjoint from the default-off ercot_gas_commitment_bridge (opposite direction — the bridge thickens CC via a min-gen floor, the posture thins it via friction).",
+      "source_date": "2026-07",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_commitment_posture_min_load_frac",
+      "display_name": "Ercot Commitment Posture Min Load Frac",
+      "value": 0.574,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "Minimum stable load of a postured ERCOT gas-CC pool as a fraction of the pool's online capacity — the MEASURED committed-CC LSL/HSL capacity- weighted p50 (60-Day DAM disclosure Gen Resource data 2023-2025, the same ERCOT-62 derive the ercot_gas_commitment_bridge uses). A measured physical/ market quantity frozen against residuals (rules 13/21/23 — NEVER swept to move the price residual). Only read when the posture gate is on.",
+      "source_date": "2023",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated"
+      ]
+    },
+    {
       "param_id": "scenario.ercot_ct_offer_surface",
       "display_name": "Ercot Ct Offer Surface",
       "value": false,
@@ -22314,6 +22877,25 @@
       "domain": "Reliability",
       "tier": 2,
       "source": "ERCOT CAMPD-blind per-plant availability (default off, ERCOT backcast-gated — ERCOT-71). Restores measured availability for the ERCOT gas plants ABSENT from the TX CAMPD extract (Kiamichi 55501, Hidalgo 55545, Arthur Von Rosenberg 7512, EG178 56233 — the ERCOT-70 phantom-CC blind spot, all has_campd_data=False), which the CAMPD-derived unit-outage overlay cannot see (no CEMS rows -> no windows -> flat statistical availability). Two composed measured identifications (scripts/derive_ercot_noncampd_availability .py, frozen — rule 23): (a) 60-Day DAM disclosure per-plant live HSL / Resource Status -> daily availability (measures Kiamichi's switchable ERCOT-share directly — OUT when serving SPP), (b) EIA-923 zero-generation months -> full-plant outage windows (backstop; a zero month is an availability event, never a monthly-level pin — rule 14). Backcast-only (the statistical stack is the forward analogue, the G4 mode-aware seam); ERCOT-gated in the fleet application. See data.outages.ercot_noncampd_availability_caps.",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.ercot_nonreleasable_as_withholding",
+      "display_name": "Ercot Nonreleasable As Withholding",
+      "value": false,
+      "unit": "",
+      "domain": "Structural",
+      "tier": 1,
+      "source": "ERCOT multi-product co-opt:",
       "source_date": "",
       "page_or_table": "",
       "url": "",
@@ -26321,6 +26903,139 @@
       ]
     },
     {
+      "param_id": "scenario.retirement_execution_lag_coal",
+      "display_name": "Retirement Execution Lag Coal",
+      "value": 3,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "§a.3 cap-weighted / ≥300 MW",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.retirement_execution_lag_gas_cc",
+      "display_name": "Retirement Execution Lag Gas Cc",
+      "value": 1,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "§a.3 median — small sample",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.retirement_execution_lag_gas_cc_ccs",
+      "display_name": "Retirement Execution Lag Gas Cc Ccs",
+      "value": null,
+      "unit": "",
+      "domain": "Supply Stack",
+      "tier": 2,
+      "source": "OPEN DOF —",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.retirement_execution_lag_gas_ct",
+      "display_name": "Retirement Execution Lag Gas Ct",
+      "value": 2,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "§a.3 median (n=161 units / 2.9 GW)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.retirement_execution_lag_gas_st",
+      "display_name": "Retirement Execution Lag Gas St",
+      "value": 1,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "§a.3 median (n=53 / 8.1 GW) —",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.retirement_execution_lag_nuclear",
+      "display_name": "Retirement Execution Lag Nuclear",
+      "value": 3,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "OPEN DOF, held at the legacy",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.retirement_execution_lag_oil",
+      "display_name": "Retirement Execution Lag Oil",
+      "value": 1,
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "§a.3 median (n=242 / 2.4 GW)",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
       "param_id": "scenario.retirement_fom_multiplier_coal",
       "display_name": "Retirement Fom Multiplier Coal",
       "value": 1.3,
@@ -26441,6 +27156,25 @@
       "domain": "Reliability",
       "tier": 2,
       "source": "NEEDS CITATION — no source comment found in code",
+      "source_date": "",
+      "page_or_table": "",
+      "url": "",
+      "notes": "Auto-generated entry; citation harvested from the constant's inline comment. Verify and complete before relying on it.",
+      "old_repo_location": "",
+      "last_verified": "",
+      "flags": [
+        "auto-generated",
+        "needs-citation"
+      ]
+    },
+    {
+      "param_id": "scenario.retirement_rule",
+      "display_name": "Retirement Rule",
+      "value": "legacy",
+      "unit": "",
+      "domain": "Reliability",
+      "tier": 2,
+      "source": "\"legacy\" | \"pipeline\" (FF-1A, owner D1 =",
       "source_date": "",
       "page_or_table": "",
       "url": "",
