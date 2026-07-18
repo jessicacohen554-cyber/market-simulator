@@ -1,15 +1,15 @@
 {
-  "id": "2026-07-18-caiso-97-evening-trim",
-  "label": "caiso 97 evening trim",
-  "date": "2026-07-18",
-  "shorthand": "caiso-97-evening-trim",
-  "definition": "caiso-97 WP-2 -- caiso-94 keeper recipe + evening hod-trim of the daytime clean tranche (6-21 -> 6-17, trimmed-window depth, FINDING-caiso94 s7 pre-registered fix, owner TRIPPED ruling) + caiso_ra_startup_trajectory carried (owner ruling), 2023-2025",
-  "years": [
-    2023,
-    2024,
-    2025
-  ],
-  "iso": "CAISO",
-  "file": "frontend/data/backcast/runs/2026-07-18-caiso-97-evening-trim.js",
-  "bundle": "results/calibration/caiso97_hodtrim_B"
+ "id": "2026-07-18-caiso-97-evening-trim",
+ "label": "caiso 97 evening trim",
+ "date": "2026-07-18",
+ "shorthand": "caiso-97-evening-trim",
+ "definition": "caiso-97 WP-2 -- caiso-94 keeper recipe + evening hod-trim of the daytime clean tranche (6-21 -> 6-17, trimmed-window depth, FINDING-caiso94 s7 pre-registered fix, owner TRIPPED ruling) + caiso_ra_startup_trajectory carried (owner ruling), 2023-2025 OWNER-PROMOTED to CAISO keeper 2026-07-18 (owner directive, this session: 'promote upon land') -- supersedes 2026-07-18-caiso-94-daytime-clean: the most structurally faithful run (the daytime tranche window aligned with its own measured admissibility table -- the evening EXCLUDE cell dropped per FINDING-caiso94 s7's pre-registered fix -- plus the caiso-96 measured-conduct startup trajectory; zero fitted scalars), every pre-registered direction landed (evening lambda toward actual all years, evening import -0.43/-0.61/-1.42 TWh toward measured, CC +0.55/+0.64/+1.45 TWh, C5a dCO2 2025 -1.39->-0.72 Mt) with all holds held; honest cost disclosed (same-machine C3a-2025 +9.1->+9.6% -- the annual mean is belly-owned, the storage charter's lane). DETERMINATION stays NOT-YET (rule 1: keeper = most faithful, not lowest error). LOYO per rule 22 satisfied structurally: zero fitted scalars (ercot81 precedent) and the trimmed depth passed its own frozen LOYO gates (worst 13.5%).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "CAISO",
+ "file": "frontend/data/backcast/runs/2026-07-18-caiso-97-evening-trim.js",
+ "bundle": "results/calibration/caiso97_hodtrim_B"
 }
