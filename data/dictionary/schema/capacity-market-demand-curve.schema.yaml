@@ -86,7 +86,8 @@ columns:
     nullable: false
     description: >-
       Canonical metric: net_cone | gross_cone | irm |
-      forecast_pool_requirement | price_cap | curve_point | soft_offer_cap |
+      forecast_pool_requirement | icap_ucap_translation_factor | price_cap |
+      curve_point | soft_offer_cap |
       ra_report_price | reliability_requirement |
       reliability_requirement_frr_adj | ee_addback | curve_point_ucap.
       net_cone is the Net
@@ -100,7 +101,13 @@ columns:
       (UCAP) terms as a fraction of forecast peak load (post-CIFP FPR =
       (1 + IRM) x Reference-Resource Accredited-UCAP factor), the ISO's own
       UCAP-basis requirement so the model need not re-derive it from IRM x a
-      conversion ratio; price_cap /
+      conversion ratio; icap_ucap_translation_factor is NYISO's NYCA-wide
+      "translation factor" (Derate Factor) — the realized capacity-weighted
+      forced-outage derate that converts the ICAP-basis NYCA Minimum Installed
+      Capacity Requirement into the UCAP-basis requirement (ICAP Manual §2.5:
+      UCAP_req = ICAP_req x (1 - translation_factor)), the NYISO analogue of
+      PJM's forecast_pool_requirement pairing, carried as a decimal `fraction`;
+      price_cap /
       price_floor are the curve's price ceiling/floor (as a multiple of
       net_cone or an absolute price, e.g. PJM's ICAP-basis cap/floor before
       UCAP conversion); curve_point is one (x,y) point on the sloped demand
@@ -164,7 +171,9 @@ columns:
       pre-UCAP-conversion ICAP-basis cap/floor) | usd_per_mw_yr |
       usd_per_kw_month |
       usd_per_kw_yr | pct | multiple_of_net_cone | fraction_of_peak_ucap
-      (the forecast_pool_requirement's UCAP-MW / forecast-peak-MW ratio).
+      (the forecast_pool_requirement's UCAP-MW / forecast-peak-MW ratio) |
+      fraction (a dimensionless decimal as published, e.g. NYISO's
+      icap_ucap_translation_factor 0.1321).
   - name: vintage
     dtype: string
     unit: none
