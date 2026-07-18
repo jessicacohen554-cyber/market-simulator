@@ -58,7 +58,11 @@ from market_sim.pipeline.commitment import (
     pjm_commitment_scoped_reserve_fleet,
     run_commitment_pass,
 )
-from market_sim.pipeline.kwargs import apply_reserve_coopt, build_base_dispatch_kwargs
+from market_sim.pipeline.kwargs import (
+    apply_ercot_commitment_posture,
+    apply_reserve_coopt,
+    build_base_dispatch_kwargs,
+)
 from market_sim.pipeline.prior import PriorYearResults
 from market_sim.pipeline.result import YearSolveResult
 from market_sim.pipeline.solve import EnergySolveResult, run_energy_solve
@@ -73,6 +77,7 @@ __all__ = [
     "EnergySolveResult",
     "build_base_dispatch_kwargs",
     "apply_reserve_coopt",
+    "apply_ercot_commitment_posture",
     "run_energy_solve",
     "run_commitment_pass",
     "build_caiso_ra_p1_prep",
