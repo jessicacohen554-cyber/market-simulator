@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1424 parameters registered** (775 flagged `needs-citation`).
+**1464 parameters registered** (789 flagged `needs-citation`).
 
 
 ## Calibration
@@ -648,6 +648,30 @@ inline comment and still need a dated primary source — search the table for
 | param_id | value | tier | source | date | flags |
 |---|---|---|---|---|---|
 | `adequacy_external_tie_firm_mw.PJM` | 1281.7 | 2 | Firm import contribution counted by PJM's own adequacy ledger but a… | 2025-07-22 |  |
+| `correlated_outage_curve.ERCOT.post.CC_REGULAR.cap` | 0.157 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.CC_REGULAR.slope_per_c` | 0.0605 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.CC_REGULAR.winter_event_share` | 0.0011 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.COAL.cap` | 0.077 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.COAL.slope_per_c` | 0.0204 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.COAL.winter_event_share` | 0.0004 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.CT_PEAKER.cap` | 0.466 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.CT_PEAKER.slope_per_c` | 0.1878 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.CT_PEAKER.winter_event_share` | 0.0033 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.ST_GAS.cap` | 0.306 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.ST_GAS.slope_per_c` | 0.1304 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.post.ST_GAS.winter_event_share` | 0.0023 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.CC_REGULAR.cap` | 0.438 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.CC_REGULAR.slope_per_c` | 0.0618 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.CC_REGULAR.winter_event_share` | 0.0029 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.COAL.cap` | 0.27 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.COAL.slope_per_c` | 0.0381 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.COAL.winter_event_share` | 0.0018 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.CT_PEAKER.cap` | 0.556 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.CT_PEAKER.slope_per_c` | 0.0784 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.CT_PEAKER.winter_event_share` | 0.0037 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.ST_GAS.cap` | 0.552 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.ST_GAS.slope_per_c` | 0.0779 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
+| `correlated_outage_curve.ERCOT.pre.ST_GAS.winter_event_share` | 0.0037 | 2 | Correlated cold-event excess forced-outage curves by ISO, winteriza… | 2026-07 | auto-generated |
 | `eford.biomass` | 0.08 | 2 | NERC GADS — biomass steam |  | auto-generated, needs-citation |
 | `eford.coal` | 0.08 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
 | `eford.gas_cc` | 0.05 | 2 | NERC Generating Availability Data System (GADS), 2018-2022 | 2023-08 |  |
@@ -690,6 +714,10 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_reserve_coopt` | False | 2 | CAISO: enable the per-generator |  | auto-generated, needs-citation |
 | `scenario.caiso_reserve_online_scoped` | False | 1 | CAISO: online-quality scoping |  | auto-generated, needs-citation |
 | `scenario.cc_outage_derate_from_top` | False | 2 | Outage capacity comes off the TOP of a CC_REGULAR plant's offer sta… |  | auto-generated, needs-citation |
+| `scenario.correlated_forced_outage` | False | 2 | Correlated cold-event forced-outage |  | auto-generated, needs-citation |
+| `scenario.correlated_outage_sigma_scale` | 1.0 | 2 | ORDC reserve-error sigma |  | auto-generated, needs-citation |
+| `scenario.correlated_outage_t0_c` | -7.0 | 2 | Hinge onset (deg C, ~20 degF): above |  | auto-generated, needs-citation |
+| `scenario.correlated_outage_winterized_year` | 2022 | 2 | First weather-driver year |  | auto-generated, needs-citation |
 | `scenario.energy_reserve_coopt` | False | 1 | Co-optimize energy and operating |  | auto-generated, needs-citation |
 | `scenario.ercot_load_resource_reserve` | False | 1 | ERCOT co-opt: credit the |  | auto-generated, needs-citation |
 | `scenario.ercot_load_resource_reserve_from_year` | 2023 | 1 | First weather year the |  | auto-generated, needs-citation |
@@ -724,12 +752,19 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.planning_reserve_margin` | 0.1375 | 2 | Fallback/override planning |  | auto-generated, needs-citation |
 | `scenario.planning_reserve_margin_override` | None | 2 | Sensitivity lever: |  | auto-generated, needs-citation |
 | `scenario.reserve_margin_build_enabled` | None | 1 | Adequacy backstop: after the |  | auto-generated, needs-citation |
+| `scenario.retirement_execution_lag_coal` | 3 | 2 | §a.3 cap-weighted / ≥300 MW |  | auto-generated, needs-citation |
+| `scenario.retirement_execution_lag_gas_cc` | 1 | 2 | §a.3 median — small sample |  | auto-generated, needs-citation |
+| `scenario.retirement_execution_lag_gas_ct` | 2 | 2 | §a.3 median (n=161 units / 2.9 GW) |  | auto-generated, needs-citation |
+| `scenario.retirement_execution_lag_gas_st` | 1 | 2 | §a.3 median (n=53 / 8.1 GW) — |  | auto-generated, needs-citation |
+| `scenario.retirement_execution_lag_nuclear` | 3 | 2 | OPEN DOF, held at the legacy |  | auto-generated, needs-citation |
+| `scenario.retirement_execution_lag_oil` | 1 | 2 | §a.3 median (n=242 / 2.4 GW) |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_coal` | 1.3 | 2 | coal faces higher effective FOM |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_gas_cc` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_gas_ct` | 1.0 | 2 | (regulatory risk, carbon liability, rising insurance). Source: Laza… | 2024 | auto-generated |
 | `scenario.retirement_fom_multiplier_gas_st` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_nuclear` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_oil` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
+| `scenario.retirement_rule` | legacy | 2 | "legacy" \| "pipeline" (FF-1A, owner D1 = |  | auto-generated, needs-citation |
 | `scenario.retirement_years_coal` | 3 | 2 | Measured EIA-860 announced-to-deactivation lag for coal (RE-status … | 2026-07-15 | curated |
 | `scenario.retirement_years_gas_cc` | 3 | 2 | modern CCs get 3 years (most flexible/valuable) |  | auto-generated, needs-citation |
 | `scenario.retirement_years_gas_ct` | 2 | 2 | CTs get 2 years |  | auto-generated, needs-citation |
@@ -995,6 +1030,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.ercot_ecrs_requirement_from_year` | 2023 | 1 | First weather year the ECRS |  | auto-generated, needs-citation |
 | `scenario.ercot_gtc_limits_measured` | False | 3 | Measured ERCOT GTC transfer limits (backcast/calibration overlay). … |  | auto-generated, needs-citation |
 | `scenario.ercot_multiproduct_as_coopt` | False | 1 | ERCOT: replace the single lumped |  | auto-generated, needs-citation |
+| `scenario.ercot_nonreleasable_as_withholding` | False | 1 | ERCOT multi-product co-opt: |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_binned_path` | None | 2 | Path to the measured condition-binned ladder JSON (default: the fro… |  | auto-generated, needs-citation |
 | `scenario.ercot_offer_surface_cleared_share` | False | 1 | ERCOT DAM CLEARED-SHARE offer boundary (ERCOT-72, default off, ERCO… | 2024 | auto-generated |
 | `scenario.ercot_offer_surface_cleared_share_path` | None | 3 | Path to the frozen cleared-share boundary JSON (default: data/raw/_… |  | auto-generated, needs-citation |
@@ -1224,6 +1260,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_lcr_commitment_credit` | False | 1 | CAISO: credit the LCR |  | auto-generated, needs-citation |
 | `scenario.caiso_ra_bridge_startup_aware` | False | 1 | CAISO RA bridge STARTUP-AWARE |  | auto-generated, needs-citation |
 | `scenario.caiso_ra_startup_bridge` | False | 1 | CAISO RA must-offer STARTUP-COST-AWARE |  | auto-generated, needs-citation |
+| `scenario.caiso_ra_startup_trajectory` | False | 1 | CAISO RA bridge STARTUP- |  | auto-generated, needs-citation |
 | `scenario.ccs_available_year` | 2030 | 1 | year CCUS enters the candidate pool |  | auto-generated, needs-citation |
 | `scenario.ccs_capture_rate` | 0.9 | 2 | NETL Cost & Performance Baseline for Fossil Energy Plants Rev 4 (20… | 2022 |  |
 | `scenario.ccs_retrofit_available_year` | 2028 | 2 | Earliest year retrofits can occur. |  | auto-generated, needs-citation |
@@ -1249,6 +1286,8 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.commitment_storage_weight` | 1.0 | 2 | 0 disables. The P2 commitment |  | auto-generated, needs-citation |
 | `scenario.eac_price_gas_cc_ccs` | 0.0 | 1 | $/MWh, CCS-equipped gas CC only (45Q-linked) |  | auto-generated, needs-citation |
 | `scenario.ercot_as_aware_commitment` | False | 1 | ERCOT: run a P2 commitment screen |  | auto-generated, needs-citation |
+| `scenario.ercot_commitment_posture` | False | 1 | ERCOT COMMITMENT POSTURE (default off, ERCOT-gated — the commitment… | 2026-07 | auto-generated |
+| `scenario.ercot_commitment_posture_min_load_frac` | 0.574 | 2 | Minimum stable load of a postured ERCOT gas-CC pool as a fraction o… | 2023 | auto-generated |
 | `scenario.ercot_gas_bridge_startup` | True | 1 | Economic (≥ min-down) bridging on the startup-restart inequality — … |  | auto-generated, needs-citation |
 | `scenario.ercot_gas_commitment_bridge` | False | 1 | ERCOT gas-CC COMMITMENT BRIDGE (default off, ERCOT-gated): the comm… | 2026-07 | auto-generated |
 | `scenario.federal_ces_ccs_capture_fraction` | 0.95 | 1 | Owner decision Q4 (docs/handoffs/national-ces-eac-premium-plan-2026… | 2026-07 |  |
@@ -1271,6 +1310,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.pjm_commitment_posture` | False | 1 | PJM: the SAME pooled linear |  | auto-generated, needs-citation |
 | `scenario.pjm_reserve_commitment_scoped` | False | 1 | PJM path B (G-20b): scope the |  | auto-generated, needs-citation |
 | `scenario.plant_tranche_config_path` | None | 2 | Optional per-plant tranche-config override CSV (one row per plant w… |  | auto-generated, needs-citation |
+| `scenario.retirement_execution_lag_gas_cc_ccs` | None | 2 | OPEN DOF — |  | auto-generated, needs-citation |
 | `scenario.retirement_fom_multiplier_gas_cc_ccs` | 1.0 | 2 | NEEDS CITATION — no source comment found in code |  | auto-generated, needs-citation |
 | `scenario.retirement_years_gas_cc_ccs` | 3 | 2 | CCS-equipped CC, like a modern CC |  | auto-generated, needs-citation |
 | `scenario.startup_co2_reporting` | False | 3 | EM-5 / plan §5 R6: when True, the calibration bundle adds a reporti… | 2026-07 | auto-generated |
