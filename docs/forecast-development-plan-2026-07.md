@@ -61,11 +61,15 @@ config freezes, never inside this program's iterations (§2.3).
    PJM's coal wave in-window (recall 76%→0) and **inverts** MISO onto gas_st (8.6 GW pure
    false-retire; LOYO-robust). Consecutive-loss counters with per-fuel thresholds race
    fuels against each other. → FF-0C (redesign memo, consult §4) then FF-1A ⛔.
-2. **ERCOT screen revenue level + no in-year scarcity formation.** Screen CT net revenue
-   ≈ 1.9 $/kW-yr co-opt-off / ~17 co-opt-on vs SOM ≈ 68 (BLK-6, G-20/G-22 dependency);
-   forecast availability carries no correlated forced-outage / extreme-weather derate, so
-   the hindcast LP never forms scarcity (ORDC $0 even through Uri). Design charter exists
-   (RC-2A Part D, unimplemented). → FF-1B.
+2. **ERCOT screen revenue level + in-year scarcity formation — availability half LANDED
+   (FF-1B, 2026-07-18), level residual open.** The correlated forced-outage derate
+   (measured Uri/Elliott/Heather curves, default-off, owner flip pending) breaks the
+   ORDC-$0 blocker *conditionally*: 2024 forms in-year scarcity on the un-staged fleet
+   (mean $0.87/MWh, max $4,968 at Heather; CT screen 6.4→11.9 $/kW-yr ≈ 17.5 % of SOM 68)
+   but is absorbed on the staged/threshold-3 full fleet, and Uri-2021 stays $0 because
+   hindcast demand is shed-suppressed served load (a demand-input gap, not availability).
+   Residual to SOM: ≈ 56 $/kW-yr event-year / ≈ 66 event-free (co-opt off) → still
+   G-20/G-22's. See `docs/handoffs/ff-1b-correlated-availability-2026-07-17.md`.
 3. **Entry stack.** BLK-8 solar (PJM price channel alone insufficient; owner's state-RPS
    attribute fix unmeasured at bands), BLK-7 VRE capacity revenue = 0, queue chunking /
    entry sizing (I13 cobweb), BLK-10 backstop over-fire (re-measure post-redesign), and an
