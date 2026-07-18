@@ -17100,3 +17100,27 @@ throwaway A/B bundles deleted; retention 11/15, no pruning. Transport:
 create_branch + git push onto `claude/ercot-2023-backcast-calibration-wojkw0`
 (incremental packs; the branch-create 413 resolved by API create_branch first).
 Next number: ercot-82 (measured-RTOLCAP cap A/B).
+## 2026-07-18 — ERCOT keeper promotion: 2026-07-18-ercot81-nonreleasable-as (owner)
+
+**Promotion (owner directive, this session: "Rebase and promote").**
+`2026-07-18-ercot81-nonreleasable-as` promoted to ERCOT keeper (determination
+**NOT-YET** — rule 1: keeper = most structurally faithful, not lowest error).
+Supersedes `2026-07-17-ercot80-unit-only-outages`; same recipe + ONE published
+mechanism (`ercot_nonreleasable_as_withholding`, the pre-RTC+B RRS/Reg-Up HASL
+carve-out as rigid at-cap reserve demand, zero fitted scalars), strictly better
+on the chartered 2023 target (C3a −33.4 → −22.1 %, C3b 0.675 → 0.456, Aug-2023
+residual −99.1 → −64.9 $/MWh) with the same fail set; honest C3b-2024 cost
+(0.263 → 0.303, the pre-existing April-2024 over-formation deepens) surfaced on
+the record. LOYO (rule 22) satisfied structurally: zero fitted scalars.
+`keepers.json` ERCOT + array flipped; sidecar + attestation marked
+owner-promoted; `build_status.py` → status.js (ERCOT stays NOT-YET);
+`audit_keepers.py --iso ERCOT` PASS 0/0; `calibration-keeper-auditor` run
+post-flip. Not touched (owner-reserved): `frontier.ERCOT` (stays WITHDRAWN),
+the calibration-complete marker (holdouts stay quarantined, rule 22 — solved
+2023-2025 only). Open lanes carried forward: the Aug mid-band offer-formation
+family (ledgered, ERCOT-75/77) and ercot-82 (the measured-RTOLCAP vs
+forward-formula supply-cap A/B — the surfaced prb_overrides stomp). Branch
+rebased onto latest `origin/main` as
+`claude/ercot81-keeper-promotion-wojkw0` (fresh branch, owner instruction);
+the calibration-log append-append conflict with caiso-96 WP-1 resolved keeping
+both entries.
