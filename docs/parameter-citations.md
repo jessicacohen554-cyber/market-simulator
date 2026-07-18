@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1464 parameters registered** (789 flagged `needs-citation`).
+**1465 parameters registered** (790 flagged `needs-citation`).
 
 
 ## Calibration
@@ -941,6 +941,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_corridor_atc_forward` | False | 1 | Cap each CAISO per-hub corridor's |  | auto-generated, needs-citation |
 | `scenario.caiso_corridor_flow_limit` | False | 2 | Cap each CAISO per-hub corridor's |  | auto-generated, needs-citation |
 | `scenario.caiso_dsw_daytime_clean` | False | 2 | Carry the MEASURED DAYTIME |  | auto-generated, needs-citation |
+| `scenario.caiso_dsw_daytime_evening_trim` | False | 2 | Trim the caiso-94 daytime |  | auto-generated, needs-citation |
 | `scenario.caiso_dsw_overnight_clean` | False | 2 | Carry the MEASURED unconditional |  | auto-generated, needs-citation |
 | `scenario.caiso_dsw_surplus_clean` | False | 2 | Carry the MEASURED surplus-hour |  | auto-generated, needs-citation |
 | `scenario.caiso_firm_import_selfschedule` | False | 2 | Floor the firm/contracted |  | auto-generated, needs-citation |
