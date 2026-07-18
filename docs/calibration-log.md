@@ -17124,3 +17124,52 @@ rebased onto latest `origin/main` as
 `claude/ercot81-keeper-promotion-wojkw0` (fresh branch, owner instruction);
 the calibration-log append-append conflict with caiso-96 WP-1 resolved keeping
 both entries.
+## 2026-07-18 — CAISO-97 opened WITHOUT the two gating owner rulings — asks FILED, derive-first work only (no build, no solve): the FINDING-caiso94 §7 hod-trim depth re-derivation PASSES the frozen gates over the trimmed 6-17 window (4,994 / 5,563 / 5,770 MW, CV 0.060, worst LOYO 13.5 %), and the parameters.json 40-entry regen chore is cleared
+
+**Session scope (per the CAISO-97 launch prompt's own fallback):** the prompt
+gates the session on two owner decisions it did not carry — (1) is the
+caiso-94 evening-window WATCH now TRIPPED (three-legged evidence:
++1.9/+2.1/+2.2 TWh/yr excess model evening import hod 17-21 vs EIA-930;
+CT_PEAKER −1.1..−2.0 Mt/yr of C5a; evening λ −6.6/−5.0/−2.4 pp; PLUS
+caiso-96's demonstration that the commitment fix alone cannot recover the
+mass), which authorizes the WP-2 hod-trim diagnostic build; and (2) does
+`caiso_ra_startup_trajectory=True` enter the next keeper/probe recipe
+(zero parameters, measured conduct, all caiso-96 holds held)? Absent both
+rulings: asks filed, derive-first work only. NO mechanism built, NO solve
+run, keeper unchanged (caiso-94), all config/derive-script bytes untouched.
+
+**Derive-first result — the pre-registered hod-trim is derivationally
+viable.** A read-only scratchpad variant of
+`scripts/derive_caiso_daytime_clean_depth.py` (identical loaders, trigger,
+p95 statistic, frozen CV ≤ 0.20 / LOYO ≤ 25 % gates; the 6-21 reference leg
+reproduces the committed 5,441/5,762/5,998 MW byte-for-digit as the
+self-check) measured the trimmed hod 6-17 trigger-OFF window the WP-2 build
+would read:
+
+- depths (p95 MW): **2023 4,994 · 2024 5,563 · 2025 5,770** (pooled mean
+  5,442; n = 1,348/2,315/1,528 OFF hours)
+- CV **0.060** (≤ 0.20 PASS); LOYO worst **13.5 %** (2023; ≤ 25 % PASS —
+  2024 3.3 %, 2025 8.5 %)
+
+So if ruling (1) = TRIPPED, the trimmed-window depth clears the same
+estimation-honesty bar as the committed 6-21 depths (slightly looser than
+the 6-21 leg's 0.040/8.1 % but well inside the frozen gates) and the build
+can proceed directly. Numbers live here and in the scratchpad only — the
+committed derive script keeps its 6-21 window until the ruling lands
+(rule 23: the window change ships with the authorized build, not before).
+
+**Chore cleared:** `frontend/data/parameters.json` +
+`docs/parameter-citations.md` regenerated
+(`scripts/generate_parameter_registry.py --check`, validation OK) — 1,424 →
+1,464 entries, exactly the 40 lagging ids (the ERCOT `correlated_outage_curve`
+family et al.), 0 removed, curated citations preserved.
+
+**Also on record (carried from caiso-96, owner attention):** the CLAUDE.md
+git-push-413 premise appears stale on this machine class (caiso-96
+blob-verified git-protocol pushes); amendment is the owner's call — not
+amended here.
+
+**Next:** WP-2 A/B (A = fresh caiso95_repro_A re-solve, B = hod-trim, with
+B armed per ruling (2)'s composition choice) awaits ruling (1); WP-3 (CT_CHP
+steam-floor LEVEL re-derivation per FINDING-caiso95 §5) awaits its own
+rule-23 gate; evening STORAGE timing stays its own charter (do not fold in).
