@@ -1947,31 +1947,64 @@ def generators_to_fleet_arrays(
             if _cap_sum <= 0.0:
                 continue
             _a = availability[_idx, : _n_days * 24].reshape(_idx.size, _n_days, 24)
-            _t = _target_h[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)
+            _ad = _a.mean(axis=2)  # (n, days) per-unit day-mean availability
+            _t = _target_h[: _n_days * 24].reshape(_n_days, 24).mean(axis=1)  # (days,)
             _covered = np.isfinite(_t)
             if not _covered.any():
                 continue
-            _cur = (_a.mean(axis=2) * _cap[:, None]).sum(axis=0) / _cap_sum
-            _r = np.where(_covered & (_cur > 1e-9), _t / np.maximum(_cur, 1e-9), 1.0)
-            # Cap-1.0 water-fill: re-inflate for the clipped mass (3 passes).
-            for _ in range(3):
-                _scaled = np.minimum(_a * _r[None, :, None], 1.0)
-                _got = (_scaled.mean(axis=2) * _cap[:, None]).sum(axis=0) / _cap_sum
-                _r = _r * np.where(
-                    _covered & (_got > 1e-9),
-                    np.where(_covered, _t, 1.0) / np.maximum(_got, 1e-9),
-                    1.0,
-                )
-            _scaled = np.minimum(_a * _r[None, :, None], 1.0)
-            _scaled[:, ~_covered, :] = _a[:, ~_covered, :]
+            # Cap-weighted current class-day mean availability.
+            _cur = (_ad * _cap[:, None]).sum(axis=0) / _cap_sum  # (days,)
+            # BIDIRECTIONAL WATER-FILL to the DAM-measured class-day level — the
+            # measured-availability backcast re-architecture (2026-07-18). The
+            # DAM class-day availability is the AUTHORITY here (it REPLACES the
+            # statistical WEFOR — the pre-overlay availability only supplies the
+            # within-class shape and the uncovered-day fallback):
+            #   * RESTORE (target >= cur): raise each unit toward its ceiling
+            #     (1.0) proportionally to its headroom, a' = a + λ(1 − a) with
+            #     λ = (target − cur)/(1 − cur). This REVIVES phantom-derated
+            #     units the old multiplicative rescale could not (0 × r stays 0),
+            #     which was the ercot82 April-CC over-removal defect: a class-day
+            #     mean rescale cannot lift a unit the CAMPD full-stop override
+            #     zeroed when the rest of the class has no 1.0-headroom.
+            #   * REMOVE (target < cur): scale each unit toward 0, a' = a·
+            #     (target/cur) — the class carries MORE measured outage than the
+            #     CAMPD windows found (the summer under-removal case).
+            # Both hit the cap-weighted class-day mean exactly. The ceiling is a
+            # flat 1.0 because the measured target already embeds every real
+            # (incl. residual) outage; wefor_residual governs the uncovered-day
+            # fallback, not this covered level.
+            _new = _ad.copy()
+            _restore = _covered & (_t >= _cur)
+            _remove = _covered & (_t < _cur)
+            _lam = np.clip((_t - _cur) / np.maximum(1.0 - _cur, 1e-9), 0.0, 1.0)
+            _new[:, _restore] = _ad[:, _restore] + _lam[None, _restore] * (
+                1.0 - _ad[:, _restore]
+            )
+            _mu = np.where(_remove, _t / np.maximum(_cur, 1e-9), 1.0)
+            _new[:, _remove] = _ad[:, _remove] * _mu[None, _remove]
+            # Broadcast the new day-mean over the 24 hourly slots, preserving each
+            # unit's intra-day shape by the per-unit day ratio (new/old); a unit
+            # revived from a zeroed day has no shape to scale, so it is set flat.
+            _ratio = np.divide(
+                _new, _ad, out=np.zeros_like(_ad), where=_ad > 1e-9
+            )  # (n, days); 0 where the pre-overlay day was zeroed (revived below)
+            _scaled = _a * _ratio[:, :, None]
+            _flat = (_ad <= 1e-9) & (_new > 1e-9)  # revived-from-zero (n, days)
+            if _flat.any():
+                _scaled[_flat, :] = _new[_flat][:, None]
+            _scaled = np.minimum(_scaled, 1.0)
+            _scaled[:, ~_covered, :] = _a[:, ~_covered, :]  # uncovered untouched
             availability[_idx, : _n_days * 24] = _scaled.reshape(_idx.size, -1)
             logger.info(
-                "ERCOT measured thermal DAM availability (%d): %s rescaled on "
-                "%d covered day(s), median ratio %.3f",
+                "ERCOT measured thermal DAM availability (%d): %s set to measured "
+                "class-day level on %d day(s) (restore %d / remove %d), median "
+                "target %.3f",
                 _yr,
                 _cls,
                 int(_covered.sum()),
-                float(np.median(_r[_covered])),
+                int(_restore.sum()),
+                int(_remove.sum()),
+                float(np.median(_t[_covered])),
             )
         np.clip(availability, 0.0, 1.0, out=availability)
 
