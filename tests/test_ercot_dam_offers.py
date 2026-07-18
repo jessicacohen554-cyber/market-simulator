@@ -1,6 +1,6 @@
 """Reshape correctness for the ERCOT DAM offer parser.
 
-Covers :func:`scripts.parse_ercot_dam_offers._parse_one_file`: the wide→tidy
+Covers :func:`scripts.data.parse_ercot_dam_offers._parse_one_file`: the wide→tidy
 melt of the 10-point energy curve, NaN-padding removal, the resource-type→model
 class map, the thermal-class filter, the ``committed`` status tag, and graceful
 handling of a missing optional column (ECRS, absent in pre-mid-2023 files).
@@ -16,7 +16,7 @@ import pandas as pd
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 
-from scripts import parse_ercot_dam_offers as parser  # noqa: E402
+from scripts.data import parse_ercot_dam_offers as parser  # noqa: E402
 
 
 def _wide_row(**over):

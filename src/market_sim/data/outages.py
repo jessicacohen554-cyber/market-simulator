@@ -8,7 +8,7 @@ statistical WEFOR/POF availability model.
 
 The **per-unit derate** (:func:`unit_outage_derate_factors`, from
 ``campd-unit-outages[-<ISO>].csv`` built by
-``scripts/derive_campd_unit_outages.py``) is the SOLE CAMPD outage layer for
+``scripts/data/derive_campd_unit_outages.py``) is the SOLE CAMPD outage layer for
 every ISO. The old facility-summed overlay (``scripts/derive_campd_outages.py``
 -> ``campd-outages*.csv``, a hard ``availability = 0`` per plant) was removed
 2026-07-17: summing a plant's units hid single-unit outages and folded
@@ -57,7 +57,7 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # When this env flag is set, the facility-outage overlay sources its windows
 # from the curated clean tree (data/clean/outages, written by
-# scripts/curate_outages.py through the frozen scripts/lib/clean_io.py seam)
+# scripts/data/curate_outages.py through the frozen scripts/lib/clean_io.py seam)
 # instead of re-deriving them from raw here. The raw/derive path below stays the
 # default and is left fully intact; the flag is a migration gate, not a switch
 # we flip in code. See data/README.md and data/dictionary/schema/outages.schema.yaml.
@@ -98,7 +98,7 @@ def read_clean_outages(
 
     The clean-backed read seam (gated by :func:`_use_clean`). Returns the
     per-``(plant_id, unit_id)`` hourly outage / availability rows curated by
-    ``scripts/curate_outages.py`` and validated against
+    ``scripts/data/curate_outages.py`` and validated against
     ``data/dictionary/schema/outages.schema.yaml`` — ``outage_mw`` is the
     capacity offline during the interval and ``available_mw`` the capacity
     available (plant nameplate minus that). Rows are unit-grain (the
@@ -121,7 +121,7 @@ BINS_CSV_DEFAULT: str = str(CAMPD_BINS_CSV)
 
 
 # Plant groups whose CAMPD outages are derived (coal + combined cycle + gas
-# steam, regular and CHP). ``scripts/derive_campd_unit_outages.py`` detects unit
+# steam, regular and CHP). ``scripts/data/derive_campd_unit_outages.py`` detects unit
 # outages for plants in these groups; the per-unit derate then routes each unit
 # to its plant bin (CTs are dropped at routing — they dispatch economically). A
 # plant qualifies if it has any bin in this set (e.g. Barney M Davis carries both
@@ -217,7 +217,7 @@ def outage_hour_mask(
 # capacity over the window.
 #
 # Default source is the CAMPD-derived unit-outage extract
-# (scripts/derive_campd_unit_outages.py): outages detected on each *unit's*
+# (scripts/data/derive_campd_unit_outages.py): outages detected on each *unit's*
 # own CAMPD gross output for the full year, both 2023 and 2024. This replaces
 # the hand-maintained data/raw/reference/tx-jan-aug23-unit-outages.csv (kept in the repo
 # for reference), which covered only Jan-Aug 2023. The unit-level layer's
@@ -303,7 +303,7 @@ def unit_outage_csv_for_iso(iso: str | None) -> Path:
 
     ERCOT uses the canonical ``campd-unit-outages.csv``; every other ISO uses
     ``campd-unit-outages-<ISO>.csv``, both written by
-    ``scripts/derive_campd_unit_outages.py --iso <ISO>``.
+    ``scripts/data/derive_campd_unit_outages.py --iso <ISO>``.
     """
     if iso is None or iso.upper() == "ERCOT":
         return UNIT_OUTAGE_CSV
@@ -313,7 +313,7 @@ def unit_outage_csv_for_iso(iso: str | None) -> Path:
 def unit_outage_short_csv_for_iso(iso: str | None) -> Path:
     """Return the SHORT (< 5-day) unit-outage CSV path for an ISO.
 
-    Written by ``scripts/derive_campd_unit_outages.py --short-windows``:
+    Written by ``scripts/data/derive_campd_unit_outages.py --short-windows``:
     baseload-coal full stops of 1-5 days that the standard >= 5-day floor
     excludes, kept only when they survive the derive script's identification
     guards (coal-only detector, unit annual CF >= 0.55, revealed-availability
@@ -342,7 +342,7 @@ def _load_unit_outage_events(csv_path: Path, iso: str) -> pd.DataFrame | None:
     """Return the ISO's unit-outage events, or ``None`` when no source exists.
 
     Reads the curated ``unit-outage-events`` clean table (written by
-    ``scripts/curate_unit_outage_events.py``) when :func:`_use_clean` is set and
+    ``scripts/data/curate_unit_outage_events.py``) when :func:`_use_clean` is set and
     the ISO's partition exists; otherwise reads ``csv_path`` (the raw CAMPD
     unit-outage CSV) directly, returning ``None`` when neither is available.
     """
@@ -515,7 +515,7 @@ def unit_outage_short_derate_factors(
     The sub-floor companion of :func:`unit_outage_derate_factors`, gated by
     ``ScenarioConfig.unit_outage_short_windows``: baseload-coal full stops of
     1-5 days from ``campd-unit-outages-short-<ISO>.csv`` (built by
-    ``scripts/derive_campd_unit_outages.py --short-windows``, which enforces
+    ``scripts/data/derive_campd_unit_outages.py --short-windows``, which enforces
     the identification guards — coal-only detector, unit annual CF >= 0.55,
     revealed-availability in-merit filter — so economic idling never enters).
     Defensively re-filters to ``plant_group == "COAL"`` and
@@ -540,7 +540,7 @@ def unit_partial_outage_csv_for_iso(iso: str | None) -> Path:
     Distinct from the ERCOT PLANT-grain :data:`PARTIAL_OUTAGE_CSV`
     (``campd-partial-outages.csv``): this is the unit-grain partial-plateau
     extract (``campd-partial-outages-<ISO>.csv``, written by
-    ``scripts/derive_campd_unit_outages.py --partial-windows``), consumed by
+    ``scripts/data/derive_campd_unit_outages.py --partial-windows``), consumed by
     :func:`unit_partial_outage_derate_factors` under
     ``ScenarioConfig.unit_partial_outage_windows``. Always ISO-suffixed —
     ERCOT keeps the plant-grain path and has no unit-grain partial file, so
@@ -566,7 +566,7 @@ def unit_partial_outage_derate_factors(
     CF-ceiling plateaus (a unit running at a depressed ceiling — half its
     capability out — which never reaches zero, so no full-stop window can
     represent it) from ``campd-partial-outages-<ISO>.csv`` (built by
-    ``scripts/derive_campd_unit_outages.py --partial-windows``, which enforces
+    ``scripts/data/derive_campd_unit_outages.py --partial-windows``, which enforces
     the same identification guards as the short windows — coal-only detector,
     the when-operable baseload CF >= 0.55 screen, the revealed-availability
     in-merit filter — plus the plant-level partial detector's frozen plateau
@@ -593,7 +593,7 @@ def unit_partial_outage_derate_factors(
 def unit_outage_maxgen_csv_for_iso(iso: str | None) -> Path:
     """Return the declared-event-window (maxgen) unit-derate CSV path.
 
-    Written by ``scripts/derive_campd_maxgen_outages.py --iso <ISO>``: CAMPD
+    Written by ``scripts/data/derive_campd_maxgen_outages.py --iso <ISO>``: CAMPD
     revealed unit derates inside the ISO's declared capacity-emergency windows
     (the ``maxgen-events`` registry), consumed by
     :func:`unit_outage_maxgen_derate_factors` under
@@ -616,7 +616,7 @@ def unit_outage_maxgen_derate_factors(
     ``ScenarioConfig.unit_outage_maxgen_events``: per-unit MW derates revealed
     by each unit's own CAMPD trace inside the ISO's *declared* capacity-
     emergency windows (``campd-unit-outages-maxgen-<ISO>.csv``, built by
-    ``scripts/derive_campd_maxgen_outages.py``, which enforces the frozen
+    ``scripts/data/derive_campd_maxgen_outages.py``, which enforces the frozen
     identification guards — registry-window scope clipped to the declared
     start/end, the $150 DA in-merit certificate, the ±45-day capability
     basis with best-event-hour credit, and disjointness vs the std/short
@@ -672,7 +672,7 @@ def unit_outage_maxgen_derate_factors(
 
 
 # Partial (unit-level) outage derates approximated from CAMPD CF-ceiling
-# plateaus (scripts/derive_partial_outages.py). A multiplicative availability
+# plateaus (scripts/data/derive_partial_outages.py). A multiplicative availability
 # factor per plant: 1.0 outside detected windows, derate_factor within.
 PARTIAL_OUTAGE_CSV: Path = RAW_DATA_DIR / "campd-partial-outages.csv"
 
@@ -687,7 +687,7 @@ def partial_outage_derate_factors(
 
     When ``MARKET_SIM_USE_CLEAN`` is set and the ISO's curated
     ``partial-outages`` clean partition exists (written by
-    ``scripts/curate_partial_outages.py``), reads from there; otherwise reads
+    ``scripts/data/curate_partial_outages.py``), reads from there; otherwise reads
     :data:`PARTIAL_OUTAGE_CSV` (ERCOT-only) directly.
     """
     iso = (iso or "ERCOT").upper()
@@ -725,7 +725,7 @@ def partial_outage_derate_factors(
 # Resource Status, monthly energy reconciled to the EIA-923 anchor) — the
 # window-grain replacement for the NUCLEAR_MONTHLY_CF_BY_YEAR fleet-month
 # smear, gated by ScenarioConfig.ercot_nuclear_unit_availability. Derived by
-# scripts/derive_ercot_nuclear_availability.py (provenance + admissibility in
+# scripts/data/derive_ercot_nuclear_availability.py (provenance + admissibility in
 # its docstring); a refuel window is a physical availability event, the
 # nuclear analogue of the CAMPD fossil outage windows above.
 ERCOT_NUCLEAR_AVAILABILITY_CSV: Path = RAW_DATA_DIR / "ercot-nuclear-availability.csv"
@@ -770,7 +770,7 @@ def ercot_nuclear_unit_availability_series(
 # Status, monthly energy reconciled to the same EIA-923 anchor the smear
 # uses) — the ISO-generic sibling of the ERCOT-specific series above, gated
 # by ScenarioConfig.nuclear_unit_availability (PJM first; ERCOT keeps its own
-# flag/file). Derived by scripts/derive_nuclear_availability.py (provenance,
+# flag/file). Derived by scripts/data/derive_nuclear_availability.py (provenance,
 # admissibility and the winter thermal-vs-net wedge fallback in its
 # docstring); a refuel window / reactor power state is a physical
 # availability event, the same rule-13 class as the CAMPD fossil outage
@@ -822,7 +822,7 @@ def nuclear_unit_availability_series(
 # — the measured replacement for the statistical WEFOR/EFOR estimate of the
 # same quantity on the covered gas classes, gated by
 # ScenarioConfig.ercot_thermal_dam_availability. Derived by
-# scripts/derive_ercot_thermal_dam_availability.py (provenance, class scope and
+# scripts/data/derive_ercot_thermal_dam_availability.py (provenance, class scope and
 # admissibility in its docstring); the June/Sep-2023 scarcity-formation
 # forensics measured the statistical stack 13-22 % derated at the summer
 # reserve margin where this disclosure shows the same fleet at its ratings.
@@ -868,7 +868,7 @@ def ercot_thermal_dam_availability_series(
 
 
 # ERCOT CAMPD-blind per-plant availability (EIA-923 zero-month outage windows;
-# scripts/derive_ercot_noncampd_availability.py). Restores measured
+# scripts/data/derive_ercot_noncampd_availability.py). Restores measured
 # availability for the ERCOT gas plants ABSENT from the TX CAMPD extract
 # (Kiamichi 55501, Hidalgo 55545, Arthur Von Rosenberg 7512, EG178 56233 — the
 # ERCOT-70 phantom-CC blind spot: the model dispatches them on flat statistical
@@ -1033,7 +1033,7 @@ def retiree_availability_caps(
     return caps
 
 
-# CT_PEAKER AS/RUC-deployment energy floor (scripts/derive_ct_deployment.py).
+# CT_PEAKER AS/RUC-deployment energy floor (scripts/data/derive_ct_deployment.py).
 # A per-plant *hourly* minimum-generation floor on the model's 8760-hour clock:
 # in the out-of-merit hours where CEMS shows a simple-cycle peaker generating
 # below its marginal energy cost (the IMM-documented ancillary-service /
@@ -1054,7 +1054,7 @@ _CT_DEPLOYMENT_DIR: Path = CALIBRATION_DIR
 def ct_deployment_csv(iso: str = "ERCOT") -> Path:
     """Return the per-ISO CT deployment-floor artifact path.
 
-    ``scripts/derive_ct_deployment.py`` writes one parquet per ISO
+    ``scripts/data/derive_ct_deployment.py`` writes one parquet per ISO
     (``ct_deployment_floor_<ISO>.parquet``); the overlay reads the file for
     the ISO it is dispatching so every ISO's out-of-merit wedge is sourced
     from its own CEMS + LMP measurement.
@@ -1073,7 +1073,7 @@ def ct_deployment_floor_for_year(
     """Return ``{plant_code: (hours,) deployment floor MW}`` for ``year``.
 
     Reads the per-plant out-of-merit deployment-hour floors written by
-    ``scripts/derive_ct_deployment.py`` (long: ``year, plant_code, hour,
+    ``scripts/data/derive_ct_deployment.py`` (long: ``year, plant_code, hour,
     floor_mw``) for ``iso`` and rebuilds each plant's dense 8760-hour floor
     (zero outside its deployment hours). Returns an empty dict when the
     artifact is missing (the overlay then degrades to the unmodified
@@ -1124,7 +1124,7 @@ def reliability_deployment_floor_for_year(
     """Return ``{plant_code: (hours,) deployment floor MW}`` for ``year``.
 
     Reads the per-plant out-of-merit-at-hub-but-economic-locally floors written
-    by ``scripts/derive_reliability_deployment.py`` (long: ``year, plant_code,
+    by ``scripts/data/derive_reliability_deployment.py`` (long: ``year, plant_code,
     hour, floor_mw``) for ``iso`` and rebuilds each plant's dense 8760-hour
     floor (zero outside its deployment hours). Returns an empty dict when the
     artifact is missing (the overlay then degrades to the unmodified
@@ -1281,7 +1281,7 @@ def nysdec_peaker_restrictions(
 # first so the mechanism relocates the cold-event share embedded in the flat
 # GADS-based WEFOR rather than stacking on it. Curves are frozen measured
 # constants (constants.CORRELATED_OUTAGE_CURVE, derived by
-# scripts/derive_correlated_outage_curve.py); the gate and anchors are
+# scripts/data/derive_correlated_outage_curve.py); the gate and anchors are
 # ScenarioConfig fields (correlated_forced_outage & co.). Backcast runs are
 # excluded — the measured CAMPD overlays above already carry the actual events
 # (charter D.5) — and ISOs without a curve entry are a no-op (rule 25).

@@ -37,7 +37,7 @@ the single-source reference.
    registry, and keep the dispatcher generic. This is what lets parallel intake
    sessions add ISOs without touching a shared file or colliding.
 
-4. **Curation script.** `scripts/curate_<datatype>.py` (underscored): read only
+4. **Curation script.** `scripts/data/curate_<datatype>.py` (underscored): read only
    `data/raw`, build a schema-shaped frame, then write through
    `clean_io.write_clean(df, "<datatype>", iso=…, year=…, market=…, source=…)`
    and `clean_io.validate_clean(path)`. Provide `curate(raw_root=None, isos=None)`

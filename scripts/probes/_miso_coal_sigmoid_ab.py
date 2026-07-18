@@ -5,7 +5,7 @@ This reproduces the ``2026-07-08-miso-49-tempderate`` keeper's exact
 ``calibration_flags`` (read from its run_config.json) for all three years
 2023-2025 in one bundle (rule 16). NOTHING in the flags changes — the only
 difference from miso-49 is the code change to ``COAL_SIGMOID_DEFAULTS[("MISO",
-…)]`` in config/scenarios.py, re-derived by scripts/derive_coal_sigmoid.py from
+…)]`` in config/scenarios.py, re-derived by scripts/data/derive_coal_sigmoid.py from
 the EIA Annual Coal Report region f.o.b. + BLS PPI series intaked in #1803
 (rule-23 source-data trigger). The MISO passthrough fields in the keeper config
 are all None, so the solve resolves the (now re-derived) region-grounded MISO
@@ -78,7 +78,7 @@ def main(mode: str) -> None:
         note=(
             f"miso-50 coal-sigmoid re-derive ({mode}) — miso-49 keeper config, "
             "COAL_SIGMOID_DEFAULTS[MISO] re-derived from #1803 region f.o.b./PPI "
-            "(scripts/derive_coal_sigmoid.py), 2023-2025"
+            "(scripts/data/derive_coal_sigmoid.py), 2023-2025"
         ),
         **kwargs,
     )

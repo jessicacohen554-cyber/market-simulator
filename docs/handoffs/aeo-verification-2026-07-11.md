@@ -3,8 +3,8 @@
 **Purpose.** Resolve the standing `TODO: verify against AEO Table 13` at
 `constants.py:914` (`HENRY_HUB_TRAJECTORIES`). This session (P-0C, forecast
 driver data intake) fetched the real AEO2025 tables via the EIA Open Data API
-v2 (`scripts/fetch_eia_aeo.py` → `data/raw/eia-aeo/eia_aeo2025_fuel_prices.csv`
-→ `scripts/curate_eia_aeo_fuel_prices.py`) and diffs them against the
+v2 (`scripts/data/fetch_eia_aeo.py` → `data/raw/eia-aeo/eia_aeo2025_fuel_prices.csv`
+→ `scripts/data/curate_eia_aeo_fuel_prices.py`) and diffs them against the
 hand-typed constants. **`HENRY_HUB_TRAJECTORIES` is unchanged in this
 session** — re-deriving it (and adding the new coal/oil trajectories) is
 P-1D's job, cited to this data change per CLAUDE.md rule 23.
@@ -183,7 +183,7 @@ Executed per the recommendation above:
 
 1. `HENRY_HUB_TRAJECTORIES` (all three paths, 2026-2050) re-derived from
    `data/raw/eia-aeo/eia_aeo2025_fuel_prices.part*.csv`
-   (`scripts/derive_fuel_trajectories.py::derive_gas_trajectory`); 2023-2025
+   (`scripts/data/derive_fuel_trajectories.py::derive_gas_trajectory`); 2023-2025
    historical-actual entries unchanged.
 2. `COAL_PRICE_TRAJECTORIES` added (national `delivered_electric_power`
    series, low/mid/high). Per-ISO `COAL_PRICE_BASE` anchors are unchanged;

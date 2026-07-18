@@ -1,4 +1,4 @@
-"""Incomplete-EIA-923-vintage guard in ``scripts/build_calibration_reference``.
+"""Incomplete-EIA-923-vintage guard in ``scripts/data/build_calibration_reference``.
 
 The current-year EIA-923 release is a partial monthly survey (~70% of plants),
 so it silently under-counts every fuel — most severely the variable renewables,
@@ -17,7 +17,7 @@ import pandas as pd
 
 REPO = Path(__file__).resolve().parents[1]
 _spec = importlib.util.spec_from_file_location(
-    "bcr", str(REPO / "scripts" / "build_calibration_reference.py")
+    "bcr", str(REPO / "scripts" / "data" / "build_calibration_reference.py")
 )
 bcr = importlib.util.module_from_spec(_spec)
 _spec.loader.exec_module(bcr)

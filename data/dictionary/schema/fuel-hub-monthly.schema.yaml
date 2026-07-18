@@ -8,7 +8,7 @@
 # daily fuel-prices datatype so that first-of-month rows never collide with
 # the daily series under the same (fuel, hub, interval_start_utc) key.
 #
-# Curated by scripts/curate_fuel_prices.py from
+# Curated by scripts/data/curate_fuel_prices.py from
 #   data/raw/gas-prices/henry_hub_monthly.csv
 datatype: fuel-hub-monthly
 schema_version: 1

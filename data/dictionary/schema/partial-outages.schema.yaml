@@ -1,6 +1,6 @@
 # Canonical schema: per-plant PARTIAL outage derate windows
 #
-# CAMPD CF-ceiling plateau windows (scripts/derive_partial_outages.py): a
+# CAMPD CF-ceiling plateau windows (scripts/data/derive_partial_outages.py): a
 # multiplicative availability derate factor (not a binary outage), used by
 # market_sim.data.outages.partial_outage_derate_factors. Distinct from the
 # ``outages`` datatype (binary offline/available MW) and from
@@ -10,7 +10,7 @@
 # Source (data/raw): campd-partial-outages.csv. iso is stamped at curation
 # time (ERCOT-only today; the raw file carries no iso column).
 #
-# Curated by scripts/curate_partial_outages.py.
+# Curated by scripts/data/curate_partial_outages.py.
 datatype: partial-outages
 schema_version: 1
 title: Per-plant partial-outage derate windows

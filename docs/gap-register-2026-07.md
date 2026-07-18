@@ -28,8 +28,8 @@ per ISO**. The NEISO one-shot execution is HELD on exactly this
   2026-07-12 landing residuals (§NYISO N5: no NEISO 2022 in `actual_lmp*`/
   tail, no `NEISO_2022_renewable_capacity.csv`, this file a placeholder stub)
   are now CLOSED, and readiness extended back to 2018 where source data
-  permits (`scripts/land_neiso_2022_readiness.py` +
-  `scripts/land_neiso_holdout_multiyear.py`). Full audit:
+  permits (`scripts/archive/land_neiso_2022_readiness.py` +
+  `scripts/archive/land_neiso_holdout_multiyear.py`). Full audit:
   `docs/holdout-data-equivalency-register-2026-07.md` §NEISO. Verdict tally
   for the 2018-2022 window: **EQUIVALENT 12 / DEGRADED 8 / MISSING 6 (zero
   unresolved — every MISSING row carries an explicit fix or acceptance)**.

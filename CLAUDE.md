@@ -41,6 +41,10 @@ src/market_sim/
   structural_prior.py → structural-error prior + convolution (PB-3)
   runner.py  → main orchestrator (P0→P1→P2 solve loop, year evolution)
 tests/       → pytest, one file per module
+scripts/     → core entry points & standing tooling ONLY (calibration/hindcast/forecast runners, scoring, dashboard, governance) — see scripts/README.md
+  data/      → data fetching & processing (fetch_*, curate_*, derive_*, per-source build_*) — not core engine
+  archive/   → retired one-off run drivers/probes/analyses; historical record, not maintained
+  lib/       → shared helpers; probes/ → per-run probe scripts (calibration record)
 data/        → all on-disk inputs; every path resolves through config/paths.py (never Path(__file__).parents[...])
   raw/       → immutable source downloads, NEVER modified in place — the single source root (W1 collapsed the old inputs/ + data/ roots into data/raw/)
                eia-930*/, eia-860/, fleet-egrid/, campd-{unit,facility}-level/, gas-prices/, lmp-data/, zone-specific-demand/, …

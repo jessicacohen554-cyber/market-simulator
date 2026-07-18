@@ -1,4 +1,4 @@
-"""Tests for the emissions curation script (scripts/curate_emissions.py).
+"""Tests for the emissions curation script (scripts/data/curate_emissions.py).
 
 A tiny synthetic CAMPD raw fixture (NOT a full-data run) is curated end to end
 and checked for: schema validity through the frozen clean_io contract, correct
@@ -15,7 +15,7 @@ from tempfile import TemporaryDirectory
 import pandas as pd
 
 from scripts.lib import clean_io
-from scripts.curate_emissions import (
+from scripts.data.curate_emissions import (
     SHORT_TON_TO_KG,
     LB_TO_KG,
     clean_campd_frame,

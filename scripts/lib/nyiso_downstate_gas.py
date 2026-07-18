@@ -24,7 +24,7 @@ LDC transport rate is their correct delivered-fuel boundary, and the LI gas isla
 (CLAUDE.md rules #11/#12; gap register G-13).
 
 The one place the construction lives, imported by both
-``scripts/curate_nyiso_downstate_gas.py`` (to write clean Parquet) and the model
+``scripts/data/curate_nyiso_downstate_gas.py`` (to write clean Parquet) and the model
 reader (``src/market_sim/data/nyiso_downstate_gas.py``, as a raw fallback when the
 clean partition is absent) so the daily series is identical either way.
 

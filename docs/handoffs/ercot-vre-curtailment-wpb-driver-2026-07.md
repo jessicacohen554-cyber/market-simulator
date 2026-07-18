@@ -35,7 +35,7 @@ LMESA→El Paso). The ERCOT SPL is the authoritative, exact, high-coverage sourc
 
 ## 2. The measured signal — `ercot-wtx-congestion` (new curated datatype)
 
-`scripts/curate_ercot_wtx_congestion.py` → `data/clean/ercot-wtx-congestion`
+`scripts/data/curate_ercot_wtx_congestion.py` → `data/clean/ercot-wtx-congestion`
 (schema `data/dictionary/schema/ercot-wtx-congestion.schema.yaml`). Per local
 clock hour: the fraction of SCED executions with ≥1 **West-corridor** constraint
 binding, where "West-corridor" is the **structural** set (not a top-N cutoff):
@@ -51,7 +51,7 @@ distinct *internal* Permian/CREZ 138/345 kV lines reach 80–95%.
 
 ## 3. The driver — SHAPE (measured) + LEVEL (single coefficient)
 
-`scripts/derive_ercot_wtx_curtailment_share.py` →
+`scripts/data/derive_ercot_wtx_curtailment_share.py` →
 `data/raw/reference/ercot_wtx_curtailment_share.csv`; consumed at solve time by
 `market_sim.data.curtailment_share`, gated on
 `ScenarioConfig.ercot_wtx_curtailment_driver` (default off).
@@ -208,6 +208,6 @@ more disciplined — measured shape + one LOYO-stable scalar).
 ## References
 - `docs/handoffs/ercot-vre-undercurtailment-2026-07.md`, `…-step2-2026-07.md`,
   `…-curtailment-topology-scope-2026-07.md` — the diagnosis chain.
-- `scripts/curate_ercot_wtx_congestion.py`, `scripts/derive_ercot_wtx_curtailment_share.py`,
+- `scripts/data/curate_ercot_wtx_congestion.py`, `scripts/data/derive_ercot_wtx_curtailment_share.py`,
   `src/market_sim/data/curtailment_share.py`.
 - `data/raw/ercot-settlement-points/README.md`, `data/raw/hifld-substations/README.md`.

@@ -190,7 +190,7 @@ The peaker-pricing fix this handoff scoped is now built and gated. Full write-up
 **Candidate (a) — LI/NYC delivered-fuel basis: IMPLEMENTED** as the rule-13
 measured input `nyiso_downstate_ct_gas_basis`
 (`data.fuel.apply_nyiso_downstate_ct_gas_basis`;
-`scripts/fetch_nyiso_downstate_gas_basis.py` →
+`scripts/data/fetch_nyiso_downstate_gas_basis.py` →
 `nyiso_downstate_ct_gas_basis_monthly.csv`). Each downstate `CT_PEAKER` LM6000's
 delivered gas is lifted from the Transco Z6 NY hub to its LDC city-gate index by
 the measured monthly `EIA N3050NY3 − Transco Z6 NY` premium (positive year-round,

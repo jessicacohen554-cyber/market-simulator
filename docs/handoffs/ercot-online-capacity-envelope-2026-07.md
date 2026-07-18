@@ -50,7 +50,7 @@ MIP, no P2), vectorized (`sp.kron`, no hour loop), and byte-identical when off.
 `online_cap_env(t) = deliv × Σ_c ERCOT_ONLINE_CAP_SHARE_c(nl_decile, season) ×
 cap_c(t)` — the CAMPD-measured committed on-line HSL fraction × the model fleet's
 responsive-class capacity (summer-derated), derived by
-`scripts/derive_ercot_rtolcap_forward.py --emit online-cap-constant`. Rule #23:
+`scripts/data/derive_ercot_rtolcap_forward.py --emit online-cap-constant`. Rule #23:
 re-derives only on a CAMPD / measured-RTOLCAP source-data update, never a residual.
 
 ## 2. Identification gate — PASSED (in the binding regime)
@@ -172,7 +172,7 @@ Two coupled contributors:
 
 ## 6. Files
 
-* `scripts/derive_ercot_rtolcap_forward.py` — `derive_online_capacity()`,
+* `scripts/data/derive_ercot_rtolcap_forward.py` — `derive_online_capacity()`,
   `_model_class_cap()`, `--emit online-cap-{constant,report}`.
 * `src/market_sim/config/constants.py` — `ERCOT_ONLINE_CAP_SHARE`,
   `ERCOT_ONLINE_CAP_DELIV_COEF`.
@@ -314,7 +314,7 @@ design round).
 
 ### 7.5 Files (delta vs §6)
 
-* `scripts/derive_ercot_rtolcap_forward.py` — `derive_online_capacity_extreme()`,
+* `scripts/data/derive_ercot_rtolcap_forward.py` — `derive_online_capacity_extreme()`,
   `--emit online-cap-extreme-{constant,report}`, `N_BIN_EXTREME`,
   `MIN_CELL_HOURS_EXTREME`.
 * `src/market_sim/config/constants.py` — `ERCOT_ONLINE_CAP_SHARE_EXTREME`,

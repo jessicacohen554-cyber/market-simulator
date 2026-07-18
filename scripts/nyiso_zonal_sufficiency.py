@@ -9,7 +9,7 @@ meaningful share of hours the topology carries real information a single zone
 would miss — which for NYISO is the persistent upstate-cheap / downstate-dear
 separation across the UPNY-SENY and Long Island interfaces.
 
-The model zones come from ``scripts/derive_actual_lmp.py`` (the simple mean of
+The model zones come from ``scripts/data/derive_actual_lmp.py`` (the simple mean of
 each model zone's constituent NYISO internal zones), so the three reported
 spreads are the prompt's J−A / K−A / F−A in model-zone terms:
 
@@ -31,6 +31,13 @@ Usage:
 from __future__ import annotations
 
 import argparse
+import sys
+from pathlib import Path
+
+# derive_actual_lmp lives in scripts/data/ since the 2026-07-18 reorg; this
+# script is run directly (python scripts/<iso>_zonal_sufficiency.py), so only
+# its own directory is on sys.path by default.
+sys.path.insert(0, str(Path(__file__).resolve().parent / "data"))
 
 from lib.zonal_sufficiency import analyze, render_concentration, render_table
 from derive_actual_lmp import nyiso_zone_hourly

@@ -195,7 +195,7 @@ shape/spatial problem, not a merit-tuning problem.** And the 2024 coal CO₂
 
 Before building any finer-zone topology, the decisive, no-LP pre-test: rank
 ERCOT's actually-binding transmission constraints from the published SCED NP6-86
-shadow-price archive (`scripts/analyze_sced_binding.py` over 24,881 intervals,
+shadow-price archive (`scripts/archive/analyze_sced_binding.py` over 24,881 intervals,
 2023–25; full table `docs/sced-binding-constraints-2023-2025.csv`). The question
 was whether a North↔South_Central (or load-zone) split would place a *binding*
 limit between the CC_REGULAR over-zone and the under-zone — the only way a

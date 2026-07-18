@@ -86,7 +86,7 @@ Land on *one* mechanism the evidence points to before building a lever.
    load-resource ECRS share). Don't credit total ECRS/NonSpin as load — that
    over-credits and would crater the tail. The per-service columns are in
    `data/raw/ercot-AS/ercot_<year>_as_up_mw.parquet`
-   (`scripts/build_ercot_as_withholding.py`).
+   (`scripts/data/build_ercot_as_withholding.py`).
 3. **ORDC LOLP curve realism for 2025.** The co-opt uses VOLL-anchored LOLP
    steps (`ercot_ordc_demand_steps`, params `ordc_lolp_mu_mw/sigma`, `ordc_voll`,
    `ordc_mcl_mw`). If 2025's real reserve margin was structurally higher, a

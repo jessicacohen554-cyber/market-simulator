@@ -4,8 +4,8 @@ Owner-authorized amendment (session-logged, the ercot52 offer-re-tune thread):
 C3a/C3b score against a **load-weighted actual** instead of the legacy
 equal-hour hub mean. Scorer `scripts/calibration_verdict.py`
 (`RUBRIC_VERSION = 2.4`), bench derivation
-`scripts/derive_actual_lmp.py --lw-retrofit`, committed-part retrofit
-`scripts/retrofit_lw_price_bench.py`, probe scorer
+`scripts/data/derive_actual_lmp.py --lw-retrofit`, committed-part retrofit
+`scripts/archive/retrofit_lw_price_bench.py`, probe scorer
 `scripts/probes/_score_probe.py`. Discovery + proof:
 `docs/handoffs/ercot-ordc-capdual-adder-2026-07.md` §4 and the 2026-07-09
 calibration-log entries.

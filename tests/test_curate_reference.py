@@ -1,4 +1,4 @@
-"""Tests for the reference curation script (scripts/curate_reference.py).
+"""Tests for the reference curation script (scripts/data/curate_reference.py).
 
 Drives the curator over a *tiny synthetic* raw fixture (not the real data) and
 asserts each lookup table writes schema-valid Parquet with the expected key
@@ -12,7 +12,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_reference
+from scripts.data import curate_reference
 from scripts.lib import clean_io
 from scripts.lib.clean_io import read_clean_metadata, validate_clean
 
@@ -33,7 +33,7 @@ _BINS_CSV = (
     "CC,South,2,S_CC2,50043,Battleground,380.7,5.67,0.0,1.0\n"
 )
 
-# A 2-row stand-in for coal_region_crosswalk.csv (scripts/derive_coal_region_crosswalk.py).
+# A 2-row stand-in for coal_region_crosswalk.csv (scripts/data/derive_coal_region_crosswalk.py).
 _COAL_CROSSWALK_CSV = (
     "iso,plant_code,plant_name,state,coal_supply_class,region_id,region_name,"
     "confidence,note\n"

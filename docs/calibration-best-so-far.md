@@ -251,7 +251,7 @@ re-threaded for the new equilibrium:
   Measured 1.34/1.88/2.22 TWh out-of-merit (29.9/35.0/42.5% of covered CT CEMS
   energy). In-merit hours stay economic (CT not floored to full CEMS); a pure LP
   min-gen bound (no MIP — prices stay LP duals). Built by
-  `scripts/derive_ct_deployment.py` → `data/raw/_validation-source/
+  `scripts/data/derive_ct_deployment.py` → `data/raw/_validation-source/
   ct_deployment_floor_ERCOT.parquet`.
 
 Reproduce with:
@@ -372,7 +372,7 @@ residual), CT runs deep (above), and PRB's multi-year mean sits at −3.3%
 - **CT AS-deployment overlay (the run-109a structural unlock):**
   `ct_deployment_overlay = on` (`--ct-deployment`). The per-plant hourly
   out-of-merit floor; see the keeper bullets above and
-  `scripts/derive_ct_deployment.py` / `outages.ct_deployment_floor_for_year`.
+  `scripts/data/derive_ct_deployment.py` / `outages.ct_deployment_floor_for_year`.
   `ct_deployment_floor_frac = 1.0` (the full measured wedge; a safety knob to
   dial back if a year overshoots its CT bar). Default off — forecast mode and
   any other ISO are byte-identical (no artifact → no-op).

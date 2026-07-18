@@ -23,7 +23,7 @@ import pandas as pd
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "src"))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from scripts.derive_campd_unit_outages import (  # noqa: E402
+from scripts.data.derive_campd_unit_outages import (  # noqa: E402
     SHORT_BASELOAD_CF,
     _operable_mask,
     _partial_plateau_windows,

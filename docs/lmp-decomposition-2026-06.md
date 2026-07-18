@@ -6,8 +6,8 @@ AS-aware storage design; CT deployment OFF, `battery_dispatch_adder=10`,
 merit-ramp CC, cc-duct, storage vintage COD ramp).
 **Companion:** `docs/ordc-overlay.md`, `docs/calibration-best-so-far.md`,
 `docs/offer-curve-methodology.md`.
-**Tooling (no LP re-solve):** `scripts/analyze_lmp_residual.py`,
-`scripts/derive_ordc_overlay.py`, the demand-weighted monthly-MAE gate metric
+**Tooling (no LP re-solve):** `scripts/archive/analyze_lmp_residual.py`,
+`scripts/data/derive_ordc_overlay.py`, the demand-weighted monthly-MAE gate metric
 (`derive_ordc_overlay._monthly_mae`).
 
 This is the Task-1 deliverable of the LMP/CT-peaker session: a measured

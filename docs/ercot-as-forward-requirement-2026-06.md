@@ -183,7 +183,7 @@ pre-RTC+B bridge for the discretionary acute/broad-May component. Honesty gate
 intact: the requirement is a formula of forward drivers, never the measured MW
 pinned to a price.
 
-_Re-solve: `python scripts/run_163.py` (run159 recipe +
+_Re-solve: `python scripts/archive/run_163.py` (run159 recipe +
 `ercot_as_forward_requirement=True`, all years, per-plant, P1-only)._
 
 ## Files

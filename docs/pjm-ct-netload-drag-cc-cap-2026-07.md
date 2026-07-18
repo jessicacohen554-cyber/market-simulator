@@ -10,13 +10,13 @@ remain?
 
 **Answer.** Two, both admissible under CLAUDE.md #12/#13 (reproducible
 physical/market inputs that regenerate for a forward year and respond to
-changed conditions), wired in `scripts/run_pjm75_ct_drag_cc_cap.py`:
+changed conditions), wired in `scripts/archive/run_pjm75_ct_drag_cc_cap.py`:
 
 ## 1. CT_PEAKER net-load deployment drag (`ct_netload_drag`)
 
 The same mechanism validated as the ERCOT keeper
 (`docs/ercot-ct-netload-drag-2026-06.md`, 2026-07-01-24-ct-drag-v1) and the
-CAISO keeper default (`scripts/derive_caiso_ct_reliability_floor.py`): a
+CAISO keeper default (`scripts/data/derive_caiso_ct_reliability_floor.py`): a
 per-hour min-gen floor `clip(slope·netload_GW + intercept, 0, cap) ×
 capacity` on the non-`_peak` CT_PEAKER tranches, gated to the
 afternoon-evening ramp window h[15,22) local standard, over which the LP
@@ -25,7 +25,7 @@ merit order can't see — PJM's real CT fleet runs reserve-deployment /
 supplemental-commitment energy at ~top-of-merit offers the hourly LP never
 clears.
 
-### The measured signature (`scripts/derive_pjm_ct_netload_drag.py`)
+### The measured signature (`scripts/data/derive_pjm_ct_netload_drag.py`)
 
 CAMPD hourly net for the model fleet's **pure-play** CT_PEAKER plants
 (110 of 121 plants, 23.48 of 25.58 GW; mixed ORIS sites are excluded because
@@ -86,7 +86,7 @@ NOT reuse ERCOT's 0.00703/−0.1427/0.47 or CAISO's 0.00901/−0.1124/0.36).
 `docs/handoffs/pjm-cc-overgen-recommendation-2026-06.md` Rank 4, targeting
 Miss #2 (the 95–100% CF pile): CC plants whose **model** nameplate exceeds
 anything they ever sustained in the CEMS record over-run the top CF bands on
-phantom capacity. `scripts/derive_cc_capacity_reconcile.py --iso PJM --mode
+phantom capacity. `scripts/data/derive_cc_capacity_reconcile.py --iso PJM --mode
 cap` bounds each pure-play CC_REGULAR plant's LP capacity at its demonstrated
 CAMPD peak (p99.9 of net MW pooled 2023–2025, robust to single-hour
 glitches), applied only where the model capacity exceeds the peak by >1.1×
@@ -124,6 +124,6 @@ is year-differentiated, unlike an offer multiplier.
 * Scarcity adders / ORDC overlays / tail decompression: blocked on the
   per-gen reserve thread (`docs/multi-iso/pjm-reserve-ordc.md` Phases 1–2).
 
-Reproduce: `python scripts/derive_pjm_ct_netload_drag.py` and
-`python scripts/derive_cc_capacity_reconcile.py --iso PJM --mode cap`.
+Reproduce: `python scripts/data/derive_pjm_ct_netload_drag.py` and
+`python scripts/data/derive_cc_capacity_reconcile.py --iso PJM --mode cap`.
 Results: run `pjm 75 ct-drag cc-cap` on the backcast dashboard.

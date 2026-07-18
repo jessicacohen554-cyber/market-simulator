@@ -158,7 +158,7 @@ making that premise stale and the drag worth re-testing as an all-hours base
 whose level flexes with net-load.
 
 **Re-adjudication result: the drag is rejected again, now on measurement.**
-`scripts/derive_nyiso_st_gas_netload_drag.py` (new, PJM-construction-faithful:
+`scripts/data/derive_nyiso_st_gas_netload_drag.py` (new, PJM-construction-faithful:
 EIA-930 NYIS net-load, CAMPD overnight CF, hinge fit) fails its own
 pre-registered honesty gates: overnight Spearman rho 0.32/0.39/0.72
 (class-wide) and 0.30/0.28/0.57 (NYC+LI-only) — not year-stable; the binned

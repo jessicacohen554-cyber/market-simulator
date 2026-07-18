@@ -25,14 +25,14 @@ The bar a new ISO must clear is no longer the 2025-era stub pipeline. As of
 1. **Per-plant fleet** from EIA-860 (one EIA plant = one LP generator;
    mixed facilities split per `Plant_Group`), zone-assigned by lat/lon+FIPS.
 2. **Offer curves grounded in the plant's own CAMPD history** — committed %
-   (`scripts/derive_cc_committed_pct.py`), coal must-run % and peaking
-   ranges (`scripts/derive_thermal_tranches.py`), n=6 smooth econ ramp
+   (`scripts/data/derive_cc_committed_pct.py`), coal must-run % and peaking
+   ranges (`scripts/data/derive_thermal_tranches.py`), n=6 smooth econ ramp
    (`docs/offer-curve-methodology.md`).
 3. **CHP behind-the-meter steam obligations** identified from EIA-860 cogen
    flags + EIA-923 fuel/steam data, removed from LP capacity, steam-following
    floors solved by the 3-solve perturbation method (PJM 2026-06 pattern).
 4. **Backcast availability from measured unit-level outages** — CAMPD CEMS
-   unit extracts → `scripts/derive_campd_unit_outages.py` → per-ISO
+   unit extracts → `scripts/data/derive_campd_unit_outages.py` → per-ISO
    `campd-unit-outages-<ISO>.csv` → historic overlay in `data/outages.py`.
    Facility-level detection is the fallback, unit-level is the standard
    (it catches single-unit outages masked by peer units).
@@ -227,7 +227,7 @@ is the per-ISO priced node (`build_import_generators(iso)` /
 not baked into the topology): an import zone with `load_share=0`, links
 with TTC, a 3–4 tranche priced supply curve plus priced export sinks.
 Calibrate the tranche prices/quantities so the modeled **net-interchange
-duration curve** tracks EIA-930 (`scripts/derive_import_tranches.py`; the
+duration curve** tracks EIA-930 (`scripts/data/derive_import_tranches.py`; the
 measured series is typically hourly price-orthogonal, so fit the duration
 curve, not the hours). Where a neighbor's price sets the tranche (HQ,
 Mid-C, Palo Verde), cite the proxy. Seasonal shaping (NW hydro year) where

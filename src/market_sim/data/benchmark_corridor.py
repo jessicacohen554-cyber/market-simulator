@@ -4,7 +4,7 @@ The model-/scorer-side consumption seam for the external forecast-corridor
 anchors — 2030/2035/2040 capacity mix, generation (energy) mix, and
 power-sector CO2 by ISO/region, per external source (EIA AEO2025, NREL Standard
 Scenarios, ISO planning documents). Curated by
-``scripts/curate_benchmark_corridor.py``; read here through
+``scripts/data/curate_benchmark_corridor.py``; read here through
 :func:`scripts.lib.clean_io.read_clean` (path resolved by
 ``market_sim.config.paths``), exactly like every other clean datatype.
 

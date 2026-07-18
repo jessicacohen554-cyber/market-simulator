@@ -9,10 +9,10 @@
 #
 # Source (data/raw): campd-unit-outages.csv (ERCOT) and
 # campd-unit-outages-<ISO>.csv (CAISO / MISO / NEISO / NYISO / PJM), the
-# committed output of scripts/derive_campd_unit_outages.py. iso is stamped at
+# committed output of scripts/data/derive_campd_unit_outages.py. iso is stamped at
 # curation time (the raw files carry no iso column).
 #
-# Curated by scripts/curate_unit_outage_events.py.
+# Curated by scripts/data/curate_unit_outage_events.py.
 datatype: unit-outage-events
 schema_version: 1
 title: Per-unit outage events

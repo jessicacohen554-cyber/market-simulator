@@ -1,4 +1,4 @@
-"""Round-trip tests for eGRID curation (scripts/curate_egrid.py).
+"""Round-trip tests for eGRID curation (scripts/data/curate_egrid.py).
 
 Builds a tiny synthetic eGRID-shaped workbook (the real workbook's first row
 of long descriptive headers, then the short-code header row, then data rows)
@@ -13,7 +13,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_egrid
+from scripts.data import curate_egrid
 from scripts.lib import clean_io
 from scripts.lib.clean_io import validate_clean
 

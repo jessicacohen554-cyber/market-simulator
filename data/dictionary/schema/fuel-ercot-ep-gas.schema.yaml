@@ -6,7 +6,7 @@
 # GAS_BASIS_DIFFERENTIAL scalar.  The annual mean minus the Henry Hub annual
 # mean gives the fleet-wide delivered-gas basis for ERCOT.
 #
-# Curated by scripts/curate_fuel_prices.py from
+# Curated by scripts/data/curate_fuel_prices.py from
 #   data/raw/ercot_electric_power_gas_price.csv
 datatype: fuel-ercot-ep-gas
 schema_version: 1

@@ -375,14 +375,14 @@ CAISO_BIDIR_IMPORT_CAP_MW = 8300.0  # aggregate simultaneous-import limit (the
 #   Re-derived from the SAME measured series the per-hub export envelopes use:
 # the EIA-930 CISO BA-to-BA net-interchange (the realized ATC proxy on disk; the
 # named "OASIS export ATC" is unreachable from this environment — see
-# scripts/derive_caiso_export_cap.py). Convention matches the corridor
+# scripts/data/derive_caiso_export_cap.py). Convention matches the corridor
 # envelopes' own CAISO_CORRIDOR_FLOW_PERCENTILE (p95): the peak-bucket ceiling =
 # max over (month x hour-of-day) of the p95 aggregate net export, 2023-2025
 # (2026 holdout excluded, rule #22) = 4,361 MW. The prior 3,500 was a
 # hand-fitted "typical peak" sitting at ~p99 of the aggregate, BELOW the measured
 # export capability. rule-23 source-data change: the caiso-51 keeper
 # (2026-07-03-caiso-51-firm-base) landed the measured per-hub export envelopes.
-# Frozen derive script: scripts/derive_caiso_export_cap.py.
+# Frozen derive script: scripts/data/derive_caiso_export_cap.py.
 CAISO_BIDIR_EXPORT_CAP_MW = 4361.0
 _CAISO_BIDIR_EXPORT_NAME = "export_bidir"
 # Intertie throughput tiebreaker (same role/magnitude as the storage ε = 0.001
@@ -2213,7 +2213,7 @@ def inject_miso_pjm_lmp_import_prices(
     supply-curve approximation, not a real market feature.
 
     Requires the ``pjm_border_lmp_hourly_MISO.parquet`` built by
-    ``scripts/build_pjm_border_lmp_miso.py``. Returns ``True`` when at least
+    ``scripts/data/build_pjm_border_lmp_miso.py``. Returns ``True`` when at least
     one seam row was repriced, ``False`` when MISO has no measured PJM border
     series (so the run keeps the gas × HR ladder and is byte-identical).
     """
@@ -2260,7 +2260,7 @@ def inject_miso_seam_ladder_prices(
     directions) takes its per-year measured band price from
     :data:`~market_sim.config.interchange_config.MISO_SEAM_LADDER_BY_YEAR` —
     the seam's revealed supply curve, derived by
-    ``scripts/derive_miso_seam_ladders.py`` from the EIA-930 per-seam flow
+    ``scripts/data/derive_miso_seam_ladders.py`` from the EIA-930 per-seam flow
     duration curves Q-Q coupled with the measured MISO DA hub LMP. Band ``k``'s
     price is the DA quantile whose exceedance duration equals the measured
     duration of the seam flowing deeper than the band's midpoint, so the LP —
@@ -2305,7 +2305,7 @@ def inject_pjm_seam_ladder_prices(
     directions) takes its per-year measured band price from
     :data:`~market_sim.config.interchange_config.PJM_SEAM_LADDER_BY_YEAR` —
     the seam's revealed supply curve, derived by
-    ``scripts/derive_pjm_seam_ladders.py`` from PJM's settlement-grade
+    ``scripts/data/derive_pjm_seam_ladders.py`` from PJM's settlement-grade
     tie-line flow duration curves Q-Q coupled with the measured PJM DA system
     LMP. The LP — still clearing each band economically on its OWN hourly
     internal price — reproduces the measured direction-structural record

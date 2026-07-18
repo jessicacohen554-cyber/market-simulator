@@ -133,7 +133,7 @@ published for each probe) plus the G-C per-year no-regression bounds.
 2. Swap first: `fallocate -l 10G /swapfile && chmod 600 /swapfile && mkswap
    /swapfile && swapon /swapfile`. `MALLOC_ARENA_MAX=2` on every solve.
 3. `.venv/bin/python` for everything. Refetch the gitignored DA-virtual raw
-   feeds BEFORE any solve (`scripts/fetch_pjm_da_virtuals.py --feeds
+   feeds BEFORE any solve (`scripts/data/fetch_pjm_da_virtuals.py --feeds
    hrl_da_incs_decs`, ~15 min, never concurrent with a solve) and regenerate
    the ramp-capability clean table (`regenerate_clean.py`) — the recipe
    carries `pjm_da_virtual_bids` + `measured_ramp_capability`.

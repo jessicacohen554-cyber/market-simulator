@@ -13,7 +13,7 @@ fabricated or tuned to any backcast target.
 | # | Item | Source | Status | File path | Notes |
 |---|------|--------|--------|-----------|-------|
 | 1a | CEMS LA 2023 (hourly unit-level) | EPA CAMPD bulk-files API (`emissions/hourly/state/emissions-hourly-2023-la.csv`) | **got** | `data/raw/campd-unit-level/LA_2023.parquet` | 692,040 rows, 30 facilities / 79 units, schema-identical to `LA_2024.parquet`. Downloaded with `x-api-key: DEMO_KEY` (project has no EPA key); bulk-file metadata gave the exact S3 path. |
-| 1b | MISO unit-outage rebuild incl. LA 2023 | `scripts/derive_campd_unit_outages.py --iso MISO --years 2023 2024 2025` | **got** | `data/raw/campd-unit-outages-MISO.csv` | Re-derived. LA-2023 unit-outage windows went **0 → 136** across **42 units** (R S Nelson coal, Coughlin CC, Louisiana 1 CT, etc.); all from real CEMS windows (no full-year fallback). Total rows 2788 → 2924 (+136 = the LA-2023 additions). All 14 MISO states × 3 years now present. |
+| 1b | MISO unit-outage rebuild incl. LA 2023 | `scripts/data/derive_campd_unit_outages.py --iso MISO --years 2023 2024 2025` | **got** | `data/raw/campd-unit-outages-MISO.csv` | Re-derived. LA-2023 unit-outage windows went **0 → 136** across **42 units** (R S Nelson coal, Coughlin CC, Louisiana 1 CT, etc.); all from real CEMS windows (no full-year fallback). Total rows 2788 → 2924 (+136 = the LA-2023 additions). All 14 MISO states × 3 years now present. |
 | 2 | MISO zonal/regional metered load 2023-2025 | EIA-930 Hourly Grid Monitor, sub-BA demand (`region-sub-ba-data`, parent=MISO) | **integrated** | `data/raw/zone-specific-demand/MISO/miso_subba_demand_2023-2025.csv` | 157,471 hourly rows, 6 MISO sub-BAs. Wired as per-zone hourly shapes; see Item 2 integration outcome below. |
 | 3 | MISO PRA clearing prices PY 2023/24–2025/26 | MISO auction-summary PDFs (cdn.misoenergy.org) | **blocked** (primary) / **got** (secondary) | `data/raw/miso-pra/miso_pra_clearing_prices_2023-2026.csv` (+ `SOURCES.md`) | Primary PDFs return HTTP 403 (allowlist). Values transcribed from public secondary reporting (Utility Dive, Enel); see manual manifest for the primary PDF URLs to replace them. |
 | 4 | Chicago Citygate + MichCon monthly gas 2023-2025 | EIA citygate state series (proxy) | **got** (proxy) / **blocked** (ICE hub) | `data/raw/gas-prices/eia_citygate_IL_MI_monthly_2023-2025.csv` (+ `SOURCES_miso_citygate.md`) | EIA IL citygate = Chicago proxy; MI citygate = MichCon proxy. The ICE daily hub indices are paywalled/off-allowlist (manual manifest). |
@@ -211,7 +211,7 @@ MichCon daily trading-hub spot** indices (paywalled / off-allowlist).
 **DAILY Chicago Citygate gap — CLOSED via the EIA-weekly proxy (2026-07-17,
 miso-72).** `data/raw/gas-prices/miso_citygate_daily.csv` — 680 daily Chicago
 Citygate delivered-gas prints 2023-2025 (`date, chicago_citygate_usd_mmbtu,
-henry_hub_usd_mmbtu, source`), scraped by `scripts/fetch_miso_citygate_daily.py`
+henry_hub_usd_mmbtu, source`), scraped by `scripts/data/fetch_miso_citygate_daily.py`
 from the **"Chicago"** row of the EIA Natural Gas Weekly Update compact spot
 table (the same free EIA-displayed NGI Daily GPI table the CAISO/NYISO daily
 scripts read; `archivenew_ngwu/YYYY/MM_DD/`). This is genuine **weekday-daily**
@@ -256,7 +256,7 @@ curl -L -o data/raw/miso-pra/2025-26_PRA_Results.pdf \
 # --- Item 4: ICE MichCon daily hub spot (paywalled) ---
 # Chicago Citygate DAILY is now proxied from the free EIA NG Weekly table
 #   (data/raw/gas-prices/miso_citygate_daily.csv via
-#    scripts/fetch_miso_citygate_daily.py) — only MichCon daily remains paywalled.
+#    scripts/data/fetch_miso_citygate_daily.py) — only MichCon daily remains paywalled.
 # ICE end-of-day natural-gas indices (subscription) — MichCon (lower Michigan):
 #   https://www.ice.com/products/  (MichCon physical gas)
 # Or NGI / Platts daily index archives (subscription). Prefer ICE MichCon daily if
@@ -268,7 +268,7 @@ curl -L -o data/raw/miso-pra/2025-26_PRA_Results.pdf \
 #   https://www.misoenergy.org/markets-and-operations/real-time--market-data/market-reports/
 #   (misoenergy.org currently returns HTTP 403 from this environment)
 # Save under data/raw/miso-hsl/ then build per-year HSL parquets following
-# scripts/build_caiso_hsl.py (HSL = EIA-930 delivered + reported curtailment).
+# scripts/data/build_caiso_hsl.py (HSL = EIA-930 delivered + reported curtailment).
 ```
 
 ### Reproduce the unblocked pulls
@@ -281,7 +281,7 @@ curl -s -H "x-api-key: DEMO_KEY" \
 # then map columns to the LA_2024.parquet schema (see Item 1 column map).
 
 # Item 1b — rebuild MISO unit outages:
-.venv/bin/python scripts/derive_campd_unit_outages.py --iso MISO --years 2023 2024 2025
+.venv/bin/python scripts/data/derive_campd_unit_outages.py --iso MISO --years 2023 2024 2025
 
 # Item 2 — MISO sub-BA demand (EIA_API_KEY):
 #   GET api.eia.gov/v2/electricity/rto/region-sub-ba-data/data/
@@ -294,7 +294,7 @@ curl -s -H "x-api-key: DEMO_KEY" \
 
 # Item 5 — MISO per-zone wind SHAPE (EIA_API_KEY for the EIA-930 clock; NASA
 #   POWER is keyless). Builds data/raw/miso-wind-shape/miso_<year>_wind_zone_shape.parquet:
-.venv/bin/python scripts/build_miso_wind_shape.py --years 2023 2024 2025
+.venv/bin/python scripts/data/build_miso_wind_shape.py --years 2023 2024 2025
 ```
 
 ---
@@ -353,7 +353,7 @@ byte-identical since solar zones co-vary and never overflow.)
 0.88; 2025 1.00 vs 0.92) — the nocturnal-jet signature, consistent year over
 year.
 
-Files: `scripts/build_miso_wind_shape.py`,
+Files: `scripts/data/build_miso_wind_shape.py`,
 `data/raw/miso-wind-shape/miso_{2023,2024,2025}_wind_zone_shape.parquet`,
 `renewables._wind_zone_reanalysis_shapes` / `_zone_renewable_shapes` gated by
 `_WIND_ZONE_SHAPE_ISOS = {"MISO"}`, `paths.MISO_WIND_SHAPE_DIR`.
@@ -401,6 +401,6 @@ mirroring the NYISO stub:
 
 When the curtailment reports are downloadable, build per-year HSL parquets
 (`HSL = delivered + reported curtailment`, schema `_HSL_COLUMNS`) following
-`scripts/build_caiso_hsl.py`; the branch picks them up automatically. CAMPD
+`scripts/data/build_caiso_hsl.py`; the branch picks them up automatically. CAMPD
 per-plant binning stays OFF for MISO and `pmax` remains generic EIA-860
 net-summer capacity (unchanged).

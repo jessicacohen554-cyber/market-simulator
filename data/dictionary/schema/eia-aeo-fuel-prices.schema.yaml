@@ -33,7 +33,7 @@ description: >-
   power-sector delivered distillate/residual fuel oil) price trajectories,
   2024-2050, across the Reference / High Oil and Gas Supply / Low Oil and Gas
   Supply scenario cases. Sourced from the EIA Open Data API v2 ``aeo`` route
-  (scripts/fetch_eia_aeo.py), not a hand transcription of the table browser.
+  (scripts/data/fetch_eia_aeo.py), not a hand transcription of the table browser.
 
 key_columns: [fuel, metric, region, scenario, year]
 allow_additional_columns: false

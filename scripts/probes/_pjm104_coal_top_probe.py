@@ -7,7 +7,7 @@ DEC demand to coal — COAL_BIT moves OUT in 2023 (+10.84) and 2024 (+8.70)
 against the ±8.0 band, and the 2025 C2 coal family stays ~+10%.
 
 The measured basis for the coal leg: the extended mid-curve derive
-(``scripts/derive_pjm_offer_midcurve.py``, shares grid + 0.975/0.995) now
+(``scripts/data/derive_pjm_offer_midcurve.py``, shares grid + 0.975/0.995) now
 samples the LONG_RUN top-of-curve belt — the "last-5% wall" the decile grid
 missed, where the pjm-99/A' findings located the real $35-83+ price
 formation and which no prior mechanism measured for coal (the pjm-99 top

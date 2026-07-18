@@ -21,11 +21,12 @@ REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO))
 sys.path.insert(0, str(REPO / "scripts"))
 
-from scripts import fetch_ercot_ordc_reserves as ordc  # noqa: E402
-from scripts.build_ercot_as_withholding import (  # noqa: E402
+sys.path.insert(0, str(REPO / "scripts" / "data"))
+from scripts.data import fetch_ercot_ordc_reserves as ordc  # noqa: E402
+from scripts.data.build_ercot_as_withholding import (  # noqa: E402
     prevailing_he_to_cst,
 )
-from scripts.curate_ercot_wtx_congestion import _sced_ts_to_cst  # noqa: E402
+from scripts.data.curate_ercot_wtx_congestion import _sced_ts_to_cst  # noqa: E402
 
 
 # ---------------------------------------------------------------------------
@@ -152,7 +153,7 @@ def test_ordc_interp_short_gaps_keeps_long_tail_nan():
 def test_ordc_sced_stamps_summer_conversion():
     """NP6-905 SCED stamps are prevailing: a June stamp lands one CST hour
     earlier (via the same _prevailing_to_standard the HSL builder uses)."""
-    from scripts.build_ercot_hsl import _prevailing_to_standard
+    from scripts.data.build_ercot_hsl import _prevailing_to_standard
 
     raw = pd.Series(pd.to_datetime(["2024-06-10 15:00:00", "2024-01-10 15:00:00"]))
     conv = _prevailing_to_standard(raw, None)

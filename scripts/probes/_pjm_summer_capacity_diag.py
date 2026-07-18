@@ -33,12 +33,12 @@ from scripts.run_calibration_full import (  # noqa: E402
     _henry_hub_actual,
     _load_reference,
 )
-from scripts.run_pjm74_cc_ct_rebalance import BIT_OVERRIDES  # noqa: E402
-from scripts.run_pjm75_ct_drag_cc_cap import (  # noqa: E402
+from scripts.archive.run_pjm74_cc_ct_rebalance import BIT_OVERRIDES  # noqa: E402
+from scripts.archive.run_pjm75_ct_drag_cc_cap import (  # noqa: E402
     CONFIG_OVERRIDES,
     CT_DRAG_OVERRIDES,
 )
-from scripts.run_pjm90_cchp_srmc import _OFFER_OVERRIDES  # noqa: E402
+from scripts.archive.run_pjm90_cchp_srmc import _OFFER_OVERRIDES  # noqa: E402
 
 
 _SUMMER = (6, 7, 8, 9)

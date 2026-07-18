@@ -80,7 +80,7 @@ The depth re-grounded on *measured* data instead of a chosen scalar: only the
 **firm-contracted** fraction is priced off a term index and is insulated. So the
 West delivered discount should be `spot_share × hub_basis` — a measured fraction.
 
-- `scripts/derive_gas_takeorpay.py` — per-plant gas contract/spot share from
+- `scripts/data/derive_gas_takeorpay.py` — per-plant gas contract/spot share from
   EIA-923 Schedule-5 **Purchase Type** (C/NC/T = firm, S = spot), mirroring the
   coal take-or-pay deriver → `data/raw/_processed-legacy/gas_takeorpay_ERCOT.csv`.
 - `fuel.ercot_gas_spot_share_by_plant` — each gas plant's own EIA-923 spot share,
@@ -130,7 +130,7 @@ the unit level.
 The f923 zips download from the EIA-923 **archive** path
 (`.../eia923/archive/xls/f923_<year>.zip` — the live `/xls/` path 301-redirects to
 the homepage, which is what blocked the first attempt); they stay gitignored and
-are re-downloadable from the URL recorded in `scripts/derive_gas_takeorpay.py`.
+are re-downloadable from the URL recorded in `scripts/data/derive_gas_takeorpay.py`.
 Morgan Creek / Permian Basin are merchant and file no Schedule-5 gas receipts, so
 they default to spot share 1.0 (full discount) — consistent with the deriver's
 "no classifiable Purchase Type → treated as fully spot".

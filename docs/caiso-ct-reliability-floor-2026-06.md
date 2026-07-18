@@ -107,7 +107,7 @@ floor_frac = clip(base + 0.047·(TMAX_degC − 25), base, 0.46)
 
 with `base = 0.049` = the **median** EIA-930/CAMPD CT_PEAKER evening (15-22 local)
 capacity factor on cool days (TMAX < 25 °C), pooled 2023-2025
-(`scripts/derive_caiso_ct_reliability_floor.py`; cool-day evening CF: median
+(`scripts/data/derive_caiso_ct_reliability_floor.py`; cool-day evening CF: median
 0.049, mean 0.066, p25 0.019). This is the regression **intercept** the hot-limb
 fit discards — a measured quantity, forward-derivable and condition-responsive on
 the same TMAX series as the hot limb, **not** a TWh-residual tune. It lifts
@@ -183,7 +183,7 @@ dispatchable.
 
 **Session-2 update — the mechanism is the gas-commitment floor, not an
 energy-balance drift.** A clean energy-balance audit
-(`scripts/caiso_energy_balance_probe.py`) shows the keeper balance closes:
+(`scripts/archive/caiso_energy_balance_probe.py`) shows the keeper balance closes:
 served demand is exact (clean EIA-930 net load, no BTM add-back), curtailment is
 ~0, storage round-trip loss ~2.7 TWh, net-import error only ±2-3 TWh (mixed sign
 by year). The "+4-5 TWh domestic over-gen" of the prior handoff is mostly an
@@ -240,5 +240,5 @@ CT_PEAKER floor's net CC-displacement.
   the peakers off.
 * CLI: `--caiso-ct-reliability-floor` / `--no-caiso-ct-reliability-floor`
   (tri-state; unset keeps the per-ISO base default).
-* Re-derive: `python scripts/derive_caiso_ct_reliability_floor.py`
+* Re-derive: `python scripts/data/derive_caiso_ct_reliability_floor.py`
   (`--no-fetch` to re-regress from the archived TMAX).

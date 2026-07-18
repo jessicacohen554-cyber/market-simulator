@@ -8,7 +8,7 @@
 > ~80-97 % at *equal-or-steeper* ramps (a regime break coincident with the
 > pocket battery build and the 2025 slice-of-day RA reform), the same
 > not-year-stable signature that rejected the NYISO ST_GAS drag alternative.
-> Adjudication: `scripts/derive_caiso_local_commitment.py`; full record:
+> Adjudication: `scripts/data/derive_caiso_local_commitment.py`; full record:
 > `results/calibration/FINDING-caiso81-local-commitment-driver-refuted-2026-07-13.md`.
 > The CT_PEAKER deficit stays OPEN pending a measured per-year
 > local-commitment source (DMM ED/min-online volumes by area) or an

@@ -1,4 +1,4 @@
-"""Tests for scripts/curate_coal_basin_price.py.
+"""Tests for scripts/data/curate_coal_basin_price.py.
 
 Drives the curation on a tiny synthetic raw fixture (not the real EIA pull):
 one market-sales-price row and one price-by-rank row -> curate -> assert the
@@ -16,7 +16,7 @@ from tempfile import TemporaryDirectory
 
 import pandas as pd
 
-from scripts import curate_coal_basin_price
+from scripts.data import curate_coal_basin_price
 from scripts.lib import clean_io
 from scripts.lib.clean_io import read_clean_metadata, validate_clean
 

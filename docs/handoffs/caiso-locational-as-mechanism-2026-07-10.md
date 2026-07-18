@@ -17,7 +17,7 @@ that configuration.** The binding driver must be locational.
    headroom re-anchored, CEMS min-load coupling, NREL startup charge, online ramp gate. Zero
    fitted parameters, default off, first design composing posture with the storage duration
    gate. Read only under `energy_reserve_coopt + caiso_reserve_coopt`.
-2. `scripts/fetch_caiso_oasis.py --datasets asreq`: DAM `AS_REQ` → `data/raw/CAISO-AS/` —
+2. `scripts/data/fetch_caiso_oasis.py --datasets asreq`: DAM `AS_REQ` → `data/raw/CAISO-AS/` —
    hourly MW **minimum and maximum per AS region** (`AS_CAISO`, `AS_SP26`, `AS_NP26`, `_EXP`
    variants) and product (SR spin / NR non-spin / RU / RD), 2023–2025 (train years only; Jan-2023
    verified retrievable). Columns: `ANC_REGION, ANC_TYPE, XML_DATA_ITEM

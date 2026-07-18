@@ -16,7 +16,7 @@ Implementation prompt in §9.
 > ### Stage-1 status note (2026-07-05, W2-P3)
 >
 > The joint FOM+scarcity protocol (§5) ran the full 2×3 ERCOT + 2-cell PJM probe matrix
-> (`scripts/run_fom_scarcity_grid.py`; report `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05.md`
+> (`scripts/archive/run_fom_scarcity_grid.py`; report `docs/handoffs/fom-scarcity-joint-protocol-2026-07-05.md`
 > + `fom-scarcity-grid-2026-07-05.json`). **Decision: the ATB FOM defaults were NOT flipped.**
 > The grid showed the going-forward FOM level is currently **inert** in the ERCOT forecast — the
 > nameplate reliability floor retains 100 % of thermal (floor ≈100 GW > ~72 GW fleet) and the

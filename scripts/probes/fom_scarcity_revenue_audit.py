@@ -13,7 +13,7 @@ Scope note (W2-P3 session constraint): the committed keeper bundles carry fit
 summaries, not hourly price/dispatch arrays, and regenerating them would be a
 multi-year calibration solve, which this session's mandate forbids. The
 model-side screen revenue stack is therefore instrumented in the FORWARD 2x3
-grid probes (scripts/run_fom_scarcity_grid.py) — the quantity the FOM bar is
+grid probes (scripts/archive/run_fom_scarcity_grid.py) — the quantity the FOM bar is
 actually compared against in a forecast — while this script establishes (a)
 the published SOM benchmark table and (b) that the repo's measured price data
 reproduces the SOM's price-taker arithmetic. In-sample years 2023-2025 only;

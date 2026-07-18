@@ -37,7 +37,7 @@ admissible, same class as delivered fuel prices / CAMPD outage windows);
 cleared volumes and prices stay LP outputs — nothing is pinned. The demand
 vector is untouched (load-weighted scoring weights stay physical). Committed
 forecast substitute: the condition-binned normalized surface
-(`scripts/derive_pjm_da_virtual_surface.py`).
+(`scripts/data/derive_pjm_da_virtual_surface.py`).
 
 **pjm-100 (B alone) vs baseline — top-150 load hours:**
 
@@ -56,7 +56,7 @@ market now reaches.
 
 ## 3. Lever A′ — the measured mid-curve floor (`pjm_offer_midcurve_conditional`)
 
-`scripts/derive_pjm_offer_midcurve.py` + 
+`scripts/data/derive_pjm_offer_midcurve.py` + 
 `fleet.build_pjm_offer_midcurve_conditional_markup`: within-unit
 capacity-share sampling (shares 0.05-0.95) of the full measured offer
 curves, per pjm-99 physics segment (+ the LONG_RUN coal/gas-steam block),
@@ -265,8 +265,8 @@ mechanism is a genuine keeper-line structural improvement to price formation.
   --with-offer-surface --with-midcurve --out-dir
   results/calibration/pjm101_depth_surfaces`.
 - Compare: `python scripts/probes/_g22_ab_compare.py <baseline> <probe>`.
-- Raw feeds: `scripts/fetch_pjm_da_virtuals.py` (~15 min),
-  `scripts/fetch_pjm_energy_offers.py` (~40 min, 3 parallel year jobs,
+- Raw feeds: `scripts/data/fetch_pjm_da_virtuals.py` (~15 min),
+  `scripts/data/fetch_pjm_energy_offers.py` (~40 min, 3 parallel year jobs,
   never concurrent with a solve).
 - ENV: 15 GB box — create the 10 GB swapfile first; solves alone, years
   sequential; `git push` needs `http.postBuffer` raised (the proxy rejects
