@@ -63,12 +63,23 @@ CANONICAL_COLUMNS: tuple[str, ...] = (
 # point in PJM's published absolute (UCAP Level MW, UCAP Price $/MW-day) form
 # for a vintage whose curve_point rows already carry the Manual-18 pct basis
 # (2025/2026), keeping the datatype key unique.
+# icap_ucap_translation_factor is NYISO's NYCA-wide "translation factor" (a.k.a.
+# Derate Factor) — the realized capacity-weighted forced-outage derate that
+# converts the ICAP-basis NYCA Minimum Installed Capacity Requirement into the
+# UCAP-basis NYCA Minimum Unforced Capacity Requirement (ICAP Manual §2.5;
+# UCAP_req = ICAP_req x (1 - translation_factor)). It is the NYISO analogue of
+# PJM's forecast_pool_requirement pairing (both put an ICAP-stated IRM onto the
+# ISO's own UCAP supply basis); carried in `fraction` (the source prints the
+# factor as a decimal, e.g. 0.1321). Published by NYSRC in the IRM Study
+# Technical Appendices, Appendix D Table D.2 "NYCA ICAP to UCAP Translation"
+# (FF-3D / RC-1D Option B).
 METRIC_VOCAB: frozenset[str] = frozenset(
     {
         "net_cone",
         "gross_cone",
         "irm",
         "forecast_pool_requirement",
+        "icap_ucap_translation_factor",
         "price_cap",
         "price_floor",
         "curve_point",
@@ -92,6 +103,9 @@ Y_UNIT_VOCAB: frozenset[str] = frozenset(
         "pct",
         "multiple_of_net_cone",
         "fraction_of_peak_ucap",
+        # Dimensionless fraction as published (NYISO icap_ucap_translation_factor
+        # / Derate Factor — the source prints e.g. 0.1321, not 13.21%).
+        "fraction",
         # UCAP MW scalars (reliability_requirement / _frr_adj / ee_addback).
         "mw",
     }
