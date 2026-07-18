@@ -379,3 +379,261 @@ def test_per_channel_separates_announced_from_economic():
     assert ch["economic"]["recall_matched"] == 1  # coal pool covers the 500 unit
     assert ch["_n_big_actual"] == 1
     assert ch["_legacy_known_mapped_to"] == "announced"
+
+
+# --------------------------------------------------------------------------- #
+# Flip-gate extras (FF-1A): T-R10, LOYO folds, BLK-10 — trivial cases first.
+# --------------------------------------------------------------------------- #
+def test_tr10_trivial_pass():
+    """1 coal econ exit against real coal retirements → both gates PASS."""
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "m1",
+                "fuel": "coal",
+                "mw": 500,
+                "year": 2023,
+                "reason": "economic",
+            }
+        ]
+    )
+    actuals = _actuals([{"kind": "retirement", "fuel": "coal", "mw": 600, "year": 2023}])
+    tr = S.score_tr10(model, actuals)
+    assert tr["tr10a"] == "PASS"
+    assert tr["tr10b"] == "PASS"
+    assert tr["first_mover_fuels"] == ["coal"]
+    assert tr["first_mover_year"] == 2023
+
+
+def test_tr10_vacuous_pass_no_econ_exits():
+    """No economic thermal exits → vacuous PASS (no wave, no inversion)."""
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "6023_1",
+                "fuel": "nuclear",
+                "mw": 1000,
+                "year": 2022,
+                "reason": "announced",
+            }
+        ]
+    )
+    actuals = _actuals([{"kind": "retirement", "fuel": "coal", "mw": 600, "year": 2023}])
+    tr = S.score_tr10(model, actuals)
+    assert tr["tr10a"] == "PASS" and tr["tr10b"] == "PASS"
+    assert tr["first_mover_fuels"] == []
+
+
+def test_tr10a_fails_zero_real_first_mover():
+    """MISO D1=3 signature: gas_st (A=0) first economic mover, >1 GW → both FAIL."""
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "m1",
+                "fuel": "gas_st",
+                "mw": 8643,
+                "year": 2023,
+                "reason": "economic",
+            },
+            {
+                "unit_id": "m2",
+                "fuel": "coal",
+                "mw": 2000,
+                "year": 2024,
+                "reason": "economic",
+            },
+        ]
+    )
+    actuals = _actuals(
+        [{"kind": "retirement", "fuel": "coal", "mw": 10000, "year": 2024}]
+    )
+    tr = S.score_tr10(model, actuals)
+    assert tr["tr10a"] == "FAIL"  # first mover gas_st has A=0
+    assert tr["tr10b"] == "FAIL"  # zero-real gas_st accumulates 8.643 GW
+    assert tr["zero_real_fuels_over_1gw"] == ["gas_st"]
+
+
+def test_tr10b_tolerates_sub_1gw_zero_real():
+    """A zero-real fuel below the pre-registered 1 GW bar does not trip b."""
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "m1",
+                "fuel": "coal",
+                "mw": 5000,
+                "year": 2023,
+                "reason": "economic",
+            },
+            {
+                "unit_id": "m2",
+                "fuel": "oil",
+                "mw": 900,
+                "year": 2024,
+                "reason": "economic",
+            },
+        ]
+    )
+    actuals = _actuals(
+        [{"kind": "retirement", "fuel": "coal", "mw": 5000, "year": 2023}]
+    )
+    tr = S.score_tr10(model, actuals)
+    assert tr["tr10a"] == "PASS"
+    assert tr["tr10b"] == "PASS"  # oil 0.9 GW <= 1.0 GW bar
+
+
+def test_tr10_announced_channel_never_trips_guard():
+    """PJM Byron/Dresden class: announced nuclear (A=0) is not an economic
+    exit — the guard sees only the economic channel."""
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "6023_1",
+                "fuel": "nuclear",
+                "mw": 4097,
+                "year": 2021,
+                "reason": "announced",
+            },
+            {
+                "unit_id": "m2",
+                "fuel": "coal",
+                "mw": 3000,
+                "year": 2023,
+                "reason": "economic",
+            },
+        ]
+    )
+    actuals = _actuals(
+        [{"kind": "retirement", "fuel": "coal", "mw": 6885, "year": 2023}]
+    )
+    tr = S.score_tr10(model, actuals)
+    assert tr["first_mover_fuels"] == ["coal"]
+    assert tr["tr10a"] == "PASS" and tr["tr10b"] == "PASS"
+
+
+def test_blk10_trivial_none_fired():
+    """Ledger with only economic additions → 0 fired MW."""
+    ledgers = {
+        2025: {
+            "thermal_additions": [
+                {
+                    "unit_id": "gas_cc_new_2025_0",
+                    "fuel": "gas_cc",
+                    "mw": 3000.0,
+                    "source": "economic",
+                },
+            ]
+        }
+    }
+    b = S.blk10_backstop_fired(ledgers)
+    assert b["fired_mw_total"] == 0.0
+    assert b["fired_rows"] == []
+    assert b["thermal_additions_mw_by_source"] == {"economic": 3000.0}
+
+
+def test_blk10_counts_reserve_backstop_rows():
+    """One gas_ct_adequacy row → its MW is the fired total, split by source."""
+    ledgers = {
+        2024: {
+            "thermal_additions": [
+                {
+                    "unit_id": "gas_ct_adequacy_2024",
+                    "fuel": "gas_ct",
+                    "mw": 6430.0,
+                    "source": "reserve_backstop",
+                },
+            ]
+        },
+        2025: {
+            "thermal_additions": [
+                {
+                    "unit_id": "gas_ct_new_2025_0",
+                    "fuel": "gas_ct",
+                    "mw": 353.0,
+                    "source": "economic",
+                },
+            ]
+        },
+    }
+    b = S.blk10_backstop_fired(ledgers)
+    assert b["fired_mw_total"] == 6430.0
+    assert b["fired_gw_total"] == 6.43
+    assert b["fired_rows"][0]["year"] == 2024
+    assert b["thermal_additions_mw_by_source"] == {
+        "economic": 353.0,
+        "reserve_backstop": 6430.0,
+    }
+
+
+def test_loyo_folds_trivial_all_hold():
+    """Recall/T-R10 verdicts identical in every fold → all hold >=2/3."""
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": f"m{y}",
+                "fuel": "coal",
+                "mw": 500,
+                "year": y,
+                "reason": "economic",
+            }
+            for y in (2023, 2024, 2025)
+        ]
+    )
+    actuals = _actuals(
+        [
+            {"kind": "retirement", "fuel": "coal", "mw": 500, "year": y}
+            for y in (2023, 2024, 2025)
+        ]
+    )
+    lo = S.loyo_folds(model, actuals, reversal_set={})
+    assert set(lo["folds"]) == {"2023", "2024", "2025"}
+    for f in lo["folds"].values():
+        assert f["recall_band"] == "PASS"
+        assert f["tr10a"] == "PASS" and f["tr10b"] == "PASS"
+    assert lo["holds_2of3"] == {
+        "recall_pass": True,
+        "tr10a_pass": True,
+        "tr10b_pass": True,
+    }
+
+
+def test_loyo_fold_drops_year_from_both_sides():
+    """A verdict carried by a single year flips only in that year's fold: the
+    2023-only zero-real gas_st exit trips T-R10 in the 2024/2025 folds but not
+    in the 2023 fold (its rows held out) → tr10 holds only 2/3... exactly the
+    boundary the >=2/3 bar is registered on."""
+    model = pd.DataFrame(
+        [
+            {
+                "unit_id": "m1",
+                "fuel": "gas_st",
+                "mw": 2000,
+                "year": 2023,
+                "reason": "economic",
+            },
+            {
+                "unit_id": "m2",
+                "fuel": "coal",
+                "mw": 500,
+                "year": 2024,
+                "reason": "economic",
+            },
+            {
+                "unit_id": "m3",
+                "fuel": "coal",
+                "mw": 500,
+                "year": 2025,
+                "reason": "economic",
+            },
+        ]
+    )
+    actuals = _actuals(
+        [
+            {"kind": "retirement", "fuel": "coal", "mw": 500, "year": 2024},
+            {"kind": "retirement", "fuel": "coal", "mw": 500, "year": 2025},
+        ]
+    )
+    lo = S.loyo_folds(model, actuals, reversal_set={})
+    assert lo["folds"]["2023"]["tr10a"] == "PASS"  # gas_st held out
+    assert lo["folds"]["2024"]["tr10a"] == "FAIL"
+    assert lo["folds"]["2025"]["tr10a"] == "FAIL"
+    assert lo["holds_2of3"]["tr10a_pass"] is False  # 1/3 < 2/3
