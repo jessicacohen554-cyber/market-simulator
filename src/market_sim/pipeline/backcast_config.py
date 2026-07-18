@@ -1230,6 +1230,13 @@ def backcast_config(
         coal_prb_mustrun_override=coal_prb_mustrun,
         outage_source=outage_source,  # backcast pins actual coal/CC outages;
         #   "statistical" reverts to the WEFOR/POF availability model.
+        correlated_forced_outage=False,  # forecast/hindcast-only correlated
+        #   cold-event forced-outage derate (FF-1B). A backcast carries the
+        #   ACTUAL deep-cold events through the measured CAMPD outage overlays
+        #   above (rule 13), so the statistical derate is explicitly OFF here —
+        #   belt-and-braces with apply_correlated_outage_derate's own mode gate,
+        #   and it keeps every calibration/keeper cache_key + run_config.json
+        #   byte-identical after the FF-1F posture flip (default off -> on).
         caiso_gas_commitment_floor=False,  # Step-1 overhaul: DEFAULT OFF. The
         #   measured-NG:NG midday slab pinned the gas fleet to 0.80 x its measured
         #   EIA-930 output (a measured-OUTCOME overlay, None for forecast years) —
