@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-18-ercot82-measured-rtolcap",
+  "label": "ercot82 measured rtolcap",
+  "date": "2026-07-18",
+  "shorthand": "ercot82-measured-rtolcap",
+  "definition": "ercot-82 measured-RTOLCAP A/B (rule-14): the 2026-07-18-ercot81-nonreleasable-as keeper recipe with the SINGLE delta ercot_reserve_supply_forward=false, sourcing the ERCOT co-opt reserve-supply cap from the MEASURED ercot_<year>_ordc_reserves_hourly.parquet RTOLCAP/RTOFFCAP series instead of the WS-A forward formula. Closes the surfaced prb_overrides stomp (coal_prb_sigmoid_overrides forced forward=true over the meta top-level false, so every ercot76..81 keeper solved on the forward-formula cap mean 16.1 GW). Zero fitted scalars; measured exogenous supply per rule 14. Full-span 2023+2024+2025 one invocation, years sequential.",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "ERCOT",
+  "file": "frontend/data/backcast/runs/2026-07-18-ercot82-measured-rtolcap.js",
+  "bundle": "results/calibration/ercot82_measured_rtolcap_fullspan"
+}
