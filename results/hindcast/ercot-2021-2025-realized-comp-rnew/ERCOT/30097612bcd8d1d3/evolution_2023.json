@@ -1,0 +1,4639 @@
+{
+  "bridge": false,
+  "ccs_retrofits": [],
+  "firm_clean_mw": 0.0,
+  "fleet_by_fuel_after": {
+    "coal": 13963.9,
+    "gas_cc": 37241.04,
+    "gas_ct": 10689.167,
+    "gas_st": 9426.07,
+    "nuclear": 4980.0
+  },
+  "fleet_by_fuel_before": {
+    "coal": 13963.9,
+    "gas_cc": 37241.04,
+    "gas_ct": 10689.167,
+    "gas_st": 9426.07,
+    "nuclear": 4980.0
+  },
+  "floor_retained": [],
+  "hindcast": true,
+  "iso": "ERCOT",
+  "mode": "forecast",
+  "peak_demand_mw": 84617.0,
+  "pipeline_events": [
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 610.75,
+      "unit_id": "COAL_Houston_p3470_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 488.6,
+      "unit_id": "COAL_Houston_p3470_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 1221.5,
+      "unit_id": "COAL_Houston_p3470_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 122.15,
+      "unit_id": "COAL_Houston_p3470_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 718.16,
+      "unit_id": "COAL_North_p6180_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 179.54000000000002,
+      "unit_id": "COAL_North_p6180_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 807.9300000000003,
+      "unit_id": "COAL_North_p6180_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 89.77000000000001,
+      "unit_id": "COAL_North_p6180_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 139.68,
+      "unit_id": "COAL_North_p7030_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 34.919999999999995,
+      "unit_id": "COAL_North_p7030_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 157.14,
+      "unit_id": "COAL_North_p7030_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 17.459999999999997,
+      "unit_id": "COAL_North_p7030_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 462.45,
+      "unit_id": "COAL_North_p298_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 462.45,
+      "unit_id": "COAL_North_p298_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 832.4099999999999,
+      "unit_id": "COAL_North_p298_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 92.49,
+      "unit_id": "COAL_North_p298_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 594.9,
+      "unit_id": "COAL_Northeast_p6146_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 594.8999999999999,
+      "unit_id": "COAL_Northeast_p6146_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 1070.82,
+      "unit_id": "COAL_Northeast_p6146_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 118.98,
+      "unit_id": "COAL_Northeast_p6146_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 155.6,
+      "unit_id": "COAL_South_p6178_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 124.48,
+      "unit_id": "COAL_South_p6178_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 311.19999999999993,
+      "unit_id": "COAL_South_p6178_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 31.12,
+      "unit_id": "COAL_South_p6178_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 164.0,
+      "unit_id": "COAL_South_p6183_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 41.0,
+      "unit_id": "COAL_South_p6183_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 184.5,
+      "unit_id": "COAL_South_p6183_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 20.5,
+      "unit_id": "COAL_South_p6183_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 422.5,
+      "unit_id": "COAL_South_Central_p6179_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 338.0,
+      "unit_id": "COAL_South_Central_p6179_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 845.0,
+      "unit_id": "COAL_South_Central_p6179_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 84.5,
+      "unit_id": "COAL_South_Central_p6179_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 372.125,
+      "unit_id": "COAL_South_Central_p7097_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 297.7,
+      "unit_id": "COAL_South_Central_p7097_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 744.25,
+      "unit_id": "COAL_South_Central_p7097_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 74.425,
+      "unit_id": "COAL_South_Central_p7097_peak",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 234.0,
+      "unit_id": "COAL_South_Central_p56611_mustrun",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 187.2,
+      "unit_id": "COAL_South_Central_p56611_committed",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 467.99999999999994,
+      "unit_id": "COAL_South_Central_p56611_econ",
+      "year": 2023
+    },
+    {
+      "decided_year": 2021,
+      "event": "re_confirmed",
+      "execute_year": 2024,
+      "fuel": "coal",
+      "mw": 46.8,
+      "unit_id": "COAL_South_Central_p56611_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.00000000000001,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 214.02,
+      "unit_id": "ST_GAS_Northeast_p3504_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 459.0,
+      "unit_id": "ST_GAS_Houston_p3460_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 76.5,
+      "unit_id": "ST_GAS_Houston_p3460_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 469.5,
+      "unit_id": "ST_GAS_Houston_p34702_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 78.25,
+      "unit_id": "ST_GAS_Houston_p34702_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 278.25,
+      "unit_id": "ST_GAS_North_p3452_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 46.375,
+      "unit_id": "ST_GAS_North_p3452_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 553.9300000000001,
+      "unit_id": "ST_GAS_North_p3453_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 394.44,
+      "unit_id": "ST_GAS_North_p3491_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 854.6199999999999,
+      "unit_id": "ST_GAS_North_p3491_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 35.67,
+      "unit_id": "ST_GAS_Northeast_p3504_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 186.9,
+      "unit_id": "ST_GAS_South_Central_p3601_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 31.15,
+      "unit_id": "ST_GAS_South_Central_p3601_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 356.8,
+      "unit_id": "ST_GAS_South_Central_p3611_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 44.6,
+      "unit_id": "ST_GAS_South_Central_p3611_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 105.6,
+      "unit_id": "ST_GAS_South_p49392_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 35.0,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 17.6,
+      "unit_id": "ST_GAS_South_p49392_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.99999999999999,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 65.74,
+      "unit_id": "ST_GAS_North_p3491_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.99999999999999,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 72.99,
+      "unit_id": "ST_GAS_North_p3507_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.999722879555726,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 602.875,
+      "unit_id": "ST_GAS_North_p3452_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.999646519594606,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 31.735,
+      "unit_id": "ST_GAS_North_p3490_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.99944890062124,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 190.41,
+      "unit_id": "ST_GAS_North_p3490_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.998490866458084,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 10.16,
+      "unit_id": "ST_GAS_South_Central_p6243_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.99821588897735,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 60.96,
+      "unit_id": "ST_GAS_South_Central_p6243_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.99651030718391,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 490.6,
+      "unit_id": "ST_GAS_South_Central_p3611_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.99518054311728,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 404.95000000000005,
+      "unit_id": "ST_GAS_South_Central_p3601_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.99232547633588,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 1017.25,
+      "unit_id": "ST_GAS_Houston_p34702_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.990950384769576,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 463.71,
+      "unit_id": "ST_GAS_Northeast_p3504_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.98965872296797,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 994.5,
+      "unit_id": "ST_GAS_Houston_p3460_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.98859162774446,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 228.8,
+      "unit_id": "ST_GAS_South_p49392_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.90806209150119,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 412.55500000000006,
+      "unit_id": "ST_GAS_North_p3490_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 34.84255621829547,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 132.07999999999998,
+      "unit_id": "ST_GAS_South_Central_p6243_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.000000000000007,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 654.445,
+      "unit_id": "CC_REGULAR_Houston_p3469_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.000000000000007,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 19.28,
+      "unit_id": "CC_REGULAR_South_p3631_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 32.18,
+      "unit_id": "CC_CHP_Houston_p50815_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 213.85,
+      "unit_id": "CC_CHP_Houston_p55470_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 30.55,
+      "unit_id": "CC_CHP_Houston_p55470_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 80.5,
+      "unit_id": "CC_CHP_West_p52176_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 11.5,
+      "unit_id": "CC_CHP_West_p52176_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 356.97,
+      "unit_id": "CC_REGULAR_Houston_p3469_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 178.485,
+      "unit_id": "CC_REGULAR_Houston_p3469_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 53.55,
+      "unit_id": "CC_REGULAR_Houston_p56806_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 44.0,
+      "unit_id": "CC_REGULAR_North_p50127_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 28.0,
+      "unit_id": "CC_REGULAR_North_p50127_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 8.0,
+      "unit_id": "CC_REGULAR_North_p50127_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 205.53,
+      "unit_id": "CC_REGULAR_North_p55501_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 240.96,
+      "unit_id": "CC_REGULAR_North_p58001_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 140.94,
+      "unit_id": "CC_REGULAR_Northeast_p55132_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 57.46,
+      "unit_id": "CC_REGULAR_South_Central_p4937_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 30.45,
+      "unit_id": "CC_REGULAR_South_Central_p55154_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 258.39,
+      "unit_id": "CC_REGULAR_South_p55086_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 30.0,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 82.56,
+      "unit_id": "CC_REGULAR_West_p56349_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.999999999999996,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 46.98,
+      "unit_id": "CC_REGULAR_South_p55086_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.99987894744933,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 121.05,
+      "unit_id": "CC_REGULAR_North_p55172_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.999270950934065,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 26.56,
+      "unit_id": "CC_REGULAR_North_p50109_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.99893021649605,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 98.115,
+      "unit_id": "CC_REGULAR_Houston_p56350_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.99817594667053,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 260.1,
+      "unit_id": "CC_REGULAR_North_p55091_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.998012712786224,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 163.23,
+      "unit_id": "CC_REGULAR_South_Central_p55153_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.9970857326023,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 164.43000000000004,
+      "unit_id": "CC_REGULAR_South_p55086_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.996614133907,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 148.35,
+      "unit_id": "CC_REGULAR_South_Central_p55144_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.991615097746035,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 15.39,
+      "unit_id": "CC_REGULAR_West_p56233_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.991609069209836,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 140.955,
+      "unit_id": "CC_REGULAR_Houston_p55062_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.988651699435884,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 118.26,
+      "unit_id": "CC_REGULAR_North_p55139_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.98865169943588,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 284.13,
+      "unit_id": "CC_REGULAR_North_p55480_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.98864439393545,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 120.48,
+      "unit_id": "CC_REGULAR_North_p58005_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.9878194591747,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 316.03,
+      "unit_id": "CC_REGULAR_South_Central_p4937_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.97452251427713,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 192.0,
+      "unit_id": "CC_REGULAR_North_p55230_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.959840394754426,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 294.525,
+      "unit_id": "CC_REGULAR_Houston_p56806_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.958981652868083,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 73.0,
+      "unit_id": "CC_REGULAR_South_p4939_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.939025818630096,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 166.89,
+      "unit_id": "CC_REGULAR_North_p55097_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.93716650263236,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 104.46,
+      "unit_id": "CC_REGULAR_South_Central_p7900_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.927682214395954,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 106.04,
+      "unit_id": "CC_REGULAR_South_p3631_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.90792604137146,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 62.7,
+      "unit_id": "CC_REGULAR_North_p55223_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.904278302102306,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 155.4,
+      "unit_id": "CC_REGULAR_North_p55226_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.902921098753154,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 37.69,
+      "unit_id": "CC_REGULAR_South_p3443_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.90209985710885,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 213.15000000000003,
+      "unit_id": "CC_REGULAR_South_Central_p55154_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.87999565607625,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 172.92,
+      "unit_id": "CC_REGULAR_West_p55215_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.876115127405548,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 123.255,
+      "unit_id": "CC_REGULAR_North_p55320_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.843810104508723,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 184.68,
+      "unit_id": "CC_REGULAR_North_p59812_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.826363147422267,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 120.15,
+      "unit_id": "CC_REGULAR_South_p55123_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.79242846505057,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 184.545,
+      "unit_id": "CC_REGULAR_Houston_p60122_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.789846796198006,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 225.26,
+      "unit_id": "CC_CHP_Houston_p50815_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.77535670186857,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 82.695,
+      "unit_id": "CC_REGULAR_South_Central_p55545_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.749261104834474,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 141.03,
+      "unit_id": "CC_REGULAR_South_Central_p55137_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.719834487595023,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 92.805,
+      "unit_id": "CC_REGULAR_South_Central_p55168_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.676828039511065,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 28.26,
+      "unit_id": "CC_REGULAR_North_p54817_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.640871814352575,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 79.35,
+      "unit_id": "CC_REGULAR_South_Central_p55098_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.583784447965122,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 73.02,
+      "unit_id": "CC_REGULAR_South_p3441_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.5004841964217,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 201.11000000000004,
+      "unit_id": "CC_REGULAR_South_Central_p4937_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.298226850346342,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 187.425,
+      "unit_id": "CC_REGULAR_Houston_p56806_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.280735954935132,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 81.5,
+      "unit_id": "CC_CHP_Houston_p55047_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.071926781612795,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 67.48,
+      "unit_id": "CC_REGULAR_South_p3631_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 29.047376216947693,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 57.5,
+      "unit_id": "CC_REGULAR_South_Central_p7512_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 28.972424349822834,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 146.08,
+      "unit_id": "CC_REGULAR_North_p50109_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 28.80431027986448,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 247.68,
+      "unit_id": "CC_REGULAR_West_p56349_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 28.533946008216798,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 84.645,
+      "unit_id": "CC_REGULAR_West_p56233_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 28.033992794897348,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 93.29,
+      "unit_id": "CC_CHP_Houston_p55327_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 27.82166217267627,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 49.79,
+      "unit_id": "CC_CHP_Houston_p54676_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 27.671424330740056,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 234.9,
+      "unit_id": "CC_REGULAR_Northeast_p55132_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 27.526460366577464,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 401.5,
+      "unit_id": "CC_REGULAR_South_p4939_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 27.261936892426306,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 117.6,
+      "unit_id": "CC_CHP_Houston_p55464_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 27.06272223633771,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 220.15999999999997,
+      "unit_id": "CC_REGULAR_West_p56349_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 26.99800389901644,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 41.93000000000001,
+      "unit_id": "CC_CHP_Houston_p52120_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 26.950022363268282,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 294.345,
+      "unit_id": "CC_REGULAR_Houston_p56350_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 26.786498388017083,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 207.295,
+      "unit_id": "CC_REGULAR_South_p3443_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 26.76396883296763,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 274.04,
+      "unit_id": "CC_REGULAR_North_p55501_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 26.713391666940712,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 45.0,
+      "unit_id": "CC_CHP_Houston_p52088_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 26.447382273049307,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 92.96000000000001,
+      "unit_id": "CC_REGULAR_North_p50109_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 26.28732187812383,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 15.64,
+      "unit_id": "CC_CHP_Houston_p52132_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 26.23334223440128,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 91.83,
+      "unit_id": "CC_CHP_Houston_p55187_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 26.15344756218595,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 890.6300000000001,
+      "unit_id": "CC_REGULAR_North_p55501_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.94029424273862,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 38.07,
+      "unit_id": "CC_CHP_Houston_p50043_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.859039545438655,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 53.86500000000001,
+      "unit_id": "CC_REGULAR_West_p56233_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.628658653045992,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 93.34,
+      "unit_id": "CC_CHP_South_p10554_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.48238850148016,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 26.0,
+      "unit_id": "CC_CHP_Houston_p56152_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.416827408117314,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 59.33,
+      "unit_id": "CC_CHP_South_p55206_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.185170240405576,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 563.76,
+      "unit_id": "CC_REGULAR_Northeast_p55132_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 25.097013616077472,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 4.510000000000001,
+      "unit_id": "CC_CHP_South_Central_p58151_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.652511920489513,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 321.28,
+      "unit_id": "CC_REGULAR_North_p58001_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.617095235515897,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 155.43,
+      "unit_id": "CC_REGULAR_North_p54817_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.284831242257823,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 201.75,
+      "unit_id": "CC_REGULAR_North_p55172_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 24.254345346574077,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 401.61,
+      "unit_id": "CC_REGULAR_South_p3441_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.610403956422548,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 51.7,
+      "unit_id": "CC_CHP_South_p55313_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.33358744963574,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 313.38,
+      "unit_id": "CC_REGULAR_South_Central_p7900_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 23.06602176325474,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 255.5,
+      "unit_id": "CC_REGULAR_South_p4939_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 22.765184049872033,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 261.64,
+      "unit_id": "CC_REGULAR_Houston_p56350_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 22.66117375341587,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 433.5,
+      "unit_id": "CC_REGULAR_North_p55091_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 22.602084496031996,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 188.1,
+      "unit_id": "CC_REGULAR_North_p55223_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 22.504344862094243,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 272.05,
+      "unit_id": "CC_REGULAR_South_Central_p55153_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.762806207829414,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 247.25,
+      "unit_id": "CC_REGULAR_South_Central_p55144_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.669921754076004,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 131.915,
+      "unit_id": "CC_REGULAR_South_p3443_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.446467041062977,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 316.25,
+      "unit_id": "CC_REGULAR_South_Central_p7512_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.000000000000004,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 106.2,
+      "unit_id": "CT_PEAKER_Houston_p55365_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.000000000000004,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 52.919999999999995,
+      "unit_id": "CT_PEAKER_Houston_p7325_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.000000000000004,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 56.1,
+      "unit_id": "CT_PEAKER_North_p4195_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.000000000000004,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 225.28799999999998,
+      "unit_id": "CT_PEAKER_West_p3492_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.000000000000004,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 201.15,
+      "unit_id": "CT_PEAKER_West_p3494_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 7.244999999999999,
+      "unit_id": "CT_CHP_Houston_p10261_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 95.51999999999998,
+      "unit_id": "CT_CHP_Houston_p10298_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 15.919999999999998,
+      "unit_id": "CT_CHP_Houston_p10298_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 171.6,
+      "unit_id": "CT_CHP_Houston_p55015_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 28.6,
+      "unit_id": "CT_CHP_Houston_p55015_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 41.1,
+      "unit_id": "CT_CHP_Houston_p58378_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 24.66,
+      "unit_id": "CT_CHP_Houston_p58378_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 16.44,
+      "unit_id": "CT_CHP_Houston_p58378_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 129.6,
+      "unit_id": "CT_PEAKER_Houston_p3464_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 107.99999999999997,
+      "unit_id": "CT_PEAKER_Houston_p3464_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 194.4,
+      "unit_id": "CT_PEAKER_Houston_p3464_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 70.8,
+      "unit_id": "CT_PEAKER_Houston_p55365_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 58.999999999999986,
+      "unit_id": "CT_PEAKER_Houston_p55365_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 128.16,
+      "unit_id": "CT_PEAKER_Houston_p60264_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 106.79999999999995,
+      "unit_id": "CT_PEAKER_Houston_p60264_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 192.24,
+      "unit_id": "CT_PEAKER_Houston_p60264_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 36.45,
+      "unit_id": "CT_PEAKER_Houston_p60468_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 30.375,
+      "unit_id": "CT_PEAKER_Houston_p60468_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 54.675,
+      "unit_id": "CT_PEAKER_Houston_p60468_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 45.0,
+      "unit_id": "CT_PEAKER_Houston_p62548_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64769_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.585,
+      "unit_id": "CT_PEAKER_Houston_p64791_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64792_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64793_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.585,
+      "unit_id": "CT_PEAKER_Houston_p64794_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64797_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64799_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64800_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64801_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64802_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64803_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64805_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64806_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64813_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64814_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64815_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64885_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64886_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64888_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64891_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64895_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64898_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64899_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64900_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64902_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64923_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64925_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.585,
+      "unit_id": "CT_PEAKER_Houston_p64926_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.585,
+      "unit_id": "CT_PEAKER_Houston_p64934_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64935_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64939_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64942_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64944_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64945_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64946_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64947_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64949_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64950_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64953_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.585,
+      "unit_id": "CT_PEAKER_Houston_p64957_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p64960_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p65026_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p65261_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p65262_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p65264_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p65267_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p65268_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p65269_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_Houston_p66549_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_Houston_p66561_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_Houston_p66566_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.84,
+      "unit_id": "CT_PEAKER_Houston_p66567_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.200000000000001,
+      "unit_id": "CT_PEAKER_Houston_p66567_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.76,
+      "unit_id": "CT_PEAKER_Houston_p66567_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p66593_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p66594_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.36,
+      "unit_id": "CT_PEAKER_Houston_p66595_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.8000000000000007,
+      "unit_id": "CT_PEAKER_Houston_p66595_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p66596_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.96,
+      "unit_id": "CT_PEAKER_Houston_p66597_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.8000000000000003,
+      "unit_id": "CT_PEAKER_Houston_p66597_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.44,
+      "unit_id": "CT_PEAKER_Houston_p66597_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p67311_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p67312_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_Houston_p67316_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.5999999999999999,
+      "unit_id": "CT_PEAKER_Houston_p67316_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.08,
+      "unit_id": "CT_PEAKER_Houston_p67316_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p67319_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_Houston_p67434_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 8.82,
+      "unit_id": "CT_PEAKER_Houston_p7325_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 8.976,
+      "unit_id": "CT_PEAKER_North_p4195_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.68,
+      "unit_id": "CT_PEAKER_North_p55053_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.585,
+      "unit_id": "CT_PEAKER_North_p64770_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64771_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64772_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64773_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64774_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64798_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64807_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64809_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64810_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64812_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64816_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64883_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64884_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64887_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64889_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64890_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64893_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64896_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64897_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64922_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64924_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64936_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64937_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64943_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64948_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64955_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64956_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64962_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p64963_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p65274_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.68,
+      "unit_id": "CT_PEAKER_North_p67308_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.4000000000000004,
+      "unit_id": "CT_PEAKER_North_p67308_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_North_p67309_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p67310_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p67313_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p67314_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p67315_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.44,
+      "unit_id": "CT_PEAKER_North_p67317_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.1999999999999997,
+      "unit_id": "CT_PEAKER_North_p67317_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.16,
+      "unit_id": "CT_PEAKER_North_p67317_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p67381_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_North_p67433_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 61.8,
+      "unit_id": "CT_PEAKER_South_Central_p3548_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 51.499999999999986,
+      "unit_id": "CT_PEAKER_South_Central_p3548_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 92.7,
+      "unit_id": "CT_PEAKER_South_Central_p3548_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 6.6,
+      "unit_id": "CT_PEAKER_South_Central_p3561_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.5,
+      "unit_id": "CT_PEAKER_South_Central_p3561_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 9.9,
+      "unit_id": "CT_PEAKER_South_Central_p3561_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 30.57,
+      "unit_id": "CT_PEAKER_South_Central_p50137_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 25.475000000000016,
+      "unit_id": "CT_PEAKER_South_Central_p50137_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_Central_p64958_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_Central_p64959_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_South_Central_p66562_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_South_Central_p66612_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.92,
+      "unit_id": "CT_PEAKER_South_Central_p66613_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.6000000000000005,
+      "unit_id": "CT_PEAKER_South_Central_p66613_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.88,
+      "unit_id": "CT_PEAKER_South_Central_p66613_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.88,
+      "unit_id": "CT_PEAKER_South_Central_p67318_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.3999999999999995,
+      "unit_id": "CT_PEAKER_South_Central_p67318_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.32,
+      "unit_id": "CT_PEAKER_South_Central_p67318_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_Central_p68730_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_Central_p68731_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_Central_p68732_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_Central_p68733_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_Central_p68734_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_South_Central_p68735_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.96,
+      "unit_id": "CT_PEAKER_South_Central_p68736_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.8000000000000003,
+      "unit_id": "CT_PEAKER_South_Central_p68736_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.44,
+      "unit_id": "CT_PEAKER_South_Central_p68736_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_Central_p68737_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 40.8,
+      "unit_id": "CT_PEAKER_South_p3559_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 34.0,
+      "unit_id": "CT_PEAKER_South_p3559_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 61.2,
+      "unit_id": "CT_PEAKER_South_p3559_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 50.0,
+      "unit_id": "CT_PEAKER_South_p61966_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 8.0,
+      "unit_id": "CT_PEAKER_South_p61966_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p64776_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p64777_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p64804_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p64901_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p64933_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p64940_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p64951_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p64961_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p65263_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_South_p65265_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_South_p66550_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_South_p66563_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_South_p66564_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.96,
+      "unit_id": "CT_PEAKER_South_p66565_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.8000000000000003,
+      "unit_id": "CT_PEAKER_South_p66565_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.44,
+      "unit_id": "CT_PEAKER_South_p66565_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.84,
+      "unit_id": "CT_PEAKER_South_p66614_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.7000000000000002,
+      "unit_id": "CT_PEAKER_South_p66614_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 268.2,
+      "unit_id": "CT_PEAKER_West_p3492_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 134.1,
+      "unit_id": "CT_PEAKER_West_p3494_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 111.74999999999997,
+      "unit_id": "CT_PEAKER_West_p3494_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 179.4,
+      "unit_id": "CT_PEAKER_West_p58471_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 28.704,
+      "unit_id": "CT_PEAKER_West_p58471_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_West_p64775_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_West_p64778_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_West_p64795_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_West_p64796_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.585,
+      "unit_id": "CT_PEAKER_West_p64808_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_West_p64829_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 21.0,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.54,
+      "unit_id": "CT_PEAKER_West_p65266_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999999999999996,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.039999999999999,
+      "unit_id": "CT_PEAKER_Houston_p66595_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999999999999996,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.5199999999999996,
+      "unit_id": "CT_PEAKER_North_p67308_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999999999999996,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 45.855,
+      "unit_id": "CT_PEAKER_South_Central_p50137_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999999999999996,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.2599999999999998,
+      "unit_id": "CT_PEAKER_South_p66614_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999999999999996,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 42.912,
+      "unit_id": "CT_PEAKER_West_p3492_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999898583033765,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 54.45,
+      "unit_id": "CT_PEAKER_Houston_p60460_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999790441044897,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 8.0,
+      "unit_id": "CT_PEAKER_Houston_p62548_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999765201529165,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 47.124,
+      "unit_id": "CT_PEAKER_North_p4195_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999663646950953,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.35,
+      "unit_id": "CT_CHP_Houston_p59145_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999619668678626,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 217.8,
+      "unit_id": "CT_PEAKER_South_Central_p66604_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999591106818475,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.8320000000000001,
+      "unit_id": "CT_PEAKER_North_p55053_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999377696411113,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 9.68,
+      "unit_id": "CT_PEAKER_Houston_p60460_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999221994192684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 217.8,
+      "unit_id": "CT_PEAKER_Houston_p63335_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.999221994192684,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 217.8,
+      "unit_id": "CT_PEAKER_Houston_p64383_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.99916518355184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.585,
+      "unit_id": "CT_PEAKER_North_p64938_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.99916518355184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.585,
+      "unit_id": "CT_PEAKER_North_p64954_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.99905156227014,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 54.45,
+      "unit_id": "CT_PEAKER_South_p60459_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.998950875596393,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 38.72,
+      "unit_id": "CT_PEAKER_South_Central_p66604_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.99893794098844,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 217.8,
+      "unit_id": "CT_PEAKER_Houston_p65372_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.998767509065896,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 272.25,
+      "unit_id": "CT_PEAKER_Houston_p63688_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.998577407383507,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 38.72,
+      "unit_id": "CT_PEAKER_Houston_p63335_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.998577407383507,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 38.72,
+      "unit_id": "CT_PEAKER_Houston_p64383_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.998540266502502,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 217.8,
+      "unit_id": "CT_PEAKER_Houston_p65373_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.998417349577984,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 9.68,
+      "unit_id": "CT_PEAKER_South_p60459_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.998310644374303,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 38.72,
+      "unit_id": "CT_PEAKER_Houston_p65372_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.998149877767386,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 48.4,
+      "unit_id": "CT_PEAKER_Houston_p63688_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.99772350675097,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 38.72,
+      "unit_id": "CT_PEAKER_Houston_p65373_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.9959623912404,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 150.696,
+      "unit_id": "CT_PEAKER_West_p58471_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.994268083547137,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 22.95,
+      "unit_id": "CT_PEAKER_South_Central_p59938_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.993748449409456,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 103.32,
+      "unit_id": "CT_PEAKER_South_Central_p3609_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.990080270835968,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.08,
+      "unit_id": "CT_PEAKER_South_Central_p59938_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.989111757398575,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 18.368,
+      "unit_id": "CT_PEAKER_South_Central_p3609_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.986035084394718,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.9199999999999995,
+      "unit_id": "CT_CHP_Houston_p62762_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.954420638973804,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 42.0,
+      "unit_id": "CT_PEAKER_South_p61966_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.953624209223864,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.72,
+      "unit_id": "CT_PEAKER_Houston_p65541_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95240530403138,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_West_p65535_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95240530403138,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_West_p65540_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95240530403138,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_West_p65544_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95240530403138,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_West_p65581_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95194856094913,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_Houston_p65537_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95194856094913,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_Houston_p65538_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95194856094913,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_Houston_p65543_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95194856094913,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_Houston_p65575_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95194856094913,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_South_p65573_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95194856094913,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_South_p65574_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95194856094913,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_South_p65579_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.95194856094913,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_South_p65580_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.950709324632026,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_West_p65542_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.950709324632026,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_West_p65578_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.9502241418173,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_Houston_p65576_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.9502241418173,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_South_p65536_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.9502241418173,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.9,
+      "unit_id": "CT_PEAKER_South_p65539_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.9465526042154,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.52,
+      "unit_id": "CT_PEAKER_North_p64952_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.924837813924608,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 26.36,
+      "unit_id": "CT_PEAKER_South_p3439_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.924837813924608,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 20.16,
+      "unit_id": "CT_PEAKER_South_p3630_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.921842542774975,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 2.88,
+      "unit_id": "CT_PEAKER_Houston_p65541_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.92126469523828,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_West_p65535_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.92126469523828,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_West_p65540_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.92126469523828,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_West_p65544_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.92126469523828,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_West_p65581_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919730883636184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_Houston_p65537_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919730883636184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_Houston_p65538_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919730883636184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_Houston_p65543_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919730883636184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_Houston_p65575_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919730883636184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_South_p65573_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919730883636184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_South_p65574_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919730883636184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_South_p65579_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919730883636184,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_South_p65580_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919229035228067,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_West_p65542_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.919229035228067,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_West_p65578_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.917606744458272,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_Houston_p65576_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.917606744458272,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_South_p65536_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.917606744458272,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6,
+      "unit_id": "CT_PEAKER_South_p65539_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.89498132844479,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 10.0,
+      "unit_id": "CT_PEAKER_South_p61241_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.88395503490527,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 105.44,
+      "unit_id": "CT_PEAKER_South_p3439_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.88395503490527,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 80.64,
+      "unit_id": "CT_PEAKER_South_p3630_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.881538420767917,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 47.0,
+      "unit_id": "CT_PEAKER_Houston_p62548_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.868240350680445,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.888000000000001,
+      "unit_id": "CT_PEAKER_North_p55053_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.856615748956017,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 56.87,
+      "unit_id": "CT_PEAKER_Houston_p60460_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.840682469836743,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 40.0,
+      "unit_id": "CT_PEAKER_South_p61241_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.828078108600145,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_South_Central_p66604_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.81063639241656,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 10.0,
+      "unit_id": "CT_PEAKER_South_p61242_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.799893269755238,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 26.1,
+      "unit_id": "CT_CHP_Houston_p59145_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.79718585486504,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_Houston_p63335_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.79718585486504,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_Houston_p64383_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.79201069743369,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.6110000000000001,
+      "unit_id": "CT_PEAKER_North_p64938_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.79201069743369,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.6110000000000001,
+      "unit_id": "CT_PEAKER_North_p64954_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.781476511644954,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 56.87,
+      "unit_id": "CT_PEAKER_South_p60459_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.773429651872178,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 22.44,
+      "unit_id": "CT_PEAKER_South_p59391_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.770775329137198,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_Houston_p65372_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.764260050482743,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.7099999999999995,
+      "unit_id": "CT_CHP_North_p54520_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.752295780316913,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 284.35,
+      "unit_id": "CT_PEAKER_Houston_p63688_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.72584545970818,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 227.48,
+      "unit_id": "CT_PEAKER_Houston_p65373_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.7253304212695,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 24.2,
+      "unit_id": "CT_PEAKER_South_Central_p56674_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.692387427269953,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 35.0,
+      "unit_id": "CT_PEAKER_South_p61242_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.67756435890249,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 22.56,
+      "unit_id": "CT_PEAKER_North_p61643_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.631846276385975,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 78.54,
+      "unit_id": "CT_PEAKER_South_p59391_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.565677941938635,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 84.7,
+      "unit_id": "CT_PEAKER_South_Central_p56674_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.509124563690282,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 234.925,
+      "unit_id": "CC_REGULAR_Houston_p55062_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.504261898125282,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 56.9,
+      "unit_id": "CT_PEAKER_South_Central_p3612_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.502613439859676,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 78.96,
+      "unit_id": "CT_PEAKER_North_p61643_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.46912142438009,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 455.2,
+      "unit_id": "CT_PEAKER_South_Central_p3612_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.46227908380698,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 23.97,
+      "unit_id": "CT_PEAKER_South_Central_p59938_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.44167678106044,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 107.912,
+      "unit_id": "CT_PEAKER_South_Central_p3609_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.4295976904664,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.295,
+      "unit_id": "CT_CHP_Houston_p54330_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.35439047751163,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 92.38,
+      "unit_id": "CC_CHP_Houston_p55299_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.330455340477183,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 248.08499999999995,
+      "unit_id": "CC_REGULAR_South_Central_p55545_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.310398064170766,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65535_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.310398064170766,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65540_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.310398064170766,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65544_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.310398064170766,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65581_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.30052741173467,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65542_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.30052741173467,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_West_p65578_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.287679168385292,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.65,
+      "unit_id": "CT_PEAKER_North_p64952_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.28116231526432,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 1044.16,
+      "unit_id": "CC_REGULAR_North_p58001_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.152119166550634,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.6099999999999999,
+      "unit_id": "CT_CHP_South_Central_p56374_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.125629862903526,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 3.6000000000000005,
+      "unit_id": "CT_PEAKER_Houston_p65541_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.11178580470164,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65537_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.11178580470164,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65538_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.11178580470164,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65543_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.11178580470164,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65575_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.11178580470164,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65573_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.11178580470164,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65574_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.11178580470164,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65579_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.11178580470164,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65580_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.102413671390256,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 197.1,
+      "unit_id": "CC_REGULAR_North_p55139_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.102413671390256,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 473.55,
+      "unit_id": "CC_REGULAR_North_p55480_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.097809003326397,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_Houston_p65576_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.097809003326397,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65536_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.097809003326397,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.5,
+      "unit_id": "CT_PEAKER_South_p65539_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.089784204493167,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 160.64,
+      "unit_id": "CC_REGULAR_North_p58005_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 20.02842502264977,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 288.2,
+      "unit_id": "CC_REGULAR_West_p55215_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.947570999335785,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 15.47,
+      "unit_id": "CT_CHP_South_p10243_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.906218420943453,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 131.8,
+      "unit_id": "CT_PEAKER_South_p3439_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.906218420943446,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 100.8,
+      "unit_id": "CT_PEAKER_South_p3630_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.853632789529783,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.63,
+      "unit_id": "CT_PEAKER_West_p55052_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.78858379837539,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 484.2,
+      "unit_id": "CC_REGULAR_North_p55172_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.703903034763876,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 278.415,
+      "unit_id": "CC_REGULAR_South_Central_p55168_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.697196706091827,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 50.0,
+      "unit_id": "CT_PEAKER_South_p61241_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.65762578260976,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 13.89,
+      "unit_id": "CC_CHP_South_Central_p50118_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.37620889788967,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 320.0,
+      "unit_id": "CC_REGULAR_North_p55230_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.249011141374126,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 55.0,
+      "unit_id": "CT_PEAKER_South_p61242_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 19.09981244600009,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 123.42000000000002,
+      "unit_id": "CT_PEAKER_South_p59391_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.98981998313459,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 238.05,
+      "unit_id": "CC_REGULAR_South_Central_p55098_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.943328191086064,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 133.10000000000002,
+      "unit_id": "CT_PEAKER_South_Central_p56674_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.875913104743177,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 625.9,
+      "unit_id": "CT_PEAKER_South_Central_p3612_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 18.794931452649777,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 124.07999999999998,
+      "unit_id": "CT_PEAKER_North_p61643_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.899484336079638,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 278.15,
+      "unit_id": "CC_REGULAR_North_p55097_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.881644612316627,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 0.99,
+      "unit_id": "CT_PEAKER_West_p55052_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.56160657447301,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 98.91000000000001,
+      "unit_id": "CC_REGULAR_North_p54817_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.45304624786541,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 1040.4,
+      "unit_id": "CC_REGULAR_North_p55091_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.217422728259102,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 652.9200000000001,
+      "unit_id": "CC_REGULAR_South_Central_p55153_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 17.151166776905914,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 255.57000000000005,
+      "unit_id": "CC_REGULAR_South_p3441_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.90004164338331,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 278.56,
+      "unit_id": "CC_REGULAR_South_Central_p7900_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.522162033589538,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 14.35,
+      "unit_id": "CT_CHP_South_p50475_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.470550117285054,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 259.0,
+      "unit_id": "CC_REGULAR_North_p55226_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 16.045833616384616,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 593.4,
+      "unit_id": "CC_REGULAR_South_Central_p55144_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.931943874939627,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 1.75,
+      "unit_id": "CT_CHP_Houston_p59381_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.642008669400028,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 167.2,
+      "unit_id": "CC_REGULAR_North_p55223_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 15.430530133795825,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 205.425,
+      "unit_id": "CC_REGULAR_North_p55320_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.374764536309767,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 246.24,
+      "unit_id": "CC_REGULAR_North_p59812_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 14.016602993037289,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 563.82,
+      "unit_id": "CC_REGULAR_Houston_p55062_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 13.964467472001076,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 200.25,
+      "unit_id": "CC_REGULAR_South_p55123_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 13.810233434788273,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 691.68,
+      "unit_id": "CC_REGULAR_West_p55215_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 13.36488336897629,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 473.03999999999996,
+      "unit_id": "CC_REGULAR_North_p55139_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 13.36488336897629,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 1136.52,
+      "unit_id": "CC_REGULAR_North_p55480_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 13.340647672344012,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 522.08,
+      "unit_id": "CC_REGULAR_North_p58005_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 13.105648811778513,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 246.06,
+      "unit_id": "CC_REGULAR_Houston_p60122_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 12.274601774232092,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 235.05,
+      "unit_id": "CC_REGULAR_South_Central_p55137_committed",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 12.19555064984534,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 768.0,
+      "unit_id": "CC_REGULAR_North_p55230_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.627464843333676,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 220.52000000000004,
+      "unit_id": "CC_REGULAR_South_Central_p55545_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 11.627464843333675,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 201.25,
+      "unit_id": "CC_REGULAR_South_Central_p7512_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 10.531223100520718,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 247.48000000000002,
+      "unit_id": "CC_REGULAR_South_Central_p55168_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 9.89273121484422,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 667.56,
+      "unit_id": "CC_REGULAR_North_p55097_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 9.388184721900432,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 211.6,
+      "unit_id": "CC_REGULAR_South_Central_p55098_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 8.937136835856768,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 81.0,
+      "unit_id": "CT_CHP_South_p50150_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 7.830436935644948,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 621.6,
+      "unit_id": "CC_REGULAR_North_p55226_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 6.431088910263782,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 493.0200000000001,
+      "unit_id": "CC_REGULAR_North_p55320_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 5.042765294389156,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 800.28,
+      "unit_id": "CC_REGULAR_North_p59812_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 4.71520864876869,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 244.5,
+      "unit_id": "CC_CHP_Houston_p55047_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 4.504536479315789,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 480.6,
+      "unit_id": "CC_REGULAR_South_p55123_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 3.3524309423588208,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 799.695,
+      "unit_id": "CC_REGULAR_Houston_p60122_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 2.3414624869676453,
+      "event": "entry_capped",
+      "fuel": "gas_cc",
+      "mw": 564.1200000000001,
+      "unit_id": "CC_REGULAR_South_Central_p55137_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 1.6088428374011936,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 19.09,
+      "unit_id": "CT_CHP_Houston_p10692_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 1.340271252484331,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 5.12,
+      "unit_id": "CT_CHP_South_p10790_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 1.192559302966945,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.9,
+      "unit_id": "CT_CHP_Houston_p57504_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 1.0690103814744185,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 4.635,
+      "unit_id": "CT_CHP_Houston_p55311_peak",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 1.0425310428210535,
+      "event": "entry_capped",
+      "fuel": "gas_st",
+      "mw": 17.5,
+      "unit_id": "ST_CHP_Houston_p50229_econ",
+      "year": 2023
+    },
+    {
+      "depth_usd_per_kw_yr": 0.2641938703795019,
+      "event": "entry_capped",
+      "fuel": "gas_ct",
+      "mw": 10.465,
+      "unit_id": "CT_CHP_Houston_p10436_peak",
+      "year": 2023
+    }
+  ],
+  "renewable_additions": [
+    {
+      "mw": 5000.0,
+      "tech": "wind",
+      "zone": "West"
+    }
+  ],
+  "renewable_credit_applied": {
+    "solar": 0.21,
+    "wind": 0.2
+  },
+  "reserve_margin": 0.337612,
+  "retirements": [],
+  "rps_dual": 0.0,
+  "solar_cap_mw": 38000.0,
+  "solve_counts": {
+    "P0": 1,
+    "P1": 1,
+    "P2": 0
+  },
+  "storage_additions": [
+    {
+      "duration_h": 100.0,
+      "mw": 448.2,
+      "tech": "iron_air",
+      "unit_id": "West_iron_air_new_2023_0",
+      "zone": "West"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 919.2,
+      "tech": "iron_air",
+      "unit_id": "North_iron_air_new_2023_0",
+      "zone": "North"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 105.3,
+      "tech": "iron_air",
+      "unit_id": "Northeast_iron_air_new_2023_0",
+      "zone": "Northeast"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 794.7,
+      "tech": "iron_air",
+      "unit_id": "Houston_iron_air_new_2023_0",
+      "zone": "Houston"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 492.6,
+      "tech": "iron_air",
+      "unit_id": "South_Central_iron_air_new_2023_0",
+      "zone": "South_Central"
+    },
+    {
+      "duration_h": 100.0,
+      "mw": 240.0,
+      "tech": "iron_air",
+      "unit_id": "South_iron_air_new_2023_0",
+      "zone": "South"
+    }
+  ],
+  "storage_firm_mw": 17687.5,
+  "storage_power_mw": 23000.0,
+  "thermal_additions": [],
+  "wind_cap_mw": 52000.0,
+  "year": 2023
+}
