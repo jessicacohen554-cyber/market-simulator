@@ -16744,3 +16744,46 @@ was scored transiently to isolate the mechanism from the machine (its registry
 sidecar + payload removed before push; the `caiso94_repro_A` bundle is gitignored
 via a new `*_repro_A/` rule). Transport: API create_branch + git push onto the
 existing ref, blob-verified (rule 27).
+
+## 2026-07-18 — CAISO keeper PROMOTED: caiso-94 (daytime trigger-OFF clean import depth) supersedes caiso-93 (owner sign-off this session: "Promote")
+
+Owner authorization session-logged — the owner-only swap flagged on the caiso-94
+diagnostic above; the owner read the full same-machine A/B **including the C5a
+cost** and directed "Promote". `frontend/data/backcast/keepers.json` CAISO
+pointer + keepers list flipped to `2026-07-18-caiso-94-daytime-clean` (the
+caiso-94 registration itself had already auto-merged to main; this promotion is
+the fresh follow-up change, branch restarted from the latest `origin/main` per
+the merged-branch rule).
+
+**This is a rule-1 promotion — the MOST STRUCTURALLY-FAITHFUL run, not the lowest
+error.** caiso-94 adds a second measured WEIM clean-transfer tranche (the daytime
+trigger-OFF depth, hod 6-21, disjoint from caiso-87 by the trigger-OFF
+complement) at ZERO fitted scalars, improving the deciding C3a-2025 miss
+(+13.3 → **+11.0 %**, −2.2 pp toward the ≤10 % band) and the C3a-2024 margin
+(+9.5 → +7.3 %), with **C1 12/12 (free 8/8), the caiso-93 overnight λ, the
+overnight import share (50/47/44 % invariant) and the C3c winter tail all
+HOLDING** and C7/C8 PASS.
+
+**Disclosed regression the promotion knowingly accepts: C5a CO2 deepens
+CAVEAT → FAIL** (all three years, model −13.3/−11.2/−16.5 % vs eGRID) because the
+EF-0 clean import displaces CC gas — a SURFACED root-cause (the model's CC
+UNDER-production, CC_REGULAR −4.40 TWh 2025, still within the C1 band), recorded
+honestly as a model-miss, **NOT** attested to a CAVEAT and **NOT** tuned away
+(rule 11). The keeper's fail set is therefore {C3a-2025, C3c, C4, **C5a**} — one
+more than caiso-93's — but on the more structurally-complete import
+representation. Per rule 1 the measured structure stays and the fit regression
+becomes the chartered successor lane, never a reason to throttle a real
+mechanism: **fix the CC under-production so the measured clean import stops
+over-displacing gas**, rather than cap the import to protect a CO2 number.
+
+The sidecar definition carries the KEEPER header (the C3a gain + the disclosed
+C5a cost) and a `market_story` (the daytime WEIM/EDAM clean-attribution story:
+on the south corridor's daytime trigger-OFF hours the Desert-Southwest surplus
+transferred into CAISO is non-emitting — WEIM/EDAM GHG attribution carries no
+unspecified-import carbon rung and no wheel — so CC backs down on merit against a
+genuinely clean, raw-hub-priced import, not by a floor). Keeper-text auditor run
+on the flip; `status.js` rebuilt via `build_status.py` (CAISO determination
+NOT-YET, deciding criteria C3a-2025/C3c/C4/C5a, consistent with the registered
+verdict). Open lanes hand off to the next charter: **the C5a / CC-under-production
+root cause (new, the promotion's own successor)**, C3a-2025 (belly/evening + the
+same CC lane), C3c lane B, C4 band-edge.
