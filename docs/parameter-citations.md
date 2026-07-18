@@ -1,6 +1,6 @@
 # Parameter Citation Registry
 
-_Generated 2026-07-17. Every numeric input to the model traces to a primary source
+_Generated 2026-07-18. Every numeric input to the model traces to a primary source
 here. This file is rendered from `frontend/data/parameters.json` by
 `scripts/generate_parameter_registry.py`; edit citations in the JSON (or the
 constant's comment, then re-run the generator), not here._
@@ -24,7 +24,7 @@ inline comment and still need a dated primary source — search the table for
 - `ScenarioConfig` dataclass defaults are prefixed with `scenario.`.
 
 
-**1412 parameters registered** (773 flagged `needs-citation`).
+**1424 parameters registered** (775 flagged `needs-citation`).
 
 
 ## Calibration
@@ -115,41 +115,47 @@ inline comment and still need a dated primary source — search the table for
 | `adequacy_demand_response_fraction_by_iso.ERCOT` | 0.058 | 2 | Load-side capacity products netted out of gross peak in the ISO's o… | 2025 | auto-generated |
 | `adequacy_demand_response_fraction_by_iso.PJM` | 0.03966325587762226 | 2 | PJM demand-response capacity counted in PJM's own adequacy construc… | 2025-07-22 |  |
 | `demand_growth_rates.CAISO.high` | 0.022 | 1 | California Energy Commission Integrated Energy Policy Report (IEPR)… | 2024-02 | modeled |
-| `demand_growth_rates.CAISO.high.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.CAISO.high.near` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.high.long` | 0.035 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.high.near` | 0.042 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.CAISO.low` | 0.005 | 1 | California Energy Commission Integrated Energy Policy Report (IEPR)… | 2024-02 | modeled |
-| `demand_growth_rates.CAISO.low.long` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.CAISO.low.near` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.low.long` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.low.near` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.CAISO.mid` | 0.012 | 1 | California Energy Commission Integrated Energy Policy Report (IEPR)… | 2024-02 | modeled |
-| `demand_growth_rates.CAISO.mid.long` | 0.01 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.CAISO.mid.near` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.mid.long` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.CAISO.mid.near` | 0.028 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.ERCOT.high` | 0.035 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | modeled |
 | `demand_growth_rates.ERCOT.high.long` | 0.04 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.ERCOT.high.near` | 0.08 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.ERCOT.high.near` | 0.115 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.ERCOT.low` | 0.01 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | modeled |
 | `demand_growth_rates.ERCOT.low.long` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.ERCOT.low.near` | 0.03 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.ERCOT.low.near` | 0.05 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.ERCOT.mid` | 0.02 | 1 | ERCOT Capacity, Demand and Reserves (CDR) Report | 2024-05 | modeled |
 | `demand_growth_rates.ERCOT.mid.long` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.ERCOT.mid.near` | 0.05 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NEISO.high.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NEISO.high.near` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NEISO.low.long` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NEISO.low.near` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NEISO.mid.long` | 0.01 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NEISO.mid.near` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.high.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.high.near` | 0.025 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.low.long` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.low.near` | 0.005 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.mid.long` | 0.01 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.NYISO.mid.near` | 0.015 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.PJM.high.long` | 0.03 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.ERCOT.mid.near` | 0.085 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.MISO.high.long` | 0.03 | 2 | Annual demand growth rates by ISO, scenario path, and era. These ar… | 2030 | auto-generated |
+| `demand_growth_rates.MISO.high.near` | 0.045 | 2 | Annual demand growth rates by ISO, scenario path, and era. These ar… | 2030 | auto-generated |
+| `demand_growth_rates.MISO.low.long` | 0.012 | 2 | Annual demand growth rates by ISO, scenario path, and era. These ar… | 2030 | auto-generated |
+| `demand_growth_rates.MISO.low.near` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. These ar… | 2030 | auto-generated |
+| `demand_growth_rates.MISO.mid.long` | 0.02 | 2 | Annual demand growth rates by ISO, scenario path, and era. These ar… | 2030 | auto-generated |
+| `demand_growth_rates.MISO.mid.near` | 0.031 | 2 | Annual demand growth rates by ISO, scenario path, and era. These ar… | 2030 | auto-generated |
+| `demand_growth_rates.NEISO.high.long` | 0.02 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.high.near` | 0.022 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.low.long` | 0.007 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.low.near` | 0.007 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.mid.long` | 0.012 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NEISO.mid.near` | 0.013 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.high.long` | 0.02 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.high.near` | 0.03 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.low.long` | 0.006 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.low.near` | 0.008 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.mid.long` | 0.012 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.NYISO.mid.near` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.high.long` | 0.04 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.PJM.high.near` | 0.06 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.PJM.low.long` | 0.01 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.low.long` | 0.014 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_rates.PJM.low.near` | 0.02 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.PJM.mid.long` | 0.018 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
-| `demand_growth_rates.PJM.mid.near` | 0.035 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.mid.long` | 0.024 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
+| `demand_growth_rates.PJM.mid.near` | 0.036 | 2 | Annual demand growth rates by ISO, scenario path, and era. Near-ter… | 2026 | auto-generated |
 | `demand_growth_transition_year` | 2030 | 2 | Year at which demand growth transitions from near-term to long-term… | 2030 | auto-generated |
 | `miso_rpe_demand_value` | 200.0 | 2 | Reserve Procurement Enhancement (RPE): MISO "models a Reserve Procu… | 2024 | auto-generated |
 | `scenario.caiso_demand_clock_realign` | False | 2 | Apply the MEASURED source-data |  | auto-generated, needs-citation |
@@ -899,6 +905,8 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.caiso_citygate_spot_level` | False | 2 | Level the CAISO gas hub overlay |  | auto-generated, needs-citation |
 | `scenario.caiso_corridor_atc_forward` | False | 1 | Cap each CAISO per-hub corridor's |  | auto-generated, needs-citation |
 | `scenario.caiso_corridor_flow_limit` | False | 2 | Cap each CAISO per-hub corridor's |  | auto-generated, needs-citation |
+| `scenario.caiso_dsw_daytime_clean` | False | 2 | Carry the MEASURED DAYTIME |  | auto-generated, needs-citation |
+| `scenario.caiso_dsw_overnight_clean` | False | 2 | Carry the MEASURED unconditional |  | auto-generated, needs-citation |
 | `scenario.caiso_dsw_surplus_clean` | False | 2 | Carry the MEASURED surplus-hour |  | auto-generated, needs-citation |
 | `scenario.caiso_firm_import_selfschedule` | False | 2 | Floor the firm/contracted |  | auto-generated, needs-citation |
 | `scenario.caiso_firm_import_shape` | False | 2 | Shape the firm/contracted CAISO |  | auto-generated, needs-citation |
@@ -1046,6 +1054,7 @@ inline comment and still need a dated primary source — search the table for
 | `scenario.miso_seam_flow_percentile` | None | 3 | Override the per-seam import |  | auto-generated, needs-citation |
 | `scenario.miso_seam_measured_ladder` | False | 1 | MISO reference-price seams: price |  | auto-generated, needs-citation |
 | `scenario.miso_south_seam_split` | False | 1 | MISO: host the South seam's |  | auto-generated, needs-citation |
+| `scenario.miso_winter_citygate_daily` | False | 3 | MISO winter fuel-security daily citygate overlay (miso-72). In the … | 2024 | auto-generated |
 | `scenario.mode` | forecast | 0 | "forecast" \| "backcast". Backcast pins the run |  | auto-generated, needs-citation |
 | `scenario.must_run_cf` | 0.85 | 3 | assumed CF for CHP must-run emissions post-processing |  | auto-generated, needs-citation |
 | `scenario.negative_renewable_offers` | False | 1 | Let curtailable wind/solar set a |  | auto-generated, needs-citation |
@@ -1369,6 +1378,9 @@ inline comment and still need a dated primary source — search the table for
 | `datacenter_additions_mw.ERCOT.high` | {"2024": 0.0, "2030": 122000.0, "2035… | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
 | `datacenter_additions_mw.ERCOT.low` | {"2024": 0.0, "2030": 0.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
 | `datacenter_additions_mw.ERCOT.mid` | {"2024": 0.0, "2030": 37000.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.MISO.high` | {"2027": 14000.0, "2030": 27000.0} | 2 | --- Data-center load block (CX-4, gap G-34; FF-1C currency refresh)… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.MISO.low` | {"2027": 0.0, "2030": 0.0} | 2 | --- Data-center load block (CX-4, gap G-34; FF-1C currency refresh)… | 2026-07 | auto-generated |
+| `datacenter_additions_mw.MISO.mid` | {"2027": 11000.0, "2030": 20000.0} | 2 | --- Data-center load block (CX-4, gap G-34; FF-1C currency refresh)… | 2026-07 | auto-generated |
 | `datacenter_additions_mw.NYISO.high` | {"2025": 0.0, "2031": 10000.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
 | `datacenter_additions_mw.NYISO.low` | {"2025": 0.0, "2031": 0.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
 | `datacenter_additions_mw.NYISO.mid` | {"2025": 0.0, "2031": 3000.0} | 2 | --- Data-center load block (CX-4, gap G-34) -----------------------… | 2026-07 | auto-generated |
