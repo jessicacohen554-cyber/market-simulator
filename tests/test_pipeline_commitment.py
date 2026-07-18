@@ -305,6 +305,73 @@ def test_caiso_ra_p1_floor_fleet_sets_floor_and_raises_availability():
     assert fa.min_gen is None
 
 
+def test_cc_startup_lead_hours_mapping(monkeypatch):
+    """Lead mapping: plant row wins, class row backfills, CT/CHP stay 0, and
+    a missing artifact leaves the extension inert (caiso-96 WP-1)."""
+    import pandas as pd
+
+    from market_sim.pipeline.commitment import cc_startup_lead_hours
+
+    gens, fa, _demand, _mc, _dk = _trivial_inputs("CAISO")  # G0 gas_cc, G1 gas_ct
+    # Missing artifact → None: a measured lead or nothing (rule 23).
+    monkeypatch.setattr(
+        pipeline_commitment, "load_cc_start_trajectory", lambda iso: None
+    )
+    assert cc_startup_lead_hours(gens, fa, "CAISO") is None
+    # Artifact present: a class row backfills plants without an accepted row
+    # (the trivial fleet's plant_code 0 matches no plant row) …
+    table = pd.DataFrame(
+        [
+            {"plant_code": 777, "basis": "plant", "lead_hours": 5},
+            {"plant_code": 0, "basis": "class", "lead_hours": 2},
+        ]
+    )
+    monkeypatch.setattr(
+        pipeline_commitment, "load_cc_start_trajectory", lambda iso: table
+    )
+    lead = cc_startup_lead_hours(gens, fa, "CAISO")
+    assert lead is not None
+    assert lead[0] == 2
+    assert lead[1] == 0
+    # … and an accepted plant row overrides the class fallback.
+    zone_names = get_iso_config("CAISO").zone_names
+    plant_gen = gens[0].model_copy(update={"plant_code": 777})
+    fa_plant = generators_to_fleet_arrays([plant_gen, gens[1]], zone_names, hours=T)
+    lead = cc_startup_lead_hours([plant_gen, gens[1]], fa_plant, "CAISO")
+    assert lead[0] == 5
+
+
+def test_caiso_ra_p1_floor_fleet_startup_trajectory_gate(monkeypatch):
+    """The trajectory extension floors pre-start hours only when its flag is on."""
+    gens, fa, demand, mc_base, _dk = _trivial_inputs("CAISO")
+    # CC runs 6-9 and 13-18 (short gap 10-12 bridges; the 13-start has free
+    # pre-start hours for the ramp-in rungs).
+    p0 = np.zeros((2, T))
+    p0[0, 6:10] = 300.0
+    p0[0, 13:19] = 300.0
+    prices = np.full((demand.shape[0], T), 40.0)
+    import pandas as pd
+
+    table = pd.DataFrame([{"plant_code": 0, "basis": "class", "lead_hours": 3}])
+    monkeypatch.setattr(
+        pipeline_commitment, "load_cc_start_trajectory", lambda iso: table
+    )
+    base_cfg = ScenarioConfig(hours=T, caiso_ra_mustoffer=True)
+    traj_cfg = ScenarioConfig(
+        hours=T, caiso_ra_mustoffer=True, caiso_ra_startup_trajectory=True
+    )
+    base = caiso_ra_p1_floor_fleet(base_cfg, "CAISO", gens, fa, p0, prices, mc_base)
+    traj = caiso_ra_p1_floor_fleet(traj_cfg, "CAISO", gens, fa, p0, prices, mc_base)
+    assert base is not None and traj is not None
+    # Flag off: no pre-start floor before the first run. Flag on: the ramp-in
+    # rungs appear before the first run-start, and everything the base floored
+    # is still floored at least as high (maximum composition).
+    first_start = int(np.flatnonzero(p0[0] > 0.05 * fa.pmax[0])[0])
+    assert base.min_gen[0, :first_start].max() == 0.0
+    assert traj.min_gen[0, first_start - 1] > 0.0
+    assert np.all(traj.min_gen >= base.min_gen - 1e-9)
+
+
 def test_run_energy_solve_p1_prep_floors_the_scored_p1():
     """The prep hook makes P1 solve on the floored fleet; the floor binds in P1."""
     gens, fa, demand, mc_base, dk = _trivial_inputs("CAISO")

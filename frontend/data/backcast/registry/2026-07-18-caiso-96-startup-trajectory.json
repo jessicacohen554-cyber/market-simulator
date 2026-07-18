@@ -1,0 +1,15 @@
+{
+  "id": "2026-07-18-caiso-96-startup-trajectory",
+  "label": "caiso 96 startup trajectory",
+  "date": "2026-07-18",
+  "shorthand": "caiso-96-startup-trajectory",
+  "definition": "caiso-96 WP-1 -- caiso-94 keeper recipe + caiso_ra_startup_trajectory (measured CC start-to-load ramp-in on the RA bridge's own detected run-starts; CAMPD per-plant p50, frozen gates), 2023-2025",
+  "years": [
+    2023,
+    2024,
+    2025
+  ],
+  "iso": "CAISO",
+  "file": "frontend/data/backcast/runs/2026-07-18-caiso-96-startup-trajectory.js",
+  "bundle": "results/calibration/caiso96_startup_trajectory"
+}
