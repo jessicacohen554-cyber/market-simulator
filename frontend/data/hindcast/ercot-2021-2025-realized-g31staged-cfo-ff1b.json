@@ -1,0 +1,278 @@
+{
+  "run_id": "ercot-2021-2025-realized-g31staged-cfo-ff1b",
+  "meta": {
+    "iso": "ERCOT",
+    "variant": "realized",
+    "energy_only_floor": false,
+    "entry_lookahead_reprice": true,
+    "staged_oversupply_thinning": true,
+    "staged_thinning_max_gw_per_year": 3.0,
+    "limited_foresight_dispatch": true,
+    "capacity_market_clearing": false,
+    "capacity_market_clearing_by_iso": null,
+    "correlated_forced_outage": true,
+    "renewable_elcc_curves": true,
+    "gas_price_path": "hindcast_realized",
+    "vintage_year": 2020,
+    "start_year": 2021,
+    "end_year": 2025,
+    "cache_key": "43313f56e59c051d",
+    "bundle": "results/hindcast/ercot-2021-2025-realized-g31staged-cfo-ff1b/ERCOT/43313f56e59c051d",
+    "solved_years": [
+      2021,
+      2023,
+      2024,
+      2025
+    ],
+    "bridged_years": [
+      2022
+    ],
+    "leakage_violations": [],
+    "started_utc": "2026-07-17T23:59:05Z"
+  },
+  "score": {
+    "iso": "ERCOT",
+    "variant": "realized",
+    "scored_years": [
+      2023,
+      2024,
+      2025
+    ],
+    "retirements": {
+      "total_gw": {
+        "actual": 1.534,
+        "model": 6.26,
+        "err_frac": 3.081,
+        "band": "FAIL"
+      },
+      "per_fuel": {
+        "biomass": {
+          "actual_gw": 0.019,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "coal": {
+          "actual_gw": 0.932,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_cc": {
+          "actual_gw": 0.08,
+          "model_gw": 0.0,
+          "err_frac": -1.0
+        },
+        "gas_ct": {
+          "actual_gw": 0.502,
+          "model_gw": 3.023,
+          "err_frac": 5.017
+        },
+        "gas_st": {
+          "actual_gw": 0.0,
+          "model_gw": 3.237,
+          "err_frac": null
+        }
+      },
+      "unit_recall_gt300": {
+        "n_big_actual": 3,
+        "matched": 1,
+        "recall": 0.333,
+        "grain": "fuel-mw-coverage",
+        "plant_recall_frac": 0.333,
+        "plant_matched": 1,
+        "band": "FAIL"
+      },
+      "false_retire": {
+        "false_gw": 5.758,
+        "frac_of_model": 0.92,
+        "grain": "per-fuel-excess",
+        "band": "FAIL"
+      }
+    },
+    "additions": {
+      "by_tech": {
+        "wind": {
+          "actual_gw": 12.663,
+          "model_gw": 20.0,
+          "err_frac": 0.579,
+          "band": "FAIL"
+        },
+        "solar": {
+          "actual_gw": 25.08,
+          "model_gw": 1.0,
+          "err_frac": -0.96,
+          "band": "FAIL"
+        },
+        "gas_cc": {
+          "actual_gw": 0.244,
+          "model_gw": 3.0,
+          "err_frac": 11.295,
+          "band": "FAIL"
+        },
+        "gas_ct": {
+          "actual_gw": 3.692,
+          "model_gw": 3.0,
+          "err_frac": -0.187,
+          "band": "FAIL"
+        },
+        "storage": {
+          "actual_gw": 13.691,
+          "model_gw": 14.0,
+          "err_frac": 0.023,
+          "band": "PASS"
+        }
+      },
+      "shares": {
+        "wind": {
+          "actual_share": 0.228,
+          "model_share": 0.488,
+          "delta_pp": 0.259,
+          "band": "FAIL"
+        },
+        "solar": {
+          "actual_share": 0.452,
+          "model_share": 0.024,
+          "delta_pp": -0.428,
+          "band": "FAIL"
+        },
+        "gas_cc": {
+          "actual_share": 0.004,
+          "model_share": 0.073,
+          "delta_pp": 0.069,
+          "band": "FAIL"
+        },
+        "gas_ct": {
+          "actual_share": 0.067,
+          "model_share": 0.073,
+          "delta_pp": 0.007,
+          "band": "PASS"
+        },
+        "storage": {
+          "actual_share": 0.247,
+          "model_share": 0.341,
+          "delta_pp": 0.094,
+          "band": "FAIL"
+        }
+      },
+      "actual_total_gw": 55.436,
+      "model_total_gw": 41.0
+    },
+    "co2": {
+      "model": {
+        "2023": 108191668.83953047,
+        "2024": 102189330.96143974,
+        "2025": 140232912.4101893
+      },
+      "actual": {
+        "2023": 191435844.4022851,
+        "2024": 191324345.6416519,
+        "2025": 193564905.05488053
+      }
+    },
+    "baselines": {
+      "announced": {
+        "retire_gw": 65.381,
+        "add_gw": 147.445,
+        "note": "2020-vintage planned schedule"
+      }
+    },
+    "bands": {
+      "thermal_gw_retired_total_frac": 0.1,
+      "thermal_gw_retired_perfuel_frac": 0.2,
+      "retire_recall_min": 0.7,
+      "false_retire_frac_max": 0.15,
+      "retire_timing_years_max": 1.5,
+      "add_gw_frac_default": 0.15,
+      "add_gw_frac_storage": 0.25,
+      "techmix_share_pp_max": 0.05,
+      "co2_2025_frac": 0.1
+    },
+    "generated_utc": "2026-07-18T01:29:11Z"
+  },
+  "invariants": [
+    {
+      "ident": "I1",
+      "name": "energy balance",
+      "status": "PASS",
+      "detail": "max |supply\u2212demand| = 3.565e-10 MW (year 2024); tol 1.0"
+    },
+    {
+      "ident": "I2",
+      "name": "no NaN/inf",
+      "status": "PASS",
+      "detail": "clean"
+    },
+    {
+      "ident": "I3",
+      "name": "unserved/dump",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I4",
+      "name": "capacity accounting",
+      "status": "PASS",
+      "detail": "closes"
+    },
+    {
+      "ident": "I5",
+      "name": "no retire-and-reenter",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I6",
+      "name": "econ-retirement sanity",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I7",
+      "name": "reliability floor",
+      "status": "FAIL",
+      "detail": "2023: thermal 71910 < retirement-bounded floor 78171 MW"
+    },
+    {
+      "ident": "I8",
+      "name": "planned-additions gating",
+      "status": "PASS",
+      "detail": "ok"
+    },
+    {
+      "ident": "I9",
+      "name": "storage integrity",
+      "status": "FAIL",
+      "detail": "2023: simultaneous chg+dis 3.66% of throughput; 2024: simultaneous chg+dis 7.81% of throughput; 2025: simultaneous chg+dis 13.10% of throughput"
+    },
+    {
+      "ident": "I10",
+      "name": "RPS dual sign+stability",
+      "status": "PASS",
+      "detail": "\u22650, stable"
+    },
+    {
+      "ident": "I11",
+      "name": "one-pass",
+      "status": "PASS",
+      "detail": "single pass"
+    },
+    {
+      "ident": "I12",
+      "name": "reserve-margin band",
+      "status": "WARN",
+      "detail": "scalar floor [13.8%, 28.7%]; out: 2021:47.1% (band [13.8%, 28.7%]), 2024:41.4% (band [13.8%, 28.7%]), 2025:47.2% (band [13.8%, 28.7%])"
+    },
+    {
+      "ident": "I13",
+      "name": "cobweb detector",
+      "status": "PASS",
+      "detail": "smooth"
+    },
+    {
+      "ident": "I14",
+      "name": "price sanity",
+      "status": "WARN",
+      "detail": "2024: 10.1% negative-price hours; 2025: 11.4% negative-price hours"
+    }
+  ],
+  "registered_utc": "2026-07-18T01:29:13Z"
+}
