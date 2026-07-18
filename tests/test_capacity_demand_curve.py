@@ -21,6 +21,7 @@ from market_sim.config.constants import (
     MARKET_DESIGN_VINTAGES,
     MISO_SEASONAL_RBDC,
     PLANNING_RESERVE_MARGIN_BY_ISO,
+    PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO,
     CapacityDemandCurvePoint,
     evaluate_demand_curve,
     resolve_capacity_curve_eligible,
@@ -230,12 +231,13 @@ class TestReservePosition(unittest.TestCase):
     """capacity_reserve_position — accredited firm / shared requirement."""
 
     def test_hand_computed_ratio(self):
-        # NYISO: DR fraction 0, ICAP->UCAP ratio 1.0, UCAP thermal basis (R5a
-        # left NYISO on the default pending owner sign-off), so the
-        # requirement and accredited sums are hand-computable. (Was NEISO
-        # until R5b moved it to the claimed-capability basis — see
-        # TestClaimedCapabilityBasis in tests/test_capacity.py for that
-        # basis's own dedicated coverage.)
+        # NYISO: DR fraction 0, UCAP thermal basis (default), so the requirement
+        # and accredited sums are hand-computable. After R5a landed (FF-3D
+        # 2026-07-18) NYISO also carries the published NYCA translation-factor
+        # ICAP->UCAP ratio, so the requirement folds that in — one requirement
+        # resolver, rule 19. (Was NEISO until R5b moved it to the
+        # claimed-capability basis — see TestClaimedCapabilityBasis in
+        # tests/test_capacity.py, and TestNyisoIcapUcapTranslation for R5a.)
         iso = "NYISO"
         gen = Generator(
             unit_id="G0",
@@ -249,7 +251,8 @@ class TestReservePosition(unittest.TestCase):
         peak = 1000.0
         config = ScenarioConfig(iso=iso)
         firm = 1000.0 * (1.0 - 0.05)  # UCAP
-        requirement = peak * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO[iso])
+        ratio = PLANNING_RESERVE_MARGIN_ICAP_TO_UCAP_RATIO_BY_ISO[iso]
+        requirement = peak * (1.0 + PLANNING_RESERVE_MARGIN_BY_ISO[iso]) * ratio
         pos = capacity_reserve_position([gen], 0.0, 0.0, 0.0, config, iso, peak)
         self.assertAlmostEqual(pos, firm / requirement)
 
@@ -659,7 +662,12 @@ class TestMarketDesignVintages(unittest.TestCase):
             return self._scalar(r, "price_cap") / self._scalar(r, "net_cone")
         if iso == "NYISO":
             nyca = r[r.area == "NYCA"]
-            if "summer" in set(nyca.season.dropna()):
+            # Whether the CAP is published seasonally — scope the detection to
+            # the cap/curve metrics this branch reconciles, so an annual scalar
+            # metric that carries a season tag (e.g. the summer-tabulated
+            # icap_ucap_translation_factor) does not flip the branch.
+            nyca_curve = nyca[nyca.metric.isin(["price_cap", "curve_point"])]
+            if "summer" in set(nyca_curve.season.dropna()):
                 cap = self._scalar(r, "price_cap", area="NYCA", season="summer")
                 ref = float(
                     nyca[(nyca.metric == "curve_point") & (nyca.season == "summer")]
@@ -765,10 +773,12 @@ class TestMarketDesignVintages(unittest.TestCase):
     def test_reference_year_equals_registry_default(self):
         # At each ISO's registry reference delivery year, the vintage override
         # reproduces the no-year (registry) price exactly — byte-identity. (NYISO
-        # is curve-INELIGIBLE — TestCurveEligibility covers it; MISO reproduces
-        # its seasonal price both ways.)
+        # became curve-eligible with R5a — FF-3D 2026-07-18 — so its reference
+        # year 2025-2026 is now exercised here too; MISO reproduces its seasonal
+        # price both ways.)
         for iso, ref_year in (
             ("PJM", 2026),
+            ("NYISO", 2025),
             ("NEISO", 2027),
             ("MISO", 2025),
         ):
@@ -782,25 +792,26 @@ class TestMarketDesignVintages(unittest.TestCase):
                     base, with_year, places=6, msg=f"{iso} {ref_year} @ {pos}"
                 )
 
-    def test_ineligible_iso_never_reaches_its_vintage(self):
+    def test_empty_curve_vintage_prices_flat_vintage_anchor(self):
         # The only remaining ()-shape vintages are NYISO's 2021-22/2022-23
-        # (PJM's 2021/22-2025/26 gained published shapes in RC-1A), and NYISO
-        # is curve-INELIGIBLE (RC-1C, R5a pairing pending owner sign-off) — so
-        # with the gate on and a year threaded, NYISO prices its FIXED anchor,
-        # never the vintage flat anchor, at any position. (The ()-vintage
-        # flat-anchor fall-through in capacity_price_per_firm_mw_yr is
-        # therefore currently unreachable on every eligible ISO; this test
-        # pins the eligibility interaction that makes it so.)
+        # (PJM's 2021/22-2025/26 gained published shapes in RC-1A). Now that R5a
+        # made NYISO curve-ELIGIBLE (FF-3D 2026-07-18), the ()-vintage
+        # flat-anchor fall-through in capacity_price_per_firm_mw_yr IS reachable:
+        # with the gate on and year=2021 threaded, NYISO prices the 2021-2022
+        # vintage's OWN flat anchor (not the registry fixed anchor, not a curve),
+        # position-invariant because that vintage carries no normalizable shape.
         design = MARKET_DESIGN["NYISO"]
-        fixed = design.net_cone_per_kw_yr * 1000.0
-        for pos in (0.3, 0.85, 1.0, 1.4):
-            self.assertAlmostEqual(
-                design.capacity_price_per_firm_mw_yr(
-                    self.ON, pos, iso="NYISO", year=2021
-                ),
-                fixed,
-                places=3,
-            )
+        vintage = resolve_demand_curve_vintage("NYISO", 2021)
+        self.assertEqual(vintage.delivery_year, "2021-2022")
+        self.assertEqual(vintage.demand_curve, ())
+        expected = (
+            vintage.net_cone_curve_per_kw_yr or design.net_cone_per_kw_yr
+        ) * 1000.0
+        prices = {
+            design.capacity_price_per_firm_mw_yr(self.ON, pos, iso="NYISO", year=2021)
+            for pos in (0.3, 0.85, 1.0, 1.4)
+        }
+        self.assertEqual(prices, {expected})  # one flat value at every position
 
     def test_pjm_pre_cifp_vintage_prices_slope(self):
         # RC-1A: a threaded pre-CIFP PJM year prices on its own published
@@ -938,34 +949,41 @@ class TestMISOSeasonalRBDC(unittest.TestCase):
 
 
 class TestCurveEligibility(unittest.TestCase):
-    """RC-1C — curve-eligibility governance gate (NYISO ineligible)."""
+    """RC-1C — curve-eligibility governance gate. Every registry ISO is now
+    eligible after R5a landed NYISO's ICAP->UCAP pairing (FF-3D 2026-07-18)."""
 
     ON = SimpleNamespace(capacity_market_clearing=True)
 
-    def test_resolver_defaults_and_nyiso_false(self):
-        self.assertFalse(resolve_capacity_curve_eligible("NYISO"))
-        for iso in ("PJM", "NEISO", "MISO"):
+    def test_resolver_defaults_all_eligible(self):
+        # R5a landed: NYISO is now eligible alongside the others.
+        for iso in ("PJM", "NEISO", "MISO", "NYISO"):
             self.assertTrue(resolve_capacity_curve_eligible(iso))
         # iso=None and an unknown ISO default ELIGIBLE (byte-identity / no
         # silent block of a new curve ISO).
         self.assertTrue(resolve_capacity_curve_eligible(None))
         self.assertTrue(resolve_capacity_curve_eligible("MADEUP"))
 
-    def test_nyiso_prices_fixed_when_iso_supplied(self):
-        # Gate ON + iso="NYISO": ineligible, so it prices the FIXED anchor
-        # (110 $/kW-yr × 1000) at EVERY position and year — never the curve.
+    def test_nyiso_prices_on_curve_when_iso_supplied(self):
+        # Gate ON + iso="NYISO": now ELIGIBLE (R5a landed), so an iso-supplied
+        # position prices on the sloped curve exactly as iso=None does — no
+        # longer pinned to the FIXED anchor. The curve is live: a short position
+        # sits above net-CONE, a long position collapses to 0.
         nyiso = MARKET_DESIGN["NYISO"]
         fixed = nyiso.net_cone_per_kw_yr * 1000.0
         for pos in (0.3, 0.85, 1.0, 1.2):
-            self.assertEqual(
-                nyiso.capacity_price_per_firm_mw_yr(self.ON, pos, iso="NYISO"), fixed
+            self.assertAlmostEqual(
+                nyiso.capacity_price_per_firm_mw_yr(self.ON, pos, iso="NYISO"),
+                nyiso.capacity_price_per_firm_mw_yr(self.ON, pos),
+                places=6,
             )
-            self.assertEqual(
-                nyiso.capacity_price_per_firm_mw_yr(
-                    self.ON, pos, iso="NYISO", year=2024
-                ),
-                fixed,
-            )
+        # Short is above net-CONE, past the zero-cross is 0 — a real curve, not
+        # the flat anchor.
+        self.assertGreater(
+            nyiso.capacity_price_per_firm_mw_yr(self.ON, 0.3, iso="NYISO"), fixed
+        )
+        self.assertEqual(
+            nyiso.capacity_price_per_firm_mw_yr(self.ON, 1.2, iso="NYISO"), 0.0
+        )
 
     def test_nyiso_iso_none_still_curves(self):
         # iso=None bypasses the eligibility gate (pre-RC-1C call sites), so the
