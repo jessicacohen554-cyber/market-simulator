@@ -169,6 +169,20 @@ methodology, no measured overlays by construction). Scoring:
 - **2026–2027**: invariants + benchmark-context only (announced pipeline, ISO forecasts).
   The scorer must structurally refuse to read bench/actuals for any year ≥ 2026.
 
+**Implemented (FF-0E).** `scripts/run_capacity_hindcast.py --crossover --vintage 2023
+--start-year 2023 --end-year 2027` runs the crossover on the hindcast harness:
+`ScenarioConfig.crossover_forward_year` (=2026) is the boundary — years `<` it use the
+realized hindcast inputs, years `>=` it drop every measured overlay (the runner skips the
+realized per-year demand loader + the F923 plant-monthly overlay and prices gas on
+`crossover_forward_gas_path` = AEO) and are SOLVED, not bridged. The forward demand
+anchors on the last realized weather year (harness pins `weather_year = 2025`). The harness
+asserts forward years consult no backcast-gated loader (`assert_forward_drivers`) and that
+planned units trace to the 2023 proposed sheet (`assert_pipeline_from_vintage`, vintage-
+generalized). Score with `scripts/score_crossover.py` (dispatch skill + capacity events
+2023–2025; a hard `_assert_scoreable_year` refuses any bench/actual read for a year ≥ 2026).
+Runs register on the forecast-validation namespace (`frontend/data/hindcast/`) with
+`meta.kind = "crossover"`. FF-0E builds the instrument; the first real runs are FF-1D's.
+
 ### 2.3 Quarantine constraints (rule 22, applied to this program)
 
 - Train years 2023–2025: solve/score freely, any mode. 2026+ **forecast-mode** solves are
