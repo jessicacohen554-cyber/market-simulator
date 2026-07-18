@@ -1,0 +1,15 @@
+{
+ "id": "2026-07-18-ercot83-commitment-posture-probe",
+ "label": "ercot83 commitment posture probe",
+ "date": "2026-07-18",
+ "shorthand": "ercot83-commitment-posture-probe",
+ "definition": "(PROBE \u2014 REJECTED, INERT) keeper ercot82 + ercot_commitment_posture=true (commitment-thinness, mlf=0.574 measured LSL/HSL p50, energy-only, reserve untouched). Hypothesis (commitment-thinness handoff 2026-07-18): thin the cheap online CC the armed conditional offer-surface + cleared-share walls get routed around, so scarcity forms via energy offers. RESULT: dispatch-perturbing but price-INERT \u2014 max|Delta LMP| $15-33/h and ~1000 hrs/yr move >$1, but every gated metric is unchanged vs ercot82: C3a/C3b/C3c FAIL, Aug-2023 129 (rt 192), >$200 tail 58/22/0, mid-band $150-800 17/7/5 \u2014 identical. Does NOT fill the empty $150-800 middle, catch the summer tail, or moderate the April-2024 evening VOLL over-shoot (9 hrs ->$5047 unchanged). The energy-only posture with the measured mlf reshuffles CC/CT at the margin and nets to zero. Keeper stays ercot82. Same rubric as keeper (NOT-YET, 3 fails). See handoff for next levers (reserve-coopt VOLL over-fire per June-2023 finding; whole-stack mid-rung level per ERCOT-77).",
+ "years": [
+  2023,
+  2024,
+  2025
+ ],
+ "iso": "ERCOT",
+ "file": "frontend/data/backcast/runs/2026-07-18-ercot83-commitment-posture-probe.js",
+ "bundle": "results/calibration/ercot83_commitment_posture"
+}
